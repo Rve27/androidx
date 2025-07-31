@@ -55,7 +55,6 @@ import androidx.pdf.content.ExternalLink
 import androidx.pdf.event.PdfTrackingEvent
 import androidx.pdf.event.RequestFailureEvent
 import androidx.pdf.exceptions.RequestFailedException
-import androidx.pdf.featureflag.PdfFeatureFlags
 import androidx.pdf.models.FormWidgetInfo
 import androidx.pdf.selection.ContextMenuComponent
 import androidx.pdf.selection.SelectionActionModeCallback
@@ -840,8 +839,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         // before the event reaches the application. If a key event is received here, it means the
         // accessibility service has chosen to not handle it. Therefore, we can safely let the
         // ExternalInputManager handle the key event.
-        return (PdfFeatureFlags.isExternalHardwareInteractionEnabled &&
-            externalInputManager.handleKeyEvent(event)) ||
+        return (externalInputManager.handleKeyEvent(event)) ||
             pdfViewAccessibilityManager?.dispatchKeyEvent(event) ?: false ||
             super.dispatchKeyEvent(event)
     }
@@ -905,7 +903,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
 
         var handled =
             event?.let { fastScrollGestureDetector?.handleEvent(it, parent, width) } ?: false
-        handled = handled || maybeDragSelectionHandle(event)
+        handled = handled || event?.let { externalInputManager.handleMouseEvent(event) } ?: false
+        handled = handled || maybeDragSelection(event)
         handled =
             handled ||
                 event?.let { gestureTracker.feed(it, parent, isContentAtHorizontalEdges()) }
@@ -940,7 +939,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         fastScroller?.hide()
     }
 
-    private fun maybeDragSelectionHandle(event: MotionEvent?): Boolean {
+    internal fun maybeDragSelection(event: MotionEvent?, isSourceMouse: Boolean = false): Boolean {
         if (event == null) return false
         val touchPoint =
             pageMetadataLoader?.getPdfPointAt(
@@ -955,10 +954,17 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         }
 
         prevDragEvent = event
+
         if (
-            selectionStateManager?.maybeDragSelectionHandle(event.action, touchPoint, zoom) == true
+            selectionStateManager?.maybeDragSelection(
+                event.action,
+                touchPoint,
+                zoom,
+                isSourceMouse,
+            ) == true
         ) {
-            if (event.action == MotionEvent.ACTION_DOWN && isAutoScrollingEnabled) {
+            val shouldAutoScroll = event.action == MotionEvent.ACTION_MOVE && !isAutoScrolling
+            if (isAutoScrollingEnabled && shouldAutoScroll) {
                 startAutoScrolling()
             }
             return true

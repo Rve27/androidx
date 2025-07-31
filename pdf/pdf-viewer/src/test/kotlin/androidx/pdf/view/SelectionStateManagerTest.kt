@@ -214,10 +214,11 @@ class SelectionStateManagerTest {
         selectionStateManager._selectionModel.update { initialSelectionForDragging }
 
         assertThat(
-                selectionStateManager.maybeDragSelectionHandle(
+                selectionStateManager.maybeDragSelection(
                     MotionEvent.ACTION_DOWN,
                     PdfPoint(pageNum = 0, PointF(0F, 0F)),
                     currentZoom = 2.0F,
+                    false,
                 )
             )
             .isFalse()
@@ -236,10 +237,11 @@ class SelectionStateManagerTest {
 
         // "Grab" the start handle and make sure we handle the event
         assertThat(
-                selectionStateManager.maybeDragSelectionHandle(
+                selectionStateManager.maybeDragSelection(
                     MotionEvent.ACTION_DOWN,
                     PdfPoint(pageNum = 0, insideStartHandle),
                     currentZoom = 2.0F,
+                    false,
                 )
             )
             .isTrue()
@@ -258,10 +260,11 @@ class SelectionStateManagerTest {
 
         // "Grab" the end handle and make sure we handle the event
         assertThat(
-                selectionStateManager.maybeDragSelectionHandle(
+                selectionStateManager.maybeDragSelection(
                     MotionEvent.ACTION_DOWN,
                     PdfPoint(pageNum = 0, insideEndHandle),
                     currentZoom = 2.0F,
+                    false,
                 )
             )
             .isTrue()
@@ -278,10 +281,11 @@ class SelectionStateManagerTest {
                 )
                 .apply { offset(-HANDLE_TOUCH_TARGET_PX / 4.0F, HANDLE_TOUCH_TARGET_PX / 4.0F) }
         assertThat(
-                selectionStateManager.maybeDragSelectionHandle(
+                selectionStateManager.maybeDragSelection(
                     MotionEvent.ACTION_DOWN,
                     PdfPoint(pageNum = 0, insideStartHandle),
                     currentZoom = 2.0F,
+                    false,
                 )
             )
             .isTrue()
@@ -290,10 +294,11 @@ class SelectionStateManagerTest {
         val newStartPosition =
             PointF(insideStartHandle).apply { offset(/* dx= */ 5F, /* dy= */ 5F) }
         assertThat(
-                selectionStateManager.maybeDragSelectionHandle(
+                selectionStateManager.maybeDragSelection(
                     MotionEvent.ACTION_MOVE,
                     PdfPoint(pageNum = 0, newStartPosition),
                     currentZoom = 2.0F,
+                    false,
                 )
             )
             .isTrue()
@@ -328,10 +333,11 @@ class SelectionStateManagerTest {
                 )
                 .apply { offset(-HANDLE_TOUCH_TARGET_PX / 4.0F, HANDLE_TOUCH_TARGET_PX / 4.0F) }
         assertThat(
-                selectionStateManager.maybeDragSelectionHandle(
+                selectionStateManager.maybeDragSelection(
                     MotionEvent.ACTION_DOWN,
                     PdfPoint(pageNum = 0, insideStartHandle),
                     currentZoom = 2.0F,
+                    false,
                 )
             )
             .isTrue()
@@ -339,10 +345,11 @@ class SelectionStateManagerTest {
         // Drag the handle to a location outside any page (location = null), and make sure we still
         // "capture" the event
         assertThat(
-                selectionStateManager.maybeDragSelectionHandle(
+                selectionStateManager.maybeDragSelection(
                     MotionEvent.ACTION_MOVE,
                     location = null,
                     currentZoom = 2.0F,
+                    false,
                 )
             )
             .isTrue()
@@ -362,10 +369,11 @@ class SelectionStateManagerTest {
         // Make sure we don't handle an ACTION_MOVE without an initial ACTION_DOWN, even when the
         // move event occurs within one of the drag handles
         assertThat(
-                selectionStateManager.maybeDragSelectionHandle(
+                selectionStateManager.maybeDragSelection(
                     MotionEvent.ACTION_MOVE,
                     PdfPoint(pageNum = 0, insideStartHandle),
                     currentZoom = 2.0F,
+                    false,
                 )
             )
             .isFalse()
@@ -385,10 +393,11 @@ class SelectionStateManagerTest {
         // Make sure we don't handle an ACTION_UP without an initial ACTION_DOWN, even when the
         // up event occurs within one of the drag handles
         assertThat(
-                selectionStateManager.maybeDragSelectionHandle(
+                selectionStateManager.maybeDragSelection(
                     MotionEvent.ACTION_UP,
                     PdfPoint(pageNum = 0, insideStartHandle),
                     currentZoom = 2.0F,
+                    false,
                 )
             )
             .isFalse()
@@ -407,30 +416,33 @@ class SelectionStateManagerTest {
 
         // "Grab" the start handle
         assertThat(
-                selectionStateManager.maybeDragSelectionHandle(
+                selectionStateManager.maybeDragSelection(
                     MotionEvent.ACTION_DOWN,
                     PdfPoint(pageNum = 0, insideStartHandle),
                     currentZoom = 2.0F,
+                    false,
                 )
             )
             .isTrue()
 
         // "Release" the start handle, and make sure we handle the event
         assertThat(
-                selectionStateManager.maybeDragSelectionHandle(
+                selectionStateManager.maybeDragSelection(
                     MotionEvent.ACTION_UP,
                     PdfPoint(pageNum = 0, insideStartHandle),
                     currentZoom = 2.0F,
+                    false,
                 )
             )
             .isTrue()
 
         // Make sure we don't handle an ACTION_MOVE after releasing the gesture
         assertThat(
-                selectionStateManager.maybeDragSelectionHandle(
+                selectionStateManager.maybeDragSelection(
                     MotionEvent.ACTION_MOVE,
                     PdfPoint(pageNum = 0, insideStartHandle),
                     currentZoom = 2.0F,
+                    false,
                 )
             )
             .isFalse()
@@ -448,16 +460,17 @@ class SelectionStateManagerTest {
                 .apply { offset(-HANDLE_TOUCH_TARGET_PX / 4.0F, HANDLE_TOUCH_TARGET_PX / 4.0F) }
 
         assertThat(
-                selectionStateManager.maybeDragSelectionHandle(
+                selectionStateManager.maybeDragSelection(
                     MotionEvent.ACTION_DOWN,
                     PdfPoint(pageNum = 0, insideStartHandle),
                     currentZoom = 2.0F,
+                    false,
                 )
             )
             .isTrue()
 
         val value =
-            selectionStateManager.maybeDragSelectionHandle(
+            selectionStateManager.maybeDragSelection(
                 MotionEvent.ACTION_MOVE,
                 PdfPoint(
                     pageNum = 2,
@@ -465,6 +478,7 @@ class SelectionStateManagerTest {
                     initialSelectionForDragging.endBoundary.location.y,
                 ),
                 currentZoom = 2.0F,
+                false,
             )
         assertThat(value).isTrue()
 
@@ -502,16 +516,17 @@ class SelectionStateManagerTest {
                 .apply { offset(-HANDLE_TOUCH_TARGET_PX / 4.0F, HANDLE_TOUCH_TARGET_PX / 4.0F) }
 
         assertThat(
-                selectionStateManager.maybeDragSelectionHandle(
+                selectionStateManager.maybeDragSelection(
                     MotionEvent.ACTION_DOWN,
                     PdfPoint(pageNum = 1, insideStartHandle),
                     currentZoom = 2.0F,
+                    false,
                 )
             )
             .isTrue()
 
         val value =
-            selectionStateManager.maybeDragSelectionHandle(
+            selectionStateManager.maybeDragSelection(
                 MotionEvent.ACTION_MOVE,
                 PdfPoint(
                     pageNum = 0,
@@ -519,6 +534,7 @@ class SelectionStateManagerTest {
                     initialSelectionForDragging.startBoundary.location.y,
                 ),
                 currentZoom = 2.0F,
+                false,
             )
         assertThat(value).isTrue()
 

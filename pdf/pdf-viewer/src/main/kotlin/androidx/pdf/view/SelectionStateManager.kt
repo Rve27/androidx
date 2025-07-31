@@ -23,6 +23,7 @@ import android.os.DeadObjectException
 import android.util.SparseArray
 import android.view.HapticFeedbackConstants
 import android.view.MotionEvent
+import androidx.annotation.IntDef
 import androidx.annotation.VisibleForTesting
 import androidx.core.util.forEach
 import androidx.pdf.PdfDocument
@@ -78,11 +79,17 @@ internal class SelectionStateManager(
      * @param currentZoom is used only to scale the size of the drag handle's touch target based on
      *   the zoom factor
      */
-    fun maybeDragSelectionHandle(action: Int, location: PdfPoint?, currentZoom: Float): Boolean {
+    fun maybeDragSelection(
+        action: Int,
+        location: PdfPoint?,
+        currentZoom: Float,
+        isSourceMouse: Boolean,
+    ): Boolean {
         return when (action) {
             MotionEvent.ACTION_DOWN -> {
                 location ?: return false // We can't handle an ACTION_DOWN without a location
-                maybeHandleActionDown(location, currentZoom)
+                if (isSourceMouse) handleActionDownForMouse(location, currentZoom)
+                else maybeHandleActionDown(location, currentZoom)
             }
             MotionEvent.ACTION_MOVE -> {
                 maybeHandleActionMove(location)
@@ -132,54 +139,90 @@ internal class SelectionStateManager(
         updateAllSelectionAsync(pageNum)
     }
 
-    private fun maybeHandleActionDown(location: PdfPoint, currentZoom: Float): Boolean {
-        val currentSelection = selectionModel.value ?: return false
-        val start = currentSelection.startBoundary.location
-        val end = currentSelection.endBoundary.location
+    /**
+     * Calculates the touch target bounding boxes for the start and end selection handles, scaled by
+     * the [currentZoom].
+     *
+     * @param currentZoom The current zoom level.
+     * @return A [Pair] of [RectF] for the start and end handle bounds, or `null` if no selection.
+     */
+    fun getSelectionHandleBounds(currentZoom: Float): Pair<RectF, RectF>? {
+        val currentSelection = selectionModel.value ?: return null
         val touchTargetContentSize = handleTouchTargetSizePx / currentZoom
 
-        if (location.pageNum == start.pageNum) {
-            // Touch target is below and behind the start position, like the start handle
-            val startTarget =
-                RectF(
-                    start.x - touchTargetContentSize,
-                    start.y,
-                    start.x,
-                    start.y + touchTargetContentSize,
-                )
-            if (startTarget.contains(location.x, location.y)) {
-                draggingState =
-                    DraggingState(
-                        currentSelection.endBoundary,
-                        currentSelection.startBoundary,
-                        PointF(location.x, location.y),
-                    )
-                // Play haptic feedback when the user starts dragging the handles
-                _selectionUiSignalBus.tryEmit(
-                    SelectionUiSignal.PlayHapticFeedback(HapticFeedbackConstants.TEXT_HANDLE_MOVE)
-                )
-                return true
-            }
+        val start = currentSelection.startBoundary.location
+        val startTarget =
+            RectF(
+                start.x - touchTargetContentSize,
+                start.y,
+                start.x,
+                start.y + touchTargetContentSize,
+            )
+
+        val end = currentSelection.endBoundary.location
+        val endTarget =
+            RectF(end.x, end.y, end.x + touchTargetContentSize, end.y + touchTargetContentSize)
+
+        return Pair(startTarget, endTarget)
+    }
+
+    @HandlePositionDef
+    fun getHandleForTouchPoint(location: PdfPoint, currentZoom: Float): Int {
+        val currentSelection = selectionModel.value ?: return SelectionHandle.NONE
+        val start = currentSelection.startBoundary.location
+        val end = currentSelection.endBoundary.location
+
+        val (startTarget, endTarget) =
+            getSelectionHandleBounds(currentZoom) ?: return SelectionHandle.NONE
+
+        // Check for start handle
+        if (location.pageNum == start.pageNum && startTarget.contains(location.x, location.y)) {
+            return SelectionHandle.START
         }
-        if (location.pageNum == end.pageNum) {
-            // Touch target is below and ahead of the end position, like the end handle
-            val endTarget =
-                RectF(end.x, end.y, end.x + touchTargetContentSize, end.y + touchTargetContentSize)
-            if (endTarget.contains(location.x, location.y)) {
-                draggingState =
-                    DraggingState(
-                        currentSelection.startBoundary,
-                        currentSelection.endBoundary,
-                        PointF(location.x, location.y),
-                    )
-                // Play haptic feedback when the user starts dragging the handles
-                _selectionUiSignalBus.tryEmit(
-                    SelectionUiSignal.PlayHapticFeedback(HapticFeedbackConstants.TEXT_HANDLE_MOVE)
-                )
-                return true
-            }
+
+        // Check for end handle
+        if (location.pageNum == end.pageNum && endTarget.contains(location.x, location.y)) {
+            return SelectionHandle.END
         }
-        return false
+
+        return SelectionHandle.NONE
+    }
+
+    private fun handleActionDownForMouse(location: PdfPoint, currentZoom: Float): Boolean {
+        if (getHandleForTouchPoint(location, currentZoom) != SelectionHandle.NONE) {
+            return maybeHandleActionDown(location, currentZoom)
+        }
+        // A new drag starts, clear previous selection and hide action mode.
+        clearSelection()
+        val boundary = UiSelectionBoundary(location, isRtl = false)
+        draggingState =
+            DraggingState(
+                fixed = boundary,
+                dragging = boundary,
+                downPoint = PointF(location.x, location.y),
+            )
+        return true
+    }
+
+    private fun maybeHandleActionDown(location: PdfPoint, currentZoom: Float): Boolean {
+        val currentSelection = selectionModel.value ?: return false
+        val startBoundary = currentSelection.startBoundary
+        val endBoundary = currentSelection.endBoundary
+
+        draggingState =
+            when (getHandleForTouchPoint(location, currentZoom)) {
+                SelectionHandle.START ->
+                    DraggingState(endBoundary, startBoundary, PointF(location.x, location.y))
+                SelectionHandle.END ->
+                    DraggingState(startBoundary, endBoundary, PointF(location.x, location.y))
+                else -> return false
+            }
+
+        _selectionUiSignalBus.tryEmit(
+            SelectionUiSignal.PlayHapticFeedback(HapticFeedbackConstants.TEXT_HANDLE_MOVE)
+        )
+
+        return true
     }
 
     private fun maybeHandleActionMove(location: PdfPoint?): Boolean {
@@ -477,3 +520,14 @@ private data class DraggingState(
     val dragging: UiSelectionBoundary,
     val downPoint: PointF,
 )
+
+/** Defines integer constants to represent relative position of selection handles */
+private object SelectionHandle {
+    const val NONE = 0
+    const val START = 1
+    const val END = 2
+}
+
+@IntDef(SelectionHandle.NONE, SelectionHandle.START, SelectionHandle.END)
+@Retention(AnnotationRetention.SOURCE)
+private annotation class HandlePositionDef
