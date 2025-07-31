@@ -17,7 +17,6 @@
 package androidx.xr.compose.testapp.ui.components
 
 import android.view.Choreographer
-import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -129,14 +128,7 @@ fun CommonTestPanel(
     composable: @Composable (padding: PaddingValues) -> Unit,
 ) {
     SpatialPanel(modifier = SubspaceModifier.size(size).movable()) {
-        CommonTestScaffold(
-            title,
-            showBottomBar,
-            "",
-            onClickBackArrow,
-            onClickRecreate ?: LocalActivity.current?.run { ::recreate },
-            composable,
-        )
+        CommonTestScaffold(title, showBottomBar, "", onClickBackArrow, onClickRecreate, composable)
     }
 }
 
