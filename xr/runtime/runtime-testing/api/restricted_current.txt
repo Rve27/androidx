@@ -983,7 +983,12 @@ package androidx.xr.runtime.testing {
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeSceneRuntime implements androidx.xr.runtime.internal.SceneRuntime {
     ctor public FakeSceneRuntime(android.app.Activity activity);
+    method public androidx.xr.runtime.internal.Entity createGroupEntity(androidx.xr.runtime.math.Pose pose, String name, androidx.xr.runtime.internal.Entity parent);
     method public void dispose();
+    method public androidx.xr.runtime.internal.ActivitySpace getActivitySpace();
+    method public androidx.xr.runtime.internal.SpatialCapabilities getSpatialCapabilities();
+    property public androidx.xr.runtime.internal.ActivitySpace activitySpace;
+    property public androidx.xr.runtime.internal.SpatialCapabilities spatialCapabilities;
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeSceneRuntimeFactory implements androidx.xr.runtime.internal.SceneRuntimeFactory {
