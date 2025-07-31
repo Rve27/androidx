@@ -51,6 +51,14 @@ package androidx.compose.runtime {
     property public boolean hasAwaiters;
   }
 
+  public fun interface CancellationHandle {
+    method public void cancel();
+    field public static final androidx.compose.runtime.CancellationHandle.Companion Companion;
+  }
+
+  public static final class CancellationHandle.Companion {
+  }
+
   @kotlin.annotation.MustBeDocumented @kotlin.annotation.Retention(kotlin.annotation.AnnotationRetention.BINARY) @kotlin.annotation.Target(allowedTargets={kotlin.annotation.AnnotationTarget.FUNCTION, kotlin.annotation.AnnotationTarget.TYPE, kotlin.annotation.AnnotationTarget.TYPE_PARAMETER, kotlin.annotation.AnnotationTarget.PROPERTY_GETTER}) public @interface Composable {
   }
 
@@ -189,6 +197,7 @@ package androidx.compose.runtime {
     method @SuppressCompatibility @androidx.compose.runtime.InternalComposeApi public void recordSideEffect(kotlin.jvm.functions.Function0<kotlin.Unit> effect);
     method @SuppressCompatibility @androidx.compose.runtime.InternalComposeApi public void recordUsed(androidx.compose.runtime.RecomposeScope scope);
     method @androidx.compose.runtime.ComposeCompilerApi public Object? rememberedValue();
+    method public androidx.compose.runtime.CancellationHandle scheduleFrameEndCallback(kotlin.jvm.functions.Function0<kotlin.Unit> action);
     method @SuppressCompatibility @androidx.compose.runtime.InternalComposeApi public boolean shouldExecute(boolean parametersChanged, int flags);
     method @androidx.compose.runtime.ComposeCompilerApi public void skipCurrentGroup();
     method @androidx.compose.runtime.ComposeCompilerApi public void skipToGroupEnd();
@@ -260,6 +269,7 @@ package androidx.compose.runtime {
 
   public abstract class CompositionContext {
     method public abstract kotlin.coroutines.CoroutineContext getEffectCoroutineContext();
+    method public abstract androidx.compose.runtime.CancellationHandle scheduleFrameEndCallback(kotlin.jvm.functions.Function0<kotlin.Unit> action);
     property public abstract kotlin.coroutines.CoroutineContext effectCoroutineContext;
   }
 
@@ -619,6 +629,7 @@ package androidx.compose.runtime {
     method public void resumeCompositionFrameClock();
     method public suspend Object? runRecomposeAndApplyChanges(kotlin.coroutines.Continuation<? super kotlin.Unit>);
     method @SuppressCompatibility @androidx.compose.runtime.ExperimentalComposeApi public suspend Object? runRecomposeConcurrentlyAndApplyChanges(kotlin.coroutines.CoroutineContext recomposeCoroutineContext, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+    method public androidx.compose.runtime.CancellationHandle scheduleFrameEndCallback(kotlin.jvm.functions.Function0<kotlin.Unit> action);
     property public long changeCount;
     property public kotlinx.coroutines.flow.StateFlow<androidx.compose.runtime.Recomposer.State> currentState;
     property public kotlin.coroutines.CoroutineContext effectCoroutineContext;

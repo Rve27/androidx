@@ -164,18 +164,8 @@ public class Recomposer(effectCoroutineContext: CoroutineContext) : CompositionC
     public var changeCount: Long = 0L
         private set
 
-    private val broadcastFrameClock = BroadcastFrameClock {
-        synchronized(stateLock) {
-                deriveStateLocked().also {
-                    if (_state.value <= State.ShuttingDown)
-                        throw CancellationException(
-                            "Recomposer shutdown; frame clock awaiter will never resume",
-                            closeCause,
-                        )
-                }
-            }
-            ?.resume(Unit)
-    }
+    private val broadcastFrameClock = BroadcastFrameClock { onNewFrameAwaiter() }
+    private val nextFrameEndCallbackQueue = NextFrameEndCallbackQueue { onNewFrameAwaiter() }
 
     /** Valid operational states of a [Recomposer]. */
     public enum class State {
@@ -314,6 +304,9 @@ public class Recomposer(effectCoroutineContext: CoroutineContext) : CompositionC
     private val hasBroadcastFrameClockAwaitersLocked: Boolean
         get() = !frameClockPaused && broadcastFrameClock.hasAwaiters
 
+    private val hasNextFrameEndAwaitersLocked: Boolean
+        get() = !frameClockPaused && nextFrameEndCallbackQueue.hasAwaiters
+
     private val hasBroadcastFrameClockAwaiters: Boolean
         get() = synchronized(stateLock) { hasBroadcastFrameClockAwaitersLocked }
 
@@ -346,7 +339,8 @@ public class Recomposer(effectCoroutineContext: CoroutineContext) : CompositionC
                 runnerJob == null -> {
                     snapshotInvalidations = MutableScatterSet()
                     compositionInvalidations.clear()
-                    if (hasBroadcastFrameClockAwaitersLocked) State.InactivePendingWork
+                    if (hasBroadcastFrameClockAwaitersLocked || hasNextFrameEndAwaitersLocked)
+                        State.InactivePendingWork
                     else State.Inactive
                 }
                 compositionInvalidations.isNotEmpty() ||
@@ -355,6 +349,7 @@ public class Recomposer(effectCoroutineContext: CoroutineContext) : CompositionC
                     movableContentAwaitingInsert.isNotEmpty() ||
                     concurrentCompositionsOutstanding > 0 ||
                     hasBroadcastFrameClockAwaitersLocked ||
+                    hasNextFrameEndAwaitersLocked ||
                     movableContentRemoved.isNotEmpty() -> State.PendingWork
                 else -> State.Idle
             }
@@ -363,6 +358,19 @@ public class Recomposer(effectCoroutineContext: CoroutineContext) : CompositionC
         return if (newState == State.PendingWork) {
             workContinuation.also { workContinuation = null }
         } else null
+    }
+
+    private fun onNewFrameAwaiter() {
+        synchronized(stateLock) {
+                deriveStateLocked().also {
+                    if (_state.value <= State.ShuttingDown)
+                        throw CancellationException(
+                            "Recomposer shutdown; frame clock awaiter will never resume",
+                            closeCause,
+                        )
+                }
+            }
+            ?.resume(Unit)
     }
 
     /** `true` if there is still work to do for an active caller of [runRecomposeAndApplyChanges] */
@@ -758,6 +766,7 @@ public class Recomposer(effectCoroutineContext: CoroutineContext) : CompositionC
                 }
 
                 discardUnusedMovableContentState()
+                nextFrameEndCallbackQueue.markFrameComplete()
             }
         }
 
@@ -1093,7 +1102,8 @@ public class Recomposer(effectCoroutineContext: CoroutineContext) : CompositionC
             synchronized(stateLock) {
                 snapshotInvalidations.isNotEmpty() ||
                     compositionInvalidations.isNotEmpty() ||
-                    hasBroadcastFrameClockAwaitersLocked
+                    hasBroadcastFrameClockAwaitersLocked ||
+                    hasNextFrameEndAwaitersLocked
             }
 
     private suspend fun awaitWorkAvailable() {
@@ -1209,6 +1219,23 @@ public class Recomposer(effectCoroutineContext: CoroutineContext) : CompositionC
     /** Await the completion of a [cancel] operation. */
     public suspend fun join() {
         currentState.first { it == State.ShutDown }
+    }
+
+    /**
+     * Schedules an [action] to be invoked when this recomposer finishes the next execution of a
+     * frame. If a frame is currently in-progress, [action] will be invoked when the current frame
+     * finishes. If a frame isn't currently in-progress, a new frame will be scheduled (if one
+     * hasn't been already) and [action] will execute at the completion of the next frame.
+     *
+     * [action] will always execute on the applier thread.
+     *
+     * @return A [CancellationHandle] that can be used to unregister the [action]. The returned
+     *   handle is thread-safe and may be cancelled from any thread. Cancelling the handle only
+     *   removes the callback from the queue. If [action] is currently executing, it will not be
+     *   cancelled by this handle.
+     */
+    public override fun scheduleFrameEndCallback(action: () -> Unit): CancellationHandle {
+        return nextFrameEndCallbackQueue.scheduleFrameEndCallback(action)
     }
 
     internal override fun composeInitial(
@@ -1536,6 +1563,7 @@ public class Recomposer(effectCoroutineContext: CoroutineContext) : CompositionC
                     concurrentCompositionsOutstanding > 0 ||
                     compositionsAwaitingApply.isNotEmpty() ||
                     hasBroadcastFrameClockAwaitersLocked ||
+                    hasNextFrameEndAwaitersLocked ||
                     movableContentRemoved.isNotEmpty()
             }
 
@@ -1543,10 +1571,14 @@ public class Recomposer(effectCoroutineContext: CoroutineContext) : CompositionC
         get() =
             compositionInvalidations.isNotEmpty() ||
                 hasBroadcastFrameClockAwaitersLocked ||
+                hasNextFrameEndAwaitersLocked ||
                 movableContentRemoved.isNotEmpty()
 
     private val hasConcurrentFrameWorkLocked: Boolean
-        get() = compositionsAwaitingApply.isNotEmpty() || hasBroadcastFrameClockAwaitersLocked
+        get() =
+            compositionsAwaitingApply.isNotEmpty() ||
+                hasBroadcastFrameClockAwaitersLocked ||
+                hasNextFrameEndAwaitersLocked
 
     /**
      * Suspends until the currently pending recomposition frame is complete. Any recomposition for

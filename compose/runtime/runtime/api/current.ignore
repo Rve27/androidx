@@ -1,4 +1,8 @@
 // Baseline format: 1.0
+AddedAbstractMethod: androidx.compose.runtime.Composer#scheduleFrameEndCallback(kotlin.jvm.functions.Function0<kotlin.Unit>):
+    Binary breaking change: Added method androidx.compose.runtime.Composer.scheduleFrameEndCallback(kotlin.jvm.functions.Function0<kotlin.Unit>)
+
+
 BecameUnchecked: androidx.compose.runtime.ComposablesKt#getCurrentCompositionContext(androidx.compose.runtime.Composer, int):
     Removed method androidx.compose.runtime.ComposablesKt.getCurrentCompositionContext(androidx.compose.runtime.Composer,int) from compatibility checked API surface
 BecameUnchecked: androidx.compose.runtime.ComposablesKt#getCurrentCompositionContext(androidx.compose.runtime.Composer, int) parameter #0:
