@@ -141,4 +141,17 @@ object ComposeFoundationFlags {
      * scrollable components
      */
     @Suppress("MutableBareField") @JvmField var isMouseWheel1DAxisLockingEnabled: Boolean = true
+
+    /**
+     * With this flag on, [androidx.compose.foundation.gestures.snapping.snapFlingBehavior] allows
+     * the supplied snap animation spec to overshoot during snapping. A
+     * [androidx.compose.foundation.gestures.snapping.snapFlingBehavior] fling consists of two
+     * phases: Approach and Snap. This flag only affects the snap phase. For example, if you pass a
+     * [androidx.compose.animation.core.spring] spec with a bouncy damping ratio to
+     * [androidx.compose.foundation.gestures.snapping.snapFlingBehavior], the snapping animation
+     * will appear bouncy.
+     */
+    @Suppress("MutableBareField")
+    @JvmField
+    var isSnapFlingBehaviorSnapAnimationSpecAllowsOvershootEnabled = true
 }
