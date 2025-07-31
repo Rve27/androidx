@@ -113,9 +113,14 @@ internal class NavigationEventProcessor {
      * Adds a callback that will be notified when the overall enabled state of registered callbacks
      * changes.
      *
+     * @param inputHandler The [AbstractNavigationEventInputHandler] registering the callback.
      * @param callback The callback to invoke when the enabled state changes.
      */
-    fun addOnHasEnabledCallbacksChangedCallback(callback: (Boolean) -> Unit) {
+    fun addOnHasEnabledCallbacksChangedCallback(
+        inputHandler: AbstractNavigationEventInputHandler? = null,
+        callback: (Boolean) -> Unit,
+    ) {
+        // TODO(mgalhardo): Update sharedProcessor to use the inputHandler to distinguish callbacks.
         onHasEnabledCallbacksChangedCallbacks += callback
     }
 
@@ -223,14 +228,20 @@ internal class NavigationEventProcessor {
      * the new event. Only the single, highest-priority enabled callback is notified and becomes the
      * `inProgressCallback`.
      *
+     * @param inputHandler The [AbstractNavigationEventInputHandler] that sourced this event.
      * @param event [NavigationEvent] to dispatch to the callback.
      */
     @MainThread
-    fun dispatchOnStarted(event: NavigationEvent) {
+    fun dispatchOnStarted(
+        inputHandler: AbstractNavigationEventInputHandler,
+        event: NavigationEvent,
+    ) {
+        // TODO(mgalhardo): Update sharedProcessor to use the inputHandler to distinguish events.
+
         if (inProgressCallback != null) {
             // It's important to ensure that any ongoing operations from previous events are
             // properly cancelled before starting new ones to maintain a consistent state.
-            dispatchOnCancelled()
+            dispatchOnCancelled(inputHandler)
         }
 
         // Find the highest-priority enabled callback to handle this event.
@@ -251,10 +262,16 @@ internal class NavigationEventProcessor {
      * will be notified. Otherwise, the highest-priority enabled callback will receive the progress
      * event. This is not a terminal event, so `inProgressCallback` is not cleared.
      *
+     * @param inputHandler The [AbstractNavigationEventInputHandler] that sourced this event.
      * @param event [NavigationEvent] to dispatch to the callback.
      */
     @MainThread
-    fun dispatchOnProgressed(event: NavigationEvent) {
+    fun dispatchOnProgressed(
+        inputHandler: AbstractNavigationEventInputHandler,
+        event: NavigationEvent,
+    ) {
+        // TODO(mgalhardo): Update sharedProcessor to use the inputHandler to distinguish events.
+
         // If there is a callback in progress, only that one is notified.
         // Otherwise, the highest-priority enabled callback is notified.
         val callback = inProgressCallback ?: resolveEnabledCallback()
@@ -271,10 +288,16 @@ internal class NavigationEventProcessor {
      * `inProgressCallback`. If no callback handles the event, the `fallbackOnBackPressed` action is
      * invoked.
      *
+     * @param inputHandler The [AbstractNavigationEventInputHandler] that sourced this event.
      * @param fallbackOnBackPressed The action to invoke if no callback handles the completion.
      */
     @MainThread
-    fun dispatchOnCompleted(fallbackOnBackPressed: (() -> Unit)?) {
+    fun dispatchOnCompleted(
+        inputHandler: AbstractNavigationEventInputHandler,
+        fallbackOnBackPressed: (() -> Unit)?,
+    ) {
+        // TODO(mgalhardo): Update sharedProcessor to use the inputHandler to distinguish events.
+
         // If there is a callback in progress, only that one is notified.
         // Otherwise, the highest-priority enabled callback is notified.
         val callback = inProgressCallback ?: resolveEnabledCallback()
@@ -294,9 +317,13 @@ internal class NavigationEventProcessor {
      * If a callback is currently in progress, only it will be notified. Otherwise, the
      * highest-priority enabled callback will be notified. This is a terminal event, clearing the
      * `inProgressCallback`.
+     *
+     * @param inputHandler The [AbstractNavigationEventInputHandler] that sourced this event.
      */
     @MainThread
-    fun dispatchOnCancelled() {
+    fun dispatchOnCancelled(inputHandler: AbstractNavigationEventInputHandler) {
+        // TODO(mgalhardo): Update sharedProcessor to use the inputHandler to distinguish events.
+
         // If there is a callback in progress, only that one is notified.
         // Otherwise, the highest-priority enabled callback is notified.
         val callback = inProgressCallback ?: resolveEnabledCallback()

@@ -29,26 +29,26 @@ public abstract class AbstractNavigationEventInputHandler(
     @Suppress("PairedRegistration")
     @MainThread
     protected fun addOnHasEnabledCallbacksChangedCallback(callback: (Boolean) -> Unit) {
-        dispatcher.addOnHasEnabledCallbacksChangedCallback(callback)
+        dispatcher.addOnHasEnabledCallbacksChangedCallback(inputHandler = this, callback)
     }
 
     @MainThread
     protected fun dispatchOnStarted(event: NavigationEvent) {
-        dispatcher.dispatchOnStarted(event)
+        dispatcher.dispatchOnStarted(inputHandler = this, event)
     }
 
     @MainThread
     protected fun dispatchOnProgressed(event: NavigationEvent) {
-        dispatcher.dispatchOnProgressed(event)
+        dispatcher.dispatchOnProgressed(inputHandler = this, event)
     }
 
     @MainThread
     protected fun dispatchOnCancelled() {
-        dispatcher.dispatchOnCancelled()
+        dispatcher.dispatchOnCancelled(inputHandler = this)
     }
 
     @MainThread
     protected fun dispatchOnCompleted() {
-        dispatcher.dispatchOnCompleted()
+        dispatcher.dispatchOnCompleted(inputHandler = this)
     }
 }

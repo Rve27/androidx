@@ -188,7 +188,10 @@ private constructor(
         // shared processor. This allows this specific dispatcher instance (or its consumers)
         // to be notified of global changes in the callback enablement state.
         if (onHasEnabledCallbacksChanged != null) {
-            sharedProcessor.addOnHasEnabledCallbacksChangedCallback(onHasEnabledCallbacksChanged)
+            sharedProcessor.addOnHasEnabledCallbacksChangedCallback(
+                inputHandler = null,
+                callback = onHasEnabledCallbacksChanged,
+            )
         }
     }
 
@@ -196,11 +199,15 @@ private constructor(
      * Adds a callback that will be notified when the overall enabled state of registered callbacks
      * changes.
      *
+     * @param inputHandler The [AbstractNavigationEventInputHandler] registering the callback.
      * @param callback The callback to invoke when the enabled state changes.
      */
     @Suppress("PairedRegistration") // No removal for now.
-    internal fun addOnHasEnabledCallbacksChangedCallback(callback: (Boolean) -> Unit) {
-        sharedProcessor.addOnHasEnabledCallbacksChangedCallback(callback)
+    internal fun addOnHasEnabledCallbacksChangedCallback(
+        inputHandler: AbstractNavigationEventInputHandler,
+        callback: (Boolean) -> Unit,
+    ) {
+        sharedProcessor.addOnHasEnabledCallbacksChangedCallback(inputHandler, callback)
     }
 
     /**
@@ -258,58 +265,68 @@ private constructor(
      * Dispatch an [NavigationEventCallback.onEventStarted] event with the given event. This call is
      * delegated to the shared [NavigationEventProcessor].
      *
+     * @param inputHandler The [AbstractNavigationEventInputHandler] that sourced this event.
      * @param event [NavigationEvent] to dispatch to the callbacks.
      * @throws IllegalStateException if the dispatcher has already been disposed.
      */
     @MainThread
-    internal fun dispatchOnStarted(event: NavigationEvent) {
+    internal fun dispatchOnStarted(
+        inputHandler: AbstractNavigationEventInputHandler,
+        event: NavigationEvent,
+    ) {
         checkInvariants()
 
         if (!isEnabled) return
-        sharedProcessor.dispatchOnStarted(event)
+        sharedProcessor.dispatchOnStarted(inputHandler, event)
     }
 
     /**
      * Dispatch an [NavigationEventCallback.onEventProgressed] event with the given event. This call
      * is delegated to the shared [NavigationEventProcessor].
      *
+     * @param inputHandler The [AbstractNavigationEventInputHandler] that sourced this event.
      * @param event [NavigationEvent] to dispatch to the callbacks.
      * @throws IllegalStateException if the dispatcher has already been disposed.
      */
     @MainThread
-    internal fun dispatchOnProgressed(event: NavigationEvent) {
+    internal fun dispatchOnProgressed(
+        inputHandler: AbstractNavigationEventInputHandler,
+        event: NavigationEvent,
+    ) {
         checkInvariants()
 
         if (!isEnabled) return
-        sharedProcessor.dispatchOnProgressed(event)
+        sharedProcessor.dispatchOnProgressed(inputHandler, event)
     }
 
     /**
      * Dispatch an [NavigationEventCallback.onEventCompleted] event. This call is delegated to the
      * shared [NavigationEventProcessor], passing the fallback action.
      *
+     * @param inputHandler The [AbstractNavigationEventInputHandler] that sourced this event.
      * @throws IllegalStateException if the dispatcher has already been disposed.
      */
     @MainThread
-    internal fun dispatchOnCompleted() {
+    internal fun dispatchOnCompleted(inputHandler: AbstractNavigationEventInputHandler) {
         checkInvariants()
 
         if (!isEnabled) return
-        sharedProcessor.dispatchOnCompleted(fallbackOnBackPressed)
+        sharedProcessor.dispatchOnCompleted(inputHandler, fallbackOnBackPressed)
     }
 
     /**
      * Dispatch an [NavigationEventCallback.onEventCancelled] event. This call is delegated to the
      * shared [NavigationEventProcessor].
      *
+     * @param inputHandler The [AbstractNavigationEventInputHandler] that sourced this event.
      * @throws IllegalStateException if the dispatcher has already been disposed.
      */
     @MainThread
-    internal fun dispatchOnCancelled() {
+    internal fun dispatchOnCancelled(inputHandler: AbstractNavigationEventInputHandler) {
         checkInvariants()
 
         if (!isEnabled) return
-        sharedProcessor.dispatchOnCancelled()
+        sharedProcessor.dispatchOnCancelled(inputHandler)
     }
 
     /**
