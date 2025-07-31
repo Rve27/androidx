@@ -410,6 +410,13 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
      */
     private var deferViewportUpdate: Boolean = false
 
+    /**
+     * Used to determine whether the form edit state restoration is in progress. If true, we block
+     * the interaction with the form widgets to prevent any further edits till the restoration is
+     * complete.
+     */
+    private var isFormEditStateBeingRestored = false
+
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public enum class FastScrollVisibility {
         AUTO_HIDE,
@@ -1462,24 +1469,30 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
             FormWidgetInteractionHandler(context, localPdfDocument, backgroundScope, errorFlow)
 
         pdfFormFillingStateManager =
-            PdfFormFillingStateManager(localPdfDocument, backgroundScope, errorFlow) {
-                pagesInvalidatedAreas ->
-                if (!isAttachedToVisibleWindow) return@PdfFormFillingStateManager
+            PdfFormFillingStateManager(
+                localPdfDocument,
+                backgroundScope,
+                errorFlow,
+                onRestoreTaskStarted = { isFormEditStateBeingRestored = true },
+                onRestoreTaskComplete = { pagesInvalidatedAreas ->
+                    if (!isAttachedToVisibleWindow) return@PdfFormFillingStateManager
 
-                val visiblePageAreas = pageMetadataLoader?.visiblePageAreas
-                visiblePageAreas?.keyIterator()?.forEach { pageNum ->
-                    pagesInvalidatedAreas[pageNum]
-                        ?.map { it.toRectF() }
-                        ?.let { areasToUpdateInPage ->
-                            pageManager?.maybeInvalidateAreas(
-                                pageNum,
-                                visiblePageAreas.get(pageNum),
-                                zoom,
-                                areasToUpdateInPage,
-                            )
-                        }
-                }
-            }
+                    val visiblePageAreas = pageMetadataLoader?.visiblePageAreas
+                    visiblePageAreas?.keyIterator()?.forEach { pageNum ->
+                        pagesInvalidatedAreas[pageNum]
+                            ?.map { it.toRectF() }
+                            ?.let { areasToUpdateInPage ->
+                                pageManager?.maybeInvalidateAreas(
+                                    pageNum,
+                                    visiblePageAreas.get(pageNum),
+                                    zoom,
+                                    areasToUpdateInPage,
+                                )
+                            }
+                    }
+                    isFormEditStateBeingRestored = false
+                },
+            )
 
         val fastScrollCalculator = FastScrollCalculator(context)
         val fastScrollDrawer =
@@ -2083,7 +2096,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                 if (handleExternalLinks(links, touchPointOnPage)) return true
             }
 
-            if (isFormFillingEnabled) {
+            if (isFormFillingEnabled && !isFormEditStateBeingRestored) {
                 pageManager?.getWidgetAtTapPoint(touchPoint)?.let { widgets ->
                     if (handleTapOnFormWidget(widgets, touchPoint)) return true
                 }
