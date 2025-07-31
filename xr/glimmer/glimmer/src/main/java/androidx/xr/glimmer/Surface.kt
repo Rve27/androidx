@@ -22,9 +22,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.AnimationVector1D
-import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
@@ -339,7 +337,7 @@ private class SurfaceNode(
                     coroutineScope.launch(start = CoroutineStart.UNDISPATCHED) {
                         pressedOverlayAlpha?.animateTo(
                             PressedOverlayAlpha,
-                            PressedOverlayAnimationSpec,
+                            PressedOverlayEnterAnimationSpec,
                         )
                     }
                 } else {
@@ -347,7 +345,7 @@ private class SurfaceNode(
                         pressReleaseAnimation =
                             coroutineScope.launch(start = CoroutineStart.UNDISPATCHED) {
                                 minimumPressDuration?.join()
-                                progress.animateTo(0f, PressedOverlayAnimationSpec)
+                                progress.animateTo(0f, PressedOverlayExitAnimationSpec)
                             }
                     }
                 }
@@ -481,10 +479,10 @@ private val DefaultSurfaceBorderWidth = 2.dp
 private val FocusedSurfaceBorderWidth = 5.dp
 
 private val FocusedHighlightEnterAnimationSpec: AnimationSpec<Float> =
-    tween(50, easing = FastOutSlowInEasing)
+    spring(dampingRatio = 1f, stiffness = 600f)
 
 private val FocusedHighlightExitAnimationSpec: AnimationSpec<Float> =
-    tween(200, easing = FastOutSlowInEasing)
+    spring(dampingRatio = 1f, stiffness = 100f)
 
 private val FocusedHighlightRotationAnimationSpec: AnimationSpec<Float> =
     tween(durationMillis = 3_000, easing = LinearOutSlowInEasing, delayMillis = 300)
@@ -495,8 +493,11 @@ private val PressedOverlayColor = Color.White
 
 private const val PressedOverlayAlpha = 0.16f
 
-private val PressedOverlayAnimationSpec: AnimationSpec<Float> =
-    spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessVeryLow)
+private val PressedOverlayEnterAnimationSpec: AnimationSpec<Float> =
+    spring(dampingRatio = 0.84f, stiffness = 8000f)
+
+private val PressedOverlayExitAnimationSpec: AnimationSpec<Float> =
+    spring(dampingRatio = 0.85f, stiffness = 50f)
 
 private const val PressedOverlayMinimumDurationMillis = 300L
 
