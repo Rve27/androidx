@@ -229,19 +229,22 @@ internal class NavigationEventProcessor {
      * `inProgressCallback`.
      *
      * @param inputHandler The [AbstractNavigationEventInputHandler] that sourced this event.
+     * @param direction The direction of the navigation event being started.
      * @param event [NavigationEvent] to dispatch to the callback.
      */
     @MainThread
     fun dispatchOnStarted(
         inputHandler: AbstractNavigationEventInputHandler,
+        direction: NavigationEventDirection,
         event: NavigationEvent,
     ) {
         // TODO(mgalhardo): Update sharedProcessor to use the inputHandler to distinguish events.
+        // TODO(mgalhardo): Update the sharedProcessor to handle NavigationEventDirection.
 
         if (inProgressCallback != null) {
             // It's important to ensure that any ongoing operations from previous events are
             // properly cancelled before starting new ones to maintain a consistent state.
-            dispatchOnCancelled(inputHandler)
+            dispatchOnCancelled(inputHandler, direction)
         }
 
         // Find the highest-priority enabled callback to handle this event.
@@ -263,14 +266,17 @@ internal class NavigationEventProcessor {
      * event. This is not a terminal event, so `inProgressCallback` is not cleared.
      *
      * @param inputHandler The [AbstractNavigationEventInputHandler] that sourced this event.
+     * @param direction The direction of the navigation event being started.
      * @param event [NavigationEvent] to dispatch to the callback.
      */
     @MainThread
     fun dispatchOnProgressed(
         inputHandler: AbstractNavigationEventInputHandler,
+        direction: NavigationEventDirection,
         event: NavigationEvent,
     ) {
         // TODO(mgalhardo): Update sharedProcessor to use the inputHandler to distinguish events.
+        // TODO(mgalhardo): Update the sharedProcessor to handle NavigationEventDirection.
 
         // If there is a callback in progress, only that one is notified.
         // Otherwise, the highest-priority enabled callback is notified.
@@ -289,14 +295,17 @@ internal class NavigationEventProcessor {
      * invoked.
      *
      * @param inputHandler The [AbstractNavigationEventInputHandler] that sourced this event.
+     * @param direction The direction of the navigation event being started.
      * @param fallbackOnBackPressed The action to invoke if no callback handles the completion.
      */
     @MainThread
     fun dispatchOnCompleted(
         inputHandler: AbstractNavigationEventInputHandler,
+        direction: NavigationEventDirection,
         fallbackOnBackPressed: (() -> Unit)?,
     ) {
         // TODO(mgalhardo): Update sharedProcessor to use the inputHandler to distinguish events.
+        // TODO(mgalhardo): Update the sharedProcessor to handle NavigationEventDirection.
 
         // If there is a callback in progress, only that one is notified.
         // Otherwise, the highest-priority enabled callback is notified.
@@ -319,10 +328,15 @@ internal class NavigationEventProcessor {
      * `inProgressCallback`.
      *
      * @param inputHandler The [AbstractNavigationEventInputHandler] that sourced this event.
+     * @param direction The direction of the navigation event being started.
      */
     @MainThread
-    fun dispatchOnCancelled(inputHandler: AbstractNavigationEventInputHandler) {
+    fun dispatchOnCancelled(
+        inputHandler: AbstractNavigationEventInputHandler,
+        direction: NavigationEventDirection,
+    ) {
         // TODO(mgalhardo): Update sharedProcessor to use the inputHandler to distinguish events.
+        // TODO(mgalhardo): Update the sharedProcessor to handle NavigationEventDirection.
 
         // If there is a callback in progress, only that one is notified.
         // Otherwise, the highest-priority enabled callback is notified.

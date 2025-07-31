@@ -17,6 +17,7 @@
 package androidx.navigationevent
 
 import androidx.annotation.MainThread
+import androidx.navigationevent.NavigationEventDirection.Companion.Backward
 
 /**
  * An abstract input handler that can send events to a [NavigationEventDispatcher].
@@ -34,21 +35,25 @@ public abstract class AbstractNavigationEventInputHandler(
 
     @MainThread
     protected fun dispatchOnStarted(event: NavigationEvent) {
-        dispatcher.dispatchOnStarted(inputHandler = this, event)
+        // TODO(kuanyingchou): Accept a direction parameter instead of hardcoding `Backward`.
+        dispatcher.dispatchOnStarted(inputHandler = this, direction = Backward, event)
     }
 
     @MainThread
     protected fun dispatchOnProgressed(event: NavigationEvent) {
-        dispatcher.dispatchOnProgressed(inputHandler = this, event)
+        // TODO(kuanyingchou): Accept a direction parameter instead of hardcoding `Backward`.
+        dispatcher.dispatchOnProgressed(inputHandler = this, direction = Backward, event)
     }
 
     @MainThread
     protected fun dispatchOnCancelled() {
-        dispatcher.dispatchOnCancelled(inputHandler = this)
+        // TODO(kuanyingchou): Accept a direction parameter instead of hardcoding `Backward`.
+        dispatcher.dispatchOnCancelled(inputHandler = this, direction = Backward)
     }
 
     @MainThread
     protected fun dispatchOnCompleted() {
-        dispatcher.dispatchOnCompleted(inputHandler = this)
+        // TODO(kuanyingchou): Accept a direction parameter instead of hardcoding `Backward`.
+        dispatcher.dispatchOnCompleted(inputHandler = this, direction = Backward)
     }
 }

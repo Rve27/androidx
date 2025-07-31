@@ -266,18 +266,20 @@ private constructor(
      * delegated to the shared [NavigationEventProcessor].
      *
      * @param inputHandler The [AbstractNavigationEventInputHandler] that sourced this event.
+     * @param direction The direction of the navigation event being started.
      * @param event [NavigationEvent] to dispatch to the callbacks.
      * @throws IllegalStateException if the dispatcher has already been disposed.
      */
     @MainThread
     internal fun dispatchOnStarted(
         inputHandler: AbstractNavigationEventInputHandler,
+        direction: NavigationEventDirection,
         event: NavigationEvent,
     ) {
         checkInvariants()
 
         if (!isEnabled) return
-        sharedProcessor.dispatchOnStarted(inputHandler, event)
+        sharedProcessor.dispatchOnStarted(inputHandler, direction, event)
     }
 
     /**
@@ -285,18 +287,20 @@ private constructor(
      * is delegated to the shared [NavigationEventProcessor].
      *
      * @param inputHandler The [AbstractNavigationEventInputHandler] that sourced this event.
+     * @param direction The direction of the navigation event being started.
      * @param event [NavigationEvent] to dispatch to the callbacks.
      * @throws IllegalStateException if the dispatcher has already been disposed.
      */
     @MainThread
     internal fun dispatchOnProgressed(
         inputHandler: AbstractNavigationEventInputHandler,
+        direction: NavigationEventDirection,
         event: NavigationEvent,
     ) {
         checkInvariants()
 
         if (!isEnabled) return
-        sharedProcessor.dispatchOnProgressed(inputHandler, event)
+        sharedProcessor.dispatchOnProgressed(inputHandler, direction, event)
     }
 
     /**
@@ -304,14 +308,18 @@ private constructor(
      * shared [NavigationEventProcessor], passing the fallback action.
      *
      * @param inputHandler The [AbstractNavigationEventInputHandler] that sourced this event.
+     * @param direction The direction of the navigation event being started.
      * @throws IllegalStateException if the dispatcher has already been disposed.
      */
     @MainThread
-    internal fun dispatchOnCompleted(inputHandler: AbstractNavigationEventInputHandler) {
+    internal fun dispatchOnCompleted(
+        inputHandler: AbstractNavigationEventInputHandler,
+        direction: NavigationEventDirection,
+    ) {
         checkInvariants()
 
         if (!isEnabled) return
-        sharedProcessor.dispatchOnCompleted(inputHandler, fallbackOnBackPressed)
+        sharedProcessor.dispatchOnCompleted(inputHandler, direction, fallbackOnBackPressed)
     }
 
     /**
@@ -319,14 +327,18 @@ private constructor(
      * shared [NavigationEventProcessor].
      *
      * @param inputHandler The [AbstractNavigationEventInputHandler] that sourced this event.
+     * @param direction The direction of the navigation event being started.
      * @throws IllegalStateException if the dispatcher has already been disposed.
      */
     @MainThread
-    internal fun dispatchOnCancelled(inputHandler: AbstractNavigationEventInputHandler) {
+    internal fun dispatchOnCancelled(
+        inputHandler: AbstractNavigationEventInputHandler,
+        direction: NavigationEventDirection,
+    ) {
         checkInvariants()
 
         if (!isEnabled) return
-        sharedProcessor.dispatchOnCancelled(inputHandler)
+        sharedProcessor.dispatchOnCancelled(inputHandler, direction)
     }
 
     /**
