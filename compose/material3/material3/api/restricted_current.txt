@@ -416,7 +416,6 @@ package androidx.compose.material3 {
     property @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ExpressiveApi public androidx.compose.ui.unit.Dp MediumIconSpacing;
     property public androidx.compose.ui.unit.Dp MinHeight;
     property public androidx.compose.ui.unit.Dp MinWidth;
-    property @Deprecated @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ExpressiveApi public androidx.compose.foundation.layout.PaddingValues SmallButtonContentPadding;
     property @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ExpressiveApi public androidx.compose.foundation.layout.PaddingValues SmallContentPadding;
     property @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ExpressiveApi public androidx.compose.ui.unit.Dp SmallIconSize;
     property public androidx.compose.foundation.layout.PaddingValues TextButtonContentPadding;
@@ -3402,14 +3401,12 @@ package androidx.compose.material3 {
     property @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ExpressiveApi public androidx.compose.foundation.layout.PaddingValues ExtraSmallLeadingButtonContentPadding;
     property @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ExpressiveApi public androidx.compose.foundation.layout.PaddingValues ExtraSmallTrailingButtonContentPadding;
     property public androidx.compose.ui.unit.Dp ExtraSmallTrailingButtonIconSize;
-    property @Deprecated public androidx.compose.foundation.shape.CornerSize InnerCornerSize;
     property @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ExpressiveApi public androidx.compose.ui.unit.Dp LargeContainerHeight;
     property public androidx.compose.foundation.shape.CornerSize LargeInnerCornerSize;
     property public androidx.compose.foundation.shape.CornerSize LargeInnerCornerSizePressed;
     property @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ExpressiveApi public androidx.compose.foundation.layout.PaddingValues LargeLeadingButtonContentPadding;
     property @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ExpressiveApi public androidx.compose.foundation.layout.PaddingValues LargeTrailingButtonContentPadding;
     property public androidx.compose.ui.unit.Dp LargeTrailingButtonIconSize;
-    property @Deprecated public androidx.compose.foundation.layout.PaddingValues LeadingButtonContentPadding;
     property public androidx.compose.ui.unit.Dp LeadingIconSize;
     property @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ExpressiveApi public androidx.compose.ui.unit.Dp MediumContainerHeight;
     property public androidx.compose.foundation.shape.CornerSize MediumInnerCornerSize;
@@ -3425,7 +3422,6 @@ package androidx.compose.material3 {
     property @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ExpressiveApi public androidx.compose.foundation.layout.PaddingValues SmallTrailingButtonContentPadding;
     property public androidx.compose.ui.unit.Dp SmallTrailingButtonIconSize;
     property public androidx.compose.ui.unit.Dp Spacing;
-    property @Deprecated public androidx.compose.foundation.layout.PaddingValues TrailingButtonContentPadding;
     property public androidx.compose.ui.unit.Dp TrailingIconSize;
     field public static final androidx.compose.material3.SplitButtonDefaults INSTANCE;
   }

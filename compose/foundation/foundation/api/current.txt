@@ -2080,7 +2080,6 @@ package androidx.compose.foundation.text {
     property public androidx.compose.ui.text.input.ImeAction imeAction;
     property public androidx.compose.ui.text.input.KeyboardType keyboardType;
     property public androidx.compose.ui.text.input.PlatformImeOptions? platformImeOptions;
-    property @Deprecated public boolean shouldShowKeyboardOnFocus;
     property public Boolean? showKeyboardOnFocus;
     field public static final androidx.compose.foundation.text.KeyboardOptions.Companion Companion;
   }

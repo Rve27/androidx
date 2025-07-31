@@ -585,7 +585,6 @@ package androidx.compose.foundation.layout {
     property @androidx.compose.runtime.Composable @androidx.compose.runtime.NonRestartableComposable public static androidx.compose.foundation.layout.WindowInsets androidx.compose.foundation.layout.WindowInsets.Companion.captionBar;
     property @SuppressCompatibility @androidx.compose.foundation.layout.ExperimentalLayoutApi @androidx.compose.runtime.Composable @androidx.compose.runtime.NonRestartableComposable public static androidx.compose.foundation.layout.WindowInsets androidx.compose.foundation.layout.WindowInsets.Companion.captionBarIgnoringVisibility;
     property public static boolean androidx.compose.ui.platform.AbstractComposeView.consumeWindowInsets;
-    property @Deprecated public static boolean androidx.compose.ui.platform.ComposeView.consumeWindowInsets;
     property @androidx.compose.runtime.Composable @androidx.compose.runtime.NonRestartableComposable public static androidx.compose.ui.graphics.Path? androidx.compose.foundation.layout.WindowInsets.Companion.cutoutPath;
     property @androidx.compose.runtime.Composable @androidx.compose.runtime.NonRestartableComposable public static androidx.compose.foundation.layout.WindowInsets androidx.compose.foundation.layout.WindowInsets.Companion.displayCutout;
     property @androidx.compose.runtime.Composable @androidx.compose.runtime.NonRestartableComposable public static androidx.compose.foundation.layout.WindowInsets androidx.compose.foundation.layout.WindowInsets.Companion.ime;
