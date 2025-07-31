@@ -47,7 +47,7 @@ class TextSelectionMenuProviderTest {
 
     @Test
     fun getMenuItems_withEmail_returnsEmailMenu() = runTest {
-        val emailText = "test@example.com"
+        val emailText = "androidpdf@gmail.com"
         val textSelection = TextSelection(emailText, emptyList())
         val menuItems = textSelectionMenuProvider.getMenuItems(textSelection)
         assertThat(menuItems).isNotNull()

@@ -1395,7 +1395,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                 invalidate()
             }
             is SelectionUiSignal.ToggleActionMode -> {
-                if (signal.show) {
+                if (signal.show && currentSelection != null) {
                     showActionMode()
                 } else {
                     hideActionMode()
