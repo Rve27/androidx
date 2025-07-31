@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -27,7 +28,6 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.snapshotFlow
 import androidx.navigationevent.NavigationEvent
 import androidx.navigationevent.NavigationEventCallback
-import androidx.navigationevent.NavigationEventDispatcher
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.BufferOverflow
@@ -41,30 +41,43 @@ import kotlinx.coroutines.launch
 /**
  * Handles predictive back navigation gestures.
  *
- * This effect registers a handler with the [NavigationEventDispatcher] provided by the
- * [LocalNavigationEventDispatcherOwner]. The handler receives updates on the progress of system
- * back gestures as a [Flow] of [NavigationEvent].
+ * This effect registers a callback to receive updates on the progress of system back gestures as a
+ * [Flow] of [NavigationEvent].
  *
- * Use it as follows:
+ * The [onEvent] lambda should be structured to handle the start, progress, completion, and
+ * cancellation of the gesture:
  * ```kotlin
  * NavigationEventHandler { progress: Flow<NavigationEvent> ->
  *   // This block is executed when the back gesture begins.
- *   try {
- *     progress.collect { backEvent ->
- *       // Handle gesture progress updates here.
- *     }
- *     // This block is executed if the gesture completes successfully.
- *   } finally {
- *     // This block is executed if the gesture is cancelled.
+ *     try {
+ *       progress.collect { backEvent ->
+ *         // Handle gesture progress updates here.
+ *       }
+ *       // This block is executed if the gesture completes successfully.
+ *     } catch (e: CancellationException) {
+ *       // This block is executed if the gesture is cancelled.
+ *       throw e
+ *     } finally {
+ *       // This block is executed either the gesture is completed or cancelled.
  *   }
  * }
  * ```
  *
- * When multiple [NavigationEventHandler] are present, only the innermost enabled handler will
- * receive the gesture events. If no handlers are enabled, the event will propagate up the
- * hierarchy.
+ * ## Precedence
+ * When multiple [NavigationEventHandler] are present in the composition, the one that is composed
+ * * **last** among all enabled handlers will be invoked.
  *
- * @param enabled Set to `false` to disable this handler. Defaults to `true`.
+ * ## Usage
+ * It is important to call this composable **unconditionally**. Use the `enabled` parameter to
+ * control whether the handler is active. This is preferable to conditionally calling
+ * [NavigationEventHandler] (e.g., inside an `if` block), as conditional calls can change the order
+ * of composition, leading to unpredictable behavior where different handlers are invoked after
+ * recomposition.
+ *
+ * @param enabled A lambda that returns `true` if this handler should be enabled. This lambda is
+ *   observed for changes. To ensure the handler's status is updated correctly, the lambda should
+ *   read from a snapshot-aware state object (e.g., a [State] created with `remember {
+ *   mutableStateOf(true) }`). Defaults to always `true`.
  * @param onEvent The lambda that receives the flow of back gesture events.
  */
 @Composable
