@@ -72,4 +72,11 @@ public abstract class AnnotationEditsDraftState(public open val pfd: ParcelFileD
      * @return The updated [PdfAnnotation].
      */
     public abstract fun updateEdit(editId: EditId, annotation: PdfAnnotation): PdfAnnotation
+
+    /**
+     * Converts this mutable draft state into an immutable representation.
+     *
+     * @return An [ImmutableAnnotationEditsDraftState] representing the current state of edits.
+     */
+    public abstract fun toImmutableDraftState(): ImmutableAnnotationEditsDraftState
 }

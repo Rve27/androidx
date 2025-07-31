@@ -20,10 +20,13 @@ import android.os.ParcelFileDescriptor
 import android.util.SparseArray
 import androidx.annotation.RestrictTo
 import androidx.annotation.VisibleForTesting
+import androidx.core.util.forEach
 import androidx.pdf.annotation.models.EditId
 import androidx.pdf.annotation.models.PdfAnnotation
 import androidx.pdf.annotation.models.PdfAnnotationData
 import java.util.UUID
+import kotlin.collections.isNotEmpty
+import kotlin.collections.toMap
 
 /**
  * A simple implementation of [AnnotationEditsDraftState] that stores annotation edits in memory
@@ -39,15 +42,6 @@ public class SimpleAnnotationEditsDraftState(
     pfd: ParcelFileDescriptor,
     private val editState: SparseArray<MutableMap<EditId, PdfAnnotationData>> = SparseArray(),
 ) : AnnotationEditsDraftState(pfd) {
-
-    /**
-     * Creates a shallow copy of the current [SimpleAnnotationEditsDraftState].
-     *
-     * @return A new [SimpleAnnotationEditsDraftState] instance with the same `pfd` and `editState`.
-     */
-    public fun copy(): SimpleAnnotationEditsDraftState {
-        return SimpleAnnotationEditsDraftState(pfd, editState)
-    }
 
     /**
      * Retrieves a list of saved annotations for a given page number.
@@ -109,6 +103,21 @@ public class SimpleAnnotationEditsDraftState(
 
         pageEdits[editId] = PdfAnnotationData(editId, annotation)
         return annotation
+    }
+
+    /**
+     * Creates an immutable copy of the current draft state.
+     *
+     * @return An [ImmutableAnnotationEditsDraftState] representing the current state of edits.
+     */
+    override fun toImmutableDraftState(): ImmutableAnnotationEditsDraftState {
+        val immutablePages = mutableMapOf<Int, Map<EditId, PdfAnnotationData>>()
+        editState.forEach { pageNum, pageEdits ->
+            if (pageEdits.isNotEmpty()) {
+                immutablePages[pageNum] = pageEdits.toMap()
+            }
+        }
+        return ImmutableAnnotationEditsDraftState(immutablePages.toMap())
     }
 
     /**
