@@ -45,6 +45,7 @@ import androidx.xr.compose.subspace.SpatialMainPanel
 import androidx.xr.compose.subspace.SpatialPanel
 import androidx.xr.compose.subspace.layout.SubspaceModifier
 import androidx.xr.compose.subspace.layout.height
+import androidx.xr.compose.subspace.layout.size
 import androidx.xr.compose.subspace.layout.testTag
 import androidx.xr.compose.subspace.layout.width
 import androidx.xr.compose.testing.SubspaceTestingActivity
@@ -53,7 +54,9 @@ import androidx.xr.compose.testing.TestSetup
 import androidx.xr.compose.testing.createFakeRuntime
 import androidx.xr.compose.testing.toDp
 import androidx.xr.runtime.internal.PanelEntity as RtPanelEntity
+import androidx.xr.scenecore.PanelEntity
 import androidx.xr.scenecore.scene
+import com.google.common.truth.Truth.assertThat
 import kotlin.test.assertNotNull
 import org.junit.Rule
 import org.junit.Test
@@ -508,5 +511,60 @@ class OrbiterTest {
             .onNodeWithTag("orbiterContentBox")
             .assertWidthIsEqualTo(targetResizeWidth.toDp())
             .assertHeightIsEqualTo(targetResizeHeight.toDp())
+    }
+
+    @Test
+    fun orbiter_inPanel_isParentedToTheContainingPanel() {
+        composeTestRule.setContent {
+            TestSetup {
+                Subspace {
+                    SpatialPanel(SubspaceModifier.size(100.dp)) {
+                        Orbiter(ContentEdge.Top) {
+                            Box(modifier = Modifier.size(10.dp).testTag("orbiterContentBox")) {
+                                Text("Some Orbiter content")
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        composeTestRule.onNodeWithTag("orbiterContentBox").assertWidthIsEqualTo(10.dp)
+
+        val session = composeTestRule.activity.session
+        val entity =
+            session?.scene?.getEntitiesOfType(PanelEntity::class.java)?.first {
+                it.sizeInPixels.width == 10
+            }
+        val parentPanel =
+            session?.scene?.getEntitiesOfType(PanelEntity::class.java)?.first {
+                it.sizeInPixels.width == 100
+            }
+        assertNotNull(entity)
+        assertThat(entity.parent).isNotEqualTo(session.scene.mainPanelEntity)
+        assertThat(entity.parent).isEqualTo(parentPanel)
+    }
+
+    @Test
+    fun orbiter_notInPanel_isParentedToTheMainPanel() {
+        composeTestRule.setContent {
+            TestSetup {
+                Orbiter(ContentEdge.Top) {
+                    Box(modifier = Modifier.size(10.dp).testTag("orbiterContentBox")) {
+                        Text("Some Orbiter content")
+                    }
+                }
+            }
+        }
+
+        composeTestRule.onNodeWithTag("orbiterContentBox").assertExists()
+
+        val session = composeTestRule.activity.session
+        val entity =
+            session?.scene?.getEntitiesOfType(PanelEntity::class.java)?.first {
+                it.sizeInPixels.width == 10
+            }
+        assertNotNull(entity)
+        assertThat(entity.parent).isEqualTo(session.scene.mainPanelEntity)
     }
 }
