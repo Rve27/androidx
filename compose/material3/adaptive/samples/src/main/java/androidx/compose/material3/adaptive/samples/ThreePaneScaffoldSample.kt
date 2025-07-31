@@ -18,7 +18,7 @@ package androidx.compose.material3.adaptive.samples
 
 import android.os.Parcel
 import android.os.Parcelable
-import androidx.annotation.IntRange
+import androidx.annotation.FloatRange
 import androidx.annotation.Sampled
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandHorizontally
@@ -285,7 +285,7 @@ fun SupportingPaneScaffoldSampleWithExtraPaneLevitatedAsBottomSheet() {
         extraPane = {
             AnimatedPane(
                 modifier =
-                    Modifier.preferredWidth(100)
+                    Modifier.preferredWidth(1f)
                         .preferredHeight(412.dp)
                         .dragToResize(rememberDragToResizeState(dockedEdge = DockedEdge.Bottom))
             ) {
@@ -328,8 +328,8 @@ fun ThreePaneScaffoldPaneScope.PreferredSizeModifierInDpSample(
 @Composable
 fun ThreePaneScaffoldPaneScope.PreferredSizeModifierInProportionSample(
     modifier: Modifier = Modifier,
-    @IntRange(from = 0, to = 100) preferredWidthInProportion: Int,
-    @IntRange(from = 0, to = 100) preferredHeightInProportion: Int,
+    @FloatRange(from = 0.0, to = 1.0) preferredWidthInProportion: Float,
+    @FloatRange(from = 0.0, to = 1.0) preferredHeightInProportion: Float,
     content: @Composable () -> Unit,
 ) {
     AnimatedPane(

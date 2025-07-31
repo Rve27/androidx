@@ -967,8 +967,8 @@ private class PaneMeasurable(
     var measuringWidth =
         if (data.preferredWidth.isSpecified) {
             with(density) { data.preferredWidth.roundToPx() }
-        } else if (data.preferredWidthInProportion != Int.MIN_VALUE) {
-            (scaffoldSize.width * data.preferredWidthInProportion / 100)
+        } else if (data.preferredWidthInProportion.isFinite()) {
+            (scaffoldSize.width * data.preferredWidthInProportion).toInt()
         } else {
             defaultPreferredWidth
         }
@@ -976,8 +976,8 @@ private class PaneMeasurable(
     var measuringHeight =
         if (data.preferredHeight.isSpecified) {
             with(density) { data.preferredHeight.roundToPx() }
-        } else if (data.preferredHeightInProportion != Int.MIN_VALUE) {
-            (scaffoldSize.width * data.preferredHeightInProportion / 100)
+        } else if (data.preferredHeightInProportion.isFinite()) {
+            (scaffoldSize.width * data.preferredHeightInProportion).toInt()
         } else {
             defaultPreferredHeight
         }

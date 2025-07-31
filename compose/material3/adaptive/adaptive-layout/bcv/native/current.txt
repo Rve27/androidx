@@ -229,11 +229,11 @@ sealed interface androidx.compose.material3.adaptive.layout/PaneScaffoldParentDa
     abstract val preferredHeight // androidx.compose.material3.adaptive.layout/PaneScaffoldParentData.preferredHeight|{}preferredHeight[0]
         abstract fun <get-preferredHeight>(): androidx.compose.ui.unit/Dp // androidx.compose.material3.adaptive.layout/PaneScaffoldParentData.preferredHeight.<get-preferredHeight>|<get-preferredHeight>(){}[0]
     abstract val preferredHeightInProportion // androidx.compose.material3.adaptive.layout/PaneScaffoldParentData.preferredHeightInProportion|{}preferredHeightInProportion[0]
-        abstract fun <get-preferredHeightInProportion>(): kotlin/Int // androidx.compose.material3.adaptive.layout/PaneScaffoldParentData.preferredHeightInProportion.<get-preferredHeightInProportion>|<get-preferredHeightInProportion>(){}[0]
+        abstract fun <get-preferredHeightInProportion>(): kotlin/Float // androidx.compose.material3.adaptive.layout/PaneScaffoldParentData.preferredHeightInProportion.<get-preferredHeightInProportion>|<get-preferredHeightInProportion>(){}[0]
     abstract val preferredWidth // androidx.compose.material3.adaptive.layout/PaneScaffoldParentData.preferredWidth|{}preferredWidth[0]
         abstract fun <get-preferredWidth>(): androidx.compose.ui.unit/Dp // androidx.compose.material3.adaptive.layout/PaneScaffoldParentData.preferredWidth.<get-preferredWidth>|<get-preferredWidth>(){}[0]
     abstract val preferredWidthInProportion // androidx.compose.material3.adaptive.layout/PaneScaffoldParentData.preferredWidthInProportion|{}preferredWidthInProportion[0]
-        abstract fun <get-preferredWidthInProportion>(): kotlin/Int // androidx.compose.material3.adaptive.layout/PaneScaffoldParentData.preferredWidthInProportion.<get-preferredWidthInProportion>|<get-preferredWidthInProportion>(){}[0]
+        abstract fun <get-preferredWidthInProportion>(): kotlin/Float // androidx.compose.material3.adaptive.layout/PaneScaffoldParentData.preferredWidthInProportion.<get-preferredWidthInProportion>|<get-preferredWidthInProportion>(){}[0]
 }
 
 sealed interface androidx.compose.material3.adaptive.layout/PaneScaffoldScope { // androidx.compose.material3.adaptive.layout/PaneScaffoldScope|null[0]
@@ -242,9 +242,9 @@ sealed interface androidx.compose.material3.adaptive.layout/PaneScaffoldScope { 
 
     abstract fun (androidx.compose.ui/Modifier).paneExpansionDraggable(androidx.compose.material3.adaptive.layout/PaneExpansionState, androidx.compose.ui.unit/Dp, androidx.compose.foundation.interaction/MutableInteractionSource, kotlin/Function1<androidx.compose.ui.semantics/SemanticsPropertyReceiver, kotlin/Unit>? = ...): androidx.compose.ui/Modifier // androidx.compose.material3.adaptive.layout/PaneScaffoldScope.paneExpansionDraggable|paneExpansionDraggable@androidx.compose.ui.Modifier(androidx.compose.material3.adaptive.layout.PaneExpansionState;androidx.compose.ui.unit.Dp;androidx.compose.foundation.interaction.MutableInteractionSource;kotlin.Function1<androidx.compose.ui.semantics.SemanticsPropertyReceiver,kotlin.Unit>?){}[0]
     abstract fun (androidx.compose.ui/Modifier).preferredHeight(androidx.compose.ui.unit/Dp): androidx.compose.ui/Modifier // androidx.compose.material3.adaptive.layout/PaneScaffoldScope.preferredHeight|preferredHeight@androidx.compose.ui.Modifier(androidx.compose.ui.unit.Dp){}[0]
-    abstract fun (androidx.compose.ui/Modifier).preferredHeight(kotlin/Int): androidx.compose.ui/Modifier // androidx.compose.material3.adaptive.layout/PaneScaffoldScope.preferredHeight|preferredHeight@androidx.compose.ui.Modifier(kotlin.Int){}[0]
+    abstract fun (androidx.compose.ui/Modifier).preferredHeight(kotlin/Float): androidx.compose.ui/Modifier // androidx.compose.material3.adaptive.layout/PaneScaffoldScope.preferredHeight|preferredHeight@androidx.compose.ui.Modifier(kotlin.Float){}[0]
     abstract fun (androidx.compose.ui/Modifier).preferredWidth(androidx.compose.ui.unit/Dp): androidx.compose.ui/Modifier // androidx.compose.material3.adaptive.layout/PaneScaffoldScope.preferredWidth|preferredWidth@androidx.compose.ui.Modifier(androidx.compose.ui.unit.Dp){}[0]
-    abstract fun (androidx.compose.ui/Modifier).preferredWidth(kotlin/Int): androidx.compose.ui/Modifier // androidx.compose.material3.adaptive.layout/PaneScaffoldScope.preferredWidth|preferredWidth@androidx.compose.ui.Modifier(kotlin.Int){}[0]
+    abstract fun (androidx.compose.ui/Modifier).preferredWidth(kotlin/Float): androidx.compose.ui/Modifier // androidx.compose.material3.adaptive.layout/PaneScaffoldScope.preferredWidth|preferredWidth@androidx.compose.ui.Modifier(kotlin.Float){}[0]
     open fun (androidx.compose.ui/Modifier).dragToResize(androidx.compose.material3.adaptive.layout/DragToResizeState): androidx.compose.ui/Modifier // androidx.compose.material3.adaptive.layout/PaneScaffoldScope.dragToResize|dragToResize@androidx.compose.ui.Modifier(androidx.compose.material3.adaptive.layout.DragToResizeState){}[0]
 }
 
