@@ -22,7 +22,7 @@ package androidx.compose.runtime {
   }
 
   public final class ActualJvm_jvmKt {
-    method @Deprecated @kotlin.PublishedApi internal static inline <R> R synchronized(Object lock, kotlin.jvm.functions.Function0<? extends R> block);
+    method @BytecodeOnly @Deprecated @kotlin.PublishedApi internal static <R> R! synchronized(Object!, kotlin.jvm.functions.Function0<? extends R!>!);
   }
 
   @kotlin.jvm.JvmDefaultWithCompatibility public interface Applier<N> {
@@ -252,7 +252,7 @@ package androidx.compose.runtime {
     method @androidx.compose.runtime.ComposeCompilerApi public static void sourceInformationMarkerStart(androidx.compose.runtime.Composer composer, int key, String sourceInformation);
     method @androidx.compose.runtime.ComposeCompilerApi public static void traceEventEnd();
     method @androidx.compose.runtime.ComposeCompilerApi public static void traceEventStart(int key, int dirty1, int dirty2, String info);
-    method @Deprecated @androidx.compose.runtime.ComposeCompilerApi public static void traceEventStart(int key, String info);
+    method @BytecodeOnly @Deprecated @androidx.compose.runtime.ComposeCompilerApi public static void traceEventStart(int, String!);
     property @kotlin.PublishedApi internal static Object compositionLocalMap;
     property @kotlin.PublishedApi internal static int compositionLocalMapKey;
     property @kotlin.PublishedApi internal static Object invocation;
@@ -1304,7 +1304,7 @@ package androidx.compose.runtime.snapshots {
     ctor public StateRecord(long snapshotId);
     method public abstract void assign(androidx.compose.runtime.snapshots.StateRecord value);
     method public abstract androidx.compose.runtime.snapshots.StateRecord create();
-    method @Deprecated public androidx.compose.runtime.snapshots.StateRecord create(int snapshotId);
+    method @BytecodeOnly @Deprecated public androidx.compose.runtime.snapshots.StateRecord! create(int);
     method public androidx.compose.runtime.snapshots.StateRecord create(long snapshotId);
   }
 

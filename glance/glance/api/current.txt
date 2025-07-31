@@ -3,7 +3,6 @@ package androidx.glance {
 
   public final class BackgroundKt {
     method public static androidx.glance.GlanceModifier background(androidx.glance.GlanceModifier, androidx.glance.ImageProvider imageProvider, @FloatRange(from=0.0, to=1.0) float alpha, optional int contentScale, optional androidx.glance.ColorFilter? colorFilter);
-    method @Deprecated public static androidx.glance.GlanceModifier background(androidx.glance.GlanceModifier, androidx.glance.ImageProvider imageProvider, optional int contentScale);
     method public static androidx.glance.GlanceModifier background(androidx.glance.GlanceModifier, androidx.glance.ImageProvider imageProvider, optional int contentScale, optional androidx.glance.ColorFilter? colorFilter);
     method public static androidx.glance.GlanceModifier background(androidx.glance.GlanceModifier, androidx.glance.unit.ColorProvider colorProvider);
     method public static androidx.glance.GlanceModifier background(androidx.glance.GlanceModifier, @ColorRes int color);

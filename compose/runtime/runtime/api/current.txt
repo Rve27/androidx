@@ -247,7 +247,7 @@ package androidx.compose.runtime {
     method @androidx.compose.runtime.ComposeCompilerApi public static void sourceInformationMarkerStart(androidx.compose.runtime.Composer composer, int key, String sourceInformation);
     method @androidx.compose.runtime.ComposeCompilerApi public static void traceEventEnd();
     method @androidx.compose.runtime.ComposeCompilerApi public static void traceEventStart(int key, int dirty1, int dirty2, String info);
-    method @Deprecated @androidx.compose.runtime.ComposeCompilerApi public static void traceEventStart(int key, String info);
+    method @BytecodeOnly @Deprecated @androidx.compose.runtime.ComposeCompilerApi public static void traceEventStart(int, String!);
   }
 
   public final class CompositeKeyHashCode_jvmKt {
@@ -1222,7 +1222,7 @@ package androidx.compose.runtime.snapshots {
     ctor public StateRecord(long snapshotId);
     method public abstract void assign(androidx.compose.runtime.snapshots.StateRecord value);
     method public abstract androidx.compose.runtime.snapshots.StateRecord create();
-    method @Deprecated public androidx.compose.runtime.snapshots.StateRecord create(int snapshotId);
+    method @BytecodeOnly @Deprecated public androidx.compose.runtime.snapshots.StateRecord! create(int);
     method public androidx.compose.runtime.snapshots.StateRecord create(long snapshotId);
   }
 
