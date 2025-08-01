@@ -586,7 +586,7 @@ internal class WindowInsetsHolder private constructor(insets: WindowInsetsCompat
         /**
          * Returns the [WindowInsetsHolder] associated with [view] or creates one and associates it.
          */
-        private fun getOrCreateFor(view: View): WindowInsetsHolder {
+        fun getOrCreateFor(view: View): WindowInsetsHolder {
             return synchronized(viewMap) {
                 viewMap.getOrPut(view) {
                     val insets = null
