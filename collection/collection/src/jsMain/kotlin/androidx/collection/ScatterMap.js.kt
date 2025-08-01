@@ -241,7 +241,7 @@ public actual class MutableScatterMap<K, V> private constructor(delegate: Mutabl
     }
 
     public actual inline operator fun minusAssign(keys: ScatterSet<K>) {
-        delegate.minusAssign(keys.asSet())
+        delegate.minusAssign(keys.delegate)
     }
 
     public actual inline operator fun minusAssign(keys: ObjectList<K>) {
