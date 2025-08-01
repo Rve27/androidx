@@ -52,7 +52,6 @@ dependencies {
     implementation(project(":privacysandbox:sdkruntime:sdkruntime-provider"))
     implementation(project(":privacysandbox:ui:macrobenchmark:testapp:sdkproviderutils"))
     implementation(project(":privacysandbox:ui:ui-provider"))
-    implementation(project(":webkit:webkit"))
     implementation(project(":privacysandbox:ui:macrobenchmark:testapp:mediateesdkproviderwrapper"))
     implementation(project(":tracing:tracing"))
 

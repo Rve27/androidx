@@ -51,7 +51,6 @@ dependencies {
     implementation(project(":privacysandbox:sdkruntime:sdkruntime-provider"))
     implementation(project(":privacysandbox:ui:integration-tests:sdkproviderutils"))
     implementation(project(":privacysandbox:ui:ui-provider"))
-    implementation(project(":webkit:webkit"))
     implementation(project(":privacysandbox:ui:integration-tests:mediateesdkproviderwrapper"))
 
     // Add library dependencies at head - to override the dependencies that will be added by

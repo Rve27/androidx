@@ -12,7 +12,196 @@
 
     <issue
         id="ObsoleteSdkInt"
-        message="This folder configuration (`v21`) is unnecessary; `minSdkVersion` is 21. Merge all the resources in this folder into `values`.">
+        message="Unnecessary; `Build.VERSION.SDK_INT >= 23` is always true here (`SDK_INT` ≥ 23 and &lt; 26)"
+        errorLine1="        } else if (Build.VERSION.SDK_INT >= 23) {"
+        errorLine2="                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/android/support/v4/media/MediaBrowserCompat.java"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 23"
+        errorLine1="            if (Build.VERSION.SDK_INT >= 23) {"
+        errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/android/support/v4/media/MediaBrowserCompat.java"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 23"
+        errorLine1="        @RequiresApi(23)"
+        errorLine2="        ~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/android/support/v4/media/MediaBrowserCompat.java"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 23"
+        errorLine1="    @RequiresApi(23)"
+        errorLine2="    ~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/android/support/v4/media/MediaBrowserCompat.java"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 23"
+        errorLine1="    @RequiresApi(23)"
+        errorLine2="    ~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/media/MediaBrowserServiceCompat.java"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `Build.VERSION.SDK_INT >= 23` is always true here (`SDK_INT` ≥ 23 and &lt; 26)"
+        errorLine1="        } else if (Build.VERSION.SDK_INT >= 23) {"
+        errorLine2="                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/media/MediaBrowserServiceCompat.java"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is never &lt; 23"
+        errorLine1="                            &amp;&amp; android.os.Build.VERSION.SDK_INT &lt; 23) {"
+        errorLine2="                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/android/support/v4/media/session/MediaControllerCompat.java"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `Build.VERSION.SDK_INT >= 23` is always true here (`SDK_INT` = 23)"
+        errorLine1="            } else if (Build.VERSION.SDK_INT >= 23) {"
+        errorLine2="                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/android/support/v4/media/session/MediaControllerCompat.java"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is never &lt; 23"
+        errorLine1="            if (android.os.Build.VERSION.SDK_INT &lt; 22 &amp;&amp; mSessionToken.getExtraBinder() != null) {"
+        errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/android/support/v4/media/session/MediaControllerCompat.java"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 23"
+        errorLine1="    @RequiresApi(23)"
+        errorLine2="    ~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/android/support/v4/media/session/MediaControllerCompat.java"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is never &lt; 23"
+        errorLine1="        if (Build.VERSION.SDK_INT &lt; 23 &amp;&amp; mMediaUri != null) {"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/android/support/v4/media/MediaDescriptionCompat.java"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 23"
+        errorLine1="        if (Build.VERSION.SDK_INT >= 23) {"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/android/support/v4/media/MediaDescriptionCompat.java"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 23"
+        errorLine1="            } else if (Build.VERSION.SDK_INT >= 23) {"
+        errorLine2="                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/android/support/v4/media/MediaDescriptionCompat.java"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 23"
+        errorLine1="    @RequiresApi(23)"
+        errorLine2="    ~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/android/support/v4/media/MediaDescriptionCompat.java"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `Build.VERSION.SDK_INT >= 22` is always true here (`SDK_INT` ≥ 23 and &lt; 28)"
+        errorLine1="        } else if (Build.VERSION.SDK_INT >= 22) {"
+        errorLine2="                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/android/support/v4/media/session/MediaSessionCompat.java"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 23"
+        errorLine1="            @RequiresApi(23)"
+        errorLine2="            ~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/android/support/v4/media/session/MediaSessionCompat.java"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is never &lt; 23"
+        errorLine1="            if (android.os.Build.VERSION.SDK_INT &lt; 23) {"
+        errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/android/support/v4/media/session/MediaSessionCompat.java"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 22"
+        errorLine1="    @RequiresApi(22)"
+        errorLine2="    ~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/android/support/v4/media/session/MediaSessionCompat.java"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 23"
+        errorLine1="            if (Build.VERSION.SDK_INT >= 22) {"
+        errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/android/support/v4/media/session/PlaybackStateCompat.java"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 23"
+        errorLine1="            if (Build.VERSION.SDK_INT >= 22) {"
+        errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/android/support/v4/media/session/PlaybackStateCompat.java"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 22"
+        errorLine1="    @RequiresApi(22)"
+        errorLine2="    ~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/android/support/v4/media/session/PlaybackStateCompat.java"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="This folder configuration (`v21`) is unnecessary; `minSdkVersion` is 23. Merge all the resources in this folder into `values`.">
         <location
             file="src/main/res/values-v21"/>
     </issue>

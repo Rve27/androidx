@@ -97,7 +97,6 @@ import org.robolectric.shadows.StreamConfigurationMapBuilder
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(RobolectricCameraPipeTestRunner::class)
-@Config(minSdk = 21)
 class UseCaseManagerTest {
     private val supportedSizes = arrayOf(Size(640, 480))
     private val streamConfigurationMap =

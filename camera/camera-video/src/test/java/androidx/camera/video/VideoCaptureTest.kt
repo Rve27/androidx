@@ -37,7 +37,6 @@ import android.media.MediaFormat.MIMETYPE_VIDEO_AV1
 import android.media.MediaFormat.MIMETYPE_VIDEO_AVC
 import android.media.MediaFormat.MIMETYPE_VIDEO_HEVC
 import android.media.MediaRecorder
-import android.os.Build
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.Looper
@@ -160,7 +159,6 @@ private const val CAMERA_ID_0 = "0"
 
 @RunWith(RobolectricTestRunner::class)
 @DoNotInstrument
-@Config(minSdk = Build.VERSION_CODES.LOLLIPOP)
 class VideoCaptureTest {
 
     private val context: Context = ApplicationProvider.getApplicationContext()

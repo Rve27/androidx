@@ -32,9 +32,6 @@ androidx {
 android {
     namespace = "androidx.compose.remote.serialization"
     compileSdk = 35
-    defaultConfig {
-       minSdk = 22
-    }
 }
 
 dependencies {

@@ -103,7 +103,6 @@ class RemoteViewsTest {
         assertThat(mTextView.maxLines).isEqualTo(7)
     }
 
-    @Config(minSdk = 21)
     @Test
     fun setTextViewHint_res() {
         mRemoteViews.setTextViewHint(R.id.text, R.string.hello_world)

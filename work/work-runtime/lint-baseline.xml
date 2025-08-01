@@ -146,6 +146,283 @@
     </issue>
 
     <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 23"
+        errorLine1="        if (Build.VERSION.SDK_INT >= 23) {"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/work/impl/background/systemalarm/Alarms.java"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 23"
+        errorLine1="        if (Build.VERSION.SDK_INT >= 23) {"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/work/impl/background/systemalarm/Alarms.java"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 23"
+        errorLine1="            if (Build.VERSION.SDK_INT >= 23) {"
+        errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/work/impl/constraints/trackers/BatteryChargingTracker.kt"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 23"
+        errorLine1="        return if (Build.VERSION.SDK_INT >= 23) {"
+        errorLine2="                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/work/impl/constraints/trackers/BatteryChargingTracker.kt"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 23"
+        errorLine1="    @RequiresApi(23) // requiresDeviceIdle is supported since API 23"
+        errorLine2="    ~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/work/Constraints.kt"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 23"
+        errorLine1="    @RequiresApi(23)"
+        errorLine2="    ~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/work/Constraints.kt"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 23"
+        errorLine1="            requiresDeviceIdle = Build.VERSION.SDK_INT >= 23 &amp;&amp; constraints.requiresDeviceIdle()"
+        errorLine2="                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/work/Constraints.kt"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 23"
+        errorLine1="        @RequiresApi(23)"
+        errorLine2="        ~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/work/Constraints.kt"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 23"
+        errorLine1="                requiresDeviceIdle = Build.VERSION.SDK_INT >= 23 &amp;&amp; requiresDeviceIdle,"
+        errorLine2="                                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/work/Constraints.kt"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 23"
+        errorLine1="    val systemIdHeader = if (Build.VERSION.SDK_INT >= 23) &quot;Job Id&quot; else &quot;Alarm Id&quot;"
+        errorLine2="                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/work/impl/workers/DiagnosticsWorker.kt"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `Build.VERSION.SDK_INT &lt;= MAX_PRE_JOB_SCHEDULER_API_LEVEL` is never true here"
+        errorLine1="        Build.VERSION.SDK_INT &lt;= MAX_PRE_JOB_SCHEDULER_API_LEVEL &amp;&amp;"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/work/impl/utils/EnqueueUtils.kt"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 23"
+        errorLine1="        if (Build.VERSION.SDK_INT >= WorkManagerImpl.MIN_JOB_SCHEDULER_API_LEVEL) {"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/work/impl/utils/ForceStopRunnable.java"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 23"
+        errorLine1="                    if (SDK_INT >= 23 &amp;&amp; constraints.requiresDeviceIdle()) {"
+        errorLine2="                        ~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/work/impl/background/greedy/GreedyScheduler.java"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 23"
+        errorLine1="@RequiresApi(23)"
+        errorLine2="~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/work/impl/background/systemjob/JobSchedulerExt.kt"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 23"
+        errorLine1="@file:RequiresApi(23)"
+        errorLine2="~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/work/impl/utils/NetworkApi23.kt"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is never &lt; 23"
+        errorLine1="        if (Build.VERSION.SDK_INT &lt; 23) {"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/work/impl/constraints/trackers/NetworkStateTracker.kt"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 23"
+        errorLine1="                    Build.VERSION.SDK_INT >= 23 &amp;&amp;"
+        errorLine2="                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/work/OneTimeWorkRequest.kt"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 23"
+        errorLine1="                    Build.VERSION.SDK_INT >= 23 &amp;&amp;"
+        errorLine2="                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/work/PeriodicWorkRequest.kt"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 23"
+        errorLine1="        if (Build.VERSION.SDK_INT >= WorkManagerImpl.MIN_JOB_SCHEDULER_API_LEVEL) {"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/work/impl/background/systemalarm/RescheduleReceiver.java"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 23"
+        errorLine1="        if (Build.VERSION.SDK_INT >= WorkManagerImpl.MIN_JOB_SCHEDULER_API_LEVEL) {"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/work/impl/Schedulers.java"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 23"
+        errorLine1="@RequiresApi(api = WorkManagerImpl.MIN_JOB_SCHEDULER_API_LEVEL)"
+        errorLine2="~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/work/impl/background/systemjob/SystemJobInfoConverter.java"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 23"
+        errorLine1="@RequiresApi(MIN_JOB_SCHEDULER_API_LEVEL)"
+        errorLine2="~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/work/impl/background/systemjob/SystemJobScheduler.java"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 23"
+        errorLine1="@RequiresApi(WorkManagerImpl.MIN_JOB_SCHEDULER_API_LEVEL)"
+        errorLine2="~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/work/impl/background/systemjob/SystemJobService.java"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 23"
+        errorLine1="        if (Build.VERSION.SDK_INT >= WorkManagerImpl.MIN_JOB_SCHEDULER_API_LEVEL) {"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/work/impl/WorkDatabaseMigrations.kt"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 23"
+        errorLine1="        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &amp;&amp; defaultDatabasePath.exists()) {"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/work/impl/WorkDatabasePathHelper.kt"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 23"
+        errorLine1="        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {"
+        errorLine2="                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/work/impl/WorkDatabasePathHelper.kt"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is never &lt; 23"
+        errorLine1="        return if (Build.VERSION.SDK_INT &lt; Build.VERSION_CODES.M) {"
+        errorLine2="                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/work/impl/WorkDatabasePathHelper.kt"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 23"
+        errorLine1="    @RequiresApi(23)"
+        errorLine2="    ~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/work/impl/WorkDatabasePathHelper.kt"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 23"
+        errorLine1="            if (Build.VERSION.SDK_INT >= WorkManagerImpl.MIN_JOB_SCHEDULER_API_LEVEL) {"
+        errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/work/impl/WorkManagerImpl.java"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 23"
+        errorLine1="                    Build.VERSION.SDK_INT >= 23 &amp;&amp; constraints.requiresDeviceIdle())"
+        errorLine2="                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/work/WorkRequest.kt"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="This folder configuration (`v23`) is unnecessary; `minSdkVersion` is 23. Merge all the resources in this folder into `values`.">
+        <location
+            file="src/main/res/values-v23"/>
+    </issue>
+
+    <issue
         id="UnknownNullness"
         message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
         errorLine1="    public final void addListener(Runnable listener, Executor executor) {"

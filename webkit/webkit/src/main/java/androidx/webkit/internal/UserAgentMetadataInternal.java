@@ -30,6 +30,7 @@ import java.util.Map;
  * {@link androidx.webkit.UserAgentMetadata}.
  */
 public class UserAgentMetadataInternal {
+    private UserAgentMetadataInternal() {}
     /**
      * Predefined set of name for user-agent metadata key.
      * Key name for user-agent metadata mobile,

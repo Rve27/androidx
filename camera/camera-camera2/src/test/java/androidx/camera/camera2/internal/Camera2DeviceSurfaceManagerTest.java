@@ -35,7 +35,6 @@ import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.CamcorderProfile;
-import android.os.Build;
 import android.os.Looper;
 import android.util.Size;
 import android.view.WindowManager;
@@ -70,7 +69,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.Shadows;
-import org.robolectric.annotation.Config;
 import org.robolectric.annotation.LooperMode;
 import org.robolectric.annotation.internal.DoNotInstrument;
 import org.robolectric.shadow.api.Shadow;
@@ -87,7 +85,6 @@ import java.util.concurrent.TimeoutException;
 /** Robolectric test for {@link Camera2DeviceSurfaceManager} class */
 @RunWith(RobolectricTestRunner.class)
 @DoNotInstrument
-@Config(minSdk = Build.VERSION_CODES.LOLLIPOP)
 @LooperMode(LooperMode.Mode.INSTRUMENTATION_TEST)
 public final class Camera2DeviceSurfaceManagerTest {
     private static final String LEGACY_CAMERA_ID = "0";

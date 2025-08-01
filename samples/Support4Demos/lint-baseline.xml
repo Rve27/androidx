@@ -156,6 +156,60 @@
 
     <issue
         id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 23"
+        errorLine1="                Build.VERSION.SDK_INT >= 23"
+        errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/example/android/supportv4/media/MediaBrowserServiceSupport.java"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 23"
+        errorLine1="                Build.VERSION.SDK_INT >= 23"
+        errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/example/android/supportv4/media/MediaNotificationManager.java"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 23"
+        errorLine1="                Build.VERSION.SDK_INT >= 23"
+        errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/example/android/supportv4/media/MediaNotificationManager.java"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 23"
+        errorLine1="                Build.VERSION.SDK_INT >= 23"
+        errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/example/android/supportv4/media/MediaNotificationManager.java"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 23"
+        errorLine1="                Build.VERSION.SDK_INT >= 23"
+        errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/example/android/supportv4/media/MediaNotificationManager.java"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 23"
+        errorLine1="                Build.VERSION.SDK_INT >= 23"
+        errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/example/android/supportv4/media/MediaNotificationManager.java"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
         message="Unnecessary; `SDK_INT` is always >= 21"
         errorLine1="    tools:targetApi=&quot;lollipop&quot;>"
         errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~">
@@ -165,14 +219,14 @@
 
     <issue
         id="ObsoleteSdkInt"
-        message="This folder configuration (`v11`) is unnecessary; `minSdkVersion` is 21. Merge all the resources in this folder into `values`.">
+        message="This folder configuration (`v11`) is unnecessary; `minSdkVersion` is 23. Merge all the resources in this folder into `values`.">
         <location
             file="src/main/res/values-v11"/>
     </issue>
 
     <issue
         id="ObsoleteSdkInt"
-        message="This folder configuration (`v21`) is unnecessary; `minSdkVersion` is 21. Merge all the resources in this folder into `values`.">
+        message="This folder configuration (`v21`) is unnecessary; `minSdkVersion` is 23. Merge all the resources in this folder into `values`.">
         <location
             file="src/main/res/values-v21"/>
     </issue>

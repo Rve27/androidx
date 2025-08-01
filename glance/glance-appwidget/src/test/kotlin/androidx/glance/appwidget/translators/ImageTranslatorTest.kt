@@ -125,7 +125,6 @@ class ImageTranslatorTest {
         }
 
     @Test
-    @Config(minSdk = 23)
     @SdkSuppress(minSdkVersion = 23)
     fun canTranslateImage_icon() =
         fakeCoroutineScope.runTest {

@@ -217,4 +217,40 @@
             file="src/main/java/androidx/transition/Styleable.java"/>
     </issue>
 
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `Build.VERSION.SDK_INT >= Build.VERSION_CODES.M` is always true here (`SDK_INT` ≥ 23 and &lt; 29)"
+        errorLine1="        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {"
+        errorLine2="                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/transition/ViewUtils.java"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1` is never true here"
+        errorLine1="        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {"
+        errorLine2="                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/transition/ViewUtils.java"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 22"
+        errorLine1="@RequiresApi(22)"
+        errorLine2="~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/transition/ViewUtilsApi22.java"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 23"
+        errorLine1="@RequiresApi(23)"
+        errorLine2="~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/transition/ViewUtilsApi23.java"/>
+    </issue>
+
 </issues>

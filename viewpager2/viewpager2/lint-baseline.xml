@@ -19,4 +19,22 @@
             file="src/androidTest/java/androidx/viewpager2/widget/swipe/ManualSwipeInjector.java"/>
     </issue>
 
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 23"
+        errorLine1="    @RequiresApi(23)"
+        errorLine2="    ~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/viewpager2/widget/ViewPager2.java"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 23"
+        errorLine1="        @RequiresApi(23)"
+        errorLine2="        ~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/viewpager2/widget/ViewPager2.java"/>
+    </issue>
+
 </issues>

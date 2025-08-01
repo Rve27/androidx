@@ -1335,51 +1335,166 @@
 
     <issue
         id="ObsoleteSdkInt"
-        message="This folder configuration (`v21`) is unnecessary; `minSdkVersion` is 21. Merge all the resources in this folder into `animator`.">
+        message="Unnecessary; `SDK_INT` is always >= 23"
+        errorLine1="        return Build.VERSION.SDK_INT >= 23;"
+        errorLine2="               ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/leanback/widget/ForegroundHelper.java"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 23"
+        errorLine1="        if (Build.VERSION.SDK_INT >= 23) {"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/leanback/widget/ForegroundHelper.java"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 23"
+        errorLine1="        if (Build.VERSION.SDK_INT >= 23) {"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/leanback/widget/ForegroundHelper.java"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 23"
+        errorLine1="        if (Build.VERSION.SDK_INT >= 23) {"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/leanback/app/FragmentUtil.java"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 23"
+        errorLine1="    @RequiresApi(23)"
+        errorLine2="    ~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/leanback/app/FragmentUtil.java"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is never &lt; 23"
+        errorLine1="        if (IS_FRAMEWORK_FRAGMENT &amp;&amp; Build.VERSION.SDK_INT &lt; 23"
+        errorLine2="                                     ~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/leanback/app/GuidedStepFragment.java"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is never &lt; 23"
+        errorLine1="        if (IS_FRAMEWORK_FRAGMENT &amp;&amp; Build.VERSION.SDK_INT &lt; 23 &amp;&amp; !inGuidedStep) {"
+        errorLine2="                                     ~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/leanback/app/GuidedStepSupportFragment.java"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 23"
+        errorLine1="                &amp;&amp; VERSION.SDK_INT >= VERSION_M) {"
+        errorLine2="                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/leanback/widget/NonOverlappingLinearLayoutWithForeground.java"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 23"
+        errorLine1="        if (VERSION.SDK_INT >= VERSION_M) {"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/leanback/widget/NonOverlappingLinearLayoutWithForeground.java"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 23"
+        errorLine1="        if (VERSION.SDK_INT >= VERSION_M) {"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/leanback/widget/NonOverlappingLinearLayoutWithForeground.java"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 23"
+        errorLine1="        if (Build.VERSION.SDK_INT >= 23) {"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/leanback/app/PermissionHelper.java"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 23"
+        errorLine1="            if (Build.VERSION.SDK_INT >= 23 &amp;&amp; mPermissionListener != null) {"
+        errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/leanback/widget/SearchBar.java"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="This folder configuration (`v21`) is unnecessary; `minSdkVersion` is 23. Merge all the resources in this folder into `animator`.">
         <location
             file="src/main/res/animator-v21"/>
     </issue>
 
     <issue
         id="ObsoleteSdkInt"
-        message="This folder configuration (`v21`) is unnecessary; `minSdkVersion` is 21. Merge all the resources in this folder into `drawable`.">
+        message="This folder configuration (`v21`) is unnecessary; `minSdkVersion` is 23. Merge all the resources in this folder into `drawable`.">
         <location
             file="src/main/res/drawable-v21"/>
     </issue>
 
     <issue
         id="ObsoleteSdkInt"
-        message="This folder configuration (`v19`) is unnecessary; `minSdkVersion` is 21. Merge all the resources in this folder into `transition`.">
+        message="This folder configuration (`v19`) is unnecessary; `minSdkVersion` is 23. Merge all the resources in this folder into `transition`.">
         <location
             file="src/main/res/transition-v19"/>
     </issue>
 
     <issue
         id="ObsoleteSdkInt"
-        message="This folder configuration (`v21`) is unnecessary; `minSdkVersion` is 21. Merge all the resources in this folder into `transition`.">
+        message="This folder configuration (`v21`) is unnecessary; `minSdkVersion` is 23. Merge all the resources in this folder into `transition`.">
         <location
             file="src/main/res/transition-v21"/>
     </issue>
 
     <issue
         id="ObsoleteSdkInt"
-        message="This folder configuration (`v18`) is unnecessary; `minSdkVersion` is 21. Merge all the resources in this folder into `values`.">
+        message="This folder configuration (`v18`) is unnecessary; `minSdkVersion` is 23. Merge all the resources in this folder into `values`.">
         <location
             file="src/main/res/values-v18"/>
     </issue>
 
     <issue
         id="ObsoleteSdkInt"
-        message="This folder configuration (`v19`) is unnecessary; `minSdkVersion` is 21. Merge all the resources in this folder into `values`.">
+        message="This folder configuration (`v19`) is unnecessary; `minSdkVersion` is 23. Merge all the resources in this folder into `values`.">
         <location
             file="src/main/res/values-v19"/>
     </issue>
 
     <issue
         id="ObsoleteSdkInt"
-        message="This folder configuration (`v21`) is unnecessary; `minSdkVersion` is 21. Merge all the resources in this folder into `values`.">
+        message="This folder configuration (`v21`) is unnecessary; `minSdkVersion` is 23. Merge all the resources in this folder into `values`.">
         <location
             file="src/main/res/values-v21"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="This folder configuration (`v22`) is unnecessary; `minSdkVersion` is 23. Merge all the resources in this folder into `values`.">
+        <location
+            file="src/main/res/values-v22"/>
     </issue>
 
     <issue

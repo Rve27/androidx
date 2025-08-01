@@ -90,13 +90,11 @@ import org.mockito.Mockito
 import org.mockito.Mockito.mock
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows.shadowOf
-import org.robolectric.annotation.Config
 import org.robolectric.annotation.internal.DoNotInstrument
 
 /** Unit tests for [StreamSharing]. */
 @RunWith(RobolectricTestRunner::class)
 @DoNotInstrument
-@Config(minSdk = Build.VERSION_CODES.LOLLIPOP)
 class StreamSharingTest {
 
     companion object {

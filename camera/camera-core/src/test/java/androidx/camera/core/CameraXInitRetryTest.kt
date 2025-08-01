@@ -77,7 +77,6 @@ import org.robolectric.versioning.AndroidVersions
 
 @RunWith(RobolectricTestRunner::class)
 @DoNotInstrument
-@Config(minSdk = Build.VERSION_CODES.LOLLIPOP)
 @OptIn(ExperimentalCoroutinesApi::class)
 class CameraXInitRetryTest {
     private val context = ApplicationProvider.getApplicationContext<Context>()

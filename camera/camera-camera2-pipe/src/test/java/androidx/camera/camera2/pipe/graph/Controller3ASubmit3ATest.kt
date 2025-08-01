@@ -19,7 +19,6 @@ package androidx.camera.camera2.pipe.graph
 import android.hardware.camera2.CaptureRequest
 import android.hardware.camera2.CaptureResult
 import android.hardware.camera2.params.MeteringRectangle
-import android.os.Build
 import androidx.camera.camera2.pipe.AeMode
 import androidx.camera.camera2.pipe.AfMode
 import androidx.camera.camera2.pipe.AwbMode
@@ -39,11 +38,9 @@ import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.robolectric.annotation.Config
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(RobolectricCameraPipeTestRunner::class)
-@Config(minSdk = Build.VERSION_CODES.LOLLIPOP)
 internal class Controller3ASubmit3ATest {
     private val graphTestContext = GraphTestContext()
     private val graphState3A = GraphState3A()

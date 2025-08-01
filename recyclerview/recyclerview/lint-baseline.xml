@@ -264,7 +264,16 @@
 
     <issue
         id="ObsoleteSdkInt"
-        message="Unnecessary; `SDK_INT` is never &lt; 21"
+        message="Unnecessary; `SDK_INT` is always >= 23"
+        errorLine1="            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {"
+        errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/recyclerview/widget/LinearLayoutManager.java"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is never &lt; 23"
         errorLine1="    static final boolean FORCE_INVALIDATE_DISPLAY_LIST = Build.VERSION.SDK_INT == 19"
         errorLine2="                                                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -276,6 +285,24 @@
         message="Unnecessary; `Build.VERSION.SDK_INT == 20` is never true here"
         errorLine1="            || Build.VERSION.SDK_INT == 20;"
         errorLine2="               ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/recyclerview/widget/RecyclerView.java"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 23"
+        errorLine1="    static final boolean ALLOW_SIZE_IN_UNSPECIFIED_SPEC = Build.VERSION.SDK_INT >= 23;"
+        errorLine2="                                                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/recyclerview/widget/RecyclerView.java"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is never &lt; 23"
+        errorLine1="            if (Build.VERSION.SDK_INT &lt; 23) {"
+        errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/java/androidx/recyclerview/widget/RecyclerView.java"/>
     </issue>
