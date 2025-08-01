@@ -17,8 +17,15 @@
 package androidx.navigationevent
 
 import androidx.annotation.MainThread
+import androidx.navigationevent.NavigationEventInfo.NotProvided
 import androidx.navigationevent.NavigationEventPriority.Companion.Default
 import androidx.navigationevent.NavigationEventPriority.Companion.Overlay
+import androidx.navigationevent.NavigationEventState.Idle
+import androidx.navigationevent.NavigationEventState.InProgress
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 
 /**
  * Manages the lifecycle and dispatching of [NavigationEventCallback] instances across all
@@ -26,6 +33,16 @@ import androidx.navigationevent.NavigationEventPriority.Companion.Overlay
  * and prioritized dispatch for navigation events.
  */
 internal class NavigationEventProcessor {
+
+    /** The private, mutable source of truth for the navigation state. */
+    internal val _state = MutableStateFlow<NavigationEventState<*>>(Idle(NotProvided))
+
+    /**
+     * The [StateFlow] from the highest-priority, enabled navigation callback.
+     *
+     * This represents the navigation state of the currently active component.
+     */
+    val state: StateFlow<NavigationEventState<*>> = _state.asStateFlow()
 
     /**
      * Stores high-priority callbacks that should be evaluated before default callbacks.
@@ -99,14 +116,47 @@ internal class NavigationEventProcessor {
         }
 
     /**
-     * Recomputes and updates the current [hasEnabledCallbacks] state based on the enabled status of
-     * all registered callbacks. This method should be called whenever a callback's enabled state or
-     * its registration status (added/removed) changes.
+     * Recomputes and updates [hasEnabledCallbacks] based on the enabled status of all registered
+     * callbacks. This should be called whenever a callback’s enabled state or its registration
+     * status (added or removed) changes.
      */
     fun updateEnabledCallbacks() {
         // `any` and `||` are efficient as they short-circuit on the first `true` result.
         hasEnabledCallbacks =
             overlayCallbacks.any { it.isEnabled } || defaultCallbacks.any { it.isEnabled }
+
+        // Whenever the set of enabled callbacks changes, we must immediately
+        // synchronize the global navigation state. This picks the new highest-priority
+        // active callback and updates the state to reflect its info, preventing stale data.
+        val enabledCallback = resolveEnabledCallback()
+        if (enabledCallback != null) {
+            updateEnabledCallbackState(enabledCallback)
+        }
+    }
+
+    /**
+     * Called by a NavigationEventCallback when its info changes via `setInfo`.
+     *
+     * This method centralizes the state update logic. It checks if the callback that changed is the
+     * authoritative one (either the `inProgressCallback` or the highest-priority idle callback)
+     * before updating the shared `_state`. This prevents lower-priority callbacks from incorrectly
+     * overwriting the state.
+     */
+    internal fun updateEnabledCallbackState(callback: NavigationEventCallback<*>) {
+        val currentCallback = inProgressCallback ?: resolveEnabledCallback()
+        if (currentCallback != callback) return
+
+        _state.update { state ->
+            when (state) {
+                is Idle -> Idle(callback.currentInfo ?: NotProvided)
+                is InProgress ->
+                    InProgress(
+                        currentInfo = callback.currentInfo ?: NotProvided,
+                        previousInfo = callback.previousInfo,
+                        latestEvent = state.latestEvent,
+                    )
+            }
+        }
     }
 
     /**
@@ -255,6 +305,9 @@ internal class NavigationEventProcessor {
             // `onEventStarted`.
             inProgressCallback = callback
             callback.onEventStarted(event)
+            _state.update {
+                InProgress(callback.currentInfo ?: NotProvided, callback.previousInfo, event)
+            }
         }
     }
 
@@ -283,7 +336,12 @@ internal class NavigationEventProcessor {
         val callback = inProgressCallback ?: resolveEnabledCallback()
         // Progressed is not a terminal event, so `inProgressCallback` is not cleared.
 
-        callback?.onEventProgressed(event)
+        if (callback != null) {
+            callback.onEventProgressed(event)
+            _state.update {
+                InProgress(callback.currentInfo ?: NotProvided, callback.previousInfo, event)
+            }
+        }
     }
 
     /**
@@ -317,6 +375,7 @@ internal class NavigationEventProcessor {
             fallbackOnBackPressed?.invoke()
         } else {
             callback.onEventCompleted()
+            _state.update { Idle(callback.currentInfo ?: NotProvided) }
         }
     }
 
@@ -343,7 +402,10 @@ internal class NavigationEventProcessor {
         val callback = inProgressCallback ?: resolveEnabledCallback()
         inProgressCallback = null // Clear in-progress, as 'cancelled' is a terminal event.
 
-        callback?.onEventCancelled()
+        if (callback != null) {
+            callback.onEventCancelled()
+            _state.update { Idle(callback.currentInfo ?: NotProvided) }
+        }
     }
 
     /**

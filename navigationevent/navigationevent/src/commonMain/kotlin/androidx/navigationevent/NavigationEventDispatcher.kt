@@ -19,6 +19,7 @@ package androidx.navigationevent
 import androidx.annotation.MainThread
 import androidx.navigationevent.NavigationEventPriority.Companion.Default
 import androidx.navigationevent.NavigationEventPriority.Companion.Overlay
+import kotlinx.coroutines.flow.StateFlow
 
 /**
  * A dispatcher for navigation events that can be organized hierarchically.
@@ -177,6 +178,13 @@ private constructor(
      * **This is primarily for cleanup when this dispatcher is no longer needed.**
      */
     private val callbacks = mutableSetOf<NavigationEventCallback<*>>()
+
+    /**
+     * The [StateFlow] from the highest-priority, enabled navigation callback.
+     *
+     * This represents the navigation state of the currently active component.
+     */
+    public val state: StateFlow<NavigationEventState<NavigationEventInfo>> = sharedProcessor.state
 
     init {
         // If a parent dispatcher is provided, register this dispatcher as its child.

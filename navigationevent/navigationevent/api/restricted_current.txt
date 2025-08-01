@@ -53,10 +53,12 @@ package androidx.navigationevent {
     method @MainThread public void addCallback(androidx.navigationevent.NavigationEventCallback<? extends java.lang.Object?> callback, optional int priority);
     method @BytecodeOnly @MainThread public void addCallback-3owFMvg(androidx.navigationevent.NavigationEventCallback<? extends java.lang.Object!>, int);
     method @MainThread public void dispose();
+    method public kotlinx.coroutines.flow.StateFlow<androidx.navigationevent.NavigationEventState<androidx.navigationevent.NavigationEventInfo>> getState();
     method public boolean hasEnabledCallbacks();
     method public boolean isEnabled();
     method public void setEnabled(boolean);
     property public boolean isEnabled;
+    property public kotlinx.coroutines.flow.StateFlow<androidx.navigationevent.NavigationEventState<androidx.navigationevent.NavigationEventInfo>> state;
   }
 
   public interface NavigationEventDispatcherOwner {
@@ -90,6 +92,27 @@ package androidx.navigationevent {
     method @BytecodeOnly public int getOverlay-b1THaJE();
     property public androidx.navigationevent.NavigationEventPriority Default;
     property public androidx.navigationevent.NavigationEventPriority Overlay;
+  }
+
+  public abstract sealed class NavigationEventState<T extends androidx.navigationevent.NavigationEventInfo> {
+    method public abstract T getCurrentInfo();
+    property public abstract T currentInfo;
+  }
+
+  public static final class NavigationEventState.Idle<T extends androidx.navigationevent.NavigationEventInfo> extends androidx.navigationevent.NavigationEventState<T> {
+    ctor public NavigationEventState.Idle(T currentInfo);
+    method public T getCurrentInfo();
+    property public T currentInfo;
+  }
+
+  public static final class NavigationEventState.InProgress<T extends androidx.navigationevent.NavigationEventInfo> extends androidx.navigationevent.NavigationEventState<T> {
+    ctor public NavigationEventState.InProgress(T currentInfo, T? previousInfo, androidx.navigationevent.NavigationEvent latestEvent);
+    method public T getCurrentInfo();
+    method public androidx.navigationevent.NavigationEvent getLatestEvent();
+    method public T? getPreviousInfo();
+    property public T currentInfo;
+    property public androidx.navigationevent.NavigationEvent latestEvent;
+    property public T? previousInfo;
   }
 
   @RequiresApi(33) public final class OnBackInvokedInputHandler extends androidx.navigationevent.AbstractNavigationEventInputHandler {

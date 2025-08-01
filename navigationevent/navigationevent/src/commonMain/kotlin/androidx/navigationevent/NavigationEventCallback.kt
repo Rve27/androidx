@@ -78,12 +78,21 @@ public abstract class NavigationEventCallback<T : NavigationEventInfo>(isEnabled
     /**
      * Updates the current and previous navigation information for this callback.
      *
+     * This method updates the callback's local info and then notifies the central
+     * `NavigationEventProcessor`. The processor is responsible for deciding whether to update the
+     * global navigation state, ensuring that only the highest-priority callback can influence the
+     * state.
+     *
      * @param currentInfo The new navigation information to be set as the current state.
      * @param previousInfo The navigation information to be set as the previous state.
      */
     public fun setInfo(currentInfo: T, previousInfo: T?) {
         this.currentInfo = currentInfo
         this.previousInfo = previousInfo
+
+        // Simply notify the processor that info has changed.
+        // The processor now owns all the logic for updating the shared state.
+        dispatcher?.sharedProcessor?.updateEnabledCallbackState(callback = this)
     }
 
     /** Callback for handling [NavigationEventDispatcher.dispatchOnStarted]. */
