@@ -28,7 +28,9 @@ import android.graphics.pdf.models.FormWidgetInfo
 import android.graphics.pdf.models.PageMatchBounds
 import android.graphics.pdf.models.selection.PageSelection
 import android.graphics.pdf.models.selection.SelectionBoundary
+import android.os.Build
 import android.os.ParcelFileDescriptor
+import androidx.annotation.RequiresExtension
 import androidx.annotation.RestrictTo
 import androidx.pdf.PdfDocumentRemote
 import androidx.pdf.PdfLoadingStatus
@@ -38,8 +40,10 @@ import androidx.pdf.adapter.PdfDocumentRendererFactoryImpl
 import androidx.pdf.adapter.PdfPage
 import androidx.pdf.annotation.models.AnnotationResult
 import androidx.pdf.annotation.models.PdfAnnotation
+import androidx.pdf.annotation.models.PdfAnnotationData
 import androidx.pdf.models.Dimensions
 import androidx.pdf.utils.readAnnotationsFromPfd
+import androidx.pdf.utils.toAospAnnotation
 
 @RestrictTo(RestrictTo.Scope.LIBRARY)
 internal class PdfDocumentRemoteImpl(
@@ -148,11 +152,25 @@ internal class PdfDocumentRemoteImpl(
         }
     }
 
-    override fun addAnnotations(pfd: ParcelFileDescriptor): AnnotationResult? {
+    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 18)
+    override fun addAnnotations(pfd: ParcelFileDescriptor): AnnotationResult {
         val pdfAnnotationsData = readAnnotationsFromPfd(pfd)
+        val (success, failures) = pdfAnnotationsData.partition { addPdfAnnotationToAosp(it) }
+        return AnnotationResult(success, failures.map { it.annotation })
+    }
 
-        // TODO: addAnnotations to be implemented in subsequent CL
-        return AnnotationResult(pdfAnnotationsData, listOf())
+    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 18)
+    private fun addPdfAnnotationToAosp(pdfAnnotationData: PdfAnnotationData): Boolean {
+        val annotation = pdfAnnotationData.annotation
+        return withPage(annotation.pageNum) { page ->
+            val aospAnnotation = annotation.toAospAnnotation()
+            try {
+                page.addPageAnnotation(aospAnnotation)
+                true
+            } catch (e: IllegalStateException) {
+                false
+            }
+        } == true
     }
 
     override fun getPageAnnotations(pageNum: Int): List<PdfAnnotation> {

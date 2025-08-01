@@ -33,6 +33,7 @@ import androidx.pdf.annotation.models.PdfAnnotationData
 import androidx.pdf.annotation.models.StampAnnotation
 import androidx.pdf.models.FormEditRecord
 import androidx.pdf.models.FormWidgetInfo
+import androidx.pdf.utils.AnnotationUtilsTest.Companion.isRequiredSdkExtensionAvailable
 import androidx.pdf.utils.TestUtils
 import androidx.pdf.utils.assertStampAnnotationEquals
 import androidx.pdf.utils.createPfd
@@ -390,6 +391,8 @@ class SandboxedPdfDocumentTest {
 
     @Test
     fun applyEdits_writingAnnotationToStorage() = runTest {
+        if (!isRequiredSdkExtensionAvailable()) return@runTest
+
         val pageNum = 1
         val sampleAnnotation = getSampleStampAnnotation(pageNum)
         val document = openDocument(PDF_DOCUMENT)

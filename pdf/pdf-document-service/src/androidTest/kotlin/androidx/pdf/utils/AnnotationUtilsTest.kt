@@ -17,8 +17,13 @@
 package androidx.pdf.utils
 
 import android.content.Context
+import android.graphics.RectF
+import android.graphics.pdf.component.PdfPagePathObject
 import android.os.Build
+import android.os.ext.SdkExtensions
+import androidx.annotation.RequiresExtension
 import androidx.pdf.annotation.models.EditId
+import androidx.pdf.annotation.models.PathPdfObject
 import androidx.pdf.annotation.models.PdfAnnotationData
 import androidx.pdf.annotation.models.StampAnnotation
 import androidx.test.core.app.ApplicationProvider
@@ -167,5 +172,97 @@ class AnnotationUtilsTest {
         pfd.close()
     }
 
-    private val TEST_ANNOTATIONS_FILE = "annotationsTest.json"
+    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 18)
+    @Test
+    fun pdfObjectToAospPdfPageObject_convertsPathPdfObject() {
+        if (!isRequiredSdkExtensionAvailable()) return
+
+        val pathPdfObject = getSamplePathPdfObject()
+
+        val aospPageObject = pathPdfObject.toAospPdfPageObject()
+
+        assert(aospPageObject is PdfPagePathObject)
+        val aospPathObject = aospPageObject as PdfPagePathObject
+        assertPathPdfObjectEquals(pathPdfObject, aospPathObject)
+    }
+
+    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 18)
+    @Test
+    fun stampAnnotationToAospStampAnnotation_convertsStampAnnotation() {
+        if (!isRequiredSdkExtensionAvailable()) return
+
+        val pageNum = 0
+        val bounds = RectF(10f, 10f, 100f, 100f)
+        val pathPdfObject = getSamplePathPdfObject()
+
+        val stampAnnotation =
+            StampAnnotation(pageNum = pageNum, bounds = bounds, pdfObjects = listOf(pathPdfObject))
+
+        val aospStampAnnotation = stampAnnotation.toAospStampAnnotation()
+
+        assertEquals(bounds, aospStampAnnotation.bounds)
+        assertEquals(1, aospStampAnnotation.objects.size)
+        assert(aospStampAnnotation.objects[0] is PdfPagePathObject)
+
+        val aospPathObject = aospStampAnnotation.objects[0] as PdfPagePathObject
+        assertPathPdfObjectEquals(pathPdfObject, aospPathObject)
+    }
+
+    @Test
+    fun getPathFromPathInputs_emptyList_returnsEmptyPath() {
+        val pathInputs = emptyList<PathPdfObject.PathInput>()
+        val path = pathInputs.getPathFromPathInputs()
+        assert(path.isEmpty)
+    }
+
+    internal companion object {
+
+        private fun getSamplePathPdfObject(): PathPdfObject {
+            val pathInputs =
+                listOf(
+                    PathPdfObject.PathInput(0f, 0f),
+                    PathPdfObject.PathInput(5f, 5f),
+                    PathPdfObject.PathInput(10f, 10f),
+                    PathPdfObject.PathInput(15f, 15f),
+                    PathPdfObject.PathInput(20f, 20f),
+                    PathPdfObject.PathInput(25f, 25f),
+                    PathPdfObject.PathInput(30f, 30f),
+                )
+            return PathPdfObject(
+                brushColor = android.graphics.Color.RED,
+                brushWidth = 10f,
+                inputs = pathInputs,
+            )
+        }
+
+        @RequiresExtension(extension = Build.VERSION_CODES.S, version = 18)
+        private fun assertPathPdfObjectEquals(
+            pathPdfObject: PathPdfObject,
+            aospPathObject: PdfPagePathObject,
+        ) {
+            if (!isRequiredSdkExtensionAvailable()) return
+
+            assertEquals(pathPdfObject.brushWidth, aospPathObject.strokeWidth)
+            assertEquals(pathPdfObject.brushColor, aospPathObject.strokeColor)
+            val aospPath = aospPathObject.toPath()
+            if (!pathPdfObject.inputs.isEmpty()) {
+                assertNotNull(aospPath)
+            }
+            val pathInputs = aospPath.getPathInputsFromPath()
+            assertEquals(pathPdfObject.inputs.size, pathInputs.size)
+            for (i in pathPdfObject.inputs.indices) {
+                assertEquals(pathPdfObject.inputs[i].x, pathInputs[i].x)
+                assertEquals(pathPdfObject.inputs[i].y, pathInputs[i].y)
+            }
+        }
+
+        fun isRequiredSdkExtensionAvailable(): Boolean {
+            // Get the device's version for the specified SDK extension
+            val deviceExtensionVersion = SdkExtensions.getExtensionVersion(Build.VERSION_CODES.R)
+            return deviceExtensionVersion >= REQUIRED_EXTENSION_VERSION
+        }
+
+        private const val TEST_ANNOTATIONS_FILE = "annotationsTest.json"
+        private const val REQUIRED_EXTENSION_VERSION = 18
+    }
 }
