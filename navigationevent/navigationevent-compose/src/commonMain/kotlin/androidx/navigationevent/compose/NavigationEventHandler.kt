@@ -20,7 +20,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -75,7 +74,15 @@ import kotlinx.coroutines.launch
  * of composition, leading to unpredictable behavior where different handlers are invoked after
  * recomposition.
  *
- * @param enabled If `true`, this handler will be enabled and eligible to handle back events.
+ * ## Timing Consideration
+ * There are cases where a predictive back gesture may be dispatched within a rendering frame before
+ * the [enabled] flag is updated, which can cause unexpected behavior (see b/375343407,
+ * b/384186542). For example, if `enabled` is set to `false`, a gesture initiated in the same frame
+ * may still trigger this handler because the system sees the stale `true` value.
+ *
+ * @param enabled Controls whether this handler is active. **Important**: Due to the timing issue
+ *   described above, a gesture starting immediately after `enabled` is set to `false` may still
+ *   trigger this handler.
  * @param onEvent The lambda that receives the flow of back gesture events when a gesture begins.
  *   You **must** `collect` the flow within this lambda.
  * @see NavigationEventHandler
@@ -95,14 +102,52 @@ public fun NavigationEventHandler(
  * which the user is navigating) and the previous state (to which the user may return). This is
  * useful for creating animations that are specific to the content being displayed.
  *
+ * This effect registers a callback to receive updates on the progress of system back gestures as a
+ * [Flow] of [NavigationEvent].
+ *
+ * The [onEvent] lambda should be structured to handle the start, progress, completion, and
+ * cancellation of the gesture:
+ * ```kotlin
+ * NavigationEventHandler { progress: Flow<NavigationEvent> ->
+ *   // This block is executed when the back gesture begins.
+ *     try {
+ *       progress.collect { backEvent ->
+ *         // Handle gesture progress updates here.
+ *       }
+ *       // This block is executed if the gesture completes successfully.
+ *     } catch (e: CancellationException) {
+ *       // This block is executed if the gesture is cancelled.
+ *       throw e
+ *     } finally {
+ *       // This block is executed either the gesture is completed or cancelled.
+ *   }
+ * }
+ * ```
+ *
+ * ## Precedence
+ * When multiple [NavigationEventHandler] are present in the composition, the one that is composed
+ * * **last** among all enabled handlers will be invoked.
+ *
+ * ## Usage
+ * It is important to call this composable **unconditionally**. Use the `enabled` parameter to
+ * control whether the handler is active. This is preferable to conditionally calling
+ * [NavigationEventHandler] (e.g., inside an `if` block), as conditional calls can change the order
+ * of composition, leading to unpredictable behavior where different handlers are invoked after
+ * recomposition.
+ *
+ * ## Timing Consideration
+ * There are cases where a predictive back gesture may be dispatched within a rendering frame before
+ * the [enabled] flag is updated, which can cause unexpected behavior (see b/375343407,
+ * b/384186542). For example, if `enabled` is set to `false`, a gesture initiated in the same frame
+ * may still trigger this handler because the system sees the stale `true` value.
+ *
  * @param T The type of the navigation information.
  * @param currentInfo An object containing information about the current destination.
  * @param previousInfo An object containing information about the destination the user is navigating
  *   back to. Can be `null` if the information is not available.
- * @param enabled A lambda that returns `true` if this handler should be enabled. This lambda is
- *   observed for changes. To ensure the handler's status is updated correctly, the lambda should
- *   read from a snapshot-aware state object (e.g., a [State] created with `remember {
- *   mutableStateOf(true) }`). Defaults to always `true`.
+ * @param enabled Controls whether this handler is active. **Important**: Due to the timing issue
+ *   described above, a gesture starting immediately after `enabled` is set to `false` may still
+ *   trigger this handler.
  * @param onEvent The lambda that receives the flow of back gesture events when a gesture begins.
  *   You **must** `collect` the flow within this lambda.
  * @see NavigationEventHandler

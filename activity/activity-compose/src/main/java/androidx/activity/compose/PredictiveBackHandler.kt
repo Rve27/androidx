@@ -73,8 +73,16 @@ import kotlinx.coroutines.launch
  * of composition, leading to unpredictable behavior where different handlers are invoked after
  * recomposition.
  *
+ * ## Timing Consideration
+ * There are cases where a predictive back gesture may be dispatched within a rendering frame before
+ * the [enabled] flag is updated, which can cause unexpected behavior (see b/375343407,
+ * b/384186542). For example, if `enabled` is set to `false`, a gesture initiated in the same frame
+ * may still trigger this handler because the system sees the stale `true` value.
+ *
  * @sample androidx.activity.compose.samples.PredictiveBack
- * @param enabled If `true`, this handler will be enabled and eligible to handle back events.
+ * @param enabled Controls whether this handler is active. **Important**: Due to the timing issue
+ *   described above, a gesture starting immediately after `enabled` is set to `false` may still
+ *   trigger this handler.
  * @param onBack The suspending lambda to be invoked by the back gesture. It receives a `Flow` that
  *   can be collected to track the gesture's progress.
  */
