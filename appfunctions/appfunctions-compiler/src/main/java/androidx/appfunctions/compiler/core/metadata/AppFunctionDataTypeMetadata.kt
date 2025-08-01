@@ -16,23 +16,10 @@
 
 package androidx.appfunctions.compiler.core.metadata
 
-import androidx.annotation.IntDef
+abstract class AppFunctionDataTypeMetadata() {
+    abstract val isNullable: Boolean
+    abstract val description: String
 
-@IntDef(
-    AppFunctionDataTypeMetadata.TYPE_UNIT,
-    AppFunctionDataTypeMetadata.TYPE_BOOLEAN,
-    AppFunctionDataTypeMetadata.TYPE_BYTES,
-    AppFunctionDataTypeMetadata.TYPE_DOUBLE,
-    AppFunctionDataTypeMetadata.TYPE_FLOAT,
-    AppFunctionDataTypeMetadata.TYPE_LONG,
-    AppFunctionDataTypeMetadata.TYPE_INT,
-    AppFunctionDataTypeMetadata.TYPE_STRING,
-    AppFunctionDataTypeMetadata.TYPE_PENDING_INTENT,
-)
-@Retention(AnnotationRetention.SOURCE)
-internal annotation class AppFunctionPrimitiveType
-
-abstract class AppFunctionDataTypeMetadata {
     abstract fun toAppFunctionDataTypeMetadataDocument(): AppFunctionDataTypeMetadataDocument
 
     companion object {
@@ -49,26 +36,13 @@ abstract class AppFunctionDataTypeMetadata {
         internal const val TYPE_REFERENCE: Int = 11
         internal const val TYPE_ALL_OF: Int = 12
         internal const val TYPE_PENDING_INTENT: Int = 13
-
-        internal val PRIMITIVE_TYPES =
-            setOf(
-                TYPE_UNIT,
-                TYPE_BOOLEAN,
-                TYPE_BYTES,
-                TYPE_DOUBLE,
-                TYPE_FLOAT,
-                TYPE_LONG,
-                TYPE_INT,
-                TYPE_STRING,
-                TYPE_PENDING_INTENT,
-            )
     }
 }
 
 data class AppFunctionArrayTypeMetadata(
     val itemType: AppFunctionDataTypeMetadata,
-    val isNullable: Boolean,
-    val description: String,
+    override val isNullable: Boolean,
+    override val description: String,
 ) : AppFunctionDataTypeMetadata() {
     override fun toAppFunctionDataTypeMetadataDocument(): AppFunctionDataTypeMetadataDocument {
         return AppFunctionDataTypeMetadataDocument(
@@ -87,8 +61,8 @@ data class AppFunctionArrayTypeMetadata(
 data class AppFunctionAllOfTypeMetadata(
     val matchAll: List<AppFunctionDataTypeMetadata>,
     val qualifiedName: String?,
-    val isNullable: Boolean,
-    val description: String,
+    override val isNullable: Boolean,
+    override val description: String,
 ) : AppFunctionDataTypeMetadata() {
     override fun toAppFunctionDataTypeMetadataDocument(): AppFunctionDataTypeMetadataDocument {
         val allOfDocuments = matchAll.map { it.toAppFunctionDataTypeMetadataDocument() }
@@ -110,8 +84,8 @@ data class AppFunctionObjectTypeMetadata(
     val properties: Map<String, AppFunctionDataTypeMetadata>,
     val required: List<String>,
     val qualifiedName: String?,
-    val isNullable: Boolean,
-    val description: String,
+    override val isNullable: Boolean,
+    override val description: String,
 ) : AppFunctionDataTypeMetadata() {
     override fun toAppFunctionDataTypeMetadataDocument(): AppFunctionDataTypeMetadataDocument {
         val properties =
@@ -138,8 +112,8 @@ data class AppFunctionObjectTypeMetadata(
 
 data class AppFunctionReferenceTypeMetadata(
     val referenceDataType: String,
-    val isNullable: Boolean,
-    val description: String,
+    override val isNullable: Boolean,
+    override val description: String,
 ) : AppFunctionDataTypeMetadata() {
     override fun toAppFunctionDataTypeMetadataDocument(): AppFunctionDataTypeMetadataDocument {
         return AppFunctionDataTypeMetadataDocument(
@@ -155,29 +129,120 @@ data class AppFunctionReferenceTypeMetadata(
     }
 }
 
-data class AppFunctionPrimitiveTypeMetadata(
-    @AppFunctionPrimitiveType val type: Int,
-    val isNullable: Boolean,
-    val description: String,
+data class AppFunctionIntTypeMetadata(
+    override val isNullable: Boolean,
+    override val description: String,
 ) : AppFunctionDataTypeMetadata() {
     override fun toAppFunctionDataTypeMetadataDocument(): AppFunctionDataTypeMetadataDocument {
         return AppFunctionDataTypeMetadataDocument(
-            type = type,
+            type = AppFunctionDataTypeMetadata.TYPE_INT,
             isNullable = isNullable,
             description = description,
         )
     }
+}
 
-    companion object {
-        const val TYPE_UNIT: Int = AppFunctionDataTypeMetadata.TYPE_UNIT
-        const val TYPE_BOOLEAN: Int = AppFunctionDataTypeMetadata.TYPE_BOOLEAN
-        const val TYPE_BYTES: Int = AppFunctionDataTypeMetadata.TYPE_BYTES
-        const val TYPE_DOUBLE: Int = AppFunctionDataTypeMetadata.TYPE_DOUBLE
-        const val TYPE_FLOAT: Int = AppFunctionDataTypeMetadata.TYPE_FLOAT
-        const val TYPE_LONG: Int = AppFunctionDataTypeMetadata.TYPE_LONG
-        const val TYPE_INT: Int = AppFunctionDataTypeMetadata.TYPE_INT
-        const val TYPE_STRING: Int = AppFunctionDataTypeMetadata.TYPE_STRING
-        const val TYPE_PENDING_INTENT: Int = AppFunctionDataTypeMetadata.TYPE_PENDING_INTENT
+data class AppFunctionLongTypeMetadata(
+    override val isNullable: Boolean,
+    override val description: String,
+) : AppFunctionDataTypeMetadata() {
+    override fun toAppFunctionDataTypeMetadataDocument(): AppFunctionDataTypeMetadataDocument {
+        return AppFunctionDataTypeMetadataDocument(
+            type = AppFunctionDataTypeMetadata.TYPE_LONG,
+            isNullable = isNullable,
+            description = description,
+        )
+    }
+}
+
+data class AppFunctionFloatTypeMetadata(
+    override val isNullable: Boolean,
+    override val description: String,
+) : AppFunctionDataTypeMetadata() {
+    override fun toAppFunctionDataTypeMetadataDocument(): AppFunctionDataTypeMetadataDocument {
+        return AppFunctionDataTypeMetadataDocument(
+            type = AppFunctionDataTypeMetadata.TYPE_FLOAT,
+            isNullable = isNullable,
+            description = description,
+        )
+    }
+}
+
+data class AppFunctionDoubleTypeMetadata(
+    override val isNullable: Boolean,
+    override val description: String,
+) : AppFunctionDataTypeMetadata() {
+    override fun toAppFunctionDataTypeMetadataDocument(): AppFunctionDataTypeMetadataDocument {
+        return AppFunctionDataTypeMetadataDocument(
+            type = AppFunctionDataTypeMetadata.TYPE_DOUBLE,
+            isNullable = isNullable,
+            description = description,
+        )
+    }
+}
+
+data class AppFunctionStringTypeMetadata(
+    override val isNullable: Boolean,
+    override val description: String,
+) : AppFunctionDataTypeMetadata() {
+    override fun toAppFunctionDataTypeMetadataDocument(): AppFunctionDataTypeMetadataDocument {
+        return AppFunctionDataTypeMetadataDocument(
+            type = AppFunctionDataTypeMetadata.TYPE_STRING,
+            isNullable = isNullable,
+            description = description,
+        )
+    }
+}
+
+data class AppFunctionBooleanTypeMetadata(
+    override val isNullable: Boolean,
+    override val description: String,
+) : AppFunctionDataTypeMetadata() {
+    override fun toAppFunctionDataTypeMetadataDocument(): AppFunctionDataTypeMetadataDocument {
+        return AppFunctionDataTypeMetadataDocument(
+            type = AppFunctionDataTypeMetadata.TYPE_BOOLEAN,
+            isNullable = isNullable,
+            description = description,
+        )
+    }
+}
+
+data class AppFunctionBytesTypeMetadata(
+    override val isNullable: Boolean,
+    override val description: String,
+) : AppFunctionDataTypeMetadata() {
+    override fun toAppFunctionDataTypeMetadataDocument(): AppFunctionDataTypeMetadataDocument {
+        return AppFunctionDataTypeMetadataDocument(
+            type = AppFunctionDataTypeMetadata.TYPE_BYTES,
+            isNullable = isNullable,
+            description = description,
+        )
+    }
+}
+
+data class AppFunctionUnitTypeMetadata(
+    override val isNullable: Boolean,
+    override val description: String,
+) : AppFunctionDataTypeMetadata() {
+    override fun toAppFunctionDataTypeMetadataDocument(): AppFunctionDataTypeMetadataDocument {
+        return AppFunctionDataTypeMetadataDocument(
+            type = AppFunctionDataTypeMetadata.TYPE_UNIT,
+            isNullable = isNullable,
+            description = description,
+        )
+    }
+}
+
+data class AppFunctionPendingIntentTypeMetadata(
+    override val isNullable: Boolean,
+    override val description: String,
+) : AppFunctionDataTypeMetadata() {
+    override fun toAppFunctionDataTypeMetadataDocument(): AppFunctionDataTypeMetadataDocument {
+        return AppFunctionDataTypeMetadataDocument(
+            type = AppFunctionDataTypeMetadata.TYPE_PENDING_INTENT,
+            isNullable = isNullable,
+            description = description,
+        )
     }
 }
 
@@ -243,9 +308,32 @@ data class AppFunctionDataTypeMetadataDocument(
                     isNullable = isNullable,
                     description = description,
                 )
-            in AppFunctionDataTypeMetadata.PRIMITIVE_TYPES ->
-                AppFunctionPrimitiveTypeMetadata(
-                    type = type,
+            AppFunctionDataTypeMetadata.TYPE_INT ->
+                AppFunctionIntTypeMetadata(isNullable = isNullable, description = description)
+
+            AppFunctionDataTypeMetadata.TYPE_LONG ->
+                AppFunctionLongTypeMetadata(isNullable = isNullable, description = description)
+
+            AppFunctionDataTypeMetadata.TYPE_FLOAT ->
+                AppFunctionFloatTypeMetadata(isNullable = isNullable, description = description)
+
+            AppFunctionDataTypeMetadata.TYPE_DOUBLE ->
+                AppFunctionDoubleTypeMetadata(isNullable = isNullable, description = description)
+
+            AppFunctionDataTypeMetadata.TYPE_STRING ->
+                AppFunctionStringTypeMetadata(isNullable = isNullable, description = description)
+
+            AppFunctionDataTypeMetadata.TYPE_BOOLEAN ->
+                AppFunctionBooleanTypeMetadata(isNullable = isNullable, description = description)
+
+            AppFunctionDataTypeMetadata.TYPE_BYTES ->
+                AppFunctionBytesTypeMetadata(isNullable = isNullable, description = description)
+
+            AppFunctionDataTypeMetadata.TYPE_UNIT ->
+                AppFunctionUnitTypeMetadata(isNullable = isNullable, description = description)
+
+            AppFunctionDataTypeMetadata.TYPE_PENDING_INTENT ->
+                AppFunctionPendingIntentTypeMetadata(
                     isNullable = isNullable,
                     description = description,
                 )

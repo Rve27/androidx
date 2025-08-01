@@ -32,12 +32,20 @@ import androidx.appfunctions.compiler.core.IntrospectionHelper.AppFunctionContex
 import androidx.appfunctions.compiler.core.IntrospectionHelper.AppFunctionSchemaDefinitionAnnotation
 import androidx.appfunctions.compiler.core.metadata.AppFunctionAllOfTypeMetadata
 import androidx.appfunctions.compiler.core.metadata.AppFunctionArrayTypeMetadata
+import androidx.appfunctions.compiler.core.metadata.AppFunctionBooleanTypeMetadata
+import androidx.appfunctions.compiler.core.metadata.AppFunctionBytesTypeMetadata
 import androidx.appfunctions.compiler.core.metadata.AppFunctionDataTypeMetadata
+import androidx.appfunctions.compiler.core.metadata.AppFunctionDoubleTypeMetadata
+import androidx.appfunctions.compiler.core.metadata.AppFunctionFloatTypeMetadata
+import androidx.appfunctions.compiler.core.metadata.AppFunctionIntTypeMetadata
+import androidx.appfunctions.compiler.core.metadata.AppFunctionLongTypeMetadata
 import androidx.appfunctions.compiler.core.metadata.AppFunctionObjectTypeMetadata
 import androidx.appfunctions.compiler.core.metadata.AppFunctionParameterMetadata
-import androidx.appfunctions.compiler.core.metadata.AppFunctionPrimitiveTypeMetadata
+import androidx.appfunctions.compiler.core.metadata.AppFunctionPendingIntentTypeMetadata
 import androidx.appfunctions.compiler.core.metadata.AppFunctionReferenceTypeMetadata
 import androidx.appfunctions.compiler.core.metadata.AppFunctionSchemaMetadata
+import androidx.appfunctions.compiler.core.metadata.AppFunctionStringTypeMetadata
+import androidx.appfunctions.compiler.core.metadata.AppFunctionUnitTypeMetadata
 import com.google.devtools.ksp.getDeclaredProperties
 import com.google.devtools.ksp.symbol.KSAnnotation
 import com.google.devtools.ksp.symbol.KSClassDeclaration
@@ -199,16 +207,16 @@ class AppFunctionMetadataCreatorHelper {
         val appFunctionTypeReference = AppFunctionTypeReference(this)
         return when (appFunctionTypeReference.typeCategory) {
             PRIMITIVE_SINGULAR ->
-                AppFunctionPrimitiveTypeMetadata(
-                    type = appFunctionTypeReference.toAppFunctionDataType(),
-                    isNullable = appFunctionTypeReference.isNullable,
-                    description = description,
+                createPrimitiveDataTypeMetadata(
+                    appFunctionTypeReference.toAppFunctionDataType(),
+                    appFunctionTypeReference.isNullable,
+                    description,
                 )
             PRIMITIVE_ARRAY ->
                 AppFunctionArrayTypeMetadata(
                     itemType =
-                        AppFunctionPrimitiveTypeMetadata(
-                            type = appFunctionTypeReference.determineArrayItemType(),
+                        createPrimitiveDataTypeMetadata(
+                            appFunctionTypeReference.determineArrayItemType(),
                             isNullable = false,
                             description = "",
                         ),
@@ -218,8 +226,8 @@ class AppFunctionMetadataCreatorHelper {
             PRIMITIVE_LIST ->
                 AppFunctionArrayTypeMetadata(
                     itemType =
-                        AppFunctionPrimitiveTypeMetadata(
-                            type = appFunctionTypeReference.determineArrayItemType(),
+                        createPrimitiveDataTypeMetadata(
+                            appFunctionTypeReference.determineArrayItemType(),
                             isNullable =
                                 AppFunctionTypeReference(appFunctionTypeReference.itemTypeReference)
                                     .isNullable,
@@ -482,7 +490,7 @@ class AppFunctionMetadataCreatorHelper {
                 }
             }
 
-            // Finally add allOf the datatypes required to build this composed objects to the
+            // Finally add allOf of the datatypes required to build this composed objects to the
             // components map
             sharedDataTypeMap.put(
                 serializableTypeQualifiedName,
@@ -657,6 +665,46 @@ class AppFunctionMetadataCreatorHelper {
                     appFunctionTypeReference.selfOrItemTypeReference.resolve().arguments
                 )
                 .validate(allowSerializableInterfaceTypes)
+        }
+    }
+
+    private fun createPrimitiveDataTypeMetadata(
+        primitiveType: Int,
+        isNullable: Boolean,
+        description: String,
+    ): AppFunctionDataTypeMetadata {
+        return when (primitiveType) {
+            AppFunctionDataTypeMetadata.TYPE_UNIT ->
+                AppFunctionUnitTypeMetadata(isNullable = isNullable, description = description)
+
+            AppFunctionDataTypeMetadata.TYPE_BYTES ->
+                AppFunctionBytesTypeMetadata(isNullable = isNullable, description = description)
+
+            AppFunctionDataTypeMetadata.TYPE_INT ->
+                AppFunctionIntTypeMetadata(isNullable = isNullable, description = description)
+
+            AppFunctionDataTypeMetadata.TYPE_LONG ->
+                AppFunctionLongTypeMetadata(isNullable = isNullable, description = description)
+
+            AppFunctionDataTypeMetadata.TYPE_FLOAT ->
+                AppFunctionFloatTypeMetadata(isNullable = isNullable, description = description)
+
+            AppFunctionDataTypeMetadata.TYPE_DOUBLE ->
+                AppFunctionDoubleTypeMetadata(isNullable = isNullable, description = description)
+
+            AppFunctionDataTypeMetadata.TYPE_BOOLEAN ->
+                AppFunctionBooleanTypeMetadata(isNullable = isNullable, description = description)
+
+            AppFunctionDataTypeMetadata.TYPE_STRING ->
+                AppFunctionStringTypeMetadata(isNullable = isNullable, description = description)
+
+            AppFunctionDataTypeMetadata.TYPE_PENDING_INTENT ->
+                AppFunctionPendingIntentTypeMetadata(
+                    isNullable = isNullable,
+                    description = description,
+                )
+
+            else -> throw IllegalStateException("Unsupported primitive type: $primitiveType")
         }
     }
 
