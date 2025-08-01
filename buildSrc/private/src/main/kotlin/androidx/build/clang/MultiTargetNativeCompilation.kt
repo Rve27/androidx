@@ -235,8 +235,8 @@ class MultiTargetNativeCompilation(
                         clang.output.set(
                             outputDir.map { it.dir("compile/$serializableKonanTarget") }
                         )
-                        includes?.let { clang.includes.from(it) }
-                        sources?.let { clang.sources.from(it) }
+                        clang.includes.from(includes)
+                        clang.sources.from(sources)
                         clang.freeArgs.addAll(freeArgs)
                         clang.konanTarget.set(serializableKonanTarget)
                     }
