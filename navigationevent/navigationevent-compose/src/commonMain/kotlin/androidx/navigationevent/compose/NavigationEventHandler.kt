@@ -25,7 +25,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.snapshotFlow
 import androidx.navigationevent.NavigationEvent
 import androidx.navigationevent.NavigationEventCallback
 import androidx.navigationevent.NavigationEventInfo
@@ -76,17 +75,14 @@ import kotlinx.coroutines.launch
  * of composition, leading to unpredictable behavior where different handlers are invoked after
  * recomposition.
  *
- * @param enabled A lambda that returns `true` if this handler should be enabled. This lambda is
- *   observed for changes. To ensure the handler's status is updated correctly, the lambda should
- *   read from a snapshot-aware state object (e.g., a [State] created with `remember {
- *   mutableStateOf(true) }`). Defaults to always `true`.
+ * @param enabled If `true`, this handler will be enabled and eligible to handle back events.
  * @param onEvent The lambda that receives the flow of back gesture events when a gesture begins.
  *   You **must** `collect` the flow within this lambda.
  * @see NavigationEventHandler
  */
 @Composable
 public fun NavigationEventHandler(
-    enabled: () -> Boolean = { true },
+    enabled: Boolean = true,
     onEvent: suspend (progress: Flow<NavigationEvent>) -> Unit,
 ) {
     NavigationEventHandler(currentInfo = NotProvided, previousInfo = null, enabled, onEvent)
@@ -115,7 +111,7 @@ public fun NavigationEventHandler(
 public fun <T : NavigationEventInfo> NavigationEventHandler(
     currentInfo: T,
     previousInfo: T?,
-    enabled: () -> Boolean = { true },
+    enabled: Boolean = true,
     onEvent: suspend (progress: Flow<NavigationEvent>) -> Unit,
 ) {
     // ensure we don't re-register callbacks when onBack changes
@@ -133,22 +129,7 @@ public fun <T : NavigationEventInfo> NavigationEventHandler(
         navEventCallBack.setInfo(currentInfo, previousInfo)
     }
 
-    LaunchedEffect(enabled) {
-        // LaunchedEffect is not snapshot-aware by itself, so we use `snapshotFlow` to observe
-        // changes to `enabled()`. `snapshotFlow` converts snapshot state reads into a cold Flow
-        // that emits whenever the underlying snapshot-aware state changes.
-        //
-        // Note: `snapshotFlow` only works correctly when the lambda reads values from
-        // snapshot-aware state objects (e.g., `State`, `MutableState`, or Compose state APIs).
-        //
-        // We collect this Flow to update the callback whenever `enabled` changes.
-        //
-        // Because we collect this Flow inside a coroutine, the timing of emissions is also bound to
-        // the CoroutineDispatcher used by the composition. This means snapshot state changes are
-        // only observed and handled when the coroutine dispatcher schedules the collection, so
-        // updates might not be strictly synchronous with the state change.
-        snapshotFlow(enabled).collect { isEnabled -> navEventCallBack.setIsEnabled(isEnabled) }
-    }
+    LaunchedEffect(enabled) { navEventCallBack.setIsEnabled(enabled) }
 
     val navEventDispatcher =
         checkNotNull(LocalNavigationEventDispatcherOwner.current) {
@@ -192,10 +173,10 @@ private class OnBackInstance(
 }
 
 private class NavigationEventHandlerCallback<T : NavigationEventInfo>(
-    enabled: () -> Boolean,
+    isEnabled: Boolean,
     var onBackScope: CoroutineScope,
     var currentOnBack: suspend (progress: Flow<NavigationEvent>) -> Unit,
-) : NavigationEventCallback<T>(enabled()) {
+) : NavigationEventCallback<T>(isEnabled) {
     private var onBackInstance: OnBackInstance? = null
     private var isActive = false
 

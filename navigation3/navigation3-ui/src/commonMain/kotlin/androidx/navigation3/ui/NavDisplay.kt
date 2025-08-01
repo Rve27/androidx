@@ -199,7 +199,7 @@ public fun <T : Any> NavDisplay(
         var progress by remember { mutableFloatStateOf(0f) }
         var inPredictiveBack by remember { mutableStateOf(false) }
 
-        NavigationEventHandler({ scene.previousEntries.isNotEmpty() }) { navEvent ->
+        NavigationEventHandler(enabled = scene.previousEntries.isNotEmpty()) { navEvent ->
             progress = 0f
             try {
                 navEvent.collect { value ->

@@ -131,7 +131,7 @@ internal class NavigationEventHandlerTest {
 
         rule.setContent {
             NavigationEventDispatcherOwner(parent = owner) {
-                NavigationEventHandler(enabled = { enabled }) { progress ->
+                NavigationEventHandler(enabled = enabled) { progress ->
                     progress.collect()
                     result += "onBack"
                 }
@@ -182,7 +182,7 @@ internal class NavigationEventHandlerTest {
 
         rule.setContent {
             NavigationEventDispatcherOwner(parent = owner) {
-                NavigationEventHandler(enabled = { count > 1 }) { progress ->
+                NavigationEventHandler(enabled = count > 1) { progress ->
                     // This flag captures if the handler's coroutine was launched
                     // even if the `enabled` check will fail.
                     if (count <= 1) {
@@ -221,7 +221,7 @@ internal class NavigationEventHandlerTest {
 
         rule.setContent {
             NavigationEventDispatcherOwner(parent = owner) {
-                NavigationEventHandler(enabled = { count > 1 }) { progress ->
+                NavigationEventHandler(enabled = count > 1) { progress ->
                     if (count <= 1) {
                         wasStartedWhenDisabled = true
                     }
@@ -336,7 +336,7 @@ internal class NavigationEventHandlerTest {
                     progress.collect()
                 }
                 Button(onClick = { inputHandler.handleOnStarted(TestNavigationEvent()) }) {
-                    NavigationEventHandler(enabled = { false }) { progress ->
+                    NavigationEventHandler(enabled = false) { progress ->
                         result += "child"
                         progress.collect()
                     }
@@ -383,7 +383,7 @@ internal class NavigationEventHandlerTest {
                     result += "first"
                     progress.collect()
                 }
-                NavigationEventHandler(enabled = { false }) { progress ->
+                NavigationEventHandler(enabled = false) { progress ->
                     result += "second"
                     progress.collect()
                 }
