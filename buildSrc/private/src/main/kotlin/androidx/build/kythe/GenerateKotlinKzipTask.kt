@@ -209,10 +209,9 @@ constructor(private val execOperations: ExecOperations) : DefaultTask() {
                         )
                     )
                     sourcePaths.setFrom(compilationInputs.sourcePaths)
-                    commonModuleSourcePaths.from(
-                        (compilationInputs as? MultiplatformCompilationInputs)
-                            ?.commonModuleSourcePaths
-                    )
+                    (compilationInputs as? MultiplatformCompilationInputs)
+                        ?.commonModuleSourcePaths
+                        ?.let { commonModuleSourcePaths.from(it) }
                     vnamesJson.set(project.getVnamesJson())
                     dependencyClasspath.setFrom(
                         compilationInputs.dependencyClasspath + compilationInputs.bootClasspath
