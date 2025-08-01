@@ -28,6 +28,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.snapshotFlow
 import androidx.navigationevent.NavigationEvent
 import androidx.navigationevent.NavigationEventCallback
+import androidx.navigationevent.NavigationEventInfo
 import androidx.navigationevent.NavigationEventInfo.NotProvided
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
@@ -79,10 +80,41 @@ import kotlinx.coroutines.launch
  *   observed for changes. To ensure the handler's status is updated correctly, the lambda should
  *   read from a snapshot-aware state object (e.g., a [State] created with `remember {
  *   mutableStateOf(true) }`). Defaults to always `true`.
- * @param onEvent The lambda that receives the flow of back gesture events.
+ * @param onEvent The lambda that receives the flow of back gesture events when a gesture begins.
+ *   You **must** `collect` the flow within this lambda.
+ * @see NavigationEventHandler
  */
 @Composable
 public fun NavigationEventHandler(
+    enabled: () -> Boolean = { true },
+    onEvent: suspend (progress: Flow<NavigationEvent>) -> Unit,
+) {
+    NavigationEventHandler(currentInfo = NotProvided, previousInfo = null, enabled, onEvent)
+}
+
+/**
+ * Handles predictive back navigation gestures.
+ *
+ * This overload allows associating specific [NavigationEventInfo] with the current state (from
+ * which the user is navigating) and the previous state (to which the user may return). This is
+ * useful for creating animations that are specific to the content being displayed.
+ *
+ * @param T The type of the navigation information.
+ * @param currentInfo An object containing information about the current destination.
+ * @param previousInfo An object containing information about the destination the user is navigating
+ *   back to. Can be `null` if the information is not available.
+ * @param enabled A lambda that returns `true` if this handler should be enabled. This lambda is
+ *   observed for changes. To ensure the handler's status is updated correctly, the lambda should
+ *   read from a snapshot-aware state object (e.g., a [State] created with `remember {
+ *   mutableStateOf(true) }`). Defaults to always `true`.
+ * @param onEvent The lambda that receives the flow of back gesture events when a gesture begins.
+ *   You **must** `collect` the flow within this lambda.
+ * @see NavigationEventHandler
+ */
+@Composable
+public fun <T : NavigationEventInfo> NavigationEventHandler(
+    currentInfo: T,
+    previousInfo: T?,
     enabled: () -> Boolean = { true },
     onEvent: suspend (progress: Flow<NavigationEvent>) -> Unit,
 ) {
@@ -91,13 +123,14 @@ public fun NavigationEventHandler(
     val navEventScope = rememberCoroutineScope()
 
     val navEventCallBack = remember {
-        NavigationEventHandlerCallback(enabled, navEventScope, currentOnBack)
+        NavigationEventHandlerCallback<T>(enabled, navEventScope, currentOnBack)
     }
 
     // we want to use the same callback, but ensure we adjust the variable on recomposition
     SideEffect {
         navEventCallBack.currentOnBack = currentOnBack
         navEventCallBack.onBackScope = navEventScope
+        navEventCallBack.setInfo(currentInfo, previousInfo)
     }
 
     LaunchedEffect(enabled) {
@@ -158,12 +191,11 @@ private class OnBackInstance(
     }
 }
 
-// TODO(mgalhardo): consider allowing `NavigationEventHandler` to set a `T` for State.
-private class NavigationEventHandlerCallback(
+private class NavigationEventHandlerCallback<T : NavigationEventInfo>(
     enabled: () -> Boolean,
     var onBackScope: CoroutineScope,
     var currentOnBack: suspend (progress: Flow<NavigationEvent>) -> Unit,
-) : NavigationEventCallback<NotProvided>(enabled()) {
+) : NavigationEventCallback<T>(enabled()) {
     private var onBackInstance: OnBackInstance? = null
     private var isActive = false
 
