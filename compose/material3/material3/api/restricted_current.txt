@@ -4810,7 +4810,7 @@ package androidx.compose.material3.pulltorefresh {
     method @BytecodeOnly @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ExpressiveApi @androidx.compose.runtime.Composable @androidx.compose.runtime.ComposableTarget(applier="androidx.compose.ui.UiComposable") public void LoadingIndicator-4eDdRP8(androidx.compose.material3.pulltorefresh.PullToRefreshState, boolean, androidx.compose.ui.Modifier?, long, long, float, float, androidx.compose.runtime.Composer?, int, int);
     method @BytecodeOnly @Deprecated @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3Api @androidx.compose.runtime.Composable public long getContainerColor(androidx.compose.runtime.Composer?, int);
     method @BytecodeOnly public float getElevation-D9Ej5fM();
-    method @BytecodeOnly @Deprecated @androidx.compose.runtime.Composable public long getIndicatorColor(androidx.compose.runtime.Composer?, int);
+    method @BytecodeOnly @androidx.compose.runtime.Composable public long getIndicatorColor(androidx.compose.runtime.Composer?, int);
     method @BytecodeOnly @androidx.compose.runtime.Composable public long getIndicatorContainerColor(androidx.compose.runtime.Composer?, int);
     method @BytecodeOnly public float getIndicatorMaxDistance-D9Ej5fM();
     method public androidx.compose.ui.graphics.Shape getIndicatorShape();
@@ -4824,7 +4824,7 @@ package androidx.compose.material3.pulltorefresh {
     property public androidx.compose.ui.unit.Dp LoadingIndicatorElevation;
     property public androidx.compose.ui.unit.Dp PositionalThreshold;
     property @Deprecated @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3Api public androidx.compose.ui.graphics.Color containerColor;
-    property @Deprecated public androidx.compose.ui.graphics.Color indicatorColor;
+    property public androidx.compose.ui.graphics.Color indicatorColor;
     property public androidx.compose.ui.graphics.Color indicatorContainerColor;
     property public androidx.compose.ui.graphics.Shape indicatorShape;
     property @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ExpressiveApi public androidx.compose.ui.graphics.Color loadingIndicatorColor;

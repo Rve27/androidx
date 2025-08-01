@@ -431,7 +431,6 @@ object PullToRefreshDefaults {
         @Composable get() = LoadingIndicatorDefaults.containedContainerColor
 
     /** The default indicator color for [Indicator] */
-    @Deprecated("Use loadingIndicatorColor instead", ReplaceWith("loadingIndicatorColor"))
     val indicatorColor: Color
         @Composable get() = MaterialTheme.colorScheme.onSurfaceVariant
 
@@ -535,7 +534,6 @@ object PullToRefreshDefaults {
      * @param maxDistance the max distance the indicator can be pulled down before a refresh is
      *   triggered on release
      */
-    @Suppress("DEPRECATION")
     @Composable
     fun Indicator(
         state: PullToRefreshState,
