@@ -1,7 +1,7 @@
 // Signature format: 4.0
 package androidx.navigationevent.testing {
 
-  public final class TestNavigationEventCallback extends androidx.navigationevent.NavigationEventCallback {
+  public final class TestNavigationEventCallback extends androidx.navigationevent.NavigationEventCallback<androidx.navigationevent.NavigationEventInfo.NotProvided> {
     ctor public TestNavigationEventCallback();
     ctor public TestNavigationEventCallback(optional boolean isEnabled, optional kotlin.jvm.functions.Function2<? super androidx.navigationevent.testing.TestNavigationEventCallback,? super androidx.navigationevent.NavigationEvent,kotlin.Unit> onEventStarted, optional kotlin.jvm.functions.Function2<? super androidx.navigationevent.testing.TestNavigationEventCallback,? super androidx.navigationevent.NavigationEvent,kotlin.Unit> onEventProgressed, optional kotlin.jvm.functions.Function1<? super androidx.navigationevent.testing.TestNavigationEventCallback,kotlin.Unit> onEventCancelled, optional kotlin.jvm.functions.Function1<? super androidx.navigationevent.testing.TestNavigationEventCallback,kotlin.Unit> onEventCompleted);
     method public int getCancelledInvocations();

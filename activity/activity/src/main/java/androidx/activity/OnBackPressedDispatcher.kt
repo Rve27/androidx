@@ -145,7 +145,7 @@ class OnBackPressedDispatcher(
         // This observer manages the callback's lifecycle-aware registration.
         val lifecycleObserver =
             object : LifecycleEventObserver, AutoCloseable {
-                private val eventCallback: NavigationEventCallback =
+                private val eventCallback: NavigationEventCallback<*> =
                     onBackPressedCallback.createNavigationEventCallback()
 
                 /**

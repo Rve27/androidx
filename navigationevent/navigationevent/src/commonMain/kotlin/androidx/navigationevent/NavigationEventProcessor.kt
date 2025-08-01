@@ -37,7 +37,7 @@ internal class NavigationEventProcessor {
      * @see [defaultCallbacks]
      * @see [inProgressCallback]
      */
-    private val overlayCallbacks = ArrayDeque<NavigationEventCallback>()
+    private val overlayCallbacks = ArrayDeque<NavigationEventCallback<*>>()
 
     /**
      * Stores standard-priority callbacks.
@@ -48,7 +48,7 @@ internal class NavigationEventProcessor {
      * @see [overlayCallbacks]
      * @see [inProgressCallback]
      */
-    private val defaultCallbacks = ArrayDeque<NavigationEventCallback>()
+    private val defaultCallbacks = ArrayDeque<NavigationEventCallback<*>>()
 
     /**
      * The callback for a navigation event that is currently in progress.
@@ -63,7 +63,7 @@ internal class NavigationEventProcessor {
      * @see [overlayCallbacks]
      * @see [defaultCallbacks]
      */
-    private var inProgressCallback: NavigationEventCallback? = null
+    private var inProgressCallback: NavigationEventCallback<*>? = null
 
     /**
      * Tracks listeners for changes in the overall enabled state of callbacks across all
@@ -172,7 +172,7 @@ internal class NavigationEventProcessor {
     @MainThread
     fun addCallback(
         dispatcher: NavigationEventDispatcher,
-        callback: NavigationEventCallback,
+        callback: NavigationEventCallback<*>,
         priority: NavigationEventPriority = Default,
     ) {
         // Enforce that a callback is not already registered with another dispatcher.
@@ -201,7 +201,7 @@ internal class NavigationEventProcessor {
      * @param callback The [NavigationEventCallback] to remove.
      */
     @MainThread
-    fun removeCallback(callback: NavigationEventCallback) {
+    fun removeCallback(callback: NavigationEventCallback<*>) {
         // If the callback is the one currently being processed, it needs to be notified of
         // cancellation and then cleared from the in-progress state.
         if (callback == inProgressCallback) {
@@ -361,7 +361,7 @@ internal class NavigationEventProcessor {
      * @return The single highest-priority [NavigationEventCallback] that is currently enabled, or
      *   `null` if no enabled callbacks exist.
      */
-    fun resolveEnabledCallback(): NavigationEventCallback? {
+    fun resolveEnabledCallback(): NavigationEventCallback<*>? {
         // `firstOrNull` is efficient and respects the LIFO order of the ArrayDeque.
         return overlayCallbacks.firstOrNull { it.isEnabled }
             ?: defaultCallbacks.firstOrNull { it.isEnabled }

@@ -24,7 +24,15 @@ package androidx.navigationevent
  * @param isEnabled The initial enabled state for this callback.
  * @see NavigationEventDispatcher
  */
-public abstract class NavigationEventCallback(isEnabled: Boolean) {
+public abstract class NavigationEventCallback<T : NavigationEventInfo>(isEnabled: Boolean) {
+
+    /** The most recent navigation info provided via [setInfo]. */
+    internal var currentInfo: T? = null
+        private set
+
+    /** Caches the navigation info from before the most recent call to [setInfo]. */
+    internal var previousInfo: T? = null
+        private set
 
     /**
      * Controls whether this callback is active and should be considered for event dispatching.
@@ -65,6 +73,17 @@ public abstract class NavigationEventCallback(isEnabled: Boolean) {
      */
     public fun remove() {
         dispatcher?.removeCallback(this)
+    }
+
+    /**
+     * Updates the current and previous navigation information for this callback.
+     *
+     * @param currentInfo The new navigation information to be set as the current state.
+     * @param previousInfo The navigation information to be set as the previous state.
+     */
+    public fun setInfo(currentInfo: T, previousInfo: T?) {
+        this.currentInfo = currentInfo
+        this.previousInfo = previousInfo
     }
 
     /** Callback for handling [NavigationEventDispatcher.dispatchOnStarted]. */

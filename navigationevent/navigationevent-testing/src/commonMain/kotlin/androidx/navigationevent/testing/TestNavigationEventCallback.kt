@@ -18,6 +18,7 @@ package androidx.navigationevent.testing
 
 import androidx.navigationevent.NavigationEvent
 import androidx.navigationevent.NavigationEventCallback
+import androidx.navigationevent.NavigationEventInfo.NotProvided
 
 /**
  * A test implementation of [NavigationEventCallback] that records received events and invocation
@@ -40,7 +41,7 @@ public class TestNavigationEventCallback(
         {},
     private val onEventCancelled: TestNavigationEventCallback.() -> Unit = {},
     private val onEventCompleted: TestNavigationEventCallback.() -> Unit = {},
-) : NavigationEventCallback(isEnabled) {
+) : NavigationEventCallback<NotProvided>(isEnabled) {
 
     private val _startedEvents = mutableListOf<NavigationEvent>()
 

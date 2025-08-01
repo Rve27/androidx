@@ -28,6 +28,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.snapshotFlow
 import androidx.navigationevent.NavigationEvent
 import androidx.navigationevent.NavigationEventCallback
+import androidx.navigationevent.NavigationEventInfo.NotProvided
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.BufferOverflow
@@ -133,7 +134,7 @@ private class OnBackInstance(
     scope: CoroutineScope,
     var isPredictiveBack: Boolean,
     onBack: suspend (progress: Flow<NavigationEvent>) -> Unit,
-    callback: NavigationEventCallback,
+    callback: NavigationEventCallback<*>,
 ) {
     val channel =
         Channel<NavigationEvent>(capacity = BUFFERED, onBufferOverflow = BufferOverflow.SUSPEND)
@@ -157,11 +158,12 @@ private class OnBackInstance(
     }
 }
 
+// TODO(mgalhardo): consider allowing `NavigationEventHandler` to set a `T` for State.
 private class NavigationEventHandlerCallback(
     enabled: () -> Boolean,
     var onBackScope: CoroutineScope,
     var currentOnBack: suspend (progress: Flow<NavigationEvent>) -> Unit,
-) : NavigationEventCallback(enabled()) {
+) : NavigationEventCallback<NotProvided>(enabled()) {
     private var onBackInstance: OnBackInstance? = null
     private var isActive = false
 

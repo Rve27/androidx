@@ -6,7 +6,7 @@
 // - Show declarations: true
 
 // Library unique name: <androidx.navigationevent:navigationevent-testing>
-final class androidx.navigationevent.testing/TestNavigationEventCallback : androidx.navigationevent/NavigationEventCallback { // androidx.navigationevent.testing/TestNavigationEventCallback|null[0]
+final class androidx.navigationevent.testing/TestNavigationEventCallback : androidx.navigationevent/NavigationEventCallback<androidx.navigationevent/NavigationEventInfo.NotProvided> { // androidx.navigationevent.testing/TestNavigationEventCallback|null[0]
     constructor <init>(kotlin/Boolean = ..., kotlin/Function2<androidx.navigationevent.testing/TestNavigationEventCallback, androidx.navigationevent/NavigationEvent, kotlin/Unit> = ..., kotlin/Function2<androidx.navigationevent.testing/TestNavigationEventCallback, androidx.navigationevent/NavigationEvent, kotlin/Unit> = ..., kotlin/Function1<androidx.navigationevent.testing/TestNavigationEventCallback, kotlin/Unit> = ..., kotlin/Function1<androidx.navigationevent.testing/TestNavigationEventCallback, kotlin/Unit> = ...) // androidx.navigationevent.testing/TestNavigationEventCallback.<init>|<init>(kotlin.Boolean;kotlin.Function2<androidx.navigationevent.testing.TestNavigationEventCallback,androidx.navigationevent.NavigationEvent,kotlin.Unit>;kotlin.Function2<androidx.navigationevent.testing.TestNavigationEventCallback,androidx.navigationevent.NavigationEvent,kotlin.Unit>;kotlin.Function1<androidx.navigationevent.testing.TestNavigationEventCallback,kotlin.Unit>;kotlin.Function1<androidx.navigationevent.testing.TestNavigationEventCallback,kotlin.Unit>){}[0]
 
     final val progressedEvents // androidx.navigationevent.testing/TestNavigationEventCallback.progressedEvents|{}progressedEvents[0]

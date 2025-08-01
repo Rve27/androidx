@@ -21,7 +21,11 @@ abstract class androidx.navigationevent/AbstractNavigationEventInputHandler { //
     final fun dispatchOnStarted(androidx.navigationevent/NavigationEvent) // androidx.navigationevent/AbstractNavigationEventInputHandler.dispatchOnStarted|dispatchOnStarted(androidx.navigationevent.NavigationEvent){}[0]
 }
 
-abstract class androidx.navigationevent/NavigationEventCallback { // androidx.navigationevent/NavigationEventCallback|null[0]
+abstract interface androidx.navigationevent/NavigationEventInfo { // androidx.navigationevent/NavigationEventInfo|null[0]
+    final object NotProvided : androidx.navigationevent/NavigationEventInfo // androidx.navigationevent/NavigationEventInfo.NotProvided|null[0]
+}
+
+abstract class <#A: androidx.navigationevent/NavigationEventInfo> androidx.navigationevent/NavigationEventCallback { // androidx.navigationevent/NavigationEventCallback|null[0]
     constructor <init>(kotlin/Boolean) // androidx.navigationevent/NavigationEventCallback.<init>|<init>(kotlin.Boolean){}[0]
 
     final var isEnabled // androidx.navigationevent/NavigationEventCallback.isEnabled|{}isEnabled[0]
@@ -29,6 +33,7 @@ abstract class androidx.navigationevent/NavigationEventCallback { // androidx.na
         final fun <set-isEnabled>(kotlin/Boolean) // androidx.navigationevent/NavigationEventCallback.isEnabled.<set-isEnabled>|<set-isEnabled>(kotlin.Boolean){}[0]
 
     final fun remove() // androidx.navigationevent/NavigationEventCallback.remove|remove(){}[0]
+    final fun setInfo(#A, #A?) // androidx.navigationevent/NavigationEventCallback.setInfo|setInfo(1:0;1:0?){}[0]
     open fun onEventCancelled() // androidx.navigationevent/NavigationEventCallback.onEventCancelled|onEventCancelled(){}[0]
     open fun onEventCompleted() // androidx.navigationevent/NavigationEventCallback.onEventCompleted|onEventCompleted(){}[0]
     open fun onEventProgressed(androidx.navigationevent/NavigationEvent) // androidx.navigationevent/NavigationEventCallback.onEventProgressed|onEventProgressed(androidx.navigationevent.NavigationEvent){}[0]
@@ -75,7 +80,7 @@ final class androidx.navigationevent/NavigationEventDispatcher { // androidx.nav
         final fun <get-isEnabled>(): kotlin/Boolean // androidx.navigationevent/NavigationEventDispatcher.isEnabled.<get-isEnabled>|<get-isEnabled>(){}[0]
         final fun <set-isEnabled>(kotlin/Boolean) // androidx.navigationevent/NavigationEventDispatcher.isEnabled.<set-isEnabled>|<set-isEnabled>(kotlin.Boolean){}[0]
 
-    final fun addCallback(androidx.navigationevent/NavigationEventCallback, androidx.navigationevent/NavigationEventPriority = ...) // androidx.navigationevent/NavigationEventDispatcher.addCallback|addCallback(androidx.navigationevent.NavigationEventCallback;androidx.navigationevent.NavigationEventPriority){}[0]
+    final fun addCallback(androidx.navigationevent/NavigationEventCallback<*>, androidx.navigationevent/NavigationEventPriority = ...) // androidx.navigationevent/NavigationEventDispatcher.addCallback|addCallback(androidx.navigationevent.NavigationEventCallback<*>;androidx.navigationevent.NavigationEventPriority){}[0]
     final fun dispose() // androidx.navigationevent/NavigationEventDispatcher.dispose|dispose(){}[0]
     final fun hasEnabledCallbacks(): kotlin/Boolean // androidx.navigationevent/NavigationEventDispatcher.hasEnabledCallbacks|hasEnabledCallbacks(){}[0]
 }

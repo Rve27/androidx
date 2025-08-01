@@ -34,7 +34,7 @@ package androidx.navigationevent {
     property public static int EDGE_RIGHT;
   }
 
-  public abstract class NavigationEventCallback {
+  public abstract class NavigationEventCallback<T extends androidx.navigationevent.NavigationEventInfo> {
     ctor public NavigationEventCallback(boolean isEnabled);
     method public final boolean isEnabled();
     method public void onEventCancelled();
@@ -43,14 +43,15 @@ package androidx.navigationevent {
     method public void onEventStarted(androidx.navigationevent.NavigationEvent event);
     method public final void remove();
     method public final void setEnabled(boolean);
+    method public final void setInfo(T currentInfo, T? previousInfo);
     property public final boolean isEnabled;
   }
 
   public final class NavigationEventDispatcher {
     ctor public NavigationEventDispatcher(androidx.navigationevent.NavigationEventDispatcher parentDispatcher);
     ctor public NavigationEventDispatcher(optional kotlin.jvm.functions.Function0<kotlin.Unit>? fallbackOnBackPressed, optional kotlin.jvm.functions.Function1<? super java.lang.Boolean,kotlin.Unit>? onHasEnabledCallbacksChanged);
-    method @MainThread public void addCallback(androidx.navigationevent.NavigationEventCallback callback, optional int priority);
-    method @BytecodeOnly @MainThread public void addCallback-3owFMvg(androidx.navigationevent.NavigationEventCallback, int);
+    method @MainThread public void addCallback(androidx.navigationevent.NavigationEventCallback<? extends java.lang.Object?> callback, optional int priority);
+    method @BytecodeOnly @MainThread public void addCallback-3owFMvg(androidx.navigationevent.NavigationEventCallback<? extends java.lang.Object!>, int);
     method @MainThread public void dispose();
     method public boolean hasEnabledCallbacks();
     method public boolean isEnabled();
@@ -61,6 +62,13 @@ package androidx.navigationevent {
   public interface NavigationEventDispatcherOwner {
     method public androidx.navigationevent.NavigationEventDispatcher getNavigationEventDispatcher();
     property public abstract androidx.navigationevent.NavigationEventDispatcher navigationEventDispatcher;
+  }
+
+  public interface NavigationEventInfo {
+  }
+
+  public static final class NavigationEventInfo.NotProvided implements androidx.navigationevent.NavigationEventInfo {
+    field public static final androidx.navigationevent.NavigationEventInfo.NotProvided INSTANCE;
   }
 
   public final class NavigationEventInputHandler extends androidx.navigationevent.AbstractNavigationEventInputHandler {

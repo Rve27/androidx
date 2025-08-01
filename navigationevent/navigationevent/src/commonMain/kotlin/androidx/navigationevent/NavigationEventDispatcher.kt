@@ -176,7 +176,7 @@ private constructor(
      *
      * **This is primarily for cleanup when this dispatcher is no longer needed.**
      */
-    private val callbacks = mutableSetOf<NavigationEventCallback>()
+    private val callbacks = mutableSetOf<NavigationEventCallback<*>>()
 
     init {
         // If a parent dispatcher is provided, register this dispatcher as its child.
@@ -247,7 +247,7 @@ private constructor(
     @Suppress("PairedRegistration") // Callback is removed via `NavigationEventCallback.remove()`
     @MainThread
     public fun addCallback(
-        callback: NavigationEventCallback,
+        callback: NavigationEventCallback<*>,
         priority: NavigationEventPriority = Default,
     ) {
         checkInvariants()
@@ -256,7 +256,7 @@ private constructor(
         callbacks += callback
     }
 
-    internal fun removeCallback(callback: NavigationEventCallback) {
+    internal fun removeCallback(callback: NavigationEventCallback<*>) {
         sharedProcessor.removeCallback(callback)
         callbacks -= callback
     }
