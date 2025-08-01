@@ -17,6 +17,7 @@
 package androidx.xr.runtime.internal
 
 import androidx.annotation.RestrictTo
+import androidx.xr.runtime.math.Matrix3
 import com.google.common.util.concurrent.ListenableFuture
 
 /**
@@ -131,6 +132,30 @@ public interface RenderingRuntime {
      * @param material The KhronosPbrMaterial to destroy.
      */
     public fun destroyKhronosPbrMaterial(material: MaterialResource)
+
+    /**
+     * Sets the base color texture for the Khronos PBR material. This texture defines the albedo or
+     * diffuse color of the material.
+     *
+     * @param material The handle of the Khronos PBR material.
+     * @param baseColor The handle of the base color texture.
+     */
+    public fun setBaseColorTextureOnKhronosPbrMaterial(
+        material: MaterialResource,
+        baseColor: TextureResource,
+    )
+
+    /**
+     * Sets the UV transformation matrix for the base color texture. This allows for scaling,
+     * rotating, and translating the texture coordinates.
+     *
+     * @param material The handle of the Khronos PBR material.
+     * @param uvTransform The uv coordinates of the transform stored in a matrix.
+     */
+    public fun setBaseColorUvTransformOnKhronosPbrMaterial(
+        material: MaterialResource,
+        uvTransform: Matrix3,
+    )
 
     /** Starts the renderer. */
     public fun startRenderer()
