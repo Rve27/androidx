@@ -18,6 +18,7 @@ package androidx.xr.runtime.internal
 
 import androidx.annotation.RestrictTo
 import androidx.xr.runtime.math.Matrix3
+import androidx.xr.runtime.math.Vector4
 import com.google.common.util.concurrent.ListenableFuture
 
 /**
@@ -156,6 +157,15 @@ public interface RenderingRuntime {
         material: MaterialResource,
         uvTransform: Matrix3,
     )
+
+    /**
+     * Sets the base color factors for the Khronos PBR material. These factors multiplies the base
+     * color texture or defines a uniform base color.
+     *
+     * @param material The handle of the Khronos PBR material.
+     * @param factors The base colors on the Khronos PBR material.
+     */
+    public fun setBaseColorFactorsOnKhronosPbrMaterial(material: MaterialResource, factors: Vector4)
 
     /** Starts the renderer. */
     public fun startRenderer()

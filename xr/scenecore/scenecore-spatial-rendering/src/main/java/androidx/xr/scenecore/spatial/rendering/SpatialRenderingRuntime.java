@@ -27,6 +27,7 @@ import androidx.xr.runtime.internal.RenderingRuntime;
 import androidx.xr.runtime.internal.SceneRuntime;
 import androidx.xr.runtime.internal.TextureResource;
 import androidx.xr.runtime.math.Matrix3;
+import androidx.xr.runtime.math.Vector4;
 import androidx.xr.scenecore.impl.extensions.XrExtensionsProvider;
 import androidx.xr.scenecore.impl.impress.ImpressApi;
 import androidx.xr.scenecore.impl.impress.ImpressApiImpl;
@@ -350,6 +351,20 @@ class SpatialRenderingRuntime implements RenderingRuntime {
                 data[6],
                 data[7],
                 data[8]);
+    }
+
+    @Override
+    public void setBaseColorFactorsOnKhronosPbrMaterial(
+            @NonNull MaterialResource material, @NonNull Vector4 factors) {
+        if (!(material instanceof MaterialResourceImpl)) {
+            throw new IllegalArgumentException("MaterialResource is not a MaterialResourceImpl");
+        }
+        mImpressApi.setBaseColorFactorsOnKhronosPbrMaterial(
+                ((MaterialResourceImpl) material).getMaterialToken(),
+                factors.getX(),
+                factors.getY(),
+                factors.getZ(),
+                factors.getW());
     }
 
     @Override

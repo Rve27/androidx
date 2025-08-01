@@ -581,6 +581,7 @@ package androidx.xr.runtime.testing {
     method public java.util.List<androidx.xr.runtime.testing.FakeRenderingRuntime.FakeWaterMaterial> getCreatedWaterMaterials();
     method public void setAlphaMapOnWaterMaterial(androidx.xr.runtime.internal.MaterialResource material, androidx.xr.runtime.internal.TextureResource alphaMap);
     method public void setAlphaStepMultiplierOnWaterMaterial(androidx.xr.runtime.internal.MaterialResource material, float alphaStepMultiplier);
+    method public void setBaseColorFactorsOnKhronosPbrMaterial(androidx.xr.runtime.internal.MaterialResource material, androidx.xr.runtime.math.Vector4 factors);
     method public void setBaseColorTextureOnKhronosPbrMaterial(androidx.xr.runtime.internal.MaterialResource material, androidx.xr.runtime.internal.TextureResource baseColor);
     method public void setBaseColorUvTransformOnKhronosPbrMaterial(androidx.xr.runtime.internal.MaterialResource material, androidx.xr.runtime.math.Matrix3 uvTransform);
     method public void setNormalBoundaryOnWaterMaterial(androidx.xr.runtime.internal.MaterialResource material, float normalBoundary);

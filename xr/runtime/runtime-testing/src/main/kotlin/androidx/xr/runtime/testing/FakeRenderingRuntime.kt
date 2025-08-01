@@ -206,6 +206,13 @@ public class FakeRenderingRuntime(
         (material as? FakeKhronosPbrMaterial)?.baseColorUvTransform = uvTransform
     }
 
+    override fun setBaseColorFactorsOnKhronosPbrMaterial(
+        material: MaterialResource,
+        factors: Vector4,
+    ) {
+        (material as? FakeKhronosPbrMaterial)?.baseColorFactors = factors
+    }
+
     override fun startRenderer() {}
 
     override fun stopRenderer() {}
