@@ -1379,7 +1379,7 @@ public class AppSearchLoggerTest {
         RemoveStats.Builder rStatsBuilder = new RemoveStats.Builder(testPackageName, testDatabase);
         mAppSearchImpl.removeByQuery(testPackageName, testDatabase,
                 /*queryExpression=*/"body", searchSpec,
-                rStatsBuilder,
+                /*deletedIds=*/null, rStatsBuilder,
                 /*callStatsBuilder=*/null);
         RemoveStats rStats = rStatsBuilder.build();
 

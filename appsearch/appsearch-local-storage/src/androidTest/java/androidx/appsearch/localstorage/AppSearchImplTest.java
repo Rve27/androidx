@@ -3212,20 +3212,19 @@ public class AppSearchImplTest {
                 new SearchSpec.Builder().addFilterSchemas("FakeType").setTermMatch(
                         TermMatchType.Code.PREFIX_VALUE).build();
         mAppSearchImpl.removeByQuery("package", "EmptyDatabase",
-                "", searchSpec, /*statsBuilder=*/ null,
+                "", searchSpec, /*deletedIds=*/null, /*statsBuilder=*/ null,
                 /*callStatsBuilder=*/null);
 
         searchSpec =
                 new SearchSpec.Builder().addFilterNamespaces("FakeNamespace").setTermMatch(
                         TermMatchType.Code.PREFIX_VALUE).build();
         mAppSearchImpl.removeByQuery("package", "EmptyDatabase",
-                "", searchSpec, /*statsBuilder=*/ null,
+                "", searchSpec, /*deletedIds=*/null, /*statsBuilder=*/ null,
                 /*callStatsBuilder=*/null);
 
         searchSpec = new SearchSpec.Builder().setTermMatch(TermMatchType.Code.PREFIX_VALUE).build();
         mAppSearchImpl.removeByQuery("package", "EmptyDatabase", "", searchSpec,
-                /*statsBuilder=*/ null,
-                /*callStatsBuilder=*/null);
+                /*deletedIds=*/null, /*statsBuilder=*/ null, /*callStatsBuilder=*/null);
     }
 
     @Test
@@ -5473,6 +5472,7 @@ public class AppSearchImplTest {
                 "database",
                 "query",
                 new SearchSpec.Builder().build(),
+                /*deletedIds=*/null,
                 /*removeStatsBuilder=*/ null,
                 /*callStatsBuilder=*/ null));
 
@@ -5712,8 +5712,8 @@ public class AppSearchImplTest {
         // Delete the first document
         mAppSearchImpl.removeByQuery("package", "database", "",
                 new SearchSpec.Builder().addFilterNamespaces("namespace1").setTermMatch(
-                        SearchSpec.TERM_MATCH_EXACT_ONLY).build(), /*statsBuilder=*/ null,
-                /*callStatsBuilder=*/null);
+                        SearchSpec.TERM_MATCH_EXACT_ONLY).build(), /*deletedIds=*/null,
+                /*statsBuilder=*/ null, /*callStatsBuilder=*/null);
         mAppSearchImpl.persistToDisk("package",
                 BaseStats.CALL_TYPE_REMOVE_DOCUMENTS_BY_SEARCH,
                 PersistType.Code.LITE, /*logger=*/ null,
@@ -5990,8 +5990,8 @@ public class AppSearchImplTest {
         // Delete the first document
         mAppSearchImpl.removeByQuery("package", "database", "",
                 new SearchSpec.Builder().addFilterNamespaces("namespace1").setTermMatch(
-                        SearchSpec.TERM_MATCH_EXACT_ONLY).build(), /*statsBuilder=*/ null,
-                /*callStatsBuilder=*/null);
+                        SearchSpec.TERM_MATCH_EXACT_ONLY).build(), /*deletedIds=*/null,
+                /*statsBuilder=*/ null, /*callStatsBuilder=*/null);
         mAppSearchImpl.persistToDisk("package",
                 BaseStats.CALL_TYPE_REMOVE_DOCUMENTS_BY_SEARCH,
                 PersistType.Code.RECOVERY_PROOF, /*logger=*/ null,
@@ -6351,8 +6351,8 @@ public class AppSearchImplTest {
                 "package", "database");
         mAppSearchImpl.removeByQuery("package", "database", "",
                 new SearchSpec.Builder().addFilterNamespaces("namespace1").setTermMatch(
-                        SearchSpec.TERM_MATCH_EXACT_ONLY).build(), removeStatsBuilder,
-                /*callStatsBuilder=*/null);
+                        SearchSpec.TERM_MATCH_EXACT_ONLY).build(),
+                /*deletedIds=*/null, removeStatsBuilder, /*callStatsBuilder=*/null);
         RemoveStats removeStats = removeStatsBuilder.build();
         assertThat(removeStats.getEnabledFeatures()).isEqualTo(onlyLaunchVMFeature);
 
@@ -6446,8 +6446,8 @@ public class AppSearchImplTest {
                 "package", "database");
         mAppSearchImpl.removeByQuery("package", "database", "",
                 new SearchSpec.Builder().addFilterNamespaces("namespace1").setTermMatch(
-                        SearchSpec.TERM_MATCH_EXACT_ONLY).build(), removeStatsBuilder,
-                /*callStatsBuilder=*/null);
+                        SearchSpec.TERM_MATCH_EXACT_ONLY).build(), /*deletedIds=*/null,
+                removeStatsBuilder, /*callStatsBuilder=*/null);
         RemoveStats removeStats = removeStatsBuilder.build();
         assertThat(removeStats.getEnabledFeatures()).isEqualTo(noLaunchFeature);
 
@@ -6559,7 +6559,7 @@ public class AppSearchImplTest {
         removeStatsBuilder = new RemoveStats.Builder(
                 "package", "database");
         mAppSearchImpl.removeByQuery("package", "database", "",
-                new SearchSpec.Builder().build(), removeStatsBuilder,
+                new SearchSpec.Builder().build(), /*deletedIds=*/null, removeStatsBuilder,
                 /*callStatsBuilder=*/null);
         removeStats = removeStatsBuilder.build();
         assertThat(removeStats.getLastWriteOperation())
@@ -7386,6 +7386,7 @@ public class AppSearchImplTest {
                 "database",
                 "nothing",
                 new SearchSpec.Builder().build(),
+                /*deletedIds=*/null,
                 /*removeStatsBuilder=*/null,
                 /*callStatsBuilder=*/null);
 
@@ -7408,6 +7409,7 @@ public class AppSearchImplTest {
                 "database",
                 "tab",
                 new SearchSpec.Builder().build(),
+                /*deletedIds=*/null,
                 /*removeStatsBuilder=*/null,
                 /*callStatsBuilder=*/null);
 
@@ -7450,6 +7452,7 @@ public class AppSearchImplTest {
                         new SearchSpec.Builder()
                                 .setJoinSpec(new JoinSpec.Builder("childProp").build())
                                 .build(),
+                        /*deletedIds=*/null,
                         /*removeStatsBuilder=*/null,
                         /*callStatsBuilder=*/null));
         assertThat(e.getMessage()).isEqualTo(
@@ -8351,7 +8354,7 @@ public class AppSearchImplTest {
         // Remove two documents by query. Now we should be under the limit and be able to add
         // another document.
         mAppSearchImpl.removeByQuery("package", "database", "evenOdd:odd",
-                new SearchSpec.Builder().build(), /*removeStatsBuilder=*/null,
+                new SearchSpec.Builder().build(), /*deletedIds=*/null, /*removeStatsBuilder=*/null,
                 /*callStatsBuilder=*/null);
         mAppSearchImpl.putDocument(
                 "package", "database", document5, /*sendChangeNotifications=*/ false,

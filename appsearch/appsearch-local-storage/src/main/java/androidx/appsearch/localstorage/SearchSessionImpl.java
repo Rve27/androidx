@@ -25,9 +25,11 @@ import android.os.ParcelFileDescriptor;
 import android.os.SystemClock;
 import android.util.Log;
 
+import androidx.annotation.OptIn;
 import androidx.annotation.WorkerThread;
 import androidx.appsearch.app.AppSearchBatchResult;
 import androidx.appsearch.app.AppSearchBlobHandle;
+import androidx.appsearch.app.AppSearchResult;
 import androidx.appsearch.app.AppSearchSession;
 import androidx.appsearch.app.CommitBlobResponse;
 import androidx.appsearch.app.ExperimentalAppSearchApi;
@@ -61,6 +63,7 @@ import androidx.appsearch.localstorage.visibilitystore.CallerAccess;
 import androidx.appsearch.stats.BaseStats;
 import androidx.appsearch.stats.SchemaMigrationStats;
 import androidx.appsearch.util.SchemaMigrationUtil;
+import androidx.collection.ArrayMap;
 import androidx.collection.ArraySet;
 import androidx.core.util.Preconditions;
 
@@ -590,6 +593,7 @@ class SearchSessionImpl implements AppSearchSession {
         });
     }
 
+    @OptIn(markerClass = ExperimentalAppSearchApi.class)
     @Override
     public @NonNull ListenableFuture<AppSearchBatchResult<String, Void>> removeAsync(
             @NonNull RemoveByDocumentIdRequest request) {
@@ -598,23 +602,39 @@ class SearchSessionImpl implements AppSearchSession {
         ListenableFuture<AppSearchBatchResult<String, Void>> future = execute(() -> {
             AppSearchBatchResult.Builder<String, Void> resultBuilder =
                     new AppSearchBatchResult.Builder<>();
-            for (String id : request.getIds()) {
-                RemoveStats.Builder removeStatsBuilder = null;
-                if (mLogger != null) {
-                    removeStatsBuilder = new RemoveStats.Builder(mPackageName, mDatabaseName);
-                }
+            RemoveStats.Builder removeStatsBuilder = null;
+            if (mLogger != null) {
+                removeStatsBuilder = new RemoveStats.Builder(mPackageName, mDatabaseName);
+            }
 
-                try {
-                    mAppSearchImpl.remove(mPackageName, mDatabaseName, request.getNamespace(), id,
-                            removeStatsBuilder,
-                            /*callStatsBuilder=*/null);
-                    resultBuilder.setSuccess(id, /*value=*/null);
-                } catch (Throwable t) {
-                    resultBuilder.setResult(id, throwableToFailedResult(t));
-                } finally {
-                    if (mLogger != null) {
-                        mLogger.logStats(removeStatsBuilder.build());
+            try {
+                Map<String, Set<String>> deletedIds = new ArrayMap<>();
+                SearchSpec searchSpec =
+                        new SearchSpec.Builder()
+                                .addFilterDocumentIds(request.getIds())
+                                .addFilterNamespaces(request.getNamespace())
+                                .addFilterPackageNames(mPackageName)
+                                .build();
+                mAppSearchImpl.removeByQuery(mPackageName, mDatabaseName, /* queryExpression= */"",
+                        searchSpec, deletedIds, removeStatsBuilder,
+                        /* callStatsBuilder= */null);
+                Set<String> deletionSet = deletedIds.get(request.getNamespace());
+                for (String id : request.getIds()) {
+                    if (deletionSet != null && deletionSet.contains(id)) {
+                        resultBuilder.setSuccess(id, /*value=*/null);
+                    } else {
+                        resultBuilder.setResult(id, AppSearchResult.newFailedResult(
+                                AppSearchResult.RESULT_NOT_FOUND, /*errorMessage=*/null));
                     }
+                }
+            } catch (Throwable t) {
+                AppSearchResult<Void> failure = throwableToFailedResult(t);
+                for (String id : request.getIds()) {
+                    resultBuilder.setResult(id, failure);
+                }
+            } finally {
+                if (mLogger != null) {
+                    mLogger.logStats(removeStatsBuilder.build());
                 }
             }
             // Now that the batch has been written. Persist the newly written data.
@@ -652,7 +672,7 @@ class SearchSessionImpl implements AppSearchSession {
                 removeStatsBuilder = new RemoveStats.Builder(mPackageName, mDatabaseName);
             }
             mAppSearchImpl.removeByQuery(mPackageName, mDatabaseName, queryExpression,
-                    searchSpec, removeStatsBuilder, /*callStatsBuilder=*/null);
+                    searchSpec, /*deletedIds=*/null, removeStatsBuilder, /*callStatsBuilder=*/null);
             // Now that the batch has been written. Persist the newly written data.
             mAppSearchImpl.persistToDisk(
                     mPackageName,

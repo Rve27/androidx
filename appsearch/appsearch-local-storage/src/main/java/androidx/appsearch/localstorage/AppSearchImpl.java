@@ -152,6 +152,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -3498,6 +3499,7 @@ public final class AppSearchImpl implements Closeable {
      * @param databaseName       The databaseName the document is in.
      * @param queryExpression    Query String to search.
      * @param searchSpec         Defines what and how to remove
+     * @param deletedIds collection to populate with ids of successfully deleted docs.
      * @param removeStatsBuilder builder for {@link RemoveStats} to hold stats for remove
      * @throws AppSearchException on IcingSearchEngine error.
      * @throws IllegalArgumentException if the {@link SearchSpec} contains a {@link JoinSpec}.
@@ -3505,6 +3507,7 @@ public final class AppSearchImpl implements Closeable {
     public void removeByQuery(@NonNull String packageName, @NonNull String databaseName,
             @NonNull String queryExpression,
             @NonNull SearchSpec searchSpec,
+            @Nullable Map<String, Set<String>> deletedIds,
             RemoveStats.@Nullable Builder removeStatsBuilder,
             CallStats.@Nullable Builder callStatsBuilder)
             throws AppSearchException {
@@ -3569,7 +3572,7 @@ public final class AppSearchImpl implements Closeable {
             }
 
             doRemoveByQueryLocked(packageName, finalSearchSpec, prefixedObservedSchemas,
-                    removeStatsBuilder, callStatsBuilder);
+                    deletedIds, removeStatsBuilder, callStatsBuilder);
 
         } finally {
             if (removeStatsBuilder != null) {
@@ -3601,11 +3604,13 @@ public final class AppSearchImpl implements Closeable {
             @NonNull String packageName,
             @NonNull SearchSpecProto finalSearchSpec,
             @Nullable Set<String> prefixedObservedSchemas,
+            @Nullable Map<String, Set<String>> deletedIds,
             RemoveStats.@Nullable Builder removeStatsBuilder,
             CallStats.@Nullable Builder callStatsBuilder) throws AppSearchException {
         LogUtil.piiTrace(TAG, "removeByQuery, request", finalSearchSpec);
         boolean returnDeletedDocumentInfo =
-                prefixedObservedSchemas != null && !prefixedObservedSchemas.isEmpty();
+                (prefixedObservedSchemas != null && !prefixedObservedSchemas.isEmpty())
+                || deletedIds != null;
         DeleteByQueryResultProto deleteResultProto =
                 mIcingSearchEngineLocked.deleteByQuery(finalSearchSpec,
                         returnDeletedDocumentInfo);
@@ -3633,37 +3638,47 @@ public final class AppSearchImpl implements Closeable {
                 deleteResultProto.getDeleteByQueryStats().getNumDocumentsDeleted();
         mDocumentLimiterLocked.reportDocumentsRemoved(packageName, numDocumentsDeleted);
 
-        if (prefixedObservedSchemas != null && !prefixedObservedSchemas.isEmpty()) {
-            dispatchChangeNotificationsAfterRemoveByQueryLocked(packageName,
-                    deleteResultProto, prefixedObservedSchemas);
+        if (returnDeletedDocumentInfo) {
+            processDeletedDocumentInfo(
+                    packageName, deleteResultProto, prefixedObservedSchemas, deletedIds);
         }
     }
 
     @GuardedBy("mReadWriteLock")
-    private void dispatchChangeNotificationsAfterRemoveByQueryLocked(
+    private void processDeletedDocumentInfo(
             @NonNull String packageName,
             @NonNull DeleteByQueryResultProto deleteResultProto,
-            @NonNull Set<String> prefixedObservedSchemas
+            @Nullable Set<String> prefixedObservedSchemas,
+            @Nullable Map<String, Set<String>> deletedIds
     ) throws AppSearchException {
         for (int i = 0; i < deleteResultProto.getDeletedDocumentsCount(); ++i) {
             DeleteByQueryResultProto.DocumentGroupInfo group =
                     deleteResultProto.getDeletedDocuments(i);
-            if (!prefixedObservedSchemas.contains(group.getSchema())) {
-                continue;
+            // 1. Populate deletedIds if it is provided.
+            String namespace = null;
+            if (deletedIds != null) {
+                namespace = removePrefix(group.getNamespace());
+                deletedIds.put(namespace, new ArraySet<>(group.getUrisList()));
             }
-            String databaseName = getDatabaseName(group.getNamespace());
-            String namespace = removePrefix(group.getNamespace());
-            String schemaType = removePrefix(group.getSchema());
-            for (int j = 0; j < group.getUrisCount(); ++j) {
-                String uri = group.getUris(j);
-                mObserverManager.onDocumentChange(
-                        packageName,
-                        databaseName,
-                        namespace,
-                        schemaType,
-                        uri,
-                        mDocumentVisibilityStoreLocked,
-                        mVisibilityCheckerLocked);
+            // 2. If this schema type is observed, then notify the observer
+            if (prefixedObservedSchemas != null
+                    && prefixedObservedSchemas.contains(group.getSchema())) {
+                if (namespace == null) {
+                    namespace = removePrefix(group.getNamespace());
+                }
+                String databaseName = getDatabaseName(group.getNamespace());
+                String schemaType = removePrefix(group.getSchema());
+                for (int j = 0; j < group.getUrisCount(); ++j) {
+                    String uri = group.getUris(j);
+                    mObserverManager.onDocumentChange(
+                            packageName,
+                            databaseName,
+                            namespace,
+                            schemaType,
+                            uri,
+                            mDocumentVisibilityStoreLocked,
+                            mVisibilityCheckerLocked);
+                }
             }
         }
     }
