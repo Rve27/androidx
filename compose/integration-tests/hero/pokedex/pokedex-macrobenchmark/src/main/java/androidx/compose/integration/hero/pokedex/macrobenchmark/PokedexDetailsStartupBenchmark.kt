@@ -22,6 +22,7 @@ import androidx.benchmark.macro.junit4.MacrobenchmarkRule
 import androidx.compose.integration.hero.common.macrobenchmark.HeroMacrobenchmarkDefaults
 import androidx.compose.integration.hero.pokedex.macrobenchmark.PokedexConstants.Compose.POKEDEX_ENABLE_SHARED_ELEMENT_TRANSITIONS
 import androidx.compose.integration.hero.pokedex.macrobenchmark.PokedexConstants.Compose.POKEDEX_ENABLE_SHARED_TRANSITION_SCOPE
+import androidx.compose.integration.hero.pokedex.macrobenchmark.PokedexConstants.Compose.POKEDEX_START_DESTINATION
 import androidx.compose.integration.hero.pokedex.macrobenchmark.PokedexConstants.POKEDEX_TARGET_PACKAGE_NAME
 import androidx.test.filters.LargeTest
 import androidx.testutils.createStartupCompilationParams
@@ -33,13 +34,16 @@ import org.junit.runners.Parameterized
 
 @LargeTest
 @RunWith(Parameterized::class)
-class PokedexStartupBenchmark(
+class PokedexDetailsStartupBenchmark(
     private val startupMode: StartupMode,
     private val compilation: CompilationMode,
     private val enableSharedTransitionScope: Boolean,
     private val enableSharedElementTransitions: Boolean,
 ) {
     @get:Rule val benchmarkRule = MacrobenchmarkRule()
+
+    @Test
+    fun startupCompose() = measureStartup("$POKEDEX_TARGET_PACKAGE_NAME.POKEDEX_COMPOSE_ACTIVITY")
 
     private fun measureStartup(action: String) =
         benchmarkRule.measureStartup(
@@ -48,19 +52,11 @@ class PokedexStartupBenchmark(
             packageName = POKEDEX_TARGET_PACKAGE_NAME,
             iterations = HeroMacrobenchmarkDefaults.ITERATIONS,
         ) {
-            // Start out by deleting any existing data
-            resetPokedexDatabase()
-
             this.action = action
             this.putExtra(POKEDEX_ENABLE_SHARED_TRANSITION_SCOPE, enableSharedTransitionScope)
             this.putExtra(POKEDEX_ENABLE_SHARED_ELEMENT_TRANSITIONS, enableSharedElementTransitions)
+            this.putExtra(POKEDEX_START_DESTINATION, "details")
         }
-
-    @Test
-    fun startupCompose() = measureStartup("$POKEDEX_TARGET_PACKAGE_NAME.POKEDEX_COMPOSE_ACTIVITY")
-
-    @Test
-    fun startupViews() = measureStartup("$POKEDEX_TARGET_PACKAGE_NAME.POKEDEX_VIEWS_HOME_ACTIVITY")
 
     companion object {
         /**

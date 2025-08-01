@@ -17,6 +17,7 @@
 package androidx.compose.integration.hero.pokedex.macrobenchmark
 
 import android.content.Intent
+import android.util.Log
 import androidx.benchmark.macro.CompilationMode
 import androidx.benchmark.macro.ExperimentalMetricApi
 import androidx.benchmark.macro.FrameTimingGfxInfoMetric
@@ -28,11 +29,12 @@ import androidx.compose.integration.hero.pokedex.macrobenchmark.PokedexConstants
 import androidx.compose.integration.hero.pokedex.macrobenchmark.PokedexConstants.POKEDEX_TARGET_PACKAGE_NAME
 import androidx.test.filters.LargeTest
 import androidx.test.uiautomator.By
-import androidx.test.uiautomator.Direction
-import androidx.test.uiautomator.UiObject2
+import androidx.test.uiautomator.SearchCondition
+import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.Until
 import androidx.testutils.createCompilationParams
 import androidx.testutils.defaultComposeScrollingMetrics
+import kotlin.IllegalArgumentException
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -40,33 +42,16 @@ import org.junit.runners.Parameterized
 
 @LargeTest
 @RunWith(Parameterized::class)
-class PokedexScrollBenchmark(
+class PokedexTransitionBenchmark(
     val compilationMode: CompilationMode,
     val enableSharedTransitionScope: Boolean,
     val enableSharedElementTransitions: Boolean,
 ) {
     @get:Rule val benchmarkRule = MacrobenchmarkRule()
 
-    @Test
-    fun scrollHomeCompose() =
-        benchmarkScroll(
-            action = "$POKEDEX_TARGET_PACKAGE_NAME.POKEDEX_COMPOSE_ACTIVITY",
-            setupBlock = {
-                val searchCondition = Until.hasObject(By.res("Pokemon"))
-                device.wait(searchCondition, 3_000)
-                val content = device.findObject(By.res("PokedexList"))
-                // Set gesture margin to avoid triggering gesture navigation
-                content.setGestureMargin(device.displayWidth / 5)
-            },
-            measureBlock = { scrollActions(device.findObject(By.res("PokedexList"))) },
-        )
-
     @OptIn(ExperimentalMetricApi::class)
-    private fun benchmarkScroll(
-        action: String,
-        setupBlock: MacrobenchmarkScope.() -> Unit,
-        measureBlock: MacrobenchmarkScope.() -> Unit,
-    ) =
+    @Test
+    fun homeToDetailsTransition() {
         benchmarkRule.measureRepeated(
             packageName = POKEDEX_TARGET_PACKAGE_NAME,
             metrics = defaultComposeScrollingMetrics() + FrameTimingGfxInfoMetric(),
@@ -77,42 +62,90 @@ class PokedexScrollBenchmark(
                 resetPokedexDatabase()
 
                 val intent = Intent()
-                intent.action = action
+                intent.action = "$POKEDEX_TARGET_PACKAGE_NAME.POKEDEX_COMPOSE_ACTIVITY"
                 intent.putExtra(POKEDEX_ENABLE_SHARED_TRANSITION_SCOPE, enableSharedTransitionScope)
                 intent.putExtra(
                     POKEDEX_ENABLE_SHARED_ELEMENT_TRANSITIONS,
                     enableSharedElementTransitions,
                 )
                 startActivityAndWait(intent)
-                setupBlock()
-            },
-            measureBlock = measureBlock,
-        )
 
-    private fun MacrobenchmarkScope.scrollActions(content: UiObject2) {
-        content.fling(Direction.DOWN)
-        device.waitForIdle()
-        content.fling(Direction.UP)
-        device.waitForIdle()
-        content.fling(Direction.DOWN)
-        device.waitForIdle()
-        content.fling(Direction.UP)
+                // Ablazeon always is the first pokemon in the grid
+                val searchCondition = Until.hasObject(By.res("Ablazeon_card"))
+                device.wait(searchCondition, 3_000)
+                val content = device.findObject(By.res("PokedexList"))
+                // Set gesture margin to avoid triggering gesture navigation
+                content.setGestureMargin(device.displayWidth / 5)
+            },
+        ) {
+            homeToDetailsAndBackAction("Ablazeon")
+            device.waitForIdle()
+            homeToDetailsAndBackAction("Anglark")
+        }
+    }
+
+    private fun MacrobenchmarkScope.homeToDetailsAndBackAction(pokemonName: String) {
+        val list = device.findObject(By.res("PokedexList"))
+        val pokemonCard = list.findObject(By.res("${pokemonName}_card"))
+        pokemonCard.click()
+
+        if (enableSharedElementTransitions) {
+            waitForTransitionStatus("details", active = true)
+            waitForTransitionStatus("details", active = false)
+        }
+
+        device.waitOrThrow(Until.hasObject(By.res("progress-animation-active-true")), 1000)
+        device.waitOrThrow(Until.gone(By.res("progress-animation-active-true")), 1000)
+
+        device.findObject(By.res("pokedexDetailsBack")).click()
+
+        if (enableSharedElementTransitions) {
+            waitForTransitionStatus("home", active = true)
+        }
+        waitForTransitionStatus("home", active = false)
         device.waitForIdle()
     }
 
+    private fun MacrobenchmarkScope.waitForTransitionStatus(
+        name: String,
+        active: Boolean,
+        timeoutMs: Long = 2_000L,
+    ) {
+        val transitionElementName = "pokedex-$name-transition-active-$active"
+        val waitForPokedexDetailsTransitionResult: Boolean? =
+            device.wait(Until.hasObject(By.res(transitionElementName)), timeoutMs)
+        if (waitForPokedexDetailsTransitionResult == null) {
+            Log.d(
+                "PokedexTransitionBenchmark",
+                "Waited for $transitionElementName, did not appear after $timeoutMs ms." +
+                    "Dumping window hierarchy.",
+            )
+            device.dumpWindowHierarchy(System.out)
+            throw IllegalArgumentException(
+                "Waited for $transitionElementName, did not appear" + " after $timeoutMs ms."
+            )
+        }
+    }
+
     companion object {
+
         /**
          * Parameters for the benchmark. Uses abbreviations because of file length limit for
-         * results. compilation = Compilation Mode eSTS = enableSharedTransitionScope eSET =
+         * results. compilation = Compilation Mode. We use CompilationMode.Full() in CI to reduce
+         * the amount of benchmark permutations. eSTS = enableSharedTransitionScope eSET =
          * enableSharedElementTransition
          */
         @Parameterized.Parameters(name = "compilation={0},eSTS={1},eSET={2}")
         @JvmStatic
-        fun parameters(): List<Array<Any>> =
-            createCompilationParams().flatMap { compilationMode ->
+        fun parameters() =
+            createCompilationParams(compilationModes = listOf(CompilationMode.Full())).flatMap {
+                compilationMode ->
                 PokedexSharedElementBenchmarkConfiguration.AllConfigurations.map { configuration ->
                     arrayOf(*compilationMode, *configuration.asBenchmarkArguments())
                 }
             }
     }
 }
+
+private fun <U> UiDevice.waitOrThrow(condition: SearchCondition<U>, timeout: Long): U =
+    requireNotNull(wait(condition, timeout))
