@@ -39,6 +39,7 @@ import androidx.pdf.adapter.PdfPage
 import androidx.pdf.annotation.models.AnnotationResult
 import androidx.pdf.annotation.models.PdfAnnotation
 import androidx.pdf.models.Dimensions
+import androidx.pdf.utils.readAnnotationsFromPfd
 
 @RestrictTo(RestrictTo.Scope.LIBRARY)
 internal class PdfDocumentRemoteImpl(
@@ -148,8 +149,10 @@ internal class PdfDocumentRemoteImpl(
     }
 
     override fun addAnnotations(pfd: ParcelFileDescriptor): AnnotationResult? {
+        val pdfAnnotationsData = readAnnotationsFromPfd(pfd)
+
         // TODO: addAnnotations to be implemented in subsequent CL
-        return AnnotationResult(listOf(), listOf())
+        return AnnotationResult(pdfAnnotationsData, listOf())
     }
 
     override fun getPageAnnotations(pageNum: Int): List<PdfAnnotation> {

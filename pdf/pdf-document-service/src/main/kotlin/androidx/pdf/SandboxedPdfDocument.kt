@@ -395,7 +395,13 @@ public class SandboxedPdfDocument(
     }
 
     override suspend fun applyEdits(sourcePfd: ParcelFileDescriptor): AnnotationResult {
-        // TODO: b/434620300 - Return success list after getting success IDs from service
+        val annotationResult = withDocument { pdfDocumentRemote ->
+            pdfDocumentRemote.addAnnotations(sourcePfd)
+        }
+        if (annotationResult != null) {
+            return annotationResult
+        }
+
         return AnnotationResult(listOf(), listOf())
     }
 

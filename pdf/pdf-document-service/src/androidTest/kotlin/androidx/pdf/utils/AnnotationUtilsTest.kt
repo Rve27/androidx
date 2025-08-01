@@ -18,6 +18,8 @@ package androidx.pdf.utils
 
 import android.content.Context
 import android.os.Build
+import androidx.pdf.annotation.models.EditId
+import androidx.pdf.annotation.models.PdfAnnotationData
 import androidx.pdf.annotation.models.StampAnnotation
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -38,7 +40,14 @@ class AnnotationUtilsTest {
 
     @Test
     fun writingAnnotationToFile_writeAndReadFromSamePfd() = runTest {
-        val expectedAnnotations = listOf(getSampleStampAnnotation(0), getSampleStampAnnotation(1))
+        // Define the expected annotationsData to be written.
+        val expectedAnnotations =
+            listOf(
+                PdfAnnotationData(EditId(pageNum = 0, value = "0"), getSampleStampAnnotation(0)),
+                PdfAnnotationData(EditId(pageNum = 1, value = "1"), getSampleStampAnnotation(1)),
+            )
+
+        // Get the application context.
         val context = ApplicationProvider.getApplicationContext<Context>()
 
         // Create a ParcelFileDescriptor for the test PDF document in read-write mode.
@@ -54,17 +63,22 @@ class AnnotationUtilsTest {
         assertNotNull(actualAnnotations)
         assertEquals(actualAnnotations.size, 2)
         for (i in 0 until expectedAnnotations.size) {
-            assert(actualAnnotations[i] is StampAnnotation)
+            assert(actualAnnotations[i].annotation is StampAnnotation)
             assertStampAnnotationEquals(
-                expectedAnnotations[i],
-                actualAnnotations[i] as StampAnnotation,
+                expectedAnnotations[i].annotation as StampAnnotation,
+                actualAnnotations[i].annotation as StampAnnotation,
             )
         }
     }
 
     @Test
     fun writingAnnotationToFile_writeAndReadMultipleTimesFromSamePfd() = runTest {
-        val expectedAnnotations = listOf(getSampleStampAnnotation(0), getSampleStampAnnotation(1))
+        val expectedAnnotations =
+            listOf(
+                PdfAnnotationData(EditId(pageNum = 0, value = "0"), getSampleStampAnnotation(0)),
+                PdfAnnotationData(EditId(pageNum = 1, value = "1"), getSampleStampAnnotation(1)),
+            )
+
         val context = ApplicationProvider.getApplicationContext<Context>()
 
         // Create a ParcelFileDescriptor for the test PDF document in read-write mode.
@@ -79,10 +93,10 @@ class AnnotationUtilsTest {
         assertNotNull(actualAnnotations)
         assertEquals(actualAnnotations.size, 2)
         for (i in 0 until expectedAnnotations.size) {
-            assert(actualAnnotations[i] is StampAnnotation)
+            assert(actualAnnotations[i].annotation is StampAnnotation)
             assertStampAnnotationEquals(
-                expectedAnnotations[i],
-                actualAnnotations[i] as StampAnnotation,
+                expectedAnnotations[i].annotation as StampAnnotation,
+                actualAnnotations[i].annotation as StampAnnotation,
             )
         }
 
@@ -93,10 +107,10 @@ class AnnotationUtilsTest {
         assertNotNull(actualAnnotations)
         assertEquals(actualAnnotations.size, 2)
         for (i in 0 until expectedAnnotations.size) {
-            assert(actualAnnotations[i] is StampAnnotation)
+            assert(actualAnnotations[i].annotation is StampAnnotation)
             assertStampAnnotationEquals(
-                expectedAnnotations[i],
-                actualAnnotations[i] as StampAnnotation,
+                expectedAnnotations[i].annotation as StampAnnotation,
+                actualAnnotations[i].annotation as StampAnnotation,
             )
         }
     }

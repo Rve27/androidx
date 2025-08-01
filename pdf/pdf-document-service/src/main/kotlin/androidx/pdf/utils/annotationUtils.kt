@@ -20,6 +20,7 @@ import android.graphics.RectF
 import android.os.ParcelFileDescriptor
 import androidx.pdf.annotation.models.PathPdfObject
 import androidx.pdf.annotation.models.PdfAnnotation
+import androidx.pdf.annotation.models.PdfAnnotationData
 import androidx.pdf.annotation.models.StampAnnotation
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -30,19 +31,22 @@ import java.io.FileOutputStream
 import java.io.IOException
 
 /**
- * Writes a list of [PdfAnnotation] objects to a [ParcelFileDescriptor].
+ * Writes a list of [PdfAnnotationData] objects to a [ParcelFileDescriptor].
  *
  * @param pfd The [ParcelFileDescriptor] to write to.
- * @param annotations The list of [PdfAnnotation] objects to write.
+ * @param annotations The list of [PdfAnnotationData] objects to write.
  * @throws IOException If there is an error writing to the file.
  */
-internal fun writeAnnotationsToFile(pfd: ParcelFileDescriptor, annotations: List<PdfAnnotation>) {
+internal fun writeAnnotationsToFile(
+    pfd: ParcelFileDescriptor,
+    annotations: List<PdfAnnotationData>,
+) {
     val fileDescriptor: FileDescriptor = pfd.fileDescriptor
     // It is the responsibility of the caller to close this pfd.
     FileOutputStream(fileDescriptor).use { outputStream ->
         val gson = Gson()
 
-        // Serialize the list of annotations to a json string
+        // Serialize the list of annotationsData to a json string
         val jsonString = gson.toJson(annotations)
         outputStream.write(jsonString.toByteArray(Charsets.UTF_8))
         outputStream.flush()
@@ -53,20 +57,20 @@ internal fun writeAnnotationsToFile(pfd: ParcelFileDescriptor, annotations: List
 }
 
 /**
- * Reads a list of [PdfAnnotation] objects from a [ParcelFileDescriptor].
+ * Reads a list of [PdfAnnotationData] objects from a [ParcelFileDescriptor].
  *
  * @param pfd The [ParcelFileDescriptor] to read from.
- * @return A list of [PdfAnnotation] objects read from the file.
+ * @return A list of [PdfAnnotationData] objects read from the file.
  */
-internal fun readAnnotationsFromPfd(pfd: ParcelFileDescriptor): List<PdfAnnotation> {
+internal fun readAnnotationsFromPfd(pfd: ParcelFileDescriptor): List<PdfAnnotationData> {
     // TODO: b/434864732 - Use stream to read annotations from file
     val jsonString = readFromPfd(pfd)
-    val type = object : TypeToken<List<PdfAnnotation>>() {}.type
+    val type = object : TypeToken<List<PdfAnnotationData>>() {}.type
     val gson =
         GsonBuilder()
             .registerTypeAdapter(PdfAnnotation::class.java, getStampAnnotationDeserializer())
             .create()
-    val annotations = gson.fromJson<List<PdfAnnotation>>(jsonString, type)
+    val annotations = gson.fromJson<List<PdfAnnotationData>>(jsonString, type)
     return annotations ?: listOf()
 }
 

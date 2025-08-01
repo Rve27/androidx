@@ -27,9 +27,17 @@ import android.os.Build
 import android.os.ParcelFileDescriptor
 import android.util.Size
 import androidx.annotation.RequiresExtension
+import androidx.pdf.annotation.EditablePdfDocument
+import androidx.pdf.annotation.models.EditId
+import androidx.pdf.annotation.models.PdfAnnotationData
+import androidx.pdf.annotation.models.StampAnnotation
 import androidx.pdf.models.FormEditRecord
 import androidx.pdf.models.FormWidgetInfo
 import androidx.pdf.utils.TestUtils
+import androidx.pdf.utils.assertStampAnnotationEquals
+import androidx.pdf.utils.createPfd
+import androidx.pdf.utils.getSampleStampAnnotation
+import androidx.pdf.utils.writeAnnotationsToFile
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SdkSuppress
@@ -380,8 +388,42 @@ class SandboxedPdfDocumentTest {
         }
     }
 
+    @Test
+    fun applyEdits_writingAnnotationToStorage() = runTest {
+        val pageNum = 1
+        val sampleAnnotation = getSampleStampAnnotation(pageNum)
+        val document = openDocument(PDF_DOCUMENT)
+        assertThat(document is EditablePdfDocument).isTrue()
+        if (document is EditablePdfDocument) {
+
+            val context = ApplicationProvider.getApplicationContext<Context>()
+
+            // Create a ParcelFileDescriptor for the testing annotations document in read-write
+            // mode.
+            val pfd = createPfd(context, PDF_ANNOTATION_DOCUMENT, "rwt")
+
+            writeAnnotationsToFile(
+                pfd,
+                listOf(PdfAnnotationData(EditId(pageNum = 0, value = "0"), sampleAnnotation)),
+            )
+
+            val annotationResult = document.applyEdits(pfd)
+
+            val actualAnnotations = annotationResult.success
+
+            assertNotNull(actualAnnotations)
+            assertEquals(actualAnnotations.size, 1)
+            assert(actualAnnotations[0].annotation is StampAnnotation)
+            assertStampAnnotationEquals(
+                sampleAnnotation,
+                actualAnnotations[0].annotation as StampAnnotation,
+            )
+        }
+    }
+
     companion object {
         private const val PDF_DOCUMENT = "sample.pdf"
+        private const val PDF_ANNOTATION_DOCUMENT = "annotation_sample.json"
         private const val PDF_DOCUMENT_WITH_LINKS = "sample_links.pdf"
         private const val PDF_DOCUMENT_PARTIALLY_CORRUPTED_FILE = "partially_corrupted.pdf"
         private const val PDF_DOCUMENT_WITH_TEXT_AND_IMAGE = "alt_text.pdf"
