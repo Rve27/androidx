@@ -1067,6 +1067,7 @@ internal class CompositionImpl(
                 // revert to an incomplete state. If isRecomposing is true then this is being
                 // called in resume()
                 pendingPausedComposition.markIncomplete()
+                pendingPausedComposition.pausableApplier.markRecomposePending()
                 return false
             }
             drainPendingModificationsForCompositionLocked()

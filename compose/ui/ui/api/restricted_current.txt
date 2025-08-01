@@ -3406,6 +3406,7 @@ package androidx.compose.ui.node {
   }
 
   public static final class ComposeUiNode.Companion {
+    method public kotlin.jvm.functions.Function1<androidx.compose.ui.node.ComposeUiNode,kotlin.Unit> getApplyOnDeactivatedNodeAssertion();
     method public kotlin.jvm.functions.Function0<androidx.compose.ui.node.ComposeUiNode> getConstructor();
     method public kotlin.jvm.functions.Function2<androidx.compose.ui.node.ComposeUiNode,java.lang.Integer,kotlin.Unit> getSetCompositeKeyHash();
     method public kotlin.jvm.functions.Function2<androidx.compose.ui.node.ComposeUiNode,androidx.compose.ui.unit.Density,kotlin.Unit> getSetDensity();
@@ -3415,6 +3416,7 @@ package androidx.compose.ui.node {
     method public kotlin.jvm.functions.Function2<androidx.compose.ui.node.ComposeUiNode,androidx.compose.runtime.CompositionLocalMap,kotlin.Unit> getSetResolvedCompositionLocals();
     method public kotlin.jvm.functions.Function2<androidx.compose.ui.node.ComposeUiNode,androidx.compose.ui.platform.ViewConfiguration,kotlin.Unit> getSetViewConfiguration();
     method public kotlin.jvm.functions.Function0<androidx.compose.ui.node.ComposeUiNode> getVirtualConstructor();
+    property public kotlin.jvm.functions.Function1<androidx.compose.ui.node.ComposeUiNode,kotlin.Unit> ApplyOnDeactivatedNodeAssertion;
     property public kotlin.jvm.functions.Function0<androidx.compose.ui.node.ComposeUiNode> Constructor;
     property public kotlin.jvm.functions.Function2<androidx.compose.ui.node.ComposeUiNode,java.lang.Integer,kotlin.Unit> SetCompositeKeyHash;
     property public kotlin.jvm.functions.Function2<androidx.compose.ui.node.ComposeUiNode,androidx.compose.ui.unit.Density,kotlin.Unit> SetDensity;

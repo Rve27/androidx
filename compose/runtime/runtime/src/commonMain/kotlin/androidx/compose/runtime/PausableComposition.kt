@@ -29,6 +29,7 @@ import androidx.compose.runtime.RecordingApplier.Companion.DOWN
 import androidx.compose.runtime.RecordingApplier.Companion.INSERT_BOTTOM_UP
 import androidx.compose.runtime.RecordingApplier.Companion.INSERT_TOP_DOWN
 import androidx.compose.runtime.RecordingApplier.Companion.MOVE
+import androidx.compose.runtime.RecordingApplier.Companion.RECOMPOSE_PENDING
 import androidx.compose.runtime.RecordingApplier.Companion.REMOVE
 import androidx.compose.runtime.RecordingApplier.Companion.REUSE
 import androidx.compose.runtime.RecordingApplier.Companion.UP
@@ -470,12 +471,16 @@ internal class RecordingApplier<N>(root: N) : Applier<N> {
                 instances,
                 reused,
                 operations,
-                currentOperation,
+                currentOperation - 1,
                 e,
             )
         } finally {
             applier.onEndChanges()
         }
+    }
+
+    fun markRecomposePending() {
+        operations.add(RECOMPOSE_PENDING)
     }
 
     // These commands need to be an integer, not just a enum value, as they are stored along side
@@ -490,6 +495,7 @@ internal class RecordingApplier<N>(root: N) : Applier<N> {
         const val INSERT_TOP_DOWN = INSERT_BOTTOM_UP + 1
         const val APPLY = INSERT_TOP_DOWN + 1
         const val REUSE = APPLY + 1
+        const val RECOMPOSE_PENDING = REUSE + 1
     }
 }
 
@@ -499,13 +505,13 @@ private class ComposePausableCompositionException(
     private val operations: IntList,
     private val lastOperation: Int,
     cause: Throwable?,
-) : Exception(cause) {
+) : RuntimeException(cause) {
 
     private fun operationsSequence(): Sequence<String> = sequence {
         var currentOperation = 0
         var currentInstance = 0
         var currentReused = 0
-        while (currentOperation < min(lastOperation, operations.size)) {
+        while (currentOperation < min(lastOperation + 10, operations.size)) {
             val index = currentOperation
             val operation = operations[currentOperation++]
             val stringValue =
@@ -546,12 +552,19 @@ private class ComposePausableCompositionException(
                     APPLY -> {
                         @Suppress("UNCHECKED_CAST")
                         val block = instances[currentInstance++] as Any?.(Any?) -> Unit
-                        val value = instances[currentInstance++]
-                        "apply $block $value"
+                        // value
+                        currentInstance++
+                        "apply $block"
                     }
+
                     REUSE -> {
                         "reuse ${reused[currentReused++]}"
                     }
+
+                    RECOMPOSE_PENDING -> {
+                        "recompose pending"
+                    }
+
                     else -> {
                         "unknown op: $operation"
                     }
@@ -565,8 +578,8 @@ private class ComposePausableCompositionException(
     override val message: String?
         get() =
             """
-            |Exception while applying pausable composition. Last 10 operations:
-            |${operationsSequence().toList().takeLast(10).joinToString("\n")}
+            |Failed to execute op number $lastOperation:
+            |${operationsSequence().toList().takeLast(50).joinToString("\n")}
             """
                 .trimMargin()
 }

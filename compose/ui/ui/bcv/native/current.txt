@@ -800,6 +800,8 @@ abstract interface androidx.compose.ui.node/ComposeUiNode { // androidx.compose.
         abstract fun <set-viewConfiguration>(androidx.compose.ui.platform/ViewConfiguration) // androidx.compose.ui.node/ComposeUiNode.viewConfiguration.<set-viewConfiguration>|<set-viewConfiguration>(androidx.compose.ui.platform.ViewConfiguration){}[0]
 
     final object Companion { // androidx.compose.ui.node/ComposeUiNode.Companion|null[0]
+        final val ApplyOnDeactivatedNodeAssertion // androidx.compose.ui.node/ComposeUiNode.Companion.ApplyOnDeactivatedNodeAssertion|{}ApplyOnDeactivatedNodeAssertion[0]
+            final fun <get-ApplyOnDeactivatedNodeAssertion>(): kotlin/Function1<androidx.compose.ui.node/ComposeUiNode, kotlin/Unit> // androidx.compose.ui.node/ComposeUiNode.Companion.ApplyOnDeactivatedNodeAssertion.<get-ApplyOnDeactivatedNodeAssertion>|<get-ApplyOnDeactivatedNodeAssertion>(){}[0]
         final val Constructor // androidx.compose.ui.node/ComposeUiNode.Companion.Constructor|{}Constructor[0]
             final fun <get-Constructor>(): kotlin/Function0<androidx.compose.ui.node/ComposeUiNode> // androidx.compose.ui.node/ComposeUiNode.Companion.Constructor.<get-Constructor>|<get-Constructor>(){}[0]
         final val SetCompositeKeyHash // androidx.compose.ui.node/ComposeUiNode.Companion.SetCompositeKeyHash|{}SetCompositeKeyHash[0]
