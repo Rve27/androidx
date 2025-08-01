@@ -270,6 +270,36 @@ private constructor(
     }
 
     /**
+     * Adds an input handler and binds it to this dispatcher's lifecycle.
+     *
+     * The handler is immediately attached via its `onAttach()` method. The dispatcher will then
+     * invoke `onEnabled()`, `onDisabled()`, and `onDispose()` on the handler to mirror its own
+     * state changes.
+     *
+     * @param inputHandler The handler to add.
+     * @see removeInputHandler
+     */
+    public fun addInputHandler(inputHandler: AbstractNavigationEventInputHandler) {
+        // TODO(mgalhardo): Wire up the handler's lifecycle.
+        //  - Call onAttach() immediately.
+        //  - Forward the dispatcher's enabled/disabled state to onEnabled()/onDisabled().
+        //  - Forward the dispatcher's dispose call to onDispose().
+    }
+
+    /**
+     * Removes and detaches an input handler from this dispatcher.
+     *
+     * This severs the lifecycle link. The handler's `onDetached()` method is invoked, and it will
+     * no longer receive events or lifecycle calls from this dispatcher.
+     *
+     * @param inputHandler The handler to remove.
+     * @see addInputHandler
+     */
+    public fun removeInputHandler(inputHandler: AbstractNavigationEventInputHandler) {
+        // TODO(mgalhardo): Call onDetached() on the handler and then remove it from the collection.
+    }
+
+    /**
      * Dispatch an [NavigationEventCallback.onEventStarted] event with the given event. This call is
      * delegated to the shared [NavigationEventProcessor].
      *

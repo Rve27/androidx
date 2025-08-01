@@ -52,10 +52,12 @@ package androidx.navigationevent {
     ctor public NavigationEventDispatcher(optional kotlin.jvm.functions.Function0<kotlin.Unit>? fallbackOnBackPressed, optional kotlin.jvm.functions.Function1<? super java.lang.Boolean,kotlin.Unit>? onHasEnabledCallbacksChanged);
     method @MainThread public void addCallback(androidx.navigationevent.NavigationEventCallback<? extends java.lang.Object?> callback, optional int priority);
     method @BytecodeOnly @MainThread public void addCallback-3owFMvg(androidx.navigationevent.NavigationEventCallback<? extends java.lang.Object!>, int);
+    method public void addInputHandler(androidx.navigationevent.AbstractNavigationEventInputHandler inputHandler);
     method @MainThread public void dispose();
     method public kotlinx.coroutines.flow.StateFlow<androidx.navigationevent.NavigationEventState<androidx.navigationevent.NavigationEventInfo>> getState();
     method public boolean hasEnabledCallbacks();
     method public boolean isEnabled();
+    method public void removeInputHandler(androidx.navigationevent.AbstractNavigationEventInputHandler inputHandler);
     method public void setEnabled(boolean);
     property public boolean isEnabled;
     property public kotlinx.coroutines.flow.StateFlow<androidx.navigationevent.NavigationEventState<androidx.navigationevent.NavigationEventInfo>> state;
