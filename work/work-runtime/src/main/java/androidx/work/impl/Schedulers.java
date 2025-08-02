@@ -27,8 +27,6 @@ import androidx.annotation.RestrictTo;
 import androidx.work.Clock;
 import androidx.work.Configuration;
 import androidx.work.Logger;
-import androidx.work.impl.background.systemalarm.SystemAlarmScheduler;
-import androidx.work.impl.background.systemalarm.SystemAlarmService;
 import androidx.work.impl.background.systemjob.SystemJobScheduler;
 import androidx.work.impl.background.systemjob.SystemJobService;
 import androidx.work.impl.model.WorkSpec;
@@ -151,36 +149,10 @@ public class Schedulers {
     static @NonNull Scheduler createBestAvailableBackgroundScheduler(@NonNull Context context,
             @NonNull WorkDatabase workDatabase, Configuration configuration) {
 
-        Scheduler scheduler;
-
-        if (Build.VERSION.SDK_INT >= WorkManagerImpl.MIN_JOB_SCHEDULER_API_LEVEL) {
-            scheduler = new SystemJobScheduler(context, workDatabase, configuration);
-            setComponentEnabled(context, SystemJobService.class, true);
-            Logger.get().debug(TAG, "Created SystemJobScheduler and enabled SystemJobService");
-        } else {
-            scheduler = tryCreateGcmBasedScheduler(context, configuration.getClock());
-            if (scheduler == null) {
-                scheduler = new SystemAlarmScheduler(context);
-                setComponentEnabled(context, SystemAlarmService.class, true);
-                Logger.get().debug(TAG, "Created SystemAlarmScheduler");
-            }
-        }
+        Scheduler scheduler = new SystemJobScheduler(context, workDatabase, configuration);
+        setComponentEnabled(context, SystemJobService.class, true);
+        Logger.get().debug(TAG, "Created SystemJobScheduler and enabled SystemJobService");
         return scheduler;
-    }
-
-    private static @Nullable Scheduler tryCreateGcmBasedScheduler(@NonNull Context context,
-            Clock clock) {
-        try {
-            Class<?> klass = Class.forName(GCM_SCHEDULER);
-            Scheduler scheduler =
-                    (Scheduler) klass.getConstructor(Context.class, Clock.class)
-                            .newInstance(context, clock);
-            Logger.get().debug(TAG, "Created " + GCM_SCHEDULER);
-            return scheduler;
-        } catch (Throwable throwable) {
-            Logger.get().debug(TAG, "Unable to create GCM Scheduler", throwable);
-            return null;
-        }
     }
 
     private Schedulers() {

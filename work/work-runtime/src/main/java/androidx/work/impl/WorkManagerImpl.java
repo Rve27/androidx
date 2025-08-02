@@ -87,6 +87,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+
 /**
  * A concrete implementation of {@link WorkManager}.
  */
@@ -619,10 +620,7 @@ public class WorkManagerImpl extends WorkManager {
             // This gives us an easy way to clear persisted work state, and then reschedule work
             // that WorkManager is aware of. Ideally, we do something similar for other
             // persistent schedulers.
-            if (Build.VERSION.SDK_INT >= WorkManagerImpl.MIN_JOB_SCHEDULER_API_LEVEL) {
-                SystemJobScheduler.cancelAllInAllNamespaces(getApplicationContext());
-            }
-
+            SystemJobScheduler.cancelAllInAllNamespaces(getApplicationContext());
             // Reset scheduled state.
             getWorkDatabase().workSpecDao().resetScheduledState();
 
@@ -671,7 +669,7 @@ public class WorkManagerImpl extends WorkManager {
     }
 
     /**
-     * Cancels workmanager's scope and closes the database
+     * Cancels WorkManager Scope and closes the datastore.
      */
     public void closeDatabase() {
         WorkManagerImplExtKt.close(this);
