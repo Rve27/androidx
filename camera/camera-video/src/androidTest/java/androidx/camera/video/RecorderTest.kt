@@ -1114,7 +1114,6 @@ class RecorderTest(private val implName: String, private val cameraConfig: Camer
     }
 
     @Test
-    @SdkSuppress(minSdkVersion = 23)
     fun getVideoCapabilitiesStabilizationSupportIsCorrect_whenNotSupportedInExtensions() {
         assumeTrue(
             Recorder.getVideoCapabilities(cameraProvider.getCameraInfo(cameraSelector))
@@ -1143,7 +1142,6 @@ class RecorderTest(private val implName: String, private val cameraConfig: Camer
     }
 
     @Test
-    @SdkSuppress(minSdkVersion = 23)
     fun getVideoCapabilitiesStabilizationSupportIsCorrect_whenSupportedInExtensions() {
         assumeFalse(
             Recorder.getVideoCapabilities(cameraProvider.getCameraInfo(cameraSelector))

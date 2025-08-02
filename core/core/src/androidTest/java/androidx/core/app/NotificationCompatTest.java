@@ -569,7 +569,6 @@ public class NotificationCompatTest extends BaseInstrumentationTestCase<TestActi
         assertThat(recovered.largeIcon).isEqualTo(largeIcon);
     }
 
-    @SdkSuppress(minSdkVersion = 23)
     @Test
     public void testBuilderFromNotification_withSmallAndLargeIcons() {
         IconCompat smallIcon = IconCompat.createWithResource(mContext, R.drawable.ic_call_answer);
@@ -965,7 +964,6 @@ public class NotificationCompatTest extends BaseInstrumentationTestCase<TestActi
         assertFalse(action.getShowsUserInterface());
     }
 
-    @SdkSuppress(minSdkVersion = 20)
     @Test
     public void testGetActionCompatFromAction_sameIconResourceId() {
         NotificationCompat.Action action = new NotificationCompat.Action.Builder(
@@ -979,7 +977,6 @@ public class NotificationCompatTest extends BaseInstrumentationTestCase<TestActi
         assertEquals(R.drawable.notification_bg, result.getIconCompat().getResId());
     }
 
-    @SdkSuppress(minSdkVersion = 20)
     @Test
     public void testGetActionCompatFromAction_showsUserInterface() {
         NotificationCompat.Action action = newActionBuilder()
@@ -993,7 +990,6 @@ public class NotificationCompatTest extends BaseInstrumentationTestCase<TestActi
         assertFalse(result.getShowsUserInterface());
     }
 
-    @SdkSuppress(minSdkVersion = 20)
     @Test
     public void testGetActionCompatFromAction_withRemoteInputs_doesntCrash() {
         NotificationCompat.Action action = newActionBuilder()
@@ -1063,7 +1059,6 @@ public class NotificationCompatTest extends BaseInstrumentationTestCase<TestActi
     }
 
     @Test
-    @SdkSuppress(minSdkVersion = 23)
     public void testNotificationSmallIcon() {
         IconCompat icon = IconCompat.createWithResource(mContext,
                 R.drawable.notification_action_background);
@@ -1217,7 +1212,6 @@ public class NotificationCompatTest extends BaseInstrumentationTestCase<TestActi
         }
     }
 
-    @SdkSuppress(minSdkVersion = 23)
     @Test
     public void testSetNotification_setLargeIconNullIcon() {
         Notification n = new NotificationCompat.Builder(mContext, "channelId")
@@ -1242,7 +1236,6 @@ public class NotificationCompatTest extends BaseInstrumentationTestCase<TestActi
 
     }
 
-    @SdkSuppress(minSdkVersion = 23)
     @Test
     public void testSetNotification_setLargeIconIcon() {
         IconCompat iconCompat = IconCompat.createWithResource(mContext,
@@ -1265,7 +1258,7 @@ public class NotificationCompatTest extends BaseInstrumentationTestCase<TestActi
         }
     }
 
-    @SdkSuppress(minSdkVersion = 23, maxSdkVersion = 26)
+    @SdkSuppress(maxSdkVersion = 26)
     @Test
     public void testSetNotification_setLargeIconBitmapScales() {
         // Original icon is 860x860
@@ -1549,16 +1542,6 @@ public class NotificationCompatTest extends BaseInstrumentationTestCase<TestActi
         assertEquals(Uri.EMPTY, n.sound);
     }
 
-    @Test
-    @SdkSuppress(maxSdkVersion = 20)
-    public void testHasStreamTypePre21() throws Throwable {
-        Notification n = new NotificationCompat.Builder(mActivityTestRule.getActivity())
-                .setSound(Uri.EMPTY, 34)
-                .build();
-        assertEquals(34, n.audioStreamType);
-        assertEquals(Uri.EMPTY, n.sound);
-    }
-
     @SdkSuppress(minSdkVersion = 26)
     @Test
     public void testClearAlertingFieldsIfUsingChannels() throws Throwable {
@@ -1614,7 +1597,6 @@ public class NotificationCompatTest extends BaseInstrumentationTestCase<TestActi
         assertNull(extras.get(NotificationCompat.EXTRA_LARGE_ICON_BIG));
     }
 
-    @SdkSuppress(minSdkVersion = 23)
     @Test
     public void testBigPictureStyle_withIconNullBigLargeIcon() {
         Bitmap bitmap = BitmapFactory.decodeResource(mContext.getResources(),
@@ -1633,7 +1615,6 @@ public class NotificationCompatTest extends BaseInstrumentationTestCase<TestActi
         assertNull(extras.get(NotificationCompat.EXTRA_LARGE_ICON_BIG));
     }
 
-    @SdkSuppress(minSdkVersion = 23)
     @Test
     public void testBigPictureStyle_withIconBigLargeIcon() {
         Bitmap bitmap = BitmapFactory.decodeResource(mContext.getResources(),
@@ -1763,7 +1744,6 @@ public class NotificationCompatTest extends BaseInstrumentationTestCase<TestActi
         }
     }
 
-    @SdkSuppress(minSdkVersion = 23)
     @SuppressWarnings("deprecation")
     @Test
     public void testBigPictureStyle_recoverStyleWithResIcon() {
@@ -2471,7 +2451,6 @@ public class NotificationCompatTest extends BaseInstrumentationTestCase<TestActi
     }
 
     @Test
-    @SdkSuppress(minSdkVersion = 20)
     public void testCallStyle_preservesOneCustomAction() {
         PendingIntent hangupIntent = createIntent("hangup");
         Person person = new Person.Builder().setName("test name").build();
@@ -2517,7 +2496,6 @@ public class NotificationCompatTest extends BaseInstrumentationTestCase<TestActi
     }
 
     @Test
-    @SdkSuppress(minSdkVersion = 20)
     public void testCallStyle_preservesTwoCustomActions() {
         PendingIntent hangupIntent = createIntent("hangup");
         Person person = new Person.Builder().setName("test name").build();
@@ -2569,7 +2547,6 @@ public class NotificationCompatTest extends BaseInstrumentationTestCase<TestActi
         }
     }
 
-    @SdkSuppress(minSdkVersion = 20)
     @Test
     public void testCallStyle_getActionsListWithSystemAndContextualActionsForIncoming() {
         PendingIntent positiveIntent = createIntent("answerIntent");
@@ -2620,7 +2597,6 @@ public class NotificationCompatTest extends BaseInstrumentationTestCase<TestActi
         assertEquals("baz", resultActions.get(4).getTitle().toString());
     }
 
-    @SdkSuppress(minSdkVersion = 20)
     @Test
     public void testCallStyle_getActionsListWithSystemAndContextualActionsForOngoing() {
         PendingIntent negativeIntent = createIntent("hang up");
@@ -2664,7 +2640,6 @@ public class NotificationCompatTest extends BaseInstrumentationTestCase<TestActi
         assertEquals("bbq", resultActions.get(4).getTitle().toString());
     }
 
-    @SdkSuppress(minSdkVersion = 20)
     @Test
     public void testCallStyle_getActionsListWithSystemAndContextualActionsForScreening() {
         PendingIntent positiveIntent = createIntent("answer");
@@ -2712,7 +2687,6 @@ public class NotificationCompatTest extends BaseInstrumentationTestCase<TestActi
         assertEquals("baz", resultActions.get(4).getTitle().toString());
     }
 
-    @SdkSuppress(minSdkVersion = 20)
     @Test
     public void testCallStyle_getActionsListForIncomingVideo() {
         PendingIntent positiveIntent = createIntent("answerIntent");
@@ -3250,7 +3224,6 @@ public class NotificationCompatTest extends BaseInstrumentationTestCase<TestActi
     }
 
     @Test
-    @SdkSuppress(minSdkVersion = 20)
     public void action_builder_fromAndroidActionAllowsZeroResIcon() {
         // Create action with a 0 resId Icon.
         Notification.Action action = new Notification.Action.Builder(0, "title", null)
@@ -3264,7 +3237,6 @@ public class NotificationCompatTest extends BaseInstrumentationTestCase<TestActi
     }
 
     @Test
-    @SdkSuppress(minSdkVersion = 20)
     public void action_semanticAction_toAndFromNotification() {
         NotificationCompat.Action action =
                 newActionBuilder()

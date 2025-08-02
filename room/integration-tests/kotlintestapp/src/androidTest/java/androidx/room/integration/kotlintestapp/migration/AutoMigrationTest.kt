@@ -21,7 +21,6 @@ import androidx.room.util.TableInfo.Companion.read
 import androidx.sqlite.SQLiteException
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
-import androidx.test.filters.SdkSuppress
 import androidx.test.platform.app.InstrumentationRegistry
 import org.junit.Rule
 import org.junit.Test
@@ -30,7 +29,6 @@ import org.junit.runner.RunWith
 /** Test custom database migrations. */
 @RunWith(AndroidJUnit4::class)
 @LargeTest
-@SdkSuppress(minSdkVersion = 22) // b/329236938
 class AutoMigrationTest {
     @JvmField
     @Rule

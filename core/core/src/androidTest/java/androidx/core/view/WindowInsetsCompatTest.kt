@@ -233,7 +233,6 @@ class WindowInsetsCompatTest {
 
     /** Only API 20-28, only `setSystemWindowInsets` and `systemBars()` works. */
     @Test
-    @SdkSuppress(minSdkVersion = 20)
     public fun builder_min20_types() {
         val sysBars = Insets.of(12, 34, 35, 31)
         val result = WindowInsetsCompat.Builder().setInsets(Type.systemBars(), sysBars).build()
@@ -243,7 +242,6 @@ class WindowInsetsCompatTest {
 
     /** Only API 20-28, only `setSystemWindowInsets` and `systemBars()` works. */
     @Test
-    @SdkSuppress(minSdkVersion = 20)
     public fun builder_min20_deprecated() {
         val sysBars = Insets.of(12, 34, 35, 31)
         val result = WindowInsetsCompat.Builder().setSystemWindowInsets(sysBars).build()
@@ -260,13 +258,6 @@ class WindowInsetsCompatTest {
     }
 
     @Test
-    @SdkSuppress(maxSdkVersion = 19)
-    public fun consumed_exists() {
-        assertNotNull(WindowInsetsCompat.CONSUMED)
-    }
-
-    @Test
-    @SdkSuppress(minSdkVersion = 20)
     public fun consumed_exists_api20() {
         assertNotNull(WindowInsetsCompat.CONSUMED)
         assertNotNull(WindowInsetsCompat.CONSUMED.toWindowInsets())
@@ -275,7 +266,6 @@ class WindowInsetsCompatTest {
 
     @Suppress("DEPRECATION")
     @Test
-    @SdkSuppress(minSdkVersion = 20)
     public fun consumed_returnsNoneInsets() {
         val sysBars = Insets.of(12, 34, 35, 31)
         val original = WindowInsetsCompat.Builder().setInsets(Type.systemBars(), sysBars).build()
@@ -301,7 +291,6 @@ class WindowInsetsCompatTest {
     }
 
     @Test
-    @SdkSuppress(minSdkVersion = 20)
     public fun test_not_equals_root_visible_insets() {
         val result =
             WindowInsetsCompat.Builder()

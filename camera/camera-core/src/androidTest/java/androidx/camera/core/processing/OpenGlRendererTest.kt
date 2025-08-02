@@ -148,7 +148,6 @@ class OpenGlRendererTest {
         }
     }
 
-    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.M)
     @Test
     fun drawInputSurface_snapshotReturnsTheSame(): Unit =
         runBlocking(glDispatcher) {
@@ -331,14 +330,7 @@ class OpenGlRendererTest {
             assertThat(glRenderer.textureName).isNotEqualTo(0L)
         }
 
-    @SdkSuppress(minSdkVersion = 23)
-    @Test
-    fun render(): Unit = runBlocking(glDispatcher) { testRender(OutputType.IMAGE_READER) }
-
-    @SdkSuppress(maxSdkVersion = 22)
-    @Test
-    fun renderBelowApi23(): Unit =
-        runBlocking(glDispatcher) { testRender(OutputType.SURFACE_TEXTURE) }
+    @Test fun render(): Unit = runBlocking(glDispatcher) { testRender(OutputType.IMAGE_READER) }
 
     @SdkSuppress(minSdkVersion = 33) // HDR is supported from API 33.
     @Test
@@ -366,24 +358,12 @@ class OpenGlRendererTest {
             )
         }
 
-    @SdkSuppress(minSdkVersion = 23)
     @Test
     fun renderByCustomShader(): Unit =
         runBlocking(glDispatcher) {
             val shaderProviderOverride = createCustomShaderProvider()
             testRender(
                 OutputType.IMAGE_READER,
-                shaderProviderOverrides = mapOf(InputFormat.DEFAULT to shaderProviderOverride),
-            )
-        }
-
-    @SdkSuppress(maxSdkVersion = 22)
-    @Test
-    fun renderByCustomShaderBelowApi23(): Unit =
-        runBlocking(glDispatcher) {
-            val shaderProviderOverride = createCustomShaderProvider()
-            testRender(
-                OutputType.SURFACE_TEXTURE,
                 shaderProviderOverrides = mapOf(InputFormat.DEFAULT to shaderProviderOverride),
             )
         }

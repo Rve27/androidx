@@ -1093,7 +1093,6 @@ class PreviewTest(private val implName: String, private val cameraConfig: Camera
     // Section 4: ResolutionSelector
     // ======================================================
 
-    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.M)
     @Test
     fun verifyHighResolutionIsDisabledForPreview() = runBlocking {
         val highResolutionOutputSizes =
@@ -1419,7 +1418,6 @@ class PreviewTest(private val implName: String, private val cameraConfig: Camera
         }
 
     @Test
-    @SdkSuppress(minSdkVersion = 23)
     fun getPreviewCapabilitiesStabilizationSupportIsCorrect_whenNotSupportedInExtensions() {
         assumeTrue(isPreviewStabilizationModeSupported(CameraSelector.DEFAULT_BACK_CAMERA))
         val sessionProcessor =
@@ -1445,7 +1443,6 @@ class PreviewTest(private val implName: String, private val cameraConfig: Camera
     }
 
     @Test
-    @SdkSuppress(minSdkVersion = 23)
     fun getPreviewCapabilitiesStabilizationSupportIsCorrect_whenSupportedInExtensions() {
         assumeFalse(isPreviewStabilizationModeSupported(CameraSelector.DEFAULT_BACK_CAMERA))
         val sessionProcessor =
@@ -1474,7 +1471,6 @@ class PreviewTest(private val implName: String, private val cameraConfig: Camera
     }
 
     @Test
-    @SdkSuppress(minSdkVersion = 23)
     fun previewStabilizationCanBeSet_whenSupportedInExtensions() = runBlocking {
         assumeTrue(isPreviewStabilizationModeSupported(CameraSelector.DEFAULT_BACK_CAMERA))
         val sessionProcessor =

@@ -44,7 +44,6 @@ import androidx.core.widget.TextViewCompat;
 import androidx.test.annotation.UiThreadTest;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
-import androidx.test.filters.SdkSuppress;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -98,20 +97,6 @@ public class AppCompatCheckedTextViewTest extends AppCompatBaseViewTest<
         assertTrue(checkMark instanceof AnimatedStateListDrawableCompat
                 || checkMark instanceof AnimatedStateListDrawable);
 
-    }
-
-    /* Max SDK as we use this test to verify the fallback behavior in situations where the ASLD
-       backport should not be used (e.g. building with AAPT1). */
-    @SdkSuppress(maxSdkVersion = 20)
-    @Test
-    public void testCheckMarkPlatformOnly_isNotNull() {
-        // Given an ACCTV which specifies a null app:checkMarkCompat and non-null android:checkMark
-        final AppCompatCheckedTextView checkedTextView =
-                mContainer.findViewById(R.id.checkedtextview_check_mark_platform);
-        final Drawable checkMark = CheckedTextViewCompat.getCheckMarkDrawable(checkedTextView);
-
-        // Then the drawable should be present
-        assertNotNull(checkMark);
     }
 
     @Test

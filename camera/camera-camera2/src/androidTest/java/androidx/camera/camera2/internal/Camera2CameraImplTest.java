@@ -1267,7 +1267,6 @@ public final class Camera2CameraImplTest {
         mCamera2CameraImpl.detachUseCases(asList(preview, record));
     }
 
-    @SdkSuppress(minSdkVersion = 23)
     @Test
     public void attachUseCaseWithTemplateZSLNoRecord() throws InterruptedException {
         if (!mCamera2CameraImpl.getCameraInfo().isZslSupported()) {
@@ -1301,7 +1300,6 @@ public final class Camera2CameraImplTest {
                 .isZslDisabledByByUserCaseConfig()).isFalse();
     }
 
-    @SdkSuppress(minSdkVersion = 23)
     @Test
     public void attachUseCaseWithTemplateZSLHasRecord() throws InterruptedException {
         if (!mCamera2CameraImpl.getCameraInfo().isZslSupported()) {
@@ -1344,7 +1342,6 @@ public final class Camera2CameraImplTest {
                 .isFalse();
     }
 
-    @SdkSuppress(minSdkVersion = 23)
     @Test
     public void attachAndDetachUseCasesMultipleTimes() throws InterruptedException {
         if (!mCamera2CameraImpl.getCameraInfo().isZslSupported()) {
@@ -1404,7 +1401,6 @@ public final class Camera2CameraImplTest {
                 .isFalse();
     }
 
-    @SdkSuppress(minSdkVersion = 23)
     @Test
     public void zslDisabled_whenHighResolutionIsEnabled() throws InterruptedException {
         UseCase zsl = createUseCase(CameraDevice.TEMPLATE_ZERO_SHUTTER_LAG);

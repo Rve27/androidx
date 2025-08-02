@@ -23,7 +23,6 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import android.content.Context;
-import android.os.Build;
 
 import androidx.arch.core.executor.testing.CountingTaskExecutorRule;
 import androidx.lifecycle.Lifecycle;
@@ -52,7 +51,6 @@ import androidx.room.integration.testapp.vo.UserAndAllPets;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.MediumTest;
-import androidx.test.filters.SdkSuppress;
 import androidx.test.platform.app.InstrumentationRegistry;
 
 import org.junit.After;
@@ -327,7 +325,6 @@ public class LiveDataQueryTest extends TestDatabaseTest {
     }
 
     @Test
-    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.LOLLIPOP)
     public void withWithClause() throws ExecutionException, InterruptedException,
             TimeoutException {
         LiveData<List<String>> actual =

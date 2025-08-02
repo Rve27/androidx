@@ -117,7 +117,6 @@ class ShellTest {
         )
     }
 
-    @SdkSuppress(minSdkVersion = 23) // xargs added api 23
     @Test
     fun executeScriptCaptureStdout_pipe_xargs() {
         // validate piping works with xargs
@@ -134,7 +133,6 @@ class ShellTest {
         )
     }
 
-    @SdkSuppress(minSdkVersion = 23) // xargs added api 23
     @Test
     fun executeScriptCaptureStdout_stdinArg_xargs() {
         // validate stdin to first command in script
@@ -168,7 +166,6 @@ class ShellTest {
         )
     }
 
-    @SdkSuppress(minSdkVersion = 23) // xargs added api 23
     @Test
     fun executeScriptCaptureStdout_multilineRedirectStdin_xargs() {
         Assert.assertEquals(
@@ -239,7 +236,6 @@ class ShellTest {
         assertFalse(Shell.isProcessAlive(pid + 1, Packages.TEST))
     }
 
-    @SdkSuppress(minSdkVersion = 23)
     @Test
     fun killProcessesAndWait() {
         // validate that killTermProcessesAndWait kills bg process
@@ -249,7 +245,6 @@ class ShellTest {
         assertFalse(backgroundProcess.isAlive())
     }
 
-    @SdkSuppress(minSdkVersion = 23)
     @Test
     fun killProcessesAndWait_nonExistentProcess() {
         Shell.killProcessesAndWait(
@@ -258,7 +253,6 @@ class ShellTest {
         )
     }
 
-    @SdkSuppress(minSdkVersion = 23)
     @Test
     fun killProcessesAndWait_failure() {
         // validate that killTermProcessesAndWait kills bg process
@@ -282,7 +276,6 @@ class ShellTest {
         assertTrue(backgroundProcess.isAlive())
     }
 
-    @SdkSuppress(minSdkVersion = 23)
     @Test
     fun killProcessesAndWait_allowBackground() {
         val backgroundProcess1 = getBackgroundSpinningProcess()
@@ -304,7 +297,6 @@ class ShellTest {
         assertFalse(backgroundProcess2.isAlive())
     }
 
-    @SdkSuppress(minSdkVersion = 23)
     @Test
     fun killProcessesAndWait_multi() {
         val backgroundProcess1 = getBackgroundSpinningProcess()
@@ -320,7 +312,6 @@ class ShellTest {
         assertFalse(backgroundProcess2.isAlive())
     }
 
-    @SdkSuppress(minSdkVersion = 23)
     @Test
     fun killProcessesAndWait_processName() {
         val backgroundProcess1 = getBackgroundSpinningProcess()
@@ -353,7 +344,6 @@ class ShellTest {
         }
     }
 
-    @SdkSuppress(minSdkVersion = 23) // xargs added api 23
     @Test
     fun shellReuse() {
         val script = Shell.createShellScript("xargs echo $1", stdin = "foo")
@@ -542,7 +532,7 @@ class ShellTest {
     }
 
     @Test
-    @SdkSuppress(minSdkVersion = 23, maxSdkVersion = 35)
+    @SdkSuppress(maxSdkVersion = 35)
     fun pgrepLFBelowApi36() {
         val processPids = Shell.pgrepLF(Packages.TEST)
         assertTrue(

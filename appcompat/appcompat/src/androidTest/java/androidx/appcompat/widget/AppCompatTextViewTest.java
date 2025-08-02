@@ -788,21 +788,18 @@ public class AppCompatTextViewTest
         });
     }
 
-    @SdkSuppress(minSdkVersion = 23)
     @Test
     public void testHyphenationFrequencyDefaultValue_withDefaultConstructor() {
         final AppCompatTextView textView = new AppCompatTextView(mActivity);
         assertEquals(Layout.HYPHENATION_FREQUENCY_NONE, textView.getHyphenationFrequency());
     }
 
-    @SdkSuppress(minSdkVersion = 23)
     @Test
     public void testHyphenationFrequencyDefaultValue_withInflator() {
         final AppCompatTextView textView = mActivity.findViewById(R.id.text_view_default_values);
         assertEquals(Layout.HYPHENATION_FREQUENCY_NONE, textView.getHyphenationFrequency());
     }
 
-    @SdkSuppress(minSdkVersion = 23)
     @Test
     public void testHyphenationFrequencyOverride_withInflator() {
         final AppCompatTextView textView = mActivity.findViewById(
@@ -810,21 +807,18 @@ public class AppCompatTextViewTest
         assertEquals(Layout.HYPHENATION_FREQUENCY_FULL, textView.getHyphenationFrequency());
     }
 
-    @SdkSuppress(minSdkVersion = 23)
     @Test
     public void testBreakStrategyDefaultValue_withDefaultConstructor() {
         final AppCompatTextView textView = new AppCompatTextView(mActivity);
         assertEquals(Layout.BREAK_STRATEGY_HIGH_QUALITY, textView.getBreakStrategy());
     }
 
-    @SdkSuppress(minSdkVersion = 23)
     @Test
     public void testBreakStrategyDefaultValue_withInflator() {
         final AppCompatTextView textView = mActivity.findViewById(R.id.text_view_default_values);
         assertEquals(Layout.BREAK_STRATEGY_HIGH_QUALITY, textView.getBreakStrategy());
     }
 
-    @SdkSuppress(minSdkVersion = 23)
     @Test
     public void testBreakStrategyOverride_withInflator() {
         final AppCompatTextView textView = mActivity.findViewById(

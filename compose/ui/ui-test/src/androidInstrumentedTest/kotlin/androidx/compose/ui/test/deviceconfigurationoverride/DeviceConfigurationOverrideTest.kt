@@ -557,7 +557,6 @@ class DeviceConfigurationOverrideTest {
         assertEquals(500, configuration.fontWeightAdjustment)
     }
 
-    @SdkSuppress(minSdkVersion = 23)
     @Test
     fun roundScreenOverride_isRound_overridesIsScreenRound() {
         lateinit var configuration: Configuration
@@ -571,7 +570,6 @@ class DeviceConfigurationOverrideTest {
         assertTrue(configuration.isScreenRound)
     }
 
-    @SdkSuppress(minSdkVersion = 23)
     @Test
     fun roundScreenOverride_isNotRound_overridesIsScreenRound() {
         lateinit var configuration: Configuration

@@ -38,7 +38,6 @@ import android.util.Log;
 import androidx.exifinterface.test.R;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
-import androidx.test.filters.SdkSuppress;
 import androidx.test.filters.SmallTest;
 import androidx.test.rule.GrantPermissionRule;
 
@@ -525,7 +524,6 @@ public class ExifInterfaceTest {
     // https://issuetracker.google.com/342697059
     @Test
     @LargeTest
-    @SdkSuppress(minSdkVersion = 22) // Parsing the large image causes OOM on API 21 FTL emulators.
     public void testWebpWithoutExifHeight8192px() throws Throwable {
         File imageFile =
                 copyFromResourceToFile(

@@ -51,7 +51,6 @@ import androidx.camera.testing.impl.fakes.FakeImageProxy;
 import androidx.core.math.MathUtils;
 import androidx.core.util.Preconditions;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
-import androidx.test.filters.SdkSuppress;
 import androidx.test.filters.SmallTest;
 
 import org.jspecify.annotations.NonNull;
@@ -358,25 +357,21 @@ public class ImageProcessingUtilTest {
         rgbImageProxy.close();
     }
 
-    @SdkSuppress(minSdkVersion = 23)
     @Test
     public void rotateYUV_imageRotated_0() {
         rotateYUV_imageRotated(OUTPUT_IMAGE_FORMAT_YUV_420_888, 0, true);
     }
 
-    @SdkSuppress(minSdkVersion = 23)
     @Test
     public void rotateYUV_imageRotated_90() {
         rotateYUV_imageRotated(OUTPUT_IMAGE_FORMAT_YUV_420_888, 90, false);
     }
 
-    @SdkSuppress(minSdkVersion = 23)
     @Test
     public void rotateYUV_imageRotated_180() {
         rotateYUV_imageRotated(OUTPUT_IMAGE_FORMAT_YUV_420_888, 180, false);
     }
 
-    @SdkSuppress(minSdkVersion = 23)
     @Test
     public void rotateYUV_imageRotated_270() {
         rotateYUV_imageRotated(OUTPUT_IMAGE_FORMAT_YUV_420_888, 270, false);

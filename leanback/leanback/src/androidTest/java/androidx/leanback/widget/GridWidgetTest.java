@@ -58,7 +58,6 @@ import androidx.recyclerview.widget.RecyclerViewAccessibilityDelegate;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.FlakyTest;
 import androidx.test.filters.LargeTest;
-import androidx.test.filters.SdkSuppress;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.testutils.AnimationActivityTestRule;
 import androidx.testutils.AnimationTest;
@@ -649,7 +648,6 @@ public class GridWidgetTest {
 
     }
 
-    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.LOLLIPOP)
     @Test
     public void testItemDecorationAndMarginsAndOpticalBounds() throws Throwable {
         final int leftMargin = 3;
@@ -5327,7 +5325,6 @@ public class GridWidgetTest {
         assertTrue(selectedPosition2 < selectedPosition1);
     }
 
-    @SdkSuppress(minSdkVersion = 23) // b/271599830
     @Test
     public void testAccessibilityFocusOutFrontEnd_actionsAvailable() throws Throwable {
         Intent intent = new Intent();

@@ -31,7 +31,6 @@ import androidx.sqlite.driver.AndroidSQLiteDriver
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.filters.MediumTest
-import androidx.test.filters.SdkSuppress
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.cancellation.CancellationException
@@ -468,7 +467,6 @@ class FlowQueryTest(driver: UseDriver) : TestDatabaseTest(driver) {
      * it all, both readers should always get the latest value. b/432365736
      */
     @Test
-    @SdkSuppress(minSdkVersion = 23)
     fun collectBooks_async_update_async() =
         repeat(1000) {
             val context = ApplicationProvider.getApplicationContext() as Context

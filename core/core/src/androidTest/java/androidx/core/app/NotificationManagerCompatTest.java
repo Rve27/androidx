@@ -1209,17 +1209,6 @@ public class NotificationManagerCompatTest {
     }
 
     @Test
-    @SdkSuppress(maxSdkVersion = 22)
-    public void testGetCurrentInterruptionFilterLegacy() {
-        NotificationManager fakeManager = mPlatformNotificationManager;
-        NotificationManagerCompat notificationManager = new NotificationManagerCompat(fakeManager,
-                mContext);
-        assertEquals(NotificationManagerCompat.INTERRUPTION_FILTER_UNKNOWN,
-                notificationManager.getCurrentInterruptionFilter());
-    }
-
-    @Test
-    @SdkSuppress(minSdkVersion = 23)
     public void testGetCurrentInterruptionFilter() {
         NotificationManagerCompat notificationManager = new NotificationManagerCompat(
                 mPlatformNotificationManager,

@@ -26,7 +26,6 @@ import androidx.room.integration.kotlintestapp.vo.Lang
 import androidx.room.integration.kotlintestapp.vo.MiniBook
 import androidx.room.integration.kotlintestapp.vo.Publisher
 import androidx.test.filters.MediumTest
-import androidx.test.filters.SdkSuppress
 import io.reactivex.observers.TestObserver
 import io.reactivex.subscribers.TestSubscriber
 import java.util.concurrent.CountDownLatch
@@ -39,7 +38,6 @@ import org.junit.Assert.fail
 import org.junit.Test
 
 @MediumTest
-@SdkSuppress(minSdkVersion = 23)
 class UpsertTest : TestDatabaseTest() {
     @Test
     fun upsertBookById() {

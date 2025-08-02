@@ -461,7 +461,6 @@ class CameraUseCaseAdapterTest {
         assertThrows<CameraException> { adapter.addUseCases(setOf(imageCapture)) }
     }
 
-    @SdkSuppress(minSdkVersion = 23)
     @Test
     fun useRawWithExtensions_throwsException() {
         // Arrange: enable extensions.
@@ -692,7 +691,6 @@ class CameraUseCaseAdapterTest {
         assertThat(streamSharing.camera).isNull()
     }
 
-    @SdkSuppress(minSdkVersion = 23)
     @Test
     fun extensionEnabledAndVideoCaptureExisted_streamSharingOn() {
         // Arrange: enable extensions.
@@ -709,7 +707,6 @@ class CameraUseCaseAdapterTest {
         assertThat(streamSharing.camera).isNotNull()
     }
 
-    @SdkSuppress(minSdkVersion = 23)
     @Test
     fun extensionEnabledAndOnlyVideoCaptureAttached_streamSharingOn() {
         // Arrange: enable extensions.
@@ -1488,7 +1485,6 @@ class CameraUseCaseAdapterTest {
         assertThat(cameraInfoInternal.isCaptureProcessProgressSupported).isTrue()
     }
 
-    @SdkSuppress(minSdkVersion = 23)
     @Test
     fun returnsCorrectSessionProcessorFromAdapterCameraControl() {
         val fakeSessionProcessor = FakeSessionProcessor()

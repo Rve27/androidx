@@ -239,7 +239,6 @@ public class AppCompatEditTextReceiveContentTest {
         verifyNoMoreInteractions(mMockReceiver);
     }
 
-    @SdkSuppress(minSdkVersion = 23) // The action "Paste as plain text" was added in SDK 23.
     @UiThreadTest
     @Test
     public void testPasteAsPlainText_noReceiver() throws Exception {

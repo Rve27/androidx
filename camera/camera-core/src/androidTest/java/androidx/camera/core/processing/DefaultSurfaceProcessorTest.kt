@@ -45,7 +45,6 @@ import androidx.camera.testing.impl.TestImageUtil.rotateBitmap
 import androidx.concurrent.futures.await
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
-import androidx.test.filters.SdkSuppress
 import androidx.testutils.assertThrows
 import com.google.common.truth.Truth.assertThat
 import java.util.Locale
@@ -160,7 +159,6 @@ class DefaultSurfaceProcessorTest {
         }
     }
 
-    @SdkSuppress(minSdkVersion = 23)
     @Test
     fun snapshot_JpegWrittenToSurface(): Unit = runBlocking {
         // Arrange: create DefaultSurfaceProcessor and setup input/output Surface.
@@ -308,30 +306,13 @@ class DefaultSurfaceProcessorTest {
         assertThat(surfaceOutput.isClosed).isTrue()
     }
 
-    @SdkSuppress(minSdkVersion = 23)
-    @Test
-    fun render(): Unit = runBlocking { testRender(OutputType.IMAGE_READER) }
+    @Test fun render(): Unit = runBlocking { testRender(OutputType.IMAGE_READER) }
 
-    @SdkSuppress(maxSdkVersion = 22)
-    @Test
-    fun renderBelowApi23(): Unit = runBlocking { testRender(OutputType.SURFACE_TEXTURE) }
-
-    @SdkSuppress(minSdkVersion = 23)
     @Test
     fun renderByCustomShader(): Unit = runBlocking {
         val shaderProviderOverride = createCustomShaderProvider()
         testRender(
             OutputType.IMAGE_READER,
-            shaderProviderOverrides = mapOf(InputFormat.DEFAULT to shaderProviderOverride),
-        )
-    }
-
-    @SdkSuppress(maxSdkVersion = 22)
-    @Test
-    fun renderByCustomShaderBelowApi23(): Unit = runBlocking {
-        val shaderProviderOverride = createCustomShaderProvider()
-        testRender(
-            OutputType.SURFACE_TEXTURE,
             shaderProviderOverrides = mapOf(InputFormat.DEFAULT to shaderProviderOverride),
         )
     }

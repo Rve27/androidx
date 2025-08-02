@@ -24,7 +24,6 @@ import static androidx.core.view.HapticFeedbackConstantsCompat.GESTURE_START;
 import static androidx.core.view.HapticFeedbackConstantsCompat.GESTURE_THRESHOLD_ACTIVATE;
 import static androidx.core.view.HapticFeedbackConstantsCompat.GESTURE_THRESHOLD_DEACTIVATE;
 import static androidx.core.view.HapticFeedbackConstantsCompat.KEYBOARD_RELEASE;
-import static androidx.core.view.HapticFeedbackConstantsCompat.KEYBOARD_TAP;
 import static androidx.core.view.HapticFeedbackConstantsCompat.LONG_PRESS;
 import static androidx.core.view.HapticFeedbackConstantsCompat.NO_HAPTICS;
 import static androidx.core.view.HapticFeedbackConstantsCompat.REJECT;
@@ -464,7 +463,7 @@ public class ViewCompatTest extends BaseInstrumentationTestCase<ViewCompatActivi
         assertFallbackHapticFeedbackPerformed(CLOCK_TICK, GESTURE_THRESHOLD_DEACTIVATE);
     }
 
-    @SdkSuppress(minSdkVersion = 23, maxSdkVersion = 29)
+    @SdkSuppress(maxSdkVersion = 29)
     @Test
     public void testPerformHapticFeedback_useFallbackForConstantsFromSdk30() {
         // Maintain constants supported in SDK >= 23
@@ -493,55 +492,6 @@ public class ViewCompatTest extends BaseInstrumentationTestCase<ViewCompatActivi
         assertFallbackHapticFeedbackPerformed(CLOCK_TICK, TOGGLE_OFF);
         assertFallbackHapticFeedbackPerformed(CLOCK_TICK, SEGMENT_FREQUENT_TICK);
         assertFallbackHapticFeedbackPerformed(CLOCK_TICK, GESTURE_THRESHOLD_DEACTIVATE);
-    }
-
-    @SdkSuppress(maxSdkVersion = 22)
-    @Test
-    public void testPerformHapticFeedback_useFallbackForConstantsFromSdk23() {
-        // Maintain constants supported in SDK >= 21
-        assertHapticFeedbackPerformed(CLOCK_TICK);
-
-        // Fallbacks for constants from SDK >= 23
-        assertFallbackHapticFeedbackPerformed(LONG_PRESS, DRAG_START);
-        assertFallbackHapticFeedbackPerformed(LONG_PRESS, REJECT);
-        assertFallbackHapticFeedbackPerformed(VIRTUAL_KEY, CONFIRM);
-        assertFallbackHapticFeedbackPerformed(VIRTUAL_KEY, GESTURE_START);
-        assertFallbackHapticFeedbackPerformed(CLOCK_TICK, GESTURE_END);
-        assertFallbackHapticFeedbackPerformed(CLOCK_TICK, TOGGLE_ON);
-        assertFallbackHapticFeedbackPerformed(CLOCK_TICK, SEGMENT_TICK);
-        assertFallbackHapticFeedbackPerformed(CLOCK_TICK, GESTURE_THRESHOLD_ACTIVATE);
-        assertFallbackHapticFeedbackPerformed(CLOCK_TICK, TOGGLE_OFF);
-        assertFallbackHapticFeedbackPerformed(CLOCK_TICK, SEGMENT_FREQUENT_TICK);
-        assertFallbackHapticFeedbackPerformed(CLOCK_TICK, GESTURE_THRESHOLD_DEACTIVATE);
-        assertFallbackHapticFeedbackPerformed(CLOCK_TICK, CONTEXT_CLICK);
-        assertNoHapticFeedbackPerformed(TEXT_HANDLE_MOVE);
-        assertNoHapticFeedbackPerformed(KEYBOARD_RELEASE);
-        assertNoHapticFeedbackPerformed(VIRTUAL_KEY_RELEASE);
-    }
-
-    @SdkSuppress(maxSdkVersion = 20)
-    @Test
-    public void testPerformHapticFeedback_useFallbackForConstantsFromSdk21() {
-        // Maintain constants supported in SDK < 21
-        assertHapticFeedbackPerformed(KEYBOARD_TAP);
-
-        // Fallbacks for constants from SDK >= 21
-        assertFallbackHapticFeedbackPerformed(LONG_PRESS, DRAG_START);
-        assertFallbackHapticFeedbackPerformed(LONG_PRESS, REJECT);
-        assertFallbackHapticFeedbackPerformed(VIRTUAL_KEY, CONFIRM);
-        assertFallbackHapticFeedbackPerformed(VIRTUAL_KEY, GESTURE_START);
-        assertNoHapticFeedbackPerformed(GESTURE_END);
-        assertNoHapticFeedbackPerformed(TOGGLE_ON);
-        assertNoHapticFeedbackPerformed(SEGMENT_TICK);
-        assertNoHapticFeedbackPerformed(GESTURE_THRESHOLD_ACTIVATE);
-        assertNoHapticFeedbackPerformed(TOGGLE_OFF);
-        assertNoHapticFeedbackPerformed(SEGMENT_FREQUENT_TICK);
-        assertNoHapticFeedbackPerformed(GESTURE_THRESHOLD_DEACTIVATE);
-        assertNoHapticFeedbackPerformed(CONTEXT_CLICK);
-        assertNoHapticFeedbackPerformed(CLOCK_TICK);
-        assertNoHapticFeedbackPerformed(TEXT_HANDLE_MOVE);
-        assertNoHapticFeedbackPerformed(KEYBOARD_RELEASE);
-        assertNoHapticFeedbackPerformed(VIRTUAL_KEY_RELEASE);
     }
 
     private void assertHapticFeedbackPerformed(int feedbackConstant) {

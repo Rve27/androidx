@@ -26,11 +26,9 @@ import android.graphics.ImageFormat;
 import android.media.Image;
 import android.media.ImageWriter;
 
-import androidx.annotation.RequiresApi;
 import androidx.camera.core.impl.ImageReaderProxy;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.MediumTest;
-import androidx.test.filters.SdkSuppress;
 
 import org.jspecify.annotations.NonNull;
 import org.junit.After;
@@ -93,7 +91,6 @@ public final class ImageReaderProxysTest {
     }
 
     @Test
-    @SdkSuppress(minSdkVersion = 23)
     public void isolatedReaderGetsFrames() {
         mReader = ImageReaderProxys.createIsolatedReader(
                 640, 480, ImageFormat.YUV_420_888, IMAGE_QUEUE_DEPTH);
@@ -106,7 +103,6 @@ public final class ImageReaderProxysTest {
                 any(ImageReaderProxy.class));
     }
 
-    @RequiresApi(23)
     private void produceFrames(@NonNull ImageReaderProxy imageReader) {
         mProducerExecutor.execute(() -> {
             try (ImageWriter writer = ImageWriter.newInstance(imageReader.getSurface(),

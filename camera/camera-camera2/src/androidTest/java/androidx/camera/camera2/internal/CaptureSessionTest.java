@@ -1183,7 +1183,6 @@ public final class CaptureSessionTest {
     }
 
     @Test
-    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.M)
     public void cameraDisconnected_whenOpeningCaptureSessions_onClosedShouldBeCalled()
             throws CameraAccessException, InterruptedException, ExecutionException,
             TimeoutException {
@@ -1254,7 +1253,6 @@ public final class CaptureSessionTest {
     }
 
     @Test
-    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.M)
     public void cameraDisconnected_captureSessionsOnClosedShouldBeCalled_repeatingStarted()
             throws ExecutionException, InterruptedException, TimeoutException,
             CameraAccessException {
@@ -1306,7 +1304,6 @@ public final class CaptureSessionTest {
     }
 
     @Test
-    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.M)
     public void cameraDisconnected_captureSessionsOnClosedShouldBeCalled_withoutRepeating()
             throws CameraAccessException, InterruptedException, ExecutionException,
             TimeoutException {

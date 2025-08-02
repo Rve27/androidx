@@ -36,7 +36,6 @@ import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
-import androidx.test.filters.SdkSuppress
 import androidx.test.platform.app.InstrumentationRegistry
 import java.io.IOException
 import java.util.concurrent.CountDownLatch
@@ -1375,7 +1374,6 @@ class SuspendingQueryTest : TestDatabaseTest() {
     }
 
     @Test
-    @SdkSuppress(minSdkVersion = 23)
     fun withTransaction_stress_dbMutation() {
         val context: Context = ApplicationProvider.getApplicationContext()
         context.deleteDatabase("test_stress_dbMutation.db")
