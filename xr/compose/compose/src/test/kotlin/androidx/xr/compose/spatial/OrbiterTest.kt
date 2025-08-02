@@ -421,6 +421,80 @@ class OrbiterTest {
     }
 
     @Test
+    fun orbiter_contentLargerThanParent_isConstrainedBySpatialPanel() {
+        composeTestRule.setContent {
+            TestSetup {
+                ApplicationSubspace {
+                    // Parent panel with a fixed size
+                    SpatialPanel(SubspaceModifier.size(200.dp)) {
+                        Orbiter(ContentEdge.Top) {
+                            // Orbiter content that is larger than the parent panel
+                            Box(modifier = Modifier.size(300.dp).testTag("orbiterContentBox"))
+                        }
+                    }
+                }
+            }
+        }
+
+        // The orbiter's content should be constrained by the parent's size (200.dp)
+        composeTestRule
+            .onNodeWithTag("orbiterContentBox")
+            .assertWidthIsEqualTo(200.dp)
+            .assertHeightIsEqualTo(200.dp)
+    }
+
+    @Test
+    fun orbiter_contentLargerThanParent_isConstrainedByMainPanel() {
+        composeTestRule.setContent {
+            TestSetup {
+                ApplicationSubspace {
+                    // Main panel with a fixed size
+                    SpatialMainPanel(SubspaceModifier.size(200.dp))
+                    Orbiter(ContentEdge.Top) {
+                        // Orbiter content that is larger than the main panel
+                        Box(modifier = Modifier.size(300.dp).testTag("orbiterContentBox"))
+                    }
+                }
+            }
+        }
+
+        // The orbiter's content should be constrained by the main panel's size (200.dp)
+        composeTestRule
+            .onNodeWithTag("orbiterContentBox")
+            .assertWidthIsEqualTo(200.dp)
+            .assertHeightIsEqualTo(200.dp)
+    }
+
+    @Test
+    fun orbiter_unparented_ContentLargerThanParent_isConstrainedByMainWindow() {
+        var windowWidthDp by mutableStateOf(0.dp)
+        var windowHeightDp by mutableStateOf(0.dp)
+
+        composeTestRule.setContent {
+            TestSetup {
+                val window = composeTestRule.activity.window
+                windowWidthDp = window.decorView.width.toDp()
+                windowHeightDp = window.decorView.height.toDp()
+
+                Orbiter(ContentEdge.Top) {
+                    // Orbiter content that is larger than the main window
+                    Box(
+                        modifier =
+                            Modifier.size(windowWidthDp + 100.dp, windowHeightDp + 100.dp)
+                                .testTag("orbiterContentBox")
+                    )
+                }
+            }
+        }
+
+        // The orbiter's content should be constrained by the main window's size
+        composeTestRule
+            .onNodeWithTag("orbiterContentBox")
+            .assertWidthIsEqualTo(windowWidthDp)
+            .assertHeightIsEqualTo(windowHeightDp)
+    }
+
+    @Test
     fun orbiter_inSubspace_noMainPanel_isSizeZero() {
         composeTestRule.setContent {
             TestSetup {

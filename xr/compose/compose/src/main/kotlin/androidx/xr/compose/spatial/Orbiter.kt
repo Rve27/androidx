@@ -82,9 +82,14 @@ public object OrbiterDefaults {
 /**
  * A composable that creates an orbiter along the top or bottom edges of a view.
  *
- * Orbiters are floating elements that contain controls for spatial content. They allow the content
- * to have more space and give users quick access to features like navigation without obstructing
- * the main content.
+ * Orbiters are floating elements that are typically used to control the content within spatial
+ * panels and other entities that they're anchored to. They allow the content to have more space and
+ * give users quick access to features like navigation without obstructing the main content.
+ *
+ * The size of the [Orbiter] is constrained by the dimensions of the parent spatial component it is
+ * anchored to (e.g., a [androidx.xr.compose.subspace.SpatialPanel]). If it's not placed within a
+ * specific spatial component, it defaults to the main window's size. Consequently, an [Orbiter]'s
+ * content cannot be larger than its parent's dimensions.
  *
  * @param position The edge of the orbiter. Use [ContentEdge.Top] or [ContentEdge.Bottom].
  * @param offset The offset of the orbiter based on the outer edge of the orbiter.
@@ -134,9 +139,14 @@ public fun Orbiter(
 /**
  * A composable that creates an orbiter along the start or end edges of a view.
  *
- * Orbiters are floating elements that contain controls for spatial content. They allow the content
- * to have more space and give users quick access to features like navigation without obstructing
- * the main content.
+ * Orbiters are floating elements that are typically used to control the content within spatial
+ * panels and other entities that they're anchored to. They allow the content to have more space and
+ * give users quick access to features like navigation without obstructing the main content.
+ *
+ * The size of the [Orbiter] is constrained by the dimensions of the parent spatial component it is
+ * anchored to (e.g., a [androidx.xr.compose.subspace.SpatialPanel]). If it's not placed within a
+ * specific spatial component, it defaults to the main window's size. Consequently, an [Orbiter]'s
+ * content cannot be larger than its parent's dimensions.
  *
  * @param position The edge of the orbiter. Use [ContentEdge.Start] or [ContentEdge.End].
  * @param offset The offset of the orbiter based on the outer edge of the orbiter.
@@ -202,6 +212,8 @@ private fun Orbiter(data: OrbiterData) {
 
 @Composable
 internal fun PositionedOrbiter(data: OrbiterData, content: @Composable @UiComposable () -> Unit) {
+    val session = checkNotNull(LocalSession.current) { "session must be initialized" }
+
     /**
      * Determine the reference panel size for Orbiter positioning.
      * 1. If parent entity is present, Orbiter is nested within a specific spatial component (e.g.,
@@ -212,10 +224,10 @@ internal fun PositionedOrbiter(data: OrbiterData, content: @Composable @UiCompos
      *    provider. In these cases, Orbiter defaults to the main window's size, which are fetched
      *    and kept updated by getMainWindowSize().
      */
-    val session = checkNotNull(LocalSession.current) { "session must be initialized" }
     val targetEntity = LocalCoreEntity.current
     val parentEntity = targetEntity ?: LocalCoreMainPanelEntity.current
     val panelSize: IntVolumeSize = targetEntity?.mutableSize ?: getMainWindowSize(session)
+
     val view = rememberComposeView()
     val panelEntity = remember {
         CorePanelEntity(
@@ -244,6 +256,7 @@ internal fun PositionedOrbiter(data: OrbiterData, content: @Composable @UiCompos
                             acc.height.coerceAtLeast(placeable.height),
                         )
                     }
+
                 layout(contentSize.width, contentSize.height) {
                     placeables.fastForEach { it.place(0, 0) }
 
