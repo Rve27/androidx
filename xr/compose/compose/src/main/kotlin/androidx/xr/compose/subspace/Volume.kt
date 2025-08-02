@@ -48,6 +48,37 @@ public annotation class ExperimentalSubspaceVolumeApi
  */
 @Composable
 @SubspaceComposable
+@Deprecated(
+    message =
+        """
+Use the SceneCoreEntity API instead.
+
+The SceneCoreEntity API inverts the relationship. Instead of creating a SceneCore node that you
+can parent content to, you must provide an entity in a factory method.
+
+For example, to migrate from Volume to SceneCoreEntity you would do something like the following.
+
+```
+gltfModel?.let { model ->
+    Volume(modifier) { parentEntity ->
+       val gltfEntity = GltfModelEntity.create(session, model)
+       gltfEntity.parent = parentEntity
+    }
+}
+```
+
+which should become:
+
+```
+gltfModel?.let { model ->
+    SceneCoreEntity(modifier = modifier, factory = { GltfModelEntity.create(session, model) })
+}
+```
+
+The SceneCoreEntity is different in that the modifier will be applied directly to the SceneCore
+entity that is provided instead of only applying its transformations to the parent entity.
+"""
+)
 @ExperimentalSubspaceVolumeApi
 public fun Volume(modifier: SubspaceModifier = SubspaceModifier, onVolumeEntity: (Entity) -> Unit) {
     SubspaceLayout(
