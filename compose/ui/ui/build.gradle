@@ -46,6 +46,13 @@ androidXMultiplatform {
         // namespace has to be unique, but default androidx.compose.ui.test package is taken by
         // the androidx.compose.ui:ui-test library
         testNamespace = "androidx.compose.ui.tests"
+
+        packaging {
+            it.resources {
+                it.pickFirsts.add("mockito-extensions/org.mockito.plugins.MockMaker")
+                it.pickFirsts.add("mockito-extensions/org.mockito.plugins.StackTraceCleanerProvider")
+            }
+        }
     }
     jvmStubs()
     linuxX64Stubs()
@@ -151,7 +158,14 @@ androidXMultiplatform {
                 implementation(libs.espressoCore)
                 implementation(libs.bundles.espressoContrib)
                 implementation(libs.junit)
+
+                // Includes both dexmakers allows support for all API levels plus final mocking
+                // support on API 28+. The implementation is swapped based on the finality of the
+                // mock type. This delegation is handled manually inside
+                // androidx.compose.ui.util.mockito.CustomMockMaker.
                 implementation(libs.dexmakerMockito)
+                implementation(libs.dexmakerMockitoInline)
+
                 implementation(libs.mockitoCore)
                 implementation(libs.truth)
                 implementation(libs.mockitoKotlin)
