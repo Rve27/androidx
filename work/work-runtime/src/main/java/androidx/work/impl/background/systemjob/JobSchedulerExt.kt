@@ -69,7 +69,6 @@ public val JobScheduler.safePendingJobs: List<JobInfo>?
         }
     }
 
-@RequiresApi(23)
 internal fun createErrorMessage(
     context: Context,
     workDatabase: WorkDatabase,

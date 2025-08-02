@@ -47,8 +47,6 @@ import java.util.concurrent.Executor;
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public class Schedulers {
-
-    public static final String GCM_SCHEDULER = "androidx.work.impl.background.gcm.GcmScheduler";
     private static final String TAG = Logger.tagWithPrefix("Schedulers");
 
     /**

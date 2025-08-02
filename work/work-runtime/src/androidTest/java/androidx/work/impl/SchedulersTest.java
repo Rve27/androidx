@@ -52,7 +52,6 @@ public class SchedulersTest {
         assertThat(scheduler, is(instanceOf(SystemJobScheduler.class)));
         assertServicesEnabled();
     }
-
     // Only one service should really be enabled at one time.
     private void assertServicesEnabled() {
         assertThat(isComponentExplicitlyEnabled(mAppContext, SystemJobService.class), is(true));
