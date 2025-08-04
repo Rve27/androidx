@@ -27,6 +27,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.List;
 
 /**
  * Encapsulates base statistics information for AppSearch results.
@@ -169,7 +170,7 @@ public class BaseStats {
     public static final String CALL_TYPE_STRING_PRUNE_PACKAGE_DATA = "prunePackageData";
     public static final String CALL_TYPE_STRING_CLOSE = "close";
 
-    private static final int LAUNCH_VM = 0;
+    public static final int LAUNCH_VM = 0;
     private final long mEnabledFeatures;
     /** Time passed while waiting to acquire the lock during Java function calls. */
     protected final int mJavaLockAcquisitionLatencyMillis;
@@ -212,6 +213,17 @@ public class BaseStats {
     /** Returns time passed while get the vm instance. */
     public int getGetVmLatencyMillis() {
         return mGetVmLatencyMillis;
+    }
+
+    /** Returns whether the given {@link BaseStats} enabled all required features. */
+    public static boolean areFeaturesOn(
+            long enabledFeatures, @NonNull List<Integer> requiredFeatures) {
+        for (int i = 0; i < requiredFeatures.size(); i++) {
+            if ((enabledFeatures & (1L << requiredFeatures.get(i))) != 1) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
