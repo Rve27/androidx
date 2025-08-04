@@ -18,6 +18,7 @@ package androidx.xr.runtime.internal
 
 import androidx.annotation.RestrictTo
 import androidx.xr.runtime.math.Matrix3
+import androidx.xr.runtime.math.Vector3
 import androidx.xr.runtime.math.Vector4
 import com.google.common.util.concurrent.ListenableFuture
 
@@ -199,6 +200,268 @@ public interface RenderingRuntime {
      * @param factor The metallic factor.
      */
     public fun setMetallicFactorOnKhronosPbrMaterial(material: MaterialResource, factor: Float)
+
+    /**
+     * Sets the roughness factor for the Khronos PBR material. Controls the surface roughness,
+     * affecting the sharpness of reflections.
+     *
+     * @param material The handle of the Khronos PBR material.
+     * @param factor The roughness factor.
+     */
+    public fun setRoughnessFactorOnKhronosPbrMaterial(material: MaterialResource, factor: Float)
+
+    /**
+     * Sets the normal map texture for the Khronos PBR material. This texture perturbs the surface
+     * normals, creating detailed surface features.
+     *
+     * @param material The handle of the Khronos PBR material.
+     * @param normal The handle of the normal map texture.
+     */
+    public fun setNormalTextureOnKhronosPbrMaterial(
+        material: MaterialResource,
+        normal: TextureResource,
+    )
+
+    /**
+     * Sets the UV transformation matrix for the normal map texture. Adjusts the mapping of the
+     * normal map texture.
+     *
+     * @param material The handle of the Khronos PBR material.
+     * @param uvTransform The uv coordinates of the transform stored in a matrix.
+     */
+    public fun setNormalUvTransformOnKhronosPbrMaterial(
+        material: MaterialResource,
+        uvTransform: Matrix3,
+    )
+
+    /**
+     * Sets the factor of the normal map effect. Controls the strength of the normal map's
+     * influence.
+     *
+     * @param material The handle of the Khronos PBR material.
+     * @param factor The factor of the normal map.
+     */
+    public fun setNormalFactorOnKhronosPbrMaterial(material: MaterialResource, factor: Float)
+
+    /**
+     * Sets the ambient occlusion texture for the Khronos PBR material. Simulates the occlusion of
+     * ambient light by surface details.
+     *
+     * @param material The handle of the Khronos PBR material.
+     * @param ambientOcclusion The handle of the ambient occlusion texture.
+     */
+    public fun setAmbientOcclusionTextureOnKhronosPbrMaterial(
+        material: MaterialResource,
+        ambientOcclusion: TextureResource,
+    )
+
+    /**
+     * Sets the UV transformation matrix for the ambient occlusion texture. Controls the mapping of
+     * the ambient occlusion texture.
+     *
+     * @param material The native handle of the Khronos PBR material.
+     * @param uvTransform The uv coordinates of the transform stored in a matrix.
+     */
+    public fun setAmbientOcclusionUvTransformOnKhronosPbrMaterial(
+        material: MaterialResource,
+        uvTransform: Matrix3,
+    )
+
+    /**
+     * Sets the factor of the ambient occlusion effect.
+     *
+     * @param material The handle of the Khronos PBR material.
+     * @param factor The factor of the ambient occlusion.
+     */
+    public fun setAmbientOcclusionFactorOnKhronosPbrMaterial(
+        material: MaterialResource,
+        factor: Float,
+    )
+
+    /**
+     * Sets the emissive texture for the Khronos PBR material. Defines the light emitted by the
+     * material.
+     *
+     * @param material The handle of the Khronos PBR material.
+     * @param emissive The handle of the emissive texture.
+     */
+    public fun setEmissiveTextureOnKhronosPbrMaterial(
+        material: MaterialResource,
+        emissive: TextureResource,
+    )
+
+    /**
+     * Sets the UV transformation matrix for the emissive texture.
+     *
+     * @param material The handle of the Khronos PBR material.
+     * @param uvTransform The uv coordinates of the transform stored in a matrix.
+     */
+    public fun setEmissiveUvTransformOnKhronosPbrMaterial(
+        material: MaterialResource,
+        uvTransform: Matrix3,
+    )
+
+    /**
+     * Sets the emissive color factors for the Khronos PBR material. Multiplies the emissive texture
+     * or defines a uniform emissive color.
+     *
+     * @param material The handle of the Khronos PBR material.
+     * @param factors An RGB [Vector3] where `(x, y, z)` maps to `(Red, Green, Blue)`.
+     */
+    public fun setEmissiveFactorsOnKhronosPbrMaterial(material: MaterialResource, factors: Vector3)
+
+    /**
+     * Sets the clearcoat texture for the Khronos PBR material. Adds a clearcoat layer to the
+     * material, affecting reflections.
+     *
+     * @param material The handle of the Khronos PBR material.
+     * @param clearcoat The handle of the clearcoat texture.
+     */
+    public fun setClearcoatTextureOnKhronosPbrMaterial(
+        material: MaterialResource,
+        clearcoat: TextureResource,
+    )
+
+    /**
+     * Sets the clearcoat normal texture for the Khronos PBR material. Perturbs the normals of the
+     * clearcoat layer.
+     *
+     * @param material The handle of the Khronos PBR material.
+     * @param clearcoatNormal The handle of the clearcoat normal texture.
+     */
+    public fun setClearcoatNormalTextureOnKhronosPbrMaterial(
+        material: MaterialResource,
+        clearcoatNormal: TextureResource,
+    )
+
+    /**
+     * Sets the clearcoat roughness texture for the Khronos PBR material. Controls the roughness of
+     * the clearcoat layer.
+     *
+     * @param material The handle of the Khronos PBR material.
+     * @param clearcoatRoughness The handle of the clearcoat roughness texture.
+     */
+    public fun setClearcoatRoughnessTextureOnKhronosPbrMaterial(
+        material: MaterialResource,
+        clearcoatRoughness: TextureResource,
+    )
+
+    /**
+     * Sets the clearcoat factor for the Khronos PBR material. Multiplies the clearcoat texture or
+     * defines a uniform clearcoat color.
+     *
+     * @param material The handle of the Khronos PBR material.
+     * @param intensity The intensity of the clearcoat.
+     * @param roughness The roughness of the clearcoat.
+     * @param normal The normal of the clearcoat.
+     */
+    public fun setClearcoatFactorsOnKhronosPbrMaterial(
+        material: MaterialResource,
+        intensity: Float,
+        roughness: Float,
+        normal: Float,
+    )
+
+    /**
+     * Sets the sheen color texture for the Khronos PBR material. Defines the color of the sheen
+     * effect, visible at grazing angles.
+     *
+     * @param material The handle of the Khronos PBR material.
+     * @param sheenColor The handle of the sheen color texture.
+     */
+    public fun setSheenColorTextureOnKhronosPbrMaterial(
+        material: MaterialResource,
+        sheenColor: TextureResource,
+    )
+
+    /**
+     * Sets the sheen color factors for the Khronos PBR material. Multiplies the sheen color texture
+     * or defines a uniform sheen color.
+     *
+     * @param material The handle of the Khronos PBR material.
+     * @param factors The sheen colors on the Khronos PBR material.
+     */
+    public fun setSheenColorFactorsOnKhronosPbrMaterial(
+        material: MaterialResource,
+        factors: Vector3,
+    )
+
+    /**
+     * Sets the sheen roughness texture for the Khronos PBR material. Controls the roughness of the
+     * sheen effect.
+     *
+     * @param material The handle of the Khronos PBR material.
+     * @param sheenRoughness The handle of the sheen roughness texture.
+     */
+    public fun setSheenRoughnessTextureOnKhronosPbrMaterial(
+        material: MaterialResource,
+        sheenRoughness: TextureResource,
+    )
+
+    /**
+     * Sets the sheen roughness factor for the Khronos PBR material. Controls the roughness of the
+     * sheen effect.
+     *
+     * @param material The handle of the Khronos PBR material.
+     * @param factor The sheen roughness factor.
+     */
+    public fun setSheenRoughnessFactorOnKhronosPbrMaterial(
+        material: MaterialResource,
+        factor: Float,
+    )
+
+    /**
+     * Sets the transmission texture for the Khronos PBR material. Defines the transmission of light
+     * through the material.
+     *
+     * @param material The handle of the Khronos PBR material.
+     * @param transmission The handle of the transmission texture.
+     */
+    public fun setTransmissionTextureOnKhronosPbrMaterial(
+        material: MaterialResource,
+        transmission: TextureResource,
+    )
+
+    /**
+     * Sets the UV transformation matrix for the transmission texture.
+     *
+     * @param material The handle of the Khronos PBR material.
+     * @param uvTransform The uv coordinates of the transform stored in a matrix.
+     */
+    public fun setTransmissionUvTransformOnKhronosPbrMaterial(
+        material: MaterialResource,
+        uvTransform: Matrix3,
+    )
+
+    /**
+     * Sets the transmission factor for the Khronos PBR material. Controls the amount of light
+     * transmitted through the material.
+     *
+     * @param material The handle of the Khronos PBR material.
+     * @param factor The transmission factor.
+     */
+    public fun setTransmissionFactorOnKhronosPbrMaterial(material: MaterialResource, factor: Float)
+
+    /**
+     * Sets the index of refraction for the Khronos PBR material. Defines how much light bends when
+     * entering the material.
+     *
+     * @param material The handle of the Khronos PBR material.
+     * @param indexOfRefraction The index of refraction.
+     */
+    public fun setIndexOfRefractionOnKhronosPbrMaterial(
+        material: MaterialResource,
+        indexOfRefraction: Float,
+    )
+
+    /**
+     * Sets the alpha cutoff for the Khronos PBR material. Defines the threshold for transparency,
+     * used for cutout effects.
+     *
+     * @param material The handle of the Khronos PBR material.
+     * @param alphaCutoff The alpha cutoff value.
+     */
+    public fun setAlphaCutoffOnKhronosPbrMaterial(material: MaterialResource, alphaCutoff: Float)
 
     /** Starts the renderer. */
     public fun startRenderer()
