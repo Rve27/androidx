@@ -23,9 +23,11 @@ import androidx.xr.runtime.internal.MaterialResource
 import androidx.xr.runtime.internal.RenderingRuntime
 import androidx.xr.runtime.internal.SceneRuntime
 import androidx.xr.runtime.internal.TextureResource
+import androidx.xr.runtime.internal.TextureSampler
 import androidx.xr.runtime.math.Matrix3
 import androidx.xr.runtime.math.Vector3
 import androidx.xr.runtime.math.Vector4
+import com.google.common.util.concurrent.Futures.immediateFailedFuture
 import com.google.common.util.concurrent.Futures.immediateFuture
 import com.google.common.util.concurrent.ListenableFuture
 
@@ -35,6 +37,33 @@ public class FakeRenderingRuntime(
     private val sceneRuntime: SceneRuntime,
     private val activity: Activity,
 ) : RenderingRuntime {
+    @Suppress("AsyncSuffixFuture")
+    override fun loadTexture(
+        assetName: String,
+        sampler: TextureSampler,
+    ): ListenableFuture<TextureResource> = immediateFailedFuture(NotImplementedError())
+
+    /**
+     * For test purposes only.
+     *
+     * Controls the `TextureResource` instance returned by [borrowReflectionTexture] and
+     * [getReflectionTextureFromIbl].
+     *
+     * <p>Tests can set this property to a [FakeResource] instance to simulate the availability of a
+     * reflection texture. This allows verification that the code under test correctly handles the
+     * borrowed or retrieved texture. Calling [destroyTexture] will reset this property to `null`,
+     * enabling tests to also verify resource cleanup behavior.
+     */
+    internal var reflectionTexture: FakeResource? = null
+
+    override fun borrowReflectionTexture(): TextureResource? {
+        return reflectionTexture
+    }
+
+    override fun destroyTexture(texture: TextureResource) {
+        reflectionTexture = null
+    }
+
     /**
      * For test purposes only.
      *

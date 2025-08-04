@@ -36,6 +36,30 @@ import com.google.common.util.concurrent.ListenableFuture
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public interface RenderingRuntime {
     /**
+     * Loads a texture resource for the given asset name or URL. The future returned by this method
+     * will fire listeners on the UI thread if Runnable::run is supplied.
+     *
+     * @param assetName The name of the texture file to load or the URL of the remote texture.
+     * @param sampler The sampler to use when loading the texture.
+     * @return A future that resolves to the texture when it is loaded.
+     */
+    @Suppress("AsyncSuffixFuture")
+    public fun loadTexture(
+        assetName: String,
+        sampler: TextureSampler,
+    ): ListenableFuture<TextureResource>
+
+    /** Borrows the reflection texture from the currently set environment IBL. */
+    public fun borrowReflectionTexture(): TextureResource?
+
+    /**
+     * Destroys the given texture resource.
+     *
+     * @param texture The name of the texture to destroy.
+     */
+    public fun destroyTexture(texture: TextureResource)
+
+    /**
      * Creates a water material by querying it from the system's built-in materials. The future
      * returned by this method will fire listeners on the UI thread if Runnable::run is supplied.
      *

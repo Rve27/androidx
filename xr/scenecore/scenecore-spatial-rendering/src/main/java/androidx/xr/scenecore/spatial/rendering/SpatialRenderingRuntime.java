@@ -26,6 +26,7 @@ import androidx.xr.runtime.internal.MaterialResource;
 import androidx.xr.runtime.internal.RenderingRuntime;
 import androidx.xr.runtime.internal.SceneRuntime;
 import androidx.xr.runtime.internal.TextureResource;
+import androidx.xr.runtime.internal.TextureSampler;
 import androidx.xr.runtime.math.Matrix3;
 import androidx.xr.runtime.math.Vector3;
 import androidx.xr.runtime.math.Vector4;
@@ -33,6 +34,7 @@ import androidx.xr.scenecore.impl.extensions.XrExtensionsProvider;
 import androidx.xr.scenecore.impl.impress.ImpressApi;
 import androidx.xr.scenecore.impl.impress.ImpressApiImpl;
 import androidx.xr.scenecore.impl.impress.KhronosPbrMaterial;
+import androidx.xr.scenecore.impl.impress.Texture;
 import androidx.xr.scenecore.impl.impress.WaterMaterial;
 
 import com.android.extensions.xr.XrExtensions;
@@ -124,8 +126,69 @@ class SpatialRenderingRuntime implements RenderingRuntime {
         return SpatialRenderingRuntime.create(sceneRuntime, activity, null, null, null);
     }
 
+    private static TextureResourceImpl getTextureResourceFromToken(long token) {
+        return new TextureResourceImpl(token);
+    }
+
     private static MaterialResourceImpl getMaterialResourceFromToken(long token) {
         return new MaterialResourceImpl(token);
+    }
+
+    // ResolvableFuture is marked as RestrictTo(LIBRARY_GROUP_PREFIX), which is intended for classes
+    // within AndroidX. We're in the process of migrating to AndroidX. Without suppressing this
+    // warning, however, we get a build error - go/bugpattern/RestrictTo.
+    @SuppressWarnings({"RestrictTo", "AsyncSuffixFuture"})
+    @Override
+    public @NonNull ListenableFuture<TextureResource> loadTexture(
+            @NonNull String path, @NonNull TextureSampler sampler) {
+        ResolvableFuture<TextureResource> textureResourceFuture = ResolvableFuture.create();
+        // TODO:b/374216912 - Consider calling setFuture() here to catch if the application calls
+        // cancel() on the return value from this function, so we can propagate the cancelation
+        // message to the Impress API.
+
+        if (!Looper.getMainLooper().isCurrentThread()) {
+            throw new IllegalStateException("This method must be called on the main thread.");
+        }
+
+        ListenableFuture<Texture> textureFuture;
+        textureFuture = mImpressApi.loadTexture(path, sampler);
+
+        textureFuture.addListener(
+                () -> {
+                    try {
+                        Texture texture = textureFuture.get();
+                        textureResourceFuture.set(
+                                getTextureResourceFromToken(texture.getNativeHandle()));
+                    } catch (Exception e) {
+                        if (e instanceof InterruptedException) {
+                            Thread.currentThread().interrupt();
+                        }
+                        textureResourceFuture.setException(e);
+                    }
+                },
+                // It's convenient for the main application for us to dispatch their listeners on
+                // the main thread, because they are required to call back to Impress from there,
+                // and it's likely that they will want to call back into the SDK to create entities
+                // from within a listener. We defensively post to the main thread here, but in
+                // practice this should not cause a thread hop because the Impress API already
+                // dispatches its callbacks to the main thread.
+                mActivity::runOnUiThread);
+        return textureResourceFuture;
+    }
+
+    @Override
+    public @Nullable TextureResource borrowReflectionTexture() {
+        Texture texture = mImpressApi.borrowReflectionTexture();
+        if (texture == null) {
+            return null;
+        }
+        return getTextureResourceFromToken(texture.getNativeHandle());
+    }
+
+    @Override
+    public void destroyTexture(@NonNull TextureResource texture) {
+        TextureResourceImpl textureResource = (TextureResourceImpl) texture;
+        mImpressApi.destroyNativeObject(textureResource.getTextureToken());
     }
 
     // ResolvableFuture is marked as RestrictTo(LIBRARY_GROUP_PREFIX), which is intended for classes
