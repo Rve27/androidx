@@ -49,7 +49,6 @@ import androidx.pdf.utils.toContentClass
 import java.util.Collections
 import java.util.concurrent.TimeoutException
 import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.coroutineContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
@@ -385,8 +384,7 @@ public class SandboxedPdfDocument(
     }
 
     override suspend fun getAnnotationsForPage(pageNum: Int): List<PdfAnnotation> {
-        // TODO: b/434620738 - Return getAnnotations for page based on source
-        return listOf()
+        return withDocument { pdfDocumentRemote -> pdfDocumentRemote.getPageAnnotations(pageNum) }
     }
 
     override suspend fun applyEdits(annotations: List<PdfAnnotationData>): AnnotationResult {

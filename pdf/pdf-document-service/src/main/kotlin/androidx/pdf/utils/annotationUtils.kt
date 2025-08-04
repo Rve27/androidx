@@ -189,3 +189,50 @@ internal fun Path.getPathInputsFromPath(): List<PathInput> {
     }
     return pathInputs
 }
+
+/**
+ * Converts this [AospPdfAnnotation] to its corresponding AOSP [PdfAnnotation] representation.
+ *
+ * @return The [PdfAnnotation] equivalent of this AOSP [AospPdfAnnotation].
+ */
+@RequiresExtension(extension = Build.VERSION_CODES.S, version = 18)
+@RestrictTo(RestrictTo.Scope.LIBRARY)
+public fun AospPdfAnnotation.toPdfAnnotation(pageNum: Int): PdfAnnotation? {
+    return when (this) {
+        is AospStampAnnotation -> this.toStampAnnotation(pageNum = pageNum)
+        // TODO: Add other types of annotations
+        else -> null
+    }
+}
+
+/**
+ * Converts this AOSP [AospStampAnnotation] to its corresponding [StampAnnotation] representation.
+ *
+ * @return The [StampAnnotation] equivalent of this AOSP [AospStampAnnotation].
+ */
+@RequiresExtension(extension = Build.VERSION_CODES.S, version = 18)
+@RestrictTo(RestrictTo.Scope.LIBRARY)
+public fun AospStampAnnotation.toStampAnnotation(pageNum: Int): StampAnnotation {
+    val pdfObjects = mutableListOf<PdfObject>()
+    for (aospPdfObject in objects) {
+        aospPdfObject.toPdfObject()?.let { pdfObject -> pdfObjects.add(pdfObject) }
+    }
+    return StampAnnotation(pageNum, bounds, pdfObjects)
+}
+
+/**
+ * Converts this AOSP [PdfPageObject] to its corresponding [PdfObject] representation.
+ *
+ * @return The [PdfObject] equivalent of this AOSP [PdfPageObject] .
+ */
+@RequiresExtension(extension = Build.VERSION_CODES.S, version = 18)
+@RestrictTo(RestrictTo.Scope.LIBRARY)
+public fun PdfPageObject.toPdfObject(): PdfObject? {
+    return when (this) {
+        is PdfPagePathObject -> {
+            val pathInputs = this.toPath().getPathInputsFromPath()
+            PathPdfObject(strokeColor, strokeWidth, pathInputs)
+        }
+        else -> null
+    }
+}

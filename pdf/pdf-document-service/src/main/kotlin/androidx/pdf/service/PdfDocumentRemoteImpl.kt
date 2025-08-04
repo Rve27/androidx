@@ -44,6 +44,7 @@ import androidx.pdf.annotation.models.PdfAnnotationData
 import androidx.pdf.models.Dimensions
 import androidx.pdf.utils.readAnnotationsFromPfd
 import androidx.pdf.utils.toAospAnnotation
+import androidx.pdf.utils.toPdfAnnotation
 
 @RestrictTo(RestrictTo.Scope.LIBRARY)
 internal class PdfDocumentRemoteImpl(
@@ -173,9 +174,18 @@ internal class PdfDocumentRemoteImpl(
         } == true
     }
 
-    override fun getPageAnnotations(pageNum: Int): List<PdfAnnotation> {
-        // TODO:  getPageAnnotations to be implemented in subsequent CL
-        return mutableListOf()
+    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 18)
+    override fun getPageAnnotations(pageNum: Int): List<PdfAnnotation>? {
+        return withPage(pageNum) { page ->
+            val aospAnnotations = page.getPageAnnotations()
+            val pdfAnnotations = mutableListOf<PdfAnnotation>()
+            for (aospAnnotation in aospAnnotations) {
+                aospAnnotation.second.toPdfAnnotation(pageNum)?.let { pfdAnnotation ->
+                    pdfAnnotations.add(pfdAnnotation)
+                }
+            }
+            pdfAnnotations
+        }
     }
 
     override fun isPdfLinearized(): Boolean {
