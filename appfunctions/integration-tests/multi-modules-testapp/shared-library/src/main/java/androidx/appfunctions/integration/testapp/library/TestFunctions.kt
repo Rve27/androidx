@@ -21,7 +21,6 @@ import android.util.Log
 import androidx.appfunctions.AppFunctionContext
 import androidx.appfunctions.AppFunctionSerializable
 import androidx.appfunctions.service.AppFunction
-import androidx.appfunctions.service.AppFunctionIntValueConstraint
 
 @Suppress("UNUSED_PARAMETER")
 class TestFunctions2 {
@@ -51,13 +50,6 @@ class TestFunctions2 {
         exampleSerializable: ExampleSerializable,
         genericSerializable: GenericSerializable<Int>,
     ) {}
-
-    @AppFunction
-    @AppFunctionIntValueConstraint(enumValues = [10, 20])
-    fun enumValueFunction(
-        appFunctionContext: AppFunctionContext,
-        @AppFunctionIntValueConstraint(enumValues = [0, 1]) intEnum: Int,
-    ): Int = 10
 }
 
 /** AppFunctionSerializable in non-root library. */

@@ -20,7 +20,6 @@ import android.annotation.SuppressLint
 import androidx.annotation.IntDef
 import androidx.annotation.RestrictTo
 import androidx.appsearch.annotation.Document
-import java.util.Objects
 
 @IntDef(
     AppFunctionDataTypeMetadata.TYPE_UNIT,
@@ -469,15 +468,6 @@ constructor(
     isNullable: Boolean,
     /** A description of the data type and its intended use. */
     description: String = "",
-    /**
-     * If non-empty, defines the complete set of allowed integer values accepted by this data type.
-     * If empty, all integer values are allowed.
-     *
-     * If any of the values carry special meaning (e.g., `0` means "off", `1` means "on"), such
-     * meanings should be documented clearly in the corresponding property, parameter, or function
-     * return KDoc.
-     */
-    public val enumValues: Set<Int> = emptySet(),
 ) : AppFunctionDataTypeMetadata(isNullable = isNullable, description = description) {
 
     /** Converts this [AppFunctionIntTypeMetadata] to an [AppFunctionDataTypeMetadataDocument]. */
@@ -493,13 +483,15 @@ constructor(
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is AppFunctionIntTypeMetadata) return false
-        return super.equals(other) && enumValues.equals(other.enumValues)
+        return super.equals(other)
     }
 
-    override fun hashCode(): Int = Objects.hash(isNullable, description, enumValues)
+    override fun hashCode(): Int {
+        return super.hashCode()
+    }
 
     override fun toString(): String {
-        return "AppFunctionIntTypeMetadata(isNullable=$isNullable, description=$description, enumValues=$enumValues)"
+        return "AppFunctionIntTypeMetadata(isNullable=$isNullable, description=$description)"
     }
 }
 
@@ -886,8 +878,6 @@ public data class AppFunctionDataTypeMetadataDocument(
     @Document.StringProperty public val objectQualifiedName: String? = null,
     /** A description of the data type and its intended use. */
     @Document.StringProperty public val description: String? = null,
-    /** Enum values, that this data type is restricted to use. */
-    @Document.StringProperty public val enumValues: List<String> = emptyList(),
 ) {
     @SuppressLint(
         // When doesn't handle @IntDef correctly.
@@ -936,11 +926,7 @@ public data class AppFunctionDataTypeMetadataDocument(
                     description = description ?: "",
                 )
             AppFunctionDataTypeMetadata.TYPE_INT ->
-                AppFunctionIntTypeMetadata(
-                    isNullable = isNullable,
-                    description = description ?: "",
-                    enumValues = enumValues.map { it.toInt() }.toSet(),
-                )
+                AppFunctionIntTypeMetadata(isNullable = isNullable, description = description ?: "")
             AppFunctionDataTypeMetadata.TYPE_LONG ->
                 AppFunctionLongTypeMetadata(
                     isNullable = isNullable,

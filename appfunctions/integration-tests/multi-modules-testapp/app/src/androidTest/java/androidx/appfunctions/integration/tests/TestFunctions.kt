@@ -26,7 +26,6 @@ import androidx.appfunctions.AppFunctionSchemaCapability
 import androidx.appfunctions.AppFunctionSerializable
 import androidx.appfunctions.AppFunctionUriGrant
 import androidx.appfunctions.service.AppFunction
-import androidx.appfunctions.service.AppFunctionIntValueConstraint
 import java.time.LocalDateTime
 
 @AppFunctionSchemaCapability
@@ -326,14 +325,6 @@ class TestFunctions {
         classWithOptionalValues: ClassWithOptionalValues,
     ): ClassWithOptionalValues {
         return classWithOptionalValues
-    }
-
-    @AppFunction
-    fun enumValueFunction(
-        appFunctionContext: AppFunctionContext,
-        @AppFunctionIntValueConstraint(enumValues = [0, 1]) intEnum: Int,
-    ) {
-        throw UnsupportedOperationException("Not implemented")
     }
 
     @AppFunction

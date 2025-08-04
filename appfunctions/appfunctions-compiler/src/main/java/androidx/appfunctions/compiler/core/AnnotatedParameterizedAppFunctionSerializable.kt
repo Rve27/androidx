@@ -107,7 +107,6 @@ class AnnotatedParameterizedAppFunctionSerializable(
                     type = actualType,
                     description = propertyDeclaration.description,
                     isRequired = propertyDeclaration.isRequired,
-                    propertyAnnotations = propertyDeclaration.propertyAnnotations,
                 )
             } else {
                 propertyDeclaration

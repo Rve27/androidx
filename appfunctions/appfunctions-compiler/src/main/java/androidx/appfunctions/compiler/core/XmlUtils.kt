@@ -102,10 +102,6 @@ private fun AppFunctionDataTypeMetadataDocument.toXmlElement(
             appendChild(doc.createElementWithTextNode("required", property))
         }
 
-        for (enumValue in enumValues) {
-            appendChild(doc.createElementWithTextNode("enumValues", enumValue))
-        }
-
         appendChild(doc.createElementWithTextNode("type", type.toString()))
     }
 
