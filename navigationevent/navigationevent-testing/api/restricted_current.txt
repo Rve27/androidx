@@ -32,9 +32,5 @@ package androidx.navigationevent.testing {
     property public int onHasEnabledCallbacksChangedInvocations;
   }
 
-  public final class TestNavigationEventKt {
-    method public static androidx.navigationevent.NavigationEvent TestNavigationEvent(optional @FloatRange(from=0.0) float touchX, optional @FloatRange(from=0.0) float touchY, optional @FloatRange(from=0.0, to=1.0) float progress, optional int swipeEdge, optional long frameTimeMillis);
-  }
-
 }
 
