@@ -77,7 +77,7 @@ package androidx.xr.scenecore {
     method public androidx.xr.scenecore.AnchorPlacement createForPlanes(optional java.util.Set<java.lang.Integer> anchorablePlaneOrientations, optional java.util.Set<java.lang.Integer> anchorablePlaneSemanticTypes);
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public abstract class BaseEntity<RtEntityType extends androidx.xr.runtime.internal.Entity> extends androidx.xr.scenecore.BaseScenePose<androidx.xr.runtime.internal.ActivityPose> implements androidx.xr.scenecore.Entity {
+  public abstract class BaseEntity<RtEntityType extends androidx.xr.runtime.internal.Entity> extends androidx.xr.scenecore.BaseScenePose<androidx.xr.runtime.internal.ActivityPose> implements androidx.xr.scenecore.Entity {
     method public void addChild(androidx.xr.scenecore.Entity child);
     method public boolean addComponent(androidx.xr.scenecore.Component component);
     method public void dispose();
@@ -101,8 +101,8 @@ package androidx.xr.scenecore {
     property public androidx.xr.scenecore.Entity? parent;
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public abstract class BaseScenePose<RtActivityPoseType extends androidx.xr.runtime.internal.ActivityPose> implements androidx.xr.scenecore.ScenePose {
-    ctor public BaseScenePose(RtActivityPoseType rtActivityPose);
+  public abstract class BaseScenePose<RtActivityPoseType extends androidx.xr.runtime.internal.ActivityPose> implements androidx.xr.scenecore.ScenePose {
+    ctor protected BaseScenePose(RtActivityPoseType rtActivityPose);
     method public androidx.xr.runtime.math.Pose getActivitySpacePose();
     method public suspend Object? hitTest(androidx.xr.runtime.math.Vector3 origin, androidx.xr.runtime.math.Vector3 direction, int hitTestFilter, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.HitTestResult>);
     method public suspend Object? hitTest(androidx.xr.runtime.math.Vector3 origin, androidx.xr.runtime.math.Vector3 direction, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.HitTestResult>);
