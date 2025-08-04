@@ -16,20 +16,16 @@
 
 package androidx.compose.foundation.gestures.snapping
 
-import androidx.collection.FloatList
-import androidx.collection.mutableFloatListOf
 import androidx.compose.animation.SplineBasedFloatDecayAnimationSpec
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.AnimationVector
 import androidx.compose.animation.core.DecayAnimationSpec
 import androidx.compose.animation.core.FloatDecayAnimationSpec
-import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.TwoWayConverter
 import androidx.compose.animation.core.VectorizedAnimationSpec
 import androidx.compose.animation.core.calculateTargetValue
 import androidx.compose.animation.core.generateDecayAnimationSpec
 import androidx.compose.animation.core.spring
-import androidx.compose.animation.rememberSplineBasedDecay
 import androidx.compose.foundation.AutoTestFrameClock
 import androidx.compose.foundation.TestScrollMotionDurationScale
 import androidx.compose.foundation.gestures.FlingBehavior
@@ -43,6 +39,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.text.matchers.assertThat
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -527,48 +524,6 @@ class SnapFlingBehaviorTest {
         rule.runOnIdle { assertEquals(0, splineSpec.animationWasExecutions) }
     }
 
-    @Test
-    fun performFling_overshootingSnapAnimationSpec_overshootsOnSnap() {
-        val inspectSpringAnimationSpec =
-            InspectSpringAnimationSpec(spring(dampingRatio = Spring.DampingRatioHighBouncy))
-
-        val testLayoutInfoProvider = TestLayoutInfoProvider(maxOffset = 100f, approachOffset = 0f)
-
-        val actualRemainingSettlingDistances = mutableFloatListOf()
-
-        rule.setContent {
-            val testFlingBehavior =
-                rememberSnapFlingBehavior(
-                    snapLayoutInfoProvider = testLayoutInfoProvider,
-                    highVelocityApproachSpec = rememberSplineBasedDecay(),
-                    snapAnimationSpec = inspectSpringAnimationSpec,
-                )
-            VelocityEffect(testFlingBehavior, TestVelocity) { settlingDistance ->
-                actualRemainingSettlingDistances.add(settlingDistance)
-            }
-        }
-
-        rule.waitForIdle()
-        assertEquals(
-            1,
-            inspectSpringAnimationSpec.animationWasExecutions,
-            "Expected one snap spec animation execution",
-        )
-        assertTrue(
-            actualRemainingSettlingDistances.isNotEmpty(),
-            "Expected list of approach offsets not to be empty",
-        )
-
-        // Our spring spec overshoots, so we expect to have some negative distances.
-        val outOfBoundsDistances =
-            actualRemainingSettlingDistances.filter { distance -> distance < 0 }
-        assertTrue(
-            outOfBoundsDistances.isNotEmpty(),
-            "Expected actualRemainingSettlingDistances to contain at least one negative" +
-                " value, but got $actualRemainingSettlingDistances.",
-        )
-    }
-
     inner class TestLayoutInfoProvider(
         val minOffset: Float = MinOffset,
         val maxOffset: Float = MaxOffset,
@@ -667,10 +622,4 @@ private fun rememberSnapFlingBehavior(
             snapAnimationSpec = snapAnimationSpec,
         )
     }
-}
-
-private fun FloatList.filter(predicate: (Float) -> Boolean): FloatList {
-    val filtered = mutableFloatListOf()
-    forEach { item -> if (predicate(item)) filtered.add(item) }
-    return filtered
 }

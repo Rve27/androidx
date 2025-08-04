@@ -29,7 +29,6 @@ import androidx.compose.animation.core.calculateTargetValue
 import androidx.compose.animation.core.copy
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.rememberSplineBasedDecay
-import androidx.compose.foundation.ComposeFoundationFlags.isSnapFlingBehaviorSnapAnimationSpecAllowsOvershootEnabled
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.DefaultScrollMotionDurationScale
 import androidx.compose.foundation.gestures.FlingBehavior
@@ -64,9 +63,7 @@ import kotlinx.coroutines.withContext
  * @param snapLayoutInfoProvider The information about the layout being snapped.
  * @param decayAnimationSpec The animation spec used to approach the target offset when the fling
  *   velocity is large enough. Large enough means large enough to naturally decay.
- * @param snapAnimationSpec The animation spec used to snap to the correct bound, and depending on
- *   the fling velocity, to approach the target offset. During the approach, any overshoot from this
- *   animation spec will be ignored. When snapping, the animation spec is allowed to overshoot.
+ * @param snapAnimationSpec The animation spec used to finally snap to the correct bound.
  */
 fun snapFlingBehavior(
     snapLayoutInfoProvider: SnapLayoutInfoProvider,
@@ -94,9 +91,7 @@ internal class SnapFlingBehavior(
      * @param onRemainingDistanceUpdated a lambda that will be called anytime the distance to the
      *   settling offset is updated. The settling offset is the final offset where this fling will
      *   stop and may change depending on the snapping animation progression.
-     * @return The remaining velocity after the fling has ended, or `0f` if the fling ended at the
-     *   offset returned by [SnapLayoutInfoProvider.calculateSnapOffset]. This velocity can be
-     *   applied to e.g. overscroll to indicate that the interaction is going past the bounds.
+     * @return remaining velocity after fling operation has ended
      */
     override suspend fun ScrollScope.performFling(
         initialVelocity: Float,
@@ -152,23 +147,11 @@ internal class SnapFlingBehavior(
 
                 debugLog { "Settling Final Bound=$remainingScrollOffset" }
 
-                @OptIn(ExperimentalFoundationApi::class)
-                val maxSnapOffset: Float =
-                    if (isSnapFlingBehaviorSnapAnimationSpecAllowsOvershootEnabled) {
-                        // We don't want to cancel the animation before it is finished in order to
-                        //  allow specs like spring to overshoot. We use Infinity so that the
-                        //  animation doesn't get cancelled when reaching the target.
-                        Float.POSITIVE_INFINITY
-                    } else {
-                        remainingScrollOffset
-                    }
-
                 animateWithTarget(
-                    targetOffset = remainingScrollOffset,
-                    absMaximumOffset = maxSnapOffset,
-                    // re-use the velocity and timestamp from state
-                    animationState = animationState.copy(value = 0f),
-                    animationSpec = snapAnimationSpec,
+                    remainingScrollOffset,
+                    remainingScrollOffset,
+                    animationState.copy(value = 0f), // re-use the velocity and timestamp from state
+                    snapAnimationSpec,
                 ) { delta ->
                     remainingScrollOffset -= delta
                     onRemainingScrollOffsetUpdate(remainingScrollOffset)
@@ -274,12 +257,13 @@ private suspend fun ScrollScope.approach(
     animation: ApproachAnimation<Float, AnimationVector1D>,
     onAnimationStep: (delta: Float) -> Unit,
 ): AnimationResult<Float, AnimationVector1D> {
+
     return animation.approachAnimation(this, initialTargetOffset, initialVelocity, onAnimationStep)
 }
 
 private class AnimationResult<T, V : AnimationVector>(
-    var remainingOffset: T,
-    var currentAnimationState: AnimationState<T, V>,
+    val remainingOffset: T,
+    val currentAnimationState: AnimationState<T, V>,
 ) {
     operator fun component1(): T = remainingOffset
 
@@ -343,11 +327,11 @@ private suspend fun ScrollScope.animateDecay(
 }
 
 /**
- * Runs a [AnimationSpec] to snap the list into [targetOffset]. Uses [absMaximumOffset] to stop this
+ * Runs a [AnimationSpec] to snap the list into [targetOffset]. Uses [cancelOffset] to stop this
  * animation before it reaches the target.
  *
  * @param targetOffset The final target of this animation
- * @param absMaximumOffset An absolute value to stop this animation before it reaches the target.
+ * @param cancelOffset If we'd like to finish the animation earlier we use this value
  * @param animationState The current animation state for continuation purposes
  * @param animationSpec The [AnimationSpec] that will drive this animation
  * @param onAnimationStep Called for each new scroll delta emitted by the animation cycle.
@@ -355,20 +339,20 @@ private suspend fun ScrollScope.animateDecay(
 @OptIn(ExperimentalFoundationApi::class)
 private suspend fun ScrollScope.animateWithTarget(
     targetOffset: Float,
-    absMaximumOffset: Float,
+    cancelOffset: Float,
     animationState: AnimationState<Float, AnimationVector1D>,
     animationSpec: AnimationSpec<Float>,
     onAnimationStep: (delta: Float) -> Unit,
 ): AnimationResult<Float, AnimationVector1D> {
-    val initialVelocity = animationState.velocity
     var consumedUpToNow = 0f
+    val initialVelocity = animationState.velocity
     animationState.animateTo(
         targetOffset,
         animationSpec = animationSpec,
         sequentialAnimation = (animationState.velocity != 0f),
     ) {
-        val valueWithinBounds = value.coerceToTarget(absMaximumOffset)
-        val delta = valueWithinBounds - consumedUpToNow
+        val realValue = value.coerceToTarget(cancelOffset)
+        val delta = realValue - consumedUpToNow
         var consumed = 0.0f
         try {
             consumed = scrollBy(delta)
@@ -377,7 +361,7 @@ private suspend fun ScrollScope.animateWithTarget(
         }
         onAnimationStep(consumed)
         // stop when unconsumed or when we reach the desired value
-        if (abs(delta - consumed) > 0.5f || valueWithinBounds != value) {
+        if (abs(delta - consumed) > 0.5f || realValue != value) {
             cancelAnimation()
         }
         consumedUpToNow += consumed
@@ -385,19 +369,11 @@ private suspend fun ScrollScope.animateWithTarget(
 
     debugLog { "Snap Animation: Proposed Offset=$targetOffset Achieved Offset=$consumedUpToNow" }
 
+    // Always course correct velocity so they don't become too large.
+    val finalVelocity = animationState.velocity.coerceToTarget(initialVelocity)
     return AnimationResult(
-        remainingOffset = targetOffset - consumedUpToNow,
-        // When not allowing overshoot, during "snap" approach, the final velocity should be smaller
-        //  than the initial velocity. This ensures the snap following the approach does not speed
-        //  up.
-        currentAnimationState =
-            if (isSnapFlingBehaviorSnapAnimationSpecAllowsOvershootEnabled) {
-                animationState
-            } else {
-                animationState.copy(
-                    velocity = animationState.velocity.coerceToTarget(initialVelocity)
-                )
-            },
+        targetOffset - consumedUpToNow,
+        animationState.copy(velocity = finalVelocity),
     )
 }
 
@@ -424,34 +400,17 @@ private class TargetApproachAnimation(private val animationSpec: AnimationSpec<F
         velocity: Float,
         onAnimationStep: (delta: Float) -> Unit,
     ): AnimationResult<Float, AnimationVector1D> {
-        val initialVelocity = velocity
-        val animationState = AnimationState(initialValue = 0f, initialVelocity = initialVelocity)
+        val animationState = AnimationState(initialValue = 0f, initialVelocity = velocity)
         val targetOffset = offset.absoluteValue * sign(velocity)
-        val animationResult =
-            with(scope) {
-                animateWithTarget(
-                    targetOffset = targetOffset,
-                    absMaximumOffset = offset,
-                    animationState = animationState,
-                    animationSpec = animationSpec,
-                    onAnimationStep = onAnimationStep,
-                )
-            }
-
-        @OptIn(ExperimentalFoundationApi::class)
-        // With the feature flag off, the velocity is coerced inside `animateWithTarget` instead
-        if (isSnapFlingBehaviorSnapAnimationSpecAllowsOvershootEnabled) {
-            // The targeted approach could end with a higher velocity than the initial velocity, for
-            //  example if the animation was cancelled because the target was reached.
-            //  The leftover approach velocity is carried over to the snap animation. If the snap
-            //  starts with a higher velocity than the initial one, that can look like
-            //  "accelerating" during the fling, which we don't want.
-            val finalVelocity =
-                animationResult.currentAnimationState.velocity.coerceToTarget(initialVelocity)
-            animationResult.currentAnimationState =
-                animationResult.currentAnimationState.copy(velocity = finalVelocity)
+        return with(scope) {
+            animateWithTarget(
+                targetOffset = targetOffset,
+                cancelOffset = offset,
+                animationState = animationState,
+                animationSpec = animationSpec,
+                onAnimationStep = onAnimationStep,
+            )
         }
-        return animationResult
     }
 }
 

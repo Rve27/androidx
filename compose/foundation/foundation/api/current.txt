@@ -142,7 +142,6 @@ package androidx.compose.foundation {
     property public boolean isNonSuspendingPointerInputInDraggableEnabled;
     property public boolean isPausableCompositionInPrefetchEnabled;
     property public boolean isSmartSelectionEnabled;
-    property public boolean isSnapFlingBehaviorSnapAnimationSpecAllowsOvershootEnabled;
     property public boolean isTextFieldDpadNavigationEnabled;
     field public static final androidx.compose.foundation.ComposeFoundationFlags INSTANCE;
     field public static boolean isDetectTapGesturesImmediateCoroutineDispatchEnabled;
@@ -154,7 +153,6 @@ package androidx.compose.foundation {
     field public static boolean isNonSuspendingPointerInputInDraggableEnabled;
     field public static boolean isPausableCompositionInPrefetchEnabled;
     field public static boolean isSmartSelectionEnabled;
-    field public static boolean isSnapFlingBehaviorSnapAnimationSpecAllowsOvershootEnabled;
     field public static boolean isTextFieldDpadNavigationEnabled;
   }
 
