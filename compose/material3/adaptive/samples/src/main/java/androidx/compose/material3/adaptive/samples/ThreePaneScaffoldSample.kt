@@ -57,6 +57,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.VerticalDragHandle
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.layout.AdaptStrategy
 import androidx.compose.material3.adaptive.layout.AnimatedPane
 import androidx.compose.material3.adaptive.layout.DockedEdge
@@ -73,6 +74,7 @@ import androidx.compose.material3.adaptive.layout.SupportingPaneScaffoldRole
 import androidx.compose.material3.adaptive.layout.ThreePaneScaffoldPaneScope
 import androidx.compose.material3.adaptive.layout.ThreePaneScaffoldRole
 import androidx.compose.material3.adaptive.layout.ThreePaneScaffoldScope
+import androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirective
 import androidx.compose.material3.adaptive.layout.rememberDragToResizeState
 import androidx.compose.material3.adaptive.layout.rememberPaneExpansionState
 import androidx.compose.material3.adaptive.navigation.BackNavigationBehavior
@@ -253,16 +255,16 @@ fun SupportingPaneScaffoldSample() {
 @Composable
 fun SupportingPaneScaffoldSampleWithExtraPaneLevitatedAsBottomSheet() {
     val coroutineScope = rememberCoroutineScope()
+    val scaffoldDirective = calculatePaneScaffoldDirective(currentWindowAdaptiveInfo())
     val scaffoldNavigator =
         rememberSupportingPaneScaffoldNavigator<NavItemData>(
+            scaffoldDirective = scaffoldDirective,
             adaptStrategies =
                 SupportingPaneScaffoldDefaults.adaptStrategies(
                     extraPaneAdaptStrategy =
-                        AdaptStrategy.Levitate(
-                            strategy = AdaptStrategy.Levitate.Strategy.SinglePaneOnly,
-                            alignment = Alignment.BottomCenter,
-                        )
-                )
+                        AdaptStrategy.Levitate(alignment = Alignment.BottomCenter)
+                            .onlyIfSinglePane(scaffoldDirective)
+                ),
         )
     val extraItems = listOf("Extra content")
     val selectedItem = NavItemData(index = 0, showExtra = true)
@@ -385,23 +387,25 @@ fun <T> reflowAdaptStrategySample(): ThreePaneScaffoldNavigator<T> =
 @Composable
 fun <T> levitateAdaptStrategySample(): ThreePaneScaffoldNavigator<T> {
     val coroutineScope = rememberCoroutineScope()
+    val scaffoldDirective = calculatePaneScaffoldDirective(currentWindowAdaptiveInfo())
     var navigator: ThreePaneScaffoldNavigator<T>? = null
     navigator =
         rememberListDetailPaneScaffoldNavigator<T>(
+            scaffoldDirective = scaffoldDirective,
             adaptStrategies =
                 ListDetailPaneScaffoldDefaults.adaptStrategies(
                     extraPaneAdaptStrategy =
                         AdaptStrategy.Levitate(
-                            strategy = AdaptStrategy.Levitate.Strategy.SinglePaneOnly,
-                            alignment = Alignment.Center,
-                            scrim =
-                                Scrim(
-                                    onClick = {
-                                        coroutineScope.launch { navigator?.navigateBack() }
-                                    }
-                                ),
-                        )
-                )
+                                alignment = Alignment.Center,
+                                scrim =
+                                    Scrim(
+                                        onClick = {
+                                            coroutineScope.launch { navigator?.navigateBack() }
+                                        }
+                                    ),
+                            )
+                            .onlyIfSinglePane(scaffoldDirective)
+                ),
         )
     return navigator
 }

@@ -13,21 +13,11 @@ package androidx.compose.material3.adaptive.layout {
 
   @androidx.compose.runtime.Immutable public static final class AdaptStrategy.Levitate implements androidx.compose.material3.adaptive.layout.AdaptStrategy {
     ctor public AdaptStrategy.Levitate();
-    ctor @KotlinOnly public AdaptStrategy.Levitate(optional androidx.compose.material3.adaptive.layout.AdaptStrategy.Levitate.Strategy strategy, optional androidx.compose.ui.Alignment alignment, optional androidx.compose.material3.adaptive.layout.Scrim? scrim);
-    ctor @BytecodeOnly public AdaptStrategy.Levitate(String!, androidx.compose.ui.Alignment!, androidx.compose.material3.adaptive.layout.Scrim!, kotlin.jvm.internal.DefaultConstructorMarker!);
-  }
-
-  @kotlin.jvm.JvmInline public static final value class AdaptStrategy.Levitate.Strategy {
-    method @BytecodeOnly public static androidx.compose.material3.adaptive.layout.AdaptStrategy.Levitate.Strategy! box-impl(String!);
-    method @BytecodeOnly public String! unbox-impl();
-    field public static final androidx.compose.material3.adaptive.layout.AdaptStrategy.Levitate.Strategy.Companion Companion;
-  }
-
-  public static final class AdaptStrategy.Levitate.Strategy.Companion {
-    method @BytecodeOnly public String getAlways-H_H46_c();
-    method @BytecodeOnly public String getSinglePaneOnly-H_H46_c();
-    property public androidx.compose.material3.adaptive.layout.AdaptStrategy.Levitate.Strategy Always;
-    property public androidx.compose.material3.adaptive.layout.AdaptStrategy.Levitate.Strategy SinglePaneOnly;
+    ctor public AdaptStrategy.Levitate(optional androidx.compose.ui.Alignment alignment, optional androidx.compose.material3.adaptive.layout.Scrim? scrim);
+    method @androidx.compose.runtime.Composable public androidx.compose.material3.adaptive.layout.AdaptStrategy onlyIf(boolean condition);
+    method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.material3.adaptive.layout.AdaptStrategy onlyIf(boolean, androidx.compose.runtime.Composer?, int);
+    method @androidx.compose.runtime.Composable public androidx.compose.material3.adaptive.layout.AdaptStrategy onlyIfSinglePane(androidx.compose.material3.adaptive.layout.PaneScaffoldDirective scaffoldDirective);
+    method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.material3.adaptive.layout.AdaptStrategy onlyIfSinglePane(androidx.compose.material3.adaptive.layout.PaneScaffoldDirective, androidx.compose.runtime.Composer?, int);
   }
 
   @androidx.compose.runtime.Immutable public static final class AdaptStrategy.Reflow implements androidx.compose.material3.adaptive.layout.AdaptStrategy {

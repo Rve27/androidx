@@ -78,24 +78,13 @@ sealed interface androidx.compose.material3.adaptive.layout/AdaptStrategy { // a
     open fun adapt(): androidx.compose.material3.adaptive.layout/PaneAdaptedValue // androidx.compose.material3.adaptive.layout/AdaptStrategy.adapt|adapt(){}[0]
 
     final class Levitate : androidx.compose.material3.adaptive.layout/AdaptStrategy { // androidx.compose.material3.adaptive.layout/AdaptStrategy.Levitate|null[0]
-        constructor <init>(androidx.compose.material3.adaptive.layout/AdaptStrategy.Levitate.Strategy = ..., androidx.compose.ui/Alignment = ..., androidx.compose.material3.adaptive.layout/Scrim? = ...) // androidx.compose.material3.adaptive.layout/AdaptStrategy.Levitate.<init>|<init>(androidx.compose.material3.adaptive.layout.AdaptStrategy.Levitate.Strategy;androidx.compose.ui.Alignment;androidx.compose.material3.adaptive.layout.Scrim?){}[0]
+        constructor <init>(androidx.compose.ui/Alignment = ..., androidx.compose.material3.adaptive.layout/Scrim? = ...) // androidx.compose.material3.adaptive.layout/AdaptStrategy.Levitate.<init>|<init>(androidx.compose.ui.Alignment;androidx.compose.material3.adaptive.layout.Scrim?){}[0]
 
         final fun equals(kotlin/Any?): kotlin/Boolean // androidx.compose.material3.adaptive.layout/AdaptStrategy.Levitate.equals|equals(kotlin.Any?){}[0]
         final fun hashCode(): kotlin/Int // androidx.compose.material3.adaptive.layout/AdaptStrategy.Levitate.hashCode|hashCode(){}[0]
+        final fun onlyIf(kotlin/Boolean, androidx.compose.runtime/Composer?, kotlin/Int): androidx.compose.material3.adaptive.layout/AdaptStrategy // androidx.compose.material3.adaptive.layout/AdaptStrategy.Levitate.onlyIf|onlyIf(kotlin.Boolean;androidx.compose.runtime.Composer?;kotlin.Int){}[0]
+        final fun onlyIfSinglePane(androidx.compose.material3.adaptive.layout/PaneScaffoldDirective, androidx.compose.runtime/Composer?, kotlin/Int): androidx.compose.material3.adaptive.layout/AdaptStrategy // androidx.compose.material3.adaptive.layout/AdaptStrategy.Levitate.onlyIfSinglePane|onlyIfSinglePane(androidx.compose.material3.adaptive.layout.PaneScaffoldDirective;androidx.compose.runtime.Composer?;kotlin.Int){}[0]
         final fun toString(): kotlin/String // androidx.compose.material3.adaptive.layout/AdaptStrategy.Levitate.toString|toString(){}[0]
-
-        final value class Strategy { // androidx.compose.material3.adaptive.layout/AdaptStrategy.Levitate.Strategy|null[0]
-            final fun equals(kotlin/Any?): kotlin/Boolean // androidx.compose.material3.adaptive.layout/AdaptStrategy.Levitate.Strategy.equals|equals(kotlin.Any?){}[0]
-            final fun hashCode(): kotlin/Int // androidx.compose.material3.adaptive.layout/AdaptStrategy.Levitate.Strategy.hashCode|hashCode(){}[0]
-            final fun toString(): kotlin/String // androidx.compose.material3.adaptive.layout/AdaptStrategy.Levitate.Strategy.toString|toString(){}[0]
-
-            final object Companion { // androidx.compose.material3.adaptive.layout/AdaptStrategy.Levitate.Strategy.Companion|null[0]
-                final val Always // androidx.compose.material3.adaptive.layout/AdaptStrategy.Levitate.Strategy.Companion.Always|{}Always[0]
-                    final fun <get-Always>(): androidx.compose.material3.adaptive.layout/AdaptStrategy.Levitate.Strategy // androidx.compose.material3.adaptive.layout/AdaptStrategy.Levitate.Strategy.Companion.Always.<get-Always>|<get-Always>(){}[0]
-                final val SinglePaneOnly // androidx.compose.material3.adaptive.layout/AdaptStrategy.Levitate.Strategy.Companion.SinglePaneOnly|{}SinglePaneOnly[0]
-                    final fun <get-SinglePaneOnly>(): androidx.compose.material3.adaptive.layout/AdaptStrategy.Levitate.Strategy // androidx.compose.material3.adaptive.layout/AdaptStrategy.Levitate.Strategy.Companion.SinglePaneOnly.<get-SinglePaneOnly>|<get-SinglePaneOnly>(){}[0]
-            }
-        }
     }
 
     final class Reflow : androidx.compose.material3.adaptive.layout/AdaptStrategy { // androidx.compose.material3.adaptive.layout/AdaptStrategy.Reflow|null[0]
