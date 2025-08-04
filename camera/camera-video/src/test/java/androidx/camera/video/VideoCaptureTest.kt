@@ -139,7 +139,6 @@ import com.google.common.truth.Truth.assertWithMessage
 import java.util.Collections
 import java.util.concurrent.Executor
 import java.util.concurrent.TimeUnit
-import kotlin.text.get
 import org.junit.After
 import org.junit.Assert.assertThrows
 import org.junit.Before
@@ -228,10 +227,10 @@ class VideoCaptureTest {
             videoCapture.getDefaultConfig(true, FakeUseCaseConfigFactory()),
         )
         videoCapture.updateSuggestedStreamSpec(StreamSpec.builder(Size(640, 480)).build(), null)
-        videoCapture.onStateAttached()
+        videoCapture.onSessionStart()
         // Assert: camera edge does not have transform.
         assertThat(videoCapture.cameraEdge!!.hasCameraTransform()).isFalse()
-        videoCapture.onStateDetached()
+        videoCapture.onSessionStop()
         videoCapture.unbindFromCamera(camera)
     }
 
