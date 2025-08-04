@@ -32,8 +32,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.Dp
@@ -124,11 +122,8 @@ internal fun ElevatedPanel(
                 name = "ElevatedPanel:${view.id}",
             )
         }
-    // TODO(b/416093964): Does ElevatedPanel's alpha still need to be dependent on Pose?
     view.setContent {
-        CompositionLocalProvider(LocalOpaqueEntity provides panelEntity) {
-            Box(Modifier.alpha(if (pose == null) 0.0f else 1.0f)) { content() }
-        }
+        CompositionLocalProvider(LocalOpaqueEntity provides panelEntity) { Box { content() } }
     }
 
     DisposableEffect(panelEntity) { onDispose { panelEntity.dispose() } }
