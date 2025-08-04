@@ -312,6 +312,9 @@ package androidx.appfunctions.metadata {
   public final class AppFunctionIntTypeMetadata extends androidx.appfunctions.metadata.AppFunctionDataTypeMetadata {
     ctor public AppFunctionIntTypeMetadata(boolean isNullable);
     ctor public AppFunctionIntTypeMetadata(boolean isNullable, optional String description);
+    ctor public AppFunctionIntTypeMetadata(boolean isNullable, optional String description, optional java.util.Set<java.lang.Integer> enumValues);
+    method public java.util.Set<java.lang.Integer> getEnumValues();
+    property public java.util.Set<java.lang.Integer> enumValues;
   }
 
   public final class AppFunctionLongTypeMetadata extends androidx.appfunctions.metadata.AppFunctionDataTypeMetadata {

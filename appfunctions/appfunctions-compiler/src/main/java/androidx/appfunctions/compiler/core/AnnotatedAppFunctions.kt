@@ -241,6 +241,7 @@ data class AnnotatedAppFunctions(
                     resolvedAnnotatedSerializableProxies = resolvedAnnotatedSerializableProxies,
                     sharedDataTypeMap = sharedDataTypeMap,
                     seenDataTypeQualifiers = seenDataTypeQualifiers,
+                    functionAnnotations = functionDeclaration.annotations,
                 )
 
             CompileTimeAppFunctionMetadata(
