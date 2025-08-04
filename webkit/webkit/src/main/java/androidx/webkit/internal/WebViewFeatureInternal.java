@@ -816,6 +816,15 @@ public class WebViewFeatureInternal {
             new ApiFeature.NoFramework(WebViewFeature.ORIGIN_MATCHED_HEADERS,
                     Features.EXTRA_HEADER_FOR_ORIGINS);
 
+    /**
+     * Feature for {@link WebViewFeature#isFeatureSupported(String)}.
+     * This feature covers {@link WebViewStartUpConfig.Builder#setProfilesToLoadDuringStartup(Set)},
+     */
+    @WebViewCompat.ExperimentalAsyncStartUp
+    public static final StartupApiFeature.NoFramework STARTUP_FEATURE_SET_PROFILES_TO_LOAD =
+            new StartupApiFeature.NoFramework(WebViewFeature.STARTUP_FEATURE_SET_PROFILES_TO_LOAD,
+                    StartupFeatures.STARTUP_FEATURE_SET_PROFILES_TO_LOAD);
+
     // --- Add new feature constants above this line ---
 
     private WebViewFeatureInternal() {

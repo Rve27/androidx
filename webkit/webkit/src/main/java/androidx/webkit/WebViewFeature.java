@@ -142,6 +142,7 @@ public class WebViewFeature {
             STARTUP_FEATURE_SET_DATA_DIRECTORY_SUFFIX,
             STARTUP_FEATURE_SET_DIRECTORY_BASE_PATHS,
             STARTUP_FEATURE_CONFIGURE_PARTITIONED_COOKIES,
+            STARTUP_FEATURE_SET_PROFILES_TO_LOAD,
     })
     @Retention(RetentionPolicy.SOURCE)
     @Target({ElementType.PARAMETER, ElementType.METHOD})
@@ -762,6 +763,13 @@ public class WebViewFeature {
      * {@link Profile#clearAllOriginMatchedHeaders()}.
      */
     public static final String ORIGIN_MATCHED_HEADERS = "ORIGIN_MATCHED_HEADERS";
+
+    /**
+     * Feature for {@link WebViewFeature#isFeatureSupported(String)}.
+     * This feature covers {@link WebViewStartUpConfig.Builder#setProfilesToLoadDuringStartup(Set)}.
+     */
+    public static final String STARTUP_FEATURE_SET_PROFILES_TO_LOAD =
+            "STARTUP_FEATURE_SET_PROFILES_TO_LOAD";
 
     /**
      * Return whether a feature is supported at run-time. This will check whether a feature is
