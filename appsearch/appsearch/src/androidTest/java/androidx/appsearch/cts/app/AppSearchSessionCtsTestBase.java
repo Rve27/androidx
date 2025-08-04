@@ -9856,10 +9856,152 @@ public abstract class AppSearchSessionCtsTestBase {
     }
 
     @Test
-    public void testGetSchema_indexableNestedPropsList() throws Exception {
+    public void testSetSchema_indexableNestedPropsList_getNotSupported() throws Exception {
+        // Unique case for T ext >=10 and <13 where we can set indexable nested properties, query
+        // over them, but getSchema will not get them.
         assumeTrue(
                 mDb1.getFeatures()
                         .isFeatureSupported(Features.SCHEMA_ADD_INDEXABLE_NESTED_PROPERTIES));
+        assumeFalse(
+                mDb1.getFeatures()
+                        .isFeatureSupported(Features.SCHEMA_GET_INDEXABLE_NESTED_PROPERTIES));
+
+        AppSearchSchema personSchema =
+                new AppSearchSchema.Builder("Person")
+                        .addProperty(
+                                new StringPropertyConfig.Builder("name")
+                                        .setCardinality(PropertyConfig.CARDINALITY_OPTIONAL)
+                                        .setIndexingType(
+                                                StringPropertyConfig.INDEXING_TYPE_PREFIXES)
+                                        .setTokenizerType(StringPropertyConfig.TOKENIZER_TYPE_PLAIN)
+                                        .build())
+                        .addProperty(
+                                new AppSearchSchema.DocumentPropertyConfig.Builder(
+                                        "worksFor", "Organization")
+                                        .setCardinality(PropertyConfig.CARDINALITY_OPTIONAL)
+                                        .setShouldIndexNestedProperties(false)
+                                        .addIndexableNestedProperties(Collections.singleton("name"))
+                                        .build())
+                        .build();
+        AppSearchSchema organizationSchema =
+                new AppSearchSchema.Builder("Organization")
+                        .addProperty(
+                                new StringPropertyConfig.Builder("name")
+                                        .setCardinality(PropertyConfig.CARDINALITY_REQUIRED)
+                                        .setIndexingType(
+                                                StringPropertyConfig.INDEXING_TYPE_EXACT_TERMS)
+                                        .setTokenizerType(StringPropertyConfig.TOKENIZER_TYPE_PLAIN)
+                                        .build())
+                        .addProperty(
+                                new StringPropertyConfig.Builder("notes")
+                                        .setCardinality(PropertyConfig.CARDINALITY_OPTIONAL)
+                                        .setIndexingType(
+                                                StringPropertyConfig.INDEXING_TYPE_PREFIXES)
+                                        .setTokenizerType(StringPropertyConfig.TOKENIZER_TYPE_PLAIN)
+                                        .build())
+                        .build();
+
+        // Set schema with indexable nested properties
+        mDb1.setSchemaAsync(
+                        new SetSchemaRequest.Builder()
+                                .addSchemas(personSchema, organizationSchema)
+                                .build())
+                .get();
+
+        // Check that getSchema does not return with indexable nested properties
+        AppSearchSchema personSchemaWithoutIndexableNestedProperties =
+                new AppSearchSchema.Builder("Person")
+                        .addProperty(
+                                new StringPropertyConfig.Builder("name")
+                                        .setCardinality(PropertyConfig.CARDINALITY_OPTIONAL)
+                                        .setIndexingType(
+                                                StringPropertyConfig.INDEXING_TYPE_PREFIXES)
+                                        .setTokenizerType(StringPropertyConfig.TOKENIZER_TYPE_PLAIN)
+                                        .build())
+                        .addProperty(
+                                new AppSearchSchema.DocumentPropertyConfig.Builder(
+                                        "worksFor", "Organization")
+                                        .setCardinality(PropertyConfig.CARDINALITY_OPTIONAL)
+                                        .setShouldIndexNestedProperties(false)
+                                        .build())
+                        .build();
+
+        Set<AppSearchSchema> actual = mDb1.getSchemaAsync().get().getSchemas();
+        assertThat(actual).hasSize(2);
+        assertThat(actual)
+                .containsExactly(personSchemaWithoutIndexableNestedProperties, organizationSchema);
+
+        for (AppSearchSchema schema : actual) {
+            if (!schema.getSchemaType().equals("Person")) {
+                continue;
+            }
+            for (PropertyConfig property : schema.getProperties()) {
+                if (property.getName().equals("worksFor")) {
+                    assertThat(((DocumentPropertyConfig) property)
+                                .getIndexableNestedProperties()).isEmpty();
+                }
+            }
+        }
+
+        // Properties in Person's indexable_nested_properties_list should still be indexed and
+        // searchable
+        GenericDocument org1 =
+                new GenericDocument.Builder<>("namespace", "org1", "Organization")
+                        .setPropertyString("name", "Org1")
+                        .setPropertyString("notes", "Some notes")
+                        .build();
+        GenericDocument person1 =
+                new GenericDocument.Builder<>("namespace", "person1", "Person")
+                        .setPropertyString("name", "Jane")
+                        .setPropertyDocument("worksFor", org1)
+                        .build();
+
+        AppSearchBatchResult<String, Void> putResult =
+                checkIsBatchResultSuccess(
+                        mDb1.putAsync(
+                                new PutDocumentsRequest.Builder()
+                                        .addGenericDocuments(person1, org1)
+                                        .build()));
+        assertThat(putResult.getSuccesses()).containsExactly("person1", null, "org1", null);
+        assertThat(putResult.getFailures()).isEmpty();
+
+        GetByDocumentIdRequest getByDocumentIdRequest =
+                new GetByDocumentIdRequest.Builder("namespace").addIds("person1", "org1").build();
+        List<GenericDocument> outDocuments = doGet(mDb1, getByDocumentIdRequest);
+        assertThat(outDocuments).hasSize(2);
+        assertThat(outDocuments).containsExactly(person1, org1);
+
+        // Both org1 and person should be returned for query "Org1"
+        // For org1 this matches the 'name' property and for person1 this matches the
+        // 'worksFor.name' property.
+        SearchResults searchResults =
+                mDb1.search(
+                        "Org1",
+                        new SearchSpec.Builder()
+                                .setTermMatch(SearchSpec.TERM_MATCH_EXACT_ONLY)
+                                .build());
+        outDocuments = convertSearchResultsToDocuments(searchResults);
+        assertThat(outDocuments).hasSize(2);
+        assertThat(outDocuments).containsExactly(person1, org1);
+
+        // Only org1 should be returned for query "notes", since 'worksFor.notes' is not indexed
+        // for the Person-type.
+        searchResults =
+                mDb1.search(
+                        "notes",
+                        new SearchSpec.Builder()
+                                .setTermMatch(SearchSpec.TERM_MATCH_EXACT_ONLY)
+                                .build());
+        outDocuments = convertSearchResultsToDocuments(searchResults);
+        assertThat(outDocuments).hasSize(1);
+        assertThat(outDocuments).containsExactly(org1);
+    }
+
+    @Test
+    public void testGetSchema_indexableNestedPropsList() throws Exception {
+        assumeTrue(
+                mDb1.getFeatures()
+                        .isFeatureSupported(Features.SCHEMA_GET_INDEXABLE_NESTED_PROPERTIES));
 
         AppSearchSchema personSchema =
                 new AppSearchSchema.Builder("Person")

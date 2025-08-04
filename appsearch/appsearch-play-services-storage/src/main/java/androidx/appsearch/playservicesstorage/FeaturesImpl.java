@@ -71,6 +71,8 @@ final class FeaturesImpl implements Features {
                 // fall through
             case Features.SCHEMA_ADD_INDEXABLE_NESTED_PROPERTIES:
                 // fall through
+            case Features.SCHEMA_GET_INDEXABLE_NESTED_PROPERTIES:
+                // fall through
             case Features.SEARCH_SPEC_ADD_FILTER_PROPERTIES:
                 // fall through
             case Features.SEARCH_SPEC_SET_SEARCH_SOURCE_LOG_TAG:

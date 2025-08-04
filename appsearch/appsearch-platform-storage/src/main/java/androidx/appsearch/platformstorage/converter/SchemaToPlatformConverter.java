@@ -224,12 +224,13 @@ public final class SchemaToPlatformConverter {
                             .setShouldIndexNestedProperties(
                                     documentProperty.shouldIndexNestedProperties());
             if (!documentProperty.getIndexableNestedProperties().isEmpty()) {
-                if (BuildCompat.T_EXTENSION_INT < AppSearchVersionUtil.TExtensionVersions.V_BASE) {
+                if (BuildCompat.T_EXTENSION_INT
+                        < AppSearchVersionUtil.TExtensionVersions.M2023_11) {
                     throw new UnsupportedOperationException(
                             "DocumentPropertyConfig.addIndexableNestedProperties is not supported "
                                     + "on this AppSearch implementation.");
                 }
-                ApiHelperForSdkExtensionVBase.addIndexableNestedProperties(platformBuilder,
+                ApiHelperForSdkExtensionM202311.addIndexableNestedProperties(platformBuilder,
                         documentProperty.getIndexableNestedProperties());
             }
             return platformBuilder.build();
@@ -393,15 +394,12 @@ public final class SchemaToPlatformConverter {
         }
     }
 
-
-    @SuppressLint("NewApi")
     @RequiresExtension(extension = Build.VERSION_CODES.TIRAMISU,
-            version = AppSearchVersionUtil.TExtensionVersions.V_BASE)
-    private static class ApiHelperForSdkExtensionVBase {
-        private ApiHelperForSdkExtensionVBase() {
+            version = AppSearchVersionUtil.TExtensionVersions.M2023_11)
+    private static class ApiHelperForSdkExtensionM202311 {
+        private ApiHelperForSdkExtensionM202311() {
             // This class is not instantiable.
         }
-
         @DoNotInline
         static void addIndexableNestedProperties(
                 android.app.appsearch.AppSearchSchema.DocumentPropertyConfig.Builder
@@ -409,7 +407,14 @@ public final class SchemaToPlatformConverter {
                 @NonNull Collection<String> indexableNestedProperties) {
             platformBuilder.addIndexableNestedProperties(indexableNestedProperties);
         }
+    }
 
+    @RequiresExtension(extension = Build.VERSION_CODES.TIRAMISU,
+            version = AppSearchVersionUtil.TExtensionVersions.V_BASE)
+    private static class ApiHelperForSdkExtensionVBase {
+        private ApiHelperForSdkExtensionVBase() {
+            // This class is not instantiable.
+        }
 
         @DoNotInline
         static List<String> getIndexableNestedProperties(

@@ -89,8 +89,13 @@ final class FeaturesImpl implements Features {
             case Features.SET_SCHEMA_CIRCULAR_REFERENCES:
                 return Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE;
 
-            // Android V Features
+            // SDK extension M-2023-11 features
             case Features.SCHEMA_ADD_INDEXABLE_NESTED_PROPERTIES:
+                return BuildCompat.T_EXTENSION_INT
+                        >= AppSearchVersionUtil.TExtensionVersions.M2023_11;
+
+            // SDK extension V Base features
+            case Features.SCHEMA_GET_INDEXABLE_NESTED_PROPERTIES:
                 return BuildCompat.T_EXTENSION_INT
                         >= AppSearchVersionUtil.TExtensionVersions.V_BASE;
 
