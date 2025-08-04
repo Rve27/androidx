@@ -56,6 +56,7 @@ package androidx.navigationevent {
     method public void addInputHandler(androidx.navigationevent.AbstractNavigationEventInputHandler inputHandler);
     method @MainThread public void dispose();
     method public kotlinx.coroutines.flow.StateFlow<androidx.navigationevent.NavigationEventState<androidx.navigationevent.NavigationEventInfo>> getState();
+    method @KotlinOnly public inline <reified T extends androidx.navigationevent.NavigationEventInfo> kotlinx.coroutines.flow.StateFlow<androidx.navigationevent.NavigationEventState<T>> getState(kotlinx.coroutines.CoroutineScope scope, T initialInfo);
     method public boolean hasEnabledCallbacks();
     method public boolean isEnabled();
     method public void removeInputHandler(androidx.navigationevent.AbstractNavigationEventInputHandler inputHandler);

@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:OptIn(ExperimentalCoroutinesApi::class)
+
 package androidx.navigationevent
 
 import androidx.kruth.assertThat
@@ -23,6 +25,11 @@ import androidx.navigationevent.NavigationEventState.InProgress
 import androidx.navigationevent.testing.TestNavigationEventCallback
 import androidx.navigationevent.testing.TestNavigationEventDispatcherOwner
 import kotlin.test.Test
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 
 class NavigationEventDispatcherStateTest {
@@ -212,6 +219,80 @@ class NavigationEventDispatcherStateTest {
         // and has higher priority (due to being added last).
         assertThat(dispatcher.state.value).isEqualTo(Idle(DetailsScreenInfo("B")))
     }
+
+    @Test
+    fun getState_whenFilteredForSpecificType_onlyEmitsMatchingStates() =
+        runTest(UnconfinedTestDispatcher()) {
+            val initialHomeInfo = HomeScreenInfo("initial")
+            val homeCallback = TestNavigationEventCallback(currentInfo = HomeScreenInfo("home"))
+            val detailsCallback =
+                TestNavigationEventCallback(currentInfo = DetailsScreenInfo("details"))
+            val collectedStates = mutableListOf<NavigationEventState<HomeScreenInfo>>()
+
+            dispatcher
+                .getState(backgroundScope, initialHomeInfo)
+                .onEach { collectedStates.add(it) }
+                .launchIn(backgroundScope)
+            advanceUntilIdle()
+
+            // The flow must start with the initial value provided.
+            assertThat(collectedStates).hasSize(1)
+            assertThat(collectedStates.last()).isEqualTo(Idle(initialHomeInfo))
+
+            // A new state with a matching type should be collected.
+            dispatcher.addCallback(homeCallback)
+            advanceUntilIdle()
+            assertThat(collectedStates).hasSize(2)
+            assertThat(collectedStates.last()).isEqualTo(Idle(HomeScreenInfo("home")))
+
+            // A state with a non-matching type should be filtered out and not collected.
+            dispatcher.addCallback(detailsCallback)
+            advanceUntilIdle()
+            assertThat(collectedStates).hasSize(2)
+
+            // When the active callback is removed, since a non-matching type should be filtered out
+            // and not collected.
+            detailsCallback.remove()
+            advanceUntilIdle()
+            assertThat(collectedStates).hasSize(2)
+            assertThat(collectedStates.last()).isEqualTo(Idle(HomeScreenInfo("home")))
+        }
+
+    @Test
+    fun getState_whenTypeDoesNotMatch_emitsOnlyInitialInfo() =
+        runTest(UnconfinedTestDispatcher()) {
+            val initialHomeInfo = HomeScreenInfo("initial")
+            val detailsCallback =
+                TestNavigationEventCallback(currentInfo = DetailsScreenInfo("details"))
+            val collectedStates = mutableListOf<NavigationEventState<HomeScreenInfo>>()
+
+            dispatcher
+                .getState(backgroundScope, initialHomeInfo)
+                .onEach { collectedStates.add(it) }
+                .launchIn(backgroundScope)
+            advanceUntilIdle()
+
+            // The flow must start with its initial value.
+            assertThat(collectedStates).hasSize(1)
+            assertThat(collectedStates.first()).isEqualTo(Idle(initialHomeInfo))
+
+            // Add a callback with a non-matching type.
+            dispatcher.addCallback(detailsCallback)
+            advanceUntilIdle()
+
+            // The collector should not have emitted a new value.
+            assertThat(collectedStates).hasSize(1)
+
+            // Update the non-matching callback's info.
+            detailsCallback.setInfo(
+                currentInfo = DetailsScreenInfo("details-updated"),
+                previousInfo = null,
+            )
+            advanceUntilIdle()
+
+            // The collector should still not have emitted a new value.
+            assertThat(collectedStates).hasSize(1)
+        }
 }
 
 /** A sealed interface for type-safe navigation information. */

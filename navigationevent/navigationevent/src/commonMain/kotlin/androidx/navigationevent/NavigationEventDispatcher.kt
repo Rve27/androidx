@@ -19,7 +19,14 @@ package androidx.navigationevent
 import androidx.annotation.MainThread
 import androidx.navigationevent.NavigationEventPriority.Companion.Default
 import androidx.navigationevent.NavigationEventPriority.Companion.Overlay
+import androidx.navigationevent.NavigationEventState.Idle
+import androidx.navigationevent.NavigationEventState.InProgress
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.stateIn
 
 /**
  * A dispatcher for navigation events that can be organized hierarchically.
@@ -185,6 +192,40 @@ private constructor(
      * This represents the navigation state of the currently active component.
      */
     public val state: StateFlow<NavigationEventState<NavigationEventInfo>> = sharedProcessor.state
+
+    /**
+     * Creates a [StateFlow] that only emits states for a specific [NavigationEventInfo] type.
+     *
+     * @param T The [NavigationEventInfo] type to filter for.
+     * @param scope The [CoroutineScope] in which the new [StateFlow] is created.
+     * @param initialInfo The initial [NavigationEventInfo] of type [T] to be used when the
+     *   [StateFlow] starts.
+     * @return A [StateFlow] that emits values only when the state's destination is of type [T].
+     */
+    public inline fun <reified T : NavigationEventInfo> getState(
+        scope: CoroutineScope,
+        initialInfo: T,
+    ): StateFlow<NavigationEventState<T>> {
+        // We can't use filterIsInstance<NavigationEventState<T>> because the type argument `T`
+        // is erased at runtime — so the JVM only sees NavigationEventState<*>. Instead, we filter
+        // by checking whether the state's contained `currentInfo` is of type `T`.
+        return state
+            .filter { state ->
+                when (state) {
+                    is Idle -> state.currentInfo is T
+                    is InProgress -> state.currentInfo is T
+                }
+            }
+            .mapNotNull { state ->
+                @Suppress("UNCHECKED_CAST")
+                state as? NavigationEventState<T>
+            }
+            .stateIn(
+                scope = scope,
+                started = SharingStarted.Eagerly,
+                initialValue = Idle(currentInfo = initialInfo),
+            )
+    }
 
     init {
         // If a parent dispatcher is provided, register this dispatcher as its child.
