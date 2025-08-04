@@ -11,7 +11,8 @@ package androidx.navigationevent {
   }
 
   public final class NavigationEvent {
-    ctor public NavigationEvent(@FloatRange(from=0.0) float touchX, @FloatRange(from=0.0) float touchY, @FloatRange(from=0.0, to=1.0) float progress, int swipeEdge, optional long frameTimeMillis);
+    ctor public NavigationEvent();
+    ctor public NavigationEvent(optional @FloatRange(from=0.0) float touchX, optional @FloatRange(from=0.0) float touchY, optional @FloatRange(from=0.0, to=1.0) float progress, optional int swipeEdge, optional long frameTimeMillis);
     method public long getFrameTimeMillis();
     method public float getProgress();
     method public int getSwipeEdge();

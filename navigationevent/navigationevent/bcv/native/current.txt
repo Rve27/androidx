@@ -41,7 +41,7 @@ abstract class androidx.navigationevent/AbstractNavigationEventInputHandler { //
 }
 
 final class androidx.navigationevent/NavigationEvent { // androidx.navigationevent/NavigationEvent|null[0]
-    constructor <init>(kotlin/Float, kotlin/Float, kotlin/Float, kotlin/Int, kotlin/Long = ...) // androidx.navigationevent/NavigationEvent.<init>|<init>(kotlin.Float;kotlin.Float;kotlin.Float;kotlin.Int;kotlin.Long){}[0]
+    constructor <init>(kotlin/Float = ..., kotlin/Float = ..., kotlin/Float = ..., kotlin/Int = ..., kotlin/Long = ...) // androidx.navigationevent/NavigationEvent.<init>|<init>(kotlin.Float;kotlin.Float;kotlin.Float;kotlin.Int;kotlin.Long){}[0]
 
     final val frameTimeMillis // androidx.navigationevent/NavigationEvent.frameTimeMillis|{}frameTimeMillis[0]
         final fun <get-frameTimeMillis>(): kotlin/Long // androidx.navigationevent/NavigationEvent.frameTimeMillis.<get-frameTimeMillis>|<get-frameTimeMillis>(){}[0]

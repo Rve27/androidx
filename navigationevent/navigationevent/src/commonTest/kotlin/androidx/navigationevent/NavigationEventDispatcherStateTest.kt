@@ -20,7 +20,6 @@ import androidx.kruth.assertThat
 import androidx.navigationevent.NavigationEventInfo.NotProvided
 import androidx.navigationevent.NavigationEventState.Idle
 import androidx.navigationevent.NavigationEventState.InProgress
-import androidx.navigationevent.testing.TestNavigationEvent
 import androidx.navigationevent.testing.TestNavigationEventCallback
 import androidx.navigationevent.testing.TestNavigationEventDispatcherOwner
 import kotlin.test.Test
@@ -86,8 +85,8 @@ class NavigationEventDispatcherStateTest {
         val callback = TestNavigationEventCallback(currentInfo = callbackInfo)
         dispatcher.addCallback(callback)
 
-        val startEvent = TestNavigationEvent(touchX = 0.1F)
-        val progressEvent = TestNavigationEvent(touchX = 0.3f)
+        val startEvent = NavigationEvent(touchX = 0.1F)
+        val progressEvent = NavigationEvent(touchX = 0.3f)
 
         assertThat(dispatcher.state.value).isEqualTo(Idle(callbackInfo))
 
@@ -114,7 +113,7 @@ class NavigationEventDispatcherStateTest {
         val callback = TestNavigationEventCallback(currentInfo = callbackInfo)
         dispatcher.addCallback(callback)
 
-        val startEvent = TestNavigationEvent()
+        val startEvent = NavigationEvent()
 
         assertThat(dispatcher.state.value).isEqualTo(Idle(callbackInfo))
 
@@ -133,7 +132,7 @@ class NavigationEventDispatcherStateTest {
         val callback = TestNavigationEventCallback(currentInfo = firstInfo)
         dispatcher.addCallback(callback)
 
-        val startEvent = TestNavigationEvent(touchX = 0.1F)
+        val startEvent = NavigationEvent(touchX = 0.1F)
 
         // Start the gesture.
         inputHandler.handleOnStarted(startEvent)
@@ -166,7 +165,7 @@ class NavigationEventDispatcherStateTest {
         dispatcher.addCallback(callback)
 
         // FIRST GESTURE: Create a complex state.
-        inputHandler.handleOnStarted(TestNavigationEvent(touchX = 0.1f))
+        inputHandler.handleOnStarted(NavigationEvent(touchX = 0.1f))
         callback.setInfo(currentInfo = HomeScreenInfo("updated"), previousInfo = null)
         inputHandler.handleOnCompleted()
 
@@ -175,7 +174,7 @@ class NavigationEventDispatcherStateTest {
         assertThat(dispatcher.state.value).isEqualTo(Idle(finalInfo))
 
         // SECOND GESTURE: Verify that previousInfo was cleared by `clearPreviousInfo()`.
-        val event2 = TestNavigationEvent(touchX = 0.3f)
+        val event2 = NavigationEvent(touchX = 0.3f)
         inputHandler.handleOnStarted(event2)
 
         // When a new gesture starts, `previousInfo` should be null, not stale data.

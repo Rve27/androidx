@@ -27,19 +27,19 @@ import androidx.annotation.RestrictTo
 public class NavigationEvent(
     /**
      * Absolute X location of the touch point of this event in the coordinate space of the screen
-     * that received this navigation event.
+     * that received this navigation event. Defaults to `0.0F`.
      */
-    @FloatRange(from = 0.0) public val touchX: Float,
+    @FloatRange(from = 0.0) public val touchX: Float = 0.0F,
     /**
      * Absolute Y location of the touch point of this event in the coordinate space of the screen
-     * that received this navigation event.
+     * that received this navigation event. Defaults to `0.0F`.
      */
-    @FloatRange(from = 0.0) public val touchY: Float,
-    /** Value between 0 and 1 on how far along the back gesture is. */
-    @FloatRange(from = 0.0, to = 1.0) public val progress: Float,
-    /** Indicates which edge the swipe starts from. */
-    public val swipeEdge: @SwipeEdge Int,
-    /** Frame time of the navigation event. */
+    @FloatRange(from = 0.0) public val touchY: Float = 0.0F,
+    /** Value between 0 and 1 on how far along the back gesture is. Defaults to `0.0F`. */
+    @FloatRange(from = 0.0, to = 1.0) public val progress: Float = 0.0F,
+    /** Indicates which edge the swipe starts from. Defaults to [EDGE_NONE]. */
+    public val swipeEdge: @SwipeEdge Int = EDGE_NONE,
+    /** Frame time of the navigation event. Defaults to `0`. */
     public val frameTimeMillis: Long = 0,
 ) {
 

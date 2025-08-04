@@ -18,7 +18,6 @@ package androidx.navigationevent
 
 import androidx.kruth.assertThat
 import androidx.kruth.assertThrows
-import androidx.navigationevent.testing.TestNavigationEvent
 import androidx.navigationevent.testing.TestNavigationEventCallback
 import kotlin.test.Test
 
@@ -30,7 +29,7 @@ class NavigationEventDispatcherTest {
         val callback = TestNavigationEventCallback()
         dispatcher.addCallback(callback)
 
-        NavigationEventInputHandler(dispatcher).handleOnStarted(TestNavigationEvent())
+        NavigationEventInputHandler(dispatcher).handleOnStarted(NavigationEvent())
 
         assertThat(callback.startedInvocations).isEqualTo(1)
         assertThat(callback.progressedInvocations).isEqualTo(0)
@@ -44,7 +43,7 @@ class NavigationEventDispatcherTest {
         val callback = TestNavigationEventCallback()
         dispatcher.addCallback(callback)
 
-        NavigationEventInputHandler(dispatcher).handleOnProgressed(TestNavigationEvent())
+        NavigationEventInputHandler(dispatcher).handleOnProgressed(NavigationEvent())
 
         assertThat(callback.startedInvocations).isEqualTo(0)
         assertThat(callback.progressedInvocations).isEqualTo(1)
@@ -95,7 +94,7 @@ class NavigationEventDispatcherTest {
             )
         dispatcher.addCallback(callback)
 
-        NavigationEventInputHandler(dispatcher).handleOnStarted(TestNavigationEvent())
+        NavigationEventInputHandler(dispatcher).handleOnStarted(NavigationEvent())
         // Sanity check that navigation has started.
         assertThat(callback.startedInvocations).isEqualTo(1)
 
@@ -113,7 +112,7 @@ class NavigationEventDispatcherTest {
         dispatcher.addCallback(callback)
 
         val inputHandler = NavigationEventInputHandler(dispatcher)
-        inputHandler.handleOnStarted(TestNavigationEvent())
+        inputHandler.handleOnStarted(NavigationEvent())
         inputHandler.handleOnCompleted()
 
         // The callback was disabled, but cancellation should not be triggered.
@@ -130,7 +129,7 @@ class NavigationEventDispatcherTest {
         dispatcher.addCallback(callback)
 
         val inputHandler = NavigationEventInputHandler(dispatcher)
-        inputHandler.handleOnStarted(TestNavigationEvent())
+        inputHandler.handleOnStarted(NavigationEvent())
         assertThat(callback.startedInvocations).isEqualTo(1)
 
         callback.isEnabled = false
@@ -153,7 +152,7 @@ class NavigationEventDispatcherTest {
             )
         dispatcher.addCallback(callback)
 
-        NavigationEventInputHandler(dispatcher).handleOnStarted(TestNavigationEvent())
+        NavigationEventInputHandler(dispatcher).handleOnStarted(NavigationEvent())
 
         // Assert that 'onEventStarted' was called.
         assertThat(callback.startedInvocations).isEqualTo(1)
@@ -172,14 +171,14 @@ class NavigationEventDispatcherTest {
 
         // Start the first navigation.
         val inputHandler = NavigationEventInputHandler(dispatcher)
-        inputHandler.handleOnStarted(TestNavigationEvent())
+        inputHandler.handleOnStarted(NavigationEvent())
         assertThat(callback1.startedInvocations).isEqualTo(1)
 
         val callback2 = TestNavigationEventCallback()
         dispatcher.addCallback(callback2)
 
         // Start the second navigation, which should cancel the first.
-        inputHandler.handleOnStarted(TestNavigationEvent())
+        inputHandler.handleOnStarted(NavigationEvent())
 
         // Assert callback1 was cancelled and callback2 was started.
         assertThat(callback1.cancelledInvocations).isEqualTo(1)
@@ -200,7 +199,7 @@ class NavigationEventDispatcherTest {
         val callback1 = TestNavigationEventCallback()
         dispatcher.addCallback(callback1)
         val inputHandler = NavigationEventInputHandler(dispatcher)
-        inputHandler.handleOnStarted(TestNavigationEvent())
+        inputHandler.handleOnStarted(NavigationEvent())
         assertThat(callback1.startedInvocations).isEqualTo(1)
 
         // Add a second callback while the first navigation is in progress.
@@ -216,7 +215,7 @@ class NavigationEventDispatcherTest {
         assertThat(callback2.completedInvocations).isEqualTo(0)
 
         // Start and complete a second navigation.
-        inputHandler.handleOnStarted(TestNavigationEvent())
+        inputHandler.handleOnStarted(NavigationEvent())
         inputHandler.handleOnCompleted()
 
         // Assert that the second navigation was handled by the new top callback (callback2).
@@ -363,7 +362,7 @@ class NavigationEventDispatcherTest {
 
         // Dispatching progress or completed without a start should still notify the top callback.
         val inputHandler = NavigationEventInputHandler(dispatcher)
-        inputHandler.handleOnProgressed(TestNavigationEvent())
+        inputHandler.handleOnProgressed(NavigationEvent())
         assertThat(callback.progressedInvocations).isEqualTo(1)
 
         inputHandler.handleOnCompleted()
