@@ -1197,15 +1197,15 @@ public class WebViewCompat {
     }
 
     /**
-     * Denotes that the startUpWebView API surface is experimental.
-     * <p>
-     * It may change without warning and should not be relied upon for non-experimental purposes.
+     * Denotes that the async startup-related API (e.g {@code startupWebView}, {@code
+     * ProcessGlobalConfig.setUiThreadStartupMode}) is experimental.
+     *
+     * <p>It may change without warning and should not be relied upon for non-experimental purposes.
      */
     @Retention(RetentionPolicy.CLASS)
     @Target({ElementType.METHOD, ElementType.TYPE, ElementType.FIELD})
     @RequiresOptIn(level = RequiresOptIn.Level.ERROR)
-    public @interface ExperimentalAsyncStartUp {
-    }
+    public @interface ExperimentalAsyncStartUp {}
 
     /**
      * Callback interface for

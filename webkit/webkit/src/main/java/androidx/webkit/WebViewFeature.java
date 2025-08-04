@@ -143,6 +143,7 @@ public class WebViewFeature {
             STARTUP_FEATURE_SET_DIRECTORY_BASE_PATHS,
             STARTUP_FEATURE_CONFIGURE_PARTITIONED_COOKIES,
             STARTUP_FEATURE_SET_PROFILES_TO_LOAD,
+            STARTUP_FEATURE_SET_UI_THREAD_STARTUP_MODE,
     })
     @Retention(RetentionPolicy.SOURCE)
     @Target({ElementType.PARAMETER, ElementType.METHOD})
@@ -542,7 +543,8 @@ public class WebViewFeature {
 
     /**
      * Feature for {@link #isStartupFeatureSupported(Context, String)}.
-     * This feature covers {@link ProcessGlobalConfig#setDirectoryBasePaths(Context, File, File)}
+     * This feature covers
+     * {@link ProcessGlobalConfig#setPartitionedCookiesEnabled(Context, Boolean)}
      */
     public static final String STARTUP_FEATURE_CONFIGURE_PARTITIONED_COOKIES =
             "STARTUP_FEATURE_CONFIGURE_PARTITIONED_COOKIES";
@@ -770,6 +772,14 @@ public class WebViewFeature {
      */
     public static final String STARTUP_FEATURE_SET_PROFILES_TO_LOAD =
             "STARTUP_FEATURE_SET_PROFILES_TO_LOAD";
+
+    /**
+     * Feature for {@link #isStartupFeatureSupported(Context, String)}.
+     * This feature covers
+     * {@link ProcessGlobalConfig#setUiThreadStartupMode(Context, int)}.
+     */
+    public static final String STARTUP_FEATURE_SET_UI_THREAD_STARTUP_MODE =
+            "STARTUP_FEATURE_SET_UI_THREAD_STARTUP_MODE";
 
     /**
      * Return whether a feature is supported at run-time. This will check whether a feature is
