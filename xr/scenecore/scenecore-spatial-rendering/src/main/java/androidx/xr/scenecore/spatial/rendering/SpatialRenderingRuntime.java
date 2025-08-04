@@ -368,6 +368,50 @@ class SpatialRenderingRuntime implements RenderingRuntime {
     }
 
     @Override
+    public void setMetallicRoughnessTextureOnKhronosPbrMaterial(
+            @NonNull MaterialResource material, @NonNull TextureResource metallicRoughness) {
+        if (!(material instanceof MaterialResourceImpl)) {
+            throw new IllegalArgumentException("MaterialResource is not a MaterialResourceImpl");
+        }
+        if (!(metallicRoughness instanceof TextureResourceImpl)) {
+            throw new IllegalArgumentException("TextureResource is not a TextureResourceImpl");
+        }
+        mImpressApi.setMetallicRoughnessTextureOnKhronosPbrMaterial(
+                ((MaterialResourceImpl) material).getMaterialToken(),
+                ((TextureResourceImpl) metallicRoughness).getTextureToken());
+    }
+
+    @Override
+    public void setMetallicRoughnessUvTransformOnKhronosPbrMaterial(
+            @NonNull MaterialResource material, @NonNull Matrix3 uvTransform) {
+        if (!(material instanceof MaterialResourceImpl)) {
+            throw new IllegalArgumentException("MaterialResource is not a MaterialResourceImpl");
+        }
+        float[] data = uvTransform.getData();
+        mImpressApi.setMetallicRoughnessUvTransformOnKhronosPbrMaterial(
+                ((MaterialResourceImpl) material).getMaterialToken(),
+                data[0],
+                data[1],
+                data[2],
+                data[3],
+                data[4],
+                data[5],
+                data[6],
+                data[7],
+                data[8]);
+    }
+
+    @Override
+    public void setMetallicFactorOnKhronosPbrMaterial(
+            @NonNull MaterialResource material, float factor) {
+        if (!(material instanceof MaterialResourceImpl)) {
+            throw new IllegalArgumentException("MaterialResource is not a MaterialResourceImpl");
+        }
+        mImpressApi.setMetallicFactorOnKhronosPbrMaterial(
+                ((MaterialResourceImpl) material).getMaterialToken(), factor);
+    }
+
+    @Override
     public void startRenderer() {
         if (mSplitEngineRenderer == null || mFrameLoopStarted) {
             return;

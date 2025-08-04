@@ -584,6 +584,9 @@ package androidx.xr.runtime.testing {
     method public void setBaseColorFactorsOnKhronosPbrMaterial(androidx.xr.runtime.internal.MaterialResource material, androidx.xr.runtime.math.Vector4 factors);
     method public void setBaseColorTextureOnKhronosPbrMaterial(androidx.xr.runtime.internal.MaterialResource material, androidx.xr.runtime.internal.TextureResource baseColor);
     method public void setBaseColorUvTransformOnKhronosPbrMaterial(androidx.xr.runtime.internal.MaterialResource material, androidx.xr.runtime.math.Matrix3 uvTransform);
+    method public void setMetallicFactorOnKhronosPbrMaterial(androidx.xr.runtime.internal.MaterialResource material, float factor);
+    method public void setMetallicRoughnessTextureOnKhronosPbrMaterial(androidx.xr.runtime.internal.MaterialResource material, androidx.xr.runtime.internal.TextureResource metallicRoughness);
+    method public void setMetallicRoughnessUvTransformOnKhronosPbrMaterial(androidx.xr.runtime.internal.MaterialResource material, androidx.xr.runtime.math.Matrix3 uvTransform);
     method public void setNormalBoundaryOnWaterMaterial(androidx.xr.runtime.internal.MaterialResource material, float normalBoundary);
     method public void setNormalMapOnWaterMaterial(androidx.xr.runtime.internal.MaterialResource material, androidx.xr.runtime.internal.TextureResource normalMap);
     method public void setNormalSpeedOnWaterMaterial(androidx.xr.runtime.internal.MaterialResource material, float normalSpeed);
