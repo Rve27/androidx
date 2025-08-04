@@ -1512,7 +1512,7 @@ public final class AppSearchImpl implements Closeable {
      *                      {@link DocumentProto}.
      */
     @NonNull
-    public static DocumentProto createDocumentProto(
+    private static DocumentProto createDocumentProto(
             @NonNull String packageName,
             @NonNull String databaseName,
             @NonNull GenericDocument doc,
@@ -1574,17 +1574,45 @@ public final class AppSearchImpl implements Closeable {
             @Nullable AppSearchLogger logger,
             PersistType.@NonNull Code persistType,
             CallStats.@Nullable Builder callStatsBuilder) throws AppSearchException {
+        int maxBufferedBytes = mConfig.getMaxByteLimitForBatchPut();
         List<DocumentProto> docProtos = new ArrayList<>();
         List<PutDocumentStats.Builder> statsBuilders = new ArrayList<>();
+        int currentTotalBytes = 0;
 
         for (int i = 0; i < documents.size(); ++i) {
             PutDocumentStats.Builder pStatsBuilder =
                     new PutDocumentStats.Builder(packageName, databaseName);
-            docProtos.add(createDocumentProto(packageName, databaseName,
-                    documents.get(i), pStatsBuilder));
+            DocumentProto docProto = createDocumentProto(packageName, databaseName,
+                    documents.get(i), pStatsBuilder);
+            int serializedSizeBytes = docProto.getSerializedSize();
+            if ((serializedSizeBytes > maxBufferedBytes - currentTotalBytes)
+                    && !docProtos.isEmpty()) {
+                try {
+                    batchPutDocuments(
+                            packageName,
+                            databaseName,
+                            docProtos,
+                            statsBuilders,
+                            batchResultBuilder,
+                            /* sendChangeNotifications= */ true,
+                            logger,
+                            PersistType.Code.UNKNOWN,
+                            callStatsBuilder);
+                } catch (AppSearchException e) {
+                    // Catch the AppSearchException so we can move on to the next batch.
+                    // For other exceptions, we allow it throw and stop indexing.
+                    Log.e(TAG, "BatchPut failed.", e);
+                }
+                currentTotalBytes = 0;
+                docProtos.clear();
+                statsBuilders.clear();
+            }
+            currentTotalBytes += serializedSizeBytes;
+            docProtos.add(docProto);
             statsBuilders.add(pStatsBuilder);
         }
 
+        // Do last flush with persistType passed in, even if docProtos is empty.
         batchPutDocuments(packageName,
                 databaseName,
                 docProtos,
@@ -1615,7 +1643,7 @@ public final class AppSearchImpl implements Closeable {
      *                                be called. See also {@link #persistToDisk(PersistType.Code)}.
      * @throws AppSearchException on IcingSearchEngine error.
      */
-    public void batchPutDocuments(
+    private void batchPutDocuments(
             @NonNull String packageName,
             @NonNull String databaseName,
             @NonNull List<DocumentProto> documents,
@@ -1628,71 +1656,38 @@ public final class AppSearchImpl implements Closeable {
         Preconditions.checkArgument(documents.size() == statsBuilders.size(),
                 "documents and statsBuilders should have same size");
 
-        // All the stats we want to print. This may not be necessary,
-        // but just to keep the behavior same as before.
-        // Use list instead of map as same id can appear more than once.
-        List<PutDocumentStats.Builder> allStatsList = new ArrayList<>();
         List<PutDocumentStats.Builder> statsNotFilteredOut = new ArrayList<>();
         long totalLatencyStartMillis = SystemClock.elapsedRealtime();
         long javaLockAcquisitionEndTimeMillis = 0;
+        String prefix = createPrefix(packageName, databaseName);
 
         mReadWriteLock.writeLock().lock();
         try {
             javaLockAcquisitionEndTimeMillis = SystemClock.elapsedRealtime();
             throwIfClosedLocked();
 
-            String prefix = createPrefix(packageName, databaseName);
-            List<PutDocumentRequest.Builder> requestBuilderList = new ArrayList<>();
-            // This is to make sure the batching size is at least getMaxDocumentSizeBytes.
-            // Otherwise one valid size doc may not fit into a batch.
-            int maxBufferedBytes = mConfig.getMaxByteLimitForBatchPut();
-            int currentTotalBytes = 0;
-            PutDocumentRequest.Builder currentBatchBuilder =
-                    PutDocumentRequest.newBuilder().setPersistType(PersistType.Code.UNKNOWN);
+            PutDocumentRequest.Builder putRequestBuilder =
+                    PutDocumentRequest.newBuilder().setPersistType(persistType);
             for (int i = 0; i < documents.size(); ++i) {
                 DocumentProto finalDocument = documents.get(i);
                 String docId = finalDocument.getUri();
-                PutDocumentStats.Builder pStatsBuilder = statsBuilders.get(i)
+                PutDocumentStats.Builder pStatsBuilder =
+                        statsBuilders.get(i)
                                 .setLaunchVMEnabled(mIsVMEnabled)
                                 .setJavaLockAcquisitionLatencyMillis(
-                                        (int) (javaLockAcquisitionEndTimeMillis
-                                                - totalLatencyStartMillis))
+                                        (int)
+                                                (javaLockAcquisitionEndTimeMillis
+                                                        - totalLatencyStartMillis))
                                 .setLastWriteOperation(mLastWriteOperationLocked)
                                 .setLastWriteOperationLatencyMillis(
                                         mLastWriteOperationLatencyMillisLocked);
-                // Previously we always log even if we reach the limit. To keep the behavior
-                // same as before, we will save all the stats created.
-                allStatsList.add(pStatsBuilder);
-
                 try {
                     // Check limits
                     int serializedSizeBytes = finalDocument.getSerializedSize();
-                    enforceLimitConfigLocked(packageName, docId, serializedSizeBytes,
-                            callStatsBuilder);
-
-                    // to see if we want to finish the current batch due to the byte limitation and
-                    // build a PutRequestProto.
-                    // - It is possible for serializedSizeBytes to exceed maxBufferedBytes if the
-                    //   currentBatch is empty, then we must add the document to it instead of
-                    //   finishing the batch.
-                    // - If the currentBatch is non-empty, then we should finish that batch and
-                    //   create a new one with this document.
-                    if (currentBatchBuilder.getDocumentsCount() > 0
-                            && serializedSizeBytes > maxBufferedBytes - currentTotalBytes) {
-                        // Time to finish the current batch.
-                        requestBuilderList.add(currentBatchBuilder);
-
-                        // reset everything for next batch
-                        currentBatchBuilder =
-                                PutDocumentRequest.newBuilder().setPersistType(
-                                        PersistType.Code.UNKNOWN);
-                        currentTotalBytes = 0;
-                    }
-
-                    currentTotalBytes += serializedSizeBytes;
-                    currentBatchBuilder.addDocuments(finalDocument);
+                    enforceLimitConfigLocked(packageName, docId,
+                            serializedSizeBytes, callStatsBuilder);
+                    putRequestBuilder.addDocuments(finalDocument);
                     statsNotFilteredOut.add(pStatsBuilder);
-
                 } catch (Throwable t) {
                     if (batchResultBuilder != null) {
                         batchResultBuilder.setResult(docId, throwableToFailedResult(t));
@@ -1700,126 +1695,121 @@ public final class AppSearchImpl implements Closeable {
                 }
             }
 
-            // We have to "flush" the last batch. Since this is the last batch, we set the
-            // persistType passed in here.
-            requestBuilderList.add(currentBatchBuilder.setPersistType(persistType));
-
             // Put documents
-            int statsIndex = 0;
-            for (int requestIndex = 0; requestIndex < requestBuilderList.size(); ++requestIndex) {
-                PutDocumentRequest requestProto = requestBuilderList.get(requestIndex).build();
-                LogUtil.piiTrace(
-                        TAG,
-                        "batchPutDocument, request",
-                        requestProto.getDocumentsCount(),
-                        requestProto);
-                BatchPutResultProto batchPutResultProto =
-                        mIcingSearchEngineLocked.batchPut(requestProto);
-                if (callStatsBuilder != null) {
-                    callStatsBuilder.addGetVmLatencyMillis(batchPutResultProto.getGetVmLatencyMs());
-                }
-                // TODO(b/394875109) We can provide a better debug information for fast trace here.
-                LogUtil.piiTrace(
-                        TAG, "batchPutDocument",
-                        /* fastTraceObj= */ null,
-                        batchPutResultProto);
+            PutDocumentRequest requestProto = putRequestBuilder.build();
+            LogUtil.piiTrace(
+                    TAG,
+                    "batchPutDocument, request",
+                    requestProto.getDocumentsCount(),
+                    requestProto);
+            BatchPutResultProto batchPutResultProto =
+                    mIcingSearchEngineLocked.batchPut(requestProto);
+            if (callStatsBuilder != null) {
+                callStatsBuilder.addGetVmLatencyMillis(batchPutResultProto.getGetVmLatencyMs());
+            }
+            // TODO(b/394875109) We can provide a better debug information for fast trace here.
+            LogUtil.piiTrace(
+                    TAG, "batchPutDocument", /* fastTraceObj= */ null, batchPutResultProto);
 
-                List<PutResultProto> putResultProtoList =
-                        batchPutResultProto.getPutResultProtosList();
-                for (int i = 0; i < putResultProtoList.size(); ++i, ++statsIndex) {
-                    PutResultProto putResultProto = putResultProtoList.get(i);
-                    String docId = putResultProto.getUri();
-                    try {
-                        if (statsIndex <= statsNotFilteredOut.size()) {
-                            PutDocumentStats.Builder pStatsBuilder =
-                                    statsNotFilteredOut.get(statsIndex);
-                            pStatsBuilder.setStatusCode(
-                                    statusProtoToResultCode(putResultProto.getStatus()))
-                                    .addGetVmLatencyMillis(putResultProto.getGetVmLatencyMs());
-                            AppSearchLoggerHelper.copyNativeStats(
-                                    putResultProto.getPutDocumentStats(), pStatsBuilder);
-                        } else {
-                            // since it is just stats, we just log the debug message if
-                            // something goes wrong.
-                            LogUtil.piiTrace(TAG, "batchPutDocument",
-                                    "index out of boundary for stats",
-                                    statsNotFilteredOut);
-                        }
+            // Create Results
+            List<PutResultProto> putResultProtoList =
+                    batchPutResultProto.getPutResultProtosList();
+            for (int i = 0; i < putResultProtoList.size(); ++i) {
+                PutResultProto putResultProto = putResultProtoList.get(i);
+                String docId = putResultProto.getUri();
+                try {
+                    if (i < statsNotFilteredOut.size()) {
+                        PutDocumentStats.Builder pStatsBuilder = statsNotFilteredOut.get(i);
+                        pStatsBuilder
+                                .setStatusCode(
+                                        statusProtoToResultCode(putResultProto.getStatus()))
+                                .addGetVmLatencyMillis(putResultProto.getGetVmLatencyMs());
+                        AppSearchLoggerHelper.copyNativeStats(
+                                putResultProto.getPutDocumentStats(), pStatsBuilder);
+                    } else {
+                        // since it is just stats, we just log the debug message if
+                        // something goes wrong.
+                        LogUtil.piiTrace(
+                                TAG,
+                                "batchPutDocument",
+                                "index out of boundary for stats",
+                                statsNotFilteredOut);
+                    }
 
-                        // If it is a failure, it will throw and the catch section will
-                        // set generated result
-                        checkSuccess(putResultProto.getStatus());
-                        if (batchResultBuilder != null) {
-                            batchResultBuilder.setSuccess(docId, /* value= */ null);
-                        }
+                    // If it is a failure, it will throw and the catch section will
+                    // set generated result
+                    checkSuccess(putResultProto.getStatus());
+                    if (batchResultBuilder != null) {
+                        batchResultBuilder.setSuccess(docId, /* value= */ null);
+                    }
 
-                        // Don't need to check the index here, as request doc list size should
-                        // definitely be bigger than response doc list size.
-                        DocumentProto documentProto = requestProto.getDocuments(i);
-                        if (!docId.equals(documentProto.getUri())) {
-                            // This shouldn't happen if native code implemented correctly.
-                            // Have a check here just in case something unexpected happens.
-                            Log.w(TAG, "id mismatch between request and response for batchPut");
-                            continue;
-                        }
+                    // Don't need to check the index here, as request doc list size should
+                    // definitely be bigger than response doc list size.
+                    DocumentProto documentProto = requestProto.getDocuments(i);
+                    if (!docId.equals(documentProto.getUri())) {
+                        // This shouldn't happen if native code implemented correctly.
+                        // Have a check here just in case something unexpected happens.
+                        Log.w(TAG, "id mismatch between request and response for batchPut");
+                        continue;
+                    }
 
-                        // Only update caches if the document is successfully put to Icing.
-                        // Prefixed namespace needed here.
-                        mNamespaceCacheLocked.addToDocumentNamespaceMap(
-                                prefix, documentProto.getNamespace());
-                        if (!Flags.enableDocumentLimiterReplaceTracking()
-                                || !putResultProto.getWasReplacement()) {
-                            // If the document was a replacement, then there is no need to report it
-                            // because the number of documents has not changed. We only need to
-                            // report "true" additions to the DocumentLimiter.
-                            // Although a replacement document will consume a document id,
-                            // the limit is only intended to apply to "living" documents.
-                            // It is the responsibility of AppSearch's optimization task to reclaim
-                            // space when needed.
-                            mDocumentLimiterLocked.reportDocumentAdded(
-                                    packageName,
-                                    () ->
-                                            getRawStorageInfoProto(callStatsBuilder)
-                                                    .getDocumentStorageInfo()
-                                                    .getNamespaceStorageInfoList());
-                        }
-                        // Prepare notifications
-                        if (sendChangeNotifications) {
-                            mObserverManager.onDocumentChange(
-                                    packageName,
-                                    databaseName,
-                                    removePrefix(documentProto.getNamespace()),
-                                    removePrefix(documentProto.getSchema()),
-                                    documentProto.getUri(),
-                                    mDocumentVisibilityStoreLocked,
-                                    mVisibilityCheckerLocked);
-                        }
-                    } catch (Throwable t) {
-                        if (batchResultBuilder != null) {
-                            batchResultBuilder.setResult(docId, throwableToFailedResult(t));
-                        } else {
-                            throw t;
-                        }
+                    // Only update caches if the document is successfully put to Icing.
+                    // Prefixed namespace needed here.
+                    mNamespaceCacheLocked.addToDocumentNamespaceMap(
+                            prefix, documentProto.getNamespace());
+                    if (!Flags.enableDocumentLimiterReplaceTracking()
+                            || !putResultProto.getWasReplacement()) {
+                        // If the document was a replacement, then there is no need to report it
+                        // because the number of documents has not changed. We only need to
+                        // report "true" additions to the DocumentLimiter.
+                        // Although a replacement document will consume a document id,
+                        // the limit is only intended to apply to "living" documents.
+                        // It is the responsibility of AppSearch's optimization task to reclaim
+                        // space when needed.
+                        mDocumentLimiterLocked.reportDocumentAdded(
+                                packageName,
+                                () ->
+                                        getRawStorageInfoProto(callStatsBuilder)
+                                                .getDocumentStorageInfo()
+                                                .getNamespaceStorageInfoList());
+                    }
+                    // Prepare notifications
+                    if (sendChangeNotifications) {
+                        mObserverManager.onDocumentChange(
+                                packageName,
+                                databaseName,
+                                removePrefix(documentProto.getNamespace()),
+                                removePrefix(documentProto.getSchema()),
+                                documentProto.getUri(),
+                                mDocumentVisibilityStoreLocked,
+                                mVisibilityCheckerLocked);
+                    }
+                } catch (Throwable t) {
+                    if (batchResultBuilder != null) {
+                        batchResultBuilder.setResult(docId, throwableToFailedResult(t));
+                    } else {
+                        throw t;
                     }
                 }
-                // As we only set "not unknown" persistType for the last request,
-                // this should ONLY be checked for last request.
-                if (requestProto.getPersistType() != PersistType.Code.UNKNOWN) {
-                    checkSuccess(batchPutResultProto.getPersistToDiskResultProto().getStatus());
-                }
+            }
+
+            if (requestProto.getPersistType() != PersistType.Code.UNKNOWN) {
+                checkSuccess(batchPutResultProto.getPersistToDiskResultProto().getStatus());
             }
         } finally {
             mLastWriteOperationLocked = BaseStats.CALL_TYPE_PUT_DOCUMENTS;
             mLastWriteOperationLatencyMillisLocked =
                     (int) (SystemClock.elapsedRealtime() - javaLockAcquisitionEndTimeMillis);
             mReadWriteLock.writeLock().unlock();
-            if (logger != null && !allStatsList.isEmpty()) {
+
+            if (logger != null && !statsBuilders.isEmpty()) {
                 // This seems broken and no easy way to get accurate number.
                 int avgTotalLatencyMs =
-                        (int) ((SystemClock.elapsedRealtime() - totalLatencyStartMillis)
-                                / allStatsList.size());
-                for (int i = 0; i < allStatsList.size(); ++i) {
-                    PutDocumentStats.Builder pStatsBuilder = allStatsList.get(i);
+                        (int)
+                                ((SystemClock.elapsedRealtime() - totalLatencyStartMillis)
+                                        / statsBuilders.size());
+                for (int i = 0; i < statsBuilders.size(); ++i) {
+                    PutDocumentStats.Builder pStatsBuilder = statsBuilders.get(i);
                     pStatsBuilder.setTotalLatencyMillis(avgTotalLatencyMs);
                     logger.logStats(pStatsBuilder.build());
                 }
