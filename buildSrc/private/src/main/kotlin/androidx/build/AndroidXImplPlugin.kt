@@ -280,14 +280,6 @@ abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
         androidXExtension: AndroidXExtension,
     ) {
         anchorTask.configure { it.dependsOn(task) }
-        val ignoreFailuresProperty =
-            project.providers.gradleProperty(TEST_FAILURES_DO_NOT_FAIL_TEST_TASK)
-        val ignoreFailures = ignoreFailuresProperty.isPresent
-        if (ignoreFailures) {
-            task.ignoreFailures = true
-        }
-        task.inputs.property("ignoreFailures", ignoreFailures)
-
         val xmlReportDestDir = project.getHostTestResultDirectory()
         val testName = "${project.path}:${task.name}"
         project.addToModuleInfo(testName, buildFeatures.isIsolatedProjectsEnabled())

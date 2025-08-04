@@ -13,6 +13,7 @@ pluginManagement {
             }
         }
     }
+    includeBuild("androidx-settings-plugins")
 }
 
 buildscript {
@@ -39,6 +40,10 @@ buildscript {
         // set guava version to be compatible with Depdendency analysis gradle plugin
         classpath("com.google.guava:guava:33.3.1-jre")
     }
+}
+
+plugins {
+    id("AndroidXHostTestFailureHandlerPlugin")
 }
 
 enableFeaturePreview "STABLE_CONFIGURATION_CACHE"
