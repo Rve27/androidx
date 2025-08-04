@@ -112,7 +112,7 @@ class IntegrationTest {
                 it.appFunctions
             }
 
-        assertThat(appFunctions).hasSize(16)
+        assertThat(appFunctions).hasSize(17)
     }
 
     @Test
