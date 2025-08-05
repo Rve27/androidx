@@ -187,11 +187,18 @@ public final class ImpressApiImpl implements ImpressApi {
 
                                 @Override
                                 public void onFailure(@NonNull String message) {
+                                    // We can safely check for the CANCELLED string here since we
+                                    // know that the underlying absl Status code is being
+                                    // translated to a java Exception and the message is being
+                                    // propagated. Ideally the native code would generate a separate
+                                    // signal call for this.
                                     // TODO: b/374217508 - Publish a more precisely typed Exception
                                     // interface for this.
-                                    // Alternatively we could return null here and have some means
-                                    // of also surfacing an error message to the application.
-                                    completer.setException(new Exception(message));
+                                    if (message.contains("CANCELLED")) {
+                                        completer.setCancelled();
+                                    } else {
+                                        completer.setException(new Exception(message));
+                                    }
                                 }
                             },
                             path);
@@ -220,11 +227,18 @@ public final class ImpressApiImpl implements ImpressApi {
 
                                 @Override
                                 public void onFailure(@NonNull String message) {
+                                    // We can safely check for the CANCELLED string here since we
+                                    // know that the underlying absl Status code is being
+                                    // translated to a java Exception and the message is being
+                                    // propagated. Ideally the native code would generate a separate
+                                    // signal call for this.
                                     // TODO: b/374217508 - Publish a more precisely typed Exception
                                     // interface for this.
-                                    // Alternatively we could return null here and have some means
-                                    // of also surfacing an error message to the application.
-                                    completer.setException(new Exception(message));
+                                    if (message.contains("CANCELLED")) {
+                                        completer.setCancelled();
+                                    } else {
+                                        completer.setException(new Exception(message));
+                                    }
                                 }
                             },
                             data,
@@ -255,11 +269,18 @@ public final class ImpressApiImpl implements ImpressApi {
 
                                 @Override
                                 public void onFailure(@NonNull String message) {
+                                    // We can safely check for the CANCELLED string here since we
+                                    // know that the underlying absl Status code is being
+                                    // translated to a java Exception and the message is being
+                                    // propagated. Ideally the native code would generate a separate
+                                    // signal call for this.
                                     // TODO: b/374217508 - Publish a more precisely typed Exception
                                     // interface for this.
-                                    // Alternatively we could return null here and have some means
-                                    // of also surfacing an error message to the application.
-                                    completer.setException(new Exception(message));
+                                    if (message.contains("CANCELLED")) {
+                                        completer.setCancelled();
+                                    } else {
+                                        completer.setException(new Exception(message));
+                                    }
                                 }
                             },
                             path);
@@ -287,11 +308,17 @@ public final class ImpressApiImpl implements ImpressApi {
 
                                 @Override
                                 public void onFailure(@NonNull String message) {
+                                    // We can safely check for the CANCELLED string here since we
+                                    // know that the underlying absl Status code is being
+                                    // translated to a java Exception and the message is being
+                                    // propagated.
                                     // TODO: b/374217508 - Publish a more precisely typed Exception
                                     // interface for this.
-                                    // Alternatively we could return null here and have some means
-                                    // of also surfacing an error message to the application.
-                                    completer.setException(new Exception(message));
+                                    if (message.contains("CANCELLED")) {
+                                        completer.setCancelled();
+                                    } else {
+                                        completer.setException(new Exception(message));
+                                    }
                                 }
                             },
                             data,
@@ -369,7 +396,18 @@ public final class ImpressApiImpl implements ImpressApi {
 
                                 @Override
                                 public void onFailure(@NonNull String message) {
-                                    mCompleter.setException(new IllegalStateException(message));
+                                    // We can safely check for the CANCELLED string here since we
+                                    // know that the underlying absl Status code is being
+                                    // translated to a java Exception and the message is being
+                                    // propagated. Ideally the native code would generate a separate
+                                    // signal call for this.
+                                    // TODO: b/374217508 - Publish a more precisely typed Exception
+                                    // interface for this.
+                                    if (message.contains("CANCELLED")) {
+                                        completer.setCancelled();
+                                    } else {
+                                        completer.setException(new Exception(message));
+                                    }
                                 }
                             });
                     return "AnimateGltfModel Operation";
@@ -531,11 +569,18 @@ public final class ImpressApiImpl implements ImpressApi {
 
                                 @Override
                                 public void onFailure(@NonNull String message) {
+                                    // We can safely check for the CANCELLED string here since we
+                                    // know that the underlying absl Status code is being
+                                    // translated to a java Exception and the message is being
+                                    // propagated. Ideally the native code would generate a separate
+                                    // signal call for this.
                                     // TODO: b/374217508 - Publish a more precisely typed Exception
                                     // interface for this.
-                                    // Alternatively we could return null here and have some means
-                                    // of also surfacing an error message to the application.
-                                    completer.setException(new Exception(message));
+                                    if (message.contains("CANCELLED")) {
+                                        completer.setCancelled();
+                                    } else {
+                                        completer.setException(new Exception(message));
+                                    }
                                 }
                             },
                             path,
@@ -598,11 +643,18 @@ public final class ImpressApiImpl implements ImpressApi {
 
                                 @Override
                                 public void onFailure(@NonNull String message) {
+                                    // We can safely check for the CANCELLED string here since we
+                                    // know that the underlying absl Status code is being
+                                    // translated to a java Exception and the message is being
+                                    // propagated. Ideally the native code would generate a separate
+                                    // signal call for this.
                                     // TODO: b/374217508 - Publish a more precisely typed Exception
                                     // interface for this.
-                                    // Alternatively we could return null here and have some means
-                                    // of also surfacing an error message to the application.
-                                    completer.setException(new Exception(message));
+                                    if (message.contains("CANCELLED")) {
+                                        completer.setCancelled();
+                                    } else {
+                                        completer.setException(new Exception(message));
+                                    }
                                 }
                             },
                             isAlphaMapVersion);
@@ -695,11 +747,18 @@ public final class ImpressApiImpl implements ImpressApi {
 
                                 @Override
                                 public void onFailure(@NonNull String message) {
+                                    // We can safely check for the CANCELLED string here since we
+                                    // know that the underlying absl Status code is being
+                                    // translated to a java Exception and the message is being
+                                    // propagated. Ideally the native code would generate a separate
+                                    // signal call for this.
                                     // TODO: b/374217508 - Publish a more precisely typed Exception
                                     // interface for this.
-                                    // Alternatively we could return null here and have some means
-                                    // of also surfacing an error message to the application.
-                                    completer.setException(new Exception(message));
+                                    if (message.contains("CANCELLED")) {
+                                        completer.setCancelled();
+                                    } else {
+                                        completer.setException(new Exception(message));
+                                    }
                                 }
                             },
                             spec.getLightingModel(),
