@@ -24,9 +24,9 @@ import androidx.core.util.Consumer
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
+import androidx.navigationevent.DirectNavigationEventInputHandler
 import androidx.navigationevent.NavigationEventCallback
 import androidx.navigationevent.NavigationEventDispatcher
-import androidx.navigationevent.NavigationEventInputHandler
 import androidx.navigationevent.OnBackInvokedInputHandler
 
 /**
@@ -81,7 +81,9 @@ class OnBackPressedDispatcher(
         )
     }
 
-    private val manualDispatchInputHandler by lazy { NavigationEventInputHandler(eventDispatcher) }
+    private val manualDispatchInputHandler by lazy {
+        DirectNavigationEventInputHandler(eventDispatcher)
+    }
 
     @JvmOverloads
     constructor(fallbackOnBackPressed: Runnable? = null) : this(fallbackOnBackPressed, null)

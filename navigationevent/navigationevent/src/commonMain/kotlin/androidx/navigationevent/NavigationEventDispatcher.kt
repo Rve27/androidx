@@ -248,12 +248,12 @@ private constructor(
      * Adds a callback that will be notified when the overall enabled state of registered callbacks
      * changes.
      *
-     * @param inputHandler The [AbstractNavigationEventInputHandler] registering the callback.
+     * @param inputHandler The [NavigationEventInputHandler] registering the callback.
      * @param callback The callback to invoke when the enabled state changes.
      */
     @Suppress("PairedRegistration") // No removal for now.
     internal fun addOnHasEnabledCallbacksChangedCallback(
-        inputHandler: AbstractNavigationEventInputHandler,
+        inputHandler: NavigationEventInputHandler,
         callback: (Boolean) -> Unit,
     ) {
         sharedProcessor.addOnHasEnabledCallbacksChangedCallback(inputHandler, callback)
@@ -320,7 +320,7 @@ private constructor(
      * @param inputHandler The handler to add.
      * @see removeInputHandler
      */
-    public fun addInputHandler(inputHandler: AbstractNavigationEventInputHandler) {
+    public fun addInputHandler(inputHandler: NavigationEventInputHandler) {
         // TODO(mgalhardo): Wire up the handler's lifecycle.
         //  - Call onAttach() immediately.
         //  - Forward the dispatcher's enabled/disabled state to onEnabled()/onDisabled().
@@ -336,7 +336,7 @@ private constructor(
      * @param inputHandler The handler to remove.
      * @see addInputHandler
      */
-    public fun removeInputHandler(inputHandler: AbstractNavigationEventInputHandler) {
+    public fun removeInputHandler(inputHandler: NavigationEventInputHandler) {
         // TODO(mgalhardo): Call onDetached() on the handler and then remove it from the collection.
     }
 
@@ -344,14 +344,14 @@ private constructor(
      * Dispatch an [NavigationEventCallback.onEventStarted] event with the given event. This call is
      * delegated to the shared [NavigationEventProcessor].
      *
-     * @param inputHandler The [AbstractNavigationEventInputHandler] that sourced this event.
+     * @param inputHandler The [NavigationEventInputHandler] that sourced this event.
      * @param direction The direction of the navigation event being started.
      * @param event [NavigationEvent] to dispatch to the callbacks.
      * @throws IllegalStateException if the dispatcher has already been disposed.
      */
     @MainThread
     internal fun dispatchOnStarted(
-        inputHandler: AbstractNavigationEventInputHandler,
+        inputHandler: NavigationEventInputHandler,
         direction: NavigationEventDirection,
         event: NavigationEvent,
     ) {
@@ -365,14 +365,14 @@ private constructor(
      * Dispatch an [NavigationEventCallback.onEventProgressed] event with the given event. This call
      * is delegated to the shared [NavigationEventProcessor].
      *
-     * @param inputHandler The [AbstractNavigationEventInputHandler] that sourced this event.
+     * @param inputHandler The [NavigationEventInputHandler] that sourced this event.
      * @param direction The direction of the navigation event being started.
      * @param event [NavigationEvent] to dispatch to the callbacks.
      * @throws IllegalStateException if the dispatcher has already been disposed.
      */
     @MainThread
     internal fun dispatchOnProgressed(
-        inputHandler: AbstractNavigationEventInputHandler,
+        inputHandler: NavigationEventInputHandler,
         direction: NavigationEventDirection,
         event: NavigationEvent,
     ) {
@@ -386,13 +386,13 @@ private constructor(
      * Dispatch an [NavigationEventCallback.onEventCompleted] event. This call is delegated to the
      * shared [NavigationEventProcessor], passing the fallback action.
      *
-     * @param inputHandler The [AbstractNavigationEventInputHandler] that sourced this event.
+     * @param inputHandler The [NavigationEventInputHandler] that sourced this event.
      * @param direction The direction of the navigation event being started.
      * @throws IllegalStateException if the dispatcher has already been disposed.
      */
     @MainThread
     internal fun dispatchOnCompleted(
-        inputHandler: AbstractNavigationEventInputHandler,
+        inputHandler: NavigationEventInputHandler,
         direction: NavigationEventDirection,
     ) {
         checkInvariants()
@@ -405,13 +405,13 @@ private constructor(
      * Dispatch an [NavigationEventCallback.onEventCancelled] event. This call is delegated to the
      * shared [NavigationEventProcessor].
      *
-     * @param inputHandler The [AbstractNavigationEventInputHandler] that sourced this event.
+     * @param inputHandler The [NavigationEventInputHandler] that sourced this event.
      * @param direction The direction of the navigation event being started.
      * @throws IllegalStateException if the dispatcher has already been disposed.
      */
     @MainThread
     internal fun dispatchOnCancelled(
-        inputHandler: AbstractNavigationEventInputHandler,
+        inputHandler: NavigationEventInputHandler,
         direction: NavigationEventDirection,
     ) {
         checkInvariants()

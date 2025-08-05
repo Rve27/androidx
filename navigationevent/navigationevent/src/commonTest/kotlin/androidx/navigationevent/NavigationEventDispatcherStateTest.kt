@@ -36,7 +36,7 @@ class NavigationEventDispatcherStateTest {
 
     private val dispatcherOwner = TestNavigationEventDispatcherOwner()
     private val dispatcher = dispatcherOwner.navigationEventDispatcher
-    private val inputHandler = NavigationEventInputHandler(dispatcher)
+    private val inputHandler = DirectNavigationEventInputHandler(dispatcher)
 
     @Test
     fun state_whenMultipleCallbacksAreAdded_thenReflectsInfoFromLastAddedCallback() = runTest {

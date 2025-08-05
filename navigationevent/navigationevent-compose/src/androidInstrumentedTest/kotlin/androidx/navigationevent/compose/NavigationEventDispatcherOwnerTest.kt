@@ -23,8 +23,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.kruth.assertThat
 import androidx.kruth.assertThrows
+import androidx.navigationevent.DirectNavigationEventInputHandler
 import androidx.navigationevent.NavigationEventDispatcherOwner
-import androidx.navigationevent.NavigationEventInputHandler
 import androidx.navigationevent.testing.TestNavigationEventCallback
 import androidx.navigationevent.testing.TestNavigationEventDispatcherOwner
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -58,7 +58,7 @@ internal class NavigationEventDispatcherOwnerTest {
         }
 
         childOwner.navigationEventDispatcher.addCallback(callback)
-        val inputHandler = NavigationEventInputHandler(childOwner.navigationEventDispatcher)
+        val inputHandler = DirectNavigationEventInputHandler(childOwner.navigationEventDispatcher)
         inputHandler.handleOnCompleted()
 
         // Verify that the child created its own, separate owner and dispatcher.
@@ -98,7 +98,7 @@ internal class NavigationEventDispatcherOwnerTest {
 
         // Verify that attempting to use the disposed dispatcher now throws an
         // IllegalStateException, preventing use-after-dispose bugs.
-        val inputHandler = NavigationEventInputHandler(childOwner.navigationEventDispatcher)
+        val inputHandler = DirectNavigationEventInputHandler(childOwner.navigationEventDispatcher)
         assertThrows<IllegalStateException> { inputHandler.handleOnCompleted() }
             .hasMessageThat()
             .contains("has already been disposed")
@@ -130,7 +130,7 @@ internal class NavigationEventDispatcherOwnerTest {
 
         // Attempt to dispatch an event while the dispatcher is disabled.
         childOwner.navigationEventDispatcher.addCallback(callback)
-        val inputHandler = NavigationEventInputHandler(childOwner.navigationEventDispatcher)
+        val inputHandler = DirectNavigationEventInputHandler(childOwner.navigationEventDispatcher)
         inputHandler.handleOnCompleted()
 
         assertThat(childOwner).isNotEqualTo(parentOwner)
@@ -160,7 +160,7 @@ internal class NavigationEventDispatcherOwnerTest {
 
         // Verify the root dispatcher can operate independently.
         rootOwner.navigationEventDispatcher.addCallback(callback)
-        val inputHandler = NavigationEventInputHandler(rootOwner.navigationEventDispatcher)
+        val inputHandler = DirectNavigationEventInputHandler(rootOwner.navigationEventDispatcher)
         inputHandler.handleOnCompleted()
 
         assertThat(rootOwner.navigationEventDispatcher.isEnabled).isTrue()
@@ -193,7 +193,7 @@ internal class NavigationEventDispatcherOwnerTest {
 
         // Verify that using the disposed dispatcher throws the expected exception.
         // This prevents use-after-dispose bugs.
-        val inputHandler = NavigationEventInputHandler(rootOwner.navigationEventDispatcher)
+        val inputHandler = DirectNavigationEventInputHandler(rootOwner.navigationEventDispatcher)
         assertThrows<IllegalStateException> { inputHandler.handleOnCompleted() }
             .hasMessageThat()
             .contains("has already been disposed")
@@ -220,7 +220,7 @@ internal class NavigationEventDispatcherOwnerTest {
 
         // Attempt to dispatch an event while disabled.
         rootOwner.navigationEventDispatcher.addCallback(callback)
-        val inputHandler = NavigationEventInputHandler(rootOwner.navigationEventDispatcher)
+        val inputHandler = DirectNavigationEventInputHandler(rootOwner.navigationEventDispatcher)
         inputHandler.handleOnCompleted()
 
         assertThat(rootOwner.navigationEventDispatcher.isEnabled).isFalse()

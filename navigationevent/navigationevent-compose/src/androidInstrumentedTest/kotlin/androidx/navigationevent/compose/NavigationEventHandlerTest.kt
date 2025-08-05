@@ -25,8 +25,8 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.kruth.assertThat
+import androidx.navigationevent.DirectNavigationEventInputHandler
 import androidx.navigationevent.NavigationEvent
-import androidx.navigationevent.NavigationEventInputHandler
 import androidx.navigationevent.testing.TestNavigationEventDispatcherOwner
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
@@ -47,7 +47,7 @@ internal class NavigationEventHandlerTest {
 
     private val owner = TestNavigationEventDispatcherOwner()
     private val dispatcher = owner.navigationEventDispatcher
-    private val inputHandler = NavigationEventInputHandler(dispatcher)
+    private val inputHandler = DirectNavigationEventInputHandler(dispatcher)
 
     @Test
     fun navigationEventHandler_whenOnStartDispatched_invokesHandler() {

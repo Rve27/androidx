@@ -31,9 +31,9 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.kruth.assertThat
 import androidx.navigation3.runtime.NavEntry
+import androidx.navigationevent.DirectNavigationEventInputHandler
 import androidx.navigationevent.NavigationEvent
 import androidx.navigationevent.NavigationEventDispatcher
-import androidx.navigationevent.NavigationEventInputHandler
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import com.google.common.truth.Truth.assertWithMessage
@@ -131,12 +131,12 @@ class NavDisplayPredictiveBackTest {
         lateinit var numberOnScreen1: MutableState<Int>
         lateinit var numberOnScreen2: MutableState<Int>
         lateinit var navEventDispatcher: NavigationEventDispatcher
-        lateinit var inputHandler: NavigationEventInputHandler
+        lateinit var inputHandler: DirectNavigationEventInputHandler
         lateinit var backStack: MutableList<Any>
         composeTestRule.setContent {
             navEventDispatcher =
                 LocalNavigationEventDispatcherOwner.current!!.navigationEventDispatcher
-            inputHandler = NavigationEventInputHandler(navEventDispatcher)
+            inputHandler = DirectNavigationEventInputHandler(navEventDispatcher)
             backStack = remember { mutableStateListOf(first) }
             NavDisplay(
                 backStack = backStack,

@@ -88,9 +88,9 @@ import androidx.lifecycle.setViewTreeLifecycleOwner
 import androidx.lifecycle.setViewTreeViewModelStoreOwner
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.MutableCreationExtras
+import androidx.navigationevent.DirectNavigationEventInputHandler
 import androidx.navigationevent.NavigationEventDispatcher
 import androidx.navigationevent.NavigationEventDispatcherOwner
-import androidx.navigationevent.NavigationEventInputHandler
 import androidx.navigationevent.setViewTreeNavigationEventDispatcherOwner
 import androidx.savedstate.SavedStateRegistry
 import androidx.savedstate.SavedStateRegistryController
@@ -243,8 +243,8 @@ open class ComponentActivity() :
 
     // Input from `ComponentActivity.onBackPressed()`, which can get called when API < 33 or
     // when `android:enableOnBackInvokedCallback` is `false`.
-    private val onBackPressedInputHandler: NavigationEventInputHandler by lazy {
-        NavigationEventInputHandler(navigationEventDispatcher)
+    private val onBackPressedInputHandler: DirectNavigationEventInputHandler by lazy {
+        DirectNavigationEventInputHandler(navigationEventDispatcher)
     }
 
     /**

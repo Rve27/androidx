@@ -17,31 +17,43 @@
 package androidx.navigationevent
 
 import androidx.annotation.MainThread
+import androidx.navigationevent.NavigationEventDirection.Companion.Backward
 
 /**
- * An input handler that can send events to a [NavigationEventDispatcher].
+ * An abstract input handler that can send events to a [NavigationEventDispatcher].
  *
  * @param dispatcher The [NavigationEventDispatcher] to send events to.
  */
-public class NavigationEventInputHandler(dispatcher: NavigationEventDispatcher) :
-    AbstractNavigationEventInputHandler(dispatcher) {
+public abstract class NavigationEventInputHandler(
+    private val dispatcher: NavigationEventDispatcher
+) {
+    @Suppress("PairedRegistration")
     @MainThread
-    public fun handleOnStarted(event: NavigationEvent) {
-        dispatchOnStarted(event)
+    protected fun addOnHasEnabledCallbacksChangedCallback(callback: (Boolean) -> Unit) {
+        dispatcher.addOnHasEnabledCallbacksChangedCallback(inputHandler = this, callback)
     }
 
     @MainThread
-    public fun handleOnProgressed(event: NavigationEvent) {
-        dispatchOnProgressed(event)
+    protected fun dispatchOnStarted(event: NavigationEvent) {
+        // TODO(kuanyingchou): Accept a direction parameter instead of hardcoding `Backward`.
+        dispatcher.dispatchOnStarted(inputHandler = this, direction = Backward, event)
     }
 
     @MainThread
-    public fun handleOnCompleted() {
-        dispatchOnCompleted()
+    protected fun dispatchOnProgressed(event: NavigationEvent) {
+        // TODO(kuanyingchou): Accept a direction parameter instead of hardcoding `Backward`.
+        dispatcher.dispatchOnProgressed(inputHandler = this, direction = Backward, event)
     }
 
     @MainThread
-    public fun handleOnCancelled() {
-        dispatchOnCancelled()
+    protected fun dispatchOnCancelled() {
+        // TODO(kuanyingchou): Accept a direction parameter instead of hardcoding `Backward`.
+        dispatcher.dispatchOnCancelled(inputHandler = this, direction = Backward)
+    }
+
+    @MainThread
+    protected fun dispatchOnCompleted() {
+        // TODO(kuanyingchou): Accept a direction parameter instead of hardcoding `Backward`.
+        dispatcher.dispatchOnCompleted(inputHandler = this, direction = Backward)
     }
 }
