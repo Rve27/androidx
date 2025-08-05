@@ -476,20 +476,20 @@ private constructor(
             // Set immediately to prevent changes (like adding new children) while we tear it down.
             currentDispatcher.isDisposed = true
 
-            // Notify all registered input handlers that this dispatcher is being disposed.
-            // This gives them a chance to clean up their own state, severing the lifecycle link
-            // and preventing them from interacting with a disposed object.
-            for (inputHandler in inputHandlers.toList()) {
-                inputHandler.onDetach()
-            }
-            inputHandlers.clear()
-
             // Add 'currentDispatcher's children to the queue before processing 'currentDispatcher's
             // own cleanup. This ensures a complete traversal of the sub-hierarchy.
             dispatchersToDispose += currentDispatcher.childDispatchers
 
+            // Notify all registered input handlers that this dispatcher is being disposed.
+            // This gives them a chance to clean up their own state, severing the lifecycle link
+            // and preventing them from interacting with a disposed object.
+            for (inputHandler in currentDispatcher.inputHandlers) {
+                inputHandler.onDetach()
+            }
+            inputHandlers.clear()
+
             // Remove callbacks directly owned by the currentDispatcher from the shared processor.
-            for (callback in currentDispatcher.callbacks.toList()) {
+            for (callback in currentDispatcher.callbacks) {
                 // Always use the public API for removal. This ensures the component's internal
                 // state is handled correctly and prevents unexpected behavior.
                 callback.remove()
