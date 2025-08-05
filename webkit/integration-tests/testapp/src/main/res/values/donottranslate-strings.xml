@@ -130,6 +130,7 @@
     <string name="user_agent_metadata_override_mode">User-Agent Metadata</string>
     <string name="user_agent_metadata_without_override">Without Overrides</string>
     <string name="user_agent_metadata_with_override">With Overrides</string>
+    <string name="user_agent_metadata_with_override_form_factors">With Overrides Form Factors</string>
 
     <!-- Async StartUp Metadata -->
     <string name="async_startup_activity_title">Async StartUp</string>
