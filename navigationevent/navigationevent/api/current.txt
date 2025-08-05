@@ -100,7 +100,9 @@ package androidx.navigationevent {
 
   public abstract sealed class NavigationEventState<T extends androidx.navigationevent.NavigationEventInfo> {
     method public abstract T getCurrentInfo();
+    method public final float getProgress();
     property public abstract T currentInfo;
+    property public final float progress;
   }
 
   public static final class NavigationEventState.Idle<T extends androidx.navigationevent.NavigationEventInfo> extends androidx.navigationevent.NavigationEventState<T> {

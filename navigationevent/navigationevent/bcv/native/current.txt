@@ -116,6 +116,8 @@ final value class androidx.navigationevent/NavigationEventPriority { // androidx
 sealed class <#A: out androidx.navigationevent/NavigationEventInfo> androidx.navigationevent/NavigationEventState { // androidx.navigationevent/NavigationEventState|null[0]
     abstract val currentInfo // androidx.navigationevent/NavigationEventState.currentInfo|{}currentInfo[0]
         abstract fun <get-currentInfo>(): #A // androidx.navigationevent/NavigationEventState.currentInfo.<get-currentInfo>|<get-currentInfo>(){}[0]
+    final val progress // androidx.navigationevent/NavigationEventState.progress|{}progress[0]
+        final fun <get-progress>(): kotlin/Float // androidx.navigationevent/NavigationEventState.progress.<get-progress>|<get-progress>(){}[0]
 
     final class <#A1: out androidx.navigationevent/NavigationEventInfo> Idle : androidx.navigationevent/NavigationEventState<#A1> { // androidx.navigationevent/NavigationEventState.Idle|null[0]
         constructor <init>(#A1) // androidx.navigationevent/NavigationEventState.Idle.<init>|<init>(1:0){}[0]

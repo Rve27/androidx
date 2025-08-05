@@ -51,7 +51,6 @@ import androidx.navigation3.ui.NavDisplay.DEFAULT_TRANSITION_DURATION_MILLISECON
 import androidx.navigation3.ui.NavDisplay.POP_TRANSITION_SPEC
 import androidx.navigation3.ui.NavDisplay.PREDICTIVE_POP_TRANSITION_SPEC
 import androidx.navigation3.ui.NavDisplay.TRANSITION_SPEC
-import androidx.navigationevent.NavigationEventState.Idle
 import androidx.navigationevent.NavigationEventState.InProgress
 import androidx.navigationevent.compose.NavigationEventHandler
 import kotlin.reflect.KClass
@@ -207,11 +206,7 @@ public fun <T : Any> NavDisplay(
                 .state
                 .collectAsState()
 
-        val progress =
-            when (val state = gestureState) {
-                is Idle -> 0f
-                is InProgress -> state.latestEvent.progress
-            }
+        val progress = gestureState.progress
         val inPredictiveBack = gestureState is InProgress
 
         NavigationEventHandler(enabled = scene.previousEntries.isNotEmpty()) { progress ->

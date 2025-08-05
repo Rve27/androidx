@@ -293,6 +293,30 @@ class NavigationEventDispatcherStateTest {
             // The collector should still not have emitted a new value.
             assertThat(collectedStates).hasSize(1)
         }
+
+    @Test
+    fun progress_whenIdleOrInProgress_returnsCorrectValue() {
+        val callbackInfo = HomeScreenInfo("home")
+        val callback = TestNavigationEventCallback(currentInfo = callbackInfo)
+        dispatcher.addCallback(callback)
+
+        // Before any gesture, the state is Idle and progress should be 0.
+        assertThat(dispatcher.state.value.progress).isEqualTo(0f)
+
+        // Start a gesture.
+        inputHandler.handleOnStarted(NavigationEvent(progress = 0.1f))
+        assertThat(dispatcher.state.value.progress).isEqualTo(0.1f)
+
+        // InProgress state should reflect the event's progress.
+        inputHandler.handleOnProgressed(NavigationEvent(progress = 0.5f))
+        assertThat(dispatcher.state.value.progress).isEqualTo(0.5f)
+
+        // Complete the gesture.
+        inputHandler.handleOnCompleted()
+
+        // After the gesture, the state is Idle again and progress should be 0.
+        assertThat(dispatcher.state.value.progress).isEqualTo(0f)
+    }
 }
 
 /** A sealed interface for type-safe navigation information. */
