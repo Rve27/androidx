@@ -16,6 +16,7 @@
 
 package androidx.aab
 
+import androidx.aab.cli.VERBOSE
 import java.io.InputStream
 import java.security.MessageDigest
 import java.util.zip.CRC32
@@ -107,22 +108,26 @@ data class DexInfo(
         }
 
         val CSV_TITLES =
-            listOf(
-                "dex_names",
-                "dex_totalSize",
-                "dex_sortedChecksumsSha256",
-                "dex_sortedChecksumsCrc32",
-            )
+            listOf("dex_totalSize") +
+                if (VERBOSE) {
+                    listOf("dex_names", "dex_sortedChecksumsSha256", "dex_sortedChecksumsCrc32")
+                } else {
+                    emptyList()
+                }
 
         fun List<DexInfo>.csvEntries(): List<String> {
-            return listOf(
-                // NOTE: we individually sort each of these, so they aren't associated with each
-                // other, but they are easy to compare when joined
-                joinToString(INTERNAL_CSV_SEPARATOR) { it.entryName },
-                this.sumOf { it.uncompressedSize }.toString(),
-                this.map { it.sha256 }.sorted().joinToString(INTERNAL_CSV_SEPARATOR),
-                this.map { it.crc32 }.sorted().joinToString(INTERNAL_CSV_SEPARATOR),
-            )
+            return listOf(this.sumOf { it.uncompressedSize }.toString()) +
+                if (VERBOSE)
+                    listOf(
+                        joinToString(INTERNAL_CSV_SEPARATOR) { it.entryName },
+                        // NOTE: we individually sort each of these, so they aren't associated with
+                        // each other, but they are easy to compare when joined
+                        this.map { it.sha256 }.sorted().joinToString(INTERNAL_CSV_SEPARATOR),
+                        this.map { it.crc32 }.sorted().joinToString(INTERNAL_CSV_SEPARATOR),
+                    )
+                else {
+                    emptyList()
+                }
         }
     }
 }

@@ -16,6 +16,7 @@
 
 package androidx.aab
 
+import androidx.aab.cli.VERBOSE
 import java.io.InputStream
 import java.lang.Byte
 import java.nio.charset.StandardCharsets
@@ -31,8 +32,6 @@ import java.util.zip.Inflater
 data class ProfInfo(val dexInfoList: List<DexInfo>) {
     data class DexInfo(val checksumCrc32: String)
 
-    // lovingly lifted from
-    //
     companion object {
         const val BUNDLE_LOCATION = "BUNDLE-METADATA/com.android.tools.build.profiles/baseline.prof"
 
@@ -181,19 +180,21 @@ data class ProfInfo(val dexInfoList: List<DexInfo>) {
                 dataStream.readUncompressedBody(numberOfDexFiles)
             }
 
-        val CSV_TITLES = listOf("prof_present", "prof_dexSortedChecksumsCrc32")
+        val CSV_TITLES =
+            if (VERBOSE) listOf("prof_present", "prof_dexSortedChecksumsCrc32") else emptyList()
 
         fun ProfInfo?.csvEntries(): List<String> {
-            return if (this == null) {
-                listOf("FALSE", "null")
-            } else {
+            return if (VERBOSE) {
                 listOf(
-                    "TRUE",
-                    dexInfoList
-                        .map { it.checksumCrc32 }
-                        .sorted()
-                        .joinToString(INTERNAL_CSV_SEPARATOR),
+                    (this != null).toString(),
+                    (this?.dexInfoList
+                            ?.map { it.checksumCrc32 }
+                            ?.sorted()
+                            ?.joinToString(INTERNAL_CSV_SEPARATOR))
+                        .toString(),
                 )
+            } else {
+                emptyList()
             }
         }
     }

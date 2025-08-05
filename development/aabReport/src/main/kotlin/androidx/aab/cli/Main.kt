@@ -44,11 +44,11 @@ fun main(args: Array<String>) = runBlocking {
     if (pathArgs.isEmpty()) {
         println(
             """
-            Expected one or more android app bundle files, or directories of files to be passed.
+            Expected one or more android app bundle files, or directories of bundles to be passed.
             Report Usage:
-                 ./<path-to-script> <path-to-aab> [<path-to-aab2>...]
+                 java -jar <path-to-jar> [--verbose] <path-to-aab> [<path-to-aab2>...]
             CSV Usage:
-                 ./<path-to-script> --csv=<output.csv> <path-to-aab> [<path-to-aab2>...]
+                 java -jar <path-to-jar> [--verbose] --csv=<output.csv> <path-to-aab> [<path-to-aab2>...]
             """
                 .trimIndent()
         )

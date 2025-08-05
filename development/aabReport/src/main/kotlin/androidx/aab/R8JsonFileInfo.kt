@@ -16,8 +16,8 @@
 
 package androidx.aab
 
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+import androidx.aab.cli.VERBOSE
+import com.android.tools.r8.metadata.R8BuildMetadata
 import java.io.InputStream
 
 data class R8JsonFileInfo(
@@ -30,41 +30,52 @@ data class R8JsonFileInfo(
         const val BUNDLE_LOCATION = "BUNDLE-METADATA/com.android.tools/r8.json"
 
         @Suppress("UNCHECKED_CAST")
-        fun fromJson(src: InputStream): R8JsonFileInfo {
-            val gson = Gson()
-            val mapType = object : TypeToken<Map<String, Any>>() {}.type
-            val metadata = gson.fromJson<Map<String, Any>>(src.bufferedReader().readText(), mapType)
-
-            val options = (metadata["options"] as Map<String, Any>?)!!
+        fun fromJson(src: InputStream): R8JsonFileInfo? {
+            val text = src.bufferedReader().readText()
+            val metadata = R8BuildMetadata.fromJson(text)
+            if (metadata.dexFilesMetadata == null) {
+                // assume this isn't properly formed metadata file. For example, have observed
+                // json file with just the content `{"version":"8.7.18"}`, from before content was
+                // filled
+                return null
+            }
 
             return R8JsonFileInfo(
-                dexShas =
-                    (metadata["dexFiles"] as List<Map<String, Any>>)
-                        .map { it["checksum"] as String }
-                        .toSet(),
-                optimizationEnabled = options["isObfuscationEnabled"] as Boolean,
-                obfuscationEnabled = options["isObfuscationEnabled"] as Boolean,
-                shrinkingEnabled = options["isShrinkingEnabled"] as Boolean,
+                dexShas = metadata.dexFilesMetadata.map { it.checksum }.toSet(),
+                optimizationEnabled = metadata.optionsMetadata.isOptimizationsEnabled,
+                obfuscationEnabled = metadata.optionsMetadata.isObfuscationEnabled,
+                shrinkingEnabled = metadata.optionsMetadata.isShrinkingEnabled,
             )
         }
 
         val CSV_TITLES =
             listOf(
                 "r8json_metadata",
-                "r8json_sortedDexChecksumsSha256",
                 "r8json_optimizationEnabled",
                 "r8json_obfuscationEnabled",
                 "r8json_shrinkingEnabled",
-            )
+            ) +
+                if (VERBOSE) {
+                    listOf("r8json_sortedDexChecksumsSha256")
+                } else {
+                    emptyList()
+                }
 
         fun R8JsonFileInfo?.csvEntries(): List<String> {
             return listOf(
-                if (this == null) "false" else "true",
-                this?.dexShas?.sorted()?.joinToString(separator = INTERNAL_CSV_SEPARATOR) ?: "null",
+                (this == null).toString(),
                 this?.optimizationEnabled.toString(),
                 this?.obfuscationEnabled.toString(),
                 this?.shrinkingEnabled.toString(),
-            )
+            ) +
+                if (VERBOSE) {
+                    listOf(
+                        this?.dexShas?.sorted()?.joinToString(separator = INTERNAL_CSV_SEPARATOR)
+                            ?: "null"
+                    )
+                } else {
+                    emptyList()
+                }
         }
     }
 }

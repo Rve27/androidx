@@ -59,16 +59,31 @@ data class R8Analysis(
         )
     }
 
+    fun getDexMatchRatio(): Double? {
+        return if (
+            r8JsonFileInfo != null &&
+                (dexSha256ChecksumsR8JsonOnly.isNotEmpty() ||
+                    dexSha256ChecksumsMatching.isNotEmpty())
+        ) {
+            dexSha256ChecksumsMatching.size * 1.0 /
+                (dexSha256ChecksumsR8JsonOnly.size + dexSha256ChecksumsMatching.size)
+        } else {
+            null
+        }
+    }
+
     fun csvEntries(): List<String> {
         return listOf(
             (r8JsonFileInfo?.getScore()).toString(),
             markerUsingD8Dex.toString(),
             markerUsingR8Dex.toString(),
+            getDexMatchRatio().toString(),
         )
     }
 
     companion object {
-        val CSV_TITLES = listOf("r8_score", "r8_marker_d8dex", "r8_marker_r8dex")
+        val CSV_TITLES =
+            listOf("r8_score", "r8_marker_d8dex", "r8_marker_r8dex", "r8_ratio_json_shas_match_dex")
 
         fun BundleInfo.getR8Analysis(): R8Analysis {
             val metadataJsonShas = r8JsonFileInfo?.dexShas?.toSet() ?: emptySet()

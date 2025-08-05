@@ -21,7 +21,6 @@ import androidx.aab.DexInfo.Companion.csvEntries
 import androidx.aab.MappingFileInfo.Companion.csvEntries
 import androidx.aab.ProfInfo.Companion.csvEntries
 import androidx.aab.R8JsonFileInfo.Companion.csvEntries
-import androidx.aab.cli.VERBOSE
 import com.android.tools.build.libraries.metadata.AppDependencies
 import java.io.File
 import java.io.FileInputStream
@@ -83,9 +82,6 @@ data class BundleInfo(
                 var entry: ZipEntry? = zis.nextEntry
 
                 while (entry != null) {
-                    if (VERBOSE && !entry.name.contains("/res/")) {
-                        println(entry.name) // just for debugging
-                    }
                     when {
                         entry.name.contains("/dex/classes") && entry.name.endsWith(".dex") -> {
                             dexInfo.add(DexInfo.from(entry.name, entry.compressedSize, zis))
@@ -120,17 +116,6 @@ data class BundleInfo(
                         }
                     }
                     entry = zis.nextEntry
-                }
-            }
-
-            if (VERBOSE) {
-                appDependencies?.run {
-                    // print all contained libraries
-                    library.forEach {
-                        it.maven_library?.run {
-                            println("LIB: ${groupId}:${artifactId}:${version}")
-                        }
-                    }
                 }
             }
 
