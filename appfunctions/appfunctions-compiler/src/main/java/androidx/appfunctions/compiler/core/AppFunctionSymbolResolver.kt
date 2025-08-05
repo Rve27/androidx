@@ -191,6 +191,17 @@ class AppFunctionSymbolResolver(private val resolver: Resolver) {
             }
     }
 
+    /**
+     * Gets a map of qualified name to docstring for [AnnotatedAppFunctionSerializable] from all
+     * processed modules.
+     */
+    fun getAppFunctionSerializablesDescriptionMap(): Map<String, String> {
+        return filterAppFunctionComponent(
+                AppFunctionComponentRegistryAnnotation.Category.SERIALIZABLE
+            )
+            .associate { it -> it.qualifiedName to it.docString }
+    }
+
     /** Gets generated AppFunctionInventory implementations. */
     fun getGeneratedAppFunctionInventories(): List<KSClassDeclaration> {
         return filterAppFunctionComponent(AppFunctionComponentRegistryAnnotation.Category.INVENTORY)
@@ -263,10 +274,12 @@ class AppFunctionSymbolResolver(private val resolver: Resolver) {
                         )
                         .filterIsInstance<String>()
 
-                // Only functions require component docstrings.
+                // Only functions and serializables require component docstrings.
                 if (
                     filterComponentCategory !=
-                        AppFunctionComponentRegistryAnnotation.Category.FUNCTION
+                        AppFunctionComponentRegistryAnnotation.Category.FUNCTION &&
+                        filterComponentCategory !=
+                            AppFunctionComponentRegistryAnnotation.Category.SERIALIZABLE
                 ) {
                     return@flatMap componentNames
                         .map { qualifiedName ->

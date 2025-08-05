@@ -213,9 +213,10 @@ data class AnnotatedAppFunctions(
      * defined in this class.
      */
     fun createAppFunctionMetadataList(
-        resolvedAnnotatedSerializableProxies: ResolvedAnnotatedSerializableProxies
+        resolvedAnnotatedSerializableProxies: ResolvedAnnotatedSerializableProxies,
+        sharedDataTypeDescriptionMap: Map<String, String> = mapOf(),
     ): List<CompileTimeAppFunctionMetadata> {
-        val metadataCreatorHelper = AppFunctionMetadataCreatorHelper()
+        val metadataCreatorHelper = AppFunctionMetadataCreatorHelper(sharedDataTypeDescriptionMap)
         return appFunctionDeclarations.map { functionDeclaration ->
             // Defining the shared types locally for this iteration is to isolate the components
             // used per function. This is done with the expectation that they can be globally

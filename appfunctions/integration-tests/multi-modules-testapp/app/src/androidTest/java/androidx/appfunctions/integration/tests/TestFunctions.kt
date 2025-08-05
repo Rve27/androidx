@@ -33,7 +33,8 @@ interface AppFunctionOpenable {
     val intentToOpen: PendingIntent
 }
 
-@AppFunctionSerializable data class SetField<T>(val value: T)
+/** Example parameterized AppFunctionSerializable. */
+@AppFunctionSerializable(isDescribedByKdoc = true) data class SetField<T>(val value: T)
 
 @AppFunctionSerializable
 data class CreateNoteParams(
@@ -58,7 +59,8 @@ data class UpdateNoteParams(
 
 @AppFunctionSerializable data class Attachment(val uri: String, val nested: Attachment? = null)
 
-@AppFunctionSerializable
+/** Represents a note in the notes app. */
+@AppFunctionSerializable(isDescribedByKdoc = true)
 data class Note(
     val title: String,
     val content: List<String>,

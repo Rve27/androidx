@@ -32,6 +32,7 @@ import androidx.appfunctions.integration.tests.TestUtil.assertWriteInaccessible
 import androidx.appfunctions.integration.tests.TestUtil.doBlocking
 import androidx.appfunctions.integration.tests.TestUtil.retryAssert
 import androidx.appfunctions.metadata.AppFunctionComponentsMetadata
+import androidx.appfunctions.metadata.AppFunctionDataTypeMetadata
 import androidx.appfunctions.metadata.AppFunctionMetadata
 import androidx.appfunctions.metadata.AppFunctionObjectTypeMetadata
 import androidx.appfunctions.metadata.AppFunctionParameterMetadata
@@ -138,7 +139,6 @@ class IntegrationTest {
                 "androidx.appfunctions.integration.testapp.library.TestFunctions2#concat" to
                     "The result of concatenating the two strings.",
             )
-
         assumeTrue(isDynamicIndexerAvailable(context))
         val searchFunctionSpec = AppFunctionSearchSpec(packageNames = setOf(context.packageName))
 
@@ -149,6 +149,9 @@ class IntegrationTest {
                 .flatMap { it.appFunctions }
                 .filter { it -> it.id in expectedAppFunctionDescriptions.keys }
 
+        assertThat(expectedAppFunctionDescriptions.keys)
+            .containsExactlyElementsIn(appFunctions.map { it -> it.id })
+
         for (appFunction in appFunctions) {
             assertThat(expectedAppFunctionDescriptions[appFunction.id])
                 .isEqualTo(appFunction.description)
@@ -156,6 +159,39 @@ class IntegrationTest {
                 .containsExactlyElementsIn(appFunction.parameters.map { it.description })
             assertThat(expectedResponseDescriptions[appFunction.id])
                 .isEqualTo(appFunction.response.description)
+        }
+    }
+
+    @Test
+    fun searchAllAppFunctions_populatesSerializableDescriptions_withDynamicIndexer() = doBlocking {
+        val expectedSerializableDescriptions =
+            mapOf(
+                "androidx.appfunctions.integration.tests.Note" to
+                    "Represents a note in the notes app.",
+                "androidx.appfunctions.integration.tests.SetField<kotlin.String>" to
+                    "Example parameterized AppFunctionSerializable.",
+                "androidx.appfunctions.integration.testapp.library.ExampleSerializable" to
+                    "AppFunctionSerializable in non-root library.",
+                "androidx.appfunctions.integration.testapp.library.GenericSerializable<kotlin.Int>" to
+                    "Example parameterized AppFunctionSerializable in another package.",
+            )
+        assumeTrue(isDynamicIndexerAvailable(context))
+        val searchFunctionSpec = AppFunctionSearchSpec(packageNames = setOf(context.packageName))
+
+        val dataTypeMetadata: Map<String, AppFunctionDataTypeMetadata> =
+            appFunctionManager
+                .observeAppFunctions(searchFunctionSpec)
+                .first()
+                .flatMap { it -> it.appFunctions }
+                .map { it.components.dataTypes }
+                .fold(emptyMap()) { acc, map -> acc + map }
+        val filteredMetadata =
+            dataTypeMetadata.filter { it -> it.key in expectedSerializableDescriptions.keys }
+        assertThat(expectedSerializableDescriptions.keys)
+            .containsExactlyElementsIn(filteredMetadata.keys)
+
+        for ((id, dataType) in filteredMetadata) {
+            assertThat(expectedSerializableDescriptions[id]).isEqualTo(dataType.description)
         }
     }
 

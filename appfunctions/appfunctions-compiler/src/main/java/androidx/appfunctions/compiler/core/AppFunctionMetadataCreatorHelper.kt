@@ -56,7 +56,9 @@ import com.google.devtools.ksp.symbol.KSValueParameter
  * A helper class that provides methods to construct
  * [androidx.appfunctions.compiler.core.metadata.AppFunctionMetadata] related class.
  */
-class AppFunctionMetadataCreatorHelper {
+class AppFunctionMetadataCreatorHelper(
+    private val sharedDataTypeDescriptionMap: Map<String, String> = mapOf()
+) {
 
     /**
      * Computes [AppFunctionAnnotationProperties] from [appFunctionAnnotation] and
@@ -394,7 +396,16 @@ class AppFunctionMetadataCreatorHelper {
         }
         seenDataTypeQualifiers.add(serializableTypeQualifiedName)
 
-        val serializableDescription = appFunctionSerializableType.description
+        val serializableDescription =
+            when {
+                appFunctionSerializableType.description.isNotEmpty() ->
+                    appFunctionSerializableType.description
+                appFunctionSerializableType is AnnotatedParameterizedAppFunctionSerializable ->
+                    sharedDataTypeDescriptionMap[
+                        appFunctionSerializableType.unparameterizedJvmQualifiedName] ?: ""
+                else -> sharedDataTypeDescriptionMap[serializableTypeQualifiedName] ?: ""
+            }
+
         val superTypesWithSerializableAnnotation =
             appFunctionSerializableType.findSuperTypesWithSerializableAnnotation()
         val superTypesWithCapabilityAnnotation =
