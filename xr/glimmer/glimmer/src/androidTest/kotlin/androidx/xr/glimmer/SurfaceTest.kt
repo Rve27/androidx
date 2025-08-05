@@ -95,6 +95,7 @@ import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.junit.After
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -1122,7 +1123,7 @@ class SurfaceTest {
             val map = toPixelMap()
             val outsideSurface = map[width / 3, height / 2]
             // Base depth should be rendered
-            assertThat(outsideSurface).isEqualTo(Color.Red)
+            assertColorsEqualWithTolerance(Color.Red, outsideSurface)
         }
 
         // Request focus for the surface
@@ -1132,7 +1133,7 @@ class SurfaceTest {
             val map = toPixelMap()
             val outsideSurface = map[width / 3, height / 2]
             // The focused depth should be rendered
-            assertThat(outsideSurface).isEqualTo(Color.Blue)
+            assertColorsEqualWithTolerance(Color.Blue, outsideSurface)
         }
 
         // Request focus for the other target, moving focus away from the surface
@@ -1142,7 +1143,7 @@ class SurfaceTest {
             val map = toPixelMap()
             val outsideSurface = map[width / 3, height / 2]
             // Base depth should be rendered again
-            assertThat(outsideSurface).isEqualTo(Color.Red)
+            assertColorsEqualWithTolerance(Color.Red, outsideSurface)
         }
     }
 
@@ -1180,7 +1181,7 @@ class SurfaceTest {
             val map = toPixelMap()
             val outsideSurface = map[width / 3, height / 2]
             // Base depth should be rendered
-            assertThat(outsideSurface).isEqualTo(Color.Red)
+            assertColorsEqualWithTolerance(Color.Red, outsideSurface)
         }
 
         // Request focus for the surface
@@ -1190,7 +1191,7 @@ class SurfaceTest {
             val map = toPixelMap()
             val outsideSurface = map[width / 3, height / 2]
             // The focused depth should be rendered
-            assertThat(outsideSurface).isEqualTo(Color.Blue)
+            assertColorsEqualWithTolerance(Color.Blue, outsideSurface)
         }
 
         // Request focus for the other target, moving focus away from the surface
@@ -1200,7 +1201,7 @@ class SurfaceTest {
             val map = toPixelMap()
             val outsideSurface = map[width / 3, height / 2]
             // Base depth should be rendered again
-            assertThat(outsideSurface).isEqualTo(Color.Red)
+            assertColorsEqualWithTolerance(Color.Red, outsideSurface)
         }
     }
 
@@ -1254,7 +1255,7 @@ class SurfaceTest {
             val map = toPixelMap()
             val outsideSurface = map[width / 3, height / 2]
             // The focused depth should be fully rendered
-            assertThat(outsideSurface).isEqualTo(Color.Red)
+            assertColorsEqualWithTolerance(Color.Red, outsideSurface)
         }
     }
 
@@ -1308,7 +1309,7 @@ class SurfaceTest {
             val map = toPixelMap()
             val outsideSurface = map[width / 3, height / 2]
             // The focused depth should be fully rendered
-            assertThat(outsideSurface).isEqualTo(Color.Red)
+            assertColorsEqualWithTolerance(Color.Red, outsideSurface)
         }
     }
 
@@ -2416,4 +2417,19 @@ private fun ImageBitmap.toIntArray(): IntArray {
     val bitmapArray = IntArray(width * height)
     asAndroidBitmap().getPixels(bitmapArray, 0, width, 0, 0, width, height)
     return bitmapArray
+}
+
+/**
+ * Asserts that [expected] and [actual] are mostly equal, to avoid test failures due to minor
+ * rendering differences across devices.
+ */
+private fun assertColorsEqualWithTolerance(
+    expected: Color,
+    actual: Color,
+    tolerance: Float = 0.05f,
+) {
+    assertEquals(expected.red, actual.red, tolerance)
+    assertEquals(expected.green, actual.green, tolerance)
+    assertEquals(expected.blue, actual.blue, tolerance)
+    assertEquals(expected.alpha, actual.alpha, tolerance)
 }
