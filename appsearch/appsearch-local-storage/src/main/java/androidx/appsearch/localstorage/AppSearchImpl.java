@@ -152,7 +152,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -283,7 +282,7 @@ public final class AppSearchImpl implements Closeable {
      * The call type of the last mutation call holds the write lock. This value will be logged in
      * the following call to analysis what the on-going call have to wait for.
      */
-    @CallStats.CallType
+    @BaseStats.CallType
     @GuardedBy("mReadWriteLock")
     private int mLastWriteOperationLocked = 0;
 

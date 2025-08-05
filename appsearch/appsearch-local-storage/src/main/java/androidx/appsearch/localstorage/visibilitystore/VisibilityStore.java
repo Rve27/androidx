@@ -450,7 +450,7 @@ public class VisibilityStore {
             searchResultPage = mAppSearchImpl.getNextPage(
                     VISIBILITY_PACKAGE_NAME,
                     searchResultPage.getNextPageToken(),
-                    /*statsBuilder=*/null,
+                    /*queryStatsBuilder=*/null,
                     callStatsBuilder);
             searchResults = searchResultPage.getResults();
         }
