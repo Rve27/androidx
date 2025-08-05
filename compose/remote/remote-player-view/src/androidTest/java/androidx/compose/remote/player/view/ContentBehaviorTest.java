@@ -53,8 +53,8 @@ public class ContentBehaviorTest {
     private RemoteComposeContext remoteComposeWriter(
             int tw, int th, int scrolling, int alignment, int sizing, int mode) {
         Bitmap lightImage = createImage(tw, th, false);
-        RemoteComposeContext doc =
-                new RemoteComposeContext(
+        RemoteComposeContextAndroid doc =
+                new RemoteComposeContextAndroid(
                         tw,
                         th,
                         "demo",
@@ -74,8 +74,8 @@ public class ContentBehaviorTest {
         int tw = lightImage.getWidth();
         int th = lightImage.getHeight();
 
-        RemoteComposeContext doc =
-                new RemoteComposeContext(
+        RemoteComposeContextAndroid doc =
+                new RemoteComposeContextAndroid(
                         tw,
                         th,
                         "demo",

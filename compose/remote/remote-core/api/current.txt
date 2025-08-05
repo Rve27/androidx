@@ -380,6 +380,7 @@ package androidx.compose.remote.core {
     method public byte[]? imageToByteArray(Object);
     method public boolean isAlpha8Image(Object);
     method public void log(androidx.compose.remote.core.Platform.LogCategory, String);
+    method public Object parsePath(String);
     method public float[]? pathToFloatArray(Object);
     field public static final androidx.compose.remote.core.Platform! None;
   }

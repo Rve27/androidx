@@ -50,7 +50,7 @@ public class ImageDrawTest {
         int th = lightImage.getHeight();
 
         RemoteComposeContext doc =
-                new RemoteComposeContext(
+                new RemoteComposeContextAndroid(
                         tw,
                         th,
                         "Demo",
@@ -195,7 +195,7 @@ public class ImageDrawTest {
         android.content.Context appContext =
                 InstrumentationRegistry.getInstrumentation().getTargetContext();
         RemoteComposeContext doc =
-                new RemoteComposeContext(
+                new RemoteComposeContextAndroid(
                         tw,
                         th,
                         "Demo",

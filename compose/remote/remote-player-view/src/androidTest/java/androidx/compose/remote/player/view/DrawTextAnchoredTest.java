@@ -57,13 +57,13 @@ public class DrawTextAnchoredTest {
     // ########################### TEST UTILS ######################################
 
     interface Callback {
-        void run(RemoteComposeContext foo);
+        void run(RemoteComposeContextAndroid foo);
     }
 
     private RemoteComposeDocument createDocument(RemoteContext context, final Callback cb) {
 
         RemoteComposeContext doc =
-                new RemoteComposeContext(
+                new RemoteComposeContextAndroid(
                         600,
                         600,
                         "Demo",

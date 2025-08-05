@@ -60,7 +60,7 @@ public class ImageErrorTest {
         int th = lightImage.getHeight();
 
         RemoteComposeContext doc =
-                new RemoteComposeContext(
+                new RemoteComposeContextAndroid(
                         tw,
                         th,
                         "demo",
