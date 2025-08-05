@@ -131,8 +131,6 @@ sealed class <#A: out androidx.navigationevent/NavigationEventInfo> androidx.nav
     }
 
     final class <#A1: out androidx.navigationevent/NavigationEventInfo> InProgress : androidx.navigationevent/NavigationEventState<#A1> { // androidx.navigationevent/NavigationEventState.InProgress|null[0]
-        constructor <init>(#A1, #A1?, androidx.navigationevent/NavigationEvent) // androidx.navigationevent/NavigationEventState.InProgress.<init>|<init>(1:0;1:0?;androidx.navigationevent.NavigationEvent){}[0]
-
         final val currentInfo // androidx.navigationevent/NavigationEventState.InProgress.currentInfo|{}currentInfo[0]
             final fun <get-currentInfo>(): #A1 // androidx.navigationevent/NavigationEventState.InProgress.currentInfo.<get-currentInfo>|<get-currentInfo>(){}[0]
         final val latestEvent // androidx.navigationevent/NavigationEventState.InProgress.latestEvent|{}latestEvent[0]

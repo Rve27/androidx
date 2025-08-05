@@ -106,13 +106,11 @@ package androidx.navigationevent {
   }
 
   public static final class NavigationEventState.Idle<T extends androidx.navigationevent.NavigationEventInfo> extends androidx.navigationevent.NavigationEventState<T> {
-    ctor public NavigationEventState.Idle(T currentInfo);
     method public T getCurrentInfo();
     property public T currentInfo;
   }
 
   public static final class NavigationEventState.InProgress<T extends androidx.navigationevent.NavigationEventInfo> extends androidx.navigationevent.NavigationEventState<T> {
-    ctor public NavigationEventState.InProgress(T currentInfo, T? previousInfo, androidx.navigationevent.NavigationEvent latestEvent);
     method public T getCurrentInfo();
     method public androidx.navigationevent.NavigationEvent getLatestEvent();
     method public T? getPreviousInfo();

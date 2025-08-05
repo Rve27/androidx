@@ -52,8 +52,9 @@ public sealed class NavigationEventState<out T : NavigationEventInfo> {
      *
      * @property currentInfo Information about the current UI state.
      */
-    public class Idle<out T : NavigationEventInfo>(override val currentInfo: T) :
-        NavigationEventState<T>() {
+    public class Idle<out T : NavigationEventInfo>
+    @PublishedApi
+    internal constructor(override val currentInfo: T) : NavigationEventState<T>() {
 
         override fun toString(): String {
             return "Idle(currentInfo=$currentInfo)"
@@ -78,7 +79,8 @@ public sealed class NavigationEventState<out T : NavigationEventInfo> {
      * @property latestEvent The latest [NavigationEvent] in the gesture sequence, containing
      *   details like touch position and progress.
      */
-    public class InProgress<out T : NavigationEventInfo>(
+    public class InProgress<out T : NavigationEventInfo>
+    internal constructor(
         override val currentInfo: T,
         public val previousInfo: T?,
         public val latestEvent: NavigationEvent,
