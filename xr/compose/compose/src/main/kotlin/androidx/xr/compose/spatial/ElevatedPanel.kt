@@ -58,8 +58,8 @@ internal object ElevatedPanelDefaults {
 }
 
 /**
- * This is the base panel underlying the implementations of SpatialElevation, SpatialPopup, and
- * SpatialDialog. It allows creating a panel at a specific size and offset.
+ * This is the base panel underlying the implementations of SpatialPopup and SpatialDialog. It
+ * allows creating a panel at a specific size and offset.
  */
 @Composable
 internal fun ElevatedPanel(
@@ -156,7 +156,7 @@ internal data class MeterPosition(
      * @param other the other [MeterPosition] to add.
      * @return a new [MeterPosition] representing the sum of the two positions.
      */
-    public operator fun plus(other: MeterPosition) =
+    operator fun plus(other: MeterPosition) =
         MeterPosition(x = x + other.x, y = y + other.y, z = z + other.z)
 
     fun toVector3() = Vector3(x = x.toM(), y = y.toM(), z = z.toM())
