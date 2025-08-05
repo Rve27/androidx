@@ -33,6 +33,7 @@ import androidx.appfunctions.integration.tests.TestUtil.doBlocking
 import androidx.appfunctions.integration.tests.TestUtil.retryAssert
 import androidx.appfunctions.metadata.AppFunctionComponentsMetadata
 import androidx.appfunctions.metadata.AppFunctionDataTypeMetadata
+import androidx.appfunctions.metadata.AppFunctionIntTypeMetadata
 import androidx.appfunctions.metadata.AppFunctionMetadata
 import androidx.appfunctions.metadata.AppFunctionObjectTypeMetadata
 import androidx.appfunctions.metadata.AppFunctionParameterMetadata
@@ -113,7 +114,54 @@ class IntegrationTest {
                 it.appFunctions
             }
 
-        assertThat(appFunctions).hasSize(17)
+        assertThat(appFunctions).hasSize(19)
+    }
+
+    @Test
+    fun searchAllAppFunctions_returnEnumValues_withDynamicIndexer() = doBlocking {
+        assumeTrue(isDynamicIndexerAvailable(context))
+        val searchFunctionSpec = AppFunctionSearchSpec(packageNames = setOf(context.packageName))
+
+        val enumFunctionMetadata =
+            appFunctionManager
+                .observeAppFunctions(searchFunctionSpec)
+                .first()
+                .flatMap { it.appFunctions }
+                .single {
+                    it.id ==
+                        "androidx.appfunctions.integration.tests.TestFunctions#enumValueFunction"
+                }
+
+        val intEnumParamMetadata =
+            assertIs<AppFunctionIntTypeMetadata>(
+                enumFunctionMetadata.parameters.associateBy { it.name }["intEnum"]?.dataType
+            )
+        assertThat(intEnumParamMetadata.enumValues).containsExactly(0, 1)
+    }
+
+    @Test
+    fun searchAllAppFunctions_returnEnumValuesFromLibraryModule_withDynamicIndexer() = doBlocking {
+        assumeTrue(isDynamicIndexerAvailable(context))
+        val searchFunctionSpec = AppFunctionSearchSpec(packageNames = setOf(context.packageName))
+
+        val enumFunctionMetadata =
+            appFunctionManager
+                .observeAppFunctions(searchFunctionSpec)
+                .first()
+                .flatMap { it.appFunctions }
+                .single {
+                    it.id ==
+                        "androidx.appfunctions.integration.testapp.library.TestFunctions2#enumValueFunction"
+                }
+
+        val intEnumParamMetadata =
+            assertIs<AppFunctionIntTypeMetadata>(
+                enumFunctionMetadata.parameters.associateBy { it.name }["intEnum"]?.dataType
+            )
+        assertThat(intEnumParamMetadata.enumValues).containsExactly(0, 1)
+        val intEnumReturnMetadata =
+            assertIs<AppFunctionIntTypeMetadata>(enumFunctionMetadata.response.valueType)
+        assertThat(intEnumReturnMetadata.enumValues).containsExactly(10, 20)
     }
 
     @Test
