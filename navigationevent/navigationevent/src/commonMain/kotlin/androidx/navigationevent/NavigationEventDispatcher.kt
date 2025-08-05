@@ -187,6 +187,17 @@ private constructor(
     private val callbacks = mutableSetOf<NavigationEventCallback<*>>()
 
     /**
+     * A set of [NavigationEventInputHandler] instances that are directly managed by this
+     * dispatcher.
+     *
+     * This dispatcher controls the lifecycle of its registered handlers, calling `onAttach` and
+     * `onDetach` as its own state changes.
+     *
+     * **This is primarily for cleanup when this dispatcher is no longer needed.**
+     */
+    private val inputHandlers = mutableSetOf<NavigationEventInputHandler>()
+
+    /**
      * The [StateFlow] from the highest-priority, enabled navigation callback.
      *
      * This represents the navigation state of the currently active component.
@@ -318,13 +329,14 @@ private constructor(
      * state changes.
      *
      * @param inputHandler The handler to add.
+     * @throws IllegalStateException if the dispatcher has already been disposed.
      * @see removeInputHandler
      */
     public fun addInputHandler(inputHandler: NavigationEventInputHandler) {
-        // TODO(mgalhardo): Wire up the handler's lifecycle.
-        //  - Call onAttach() immediately.
-        //  - Forward the dispatcher's enabled/disabled state to onEnabled()/onDisabled().
-        //  - Forward the dispatcher's dispose call to onDispose().
+        checkInvariants()
+
+        inputHandlers += inputHandler
+        inputHandler.onAttach(dispatcher = this)
     }
 
     /**
@@ -334,10 +346,14 @@ private constructor(
      * no longer receive events or lifecycle calls from this dispatcher.
      *
      * @param inputHandler The handler to remove.
+     * @throws IllegalStateException if the dispatcher has already been disposed.
      * @see addInputHandler
      */
     public fun removeInputHandler(inputHandler: NavigationEventInputHandler) {
-        // TODO(mgalhardo): Call onDetached() on the handler and then remove it from the collection.
+        checkInvariants()
+
+        inputHandlers -= inputHandler
+        inputHandler.onDetach()
     }
 
     /**
@@ -459,6 +475,14 @@ private constructor(
 
             // Set immediately to prevent changes (like adding new children) while we tear it down.
             currentDispatcher.isDisposed = true
+
+            // Notify all registered input handlers that this dispatcher is being disposed.
+            // This gives them a chance to clean up their own state, severing the lifecycle link
+            // and preventing them from interacting with a disposed object.
+            for (inputHandler in inputHandlers.toList()) {
+                inputHandler.onDetach()
+            }
+            inputHandlers.clear()
 
             // Add 'currentDispatcher's children to the queue before processing 'currentDispatcher's
             // own cleanup. This ensures a complete traversal of the sub-hierarchy.
