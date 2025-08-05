@@ -100,18 +100,30 @@ class AppFunctionComponentRegistryProcessor(private val codeGenerator: CodeGener
     private fun generateSerializableComponentRegistry(resolver: Resolver) {
         val annotatedSerializables =
             AppFunctionSymbolResolver(resolver).resolveAnnotatedAppFunctionSerializables()
-        val serializableComponents =
-            annotatedSerializables.map { annotatedSerializable ->
-                AppFunctionComponent(
-                    qualifiedName = annotatedSerializable.jvmQualifiedName,
-                    docString =
-                        if (annotatedSerializable.isDescribedByKdoc) {
-                            annotatedSerializable.description
-                        } else {
-                            ""
-                        },
+        val serializableComponents = buildList {
+            for (annotatedSerializable in annotatedSerializables) {
+                add(
+                    AppFunctionComponent(
+                        qualifiedName = annotatedSerializable.jvmQualifiedName,
+                        docString =
+                            if (annotatedSerializable.isDescribedByKdoc) {
+                                annotatedSerializable.description
+                            } else {
+                                ""
+                            },
+                    )
                 )
+                for (property in annotatedSerializable.getProperties()) {
+                    add(
+                        AppFunctionComponent(
+                            qualifiedName =
+                                "${annotatedSerializable.jvmQualifiedName}#${property.name}",
+                            docString = property.description,
+                        )
+                    )
+                }
             }
+        }
 
         AppFunctionComponentRegistryGenerator(codeGenerator)
             .generateRegistry(

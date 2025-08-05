@@ -616,7 +616,10 @@ class AppFunctionMetadataCreatorHelper(
                             seenDataTypeQualifiers,
                             resolvedAnnotatedSerializableProxies,
                             allowSerializableInterfaceTypes,
-                            property.description,
+                            // Remove type parameter in case of generic type.
+                            sharedDataTypeDescriptionMap[
+                                "${serializableTypeQualifiedName.substringBefore("<")}#${property.name}"]
+                                ?: "",
                             annotations = property.propertyAnnotations,
                         )
                     put(property.name, innerAppFunctionDataTypeMetadata)

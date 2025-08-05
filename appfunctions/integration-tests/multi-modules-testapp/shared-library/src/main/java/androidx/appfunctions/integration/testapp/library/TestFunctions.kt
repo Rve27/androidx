@@ -61,7 +61,15 @@ class TestFunctions2 {
 }
 
 /** AppFunctionSerializable in non-root library. */
-@AppFunctionSerializable(isDescribedByKdoc = true) class ExampleSerializable(val intProperty: Int)
+@AppFunctionSerializable(isDescribedByKdoc = true)
+class ExampleSerializable(
+    /** Int property of ExampleSerializable. */
+    val intProperty: Int
+)
 
 /** Example parameterized AppFunctionSerializable in another package. */
-@AppFunctionSerializable(isDescribedByKdoc = true) class GenericSerializable<T>(val value: T)
+@AppFunctionSerializable(isDescribedByKdoc = true)
+class GenericSerializable<T>(
+    /** Value property of GenericSerializable. */
+    val value: T
+)

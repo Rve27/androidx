@@ -223,6 +223,23 @@ class IntegrationTest {
                 "androidx.appfunctions.integration.testapp.library.GenericSerializable<kotlin.Int>" to
                     "Example parameterized AppFunctionSerializable in another package.",
             )
+        val expectedPropertyDescriptions =
+            mapOf(
+                "androidx.appfunctions.integration.tests.Note" to
+                    mapOf(
+                        "title" to "The note's title.",
+                        "content" to "The note's content.",
+                        "owner" to "The note's [Owner].",
+                        "attachments" to "The note's attachments.",
+                        "modifiedTime" to "The note's last modified time.",
+                    ),
+                "androidx.appfunctions.integration.tests.SetField<kotlin.String>" to
+                    mapOf("value" to "Value property of SetField."),
+                "androidx.appfunctions.integration.testapp.library.ExampleSerializable" to
+                    mapOf("intProperty" to "Int property of ExampleSerializable."),
+                "androidx.appfunctions.integration.testapp.library.GenericSerializable<kotlin.Int>" to
+                    mapOf("value" to "Value property of GenericSerializable."),
+            )
         assumeTrue(isDynamicIndexerAvailable(context))
         val searchFunctionSpec = AppFunctionSearchSpec(packageNames = setOf(context.packageName))
 
@@ -240,6 +257,12 @@ class IntegrationTest {
 
         for ((id, dataType) in filteredMetadata) {
             assertThat(expectedSerializableDescriptions[id]).isEqualTo(dataType.description)
+            assertThat(expectedPropertyDescriptions[id])
+                .containsExactlyEntriesIn(
+                    (dataType as AppFunctionObjectTypeMetadata).properties.entries.associate { it ->
+                        it.key to it.value.description
+                    }
+                )
         }
     }
 

@@ -108,6 +108,11 @@ internal annotation class AppFunctionComponentCategory {
          * The components in serializable category provide the data type description elements in the
          * common components in the indexer's XML file through
          * [AppFunctionComponentRegistry.componentDocStrings].
+         *
+         * Serializable components also include the class's properties and their descriptions.
+         * Properties component names take the format: <enclosing class qualified name>#<property
+         * name>. For example, property `title` in class `com.notes.Note` will have the component
+         * name "com.notes.Note#title".
          */
         const val SERIALIZABLE: String = "SERIALIZABLE"
     }

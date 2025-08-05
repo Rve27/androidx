@@ -35,7 +35,11 @@ interface AppFunctionOpenable {
 }
 
 /** Example parameterized AppFunctionSerializable. */
-@AppFunctionSerializable(isDescribedByKdoc = true) data class SetField<T>(val value: T)
+@AppFunctionSerializable(isDescribedByKdoc = true)
+data class SetField<T>(
+    /** Value property of SetField. */
+    val value: T
+)
 
 @AppFunctionSerializable
 data class CreateNoteParams(
@@ -63,10 +67,15 @@ data class UpdateNoteParams(
 /** Represents a note in the notes app. */
 @AppFunctionSerializable(isDescribedByKdoc = true)
 data class Note(
+    /** The note's title. */
     val title: String,
+    /** The note's content. */
     val content: List<String>,
+    /** The note's [Owner]. */
     val owner: Owner,
+    /** The note's attachments. */
     val attachments: List<Attachment>,
+    /** The note's last modified time. */
     val modifiedTime: LocalDateTime? = null,
 )
 
