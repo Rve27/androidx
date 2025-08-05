@@ -722,7 +722,7 @@ class SearchSessionImpl implements AppSearchSession {
         if (mIsMutated && !mIsClosed) {
             // No future is needed here since the method is void.
             FutureUtil.execute(mExecutor, () -> {
-                mAppSearchImpl.persistToDisk(mPackageName, BaseStats.CALL_TYPE_CLOSE,
+                mAppSearchImpl.persistToDisk(mPackageName, BaseStats.INTERNAL_CALL_TYPE_CLOSE,
                         PersistType.Code.FULL, mLogger,
                         /*callStatsBuilder=*/null);
                 mIsClosed = true;

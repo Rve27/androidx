@@ -31,6 +31,7 @@ import static org.junit.Assume.assumeFalse;
 import static org.junit.Assume.assumeTrue;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.appsearch.app.AppSearchBatchResult;
 import androidx.appsearch.app.AppSearchResult;
@@ -99,6 +100,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 
 public abstract class AppSearchSessionCtsTestBase {
+    private static final String TAG = "AppSearchSessionCtsTest";
     static final String DB_NAME_1 = "";
     static final String DB_NAME_2 = "testDb2";
 
@@ -1630,6 +1632,216 @@ public abstract class AppSearchSessionCtsTestBase {
         assertThat(result.getFailures()).isEmpty();
     }
 // @exportToFramework:endStrip()
+
+    @Test
+    public void testPutHugeDocumentInBatch() throws Exception {
+        // Schema registration
+        AppSearchSchema schema =
+                new AppSearchSchema.Builder("Type")
+                        .addProperty(
+                                new StringPropertyConfig.Builder("body")
+                                        .setCardinality(PropertyConfig.CARDINALITY_OPTIONAL)
+                                        .setTokenizerType(StringPropertyConfig.TOKENIZER_TYPE_PLAIN)
+                                        .setIndexingType(
+                                                StringPropertyConfig.INDEXING_TYPE_PREFIXES)
+                                        .build())
+                        .build();
+        mDb1.setSchemaAsync(new SetSchemaRequest.Builder().addSchemas(schema).build()).get();
+
+        // Creates a batch of Documents with 100 small documents, one huge (128KiB) document and
+        // many small documents.
+        char[] chars;
+        String body;
+        String id;
+        GenericDocument inDocument;
+        List<GenericDocument> inDocuments = new ArrayList<>();
+        GetByDocumentIdRequest.Builder getByDocumentIdRequestBuilder =
+                new GetByDocumentIdRequest.Builder("namespace");
+
+        for (int i = 0; i < 100; ++i) {
+            chars = new char[1024];
+            Arrays.fill(chars, ' ');
+            body = String.valueOf(chars) + "the end.";
+            id = "id" + i;
+            inDocument =
+                    new GenericDocument.Builder<>("namespace", id, "Type")
+                            .setPropertyString("body", body)
+                            .build();
+            inDocuments.add(inDocument);
+            getByDocumentIdRequestBuilder.addIds(id);
+        }
+
+        chars = new char[128 * 1024];
+        Arrays.fill(chars, ' ');
+        body = String.valueOf(chars) + "the end.";
+        id = "id100";
+        inDocument =
+                new GenericDocument.Builder<>("namespace", id, "Type")
+                        .setPropertyString("body", body)
+                        .build();
+        inDocuments.add(inDocument);
+        getByDocumentIdRequestBuilder.addIds(id);
+
+        for (int i = 101; i < 200; ++i) {
+            chars = new char[1024];
+            Arrays.fill(chars, ' ');
+            body = String.valueOf(chars) + "the end.";
+            id = "id" + i;
+            inDocument =
+                    new GenericDocument.Builder<>("namespace", id, "Type")
+                            .setPropertyString("body", body)
+                            .build();
+            inDocuments.add(inDocument);
+            getByDocumentIdRequestBuilder.addIds(id);
+        }
+
+        // Index documents.
+        AppSearchBatchResult<String, Void> result =
+                mDb1.putAsync(
+                                new PutDocumentsRequest.Builder()
+                                        .addGenericDocuments(inDocuments)
+                                        .build())
+                        .get();
+        assertThat(result.isSuccess()).isTrue();
+
+        // Query those documents and verify they are same with the input. This also verify
+        // AppSearchResult could handle large batch.
+        SearchResults searchResults =
+                mDb1.search(
+                        "end",
+                        new SearchSpec.Builder()
+                                .setTermMatch(SearchSpec.TERM_MATCH_EXACT_ONLY)
+                                .setResultCountPerPage(4000)
+                                .build());
+        List<GenericDocument> outDocuments = convertSearchResultsToDocuments(searchResults);
+
+        // Create a map to assert the output is same to the input in O(n).
+        // containsExactlyElementsIn will create two iterators and the complexity is O(n^2).
+        Map<String, GenericDocument> outMap = new ArrayMap<>(outDocuments.size());
+        for (int i = 0; i < outDocuments.size(); i++) {
+            outMap.put(outDocuments.get(i).getId(), outDocuments.get(i));
+        }
+        for (int i = 0; i < inDocuments.size(); i++) {
+            GenericDocument inDoc = inDocuments.get(i);
+            assertThat(inDoc).isEqualTo(outMap.get(inDoc.getId()));
+            outMap.remove(inDoc.getId());
+        }
+        assertThat(outMap).isEmpty();
+
+        // Get by document ID and verify they are same with the input. This also verify
+        // AppSearchBatchResult could handle a batch with a large document.
+        AppSearchBatchResult<String, GenericDocument> batchResult =
+                mDb1.getByDocumentIdAsync(getByDocumentIdRequestBuilder.build()).get();
+        assertThat(batchResult.isSuccess()).isTrue();
+        for (int i = 0; i < inDocuments.size(); i++) {
+            GenericDocument inDoc = inDocuments.get(i);
+            assertThat(batchResult.getSuccesses().get(inDoc.getId())).isEqualTo(inDoc);
+        }
+    }
+
+    @Test
+    public void testPutDocumentVariousBatches() throws Exception {
+        // Schema registration
+        AppSearchSchema schema =
+                new AppSearchSchema.Builder("Type")
+                        .addProperty(
+                                new StringPropertyConfig.Builder("body")
+                                        .setCardinality(PropertyConfig.CARDINALITY_OPTIONAL)
+                                        .setTokenizerType(StringPropertyConfig.TOKENIZER_TYPE_PLAIN)
+                                        .setIndexingType(
+                                                StringPropertyConfig.INDEXING_TYPE_PREFIXES)
+                                        .build())
+                        .build();
+        mDb1.setSchemaAsync(new SetSchemaRequest.Builder().addSchemas(schema).build()).get();
+
+        for (int batchSize = 100; batchSize < 1000000; batchSize *= 10) {
+            for (int docSize = 100; batchSize / docSize >= 1; docSize *= 10) {
+                Log.i(TAG, "Indexing batch {batchSize = " + batchSize + ", docSize = " + docSize);
+                List<GenericDocument> inDocuments = new ArrayList<>();
+                GetByDocumentIdRequest.Builder getByDocumentIdRequestBuilder =
+                        new GetByDocumentIdRequest.Builder("namespace");
+                for (int numDocs = batchSize / docSize; numDocs > 0; --numDocs) {
+                    char[] chars = new char[1024];
+                    Arrays.fill(chars, ' ');
+                    String body = String.valueOf(chars) + "the end.";
+                    String id = "id" + numDocs;
+                    GenericDocument inDocument =
+                            new GenericDocument.Builder<>("namespace", id, "Type")
+                                    .setPropertyString("body", body)
+                                    .build();
+                    inDocuments.add(inDocument);
+                    getByDocumentIdRequestBuilder.addIds(id);
+                }
+
+                // Index documents.
+                AppSearchBatchResult<String, Void> result =
+                        mDb1.putAsync(
+                                        new PutDocumentsRequest.Builder()
+                                                .addGenericDocuments(inDocuments)
+                                                .build())
+                                .get();
+                assertThat(result.isSuccess()).isTrue();
+
+                // Query those documents and verify they are same with the input. This also verify
+                // AppSearchResult could handle large batch.
+                SearchResults searchResults =
+                        mDb1.search(
+                                "end",
+                                new SearchSpec.Builder()
+                                        .setTermMatch(SearchSpec.TERM_MATCH_EXACT_ONLY)
+                                        .setResultCountPerPage(10000)
+                                        .build());
+                List<GenericDocument> outDocuments = convertSearchResultsToDocuments(searchResults);
+
+                // Create a map to assert the output is same to the input in O(n).
+                // containsExactlyElementsIn will create two iterators and the complexity is O(n^2).
+                Map<String, GenericDocument> outMap = new ArrayMap<>(outDocuments.size());
+                for (int i = 0; i < outDocuments.size(); i++) {
+                    outMap.put(outDocuments.get(i).getId(), outDocuments.get(i));
+                }
+                for (int i = 0; i < inDocuments.size(); i++) {
+                    GenericDocument inDocument = inDocuments.get(i);
+                    assertThat(inDocument).isEqualTo(outMap.get(inDocument.getId()));
+                    outMap.remove(inDocument.getId());
+                }
+                assertThat(outMap).isEmpty();
+
+                // Get by document ID and verify they are same with the input. This also verify
+                // AppSearchBatchResult could handle large batch.
+                AppSearchBatchResult<String, GenericDocument> batchResult =
+                        mDb1.getByDocumentIdAsync(getByDocumentIdRequestBuilder.build()).get();
+                assertThat(batchResult.isSuccess()).isTrue();
+                for (int i = 0; i < inDocuments.size(); i++) {
+                    GenericDocument inDocument = inDocuments.get(i);
+                    assertThat(batchResult.getSuccesses().get(inDocument.getId()))
+                            .isEqualTo(inDocument);
+                }
+
+                // Delete all of the documents that we just added.
+                mDb1.removeAsync(
+                                "end",
+                                new SearchSpec.Builder()
+                                        .setTermMatch(SearchSpec.TERM_MATCH_PREFIX).build())
+                        .get();
+
+                // Verify that they can't be retrieved in a search or get
+                searchResults =
+                        mDb1.search(
+                                "end",
+                                new SearchSpec.Builder()
+                                        .setTermMatch(SearchSpec.TERM_MATCH_EXACT_ONLY)
+                                        .setResultCountPerPage(10000)
+                                        .build());
+                outDocuments = convertSearchResultsToDocuments(searchResults);
+                assertThat(outDocuments).isEmpty();
+
+                batchResult =
+                        mDb1.getByDocumentIdAsync(getByDocumentIdRequestBuilder.build()).get();
+                assertThat(batchResult.getSuccesses()).isEmpty();
+                assertThat(batchResult.getFailures()).hasSize(inDocuments.size());
+            }
+        }
+    }
 
     @Test
     public void testPutDocuments_takenActionGenericDocuments() throws Exception {

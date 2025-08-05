@@ -6602,7 +6602,7 @@ public class AppSearchImplTest {
         assertThat(internalSetSchemaResponse.isSuccess()).isTrue();
         setSchemaStats = setSchemaStatsBuilder.build();
         assertThat(setSchemaStats.getLastWriteOperation())
-                .isEqualTo(BaseStats.CALL_TYPE_PRUNE_PACKAGE_DATA);
+                .isEqualTo(BaseStats.INTERNAL_CALL_TYPE_PRUNE_PACKAGE_DATA);
 
         // Write blob and check the last write operation
         AppSearchBlobHandle handle = AppSearchBlobHandle.createWithSha256(

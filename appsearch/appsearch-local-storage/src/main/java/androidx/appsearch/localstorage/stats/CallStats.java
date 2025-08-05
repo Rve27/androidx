@@ -372,8 +372,8 @@ public class CallStats extends BaseStats {
                 return CALL_TYPE_REMOVE_BLOB;
             case CALL_TYPE_STRING_SET_BLOB_VISIBILITY:
                 return CALL_TYPE_SET_BLOB_VISIBILITY;
-            case CALL_TYPE_STRING_PRUNE_PACKAGE_DATA:
-                return CALL_TYPE_PRUNE_PACKAGE_DATA;
+            case INTERNAL_CALL_TYPE_STRING_PRUNE_PACKAGE_DATA:
+                return INTERNAL_CALL_TYPE_PRUNE_PACKAGE_DATA;
             default:
                 return CALL_TYPE_UNKNOWN;
         }
@@ -415,7 +415,6 @@ public class CallStats extends BaseStats {
                 CALL_TYPE_OPEN_READ_BLOB,
                 CALL_TYPE_GLOBAL_OPEN_READ_BLOB,
                 CALL_TYPE_REMOVE_BLOB,
-                CALL_TYPE_SET_BLOB_VISIBILITY,
-                CALL_TYPE_PRUNE_PACKAGE_DATA));
+                CALL_TYPE_SET_BLOB_VISIBILITY));
     }
 }

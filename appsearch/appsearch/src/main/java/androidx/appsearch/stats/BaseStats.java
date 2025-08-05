@@ -79,8 +79,11 @@ public class BaseStats {
             CALL_TYPE_GLOBAL_OPEN_READ_BLOB,
             CALL_TYPE_REMOVE_BLOB,
             CALL_TYPE_SET_BLOB_VISIBILITY,
-            CALL_TYPE_PRUNE_PACKAGE_DATA,
-            CALL_TYPE_CLOSE
+            INTERNAL_CALL_TYPE_APP_OPEN_EVENT_INDEXER,
+            INTERNAL_CALL_TYPE_ISOLATED_STORAGE_DATA_MIGRATION,
+            INTERNAL_CALL_TYPE_PRUNE_PACKAGE_DATA,
+            INTERNAL_CALL_TYPE_CLOSE,
+            INTERNAL_CALL_TYPE_PERSIST_TO_DISK_JOB
     })
     @Retention(RetentionPolicy.SOURCE)
     public @interface CallType {
@@ -127,8 +130,10 @@ public class BaseStats {
     // Most call types are for AppSearchManager APIs. This call type is for internal calls, such
     // as from indexers.
     public static final int INTERNAL_CALL_TYPE_APP_OPEN_EVENT_INDEXER = 38;
-    public static final int CALL_TYPE_PRUNE_PACKAGE_DATA = 39;
-    public static final int CALL_TYPE_CLOSE = 40;
+    public static final int INTERNAL_CALL_TYPE_ISOLATED_STORAGE_DATA_MIGRATION = 39;
+    public static final int INTERNAL_CALL_TYPE_PRUNE_PACKAGE_DATA = 40;
+    public static final int INTERNAL_CALL_TYPE_CLOSE = 41;
+    public static final int INTERNAL_CALL_TYPE_PERSIST_TO_DISK_JOB = 42;
 
     // These strings are for the subset of call types that correspond to an AppSearchManager API
     public static final String CALL_TYPE_STRING_INITIALIZE = "initialize";
@@ -167,8 +172,13 @@ public class BaseStats {
     public static final String CALL_TYPE_STRING_GLOBAL_OPEN_READ_BLOB = "globalOpenReadBlob";
     public static final String CALL_TYPE_STRING_REMOVE_BLOB = "removeBlob";
     public static final String CALL_TYPE_STRING_SET_BLOB_VISIBILITY = "setBlobVisibility";
-    public static final String CALL_TYPE_STRING_PRUNE_PACKAGE_DATA = "prunePackageData";
-    public static final String CALL_TYPE_STRING_CLOSE = "close";
+    public static final String INTERNAL_CALL_TYPE_STRING_APP_OPEN_EVENT_INDEXER =
+            "appOpenEventIndexer";
+    public static final String INTERNAL_CALL_TYPE_STRING_ISOLATED_STORAGE_DATA_MIGRATION =
+            "isolatedStorageDataMigration";
+    public static final String INTERNAL_CALL_TYPE_STRING_PRUNE_PACKAGE_DATA = "prunePackageData";
+    public static final String INTERNAL_CALL_TYPE_STRING_CLOSE = "close";
+    public static final String INTERNAL_CALL_TYPE_STRING_PERSIST_TO_DISK_JOB = "persistToDiskJob";
 
     public static final int LAUNCH_VM = 0;
     private final long mEnabledFeatures;

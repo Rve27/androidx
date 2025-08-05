@@ -220,10 +220,12 @@ public final class AppSearchImpl implements Closeable {
     @GuardedBy("mReadWriteLock")
     @VisibleForTesting
     IcingSearchEngineInterface mIcingSearchEngineLocked;
-    private final boolean mIsVMEnabled;
-    private final boolean mResetVisibilityStore;
 
-    private boolean mIsIcingSchemaDatabaseEnabled = false;
+    private boolean mIsVMEnabled;
+
+    private boolean mResetVisibilityStore;
+
+    private boolean mIsIcingSchemaDatabaseEnabled;
 
     @GuardedBy("mReadWriteLock")
     private final SchemaCache mSchemaCacheLocked = new SchemaCache();
@@ -634,7 +636,7 @@ public final class AppSearchImpl implements Closeable {
             if (mClosedLocked) {
                 return;
             }
-            persistToDisk(/*callingPackageName=*/null, BaseStats.CALL_TYPE_CLOSE,
+            persistToDisk(/*callingPackageName=*/null, BaseStats.INTERNAL_CALL_TYPE_CLOSE,
                     PersistType.Code.FULL, /*logger=*/null, /*callStatsBuilder=*/null);
             LogUtil.piiTrace(TAG, "icingSearchEngine.close, request");
             mIcingSearchEngineLocked.close();
@@ -670,13 +672,29 @@ public final class AppSearchImpl implements Closeable {
     /** Atomic method to set a new icing search engine and return the previous engine. */
     @GuardedBy("mReadWriteLock")
     public @NonNull IcingSearchEngineInterface swapIcingSearchEngineLocked(
-            @NonNull IcingSearchEngineInterface icingSearchEngineLocked) {
+            @NonNull IcingSearchEngineInterface icingSearchEngineLocked, boolean isVmEnabled) {
         Objects.requireNonNull(icingSearchEngineLocked);
         mReadWriteLock.writeLock().lock();
         try {
             IcingSearchEngineInterface previousIcingSearchEngine = mIcingSearchEngineLocked;
             mIcingSearchEngineLocked = icingSearchEngineLocked;
+            mIsVMEnabled = isVmEnabled;
+            mIsIcingSchemaDatabaseEnabled =
+                    Flags.enableDatabaseScopedSchemaOperations() || isVmEnabled;
+            mResetVisibilityStore = Flags.enableResetVisibilityStore() || isVmEnabled;
             return previousIcingSearchEngine;
+        } finally {
+            mReadWriteLock.writeLock().unlock();
+        }
+    }
+
+    /** Clears all data from the current icing instance. */
+    public void clearAndDestroy() {
+        mReadWriteLock.writeLock().lock();
+        try {
+            throwIfClosedLocked();
+            mIcingSearchEngineLocked.clearAndDestroy();
+            mClosedLocked = true;
         } finally {
             mReadWriteLock.writeLock().unlock();
         }
@@ -4074,7 +4092,7 @@ public final class AppSearchImpl implements Closeable {
                 mRevocableFileDescriptorStore.revokeForPackage(packageName);
             }
         } finally {
-            mLastWriteOperationLocked = BaseStats.CALL_TYPE_PRUNE_PACKAGE_DATA;
+            mLastWriteOperationLocked = BaseStats.INTERNAL_CALL_TYPE_PRUNE_PACKAGE_DATA;
             mLastWriteOperationLatencyMillisLocked =
                     (int) (SystemClock.elapsedRealtime() - javaLockAcquisitionEndTimeMillis);
             mReadWriteLock.writeLock().unlock();
@@ -4171,7 +4189,7 @@ public final class AppSearchImpl implements Closeable {
                 }
             }
         } finally {
-            mLastWriteOperationLocked = BaseStats.CALL_TYPE_PRUNE_PACKAGE_DATA;
+            mLastWriteOperationLocked = BaseStats.INTERNAL_CALL_TYPE_PRUNE_PACKAGE_DATA;
             mLastWriteOperationLatencyMillisLocked =
                     (int) (SystemClock.elapsedRealtime() - javaLockAcquisitionEndTimeMillis);
             mReadWriteLock.writeLock().unlock();
