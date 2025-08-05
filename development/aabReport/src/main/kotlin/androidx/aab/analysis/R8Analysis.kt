@@ -22,8 +22,10 @@ import androidx.aab.analysis.R8Issues.getPrimaryOptimizationIssue
 import kotlin.math.roundToInt
 
 data class R8Analysis(
-    val mappingExpected: Boolean,
     val mappingPresent: Boolean,
+    val markerUsingD8Dex: Boolean,
+    val markerUsingR8Dex: Boolean,
+    val r8JsonFileExpected: Boolean,
     val r8JsonFileInfo: R8JsonFileInfo?,
     val dexSha256ChecksumsMatching: Set<String>,
     val dexSha256ChecksumsR8JsonOnly: Set<String>,
@@ -44,7 +46,7 @@ data class R8Analysis(
                 else null,
                 if (!mappingPresent && r8JsonFileInfo == null) R8Issues.NoMappingFileOrJsonMetadata
                 else null,
-                if (mappingPresent && r8JsonFileInfo == null) R8Issues.MissingJsonMetadata
+                if (r8JsonFileExpected && r8JsonFileInfo == null) R8Issues.MissingJsonMetadata
                 else null,
                 r8JsonFileInfo?.getPrimaryOptimizationIssue(),
             )
@@ -58,20 +60,32 @@ data class R8Analysis(
     }
 
     fun csvEntries(): List<String> {
-        return listOf((r8JsonFileInfo?.getScore()).toString())
+        return listOf(
+            (r8JsonFileInfo?.getScore()).toString(),
+            markerUsingD8Dex.toString(),
+            markerUsingR8Dex.toString(),
+        )
     }
 
     companion object {
-        val CSV_TITLES = listOf("r8_score")
+        val CSV_TITLES = listOf("r8_score", "r8_marker_d8dex", "r8_marker_r8dex")
 
         fun BundleInfo.getR8Analysis(): R8Analysis {
             val metadataJsonShas = r8JsonFileInfo?.dexShas?.toSet() ?: emptySet()
             val dexShas = dexInfo.map { it.sha256 }.toSet()
             return R8Analysis(
-                mappingExpected =
+                mappingPresent = mappingFileInfo != null,
+                markerUsingD8Dex =
+                    dexInfo.any { dex ->
+                        dex.r8Markers.any { it.compiler == "D8" && it.map["backend"] == "dex" }
+                    },
+                markerUsingR8Dex =
+                    dexInfo.any { dex ->
+                        dex.r8Markers.any { it.compiler == "R8" && it.map["backend"] == "dex" }
+                    },
+                r8JsonFileExpected =
                     (this.appMetadataPropsInfoBundleMetadata ?: this.appMetadataPropsInfoMetaInf)
                         ?.agpAtLeast(8, 8) ?: false,
-                mappingPresent = r8JsonFileInfo != null,
                 r8JsonFileInfo = r8JsonFileInfo,
                 dexSha256ChecksumsMatching = metadataJsonShas.intersect(dexShas),
                 dexSha256ChecksumsDexOnly = dexShas - metadataJsonShas,

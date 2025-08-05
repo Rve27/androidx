@@ -72,7 +72,16 @@ fun main(args: Array<String>) = runBlocking {
         files
             .asFlow()
             .flatMapMerge { bundleFile ->
-                flow { emit(AnalyzedBundleInfo(BundleInfo.Companion.from(bundleFile))) }
+                flow {
+                        try {
+                            emit(AnalyzedBundleInfo(BundleInfo.Companion.from(bundleFile)))
+                        } catch (t: Throwable) {
+                            println(
+                                "ERROR during parsing ${bundleFile.absolutePath}, skipping bundle"
+                            )
+                            t.printStackTrace()
+                        }
+                    }
                     .flowOn(Dispatchers.IO)
             }
             .toList()
