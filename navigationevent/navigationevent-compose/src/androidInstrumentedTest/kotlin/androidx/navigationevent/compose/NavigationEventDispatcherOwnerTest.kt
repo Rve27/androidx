@@ -117,7 +117,7 @@ internal class NavigationEventDispatcherOwnerTest {
                 // The 'enabled' parameter is a lambda to allow for dynamic updates.
                 // This is a common pattern for controlling behavior based on state,
                 // such as disabling back navigation during a loading operation.
-                NavigationEventDispatcherOwner(enabled = { enabled }) {
+                NavigationEventDispatcherOwner(enabled = enabled) {
                     childOwner = LocalNavigationEventDispatcherOwner.current!!
                 }
             }
@@ -208,7 +208,7 @@ internal class NavigationEventDispatcherOwnerTest {
         rule.setContent {
             // The enabled state should work just as well for a root dispatcher
             // as it does for a child.
-            NavigationEventDispatcherOwner(parent = null, enabled = { enabled }) {
+            NavigationEventDispatcherOwner(parent = null, enabled = enabled) {
                 rootOwner = LocalNavigationEventDispatcherOwner.current!!
             }
         }

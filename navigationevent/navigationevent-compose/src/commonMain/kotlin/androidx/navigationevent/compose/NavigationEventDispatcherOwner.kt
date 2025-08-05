@@ -21,7 +21,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.snapshotFlow
 import androidx.navigationevent.NavigationEventDispatcher
 import androidx.navigationevent.NavigationEventDispatcherOwner
 import androidx.navigationevent.NavigationEventInputHandler
@@ -53,7 +52,7 @@ import androidx.navigationevent.NavigationEventInputHandler
  */
 @Composable
 public fun NavigationEventDispatcherOwner(
-    enabled: () -> Boolean = { true },
+    enabled: Boolean = true,
     parent: NavigationEventDispatcherOwner? =
         checkNotNull(LocalNavigationEventDispatcherOwner.current) {
             "No NavigationEventDispatcherOwner provided in LocalNavigationEventDispatcherOwner. " +
@@ -66,22 +65,7 @@ public fun NavigationEventDispatcherOwner(
         parent?.navigationEventDispatcher ?: NavigationEventDispatcher()
     }
 
-    LaunchedEffect(enabled) {
-        // LaunchedEffect is not snapshot-aware by itself, so we use `snapshotFlow` to observe
-        // changes to `enabled()`. `snapshotFlow` converts snapshot state reads into a cold Flow
-        // that emits whenever the underlying snapshot-aware state changes.
-        //
-        // Note: `snapshotFlow` only works correctly when the lambda reads values from
-        // snapshot-aware state objects (e.g., `State`, `MutableState`, or Compose state APIs).
-        //
-        // We collect this Flow to update the callback whenever `enabled` changes.
-        //
-        // Because we collect this Flow inside a coroutine, the timing of emissions is also bound to
-        // the CoroutineDispatcher used by the composition. This means snapshot state changes are
-        // only observed and handled when the coroutine dispatcher schedules the collection, so
-        // updates might not be strictly synchronous with the state change.
-        snapshotFlow(enabled).collect { isEnabled -> localDispatcher.isEnabled = isEnabled }
-    }
+    LaunchedEffect(enabled) { localDispatcher.isEnabled = enabled }
 
     // Clean up the dispatcher on dispose to prevent memory leaks.
     DisposableEffect(Unit) { onDispose { localDispatcher.dispose() } }
