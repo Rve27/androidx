@@ -291,6 +291,10 @@ public final class Flags {
     public static final String FLAG_ENABLE_PASSING_FILTER_TO_CHILDREN =
             FLAG_PREFIX + "enable_passing_filter_to_children";
 
+    /** Whether to enable using removeByQuery to implement removeById. */
+    public static final String FLAG_ENABLE_REMOVE_BY_ID_USES_QUERY =
+            FLAG_PREFIX + "enable_remove_by_id_uses_query";
+
     // Whether the features should be enabled.
     //
     // In Jetpack, those should always return true.
@@ -634,5 +638,13 @@ public final class Flags {
      */
     public static boolean enablePassingFilterToChildren() {
         return true;
+    }
+
+    /**
+     * Whether to enable using removeByQuery to implement removeById.
+     */
+    public static boolean enableRemoveByIdUsesQuery() {
+        // TODO(b/401245772): Enable this once the feature is rolled out to Nextfood in platform.
+        return false;
     }
 }

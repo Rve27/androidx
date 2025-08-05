@@ -6360,6 +6360,44 @@ public abstract class AppSearchSessionCtsTestBase {
                 .isEqualTo(AppSearchResult.RESULT_NOT_FOUND);
     }
 
+
+    @Test
+    public void testRemove_emptyIds_hasNoEffect() throws Exception {
+        // Schema registration
+        mDb1.setSchemaAsync(
+                new SetSchemaRequest.Builder().addSchemas(AppSearchEmail.SCHEMA).build()).get();
+
+        // Index documents
+        AppSearchEmail email1 =
+                new AppSearchEmail.Builder("namespace", "id1")
+                        .setFrom("from@example.com")
+                        .setTo("to1@example.com", "to2@example.com")
+                        .setSubject("testPut example")
+                        .setBody("This is the body of the testPut email")
+                        .build();
+        AppSearchEmail email2 =
+                new AppSearchEmail.Builder("namespace", "id2")
+                        .setFrom("from@example.com")
+                        .setTo("to1@example.com", "to2@example.com")
+                        .setSubject("testPut example 2")
+                        .setBody("This is the body of the testPut second email")
+                        .build();
+        checkIsBatchResultSuccess(mDb1.putAsync(
+                new PutDocumentsRequest.Builder().addGenericDocuments(email1, email2).build()));
+
+        // Check the presence of the documents
+        assertThat(doGet(mDb1, "namespace", "id1")).hasSize(1);
+        assertThat(doGet(mDb1, "namespace", "id2")).hasSize(1);
+
+        // Delete the document
+        checkIsBatchResultSuccess(mDb1.removeAsync(
+                new RemoveByDocumentIdRequest.Builder("namespace").build()));
+
+        // Nothing should be deleted.
+        assertThat(doGet(mDb1, "namespace", "id1")).hasSize(1);
+        assertThat(doGet(mDb1, "namespace", "id2")).hasSize(1);
+    }
+
     @Test
     public void testRemoveByQuery() throws Exception {
         // Schema registration
