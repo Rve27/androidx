@@ -23,6 +23,7 @@ import java.util.zip.CRC32
 import org.jf.dexlib2.Opcodes
 import org.jf.dexlib2.dexbacked.DexBackedDexFile
 
+/** Bundle information captured from `.dex` files (Not just classesXXX.dex, any .dex files) */
 data class DexInfo(
     /** Entry name (relative path) within the containing bundle */
     val entryName: String,
@@ -50,12 +51,15 @@ data class DexInfo(
     /** r8 markers */
     val r8Markers: List<R8Marker>,
 ) {
+    init {
+        require(uncompressedSize >= 0) { "Uncompressed size must be non-negative" }
+    }
+
     data class R8Marker(val compiler: String, val map: Map<String, String>) {
         companion object {
             // """~~R8{"backend":"dex","compilation-mode":"release","has-checksums":false,"min-api":21,"pg-map-id":"17647d6605bb91237bf2b0766cb45b010d6e01aa899f20d7d6b08253bc38712e","r8-mode":"full","sha-1":"4ce18528a68a4b7401548810621405baaf439a48","version":"8.12.13-dev"}"""
             fun from(markerString: String): R8Marker {
                 val entries = markerString.substringAfter('{').substringBefore('}').split(',')
-                // println("entries = $entries")
                 return R8Marker(
                     compiler = markerString.substring(2, markerString.indexOf("{")),
                     map =
@@ -108,7 +112,7 @@ data class DexInfo(
         }
 
         val CSV_TITLES =
-            listOf("dex_totalSize") +
+            listOf("dex_totalSizeMb") +
                 if (VERBOSE) {
                     listOf("dex_names", "dex_sortedChecksumsSha256", "dex_sortedChecksumsCrc32")
                 } else {
@@ -116,7 +120,7 @@ data class DexInfo(
                 }
 
         fun List<DexInfo>.csvEntries(): List<String> {
-            return listOf(this.sumOf { it.uncompressedSize }.toString()) +
+            return listOf((this.sumOf { it.uncompressedSize } / (1024.0 * 1024)).toString()) +
                 if (VERBOSE)
                     listOf(
                         joinToString(INTERNAL_CSV_SEPARATOR) { it.entryName },

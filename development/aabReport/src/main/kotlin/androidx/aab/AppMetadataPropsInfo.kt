@@ -19,6 +19,11 @@ package androidx.aab
 import androidx.aab.cli.VERBOSE
 import java.io.InputStream
 
+/**
+ * Bundle information captured from `app-metadata.properties` (in either BUNDLE-METADATA/ or META-INF/)
+ *
+ * This primarily lists AGP version
+ */
 data class AppMetadataPropsInfo(
     val appMetadataVersion: String,
     val androidGradlePluginVersion: String,

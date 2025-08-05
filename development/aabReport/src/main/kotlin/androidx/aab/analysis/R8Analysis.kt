@@ -46,7 +46,7 @@ data class R8Analysis(
                 else null,
                 if (!mappingPresent && r8JsonFileInfo == null) R8Issues.NoMappingFileOrJsonMetadata
                 else null,
-                if (r8JsonFileExpected && r8JsonFileInfo == null) R8Issues.MissingJsonMetadata
+                if (r8JsonFileExpected && r8JsonFileInfo == null) R8Issues.MissingR8JsonMetadata
                 else null,
                 r8JsonFileInfo?.getPrimaryOptimizationIssue(),
             )

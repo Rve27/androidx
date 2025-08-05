@@ -120,11 +120,11 @@ object BaselineProfileIssues {
 }
 
 object R8Issues {
-    val MissingJsonMetadata =
+    val MissingR8JsonMetadata =
         Issue(
             severity = Issue.Severity.MISSING_METADATA,
             title = "MISSING R8 METADATA",
-            summary = "No r8 metadata is present in at ${R8JsonFileInfo.BUNDLE_LOCATION}",
+            summary = "No r8 metadata is present in at ${R8JsonFileInfo.BUNDLE_LOCATION_R8}",
             impact =
                 """
             This tool will not be able to report high level optimization quality
@@ -136,7 +136,7 @@ object R8Issues {
             Ensure your app is using a sufficiently recent version of AGP (8.8+), or
             if you're using a separate build system, manually extract this from R8,
             for example with R8Command.Builder.setBuildMetadataConsumer(), and place
-            this in the app bundle at ${R8JsonFileInfo.BUNDLE_LOCATION}.
+            this in the app bundle at ${R8JsonFileInfo.BUNDLE_LOCATION_R8}.
         """
                     .trimIndent(),
         )
@@ -146,7 +146,7 @@ object R8Issues {
             severity = Issue.Severity.WARNING,
             title = "R8 DEX CHECKSUMS DO NOT MATCH DEX FILES",
             summary =
-                "R8 metadata dex sha256 checksums present in at ${R8JsonFileInfo.BUNDLE_LOCATION}" +
+                "R8 metadata dex sha256 checksums present in at ${R8JsonFileInfo.BUNDLE_LOCATION_R8}" +
                     " do not match the dex files present in the bundle.",
             impact =
                 """

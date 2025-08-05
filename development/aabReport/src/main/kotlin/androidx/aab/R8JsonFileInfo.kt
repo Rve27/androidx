@@ -20,17 +20,54 @@ import androidx.aab.cli.VERBOSE
 import com.android.tools.r8.metadata.R8BuildMetadata
 import java.io.InputStream
 
-data class R8JsonFileInfo(
+/**
+ * Information captured from the `r8.json` or `d8.json` file.
+ *
+ * Note that if loaded from a D8 file, features not supported by D8 builds are reported as
+ * non-functioning (e.g. shrinking)
+ */
+@ConsistentCopyVisibility
+data class R8JsonFileInfo
+private constructor(
+    val compiler: Compiler,
     val dexShas: Set<String>,
+    val startupDexShas: Set<String>,
     val optimizationEnabled: Boolean,
+    val optimizationDisablePercent: Float,
     val obfuscationEnabled: Boolean,
+    val obfuscationDisabledPercent: Float,
     val shrinkingEnabled: Boolean,
+    val shrinkingDisabledPercent: Float,
+    val optimizedResourceShrinkingEnabled: Boolean?,
+    val isProGuardCompatibilityModeEnabled: Boolean,
 ) {
+    enum class Compiler {
+        R8,
+        D8,
+    }
+
     companion object {
-        const val BUNDLE_LOCATION = "BUNDLE-METADATA/com.android.tools/r8.json"
+        const val BUNDLE_LOCATION_R8 = "BUNDLE-METADATA/com.android.tools/r8.json"
+        const val BUNDLE_LOCATION_D8 = "BUNDLE-METADATA/com.android.tools/d8.json"
+
+        fun fromD8Json(src: InputStream): R8JsonFileInfo {
+            return R8JsonFileInfo(
+                compiler = Compiler.D8,
+                dexShas = emptySet(),
+                optimizationEnabled = false,
+                optimizationDisablePercent = 100.0f,
+                obfuscationEnabled = false,
+                obfuscationDisabledPercent = 100.0f,
+                shrinkingEnabled = false,
+                shrinkingDisabledPercent = 100.0f,
+                optimizedResourceShrinkingEnabled = false,
+                isProGuardCompatibilityModeEnabled = false,
+                startupDexShas = setOf(),
+            )
+        }
 
         @Suppress("UNCHECKED_CAST")
-        fun fromJson(src: InputStream): R8JsonFileInfo? {
+        fun fromR8Json(src: InputStream): R8JsonFileInfo? {
             val text = src.bufferedReader().readText()
             val metadata = R8BuildMetadata.fromJson(text)
             if (metadata.dexFilesMetadata == null) {
@@ -41,10 +78,20 @@ data class R8JsonFileInfo(
             }
 
             return R8JsonFileInfo(
+                compiler = Compiler.R8,
                 dexShas = metadata.dexFilesMetadata.map { it.checksum }.toSet(),
                 optimizationEnabled = metadata.optionsMetadata.isOptimizationsEnabled,
                 obfuscationEnabled = metadata.optionsMetadata.isObfuscationEnabled,
                 shrinkingEnabled = metadata.optionsMetadata.isShrinkingEnabled,
+                optimizationDisablePercent = metadata.statsMetadata.noOptimizationPercentage,
+                obfuscationDisabledPercent = metadata.statsMetadata.noObfuscationPercentage,
+                shrinkingDisabledPercent = metadata.statsMetadata.noShrinkingPercentage,
+                optimizedResourceShrinkingEnabled =
+                    metadata.resourceOptimizationMetadata?.isOptimizedShrinkingEnabled,
+                isProGuardCompatibilityModeEnabled =
+                    metadata.optionsMetadata.isProGuardCompatibilityModeEnabled,
+                startupDexShas =
+                    metadata.dexFilesMetadata.filter { it.isStartup }.map { it.checksum }.toSet(),
             )
         }
 
@@ -54,24 +101,34 @@ data class R8JsonFileInfo(
                 "r8json_optimizationEnabled",
                 "r8json_obfuscationEnabled",
                 "r8json_shrinkingEnabled",
+                "r8json_compatMode",
             ) +
                 if (VERBOSE) {
-                    listOf("r8json_sortedDexChecksumsSha256")
+                    listOf(
+                        "r8json_optimizationDisablePercent",
+                        "r8json_obfuscationDisablePercent",
+                        "r8json_shrinkingDisablePercent",
+                        "r8json_sortedDexChecksumsSha256",
+                    )
                 } else {
                     emptyList()
                 }
 
         fun R8JsonFileInfo?.csvEntries(): List<String> {
             return listOf(
-                (this == null).toString(),
+                (this != null).toString(),
                 this?.optimizationEnabled.toString(),
                 this?.obfuscationEnabled.toString(),
                 this?.shrinkingEnabled.toString(),
+                this?.isProGuardCompatibilityModeEnabled.toString(),
             ) +
                 if (VERBOSE) {
                     listOf(
+                        this?.optimizationDisablePercent.toString(),
+                        this?.obfuscationDisabledPercent.toString(),
+                        this?.shrinkingDisabledPercent.toString(),
                         this?.dexShas?.sorted()?.joinToString(separator = INTERNAL_CSV_SEPARATOR)
-                            ?: "null"
+                            ?: "null",
                     )
                 } else {
                     emptyList()

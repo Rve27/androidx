@@ -23,6 +23,8 @@ import java.nio.charset.StandardCharsets
 import java.util.zip.Inflater
 
 /**
+ * Bundle information captured from `baseline.prof`
+ *
  * This implementation was lovingly lifted from
  * profgen/src/main/kotlin/com/android/tools/profgen/ArtProfileSerializer.kt and friends.
  *

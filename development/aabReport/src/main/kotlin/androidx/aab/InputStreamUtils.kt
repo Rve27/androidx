@@ -16,20 +16,9 @@
 
 package androidx.aab
 
-/**
- * Bundle information captured from `proguard.map`
- *
- * Currently, this object is empty - its presence indicates presence of a mapping file.
- */
-class MappingFileInfo() {
-    companion object {
-        const val BUNDLE_LOCATION =
-            "BUNDLE-METADATA/com.android.tools.build.obfuscation/proguard.map"
+import java.io.InputStream
+import java.io.OutputStream
 
-        fun MappingFileInfo?.csvEntries(): List<String> {
-            return listOf((this != null).toString())
-        }
-
-        val CSV_TITLES = listOf("mapping_file_present")
-    }
+fun InputStream.countBytes(): Long {
+    return copyTo(OutputStream.nullOutputStream())
 }
