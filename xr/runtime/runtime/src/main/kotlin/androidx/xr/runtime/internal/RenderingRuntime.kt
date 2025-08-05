@@ -70,7 +70,11 @@ public interface RenderingRuntime {
     @Suppress("AsyncSuffixFuture")
     public fun createWaterMaterial(isAlphaMapVersion: Boolean): ListenableFuture<MaterialResource>
 
-    /** Destroys the given water material resource. */
+    /**
+     * Destroys the given water material resource.
+     *
+     * @param material The name of the WaterMaterial to destroy.
+     */
     public fun destroyWaterMaterial(material: MaterialResource)
 
     /**
