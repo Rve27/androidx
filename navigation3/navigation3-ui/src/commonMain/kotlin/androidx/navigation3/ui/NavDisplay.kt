@@ -51,6 +51,8 @@ import androidx.navigation3.ui.NavDisplay.DEFAULT_TRANSITION_DURATION_MILLISECON
 import androidx.navigation3.ui.NavDisplay.POP_TRANSITION_SPEC
 import androidx.navigation3.ui.NavDisplay.PREDICTIVE_POP_TRANSITION_SPEC
 import androidx.navigation3.ui.NavDisplay.TRANSITION_SPEC
+import androidx.navigationevent.NavigationEvent.Companion.EDGE_NONE
+import androidx.navigationevent.NavigationEvent.SwipeEdge
 import androidx.navigationevent.NavigationEventState.InProgress
 import androidx.navigationevent.compose.NavigationEventHandler
 import kotlin.reflect.KClass
@@ -82,11 +84,12 @@ public object NavDisplay {
      * the provided [ContentTransform].
      */
     public fun predictivePopTransitionSpec(
-        predictivePopTransitionSpec: AnimatedContentTransitionScope<*>.() -> ContentTransform?
+        predictivePopTransitionSpec:
+            AnimatedContentTransitionScope<*>.(@SwipeEdge Int) -> ContentTransform?
     ): Map<String, Any> = mapOf(PREDICTIVE_POP_TRANSITION_SPEC to predictivePopTransitionSpec)
 
     public val defaultPredictivePopTransitionSpec:
-        AnimatedContentTransitionScope<*>.() -> ContentTransform =
+        AnimatedContentTransitionScope<*>.(@SwipeEdge Int) -> ContentTransform =
         {
             ContentTransform(
                 fadeIn(
@@ -165,7 +168,8 @@ public fun <T : Any> NavDisplay(
             fadeOut(animationSpec = tween(DEFAULT_TRANSITION_DURATION_MILLISECOND)),
         )
     },
-    predictivePopTransitionSpec: AnimatedContentTransitionScope<*>.() -> ContentTransform =
+    predictivePopTransitionSpec:
+        AnimatedContentTransitionScope<*>.(@SwipeEdge Int) -> ContentTransform =
         NavDisplay.defaultPredictivePopTransitionSpec,
     entryProvider: (key: T) -> NavEntry<T>,
 ) {
@@ -208,6 +212,11 @@ public fun <T : Any> NavDisplay(
 
         val progress = gestureState.progress
         val inPredictiveBack = gestureState is InProgress
+        val swipeEdge =
+            when (val currentGestureState = gestureState) {
+                is InProgress -> currentGestureState.latestEvent.swipeEdge
+                else -> EDGE_NONE
+            }
 
         NavigationEventHandler(enabled = scene.previousEntries.isNotEmpty()) { progress ->
             progress.collect()
@@ -347,8 +356,8 @@ public fun <T : Any> NavDisplay(
         val contentTransform: AnimatedContentTransitionScope<*>.() -> ContentTransform = {
             when {
                 inPredictiveBack -> {
-                    transitionEntry.contentTransform(PREDICTIVE_POP_TRANSITION_SPEC)?.invoke(this)
-                        ?: predictivePopTransitionSpec(this)
+                    transitionEntry.predictivePopSpec()?.invoke(this, swipeEdge)
+                        ?: predictivePopTransitionSpec(swipeEdge)
                 }
                 isPop -> {
                     transitionEntry.contentTransform(POP_TRANSITION_SPEC)?.invoke(this)
@@ -437,4 +446,11 @@ private fun <T : Any> NavEntry<T>.contentTransform(
     key: String
 ): (AnimatedContentTransitionScope<*>.() -> ContentTransform)? {
     return metadata[key] as? AnimatedContentTransitionScope<*>.() -> ContentTransform
+}
+
+@Suppress("UNCHECKED_CAST")
+private fun <T : Any> NavEntry<T>.predictivePopSpec():
+    (AnimatedContentTransitionScope<*>.(@SwipeEdge Int) -> ContentTransform)? {
+    return metadata[PREDICTIVE_POP_TRANSITION_SPEC]
+        as? AnimatedContentTransitionScope<*>.(@SwipeEdge Int) -> ContentTransform
 }
