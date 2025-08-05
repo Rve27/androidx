@@ -372,8 +372,16 @@ public class CallStats extends BaseStats {
                 return CALL_TYPE_REMOVE_BLOB;
             case CALL_TYPE_STRING_SET_BLOB_VISIBILITY:
                 return CALL_TYPE_SET_BLOB_VISIBILITY;
+            case INTERNAL_CALL_TYPE_STRING_APP_OPEN_EVENT_INDEXER:
+                return INTERNAL_CALL_TYPE_APP_OPEN_EVENT_INDEXER;
+            case INTERNAL_CALL_TYPE_STRING_ISOLATED_STORAGE_DATA_MIGRATION:
+                return INTERNAL_CALL_TYPE_ISOLATED_STORAGE_DATA_MIGRATION;
             case INTERNAL_CALL_TYPE_STRING_PRUNE_PACKAGE_DATA:
                 return INTERNAL_CALL_TYPE_PRUNE_PACKAGE_DATA;
+            case INTERNAL_CALL_TYPE_STRING_CLOSE:
+                return INTERNAL_CALL_TYPE_CLOSE;
+            case INTERNAL_CALL_TYPE_STRING_PERSIST_TO_DISK_JOB:
+                return INTERNAL_CALL_TYPE_PERSIST_TO_DISK_JOB;
             default:
                 return CALL_TYPE_UNKNOWN;
         }
@@ -415,6 +423,11 @@ public class CallStats extends BaseStats {
                 CALL_TYPE_OPEN_READ_BLOB,
                 CALL_TYPE_GLOBAL_OPEN_READ_BLOB,
                 CALL_TYPE_REMOVE_BLOB,
-                CALL_TYPE_SET_BLOB_VISIBILITY));
+                CALL_TYPE_SET_BLOB_VISIBILITY,
+                INTERNAL_CALL_TYPE_APP_OPEN_EVENT_INDEXER,
+                INTERNAL_CALL_TYPE_ISOLATED_STORAGE_DATA_MIGRATION,
+                INTERNAL_CALL_TYPE_PRUNE_PACKAGE_DATA,
+                INTERNAL_CALL_TYPE_CLOSE,
+                INTERNAL_CALL_TYPE_PERSIST_TO_DISK_JOB));
     }
 }

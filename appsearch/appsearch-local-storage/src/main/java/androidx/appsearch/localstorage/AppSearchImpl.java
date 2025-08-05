@@ -1535,22 +1535,18 @@ public final class AppSearchImpl implements Closeable {
             @NonNull String databaseName,
             @NonNull GenericDocument doc,
             PutDocumentStats.@Nullable Builder statsBuilder) {
-        long generateDocumentProtoStartTimeMillis = 0;
-        long generateDocumentProtoEndTimeMillis = 0;
-        long rewriteDocumentTypeStartTimeMillis = 0;
-        long rewriteDocumentTypeEndTimeMillis = 0;
         String prefix = createPrefix(packageName, databaseName);
 
         // Generate Document Proto
-        generateDocumentProtoStartTimeMillis = SystemClock.elapsedRealtime();
+        long generateDocumentProtoStartTimeMillis = SystemClock.elapsedRealtime();
         DocumentProto.Builder documentBuilder =
                 GenericDocumentToProtoConverter.toDocumentProto(doc).toBuilder();
-        generateDocumentProtoEndTimeMillis = SystemClock.elapsedRealtime();
+        long generateDocumentProtoEndTimeMillis = SystemClock.elapsedRealtime();
 
         // Rewrite Document Type
-        rewriteDocumentTypeStartTimeMillis = SystemClock.elapsedRealtime();
+        long rewriteDocumentTypeStartTimeMillis = SystemClock.elapsedRealtime();
         addPrefixToDocument(documentBuilder, prefix);
-        rewriteDocumentTypeEndTimeMillis = SystemClock.elapsedRealtime();
+        long rewriteDocumentTypeEndTimeMillis = SystemClock.elapsedRealtime();
         DocumentProto finalDocument = documentBuilder.build();
 
         if (statsBuilder != null) {
