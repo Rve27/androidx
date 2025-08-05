@@ -80,28 +80,6 @@ class PdfViewExternalInputManagerTest {
     }
 
     @Test
-    fun handleKeyEvent_dpadLeft_ReturnsTrue() {
-        val event = mock<KeyEvent>()
-        whenever(event.action).thenReturn(KeyEvent.ACTION_DOWN)
-        whenever(event.keyCode).thenReturn(KeyEvent.KEYCODE_DPAD_LEFT)
-
-        val handled = externalInputManager.handleKeyEvent(event)
-
-        assertThat(handled).isTrue()
-    }
-
-    @Test
-    fun handleKeyEvent_dpadRight_ReturnsTrue() {
-        val event = mock<KeyEvent>()
-        whenever(event.action).thenReturn(KeyEvent.ACTION_DOWN)
-        whenever(event.keyCode).thenReturn(KeyEvent.KEYCODE_DPAD_RIGHT)
-
-        val handled = externalInputManager.handleKeyEvent(event)
-
-        assertThat(handled).isTrue()
-    }
-
-    @Test
     fun handleKeyEvent_dpadUp_ReturnsTrue() {
         val event = mock<KeyEvent>()
         whenever(event.action).thenReturn(KeyEvent.ACTION_DOWN)

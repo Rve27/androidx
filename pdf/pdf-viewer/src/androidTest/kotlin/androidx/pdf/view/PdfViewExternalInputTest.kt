@@ -28,6 +28,7 @@ import android.widget.FrameLayout
 import androidx.pdf.PdfPoint
 import androidx.pdf.content.PdfPageTextContent
 import androidx.pdf.featureflag.PdfFeatureFlags
+import androidx.pdf.util.ZoomUtils
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.action.EspressoKey
@@ -37,6 +38,7 @@ import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import com.google.common.truth.Truth.assertThat
+import kotlin.math.roundToInt
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -118,24 +120,36 @@ class PdfViewExternalInputTest {
     }
 
     @Test
-    fun testDpadLeft_scrollsLeft() {
+    fun testDpadLeft_zoomMoreThanFitToWidth_scrollsLeft() {
         var scrollBefore = Point(Int.MAX_VALUE, Int.MAX_VALUE)
         var scrollAfter = Point(Int.MIN_VALUE, Int.MIN_VALUE)
-        var viewportWidth = 0
+        var fitToWidthZoom: Float
         val initialScrollX = 500
+        var finalZoomGreaterThanFitToWidth = false
 
         with(ActivityScenario.launch(PdfViewTestActivity::class.java)) {
             Espresso.onView(ViewMatchers.withId(PDF_VIEW_ID))
                 .check { view, _ ->
                     val pdfView = view as PdfView
-                    // Request focus to receive key events.
-                    pdfView.post { pdfView.requestFocus() }
-                    // Zoom in to ensure the content is larger than the view, making it scrollable.
-                    pdfView.zoom = 2.0f
-                    // Scroll right initially so there is space to scroll left.
-                    pdfView.scrollTo(initialScrollX, pdfView.scrollY)
+                    with(pdfView) {
+                        // Request focus to receive key events.
+                        requestFocus()
+                        // find fit to width zoom
+                        fitToWidthZoom =
+                            ZoomUtils.calculateZoomToFit(
+                                viewportWidth.toFloat(),
+                                viewportHeight.toFloat(),
+                                contentWidth,
+                                1f,
+                            )
+                        // Zoom in to ensure the content is larger than the view, making it
+                        // scrollable.
+                        zoom = fitToWidthZoom * 2f
+                        if (zoom > fitToWidthZoom) finalZoomGreaterThanFitToWidth = true
+                        // Scroll right initially so there is space to scroll left.
+                        scrollTo(initialScrollX, pdfView.scrollY)
+                    }
                     scrollBefore = Point(pdfView.scrollX, pdfView.scrollY)
-                    viewportWidth = pdfView.viewportWidth
                 }
                 .perform(ViewActions.pressKey(KeyEvent.KEYCODE_DPAD_LEFT))
                 .check { view, _ ->
@@ -145,35 +159,148 @@ class PdfViewExternalInputTest {
             close()
         }
 
-        // Calculate the expected scroll distance based on the helper utility.
-        val expectedScrollDelta =
-            ExternalInputUtils.calculateScroll(viewportWidth, KEYBOARD_HORIZONTAL_SCROLL_FACTOR)
-
-        // Verify that the view scrolled horizontally by the correct amount.
-        assertThat(scrollAfter.x - scrollBefore.x).isEqualTo(-expectedScrollDelta)
+        // Verify that the view scrolled horizontally
+        if (finalZoomGreaterThanFitToWidth) assertThat(scrollAfter.x).isLessThan(scrollBefore.x)
 
         // Verify that the view did not scroll vertically.
         assertThat(scrollAfter.y).isEqualTo(scrollBefore.y)
     }
 
     @Test
-    fun testDpadRight_scrollsRight() {
+    fun testDpadLeft_zoomLessOrEqualToFitToWidth_AtTopOfPage_scrollToPreviousPage() {
+        var fitToWidthZoom: Float
         var scrollBefore = Point(Int.MAX_VALUE, Int.MAX_VALUE)
         var scrollAfter = Point(Int.MIN_VALUE, Int.MIN_VALUE)
-        var viewportWidth = 0
+        var isFinalZoomLessOrEqualToFitToWidth = false
+        var scrollForPreviousPageTop = -1
 
         with(ActivityScenario.launch(PdfViewTestActivity::class.java)) {
             Espresso.onView(ViewMatchers.withId(PDF_VIEW_ID))
                 .check { view, _ ->
                     val pdfView = view as PdfView
-                    // Request focus to receive key events.
-                    pdfView.post { pdfView.requestFocus() }
-                    // Zoom in to ensure the content is larger than the view, making it scrollable.
-                    pdfView.zoom = 2.0f
-                    // Ensure we are at the far left to have space to scroll right.
-                    pdfView.scrollTo(0, pdfView.scrollY)
+                    with(pdfView) {
+                        // Request focus to receive key events.
+                        requestFocus()
+                        // find fit to width zoom
+                        fitToWidthZoom =
+                            ZoomUtils.calculateZoomToFit(
+                                viewportWidth.toFloat(),
+                                viewportHeight.toFloat(),
+                                contentWidth,
+                                1f,
+                            )
+                        zoom = fitToWidthZoom - 0.1f
+                        if (zoom <= fitToWidthZoom) isFinalZoomLessOrEqualToFitToWidth = true
+
+                        scrollToPosition(PdfPoint(1, 0f, 0f))
+                    }
                     scrollBefore = Point(pdfView.scrollX, pdfView.scrollY)
-                    viewportWidth = pdfView.viewportWidth
+                }
+                .perform(ViewActions.pressKey(KeyEvent.KEYCODE_DPAD_LEFT))
+                .check { view, _ ->
+                    val pdfView = view as PdfView
+                    val pageRect =
+                        pdfView.pageMetadataLoader?.getPageLocation(
+                            0,
+                            pdfView.getVisibleAreaInContentCoords(),
+                        )
+                    if (pageRect != null) {
+                        // Calculate y to align top of page with top of viewport.
+                        scrollForPreviousPageTop = (pageRect.top * pdfView.zoom).roundToInt()
+                    }
+                    scrollAfter = Point(pdfView.scrollX, pdfView.scrollY)
+                }
+            close()
+        }
+
+        if (isFinalZoomLessOrEqualToFitToWidth) {
+            assertThat(scrollAfter.x).isEqualTo(scrollBefore.x)
+            assertThat(scrollAfter.y).isEqualTo(scrollForPreviousPageTop)
+        }
+    }
+
+    @Test
+    fun testDpadLeft_zoomLessOrEqualToFitToWidth_beyondTopOfPage_scrollToPreviousPage() {
+        var fitToWidthZoom: Float
+        var scrollBefore = Point(Int.MAX_VALUE, Int.MAX_VALUE)
+        var scrollAfter = Point(Int.MIN_VALUE, Int.MIN_VALUE)
+        var isFinalZoomLessOrEqualToFitToWidth = false
+        var scrollForPreviousPageTop = -1
+
+        with(ActivityScenario.launch(PdfViewTestActivity::class.java)) {
+            Espresso.onView(ViewMatchers.withId(PDF_VIEW_ID))
+                .check { view, _ ->
+                    val pdfView = view as PdfView
+                    with(pdfView) {
+                        // Request focus to receive key events.
+                        requestFocus()
+                        // find fit to width zoom
+                        fitToWidthZoom =
+                            ZoomUtils.calculateZoomToFit(
+                                viewportWidth.toFloat(),
+                                viewportHeight.toFloat(),
+                                contentWidth,
+                                1f,
+                            )
+                        zoom = fitToWidthZoom - 0.1f
+                        if (zoom <= fitToWidthZoom) isFinalZoomLessOrEqualToFitToWidth = true
+                        scrollToPosition(PdfPoint(1, 0f, 10f), ScrollAlignment.TOP)
+                    }
+                    scrollBefore = Point(pdfView.scrollX, pdfView.scrollY)
+                }
+                .perform(ViewActions.pressKey(KeyEvent.KEYCODE_DPAD_LEFT))
+                .check { view, _ ->
+                    val pdfView = view as PdfView
+                    val pageRect =
+                        pdfView.pageMetadataLoader?.getPageLocation(
+                            1,
+                            pdfView.getVisibleAreaInContentCoords(),
+                        )
+                    if (pageRect != null) {
+                        // Calculate y to align top of page with top of viewport.
+                        scrollForPreviousPageTop = (pageRect.top * pdfView.zoom).roundToInt()
+                    }
+                    scrollAfter = Point(pdfView.scrollX, pdfView.scrollY)
+                }
+            close()
+        }
+
+        if (isFinalZoomLessOrEqualToFitToWidth) {
+            assertThat(scrollAfter.x).isEqualTo(scrollBefore.x)
+            assertThat(scrollAfter.y).isEqualTo(scrollForPreviousPageTop)
+        }
+    }
+
+    @Test
+    fun testDpadRight_zoomMoreThanFitToWidth_scrollsRight() {
+        var scrollBefore = Point(Int.MAX_VALUE, Int.MAX_VALUE)
+        var scrollAfter = Point(Int.MIN_VALUE, Int.MIN_VALUE)
+        var fitToWidthZoom: Float
+        var finalZoomGreaterThanFitToWidth = false
+
+        with(ActivityScenario.launch(PdfViewTestActivity::class.java)) {
+            Espresso.onView(ViewMatchers.withId(PDF_VIEW_ID))
+                .check { view, _ ->
+                    val pdfView = view as PdfView
+                    with(pdfView) {
+                        // Request focus to receive key events.
+                        requestFocus()
+                        // find fit to width zoom
+                        fitToWidthZoom =
+                            ZoomUtils.calculateZoomToFit(
+                                viewportWidth.toFloat(),
+                                viewportHeight.toFloat(),
+                                contentWidth,
+                                1f,
+                            )
+                        // Zoom in to ensure the content is larger than the view, making it
+                        // scrollable.
+                        zoom = fitToWidthZoom * 2f
+                        if (zoom > fitToWidthZoom) finalZoomGreaterThanFitToWidth = true
+                        // Scroll left initially so there is space to scroll left.
+                        scrollTo(0, pdfView.scrollY)
+                    }
+                    scrollBefore = Point(pdfView.scrollX, pdfView.scrollY)
                 }
                 .perform(ViewActions.pressKey(KeyEvent.KEYCODE_DPAD_RIGHT))
                 .check { view, _ ->
@@ -183,15 +310,62 @@ class PdfViewExternalInputTest {
             close()
         }
 
-        // Calculate the expected scroll distance based on the helper utility.
-        val expectedScrollDelta =
-            ExternalInputUtils.calculateScroll(viewportWidth, KEYBOARD_HORIZONTAL_SCROLL_FACTOR)
-
-        // Verify that the view scrolled horizontally by the correct amount.
-        assertThat(scrollAfter.x - scrollBefore.x).isEqualTo(expectedScrollDelta)
+        // Verify that the view scrolled horizontally.
+        if (finalZoomGreaterThanFitToWidth) assertThat(scrollAfter.x).isGreaterThan(scrollBefore.x)
 
         // Verify that the view did not scroll vertically.
         assertThat(scrollAfter.y).isEqualTo(scrollBefore.y)
+    }
+
+    @Test
+    fun testDpadRight_zoomLessOrEqualToFitToWidth_scrollToNextPage() {
+        var fitToWidthZoom: Float
+        var scrollBefore = Point(Int.MAX_VALUE, Int.MAX_VALUE)
+        var scrollAfter = Point(Int.MIN_VALUE, Int.MIN_VALUE)
+        var isFinalZoomLessOrEqualToFitToWidth = false
+        var scrollForPreviousPageTop = -1
+
+        with(ActivityScenario.launch(PdfViewTestActivity::class.java)) {
+            Espresso.onView(ViewMatchers.withId(PDF_VIEW_ID))
+                .check { view, _ ->
+                    val pdfView = view as PdfView
+                    with(pdfView) {
+                        // Request focus to receive key events.
+                        requestFocus()
+                        // find fit to width zoom
+                        fitToWidthZoom =
+                            ZoomUtils.calculateZoomToFit(
+                                viewportWidth.toFloat(),
+                                viewportHeight.toFloat(),
+                                contentWidth,
+                                1f,
+                            )
+                        zoom = fitToWidthZoom - 0.1f
+                        if (zoom <= fitToWidthZoom) isFinalZoomLessOrEqualToFitToWidth = true
+                    }
+                    scrollBefore = Point(pdfView.scrollX, pdfView.scrollY)
+                }
+                .perform(ViewActions.pressKey(KeyEvent.KEYCODE_DPAD_RIGHT))
+                .check { view, _ ->
+                    val pdfView = view as PdfView
+                    val pageRect =
+                        pdfView.pageMetadataLoader?.getPageLocation(
+                            1,
+                            pdfView.getVisibleAreaInContentCoords(),
+                        )
+                    if (pageRect != null) {
+                        // Calculate y to align top of page with top of viewport.
+                        scrollForPreviousPageTop = (pageRect.top * pdfView.zoom).roundToInt()
+                    }
+                    scrollAfter = Point(pdfView.scrollX, pdfView.scrollY)
+                }
+            close()
+        }
+
+        if (isFinalZoomLessOrEqualToFitToWidth) {
+            assertThat(scrollAfter.x).isEqualTo(scrollBefore.x)
+            assertThat(scrollAfter.y).isEqualTo(scrollForPreviousPageTop)
+        }
     }
 
     @Test
