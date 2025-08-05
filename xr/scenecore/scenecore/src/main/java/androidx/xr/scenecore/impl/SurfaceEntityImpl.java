@@ -52,7 +52,6 @@ import java.util.concurrent.ScheduledExecutorService;
 final class SurfaceEntityImpl extends AndroidXrEntity implements SurfaceEntity {
     private final ImpressApi mImpressApi;
     private final SplitEngineSubspaceManager mSplitEngineSubspaceManager;
-    private final SubspaceNode mSubspace;
     // TODO: b/362520810 - Wrap impress nodes w/ Java class.
     private final int mEntityImpressNode;
     private final int mSubspaceImpressNode;
@@ -70,6 +69,9 @@ final class SurfaceEntityImpl extends AndroidXrEntity implements SurfaceEntity {
     @ColorTransfer private int mColorTransfer = SurfaceEntity.ColorTransfer.SRGB;
     @ColorRange private int mColorRange = SurfaceEntity.ColorRange.FULL;
     private int mMaxContentLightLevel = 0;
+    // The SubspaceNode isn't final so that we can support setting it to null in dispose(), while
+    // still allowing the application to hold a reference to the SurfaceEntity.
+    private SubspaceNode mSubspace;
 
     // Converts SurfaceEntity's ContentSecurityLevel to an Impress ContentSecurityLevel.
     private static int toImpressContentSecurityLevel(
@@ -230,6 +232,8 @@ final class SurfaceEntityImpl extends AndroidXrEntity implements SurfaceEntity {
     public void dispose() {
         // The subspace impress node will be destroyed when the subspace is deleted.
         mSplitEngineSubspaceManager.deleteSubspace(mSubspace.subspaceId);
+        // Explicitly drop the CPM subspace node.
+        mSubspace = null;
         super.dispose();
     }
 
