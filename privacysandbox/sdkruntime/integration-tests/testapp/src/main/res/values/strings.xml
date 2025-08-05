@@ -26,6 +26,7 @@
     <string name="sandbox_death_cuj">Sandbox Death CUJ</string>
     <string name="get_client_package_cuj">Get Client Package CUJ</string>
     <string name="sdk_context_cuj">SdkContext CUJ</string>
+    <string name="client_importance_listener_cuj">ClientImportanceListener CUJ</string>
     <string name="register_sandbox_death_callback">Register DeathCallback</string>
     <string name="unregister_sandbox_death_callback">Unregister DeathCallback</string>
     <string name="trigger_sandbox_death">SDK: Kill Sandbox Process</string>
@@ -40,5 +41,7 @@
     <string name="read_from_test_sdk_storage">TestSDK: Read from File</string>
     <string name="write_to_mediatee_sdk_storage">MediateeSDK: Write to File</string>
     <string name="read_from_mediatee_sdk_storage">MediateeSDK: Read from File</string>
+    <string name="register_client_importance_listener">Register Listener</string>
+    <string name="unregister_client_importance_listener">Unregister Listener</string>
     <string name="log">Log: </string>
 </resources>

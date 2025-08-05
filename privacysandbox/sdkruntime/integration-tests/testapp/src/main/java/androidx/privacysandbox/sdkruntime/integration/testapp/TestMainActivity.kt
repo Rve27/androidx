@@ -28,6 +28,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.privacysandbox.sdkruntime.core.LoadSdkCompatException
 import androidx.privacysandbox.sdkruntime.integration.testapp.fragments.AppOwnedInterfacesFragment
 import androidx.privacysandbox.sdkruntime.integration.testapp.fragments.BaseFragment
+import androidx.privacysandbox.sdkruntime.integration.testapp.fragments.ClientImportanceListenerFragment
 import androidx.privacysandbox.sdkruntime.integration.testapp.fragments.GetClientPackageNameFragment
 import androidx.privacysandbox.sdkruntime.integration.testapp.fragments.LoadedSdksFragment
 import androidx.privacysandbox.sdkruntime.integration.testapp.fragments.SandboxDeathFragment
@@ -137,6 +138,8 @@ class TestMainActivity : AppCompatActivity() {
             R.id.itemSandboxDeathCuj -> switchContentFragment(SandboxDeathFragment())
             R.id.itemClientPackageCuj -> switchContentFragment(GetClientPackageNameFragment())
             R.id.itemSdkContextCuj -> switchContentFragment(SdkContextFragment())
+            R.id.itemClientImportanceListenerCuj ->
+                switchContentFragment(ClientImportanceListenerFragment())
             else -> addLogMessage("Invalid CUJ option")
         }
     }

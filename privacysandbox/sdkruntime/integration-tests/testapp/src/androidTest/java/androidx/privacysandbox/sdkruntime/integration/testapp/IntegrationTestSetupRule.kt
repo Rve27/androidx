@@ -28,7 +28,7 @@ import org.junit.rules.ExternalResource
 /** Setup and cleanup for SdkRuntime integration tests */
 class IntegrationTestSetupRule : ExternalResource() {
 
-    private lateinit var activityScenario: ActivityScenario<TestMainActivity>
+    lateinit var activityScenario: ActivityScenario<TestMainActivity>
 
     val isCompatRun: Boolean by lazy {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
