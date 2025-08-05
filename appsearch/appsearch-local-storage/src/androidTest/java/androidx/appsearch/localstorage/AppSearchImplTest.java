@@ -3999,6 +3999,8 @@ public class AppSearchImplTest {
     @Test
     @RequiresFlagsEnabled(Flags.FLAG_ENABLE_BLOB_STORE)
     public void testRevokeFileDescriptor() throws Exception {
+        mAppSearchImpl.close();
+        // Initialize AppSearch with revocable file descriptor store.
         mAppSearchImpl = AppSearchImpl.create(
                 mAppSearchDir,
                 new AppSearchConfigImpl(new UnlimitedLimitConfig(),
@@ -4031,15 +4033,15 @@ public class AppSearchImplTest {
         try (ParcelFileDescriptor writePfd2 =
                      mAppSearchImpl.openWriteBlob("package", "db1", handle,
                 /*callStatsBuilder=*/null)) {
-            try (OutputStream outputStream = new ParcelFileDescriptor
-                    .AutoCloseOutputStream(writePfd2)) {
+            try (FileOutputStream outputStream =
+                         new FileOutputStream(writePfd2.getFileDescriptor())) {
                 outputStream.write(data);
             }
             // close the AppSearchImpl will revoke all sent fds.
             mAppSearchImpl.close();
             assertThrows(IOException.class, () -> {
-                try (OutputStream outputStream = new ParcelFileDescriptor
-                        .AutoCloseOutputStream(writePfd2)) {
+                try (FileOutputStream outputStream =
+                             new FileOutputStream(writePfd2.getFileDescriptor())) {
                     outputStream.write(data);
                 }
             });
@@ -11095,6 +11097,107 @@ public class AppSearchImplTest {
 
         // Check that previous size (compressed) is smaller than the latter (uncompressed)
         assertThat(compressedSize).isLessThan(uncompressedSize);
+    }
+
+    @Test
+    public void testClearAndDestroy() throws Exception {
+        // Set schema
+        List<AppSearchSchema> schemas = Collections.singletonList(
+                new AppSearchSchema.Builder("Type")
+                        .addProperty(new AppSearchSchema.StringPropertyConfig.Builder("body")
+                                .setCardinality(AppSearchSchema.PropertyConfig.CARDINALITY_OPTIONAL)
+                                .setIndexingType(
+                                        AppSearchSchema.StringPropertyConfig.INDEXING_TYPE_NONE)
+                                .setTokenizerType(
+                                        AppSearchSchema.StringPropertyConfig.TOKENIZER_TYPE_NONE)
+                                .build())
+                        .build());
+        InternalSetSchemaResponse internalSetSchemaResponse = mAppSearchImpl.setSchema(
+                "package",
+                "database",
+                schemas,
+                /*visibilityConfigs=*/ Collections.emptyList(),
+                /*forceOverride=*/ false,
+                /*version=*/ 0,
+                /* setSchemaStatsBuilder= */ null,
+                /*callStatsBuilder=*/ null);
+        assertThat(internalSetSchemaResponse.isSuccess()).isTrue();
+
+        // Add a large document
+        GenericDocument doc1 =
+                new GenericDocument.Builder<>("namespace", "id1", "Type")
+                        .setPropertyString("body", "foo")
+                        .build();
+        mAppSearchImpl.putDocument(
+                "package",
+                "database",
+                doc1,
+                /*sendChangeNotifications=*/ false,
+                /*logger=*/ null,
+                /*callStatsBuilder=*/ null);
+
+        // Sanity check that mAppSearchDir exists.
+        assertThat(mAppSearchDir.exists()).isTrue();
+
+        // Call clearAndDestroy.
+        mAppSearchImpl.clearAndDestroy();
+
+        // mAppSearchDir does not exist afterwards.
+        assertThat(mAppSearchDir.exists()).isFalse();
+
+        // Requests should be rejected afterwards.
+        GenericDocument doc2 =
+                new GenericDocument.Builder<>("namespace", "id2", "Type")
+                        .setPropertyString("body", "bar")
+                        .build();
+        IllegalStateException e = assertThrows(IllegalStateException.class,
+                () -> mAppSearchImpl.putDocument(
+                        "package",
+                        "database",
+                        doc2,
+                        /*sendChangeNotifications=*/ false,
+                        /*logger=*/ null,
+                        /*callStatsBuilder=*/ null));
+        assertThat(e).hasMessageThat().contains("Trying to use a closed AppSearchImpl instance");
+    }
+
+    @Test
+    @RequiresFlagsEnabled(Flags.FLAG_ENABLE_BLOB_STORE)
+    public void testClearAndDestroy_shouldRevokeFileDescriptor() throws Exception {
+        mAppSearchImpl.close();
+        // Initialize AppSearch with revocable file descriptor store.
+        mAppSearchImpl = AppSearchImpl.create(
+                mAppSearchDir,
+                new AppSearchConfigImpl(new UnlimitedLimitConfig(),
+                        new LocalStorageIcingOptionsConfig()),
+                /*initStatsBuilder=*/ null,
+                /*callStatsBuilder=*/ null,
+                /*visibilityChecker=*/ null,
+                new JetpackRevocableFileDescriptorStore(mUnlimitedConfig),
+                /*icingSearchEngine=*/ null,
+                ALWAYS_OPTIMIZE);
+        byte[] data = generateRandomBytes(20 * 1024); // 20 KiB
+        byte[] digest = calculateDigest(data);
+        AppSearchBlobHandle handle = AppSearchBlobHandle.createWithSha256(
+                digest, "package", "db1", "ns");
+
+        try (ParcelFileDescriptor writePfd =
+                     mAppSearchImpl.openWriteBlob("package", "db1", handle,
+                             /*callStatsBuilder=*/null)) {
+            // Can write data.
+            try (FileOutputStream outputStream =
+                         new FileOutputStream(writePfd.getFileDescriptor())) {
+                outputStream.write(data);
+            }
+            // clearAndDestroy will revoke all sent fds.
+            mAppSearchImpl.clearAndDestroy();
+            assertThrows(IOException.class, () -> {
+                try (FileOutputStream outputStream =
+                             new FileOutputStream(writePfd.getFileDescriptor())) {
+                    outputStream.write(data);
+                }
+            });
+        }
     }
 
     private SchemaProto getSchemaProtoWithDatabase(SchemaProto schema) throws AppSearchException {
