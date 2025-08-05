@@ -67,7 +67,8 @@ internal class Controller3ASubmit3ATest {
     @Test
     fun testSubmit3ADoesNotUpdateState3A() = runTest {
         val result = controller3A.submit3A(afMode = AfMode.OFF)
-        assertThat(graphState3A.afMode?.value).isNotEqualTo(CaptureRequest.CONTROL_AF_MODE_OFF)
+        assertThat(graphState3A.current.afMode?.value)
+            .isNotEqualTo(CaptureRequest.CONTROL_AF_MODE_OFF)
         assertThat(result.isCompleted).isFalse()
     }
 

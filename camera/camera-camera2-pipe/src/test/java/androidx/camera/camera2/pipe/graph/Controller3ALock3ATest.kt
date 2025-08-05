@@ -81,8 +81,9 @@ internal class Controller3ALock3ATest {
                 aeRegions = listOf(MeteringRectangle(0, 0, 100, 200, 10)),
             )
         assertThat(result.await().status).isEqualTo(Result3A.Status.SUBMIT_FAILED)
-        assertThat(graphState3A.aeRegions).isNotNull()
-        assertThat(graphState3A.aeRegions).containsExactly(MeteringRectangle(0, 0, 100, 200, 10))
+        assertThat(graphState3A.current.aeRegions).isNotNull()
+        assertThat(graphState3A.current.aeRegions)
+            .containsExactly(MeteringRectangle(0, 0, 100, 200, 10))
     }
 
     @Test
@@ -756,11 +757,11 @@ internal class Controller3ALock3ATest {
         assertThat(result3A.frameMetadata!!.frameNumber.value).isEqualTo(101L)
         assertThat(result3A.status).isEqualTo(Result3A.Status.OK)
 
-        val aeRegions = graphState3A.aeRegions!!
+        val aeRegions = graphState3A.current.aeRegions!!
         assertThat(aeRegions.size).isEqualTo(1)
         assertThat(aeRegions[0]).isEqualTo(aeMeteringRegion)
 
-        val afRegions = graphState3A.afRegions!!
+        val afRegions = graphState3A.current.afRegions!!
         assertThat(afRegions.size).isEqualTo(1)
         assertThat(afRegions[0]).isEqualTo(afMeteringRegion)
 
