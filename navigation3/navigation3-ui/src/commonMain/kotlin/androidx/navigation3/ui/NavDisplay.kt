@@ -32,8 +32,8 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
@@ -51,8 +51,11 @@ import androidx.navigation3.ui.NavDisplay.DEFAULT_TRANSITION_DURATION_MILLISECON
 import androidx.navigation3.ui.NavDisplay.POP_TRANSITION_SPEC
 import androidx.navigation3.ui.NavDisplay.PREDICTIVE_POP_TRANSITION_SPEC
 import androidx.navigation3.ui.NavDisplay.TRANSITION_SPEC
+import androidx.navigationevent.NavigationEventState.Idle
+import androidx.navigationevent.NavigationEventState.InProgress
 import androidx.navigationevent.compose.NavigationEventHandler
 import kotlin.reflect.KClass
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 
@@ -196,20 +199,29 @@ public fun <T : Any> NavDisplay(
         val scene = allScenes.last()
 
         // Predictive Back Handling
-        var progress by remember { mutableFloatStateOf(0f) }
-        var inPredictiveBack by remember { mutableStateOf(false) }
-
-        NavigationEventHandler(enabled = scene.previousEntries.isNotEmpty()) { navEvent ->
-            progress = 0f
-            try {
-                navEvent.collect { value ->
-                    inPredictiveBack = true
-                    progress = value.progress
+        val gestureState by
+            checkNotNull(LocalNavigationEventDispatcherOwner.current) {
+                    "No NavigationEventDispatcher was provided via LocalNavigationEventDispatcherOwner"
                 }
-                inPredictiveBack = false
+                .navigationEventDispatcher
+                .state
+                .collectAsState()
+
+        val progress =
+            when (val state = gestureState) {
+                is Idle -> 0f
+                is InProgress -> state.latestEvent.progress
+            }
+        val inPredictiveBack = gestureState is InProgress
+
+        NavigationEventHandler(enabled = scene.previousEntries.isNotEmpty()) { progress ->
+            progress.collect()
+
+            // If `enabled` becomes stale (e.g., it was set to false but a gesture was
+            // dispatched in the same frame), this ensures that the calculated index is valid
+            // before calling onBack, avoiding IndexOutOfBoundsException in edge cases.
+            if (entries.size > scene.previousEntries.size) {
                 onBack(entries.size - scene.previousEntries.size)
-            } finally {
-                inPredictiveBack = false
             }
         }
 
