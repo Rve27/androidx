@@ -28,7 +28,7 @@ import java.util.zip.Inflater
  * Ideally, we'd use Profgen to extract dex checksums and other similar metadata so we wouldn't need
  * to reimplement this.
  */
-data class ProfileInfo(val dexInfoList: List<DexInfo>) {
+data class ProfInfo(val dexInfoList: List<DexInfo>) {
     data class DexInfo(val checksumCrc32: String)
 
     // lovingly lifted from
@@ -138,13 +138,13 @@ data class ProfileInfo(val dexInfoList: List<DexInfo>) {
             return result
         }
 
-        private fun InputStream.readUncompressedBody(numberOfDexFiles: Int): ProfileInfo {
+        private fun InputStream.readUncompressedBody(numberOfDexFiles: Int): ProfInfo {
             // If the uncompressed profile data stream is empty then we have nothing more to do.
             if (available() == 0) {
-                return ProfileInfo(emptyList())
+                return ProfInfo(emptyList())
             }
             // Read the dex file line headers.
-            return ProfileInfo(
+            return ProfInfo(
                 List(numberOfDexFiles) {
                     val profileKeySize = readUInt16()
                     val typeIdSetSize = readUInt16()
@@ -166,7 +166,7 @@ data class ProfileInfo(val dexInfoList: List<DexInfo>) {
             // TODO: consider more verification of profiles here!
         }
 
-        fun readFromProfile(src: InputStream): ProfileInfo =
+        fun readFromProfile(src: InputStream): ProfInfo =
             with(src) {
                 readAndCheckProfileVersion() // read 8
                 val numberOfDexFiles = readUInt8()
@@ -181,9 +181,9 @@ data class ProfileInfo(val dexInfoList: List<DexInfo>) {
                 dataStream.readUncompressedBody(numberOfDexFiles)
             }
 
-        val CSV_TITLES = listOf("profile_present", "profile_dexSortedChecksumsCrc32")
+        val CSV_TITLES = listOf("prof_present", "prof_dexSortedChecksumsCrc32")
 
-        fun ProfileInfo?.csvEntries(): List<String> {
+        fun ProfInfo?.csvEntries(): List<String> {
             return if (this == null) {
                 listOf("FALSE", "null")
             } else {

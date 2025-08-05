@@ -56,31 +56,34 @@ fun main(args: Array<String>) = runBlocking {
     }
 
     val files =
-        pathArgs.flatMap { path ->
-            val f = File(path)
-            if (f.isDirectory) {
-                (f.listFiles()?.toList()) ?: emptyList()
-            } else {
-                listOf(f)
+        pathArgs
+            .flatMap { path ->
+                val f = File(path)
+                if (f.isDirectory) {
+                    (f.listFiles()?.toList()) ?: emptyList()
+                } else {
+                    listOf(f)
+                }
             }
-        }
+            .filter { it.name != ".DS_Store" }
 
     println("Analyzing ${files.size} bundles...")
-    val bundleInfoList =
+    val analyzedBundleInfoList =
         files
             .asFlow()
             .flatMapMerge { bundleFile ->
-                flow { emit(BundleInfo.Companion.from(bundleFile)) }.flowOn(Dispatchers.IO)
+                flow { emit(AnalyzedBundleInfo(BundleInfo.Companion.from(bundleFile))) }
+                    .flowOn(Dispatchers.IO)
             }
             .toList()
 
     if (csvFile != null) {
         println("Bundle parsing complete, constructing CSV...")
-        csvFile.writeText(BundleInfo.Companion.CSV_HEADER + "\n")
-        bundleInfoList.forEach { csvFile.appendText(it.toCsvLine() + "\n") }
+        csvFile.writeText(AnalyzedBundleInfo.CSV_HEADER + "\n")
+        analyzedBundleInfoList.forEach { csvFile.appendText(it.toCsvLine() + "\n") }
         println("Analysis complete, CSV saved to ${csvFile.absolutePath}")
     } else {
         println("Bundle parsing complete, reporting problems...")
-        bundleInfoList.forEach { AnalyzedBundleInfo(it).printAnalysis() }
+        analyzedBundleInfoList.forEach { it.printAnalysis() }
     }
 }

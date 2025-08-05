@@ -22,7 +22,7 @@ data class LibraryAnalysis(val hasDotVersionFiles: Boolean, val hasAppBundleDepe
     ScoreReporter {
     // TODO: compose version
     // TODO: don't embed compose tooling, perfetto tracing binary
-    override fun getScore(): SubScore {
+    override fun getSubScore(): SubScore {
         return SubScore(
             label = "Library Version Analysis",
             score = 0,

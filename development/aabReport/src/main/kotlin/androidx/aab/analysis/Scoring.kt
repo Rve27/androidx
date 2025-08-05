@@ -57,5 +57,5 @@ fun List<SubScore>.print() {
 }
 
 interface ScoreReporter {
-    fun getScore(): SubScore
+    fun getSubScore(): SubScore
 }

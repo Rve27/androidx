@@ -37,15 +37,17 @@ data class ProfileAnalysis(
         OK,
     }
 
-    override fun getScore(): SubScore {
-        val score: Int =
-            when (status) {
-                Status.MISSING,
-                Status.EMPTY,
-                Status.FULLY_CORRUPTED -> 0
-                Status.PARTLY_CORRUPTED -> (20 * corruptionRatio).roundToInt()
-                Status.OK -> 20
-            }
+    fun getScore() =
+        when (status) {
+            Status.MISSING,
+            Status.EMPTY,
+            Status.FULLY_CORRUPTED -> 0
+            Status.PARTLY_CORRUPTED -> (20 * corruptionRatio).roundToInt()
+            Status.OK -> 20
+        }
+
+    override fun getSubScore(): SubScore {
+        val score: Int = getScore()
 
         val issue =
             when (status) {
@@ -58,7 +60,11 @@ data class ProfileAnalysis(
         return SubScore("Baseline Profile", score, 20, listOfNotNull(issue))
     }
 
+    fun csvEntries() = listOf(getScore().toString(), status.toString())
+
     companion object {
+        val CSV_TITLES = listOf("profile_score", "profile_status")
+
         fun BundleInfo.getProfileAnalysis(): ProfileAnalysis {
             val setOfDexCrc32FromDex = (dexInfo.map { it.crc32 }.toSet())
             val setOfDexCrc32FromProfiles =

@@ -37,7 +37,7 @@ data class R8Analysis(
             .roundToInt()
     }
 
-    override fun getScore(): SubScore {
+    override fun getSubScore(): SubScore {
         val issues =
             listOfNotNull(
                 if (dexSha256ChecksumsR8JsonOnly.isNotEmpty()) R8Issues.DexChecksumsMismatched
@@ -57,7 +57,13 @@ data class R8Analysis(
         )
     }
 
+    fun csvEntries(): List<String> {
+        return listOf((r8JsonFileInfo?.getScore()).toString())
+    }
+
     companion object {
+        val CSV_TITLES = listOf("r8_score")
+
         fun BundleInfo.getR8Analysis(): R8Analysis {
             val metadataJsonShas = r8JsonFileInfo?.dexShas?.toSet() ?: emptySet()
             val dexShas = dexInfo.map { it.sha256 }.toSet()

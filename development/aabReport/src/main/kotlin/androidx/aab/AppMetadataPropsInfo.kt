@@ -56,23 +56,14 @@ data class AppMetadataPropsInfo(
         }
 
         val CSV_TITLES_META_INF =
-            listOf(
-                "appMetadataPropsLegacy_present",
-                "appMetadataPropsLegacy_version",
-                "appMetadataPropsLegacy_agpVerson",
-            )
-        val CSV_TITLES_BUNDLE =
-            listOf(
-                "appMetadataProps_present",
-                "appMetadataProps_version",
-                "appMetadataProps_agpVerson",
-            )
+            listOf("appMetadataPropsLegacy_version", "appMetadataPropsLegacy_agpVerson")
+        val CSV_TITLES_BUNDLE = listOf("appMetadataProps_version", "appMetadataProps_agpVerson")
 
         fun AppMetadataPropsInfo?.csvEntries(): List<String> {
             return if (this == null) {
-                listOf("FALSE, null, null")
+                listOf("null", "null")
             } else {
-                listOf("TRUE, $appMetadataVersion, $androidGradlePluginVersion")
+                listOf(appMetadataVersion, androidGradlePluginVersion)
             }
         }
     }
