@@ -69,8 +69,16 @@ androidXMultiplatform {
             }
         }
 
-        androidMain {
+        jvmMain {
             dependsOn(commonMain)
+        }
+
+        jvmTest {
+            dependsOn(commonTest)
+        }
+
+        androidMain {
+            dependsOn(jvmMain)
             dependencies {
                 implementation(libs.kotlinCoroutinesAndroid)
                 implementation("androidx.core:core-viewtree:1.0.0")
@@ -78,7 +86,7 @@ androidXMultiplatform {
         }
 
         androidInstrumentedTest {
-            dependsOn(commonTest)
+            dependsOn(jvmTest)
             dependencies {
                 runtimeOnly(libs.kotlinTestJunit)
                 implementation(libs.junit)
@@ -92,8 +100,78 @@ androidXMultiplatform {
             }
         }
 
-        wasmJsMain {
+        nonAndroidMain {
             dependsOn(commonMain)
+        }
+
+        nonAndroidTest {
+            dependsOn(commonTest)
+        }
+
+        desktopMain {
+            dependsOn(jvmMain)
+            dependsOn(nonAndroidMain)
+        }
+
+        desktopTest {
+            dependsOn(jvmTest)
+            dependsOn(nonAndroidTest)
+        }
+
+        nativeMain {
+            dependsOn(nonAndroidMain)
+        }
+
+        nativeTest {
+            dependsOn(nonAndroidTest)
+        }
+
+        unixMain {
+            dependsOn(nativeMain)
+        }
+
+        unixTest {
+            dependsOn(nativeTest)
+        }
+
+        darwinMain {
+            dependsOn(unixMain)
+        }
+
+        darwinTest {
+            dependsOn(unixTest)
+        }
+
+        linuxMain {
+            dependsOn(unixMain)
+        }
+
+        linuxTest {
+            dependsOn(unixTest)
+        }
+
+        mingwMain {
+            dependsOn(nativeMain)
+        }
+
+        mingwTest {
+            dependsOn(nativeTest)
+        }
+
+        webMain {
+            dependsOn(nonAndroidMain)
+        }
+
+        webTest {
+            dependsOn(nonAndroidTest)
+            dependencies {
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0")
+            }
+        }
+
+        wasmJsMain {
+            dependsOn(webMain)
             dependencies {
                 implementation(libs.kotlinStdlibWasm)
                 implementation(libs.kotlinXw3c)
@@ -101,15 +179,44 @@ androidXMultiplatform {
         }
 
         wasmJsTest {
+            dependsOn(webTest)
             dependencies {
                 implementation(libs.kotlinTestForWasmTests)
             }
         }
 
         jsMain {
-            dependsOn(commonMain)
+            dependsOn(webMain)
             dependencies {
                 implementation(libs.kotlinStdlibJs)
+            }
+        }
+
+        jsTest {
+            dependsOn(webTest)
+            dependencies {
+                implementation(libs.kotlinTestJs)
+            }
+        }
+
+        targets.configureEach { target ->
+            if (target.platformType == org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.native) {
+                if (target.konanTarget.family.appleFamily) {
+                    target.compilations["main"].defaultSourceSet.dependsOn(darwinMain)
+                    target.compilations["test"].defaultSourceSet.dependsOn(darwinTest)
+                } else if (target.konanTarget.family == org.jetbrains.kotlin.konan.target.Family.LINUX) {
+                    target.compilations["main"].defaultSourceSet.dependsOn(linuxMain)
+                    target.compilations["test"].defaultSourceSet.dependsOn(linuxTest)
+                } else if (target.konanTarget.family == org.jetbrains.kotlin.konan.target.Family.MINGW) {
+                    target.compilations["main"].defaultSourceSet.dependsOn(mingwMain)
+                    target.compilations["test"].defaultSourceSet.dependsOn(mingwTest)
+                } else {
+                    target.compilations["main"].defaultSourceSet.dependsOn(nativeMain)
+                    target.compilations["test"].defaultSourceSet.dependsOn(nativeTest)
+                }
+            } else if (target.platformType in [org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.js, org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.wasm]) {
+                target.compilations["main"].defaultSourceSet.dependsOn(webMain)
+                target.compilations["test"].defaultSourceSet.dependsOn(webTest)
             }
         }
     }
