@@ -50,6 +50,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.input.indirect.IndirectTouchEvent
+import androidx.compose.ui.input.indirect.IndirectTouchEventPrimaryDirectionalMotionAxis
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.SemanticsProperties
@@ -342,7 +343,14 @@ class CardTest {
                 0,
             )
         down.source = SOURCE_TOUCH_NAVIGATION
-        rule.onNodeWithTag("card").performIndirectTouchEvent(IndirectTouchEvent(down))
+        rule
+            .onNodeWithTag("card")
+            .performIndirectTouchEvent(
+                IndirectTouchEvent(
+                    motionEvent = down,
+                    primaryDirectionalMotionAxis = IndirectTouchEventPrimaryDirectionalMotionAxis.X,
+                )
+            )
 
         rule.runOnIdle {
             assertThat(interactions).hasSize(1)
@@ -359,7 +367,14 @@ class CardTest {
                 0,
             )
         up.source = SOURCE_TOUCH_NAVIGATION
-        rule.onNodeWithTag("card").performIndirectTouchEvent(IndirectTouchEvent(up))
+        rule
+            .onNodeWithTag("card")
+            .performIndirectTouchEvent(
+                IndirectTouchEvent(
+                    motionEvent = up,
+                    primaryDirectionalMotionAxis = IndirectTouchEventPrimaryDirectionalMotionAxis.X,
+                )
+            )
 
         rule.runOnIdle {
             assertThat(interactions).hasSize(2)

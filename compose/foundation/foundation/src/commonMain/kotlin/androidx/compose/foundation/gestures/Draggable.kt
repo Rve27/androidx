@@ -36,7 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.isSpecified
 import androidx.compose.ui.input.indirect.IndirectTouchEvent
-import androidx.compose.ui.input.indirect.IndirectTouchEventPrimaryAxis
+import androidx.compose.ui.input.indirect.IndirectTouchEventPrimaryDirectionalMotionAxis
 import androidx.compose.ui.input.indirect.IndirectTouchEventType
 import androidx.compose.ui.input.indirect.IndirectTouchInputModifierNode
 import androidx.compose.ui.input.pointer.PointerEvent
@@ -1237,7 +1237,7 @@ internal class TouchInputEventSmoother() {
 
     /**
      * Smooths [event]'s position and additionally locks it to the provided [orientation] if a
-     * [IndirectTouchEventPrimaryAxis] is defined.
+     * [IndirectTouchEventPrimaryDirectionalMotionAxis] is defined.
      */
     fun smoothEventPosition(event: IndirectTouchEvent, orientation: Orientation?): Offset {
         val primaryAxisPosition = event.primaryAxisPosition(orientation)
@@ -1271,18 +1271,18 @@ internal class TouchInputEventSmoother() {
 
     /**
      * Returns a modified position for this [IndirectTouchEvent] accounting for
-     * [IndirectTouchEvent.primaryAxis]. When we no longer need to smooth positions, we should
-     * instead only use the primary axis to resolve delta changes, as changing the entire event in
-     * this way will affect the start position we report to onDragStarted. Until we can remove
-     * smoothing logic, it's complicated to manage primary axis as well as smoothed positions, so we
-     * just make the change here for simplicity.
+     * [IndirectTouchEvent.primaryDirectionalMotionAxis]. When we no longer need to smooth
+     * positions, we should instead only use the primary axis to resolve delta changes, as changing
+     * the entire event in this way will affect the start position we report to onDragStarted. Until
+     * we can remove smoothing logic, it's complicated to manage primary axis as well as smoothed
+     * positions, so we just make the change here for simplicity.
      */
     private fun IndirectTouchEvent.primaryAxisPosition(orientation: Orientation?): Offset {
         if (orientation == null) return position
         val delta =
-            when (primaryAxis) {
-                IndirectTouchEventPrimaryAxis.X -> position.x
-                IndirectTouchEventPrimaryAxis.Y -> position.y
+            when (primaryDirectionalMotionAxis) {
+                IndirectTouchEventPrimaryDirectionalMotionAxis.X -> position.x
+                IndirectTouchEventPrimaryDirectionalMotionAxis.Y -> position.y
                 // No primary axis, so don't change the offset
                 else -> return position
             }
