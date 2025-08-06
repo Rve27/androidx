@@ -25,13 +25,13 @@ setup_build_env_vars
 start_time=$(initialize_start_time)
 
 BUILD_EXIT_CODE=0
-if ! ( \
-    "$BUILD_SCRIPT_PATH" $GRADLE_TASKS \
-        -Pandroidx.displayTestOutput=false \
-        --continue \
-        $EXTRA_GRADLE_PARAMS \
-        "$@" \
-); then
+if "$BUILD_SCRIPT_PATH" $GRADLE_TASKS \
+    -Pandroidx.displayTestOutput=false \
+    --continue \
+    $EXTRA_GRADLE_PARAMS \
+    "$@"; then
+    echo "Gradle command completed successfully."
+else
     BUILD_EXIT_CODE=$?
 fi
 
