@@ -77,8 +77,7 @@ object IntrospectionHelper {
     }
 
     object AppFunctionIntValueConstraintAnnotation {
-        val CLASS_NAME =
-            ClassName(APP_FUNCTIONS_SERVICE_PACKAGE_NAME, "AppFunctionIntValueConstraint")
+        val CLASS_NAME = ClassName(APP_FUNCTIONS_PACKAGE_NAME, "AppFunctionIntValueConstraint")
 
         const val PROPERTY_ENUM_VALUES = "enumValues"
     }

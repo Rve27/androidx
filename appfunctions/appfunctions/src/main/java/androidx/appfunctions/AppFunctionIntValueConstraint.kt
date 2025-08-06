@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.appfunctions.service
+package androidx.appfunctions
 
 /**
  * Specifies constraints applied on the integer values for return types, parameters, or properties

@@ -21,12 +21,12 @@ import android.content.Intent
 import android.net.Uri
 import android.util.Log
 import androidx.appfunctions.AppFunctionContext
+import androidx.appfunctions.AppFunctionIntValueConstraint
 import androidx.appfunctions.AppFunctionInvalidArgumentException
 import androidx.appfunctions.AppFunctionSchemaCapability
 import androidx.appfunctions.AppFunctionSerializable
 import androidx.appfunctions.AppFunctionUriGrant
 import androidx.appfunctions.service.AppFunction
-import androidx.appfunctions.service.AppFunctionIntValueConstraint
 import java.time.LocalDateTime
 
 @AppFunctionSchemaCapability

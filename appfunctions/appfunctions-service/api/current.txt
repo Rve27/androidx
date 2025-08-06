@@ -25,11 +25,5 @@ package androidx.appfunctions.service {
     property public abstract androidx.appfunctions.service.AppFunctionConfiguration appFunctionConfiguration;
   }
 
-  @kotlin.annotation.Retention(kotlin.annotation.AnnotationRetention.BINARY) @kotlin.annotation.Target(allowedTargets={kotlin.annotation.AnnotationTarget.FUNCTION, kotlin.annotation.AnnotationTarget.PROPERTY, kotlin.annotation.AnnotationTarget.VALUE_PARAMETER}) public @interface AppFunctionIntValueConstraint {
-    ctor @KotlinOnly public AppFunctionIntValueConstraint(optional int[] enumValues);
-    method public abstract int[] enumValues();
-    property public abstract int[] enumValues;
-  }
-
 }
 
