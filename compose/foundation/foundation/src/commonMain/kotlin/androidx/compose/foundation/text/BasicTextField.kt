@@ -386,6 +386,8 @@ internal fun BasicTextField(
 
     DisposableEffect(textFieldSelectionState) { onDispose { textFieldSelectionState.dispose() } }
 
+    val overscrollEffect = rememberTextFieldOverscrollEffect()
+
     val handwritingEnabled =
         !isPassword &&
             keyboardOptions.keyboardType != KeyboardType.Password &&
@@ -444,6 +446,7 @@ internal fun BasicTextField(
                         reverseScrolling = false,
                     ),
                 interactionSource = interactionSource,
+                overscrollEffect = overscrollEffect,
             )
             .pointerHoverIcon(PointerIcon.Text)
             .addContextMenuComponents(textFieldSelectionState, coroutineScope)

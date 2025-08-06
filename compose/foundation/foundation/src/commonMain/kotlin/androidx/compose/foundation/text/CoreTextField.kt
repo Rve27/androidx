@@ -550,6 +550,8 @@ internal fun CoreTextField(
             }
         }
 
+    val overscrollEffect = rememberTextFieldOverscrollEffect()
+
     // Modifiers that should be applied to the outer text field container. Usually those include
     // gesture and semantics modifiers.
     val decorationBoxModifier =
@@ -561,7 +563,7 @@ internal fun CoreTextField(
             .interceptDPadAndMoveFocus(state, focusManager)
             .previewKeyEventToDeselectOnBack(state, manager)
             .then(textKeyInputModifier)
-            .textFieldScrollable(scrollerPosition, interactionSource, enabled)
+            .textFieldScrollable(scrollerPosition, interactionSource, enabled, overscrollEffect)
             .then(pointerModifier)
             .then(semanticsModifier)
             .onGloballyPositioned @DontMemoize { state.layoutResult?.decorationBoxCoordinates = it }
