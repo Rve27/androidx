@@ -48,7 +48,6 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.isSpecified
-import androidx.compose.ui.unit.isUnspecified
 import androidx.compose.ui.unit.roundToIntRect
 import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.util.fastForEachIndexed
@@ -762,7 +761,7 @@ private class ThreePaneContentMeasurePolicy(
         isLookingAhead: Boolean,
     ) {
         val reflowedPane = if (reflowedPanes.isEmpty()) null else reflowedPanes[0]
-        if ((reflowedPane?.value as? PaneAdaptedValue.Reflowed)?.targetPane == expandedPane.role) {
+        if ((reflowedPane?.value as? PaneAdaptedValue.Reflowed)?.reflowUnder == expandedPane.role) {
             // Measure the reflowed pane and adjust the expanded pane's height
             // TODO(conradchen): Avoid hinges
             val availableHeight = partitionBounds.height - horizontalSpacerSize

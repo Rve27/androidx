@@ -49,8 +49,10 @@ import androidx.compose.ui.unit.isSpecified
  * @see LookaheadScope
  */
 @ExperimentalMaterial3AdaptiveApi
-sealed interface ExtendedPaneScaffoldPaneScope<Role, ScaffoldValue : PaneScaffoldValue<Role>> :
-    ExtendedPaneScaffoldScope<Role, ScaffoldValue>, PaneScaffoldPaneScope<Role>
+sealed interface ExtendedPaneScaffoldPaneScope<
+    Role : PaneScaffoldRole,
+    ScaffoldValue : PaneScaffoldValue<Role>,
+> : ExtendedPaneScaffoldScope<Role, ScaffoldValue>, PaneScaffoldPaneScope<Role>
 
 /**
  * Extended scope for pane scaffolds. All pane scaffolds will implement this interface to provide
@@ -65,8 +67,10 @@ sealed interface ExtendedPaneScaffoldPaneScope<Role, ScaffoldValue : PaneScaffol
  * @see LookaheadScope
  */
 @ExperimentalMaterial3AdaptiveApi
-sealed interface ExtendedPaneScaffoldScope<Role, ScaffoldValue : PaneScaffoldValue<Role>> :
-    PaneScaffoldScope, PaneScaffoldTransitionScope<Role, ScaffoldValue>, LookaheadScope
+sealed interface ExtendedPaneScaffoldScope<
+    Role : PaneScaffoldRole,
+    ScaffoldValue : PaneScaffoldValue<Role>,
+> : PaneScaffoldScope, PaneScaffoldTransitionScope<Role, ScaffoldValue>, LookaheadScope
 
 /**
  * The base scope of pane scaffolds, which provides scoped functions that supported by pane
@@ -210,7 +214,10 @@ sealed interface PaneScaffoldScope {
  * of the associated pane scaffold.
  */
 @ExperimentalMaterial3AdaptiveApi
-sealed interface PaneScaffoldTransitionScope<Role, ScaffoldValue : PaneScaffoldValue<Role>> {
+sealed interface PaneScaffoldTransitionScope<
+    Role : PaneScaffoldRole,
+    ScaffoldValue : PaneScaffoldValue<Role>,
+> {
     /** The current scaffold state transition between [PaneScaffoldValue]s. */
     val scaffoldStateTransition: Transition<ScaffoldValue>
 
@@ -233,7 +240,7 @@ sealed interface PaneScaffoldTransitionScope<Role, ScaffoldValue : PaneScaffoldV
  * its role and [PaneMotion].
  */
 @ExperimentalMaterial3AdaptiveApi
-sealed interface PaneScaffoldPaneScope<Role> {
+sealed interface PaneScaffoldPaneScope<Role : PaneScaffoldRole> {
     /** The role of the current pane in the scope. */
     val paneRole: Role
 

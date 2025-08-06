@@ -59,7 +59,7 @@ sealed interface AdaptStrategy {
      *   three pane scaffolds, the type of this parameter is supposed to be [ThreePaneScaffoldRole].
      */
     @Immutable
-    class Reflow(internal val reflowUnder: Any) : AdaptStrategy {
+    class Reflow(internal val reflowUnder: PaneScaffoldRole) : AdaptStrategy {
         override fun toString() = "AdaptStrategy[Reflow to $reflowUnder]"
 
         override fun equals(other: Any?): Boolean {
