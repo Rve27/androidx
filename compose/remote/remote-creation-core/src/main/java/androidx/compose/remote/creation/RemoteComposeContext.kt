@@ -90,6 +90,14 @@ public open class RemoteComposeContext {
             RemoteComposeWriter(width, height, contentDescription, apiLevel, profiles, platform)
     }
 
+    public constructor(
+        vararg tags: RemoteComposeWriter.HTag,
+        platform: Platform,
+        content: RemoteComposeContext.() -> Unit,
+    ) {
+        mRemoteWriter = RemoteComposeWriter(platform, *tags)
+    }
+
     /** Create a new matrix expression. */
     public fun matrix(vararg exp: Float): Matrix {
         return Matrix(this, *exp)

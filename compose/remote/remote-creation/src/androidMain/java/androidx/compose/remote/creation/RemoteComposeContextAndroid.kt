@@ -14,24 +14,22 @@
  * limitations under the License.
  */
 
-package androidx.compose.remote.player.view
+package androidx.compose.remote.creation
 
 import android.graphics.Bitmap
 import androidx.compose.remote.core.Platform
-import androidx.compose.remote.creation.Painter
-import androidx.compose.remote.creation.RemoteComposeContext
-import androidx.compose.remote.creation.RemoteComposeWriterAndroid
 import androidx.compose.remote.creation.profile.PlatformProfile
 import androidx.compose.remote.creation.profile.Profile
 
 class RemoteComposeContextAndroid : RemoteComposeContext {
 
-    fun getPainter(): Painter {
-        if (mRemoteWriter is RemoteComposeWriterAndroid) {
+    val painter: Painter
+        get() {
+            if (mRemoteWriter !is RemoteComposeWriterAndroid) {
+                throw (Exception("This RemoteComposeContext is not an Android one"))
+            }
             return (mRemoteWriter as RemoteComposeWriterAndroid).painter
         }
-        throw (Exception("This RemoteComposeContext is not an Android one"))
-    }
 
     constructor(
         width: Int,
@@ -67,7 +65,23 @@ class RemoteComposeContextAndroid : RemoteComposeContext {
         content()
     }
 
+    constructor(
+        platform: Platform,
+        vararg tags: RemoteComposeWriter.HTag,
+        content: RemoteComposeContextAndroid.() -> Unit,
+    ) : super(RemoteComposeWriterAndroid(platform, *tags)) {
+        content()
+    }
+
+    fun addBitmap(image: Bitmap): Int {
+        return mRemoteWriter.addBitmap(image)
+    }
+
     public fun drawBitmap(image: Bitmap, contentDescription: String) {
         mRemoteWriter.drawBitmap(image, image.width, image.height, contentDescription)
+    }
+
+    public fun createCirclePath(x: Float, y: Float, rad: Float): RemotePath {
+        return RemotePath.createCirclePath(mRemoteWriter, x, y, rad)
     }
 }

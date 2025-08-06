@@ -21,6 +21,7 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import androidx.compose.remote.core.RemoteContext
 import androidx.compose.remote.core.operations.Theme
+import androidx.compose.remote.creation.RemoteComposeContextAndroid
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import java.io.ByteArrayInputStream
 import kotlin.math.abs

@@ -237,12 +237,34 @@ public class RecordingModifier {
     }
 
     /**
+     * Add a fixed width modifier
+     *
+     * @param value
+     * @return
+     */
+    public @NonNull RecordingModifier width(float value) {
+        setWidthModifier(DimensionModifierOperation.Type.EXACT, value);
+        return this;
+    }
+
+    /**
      * Add a fixed height modifier
      *
      * @param value
      * @return
      */
     public @NonNull RecordingModifier height(int value) {
+        setHeightModifier(DimensionModifierOperation.Type.EXACT, value);
+        return this;
+    }
+
+    /**
+     * Add a fixed height modifier
+     *
+     * @param value
+     * @return
+     */
+    public @NonNull RecordingModifier height(float value) {
         setHeightModifier(DimensionModifierOperation.Type.EXACT, value);
         return this;
     }
