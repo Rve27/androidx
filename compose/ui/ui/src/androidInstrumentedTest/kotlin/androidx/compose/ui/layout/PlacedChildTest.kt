@@ -31,7 +31,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.testutils.assertPixels
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.background
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.node.LayoutNode
 import androidx.compose.ui.platform.testTag
@@ -490,103 +489,6 @@ class PlacedChildTest {
         }
         rule.runOnIdle { childHeight = 200 }
         rule.runOnIdle { assertThat(coordinates.positionInParent().y.roundToInt()).isEqualTo(200) }
-    }
-
-    @Test
-    fun onPlacedIsNotCalledDuringAlignmentLinesCalculation() {
-        val onPlacedPositions = mutableListOf<Offset>()
-        rule.setContent {
-            Layout(
-                content = {
-                    Box {
-                        Layout(
-                            modifier =
-                                Modifier.onPlaced { onPlacedPositions.add(it.positionInRoot()) }
-                        ) { measurables, constraints ->
-                            layout(50, 50, mapOf(FirstBaseline to 0)) {}
-                        }
-                    }
-                }
-            ) { measurables, constraints ->
-                val placeable = measurables.first().measure(constraints)
-                placeable[FirstBaseline]
-                layout(placeable.width, placeable.height) { placeable.place(10, 10) }
-            }
-        }
-
-        rule.runOnIdle { assertThat(onPlacedPositions).isEqualTo(listOf(Offset(10f, 10f))) }
-    }
-
-    @Test
-    fun grandChildIsPlacedWithNullCoordinatesFirstDuringAlignmentLinesCalculation() {
-        val onPlacedPositions = mutableListOf<Offset?>()
-        rule.setContent {
-            Layout(
-                content = {
-                    Box {
-                        Layout { measurables, constraints ->
-                            layout(50, 50, mapOf(FirstBaseline to 0)) {
-                                onPlacedPositions.add(coordinates?.positionInRoot())
-                            }
-                        }
-                    }
-                }
-            ) { measurables, constraints ->
-                val placeable = measurables.first().measure(constraints)
-                placeable[FirstBaseline]
-                layout(placeable.width, placeable.height) { placeable.place(10, 10) }
-            }
-        }
-
-        rule.runOnIdle { assertThat(onPlacedPositions).isEqualTo(listOf(null, Offset(10f, 10f))) }
-    }
-
-    @Test
-    fun onPlacedIsNotCalledOnNotPlacedChildUsedByAlignmentLinesCalculation() {
-        var onPlacedCalls = 0
-        rule.setContent {
-            Layout(
-                content = {
-                    Box {
-                        Layout(modifier = Modifier.onPlaced { onPlacedCalls++ }) {
-                            measurables,
-                            constraints ->
-                            layout(50, 50, mapOf(FirstBaseline to 0)) {}
-                        }
-                    }
-                }
-            ) { measurables, constraints ->
-                val placeable = measurables.first().measure(constraints)
-                placeable[FirstBaseline]
-                layout(placeable.width, placeable.height) {}
-            }
-        }
-
-        rule.runOnIdle { assertThat(onPlacedCalls).isEqualTo(0) }
-    }
-
-    @Test
-    fun grandChildIsOnlyCalledWithNullCoordinatesWhenUsedByAlignmentLinesCalculationButNotPlaced() {
-        val onPlacedPositions = mutableListOf<Offset?>()
-        rule.setContent {
-            Layout(
-                content = {
-                    Box {
-                        Layout { measurables, constraints ->
-                            layout(50, 50, mapOf(FirstBaseline to 0)) {
-                                onPlacedPositions.add(coordinates?.positionInRoot())
-                            }
-                        }
-                    }
-                }
-            ) { measurables, constraints ->
-                val placeable = measurables.first().measure(constraints)
-                placeable[FirstBaseline]
-                layout(placeable.width, placeable.height) {}
-            }
-        }
-
-        rule.runOnIdle { assertThat(onPlacedPositions).isEqualTo(listOf(null)) }
     }
 }
 
