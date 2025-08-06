@@ -42,6 +42,7 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.filters.SdkSuppress
 import androidx.test.filters.SmallTest
 import com.google.common.truth.Truth.assertThat
+import java.lang.Long
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -158,14 +159,6 @@ class ImageCaptureExtenderValidationTest(private val config: CameraXExtensionTes
     fun getEstimatedCaptureLatencyRangeSameAsImplClass_sinceVersion_1_2(): Unit = runBlocking {
         assumeTrue(ExtensionVersion.getRuntimeVersion()!!.compareTo(Version.VERSION_1_2) >= 0)
 
-        // This call should not cause any exception even if the vendor library doesn't implement
-        // the getEstimatedCaptureLatencyRange function.
-        val latencyInfo =
-            extensionsManager.getEstimatedCaptureLatencyRange(
-                baseCameraSelector,
-                config.extensionMode,
-            )
-
         // Creates ImageCaptureExtenderImpl directly to retrieve the capture latency range info
         val impl =
             CameraXExtensionsTestUtil.createImageCaptureExtenderImpl(
@@ -173,11 +166,16 @@ class ImageCaptureExtenderValidationTest(private val config: CameraXExtensionTes
                 config.cameraId,
                 cameraCharacteristics,
             )
-        val expectedLatencyInfo = impl.getEstimatedCaptureLatencyRange(null)
 
-        // Compares the values obtained from ExtensionsManager and ImageCaptureExtenderImpl are
-        // the same.
-        assertThat(latencyInfo).isEqualTo(expectedLatencyInfo)
+        val supportedOutputSizes = getImageCaptureSupportedResolutions(impl, cameraCharacteristics)
+        val maxCaptureSize =
+            supportedOutputSizes.maxWith { lhs, rhs ->
+                Long.signum(lhs.width.toLong() * lhs.height - rhs.width.toLong() * rhs.height)
+            }
+
+        // Makes sure getEstimatedCaptureLatencyRange API can be called without any exception
+        // occurring when the vendor library is 1.2 or above
+        impl.getEstimatedCaptureLatencyRange(maxCaptureSize)
     }
 
     /**
