@@ -184,6 +184,12 @@ package androidx.appfunctions {
     property public abstract boolean isDescribedByKdoc;
   }
 
+  @kotlin.annotation.Retention(kotlin.annotation.AnnotationRetention.BINARY) @kotlin.annotation.Target(allowedTargets={kotlin.annotation.AnnotationTarget.FUNCTION, kotlin.annotation.AnnotationTarget.PROPERTY, kotlin.annotation.AnnotationTarget.VALUE_PARAMETER}) public @interface AppFunctionStringValueConstraint {
+    ctor @KotlinOnly public AppFunctionStringValueConstraint(optional String[] enumValues);
+    method public abstract String[] enumValues();
+    property public abstract String[] enumValues;
+  }
+
   public abstract class AppFunctionSystemException extends androidx.appfunctions.AppFunctionException {
   }
 
@@ -425,6 +431,9 @@ package androidx.appfunctions.metadata {
   public final class AppFunctionStringTypeMetadata extends androidx.appfunctions.metadata.AppFunctionDataTypeMetadata {
     ctor public AppFunctionStringTypeMetadata(boolean isNullable);
     ctor public AppFunctionStringTypeMetadata(boolean isNullable, optional String description);
+    ctor public AppFunctionStringTypeMetadata(boolean isNullable, optional String description, optional java.util.Set<java.lang.String>? enumValues);
+    method public java.util.Set<java.lang.String>? getEnumValues();
+    property public java.util.Set<java.lang.String>? enumValues;
   }
 
   public final class AppFunctionUnitTypeMetadata extends androidx.appfunctions.metadata.AppFunctionDataTypeMetadata {

@@ -63,7 +63,8 @@ public class `$SchemaAppFunctionInventory_Impl` : SchemaAppFunctionInventory() {
     private val COM_TESTDATA_SHOWNOTEFUNCTION_PARAMETERS_OBJECT_DATA_TYPE_PROPERTIES_MAP_NOTEID:
         AppFunctionStringTypeMetadata = AppFunctionStringTypeMetadata(
             isNullable = false,
-            description = ""
+            description = "",
+            enumValues = null,
         )
 
     private val COM_TESTDATA_SHOWNOTEFUNCTION_PARAMETERS_OBJECT_DATA_TYPE_PROPERTIES_MAP:
@@ -182,7 +183,8 @@ public class `$SchemaAppFunctionInventory_Impl` : SchemaAppFunctionInventory() {
     private val COM_TESTDATA_SETFIELD_KOTLIN_STRING__OBJECT_DATA_TYPE_PROPERTIES_MAP_VALUE:
         AppFunctionStringTypeMetadata = AppFunctionStringTypeMetadata(
             isNullable = false,
-            description = ""
+            description = "",
+            enumValues = null,
         )
 
     private val COM_TESTDATA_SETFIELD_KOTLIN_STRING__OBJECT_DATA_TYPE_PROPERTIES_MAP:
@@ -207,7 +209,8 @@ public class `$SchemaAppFunctionInventory_Impl` : SchemaAppFunctionInventory() {
     private val COM_TESTDATA_SETFIELD_KOTLIN_STRING_NULLABLE__OBJECT_DATA_TYPE_PROPERTIES_MAP_VALUE:
         AppFunctionStringTypeMetadata = AppFunctionStringTypeMetadata(
             isNullable = true,
-            description = ""
+            description = "",
+            enumValues = null,
         )
 
     private val COM_TESTDATA_SETFIELD_KOTLIN_STRING_NULLABLE__OBJECT_DATA_TYPE_PROPERTIES_MAP:
@@ -232,7 +235,8 @@ public class `$SchemaAppFunctionInventory_Impl` : SchemaAppFunctionInventory() {
     private val COM_TESTDATA_ATTACHMENT_OBJECT_DATA_TYPE_PROPERTIES_MAP_URI:
         AppFunctionStringTypeMetadata = AppFunctionStringTypeMetadata(
             isNullable = false,
-            description = ""
+            description = "",
+            enumValues = null,
         )
 
     private val COM_TESTDATA_ATTACHMENT_OBJECT_DATA_TYPE_PROPERTIES_MAP:
@@ -290,7 +294,8 @@ public class `$SchemaAppFunctionInventory_Impl` : SchemaAppFunctionInventory() {
     private val COM_TESTDATA_UPDATENOTEFUNCTION_PARAMETERS_OBJECT_DATA_TYPE_PROPERTIES_MAP_NOTEID:
         AppFunctionStringTypeMetadata = AppFunctionStringTypeMetadata(
             isNullable = false,
-            description = ""
+            description = "",
+            enumValues = null,
         )
 
     private val COM_TESTDATA_UPDATENOTEFUNCTION_PARAMETERS_OBJECT_DATA_TYPE_PROPERTIES_MAP_TITLE:
@@ -422,19 +427,22 @@ public class `$SchemaAppFunctionInventory_Impl` : SchemaAppFunctionInventory() {
     private val COM_TESTDATA_NOTE_OBJECT_DATA_TYPE_PROPERTIES_MAP_ID: AppFunctionStringTypeMetadata
         = AppFunctionStringTypeMetadata(
             isNullable = false,
-            description = ""
+            description = "",
+            enumValues = null,
         )
 
     private val COM_TESTDATA_NOTE_OBJECT_DATA_TYPE_PROPERTIES_MAP_TITLE:
         AppFunctionStringTypeMetadata = AppFunctionStringTypeMetadata(
             isNullable = false,
-            description = ""
+            description = "",
+            enumValues = null,
         )
 
     private val COM_TESTDATA_NOTE_OBJECT_DATA_TYPE_PROPERTIES_MAP_CONTENT_PRIMITIVE_ITEM_TYPE:
         AppFunctionStringTypeMetadata = AppFunctionStringTypeMetadata(
             isNullable = false,
-            description = ""
+            description = "",
+            enumValues = null,
         )
 
     private val COM_TESTDATA_NOTE_OBJECT_DATA_TYPE_PROPERTIES_MAP_CONTENT:

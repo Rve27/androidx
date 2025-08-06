@@ -279,7 +279,8 @@ public class `$FunctionWithSerializableProxyInput_AppFunctionInventory` : AppFun
     private val ANDROID_NET_URI_OBJECT_DATA_TYPE_PROPERTIES_MAP_URISTRING:
         AppFunctionStringTypeMetadata = AppFunctionStringTypeMetadata(
             isNullable = false,
-            description = ""
+            description = "",
+            enumValues = null,
         )
 
     private val ANDROID_NET_URI_OBJECT_DATA_TYPE_PROPERTIES_MAP:

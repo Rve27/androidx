@@ -21,6 +21,7 @@ import android.util.Log
 import androidx.appfunctions.AppFunctionContext
 import androidx.appfunctions.AppFunctionIntValueConstraint
 import androidx.appfunctions.AppFunctionSerializable
+import androidx.appfunctions.AppFunctionStringValueConstraint
 import androidx.appfunctions.service.AppFunction
 
 @Suppress("UNUSED_PARAMETER")
@@ -57,6 +58,7 @@ class TestFunctions2 {
     fun enumValueFunction(
         appFunctionContext: AppFunctionContext,
         @AppFunctionIntValueConstraint(enumValues = [0, 1]) intEnum: Int,
+        @AppFunctionStringValueConstraint(enumValues = ["A", "B"]) stringEnum: String,
     ): Int = 10
 }
 

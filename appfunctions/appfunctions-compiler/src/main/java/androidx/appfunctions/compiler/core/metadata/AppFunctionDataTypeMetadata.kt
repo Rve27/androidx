@@ -145,7 +145,7 @@ data class AppFunctionIntTypeMetadata(
             type = AppFunctionDataTypeMetadata.TYPE_INT,
             isNullable = isNullable,
             description = description,
-            enumValues = enumValues?.map { it.toString() } ?: emptyList(),
+            enumValues = enumValues.orEmpty().map { it.toString() },
         )
     }
 
@@ -218,13 +218,41 @@ data class AppFunctionDoubleTypeMetadata(
 data class AppFunctionStringTypeMetadata(
     override val isNullable: Boolean,
     override val description: String,
+    val enumValues: Set<String>? = null,
 ) : AppFunctionDataTypeMetadata() {
     override fun toAppFunctionDataTypeMetadataDocument(): AppFunctionDataTypeMetadataDocument {
         return AppFunctionDataTypeMetadataDocument(
             type = AppFunctionDataTypeMetadata.TYPE_STRING,
             isNullable = isNullable,
             description = description,
+            enumValues = enumValues.orEmpty().toList(),
         )
+    }
+
+    companion object {
+        fun create(
+            isNullable: Boolean,
+            description: String,
+            annotations: Sequence<KSAnnotation>,
+        ): AppFunctionStringTypeMetadata {
+            return AppFunctionStringTypeMetadata(
+                isNullable,
+                description,
+                annotations
+                    .findAnnotation(
+                        IntrospectionHelper.AppFunctionStringValueConstraintAnnotation.CLASS_NAME
+                    )
+                    ?.requirePropertyValueOfType(
+                        IntrospectionHelper.AppFunctionStringValueConstraintAnnotation
+                            .PROPERTY_ENUM_VALUES,
+                        // Array properties are returned as ArrayList from KSP.
+                        java.util.ArrayList::class,
+                    )
+                    ?.map { String::class.cast(it) }
+                    ?.toSet()
+                    ?.ifEmpty { null },
+            )
+        }
     }
 }
 
@@ -360,7 +388,11 @@ data class AppFunctionDataTypeMetadataDocument(
                 AppFunctionDoubleTypeMetadata(isNullable = isNullable, description = description)
 
             AppFunctionDataTypeMetadata.TYPE_STRING ->
-                AppFunctionStringTypeMetadata(isNullable = isNullable, description = description)
+                AppFunctionStringTypeMetadata(
+                    isNullable = isNullable,
+                    description = description,
+                    enumValues = enumValues.toSet().ifEmpty { null },
+                )
 
             AppFunctionDataTypeMetadata.TYPE_BOOLEAN ->
                 AppFunctionBooleanTypeMetadata(isNullable = isNullable, description = description)

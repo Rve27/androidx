@@ -383,6 +383,26 @@ class AppFunctionCompilerTest {
     }
 
     @Test
+    fun testStringValueConstraint_Xml_success() {
+        val report =
+            compilationTestHelper.compileAll(
+                sourceFileNames = listOf("StringEnumValueFunctions.KT"),
+                processorOptions = mapOf("appfunctions:aggregateAppFunctions" to "true"),
+            )
+        compilationTestHelper.assertSuccessWithResourceContent(
+            report = report,
+            expectGeneratedResourceFileName = "app_functions_v2.xml",
+            goldenFileName = "stringEnumValueFunctions_app_functions_v2.xml",
+        )
+        compilationTestHelper.assertSuccessWithSourceContent(
+            report = report,
+            expectGeneratedSourceFileName =
+                "${'$'}StringEnumValueFunctions_AppFunctionInventory.kt",
+            goldenFileName = "${'$'}StringEnumValueFunctions_AppFunctionInventory.KT",
+        )
+    }
+
+    @Test
     fun testSerializableOutputFunctions_genAppFunctionInventory_success() {
         val report =
             compilationTestHelper.compileAll(

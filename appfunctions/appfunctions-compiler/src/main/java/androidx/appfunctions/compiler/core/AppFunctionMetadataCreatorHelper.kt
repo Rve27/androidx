@@ -738,7 +738,11 @@ class AppFunctionMetadataCreatorHelper(
                 AppFunctionBooleanTypeMetadata(isNullable = isNullable, description = description)
 
             AppFunctionDataTypeMetadata.TYPE_STRING ->
-                AppFunctionStringTypeMetadata(isNullable = isNullable, description = description)
+                AppFunctionStringTypeMetadata.create(
+                    isNullable = isNullable,
+                    description = description,
+                    annotations,
+                )
 
             AppFunctionDataTypeMetadata.TYPE_PENDING_INTENT ->
                 AppFunctionPendingIntentTypeMetadata(

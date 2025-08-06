@@ -475,7 +475,37 @@ class AppFunctionInventoryCodeBuilder(private val inventoryClassBuilder: TypeSpe
                                 IntrospectionHelper.APP_FUNCTION_INT_TYPE_METADATA_CLASS,
                                 isNullable,
                                 description,
-                                enumValues?.joinToString(prefix = "setOf(", postfix = ")") ?: null,
+                                enumValues?.joinToString(prefix = "setOf(", postfix = ")"),
+                            )
+                        }
+                    )
+                    .build()
+
+            is AppFunctionStringTypeMetadata ->
+                PropertySpec.builder(
+                        propertyName,
+                        IntrospectionHelper.APP_FUNCTION_STRING_TYPE_METADATA_CLASS,
+                    )
+                    .addModifiers(KModifier.PRIVATE)
+                    .initializer(
+                        buildCodeBlock {
+                            addStatement(
+                                """
+                            %T(
+                                isNullable = %L,
+                                description = %S,
+                                enumValues = %L,
+                            )
+                            """
+                                    .trimIndent(),
+                                IntrospectionHelper.APP_FUNCTION_STRING_TYPE_METADATA_CLASS,
+                                isNullable,
+                                description,
+                                enumValues?.joinToString(
+                                    prefix = "setOf(",
+                                    postfix = ")",
+                                    transform = { "\"$it\"" },
+                                ),
                             )
                         }
                     )

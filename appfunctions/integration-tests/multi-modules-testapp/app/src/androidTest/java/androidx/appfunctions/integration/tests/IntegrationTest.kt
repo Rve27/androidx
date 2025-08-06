@@ -38,6 +38,7 @@ import androidx.appfunctions.metadata.AppFunctionMetadata
 import androidx.appfunctions.metadata.AppFunctionObjectTypeMetadata
 import androidx.appfunctions.metadata.AppFunctionParameterMetadata
 import androidx.appfunctions.metadata.AppFunctionReferenceTypeMetadata
+import androidx.appfunctions.metadata.AppFunctionStringTypeMetadata
 import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth.assertThat
@@ -137,6 +138,11 @@ class IntegrationTest {
                 enumFunctionMetadata.parameters.associateBy { it.name }["intEnum"]?.dataType
             )
         assertThat(intEnumParamMetadata.enumValues).containsExactly(0, 1)
+        val stringEnumParamMetadata =
+            assertIs<AppFunctionStringTypeMetadata>(
+                enumFunctionMetadata.parameters.associateBy { it.name }["stringEnum"]?.dataType
+            )
+        assertThat(stringEnumParamMetadata.enumValues).containsExactly("A", "B")
     }
 
     @Test
@@ -159,6 +165,11 @@ class IntegrationTest {
                 enumFunctionMetadata.parameters.associateBy { it.name }["intEnum"]?.dataType
             )
         assertThat(intEnumParamMetadata.enumValues).containsExactly(0, 1)
+        val stringEnumParamMetadata =
+            assertIs<AppFunctionStringTypeMetadata>(
+                enumFunctionMetadata.parameters.associateBy { it.name }["stringEnum"]?.dataType
+            )
+        assertThat(stringEnumParamMetadata.enumValues).containsExactly("A", "B")
         val intEnumReturnMetadata =
             assertIs<AppFunctionIntTypeMetadata>(enumFunctionMetadata.response.valueType)
         assertThat(intEnumReturnMetadata.enumValues).containsExactly(10, 20)

@@ -25,6 +25,7 @@ import androidx.appfunctions.AppFunctionIntValueConstraint
 import androidx.appfunctions.AppFunctionInvalidArgumentException
 import androidx.appfunctions.AppFunctionSchemaCapability
 import androidx.appfunctions.AppFunctionSerializable
+import androidx.appfunctions.AppFunctionStringValueConstraint
 import androidx.appfunctions.AppFunctionUriGrant
 import androidx.appfunctions.service.AppFunction
 import java.time.LocalDateTime
@@ -343,6 +344,7 @@ class TestFunctions {
     fun enumValueFunction(
         appFunctionContext: AppFunctionContext,
         @AppFunctionIntValueConstraint(enumValues = [0, 1]) intEnum: Int,
+        @AppFunctionStringValueConstraint(enumValues = ["A", "B"]) stringEnum: String,
     ) {
         throw UnsupportedOperationException("Not implemented")
     }

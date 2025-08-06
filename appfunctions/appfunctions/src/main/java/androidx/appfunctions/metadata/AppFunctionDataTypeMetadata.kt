@@ -766,7 +766,27 @@ constructor(
     isNullable: Boolean,
     /** A description of the data type and its intended use. */
     description: String = "",
+    /**
+     * Defines the complete set of allowed string values accepted by this data type.
+     *
+     * If null, all values are allowed, otherwise it must be non-empty.
+     *
+     * If any of the values carry special meaning (e.g., `"AUTO"` means automatic mode), such
+     * meanings should be documented clearly in the corresponding property, parameter, or function
+     * return KDoc.
+     */
+    @get:Suppress(
+        // Null value is used to specify that the value was not set by the caller.
+        "NullableCollection"
+    )
+    public val enumValues: Set<String>? = null,
 ) : AppFunctionDataTypeMetadata(isNullable = isNullable, description = description) {
+
+    init {
+        require(enumValues == null || enumValues.isNotEmpty()) {
+            "If specified, enumValues cannot be empty."
+        }
+    }
 
     /**
      * Converts this [AppFunctionStringTypeMetadata] to an [AppFunctionDataTypeMetadataDocument].
@@ -986,6 +1006,7 @@ public data class AppFunctionDataTypeMetadataDocument(
                 AppFunctionStringTypeMetadata(
                     isNullable = isNullable,
                     description = description ?: "",
+                    enumValues = enumValues.toSet().ifEmpty { null },
                 )
             AppFunctionDataTypeMetadata.TYPE_PENDING_INTENT ->
                 AppFunctionPendingIntentTypeMetadata(
