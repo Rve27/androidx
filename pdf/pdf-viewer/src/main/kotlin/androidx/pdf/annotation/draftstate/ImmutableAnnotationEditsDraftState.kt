@@ -28,5 +28,16 @@ import androidx.pdf.annotation.models.PdfAnnotationData
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY)
 public class ImmutableAnnotationEditsDraftState(
-    public val edits: Map<Int, Map<EditId, PdfAnnotationData>>
-)
+    public val edits: Map<Int, List<PdfAnnotationData>>
+) {
+    /**
+     * Retrieves the edits for a specific page.
+     *
+     * @param pageNumber The page number for which to retrieve edits.
+     * @return A map of [EditId] to [PdfAnnotationData] for the specified page, or an empty map if
+     *   no edits exist for that page.
+     */
+    public fun getEdits(pageNumber: Int): List<PdfAnnotationData> {
+        return edits[pageNumber] ?: emptyList()
+    }
+}

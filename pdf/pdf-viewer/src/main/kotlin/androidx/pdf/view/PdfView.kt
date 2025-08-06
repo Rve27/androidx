@@ -45,6 +45,7 @@ import androidx.core.animation.addListener
 import androidx.core.graphics.toRectF
 import androidx.core.os.HandlerCompat
 import androidx.core.util.Pools
+import androidx.core.util.forEach
 import androidx.core.util.keyIterator
 import androidx.core.util.valueIterator
 import androidx.core.view.ViewCompat
@@ -539,6 +540,20 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
             zoom,
             pageMetadataLoader?.visiblePageAreas,
         ) ?: true
+    }
+
+    /** Returns a [SparseArray] of page locations ([RectF]) in view coordinates. */
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    public fun getCurrentPageLocations(): SparseArray<RectF> {
+        val localPageLayoutManager = pageMetadataLoader ?: return SparseArray()
+        val pageLocations = localPageLayoutManager.pageLocations
+
+        val pageLocationsInViewCoords = SparseArray<RectF>(pageLocations.size())
+        pageLocations.forEach { page, pageLocationsInContentCoords ->
+            val rectToTransform = RectF(pageLocationsInContentCoords)
+            pageLocationsInViewCoords.put(page, rectToTransform.asViewRectF())
+        }
+        return pageLocationsInViewCoords
     }
 
     @VisibleForTesting internal var pdfViewAccessibilityManager: PdfViewAccessibilityManager? = null

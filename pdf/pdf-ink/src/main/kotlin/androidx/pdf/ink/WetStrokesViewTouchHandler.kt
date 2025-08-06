@@ -18,13 +18,16 @@ package androidx.pdf.ink
 
 import android.graphics.Color
 import android.graphics.RectF
+import android.os.Build
 import android.view.MotionEvent
 import android.view.View
+import androidx.annotation.RequiresExtension
 import androidx.ink.authoring.InProgressStrokeId
 import androidx.ink.authoring.InProgressStrokesView
 import androidx.ink.brush.Brush
 import androidx.ink.brush.StockBrushes
 import androidx.input.motionprediction.MotionEventPredictor
+import androidx.pdf.ink.EditablePdfViewerFragment.PageBoundsProvider
 
 /**
  * Handles touch events on an [InProgressStrokesView] for ink drawing.
@@ -33,6 +36,7 @@ import androidx.input.motionprediction.MotionEventPredictor
  * @param pageBoundsProvider A functional interface that returns page bounds for given touch
  *   coordinates, or null if outside.
  */
+@RequiresExtension(extension = Build.VERSION_CODES.S, version = 13)
 internal class WetStrokesViewTouchHandler(
     private val wetStrokesView: InProgressStrokesView,
     private val pageBoundsProvider: PageBoundsProvider,
@@ -83,7 +87,7 @@ internal class WetStrokesViewTouchHandler(
         }
 
         currentPointerId = pointerId
-        currentPageBounds = pageBoundsProvider.getCurrentPageBounds(event.x, event.y)
+        currentPageBounds = pageBoundsProvider.getCurrentPageBounds(event.x, event.y)?.bounds
 
         currentPageBounds?.let {
             currentStrokeId =
@@ -153,17 +157,6 @@ internal class WetStrokesViewTouchHandler(
         currentPageBounds = null
         lastValidEvent?.recycle()
         lastValidEvent = null
-    }
-
-    /**
-     * A functional interface to provide the bounds of the current page based on touch coordinates.
-     * The coordinates are relative to the WetStrokesView.
-     *
-     * @return [RectF] representing the page bounds, or null if the coordinates are outside any
-     *   page.
-     */
-    fun interface PageBoundsProvider {
-        fun getCurrentPageBounds(viewX: Float, viewY: Float): RectF?
     }
 
     companion object {

@@ -111,10 +111,10 @@ public class SimpleAnnotationEditsDraftState(
      * @return An [ImmutableAnnotationEditsDraftState] representing the current state of edits.
      */
     override fun toImmutableDraftState(): ImmutableAnnotationEditsDraftState {
-        val immutablePages = mutableMapOf<Int, Map<EditId, PdfAnnotationData>>()
+        val immutablePages = mutableMapOf<Int, List<PdfAnnotationData>>()
         editState.forEach { pageNum, pageEdits ->
             if (pageEdits.isNotEmpty()) {
-                immutablePages[pageNum] = pageEdits.toMap()
+                immutablePages[pageNum] = pageEdits.map { it.value }
             }
         }
         return ImmutableAnnotationEditsDraftState(immutablePages.toMap())
