@@ -112,6 +112,7 @@ class UseCaseManagerTest {
     fun tearDown() = runBlocking {
         useCaseManagerList.forEach { it.close() }
         useCaseList.forEach { it.onUnbind() }
+        DisplayInfoManager.releaseInstance()
     }
 
     @Test
@@ -729,7 +730,8 @@ class UseCaseManagerTest {
                 encoderProfilesProvider = FakeEncoderProfilesProvider.Builder().build(),
                 context = ApplicationProvider.getApplicationContext(),
                 cameraProperties = cameraProperties,
-                displayInfoManager = DisplayInfoManager(ApplicationProvider.getApplicationContext()),
+                displayInfoManager =
+                    DisplayInfoManager.getInstance(ApplicationProvider.getApplicationContext()),
             )
             .also { useCaseManagerList.add(it) }
     }

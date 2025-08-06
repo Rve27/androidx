@@ -168,14 +168,14 @@ class DisplayInfoManagerTest {
     }
 
     @Test
-    fun canReturnDifferentPreviewSize_refreshIsCalled() {
+    fun canReturnDifferentPreviewSize_refreshPreviewSizeIsCalled() {
         // Arrange
         val displayInfoManager =
             spy(DisplayInfoManager.getInstance(ApplicationProvider.getApplicationContext()))
 
         // Act
         displayInfoManager.previewSize
-        displayInfoManager.refresh()
+        displayInfoManager.refreshPreviewSize()
         displayInfoManager.previewSize
 
         // Assert
