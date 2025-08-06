@@ -270,7 +270,8 @@ public class `$FunctionWithGenericSerializable_AppFunctionInventory` : AppFuncti
     private val COM_TESTDATA_SETFIELD_KOTLIN_INT__OBJECT_DATA_TYPE_PROPERTIES_MAP_VALUE:
         AppFunctionIntTypeMetadata = AppFunctionIntTypeMetadata(
             isNullable = false,
-            description = ""
+            description = "",
+            enumValues = null,
         )
 
     private val COM_TESTDATA_SETFIELD_KOTLIN_INT__OBJECT_DATA_TYPE_PROPERTIES_MAP:

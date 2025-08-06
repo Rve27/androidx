@@ -447,26 +447,61 @@ class AppFunctionInventoryCodeBuilder(private val inventoryClassBuilder: TypeSpe
         primitiveTypeMetadata: AppFunctionDataTypeMetadata,
     ) {
         functionMetadataObjectClassBuilder.addProperty(
-            PropertySpec.builder(propertyName, primitiveTypeMetadata.toMetadataClassName())
-                .addModifiers(KModifier.PRIVATE)
-                .initializer(
-                    buildCodeBlock {
-                        addStatement(
+            primitiveTypeMetadata.toPrimitiveMetadataPropertySpec(propertyName)
+        )
+    }
+
+    private fun AppFunctionDataTypeMetadata.toPrimitiveMetadataPropertySpec(
+        propertyName: String
+    ): PropertySpec {
+        return when (this) {
+            is AppFunctionIntTypeMetadata ->
+                PropertySpec.builder(
+                        propertyName,
+                        IntrospectionHelper.APP_FUNCTION_INT_TYPE_METADATA_CLASS,
+                    )
+                    .addModifiers(KModifier.PRIVATE)
+                    .initializer(
+                        buildCodeBlock {
+                            addStatement(
+                                """
+                            %T(
+                                isNullable = %L,
+                                description = %S,
+                                enumValues = %L,
+                            )
                             """
+                                    .trimIndent(),
+                                IntrospectionHelper.APP_FUNCTION_INT_TYPE_METADATA_CLASS,
+                                isNullable,
+                                description,
+                                enumValues?.joinToString(prefix = "setOf(", postfix = ")") ?: null,
+                            )
+                        }
+                    )
+                    .build()
+
+            else ->
+                PropertySpec.builder(propertyName, toMetadataClassName())
+                    .addModifiers(KModifier.PRIVATE)
+                    .initializer(
+                        buildCodeBlock {
+                            addStatement(
+                                """
                             %T(
                                 isNullable = %L,
                                 description = %S
                             )
                             """
-                                .trimIndent(),
-                            primitiveTypeMetadata.toMetadataClassName(),
-                            primitiveTypeMetadata.isNullable,
-                            primitiveTypeMetadata.description,
-                        )
-                    }
-                )
-                .build()
-        )
+                                    .trimIndent(),
+                                toMetadataClassName(),
+                                isNullable,
+                                description,
+                            )
+                        }
+                    )
+                    .build()
+        }
     }
 
     /**

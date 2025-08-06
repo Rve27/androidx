@@ -375,6 +375,11 @@ class AppFunctionCompilerTest {
             expectGeneratedSourceFileName = "${'$'}AggregatedAppFunctionInventory_Impl.kt",
             goldenFileName = "${'$'}AggregatedAppFunctionInventory_IntEnum_Impl.KT",
         )
+        compilationTestHelper.assertSuccessWithSourceContent(
+            report = report,
+            expectGeneratedSourceFileName = "${'$'}IntEnumValueFunctions_AppFunctionInventory.kt",
+            goldenFileName = "${'$'}IntEnumValueFunctions_AppFunctionInventory.KT",
+        )
     }
 
     @Test

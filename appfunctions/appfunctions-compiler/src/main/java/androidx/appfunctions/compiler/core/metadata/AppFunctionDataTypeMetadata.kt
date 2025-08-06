@@ -138,14 +138,14 @@ data class AppFunctionReferenceTypeMetadata(
 data class AppFunctionIntTypeMetadata(
     override val isNullable: Boolean,
     override val description: String,
-    val enumValues: Set<Int> = emptySet(),
+    val enumValues: Set<Int>? = null,
 ) : AppFunctionDataTypeMetadata() {
     override fun toAppFunctionDataTypeMetadataDocument(): AppFunctionDataTypeMetadataDocument {
         return AppFunctionDataTypeMetadataDocument(
             type = AppFunctionDataTypeMetadata.TYPE_INT,
             isNullable = isNullable,
             description = description,
-            enumValues = enumValues.map { it.toString() },
+            enumValues = enumValues?.map { it.toString() } ?: emptyList(),
         )
     }
 
@@ -169,7 +169,8 @@ data class AppFunctionIntTypeMetadata(
                         java.util.ArrayList::class,
                     )
                     ?.map { Int::class.cast(it) }
-                    ?.toSet() ?: emptySet(),
+                    ?.toSet()
+                    ?.ifEmpty { null },
             )
         }
     }
@@ -346,7 +347,7 @@ data class AppFunctionDataTypeMetadataDocument(
                 AppFunctionIntTypeMetadata(
                     isNullable = isNullable,
                     description = description,
-                    enumValues.map { it.toInt() }.toSet(),
+                    enumValues.map { it.toInt() }.toSet().ifEmpty { null },
                 )
 
             AppFunctionDataTypeMetadata.TYPE_LONG ->

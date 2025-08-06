@@ -342,43 +342,50 @@ public class `$SchemaAppFunctionInventory_Impl` : SchemaAppFunctionInventory() {
     private val JAVA_TIME_LOCALDATETIME_OBJECT_DATA_TYPE_PROPERTIES_MAP_YEAR:
         AppFunctionIntTypeMetadata = AppFunctionIntTypeMetadata(
             isNullable = false,
-            description = ""
+            description = "",
+            enumValues = null,
         )
 
     private val JAVA_TIME_LOCALDATETIME_OBJECT_DATA_TYPE_PROPERTIES_MAP_MONTH:
         AppFunctionIntTypeMetadata = AppFunctionIntTypeMetadata(
             isNullable = false,
-            description = ""
+            description = "",
+            enumValues = null,
         )
 
     private val JAVA_TIME_LOCALDATETIME_OBJECT_DATA_TYPE_PROPERTIES_MAP_DAYOFMONTH:
         AppFunctionIntTypeMetadata = AppFunctionIntTypeMetadata(
             isNullable = false,
-            description = ""
+            description = "",
+            enumValues = null,
         )
 
     private val JAVA_TIME_LOCALDATETIME_OBJECT_DATA_TYPE_PROPERTIES_MAP_HOUR:
         AppFunctionIntTypeMetadata = AppFunctionIntTypeMetadata(
             isNullable = false,
-            description = ""
+            description = "",
+            enumValues = null,
         )
 
     private val JAVA_TIME_LOCALDATETIME_OBJECT_DATA_TYPE_PROPERTIES_MAP_MINUTE:
         AppFunctionIntTypeMetadata = AppFunctionIntTypeMetadata(
             isNullable = false,
-            description = ""
+            description = "",
+            enumValues = null,
         )
 
     private val JAVA_TIME_LOCALDATETIME_OBJECT_DATA_TYPE_PROPERTIES_MAP_SECOND:
         AppFunctionIntTypeMetadata = AppFunctionIntTypeMetadata(
             isNullable = false,
-            description = ""
+            description = "",
+            enumValues = null,
         )
 
     private val JAVA_TIME_LOCALDATETIME_OBJECT_DATA_TYPE_PROPERTIES_MAP_NANOOFSECOND:
         AppFunctionIntTypeMetadata = AppFunctionIntTypeMetadata(
             isNullable = false,
-            description = ""
+            description = "",
+            enumValues = null,
         )
 
     private val JAVA_TIME_LOCALDATETIME_OBJECT_DATA_TYPE_PROPERTIES_MAP:
