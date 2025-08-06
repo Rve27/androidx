@@ -19,9 +19,7 @@ package androidx.camera.extensions
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.ImageFormat
-import android.graphics.SurfaceTexture
 import android.util.Log
-import android.util.Size
 import android.view.Surface
 import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
@@ -42,7 +40,6 @@ import androidx.camera.testing.impl.CameraUtil.PreTestCameraIdList
 import androidx.camera.testing.impl.ExifUtil
 import androidx.camera.testing.impl.ExtensionsUtil.assumePcsSupportedForImageCapture
 import androidx.camera.testing.impl.SurfaceTextureProvider
-import androidx.camera.testing.impl.SurfaceTextureProvider.SurfaceTextureCallback
 import androidx.camera.testing.impl.WakelockEmptyActivityRule
 import androidx.camera.testing.impl.fakes.FakeLifecycleOwner
 import androidx.test.core.app.ApplicationProvider
@@ -370,22 +367,8 @@ class ImageCaptureTest(
         val preview = Preview.Builder().build()
         return withContext(Dispatchers.Main) {
             // To set the update listener and Preview will change to active state.
-            preview.setSurfaceProvider(
-                SurfaceTextureProvider.createSurfaceTextureProvider(
-                    object : SurfaceTextureCallback {
-                        override fun onSurfaceTextureReady(
-                            surfaceTexture: SurfaceTexture,
-                            resolution: Size,
-                        ) {
-                            // No-op.
-                        }
-
-                        override fun onSafeToRelease(surfaceTexture: SurfaceTexture) {
-                            // No-op.
-                        }
-                    }
-                )
-            )
+            preview.surfaceProvider =
+                SurfaceTextureProvider.createAutoDrainingSurfaceTextureProvider()
 
             val camera =
                 cameraProvider.bindToLifecycle(
@@ -458,22 +441,8 @@ class ImageCaptureTest(
         val preview = Preview.Builder().build()
         return withContext(Dispatchers.Main) {
             // To set the update listener and Preview will change to active state.
-            preview.setSurfaceProvider(
-                SurfaceTextureProvider.createSurfaceTextureProvider(
-                    object : SurfaceTextureCallback {
-                        override fun onSurfaceTextureReady(
-                            surfaceTexture: SurfaceTexture,
-                            resolution: Size,
-                        ) {
-                            // No-op.
-                        }
-
-                        override fun onSafeToRelease(surfaceTexture: SurfaceTexture) {
-                            // No-op.
-                        }
-                    }
-                )
-            )
+            preview.surfaceProvider =
+                SurfaceTextureProvider.createAutoDrainingSurfaceTextureProvider()
 
             val camera =
                 cameraProvider.bindToLifecycle(
