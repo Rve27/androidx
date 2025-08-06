@@ -188,6 +188,7 @@ fun ListDetailPaneScaffoldSampleWithExtraPane() {
             rememberPaneExpansionState(
                 keyProvider = scaffoldNavigator.scaffoldValue,
                 anchors = PaneExpansionAnchors,
+                initialAnchoredIndex = 1,
             ),
         paneExpansionDragHandle = { state -> PaneExpansionDragHandleSample(state) },
     )
@@ -811,8 +812,8 @@ private fun RadioButtonRow(
 private val PaneExpansionAnchors =
     listOf(
         PaneExpansionAnchor.Proportion(0f),
-        PaneExpansionAnchor.Offset.fromStart(360.dp),
+        PaneExpansionAnchor.Offset.fromStart(240.dp),
         PaneExpansionAnchor.Proportion(0.5f),
-        PaneExpansionAnchor.Offset.fromEnd(360.dp),
+        PaneExpansionAnchor.Offset.fromEnd(240.dp),
         PaneExpansionAnchor.Proportion(1f),
     )

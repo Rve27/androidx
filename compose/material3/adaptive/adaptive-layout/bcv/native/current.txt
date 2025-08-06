@@ -468,6 +468,7 @@ sealed class androidx.compose.material3.adaptive.layout/PaneExpansionAnchor { //
 
         open fun equals(kotlin/Any?): kotlin/Boolean // androidx.compose.material3.adaptive.layout/PaneExpansionAnchor.Offset.equals|equals(kotlin.Any?){}[0]
         open fun hashCode(): kotlin/Int // androidx.compose.material3.adaptive.layout/PaneExpansionAnchor.Offset.hashCode|hashCode(){}[0]
+        open fun toString(): kotlin/String // androidx.compose.material3.adaptive.layout/PaneExpansionAnchor.Offset.toString|toString(){}[0]
 
         final value class Direction { // androidx.compose.material3.adaptive.layout/PaneExpansionAnchor.Offset.Direction|null[0]
             final fun equals(kotlin/Any?): kotlin/Boolean // androidx.compose.material3.adaptive.layout/PaneExpansionAnchor.Offset.Direction.equals|equals(kotlin.Any?){}[0]
@@ -498,6 +499,7 @@ sealed class androidx.compose.material3.adaptive.layout/PaneExpansionAnchor { //
 
         final fun equals(kotlin/Any?): kotlin/Boolean // androidx.compose.material3.adaptive.layout/PaneExpansionAnchor.Proportion.equals|equals(kotlin.Any?){}[0]
         final fun hashCode(): kotlin/Int // androidx.compose.material3.adaptive.layout/PaneExpansionAnchor.Proportion.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // androidx.compose.material3.adaptive.layout/PaneExpansionAnchor.Proportion.toString|toString(){}[0]
     }
 }
 
