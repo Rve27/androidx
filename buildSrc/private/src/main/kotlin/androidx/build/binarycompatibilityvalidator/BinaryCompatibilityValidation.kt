@@ -28,6 +28,7 @@ import androidx.build.checkapi.shouldWriteVersionedApiFile
 import androidx.build.getDistributionDirectory
 import androidx.build.getLibraryByName
 import androidx.build.getSupportRootFolder
+import androidx.build.isWriteVersionedApiFilesEnabled
 import androidx.build.metalava.UpdateApiTask
 import androidx.build.uptodatedness.cacheEvenIfNoOutputs
 import androidx.build.version
@@ -385,6 +386,7 @@ private fun Project.getRequiredCompatibilityAbiLocation(suffix: String) =
         project.getBcvFileDirectory().dir(suffix).asFile,
         project.version(),
         ApiType.CLASSAPI,
+        enforceVersionContinuity = isWriteVersionedApiFilesEnabled(),
     )
 
 private fun KotlinMultiplatformExtension.nativeTargets() =

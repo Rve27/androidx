@@ -223,7 +223,6 @@ dependencies {
     docs(project(":leanback:leanback-tab"))
     kmpDocs(project(":lifecycle:lifecycle-common"))
     docs(project(":lifecycle:lifecycle-common-java8"))
-    docs(project(":lifecycle:lifecycle-extensions"))
     docs(project(":lifecycle:lifecycle-livedata"))
     docs(project(":lifecycle:lifecycle-livedata-core"))
     docs(project(":lifecycle:lifecycle-livedata-core-ktx"))
