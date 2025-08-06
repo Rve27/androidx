@@ -195,10 +195,15 @@ public final class ImpressApiImpl implements ImpressApi {
                                     // TODO: b/374217508 - Publish a more precisely typed Exception
                                     // interface for this.
                                     if (message.contains("CANCELLED")) {
-                                        completer.setCancelled();
+                                        onCancelled(message);
                                     } else {
                                         completer.setException(new Exception(message));
                                     }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull String message) {
+                                    completer.setCancelled();
                                 }
                             },
                             path);
@@ -235,10 +240,15 @@ public final class ImpressApiImpl implements ImpressApi {
                                     // TODO: b/374217508 - Publish a more precisely typed Exception
                                     // interface for this.
                                     if (message.contains("CANCELLED")) {
-                                        completer.setCancelled();
+                                        onCancelled(message);
                                     } else {
                                         completer.setException(new Exception(message));
                                     }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull String message) {
+                                    completer.setCancelled();
                                 }
                             },
                             data,
@@ -277,10 +287,15 @@ public final class ImpressApiImpl implements ImpressApi {
                                     // TODO: b/374217508 - Publish a more precisely typed Exception
                                     // interface for this.
                                     if (message.contains("CANCELLED")) {
-                                        completer.setCancelled();
+                                        onCancelled(message);
                                     } else {
                                         completer.setException(new Exception(message));
                                     }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull String message) {
+                                    completer.setCancelled();
                                 }
                             },
                             path);
@@ -315,10 +330,15 @@ public final class ImpressApiImpl implements ImpressApi {
                                     // TODO: b/374217508 - Publish a more precisely typed Exception
                                     // interface for this.
                                     if (message.contains("CANCELLED")) {
-                                        completer.setCancelled();
+                                        onCancelled(message);
                                     } else {
                                         completer.setException(new Exception(message));
                                     }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull String message) {
+                                    completer.setCancelled();
                                 }
                             },
                             data,
@@ -404,10 +424,15 @@ public final class ImpressApiImpl implements ImpressApi {
                                     // TODO: b/374217508 - Publish a more precisely typed Exception
                                     // interface for this.
                                     if (message.contains("CANCELLED")) {
-                                        completer.setCancelled();
+                                        onCancelled(message);
                                     } else {
-                                        completer.setException(new Exception(message));
+                                        mCompleter.setException(new Exception(message));
                                     }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull String message) {
+                                    mCompleter.setCancelled();
                                 }
                             });
                     return "AnimateGltfModel Operation";
@@ -577,10 +602,15 @@ public final class ImpressApiImpl implements ImpressApi {
                                     // TODO: b/374217508 - Publish a more precisely typed Exception
                                     // interface for this.
                                     if (message.contains("CANCELLED")) {
-                                        completer.setCancelled();
+                                        onCancelled(message);
                                     } else {
                                         completer.setException(new Exception(message));
                                     }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull String message) {
+                                    completer.setCancelled();
                                 }
                             },
                             path,
@@ -651,10 +681,15 @@ public final class ImpressApiImpl implements ImpressApi {
                                     // TODO: b/374217508 - Publish a more precisely typed Exception
                                     // interface for this.
                                     if (message.contains("CANCELLED")) {
-                                        completer.setCancelled();
+                                        onCancelled(message);
                                     } else {
                                         completer.setException(new Exception(message));
                                     }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull String message) {
+                                    completer.setCancelled();
                                 }
                             },
                             isAlphaMapVersion);
@@ -755,10 +790,15 @@ public final class ImpressApiImpl implements ImpressApi {
                                     // TODO: b/374217508 - Publish a more precisely typed Exception
                                     // interface for this.
                                     if (message.contains("CANCELLED")) {
-                                        completer.setCancelled();
+                                        onCancelled(message);
                                     } else {
                                         completer.setException(new Exception(message));
                                     }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull String message) {
+                                    completer.setCancelled();
                                 }
                             },
                             spec.getLightingModel(),

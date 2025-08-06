@@ -1415,16 +1415,6 @@ package androidx.xr.scenecore.impl.extensions {
 
 package androidx.xr.scenecore.impl.impress {
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface AssetAnimator {
-    method public void onComplete();
-    method public void onFailure(String message);
-  }
-
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface AssetLoader {
-    method public void onFailure(String message);
-    method public void onSuccess(long value);
-  }
-
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public class BindingsObjectPhantomReference extends java.lang.ref.PhantomReference<java.lang.Object!> {
   }
 
