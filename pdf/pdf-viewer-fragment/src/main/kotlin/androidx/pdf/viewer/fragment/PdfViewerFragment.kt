@@ -57,11 +57,11 @@ import androidx.pdf.content.ExternalLink
 import androidx.pdf.event.PdfTrackingEvent
 import androidx.pdf.event.RequestFailureEvent
 import androidx.pdf.featureflag.PdfFeatureFlags.isExternalHardwareInteractionEnabled
+import androidx.pdf.selection.Selection
 import androidx.pdf.util.AnnotationUtils
 import androidx.pdf.util.Uris
 import androidx.pdf.view.PdfContentLayout
 import androidx.pdf.view.PdfView
-import androidx.pdf.view.Selection
 import androidx.pdf.view.ToolBoxView
 import androidx.pdf.view.search.PdfSearchView
 import androidx.pdf.viewer.PdfPasswordDialog

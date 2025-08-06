@@ -28,6 +28,7 @@ import android.widget.FrameLayout
 import androidx.pdf.PdfPoint
 import androidx.pdf.content.PdfPageTextContent
 import androidx.pdf.featureflag.PdfFeatureFlags
+import androidx.pdf.selection.model.TextSelection
 import androidx.pdf.util.ZoomUtils
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso

@@ -17,7 +17,7 @@ package androidx.pdf.selection
 
 import android.os.Build
 import androidx.pdf.featureflag.PdfFeatureFlags
-import androidx.pdf.view.TextSelection
+import androidx.pdf.selection.model.TextSelection
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SdkSuppress
 import androidx.test.platform.app.InstrumentationRegistry

@@ -57,8 +57,12 @@ import androidx.pdf.event.RequestFailureEvent
 import androidx.pdf.exceptions.RequestFailedException
 import androidx.pdf.models.FormWidgetInfo
 import androidx.pdf.selection.ContextMenuComponent
+import androidx.pdf.selection.Selection
 import androidx.pdf.selection.SelectionActionModeCallback
 import androidx.pdf.selection.SelectionMenuManager
+import androidx.pdf.selection.SelectionRenderer
+import androidx.pdf.selection.SelectionStateManager
+import androidx.pdf.selection.SelectionUiSignal
 import androidx.pdf.util.Accessibility
 import androidx.pdf.util.MathUtils
 import androidx.pdf.util.ZoomUtils

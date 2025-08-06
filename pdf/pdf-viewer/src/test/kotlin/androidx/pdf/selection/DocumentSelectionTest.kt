@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
+package androidx.pdf.selection
+
 import android.graphics.RectF
 import android.util.SparseArray
 import androidx.pdf.PdfRect
-import androidx.pdf.view.DocumentSelection
-import androidx.pdf.view.Selection
-import androidx.pdf.view.TextSelection
+import androidx.pdf.selection.model.TextSelection
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith

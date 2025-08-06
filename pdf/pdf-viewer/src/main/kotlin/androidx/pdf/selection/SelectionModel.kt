@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.pdf.view
+package androidx.pdf.selection
 
 import android.annotation.SuppressLint
 import android.graphics.PointF
@@ -22,11 +22,14 @@ import android.os.Parcel
 import android.os.Parcelable
 import androidx.annotation.VisibleForTesting
 import androidx.core.util.isEmpty
-import androidx.pdf.PdfDocument
 import androidx.pdf.PdfPoint
 import androidx.pdf.PdfRect
 import androidx.pdf.content.PageSelection
-import kotlin.collections.forEach
+import androidx.pdf.selection.model.TextSelection
+import androidx.pdf.view.pdfPointFromParcel
+import androidx.pdf.view.writeToParcel
+import kotlin.collections.firstOrNull
+import kotlin.collections.lastOrNull
 
 /** Value class containing all data necessary to display UI related to content selection */
 @SuppressLint("BanParcelableUsage")
@@ -75,7 +78,8 @@ internal constructor(
          * Combines multiple selections from different pages into a single [SelectionModel].
          *
          * @param currentSelection The current selection, can be `null` if no selection yet exists.
-         * @param newPageSelections New [PageSelection] objects on different pages.
+         * @param newPageSelections New [androidx.pdf.content.PageSelection] objects on different
+         *   pages.
          * @return A [SelectionModel] that encompasses all selections, or `null` if none were found.
          */
         fun getCombinedSelectionModel(
@@ -129,8 +133,8 @@ internal constructor(
         }
 
         /**
-         * Returns a [Selection] as exposed in the [PdfView] API from a [PageSelection] as produced
-         * by the [PdfDocument] API
+         * Returns a [Selection] as exposed in the [androidx.pdf.view.PdfView] API from a
+         * [PageSelection] as produced by the [androidx.pdf.PdfDocument] API
          */
         private fun PageSelection.toViewSelection(): Selection {
             val flattenedBounds =

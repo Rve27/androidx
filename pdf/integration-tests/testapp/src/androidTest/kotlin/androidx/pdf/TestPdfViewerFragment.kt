@@ -31,9 +31,9 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.pdf.content.ExternalLink
 import androidx.pdf.idlingresource.PdfIdlingResource
+import androidx.pdf.selection.Selection
 import androidx.pdf.testapp.R
 import androidx.pdf.view.PdfView
-import androidx.pdf.view.Selection
 import androidx.pdf.viewer.fragment.PdfStylingOptions
 import androidx.pdf.viewer.fragment.PdfViewerFragment
 import com.google.android.material.floatingactionbutton.FloatingActionButton

@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package androidx.pdf.view
+package androidx.pdf.selection
 
 import android.os.Parcel
 import android.util.SparseArray
 import androidx.annotation.RestrictTo
 import androidx.core.util.forEach
-import kotlin.collections.filterIsInstance
-import kotlin.collections.joinToString
+import androidx.pdf.selection.model.TextSelection
+import androidx.pdf.selection.model.textSelectionFromParcel
+import androidx.pdf.selection.model.writeToParcel
 
 /**
  * Represents the selected content in the document. The key is the page number and the value is a

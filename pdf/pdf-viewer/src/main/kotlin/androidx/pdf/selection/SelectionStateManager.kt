@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.pdf.view
+package androidx.pdf.selection
 
 import android.graphics.Point
 import android.graphics.PointF
@@ -32,6 +32,7 @@ import androidx.pdf.content.PageSelection
 import androidx.pdf.exceptions.RequestFailedException
 import androidx.pdf.exceptions.RequestMetadata
 import androidx.pdf.util.CONTENT_SELECTION_REQUEST_NAME
+import androidx.pdf.view.PageMetadataLoader
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
@@ -73,8 +74,8 @@ internal class SelectionStateManager(
 
     /**
      * Potentially updates the location of a drag handle given the [action] and [location] of a
-     * [MotionEvent] within the [PdfView]. If a drag handle is moved, the current selection is
-     * updated asynchronously.
+     * [MotionEvent] within the [androidx.pdf.view.PdfView]. If a drag handle is moved, the current
+     * selection is updated asynchronously.
      *
      * @param currentZoom is used only to scale the size of the drag handle's touch target based on
      *   the zoom factor
@@ -497,20 +498,23 @@ internal class SelectionStateManager(
         }
 }
 
-/** Signals to [PdfView] to update the UI in regards to a change in selection state */
+/**
+ * Signals to [androidx.pdf.view.PdfView] to update the UI in regards to a change in selection state
+ */
 internal sealed interface SelectionUiSignal {
-    /** [PdfView] should invalidate itself to reflect a change in selection */
+    /** [androidx.pdf.view.PdfView] should invalidate itself to reflect a change in selection */
     object Invalidate : SelectionUiSignal
 
     /**
-     * [PdfView] should play haptic feedback to indicate the start or end of a change in selection
+     * [androidx.pdf.view.PdfView] should play haptic feedback to indicate the start or end of a
+     * change in selection
      *
-     * @param level should be a value from [android.view.HapticFeedbackConstants] indicating the
-     *   type of haptic feedback to play
+     * @param level should be a value from [HapticFeedbackConstants] indicating the type of haptic
+     *   feedback to play
      */
     class PlayHapticFeedback(val level: Int) : SelectionUiSignal
 
-    /** [PdfView] should show or hide the selection action mode */
+    /** [androidx.pdf.view.PdfView] should show or hide the selection action mode */
     class ToggleActionMode(val show: Boolean) : SelectionUiSignal
 }
 

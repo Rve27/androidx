@@ -18,6 +18,7 @@ package androidx.pdf.view
 
 import android.graphics.PointF
 import androidx.pdf.PdfPoint
+import androidx.pdf.selection.model.TextSelection
 import androidx.pdf.util.ClipboardUtils
 import androidx.pdf.util.ZoomUtils
 import kotlin.math.roundToInt
