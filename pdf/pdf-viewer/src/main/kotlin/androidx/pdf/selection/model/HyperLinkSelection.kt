@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,6 +16,7 @@
 
 package androidx.pdf.selection.model
 
+import android.net.Uri
 import android.os.Parcel
 import android.text.TextUtils
 import androidx.pdf.PdfRect
@@ -24,21 +25,28 @@ import androidx.pdf.view.pdfRectFromParcel
 import androidx.pdf.view.writeToParcel
 
 /**
- * Represents text content that has been selected.
+ * A [Selection] for a hyperlink.
  *
- * @property text The selected text.
- * @property bounds The bounding rectangles of the selected text.
+ * This represents a text range that is also a hyperlink, containing both the link and the text that
+ * is displayed.
+ *
+ * @property link The URL of the hyperlink.
+ * @property text The text that is displayed as a hyperlink.
+ * @property bounds The list of bounding boxes for the text.
  */
-public class TextSelection(public val text: CharSequence, override val bounds: List<PdfRect>) :
-    Selection {
-
+internal class HyperLinkSelection(
+    public val link: Uri,
+    public val text: CharSequence,
+    override val bounds: List<PdfRect>,
+) : Selection {
     /** Returns [text] as a [String] */
     public fun textAsString(): String = text.toString()
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other == null || other !is TextSelection) return false
+        if (other == null || other !is HyperLinkSelection) return false
 
+        if (other.link != this.link) return false
         if (other.text != this.text) return false
         if (other.bounds != this.bounds) return false
 
@@ -46,17 +54,19 @@ public class TextSelection(public val text: CharSequence, override val bounds: L
     }
 
     override fun hashCode(): Int {
-        var result = text.hashCode()
+        var result = link.hashCode()
+        result = 31 * result + text.hashCode()
         result = 31 * result + bounds.hashCode()
         return result
     }
 
     override fun toString(): String {
-        return "TextSelection: text $text bounds $bounds"
+        return "HyperLinkSelection: link $link text $text bounds $bounds"
     }
 
-    /** Writes a [TextSelection] to [dest]. */
+    /** Writes a [HyperLinkSelection] to [dest]. */
     internal fun writeToParcel(dest: Parcel, flags: Int) {
+        dest.writeParcelable(link, flags)
         TextUtils.writeToParcel(text, dest, flags)
         dest.writeInt(bounds.size)
         for (bound in bounds) {
@@ -66,16 +76,17 @@ public class TextSelection(public val text: CharSequence, override val bounds: L
 }
 
 /**
- * Reads a [TextSelection] from [source].
+ * Reads a [HyperLinkSelection] from [source].
  *
  * Not part of the public API because public APIs cannot be [android.os.Parcelable]
  */
-internal fun textSelectionFromParcel(source: Parcel): TextSelection {
+internal fun hyperLinkSelectionFromParcel(source: Parcel): HyperLinkSelection {
+    val link = requireNotNull(Uri.CREATOR.createFromParcel(source))
     val text = requireNotNull(TextUtils.CHAR_SEQUENCE_CREATOR.createFromParcel(source))
     val boundsSize = source.readInt()
     val bounds = mutableListOf<PdfRect>()
     for (i in 0 until boundsSize) {
         bounds.add(pdfRectFromParcel(source))
     }
-    return TextSelection(text, bounds.toList())
+    return HyperLinkSelection(link, text, bounds.toList())
 }
