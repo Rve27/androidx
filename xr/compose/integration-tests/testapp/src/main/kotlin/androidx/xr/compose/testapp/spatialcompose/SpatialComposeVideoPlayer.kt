@@ -177,6 +177,15 @@ class SpatialComposeVideoPlayer : ComponentActivity() {
             mediaUriState.value = Uri.fromFile(file)
         }
 
+        if (!File(drmVideoUri).exists()) {
+            Toast.makeText(
+                    this@SpatialComposeVideoPlayer,
+                    "Drm file does not exist. Please adb push the asset if using drm.",
+                    Toast.LENGTH_LONG,
+                )
+                .show()
+        }
+
         // For a transparent SpatialMainPanel.
         window.setBackgroundDrawableResource(android.R.color.transparent)
 
@@ -435,6 +444,16 @@ class SpatialComposeVideoPlayer : ComponentActivity() {
                                             }
                                         }
 
+                                        Button(
+                                            onClick = { useDrmState.value = !useDrmState.value }
+                                        ) {
+                                            if (useDrmState.value) {
+                                                Text("Use picker video uri")
+                                            } else {
+                                                Text("Use drm video uri")
+                                            }
+                                        }
+
                                         val text =
                                             "Current stereo mode: " +
                                                 when (stereoMode) {
@@ -479,25 +498,24 @@ class SpatialComposeVideoPlayer : ComponentActivity() {
                                             ) {
                                                 Text("Side by Side")
                                             }
-                                            Row(
-                                                modifier = Modifier.padding(bottom = 16.dp),
-                                                verticalAlignment = Alignment.CenterVertically,
+                                        }
+                                        Row(
+                                            modifier = Modifier.padding(bottom = 16.dp),
+                                            verticalAlignment = Alignment.CenterVertically,
+                                        ) {
+                                            Button(
+                                                onClick = {
+                                                    stereoMode = StereoMode.MultiviewLeftPrimary
+                                                }
                                             ) {
-                                                Button(
-                                                    onClick = {
-                                                        stereoMode = StereoMode.MultiviewLeftPrimary
-                                                    }
-                                                ) {
-                                                    Text("Multiview Left Primary")
+                                                Text("Multiview Left Primary")
+                                            }
+                                            Button(
+                                                onClick = {
+                                                    stereoMode = StereoMode.MultiviewRightPrimary
                                                 }
-                                                Button(
-                                                    onClick = {
-                                                        stereoMode =
-                                                            StereoMode.MultiviewRightPrimary
-                                                    }
-                                                ) {
-                                                    Text("Multiview Right Primary")
-                                                }
+                                            ) {
+                                                Text("Multiview Right Primary")
                                             }
                                         }
 
