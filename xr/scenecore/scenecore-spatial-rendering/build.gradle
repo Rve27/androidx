@@ -63,7 +63,7 @@ android {
 
 androidx {
     name = "XR SceneCore Spatial Rendering"
-    type = SoftwareType.PUBLISHED_LIBRARY
+    type = SoftwareType.SNAPSHOT_ONLY_LIBRARY_WITH_API_TASKS
     inceptionYear = "2025"
     description = "SceneCore's rendering implementation for devices with full spatial capabilities, enabling a comprehensive experience."
 
