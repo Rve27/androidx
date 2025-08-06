@@ -223,6 +223,9 @@ public fun SpatialPanel(
     view.setContent {
         val dialogManager = LocalDialogManager.current
         val isDialogActive = dialogManager.isSpatialDialogActive.value
+
+        CompositionLocalProvider(LocalOpaqueEntity provides corePanelEntity, content = content)
+
         if (isDialogActive) {
             Box(
                 modifier =
@@ -239,8 +242,6 @@ public fun SpatialPanel(
                     Color.TRANSPARENT.toDrawable()
                 }
         }
-
-        CompositionLocalProvider(LocalOpaqueEntity provides corePanelEntity, content = content)
     }
 
     ComposeNode<ComposeSubspaceNode, Applier<Any>>(
