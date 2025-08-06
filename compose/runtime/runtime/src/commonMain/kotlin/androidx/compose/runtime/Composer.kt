@@ -3756,11 +3756,12 @@ internal class ComposerImpl(
     }
 
     fun parentStackTrace(): List<ComposeStackTraceFrame> {
-        val composition = parentContext.composition as? CompositionImpl ?: return emptyList()
-        val position = composition.slotTable.findSubcompositionContextGroup(parentContext)
+        val parentComposition = parentContext.composition as? CompositionImpl ?: return emptyList()
+        val position = parentComposition.slotTable.findSubcompositionContextGroup(parentContext)
 
         return if (position != null) {
-            composition.slotTable.read { reader -> reader.traceForGroup(position, 0) }
+            parentComposition.slotTable.read { reader -> reader.traceForGroup(position, 0) } +
+                parentComposition.composer.parentStackTrace()
         } else {
             emptyList()
         }
