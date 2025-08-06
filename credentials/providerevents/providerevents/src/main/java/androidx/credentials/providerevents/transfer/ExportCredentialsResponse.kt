@@ -17,6 +17,7 @@
 package androidx.credentials.providerevents.transfer
 
 import android.os.Bundle
+import androidx.annotation.RestrictTo
 
 /**
  * Success response of exporting the credentials to the provider
@@ -34,6 +35,7 @@ public class ExportCredentialsResponse(public val exportResults: Map<String, Per
 
         /** Wraps the response class into a bundle */
         @JvmStatic
+        @RestrictTo(RestrictTo.Scope.LIBRARY)
         public fun toBundle(response: ExportCredentialsResponse): Bundle =
             Bundle().apply {
                 for (result in response.exportResults.entries) {

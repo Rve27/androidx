@@ -17,10 +17,14 @@
 package androidx.credentials.providerevents.exception
 
 /** The request json cannot be read because it is written in invalid format */
-public class ImportCredentialsInvalidJsonException(errorMessage: String? = null) :
-    ImportCredentialsException(TYPE_IMPORT_CREDENTIALS_INVALID_JSON_EXCEPTION, errorMessage) {
+public class GetCredentialTransferCapabilitiesInvalidJsonException(errorMessage: String? = null) :
+    GetCredentialTransferCapabilitiesException(
+        TYPE_GET_CREDENTIAL_TRANSFER_CAPABILITIES_INVALID_JSON_EXCEPTION,
+        errorMessage,
+    ) {
     internal companion object {
-        internal const val TYPE_IMPORT_CREDENTIALS_INVALID_JSON_EXCEPTION: String =
-            "androidx.credentials.providerevents.exception.TYPE_IMPORT_CREDENTIALS_INVALID_JSON_EXCEPTION"
+        internal const val TYPE_GET_CREDENTIAL_TRANSFER_CAPABILITIES_INVALID_JSON_EXCEPTION:
+            String =
+            "androidx.credentials.providerevents.exception.TYPE_GET_CREDENTIAL_TRANSFER_CAPABILITIES_INVALID_JSON_EXCEPTION"
     }
 }
