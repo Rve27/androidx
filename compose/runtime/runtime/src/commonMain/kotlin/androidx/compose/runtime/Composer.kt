@@ -397,8 +397,10 @@ internal constructor(
 ) {
     /** Transfer any invalidations that may have accumulated since this reference was created. */
     internal fun transferPendingInvalidations() {
-        invalidations =
-            invalidations + (composition as CompositionImpl).extractInvalidationsOf(anchor)
+        if (anchor.valid) {
+            invalidations =
+                invalidations + (composition as CompositionImpl).extractInvalidationsOf(anchor)
+        }
     }
 }
 
