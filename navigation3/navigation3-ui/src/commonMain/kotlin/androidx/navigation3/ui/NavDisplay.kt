@@ -199,7 +199,10 @@ public fun <T : Any> NavDisplay(
             }
         } while (overlaidEntries != null)
         val overlayScenes = allScenes.dropLast(1)
-        val scene = allScenes.last()
+        val scene =
+            remember(backStack.map { it }, entryDecorators.map { it }, sceneStrategy, onBack) {
+                allScenes.last()
+            }
 
         // Predictive Back Handling
         val gestureState by
@@ -420,6 +423,7 @@ public fun <T : Any> NavDisplay(
         // Show all OverlayScene instances above the AnimatedContent
         overlayScenes.fastForEachReversed { overlayScene ->
             // TODO Calculate what entries should be displayed from sceneToRenderableEntryMap
+            @Suppress("ListIterator")
             val allEntries = overlayScene.entries.map { it.contentKey }.toSet()
             CompositionLocalProvider(LocalEntriesToRenderInCurrentScene provides allEntries) {
                 overlayScene.content.invoke()
