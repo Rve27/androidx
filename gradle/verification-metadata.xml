@@ -215,6 +215,7 @@
             <trusting group="net.java"/>
             <trusting group="org.sonatype.oss"/>
          </trusted-key>
+         <trusted-key id="46F3DC86887FD87EB57BC65BF9FEA41F99E66CC8" group="de.javagl"/>
          <trusted-key id="47504B76CF89C15C0512D9AFE16AB52D79FD224F">
             <trusting group="com.google.api"/>
             <trusting group="com.google.api-client"/>
