@@ -17,6 +17,7 @@
 package androidx.xr.compose.subspace.layout
 
 import android.annotation.SuppressLint
+import android.view.Surface
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -306,6 +307,8 @@ internal class CoreSurfaceEntity(
     internal val surfaceEntity: SurfaceEntity,
     private val localDensity: Density,
 ) : CoreEntity(surfaceEntity), ResizableCoreEntity, MovableCoreEntity {
+    private var pendingOnSurfaceDestroyed: ((Surface) -> Unit)? = null
+
     internal var stereoMode: Int
         get() = surfaceEntity.stereoMode
         set(value) {
@@ -329,6 +332,16 @@ internal class CoreSurfaceEntity(
                 updateFeathering()
             }
         }
+
+    override fun dispose() {
+        pendingOnSurfaceDestroyed?.let { it(surfaceEntity.getSurface()) }
+        pendingOnSurfaceDestroyed = null
+        super.dispose()
+    }
+
+    internal fun setOnSurfaceDestroyed(onSurfaceDestroyed: (Surface) -> Unit) {
+        pendingOnSurfaceDestroyed = onSurfaceDestroyed
+    }
 
     internal fun setFeatheringEffect(featheringEffect: SpatialFeatheringEffect) {
         currentFeatheringEffect = featheringEffect
@@ -372,7 +385,7 @@ internal class CoreSphereSurfaceEntity(
     private val headPose: Pose?,
     val initialDensity: Density,
 ) : CoreEntity(surfaceEntity) {
-
+    private var pendingOnSurfaceDestroyed: ((Surface) -> Unit)? = null
     internal var stereoMode: Int
         get() = surfaceEntity.stereoMode
         set(value) {
@@ -385,7 +398,13 @@ internal class CoreSphereSurfaceEntity(
 
     override fun dispose() {
         isDisposed = true
+        pendingOnSurfaceDestroyed?.let { it(surfaceEntity.getSurface()) }
+        pendingOnSurfaceDestroyed = null
         super.dispose()
+    }
+
+    internal fun setOnSurfaceDestroyed(onSurfaceDestroyed: (Surface) -> Unit) {
+        pendingOnSurfaceDestroyed = onSurfaceDestroyed
     }
 
     internal var isBoundaryAvailable = true
