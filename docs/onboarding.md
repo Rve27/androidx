@@ -371,6 +371,14 @@ at any time to see an updated list of the remaining errors.
 
 ## Building {#building}
 
+Gradle `:tasks` command allows you to find all the useful tasks for a given
+project. For example, the following command will let you find tasks available
+for `:core:core` project:
+
+```bash
+./gradlew :core:core:tasks
+```
+
 ### Modules and Maven artifacts {#modules-and-maven-artifacts}
 
 To build a specific module, use the module's `assemble` Gradle task. For
@@ -486,9 +494,6 @@ which is typically used for plugin and IDE development.
 Our reference docs (Javadocs and KotlinDocs) are published to
 https://developer.android.com/reference/androidx/packages and may be built
 locally.
-
-NOTE `./gradlew tasks` always has the canonical task information! When in doubt,
-run `./gradlew tasks`
 
 #### Generate docs
 
