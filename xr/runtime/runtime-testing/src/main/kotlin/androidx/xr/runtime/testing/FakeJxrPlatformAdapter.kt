@@ -217,7 +217,7 @@ public class FakeJxrPlatformAdapter : JxrPlatformAdapter {
     @Suppress("AsyncSuffixFuture")
     override fun createWaterMaterial(
         isAlphaMapVersion: Boolean
-    ): ListenableFuture<MaterialResource>? {
+    ): ListenableFuture<MaterialResource> {
         val newMaterial = FakeWaterMaterial(isAlphaMapVersion)
         createdWaterMaterials.add(newMaterial)
         return immediateFuture(newMaterial)
@@ -326,7 +326,7 @@ public class FakeJxrPlatformAdapter : JxrPlatformAdapter {
     @Suppress("AsyncSuffixFuture")
     override fun createKhronosPbrMaterial(
         spec: KhronosPbrMaterialSpec
-    ): ListenableFuture<MaterialResource>? {
+    ): ListenableFuture<MaterialResource> {
         val newMaterial = FakeKhronosPbrMaterial(spec)
         createdKhronosPbrMaterials.add(newMaterial)
         return immediateFuture(newMaterial)

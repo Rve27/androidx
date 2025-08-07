@@ -160,7 +160,7 @@ public class JxrPlatformAdapterAxr implements JxrPlatformAdapter {
     // been set. The spatial state is kept updated in the SpatialStateCallback.
     private final Supplier<SpatialState> mLazySpatialStateProvider;
 
-    private @Nullable Activity mActivity;
+    private Activity mActivity;
     private SplitEngineSubspaceManager mSplitEngineSubspaceManager;
     private ImpSplitEngineRenderer mSplitEngineRenderer;
     private boolean mFrameLoopStarted;
@@ -728,7 +728,7 @@ public class JxrPlatformAdapterAxr implements JxrPlatformAdapter {
     // warning, however, we get a build error - go/bugpattern/RestrictTo.
     @SuppressWarnings({"RestrictTo", "AsyncSuffixFuture"})
     @Override
-    public @Nullable ListenableFuture<GltfModelResource> loadGltfByAssetName(@NonNull String name) {
+    public @NonNull ListenableFuture<GltfModelResource> loadGltfByAssetName(@NonNull String name) {
         if (!mUseSplitEngine) {
             throw new UnsupportedOperationException(
                     "Loading glTFs is not supported without SplitEngine.");
@@ -739,7 +739,7 @@ public class JxrPlatformAdapterAxr implements JxrPlatformAdapter {
 
     @SuppressWarnings({"RestrictTo", "AsyncSuffixFuture"})
     @Override
-    public @Nullable ListenableFuture<GltfModelResource> loadGltfByByteArray(
+    public @NonNull ListenableFuture<GltfModelResource> loadGltfByByteArray(
             byte @NonNull [] assetData, @NonNull String assetKey) {
         if (!mUseSplitEngine) {
             throw new UnsupportedOperationException(
@@ -754,7 +754,7 @@ public class JxrPlatformAdapterAxr implements JxrPlatformAdapter {
     // warning, however, we get a build error - go/bugpattern/RestrictTo.
     @SuppressWarnings({"RestrictTo", "AsyncSuffixFuture"})
     @Override
-    public @Nullable ListenableFuture<ExrImageResource> loadExrImageByAssetName(
+    public @NonNull ListenableFuture<ExrImageResource> loadExrImageByAssetName(
             @NonNull String assetName) {
         if (!mUseSplitEngine) {
             throw new UnsupportedOperationException(
@@ -766,7 +766,7 @@ public class JxrPlatformAdapterAxr implements JxrPlatformAdapter {
 
     @SuppressWarnings({"RestrictTo", "AsyncSuffixFuture"})
     @Override
-    public @Nullable ListenableFuture<ExrImageResource> loadExrImageByByteArray(
+    public @NonNull ListenableFuture<ExrImageResource> loadExrImageByByteArray(
             byte @NonNull [] assetData, @NonNull String assetKey) {
         if (!mUseSplitEngine) {
             throw new UnsupportedOperationException(
@@ -781,7 +781,7 @@ public class JxrPlatformAdapterAxr implements JxrPlatformAdapter {
     // warning, however, we get a build error - go/bugpattern/RestrictTo.
     @SuppressWarnings({"RestrictTo", "AsyncSuffixFuture"})
     @Override
-    public @Nullable ListenableFuture<TextureResource> loadTexture(
+    public @NonNull ListenableFuture<TextureResource> loadTexture(
             @NonNull String path, @NonNull TextureSampler sampler) {
         if (!mUseSplitEngine) {
             throw new UnsupportedOperationException(
@@ -802,9 +802,8 @@ public class JxrPlatformAdapterAxr implements JxrPlatformAdapter {
             textureFuture = mImpressApi.loadTexture(path, sampler);
         } catch (RuntimeException e) {
             Log.e(TAG, "Failed to load texture with error: " + e.getMessage());
-            // TODO:b/375070346 - make this method NonNull and set the textureResourceFuture to an
-            // exception and return that.
-            return null;
+            textureResourceFuture.setException(e);
+            return textureResourceFuture;
         }
 
         textureFuture.addListener(
@@ -862,7 +861,7 @@ public class JxrPlatformAdapterAxr implements JxrPlatformAdapter {
     // warning, however, we get a build error - go/bugpattern/RestrictTo.
     @SuppressWarnings({"RestrictTo", "AsyncSuffixFuture"})
     @Override
-    public @Nullable ListenableFuture<MaterialResource> createWaterMaterial(
+    public @NonNull ListenableFuture<MaterialResource> createWaterMaterial(
             boolean isAlphaMapVersion) {
         if (!mUseSplitEngine) {
             throw new UnsupportedOperationException(
@@ -883,9 +882,8 @@ public class JxrPlatformAdapterAxr implements JxrPlatformAdapter {
             materialFuture = mImpressApi.createWaterMaterial(isAlphaMapVersion);
         } catch (RuntimeException e) {
             Log.e(TAG, "Failed to load water material with error: " + e.getMessage());
-            // TODO:b/375070346 - make this method NonNull and set the textureResourceFuture to an
-            // exception and return that.
-            return null;
+            materialResourceFuture.setException(e);
+            return materialResourceFuture;
         }
 
         materialFuture.addListener(
@@ -1049,7 +1047,7 @@ public class JxrPlatformAdapterAxr implements JxrPlatformAdapter {
 
     @SuppressWarnings("AsyncSuffixFuture")
     @Override
-    public @Nullable ListenableFuture<MaterialResource> createKhronosPbrMaterial(
+    public @NonNull ListenableFuture<MaterialResource> createKhronosPbrMaterial(
             @NonNull KhronosPbrMaterialSpec spec) {
         ResolvableFuture<MaterialResource> materialResourceFuture = ResolvableFuture.create();
         // TODO:b/374216912 - Consider calling setFuture() here to catch if the application calls
@@ -1066,9 +1064,8 @@ public class JxrPlatformAdapterAxr implements JxrPlatformAdapter {
             materialFuture = mImpressApi.createKhronosPbrMaterial(spec);
         } catch (RuntimeException e) {
             Log.e(TAG, "Failed to load Khronos PBR material with error: " + e.getMessage());
-            // TODO:b/375070346 - make this method NonNull and set the textureResourceFuture to an
-            // exception and return that.
-            return null;
+            materialResourceFuture.setException(e);
+            return materialResourceFuture;
         }
 
         materialFuture.addListener(

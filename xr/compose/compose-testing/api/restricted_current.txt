@@ -205,7 +205,7 @@ package androidx.xr.compose.testing {
     method @BytecodeOnly public androidx.xr.runtime.internal.GltfEntity createGltfEntity(androidx.xr.runtime.math.Pose, androidx.xr.runtime.internal.GltfModelResource, androidx.xr.runtime.internal.Entity);
     method @BytecodeOnly public androidx.xr.runtime.internal.Entity createGroupEntity(androidx.xr.runtime.math.Pose, String, androidx.xr.runtime.internal.Entity);
     method @BytecodeOnly public androidx.xr.runtime.internal.InteractableComponent createInteractableComponent(java.util.concurrent.Executor, androidx.xr.runtime.internal.InputEventListener);
-    method @BytecodeOnly public com.google.common.util.concurrent.ListenableFuture<androidx.xr.runtime.internal.MaterialResource!>? createKhronosPbrMaterial(androidx.xr.runtime.internal.KhronosPbrMaterialSpec);
+    method @BytecodeOnly public com.google.common.util.concurrent.ListenableFuture<androidx.xr.runtime.internal.MaterialResource!> createKhronosPbrMaterial(androidx.xr.runtime.internal.KhronosPbrMaterialSpec);
     method @BytecodeOnly public androidx.xr.runtime.internal.LoggingEntity createLoggingEntity(androidx.xr.runtime.math.Pose);
     method @BytecodeOnly public androidx.xr.runtime.internal.MovableComponent createMovableComponent(boolean, boolean, java.util.Set<androidx.xr.runtime.internal.AnchorPlacement!>, boolean);
     method @BytecodeOnly public androidx.xr.runtime.internal.PanelEntity createPanelEntity(android.content.Context, androidx.xr.runtime.math.Pose, android.view.View, androidx.xr.runtime.internal.Dimensions, String, androidx.xr.runtime.internal.Entity);
@@ -216,7 +216,7 @@ package androidx.xr.compose.testing {
     method @BytecodeOnly public androidx.xr.runtime.internal.SpatialPointerComponent createSpatialPointerComponent();
     method @BytecodeOnly @RestrictTo({androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX}) public androidx.xr.runtime.internal.SubspaceNodeEntity createSubspaceNodeEntity(androidx.xr.runtime.SubspaceNodeHolder<? extends java.lang.Object!>, androidx.xr.runtime.internal.Dimensions);
     method @BytecodeOnly public androidx.xr.runtime.internal.SurfaceEntity createSurfaceEntity(int, androidx.xr.runtime.math.Pose, androidx.xr.runtime.internal.SurfaceEntity.CanvasShape, @androidx.xr.runtime.internal.SurfaceEntity.ContentSecurityLevel int, int, androidx.xr.runtime.internal.Entity);
-    method @BytecodeOnly public com.google.common.util.concurrent.ListenableFuture<androidx.xr.runtime.internal.MaterialResource!>? createWaterMaterial(boolean);
+    method @BytecodeOnly public com.google.common.util.concurrent.ListenableFuture<androidx.xr.runtime.internal.MaterialResource!> createWaterMaterial(boolean);
     method @BytecodeOnly public void destroyKhronosPbrMaterial(androidx.xr.runtime.internal.MaterialResource);
     method @BytecodeOnly public void destroyTexture(androidx.xr.runtime.internal.TextureResource);
     method @BytecodeOnly public void destroyWaterMaterial(androidx.xr.runtime.internal.MaterialResource);

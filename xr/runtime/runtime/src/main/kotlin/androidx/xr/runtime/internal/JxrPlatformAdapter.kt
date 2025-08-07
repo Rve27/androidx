@@ -149,7 +149,7 @@ public interface JxrPlatformAdapter {
      * returned by this method will fire listeners on the UI thread if Runnable::run is supplied.
      */
     @Suppress("AsyncSuffixFuture")
-    public fun createWaterMaterial(isAlphaMapVersion: Boolean): ListenableFuture<MaterialResource>?
+    public fun createWaterMaterial(isAlphaMapVersion: Boolean): ListenableFuture<MaterialResource>
 
     /** Destroys the given water material resource. */
     public fun destroyWaterMaterial(material: MaterialResource)
@@ -191,7 +191,7 @@ public interface JxrPlatformAdapter {
      */
     public fun createKhronosPbrMaterial(
         spec: KhronosPbrMaterialSpec
-    ): ListenableFuture<MaterialResource>?
+    ): ListenableFuture<MaterialResource>
 
     /** Destroys the given Khronos PBR material resource. */
     public fun destroyKhronosPbrMaterial(material: MaterialResource)
