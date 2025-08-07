@@ -69,7 +69,7 @@ fun Project.configureErrorProneForAndroid() {
                 .extendsFrom(errorProneConfiguration)
 
             log.info("Configuring error-prone for ${variant.name}'s java compile")
-            androidComponents.finalizeDsl {
+            afterEvaluate {
                 makeErrorProneTask(
                     compileTaskProvider =
                         tasks

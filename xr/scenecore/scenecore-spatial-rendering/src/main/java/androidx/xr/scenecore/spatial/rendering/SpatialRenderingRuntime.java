@@ -54,9 +54,11 @@ import org.jspecify.annotations.Nullable;
 class SpatialRenderingRuntime implements RenderingRuntime {
     private static final String SPLIT_ENGINE_LIBRARY_NAME = "impress_api_jni";
 
+    @SuppressWarnings("UnusedVariable")
     private final @NonNull SceneRuntime mSceneRuntime;
     private @Nullable Activity mActivity;
 
+    @SuppressWarnings("UnusedVariable")
     private final XrExtensions mExtensions;
     private final ImpressApi mImpressApi;
     private SplitEngineSubspaceManager mSplitEngineSubspaceManager;

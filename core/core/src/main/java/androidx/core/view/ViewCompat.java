@@ -540,7 +540,6 @@ public class ViewCompat {
     private static Method sDispatchFinishTemporaryDetach;
     private static boolean sTempDetachBound;
 
-    private static WeakHashMap<View, String> sTransitionNameMap;
     private static WeakHashMap<View, ViewPropertyAnimatorCompat> sViewPropertyAnimatorMap = null;
 
     private static Method sChildrenDrawingOrderMethod;

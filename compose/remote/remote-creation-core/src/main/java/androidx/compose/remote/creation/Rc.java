@@ -192,8 +192,6 @@ public class Rc {
         /** SMOOTH_STEP (1-smoothstep(edge0,edge1,x)); */
         public static final float SMOOTH_STEP = AnimatedFloatExpression.SMOOTH_STEP;
 
-        // private static final int API_LEVEL6_MAX = 50;
-
         /** LOG2 (log base 2) operator */
         public static final float LOG2 = AnimatedFloatExpression.LOG2;
 

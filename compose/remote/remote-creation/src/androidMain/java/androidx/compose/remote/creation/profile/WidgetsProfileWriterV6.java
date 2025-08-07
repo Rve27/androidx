@@ -50,6 +50,7 @@ public class WidgetsProfileWriterV6 extends RemoteComposeWriterAndroid {
      * @param data the font data
      * @return the id of the font use in painter.setTypeface(id)
      */
+    @Override
     public int addFont(byte @NonNull [] data) {
         throw new RuntimeException("Adding custom fonts is not available in V6");
     }
@@ -61,6 +62,7 @@ public class WidgetsProfileWriterV6 extends RemoteComposeWriterAndroid {
      * @param ops Combination
      * @return the id of the expression as a Nan float
      */
+    @Override
     public @NonNull Float floatExpression(float @NonNull ... ops) {
         validateOps(ops);
         return super.floatExpression(ops);
@@ -74,6 +76,7 @@ public class WidgetsProfileWriterV6 extends RemoteComposeWriterAndroid {
      * @param animation Array of floats that represents animation
      * @return NaN id of the result of the calculation
      */
+    @Override
     public float floatExpression(float @NonNull [] value, float @Nullable [] animation) {
         validateOps(value);
         return super.floatExpression(value, animation);
@@ -87,6 +90,7 @@ public class WidgetsProfileWriterV6 extends RemoteComposeWriterAndroid {
      * @param vOffset the vertical offset to position the string
      * @param flags flags to set path 1=position only , 2 = Tangent
      */
+    @Override
     public void matrixFromPath(int pathId, float fraction, float vOffset, int flags) {
         throw new RuntimeException("matrixFromPath is not available in V6");
     }

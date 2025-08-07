@@ -1187,47 +1187,6 @@ public final class NotificationManagerCompat {
         }
     }
 
-    private static class CancelTask implements Task {
-        final String packageName;
-        final int id;
-        final String tag;
-        final boolean all;
-
-        CancelTask(String packageName) {
-            this.packageName = packageName;
-            this.id = 0;
-            this.tag = null;
-            this.all = true;
-        }
-
-        CancelTask(String packageName, int id, String tag) {
-            this.packageName = packageName;
-            this.id = id;
-            this.tag = tag;
-            this.all = false;
-        }
-
-        @Override
-        public void send(INotificationSideChannel service) throws RemoteException {
-            if (all) {
-                service.cancelAll(packageName);
-            } else {
-                service.cancel(packageName, id, tag);
-            }
-        }
-
-        @Override
-        public @NonNull String toString() {
-            StringBuilder sb = new StringBuilder("CancelTask[");
-            sb.append("packageName:").append(packageName);
-            sb.append(", id:").append(id);
-            sb.append(", tag:").append(tag);
-            sb.append(", all:").append(all);
-            sb.append("]");
-            return sb.toString();
-        }
-    }
-
     /**
      * A class for wrapping calls to {@link NotificationManager} methods which
      * were added in API 23; these calls must be wrapped to avoid performance issues.

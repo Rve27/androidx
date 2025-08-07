@@ -2987,8 +2987,6 @@ public class NotificationCompat {
             boolean showLine3 = false;
             boolean showLine2 = false;
 
-            boolean minPriority = mBuilder.getPriority() < NotificationCompat.PRIORITY_LOW;
-
             if (mBuilder.mLargeIcon != null) {
                 // On versions before Jellybean, the large icon was shown by SystemUI, so we need
                 // to hide it here.
@@ -4921,8 +4919,7 @@ public class NotificationCompat {
         }
 
         private @NonNull Action makeNegativeAction() {
-            int icon = R.drawable.ic_call_decline_low;
-            icon = R.drawable.ic_call_decline;
+            int icon = R.drawable.ic_call_decline;
             if (mDeclineIntent == null) {
                 return makeAction(icon, R.string.call_notification_hang_up_action,
                         mDeclineButtonColor,
@@ -4937,10 +4934,8 @@ public class NotificationCompat {
         }
 
         private @Nullable Action makeAnswerAction() {
-            int videoIcon = R.drawable.ic_call_answer_video_low;
-            int icon = R.drawable.ic_call_answer_low;
-            videoIcon = R.drawable.ic_call_answer_video;
-            icon = R.drawable.ic_call_answer;
+            int videoIcon = R.drawable.ic_call_answer_video;
+            int icon = R.drawable.ic_call_answer;
 
             return mAnswerIntent == null ? null : makeAction(
                     mIsVideo ? videoIcon : icon,
@@ -5298,7 +5293,6 @@ public class NotificationCompat {
         private static final String TEMPLATE_CLASS_NAME =
                 "androidx.core.app.NotificationCompat$ProgressStyle";
 
-        private static final int MAX_PROGRESS_POINT_LIMIT = 4;
         private static final int DEFAULT_PROGRESS_MAX = 100;
 
         private List<Segment> mProgressSegments = new ArrayList<>();

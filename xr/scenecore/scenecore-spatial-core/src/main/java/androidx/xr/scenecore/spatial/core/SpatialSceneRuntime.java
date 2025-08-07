@@ -213,6 +213,7 @@ class SpatialSceneRuntime implements SceneRuntime {
                 mLazySpatialStateProvider.get().getSpatialCapabilities());
     }
 
+    @Override
     public @NonNull ActivitySpace getActivitySpace() {
         return mActivitySpace;
     }

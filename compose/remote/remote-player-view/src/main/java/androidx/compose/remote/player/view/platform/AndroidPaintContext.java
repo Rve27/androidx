@@ -15,11 +15,8 @@
  */
 package androidx.compose.remote.player.view.platform;
 
-import static androidx.compose.remote.core.RemoteComposeState.BITMAP_TEXTURE_ID_OFFSET;
-
 import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
-
-import androidx.annotation.RestrictTo;
+import static androidx.compose.remote.core.RemoteComposeState.BITMAP_TEXTURE_ID_OFFSET;
 
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
@@ -53,6 +50,7 @@ import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.text.TextUtils;
 
+import androidx.annotation.RestrictTo;
 import androidx.compose.remote.core.MatrixAccess;
 import androidx.compose.remote.core.PaintContext;
 import androidx.compose.remote.core.Platform;
@@ -650,14 +648,6 @@ public class AndroidPaintContext extends PaintContext {
 
                 @Override
                 public void setTypeFace(int fontType, int weight, boolean italic) {
-                    int[] type =
-                            new int[] {
-                                Typeface.NORMAL,
-                                Typeface.BOLD,
-                                Typeface.ITALIC,
-                                Typeface.BOLD_ITALIC
-                            };
-
                     switch (fontType) {
                         case PaintBundle.FONT_TYPE_DEFAULT:
                             if (weight == 400 && !italic) { // for normal case
@@ -730,7 +720,7 @@ public class AndroidPaintContext extends PaintContext {
                     mFontBuilder = new Font.Builder(new File(path));
                     mFontBuilder.setWeight(weight);
                     mFontBuilder.setSlant(
-                            (italic) ? FontStyle.FONT_SLANT_ITALIC : FontStyle.FONT_SLANT_UPRIGHT);
+                            italic ? FontStyle.FONT_SLANT_ITALIC : FontStyle.FONT_SLANT_UPRIGHT);
                     setAxis(null);
                 }
 
@@ -743,7 +733,7 @@ public class AndroidPaintContext extends PaintContext {
                     mFontBuilder = new Font.Builder(buffer);
                     mFontBuilder.setWeight(weight);
                     mFontBuilder.setSlant(
-                            (italic) ? FontStyle.FONT_SLANT_ITALIC : FontStyle.FONT_SLANT_UPRIGHT);
+                            italic ? FontStyle.FONT_SLANT_ITALIC : FontStyle.FONT_SLANT_UPRIGHT);
                     setAxis(null);
                     return mFontBuilder;
                 }

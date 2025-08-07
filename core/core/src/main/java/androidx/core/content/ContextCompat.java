@@ -173,9 +173,6 @@ import java.util.concurrent.Executor;
 public class ContextCompat {
     private static final String TAG = "ContextCompat";
 
-    // Lock that provides similar functionality to ContextImpl.mSync.
-    private static final Object sSync = new Object();
-
     /**
      * This class should not be instantiated, but the constructor must be
      * visible for the class to be extended (ex. in ActivityCompat).
@@ -590,25 +587,6 @@ public class ContextCompat {
      */
     public static @NonNull File getCodeCacheDir(@NonNull Context context) {
         return context.getCodeCacheDir();
-    }
-
-    private static File createFilesDir(File file) {
-        // In the platform, all operations on Context that involve creating files (codeCacheDir,
-        // noBackupFilesDir, etc.) are synchronized on a single lock owned by the Context. So, if
-        // we lock on a single static lock owned by ContextCompat then we're a bit too broad but
-        // at least we'll provide similar guarantees.
-        synchronized (sSync) {
-            if (!file.exists()) {
-                if (file.mkdirs()) {
-                    return file;
-                } else {
-                    // There used to be another check for file.exists() here, but that was a
-                    // side-effect of improper synchronization.
-                    Log.w(TAG, "Unable to create files subdir " + file.getPath());
-                }
-            }
-            return file;
-        }
     }
 
     /**

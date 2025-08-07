@@ -2050,9 +2050,9 @@ public class JxrPlatformAdapterAxr implements JxrPlatformAdapter {
 
     @Override
     public void setSpatialModeChangeListener(
-            @NonNull SpatialModeChangeListener SpatialModeChangeListener) {
-        mSpatialModeChangeListener = SpatialModeChangeListener;
-        mActivitySpace.setSpatialModeChangeListener(SpatialModeChangeListener);
+            @NonNull SpatialModeChangeListener spatialModeChangeListener) {
+        mSpatialModeChangeListener = spatialModeChangeListener;
+        mActivitySpace.setSpatialModeChangeListener(spatialModeChangeListener);
     }
 
     @Override

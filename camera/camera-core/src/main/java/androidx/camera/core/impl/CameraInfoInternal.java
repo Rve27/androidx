@@ -181,6 +181,7 @@ public interface CameraInfoInternal extends CameraInfo {
     @NonNull
     Rect getSensorRect();
 
+    @SuppressWarnings("MixedMutabilityReturnType")
     @ExperimentalSessionConfig
     @Override
     default @NonNull Set<Range<Integer>> getSupportedFrameRateRanges(

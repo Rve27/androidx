@@ -337,6 +337,7 @@ public final class TriggerBuilders {
             }
         }
 
+        @SuppressWarnings("NullAway") // getCondition()
         @Override
         public int hashCode() {
             DynamicBool condition = getCondition();
@@ -450,6 +451,7 @@ public final class TriggerBuilders {
          * Checks whether the given {@link Trigger} is equal to the object taking into account inner
          * position.
          */
+        @SuppressWarnings("NullAway") // that.toTriggerProto()
         @RestrictTo(Scope.LIBRARY)
         static boolean equal(@Nullable Trigger trigger, @Nullable Trigger that) {
             if (trigger == that) {
