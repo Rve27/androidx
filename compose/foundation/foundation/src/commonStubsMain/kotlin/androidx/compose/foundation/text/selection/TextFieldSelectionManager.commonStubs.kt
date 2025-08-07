@@ -31,3 +31,7 @@ internal actual fun Modifier.addBasicTextFieldTextContextMenuComponents(
     manager: TextFieldSelectionManager,
     coroutineScope: CoroutineScope,
 ): Modifier = implementedInJetBrainsFork()
+
+internal actual suspend fun TextFieldSelectionManager.hasAvailableTextToPaste(): Boolean {
+    implementedInJetBrainsFork()
+}

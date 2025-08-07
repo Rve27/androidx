@@ -22,8 +22,9 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.contextmenu.ContextMenuScope
 import androidx.compose.foundation.contextmenu.ContextMenuState
 import androidx.compose.foundation.internal.checkPreconditionNotNull
-import androidx.compose.foundation.internal.hasText
 import androidx.compose.foundation.internal.isAutofillAvailable
+import androidx.compose.foundation.internal.isReadSupported
+import androidx.compose.foundation.internal.isWriteSupported
 import androidx.compose.foundation.internal.readAnnotatedString
 import androidx.compose.foundation.internal.toClipEntry
 import androidx.compose.foundation.text.DefaultCursorThickness
@@ -67,7 +68,6 @@ import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.PointerEvent
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.ClipEntry
 import androidx.compose.ui.platform.Clipboard
 import androidx.compose.ui.platform.TextToolbar
 import androidx.compose.ui.platform.TextToolbarStatus
@@ -216,8 +216,8 @@ internal class TextFieldSelectionManager(val undoManager: UndoManager? = null) {
 
     // TODO(grantapher) android ClipboardManager has a way to notify primary clip changes.
     //  That could possibly be used so that this doesn't have to be updated manually.
-    /** The current clip entry. Updated via [updateClipboardEntry]. */
-    private var clipEntry: ClipEntry? by mutableStateOf(null)
+    /** The current availability of text for pasting. Updated via [updateClipboardEntry]. */
+    private var hasAvailableTextToPaste by mutableStateOf(false)
 
     @VisibleForTesting internal var toolbarRequester: ToolbarRequester = ToolbarRequesterImpl()
 
@@ -794,10 +794,13 @@ internal class TextFieldSelectionManager(val undoManager: UndoManager? = null) {
     private val hasSelection: Boolean
         get() = !value.selection.collapsed
 
-    internal fun canCopy(): Boolean = hasSelection && !isPassword
+    internal fun canCopy(): Boolean =
+        hasSelection && !isPassword && clipboard?.isWriteSupported() == true
 
     internal suspend fun updateClipboardEntry() {
-        clipEntry = clipboard?.getClipEntry()
+        if (clipboard?.isReadSupported() == true) {
+            hasAvailableTextToPaste = hasAvailableTextToPaste()
+        }
     }
 
     private fun getContextTextAndSelection(): Pair<String, TextRange>? {
@@ -814,9 +817,11 @@ internal class TextFieldSelectionManager(val undoManager: UndoManager? = null) {
     }
 
     /** Only fully accurate if [updateClipboardEntry] has been called. */
-    internal fun canPaste(): Boolean = editable && clipEntry?.hasText() == true
+    internal fun canPaste(): Boolean =
+        editable && hasAvailableTextToPaste && clipboard?.isReadSupported() == true
 
-    internal fun canCut(): Boolean = hasSelection && editable && !isPassword
+    internal fun canCut(): Boolean =
+        hasSelection && editable && !isPassword && clipboard?.isWriteSupported() == true
 
     internal fun canSelectAll(): Boolean = value.selection.length != value.text.length
 
@@ -991,6 +996,8 @@ internal class TextFieldSelectionManager(val undoManager: UndoManager? = null) {
      */
     private fun showSelectionToolbarViaTextToolbar() =
         coroutineScope?.launch(start = CoroutineStart.UNDISPATCHED) {
+            updateClipboardEntry()
+
             // Because this is undispatched and the above is called once in CoreTextField
             // composition, disable read observation to avoid reading many states and landing
             // in a composition loop.
@@ -1011,7 +1018,6 @@ internal class TextFieldSelectionManager(val undoManager: UndoManager? = null) {
                         }
                     } else null
 
-                updateClipboardEntry()
                 val paste: (() -> Unit)? =
                     if (canPaste()) {
                         {
@@ -1385,3 +1391,16 @@ internal fun TextFieldSelectionManager.contextMenuBuilder(
         textFieldItem(Autofill, enabled = availability.canAutofill) { autofill() }
     }
 }
+
+/**
+ * This method checks if it makes sense to show the "Paste" item in the context menu based on the
+ * state of the [TextFieldSelectionManager.clipboard]. The returned value might be not enough -
+ * there can be other conditions affecting the necessity for the "Paste" item.
+ *
+ * Note: Currently on web it will always return true. This mitigates the UX issue when a Clipboard
+ * read permission is requested when a user has no intention to 'Paste' (e.g. before the context
+ * menu is shown, regardless of "Paste" possibility). The downside is that it will show the 'Paste'
+ * item even when there is nothing to paste. But we consider it to be a better Context Menu /
+ * Toolbar UX than the alternative.
+ */
+internal expect suspend fun TextFieldSelectionManager.hasAvailableTextToPaste(): Boolean

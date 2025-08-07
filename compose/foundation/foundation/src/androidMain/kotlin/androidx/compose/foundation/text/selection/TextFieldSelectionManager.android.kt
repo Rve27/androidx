@@ -18,6 +18,7 @@ package androidx.compose.foundation.text.selection
 
 import android.os.Build
 import androidx.compose.foundation.PlatformMagnifierFactory
+import androidx.compose.foundation.internal.ClipboardUtils
 import androidx.compose.foundation.isPlatformMagnifierSupported
 import androidx.compose.foundation.magnifier
 import androidx.compose.foundation.text.TextContextMenuItems
@@ -137,3 +138,6 @@ internal actual fun Modifier.addBasicTextFieldTextContextMenuComponents(
         }
     }
 }
+
+internal actual suspend fun TextFieldSelectionManager.hasAvailableTextToPaste(): Boolean =
+    this.clipboard?.let { ClipboardUtils.hasText(it) } ?: false
