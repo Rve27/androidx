@@ -401,11 +401,15 @@ public fun <T : Any> NavDisplay(
             snapshotFlow { transition.isRunning }
                 .filter { !it }
                 .collect {
+                    // Creating a copy to avoid ConcurrentModificationException
+                    @Suppress("ListIterator")
                     scenes.keys.toList().forEach { key ->
                         if (key != transition.targetState) {
                             scenes.remove(key)
                         }
                     }
+                    // Creating a copy to avoid ConcurrentModificationException
+                    @Suppress("ListIterator")
                     mostRecentSceneKeys.toList().forEach { key ->
                         if (key != transition.targetState) {
                             mostRecentSceneKeys.remove(key)
