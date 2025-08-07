@@ -105,6 +105,8 @@ develocity {
     buildScan {
         capture {
             fileFingerprints.set(true)
+            buildLogging.set(false)
+            testLogging.set(false)
         }
         obfuscation {
             hostname { host -> "unset" }
