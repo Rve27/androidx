@@ -277,6 +277,7 @@ public constructor(
         private val STATE_EXTENDER_PROVIDERS =
             listOf(
                 "androidx.xr.arcore.PerceptionStateExtender",
+                "androidx.xr.arcore.playservices.CameraStateExtender",
                 "androidx.xr.runtime.testing.FakeStateExtender",
             )
         private val SESSION_CONNECTOR_PROVIDERS =
@@ -295,18 +296,20 @@ public constructor(
      * property directly; they should use ARCore for XR APIs instead.
      */
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-    public val runtime: Runtime =
+    public val runtime: Runtime by lazy {
         checkNotNull(_runtime) { "ARCore is not available. Did you forget to add a dependency?" }
+    }
 
     /**
      * The [JxrPlatformAdapter] instance that is used to manage the session. Applications must NOT
      * use this property directly; they should use SceneCore APIs instead.
      */
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-    public val platformAdapter: JxrPlatformAdapter =
+    public val platformAdapter: JxrPlatformAdapter by lazy {
         checkNotNull(_platformAdapter) {
             "SceneCore is not available. Did you forget to add a dependency?"
         }
+    }
 
     private var updateJob: Job? = null
 
