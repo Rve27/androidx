@@ -76,6 +76,7 @@ import androidx.compose.remote.core.operations.PathAppend;
 import androidx.compose.remote.core.operations.PathCombine;
 import androidx.compose.remote.core.operations.PathCreate;
 import androidx.compose.remote.core.operations.PathData;
+import androidx.compose.remote.core.operations.PathExpression;
 import androidx.compose.remote.core.operations.PathTween;
 import androidx.compose.remote.core.operations.Rem;
 import androidx.compose.remote.core.operations.RootContentBehavior;
@@ -274,6 +275,7 @@ public class Operations {
     public static final int DRAW_TO_BITMAP = 190;
     public static final int WAKE_IN = 191;
     public static final int ID_LOOKUP = 192;
+    public static final int PATH_EXPRESSION = 193;
 
     ///////////////////////////////////////// ======================
 
@@ -446,6 +448,7 @@ public class Operations {
             sMapV7AndroidX.put(DRAW_TO_BITMAP, DrawToBitmap::read);
             sMapV7AndroidX.put(WAKE_IN, WakeIn::read);
             sMapV7AndroidX.put(ID_LOOKUP, IdLookup::read);
+            sMapV7AndroidX.put(PATH_EXPRESSION, PathExpression::read);
         }
         return sMapV7AndroidX;
     }
@@ -476,7 +479,8 @@ public class Operations {
             sMapV7Widgets.put(DRAW_BITMAP_TEXT_ANCHORED, DrawBitmapTextAnchored::read);
             sMapV7Widgets.put(DRAW_TO_BITMAP, DrawToBitmap::read);
             sMapV7Widgets.put(WAKE_IN, WakeIn::read);
-            sMapV7AndroidX.put(ID_LOOKUP, IdLookup::read);
+            sMapV7Widgets.put(ID_LOOKUP, IdLookup::read);
+            sMapV7Widgets.put(PATH_EXPRESSION, PathExpression::read);
         }
         return sMapV7Widgets;
     }

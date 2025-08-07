@@ -22,6 +22,10 @@ import static androidx.compose.remote.core.operations.ColorAttribute.COLOR_GREEN
 import static androidx.compose.remote.core.operations.ColorAttribute.COLOR_HUE;
 import static androidx.compose.remote.core.operations.ColorAttribute.COLOR_RED;
 import static androidx.compose.remote.core.operations.ColorAttribute.COLOR_SATURATION;
+import static androidx.compose.remote.core.operations.PathExpression.LINEAR;
+import static androidx.compose.remote.core.operations.PathExpression.LOOP;
+import static androidx.compose.remote.core.operations.PathExpression.MONOTONIC;
+import static androidx.compose.remote.core.operations.PathExpression.POLAR;
 
 import androidx.compose.remote.core.PaintOperation;
 import androidx.compose.remote.core.RemoteContext;
@@ -778,5 +782,12 @@ public class Rc {
 
     public static class Debug {
         public static final int SHOW_USAGE = DebugMessage.SHOW_USAGE;
+    }
+
+    public static class PathExpression {
+        public static final int LOOP_PATH = LOOP;
+        public static final int MONOTONIC_PATH = MONOTONIC;
+        public static final int LINEAR_PATH = LINEAR;
+        public static final int POLAR_PATH = POLAR;
     }
 }

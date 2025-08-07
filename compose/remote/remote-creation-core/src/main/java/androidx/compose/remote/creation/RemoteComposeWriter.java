@@ -448,6 +448,63 @@ public class RemoteComposeWriter {
         mBuffer.wakeIn(seconds);
     }
 
+    /**
+     * Add a path expression
+     *
+     * @param expressionX the x expression
+     * @param expressionY the y expression
+     * @param start the start value
+     * @param end the end value
+     * @param count the number of points
+     * @param flags the flags
+     * @return the id of the path
+     */
+    public int addPathExpression(
+            float @NonNull [] expressionX,
+            float @NonNull [] expressionY,
+            float start,
+            float end,
+            float count,
+            int flags) {
+
+        int id = mState.createNextAvailableId();
+        mBuffer.addPathExpression(id, expressionX, expressionY, start, end, count, flags);
+        return id;
+    }
+
+    /**
+     * Add a polar path expression
+     *
+     * @param expressionR the radius expression
+     * @param start the start value
+     * @param end the end value
+     * @param count the number of points
+     * @param centerX the center x
+     * @param centerY the center y
+     * @param flags the flags
+     * @return the id of the path
+     */
+    public int addPolarPathExpression(
+            float @NonNull [] expressionR,
+            float start,
+            float end,
+            float count,
+            float centerX,
+            float centerY,
+            int flags) {
+
+        int id = mState.createNextAvailableId();
+        mBuffer.addPathExpression(
+                id,
+                expressionR,
+                new float[] {centerX, centerY},
+                start,
+                end,
+                count,
+                Rc.PathExpression.POLAR_PATH | flags);
+        return id;
+    }
+
     /** Used to create the tag values in the header */
     public static class HTag {
         @NonNull Short mTag;

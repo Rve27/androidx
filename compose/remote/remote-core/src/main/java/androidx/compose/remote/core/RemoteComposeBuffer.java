@@ -76,6 +76,7 @@ import androidx.compose.remote.core.operations.PathAppend;
 import androidx.compose.remote.core.operations.PathCombine;
 import androidx.compose.remote.core.operations.PathCreate;
 import androidx.compose.remote.core.operations.PathData;
+import androidx.compose.remote.core.operations.PathExpression;
 import androidx.compose.remote.core.operations.PathTween;
 import androidx.compose.remote.core.operations.Rem;
 import androidx.compose.remote.core.operations.RootContentBehavior;
@@ -2193,5 +2194,27 @@ public class RemoteComposeBuffer {
      */
     public void wakeIn(float seconds) {
         WakeIn.apply(mBuffer, seconds);
+    }
+
+    /**
+     * Add a path expression
+     *
+     * @param id output id
+     * @param expressionX expression for x
+     * @param expressionY expression for y
+     * @param start start value
+     * @param end end value
+     * @param count count value
+     * @param flags flags
+     */
+    public void addPathExpression(
+            int id,
+            float @NonNull [] expressionX,
+            float @Nullable [] expressionY,
+            float start,
+            float end,
+            float count,
+            int flags) {
+        PathExpression.apply(mBuffer, id, expressionX, expressionY, start, end, count, flags);
     }
 }
