@@ -1,42 +1,4 @@
 // Baseline format: 1.0
-BecameUnchecked: androidx.compose.material3.BasicAlertDialogOverrideScope:
-    Removed class androidx.compose.material3.BasicAlertDialogOverrideScope from compatibility checked API surface
-BecameUnchecked: androidx.compose.material3.BasicAlertDialogOverrideScope#content:
-    Removed property BasicAlertDialogOverrideScope.content from compatibility checked API surface
-BecameUnchecked: androidx.compose.material3.BasicAlertDialogOverrideScope#getContent():
-    Removed method androidx.compose.material3.BasicAlertDialogOverrideScope.getContent() from compatibility checked API surface
-BecameUnchecked: androidx.compose.material3.BasicAlertDialogOverrideScope#getModifier():
-    Removed method androidx.compose.material3.BasicAlertDialogOverrideScope.getModifier() from compatibility checked API surface
-BecameUnchecked: androidx.compose.material3.BasicAlertDialogOverrideScope#getOnDismissRequest():
-    Removed method androidx.compose.material3.BasicAlertDialogOverrideScope.getOnDismissRequest() from compatibility checked API surface
-BecameUnchecked: androidx.compose.material3.BasicAlertDialogOverrideScope#getProperties():
-    Removed method androidx.compose.material3.BasicAlertDialogOverrideScope.getProperties() from compatibility checked API surface
-BecameUnchecked: androidx.compose.material3.BasicAlertDialogOverrideScope#modifier:
-    Removed property BasicAlertDialogOverrideScope.modifier from compatibility checked API surface
-BecameUnchecked: androidx.compose.material3.BasicAlertDialogOverrideScope#onDismissRequest:
-    Removed property BasicAlertDialogOverrideScope.onDismissRequest from compatibility checked API surface
-BecameUnchecked: androidx.compose.material3.BasicAlertDialogOverrideScope#properties:
-    Removed property BasicAlertDialogOverrideScope.properties from compatibility checked API surface
-BecameUnchecked: androidx.compose.material3.pulltorefresh.PullToRefreshDefaults#containerColor:
-    Removed property PullToRefreshDefaults.containerColor from compatibility checked API surface
-BecameUnchecked: androidx.compose.material3.pulltorefresh.PullToRefreshDefaults#getContainerColor(androidx.compose.runtime.Composer, int):
-    Removed method androidx.compose.material3.pulltorefresh.PullToRefreshDefaults.getContainerColor(androidx.compose.runtime.Composer,int) from compatibility checked API surface
-BecameUnchecked: androidx.compose.material3.pulltorefresh.PullToRefreshDefaults#getContainerColor(androidx.compose.runtime.Composer, int) parameter #0:
-    Removed parameter arg1 in androidx.compose.material3.pulltorefresh.PullToRefreshDefaults.getContainerColor(androidx.compose.runtime.Composer arg1, int arg2) from compatibility checked API surface
-BecameUnchecked: androidx.compose.material3.pulltorefresh.PullToRefreshDefaults#getContainerColor(androidx.compose.runtime.Composer, int) parameter #1:
-    Removed parameter arg2 in androidx.compose.material3.pulltorefresh.PullToRefreshDefaults.getContainerColor(androidx.compose.runtime.Composer arg1, int arg2) from compatibility checked API surface
-BecameUnchecked: androidx.compose.material3.pulltorefresh.PullToRefreshDefaults#getShape():
-    Removed method androidx.compose.material3.pulltorefresh.PullToRefreshDefaults.getShape() from compatibility checked API surface
-BecameUnchecked: androidx.compose.material3.pulltorefresh.PullToRefreshDefaults#shape:
-    Removed property PullToRefreshDefaults.shape from compatibility checked API surface
-
-
-ParameterNameChange: androidx.compose.material3.pulltorefresh.PullToRefreshDefaults#Indicator(androidx.compose.material3.pulltorefresh.PullToRefreshState, boolean, androidx.compose.ui.Modifier, long, long, float) parameter #5:
-    Source breaking change: Attempted to change parameter name from threshold to maxDistance in method androidx.compose.material3.pulltorefresh.PullToRefreshDefaults.Indicator
-ParameterNameChange: androidx.compose.material3.pulltorefresh.PullToRefreshDefaults#IndicatorBox(androidx.compose.material3.pulltorefresh.PullToRefreshState, boolean, androidx.compose.ui.Modifier, float, androidx.compose.ui.graphics.Shape, long, float, kotlin.jvm.functions.Function1<? super androidx.compose.foundation.layout.BoxScope,kotlin.Unit>) parameter #3:
-    Source breaking change: Attempted to change parameter name from threshold to maxDistance in method androidx.compose.material3.pulltorefresh.PullToRefreshDefaults.IndicatorBox
-
-
 RemovedDeprecatedMethod: androidx.compose.material3.AndroidMenu_androidKt#DropdownMenu(boolean, kotlin.jvm.functions.Function0<kotlin.Unit>, androidx.compose.ui.Modifier, long, androidx.compose.foundation.ScrollState, androidx.compose.ui.window.PopupProperties, kotlin.jvm.functions.Function1<? super androidx.compose.foundation.layout.ColumnScope,kotlin.Unit>):
     Binary breaking change: Removed deprecated method androidx.compose.material3.AndroidMenu_androidKt.DropdownMenu(boolean,kotlin.jvm.functions.Function0<kotlin.Unit>,androidx.compose.ui.Modifier,long,androidx.compose.foundation.ScrollState,androidx.compose.ui.window.PopupProperties,kotlin.jvm.functions.Function1<? super androidx.compose.foundation.layout.ColumnScope,kotlin.Unit>)
 RemovedDeprecatedMethod: androidx.compose.material3.AndroidMenu_androidKt#DropdownMenu(boolean, kotlin.jvm.functions.Function0<kotlin.Unit>, androidx.compose.ui.Modifier, long, androidx.compose.ui.window.PopupProperties, kotlin.jvm.functions.Function1<? super androidx.compose.foundation.layout.ColumnScope,kotlin.Unit>):
@@ -107,3 +69,7 @@ RemovedDeprecatedMethod: androidx.compose.material3.TextKt#Text(androidx.compose
     Binary breaking change: Removed deprecated method androidx.compose.material3.TextKt.Text(androidx.compose.ui.text.AnnotatedString,androidx.compose.ui.Modifier,long,long,androidx.compose.ui.text.font.FontStyle,androidx.compose.ui.text.font.FontWeight,androidx.compose.ui.text.font.FontFamily,long,androidx.compose.ui.text.style.TextDecoration,androidx.compose.ui.text.style.TextAlign,long,int,boolean,int,java.util.Map<java.lang.String,androidx.compose.foundation.text.InlineTextContent>,kotlin.jvm.functions.Function1<? super androidx.compose.ui.text.TextLayoutResult,kotlin.Unit>,androidx.compose.ui.text.TextStyle)
 RemovedDeprecatedMethod: androidx.compose.material3.TopAppBarDefaults#topAppBarColors(long, long, long, long, long):
     Binary breaking change: Removed deprecated method androidx.compose.material3.TopAppBarDefaults.topAppBarColors(long,long,long,long,long)
+
+
+RemovedMethod: androidx.compose.material3.CheckboxColors#copy(long, long, long, long, long, long, long, long, long, long, long, long):
+    Binary breaking change: Removed method androidx.compose.material3.CheckboxColors.copy(long,long,long,long,long,long,long,long,long,long,long,long)

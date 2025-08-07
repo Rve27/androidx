@@ -598,15 +598,19 @@ package androidx.compose.material3 {
   }
 
   @androidx.compose.runtime.Immutable public final class CheckboxColors {
-    ctor @KotlinOnly public CheckboxColors(androidx.compose.ui.graphics.Color checkedCheckmarkColor, androidx.compose.ui.graphics.Color uncheckedCheckmarkColor, androidx.compose.ui.graphics.Color checkedBoxColor, androidx.compose.ui.graphics.Color uncheckedBoxColor, androidx.compose.ui.graphics.Color disabledCheckedBoxColor, androidx.compose.ui.graphics.Color disabledUncheckedBoxColor, androidx.compose.ui.graphics.Color disabledIndeterminateBoxColor, androidx.compose.ui.graphics.Color checkedBorderColor, androidx.compose.ui.graphics.Color uncheckedBorderColor, androidx.compose.ui.graphics.Color disabledBorderColor, androidx.compose.ui.graphics.Color disabledUncheckedBorderColor, androidx.compose.ui.graphics.Color disabledIndeterminateBorderColor);
-    ctor @BytecodeOnly public CheckboxColors(long, long, long, long, long, long, long, long, long, long, long, long, kotlin.jvm.internal.DefaultConstructorMarker!);
-    method public androidx.compose.material3.CheckboxColors copy(optional long checkedCheckmarkColor, optional long uncheckedCheckmarkColor, optional long checkedBoxColor, optional long uncheckedBoxColor, optional long disabledCheckedBoxColor, optional long disabledUncheckedBoxColor, optional long disabledIndeterminateBoxColor, optional long checkedBorderColor, optional long uncheckedBorderColor, optional long disabledBorderColor, optional long disabledUncheckedBorderColor, optional long disabledIndeterminateBorderColor);
-    method @BytecodeOnly public androidx.compose.material3.CheckboxColors copy-2qZNXz8(long, long, long, long, long, long, long, long, long, long, long, long);
+    ctor @KotlinOnly @Deprecated public CheckboxColors(androidx.compose.ui.graphics.Color checkedCheckmarkColor, androidx.compose.ui.graphics.Color uncheckedCheckmarkColor, androidx.compose.ui.graphics.Color checkedBoxColor, androidx.compose.ui.graphics.Color uncheckedBoxColor, androidx.compose.ui.graphics.Color disabledCheckedBoxColor, androidx.compose.ui.graphics.Color disabledUncheckedBoxColor, androidx.compose.ui.graphics.Color disabledIndeterminateBoxColor, androidx.compose.ui.graphics.Color checkedBorderColor, androidx.compose.ui.graphics.Color uncheckedBorderColor, androidx.compose.ui.graphics.Color disabledBorderColor, androidx.compose.ui.graphics.Color disabledUncheckedBorderColor, androidx.compose.ui.graphics.Color disabledIndeterminateBorderColor);
+    ctor @KotlinOnly public CheckboxColors(androidx.compose.ui.graphics.Color checkedCheckmarkColor, androidx.compose.ui.graphics.Color uncheckedCheckmarkColor, androidx.compose.ui.graphics.Color disabledCheckmarkColor, androidx.compose.ui.graphics.Color checkedBoxColor, androidx.compose.ui.graphics.Color uncheckedBoxColor, androidx.compose.ui.graphics.Color disabledCheckedBoxColor, androidx.compose.ui.graphics.Color disabledUncheckedBoxColor, androidx.compose.ui.graphics.Color disabledIndeterminateBoxColor, androidx.compose.ui.graphics.Color checkedBorderColor, androidx.compose.ui.graphics.Color uncheckedBorderColor, androidx.compose.ui.graphics.Color disabledBorderColor, androidx.compose.ui.graphics.Color disabledUncheckedBorderColor, androidx.compose.ui.graphics.Color disabledIndeterminateBorderColor);
+    ctor @BytecodeOnly @Deprecated public CheckboxColors(long, long, long, long, long, long, long, long, long, long, long, long, kotlin.jvm.internal.DefaultConstructorMarker!);
+    ctor @BytecodeOnly public CheckboxColors(long, long, long, long, long, long, long, long, long, long, long, long, long, kotlin.jvm.internal.DefaultConstructorMarker!);
+    method public androidx.compose.material3.CheckboxColors copy(optional long checkedCheckmarkColor, optional long uncheckedCheckmarkColor, optional long disabledCheckmarkColor, optional long checkedBoxColor, optional long uncheckedBoxColor, optional long disabledCheckedBoxColor, optional long disabledUncheckedBoxColor, optional long disabledIndeterminateBoxColor, optional long checkedBorderColor, optional long uncheckedBorderColor, optional long disabledBorderColor, optional long disabledUncheckedBorderColor, optional long disabledIndeterminateBorderColor);
+    method @BytecodeOnly @Deprecated public androidx.compose.material3.CheckboxColors! copy-2qZNXz8(long, long, long, long, long, long, long, long, long, long, long, long);
+    method @BytecodeOnly public androidx.compose.material3.CheckboxColors copy-daRQuJA(long, long, long, long, long, long, long, long, long, long, long, long, long);
     method @BytecodeOnly public long getCheckedBorderColor-0d7_KjU();
     method @BytecodeOnly public long getCheckedBoxColor-0d7_KjU();
     method @BytecodeOnly public long getCheckedCheckmarkColor-0d7_KjU();
     method @BytecodeOnly public long getDisabledBorderColor-0d7_KjU();
     method @BytecodeOnly public long getDisabledCheckedBoxColor-0d7_KjU();
+    method @BytecodeOnly public long getDisabledCheckmarkColor-0d7_KjU();
     method @BytecodeOnly public long getDisabledIndeterminateBorderColor-0d7_KjU();
     method @BytecodeOnly public long getDisabledIndeterminateBoxColor-0d7_KjU();
     method @BytecodeOnly public long getDisabledUncheckedBorderColor-0d7_KjU();
@@ -619,6 +623,7 @@ package androidx.compose.material3 {
     property public androidx.compose.ui.graphics.Color checkedCheckmarkColor;
     property public androidx.compose.ui.graphics.Color disabledBorderColor;
     property public androidx.compose.ui.graphics.Color disabledCheckedBoxColor;
+    property public androidx.compose.ui.graphics.Color disabledCheckmarkColor;
     property public androidx.compose.ui.graphics.Color disabledIndeterminateBorderColor;
     property public androidx.compose.ui.graphics.Color disabledIndeterminateBoxColor;
     property public androidx.compose.ui.graphics.Color disabledUncheckedBorderColor;
@@ -632,7 +637,9 @@ package androidx.compose.material3 {
     method @androidx.compose.runtime.Composable public androidx.compose.material3.CheckboxColors colors();
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.material3.CheckboxColors colors(androidx.compose.runtime.Composer?, int);
     method @androidx.compose.runtime.Composable public androidx.compose.material3.CheckboxColors colors(optional long checkedColor, optional long uncheckedColor, optional long checkmarkColor, optional long disabledCheckedColor, optional long disabledUncheckedColor, optional long disabledIndeterminateColor);
+    method @androidx.compose.runtime.Composable public androidx.compose.material3.CheckboxColors colors(optional long checkedCheckmarkColor, optional long uncheckedCheckmarkColor, optional long disabledCheckmarkColor, optional long checkedBoxColor, optional long uncheckedBoxColor, optional long disabledCheckedBoxColor, optional long disabledUncheckedBoxColor, optional long disabledIndeterminateBoxColor, optional long checkedBorderColor, optional long uncheckedBorderColor, optional long disabledBorderColor, optional long disabledUncheckedBorderColor, optional long disabledIndeterminateBorderColor);
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.material3.CheckboxColors colors-5tl4gsc(long, long, long, long, long, long, androidx.compose.runtime.Composer?, int, int);
+    method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.material3.CheckboxColors colors-kwJvTHA(long, long, long, long, long, long, long, long, long, long, long, long, long, androidx.compose.runtime.Composer?, int, int, int);
     method @BytecodeOnly public float getStrokeWidth-D9Ej5fM();
     property public androidx.compose.ui.unit.Dp StrokeWidth;
     field public static final androidx.compose.material3.CheckboxDefaults INSTANCE;
@@ -647,6 +654,9 @@ package androidx.compose.material3 {
     method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.compose.runtime.ComposableTarget(applier="androidx.compose.ui.UiComposable") public static void TriStateCheckbox(androidx.compose.ui.state.ToggleableState, kotlin.jvm.functions.Function0<kotlin.Unit!>?, androidx.compose.ui.graphics.drawscope.Stroke, androidx.compose.ui.graphics.drawscope.Stroke, androidx.compose.ui.Modifier?, boolean, androidx.compose.material3.CheckboxColors?, androidx.compose.foundation.interaction.MutableInteractionSource?, androidx.compose.runtime.Composer?, int, int);
     method @androidx.compose.runtime.Composable public static void TriStateCheckbox(androidx.compose.ui.state.ToggleableState state, kotlin.jvm.functions.Function0<kotlin.Unit>? onClick, optional androidx.compose.ui.Modifier modifier, optional boolean enabled, optional androidx.compose.material3.CheckboxColors colors, optional androidx.compose.foundation.interaction.MutableInteractionSource? interactionSource);
     method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.compose.runtime.ComposableTarget(applier="androidx.compose.ui.UiComposable") public static void TriStateCheckbox(androidx.compose.ui.state.ToggleableState, kotlin.jvm.functions.Function0<kotlin.Unit!>?, androidx.compose.ui.Modifier?, boolean, androidx.compose.material3.CheckboxColors?, androidx.compose.foundation.interaction.MutableInteractionSource?, androidx.compose.runtime.Composer?, int, int);
+    method @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3Api public static boolean isCheckboxStylingFixEnabled();
+    method @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3Api public static void setCheckboxStylingFixEnabled(boolean);
+    property @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3Api public static boolean isCheckboxStylingFixEnabled;
   }
 
   @Deprecated @androidx.compose.runtime.Immutable public final class ChipBorder {

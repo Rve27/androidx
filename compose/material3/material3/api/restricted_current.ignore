@@ -107,3 +107,7 @@ RemovedDeprecatedMethod: androidx.compose.material3.TextKt#Text(androidx.compose
     Binary breaking change: Removed deprecated method androidx.compose.material3.TextKt.Text(androidx.compose.ui.text.AnnotatedString,androidx.compose.ui.Modifier,long,long,androidx.compose.ui.text.font.FontStyle,androidx.compose.ui.text.font.FontWeight,androidx.compose.ui.text.font.FontFamily,long,androidx.compose.ui.text.style.TextDecoration,androidx.compose.ui.text.style.TextAlign,long,int,boolean,int,java.util.Map<java.lang.String,androidx.compose.foundation.text.InlineTextContent>,kotlin.jvm.functions.Function1<? super androidx.compose.ui.text.TextLayoutResult,kotlin.Unit>,androidx.compose.ui.text.TextStyle)
 RemovedDeprecatedMethod: androidx.compose.material3.TopAppBarDefaults#topAppBarColors(long, long, long, long, long):
     Binary breaking change: Removed deprecated method androidx.compose.material3.TopAppBarDefaults.topAppBarColors(long,long,long,long,long)
+
+
+RemovedMethod: androidx.compose.material3.CheckboxColors#copy(long, long, long, long, long, long, long, long, long, long, long, long):
+    Binary breaking change: Removed method androidx.compose.material3.CheckboxColors.copy(long,long,long,long,long,long,long,long,long,long,long,long)
