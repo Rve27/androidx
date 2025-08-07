@@ -16,10 +16,6 @@
 
 package androidx.tracing.driver
 
-internal val id = AtomicLong(42L)
+import java.util.concurrent.atomic.AtomicInteger
 
-/** Generates a monotonically increasing [Long] value. */
-@PublishedApi
-internal fun monotonicId(): Long {
-    return id.incrementAndGet()
-}
+public actual typealias AtomicInteger = AtomicInteger

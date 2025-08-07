@@ -57,7 +57,7 @@ import okio.BufferedSink
  *
  * To create a WireTraceSink for a File, you can use `File("myFile").appendingSink().buffer()`.
  */
-public class WireTraceSink(
+public class TraceSink(
     /**
      * ID which uniquely identifies the trace capture system, within which uuids are guaranteed to
      * be unique.

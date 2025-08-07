@@ -16,7 +16,6 @@
 
 package androidx.tracing.driver.wire
 
-import android.content.Context
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -34,13 +33,13 @@ private fun File.perfettoTraceFile(): File {
     return traceFile
 }
 
-public fun WireTraceSink(
-    context: Context,
+public fun TraceSink(
+    directory: File,
     sequenceId: Int,
     coroutineContext: CoroutineContext = Dispatchers.IO,
-): WireTraceSink =
-    WireTraceSink(
+): TraceSink =
+    TraceSink(
         sequenceId = sequenceId,
-        bufferedSink = context.noBackupFilesDir.perfettoTraceFile().appendingSink().buffer(),
+        bufferedSink = directory.perfettoTraceFile().appendingSink().buffer(),
         coroutineContext = coroutineContext,
     )
