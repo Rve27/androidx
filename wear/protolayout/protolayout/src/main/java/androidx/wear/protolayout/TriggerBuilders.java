@@ -337,11 +337,10 @@ public final class TriggerBuilders {
             }
         }
 
-        @SuppressWarnings("NullAway") // getCondition()
         @Override
         public int hashCode() {
             DynamicBool condition = getCondition();
-            return condition == null ? 4 : Arrays.hashCode(getCondition().toDynamicBoolByteArray());
+            return condition == null ? 4 : Arrays.hashCode(condition.toDynamicBoolByteArray());
         }
 
         @Override
@@ -457,7 +456,9 @@ public final class TriggerBuilders {
             if (trigger == that) {
                 return true;
             }
-            return that.toTriggerProto().getInnerCase().getNumber()
+            return that != null
+                    && trigger != null
+                    && that.toTriggerProto().getInnerCase().getNumber()
                             == trigger.toTriggerProto().getInnerCase().getNumber()
                     && Objects.equals(that, trigger);
         }

@@ -551,10 +551,9 @@ public final class ModifiersBuilders {
             }
 
             /** Builds an instance from accumulated values. */
-            @SuppressWarnings("NullAway") // mScope.registerPendingIntent
             public @NonNull Clickable build() {
                 ModifiersProto.Clickable protoImpl = mImpl.build();
-                if (mPendingIntent != null) {
+                if (mPendingIntent != null && mScope != null) {
                     // register the pending intent to the scope for later collection.
                     mScope.registerPendingIntent(protoImpl.getId(), mPendingIntent);
                 }
