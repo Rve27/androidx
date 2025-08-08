@@ -285,9 +285,7 @@ internal class SubspaceLayoutNode : ComposeSubspaceNode {
         val depthString = "  ".repeat(depth)
         var nextDepth = depth
         if (entity != null) {
-            tree.append(
-                "$depthString|-${coreEntity?.entity} -> ${findCoreEntityParent(this)?.entity}\n"
-            )
+            tree.append("$depthString|-$coreEntity -> ${findCoreEntityParent(this)}\n")
             nextDepth++
         }
 
@@ -356,7 +354,7 @@ internal class SubspaceLayoutNode : ComposeSubspaceNode {
             layoutPose = pose
 
             coreEntity?.applyCoreEntityNodes(nodes.getAll<CoreEntityNode>())
-            coreEntity?.updateEntityPose()
+            coreEntity?.updatePoseFromLayout()
             coreEntity?.size = IntVolumeSize(measuredWidth, measuredHeight, measuredDepth)
 
             subspaceMeasureResult?.placeChildren(
@@ -422,7 +420,7 @@ internal class SubspaceLayoutNode : ComposeSubspaceNode {
             get() = nodes.getLast<SubspaceSemanticsModifierNode>() != null
 
         override val semanticsEntity: Entity?
-            get() = coreEntity?.entity
+            get() = coreEntity?.semanticsEntity
 
         /**
          * The layout coordinates of the parent [SubspaceLayoutNode] up to the root of the hierarchy

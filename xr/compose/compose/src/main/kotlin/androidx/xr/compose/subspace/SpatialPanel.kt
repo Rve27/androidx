@@ -48,6 +48,7 @@ import androidx.xr.compose.platform.LocalOpaqueEntity
 import androidx.xr.compose.platform.LocalSession
 import androidx.xr.compose.platform.disposableValueOf
 import androidx.xr.compose.platform.getValue
+import androidx.xr.compose.subspace.layout.CoreActivityPanelEntity
 import androidx.xr.compose.subspace.layout.CorePanelEntity
 import androidx.xr.compose.subspace.layout.SpatialRoundedCornerShape
 import androidx.xr.compose.subspace.layout.SpatialShape
@@ -316,29 +317,19 @@ public fun SpatialActivityPanel(
 
     val pixelDimensions = IntSize2d(DEFAULT_SIZE_PX, DEFAULT_SIZE_PX)
 
-    val activityPanelEntity: ActivityPanelEntity by
-        remember(session, pixelDimensions) {
-            disposableValueOf(
-                ActivityPanelEntity.create(
-                    session,
-                    pixelDimensions,
-                    entityName("ActivityPanel-${intent.action}"),
-                )
-            ) {
-                it.dispose()
-            }
-        }
-
-    val corePanelEntity: CorePanelEntity by
-        remember(activityPanelEntity, density) {
-            disposableValueOf(CorePanelEntity(activityPanelEntity)) { it.dispose() }
-        }
+    val corePanelEntity: CoreActivityPanelEntity = remember {
+        CoreActivityPanelEntity(
+            ActivityPanelEntity.create(
+                session,
+                pixelDimensions,
+                entityName("ActivityPanel-${intent.action}"),
+            )
+        )
+    }
 
     SideEffect { corePanelEntity.setShape(shape, density) }
 
-    LaunchedEffect(intent) {
-        (corePanelEntity.entity as ActivityPanelEntity).launchActivity(intent)
-    }
+    LaunchedEffect(intent) { corePanelEntity.launchActivity(intent) }
 
     SpatialBox {
         SubspaceLayout(modifier = modifier, coreEntity = corePanelEntity) { _, constraints ->
@@ -359,18 +350,22 @@ public fun SpatialActivityPanel(
                 }
 
             val scrimPanelEntity by
-                remember(session, corePanelEntity.entity, scrimView) {
+                remember(session, scrimView) {
                     disposableValueOf(
-                        PanelEntity.create(
-                                session = session,
-                                view = scrimView,
-                                dimensions = activityPanelEntity.size,
-                                name = entityName("ScrimPanel"),
-                                pose = Pose.Identity,
+                        CorePanelEntity(
+                                PanelEntity.create(
+                                    session = session,
+                                    view = scrimView,
+                                    pixelDimensions =
+                                        corePanelEntity.size.run { IntSize2d(width, height) },
+                                    name = entityName("ScrimPanel"),
+                                    pose = Pose.Identity,
+                                )
                             )
                             .apply {
-                                parent = corePanelEntity.entity
-                                setPose(Pose(translation = Vector3(0f, 0f, 3.millimeters.toM())))
+                                parent = corePanelEntity
+                                poseInMeters =
+                                    Pose(translation = Vector3(0f, 0f, 3.millimeters.toM()))
                             }
                     ) {
                         it.dispose()
@@ -378,8 +373,8 @@ public fun SpatialActivityPanel(
                 }
 
             SideEffect {
-                scrimPanelEntity.size = activityPanelEntity.size
-                scrimPanelEntity.cornerRadius = activityPanelEntity.cornerRadius
+                scrimPanelEntity.size = corePanelEntity.mutableSize
+                scrimPanelEntity.setShape(shape, density)
             }
         }
     }

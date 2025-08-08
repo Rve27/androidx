@@ -253,9 +253,9 @@ private fun NestedSubspace(content: @Composable @SubspaceComposable SpatialBoxSc
     // subspace properly.
     val subspaceRootContainer by remember {
         disposableValueOf(
-            GroupEntity.create(session, "SubspaceRootContainer").apply {
-                parent = coreEntity.entity
-                setEnabled(false)
+            CoreGroupEntity(GroupEntity.create(session, "SubspaceRootContainer")).apply {
+                enabled = false
+                parent = coreEntity
             }
         ) {
             it.dispose()
@@ -263,14 +263,16 @@ private fun NestedSubspace(content: @Composable @SubspaceComposable SpatialBoxSc
     }
     val scene by remember {
         val subspaceRoot =
-            GroupEntity.create(session, "SubspaceRoot").apply { parent = subspaceRootContainer }
+            CoreGroupEntity(GroupEntity.create(session, "SubspaceRoot")).apply {
+                parent = subspaceRootContainer
+            }
         disposableValueOf(
             SpatialComposeScene(
                 lifecycleOwner = lifecycleOwner,
                 context = context,
                 jxrSession = session,
                 parentCompositionContext = compositionContext,
-                rootEntity = CoreGroupEntity(subspaceRoot),
+                rootEntity = subspaceRoot,
             )
         ) {
             it.dispose()
@@ -341,13 +343,8 @@ private fun NestedSubspace(content: @Composable @SubspaceComposable SpatialBoxSc
                 val contentOffset = coordinates?.positionInRoot() ?: return@layout
                 val nextPose =
                     calculatePose(contentOffset, parentSize, measuredPlaceholderSize, density)
-                if (subspaceRootContainer.getPose() != nextPose) {
-                    subspaceRootContainer.setPose(nextPose)
-                }
-                // This needs to be checked aside from the pose check since the pose may not change.
-                if (!subspaceRootContainer.isEnabled(false)) {
-                    subspaceRootContainer.setEnabled(true)
-                }
+                subspaceRootContainer.poseInMeters = nextPose
+                subspaceRootContainer.enabled = true
             }
         }
     }

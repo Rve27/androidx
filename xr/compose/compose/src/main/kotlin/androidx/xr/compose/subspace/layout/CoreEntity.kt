@@ -17,6 +17,8 @@
 package androidx.xr.compose.subspace.layout
 
 import android.annotation.SuppressLint
+import android.content.Intent
+import android.os.Bundle
 import android.view.Surface
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,45 +33,58 @@ import androidx.xr.runtime.Session
 import androidx.xr.runtime.math.IntSize2d
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Vector3
+import androidx.xr.scenecore.ActivityPanelEntity
 import androidx.xr.scenecore.Component
 import androidx.xr.scenecore.Entity
 import androidx.xr.scenecore.GroupEntity
 import androidx.xr.scenecore.PanelEntity
+import androidx.xr.scenecore.PointSourceParams
 import androidx.xr.scenecore.SurfaceEntity
 import androidx.xr.scenecore.scene
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import kotlin.getValue
 import kotlin.math.PI
+import org.jetbrains.annotations.TestOnly
 
 /**
  * Wrapper class for Entities from SceneCore to provide convenience methods for working with
  * Entities from SceneCore.
  */
-internal sealed class CoreEntity(val entity: Entity) : OpaqueEntity {
+internal sealed class CoreEntity(protected val entity: Entity) : OpaqueEntity {
 
-    // This parameter is null for Composables without a layout, such as Orbiters and Spatial
-    // Dialogs.
+    /**
+     * This parameter is null for Composables without a layout, such as Orbiters and Spatial
+     * Dialogs.
+     */
     internal var layout: SubspaceLayoutNode? = null
         set(value) {
             field = value
-            updateEntityPose()
+            updatePoseFromLayout()
         }
 
     protected val density: Density?
         get() = layout?.density
 
-    internal open fun updateEntityPose() {
-        val density = density ?: return
-
+    internal fun updatePoseFromLayout() {
         // Compose XR uses pixels, SceneCore uses meters.
-        val corePose = layoutPoseInPixels.convertPixelsToMeters(density)
-        if (entity.getPose() != corePose) {
-            entity.setPose(corePose)
-        }
+        poseInMeters = layoutPoseInPixels.convertPixelsToMeters(density ?: return)
     }
 
-    open val layoutPoseInPixels
+    open val layoutPoseInPixels: Pose
         get() = layout?.measurableLayout?.poseInParentEntity ?: Pose.Identity
+
+    internal open var poseInMeters: Pose
+        get() = entity.getPose()
+        set(value) {
+            if (entity.getPose() != value) {
+                entity.setPose(value)
+            }
+        }
+
+    /** Get the [Entity] associated with this [CoreEntity] for testing purposes. */
+    internal val semanticsEntity: Entity?
+        @TestOnly get() = entity
 
     open fun dispose() {
         entity.dispose()
@@ -93,6 +108,9 @@ internal sealed class CoreEntity(val entity: Entity) : OpaqueEntity {
             field = value
             mutableSize = value
         }
+
+    /** Get a [PointSourceParams] for this entity for spatial audio. */
+    val pointSourceParams by lazy { PointSourceParams(entity) }
 
     /**
      * Whether this entity and all of its ancestors are enabled. An entity will not render if it is
@@ -134,9 +152,10 @@ internal sealed class CoreEntity(val entity: Entity) : OpaqueEntity {
             field = value
         }
 
-    // SceneCore parents all newly-created non-Anchor entities under a world
-    // space point of reference for the activity space, which we save for future
-    // use.
+    /**
+     * SceneCore parents all newly-created non-Anchor entities under a world space point of
+     * reference for the activity space, which we save for future use.
+     */
     private val originalParent: Entity? = entity.parent
 
     open var parent: CoreEntity? = null
@@ -169,6 +188,8 @@ internal sealed class CoreEntity(val entity: Entity) : OpaqueEntity {
     fun removeComponent(component: Component) {
         entity.removeComponent(component)
     }
+
+    override fun toString(): String = "CoreEntity(entity=$entity)"
 }
 
 /** Wrapper class for group entities from SceneCore. */
@@ -197,17 +218,11 @@ internal sealed class CoreBasePanelEntity(private val panelEntity: PanelEntity) 
             field = value
         }
 
-    override fun updateEntityPose() {
-        val density = density ?: return
-
-        // Compose XR uses pixels, SceneCore uses meters.
-        val corePose = layoutPoseInPixels.convertPixelsToMeters(density)
-        CoreExecutor.submit {
-            if (entity.getPose() != corePose) {
-                entity.setPose(corePose)
-            }
+    override var poseInMeters
+        get() = super.poseInMeters
+        set(value) {
+            CoreExecutor.submit { super.poseInMeters = value }
         }
-    }
 
     /**
      * The size of the [CoreBasePanelEntity] in pixels.
@@ -272,6 +287,13 @@ internal sealed class CoreBasePanelEntity(private val panelEntity: PanelEntity) 
  * from SceneCore.
  */
 internal class CorePanelEntity(entity: PanelEntity) : CoreBasePanelEntity(entity)
+
+internal class CoreActivityPanelEntity(private val activityPanelEntity: ActivityPanelEntity) :
+    CoreBasePanelEntity(activityPanelEntity) {
+    fun launchActivity(intent: Intent, bundle: Bundle? = null) {
+        activityPanelEntity.launchActivity(intent, bundle)
+    }
+}
 
 /**
  * Wrapper class for SceneCore's PanelEntity associated with the "main window" for the Activity.

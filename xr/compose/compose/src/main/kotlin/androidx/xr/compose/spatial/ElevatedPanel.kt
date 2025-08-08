@@ -130,7 +130,7 @@ internal fun ElevatedPanel(
 
     LaunchedEffect(pose) {
         if (pose != null) {
-            panelEntity.entity.setPose(pose)
+            panelEntity.poseInMeters = pose
         }
     }
 
@@ -141,7 +141,7 @@ internal fun ElevatedPanel(
         panelEntity.size = IntVolumeSize(width = width, height = height, depth = 0)
     }
 
-    LaunchedEffect(parentEntity) { panelEntity.entity.parent = parentEntity.entity }
+    LaunchedEffect(parentEntity) { panelEntity.parent = parentEntity }
 }
 
 /** A 3D vector where each coordinate is [Meter]s. */
