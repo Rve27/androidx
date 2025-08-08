@@ -1291,7 +1291,25 @@ public class RemoteComposeWriter {
     public int addPathData(@NonNull Object path) {
         float[] pathData = mPlatform.pathToFloatArray(path);
         int id = mState.cacheData(path);
+        if (pathData == null) {
+            throw new IllegalArgumentException("Invalid path data");
+        }
         return mBuffer.addPathData(id, pathData);
+    }
+
+    /**
+     * Add an android Path object. (It is converted to internal path)
+     *
+     * @param path Android Path object
+     * @return id of the path object to be used by drawPath, etc.
+     */
+    public int addPathData(@NonNull Object path, int winding) {
+        float[] pathData = mPlatform.pathToFloatArray(path);
+        int id = mState.cacheData(path);
+        if (pathData == null) {
+            throw new IllegalArgumentException("Invalid path data");
+        }
+        return mBuffer.addPathData(id, pathData, winding);
     }
 
     /**

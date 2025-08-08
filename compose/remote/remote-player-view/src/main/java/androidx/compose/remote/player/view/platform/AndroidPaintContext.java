@@ -121,16 +121,16 @@ public class AndroidPaintContext extends PaintContext {
     /**
      * Draw an image onto the canvas
      *
-     * @param imageId the id of the image
-     * @param srcLeft left coordinate of the source area
-     * @param srcTop top coordinate of the source area
-     * @param srcRight right coordinate of the source area
+     * @param imageId   the id of the image
+     * @param srcLeft   left coordinate of the source area
+     * @param srcTop    top coordinate of the source area
+     * @param srcRight  right coordinate of the source area
      * @param srcBottom bottom coordinate of the source area
-     * @param dstLeft left coordinate of the destination area
-     * @param dstTop top coordinate of the destination area
-     * @param dstRight right coordinate of the destination area
+     * @param dstLeft   left coordinate of the destination area
+     * @param dstTop    top coordinate of the destination area
+     * @param dstRight  right coordinate of the destination area
      * @param dstBottom bottom coordinate of the destination area
-     * @param cdId the id of the content description
+     * @param cdId      the id of the content description
      */
     @Override
     public void drawBitmap(
@@ -950,8 +950,10 @@ public class AndroidPaintContext extends PaintContext {
                 }
 
                 Shader.TileMode[] mTileModes =
-                        new Shader.TileMode[] {
-                            Shader.TileMode.CLAMP, Shader.TileMode.REPEAT, Shader.TileMode.MIRROR
+                        new Shader.TileMode[]{
+                                Shader.TileMode.CLAMP,
+                                Shader.TileMode.REPEAT,
+                                Shader.TileMode.MIRROR
                         };
 
                 @Override
@@ -1068,15 +1070,15 @@ public class AndroidPaintContext extends PaintContext {
             float bottomEnd) {
         Path roundedPath = new Path();
         float[] radii =
-                new float[] {
-                    topStart,
-                    topStart,
-                    topEnd,
-                    topEnd,
-                    bottomEnd,
-                    bottomEnd,
-                    bottomStart,
-                    bottomStart
+                new float[]{
+                        topStart,
+                        topStart,
+                        topEnd,
+                        topEnd,
+                        bottomEnd,
+                        bottomEnd,
+                        bottomStart,
+                        bottomStart
                 };
 
         roundedPath.addRoundRect(0f, 0f, width, height, radii, android.graphics.Path.Direction.CW);
@@ -1105,11 +1107,11 @@ public class AndroidPaintContext extends PaintContext {
         Path p1 = getPath(path1, 0, 1);
         Path p2 = getPath(path2, 0, 1);
         Path.Op[] op = {
-            Path.Op.DIFFERENCE,
-            Path.Op.INTERSECT,
-            Path.Op.REVERSE_DIFFERENCE,
-            Path.Op.UNION,
-            Path.Op.XOR,
+                Path.Op.DIFFERENCE,
+                Path.Op.INTERSECT,
+                Path.Op.REVERSE_DIFFERENCE,
+                Path.Op.UNION,
+                Path.Op.XOR,
         };
         Path p = new Path(p1);
         p.op(p2, op[operation]);
@@ -1162,6 +1164,7 @@ public class AndroidPaintContext extends PaintContext {
     private Path getPath(int id, float start, float end) {
         AndroidRemoteContext androidContext = (AndroidRemoteContext) mContext;
         Path p = (Path) androidContext.mRemoteComposeState.getPath(id);
+        int w = androidContext.mRemoteComposeState.getPathWinding(id);
         if (p != null) {
             return p;
         }
@@ -1169,6 +1172,17 @@ public class AndroidPaintContext extends PaintContext {
         float[] pathData = androidContext.mRemoteComposeState.getPathData(id);
         if (pathData != null) {
             FloatsToPath.genPath(path, pathData, start, end);
+            switch (w) {
+                case 1:
+                    path.setFillType(Path.FillType.EVEN_ODD);
+                    break;
+                case 2:
+                    path.setFillType(Path.FillType.INVERSE_EVEN_ODD);
+                    break;
+                case 3:
+                    path.setFillType(Path.FillType.INVERSE_WINDING);
+                    break;
+            }
             androidContext.mRemoteComposeState.putPath(id, path);
         }
 

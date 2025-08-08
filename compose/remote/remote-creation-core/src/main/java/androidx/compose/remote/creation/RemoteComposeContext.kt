@@ -1396,3 +1396,4 @@ public fun RemoteComposeContext.createCirclePath(
     return path
 }
 */
+private fun RecordingModifier.clip(unit: Any) {}

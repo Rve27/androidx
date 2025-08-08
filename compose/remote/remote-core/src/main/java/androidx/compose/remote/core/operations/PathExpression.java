@@ -57,11 +57,13 @@ public class PathExpression extends Operation implements VariableSupport, Serial
     private final float mOutCount;
     private final int mFlags;
     private boolean mPathChanged = true;
+    private final int mWinding;
 
     public static final int LOOP = 1;
     public static final int MONOTONIC = 2;
     public static final int LINEAR = 4;
     public static final int POLAR = 8;
+    public static final int WINDING_MASK =  0x3000000;
 
     PathExpression(
             int instanceId,
@@ -83,6 +85,7 @@ public class PathExpression extends Operation implements VariableSupport, Serial
         mCount = count;
         mOutCount = mCount;
         mFlags = flags;
+        mWinding = (flags & WINDING_MASK) >> 24;
     }
 
     @Override
@@ -354,7 +357,7 @@ public class PathExpression extends Operation implements VariableSupport, Serial
                         loop,
                         context.getCollectionsAccess());
             }
-            context.loadPathData(mInstanceId, mOutputPath);
+            context.loadPathData(mInstanceId, mWinding,  mOutputPath);
         }
         mPathChanged = false;
     }

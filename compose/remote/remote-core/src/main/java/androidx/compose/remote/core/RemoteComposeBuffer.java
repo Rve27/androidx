@@ -777,6 +777,20 @@ public class RemoteComposeBuffer {
     }
 
     /**
+     * Add a path object
+     *
+     * @param id the path id
+     * @param pathData the path data
+     * @return the id of the path on the wire
+     */
+    public int addPathData(int id, float @NonNull [] pathData, int winding) {
+        if (mApiLevel < 7 && winding != 0) {
+            throw new RuntimeException("winding not supported in API level < 7");
+        }
+        PathData.apply(mBuffer, id | (winding << 24), pathData);
+        return id;
+    }
+    /**
      * Adds a paint Bundle to the doc
      *
      * @param paint

@@ -94,8 +94,9 @@ public class AndroidRemoteContext extends RemoteContext {
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
-    public void loadPathData(int instanceId, float @NonNull [] floatPath) {
+    public void loadPathData(int instanceId, int winding, float @NonNull [] floatPath) {
         mRemoteComposeState.putPathData(instanceId, floatPath);
+        mRemoteComposeState.putPathWinding(instanceId, winding);
     }
 
     @Override
