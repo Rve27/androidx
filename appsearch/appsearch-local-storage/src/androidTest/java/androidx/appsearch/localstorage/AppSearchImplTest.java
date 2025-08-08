@@ -64,6 +64,7 @@ import androidx.appsearch.app.SetSchemaResponse;
 import androidx.appsearch.app.StorageInfo;
 import androidx.appsearch.exceptions.AppSearchException;
 import androidx.appsearch.flags.Flags;
+import androidx.appsearch.localstorage.stats.CallStats;
 import androidx.appsearch.localstorage.stats.InitializeStats;
 import androidx.appsearch.localstorage.stats.OptimizeStats;
 import androidx.appsearch.localstorage.stats.PersistToDiskStats;
@@ -2798,7 +2799,8 @@ public class AppSearchImplTest {
         long nextPageToken = searchResultPage.getNextPageToken();
 
         // Invalidate the token
-        mAppSearchImpl.invalidateNextPageToken("package1", nextPageToken);
+        mAppSearchImpl.invalidateNextPageToken("package1", nextPageToken,
+                /*callStatsBuilder=*/null);
 
         // Can't get next page because we invalidated the token.
         AppSearchException e = assertThrows(AppSearchException.class,
@@ -2854,7 +2856,8 @@ public class AppSearchImplTest {
         assertThat(nextPageToken).isEqualTo(0);
 
         // Invalidate the token, no exception should be thrown
-        mAppSearchImpl.invalidateNextPageToken("package1", nextPageToken);
+        mAppSearchImpl.invalidateNextPageToken("package1", nextPageToken,
+                /*callStatsBuilder=*/null);
     }
 
     @Test
@@ -2912,7 +2915,8 @@ public class AppSearchImplTest {
         // Try getting next page with the wrong package, package2
         AppSearchException e = assertThrows(AppSearchException.class,
                 () -> mAppSearchImpl.invalidateNextPageToken("package2",
-                        nextPageToken));
+                        nextPageToken,
+                        /*callStatsBuilder=*/null));
         assertThat(e).hasMessageThat().contains(
                 "Package \"package2\" cannot use nextPageToken: " + nextPageToken);
         assertThat(e.getResultCode()).isEqualTo(AppSearchResult.RESULT_SECURITY_ERROR);
@@ -2981,7 +2985,8 @@ public class AppSearchImplTest {
         long nextPageToken = searchResultPage.getNextPageToken();
 
         // Invalidate the token
-        mAppSearchImpl.invalidateNextPageToken("package1", nextPageToken);
+        mAppSearchImpl.invalidateNextPageToken("package1", nextPageToken,
+                /*callStatsBuilder=*/null);
 
         // Can't get next page because we invalidated the token.
         AppSearchException e = assertThrows(AppSearchException.class,
@@ -3051,7 +3056,8 @@ public class AppSearchImplTest {
         // Try getting next page with the wrong package, package2
         AppSearchException e = assertThrows(AppSearchException.class,
                 () -> mAppSearchImpl.invalidateNextPageToken("package2",
-                        nextPageToken));
+                        nextPageToken,
+                        /*callStatsBuilder=*/null));
         assertThat(e).hasMessageThat().contains(
                 "Package \"package2\" cannot use nextPageToken: " + nextPageToken);
         assertThat(e.getResultCode()).isEqualTo(AppSearchResult.RESULT_SECURITY_ERROR);
@@ -5458,7 +5464,8 @@ public class AppSearchImplTest {
 
         assertThrows(IllegalStateException.class, () -> mAppSearchImpl.invalidateNextPageToken(
                 "package",
-                /*nextPageToken=*/ 1L));
+                /*nextPageToken=*/ 1L,
+                /*callStatsBuilder=*/null));
 
         assertThrows(IllegalStateException.class, () -> mAppSearchImpl.reportUsage(
                 "package", "database", "namespace", "id",
@@ -6461,18 +6468,19 @@ public class AppSearchImplTest {
     }
 
     @Test
-    public void testLastWriteOperationStats() throws Exception {
+    public void testLastBlockingOperationStats() throws Exception {
         mAppSearchImpl = AppSearchImpl.create(
                 mAppSearchDir,
                 mUnlimitedConfig,
                 /*initStatsBuilder=*/null,
-                /*visibilityChecker=*/ null,
                 /*callStatsBuilder=*/null,
+                /*visibilityChecker=*/ null,
                 new JetpackRevocableFileDescriptorStore(mUnlimitedConfig),
                 /*icingSearchEngine=*/ null,
                 ALWAYS_OPTIMIZE);
 
         // Set a schema and check last write operation is Initialize
+        CallStats.Builder callStatsBuilder = new CallStats.Builder();
         List<AppSearchSchema> schemas =
                 Collections.singletonList(new AppSearchSchema.Builder("type").build());
         SetSchemaStats.Builder setSchemaStatsBuilder = new SetSchemaStats.Builder(
@@ -6485,34 +6493,42 @@ public class AppSearchImplTest {
                 /*forceOverride=*/ false,
                 /*version=*/ 0,
                 setSchemaStatsBuilder,
-                /*callStatsBuilder=*/null);
+                callStatsBuilder);
         assertThat(internalSetSchemaResponse.isSuccess()).isTrue();
         SetSchemaStats setSchemaStats = setSchemaStatsBuilder.build();
-        assertThat(setSchemaStats.getLastWriteOperation())
+        assertThat(setSchemaStats.getLastBlockingOperation())
+                .isEqualTo(BaseStats.CALL_TYPE_INITIALIZE);
+        CallStats callStats = callStatsBuilder.build();
+        assertThat(callStats.getLastBlockingOperation())
                 .isEqualTo(BaseStats.CALL_TYPE_INITIALIZE);
 
         // Put a document and check last write operation is SetSchema
         AppSearchLogger fakeLogger = new AppSearchLogger() {
             @Override
             public void logStats(@NonNull SetSchemaStats stats) {
-                assertThat(stats.getLastWriteOperation()).isEqualTo(BaseStats.CALL_TYPE_SET_SCHEMA);
+                assertThat(stats.getLastBlockingOperation())
+                        .isEqualTo(BaseStats.CALL_TYPE_SET_SCHEMA);
             }
         };
         GenericDocument document =
                 new GenericDocument.Builder<>("namespace", "id", "type").build();
+        callStatsBuilder = new CallStats.Builder();
         mAppSearchImpl.putDocument(
                 "package",
                 "database",
                 document,
                 /*sendChangeNotifications=*/ false,
                 fakeLogger,
-                /*callStatsBuilder=*/null);
+                callStatsBuilder);
+        callStats = callStatsBuilder.build();
+        assertThat(callStats.getLastBlockingOperation())
+                .isEqualTo(BaseStats.CALL_TYPE_SET_SCHEMA);
 
         // Batch put a document and check last write operation is PUT_DOCUMENT
         fakeLogger = new AppSearchLogger() {
             @Override
             public void logStats(@NonNull PutDocumentStats stats) {
-                assertThat(stats.getLastWriteOperation()).isEqualTo(
+                assertThat(stats.getLastBlockingOperation()).isEqualTo(
                         BaseStats.CALL_TYPE_PUT_DOCUMENT);
             }
         };
@@ -6520,6 +6536,7 @@ public class AppSearchImplTest {
         documents.add(document);
         AppSearchBatchResult.Builder<String, Void> resultBuilder =
                 new AppSearchBatchResult.Builder<>();
+        callStatsBuilder = new CallStats.Builder();
         mAppSearchImpl.batchPutDocuments(
                 "package",
                 "database",
@@ -6528,152 +6545,203 @@ public class AppSearchImplTest {
                 /*sendChangeNotifications=*/ false,
                 fakeLogger,
                 PersistType.Code.LITE,
-                /*callStatsBuilder=*/ null);
+                callStatsBuilder);
+        callStats = callStatsBuilder.build();
+        assertThat(callStats.getLastBlockingOperation())
+                .isEqualTo(BaseStats.CALL_TYPE_PUT_DOCUMENT);
 
         // Search document and check last write operation is PUT_DOCUMENTS
         fakeLogger = new AppSearchLogger() {
             @Override
             public void logStats(@NonNull QueryStats stats) {
-                assertThat(stats.getLastWriteOperation()).isEqualTo(
+                assertThat(stats.getLastBlockingOperation()).isEqualTo(
                         BaseStats.CALL_TYPE_PUT_DOCUMENTS);
             }
         };
+        callStatsBuilder = new CallStats.Builder();
         mAppSearchImpl.query(
                 "package", "database", "",
                 new SearchSpec.Builder().build(), fakeLogger,
-                /*callStatsBuilder=*/null);
+                callStatsBuilder);
+        callStats = callStatsBuilder.build();
+        assertThat(callStats.getLastBlockingOperation())
+                .isEqualTo(BaseStats.CALL_TYPE_PUT_DOCUMENTS);
 
-        // Report usage
+        // Global query will only blocked by write operation
+        callStatsBuilder = new CallStats.Builder();
+        mAppSearchImpl.globalQuery(
+                "",
+                new SearchSpec.Builder().build(),
+                mSelfCallerAccess,
+                fakeLogger,
+                callStatsBuilder);
+        assertThat(callStats.getLastBlockingOperation())
+                .isEqualTo(BaseStats.CALL_TYPE_PUT_DOCUMENTS);
+
+        // Report usage write operation will be blocked by read and write operation
+        callStatsBuilder = new CallStats.Builder();
         mAppSearchImpl.reportUsage("package", "database", "namespace",
                 "id", /*usageTimestampMillis=*/ 10, /*systemUsage=*/ false,
-                /*callStatsBuilder=*/null);
+                callStatsBuilder);
+        callStats = callStatsBuilder.build();
+        assertThat(callStats.getLastBlockingOperation())
+                .isEqualTo(BaseStats.CALL_TYPE_GLOBAL_SEARCH);
+
+        // Get document and check the last blocking operation
+        callStatsBuilder = new CallStats.Builder();
+        mAppSearchImpl.getDocument("package", "database", "namespace",
+                "id",
+                Collections.emptyMap(),
+                callStatsBuilder);
+        callStats = callStatsBuilder.build();
+        assertThat(callStats.getLastBlockingOperation())
+                .isEqualTo(BaseStats.CALL_TYPE_REPORT_USAGE);
+
+        // Batch get document and check the last blocking operation
+        callStatsBuilder = new CallStats.Builder();
+        mAppSearchImpl.batchGetDocuments(
+                "package",
+                "database",
+                new GetByDocumentIdRequest.Builder("namespace").addIds("id").build(),
+                mSelfCallerAccess,
+                callStatsBuilder);
+        callStats = callStatsBuilder.build();
+        assertThat(callStats.getLastBlockingOperation())
+                .isEqualTo(BaseStats.CALL_TYPE_REPORT_USAGE);
 
         // Remove document and check last write operation is REPORT_USAGE
         RemoveStats.Builder removeStatsBuilder = new RemoveStats.Builder(
                 "package", "database");
+        callStatsBuilder = new CallStats.Builder();
         mAppSearchImpl.remove("package", "database", "namespace",
                 "id", removeStatsBuilder,
-                /*callStatsBuilder=*/null);
+                callStatsBuilder);
         RemoveStats removeStats = removeStatsBuilder.build();
-        assertThat(removeStats.getLastWriteOperation()).isEqualTo(BaseStats.CALL_TYPE_REPORT_USAGE);
+        assertThat(removeStats.getLastBlockingOperation())
+                .isEqualTo(BaseStats.CALL_TYPE_GET_DOCUMENTS);
+        callStats = callStatsBuilder.build();
+        assertThat(callStats.getLastBlockingOperation())
+                .isEqualTo(BaseStats.CALL_TYPE_GET_DOCUMENTS);
 
         // RemoveByQuery and check last write operation is REMOVE_DOCUMENT_BY_ID
         removeStatsBuilder = new RemoveStats.Builder(
                 "package", "database");
+        callStatsBuilder = new CallStats.Builder();
         mAppSearchImpl.removeByQuery("package", "database", "",
                 new SearchSpec.Builder().build(), /*deletedIds=*/null, removeStatsBuilder,
-                /*callStatsBuilder=*/null);
+                callStatsBuilder);
         removeStats = removeStatsBuilder.build();
-        assertThat(removeStats.getLastWriteOperation())
+        assertThat(removeStats.getLastBlockingOperation())
+                .isEqualTo(BaseStats.CALL_TYPE_REMOVE_DOCUMENT_BY_ID);
+        callStats = callStatsBuilder.build();
+        assertThat(callStats.getLastBlockingOperation())
                 .isEqualTo(BaseStats.CALL_TYPE_REMOVE_DOCUMENT_BY_ID);
 
-        // Optimize to check the last write operation is REMOVE_DOCUMENTS_BY_SEARCH
+        // Optimize to check the last blocking operation is REMOVE_DOCUMENTS_BY_SEARCH
         OptimizeStats.Builder optimizeStatsBuilder = new OptimizeStats.Builder();
         mAppSearchImpl.optimize(optimizeStatsBuilder);
         OptimizeStats optimizeStats = optimizeStatsBuilder.build();
-        assertThat(optimizeStats.getLastWriteOperation())
+        assertThat(optimizeStats.getLastBlockingOperation())
                 .isEqualTo(BaseStats.CALL_TYPE_REMOVE_DOCUMENTS_BY_SEARCH);
 
-        // Use SetSchema Stats to check the last write operation is Optimize
-        internalSetSchemaResponse = mAppSearchImpl.setSchema("package", "database",
-                schemas, /*visibilityConfigs=*/ Collections.emptyList(), /*forceOverride=*/ false,
-                /*version=*/ 0, setSchemaStatsBuilder,
-                /*callStatsBuilder=*/null);
-        assertThat(internalSetSchemaResponse.isSuccess()).isTrue();
-        setSchemaStats = setSchemaStatsBuilder.build();
-        assertThat(setSchemaStats.getLastWriteOperation()).isEqualTo(BaseStats.CALL_TYPE_OPTIMIZE);
-
-        // Flush and check the last write operation
+        // Flush and check the last blocking operation
+        callStatsBuilder = new CallStats.Builder();
         mAppSearchImpl.persistToDisk("package", BaseStats.CALL_TYPE_PUT_DOCUMENT,
                 PersistType.Code.FULL, /*logger=*/ null,
-                /*callStatsBuilder=*/ null);
-        internalSetSchemaResponse = mAppSearchImpl.setSchema("package", "database",
-                schemas, /*visibilityConfigs=*/ Collections.emptyList(), /*forceOverride=*/ false,
-                /*version=*/ 0, setSchemaStatsBuilder,
-                /*callStatsBuilder=*/null);
-        assertThat(internalSetSchemaResponse.isSuccess()).isTrue();
-        setSchemaStats = setSchemaStatsBuilder.build();
-        assertThat(setSchemaStats.getLastWriteOperation()).isEqualTo(BaseStats.CALL_TYPE_FLUSH);
+                callStatsBuilder);
+        callStats = callStatsBuilder.build();
+        assertThat(callStats.getLastBlockingOperation())
+                .isEqualTo(BaseStats.CALL_TYPE_OPTIMIZE);
+        // Second call to check last blocking operation is flush
+        callStatsBuilder = new CallStats.Builder();
+        mAppSearchImpl.persistToDisk("package", BaseStats.CALL_TYPE_PUT_DOCUMENT,
+                PersistType.Code.FULL, /*logger=*/ null,
+                callStatsBuilder);
+        callStats = callStatsBuilder.build();
+        assertThat(callStats.getLastBlockingOperation())
+                .isEqualTo(BaseStats.CALL_TYPE_FLUSH);
 
-        // Clear package data and check the last write operation
+        // Clear package data
         mAppSearchImpl.clearPackageData("nonExistPackage");
-        internalSetSchemaResponse = mAppSearchImpl.setSchema("package", "database",
-                schemas, /*visibilityConfigs=*/ Collections.emptyList(), /*forceOverride=*/ false,
-                /*version=*/ 0, setSchemaStatsBuilder,
-                /*callStatsBuilder=*/null);
-        assertThat(internalSetSchemaResponse.isSuccess()).isTrue();
-        setSchemaStats = setSchemaStatsBuilder.build();
-        assertThat(setSchemaStats.getLastWriteOperation())
-                .isEqualTo(BaseStats.INTERNAL_CALL_TYPE_PRUNE_PACKAGE_DATA);
 
-        // Write blob and check the last write operation
+        // Write blob and check the last blocking operation
+        callStatsBuilder = new CallStats.Builder();
         AppSearchBlobHandle handle = AppSearchBlobHandle.createWithSha256(
                 /*digest=*/ new byte[32], "package", "db1", "ns");
         try {
             mAppSearchImpl.openWriteBlob("package", "database", handle,
-                /*callStatsBuilder=*/null);
+                    callStatsBuilder);
         } catch (Exception e) {
             // We don't care whether the write blob is success or not, just want to verify the last
             // write operation.
         }
-        internalSetSchemaResponse = mAppSearchImpl.setSchema("package", "database",
-                schemas, /*visibilityConfigs=*/ Collections.emptyList(), /*forceOverride=*/ false,
-                /*version=*/ 0, setSchemaStatsBuilder,
-                /*callStatsBuilder=*/null);
-        assertThat(internalSetSchemaResponse.isSuccess()).isTrue();
-        setSchemaStats = setSchemaStatsBuilder.build();
-        assertThat(setSchemaStats.getLastWriteOperation())
-                .isEqualTo(BaseStats.CALL_TYPE_OPEN_WRITE_BLOB);
+        callStats = callStatsBuilder.build();
+        assertThat(callStats.getLastBlockingOperation())
+                .isEqualTo(BaseStats.INTERNAL_CALL_TYPE_PRUNE_PACKAGE_DATA);
 
-        // Commit blob and check the last write operation
+        // Commit blob and check the last blocking operation
+        callStatsBuilder = new CallStats.Builder();
         try {
             mAppSearchImpl.commitBlob("package", "database", handle,
-                /*callStatsBuilder=*/null);
+                    callStatsBuilder);
         } catch (Exception e) {
             // We don't care whether the write blob is success or not, just want to verify the last
             // write operation.
         }
-        internalSetSchemaResponse = mAppSearchImpl.setSchema("package", "database",
-                schemas, /*visibilityConfigs=*/ Collections.emptyList(), /*forceOverride=*/ false,
-                /*version=*/ 0, setSchemaStatsBuilder,
-                /*callStatsBuilder=*/null);
-        assertThat(internalSetSchemaResponse.isSuccess()).isTrue();
-        setSchemaStats = setSchemaStatsBuilder.build();
-        assertThat(setSchemaStats.getLastWriteOperation())
-                .isEqualTo(BaseStats.CALL_TYPE_COMMIT_BLOB);
+        callStats = callStatsBuilder.build();
+        assertThat(callStats.getLastBlockingOperation())
+                .isEqualTo(BaseStats.CALL_TYPE_OPEN_WRITE_BLOB);
 
-        // Remove blob and check the last write operation
+        // Remove blob and check the last blocking operation
+        callStatsBuilder = new CallStats.Builder();
         try {
             mAppSearchImpl.removeBlob("package", "database", handle,
-                /*callStatsBuilder=*/null);
+                    callStatsBuilder);
         } catch (Exception e) {
             // We don't care whether the write blob is success or not, just want to verify the last
             // write operation.
         }
-        internalSetSchemaResponse = mAppSearchImpl.setSchema("package", "database",
-                schemas, /*visibilityConfigs=*/ Collections.emptyList(), /*forceOverride=*/ false,
-                /*version=*/ 0, setSchemaStatsBuilder,
-                /*callStatsBuilder=*/null);
-        assertThat(internalSetSchemaResponse.isSuccess()).isTrue();
-        setSchemaStats = setSchemaStatsBuilder.build();
-        assertThat(setSchemaStats.getLastWriteOperation())
-                .isEqualTo(BaseStats.CALL_TYPE_REMOVE_BLOB);
+        callStats = callStatsBuilder.build();
+        assertThat(callStats.getLastBlockingOperation())
+                .isEqualTo(BaseStats.CALL_TYPE_COMMIT_BLOB);
 
-        // Set blob visibility and check the last write operation
+        // Set blob visibility and check the last blocking operation
+        callStatsBuilder = new CallStats.Builder();
         try {
             mAppSearchImpl.setBlobNamespaceVisibility("package", "database", ImmutableList.of(),
-                    /*callStatsBuilder=*/null);
+                    callStatsBuilder);
         } catch (Exception e) {
             // We don't care whether the write blob is success or not, just want to verify the last
             // write operation.
         }
-        internalSetSchemaResponse = mAppSearchImpl.setSchema("package", "database",
-                schemas, /*visibilityConfigs=*/ Collections.emptyList(), /*forceOverride=*/ false,
-                /*version=*/ 0, setSchemaStatsBuilder,
-                /*callStatsBuilder=*/null);
-        assertThat(internalSetSchemaResponse.isSuccess()).isTrue();
-        setSchemaStats = setSchemaStatsBuilder.build();
-        assertThat(setSchemaStats.getLastWriteOperation())
+        callStats = callStatsBuilder.build();
+        assertThat(callStats.getLastBlockingOperation())
+                .isEqualTo(BaseStats.CALL_TYPE_REMOVE_BLOB);
+
+        // Read blob visibility and check the last blocking operation
+        callStatsBuilder = new CallStats.Builder();
+        try {
+            mAppSearchImpl.openReadBlob("package", "database", handle,
+                    callStatsBuilder);
+        } catch (Exception e) {
+            // We don't care whether the write blob is success or not, just want to verify the last
+            // write operation.
+        }
+        callStats = callStatsBuilder.build();
+        assertThat(callStats.getLastBlockingOperation())
+                .isEqualTo(BaseStats.CALL_TYPE_SET_BLOB_VISIBILITY);
+
+        // Global read blob visibility and check the last blocking operation
+        callStatsBuilder = new CallStats.Builder();
+        try {
+            mAppSearchImpl.globalOpenReadBlob(handle, mSelfCallerAccess,
+                    callStatsBuilder);
+        } catch (Exception e) {
+            // We don't care whether the write blob is success or not, just want to verify the last
+            // write operation.
+        }
+        callStats = callStatsBuilder.build();
+        assertThat(callStats.getLastBlockingOperation())
                 .isEqualTo(BaseStats.CALL_TYPE_SET_BLOB_VISIBILITY);
     }
 

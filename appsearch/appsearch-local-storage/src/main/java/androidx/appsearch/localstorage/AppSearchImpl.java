@@ -284,7 +284,15 @@ public final class AppSearchImpl implements Closeable {
      */
     @BaseStats.CallType
     @GuardedBy("mReadWriteLock")
-    private int mLastWriteOperationLocked = 0;
+    private int mLastWriteOperationLocked;
+
+    /**
+     * The call type of the last read call that holds the read lock. This value will be logged in
+     * the following call to analysis what the on-going call have to wait for.
+     */
+    @CallStats.CallType
+    @GuardedBy("mReadWriteLock")
+    private int mLastReadOrWriteOperationLocked;
 
     /**
      * Time in millis that the last mutation call holds the write lock. This value will be logged in
@@ -292,6 +300,14 @@ public final class AppSearchImpl implements Closeable {
      */
     @GuardedBy("mReadWriteLock")
     private int mLastWriteOperationLatencyMillisLocked;
+
+    /**
+     * Time in millis that the last read call blocks both read and write operation in AppSearch.
+     * This value will be logged in the following call to analysis what the on-going call have to
+     * wait for.
+     */
+    @GuardedBy("mReadWriteLock")
+    private int mLastReadOrWriteOperationLatencyMillisLocked;
 
     @ExperimentalAppSearchApi
     private final @Nullable RevocableFileDescriptorStore mRevocableFileDescriptorStore;
@@ -586,6 +602,8 @@ public final class AppSearchImpl implements Closeable {
             mLastWriteOperationLocked = BaseStats.CALL_TYPE_INITIALIZE;
             mLastWriteOperationLatencyMillisLocked =
                     (int) (SystemClock.elapsedRealtime() - javaLockAcquisitionEndTimeMillis);
+            mLastReadOrWriteOperationLocked = mLastWriteOperationLocked;
+            mLastReadOrWriteOperationLatencyMillisLocked = mLastWriteOperationLatencyMillisLocked;
             mReadWriteLock.writeLock().unlock();
         }
     }
@@ -760,12 +778,18 @@ public final class AppSearchImpl implements Closeable {
         try {
             javaLockAcquisitionEndTimeMillis = SystemClock.elapsedRealtime();
             throwIfClosedLocked();
+            if (callStatsBuilder != null) {
+                callStatsBuilder.setLastBlockingOperation(mLastReadOrWriteOperationLocked)
+                        .setLastBlockingOperationLatencyMillis(
+                                mLastReadOrWriteOperationLatencyMillisLocked);
+            }
             if (setSchemaStatsBuilder != null) {
                 setSchemaStatsBuilder.setJavaLockAcquisitionLatencyMillis(
                                 (int) (javaLockAcquisitionEndTimeMillis
                                         - totalLatencyStartMillis))
-                        .setLastWriteOperation(mLastWriteOperationLocked)
-                        .setLastWriteOperationLatencyMillis(mLastWriteOperationLatencyMillisLocked)
+                        .setLastBlockingOperation(mLastReadOrWriteOperationLocked)
+                        .setLastBlockingOperationLatencyMillis(
+                                mLastReadOrWriteOperationLatencyMillisLocked)
                         .setLaunchVMEnabled(mIsVMEnabled);
             }
             if (mObserverManager.isPackageObserved(packageName)) {
@@ -802,9 +826,11 @@ public final class AppSearchImpl implements Closeable {
                         callStatsBuilder).first;
             }
         } finally {
-            mLastWriteOperationLocked = BaseStats.CALL_TYPE_SET_SCHEMA;
-            mLastWriteOperationLatencyMillisLocked =
-                    (int) (SystemClock.elapsedRealtime() - javaLockAcquisitionEndTimeMillis);
+            logWriteOperationLatencyLocked(totalLatencyStartMillis,
+                    javaLockAcquisitionEndTimeMillis,
+                    /*totalLatencyEndMillis=*/ SystemClock.elapsedRealtime(),
+                    BaseStats.CALL_TYPE_SET_SCHEMA,
+                    callStatsBuilder);
             mReadWriteLock.writeLock().unlock();
         }
     }
@@ -1389,8 +1415,16 @@ public final class AppSearchImpl implements Closeable {
             @NonNull CallerAccess callerAccess,
             CallStats.@Nullable Builder callStatsBuilder)
             throws AppSearchException {
+        long totalLatencyStartMillis = SystemClock.elapsedRealtime();
+        long javaLockAcquisitionEndTimeMillis = 0;
         mReadWriteLock.readLock().lock();
         try {
+            javaLockAcquisitionEndTimeMillis = SystemClock.elapsedRealtime();
+            if (callStatsBuilder != null) {
+                callStatsBuilder.setLastBlockingOperation(mLastWriteOperationLocked)
+                        .setLastBlockingOperationLatencyMillis(
+                                mLastWriteOperationLatencyMillisLocked);
+            }
             throwIfClosedLocked();
 
             // Get the schema from IcingLib.
@@ -1486,6 +1520,11 @@ public final class AppSearchImpl implements Closeable {
             return responseBuilder.build();
 
         } finally {
+            logReadOperationLatencyLocked(totalLatencyStartMillis,
+                    javaLockAcquisitionEndTimeMillis,
+                    /*totalLatencyEndMillis=*/ SystemClock.elapsedRealtime(),
+                    BaseStats.CALL_TYPE_GET_SCHEMA,
+                    callStatsBuilder);
             mReadWriteLock.readLock().unlock();
         }
     }
@@ -1502,8 +1541,16 @@ public final class AppSearchImpl implements Closeable {
     public @NonNull List<String> getNamespaces(
             @NonNull String packageName, @NonNull String databaseName,
             CallStats.@Nullable Builder callStatsBuilder) throws AppSearchException {
+        long totalLatencyStartMillis = SystemClock.elapsedRealtime();
+        long javaLockAcquisitionEndTimeMillis = 0;
         mReadWriteLock.readLock().lock();
         try {
+            javaLockAcquisitionEndTimeMillis = SystemClock.elapsedRealtime();
+            if (callStatsBuilder != null) {
+                callStatsBuilder.setLastBlockingOperation(mLastWriteOperationLocked)
+                        .setLastBlockingOperationLatencyMillis(
+                                mLastWriteOperationLatencyMillisLocked);
+            }
             throwIfClosedLocked();
             LogUtil.piiTrace(TAG, "getAllNamespaces, request");
             // We can't just use mNamespaceMap here because we have no way to prune namespaces from
@@ -1531,6 +1578,11 @@ public final class AppSearchImpl implements Closeable {
             }
             return results;
         } finally {
+            logReadOperationLatencyLocked(totalLatencyStartMillis,
+                    javaLockAcquisitionEndTimeMillis,
+                    /*totalLatencyEndMillis=*/ SystemClock.elapsedRealtime(),
+                    BaseStats.CALL_TYPE_GET_NAMESPACES,
+                    callStatsBuilder);
             mReadWriteLock.readLock().unlock();
         }
     }
@@ -1693,6 +1745,11 @@ public final class AppSearchImpl implements Closeable {
         mReadWriteLock.writeLock().lock();
         try {
             javaLockAcquisitionEndTimeMillis = SystemClock.elapsedRealtime();
+            if (callStatsBuilder != null) {
+                callStatsBuilder.setLastBlockingOperation(mLastReadOrWriteOperationLocked)
+                        .setLastBlockingOperationLatencyMillis(
+                                mLastReadOrWriteOperationLatencyMillisLocked);
+            }
             throwIfClosedLocked();
 
             PutDocumentRequest.Builder putRequestBuilder =
@@ -1707,9 +1764,9 @@ public final class AppSearchImpl implements Closeable {
                                         (int)
                                                 (javaLockAcquisitionEndTimeMillis
                                                         - totalLatencyStartMillis))
-                                .setLastWriteOperation(mLastWriteOperationLocked)
-                                .setLastWriteOperationLatencyMillis(
-                                        mLastWriteOperationLatencyMillisLocked);
+                                .setLastBlockingOperation(mLastReadOrWriteOperationLocked)
+                                .setLastBlockingOperationLatencyMillis(
+                                        mLastReadOrWriteOperationLatencyMillisLocked);
                 try {
                     // Check limits
                     int serializedSizeBytes = finalDocument.getSerializedSize();
@@ -1826,9 +1883,11 @@ public final class AppSearchImpl implements Closeable {
                 checkSuccess(batchPutResultProto.getPersistToDiskResultProto().getStatus());
             }
         } finally {
-            mLastWriteOperationLocked = BaseStats.CALL_TYPE_PUT_DOCUMENTS;
-            mLastWriteOperationLatencyMillisLocked =
-                    (int) (SystemClock.elapsedRealtime() - javaLockAcquisitionEndTimeMillis);
+            logWriteOperationLatencyLocked(totalLatencyStartMillis,
+                    javaLockAcquisitionEndTimeMillis,
+                    /*totalLatencyEndMillis=*/ SystemClock.elapsedRealtime(),
+                    BaseStats.CALL_TYPE_PUT_DOCUMENTS,
+                    callStatsBuilder);
             mReadWriteLock.writeLock().unlock();
 
             if (logger != null && !statsBuilders.isEmpty()) {
@@ -1883,6 +1942,11 @@ public final class AppSearchImpl implements Closeable {
         mReadWriteLock.writeLock().lock();
         try {
             javaLockAcquisitionEndTimeMillis = SystemClock.elapsedRealtime();
+            if (callStatsBuilder != null) {
+                callStatsBuilder.setLastBlockingOperation(mLastReadOrWriteOperationLocked)
+                        .setLastBlockingOperationLatencyMillis(
+                                mLastReadOrWriteOperationLatencyMillisLocked);
+            }
             throwIfClosedLocked();
 
             // Generate Document Proto
@@ -1916,9 +1980,9 @@ public final class AppSearchImpl implements Closeable {
                 pStatsBuilder
                         .setJavaLockAcquisitionLatencyMillis(
                                 (int) (javaLockAcquisitionEndTimeMillis - totalLatencyStartMillis))
-                        .setLastWriteOperation(mLastWriteOperationLocked)
-                        .setLastWriteOperationLatencyMillis(
-                                mLastWriteOperationLatencyMillisLocked)
+                        .setLastBlockingOperation(mLastReadOrWriteOperationLocked)
+                        .setLastBlockingOperationLatencyMillis(
+                                mLastReadOrWriteOperationLatencyMillisLocked)
                         .setStatusCode(statusProtoToResultCode(putResultProto.getStatus()))
                         .setGenerateDocumentProtoLatencyMillis(
                                 (int) (generateDocumentProtoEndTimeMillis
@@ -1962,9 +2026,11 @@ public final class AppSearchImpl implements Closeable {
                         mVisibilityCheckerLocked);
             }
         } finally {
-            mLastWriteOperationLocked = BaseStats.CALL_TYPE_PUT_DOCUMENT;
-            mLastWriteOperationLatencyMillisLocked =
-                    (int) (SystemClock.elapsedRealtime() - javaLockAcquisitionEndTimeMillis);
+            logWriteOperationLatencyLocked(totalLatencyStartMillis,
+                    javaLockAcquisitionEndTimeMillis,
+                    /*totalLatencyEndMillis=*/ SystemClock.elapsedRealtime(),
+                    BaseStats.CALL_TYPE_PUT_DOCUMENT,
+                    callStatsBuilder);
             mReadWriteLock.writeLock().unlock();
 
             if (pStatsBuilder != null && logger != null) {
@@ -1999,10 +2065,16 @@ public final class AppSearchImpl implements Closeable {
             throw new UnsupportedOperationException(
                     "BLOB_STORAGE is not available on this AppSearch implementation.");
         }
+        long totalLatencyStartMillis = SystemClock.elapsedRealtime();
         long javaLockAcquisitionEndTimeMillis = 0;
         mReadWriteLock.writeLock().lock();
         try {
             javaLockAcquisitionEndTimeMillis = SystemClock.elapsedRealtime();
+            if (callStatsBuilder != null) {
+                callStatsBuilder.setLastBlockingOperation(mLastReadOrWriteOperationLocked)
+                        .setLastBlockingOperationLatencyMillis(
+                                mLastReadOrWriteOperationLatencyMillisLocked);
+            }
             throwIfClosedLocked();
             verifyCallingBlobHandle(packageName, databaseName, handle);
             ParcelFileDescriptor pfd = mRevocableFileDescriptorStore
@@ -2027,9 +2099,11 @@ public final class AppSearchImpl implements Closeable {
             return mRevocableFileDescriptorStore.wrapToRevocableFileDescriptor(
                     packageName, handle, pfd, ParcelFileDescriptor.MODE_READ_WRITE);
         } finally {
-            mLastWriteOperationLocked = BaseStats.CALL_TYPE_OPEN_WRITE_BLOB;
-            mLastWriteOperationLatencyMillisLocked =
-                    (int) (SystemClock.elapsedRealtime() - javaLockAcquisitionEndTimeMillis);
+            logWriteOperationLatencyLocked(totalLatencyStartMillis,
+                    javaLockAcquisitionEndTimeMillis,
+                    /*totalLatencyEndMillis=*/ SystemClock.elapsedRealtime(),
+                    BaseStats.CALL_TYPE_OPEN_WRITE_BLOB,
+                    callStatsBuilder);
             mReadWriteLock.writeLock().unlock();
         }
     }
@@ -2056,11 +2130,17 @@ public final class AppSearchImpl implements Closeable {
             throw new UnsupportedOperationException(
                     "BLOB_STORAGE is not available on this AppSearch implementation.");
         }
+        long totalLatencyStartMillis = SystemClock.elapsedRealtime();
         long javaLockAcquisitionEndTimeMillis = 0;
         mReadWriteLock.writeLock().lock();
         try {
             javaLockAcquisitionEndTimeMillis = SystemClock.elapsedRealtime();
             throwIfClosedLocked();
+            if (callStatsBuilder != null) {
+                callStatsBuilder.setLastBlockingOperation(mLastReadOrWriteOperationLocked)
+                        .setLastBlockingOperationLatencyMillis(
+                                mLastReadOrWriteOperationLatencyMillisLocked);
+            }
             verifyCallingBlobHandle(packageName, databaseName, handle);
 
             BlobProto result = mIcingSearchEngineLocked.removeBlob(
@@ -2078,9 +2158,11 @@ public final class AppSearchImpl implements Closeable {
             }
             mRevocableFileDescriptorStore.revokeFdForWrite(packageName, handle);
         } finally {
-            mLastWriteOperationLocked = BaseStats.CALL_TYPE_REMOVE_BLOB;
-            mLastWriteOperationLatencyMillisLocked =
-                    (int) (SystemClock.elapsedRealtime() - javaLockAcquisitionEndTimeMillis);
+            logWriteOperationLatencyLocked(totalLatencyStartMillis,
+                    javaLockAcquisitionEndTimeMillis,
+                    /*totalLatencyEndMillis=*/ SystemClock.elapsedRealtime(),
+                    BaseStats.CALL_TYPE_REMOVE_BLOB,
+                    callStatsBuilder);
             mReadWriteLock.writeLock().unlock();
         }
     }
@@ -2178,10 +2260,16 @@ public final class AppSearchImpl implements Closeable {
             throw new UnsupportedOperationException(
                     "BLOB_STORAGE is not available on this AppSearch implementation.");
         }
+        long totalLatencyStartMillis = SystemClock.elapsedRealtime();
         mReadWriteLock.writeLock().lock();
         long javaLockAcquisitionEndTimeMillis = 0;
         try {
             javaLockAcquisitionEndTimeMillis = SystemClock.elapsedRealtime();
+            if (callStatsBuilder != null) {
+                callStatsBuilder.setLastBlockingOperation(mLastReadOrWriteOperationLocked)
+                        .setLastBlockingOperationLatencyMillis(
+                                mLastReadOrWriteOperationLatencyMillisLocked);
+            }
             verifyCallingBlobHandle(packageName, databaseName, handle);
 
             // If AppSearch manages blob files, it is responsible for verifying the digest of the
@@ -2200,9 +2288,11 @@ public final class AppSearchImpl implements Closeable {
             // The blob is committed and sealed, revoke the sent pfd for writing.
             mRevocableFileDescriptorStore.revokeFdForWrite(packageName, handle);
         } finally {
-            mLastWriteOperationLocked = BaseStats.CALL_TYPE_COMMIT_BLOB;
-            mLastWriteOperationLatencyMillisLocked =
-                    (int) (SystemClock.elapsedRealtime() - javaLockAcquisitionEndTimeMillis);
+            logWriteOperationLatencyLocked(totalLatencyStartMillis,
+                    javaLockAcquisitionEndTimeMillis,
+                    /*totalLatencyEndMillis=*/ SystemClock.elapsedRealtime(),
+                    BaseStats.CALL_TYPE_COMMIT_BLOB,
+                    callStatsBuilder);
             mReadWriteLock.writeLock().unlock();
         }
     }
@@ -2229,9 +2319,17 @@ public final class AppSearchImpl implements Closeable {
                     "BLOB_STORAGE is not available on this AppSearch implementation.");
         }
 
+        long totalLatencyStartMillis = SystemClock.elapsedRealtime();
+        long javaLockAcquisitionEndTimeMillis = 0;
         mReadWriteLock.readLock().lock();
         try {
+            javaLockAcquisitionEndTimeMillis = SystemClock.elapsedRealtime();
             throwIfClosedLocked();
+            if (callStatsBuilder != null) {
+                callStatsBuilder.setLastBlockingOperation(mLastWriteOperationLocked)
+                        .setLastBlockingOperationLatencyMillis(
+                                mLastWriteOperationLatencyMillisLocked);
+            }
             verifyCallingBlobHandle(packageName, databaseName, handle);
             mRevocableFileDescriptorStore.checkBlobStoreLimit(packageName);
             BlobProto result = mIcingSearchEngineLocked.openReadBlob(
@@ -2247,6 +2345,11 @@ public final class AppSearchImpl implements Closeable {
             return mRevocableFileDescriptorStore.wrapToRevocableFileDescriptor(
                     packageName, /*blobHandle=*/null, pfd, ParcelFileDescriptor.MODE_READ_ONLY);
         } finally {
+            logReadOperationLatencyLocked(totalLatencyStartMillis,
+                    javaLockAcquisitionEndTimeMillis,
+                    /*totalLatencyEndMillis=*/ SystemClock.elapsedRealtime(),
+                    BaseStats.CALL_TYPE_OPEN_READ_BLOB,
+                    callStatsBuilder);
             mReadWriteLock.readLock().unlock();
         }
     }
@@ -2269,9 +2372,17 @@ public final class AppSearchImpl implements Closeable {
                     "BLOB_STORAGE is not available on this AppSearch implementation.");
         }
 
+        long totalLatencyStartMillis = SystemClock.elapsedRealtime();
+        long javaLockAcquisitionEndTimeMillis = 0;
         mReadWriteLock.readLock().lock();
         try {
+            javaLockAcquisitionEndTimeMillis = SystemClock.elapsedRealtime();
             throwIfClosedLocked();
+            if (callStatsBuilder != null) {
+                callStatsBuilder.setLastBlockingOperation(mLastWriteOperationLocked)
+                        .setLastBlockingOperationLatencyMillis(
+                                mLastWriteOperationLatencyMillisLocked);
+            }
             mRevocableFileDescriptorStore.checkBlobStoreLimit(access.getCallingPackageName());
             String prefixedNamespace =
                     createPrefix(handle.getPackageName(), handle.getDatabaseName())
@@ -2306,6 +2417,11 @@ public final class AppSearchImpl implements Closeable {
                     pfd,
                     ParcelFileDescriptor.MODE_READ_ONLY);
         } finally {
+            logReadOperationLatencyLocked(totalLatencyStartMillis,
+                    javaLockAcquisitionEndTimeMillis,
+                    /*totalLatencyEndMillis=*/ SystemClock.elapsedRealtime(),
+                    BaseStats.CALL_TYPE_GLOBAL_OPEN_READ_BLOB,
+                    callStatsBuilder);
             mReadWriteLock.readLock().unlock();
         }
     }
@@ -2333,11 +2449,17 @@ public final class AppSearchImpl implements Closeable {
             @NonNull String databaseName,
             @NonNull List<InternalVisibilityConfig> visibilityConfigs,
             CallStats.@Nullable Builder callStatsBuilder) throws AppSearchException {
+        long totalLatencyStartMillis = SystemClock.elapsedRealtime();
         long javaLockAcquisitionEndTimeMillis = 0;
         mReadWriteLock.writeLock().lock();
         try {
             javaLockAcquisitionEndTimeMillis = SystemClock.elapsedRealtime();
             throwIfClosedLocked();
+            if (callStatsBuilder != null) {
+                callStatsBuilder.setLastBlockingOperation(mLastWriteOperationLocked)
+                        .setLastBlockingOperationLatencyMillis(
+                                mLastWriteOperationLatencyMillisLocked);
+            }
             if (mBlobVisibilityStoreLocked != null) {
                 String prefix = createPrefix(packageName, databaseName);
                 Set<String> removedVisibilityConfigs =
@@ -2368,9 +2490,11 @@ public final class AppSearchImpl implements Closeable {
                         "BLOB_STORAGE is not available on this AppSearch implementation.");
             }
         } finally {
-            mLastWriteOperationLocked = BaseStats.CALL_TYPE_SET_BLOB_VISIBILITY;
-            mLastWriteOperationLatencyMillisLocked =
-                    (int) (SystemClock.elapsedRealtime() - javaLockAcquisitionEndTimeMillis);
+            logWriteOperationLatencyLocked(totalLatencyStartMillis,
+                    javaLockAcquisitionEndTimeMillis,
+                    /*totalLatencyEndMillis=*/ SystemClock.elapsedRealtime(),
+                    BaseStats.CALL_TYPE_SET_BLOB_VISIBILITY,
+                    callStatsBuilder);
             mReadWriteLock.writeLock().unlock();
         }
     }
@@ -2454,9 +2578,17 @@ public final class AppSearchImpl implements Closeable {
             @NonNull Map<String, List<String>> typePropertyPaths,
             @NonNull CallerAccess callerAccess,
             CallStats.@Nullable Builder callStatsBuilder) throws AppSearchException {
+        long totalLatencyStartMillis = SystemClock.elapsedRealtime();
+        long javaLockAcquisitionEndTimeMillis = 0;
         mReadWriteLock.readLock().lock();
         try {
+            javaLockAcquisitionEndTimeMillis = SystemClock.elapsedRealtime();
             throwIfClosedLocked();
+            if (callStatsBuilder != null) {
+                callStatsBuilder.setLastBlockingOperation(mLastWriteOperationLocked)
+                        .setLastBlockingOperationLatencyMillis(
+                                mLastWriteOperationLatencyMillisLocked);
+            }
             // We retrieve the document before checking for access, as we do not know which
             // schema the document is under. Schema is required for checking access
             DocumentProto documentProto;
@@ -2485,6 +2617,11 @@ public final class AppSearchImpl implements Closeable {
             return GenericDocumentToProtoConverter.toGenericDocument(documentBuilder.build(),
                     prefix, mSchemaCacheLocked, mConfig);
         } finally {
+            logReadOperationLatencyLocked(totalLatencyStartMillis,
+                    javaLockAcquisitionEndTimeMillis,
+                    /*totalLatencyEndMillis=*/ SystemClock.elapsedRealtime(),
+                    BaseStats.CALL_TYPE_GLOBAL_GET_DOCUMENT_BY_ID,
+                    callStatsBuilder);
             mReadWriteLock.readLock().unlock();
         }
     }
@@ -2510,9 +2647,17 @@ public final class AppSearchImpl implements Closeable {
             @NonNull String id,
             @NonNull Map<String, List<String>> typePropertyPaths,
             CallStats.@Nullable Builder callStatsBuilder) throws AppSearchException {
+        long totalLatencyStartMillis = SystemClock.elapsedRealtime();
+        long javaLockAcquisitionEndTimeMillis = 0;
         mReadWriteLock.readLock().lock();
         try {
+            javaLockAcquisitionEndTimeMillis = SystemClock.elapsedRealtime();
             throwIfClosedLocked();
+            if (callStatsBuilder != null) {
+                callStatsBuilder.setLastBlockingOperation(mLastWriteOperationLocked)
+                        .setLastBlockingOperationLatencyMillis(
+                                mLastWriteOperationLatencyMillisLocked);
+            }
             DocumentProto documentProto = getDocumentProtoByIdLocked(packageName, databaseName,
                     namespace, id, typePropertyPaths, callStatsBuilder);
             DocumentProto.Builder documentBuilder = documentProto.toBuilder();
@@ -2525,6 +2670,11 @@ public final class AppSearchImpl implements Closeable {
             return GenericDocumentToProtoConverter.toGenericDocument(documentBuilder.build(),
                     prefix, mSchemaCacheLocked, mConfig);
         } finally {
+            logReadOperationLatencyLocked(totalLatencyStartMillis,
+                    javaLockAcquisitionEndTimeMillis,
+                    /*totalLatencyEndMillis=*/ SystemClock.elapsedRealtime(),
+                    BaseStats.CALL_TYPE_GET_DOCUMENT,
+                    callStatsBuilder);
             mReadWriteLock.readLock().unlock();
         }
     }
@@ -2556,9 +2706,17 @@ public final class AppSearchImpl implements Closeable {
             return resultBuilder.build();
         }
 
+        long totalLatencyStartMillis = SystemClock.elapsedRealtime();
+        long javaLockAcquisitionEndTimeMillis = 0;
         mReadWriteLock.readLock().lock();
         try {
+            javaLockAcquisitionEndTimeMillis = SystemClock.elapsedRealtime();
             throwIfClosedLocked();
+            if (callStatsBuilder != null) {
+                callStatsBuilder.setLastBlockingOperation(mLastWriteOperationLocked)
+                        .setLastBlockingOperationLatencyMillis(
+                                mLastWriteOperationLatencyMillisLocked);
+            }
 
             BatchGetResultProto batchGetResultProto = batchGetDocumentProtoByIdLocked(
                     packageName, databaseName, request, callStatsBuilder);
@@ -2613,6 +2771,11 @@ public final class AppSearchImpl implements Closeable {
 
             return resultBuilder.build();
         } finally {
+            logReadOperationLatencyLocked(totalLatencyStartMillis,
+                    javaLockAcquisitionEndTimeMillis,
+                    /*totalLatencyEndMillis=*/ SystemClock.elapsedRealtime(),
+                    BaseStats.CALL_TYPE_GET_DOCUMENTS,
+                    callStatsBuilder);
             mReadWriteLock.readLock().unlock();
         }
     }
@@ -2749,24 +2912,28 @@ public final class AppSearchImpl implements Closeable {
             CallStats.@Nullable Builder callStatsBuilder) throws AppSearchException {
         long totalLatencyStartMillis = SystemClock.elapsedRealtime();
         QueryStats.Builder sStatsBuilder = null;
-        if (logger != null) {
-            sStatsBuilder =
-                    new QueryStats.Builder(QueryStats.VISIBILITY_SCOPE_LOCAL, packageName)
-                            .setDatabase(databaseName)
-                            .setSearchSourceLogTag(searchSpec.getSearchSourceLogTag())
-                            .setLaunchVMEnabled(mIsVMEnabled)
-                            .setLastWriteOperation(mLastWriteOperationLocked)
-                            .setLastWriteOperationLatencyMillis(
-                                    mLastWriteOperationLatencyMillisLocked);
-        }
 
-        long javaLockAcquisitionLatencyStartMillis = SystemClock.elapsedRealtime();
+        long javaLockAcquisitionEndTimeMillis = 0;
         mReadWriteLock.readLock().lock();
         try {
-            if (sStatsBuilder != null) {
-                sStatsBuilder.setJavaLockAcquisitionLatencyMillis(
-                        (int) (SystemClock.elapsedRealtime()
-                                - javaLockAcquisitionLatencyStartMillis));
+            javaLockAcquisitionEndTimeMillis = SystemClock.elapsedRealtime();
+            if (logger != null) {
+                sStatsBuilder =
+                        new QueryStats.Builder(QueryStats.VISIBILITY_SCOPE_LOCAL, packageName)
+                                .setDatabase(databaseName)
+                                .setSearchSourceLogTag(searchSpec.getSearchSourceLogTag())
+                                .setLaunchVMEnabled(mIsVMEnabled)
+                                .setLastBlockingOperation(mLastWriteOperationLocked)
+                                .setLastBlockingOperationLatencyMillis(
+                                        mLastWriteOperationLatencyMillisLocked)
+                                .setJavaLockAcquisitionLatencyMillis(
+                                        (int) (javaLockAcquisitionEndTimeMillis
+                                                - totalLatencyStartMillis));
+            }
+            if (callStatsBuilder != null) {
+                callStatsBuilder.setLastBlockingOperation(mLastWriteOperationLocked)
+                        .setLastBlockingOperationLatencyMillis(
+                                mLastWriteOperationLatencyMillisLocked);
             }
             throwIfClosedLocked();
 
@@ -2799,6 +2966,11 @@ public final class AppSearchImpl implements Closeable {
             addNextPageToken(packageName, searchResultPage.getNextPageToken());
             return searchResultPage;
         } finally {
+            logReadOperationLatencyLocked(totalLatencyStartMillis,
+                    javaLockAcquisitionEndTimeMillis,
+                    /*totalLatencyEndMillis=*/ SystemClock.elapsedRealtime(),
+                    BaseStats.CALL_TYPE_SEARCH,
+                    callStatsBuilder);
             mReadWriteLock.readLock().unlock();
             if (sStatsBuilder != null && logger != null) {
                 sStatsBuilder.setTotalLatencyMillis(
@@ -2830,25 +3002,29 @@ public final class AppSearchImpl implements Closeable {
             CallStats.@Nullable Builder callStatsBuilder) throws AppSearchException {
         long totalLatencyStartMillis = SystemClock.elapsedRealtime();
         QueryStats.Builder sStatsBuilder = null;
-        if (logger != null) {
-            sStatsBuilder =
-                    new QueryStats.Builder(
-                            QueryStats.VISIBILITY_SCOPE_GLOBAL,
-                            callerAccess.getCallingPackageName())
-                            .setSearchSourceLogTag(searchSpec.getSearchSourceLogTag())
-                            .setLaunchVMEnabled(mIsVMEnabled)
-                            .setLastWriteOperation(mLastWriteOperationLocked)
-                            .setLastWriteOperationLatencyMillis(
-                                    mLastWriteOperationLatencyMillisLocked);
-        }
 
-        long javaLockAcquisitionLatencyStartMillis = SystemClock.elapsedRealtime();
+        long javaLockAcquisitionEndTimeMillis = 0;
         mReadWriteLock.readLock().lock();
         try {
-            if (sStatsBuilder != null) {
-                sStatsBuilder.setJavaLockAcquisitionLatencyMillis(
-                        (int) (SystemClock.elapsedRealtime()
-                                - javaLockAcquisitionLatencyStartMillis));
+            javaLockAcquisitionEndTimeMillis = SystemClock.elapsedRealtime();
+            if (logger != null) {
+                sStatsBuilder =
+                        new QueryStats.Builder(
+                                QueryStats.VISIBILITY_SCOPE_GLOBAL,
+                                callerAccess.getCallingPackageName())
+                                .setSearchSourceLogTag(searchSpec.getSearchSourceLogTag())
+                                .setLaunchVMEnabled(mIsVMEnabled)
+                                .setLastBlockingOperation(mLastWriteOperationLocked)
+                                .setLastBlockingOperationLatencyMillis(
+                                        mLastWriteOperationLatencyMillisLocked)
+                                .setJavaLockAcquisitionLatencyMillis(
+                                        (int) (javaLockAcquisitionEndTimeMillis
+                                                - totalLatencyStartMillis));
+            }
+            if (callStatsBuilder != null) {
+                callStatsBuilder.setLastBlockingOperation(mLastWriteOperationLocked)
+                        .setLastBlockingOperationLatencyMillis(
+                                mLastWriteOperationLatencyMillisLocked);
             }
             throwIfClosedLocked();
 
@@ -2912,6 +3088,11 @@ public final class AppSearchImpl implements Closeable {
                     callerAccess.getCallingPackageName(), searchResultPage.getNextPageToken());
             return searchResultPage;
         } finally {
+            logReadOperationLatencyLocked(totalLatencyStartMillis,
+                    javaLockAcquisitionEndTimeMillis,
+                    /*totalLatencyEndMillis=*/ SystemClock.elapsedRealtime(),
+                    BaseStats.CALL_TYPE_GLOBAL_SEARCH,
+                    callStatsBuilder);
             mReadWriteLock.readLock().unlock();
 
             if (sStatsBuilder != null && logger != null) {
@@ -3131,9 +3312,17 @@ public final class AppSearchImpl implements Closeable {
             @NonNull String suggestionQueryExpression,
             @NonNull SearchSuggestionSpec searchSuggestionSpec,
             CallStats.@Nullable Builder callStatsBuilder) throws AppSearchException {
+        long totalLatencyStartMillis = SystemClock.elapsedRealtime();
+        long javaLockAcquisitionEndTimeMillis = 0;
         mReadWriteLock.readLock().lock();
         try {
+            javaLockAcquisitionEndTimeMillis = SystemClock.elapsedRealtime();
             throwIfClosedLocked();
+            if (callStatsBuilder != null) {
+                callStatsBuilder.setLastBlockingOperation(mLastWriteOperationLocked)
+                        .setLastBlockingOperationLatencyMillis(
+                                mLastWriteOperationLatencyMillisLocked);
+            }
             if (suggestionQueryExpression.isEmpty()) {
                 throw new AppSearchException(
                         AppSearchResult.RESULT_INVALID_ARGUMENT,
@@ -3177,6 +3366,11 @@ public final class AppSearchImpl implements Closeable {
             }
             return suggestions;
         } finally {
+            logReadOperationLatencyLocked(totalLatencyStartMillis,
+                    javaLockAcquisitionEndTimeMillis,
+                    /*totalLatencyEndMillis=*/ SystemClock.elapsedRealtime(),
+                    BaseStats.CALL_TYPE_SEARCH_SUGGESTION,
+                    callStatsBuilder);
             mReadWriteLock.readLock().unlock();
         }
     }
@@ -3227,18 +3421,25 @@ public final class AppSearchImpl implements Closeable {
             throws AppSearchException {
         long totalLatencyStartMillis = SystemClock.elapsedRealtime();
 
-        long javaLockAcquisitionLatencyStartMillis = SystemClock.elapsedRealtime();
+        long javaLockAcquisitionEndTimeMillis = 0;
         mReadWriteLock.readLock().lock();
         try {
+            javaLockAcquisitionEndTimeMillis = SystemClock.elapsedRealtime();
+            throwIfClosedLocked();
+            if (callStatsBuilder != null) {
+                callStatsBuilder.setLastBlockingOperation(mLastWriteOperationLocked)
+                        .setLastBlockingOperationLatencyMillis(
+                                mLastWriteOperationLatencyMillisLocked);
+            }
             if (queryStatsBuilder != null) {
                 queryStatsBuilder.setJavaLockAcquisitionLatencyMillis(
-                                (int) (SystemClock.elapsedRealtime()
-                                        - javaLockAcquisitionLatencyStartMillis))
+                                (int) (javaLockAcquisitionEndTimeMillis
+                                        - totalLatencyStartMillis))
                         .setLaunchVMEnabled(mIsVMEnabled)
-                        .setLastWriteOperation(mLastWriteOperationLocked)
-                        .setLastWriteOperationLatencyMillis(mLastWriteOperationLatencyMillisLocked);
+                        .setLastBlockingOperation(mLastWriteOperationLocked)
+                        .setLastBlockingOperationLatencyMillis(
+                                mLastWriteOperationLatencyMillisLocked);
             }
-            throwIfClosedLocked();
 
             LogUtil.piiTrace(TAG, "getNextPage, request", nextPageToken);
             checkNextPageToken(packageName, nextPageToken);
@@ -3322,6 +3523,11 @@ public final class AppSearchImpl implements Closeable {
             }
             return searchResultPage;
         } finally {
+            logReadOperationLatencyLocked(totalLatencyStartMillis,
+                    javaLockAcquisitionEndTimeMillis,
+                    /*totalLatencyEndMillis=*/ SystemClock.elapsedRealtime(),
+                    BaseStats.CALL_TYPE_GET_NEXT_PAGE,
+                    callStatsBuilder);
             mReadWriteLock.readLock().unlock();
             if (queryStatsBuilder != null) {
                 queryStatsBuilder.setTotalLatencyMillis(
@@ -3340,7 +3546,8 @@ public final class AppSearchImpl implements Closeable {
      *                      Invalidated.
      * @throws AppSearchException if nextPageToken is unusable.
      */
-    public void invalidateNextPageToken(@NonNull String packageName, long nextPageToken)
+    public void invalidateNextPageToken(@NonNull String packageName, long nextPageToken,
+            CallStats.@Nullable Builder callStatsBuilder)
             throws AppSearchException {
         if (nextPageToken == SearchResultPage.EMPTY_PAGE_TOKEN) {
             // (b/208305352) Directly return here since we are no longer caching EMPTY_PAGE_TOKEN
@@ -3348,9 +3555,17 @@ public final class AppSearchImpl implements Closeable {
             return;
         }
 
+        long totalLatencyStartMillis = SystemClock.elapsedRealtime();
+        long javaLockAcquisitionEndTimeMillis = 0;
         mReadWriteLock.readLock().lock();
         try {
+            javaLockAcquisitionEndTimeMillis = SystemClock.elapsedRealtime();
             throwIfClosedLocked();
+            if (callStatsBuilder != null) {
+                callStatsBuilder.setLastBlockingOperation(mLastWriteOperationLocked)
+                        .setLastBlockingOperationLatencyMillis(
+                                mLastWriteOperationLatencyMillisLocked);
+            }
 
             LogUtil.piiTrace(TAG, "invalidateNextPageToken, request", nextPageToken);
             checkNextPageToken(packageName, nextPageToken);
@@ -3366,6 +3581,11 @@ public final class AppSearchImpl implements Closeable {
                 }
             }
         } finally {
+            logReadOperationLatencyLocked(totalLatencyStartMillis,
+                    javaLockAcquisitionEndTimeMillis,
+                    /*totalLatencyEndMillis=*/ SystemClock.elapsedRealtime(),
+                    BaseStats.CALL_TYPE_INVALIDATE_NEXT_PAGE_TOKEN,
+                    callStatsBuilder);
             mReadWriteLock.readLock().unlock();
         }
     }
@@ -3379,11 +3599,17 @@ public final class AppSearchImpl implements Closeable {
             long usageTimestampMillis,
             boolean systemUsage,
             CallStats.@Nullable Builder callStatsBuilder) throws AppSearchException {
+        long totalLatencyStartMillis = SystemClock.elapsedRealtime();
         long javaLockAcquisitionEndTimeMillis = 0;
         mReadWriteLock.writeLock().lock();
         try {
             javaLockAcquisitionEndTimeMillis = SystemClock.elapsedRealtime();
             throwIfClosedLocked();
+            if (callStatsBuilder != null) {
+                callStatsBuilder.setLastBlockingOperation(mLastReadOrWriteOperationLocked)
+                        .setLastBlockingOperationLatencyMillis(
+                                mLastReadOrWriteOperationLatencyMillisLocked);
+            }
 
             String prefixedNamespace = createPrefix(packageName, databaseName) + namespace;
             UsageReport.UsageType usageType = systemUsage
@@ -3403,9 +3629,11 @@ public final class AppSearchImpl implements Closeable {
             LogUtil.piiTrace(TAG, "reportUsage, response", result.getStatus(), result);
             checkSuccess(result.getStatus());
         } finally {
-            mLastWriteOperationLocked = BaseStats.CALL_TYPE_REPORT_USAGE;
-            mLastWriteOperationLatencyMillisLocked =
-                    (int) (SystemClock.elapsedRealtime() - javaLockAcquisitionEndTimeMillis);
+            logWriteOperationLatencyLocked(totalLatencyStartMillis,
+                    javaLockAcquisitionEndTimeMillis,
+                    /*totalLatencyEndMillis=*/ SystemClock.elapsedRealtime(),
+                    BaseStats.CALL_TYPE_REPORT_USAGE,
+                    callStatsBuilder);
             mReadWriteLock.writeLock().unlock();
         }
     }
@@ -3435,6 +3663,11 @@ public final class AppSearchImpl implements Closeable {
         try {
             javaLockAcquisitionEndTimeMillis = SystemClock.elapsedRealtime();
             throwIfClosedLocked();
+            if (callStatsBuilder != null) {
+                callStatsBuilder.setLastBlockingOperation(mLastReadOrWriteOperationLocked)
+                        .setLastBlockingOperationLatencyMillis(
+                                mLastReadOrWriteOperationLatencyMillisLocked);
+            }
 
             String prefixedNamespace = createPrefix(packageName, databaseName) + namespace;
             String schemaType = null;
@@ -3474,8 +3707,9 @@ public final class AppSearchImpl implements Closeable {
                         .setLaunchVMEnabled(mIsVMEnabled)
                         .setJavaLockAcquisitionLatencyMillis(
                                 (int) (javaLockAcquisitionEndTimeMillis - totalLatencyStartMillis))
-                        .setLastWriteOperation(mLastWriteOperationLocked)
-                        .setLastWriteOperationLatencyMillis(mLastWriteOperationLatencyMillisLocked);
+                        .setLastBlockingOperation(mLastReadOrWriteOperationLocked)
+                        .setLastBlockingOperationLatencyMillis(
+                                mLastReadOrWriteOperationLatencyMillisLocked);
                 AppSearchLoggerHelper.copyNativeStats(deleteResultProto.getDeleteStats(),
                         removeStatsBuilder);
             }
@@ -3496,9 +3730,11 @@ public final class AppSearchImpl implements Closeable {
                         mVisibilityCheckerLocked);
             }
         } finally {
-            mLastWriteOperationLocked = BaseStats.CALL_TYPE_REMOVE_DOCUMENT_BY_ID;
-            mLastWriteOperationLatencyMillisLocked =
-                    (int) (SystemClock.elapsedRealtime() - javaLockAcquisitionEndTimeMillis);
+            logWriteOperationLatencyLocked(totalLatencyStartMillis,
+                    javaLockAcquisitionEndTimeMillis,
+                    /*totalLatencyEndMillis=*/ SystemClock.elapsedRealtime(),
+                    BaseStats.CALL_TYPE_REMOVE_DOCUMENT_BY_ID,
+                    callStatsBuilder);
             mReadWriteLock.writeLock().unlock();
             if (removeStatsBuilder != null) {
                 removeStatsBuilder.setTotalLatencyMillis(
@@ -3541,11 +3777,17 @@ public final class AppSearchImpl implements Closeable {
         try {
             javaLockAcquisitionEndTimeMillis = SystemClock.elapsedRealtime();
             throwIfClosedLocked();
+            if (callStatsBuilder != null) {
+                callStatsBuilder.setLastBlockingOperation(mLastReadOrWriteOperationLocked)
+                        .setLastBlockingOperationLatencyMillis(
+                                mLastReadOrWriteOperationLatencyMillisLocked);
+            }
             if (removeStatsBuilder != null) {
                 removeStatsBuilder.setJavaLockAcquisitionLatencyMillis(
                         (int) (javaLockAcquisitionEndTimeMillis - totalLatencyStartMillis))
-                        .setLastWriteOperation(mLastWriteOperationLocked)
-                        .setLastWriteOperationLatencyMillis(mLastWriteOperationLatencyMillisLocked);
+                        .setLastBlockingOperation(mLastReadOrWriteOperationLocked)
+                        .setLastBlockingOperationLatencyMillis(
+                                mLastReadOrWriteOperationLatencyMillisLocked);
             }
 
             List<String> filterPackageNames = searchSpec.getFilterPackageNames();
@@ -3594,15 +3836,17 @@ public final class AppSearchImpl implements Closeable {
                     deletedIds, removeStatsBuilder, callStatsBuilder);
 
         } finally {
+            logWriteOperationLatencyLocked(totalLatencyStartMillis,
+                    javaLockAcquisitionEndTimeMillis,
+                    /*totalLatencyEndMillis=*/ SystemClock.elapsedRealtime(),
+                    BaseStats.CALL_TYPE_REMOVE_DOCUMENTS_BY_SEARCH,
+                    callStatsBuilder);
+            mReadWriteLock.writeLock().unlock();
             if (removeStatsBuilder != null) {
                 removeStatsBuilder.setTotalLatencyMillis(
                                 (int) (SystemClock.elapsedRealtime() - totalLatencyStartMillis))
                         .setLaunchVMEnabled(mIsVMEnabled);
             }
-            mLastWriteOperationLocked = BaseStats.CALL_TYPE_REMOVE_DOCUMENTS_BY_SEARCH;
-            mLastWriteOperationLatencyMillisLocked =
-                    (int) (SystemClock.elapsedRealtime() - javaLockAcquisitionEndTimeMillis);
-            mReadWriteLock.writeLock().unlock();
 
         }
     }
@@ -3707,9 +3951,17 @@ public final class AppSearchImpl implements Closeable {
     public @NonNull StorageInfo getStorageInfoForPackages(@NonNull Set<String> packageNames,
             CallStats.@Nullable Builder callStatsBuilder)
             throws AppSearchException {
+        long totalLatencyStartMillis = SystemClock.elapsedRealtime();
+        long javaLockAcquisitionEndTimeMillis = 0;
         mReadWriteLock.readLock().lock();
         try {
+            javaLockAcquisitionEndTimeMillis = SystemClock.elapsedRealtime();
             throwIfClosedLocked();
+            if (callStatsBuilder != null) {
+                callStatsBuilder.setLastBlockingOperation(mLastReadOrWriteOperationLocked)
+                        .setLastBlockingOperationLatencyMillis(
+                                mLastReadOrWriteOperationLatencyMillisLocked);
+            }
 
             StorageInfo.Builder storageInfoBuilder = new StorageInfo.Builder();
             // read document storage info and set to storageInfoBuilder
@@ -3733,6 +3985,11 @@ public final class AppSearchImpl implements Closeable {
             }
             return storageInfoBuilder.build();
         } finally {
+            logReadOperationLatencyLocked(totalLatencyStartMillis,
+                    javaLockAcquisitionEndTimeMillis,
+                    /*totalLatencyEndMillis=*/ SystemClock.elapsedRealtime(),
+                    BaseStats.CALL_TYPE_GET_STORAGE_INFO,
+                    callStatsBuilder);
             mReadWriteLock.readLock().unlock();
         }
     }
@@ -3743,9 +4000,17 @@ public final class AppSearchImpl implements Closeable {
             @NonNull String databaseName,
             CallStats.@Nullable Builder callStatsBuilder)
             throws AppSearchException {
+        long totalLatencyStartMillis = SystemClock.elapsedRealtime();
+        long javaLockAcquisitionEndTimeMillis = 0;
         mReadWriteLock.readLock().lock();
         try {
+            javaLockAcquisitionEndTimeMillis = SystemClock.elapsedRealtime();
             throwIfClosedLocked();
+            if (callStatsBuilder != null) {
+                callStatsBuilder.setLastBlockingOperation(mLastReadOrWriteOperationLocked)
+                        .setLastBlockingOperationLatencyMillis(
+                                mLastReadOrWriteOperationLatencyMillisLocked);
+            }
 
             StorageInfo.Builder storageInfoBuilder = new StorageInfo.Builder();
             String prefix = createPrefix(packageName, databaseName);
@@ -3785,6 +4050,11 @@ public final class AppSearchImpl implements Closeable {
             }
             return storageInfoBuilder.build();
         } finally {
+            logReadOperationLatencyLocked(totalLatencyStartMillis,
+                    javaLockAcquisitionEndTimeMillis,
+                    /*totalLatencyEndMillis=*/ SystemClock.elapsedRealtime(),
+                    BaseStats.CALL_TYPE_GET_STORAGE_INFO,
+                    callStatsBuilder);
             mReadWriteLock.readLock().unlock();
         }
     }
@@ -4028,14 +4298,19 @@ public final class AppSearchImpl implements Closeable {
         try {
             javaLockAcquisitionEndTimeMillis = SystemClock.elapsedRealtime();
             throwIfClosedLocked();
+            if (callStatsBuilder != null) {
+                callStatsBuilder.setLastBlockingOperation(mLastReadOrWriteOperationLocked)
+                        .setLastBlockingOperationLatencyMillis(
+                                mLastReadOrWriteOperationLatencyMillisLocked);
+            }
             if (logger != null) {
                 statsBuilder = new PersistToDiskStats.Builder(callingPackageName, triggerCallType)
                         .setJavaLockAcquisitionLatencyMillis(
                                 (int) (javaLockAcquisitionEndTimeMillis
                                         - totalLatencyStartMillis))
-                        .setLastWriteOperation(mLastWriteOperationLocked)
-                        .setLastWriteOperationLatencyMillis(
-                                mLastWriteOperationLatencyMillisLocked)
+                        .setLastBlockingOperation(mLastReadOrWriteOperationLocked)
+                        .setLastBlockingOperationLatencyMillis(
+                                mLastReadOrWriteOperationLatencyMillisLocked)
                                 .setLaunchVMEnabled(mIsVMEnabled);
             }
 
@@ -4061,11 +4336,12 @@ public final class AppSearchImpl implements Closeable {
             }
             checkSuccess(persistToDiskResultProto.getStatus());
         } finally {
-            mLastWriteOperationLocked = BaseStats.CALL_TYPE_FLUSH;
-            mLastWriteOperationLatencyMillisLocked =
-                    (int) (SystemClock.elapsedRealtime() - javaLockAcquisitionEndTimeMillis);
+            logWriteOperationLatencyLocked(totalLatencyStartMillis,
+                    javaLockAcquisitionEndTimeMillis,
+                    /*totalLatencyEndMillis=*/ SystemClock.elapsedRealtime(),
+                    BaseStats.CALL_TYPE_FLUSH,
+                    callStatsBuilder);
             mReadWriteLock.writeLock().unlock();
-
             if (logger != null) {
                 logger.logStats(statsBuilder.build());
             }
@@ -4081,6 +4357,7 @@ public final class AppSearchImpl implements Closeable {
     @OptIn(markerClass = ExperimentalAppSearchApi.class)
     public void clearPackageData(@NonNull String packageName) throws AppSearchException,
             IOException {
+        long totalLatencyStartMillis = SystemClock.elapsedRealtime();
         long javaLockAcquisitionEndTimeMillis = 0;
         mReadWriteLock.writeLock().lock();
         try {
@@ -4103,9 +4380,11 @@ public final class AppSearchImpl implements Closeable {
                 mRevocableFileDescriptorStore.revokeForPackage(packageName);
             }
         } finally {
-            mLastWriteOperationLocked = BaseStats.INTERNAL_CALL_TYPE_PRUNE_PACKAGE_DATA;
-            mLastWriteOperationLatencyMillisLocked =
-                    (int) (SystemClock.elapsedRealtime() - javaLockAcquisitionEndTimeMillis);
+            logWriteOperationLatencyLocked(totalLatencyStartMillis,
+                    javaLockAcquisitionEndTimeMillis,
+                    /*totalLatencyEndMillis=*/ SystemClock.elapsedRealtime(),
+                    BaseStats.INTERNAL_CALL_TYPE_PRUNE_PACKAGE_DATA,
+                    /*callStatsBuilder=*/ null);
             mReadWriteLock.writeLock().unlock();
         }
     }
@@ -4118,6 +4397,7 @@ public final class AppSearchImpl implements Closeable {
      * @throws AppSearchException if we cannot remove the data.
      */
     public void prunePackageData(@NonNull Set<String> installedPackages) throws AppSearchException {
+        long totalLatencyStartMillis = SystemClock.elapsedRealtime();
         long javaLockAcquisitionEndTimeMillis = 0;
         mReadWriteLock.writeLock().lock();
         try {
@@ -4200,9 +4480,11 @@ public final class AppSearchImpl implements Closeable {
                 }
             }
         } finally {
-            mLastWriteOperationLocked = BaseStats.INTERNAL_CALL_TYPE_PRUNE_PACKAGE_DATA;
-            mLastWriteOperationLatencyMillisLocked =
-                    (int) (SystemClock.elapsedRealtime() - javaLockAcquisitionEndTimeMillis);
+            logWriteOperationLatencyLocked(totalLatencyStartMillis,
+                    javaLockAcquisitionEndTimeMillis,
+                    /*totalLatencyEndMillis=*/ SystemClock.elapsedRealtime(),
+                    BaseStats.INTERNAL_CALL_TYPE_PRUNE_PACKAGE_DATA,
+                    /*callStatsBuilder=*/ null);
             mReadWriteLock.writeLock().unlock();
         }
     }
@@ -4702,9 +4984,11 @@ public final class AppSearchImpl implements Closeable {
                 checkForOptimize(statsBuilder);
             }
         } finally {
-            mLastWriteOperationLocked = BaseStats.CALL_TYPE_OPTIMIZE;
-            mLastWriteOperationLatencyMillisLocked =
-                    (int) (SystemClock.elapsedRealtime() - javaLockAcquisitionEndTimeMillis);
+            logWriteOperationLatencyLocked(totalLatencyStartMillis,
+                    javaLockAcquisitionEndTimeMillis,
+                    /*totalLatencyEndMillis=*/ SystemClock.elapsedRealtime(),
+                    BaseStats.CALL_TYPE_OPTIMIZE,
+                    /*callStatsBuilder=*/ null);
             mReadWriteLock.writeLock().unlock();
         }
     }
@@ -4736,9 +5020,11 @@ public final class AppSearchImpl implements Closeable {
                 optimize(statsBuilder);
             }
         } finally {
-            mLastWriteOperationLocked = BaseStats.CALL_TYPE_OPTIMIZE;
-            mLastWriteOperationLatencyMillisLocked =
-                    (int) (SystemClock.elapsedRealtime() - javaLockAcquisitionEndTimeMillis);
+            logWriteOperationLatencyLocked(totalLatencyStartMillis,
+                    javaLockAcquisitionEndTimeMillis,
+                    /*totalLatencyEndMillis=*/ SystemClock.elapsedRealtime(),
+                    BaseStats.CALL_TYPE_OPTIMIZE,
+                    /*callStatsBuilder=*/ null);
             mReadWriteLock.writeLock().unlock();
         }
         // TODO(b/147699081): Return OptimizeResultProto & log lost data detail once we add
@@ -4763,8 +5049,9 @@ public final class AppSearchImpl implements Closeable {
             if (statsBuilder != null) {
                 statsBuilder.setStatusCode(statusProtoToResultCode(optimizeResultProto.getStatus()))
                         .setJavaLockAcquisitionLatencyMillis(javaLockAcquisitionLatencyMillis)
-                        .setLastWriteOperation(mLastWriteOperationLocked)
-                        .setLastWriteOperationLatencyMillis(mLastWriteOperationLatencyMillisLocked)
+                        .setLastBlockingOperation(mLastReadOrWriteOperationLocked)
+                        .setLastBlockingOperationLatencyMillis(
+                                mLastReadOrWriteOperationLatencyMillisLocked)
                         .setLaunchVMEnabled(mIsVMEnabled)
                         .addGetVmLatencyMillis(optimizeResultProto.getGetVmLatencyMs());
                 AppSearchLoggerHelper.copyNativeStats(optimizeResultProto.getOptimizeStats(),
@@ -4785,9 +5072,11 @@ public final class AppSearchImpl implements Closeable {
                 }
             }
         } finally {
-            mLastWriteOperationLocked = BaseStats.CALL_TYPE_OPTIMIZE;
-            mLastWriteOperationLatencyMillisLocked =
-                    (int) (SystemClock.elapsedRealtime() - javaLockAcquisitionEndTimeMillis);
+            logWriteOperationLatencyLocked(totalLatencyStartMillis,
+                    javaLockAcquisitionEndTimeMillis,
+                    /*totalLatencyEndMillis=*/ SystemClock.elapsedRealtime(),
+                    BaseStats.CALL_TYPE_OPTIMIZE,
+                    /*callStatsBuilder=*/ null);
             mReadWriteLock.writeLock().unlock();
         }
     }
@@ -4925,5 +5214,47 @@ public final class AppSearchImpl implements Closeable {
         } finally {
             mReadWriteLock.readLock().unlock();
         }
+    }
+
+    /**
+     * Logs the operation latency of a write operation. This method is guarded by
+     * {@code mReadWriteLock}.
+     */
+    @GuardedBy("mReadWriteLock")
+    private void logWriteOperationLatencyLocked(long totalLatencyStartMillis,
+            long javaLockAcquisitionEndTimeMillis,
+            long totalLatencyEndMillis,
+            @BaseStats.CallType int callType,
+            CallStats.@Nullable Builder callStatsBuilder) {
+        int executeTime = (int) (totalLatencyEndMillis - javaLockAcquisitionEndTimeMillis);
+        mLastWriteOperationLocked = callType;
+        mLastWriteOperationLatencyMillisLocked = executeTime;
+        // The write operation will also block read operation, calling logReadOperationLatencyLocked
+        logReadOperationLatencyLocked(totalLatencyStartMillis,
+                javaLockAcquisitionEndTimeMillis,
+                totalLatencyEndMillis,
+                callType,
+                callStatsBuilder);
+    }
+
+    /**
+     * Logs the operation latency of a read operation. This method is guarded by
+     * {@code mReadWriteLock}.
+     */
+    @GuardedBy("mReadWriteLock")
+    private void logReadOperationLatencyLocked(long totalLatencyStartMillis,
+            long javaLockAcquisitionEndTimeMillis,
+            long totalLatencyEndMillis,
+            @BaseStats.CallType int callType,
+            CallStats.@Nullable Builder callStatsBuilder) {
+        int executeTime = (int) (totalLatencyEndMillis - javaLockAcquisitionEndTimeMillis);
+        if (callStatsBuilder != null) {
+            // This is a read operation, only write operation could be a blocker.
+            callStatsBuilder.setJavaLockAcquisitionLatencyMillis(
+                            (int) (totalLatencyStartMillis - javaLockAcquisitionEndTimeMillis))
+                    .setUnblockedAppSearchLatencyMillis(executeTime);
+        }
+        mLastReadOrWriteOperationLocked = callType;
+        mLastReadOrWriteOperationLatencyMillisLocked = executeTime;
     }
 }
