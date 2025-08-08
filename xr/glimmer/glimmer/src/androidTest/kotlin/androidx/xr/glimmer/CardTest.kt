@@ -74,13 +74,10 @@ import androidx.core.view.InputDeviceCompat.SOURCE_TOUCH_NAVIGATION
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
 import androidx.test.filters.SdkSuppress
-import androidx.test.platform.app.InstrumentationRegistry
 import androidx.xr.glimmer.samples.placeholderImagePainter
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import org.junit.After
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -93,13 +90,7 @@ import org.junit.runner.RunWith
 class CardTest {
     @get:Rule val rule = createComposeRule()
 
-    // Enter non-touch mode for tests, so that clickables can be focused.
-    // TODO(b/267253920): Add a compose test API to set/reset InputMode.
-    @Before
-    fun enterNonTouchMode() = InstrumentationRegistry.getInstrumentation().setInTouchMode(false)
-
-    // TODO(b/267253920): Add a compose test API to set/reset InputMode.
-    @After fun resetTouchMode() = InstrumentationRegistry.getInstrumentation().resetInTouchMode()
+    @get:Rule val inputModeRule = nonTouchInputModeRule()
 
     @Test
     fun semantics() {
