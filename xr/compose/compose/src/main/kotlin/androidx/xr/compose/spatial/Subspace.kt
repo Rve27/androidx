@@ -38,6 +38,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.IntSize
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.xr.compose.platform.LocalComposeXrOwners
 import androidx.xr.compose.platform.LocalCoreEntity
@@ -202,7 +203,9 @@ private fun ApplicationSubspace(
         ) {
             it.dispose()
             subspaceRoot.dispose()
-            session.scene.mainPanelEntity.setEnabled(true)
+            if (lifecycleOwner.lifecycle.currentState != Lifecycle.State.DESTROYED) {
+                session.scene.mainPanelEntity.setEnabled(true)
+            }
         }
     }
 

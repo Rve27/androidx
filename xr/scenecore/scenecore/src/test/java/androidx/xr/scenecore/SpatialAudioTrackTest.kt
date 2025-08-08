@@ -16,8 +16,8 @@
 
 package androidx.xr.scenecore
 
-import android.app.Activity
 import android.media.AudioTrack
+import androidx.activity.ComponentActivity
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.internal.ActivitySpace as RtActivitySpace
 import androidx.xr.runtime.internal.AudioTrackExtensionsWrapper as RtAudioTrackExtensionsWrapper
@@ -51,7 +51,8 @@ class SpatialAudioTrackTest {
     private var mockRtAudioTrackExtensions: RtAudioTrackExtensionsWrapper = mock()
 
     private val mockGroupEntity = mock<RtEntity>()
-    private val activity = Robolectric.buildActivity(Activity::class.java).create().start().get()
+    private val activity =
+        Robolectric.buildActivity(ComponentActivity::class.java).create().start().get()
     private val mockActivitySpace = mock<RtActivitySpace>()
 
     private lateinit var session: Session

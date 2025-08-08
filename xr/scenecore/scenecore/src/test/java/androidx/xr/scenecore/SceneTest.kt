@@ -16,11 +16,11 @@
 
 package androidx.xr.scenecore
 
-import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
+import androidx.activity.ComponentActivity
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.internal.ActivityPanelEntity as RtActivityPanelEntity
 import androidx.xr.runtime.internal.ActivitySpace as RtActivitySpace
@@ -39,6 +39,7 @@ import androidx.xr.runtime.testing.FakeRuntimeFactory
 import com.google.common.truth.Truth.assertThat
 import com.google.common.util.concurrent.MoreExecutors.directExecutor
 import java.util.function.Consumer
+import kotlin.test.assertFailsWith
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -57,7 +58,7 @@ import org.robolectric.RobolectricTestRunner
 @RunWith(RobolectricTestRunner::class)
 class SceneTest {
     private val fakeRuntimeFactory = FakeRuntimeFactory()
-    private val activityController = Robolectric.buildActivity(Activity::class.java)
+    private val activityController = Robolectric.buildActivity(ComponentActivity::class.java)
     private val activity = activityController.create().start().get()
     private val mockPlatformAdapter = mock<JxrPlatformAdapter>()
     private val mockAnchorEntity = mock<RtAnchorEntity>()
@@ -75,6 +76,18 @@ class SceneTest {
         whenever(mockAnchorEntity.state).thenReturn(RtAnchorEntity.State.UNANCHORED)
         whenever(mockPlatformAdapter.spatialCapabilities).thenReturn(RtSpatialCapabilities(0))
         session = Session(activity, fakeRuntimeFactory.createRuntime(activity), mockPlatformAdapter)
+    }
+
+    @Test
+    fun getSceneBeforeSessionDestroyed_returnsScene() {
+        assertThat(session.scene).isInstanceOf(Scene::class.java)
+    }
+
+    @Test
+    fun getSceneAfterSessionDestroyed_throwsIllegalStateException() {
+        activityController.destroy()
+
+        assertFailsWith<IllegalStateException> { session.scene }
     }
 
     @Test
