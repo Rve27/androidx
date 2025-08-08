@@ -26,6 +26,7 @@ import androidx.privacysandbox.sdkruntime.core.SdkSandboxClientImportanceListene
 import androidx.privacysandbox.sdkruntime.integration.callDoSomething
 import androidx.privacysandbox.sdkruntime.integration.testaidl.IClientImportanceListener
 import androidx.privacysandbox.sdkruntime.integration.testaidl.ILoadSdkCallback
+import androidx.privacysandbox.sdkruntime.integration.testaidl.ISdkActivityHandler
 import androidx.privacysandbox.sdkruntime.integration.testaidl.ISdkApi
 import androidx.privacysandbox.sdkruntime.integration.testaidl.LoadedSdkInfo
 import androidx.privacysandbox.sdkruntime.provider.controller.SdkSandboxControllerCompat
@@ -143,6 +144,13 @@ class TestSdk(private val sdkContext: Context) : ISdkApi.Stub() {
                     .unregisterSdkSandboxClientImportanceListener(wrapper)
             }
         }
+    }
+
+    override fun registerSdkActivityHandler(appSideActivityHandler: ISdkActivityHandler): IBinder {
+        return SdkSandboxControllerCompat.from(sdkContext)
+            .registerSdkSandboxActivityHandler(
+                ActivityHandlerWrapper(sdkContext, appSideActivityHandler)
+            )
     }
 
     private class ClientListenerWrapper(private val clientListener: IClientImportanceListener) :
