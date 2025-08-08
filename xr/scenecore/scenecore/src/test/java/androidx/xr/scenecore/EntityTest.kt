@@ -1277,4 +1277,10 @@ class EntityTest {
         surfaceEntity.dispose()
         verify(mockSurfaceEntity).dispose()
     }
+
+    @Test
+    fun surfaceEntity_disposeSupportsMultipleCalls() {
+        surfaceEntity.dispose()
+        surfaceEntity.dispose()
+    }
 }

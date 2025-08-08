@@ -204,6 +204,18 @@ public final class SurfaceEntityImplTest {
 
     @Ignore // b/428211243 this test currently leaks android.view.Surface
     @Test
+    public void dispose_supports_reentry() {
+        CanvasShape.Quad quadShape = new CanvasShape.Quad(1.0f, 1.0f); // 1m x 1m local
+        mSurfaceEntity = createDefaultSurfaceEntity(quadShape);
+
+        // Note that we don't test that dispose prevents manipulating other properties because that
+        // is enforced at the API level, rather than the implementation level.
+        mSurfaceEntity.dispose();
+        mSurfaceEntity.dispose();  // shouldn't crash
+    }
+
+    @Ignore // b/428211243 this test currently leaks android.view.Surface
+    @Test
     public void setEdgeFeather_forwardsToImpress() {
         float kFeatherRadiusX = 0.14f;
         float kFeatherRadiusY = 0.28f;
