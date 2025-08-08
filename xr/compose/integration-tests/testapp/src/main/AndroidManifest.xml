@@ -139,7 +139,11 @@
             android:exported="true"
             android:label="ResizablePanel"
             android:theme="@style/Theme.IntegrationTestsApp" />
-
+        <activity
+            android:name=".accessibility.AccessibilityActivity"
+            android:exported="true"
+            android:label="AccessibilityTest"
+            android:theme="@style/Theme.IntegrationTestsApp" />
 
         <property
             android:name="android.window.PROPERTY_XR_ACTIVITY_START_MODE"
