@@ -2,51 +2,6 @@
 <issues format="6" by="lint 8.13.0-alpha01" type="baseline" client="gradle" dependencies="false" name="AGP (8.13.0-alpha01)" variant="all" version="8.13.0-alpha01">
 
     <issue
-        id="CheckResult"
-        message="The result of `assertThat` is not used"
-        errorLine1="                assertThat(dateRangePickerState.getSelectedEndDate())"
-        errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/androidInstrumentedTest/kotlin/androidx/compose/material3/DateRangePickerTest.kt"/>
-    </issue>
-
-    <issue
-        id="CheckResult"
-        message="The result of `assertThat` is not used"
-        errorLine1="            assertThat(sheetState.currentValue == SheetValue.Expanded)"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/androidInstrumentedTest/kotlin/androidx/compose/material3/ModalBottomSheetTest.kt"/>
-    </issue>
-
-    <issue
-        id="CheckResult"
-        message="The result of `assertThat` is not used"
-        errorLine1="        assertThat(keylines.firstFocal == keylines.firstNonAnchor)"
-        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/androidUnitTest/kotlin/androidx/compose/material3/carousel/MultiBrowseTest.kt"/>
-    </issue>
-
-    <issue
-        id="CheckResult"
-        message="The result of `assertThat` is not used"
-        errorLine1="        assertThat(keylines.lastFocal == keylines.lastNonAnchor)"
-        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/androidUnitTest/kotlin/androidx/compose/material3/carousel/MultiBrowseTest.kt"/>
-    </issue>
-
-    <issue
-        id="CheckResult"
-        message="The result of `assertThat` is not used"
-        errorLine1="        assertThat(rule.onNodeWithTag(&quot;ROW_TAG&quot;).assertWidthIsEqualTo(expectedWidth))"
-        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/androidInstrumentedTest/kotlin/androidx/compose/material3/NavigationBarTest.kt"/>
-    </issue>
-
-    <issue
         id="BanThreadSleep"
         message="Uses Thread.sleep()"
         errorLine1="        Thread.sleep(300)"
