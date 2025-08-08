@@ -105,6 +105,9 @@ private class PagerCacheWindowScope(val itemCount: () -> Int) : CacheWindowScope
     override val density: Density?
         get() = layoutInfo.density
 
+    override val enableInitialPrefetch: Boolean
+        get() = false
+
     override fun schedulePrefetch(
         lineIndex: Int,
         onItemPrefetched: (Int, Int) -> Unit,

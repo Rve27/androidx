@@ -97,7 +97,7 @@ internal abstract class CacheWindowLogic(private val cacheWindow: LazyLayoutCach
 
     fun CacheWindowScope.onVisibleItemsUpdated() {
         debugLog { "hasUpdatedVisibleItemsOnce=$hasUpdatedVisibleItemsOnce" }
-        if (!hasUpdatedVisibleItemsOnce) {
+        if (!hasUpdatedVisibleItemsOnce && enableInitialPrefetch) {
             val prefetchForwardWindow =
                 with(cacheWindow) { density?.calculateAheadWindow(mainAxisViewportSize) ?: 0 }
             // we won't fill the window if we don't have a prefetch window
@@ -479,6 +479,8 @@ internal interface CacheWindowScope {
     val lastVisibleLineIndex: Int
     val mainAxisViewportSize: Int
     val density: Density?
+    val enableInitialPrefetch: Boolean
+        get() = true
 
     fun schedulePrefetch(lineIndex: Int, onItemPrefetched: (Int, Int) -> Unit): List<PrefetchHandle>
 
