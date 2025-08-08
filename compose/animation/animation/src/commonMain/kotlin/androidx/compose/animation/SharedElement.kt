@@ -41,8 +41,7 @@ internal class SharedElement(val key: Any, val scope: SharedTransitionScopeImpl)
 
     fun isAnimating(): Boolean = enabledEntries.fastAny { it.boundsAnimation.isRunning }
 
-    internal fun updateMatch() {
-        @Suppress("VisibleForTests") scope.testBlockToRun?.invoke()
+    fun updateMatch() {
         _enabledEntries.removeAll { !allEntries.contains(it) || !it.isEnabled }
         allEntries.fastForEach {
             if (it.isEnabled && !enabledEntries.contains(it)) {
@@ -51,6 +50,9 @@ internal class SharedElement(val key: Any, val scope: SharedTransitionScopeImpl)
         }
         val hasVisibleContent = _enabledEntries.hasVisibleContent()
         stateMachine.checkForAndDeferStateUpdates(hasVisibleContent)
+        if (allEntries.isNotEmpty()) {
+            scope.observeReads(this, updateMatch, observingVisibilityChange)
+        }
     }
 
     fun invalidateTargetBoundsProvider() = stateMachine.invalidateTargetBoundsProvider()
@@ -116,19 +118,26 @@ internal class SharedElement(val key: Any, val scope: SharedTransitionScopeImpl)
     private val _allEntries = mutableStateListOf<SharedElementEntry>()
     private val _enabledEntries = mutableStateListOf<SharedElementEntry>()
 
-    internal val observingVisibilityChange: () -> Unit = {
+    private val updateMatch: (SharedElement) -> Unit = { updateMatch() }
+
+    private val observingVisibilityChange: () -> Unit = {
         allEntries.any { it.target && it.isEnabled }
     }
 
     fun addEntry(sharedElementState: SharedElementEntry) {
         _allEntries.add(sharedElementState)
-        updateMatch()
+        scope.observeReads(this, updateMatch, observingVisibilityChange)
     }
 
     fun removeEntry(sharedElementState: SharedElementEntry) {
         _allEntries.remove(sharedElementState)
         _enabledEntries.remove(sharedElementState)
-        updateMatch()
+        if (allEntries.isEmpty()) {
+            updateMatch()
+            scope.clearObservation(scope = this)
+        } else {
+            scope.observeReads(scope = this, updateMatch, observingVisibilityChange)
+        }
     }
 }
 
