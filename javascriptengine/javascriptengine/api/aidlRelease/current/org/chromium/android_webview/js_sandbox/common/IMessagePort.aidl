@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,11 +33,10 @@
 
 package org.chromium.android_webview.js_sandbox.common;
 @JavaPassthrough(annotation="@androidx.annotation.RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY)")
-interface IJsSandboxIsolate {
-  void evaluateJavascript(String code, in org.chromium.android_webview.js_sandbox.common.IJsSandboxIsolateCallback callback) = 0;
-  void close() = 1;
-  boolean provideNamedData(String name, in android.content.res.AssetFileDescriptor afd) = 2;
-  void evaluateJavascriptWithFd(in android.content.res.AssetFileDescriptor afd, in org.chromium.android_webview.js_sandbox.common.IJsSandboxIsolateSyncCallback callback) = 3;
-  void setConsoleCallback(org.chromium.android_webview.js_sandbox.common.IJsSandboxConsoleCallback callback) = 4;
-  org.chromium.android_webview.js_sandbox.common.IMessagePort provideMessagePort(in String name, in org.chromium.android_webview.js_sandbox.common.IMessagePort port) = 5;
+interface IMessagePort {
+  void sendString(in String string) = 1;
+  void sendStringOverFd(in android.content.res.AssetFileDescriptor afd) = 2;
+  void sendArrayBuffer(in byte[] bytes) = 3;
+  void sendArrayBufferOverFd(in android.content.res.AssetFileDescriptor afd) = 4;
+  void close() = 5;
 }
