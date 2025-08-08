@@ -474,12 +474,12 @@ public final class CameraX {
                 completer.set(null);
             } catch (CameraIdListIncorrectException | InitializationException
                      | RuntimeException e) {
+                boolean shouldShutdown = true;
                 RetryPolicy.ExecutionState executionState =
                         new CameraProviderExecutionState(startMs, attemptCount, e);
                 RetryPolicy.RetryConfig retryConfig = mRetryPolicy.onRetryDecisionRequested(
                         executionState);
                 traceExecutionState(executionState);
-                mCameraPresenceProvider.shutdown();
                 if (retryConfig.shouldRetry() && attemptCount < Integer.MAX_VALUE) {
                     Logger.w(TAG, "Retry init. Start time " + startMs + " current time "
                             + SystemClock.elapsedRealtime(), e);
@@ -495,6 +495,7 @@ public final class CameraX {
                         // Ignoring camera failure for compatibility reasons. Initialization will
                         // be marked as complete, but some camera features might be unavailable.
                         setStateToInitialized();
+                        shouldShutdown = false;
                         completer.set(null);
                     } else if (e instanceof CameraIdListIncorrectException) {
                         String message = "Device reporting less cameras than anticipated. On real"
@@ -512,6 +513,10 @@ public final class CameraX {
                         // For any unexpected RuntimeException, catch it instead of crashing.
                         completer.setException(new InitializationException(e));
                     }
+                }
+
+                if (shouldShutdown) {
+                    mCameraPresenceProvider.shutdown();
                 }
             } finally {
                 Trace.endSection();
