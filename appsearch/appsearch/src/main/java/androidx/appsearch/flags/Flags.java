@@ -295,6 +295,13 @@ public final class Flags {
     public static final String FLAG_ENABLE_REMOVE_BY_ID_USES_QUERY =
             FLAG_PREFIX + "enable_remove_by_id_uses_query";
 
+    /**
+     * Whether to enable the new header format (refactor legacy format and introduce unsynced tail
+     * checksum) related changes in PortableFileBackedProtoLog.
+     */
+    public static final String FLAG_ENABLE_PROTO_LOG_NEW_HEADER_FORMAT =
+            FLAG_PREFIX + "enable_proto_log_new_header_format";
+
     // Whether the features should be enabled.
     //
     // In Jetpack, those should always return true.
@@ -645,6 +652,15 @@ public final class Flags {
      */
     public static boolean enableRemoveByIdUsesQuery() {
         // TODO(b/401245772): Enable this once the feature is rolled out to Nextfood in platform.
+        return false;
+    }
+
+    /**
+     * Whether to enable the new header format (refactor legacy format and introduce unsynced tail
+     * checksum) related changes in PortableFileBackedProtoLog.
+     */
+    public static boolean enableProtoLogNewHeaderFormat() {
+        // TODO(b/415387509): Enable this once the feature is rolled out to Nextfood in platform.
         return false;
     }
 }
