@@ -459,12 +459,16 @@ package androidx.xr.compose.subspace.layout {
   public final class SizeKt {
     method public static androidx.xr.compose.subspace.layout.SubspaceModifier depth(androidx.xr.compose.subspace.layout.SubspaceModifier, float depth);
     method @BytecodeOnly public static androidx.xr.compose.subspace.layout.SubspaceModifier depth-3ABfNKs(androidx.xr.compose.subspace.layout.SubspaceModifier, float);
+    method public static androidx.xr.compose.subspace.layout.SubspaceModifier depthIn(androidx.xr.compose.subspace.layout.SubspaceModifier, optional float min, optional float max);
+    method @BytecodeOnly public static androidx.xr.compose.subspace.layout.SubspaceModifier depthIn-VpY3zN4(androidx.xr.compose.subspace.layout.SubspaceModifier, float, float);
     method public static androidx.xr.compose.subspace.layout.SubspaceModifier fillMaxDepth(androidx.xr.compose.subspace.layout.SubspaceModifier, optional @FloatRange(from=0.0, to=1.0) float fraction);
     method public static androidx.xr.compose.subspace.layout.SubspaceModifier fillMaxHeight(androidx.xr.compose.subspace.layout.SubspaceModifier, optional @FloatRange(from=0.0, to=1.0) float fraction);
     method public static androidx.xr.compose.subspace.layout.SubspaceModifier fillMaxSize(androidx.xr.compose.subspace.layout.SubspaceModifier, optional @FloatRange(from=0.0, to=1.0) float fraction);
     method public static androidx.xr.compose.subspace.layout.SubspaceModifier fillMaxWidth(androidx.xr.compose.subspace.layout.SubspaceModifier, optional @FloatRange(from=0.0, to=1.0) float fraction);
     method public static androidx.xr.compose.subspace.layout.SubspaceModifier height(androidx.xr.compose.subspace.layout.SubspaceModifier, float height);
     method @BytecodeOnly public static androidx.xr.compose.subspace.layout.SubspaceModifier height-3ABfNKs(androidx.xr.compose.subspace.layout.SubspaceModifier, float);
+    method public static androidx.xr.compose.subspace.layout.SubspaceModifier heightIn(androidx.xr.compose.subspace.layout.SubspaceModifier, optional float min, optional float max);
+    method @BytecodeOnly public static androidx.xr.compose.subspace.layout.SubspaceModifier heightIn-VpY3zN4(androidx.xr.compose.subspace.layout.SubspaceModifier, float, float);
     method public static androidx.xr.compose.subspace.layout.SubspaceModifier requiredDepth(androidx.xr.compose.subspace.layout.SubspaceModifier, float depth);
     method @BytecodeOnly public static androidx.xr.compose.subspace.layout.SubspaceModifier requiredDepth-3ABfNKs(androidx.xr.compose.subspace.layout.SubspaceModifier, float);
     method public static androidx.xr.compose.subspace.layout.SubspaceModifier requiredHeight(androidx.xr.compose.subspace.layout.SubspaceModifier, float height);
@@ -477,8 +481,12 @@ package androidx.xr.compose.subspace.layout {
     method public static androidx.xr.compose.subspace.layout.SubspaceModifier size(androidx.xr.compose.subspace.layout.SubspaceModifier, androidx.xr.compose.unit.DpVolumeSize size);
     method public static androidx.xr.compose.subspace.layout.SubspaceModifier size(androidx.xr.compose.subspace.layout.SubspaceModifier, float size);
     method @BytecodeOnly public static androidx.xr.compose.subspace.layout.SubspaceModifier size-3ABfNKs(androidx.xr.compose.subspace.layout.SubspaceModifier, float);
+    method public static androidx.xr.compose.subspace.layout.SubspaceModifier sizeIn(androidx.xr.compose.subspace.layout.SubspaceModifier, optional float minWidth, optional float maxWidth, optional float minHeight, optional float maxHeight, optional float minDepth, optional float maxDepth);
+    method @BytecodeOnly public static androidx.xr.compose.subspace.layout.SubspaceModifier sizeIn-0tawpAo(androidx.xr.compose.subspace.layout.SubspaceModifier, float, float, float, float, float, float);
     method public static androidx.xr.compose.subspace.layout.SubspaceModifier width(androidx.xr.compose.subspace.layout.SubspaceModifier, float width);
     method @BytecodeOnly public static androidx.xr.compose.subspace.layout.SubspaceModifier width-3ABfNKs(androidx.xr.compose.subspace.layout.SubspaceModifier, float);
+    method public static androidx.xr.compose.subspace.layout.SubspaceModifier widthIn(androidx.xr.compose.subspace.layout.SubspaceModifier, optional float min, optional float max);
+    method @BytecodeOnly public static androidx.xr.compose.subspace.layout.SubspaceModifier widthIn-VpY3zN4(androidx.xr.compose.subspace.layout.SubspaceModifier, float, float);
   }
 
   public interface SpatialAlignment {
