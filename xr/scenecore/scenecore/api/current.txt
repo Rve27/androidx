@@ -210,14 +210,14 @@ package androidx.xr.scenecore {
   }
 
   public final class GroupEntity extends androidx.xr.scenecore.BaseEntity<androidx.xr.runtime.internal.Entity> {
-    method public static androidx.xr.scenecore.Entity create(androidx.xr.runtime.Session session, String name);
-    method public static androidx.xr.scenecore.Entity create(androidx.xr.runtime.Session session, String name, optional androidx.xr.runtime.math.Pose pose);
+    method public static androidx.xr.scenecore.GroupEntity create(androidx.xr.runtime.Session session, String name);
+    method public static androidx.xr.scenecore.GroupEntity create(androidx.xr.runtime.Session session, String name, optional androidx.xr.runtime.math.Pose pose);
     field public static final androidx.xr.scenecore.GroupEntity.Companion Companion;
   }
 
   public static final class GroupEntity.Companion {
-    method public androidx.xr.scenecore.Entity create(androidx.xr.runtime.Session session, String name);
-    method public androidx.xr.scenecore.Entity create(androidx.xr.runtime.Session session, String name, optional androidx.xr.runtime.math.Pose pose);
+    method public androidx.xr.scenecore.GroupEntity create(androidx.xr.runtime.Session session, String name);
+    method public androidx.xr.scenecore.GroupEntity create(androidx.xr.runtime.Session session, String name, optional androidx.xr.runtime.math.Pose pose);
   }
 
   public final class Head extends androidx.xr.scenecore.BaseScenePose<androidx.xr.runtime.internal.HeadActivityPose> {
