@@ -175,7 +175,7 @@ public value class SurfaceProtection private constructor(public val value: Int) 
  *
  * Note that this Surface does not capture input events. It is also not currently possible to
  * synchronize StereoMode changes with application rendering or video decoding. This composable
- * currently cannot render in front of other panels, so movable modifier usage is not recommended if
+ * currently cannot render in front of other panels, so [dragPolicy] usage is not recommended if
  * there are other panels in the layout, aside from the content block of this Composable.
  *
  * Playing certain content will require the proper [SurfaceProtection]. This is mainly used to
@@ -187,6 +187,13 @@ public value class SurfaceProtection private constructor(public val value: Int) 
  * @param featheringEffect A [SpatialFeatheringEffect] to apply to to canvas of the surface exposed
  *   from [SpatialExternalSurfaceScope.onSurfaceCreated].
  * @param surfaceProtection Sets the Surface's protection from CPU access.
+ * @param dragPolicy An optional [DragPolicy] that defines the motion behavior of the
+ *   [SpatialPanel]. This can be either a [MovePolicy] for free movement or an [AnchorPolicy] for
+ *   anchoring to real-world surfaces. If a policy is provided, draggable UI controls will be shown,
+ *   allowing the user to manipulate the panel in 3D space. If null, no motion behavior is applied.
+ * @param resizePolicy An optional [ResizePolicy] configuration object that resizing behavior of
+ *   this [SpatialPanel]. The draggable UI controls will be shown that allow the user to resize the
+ *   element in 3D space. If null, there is no resize behavior applied to the element.
  * @param content Content block where the surface can be accessed using
  *   [SpatialExternalSurfaceScope.onSurfaceCreated]. Composable content will be rendered over the
  *   Surface canvas. If using [StereoMode.SideBySide] or [StereoMode.TopBottom], it is recommended
@@ -201,8 +208,11 @@ public fun SpatialExternalSurface(
     modifier: SubspaceModifier = SubspaceModifier,
     featheringEffect: SpatialFeatheringEffect = ZeroFeatheringEffect,
     surfaceProtection: SurfaceProtection = SurfaceProtection.None,
+    dragPolicy: DragPolicy? = null,
+    resizePolicy: ResizePolicy? = null,
     content: @Composable @SubspaceComposable SpatialExternalSurfaceScope.() -> Unit,
 ) {
+    val finalModifier = buildSpatialPanelModifier(modifier, dragPolicy, resizePolicy)
     val session = LocalSession.current
 
     // When surface protection changes, the surface entity has to be recreated because protection is
@@ -226,7 +236,7 @@ public fun SpatialExternalSurface(
 
     key(coreSurfaceEntity) {
         SubspaceLayout(
-            modifier = modifier,
+            modifier = finalModifier,
             coreEntity = coreSurfaceEntity,
             content = { instance.content() },
             measurePolicy = SpatialBoxMeasurePolicy(SpatialAlignment.Center, false),

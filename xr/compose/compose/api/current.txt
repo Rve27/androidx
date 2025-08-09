@@ -184,7 +184,53 @@ package androidx.xr.compose.spatial {
 
 package androidx.xr.compose.subspace {
 
+  public final class AnchorPolicy extends androidx.xr.compose.subspace.DragPolicy {
+    ctor public AnchorPolicy();
+    ctor public AnchorPolicy(optional boolean isEnabled, optional java.util.Set<androidx.xr.compose.subspace.layout.PlaneOrientation> anchorPlaneOrientations, optional java.util.Set<androidx.xr.compose.subspace.layout.PlaneSemantic> anchorPlaneSemantics);
+    method public java.util.Set<androidx.xr.compose.subspace.layout.PlaneOrientation> getAnchorPlaneOrientations();
+    method public java.util.Set<androidx.xr.compose.subspace.layout.PlaneSemantic> getAnchorPlaneSemantics();
+    method public boolean isEnabled();
+    property public java.util.Set<androidx.xr.compose.subspace.layout.PlaneOrientation> anchorPlaneOrientations;
+    property public java.util.Set<androidx.xr.compose.subspace.layout.PlaneSemantic> anchorPlaneSemantics;
+    property public boolean isEnabled;
+  }
+
+  public abstract class DragPolicy {
+  }
+
   @SuppressCompatibility @kotlin.RequiresOptIn(level=kotlin.RequiresOptIn.Level.ERROR, message="This is an experimental API. It may be changed or removed in the future.") @kotlin.annotation.Retention(kotlin.annotation.AnnotationRetention.BINARY) public @interface ExperimentalSubspaceVolumeApi {
+  }
+
+  public final class MovePolicy extends androidx.xr.compose.subspace.DragPolicy {
+    ctor public MovePolicy();
+    ctor public MovePolicy(optional boolean isEnabled, optional boolean isStickyPose, optional boolean shouldScaleWithDistance, optional kotlin.jvm.functions.Function1<? super androidx.xr.compose.subspace.layout.SpatialMoveStartEvent,kotlin.Unit>? onMoveStart, optional kotlin.jvm.functions.Function1<? super androidx.xr.compose.subspace.layout.SpatialMoveEndEvent,kotlin.Unit>? onMoveEnd, optional kotlin.jvm.functions.Function1<? super androidx.xr.compose.subspace.layout.SpatialMoveEvent,java.lang.Boolean>? onMove);
+    method public kotlin.jvm.functions.Function1<androidx.xr.compose.subspace.layout.SpatialMoveEvent,java.lang.Boolean>? getOnMove();
+    method public kotlin.jvm.functions.Function1<androidx.xr.compose.subspace.layout.SpatialMoveEndEvent,kotlin.Unit>? getOnMoveEnd();
+    method public kotlin.jvm.functions.Function1<androidx.xr.compose.subspace.layout.SpatialMoveStartEvent,kotlin.Unit>? getOnMoveStart();
+    method public boolean isEnabled();
+    method public boolean isStickyPose();
+    method public boolean shouldScaleWithDistance();
+    property public boolean isEnabled;
+    property public boolean isStickyPose;
+    property public kotlin.jvm.functions.Function1<androidx.xr.compose.subspace.layout.SpatialMoveEvent,java.lang.Boolean>? onMove;
+    property public kotlin.jvm.functions.Function1<androidx.xr.compose.subspace.layout.SpatialMoveEndEvent,kotlin.Unit>? onMoveEnd;
+    property public kotlin.jvm.functions.Function1<androidx.xr.compose.subspace.layout.SpatialMoveStartEvent,kotlin.Unit>? onMoveStart;
+    property public boolean shouldScaleWithDistance;
+  }
+
+  public final class ResizePolicy {
+    ctor public ResizePolicy();
+    ctor public ResizePolicy(optional boolean isEnabled, optional androidx.xr.compose.unit.DpVolumeSize minimumSize, optional androidx.xr.compose.unit.DpVolumeSize maximumSize, optional boolean shouldMaintainAspectRatio, optional kotlin.jvm.functions.Function1<? super androidx.xr.compose.unit.IntVolumeSize,java.lang.Boolean>? onSizeChange);
+    method public androidx.xr.compose.unit.DpVolumeSize getMaximumSize();
+    method public androidx.xr.compose.unit.DpVolumeSize getMinimumSize();
+    method public kotlin.jvm.functions.Function1<androidx.xr.compose.unit.IntVolumeSize,java.lang.Boolean>? getOnSizeChange();
+    method public boolean isEnabled();
+    method public boolean shouldMaintainAspectRatio();
+    property public boolean isEnabled;
+    property public androidx.xr.compose.unit.DpVolumeSize maximumSize;
+    property public androidx.xr.compose.unit.DpVolumeSize minimumSize;
+    property public kotlin.jvm.functions.Function1<androidx.xr.compose.unit.IntVolumeSize,java.lang.Boolean>? onSizeChange;
+    property public boolean shouldMaintainAspectRatio;
   }
 
   public final class SceneCoreEntityKt {
@@ -238,12 +284,12 @@ package androidx.xr.compose.subspace {
   }
 
   public final class SpatialPanelKt {
-    method @androidx.compose.runtime.Composable @androidx.xr.compose.subspace.SubspaceComposable public static void SpatialActivityPanel(android.content.Intent intent, optional androidx.xr.compose.subspace.layout.SubspaceModifier modifier, optional androidx.xr.compose.subspace.layout.SpatialShape shape);
-    method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.xr.compose.subspace.SubspaceComposable public static void SpatialActivityPanel(android.content.Intent, androidx.xr.compose.subspace.layout.SubspaceModifier?, androidx.xr.compose.subspace.layout.SpatialShape?, androidx.compose.runtime.Composer?, int, int);
-    method @androidx.compose.runtime.Composable @androidx.xr.compose.subspace.SubspaceComposable public static <T extends android.view.View> void SpatialAndroidViewPanel(kotlin.jvm.functions.Function1<? super android.content.Context,? extends T> factory, optional androidx.xr.compose.subspace.layout.SubspaceModifier modifier, optional kotlin.jvm.functions.Function1<? super T,kotlin.Unit> update, optional androidx.xr.compose.subspace.layout.SpatialShape shape);
-    method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.xr.compose.subspace.SubspaceComposable public static <T extends android.view.View> void SpatialAndroidViewPanel(kotlin.jvm.functions.Function1<? super android.content.Context!,? extends T!>, androidx.xr.compose.subspace.layout.SubspaceModifier?, kotlin.jvm.functions.Function1<? super T!,kotlin.Unit!>?, androidx.xr.compose.subspace.layout.SpatialShape?, androidx.compose.runtime.Composer?, int, int);
-    method @androidx.compose.runtime.Composable @androidx.xr.compose.subspace.SubspaceComposable public static void SpatialPanel(optional androidx.xr.compose.subspace.layout.SubspaceModifier modifier, optional androidx.xr.compose.subspace.layout.SpatialShape shape, kotlin.jvm.functions.Function0<kotlin.Unit> content);
-    method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.xr.compose.subspace.SubspaceComposable public static void SpatialPanel(androidx.xr.compose.subspace.layout.SubspaceModifier?, androidx.xr.compose.subspace.layout.SpatialShape?, kotlin.jvm.functions.Function2<? super androidx.compose.runtime.Composer!,? super java.lang.Integer!,kotlin.Unit!>, androidx.compose.runtime.Composer?, int, int);
+    method @androidx.compose.runtime.Composable @androidx.xr.compose.subspace.SubspaceComposable public static void SpatialActivityPanel(android.content.Intent intent, optional androidx.xr.compose.subspace.layout.SubspaceModifier modifier, optional androidx.xr.compose.subspace.layout.SpatialShape shape, optional androidx.xr.compose.subspace.DragPolicy? dragPolicy, optional androidx.xr.compose.subspace.ResizePolicy? resizePolicy);
+    method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.xr.compose.subspace.SubspaceComposable public static void SpatialActivityPanel(android.content.Intent, androidx.xr.compose.subspace.layout.SubspaceModifier?, androidx.xr.compose.subspace.layout.SpatialShape?, androidx.xr.compose.subspace.DragPolicy?, androidx.xr.compose.subspace.ResizePolicy?, androidx.compose.runtime.Composer?, int, int);
+    method @androidx.compose.runtime.Composable @androidx.xr.compose.subspace.SubspaceComposable public static <T extends android.view.View> void SpatialAndroidViewPanel(kotlin.jvm.functions.Function1<? super android.content.Context,? extends T> factory, optional androidx.xr.compose.subspace.layout.SubspaceModifier modifier, optional kotlin.jvm.functions.Function1<? super T,kotlin.Unit> update, optional androidx.xr.compose.subspace.layout.SpatialShape shape, optional androidx.xr.compose.subspace.DragPolicy? dragPolicy, optional androidx.xr.compose.subspace.ResizePolicy? resizePolicy);
+    method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.xr.compose.subspace.SubspaceComposable public static <T extends android.view.View> void SpatialAndroidViewPanel(kotlin.jvm.functions.Function1<? super android.content.Context!,? extends T!>, androidx.xr.compose.subspace.layout.SubspaceModifier?, kotlin.jvm.functions.Function1<? super T!,kotlin.Unit!>?, androidx.xr.compose.subspace.layout.SpatialShape?, androidx.xr.compose.subspace.DragPolicy?, androidx.xr.compose.subspace.ResizePolicy?, androidx.compose.runtime.Composer?, int, int);
+    method @androidx.compose.runtime.Composable @androidx.xr.compose.subspace.SubspaceComposable public static void SpatialPanel(optional androidx.xr.compose.subspace.layout.SubspaceModifier modifier, optional androidx.xr.compose.subspace.layout.SpatialShape shape, optional androidx.xr.compose.subspace.DragPolicy? dragPolicy, optional androidx.xr.compose.subspace.ResizePolicy? resizePolicy, kotlin.jvm.functions.Function0<kotlin.Unit> content);
+    method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.xr.compose.subspace.SubspaceComposable public static void SpatialPanel(androidx.xr.compose.subspace.layout.SubspaceModifier?, androidx.xr.compose.subspace.layout.SpatialShape?, androidx.xr.compose.subspace.DragPolicy?, androidx.xr.compose.subspace.ResizePolicy?, kotlin.jvm.functions.Function2<? super androidx.compose.runtime.Composer!,? super java.lang.Integer!,kotlin.Unit!>, androidx.compose.runtime.Composer?, int, int);
   }
 
   public final class SpatialRowKt {
@@ -310,6 +356,40 @@ package androidx.xr.compose.subspace.layout {
 
   public interface ParentLayoutParamsModifier {
     method public void adjustParams(androidx.xr.compose.subspace.layout.ParentLayoutParamsAdjustable params);
+  }
+
+  @kotlin.jvm.JvmInline public final value class PlaneOrientation {
+    method @BytecodeOnly public static androidx.xr.compose.subspace.layout.PlaneOrientation! box-impl(int);
+    method @BytecodeOnly public int unbox-impl();
+    field public static final androidx.xr.compose.subspace.layout.PlaneOrientation.Companion Companion;
+  }
+
+  public static final class PlaneOrientation.Companion {
+    method @BytecodeOnly public int getAny-rnqRDCc();
+    method @BytecodeOnly public int getHorizontal-rnqRDCc();
+    method @BytecodeOnly public int getVertical-rnqRDCc();
+    property public androidx.xr.compose.subspace.layout.PlaneOrientation Any;
+    property public androidx.xr.compose.subspace.layout.PlaneOrientation Horizontal;
+    property public androidx.xr.compose.subspace.layout.PlaneOrientation Vertical;
+  }
+
+  @kotlin.jvm.JvmInline public final value class PlaneSemantic {
+    method @BytecodeOnly public static androidx.xr.compose.subspace.layout.PlaneSemantic! box-impl(int);
+    method @BytecodeOnly public int unbox-impl();
+    field public static final androidx.xr.compose.subspace.layout.PlaneSemantic.Companion Companion;
+  }
+
+  public static final class PlaneSemantic.Companion {
+    method @BytecodeOnly public int getAny-FWya8ks();
+    method @BytecodeOnly public int getCeiling-FWya8ks();
+    method @BytecodeOnly public int getFloor-FWya8ks();
+    method @BytecodeOnly public int getTable-FWya8ks();
+    method @BytecodeOnly public int getWall-FWya8ks();
+    property public androidx.xr.compose.subspace.layout.PlaneSemantic Any;
+    property public androidx.xr.compose.subspace.layout.PlaneSemantic Ceiling;
+    property public androidx.xr.compose.subspace.layout.PlaneSemantic Floor;
+    property public androidx.xr.compose.subspace.layout.PlaneSemantic Table;
+    property public androidx.xr.compose.subspace.layout.PlaneSemantic Wall;
   }
 
   public final class PointerHoverIconKt {
