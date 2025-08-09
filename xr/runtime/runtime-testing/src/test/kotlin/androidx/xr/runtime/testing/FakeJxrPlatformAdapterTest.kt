@@ -493,6 +493,19 @@ class FakeJxrPlatformAdapterTest {
     }
 
     @Test
+    fun createAnchorPlacementForPlanes_returnsInitialValue() {
+        val planeTypeFilter = setOf(PlaneType.HORIZONTAL)
+        val planeSemanticFilter = setOf(PlaneSemantic.TABLE, PlaneSemantic.FLOOR)
+
+        val anchorPlacement =
+            adapter.createAnchorPlacementForPlanes(planeTypeFilter, planeSemanticFilter)
+
+        assertThat(anchorPlacement).isInstanceOf(FakeAnchorPlacement::class.java)
+        assertThat(anchorPlacement.planeTypeFilter).isEqualTo(planeTypeFilter)
+        assertThat(anchorPlacement.planeSemanticFilter).isEqualTo(planeSemanticFilter)
+    }
+
+    @Test
     fun createResizableComponent_returnsInitialValue() {
         val minimumSize = Dimensions(1.0f, 1.0f, 0.0f)
         val maximumSize = Dimensions(2.0f, 2.0f, 2.0f)

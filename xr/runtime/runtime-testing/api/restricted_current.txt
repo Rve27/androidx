@@ -77,6 +77,9 @@ package androidx.xr.runtime.testing {
     property public java.util.UUID uuid;
   }
 
+  public final class FakeAnchorPlacement implements androidx.xr.runtime.internal.AnchorPlacement {
+  }
+
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeAudioTrackExtensionsWrapper implements androidx.xr.runtime.internal.AudioTrackExtensionsWrapper {
     ctor public FakeAudioTrackExtensionsWrapper();
     method public androidx.xr.runtime.internal.PointSourceParams? getPointSourceParams(android.media.AudioTrack track);
@@ -173,7 +176,7 @@ package androidx.xr.runtime.testing {
     method public androidx.xr.runtime.internal.ActivityPanelEntity createActivityPanelEntity(androidx.xr.runtime.math.Pose pose, androidx.xr.runtime.internal.PixelDimensions windowBoundsPx, String name, android.app.Activity hostActivity, androidx.xr.runtime.internal.Entity parent);
     method @RequiresApi(android.os.Build.VERSION_CODES.O) public androidx.xr.runtime.testing.FakeAnchorEntity createAnchorEntity(androidx.xr.runtime.internal.Anchor anchor);
     method @RequiresApi(android.os.Build.VERSION_CODES.O) public androidx.xr.runtime.testing.FakeAnchorEntity createAnchorEntity(androidx.xr.runtime.internal.Dimensions bounds, androidx.xr.runtime.internal.PlaneType planeType, androidx.xr.runtime.internal.PlaneSemantic planeSemantic, java.time.Duration searchTimeout);
-    method public androidx.xr.runtime.internal.AnchorPlacement createAnchorPlacementForPlanes(java.util.Set<androidx.xr.runtime.internal.PlaneType> planeTypeFilter, java.util.Set<androidx.xr.runtime.internal.PlaneSemantic> planeSemanticFilter);
+    method public androidx.xr.runtime.testing.FakeAnchorPlacement createAnchorPlacementForPlanes(java.util.Set<androidx.xr.runtime.internal.PlaneType> planeTypeFilter, java.util.Set<androidx.xr.runtime.internal.PlaneSemantic> planeSemanticFilter);
     method public androidx.xr.runtime.internal.GltfEntity createGltfEntity(androidx.xr.runtime.math.Pose pose, androidx.xr.runtime.internal.GltfModelResource loadedGltf, androidx.xr.runtime.internal.Entity parentEntity);
     method public androidx.xr.runtime.internal.Entity createGroupEntity(androidx.xr.runtime.math.Pose pose, String name, androidx.xr.runtime.internal.Entity parent);
     method public androidx.xr.runtime.internal.InteractableComponent createInteractableComponent(java.util.concurrent.Executor executor, androidx.xr.runtime.internal.InputEventListener listener);

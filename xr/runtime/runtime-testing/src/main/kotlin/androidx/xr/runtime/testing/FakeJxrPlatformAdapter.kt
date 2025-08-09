@@ -774,7 +774,7 @@ public class FakeJxrPlatformAdapter : JxrPlatformAdapter {
     override fun createAnchorPlacementForPlanes(
         planeTypeFilter: Set<@JvmSuppressWildcards PlaneType>,
         planeSemanticFilter: Set<@JvmSuppressWildcards PlaneSemantic>,
-    ): AnchorPlacement = object : AnchorPlacement {}
+    ): FakeAnchorPlacement = FakeAnchorPlacement(planeTypeFilter, planeSemanticFilter)
 
     override fun createResizableComponent(
         minimumSize: Dimensions,
