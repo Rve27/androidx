@@ -444,7 +444,11 @@ public class Shader(
     }
 
     private fun getUniformLocation(name: String): Int {
-        val locationObject: Int? = uniformLocations.get(name)
+        val locationObject: Int? =
+            if (uniformLocations.containsKey(name)) {
+                uniformLocations.get(name)
+            } else null
+
         if (locationObject != null) {
             return locationObject
         }
