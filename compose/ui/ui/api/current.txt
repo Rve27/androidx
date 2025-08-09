@@ -468,9 +468,9 @@ package androidx.compose.ui.autofill {
   }
 
   public final class FillableData_androidKt {
-    method @RequiresApi(android.os.Build.VERSION_CODES.O) public static androidx.compose.ui.autofill.FillableData FillableData(boolean booleanValue);
-    method @RequiresApi(android.os.Build.VERSION_CODES.O) public static androidx.compose.ui.autofill.FillableData FillableData(int intValue);
-    method @RequiresApi(android.os.Build.VERSION_CODES.O) public static androidx.compose.ui.autofill.FillableData FillableData(CharSequence charSequenceValue);
+    method public static androidx.compose.ui.autofill.FillableData? FillableData(boolean booleanValue);
+    method public static androidx.compose.ui.autofill.FillableData? FillableData(int intValue);
+    method public static androidx.compose.ui.autofill.FillableData? FillableData(CharSequence charSequenceValue);
   }
 
 }
@@ -4255,6 +4255,7 @@ package androidx.compose.ui.semantics {
     method public androidx.compose.ui.semantics.SemanticsPropertyKey<androidx.compose.ui.semantics.AccessibilityAction<kotlin.jvm.functions.Function1<androidx.compose.ui.text.AnnotatedString,java.lang.Boolean>>> getInsertTextAtCursor();
     method public androidx.compose.ui.semantics.SemanticsPropertyKey<androidx.compose.ui.semantics.AccessibilityAction<kotlin.jvm.functions.Function1<androidx.compose.ui.text.AnnotatedString,java.lang.Boolean>>> getOnAutofillText();
     method public androidx.compose.ui.semantics.SemanticsPropertyKey<androidx.compose.ui.semantics.AccessibilityAction<kotlin.jvm.functions.Function0<java.lang.Boolean>>> getOnClick();
+    method public androidx.compose.ui.semantics.SemanticsPropertyKey<androidx.compose.ui.semantics.AccessibilityAction<kotlin.jvm.functions.Function1<androidx.compose.ui.autofill.FillableData,java.lang.Boolean>>> getOnFillData();
     method public androidx.compose.ui.semantics.SemanticsPropertyKey<androidx.compose.ui.semantics.AccessibilityAction<kotlin.jvm.functions.Function0<java.lang.Boolean>>> getOnImeAction();
     method public androidx.compose.ui.semantics.SemanticsPropertyKey<androidx.compose.ui.semantics.AccessibilityAction<kotlin.jvm.functions.Function0<java.lang.Boolean>>> getOnLongClick();
     method public androidx.compose.ui.semantics.SemanticsPropertyKey<androidx.compose.ui.semantics.AccessibilityAction<kotlin.jvm.functions.Function0<java.lang.Boolean>>> getPageDown();
@@ -4284,6 +4285,7 @@ package androidx.compose.ui.semantics {
     property public androidx.compose.ui.semantics.SemanticsPropertyKey<androidx.compose.ui.semantics.AccessibilityAction<kotlin.jvm.functions.Function1<androidx.compose.ui.text.AnnotatedString,java.lang.Boolean>>> InsertTextAtCursor;
     property public androidx.compose.ui.semantics.SemanticsPropertyKey<androidx.compose.ui.semantics.AccessibilityAction<kotlin.jvm.functions.Function1<androidx.compose.ui.text.AnnotatedString,java.lang.Boolean>>> OnAutofillText;
     property public androidx.compose.ui.semantics.SemanticsPropertyKey<androidx.compose.ui.semantics.AccessibilityAction<kotlin.jvm.functions.Function0<java.lang.Boolean>>> OnClick;
+    property public androidx.compose.ui.semantics.SemanticsPropertyKey<androidx.compose.ui.semantics.AccessibilityAction<kotlin.jvm.functions.Function1<androidx.compose.ui.autofill.FillableData,java.lang.Boolean>>> OnFillData;
     property public androidx.compose.ui.semantics.SemanticsPropertyKey<androidx.compose.ui.semantics.AccessibilityAction<kotlin.jvm.functions.Function0<java.lang.Boolean>>> OnImeAction;
     property public androidx.compose.ui.semantics.SemanticsPropertyKey<androidx.compose.ui.semantics.AccessibilityAction<kotlin.jvm.functions.Function0<java.lang.Boolean>>> OnLongClick;
     property public androidx.compose.ui.semantics.SemanticsPropertyKey<androidx.compose.ui.semantics.AccessibilityAction<kotlin.jvm.functions.Function0<java.lang.Boolean>>> PageDown;
@@ -4392,6 +4394,7 @@ package androidx.compose.ui.semantics {
     method public androidx.compose.ui.semantics.SemanticsPropertyKey<kotlin.Unit> getDisabled();
     method public androidx.compose.ui.semantics.SemanticsPropertyKey<androidx.compose.ui.text.AnnotatedString> getEditableText();
     method public androidx.compose.ui.semantics.SemanticsPropertyKey<java.lang.String> getError();
+    method public androidx.compose.ui.semantics.SemanticsPropertyKey<androidx.compose.ui.autofill.FillableData> getFillableData();
     method public androidx.compose.ui.semantics.SemanticsPropertyKey<java.lang.Boolean> getFocused();
     method public androidx.compose.ui.semantics.SemanticsPropertyKey<kotlin.Unit> getHeading();
     method public androidx.compose.ui.semantics.SemanticsPropertyKey<kotlin.Unit> getHideFromAccessibility();
@@ -4433,6 +4436,7 @@ package androidx.compose.ui.semantics {
     property public androidx.compose.ui.semantics.SemanticsPropertyKey<kotlin.Unit> Disabled;
     property public androidx.compose.ui.semantics.SemanticsPropertyKey<androidx.compose.ui.text.AnnotatedString> EditableText;
     property public androidx.compose.ui.semantics.SemanticsPropertyKey<java.lang.String> Error;
+    property public androidx.compose.ui.semantics.SemanticsPropertyKey<androidx.compose.ui.autofill.FillableData> FillableData;
     property public androidx.compose.ui.semantics.SemanticsPropertyKey<java.lang.Boolean> Focused;
     property public androidx.compose.ui.semantics.SemanticsPropertyKey<kotlin.Unit> Heading;
     property public androidx.compose.ui.semantics.SemanticsPropertyKey<kotlin.Unit> HideFromAccessibility;
@@ -4494,6 +4498,7 @@ package androidx.compose.ui.semantics {
     method public static androidx.compose.ui.autofill.ContentType getContentType(androidx.compose.ui.semantics.SemanticsPropertyReceiver);
     method public static java.util.List<androidx.compose.ui.semantics.CustomAccessibilityAction> getCustomActions(androidx.compose.ui.semantics.SemanticsPropertyReceiver);
     method public static androidx.compose.ui.text.AnnotatedString getEditableText(androidx.compose.ui.semantics.SemanticsPropertyReceiver);
+    method public static androidx.compose.ui.autofill.FillableData getFillableData(androidx.compose.ui.semantics.SemanticsPropertyReceiver);
     method public static boolean getFocused(androidx.compose.ui.semantics.SemanticsPropertyReceiver);
     method public static androidx.compose.ui.semantics.ScrollAxisRange getHorizontalScrollAxisRange(androidx.compose.ui.semantics.SemanticsPropertyReceiver);
     method @BytecodeOnly @Deprecated public static int getImeAction(androidx.compose.ui.semantics.SemanticsPropertyReceiver);
@@ -4527,6 +4532,7 @@ package androidx.compose.ui.semantics {
     method public static boolean isTraversalGroup(androidx.compose.ui.semantics.SemanticsPropertyReceiver);
     method public static void onAutofillText(androidx.compose.ui.semantics.SemanticsPropertyReceiver, optional String? label, kotlin.jvm.functions.Function1<? super androidx.compose.ui.text.AnnotatedString,java.lang.Boolean>? action);
     method public static void onClick(androidx.compose.ui.semantics.SemanticsPropertyReceiver, optional String? label, kotlin.jvm.functions.Function0<java.lang.Boolean>? action);
+    method public static void onFillData(androidx.compose.ui.semantics.SemanticsPropertyReceiver, optional String? label, kotlin.jvm.functions.Function1<? super androidx.compose.ui.autofill.FillableData,java.lang.Boolean>? action);
     method public static void onImeAction(androidx.compose.ui.semantics.SemanticsPropertyReceiver, int imeActionType, optional String? label, kotlin.jvm.functions.Function0<java.lang.Boolean>? action);
     method @BytecodeOnly public static void onImeAction-9UiTYpY(androidx.compose.ui.semantics.SemanticsPropertyReceiver, int, String?, kotlin.jvm.functions.Function0<java.lang.Boolean!>?);
     method public static void onLongClick(androidx.compose.ui.semantics.SemanticsPropertyReceiver, optional String? label, kotlin.jvm.functions.Function0<java.lang.Boolean>? action);
@@ -4552,6 +4558,7 @@ package androidx.compose.ui.semantics {
     method public static void setCustomActions(androidx.compose.ui.semantics.SemanticsPropertyReceiver, java.util.List<androidx.compose.ui.semantics.CustomAccessibilityAction>);
     method public static void setEditable(androidx.compose.ui.semantics.SemanticsPropertyReceiver, boolean);
     method public static void setEditableText(androidx.compose.ui.semantics.SemanticsPropertyReceiver, androidx.compose.ui.text.AnnotatedString);
+    method public static void setFillableData(androidx.compose.ui.semantics.SemanticsPropertyReceiver, androidx.compose.ui.autofill.FillableData);
     method public static void setFocused(androidx.compose.ui.semantics.SemanticsPropertyReceiver, boolean);
     method public static void setHorizontalScrollAxisRange(androidx.compose.ui.semantics.SemanticsPropertyReceiver, androidx.compose.ui.semantics.ScrollAxisRange);
     method @BytecodeOnly @Deprecated public static void setImeAction-4L7nppU(androidx.compose.ui.semantics.SemanticsPropertyReceiver, int);
@@ -4586,6 +4593,7 @@ package androidx.compose.ui.semantics {
     property public static androidx.compose.ui.autofill.ContentType androidx.compose.ui.semantics.SemanticsPropertyReceiver.contentType;
     property public static java.util.List<androidx.compose.ui.semantics.CustomAccessibilityAction> androidx.compose.ui.semantics.SemanticsPropertyReceiver.customActions;
     property public static androidx.compose.ui.text.AnnotatedString androidx.compose.ui.semantics.SemanticsPropertyReceiver.editableText;
+    property public static androidx.compose.ui.autofill.FillableData androidx.compose.ui.semantics.SemanticsPropertyReceiver.fillableData;
     property public static boolean androidx.compose.ui.semantics.SemanticsPropertyReceiver.focused;
     property public static androidx.compose.ui.semantics.ScrollAxisRange androidx.compose.ui.semantics.SemanticsPropertyReceiver.horizontalScrollAxisRange;
     property @Deprecated public static androidx.compose.ui.text.input.ImeAction androidx.compose.ui.semantics.SemanticsPropertyReceiver.imeAction;

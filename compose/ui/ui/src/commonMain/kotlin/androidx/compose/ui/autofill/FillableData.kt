@@ -55,8 +55,38 @@ interface FillableData {
     }
 }
 
-internal expect fun FillableData(booleanValue: Boolean): FillableData
+/**
+ * Creates a [FillableData] instance from a [Boolean].
+ *
+ * This function is used to wrap a boolean value for autofill purposes, such as the state of a
+ * checkbox or a switch.
+ *
+ * @param booleanValue The boolean data to be used for autofill.
+ * @return A [FillableData] object containing the boolean data, or `null` if the platform does not
+ *   support autofill.
+ */
+expect fun FillableData(booleanValue: Boolean): FillableData?
 
-internal expect fun FillableData(charSequenceValue: CharSequence): FillableData
+/**
+ * Creates a [FillableData] instance from a [CharSequence].
+ *
+ * This function is used to wrap a text value for autofill purposes.
+ *
+ * @param charSequenceValue The text data to be used for autofill.
+ * @return A [FillableData] object containing the text data, or `null` if the platform does not
+ *   support autofill.
+ */
+expect fun FillableData(charSequenceValue: CharSequence): FillableData?
 
-internal expect fun FillableData(intValue: Int): FillableData
+/**
+ * Creates a [FillableData] instance from an [Int].
+ *
+ * This function is used to wrap an integer value for autofill purposes, such as the selected index
+ * in a dropdown menu or spinner.
+ *
+ * @param intValue The integer data to be used for autofill, representing the index of the selected
+ *   item in a list.
+ * @return A [FillableData] object containing the integer data, or `null` if the platform does not
+ *   support autofill.
+ */
+expect fun FillableData(intValue: Int): FillableData?

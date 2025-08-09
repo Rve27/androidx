@@ -57,11 +57,13 @@ internal class AndroidFillableData(private val autofillValue: AutofillValue) : F
  * [AutofillValue] that contains the provided text.
  *
  * @param charSequenceValue The text data to be used for autofill.
- * @return A [FillableData] object containing the text data.
+ * @return A [FillableData] object containing the text data, or `null` if the platform version is
+ *   lower than [Build.VERSION_CODES.O].
  */
-@RequiresApi(Build.VERSION_CODES.O)
-actual fun FillableData(charSequenceValue: CharSequence): FillableData {
-    return AndroidFillableData(AutofillValue.forText(charSequenceValue))
+actual fun FillableData(charSequenceValue: CharSequence): FillableData? {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        AndroidFillableData(AutofillValue.forText(charSequenceValue))
+    } else null
 }
 
 /**
@@ -71,11 +73,13 @@ actual fun FillableData(charSequenceValue: CharSequence): FillableData {
  * checkbox or a switch. On Android, it creates an [AutofillValue] that represents a toggle state.
  *
  * @param booleanValue The boolean data to be used for autofill.
- * @return A [FillableData] object containing the boolean data.
+ * @return A [FillableData] object containing the boolean data, or `null` if the platform version is
+ *   lower than [Build.VERSION_CODES.O].
  */
-@RequiresApi(Build.VERSION_CODES.O)
-actual fun FillableData(booleanValue: Boolean): FillableData {
-    return AndroidFillableData(AutofillValue.forToggle(booleanValue))
+actual fun FillableData(booleanValue: Boolean): FillableData? {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        AndroidFillableData(AutofillValue.forToggle(booleanValue))
+    } else null
 }
 
 /**
@@ -87,9 +91,11 @@ actual fun FillableData(booleanValue: Boolean): FillableData {
  *
  * @param intValue The integer data to be used for autofill, representing the index of the selected
  *   item in a list.
- * @return A [FillableData] object containing the integer data.
+ * @return A [FillableData] object containing the integer data, or `null` if the platform version is
+ *   lower than [Build.VERSION_CODES.O].
  */
-@RequiresApi(Build.VERSION_CODES.O)
-actual fun FillableData(intValue: Int): FillableData {
-    return AndroidFillableData(AutofillValue.forList(intValue))
+actual fun FillableData(intValue: Int): FillableData? {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        AndroidFillableData(AutofillValue.forList(intValue))
+    } else null
 }
