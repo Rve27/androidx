@@ -108,7 +108,7 @@ data class BundleInfo(
                             if (r8MetadataFileInfo != null) {
                                 println("Found duplicate r8 or d8 json files")
                             }
-                            r8MetadataFileInfo = R8JsonFileInfo.fromD8Json(zis)
+                            r8MetadataFileInfo = R8JsonFileInfo.fromD8()
                         }
 
                         entry.name == R8JsonFileInfo.BUNDLE_LOCATION_R8 -> {
