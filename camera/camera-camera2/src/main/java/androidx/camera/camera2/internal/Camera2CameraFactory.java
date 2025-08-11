@@ -134,6 +134,14 @@ public final class Camera2CameraFactory implements CameraFactory {
                 if (mAvailableCameraIds.equals(filteredIds)) {
                     return; // No change
                 }
+
+                List<String> idsToRemove = new ArrayList<>(mAvailableCameraIds);
+                idsToRemove.removeAll(filteredIds);
+                for (String id : idsToRemove) {
+                    Logger.d(TAG, "Removing camera info for unavailable camera: " + id);
+                    mCameraInfos.remove(id);
+                }
+
                 Logger.d(TAG, "Updated available camera list: " + mAvailableCameraIds + " -> "
                         + filteredIds);
                 mAvailableCameraIds = filteredIds;
