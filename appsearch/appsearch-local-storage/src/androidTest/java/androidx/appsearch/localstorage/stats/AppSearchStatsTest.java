@@ -85,6 +85,8 @@ public class AppSearchStatsTest {
                 .isEqualTo(getVmLatency1 + getVmLatency2);
         assertThat(cStats.getUnblockedAppSearchLatencyMillis())
                 .isEqualTo(unblockedAppSearchLatencyMillis);
+        assertThat(cStats.getNumIcingCalls())
+                .isEqualTo(2);
     }
 
     @Test

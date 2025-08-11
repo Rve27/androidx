@@ -506,23 +506,25 @@ public class AppSearchImplTest {
                 /*callStatsBuilder=*/ null);
 
         // Verify there is garbage documents.
-        GetOptimizeInfoResultProto optimizeInfo = mAppSearchImpl.getOptimizeInfoResultLocked();
+        GetOptimizeInfoResultProto optimizeInfo = mAppSearchImpl.getOptimizeInfoResultLocked(
+                /*callStatsBuilder=*/null);
         assertThat(optimizeInfo.getOptimizableDocs()).isEqualTo(1);
 
         // Increase mutation counter and stop before reach the threshold
         mAppSearchImpl.checkForOptimize(AppSearchImpl.CHECK_OPTIMIZE_INTERVAL - 1,
-                /*builder=*/null);
+                /*optimizeStatsBuilder=*/null, /*callStatsBuilder=*/ null);
 
         // Verify the optimize() isn't triggered.
-        optimizeInfo = mAppSearchImpl.getOptimizeInfoResultLocked();
+        optimizeInfo = mAppSearchImpl.getOptimizeInfoResultLocked(/*callStatsBuilder=*/null);
         assertThat(optimizeInfo.getOptimizableDocs()).isEqualTo(1);
 
         // Increase the counter and reach the threshold, optimize() should be triggered.
         OptimizeStats.Builder builder = new OptimizeStats.Builder();
-        mAppSearchImpl.checkForOptimize(/*mutateBatchSize=*/ 1, builder);
+        mAppSearchImpl.checkForOptimize(/*mutateBatchSize=*/ 1, builder,
+                /*callStatsBuilder=*/ null);
 
         // Verify optimize() is triggered.
-        optimizeInfo = mAppSearchImpl.getOptimizeInfoResultLocked();
+        optimizeInfo = mAppSearchImpl.getOptimizeInfoResultLocked(/*callStatsBuilder=*/null);
         assertThat(optimizeInfo.getOptimizableDocs()).isEqualTo(0);
         assertThat(optimizeInfo.getEstimatedOptimizableBytes()).isEqualTo(0);
 
@@ -3130,7 +3132,7 @@ public class AppSearchImplTest {
         assertThat(nextPageToken).isNotEqualTo(0);
 
         // Call Optimize.
-        mAppSearchImpl.optimize(/* builder= */ null);
+        mAppSearchImpl.optimize(/*optimizeStatsBuilder=*/ null, /*callStatsBuilder=*/ null);
 
         // All page tokens are evicted after optimize, so AppSearchException with code
         // RESULT_ABORTED will be thrown.
@@ -3201,7 +3203,7 @@ public class AppSearchImplTest {
         assertThat(nextPageToken).isNotEqualTo(0);
 
         // Call Optimize.
-        mAppSearchImpl.optimize(/* builder= */ null);
+        mAppSearchImpl.optimize(/*optimizeStatsBuilder=*/ null, /*callStatsBuilder=*/ null);
 
         // All page tokens are evicted after optimize. getNextPage should return an empty page if
         // the flag is disabled.
@@ -3902,7 +3904,7 @@ public class AppSearchImplTest {
                 /*callStatsBuilder=*/ null);
 
         // Optimize remove the expired orphan blob.
-        mAppSearchImpl.optimize(/*builder=*/null);
+        mAppSearchImpl.optimize(/*optimizeStatsBuilder=*/ null, /*callStatsBuilder=*/ null);
         AppSearchException e = assertThrows(AppSearchException.class, () -> {
             mAppSearchImpl.openReadBlob("package", "db1", handle,
                 /*callStatsBuilder=*/null);
@@ -3980,7 +3982,7 @@ public class AppSearchImplTest {
                 /*callStatsBuilder=*/ null);
 
         // Optimize won't remove the blob since it has reference document.
-        mAppSearchImpl.optimize(/*builder=*/null);
+        mAppSearchImpl.optimize(/*optimizeStatsBuilder=*/ null, /*callStatsBuilder=*/ null);
         byte[] readBytes = new byte[20];
         try (ParcelFileDescriptor readPfd =  mAppSearchImpl.openReadBlob("package", "db1", handle,
                 /*callStatsBuilder=*/null);
@@ -3993,7 +3995,7 @@ public class AppSearchImplTest {
                 /*callStatsBuilder=*/null);
 
         // The blob is orphan now and optimize will remove it.
-        mAppSearchImpl.optimize(/*builder=*/null);
+        mAppSearchImpl.optimize(/*optimizeStatsBuilder=*/ null, /*callStatsBuilder=*/ null);
         AppSearchException e = assertThrows(AppSearchException.class, () -> {
             mAppSearchImpl.openReadBlob("package", "db1", handle,
                 /*callStatsBuilder=*/null);
@@ -6367,7 +6369,7 @@ public class AppSearchImplTest {
 
         // Trigger optimize and check optimize stats
         OptimizeStats.Builder optimizeStatsBuilder = new OptimizeStats.Builder();
-        mAppSearchImpl.optimize(optimizeStatsBuilder);
+        mAppSearchImpl.optimize(optimizeStatsBuilder, /*callStatsBuilder=*/ null);
         OptimizeStats optimizeStats = optimizeStatsBuilder.build();
         assertThat(optimizeStats.getEnabledFeatures()).isEqualTo(onlyLaunchVMFeature);
     }
@@ -6462,7 +6464,7 @@ public class AppSearchImplTest {
 
         // Trigger optimize and check optimize stats
         OptimizeStats.Builder optimizeStatsBuilder = new OptimizeStats.Builder();
-        mAppSearchImpl.optimize(optimizeStatsBuilder);
+        mAppSearchImpl.optimize(optimizeStatsBuilder, /*callStatsBuilder=*/ null);
         OptimizeStats optimizeStats = optimizeStatsBuilder.build();
         assertThat(optimizeStats.getEnabledFeatures()).isEqualTo(noLaunchFeature);
     }
@@ -6639,7 +6641,7 @@ public class AppSearchImplTest {
 
         // Optimize to check the last blocking operation is REMOVE_DOCUMENTS_BY_SEARCH
         OptimizeStats.Builder optimizeStatsBuilder = new OptimizeStats.Builder();
-        mAppSearchImpl.optimize(optimizeStatsBuilder);
+        mAppSearchImpl.optimize(optimizeStatsBuilder, /*callStatsBuilder=*/ null);
         OptimizeStats optimizeStats = optimizeStatsBuilder.build();
         assertThat(optimizeStats.getLastBlockingOperation())
                 .isEqualTo(BaseStats.CALL_TYPE_REMOVE_DOCUMENTS_BY_SEARCH);
@@ -6743,6 +6745,147 @@ public class AppSearchImplTest {
         callStats = callStatsBuilder.build();
         assertThat(callStats.getLastBlockingOperation())
                 .isEqualTo(BaseStats.CALL_TYPE_SET_BLOB_VISIBILITY);
+    }
+
+    @Test
+    public void testGetVmLatency() throws Exception {
+        CallStats.Builder callStatsBuilder = new CallStats.Builder();
+
+        mAppSearchImpl = AppSearchImpl.create(
+                mAppSearchDir,
+                new AppSearchConfigImpl(new LimitConfig() {
+                    @Override
+                    public int getMaxByteLimitForBatchPut() {
+                        return 80;
+                    }
+
+                    @Override
+                    public int getMaxDocumentSizeBytes() {
+                        return Integer.MAX_VALUE;
+                    }
+
+                    @Override
+                    public int getPerPackageDocumentCountLimit() {
+                        return Integer.MAX_VALUE;
+                    }
+
+                    @Override
+                    public int getDocumentCountLimitStartThreshold() {
+                        return Integer.MAX_VALUE;
+                    }
+
+                    @Override
+                    public int getMaxSuggestionCount() {
+                        return Integer.MAX_VALUE;
+                    }
+
+                    @Override
+                    public int getMaxOpenBlobCount() {
+                        return 2;
+                    }
+                }, new LocalStorageIcingOptionsConfig()),
+                /*initStatsBuilder=*/null,
+                callStatsBuilder,
+                /*visibilityChecker=*/ null,
+                new JetpackRevocableFileDescriptorStore(mUnlimitedConfig),
+                /*icingSearchEngine=*/ null,
+                ALWAYS_OPTIMIZE);
+        // initialize + GetSchema + GetStorage + SetVisibilitySchema + SetBlobVisibilitySchema
+        assertThat(callStatsBuilder.build().getNumIcingCalls()).isEqualTo(5);
+
+        // Set a schema
+        callStatsBuilder = new CallStats.Builder();
+        List<AppSearchSchema> schemas =
+                Collections.singletonList(new AppSearchSchema.Builder("type").build());
+        InternalSetSchemaResponse internalSetSchemaResponse = mAppSearchImpl.setSchema(
+                "package",
+                "database",
+                schemas,
+                /*visibilityConfigs=*/ Collections.emptyList(),
+                /*forceOverride=*/ false,
+                /*version=*/ 0,
+                /*setSchemaStatsBuilder=*/ null,
+                callStatsBuilder);
+        assertThat(internalSetSchemaResponse.isSuccess()).isTrue();
+        assertThat(callStatsBuilder.build().getNumIcingCalls()).isEqualTo(1);
+
+        // Put a document and check last write operation is SetSchema
+        AppSearchLogger fakeLogger = new AppSearchLogger() {};
+        callStatsBuilder = new CallStats.Builder();
+        GenericDocument document1 =
+                new GenericDocument.Builder<>("namespace", "id", "type").build();
+        GenericDocument document2 =
+                new GenericDocument.Builder<>("namespace", "id2", "type").build();
+        GenericDocument document3 =
+                new GenericDocument.Builder<>("namespace", "id3", "type").build();
+        mAppSearchImpl.putDocument(
+                "package",
+                "database",
+                document1,
+                /*sendChangeNotifications=*/ false,
+                fakeLogger,
+                callStatsBuilder);
+        assertThat(callStatsBuilder.build().getNumIcingCalls()).isEqualTo(1);
+
+        // Batch put 3 documents, the batch size is set to 80 Byte, and each doc will have ~66 Byte
+        // This will have 3 batches
+        callStatsBuilder = new CallStats.Builder();
+        List<GenericDocument> documents = new ArrayList<>();
+        documents.add(document1);
+        documents.add(document2);
+        documents.add(document3);
+        AppSearchBatchResult.Builder<String, Void> resultBuilder =
+                new AppSearchBatchResult.Builder<>();
+        mAppSearchImpl.batchPutDocuments(
+                "package",
+                "database",
+                documents,
+                resultBuilder,
+                /*sendChangeNotifications=*/ false,
+                fakeLogger,
+                PersistType.Code.LITE,
+                callStatsBuilder);
+        assertThat(callStatsBuilder.build().getNumIcingCalls()).isEqualTo(3);
+
+        // Search document
+        callStatsBuilder = new CallStats.Builder();
+        mAppSearchImpl.query(
+                "package", "database", "",
+                new SearchSpec.Builder().build(), fakeLogger,
+                callStatsBuilder);
+        assertThat(callStatsBuilder.build().getNumIcingCalls()).isEqualTo(1);
+
+        // Report usage
+        callStatsBuilder = new CallStats.Builder();
+        mAppSearchImpl.reportUsage("package", "database", "namespace",
+                "id", /*usageTimestampMillis=*/ 10, /*systemUsage=*/ false,
+                callStatsBuilder);
+        assertThat(callStatsBuilder.build().getNumIcingCalls()).isEqualTo(1);
+
+        // Remove document
+        callStatsBuilder = new CallStats.Builder();
+        mAppSearchImpl.remove("package", "database", "namespace",
+                "id", /*removeStatsBuilder=*/ null, callStatsBuilder);
+        assertThat(callStatsBuilder.build().getNumIcingCalls()).isEqualTo(1);
+
+        // RemoveByQuery
+        callStatsBuilder = new CallStats.Builder();
+        mAppSearchImpl.removeByQuery("package", "database", "",
+                new SearchSpec.Builder().build(), /*deletedIds=*/null, /*removeStatsBuilder=*/ null,
+                callStatsBuilder);
+        assertThat(callStatsBuilder.build().getNumIcingCalls()).isEqualTo(1);
+
+        // Optimize
+        callStatsBuilder = new CallStats.Builder();
+        mAppSearchImpl.optimize(/*optimizeStatsBuilder=*/ null, callStatsBuilder);
+        assertThat(callStatsBuilder.build().getNumIcingCalls()).isEqualTo(1);
+
+        // Flush
+        callStatsBuilder = new CallStats.Builder();
+        mAppSearchImpl.persistToDisk("package", BaseStats.CALL_TYPE_PUT_DOCUMENT,
+                PersistType.Code.FULL, /*logger=*/ null,
+                callStatsBuilder);
+        assertThat(callStatsBuilder.build().getNumIcingCalls()).isEqualTo(1);
     }
 
     @Test
@@ -11122,7 +11265,7 @@ public class AppSearchImplTest {
                 /*sendChangeNotifications=*/ false,
                 /*logger=*/ null,
                 /*callStatsBuilder=*/ null);
-        mAppSearchImpl.optimize(/*builder=*/ null);
+        mAppSearchImpl.optimize(/*optimizeStatsBuilder=*/ null, /*callStatsBuilder=*/ null);
         mAppSearchImpl.persistToDisk("package", BaseStats.CALL_TYPE_PUT_DOCUMENT,
                 PersistType.Code.LITE, /*logger=*/ null,
                 /*callStatsBuilder=*/ null);
@@ -11155,7 +11298,7 @@ public class AppSearchImplTest {
                 ALWAYS_OPTIMIZE);
 
         // Run optimize, and test that the document is decompressed based on the new threshold.
-        mAppSearchImpl.optimize(/*builder=*/ null);
+        mAppSearchImpl.optimize(/*optimizeStatsBuilder=*/ null, /*callStatsBuilder=*/ null);
 
         // Record storage size again (should be uncompressed)
         storageInfo = mAppSearchImpl.getRawStorageInfoProto(

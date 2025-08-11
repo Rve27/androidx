@@ -381,7 +381,6 @@ public final class AppSearchImpl implements Closeable {
         Map<String, VisibilityStore> visibilityStoreMap = new ArrayMap<>();
         long totalLatencyStartMillis = SystemClock.elapsedRealtime();
         long javaLockAcquisitionEndTimeMillis = 0;
-        int getVmLatency = 0;
         mReadWriteLock.writeLock().lock();
         try {
             javaLockAcquisitionEndTimeMillis = SystemClock.elapsedRealtime();
@@ -414,7 +413,10 @@ public final class AppSearchImpl implements Closeable {
             try {
                 LogUtil.piiTrace(TAG, "icingSearchEngine.initialize, request");
                 InitializeResultProto initializeResultProto = mIcingSearchEngineLocked.initialize();
-                getVmLatency += initializeResultProto.getGetVmLatencyMs();
+                if (callStatsBuilder != null) {
+                    callStatsBuilder.addGetVmLatencyMillis(
+                            initializeResultProto.getGetVmLatencyMs());
+                }
                 while (maxInitRetries > 0 && !isSuccess(initializeResultProto.getStatus())) {
                     Log.e(TAG, String.format(
                             "INIT: Initialize failed with status (%d:%s). %d retries left!",
@@ -422,6 +424,10 @@ public final class AppSearchImpl implements Closeable {
                             initializeResultProto.getStatus().getMessage(), maxInitRetries));
                     --maxInitRetries;
                     initializeResultProto = mIcingSearchEngineLocked.initialize();
+                    if (callStatsBuilder != null) {
+                        callStatsBuilder.addGetVmLatencyMillis(
+                                initializeResultProto.getGetVmLatencyMs());
+                    }
                 }
                 LogUtil.piiTrace(
                         TAG,
@@ -466,7 +472,9 @@ public final class AppSearchImpl implements Closeable {
                 long prepareSchemaAndNamespacesLatencyStartMillis = SystemClock.elapsedRealtime();
                 LogUtil.piiTrace(TAG, "getSchema, request");
                 GetSchemaResultProto schemaResultProto = mIcingSearchEngineLocked.getSchema();
-                getVmLatency += schemaResultProto.getGetVmLatencyMs();
+                if (callStatsBuilder != null) {
+                    callStatsBuilder.addGetVmLatencyMillis(schemaResultProto.getGetVmLatencyMs());
+                }
                 // GetSchema may return NOT_FOUND if we've initialized an empty instance.
                 while (maxInitRetries > 0
                         && !isCodeOneOf(schemaResultProto.getStatus(),
@@ -477,7 +485,10 @@ public final class AppSearchImpl implements Closeable {
                             schemaResultProto.getStatus().getMessage(), maxInitRetries));
                     --maxInitRetries;
                     schemaResultProto = mIcingSearchEngineLocked.getSchema();
-                    getVmLatency += schemaResultProto.getGetVmLatencyMs();
+                    if (callStatsBuilder != null) {
+                        callStatsBuilder.addGetVmLatencyMillis(
+                                schemaResultProto.getGetVmLatencyMs());
+                    }
                 }
                 LogUtil.piiTrace(TAG, "getSchema, response", schemaResultProto.getStatus(),
                         schemaResultProto);
@@ -488,7 +499,9 @@ public final class AppSearchImpl implements Closeable {
                 LogUtil.piiTrace(TAG, "getStorageInfo, request");
                 StorageInfoResultProto storageInfoResult =
                         mIcingSearchEngineLocked.getStorageInfo();
-                getVmLatency += storageInfoResult.getGetVmLatencyMs();
+                if (callStatsBuilder != null) {
+                    callStatsBuilder.addGetVmLatencyMillis(storageInfoResult.getGetVmLatencyMs());
+                }
                 while (maxInitRetries > 0 && !isSuccess(storageInfoResult.getStatus())) {
                     Log.e(TAG, String.format(
                             "INIT: GetStorageInfo failed with status (%d:%s). %d retries left!",
@@ -496,7 +509,10 @@ public final class AppSearchImpl implements Closeable {
                             storageInfoResult.getStatus().getMessage(), maxInitRetries));
                     --maxInitRetries;
                     storageInfoResult = mIcingSearchEngineLocked.getStorageInfo();
-                    getVmLatency += storageInfoResult.getGetVmLatencyMs();
+                    if (callStatsBuilder != null) {
+                        callStatsBuilder.addGetVmLatencyMillis(
+                                storageInfoResult.getGetVmLatencyMs());
+                    }
                 }
                 LogUtil.piiTrace(
                         TAG,
@@ -590,9 +606,6 @@ public final class AppSearchImpl implements Closeable {
                 // Keep the old behaviour when flags are off.
                 visibilityStoreMap = initializeVisibilityStore(mRevocableFileDescriptorStore,
                         initStatsBuilder, callStatsBuilder);
-            }
-            if (callStatsBuilder != null) {
-                callStatsBuilder.addGetVmLatencyMillis(getVmLatency);
             }
             mDocumentVisibilityStoreLocked = visibilityStoreMap.get(
                     VisibilityStore.DOCUMENT_VISIBILITY_DATABASE_NAME);
@@ -4968,20 +4981,22 @@ public final class AppSearchImpl implements Closeable {
      *                     {@link IcingSearchEngine#getOptimizeInfo()} will be triggered and the
      *                     counter will be reset.
      */
-    public void checkForOptimize(int mutationSize, OptimizeStats.@Nullable Builder statsBuilder)
+    public void checkForOptimize(int mutationSize,
+            OptimizeStats.@Nullable Builder optimizeStatsBuilder,
+            CallStats.@Nullable Builder callStatsBuilder)
             throws AppSearchException {
         long totalLatencyStartMillis = SystemClock.elapsedRealtime();
         long javaLockAcquisitionEndTimeMillis = 0;
         mReadWriteLock.writeLock().lock();
         try {
             javaLockAcquisitionEndTimeMillis = SystemClock.elapsedRealtime();
-            if (statsBuilder != null) {
-                statsBuilder.setJavaLockAcquisitionLatencyMillis(
+            if (optimizeStatsBuilder != null) {
+                optimizeStatsBuilder.setJavaLockAcquisitionLatencyMillis(
                         (int) (javaLockAcquisitionEndTimeMillis - totalLatencyStartMillis));
             }
             mOptimizeIntervalCountLocked += mutationSize;
             if (mOptimizeIntervalCountLocked >= CHECK_OPTIMIZE_INTERVAL) {
-                checkForOptimize(statsBuilder);
+                checkForOptimize(optimizeStatsBuilder, callStatsBuilder);
             }
         } finally {
             logWriteOperationLatencyLocked(totalLatencyStartMillis,
@@ -5002,22 +5017,23 @@ public final class AppSearchImpl implements Closeable {
      * <p>{@link IcingSearchEngine#optimize()} should be called only if
      * {@link OptimizeStrategy#shouldOptimize(GetOptimizeInfoResultProto)} return true.
      */
-    public void checkForOptimize(OptimizeStats.@Nullable Builder statsBuilder)
+    public void checkForOptimize(OptimizeStats.@Nullable Builder optimizeStatsBuilder,
+            CallStats.@Nullable Builder callStatsBuilder)
             throws AppSearchException {
         long totalLatencyStartMillis = SystemClock.elapsedRealtime();
         long javaLockAcquisitionEndTimeMillis = 0;
         mReadWriteLock.writeLock().lock();
         try {
             javaLockAcquisitionEndTimeMillis = SystemClock.elapsedRealtime();
-            if (statsBuilder != null) {
-                statsBuilder.setJavaLockAcquisitionLatencyMillis(
+            if (optimizeStatsBuilder != null) {
+                optimizeStatsBuilder.setJavaLockAcquisitionLatencyMillis(
                         (int) (javaLockAcquisitionEndTimeMillis - totalLatencyStartMillis));
             }
-            GetOptimizeInfoResultProto optimizeInfo = getOptimizeInfoResultLocked();
+            GetOptimizeInfoResultProto optimizeInfo = getOptimizeInfoResultLocked(callStatsBuilder);
             checkSuccess(optimizeInfo.getStatus());
             mOptimizeIntervalCountLocked = 0;
             if (mOptimizeStrategy.shouldOptimize(optimizeInfo)) {
-                optimize(statsBuilder);
+                optimize(optimizeStatsBuilder, callStatsBuilder);
             }
         } finally {
             logWriteOperationLatencyLocked(totalLatencyStartMillis,
@@ -5033,7 +5049,8 @@ public final class AppSearchImpl implements Closeable {
     }
 
     /** Triggers {@link IcingSearchEngine#optimize()} directly. */
-    public void optimize(OptimizeStats.@Nullable Builder statsBuilder) throws AppSearchException {
+    public void optimize(OptimizeStats.@Nullable Builder optimizeStatsBuilder,
+            CallStats.@Nullable Builder callStatsBuilder) throws AppSearchException {
         long totalLatencyStartMillis = SystemClock.elapsedRealtime();
         long javaLockAcquisitionEndTimeMillis = 0;
         mReadWriteLock.writeLock().lock();
@@ -5046,8 +5063,12 @@ public final class AppSearchImpl implements Closeable {
             LogUtil.piiTrace(
                     TAG,
                     "optimize, response", optimizeResultProto.getStatus(), optimizeResultProto);
-            if (statsBuilder != null) {
-                statsBuilder.setStatusCode(statusProtoToResultCode(optimizeResultProto.getStatus()))
+            if (callStatsBuilder != null) {
+                callStatsBuilder.addGetVmLatencyMillis(optimizeResultProto.getGetVmLatencyMs());
+            }
+            if (optimizeStatsBuilder != null) {
+                optimizeStatsBuilder.setStatusCode(
+                        statusProtoToResultCode(optimizeResultProto.getStatus()))
                         .setJavaLockAcquisitionLatencyMillis(javaLockAcquisitionLatencyMillis)
                         .setLastBlockingOperation(mLastReadOrWriteOperationLocked)
                         .setLastBlockingOperationLatencyMillis(
@@ -5055,7 +5076,7 @@ public final class AppSearchImpl implements Closeable {
                         .setLaunchVMEnabled(mIsVMEnabled)
                         .addGetVmLatencyMillis(optimizeResultProto.getGetVmLatencyMs());
                 AppSearchLoggerHelper.copyNativeStats(optimizeResultProto.getOptimizeStats(),
-                        statsBuilder);
+                        optimizeStatsBuilder);
             }
             checkSuccess(optimizeResultProto.getStatus());
 
@@ -5117,10 +5138,14 @@ public final class AppSearchImpl implements Closeable {
 
     @GuardedBy("mReadWriteLock")
     @VisibleForTesting
-    GetOptimizeInfoResultProto getOptimizeInfoResultLocked() {
+    GetOptimizeInfoResultProto getOptimizeInfoResultLocked(
+            CallStats.@Nullable Builder callStatsBuilder) {
         LogUtil.piiTrace(TAG, "getOptimizeInfo, request");
         GetOptimizeInfoResultProto result = mIcingSearchEngineLocked.getOptimizeInfo();
         LogUtil.piiTrace(TAG, "getOptimizeInfo, response", result.getStatus(), result);
+        if (callStatsBuilder != null) {
+            callStatsBuilder.addGetVmLatencyMillis(result.getGetVmLatencyMs());
+        }
         return result;
     }
 

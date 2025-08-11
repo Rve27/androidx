@@ -188,8 +188,9 @@ public class BaseStats {
     private final int mLastBlockingOperation;
     private final int mLastBlockingOperationLatencyMillis;
     // The latency of get the VM instance.
-    int mGetVmLatencyMillis;
-    int mUnblockedAppSearchLatencyMillis;
+    private final int mGetVmLatencyMillis;
+    private final int mUnblockedAppSearchLatencyMillis;
+    private final int mNumIcingCalls;
 
     protected BaseStats(@NonNull Builder<?> builder) {
         Preconditions.checkNotNull(builder);
@@ -199,6 +200,7 @@ public class BaseStats {
         mLastBlockingOperationLatencyMillis = builder.mLastBlockingOperationLatencyMillis;
         mGetVmLatencyMillis = builder.mGetVmLatencyMillis;
         mUnblockedAppSearchLatencyMillis = builder.mUnblockedAppSearchLatencyMillis;
+        mNumIcingCalls = builder.mNumIcingCalls;
     }
 
     /** Returns the bitmask representing the enabled features. */
@@ -243,6 +245,11 @@ public class BaseStats {
         return mUnblockedAppSearchLatencyMillis;
     }
 
+    /** Returns the number we called Icing. */
+    public int getNumIcingCalls() {
+        return mNumIcingCalls;
+    }
+
     /**
      * Builder for {@link BaseStats}.
      *
@@ -273,6 +280,8 @@ public class BaseStats {
         int mGetVmLatencyMillis = 0;
         // The amount of time that the task is running after the AppSearch RW lock.
         int mUnblockedAppSearchLatencyMillis;
+        // The number of times that we called icing
+        int mNumIcingCalls = 0;
 
         /** Creates a new {@link BaseStats.Builder}. */
         @SuppressWarnings("unchecked")
@@ -318,10 +327,14 @@ public class BaseStats {
             return mBuilderTypeInstance;
         }
 
-        /**  Adds latency for last blocking operation which hold the write lock in milliseconds. */
+        /**
+         * Adds the latency required to get a connection to the vm. Also increments the count of
+         * Icing calls.
+         */
         @CanIgnoreReturnValue
         public @NonNull BuilderType addGetVmLatencyMillis(int getVmLatencyMillis) {
             mGetVmLatencyMillis += getVmLatencyMillis;
+            mNumIcingCalls++;
             return mBuilderTypeInstance;
         }
 
