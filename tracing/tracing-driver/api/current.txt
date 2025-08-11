@@ -109,10 +109,10 @@ package androidx.tracing.driver {
   }
 
   @kotlin.jvm.JvmInline public final value class TraceEventScope {
-    method public void addMetadataEntry(String name, boolean value);
-    method public void addMetadataEntry(String name, double value);
-    method public void addMetadataEntry(String name, String value);
-    method public void addMetadataEntry(String name, long value);
+    method @KotlinOnly public void addMetadataEntry(String name, boolean value);
+    method @KotlinOnly public void addMetadataEntry(String name, double value);
+    method @KotlinOnly public void addMetadataEntry(String name, String value);
+    method @KotlinOnly public void addMetadataEntry(String name, long value);
     method @BytecodeOnly public static void addMetadataEntry-impl(androidx.tracing.driver.TraceEvent!, String, boolean);
     method @BytecodeOnly public static void addMetadataEntry-impl(androidx.tracing.driver.TraceEvent!, String, double);
     method @BytecodeOnly public static void addMetadataEntry-impl(androidx.tracing.driver.TraceEvent!, String, String);
@@ -157,6 +157,12 @@ package androidx.tracing.driver {
     property public int type;
     property public long uuid;
   }
+
+  public typealias AtomicBoolean = java.util.concurrent.atomic.AtomicBoolean;
+
+  public typealias AtomicInteger = java.util.concurrent.atomic.AtomicInteger;
+
+  public typealias AtomicLong = java.util.concurrent.atomic.AtomicLong;
 
 }
 

@@ -109,5 +109,7 @@ package androidx.navigation3.runtime {
     method @BytecodeOnly @androidx.compose.runtime.Composable public static androidx.navigation3.runtime.NavEntryDecorator<java.lang.Object!> rememberSavedStateNavEntryDecorator(androidx.compose.runtime.saveable.SaveableStateHolder?, androidx.compose.runtime.Composer?, int, int);
   }
 
+  public typealias NavBackStack = androidx.compose.runtime.snapshots.SnapshotStateList<androidx.navigation3.runtime.NavKey>;
+
 }
 
