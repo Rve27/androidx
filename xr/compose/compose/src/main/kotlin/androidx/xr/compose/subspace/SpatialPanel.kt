@@ -360,17 +360,23 @@ private fun <T : View> AndroidViewPanel(
 ) {
     val context = LocalContext.current
     val view = remember { factory(context) }
+    val session = checkNotNull(LocalSession.current) { "session must be initialized" }
+    val density = LocalDensity.current
 
-    val corePanelEntity =
-        rememberCorePanelEntity(shape = shape) {
-            PanelEntity.create(
-                session = this,
-                view = view,
-                dimensions = SpatialPanelDimensions.minimumPanelDimension,
-                name = "ViewPanel",
-                pose = Pose.Identity,
+    val corePanelEntity: CorePanelEntity = remember {
+        CorePanelEntity(
+                PanelEntity.create(
+                    session = session,
+                    view = view,
+                    dimensions = SpatialPanelDimensions.minimumPanelDimension,
+                    name = "ViewPanel:${view.id}",
+                    pose = Pose.Identity,
+                )
             )
-        }
+            .also { it.setShape(shape, density) }
+    }
+
+    LaunchedEffect(shape, density) { corePanelEntity.setShape(shape, density) }
 
     val measurePolicy = SpatialViewPanelMeasurePolicy(view)
 
@@ -418,16 +424,23 @@ public fun SpatialPanel(
             resizePolicy = resizePolicy,
         )
     val view = rememberComposeView()
-    val corePanelEntity =
-        rememberCorePanelEntity(shape = shape) {
-            PanelEntity.create(
-                session = this,
-                view = view,
-                dimensions = SpatialPanelDimensions.minimumPanelDimension,
-                name = entityName("SpatialPanel"),
-                pose = Pose.Identity,
+    val session = checkNotNull(LocalSession.current) { "session must be initialized" }
+    val density = LocalDensity.current
+
+    val corePanelEntity: CorePanelEntity = remember {
+        CorePanelEntity(
+                PanelEntity.create(
+                    session = session,
+                    view = view,
+                    dimensions = SpatialPanelDimensions.minimumPanelDimension,
+                    name = entityName("SpatialPanel"),
+                    pose = Pose.Identity,
+                )
             )
-        }
+            .also { it.setShape(shape, density) }
+    }
+
+    LaunchedEffect(shape, density) { corePanelEntity.setShape(shape, density) }
 
     val measurePolicy = SpatialViewPanelMeasurePolicy(view)
 
