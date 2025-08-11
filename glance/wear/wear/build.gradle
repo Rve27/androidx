@@ -27,10 +27,18 @@ plugins {
     id("AndroidXPlugin")
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
+    id("androidx.stableaidl")
 }
 
 dependencies {
     api(libs.kotlinStdlib)
+    api(libs.kotlinCoroutinesAndroid)
+    api("androidx.annotation:annotation:1.9.1")
+    implementation("androidx.lifecycle:lifecycle-service:2.9.2")
+
+    testImplementation(libs.junit)
+    testImplementation(libs.testRunner)
+    testImplementation(libs.truth)
 }
 
 android {
@@ -39,6 +47,14 @@ android {
         minSdk = 33
         compileSdk = 36
     }
+    buildFeatures {
+        aidl = true
+    }
+    buildTypes.all {
+        stableAidl {
+            version 1
+        }
+    }
 }
 
 androidx {
@@ -46,4 +62,5 @@ androidx {
     type = SoftwareType.PUBLISHED_LIBRARY
     inceptionYear = "2025"
     description = "Allows developers to build Widgets on Wear OS using Remote Compose."
+    enableRobolectric()
 }
