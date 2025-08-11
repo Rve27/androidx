@@ -149,5 +149,5 @@ object ComposeFoundationFlags {
      * of 1 item in the direction of the scroll. The window used will be 1 view port AFTER the
      * currently composed items, this includes visible and items composed through beyond bounds.
      */
-    @Suppress("MutableBareField") @JvmField var isCacheWindowForPagerEnabled = true
+    @Suppress("MutableBareField") @JvmField var isCacheWindowForPagerEnabled = false
 }

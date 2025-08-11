@@ -29,12 +29,14 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.test.filters.LargeTest
 import com.google.common.truth.Truth.assertThat
 import kotlin.test.BeforeTest
+import kotlin.test.Ignore
 import kotlinx.coroutines.runBlocking
 import org.junit.Assume
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 
+@Ignore
 @OptIn(ExperimentalFoundationApi::class)
 @LargeTest
 @RunWith(Parameterized::class)
