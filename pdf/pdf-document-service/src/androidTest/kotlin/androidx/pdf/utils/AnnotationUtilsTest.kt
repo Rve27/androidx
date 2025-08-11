@@ -29,12 +29,11 @@ import androidx.pdf.annotation.models.StampAnnotation
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SdkSuppress
+import com.google.common.truth.Truth.assertThat
 import com.google.gson.JsonSyntaxException
 import java.io.FileOutputStream
 import java.io.IOException
-import junit.framework.TestCase.assertNotNull
 import kotlinx.coroutines.test.runTest
-import org.junit.Assert.assertEquals
 import org.junit.Assert.assertThrows
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -65,8 +64,8 @@ class AnnotationUtilsTest {
         val actualAnnotations = readAnnotationsFromPfd(pfd)
 
         pfd.close()
-        assertNotNull(actualAnnotations)
-        assertEquals(actualAnnotations.size, 2)
+        assertThat(actualAnnotations).isNotNull()
+        assertThat(actualAnnotations.size).isEqualTo(2)
         for (i in 0 until expectedAnnotations.size) {
             assert(actualAnnotations[i].annotation is StampAnnotation)
             assertStampAnnotationEquals(
@@ -95,8 +94,8 @@ class AnnotationUtilsTest {
         // Read annotations from the same PFD
         var actualAnnotations = readAnnotationsFromPfd(pfd)
 
-        assertNotNull(actualAnnotations)
-        assertEquals(actualAnnotations.size, 2)
+        assertThat(actualAnnotations).isNotNull()
+        assertThat(actualAnnotations.size).isEqualTo(2)
         for (i in 0 until expectedAnnotations.size) {
             assert(actualAnnotations[i].annotation is StampAnnotation)
             assertStampAnnotationEquals(
@@ -109,8 +108,8 @@ class AnnotationUtilsTest {
         actualAnnotations = readAnnotationsFromPfd(pfd)
 
         pfd.close()
-        assertNotNull(actualAnnotations)
-        assertEquals(actualAnnotations.size, 2)
+        assertThat(actualAnnotations).isNotNull()
+        assertThat(actualAnnotations.size).isEqualTo(2)
         for (i in 0 until expectedAnnotations.size) {
             assert(actualAnnotations[i].annotation is StampAnnotation)
             assertStampAnnotationEquals(
@@ -126,7 +125,7 @@ class AnnotationUtilsTest {
         val pfd = createPfd(context, TEST_ANNOTATIONS_FILE, "rwt")
 
         val annotations = readAnnotationsFromPfd(pfd)
-        assertEquals(0, annotations.size)
+        assertThat(annotations).isEmpty()
         pfd.close()
     }
 
@@ -200,8 +199,8 @@ class AnnotationUtilsTest {
 
         val aospStampAnnotation = stampAnnotation.toAospStampAnnotation()
 
-        assertEquals(bounds, aospStampAnnotation.bounds)
-        assertEquals(1, aospStampAnnotation.objects.size)
+        assertThat(aospStampAnnotation.bounds).isEqualTo(bounds)
+        assertThat(aospStampAnnotation.objects.size).isEqualTo(1)
         assert(aospStampAnnotation.objects[0] is PdfPagePathObject)
 
         val aospPathObject = aospStampAnnotation.objects[0] as PdfPagePathObject
@@ -242,17 +241,17 @@ class AnnotationUtilsTest {
         ) {
             if (!isRequiredSdkExtensionAvailable()) return
 
-            assertEquals(pathPdfObject.brushWidth, aospPathObject.strokeWidth)
-            assertEquals(pathPdfObject.brushColor, aospPathObject.strokeColor)
+            assertThat(aospPathObject.strokeWidth).isEqualTo(pathPdfObject.brushWidth)
+            assertThat(aospPathObject.strokeColor).isEqualTo(pathPdfObject.brushColor)
             val aospPath = aospPathObject.toPath()
             if (!pathPdfObject.inputs.isEmpty()) {
-                assertNotNull(aospPath)
+                assertThat(aospPath).isNotNull()
             }
             val pathInputs = aospPath.getPathInputsFromPath()
-            assertEquals(pathPdfObject.inputs.size, pathInputs.size)
+            assertThat(pathInputs.size).isEqualTo(pathPdfObject.inputs.size)
             for (i in pathPdfObject.inputs.indices) {
-                assertEquals(pathPdfObject.inputs[i].x, pathInputs[i].x)
-                assertEquals(pathPdfObject.inputs[i].y, pathInputs[i].y)
+                assertThat(pathInputs[i].x).isEqualTo(pathPdfObject.inputs[i].x)
+                assertThat(pathInputs[i].y).isEqualTo(pathPdfObject.inputs[i].y)
             }
         }
 

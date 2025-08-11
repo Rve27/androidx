@@ -38,6 +38,7 @@ import androidx.pdf.annotation.EditablePdfDocument
 import androidx.pdf.annotation.models.AnnotationResult
 import androidx.pdf.annotation.models.PdfAnnotation
 import androidx.pdf.annotation.models.PdfAnnotationData
+import androidx.pdf.annotation.processor.PdfAnnotationsProcessor
 import androidx.pdf.content.PageMatchBounds
 import androidx.pdf.content.PageSelection
 import androidx.pdf.content.SelectionBoundary
@@ -89,6 +90,7 @@ public class SandboxedPdfDocument(
     override val pageCount: Int,
     override val isLinearized: Boolean,
     override val formType: Int,
+    private val annotationsProcessor: PdfAnnotationsProcessor,
 ) : EditablePdfDocument() {
 
     public override val formEditRecords: List<FormEditRecord>
@@ -388,8 +390,9 @@ public class SandboxedPdfDocument(
     }
 
     override suspend fun applyEdits(annotations: List<PdfAnnotationData>): AnnotationResult {
-        // TODO: b/434620410 - Return success list after getting success IDs from service
-        return AnnotationResult(listOf(), listOf())
+        // Wrapping the process method inside withDocument is important because if the service
+        // disconnected/crashed, withDocument is responsible for retrying the request.
+        return withDocument { annotationsProcessor.process(annotations) }
     }
 
     override suspend fun applyEdits(sourcePfd: ParcelFileDescriptor): AnnotationResult {

@@ -32,11 +32,14 @@ import androidx.pdf.annotation.EditablePdfDocument
 import androidx.pdf.annotation.models.EditId
 import androidx.pdf.annotation.models.PdfAnnotationData
 import androidx.pdf.annotation.models.StampAnnotation
+import androidx.pdf.annotation.processor.BatchPdfAnnotationsProcessor
+import androidx.pdf.annotation.processor.BatchPdfAnnotationsProcessor.Companion.parcelSizeInBytes
 import androidx.pdf.models.FormEditRecord
 import androidx.pdf.models.FormWidgetInfo
 import androidx.pdf.utils.AnnotationUtilsTest.Companion.isRequiredSdkExtensionAvailable
 import androidx.pdf.utils.TestUtils
 import androidx.pdf.utils.assertStampAnnotationEquals
+import androidx.pdf.utils.createPdfAnnotationDataList
 import androidx.pdf.utils.createPfd
 import androidx.pdf.utils.getSampleStampAnnotation
 import androidx.pdf.utils.writeAnnotationsToFile
@@ -396,32 +399,29 @@ class SandboxedPdfDocumentTest {
         val pageNum = 1
         val sampleAnnotation = getSampleStampAnnotation(pageNum)
         val document = openDocument(PDF_DOCUMENT)
-        assertThat(document is EditablePdfDocument).isTrue()
-        if (document is EditablePdfDocument) {
 
-            val context = ApplicationProvider.getApplicationContext<Context>()
+        val context = ApplicationProvider.getApplicationContext<Context>()
 
-            // Create a ParcelFileDescriptor for the testing annotations document in read-write
-            // mode.
-            val pfd = createPfd(context, PDF_ANNOTATION_DOCUMENT, "rwt")
+        // Create a ParcelFileDescriptor for the testing annotations document in read-write
+        // mode.
+        val pfd = createPfd(context, PDF_ANNOTATION_DOCUMENT, "rwt")
 
-            writeAnnotationsToFile(
-                pfd,
-                listOf(PdfAnnotationData(EditId(pageNum = 0, value = "0"), sampleAnnotation)),
-            )
+        writeAnnotationsToFile(
+            pfd,
+            listOf(PdfAnnotationData(EditId(pageNum = 0, value = "0"), sampleAnnotation)),
+        )
 
-            val annotationResult = document.applyEdits(pfd)
+        val annotationResult = document.applyEdits(pfd)
 
-            val actualAnnotations = annotationResult.success
+        val actualAnnotations = annotationResult.success
 
-            assertNotNull(actualAnnotations)
-            assertThat(actualAnnotations.size).isEqualTo(1)
-            assert(actualAnnotations[0].annotation is StampAnnotation)
-            assertStampAnnotationEquals(
-                sampleAnnotation,
-                actualAnnotations[0].annotation as StampAnnotation,
-            )
-        }
+        assertNotNull(actualAnnotations)
+        assertThat(actualAnnotations.size).isEqualTo(1)
+        assert(actualAnnotations[0].annotation is StampAnnotation)
+        assertStampAnnotationEquals(
+            sampleAnnotation,
+            actualAnnotations[0].annotation as StampAnnotation,
+        )
     }
 
     @Test
@@ -433,34 +433,26 @@ class SandboxedPdfDocumentTest {
         val expectedAnnotation2 =
             getSampleStampAnnotation(pageNum = pageNum, bounds = RectF(100f, 100f, 200f, 200f))
         val document = openDocument(PDF_DOCUMENT)
-        assertThat(document is EditablePdfDocument).isTrue()
-        if (document is EditablePdfDocument) {
-            val context = ApplicationProvider.getApplicationContext<Context>()
 
-            // Create a ParcelFileDescriptor for the testing annotations document in read-write
-            // mode.
-            val pfd = createPfd(context, PDF_ANNOTATION_DOCUMENT, "rwt")
+        val context = ApplicationProvider.getApplicationContext<Context>()
 
-            val pdfAnnotationsData =
-                listOf(
-                    PdfAnnotationData(EditId(pageNum = 0, value = "1"), expectedAnnotation1),
-                    PdfAnnotationData(EditId(pageNum = 0, value = "2"), expectedAnnotation2),
-                )
-            writeAnnotationsToFile(pfd, pdfAnnotationsData)
-            document.applyEdits(pfd)
+        // Create a ParcelFileDescriptor for the testing annotations document in read-write
+        // mode.
+        val pfd = createPfd(context, PDF_ANNOTATION_DOCUMENT, "rwt")
 
-            val actualAnnotations = document.getAnnotationsForPage(pageNum)
-            assertThat(actualAnnotations.size).isEqualTo(2)
-            assert(actualAnnotations[0] is StampAnnotation)
-            assertStampAnnotationEquals(
-                expectedAnnotation1,
-                actualAnnotations[0] as StampAnnotation,
+        val pdfAnnotationsData =
+            listOf(
+                PdfAnnotationData(EditId(pageNum = 0, value = "1"), expectedAnnotation1),
+                PdfAnnotationData(EditId(pageNum = 0, value = "2"), expectedAnnotation2),
             )
-            assertStampAnnotationEquals(
-                expectedAnnotation2,
-                actualAnnotations[1] as StampAnnotation,
-            )
-        }
+        writeAnnotationsToFile(pfd, pdfAnnotationsData)
+        document.applyEdits(pfd)
+
+        val actualAnnotations = document.getAnnotationsForPage(pageNum)
+        assertThat(actualAnnotations.size).isEqualTo(2)
+        assert(actualAnnotations[0] is StampAnnotation)
+        assertStampAnnotationEquals(expectedAnnotation1, actualAnnotations[0] as StampAnnotation)
+        assertStampAnnotationEquals(expectedAnnotation2, actualAnnotations[1] as StampAnnotation)
     }
 
     @Test
@@ -469,21 +461,119 @@ class SandboxedPdfDocumentTest {
 
         val pageNum = 1
         val document = openDocument(PDF_DOCUMENT)
-        assertThat(document is EditablePdfDocument).isTrue()
-        if (document is EditablePdfDocument) {
-            val context = ApplicationProvider.getApplicationContext<Context>()
 
-            // Create a ParcelFileDescriptor for the testing annotations document in read-write
-            // mode.
-            val pfd = createPfd(context, PDF_ANNOTATION_DOCUMENT, "rwt")
+        val context = ApplicationProvider.getApplicationContext<Context>()
 
-            val pdfAnnotationsData = listOf<PdfAnnotationData>()
-            writeAnnotationsToFile(pfd, pdfAnnotationsData)
-            document.applyEdits(pfd)
+        // Create a ParcelFileDescriptor for the testing annotations document in read-write
+        // mode.
+        val pfd = createPfd(context, PDF_ANNOTATION_DOCUMENT, "rwt")
 
-            val actualAnnotations = document.getAnnotationsForPage(pageNum)
-            assertThat(actualAnnotations.size).isEqualTo(0)
-        }
+        val pdfAnnotationsData = listOf<PdfAnnotationData>()
+        writeAnnotationsToFile(pfd, pdfAnnotationsData)
+        document.applyEdits(pfd)
+
+        val actualAnnotations = document.getAnnotationsForPage(pageNum)
+        assertThat(actualAnnotations.size).isEqualTo(0)
+    }
+
+    @Test
+    fun applyEdits_emptyAnnotations_returnsEmptyResult() = runTest {
+        if (!isRequiredSdkExtensionAvailable()) return@runTest
+
+        val actualDocument = openDocument(PDF_DOCUMENT)
+        val actualAnnotations = listOf<PdfAnnotationData>()
+
+        val annotationResult = actualDocument.applyEdits(annotations = actualAnnotations)
+
+        assertThat(annotationResult.success).isEmpty()
+        assertThat(annotationResult.failures).isEmpty()
+    }
+
+    @Test
+    fun applyEdits_addAnnotations_singleBatch_returnsSuccess() = runTest {
+        if (!isRequiredSdkExtensionAvailable()) return@runTest
+
+        val pageNum = 1
+        val numAnnots = 10
+        val actualAnnotations =
+            IntArray(numAnnots)
+                .map {
+                    PdfAnnotationData(
+                        editId = EditId(pageNum = pageNum, value = it.toString()),
+                        annotation = getSampleStampAnnotation(pageNum),
+                    )
+                }
+                .toList()
+        val actualDocument = openDocument(PDF_DOCUMENT)
+        val totalPayloadSize = actualAnnotations.sumOf { it.parcelSizeInBytes() }
+
+        val result = actualDocument.applyEdits(annotations = actualAnnotations)
+
+        assertThat(totalPayloadSize < BatchPdfAnnotationsProcessor.MAX_BATCH_SIZE_IN_BYTES).isTrue()
+        assertThat(result.success.size).isEqualTo(numAnnots)
+        assertThat(result.failures).isEmpty()
+    }
+
+    // This is a long running test the payload is approx 1MB and it takes time to propagate all the
+    // the annotations over IPC.
+    @Test
+    fun applyEdits_addAnnotations_multipleBatches_returnsSuccess() = runTest {
+        if (!isRequiredSdkExtensionAvailable()) return@runTest
+
+        val pathLength = 1000
+        val numAnnots = 12
+        val actualAnnotations = createPdfAnnotationDataList(numAnnots, pathLength)
+        val actualDocument = openDocument(PDF_DOCUMENT)
+        val totalPayloadSize = actualAnnotations.sumOf { it.parcelSizeInBytes() }
+
+        val result = actualDocument.applyEdits(annotations = actualAnnotations)
+
+        assertThat(totalPayloadSize > BatchPdfAnnotationsProcessor.MAX_BATCH_SIZE_IN_BYTES).isTrue()
+        assertThat(result.success.size).isEqualTo(numAnnots)
+        assertThat(result.failures).isEmpty()
+    }
+
+    @Test
+    fun applyEdits_addAnnotations_singleInvalidAnnotation_returnsSuccessAndFailure() = runTest {
+        if (!isRequiredSdkExtensionAvailable()) return@runTest
+
+        val pathLength = 10
+        val numAnnots = 1
+        val actualAnnotations =
+            createPdfAnnotationDataList(numAnnots, pathLength, invalidRatio = 1f)
+        val actualDocument = openDocument(PDF_DOCUMENT)
+        val totalPayloadSize = actualAnnotations.sumOf { it.parcelSizeInBytes() }
+
+        val result = actualDocument.applyEdits(annotations = actualAnnotations)
+
+        assertThat(totalPayloadSize < BatchPdfAnnotationsProcessor.MAX_BATCH_SIZE_IN_BYTES).isTrue()
+        assertThat(result.success).isEmpty()
+        assertThat(result.failures.size).isEqualTo(numAnnots)
+    }
+
+    // This is a long running test the payload is approx 1MB and it takes time to propagate all the
+    // the annotations over IPC.
+    @Test
+    fun applyEdits_addAnnotations_multipleBatchesWithInvalid_returnsSuccessAndFailure() = runTest {
+        if (!isRequiredSdkExtensionAvailable()) return@runTest
+
+        val pathLength = 1000
+        val numAnnots = 10
+        val firstBatch = createPdfAnnotationDataList(numAnnots, pathLength)
+
+        val invalidNumAnnots = 2
+        val secondBatch =
+            createPdfAnnotationDataList(invalidNumAnnots, pathLength, invalidRatio = 1f)
+        val actualAnnotations = firstBatch + secondBatch
+
+        val actualDocument = openDocument(PDF_DOCUMENT)
+        val totalPayloadSize = actualAnnotations.sumOf { it.parcelSizeInBytes() }
+
+        val result = actualDocument.applyEdits(annotations = actualAnnotations)
+
+        assertThat(totalPayloadSize > BatchPdfAnnotationsProcessor.MAX_BATCH_SIZE_IN_BYTES).isTrue()
+        assertThat(result.success.size).isEqualTo(numAnnots)
+        assertThat(result.failures.size).isEqualTo(invalidNumAnnots)
     }
 
     companion object {
@@ -504,12 +594,15 @@ class SandboxedPdfDocumentTest {
             }
         }
 
-        private suspend fun openDocument(filename: String): PdfDocument {
+        private suspend fun openDocument(filename: String): EditablePdfDocument {
             val context = ApplicationProvider.getApplicationContext<Context>()
             val loader = SandboxedPdfLoader(context, Dispatchers.Main)
             val uri = TestUtils.openFile(context, filename)
 
-            return loader.openDocument(uri)
+            val document = loader.openDocument(uri)
+            assertThat(document is EditablePdfDocument).isTrue()
+
+            return document as EditablePdfDocument
         }
 
         private fun Bitmap.checkIsAllWhite(): Boolean {

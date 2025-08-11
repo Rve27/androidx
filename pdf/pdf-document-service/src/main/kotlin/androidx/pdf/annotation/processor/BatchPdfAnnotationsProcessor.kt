@@ -17,6 +17,7 @@
 package androidx.pdf.annotation.processor
 
 import android.os.Parcel
+import androidx.annotation.RestrictTo
 import androidx.annotation.VisibleForTesting
 import androidx.pdf.PdfDocumentRemote
 import androidx.pdf.annotation.models.AnnotationResult
@@ -28,7 +29,8 @@ import androidx.pdf.annotation.models.PdfAnnotationData
  *
  * @property remoteDocument The [PdfDocumentRemote] interface used to apply the annotation edits.
  */
-internal class BatchPdfAnnotationsProcessor(private val remoteDocument: PdfDocumentRemote) :
+@RestrictTo(RestrictTo.Scope.LIBRARY)
+public class BatchPdfAnnotationsProcessor(private val remoteDocument: PdfDocumentRemote) :
     PdfAnnotationsProcessor {
 
     /**
@@ -44,8 +46,12 @@ internal class BatchPdfAnnotationsProcessor(private val remoteDocument: PdfDocum
      *   annotations and the list of failed annotations.
      */
     override fun process(annotations: List<PdfAnnotationData>): AnnotationResult {
-        val batches = annotations.unflatten(MAX_BATCH_SIZE_IN_BYTES)
         val emptyAnnotationResult = AnnotationResult(success = emptyList(), failures = emptyList())
+        if (annotations.isEmpty()) {
+            return emptyAnnotationResult
+        }
+
+        val batches = annotations.unflatten(MAX_BATCH_SIZE_IN_BYTES)
 
         // The operation here applies each annotation batch and the result of each operation is
         // folded into a single [AnnotationResult].
@@ -58,8 +64,8 @@ internal class BatchPdfAnnotationsProcessor(private val remoteDocument: PdfDocum
         }
     }
 
-    companion object {
-        private const val MAX_BATCH_SIZE_IN_BYTES = 1000000
+    public companion object {
+        public const val MAX_BATCH_SIZE_IN_BYTES: Int = 1000000
 
         /**
          * Used to expand a 1D list to a 2D list of annotations based on [maxSizeInBytes].
@@ -94,11 +100,9 @@ internal class BatchPdfAnnotationsProcessor(private val remoteDocument: PdfDocum
         }
 
         /**
-         * Calculates the size of a [PdfAnnotationData] object when flattened into a
-         * [android.os.Parcel].
+         * Calculates the size of a [PdfAnnotationData] object when flattened into a [Parcel].
          *
-         * @return The size in bytes of the `PdfAnnotationData` object when written to a
-         *   [android.os.Parcel].
+         * @return The size in bytes of the `PdfAnnotationData` object when written to a [Parcel].
          */
         @VisibleForTesting
         internal fun PdfAnnotationData.parcelSizeInBytes(): Int {
