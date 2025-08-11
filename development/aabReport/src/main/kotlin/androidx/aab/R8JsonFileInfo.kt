@@ -35,6 +35,19 @@ enum class Compiler {
                 else -> Unknown
             }
         }
+
+        fun fromMarkers(dexInfo: List<DexInfo>): Compiler {
+            return Compiler.fromPresence(
+                d8 =
+                    dexInfo.any { dex ->
+                        dex.r8Markers.any { it.compiler == "D8" && it.map["backend"] == "dex" }
+                    },
+                r8 =
+                    dexInfo.any { dex ->
+                        dex.r8Markers.any { it.compiler == "R8" && it.map["backend"] == "dex" }
+                    },
+            )
+        }
     }
 }
 

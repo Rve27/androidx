@@ -42,6 +42,8 @@ data class AppMetadataPropsInfo(
             "base/root/META-INF/com/android/build/gradle/app-metadata.properties"
         const val BUNDLE_LOCATION_METADATA =
             "BUNDLE-METADATA/com.android.tools.build.gradle/app-metadata.properties"
+        const val APK_LOCATION_META_INF =
+            "META-INF/com/android/build/gradle/app-metadata.properties"
 
         fun from(src: InputStream): AppMetadataPropsInfo {
             var appMetadataVersion = ""

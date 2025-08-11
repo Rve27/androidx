@@ -16,6 +16,7 @@
 
 package androidx.aab.analysis
 
+import androidx.aab.ApkInfo
 import androidx.aab.BundleInfo
 import androidx.aab.Compiler
 import androidx.aab.R8JsonFileInfo
@@ -91,27 +92,26 @@ data class R8Analysis(
                 "r8_ratio_json_shas_match_dex",
             )
 
+        fun ApkInfo.getR8Analysis(): R8Analysis {
+            return R8Analysis(
+                mappingPresent = false,
+                compilerMarker = Compiler.fromMarkers(dexInfo),
+                compilerJson = Compiler.Unknown,
+                r8JsonFileExpected = false,
+                r8JsonFileInfo = null,
+                dexSha256ChecksumsDexOnly = emptySet(),
+                dexSha256ChecksumsMatching = emptySet(),
+                dexSha256ChecksumsR8JsonOnly = emptySet(),
+            )
+        }
+
         fun BundleInfo.getR8Analysis(): R8Analysis {
             val metadataJsonShas = r8JsonFileInfo?.dexShas?.toSet() ?: emptySet()
             val dexShas = dexInfo.map { it.sha256 }.toSet()
 
             return R8Analysis(
                 mappingPresent = mappingFileInfo != null,
-                compilerMarker =
-                    Compiler.fromPresence(
-                        d8 =
-                            dexInfo.any { dex ->
-                                dex.r8Markers.any {
-                                    it.compiler == "D8" && it.map["backend"] == "dex"
-                                }
-                            },
-                        r8 =
-                            dexInfo.any { dex ->
-                                dex.r8Markers.any {
-                                    it.compiler == "R8" && it.map["backend"] == "dex"
-                                }
-                            },
-                    ),
+                compilerMarker = Compiler.fromMarkers(dexInfo),
                 // technically, should capture all *8.json files, but in comparison to dex markers,
                 // unlikely to be Both
                 compilerJson = r8JsonFileInfo?.compiler ?: Compiler.Unknown,
