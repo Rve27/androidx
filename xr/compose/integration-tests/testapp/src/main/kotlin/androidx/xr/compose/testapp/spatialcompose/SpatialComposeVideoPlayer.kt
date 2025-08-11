@@ -778,7 +778,7 @@ class SpatialComposeVideoPlayer : ComponentActivity() {
                 SpatialPanel(
                     modifier =
                         SubspaceModifier.size(1000.dp)
-                            .align(SpatialAlignment.CenterLeft)
+                            .align(SpatialAlignment.CenterStart)
                             .rotate(axisAngle = Vector3(y = 1.0f), 90f)
                 ) {
                     Box(
@@ -910,7 +910,7 @@ class SpatialComposeVideoPlayer : ComponentActivity() {
             } else {
                 SpatialBox(
                     modifier = SubspaceModifier.fillMaxSize(),
-                    alignment = SpatialAlignment.TopRight,
+                    alignment = SpatialAlignment.TopEnd,
                 ) {
                     SpatialPanel(SubspaceModifier.offset(z = 30.dp)) {
                         Button(onClick = { videoPlayingState.value = false }) { Text("Close") }

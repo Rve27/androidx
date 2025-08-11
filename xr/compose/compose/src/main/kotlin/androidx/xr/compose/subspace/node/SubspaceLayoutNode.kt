@@ -18,9 +18,11 @@ package androidx.xr.compose.subspace.node
 
 import androidx.compose.runtime.CompositionLocalMap
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.SemanticsConfiguration
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.util.fastForEach
 import androidx.xr.compose.subspace.layout.CoreEntity
 import androidx.xr.compose.subspace.layout.CoreEntityNode
@@ -99,9 +101,13 @@ internal class SubspaceLayoutNode : ComposeSubspaceNode {
         set(value) {
             field = value
             density = value[LocalDensity]
+            layoutDirection = value[LocalLayoutDirection]
         }
 
     internal var density: Density = DefaultDensity
+        private set
+
+    internal var layoutDirection: LayoutDirection = LayoutDirection.Ltr
         private set
 
     private var ignoreRelayoutRequests = false

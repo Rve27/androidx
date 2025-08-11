@@ -665,7 +665,7 @@ class VideoPlayerActivity : ComponentActivity() {
                 SpatialPanel(
                     modifier =
                         SubspaceModifier.size(1000.dp)
-                            .align(SpatialAlignment.CenterLeft)
+                            .align(SpatialAlignment.CenterStart)
                             .rotate(axisAngle = Vector3(y = 1.0f), 90f)
                 ) {
                     Box(
@@ -807,7 +807,7 @@ class VideoPlayerActivity : ComponentActivity() {
 
             SpatialBox(
                 modifier = SubspaceModifier.fillMaxSize(),
-                alignment = SpatialAlignment.TopRight,
+                alignment = SpatialAlignment.TopStart,
             ) {
                 SpatialPanel(SubspaceModifier.offset(z = 30.dp)) {
                     Button(onClick = { videoPlayingState.value = false }) { Text("Close") }

@@ -78,6 +78,7 @@ import androidx.xr.compose.testapp.panelvolume.PanelVolume
 import androidx.xr.compose.testapp.permissionsdialog.PermissionsDialog
 import androidx.xr.compose.testapp.resizablepanel.ResizablePanel
 import androidx.xr.compose.testapp.rotation.Rotation
+import androidx.xr.compose.testapp.spatialalignmentusage.SpatialAlignmentUsageActivity
 import androidx.xr.compose.testapp.spatialcompose.SpatialCompose
 import androidx.xr.compose.testapp.spatialelevation.SpatialElevation
 import androidx.xr.compose.testapp.splitengine.SplitEngine
@@ -300,6 +301,9 @@ class MainActivity : ComponentActivity() {
                     }
                     TestCaseColumnRowItem(getString(R.string.resizable_panel_test_case)) {
                         startTest<ResizablePanel>()
+                    }
+                    TestCaseColumnRowItem(getString(R.string.spatial_alignment_usage_test_case)) {
+                        startTest<SpatialAlignmentUsageActivity>()
                     }
                 }
             }
