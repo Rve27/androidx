@@ -491,6 +491,41 @@ class RemoteFloatTest {
         assertThat(context.getFloat(resultId)).isEqualTo(400f)
     }
 
+    @Test
+    fun asRemoteDp_createsCorrectly() {
+        val floatValue = 10.5f
+        val remoteFloat = RemoteFloat(floatValue)
+        val remoteFloatDp = remoteFloat.asRemoteDp()
+
+        assertThat(remoteFloatDp.value).isEqualTo(remoteFloat)
+    }
+
+    @Test
+    fun asRemoteDp_hasSameFloatValueAsOriginalRemoteFloat() {
+        val floatValue = 10.5f
+        val remoteFloat = RemoteFloat(floatValue)
+        val remoteFloatDp = remoteFloat.asRemoteDp()
+        val resultId = remoteFloat.getIdForCreationState(creationState)
+        val resultDpId = remoteFloatDp.value.getIdForCreationState(creationState)
+
+        makeAndPaintCoreDocument()
+
+        assertThat(context.getFloat(resultId)).isEqualTo(floatValue)
+        assertThat(context.getFloat(resultDpId)).isEqualTo(floatValue)
+    }
+
+    @Test
+    fun asRemoteDp_hasSameIdFromOriginalRemoteFloat() {
+        val floatValue = 10.5f
+        val remoteFloat = RemoteFloat(floatValue)
+        val remoteFloatDp = remoteFloat.asRemoteDp()
+
+        val resultId = remoteFloat.getIdForCreationState(creationState)
+        val resultDpId = remoteFloatDp.value.getIdForCreationState(creationState)
+
+        assertThat(resultId).isEqualTo(resultDpId)
+    }
+
     private fun makeAndPaintCoreDocument() =
         CoreDocument().apply {
             val buffer = creationState.document.buffer
