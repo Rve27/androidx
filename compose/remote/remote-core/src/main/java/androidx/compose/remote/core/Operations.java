@@ -373,6 +373,7 @@ public class Operations {
     public static final int PROFILE_WIDGETS = 0x100;
     public static final int PROFILE_ANDROIDX = 0x200;
     public static final int PROFILE_ANDROID_NATIVE = 0x400;
+    public static final int PROFILE_WEAR_WIDGETS = 0x800;
 
     /**
      * Returns true if the operation exists for the given api level
