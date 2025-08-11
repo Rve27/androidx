@@ -254,7 +254,7 @@ public final class AppSearchLoggerHelper {
                 .setNumDeletedNamespaces(fromNativeStats.getNumDeletedNamespaces());
     }
 
-    /*
+    /**
      * Copy SetSchema result stats to builder.
      *
      * @param fromProto Stats copied from.
