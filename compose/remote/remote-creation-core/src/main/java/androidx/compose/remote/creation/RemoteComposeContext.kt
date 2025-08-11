@@ -1365,9 +1365,9 @@ public fun RemoteComposeWriter.createParticles(
     return ret
 }
 
-operator public fun <RFloat> Array<RFloat>.component6() = this[5]
+operator public fun <RFloat> Array<RFloat>.component6(): RFloat = this[5]
 
-operator public fun <RFloat> Array<RFloat>.component7() = this[6]
+operator public fun <RFloat> Array<RFloat>.component7(): RFloat = this[6]
 
 /*
 // This is useful to create an approximate circle using remote float

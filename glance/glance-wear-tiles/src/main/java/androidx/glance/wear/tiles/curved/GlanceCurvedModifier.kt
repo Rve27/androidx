@@ -175,14 +175,15 @@ public inline fun <reified T> GlanceCurvedModifier.extractModifier():
 public data class SweepAngleModifier(public val degrees: Float) : GlanceCurvedModifier.Element
 
 /** Sets the sweep angle of the curved element, in degrees */
-public fun GlanceCurvedModifier.sweepAngleDegrees(degrees: Float) =
+public fun GlanceCurvedModifier.sweepAngleDegrees(degrees: Float): GlanceCurvedModifier =
     this.then(SweepAngleModifier(degrees))
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public data class ThicknessModifier(public val thickness: Dp) : GlanceCurvedModifier.Element
 
 /** Sets the thickness of the curved element, in [Dp] */
-public fun GlanceCurvedModifier.thickness(thickness: Dp) = this.then(ThicknessModifier(thickness))
+public fun GlanceCurvedModifier.thickness(thickness: Dp): GlanceCurvedModifier =
+    this.then(ThicknessModifier(thickness))
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public data class ActionCurvedModifier(public val action: Action) : GlanceCurvedModifier.Element
