@@ -20,7 +20,7 @@ import androidx.datastore.core.DataStore
 /**
  * Preferences and MutablePreferences are a lot like a generic Map and MutableMap keyed by the
  * Preferences.Key class. These are intended for use with DataStore. Construct a
- * DataStore<Preferences> instance using [PreferenceDataStoreFactory.create].
+ * `DataStore<Preferences>` instance using [PreferenceDataStoreFactory.create].
  */
 public abstract class Preferences internal constructor() {
     /**
