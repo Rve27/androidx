@@ -60,6 +60,7 @@ import androidx.camera.video.internal.compat.quirk.CameraUseInconsistentTimebase
 import androidx.camera.video.internal.compat.quirk.CodecStuckOnFlushQuirk;
 import androidx.camera.video.internal.compat.quirk.DeviceQuirks;
 import androidx.camera.video.internal.compat.quirk.EncoderNotUsePersistentInputSurfaceQuirk;
+import androidx.camera.video.internal.compat.quirk.GLProcessingStuckOnCodecFlushQuirk;
 import androidx.camera.video.internal.compat.quirk.PrematureEndOfStreamVideoQuirk;
 import androidx.camera.video.internal.compat.quirk.PreviewFreezeAfterHighSpeedRecordingQuirk;
 import androidx.camera.video.internal.compat.quirk.SignalEosOutputBufferNotComeQuirk;
@@ -294,9 +295,7 @@ public class EncoderImpl implements Encoder {
                 }));
         mReleasedCompleter = Preconditions.checkNotNull(releaseFutureRef.get());
 
-        mCodecStopAsFlushWorkaroundEnabled = mIsVideoEncoder
-                && sessionType == SESSION_TYPE_HIGH_SPEED
-                && DeviceQuirks.get(PreviewFreezeAfterHighSpeedRecordingQuirk.class) != null;
+        mCodecStopAsFlushWorkaroundEnabled = shouldEnableCodecStopAsFlushWorkaround(sessionType);
 
         setState(CONFIGURED);
     }
@@ -1112,6 +1111,13 @@ public class EncoderImpl implements Encoder {
 
     private boolean hasStopCodecAfterSurfaceRemovalCrashMediaServerQuirk() {
         return DeviceQuirks.get(StopCodecAfterSurfaceRemovalCrashMediaServerQuirk.class) != null;
+    }
+
+    private boolean shouldEnableCodecStopAsFlushWorkaround(int sessionType) {
+        return mIsVideoEncoder
+                && ((sessionType == SESSION_TYPE_HIGH_SPEED
+                && DeviceQuirks.get(PreviewFreezeAfterHighSpeedRecordingQuirk.class) != null)
+                || DeviceQuirks.get(GLProcessingStuckOnCodecFlushQuirk.class) != null);
     }
 
     private long toPresentationTimeUsByCaptureEncodeRatio(long systemTimeUs) {

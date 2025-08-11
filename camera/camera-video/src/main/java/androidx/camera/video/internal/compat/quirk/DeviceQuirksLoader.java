@@ -165,6 +165,11 @@ public class DeviceQuirksLoader {
                 PreviewFreezeAfterHighSpeedRecordingQuirk.load())) {
             quirks.add(PreviewFreezeAfterHighSpeedRecordingQuirk.INSTANCE);
         }
+        if (quirkSettings.shouldEnableQuirk(
+                GLProcessingStuckOnCodecFlushQuirk.class,
+                GLProcessingStuckOnCodecFlushQuirk.load())) {
+            quirks.add(GLProcessingStuckOnCodecFlushQuirk.INSTANCE);
+        }
         return quirks;
     }
 }
