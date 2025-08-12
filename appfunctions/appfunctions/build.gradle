@@ -34,6 +34,7 @@ plugins {
 
 dependencies {
     api(libs.kotlinStdlib)
+    api("androidx.annotation:annotation:1.8.1")
     // Public dependencies
     implementation(libs.kotlinCoroutinesAndroid)
     implementation("androidx.appsearch:appsearch:1.1.0-rc01")
@@ -49,9 +50,6 @@ dependencies {
     // Compiler dependencies
     // TODO(b/413622177): Enable KSP on appfunctions module to generate proxy factory.
     // ksp(project(":appfunctions:appfunctions-compiler"))
-
-    // Internal dependencies
-    implementation("androidx.annotation:annotation:1.8.1")
 
     // Compile only dependencies
     compileOnly(project(":appfunctions:appfunctions-stubs"))
