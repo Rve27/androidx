@@ -1188,6 +1188,7 @@ public class NotificationCompat {
                     .setFullScreenIntent(notification.fullScreenIntent,
                             NotificationCompat.getHighPriority(notification))
                     .setSound(notification.sound, notification.audioStreamType)
+                    .setSilent(NotificationCompat.isSilent(notification))
                     .setVibrate(notification.vibrate)
                     .setLights(notification.ledARGB, notification.ledOnMS, notification.ledOffMS)
                     .setDefaults(notification.defaults)
@@ -9980,6 +9981,25 @@ public class NotificationCompat {
             return Api36Impl.hasPromotableCharacteristics(notification);
         } else {
             return false;
+        }
+    }
+
+    static boolean isSilent(@NonNull Notification notification) {
+        if (Build.VERSION.SDK_INT >= 26) {
+            if (NotificationCompat.GROUP_KEY_SILENT.equals(notification.getGroup())) {
+                return true;
+            }
+
+            if (isGroupSummary(notification)) {
+                return getGroupAlertBehavior(notification) == GROUP_ALERT_CHILDREN;
+            } else {
+                return getGroupAlertBehavior(notification) == GROUP_ALERT_SUMMARY;
+            }
+        } else {
+            return ((notification.defaults & DEFAULT_SOUND) == 0
+                    && (notification.defaults & DEFAULT_VIBRATE) == 0
+                    && notification.vibrate == null
+                    && notification.sound == null);
         }
     }
 

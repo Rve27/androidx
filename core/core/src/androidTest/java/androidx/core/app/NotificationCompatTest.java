@@ -383,7 +383,7 @@ public class NotificationCompatTest extends BaseInstrumentationTestCase<TestActi
 
         Notification notification = builder.build();
         assertThat(NotificationCompat.getShortCriticalText(notification))
-            .isEqualTo(shortCriticalText);
+                .isEqualTo(shortCriticalText);
 
         notification = builder.setShortCriticalText(null).build();
         assertThat(NotificationCompat.getShortCriticalText(notification)).isNull();
@@ -1457,6 +1457,37 @@ public class NotificationCompatTest extends BaseInstrumentationTestCase<TestActi
     }
 
     @Test
+    public void testSetNotificationSilent_clonedNotificationIsSilent_noGroup() {
+        // Create a silent notification
+        Notification notification = new NotificationCompat.Builder(mContext).setSilent(
+                true).build();
+        assertThat(NotificationCompat.isSilent(notification)).isTrue();
+        // Check that the copy notification is also silent
+        Notification notificationCopy = new NotificationCompat.Builder(mContext,
+                notification).build();
+        assertThat(NotificationCompat.isSilent(notificationCopy)).isTrue();
+
+        if (Build.VERSION.SDK_INT >= 26) {
+            assertThat(notification.getGroup()).isEqualTo(GROUP_KEY_SILENT);
+            assertThat(notificationCopy.getGroup()).isEqualTo(GROUP_KEY_SILENT);
+        }
+    }
+
+    @Test
+    public void testSetNotificationSilent_clonedNotificationIsSilent_grouped() {
+        // Create a silent notification
+        final String groupName = "testGrp";
+        Notification notification = new NotificationCompat.Builder(mContext).setGroup(
+                groupName).setSilent(true).build();
+        assertThat(NotificationCompat.isSilent(notification)).isTrue();
+        // Check that the copy notification is also silent
+        Notification notificationCopy = new NotificationCompat.Builder(mContext,
+                notification).build();
+        assertThat(NotificationCompat.isSilent(notificationCopy)).isTrue();
+        assertThat(NotificationCompat.getGroup(notificationCopy)).isEqualTo(groupName);
+    }
+
+    @Test
     public void testGroupAlertBehavior_doesNotMuteIncorrectGroupNotifications() throws Throwable {
         Notification n = new NotificationCompat.Builder(mActivityTestRule.getActivity())
                 .setGroupAlertBehavior(GROUP_ALERT_SUMMARY)
@@ -2488,8 +2519,8 @@ public class NotificationCompatTest extends BaseInstrumentationTestCase<TestActi
         } else if (Build.VERSION.SDK_INT == 33) {
             // Could be either, so check presence but not ordering.
             assertThat(actionTitles).containsExactly(
-                            mContext.getString(R.string.call_notification_hang_up_action),
-                            customAction.title.toString());
+                    mContext.getString(R.string.call_notification_hang_up_action),
+                    customAction.title.toString());
         } else {
             throw new AssertionError("All SDK_INT values are covered!");
         }
@@ -2539,9 +2570,9 @@ public class NotificationCompatTest extends BaseInstrumentationTestCase<TestActi
         } else if (Build.VERSION.SDK_INT == 33) {
             // Could be either, so check presence but not ordering.
             assertThat(actionTitles).containsExactly(
-                            mContext.getString(R.string.call_notification_hang_up_action),
-                            customAction1.title.toString(),
-                            customAction2.title.toString());
+                    mContext.getString(R.string.call_notification_hang_up_action),
+                    customAction1.title.toString(),
+                    customAction2.title.toString());
         } else {
             throw new AssertionError("All SDK_INT values are covered!");
         }
