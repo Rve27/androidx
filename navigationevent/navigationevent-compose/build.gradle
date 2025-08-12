@@ -51,7 +51,7 @@ androidXMultiplatform {
         commonMain {
             dependencies {
                 api(project(":navigationevent:navigationevent"))
-                api("androidx.compose.runtime:runtime:1.9.0-beta03")
+                api("androidx.compose.runtime:runtime:1.9.0")
                 implementation(libs.kotlinStdlib)
                 implementation(libs.kotlinCoroutinesCore)
             }

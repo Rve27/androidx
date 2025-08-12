@@ -39,7 +39,7 @@ androidXMultiplatform {
         commonMain {
             dependencies {
                 api(project(":savedstate:savedstate"))
-                api("androidx.compose.runtime:runtime:1.9.0-beta03")
+                api("androidx.compose.runtime:runtime:1.9.0")
             }
         }
 
