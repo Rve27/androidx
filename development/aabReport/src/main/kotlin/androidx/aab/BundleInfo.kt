@@ -123,7 +123,7 @@ data class BundleInfo(
                         }
 
                         entry.name == MappingFileInfo.BUNDLE_LOCATION -> {
-                            mappingFileInfo = MappingFileInfo()
+                            mappingFileInfo = MappingFileInfo.from(zis)
                         }
 
                         entry.name == AppMetadataPropsInfo.BUNDLE_LOCATION_METADATA -> {
