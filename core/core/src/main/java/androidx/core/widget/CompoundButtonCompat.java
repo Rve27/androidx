@@ -19,27 +19,17 @@ package androidx.core.widget;
 import android.content.res.ColorStateList;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
-import android.util.Log;
 import android.widget.CompoundButton;
 
-import androidx.annotation.RequiresApi;
 import androidx.core.graphics.drawable.DrawableCompat;
 
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
-import java.lang.reflect.Field;
-
 /**
  * Helper for accessing {@link CompoundButton}.
  */
 public final class CompoundButtonCompat {
-    private static final String TAG = "CompoundButtonCompat";
-
-    private static Field sButtonDrawableField;
-    private static boolean sButtonDrawableFieldFetched;
-
     private CompoundButtonCompat() {}
 
     /**
@@ -101,29 +91,7 @@ public final class CompoundButtonCompat {
      * @see CompoundButton#setButtonDrawable(Drawable)
      */
     public static @Nullable Drawable getButtonDrawable(@NonNull CompoundButton button) {
-        if (Build.VERSION.SDK_INT >= 23) {
-            return Api23Impl.getButtonDrawable(button);
-        }
-
-        if (!sButtonDrawableFieldFetched) {
-            try {
-                sButtonDrawableField = CompoundButton.class.getDeclaredField("mButtonDrawable");
-                sButtonDrawableField.setAccessible(true);
-            } catch (NoSuchFieldException e) {
-                Log.i(TAG, "Failed to retrieve mButtonDrawable field", e);
-            }
-            sButtonDrawableFieldFetched = true;
-        }
-
-        if (sButtonDrawableField != null) {
-            try {
-                return (Drawable) sButtonDrawableField.get(button);
-            } catch (IllegalAccessException e) {
-                Log.i(TAG, "Failed to get button drawable via reflection", e);
-                sButtonDrawableField = null;
-            }
-        }
-        return null;
+        return button.getButtonDrawable();
     }
 
     static class Api21Impl {
@@ -145,17 +113,6 @@ public final class CompoundButtonCompat {
 
         static PorterDuff.Mode getButtonTintMode(CompoundButton compoundButton) {
             return compoundButton.getButtonTintMode();
-        }
-    }
-
-    @RequiresApi(23)
-    static class Api23Impl {
-        private Api23Impl() {
-            // This class is not instantiable.
-        }
-
-        static Drawable getButtonDrawable(CompoundButton compoundButton) {
-            return compoundButton.getButtonDrawable();
         }
     }
 }
