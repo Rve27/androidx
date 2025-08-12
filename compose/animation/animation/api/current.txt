@@ -169,9 +169,7 @@ package androidx.compose.animation {
 
   @SuppressCompatibility @androidx.compose.animation.ExperimentalSharedTransitionApi public final class SharedTransitionDefaults {
     method public androidx.compose.animation.BoundsTransform getBoundsTransform();
-    method public kotlin.jvm.functions.Function1<androidx.compose.animation.SharedTransitionScope,java.lang.Boolean> getRenderInOverlay();
     property public androidx.compose.animation.BoundsTransform BoundsTransform;
-    property public kotlin.jvm.functions.Function1<androidx.compose.animation.SharedTransitionScope,java.lang.Boolean> RenderInOverlay;
     field public static final androidx.compose.animation.SharedTransitionDefaults INSTANCE;
   }
 
