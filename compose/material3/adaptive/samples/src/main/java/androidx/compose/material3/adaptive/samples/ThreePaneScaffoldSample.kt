@@ -32,6 +32,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -42,6 +43,8 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -581,11 +584,26 @@ private fun ListCard(
             ),
         modifier = modifier.height(80.dp).fillMaxWidth(),
     ) {
-        Text(
-            text = title,
-            modifier = Modifier.fillMaxSize().wrapContentHeight().padding(12.dp),
-            style = MaterialTheme.typography.headlineSmall,
-        )
+        Row(
+            modifier = Modifier.padding(12.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(
+                modifier = Modifier.fillMaxHeight(),
+                imageVector =
+                    when {
+                        highlight -> Icons.Filled.CheckCircle
+                        else -> Icons.Outlined.CheckCircle
+                    },
+                contentDescription = null,
+            )
+            Text(
+                text = title,
+                modifier = Modifier.fillMaxSize().wrapContentHeight(),
+                style = MaterialTheme.typography.headlineSmall,
+            )
+        }
     }
 }
 
