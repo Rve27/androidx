@@ -27,6 +27,11 @@ import androidx.navigationevent.NavigationEventDirection.Companion.Backward
 public abstract class NavigationEventInputHandler(
     private val dispatcher: NavigationEventDispatcher
 ) {
+    // TODO: remove once the dispatcher calls `onHasEnabledCallbacksChanged`.
+    init {
+        dispatcher.addOnHasEnabledCallbacksChangedCallback(this, ::onHasEnabledCallbacksChanged)
+    }
+
     /**
      * Attaches this input handler to the [NavigationEventDispatcher].
      *
@@ -43,17 +48,17 @@ public abstract class NavigationEventInputHandler(
         // TODO(kuanyingchou): fill in implementation. Also consider making this open and public.
     }
 
-    /**
-     * Adds a callback that will be notified when the connected dispatcher's `hasEnabledCallbacks`
-     * changes.
-     *
-     * @param callback The callback to invoke.
-     */
-    @Suppress("PairedRegistration")
     @MainThread
-    protected fun addOnHasEnabledCallbacksChangedCallback(callback: (Boolean) -> Unit) {
-        dispatcher.addOnHasEnabledCallbacksChangedCallback(inputHandler = this, callback)
+    internal fun doHasEnabledCallbacksChanged(hasEnabledCallbacks: Boolean) {
+        onHasEnabledCallbacksChanged(hasEnabledCallbacks)
     }
+
+    /**
+     * Callback that will be notified when the connected dispatcher's `hasEnabledCallbacks` changes.
+     *
+     * @param hasEnabledCallbacks Whether the connected dispatcher has any enabled callbacks.
+     */
+    @MainThread protected open fun onHasEnabledCallbacksChanged(hasEnabledCallbacks: Boolean) {}
 
     /**
      * Call `dispatchOnStarted` on the connected dispatcher.

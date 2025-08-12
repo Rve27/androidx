@@ -39,10 +39,11 @@ public class OnBackInvokedInputHandler(
     private var backInvokedCallbackRegistered = false
 
     init {
-        addOnHasEnabledCallbacksChangedCallback { hasEnabledCallbacks ->
-            updateBackInvokedCallbackState(hasEnabledCallbacks)
-        }
         updateBackInvokedCallbackState(dispatcher.hasEnabledCallbacks())
+    }
+
+    override fun onHasEnabledCallbacksChanged(hasEnabledCallbacks: Boolean) {
+        updateBackInvokedCallbackState(hasEnabledCallbacks)
     }
 
     private fun updateBackInvokedCallbackState(shouldBeRegistered: Boolean) {

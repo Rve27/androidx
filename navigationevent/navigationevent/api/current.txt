@@ -78,11 +78,11 @@ package androidx.navigationevent {
 
   public abstract class NavigationEventInputHandler {
     ctor public NavigationEventInputHandler(androidx.navigationevent.NavigationEventDispatcher dispatcher);
-    method @MainThread protected final void addOnHasEnabledCallbacksChangedCallback(kotlin.jvm.functions.Function1<? super java.lang.Boolean,kotlin.Unit> callback);
     method @MainThread protected final void dispatchOnCancelled();
     method @MainThread protected final void dispatchOnCompleted();
     method @MainThread protected final void dispatchOnProgressed(androidx.navigationevent.NavigationEvent event);
     method @MainThread protected final void dispatchOnStarted(androidx.navigationevent.NavigationEvent event);
+    method @MainThread protected void onHasEnabledCallbacksChanged(boolean hasEnabledCallbacks);
   }
 
   @kotlin.jvm.JvmInline public final value class NavigationEventPriority {
