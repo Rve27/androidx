@@ -22,11 +22,6 @@ final class <#A: androidx.navigationevent/NavigationEventInfo> androidx.navigati
         final fun <get-cancelledInvocations>(): kotlin/Int // androidx.navigationevent.testing/TestNavigationEventCallback.cancelledInvocations.<get-cancelledInvocations>|<get-cancelledInvocations>(){}[0]
     final var completedInvocations // androidx.navigationevent.testing/TestNavigationEventCallback.completedInvocations|{}completedInvocations[0]
         final fun <get-completedInvocations>(): kotlin/Int // androidx.navigationevent.testing/TestNavigationEventCallback.completedInvocations.<get-completedInvocations>|<get-completedInvocations>(){}[0]
-
-    final fun onEventCancelled() // androidx.navigationevent.testing/TestNavigationEventCallback.onEventCancelled|onEventCancelled(){}[0]
-    final fun onEventCompleted() // androidx.navigationevent.testing/TestNavigationEventCallback.onEventCompleted|onEventCompleted(){}[0]
-    final fun onEventProgressed(androidx.navigationevent/NavigationEvent) // androidx.navigationevent.testing/TestNavigationEventCallback.onEventProgressed|onEventProgressed(androidx.navigationevent.NavigationEvent){}[0]
-    final fun onEventStarted(androidx.navigationevent/NavigationEvent) // androidx.navigationevent.testing/TestNavigationEventCallback.onEventStarted|onEventStarted(androidx.navigationevent.NavigationEvent){}[0]
 }
 
 final class androidx.navigationevent.testing/TestNavigationEventDispatcherOwner : androidx.navigationevent/NavigationEventDispatcherOwner { // androidx.navigationevent.testing/TestNavigationEventDispatcherOwner|null[0]
