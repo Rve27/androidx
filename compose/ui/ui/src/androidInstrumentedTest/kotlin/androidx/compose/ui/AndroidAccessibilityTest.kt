@@ -174,6 +174,8 @@ import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.assertValueEquals
 import androidx.compose.ui.test.getBoundsInRoot
 import androidx.compose.ui.test.isEnabled
+import androidx.compose.ui.test.isHiddenFromAccessibility
+import androidx.compose.ui.test.isInHiddenAccessibilitySubtree
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
@@ -3786,6 +3788,29 @@ class AndroidAccessibilityTest {
 
         // Assert.
         rule.runOnIdle { assertThat(hitNodeId).isEqualTo(InvalidId) }
+    }
+
+    @Test
+    fun testHideFromAccessibilityMatchers() {
+        // Arrange.
+        setContent {
+            Box(Modifier.testTag("testTag1").semantics { hideFromAccessibility() }) {
+                BasicText(modifier = Modifier.testTag("testTag2"), text = "text")
+                BasicText(
+                    modifier = Modifier.testTag("testTag3").semantics { hideFromAccessibility() },
+                    text = "text",
+                )
+            }
+        }
+        // TestTag2 is not hidden from accessibility
+        rule.onNodeWithTag("testTag2").assert(isHiddenFromAccessibility().not())
+        // TestTag2 is in a subtree hidden from accessibility
+        rule.onNodeWithTag("testTag2").assert(isInHiddenAccessibilitySubtree())
+
+        // TestTag3 is hidden from accessibility
+        rule.onNodeWithTag("testTag3").assert(isHiddenFromAccessibility())
+        // TestTag3 is in a subtree hidden from accessibility
+        rule.onNodeWithTag("testTag3").assert(isInHiddenAccessibilitySubtree())
     }
 
     @Test
