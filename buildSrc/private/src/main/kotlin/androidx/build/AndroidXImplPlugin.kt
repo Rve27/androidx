@@ -232,7 +232,7 @@ abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
         project.disallowAccidentalAndroidDependenciesInKmpProject(androidXKmpExtension)
         TaskUpToDateValidator.setup(project, registry)
 
-        project.workaroundPrebuiltTakingPrecedenceOverProject()
+        project.workaroundAndroidXDependencyResolutions()
         project.configureSamplesProject()
         project.configureMaxDepVersions(androidXExtension)
         project.configureUnzipChromeBuildService()
@@ -1686,10 +1686,21 @@ fun AndroidXExtension.validateMavenVersion() {
     }
 }
 
-/** Workaround for https://github.com/gradle/gradle/issues/27407 */
-fun Project.workaroundPrebuiltTakingPrecedenceOverProject() {
+/** Workarounds for configuration resolution */
+fun Project.workaroundAndroidXDependencyResolutions() {
     project.configurations.configureEach { configuration ->
+        // https://github.com/gradle/gradle/issues/27407
         configuration.resolutionStrategy.preferProjectModules()
+
+        // https://github.com/gradle/gradle/issues/7594
+        configuration.resolutionStrategy.eachDependency { dependency ->
+            if (dependency.requested.group.startsWith("androidx.")) {
+                // Drop aar classifier that comes from <type>aar</type> in POM files
+                // as it causes a bug in Gradle. Gradle does not actually need the
+                // classifiers for Android libraries for them to work correctly.
+                dependency.artifactSelection { it.withoutArtifactSelectors() }
+            }
+        }
     }
 }
 

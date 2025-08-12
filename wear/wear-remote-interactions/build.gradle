@@ -53,7 +53,7 @@ dependencies {
     testImplementation(libs.kotlinCoroutinesTest)
 
     implementation(libs.playServicesBasement)
-    implementation(libs.playServicesWearable, { exclude group: "androidx.core"})
+    implementation(libs.playServicesWearable)
 
     // Includes the wear-sdk jar
     compileOnly files("../../wear/wear_sdk/wear-sdk.jar")

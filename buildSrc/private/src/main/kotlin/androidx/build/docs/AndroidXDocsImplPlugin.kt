@@ -31,7 +31,7 @@ import androidx.build.metalava.versionMetadataUsage
 import androidx.build.sources.PROJECT_STRUCTURE_METADATA_FILENAME
 import androidx.build.sources.multiplatformUsage
 import androidx.build.versionCatalog
-import androidx.build.workaroundPrebuiltTakingPrecedenceOverProject
+import androidx.build.workaroundAndroidXDependencyResolutions
 import com.android.build.api.attributes.BuildTypeAttr
 import com.android.build.api.dsl.LibraryExtension
 import com.android.build.gradle.LibraryPlugin
@@ -185,7 +185,7 @@ abstract class AndroidXDocsImplPlugin : Plugin<Project> {
         )
 
         project.configureTaskTimeouts()
-        project.workaroundPrebuiltTakingPrecedenceOverProject()
+        project.workaroundAndroidXDependencyResolutions()
     }
 
     /**

@@ -64,9 +64,7 @@ dependencies {
     testImplementation(project(":internal-testutils-ktx"))
     testImplementation(project(":internal-testutils-truth"))
     testImplementation(project(":camera:camera-camera2"))
-    testImplementation(project(":camera:camera-testing"), {
-        exclude group: "androidx.camera", module: "camera-core"
-    })
+    testImplementation(project(":camera:camera-testing"))
     testImplementation(project(":camera:camera-lifecycle"))
     testImplementation(libs.guavaAndroid)
     testImplementation(libs.kotlinCoroutinesCore)
