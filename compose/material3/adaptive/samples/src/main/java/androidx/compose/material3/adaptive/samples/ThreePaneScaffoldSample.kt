@@ -97,6 +97,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -569,7 +572,7 @@ private data class NavItemData(val index: Int, val showExtra: Boolean = false) :
 @Composable
 private fun ListCard(
     title: String,
-    highlight: Boolean,
+    isSelected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -578,11 +581,15 @@ private fun ListCard(
         colors =
             CardDefaults.outlinedCardColors(
                 when {
-                    highlight -> MaterialTheme.colorScheme.primaryContainer
+                    isSelected -> MaterialTheme.colorScheme.primaryContainer
                     else -> MaterialTheme.colorScheme.surface
                 }
             ),
-        modifier = modifier.height(80.dp).fillMaxWidth(),
+        modifier =
+            modifier.height(80.dp).fillMaxWidth().semantics {
+                contentDescription = title
+                selected = isSelected
+            },
     ) {
         Row(
             modifier = Modifier.padding(12.dp),
@@ -593,7 +600,7 @@ private fun ListCard(
                 modifier = Modifier.fillMaxHeight(),
                 imageVector =
                     when {
-                        highlight -> Icons.Filled.CheckCircle
+                        isSelected -> Icons.Filled.CheckCircle
                         else -> Icons.Outlined.CheckCircle
                     },
                 contentDescription = null,
@@ -620,7 +627,7 @@ private fun ListPaneContent(
         items.forEachIndexed { index, item ->
             ListCard(
                 title = item,
-                highlight =
+                isSelected =
                     index == selectedItem?.index &&
                         scaffoldNavigator.isExpanded(ListDetailPaneScaffoldRole.Detail),
                 onClick = {
@@ -733,7 +740,7 @@ private fun SupportingPaneContent(modifier: Modifier = Modifier) {
         items.forEachIndexed { index, item ->
             ListCard(
                 title = item,
-                highlight = index == selectedIndex,
+                isSelected = index == selectedIndex,
                 onClick = { selectedIndex = index },
             )
         }
