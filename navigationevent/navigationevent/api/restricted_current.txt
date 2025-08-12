@@ -35,7 +35,8 @@ package androidx.navigationevent {
   }
 
   public abstract class NavigationEventCallback<T extends androidx.navigationevent.NavigationEventInfo> {
-    ctor public NavigationEventCallback(boolean isEnabled);
+    ctor public NavigationEventCallback();
+    ctor public NavigationEventCallback(optional boolean isEnabled);
     method public final boolean isEnabled();
     method @EmptySuper protected void onEventCancelled();
     method protected abstract void onEventCompleted();

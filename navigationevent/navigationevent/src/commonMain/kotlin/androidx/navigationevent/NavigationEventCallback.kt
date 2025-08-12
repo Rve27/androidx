@@ -25,11 +25,11 @@ import androidx.annotation.EmptySuper
  * added to a [NavigationEventDispatcher] and will only receive events when both the callback and
  * its dispatcher are enabled.
  *
- * @param isEnabled The initial enabled state for this callback.
+ * @param isEnabled The initial enabled state for this callback. Defaults to `true`.
  * @see NavigationEventDispatcher
  * @see NavigationEventInputHandler
  */
-public abstract class NavigationEventCallback<T : NavigationEventInfo>(isEnabled: Boolean) {
+public abstract class NavigationEventCallback<T : NavigationEventInfo>(isEnabled: Boolean = true) {
 
     /** The most recent navigation info provided via [setInfo]. */
     internal var currentInfo: T? = null

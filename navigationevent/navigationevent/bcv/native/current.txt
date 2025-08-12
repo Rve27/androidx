@@ -16,7 +16,7 @@ abstract interface androidx.navigationevent/NavigationEventInfo { // androidx.na
 }
 
 abstract class <#A: androidx.navigationevent/NavigationEventInfo> androidx.navigationevent/NavigationEventCallback { // androidx.navigationevent/NavigationEventCallback|null[0]
-    constructor <init>(kotlin/Boolean) // androidx.navigationevent/NavigationEventCallback.<init>|<init>(kotlin.Boolean){}[0]
+    constructor <init>(kotlin/Boolean = ...) // androidx.navigationevent/NavigationEventCallback.<init>|<init>(kotlin.Boolean){}[0]
 
     final var isEnabled // androidx.navigationevent/NavigationEventCallback.isEnabled|{}isEnabled[0]
         final fun <get-isEnabled>(): kotlin/Boolean // androidx.navigationevent/NavigationEventCallback.isEnabled.<get-isEnabled>|<get-isEnabled>(){}[0]
