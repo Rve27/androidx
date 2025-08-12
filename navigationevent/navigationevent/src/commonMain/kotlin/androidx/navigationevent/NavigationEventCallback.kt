@@ -156,7 +156,7 @@ public abstract class NavigationEventCallback<T : NavigationEventInfo>(isEnabled
      * This is called when the user commits to the navigation action (e.g., by lifting their finger
      * at the end of a swipe), signaling that the navigation should be finalized.
      */
-    @EmptySuper protected open fun onEventCompleted() {}
+    protected abstract fun onEventCompleted()
 
     /**
      * Internal-only method for dispatching.

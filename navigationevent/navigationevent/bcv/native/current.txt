@@ -22,10 +22,10 @@ abstract class <#A: androidx.navigationevent/NavigationEventInfo> androidx.navig
         final fun <get-isEnabled>(): kotlin/Boolean // androidx.navigationevent/NavigationEventCallback.isEnabled.<get-isEnabled>|<get-isEnabled>(){}[0]
         final fun <set-isEnabled>(kotlin/Boolean) // androidx.navigationevent/NavigationEventCallback.isEnabled.<set-isEnabled>|<set-isEnabled>(kotlin.Boolean){}[0]
 
+    abstract fun onEventCompleted() // androidx.navigationevent/NavigationEventCallback.onEventCompleted|onEventCompleted(){}[0]
     final fun remove() // androidx.navigationevent/NavigationEventCallback.remove|remove(){}[0]
     final fun setInfo(#A, #A?) // androidx.navigationevent/NavigationEventCallback.setInfo|setInfo(1:0;1:0?){}[0]
     open fun onEventCancelled() // androidx.navigationevent/NavigationEventCallback.onEventCancelled|onEventCancelled(){}[0]
-    open fun onEventCompleted() // androidx.navigationevent/NavigationEventCallback.onEventCompleted|onEventCompleted(){}[0]
     open fun onEventProgressed(androidx.navigationevent/NavigationEvent) // androidx.navigationevent/NavigationEventCallback.onEventProgressed|onEventProgressed(androidx.navigationevent.NavigationEvent){}[0]
     open fun onEventStarted(androidx.navigationevent/NavigationEvent) // androidx.navigationevent/NavigationEventCallback.onEventStarted|onEventStarted(androidx.navigationevent.NavigationEvent){}[0]
 }

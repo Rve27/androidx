@@ -38,7 +38,7 @@ package androidx.navigationevent {
     ctor public NavigationEventCallback(boolean isEnabled);
     method public final boolean isEnabled();
     method @EmptySuper protected void onEventCancelled();
-    method @EmptySuper protected void onEventCompleted();
+    method protected abstract void onEventCompleted();
     method @EmptySuper protected void onEventProgressed(androidx.navigationevent.NavigationEvent event);
     method @EmptySuper protected void onEventStarted(androidx.navigationevent.NavigationEvent event);
     method public final void remove();

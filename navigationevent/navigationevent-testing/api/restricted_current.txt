@@ -9,6 +9,7 @@ package androidx.navigationevent.testing {
     method public int getProgressedInvocations();
     method public java.util.List<androidx.navigationevent.NavigationEvent> getStartedEvents();
     method public int getStartedInvocations();
+    method protected void onEventCompleted();
     property public int cancelledInvocations;
     property public int completedInvocations;
     property public java.util.List<androidx.navigationevent.NavigationEvent> progressedEvents;
