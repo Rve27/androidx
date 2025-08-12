@@ -181,6 +181,24 @@ class CameraFactoryAdapterTest {
             assertThat(factory.availableCameraIds).containsExactly("0", "2", "4")
         }
 
+    fun getAvailableCameraIds_previewsResult_withoutChangingState() =
+        testScope.runTest {
+            // Arrange
+            setFingerprint("fake-fingerprint")
+            val factory = createCameraFactoryAdapter(null)
+
+            // Assert initial state
+            assertThat(factory.availableCameraIds).containsExactly("0", "1", "2")
+
+            // Act: Preview a new list where camera "1" is removed.
+            val previewedIds = factory.getAvailableCameraIds(listOf("0", "2", "3"))
+
+            // Assert: The previewed list is correct.
+            assertThat(previewedIds).containsExactly("0", "2")
+            // Assert: The factory's internal state has NOT changed.
+            assertThat(factory.availableCameraIds).containsExactly("0", "1", "2")
+        }
+
     @Test
     fun shutdown_callsShutdownOnDependencies() =
         testScope.runTest {
