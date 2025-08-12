@@ -214,15 +214,19 @@ public fun SpatialExternalSurface(
 ) {
     val finalModifier = buildSpatialPanelModifier(modifier, dragPolicy, resizePolicy)
     val session = LocalSession.current
+    val density = LocalDensity.current
 
     // When surface protection changes, the surface entity has to be recreated because protection is
     // a non mutable setting.
     val coreSurfaceEntity =
-        rememberCoreSurfaceEntity(key = surfaceProtection) {
-            SurfaceEntity.create(
-                session = checkNotNull(session) { "Session is required" },
-                stereoMode = stereoMode.value,
-                contentSecurityLevel = surfaceProtection.value,
+        remember(surfaceProtection) {
+            CoreSurfaceEntity(
+                SurfaceEntity.create(
+                    session = checkNotNull(session) { "Session is required" },
+                    stereoMode = stereoMode.value,
+                    contentSecurityLevel = surfaceProtection.value,
+                ),
+                localDensity = density,
             )
         }
     val instance =

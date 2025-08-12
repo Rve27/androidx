@@ -22,30 +22,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalDensity
 import androidx.xr.compose.platform.LocalSession
 import androidx.xr.compose.subspace.layout.CoreSphereSurfaceEntity
-import androidx.xr.compose.subspace.layout.CoreSurfaceEntity
 import androidx.xr.runtime.Config.HeadTrackingMode
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.SessionConfigureSuccess
 import androidx.xr.scenecore.Entity
 import androidx.xr.scenecore.SurfaceEntity
 import androidx.xr.scenecore.scene
-
-/**
- * Creates a [CoreSurfaceEntity]. If this [androidx.xr.compose.subspace.layout.CoreEntity] is
- * attached to a [androidx.xr.compose.subspace.node.ComposeSubspaceNode], then the node will dispose
- * of the CoreEntity when it exits composition. Otherwise, it is the responsibility of the caller to
- * dispose of the CoreEntity (e.g. [androidx.xr.compose.spatial.ElevatedPanel]).
- */
-@Composable
-internal inline fun rememberCoreSurfaceEntity(
-    key: Any? = null,
-    crossinline entityFactory: @DisallowComposableCalls Session.() -> SurfaceEntity,
-): CoreSurfaceEntity {
-    val session = checkNotNull(LocalSession.current) { "session must be initialized" }
-    val density = LocalDensity.current
-
-    return remember(key) { CoreSurfaceEntity(session.entityFactory(), density) }
-}
 
 /**
  * Creates a [CoreSphereSurfaceEntity]. If this [androidx.xr.compose.subspace.layout.CoreEntity] is
