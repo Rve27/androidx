@@ -3243,24 +3243,31 @@ public class AppSearchImplTest {
         List<AppSearchSchema> schemas =
                 Collections.singletonList(new AppSearchSchema.Builder("Email").build());
         // Set schema Email to AppSearch database1
-        InternalSetSchemaResponse internalSetSchemaResponse = mAppSearchImpl.setSchema(
-                "package",
-                "database1",
-                schemas,
-                /*visibilityConfigs=*/ Collections.emptyList(),
-                /*forceOverride=*/ false,
-                /*version=*/ 0,
-                /* setSchemaStatsBuilder= */ null,
-                /*callStatsBuilder=*/ null);
+        SetSchemaStats.Builder schemaStatsBuilder =
+                new SetSchemaStats.Builder("package", "database1");
+        InternalSetSchemaResponse internalSetSchemaResponse =
+                mAppSearchImpl.setSchema(
+                        "package",
+                        "database1",
+                        schemas,
+                        /* visibilityConfigs= */ Collections.emptyList(),
+                        /* forceOverride= */ false,
+                        /* version= */ 0,
+                        schemaStatsBuilder,
+                        /* callStatsBuilder= */ null);
         assertThat(internalSetSchemaResponse.isSuccess()).isTrue();
+        SetSchemaStats schemaStats = schemaStatsBuilder.build();
+        assertThat(schemaStats.getSkippedIcingInteraction()).isFalse();
 
         // Create expected schemaType proto.
-        SchemaProto expectedProto = SchemaProto.newBuilder()
-                .addTypes(SchemaTypeConfigProto.newBuilder()
-                        .setSchemaType("package$database1/Email")
-                        .setDescription("")
-                        .setVersion(0))
-                .build();
+        SchemaProto expectedProto =
+                SchemaProto.newBuilder()
+                        .addTypes(
+                                SchemaTypeConfigProto.newBuilder()
+                                        .setSchemaType("package$database1/Email")
+                                        .setDescription("")
+                                        .setVersion(0))
+                        .build();
         if (mAppSearchImpl.useDatabaseScopedSchemaOperations()) {
             expectedProto = getSchemaProtoWithDatabase(expectedProto);
         }
@@ -3268,8 +3275,126 @@ public class AppSearchImplTest {
         List<SchemaTypeConfigProto> expectedTypes = new ArrayList<>();
         expectedTypes.addAll(existingSchemas);
         expectedTypes.addAll(expectedProto.getTypesList());
-        assertThat(mAppSearchImpl.getSchemaProtoLocked(/*callStatsBuilder=*/ null).getTypesList())
+        assertThat(mAppSearchImpl.getSchemaProtoLocked(/* callStatsBuilder= */ null).getTypesList())
                 .containsExactlyElementsIn(expectedTypes);
+    }
+
+    @Test
+    public void testSetSchemaNoChanges_doesntInteractWithIcing() throws Exception {
+        boolean canSkipIcingInteraction =
+                mAppSearchImpl.useDatabaseScopedSchemaOperations()
+                        && mAppSearchImpl.enableEarlySetSchemaExit();
+
+        List<AppSearchSchema> schemas =
+                Collections.singletonList(new AppSearchSchema.Builder("Email").build());
+        // Set schema Email to AppSearch database1
+        SetSchemaStats.Builder schemaStatsBuilder =
+                new SetSchemaStats.Builder("package", "database1");
+        InternalSetSchemaResponse internalSetSchemaResponse =
+                mAppSearchImpl.setSchema(
+                        "package",
+                        "database1",
+                        schemas,
+                        /* visibilityConfigs= */ Collections.emptyList(),
+                        /* forceOverride= */ false,
+                        /* version= */ 0,
+                        schemaStatsBuilder,
+                        /* callStatsBuilder= */ null);
+        assertThat(internalSetSchemaResponse.isSuccess()).isTrue();
+        SetSchemaStats schemaStats = schemaStatsBuilder.build();
+        assertThat(schemaStats.getSkippedIcingInteraction()).isFalse();
+
+        // Set the same schema again. We should not interact with Icing at all.
+        schemaStatsBuilder =
+                new SetSchemaStats.Builder("package", "database1");
+        internalSetSchemaResponse =
+                mAppSearchImpl.setSchema(
+                        "package",
+                        "database1",
+                        schemas,
+                        /* visibilityConfigs= */ Collections.emptyList(),
+                        /* forceOverride= */ false,
+                        /* version= */ 0,
+                        schemaStatsBuilder,
+                        /* callStatsBuilder= */ null);
+        assertThat(internalSetSchemaResponse.isSuccess()).isTrue();
+        schemaStats = schemaStatsBuilder.build();
+        assertThat(schemaStats.getSkippedIcingInteraction()).isEqualTo(canSkipIcingInteraction);
+        assertThat(schemaStats.getNewTypeCount()).isEqualTo(0);
+        assertThat(schemaStats.getDeletedTypeCount()).isEqualTo(0);
+        assertThat(schemaStats.getCompatibleTypeChangeCount()).isEqualTo(0);
+        assertThat(schemaStats.getIndexIncompatibleTypeChangeCount()).isEqualTo(0);
+        assertThat(schemaStats.getBackwardsIncompatibleTypeChangeCount()).isEqualTo(0);
+    }
+
+    @Test
+    public void testSetSchemaNoChangesWithAddVisibilityChange_updatesVisibilityConfig()
+            throws Exception {
+        boolean canSkipIcingInteraction =
+                mAppSearchImpl.useDatabaseScopedSchemaOperations()
+                        && mAppSearchImpl.enableEarlySetSchemaExit();
+
+        InternalVisibilityConfig visibilityConfig =
+                new InternalVisibilityConfig.Builder("Email")
+                        .setNotDisplayedBySystem(true)
+                        .addVisibleToPackage(new PackageIdentifier("pkgBar", new byte[32]))
+                        .build();
+        List<AppSearchSchema> schemas =
+                Collections.singletonList(new AppSearchSchema.Builder("Email").build());
+        // Set schema Email to AppSearch database1
+        SetSchemaStats.Builder schemaStatsBuilder =
+                new SetSchemaStats.Builder("package", "database1");
+        InternalSetSchemaResponse internalSetSchemaResponse =
+                mAppSearchImpl.setSchema(
+                        "package",
+                        "database1",
+                        schemas,
+                        /* visibilityConfigs= */ Collections.emptyList(),
+                        /* forceOverride= */ false,
+                        /* version= */ 0,
+                        schemaStatsBuilder,
+                        /* callStatsBuilder= */ null);
+        assertThat(internalSetSchemaResponse.isSuccess()).isTrue();
+        SetSchemaStats schemaStats = schemaStatsBuilder.build();
+        assertThat(schemaStats.getSkippedIcingInteraction()).isFalse();
+
+        // Set the same schema again. We should not interact with Icing at all.
+        schemaStatsBuilder = new SetSchemaStats.Builder("package", "database1");
+        internalSetSchemaResponse =
+                mAppSearchImpl.setSchema(
+                        "package",
+                        "database1",
+                        schemas,
+                        Collections.singletonList(visibilityConfig),
+                        /* forceOverride= */ false,
+                        /* version= */ 0,
+                        schemaStatsBuilder,
+                        /* callStatsBuilder= */ null);
+        assertThat(internalSetSchemaResponse.isSuccess()).isTrue();
+        schemaStats = schemaStatsBuilder.build();
+        assertThat(schemaStats.getSkippedIcingInteraction()).isEqualTo(canSkipIcingInteraction);
+
+        String prefix = PrefixUtil.createPrefix("package", "database1");
+        // assert the visibility document is saved.
+        InternalVisibilityConfig expectedDocument =
+                new InternalVisibilityConfig.Builder(prefix + "Email")
+                        .setNotDisplayedBySystem(true)
+                        .addVisibleToPackage(new PackageIdentifier("pkgBar", new byte[32]))
+                        .build();
+        assertThat(mAppSearchImpl.mDocumentVisibilityStoreLocked.getVisibility(prefix + "Email"))
+                .isEqualTo(expectedDocument);
+        // Verify the InternalVisibilityConfig is saved to AppSearchImpl.
+        InternalVisibilityConfig actualDocument =
+                VisibilityToDocumentConverter.createInternalVisibilityConfig(
+                        mAppSearchImpl.getDocument(
+                                VISIBILITY_PACKAGE_NAME,
+                                DOCUMENT_VISIBILITY_DATABASE_NAME,
+                                VisibilityToDocumentConverter.VISIBILITY_DOCUMENT_NAMESPACE,
+                                /* id= */ prefix + "Email",
+                                /* typePropertyPaths= */ Collections.emptyMap(),
+                                /* callStatsBuilder= */ null),
+                        /* androidVOverlayDocument= */ null);
+        assertThat(actualDocument).isEqualTo(expectedDocument);
     }
 
     @Test
@@ -3285,34 +3410,44 @@ public class AppSearchImplTest {
                 .build());
         oldSchemas.add(new AppSearchSchema.Builder("Text").build());
         // Set schema Email to AppSearch database1
-        InternalSetSchemaResponse internalSetSchemaResponse = mAppSearchImpl.setSchema(
-                "package",
-                "database1",
-                oldSchemas,
-                /*visibilityConfigs=*/ Collections.emptyList(),
-                /*forceOverride=*/ false,
-                /*version=*/ 0,
-                /* setSchemaStatsBuilder= */ null,
-                /*callStatsBuilder=*/ null);
+        SetSchemaStats.Builder schemaStatsBuilder =
+                new SetSchemaStats.Builder("package", "database1");
+        InternalSetSchemaResponse internalSetSchemaResponse =
+                mAppSearchImpl.setSchema(
+                        "package",
+                        "database1",
+                        oldSchemas,
+                        /* visibilityConfigs= */ Collections.emptyList(),
+                        /* forceOverride= */ false,
+                        /* version= */ 0,
+                        schemaStatsBuilder,
+                        /* callStatsBuilder= */ null);
         assertThat(internalSetSchemaResponse.isSuccess()).isTrue();
+        SetSchemaStats schemaStats = schemaStatsBuilder.build();
+        assertThat(schemaStats.getSkippedIcingInteraction()).isFalse();
 
         // Create incompatible schema
         List<AppSearchSchema> newSchemas =
                 Collections.singletonList(new AppSearchSchema.Builder("Email").build());
 
         // set email incompatible and delete text
-        internalSetSchemaResponse = mAppSearchImpl.setSchema(
-                "package",
-                "database1",
-                newSchemas,
-                /*visibilityConfigs=*/ Collections.emptyList(),
-                /*forceOverride=*/ true,
-                /*version=*/ 0,
-                /* setSchemaStatsBuilder= */ null,
-                /*callStatsBuilder=*/ null);
+        schemaStatsBuilder =
+                new SetSchemaStats.Builder("package", "database1");
+        internalSetSchemaResponse =
+                mAppSearchImpl.setSchema(
+                        "package",
+                        "database1",
+                        newSchemas,
+                        /* visibilityConfigs= */ Collections.emptyList(),
+                        /* forceOverride= */ true,
+                        /* version= */ 0,
+                        schemaStatsBuilder,
+                        /* callStatsBuilder= */ null);
         assertThat(internalSetSchemaResponse.isSuccess()).isTrue();
-        SetSchemaResponse setSchemaResponse = internalSetSchemaResponse.getSetSchemaResponse();
+        schemaStats = schemaStatsBuilder.build();
+        assertThat(schemaStats.getSkippedIcingInteraction()).isFalse();
 
+        SetSchemaResponse setSchemaResponse = internalSetSchemaResponse.getSetSchemaResponse();
         assertThat(setSchemaResponse.getDeletedTypes()).containsExactly("Text");
         assertThat(setSchemaResponse.getIncompatibleTypes()).containsExactly("Email");
     }

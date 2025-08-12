@@ -699,6 +699,10 @@ public final class AppSearchImpl implements Closeable {
         return mIsIcingSchemaDatabaseEnabled;
     }
 
+    public boolean enableEarlySetSchemaExit() {
+        return Flags.enableEarlySetSchemaExit() || isVMEnabled();
+    }
+
     /** Atomic method to set a new icing search engine and return the previous engine. */
     @GuardedBy("mReadWriteLock")
     public @NonNull IcingSearchEngineInterface swapIcingSearchEngineLocked(
@@ -1280,26 +1284,42 @@ public final class AppSearchImpl implements Closeable {
 
         long rewriteSchemaEndTimeMillis;
         long nativeLatencyStartTimeMillis = SystemClock.elapsedRealtime();
+        boolean containsSchemaChange = true;  // Presumed true, by default.
         // Rewrite and apply schema
         if (useDatabaseScopedSchemaOperations()) {
             rewrittenPrefixedTypes = getRewrittenPrefixedTypes(prefix,
                     newSchemaBuilder.build(), /*populateDatabase=*/true);
             rewriteSchemaEndTimeMillis = SystemClock.elapsedRealtime();
 
-            SchemaProto finalSchema = SchemaProto.newBuilder()
-                    .addAllTypes(rewrittenPrefixedTypes.values())
-                    .build();
-            SetSchemaRequestProto setSchemaRequestProto = SetSchemaRequestProto.newBuilder()
-                    .setSchema(finalSchema)
-                    .setDatabase(prefix)
-                    .setIgnoreErrorsAndDeleteDocuments(forceOverride)
-                    .build();
-            LogUtil.piiTrace(TAG, "setSchema, request", finalSchema.getTypesCount(),
-                    setSchemaRequestProto);
-            setSchemaResultProto = mIcingSearchEngineLocked.setSchemaWithRequestProto(
-                    setSchemaRequestProto);
-
-            deletedPrefixedTypes = new ArraySet<>(setSchemaResultProto.getDeletedSchemaTypesList());
+            if (enableEarlySetSchemaExit()) {
+                containsSchemaChange =
+                        doesSchemaContainChangeLocked(prefix, rewrittenPrefixedTypes);
+            }
+            if (containsSchemaChange) {
+                SchemaProto finalSchema =
+                        SchemaProto.newBuilder().addAllTypes(
+                                rewrittenPrefixedTypes.values()).build();
+                SetSchemaRequestProto setSchemaRequestProto =
+                        SetSchemaRequestProto.newBuilder()
+                                .setSchema(finalSchema)
+                                .setDatabase(prefix)
+                                .setIgnoreErrorsAndDeleteDocuments(forceOverride)
+                                .build();
+                LogUtil.piiTrace(
+                        TAG, "setSchema, request", finalSchema.getTypesCount(),
+                        setSchemaRequestProto);
+                setSchemaResultProto =
+                        mIcingSearchEngineLocked.setSchemaWithRequestProto(setSchemaRequestProto);
+                deletedPrefixedTypes =
+                        new ArraySet<>(setSchemaResultProto.getDeletedSchemaTypesList());
+            } else {
+                // Schema was a no-op. Skip interaction with Icing.
+                setSchemaResultProto =
+                        SetSchemaResultProto.newBuilder()
+                                .setStatus(StatusProto.newBuilder().setCode(StatusProto.Code.OK))
+                                .build();
+                deletedPrefixedTypes = Collections.emptySet();
+            }
         } else {
             SchemaProto.Builder existingSchemaBuilder =
                     getSchemaProtoLocked(callStatsBuilder).toBuilder();
@@ -1329,7 +1349,8 @@ public final class AppSearchImpl implements Closeable {
                     .setTotalNativeLatencyMillis(
                             (int) (nativeLatencyEndTimeMillis - nativeLatencyStartTimeMillis))
                     .setStatusCode(statusProtoToResultCode(
-                            setSchemaResultProto.getStatus()));
+                            setSchemaResultProto.getStatus()))
+                    .setSkippedIcingInteraction(!containsSchemaChange);
             AppSearchLoggerHelper.copyNativeStats(setSchemaResultProto,
                     setSchemaStatsBuilder);
         }
@@ -1362,16 +1383,18 @@ public final class AppSearchImpl implements Closeable {
         }
 
         long saveVisibilitySettingStartTimeMillis = SystemClock.elapsedRealtime();
-        // Update derived data structures.
-        for (SchemaTypeConfigProto schemaTypeConfigProto : rewrittenPrefixedTypes.values()) {
-            mSchemaCacheLocked.addToSchemaMap(prefix, schemaTypeConfigProto);
-        }
+        if (containsSchemaChange) {
+            // Update derived data structures.
+            for (SchemaTypeConfigProto schemaTypeConfigProto : rewrittenPrefixedTypes.values()) {
+                mSchemaCacheLocked.addToSchemaMap(prefix, schemaTypeConfigProto);
+            }
 
-        for (String schemaType : deletedPrefixedTypes) {
-            mSchemaCacheLocked.removeFromSchemaMap(prefix, schemaType);
-        }
+            for (String schemaType : deletedPrefixedTypes) {
+                mSchemaCacheLocked.removeFromSchemaMap(prefix, schemaType);
+            }
 
-        mSchemaCacheLocked.rebuildCacheForPrefix(prefix);
+            mSchemaCacheLocked.rebuildCacheForPrefix(prefix);
+        }
 
         // Since the constructor of VisibilityStore will set schema. Avoid call visibility
         // store before we have already created it.
@@ -1410,6 +1433,26 @@ public final class AppSearchImpl implements Closeable {
                             - convertToResponseStartTimeMillis));
         }
         return new Pair<>(setSchemaResponse, setSchemaResultProto);
+    }
+
+    private boolean doesSchemaContainChangeLocked(
+            @NonNull String prefix,
+            @NonNull Map<String, SchemaTypeConfigProto> rewrittenPrefixedTypes) {
+        // RewrittenPrefixedTypes maps from prefixed schema type to SchemaTypeConfigProto.
+        Map<String, SchemaTypeConfigProto> previousTypes =
+                mSchemaCacheLocked.getSchemaMapForPrefix(prefix);
+        if (previousTypes.size() != rewrittenPrefixedTypes.size()) {
+            return true;  // A type was added or deleted.
+        }
+        Set<String> previousTypeNames = new ArraySet<>(previousTypes.keySet());
+        for (SchemaTypeConfigProto typeConfig : rewrittenPrefixedTypes.values()) {
+            SchemaTypeConfigProto oldTypeConfig = previousTypes.get(typeConfig.getSchemaType());
+            if (oldTypeConfig == null || !typeConfig.equals(oldTypeConfig)) {
+                return true;  // Type definition has changed in some way. Let Icing sort out how.
+            }
+            previousTypeNames.remove(typeConfig.getSchemaType());
+        }
+        return !previousTypeNames.isEmpty();  // A type was deleted.
     }
 
     /**

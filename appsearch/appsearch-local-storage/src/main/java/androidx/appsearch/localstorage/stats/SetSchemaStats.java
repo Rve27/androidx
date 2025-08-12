@@ -76,6 +76,7 @@ public final class SetSchemaStats extends BaseStats {
     private final int mPreparingChangeNotificationLatencyMillis;
     @SchemaMigrationStats.SchemaMigrationCallType
     private final int mSchemaMigrationCallType;
+    private final boolean mSkippedIcingInteraction;
 
     SetSchemaStats(@NonNull Builder builder) {
         super(builder);
@@ -120,6 +121,7 @@ public final class SetSchemaStats extends BaseStats {
         mPreparingChangeNotificationLatencyMillis =
                 builder.mPreparingChangeNotificationLatencyMillis;
         mSchemaMigrationCallType = builder.mSchemaMigrationCallType;
+        mSkippedIcingInteraction = builder.mSkippedIcingInteraction;
     }
 
     /** Returns calling package name. */
@@ -324,6 +326,11 @@ public final class SetSchemaStats extends BaseStats {
         return mSchemaMigrationCallType;
     }
 
+    /** Whether or not AppSearch skipped sending the schema to Icing because it didn't change. */
+    public boolean getSkippedIcingInteraction() {
+        return mSkippedIcingInteraction;
+    }
+
     /** Builder for {@link SetSchemaStats}. */
     public static class Builder extends BaseStats.Builder<SetSchemaStats.Builder> {
         final @NonNull String mPackageName;
@@ -363,6 +370,7 @@ public final class SetSchemaStats extends BaseStats {
         int mPreparingChangeNotificationLatencyMillis;
         @SchemaMigrationStats.SchemaMigrationCallType
         int mSchemaMigrationCallType;
+        boolean mSkippedIcingInteraction;
 
         /** Constructor for the {@link Builder}. */
         public Builder(@NonNull String packageName, @NonNull String database) {
@@ -625,6 +633,12 @@ public final class SetSchemaStats extends BaseStats {
             Preconditions.checkArgumentInRange(schemaMigrationCallType, NO_MIGRATION,
                     SECOND_CALL_APPLY_NEW_SCHEMA, "schemaMigrationCallType");
             mSchemaMigrationCallType = schemaMigrationCallType;
+            return this;
+        }
+
+        @CanIgnoreReturnValue
+        public @NonNull Builder setSkippedIcingInteraction(boolean skippedIcingInteraction) {
+            mSkippedIcingInteraction = skippedIcingInteraction;
             return this;
         }
 
