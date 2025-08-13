@@ -311,8 +311,9 @@ private constructor(
     public fun addInputHandler(inputHandler: NavigationEventInputHandler) {
         checkInvariants()
 
-        inputHandlers += inputHandler
-        inputHandler.doAttach(dispatcher = this)
+        if (inputHandlers.add(inputHandler)) {
+            inputHandler.doAttach(dispatcher = this)
+        }
     }
 
     /**
@@ -328,8 +329,9 @@ private constructor(
     public fun removeInputHandler(inputHandler: NavigationEventInputHandler) {
         checkInvariants()
 
-        inputHandlers -= inputHandler
-        inputHandler.doDetach()
+        if (inputHandlers.remove(inputHandler)) {
+            inputHandler.doDetach()
+        }
     }
 
     /**
