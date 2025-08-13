@@ -31,6 +31,17 @@ class PaddingModifier(
     val right: RemoteFloat,
     val bottom: RemoteFloat,
 ) : RemoteLayoutModifier {
+    init {
+        require(
+            (!left.hasConstantValue || left.toFloat() >= 0f) and
+                (!top.hasConstantValue || top.toFloat() >= 0f) and
+                (!right.hasConstantValue || right.toFloat() >= 0f) and
+                (!bottom.hasConstantValue || bottom.toFloat() >= 0f)
+        ) {
+            "Padding must be non-negative"
+        }
+    }
+
     override fun toRemoteComposeElement(): RecordingModifier.Element {
         return androidx.compose.remote.creation.modifiers.PaddingModifier(
             left.internalAsFloat(),

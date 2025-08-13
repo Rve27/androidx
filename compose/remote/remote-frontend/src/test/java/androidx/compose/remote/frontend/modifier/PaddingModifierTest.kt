@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-package androidx.compose.remote.frontend.state
+package androidx.compose.remote.frontend.modifier
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import androidx.compose.remote.core.CoreDocument
 import androidx.compose.remote.creation.platform.AndroidxPlatformServices
 import androidx.compose.remote.frontend.capture.RemoteComposeCreationState
-import androidx.compose.remote.frontend.modifier.PaddingModifier
-import androidx.compose.remote.frontend.modifier.RemoteModifier
-import androidx.compose.remote.frontend.modifier.padding
+import androidx.compose.remote.frontend.state.rf
 import androidx.compose.remote.player.view.platform.AndroidRemoteContext
 import androidx.compose.ui.geometry.Size
 import androidx.test.filters.SdkSuppress
@@ -42,6 +40,48 @@ class PaddingModifierTest {
 
     val creationState =
         RemoteComposeCreationState(AndroidxPlatformServices(), density = 1f, Size(1f, 1f))
+
+    /** Tests that negative start padding is not allowed. */
+    @Test(expected = IllegalArgumentException::class)
+    fun negativeLeftPadding_throws() {
+        RemoteModifier.padding(left = (-1f).rf)
+    }
+
+    /** Tests that negative top padding is not allowed. */
+    @Test(expected = IllegalArgumentException::class)
+    fun negativeTopPadding_throws() {
+        RemoteModifier.padding(top = (-1f).rf)
+    }
+
+    /** Tests that negative end padding is not allowed. */
+    @Test(expected = IllegalArgumentException::class)
+    fun negativeRightPadding_throws() {
+        RemoteModifier.padding(right = (-1f).rf)
+    }
+
+    /** Tests that negative bottom padding is not allowed. */
+    @Test(expected = IllegalArgumentException::class)
+    fun negativeBottomPadding_throws() {
+        RemoteModifier.padding(bottom = (-1f).rf)
+    }
+
+    /** Tests that negative all padding is not allowed. */
+    @Test(expected = IllegalArgumentException::class)
+    fun negativeAllPadding_throws() {
+        RemoteModifier.padding(all = (-1f).rf)
+    }
+
+    /** Tests that negative horizontal padding is not allowed. */
+    @Test(expected = IllegalArgumentException::class)
+    fun negativeHorizontalPadding_throws() {
+        RemoteModifier.padding(horizontal = (-1f).rf)
+    }
+
+    /** Tests that negative vertical padding is not allowed. */
+    @Test(expected = IllegalArgumentException::class)
+    fun negativeVerticalPadding_throws() {
+        RemoteModifier.padding(vertical = (-1f).rf)
+    }
 
     /** Tests that the [padding]-all and [padding] factories return equivalent modifiers. */
     @Test
