@@ -48,7 +48,6 @@ import androidx.pdf.annotation.draftstate.ImmutableAnnotationEditsDraftState
 import androidx.pdf.annotation.models.PdfAnnotation
 import androidx.pdf.featureflag.PdfFeatureFlags
 import androidx.pdf.ink.EditableDocumentViewModel.AnnotationsDisplayState
-import androidx.pdf.ink.drawer.PdfObjectDrawerFactoryImpl
 import androidx.pdf.ink.util.PageTransformCalculator
 import androidx.pdf.ink.util.StrokeProcessor
 import androidx.pdf.view.PdfContentLayout
@@ -165,7 +164,6 @@ public open class EditablePdfViewerFragment : PdfViewerFragment, InProgressStrok
 
     private fun setupTouchListeners() {
         toolboxView.setOnEditClickListener { annotationsViewModel.setEditModeEnabled(true) }
-        annotationView.pdfObjectDrawerFactory = PdfObjectDrawerFactoryImpl
 
         wetStrokesView.apply {
             addFinishedStrokesListener(this@EditablePdfViewerFragment)

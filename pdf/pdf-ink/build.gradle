@@ -49,6 +49,7 @@ dependencies {
     implementation("androidx.fragment:fragment-ktx:1.8.1")
     implementation("androidx.ink:ink-authoring:${ink_version}")
     implementation("androidx.ink:ink-brush:${ink_version}")
+    implementation("androidx.ink:ink-geometry:${ink_version}")
     implementation("androidx.ink:ink-nativeloader:${ink_version}")
     implementation("androidx.ink:ink-rendering:${ink_version}")
     implementation("androidx.ink:ink-strokes:${ink_version}")
