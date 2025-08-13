@@ -17,7 +17,14 @@ package androidx.compose.remote.foundation
 
 import androidx.compose.remote.creation.RemotePath
 import androidx.compose.remote.foundation.icons.RemoteImageVector
+import androidx.compose.remote.frontend.modifier.RemoteModifier
+import androidx.compose.remote.frontend.modifier.size
+import androidx.compose.remote.frontend.state.rememberRemoteColor
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.test.filters.MediumTest
 import androidx.test.filters.SdkSuppress
@@ -33,16 +40,45 @@ class RemoteIconTest {
     @get:Rule val remoteComposeTestRule = RemoteComposeScreenshotTestRule()
 
     @Test
-    fun checkVolumeUpIcon_rendered() {
-        val size = 24.dp.value
-        remoteComposeTestRule.runScreenshotTest(size = Size(size, size)) {
+    fun volumeUpRemoteIcon() {
+        remoteComposeTestRule.runScreenshotTest(size = size) {
             RemoteIcon(imageVector = VolumeUp, contentDescription = null)
         }
     }
 
+    @Test
+    fun volumeUpRemoteIcon_tintedRed() {
+        remoteComposeTestRule.runScreenshotTest(size = size) {
+            val color = rememberRemoteColor("testColor") { Color.Red }
+            RemoteIcon(imageVector = VolumeUp, contentDescription = null, tint = color)
+        }
+    }
+
+    @Test
+    fun volumeUpRemoteIcon_rtl() {
+        remoteComposeTestRule.runScreenshotTest(size = size) {
+            val layoutDirection = LayoutDirection.Rtl
+            CompositionLocalProvider(LocalLayoutDirection provides layoutDirection) {
+                RemoteIcon(imageVector = VolumeUp, contentDescription = null)
+            }
+        }
+    }
+
+    @Test
+    fun volumeUpRemoteIcon_scaledUp() {
+        remoteComposeTestRule.runScreenshotTest(size = Size(48.dp.value, 48.dp.value)) {
+            RemoteIcon(
+                imageVector = VolumeUp,
+                contentDescription = null,
+                modifier = RemoteModifier.size(48.dp),
+            )
+        }
+    }
+
     companion object {
+        val size = Size(24.dp.value, 24.dp.value)
         val VolumeUp =
-            object : RemoteImageVector() {
+            object : RemoteImageVector(autoMirror = true) {
                 override fun RemotePath.buildPath() {
                     moveTo(3.0f, 9.0f)
                     verticalLineToRelative(6.0f)

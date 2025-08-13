@@ -28,10 +28,8 @@ import androidx.compose.remote.frontend.modifier.fillMaxSize
 import androidx.compose.remote.frontend.modifier.semantics
 import androidx.compose.remote.frontend.modifier.size
 import androidx.compose.remote.frontend.state.RemoteColor
-import androidx.compose.remote.frontend.state.RemoteFloat
 import androidx.compose.remote.frontend.state.RemoteString
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
@@ -58,35 +56,37 @@ fun RemoteIcon(
     tint: RemoteColor = RemoteColor(DefaultTint.toArgb()),
 ) {
     RemoteBox(modifier.semantics { this.contentDescription = contentDescription }) {
-        RemoteCanvas(modifier = RemoteModifier.fillMaxSize()) {
-            val viewportSize = remote.component.width
-            drawImageVector(imageVector, tint, viewportSize)
-        }
+        RemoteCanvas(modifier = RemoteModifier.fillMaxSize()) { drawImageVector(imageVector, tint) }
     }
 }
 
 private fun RemoteCanvasDrawScope.drawImageVector(
     remoteImageVector: RemoteImageVector,
     tint: RemoteColor,
-    viewportSize: RemoteFloat,
 ) {
-    val w = remote.component.width
+    val viewportSize = remote.component.width
     val canvas = drawContext.canvas.nativeCanvas
     val intrinsicSize = remoteImageVector.intrinsicWidth
     val scale = viewportSize / intrinsicSize
+
     // Handles autoMirror
     val isRtl = drawContext.layoutDirection == LayoutDirection.Rtl
     val shouldAutoMirror = remoteImageVector.autoMirror && isRtl
-    val pivot = if (shouldAutoMirror) ROffset(-w, 0) else Offset.Zero
+
     val scaleX = if (shouldAutoMirror) -scale else scale
+    val scaleY = scale
+
+    val pivotX = if (shouldAutoMirror) viewportSize / (-scale + 1f) else 0f
+    val pivot = ROffset(pivotX, 0f)
 
     val paint =
         remoteImageVector.paint().apply {
             if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.Q) return
             setColor(tint.getValueForCreationState(remote.remoteComposeCreationState))
         }
+
     if (canvas is RecordingCanvas) {
-        scale(scaleX = scaleX.internalAsFloat(), scaleY = scale.internalAsFloat(), pivot = pivot) {
+        scale(scaleX = scaleX.internalAsFloat(), scaleY = scaleY.internalAsFloat(), pivot = pivot) {
             canvas.drawRPath(path = remoteImageVector.path, paint = paint)
         }
     }
