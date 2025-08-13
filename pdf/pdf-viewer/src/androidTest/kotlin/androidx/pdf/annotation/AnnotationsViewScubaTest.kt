@@ -191,19 +191,20 @@ class AnnotationViewScubaTest {
 
     private fun setupAnnotationViewInActivity(annotationData: SparseArray<PageAnnotationsData>) {
         PdfViewTestActivity.onCreateCallback = { activity ->
-            val container = FrameLayout(activity)
-            val layoutParams = FrameLayout.LayoutParams(CONTAINER_VIEW_WIDTH, CONTAINER_VIEW_HEIGHT)
-            container.layoutParams = layoutParams
+            with(activity) {
+                val layoutParams =
+                    FrameLayout.LayoutParams(CONTAINER_VIEW_WIDTH, CONTAINER_VIEW_HEIGHT)
+                container.layoutParams = layoutParams
 
-            val annotationView =
-                AnnotationsView(activity).apply {
-                    id = ANNOTATION_VIEW_ID
-                    this.layoutParams =
-                        FrameLayout.LayoutParams(CONTAINER_VIEW_WIDTH, CONTAINER_VIEW_HEIGHT)
-                    this.annotations = annotationData
-                }
-            container.addView(annotationView)
-            activity.setContentView(container)
+                val annotationView =
+                    AnnotationsView(activity).apply {
+                        id = ANNOTATION_VIEW_ID
+                        this.layoutParams =
+                            FrameLayout.LayoutParams(CONTAINER_VIEW_WIDTH, CONTAINER_VIEW_HEIGHT)
+                        this.annotations = annotationData
+                    }
+                container.addView(annotationView)
+            }
         }
     }
 
