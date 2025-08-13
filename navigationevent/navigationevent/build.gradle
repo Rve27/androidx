@@ -225,6 +225,7 @@ androidXMultiplatform {
 androidx {
     name = "Navigation Event"
     type = SoftwareType.PUBLISHED_LIBRARY_ONLY_USED_BY_KOTLIN_CONSUMERS
+    samples(project(":navigationevent:navigationevent-samples"))
     inceptionYear = "2025"
     description = "Provides APIs to easily intercept platform navigation events, including " +
             "swipes and clicks, to provide a consistent API surface for handling these events."

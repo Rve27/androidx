@@ -207,6 +207,7 @@ androidXMultiplatform {
 androidx {
     name = "NavigationEvent Compose"
     type = SoftwareType.PUBLISHED_LIBRARY_ONLY_USED_BY_KOTLIN_CONSUMERS
+    samples(project(":navigationevent:navigationevent-samples"))
     inceptionYear = "2025"
     description = "Compose integration with NavigationEvent"
 }
