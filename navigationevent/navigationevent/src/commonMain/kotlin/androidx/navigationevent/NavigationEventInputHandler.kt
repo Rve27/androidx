@@ -25,6 +25,12 @@ public abstract class NavigationEventInputHandler() {
 
     private var dispatcher: NavigationEventDispatcher? = null
 
+    /**
+     * Attaches this [NavigationEventInputHandler] to [dispatcher].
+     *
+     * @param dispatcher The [NavigationEventDispatcher] to attach to.
+     * @throws IllegalStateException if it's already attached to a dispatcher.
+     */
     @MainThread
     internal fun doAttach(dispatcher: NavigationEventDispatcher) {
         check(this.dispatcher == null) {
@@ -38,16 +44,15 @@ public abstract class NavigationEventInputHandler() {
         onAttach(dispatcher)
     }
 
+    /**
+     * Detaches this [NavigationEventInputHandler] from the attached [NavigationEventDispatcher]. If
+     * it's not attached to a dispatcher, this function does nothing.
+     */
     @MainThread
     internal fun doDetach() {
-        check(this.dispatcher != null) { "This input handler is not attached to any dispatcher." }
+        if (this.dispatcher == null) return
         this.dispatcher = null
         onDetach()
-    }
-
-    @MainThread
-    internal fun isAttached(): Boolean {
-        return this.dispatcher != null
     }
 
     /**
