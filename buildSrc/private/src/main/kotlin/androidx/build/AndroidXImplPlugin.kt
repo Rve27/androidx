@@ -590,7 +590,6 @@ abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
             isTestApp = true,
         )
         project.buildOnServerDependsOnAssembleRelease()
-        project.buildOnServerDependsOnLint()
     }
 
     private fun configureWithTestPlugin(project: Project, androidXExtension: AndroidXExtension) {
@@ -829,12 +828,6 @@ abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
         project.addToBuildOnServer("assembleRelease")
     }
 
-    private fun Project.buildOnServerDependsOnLint() {
-        if (!project.usingMaxDepVersions().get()) {
-            project.addToBuildOnServer("lint")
-        }
-    }
-
     private fun HasDeviceTests.configureTests() {
         deviceTests.forEach { (_, deviceTest) ->
             deviceTest.packaging.resources.apply {
@@ -944,7 +937,6 @@ abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
             project.addToBuildOnServer(verifyELFRegionAlignmentTaskProvider)
         }
         project.buildOnServerDependsOnAssembleRelease()
-        project.buildOnServerDependsOnLint()
     }
 
     private fun configureGradlePluginPlugin(project: Project) {
