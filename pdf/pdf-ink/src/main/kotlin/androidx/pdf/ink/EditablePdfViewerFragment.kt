@@ -45,9 +45,9 @@ import androidx.pdf.annotation.AnnotationsView
 import androidx.pdf.annotation.AnnotationsView.PageAnnotationsData
 import androidx.pdf.annotation.EditablePdfDocument
 import androidx.pdf.annotation.draftstate.ImmutableAnnotationEditsDraftState
+import androidx.pdf.annotation.models.AnnotationsDisplayState
 import androidx.pdf.annotation.models.PdfAnnotation
 import androidx.pdf.featureflag.PdfFeatureFlags
-import androidx.pdf.ink.EditableDocumentViewModel.AnnotationsDisplayState
 import androidx.pdf.ink.util.PageTransformCalculator
 import androidx.pdf.ink.util.StrokeProcessor
 import androidx.pdf.view.PdfContentLayout
@@ -143,9 +143,10 @@ public open class EditablePdfViewerFragment : PdfViewerFragment, InProgressStrok
      */
     override fun onLoadDocumentSuccess(document: PdfDocument) {
         super.onLoadDocumentSuccess(document)
-        if (document is EditablePdfDocument) {
-            annotationsViewModel.pdfDocument = document
-            annotationsViewModel.maybeInitDraftState(documentUri)
+        if (documentUri != null && document is EditablePdfDocument) {
+            annotationsViewModel.editablePdfDocument = document
+        } else {
+            annotationsViewModel.editablePdfDocument = null
         }
     }
 
@@ -163,7 +164,7 @@ public open class EditablePdfViewerFragment : PdfViewerFragment, InProgressStrok
     }
 
     private fun setupTouchListeners() {
-        toolboxView.setOnEditClickListener { annotationsViewModel.setEditModeEnabled(true) }
+        toolboxView.setOnEditClickListener { annotationsViewModel.isEditModeEnabled = true }
 
         wetStrokesView.apply {
             addFinishedStrokesListener(this@EditablePdfViewerFragment)
@@ -183,7 +184,7 @@ public open class EditablePdfViewerFragment : PdfViewerFragment, InProgressStrok
             object : OnBackPressedCallback(false) {
                     override fun handleOnBackPressed() {
                         // TODO: b/426125449 - Add a dialog box for saving or discarding changes.
-                        annotationsViewModel.setEditModeEnabled(false)
+                        annotationsViewModel.isEditModeEnabled = false
                     }
                 }
                 .also {
@@ -210,11 +211,11 @@ public open class EditablePdfViewerFragment : PdfViewerFragment, InProgressStrok
     private fun createPageAnnotationsData(
         pageNum: Int,
         draftState: ImmutableAnnotationEditsDraftState,
-        transformationMatrices: SparseArray<Matrix>,
+        transformationMatrices: Map<Int, Matrix>,
     ): PageAnnotationsData {
         val annotationsForPage: List<PdfAnnotation> =
             draftState.getEdits(pageNum).map { it.annotation }
-        val transformMatrix = transformationMatrices.get(pageNum) ?: Matrix()
+        val transformMatrix = transformationMatrices[pageNum] ?: Matrix()
         return PageAnnotationsData(annotationsForPage, transformMatrix)
     }
 
@@ -238,14 +239,14 @@ public open class EditablePdfViewerFragment : PdfViewerFragment, InProgressStrok
                     pageLocations: SparseArray<RectF>,
                     zoomLevel: Float,
                 ) {
-                    val pageTransformationMatrices =
+                    val transformationMatrices =
                         pageTransformCalculator.calculate(
                             firstVisiblePage,
                             visiblePagesCount,
                             pageLocations,
                             zoomLevel,
                         )
-                    annotationsViewModel.updateTransformationMatrices(pageTransformationMatrices)
+                    annotationsViewModel.updateTransformationMatrices(transformationMatrices)
                 }
             }
         pdfView.addOnViewportChangedListener(onViewportChangedListener)
