@@ -24,11 +24,11 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.pdf.annotation.EditablePdfDocument
+import androidx.pdf.annotation.manager.AnnotationsManager
+import androidx.pdf.annotation.manager.InMemoryAnnotationsManager
 import androidx.pdf.annotation.models.AnnotationsDisplayState
 import androidx.pdf.annotation.models.PdfAnnotation
 import androidx.pdf.annotation.models.PdfAnnotationData
-import androidx.pdf.ink.manager.AnnotationsManager
-import androidx.pdf.ink.manager.InMemoryAnnotationsManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

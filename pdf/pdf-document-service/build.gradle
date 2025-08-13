@@ -45,6 +45,7 @@ dependencies {
     testImplementation(libs.truth)
     testImplementation(libs.testExtTruth)
     testImplementation(libs.testExtJunitKtx)
+    testImplementation(libs.kotlinCoroutinesTest)
 
     androidTestImplementation(libs.testExtJunit)
     androidTestImplementation(libs.junit)

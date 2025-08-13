@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.pdf.ink.manager
+package androidx.pdf.annotation.manager
 
+import androidx.annotation.RestrictTo
 import androidx.pdf.annotation.EditablePdfDocument
 import androidx.pdf.annotation.draftstate.AnnotationEditsDraftState
 import androidx.pdf.annotation.draftstate.ImmutableAnnotationEditsDraftState
@@ -30,7 +31,8 @@ import java.util.Collections
  *
  * @param document The [EditablePdfDocument] to manage annotations for.
  */
-internal class InMemoryAnnotationsManager(private val document: EditablePdfDocument) :
+@RestrictTo(RestrictTo.Scope.LIBRARY)
+public class InMemoryAnnotationsManager(private val document: EditablePdfDocument) :
     AnnotationsManager {
     private val annotationEditsDraftState: AnnotationEditsDraftState =
         MemoryAnnotationEditsDraftState()

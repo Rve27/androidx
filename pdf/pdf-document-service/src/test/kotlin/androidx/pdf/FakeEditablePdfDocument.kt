@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package androidx.pdf.ink
+package androidx.pdf
 
 import android.graphics.PointF
 import android.graphics.Rect
 import android.net.Uri
 import android.os.ParcelFileDescriptor
 import android.util.SparseArray
-import androidx.pdf.PdfDocument
 import androidx.pdf.annotation.EditablePdfDocument
 import androidx.pdf.annotation.models.AnnotationResult
 import androidx.pdf.annotation.models.EditId

@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package androidx.pdf.ink.manager
+package androidx.pdf.manager
 
 import android.net.Uri
-import androidx.pdf.ink.FakeEditablePdfDocument
-import androidx.pdf.ink.util.createDummyUri
+import androidx.pdf.FakeEditablePdfDocument
+import androidx.pdf.annotation.createStampAnnotationWithPath
+import androidx.pdf.annotation.manager.InMemoryAnnotationsManager
+import androidx.pdf.util.createDummyUri
 import com.google.common.truth.Truth.assertThat
-import createStampAnnotationWithPath
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test

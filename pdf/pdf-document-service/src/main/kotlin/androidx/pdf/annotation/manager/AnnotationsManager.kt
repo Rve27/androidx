@@ -14,22 +14,24 @@
  * limitations under the License.
  */
 
-package androidx.pdf.ink.manager
+package androidx.pdf.annotation.manager
 
+import androidx.annotation.RestrictTo
 import androidx.pdf.annotation.draftstate.ImmutableAnnotationEditsDraftState
 import androidx.pdf.annotation.models.EditId
 import androidx.pdf.annotation.models.PdfAnnotation
 import androidx.pdf.annotation.models.PdfAnnotationData
 
 /** Manages annotations for a PDF document. */
-internal interface AnnotationsManager {
+@RestrictTo(RestrictTo.Scope.LIBRARY)
+public interface AnnotationsManager {
     /**
      * Retrieves all annotations for a given page number.
      *
      * @param pageNum The page number (0-indexed) to retrieve annotations for.
      * @return A list of [PdfAnnotationData] for the specified page.
      */
-    suspend fun getAnnotationsForPage(pageNum: Int): List<PdfAnnotationData>
+    public suspend fun getAnnotationsForPage(pageNum: Int): List<PdfAnnotationData>
 
     /**
      * Adds a new annotation.
@@ -37,7 +39,7 @@ internal interface AnnotationsManager {
      * @param annotation The [PdfAnnotation] to add.
      * @return The [EditId] assigned to the newly added annotation.
      */
-    fun addAnnotation(annotation: PdfAnnotation): EditId
+    public fun addAnnotation(annotation: PdfAnnotation): EditId
 
     /**
      * Returns an immutable snapshot of the current annotation state.
@@ -46,5 +48,5 @@ internal interface AnnotationsManager {
      *
      * @return An [ImmutableAnnotationEditsDraftState] representing the current state.
      */
-    fun getFullAnnotationStateSnapshot(): ImmutableAnnotationEditsDraftState
+    public fun getFullAnnotationStateSnapshot(): ImmutableAnnotationEditsDraftState
 }
