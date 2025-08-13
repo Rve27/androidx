@@ -31,6 +31,7 @@ import androidx.annotation.RequiresExtension
 import androidx.pdf.annotation.EditablePdfDocument
 import androidx.pdf.annotation.models.EditId
 import androidx.pdf.annotation.models.PdfAnnotationData
+import androidx.pdf.annotation.models.PdfEdit
 import androidx.pdf.annotation.models.StampAnnotation
 import androidx.pdf.annotation.processor.BatchPdfAnnotationsProcessor
 import androidx.pdf.annotation.processor.BatchPdfAnnotationsProcessor.Companion.parcelSizeInBytes
@@ -41,6 +42,7 @@ import androidx.pdf.utils.TestUtils
 import androidx.pdf.utils.assertStampAnnotationEquals
 import androidx.pdf.utils.createPdfAnnotationDataList
 import androidx.pdf.utils.createPfd
+import androidx.pdf.utils.createStampAnnotationWithPath
 import androidx.pdf.utils.getSampleStampAnnotation
 import androidx.pdf.utils.writeAnnotationsToFile
 import androidx.test.core.app.ApplicationProvider
@@ -53,6 +55,7 @@ import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertNotNull
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertThrows
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -574,6 +577,94 @@ class SandboxedPdfDocumentTest {
         assertThat(totalPayloadSize > BatchPdfAnnotationsProcessor.MAX_BATCH_SIZE_IN_BYTES).isTrue()
         assertThat(result.success.size).isEqualTo(numAnnots)
         assertThat(result.failures.size).isEqualTo(invalidNumAnnots)
+    }
+
+    @Test
+    fun addEdit_addAnnotations_returnSuccess() = runTest {
+        if (!isRequiredSdkExtensionAvailable()) return@runTest
+
+        val expectedAnnotation = createStampAnnotationWithPath(0, 10)
+        val document = openDocument(PDF_DOCUMENT) as SandboxedPdfDocument
+
+        document.addEdit(expectedAnnotation)
+        val actualAnnotationsData = document.getAnnotationsFromDraftState(0)
+
+        assertThat(actualAnnotationsData.size).isEqualTo(1)
+        assert(actualAnnotationsData[0].annotation is StampAnnotation)
+        assertStampAnnotationEquals(
+            expectedAnnotation,
+            actualAnnotationsData[0].annotation as StampAnnotation,
+        )
+    }
+
+    @Test
+    fun addEdit_updateAnnotations_throwsNoSuchElementException() = runTest {
+        if (!isRequiredSdkExtensionAvailable()) return@runTest
+
+        val unsupportedPdfEdit = object : PdfEdit() {}
+        val document = openDocument(PDF_DOCUMENT) as SandboxedPdfDocument
+
+        assertThrows(UnsupportedOperationException::class.java) {
+            document.addEdit(unsupportedPdfEdit)
+        }
+    }
+
+    @Test
+    fun updateEdit_updateAnnotations_returnSuccess() = runTest {
+        if (!isRequiredSdkExtensionAvailable()) return@runTest
+
+        val annotation1 = createStampAnnotationWithPath(0, 10)
+        val annotation2 = createStampAnnotationWithPath(0, 20)
+        val document = openDocument(PDF_DOCUMENT) as SandboxedPdfDocument
+
+        val editId = document.addEdit(annotation1)
+        document.updateEdit(editId, annotation2)
+        val actualAnnotationsData = document.getAnnotationsFromDraftState(0)
+
+        assertThat(actualAnnotationsData.size).isEqualTo(1)
+        assert(actualAnnotationsData[0].annotation is StampAnnotation)
+        assertStampAnnotationEquals(
+            annotation2,
+            actualAnnotationsData[0].annotation as StampAnnotation,
+        )
+    }
+
+    @Test
+    fun updateEdit_updateAnnotations_throwsNoSuchElementException() = runTest {
+        if (!isRequiredSdkExtensionAvailable()) return@runTest
+
+        val annotation = createStampAnnotationWithPath(0, 10)
+        val document = openDocument(PDF_DOCUMENT) as SandboxedPdfDocument
+
+        val editId = EditId(0, "non-existent-edit-id")
+
+        assertThrows(NoSuchElementException::class.java) { document.updateEdit(editId, annotation) }
+    }
+
+    @Test
+    fun removeEdit_removeAnnotations_throwsNoSuchElementException() = runTest {
+        if (!isRequiredSdkExtensionAvailable()) return@runTest
+
+        val annotation = createStampAnnotationWithPath(0, 10)
+        val document = openDocument(PDF_DOCUMENT) as SandboxedPdfDocument
+
+        val editId = EditId(0, "non-existent-edit-id")
+
+        assertThrows(NoSuchElementException::class.java) { document.removeEdit(editId) }
+    }
+
+    @Test
+    fun removeEdit_removeAnnotations_returnSuccess() = runTest {
+        if (!isRequiredSdkExtensionAvailable()) return@runTest
+
+        val expectedAnnotation = createStampAnnotationWithPath(0, 10)
+        val document = openDocument(PDF_DOCUMENT) as SandboxedPdfDocument
+
+        val editId = document.addEdit(expectedAnnotation)
+        document.removeEdit(editId)
+        val actualAnnotationsData = document.getAnnotationsFromDraftState(0)
+
+        assertThat(actualAnnotationsData.size).isEqualTo(0)
     }
 
     companion object {

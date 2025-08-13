@@ -20,9 +20,11 @@ import android.net.Uri
 import androidx.pdf.FakeEditablePdfDocument
 import androidx.pdf.annotation.createStampAnnotationWithPath
 import androidx.pdf.annotation.manager.InMemoryAnnotationsManager
+import androidx.pdf.annotation.models.StampAnnotation
 import androidx.pdf.util.createDummyUri
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -158,5 +160,65 @@ class InMemoryAnnotationsManagerTest {
         assertThat(annotations1.size).isEqualTo(1)
         assertThat(annotations0Final.size).isEqualTo(2)
         assertThat(annotations0Final.map { it.editId.value }).contains(editId.value)
+    }
+
+    @Test
+    fun removeAnnotation_removesAnnotation() = runTest {
+        val annotation1 = createStampAnnotationWithPath(pageNum = 0, pathSize = 10)
+
+        val editId1 = annotationsManager.addAnnotation(annotation1)
+        val annotationsInitial = annotationsManager.getAnnotationsForPage(0)
+        assertThat(annotationsInitial.size).isEqualTo(1)
+
+        annotationsManager.removeAnnotation(editId1)
+        val annotationsFinal = annotationsManager.getAnnotationsForPage(0)
+        assertThat(annotationsFinal.size).isEqualTo(0)
+    }
+
+    @Test
+    fun removeAnnotation_editIdNotPresent() = runTest {
+        val annotation1 = createStampAnnotationWithPath(pageNum = 0, pathSize = 10)
+
+        val editId1 = annotationsManager.addAnnotation(annotation1)
+        val annotationsInitial = annotationsManager.getAnnotationsForPage(0)
+        assertThat(annotationsInitial.size).isEqualTo(1)
+
+        annotationsManager.removeAnnotation(editId1)
+
+        assertThrows(NoSuchElementException::class.java) {
+            annotationsManager.removeAnnotation(editId1)
+        }
+    }
+
+    @Test
+    fun updateAnnotation_updatesAnnotation() = runTest {
+        val annotation1 = createStampAnnotationWithPath(pageNum = 0, pathSize = 10)
+        val annotation2 = createStampAnnotationWithPath(pageNum = 0, pathSize = 20)
+
+        val editId1 = annotationsManager.addAnnotation(annotation1)
+        val annotationsInitial = annotationsManager.getAnnotationsForPage(0)
+        assertThat(annotationsInitial.size).isEqualTo(1)
+
+        annotationsManager.updateAnnotation(editId1, annotation2)
+        val annotationsFinal = annotationsManager.getAnnotationsForPage(0)
+        assertThat(annotationsFinal.size).isEqualTo(1)
+        assertThat(annotationsFinal[0].editId).isEqualTo(editId1)
+        assertThat((annotationsFinal[0].annotation as StampAnnotation).pdfObjects.size)
+            .isEqualTo(20)
+    }
+
+    @Test
+    fun updateAnnotation_editIdNotPresent() = runTest {
+        val annotation1 = createStampAnnotationWithPath(pageNum = 0, pathSize = 10)
+
+        val editId1 = annotationsManager.addAnnotation(annotation1)
+        val annotationsInitial = annotationsManager.getAnnotationsForPage(0)
+        assertThat(annotationsInitial.size).isEqualTo(1)
+
+        annotationsManager.removeAnnotation(editId1)
+
+        assertThrows(NoSuchElementException::class.java) {
+            annotationsManager.updateAnnotation(editId1, annotation1)
+        }
     }
 }

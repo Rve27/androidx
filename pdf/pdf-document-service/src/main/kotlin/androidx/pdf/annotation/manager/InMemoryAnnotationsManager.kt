@@ -84,6 +84,27 @@ public class InMemoryAnnotationsManager(private val document: EditablePdfDocumen
         annotationEditsDraftState.addEdit(annotation)
 
     /**
+     * Removes an annotation from the draft state.
+     *
+     * @param editId The [EditId] of the annotation to remove.
+     * @return The removed [PdfAnnotation].
+     * @throws NoSuchElementException if the annotation with the given [editId] is not found.
+     */
+    public fun removeAnnotation(editId: EditId): PdfAnnotation =
+        annotationEditsDraftState.removeEdit(editId)
+
+    /**
+     * Updates an existing annotation in the draft state.
+     *
+     * @param editId The [EditId] of the annotation to update.
+     * @param annotation The new [PdfAnnotation] data.
+     * @return The updated [PdfAnnotation].
+     * @throws NoSuchElementException if the annotation with the given [editId] is not found.
+     */
+    public fun updateAnnotation(editId: EditId, annotation: PdfAnnotation): PdfAnnotation =
+        annotationEditsDraftState.updateEdit(editId, annotation)
+
+    /**
      * Returns an immutable snapshot of the current annotation draft state including unedited
      * existing annotations as well.
      *
