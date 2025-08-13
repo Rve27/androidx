@@ -16,15 +16,6 @@
 
 package androidx.privacysandbox.sdkruntime.integration.testaidl;
 
-import androidx.privacysandbox.sdkruntime.integration.testaidl.ISdkActivityLifecycleObserver;
-import androidx.privacysandbox.sdkruntime.integration.testaidl.ISdkActivityOnBackPressedCallback;
-
-interface ISdkActivityApi {
-    void addLifecycleObserver(in ISdkActivityLifecycleObserver observer);
-    void removeLifecycleObserver(in ISdkActivityLifecycleObserver observer);
-
-    void addOnBackPressedCallback(in ISdkActivityOnBackPressedCallback callback);
-    void removeOnBackPressedCallback(in ISdkActivityOnBackPressedCallback callback);
-
-    void finishActivity();
+interface ISdkActivityOnBackPressedCallback {
+    void handleOnBackPressed();
 }

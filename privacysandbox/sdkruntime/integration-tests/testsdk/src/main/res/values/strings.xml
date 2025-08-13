@@ -15,5 +15,9 @@
   -->
 
 <resources>
+    <string name="add_lifecycle_observer">Add LifecycleObserver</string>
+    <string name="remove_lifecycle_observer">Remove LifecycleObserver</string>
+    <string name="add_on_back_pressed_callback">Add BackKeyCallback</string>
+    <string name="remove_on_back_pressed_callback">Remove BackKeyCallback</string>
     <string name="finish_activity">Finish Activity</string>
 </resources>

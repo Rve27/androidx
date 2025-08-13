@@ -21,6 +21,44 @@
     android:orientation="vertical"
     android:fitsSystemWindows="true">
 
+    <LinearLayout
+        android:layout_gravity="center_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/addLifecycleObserverButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/add_lifecycle_observer"
+            android:textAllCaps="false"/>
+        <Button
+            android:id="@+id/removeLifecycleObserverButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/remove_lifecycle_observer"
+            android:textAllCaps="false"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_gravity="center_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/addOnBackPressedCallbackButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/add_on_back_pressed_callback"
+            android:textAllCaps="false"/>
+        <Button
+            android:id="@+id/removeOnBackPressedCallbackButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/remove_on_back_pressed_callback"
+            android:textAllCaps="false"/>
+    </LinearLayout>
+
     <Button
         android:id="@+id/finishActivityButton"
         android:layout_width="match_parent"

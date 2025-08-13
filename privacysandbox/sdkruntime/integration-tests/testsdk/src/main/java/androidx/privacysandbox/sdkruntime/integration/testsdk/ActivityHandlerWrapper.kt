@@ -21,9 +21,14 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
+import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
+import androidx.annotation.IdRes
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.privacysandbox.sdkruntime.core.activity.ActivityHolder
 import androidx.privacysandbox.sdkruntime.core.activity.SdkSandboxActivityHandlerCompat
-import androidx.privacysandbox.sdkruntime.integration.testaidl.ISdkActivityApi
 import androidx.privacysandbox.sdkruntime.integration.testaidl.ISdkActivityHandler
 
 /** Inflate SDK Activity and provide API for controlling it to client. */
@@ -31,6 +36,10 @@ class ActivityHandlerWrapper(
     private val sdkContext: Context,
     private val appSideActivityHandler: ISdkActivityHandler,
 ) : SdkSandboxActivityHandlerCompat {
+
+    private val lifecycleObserver = SdkActivityLifecycleObserver(sdkContext)
+    private val onBackPressedCallback = SdkActivityOnBackPressedCallback(sdkContext)
+
     override fun onActivityCreated(activityHolder: ActivityHolder) {
         val sdkActivityApi = SdkActivityApi(activityHolder)
         inflateActivity(activityHolder.getActivity(), sdkActivityApi)
@@ -40,20 +49,44 @@ class ActivityHandlerWrapper(
     private fun inflateActivity(activity: Activity, sdkActivityApi: SdkActivityApi) {
         val mainLayout = LayoutInflater.from(sdkContext).inflate(R.layout.sdk_activity_layout, null)
 
-        setupFinishActivityButton(mainLayout, sdkActivityApi)
+        // LifecycleObservers
+        setupButton(mainLayout, R.id.addLifecycleObserverButton) {
+            sdkActivityApi.addLifecycleObserver(lifecycleObserver)
+        }
+        setupButton(mainLayout, R.id.removeLifecycleObserverButton) {
+            sdkActivityApi.removeLifecycleObserver(lifecycleObserver)
+        }
+
+        // OnBackPressedCallbacks
+        setupButton(mainLayout, R.id.addOnBackPressedCallbackButton) {
+            sdkActivityApi.addOnBackPressedCallback(onBackPressedCallback)
+        }
+        setupButton(mainLayout, R.id.removeOnBackPressedCallbackButton) {
+            sdkActivityApi.removeOnBackPressedCallback(onBackPressedCallback)
+        }
+
+        // Finish Activity
+        setupButton(mainLayout, R.id.finishActivityButton) { sdkActivityApi.finishActivity() }
 
         activity.setContentView(mainLayout)
     }
 
-    private fun setupFinishActivityButton(mainLayout: View, sdkActivityApi: SdkActivityApi) {
-        val finishActivityButton = mainLayout.findViewById<Button>(R.id.finishActivityButton)
-        finishActivityButton.setOnClickListener { sdkActivityApi.finishActivity() }
+    private fun setupButton(mainLayout: View, @IdRes id: Int, action: () -> Unit) {
+        val button = mainLayout.findViewById<Button>(id)
+        button.setOnClickListener { action() }
     }
 
-    private class SdkActivityApi(private val activityHolder: ActivityHolder) :
-        ISdkActivityApi.Stub() {
-        override fun finishActivity() {
-            activityHolder.getActivity().finish()
+    private class SdkActivityLifecycleObserver(private val sdkContext: Context) :
+        LifecycleEventObserver {
+        override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+            Toast.makeText(sdkContext, "onStateChanged: $event", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private class SdkActivityOnBackPressedCallback(private val sdkContext: Context) :
+        OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            Toast.makeText(sdkContext, "handleOnBackPressed()", Toast.LENGTH_SHORT).show()
         }
     }
 }

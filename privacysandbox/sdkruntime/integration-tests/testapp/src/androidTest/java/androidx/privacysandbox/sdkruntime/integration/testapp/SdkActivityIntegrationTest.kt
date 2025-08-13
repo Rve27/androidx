@@ -17,16 +17,17 @@
 package androidx.privacysandbox.sdkruntime.integration.testapp
 
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.Lifecycle.Event
 import androidx.privacysandbox.sdkruntime.integration.testaidl.ISdkActivityApi
 import androidx.privacysandbox.sdkruntime.integration.testaidl.ISdkActivityHandler
+import androidx.privacysandbox.sdkruntime.integration.testaidl.ISdkActivityLifecycleObserver
+import androidx.privacysandbox.sdkruntime.integration.testaidl.ISdkActivityOnBackPressedCallback
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.BySelector
 import androidx.test.uiautomator.Until
 import com.google.common.truth.Truth.assertThat
 import java.util.concurrent.CountDownLatch
-import java.util.concurrent.TimeUnit
-import java.util.concurrent.TimeoutException
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
@@ -40,14 +41,8 @@ class SdkActivityIntegrationTest {
     @Test
     fun startSdkActivityTest() = runTest {
         val uiDevice = testSetup.uiDevice
-        val testAppApi = testSetup.testAppApi()
-        val testSdk = testAppApi.getOrLoadTestSdk()
 
-        val handler = TestActivityHandler()
-        val token = testSdk.registerSdkActivityHandler(handler)
-        testAppApi.startSdkActivity(token)
-        val startedActivity = handler.waitForSdkActivity()
-
+        val startedActivity = startSdkActivity()
         val activityIsVisible = uiDevice.wait(Until.hasObject(SDK_ACTIVITY_LAYOUT), TIMEOUT_MS)
         assertThat(activityIsVisible).isTrue()
 
@@ -59,22 +54,80 @@ class SdkActivityIntegrationTest {
         assertThat(testSetup.activityScenario.state).isEqualTo(Lifecycle.State.RESUMED)
     }
 
-    private class TestActivityHandler() : ISdkActivityHandler.Stub() {
+    @Test
+    fun sdkActivityLifeCycleObserverTest() = runTest {
+        val startedActivity = startSdkActivity()
 
-        var activity: ISdkActivityApi? = null
+        // Observer will be brought to the current state of the Activity when added.
+        val startEventsCollector = EventCollector<Event>(3)
+        val lifecycleObserver = TestActivityLifecycleObserver(startEventsCollector::onEvent)
+        startedActivity.addLifecycleObserver(lifecycleObserver)
+        val startEvents = startEventsCollector.await()
+        assertThat(startEvents)
+            .containsExactly(Event.ON_CREATE, Event.ON_START, Event.ON_RESUME)
+            .inOrder()
+
+        // Observer will follow all stages of finishing activity
+        val finishEventsCollector = EventCollector<Event>(3)
+        lifecycleObserver.impl = finishEventsCollector::onEvent
+        startedActivity.finishActivity()
+        val finishEvents = finishEventsCollector.await()
+        assertThat(finishEvents)
+            .containsExactly(Event.ON_PAUSE, Event.ON_STOP, Event.ON_DESTROY)
+            .inOrder()
+    }
+
+    @Test
+    fun sdkActivityOnBackPressedCallbackTest() = runTest {
+        val uiDevice = testSetup.uiDevice
+        val startedActivity = startSdkActivity()
         val async = CountDownLatch(1)
+        val onBackPressedCallback = TestActivityOnBackPressedCallback(async::countDown)
+
+        startedActivity.addOnBackPressedCallback(onBackPressedCallback)
+        uiDevice.pressBack()
+        async.await()
+        // Activity still visible because back key intercepted
+        assertThat(uiDevice.hasObject(SDK_ACTIVITY_LAYOUT)).isTrue()
+
+        startedActivity.removeOnBackPressedCallback(onBackPressedCallback)
+        uiDevice.pressBack()
+        // Activity is gone because back key finished it
+        val activityIsGone = uiDevice.wait(Until.gone(SDK_ACTIVITY_LAYOUT), TIMEOUT_MS)
+        assertThat(activityIsGone).isTrue()
+
+        // App Activity should be on top again
+        assertThat(testSetup.activityScenario.state).isEqualTo(Lifecycle.State.RESUMED)
+    }
+
+    private suspend fun startSdkActivity(): ISdkActivityApi {
+        val testAppApi = testSetup.testAppApi()
+        val testSdk = testAppApi.getOrLoadTestSdk()
+
+        val handler = TestActivityHandler()
+        val token = testSdk.registerSdkActivityHandler(handler)
+        testAppApi.startSdkActivity(token)
+        return handler.waitForSdkActivity()
+    }
+
+    private class TestActivityHandler() : ISdkActivityHandler.Stub() {
+        val apiCollector = EventCollector<ISdkActivityApi>(1)
 
         override fun onActivityCreated(activityApi: ISdkActivityApi) {
-            activity = activityApi
-            async.countDown()
+            apiCollector.onEvent(activityApi)
         }
 
-        fun waitForSdkActivity(): ISdkActivityApi {
-            if (!async.await(TIMEOUT_MS, TimeUnit.MILLISECONDS)) {
-                throw TimeoutException("Timeout for onActivityCreated()")
-            }
-            return activity!!
-        }
+        fun waitForSdkActivity(): ISdkActivityApi = apiCollector.await().first()
+    }
+
+    private class TestActivityLifecycleObserver(var impl: (Event) -> Unit) :
+        ISdkActivityLifecycleObserver.Stub() {
+        override fun onStateChanged(event: String) = impl(Event.valueOf(event))
+    }
+
+    private class TestActivityOnBackPressedCallback(var impl: () -> Unit) :
+        ISdkActivityOnBackPressedCallback.Stub() {
+        override fun handleOnBackPressed() = impl()
     }
 
     companion object {
