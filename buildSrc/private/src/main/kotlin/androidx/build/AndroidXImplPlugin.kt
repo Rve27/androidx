@@ -738,7 +738,6 @@ abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
             project.addToBuildOnServer("lint")
             // Created to be consumed by docs-tip-of-tree
             project.configurations.register("androidIntermediates") {
-                it.isVisible = false
                 it.isCanBeResolved = false
                 it.attributes.attribute(
                     Usage.USAGE_ATTRIBUTE,
