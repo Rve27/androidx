@@ -91,6 +91,10 @@ public fun AndroidComposeTestRule<*, *>.setContentWithCompatibilityForXr(
     ShadowConfig.extract(XrExtensionsProvider.getXrExtensions()!!.config!!)
         .setDefaultDpPerMeter(1151.856f)
 
+    if (session == null) {
+        session = createFakeSession(activity)
+    }
+
     activity.lifecycle.addObserver(
         object : DefaultLifecycleObserver {
             override fun onDestroy(owner: LifecycleOwner) {
@@ -104,9 +108,9 @@ public fun AndroidComposeTestRule<*, *>.setContentWithCompatibilityForXr(
 
     setContent {
         CompositionLocalProvider(
-            LocalSession provides session,
-            LocalSpatialConfiguration provides TestSessionSpatialConfiguration(session),
-            LocalSpatialCapabilities provides TestSessionSpatialCapabilities(session),
+            LocalSession provides session!!,
+            LocalSpatialConfiguration provides TestSessionSpatialConfiguration(session!!),
+            LocalSpatialCapabilities provides TestSessionSpatialCapabilities(session!!),
             content = content,
         )
     }
@@ -115,13 +119,14 @@ public fun AndroidComposeTestRule<*, *>.setContentWithCompatibilityForXr(
 /**
  * The XR [Session] for the current [androidx.compose.ui.test.junit4.AndroidComposeTestRule].
  *
- * Only one [Session] may exist per [Activity] instance. A new test [Session] may be assigned before
- * fetching this value and that version will be used; otherwise, a new [Session] will be created for
- * you.
+ * This will be null until the value is set or [setContentWithCompatibilityForXr] is called, after
+ * which the value will be non-null and return the current [Session]. Setting this value after
+ * calling [setContentWithCompatibilityForXr] will not change the Session that is used for that
+ * content block. Setting the value to null will indicate that the default test Session should be
+ * used.
  */
-public var AndroidComposeTestRule<*, *>.session: Session
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-    get() = activity.session ?: createFakeSession(activity).also { activity.session = it }
+public var AndroidComposeTestRule<*, *>.session: Session?
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) get() = activity.session
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
     set(value) {
         activity.session = value

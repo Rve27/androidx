@@ -215,11 +215,11 @@ class OrbiterTest {
         }
 
         composeTestRule.onParent().onChild().assertTextContains("Main Content")
-        composeTestRule.session.scene.requestHomeSpaceMode()
+        checkNotNull(composeTestRule.session).scene.requestHomeSpaceMode()
 
         // All orbiters become children of the Parent node
         composeTestRule.onParent().onChildren().assertCountEquals(5)
-        composeTestRule.session.scene.requestFullSpaceMode()
+        checkNotNull(composeTestRule.session).scene.requestFullSpaceMode()
 
         // Orbiters exist outside of the compose hierarchy
         composeTestRule.onParent().onChildren().assertCountEquals(1)
@@ -551,7 +551,7 @@ class OrbiterTest {
 
         composeTestRule.onNodeWithTag("orbiterContentBox").assertWidthIsEqualTo(10.dp)
 
-        val session = composeTestRule.session
+        val session = checkNotNull(composeTestRule.session)
         val entity =
             session.scene.getEntitiesOfType(PanelEntity::class.java).first {
                 it.sizeInPixels.width == 10
@@ -577,7 +577,7 @@ class OrbiterTest {
 
         composeTestRule.onNodeWithTag("orbiterContentBox").assertExists()
 
-        val session = composeTestRule.session
+        val session = checkNotNull(composeTestRule.session)
         val entity =
             session.scene.getEntitiesOfType(PanelEntity::class.java).first {
                 it.sizeInPixels.width == 10
