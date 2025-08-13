@@ -133,26 +133,36 @@ package androidx.compose.foundation {
   }
 
   @SuppressCompatibility @androidx.compose.foundation.ExperimentalFoundationApi public final class ComposeFoundationFlags {
+    property public boolean DragGesturePickUpEnabled;
+    property public boolean isAdjustPointerInputChangeOffsetForVelocityTrackerEnabled;
+    property public boolean isAutomaticNestedPrefetchEnabled;
     property public boolean isCacheWindowForPagerEnabled;
     property public boolean isDetectTapGesturesImmediateCoroutineDispatchEnabled;
+    property public boolean isFlingContinuationAtBoundsEnabled;
     property public boolean isKeepInViewFocusObservationChangeEnabled;
     property public boolean isMouseWheel1DAxisLockingEnabled;
     property public boolean isNewContextMenuEnabled;
     property public boolean isNonComposedClickableEnabled;
     property public boolean isNonSuspendingPointerInputInClickableEnabled;
     property public boolean isNonSuspendingPointerInputInDraggableEnabled;
+    property public boolean isOnScrollChangedCallbackEnabled;
     property public boolean isPausableCompositionInPrefetchEnabled;
     property public boolean isSmartSelectionEnabled;
     property public boolean isTextFieldDpadNavigationEnabled;
+    field public static boolean DragGesturePickUpEnabled;
     field public static final androidx.compose.foundation.ComposeFoundationFlags INSTANCE;
+    field public static boolean isAdjustPointerInputChangeOffsetForVelocityTrackerEnabled;
+    field public static boolean isAutomaticNestedPrefetchEnabled;
     field public static boolean isCacheWindowForPagerEnabled;
     field public static boolean isDetectTapGesturesImmediateCoroutineDispatchEnabled;
+    field public static boolean isFlingContinuationAtBoundsEnabled;
     field public static boolean isKeepInViewFocusObservationChangeEnabled;
     field public static boolean isMouseWheel1DAxisLockingEnabled;
     field public static boolean isNewContextMenuEnabled;
     field public static boolean isNonComposedClickableEnabled;
     field public static boolean isNonSuspendingPointerInputInClickableEnabled;
     field public static boolean isNonSuspendingPointerInputInDraggableEnabled;
+    field public static boolean isOnScrollChangedCallbackEnabled;
     field public static boolean isPausableCompositionInPrefetchEnabled;
     field public static boolean isSmartSelectionEnabled;
     field public static boolean isTextFieldDpadNavigationEnabled;

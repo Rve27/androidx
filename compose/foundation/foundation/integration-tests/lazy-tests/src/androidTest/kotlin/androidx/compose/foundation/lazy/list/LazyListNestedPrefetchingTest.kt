@@ -19,6 +19,7 @@
 package androidx.compose.foundation.lazy.list
 
 import androidx.compose.foundation.AutoTestFrameClock
+import androidx.compose.foundation.ComposeFoundationFlags.isAutomaticNestedPrefetchEnabled
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollBy
@@ -41,6 +42,7 @@ import androidx.compose.ui.unit.Constraints
 import androidx.test.filters.LargeTest
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.runBlocking
+import org.junit.BeforeClass
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -59,6 +61,12 @@ class LazyListNestedPrefetchingTest(val config: Config) :
 
         class Config(val orientation: Orientation) {
             override fun toString() = "orientation=$orientation"
+        }
+
+        @JvmStatic
+        @BeforeClass
+        fun setUp() {
+            isAutomaticNestedPrefetchEnabled = false
         }
     }
 
@@ -256,6 +264,7 @@ class LazyListNestedPrefetchingTest(val config: Config) :
 
     @Test
     fun automaticNestedPrefetchingBasedOnNumberOfVisibleItems() {
+        isAutomaticNestedPrefetchEnabled = true
 
         val state = createState() // using the default strategy
         composeList(

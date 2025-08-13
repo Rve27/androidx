@@ -29,6 +29,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewParent
 import androidx.compose.runtime.remember
+import androidx.compose.ui.ComposeUiFlags.isPointerInteropFilterDispatchingFixEnabled
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
@@ -235,7 +236,7 @@ internal class PointerInteropFilter : PointerInputModifier {
                         changes.fastAny {
                             it.changedToDownIgnoreConsumed() || it.changedToUpIgnoreConsumed()
                         } ||
-                        hasUnconsumedMove
+                        (hasUnconsumedMove && isPointerInteropFilterDispatchingFixEnabled)
 
                 if (state !== DispatchToViewState.NotDispatching) {
                     if (pass == PointerEventPass.Initial && dispatchDuringInitialTunnel) {
@@ -250,16 +251,21 @@ internal class PointerInteropFilter : PointerInputModifier {
                         pass == PointerEventPass.Main &&
                             isMoveEvent &&
                             pointerEvent == lastEventDispatchedToInitialPass &&
-                            disallowIntercept
+                            disallowIntercept &&
+                            isPointerInteropFilterDispatchingFixEnabled
                     ) {
                         changes.fastForEach { it.consume() }
                     }
 
                     val dispatchToFinalCriteria =
-                        pass == PointerEventPass.Final &&
-                            !dispatchDuringInitialTunnel &&
-                            // this was already dispatched during the initial pass
-                            pointerEvent != lastEventDispatchedToInitialPass
+                        if (isPointerInteropFilterDispatchingFixEnabled) {
+                            pass == PointerEventPass.Final &&
+                                !dispatchDuringInitialTunnel &&
+                                // this was already dispatched during the initial pass
+                                pointerEvent != lastEventDispatchedToInitialPass
+                        } else {
+                            pass == PointerEventPass.Final && !dispatchDuringInitialTunnel
+                        }
 
                     if (dispatchToFinalCriteria) {
                         dispatchToView(pointerEvent, true)
@@ -272,7 +278,11 @@ internal class PointerInteropFilter : PointerInputModifier {
                         reset()
                     }
 
-                    if (pointerEvent == lastEventDispatchedToInitialPass && isMoveEvent) {
+                    if (
+                        pointerEvent == lastEventDispatchedToInitialPass &&
+                            isMoveEvent &&
+                            isPointerInteropFilterDispatchingFixEnabled
+                    ) {
                         // we've reached the final pass, if the motion event that was sent
                         // during the initial pass was consumed, it means Compose claimed it
                         // so we should stop dispatching to the View
@@ -343,7 +353,11 @@ internal class PointerInteropFilter : PointerInputModifier {
                     }
                     if (state === DispatchToViewState.Dispatching) {
                         // If the Android View claimed the event, consume all changes.
-                        if (shouldConsume) changes.fastForEach { it.consume() }
+                        if (isPointerInteropFilterDispatchingFixEnabled) {
+                            if (shouldConsume) changes.fastForEach { it.consume() }
+                        } else {
+                            changes.fastForEach { it.consume() }
+                        }
 
                         pointerEvent.internalPointerEvent?.suppressMovementConsumption =
                             !disallowIntercept

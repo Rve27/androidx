@@ -19,6 +19,7 @@ package androidx.compose.foundation.gestures
 import androidx.compose.animation.core.VectorConverter
 import androidx.compose.animation.core.animate
 import androidx.compose.animation.splineBasedDecay
+import androidx.compose.foundation.ComposeFoundationFlags.isFlingContinuationAtBoundsEnabled
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.MutatePriority
 import androidx.compose.foundation.OverscrollEffect
@@ -394,6 +395,15 @@ private class ScrollingLogic2D(
         }
     }
 
+    // fling should be cancelled if we try to scroll more than we can or if this node
+    // is detached during a fling.
+    private fun shouldCancelFling(pixels: Offset): Boolean {
+        // tries to scroll but cannot.
+        return !scrollableState.canScroll(pixels) ||
+            // node is detached.
+            !isScrollableNodeAttached.invoke()
+    }
+
     @OptIn(ExperimentalFoundationApi::class)
     override suspend fun doFlingAnimation(available: Velocity): Velocity {
         var result: Velocity = available
@@ -438,7 +448,14 @@ private class ScrollingLogic2D(
                         override fun scrollBy(pixels: Float): Float {
                             val pixelsOffset = pixels.toDecomposedOffset()
 
-                            if (pixelsOffset != Offset.Zero && !isScrollableNodeAttached.invoke()) {
+                            val cancelFling =
+                                if (isFlingContinuationAtBoundsEnabled) {
+                                    !isScrollableNodeAttached.invoke()
+                                } else {
+                                    shouldCancelFling(pixelsOffset)
+                                }
+
+                            if (pixelsOffset != Offset.Zero && cancelFling) {
                                 throw FlingCancellationException()
                             }
 

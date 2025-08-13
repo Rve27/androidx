@@ -16,6 +16,7 @@
 
 package androidx.compose.foundation.gestures
 
+import androidx.compose.foundation.ComposeFoundationFlags.isAdjustPointerInputChangeOffsetForVelocityTrackerEnabled
 import androidx.compose.foundation.ComposeFoundationFlags.isNonSuspendingPointerInputInDraggableEnabled
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.MutatePriority
@@ -448,7 +449,8 @@ internal abstract class DragGestureNode(
      * of this node changes during the drag cycle, we need to correct the Pointer Input used for the
      * drag events, this is because Velocity Tracker doesn't have the knowledge about changes in the
      * position of the container that uses it, and because each Pointer Input event is related to
-     * the container's root.
+     * the container's root. This new behavior relies on
+     * [androidx.compose.foundation.ComposeFoundationFlags.isAdjustPointerInputChangeOffsetForVelocityTrackerEnabled]
      */
     private var nodeOffset = Offset.Zero
 
@@ -586,7 +588,12 @@ internal abstract class DragGestureNode(
             // re-create tracker when pointer input block restarts. This lazily creates the tracker
             // only when it is need.
             val suspendingPointerInputVelocityTracker = VelocityTracker()
-            var previousPositionOnScreen = requireLayoutCoordinates().positionOnScreen()
+            var previousPositionOnScreen =
+                if (isAdjustPointerInputChangeOffsetForVelocityTrackerEnabled) {
+                    requireLayoutCoordinates().positionOnScreen()
+                } else {
+                    Offset.Zero
+                }
             val onDragStart:
                 (
                     down: PointerInputChange,
@@ -625,13 +632,15 @@ internal abstract class DragGestureNode(
 
             val onDrag: (change: PointerInputChange, dragAmount: Offset) -> Unit =
                 { change, delta ->
-                    val currentPositionOnScreen = requireLayoutCoordinates().positionOnScreen()
-                    // container changed positions
-                    if (currentPositionOnScreen != previousPositionOnScreen) {
-                        val delta = currentPositionOnScreen - previousPositionOnScreen
-                        nodeOffset += delta
+                    if (isAdjustPointerInputChangeOffsetForVelocityTrackerEnabled) {
+                        val currentPositionOnScreen = requireLayoutCoordinates().positionOnScreen()
+                        // container changed positions
+                        if (currentPositionOnScreen != previousPositionOnScreen) {
+                            val delta = currentPositionOnScreen - previousPositionOnScreen
+                            nodeOffset += delta
+                        }
+                        previousPositionOnScreen = currentPositionOnScreen
                     }
-                    previousPositionOnScreen = currentPositionOnScreen
                     suspendingPointerInputVelocityTracker.addPointerInputChange(
                         event = change,
                         offset = nodeOffset,

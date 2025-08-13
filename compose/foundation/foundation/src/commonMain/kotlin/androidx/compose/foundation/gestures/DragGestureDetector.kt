@@ -24,6 +24,7 @@ package androidx.compose.foundation.gestures
 // TODO(b/193549931): when the new pointer API will be ready we should make *PointerSlop*
 //  functions public
 
+import androidx.compose.foundation.ComposeFoundationFlags.DragGesturePickUpEnabled
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.isSpecified
@@ -271,7 +272,9 @@ suspend fun PointerInputScope.detectDragGestures(
         }
 
         // if the pointer is still down, keep reading events in case we need to pick up the gesture.
-        while (drag == null && currentEvent.changes.fastAny { it.pressed }) {
+        while (
+            DragGesturePickUpEnabled && drag == null && currentEvent.changes.fastAny { it.pressed }
+        ) {
             var event: PointerEvent
             do {
                 // use final pass so we only pick up a gesture if it was really ignored by
@@ -316,7 +319,7 @@ suspend fun PointerInputScope.detectDragGestures(
                     // they will be propagated on the correct direction above we want to
                     // consume any new drag to avoid the cases where we start dragging
                     // on a given direction and then change directions.
-                    orientation = null,
+                    orientation = if (DragGesturePickUpEnabled) null else orientationLock,
                     motionConsumed = { it.isConsumed },
                 )
             if (upEvent == null) {

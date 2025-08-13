@@ -19,6 +19,7 @@
 package androidx.compose.foundation.lazy.grid
 
 import androidx.compose.foundation.AutoTestFrameClock
+import androidx.compose.foundation.ComposeFoundationFlags.isAutomaticNestedPrefetchEnabled
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollBy
@@ -277,6 +278,7 @@ class LazyGridNestedPrefetchingTest(val config: Config) :
 
     @Test
     fun automaticNestedPrefetchingBasedOnNumberOfVisibleItems() {
+        isAutomaticNestedPrefetchEnabled = true
 
         val state = createState()
         composeGrid(state, createNestedLazyGridState = { LazyGridState(firstVisibleItemIndex = 4) })

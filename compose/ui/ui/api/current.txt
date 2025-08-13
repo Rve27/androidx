@@ -145,9 +145,12 @@ package androidx.compose.ui {
     property public boolean isGraphicsLayerShapeSemanticsEnabled;
     property public boolean isIgnoreInvalidPrevFocusRectEnabled;
     property public boolean isIndirectTouchNavigationGestureDetectorEnabled;
+    property public boolean isNestedScrollDispatcherNodeFixEnabled;
     property public boolean isNestedScrollInteropIntegerPropagationEnabled;
+    property public boolean isNestedScrollInteropPostFlingFixEnabled;
     property @Deprecated public boolean isNoPinningInFocusRestorationEnabled;
     property public boolean isOutOfFrameDeactivationEnabled;
+    property public boolean isPointerInteropFilterDispatchingFixEnabled;
     property public boolean isPre26FocusFinderFixEnabled;
     property public boolean isRectTrackingEnabled;
     property @Deprecated public boolean isRemoveFocusedViewFixEnabled;
@@ -164,9 +167,12 @@ package androidx.compose.ui {
     field public static boolean isGraphicsLayerShapeSemanticsEnabled;
     field public static boolean isIgnoreInvalidPrevFocusRectEnabled;
     field public static boolean isIndirectTouchNavigationGestureDetectorEnabled;
+    field public static boolean isNestedScrollDispatcherNodeFixEnabled;
     field public static boolean isNestedScrollInteropIntegerPropagationEnabled;
+    field public static boolean isNestedScrollInteropPostFlingFixEnabled;
     field @Deprecated public static boolean isNoPinningInFocusRestorationEnabled;
     field public static boolean isOutOfFrameDeactivationEnabled;
+    field public static boolean isPointerInteropFilterDispatchingFixEnabled;
     field public static boolean isPre26FocusFinderFixEnabled;
     field public static boolean isRectTrackingEnabled;
     field @Deprecated public static boolean isRemoveFocusedViewFixEnabled;
