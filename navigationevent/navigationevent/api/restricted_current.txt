@@ -50,7 +50,7 @@ package androidx.navigationevent {
 
   public final class NavigationEventDispatcher {
     ctor public NavigationEventDispatcher(androidx.navigationevent.NavigationEventDispatcher parentDispatcher);
-    ctor public NavigationEventDispatcher(optional kotlin.jvm.functions.Function0<kotlin.Unit>? fallbackOnBackPressed, optional kotlin.jvm.functions.Function1<? super java.lang.Boolean,kotlin.Unit>? onHasEnabledCallbacksChanged);
+    ctor public NavigationEventDispatcher(optional kotlin.jvm.functions.Function0<kotlin.Unit>? fallbackOnBackPressed);
     method @KotlinOnly @MainThread public void addCallback(androidx.navigationevent.NavigationEventCallback<? extends java.lang.Object?> callback, optional androidx.navigationevent.NavigationEventPriority priority);
     method @BytecodeOnly @MainThread public void addCallback-3owFMvg(androidx.navigationevent.NavigationEventCallback<? extends java.lang.Object!>, int);
     method public void addInputHandler(androidx.navigationevent.NavigationEventInputHandler inputHandler);

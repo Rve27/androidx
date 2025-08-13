@@ -55,13 +55,10 @@ public class NavigationEventDispatcher
  *   root of its own event handling hierarchy.
  * @param fallbackOnBackPressed An optional lambda to be invoked if a navigation event completes and
  *   no registered [NavigationEventCallback] handles it. This provides a default "back" action.
- * @param onHasEnabledCallbacksChanged An optional lambda that will be called whenever the global
- *   state of whether there are any enabled callback changes.
  */
 private constructor(
     private var parentDispatcher: NavigationEventDispatcher?,
     private val fallbackOnBackPressed: (() -> Unit)?,
-    private val onHasEnabledCallbacksChanged: ((Boolean) -> Unit)?,
 ) {
 
     /**
@@ -74,17 +71,10 @@ private constructor(
      * @param fallbackOnBackPressed An optional lambda to be invoked if a navigation event completes
      *   and no registered [NavigationEventCallback] handles it. This provides a default "back"
      *   action for the entire hierarchy.
-     * @param onHasEnabledCallbacksChanged An optional lambda that will be called whenever the
-     *   global state of whether there are any enabled callbacks changes.
      */
     public constructor(
-        fallbackOnBackPressed: (() -> Unit)? = null,
-        onHasEnabledCallbacksChanged: ((Boolean) -> Unit)? = null,
-    ) : this(
-        parentDispatcher = null,
-        fallbackOnBackPressed = fallbackOnBackPressed,
-        onHasEnabledCallbacksChanged = onHasEnabledCallbacksChanged,
-    )
+        fallbackOnBackPressed: (() -> Unit)? = null
+    ) : this(parentDispatcher = null, fallbackOnBackPressed = fallbackOnBackPressed)
 
     /**
      * Creates a **child** `NavigationEventDispatcher` linked to a parent.
@@ -98,11 +88,7 @@ private constructor(
      */
     public constructor(
         parentDispatcher: NavigationEventDispatcher
-    ) : this(
-        parentDispatcher = parentDispatcher,
-        fallbackOnBackPressed = null,
-        onHasEnabledCallbacksChanged = null,
-    )
+    ) : this(parentDispatcher = parentDispatcher, fallbackOnBackPressed = null)
 
     /**
      * Returns `true` if this dispatcher is in a terminal state and can no longer be used.
@@ -243,16 +229,6 @@ private constructor(
         // This establishes the hierarchical relationship and ensures the parent is aware
         // of its direct descendants for proper event propagation and cleanup.
         parentDispatcher?.childDispatchers += this
-
-        // If a lambda for changes in enabled callbacks is provided, register it with the
-        // shared processor. This allows this specific dispatcher instance (or its consumers)
-        // to be notified of global changes in the callback enablement state.
-        if (onHasEnabledCallbacksChanged != null) {
-            sharedProcessor.addOnHasEnabledCallbacksChangedCallback(
-                inputHandler = null,
-                callback = onHasEnabledCallbacksChanged,
-            )
-        }
     }
 
     /**
@@ -445,14 +421,12 @@ private constructor(
      * This is a **terminal** operation; once a dispatcher is disposed, it cannot be reused.
      *
      * Calling this method triggers a comprehensive, iterative cleanup:
-     * 1. It unregisters this dispatcher's [onHasEnabledCallbacksChanged] listener from the shared
-     *    processor.
-     * 2. It iteratively processes and disposes of all child dispatchers and their descendants,
+     * 1. It iteratively processes and disposes of all child dispatchers and their descendants,
      *    ensuring a complete top-down cleanup of the entire sub-hierarchy without recursion.
-     * 3. It removes all [NavigationEventCallback] instances directly registered with *this
+     * 2. It removes all [NavigationEventCallback] instances directly registered with *this
      *    specific* dispatcher from the shared [NavigationEventProcessor], preventing memory leaks
      *    and ensuring callbacks are no longer active.
-     * 4. Finally, it removes itself from its parent's list of children, if a parent exists.
+     * 3. Finally, it removes itself from its parent's list of children, if a parent exists.
      *
      * @throws IllegalStateException if the dispatcher has already been disposed.
      */
@@ -460,10 +434,6 @@ private constructor(
     public fun dispose() {
         checkInvariants()
         isDisposed = true // Set immediately to block potential re-entrant calls.
-
-        if (onHasEnabledCallbacksChanged != null) {
-            sharedProcessor.removeOnHasEnabledCallbacksChangedCallback(onHasEnabledCallbacksChanged)
-        }
 
         // Iteratively dispose of all child dispatchers and their sub-hierarchies. We use a mutable
         // list as a work queue to process dispatchers.
