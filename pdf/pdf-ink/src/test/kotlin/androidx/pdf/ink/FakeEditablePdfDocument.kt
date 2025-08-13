@@ -24,8 +24,11 @@ import android.util.SparseArray
 import androidx.pdf.PdfDocument
 import androidx.pdf.annotation.EditablePdfDocument
 import androidx.pdf.annotation.models.AnnotationResult
+import androidx.pdf.annotation.models.EditId
+import androidx.pdf.annotation.models.EditsResult
 import androidx.pdf.annotation.models.PdfAnnotation
 import androidx.pdf.annotation.models.PdfAnnotationData
+import androidx.pdf.annotation.models.PdfEdit
 import androidx.pdf.content.PageMatchBounds
 import androidx.pdf.content.PageSelection
 import androidx.pdf.models.FormEditRecord
@@ -58,6 +61,22 @@ internal class FakeEditablePdfDocument(
     }
 
     override suspend fun applyEdits(sourcePfd: ParcelFileDescriptor): AnnotationResult {
+        TODO("Not yet implemented")
+    }
+
+    override fun addEdit(edit: PdfEdit): EditId {
+        TODO("Not yet implemented")
+    }
+
+    override fun removeEdit(editId: EditId) {
+        TODO("Not yet implemented")
+    }
+
+    override fun updateEdit(editId: EditId, edit: PdfEdit) {
+        TODO("Not yet implemented")
+    }
+
+    override fun commitEdits(): EditsResult {
         TODO("Not yet implemented")
     }
 
