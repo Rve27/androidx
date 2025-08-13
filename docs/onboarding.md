@@ -219,13 +219,21 @@ query to search for, e.g. `AppCompatButton file:appcompat`, and press the
 Library development uses a curated version of Android Studio to ensure
 compatibility between various components of the development workflow.
 
-From the `frameworks/support` directory, you can use `./studiow m` (short for
-`ANDROIDX_PROJECTS=main ./gradlew studio`) to automatically download and run the
-correct version of Studio to work on the `main` set of androidx projects
-(non-Compose Jetpack libraries).
-[studiow](https://cs.android.com/androidx/platform/frameworks/support/+/androidx-main:studiow)
-also supports several other arguments like `all` for other subsets of the
-projects (run `./studiow` for help).
+From the `frameworks/support` directory, you can use
+
+```shell
+PROJECT_PREFIX=:core:,:work: ./gradlew :studio
+```
+
+where `PROJECT_PREFIX` is comma separated list of project prefixes for projects
+you want to work on. This will automatically download and run the correct
+version of Studio to work on the selected libraries.
+
+If you want to open all projects, you can run
+
+```shell
+./studiow all
+```
 
 Next, open the `framework/support` project root from your checkout. If Studio
 asks you which SDK you would like to use, select `Use project SDK`. Importing
