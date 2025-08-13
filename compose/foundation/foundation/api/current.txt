@@ -746,6 +746,7 @@ package androidx.compose.foundation.gestures {
     method @InaccessibleFromKotlin public default boolean getCanScrollForward();
     method @InaccessibleFromKotlin public default boolean getLastScrolledBackward();
     method @InaccessibleFromKotlin public default boolean getLastScrolledForward();
+    method @InaccessibleFromKotlin public default androidx.compose.foundation.ScrollIndicatorState? getScrollIndicatorState();
     method @InaccessibleFromKotlin public boolean isScrollInProgress();
     method public suspend Object? scroll(optional androidx.compose.foundation.MutatePriority scrollPriority, kotlin.jvm.functions.Function2<? super androidx.compose.foundation.gestures.ScrollScope,? super kotlin.coroutines.Continuation<? super kotlin.Unit>,? extends java.lang.Object?> block, kotlin.coroutines.Continuation<? super kotlin.Unit>);
     property public default boolean canScrollBackward;
@@ -753,6 +754,7 @@ package androidx.compose.foundation.gestures {
     property public abstract boolean isScrollInProgress;
     property public default boolean lastScrolledBackward;
     property public default boolean lastScrolledForward;
+    property public default androidx.compose.foundation.ScrollIndicatorState? scrollIndicatorState;
   }
 
   public final class ScrollableStateKt {

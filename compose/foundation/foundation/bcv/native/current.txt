@@ -195,6 +195,8 @@ abstract interface androidx.compose.foundation.gestures/ScrollableState { // and
         open fun <get-lastScrolledBackward>(): kotlin/Boolean // androidx.compose.foundation.gestures/ScrollableState.lastScrolledBackward.<get-lastScrolledBackward>|<get-lastScrolledBackward>(){}[0]
     open val lastScrolledForward // androidx.compose.foundation.gestures/ScrollableState.lastScrolledForward|{}lastScrolledForward[0]
         open fun <get-lastScrolledForward>(): kotlin/Boolean // androidx.compose.foundation.gestures/ScrollableState.lastScrolledForward.<get-lastScrolledForward>|<get-lastScrolledForward>(){}[0]
+    open val scrollIndicatorState // androidx.compose.foundation.gestures/ScrollableState.scrollIndicatorState|{}scrollIndicatorState[0]
+        open fun <get-scrollIndicatorState>(): androidx.compose.foundation/ScrollIndicatorState? // androidx.compose.foundation.gestures/ScrollableState.scrollIndicatorState.<get-scrollIndicatorState>|<get-scrollIndicatorState>(){}[0]
 
     abstract fun dispatchRawDelta(kotlin/Float): kotlin/Float // androidx.compose.foundation.gestures/ScrollableState.dispatchRawDelta|dispatchRawDelta(kotlin.Float){}[0]
     abstract suspend fun scroll(androidx.compose.foundation/MutatePriority = ..., kotlin.coroutines/SuspendFunction1<androidx.compose.foundation.gestures/ScrollScope, kotlin/Unit>) // androidx.compose.foundation.gestures/ScrollableState.scroll|scroll(androidx.compose.foundation.MutatePriority;kotlin.coroutines.SuspendFunction1<androidx.compose.foundation.gestures.ScrollScope,kotlin.Unit>){}[0]
