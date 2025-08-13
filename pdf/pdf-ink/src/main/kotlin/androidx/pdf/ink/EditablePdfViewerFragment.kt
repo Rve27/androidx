@@ -225,7 +225,7 @@ public open class EditablePdfViewerFragment : PdfViewerFragment, InProgressStrok
 
         strokes.values.forEach { stroke ->
             strokeProcessor?.process(stroke, pdfView.zoom)?.let { annotation ->
-                annotationsViewModel.addAnnotations(annotation)
+                annotationsViewModel.addDraftAnnotation(annotation)
             }
         }
     }
@@ -239,17 +239,38 @@ public open class EditablePdfViewerFragment : PdfViewerFragment, InProgressStrok
                     pageLocations: SparseArray<RectF>,
                     zoomLevel: Float,
                 ) {
-                    val transformationMatrices =
-                        pageTransformCalculator.calculate(
-                            firstVisiblePage,
-                            visiblePagesCount,
-                            pageLocations,
-                            zoomLevel,
-                        )
-                    annotationsViewModel.updateTransformationMatrices(transformationMatrices)
+                    val firstVisiblePage = pdfView.firstVisiblePage
+                    val lastVisiblePage = firstVisiblePage + pdfView.visiblePagesCount - 1
+
+                    updateTransformationMatrices(
+                        firstVisiblePage,
+                        visiblePagesCount,
+                        pageLocations,
+                        zoomLevel,
+                    )
+                    annotationsViewModel.fetchAnnotationsForPageRange(
+                        startPage = firstVisiblePage,
+                        endPage = lastVisiblePage,
+                    )
                 }
             }
         pdfView.addOnViewportChangedListener(onViewportChangedListener)
+    }
+
+    private fun updateTransformationMatrices(
+        firstVisiblePage: Int,
+        visiblePagesCount: Int,
+        pageLocations: SparseArray<RectF>,
+        zoomLevel: Float,
+    ) {
+        val transformationMatrices =
+            pageTransformCalculator.calculate(
+                firstVisiblePage,
+                visiblePagesCount,
+                pageLocations,
+                zoomLevel,
+            )
+        annotationsViewModel.updateTransformationMatrices(transformationMatrices)
     }
 
     /**

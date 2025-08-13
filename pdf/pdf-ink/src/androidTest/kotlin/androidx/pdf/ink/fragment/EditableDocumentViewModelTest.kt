@@ -59,10 +59,10 @@ class EditableDocumentViewModelTest {
     }
 
     @Test
-    fun addAnnotations_updatesDraftState_forSingleAnnotation() = runTest {
+    fun addDraftAnnotation_updatesDraftState_forSingleAnnotation() = runTest {
         val annotation = createAnnotation(pageNum = 0)
 
-        annotationsViewModel.addAnnotations(annotation)
+        annotationsViewModel.addDraftAnnotation(annotation)
         val firstPageEdits: List<PdfAnnotationData>? =
             annotationsViewModel.annotationsDisplayStateFlow.value.draftState.edits[0]
 
@@ -74,12 +74,12 @@ class EditableDocumentViewModelTest {
     }
 
     @Test
-    fun addAnnotations_updatesDraftState_forMultipleAnnotationsOnSamePage() = runTest {
+    fun addAnnotations_updatesDraftState_forMultipleDraftAnnotationOnSamePage() = runTest {
         val annotation1 = createAnnotation(pageNum = 0, bounds = RectF(0f, 0f, 50f, 50f))
         val annotation2 = createAnnotation(pageNum = 0, bounds = RectF(50f, 50f, 100f, 100f))
 
-        annotationsViewModel.addAnnotations(annotation1)
-        annotationsViewModel.addAnnotations(annotation2)
+        annotationsViewModel.addDraftAnnotation(annotation1)
+        annotationsViewModel.addDraftAnnotation(annotation2)
 
         val firstPageEdits: List<PdfAnnotationData>? =
             annotationsViewModel.annotationsDisplayStateFlow.value.draftState.edits[0]
@@ -91,12 +91,12 @@ class EditableDocumentViewModelTest {
     }
 
     @Test
-    fun addAnnotations_updatesDraftState_forMultipleAnnotationsOnDifferentPages() = runTest {
+    fun addAnnotations_updatesDraftState_forMultipleDraftAnnotationOnDifferentPages() = runTest {
         val annotationPage0 = createAnnotation(pageNum = 0)
         val annotationPage1 = createAnnotation(pageNum = 1)
 
-        annotationsViewModel.addAnnotations(annotationPage0)
-        annotationsViewModel.addAnnotations(annotationPage1)
+        annotationsViewModel.addDraftAnnotation(annotationPage0)
+        annotationsViewModel.addDraftAnnotation(annotationPage1)
 
         val firstPageEdits: List<PdfAnnotationData>? =
             annotationsViewModel.annotationsDisplayStateFlow.value.draftState.edits[0]
@@ -132,7 +132,7 @@ class EditableDocumentViewModelTest {
     @Test
     fun maybeInitialiseForDocument_resetsState_whenDocumentUriChanges() = runTest {
         val initialAnnotation = createAnnotation(pageNum = 0)
-        annotationsViewModel.addAnnotations(initialAnnotation)
+        annotationsViewModel.addDraftAnnotation(initialAnnotation)
         annotationsViewModel.isEditModeEnabled = true
 
         val initialDocUri = Uri.fromFile(File("test1.pdf"))
@@ -162,7 +162,7 @@ class EditableDocumentViewModelTest {
         annotationsViewModel.editablePdfDocument = FakeEditablePdfDocument(uri = docUri)
 
         val initialAnnotation = createAnnotation(pageNum = 0)
-        annotationsViewModel.addAnnotations(initialAnnotation)
+        annotationsViewModel.addDraftAnnotation(initialAnnotation)
         annotationsViewModel.isEditModeEnabled = true
 
         val initialEdits = annotationsViewModel.annotationsDisplayStateFlow.value.draftState.edits

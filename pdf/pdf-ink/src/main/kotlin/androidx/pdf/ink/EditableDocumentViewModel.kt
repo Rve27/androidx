@@ -22,19 +22,22 @@ import androidx.annotation.RestrictTo
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.pdf.annotation.EditablePdfDocument
-import androidx.pdf.annotation.draftstate.AnnotationEditsDraftState
-import androidx.pdf.annotation.draftstate.MemoryAnnotationEditsDraftState
 import androidx.pdf.annotation.models.AnnotationsDisplayState
 import androidx.pdf.annotation.models.PdfAnnotation
+import androidx.pdf.annotation.models.PdfAnnotationData
+import androidx.pdf.ink.manager.AnnotationsManager
+import androidx.pdf.ink.manager.InMemoryAnnotationsManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 @RestrictTo(RestrictTo.Scope.LIBRARY)
 internal class EditableDocumentViewModel(private val state: SavedStateHandle) : ViewModel() {
-    private lateinit var annotationEditsDraftState: AnnotationEditsDraftState
+    private lateinit var annotationsManager: AnnotationsManager
 
     private val _annotationDisplayStateFlow = MutableStateFlow(AnnotationsDisplayState.EMPTY)
 
@@ -69,21 +72,21 @@ internal class EditableDocumentViewModel(private val state: SavedStateHandle) : 
             state[DOCUMENT_URI_KEY] = documentUri
             editablePdfDocument = document
 
-            annotationEditsDraftState = MemoryAnnotationEditsDraftState()
+            annotationsManager = InMemoryAnnotationsManager(document)
             _annotationDisplayStateFlow.value =
                 AnnotationsDisplayState(
-                    draftState = annotationEditsDraftState.toImmutableDraftState(),
+                    draftState = annotationsManager.getFullAnnotationStateSnapshot(),
                     transformationMatrices = HashMap(),
                 )
         }
     }
 
     /** Adds a [PdfAnnotation] to the draft state. */
-    fun addAnnotations(annotation: PdfAnnotation) {
+    fun addDraftAnnotation(annotation: PdfAnnotation) {
         if (editablePdfDocument != null) {
-            annotationEditsDraftState.addEdit(annotation)
+            val unused = annotationsManager.addAnnotation(annotation)
             _annotationDisplayStateFlow.update { currentState ->
-                currentState.copy(draftState = annotationEditsDraftState.toImmutableDraftState())
+                currentState.copy(draftState = annotationsManager.getFullAnnotationStateSnapshot())
             }
         }
     }
@@ -93,6 +96,28 @@ internal class EditableDocumentViewModel(private val state: SavedStateHandle) : 
         if (editablePdfDocument != null) {
             _annotationDisplayStateFlow.update { displayState ->
                 displayState.copy(transformationMatrices = transformationMatrices)
+            }
+        }
+    }
+
+    /**
+     * Fetches annotations from the [AnnotationsManager] for the defined page range.
+     *
+     * @param startPage The starting page number (inclusive).
+     * @param endPage The ending page number (inclusive).
+     */
+    fun fetchAnnotationsForPageRange(startPage: Int, endPage: Int) {
+        if (editablePdfDocument == null) {
+            return
+        }
+
+        viewModelScope.launch {
+            val annotationsByPage = mutableMapOf<Int, List<PdfAnnotationData>>()
+            for (page in startPage..endPage) {
+                annotationsByPage[page] = annotationsManager.getAnnotationsForPage(page)
+            }
+            _annotationDisplayStateFlow.update { displayState ->
+                displayState.copy(draftState = annotationsManager.getFullAnnotationStateSnapshot())
             }
         }
     }
