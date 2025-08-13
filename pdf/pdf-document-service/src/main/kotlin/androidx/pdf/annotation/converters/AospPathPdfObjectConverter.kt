@@ -21,17 +21,17 @@ import android.os.Build
 import androidx.annotation.RequiresExtension
 import androidx.pdf.Converter
 import androidx.pdf.annotation.models.PathPdfObject
-import androidx.pdf.utils.getPathFromPathInputs
+import androidx.pdf.utils.getPathInputsFromPath
 
-/** Converts a [PathPdfObject] to a AOSP [PdfPagePathObject]. */
+/** Converts a [PdfPagePathObject] to a AOSP [PathPdfObject]. */
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 18)
-internal class PathPdfObjectConverter : Converter<PathPdfObject, PdfPagePathObject> {
-    override fun convert(from: PathPdfObject, vararg args: Any): PdfPagePathObject {
-        val path = from.inputs.getPathFromPathInputs()
-        return PdfPagePathObject(path).apply {
-            strokeWidth = from.brushWidth
-            fillColor = from.brushColor
-            renderMode = PdfPagePathObject.RENDER_MODE_FILL
-        }
+internal class AospPathPdfObjectConverter : Converter<PdfPagePathObject, PathPdfObject> {
+    override fun convert(from: PdfPagePathObject, vararg args: Any): PathPdfObject {
+        val pathInputs = from.toPath().getPathInputsFromPath()
+        return PathPdfObject(
+            brushColor = from.fillColor,
+            brushWidth = from.strokeWidth,
+            inputs = pathInputs,
+        )
     }
 }

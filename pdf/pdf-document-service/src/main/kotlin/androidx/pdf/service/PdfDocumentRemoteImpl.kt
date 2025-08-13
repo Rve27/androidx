@@ -19,6 +19,7 @@ package androidx.pdf.service
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.Rect
+import android.graphics.pdf.component.PdfAnnotation as AospPdfAnnotation
 import android.graphics.pdf.content.PdfPageGotoLinkContent
 import android.graphics.pdf.content.PdfPageImageContent
 import android.graphics.pdf.content.PdfPageLinkContent
@@ -37,14 +38,13 @@ import androidx.pdf.PdfLoadingStatus
 import androidx.pdf.adapter.PdfDocumentRenderer
 import androidx.pdf.adapter.PdfDocumentRendererFactory
 import androidx.pdf.adapter.PdfDocumentRendererFactoryImpl
+import androidx.pdf.annotation.converters.PdfAnnotationConvertersFactory
 import androidx.pdf.annotation.models.AnnotationResult
 import androidx.pdf.annotation.models.PdfAnnotation
 import androidx.pdf.annotation.models.PdfAnnotationData
 import androidx.pdf.annotation.processor.PdfRendererAnnotationsProcessor
 import androidx.pdf.models.Dimensions
 import androidx.pdf.utils.readAnnotationsFromPfd
-import androidx.pdf.utils.toAospAnnotation
-import androidx.pdf.utils.toPdfAnnotation
 
 @RestrictTo(RestrictTo.Scope.LIBRARY)
 internal class PdfDocumentRemoteImpl(
@@ -167,7 +167,8 @@ internal class PdfDocumentRemoteImpl(
     private fun addPdfAnnotationToAosp(pdfAnnotationData: PdfAnnotationData): Boolean {
         val annotation = pdfAnnotationData.annotation
         return rendererAdapter.withPage(annotation.pageNum) { page ->
-            val aospAnnotation = annotation.toAospAnnotation()
+            val converter = PdfAnnotationConvertersFactory.create<PdfAnnotation>(annotation)
+            val aospAnnotation = converter.convert(annotation)
             try {
                 page.addPageAnnotation(aospAnnotation)
                 true
@@ -183,7 +184,10 @@ internal class PdfDocumentRemoteImpl(
             val aospAnnotations = page.getPageAnnotations()
             val pdfAnnotations = mutableListOf<PdfAnnotation>()
             for (aospAnnotation in aospAnnotations) {
-                aospAnnotation.second.toPdfAnnotation(pageNum)?.let { pfdAnnotation ->
+                val unused = aospAnnotation.first // <-- AOSP ID
+                val converter =
+                    PdfAnnotationConvertersFactory.create<AospPdfAnnotation>(aospAnnotation.second)
+                converter.convert(aospAnnotation.second, pageNum).let { pfdAnnotation ->
                     pdfAnnotations.add(pfdAnnotation)
                 }
             }

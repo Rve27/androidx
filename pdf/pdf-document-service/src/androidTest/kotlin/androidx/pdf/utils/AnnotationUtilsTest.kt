@@ -17,7 +17,6 @@
 package androidx.pdf.utils
 
 import android.content.Context
-import android.graphics.RectF
 import android.graphics.pdf.component.PdfPagePathObject
 import android.os.Build
 import android.os.ext.SdkExtensions
@@ -169,42 +168,6 @@ class AnnotationUtilsTest {
         )
 
         pfd.close()
-    }
-
-    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 18)
-    @Test
-    fun pdfObjectToAospPdfPageObject_convertsPathPdfObject() {
-        if (!isRequiredSdkExtensionAvailable()) return
-
-        val pathPdfObject = getSamplePathPdfObject()
-
-        val aospPageObject = pathPdfObject.toAospPdfPageObject()
-
-        assert(aospPageObject is PdfPagePathObject)
-        val aospPathObject = aospPageObject as PdfPagePathObject
-        assertPathPdfObjectEquals(pathPdfObject, aospPathObject)
-    }
-
-    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 18)
-    @Test
-    fun stampAnnotationToAospStampAnnotation_convertsStampAnnotation() {
-        if (!isRequiredSdkExtensionAvailable()) return
-
-        val pageNum = 0
-        val bounds = RectF(10f, 10f, 100f, 100f)
-        val pathPdfObject = getSamplePathPdfObject()
-
-        val stampAnnotation =
-            StampAnnotation(pageNum = pageNum, bounds = bounds, pdfObjects = listOf(pathPdfObject))
-
-        val aospStampAnnotation = stampAnnotation.toAospStampAnnotation()
-
-        assertThat(aospStampAnnotation.bounds).isEqualTo(bounds)
-        assertThat(aospStampAnnotation.objects.size).isEqualTo(1)
-        assert(aospStampAnnotation.objects[0] is PdfPagePathObject)
-
-        val aospPathObject = aospStampAnnotation.objects[0] as PdfPagePathObject
-        assertPathPdfObjectEquals(pathPdfObject, aospPathObject)
     }
 
     @Test

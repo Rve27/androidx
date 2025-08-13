@@ -25,7 +25,7 @@ import androidx.annotation.RestrictTo
  * @param <T> type to be converted to
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public interface Converter<in F, out T> {
+public interface Converter<F, T> {
     /** Converts object of type F to type T */
-    public fun convert(from: F): T
+    public fun convert(from: F, vararg args: Any): T
 }
