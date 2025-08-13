@@ -308,7 +308,7 @@ abstract class RemoteFloat internal constructor(override val hasConstantValue: B
      */
     val dp: RemoteFloat
         get() {
-            return RemoteFloatExpression(hasConstantValue) { creationState ->
+            return RemoteFloatExpression(false) { creationState ->
                 floatArrayOf(
                     *arrayForCreationState(creationState),
                     RemoteContext.FLOAT_DENSITY,
