@@ -334,6 +334,15 @@ package androidx.compose.foundation {
     method @androidx.compose.runtime.Stable public static androidx.compose.ui.Modifier progressSemantics(androidx.compose.ui.Modifier, float value, optional kotlin.ranges.ClosedFloatingPointRange<java.lang.Float> valueRange, optional @IntRange(from=0L) int steps);
   }
 
+  @androidx.compose.runtime.Stable public interface ScrollIndicatorState {
+    method @IntRange(from=0L) public int getContentSize();
+    method @IntRange(from=0L) public int getScrollOffset();
+    method @IntRange(from=0L) public int getViewportSize();
+    property @IntRange(from=0L) public abstract int contentSize;
+    property @IntRange(from=0L) public abstract int scrollOffset;
+    property @IntRange(from=0L) public abstract int viewportSize;
+  }
+
   public final class ScrollKt {
     method public static androidx.compose.ui.Modifier horizontalScroll(androidx.compose.ui.Modifier, androidx.compose.foundation.ScrollState state, androidx.compose.foundation.OverscrollEffect? overscrollEffect, optional boolean enabled, optional androidx.compose.foundation.gestures.FlingBehavior? flingBehavior, optional boolean reverseScrolling);
     method public static androidx.compose.ui.Modifier horizontalScroll(androidx.compose.ui.Modifier, androidx.compose.foundation.ScrollState state, optional boolean enabled, optional androidx.compose.foundation.gestures.FlingBehavior? flingBehavior, optional boolean reverseScrolling);
