@@ -20,7 +20,6 @@ import androidx.compose.animation.core.DecayAnimationSpec
 import androidx.compose.animation.core.keyframes
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.rememberSplineBasedDecay
-import androidx.compose.foundation.ComposeFoundationFlags.isFlingContinuationAtBoundsEnabled
 import androidx.compose.foundation.gestures.DefaultFlingBehavior
 import androidx.compose.foundation.gestures.FlingBehavior
 import androidx.compose.foundation.gestures.Orientation
@@ -148,7 +147,6 @@ import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.instanceOf
 import org.junit.After
 import org.junit.Assert
-import org.junit.Assume
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -2329,7 +2327,6 @@ class ScrollableTest {
     @OptIn(ExperimentalFoundationApi::class)
     @Test
     fun scrollable_nestedFling_shouldCancelWhenHitTheBounds_ifRemoved() {
-        Assume.assumeTrue(isFlingContinuationAtBoundsEnabled)
         var shouldEmit by mutableStateOf(true)
         var latestScroll = Offset.Zero
         val connection =
@@ -2372,58 +2369,7 @@ class ScrollableTest {
 
     @OptIn(ExperimentalFoundationApi::class)
     @Test
-    fun scrollable_nestedFling_shouldCancelWhenHitTheBounds() {
-        Assume.assumeFalse(isFlingContinuationAtBoundsEnabled)
-        var latestAvailableVelocity = Velocity.Zero
-        var onPostFlingCalled = false
-        val connection =
-            object : NestedScrollConnection {
-                override suspend fun onPostFling(
-                    consumed: Velocity,
-                    available: Velocity,
-                ): Velocity {
-                    latestAvailableVelocity = available
-                    onPostFlingCalled = true
-                    return super.onPostFling(consumed, available)
-                }
-            }
-        rule.setContent {
-            Box(
-                Modifier.scrollable(
-                    state = rememberScrollableState { it },
-                    orientation = Orientation.Vertical,
-                )
-            ) {
-                Box(Modifier.nestedScroll(connection)) {
-                    Column(
-                        Modifier.testTag("column")
-                            .verticalScroll(
-                                rememberScrollState(with(rule.density) { (5 * 200.dp).roundToPx() })
-                            )
-                    ) {
-                        repeat(10) { Box(Modifier.size(200.dp)) }
-                    }
-                }
-            }
-        }
-
-        rule.onNodeWithTag("column").performTouchInput { swipeDown() }
-
-        /**
-         * Because previously the animation was being completely consumed by the child fling, the
-         * nested scroll connection in the middle would see a zero post fling velocity, even if the
-         * child hit the bounds.
-         */
-        rule.runOnIdle {
-            assertThat(onPostFlingCalled).isTrue()
-            assertThat(latestAvailableVelocity.y).isNonZero()
-        }
-    }
-
-    @OptIn(ExperimentalFoundationApi::class)
-    @Test
     fun scrollable_nestedFling_shouldContinueSendingDeltasWhenHitBounds() {
-        Assume.assumeTrue(isFlingContinuationAtBoundsEnabled)
         var flingDeltas = Offset.Zero
         val connection =
             object : NestedScrollConnection {

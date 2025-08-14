@@ -22,7 +22,6 @@ import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.animateDecay
 import androidx.compose.animation.splineBasedDecay
 import androidx.compose.foundation.ComposeFoundationFlags
-import androidx.compose.foundation.ComposeFoundationFlags.isFlingContinuationAtBoundsEnabled
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.FocusedBoundsObserverNode
 import androidx.compose.foundation.LocalOverscrollFactory
@@ -821,17 +820,6 @@ internal class ScrollingLogic(
         }
     }
 
-    // fling should be cancelled if we try to scroll more than we can or if this node
-    // is detached during a fling.
-    private fun shouldCancelFling(pixels: Float): Boolean {
-        // tries to scroll forward but cannot.
-        return (pixels > 0.0f && !scrollableState.canScrollForward) ||
-            // tries to scroll backward but cannot.
-            (pixels < 0.0f && !scrollableState.canScrollBackward) ||
-            // node is detached.
-            !isScrollableNodeAttached.invoke()
-    }
-
     @OptIn(ExperimentalFoundationApi::class)
     override suspend fun doFlingAnimation(available: Velocity): Velocity {
         var result: Velocity = available
@@ -851,13 +839,9 @@ internal class ScrollingLogic(
                             // node above will be able to pick up the left over velocity and
                             // continue
                             // the fling.
-                            val cancelFling =
-                                if (isFlingContinuationAtBoundsEnabled) {
-                                    !isScrollableNodeAttached.invoke()
-                                } else {
-                                    shouldCancelFling(pixels)
-                                }
-                            if (pixels.absoluteValue != 0.0f && cancelFling) {
+                            if (
+                                pixels.absoluteValue != 0.0f && !isScrollableNodeAttached.invoke()
+                            ) {
                                 throw FlingCancellationException()
                             }
 
