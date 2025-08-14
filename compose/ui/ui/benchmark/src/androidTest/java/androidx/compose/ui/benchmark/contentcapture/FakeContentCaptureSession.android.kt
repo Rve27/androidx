@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,32 +14,43 @@
  * limitations under the License.
  */
 
-package androidx.compose.ui.contentcapture
+package androidx.compose.ui.benchmark.contentcapture
 
+import android.os.Build
+import android.view.View
 import android.view.ViewStructure
 import android.view.autofill.AutofillId
+import androidx.annotation.RequiresApi
+import androidx.compose.ui.benchmark.autofill.FakeViewStructure
+import androidx.compose.ui.contentcapture.ContentCaptureSessionWrapper
 import androidx.compose.ui.platform.coreshims.ViewStructureCompat
 
 /** A fake implementation of [ContentCaptureSession] for use in tests. */
-class FakeContentCaptureSession : ContentCaptureSessionWrapper {
-    var lastAutofillId: AutofillId? = null
+internal class FakeContentCaptureSession : ContentCaptureSessionWrapper {
     var lastViewStructure: ViewStructure? = null
     var lastDisappearedId: AutofillId? = null
     var lastTextChangeId: AutofillId? = null
     var lastTextChange: CharSequence? = null
     var flushCount = 0
-    var lastAppearedNodes: List<ViewStructure>? = null
+    var lastAppearedNodes: List<ViewStructure> = emptyList()
     var lastDisappearedIds: LongArray? = null
+    val hostView: View
 
-    override fun newAutofillId(virtualChildId: Long): AutofillId? {
-        return null
+    constructor(view: View) {
+        hostView = view
     }
 
+    @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
+    override fun newAutofillId(virtualChildId: Long): AutofillId? {
+        return AutofillId.create(hostView, 0)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun newVirtualViewStructure(
         parentId: AutofillId,
         virtualId: Long,
     ): ViewStructureCompat? {
-        return null
+        return ViewStructureCompat.toViewStructureCompat(FakeViewStructure())
     }
 
     override fun notifyViewAppeared(node: ViewStructure) {
