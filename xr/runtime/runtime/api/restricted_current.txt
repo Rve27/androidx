@@ -1428,6 +1428,11 @@ package androidx.xr.runtime.internal {
     method public void destroyTexture(androidx.xr.runtime.internal.TextureResource texture);
     method public void destroyWaterMaterial(androidx.xr.runtime.internal.MaterialResource material);
     method public void dispose();
+    method public androidx.xr.runtime.internal.TextureResource? getReflectionTextureFromIbl(androidx.xr.runtime.internal.ExrImageResource iblToken);
+    method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.runtime.internal.ExrImageResource> loadExrImageByAssetName(String assetName);
+    method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.runtime.internal.ExrImageResource> loadExrImageByByteArray(byte[] assetData, String assetKey);
+    method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.runtime.internal.GltfModelResource> loadGltfByAssetName(String assetName);
+    method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.runtime.internal.GltfModelResource> loadGltfByByteArray(byte[] assetData, String assetKey);
     method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.runtime.internal.TextureResource> loadTexture(String assetName, androidx.xr.runtime.internal.TextureSampler sampler);
     method public void setAlphaCutoffOnKhronosPbrMaterial(androidx.xr.runtime.internal.MaterialResource material, float alphaCutoff);
     method public void setAlphaMapOnWaterMaterial(androidx.xr.runtime.internal.MaterialResource material, androidx.xr.runtime.internal.TextureResource alphaMap);
