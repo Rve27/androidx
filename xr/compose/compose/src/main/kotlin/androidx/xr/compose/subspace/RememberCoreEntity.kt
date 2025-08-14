@@ -16,48 +16,7 @@
 
 package androidx.xr.compose.subspace
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisallowComposableCalls
-import androidx.compose.runtime.remember
-import androidx.compose.ui.platform.LocalDensity
-import androidx.xr.compose.platform.LocalSession
-import androidx.xr.compose.subspace.layout.CoreSphereSurfaceEntity
-import androidx.xr.runtime.Config.HeadTrackingMode
-import androidx.xr.runtime.Session
-import androidx.xr.runtime.SessionConfigureSuccess
 import androidx.xr.scenecore.Entity
-import androidx.xr.scenecore.SurfaceEntity
-import androidx.xr.scenecore.scene
-
-/**
- * Creates a [CoreSphereSurfaceEntity]. If this [androidx.xr.compose.subspace.layout.CoreEntity] is
- * attached to a [androidx.xr.compose.subspace.node.ComposeSubspaceNode], then the node will dispose
- * of the CoreEntity when it exits composition. Otherwise, it is the responsibility of the caller to
- * dispose of the CoreEntity (e.g. [androidx.xr.compose.spatial.ElevatedPanel]).
- */
-@Composable
-internal inline fun rememberCoreSphereSurfaceEntity(
-    key: Any? = null,
-    crossinline entityFactory: @DisallowComposableCalls Session.() -> SurfaceEntity,
-): CoreSphereSurfaceEntity {
-    val session = checkNotNull(LocalSession.current) { "session must be initialized" }
-    val density = LocalDensity.current
-
-    return remember(key) {
-        val headPose =
-            if (
-                session.config.headTracking == HeadTrackingMode.LAST_KNOWN ||
-                    session.configure(
-                        config = session.config.copy(headTracking = HeadTrackingMode.LAST_KNOWN)
-                    ) is SessionConfigureSuccess
-            ) {
-                session.scene.spatialUser.head?.activitySpacePose
-            } else {
-                null
-            }
-        CoreSphereSurfaceEntity(session.entityFactory(), headPose, density)
-    }
-}
 
 private var entityNamePart: Int = 0
 

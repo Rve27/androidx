@@ -47,6 +47,8 @@ import androidx.xr.compose.unit.IntVolumeSize
 import androidx.xr.compose.unit.Meter
 import androidx.xr.compose.unit.VolumeConstraints
 import androidx.xr.compose.unit.toMeter
+import androidx.xr.runtime.Config.HeadTrackingMode
+import androidx.xr.runtime.SessionConfigureSuccess
 import androidx.xr.runtime.math.Pose
 import androidx.xr.scenecore.SpatialEnvironment
 import androidx.xr.scenecore.SurfaceEntity
@@ -367,20 +369,38 @@ private fun SpatialExternalSurfaceSphere(
     surfaceProtection: SurfaceProtection = SurfaceProtection.None,
     content: @Composable @SubspaceComposable SpatialExternalSurfaceScope.() -> Unit,
 ) {
-    val session = LocalSession.current
+    val session = checkNotNull(LocalSession.current) { "session must be initialized" }
+    val density = LocalDensity.current
+
     val meterRadius = radius.toMeter().value
+
     val coreSurfaceEntity =
-        rememberCoreSphereSurfaceEntity(surfaceProtection) {
-            SurfaceEntity.create(
-                session = checkNotNull(session) { "Session is required" },
-                stereoMode = stereoMode.value,
-                contentSecurityLevel = surfaceProtection.value,
-                canvasShape =
-                    if (isHemisphere) {
-                        SurfaceEntity.CanvasShape.Vr180Hemisphere(meterRadius)
-                    } else {
-                        SurfaceEntity.CanvasShape.Vr360Sphere(meterRadius)
-                    },
+        remember(surfaceProtection) {
+            val headPose =
+                if (
+                    session.config.headTracking == HeadTrackingMode.LAST_KNOWN ||
+                        session.configure(
+                            config = session.config.copy(headTracking = HeadTrackingMode.LAST_KNOWN)
+                        ) is SessionConfigureSuccess
+                ) {
+                    session.scene.spatialUser.head?.activitySpacePose
+                } else {
+                    null
+                }
+            CoreSphereSurfaceEntity(
+                SurfaceEntity.create(
+                    session = checkNotNull(session) { "Session is required" },
+                    stereoMode = stereoMode.value,
+                    contentSecurityLevel = surfaceProtection.value,
+                    canvasShape =
+                        if (isHemisphere) {
+                            SurfaceEntity.CanvasShape.Vr180Hemisphere(meterRadius)
+                        } else {
+                            SurfaceEntity.CanvasShape.Vr360Sphere(meterRadius)
+                        },
+                ),
+                headPose,
+                density,
             )
         }
 
