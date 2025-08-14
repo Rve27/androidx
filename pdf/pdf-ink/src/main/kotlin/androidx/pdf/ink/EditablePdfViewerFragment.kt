@@ -28,6 +28,7 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresExtension
 import androidx.annotation.RestrictTo
@@ -65,6 +66,7 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
 
     private lateinit var wetStrokesView: InProgressStrokesView
     private lateinit var annotationView: AnnotationsView
+    private lateinit var savingOverlay: FrameLayout
     private lateinit var backPressedCallback: OnBackPressedCallback
     private lateinit var onViewportChangedListener: PdfView.OnViewportChangedListener
     private lateinit var wetStrokesOnFinishedListener: WetStrokesOnFinishedListener
@@ -80,7 +82,13 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
      * @param onCompletion A callback function to be invoked when the write operation is complete.
      */
     public fun writeTo(dest: ParcelFileDescriptor, onCompletion: () -> Unit) {
-        annotationsViewModel.saveEdits(dest, onCompletion)
+        savingOverlay.visibility = VISIBLE
+
+        annotationsViewModel.saveEdits(dest) {
+            savingOverlay.visibility = GONE
+            annotationsViewModel.isEditModeEnabled = false
+            onCompletion()
+        }
     }
 
     override fun onCreateView(
@@ -117,6 +125,9 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
         pdfContentLayout.addView(annotationView)
         pdfContentLayout.addView(wetStrokesView)
 
+        savingOverlay =
+            inflater.inflate(R.layout.saving_progress_overlay, rootView, false) as FrameLayout
+        rootView.addView(savingOverlay)
         return rootView
     }
 
