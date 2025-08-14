@@ -86,16 +86,8 @@ internal class NavigationEventProcessor {
      * Tracks listeners for changes in the overall enabled state of callbacks across all
      * dispatchers. This allows individual `NavigationEventDispatcher` instances to react when the
      * global state changes.
-     *
-     * TODO: We currently assume that each child dispatcher registers only one callback (via the
-     *   constructor property [NavigationEventDispatcher.onHasEnabledCallbacksChanged]). This allows
-     *   us to safely remove that callback when the dispatcher is disposed, preventing memory leaks.
-     *   However, this assumption is fragile. If [addOnHasEnabledCallbacksChangedCallback] is ever
-     *   called multiple times for the same dispatcher, it *will* result in memory leaks. We need a
-     *   more robust mechanism to reliably track and remove *all* callbacks associated with a given
-     *   child [NavigationEventDispatcher].
      */
-    private val onHasEnabledCallbacksChangedCallbacks = mutableListOf<((Boolean) -> Unit)>()
+    private val onHasEnabledCallbacksChangedCallbacks = mutableMapOf<Any, (Boolean) -> Unit>()
 
     /**
      * Represents whether there is at least one enabled callback registered across all dispatchers.
@@ -110,7 +102,7 @@ internal class NavigationEventProcessor {
             if (field == value) return
 
             field = value
-            for (callback in onHasEnabledCallbacksChangedCallbacks) {
+            for ((_, callback) in onHasEnabledCallbacksChangedCallbacks) {
                 callback.invoke(value)
             }
         }
@@ -160,27 +152,23 @@ internal class NavigationEventProcessor {
     }
 
     /**
-     * Adds a callback that will be notified when the overall enabled state of registered callbacks
-     * changes.
+     * Registers a **callback** to be notified when the overall enabled state of registered
+     * callbacks changes.
      *
-     * @param inputHandler The [NavigationEventInputHandler] registering the callback.
+     * @param owner The owner registering the callback.
      * @param callback The callback to invoke when the enabled state changes.
      */
-    fun addOnHasEnabledCallbacksChangedCallback(
-        inputHandler: NavigationEventInputHandler? = null,
-        callback: (Boolean) -> Unit,
-    ) {
-        // TODO(mgalhardo): Update sharedProcessor to use the inputHandler to distinguish callbacks.
-        onHasEnabledCallbacksChangedCallbacks += callback
+    fun addOnHasEnabledCallbacksChangedCallback(owner: Any, callback: (Boolean) -> Unit) {
+        onHasEnabledCallbacksChangedCallbacks[owner] = callback
     }
 
     /**
-     * Removes a callback previously added with [addOnHasEnabledCallbacksChangedCallback].
+     * Removes a previously registered **callback** for a given **owner**.
      *
-     * @param callback The callback to remove.
+     * @param owner The owner that registered the callback.
      */
-    fun removeOnHasEnabledCallbacksChangedCallback(callback: (Boolean) -> Unit) {
-        onHasEnabledCallbacksChangedCallbacks -= callback
+    fun removeOnHasEnabledCallbacksChangedCallback(owner: Any) {
+        onHasEnabledCallbacksChangedCallbacks -= owner
     }
 
     /**

@@ -243,7 +243,7 @@ private constructor(
         inputHandler: NavigationEventInputHandler,
         callback: (Boolean) -> Unit,
     ) {
-        sharedProcessor.addOnHasEnabledCallbacksChangedCallback(inputHandler, callback)
+        sharedProcessor.addOnHasEnabledCallbacksChangedCallback(owner = inputHandler, callback)
     }
 
     /**
@@ -313,6 +313,10 @@ private constructor(
 
         if (inputHandlers.add(inputHandler)) {
             inputHandler.doAttach(dispatcher = this)
+            sharedProcessor.addOnHasEnabledCallbacksChangedCallback(
+                owner = inputHandler,
+                callback = inputHandler::doHasEnabledCallbacksChanged,
+            )
         }
     }
 
@@ -331,6 +335,7 @@ private constructor(
 
         if (inputHandlers.remove(inputHandler)) {
             inputHandler.doDetach()
+            sharedProcessor.removeOnHasEnabledCallbacksChangedCallback(owner = inputHandler)
         }
     }
 
@@ -457,6 +462,7 @@ private constructor(
             // and preventing them from interacting with a disposed object.
             for (inputHandler in currentDispatcher.inputHandlers) {
                 inputHandler.doDetach()
+                sharedProcessor.removeOnHasEnabledCallbacksChangedCallback(owner = inputHandler)
             }
             inputHandlers.clear()
 
