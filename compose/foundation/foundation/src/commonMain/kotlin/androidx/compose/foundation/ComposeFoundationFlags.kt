@@ -55,15 +55,6 @@ import kotlin.jvm.JvmField
 @ExperimentalFoundationApi
 object ComposeFoundationFlags {
     /**
-     * Selecting flag to enable Drag Gesture "Pick-up" on drag gesture detectors. This also applies
-     * to Draggables and Scrollables which use gesture detectors as well. Any parent drag detector
-     * will continue to monitor the event stream until the gesture terminates (all pointers are
-     * lifted), if a child gives up an event, the parent gesture detector will "pick-up" and
-     * continue the gesture until all pointers are up.
-     */
-    @Suppress("MutableBareField") @JvmField var DragGesturePickUpEnabled = true
-
-    /**
      * Whether to use more immediate coroutine dispatching in [detectTapGestures] and
      * [detectTapAndPress], true by default.
      */
@@ -95,15 +86,6 @@ object ComposeFoundationFlags {
     @Suppress("MutableBareField") @JvmField var isPausableCompositionInPrefetchEnabled = false
 
     /**
-     * Selecting flag to enable the use of automatic nested prefetch. When this is enabled, nested
-     * prefetching using the default Prefetch Strategies
-     * [androidx.compose.foundation.lazy.LazyListPrefetchStrategy] and
-     * [androidx.compose.foundation.lazy.grid.LazyGridPrefetchStrategy] or Cache Window will be
-     * automatically defined by the number of visible items in the nested LazyLayout.
-     */
-    @Suppress("MutableBareField") @JvmField var isAutomaticNestedPrefetchEnabled = true
-
-    /**
      * Flag that enables an optimized implementation for the [clickable] overload without an
      * [Indication] parameter. This also applies to [combinedClickable],
      * [androidx.compose.foundation.selection.selectable], and
@@ -117,13 +99,6 @@ object ComposeFoundationFlags {
      * parameter - this flag can be disabled as a temporary migration aid.
      */
     @Suppress("MutableBareField") @JvmField var isNonComposedClickableEnabled = true
-
-    /**
-     * Enables Compose trigger for calling
-     * [androidx.compose.ui.node.DelegatableNode.dispatchOnScrollChanged] callbacks during scroll
-     * events.
-     */
-    @Suppress("MutableBareField") @JvmField var isOnScrollChangedCallbackEnabled: Boolean = true
 
     /**
      * With this flag on, any dragging movement is offset by the container position offset before it

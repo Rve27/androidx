@@ -23,7 +23,6 @@ import androidx.compose.animation.core.animateDecay
 import androidx.compose.animation.splineBasedDecay
 import androidx.compose.foundation.ComposeFoundationFlags
 import androidx.compose.foundation.ComposeFoundationFlags.isFlingContinuationAtBoundsEnabled
-import androidx.compose.foundation.ComposeFoundationFlags.isOnScrollChangedCallbackEnabled
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.FocusedBoundsObserverNode
 import androidx.compose.foundation.LocalOverscrollFactory
@@ -766,9 +765,7 @@ internal class ScrollingLogic(
             scrollBy(singleAxisDeltaForSelfScroll).toOffset().reverseIfNeeded()
 
         // Trigger on scroll changed callback
-        if (isOnScrollChangedCallbackEnabled) {
-            onScrollChangedDispatcher.dispatchScrollDeltaInfo(consumedBySelfScroll)
-        }
+        onScrollChangedDispatcher.dispatchScrollDeltaInfo(consumedBySelfScroll)
 
         val deltaAvailableAfterScroll = scrollAvailableAfterPreScroll - consumedBySelfScroll
         val consumedByPostScroll =
