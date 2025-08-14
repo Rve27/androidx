@@ -37,13 +37,13 @@ import androidx.xr.scenecore.ActivityPanelEntity
 import androidx.xr.scenecore.Component
 import androidx.xr.scenecore.Entity
 import androidx.xr.scenecore.GroupEntity
+import androidx.xr.scenecore.MainPanelEntity
 import androidx.xr.scenecore.PanelEntity
 import androidx.xr.scenecore.PointSourceParams
 import androidx.xr.scenecore.SurfaceEntity
 import androidx.xr.scenecore.scene
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-import kotlin.getValue
 import kotlin.math.PI
 import org.jetbrains.annotations.TestOnly
 
@@ -232,13 +232,18 @@ internal sealed class CoreBasePanelEntity(private val panelEntity: PanelEntity) 
      * If the width or height is zero or negative, the panel will be hidden. And the panel size will
      * be adjusted to 1 because the underlying implementation of the main panel entity does not
      * allow for zero or negative sizes.
+     *
+     * For the MainPanel, the [CoreBasePanelEntity] size and the [MainPanelEntity] size (SceneCore)
+     * may diverge. SceneCore uses the bounds from the WindowManager. Therefore unfortunately, it is
+     * impossible to unit test the case for this diverging behavior.
      */
     override var size: IntVolumeSize
         get() = super.size
         set(value) {
             if (super.size != value) {
                 super.size = value
-                panelEntity.sizeInPixels = IntSize2d(size.width, size.height)
+                panelEntity.sizeInPixels =
+                    IntSize2d(size.width.coerceAtLeast(1), size.height.coerceAtLeast(1))
                 shapeDensity?.let { updateShape(it) }
             }
 
