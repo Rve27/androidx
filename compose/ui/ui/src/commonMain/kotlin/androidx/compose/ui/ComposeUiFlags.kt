@@ -160,14 +160,6 @@ object ComposeUiFlags {
      */
     @Suppress("MutableBareField") @JvmField var isAdaptiveRefreshRateEnabled: Boolean = true
 
-    /**
-     * Flag for enabling the fix for correctly dispatching interop pointer events during the
-     * [PointerEventPass.Main] pass and not the final pass.
-     */
-    @Suppress("MutableBareField")
-    @JvmField
-    var isPointerInteropFilterDispatchingFixEnabled: Boolean = true
-
     /** Flag for enabling the fix for using the correct node for nested scroll operations. */
     @Suppress("MutableBareField")
     @JvmField
