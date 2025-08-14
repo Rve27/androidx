@@ -22,6 +22,7 @@ import android.os.Looper;
 
 import androidx.annotation.VisibleForTesting;
 import androidx.xr.runtime.internal.ActivitySpace;
+import androidx.xr.runtime.internal.CameraViewActivityPose;
 import androidx.xr.runtime.internal.Entity;
 import androidx.xr.runtime.internal.SceneRuntime;
 import androidx.xr.runtime.internal.Space;
@@ -41,7 +42,9 @@ import com.google.common.util.concurrent.ListenableFuture;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -81,6 +84,7 @@ class SpatialSceneRuntime implements SceneRuntime {
     private final Supplier<SpatialState> mLazySpatialStateProvider;
 
     private final ActivitySpaceImpl mActivitySpace;
+    private final List<CameraViewActivityPoseImpl> mCameraActivityPoses = new ArrayList<>();
 
     private SpatialSceneRuntime(
             @NonNull Activity activity,
@@ -125,6 +129,19 @@ class SpatialSceneRuntime implements SceneRuntime {
                         unscaledGravityAlignedActivitySpace,
                         executor);
         mEntityManager.addSystemSpaceActivityPose(mActivitySpace);
+        mCameraActivityPoses.add(
+                new CameraViewActivityPoseImpl(
+                        CameraViewActivityPose.CameraType.CAMERA_TYPE_LEFT_EYE,
+                        mActivitySpace,
+                        mActivitySpace,
+                        perceptionLibrary));
+        mCameraActivityPoses.add(
+                new CameraViewActivityPoseImpl(
+                        CameraViewActivityPose.CameraType.CAMERA_TYPE_RIGHT_EYE,
+                        mActivitySpace,
+                        mActivitySpace,
+                        perceptionLibrary));
+        mCameraActivityPoses.forEach(mEntityManager::addSystemSpaceActivityPose);
     }
 
     static @NonNull SpatialSceneRuntime create(
@@ -230,6 +247,23 @@ class SpatialSceneRuntime implements SceneRuntime {
     @Override
     public @NonNull ActivitySpace getActivitySpace() {
         return mActivitySpace;
+    }
+
+    @Override
+    public @Nullable CameraViewActivityPose getCameraViewActivityPose(
+            @CameraViewActivityPose.CameraType int cameraType) {
+        CameraViewActivityPoseImpl cameraViewActivityPose = null;
+        if (cameraType == CameraViewActivityPose.CameraType.CAMERA_TYPE_LEFT_EYE) {
+            cameraViewActivityPose = mCameraActivityPoses.get(0);
+        } else if (cameraType == CameraViewActivityPose.CameraType.CAMERA_TYPE_RIGHT_EYE) {
+            cameraViewActivityPose = mCameraActivityPoses.get(1);
+        }
+        // If it is unable to retrieve a pose the camera in not yet loaded in openXR so return null.
+        if (cameraViewActivityPose == null
+                || cameraViewActivityPose.getPoseInOpenXrReferenceSpace() == null) {
+            return null;
+        }
+        return cameraViewActivityPose;
     }
 
     @Override

@@ -42,6 +42,16 @@ public interface SceneRuntime {
     public val activitySpace: ActivitySpace
 
     /**
+     * Returns the CameraViewActivityPose for the specified camera type or null if it is not
+     * ready/available.
+     *
+     * @param cameraType The type of camera to retrieve the pose for.
+     */
+    public fun getCameraViewActivityPose(
+        @CameraViewActivityPose.CameraType cameraType: Int
+    ): CameraViewActivityPose?
+
+    /**
      * A factory function to create a group entity. This entity is used as a connection point for
      * attaching children entities and managing them (i.e. setPose()) as a group.
      *
