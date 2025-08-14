@@ -23,6 +23,8 @@ import androidx.xr.runtime.internal.Entity
 import androidx.xr.runtime.internal.SceneRuntime
 import androidx.xr.runtime.internal.SpatialCapabilities
 import androidx.xr.runtime.math.Pose
+import java.util.concurrent.Executor
+import java.util.function.Consumer
 
 /** Test-only implementation of [SceneRuntime] */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
@@ -32,6 +34,15 @@ public class FakeSceneRuntime(private val activity: Activity) : SceneRuntime {
     override val activitySpace: ActivitySpace = FakeActivitySpace()
 
     override fun createGroupEntity(pose: Pose, name: String, parent: Entity): Entity = FakeEntity()
+
+    override fun addSpatialCapabilitiesChangedListener(
+        callbackExecutor: Executor,
+        listener: Consumer<SpatialCapabilities>,
+    ) {}
+
+    override fun removeSpatialCapabilitiesChangedListener(
+        listener: Consumer<SpatialCapabilities>
+    ) {}
 
     override fun dispose() {}
 }

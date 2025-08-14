@@ -18,6 +18,8 @@ package androidx.xr.runtime.internal
 
 import androidx.annotation.RestrictTo
 import androidx.xr.runtime.math.Pose
+import java.util.concurrent.Executor
+import java.util.function.Consumer
 
 /**
  * Defines the contract for a platform-agnostic runtime that manages the scene graph and spatial
@@ -48,6 +50,28 @@ public interface SceneRuntime {
      * @param parent Parent entity.
      */
     public fun createGroupEntity(pose: Pose, name: String, parent: Entity): Entity
+
+    /**
+     * Adds the given {@link Consumer} as a listener to be invoked when this Session's current
+     * SpatialCapabilities change. {@link Consumer#accept(SpatialCapabilities)} will be invoked on
+     * the given Executor.
+     *
+     * @param callbackExecutor Executor on which the listener will be invoked.
+     * @param listener Listener to be invoked when the Session's SpatialCapabilities change.
+     */
+    @Suppress("ExecutorRegistration")
+    public fun addSpatialCapabilitiesChangedListener(
+        callbackExecutor: Executor,
+        listener: Consumer<SpatialCapabilities>,
+    )
+
+    /**
+     * Releases the given {@link Consumer} from receiving updates when the Session's {@link
+     * SpatialCapabilities} change.
+     *
+     * @param listener Listener to be removed from the list of listeners.
+     */
+    public fun removeSpatialCapabilitiesChangedListener(listener: Consumer<SpatialCapabilities>)
 
     /** Disposes of the resources used by this runtime */
     public fun dispose()
