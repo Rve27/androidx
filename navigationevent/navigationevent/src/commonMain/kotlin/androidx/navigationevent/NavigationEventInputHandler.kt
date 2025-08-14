@@ -79,7 +79,9 @@ public abstract class NavigationEventInputHandler() {
      *
      * @param hasEnabledCallbacks Whether the connected dispatcher has any enabled callbacks.
      */
-    @MainThread protected open fun onHasEnabledCallbacksChanged(hasEnabledCallbacks: Boolean) {}
+    @MainThread
+    @EmptySuper
+    protected open fun onHasEnabledCallbacksChanged(hasEnabledCallbacks: Boolean) {}
 
     /**
      * Call `dispatchOnStarted` on the connected dispatcher.

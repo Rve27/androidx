@@ -85,7 +85,7 @@ package androidx.navigationevent {
     method @MainThread protected final void dispatchOnStarted(androidx.navigationevent.NavigationEvent event);
     method @EmptySuper @MainThread protected void onAttach(androidx.navigationevent.NavigationEventDispatcher dispatcher);
     method @EmptySuper @MainThread protected void onDetach();
-    method @MainThread protected void onHasEnabledCallbacksChanged(boolean hasEnabledCallbacks);
+    method @EmptySuper @MainThread protected void onHasEnabledCallbacksChanged(boolean hasEnabledCallbacks);
   }
 
   @kotlin.jvm.JvmInline public final value class NavigationEventPriority {
