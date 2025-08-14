@@ -458,7 +458,7 @@ internal class CoreSphereSurfaceEntity(
                 )
             }
 
-    /** The parent of spheres is always scene.activitySpaceRoot. Setting this has no affect. */
+    /** The parent of spheres is always scene.activitySpace. Setting this has no affect. */
     override var parent: CoreEntity? = null
 
     /** Radius in meters. */
