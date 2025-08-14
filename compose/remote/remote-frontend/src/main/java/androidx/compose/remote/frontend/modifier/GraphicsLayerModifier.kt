@@ -235,21 +235,23 @@ fun RemoteModifier.graphicsLayer(
             ModulateAlpha -> 2
             else -> 0
         }
-    return GraphicsLayerModifier(
-        sX,
-        sY,
-        rX,
-        rY,
-        rZ,
-        sE,
-        tOX,
-        tOY,
-        tX,
-        tY,
-        shape,
-        cS,
-        tA,
-        tCD,
-        renderEffect,
+    return then(
+        GraphicsLayerModifier(
+            sX,
+            sY,
+            rX,
+            rY,
+            rZ,
+            sE,
+            tOX,
+            tOY,
+            tX,
+            tY,
+            shape,
+            cS,
+            tA,
+            tCD,
+            renderEffect,
+        )
     )
 }
