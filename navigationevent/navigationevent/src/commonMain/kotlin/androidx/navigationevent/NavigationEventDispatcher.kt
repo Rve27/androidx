@@ -232,21 +232,6 @@ private constructor(
     }
 
     /**
-     * Adds a callback that will be notified when the overall enabled state of registered callbacks
-     * changes.
-     *
-     * @param inputHandler The [NavigationEventInputHandler] registering the callback.
-     * @param callback The callback to invoke when the enabled state changes.
-     */
-    @Suppress("PairedRegistration") // No removal for now.
-    internal fun addOnHasEnabledCallbacksChangedCallback(
-        inputHandler: NavigationEventInputHandler,
-        callback: (Boolean) -> Unit,
-    ) {
-        sharedProcessor.addOnHasEnabledCallbacksChangedCallback(owner = inputHandler, callback)
-    }
-
-    /**
      * Returns `true` if there is at least one [NavigationEventCallback.isEnabled] callback
      * registered with this dispatcher.
      *

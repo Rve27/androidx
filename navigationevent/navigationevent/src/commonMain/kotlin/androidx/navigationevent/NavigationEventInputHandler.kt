@@ -38,9 +38,6 @@ public abstract class NavigationEventInputHandler() {
         }
         this.dispatcher = dispatcher
 
-        // TODO: remove once the dispatcher calls `onHasEnabledCallbacksChanged`.
-        dispatcher.addOnHasEnabledCallbacksChangedCallback(this, ::onHasEnabledCallbacksChanged)
-
         onAttach(dispatcher)
     }
 
