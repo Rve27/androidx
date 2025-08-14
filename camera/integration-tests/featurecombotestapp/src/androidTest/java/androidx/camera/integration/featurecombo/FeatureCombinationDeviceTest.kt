@@ -61,8 +61,7 @@ class FeatureCombinationDeviceTest(
         runBlocking {
             // Arrange: Bind with all features as preferred and store the selected ones.
             val useCases = useCasesToTest.toUseCases()
-            // TODO: b/437816469 - Remove the stabilization filter once issue is fixed
-            val features = allFeatures.filterNot { it == GroupableFeature.PREVIEW_STABILIZATION }
+            val features = allFeatures.toList()
             val selectedFeatures = bindAndVerifyFeatures(useCases, features)
 
             // Act & assert: Ensure query returns false for each of the unselected features added
@@ -104,8 +103,7 @@ class FeatureCombinationDeviceTest(
 
             // Arrange: Bind with all features preferred and store the selected ones + UHD recording
             val useCases = useCasesToTest.toUseCases().recordingQualityToUhd()
-            // TODO: b/437816469 - Remove the stabilization filter once issue is fixed
-            val features = allFeatures.filterNot { it == GroupableFeature.PREVIEW_STABILIZATION }
+            val features = allFeatures.toList()
             val selectedFeatures = bindAndVerifyFeatures(useCases, features)
 
             // Act & assert: Ensure query returns false for each of the unselected features added
