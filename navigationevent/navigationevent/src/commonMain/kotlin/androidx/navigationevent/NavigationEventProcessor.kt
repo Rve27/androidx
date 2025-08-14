@@ -83,18 +83,27 @@ internal class NavigationEventProcessor {
     private var inProgressCallback: NavigationEventCallback<*>? = null
 
     /**
-     * Tracks listeners for changes in the overall enabled state of callbacks across all
-     * dispatchers. This allows individual `NavigationEventDispatcher` instances to react when the
-     * global state changes.
+     * A central registry of all active [NavigationEventInputHandler] instances associated with this
+     * processor.
+     *
+     * This set is managed by the [NavigationEventDispatcher] and allows the processor to
+     * communicate global state changes—such as whether any callbacks are enabled—to all relevant
+     * input sources.
+     *
+     * It is not intended for direct public use and is exposed internally for the dispatcher.
      */
-    private val onHasEnabledCallbacksChangedCallbacks = mutableMapOf<Any, (Boolean) -> Unit>()
+    val inputs = mutableSetOf<NavigationEventInputHandler>()
 
     /**
      * Represents whether there is at least one enabled callback registered across all dispatchers.
      *
-     * This property is updated automatically when callbacks are added, removed, or their enabled
-     * state changes. Listeners registered via [addOnHasEnabledCallbacksChangedCallback] are
-     * notified of changes to this state.
+     * This property serves as a global flag that input handlers can observe to enable or disable
+     * system back gestures. For example, on Android, this would control `OnBackInvokedDispatcher.`
+     * `OnBackPressedDispatcher.setEnabled()`.
+     *
+     * It is updated automatically when callbacks are added, removed, or their enabled state
+     * changes. When its value changes, it notifies all registered [NavigationEventInputHandler]
+     * instances.
      */
     private var hasEnabledCallbacks: Boolean = false
         set(value) {
@@ -102,8 +111,8 @@ internal class NavigationEventProcessor {
             if (field == value) return
 
             field = value
-            for ((_, callback) in onHasEnabledCallbacksChangedCallbacks) {
-                callback.invoke(value)
+            for (input in inputs) {
+                input.doHasEnabledCallbacksChanged(hasEnabledCallbacks = value)
             }
         }
 
@@ -149,26 +158,6 @@ internal class NavigationEventProcessor {
                     )
             }
         }
-    }
-
-    /**
-     * Registers a **callback** to be notified when the overall enabled state of registered
-     * callbacks changes.
-     *
-     * @param owner The owner registering the callback.
-     * @param callback The callback to invoke when the enabled state changes.
-     */
-    fun addOnHasEnabledCallbacksChangedCallback(owner: Any, callback: (Boolean) -> Unit) {
-        onHasEnabledCallbacksChangedCallbacks[owner] = callback
-    }
-
-    /**
-     * Removes a previously registered **callback** for a given **owner**.
-     *
-     * @param owner The owner that registered the callback.
-     */
-    fun removeOnHasEnabledCallbacksChangedCallback(owner: Any) {
-        onHasEnabledCallbacksChangedCallbacks -= owner
     }
 
     /**

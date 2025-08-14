@@ -18,6 +18,7 @@ package androidx.navigationevent
 
 import androidx.kruth.assertThat
 import androidx.kruth.assertThrows
+import androidx.navigationevent.internal.TestNavigationEventInput
 import androidx.navigationevent.testing.TestNavigationEventCallback
 import kotlin.test.Test
 
@@ -422,5 +423,145 @@ class NavigationEventDispatcherTest {
         inputHandler.handleOnCompleted()
         // Invocations should increase again.
         assertThat(callback.completedInvocations).isEqualTo(2)
+    }
+
+    @Test
+    fun addInputHandler_whenAdded_onAttachIsCalled() {
+        val dispatcher = NavigationEventDispatcher()
+        val handler = TestNavigationEventInput()
+
+        dispatcher.addInputHandler(handler)
+
+        assertThat(handler.addedInvocations).isEqualTo(1)
+        assertThat(handler.currentDispatcher).isEqualTo(dispatcher)
+    }
+
+    @Test
+    fun addInputHandler_whenAddedTwice_onAttachIsCalledOnce() {
+        val dispatcher = NavigationEventDispatcher()
+        val handler = TestNavigationEventInput()
+
+        dispatcher.addInputHandler(handler)
+        dispatcher.addInputHandler(handler)
+
+        assertThat(handler.addedInvocations).isEqualTo(1)
+    }
+
+    @Test
+    fun removeInputHandler_whenRemoved_onDetachIsCalled() {
+        val dispatcher = NavigationEventDispatcher()
+        val handler = TestNavigationEventInput()
+        dispatcher.addInputHandler(handler)
+        assertThat(handler.addedInvocations).isEqualTo(1)
+
+        dispatcher.removeInputHandler(handler)
+
+        assertThat(handler.removedInvocations).isEqualTo(1)
+        assertThat(handler.currentDispatcher).isNull()
+    }
+
+    @Test
+    fun removeInputHandler_whenNotRegistered_onDetachIsNotCalled() {
+        val dispatcher = NavigationEventDispatcher()
+        val handler = TestNavigationEventInput()
+
+        // Try to remove a handler that was never added.
+        dispatcher.removeInputHandler(handler)
+
+        assertThat(handler.removedInvocations).isEqualTo(0)
+    }
+
+    @Test
+    fun dispose_detachesInputHandlers() {
+        val dispatcher = NavigationEventDispatcher()
+        val handler1 = TestNavigationEventInput()
+        val handler2 = TestNavigationEventInput()
+        dispatcher.addInputHandler(handler1)
+        dispatcher.addInputHandler(handler2)
+
+        dispatcher.dispose()
+
+        assertThat(handler1.removedInvocations).isEqualTo(1)
+        assertThat(handler2.removedInvocations).isEqualTo(1)
+        assertThat(handler1.currentDispatcher).isNull()
+        assertThat(handler2.currentDispatcher).isNull()
+    }
+
+    @Test
+    fun addInputHandler_onDisposedDispatcher_throwsException() {
+        val dispatcher = NavigationEventDispatcher()
+        dispatcher.dispose()
+
+        val handler = TestNavigationEventInput()
+        assertThrows<IllegalStateException> { dispatcher.addInputHandler(handler) }
+            .hasMessageThat()
+            .contains("This NavigationEventDispatcher has already been disposed")
+    }
+
+    @Test
+    fun removeInputHandler_onDisposedDispatcher_throwsException() {
+        val dispatcher = NavigationEventDispatcher()
+        dispatcher.dispose()
+
+        val handler = TestNavigationEventInput()
+        assertThrows<IllegalStateException> { dispatcher.removeInputHandler(handler) }
+            .hasMessageThat()
+            .contains("This NavigationEventDispatcher has already been disposed")
+    }
+
+    @Test
+    fun onHasEnabledCallbacksChanged_whenHandlerIsRegistered_callbackIsFired() {
+        val dispatcher = NavigationEventDispatcher()
+        val handler = TestNavigationEventInput()
+        dispatcher.addInputHandler(handler)
+
+        assertThat(handler.onHasEnabledCallbacksChangedInvocations).isEqualTo(0)
+
+        // Add a callback to trigger the onHasEnabledCallbacksChanged listener
+        val callback = TestNavigationEventCallback()
+        dispatcher.addCallback(callback)
+
+        assertThat(handler.onHasEnabledCallbacksChangedInvocations).isEqualTo(1)
+
+        // Disable the callback to trigger it again
+        callback.isEnabled = false
+        assertThat(handler.onHasEnabledCallbacksChangedInvocations).isEqualTo(2)
+    }
+
+    @Test
+    fun onHasEnabledCallbacksChanged_whenHandlerIsRemoved_callbackIsNotFired() {
+        val dispatcher = NavigationEventDispatcher()
+        val handler = TestNavigationEventInput()
+        dispatcher.addInputHandler(handler)
+
+        val callback1 = TestNavigationEventCallback()
+        dispatcher.addCallback(callback1)
+        assertThat(handler.onHasEnabledCallbacksChangedInvocations).isEqualTo(1)
+
+        dispatcher.removeInputHandler(handler)
+
+        // Add another callback; the removed handler should not be notified
+        val callback2 = TestNavigationEventCallback()
+        dispatcher.addCallback(callback2)
+        assertThat(handler.onHasEnabledCallbacksChangedInvocations).isEqualTo(1) // Unchanged
+    }
+
+    @Test
+    fun dispose_whenParentIsDisposed_detachesChildInputHandlers() {
+        val parentDispatcher = NavigationEventDispatcher()
+        val childDispatcher = NavigationEventDispatcher(parentDispatcher)
+
+        val parentHandler = TestNavigationEventInput()
+        val childHandler = TestNavigationEventInput()
+        parentDispatcher.addInputHandler(parentHandler)
+        childDispatcher.addInputHandler(childHandler)
+
+        // Disposing the parent should cascade to the child
+        parentDispatcher.dispose()
+
+        assertThat(parentHandler.removedInvocations).isEqualTo(1)
+        assertThat(childHandler.removedInvocations).isEqualTo(1)
+        assertThat(parentHandler.currentDispatcher).isNull()
+        assertThat(childHandler.currentDispatcher).isNull()
     }
 }

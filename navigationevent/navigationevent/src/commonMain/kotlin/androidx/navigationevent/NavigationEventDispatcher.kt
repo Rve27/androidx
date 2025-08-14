@@ -176,12 +176,13 @@ private constructor(
      * A set of [NavigationEventInputHandler] instances that are directly managed by this
      * dispatcher.
      *
-     * This dispatcher controls the lifecycle of its registered handlers, calling `onAttach` and
-     * `onDetach` as its own state changes.
+     * This dispatcher controls the lifecycle of its registered handlers, calling
+     * [NavigationEventInputHandler.doAttach] and [NavigationEventInputHandler.doDetach] as its own
+     * state changes.
      *
      * **This is primarily for cleanup when this dispatcher is no longer needed.**
      */
-    private val inputHandlers = mutableSetOf<NavigationEventInputHandler>()
+    private val inputs = mutableSetOf<NavigationEventInputHandler>()
 
     /**
      * The [StateFlow] from the highest-priority, enabled navigation callback.
@@ -283,46 +284,50 @@ private constructor(
     }
 
     /**
-     * Adds an input handler and binds it to this dispatcher's lifecycle.
+     * Adds an input handler, registering it with the shared processor and binding it to this
+     * dispatcher's lifecycle.
      *
-     * The handler is immediately attached via its `onAttach()` method. The dispatcher will then
-     * invoke `onEnabled()`, `onDisabled()`, and `onDispose()` on the handler to mirror its own
-     * state changes.
+     * The handler is registered globally with the [sharedProcessor] to receive system-wide state
+     * updates (e.g., whether any callbacks are enabled). It is also tracked locally by this
+     * dispatcher for lifecycle management.
+     *
+     * The handler's [NavigationEventInputHandler.onAttach] method is invoked immediately upon
+     * addition. It will be automatically detached when this dispatcher [dispose] is called.
      *
      * @param inputHandler The handler to add.
      * @throws IllegalStateException if the dispatcher has already been disposed.
      * @see removeInputHandler
+     * @see NavigationEventInputHandler.onDetach
      */
     @MainThread
     public fun addInputHandler(inputHandler: NavigationEventInputHandler) {
         checkInvariants()
 
-        if (inputHandlers.add(inputHandler)) {
+        if (inputs.add(inputHandler)) {
+            sharedProcessor.inputs += inputHandler
             inputHandler.doAttach(dispatcher = this)
-            sharedProcessor.addOnHasEnabledCallbacksChangedCallback(
-                owner = inputHandler,
-                callback = inputHandler::doHasEnabledCallbacksChanged,
-            )
         }
     }
 
     /**
-     * Removes and detaches an input handler from this dispatcher.
+     * Removes and detaches an input handler from this dispatcher and the shared processor.
      *
-     * This severs the lifecycle link. The handler's `onDetached()` method is invoked, and it will
-     * no longer receive events or lifecycle calls from this dispatcher.
+     * This severs the handler's lifecycle link to the dispatcher. Its
+     * [NavigationEventInputHandler.onDetach] method is invoked, and it will no longer receive
+     * lifecycle calls or global state updates from the processor.
      *
      * @param inputHandler The handler to remove.
      * @throws IllegalStateException if the dispatcher has already been disposed.
      * @see addInputHandler
+     * @see NavigationEventInputHandler.onAttach
      */
     @MainThread
     public fun removeInputHandler(inputHandler: NavigationEventInputHandler) {
         checkInvariants()
 
-        if (inputHandlers.remove(inputHandler)) {
+        if (inputs.remove(inputHandler)) {
+            sharedProcessor.inputs -= inputHandler
             inputHandler.doDetach()
-            sharedProcessor.removeOnHasEnabledCallbacksChangedCallback(owner = inputHandler)
         }
     }
 
@@ -417,10 +422,13 @@ private constructor(
      * Calling this method triggers a comprehensive, iterative cleanup:
      * 1. It iteratively processes and disposes of all child dispatchers and their descendants,
      *    ensuring a complete top-down cleanup of the entire sub-hierarchy without recursion.
-     * 2. It removes all [NavigationEventCallback] instances directly registered with *this
-     *    specific* dispatcher from the shared [NavigationEventProcessor], preventing memory leaks
-     *    and ensuring callbacks are no longer active.
-     * 3. Finally, it removes itself from its parent's list of children, if a parent exists.
+     * 2. For each dispatcher, it first detaches all registered [NavigationEventInputHandler]
+     *    instances by calling [NavigationEventInputHandler.onDetach]. This severs their lifecycle
+     *    link to the dispatcher and allows them to release any tied resources.
+     * 3. It then removes all [NavigationEventCallback] instances registered with that dispatcher
+     *    from the shared processor, preventing memory leaks.
+     * 4. Finally, it removes the dispatcher from its parent's list of children, fully dismantling
+     *    the hierarchy.
      *
      * @throws IllegalStateException if the dispatcher has already been disposed.
      */
@@ -447,11 +455,11 @@ private constructor(
             // Notify all registered input handlers that this dispatcher is being disposed.
             // This gives them a chance to clean up their own state, severing the lifecycle link
             // and preventing them from interacting with a disposed object.
-            for (inputHandler in currentDispatcher.inputHandlers) {
-                inputHandler.doDetach()
-                sharedProcessor.removeOnHasEnabledCallbacksChangedCallback(owner = inputHandler)
+            for (input in currentDispatcher.inputs) {
+                sharedProcessor.inputs -= input
+                input.doDetach()
             }
-            inputHandlers.clear()
+            inputs.clear()
 
             // Remove callbacks directly owned by the currentDispatcher from the shared processor.
             for (callback in currentDispatcher.callbacks) {
