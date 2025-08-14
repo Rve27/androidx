@@ -20,6 +20,7 @@ import android.graphics.Matrix
 import android.graphics.RectF
 import android.os.Build
 import android.os.Bundle
+import android.os.ParcelFileDescriptor
 import android.util.SparseArray
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -33,10 +34,7 @@ import androidx.annotation.RestrictTo
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.util.forEach
 import androidx.fragment.app.viewModels
-import androidx.ink.authoring.InProgressStrokeId
-import androidx.ink.authoring.InProgressStrokesFinishedListener
 import androidx.ink.authoring.InProgressStrokesView
-import androidx.ink.strokes.Stroke
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -57,9 +55,9 @@ import androidx.pdf.viewer.fragment.PdfViewerFragment
 import kotlinx.coroutines.launch
 
 /** A [PdfViewerFragment] that provide annotations capabilities using ink library. */
-@RestrictTo(RestrictTo.Scope.LIBRARY)
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 13)
-public open class EditablePdfViewerFragment : PdfViewerFragment, InProgressStrokesFinishedListener {
+public open class EditablePdfViewerFragment : PdfViewerFragment {
 
     public constructor() : super()
 
@@ -69,10 +67,21 @@ public open class EditablePdfViewerFragment : PdfViewerFragment, InProgressStrok
     private lateinit var annotationView: AnnotationsView
     private lateinit var backPressedCallback: OnBackPressedCallback
     private lateinit var onViewportChangedListener: PdfView.OnViewportChangedListener
+    private lateinit var wetStrokesOnFinishedListener: WetStrokesOnFinishedListener
 
     private val annotationsViewModel: EditableDocumentViewModel by viewModels()
     private var strokeProcessor: StrokeProcessor? = null
     private var pageTransformCalculator: PageTransformCalculator = PageTransformCalculator()
+
+    /**
+     * Writes the current state of the document, including any edits, to the given destination.
+     *
+     * @param dest The [ParcelFileDescriptor] to write the document to.
+     * @param onCompletion A callback function to be invoked when the write operation is complete.
+     */
+    public fun writeTo(dest: ParcelFileDescriptor, onCompletion: () -> Unit) {
+        annotationsViewModel.saveEdits(dest, onCompletion)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -166,8 +175,15 @@ public open class EditablePdfViewerFragment : PdfViewerFragment, InProgressStrok
     private fun setupTouchListeners() {
         toolboxView.setOnEditClickListener { annotationsViewModel.isEditModeEnabled = true }
 
+        wetStrokesOnFinishedListener =
+            WetStrokesOnFinishedListener(
+                wetStrokesView = wetStrokesView,
+                strokeProcessor = strokeProcessor,
+                pdfViewZoomProvider = { pdfView.zoom },
+                annotationsViewModel = annotationsViewModel,
+            )
         wetStrokesView.apply {
-            addFinishedStrokesListener(this@EditablePdfViewerFragment)
+            addFinishedStrokesListener(wetStrokesOnFinishedListener)
             setOnTouchListener(WetStrokesViewTouchHandler(this, ::getPageBoundsFromViewCoordinates))
         }
 
@@ -217,17 +233,6 @@ public open class EditablePdfViewerFragment : PdfViewerFragment, InProgressStrok
             edits.getEditsForPage(pageNum).map { it.edit }.filterIsInstance<PdfAnnotation>()
         val transformMatrix = transformationMatrices[pageNum] ?: Matrix()
         return PageAnnotationsData(annotationsForPage, transformMatrix)
-    }
-
-    override fun onStrokesFinished(strokes: Map<InProgressStrokeId, Stroke>) {
-        super.onStrokesFinished(strokes)
-        wetStrokesView.removeFinishedStrokes(strokes.keys)
-
-        strokes.values.forEach { stroke ->
-            strokeProcessor?.process(stroke, pdfView.zoom)?.let { annotation ->
-                annotationsViewModel.addDraftAnnotation(annotation)
-            }
-        }
     }
 
     private fun attachOnViewportChangedListener() {

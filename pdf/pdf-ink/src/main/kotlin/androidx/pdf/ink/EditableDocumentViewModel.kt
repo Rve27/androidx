@@ -18,6 +18,7 @@ package androidx.pdf.ink
 
 import android.graphics.Matrix
 import android.net.Uri
+import android.os.ParcelFileDescriptor
 import androidx.annotation.RestrictTo
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.SavedStateHandle
@@ -117,6 +118,23 @@ internal class EditableDocumentViewModel(private val state: SavedStateHandle) : 
             _annotationDisplayStateFlow.update { displayState ->
                 displayState.copy(edits = document.getAllEdits())
             }
+        }
+    }
+
+    /** Saves the draft annotations to the PDF document. */
+    fun saveEdits(dest: ParcelFileDescriptor, onCompletion: () -> Unit) {
+        val document = editablePdfDocument ?: return
+
+        val annotations =
+            document
+                .getAllEdits()
+                .editsByPage
+                .flatMap { it.value }
+                .filterIsInstance<PdfAnnotationData>()
+        viewModelScope.launch {
+            document.applyEdits(annotations)
+            document.write(dest)
+            onCompletion()
         }
     }
 
