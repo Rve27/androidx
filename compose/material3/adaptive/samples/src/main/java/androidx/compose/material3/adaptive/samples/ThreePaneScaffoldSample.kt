@@ -204,6 +204,61 @@ fun ListDetailPaneScaffoldSampleWithExtraPane() {
 @Preview
 @Sampled
 @Composable
+fun ListDetailPaneScaffoldSampleWithExtraPaneLevitatedAsDialog() {
+    val coroutineScope = rememberCoroutineScope()
+    val scaffoldNavigator = levitateAsDialogSample<NavItemData>()
+    val items = listOf("Item 1", "Item 2", "Item 3")
+    val extraItems = listOf("Extra 1", "Extra 2", "Extra 3")
+    val selectedItem = scaffoldNavigator.currentDestination?.contentKey
+
+    ListDetailPaneScaffold(
+        directive = scaffoldNavigator.scaffoldDirective,
+        scaffoldState = scaffoldNavigator.scaffoldState,
+        listPane = {
+            AnimatedPane(modifier = Modifier.preferredWidth(200.dp)) {
+                ListPaneContent(
+                    items = items,
+                    selectedItem = selectedItem,
+                    scaffoldNavigator = scaffoldNavigator,
+                    coroutineScope = coroutineScope,
+                )
+            }
+        },
+        detailPane = {
+            AnimatedPane {
+                DetailPaneContent(
+                    items = items,
+                    selectedItem = selectedItem,
+                    scaffoldNavigator = scaffoldNavigator,
+                    hasExtraPane = true,
+                    coroutineScope = coroutineScope,
+                )
+            }
+        },
+        extraPane = {
+            AnimatedPane {
+                ExtraPaneContent(
+                    extraItems = extraItems,
+                    selectedItem = selectedItem,
+                    scaffoldNavigator = scaffoldNavigator,
+                    coroutineScope = coroutineScope,
+                )
+            }
+        },
+        paneExpansionState =
+            rememberPaneExpansionState(
+                keyProvider = scaffoldNavigator.scaffoldValue,
+                anchors = PaneExpansionAnchors,
+                initialAnchoredIndex = 1,
+            ),
+        paneExpansionDragHandle = { state -> PaneExpansionDragHandleSample(state) },
+    )
+}
+
+@OptIn(ExperimentalMaterial3AdaptiveApi::class)
+@Preview
+@Sampled
+@Composable
 fun SupportingPaneScaffoldSample() {
     val coroutineScope = rememberCoroutineScope()
     val scaffoldNavigator = rememberSupportingPaneScaffoldNavigator<NavItemData>()
@@ -254,7 +309,7 @@ fun SupportingPaneScaffoldSample() {
  * 2. The use of [androidx.compose.material3.adaptive.layout.PaneScaffoldScope.dragToResize] with
  *    [DockedEdge.Bottom] so that the levitated extra pane can be resized by dragging.
  *
- * @see levitateAdaptStrategySample for more usage samples of [AdaptStrategy.Levitate].
+ * @see levitateAsDialogSample for more usage samples of [AdaptStrategy.Levitate].
  */
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Preview
@@ -262,17 +317,7 @@ fun SupportingPaneScaffoldSample() {
 @Composable
 fun SupportingPaneScaffoldSampleWithExtraPaneLevitatedAsBottomSheet() {
     val coroutineScope = rememberCoroutineScope()
-    val scaffoldDirective = calculatePaneScaffoldDirective(currentWindowAdaptiveInfo())
-    val scaffoldNavigator =
-        rememberSupportingPaneScaffoldNavigator<NavItemData>(
-            scaffoldDirective = scaffoldDirective,
-            adaptStrategies =
-                SupportingPaneScaffoldDefaults.adaptStrategies(
-                    extraPaneAdaptStrategy =
-                        AdaptStrategy.Levitate(alignment = Alignment.BottomCenter)
-                            .onlyIfSinglePane(scaffoldDirective)
-                ),
-        )
+    val scaffoldNavigator = levitateAsBottomSheetSample<NavItemData>()
     val extraItems = listOf("Extra content")
     val selectedItem = NavItemData(index = 0, showExtra = true)
 
@@ -385,14 +430,14 @@ fun <T> reflowAdaptStrategySample(): ThreePaneScaffoldNavigator<T> =
 
 /**
  * This sample shows how to create a [ThreePaneScaffoldNavigator] that will show the extra pane as a
- * modal dialog in a single pane layout when the extra pane is the current destination. The dialog
- * will be centered in the scaffold, with a scrim that clicking on it will dismiss the dialog.
+ * modal dialog when the extra pane is the current destination. The dialog will be centered in the
+ * scaffold, with a scrim that clicking on it will dismiss the dialog.
  */
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Preview
 @Sampled
 @Composable
-fun <T> levitateAdaptStrategySample(): ThreePaneScaffoldNavigator<T> {
+fun <T> levitateAsDialogSample(): ThreePaneScaffoldNavigator<T> {
     val coroutineScope = rememberCoroutineScope()
     val scaffoldDirective = calculatePaneScaffoldDirective(currentWindowAdaptiveInfo())
     var navigator: ThreePaneScaffoldNavigator<T>? = null
@@ -411,6 +456,35 @@ fun <T> levitateAdaptStrategySample(): ThreePaneScaffoldNavigator<T> {
                                         }
                                     ),
                             )
+                            .onlyIfSinglePane(scaffoldDirective)
+                ),
+        )
+    return navigator
+}
+
+/**
+ * This sample shows how to create a [ThreePaneScaffoldNavigator] that will show the extra pane as a
+ * bottom sheet in a single pane layout when the extra pane is the current destination.
+ *
+ * Note that besides the navigator, you also need to apply
+ * [androidx.compose.material3.adaptive.layout.PaneScaffoldScope.dragToResize] on the extra pane to
+ * make it be resizable by dragging. See
+ * [SupportingPaneScaffoldSampleWithExtraPaneLevitatedAsBottomSheet] for more info.
+ */
+@OptIn(ExperimentalMaterial3AdaptiveApi::class)
+@Preview
+@Sampled
+@Composable
+fun <T> levitateAsBottomSheetSample(): ThreePaneScaffoldNavigator<T> {
+    val scaffoldDirective = calculatePaneScaffoldDirective(currentWindowAdaptiveInfo())
+    var navigator: ThreePaneScaffoldNavigator<T>? = null
+    navigator =
+        rememberSupportingPaneScaffoldNavigator<T>(
+            scaffoldDirective = scaffoldDirective,
+            adaptStrategies =
+                SupportingPaneScaffoldDefaults.adaptStrategies(
+                    extraPaneAdaptStrategy =
+                        AdaptStrategy.Levitate(alignment = Alignment.BottomCenter)
                             .onlyIfSinglePane(scaffoldDirective)
                 ),
         )
