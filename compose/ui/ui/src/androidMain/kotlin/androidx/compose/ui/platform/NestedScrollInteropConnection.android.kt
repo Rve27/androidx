@@ -22,7 +22,6 @@ import android.view.View
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.ComposeUiFlags.isNestedScrollInteropIntegerPropagationEnabled
-import androidx.compose.ui.ComposeUiFlags.isNestedScrollInteropPostFlingFixEnabled
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
@@ -148,117 +147,6 @@ internal class NestedScrollInteropConnection(
     }
 
     private fun stopNestedScrolls() {
-        if (nestedScrollChildHelper.hasNestedScrollingParent(TYPE_TOUCH)) {
-            nestedScrollChildHelper.stopNestedScroll(TYPE_TOUCH)
-        }
-
-        if (nestedScrollChildHelper.hasNestedScrollingParent(TYPE_NON_TOUCH)) {
-            nestedScrollChildHelper.stopNestedScroll(TYPE_NON_TOUCH)
-        }
-    }
-}
-
-internal class LegacyNestedScrollInteropConnection(private val view: View) :
-    NestedScrollConnection {
-
-    private val nestedScrollChildHelper =
-        NestedScrollingChildHelper(view).apply { isNestedScrollingEnabled = true }
-
-    private val consumedScrollCache = IntArray(2)
-
-    init {
-        // Enables nested scrolling for the root view [AndroidComposeView].
-        // Like in Compose, nested scrolling is a default implementation
-        ViewCompat.setNestedScrollingEnabled(view, true)
-    }
-
-    override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
-        // Using the return of startNestedScroll to determine if nested scrolling will happen.
-        if (nestedScrollChildHelper.startNestedScroll(available.scrollAxes, source.toViewType())) {
-            // reuse
-            consumedScrollCache.fill(0)
-            val dx = composeToViewOffset(available.x)
-            val dy = composeToViewOffset(available.y)
-            nestedScrollChildHelper.dispatchNestedPreScroll(
-                dx,
-                dy,
-                consumedScrollCache,
-                null,
-                source.toViewType(),
-            )
-
-            return toOffset(dx, dy, consumedScrollCache, available)
-        }
-
-        return Offset.Zero
-    }
-
-    override fun onPostScroll(
-        consumed: Offset,
-        available: Offset,
-        source: NestedScrollSource,
-    ): Offset {
-        // Using the return of startNestedScroll to determine if nested scrolling will happen.
-        if (nestedScrollChildHelper.startNestedScroll(available.scrollAxes, source.toViewType())) {
-            consumedScrollCache.fill(0)
-
-            val dx = composeToViewOffset(available.x)
-            val dy = composeToViewOffset(available.y)
-
-            nestedScrollChildHelper.dispatchNestedScroll(
-                composeToViewOffset(consumed.x),
-                composeToViewOffset(consumed.y),
-                dx,
-                dy,
-                null,
-                source.toViewType(),
-                consumedScrollCache,
-            )
-
-            return toOffset(dx, dy, consumedScrollCache, available)
-        }
-
-        return Offset.Zero
-    }
-
-    override suspend fun onPreFling(available: Velocity): Velocity {
-        val result =
-            if (
-                nestedScrollChildHelper.dispatchNestedPreFling(
-                    available.x.toViewVelocity(),
-                    available.y.toViewVelocity(),
-                )
-            ) {
-                available
-            } else {
-                Velocity.Zero
-            }
-
-        interruptOngoingScrolls()
-
-        return result
-    }
-
-    override suspend fun onPostFling(consumed: Velocity, available: Velocity): Velocity {
-        val result =
-            if (
-                nestedScrollChildHelper.dispatchNestedFling(
-                    available.x.toViewVelocity(),
-                    available.y.toViewVelocity(),
-                    true,
-                )
-            ) {
-                available
-            } else {
-                Velocity.Zero
-            }
-
-        interruptOngoingScrolls()
-
-        return result
-    }
-
-    private fun interruptOngoingScrolls() {
         if (nestedScrollChildHelper.hasNestedScrollingParent(TYPE_TOUCH)) {
             nestedScrollChildHelper.stopNestedScroll(TYPE_TOUCH)
         }
@@ -397,10 +285,6 @@ fun rememberNestedScrollInteropConnection(
 ): NestedScrollConnection {
     val viewConfiguration = LocalViewConfiguration.current
     return remember(hostView, viewConfiguration) {
-        if (isNestedScrollInteropPostFlingFixEnabled) {
-            NestedScrollInteropConnection(hostView, viewConfiguration.minimumFlingVelocity)
-        } else {
-            LegacyNestedScrollInteropConnection(hostView)
-        }
+        NestedScrollInteropConnection(hostView, viewConfiguration.minimumFlingVelocity)
     }
 }
