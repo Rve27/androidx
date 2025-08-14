@@ -98,9 +98,6 @@ import androidx.camera.video.internal.audio.AudioSettings;
 import androidx.camera.video.internal.audio.AudioSource;
 import androidx.camera.video.internal.audio.AudioSourceAccessException;
 import androidx.camera.video.internal.compat.Api26Impl;
-import androidx.camera.video.internal.compat.quirk.DeactivateEncoderSurfaceBeforeStopEncoderQuirk;
-import androidx.camera.video.internal.compat.quirk.DeviceQuirks;
-import androidx.camera.video.internal.compat.quirk.EncoderNotUsePersistentInputSurfaceQuirk;
 import androidx.camera.video.internal.config.AudioMimeInfo;
 import androidx.camera.video.internal.config.VideoMimeInfo;
 import androidx.camera.video.internal.encoder.AudioEncoderConfig;
@@ -408,8 +405,6 @@ public final class Recorder implements VideoOutput {
     private final EncoderFactory mAudioEncoderFactory;
     private final OutputStorage.Factory mOutputStorageFactory;
     private final Object mLock = new Object();
-    private final boolean mEncoderNotUsePersistentInputSurface = DeviceQuirks.get(
-            EncoderNotUsePersistentInputSurfaceQuirk.class) != null;
     private final @VideoCapabilitiesSource int mVideoCapabilitiesSource;
     private final long mRequiredFreeStorageBytes;
     private final MutableStateObservable<Range<Integer>> mVideoEncoderBitrateRange =
@@ -1464,11 +1459,8 @@ public final class Recorder implements VideoOutput {
                     throw new AssertionError(
                             "Incorrectly invoke onConfigured() in state " + mState);
                 case STOPPING:
-                    if (!mEncoderNotUsePersistentInputSurface) {
-                        throw new AssertionError("Unexpectedly invoke onConfigured() in a "
-                                + "STOPPING state when it's not waiting for a new surface.");
-                    }
-                    break;
+                    throw new AssertionError("Unexpectedly invoke onConfigured() in a "
+                            + "STOPPING state when it's not waiting for a new surface.");
                 case PAUSED:
                     recordingPaused = true;
                     // Fall-through
@@ -2339,20 +2331,12 @@ public final class Recorder implements VideoOutput {
                 // In both cases, we set a timeout to ensure the source is always signalled on
                 // devices that require it and to act as a flag that we need to signal the source
                 // stopped.
-                Encoder finalVideoEncoder = mVideoEncoder;
-                mSourceNonStreamingTimeout = scheduleTask(() -> {
+                mSourceNonStreamingTimeout = scheduleTask(() ->
                     Logger.d(TAG, "The source didn't become non-streaming "
                             + "before timeout. Waited " + SOURCE_NON_STREAMING_TIMEOUT_MS
-                            + "ms");
-                    if (DeviceQuirks.get(
-                            DeactivateEncoderSurfaceBeforeStopEncoderQuirk.class)
-                            != null) {
-                        // Even in the case of timeout, we tell the encoder the source has
-                        // stopped because devices with this quirk require that the codec
-                        // produce a new surface.
-                        notifyEncoderSourceStopped(finalVideoEncoder);
-                    }
-                }, mSequentialExecutor, SOURCE_NON_STREAMING_TIMEOUT_MS, TimeUnit.MILLISECONDS);
+                            + "ms"),
+                        mSequentialExecutor, SOURCE_NON_STREAMING_TIMEOUT_MS,
+                        TimeUnit.MILLISECONDS);
             } else {
                 // Source is already non-streaming. Signal source is stopped right away.
                 notifyEncoderSourceStopped(mVideoEncoder);
@@ -2510,10 +2494,7 @@ public final class Recorder implements VideoOutput {
     }
 
     private @NonNull StreamState internalStateToStreamState(@NonNull State state) {
-        // Stopping state should be treated as inactive on certain chipsets. See b/196039619.
-        DeactivateEncoderSurfaceBeforeStopEncoderQuirk quirk =
-                DeviceQuirks.get(DeactivateEncoderSurfaceBeforeStopEncoderQuirk.class);
-        return state == State.RECORDING || (state == State.STOPPING && quirk == null)
+        return state == State.RECORDING || state == State.STOPPING
                 ? StreamState.ACTIVE : StreamState.INACTIVE;
     }
 
@@ -2625,7 +2606,6 @@ public final class Recorder implements VideoOutput {
     private void onRecordingFinalized(@NonNull RecordingRecord finalizedRecording) {
         boolean needsReset = false;
         boolean startRecordingPaused = false;
-        boolean needsConfigure = false;
         RecordingRecord recordingToStart = null;
         RecordingRecord pendingRecordingToFinalize = null;
         @VideoRecordError int error = ERROR_NONE;
@@ -2649,19 +2629,7 @@ public final class Recorder implements VideoOutput {
                     // likely finalized due to an error.
                     // Fall-through
                 case STOPPING:
-                    if (mEncoderNotUsePersistentInputSurface) {
-                        // If the encoder doesn't use persistent input surface, the active
-                        // surface will become invalid after a recording is finalized. If there's
-                        // an unserviced surface request, configure with it directly, otherwise
-                        // wait for a new surface update.
-                        mActiveSurface = null;
-                        if (mLatestSurfaceRequest != null && !mLatestSurfaceRequest.isServiced()) {
-                            needsConfigure = true;
-                        }
-                        setState(State.CONFIGURING);
-                    } else {
-                        setState(State.IDLING);
-                    }
+                    setState(State.IDLING);
                     break;
                 case PENDING_PAUSED:
                     startRecordingPaused = true;
@@ -2673,16 +2641,6 @@ public final class Recorder implements VideoOutput {
                         setState(State.CONFIGURING);
                         error = ERROR_SOURCE_INACTIVE;
                         errorCause = PENDING_RECORDING_ERROR_CAUSE_SOURCE_INACTIVE;
-                    } else if (mEncoderNotUsePersistentInputSurface) {
-                        // If the encoder doesn't use persistent input surface, the active
-                        // surface will become invalid after a recording is finalized. If there's
-                        // an unserviced surface request, configure with it directly, otherwise
-                        // wait for a new surface update.
-                        mActiveSurface = null;
-                        if (mLatestSurfaceRequest != null && !mLatestSurfaceRequest.isServiced()) {
-                            needsConfigure = true;
-                        }
-                        updateNonPendingState(State.CONFIGURING);
                     } else if (mVideoEncoder != null) {
                         // If there's no VideoEncoder, it may need to wait for the new
                         // VideoEncoder to be configured.
@@ -2703,17 +2661,9 @@ public final class Recorder implements VideoOutput {
         }
 
         // Perform required actions from state changes inline on sequential executor but unlocked.
-        if (needsConfigure) {
-            configureInternal(mLatestSurfaceRequest, mVideoSourceTimebase, false);
-        } else if (needsReset) {
+        if (needsReset) {
             reset();
         } else if (recordingToStart != null) {
-            // A pending recording will only be started if we're not waiting for a new surface.
-            // Otherwise the recording will be started after receiving a new surface request.
-            if (mEncoderNotUsePersistentInputSurface) {
-                throw new AssertionError("Attempt to start a pending recording while the Recorder"
-                        + " is waiting for a new surface request.");
-            }
             startRecording(recordingToStart, startRecordingPaused);
         } else if (pendingRecordingToFinalize != null) {
             finalizePendingRecording(pendingRecordingToFinalize, error, errorCause);

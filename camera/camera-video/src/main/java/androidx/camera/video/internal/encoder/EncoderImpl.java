@@ -45,7 +45,6 @@ import android.util.Rational;
 import android.view.Surface;
 
 import androidx.annotation.GuardedBy;
-import androidx.annotation.RequiresApi;
 import androidx.annotation.VisibleForTesting;
 import androidx.arch.core.util.Function;
 import androidx.camera.core.Logger;
@@ -59,7 +58,6 @@ import androidx.camera.video.internal.compat.quirk.AudioEncoderIgnoresInputTimes
 import androidx.camera.video.internal.compat.quirk.CameraUseInconsistentTimebaseQuirk;
 import androidx.camera.video.internal.compat.quirk.CodecStuckOnFlushQuirk;
 import androidx.camera.video.internal.compat.quirk.DeviceQuirks;
-import androidx.camera.video.internal.compat.quirk.EncoderNotUsePersistentInputSurfaceQuirk;
 import androidx.camera.video.internal.compat.quirk.GLProcessingStuckOnCodecFlushQuirk;
 import androidx.camera.video.internal.compat.quirk.PrematureEndOfStreamVideoQuirk;
 import androidx.camera.video.internal.compat.quirk.PreviewFreezeAfterHighSpeedRecordingQuirk;
@@ -1650,9 +1648,6 @@ public class EncoderImpl implements Encoder {
         private Surface mSurface;
 
         @GuardedBy("mLock")
-        private final Set<Surface> mObsoleteSurfaces = new HashSet<>();
-
-        @GuardedBy("mLock")
         private OnSurfaceUpdateListener mSurfaceUpdateListener;
 
         @GuardedBy("mLock")
@@ -1683,24 +1678,14 @@ public class EncoderImpl implements Encoder {
             Surface surface;
             Executor executor;
             OnSurfaceUpdateListener listener;
-            EncoderNotUsePersistentInputSurfaceQuirk quirk = DeviceQuirks.get(
-                    EncoderNotUsePersistentInputSurfaceQuirk.class);
             synchronized (mLock) {
-                if (quirk == null) {
-                    if (mSurface == null) {
-                        mSurface = Api23Impl.createPersistentInputSurface();
-                        surface = mSurface;
-                    } else {
-                        surface = null;
-                    }
-                    Api23Impl.setInputSurface(mMediaCodec, mSurface);
-                } else {
-                    if (mSurface != null) {
-                        mObsoleteSurfaces.add(mSurface);
-                    }
-                    mSurface = mMediaCodec.createInputSurface();
+                if (mSurface == null) {
+                    mSurface = MediaCodec.createPersistentInputSurface();
                     surface = mSurface;
+                } else {
+                    surface = null;
                 }
+                mMediaCodec.setInputSurface(mSurface);
                 listener = mSurfaceUpdateListener;
                 executor = mSurfaceUpdateExecutor;
             }
@@ -1711,18 +1696,12 @@ public class EncoderImpl implements Encoder {
 
         void releaseSurface() {
             Surface surface;
-            Set<Surface> obsoleteSurfaces;
             synchronized (mLock) {
                 surface = mSurface;
                 mSurface = null;
-                obsoleteSurfaces = new HashSet<>(mObsoleteSurfaces);
-                mObsoleteSurfaces.clear();
             }
             if (surface != null) {
                 surface.release();
-            }
-            for (Surface obsoleteSurface : obsoleteSurfaces) {
-                obsoleteSurface.release();
             }
         }
 
@@ -1838,24 +1817,6 @@ public class EncoderImpl implements Encoder {
                     Logger.e(mTag, "Unable to post to the supplied executor.", e);
                 }
             }
-        }
-    }
-
-    /**
-     * Nested class to avoid verification errors for methods introduced in Android 6.0 (API 23).
-     */
-    @RequiresApi(23)
-    private static class Api23Impl {
-
-        private Api23Impl() {
-        }
-
-        static @NonNull Surface createPersistentInputSurface() {
-            return MediaCodec.createPersistentInputSurface();
-        }
-
-        static void setInputSurface(@NonNull MediaCodec mediaCodec, @NonNull Surface surface) {
-            mediaCodec.setInputSurface(surface);
         }
     }
 }

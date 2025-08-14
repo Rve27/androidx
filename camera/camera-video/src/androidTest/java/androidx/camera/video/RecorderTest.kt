@@ -31,7 +31,6 @@ import android.location.Location
 import android.media.MediaMetadataRetriever
 import android.media.MediaRecorder
 import android.net.Uri
-import android.os.Build
 import android.os.ParcelFileDescriptor
 import android.provider.MediaStore
 import android.util.Size
@@ -88,9 +87,7 @@ import androidx.camera.video.VideoRecordEvent.Finalize.ERROR_SOURCE_INACTIVE
 import androidx.camera.video.VideoRecordEvent.Pause
 import androidx.camera.video.VideoRecordEvent.Resume
 import androidx.camera.video.internal.OutputStorage
-import androidx.camera.video.internal.compat.quirk.DeactivateEncoderSurfaceBeforeStopEncoderQuirk
 import androidx.camera.video.internal.compat.quirk.DeviceQuirks
-import androidx.camera.video.internal.compat.quirk.EncoderNotUsePersistentInputSurfaceQuirk
 import androidx.camera.video.internal.compat.quirk.ExtraSupportedResolutionQuirk
 import androidx.camera.video.internal.compat.quirk.MediaStoreVideoCannotWrite
 import androidx.camera.video.internal.encoder.EncoderFactory
@@ -290,9 +287,6 @@ class RecorderTest(private val implName: String, private val cameraConfig: Camer
                     recorder = createRecorder(),
                     outputOptionsProvider = { createFileOutputOptions() },
                     withAudio = true,
-                    recordingStopStrategy = { recording, recorder ->
-                        recording.stopSafely(recorder)
-                    },
                 )
             )
     }
@@ -1076,10 +1070,6 @@ class RecorderTest(private val implName: String, private val cameraConfig: Camer
 
     @Test
     fun insufficientStorageOnNextRecordingStarts_shouldFailWithInsufficientStorageError() {
-        assumeTrue(
-            "RecorderTest can't support second recording when using non persistent input surface",
-            DeviceQuirks.get(EncoderNotUsePersistentInputSurfaceQuirk::class.java) == null,
-        )
         // Arrange.
         var storageAvailableBytes = 100L * 1024L * 1024L // 100MB
         // Required size is less than storage size.
@@ -1439,21 +1429,6 @@ class RecorderTest(private val implName: String, private val cameraConfig: Camer
             } else {
                 Recorder.DEFAULT_ENCODER_FACTORY.createEncoder(executor, config, sessionType)
             }
-        }
-    }
-
-    // It fails on devices with certain chipset if the codec is stopped when the camera is still
-    // producing frames to the provided surface. This method first stop the camera from
-    // producing frames then stops the recording safely on the problematic devices.
-    private fun Recording.stopSafely(recorder: Recorder) {
-        val deactivateSurfaceBeforeStop =
-            DeviceQuirks.get(DeactivateEncoderSurfaceBeforeStopEncoderQuirk::class.java) != null
-        if (deactivateSurfaceBeforeStop) {
-            instrumentation.runOnMainSync { preview.surfaceProvider = null }
-        }
-        stop()
-        if (deactivateSurfaceBeforeStop && Build.VERSION.SDK_INT >= 23) {
-            recorder.sendSurfaceRequest()
         }
     }
 
