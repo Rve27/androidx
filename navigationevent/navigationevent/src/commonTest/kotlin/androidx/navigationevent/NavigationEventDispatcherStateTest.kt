@@ -36,8 +36,7 @@ class NavigationEventDispatcherStateTest {
 
     private val dispatcherOwner = TestNavigationEventDispatcherOwner()
     private val dispatcher = dispatcherOwner.navigationEventDispatcher
-    private val inputHandler =
-        DirectNavigationEventInputHandler().also { dispatcher.addInputHandler(it) }
+    private val input = DirectNavigationEventInput().also { dispatcher.addInput(it) }
 
     @Test
     fun state_whenMultipleCallbacksAreAdded_thenReflectsInfoFromLastAddedCallback() = runTest {
@@ -99,19 +98,19 @@ class NavigationEventDispatcherStateTest {
         assertThat(dispatcher.state.value).isEqualTo(Idle(callbackInfo))
 
         // Starting a gesture should move the state to InProgress with the start event.
-        inputHandler.handleOnStarted(startEvent)
+        input.handleOnStarted(startEvent)
         var state = dispatcher.state.value as InProgress
         assertThat(state.currentInfo).isEqualTo(callbackInfo)
         assertThat(state.previousInfo).isNull()
         assertThat(state.latestEvent).isEqualTo(startEvent)
 
         // Progressing the gesture should keep it InProgress but update to the latest event.
-        inputHandler.handleOnProgressed(progressEvent)
+        input.handleOnProgressed(progressEvent)
         state = dispatcher.state.value as InProgress
         assertThat(state.latestEvent).isEqualTo(progressEvent)
 
         // Completing the gesture should return the state to Idle.
-        inputHandler.handleOnCompleted()
+        input.handleOnCompleted()
         assertThat(dispatcher.state.value).isEqualTo(Idle(callbackInfo))
     }
 
@@ -126,11 +125,11 @@ class NavigationEventDispatcherStateTest {
         assertThat(dispatcher.state.value).isEqualTo(Idle(callbackInfo))
 
         // Starting a gesture moves the state to InProgress.
-        inputHandler.handleOnStarted(startEvent)
+        input.handleOnStarted(startEvent)
         assertThat(dispatcher.state.value).isEqualTo(InProgress(callbackInfo, null, startEvent))
 
         // Cancelling the gesture should also return the state to Idle.
-        inputHandler.handleOnCancelled()
+        input.handleOnCancelled()
         assertThat(dispatcher.state.value).isEqualTo(Idle(callbackInfo))
     }
 
@@ -143,7 +142,7 @@ class NavigationEventDispatcherStateTest {
         val startEvent = NavigationEvent(touchX = 0.1F)
 
         // Start the gesture.
-        inputHandler.handleOnStarted(startEvent)
+        input.handleOnStarted(startEvent)
 
         // At the start, previousInfo is null.
         var state = dispatcher.state.value as InProgress
@@ -162,7 +161,7 @@ class NavigationEventDispatcherStateTest {
         assertThat(state.latestEvent).isEqualTo(startEvent) // Event hasn't changed yet.
 
         // Complete the gesture.
-        inputHandler.handleOnCompleted()
+        input.handleOnCompleted()
         assertThat(dispatcher.state.value).isEqualTo(Idle(secondInfo))
     }
 
@@ -173,9 +172,9 @@ class NavigationEventDispatcherStateTest {
         dispatcher.addCallback(callback)
 
         // FIRST GESTURE: Create a complex state.
-        inputHandler.handleOnStarted(NavigationEvent(touchX = 0.1f))
+        input.handleOnStarted(NavigationEvent(touchX = 0.1f))
         callback.setInfo(currentInfo = HomeScreenInfo("updated"), previousInfo = null)
-        inputHandler.handleOnCompleted()
+        input.handleOnCompleted()
 
         // After the first gesture, the final state is Idle with the updated info.
         val finalInfo = HomeScreenInfo("updated")
@@ -183,7 +182,7 @@ class NavigationEventDispatcherStateTest {
 
         // SECOND GESTURE: Verify that previousInfo was cleared by `clearPreviousInfo()`.
         val event2 = NavigationEvent(touchX = 0.3f)
-        inputHandler.handleOnStarted(event2)
+        input.handleOnStarted(event2)
 
         // When a new gesture starts, `previousInfo` should be null, not stale data.
         val state = dispatcher.state.value as InProgress
@@ -305,15 +304,15 @@ class NavigationEventDispatcherStateTest {
         assertThat(dispatcher.state.value.progress).isEqualTo(0f)
 
         // Start a gesture.
-        inputHandler.handleOnStarted(NavigationEvent(progress = 0.1f))
+        input.handleOnStarted(NavigationEvent(progress = 0.1f))
         assertThat(dispatcher.state.value.progress).isEqualTo(0.1f)
 
         // InProgress state should reflect the event's progress.
-        inputHandler.handleOnProgressed(NavigationEvent(progress = 0.5f))
+        input.handleOnProgressed(NavigationEvent(progress = 0.5f))
         assertThat(dispatcher.state.value.progress).isEqualTo(0.5f)
 
         // Complete the gesture.
-        inputHandler.handleOnCompleted()
+        input.handleOnCompleted()
 
         // After the gesture, the state is Idle again and progress should be 0.
         assertThat(dispatcher.state.value.progress).isEqualTo(0f)

@@ -20,13 +20,13 @@ import androidx.annotation.EmptySuper
 import androidx.annotation.MainThread
 import androidx.navigationevent.NavigationEventDirection.Companion.Backward
 
-/** An input handler that can send events to a [NavigationEventDispatcher]. */
-public abstract class NavigationEventInputHandler() {
+/** A class that can send events to a [NavigationEventDispatcher]. */
+public abstract class NavigationEventInput() {
 
     private var dispatcher: NavigationEventDispatcher? = null
 
     /**
-     * Attaches this [NavigationEventInputHandler] to [dispatcher].
+     * Attaches this [NavigationEventInput] to [dispatcher].
      *
      * @param dispatcher The [NavigationEventDispatcher] to attach to.
      * @throws IllegalStateException if it's already attached to a dispatcher.
@@ -34,7 +34,7 @@ public abstract class NavigationEventInputHandler() {
     @MainThread
     internal fun doAttach(dispatcher: NavigationEventDispatcher) {
         check(this.dispatcher == null) {
-            "This input handler is already attached to dispatcher ${this.dispatcher}."
+            "This input is already attached to dispatcher ${this.dispatcher}."
         }
         this.dispatcher = dispatcher
 
@@ -42,8 +42,8 @@ public abstract class NavigationEventInputHandler() {
     }
 
     /**
-     * Detaches this [NavigationEventInputHandler] from the attached [NavigationEventDispatcher]. If
-     * it's not attached to a dispatcher, this function does nothing.
+     * Detaches this [NavigationEventInput] from the attached [NavigationEventDispatcher]. If it's
+     * not attached to a dispatcher, this function does nothing.
      */
     @MainThread
     internal fun doDetach() {
@@ -53,19 +53,18 @@ public abstract class NavigationEventInputHandler() {
     }
 
     /**
-     * Called after this [NavigationEventInputHandler] is attached to [dispatcher]. This can happen
-     * when calling [NavigationEventDispatcher.addInputHandler]. A [NavigationEventInputHandler] can
-     * only be attached to one [NavigationEventDispatcher] at a time.
+     * Called after this [NavigationEventInput] is attached to [dispatcher]. This can happen when
+     * calling [NavigationEventDispatcher.addInput]. A [NavigationEventInput] can only be attached
+     * to one [NavigationEventDispatcher] at a time.
      *
-     * @param dispatcher The [NavigationEventDispatcher] that this input handler is now attached to.
+     * @param dispatcher The [NavigationEventDispatcher] that this input is now attached to.
      */
     @MainThread @EmptySuper protected open fun onAttach(dispatcher: NavigationEventDispatcher) {}
 
     /**
-     * Called after this [NavigationEventInputHandler] is detached from a
-     * [NavigationEventDispatcher]. This can happen when calling
-     * [NavigationEventDispatcher.removeInputHandler] or [NavigationEventDispatcher.dispose] on the
-     * attached [NavigationEventDispatcher].
+     * Called after this [NavigationEventInput] is detached from a [NavigationEventDispatcher]. This
+     * can happen when calling [NavigationEventDispatcher.removeInput] or
+     * [NavigationEventDispatcher.dispose] on the attached [NavigationEventDispatcher].
      */
     @MainThread @EmptySuper protected open fun onDetach() {}
 
@@ -91,8 +90,8 @@ public abstract class NavigationEventInputHandler() {
     @MainThread
     protected fun dispatchOnStarted(event: NavigationEvent) {
         // TODO(kuanyingchou): Accept a direction parameter instead of hardcoding `Backward`.
-        dispatcher?.dispatchOnStarted(inputHandler = this, direction = Backward, event)
-            ?: error("This input handler is not attached to a dispatcher.")
+        dispatcher?.dispatchOnStarted(input = this, direction = Backward, event)
+            ?: error("This input is not attached to a dispatcher.")
     }
 
     /**
@@ -103,23 +102,23 @@ public abstract class NavigationEventInputHandler() {
     @MainThread
     protected fun dispatchOnProgressed(event: NavigationEvent) {
         // TODO(kuanyingchou): Accept a direction parameter instead of hardcoding `Backward`.
-        dispatcher?.dispatchOnProgressed(inputHandler = this, direction = Backward, event)
-            ?: error("This input handler is not attached to a dispatcher.")
+        dispatcher?.dispatchOnProgressed(input = this, direction = Backward, event)
+            ?: error("This input is not attached to a dispatcher.")
     }
 
     /** Call `dispatchOnCancelled` on the connected dispatcher. */
     @MainThread
     protected fun dispatchOnCancelled() {
         // TODO(kuanyingchou): Accept a direction parameter instead of hardcoding `Backward`.
-        dispatcher?.dispatchOnCancelled(inputHandler = this, direction = Backward)
-            ?: error("This input handler is not attached to a dispatcher.")
+        dispatcher?.dispatchOnCancelled(input = this, direction = Backward)
+            ?: error("This input is not attached to a dispatcher.")
     }
 
     /** Call `dispatchOnCompleted` on the connected dispatcher. */
     @MainThread
     protected fun dispatchOnCompleted() {
         // TODO(kuanyingchou): Accept a direction parameter instead of hardcoding `Backward`.
-        dispatcher?.dispatchOnCompleted(inputHandler = this, direction = Backward)
-            ?: error("This input handler is not attached to a dispatcher.")
+        dispatcher?.dispatchOnCompleted(input = this, direction = Backward)
+            ?: error("This input is not attached to a dispatcher.")
     }
 }

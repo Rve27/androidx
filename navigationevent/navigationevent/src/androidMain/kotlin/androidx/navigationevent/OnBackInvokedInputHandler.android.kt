@@ -25,9 +25,8 @@ import androidx.annotation.RequiresApi
 
 /** Provides input from OnBackInvokedCallback to the given [NavigationEventDispatcher]. */
 @RequiresApi(33)
-public class OnBackInvokedInputHandler(
-    private val onBackInvokedDispatcher: OnBackInvokedDispatcher
-) : NavigationEventInputHandler() {
+public class OnBackInvokedInput(private val onBackInvokedDispatcher: OnBackInvokedDispatcher) :
+    NavigationEventInput() {
     private val onBackInvokedCallback: OnBackInvokedCallback =
         if (Build.VERSION.SDK_INT == 33) {
             OnBackInvokedCallback { dispatchOnCompleted() }

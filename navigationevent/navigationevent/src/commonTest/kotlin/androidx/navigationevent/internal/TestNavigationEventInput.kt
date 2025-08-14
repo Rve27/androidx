@@ -19,11 +19,11 @@ package androidx.navigationevent.internal
 import androidx.annotation.MainThread
 import androidx.navigationevent.NavigationEvent
 import androidx.navigationevent.NavigationEventDispatcher
-import androidx.navigationevent.NavigationEventInputHandler
+import androidx.navigationevent.NavigationEventInput
 
 /**
- * A test implementation of [NavigationEventInputHandler] that records lifecycle events and
- * invocation counts.
+ * A test implementation of [NavigationEventInput] that records lifecycle events and invocation
+ * counts.
  *
  * Use this class in tests to verify that `onAdded`, `onRemoved`, and `onHasEnabledCallbacksChanged`
  * are called correctly. It counts how many times each lifecycle method is invoked and stores a
@@ -40,7 +40,7 @@ internal class TestNavigationEventInput(
     private val onAdded: (dispatcher: NavigationEventDispatcher) -> Unit = {},
     private val onRemoved: () -> Unit = {},
     private val onHasEnabledCallbacksChanged: (hasEnabledCallbacks: Boolean) -> Unit = {},
-) : NavigationEventInputHandler() {
+) : NavigationEventInput() {
 
     /** The number of times [onAdded] has been invoked. */
     var addedInvocations: Int = 0
