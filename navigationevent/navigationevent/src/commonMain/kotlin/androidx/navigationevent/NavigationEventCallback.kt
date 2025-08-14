@@ -106,7 +106,7 @@ public abstract class NavigationEventCallback<T : NavigationEventInfo>(isEnabled
      * @see onEventStarted
      * @see NavigationEventDispatcher.dispatchOnStarted
      */
-    internal fun doEventStarted(event: NavigationEvent) {
+    internal fun doOnEventStarted(event: NavigationEvent) {
         onEventStarted(event)
     }
 
@@ -126,7 +126,7 @@ public abstract class NavigationEventCallback<T : NavigationEventInfo>(isEnabled
      * @see onEventProgressed
      * @see NavigationEventDispatcher.dispatchOnProgressed
      */
-    internal fun doEventProgressed(event: NavigationEvent) {
+    internal fun doOnEventProgressed(event: NavigationEvent) {
         onEventProgressed(event)
     }
 
@@ -146,7 +146,7 @@ public abstract class NavigationEventCallback<T : NavigationEventInfo>(isEnabled
      * @see onEventCompleted
      * @see NavigationEventDispatcher.dispatchOnCompleted
      */
-    internal fun doEventCompleted() {
+    internal fun doOnEventCompleted() {
         onEventCompleted()
     }
 
@@ -164,7 +164,7 @@ public abstract class NavigationEventCallback<T : NavigationEventInfo>(isEnabled
      * @see onEventCancelled
      * @see NavigationEventDispatcher.dispatchOnCancelled
      */
-    internal fun doEventCancelled() {
+    internal fun doOnEventCancelled() {
         onEventCancelled()
     }
 

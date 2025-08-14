@@ -232,7 +232,7 @@ internal class NavigationEventProcessor {
         // If the callback is the one currently being processed, it needs to be notified of
         // cancellation and then cleared from the in-progress state.
         if (callback == inProgressCallback) {
-            callback.doEventCancelled()
+            callback.doOnEventCancelled()
             inProgressCallback = null
         }
 
@@ -281,7 +281,7 @@ internal class NavigationEventProcessor {
             // `onCancelled` can be correctly handled if the callback removes itself during
             // `onEventStarted`.
             inProgressCallback = callback
-            callback.doEventStarted(event)
+            callback.doOnEventStarted(event)
             _state.update {
                 InProgress(callback.currentInfo ?: NotProvided, callback.previousInfo, event)
             }
@@ -314,7 +314,7 @@ internal class NavigationEventProcessor {
         // Progressed is not a terminal event, so `inProgressCallback` is not cleared.
 
         if (callback != null) {
-            callback.doEventProgressed(event)
+            callback.doOnEventProgressed(event)
             _state.update {
                 InProgress(callback.currentInfo ?: NotProvided, callback.previousInfo, event)
             }
@@ -351,7 +351,7 @@ internal class NavigationEventProcessor {
         if (callback == null) {
             fallbackOnBackPressed?.invoke()
         } else {
-            callback.doEventCompleted()
+            callback.doOnEventCompleted()
             _state.update { Idle(callback.currentInfo ?: NotProvided) }
         }
     }
@@ -380,7 +380,7 @@ internal class NavigationEventProcessor {
         inProgressCallback = null // Clear in-progress, as 'cancelled' is a terminal event.
 
         if (callback != null) {
-            callback.doEventCancelled()
+            callback.doOnEventCancelled()
             _state.update { Idle(callback.currentInfo ?: NotProvided) }
         }
     }
