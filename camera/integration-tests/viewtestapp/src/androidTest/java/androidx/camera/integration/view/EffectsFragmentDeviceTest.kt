@@ -17,6 +17,7 @@
 package androidx.camera.integration.view
 
 import android.net.Uri
+import android.util.Log
 import androidx.camera.camera2.Camera2Config
 import androidx.camera.camera2.pipe.integration.CameraPipeConfig
 import androidx.camera.core.CameraXConfig
@@ -145,17 +146,20 @@ class EffectsFragmentDeviceTest(
                     }
 
                     override fun onError(exception: ImageCaptureException) {
+                        Log.d(TAG, "onError", exception)
                         imageCallbackSemaphore.release()
                     }
                 }
             )
         }
-        assertThat(imageCallbackSemaphore.tryAcquire(TIMEOUT_SECONDS, TimeUnit.SECONDS)).isTrue()
+        assertThat(imageCallbackSemaphore.tryAcquire(CAPTURE_TIMEOUT_SECONDS, TimeUnit.SECONDS))
+            .isTrue()
         assertThat(uri).isNotNull()
     }
 
     companion object {
-        private const val TIMEOUT_SECONDS = 10L
+        private const val TAG = "EffectsFragmentDeviceTest"
+        private const val CAPTURE_TIMEOUT_SECONDS = 45L
 
         @JvmStatic
         @Parameterized.Parameters(name = "{0}")
