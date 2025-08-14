@@ -706,31 +706,25 @@ class SpatialComposeVideoPlayer : ComponentActivity() {
     fun VideoInSpatialPanel(isAudioSpatialized: Boolean) {
         val session = LocalSession.current
 
+        val player = remember { MediaPlayer() }
         SpatialPanel(
             modifier =
                 SubspaceModifier.width(600.dp)
                     .height(600.dp)
                     .onPointSourceParamsAvailable {
-                        mediaPlayer = MediaPlayer()
                         if (isAudioSpatialized) {
-                            SpatialMediaPlayer.setPointSourceParams(session!!, mediaPlayer, it)
+                            SpatialMediaPlayer.setPointSourceParams(session!!, player, it)
                         }
-
-                        mediaPlayer.setDataSource(
-                            this@SpatialComposeVideoPlayer,
-                            mediaUriState.value!!,
-                        )
-                        mediaPlayer.prepare()
-                        mediaPlayer.isLooping = true
-                        mediaPlayer.start()
+                        player.setDataSource(this@SpatialComposeVideoPlayer, mediaUriState.value!!)
+                        player.prepare()
+                        player.isLooping = true
+                        player.start()
                     }
                     .movable(enabled = true)
         ) {
-            DisposableEffect(Unit) { onDispose { releaseMediaPlayer() } }
+            DisposableEffect(Unit) { onDispose { player.release() } }
 
-            AndroidExternalSurface {
-                onSurface { surface, _, _ -> mediaPlayer.setSurface(surface) }
-            }
+            AndroidExternalSurface { onSurface { surface, _, _ -> player.setSurface(surface) } }
         }
     }
 
