@@ -16,6 +16,8 @@
 
 package androidx.pdf.ink.history
 
+import androidx.pdf.annotation.models.AnnotationEditOperation
+
 /** Responsible for maintaining the history of annotations to support undo and redo operations. */
 internal interface AnnotationEditsHistory {
     /**

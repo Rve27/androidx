@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.pdf.ink.history
+package androidx.pdf.annotation.models
 
 import androidx.annotation.RestrictTo
 
@@ -50,7 +50,7 @@ public abstract class EditOperation<T>(public open val op: Operation, public ope
 
     public companion object {
         /** Returns the logical opposite of the current operation. */
-        internal fun Operation.invert(): Operation {
+        public fun Operation.invert(): Operation {
             return when (this) {
                 is Add -> Remove
                 is Remove -> Add

@@ -16,7 +16,9 @@
 
 package androidx.pdf.ink.history
 
+import androidx.pdf.annotation.models.AnnotationEditOperation
 import androidx.pdf.annotation.models.EditId
+import androidx.pdf.annotation.models.EditOperation
 import com.google.common.truth.Truth.assertThat
 import createDummyPdfAnnotationData
 import java.util.UUID

@@ -16,7 +16,8 @@
 
 package androidx.pdf.ink.history
 
-import androidx.pdf.ink.history.EditOperation.Companion.invert
+import androidx.pdf.annotation.models.AnnotationEditOperation
+import androidx.pdf.annotation.models.EditOperation.Companion.invert
 import java.util.LinkedList
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock

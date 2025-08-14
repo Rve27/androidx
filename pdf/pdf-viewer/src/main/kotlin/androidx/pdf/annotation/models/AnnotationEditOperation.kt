@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.pdf.ink.history
+package androidx.pdf.annotation.models
 
 import androidx.annotation.RestrictTo
-import androidx.pdf.annotation.models.PdfAnnotationData
 
 /**
  * An [EditOperation] that specifically operates on [PdfAnnotationData].
