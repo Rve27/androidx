@@ -18,25 +18,24 @@ package androidx.pdf.annotation.models
 
 import android.graphics.Matrix
 import androidx.annotation.RestrictTo
-import androidx.pdf.annotation.draftstate.ImmutableAnnotationEditsDraftState
 
 /**
  * Represents the complete display state for annotations on a PDF document.
  *
- * @property draftState The immutable snapshot of the current annotation edits.
+ * @property edits The immutable snapshot of the current annotation edits.
  * @property transformationMatrices A map where the key is the page number (0-indexed) and the value
  *   is the [Matrix] required to transform the annotations for that page from PDF coordinates to
  *   screen coordinates, accounting for zoom and pan.
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY)
 public data class AnnotationsDisplayState(
-    val draftState: ImmutableAnnotationEditsDraftState,
+    val edits: PdfEdits,
     val transformationMatrices: Map<Int, Matrix>,
 ) {
     public companion object {
         public val EMPTY: AnnotationsDisplayState =
             AnnotationsDisplayState(
-                draftState = ImmutableAnnotationEditsDraftState(edits = HashMap()),
+                edits = PdfEdits(editsByPage = emptyMap()),
                 transformationMatrices = emptyMap(),
             )
     }

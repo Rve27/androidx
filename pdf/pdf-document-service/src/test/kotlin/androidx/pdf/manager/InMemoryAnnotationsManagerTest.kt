@@ -20,6 +20,8 @@ import android.net.Uri
 import androidx.pdf.FakeEditablePdfDocument
 import androidx.pdf.annotation.createStampAnnotationWithPath
 import androidx.pdf.annotation.manager.InMemoryAnnotationsManager
+import androidx.pdf.annotation.models.PdfAnnotation
+import androidx.pdf.annotation.models.PdfAnnotationData
 import androidx.pdf.annotation.models.StampAnnotation
 import androidx.pdf.util.createDummyUri
 import com.google.common.truth.Truth.assertThat
@@ -41,7 +43,7 @@ class InMemoryAnnotationsManagerTest {
     fun setUp() {
         fakeUri = createDummyUri("test.pdf")
         fakeDocument = FakeEditablePdfDocument(uri = fakeUri, pageCount = 10)
-        annotationsManager = InMemoryAnnotationsManager(fakeDocument)
+        annotationsManager = InMemoryAnnotationsManager(::getEditsForPage)
     }
 
     @Test
@@ -116,9 +118,9 @@ class InMemoryAnnotationsManagerTest {
     }
 
     @Test
-    fun getFullAnnotationStateSnapshot_empty_returnsEmptyState() = runTest {
-        val snapshot = annotationsManager.getFullAnnotationStateSnapshot()
-        assertThat(snapshot.edits).isEmpty()
+    fun getSnapshot_empty_returnsEmptyState() = runTest {
+        val snapshot = annotationsManager.getSnapshot()
+        assertThat(snapshot.editsByPage).isEmpty()
     }
 
     @Test
@@ -130,14 +132,14 @@ class InMemoryAnnotationsManagerTest {
         val existingAnnots = annotationsManager.getAnnotationsForPage(0)
         val editId = annotationsManager.addAnnotation(newAnnotation)
 
-        val snapshot = annotationsManager.getFullAnnotationStateSnapshot()
-        val allEdits = snapshot.edits
+        val snapshot = annotationsManager.getSnapshot()
+        val allEdits = snapshot.editsByPage
 
         assertThat(existingAnnots).hasSize(1)
         assertThat(allEdits.size).isEqualTo(1) // Only single entry in the map
         assertThat(allEdits[0]).isNotNull()
         assertThat(allEdits[0]).hasSize(2)
-        assertThat(allEdits[0]!!.map { it.editId }).contains(editId)
+        assertThat(allEdits[0]!!.map { it.id }).contains(editId)
     }
 
     @Test
@@ -221,4 +223,7 @@ class InMemoryAnnotationsManagerTest {
             annotationsManager.updateAnnotation(editId1, annotation1)
         }
     }
+
+    private suspend fun getEditsForPage(pageNum: Int): List<PdfAnnotation> =
+        fakeDocument.getEditsForPage<PdfAnnotationData>(pageNum).map { it.annotation }
 }

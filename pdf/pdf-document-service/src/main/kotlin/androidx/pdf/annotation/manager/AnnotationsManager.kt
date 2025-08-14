@@ -17,10 +17,10 @@
 package androidx.pdf.annotation.manager
 
 import androidx.annotation.RestrictTo
-import androidx.pdf.annotation.draftstate.ImmutableAnnotationEditsDraftState
 import androidx.pdf.annotation.models.EditId
 import androidx.pdf.annotation.models.PdfAnnotation
 import androidx.pdf.annotation.models.PdfAnnotationData
+import androidx.pdf.annotation.models.PdfEdits
 
 /** Manages annotations for a PDF document. */
 @RestrictTo(RestrictTo.Scope.LIBRARY)
@@ -46,7 +46,7 @@ public interface AnnotationsManager {
      *
      * This snapshot includes all edits and additions made to the annotations.
      *
-     * @return An [ImmutableAnnotationEditsDraftState] representing the current state.
+     * @return [PdfEdits] object representing the current state of annotations.
      */
-    public fun getFullAnnotationStateSnapshot(): ImmutableAnnotationEditsDraftState
+    public fun getSnapshot(): PdfEdits
 }

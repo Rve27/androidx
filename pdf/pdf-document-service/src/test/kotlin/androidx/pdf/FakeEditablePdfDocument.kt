@@ -28,10 +28,13 @@ import androidx.pdf.annotation.models.EditsResult
 import androidx.pdf.annotation.models.PdfAnnotation
 import androidx.pdf.annotation.models.PdfAnnotationData
 import androidx.pdf.annotation.models.PdfEdit
+import androidx.pdf.annotation.models.PdfEditEntry
+import androidx.pdf.annotation.models.PdfEdits
 import androidx.pdf.content.PageMatchBounds
 import androidx.pdf.content.PageSelection
 import androidx.pdf.models.FormEditRecord
 import androidx.pdf.models.FormWidgetInfo
+import java.util.UUID
 
 /** Fake implementation of [androidx.pdf.annotation.EditablePdfDocument] for testing. */
 internal class FakeEditablePdfDocument(
@@ -41,18 +44,21 @@ internal class FakeEditablePdfDocument(
     override val formType: Int = -1,
     override val formEditRecords: List<FormEditRecord> = listOf(),
 ) : EditablePdfDocument() {
-    private val annotationsByPage = mutableMapOf<Int, MutableList<PdfAnnotation>>()
+    private val annotationsByPage = mutableMapOf<Int, MutableList<PdfEditEntry<out PdfEdit>>>()
 
     val getAnnotationsForPageCallCount = mutableMapOf<Int, Int>()
 
     fun addAnnotationToPage(pageNum: Int, annotation: PdfAnnotation) {
-        annotationsByPage.getOrPut(pageNum) { mutableListOf() }.add(annotation)
+        val editId = EditId(pageNum, UUID.randomUUID().toString())
+        val data = PdfAnnotationData(editId, annotation)
+        annotationsByPage.getOrPut(pageNum) { mutableListOf() }.add(data)
     }
 
-    override suspend fun getAnnotationsForPage(pageNum: Int): List<PdfAnnotation> {
+    @Suppress("UNCHECKED_CAST")
+    override suspend fun <T : PdfEditEntry<out PdfEdit>> getEditsForPage(pageNum: Int): List<T> {
         getAnnotationsForPageCallCount[pageNum] =
             getAnnotationsForPageCallCount.getOrDefault(pageNum, 0) + 1
-        return annotationsByPage[pageNum] ?: emptyList()
+        return (annotationsByPage[pageNum] ?: emptyList()).toList() as List<T>
     }
 
     override suspend fun applyEdits(annotations: List<PdfAnnotationData>): AnnotationResult {
@@ -76,6 +82,10 @@ internal class FakeEditablePdfDocument(
     }
 
     override fun commitEdits(): EditsResult {
+        TODO("Not yet implemented")
+    }
+
+    override fun getAllEdits(): PdfEdits {
         TODO("Not yet implemented")
     }
 

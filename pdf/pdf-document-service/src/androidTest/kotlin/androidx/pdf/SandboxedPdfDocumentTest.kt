@@ -396,6 +396,64 @@ class SandboxedPdfDocumentTest {
     }
 
     @Test
+    fun getEditsForPage_addAndGetAnnotationFromService() = runTest {
+        if (!isRequiredSdkExtensionAvailable()) return@runTest
+
+        val pageNum = 1
+        val expectedAnnotation1 = getSampleStampAnnotation(pageNum)
+        val expectedAnnotation2 =
+            getSampleStampAnnotation(pageNum = pageNum, bounds = RectF(100f, 100f, 200f, 200f))
+        val document = openDocument(PDF_DOCUMENT)
+
+        val context = ApplicationProvider.getApplicationContext<Context>()
+
+        // Create a ParcelFileDescriptor for the testing annotations document in read-write
+        // mode.
+        val pfd = createPfd(context, PDF_ANNOTATION_DOCUMENT, "rwt")
+
+        val pdfAnnotationsData =
+            listOf(
+                PdfAnnotationData(EditId(pageNum = 0, value = "1"), expectedAnnotation1),
+                PdfAnnotationData(EditId(pageNum = 0, value = "2"), expectedAnnotation2),
+            )
+        writeAnnotationsToFile(pfd, pdfAnnotationsData)
+        document.applyEdits(pfd)
+
+        val actualAnnotations = document.getEditsForPage<PdfAnnotationData>(pageNum)
+        assertThat(actualAnnotations.size).isEqualTo(2)
+        assert(actualAnnotations[0].annotation is StampAnnotation)
+        assertStampAnnotationEquals(
+            expectedAnnotation1,
+            actualAnnotations[0].annotation as StampAnnotation,
+        )
+        assertStampAnnotationEquals(
+            expectedAnnotation2,
+            actualAnnotations[1].annotation as StampAnnotation,
+        )
+    }
+
+    @Test
+    fun getEditsForPage_addAndGetEmptyAnnotationFromService() = runTest {
+        if (!isRequiredSdkExtensionAvailable()) return@runTest
+
+        val pageNum = 1
+        val document = openDocument(PDF_DOCUMENT)
+
+        val context = ApplicationProvider.getApplicationContext<Context>()
+
+        // Create a ParcelFileDescriptor for the testing annotations document in read-write
+        // mode.
+        val pfd = createPfd(context, PDF_ANNOTATION_DOCUMENT, "rwt")
+
+        val pdfAnnotationsData = listOf<PdfAnnotationData>()
+        writeAnnotationsToFile(pfd, pdfAnnotationsData)
+        document.applyEdits(pfd)
+
+        val actualAnnotations = document.getEditsForPage<PdfAnnotationData>(pageNum)
+        assertThat(actualAnnotations.size).isEqualTo(0)
+    }
+
+    @Test
     fun applyEdits_writingAnnotationToStorage() = runTest {
         if (!isRequiredSdkExtensionAvailable()) return@runTest
 
@@ -425,58 +483,6 @@ class SandboxedPdfDocumentTest {
             sampleAnnotation,
             actualAnnotations[0].annotation as StampAnnotation,
         )
-    }
-
-    @Test
-    fun getAnnotationsForPage_addAndGetAnnotationFromService() = runTest {
-        if (!isRequiredSdkExtensionAvailable()) return@runTest
-
-        val pageNum = 1
-        val expectedAnnotation1 = getSampleStampAnnotation(pageNum)
-        val expectedAnnotation2 =
-            getSampleStampAnnotation(pageNum = pageNum, bounds = RectF(100f, 100f, 200f, 200f))
-        val document = openDocument(PDF_DOCUMENT)
-
-        val context = ApplicationProvider.getApplicationContext<Context>()
-
-        // Create a ParcelFileDescriptor for the testing annotations document in read-write
-        // mode.
-        val pfd = createPfd(context, PDF_ANNOTATION_DOCUMENT, "rwt")
-
-        val pdfAnnotationsData =
-            listOf(
-                PdfAnnotationData(EditId(pageNum = 0, value = "1"), expectedAnnotation1),
-                PdfAnnotationData(EditId(pageNum = 0, value = "2"), expectedAnnotation2),
-            )
-        writeAnnotationsToFile(pfd, pdfAnnotationsData)
-        document.applyEdits(pfd)
-
-        val actualAnnotations = document.getAnnotationsForPage(pageNum)
-        assertThat(actualAnnotations.size).isEqualTo(2)
-        assert(actualAnnotations[0] is StampAnnotation)
-        assertStampAnnotationEquals(expectedAnnotation1, actualAnnotations[0] as StampAnnotation)
-        assertStampAnnotationEquals(expectedAnnotation2, actualAnnotations[1] as StampAnnotation)
-    }
-
-    @Test
-    fun getAnnotationsForPage_addAndGetEmptyAnnotationFromService() = runTest {
-        if (!isRequiredSdkExtensionAvailable()) return@runTest
-
-        val pageNum = 1
-        val document = openDocument(PDF_DOCUMENT)
-
-        val context = ApplicationProvider.getApplicationContext<Context>()
-
-        // Create a ParcelFileDescriptor for the testing annotations document in read-write
-        // mode.
-        val pfd = createPfd(context, PDF_ANNOTATION_DOCUMENT, "rwt")
-
-        val pdfAnnotationsData = listOf<PdfAnnotationData>()
-        writeAnnotationsToFile(pfd, pdfAnnotationsData)
-        document.applyEdits(pfd)
-
-        val actualAnnotations = document.getAnnotationsForPage(pageNum)
-        assertThat(actualAnnotations.size).isEqualTo(0)
     }
 
     @Test
@@ -665,6 +671,36 @@ class SandboxedPdfDocumentTest {
         val actualAnnotationsData = document.getAnnotationsFromDraftState(0)
 
         assertThat(actualAnnotationsData.size).isEqualTo(0)
+    }
+
+    @Test
+    fun getAllEditsSnapshot_returnsCorrect() = runTest {
+        if (!isRequiredSdkExtensionAvailable()) return@runTest
+
+        val document = openDocument(PDF_DOCUMENT) as SandboxedPdfDocument
+        val annotation1 = createStampAnnotationWithPath(0, 10)
+        val annotation2 = createStampAnnotationWithPath(1, 20)
+        val annotation3 = createStampAnnotationWithPath(1, 30)
+
+        val editId1 = document.addEdit(annotation1)
+        val editId2 = document.addEdit(annotation2)
+        val editId3 = document.addEdit(annotation3)
+
+        val pdfEdits = document.getAllEdits()
+
+        assertThat(pdfEdits.editsByPage.size).isEqualTo(2)
+        assertThat(pdfEdits.editsByPage.containsKey(0)).isTrue()
+        assertThat(pdfEdits.editsByPage.containsKey(1)).isTrue()
+
+        val page0Edits = pdfEdits.editsByPage[0]!!
+        assertThat(page0Edits.size).isEqualTo(1)
+        assertThat(page0Edits[0].id).isEqualTo(editId1)
+        assertStampAnnotationEquals(annotation1, page0Edits[0].edit as StampAnnotation)
+
+        val page1Edits = pdfEdits.editsByPage[1]!!
+        assertThat(page1Edits.size).isEqualTo(2)
+        val page1EditIds = page1Edits.map { it.id }
+        assertThat(page1EditIds).containsExactly(editId2, editId3)
     }
 
     companion object {

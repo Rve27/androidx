@@ -20,6 +20,7 @@ import androidx.annotation.RestrictTo
 import androidx.pdf.annotation.models.EditId
 import androidx.pdf.annotation.models.PdfAnnotation
 import androidx.pdf.annotation.models.PdfAnnotationData
+import androidx.pdf.annotation.models.PdfEdits
 
 /** Responsible for managing the draft edits of annotations. */
 @RestrictTo(RestrictTo.Scope.LIBRARY)
@@ -58,10 +59,6 @@ public interface AnnotationEditsDraftState {
      */
     public fun updateEdit(editId: EditId, annotation: PdfAnnotation): PdfAnnotation
 
-    /**
-     * Converts this mutable draft state into an immutable representation.
-     *
-     * @return An [ImmutableAnnotationEditsDraftState] representing the current state of edits.
-     */
-    public fun toImmutableDraftState(): ImmutableAnnotationEditsDraftState
+    /** Returns the state of the draft as a [PdfEdits] object. */
+    public fun toPdfEdits(): PdfEdits
 }

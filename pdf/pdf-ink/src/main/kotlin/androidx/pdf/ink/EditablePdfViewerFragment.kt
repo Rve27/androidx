@@ -44,9 +44,9 @@ import androidx.pdf.PdfDocument
 import androidx.pdf.annotation.AnnotationsView
 import androidx.pdf.annotation.AnnotationsView.PageAnnotationsData
 import androidx.pdf.annotation.EditablePdfDocument
-import androidx.pdf.annotation.draftstate.ImmutableAnnotationEditsDraftState
 import androidx.pdf.annotation.models.AnnotationsDisplayState
 import androidx.pdf.annotation.models.PdfAnnotation
+import androidx.pdf.annotation.models.PdfEdits
 import androidx.pdf.featureflag.PdfFeatureFlags
 import androidx.pdf.ink.util.PageTransformCalculator
 import androidx.pdf.ink.util.StrokeProcessor
@@ -197,12 +197,12 @@ public open class EditablePdfViewerFragment : PdfViewerFragment, InProgressStrok
         val firstVisiblePage = pdfView.firstVisiblePage
         val lastVisiblePage = firstVisiblePage + pdfView.visiblePagesCount - 1
 
-        val draftState = displayState.draftState
+        val edits = displayState.edits
         val transformationMatrices = displayState.transformationMatrices
 
         (firstVisiblePage..lastVisiblePage).forEach { pageNum ->
             val pageAnnotationData =
-                createPageAnnotationsData(pageNum, draftState, transformationMatrices)
+                createPageAnnotationsData(pageNum, edits, transformationMatrices)
             pageRenderDataArray.put(pageNum, pageAnnotationData)
         }
         annotationView.annotations = pageRenderDataArray
@@ -210,11 +210,11 @@ public open class EditablePdfViewerFragment : PdfViewerFragment, InProgressStrok
 
     private fun createPageAnnotationsData(
         pageNum: Int,
-        draftState: ImmutableAnnotationEditsDraftState,
+        edits: PdfEdits,
         transformationMatrices: Map<Int, Matrix>,
     ): PageAnnotationsData {
         val annotationsForPage: List<PdfAnnotation> =
-            draftState.getEdits(pageNum).map { it.annotation }
+            edits.getEditsForPage(pageNum).map { it.edit }.filterIsInstance<PdfAnnotation>()
         val transformMatrix = transformationMatrices[pageNum] ?: Matrix()
         return PageAnnotationsData(annotationsForPage, transformMatrix)
     }

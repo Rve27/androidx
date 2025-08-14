@@ -36,6 +36,8 @@ import androidx.pdf.annotation.models.EditsResult
 import androidx.pdf.annotation.models.PdfAnnotation
 import androidx.pdf.annotation.models.PdfAnnotationData
 import androidx.pdf.annotation.models.PdfEdit
+import androidx.pdf.annotation.models.PdfEditEntry
+import androidx.pdf.annotation.models.PdfEdits
 import androidx.pdf.content.PageMatchBounds
 import androidx.pdf.content.PageSelection
 import androidx.pdf.content.PdfPageGotoLinkContent
@@ -45,6 +47,7 @@ import androidx.pdf.content.SelectionBoundary
 import androidx.pdf.models.FormEditRecord
 import androidx.pdf.models.FormWidgetInfo
 import androidx.pdf.models.ListItem
+import java.util.UUID
 import kotlin.random.Random
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -84,6 +87,7 @@ internal open class FakeEditablePdfDocument(
     private val pageLinks: Map<Int, PdfDocument.PdfPageLinks> = mapOf(),
     private val textContents: List<PdfPageTextContent> = emptyList(),
     private val pageFormWidgetInfos: Map<Int, List<FormWidgetInfo>> = mapOf(),
+    initialEdits: List<PdfAnnotation> = emptyList(),
 ) : EditablePdfDocument() {
     override val pageCount: Int = pages.size
 
@@ -110,6 +114,12 @@ internal open class FakeEditablePdfDocument(
     }
 
     internal var editHistory: MutableList<FormEditRecord> = mutableListOf()
+
+    private val edits = mutableMapOf<EditId, PdfAnnotationData>()
+
+    init {
+        initialEdits.forEach { addEdit(it) }
+    }
 
     override fun getPageBitmapSource(pageNumber: Int): PdfDocument.BitmapSource {
         return FakeBitmapSource(pageNumber)
@@ -231,12 +241,9 @@ internal open class FakeEditablePdfDocument(
         // No-op, fake
     }
 
-    override suspend fun getAnnotationsForPage(pageNum: Int): List<PdfAnnotation> {
-        TODO("Not yet implemented")
-    }
-
     override suspend fun applyEdits(annotations: List<PdfAnnotationData>): AnnotationResult {
-        TODO("Not yet implemented")
+        annotations.forEach { edits[it.editId] = it }
+        return AnnotationResult(annotations, listOf())
     }
 
     override suspend fun applyEdits(sourcePfd: ParcelFileDescriptor): AnnotationResult {
@@ -244,19 +251,25 @@ internal open class FakeEditablePdfDocument(
     }
 
     override fun addEdit(edit: PdfEdit): EditId {
-        TODO("Not yet implemented")
+        require(edit is PdfAnnotation) { "This fake only supports PdfAnnotation edits" }
+        val id = EditId(edit.pageNum, UUID.randomUUID().toString())
+        edits[id] = PdfAnnotationData(id, edit)
+        return id
     }
 
     override fun removeEdit(editId: EditId) {
-        TODO("Not yet implemented")
+        edits.remove(editId)
     }
 
     override fun updateEdit(editId: EditId, edit: PdfEdit) {
-        TODO("Not yet implemented")
+        require(edit is PdfAnnotation) { "This fake only supports PdfAnnotation edits" }
+        if (edits.containsKey(editId)) {
+            edits[editId] = PdfAnnotationData(editId, edit)
+        }
     }
 
     override fun commitEdits(): EditsResult {
-        TODO("Not yet implemented")
+        return EditsResult(edits.values.map { it.editId }, listOf())
     }
 
     /**
@@ -311,6 +324,13 @@ internal open class FakeEditablePdfDocument(
             /* No-op, fake */
         }
     }
+
+    override suspend fun <T : PdfEditEntry<out PdfEdit>> getEditsForPage(pageNum: Int): List<T> {
+        @Suppress("UNCHECKED_CAST")
+        return edits.values.filter { it.annotation.pageNum == pageNum } as List<T>
+    }
+
+    override fun getAllEdits(): PdfEdits = PdfEdits(edits.values.groupBy { it.annotation.pageNum })
 
     companion object {
         const val URI_WITH_VALID_SCHEME = "https://www.example.com"

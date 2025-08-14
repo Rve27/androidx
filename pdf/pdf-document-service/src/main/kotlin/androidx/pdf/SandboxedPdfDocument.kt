@@ -42,6 +42,8 @@ import androidx.pdf.annotation.models.EditsResult
 import androidx.pdf.annotation.models.PdfAnnotation
 import androidx.pdf.annotation.models.PdfAnnotationData
 import androidx.pdf.annotation.models.PdfEdit
+import androidx.pdf.annotation.models.PdfEditEntry
+import androidx.pdf.annotation.models.PdfEdits
 import androidx.pdf.annotation.processor.PdfAnnotationsProcessor
 import androidx.pdf.content.PageMatchBounds
 import androidx.pdf.content.PageSelection
@@ -98,7 +100,7 @@ public class SandboxedPdfDocument(
 ) : EditablePdfDocument() {
 
     // TODO: b/437827008 - Implement management of PdfEdits in EditablePdfDocument
-    private val annotationsManager = InMemoryAnnotationsManager(this)
+    private val annotationsManager = InMemoryAnnotationsManager(::getAnnotationsForPage)
 
     public override val formEditRecords: List<FormEditRecord>
         get() = _formEditRecords.toList()
@@ -392,9 +394,9 @@ public class SandboxedPdfDocument(
         }
     }
 
-    override suspend fun getAnnotationsForPage(pageNum: Int): List<PdfAnnotation> {
-        return withDocument { pdfDocumentRemote -> pdfDocumentRemote.getPageAnnotations(pageNum) }
-    }
+    @Suppress("UNCHECKED_CAST")
+    override suspend fun <T : PdfEditEntry<out PdfEdit>> getEditsForPage(pageNum: Int): List<T> =
+        annotationsManager.getAnnotationsForPage(pageNum) as List<T>
 
     override suspend fun applyEdits(annotations: List<PdfAnnotationData>): AnnotationResult {
         // Wrapping the process method inside withDocument is important because if the service
@@ -440,6 +442,13 @@ public class SandboxedPdfDocument(
         // TODO: b/437827008 - Implementation of managing PdfEdits in EditablePdfDocument
         return EditsResult(listOf(), listOf())
     }
+
+    override fun getAllEdits(): PdfEdits = annotationsManager.getSnapshot()
+
+    private suspend fun getAnnotationsForPage(pageNum: Int): List<PdfAnnotation> =
+        withDocument { pdfDocumentRemote ->
+            pdfDocumentRemote.getPageAnnotations(pageNum)
+        }
 
     private companion object {
         private const val DEFAULT_PAGE = 400

@@ -17,25 +17,20 @@
 package androidx.pdf.annotation.manager
 
 import androidx.annotation.RestrictTo
-import androidx.pdf.annotation.EditablePdfDocument
 import androidx.pdf.annotation.draftstate.AnnotationEditsDraftState
-import androidx.pdf.annotation.draftstate.ImmutableAnnotationEditsDraftState
-import androidx.pdf.annotation.draftstate.MemoryAnnotationEditsDraftState
+import androidx.pdf.annotation.draftstate.InMemoryAnnotationEditsDraftState
 import androidx.pdf.annotation.models.EditId
 import androidx.pdf.annotation.models.PdfAnnotation
 import androidx.pdf.annotation.models.PdfAnnotationData
+import androidx.pdf.annotation.models.PdfEdits
 import java.util.Collections
 
-/**
- * Manages annotations for a PDF document, storing them in memory.
- *
- * @param document The [EditablePdfDocument] to manage annotations for.
- */
+/** Manages annotations for a PDF document, storing them in memory. */
 @RestrictTo(RestrictTo.Scope.LIBRARY)
-public class InMemoryAnnotationsManager(private val document: EditablePdfDocument) :
+public class InMemoryAnnotationsManager(private val fetcher: PageAnnotationFetcher) :
     AnnotationsManager {
     private val annotationEditsDraftState: AnnotationEditsDraftState =
-        MemoryAnnotationEditsDraftState()
+        InMemoryAnnotationEditsDraftState()
 
     // Tracks the existing annotations per page. If the request has been invoked and no annotations
     // have been found then the value will be empty.
@@ -49,7 +44,7 @@ public class InMemoryAnnotationsManager(private val document: EditablePdfDocumen
      * @param pageNum The page number (0-indexed) to fetch annotations for.
      */
     private suspend fun fetchAndCacheAnnotationsForPage(pageNum: Int) {
-        val existingPageAnnotations = document.getAnnotationsForPage(pageNum)
+        val existingPageAnnotations = fetcher.fetchAnnotations(pageNum)
         existingAnnotationsPerPage.put(pageNum, existingPageAnnotations)
 
         // Add the annotations to the draft state.
@@ -108,8 +103,7 @@ public class InMemoryAnnotationsManager(private val document: EditablePdfDocumen
      * Returns an immutable snapshot of the current annotation draft state including unedited
      * existing annotations as well.
      *
-     * @return An [ImmutableAnnotationEditsDraftState] representing the current draft.
+     * @return An [PdfEdits] representing the current draft.
      */
-    override fun getFullAnnotationStateSnapshot(): ImmutableAnnotationEditsDraftState =
-        annotationEditsDraftState.toImmutableDraftState()
+    override fun getSnapshot(): PdfEdits = annotationEditsDraftState.toPdfEdits()
 }

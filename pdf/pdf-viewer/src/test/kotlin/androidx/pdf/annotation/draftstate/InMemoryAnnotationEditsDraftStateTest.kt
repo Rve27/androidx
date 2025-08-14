@@ -28,13 +28,13 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
-class MemoryAnnotationEditsDraftStateTest {
+class InMemoryAnnotationEditsDraftStateTest {
 
-    private lateinit var draftState: MemoryAnnotationEditsDraftState
+    private lateinit var draftState: InMemoryAnnotationEditsDraftState
 
     @Before
     fun setUp() {
-        draftState = MemoryAnnotationEditsDraftState()
+        draftState = InMemoryAnnotationEditsDraftState()
     }
 
     @Test
@@ -91,16 +91,12 @@ class MemoryAnnotationEditsDraftStateTest {
     @Test
     fun addEdit_addAnAnnotation_returnsCorrectAnnotation() {
         val expectedPageNum = 1
-        val expectedAnnotations = getSampleStampAnnotation(expectedPageNum)
-        val editId = draftState.addEdit(expectedAnnotations)
+        val expectedAnnotation = getSampleStampAnnotation(expectedPageNum)
+        val editId = draftState.addEdit(expectedAnnotation)
 
-        val pageEdits = draftState.getPageEditsForId(editId)
-        val actualAnnotation = pageEdits[editId]
-        assertThat(actualAnnotation).isNotNull()
-        assertThat(actualAnnotation?.annotation).isInstanceOf(StampAnnotation::class.java)
-        if (actualAnnotation?.annotation is StampAnnotation) {
-            assertStampAnnotationEquals(expectedAnnotations, actualAnnotation.annotation)
-        }
+        val actualAnnotation = draftState.getPdfAnnotationForId(editId)
+        assertThat(actualAnnotation).isInstanceOf(StampAnnotation::class.java)
+        assertStampAnnotationEquals(expectedAnnotation, actualAnnotation as StampAnnotation)
     }
 
     @Test
@@ -116,35 +112,17 @@ class MemoryAnnotationEditsDraftStateTest {
         val editId2 = draftState.addEdit(expectedAnnotation2)
         val editId3 = draftState.addEdit(expectedAnnotation3)
 
-        val page0Edits = draftState.getPageEditsForId(editId1)
-        assertThat(page0Edits).isNotNull()
-
+        val page0Edits = draftState.getEdits(0)
         assertThat(page0Edits).hasSize(2)
-        val actualAnnotation1 = page0Edits[editId1]
-        val actualAnnotation2 = page0Edits[editId2]
-        assertThat(actualAnnotation1).isNotNull()
-        assertThat(actualAnnotation2).isNotNull()
-        assertThat(actualAnnotation1!!.annotation).isInstanceOf(StampAnnotation::class.java)
-        assertThat(actualAnnotation2!!.annotation).isInstanceOf(StampAnnotation::class.java)
-        assertStampAnnotationEquals(
-            expectedAnnotation1,
-            actualAnnotation1.annotation as StampAnnotation,
-        )
-        assertStampAnnotationEquals(
-            expectedAnnotation2,
-            actualAnnotation2.annotation as StampAnnotation,
-        )
+        val actualAnnotation1 = page0Edits.find { it.editId == editId1 }!!.annotation
+        val actualAnnotation2 = page0Edits.find { it.editId == editId2 }!!.annotation
+        assertStampAnnotationEquals(expectedAnnotation1, actualAnnotation1 as StampAnnotation)
+        assertStampAnnotationEquals(expectedAnnotation2, actualAnnotation2 as StampAnnotation)
 
-        val page1Edits = draftState.getPageEditsForId(editId3)
-        assertThat(page1Edits).isNotNull()
+        val page1Edits = draftState.getEdits(1)
         assertThat(page1Edits).hasSize(1)
-        val actualAnnotation3 = page1Edits[editId3]
-        assertThat(actualAnnotation3).isNotNull()
-        assertThat(actualAnnotation3!!.annotation).isInstanceOf(StampAnnotation::class.java)
-        assertStampAnnotationEquals(
-            expectedAnnotation3,
-            actualAnnotation3.annotation as StampAnnotation,
-        )
+        val actualAnnotation3 = page1Edits.find { it.editId == editId3 }!!.annotation
+        assertStampAnnotationEquals(expectedAnnotation3, actualAnnotation3 as StampAnnotation)
     }
 
     @Test
@@ -153,19 +131,25 @@ class MemoryAnnotationEditsDraftStateTest {
         val annotationBounds = RectF(1f, 2f, 3f, 4f)
         val annotation = getSampleStampAnnotation(pageNum, annotationBounds)
         val editId = draftState.addEdit(annotation)
-        val editId2 = draftState.addEdit(getSampleStampAnnotation(pageNum))
+        draftState.addEdit(getSampleStampAnnotation(pageNum))
 
         // Ensure it's there before removal
-        assertThat(draftState.getPageEditsForId(editId).containsKey(editId)).isTrue()
+        assertThat(draftState.getEdits(pageNum)).hasSize(2)
 
         val removedAnnotation = draftState.removeEdit(editId)
-        assertThat(removedAnnotation).isNotNull()
         assertThat(removedAnnotation).isInstanceOf(StampAnnotation::class.java)
         assertStampAnnotationEquals(annotation, removedAnnotation as StampAnnotation)
 
-        val pageEditsMap = draftState.getPageEditsForId(editId2)
-        // The map itself might still exist if other edits are on the page, or be null/empty
-        assertThat(pageEditsMap.containsKey(editId)).isFalse()
+        assertThat(draftState.getEdits(pageNum)).hasSize(1)
+    }
+
+    @Test(expected = NoSuchElementException::class)
+    fun getPdfAnnotationForId_afterRemoving_throwsException() {
+        val pageNum = 0
+        val annotation = getSampleStampAnnotation(pageNum)
+        val editId = draftState.addEdit(annotation)
+        draftState.removeEdit(editId)
+        draftState.getPdfAnnotationForId(editId)
     }
 
     @Test
@@ -178,18 +162,13 @@ class MemoryAnnotationEditsDraftStateTest {
         val expectedBounds = RectF(50f, 60f, 70f, 80f)
         val expectedAnnotation = getSampleStampAnnotation(pageNum, expectedBounds)
 
-        val actualAnnotation = draftState.updateEdit(editId, expectedAnnotation)
-        assertThat(actualAnnotation).isNotNull()
-        assertThat(actualAnnotation).isInstanceOf(StampAnnotation::class.java)
-        assertStampAnnotationEquals(expectedAnnotation, actualAnnotation as StampAnnotation)
+        val oldAnnotation = draftState.updateEdit(editId, expectedAnnotation)
+        assertStampAnnotationEquals(initialAnnotation, oldAnnotation as StampAnnotation)
 
-        val retrievedAnnotationAfterUpdate = draftState.getPageEditsForId(editId)[editId]
-        assertThat(retrievedAnnotationAfterUpdate).isNotNull()
-        assertThat(retrievedAnnotationAfterUpdate!!.annotation)
-            .isInstanceOf(StampAnnotation::class.java)
+        val retrievedAnnotationAfterUpdate = draftState.getPdfAnnotationForId(editId)
         assertStampAnnotationEquals(
             expectedAnnotation,
-            retrievedAnnotationAfterUpdate.annotation as StampAnnotation,
+            retrievedAnnotationAfterUpdate as StampAnnotation,
         )
     }
 
