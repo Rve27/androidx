@@ -107,15 +107,13 @@ internal class TestNavigationEventInput(
         dispatchOnCancelled()
     }
 
-    // TODO(mgalhardo): aosp/3732466 is renaming this to `onAdded`
-    override fun onAttach(dispatcher: NavigationEventDispatcher) {
+    override fun onAdded(dispatcher: NavigationEventDispatcher) {
         addedInvocations++
         currentDispatcher = dispatcher
         onAdded.invoke(dispatcher)
     }
 
-    // TODO(mgalhardo): aosp/3732466 is renaming this to `onRemoved`
-    override fun onDetach() {
+    override fun onRemoved() {
         currentDispatcher = null
         removedInvocations++
         onRemoved.invoke()

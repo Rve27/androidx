@@ -37,9 +37,9 @@ abstract class androidx.navigationevent/NavigationEventInput { // androidx.navig
     final fun dispatchOnCompleted() // androidx.navigationevent/NavigationEventInput.dispatchOnCompleted|dispatchOnCompleted(){}[0]
     final fun dispatchOnProgressed(androidx.navigationevent/NavigationEvent) // androidx.navigationevent/NavigationEventInput.dispatchOnProgressed|dispatchOnProgressed(androidx.navigationevent.NavigationEvent){}[0]
     final fun dispatchOnStarted(androidx.navigationevent/NavigationEvent) // androidx.navigationevent/NavigationEventInput.dispatchOnStarted|dispatchOnStarted(androidx.navigationevent.NavigationEvent){}[0]
-    open fun onAttach(androidx.navigationevent/NavigationEventDispatcher) // androidx.navigationevent/NavigationEventInput.onAttach|onAttach(androidx.navigationevent.NavigationEventDispatcher){}[0]
-    open fun onDetach() // androidx.navigationevent/NavigationEventInput.onDetach|onDetach(){}[0]
+    open fun onAdded(androidx.navigationevent/NavigationEventDispatcher) // androidx.navigationevent/NavigationEventInput.onAdded|onAdded(androidx.navigationevent.NavigationEventDispatcher){}[0]
     open fun onHasEnabledCallbacksChanged(kotlin/Boolean) // androidx.navigationevent/NavigationEventInput.onHasEnabledCallbacksChanged|onHasEnabledCallbacksChanged(kotlin.Boolean){}[0]
+    open fun onRemoved() // androidx.navigationevent/NavigationEventInput.onRemoved|onRemoved(){}[0]
 }
 
 final class androidx.navigationevent/DirectNavigationEventInput : androidx.navigationevent/NavigationEventInput { // androidx.navigationevent/DirectNavigationEventInput|null[0]

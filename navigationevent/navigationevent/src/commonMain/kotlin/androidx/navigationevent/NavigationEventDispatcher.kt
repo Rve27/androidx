@@ -176,7 +176,7 @@ private constructor(
      * A set of [NavigationEventInput] instances that are directly managed by this dispatcher.
      *
      * This dispatcher controls the lifecycle of its registered handlers, calling
-     * [NavigationEventInput.doAttach] and [NavigationEventInput.doDetach] as its own state changes.
+     * [NavigationEventInput.onAdded] and [NavigationEventInput.onRemoved] as its own state changes.
      *
      * **This is primarily for cleanup when this dispatcher is no longer needed.**
      */
@@ -289,35 +289,40 @@ private constructor(
      * updates (e.g., whether any callbacks are enabled). It is also tracked locally by this
      * dispatcher for lifecycle management.
      *
-     * The input's [NavigationEventInput.onAttach] method is invoked immediately upon addition. It
+     * The input's [NavigationEventInput.onAdded] method is invoked immediately upon addition. It
      * will be automatically detached when this dispatcher [dispose] is called.
      *
      * @param input The input to add.
-     * @throws IllegalStateException if the dispatcher has already been disposed.
+     * @throws IllegalStateException if the dispatcher has already been disposed or if [input] is
+     *   already added to a dispatcher.
      * @see removeInput
-     * @see NavigationEventInput.onDetach
+     * @see NavigationEventInput.onRemoved
      */
     @MainThread
     public fun addInput(input: NavigationEventInput) {
         checkInvariants()
 
         if (inputs.add(input)) {
+            check(input.dispatcher == null) {
+                "This input is already added to dispatcher ${input.dispatcher}."
+            }
             sharedProcessor.inputs += input
-            input.doAttach(dispatcher = this)
+            input.dispatcher = this
+            input.doOnAdded(this)
         }
     }
 
     /**
      * Removes and detaches an input from this dispatcher and the shared processor.
      *
-     * This severs the input's lifecycle link to the dispatcher. Its [NavigationEventInput.onDetach]
-     * method is invoked, and it will no longer receive lifecycle calls or global state updates from
-     * the processor.
+     * This severs the input's lifecycle link to the dispatcher. Its
+     * [NavigationEventInput.onRemoved] method is invoked, and it will no longer receive lifecycle
+     * calls or global state updates from the processor.
      *
      * @param input The input to remove.
      * @throws IllegalStateException if the dispatcher has already been disposed.
      * @see addInput
-     * @see NavigationEventInput.onAttach
+     * @see NavigationEventInput.onAdded
      */
     @MainThread
     public fun removeInput(input: NavigationEventInput) {
@@ -325,7 +330,8 @@ private constructor(
 
         if (inputs.remove(input)) {
             sharedProcessor.inputs -= input
-            input.doDetach()
+            input.dispatcher = null
+            input.doOnRemoved()
         }
     }
 
@@ -421,7 +427,7 @@ private constructor(
      * 1. It iteratively processes and disposes of all child dispatchers and their descendants,
      *    ensuring a complete top-down cleanup of the entire sub-hierarchy without recursion.
      * 2. For each dispatcher, it first detaches all registered [NavigationEventInput] instances by
-     *    calling [NavigationEventInputHandler.onDetach]. This severs their lifecycle link to the
+     *    calling [NavigationEventInput.onRemoved]. This severs their lifecycle link to the
      *    dispatcher and allows them to release any tied resources.
      * 3. It then removes all [NavigationEventCallback] instances registered with that dispatcher
      *    from the shared processor, preventing memory leaks.
@@ -455,7 +461,8 @@ private constructor(
             // and preventing them from interacting with a disposed object.
             for (input in currentDispatcher.inputs) {
                 sharedProcessor.inputs -= input
-                input.doDetach()
+                input.dispatcher = null
+                input.doOnRemoved()
             }
             inputs.clear()
 
