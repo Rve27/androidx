@@ -45,6 +45,7 @@ public class CameraPresenceProvider(private val backgroundExecutor: Executor) {
     private var cameraFactory: CameraFactory? = null
     private var cameraRepository: CameraRepository? = null
     private var sourcePresenceObservable: Observable<List<CameraIdentifier>>? = null
+    private var cameraValidator: CameraValidator? = null
     private val sourceObserver: SourceObservableObserver = SourceObservableObserver()
 
     @Volatile private var currentFilteredIds: List<CameraIdentifier> = emptyList()
@@ -64,15 +65,21 @@ public class CameraPresenceProvider(private val backgroundExecutor: Executor) {
     /**
      * Starts monitoring camera presence.
      *
+     * @param cameraValidator The validator to verify whether the change of the camera is valid.
      * @param cameraFactory The factory that provides the presence observable.
      * @param cameraRepository The repository to get camera instances from.
      */
-    public fun startup(cameraFactory: CameraFactory, cameraRepository: CameraRepository) {
+    public fun startup(
+        cameraValidator: CameraValidator,
+        cameraFactory: CameraFactory,
+        cameraRepository: CameraRepository,
+    ) {
         if (!isMonitoring.compareAndSet(false, true)) {
             return
         }
         Logger.i(TAG, "Starting CameraPresenceProvider monitoring.")
 
+        this.cameraValidator = cameraValidator
         this.currentFilteredIds =
             cameraFactory.availableCameraIds.map { CameraIdentifier.create(it) }
         this.cameraFactory = cameraFactory
@@ -96,6 +103,7 @@ public class CameraPresenceProvider(private val backgroundExecutor: Executor) {
         sourcePresenceObservable?.removeObserver(sourceObserver)
         clearAllCameraStateObservers()
 
+        cameraValidator = null
         dependentInternalListeners.clear()
         publicApiListeners.clear()
         currentFilteredIds = emptyList()
@@ -106,20 +114,50 @@ public class CameraPresenceProvider(private val backgroundExecutor: Executor) {
     private inner class SourceObservableObserver : Observable.Observer<List<CameraIdentifier>> {
         override fun onNewData(rawCameraIdentifiers: List<CameraIdentifier>?) {
             if (!isMonitoring.get()) return
-            val factory = cameraFactory ?: return
 
-            // Phase 1: Update CameraFactory
+            val factory = cameraFactory ?: return
+            val repo = cameraRepository ?: return
+            val validator = cameraValidator ?: return
+
             val rawIdStrings = rawCameraIdentifiers?.map { it.internalId } ?: emptyList()
+
+            // For factories that support interrogation, we can pre-validate the change.
+            if (factory is CameraFactory.Interrogator) {
+                val oldFilteredIds = currentFilteredIds
+                val potentialNewIds =
+                    factory.getAvailableCameraIds(rawIdStrings).map { CameraIdentifier.create(it) }
+
+                val removedCameras = oldFilteredIds.toSet() - potentialNewIds.toSet()
+                if (
+                    removedCameras.isNotEmpty() &&
+                        validator.isChangeInvalid(repo.cameras, removedCameras)
+                ) {
+                    Logger.w(TAG, "Camera removal update invalid. Aborting.")
+                    return
+                }
+            }
+
+            // After any pre-validation has passed, commit the update to the factory.
             try {
                 factory.onCameraIdsUpdated(rawIdStrings)
             } catch (e: Exception) {
-                Logger.e(TAG, "CameraFactory failed to update. Triggering refresh.", e)
-                sourcePresenceObservable?.fetchData()
+                Logger.w(
+                    TAG,
+                    "CameraFactory failed to update. The camera list may be stale until the next update.",
+                    e,
+                )
                 return
             }
 
-            // Phase 2: Get filtered list and start transaction
+            // Now, get the definitive new list from the factory's updated state.
             val newFilteredIds = factory.availableCameraIds.map { CameraIdentifier.create(it) }
+
+            // If the final list results in no change, we can stop.
+            if (newFilteredIds == currentFilteredIds) {
+                return
+            }
+
+            // Proceed with the full update transaction.
             processFilteredCameraIdUpdate(newFilteredIds)
         }
 
