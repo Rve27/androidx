@@ -154,6 +154,9 @@ object ComposeUiFlags {
     @JvmField
     var isClearFocusOnResetEnabled: Boolean = false
 
+    /** Enable initial focus when a focusable is added to a screen with no focusable content. */
+    @Suppress("MutableBareField") @JvmField var isInitialFocusOnFocusableAvailable: Boolean = false
+
     /**
      * With this flag on, the adaptive refresh rate (ARR) feature will be enabled. A preferred frame
      * rate can be set on a Composable through frame rate modifier: [Modifier.preferredFrameRate]
