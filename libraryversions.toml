@@ -188,13 +188,12 @@ WINDOW_EXTENSIONS = "1.5.0"
 WINDOW_EXTENSIONS_CORE = "1.1.0-alpha01"
 WINDOW_SIDECAR = "1.0.0-rc01"
 WORK = "2.11.0-alpha01"
-XR = "1.0.0-alpha05"
-XR_ARCORE = "1.0.0-alpha05"
-XR_COMPOSE = "1.0.0-alpha06"
+XR_ARCORE = "1.0.0-alpha06"
+XR_COMPOSE = "1.0.0-alpha07"
 XR_GLIMMER = "1.0.0-alpha01"
 XR_PROJECTED = "1.0.0-alpha01"
-XR_RUNTIME = "1.0.0-alpha05"
-XR_SCENECORE = "1.0.0-alpha06"
+XR_RUNTIME = "1.0.0-alpha06"
+XR_SCENECORE = "1.0.0-alpha07"
 
 [groups]
 ACTIVITY = { group = "androidx.activity", atomicGroupVersion = "versions.ACTIVITY" }
@@ -336,7 +335,6 @@ WINDOW_EXTENSIONS = { group = "androidx.window.extensions", atomicGroupVersion =
 WINDOW_EXTENSIONS_CORE = { group = "androidx.window.extensions.core", atomicGroupVersion = "versions.WINDOW_EXTENSIONS_CORE" }
 WINDOW_SIDECAR = { group = "androidx.window.sidecar", atomicGroupVersion = "versions.WINDOW_SIDECAR" }
 WORK = { group = "androidx.work", atomicGroupVersion = "versions.WORK" }
-XR = { group = "androidx.xr", atomicGroupVersion = "versions.XR" }
 XR_ARCORE = { group = "androidx.xr.arcore", atomicGroupVersion = "versions.XR_ARCORE" }
 XR_COMPOSE = { group = "androidx.xr.compose", atomicGroupVersion = "versions.XR_COMPOSE" }
 XR_GLIMMER = { group = "androidx.xr.glimmer", atomicGroupVersion = "versions.XR_GLIMMER" }
