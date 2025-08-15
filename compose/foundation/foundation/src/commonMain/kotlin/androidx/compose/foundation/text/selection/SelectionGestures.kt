@@ -130,7 +130,7 @@ internal suspend fun PointerInputScope.awaitSelectionGestures(
  * press instead of immediately looking for drags. If no long press is found, this does not trigger
  * any observer.
  */
-private suspend fun AwaitPointerEventScope.touchSelectionFirstPress(
+internal suspend fun AwaitPointerEventScope.touchSelectionFirstPress(
     observer: TextDragObserver,
     downEvent: PointerEvent,
 ) {
@@ -243,7 +243,7 @@ private suspend fun AwaitPointerEventScope.touchSelectionSubsequentPress(
 }
 
 /** Gesture handler for mouse selection. */
-private suspend fun AwaitPointerEventScope.mouseSelection(
+internal suspend fun AwaitPointerEventScope.mouseSelection(
     observer: MouseSelectionObserver,
     clicksCounter: ClicksCounter,
     down: PointerEvent,
@@ -299,7 +299,7 @@ private suspend fun AwaitPointerEventScope.mouseSelection(
     }
 }
 
-private class ClicksCounter(private val viewConfiguration: ViewConfiguration) {
+internal class ClicksCounter(private val viewConfiguration: ViewConfiguration) {
     var clicks = 0
     var prevClick: PointerInputChange? = null
 
