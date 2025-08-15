@@ -46,20 +46,6 @@ androidXMultiplatform {
                 implementation(libs.kotlinTest)
             }
         }
-
-        jsMain {
-            dependsOn(commonMain)
-            dependencies {
-                implementation(libs.kotlinStdlibJs)
-            }
-        }
-
-        wasmJsMain {
-            dependsOn(commonMain)
-            dependencies {
-                implementation(libs.kotlinStdlibWasm)
-            }
-        }
     }
 }
 

@@ -115,32 +115,18 @@ androidXMultiplatform {
 
         jsMain {
             dependsOn(webMain)
-            dependencies {
-                implementation(libs.kotlinStdlibJs)
-            }
         }
 
         jsTest {
             dependsOn(webTest)
-            dependencies {
-                implementation(libs.kotlinStdlibJs)
-                implementation(libs.kotlinTestJs)
-            }
         }
 
         wasmJsMain {
             dependsOn(webMain)
-            dependencies {
-                implementation(libs.kotlinStdlibWasm)
-            }
         }
 
         wasmJsTest {
             dependsOn(webTest)
-            dependencies {
-                implementation(libs.kotlinStdlibWasm)
-                implementation(libs.kotlinTestWasm)
-            }
         }
     }
 }
