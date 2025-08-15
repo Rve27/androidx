@@ -14,15 +14,12 @@
  * limitations under the License.
  */
 
-@file:OptIn(ExperimentalForeignApi::class)
-
 package androidx.paging.testing.internal
 
 import kotlinx.atomicfu.AtomicBoolean as AtomicFuAtomicBoolean
 import kotlinx.atomicfu.AtomicInt as AtomicFuAtomicInt
 import kotlinx.atomicfu.AtomicRef as AtomicFuAtomicRef
 import kotlinx.atomicfu.atomic
-import kotlinx.cinterop.ExperimentalForeignApi
 
 internal actual class AtomicInt actual constructor(initialValue: Int) {
     private var delegate: AtomicFuAtomicInt = atomic(initialValue)

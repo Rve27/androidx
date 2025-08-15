@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,6 @@
  * limitations under the License.
  */
 
-package androidx.paging
+package androidx.paging.testing
 
-import androidx.annotation.RestrictTo
-
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public actual object PagingLogger {
-
-    public actual fun isLoggable(level: Int): Boolean {
-        return false
-    }
-
-    // consider using java.util.logging APIs instead
-    public actual fun log(level: Int, message: String, tr: Throwable?) {
-        print("\n$message")
-    }
-}
+actual typealias IgnoreWebTarget = kotlin.test.Ignore

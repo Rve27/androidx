@@ -21,6 +21,8 @@
  * Please use that script when creating a new project, rather than copying an existing project and
  * modifying its settings.
  */
+
+import androidx.build.PlatformIdentifier
 import androidx.build.SoftwareType
 
 plugins {
@@ -37,6 +39,8 @@ androidXMultiplatform {
     js()
     wasmJs()
     mingwX64()
+
+    defaultPlatform(PlatformIdentifier.JVM)
 
     sourceSets {
         commonMain {
