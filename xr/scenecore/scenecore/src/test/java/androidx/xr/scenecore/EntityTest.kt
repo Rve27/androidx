@@ -760,7 +760,7 @@ class EntityTest {
     @Test
     fun activityPanelEntityLaunchActivity_callsImplLaunchActivity() {
         val launchIntent = Intent(activity.applicationContext, ComponentActivity::class.java)
-        activityPanelEntity.launchActivity(launchIntent, null)
+        activityPanelEntity.startActivity(launchIntent, null)
 
         verify(mockActivityPanelEntity).launchActivity(launchIntent, null)
     }

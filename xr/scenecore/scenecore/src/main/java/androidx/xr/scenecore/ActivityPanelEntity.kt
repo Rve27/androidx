@@ -29,8 +29,9 @@ import androidx.xr.runtime.math.Pose
 /**
  * ActivityPanelEntity creates a spatial panel for embedding an [Activity] in Android XR. Users can
  * either use an [Intent] to launch an Activity in the given panel or provide an instance of
- * Activity to move into this panel. Calling [Entity.dispose] on this Entity will destroy the
- * underlying Activity.
+ * Activity to move into this panel. In order to launch and embed an activity,
+ * [SpatialCapabilities.SPATIAL_CAPABILITY_EMBED_ACTIVITY] capability is required. Calling
+ * [Entity.dispose] on this Entity will destroy the underlying Activity.
  */
 public class ActivityPanelEntity
 private constructor(
@@ -40,21 +41,23 @@ private constructor(
 ) : PanelEntity(lifecycleManager, rtActivityPanelEntity, entityManager) {
 
     /**
-     * Launches an [Activity] in the given panel. Subsequent calls to this method will replace the
+     * Starts an [Activity] in the given panel. Subsequent calls to this method will replace the
      * already existing Activity in the panel with the new one. The panel will not be visible until
-     * an Activity is successfully launched. This method will not provide any information about when
-     * the Activity successfully launches.
+     * an Activity is successfully launched. This will fail if the [Scene] does not have the
+     * [SpatialCapabilities.SPATIAL_CAPABILITY_EMBED_ACTIVITY] capability. This method will not
+     * provide any information about when the Activity successfully launches.
      *
      * @param intent Intent to launch the activity.
      * @param bundle Bundle to pass to the activity, can be null.
      */
     @JvmOverloads
-    public fun launchActivity(intent: Intent, bundle: Bundle? = null) {
+    public fun startActivity(intent: Intent, bundle: Bundle? = null) {
         rtActivityPanelEntity.launchActivity(intent, bundle)
     }
 
     /**
-     * Moves the given [Activity] into this panel.
+     * Moves the given [Activity] into this panel. This will fail if the application does not have
+     * the [SpatialCapabilities.SPATIAL_CAPABILITY_EMBED_ACTIVITY] capability.
      *
      * @param activity Activity to move into this panel.
      */

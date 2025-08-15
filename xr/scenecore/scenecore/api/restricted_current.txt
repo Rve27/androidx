@@ -4,9 +4,9 @@ package androidx.xr.scenecore {
   public final class ActivityPanelEntity extends androidx.xr.scenecore.PanelEntity {
     method public static androidx.xr.scenecore.ActivityPanelEntity create(androidx.xr.runtime.Session session, androidx.xr.runtime.math.IntSize2d pixelDimensions, String name);
     method public static androidx.xr.scenecore.ActivityPanelEntity create(androidx.xr.runtime.Session session, androidx.xr.runtime.math.IntSize2d pixelDimensions, String name, optional androidx.xr.runtime.math.Pose pose);
-    method public void launchActivity(android.content.Intent intent);
-    method public void launchActivity(android.content.Intent intent, optional android.os.Bundle? bundle);
     method public void moveActivity(android.app.Activity activity);
+    method public void startActivity(android.content.Intent intent);
+    method public void startActivity(android.content.Intent intent, optional android.os.Bundle? bundle);
     field public static final androidx.xr.scenecore.ActivityPanelEntity.Companion Companion;
   }
 
