@@ -53,6 +53,20 @@ androidXMultiplatform {
                 api(project(":navigationevent:navigationevent"))
             }
         }
+
+        wasmJsMain {
+            dependsOn(commonMain)
+            dependencies {
+                implementation(libs.kotlinStdlibWasm)
+            }
+        }
+
+        jsMain {
+            dependsOn(commonMain)
+            dependencies {
+                implementation(libs.kotlinStdlibJs)
+            }
+        }
     }
 }
 

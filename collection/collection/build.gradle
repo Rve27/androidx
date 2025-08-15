@@ -61,7 +61,12 @@ androidXMultiplatform {
         commonTest {
             dependencies {
                 implementation(libs.kotlinTestAnnotationsCommon)
-                implementation(libs.kotlinTest)
+                // TODO(b/375358921) Set to libs.kotlinTest when collection targets Kotlin 2
+                // For KotlinWasm, versions of toolchain and stdlib need to be the same for tests:
+                // https://youtrack.jetbrains.com/issue/KT-71032
+                // So we force kotlin-test to be on Kotlin 2.
+                // Published artifacts are unaffected by this, they continue to target Kotlin 1.9
+                implementation(libs.kotlinTestForWasmTests)
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0")
             }
@@ -128,6 +133,9 @@ androidXMultiplatform {
         wasmJsMain {
             dependsOn(nonJsMain)
             dependsOn(webMain)
+            dependencies {
+                implementation(libs.kotlinStdlibWasm)
+            }
         }
 
         wasmJsTest {
@@ -137,6 +145,9 @@ androidXMultiplatform {
 
         jsMain {
             dependsOn(webMain)
+            dependencies {
+                implementation(libs.kotlinStdlibJs)
+            }
         }
 
         jsTest {
@@ -146,11 +157,15 @@ androidXMultiplatform {
         targets.configureEach { target ->
             if (target.platformType == KotlinPlatformType.native) {
                 target.compilations["main"].defaultSourceSet {
-                    if (target.konanTarget.family.appleFamily) {
+                    def konanTargetFamily = target.konanTarget.family
+                    if (konanTargetFamily == Family.OSX ||
+                            konanTargetFamily == Family.IOS ||
+                            konanTargetFamily == Family.WATCHOS ||
+                            konanTargetFamily == Family.TVOS) {
                         dependsOn(darwinMain)
-                    } else if (target.konanTarget.family == Family.LINUX) {
+                    } else if (konanTargetFamily == Family.LINUX) {
                         dependsOn(linuxMain)
-                    } else if (target.konanTarget.family == Family.MINGW) {
+                    } else if (konanTargetFamily == Family.MINGW) {
                         dependsOn(mingwMain)
                     } else {
                         throw new GradleException("unknown native target ${target}")
