@@ -40,6 +40,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -99,7 +100,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.selected
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -659,11 +659,7 @@ private fun ListCard(
                     else -> MaterialTheme.colorScheme.surface
                 }
             ),
-        modifier =
-            modifier.height(80.dp).fillMaxWidth().semantics {
-                contentDescription = title
-                selected = isSelected
-            },
+        modifier = modifier.height(80.dp).fillMaxWidth().selectable(isSelected, onClick = onClick),
     ) {
         Row(
             modifier = Modifier.padding(12.dp),
@@ -697,7 +693,10 @@ private fun ListPaneContent(
     modifier: Modifier = Modifier,
     coroutineScope: CoroutineScope,
 ) {
-    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    Column(
+        modifier = modifier.selectableGroup(),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
         items.forEachIndexed { index, item ->
             ListCard(
                 title = item,
@@ -810,7 +809,10 @@ private fun MainPaneContent(
 private fun SupportingPaneContent(modifier: Modifier = Modifier) {
     val items = listOf("Item 1", "Item 2", "Item 3")
     var selectedIndex by rememberSaveable { mutableIntStateOf(-1) }
-    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    Column(
+        modifier = modifier.selectableGroup(),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
         items.forEachIndexed { index, item ->
             ListCard(
                 title = item,
