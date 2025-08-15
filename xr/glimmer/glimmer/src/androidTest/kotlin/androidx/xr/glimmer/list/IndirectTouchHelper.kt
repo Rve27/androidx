@@ -62,13 +62,14 @@ internal fun SemanticsNodeInteraction.performIndirectSwipe(distance: Float) {
         IndirectTouchEvent(
             motionEvent = move,
             primaryDirectionalMotionAxis = IndirectTouchEventPrimaryDirectionalMotionAxis.X,
+            previousMotionEvent = down,
         )
     )
 
     val up =
         MotionEvent.obtain(
-            currentTime + 200L,
-            currentTime + 200L,
+            currentTime + 400L,
+            currentTime + 400L,
             MotionEvent.ACTION_UP,
             distance,
             Offset.Zero.y,
@@ -79,6 +80,7 @@ internal fun SemanticsNodeInteraction.performIndirectSwipe(distance: Float) {
         IndirectTouchEvent(
             motionEvent = up,
             primaryDirectionalMotionAxis = IndirectTouchEventPrimaryDirectionalMotionAxis.X,
+            previousMotionEvent = move,
         )
     )
 }

@@ -1373,20 +1373,30 @@ internal abstract class AbstractClickableNode(
         focusableNode.update(this.interactionSource)
     }
 
-    override fun onIndirectTouchEvent(event: IndirectTouchEvent): Boolean {
-        // Indirect touch events usually require focus, but if a focused child does not handle the
-        // IndirectTouchEvent, the event can bubble up without this clickable ever being focused,
-        // and hence without this being initialized through the focus path
-        initializeIndicationAndInteractionSourceIfNeeded()
-        if (!enabled) return false
-        if (touchInputEventSmoother == null) touchInputEventSmoother = TouchInputEventSmoother()
-        return processIndirectTouchEvent(
-            event.type,
-            event.primaryDirectionalMotionAxis,
-            touchInputEventSmoother!!.smoothEventPosition(event, orientation = null),
-        )
+    override fun onIndirectTouchEvent(event: IndirectTouchEvent, pass: PointerEventPass) {
+        if (pass == PointerEventPass.Main) {
+            // Indirect touch events usually require focus, but if a focused child does not handle
+            // the IndirectTouchEvent, the event can bubble up without this clickable ever being
+            // focused, and hence without this being initialized through the focus path
+            initializeIndicationAndInteractionSourceIfNeeded()
+            if (enabled) {
+                if (touchInputEventSmoother == null) {
+                    touchInputEventSmoother = TouchInputEventSmoother()
+                }
+                processIndirectTouchEvent(
+                    event.type,
+                    event.primaryDirectionalMotionAxis,
+                    touchInputEventSmoother!!.smoothEventPosition(event, orientation = null),
+                )
+            }
+        }
     }
 
+    override fun onCancelIndirectTouchInput() {
+        // TODO (levima): Add support for cancellation
+    }
+
+    // TODO (levima): Change your logic to use a consumption based approach.
     private fun processIndirectTouchEvent(
         type: IndirectTouchEventType,
         primaryAxis: IndirectTouchEventPrimaryDirectionalMotionAxis,
@@ -1438,8 +1448,6 @@ internal abstract class AbstractClickableNode(
 
         return consumedEvent
     }
-
-    override fun onPreIndirectTouchEvent(event: IndirectTouchEvent): Boolean = false
 
     final override fun onAttach() {
         onObservedReadsChanged()

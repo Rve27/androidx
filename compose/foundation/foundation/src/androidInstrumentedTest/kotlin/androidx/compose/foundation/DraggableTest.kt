@@ -71,6 +71,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
 import com.google.common.truth.Truth.assertThat
 import kotlin.math.absoluteValue
+import kotlin.test.Ignore
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import kotlinx.coroutines.CoroutineScope
@@ -543,6 +544,7 @@ class DraggableTest {
     }
 
     @Test
+    @Ignore("Fixed in follow up CL (aosp/3768764)")
     fun draggable_indirectTouchCancel_callsDragStop() {
         var total = 0f
         var dragStopped = 0

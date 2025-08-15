@@ -17,6 +17,7 @@
 package androidx.compose.ui.input.indirect
 
 import android.os.SystemClock
+import android.view.MotionEvent.ACTION_CANCEL
 import android.view.MotionEvent.ACTION_DOWN
 import android.view.MotionEvent.ACTION_MOVE
 import android.view.MotionEvent.ACTION_UP
@@ -34,6 +35,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.AndroidComposeView
 import androidx.compose.ui.platform.LocalFocusManager
@@ -51,6 +53,7 @@ import com.google.common.truth.Truth.assertThat
 import kotlin.test.Test
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
+import org.junit.Before
 import org.junit.Rule
 import org.junit.runner.RunWith
 
@@ -84,10 +87,17 @@ class IndirectTouchEventNavigationSystemTests {
     // Used to dispatch motion events
     private lateinit var rootView: AndroidComposeView
     private var receivedEvent: IndirectTouchEvent? = null
+    private var indirectEventCancellation = false
 
     private val timeBetweenEvents = 20L
     private val flingTriggeringDistanceBetweenEvents = 50
     private val nonFlingTriggeringDistanceBetweenEvents = 5
+
+    @Before
+    fun setup() {
+        receivedEvent = null
+        indirectEventCancellation = false
+    }
 
     // ----- Primary Directional Motion Axis X tests -----
     @Test
@@ -126,11 +136,11 @@ class IndirectTouchEventNavigationSystemTests {
                 testTagBox3 = testTagBox3,
                 onBox3FocusChanged = { box3Focused = it },
                 focusRequesterBox3 = focusRequesterBox3,
-                onIndirectTouchEventForAllBoxes = {
+                onIndirectTouchEventMainPassForAllBoxes = {
                     receivedEvent = it
-                    // Never consume event so it triggers the navigation behavior we are testing
-                    false
+                    // We don't consume the event, so it can pass on for system navigation behavior.
                 },
+                onIndirectTouchCancelForAllBoxes = { indirectEventCancellation = true },
             )
         }
 
@@ -151,8 +161,11 @@ class IndirectTouchEventNavigationSystemTests {
 
         val downTime = SystemClock.uptimeMillis()
         var eventTime = downTime
+        var previousTime = eventTime
         var indirectX = 100f
+        var previousIndirectX = indirectX
         val indirectY = 100f
+        val previousIndirectY = indirectY
 
         val downEvent =
             MotionEventBuilder.newBuilder()
@@ -168,7 +181,22 @@ class IndirectTouchEventNavigationSystemTests {
                 IndirectTouchEventPrimaryDirectionalMotionAxis.X
             rootView.dispatchGenericMotionEvent(downEvent)
         }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Press) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Press)
+            assertThat(receivedEvent!!.changes.first().position.x).isEqualTo(indirectX)
+            assertThat(receivedEvent!!.changes.first().position.y).isEqualTo(indirectY)
+            assertThat(receivedEvent!!.changes.first().isConsumed).isEqualTo(false)
+            assertThat(receivedEvent!!.changes.first().pressed).isEqualTo(true)
+            // For a first event in a stream, previous is going to equal current (since there is
+            // no previous).
+            assertThat(receivedEvent!!.changes.first().previousPosition.x)
+                .isEqualTo(previousIndirectX)
+            assertThat(receivedEvent!!.changes.first().previousPosition.y)
+                .isEqualTo(previousIndirectY)
+            assertThat(receivedEvent!!.changes.first().previousUptimeMillis).isEqualTo(previousTime)
+            assertThat(receivedEvent!!.changes.first().previousPressed).isEqualTo(false)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectX += flingTriggeringDistanceBetweenEvents
@@ -183,7 +211,23 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(moveEvent1) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move)
+            assertThat(receivedEvent!!.changes.first().position.x).isEqualTo(indirectX)
+            assertThat(receivedEvent!!.changes.first().position.y).isEqualTo(indirectY)
+            assertThat(receivedEvent!!.changes.first().isConsumed).isEqualTo(false)
+            assertThat(receivedEvent!!.changes.first().pressed).isEqualTo(true)
+            assertThat(receivedEvent!!.changes.first().previousPosition.x)
+                .isEqualTo(previousIndirectX)
+            assertThat(receivedEvent!!.changes.first().previousPosition.y)
+                .isEqualTo(previousIndirectY)
+            assertThat(receivedEvent!!.changes.first().previousUptimeMillis).isEqualTo(previousTime)
+            assertThat(receivedEvent!!.changes.first().previousPressed).isEqualTo(true)
+            assertThat(indirectEventCancellation).isFalse()
+        }
+
+        previousTime = eventTime
+        previousIndirectX = indirectX
 
         eventTime += timeBetweenEvents
         indirectX += flingTriggeringDistanceBetweenEvents
@@ -198,7 +242,23 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(moveEvent2) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move)
+            assertThat(receivedEvent!!.changes.first().position.x).isEqualTo(indirectX)
+            assertThat(receivedEvent!!.changes.first().position.y).isEqualTo(indirectY)
+            assertThat(receivedEvent!!.changes.first().isConsumed).isEqualTo(false)
+            assertThat(receivedEvent!!.changes.first().pressed).isEqualTo(true)
+            assertThat(receivedEvent!!.changes.first().previousPosition.x)
+                .isEqualTo(previousIndirectX)
+            assertThat(receivedEvent!!.changes.first().previousPosition.y)
+                .isEqualTo(previousIndirectY)
+            assertThat(receivedEvent!!.changes.first().previousUptimeMillis).isEqualTo(previousTime)
+            assertThat(receivedEvent!!.changes.first().previousPressed).isEqualTo(true)
+            assertThat(indirectEventCancellation).isFalse()
+        }
+
+        previousTime = eventTime
+        previousIndirectX = indirectX
 
         eventTime += timeBetweenEvents
         indirectX += flingTriggeringDistanceBetweenEvents
@@ -213,7 +273,20 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(upEvent) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Release) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Release)
+            assertThat(receivedEvent!!.changes.first().position.x).isEqualTo(indirectX)
+            assertThat(receivedEvent!!.changes.first().position.y).isEqualTo(indirectY)
+            assertThat(receivedEvent!!.changes.first().isConsumed).isEqualTo(false)
+            assertThat(receivedEvent!!.changes.first().pressed).isEqualTo(false)
+            assertThat(receivedEvent!!.changes.first().previousPosition.x)
+                .isEqualTo(previousIndirectX)
+            assertThat(receivedEvent!!.changes.first().previousPosition.y)
+                .isEqualTo(previousIndirectY)
+            assertThat(receivedEvent!!.changes.first().previousUptimeMillis).isEqualTo(previousTime)
+            assertThat(receivedEvent!!.changes.first().previousPressed).isEqualTo(true)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         rule.runOnIdle {
             assertFalse(box1Focused)
@@ -258,11 +331,11 @@ class IndirectTouchEventNavigationSystemTests {
                 testTagBox3 = testTagBox3,
                 onBox3FocusChanged = { box3Focused = it },
                 focusRequesterBox3 = focusRequesterBox3,
-                onIndirectTouchEventForAllBoxes = {
+                onIndirectTouchEventMainPassForAllBoxes = {
                     receivedEvent = it
-                    // Never consume event so it triggers the navigation behavior we are testing
-                    false
+                    // We don't consume the event, so it can pass on for system navigation behavior.
                 },
+                onIndirectTouchCancelForAllBoxes = { indirectEventCancellation = true },
             )
         }
 
@@ -300,7 +373,10 @@ class IndirectTouchEventNavigationSystemTests {
                 IndirectTouchEventPrimaryDirectionalMotionAxis.X
             rootView.dispatchGenericMotionEvent(downEvent)
         }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Press) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Press)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectX -= flingTriggeringDistanceBetweenEvents
@@ -315,7 +391,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(moveEvent1) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectX -= flingTriggeringDistanceBetweenEvents
@@ -330,7 +409,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(moveEvent2) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectX -= flingTriggeringDistanceBetweenEvents
@@ -345,7 +427,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(upEvent) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Release) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Release)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         rule.runOnIdle {
             assertTrue(box1Focused)
@@ -390,11 +475,11 @@ class IndirectTouchEventNavigationSystemTests {
                 testTagBox3 = testTagBox3,
                 onBox3FocusChanged = { box3Focused = it },
                 focusRequesterBox3 = focusRequesterBox3,
-                onIndirectTouchEventForAllBoxes = {
+                onIndirectTouchEventMainPassForAllBoxes = {
                     receivedEvent = it
-                    // Never consume event so it triggers the navigation behavior we are testing
-                    false
+                    // We don't consume the event, so it can pass on for system navigation behavior.
                 },
+                onIndirectTouchCancelForAllBoxes = { indirectEventCancellation = true },
             )
         }
 
@@ -432,7 +517,10 @@ class IndirectTouchEventNavigationSystemTests {
                 IndirectTouchEventPrimaryDirectionalMotionAxis.X
             rootView.dispatchGenericMotionEvent(downEvent)
         }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Press) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Press)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectX += flingTriggeringDistanceBetweenEvents
@@ -448,7 +536,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(moveEvent1) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectX += flingTriggeringDistanceBetweenEvents
@@ -464,7 +555,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(moveEvent2) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectX += flingTriggeringDistanceBetweenEvents
@@ -480,7 +574,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(upEvent) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Release) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Release)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         rule.runOnIdle {
             assertFalse(box1Focused)
@@ -525,11 +622,11 @@ class IndirectTouchEventNavigationSystemTests {
                 testTagBox3 = testTagBox3,
                 onBox3FocusChanged = { box3Focused = it },
                 focusRequesterBox3 = focusRequesterBox3,
-                onIndirectTouchEventForAllBoxes = {
+                onIndirectTouchEventMainPassForAllBoxes = {
                     receivedEvent = it
-                    // Never consume event so it triggers the navigation behavior we are testing
-                    false
+                    // We don't consume the event, so it can pass on for system navigation behavior.
                 },
+                onIndirectTouchCancelForAllBoxes = { indirectEventCancellation = true },
             )
         }
 
@@ -567,7 +664,10 @@ class IndirectTouchEventNavigationSystemTests {
                 IndirectTouchEventPrimaryDirectionalMotionAxis.X
             rootView.dispatchGenericMotionEvent(downEvent)
         }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Press) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Press)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectX -= flingTriggeringDistanceBetweenEvents
@@ -583,7 +683,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(moveEvent1) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectX -= flingTriggeringDistanceBetweenEvents
@@ -599,7 +702,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(moveEvent2) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectX -= flingTriggeringDistanceBetweenEvents
@@ -615,7 +721,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(upEvent) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Release) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Release)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         rule.runOnIdle {
             assertTrue(box1Focused)
@@ -662,11 +771,11 @@ class IndirectTouchEventNavigationSystemTests {
                 testTagBox3 = testTagBox3,
                 onBox3FocusChanged = { box3Focused = it },
                 focusRequesterBox3 = focusRequesterBox3,
-                onIndirectTouchEventForAllBoxes = {
+                onIndirectTouchEventMainPassForAllBoxes = {
                     receivedEvent = it
-                    // Never consume event so it triggers the navigation behavior we are testing
-                    false
+                    // We don't consume the event, so it can pass on for system navigation behavior.
                 },
+                onIndirectTouchCancelForAllBoxes = { indirectEventCancellation = true },
             )
         }
 
@@ -704,7 +813,10 @@ class IndirectTouchEventNavigationSystemTests {
                 IndirectTouchEventPrimaryDirectionalMotionAxis.X
             rootView.dispatchGenericMotionEvent(downEvent)
         }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Press) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Press)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectX += flingTriggeringDistanceBetweenEvents
@@ -720,7 +832,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(moveEvent1) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectX += flingTriggeringDistanceBetweenEvents
@@ -736,7 +851,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(moveEvent2) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectX += flingTriggeringDistanceBetweenEvents
@@ -752,7 +870,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(upEvent) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Release) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Release)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         rule.runOnIdle {
             assertFalse(box1Focused)
@@ -799,11 +920,11 @@ class IndirectTouchEventNavigationSystemTests {
                 testTagBox3 = testTagBox3,
                 onBox3FocusChanged = { box3Focused = it },
                 focusRequesterBox3 = focusRequesterBox3,
-                onIndirectTouchEventForAllBoxes = {
+                onIndirectTouchEventMainPassForAllBoxes = {
                     receivedEvent = it
-                    // Never consume event so it triggers the navigation behavior we are testing
-                    false
+                    // We don't consume the event, so it can pass on for system navigation behavior.
                 },
+                onIndirectTouchCancelForAllBoxes = { indirectEventCancellation = true },
             )
         }
 
@@ -841,7 +962,10 @@ class IndirectTouchEventNavigationSystemTests {
                 IndirectTouchEventPrimaryDirectionalMotionAxis.X
             rootView.dispatchGenericMotionEvent(downEvent)
         }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Press) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Press)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectX -= flingTriggeringDistanceBetweenEvents
@@ -857,7 +981,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(moveEvent1) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectX -= flingTriggeringDistanceBetweenEvents
@@ -873,7 +1000,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(moveEvent2) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectX -= flingTriggeringDistanceBetweenEvents
@@ -889,7 +1019,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(upEvent) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Release) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Release)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         rule.runOnIdle {
             assertFalse(box1Focused)
@@ -935,11 +1068,11 @@ class IndirectTouchEventNavigationSystemTests {
                 testTagBox3 = testTagBox3,
                 onBox3FocusChanged = { box3Focused = it },
                 focusRequesterBox3 = focusRequesterBox3,
-                onIndirectTouchEventForAllBoxes = {
+                onIndirectTouchEventMainPassForAllBoxes = {
                     receivedEvent = it
-                    // Never consume event so it triggers the navigation behavior we are testing
-                    false
+                    // We don't consume the event, so it can pass on for system navigation behavior.
                 },
+                onIndirectTouchCancelForAllBoxes = { indirectEventCancellation = true },
             )
         }
 
@@ -977,7 +1110,10 @@ class IndirectTouchEventNavigationSystemTests {
                 IndirectTouchEventPrimaryDirectionalMotionAxis.X
             rootView.dispatchGenericMotionEvent(downEvent)
         }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Press) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Press)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectX += nonFlingTriggeringDistanceBetweenEvents
@@ -992,7 +1128,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(moveEvent1) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectX += nonFlingTriggeringDistanceBetweenEvents
@@ -1007,7 +1146,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(moveEvent2) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectX += nonFlingTriggeringDistanceBetweenEvents
@@ -1022,7 +1164,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(upEvent) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Release) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Release)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         rule.runOnIdle {
             assertFalse(box1Focused)
@@ -1068,11 +1213,11 @@ class IndirectTouchEventNavigationSystemTests {
                 testTagBox3 = testTagBox3,
                 onBox3FocusChanged = { box3Focused = it },
                 focusRequesterBox3 = focusRequesterBox3,
-                onIndirectTouchEventForAllBoxes = {
+                onIndirectTouchEventMainPassForAllBoxes = {
                     receivedEvent = it
-                    // Never consume event so it triggers the navigation behavior we are testing
-                    false
+                    // We don't consume the event, so it can pass on for system navigation behavior.
                 },
+                onIndirectTouchCancelForAllBoxes = { indirectEventCancellation = true },
             )
         }
 
@@ -1110,7 +1255,10 @@ class IndirectTouchEventNavigationSystemTests {
                 IndirectTouchEventPrimaryDirectionalMotionAxis.X
             rootView.dispatchGenericMotionEvent(downEvent)
         }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Press) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Press)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectX -= nonFlingTriggeringDistanceBetweenEvents
@@ -1125,7 +1273,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(moveEvent1) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectX -= nonFlingTriggeringDistanceBetweenEvents
@@ -1140,7 +1291,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(moveEvent2) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectX -= nonFlingTriggeringDistanceBetweenEvents
@@ -1155,7 +1309,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(upEvent) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Release) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Release)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         rule.runOnIdle {
             assertFalse(box1Focused)
@@ -1200,11 +1357,11 @@ class IndirectTouchEventNavigationSystemTests {
                 testTagBox3 = testTagBox3,
                 onBox3FocusChanged = { box3Focused = it },
                 focusRequesterBox3 = focusRequesterBox3,
-                onIndirectTouchEventForAllBoxes = {
+                onIndirectTouchEventMainPassForAllBoxes = {
                     receivedEvent = it
-                    // Never consume event so it triggers the navigation behavior we are testing
-                    false
+                    // We don't consume the event, so it can pass on for system navigation behavior.
                 },
+                onIndirectTouchCancelForAllBoxes = { indirectEventCancellation = true },
             )
         }
 
@@ -1242,7 +1399,10 @@ class IndirectTouchEventNavigationSystemTests {
                 IndirectTouchEventPrimaryDirectionalMotionAxis.X
             rootView.dispatchGenericMotionEvent(downEvent)
         }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Press) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Press)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectY += flingTriggeringDistanceBetweenEvents
@@ -1257,7 +1417,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(moveEvent1) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectY += flingTriggeringDistanceBetweenEvents
@@ -1272,7 +1435,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(moveEvent2) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectY += flingTriggeringDistanceBetweenEvents
@@ -1287,7 +1453,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(upEvent) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Release) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Release)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         rule.runOnIdle {
             assertFalse(box1Focused)
@@ -1332,11 +1501,11 @@ class IndirectTouchEventNavigationSystemTests {
                 testTagBox3 = testTagBox3,
                 onBox3FocusChanged = { box3Focused = it },
                 focusRequesterBox3 = focusRequesterBox3,
-                onIndirectTouchEventForAllBoxes = {
+                onIndirectTouchEventMainPassForAllBoxes = {
                     receivedEvent = it
-                    // Never consume event so it triggers the navigation behavior we are testing
-                    false
+                    // We don't consume the event, so it can pass on for system navigation behavior.
                 },
+                onIndirectTouchCancelForAllBoxes = { indirectEventCancellation = true },
             )
         }
 
@@ -1374,7 +1543,10 @@ class IndirectTouchEventNavigationSystemTests {
                 IndirectTouchEventPrimaryDirectionalMotionAxis.X
             rootView.dispatchGenericMotionEvent(downEvent)
         }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Press) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Press)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectY -= flingTriggeringDistanceBetweenEvents
@@ -1389,7 +1561,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(moveEvent1) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectY -= flingTriggeringDistanceBetweenEvents
@@ -1404,7 +1579,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(moveEvent2) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectY -= flingTriggeringDistanceBetweenEvents
@@ -1419,7 +1597,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(upEvent) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Release) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Release)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         rule.runOnIdle {
             assertFalse(box1Focused)
@@ -1465,11 +1646,11 @@ class IndirectTouchEventNavigationSystemTests {
                 testTagBox3 = testTagBox3,
                 onBox3FocusChanged = { box3Focused = it },
                 focusRequesterBox3 = focusRequesterBox3,
-                onIndirectTouchEventForAllBoxes = {
+                onIndirectTouchEventMainPassForAllBoxes = {
                     receivedEvent = it
-                    // Never consume event so it triggers the navigation behavior we are testing
-                    false
+                    // We don't consume the event, so it can pass on for system navigation behavior.
                 },
+                onIndirectTouchCancelForAllBoxes = { indirectEventCancellation = true },
             )
         }
 
@@ -1490,8 +1671,11 @@ class IndirectTouchEventNavigationSystemTests {
 
         val downTime = SystemClock.uptimeMillis()
         var eventTime = downTime
+        var previousTime = eventTime
         val indirectX = 100f
+        val previousIndirectX = indirectX
         var indirectY = 100f
+        var previousIndirectY = indirectY
 
         val downEvent =
             MotionEventBuilder.newBuilder()
@@ -1507,7 +1691,22 @@ class IndirectTouchEventNavigationSystemTests {
                 IndirectTouchEventPrimaryDirectionalMotionAxis.Y
             rootView.dispatchGenericMotionEvent(downEvent)
         }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Press) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Press)
+            assertThat(receivedEvent!!.changes.first().position.x).isEqualTo(indirectX)
+            assertThat(receivedEvent!!.changes.first().position.y).isEqualTo(indirectY)
+            assertThat(receivedEvent!!.changes.first().isConsumed).isEqualTo(false)
+            assertThat(receivedEvent!!.changes.first().pressed).isEqualTo(true)
+            // For a first event in a stream, previous is going to equal current (since there is
+            // no previous).
+            assertThat(receivedEvent!!.changes.first().previousPosition.x)
+                .isEqualTo(previousIndirectX)
+            assertThat(receivedEvent!!.changes.first().previousPosition.y)
+                .isEqualTo(previousIndirectY)
+            assertThat(receivedEvent!!.changes.first().previousUptimeMillis).isEqualTo(previousTime)
+            assertThat(receivedEvent!!.changes.first().previousPressed).isEqualTo(false)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectY += flingTriggeringDistanceBetweenEvents
@@ -1522,7 +1721,23 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(moveEvent1) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move)
+            assertThat(receivedEvent!!.changes.first().position.x).isEqualTo(indirectX)
+            assertThat(receivedEvent!!.changes.first().position.y).isEqualTo(indirectY)
+            assertThat(receivedEvent!!.changes.first().isConsumed).isEqualTo(false)
+            assertThat(receivedEvent!!.changes.first().pressed).isEqualTo(true)
+            assertThat(receivedEvent!!.changes.first().previousPosition.x)
+                .isEqualTo(previousIndirectX)
+            assertThat(receivedEvent!!.changes.first().previousPosition.y)
+                .isEqualTo(previousIndirectY)
+            assertThat(receivedEvent!!.changes.first().previousUptimeMillis).isEqualTo(previousTime)
+            assertThat(receivedEvent!!.changes.first().previousPressed).isEqualTo(true)
+            assertThat(indirectEventCancellation).isFalse()
+        }
+
+        previousTime = eventTime
+        previousIndirectY = indirectY
 
         eventTime += timeBetweenEvents
         indirectY += flingTriggeringDistanceBetweenEvents
@@ -1537,7 +1752,23 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(moveEvent2) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move)
+            assertThat(receivedEvent!!.changes.first().position.x).isEqualTo(indirectX)
+            assertThat(receivedEvent!!.changes.first().position.y).isEqualTo(indirectY)
+            assertThat(receivedEvent!!.changes.first().isConsumed).isEqualTo(false)
+            assertThat(receivedEvent!!.changes.first().pressed).isEqualTo(true)
+            assertThat(receivedEvent!!.changes.first().previousPosition.x)
+                .isEqualTo(previousIndirectX)
+            assertThat(receivedEvent!!.changes.first().previousPosition.y)
+                .isEqualTo(previousIndirectY)
+            assertThat(receivedEvent!!.changes.first().previousUptimeMillis).isEqualTo(previousTime)
+            assertThat(receivedEvent!!.changes.first().previousPressed).isEqualTo(true)
+            assertThat(indirectEventCancellation).isFalse()
+        }
+
+        previousTime = eventTime
+        previousIndirectY = indirectY
 
         eventTime += timeBetweenEvents
         indirectY += flingTriggeringDistanceBetweenEvents
@@ -1552,7 +1783,20 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(upEvent) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Release) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Release)
+            assertThat(receivedEvent!!.changes.first().position.x).isEqualTo(indirectX)
+            assertThat(receivedEvent!!.changes.first().position.y).isEqualTo(indirectY)
+            assertThat(receivedEvent!!.changes.first().isConsumed).isEqualTo(false)
+            assertThat(receivedEvent!!.changes.first().pressed).isEqualTo(false)
+            assertThat(receivedEvent!!.changes.first().previousPosition.x)
+                .isEqualTo(previousIndirectX)
+            assertThat(receivedEvent!!.changes.first().previousPosition.y)
+                .isEqualTo(previousIndirectY)
+            assertThat(receivedEvent!!.changes.first().previousUptimeMillis).isEqualTo(previousTime)
+            assertThat(receivedEvent!!.changes.first().previousPressed).isEqualTo(true)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         rule.runOnIdle {
             assertFalse(box1Focused)
@@ -1597,11 +1841,11 @@ class IndirectTouchEventNavigationSystemTests {
                 testTagBox3 = testTagBox3,
                 onBox3FocusChanged = { box3Focused = it },
                 focusRequesterBox3 = focusRequesterBox3,
-                onIndirectTouchEventForAllBoxes = {
+                onIndirectTouchEventMainPassForAllBoxes = {
                     receivedEvent = it
-                    // Never consume event so it triggers the navigation behavior we are testing
-                    false
+                    // We don't consume the event, so it can pass on for system navigation behavior.
                 },
+                onIndirectTouchCancelForAllBoxes = { indirectEventCancellation = true },
             )
         }
 
@@ -1639,7 +1883,10 @@ class IndirectTouchEventNavigationSystemTests {
                 IndirectTouchEventPrimaryDirectionalMotionAxis.Y
             rootView.dispatchGenericMotionEvent(downEvent)
         }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Press) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Press)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectY -= flingTriggeringDistanceBetweenEvents
@@ -1654,7 +1901,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(moveEvent1) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectY -= flingTriggeringDistanceBetweenEvents
@@ -1669,7 +1919,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(moveEvent2) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectY -= flingTriggeringDistanceBetweenEvents
@@ -1684,7 +1937,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(upEvent) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Release) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Release)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         rule.runOnIdle {
             assertTrue(box1Focused)
@@ -1729,11 +1985,11 @@ class IndirectTouchEventNavigationSystemTests {
                 testTagBox3 = testTagBox3,
                 onBox3FocusChanged = { box3Focused = it },
                 focusRequesterBox3 = focusRequesterBox3,
-                onIndirectTouchEventForAllBoxes = {
+                onIndirectTouchEventMainPassForAllBoxes = {
                     receivedEvent = it
-                    // Never consume event so it triggers the navigation behavior we are testing
-                    false
+                    // We don't consume the event, so it can pass on for system navigation behavior.
                 },
+                onIndirectTouchCancelForAllBoxes = { indirectEventCancellation = true },
             )
         }
 
@@ -1771,7 +2027,10 @@ class IndirectTouchEventNavigationSystemTests {
                 IndirectTouchEventPrimaryDirectionalMotionAxis.Y
             rootView.dispatchGenericMotionEvent(downEvent)
         }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Press) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Press)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectX += nonFlingTriggeringDistanceBetweenEvents
@@ -1787,7 +2046,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(moveEvent1) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectX += nonFlingTriggeringDistanceBetweenEvents
@@ -1803,7 +2065,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(moveEvent2) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectX += nonFlingTriggeringDistanceBetweenEvents
@@ -1819,7 +2084,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(upEvent) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Release) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Release)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         rule.runOnIdle {
             assertFalse(box1Focused)
@@ -1864,11 +2132,11 @@ class IndirectTouchEventNavigationSystemTests {
                 testTagBox3 = testTagBox3,
                 onBox3FocusChanged = { box3Focused = it },
                 focusRequesterBox3 = focusRequesterBox3,
-                onIndirectTouchEventForAllBoxes = {
+                onIndirectTouchEventMainPassForAllBoxes = {
                     receivedEvent = it
-                    // Never consume event so it triggers the navigation behavior we are testing
-                    false
+                    // We don't consume the event, so it can pass on for system navigation behavior.
                 },
+                onIndirectTouchCancelForAllBoxes = { indirectEventCancellation = true },
             )
         }
 
@@ -1906,7 +2174,10 @@ class IndirectTouchEventNavigationSystemTests {
                 IndirectTouchEventPrimaryDirectionalMotionAxis.Y
             rootView.dispatchGenericMotionEvent(downEvent)
         }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Press) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Press)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectX -= nonFlingTriggeringDistanceBetweenEvents
@@ -1922,7 +2193,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(moveEvent1) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectX -= nonFlingTriggeringDistanceBetweenEvents
@@ -1938,7 +2212,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(moveEvent2) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectX -= nonFlingTriggeringDistanceBetweenEvents
@@ -1954,7 +2231,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(upEvent) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Release) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Release)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         rule.runOnIdle {
             assertTrue(box1Focused)
@@ -2001,11 +2281,11 @@ class IndirectTouchEventNavigationSystemTests {
                 testTagBox3 = testTagBox3,
                 onBox3FocusChanged = { box3Focused = it },
                 focusRequesterBox3 = focusRequesterBox3,
-                onIndirectTouchEventForAllBoxes = {
+                onIndirectTouchEventMainPassForAllBoxes = {
                     receivedEvent = it
-                    // Never consume event so it triggers the navigation behavior we are testing
-                    false
+                    // We don't consume the event, so it can pass on for system navigation behavior.
                 },
+                onIndirectTouchCancelForAllBoxes = { indirectEventCancellation = true },
             )
         }
 
@@ -2043,7 +2323,10 @@ class IndirectTouchEventNavigationSystemTests {
                 IndirectTouchEventPrimaryDirectionalMotionAxis.Y
             rootView.dispatchGenericMotionEvent(downEvent)
         }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Press) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Press)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectX += (flingTriggeringDistanceBetweenEvents * 2)
@@ -2059,7 +2342,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(moveEvent1) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectX += (flingTriggeringDistanceBetweenEvents * 2)
@@ -2075,7 +2361,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(moveEvent2) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectX += (flingTriggeringDistanceBetweenEvents * 2)
@@ -2091,7 +2380,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(upEvent) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Release) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Release)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         rule.runOnIdle {
             assertFalse(box1Focused)
@@ -2138,11 +2430,11 @@ class IndirectTouchEventNavigationSystemTests {
                 testTagBox3 = testTagBox3,
                 onBox3FocusChanged = { box3Focused = it },
                 focusRequesterBox3 = focusRequesterBox3,
-                onIndirectTouchEventForAllBoxes = {
+                onIndirectTouchEventMainPassForAllBoxes = {
                     receivedEvent = it
-                    // Never consume event so it triggers the navigation behavior we are testing
-                    false
+                    // We don't consume the event, so it can pass on for system navigation behavior.
                 },
+                onIndirectTouchCancelForAllBoxes = { indirectEventCancellation = true },
             )
         }
 
@@ -2180,7 +2472,10 @@ class IndirectTouchEventNavigationSystemTests {
                 IndirectTouchEventPrimaryDirectionalMotionAxis.Y
             rootView.dispatchGenericMotionEvent(downEvent)
         }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Press) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Press)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectX -= (2 * flingTriggeringDistanceBetweenEvents)
@@ -2196,7 +2491,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(moveEvent1) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectX -= (2 * flingTriggeringDistanceBetweenEvents)
@@ -2212,7 +2510,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(moveEvent2) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectX -= (2 * flingTriggeringDistanceBetweenEvents)
@@ -2228,7 +2529,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(upEvent) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Release) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Release)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         rule.runOnIdle {
             assertFalse(box1Focused)
@@ -2274,11 +2578,11 @@ class IndirectTouchEventNavigationSystemTests {
                 testTagBox3 = testTagBox3,
                 onBox3FocusChanged = { box3Focused = it },
                 focusRequesterBox3 = focusRequesterBox3,
-                onIndirectTouchEventForAllBoxes = {
+                onIndirectTouchEventMainPassForAllBoxes = {
                     receivedEvent = it
-                    // Never consume event so it triggers the navigation behavior we are testing
-                    false
+                    // We don't consume the event, so it can pass on for system navigation behavior.
                 },
+                onIndirectTouchCancelForAllBoxes = { indirectEventCancellation = true },
             )
         }
 
@@ -2316,7 +2620,10 @@ class IndirectTouchEventNavigationSystemTests {
                 IndirectTouchEventPrimaryDirectionalMotionAxis.Y
             rootView.dispatchGenericMotionEvent(downEvent)
         }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Press) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Press)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectY += nonFlingTriggeringDistanceBetweenEvents
@@ -2331,7 +2638,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(moveEvent1) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectY += nonFlingTriggeringDistanceBetweenEvents
@@ -2346,7 +2656,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(moveEvent2) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectY += nonFlingTriggeringDistanceBetweenEvents
@@ -2361,7 +2674,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(upEvent) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Release) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Release)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         rule.runOnIdle {
             assertFalse(box1Focused)
@@ -2407,11 +2723,11 @@ class IndirectTouchEventNavigationSystemTests {
                 testTagBox3 = testTagBox3,
                 onBox3FocusChanged = { box3Focused = it },
                 focusRequesterBox3 = focusRequesterBox3,
-                onIndirectTouchEventForAllBoxes = {
+                onIndirectTouchEventMainPassForAllBoxes = {
                     receivedEvent = it
-                    // Never consume event so it triggers the navigation behavior we are testing
-                    false
+                    // We don't consume the event, so it can pass on for system navigation behavior.
                 },
+                onIndirectTouchCancelForAllBoxes = { indirectEventCancellation = true },
             )
         }
 
@@ -2449,7 +2765,10 @@ class IndirectTouchEventNavigationSystemTests {
                 IndirectTouchEventPrimaryDirectionalMotionAxis.Y
             rootView.dispatchGenericMotionEvent(downEvent)
         }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Press) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Press)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectY -= nonFlingTriggeringDistanceBetweenEvents
@@ -2464,7 +2783,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(moveEvent1) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectY -= nonFlingTriggeringDistanceBetweenEvents
@@ -2479,7 +2801,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(moveEvent2) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectY -= nonFlingTriggeringDistanceBetweenEvents
@@ -2494,7 +2819,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(upEvent) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Release) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Release)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         rule.runOnIdle {
             assertFalse(box1Focused)
@@ -2539,11 +2867,11 @@ class IndirectTouchEventNavigationSystemTests {
                 testTagBox3 = testTagBox3,
                 onBox3FocusChanged = { box3Focused = it },
                 focusRequesterBox3 = focusRequesterBox3,
-                onIndirectTouchEventForAllBoxes = {
+                onIndirectTouchEventMainPassForAllBoxes = {
                     receivedEvent = it
-                    // Never consume event so it triggers the navigation behavior we are testing
-                    false
+                    // We don't consume the event, so it can pass on for system navigation behavior.
                 },
+                onIndirectTouchCancelForAllBoxes = { indirectEventCancellation = true },
             )
         }
 
@@ -2581,7 +2909,10 @@ class IndirectTouchEventNavigationSystemTests {
                 IndirectTouchEventPrimaryDirectionalMotionAxis.Y
             rootView.dispatchGenericMotionEvent(downEvent)
         }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Press) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Press)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectX += flingTriggeringDistanceBetweenEvents
@@ -2596,7 +2927,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(moveEvent1) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectX += flingTriggeringDistanceBetweenEvents
@@ -2611,7 +2945,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(moveEvent2) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectX += flingTriggeringDistanceBetweenEvents
@@ -2626,7 +2963,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(upEvent) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Release) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Release)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         rule.runOnIdle {
             assertFalse(box1Focused)
@@ -2671,11 +3011,11 @@ class IndirectTouchEventNavigationSystemTests {
                 testTagBox3 = testTagBox3,
                 onBox3FocusChanged = { box3Focused = it },
                 focusRequesterBox3 = focusRequesterBox3,
-                onIndirectTouchEventForAllBoxes = {
+                onIndirectTouchEventMainPassForAllBoxes = {
                     receivedEvent = it
-                    // Never consume event so it triggers the navigation behavior we are testing
-                    false
+                    // We don't consume the event, so it can pass on for system navigation behavior.
                 },
+                onIndirectTouchCancelForAllBoxes = { indirectEventCancellation = true },
             )
         }
 
@@ -2713,7 +3053,10 @@ class IndirectTouchEventNavigationSystemTests {
                 IndirectTouchEventPrimaryDirectionalMotionAxis.Y
             rootView.dispatchGenericMotionEvent(downEvent)
         }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Press) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Press)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectX -= flingTriggeringDistanceBetweenEvents
@@ -2728,7 +3071,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(moveEvent1) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectX -= flingTriggeringDistanceBetweenEvents
@@ -2743,7 +3089,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(moveEvent2) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectX -= flingTriggeringDistanceBetweenEvents
@@ -2758,7 +3107,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(upEvent) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Release) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Release)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         rule.runOnIdle {
             assertFalse(box1Focused)
@@ -2806,11 +3158,11 @@ class IndirectTouchEventNavigationSystemTests {
                 testTagBox3 = testTagBox3,
                 onBox3FocusChanged = { box3Focused = it },
                 focusRequesterBox3 = focusRequesterBox3,
-                onIndirectTouchEventForAllBoxes = {
+                onIndirectTouchEventMainPassForAllBoxes = {
                     receivedEvent = it
-                    // Never consume event so it triggers the navigation behavior we are testing
-                    false
+                    // We don't consume the event, so it can pass on for system navigation behavior.
                 },
+                onIndirectTouchCancelForAllBoxes = { indirectEventCancellation = true },
             )
         }
 
@@ -2831,8 +3183,11 @@ class IndirectTouchEventNavigationSystemTests {
 
         val downTime = SystemClock.uptimeMillis()
         var eventTime = downTime
+        var previousTime = eventTime
         var indirectX = 100f
+        var previousIndirectX = indirectX
         var indirectY = 100f
+        var previousIndirectY = indirectY
 
         val downEvent =
             MotionEventBuilder.newBuilder()
@@ -2848,7 +3203,22 @@ class IndirectTouchEventNavigationSystemTests {
                 IndirectTouchEventPrimaryDirectionalMotionAxis.None
             rootView.dispatchGenericMotionEvent(downEvent)
         }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Press) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Press)
+            assertThat(receivedEvent!!.changes.first().position.x).isEqualTo(indirectX)
+            assertThat(receivedEvent!!.changes.first().position.y).isEqualTo(indirectY)
+            assertThat(receivedEvent!!.changes.first().isConsumed).isEqualTo(false)
+            assertThat(receivedEvent!!.changes.first().pressed).isEqualTo(true)
+            // For a first event in a stream, previous is going to equal current (since there is
+            // no previous).
+            assertThat(receivedEvent!!.changes.first().previousPosition.x)
+                .isEqualTo(previousIndirectX)
+            assertThat(receivedEvent!!.changes.first().previousPosition.y)
+                .isEqualTo(previousIndirectY)
+            assertThat(receivedEvent!!.changes.first().previousUptimeMillis).isEqualTo(previousTime)
+            assertThat(receivedEvent!!.changes.first().previousPressed).isEqualTo(false)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectX += flingTriggeringDistanceBetweenEvents
@@ -2864,7 +3234,24 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(moveEvent1) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move)
+            assertThat(receivedEvent!!.changes.first().position.x).isEqualTo(indirectX)
+            assertThat(receivedEvent!!.changes.first().position.y).isEqualTo(indirectY)
+            assertThat(receivedEvent!!.changes.first().isConsumed).isEqualTo(false)
+            assertThat(receivedEvent!!.changes.first().pressed).isEqualTo(true)
+            assertThat(receivedEvent!!.changes.first().previousPosition.x)
+                .isEqualTo(previousIndirectX)
+            assertThat(receivedEvent!!.changes.first().previousPosition.y)
+                .isEqualTo(previousIndirectY)
+            assertThat(receivedEvent!!.changes.first().previousUptimeMillis).isEqualTo(previousTime)
+            assertThat(receivedEvent!!.changes.first().previousPressed).isEqualTo(true)
+            assertThat(indirectEventCancellation).isFalse()
+        }
+
+        previousTime = eventTime
+        previousIndirectX = indirectX
+        previousIndirectY = indirectY
 
         eventTime += timeBetweenEvents
         indirectX += flingTriggeringDistanceBetweenEvents
@@ -2880,7 +3267,24 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(moveEvent2) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move)
+            assertThat(receivedEvent!!.changes.first().position.x).isEqualTo(indirectX)
+            assertThat(receivedEvent!!.changes.first().position.y).isEqualTo(indirectY)
+            assertThat(receivedEvent!!.changes.first().isConsumed).isEqualTo(false)
+            assertThat(receivedEvent!!.changes.first().pressed).isEqualTo(true)
+            assertThat(receivedEvent!!.changes.first().previousPosition.x)
+                .isEqualTo(previousIndirectX)
+            assertThat(receivedEvent!!.changes.first().previousPosition.y)
+                .isEqualTo(previousIndirectY)
+            assertThat(receivedEvent!!.changes.first().previousUptimeMillis).isEqualTo(previousTime)
+            assertThat(receivedEvent!!.changes.first().previousPressed).isEqualTo(true)
+            assertThat(indirectEventCancellation).isFalse()
+        }
+
+        previousTime = eventTime
+        previousIndirectX = indirectX
+        previousIndirectY = indirectY
 
         eventTime += timeBetweenEvents
         indirectX += flingTriggeringDistanceBetweenEvents
@@ -2896,7 +3300,20 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(upEvent) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Release) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Release)
+            assertThat(receivedEvent!!.changes.first().position.x).isEqualTo(indirectX)
+            assertThat(receivedEvent!!.changes.first().position.y).isEqualTo(indirectY)
+            assertThat(receivedEvent!!.changes.first().isConsumed).isEqualTo(false)
+            assertThat(receivedEvent!!.changes.first().pressed).isEqualTo(false)
+            assertThat(receivedEvent!!.changes.first().previousPosition.x)
+                .isEqualTo(previousIndirectX)
+            assertThat(receivedEvent!!.changes.first().previousPosition.y)
+                .isEqualTo(previousIndirectY)
+            assertThat(receivedEvent!!.changes.first().previousUptimeMillis).isEqualTo(previousTime)
+            assertThat(receivedEvent!!.changes.first().previousPressed).isEqualTo(true)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         rule.runOnIdle {
             assertFalse(box1Focused)
@@ -2941,11 +3358,11 @@ class IndirectTouchEventNavigationSystemTests {
                 testTagBox3 = testTagBox3,
                 onBox3FocusChanged = { box3Focused = it },
                 focusRequesterBox3 = focusRequesterBox3,
-                onIndirectTouchEventForAllBoxes = {
+                onIndirectTouchEventMainPassForAllBoxes = {
                     receivedEvent = it
-                    // Never consume event so it triggers the navigation behavior we are testing
-                    false
+                    // We don't consume the event, so it can pass on for system navigation behavior.
                 },
+                onIndirectTouchCancelForAllBoxes = { indirectEventCancellation = true },
             )
         }
 
@@ -2983,7 +3400,10 @@ class IndirectTouchEventNavigationSystemTests {
                 IndirectTouchEventPrimaryDirectionalMotionAxis.None
             rootView.dispatchGenericMotionEvent(downEvent)
         }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Press) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Press)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectX -= flingTriggeringDistanceBetweenEvents
@@ -2999,7 +3419,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(moveEvent1) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectX -= flingTriggeringDistanceBetweenEvents
@@ -3015,7 +3438,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(moveEvent2) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectX -= flingTriggeringDistanceBetweenEvents
@@ -3031,7 +3457,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(upEvent) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Release) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Release)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         rule.runOnIdle {
             assertFalse(box1Focused)
@@ -3077,11 +3506,11 @@ class IndirectTouchEventNavigationSystemTests {
                 testTagBox3 = testTagBox3,
                 onBox3FocusChanged = { box3Focused = it },
                 focusRequesterBox3 = focusRequesterBox3,
-                onIndirectTouchEventForAllBoxes = {
+                onIndirectTouchEventMainPassForAllBoxes = {
                     receivedEvent = it
-                    // Never consume event so it triggers the navigation behavior we are testing
-                    false
+                    // We don't consume the event, so it can pass on for system navigation behavior.
                 },
+                onIndirectTouchCancelForAllBoxes = { indirectEventCancellation = true },
             )
         }
 
@@ -3119,7 +3548,10 @@ class IndirectTouchEventNavigationSystemTests {
                 IndirectTouchEventPrimaryDirectionalMotionAxis.None
             rootView.dispatchGenericMotionEvent(downEvent)
         }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Press) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Press)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectX += nonFlingTriggeringDistanceBetweenEvents
@@ -3135,7 +3567,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(moveEvent1) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectX += nonFlingTriggeringDistanceBetweenEvents
@@ -3151,7 +3586,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(moveEvent2) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectX += nonFlingTriggeringDistanceBetweenEvents
@@ -3167,7 +3605,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(upEvent) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Release) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Release)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         rule.runOnIdle {
             assertFalse(box1Focused)
@@ -3213,11 +3654,11 @@ class IndirectTouchEventNavigationSystemTests {
                 testTagBox3 = testTagBox3,
                 onBox3FocusChanged = { box3Focused = it },
                 focusRequesterBox3 = focusRequesterBox3,
-                onIndirectTouchEventForAllBoxes = {
+                onIndirectTouchEventMainPassForAllBoxes = {
                     receivedEvent = it
-                    // Never consume event so it triggers the navigation behavior we are testing
-                    false
+                    // We don't consume the event, so it can pass on for system navigation behavior.
                 },
+                onIndirectTouchCancelForAllBoxes = { indirectEventCancellation = true },
             )
         }
 
@@ -3255,7 +3696,10 @@ class IndirectTouchEventNavigationSystemTests {
                 IndirectTouchEventPrimaryDirectionalMotionAxis.None
             rootView.dispatchGenericMotionEvent(downEvent)
         }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Press) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Press)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectX -= nonFlingTriggeringDistanceBetweenEvents
@@ -3271,7 +3715,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(moveEvent1) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectX -= nonFlingTriggeringDistanceBetweenEvents
@@ -3287,7 +3734,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(moveEvent2) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectX -= nonFlingTriggeringDistanceBetweenEvents
@@ -3303,7 +3753,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(upEvent) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Release) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Release)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         rule.runOnIdle {
             assertFalse(box1Focused)
@@ -3348,11 +3801,11 @@ class IndirectTouchEventNavigationSystemTests {
                 testTagBox3 = testTagBox3,
                 onBox3FocusChanged = { box3Focused = it },
                 focusRequesterBox3 = focusRequesterBox3,
-                onIndirectTouchEventForAllBoxes = {
+                onIndirectTouchEventMainPassForAllBoxes = {
                     receivedEvent = it
-                    // Never consume event so it triggers the navigation behavior we are testing
-                    false
+                    // We don't consume the event, so it can pass on for system navigation behavior.
                 },
+                onIndirectTouchCancelForAllBoxes = { indirectEventCancellation = true },
             )
         }
 
@@ -3390,7 +3843,10 @@ class IndirectTouchEventNavigationSystemTests {
                 IndirectTouchEventPrimaryDirectionalMotionAxis.None
             rootView.dispatchGenericMotionEvent(downEvent)
         }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Press) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Press)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectX += flingTriggeringDistanceBetweenEvents
@@ -3405,7 +3861,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(moveEvent1) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectX += flingTriggeringDistanceBetweenEvents
@@ -3420,7 +3879,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(moveEvent2) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectX += flingTriggeringDistanceBetweenEvents
@@ -3435,7 +3897,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(upEvent) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Release) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Release)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         rule.runOnIdle {
             assertFalse(box1Focused)
@@ -3480,11 +3945,11 @@ class IndirectTouchEventNavigationSystemTests {
                 testTagBox3 = testTagBox3,
                 onBox3FocusChanged = { box3Focused = it },
                 focusRequesterBox3 = focusRequesterBox3,
-                onIndirectTouchEventForAllBoxes = {
+                onIndirectTouchEventMainPassForAllBoxes = {
                     receivedEvent = it
-                    // Never consume event so it triggers the navigation behavior we are testing
-                    false
+                    // We don't consume the event, so it can pass on for system navigation behavior.
                 },
+                onIndirectTouchCancelForAllBoxes = { indirectEventCancellation = true },
             )
         }
 
@@ -3522,7 +3987,10 @@ class IndirectTouchEventNavigationSystemTests {
                 IndirectTouchEventPrimaryDirectionalMotionAxis.None
             rootView.dispatchGenericMotionEvent(downEvent)
         }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Press) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Press)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectX -= flingTriggeringDistanceBetweenEvents
@@ -3537,7 +4005,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(moveEvent1) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectX -= flingTriggeringDistanceBetweenEvents
@@ -3552,7 +4023,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(moveEvent2) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectX -= flingTriggeringDistanceBetweenEvents
@@ -3567,7 +4041,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(upEvent) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Release) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Release)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         rule.runOnIdle {
             assertFalse(box1Focused)
@@ -3612,11 +4089,11 @@ class IndirectTouchEventNavigationSystemTests {
                 testTagBox3 = testTagBox3,
                 onBox3FocusChanged = { box3Focused = it },
                 focusRequesterBox3 = focusRequesterBox3,
-                onIndirectTouchEventForAllBoxes = {
+                onIndirectTouchEventMainPassForAllBoxes = {
                     receivedEvent = it
-                    // Never consume event so it triggers the navigation behavior we are testing
-                    false
+                    // We don't consume the event, so it can pass on for system navigation behavior.
                 },
+                onIndirectTouchCancelForAllBoxes = { indirectEventCancellation = true },
             )
         }
 
@@ -3654,7 +4131,10 @@ class IndirectTouchEventNavigationSystemTests {
                 IndirectTouchEventPrimaryDirectionalMotionAxis.None
             rootView.dispatchGenericMotionEvent(downEvent)
         }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Press) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Press)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectY += flingTriggeringDistanceBetweenEvents
@@ -3669,7 +4149,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(moveEvent1) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectY += flingTriggeringDistanceBetweenEvents
@@ -3684,7 +4167,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(moveEvent2) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectY += flingTriggeringDistanceBetweenEvents
@@ -3699,7 +4185,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(upEvent) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Release) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Release)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         rule.runOnIdle {
             assertFalse(box1Focused)
@@ -3744,11 +4233,11 @@ class IndirectTouchEventNavigationSystemTests {
                 testTagBox3 = testTagBox3,
                 onBox3FocusChanged = { box3Focused = it },
                 focusRequesterBox3 = focusRequesterBox3,
-                onIndirectTouchEventForAllBoxes = {
+                onIndirectTouchEventMainPassForAllBoxes = {
                     receivedEvent = it
-                    // Never consume event so it triggers the navigation behavior we are testing
-                    false
+                    // We don't consume the event, so it can pass on for system navigation behavior.
                 },
+                onIndirectTouchCancelForAllBoxes = { indirectEventCancellation = true },
             )
         }
 
@@ -3786,7 +4275,10 @@ class IndirectTouchEventNavigationSystemTests {
                 IndirectTouchEventPrimaryDirectionalMotionAxis.None
             rootView.dispatchGenericMotionEvent(downEvent)
         }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Press) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Press)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectY -= flingTriggeringDistanceBetweenEvents
@@ -3801,7 +4293,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(moveEvent1) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectY -= flingTriggeringDistanceBetweenEvents
@@ -3816,7 +4311,10 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(moveEvent2) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         eventTime += timeBetweenEvents
         indirectY -= flingTriggeringDistanceBetweenEvents
@@ -3831,11 +4329,137 @@ class IndirectTouchEventNavigationSystemTests {
                 .build()
 
         rule.runOnIdle { rootView.dispatchGenericMotionEvent(upEvent) }
-        rule.runOnIdle { assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Release) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Release)
+            assertThat(indirectEventCancellation).isFalse()
+        }
 
         rule.runOnIdle {
             assertFalse(box1Focused)
             assertTrue(box2Focused) // No behavior, stays on box 2
+            assertFalse(box3Focused)
+        }
+    }
+
+    @Test
+    fun swipeViaNavigationMotionEvent_cancelEvent_callsOnCancel() {
+        var focusManager: FocusManager? = null
+
+        val testTagBox1 = "testTagBox1"
+        var box1Focused = false
+
+        val testTagBox2 = "testTagBox2"
+        var box2Focused = false
+
+        val testTagBox3 = "testTagBox3"
+        var box3Focused = false
+
+        val contentBoxSize = 100.dp
+        val boxPadding = 10.dp
+
+        val focusRequesterBox1 = FocusRequester()
+        val focusRequesterBox2 = FocusRequester()
+        val focusRequesterBox3 = FocusRequester()
+
+        rule.setContent {
+            rootView = LocalView.current as AndroidComposeView
+            focusManager = LocalFocusManager.current
+
+            ThreeStackedBoxes(
+                boxSize = contentBoxSize,
+                boxPadding = boxPadding,
+                testTagBox1 = testTagBox1,
+                onBox1FocusChanged = { box1Focused = it },
+                focusRequesterBox1 = focusRequesterBox1,
+                testTagBox2 = testTagBox2,
+                onBox2FocusChanged = { box2Focused = it },
+                focusRequesterBox2 = focusRequesterBox2,
+                testTagBox3 = testTagBox3,
+                onBox3FocusChanged = { box3Focused = it },
+                focusRequesterBox3 = focusRequesterBox3,
+                onIndirectTouchEventMainPassForAllBoxes = {
+                    receivedEvent = it
+                    // We don't consume the event, so it can pass on for system navigation behavior.
+                },
+                onIndirectTouchCancelForAllBoxes = { indirectEventCancellation = true },
+            )
+        }
+
+        // --- Test assertions and actions ---
+
+        // Clear focus to start
+        rule.runOnIdle { focusManager!!.clearFocus(true) }
+
+        // Request initial focus for center box
+        rule.runOnIdle { focusRequesterBox2.requestFocus() }
+        rule.waitForIdle()
+
+        rule.runOnIdle {
+            assertFalse(box1Focused)
+            assertTrue(box2Focused)
+            assertFalse(box3Focused)
+        }
+
+        val downTime = SystemClock.uptimeMillis()
+        var eventTime = downTime
+        var indirectX = 100f
+        val indirectY = 100f
+
+        val downEvent =
+            MotionEventBuilder.newBuilder()
+                .setDownTime(downTime)
+                .setEventTime(eventTime)
+                .setAction(ACTION_DOWN)
+                .setSource(SOURCE_TOUCH_NAVIGATION)
+                .setPointer(indirectX, indirectY)
+                .build()
+
+        rule.runOnIdle {
+            rootView.primaryDirectionalMotionAxisOverride =
+                IndirectTouchEventPrimaryDirectionalMotionAxis.X
+            rootView.dispatchGenericMotionEvent(downEvent)
+        }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Press)
+            assertThat(indirectEventCancellation).isFalse()
+        }
+
+        eventTime += timeBetweenEvents
+        indirectX += flingTriggeringDistanceBetweenEvents
+
+        val moveEvent =
+            MotionEventBuilder.newBuilder()
+                .setDownTime(downTime)
+                .setEventTime(eventTime)
+                .setAction(ACTION_MOVE)
+                .setSource(SOURCE_TOUCH_NAVIGATION)
+                .setPointer(indirectX, indirectY)
+                .build()
+
+        rule.runOnIdle { rootView.dispatchGenericMotionEvent(moveEvent) }
+        rule.runOnIdle {
+            assertThat(receivedEvent?.type).isEqualTo(IndirectTouchEventType.Move)
+            assertThat(indirectEventCancellation).isFalse()
+        }
+
+        eventTime += timeBetweenEvents
+
+        val cancelEvent =
+            MotionEventBuilder.newBuilder()
+                .setDownTime(downTime)
+                .setEventTime(eventTime)
+                .setAction(ACTION_CANCEL)
+                .setSource(SOURCE_TOUCH_NAVIGATION)
+                .setPointer(indirectX, indirectY)
+                .build()
+
+        rule.runOnIdle { rootView.dispatchGenericMotionEvent(cancelEvent) }
+        rule.runOnIdle { assertThat(indirectEventCancellation).isTrue() }
+
+        // Focus should not have changed.
+        rule.runOnIdle {
+            assertFalse(box1Focused)
+            assertTrue(box2Focused)
             assertFalse(box3Focused)
         }
     }
@@ -3853,10 +4477,22 @@ class IndirectTouchEventNavigationSystemTests {
         testTagBox3: String,
         onBox3FocusChanged: (Boolean) -> Unit,
         focusRequesterBox3: FocusRequester,
-        onIndirectTouchEventForAllBoxes: (IndirectTouchEvent) -> Boolean,
+        onIndirectTouchEventMainPassForAllBoxes: (IndirectTouchEvent) -> Unit,
+        onIndirectTouchCancelForAllBoxes: () -> Unit,
     ) {
         Layout(
-            modifier = Modifier.onIndirectTouchEvent { onIndirectTouchEventForAllBoxes(it) },
+            modifier =
+                @Suppress("DEPRECATION")
+                Modifier.onIndirectTouchInput(
+                    onEvent = {
+                        indirectTouchEvent: IndirectTouchEvent,
+                        pointerEventPass: PointerEventPass ->
+                        if (pointerEventPass == PointerEventPass.Main) {
+                            onIndirectTouchEventMainPassForAllBoxes(indirectTouchEvent)
+                        }
+                    },
+                    onCancel = { onIndirectTouchCancelForAllBoxes() },
+                ),
             content = {
                 // Box 1
                 CustomBox(

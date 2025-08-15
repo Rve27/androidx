@@ -140,11 +140,8 @@ import androidx.compose.ui.input.InputMode.Companion.Keyboard
 import androidx.compose.ui.input.InputMode.Companion.Touch
 import androidx.compose.ui.input.InputModeManager
 import androidx.compose.ui.input.InputModeManagerImpl
-import androidx.compose.ui.input.indirect.AndroidIndirectTouchEvent
 import androidx.compose.ui.input.indirect.IndirectTouchEvent
 import androidx.compose.ui.input.indirect.IndirectTouchEventPrimaryDirectionalMotionAxis
-import androidx.compose.ui.input.indirect.convertActionToIndirectTouchEventType
-import androidx.compose.ui.input.indirect.indirectPrimaryDirectionalScrollAxis
 import androidx.compose.ui.input.indirect.nativeEvent
 import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.key.KeyEventType.Companion.KeyDown
@@ -1295,6 +1292,7 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
     }
 
     override fun onFocusChanged(gainFocus: Boolean, direction: Int, previouslyFocusedRect: Rect?) {
+        // TODO (jjw): Add logic for indirect cancel for active streams
         super.onFocusChanged(gainFocus, direction, previouslyFocusedRect)
         if (!gainFocus && !hasFocus()) {
             focusOwner.releaseFocus()
@@ -1334,6 +1332,10 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
     /** This function is used by the testing framework to send indirect touch events. */
     @OptIn(ExperimentalIndirectTouchTypeApi::class)
     override fun sendIndirectTouchEvent(indirectTouchEvent: IndirectTouchEvent): Boolean {
+        if (indirectTouchEvent.nativeEvent.actionMasked == ACTION_CANCEL) {
+            focusOwner.dispatchIndirectTouchCancel()
+            return true
+        }
         return handleIndirectTouchEvent(indirectTouchEvent)
     }
 
@@ -2378,19 +2380,17 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
             else -> {
                 @OptIn(ExperimentalIndirectTouchTypeApi::class)
                 if (motionEvent.isFromSource(SOURCE_TOUCH_NAVIGATION)) {
-                    val primaryDirectionalMotionAxis =
-                        primaryDirectionalMotionAxisOverride
-                            ?: indirectPrimaryDirectionalScrollAxis(motionEvent)
                     val indirectTouchEvent =
-                        AndroidIndirectTouchEvent(
-                            position = Offset(motionEvent.x, motionEvent.y),
-                            uptimeMillis = motionEvent.eventTime,
-                            type = convertActionToIndirectTouchEventType(motionEvent.actionMasked),
-                            primaryDirectionalMotionAxis = primaryDirectionalMotionAxis,
-                            nativeEvent = motionEvent,
+                        motionEventAdapter.convertToIndirectTouchEvent(
+                            motionEvent,
+                            primaryDirectionalMotionAxisOverride,
                         )
-
-                    if (handleIndirectTouchEvent(indirectTouchEvent)) {
+                    if (indirectTouchEvent != null) {
+                        if (handleIndirectTouchEvent(indirectTouchEvent)) {
+                            return true
+                        }
+                    } else {
+                        focusOwner.dispatchIndirectTouchCancel()
                         return true
                     }
                 }
@@ -2405,10 +2405,7 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
     private fun handleIndirectTouchEvent(indirectTouchEvent: IndirectTouchEvent): Boolean {
         val motionEvent = indirectTouchEvent.nativeEvent
 
-        val handled =
-            focusOwner.dispatchIndirectTouchEvent(indirectTouchEvent) {
-                super.dispatchGenericMotionEvent(motionEvent)
-            }
+        val handled = focusOwner.dispatchIndirectTouchEvent(indirectTouchEvent)
 
         if (handled) {
             // Turns off all navigation gestures for this event stream since an app is

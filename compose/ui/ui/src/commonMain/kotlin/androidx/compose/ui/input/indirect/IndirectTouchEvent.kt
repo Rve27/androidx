@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package androidx.compose.ui.input.indirect
 
 import androidx.compose.ui.ExperimentalIndirectTouchTypeApi
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.PointerEvent
+import androidx.compose.ui.input.pointer.PointerId
 
 /**
  * Represents a touch event that did not result from contact with a touchscreen.
@@ -28,12 +28,8 @@ import androidx.compose.ui.input.pointer.PointerEvent
  */
 @ExperimentalIndirectTouchTypeApi
 sealed interface IndirectTouchEvent {
-
-    /** The position relative to the input device. */
-    val position: Offset
-
-    /** The time at which this event occurred. */
-    val uptimeMillis: Long
+    /** The list of individual pointer changes in this event. */
+    val changes: List<IndirectPointerInputChange>
 
     /** The reason the [IndirectTouchEvent] was sent. */
     val type: IndirectTouchEventType
@@ -99,5 +95,51 @@ private constructor(internal val value: Int) {
 
         /** Y coordinate axis specified as the primary movement axis. */
         val Y = IndirectTouchEventPrimaryDirectionalMotionAxis(2)
+    }
+}
+
+/**
+ * Represents a single pointer input change for an indirect touch event.
+ *
+ * @param id The unique identifier for the pointer.
+ * @param uptimeMillis The time at which the event occurred.
+ * @param position The position of the pointer on the input device (not screen).
+ * @param pressed Whether the pointer is down or up.
+ * @param pressure The pressure of the pointer.
+ * @param previousUptimeMillis The time at which the previous event occurred.
+ * @param previousPosition The position of the pointer on the input device (not screen) at the
+ *   previous event.
+ * @param previousPressed Whether the pointer was down or up at the previous event.
+ */
+@ExperimentalIndirectTouchTypeApi
+class IndirectPointerInputChange(
+    val id: PointerId,
+    val uptimeMillis: Long,
+    val position: Offset,
+    @get:Suppress("GetterSetterNames") val pressed: Boolean,
+    val pressure: Float,
+    val previousUptimeMillis: Long,
+    val previousPosition: Offset,
+    @get:Suppress("GetterSetterNames") val previousPressed: Boolean,
+) {
+    /** Indicates whether the change was consumed or not. */
+    var isConsumed: Boolean = false
+        private set
+
+    /** Consumes the change event, claiming it for the caller. */
+    fun consume() {
+        isConsumed = true
+    }
+
+    override fun toString(): String {
+        return "IndirectPointerInputChange(id=$id, " +
+            "uptimeMillis=$uptimeMillis, " +
+            "position=$position, " +
+            "pressed=$pressed, " +
+            "pressure=$pressure, " +
+            "previousUptimeMillis=$previousUptimeMillis, " +
+            "previousPosition=$previousPosition, " +
+            "previousPressed=$previousPressed, " +
+            "isConsumed=$isConsumed)"
     }
 }

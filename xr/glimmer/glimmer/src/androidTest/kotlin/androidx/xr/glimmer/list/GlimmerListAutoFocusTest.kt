@@ -36,8 +36,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.indirect.IndirectTouchEvent
 import androidx.compose.ui.input.indirect.IndirectTouchEventType
-import androidx.compose.ui.input.indirect.onIndirectTouchEvent
+import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.SemanticsActions.ScrollBy
@@ -54,9 +55,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.util.fastAny
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
 import androidx.xr.glimmer.Text
+import androidx.xr.glimmer.util.onIndirectTouchInput
 import com.google.common.truth.Truth
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
@@ -139,14 +142,34 @@ class GlimmerListAutoFocusTest : BaseListTestWithOrientation(Orientation.Vertica
     @Test
     @ExperimentalIndirectTouchTypeApi
     fun nonScrollableList_doesNotConsumed_indirectTouchEvents() {
-        var eventReceivedByParent = false
+        var downEventReceivedByParentWasConsumed = false
+        var moveEventReceivedByParentWasConsumed = false
+        var upEventReceivedByParentWasConsumed = false
         rule.setAutoFocusContent {
             Box(
-                Modifier.onIndirectTouchEvent {
-                    // Check 'Release' since 'Press' is always propagated.
-                    eventReceivedByParent = it.type == IndirectTouchEventType.Release
-                    true
-                }
+                Modifier.onIndirectTouchInput(
+                    onEvent = {
+                        indirectTouchEvent: IndirectTouchEvent,
+                        pointerEventPass: PointerEventPass ->
+                        if (pointerEventPass == PointerEventPass.Main) {
+                            val indirectConsumed =
+                                indirectTouchEvent.changes.fastAny { it.isConsumed }
+
+                            when (indirectTouchEvent.type) {
+                                IndirectTouchEventType.Press -> {
+                                    downEventReceivedByParentWasConsumed = indirectConsumed
+                                }
+                                IndirectTouchEventType.Move -> {
+                                    moveEventReceivedByParentWasConsumed = indirectConsumed
+                                }
+                                IndirectTouchEventType.Release -> {
+                                    // Check 'Release' since 'Press' is always propagated.
+                                    upEventReceivedByParentWasConsumed = indirectConsumed
+                                }
+                            }
+                        }
+                    }
+                )
             ) {
                 FocusableTestList(itemsCount = 3)
             }
@@ -154,21 +177,44 @@ class GlimmerListAutoFocusTest : BaseListTestWithOrientation(Orientation.Vertica
 
         rule.onRoot().performIndirectSwipe(1500f)
 
-        Truth.assertThat(eventReceivedByParent).isTrue()
+        Truth.assertThat(downEventReceivedByParentWasConsumed).isFalse()
+        Truth.assertThat(moveEventReceivedByParentWasConsumed).isFalse()
+        Truth.assertThat(upEventReceivedByParentWasConsumed).isFalse()
     }
 
     @Test
     @ExperimentalIndirectTouchTypeApi
     fun scrollableList_afterTurningIntoNonScrollable_stopsConsumingEvents() {
-        var eventReceivedByParent = false
+        var downEventReceivedByParentWasConsumed = false
+        var moveEventReceivedByParentWasConsumed = false
+        var upEventReceivedByParentWasConsumed = false
+
         val itemsCount = mutableIntStateOf(10)
         rule.setAutoFocusContent {
             Box(
-                Modifier.onIndirectTouchEvent {
-                    // Check 'Release' since 'Press' is always propagated.
-                    eventReceivedByParent = it.type == IndirectTouchEventType.Release
-                    true
-                }
+                Modifier.onIndirectTouchInput(
+                    onEvent = {
+                        indirectTouchEvent: IndirectTouchEvent,
+                        pointerEventPass: PointerEventPass ->
+                        if (pointerEventPass == PointerEventPass.Main) {
+                            val indirectConsumed =
+                                indirectTouchEvent.changes.fastAny { it.isConsumed }
+
+                            when (indirectTouchEvent.type) {
+                                IndirectTouchEventType.Press -> {
+                                    downEventReceivedByParentWasConsumed = indirectConsumed
+                                }
+                                IndirectTouchEventType.Move -> {
+                                    moveEventReceivedByParentWasConsumed = indirectConsumed
+                                }
+                                IndirectTouchEventType.Release -> {
+                                    // Check 'Release' since 'Press' is always propagated.
+                                    upEventReceivedByParentWasConsumed = indirectConsumed
+                                }
+                            }
+                        }
+                    }
+                )
             ) {
                 FocusableTestList(itemsCount = itemsCount.intValue)
             }
@@ -176,14 +222,24 @@ class GlimmerListAutoFocusTest : BaseListTestWithOrientation(Orientation.Vertica
 
         // List is scrollable, so it has to consume all events.
         rule.onRoot().performIndirectSwipe(200f)
-        Truth.assertThat(eventReceivedByParent).isFalse()
+        Truth.assertThat(downEventReceivedByParentWasConsumed).isTrue()
+        Truth.assertThat(moveEventReceivedByParentWasConsumed).isTrue()
+        // TODO (levi): ScrollableNode isn't consuming the up event (will fully support in
+        // followup CL.
+        // Truth.assertThat(upEventReceivedByParentWasConsumed).isTrue()
 
         // Reduce amount of items in the list.
         itemsCount.intValue = 3
 
+        downEventReceivedByParentWasConsumed = false
+        moveEventReceivedByParentWasConsumed = false
+        upEventReceivedByParentWasConsumed = false
+
         // List is non-scrollable now, so events must be propagated further.
         rule.onRoot().performIndirectSwipe(200f)
-        Truth.assertThat(eventReceivedByParent).isTrue()
+        Truth.assertThat(downEventReceivedByParentWasConsumed).isFalse()
+        Truth.assertThat(moveEventReceivedByParentWasConsumed).isFalse()
+        Truth.assertThat(upEventReceivedByParentWasConsumed).isFalse()
     }
 
     /**

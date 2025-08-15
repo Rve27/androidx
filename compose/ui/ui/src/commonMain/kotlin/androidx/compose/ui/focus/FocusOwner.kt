@@ -172,10 +172,10 @@ internal interface FocusOwner : FocusManager {
 
     /** Dispatches an indirect touch event through the compose hierarchy. */
     @OptIn(ExperimentalIndirectTouchTypeApi::class)
-    fun dispatchIndirectTouchEvent(
-        event: IndirectTouchEvent,
-        onFocusedItem: () -> Boolean = { false },
-    ): Boolean
+    fun dispatchIndirectTouchEvent(event: IndirectTouchEvent): Boolean
+
+    /** Dispatches an indirect touch cancel event through the compose hierarchy. */
+    @OptIn(ExperimentalIndirectTouchTypeApi::class) fun dispatchIndirectTouchCancel()
 
     /** Lets the FocusOwner know that a focus target is placed. */
     fun focusTargetAvailable()

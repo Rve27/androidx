@@ -553,32 +553,38 @@ internal abstract class DragGestureNode(
         }
     }
 
-    override fun onIndirectTouchEvent(event: IndirectTouchEvent): Boolean {
-        if (!enabled) return false
-        val orientation = orientationLock
-        if (orientation == null) return false
+    override fun onIndirectTouchEvent(event: IndirectTouchEvent, pass: PointerEventPass) {
+        if (pass == PointerEventPass.Main) {
+            if (enabled) {
+                val orientation = orientationLock
+                if (orientation != null) {
+                    if (indirectTouchEventProcessor == null) {
+                        indirectTouchEventProcessor =
+                            IndirectTouchEventProcessor(
+                                startGestureTrigger = {
+                                    if (!isListeningForEvents) startListeningForEvents()
+                                },
+                                onDragEvent = { channel?.trySend(it) },
+                            )
+                    }
 
-        if (indirectTouchEventProcessor == null) {
-            indirectTouchEventProcessor =
-                IndirectTouchEventProcessor(
-                    startGestureTrigger = { if (!isListeningForEvents) startListeningForEvents() },
-                    onDragEvent = { channel?.trySend(it) },
-                )
+                    /**
+                     * TODO(levima) Get the touchslop from device aware ViewConfiguration once it
+                     *   lands b/370720522
+                     */
+                    indirectTouchEventProcessor!!.processIndirectTouchEvent(
+                        event,
+                        orientation,
+                        currentValueOf(LocalViewConfiguration),
+                    )
+                }
+            }
         }
-
-        /**
-         * TODO(levima) Get the touchslop from device aware ViewConfiguration once it lands
-         *   b/370720522
-         */
-        return indirectTouchEventProcessor!!.processIndirectTouchEvent(
-            event,
-            orientation,
-            currentValueOf(LocalViewConfiguration),
-        )
     }
 
-    /** Draggable will consume during the main pass. */
-    override fun onPreIndirectTouchEvent(event: IndirectTouchEvent): Boolean = false
+    override fun onCancelIndirectTouchInput() {
+        // TODO (levima): Add support for cancellation
+    }
 
     @OptIn(ExperimentalFoundationApi::class)
     private fun initializePointerInputNode(): SuspendingPointerInputModifierNode {
@@ -1185,22 +1191,27 @@ private class IndirectTouchEventProcessor(
     private fun requireVelocityTracker() =
         requireNotNull(velocityTracker) { "VelocityTracker was not initialized." }
 
+    // TODO (levima): Finish changing logic to fully support the consumption based approach.
     fun processIndirectTouchEvent(
         event: IndirectTouchEvent,
         orientation: Orientation,
         viewConfiguration: ViewConfiguration,
-    ): Boolean {
+    ) {
+        // TODO (levima): Add multi-finger support
+        if (event.changes.first().isConsumed) return
+
         if (velocityTracker == null) velocityTracker = VelocityTracker()
         // Reduce noise and account for primary axis
         val smoothedEventPosition = touchInputEventSmoother.smoothEventPosition(event, orientation)
 
-        return when (event.type) {
+        when (event.type) {
             IndirectTouchEventType.Press -> {
                 resetProcessor()
-                requireVelocityTracker().addPosition(event.uptimeMillis, smoothedEventPosition)
+                requireVelocityTracker()
+                    .addPosition(event.changes.first().uptimeMillis, smoothedEventPosition)
                 previousIndirectTouchPosition = smoothedEventPosition
                 startEventPosition = smoothedEventPosition
-                false // just saved the press, but didn't consume.
+                event.changes.first().consume()
             }
 
             IndirectTouchEventType.Move -> {
@@ -1223,6 +1234,7 @@ private class IndirectTouchEventProcessor(
                         if (orientation == Orientation.Horizontal) Offset(x = postSlopDelta, y = 0f)
                         else Offset(x = 0f, y = postSlopDelta)
                     onDragEvent(DragStarted(startEventPosition))
+                    event.changes.first().consume()
                     consumed = true
                 }
 
@@ -1231,12 +1243,13 @@ private class IndirectTouchEventProcessor(
                     hasCrossedTouchSlop &&
                         delta.toFloat(orientation).absoluteValue > PixelSensitivity
                 ) {
-                    requireVelocityTracker().addPosition(event.uptimeMillis, smoothedEventPosition)
+                    requireVelocityTracker()
+                        .addPosition(event.changes.first().uptimeMillis, smoothedEventPosition)
+                    event.changes.first().consume()
                     consumed = true // regular move, consume it
                     onDragEvent(DragDelta(delta, isIndirectTouchEvent = true))
                 }
                 previousIndirectTouchPosition = smoothedEventPosition
-                consumed
             }
             IndirectTouchEventType.Release -> {
                 val consumed =
@@ -1254,12 +1267,10 @@ private class IndirectTouchEventProcessor(
                         false
                     }
                 resetProcessor()
-                consumed
             }
             else -> {
                 onDragEvent(DragCancelled)
                 resetProcessor()
-                false
             }
         }
     }
@@ -1334,13 +1345,13 @@ internal class TouchInputEventSmoother() {
      * positions, so we just make the change here for simplicity.
      */
     private fun IndirectTouchEvent.primaryAxisPosition(orientation: Orientation?): Offset {
-        if (orientation == null) return position
+        if (orientation == null) return changes.first().position
         val delta =
             when (primaryDirectionalMotionAxis) {
-                IndirectTouchEventPrimaryDirectionalMotionAxis.X -> position.x
-                IndirectTouchEventPrimaryDirectionalMotionAxis.Y -> position.y
+                IndirectTouchEventPrimaryDirectionalMotionAxis.X -> changes.first().position.x
+                IndirectTouchEventPrimaryDirectionalMotionAxis.Y -> changes.first().position.y
                 // No primary axis, so don't change the offset
-                else -> return position
+                else -> return changes.first().position
             }
         return if (orientation == Orientation.Horizontal) {
             Offset(x = delta, y = 0f)

@@ -119,6 +119,10 @@ ParameterNameChange: androidx.compose.ui.FrameRateKt#preferredFrameRate(androidx
     Source breaking change: Attempted to change parameter name from frameRateCategory to frameRate in method androidx.compose.ui.FrameRateKt.preferredFrameRate
 
 
+RemovedClass: androidx.compose.ui.input.indirect.IndirectTouchInputModifierKt:
+    Binary breaking change: Removed class androidx.compose.ui.input.indirect.IndirectTouchInputModifierKt
+
+
 RemovedDeprecatedMethod: androidx.compose.ui.draganddrop.DragAndDropModifierNode#drag(androidx.compose.ui.draganddrop.DragAndDropTransferData, long, kotlin.jvm.functions.Function1<? super androidx.compose.ui.graphics.drawscope.DrawScope,kotlin.Unit>):
     Binary breaking change: Removed deprecated method androidx.compose.ui.draganddrop.DragAndDropModifierNode.drag(androidx.compose.ui.draganddrop.DragAndDropTransferData,long,kotlin.jvm.functions.Function1<? super androidx.compose.ui.graphics.drawscope.DrawScope,kotlin.Unit>)
 RemovedDeprecatedMethod: androidx.compose.ui.draw.ShadowKt#shadow(androidx.compose.ui.Modifier, float, androidx.compose.ui.graphics.Shape, boolean):
