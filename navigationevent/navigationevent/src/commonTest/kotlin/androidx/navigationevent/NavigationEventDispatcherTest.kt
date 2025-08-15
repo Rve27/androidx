@@ -16,9 +16,9 @@
 
 package androidx.navigationevent
 
+import androidx.annotation.MainThread
 import androidx.kruth.assertThat
 import androidx.kruth.assertThrows
-import androidx.navigationevent.internal.TestNavigationEventInput
 import androidx.navigationevent.testing.TestNavigationEventCallback
 import kotlin.test.Test
 
@@ -30,7 +30,7 @@ class NavigationEventDispatcherTest {
         val callback = TestNavigationEventCallback()
         dispatcher.addCallback(callback)
 
-        val input = DirectNavigationEventInput()
+        val input = TestNavigationEventInput()
         dispatcher.addInput(input)
         input.handleOnStarted(NavigationEvent())
 
@@ -46,7 +46,7 @@ class NavigationEventDispatcherTest {
         val callback = TestNavigationEventCallback()
         dispatcher.addCallback(callback)
 
-        val input = DirectNavigationEventInput()
+        val input = TestNavigationEventInput()
         dispatcher.addInput(input)
         input.handleOnProgressed(NavigationEvent())
 
@@ -62,7 +62,7 @@ class NavigationEventDispatcherTest {
         val callback = TestNavigationEventCallback()
         dispatcher.addCallback(callback)
 
-        val input = DirectNavigationEventInput()
+        val input = TestNavigationEventInput()
         dispatcher.addInput(input)
         input.handleOnCompleted()
 
@@ -78,7 +78,7 @@ class NavigationEventDispatcherTest {
         val callback = TestNavigationEventCallback()
         dispatcher.addCallback(callback)
 
-        val input = DirectNavigationEventInput()
+        val input = TestNavigationEventInput()
         dispatcher.addInput(input)
         input.handleOnCancelled()
 
@@ -103,7 +103,7 @@ class NavigationEventDispatcherTest {
             )
         dispatcher.addCallback(callback)
 
-        val input = DirectNavigationEventInput()
+        val input = TestNavigationEventInput()
         dispatcher.addInput(input)
         input.handleOnStarted(NavigationEvent())
         // Sanity check that navigation has started.
@@ -122,7 +122,7 @@ class NavigationEventDispatcherTest {
         val callback = TestNavigationEventCallback(onEventStarted = { isEnabled = false })
         dispatcher.addCallback(callback)
 
-        val input = DirectNavigationEventInput()
+        val input = TestNavigationEventInput()
         dispatcher.addInput(input)
         input.handleOnStarted(NavigationEvent())
         input.handleOnCompleted()
@@ -140,7 +140,7 @@ class NavigationEventDispatcherTest {
         val callback = TestNavigationEventCallback()
         dispatcher.addCallback(callback)
 
-        val input = DirectNavigationEventInput()
+        val input = TestNavigationEventInput()
         dispatcher.addInput(input)
         input.handleOnStarted(NavigationEvent())
         assertThat(callback.startedInvocations).isEqualTo(1)
@@ -165,7 +165,7 @@ class NavigationEventDispatcherTest {
             )
         dispatcher.addCallback(callback)
 
-        val input = DirectNavigationEventInput()
+        val input = TestNavigationEventInput()
         dispatcher.addInput(input)
         input.handleOnStarted(NavigationEvent())
 
@@ -185,7 +185,7 @@ class NavigationEventDispatcherTest {
         dispatcher.addCallback(callback1)
 
         // Start the first navigation.
-        val input = DirectNavigationEventInput()
+        val input = TestNavigationEventInput()
         dispatcher.addInput(input)
         input.handleOnStarted(NavigationEvent())
         assertThat(callback1.startedInvocations).isEqualTo(1)
@@ -214,7 +214,7 @@ class NavigationEventDispatcherTest {
 
         val callback1 = TestNavigationEventCallback()
         dispatcher.addCallback(callback1)
-        val input = DirectNavigationEventInput()
+        val input = TestNavigationEventInput()
         dispatcher.addInput(input)
         input.handleOnStarted(NavigationEvent())
         assertThat(callback1.startedInvocations).isEqualTo(1)
@@ -250,7 +250,7 @@ class NavigationEventDispatcherTest {
         val callback = TestNavigationEventCallback()
         dispatcher.addCallback(callback)
 
-        val input = DirectNavigationEventInput()
+        val input = TestNavigationEventInput()
         dispatcher.addInput(input)
         input.handleOnCompleted()
         assertThat(callback.completedInvocations).isEqualTo(1)
@@ -272,7 +272,7 @@ class NavigationEventDispatcherTest {
         dispatcher.addCallback(overlayCallback, NavigationEventPriority.Overlay)
         dispatcher.addCallback(normalCallback, NavigationEventPriority.Default)
 
-        val input = DirectNavigationEventInput()
+        val input = TestNavigationEventInput()
         dispatcher.addInput(input)
         input.handleOnCompleted()
 
@@ -293,7 +293,7 @@ class NavigationEventDispatcherTest {
         // The highest priority callback is disabled.
         overlayCallback.isEnabled = false
 
-        val input = DirectNavigationEventInput()
+        val input = TestNavigationEventInput()
         dispatcher.addInput(input)
         input.handleOnCompleted()
 
@@ -336,7 +336,7 @@ class NavigationEventDispatcherTest {
         dispatcher.addCallback(firstOverlayCallback, NavigationEventPriority.Overlay)
         dispatcher.addCallback(secondOverlayCallback, NavigationEventPriority.Overlay)
 
-        val input = DirectNavigationEventInput()
+        val input = TestNavigationEventInput()
         dispatcher.addInput(input)
         input.handleOnCompleted()
 
@@ -353,7 +353,7 @@ class NavigationEventDispatcherTest {
             NavigationEventDispatcher(fallbackOnBackPressed = { fallbackCalled = true })
 
         // With no callbacks registered at all, the fallback should still work.
-        val input = DirectNavigationEventInput()
+        val input = TestNavigationEventInput()
         dispatcher.addInput(input)
         input.handleOnCompleted()
 
@@ -368,7 +368,7 @@ class NavigationEventDispatcherTest {
 
         // Disable the callback and confirm it doesn't receive an event.
         callback.isEnabled = false
-        val input = DirectNavigationEventInput()
+        val input = TestNavigationEventInput()
         dispatcher.addInput(input)
         input.handleOnCompleted()
         assertThat(callback.completedInvocations).isEqualTo(0)
@@ -388,7 +388,7 @@ class NavigationEventDispatcherTest {
         dispatcher.addCallback(callback)
 
         // Dispatching progress or completed without a start should still notify the top callback.
-        val input = DirectNavigationEventInput()
+        val input = TestNavigationEventInput()
         dispatcher.addInput(input)
         input.handleOnProgressed(NavigationEvent())
         assertThat(callback.progressedInvocations).isEqualTo(1)
@@ -407,7 +407,7 @@ class NavigationEventDispatcherTest {
 
         dispatcher.addCallback(callback)
 
-        val input = DirectNavigationEventInput()
+        val input = TestNavigationEventInput()
         dispatcher.addInput(input)
         input.handleOnCompleted()
         assertThat(callback.completedInvocations).isEqualTo(1)
@@ -563,5 +563,108 @@ class NavigationEventDispatcherTest {
         assertThat(childHandler.removedInvocations).isEqualTo(1)
         assertThat(parentHandler.currentDispatcher).isNull()
         assertThat(childHandler.currentDispatcher).isNull()
+    }
+}
+
+/**
+ * A test implementation of [NavigationEventInput] that records lifecycle events and invocation
+ * counts.
+ *
+ * Use this class in tests to verify that `onAdded`, `onRemoved`, and `onHasEnabledCallbacksChanged`
+ * are called correctly. It counts how many times each lifecycle method is invoked and stores a
+ * reference to the most recently added dispatcher. It also provides helper methods to simulate
+ * dispatching navigation events.
+ *
+ * @param onAdded An optional lambda to execute when [onAdded] is called.
+ * @param onRemoved An optional lambda to execute when [onRemoved] is called.
+ * @param onHasEnabledCallbacksChanged An optional lambda to execute when
+ *   [onHasEnabledCallbacksChanged] is called.
+ */
+private class TestNavigationEventInput(
+    private val onAdded: (dispatcher: NavigationEventDispatcher) -> Unit = {},
+    private val onRemoved: () -> Unit = {},
+    private val onHasEnabledCallbacksChanged: (hasEnabledCallbacks: Boolean) -> Unit = {},
+) : NavigationEventInput() {
+
+    /** The number of times [onAdded] has been invoked. */
+    var addedInvocations: Int = 0
+        private set
+
+    /** The number of times [onRemoved] has been invoked. */
+    var removedInvocations: Int = 0
+        private set
+
+    /** The number of times [onHasEnabledCallbacksChanged] has been invoked. */
+    var onHasEnabledCallbacksChangedInvocations: Int = 0
+        private set
+
+    /**
+     * The most recently added [NavigationEventDispatcher].
+     *
+     * This is set by [onAdded] and cleared to `null` by [onRemoved].
+     */
+    var currentDispatcher: NavigationEventDispatcher? = null
+        private set
+
+    /**
+     * Test helper to simulate the start of a navigation event.
+     *
+     * This directly calls `dispatchOnStarted`, notifying any registered callbacks. Use this to
+     * trigger the beginning of a navigation flow in your tests.
+     *
+     * @param event The [NavigationEvent] to dispatch.
+     */
+    @MainThread
+    fun handleOnStarted(event: NavigationEvent = NavigationEvent()) {
+        dispatchOnStarted(event)
+    }
+
+    /**
+     * Test helper to simulate the progress of a navigation event.
+     *
+     * This directly calls `dispatchOnProgressed`, notifying any registered callbacks.
+     *
+     * @param event The [NavigationEvent] to dispatch.
+     */
+    @MainThread
+    fun handleOnProgressed(event: NavigationEvent = NavigationEvent()) {
+        dispatchOnProgressed(event)
+    }
+
+    /**
+     * Test helper to simulate the completion of a navigation event.
+     *
+     * This directly calls `dispatchOnCompleted`, notifying any registered callbacks.
+     */
+    @MainThread
+    fun handleOnCompleted() {
+        dispatchOnCompleted()
+    }
+
+    /**
+     * Test helper to simulate the cancellation of a navigation event.
+     *
+     * This directly calls `dispatchOnCancelled`, notifying any registered callbacks.
+     */
+    @MainThread
+    fun handleOnCancelled() {
+        dispatchOnCancelled()
+    }
+
+    override fun onAdded(dispatcher: NavigationEventDispatcher) {
+        addedInvocations++
+        currentDispatcher = dispatcher
+        onAdded.invoke(dispatcher)
+    }
+
+    override fun onRemoved() {
+        currentDispatcher = null
+        removedInvocations++
+        onRemoved.invoke()
+    }
+
+    override fun onHasEnabledCallbacksChanged(hasEnabledCallbacks: Boolean) {
+        onHasEnabledCallbacksChangedInvocations++
+        onHasEnabledCallbacksChanged.invoke(hasEnabledCallbacks)
     }
 }
