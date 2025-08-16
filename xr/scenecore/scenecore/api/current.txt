@@ -587,12 +587,32 @@ package androidx.xr.scenecore {
     property public static androidx.xr.scenecore.Scene androidx.xr.runtime.Session.scene;
   }
 
+  public final class SoundFieldAttributes {
+    ctor public SoundFieldAttributes(int order);
+    method public int getOrder();
+    property public int order;
+  }
+
   public final class Space {
     property public static int ACTIVITY;
     property public static int PARENT;
     field public static final int ACTIVITY = 1; // 0x1
     field public static final androidx.xr.scenecore.Space INSTANCE;
     field public static final int PARENT = 0; // 0x0
+  }
+
+  public final class SpatialAudioTrack {
+    method public static androidx.xr.scenecore.PointSourceParams? getPointSourceParams(androidx.xr.runtime.Session session, android.media.AudioTrack track);
+    method public static androidx.xr.scenecore.SoundFieldAttributes? getSoundFieldAttributes(androidx.xr.runtime.Session session, android.media.AudioTrack track);
+    method public static int getSpatialSourceType(androidx.xr.runtime.Session session, android.media.AudioTrack track);
+    method public static void setPointSourceParams(androidx.xr.runtime.Session session, android.media.AudioTrack track, androidx.xr.scenecore.PointSourceParams params);
+    field public static final androidx.xr.scenecore.SpatialAudioTrack INSTANCE;
+  }
+
+  public final class SpatialAudioTrackBuilder {
+    method public static void setPointSourceParams(androidx.xr.runtime.Session session, android.media.AudioTrack.Builder builder, androidx.xr.scenecore.PointSourceParams params);
+    method public static void setSoundFieldAttributes(androidx.xr.runtime.Session session, android.media.AudioTrack.Builder builder, androidx.xr.scenecore.SoundFieldAttributes attributes);
+    field public static final androidx.xr.scenecore.SpatialAudioTrackBuilder INSTANCE;
   }
 
   public final class SpatialCapabilities {
@@ -648,6 +668,12 @@ package androidx.xr.scenecore {
     property public androidx.xr.scenecore.ExrImage? skybox;
   }
 
+  public final class SpatialMediaPlayer {
+    method public static void setPointSourceParams(androidx.xr.runtime.Session session, android.media.MediaPlayer mediaPlayer, androidx.xr.scenecore.PointSourceParams params);
+    method public static void setSoundFieldAttributes(androidx.xr.runtime.Session session, android.media.MediaPlayer mediaPlayer, androidx.xr.scenecore.SoundFieldAttributes attributes);
+    field public static final androidx.xr.scenecore.SpatialMediaPlayer INSTANCE;
+  }
+
   public fun interface SpatialModeChangeListener {
     method public void onSpatialModeChanged(androidx.xr.runtime.math.Pose recommendedPose, float recommendedScale);
   }
@@ -679,6 +705,23 @@ package androidx.xr.scenecore {
     property public androidx.xr.scenecore.SpatialPointerIcon NONE;
   }
 
+  public final class SpatialSoundPool {
+    method public static int getSpatialSourceType(androidx.xr.runtime.Session session, android.media.SoundPool soundPool, int streamId);
+    method public static int play(androidx.xr.runtime.Session session, android.media.SoundPool soundPool, int soundID, androidx.xr.scenecore.PointSourceParams params);
+    method public static int play(androidx.xr.runtime.Session session, android.media.SoundPool soundPool, int soundID, androidx.xr.scenecore.PointSourceParams params, optional @FloatRange(from=0.0, to=1.0) float volume);
+    method public static int play(androidx.xr.runtime.Session session, android.media.SoundPool soundPool, int soundID, androidx.xr.scenecore.PointSourceParams params, optional @FloatRange(from=0.0, to=1.0) float volume, optional @IntRange(from=0L) int priority);
+    method public static int play(androidx.xr.runtime.Session session, android.media.SoundPool soundPool, int soundID, androidx.xr.scenecore.PointSourceParams params, optional @FloatRange(from=0.0, to=1.0) float volume, optional @IntRange(from=0L) int priority, optional @IntRange(from=-1L) int loop);
+    method public static int play(androidx.xr.runtime.Session session, android.media.SoundPool soundPool, int soundID, androidx.xr.scenecore.PointSourceParams params, optional @FloatRange(from=0.0, to=1.0) float volume, optional @IntRange(from=0L) int priority, optional @IntRange(from=-1L) int loop, optional @FloatRange(from=0.5, to=2.0) float rate);
+    method public static int play(androidx.xr.runtime.Session session, android.media.SoundPool soundPool, int soundID, androidx.xr.scenecore.SoundFieldAttributes attributes);
+    method public static int play(androidx.xr.runtime.Session session, android.media.SoundPool soundPool, int soundID, androidx.xr.scenecore.SoundFieldAttributes attributes, optional @FloatRange(from=0.0, to=1.0) float volume);
+    method public static int play(androidx.xr.runtime.Session session, android.media.SoundPool soundPool, int soundID, androidx.xr.scenecore.SoundFieldAttributes attributes, optional @FloatRange(from=0.0, to=1.0) float volume, optional @IntRange(from=0L) int priority);
+    method public static int play(androidx.xr.runtime.Session session, android.media.SoundPool soundPool, int soundID, androidx.xr.scenecore.SoundFieldAttributes attributes, optional @FloatRange(from=0.0, to=1.0) float volume, optional @IntRange(from=0L) int priority, optional @IntRange(from=-1L) int loop);
+    method public static int play(androidx.xr.runtime.Session session, android.media.SoundPool soundPool, int soundID, androidx.xr.scenecore.SoundFieldAttributes attributes, optional @FloatRange(from=0.0, to=1.0) float volume, optional @IntRange(from=0L) int priority, optional @IntRange(from=-1L) int loop, optional @FloatRange(from=0.5, to=2.0) float rate);
+    property public static int PLAY_FAILED;
+    field public static final androidx.xr.scenecore.SpatialSoundPool INSTANCE;
+    field public static final int PLAY_FAILED = 0; // 0x0
+  }
+
   public final class SpatialUser {
     ctor public SpatialUser(androidx.xr.runtime.internal.LifecycleManager lifecycleManager, androidx.xr.runtime.internal.JxrPlatformAdapter runtime);
     method public java.util.Map<androidx.xr.scenecore.CameraView.CameraType,androidx.xr.scenecore.CameraView> getCameraViews();
@@ -704,6 +747,31 @@ package androidx.xr.scenecore {
     property public static float NO_PREFERRED_ASPECT_RATIO;
     field public static final androidx.xr.scenecore.SpatialWindow INSTANCE;
     field public static final float NO_PREFERRED_ASPECT_RATIO = -1.0f;
+  }
+
+  public interface SpatializerConstants {
+    field public static final int AMBISONICS_ORDER_FIRST_ORDER = 0; // 0x0
+    field public static final int AMBISONICS_ORDER_SECOND_ORDER = 1; // 0x1
+    field public static final int AMBISONICS_ORDER_THIRD_ORDER = 2; // 0x2
+    field public static final androidx.xr.scenecore.SpatializerConstants.Companion Companion;
+    field public static final int SOURCE_TYPE_DEFAULT = 0; // 0x0
+    field public static final int SOURCE_TYPE_POINT_SOURCE = 1; // 0x1
+    field public static final int SOURCE_TYPE_SOUND_FIELD = 2; // 0x2
+  }
+
+  public static final class SpatializerConstants.Companion {
+    property public static int AMBISONICS_ORDER_FIRST_ORDER;
+    property public static int AMBISONICS_ORDER_SECOND_ORDER;
+    property public static int AMBISONICS_ORDER_THIRD_ORDER;
+    property public static int SOURCE_TYPE_DEFAULT;
+    property public static int SOURCE_TYPE_POINT_SOURCE;
+    property public static int SOURCE_TYPE_SOUND_FIELD;
+    field public static final int AMBISONICS_ORDER_FIRST_ORDER = 0; // 0x0
+    field public static final int AMBISONICS_ORDER_SECOND_ORDER = 1; // 0x1
+    field public static final int AMBISONICS_ORDER_THIRD_ORDER = 2; // 0x2
+    field public static final int SOURCE_TYPE_DEFAULT = 0; // 0x0
+    field public static final int SOURCE_TYPE_POINT_SOURCE = 1; // 0x1
+    field public static final int SOURCE_TYPE_SOUND_FIELD = 2; // 0x2
   }
 
   public final class SurfaceEntity extends androidx.xr.scenecore.BaseEntity<androidx.xr.runtime.internal.SurfaceEntity> {
