@@ -53,7 +53,7 @@ public abstract class NavigationEventInput() {
     @MainThread @EmptySuper protected open fun onRemoved() {}
 
     @MainThread
-    internal fun doHasEnabledCallbacksChanged(hasEnabledCallbacks: Boolean) {
+    internal fun doOnHasEnabledCallbacksChanged(hasEnabledCallbacks: Boolean) {
         onHasEnabledCallbacksChanged(hasEnabledCallbacks)
     }
 

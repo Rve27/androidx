@@ -111,7 +111,7 @@ internal class NavigationEventProcessor {
 
             field = value
             for (input in inputs) {
-                input.doHasEnabledCallbacksChanged(hasEnabledCallbacks = value)
+                input.doOnHasEnabledCallbacksChanged(hasEnabledCallbacks = value)
             }
         }
 
