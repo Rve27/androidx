@@ -23,23 +23,27 @@ import androidx.annotation.MainThread
  * [NavigationEventInput], users can create instances of this class and use it directly.
  */
 public class DirectNavigationEventInput() : NavigationEventInput() {
+    /** Send "start" event to the connected dispatcher. */
     @MainThread
-    public fun handleOnStarted(event: NavigationEvent) {
+    public fun start(event: NavigationEvent) {
         dispatchOnStarted(event)
     }
 
+    /** Send "progress" event to the connected dispatcher. */
     @MainThread
-    public fun handleOnProgressed(event: NavigationEvent) {
+    public fun progress(event: NavigationEvent) {
         dispatchOnProgressed(event)
     }
 
+    /** Send "complete" event to the connected dispatcher. */
     @MainThread
-    public fun handleOnCompleted() {
+    public fun complete() {
         dispatchOnCompleted()
     }
 
+    /** Send "cancel" event to the connected dispatcher. */
     @MainThread
-    public fun handleOnCancelled() {
+    public fun cancel() {
         dispatchOnCancelled()
     }
 }
