@@ -26,14 +26,18 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.util.TestCounter
 import androidx.test.filters.SmallTest
 import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.junit.Rule
 import org.junit.Test
 
 @SmallTest
-class PhaseOrderingTest {
+class UnconfinedTestDispatcherPhaseOrderingTest {
 
-    @get:Rule val rule = createComposeRule()
+    @OptIn(ExperimentalTestApi::class, ExperimentalCoroutinesApi::class)
+    @get:Rule
+    val rule = createComposeRule(UnconfinedTestDispatcher())
 
     @Test
     fun singlePass() {
