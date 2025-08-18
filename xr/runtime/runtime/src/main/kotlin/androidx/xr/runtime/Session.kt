@@ -206,7 +206,7 @@ public constructor(
                     loadProviders(RuntimeFactory::class.java, RUNTIME_FACTORY_PROVIDERS),
                     features,
                 )
-            val runtime = runtimeFactory?.createRuntime(activity)
+            val runtime = runtimeFactory?.createRuntime(activity, coroutineContext)
             try {
                 runtime?.lifecycleManager?.create()
             } catch (e: ApkNotInstalledException) {

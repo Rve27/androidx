@@ -947,6 +947,7 @@ package androidx.xr.runtime.testing {
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeRuntimeFactory implements androidx.xr.runtime.internal.RuntimeFactory {
     ctor public FakeRuntimeFactory();
     method public androidx.xr.runtime.testing.FakeRuntime createRuntime(android.app.Activity activity);
+    method public androidx.xr.runtime.testing.FakeRuntime createRuntime(android.app.Activity activity, kotlin.coroutines.CoroutineContext coroutineContext);
     method public java.util.Set<androidx.xr.runtime.internal.Feature> getRequirements();
     method public static boolean hasCreatePermission();
     method public static void setHasCreatePermission(boolean);

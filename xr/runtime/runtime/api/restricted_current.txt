@@ -1540,7 +1540,7 @@ package androidx.xr.runtime.internal {
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface RuntimeFactory extends androidx.xr.runtime.internal.Service {
-    method public androidx.xr.runtime.internal.Runtime createRuntime(android.app.Activity activity);
+    method public androidx.xr.runtime.internal.Runtime createRuntime(android.app.Activity activity, kotlin.coroutines.CoroutineContext coroutineContext);
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface SceneRuntime {
