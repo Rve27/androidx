@@ -24,6 +24,13 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.annotation.VisibleForTesting
+import kotlin.coroutines.CoroutineContext
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.asExecutor
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 
 /**
  * Helper for accessing Projected device [Context] and its features.
@@ -142,6 +149,48 @@ public object ProjectedContext {
         }
 
         return ActivityOptions.makeBasic().setLaunchDisplayId(displayIds.first())
+    }
+
+    /**
+     * Observe whether a Projected device is connected to the host.
+     *
+     * This method should only be used before an Activity is created. After that, use the Activity
+     * lifecycle as an Activity will be stopped when the Projected device disconnects.
+     *
+     * @param context The context used to access the [VirtualDeviceManager]. It can be any context
+     *   object.
+     * @param coroutineContext The CoroutineContext that includes CoroutineDispatcher which is where
+     *   the Projected device connectivity observer is executed on.
+     * @throws IllegalArgumentException if provided coroutineContext doesn't include
+     *   CoroutineDispatcher.
+     */
+    @JvmStatic
+    @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
+    public fun isProjectedDeviceConnected(
+        context: Context,
+        coroutineContext: CoroutineContext,
+    ): StateFlow<Boolean> {
+        val coroutineDispatcher =
+            coroutineContext[CoroutineDispatcher]
+                ?: throw IllegalArgumentException(
+                    "CoroutineContext must contain a CoroutineDispatcher."
+                )
+
+        val isConnected = MutableStateFlow(getProjectedDeviceId(context) != null)
+        val virtualDeviceManager = context.getSystemService(VirtualDeviceManager::class.java)
+
+        val listener =
+            object : VirtualDeviceManager.VirtualDeviceListener {
+                override fun onVirtualDeviceCreated(deviceId: Int) {
+                    isConnected.update { getProjectedDeviceId(context) != null }
+                    virtualDeviceManager.unregisterVirtualDeviceListener(this)
+                }
+            }
+        virtualDeviceManager.registerVirtualDeviceListener(
+            coroutineDispatcher.asExecutor(),
+            listener,
+        )
+        return isConnected.asStateFlow()
     }
 
     @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
