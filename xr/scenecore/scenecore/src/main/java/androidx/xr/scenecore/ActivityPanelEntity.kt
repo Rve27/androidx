@@ -18,7 +18,6 @@ package androidx.xr.scenecore
 
 import android.app.Activity
 import android.content.Intent
-import android.os.Bundle
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.internal.ActivityPanelEntity as RtActivityPanelEntity
 import androidx.xr.runtime.internal.JxrPlatformAdapter
@@ -48,11 +47,9 @@ private constructor(
      * provide any information about when the Activity successfully launches.
      *
      * @param intent Intent to launch the activity.
-     * @param bundle Bundle to pass to the activity, can be null.
      */
-    @JvmOverloads
-    public fun startActivity(intent: Intent, bundle: Bundle? = null) {
-        rtActivityPanelEntity.launchActivity(intent, bundle)
+    public fun startActivity(intent: Intent) {
+        rtActivityPanelEntity.launchActivity(intent, null)
     }
 
     /**

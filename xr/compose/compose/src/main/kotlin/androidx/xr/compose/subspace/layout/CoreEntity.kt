@@ -18,7 +18,6 @@ package androidx.xr.compose.subspace.layout
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.os.Bundle
 import android.view.Surface
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -296,8 +295,8 @@ internal class CorePanelEntity(entity: PanelEntity) : CoreBasePanelEntity(entity
 
 internal class CoreActivityPanelEntity(private val activityPanelEntity: ActivityPanelEntity) :
     CoreBasePanelEntity(activityPanelEntity) {
-    fun startActivity(intent: Intent, bundle: Bundle? = null) {
-        activityPanelEntity.startActivity(intent, bundle)
+    fun startActivity(intent: Intent) {
+        activityPanelEntity.startActivity(intent)
     }
 }
 
