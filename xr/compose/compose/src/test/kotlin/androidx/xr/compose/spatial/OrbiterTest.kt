@@ -72,40 +72,54 @@ class OrbiterTest {
 
     @get:Rule val composeTestRule = createAndroidComposeRule<SubspaceTestingActivity>()
 
+    private val parentTestTag = "parent"
+
     @Test
     fun orbiter_contentIsElevated() {
         composeTestRule.setContentWithCompatibilityForXr {
-            Parent { Orbiter(ContentEdge.Top) { Text("Main Content") } }
+            Box(Modifier.testTag(parentTestTag)) {
+                Orbiter(ContentEdge.Top) { Text("Main Content") }
+            }
         }
 
         composeTestRule.onNodeWithText("Main Content").assertExists()
-        composeTestRule.onParent().onChild().assertDoesNotExist()
+        composeTestRule.onNodeWithTag(parentTestTag).onChild().assertDoesNotExist()
     }
 
     @Test
     fun orbiter_nonXr_contentIsInline() {
-        composeTestRule.setContent { Parent { Orbiter(ContentEdge.Top) { Text("Main Content") } } }
+        composeTestRule.setContent {
+            Box(Modifier.testTag(parentTestTag)) {
+                Orbiter(ContentEdge.Top) { Text("Main Content") }
+            }
+        }
 
-        composeTestRule.onParent().onChild().assertTextContains("Main Content")
+        composeTestRule.onNodeWithTag(parentTestTag).onChild().assertTextContains("Main Content")
     }
 
     @Test
     fun orbiter_homeSpaceMode_contentIsInline() {
+        composeTestRule.session = createFakeSession(composeTestRule.activity)
+        composeTestRule.session?.scene?.requestHomeSpaceMode()
+
         composeTestRule.setContentWithCompatibilityForXr {
-            Parent { Orbiter(ContentEdge.Top) { Text("Main Content") } }
-            checkNotNull(LocalSession.current).scene.requestHomeSpaceMode()
+            Box(Modifier.testTag(parentTestTag)) {
+                Orbiter(ContentEdge.Top) { Text("Main Content") }
+            }
         }
 
-        composeTestRule.onParent().onChild().assertTextContains("Main Content")
+        composeTestRule.onNodeWithTag(parentTestTag).onChild().assertTextContains("Main Content")
     }
 
     @Test
     fun orbiter_nonSpatial_doesNotRenderContent() {
+        composeTestRule.session = createFakeSession(composeTestRule.activity)
+        composeTestRule.session?.scene?.requestHomeSpaceMode()
+
         composeTestRule.setContentWithCompatibilityForXr {
-            Parent {
+            Box {
                 Orbiter(ContentEdge.Top, shouldRenderInNonSpatial = false) { Text("Main Content") }
             }
-            LocalSession.current?.scene?.requestHomeSpaceMode()
         }
 
         composeTestRule.onNodeWithText("Main Content").assertDoesNotExist()
@@ -114,7 +128,7 @@ class OrbiterTest {
     @Test
     fun orbiter_multipleInstances_rendersInSpatial() {
         composeTestRule.setContentWithCompatibilityForXr {
-            Parent {
+            Box(Modifier.testTag(parentTestTag)) {
                 Orbiter(position = ContentEdge.Top) { Text("Top") }
                 Orbiter(position = ContentEdge.Start) { Text("Start") }
                 Orbiter(position = ContentEdge.End) { Text("End") }
@@ -122,36 +136,40 @@ class OrbiterTest {
             }
         }
 
-        composeTestRule.onParent().onChild().assertDoesNotExist()
+        composeTestRule.onNodeWithTag(parentTestTag).onChild().assertDoesNotExist()
     }
 
     @Test
     fun orbiter_afterSwitchToFullSpaceMode_isSpatial() {
+        composeTestRule.session = createFakeSession(composeTestRule.activity)
+        composeTestRule.session?.scene?.requestHomeSpaceMode()
+
         composeTestRule.setContentWithCompatibilityForXr {
-            checkNotNull(LocalSession.current).scene.requestHomeSpaceMode()
-            Parent { Orbiter(position = ContentEdge.Bottom) { Text("Bottom") } }
+            Box(Modifier.testTag(parentTestTag)) {
+                Orbiter(position = ContentEdge.Bottom) { Text("Bottom") }
+            }
             checkNotNull(LocalSession.current).scene.requestFullSpaceMode()
         }
 
-        composeTestRule.onParent().onChild().assertDoesNotExist()
+        composeTestRule.onNodeWithTag(parentTestTag).onChild().assertDoesNotExist()
     }
 
     @Test
     fun orbiter_setting_contentIsNotInline() {
         composeTestRule.setContent {
-            Parent {
+            Box(Modifier.testTag(parentTestTag)) {
                 Orbiter(ContentEdge.Top, shouldRenderInNonSpatial = false) { Text("Main Content") }
             }
         }
 
-        composeTestRule.onParent().onChild().assertDoesNotExist()
+        composeTestRule.onNodeWithTag(parentTestTag).onChild().assertDoesNotExist()
     }
 
     @Test
     fun orbiter_settingChange_contentIsInline() {
         var shouldRenderInNonSpatial by mutableStateOf(false)
         composeTestRule.setContent {
-            Parent {
+            Box(Modifier.testTag(parentTestTag)) {
                 Orbiter(ContentEdge.Top, shouldRenderInNonSpatial = shouldRenderInNonSpatial) {
                     Text("Main Content")
                 }
@@ -160,13 +178,15 @@ class OrbiterTest {
 
         shouldRenderInNonSpatial = true
 
-        composeTestRule.onParent().onChild().assertTextContains("Main Content")
+        composeTestRule.onNodeWithTag(parentTestTag).onChild().assertTextContains("Main Content")
     }
 
     @Test
     fun orbiter_orbiterRendered() {
-        composeTestRule.setContent {
-            LocalSession.current?.scene?.requestHomeSpaceMode()
+        composeTestRule.session = createFakeSession(composeTestRule.activity)
+        composeTestRule.session?.scene?.requestHomeSpaceMode()
+
+        composeTestRule.setContentWithCompatibilityForXr {
             Box {
                 Text("Main Content")
                 Orbiter(ContentEdge.Start) { Text("Orbiter Content") }
@@ -181,8 +201,10 @@ class OrbiterTest {
     fun orbiter_orbiterCanBeRemoved() {
         var showOrbiter by mutableStateOf(true)
 
-        composeTestRule.setContent {
-            LocalSession.current?.scene?.requestHomeSpaceMode()
+        composeTestRule.session = createFakeSession(composeTestRule.activity)
+        composeTestRule.session?.scene?.requestHomeSpaceMode()
+
+        composeTestRule.setContentWithCompatibilityForXr {
             Box(modifier = Modifier.size(100.dp)) {
                 Text("Main Content")
                 if (showOrbiter) {
@@ -199,7 +221,7 @@ class OrbiterTest {
     @Test
     fun orbiter_orbiterRenderedInlineInHomeSpaceMode() {
         composeTestRule.setContentWithCompatibilityForXr {
-            Parent {
+            Box(Modifier.testTag(parentTestTag)) {
                 Box(modifier = Modifier.size(100.dp)) { Text("Main Content") }
                 Orbiter(
                     position = ContentEdge.Top,
@@ -214,15 +236,19 @@ class OrbiterTest {
             }
         }
 
-        composeTestRule.onParent().onChild().assertTextContains("Main Content")
-        checkNotNull(composeTestRule.session).scene.requestHomeSpaceMode()
+        composeTestRule.onNodeWithTag(parentTestTag).onChild().assertTextContains("Main Content")
+        composeTestRule.runOnIdle {
+            checkNotNull(composeTestRule.session).scene.requestHomeSpaceMode()
+        }
 
         // All orbiters become children of the Parent node
-        composeTestRule.onParent().onChildren().assertCountEquals(5)
-        checkNotNull(composeTestRule.session).scene.requestFullSpaceMode()
+        composeTestRule.onNodeWithTag(parentTestTag).onChildren().assertCountEquals(5)
+        composeTestRule.runOnIdle {
+            checkNotNull(composeTestRule.session).scene.requestFullSpaceMode()
+        }
 
         // Orbiters exist outside of the compose hierarchy
-        composeTestRule.onParent().onChildren().assertCountEquals(1)
+        composeTestRule.onNodeWithTag(parentTestTag).onChildren().assertCountEquals(1)
     }
 
     @Test
@@ -519,7 +545,6 @@ class OrbiterTest {
                 }
             }
         }
-        composeTestRule.waitForIdle()
 
         composeTestRule
             .onNodeWithTag("orbiterContentBox")
@@ -527,7 +552,6 @@ class OrbiterTest {
             .assertHeightIsEqualTo(initialHeight.toDp())
 
         triggerResize = true
-        composeTestRule.waitForIdle()
 
         composeTestRule
             .onNodeWithTag("orbiterContentBox")
@@ -560,7 +584,6 @@ class OrbiterTest {
             session.scene.getEntitiesOfType(PanelEntity::class.java).first {
                 it.sizeInPixels.width == 100
             }
-        assertNotNull(entity)
         assertThat(entity.parent).isNotEqualTo(session.scene.mainPanelEntity)
         assertThat(entity.parent).isEqualTo(parentPanel)
     }
@@ -582,7 +605,6 @@ class OrbiterTest {
             session.scene.getEntitiesOfType(PanelEntity::class.java).first {
                 it.sizeInPixels.width == 10
             }
-        assertNotNull(entity)
         assertThat(entity.parent).isEqualTo(session.scene.mainPanelEntity)
     }
 }
