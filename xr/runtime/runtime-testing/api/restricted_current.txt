@@ -574,7 +574,7 @@ package androidx.xr.runtime.testing {
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeRenderingRuntime implements androidx.xr.runtime.internal.RenderingRuntime {
-    ctor public FakeRenderingRuntime(androidx.xr.runtime.internal.SceneRuntime sceneRuntime, android.app.Activity activity);
+    ctor public FakeRenderingRuntime(androidx.xr.runtime.internal.RenderingEntityFactory entityFactory);
     method public androidx.xr.runtime.internal.TextureResource? borrowReflectionTexture();
     method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.runtime.internal.MaterialResource>? createKhronosPbrMaterial(androidx.xr.runtime.internal.KhronosPbrMaterialSpec spec);
     method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.runtime.internal.MaterialResource> createWaterMaterial(boolean isAlphaMapVersion);
@@ -1022,9 +1022,10 @@ package androidx.xr.runtime.testing {
   public static final class FakeRuntimeViewCamera.Companion {
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeSceneRuntime implements androidx.xr.runtime.internal.SceneRuntime {
-    ctor public FakeSceneRuntime(android.app.Activity activity);
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeSceneRuntime implements androidx.xr.runtime.internal.RenderingEntityFactory androidx.xr.runtime.internal.SceneRuntime {
+    ctor public FakeSceneRuntime();
     method public void addSpatialCapabilitiesChangedListener(java.util.concurrent.Executor callbackExecutor, java.util.function.Consumer<androidx.xr.runtime.internal.SpatialCapabilities> listener);
+    method public androidx.xr.runtime.internal.GltfEntity createGltfEntity(androidx.xr.runtime.internal.GltfFeature feature, androidx.xr.runtime.math.Pose pose, androidx.xr.runtime.internal.Entity parentEntity);
     method public androidx.xr.runtime.internal.Entity createGroupEntity(androidx.xr.runtime.math.Pose pose, String name, androidx.xr.runtime.internal.Entity parent);
     method public void dispose();
     method public androidx.xr.runtime.internal.ActivitySpace getActivitySpace();

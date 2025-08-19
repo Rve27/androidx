@@ -863,6 +863,15 @@ package androidx.xr.runtime.internal {
   @java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.RUNTIME) public static @interface GltfEntity.AnimationStateValue {
   }
 
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface GltfFeature extends androidx.xr.runtime.internal.RenderingFeature {
+    method public int getAnimationState();
+    method public void setColliderEnabled(boolean enableCollider);
+    method public void setMaterialOverride(androidx.xr.runtime.internal.MaterialResource material, String meshName);
+    method public void startAnimation(boolean loop, String? animationName, java.util.concurrent.Executor executor);
+    method public void stopAnimation();
+    property public abstract int animationState;
+  }
+
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface GltfModelResource extends androidx.xr.runtime.internal.Resource {
   }
 
@@ -1418,6 +1427,16 @@ package androidx.xr.runtime.internal {
 
   public static fun interface PointerCaptureComponent.StateListener {
     method public void onStateChanged(@androidx.xr.runtime.internal.PointerCaptureComponent.PointerCaptureState int newState);
+  }
+
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface RenderingEntityFactory {
+    method public androidx.xr.runtime.internal.GltfEntity createGltfEntity(androidx.xr.runtime.internal.GltfFeature feature, androidx.xr.runtime.math.Pose pose, androidx.xr.runtime.internal.Entity parentEntity);
+  }
+
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface RenderingFeature {
+    method public void dispose();
+    method public androidx.xr.runtime.NodeHolder<? extends java.lang.Object?> getNodeHolder();
+    property public abstract androidx.xr.runtime.NodeHolder<? extends java.lang.Object?> nodeHolder;
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface RenderingRuntime {

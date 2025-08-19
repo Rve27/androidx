@@ -16,18 +16,24 @@
 
 package androidx.xr.runtime.internal
 
-import android.app.Activity
 import androidx.annotation.RestrictTo
+import androidx.xr.runtime.NodeHolder
 
-/** Factory for creating instances of a RenderingRuntime. */
+/**
+ * Defines the internal rendering implementation for an entity.
+ *
+ * This feature provides the rendering logic and manages the underlying extension node and its
+ * associated resources. An instance of a `RenderingFeature` is injected into an entity that
+ * requires rendering API support.
+ */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public interface RenderingRuntimeFactory : Service {
+public interface RenderingFeature {
+    /** Holds the underlying extension Node for the corresponding entity's creation. */
+    public val nodeHolder: NodeHolder<*>
+
     /**
-     * Creates a [RenderingRuntime].
-     *
-     * @param sceneRuntime The [SceneRuntime] for the session. This instance must also implement the
-     *   [RenderingEntityFactory] interface.
-     * @param activity The host [Activity] for the session.
+     * Disposes the resources used by the feature. This is called by the corresponding entity's
+     * dispose method.
      */
-    public fun create(sceneRuntime: SceneRuntime, activity: Activity): RenderingRuntime
+    public fun dispose()
 }

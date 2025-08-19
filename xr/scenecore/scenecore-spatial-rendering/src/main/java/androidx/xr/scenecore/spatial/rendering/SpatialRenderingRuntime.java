@@ -25,6 +25,7 @@ import androidx.xr.runtime.internal.ExrImageResource;
 import androidx.xr.runtime.internal.GltfModelResource;
 import androidx.xr.runtime.internal.KhronosPbrMaterialSpec;
 import androidx.xr.runtime.internal.MaterialResource;
+import androidx.xr.runtime.internal.RenderingEntityFactory;
 import androidx.xr.runtime.internal.RenderingRuntime;
 import androidx.xr.runtime.internal.SceneRuntime;
 import androidx.xr.runtime.internal.TextureResource;
@@ -59,7 +60,8 @@ class SpatialRenderingRuntime implements RenderingRuntime {
     private static final String SPLIT_ENGINE_LIBRARY_NAME = "impress_api_jni";
 
     @SuppressWarnings("UnusedVariable")
-    private final @NonNull SceneRuntime mSceneRuntime;
+    private final @NonNull RenderingEntityFactory mRenderingEntityFactory;
+
     private @Nullable Activity mActivity;
 
     @SuppressWarnings("UnusedVariable")
@@ -77,7 +79,11 @@ class SpatialRenderingRuntime implements RenderingRuntime {
             @NonNull ImpressApi impressApi,
             @NonNull SplitEngineSubspaceManager subspaceManager,
             @NonNull ImpSplitEngineRenderer renderer) {
-        mSceneRuntime = sceneRuntime;
+        if (!(sceneRuntime instanceof RenderingEntityFactory)) {
+            throw new IllegalArgumentException(
+                    "Expected sceneRuntime to be a RenderingEntityFactory");
+        }
+        mRenderingEntityFactory = (RenderingEntityFactory) sceneRuntime;
         mActivity = activity;
         mExtensions = extensions;
         mImpressApi = impressApi;

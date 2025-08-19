@@ -16,12 +16,12 @@
 
 package androidx.xr.runtime.testing
 
-import android.app.Activity
 import androidx.annotation.RestrictTo
 import androidx.xr.runtime.internal.ExrImageResource
 import androidx.xr.runtime.internal.GltfModelResource
 import androidx.xr.runtime.internal.KhronosPbrMaterialSpec
 import androidx.xr.runtime.internal.MaterialResource
+import androidx.xr.runtime.internal.RenderingEntityFactory
 import androidx.xr.runtime.internal.RenderingRuntime
 import androidx.xr.runtime.internal.SceneRuntime
 import androidx.xr.runtime.internal.TextureResource
@@ -33,12 +33,16 @@ import com.google.common.util.concurrent.Futures.immediateFailedFuture
 import com.google.common.util.concurrent.Futures.immediateFuture
 import com.google.common.util.concurrent.ListenableFuture
 
-/** Test-only implementation of [SceneRuntime] */
+/**
+ * Test-only implementation of [RenderingRuntime].
+ *
+ * @param entityFactory The factory used to create rendering-related entities. This is typically the
+ *   [SceneRuntime] instance, which must also implement [RenderingEntityFactory].
+ */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public class FakeRenderingRuntime(
-    private val sceneRuntime: SceneRuntime,
-    private val activity: Activity,
-) : RenderingRuntime {
+public class FakeRenderingRuntime(private val entityFactory: RenderingEntityFactory) :
+    RenderingRuntime {
+
     @Suppress("AsyncSuffixFuture")
     override fun loadGltfByAssetName(assetName: String): ListenableFuture<GltfModelResource> =
         immediateFuture(FakeGltfModelResource(0))
