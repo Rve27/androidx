@@ -1,11 +1,11 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,10 +19,10 @@ package androidx.pdf.content
 import android.graphics.RectF
 
 /**
- * Represents a continuous stream of text in a page of a PDF document in the order of viewing.
+ * Represents the content on a PDF page, such as text, images, uris, or other selectable elements.
  *
- * @param bounds: Bounds for the text content
- * @param text: Text content within the bounds.
+ * This is an abstract class that serves as a base for different types of page content.
+ *
+ * @param bounds: A list of rectangles defining the content's bounding boxes in PDF coordinates.
  */
-public class PdfPageTextContent(bounds: List<RectF>, public val text: String) :
-    PdfPageContent(bounds)
+public abstract class PdfPageContent internal constructor(public val bounds: List<RectF>)

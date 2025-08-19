@@ -110,22 +110,25 @@ package androidx.pdf.content {
   }
 
   public final class PageSelection {
-    ctor public PageSelection(int page, androidx.pdf.content.SelectionBoundary start, androidx.pdf.content.SelectionBoundary stop, java.util.List<androidx.pdf.content.PdfPageTextContent> selectedTextContents);
+    ctor public PageSelection(int page, androidx.pdf.content.SelectionBoundary start, androidx.pdf.content.SelectionBoundary stop, java.util.List<? extends androidx.pdf.content.PdfPageContent> selectedContents);
     method public int getPage();
-    method public java.util.List<androidx.pdf.content.PdfPageTextContent> getSelectedTextContents();
+    method public java.util.List<androidx.pdf.content.PdfPageContent> getSelectedContents();
     method public androidx.pdf.content.SelectionBoundary getStart();
     method public androidx.pdf.content.SelectionBoundary getStop();
     property public int page;
-    property public java.util.List<androidx.pdf.content.PdfPageTextContent> selectedTextContents;
+    property public java.util.List<androidx.pdf.content.PdfPageContent> selectedContents;
     property public androidx.pdf.content.SelectionBoundary start;
     property public androidx.pdf.content.SelectionBoundary stop;
   }
 
-  public final class PdfPageGotoLinkContent {
+  public abstract class PdfPageContent {
+    method public final java.util.List<android.graphics.RectF> getBounds();
+    property public final java.util.List<android.graphics.RectF> bounds;
+  }
+
+  public final class PdfPageGotoLinkContent extends androidx.pdf.content.PdfPageContent {
     ctor public PdfPageGotoLinkContent(java.util.List<? extends android.graphics.RectF> bounds, androidx.pdf.content.PdfPageGotoLinkContent.Destination destination);
-    method public java.util.List<android.graphics.RectF> getBounds();
     method public androidx.pdf.content.PdfPageGotoLinkContent.Destination getDestination();
-    property public java.util.List<android.graphics.RectF> bounds;
     property public androidx.pdf.content.PdfPageGotoLinkContent.Destination destination;
   }
 
@@ -147,19 +150,15 @@ package androidx.pdf.content {
     property public String altText;
   }
 
-  public final class PdfPageLinkContent {
+  public final class PdfPageLinkContent extends androidx.pdf.content.PdfPageContent {
     ctor public PdfPageLinkContent(java.util.List<? extends android.graphics.RectF> bounds, android.net.Uri uri);
-    method public java.util.List<android.graphics.RectF> getBounds();
     method public android.net.Uri getUri();
-    property public java.util.List<android.graphics.RectF> bounds;
     property public android.net.Uri uri;
   }
 
-  public final class PdfPageTextContent {
+  public final class PdfPageTextContent extends androidx.pdf.content.PdfPageContent {
     ctor public PdfPageTextContent(java.util.List<? extends android.graphics.RectF> bounds, String text);
-    method public java.util.List<android.graphics.RectF> getBounds();
     method public String getText();
-    property public java.util.List<android.graphics.RectF> bounds;
     property public String text;
   }
 

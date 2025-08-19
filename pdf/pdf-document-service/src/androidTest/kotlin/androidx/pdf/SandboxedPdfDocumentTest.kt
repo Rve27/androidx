@@ -35,6 +35,7 @@ import androidx.pdf.annotation.models.PdfEdit
 import androidx.pdf.annotation.models.StampAnnotation
 import androidx.pdf.annotation.processor.BatchPdfAnnotationsProcessor
 import androidx.pdf.annotation.processor.BatchPdfAnnotationsProcessor.Companion.parcelSizeInBytes
+import androidx.pdf.content.PdfPageTextContent
 import androidx.pdf.models.FormEditRecord
 import androidx.pdf.models.FormWidgetInfo
 import androidx.pdf.utils.AnnotationUtilsTest.Companion.isRequiredSdkExtensionAvailable
@@ -217,8 +218,10 @@ class SandboxedPdfDocumentTest {
             val expectedSelectedText = "F i"
             assertThat(selection != null).isTrue()
             assertThat(selection!!.page == pageNumber).isTrue()
-            assertThat(selection.selectedTextContents.size == 1).isTrue()
-            assertThat(selection.selectedTextContents[0].text == expectedSelectedText).isTrue()
+            assertThat(selection.selectedContents.size == 1).isTrue()
+            val selectedText = selection.selectedContents[0] as? PdfPageTextContent
+            assertThat(selectedText).isNotNull()
+            assertThat(selectedText?.text).isEqualTo(expectedSelectedText)
         }
     }
 
@@ -253,14 +256,16 @@ class SandboxedPdfDocumentTest {
         withDocument(PDF_DOCUMENT) { document ->
             val pageNumber = 0
 
-            val selection = document.getSelectAllSelectionBounds(pageNumber)?.selectedTextContents
+            val selection = document.getSelectAllSelectionBounds(pageNumber)?.selectedContents
             val expectedSelection = document.getPageContent(pageNumber)?.textContents
 
             assertNotNull(selection)
             assertNotNull(expectedSelection)
             assertThat(selection?.size == expectedSelection?.size).isTrue()
             for (index: Int in 0..selection!!.size - 1) {
-                assertThat(selection[index].text == expectedSelection!![index].text).isTrue()
+                val selectedText = selection[index] as? PdfPageTextContent
+                assertThat(selectedText).isNotNull()
+                assertThat(selectedText?.text == expectedSelection!![index].text).isTrue()
             }
         }
     }
