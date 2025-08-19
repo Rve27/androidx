@@ -121,7 +121,7 @@ private fun View.createXrOwnerLocals(
             coreMainPanelEntity = CoreMainPanelEntity(session),
             subspaceRootNode =
                 GroupEntity.create(session, "SubspaceRootContainer").apply {
-                    session.scene.setKeyEntity(this)
+                    session.scene.keyEntity = this
                 },
             dialogManager = DefaultDialogManager(),
         )

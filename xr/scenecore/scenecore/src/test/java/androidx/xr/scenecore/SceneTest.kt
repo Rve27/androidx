@@ -17,6 +17,7 @@
 package androidx.xr.scenecore
 
 import android.content.Context
+import android.os.Looper
 import android.view.View
 import android.widget.TextView
 import androidx.activity.ComponentActivity
@@ -29,6 +30,7 @@ import androidx.xr.runtime.internal.JxrPlatformAdapter
 import androidx.xr.runtime.internal.PanelEntity as RtPanelEntity
 import androidx.xr.runtime.internal.PixelDimensions as RtPixelDimensions
 import androidx.xr.runtime.internal.SpatialCapabilities as RtSpatialCapabilities
+import androidx.xr.runtime.internal.SpatialModeChangeListener as RtSpatialModeChangeListener
 import androidx.xr.runtime.internal.SpatialVisibility as RtSpatialVisibility
 import androidx.xr.runtime.math.FloatSize2d
 import androidx.xr.runtime.math.IntSize2d
@@ -53,6 +55,7 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.Shadows.shadowOf
 
 @RunWith(RobolectricTestRunner::class)
 class SceneTest {
@@ -240,22 +243,122 @@ class SceneTest {
     }
 
     @Test
-    fun sceneInit_setsDefaultSpatialStateChangeHandler() {
+    fun sceneInit_setsDefaultSpatialModeChangedListener() {
         // Verify that default handler is always set.
         verify(mockPlatformAdapter).spatialModeChangeListener = any()
     }
 
     @Test
-    fun setSpatialStateChangeHandler_callsRuntimeSetSpatialStateChangeHandler() {
-        val mockSpatialModeChangeListener = mock<SpatialModeChangeListener>()
-        session.scene.spatialModeChangeListener = mockSpatialModeChangeListener
-        val captor = argumentCaptor<androidx.xr.runtime.internal.SpatialModeChangeListener>()
+    fun setSpatialModeChangedListener_withExecutor_receivesEvent() {
+        var receivedEvent: SpatialModeChangeEvent? = null
+        val listener = Consumer<SpatialModeChangeEvent> { event -> receivedEvent = event }
+        val captor = argumentCaptor<RtSpatialModeChangeListener>()
+        // The listener is set during Scene initialization. We need to capture it to trigger
+        // changes.
         verify(mockPlatformAdapter).spatialModeChangeListener = captor.capture()
-        val rtSpatialStateChangeHandler = captor.firstValue
+        val rtListener = captor.firstValue
+
+        val executor = directExecutor()
+        session.scene.setSpatialModeChangedListener(executor, listener)
+
         val pose = Pose.Identity
         val scale = Vector3(2f, 2f, 2f)
-        rtSpatialStateChangeHandler.onSpatialModeChanged(pose, scale)
-        verify(mockSpatialModeChangeListener).onSpatialModeChanged(pose, scale.x)
+        rtListener.onSpatialModeChanged(pose, scale)
+
+        assertThat(receivedEvent).isNotNull()
+        assertThat(receivedEvent?.recommendedPose).isEqualTo(pose)
+        assertThat(receivedEvent?.recommendedScale).isEqualTo(scale.x)
+    }
+
+    @Test
+    fun setSpatialModeChangedListener_withNoExecutor_receivesEvent() {
+        var receivedEvent: SpatialModeChangeEvent? = null
+        val listener = Consumer<SpatialModeChangeEvent> { event -> receivedEvent = event }
+        val captor = argumentCaptor<RtSpatialModeChangeListener>()
+        verify(mockPlatformAdapter).spatialModeChangeListener = captor.capture()
+        val rtListener = captor.firstValue
+
+        session.scene.setSpatialModeChangedListener(listener)
+
+        val pose = Pose.Identity
+        val scale = Vector3(2f, 2f, 2f)
+        rtListener.onSpatialModeChanged(pose, scale)
+        shadowOf(Looper.getMainLooper()).idle()
+
+        assertThat(receivedEvent).isNotNull()
+        assertThat(receivedEvent?.recommendedPose).isEqualTo(pose)
+        assertThat(receivedEvent?.recommendedScale).isEqualTo(scale.x)
+    }
+
+    @Test
+    fun clearSpatialModeChangedListener_removesListener() {
+        var listenerCalled = false
+        val listener = Consumer<SpatialModeChangeEvent> { _ -> listenerCalled = true }
+        val captor = argumentCaptor<RtSpatialModeChangeListener>()
+        verify(mockPlatformAdapter).spatialModeChangeListener = captor.capture()
+        val rtListener = captor.firstValue
+
+        session.scene.setSpatialModeChangedListener(listener)
+        session.scene.clearSpatialModeChangedListener()
+
+        rtListener.onSpatialModeChanged(Pose.Identity, Vector3.One)
+        shadowOf(Looper.getMainLooper()).idle()
+
+        assertThat(listenerCalled).isFalse()
+    }
+
+    @Test
+    fun clearSpatialModeChangedListener_restoresDefaultKeyEntityBehavior() {
+        val captor = argumentCaptor<RtSpatialModeChangeListener>()
+        verify(mockPlatformAdapter).spatialModeChangeListener = captor.capture()
+        val rtListener = captor.firstValue
+
+        val mockKeyEntity = mock<Entity>()
+        session.scene.keyEntity = mockKeyEntity
+
+        // Set a custom listener that does nothing
+        session.scene.setSpatialModeChangedListener {}
+
+        // Trigger change, keyEntity should not be updated
+        val pose1 = Pose(Vector3(1f, 1f, 1f))
+        val scale1 = Vector3(1f, 1f, 1f)
+        rtListener.onSpatialModeChanged(pose1, scale1)
+        shadowOf(Looper.getMainLooper()).idle()
+        verify(mockKeyEntity, never()).setPose(any(), any())
+        verify(mockKeyEntity, never()).setScale(any(), any())
+
+        // Clear the listener
+        session.scene.clearSpatialModeChangedListener()
+
+        // Trigger change again, keyEntity should now be updated
+        val pose2 = Pose(Vector3(2f, 2f, 2f))
+        val scale2 = Vector3(3f, 3f, 3f)
+        rtListener.onSpatialModeChanged(pose2, scale2)
+        shadowOf(Looper.getMainLooper()).idle()
+
+        verify(mockKeyEntity).setPose(pose2, Space.ACTIVITY)
+        verify(mockKeyEntity).setScale(scale2.x, Space.ACTIVITY)
+    }
+
+    @Test
+    fun setSpatialModeChangedListener_overridesDefaultBehavior() {
+        val captor = argumentCaptor<RtSpatialModeChangeListener>()
+        verify(mockPlatformAdapter).spatialModeChangeListener = captor.capture()
+        val rtListener = captor.firstValue
+
+        val mockKeyEntity = mock<Entity>()
+        session.scene.keyEntity = mockKeyEntity
+
+        var listenerCalled = false
+        val listener = Consumer<SpatialModeChangeEvent> { _ -> listenerCalled = true }
+        session.scene.setSpatialModeChangedListener(listener)
+
+        rtListener.onSpatialModeChanged(Pose.Identity, Vector3.One)
+        shadowOf(Looper.getMainLooper()).idle()
+
+        assertThat(listenerCalled).isTrue()
+        verify(mockKeyEntity, never()).setPose(any(), any())
+        verify(mockKeyEntity, never()).setScale(any(), any())
     }
 
     @Test
@@ -308,5 +411,89 @@ class SceneTest {
         inOrder.verify(mockPlatformAdapter).enablePanelDepthTest(false)
         inOrder.verify(mockPlatformAdapter).enablePanelDepthTest(true)
         assertThat(session.scene.panelClippingConfig).isEqualTo(enabledConfig)
+    }
+
+    @Test
+    fun keyEntity_defaultValue_isNull() {
+        assertThat(session.scene.keyEntity).isNull()
+    }
+
+    @Test
+    fun keyEntity_setWithValidEntity_succeeds() {
+        val mockEntity = mock<Entity>()
+        session.scene.keyEntity = mockEntity
+        assertThat(session.scene.keyEntity).isEqualTo(mockEntity)
+    }
+
+    @Test
+    fun keyEntity_setWithAnchorEntity_throwsIllegalArgumentException() {
+        whenever(mockPlatformAdapter.createAnchorEntity(any(), any(), any(), any()))
+            .thenReturn(mockAnchorEntity)
+        val anchorEntity =
+            AnchorEntity.create(session, FloatSize2d(), PlaneOrientation.ANY, PlaneSemanticType.ANY)
+
+        val exception =
+            assertFailsWith<IllegalArgumentException> { session.scene.keyEntity = anchorEntity }
+        assertThat(exception)
+            .hasMessageThat()
+            .isEqualTo("AnchorEntity cannot be set as the keyEntity.")
+    }
+
+    @Test
+    fun keyEntity_setWithActivitySpace_throwsIllegalArgumentException() {
+        val exception =
+            assertFailsWith<IllegalArgumentException> {
+                session.scene.keyEntity = session.scene.activitySpace
+            }
+        assertThat(exception)
+            .hasMessageThat()
+            .isEqualTo("ActivitySpace cannot be set as the keyEntity.")
+    }
+
+    @Test
+    fun keyEntity_setWithNull_clearsKeyEntity() {
+        val mockEntity = mock<Entity>()
+        session.scene.keyEntity = mockEntity // Set it first
+        assertThat(session.scene.keyEntity).isEqualTo(mockEntity)
+
+        session.scene.keyEntity = null // Clear it
+        assertThat(session.scene.keyEntity).isNull()
+    }
+
+    @Test
+    fun defaultSpatialModeChangedListener_withKeyEntity_updatesPoseAndScale() {
+        val captor = argumentCaptor<RtSpatialModeChangeListener>()
+        // The listener is set during Scene initialization. Capture it to trigger a change.
+        verify(mockPlatformAdapter).spatialModeChangeListener = captor.capture()
+        val rtListener = captor.firstValue
+
+        val mockKeyEntity = mock<Entity>()
+        session.scene.keyEntity = mockKeyEntity
+
+        val recommendedPose = Pose(Vector3(1f, 2f, 3f))
+        val recommendedScale = Vector3(2f, 2f, 2f)
+
+        rtListener.onSpatialModeChanged(recommendedPose, recommendedScale)
+        shadowOf(Looper.getMainLooper()).idle()
+
+        verify(mockKeyEntity).setPose(recommendedPose, Space.ACTIVITY)
+        verify(mockKeyEntity).setScale(recommendedScale.x, Space.ACTIVITY)
+    }
+
+    @Test
+    fun defaultSpatialModeChangedListener_withNullKeyEntity_isNoOp() {
+        val captor = argumentCaptor<RtSpatialModeChangeListener>()
+        verify(mockPlatformAdapter).spatialModeChangeListener = captor.capture()
+        val rtListener = captor.firstValue
+
+        // Ensure keyEntity is null (it is by default)
+        assertThat(session.scene.keyEntity).isNull()
+
+        val recommendedPose = Pose.Identity
+        val recommendedScale = Vector3.One
+
+        // This should not throw any exception
+        rtListener.onSpatialModeChanged(recommendedPose, recommendedScale)
+        shadowOf(Looper.getMainLooper()).idle()
     }
 }

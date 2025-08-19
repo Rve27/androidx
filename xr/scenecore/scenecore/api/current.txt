@@ -541,9 +541,11 @@ package androidx.xr.scenecore {
     ctor public Scene();
     method public void addSpatialCapabilitiesChangedListener(java.util.concurrent.Executor callbackExecutor, java.util.function.Consumer<androidx.xr.scenecore.SpatialCapabilities> listener);
     method public void addSpatialCapabilitiesChangedListener(java.util.function.Consumer<androidx.xr.scenecore.SpatialCapabilities> listener);
+    method public void clearSpatialModeChangedListener();
     method public void clearSpatialVisibilityChangedListener();
     method public androidx.xr.scenecore.ActivitySpace getActivitySpace();
     method public <T extends androidx.xr.scenecore.Entity> java.util.List<T> getEntitiesOfType(Class<? extends T> type);
+    method public androidx.xr.scenecore.Entity? getKeyEntity();
     method public androidx.xr.scenecore.MainPanelEntity getMainPanelEntity();
     method public androidx.xr.scenecore.PanelClippingConfig getPanelClippingConfig();
     method public androidx.xr.scenecore.PerceptionSpace getPerceptionSpace();
@@ -553,10 +555,14 @@ package androidx.xr.scenecore {
     method public void removeSpatialCapabilitiesChangedListener(java.util.function.Consumer<androidx.xr.scenecore.SpatialCapabilities> listener);
     method public void requestFullSpaceMode();
     method public void requestHomeSpaceMode();
+    method public void setKeyEntity(androidx.xr.scenecore.Entity?);
     method public void setPanelClippingConfig(androidx.xr.scenecore.PanelClippingConfig);
+    method public void setSpatialModeChangedListener(java.util.concurrent.Executor callbackExecutor, java.util.function.Consumer<androidx.xr.scenecore.SpatialModeChangeEvent> listener);
+    method public void setSpatialModeChangedListener(java.util.function.Consumer<androidx.xr.scenecore.SpatialModeChangeEvent> listener);
     method public void setSpatialVisibilityChangedListener(java.util.concurrent.Executor callbackExecutor, java.util.function.Consumer<java.lang.Integer> listener);
     method public void setSpatialVisibilityChangedListener(java.util.function.Consumer<java.lang.Integer> listener);
     property public androidx.xr.scenecore.ActivitySpace activitySpace;
+    property public androidx.xr.scenecore.Entity? keyEntity;
     property public androidx.xr.scenecore.MainPanelEntity mainPanelEntity;
     property public androidx.xr.scenecore.PanelClippingConfig panelClippingConfig;
     property public androidx.xr.scenecore.PerceptionSpace perceptionSpace;
@@ -673,8 +679,12 @@ package androidx.xr.scenecore {
     field public static final androidx.xr.scenecore.SpatialMediaPlayer INSTANCE;
   }
 
-  public fun interface SpatialModeChangeListener {
-    method public void onSpatialModeChanged(androidx.xr.runtime.math.Pose recommendedPose, float recommendedScale);
+  public final class SpatialModeChangeEvent {
+    ctor public SpatialModeChangeEvent(androidx.xr.runtime.math.Pose recommendedPose, float recommendedScale);
+    method public androidx.xr.runtime.math.Pose getRecommendedPose();
+    method public float getRecommendedScale();
+    property public androidx.xr.runtime.math.Pose recommendedPose;
+    property public float recommendedScale;
   }
 
   public final class SpatialPointerComponent implements androidx.xr.scenecore.Component {
