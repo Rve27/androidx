@@ -17,7 +17,6 @@
 package androidx.compose.integration.hero.pokedex.macrobenchmark
 
 import android.content.Intent
-import android.util.Log
 import androidx.benchmark.macro.CompilationMode
 import androidx.benchmark.macro.ExperimentalMetricApi
 import androidx.benchmark.macro.FrameTimingGfxInfoMetric
@@ -29,12 +28,13 @@ import androidx.compose.integration.hero.pokedex.macrobenchmark.PokedexConstants
 import androidx.compose.integration.hero.pokedex.macrobenchmark.PokedexConstants.POKEDEX_TARGET_PACKAGE_NAME
 import androidx.test.filters.LargeTest
 import androidx.test.uiautomator.By
+import androidx.test.uiautomator.BySelector
 import androidx.test.uiautomator.SearchCondition
 import androidx.test.uiautomator.UiDevice
+import androidx.test.uiautomator.UiObject2
 import androidx.test.uiautomator.Until
 import androidx.testutils.createCompilationParams
 import androidx.testutils.defaultComposeScrollingMetrics
-import kotlin.IllegalArgumentException
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -71,60 +71,108 @@ class PokedexTransitionBenchmark(
                 startActivityAndWait(intent)
 
                 // Ablazeon always is the first pokemon in the grid
-                val searchCondition = Until.hasObject(By.res("Ablazeon_card"))
-                device.wait(searchCondition, 3_000)
-                val content = device.findObject(By.res("PokedexList"))
+                device.waitOrThrow(Until.hasObject(By.text("Fractalix")), 3_000)
+                val content = device.findObjectOrThrow(By.res("PokedexList"))
                 // Set gesture margin to avoid triggering gesture navigation
                 content.setGestureMargin(device.displayWidth / 5)
             },
         ) {
-            homeToDetailsAndBackAction("Ablazeon")
+            homeToDetailsAndBackAction(
+                "Fractalix",
+                waitForActiveTransitionStatus = true,
+                waitForProgressBarAnimation = true,
+                backButtonSelector = By.res("pokedexDetailsBack"),
+            )
             device.waitForIdle()
-            homeToDetailsAndBackAction("Anglark")
+            homeToDetailsAndBackAction(
+                "Fungoyle",
+                waitForActiveTransitionStatus = true,
+                waitForProgressBarAnimation = true,
+                backButtonSelector = By.res("pokedexDetailsBack"),
+            )
         }
     }
 
-    private fun MacrobenchmarkScope.homeToDetailsAndBackAction(pokemonName: String) {
-        val list = device.findObject(By.res("PokedexList"))
-        val pokemonCard = list.findObject(By.res("${pokemonName}_card"))
-        pokemonCard.click()
+    @OptIn(ExperimentalMetricApi::class)
+    @Test
+    fun homeToDetailsTransitionViews() {
+        benchmarkRule.measureRepeated(
+            packageName = POKEDEX_TARGET_PACKAGE_NAME,
+            metrics = defaultComposeScrollingMetrics() + FrameTimingGfxInfoMetric(),
+            compilationMode = compilationMode,
+            iterations = HeroMacrobenchmarkDefaults.ITERATIONS,
+            setupBlock = {
+                // Start out by deleting any existing data
+                resetPokedexDatabase()
 
-        if (enableSharedElementTransitions) {
-            waitForTransitionStatus("details", active = true)
-            waitForTransitionStatus("details", active = false)
+                val intent = Intent()
+                intent.action = "$POKEDEX_TARGET_PACKAGE_NAME.POKEDEX_VIEWS_HOME_ACTIVITY"
+                intent.putExtra(POKEDEX_ENABLE_SHARED_TRANSITION_SCOPE, enableSharedTransitionScope)
+                intent.putExtra(
+                    POKEDEX_ENABLE_SHARED_ELEMENT_TRANSITIONS,
+                    enableSharedElementTransitions,
+                )
+                startActivityAndWait(intent)
+
+                device.waitOrThrow(Until.hasObject(By.text("Fractalix")), 3_000)
+                val content =
+                    device.findObjectOrThrow(By.res(POKEDEX_TARGET_PACKAGE_NAME, "PokedexList"))
+                // Set gesture margin to avoid triggering gesture navigation
+                content.setGestureMargin(device.displayWidth / 5)
+            },
+        ) {
+            homeToDetailsAndBackAction(
+                "Fractalix",
+                waitForActiveTransitionStatus = false,
+                waitForProgressBarAnimation = false,
+                backButtonSelector = By.res(POKEDEX_TARGET_PACKAGE_NAME, "pokedexDetailsBack"),
+            )
+            device.waitForIdle()
+            homeToDetailsAndBackAction(
+                "Fungoyle",
+                waitForActiveTransitionStatus = false,
+                waitForProgressBarAnimation = false,
+                backButtonSelector = By.res(POKEDEX_TARGET_PACKAGE_NAME, "pokedexDetailsBack"),
+            )
         }
+    }
 
-        device.waitOrThrow(Until.hasObject(By.res("progress-animation-active-true")), 1000)
-        device.waitOrThrow(Until.gone(By.res("progress-animation-active-true")), 1000)
-
-        device.findObject(By.res("pokedexDetailsBack")).click()
-
-        if (enableSharedElementTransitions) {
-            waitForTransitionStatus("home", active = true)
-        }
-        waitForTransitionStatus("home", active = false)
+    private fun MacrobenchmarkScope.homeToDetailsAndBackAction(
+        pokemonName: String,
+        backButtonSelector: BySelector,
+        waitForActiveTransitionStatus: Boolean,
+        waitForProgressBarAnimation: Boolean,
+    ) {
+        device.findObjectOrThrow(By.text(pokemonName)).click()
         device.waitForIdle()
+        if (enableSharedElementTransitions && waitForActiveTransitionStatus) {
+            device.waitForTransitionStatus(name = "details", active = true)
+        }
+        device.waitForTransitionStatus(name = "details", active = false)
+
+        if (waitForProgressBarAnimation) {
+            device.waitOrThrow(
+                condition = Until.hasObject(By.res("progress-animation-active-true")),
+                timeoutMillis = 1000,
+            )
+            device.waitOrThrow(Until.gone(By.res("progress-animation-active-true")), 1000)
+        }
+
+        device.findObjectOrThrow(backButtonSelector).click()
+        device.waitForIdle()
+
+        if (enableSharedElementTransitions && waitForActiveTransitionStatus) {
+            device.waitForTransitionStatus("home", active = true)
+        }
+        device.waitForTransitionStatus("home", active = false)
     }
 
-    private fun MacrobenchmarkScope.waitForTransitionStatus(
+    private fun UiDevice.waitForTransitionStatus(
         name: String,
         active: Boolean,
         timeoutMs: Long = 2_000L,
     ) {
-        val transitionElementName = "pokedex-$name-transition-active-$active"
-        val waitForPokedexDetailsTransitionResult: Boolean? =
-            device.wait(Until.hasObject(By.res(transitionElementName)), timeoutMs)
-        if (waitForPokedexDetailsTransitionResult == null) {
-            Log.d(
-                "PokedexTransitionBenchmark",
-                "Waited for $transitionElementName, did not appear after $timeoutMs ms." +
-                    "Dumping window hierarchy.",
-            )
-            device.dumpWindowHierarchy(System.out)
-            throw IllegalArgumentException(
-                "Waited for $transitionElementName, did not appear" + " after $timeoutMs ms."
-            )
-        }
+        waitOrThrow(Until.hasObject(By.text("pokedex-$name-transition-active-$active")), timeoutMs)
     }
 
     companion object {
@@ -147,5 +195,29 @@ class PokedexTransitionBenchmark(
     }
 }
 
-private fun <U> UiDevice.waitOrThrow(condition: SearchCondition<U>, timeout: Long): U =
-    requireNotNull(wait(condition, timeout))
+private fun UiDevice.waitOrThrow(
+    condition: SearchCondition<Boolean>,
+    timeoutMillis: Long,
+    lazyMessage: () -> String = {
+        "Waited for $condition, was not fulfilled after $timeoutMillis ms."
+    },
+) {
+    val waitResult = wait(condition, timeoutMillis)
+    if (waitResult != true) {
+        dumpWindowHierarchy(System.out)
+    }
+    require(waitResult == true, lazyMessage)
+}
+
+private fun UiDevice.findObjectOrThrow(
+    selector: BySelector,
+    dumpWindowHierarchyOnFailure: Boolean = true,
+    lazyMessage: () -> String = { "Did not find $selector." },
+): UiObject2 {
+    val findObjectResult = findObject(selector)
+    if (findObjectResult == null && dumpWindowHierarchyOnFailure) {
+        dumpWindowHierarchy(System.out)
+    }
+    requireNotNull(findObjectResult, lazyMessage)
+    return findObjectResult
+}
