@@ -22,6 +22,7 @@ import androidx.credentials.registry.provider.digitalcredentials.VerificationFie
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
 import com.google.common.truth.Truth.assertThat
+import org.junit.Assert.assertThrows
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -35,6 +36,18 @@ class SdJwtEntryTest {
                 subtitle = "test-subtitle",
                 icon = Bitmap.createBitmap(4, 4, Bitmap.Config.ALPHA_8),
             )
+    }
+
+    @Test
+    fun construction_longId_throws() {
+        assertThrows(IllegalArgumentException::class.java) {
+            SdJwtEntry(
+                verifiableCredentialType = "https://example.com/vct",
+                claims = listOf(),
+                entryDisplayPropertySet = setOf(ENTRY_DISPLAY_DATA),
+                id = "a".repeat(65),
+            )
+        }
     }
 
     @Test
@@ -54,13 +67,13 @@ class SdJwtEntryTest {
 
         val entry =
             SdJwtEntry(
-                vct = "https://example.com/vct",
+                verifiableCredentialType = "https://example.com/vct",
                 claims = listOf(claim1, claim2),
                 entryDisplayPropertySet = setOf(ENTRY_DISPLAY_DATA),
                 id = "id",
             )
 
-        assertThat(entry.vct).isEqualTo("https://example.com/vct")
+        assertThat(entry.verifiableCredentialType).isEqualTo("https://example.com/vct")
         assertThat(entry.claims).containsExactly(claim1, claim2).inOrder()
         assertThat(entry.entryDisplayPropertySet).containsExactly(ENTRY_DISPLAY_DATA)
         assertThat(entry.id).isEqualTo("id")

@@ -16,7 +16,6 @@
 
 package androidx.credentials.registry.digitalcredentials.sdjwt
 
-import androidx.annotation.RestrictTo
 import androidx.credentials.registry.provider.digitalcredentials.DigitalCredentialEntry
 import androidx.credentials.registry.provider.digitalcredentials.EntryDisplayProperties
 
@@ -25,7 +24,7 @@ import androidx.credentials.registry.provider.digitalcredentials.EntryDisplayPro
  * [IETF SD-JWT-based Verifiable Credentials (SD-JWT VC)](https://datatracker.ietf.org/doc/draft-ietf-oauth-sd-jwt-vc/)
  * credential format.
  *
- * @property vct the verifiable credential type as defined in
+ * @property verifiableCredentialType the verifiable credential type (vct) as defined in
  *   [the SD-JWT VC spec](https://www.ietf.org/archive/id/draft-ietf-oauth-sd-jwt-vc-10.html#section-3.2.2.1)
  * @property claims the individual attributes associated with this credential
  * @property entryDisplayPropertySet a set of entry display metadata, each serving a different UI
@@ -33,10 +32,10 @@ import androidx.credentials.registry.provider.digitalcredentials.EntryDisplayPro
  * @property id the unique identifier of this credential entry, which can be used to identify the
  *   exact credential that the user has chosen
  * @constructor
+ * @throws IllegalArgumentException if [id] length is greater than 64 characters
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY)
 public class SdJwtEntry(
-    public val vct: String,
+    public val verifiableCredentialType: String,
     public val claims: List<SdJwtClaim>,
     entryDisplayPropertySet: Set<EntryDisplayProperties>,
     id: String,
@@ -46,7 +45,7 @@ public class SdJwtEntry(
         if (other !is SdJwtEntry) return false
         return this.id == other.id &&
             this.entryDisplayPropertySet == other.entryDisplayPropertySet &&
-            this.vct == other.vct &&
+            this.verifiableCredentialType == other.verifiableCredentialType &&
             this.claims == other.claims &&
             this.entryDisplayPropertySet == other.entryDisplayPropertySet
     }
@@ -54,7 +53,7 @@ public class SdJwtEntry(
     override fun hashCode(): Int {
         var result = id.hashCode()
         result = 31 * result + entryDisplayPropertySet.hashCode()
-        result = 31 * result + vct.hashCode()
+        result = 31 * result + verifiableCredentialType.hashCode()
         result = 31 * result + claims.hashCode()
         return result
     }

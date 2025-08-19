@@ -16,14 +16,16 @@
 
 package androidx.credentials.registry.digitalcredentials.sdjwt
 
-import androidx.annotation.RestrictTo
 import androidx.credentials.registry.provider.digitalcredentials.DigitalCredentialField
 import androidx.credentials.registry.provider.digitalcredentials.FieldDisplayProperties
 
 /**
- * An attribute of a [SdJwtEntry].
+ * An attribute of a [SdJwtEntry] conforming to the
+ * [IETF SD-JWT-based Verifiable Credentials (SD-JWT VC)](https://datatracker.ietf.org/doc/draft-ietf-oauth-sd-jwt-vc/)
+ * credential format.
  *
- * @property value the claim value, used for matching purpose;
+ * @property value the json-serializable claim value, used for matching when the incoming Digital
+ *   Credentials request specifies a required value for this claim;
  * @property path a non-empty array of path strings used to select this given claim during matching
  * @property isSelectivelyDisclosable true (default) if the given claim is selectively disclosable,
  *   or false otherwise when the claim will always be disclosed
@@ -31,7 +33,6 @@ import androidx.credentials.registry.provider.digitalcredentials.FieldDisplayPro
  *   style variant
  * @constructor
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY)
 public class SdJwtClaim(
     public val path: List<String>,
     public val value: Any?,

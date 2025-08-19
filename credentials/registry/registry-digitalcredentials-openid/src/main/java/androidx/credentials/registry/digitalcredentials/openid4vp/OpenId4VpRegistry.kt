@@ -17,7 +17,6 @@
 package androidx.credentials.registry.digitalcredentials.openid4vp
 
 import android.graphics.Bitmap
-import androidx.annotation.RestrictTo
 import androidx.credentials.registry.digitalcredentials.mdoc.MdocEntry
 import androidx.credentials.registry.digitalcredentials.openid4vp.OpenId4VpDefaults.DEFAULT_MATCHER
 import androidx.credentials.registry.digitalcredentials.sdjwt.SdJwtEntry
@@ -41,7 +40,10 @@ import org.json.JSONObject
  * based request.
  *
  * The ([type], [id]) properties together act as a primary key for this registry record stored with
- * the Registry Manager. You later can use them to perform overwrite or deletion.
+ * the Registry Manager. You later can use the same values of [type] + [id] to overwrite or delete a
+ * previously registered registry. Therefore, you should track the ids you use for various registry
+ * use cases (most often you only need one) so that you can later use them to update the same
+ * registry record.
  *
  * @param credentialEntries the list of entries to register
  * @param id the unique id for this registry
@@ -51,8 +53,8 @@ import org.json.JSONObject
  *   fulfillment activity, it will build an intent with the given `intentAction` targeting your
  *   package, so this is useful when you need to define different fulfillment activities for
  *   different registries
+ * @throws IllegalArgumentException if [id] or [intentAction] length is greater than 64 characters
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY)
 public class OpenId4VpRegistry(
     credentialEntries: List<DigitalCredentialEntry>,
     id: String,
@@ -64,7 +66,7 @@ public class OpenId4VpRegistry(
         matcher = DEFAULT_MATCHER,
         intentAction = intentAction,
     ) {
-    public companion object {
+    private companion object {
         private const val CREDENTIALS = "credentials"
         private const val ID = "id"
         private const val TITLE = "title"
@@ -72,7 +74,6 @@ public class OpenId4VpRegistry(
         private const val ICON = "icon"
         private const val START = "start"
         private const val LENGTH = "length"
-        private const val NAMESPACES = "namespaces"
         private const val PATHS = "paths"
         private const val VALUE = "value"
         private const val DISPLAY = "display"
@@ -252,7 +253,7 @@ public class OpenId4VpRegistry(
                             addClaimToPathJson(pathJson, claim.path, claimJson)
                         }
                         credJson.put(PATHS, pathJson)
-                        addCredentialJson(sdJwtCredentials, credJson, item.vct)
+                        addCredentialJson(sdJwtCredentials, credJson, item.verifiableCredentialType)
                     }
                     is MdocEntry -> {
                         val credJson = JSONObject()
@@ -262,18 +263,16 @@ public class OpenId4VpRegistry(
                             iconMap,
                         )
                         val pathJson = JSONObject()
-                        // TODO: Enable once MdocField is updated
-                        //                        for (field in item.fields) {
-                        //                            val namespaceJson =
-                        //                                pathJson.optJSONObject(field.namespace) ?:
-                        // JSONObject()
-                        //                            val fieldJson = JSONObject()
-                        //
-                        // fieldJson.putDisplayForField(field.fieldDisplayPropertySet)
-                        //                            fieldJson.putOpt(VALUE, field.fieldValue)
-                        //                            namespaceJson.put(field.identifier, fieldJson)
-                        //                            pathJson.put(field.namespace, namespaceJson)
-                        //                        }
+                        for (field in item.fields) {
+                            val namespaceJson =
+                                pathJson.optJSONObject(field.namespace) ?: JSONObject()
+                            val fieldJson = JSONObject()
+
+                            fieldJson.putDisplayForField(field.fieldDisplayPropertySet)
+                            fieldJson.putOpt(VALUE, field.fieldValue)
+                            namespaceJson.put(field.identifier, fieldJson)
+                            pathJson.put(field.namespace, namespaceJson)
+                        }
                         credJson.put(PATHS, pathJson)
                         addCredentialJson(mdocCredentials, credJson, item.docType)
                     }
