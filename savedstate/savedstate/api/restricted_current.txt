@@ -338,14 +338,18 @@ package androidx.savedstate.serialization {
 
   public final class SavedStateDecoderKt {
     method @KotlinOnly public static inline <reified T> T decodeFromSavedState(android.os.Bundle savedState, optional androidx.savedstate.serialization.SavedStateConfiguration configuration);
-    method public static <T> T decodeFromSavedState(kotlinx.serialization.DeserializationStrategy<? extends T> deserializer, android.os.Bundle savedState);
-    method public static <T> T decodeFromSavedState(kotlinx.serialization.DeserializationStrategy<? extends T> deserializer, android.os.Bundle savedState, optional androidx.savedstate.serialization.SavedStateConfiguration configuration);
+    method @BytecodeOnly @Deprecated public static Object! decodeFromSavedState(kotlinx.serialization.DeserializationStrategy!, android.os.Bundle!);
+    method @BytecodeOnly @Deprecated public static Object! decodeFromSavedState(kotlinx.serialization.DeserializationStrategy!, android.os.Bundle!, androidx.savedstate.serialization.SavedStateConfiguration!);
+    method public static <T> T decodeFromSavedStateNullable(kotlinx.serialization.DeserializationStrategy<? extends T> deserializer, android.os.Bundle savedState);
+    method public static <T> T decodeFromSavedStateNullable(kotlinx.serialization.DeserializationStrategy<? extends T> deserializer, android.os.Bundle savedState, optional androidx.savedstate.serialization.SavedStateConfiguration configuration);
   }
 
   public final class SavedStateEncoderKt {
-    method public static <T> android.os.Bundle encodeToSavedState(kotlinx.serialization.SerializationStrategy<? super T> serializer, T value);
-    method public static <T> android.os.Bundle encodeToSavedState(kotlinx.serialization.SerializationStrategy<? super T> serializer, T value, optional androidx.savedstate.serialization.SavedStateConfiguration configuration);
+    method @BytecodeOnly @Deprecated public static android.os.Bundle! encodeToSavedState(kotlinx.serialization.SerializationStrategy!, Object!);
+    method @BytecodeOnly @Deprecated public static android.os.Bundle! encodeToSavedState(kotlinx.serialization.SerializationStrategy!, Object!, androidx.savedstate.serialization.SavedStateConfiguration!);
     method @KotlinOnly public static inline <reified T> android.os.Bundle encodeToSavedState(T value, optional androidx.savedstate.serialization.SavedStateConfiguration configuration);
+    method public static <T> android.os.Bundle encodeToSavedStateNullable(kotlinx.serialization.SerializationStrategy<? super T> serializer, T value);
+    method public static <T> android.os.Bundle encodeToSavedStateNullable(kotlinx.serialization.SerializationStrategy<? super T> serializer, T value, optional androidx.savedstate.serialization.SavedStateConfiguration configuration);
   }
 
   public final class SavedStateRegistryOwnerDelegateKt {
