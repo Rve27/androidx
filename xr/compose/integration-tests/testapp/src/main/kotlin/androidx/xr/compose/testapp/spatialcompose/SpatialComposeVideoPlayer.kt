@@ -75,6 +75,8 @@ import androidx.xr.compose.platform.LocalSession
 import androidx.xr.compose.spatial.ContentEdge
 import androidx.xr.compose.spatial.Orbiter
 import androidx.xr.compose.spatial.Subspace
+import androidx.xr.compose.subspace.MovePolicy
+import androidx.xr.compose.subspace.ResizePolicy
 import androidx.xr.compose.subspace.SpatialBox
 import androidx.xr.compose.subspace.SpatialColumn
 import androidx.xr.compose.subspace.SpatialExternalSurface
@@ -93,10 +95,8 @@ import androidx.xr.compose.subspace.layout.SubspaceModifier
 import androidx.xr.compose.subspace.layout.alpha
 import androidx.xr.compose.subspace.layout.fillMaxSize
 import androidx.xr.compose.subspace.layout.height
-import androidx.xr.compose.subspace.layout.movable
 import androidx.xr.compose.subspace.layout.offset
 import androidx.xr.compose.subspace.layout.onPointSourceParamsAvailable
-import androidx.xr.compose.subspace.layout.resizable
 import androidx.xr.compose.subspace.layout.rotate
 import androidx.xr.compose.subspace.layout.size
 import androidx.xr.compose.subspace.layout.width
@@ -115,7 +115,6 @@ import androidx.xr.scenecore.SpatialMediaPlayer
 import androidx.xr.scenecore.SurfaceEntity
 import androidx.xr.scenecore.scene
 import java.io.File
-import kotlin.getValue
 import kotlin.math.roundToInt
 
 class SpatialComposeVideoPlayer : ComponentActivity() {
@@ -312,7 +311,10 @@ class SpatialComposeVideoPlayer : ComponentActivity() {
         } else {
 
             SpatialColumn {
-                SpatialPanel(SubspaceModifier.height(600.dp).width(600.dp).movable()) {
+                SpatialPanel(
+                    SubspaceModifier.height(600.dp).width(600.dp),
+                    dragPolicy = MovePolicy(),
+                ) {
                     CommonTestScaffold(
                         title = "Video Player Tests",
                         showBottomBar = true,
@@ -710,18 +712,16 @@ class SpatialComposeVideoPlayer : ComponentActivity() {
         val player = remember { MediaPlayer() }
         SpatialPanel(
             modifier =
-                SubspaceModifier.width(600.dp)
-                    .height(600.dp)
-                    .onPointSourceParamsAvailable {
-                        if (isAudioSpatialized) {
-                            SpatialMediaPlayer.setPointSourceParams(session!!, player, it)
-                        }
-                        player.setDataSource(this@SpatialComposeVideoPlayer, mediaUriState.value!!)
-                        player.prepare()
-                        player.isLooping = true
-                        player.start()
+                SubspaceModifier.width(600.dp).height(600.dp).onPointSourceParamsAvailable {
+                    if (isAudioSpatialized) {
+                        SpatialMediaPlayer.setPointSourceParams(session!!, player, it)
                     }
-                    .movable(enabled = true)
+                    player.setDataSource(this@SpatialComposeVideoPlayer, mediaUriState.value!!)
+                    player.prepare()
+                    player.isLooping = true
+                    player.start()
+                },
+            dragPolicy = MovePolicy(isEnabled = true),
         ) {
             DisposableEffect(Unit) { onDispose { player.release() } }
 
@@ -865,9 +865,9 @@ class SpatialComposeVideoPlayer : ComponentActivity() {
                     )
                     .height(
                         if (stereoMode == StereoMode.TopBottom) videoHeight / 2 else videoHeight
-                    )
-                    .movable()
-                    .resizable(),
+                    ),
+            dragPolicy = MovePolicy(),
+            resizePolicy = ResizePolicy(),
             stereoMode = stereoMode,
             featheringEffect = getFeatheringEffect(animatedFeatheringValue, featheringType),
             surfaceProtection =

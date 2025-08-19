@@ -75,6 +75,8 @@ import androidx.xr.compose.platform.LocalSession
 import androidx.xr.compose.spatial.ContentEdge
 import androidx.xr.compose.spatial.Orbiter
 import androidx.xr.compose.spatial.Subspace
+import androidx.xr.compose.subspace.MovePolicy
+import androidx.xr.compose.subspace.ResizePolicy
 import androidx.xr.compose.subspace.SpatialBox
 import androidx.xr.compose.subspace.SpatialColumn
 import androidx.xr.compose.subspace.SpatialExternalSurface
@@ -92,10 +94,8 @@ import androidx.xr.compose.subspace.layout.SubspaceModifier
 import androidx.xr.compose.subspace.layout.alpha
 import androidx.xr.compose.subspace.layout.fillMaxSize
 import androidx.xr.compose.subspace.layout.height
-import androidx.xr.compose.subspace.layout.movable
 import androidx.xr.compose.subspace.layout.offset
 import androidx.xr.compose.subspace.layout.onPointSourceParamsAvailable
-import androidx.xr.compose.subspace.layout.resizable
 import androidx.xr.compose.subspace.layout.rotate
 import androidx.xr.compose.subspace.layout.size
 import androidx.xr.compose.subspace.layout.width
@@ -285,7 +285,10 @@ class VideoPlayerActivity : ComponentActivity() {
             }
         } else {
             SpatialColumn {
-                SpatialPanel(SubspaceModifier.height(600.dp).width(600.dp).movable()) {
+                SpatialPanel(
+                    SubspaceModifier.height(600.dp).width(600.dp),
+                    dragPolicy = MovePolicy(),
+                ) {
                     Column(modifier = Modifier.background(Color.LightGray).fillMaxSize()) {
                         when (menu) {
                             VideoMenuState.HOME -> {
@@ -599,20 +602,18 @@ class VideoPlayerActivity : ComponentActivity() {
 
         SpatialPanel(
             modifier =
-                SubspaceModifier.width(600.dp)
-                    .height(600.dp)
-                    .onPointSourceParamsAvailable {
-                        mediaPlayer = MediaPlayer()
-                        if (isAudioSpatialized) {
-                            SpatialMediaPlayer.setPointSourceParams(session!!, mediaPlayer, it)
-                        }
-
-                        mediaPlayer.setDataSource(this@VideoPlayerActivity, mediaUriState.value!!)
-                        mediaPlayer.prepare()
-                        mediaPlayer.isLooping = true
-                        mediaPlayer.start()
+                SubspaceModifier.width(600.dp).height(600.dp).onPointSourceParamsAvailable {
+                    mediaPlayer = MediaPlayer()
+                    if (isAudioSpatialized) {
+                        SpatialMediaPlayer.setPointSourceParams(session!!, mediaPlayer, it)
                     }
-                    .movable(enabled = true)
+
+                    mediaPlayer.setDataSource(this@VideoPlayerActivity, mediaUriState.value!!)
+                    mediaPlayer.prepare()
+                    mediaPlayer.isLooping = true
+                    mediaPlayer.start()
+                },
+            dragPolicy = MovePolicy(isEnabled = true),
         ) {
             DisposableEffect(Unit) { onDispose { releaseMediaPlayer() } }
 
@@ -771,9 +772,9 @@ class VideoPlayerActivity : ComponentActivity() {
                     )
                     .height(
                         if (stereoMode == StereoMode.TopBottom) videoHeight / 2 else videoHeight
-                    )
-                    .movable()
-                    .resizable(),
+                    ),
+            dragPolicy = MovePolicy(),
+            resizePolicy = ResizePolicy(),
             stereoMode = stereoMode,
             featheringEffect = getFeatheringEffect(animatedFeatheringValue, featheringType),
             surfaceProtection =

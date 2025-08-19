@@ -60,11 +60,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.xr.compose.spatial.ApplicationSubspace
+import androidx.xr.compose.subspace.MovePolicy
+import androidx.xr.compose.subspace.ResizePolicy
 import androidx.xr.compose.subspace.SpatialPanel
 import androidx.xr.compose.subspace.layout.SubspaceModifier
 import androidx.xr.compose.subspace.layout.height
-import androidx.xr.compose.subspace.layout.movable
-import androidx.xr.compose.subspace.layout.resizable
 import androidx.xr.compose.subspace.layout.width
 import androidx.xr.compose.testapp.accessibility.AccessibilityActivity
 import androidx.xr.compose.testapp.animation.Animation
@@ -102,7 +102,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             ApplicationSubspace {
                 SpatialPanel(
-                    modifier = SubspaceModifier.width(800.dp).height(750.dp).movable().resizable()
+                    modifier = SubspaceModifier.width(800.dp).height(750.dp),
+                    dragPolicy = MovePolicy(),
+                    resizePolicy = ResizePolicy(),
                 ) {
                     IntegrationTestsAppTheme {
                         val scrollBehavior =
