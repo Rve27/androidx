@@ -315,10 +315,10 @@ private fun boundsOfLayoutNode(node: LayoutInfo): IntRect {
 }
 
 @UiToolingDataApi
-private class CompositionCallStack<T>(
-    private val factory: (CompositionGroup, SourceContext, List<T>, List<T>) -> T?,
+private class CompositionCallStack<T, R>(
+    private val createNode: (CompositionGroup, SourceContext, List<T>, List<R>) -> T?,
     private val contexts: MutableMap<String, Any?>,
-    private val childrenToAdd: MutableMap<Any?, MutableList<T>>? = null,
+    private val childrenToAdd: MutableMap<Any?, MutableList<R>>? = null,
 ) : SourceContext {
     private val stack = ArrayDeque<CompositionGroup>()
     private var currentCallIndex = 0
@@ -341,7 +341,9 @@ private class CompositionCallStack<T>(
         val childrenToStitchToGroup =
             childrenToAdd?.takeIf { it.isNotEmpty() }?.remove(group.identity)
 
-        factory(group, this, children, childrenToStitchToGroup ?: emptyList())?.let { out.add(it) }
+        createNode(group, this, children, childrenToStitchToGroup ?: emptyList())?.let {
+            out.add(it)
+        }
         pop()
         return box
     }
@@ -464,7 +466,7 @@ fun <T> CompositionData.mapTree(
 
     // After
     val callStack =
-        CompositionCallStack(
+        CompositionCallStack<T, T>(
             { group, sourceContext, children, _ -> factory(group, sourceContext, children) },
             cache.contexts,
         )
@@ -477,31 +479,31 @@ fun <T> CompositionData.mapTree(
 /**
  * Transforms a [CompositionData] instance into a tree of custom nodes.
  *
- * The [factory] method is invoked for each [CompositionGroup] within the slot tree. This allows for
- * the creation of custom nodes based on the provided arguments. The [SourceContext] argument offers
- * access to supplementary information encoded in [CompositionGroup.sourceInfo]. If [factory]
- * returns `null`, the entire corresponding subtree is disregarded.
+ * The [createNode] method is invoked for each [CompositionGroup] within the slot tree. This allows
+ * for the creation of custom nodes based on the provided arguments. The [SourceContext] argument
+ * offers access to supplementary information encoded in [CompositionGroup.sourceInfo]. If
+ * [createNode] returns `null`, the entire corresponding subtree is disregarded.
  *
  * An optional [cache] (of type [ContextCache]) can be supplied. This can enhance performance if
  * [mapTree] is called multiple times and the values of [CompositionGroup.sourceInfo] are not
  * unique.
  *
- * @param factory A function that takes a [CompositionGroup], its [SourceContext], and a list of
- *   already processed children of type [T], and if present children of type [T] that should be
+ * @param createNode A function that takes a [CompositionGroup], its [SourceContext], and a list of
+ *   already processed children of type [T], and if present children of type [R] that should be
  *   stitched and returns a custom node of type [T] or `null` to ignore the subtree.
  * @param cache An optional [ContextCache] to optimize [SourceContext] creation.
  * @param childrenToAdd A map to accumulate children that need to be stitched.
  * @return The root of the custom node tree of type [T], or `null` if the input [CompositionData] is
- *   empty or the root group is processed to `null` by the [factory].
+ *   empty or the root group is processed to `null` by the [createNode].
  */
 @OptIn(UiToolingDataApi::class)
-internal fun <T> CompositionData.mapTreeWithStitching(
-    factory: (CompositionGroup, SourceContext, List<T>, List<T>) -> T?,
+internal fun <T, R> CompositionData.mapTreeWithStitching(
+    createNode: (CompositionGroup, SourceContext, List<T>, List<R>) -> T?,
     cache: ContextCache = ContextCache(),
-    childrenToAdd: MutableMap<Any?, MutableList<T>>? = mutableMapOf(),
+    childrenToAdd: MutableMap<Any?, MutableList<R>> = mutableMapOf(),
 ): T? {
     val group = compositionGroups.firstOrNull() ?: return null
-    val callStack = CompositionCallStack(factory, cache.contexts, childrenToAdd)
+    val callStack = CompositionCallStack(createNode, cache.contexts, childrenToAdd)
     val out = mutableListOf<T>()
     callStack.convert(group, 0, out)
     return out.firstOrNull()
