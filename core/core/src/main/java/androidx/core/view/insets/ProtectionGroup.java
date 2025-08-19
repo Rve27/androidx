@@ -70,9 +70,7 @@ class ProtectionGroup implements SystemBarStateMonitor.Callback {
             } else {
                 throw new IllegalStateException(
                         protection + " (" + (i + 1) + "/" + size + ") is already controlled by "
-                                + controller + " but is still added to " + this + " at tid="
-                                + Thread.currentThread().getId(),
-                        protection.getSetControllerStack());
+                                + controller + " but is still added to " + this);
             }
         }
     }

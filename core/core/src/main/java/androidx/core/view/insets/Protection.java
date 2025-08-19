@@ -70,7 +70,6 @@ public abstract class Protection {
     private float mSystemInsetAmount = 1f;
     private float mUserInsetAmount = 1f;
     private Object mController = null;
-    private Throwable mSetControllerStack = null;
 
     // These animators are driven by the explicit calls to {@link #animateAlpha()} or
     // {@link #animateInsetsAmount()}, not by the system bar animation.
@@ -205,15 +204,6 @@ public abstract class Protection {
 
     void setController(Object controller) {
         mController = controller;
-
-        // TODO (b/437035243) Remove this after the root cause of b/437035243 is known.
-        mSetControllerStack = controller != null
-                ? new Throwable("tid=" + Thread.currentThread().getId())
-                : null;
-    }
-
-    Throwable getSetControllerStack() {
-        return mSetControllerStack;
     }
 
     void setSystemVisible(boolean visible) {
