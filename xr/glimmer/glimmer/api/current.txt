@@ -221,6 +221,18 @@ package androidx.xr.glimmer {
     property public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.compose.ui.text.TextStyle> LocalTextStyle;
   }
 
+  public final class TitleChipDefaults {
+    method public androidx.compose.foundation.layout.PaddingValues contentPadding(boolean hasIcon);
+    method @BytecodeOnly public float getAssociatedContentSpacing-D9Ej5fM();
+    property public androidx.compose.ui.unit.Dp AssociatedContentSpacing;
+    field public static final androidx.xr.glimmer.TitleChipDefaults INSTANCE;
+  }
+
+  public final class TitleChipKt {
+    method @KotlinOnly @androidx.compose.runtime.Composable public static void TitleChip(optional androidx.compose.ui.Modifier modifier, optional kotlin.jvm.functions.Function0<kotlin.Unit>? leadingIcon, optional androidx.compose.ui.graphics.Shape shape, optional androidx.compose.ui.graphics.Color color, optional androidx.compose.ui.graphics.Color contentColor, optional androidx.compose.foundation.BorderStroke? border, optional androidx.compose.foundation.layout.PaddingValues contentPadding, kotlin.jvm.functions.Function1<androidx.compose.foundation.layout.RowScope,kotlin.Unit> content);
+    method @BytecodeOnly @androidx.compose.runtime.Composable public static void TitleChip-X-z6DiA(androidx.compose.ui.Modifier?, kotlin.jvm.functions.Function2<? super androidx.compose.runtime.Composer!,? super java.lang.Integer!,kotlin.Unit!>?, androidx.compose.ui.graphics.Shape?, long, long, androidx.compose.foundation.BorderStroke?, androidx.compose.foundation.layout.PaddingValues?, kotlin.jvm.functions.Function3<? super androidx.compose.foundation.layout.RowScope!,? super androidx.compose.runtime.Composer!,? super java.lang.Integer!,kotlin.Unit!>, androidx.compose.runtime.Composer?, int, int);
+  }
+
   @androidx.compose.runtime.Immutable public final class Typography {
     ctor public Typography(optional androidx.compose.ui.text.font.FontFamily? defaultFontFamily, optional androidx.compose.ui.text.TextStyle titleLarge, optional androidx.compose.ui.text.TextStyle titleMedium, optional androidx.compose.ui.text.TextStyle titleSmall, optional androidx.compose.ui.text.TextStyle bodyLarge, optional androidx.compose.ui.text.TextStyle bodyMedium, optional androidx.compose.ui.text.TextStyle bodySmall);
     method public androidx.xr.glimmer.Typography copy(optional androidx.compose.ui.text.TextStyle titleLarge, optional androidx.compose.ui.text.TextStyle titleMedium, optional androidx.compose.ui.text.TextStyle titleSmall, optional androidx.compose.ui.text.TextStyle bodyLarge, optional androidx.compose.ui.text.TextStyle bodyMedium, optional androidx.compose.ui.text.TextStyle bodySmall);

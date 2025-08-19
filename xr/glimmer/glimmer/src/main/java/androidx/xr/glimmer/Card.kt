@@ -52,6 +52,9 @@ import kotlin.math.max
  *
  * This Card is focusable - see the other [Card] overload for a clickable Card.
  *
+ * Cards can also be combined with a [TitleChip]. See the documentation for [TitleChip] for more
+ * information / sample code.
+ *
  * A simple Card with just text:
  *
  * @sample androidx.xr.glimmer.samples.CardSample
@@ -139,6 +142,9 @@ public fun Card(
  *
  * This Card is focusable and clickable - see the other [Card] overload for a Card that is only
  * focusable.
+ *
+ * Cards can also be combined with a [TitleChip]. See the documentation for [TitleChip] for more
+ * information / sample code.
  *
  * A simple clickable Card with just text:
  *
