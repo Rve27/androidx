@@ -35,6 +35,7 @@ import androidx.compose.material3.adaptive.layout.PaneExpansionState.Companion.U
 import androidx.compose.material3.adaptive.layout.internal.Strings
 import androidx.compose.material3.adaptive.layout.internal.getString
 import androidx.compose.material3.adaptive.layout.internal.identityHashCode
+import androidx.compose.material3.adaptive.layout.internal.rememberPersistentlyWithKey
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
@@ -42,19 +43,16 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.Snapshot
 import androidx.compose.ui.node.CompositionLocalConsumerModifierNode
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.util.packInts
 import androidx.compose.ui.util.unpackInt1
 import androidx.compose.ui.util.unpackInt2
@@ -164,25 +162,21 @@ fun rememberPaneExpansionState(
     anchoringAnimationSpec: FiniteAnimationSpec<Float> = DefaultAnchoringAnimationSpec,
     flingBehavior: FlingBehavior = ScrollableDefaults.flingBehavior(),
 ): PaneExpansionState {
-    fun MutableMap<PaneExpansionStateKey, PaneExpansionStateData>.getOrCreate(
-        key: PaneExpansionStateKey,
-        initialAnchor: PaneExpansionAnchor?,
-    ): PaneExpansionStateData =
-        getOrPut(key) { PaneExpansionStateData(currentAnchor = initialAnchor) }
-
-    val dataMap = rememberSaveable(saver = PaneExpansionStateSaver()) { mutableStateMapOf() }
     val initialAnchor =
         remember(anchors, initialAnchoredIndex) {
             if (initialAnchoredIndex == -1) null else anchors[initialAnchoredIndex]
         }
-    val expansionState = remember { PaneExpansionState(dataMap.getOrCreate(key, initialAnchor)) }
+    val data =
+        rememberPersistentlyWithKey(
+            key = key,
+            keySaver = PaneExpansionStateKeySaver(),
+            valueSaver = PaneExpansionStateDataSaver(),
+        ) {
+            PaneExpansionStateData(currentAnchor = initialAnchor)
+        }
+    val expansionState = remember { PaneExpansionState(data) }
     LaunchedEffect(key, anchors, anchoringAnimationSpec, flingBehavior) {
-        expansionState.restore(
-            dataMap.getOrCreate(key, initialAnchor),
-            anchors,
-            anchoringAnimationSpec,
-            flingBehavior,
-        )
+        expansionState.restore(data, anchors, anchoringAnimationSpec, flingBehavior)
     }
     return expansionState
 }
@@ -764,45 +758,46 @@ internal fun rememberDefaultPaneExpansionState(
         remember { PaneExpansionState() } // Use a stub impl to avoid performance overhead
     }
 
-@OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @VisibleForTesting
-internal fun PaneExpansionStateSaver():
-    Saver<MutableMap<PaneExpansionStateKey, PaneExpansionStateData>, *> =
-    listSaver<MutableMap<PaneExpansionStateKey, PaneExpansionStateData>, Any>(
-        save = {
-            val dataSaver = PaneExpansionStateDataSaver()
-            buildList { it.forEach { entry -> add(with(dataSaver) { save(entry) }!!) } }
-        },
-        restore = {
-            val dataSaver = PaneExpansionStateDataSaver()
-            val map = mutableMapOf<PaneExpansionStateKey, PaneExpansionStateData>()
-            it.fastForEach { with(dataSaver) { restore(it) }!!.apply { map[key] = value } }
-            map
-        },
-    )
-
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
-private fun PaneExpansionStateDataSaver():
-    Saver<Map.Entry<PaneExpansionStateKey, PaneExpansionStateData>, Any> =
+internal fun PaneExpansionStateKeySaver(): Saver<PaneExpansionStateKey, Any> =
     listSaver(
         save = {
-            val keyType = it.key.type
-            val currentAnchorType =
-                it.value.currentAnchorState?.type ?: PaneExpansionAnchor.UnspecifiedType
+            val keyType = it.type
             listOf(
                 keyType,
                 if (keyType == DefaultPaneExpansionStateKey) {
                     null
                 } else {
                     with(TwoPaneExpansionStateKeyImpl.saver()) {
-                        save(it.key as TwoPaneExpansionStateKeyImpl)
+                        save(it as TwoPaneExpansionStateKeyImpl)
                     }
                 },
-                it.value.firstPaneWidthState,
-                it.value.firstPaneProportionState,
-                it.value.currentDraggingOffsetState,
+            )
+        },
+        restore = {
+            val keyType = it[0] as Int
+            if (keyType == DefaultPaneExpansionStateKey || it[1] == null) {
+                PaneExpansionStateKey.Default
+            } else {
+                with(TwoPaneExpansionStateKeyImpl.saver()) { restore(it[1]!!) }
+            }
+        },
+    )
+
+@VisibleForTesting
+@OptIn(ExperimentalMaterial3AdaptiveApi::class)
+internal fun PaneExpansionStateDataSaver(): Saver<PaneExpansionStateData, Any> =
+    listSaver(
+        save = {
+            val currentAnchorType =
+                it.currentAnchorState?.type ?: PaneExpansionAnchor.UnspecifiedType
+            listOf(
+                it.firstPaneWidthState,
+                it.firstPaneProportionState,
+                it.currentDraggingOffsetState,
                 currentAnchorType,
-                with(it.value.currentAnchorState) {
+                with(it.currentAnchorState) {
                     when (this) {
                         is PaneExpansionAnchor.Proportion -> this.proportion
                         is PaneExpansionAnchor.Offset -> this.offset.value
@@ -812,34 +807,23 @@ private fun PaneExpansionStateDataSaver():
             )
         },
         restore = {
-            val keyType = it[0] as Int
-            val key =
-                if (keyType == DefaultPaneExpansionStateKey || it[1] == null) {
-                    PaneExpansionStateKey.Default
-                } else {
-                    with(TwoPaneExpansionStateKeyImpl.saver()) { restore(it[1]!!) }
-                }
-            val currentAnchorType = it[5] as Int
+            val currentAnchorType = it[3] as Int
             val currentAnchor =
                 when (currentAnchorType) {
                     PaneExpansionAnchor.ProportionType ->
-                        PaneExpansionAnchor.Proportion(it[6] as Float)
+                        PaneExpansionAnchor.Proportion(it[4] as Float)
                     PaneExpansionAnchor.OffsetFromStartType ->
-                        PaneExpansionAnchor.Offset.fromStart((it[6] as Float).dp)
+                        PaneExpansionAnchor.Offset.fromStart((it[4] as Float).dp)
                     PaneExpansionAnchor.OffsetFromEndType ->
-                        PaneExpansionAnchor.Offset.fromEnd((it[6] as Float).dp)
+                        PaneExpansionAnchor.Offset.fromEnd((it[4] as Float).dp)
                     else -> null
                 }
-            object : Map.Entry<PaneExpansionStateKey, PaneExpansionStateData> {
-                override val key: PaneExpansionStateKey = key!!
-                override val value: PaneExpansionStateData =
-                    PaneExpansionStateData(
-                        firstPaneWidth = it[2] as Int,
-                        firstPaneProportion = it[3] as Float,
-                        currentDraggingOffset = it[4] as Int,
-                        currentAnchor = currentAnchor,
-                    )
-            }
+            PaneExpansionStateData(
+                firstPaneWidth = it[0] as Int,
+                firstPaneProportion = it[1] as Float,
+                currentDraggingOffset = it[2] as Int,
+                currentAnchor = currentAnchor,
+            )
         },
     )
 
