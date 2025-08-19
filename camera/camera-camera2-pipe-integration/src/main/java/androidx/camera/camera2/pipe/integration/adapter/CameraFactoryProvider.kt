@@ -30,6 +30,7 @@ import androidx.camera.core.CameraSelector
 import androidx.camera.core.CameraXConfig
 import androidx.camera.core.impl.CameraFactory
 import androidx.camera.core.impl.CameraThreadConfig
+import androidx.camera.core.impl.utils.ContextUtil
 import androidx.camera.core.internal.StreamSpecsCalculator
 
 /**
@@ -89,7 +90,7 @@ public class CameraFactoryProvider(
             val cameraPipe =
                 CameraPipe(
                     CameraPipe.Config(
-                        appContext = context.applicationContext,
+                        appContext = ContextUtil.getApplicationContext(context),
                         threadConfig =
                             CameraPipe.ThreadConfig(
                                 defaultCameraExecutor = threadConfig.cameraExecutor
