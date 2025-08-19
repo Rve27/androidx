@@ -183,12 +183,9 @@ public constructor(
      *
      * The calling app can observe metadata for:
      * - Functions in its own package (no permission required).
-     * - Functions in other packages that it is allowed to query via
-     *   [android.content.pm.PackageManager.canPackageQuery] and when holding the
-     *   `android.permission.EXECUTE_APP_FUNCTIONS` permission.
-     *
-     * If a package is not queryable by the calling app, its functions' metadata will not be
-     * visible, even when holding the `android.permission.EXECUTE_APP_FUNCTIONS` permission.
+     * - When holding the `android.permission.EXECUTE_APP_FUNCTIONS` permission - functions in other
+     *   packages that it is allowed to query via
+     *   [android.content.pm.PackageManager.canPackageQuery].
      *
      * @param searchSpec an [AppFunctionSearchSpec] instance specifying the filters for searching
      *   the app function metadata.
