@@ -16,8 +16,4 @@
 
 package androidx.paging.compose
 
-internal fun getPagingPlaceholderKey(index: Int): Any = PagingPlaceholderKey(index)
-
-internal expect class PagingPlaceholderKey(index: Int)
-
-internal object PagingPlaceholderContentType
+internal actual data class PagingPlaceholderKey actual constructor(private val index: Int)

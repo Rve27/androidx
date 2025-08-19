@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,7 @@
 
 package androidx.paging.compose
 
-internal fun getPagingPlaceholderKey(index: Int): Any = PagingPlaceholderKey(index)
+import kotlin.coroutines.CoroutineContext
+import kotlinx.coroutines.Dispatchers
 
-internal expect class PagingPlaceholderKey(index: Int)
-
-internal object PagingPlaceholderContentType
+internal actual val uiDispatcher: CoroutineContext = Dispatchers.Main
