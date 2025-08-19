@@ -135,7 +135,7 @@ private object DefaultAnimatedPaneOverride : AnimatedPaneOverride {
                 }
             }
 
-            var scrim by rememberRef<Scrim?>(null)
+            var scrim by rememberRef<(@Composable () -> Unit)?>(null)
             (paneValue as? PaneAdaptedValue.Levitated)?.apply { scrim = this.scrim }
             scrim?.apply {
                 // Display a scrim when the pane gets levitated
@@ -146,10 +146,7 @@ private object DefaultAnimatedPaneOverride : AnimatedPaneOverride {
                     enter = enterTransition,
                     exit = exitTransition,
                 ) {
-                    Content(
-                        defaultColor = ThreePaneScaffoldDefaults.ScrimColor,
-                        enabled = paneValue is PaneAdaptedValue.Levitated,
-                    )
+                    this@apply.invoke()
                 }
             }
         }

@@ -445,16 +445,17 @@ fun <T> levitateAsDialogSample(): ThreePaneScaffoldNavigator<T> {
         rememberListDetailPaneScaffoldNavigator<T>(
             scaffoldDirective = scaffoldDirective,
             adaptStrategies =
-                ListDetailPaneScaffoldDefaults.adaptStrategies(
+                SupportingPaneScaffoldDefaults.adaptStrategies(
                     extraPaneAdaptStrategy =
                         AdaptStrategy.Levitate(
-                                alignment = Alignment.Center,
-                                scrim =
+                                alignment = Alignment.BottomCenter,
+                                scrim = {
                                     Scrim(
                                         onClick = {
                                             coroutineScope.launch { navigator?.navigateBack() }
                                         }
-                                    ),
+                                    )
+                                },
                             )
                             .onlyIfSinglePane(scaffoldDirective)
                 ),

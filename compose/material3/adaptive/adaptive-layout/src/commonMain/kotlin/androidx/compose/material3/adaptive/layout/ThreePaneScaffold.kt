@@ -31,7 +31,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.LookaheadScope
 import androidx.compose.ui.layout.Measurable
@@ -227,9 +226,7 @@ private object DefaultThreePaneScaffoldOverride : ThreePaneScaffoldOverride {
                 {
                     // A default scrim when no AnimatedPane is being used.
                     scaffoldValue.forEach { _, value ->
-                        (value as? PaneAdaptedValue.Levitated)
-                            ?.scrim
-                            ?.Content(ThreePaneScaffoldDefaults.ScrimColor, true)
+                        (value as? PaneAdaptedValue.Levitated)?.scrim?.invoke()
                         return@listOf
                     }
                 },
@@ -807,26 +804,28 @@ private class ThreePaneContentMeasurePolicy(
         isLookingAhead: Boolean,
     ) {
         measurables.fastForEach {
+            val measuringWidth = min(it.measuringWidth, scaffoldBounds.width)
+            val measuringHeight = min(it.measuringHeight, scaffoldBounds.height)
             val paneSize =
                 IntSize(
                     width =
                         it.dragToResizeState?.getDraggedWidth(
-                            measuringWidth = it.measuringWidth,
+                            measuringWidth = measuringWidth,
                             defaultMinWidth =
                                 with(density) {
                                     ThreePaneScaffoldDefaults.MinPaneWidth.roundToPx()
                                 },
                             scaffoldWidth = scaffoldBounds.width,
-                        ) ?: min(it.measuringWidth, scaffoldBounds.width),
+                        ) ?: measuringWidth,
                     height =
                         it.dragToResizeState?.getDraggedHeight(
-                            measuringHeight = it.measuringHeight,
+                            measuringHeight = measuringHeight,
                             defaultMinHeight =
                                 with(density) {
                                     ThreePaneScaffoldDefaults.MinPaneHeight.roundToPx()
                                 },
                             scaffoldHeight = scaffoldBounds.height,
-                        ) ?: min(it.measuringHeight, scaffoldBounds.height),
+                        ) ?: measuringHeight,
                 )
             val alignment = (it.value as? PaneAdaptedValue.Levitated)?.alignment ?: Alignment.Center
             val offset = alignment.align(paneSize, scaffoldBounds.size, layoutDirection)
@@ -1082,8 +1081,6 @@ internal object ThreePaneScaffoldDefaults {
      * the same z-index level during pane animations.
      */
     const val HiddenPaneZIndexOffset = -0.1f
-
-    val ScrimColor = Color.Black.copy(alpha = 0.32f)
 
     val MinPaneWidth = 48.dp
 

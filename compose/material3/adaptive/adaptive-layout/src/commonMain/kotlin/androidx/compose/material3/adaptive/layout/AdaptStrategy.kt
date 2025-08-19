@@ -101,7 +101,7 @@ sealed interface AdaptStrategy {
     @Immutable
     class Levitate(
         internal val alignment: Alignment = Alignment.Center,
-        internal val scrim: Scrim? = null,
+        val scrim: (@Composable () -> Unit)? = null,
     ) : AdaptStrategy {
         override fun toString() = "AdaptStrategy[Levitate, alignment=$alignment, scrim=$scrim]"
 
@@ -109,7 +109,7 @@ sealed interface AdaptStrategy {
             if (this === other) return true
             if (other !is Levitate) return false
             if (alignment != other.alignment) return false
-            if (scrim != other.scrim) return false
+            if (scrim !== other.scrim) return false
             return true
         }
 
