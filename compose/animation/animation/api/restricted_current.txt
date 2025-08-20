@@ -236,6 +236,8 @@ package androidx.compose.animation {
     method public Object getKey();
     method public androidx.compose.animation.SharedTransitionScope.SharedContentState? getParentSharedContentState();
     method public boolean isMatchFound();
+    method @KotlinOnly public void prepareTransitionWithInitialVelocity(androidx.compose.ui.unit.Velocity initialVelocity);
+    method @BytecodeOnly public void prepareTransitionWithInitialVelocity-TH1AsA0(long);
     property public androidx.compose.ui.graphics.Path? clipPathInOverlay;
     property public boolean isMatchFound;
     property public Object key;
