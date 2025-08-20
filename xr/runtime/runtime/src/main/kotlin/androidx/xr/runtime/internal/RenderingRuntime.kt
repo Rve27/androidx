@@ -93,14 +93,10 @@ public interface RenderingRuntime {
      * will fire listeners on the UI thread if Runnable::run is supplied.
      *
      * @param assetName The name of the texture file to load or the URL of the remote texture.
-     * @param sampler The sampler to use when loading the texture.
      * @return A future that resolves to the texture when it is loaded.
      */
     @Suppress("AsyncSuffixFuture")
-    public fun loadTexture(
-        assetName: String,
-        sampler: TextureSampler,
-    ): ListenableFuture<TextureResource>
+    public fun loadTexture(assetName: String): ListenableFuture<TextureResource>
 
     /** Borrows the reflection texture from the currently set environment IBL. */
     public fun borrowReflectionTexture(): TextureResource?
@@ -144,10 +140,12 @@ public interface RenderingRuntime {
      *
      * @param material The handle of the water material to be updated.
      * @param reflectionMap The handle of the texture to be used as the reflection map.
+     * @param sampler The sampler used for the reflection map texture.
      */
     public fun setReflectionMapOnWaterMaterial(
         material: MaterialResource,
         reflectionMap: TextureResource,
+        sampler: TextureSampler,
     )
 
     /**
@@ -155,8 +153,13 @@ public interface RenderingRuntime {
      *
      * @param material The handle of the water material to be updated.
      * @param normalMap The handle of the texture to be used as the normal map.
+     * @param sampler The sampler used for the normal map texture.
      */
-    public fun setNormalMapOnWaterMaterial(material: MaterialResource, normalMap: TextureResource)
+    public fun setNormalMapOnWaterMaterial(
+        material: MaterialResource,
+        normalMap: TextureResource,
+        sampler: TextureSampler,
+    )
 
     /**
      * Sets the normal tiling for the water material.
@@ -190,8 +193,13 @@ public interface RenderingRuntime {
      *
      * @param material The handle of the water material to be updated.
      * @param alphaMap The handle of the texture to be used as the alpha map.
+     * @param sampler The sampler used for the alpha map texture.
      */
-    public fun setAlphaMapOnWaterMaterial(material: MaterialResource, alphaMap: TextureResource)
+    public fun setAlphaMapOnWaterMaterial(
+        material: MaterialResource,
+        alphaMap: TextureResource,
+        sampler: TextureSampler,
+    )
 
     /**
      * Sets the normal z for the water material.
@@ -231,10 +239,12 @@ public interface RenderingRuntime {
      *
      * @param material The handle of the Khronos PBR material.
      * @param baseColor The handle of the base color texture.
+     * @param sampler The sampler used for the base color texture.
      */
     public fun setBaseColorTextureOnKhronosPbrMaterial(
         material: MaterialResource,
         baseColor: TextureResource,
+        sampler: TextureSampler,
     )
 
     /**
@@ -264,10 +274,12 @@ public interface RenderingRuntime {
      *
      * @param material The handle of the Khronos PBR material.
      * @param metallicRoughness The handle of the metallic-roughness texture.
+     * @param sampler The sampler used for the metallic-roughness texture.
      */
     public fun setMetallicRoughnessTextureOnKhronosPbrMaterial(
         material: MaterialResource,
         metallicRoughness: TextureResource,
+        sampler: TextureSampler,
     )
 
     /**
@@ -306,10 +318,12 @@ public interface RenderingRuntime {
      *
      * @param material The handle of the Khronos PBR material.
      * @param normal The handle of the normal map texture.
+     * @param sampler The sampler used for the normal texture.
      */
     public fun setNormalTextureOnKhronosPbrMaterial(
         material: MaterialResource,
         normal: TextureResource,
+        sampler: TextureSampler,
     )
 
     /**
@@ -339,10 +353,12 @@ public interface RenderingRuntime {
      *
      * @param material The handle of the Khronos PBR material.
      * @param ambientOcclusion The handle of the ambient occlusion texture.
+     * @param sampler The sampler used for the ambient occlusion texture.
      */
     public fun setAmbientOcclusionTextureOnKhronosPbrMaterial(
         material: MaterialResource,
         ambientOcclusion: TextureResource,
+        sampler: TextureSampler,
     )
 
     /**
@@ -374,10 +390,12 @@ public interface RenderingRuntime {
      *
      * @param material The handle of the Khronos PBR material.
      * @param emissive The handle of the emissive texture.
+     * @param sampler The sampler used for the emissive texture.
      */
     public fun setEmissiveTextureOnKhronosPbrMaterial(
         material: MaterialResource,
         emissive: TextureResource,
+        sampler: TextureSampler,
     )
 
     /**
@@ -406,10 +424,12 @@ public interface RenderingRuntime {
      *
      * @param material The handle of the Khronos PBR material.
      * @param clearcoat The handle of the clearcoat texture.
+     * @param sampler The sampler used for the clearcoat texture.
      */
     public fun setClearcoatTextureOnKhronosPbrMaterial(
         material: MaterialResource,
         clearcoat: TextureResource,
+        sampler: TextureSampler,
     )
 
     /**
@@ -418,10 +438,12 @@ public interface RenderingRuntime {
      *
      * @param material The handle of the Khronos PBR material.
      * @param clearcoatNormal The handle of the clearcoat normal texture.
+     * @param sampler The sampler used for the clearcoat normal texture.
      */
     public fun setClearcoatNormalTextureOnKhronosPbrMaterial(
         material: MaterialResource,
         clearcoatNormal: TextureResource,
+        sampler: TextureSampler,
     )
 
     /**
@@ -430,10 +452,12 @@ public interface RenderingRuntime {
      *
      * @param material The handle of the Khronos PBR material.
      * @param clearcoatRoughness The handle of the clearcoat roughness texture.
+     * @param sampler The sampler used for the clearcoat roughness texture.
      */
     public fun setClearcoatRoughnessTextureOnKhronosPbrMaterial(
         material: MaterialResource,
         clearcoatRoughness: TextureResource,
+        sampler: TextureSampler,
     )
 
     /**
@@ -458,10 +482,12 @@ public interface RenderingRuntime {
      *
      * @param material The handle of the Khronos PBR material.
      * @param sheenColor The handle of the sheen color texture.
+     * @param sampler The sampler used for the sheen color texture.
      */
     public fun setSheenColorTextureOnKhronosPbrMaterial(
         material: MaterialResource,
         sheenColor: TextureResource,
+        sampler: TextureSampler,
     )
 
     /**
@@ -482,10 +508,12 @@ public interface RenderingRuntime {
      *
      * @param material The handle of the Khronos PBR material.
      * @param sheenRoughness The handle of the sheen roughness texture.
+     * @param sampler The sampler used for the sheen roughness texture.
      */
     public fun setSheenRoughnessTextureOnKhronosPbrMaterial(
         material: MaterialResource,
         sheenRoughness: TextureResource,
+        sampler: TextureSampler,
     )
 
     /**
@@ -506,10 +534,12 @@ public interface RenderingRuntime {
      *
      * @param material The handle of the Khronos PBR material.
      * @param transmission The handle of the transmission texture.
+     * @param sampler The sampler used for the transmission texture.
      */
     public fun setTransmissionTextureOnKhronosPbrMaterial(
         material: MaterialResource,
         transmission: TextureResource,
+        sampler: TextureSampler,
     )
 
     /**

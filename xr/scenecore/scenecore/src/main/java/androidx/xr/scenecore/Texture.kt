@@ -30,11 +30,7 @@ import java.nio.file.Path
 @Suppress("NotCloseable")
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public open class Texture
-internal constructor(
-    internal val texture: RtTextureResource,
-    internal val sampler: TextureSampler = TextureSampler.create(),
-    internal val session: Session,
-) {
+internal constructor(internal val texture: RtTextureResource, internal val session: Session) {
 
     /**
      * Disposes the given [Texture].
@@ -57,17 +53,15 @@ internal constructor(
         internal fun createAsync(
             platformAdapter: JxrPlatformAdapter,
             name: String,
-            sampler: TextureSampler,
             session: Session,
         ): ListenableFuture<Texture> {
-            val textureResourceFuture =
-                platformAdapter.loadTexture(name, sampler.toRtTextureSampler())
+            val textureResourceFuture = platformAdapter.loadTexture(name)
             val textureFuture = ResolvableFuture.create<Texture>()
             textureResourceFuture!!.addListener(
                 {
                     try {
                         val texture = textureResourceFuture.get()
-                        textureFuture.set(Texture(texture, sampler, session))
+                        textureFuture.set(Texture(texture, session))
                     } catch (e: Exception) {
                         if (e is InterruptedException) {
                             Thread.currentThread().interrupt()
@@ -92,8 +86,6 @@ internal constructor(
          * @param session The [Session] to use for loading the [Texture].
          * @param path The Path of the `.png` texture file to be loaded, relative to the
          *   application's `assets/` folder.
-         * @param sampler A [TextureSampler] descriptor which describes how the texture will be
-         *   filtered
          * @return a [Texture] upon completion.
          * @throws IllegalArgumentException if [Path.isAbsolute] is true, as this method requires a
          *   relative path, or if the path does not specify a `.zip` file.
@@ -101,12 +93,11 @@ internal constructor(
         @MainThread
         @JvmStatic
         @Suppress("AsyncSuffixFuture")
-        public suspend fun create(session: Session, path: Path, sampler: TextureSampler): Texture {
+        public suspend fun create(session: Session, path: Path): Texture {
             require(!File(path.toString()).isAbsolute) {
                 "Texture.create() expects a path relative to `assets/`, received absolute path $path."
             }
-            return createAsync(session.platformAdapter, path.toString(), sampler, session)
-                .awaitSuspending()
+            return createAsync(session.platformAdapter, path.toString(), session).awaitSuspending()
         }
     }
 }

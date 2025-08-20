@@ -85,9 +85,8 @@ import androidx.xr.runtime.internal.SpatialVisibility;
 import androidx.xr.runtime.internal.SubspaceNodeEntity;
 import androidx.xr.runtime.internal.SurfaceEntity;
 import androidx.xr.runtime.internal.TextureResource;
-import androidx.xr.runtime.internal.TextureSampler;
-import androidx.xr.runtime.math.Matrix4;
 import androidx.xr.runtime.math.FloatSize2d;
+import androidx.xr.runtime.math.Matrix4;
 import androidx.xr.runtime.math.Pose;
 import androidx.xr.runtime.math.Quaternion;
 import androidx.xr.runtime.math.Vector3;
@@ -266,18 +265,7 @@ public final class JxrPlatformAdapterAxrTest {
     }
 
     TextureResource loadTexture() throws Exception {
-        TextureSampler sampler =
-                new TextureSampler(
-                        TextureSampler.CLAMP_TO_EDGE,
-                        TextureSampler.CLAMP_TO_EDGE,
-                        TextureSampler.CLAMP_TO_EDGE,
-                        TextureSampler.LINEAR,
-                        TextureSampler.MAG_LINEAR,
-                        TextureSampler.NONE,
-                        TextureSampler.N,
-                        0);
-        ListenableFuture<TextureResource> textureFuture =
-                mRuntime.loadTexture("FakeTexture.png", sampler);
+        ListenableFuture<TextureResource> textureFuture = mRuntime.loadTexture("FakeTexture.png");
         assertThat(textureFuture).isNotNull();
         // This resolves the transformation of the Future from a SplitEngine token to the JXR
         // Texture.  This is a hidden detail from the API surface's perspective.
@@ -2402,8 +2390,7 @@ public final class JxrPlatformAdapterAxrTest {
 
         // Check that calls to set the Shape and StereoMode after construction call through
         // Change the Quad to a Sphere
-        surfaceEntityQuad.setShape(
-                new SurfaceEntity.Shape.Sphere(kTestSphereRadius));
+        surfaceEntityQuad.setShape(new SurfaceEntity.Shape.Sphere(kTestSphereRadius));
         // change the StereoMode to Top/Bottom from Side/Side
         surfaceEntityQuad.setStereoMode(SurfaceEntity.StereoMode.TOP_BOTTOM);
         quadData =

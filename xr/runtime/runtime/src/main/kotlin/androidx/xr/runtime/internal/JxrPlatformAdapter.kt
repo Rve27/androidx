@@ -130,10 +130,7 @@ public interface JxrPlatformAdapter {
      * will fire listeners on the UI thread if Runnable::run is supplied.
      */
     @Suppress("AsyncSuffixFuture")
-    public fun loadTexture(
-        assetName: String,
-        sampler: TextureSampler,
-    ): ListenableFuture<TextureResource>?
+    public fun loadTexture(assetName: String): ListenableFuture<TextureResource>?
 
     /** Borrows the reflection texture from the currently set environment IBL. */
     public fun borrowReflectionTexture(): TextureResource?
@@ -158,10 +155,15 @@ public interface JxrPlatformAdapter {
     public fun setReflectionMapOnWaterMaterial(
         material: MaterialResource,
         reflectionMap: TextureResource,
+        sampler: TextureSampler,
     )
 
     /** Sets the normal map texture for the water material. */
-    public fun setNormalMapOnWaterMaterial(material: MaterialResource, normalMap: TextureResource)
+    public fun setNormalMapOnWaterMaterial(
+        material: MaterialResource,
+        normalMap: TextureResource,
+        sampler: TextureSampler,
+    )
 
     /** Sets the normal tiling for the water material. */
     public fun setNormalTilingOnWaterMaterial(material: MaterialResource, normalTiling: Float)
@@ -176,7 +178,11 @@ public interface JxrPlatformAdapter {
     )
 
     /** Sets the alpha map for the water material. */
-    public fun setAlphaMapOnWaterMaterial(material: MaterialResource, alphaMap: TextureResource)
+    public fun setAlphaMapOnWaterMaterial(
+        material: MaterialResource,
+        alphaMap: TextureResource,
+        sampler: TextureSampler,
+    )
 
     /** Sets the normal z for the water material. */
     public fun setNormalZOnWaterMaterial(material: MaterialResource, normalZ: Float)
@@ -203,6 +209,7 @@ public interface JxrPlatformAdapter {
     public fun setBaseColorTextureOnKhronosPbrMaterial(
         material: MaterialResource,
         baseColor: TextureResource,
+        sampler: TextureSampler,
     )
 
     /**
@@ -227,6 +234,7 @@ public interface JxrPlatformAdapter {
     public fun setMetallicRoughnessTextureOnKhronosPbrMaterial(
         material: MaterialResource,
         metallicRoughness: TextureResource,
+        sampler: TextureSampler,
     )
 
     /**
@@ -257,6 +265,7 @@ public interface JxrPlatformAdapter {
     public fun setNormalTextureOnKhronosPbrMaterial(
         material: MaterialResource,
         normal: TextureResource,
+        sampler: TextureSampler,
     )
 
     /**
@@ -281,6 +290,7 @@ public interface JxrPlatformAdapter {
     public fun setAmbientOcclusionTextureOnKhronosPbrMaterial(
         material: MaterialResource,
         ambientOcclusion: TextureResource,
+        sampler: TextureSampler,
     )
 
     /**
@@ -305,6 +315,7 @@ public interface JxrPlatformAdapter {
     public fun setEmissiveTextureOnKhronosPbrMaterial(
         material: MaterialResource,
         emissive: TextureResource,
+        sampler: TextureSampler,
     )
 
     /** Sets the UV transformation matrix for the emissive texture. */
@@ -326,6 +337,7 @@ public interface JxrPlatformAdapter {
     public fun setClearcoatTextureOnKhronosPbrMaterial(
         material: MaterialResource,
         clearcoat: TextureResource,
+        sampler: TextureSampler,
     )
 
     /**
@@ -335,6 +347,7 @@ public interface JxrPlatformAdapter {
     public fun setClearcoatNormalTextureOnKhronosPbrMaterial(
         material: MaterialResource,
         clearcoatNormal: TextureResource,
+        sampler: TextureSampler,
     )
 
     /**
@@ -344,6 +357,7 @@ public interface JxrPlatformAdapter {
     public fun setClearcoatRoughnessTextureOnKhronosPbrMaterial(
         material: MaterialResource,
         clearcoatRoughness: TextureResource,
+        sampler: TextureSampler,
     )
 
     /**
@@ -364,6 +378,7 @@ public interface JxrPlatformAdapter {
     public fun setSheenColorTextureOnKhronosPbrMaterial(
         material: MaterialResource,
         sheenColor: TextureResource,
+        sampler: TextureSampler,
     )
 
     /**
@@ -382,6 +397,7 @@ public interface JxrPlatformAdapter {
     public fun setSheenRoughnessTextureOnKhronosPbrMaterial(
         material: MaterialResource,
         sheenRoughness: TextureResource,
+        sampler: TextureSampler,
     )
 
     /**
@@ -400,6 +416,7 @@ public interface JxrPlatformAdapter {
     public fun setTransmissionTextureOnKhronosPbrMaterial(
         material: MaterialResource,
         transmission: TextureResource,
+        sampler: TextureSampler,
     )
 
     /** Sets the UV transformation matrix for the transmission texture. */

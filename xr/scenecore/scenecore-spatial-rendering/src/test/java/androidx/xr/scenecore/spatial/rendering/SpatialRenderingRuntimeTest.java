@@ -189,5 +189,4 @@ public class SpatialRenderingRuntimeTest {
         mRuntime.startRenderer();
         assertThat(mRuntime.isFrameLoopStarted()).isTrue();
     }
-
 }

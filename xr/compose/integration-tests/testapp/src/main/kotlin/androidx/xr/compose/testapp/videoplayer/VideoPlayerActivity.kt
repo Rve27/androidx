@@ -95,7 +95,6 @@ import androidx.xr.scenecore.MovableComponent
 import androidx.xr.scenecore.PanelEntity
 import androidx.xr.scenecore.SurfaceEntity
 import androidx.xr.scenecore.Texture
-import androidx.xr.scenecore.TextureSampler
 import androidx.xr.scenecore.scene
 import java.io.File
 import java.nio.file.Paths
@@ -134,12 +133,7 @@ class VideoPlayerActivity : ComponentActivity() {
 
         // Load texture
         lifecycleScope.launch {
-            alphaMaskTexture =
-                Texture.create(
-                    session,
-                    Paths.get("textures", "alpha_mask.png"),
-                    TextureSampler.create(),
-                )
+            alphaMaskTexture = Texture.create(session, Paths.get("textures", "alpha_mask.png"))
         }
 
         setContent {

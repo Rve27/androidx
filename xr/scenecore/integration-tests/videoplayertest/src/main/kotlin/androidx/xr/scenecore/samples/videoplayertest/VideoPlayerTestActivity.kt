@@ -93,7 +93,6 @@ import androidx.xr.scenecore.MovableComponent
 import androidx.xr.scenecore.PanelEntity
 import androidx.xr.scenecore.SurfaceEntity
 import androidx.xr.scenecore.Texture
-import androidx.xr.scenecore.TextureSampler
 import androidx.xr.scenecore.scene
 import java.io.File
 import java.nio.ByteBuffer
@@ -190,12 +189,7 @@ class VideoPlayerTestActivity : ComponentActivity() {
         }
 
         lifecycleScope.launch {
-            alphaMaskTexture =
-                Texture.create(
-                    session,
-                    Paths.get("textures", "alpha_mask.png"),
-                    TextureSampler.create(),
-                )
+            alphaMaskTexture = Texture.create(session, Paths.get("textures", "alpha_mask.png"))
         }
         setContent { HelloWorld(session, activity) }
     }
