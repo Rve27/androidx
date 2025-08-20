@@ -204,6 +204,7 @@ sealed interface PaneScaffoldScope {
     fun Modifier.dragToResize(state: DragToResizeState): Modifier =
         this.draggable(state = state, orientation = state.orientation)
             .then(DragToResizeElement(state))
+            .clickToResize(state)
 
     /**
      * The saveable state holder to save pane states across their visibility life-cycles. The

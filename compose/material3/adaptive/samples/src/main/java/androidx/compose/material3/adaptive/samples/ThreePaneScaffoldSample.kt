@@ -339,11 +339,12 @@ fun SupportingPaneScaffoldSampleWithExtraPaneLevitatedAsBottomSheet() {
             AnimatedPane(modifier = Modifier.preferredWidth(200.dp)) { SupportingPaneContent() }
         },
         extraPane = {
+            val dragToResizeState = rememberDragToResizeState(dockedEdge = DockedEdge.Bottom)
             AnimatedPane(
                 modifier =
                     Modifier.preferredWidth(1f)
                         .preferredHeight(412.dp)
-                        .dragToResize(rememberDragToResizeState(dockedEdge = DockedEdge.Bottom))
+                        .dragToResize(dragToResizeState)
             ) {
                 ExtraPaneContent(
                     extraItems = extraItems,
