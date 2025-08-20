@@ -34,12 +34,12 @@ import org.junit.runner.RunWith
 @SdkSuppress(minSdkVersion = 29)
 @LargeTest
 @RunWith(AndroidJUnit4::class)
-class OpenXrViewCameraTest {
-    private lateinit var underTest: OpenXrViewCamera
+class OpenXrRenderViewpointTest {
+    private lateinit var underTest: OpenXrRenderViewpoint
 
     @Before
     fun setUp() {
-        underTest = OpenXrViewCamera()
+        underTest = OpenXrRenderViewpoint()
     }
 
     @Test

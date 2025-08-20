@@ -53,11 +53,13 @@ package androidx.xr.arcore.playservices {
     method public java.util.List<androidx.xr.runtime.internal.DepthMap> getDepthMaps();
     method public androidx.xr.arcore.playservices.ArCoreEarth getEarth();
     method public androidx.xr.runtime.internal.Hand? getLeftHand();
+    method public androidx.xr.runtime.internal.RenderViewpoint? getLeftRenderViewpoint();
+    method public androidx.xr.runtime.internal.RenderViewpoint? getMonoRenderViewpoint();
     method public java.util.List<java.util.UUID> getPersistedAnchorUuids();
     method public androidx.xr.runtime.internal.Hand? getRightHand();
+    method public androidx.xr.runtime.internal.RenderViewpoint? getRightRenderViewpoint();
     method public java.util.Collection<androidx.xr.runtime.internal.Trackable> getTrackables();
     method public androidx.xr.runtime.internal.Face? getUserFace();
-    method public java.util.List<androidx.xr.runtime.internal.ViewCamera> getViewCameras();
     method public java.util.List<androidx.xr.runtime.internal.HitResult> hitTest(androidx.xr.runtime.math.Ray ray);
     method @SuppressCompatibility @androidx.xr.arcore.playservices.UnsupportedArCoreCompatApi public com.google.ar.core.Frame lastFrame();
     method public androidx.xr.runtime.internal.Anchor loadAnchor(java.util.UUID uuid);
@@ -68,10 +70,12 @@ package androidx.xr.arcore.playservices {
     property public java.util.List<androidx.xr.runtime.internal.DepthMap> depthMaps;
     property public androidx.xr.arcore.playservices.ArCoreEarth earth;
     property public androidx.xr.runtime.internal.Hand? leftHand;
+    property public androidx.xr.runtime.internal.RenderViewpoint? leftRenderViewpoint;
+    property public androidx.xr.runtime.internal.RenderViewpoint? monoRenderViewpoint;
     property public androidx.xr.runtime.internal.Hand? rightHand;
+    property public androidx.xr.runtime.internal.RenderViewpoint? rightRenderViewpoint;
     property public java.util.Collection<androidx.xr.runtime.internal.Trackable> trackables;
     property public androidx.xr.runtime.internal.Face? userFace;
-    property public java.util.List<androidx.xr.runtime.internal.ViewCamera> viewCameras;
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class ArCorePlane implements androidx.xr.runtime.internal.Plane androidx.xr.runtime.internal.Trackable {

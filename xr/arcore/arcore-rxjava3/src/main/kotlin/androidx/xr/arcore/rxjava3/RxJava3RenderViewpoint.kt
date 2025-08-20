@@ -14,19 +14,14 @@
  * limitations under the License.
  */
 
-package androidx.xr.runtime.internal
+@file:JvmName("RxJava3RenderViewpoint")
 
-import androidx.annotation.RestrictTo
-import androidx.xr.runtime.FieldOfView
-import androidx.xr.runtime.math.Pose
+package androidx.xr.arcore.rxjava3
 
-/** Describes the View Camera data. */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public interface ViewCamera {
+import androidx.xr.arcore.RenderViewpoint
+import io.reactivex.rxjava3.core.Flowable
+import kotlinx.coroutines.rx3.asFlowable
 
-    /** The pose of the view camera. */
-    public val pose: Pose
-
-    /** The field of view of the view camera. */
-    public val fieldOfView: FieldOfView
-}
+/** The current [State] of the Render Viewpoint. */
+public val RenderViewpoint.stateAsFlowable: Flowable<RenderViewpoint.State>
+    get() = state.asFlowable()

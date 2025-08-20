@@ -14,19 +14,25 @@
  * limitations under the License.
  */
 
-package androidx.xr.runtime.testing
+package androidx.xr.runtime.openxr
 
 import androidx.annotation.RestrictTo
 import androidx.xr.runtime.FieldOfView
-import androidx.xr.runtime.internal.ViewCamera as RuntimeViewCamera
+import androidx.xr.runtime.internal.RenderViewpoint
 import androidx.xr.runtime.math.Pose
 
-// TODO: b/326481788 - Add more functionality to FakeRuntimeArDevice
+/** Wraps the device tracking data. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public class FakeRuntimeViewCamera(
-    override var pose: Pose = Pose(),
-    override var fieldOfView: FieldOfView = FieldOfView(0f, 0f, 0f, 0f),
-) : RuntimeViewCamera {
+public class OpenXrRenderViewpoint internal constructor() : RenderViewpoint {
 
-    public companion object {}
+    override var pose: Pose = Pose()
+        private set
+
+    override var fieldOfView: FieldOfView = FieldOfView(0f, 0f, 0f, 0f)
+        private set
+
+    internal fun update(state: ViewCameraState) {
+        pose = state.pose
+        fieldOfView = state.fieldOfView
+    }
 }

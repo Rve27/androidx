@@ -16,7 +16,7 @@
 
 package androidx.xr.arcore.rxjava3;
 
-import static androidx.xr.arcore.rxjava3.RxJava3ViewCamera.getStateAsFlowable;
+import static androidx.xr.arcore.rxjava3.RxJava3RenderViewpoint.getStateAsFlowable;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -25,7 +25,7 @@ import static kotlinx.coroutines.test.TestCoroutineDispatchersKt.StandardTestDis
 import androidx.activity.ComponentActivity;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
-import androidx.xr.arcore.ViewCamera;
+import androidx.xr.arcore.RenderViewpoint;
 import androidx.xr.runtime.Session;
 import androidx.xr.runtime.SessionCreateSuccess;
 import androidx.xr.runtime.math.Pose;
@@ -38,15 +38,15 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(AndroidJUnit4.class)
-public class RxJava3ViewCameraTest {
+public class RxJava3RenderViewpointTest {
     private Session mSession;
     private TestDispatcher mTestDispatcher;
 
     @Test
-    public void viewCamera_stateAsFlowable_returnsViewCameraState() {
+    public void renderViewpoint_stateAsFlowable_returnsRenderViewpointState() {
         createTestSessionAndRunTest(() -> {
-            ViewCamera underTest = ViewCamera.getAll(mSession).get(0);
-            TestSubscriber<ViewCamera.State> testSubscriber = new TestSubscriber<>();
+            RenderViewpoint underTest = RenderViewpoint.left(mSession);
+            TestSubscriber<RenderViewpoint.State> testSubscriber = new TestSubscriber<>();
 
             getStateAsFlowable(underTest).subscribe(testSubscriber);
 

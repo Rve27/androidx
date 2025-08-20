@@ -14,25 +14,19 @@
  * limitations under the License.
  */
 
-package androidx.xr.runtime.openxr
+package androidx.xr.runtime.internal
 
 import androidx.annotation.RestrictTo
 import androidx.xr.runtime.FieldOfView
-import androidx.xr.runtime.internal.ViewCamera
 import androidx.xr.runtime.math.Pose
 
-/** Wraps the device tracking data. */
+/** Describes the View Camera data. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public class OpenXrViewCamera internal constructor() : ViewCamera {
+public interface RenderViewpoint {
 
-    override var pose: Pose = Pose()
-        private set
+    /** The pose of the view camera. */
+    public val pose: Pose
 
-    override var fieldOfView: FieldOfView = FieldOfView(0f, 0f, 0f, 0f)
-        private set
-
-    internal fun update(state: ViewCameraState) {
-        pose = state.pose
-        fieldOfView = state.fieldOfView
-    }
+    /** The field of view of the view camera. */
+    public val fieldOfView: FieldOfView
 }

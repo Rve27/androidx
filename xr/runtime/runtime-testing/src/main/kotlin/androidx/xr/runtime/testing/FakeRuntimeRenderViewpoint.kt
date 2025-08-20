@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
-@file:JvmName("RxJava3ViewCamera")
+package androidx.xr.runtime.testing
 
-package androidx.xr.arcore.rxjava3
+import androidx.annotation.RestrictTo
+import androidx.xr.runtime.FieldOfView
+import androidx.xr.runtime.internal.RenderViewpoint as RuntimeRenderViewpoint
+import androidx.xr.runtime.math.Pose
 
-import androidx.xr.arcore.ViewCamera
-import io.reactivex.rxjava3.core.Flowable
-import kotlinx.coroutines.rx3.asFlowable
-
-/** The current [State] of the view camera. */
-public val ViewCamera.stateAsFlowable: Flowable<ViewCamera.State>
-    get() = state.asFlowable()
+// TODO: b/326481788 - Add more functionality to FakeRuntimeArDevice
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
+public class FakeRuntimeRenderViewpoint(
+    override var pose: Pose = Pose(),
+    override var fieldOfView: FieldOfView = FieldOfView(0f, 0f, 0f, 0f),
+) : RuntimeRenderViewpoint {}

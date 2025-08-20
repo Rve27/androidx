@@ -20,7 +20,7 @@ import androidx.annotation.RestrictTo
 import androidx.xr.runtime.FieldOfView
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.internal.ArDevice as RuntimeArDevice
-import androidx.xr.runtime.internal.ViewCamera as RuntimeViewCamera
+import androidx.xr.runtime.internal.RenderViewpoint as RuntimeRenderViewpoint
 import androidx.xr.runtime.math.Pose
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -28,22 +28,49 @@ import kotlinx.coroutines.flow.asStateFlow
 
 /** Contains view cameras information. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public class ViewCamera
+public class RenderViewpoint
 internal constructor(
-    internal val runtimeViewCamera: RuntimeViewCamera,
+    internal val runtimeRenderViewpoint: RuntimeRenderViewpoint,
     internal val runtimeArDevice: RuntimeArDevice,
 ) : Updatable {
 
     public companion object {
         /**
-         * Returns all view cameras.
+         * Returns the RenderViewpoint associated with the left display.
          *
          * @param session the currently active [Session].
+         * @note Supported only on devices that use stereo displays for rendering.
          */
         @JvmStatic
-        public fun getAll(session: Session): List<ViewCamera> {
+        public fun left(session: Session): RenderViewpoint? {
             val perceptionStateExtender = getPerceptionStateExtender(session)
-            return perceptionStateExtender.xrResourcesManager.viewCameras
+            return perceptionStateExtender.xrResourcesManager.leftRenderViewpoint
+        }
+
+        /**
+         * Returns the RenderViewpoint associated with the right display.
+         *
+         * @param session the currently active [Session].
+         * @note Supported only on devices that use stereo displays for rendering.
+         */
+        @JvmStatic
+        public fun right(session: Session): RenderViewpoint? {
+            val perceptionStateExtender = getPerceptionStateExtender(session)
+            return perceptionStateExtender.xrResourcesManager.rightRenderViewpoint
+        }
+
+        /**
+         * Returns the RenderViewpoint associated with the single device display.
+         *
+         * @param session the currently active [Session].
+         * @note When the device uses a single display, this will return the render viewpoint for
+         *   that display. When the device uses stereo displays, this will return the render
+         *   viewpoint for the center of the two displays.
+         */
+        @JvmStatic
+        public fun mono(session: Session): RenderViewpoint? {
+            val perceptionStateExtender = getPerceptionStateExtender(session)
+            return perceptionStateExtender.xrResourcesManager.monoRenderViewpoint
         }
 
         // TODO(b/421240554): Combine getPerceptionStateExtender in different classes.
@@ -56,11 +83,11 @@ internal constructor(
     }
 
     /**
-     * Data class that contains the current state of the view camera.
+     * Data class that contains the current state of the render viewpoint.
      *
-     * @property pose The view camera's pose in perception space, the global coordinate system of
-     *   the [Session]. This value is the underlying XR Device's pose plus the localPose offset. Its
-     *   update behavior is determined by [Config.HeadTrackingMode]:
+     * @property pose The render viewpoint's pose in perception space, the global coordinate system
+     *   of the [Session]. This value is the underlying XR Device's pose plus the localPose offset.
+     *   Its update behavior is determined by [Config.HeadTrackingMode]:
      * - **LAST_KNOWN:** The device pose is updated each frame with the latest valid tracking data,
      *   reflecting physical movement.
      * - **DISABLED:** The device pose is not updated. It remains at the origin (an identity pose)
@@ -97,21 +124,25 @@ internal constructor(
     }
 
     private val _state = MutableStateFlow<State>(State(Pose(), Pose(), FieldOfView(0f, 0f, 0f, 0f)))
-    /** The current [State] of the view camera. */
+    /** The current [State] of the render viewpoint. */
     public val state: StateFlow<State> = _state.asStateFlow()
 
     override suspend fun update() {
-        val poseInPerceptionSpace = runtimeArDevice.devicePose.compose(runtimeViewCamera.pose)
+        val poseInPerceptionSpace = runtimeArDevice.devicePose.compose(runtimeRenderViewpoint.pose)
         _state.emit(
-            State(poseInPerceptionSpace, runtimeViewCamera.pose, runtimeViewCamera.fieldOfView)
+            State(
+                poseInPerceptionSpace,
+                runtimeRenderViewpoint.pose,
+                runtimeRenderViewpoint.fieldOfView,
+            )
         )
     }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is ViewCamera) return false
-        return runtimeViewCamera == other.runtimeViewCamera
+        if (other !is RenderViewpoint) return false
+        return runtimeRenderViewpoint == other.runtimeRenderViewpoint
     }
 
-    override fun hashCode(): Int = runtimeViewCamera.hashCode()
+    override fun hashCode(): Int = runtimeRenderViewpoint.hashCode()
 }
