@@ -22,7 +22,7 @@ import androidx.build.dackka.GenerateMetadataTask
 import androidx.build.defaultAndroidConfig
 import androidx.build.getAndroidJar
 import androidx.build.getCheckoutRoot
-import androidx.build.getDistributionDirectory
+import androidx.build.getDistributionDirectoryProperty
 import androidx.build.getKeystore
 import androidx.build.getLibraryByName
 import androidx.build.getSupportRootFolder
@@ -68,8 +68,8 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Classpath
+import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.InputFiles
-import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.PathSensitive
@@ -89,7 +89,6 @@ import org.gradle.work.DisableCachingByDefault
  * Plugin that allows to build documentation for a given set of prebuilt and tip of tree projects.
  */
 abstract class AndroidXDocsImplPlugin : Plugin<Project> {
-    lateinit var docsType: String
     lateinit var docsSourcesConfiguration: Configuration
     lateinit var multiplatformDocsSourcesConfiguration: Configuration
     lateinit var samplesSourcesConfiguration: Configuration
@@ -99,7 +98,7 @@ abstract class AndroidXDocsImplPlugin : Plugin<Project> {
     @get:Inject abstract val archiveOperations: ArchiveOperations
 
     override fun apply(project: Project) {
-        docsType = project.name.removePrefix("docs-")
+        val docsType = project.name.removePrefix("docs-")
         project.plugins.configureEach { plugin ->
             when (plugin) {
                 is LibraryPlugin -> {
@@ -123,8 +122,9 @@ abstract class AndroidXDocsImplPlugin : Plugin<Project> {
         createConfigurations(project)
         val buildOnServer =
             project.tasks.register<DocsBuildOnServer>("buildOnServer") {
-                docsType = this@AndroidXDocsImplPlugin.docsType
-                distributionDirectory = project.getDistributionDirectory()
+                requiredFile.set(
+                    project.getDistributionDirectoryProperty().file("docs-$docsType.zip")
+                )
             }
 
         val unzippedDeprecatedSamplesSources =
@@ -179,6 +179,7 @@ abstract class AndroidXDocsImplPlugin : Plugin<Project> {
             docsConfiguration = docsSourcesConfiguration,
             multiplatformDocsConfiguration = multiplatformDocsSourcesConfiguration,
             mergedProjectMetadata = mergedProjectMetadata,
+            docsType = docsType,
         )
 
         project.configureTaskTimeouts()
@@ -505,6 +506,7 @@ abstract class AndroidXDocsImplPlugin : Plugin<Project> {
         docsConfiguration: Configuration,
         multiplatformDocsConfiguration: Configuration,
         mergedProjectMetadata: Provider<RegularFile>,
+        docsType: String,
     ) {
         val generatedDocsDir = project.layout.buildDirectory.dir("docs")
 
@@ -537,7 +539,9 @@ abstract class AndroidXDocsImplPlugin : Plugin<Project> {
             project.tasks.register("docs", DackkaTask::class.java) { task ->
                 var taskStartTime: LocalDateTime? = null
                 task.argsJsonFile.set(
-                    File(project.getDistributionDirectory(), "dackkaArgs-${project.name}.json")
+                    project
+                        .getDistributionDirectoryProperty()
+                        .file("dackkaArgs-${project.name}.json")
                 )
                 task.apply {
                     // Remove once there is property version of Copy#destinationDir
@@ -630,7 +634,7 @@ abstract class AndroidXDocsImplPlugin : Plugin<Project> {
 
                     val baseName = "docs-$docsType"
                     archiveBaseName.set(baseName)
-                    destinationDirectory.set(project.getDistributionDirectory())
+                    destinationDirectory.set(project.getDistributionDirectoryProperty())
                     group = JavaBasePlugin.DOCUMENTATION_GROUP
                 }
             }
@@ -668,27 +672,16 @@ abstract class AndroidXDocsImplPlugin : Plugin<Project> {
 }
 
 @DisableCachingByDefault(because = "Doesn't benefit from caching")
-open class DocsBuildOnServer : DefaultTask() {
-    @Internal lateinit var docsType: String
-    @Internal lateinit var distributionDirectory: File
-
-    @[InputFiles PathSensitive(PathSensitivity.RELATIVE)]
-    fun getRequiredFiles(): List<File> {
-        return listOf(File(distributionDirectory, "docs-$docsType.zip"))
-    }
+abstract class DocsBuildOnServer : DefaultTask() {
+    @get:InputFile
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    abstract val requiredFile: RegularFileProperty
 
     @TaskAction
     fun checkAllBuildOutputs() {
-        val missingFiles = mutableListOf<String>()
-        getRequiredFiles().forEach { file ->
-            if (!file.exists()) {
-                missingFiles.add(file.path)
-            }
-        }
-
-        if (missingFiles.isNotEmpty()) {
-            val missingFileString = missingFiles.reduce { acc, s -> "$acc, $s" }
-            throw FileNotFoundException("buildOnServer required output missing: $missingFileString")
+        val file = requiredFile.get().asFile
+        if (!file.exists()) {
+            throw FileNotFoundException("buildOnServer required output missing: ${file.path}")
         }
     }
 }

@@ -43,11 +43,6 @@ abstract class ListTaskOutputsTask : DefaultTask() {
         project.gradle.taskGraph.whenReady { outputText }
     }
 
-    fun setOutput(f: File) {
-        outputFile.set(f)
-        description = "Finds the outputs of every task and saves the resulting mapping into $f"
-    }
-
     fun removePrefix(prefix: String) {
         removePrefixes.add("$prefix/")
     }

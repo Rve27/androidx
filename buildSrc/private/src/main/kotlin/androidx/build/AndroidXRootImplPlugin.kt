@@ -95,7 +95,9 @@ abstract class AndroidXRootImplPlugin : Plugin<Project> {
 
         tasks.register(BUILD_ON_SERVER_TASK, BuildOnServerTask::class.java) { task ->
             task.cacheEvenIfNoOutputs()
-            task.distributionDirectory = getDistributionDirectory()
+            task.aggregateBuildInfoFile.set(
+                getDistributionDirectoryProperty().file(AGGREGATE_BUILD_INFO_FILE_NAME)
+            )
             verifyPlayground?.let { task.dependsOn(it) }
             aggregateBuildInfo?.let { task.dependsOn(it) }
         }
@@ -119,7 +121,7 @@ abstract class AndroidXRootImplPlugin : Plugin<Project> {
         project.tasks.register(ZIP_TEST_CONFIGS_WITH_APKS_TASK, Zip::class.java) {
             // Flatten PrivacySandbox APKs in separate task to preserve file order in resulting ZIP.
             it.dependsOn(finalizeConfigsTask)
-            it.destinationDirectory.set(project.getDistributionDirectory())
+            it.destinationDirectory.set(project.getDistributionDirectoryProperty())
             it.archiveFileName.set("androidTest.zip")
             it.from(project.getTestConfigDirectory())
             // We're mostly zipping a bunch of .apk files that are already compressed
@@ -137,7 +139,7 @@ abstract class AndroidXRootImplPlugin : Plugin<Project> {
         registerStudioTask()
 
         project.tasks.register("listTaskOutputs", ListTaskOutputsTask::class.java) { task ->
-            task.setOutput(File(project.getDistributionDirectory(), "task_outputs.txt"))
+            task.outputFile.set(project.getDistributionDirectoryProperty().file("task_outputs.txt"))
             task.removePrefix(project.getCheckoutRoot().path)
         }
 
@@ -222,3 +224,5 @@ abstract class AndroidXRootImplPlugin : Plugin<Project> {
         }
     }
 }
+
+internal const val AGGREGATE_BUILD_INFO_FILE_NAME = "androidx_aggregate_build_info.txt"
