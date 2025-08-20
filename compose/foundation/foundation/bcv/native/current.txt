@@ -1338,6 +1338,8 @@ final class androidx.compose.foundation/ScrollState : androidx.compose.foundatio
         final fun <get-lastScrolledBackward>(): kotlin/Boolean // androidx.compose.foundation/ScrollState.lastScrolledBackward.<get-lastScrolledBackward>|<get-lastScrolledBackward>(){}[0]
     final val lastScrolledForward // androidx.compose.foundation/ScrollState.lastScrolledForward|{}lastScrolledForward[0]
         final fun <get-lastScrolledForward>(): kotlin/Boolean // androidx.compose.foundation/ScrollState.lastScrolledForward.<get-lastScrolledForward>|<get-lastScrolledForward>(){}[0]
+    final val scrollIndicatorState // androidx.compose.foundation/ScrollState.scrollIndicatorState|{}scrollIndicatorState[0]
+        final fun <get-scrollIndicatorState>(): androidx.compose.foundation/ScrollIndicatorState? // androidx.compose.foundation/ScrollState.scrollIndicatorState.<get-scrollIndicatorState>|<get-scrollIndicatorState>(){}[0]
 
     final var maxValue // androidx.compose.foundation/ScrollState.maxValue|{}maxValue[0]
         final fun <get-maxValue>(): kotlin/Int // androidx.compose.foundation/ScrollState.maxValue.<get-maxValue>|<get-maxValue>(){}[0]

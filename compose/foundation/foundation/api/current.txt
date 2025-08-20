@@ -324,10 +324,10 @@ package androidx.compose.foundation {
 
   @androidx.compose.runtime.Stable public interface ScrollIndicatorState {
     method @InaccessibleFromKotlin @IntRange(from=0L) public int getContentSize();
-    method @InaccessibleFromKotlin @IntRange(from=0L) public int getScrollOffset();
+    method @InaccessibleFromKotlin @IntRange(from=0L) @androidx.compose.runtime.annotation.FrequentlyChangingValue public int getScrollOffset();
     method @InaccessibleFromKotlin @IntRange(from=0L) public int getViewportSize();
     property @IntRange(from=0L) public abstract int contentSize;
-    property @IntRange(from=0L) public abstract int scrollOffset;
+    property @IntRange(from=0L) @androidx.compose.runtime.annotation.FrequentlyChangingValue public abstract int scrollOffset;
     property @IntRange(from=0L) public abstract int viewportSize;
   }
 
@@ -358,6 +358,7 @@ package androidx.compose.foundation {
     property public boolean lastScrolledBackward;
     property public boolean lastScrolledForward;
     property public int maxValue;
+    property public androidx.compose.foundation.ScrollIndicatorState? scrollIndicatorState;
     property @androidx.compose.runtime.annotation.FrequentlyChangingValue public int value;
     property public int viewportSize;
     field public static final androidx.compose.foundation.ScrollState.Companion Companion;
