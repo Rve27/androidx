@@ -16,12 +16,15 @@
 
 package androidx.xr.runtime.testing
 
+import android.app.Activity
 import androidx.annotation.RestrictTo
+import androidx.xr.runtime.internal.ActivityPanelEntity
 import androidx.xr.runtime.internal.ActivitySpace
 import androidx.xr.runtime.internal.CameraViewActivityPose
 import androidx.xr.runtime.internal.Entity
 import androidx.xr.runtime.internal.GltfEntity
 import androidx.xr.runtime.internal.GltfFeature
+import androidx.xr.runtime.internal.PixelDimensions
 import androidx.xr.runtime.internal.RenderingEntityFactory
 import androidx.xr.runtime.internal.SceneRuntime
 import androidx.xr.runtime.internal.SpatialCapabilities
@@ -39,6 +42,14 @@ public class FakeSceneRuntime() : SceneRuntime, RenderingEntityFactory {
     override fun getCameraViewActivityPose(
         @CameraViewActivityPose.CameraType cameraType: Int
     ): CameraViewActivityPose? = FakeCameraViewActivityPose()
+
+    override fun createActivityPanelEntity(
+        pose: Pose,
+        windowBoundsPx: PixelDimensions,
+        name: String,
+        hostActivity: Activity,
+        parent: Entity,
+    ): ActivityPanelEntity = FakeActivityPanelEntity()
 
     override fun createGltfEntity(
         feature: GltfFeature,

@@ -17,15 +17,18 @@
 package androidx.xr.scenecore.spatial.core;
 
 import android.app.Activity;
+import android.graphics.Rect;
 import android.os.Handler;
 import android.os.Looper;
 
 import androidx.annotation.VisibleForTesting;
+import androidx.xr.runtime.internal.ActivityPanelEntity;
 import androidx.xr.runtime.internal.ActivitySpace;
 import androidx.xr.runtime.internal.CameraViewActivityPose;
 import androidx.xr.runtime.internal.Entity;
 import androidx.xr.runtime.internal.GltfEntity;
 import androidx.xr.runtime.internal.GltfFeature;
+import androidx.xr.runtime.internal.PixelDimensions;
 import androidx.xr.runtime.internal.RenderingEntityFactory;
 import androidx.xr.runtime.internal.SceneRuntime;
 import androidx.xr.runtime.internal.Space;
@@ -38,6 +41,8 @@ import androidx.xr.scenecore.impl.perception.Session;
 import com.android.extensions.xr.XrExtensions;
 import com.android.extensions.xr.node.Node;
 import com.android.extensions.xr.node.NodeTransaction;
+import com.android.extensions.xr.space.ActivityPanel;
+import com.android.extensions.xr.space.ActivityPanelLaunchParameters;
 import com.android.extensions.xr.space.SpatialState;
 
 import com.google.common.util.concurrent.ListenableFuture;
@@ -267,6 +272,36 @@ class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory {
             return null;
         }
         return cameraViewActivityPose;
+    }
+
+    @Override
+    public @NonNull ActivityPanelEntity createActivityPanelEntity(
+            @NonNull Pose pose,
+            @NonNull PixelDimensions windowBoundsPx,
+            @NonNull String name,
+            @NonNull Activity hostActivity,
+            @NonNull Entity parent) {
+
+        // TODO(b/352630140): Move this into a static factory method of ActivityPanelEntityImpl.
+        Rect windowBoundsRect = new Rect(0, 0, windowBoundsPx.width, windowBoundsPx.height);
+        ActivityPanel activityPanel =
+                mExtensions.createActivityPanel(
+                        hostActivity, new ActivityPanelLaunchParameters(windowBoundsRect));
+
+        activityPanel.setWindowBounds(windowBoundsRect);
+        ActivityPanelEntityImpl activityPanelEntity =
+                new ActivityPanelEntityImpl(
+                        hostActivity,
+                        activityPanel.getNode(),
+                        name,
+                        mExtensions,
+                        mEntityManager,
+                        activityPanel,
+                        windowBoundsPx,
+                        mExecutor);
+        activityPanelEntity.setParent(parent);
+        activityPanelEntity.setPose(pose, Space.PARENT);
+        return activityPanelEntity;
     }
 
     @Override

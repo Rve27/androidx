@@ -16,6 +16,7 @@
 
 package androidx.xr.runtime.internal
 
+import android.app.Activity
 import androidx.annotation.RestrictTo
 import androidx.xr.runtime.math.Pose
 import java.util.concurrent.Executor
@@ -50,6 +51,23 @@ public interface SceneRuntime {
     public fun getCameraViewActivityPose(
         @CameraViewActivityPose.CameraType cameraType: Int
     ): CameraViewActivityPose?
+
+    /**
+     * Factory function to create ActivityPanel to launch/move activity into.
+     *
+     * @param pose Initial pose of the panel.
+     * @param windowBoundsPx Boundary for the window
+     * @param name Name of the panel.
+     * @param hostActivity Activity to host the panel.
+     * @param parent Parent entity.
+     */
+    public fun createActivityPanelEntity(
+        pose: Pose,
+        windowBoundsPx: PixelDimensions,
+        name: String,
+        hostActivity: Activity,
+        parent: Entity,
+    ): ActivityPanelEntity
 
     /**
      * A factory function to create a group entity. This entity is used as a connection point for
