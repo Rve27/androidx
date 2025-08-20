@@ -81,7 +81,7 @@ class PdfViewSelectionMenuTest {
             Espresso.onView(withId(R.id.pdf_view)).check { view, noViewFoundException ->
                 view ?: throw noViewFoundException
                 val localPdfView = view as PdfView
-                localPdfView.setSelectionMenuItemPreparer(selectionMenuItemPreparer)
+                localPdfView.addSelectionMenuItemPreparer(selectionMenuItemPreparer)
             }
         }
         // long click to trigger selection
@@ -114,7 +114,7 @@ class PdfViewSelectionMenuTest {
             Espresso.onView(withId(R.id.pdf_view)).check { view, noViewFoundException ->
                 view ?: throw noViewFoundException
                 val localPdfView = view as PdfView
-                localPdfView.setSelectionMenuItemPreparer(selectionMenuItemPreparer)
+                localPdfView.addSelectionMenuItemPreparer(selectionMenuItemPreparer)
             }
         }
         // long click to trigger selection
@@ -146,7 +146,7 @@ class PdfViewSelectionMenuTest {
             Espresso.onView(withId(R.id.pdf_view)).check { view, noViewFoundException ->
                 view ?: throw noViewFoundException
                 val localPdfView = view as PdfView
-                localPdfView.setSelectionMenuItemPreparer(selectionMenuItemPreparer)
+                localPdfView.addSelectionMenuItemPreparer(selectionMenuItemPreparer)
             }
         }
         // long click to trigger selection
