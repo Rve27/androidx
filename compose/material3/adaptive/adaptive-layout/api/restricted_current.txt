@@ -80,6 +80,8 @@ package androidx.compose.material3.adaptive.layout {
   }
 
   @SuppressCompatibility @androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi public sealed interface ExtendedPaneScaffoldScope<Role extends androidx.compose.material3.adaptive.layout.PaneScaffoldRole, ScaffoldValue extends androidx.compose.material3.adaptive.layout.PaneScaffoldValue<Role>> extends androidx.compose.material3.adaptive.layout.PaneScaffoldScope androidx.compose.ui.layout.LookaheadScope androidx.compose.material3.adaptive.layout.PaneScaffoldTransitionScope<Role,ScaffoldValue> {
+    method public java.util.Map<Role,androidx.compose.ui.focus.FocusRequester> getFocusRequesters();
+    property public abstract java.util.Map<Role,androidx.compose.ui.focus.FocusRequester> focusRequesters;
   }
 
   @androidx.compose.runtime.Immutable @kotlin.jvm.JvmInline public final value class HingePolicy {
@@ -398,6 +400,8 @@ package androidx.compose.material3.adaptive.layout {
   @SuppressCompatibility @androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi public sealed interface PaneScaffoldPaneScope<Role extends androidx.compose.material3.adaptive.layout.PaneScaffoldRole> {
     method public androidx.compose.material3.adaptive.layout.PaneMotion getPaneMotion();
     method public Role getPaneRole();
+    method public boolean isInteractable();
+    property public abstract boolean isInteractable;
     property public abstract androidx.compose.material3.adaptive.layout.PaneMotion paneMotion;
     property public abstract Role paneRole;
   }
@@ -456,8 +460,8 @@ package androidx.compose.material3.adaptive.layout {
   }
 
   public final class ScrimKt {
-    method @KotlinOnly @SuppressCompatibility @androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi @androidx.compose.runtime.Composable public static void Scrim(optional kotlin.jvm.functions.Function0<kotlin.Unit> onClick, optional androidx.compose.ui.graphics.Color color);
-    method @BytecodeOnly @SuppressCompatibility @androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi @androidx.compose.runtime.Composable @androidx.compose.runtime.ComposableTarget(applier="androidx.compose.ui.UiComposable") public static void Scrim-iJQMabo(kotlin.jvm.functions.Function0<kotlin.Unit!>?, long, androidx.compose.runtime.Composer?, int, int);
+    method @KotlinOnly @SuppressCompatibility @androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi @androidx.compose.runtime.Composable public static void Scrim(optional androidx.compose.ui.Modifier modifier, optional kotlin.jvm.functions.Function0<kotlin.Unit> onClick, optional androidx.compose.ui.graphics.Color color);
+    method @BytecodeOnly @SuppressCompatibility @androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi @androidx.compose.runtime.Composable @androidx.compose.runtime.ComposableTarget(applier="androidx.compose.ui.UiComposable") public static void Scrim-FNF3uiM(androidx.compose.ui.Modifier?, kotlin.jvm.functions.Function0<kotlin.Unit!>?, long, androidx.compose.runtime.Composer?, int, int);
   }
 
   @SuppressCompatibility @androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi public final class SupportingPaneScaffoldDefaults {

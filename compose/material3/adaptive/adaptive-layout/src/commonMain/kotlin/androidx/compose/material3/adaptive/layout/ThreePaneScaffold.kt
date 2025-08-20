@@ -29,6 +29,7 @@ import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.layout.Layout
@@ -152,8 +153,18 @@ internal fun ThreePaneScaffold(
     LookaheadScope {
         val scaffoldScope =
             remember(currentTransition, this) {
-                ThreePaneScaffoldScopeImpl(transitionScope, this, stateHolder)
+                ThreePaneScaffoldScopeImpl(
+                    transitionScope,
+                    this,
+                    stateHolder,
+                    mapOf(
+                        ThreePaneScaffoldRole.Primary to FocusRequester(),
+                        ThreePaneScaffoldRole.Secondary to FocusRequester(),
+                        ThreePaneScaffoldRole.Tertiary to FocusRequester(),
+                    ),
+                )
             }
+        val scaffoldValue = scaffoldState.targetState
         with(LocalThreePaneScaffoldOverride.current) {
             ThreePaneScaffoldOverrideScope(
                     modifier = modifier,
@@ -165,6 +176,7 @@ internal fun ThreePaneScaffold(
                                 ThreePaneScaffoldRole.Primary,
                                 scaffoldScope,
                                 paneMotions[ThreePaneScaffoldRole.Primary],
+                                scaffoldValue.isInteractable(ThreePaneScaffoldRole.Primary),
                             )
                             .primaryPane()
                     },
@@ -173,6 +185,7 @@ internal fun ThreePaneScaffold(
                                 ThreePaneScaffoldRole.Secondary,
                                 scaffoldScope,
                                 paneMotions[ThreePaneScaffoldRole.Secondary],
+                                scaffoldValue.isInteractable(ThreePaneScaffoldRole.Secondary),
                             )
                             .secondaryPane()
                     },
@@ -184,6 +197,7 @@ internal fun ThreePaneScaffold(
                                         ThreePaneScaffoldRole.Tertiary,
                                         scaffoldScope,
                                         paneMotions[ThreePaneScaffoldRole.Tertiary],
+                                        scaffoldValue.isInteractable(ThreePaneScaffoldRole.Tertiary),
                                     )
                                     .tertiaryPane()
                             }
@@ -199,6 +213,10 @@ internal fun ThreePaneScaffold(
                     motionDataProvider = motionDataProvider,
                 )
                 .ThreePaneScaffold()
+
+            LaunchedEffect(scaffoldValue.currentDestination) {
+                scaffoldScope.focusRequesters[scaffoldValue.currentDestination]?.requestFocus()
+            }
         }
     }
 }

@@ -99,7 +99,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -441,6 +443,7 @@ fun <T> levitateAsDialogSample(): ThreePaneScaffoldNavigator<T> {
     val coroutineScope = rememberCoroutineScope()
     val scaffoldDirective = calculatePaneScaffoldDirective(currentWindowAdaptiveInfo())
     var navigator: ThreePaneScaffoldNavigator<T>? = null
+    val onClick: () -> Unit = { coroutineScope.launch { navigator?.navigateBack() } }
     navigator =
         rememberListDetailPaneScaffoldNavigator<T>(
             scaffoldDirective = scaffoldDirective,
@@ -448,12 +451,17 @@ fun <T> levitateAsDialogSample(): ThreePaneScaffoldNavigator<T> {
                 SupportingPaneScaffoldDefaults.adaptStrategies(
                     extraPaneAdaptStrategy =
                         AdaptStrategy.Levitate(
-                                alignment = Alignment.BottomCenter,
+                                alignment = Alignment.Center,
                                 scrim = {
                                     Scrim(
-                                        onClick = {
-                                            coroutineScope.launch { navigator?.navigateBack() }
-                                        }
+                                        Modifier.semantics {
+                                            contentDescription = "Scrim"
+                                            this.onClick("Dismiss the extra pane") {
+                                                onClick()
+                                                true
+                                            }
+                                        },
+                                        onClick = onClick,
                                     )
                                 },
                             )

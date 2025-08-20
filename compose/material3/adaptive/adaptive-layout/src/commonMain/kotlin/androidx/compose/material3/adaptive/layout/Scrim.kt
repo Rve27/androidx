@@ -24,12 +24,16 @@ import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.clearAndSetSemantics
 
 /**
  * The default scrim implementation shown with a levitated pane to block the user interaction from
  * the underlying layout. See [AdaptStrategy.Levitate] for more detailed info.
  *
  * @sample androidx.compose.material3.adaptive.samples.levitateAsDialogSample
+ * @param modifier the additional modifiers to apply to the scrim; note that we will set up the
+ *   size, color, and clicking behavior of the scrim via default modifiers, and custom modifiers
+ *   provided here might interfere with the default behavior.
  * @param onClick the on-click listener of the scrim; usually used to dismiss the levitated pane;
  *   i.e. remove the pane from the top of the destination history. By default this will be an empty
  *   lambda, which simply blocks the user interaction from the underlying layout.
@@ -38,11 +42,24 @@ import androidx.compose.ui.graphics.Color
  */
 @ExperimentalMaterial3AdaptiveApi
 @Composable
-fun Scrim(onClick: (() -> Unit) = {}, color: Color = ScrimDefaults.color) {
+fun Scrim(
+    modifier: Modifier = Modifier,
+    onClick: (() -> Unit) = ScrimDefaults.onClickAction,
+    color: Color = ScrimDefaults.color,
+) {
     Box(
         modifier =
-            Modifier.fillMaxSize()
+            modifier
+                .fillMaxSize()
                 .background(color)
+                .then(
+                    if (onClick === ScrimDefaults.onClickAction) {
+                        Modifier
+                    } else {
+                        // Disable a11y for the scrim to respect the no-op default onClick action.
+                        Modifier.clearAndSetSemantics {}
+                    }
+                )
                 .clickable(interactionSource = null, indication = null, onClick = onClick)
     )
 }
@@ -52,4 +69,6 @@ fun Scrim(onClick: (() -> Unit) = {}, color: Color = ScrimDefaults.color) {
 object ScrimDefaults {
     /** The default color of the scrim, which is a translucent black. */
     val color = Color.Black.copy(alpha = 0.32f)
+
+    internal val onClickAction: () -> Unit = {}
 }
