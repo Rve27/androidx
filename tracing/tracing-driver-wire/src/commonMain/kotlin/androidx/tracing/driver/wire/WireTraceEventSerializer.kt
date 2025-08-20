@@ -56,12 +56,12 @@ internal class WireTraceEventSerializer(sequenceId: Int, val protoWriter: ProtoW
         MutableTracePacket(timestamp = DEFAULT_LONG, trusted_packet_sequence_id = sequenceId)
 
     /** Private scratchpad of debug annotations. */
-    private var scratchDebugAnnotations: MutableList<MutableDebugAnnotation> =
+    private var scratchAnnotations: MutableList<MutableDebugAnnotation> =
         MutableList(size = METADATA_ENTRIES_EXPECTED_SIZE) { MutableDebugAnnotation() }
 
     /** This is passed by ref, to avoid unnecessary computation. */
     // Using a Long for convenience, given we already have a commonized definition.
-    private val scratchDebugAnnotationIndex = AtomicInteger(/* initialValue= */ -1)
+    private val scratchAnnotationIndex = AtomicInteger(/* initialValue= */ -1)
 
     /**
      * Private scratchpad descriptor, used to avoid allocating a descriptor for each new track
@@ -77,21 +77,35 @@ internal class WireTraceEventSerializer(sequenceId: Int, val protoWriter: ProtoW
             scratchTracePacket = scratchTracePacket,
             scratchTrackDescriptor = scratchTrackDescriptor,
             scratchTrackEvent = scratchTrackEvent,
-            scratchAnnotations = scratchDebugAnnotations,
-            scratchDebugAnnotationIndex = scratchDebugAnnotationIndex,
+            scratchAnnotations = scratchAnnotations,
+            scratchAnnotationIndex = scratchAnnotationIndex,
         )
         MutableTracePacket.Companion.ADAPTER.encodeWithTag(
             writer = protoWriter,
             tag = 1,
             value = scratchTracePacket,
         )
-        // Resize the size of the list when necessary.
-        val index = scratchDebugAnnotationIndex.get()
+        resetScratchAnnotations()
+    }
+
+    /** Reset and resize scratch annotations when necessary. */
+    inline fun resetScratchAnnotations() {
+        val index = scratchAnnotationIndex.get()
         val size = index + 1
-        if (size > METADATA_ENTRIES_EXPECTED_SIZE) {
-            scratchDebugAnnotations =
-                scratchDebugAnnotations.subList(0, METADATA_ENTRIES_EXPECTED_SIZE)
+        // Reset
+        repeat(size) {
+            val scratchAnnotation = scratchAnnotations[it]
+            scratchAnnotation.name = null
+            scratchAnnotation.bool_value = null
+            scratchAnnotation.int_value = null
+            scratchAnnotation.double_value = null
+            scratchAnnotation.string_value = null
         }
+        // Resize
+        if (size > METADATA_ENTRIES_EXPECTED_SIZE) {
+            scratchAnnotations = scratchAnnotations.subList(0, METADATA_ENTRIES_EXPECTED_SIZE)
+        }
+        scratchAnnotationIndex.set(-1)
     }
 
     companion object {
@@ -108,7 +122,7 @@ internal class WireTraceEventSerializer(sequenceId: Int, val protoWriter: ProtoW
             scratchTrackDescriptor: MutableTrackDescriptor,
             scratchTrackEvent: MutableTrackEvent,
             scratchAnnotations: MutableList<MutableDebugAnnotation>,
-            scratchDebugAnnotationIndex: AtomicInteger,
+            scratchAnnotationIndex: AtomicInteger,
         ) {
             scratchTracePacket.timestamp = event.timestamp
             // in the common case when the track_descriptor isn't needed, clear it on the
@@ -165,20 +179,8 @@ internal class WireTraceEventSerializer(sequenceId: Int, val protoWriter: ProtoW
                 if (scratchTrackEvent.flow_ids.isNotEmpty() || event.flowIds.isNotEmpty()) {
                     scratchTrackEvent.flow_ids = event.flowIds
                 }
-
                 // Debug annotations
-                var index = scratchDebugAnnotationIndex.get()
-                if (index >= 0 && index < scratchAnnotations.size) {
-                    repeat(index + 1) {
-                        val debugAnnotation = scratchAnnotations[it]
-                        debugAnnotation.name = null
-                        debugAnnotation.bool_value = null
-                        debugAnnotation.int_value = null
-                        debugAnnotation.double_value = null
-                        debugAnnotation.string_value = null
-                    }
-                }
-                index = -1
+                var index = -1
                 event.forEachMetadataEntry { metadataEntry ->
                     index += 1
                     if (index >= scratchAnnotations.size) {
@@ -203,7 +205,7 @@ internal class WireTraceEventSerializer(sequenceId: Int, val protoWriter: ProtoW
                         }
                     }
                 }
-                scratchDebugAnnotationIndex.set(index)
+                scratchAnnotationIndex.set(index)
                 if (index >= 0) {
                     // The actual usable annotations in the pool.
                     // The actual resizing happens once we have finished the write.
