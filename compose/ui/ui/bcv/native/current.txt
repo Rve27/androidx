@@ -190,9 +190,14 @@ abstract interface androidx.compose.ui.autofill/Autofill { // androidx.compose.u
 }
 
 abstract interface androidx.compose.ui.autofill/FillableData { // androidx.compose.ui.autofill/FillableData|null[0]
-    open fun getBool(): kotlin/Boolean? // androidx.compose.ui.autofill/FillableData.getBool|getBool(){}[0]
-    open fun getCharSequence(): kotlin/CharSequence? // androidx.compose.ui.autofill/FillableData.getCharSequence|getCharSequence(){}[0]
-    open fun getInt(): kotlin/Int? // androidx.compose.ui.autofill/FillableData.getInt|getInt(){}[0]
+    open val booleanValue // androidx.compose.ui.autofill/FillableData.booleanValue|{}booleanValue[0]
+        open fun <get-booleanValue>(): kotlin/Boolean? // androidx.compose.ui.autofill/FillableData.booleanValue.<get-booleanValue>|<get-booleanValue>(){}[0]
+    open val listIndexValue // androidx.compose.ui.autofill/FillableData.listIndexValue|{}listIndexValue[0]
+        open fun <get-listIndexValue>(): kotlin/Int? // androidx.compose.ui.autofill/FillableData.listIndexValue.<get-listIndexValue>|<get-listIndexValue>(){}[0]
+    open val textValue // androidx.compose.ui.autofill/FillableData.textValue|{}textValue[0]
+        open fun <get-textValue>(): kotlin/CharSequence? // androidx.compose.ui.autofill/FillableData.textValue.<get-textValue>|<get-textValue>(){}[0]
+
+    open fun getListIndexOrDefault(kotlin/Int): kotlin/Int // androidx.compose.ui.autofill/FillableData.getListIndexOrDefault|getListIndexOrDefault(kotlin.Int){}[0]
 }
 
 abstract interface androidx.compose.ui.draganddrop/DragAndDropModifierNode : androidx.compose.ui.draganddrop/DragAndDropTarget, androidx.compose.ui.node/DelegatableNode { // androidx.compose.ui.draganddrop/DragAndDropModifierNode|null[0]

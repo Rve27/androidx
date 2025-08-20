@@ -24,9 +24,9 @@ import androidx.compose.ui.implementedInJetBrainsFork
  * This is a stub implementation and will throw an exception if called. Autofill is not supported on
  * this platform.
  *
- * @param charSequenceValue The value to store in the [FillableData].
+ * @param textValue The value to store in the [FillableData].
  */
-actual fun FillableData(charSequenceValue: CharSequence): FillableData? {
+actual fun FillableData(textValue: CharSequence): FillableData? {
     implementedInJetBrainsFork()
 }
 
@@ -48,8 +48,8 @@ actual fun FillableData(booleanValue: Boolean): FillableData? {
  * This is a stub implementation and will throw an exception if called. Autofill is not supported on
  * this platform.
  *
- * @param intValue The value to store in the [FillableData].
+ * @param listIndexValue The value to store in the [FillableData].
  */
-actual fun FillableData(intValue: Int): FillableData? {
+actual fun FillableData(listIndexValue: Int): FillableData? {
     implementedInJetBrainsFork()
 }
