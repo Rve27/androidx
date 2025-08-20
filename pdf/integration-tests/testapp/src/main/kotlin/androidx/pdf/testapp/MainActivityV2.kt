@@ -84,7 +84,6 @@ internal class MainActivityV2 : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        setupViews()
 
         if (savedInstanceState == null) {
             // We're creating the activity for the first time
@@ -97,6 +96,7 @@ internal class MainActivityV2 : AppCompatActivity() {
                     as PdfViewerFragment
         }
 
+        setupViews(pdfViewerFragment)
         handleWindowInsets()
 
         // Ensure WindowInsetsCompat are passed to content views without being consumed by the decor
@@ -105,12 +105,17 @@ internal class MainActivityV2 : AppCompatActivity() {
     }
 
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 13)
-    private fun setupViews() {
+    private fun setupViews(pdfViewerFragment: PdfViewerFragment) {
         openPdfButton = findViewById(R.id.launch_button)
         searchButton = findViewById(R.id.search_pdf_button)
         preferenceButton = findViewById(R.id.preference_button)
         savePdfButton = findViewById(R.id.save_pdf_button)
-        savePdfButton.visibility = View.GONE
+
+        if (pdfViewerFragment is EditablePdfViewerFragment) {
+            savePdfButton.visibility = View.VISIBLE
+        } else {
+            savePdfButton.visibility = View.GONE
+        }
 
         openPdfButton.setOnClickListener { filePicker.launch(MIME_TYPE_PDF) }
 
@@ -142,7 +147,6 @@ internal class MainActivityV2 : AppCompatActivity() {
             FragmentType.BASIC_FRAGMENT -> PdfViewerFragmentExtended()
             FragmentType.STYLED_FRAGMENT -> StyledPdfViewerFragment.newInstance()
             FragmentType.EDITABLE_FRAGMENT -> {
-                savePdfButton.visibility = View.VISIBLE
                 EditablePdfViewerFragment()
             }
         }
