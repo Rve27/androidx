@@ -2079,9 +2079,11 @@ package androidx.wear.compose.material3 {
     method @BytecodeOnly public int getHoursMinutes24H-5KJDQV4();
     method @BytecodeOnly public int getHoursMinutesAmPm12H-5KJDQV4();
     method @BytecodeOnly public int getHoursMinutesSeconds24H-5KJDQV4();
+    method @BytecodeOnly public int getMinutesSeconds-5KJDQV4();
     property public androidx.wear.compose.material3.TimePickerType HoursMinutes24H;
     property public androidx.wear.compose.material3.TimePickerType HoursMinutesAmPm12H;
     property public androidx.wear.compose.material3.TimePickerType HoursMinutesSeconds24H;
+    property public androidx.wear.compose.material3.TimePickerType MinutesSeconds;
   }
 
   public interface TimeSource {
