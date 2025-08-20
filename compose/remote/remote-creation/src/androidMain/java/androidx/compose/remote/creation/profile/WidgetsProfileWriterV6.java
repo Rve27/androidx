@@ -24,6 +24,7 @@ import androidx.compose.remote.core.operations.Utils;
 import androidx.compose.remote.core.operations.utilities.AnimatedFloatExpression;
 import androidx.compose.remote.creation.Rc;
 import androidx.compose.remote.creation.RemoteComposeWriterAndroid;
+import androidx.compose.remote.creation.modifiers.RecordingModifier;
 
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -56,6 +57,18 @@ public class WidgetsProfileWriterV6 extends RemoteComposeWriterAndroid {
     }
 
     /**
+     * Intercepts invalid image operations.
+     */
+    @Override
+    public void image(@NonNull RecordingModifier modifier, int imageId, int scaleType,
+            float alpha) {
+        if (Float.isNaN(alpha)) {
+            throw new IllegalArgumentException("Invalid alpha in V6");
+        }
+        super.image(modifier, imageId, scaleType, alpha);
+    }
+
+    /**
      * Example of validating parameters on the writer Create an animated float based on a
      * reverse-Polish notation expression
      *
@@ -72,7 +85,7 @@ public class WidgetsProfileWriterV6 extends RemoteComposeWriterAndroid {
      * Example of validating parameters on the writer Add a float expression that is a computation
      * based on variables. see packAnimation
      *
-     * @param value A RPN style float operation i.e. "4, 3, ADD" outputs 7
+     * @param value     A RPN style float operation i.e. "4, 3, ADD" outputs 7
      * @param animation Array of floats that represents animation
      * @return NaN id of the result of the calculation
      */
@@ -85,10 +98,10 @@ public class WidgetsProfileWriterV6 extends RemoteComposeWriterAndroid {
     /**
      * set the Matrix relative to the path
      *
-     * @param pathId the id of the path object
+     * @param pathId   the id of the path object
      * @param fraction the position on path
-     * @param vOffset the vertical offset to position the string
-     * @param flags flags to set path 1=position only , 2 = Tangent
+     * @param vOffset  the vertical offset to position the string
+     * @param flags    flags to set path 1=position only , 2 = Tangent
      */
     @Override
     public void matrixFromPath(int pathId, float fraction, float vOffset, int flags) {

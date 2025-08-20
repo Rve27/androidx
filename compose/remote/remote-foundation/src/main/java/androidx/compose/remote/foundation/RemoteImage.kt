@@ -53,7 +53,7 @@ internal class RemoteComposeImageModifier(
                         modifier.toRemoteCompose(),
                         bitmapId,
                         contentScale.toRemoteCompose(),
-                        1f, // TODO handles remote float alpha
+                        alpha.internalAsFloat(),
                     )
             }
         }
