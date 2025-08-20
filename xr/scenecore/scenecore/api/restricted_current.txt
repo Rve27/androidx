@@ -1100,15 +1100,6 @@ package androidx.xr.scenecore {
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class TextureSampler {
-    method public static androidx.xr.scenecore.TextureSampler create();
-    method public static androidx.xr.scenecore.TextureSampler create(optional int minFilter);
-    method public static androidx.xr.scenecore.TextureSampler create(optional int minFilter, optional int magFilter);
-    method public static androidx.xr.scenecore.TextureSampler create(optional int minFilter, optional int magFilter, optional int wrapModeS);
-    method public static androidx.xr.scenecore.TextureSampler create(optional int minFilter, optional int magFilter, optional int wrapModeS, optional int wrapModeT);
-    method public static androidx.xr.scenecore.TextureSampler create(optional int minFilter, optional int magFilter, optional int wrapModeS, optional int wrapModeT, optional int wrapModeR);
-    method public static androidx.xr.scenecore.TextureSampler create(optional int minFilter, optional int magFilter, optional int wrapModeS, optional int wrapModeT, optional int wrapModeR, optional int compareMode);
-    method public static androidx.xr.scenecore.TextureSampler create(optional int minFilter, optional int magFilter, optional int wrapModeS, optional int wrapModeT, optional int wrapModeR, optional int compareMode, optional int compareFunc);
-    method public static androidx.xr.scenecore.TextureSampler create(optional int minFilter, optional int magFilter, optional int wrapModeS, optional int wrapModeT, optional int wrapModeR, optional int compareMode, optional int compareFunc, optional int anisotropyLog2);
     method public int getAnisotropyLog2();
     method public int getCompareFunc();
     method public int getCompareMode();
@@ -1125,81 +1116,65 @@ package androidx.xr.scenecore {
     property public int wrapModeR;
     property public int wrapModeS;
     property public int wrapModeT;
+    field public static final int COMPARE_FUNC_ALWAYS = 6; // 0x6
+    field public static final int COMPARE_FUNC_EQUAL = 4; // 0x4
+    field public static final int COMPARE_FUNC_GREATER = 3; // 0x3
+    field public static final int COMPARE_FUNC_GREATER_OR_EQUAL = 1; // 0x1
+    field public static final int COMPARE_FUNC_LESSER = 2; // 0x2
+    field public static final int COMPARE_FUNC_LESSER_OR_EQUAL = 0; // 0x0
+    field public static final int COMPARE_FUNC_NEVER = 7; // 0x7
+    field public static final int COMPARE_FUNC_NOT_EQUAL = 5; // 0x5
+    field public static final int COMPARE_MODE_COMPARE_TO_TEXTURE = 1; // 0x1
+    field public static final int COMPARE_MODE_NONE = 0; // 0x0
     field public static final androidx.xr.scenecore.TextureSampler.Companion Companion;
+    field public static final int MAG_FILTER_LINEAR = 1; // 0x1
+    field public static final int MAG_FILTER_NEAREST = 0; // 0x0
+    field public static final int MIN_FILTER_LINEAR = 1; // 0x1
+    field public static final int MIN_FILTER_LINEAR_MIPMAP_LINEAR = 5; // 0x5
+    field public static final int MIN_FILTER_LINEAR_MIPMAP_NEAREST = 3; // 0x3
+    field public static final int MIN_FILTER_NEAREST = 0; // 0x0
+    field public static final int MIN_FILTER_NEAREST_MIPMAP_LINEAR = 4; // 0x4
+    field public static final int MIN_FILTER_NEAREST_MIPMAP_NEAREST = 2; // 0x2
+    field public static final int WRAP_MODE_CLAMP_TO_EDGE = 0; // 0x0
+    field public static final int WRAP_MODE_MIRRORED_REPEAT = 2; // 0x2
+    field public static final int WRAP_MODE_REPEAT = 1; // 0x1
+  }
+
+  public static final class TextureSampler.Builder {
+    ctor public TextureSampler.Builder();
+    method public androidx.xr.scenecore.TextureSampler build();
+    method public androidx.xr.scenecore.TextureSampler.Builder setAnisotropyLog2(@IntRange(from=0L) int anisotropyLog2);
+    method public androidx.xr.scenecore.TextureSampler.Builder setCompareFunc(int compareFunc);
+    method public androidx.xr.scenecore.TextureSampler.Builder setCompareMode(int compareMode);
+    method public androidx.xr.scenecore.TextureSampler.Builder setMagFilter(int magFilter);
+    method public androidx.xr.scenecore.TextureSampler.Builder setMinFilter(int minFilter);
+    method public androidx.xr.scenecore.TextureSampler.Builder setWrapModeR(int wrapModeR);
+    method public androidx.xr.scenecore.TextureSampler.Builder setWrapModeS(int wrapModeS);
+    method public androidx.xr.scenecore.TextureSampler.Builder setWrapModeT(int wrapModeT);
   }
 
   public static final class TextureSampler.Companion {
-    method public androidx.xr.scenecore.TextureSampler create();
-    method public androidx.xr.scenecore.TextureSampler create(optional int minFilter);
-    method public androidx.xr.scenecore.TextureSampler create(optional int minFilter, optional int magFilter);
-    method public androidx.xr.scenecore.TextureSampler create(optional int minFilter, optional int magFilter, optional int wrapModeS);
-    method public androidx.xr.scenecore.TextureSampler create(optional int minFilter, optional int magFilter, optional int wrapModeS, optional int wrapModeT);
-    method public androidx.xr.scenecore.TextureSampler create(optional int minFilter, optional int magFilter, optional int wrapModeS, optional int wrapModeT, optional int wrapModeR);
-    method public androidx.xr.scenecore.TextureSampler create(optional int minFilter, optional int magFilter, optional int wrapModeS, optional int wrapModeT, optional int wrapModeR, optional int compareMode);
-    method public androidx.xr.scenecore.TextureSampler create(optional int minFilter, optional int magFilter, optional int wrapModeS, optional int wrapModeT, optional int wrapModeR, optional int compareMode, optional int compareFunc);
-    method public androidx.xr.scenecore.TextureSampler create(optional int minFilter, optional int magFilter, optional int wrapModeS, optional int wrapModeT, optional int wrapModeR, optional int compareMode, optional int compareFunc, optional int anisotropyLog2);
-  }
-
-  public static final class TextureSampler.CompareFunc {
-    property public static int A;
-    property public static int E;
-    property public static int G;
-    property public static int GE;
-    property public static int L;
-    property public static int LE;
-    property public static int N;
-    property public static int NE;
-    field public static final int A = 6; // 0x6
-    field public static final int E = 4; // 0x4
-    field public static final int G = 3; // 0x3
-    field public static final int GE = 1; // 0x1
-    field public static final androidx.xr.scenecore.TextureSampler.CompareFunc INSTANCE;
-    field public static final int L = 2; // 0x2
-    field public static final int LE = 0; // 0x0
-    field public static final int N = 7; // 0x7
-    field public static final int NE = 5; // 0x5
-  }
-
-  public static final class TextureSampler.CompareMode {
-    property public static int COMPARE_TO_TEXTURE;
-    property public static int NONE;
-    field public static final int COMPARE_TO_TEXTURE = 1; // 0x1
-    field public static final androidx.xr.scenecore.TextureSampler.CompareMode INSTANCE;
-    field public static final int NONE = 0; // 0x0
-  }
-
-  public static final class TextureSampler.MagFilter {
-    property public static int LINEAR;
-    property public static int NEAREST;
-    field public static final androidx.xr.scenecore.TextureSampler.MagFilter INSTANCE;
-    field public static final int LINEAR = 1; // 0x1
-    field public static final int NEAREST = 0; // 0x0
-  }
-
-  public static final class TextureSampler.MinFilter {
-    property public static int LINEAR;
-    property public static int LINEAR_MIPMAP_LINEAR;
-    property public static int LINEAR_MIPMAP_NEAREST;
-    property public static int NEAREST;
-    property public static int NEAREST_MIPMAP_LINEAR;
-    property public static int NEAREST_MIPMAP_NEAREST;
-    field public static final androidx.xr.scenecore.TextureSampler.MinFilter INSTANCE;
-    field public static final int LINEAR = 1; // 0x1
-    field public static final int LINEAR_MIPMAP_LINEAR = 5; // 0x5
-    field public static final int LINEAR_MIPMAP_NEAREST = 3; // 0x3
-    field public static final int NEAREST = 0; // 0x0
-    field public static final int NEAREST_MIPMAP_LINEAR = 4; // 0x4
-    field public static final int NEAREST_MIPMAP_NEAREST = 2; // 0x2
-  }
-
-  public static final class TextureSampler.WrapMode {
-    property public static int CLAMP_TO_EDGE;
-    property public static int MIRRORED_REPEAT;
-    property public static int REPEAT;
-    field public static final int CLAMP_TO_EDGE = 0; // 0x0
-    field public static final androidx.xr.scenecore.TextureSampler.WrapMode INSTANCE;
-    field public static final int MIRRORED_REPEAT = 2; // 0x2
-    field public static final int REPEAT = 1; // 0x1
+    property public static int COMPARE_FUNC_ALWAYS;
+    property public static int COMPARE_FUNC_EQUAL;
+    property public static int COMPARE_FUNC_GREATER;
+    property public static int COMPARE_FUNC_GREATER_OR_EQUAL;
+    property public static int COMPARE_FUNC_LESSER;
+    property public static int COMPARE_FUNC_LESSER_OR_EQUAL;
+    property public static int COMPARE_FUNC_NEVER;
+    property public static int COMPARE_FUNC_NOT_EQUAL;
+    property public static int COMPARE_MODE_COMPARE_TO_TEXTURE;
+    property public static int COMPARE_MODE_NONE;
+    property public static int MAG_FILTER_LINEAR;
+    property public static int MAG_FILTER_NEAREST;
+    property public static int MIN_FILTER_LINEAR;
+    property public static int MIN_FILTER_LINEAR_MIPMAP_LINEAR;
+    property public static int MIN_FILTER_LINEAR_MIPMAP_NEAREST;
+    property public static int MIN_FILTER_NEAREST;
+    property public static int MIN_FILTER_NEAREST_MIPMAP_LINEAR;
+    property public static int MIN_FILTER_NEAREST_MIPMAP_NEAREST;
+    property public static int WRAP_MODE_CLAMP_TO_EDGE;
+    property public static int WRAP_MODE_MIRRORED_REPEAT;
+    property public static int WRAP_MODE_REPEAT;
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class WaterMaterial extends androidx.xr.scenecore.Material {

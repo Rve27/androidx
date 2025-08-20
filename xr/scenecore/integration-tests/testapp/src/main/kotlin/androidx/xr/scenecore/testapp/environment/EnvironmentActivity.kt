@@ -254,7 +254,10 @@ class EnvironmentActivity : AppCompatActivity() {
                 doubleSidedMode = KhronosPbrMaterialSpec.DoubleSidedMode.SINGLE_SIDED,
             )
         this.khronosPbrMaterial = KhronosPbrMaterial.create(session!!, spec)
-        this.khronosPbrMaterial.setBaseColorTexture(patternTexture, TextureSampler.create())
+        this.khronosPbrMaterial.setBaseColorTexture(
+            patternTexture,
+            TextureSampler.Builder().build(),
+        )
     }
 
     private fun setGeoAndSkybox(

@@ -696,17 +696,17 @@ class UtilsTest {
 
     @Test
     fun intToTextureSampler_convertsCorrectly() {
-        val sampler: TextureSampler =
-            TextureSampler(
-                TextureSampler.MinFilter.NEAREST,
-                TextureSampler.MagFilter.LINEAR,
-                TextureSampler.WrapMode.CLAMP_TO_EDGE,
-                TextureSampler.WrapMode.REPEAT,
-                TextureSampler.WrapMode.MIRRORED_REPEAT,
-                TextureSampler.CompareMode.NONE,
-                TextureSampler.CompareFunc.LE,
-                2,
-            )
+        val sampler =
+            TextureSampler.Builder()
+                .setMinFilter(TextureSampler.MIN_FILTER_NEAREST)
+                .setMagFilter(TextureSampler.MAG_FILTER_LINEAR)
+                .setWrapModeS(TextureSampler.WRAP_MODE_CLAMP_TO_EDGE)
+                .setWrapModeT(TextureSampler.WRAP_MODE_REPEAT)
+                .setWrapModeR(TextureSampler.WRAP_MODE_MIRRORED_REPEAT)
+                .setCompareMode(TextureSampler.COMPARE_MODE_NONE)
+                .setCompareFunc(TextureSampler.COMPARE_FUNC_LESSER_OR_EQUAL)
+                .setAnisotropyLog2(2)
+                .build()
 
         val rtSampler: RuntimeTextureSampler = sampler.toRtTextureSampler()
 
