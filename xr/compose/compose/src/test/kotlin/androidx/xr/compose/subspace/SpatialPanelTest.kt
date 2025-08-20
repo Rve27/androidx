@@ -50,6 +50,7 @@ import androidx.xr.compose.subspace.layout.SpatialRoundedCornerShape
 import androidx.xr.compose.subspace.layout.SubspaceModifier
 import androidx.xr.compose.subspace.layout.height
 import androidx.xr.compose.subspace.layout.size
+import androidx.xr.compose.subspace.layout.sizeIn
 import androidx.xr.compose.subspace.layout.testTag
 import androidx.xr.compose.subspace.layout.width
 import androidx.xr.compose.testing.SubspaceTestingActivity
@@ -59,7 +60,6 @@ import androidx.xr.compose.testing.onSubspaceNodeWithTag
 import androidx.xr.compose.testing.session
 import androidx.xr.compose.testing.setContentWithCompatibilityForXr
 import androidx.xr.compose.unit.Meter.Companion.meters
-import androidx.xr.compose.unit.VolumeConstraints
 import androidx.xr.scenecore.PanelEntity
 import androidx.xr.scenecore.scene
 import com.android.extensions.xr.ShadowXrExtensions
@@ -138,15 +138,7 @@ class SpatialPanelTest {
     @Test
     fun spatialPanel_composePanel_sizesItselfWithLazyContent() {
         composeTestRule.setContentWithCompatibilityForXr {
-            ApplicationSubspace(
-                constraints =
-                    VolumeConstraints(
-                        minWidth = 0,
-                        maxWidth = 2000,
-                        minHeight = 0,
-                        maxHeight = 2000,
-                    )
-            ) {
+            ApplicationSubspace(modifier = SubspaceModifier.sizeIn(0.dp, 2000.dp, 0.dp, 2000.dp)) {
                 SpatialPanel(SubspaceModifier.testTag("panel")) {
                     LazyColumn { items(50) { Box(Modifier.size(100.dp)) } }
                 }

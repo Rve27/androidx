@@ -46,7 +46,6 @@ import androidx.xr.compose.subspace.SpatialRow
 import androidx.xr.compose.subspace.layout.SubspaceModifier
 import androidx.xr.compose.subspace.layout.height
 import androidx.xr.compose.subspace.layout.width
-import androidx.xr.compose.unit.VolumeConstraints
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.SessionCreateSuccess
 import androidx.xr.scenecore.scene
@@ -74,7 +73,7 @@ class ModeChangeApp : ComponentActivity() {
 
     @Composable
     private fun FullSpaceModeContent(session: Session) {
-        GravityAlignedSubspace(constraints = VolumeConstraints()) {
+        GravityAlignedSubspace(allowUnboundedSubspace = true) {
             SpatialRow {
                 SpatialPanel(
                     modifier = SubspaceModifier.width(300.dp).height(300.dp),

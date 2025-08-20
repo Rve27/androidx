@@ -17,16 +17,22 @@
 package androidx.xr.compose.subspace.layout
 
 import androidx.annotation.FloatRange
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.util.fastRoundToInt
+import androidx.xr.compose.platform.LocalSession
+import androidx.xr.compose.subspace.node.CompositionLocalConsumerSubspaceModifierNode
 import androidx.xr.compose.subspace.node.SubspaceLayoutModifierNode
 import androidx.xr.compose.subspace.node.SubspaceModifierNodeElement
+import androidx.xr.compose.subspace.node.currentValueOf
 import androidx.xr.compose.unit.DpVolumeSize
+import androidx.xr.compose.unit.Meter
 import androidx.xr.compose.unit.VolumeConstraints
 import androidx.xr.compose.unit.constrain
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Quaternion
 import androidx.xr.runtime.math.Vector3
+import androidx.xr.scenecore.scene
 
 /** Declare the preferred size of the content to be exactly [width] dp along the x dimension. */
 public fun SubspaceModifier.width(width: Dp): SubspaceModifier =
@@ -149,6 +155,84 @@ public fun SubspaceModifier.depthIn(
     min: Dp = Dp.Unspecified,
     max: Dp = Dp.Unspecified,
 ): SubspaceModifier = this.then(SizeElement(minDepth = min, maxDepth = max, enforceIncoming = true))
+
+/**
+ * An internal-only modifier that constrains its content to the recommended content box if the
+ * incoming constraints for a given dimension are infinite.
+ */
+internal fun SubspaceModifier.recommendedSizeIfUnbounded(): SubspaceModifier =
+    this.then(RecommendedSizeElement)
+
+private object RecommendedSizeElement : SubspaceModifierNodeElement<RecommendedSizeNode>() {
+    override fun create(): RecommendedSizeNode = RecommendedSizeNode()
+
+    override fun update(node: RecommendedSizeNode) {}
+
+    override fun hashCode(): Int = javaClass.hashCode()
+
+    override fun equals(other: Any?): Boolean = other === this
+}
+
+private class RecommendedSizeNode :
+    SubspaceLayoutModifierNode,
+    CompositionLocalConsumerSubspaceModifierNode,
+    SubspaceModifier.Node() {
+    override fun SubspaceMeasureScope.measure(
+        measurable: SubspaceMeasurable,
+        constraints: VolumeConstraints,
+    ): SubspaceMeasureResult {
+        val session = currentValueOf(LocalSession)
+        val density = currentValueOf(LocalDensity)
+
+        if (session == null) {
+            val placeable = measurable.measure(constraints)
+
+            return layout(
+                placeable.measuredWidth,
+                placeable.measuredHeight,
+                placeable.measuredDepth,
+            ) {
+                placeable.place(Pose())
+            }
+        }
+
+        val recommendedBox = session.scene.activitySpace.recommendedContentBoxInFullSpace
+
+        val finalMaxWidth =
+            if (constraints.maxWidth == VolumeConstraints.INFINITY) {
+                Meter(recommendedBox.max.x - recommendedBox.min.x).roundToPx(density)
+            } else {
+                constraints.maxWidth
+            }
+
+        val finalMaxHeight =
+            if (constraints.maxHeight == VolumeConstraints.INFINITY) {
+                Meter(recommendedBox.max.y - recommendedBox.min.y).roundToPx(density)
+            } else {
+                constraints.maxHeight
+            }
+
+        val finalMaxDepth =
+            if (constraints.maxDepth == VolumeConstraints.INFINITY) {
+                Meter(recommendedBox.max.z - recommendedBox.min.z).roundToPx(density)
+            } else {
+                constraints.maxDepth
+            }
+
+        val finalConstraints =
+            constraints.copy(
+                maxWidth = finalMaxWidth,
+                maxHeight = finalMaxHeight,
+                maxDepth = finalMaxDepth,
+            )
+
+        val placeable = measurable.measure(finalConstraints)
+
+        return layout(placeable.measuredWidth, placeable.measuredHeight, placeable.measuredDepth) {
+            placeable.place(Pose())
+        }
+    }
+}
 
 /**
  * Declare the size of the content to be exactly [width] dp along the x dimension, disregarding the

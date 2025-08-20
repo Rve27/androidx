@@ -6,6 +6,8 @@ package androidx.xr.compose.testing {
     method @BytecodeOnly @RestrictTo({androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX}) @com.google.errorprone.annotations.CanIgnoreReturnValue public static androidx.xr.compose.testing.SubspaceSemanticsNodeInteraction assertDepthIsAtLeast-3ABfNKs(androidx.xr.compose.testing.SubspaceSemanticsNodeInteraction, float);
     method @KotlinOnly @RestrictTo({androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX}) @com.google.errorprone.annotations.CanIgnoreReturnValue public static androidx.xr.compose.testing.SubspaceSemanticsNodeInteraction assertDepthIsEqualTo(androidx.xr.compose.testing.SubspaceSemanticsNodeInteraction, androidx.compose.ui.unit.Dp expectedDepth);
     method @BytecodeOnly @RestrictTo({androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX}) @com.google.errorprone.annotations.CanIgnoreReturnValue public static androidx.xr.compose.testing.SubspaceSemanticsNodeInteraction assertDepthIsEqualTo-3ABfNKs(androidx.xr.compose.testing.SubspaceSemanticsNodeInteraction, float);
+    method @KotlinOnly @RestrictTo({androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX}) @com.google.errorprone.annotations.CanIgnoreReturnValue public static androidx.xr.compose.testing.SubspaceSemanticsNodeInteraction assertDepthIsNotEqualTo(androidx.xr.compose.testing.SubspaceSemanticsNodeInteraction, androidx.compose.ui.unit.Dp expectedDepth);
+    method @BytecodeOnly @RestrictTo({androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX}) @com.google.errorprone.annotations.CanIgnoreReturnValue public static androidx.xr.compose.testing.SubspaceSemanticsNodeInteraction assertDepthIsNotEqualTo-3ABfNKs(androidx.xr.compose.testing.SubspaceSemanticsNodeInteraction, float);
     method @KotlinOnly @RestrictTo({androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX}) @com.google.errorprone.annotations.CanIgnoreReturnValue public static androidx.xr.compose.testing.SubspaceSemanticsNodeInteraction assertHeightIsAtLeast(androidx.xr.compose.testing.SubspaceSemanticsNodeInteraction, androidx.compose.ui.unit.Dp expectedMinHeight);
     method @BytecodeOnly @RestrictTo({androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX}) @com.google.errorprone.annotations.CanIgnoreReturnValue public static androidx.xr.compose.testing.SubspaceSemanticsNodeInteraction assertHeightIsAtLeast-3ABfNKs(androidx.xr.compose.testing.SubspaceSemanticsNodeInteraction, float);
     method @KotlinOnly @RestrictTo({androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX}) @com.google.errorprone.annotations.CanIgnoreReturnValue public static androidx.xr.compose.testing.SubspaceSemanticsNodeInteraction assertHeightIsEqualTo(androidx.xr.compose.testing.SubspaceSemanticsNodeInteraction, androidx.compose.ui.unit.Dp expectedHeight);
@@ -109,7 +111,7 @@ package androidx.xr.compose.testing {
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class TestActivitySpace implements androidx.xr.runtime.internal.ActivitySpace {
-    ctor public TestActivitySpace(androidx.xr.runtime.internal.ActivitySpace fakeRuntimeActivitySpaceBase, optional androidx.xr.runtime.math.Pose activitySpacePose, optional androidx.xr.runtime.math.Vector3 activitySpaceScale);
+    ctor public TestActivitySpace(androidx.xr.runtime.internal.ActivitySpace fakeRuntimeActivitySpaceBase, optional androidx.xr.runtime.math.Pose activitySpacePose, optional androidx.xr.runtime.math.Vector3 activitySpaceScale, optional androidx.xr.runtime.math.BoundingBox recommendedContentBoxInFullSpace);
     method @InaccessibleFromJava public void addChild(androidx.xr.runtime.internal.Entity child);
     method @InaccessibleFromJava public void addChildren(java.util.List<androidx.xr.runtime.internal.Entity> children);
     method @InaccessibleFromJava public boolean addComponent(androidx.xr.runtime.internal.Component component);
@@ -126,7 +128,7 @@ package androidx.xr.compose.testing {
     method @BytecodeOnly public CharSequence getContentDescription();
     method @BytecodeOnly public androidx.xr.runtime.internal.Entity? getParent();
     method @InaccessibleFromJava public androidx.xr.runtime.math.Pose getPose(int relativeTo);
-    method @BytecodeOnly public androidx.xr.runtime.math.BoundingBox getRecommendedContentBoxInFullSpace();
+    method public androidx.xr.runtime.math.BoundingBox getRecommendedContentBoxInFullSpace();
     method public androidx.xr.runtime.math.Vector3 getScale(int relativeTo);
     method @BytecodeOnly public androidx.xr.runtime.math.Vector3 getWorldSpaceScale();
     method @InaccessibleFromJava public com.google.common.util.concurrent.ListenableFuture<androidx.xr.runtime.internal.HitTestResult> hitTest(androidx.xr.runtime.math.Vector3 origin, androidx.xr.runtime.math.Vector3 direction, int hitTestFilter);

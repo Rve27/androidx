@@ -47,6 +47,7 @@ import androidx.xr.runtime.internal.HitTestResult
 import androidx.xr.runtime.internal.JxrPlatformAdapter
 import androidx.xr.runtime.internal.PanelEntity
 import androidx.xr.runtime.internal.PixelDimensions
+import androidx.xr.runtime.math.BoundingBox
 import androidx.xr.runtime.math.FloatSize3d
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Vector3
@@ -198,6 +199,11 @@ public class TestActivitySpace(
     private val fakeRuntimeActivitySpaceBase: ActivitySpace,
     override var activitySpacePose: Pose = Pose.Identity,
     override var activitySpaceScale: Vector3 = Vector3(1f, 1f, 1f),
+    override val recommendedContentBoxInFullSpace: BoundingBox =
+        BoundingBox(
+            min = Vector3(-1.73f / 2, -1.61f / 2, -0.5f / 2),
+            max = Vector3(1.73f / 2, 1.61f / 2, 0.5f / 2),
+        ),
 ) : ActivitySpace by fakeRuntimeActivitySpaceBase {
 
     override fun getScale(relativeTo: Int): Vector3 {
