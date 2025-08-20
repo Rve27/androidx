@@ -63,7 +63,7 @@ internal abstract class AuthenticationResultDispatcher(
      */
     open fun onAuthenticationError(errorCode: Int, errorMessage: CharSequence?) {
         // Ensure we're only sending publicly defined errors.
-        val knownErrorCode = ErrorUtils.toKnownErrorCode(errorCode)
+        val knownErrorCode = ErrorUtils.toKnownErrorCodeForAuthenticate(errorCode)
         val errorString = errorMessage ?: context.getString(R.string.default_error_msg)
 
         sendErrorAndDismiss(knownErrorCode, errorString)
