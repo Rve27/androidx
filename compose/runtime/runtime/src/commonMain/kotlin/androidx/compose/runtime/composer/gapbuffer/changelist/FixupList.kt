@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package androidx.compose.runtime.changelist
+package androidx.compose.runtime.composer.gapbuffer.changelist
 
-import androidx.compose.runtime.Anchor
 import androidx.compose.runtime.Applier
-import androidx.compose.runtime.RememberManager
-import androidx.compose.runtime.SlotWriter
-import androidx.compose.runtime.changelist.Operation.InsertNodeFixup
-import androidx.compose.runtime.changelist.Operation.PostInsertNodeFixup
-import androidx.compose.runtime.changelist.Operation.UpdateNode
+import androidx.compose.runtime.composer.DebugStringFormattable
+import androidx.compose.runtime.composer.RememberManager
+import androidx.compose.runtime.composer.gapbuffer.GapAnchor
+import androidx.compose.runtime.composer.gapbuffer.SlotWriter
 import androidx.compose.runtime.runtimeCheck
+import androidx.compose.runtime.tooling.OperationErrorContext
 
-internal class FixupList : OperationsDebugStringFormattable() {
+internal class FixupList : DebugStringFormattable() {
     private val operations = Operations()
     private val pendingOperations = Operations()
 
@@ -59,16 +58,16 @@ internal class FixupList : OperationsDebugStringFormattable() {
         )
     }
 
-    fun createAndInsertNode(factory: () -> Any?, insertIndex: Int, groupAnchor: Anchor) {
-        operations.push(InsertNodeFixup) {
-            setObject(InsertNodeFixup.Factory, factory)
-            setInt(InsertNodeFixup.InsertIndex, insertIndex)
-            setObject(InsertNodeFixup.GroupAnchor, groupAnchor)
+    fun createAndInsertNode(factory: () -> Any?, insertIndex: Int, groupAnchor: GapAnchor) {
+        operations.push(Operation.InsertNodeFixup) {
+            setObject(Operation.InsertNodeFixup.Factory, factory)
+            setInt(Operation.InsertNodeFixup.InsertIndex, insertIndex)
+            setObject(Operation.InsertNodeFixup.GroupAnchor, groupAnchor)
         }
 
-        pendingOperations.push(PostInsertNodeFixup) {
-            setInt(PostInsertNodeFixup.InsertIndex, insertIndex)
-            setObject(PostInsertNodeFixup.GroupAnchor, groupAnchor)
+        pendingOperations.push(Operation.PostInsertNodeFixup) {
+            setInt(Operation.PostInsertNodeFixup.InsertIndex, insertIndex)
+            setObject(Operation.PostInsertNodeFixup.GroupAnchor, groupAnchor)
         }
     }
 
@@ -80,9 +79,12 @@ internal class FixupList : OperationsDebugStringFormattable() {
     }
 
     fun <V, T> updateNode(value: V, block: T.(V) -> Unit) {
-        operations.push(UpdateNode) {
-            setObject(UpdateNode.Value, value)
-            setObject(UpdateNode.Block, @Suppress("UNCHECKED_CAST") (block as Any?.(Any?) -> Unit))
+        operations.push(Operation.UpdateNode) {
+            setObject(Operation.UpdateNode.Value, value)
+            setObject(
+                Operation.UpdateNode.Block,
+                @Suppress("UNCHECKED_CAST") (block as Any?.(Any?) -> Unit),
+            )
         }
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,11 @@
  * limitations under the License.
  */
 
-package androidx.compose.runtime.tooling
+package androidx.compose.runtime.composer.gapbuffer
 
 import androidx.compose.runtime.InternalComposeApi
-import androidx.compose.runtime.SlotTable
-import androidx.compose.runtime.group
-import androidx.compose.runtime.grouplessCall
-import androidx.compose.runtime.insert
-import androidx.compose.runtime.nodeGroup
+import androidx.compose.runtime.tooling.CompositionData
+import androidx.compose.runtime.tooling.CompositionGroup
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith

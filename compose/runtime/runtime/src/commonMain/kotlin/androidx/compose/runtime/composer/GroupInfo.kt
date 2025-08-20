@@ -14,15 +14,20 @@
  * limitations under the License.
  */
 
-package androidx.compose.runtime
+package androidx.compose.runtime.composer
 
-import androidx.annotation.CheckResult
+internal class GroupInfo(
+    /**
+     * The current location of the slot relative to the start location of the pending slot changes
+     */
+    var slotIndex: Int,
 
-// TODO: It's not required anymore, but was declared as public previously.
-//  `metalava` won't detect removing this API because typealias doesn't
-//  introduce a new type in runtime.
-@Deprecated(
-    message = "It was never intended to be public",
-    replaceWith = ReplaceWith("androidx.annotation.CheckResult"),
+    /**
+     * The current location of the first node relative the start location of the pending node
+     * changes
+     */
+    var nodeIndex: Int,
+
+    /** The current number of nodes the group contains after changes have been applied */
+    var nodeCount: Int,
 )
-public typealias CheckResult = CheckResult

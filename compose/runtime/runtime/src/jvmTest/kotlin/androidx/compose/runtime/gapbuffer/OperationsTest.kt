@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,21 @@
  * limitations under the License.
  */
 
-package androidx.compose.runtime.changelist
+package androidx.compose.runtime.gapbuffer
 
 import androidx.compose.runtime.EnableDebugRuntimeChecks
-import androidx.compose.runtime.changelist.Operation.ObjectParameter
-import androidx.compose.runtime.changelist.TestOperations.MixedOperation
-import androidx.compose.runtime.changelist.TestOperations.NoArgsOperation
-import androidx.compose.runtime.changelist.TestOperations.OneIntOperation
-import androidx.compose.runtime.changelist.TestOperations.OneObjectOperation
-import androidx.compose.runtime.changelist.TestOperations.ThreeIntsOperation
-import androidx.compose.runtime.changelist.TestOperations.ThreeObjectsOperation
-import androidx.compose.runtime.changelist.TestOperations.TwoIntsOperation
-import androidx.compose.runtime.changelist.TestOperations.TwoObjectsOperation
+import androidx.compose.runtime.composer.gapbuffer.changelist.Operation
+import androidx.compose.runtime.composer.gapbuffer.changelist.Operation.ObjectParameter
+import androidx.compose.runtime.composer.gapbuffer.changelist.Operations
+import androidx.compose.runtime.composer.gapbuffer.changelist.OperationsInitialCapacity
+import androidx.compose.runtime.composer.gapbuffer.changelist.TestOperations.MixedOperation
+import androidx.compose.runtime.composer.gapbuffer.changelist.TestOperations.NoArgsOperation
+import androidx.compose.runtime.composer.gapbuffer.changelist.TestOperations.OneIntOperation
+import androidx.compose.runtime.composer.gapbuffer.changelist.TestOperations.OneObjectOperation
+import androidx.compose.runtime.composer.gapbuffer.changelist.TestOperations.ThreeIntsOperation
+import androidx.compose.runtime.composer.gapbuffer.changelist.TestOperations.ThreeObjectsOperation
+import androidx.compose.runtime.composer.gapbuffer.changelist.TestOperations.TwoIntsOperation
+import androidx.compose.runtime.composer.gapbuffer.changelist.TestOperations.TwoObjectsOperation
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.declaredMembers
 import kotlin.reflect.jvm.isAccessible

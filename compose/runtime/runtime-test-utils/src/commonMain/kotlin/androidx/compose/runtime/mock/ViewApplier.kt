@@ -90,6 +90,11 @@ class ViewApplier(root: View) : AbstractApplier<View>(root) {
         super.up()
         called = true
     }
+
+    override fun apply(block: View.(Any?) -> Unit, value: Any?) {
+        super.apply(block, value)
+        called = true
+    }
 }
 
 private sealed class Operation

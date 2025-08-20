@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
-package androidx.compose.runtime
+package androidx.compose.runtime.composer.gapbuffer.changelist
 
-import androidx.annotation.CheckResult
+internal object TestOperations {
+    val NoArgsOperation = Operation.TestOperation()
 
-// TODO: It's not required anymore, but was declared as public previously.
-//  `metalava` won't detect removing this API because typealias doesn't
-//  introduce a new type in runtime.
-@Deprecated(
-    message = "It was never intended to be public",
-    replaceWith = ReplaceWith("androidx.annotation.CheckResult"),
-)
-public typealias CheckResult = CheckResult
+    val OneIntOperation = Operation.TestOperation(ints = 1)
+    val TwoIntsOperation = Operation.TestOperation(ints = 2)
+    val ThreeIntsOperation = Operation.TestOperation(ints = 3)
+
+    val OneObjectOperation = Operation.TestOperation(objects = 1)
+    val TwoObjectsOperation = Operation.TestOperation(objects = 2)
+    val ThreeObjectsOperation = Operation.TestOperation(objects = 3)
+
+    val MixedOperation = Operation.TestOperation(ints = 2, objects = 2)
+}

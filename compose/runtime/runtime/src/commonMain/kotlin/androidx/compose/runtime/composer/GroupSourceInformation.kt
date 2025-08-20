@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-package androidx.compose.runtime
+package androidx.compose.runtime.composer
 
-import androidx.annotation.CheckResult
-
-// TODO: It's not required anymore, but was declared as public previously.
-//  `metalava` won't detect removing this API because typealias doesn't
-//  introduce a new type in runtime.
-@Deprecated(
-    message = "It was never intended to be public",
-    replaceWith = ReplaceWith("androidx.annotation.CheckResult"),
-)
-public typealias CheckResult = CheckResult
+internal interface GroupSourceInformation {
+    val closed: Boolean
+    val dataEndOffset: Int
+    val dataStartOffset: Int
+    val key: Int
+    val sourceInformation: String?
+    val groups: ArrayList<Any /* Anchor | GroupSourceInformation */>?
+}
