@@ -36,7 +36,8 @@ import androidx.navigationevent.NavigationEventState.InProgress
  * @property visibleEntries A list of unique keys for the visible navigation destinations, typically
  *   ordered from the bottom to the top of the back stack.
  */
-internal class NavDisplayInfo(val visibleEntries: List<Any>) : NavigationEventInfo {
+public class NavDisplayInfo internal constructor(public val visibleEntries: List<Any>) :
+    NavigationEventInfo {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
