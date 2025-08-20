@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.compose.integration.hero.pokedex.macrobenchmark
-
-import android.content.Context
-import androidx.compose.integration.hero.pokedex.macrobenchmark.PokedexConstants.POKEDEX_DATABASE_NAME
-import androidx.test.platform.app.InstrumentationRegistry
+package androidx.compose.integration.hero.pokedex.macrobenchmark.internal
 
 internal object PokedexConstants {
     const val POKEDEX_TARGET_PACKAGE_NAME =
@@ -30,10 +26,4 @@ internal object PokedexConstants {
         const val POKEDEX_ENABLE_SHARED_ELEMENT_TRANSITIONS = "enableSharedElementTransitions"
         const val POKEDEX_START_DESTINATION = "startDestination"
     }
-}
-
-internal fun resetPokedexDatabase(
-    context: Context = InstrumentationRegistry.getInstrumentation().targetContext
-) {
-    context.deleteDatabase(POKEDEX_DATABASE_NAME)
 }
