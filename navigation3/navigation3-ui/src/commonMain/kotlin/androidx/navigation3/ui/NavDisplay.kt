@@ -37,6 +37,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -203,18 +204,23 @@ public fun <T : Any> NavDisplay(
             }
 
         // Predictive Back Handling
-        val gestureState by
+
+        val navigationEventDispatcher =
             checkNotNull(LocalNavigationEventDispatcherOwner.current) {
                     "No NavigationEventDispatcher was provided via LocalNavigationEventDispatcherOwner"
                 }
                 .navigationEventDispatcher
-                .state
-                .collectAsState()
 
-        // Only treat as predictive back if the gesture came from NavDisplay itself.
-        // Without this check, all NavigationEventHandler instances would match.
-        val inPredictiveBack =
-            gestureState is InProgress && gestureState.currentInfo is NavDisplayInfo
+        val gestureScope = rememberCoroutineScope()
+        val currentInfo = NavDisplayInfo(scene.entries.fastMap { it.contentKey })
+        val gestureStateFlow = remember {
+            // Only treat as predictive back if the gesture came from NavDisplay itself.
+            // Without this, all `NavigationEventHandler` instances would match.
+            navigationEventDispatcher.getState(gestureScope, initialInfo = currentInfo)
+        }
+        val gestureState by gestureStateFlow.collectAsState()
+
+        val inPredictiveBack = gestureState is InProgress
         val progress = gestureState.progress
         val swipeEdge =
             when (val currentGestureState = gestureState) {
@@ -223,7 +229,7 @@ public fun <T : Any> NavDisplay(
             }
 
         NavigationEventHandler(
-            currentInfo = NavDisplayInfo(scene.entries.fastMap { it.contentKey }),
+            currentInfo = currentInfo,
             previousInfo = NavDisplayInfo(scene.previousEntries.fastMap { it.contentKey }),
             enabled = scene.previousEntries.isNotEmpty(),
         ) { progress ->
