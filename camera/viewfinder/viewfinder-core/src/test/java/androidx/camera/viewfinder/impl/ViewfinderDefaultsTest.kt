@@ -18,7 +18,7 @@ package androidx.camera.viewfinder.impl
 
 import android.os.Build
 import androidx.camera.viewfinder.core.ImplementationMode
-import androidx.camera.viewfinder.core.impl.ImplementationModeCompat
+import androidx.camera.viewfinder.core.ViewfinderDefaults
 import androidx.camera.viewfinder.core.impl.quirk.DeviceQuirks
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
@@ -33,7 +33,7 @@ import org.robolectric.util.ReflectionHelpers
 
 @RunWith(RobolectricTestRunner::class)
 @DoNotInstrument // Needed for Robolectric to correctly instrument classes in the same module
-class ImplementationModeCompatTest {
+class ViewfinderDefaultsTest {
     private lateinit var originalManufacturer: String
     private lateinit var originalDevice: String
     private lateinit var originalModel: String
@@ -62,8 +62,7 @@ class ImplementationModeCompatTest {
     // Both LOLLIPOP (21/22) and N (24) should result in EMBEDDED.
     @Config(maxSdk = Build.VERSION_CODES.N)
     fun chooseCompatibleMode_returnsEmbedded_onApi24AndBelow() {
-        assertThat(ImplementationModeCompat.chooseCompatibleMode())
-            .isEqualTo(ImplementationMode.EMBEDDED)
+        assertThat(ViewfinderDefaults.implementationMode).isEqualTo(ImplementationMode.EMBEDDED)
     }
 
     @Test
@@ -71,8 +70,7 @@ class ImplementationModeCompatTest {
     // N_MR1 (25) and higher should result in EXTERNAL.
     @Config(minSdk = Build.VERSION_CODES.N_MR1)
     fun chooseCompatibleMode_returnsExternal_onApi25AndAbove() {
-        assertThat(ImplementationModeCompat.chooseCompatibleMode())
-            .isEqualTo(ImplementationMode.EXTERNAL)
+        assertThat(ViewfinderDefaults.implementationMode).isEqualTo(ImplementationMode.EXTERNAL)
     }
 
     // --- Tests for SurfaceViewNotCroppedByParentQuirk (e.g., Redmi Note 10) ---
@@ -197,8 +195,7 @@ class ImplementationModeCompatTest {
 
         setBuildPropertiesAndReload(manufacturer = manufacturer, device = device, model = model)
 
-        assertThat(ImplementationModeCompat.chooseCompatibleMode())
-            .isEqualTo(expectedImplementationMode)
+        assertThat(ViewfinderDefaults.implementationMode).isEqualTo(expectedImplementationMode)
     }
 
     private fun setBuildPropertiesAndReload(
