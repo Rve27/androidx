@@ -24,7 +24,6 @@ import android.view.View.MeasureSpec
 import androidx.annotation.RestrictTo
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.runtime.Applier
 import androidx.compose.runtime.Composable
@@ -451,16 +450,27 @@ public fun SpatialPanel(
         val dialogManager = LocalDialogManager.current
         val isDialogActive = dialogManager.isSpatialDialogActive.value
 
-        CompositionLocalProvider(LocalOpaqueEntity provides corePanelEntity, content = content)
+        // The root is a Box. Its size is determined by its content.
+        Box {
+            // The user's content is the first child. It determines the size of the parent Box.
+            CompositionLocalProvider(LocalOpaqueEntity provides corePanelEntity, content = content)
 
-        if (isDialogActive) {
-            Box(
-                modifier =
-                    Modifier.fillMaxSize().pointerInput(Unit) {
-                        detectTapGestures { dialogManager.isSpatialDialogActive.value = false }
-                    }
-            ) {}
+            // The scrim for input handling. It uses matchParentSize to avoid affecting
+            // the measurement of the parent Box.
+            if (isDialogActive) {
+                Box(
+                    modifier =
+                        Modifier.matchParentSize() // This sizes the overlay without affecting the
+                            // parent's size.
+                            .pointerInput(Unit) {
+                                detectTapGestures {
+                                    dialogManager.isSpatialDialogActive.value = false
+                                }
+                            }
+                )
+            }
         }
+
         SideEffect {
             view.foreground =
                 if (isDialogActive) {
