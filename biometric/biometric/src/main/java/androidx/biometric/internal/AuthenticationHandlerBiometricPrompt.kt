@@ -44,6 +44,14 @@ import java.util.concurrent.Executor
 
 private const val TAG = "AuthHandlerBP"
 
+/**
+ * An [AuthenticationHandler] that uses the framework [android.hardware.biometrics.BiometricPrompt]
+ * for handling the authentication flow.
+ *
+ * This handler is responsible for constructing and displaying the system biometric prompt based on
+ * the configuration provided in the [BiometricViewModel], and processing the results. It uses an
+ * internal [AuthenticationManager] to manage state and interactions.
+ */
 internal class AuthenticationHandlerBiometricPrompt(
     val context: Context,
     lifecycleOwner: LifecycleOwner,

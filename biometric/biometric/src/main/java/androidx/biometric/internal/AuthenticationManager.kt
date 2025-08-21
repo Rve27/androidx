@@ -249,6 +249,7 @@ internal class AuthenticationManager(
     /** Removes any associated UI from the client activity/fragment. */
     fun dismiss() {
         viewModel.setPromptShowing(false)
+        viewModel.setConfirmingDeviceCredential(false)
 
         // Wait before showing again to work around a dismissal logic issue on API 29 (b/157783075).
         if (DeviceUtils.shouldDelayShowingPrompt(context, Build.MODEL)) {
