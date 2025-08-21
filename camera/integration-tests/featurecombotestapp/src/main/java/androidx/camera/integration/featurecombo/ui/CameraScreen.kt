@@ -92,7 +92,7 @@ fun CameraScreen(viewModel: CameraViewModel = viewModel()) {
         onFeatureUpdated = { featureUi, newValueIndex ->
             viewModel.updateFeature(featureUi, newValueIndex, lifecycleOwner)
         },
-        onReset = { viewModel.resetFeatureCombination(lifecycleOwner) },
+        onReset = { viewModel.resetUseCasesAndFeatureCombo(lifecycleOwner) },
     )
 }
 
