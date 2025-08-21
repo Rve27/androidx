@@ -414,5 +414,6 @@ w[:] file[:]//[$]SUPPORT/tracing/.* This code uses error suppression for 'OPTION
 # > Task :glance:glance-wear-tiles:compileReleaseKotlin
 w: file://\$SUPPORT/glance/glance\-wear\-tiles/integration.* is deprecated\. glance\-wear\-tiles is deprecated and will be removed\.
 w: file://\$SUPPORT/glance/glance\-wear\-tiles/src/.* is deprecated\. glance\-wear\-tiles is deprecated and will be removed\.
-
-
+# b/438815669
+WARNING: skipping method .*
+Warning: mismatched arity: .*
