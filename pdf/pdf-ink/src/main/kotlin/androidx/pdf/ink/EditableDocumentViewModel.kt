@@ -35,6 +35,8 @@ import androidx.pdf.annotation.manager.AnnotationsManager
 import androidx.pdf.annotation.models.AnnotationsDisplayState
 import androidx.pdf.annotation.models.PdfAnnotation
 import androidx.pdf.annotation.models.PdfAnnotationData
+import androidx.pdf.ink.edits.AnnotationEditOperationsHandler
+import androidx.pdf.ink.history.AnnotationEditsHistoryManager
 import androidx.pdf.viewer.fragment.PdfDocumentViewModel
 import java.util.concurrent.Executors
 import kotlinx.coroutines.asCoroutineDispatcher
@@ -47,6 +49,9 @@ import kotlinx.coroutines.launch
 @RestrictTo(RestrictTo.Scope.LIBRARY)
 internal class EditableDocumentViewModel(private val state: SavedStateHandle, loader: PdfLoader) :
     PdfDocumentViewModel(state, loader) {
+    private lateinit var editsHistoryManager: AnnotationEditsHistoryManager
+    private lateinit var editOperationsHandler: AnnotationEditOperationsHandler
+
     private val _annotationDisplayStateFlow = MutableStateFlow(AnnotationsDisplayState.EMPTY)
 
     internal val annotationsDisplayStateFlow: StateFlow<AnnotationsDisplayState> =
@@ -79,6 +84,11 @@ internal class EditableDocumentViewModel(private val state: SavedStateHandle, lo
             state[EDIT_MODE_ENABLED_KEY] = false
             state[DOCUMENT_URI_KEY] = documentUri
             editablePdfDocument = document
+            editsHistoryManager = AnnotationEditsHistoryManager()
+            editOperationsHandler =
+                AnnotationEditOperationsHandler(document, editsHistoryManager) {
+                    _annotationDisplayStateFlow
+                }
 
             _annotationDisplayStateFlow.value =
                 AnnotationsDisplayState(
@@ -94,15 +104,14 @@ internal class EditableDocumentViewModel(private val state: SavedStateHandle, lo
     }
 
     /** Adds a [PdfAnnotation] to the draft state. */
-    fun addDraftAnnotation(annotation: PdfAnnotation) {
-        val document = editablePdfDocument
-        if (document != null) {
-            val unused = document.addEdit(annotation)
-            _annotationDisplayStateFlow.update { currentState ->
-                currentState.copy(edits = document.getAllEdits())
-            }
-        }
-    }
+    fun addDraftAnnotation(annotation: PdfAnnotation) =
+        editOperationsHandler.addDraftAnnotation(annotation)
+
+    /** Undoes the last edit operation. */
+    fun undo() = editOperationsHandler.undo()
+
+    /** Redoes the last undo edit operation. */
+    fun redo() = editOperationsHandler.redo()
 
     /** Updates the transformation matrices for rendering annotations. */
     fun updateTransformationMatrices(transformationMatrices: Map<Int, Matrix>) {
@@ -151,6 +160,25 @@ internal class EditableDocumentViewModel(private val state: SavedStateHandle, lo
             document.write(dest)
             onCompletion()
         }
+    }
+
+    /**
+     * Checks for unsaved changes by verifying if there are any edits in the edits history.
+     *
+     * @return `true` if unsaved changes exist, `false` if the document is not loaded or there are
+     *   no changes.
+     */
+    fun hasUnsavedChanges(): Boolean = editablePdfDocument != null && editsHistoryManager.canUndo()
+
+    /** Discards all uncommitted edits, reverting the document to its last saved state. */
+    fun discardUnsavedChanges() {
+        val document = editablePdfDocument ?: return
+
+        document.clearUncommittedEdits()
+        _annotationDisplayStateFlow.update { displayState ->
+            displayState.copy(edits = document.getAllEdits())
+        }
+        isEditModeEnabled = false
     }
 
     @Suppress("UNCHECKED_CAST")

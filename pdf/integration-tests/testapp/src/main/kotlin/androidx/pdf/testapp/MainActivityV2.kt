@@ -54,6 +54,8 @@ internal class MainActivityV2 : AppCompatActivity() {
 
     private lateinit var searchButton: MaterialButton
     private lateinit var openPdfButton: MaterialButton
+    private lateinit var undoPdfButton: MaterialButton
+    private lateinit var redoPdfButton: MaterialButton
     private lateinit var preferenceButton: ImageButton
 
     private val settingsDialog: FeaturePreferencesDialog by lazy { FeaturePreferencesDialog(this) }
@@ -110,11 +112,17 @@ internal class MainActivityV2 : AppCompatActivity() {
         searchButton = findViewById(R.id.search_pdf_button)
         preferenceButton = findViewById(R.id.preference_button)
         savePdfButton = findViewById(R.id.save_pdf_button)
+        undoPdfButton = findViewById(R.id.undo_pdf_button)
+        redoPdfButton = findViewById(R.id.redo_pdf_button)
 
         if (pdfViewerFragment is EditablePdfViewerFragment) {
             savePdfButton.visibility = View.VISIBLE
+            undoPdfButton.visibility = View.VISIBLE
+            redoPdfButton.visibility = View.VISIBLE
         } else {
             savePdfButton.visibility = View.GONE
+            undoPdfButton.visibility = View.GONE
+            redoPdfButton.visibility = View.GONE
         }
 
         openPdfButton.setOnClickListener { filePicker.launch(MIME_TYPE_PDF) }
@@ -123,6 +131,18 @@ internal class MainActivityV2 : AppCompatActivity() {
 
         preferenceButton.setOnClickListener { view -> settingsDialog.show() }
         savePdfButton.setOnClickListener { createDocumentLauncher.launch(MIME_TYPE_PDF) }
+        undoPdfButton.setOnClickListener {
+            val localFragment = pdfViewerFragment
+            if (localFragment is EditablePdfViewerFragment) {
+                localFragment.undo()
+            }
+        }
+        redoPdfButton.setOnClickListener {
+            val localFragment = pdfViewerFragment
+            if (localFragment is EditablePdfViewerFragment) {
+                localFragment.redo()
+            }
+        }
     }
 
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 13)

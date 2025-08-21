@@ -93,6 +93,12 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
         }
     }
 
+    /** Undoes the last edit. If there are no more edits to undo, this is a no-op. */
+    public fun undo(): Unit = annotationsViewModel.undo()
+
+    /** Redoes the last undone edit. If there are no more edits to redo, this is a no-op. */
+    public fun redo(): Unit = annotationsViewModel.redo()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -210,15 +216,31 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
 
     private fun setupBackPressedCallback() {
         backPressedCallback =
-            object : OnBackPressedCallback(false) {
-                    override fun handleOnBackPressed() {
-                        // TODO: b/426125449 - Add a dialog box for saving or discarding changes.
+            object : OnBackPressedCallback(enabled = false) {
+                override fun handleOnBackPressed() {
+                    if (annotationsViewModel.hasUnsavedChanges()) {
+                        showDiscardChangesDialog()
+                    } else {
                         annotationsViewModel.isEditModeEnabled = false
                     }
                 }
-                .also {
-                    requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, it)
-                }
+            }
+        requireActivity()
+            .onBackPressedDispatcher
+            .addCallback(viewLifecycleOwner, backPressedCallback)
+    }
+
+    private fun showDiscardChangesDialog() {
+        val dialog =
+            (childFragmentManager.findFragmentByTag(DISCARD_CHANGES_DIALOG_TAG)
+                as? DiscardChangesDialog)
+                ?: DiscardChangesDialog(
+                    onDiscardChanges = annotationsViewModel::discardUnsavedChanges
+                )
+
+        if (!dialog.isAdded) {
+            dialog.show(childFragmentManager, DISCARD_CHANGES_DIALOG_TAG)
+        }
     }
 
     private fun updateAnnotationsView(displayState: AnnotationsDisplayState) {
@@ -331,5 +353,9 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
         override fun dispatchTouchEvent(event: MotionEvent): Boolean {
             return pdfView.onTouchEvent(event)
         }
+    }
+
+    private companion object {
+        private const val DISCARD_CHANGES_DIALOG_TAG = "DiscardChangesDialog"
     }
 }
