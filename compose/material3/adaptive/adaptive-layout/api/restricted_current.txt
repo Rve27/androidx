@@ -389,6 +389,15 @@ package androidx.compose.material3.adaptive.layout {
     method @BytecodeOnly @SuppressCompatibility @androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi public static androidx.compose.material3.adaptive.layout.PaneScaffoldDirective calculatePaneScaffoldDirectiveWithTwoPanesOnMediumWidth-A-ymEG0(androidx.compose.material3.adaptive.WindowAdaptiveInfo, int);
   }
 
+  @SuppressCompatibility @androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi public sealed interface PaneScaffoldHorizontalOrder<Role extends androidx.compose.material3.adaptive.layout.PaneScaffoldRole> {
+    method public void forEach(kotlin.jvm.functions.Function1<? super Role,kotlin.Unit> action);
+    method public void forEachIndexed(kotlin.jvm.functions.Function2<? super java.lang.Integer,? super Role,kotlin.Unit> action);
+    method public void forEachIndexedReversed(kotlin.jvm.functions.Function2<? super java.lang.Integer,? super Role,kotlin.Unit> action);
+    method public int getSize();
+    method public int indexOf(Role role);
+    property public abstract int size;
+  }
+
   @SuppressCompatibility @androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi public sealed interface PaneScaffoldMotionDataProvider<Role extends androidx.compose.material3.adaptive.layout.PaneScaffoldRole> {
     method public operator androidx.compose.material3.adaptive.layout.PaneMotionData get(int index);
     method public operator androidx.compose.material3.adaptive.layout.PaneMotionData get(Role role);
@@ -511,7 +520,7 @@ package androidx.compose.material3.adaptive.layout {
     property public androidx.compose.material3.adaptive.layout.ThreePaneScaffoldRole pane;
   }
 
-  @SuppressCompatibility @androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi @androidx.compose.runtime.Immutable public final class ThreePaneScaffoldHorizontalOrder {
+  @SuppressCompatibility @androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi @androidx.compose.runtime.Immutable public final class ThreePaneScaffoldHorizontalOrder implements androidx.compose.material3.adaptive.layout.PaneScaffoldHorizontalOrder<androidx.compose.material3.adaptive.layout.ThreePaneScaffoldRole> {
     method public void forEach(kotlin.jvm.functions.Function1<? super androidx.compose.material3.adaptive.layout.ThreePaneScaffoldRole,kotlin.Unit> action);
     method public void forEachIndexed(kotlin.jvm.functions.Function2<? super java.lang.Integer,? super androidx.compose.material3.adaptive.layout.ThreePaneScaffoldRole,kotlin.Unit> action);
     method public void forEachIndexedReversed(kotlin.jvm.functions.Function2<? super java.lang.Integer,? super androidx.compose.material3.adaptive.layout.ThreePaneScaffoldRole,kotlin.Unit> action);
