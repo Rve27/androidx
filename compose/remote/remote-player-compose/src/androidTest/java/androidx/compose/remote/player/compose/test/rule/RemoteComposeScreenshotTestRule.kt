@@ -106,7 +106,6 @@ class RemoteComposeScreenshotTestRule(moduleDirectory: String) : TestRule {
                 modifier =
                     Modifier.Companion.width(size.width.dp)
                         .height(size.height.dp)
-                        .background(Color.Companion.Black)
                         .testTag("playerRoot")
             ) {
                 if (outerContent != null) {

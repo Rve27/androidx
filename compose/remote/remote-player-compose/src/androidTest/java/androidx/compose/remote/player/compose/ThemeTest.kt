@@ -24,20 +24,15 @@ import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
 import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_UNSPECIFIED
 import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES
 import androidx.compose.remote.core.CoreDocument
-import androidx.compose.remote.core.operations.Header
 import androidx.compose.remote.core.operations.Theme
-import androidx.compose.remote.creation.RemoteComposeContextAndroid
-import androidx.compose.remote.creation.RemoteComposeWriter
-import androidx.compose.remote.creation.platform.AndroidxPlatformServices
 import androidx.compose.remote.frontend.layout.RemoteComposable
 import androidx.compose.remote.player.compose.test.rule.RemoteComposeScreenshotTestRule
-import androidx.compose.remote.player.view.RemoteComposeDocument
+import androidx.compose.remote.player.compose.test.util.getCoreDocument
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.DarkMode
 import androidx.compose.ui.test.DeviceConfigurationOverride
 import androidx.test.filters.MediumTest
 import androidx.test.filters.SdkSuppress
-import java.io.ByteArrayInputStream
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -316,20 +311,5 @@ class ThemeTest {
             painter.setColor(Color.GREEN).commit()
             drawTextAnchored("Light theme", 0f, 300f, -1f, 0f, 0)
         }
-    }
-
-    private fun getCoreDocument(content: RemoteComposeContextAndroid.() -> Unit): CoreDocument {
-        val rcContext =
-            RemoteComposeContextAndroid(
-                AndroidxPlatformServices(),
-                RemoteComposeWriter.HTag(Header.DOC_CONTENT_DESCRIPTION, "Test"),
-                RemoteComposeWriter.HTag(Header.DOC_DESIRED_FPS, 120),
-            ) {
-                apply(content)
-            }
-        return RemoteComposeDocument(
-                ByteArrayInputStream(rcContext.mRemoteWriter.buffer(), 0, rcContext.bufferSize())
-            )
-            .document
     }
 }
