@@ -192,11 +192,14 @@ abstract interface androidx.compose.ui.autofill/Autofill { // androidx.compose.u
 abstract interface androidx.compose.ui.autofill/FillableData { // androidx.compose.ui.autofill/FillableData|null[0]
     open val booleanValue // androidx.compose.ui.autofill/FillableData.booleanValue|{}booleanValue[0]
         open fun <get-booleanValue>(): kotlin/Boolean? // androidx.compose.ui.autofill/FillableData.booleanValue.<get-booleanValue>|<get-booleanValue>(){}[0]
+    open val dateMillisValue // androidx.compose.ui.autofill/FillableData.dateMillisValue|{}dateMillisValue[0]
+        open fun <get-dateMillisValue>(): kotlin/Long? // androidx.compose.ui.autofill/FillableData.dateMillisValue.<get-dateMillisValue>|<get-dateMillisValue>(){}[0]
     open val listIndexValue // androidx.compose.ui.autofill/FillableData.listIndexValue|{}listIndexValue[0]
         open fun <get-listIndexValue>(): kotlin/Int? // androidx.compose.ui.autofill/FillableData.listIndexValue.<get-listIndexValue>|<get-listIndexValue>(){}[0]
     open val textValue // androidx.compose.ui.autofill/FillableData.textValue|{}textValue[0]
         open fun <get-textValue>(): kotlin/CharSequence? // androidx.compose.ui.autofill/FillableData.textValue.<get-textValue>|<get-textValue>(){}[0]
 
+    open fun getDateMillisOrDefault(kotlin/Long): kotlin/Long // androidx.compose.ui.autofill/FillableData.getDateMillisOrDefault|getDateMillisOrDefault(kotlin.Long){}[0]
     open fun getListIndexOrDefault(kotlin/Int): kotlin/Int // androidx.compose.ui.autofill/FillableData.getListIndexOrDefault|getListIndexOrDefault(kotlin.Int){}[0]
 }
 
@@ -4140,6 +4143,7 @@ final fun <#A: kotlin/Any?> androidx.compose.ui.modifier/modifierLocalOf(kotlin/
 final fun androidx.compose.ui.autofill/FillableData(kotlin/Boolean): androidx.compose.ui.autofill/FillableData? // androidx.compose.ui.autofill/FillableData|FillableData(kotlin.Boolean){}[0]
 final fun androidx.compose.ui.autofill/FillableData(kotlin/CharSequence): androidx.compose.ui.autofill/FillableData? // androidx.compose.ui.autofill/FillableData|FillableData(kotlin.CharSequence){}[0]
 final fun androidx.compose.ui.autofill/FillableData(kotlin/Int): androidx.compose.ui.autofill/FillableData? // androidx.compose.ui.autofill/FillableData|FillableData(kotlin.Int){}[0]
+final fun androidx.compose.ui.autofill/FillableData(kotlin/Long): androidx.compose.ui.autofill/FillableData? // androidx.compose.ui.autofill/FillableData|FillableData(kotlin.Long){}[0]
 final fun androidx.compose.ui.autofill/androidx_compose_ui_autofill_AutofillManager$stableprop_getter(): kotlin/Int // androidx.compose.ui.autofill/androidx_compose_ui_autofill_AutofillManager$stableprop_getter|androidx_compose_ui_autofill_AutofillManager$stableprop_getter(){}[0]
 final fun androidx.compose.ui.autofill/androidx_compose_ui_autofill_AutofillNode$stableprop_getter(): kotlin/Int // androidx.compose.ui.autofill/androidx_compose_ui_autofill_AutofillNode$stableprop_getter|androidx_compose_ui_autofill_AutofillNode$stableprop_getter(){}[0]
 final fun androidx.compose.ui.autofill/androidx_compose_ui_autofill_AutofillTree$stableprop_getter(): kotlin/Int // androidx.compose.ui.autofill/androidx_compose_ui_autofill_AutofillTree$stableprop_getter|androidx_compose_ui_autofill_AutofillTree$stableprop_getter(){}[0]

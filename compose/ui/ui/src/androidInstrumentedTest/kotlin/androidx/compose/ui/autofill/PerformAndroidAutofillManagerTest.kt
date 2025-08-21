@@ -20,6 +20,7 @@ import android.graphics.Rect
 import android.text.InputType
 import android.util.SparseArray
 import android.view.View
+import android.view.View.AUTOFILL_TYPE_DATE
 import android.view.View.AUTOFILL_TYPE_TEXT
 import android.view.ViewStructure
 import android.view.autofill.AutofillValue
@@ -1382,6 +1383,43 @@ class PerformAndroidAutofillManagerTest {
                         ViewStructure(view) {
                             autofillHints = mutableListOf(HintConstants.AUTOFILL_HINT_USERNAME)
                             dataIsSensitive = true
+                            virtualId = rule.onNodeWithTag(contentTag).semanticsId()
+                        }
+                    )
+                    virtualId = AccessibilityNodeProviderCompat.HOST_VIEW_ID
+                }
+            )
+    }
+
+    @Test
+    @SmallTest
+    @SdkSuppress(minSdkVersion = 26)
+    fun populateViewStructure_contentDataType_date() {
+        // Arrange.
+        lateinit var view: View
+        val viewStructure: ViewStructure = FakeViewStructure()
+        rule.setContent {
+            view = LocalView.current
+            Box(
+                Modifier.semantics { contentDataType = ContentDataType.Date }
+                    .size(height, width)
+                    .testTag(contentTag)
+            )
+        }
+
+        // Act.
+        rule.runOnIdle {
+            // Compose does not use the Autofill flags parameter, passing in 0 as a placeholder flag
+            view.onProvideAutofillVirtualStructure(viewStructure, 0)
+        }
+
+        // Assert.
+        assertThat(viewStructure)
+            .isEqualTo(
+                ViewStructure(view) {
+                    children.add(
+                        ViewStructure(view) {
+                            autofillType = AUTOFILL_TYPE_DATE
                             virtualId = rule.onNodeWithTag(contentTag).semanticsId()
                         }
                     )
