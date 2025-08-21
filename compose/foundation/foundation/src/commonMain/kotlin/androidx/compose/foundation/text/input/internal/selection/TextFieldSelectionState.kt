@@ -885,7 +885,21 @@ internal class TextFieldSelectionState(
         }
 
         override fun onExtend(downPosition: Offset): Boolean {
+            val layoutResult = textLayoutState.layoutResult
+            if (!enabled || layoutResult == null || textFieldState.visualText.isEmpty()) {
+                return false
+            }
+
             logDebug { "Mouse.onExtend" }
+            isDoubleOrTripleClickOnly = false
+            requestFocus()
+            updateSelection(
+                dragPosition = downPosition,
+                adjustment = SelectionAdjustment.None,
+                layoutResult = layoutResult,
+                isStartOfSelection = false,
+            )
+
             return true
         }
 

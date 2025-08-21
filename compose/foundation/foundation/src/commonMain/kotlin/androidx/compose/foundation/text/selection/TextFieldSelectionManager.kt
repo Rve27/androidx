@@ -66,7 +66,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.input.pointer.PointerEvent
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.Clipboard
 import androidx.compose.ui.platform.TextToolbar
@@ -449,6 +448,7 @@ internal class TextFieldSelectionManager(val undoManager: UndoManager? = null) {
                 state?.layoutResult ?: return false
                 if (!enabled) return false
                 previousRawDragOffset = -1
+                focusRequester?.requestFocus()
                 updateMouseSelection(
                     value = value,
                     currentPosition = downPosition,
@@ -1295,9 +1295,6 @@ internal fun TextFieldSelectionManager.isSelectionHandleInVisibleBound(
 ): Boolean =
     state?.layoutCoordinates?.visibleBounds()?.containsInclusive(getHandlePosition(isStartHandle))
         ?: false
-
-// TODO(b/180075467) it should be part of PointerEvent API in one way or another
-internal expect val PointerEvent.isShiftPressed: Boolean
 
 /**
  * Optionally shows a magnifier widget, if the current platform supports it, for the current state

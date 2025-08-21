@@ -34,6 +34,7 @@ import androidx.compose.ui.input.pointer.changedToDownIgnoreConsumed
 import androidx.compose.ui.input.pointer.changedToUp
 import androidx.compose.ui.input.pointer.changedToUpIgnoreConsumed
 import androidx.compose.ui.input.pointer.isPrimaryPressed
+import androidx.compose.ui.input.pointer.isShiftPressed
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.platform.ViewConfiguration
@@ -249,7 +250,7 @@ private suspend fun AwaitPointerEventScope.mouseSelection(
     down: PointerEvent,
 ) {
     val downChange = down.changes[0]
-    if (down.isShiftPressed) {
+    if (down.keyboardModifiers.isShiftPressed) {
         val started = observer.onExtend(downChange.position)
         if (started) {
             try {
