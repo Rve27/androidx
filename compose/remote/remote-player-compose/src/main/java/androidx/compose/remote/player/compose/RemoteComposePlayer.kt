@@ -25,7 +25,7 @@ import androidx.compose.remote.player.compose.context.ComposeRemoteContext
 import androidx.compose.remote.player.view.RemoteComposeDocument
 import androidx.compose.remote.player.view.action.NamedActionHandler
 import androidx.compose.remote.player.view.action.StateUpdaterActionCallback
-import androidx.compose.remote.player.view.player.platform.SettingsRetriever
+import androidx.compose.remote.player.view.platform.SettingsRetriever
 import androidx.compose.remote.player.view.state.StateUpdater
 import androidx.compose.remote.player.view.state.StateUpdaterImpl
 import androidx.compose.runtime.Composable
