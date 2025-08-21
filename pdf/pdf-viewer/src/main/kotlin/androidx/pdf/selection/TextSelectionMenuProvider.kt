@@ -43,9 +43,9 @@ internal class TextSelectionMenuProvider(private val context: Context) :
     override suspend fun getMenuItems(selection: TextSelection): List<ContextMenuComponent> {
         val menuItems: MutableList<ContextMenuComponent> = mutableListOf()
         if (PdfFeatureFlags.isSmartActionMenuComponentEnabled) {
-            menuItems.addAll(getSmartMenuItems(selection))
+            menuItems += getSmartMenuItems(selection.text)
         }
-        menuItems.addAll(getDefaultMenuItems())
+        menuItems += getDefaultMenuItems()
         return menuItems
     }
 
@@ -82,49 +82,48 @@ internal class TextSelectionMenuProvider(private val context: Context) :
         return defaultMenuItems
     }
 
-    private suspend fun getSmartMenuItems(
-        textSelection: TextSelection
-    ): List<ContextMenuComponent> = coroutineScope {
-        val smartMenuItems: MutableList<ContextMenuComponent> = mutableListOf()
-        // Cannot add smart menu items if text classifier is not present on device
-        val localTextClassifier = textClassifier ?: return@coroutineScope smartMenuItems
-        val textLength = textSelection.text.length
-        // This is the char limit for the textClassifier library to produce
-        // any meaningful action item.
-        if (textLength > MAX_CHAR_LIMIT) {
-            return@coroutineScope smartMenuItems
-        }
-        // Make sure that the backgroundScope is active before starting classifyText operation.
-        ensureActive()
-        val textClassification =
-            localTextClassifier.classifyText(
-                textSelection.text,
-                0,
-                textLength,
-                LocaleList.getAdjustedDefault(),
-            )
-        textClassification.actions?.forEach { action ->
-            smartMenuItems.add(
-                SmartSelectionMenuComponent(
-                    key = PdfSelectionMenuKeys.SmartActionKey,
-                    label = action.title as String,
-                    contentDescription = action.contentDescription as? String?,
-                    leadingIcon = action.icon.loadDrawable(context),
-                    onClick = { pdfView ->
-                        try {
-                            sendPendingIntent(action.actionIntent)
-                        } catch (e: PendingIntent.CanceledException) {
-                            // TODO(b/431669141): Propagate Exception to Host App.
-                        } finally {
-                            close()
-                            pdfView.clearSelection()
-                        }
-                    },
+    internal suspend fun getSmartMenuItems(text: CharSequence): List<ContextMenuComponent> =
+        coroutineScope {
+            val smartMenuItems: MutableList<ContextMenuComponent> = mutableListOf()
+            // Cannot add smart menu items if text classifier is not present on device
+            val localTextClassifier = textClassifier ?: return@coroutineScope smartMenuItems
+            val textLength = text.length
+            // This is the char limit for the textClassifier library to produce
+            // any meaningful action item.
+            if (textLength > MAX_CHAR_LIMIT) {
+                return@coroutineScope smartMenuItems
+            }
+            // Make sure that the backgroundScope is active before starting classifyText operation.
+            ensureActive()
+            val textClassification =
+                localTextClassifier.classifyText(
+                    text,
+                    0,
+                    textLength,
+                    LocaleList.getAdjustedDefault(),
                 )
-            )
+            textClassification.actions?.forEach { action ->
+                smartMenuItems.add(
+                    SmartSelectionMenuComponent(
+                        key = PdfSelectionMenuKeys.SmartActionKey,
+                        label = action.title as String,
+                        contentDescription = action.contentDescription as? String?,
+                        leadingIcon = action.icon.loadDrawable(context),
+                        onClick = { pdfView ->
+                            try {
+                                sendPendingIntent(action.actionIntent)
+                            } catch (e: PendingIntent.CanceledException) {
+                                // TODO(b/431669141): Propagate Exception to Host App.
+                            } finally {
+                                close()
+                                pdfView.clearSelection()
+                            }
+                        },
+                    )
+                )
+            }
+            smartMenuItems
         }
-        smartMenuItems
-    }
 
     @Suppress("DEPRECATION")
     private fun sendIntentAllowBackgroundActivityStart(pendingIntent: PendingIntent) {
