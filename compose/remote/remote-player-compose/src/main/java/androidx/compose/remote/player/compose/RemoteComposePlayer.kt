@@ -157,7 +157,7 @@ internal fun RemoteComposePlayer(
             remoteContext.setPaintContext(
                 ComposePaintContext(remoteContext as ComposeRemoteContext, it)
             )
-            document.paint(remoteContext, 0)
+            document.paint(remoteContext, theme)
             it.restore()
         }
     }

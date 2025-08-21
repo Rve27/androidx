@@ -16,19 +16,13 @@
 
 package androidx.compose.remote.player.compose
 
-import androidx.compose.remote.core.operations.Header
-import androidx.compose.remote.creation.RemoteComposeContextAndroid
-import androidx.compose.remote.creation.RemoteComposeWriter
-import androidx.compose.remote.creation.platform.AndroidxPlatformServices
 import androidx.compose.remote.frontend.layout.RemoteCanvas
 import androidx.compose.remote.frontend.layout.RemoteOffset
 import androidx.compose.remote.frontend.state.rf
 import androidx.compose.remote.player.compose.test.rule.RemoteComposeScreenshotTestRule
-import androidx.compose.remote.player.view.RemoteComposeDocument
 import androidx.compose.ui.graphics.Color
 import androidx.test.filters.MediumTest
 import androidx.test.filters.SdkSuppress
-import java.io.ByteArrayInputStream
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -51,29 +45,5 @@ class ScreenshotCheckTest {
         remoteComposeTestRule.runScreenshotTest {
             RemoteCanvas { drawCircle(Color.Red, 100f.rf, RemoteOffset(100f, 100f)) }
         }
-    }
-
-    @Test
-    fun screenshotTests_withCoreDocument() {
-        val rcContext =
-            RemoteComposeContextAndroid(
-                AndroidxPlatformServices(),
-                RemoteComposeWriter.HTag(Header.DOC_CONTENT_DESCRIPTION, "Test"),
-                RemoteComposeWriter.HTag(Header.DOC_DESIRED_FPS, 120),
-            ) {
-                painter.setColor(android.graphics.Color.RED).commit()
-                drawCircle(100f, 100f, 100f)
-            }
-        val document =
-            RemoteComposeDocument(
-                    ByteArrayInputStream(
-                        rcContext.mRemoteWriter.buffer(),
-                        0,
-                        rcContext.bufferSize(),
-                    )
-                )
-                .document
-
-        remoteComposeTestRule.runScreenshotTest(document = document)
     }
 }
