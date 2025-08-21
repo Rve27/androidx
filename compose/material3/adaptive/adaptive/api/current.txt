@@ -2,7 +2,7 @@
 package androidx.compose.material3.adaptive {
 
   public final class AndroidPosture_androidKt {
-    method public static androidx.compose.material3.adaptive.Posture calculatePosture(java.util.List<? extends androidx.window.layout.FoldingFeature> foldingFeatures);
+    method @SuppressCompatibility @androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi public static androidx.compose.material3.adaptive.Posture calculatePosture(java.util.List<? extends androidx.window.layout.FoldingFeature> foldingFeatures);
   }
 
   public final class AndroidWindowAdaptiveInfo_androidKt {
@@ -68,8 +68,8 @@ package androidx.compose.material3.adaptive {
   public final class WindowAdaptiveInfoKt {
     method @androidx.compose.runtime.Composable public static androidx.compose.material3.adaptive.WindowAdaptiveInfo currentWindowAdaptiveInfo(optional boolean supportLargeAndXLargeWidth);
     method @BytecodeOnly @androidx.compose.runtime.Composable public static androidx.compose.material3.adaptive.WindowAdaptiveInfo currentWindowAdaptiveInfo(boolean, androidx.compose.runtime.Composer?, int, int);
-    method @KotlinOnly @androidx.compose.runtime.Composable public static androidx.compose.ui.unit.DpSize currentWindowDpSize();
-    method @BytecodeOnly @androidx.compose.runtime.Composable public static long currentWindowDpSize(androidx.compose.runtime.Composer?, int);
+    method @KotlinOnly @SuppressCompatibility @androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi @androidx.compose.runtime.Composable public static androidx.compose.ui.unit.DpSize currentWindowDpSize();
+    method @BytecodeOnly @SuppressCompatibility @androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi @androidx.compose.runtime.Composable public static long currentWindowDpSize(androidx.compose.runtime.Composer?, int);
     method @KotlinOnly @androidx.compose.runtime.Composable public static androidx.compose.ui.unit.IntSize currentWindowSize();
     method @BytecodeOnly @androidx.compose.runtime.Composable public static long currentWindowSize(androidx.compose.runtime.Composer?, int);
   }
