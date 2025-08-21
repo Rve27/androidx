@@ -22,7 +22,7 @@ import androidx.build.dackka.GenerateMetadataTask
 import androidx.build.defaultAndroidConfig
 import androidx.build.getAndroidJar
 import androidx.build.getCheckoutRoot
-import androidx.build.getDistributionDirectoryProperty
+import androidx.build.getDistributionDirectory
 import androidx.build.getKeystore
 import androidx.build.getLibraryByName
 import androidx.build.getSupportRootFolder
@@ -122,9 +122,7 @@ abstract class AndroidXDocsImplPlugin : Plugin<Project> {
         createConfigurations(project)
         val buildOnServer =
             project.tasks.register<DocsBuildOnServer>("buildOnServer") {
-                requiredFile.set(
-                    project.getDistributionDirectoryProperty().file("docs-$docsType.zip")
-                )
+                requiredFile.set(project.getDistributionDirectory().file("docs-$docsType.zip"))
             }
 
         val unzippedDeprecatedSamplesSources =
@@ -539,9 +537,7 @@ abstract class AndroidXDocsImplPlugin : Plugin<Project> {
             project.tasks.register("docs", DackkaTask::class.java) { task ->
                 var taskStartTime: LocalDateTime? = null
                 task.argsJsonFile.set(
-                    project
-                        .getDistributionDirectoryProperty()
-                        .file("dackkaArgs-${project.name}.json")
+                    project.getDistributionDirectory().file("dackkaArgs-${project.name}.json")
                 )
                 task.apply {
                     // Remove once there is property version of Copy#destinationDir
@@ -634,7 +630,7 @@ abstract class AndroidXDocsImplPlugin : Plugin<Project> {
 
                     val baseName = "docs-$docsType"
                     archiveBaseName.set(baseName)
-                    destinationDirectory.set(project.getDistributionDirectoryProperty())
+                    destinationDirectory.set(project.getDistributionDirectory())
                     group = JavaBasePlugin.DOCUMENTATION_GROUP
                 }
             }
