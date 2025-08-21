@@ -734,7 +734,7 @@ package androidx.wear.protolayout {
   }
 
   public static final class LayoutElementBuilders.Image.Builder {
-    ctor public LayoutElementBuilders.Image.Builder();
+    ctor @Deprecated public LayoutElementBuilders.Image.Builder();
     ctor public LayoutElementBuilders.Image.Builder(androidx.wear.protolayout.ProtoLayoutScope);
     method public androidx.wear.protolayout.LayoutElementBuilders.Image build();
     method @androidx.wear.protolayout.expression.RequiresSchemaVersion(major=1, minor=0) public androidx.wear.protolayout.LayoutElementBuilders.Image.Builder setColorFilter(androidx.wear.protolayout.LayoutElementBuilders.ColorFilter);
@@ -744,8 +744,8 @@ package androidx.wear.protolayout {
     method @androidx.wear.protolayout.expression.RequiresSchemaVersion(major=1, minor=0) public androidx.wear.protolayout.LayoutElementBuilders.Image.Builder setImageResource(androidx.wear.protolayout.ResourceBuilders.ImageResource);
     method @androidx.wear.protolayout.expression.RequiresSchemaVersion(major=1, minor=0) public androidx.wear.protolayout.LayoutElementBuilders.Image.Builder setImageResource(androidx.wear.protolayout.ResourceBuilders.ImageResource, String);
     method @androidx.wear.protolayout.expression.RequiresSchemaVersion(major=1, minor=0) public androidx.wear.protolayout.LayoutElementBuilders.Image.Builder setModifiers(androidx.wear.protolayout.ModifiersBuilders.Modifiers);
-    method @androidx.wear.protolayout.expression.RequiresSchemaVersion(major=1, minor=0) public androidx.wear.protolayout.LayoutElementBuilders.Image.Builder setResourceId(androidx.wear.protolayout.TypeBuilders.StringProp);
-    method @androidx.wear.protolayout.expression.RequiresSchemaVersion(major=1, minor=0) public androidx.wear.protolayout.LayoutElementBuilders.Image.Builder setResourceId(String);
+    method @Deprecated @androidx.wear.protolayout.expression.RequiresSchemaVersion(major=1, minor=0) public androidx.wear.protolayout.LayoutElementBuilders.Image.Builder setResourceId(androidx.wear.protolayout.TypeBuilders.StringProp);
+    method @Deprecated @androidx.wear.protolayout.expression.RequiresSchemaVersion(major=1, minor=0) public androidx.wear.protolayout.LayoutElementBuilders.Image.Builder setResourceId(String);
     method @androidx.wear.protolayout.expression.RequiresSchemaVersion(major=1, minor=0) public androidx.wear.protolayout.LayoutElementBuilders.Image.Builder setWidth(androidx.wear.protolayout.DimensionBuilders.ImageDimension);
   }
 

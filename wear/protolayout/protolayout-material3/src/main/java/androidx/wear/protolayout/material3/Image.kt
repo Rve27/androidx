@@ -56,6 +56,7 @@ import androidx.wear.protolayout.types.LayoutColor
  * @param contentScaleMode The content scale mode for the image to define how image will adapt to
  *   the given size
  */
+@Suppress("deprecation")
 public fun MaterialScope.backgroundImage(
     protoLayoutResourceId: String,
     modifier: LayoutModifier = LayoutModifier,
@@ -111,6 +112,7 @@ public fun MaterialScope.backgroundImage(
  * @param contentScaleMode The content scale mode for the image to define how image will adapt to
  *   the given size
  */
+@Suppress("deprecation")
 public fun MaterialScope.avatarImage(
     protoLayoutResourceId: String,
     width: ImageDimension = defaultAvatarImageStyle.width,

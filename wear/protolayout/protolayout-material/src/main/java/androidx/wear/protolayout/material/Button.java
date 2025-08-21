@@ -275,6 +275,7 @@ public class Button implements LayoutElement {
             return new Button(mCoreBuilder.build());
         }
 
+        @SuppressWarnings("deprecation")
         private @NonNull LayoutElement getCorrectContent() {
             LayoutElement.Builder content;
             switch (mType) {

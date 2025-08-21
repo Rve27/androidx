@@ -34,6 +34,7 @@ import androidx.wear.protolayout.types.LayoutColor
  * @param height The height of the icon.
  * @param tintColor The color used to tint the icon.
  */
+@Suppress("deprecation")
 public fun MaterialScope.icon(
     protoLayoutResourceId: String,
     width: ImageDimension = defaultIconStyle.width,
