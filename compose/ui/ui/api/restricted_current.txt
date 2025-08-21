@@ -2584,11 +2584,8 @@ package androidx.compose.ui.input.pointer.util {
     method @KotlinOnly public static void addPointerInputChange(androidx.compose.ui.input.pointer.util.VelocityTracker, androidx.compose.ui.input.pointer.PointerInputChange event, androidx.compose.ui.geometry.Offset offset);
     method @BytecodeOnly public static void addPointerInputChange-0AR0LA0(androidx.compose.ui.input.pointer.util.VelocityTracker, androidx.compose.ui.input.pointer.PointerInputChange, long);
     method @SuppressCompatibility @androidx.compose.ui.ExperimentalComposeUiApi public static boolean getVelocityTrackerAddPointsFix();
-    method @SuppressCompatibility @androidx.compose.ui.input.pointer.util.ExperimentalVelocityTrackerApi public static boolean getVelocityTrackerStrategyUseImpulse();
     method @SuppressCompatibility @androidx.compose.ui.ExperimentalComposeUiApi public static void setVelocityTrackerAddPointsFix(boolean);
-    method @SuppressCompatibility @androidx.compose.ui.input.pointer.util.ExperimentalVelocityTrackerApi public static void setVelocityTrackerStrategyUseImpulse(boolean);
     property @SuppressCompatibility @androidx.compose.ui.ExperimentalComposeUiApi public static boolean VelocityTrackerAddPointsFix;
-    property @SuppressCompatibility @androidx.compose.ui.input.pointer.util.ExperimentalVelocityTrackerApi public static boolean VelocityTrackerStrategyUseImpulse;
   }
 
 }
