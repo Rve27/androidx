@@ -882,5 +882,52 @@ package androidx.xr.scenecore {
     field public static final int SURFACE_PROTECTION_PROTECTED = 1; // 0x1
   }
 
+  public class Texture {
+    method @MainThread public static final suspend Object? create(androidx.xr.runtime.Session session, java.nio.file.Path path, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.Texture>);
+    method @MainThread public void dispose();
+    field public static final androidx.xr.scenecore.Texture.Companion Companion;
+  }
+
+  public static final class Texture.Companion {
+    method @MainThread public suspend Object? create(androidx.xr.runtime.Session session, java.nio.file.Path path, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.Texture>);
+  }
+
+  public final class TextureSampler {
+    ctor public TextureSampler();
+    ctor public TextureSampler(optional int minificationFilter);
+    ctor public TextureSampler(optional int minificationFilter, optional int magnificationFilter);
+    ctor public TextureSampler(optional int minificationFilter, optional int magnificationFilter, optional int wrapModeHorizontal);
+    ctor public TextureSampler(optional int minificationFilter, optional int magnificationFilter, optional int wrapModeHorizontal, optional int wrapModeVertical);
+    ctor public TextureSampler(optional int minificationFilter, optional int magnificationFilter, optional int wrapModeHorizontal, optional int wrapModeVertical, optional int wrapModeDepth);
+    method public int getMagnificationFilter();
+    method public int getMinificationFilter();
+    method public int getWrapModeDepth();
+    method public int getWrapModeHorizontal();
+    method public int getWrapModeVertical();
+    property public int magnificationFilter;
+    property public int minificationFilter;
+    property public int wrapModeDepth;
+    property public int wrapModeHorizontal;
+    property public int wrapModeVertical;
+    field public static final androidx.xr.scenecore.TextureSampler.Companion Companion;
+    field public static final int MAGNIFICATION_FILTER_LINEAR = 1; // 0x1
+    field public static final int MAGNIFICATION_FILTER_NEAREST = 0; // 0x0
+    field public static final int MINIFICATION_FILTER_LINEAR = 1; // 0x1
+    field public static final int MINIFICATION_FILTER_NEAREST = 0; // 0x0
+    field public static final int WRAP_MODE_CLAMP_TO_EDGE = 0; // 0x0
+    field public static final int WRAP_MODE_MIRRORED_REPEAT = 2; // 0x2
+    field public static final int WRAP_MODE_REPEAT = 1; // 0x1
+  }
+
+  public static final class TextureSampler.Companion {
+    property public static int MAGNIFICATION_FILTER_LINEAR;
+    property public static int MAGNIFICATION_FILTER_NEAREST;
+    property public static int MINIFICATION_FILTER_LINEAR;
+    property public static int MINIFICATION_FILTER_NEAREST;
+    property public static int WRAP_MODE_CLAMP_TO_EDGE;
+    property public static int WRAP_MODE_MIRRORED_REPEAT;
+    property public static int WRAP_MODE_REPEAT;
+  }
+
 }
 
