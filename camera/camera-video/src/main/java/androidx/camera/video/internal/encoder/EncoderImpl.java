@@ -33,7 +33,6 @@ import static androidx.core.util.Preconditions.checkState;
 
 import static java.util.Objects.requireNonNull;
 
-import android.annotation.SuppressLint;
 import android.media.MediaCodec;
 import android.media.MediaCodec.BufferInfo;
 import android.media.MediaCodecInfo;
@@ -1647,51 +1646,8 @@ public class EncoderImpl implements Encoder {
         @GuardedBy("mLock")
         private Surface mSurface;
 
-        @GuardedBy("mLock")
-        private OnSurfaceUpdateListener mSurfaceUpdateListener;
-
-        @GuardedBy("mLock")
-        private Executor mSurfaceUpdateExecutor;
-
-        /**
-         * Sets the surface update listener.
-         *
-         * @param executor the executor to invoke the listener
-         * @param listener the surface update listener
-         */
-        @Override
-        public void setOnSurfaceUpdateListener(@NonNull Executor executor,
-                @NonNull OnSurfaceUpdateListener listener) {
-            Surface surface;
-            synchronized (mLock) {
-                mSurfaceUpdateListener = Preconditions.checkNotNull(listener);
-                mSurfaceUpdateExecutor = Preconditions.checkNotNull(executor);
-                surface = mSurface;
-            }
-            if (surface != null) {
-                notifySurfaceUpdate(executor, listener, surface);
-            }
-        }
-
-        @SuppressLint("NewApi")
         void resetSurface() {
-            Surface surface;
-            Executor executor;
-            OnSurfaceUpdateListener listener;
-            synchronized (mLock) {
-                if (mSurface == null) {
-                    mSurface = MediaCodec.createPersistentInputSurface();
-                    surface = mSurface;
-                } else {
-                    surface = null;
-                }
-                mMediaCodec.setInputSurface(mSurface);
-                listener = mSurfaceUpdateListener;
-                executor = mSurfaceUpdateExecutor;
-            }
-            if (surface != null && listener != null && executor != null) {
-                notifySurfaceUpdate(executor, listener, surface);
-            }
+            mMediaCodec.setInputSurface(getSurface());
         }
 
         void releaseSurface() {
@@ -1705,12 +1661,13 @@ public class EncoderImpl implements Encoder {
             }
         }
 
-        private void notifySurfaceUpdate(@NonNull Executor executor,
-                @NonNull OnSurfaceUpdateListener listener, @NonNull Surface surface) {
-            try {
-                executor.execute(() -> listener.onSurfaceUpdate(surface));
-            } catch (RejectedExecutionException e) {
-                Logger.e(mTag, "Unable to post to the supplied executor.", e);
+        @Override
+        public @NonNull Surface getSurface() {
+            synchronized (mLock) {
+                if (mSurface == null) {
+                    mSurface = MediaCodec.createPersistentInputSurface();
+                }
+                return mSurface;
             }
         }
     }

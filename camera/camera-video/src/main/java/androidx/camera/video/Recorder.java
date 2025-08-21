@@ -1416,8 +1416,6 @@ public final class Recorder implements VideoOutput {
         mActiveSurface = videoEncoderSession.getActiveSurface();
         setLatestSurface(mActiveSurface);
 
-        videoEncoderSession.setOnSurfaceUpdateListener(mSequentialExecutor, this::setLatestSurface);
-
         Futures.addCallback(videoEncoderSession.getReadyToReleaseFuture(),
                 new FutureCallback<Encoder>() {
                     @Override
