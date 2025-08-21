@@ -71,9 +71,7 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
     private lateinit var onViewportChangedListener: PdfView.OnViewportChangedListener
     private lateinit var wetStrokesOnFinishedListener: WetStrokesOnFinishedListener
 
-    private val annotationsViewModel: EditableDocumentViewModel by viewModels {
-        EditableDocumentViewModel.Factory
-    }
+    private val annotationsViewModel: EditableDocumentViewModel by viewModels()
     private var strokeProcessor: StrokeProcessor? = null
     private var pageTransformCalculator: PageTransformCalculator = PageTransformCalculator()
 

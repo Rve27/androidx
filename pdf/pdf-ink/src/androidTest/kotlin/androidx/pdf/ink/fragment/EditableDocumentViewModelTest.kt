@@ -21,7 +21,6 @@ import android.graphics.RectF
 import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.pdf.FakeEditablePdfDocument
-import androidx.pdf.SandboxedPdfLoader
 import androidx.pdf.annotation.EditablePdfDocument
 import androidx.pdf.annotation.models.PathPdfObject
 import androidx.pdf.annotation.models.PdfAnnotation
@@ -30,12 +29,9 @@ import androidx.pdf.annotation.models.StampAnnotation
 import androidx.pdf.ink.EditableDocumentViewModel
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
-import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth.assertThat
 import java.io.File
-import java.util.concurrent.Executors
 import kotlin.collections.first
-import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
@@ -49,9 +45,6 @@ class EditableDocumentViewModelTest {
     private lateinit var annotationsViewModel: EditableDocumentViewModel
     private lateinit var savedStateHandle: SavedStateHandle
 
-    private val appContext =
-        InstrumentationRegistry.getInstrumentation().targetContext.applicationContext
-    val dispatcher = Executors.newSingleThreadExecutor().asCoroutineDispatcher()
     private var defaultDocumentUri: Uri? = null
     private var editablePdfDocument: EditablePdfDocument? = null
 
@@ -60,8 +53,7 @@ class EditableDocumentViewModelTest {
         defaultDocumentUri = Uri.fromFile(File("test1.pdf"))
         editablePdfDocument = FakeEditablePdfDocument(uri = requireNotNull(defaultDocumentUri))
         savedStateHandle = SavedStateHandle()
-        annotationsViewModel =
-            EditableDocumentViewModel(savedStateHandle, SandboxedPdfLoader(appContext, dispatcher))
+        annotationsViewModel = EditableDocumentViewModel(savedStateHandle)
 
         annotationsViewModel.editablePdfDocument = requireNotNull(editablePdfDocument)
     }

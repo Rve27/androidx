@@ -64,7 +64,7 @@ import kotlinx.coroutines.launch
  * @constructor Creates a new [PdfDocumentViewModel] instance.
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY)
-public open class PdfDocumentViewModel(
+internal class PdfDocumentViewModel(
     private val state: SavedStateHandle,
     private val loader: PdfLoader,
 ) : ViewModel() {
@@ -121,15 +121,15 @@ public open class PdfDocumentViewModel(
     private var passwordFailed = false
 
     /** DocumentUri as set in [state] */
-    internal val documentUriFromState: Uri?
+    val documentUriFromState: Uri?
         get() = state[DOCUMENT_URI_KEY]
 
     /** isTextSearchActive as set in [state] */
-    internal val isTextSearchActiveFromState: Boolean
+    val isTextSearchActiveFromState: Boolean
         get() = state[TEXT_SEARCH_STATE_KEY] ?: false
 
     /** isImmersiveModeFromState as set in [state] */
-    internal val isImmersiveModeDesired: Boolean
+    val isImmersiveModeDesired: Boolean
         get() = state[IMMERSIVE_MODE_STATE_KEY] ?: false
 
     /** Holds business logic for search feature. */
@@ -189,7 +189,7 @@ public open class PdfDocumentViewModel(
      * @param uri The Uri of the PDF document to load.
      * @param password The optional password to use if the document is encrypted.
      */
-    internal fun loadDocument(uri: Uri?, password: String?) {
+    fun loadDocument(uri: Uri?, password: String?) {
         uri?.let {
             /*
             Triggers the document loading process only under the following conditions:
@@ -209,17 +209,12 @@ public open class PdfDocumentViewModel(
 
                 // Loading a new document should not persist a search session from previous
                 // document.
-                resetState()
+                updateSearchState(isTextSearchActive = false)
+                setImmersiveModeDesired(enterImmersive = true)
 
                 documentLoadJob = viewModelScope.launch { openDocument(uri, password) }
             }
         }
-    }
-
-    /** Resets UI and internal states. This is invoked when a new document is loaded. */
-    protected open fun resetState() {
-        updateSearchState(isTextSearchActive = false)
-        setImmersiveModeDesired(enterImmersive = true)
     }
 
     /**
@@ -316,7 +311,7 @@ public open class PdfDocumentViewModel(
      * This function ensures that the immersive mode is properly applied and ready for user input
      * when triggered.
      */
-    internal fun setImmersiveModeDesired(enterImmersive: Boolean) {
+    fun setImmersiveModeDesired(enterImmersive: Boolean) {
         /**
          * Immersive mode state should be updated only after document is loaded. else it will be a
          * No-Op.
@@ -331,7 +326,7 @@ public open class PdfDocumentViewModel(
      * This function ensures that the immersive mode is properly applied and ready for user input
      * when triggered.
      */
-    internal fun toggleImmersiveModeState() {
+    fun toggleImmersiveModeState() {
         /**
          * Immersive mode state should be updated only after document is loaded. else it will be a
          * No-Op.
@@ -379,7 +374,7 @@ public open class PdfDocumentViewModel(
     }
 
     /** Intent triggered when user submits a search query. */
-    internal fun searchDocument(query: String, visiblePageRange: IntRange) {
+    fun searchDocument(query: String, visiblePageRange: IntRange) {
         /**
          * Cannot start searching document before it's loaded, i.e. fragment is moved to
          * [PdfFragmentUiState.DocumentLoaded] state.
@@ -403,12 +398,12 @@ public open class PdfDocumentViewModel(
     }
 
     /** Intent triggered when user clicks prev button. */
-    internal fun findPreviousMatch() {
+    fun findPreviousMatch() {
         viewModelScope.launch(searchJob) { searchRepository.producePreviousResult() }
     }
 
     /** Intent triggered when user clicks next button. */
-    internal fun findNextMatch() {
+    fun findNextMatch() {
         viewModelScope.launch(searchJob) { searchRepository.produceNextResult() }
     }
 
@@ -417,7 +412,7 @@ public open class PdfDocumentViewModel(
         return first + size / 2
     }
 
-    internal fun passwordDialogCancelled() {
+    fun passwordDialogCancelled() {
         /** Resets the [passwordFailed] state after a password dialog is cancelled. */
         passwordFailed = false
         _fragmentUiScreenState.update {
@@ -441,7 +436,7 @@ public open class PdfDocumentViewModel(
     }
 
     @Suppress("UNCHECKED_CAST")
-    internal companion object {
+    companion object {
 
         private const val DOCUMENT_URI_KEY = "documentUri"
         private const val TEXT_SEARCH_STATE_KEY = "textSearchState"
