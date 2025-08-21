@@ -2553,6 +2553,7 @@ package androidx.xr.scenecore.internal {
     method @InaccessibleFromKotlin public android.view.Surface getSurface();
     method public void resetContentColorMetadata();
     method public void setAuxiliaryAlphaMaskTexture(androidx.xr.scenecore.internal.TextureResource? alphaMask);
+    method public void setColliderEnabled(boolean enableCollider);
     method public void setContentColorMetadata(@androidx.xr.scenecore.internal.SurfaceEntity.ColorSpace int colorSpace, @androidx.xr.scenecore.internal.SurfaceEntity.ColorTransfer int colorTransfer, @androidx.xr.scenecore.internal.SurfaceEntity.ColorRange int colorRange, int maxCLL);
     method @InaccessibleFromKotlin public void setEdgeFeather(androidx.xr.scenecore.internal.SurfaceEntity.EdgeFeather);
     method public void setPrimaryAlphaMaskTexture(androidx.xr.scenecore.internal.TextureResource? alphaMask);
