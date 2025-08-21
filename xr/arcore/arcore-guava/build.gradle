@@ -46,10 +46,6 @@ dependencies {
 }
 
 android {
-    defaultConfig {
-        minSdk = 23
-    }
-
     namespace = "androidx.xr.arcore.guava"
 }
 

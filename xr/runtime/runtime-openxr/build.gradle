@@ -65,7 +65,6 @@ android {
     }
     defaultConfig {
         consumerProguardFiles 'proguard-rules.pro'
-        minSdk = 23
     }
     sourceSets.androidTest {
         jniLibs.srcDirs += new File(AndroidXConfig.getPrebuiltsRoot(project), "androidx/xr/native/androidTest")

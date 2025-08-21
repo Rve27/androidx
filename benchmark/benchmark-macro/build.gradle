@@ -34,7 +34,6 @@ plugins {
 
 android {
     defaultConfig {
-        minSdk = 23
 
         // We don't care about perf from these correctness tests, so suppress
         // anything that may otherwise block these tests
