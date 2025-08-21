@@ -804,13 +804,17 @@ private fun Project.configureNode() {
     plugins.withType<WasmNodeJsPlugin>().configureEach {
         the<WasmNodeJsEnvSpec>().let {
             it.version.set(getVersionByName("node"))
-            it.downloadBaseUrl.set(nodeJsPrebuilt)
+            if (!ProjectLayoutType.isPlayground(this)) {
+                it.downloadBaseUrl.set(nodeJsPrebuilt)
+            }
         }
     }
     plugins.withType<NodeJsPlugin>().configureEach {
         the<NodeJsEnvSpec>().let {
             it.version.set(getVersionByName("node"))
-            it.downloadBaseUrl.set(nodeJsPrebuilt)
+            if (!ProjectLayoutType.isPlayground(this)) {
+                it.downloadBaseUrl.set(nodeJsPrebuilt)
+            }
         }
     }
 
