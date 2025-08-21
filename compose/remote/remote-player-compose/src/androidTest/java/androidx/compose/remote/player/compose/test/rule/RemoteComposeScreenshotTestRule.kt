@@ -93,7 +93,7 @@ class RemoteComposeScreenshotTestRule(moduleDirectory: String) : TestRule {
         outerContent: (@Composable (content: @Composable @RemoteComposable () -> Unit) -> Unit)? =
             null,
     ) {
-        setContent(size) {
+        composeTestRule.setContent {
             val content: @Composable @RemoteComposable () -> Unit = {
                 RemoteDocumentPlayer(
                     document,
@@ -102,10 +102,18 @@ class RemoteComposeScreenshotTestRule(moduleDirectory: String) : TestRule {
                     debugMode = 1,
                 )
             }
-            if (outerContent != null) {
-                outerContent { content() }
-            } else {
-                content()
+            Box(
+                modifier =
+                    Modifier.Companion.width(size.width.dp)
+                        .height(size.height.dp)
+                        .background(Color.Companion.Black)
+                        .testTag("playerRoot")
+            ) {
+                if (outerContent != null) {
+                    outerContent { content() }
+                } else {
+                    content()
+                }
             }
         }
         composeTestRule.verifyScreenshot(screenshotName, screenshotRule)
