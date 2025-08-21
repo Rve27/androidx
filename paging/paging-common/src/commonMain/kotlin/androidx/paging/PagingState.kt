@@ -84,6 +84,109 @@ constructor(
     }
 
     /**
+     * Coerces [anchorPosition] to closest loaded value in [pages] that matches [predicate].
+     *
+     * This function can be called with [anchorPosition] to fetch the loaded item that is closest to
+     * the last accessed index in the list.
+     *
+     * This function searches for the matching predicate amongst items that are positioned both
+     * before and after the [anchorPosition] with this order of priority:
+     * 1. item closest to anchorPosition
+     * 2. item before anchorPosition
+     *
+     * This means that given an anchorPosition of item[10], if item[8] and item[11] both match the
+     * predicate, then item[11] will be returned since it is closer to item[10]. If two matching
+     * items have the same proximity, then the item that comes first will be returned. So given an
+     * anchorPosition of item[10], if item[9] and item[11] both match the predicate, then item[9]
+     * will be returned since it comes before item[11].
+     *
+     * This method should be avoided if possible if used on Lists that do not support random access,
+     * otherwise performance will take a big hit.
+     *
+     * @param anchorPosition Index in the list, including placeholders.
+     * @param predicate the predicate that matches target item
+     * @return The closest loaded [Value] in [pages] to the provided [anchorPosition] that matches
+     *   the [predicate]. `null` if all loaded [pages] are empty or if none of the loaded values
+     *   match [predicate]
+     */
+    public fun closestItemAroundPosition(
+        anchorPosition: Int,
+        predicate: (value: Value) -> Boolean,
+    ): Value? {
+        if (pages.all { it.data.isEmpty() }) return null
+
+        anchorPositionToPagedIndices(anchorPosition) { pageIndex, index ->
+            val firstNonEmptyPage = pages.first { it.data.isNotEmpty() }
+            val lastNonEmptyPage = pages.last { it.data.isNotEmpty() }
+            return when {
+                index < 0 -> firstNonEmptyPage.data.firstOrNull(predicate)
+                pageIndex == pages.lastIndex && index > pages.last().data.lastIndex -> {
+                    lastNonEmptyPage.data.lastOrNull(predicate)
+                }
+                else -> {
+                    // first check if item at anchorPosition matches predicate
+                    pages[pageIndex].data[index].let { if (predicate(it)) return it }
+
+                    // if not, start looking prepended and appended items
+                    var prependedPageIndex = pageIndex
+                    var prependedLocalIndex = index - 1
+                    var prependedPage = pages[pageIndex]
+
+                    var appendedPageIndex = pageIndex
+                    var appendedLocalIndex = index + 1
+                    var appendedPage = pages[pageIndex]
+
+                    var prependComplete = false
+                    var appendComplete = false
+
+                    // on each loop, we move by one index in both directions
+                    while (!prependComplete && !appendComplete) {
+                        if (!prependComplete) {
+                            // iterate to next page if done with current page
+                            while (prependedLocalIndex < 0 && --prependedPageIndex >= 0) {
+                                prependedPage = pages[prependedPageIndex]
+                                prependedLocalIndex = prependedPage.data.lastIndex
+                            }
+                            // mark prependComplete if we reached the end of prepended pages
+                            if (prependedPageIndex < 0) {
+                                prependComplete = true
+                            } else {
+                                // check if next item matches predicate
+                                val prevItem = prependedPage.data[prependedLocalIndex]
+                                if (predicate(prevItem)) return prevItem
+                                prependedLocalIndex--
+                            }
+                        }
+
+                        if (!appendComplete) {
+                            // iterate to next page if done with current page
+                            while (
+                                appendedLocalIndex > appendedPage.data.lastIndex &&
+                                    ++appendedPageIndex <= pages.lastIndex
+                            ) {
+                                appendedPage = pages[appendedPageIndex]
+                                appendedLocalIndex =
+                                    if (appendedPage.data.isEmpty()) Int.MAX_VALUE else 0
+                            }
+                            // mark appendComplete if we reached the end of appended pages
+                            if (appendedPageIndex > pages.lastIndex) {
+                                appendComplete = true
+                            } else {
+                                // check if next item matches predicate
+                                val nextItem = appendedPage.data[appendedLocalIndex]
+                                if (predicate(nextItem)) return nextItem
+                                appendedLocalIndex++
+                            }
+                        }
+                    }
+                    // no items matching predicate found
+                    return null
+                }
+            }
+        }
+    }
+
+    /**
      * Coerces an index in the list, including placeholders, to closest loaded page in [pages].
      *
      * This function can be called with [anchorPosition] to fetch the loaded page that is closest to

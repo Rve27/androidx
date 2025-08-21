@@ -152,6 +152,96 @@ class PagingStateTest {
     }
 
     @Test
+    fun closestItemAroundPosition_withoutPlaceholders() {
+        val pagingState =
+            PagingState(
+                pages = listOf(listOf(0, 1, 2, 3), listOf(4, 5, 6), listOf(7, 8, 9)).asPages(),
+                anchorPosition = 10,
+                config = PagingConfig(pageSize = 10),
+                leadingPlaceholderCount = 0,
+            )
+
+        assertEquals(0, pagingState.closestItemAroundPosition(-1) { true })
+        assertEquals(5, pagingState.closestItemAroundPosition(5) { it == 5 })
+        assertEquals(9, pagingState.closestItemAroundPosition(15) { true })
+    }
+
+    @Test
+    fun closestItemAroundPosition_withPlaceholders() {
+        val pagingState =
+            PagingState(
+                pages = listOf(listOf(0, 1, 2, 3), listOf(4, 5, 6), listOf(7, 8, 9)).asPages(),
+                anchorPosition = 10,
+                config = PagingConfig(pageSize = 10),
+                leadingPlaceholderCount = 10,
+            )
+
+        assertEquals(0, pagingState.closestItemAroundPosition(5) { true })
+        assertEquals(5, pagingState.closestItemAroundPosition(15) { it == 5 })
+        assertEquals(9, pagingState.closestItemAroundPosition(25) { true })
+    }
+
+    @Test
+    fun closestItemAroundPosition_withEmptyPages() {
+        val pagingState =
+            PagingState(
+                pages =
+                    listOf(listOf(0, 1, 2, 3), listOf(), listOf(4, 5, 6), listOf(7, 8, 9))
+                        .asPages(),
+                anchorPosition = 10,
+                config = PagingConfig(pageSize = 10),
+                leadingPlaceholderCount = 10,
+            )
+
+        assertEquals(0, pagingState.closestItemAroundPosition(5) { true })
+        assertEquals(5, pagingState.closestItemAroundPosition(15) { it == 5 })
+        assertEquals(9, pagingState.closestItemAroundPosition(25) { true })
+    }
+
+    @Test
+    fun closestItemAroundPosition_onlyEmptyPages() {
+        val pagingState =
+            PagingState(
+                pages = listOf<List<Int>>(listOf(), listOf()).asPages(),
+                anchorPosition = 10,
+                config = PagingConfig(pageSize = 10),
+                leadingPlaceholderCount = 10,
+            )
+
+        assertEquals(null, pagingState.closestItemAroundPosition(5) { true })
+        assertEquals(null, pagingState.closestItemAroundPosition(15) { it == 5 })
+        assertEquals(null, pagingState.closestItemAroundPosition(25) { true })
+    }
+
+    @Test
+    fun closestItemAroundPosition_prioritizesPrependedItem() {
+        val pagingState =
+            PagingState(
+                pages = listOf(listOf(0, 1, 2, 3), listOf(4, 5, 6), listOf(7, 8, 9)).asPages(),
+                anchorPosition = 10,
+                config = PagingConfig(pageSize = 10),
+                leadingPlaceholderCount = 0,
+            )
+
+        // returns previous item if both previous & next items match predicate
+        assertEquals(4, pagingState.closestItemAroundPosition(5) { it != 5 })
+    }
+
+    @Test
+    fun closestItemAroundPosition_prioritizesClosestAppendedItem() {
+        val pagingState =
+            PagingState(
+                pages = listOf(listOf(0, 1, 2, 3), listOf(4, 5, 6), listOf(7, 8, 9)).asPages(),
+                anchorPosition = 10,
+                config = PagingConfig(pageSize = 10),
+                leadingPlaceholderCount = 0,
+            )
+
+        // returns matching appended item if it is closer than the matching prepended item
+        assertEquals(6, pagingState.closestItemAroundPosition(5) { it != 5 && it != 4 })
+    }
+
+    @Test
     fun itemOrNull_noPages() {
         val pagingState =
             PagingState(
