@@ -19,9 +19,9 @@ package androidx.xr.arcore
 import androidx.activity.ComponentActivity
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.xr.arcore.internal.Earth as RuntimeEarth
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.SessionCreateSuccess
-import androidx.xr.runtime.internal.Earth as RuntimeEarth
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.testing.FakePerceptionManager
 import androidx.xr.runtime.testing.FakeRuntimeAnchor
@@ -115,7 +115,7 @@ class XrResourcesManagerTest {
 
     @Test
     fun addUpdatable_addsUpdatable() = createTestSessionAndRunTest {
-        val fakePerceptionManager = session.runtime.perceptionManager as FakePerceptionManager
+        val fakePerceptionManager = getFakePerceptionManager()
         val anchor = Anchor(fakePerceptionManager.createAnchor(Pose()), underTest)
         check(underTest.updatables.isEmpty())
 
@@ -126,7 +126,7 @@ class XrResourcesManagerTest {
 
     @Test
     fun removeUpdatable_removesUpdatable() = createTestSessionAndRunTest {
-        val fakePerceptionManager = session.runtime.perceptionManager as FakePerceptionManager
+        val fakePerceptionManager = getFakePerceptionManager()
         val anchor = Anchor(fakePerceptionManager.createAnchor(Pose()), underTest)
         underTest.addUpdatable(anchor)
         check(underTest.updatables.contains(anchor))
@@ -139,7 +139,7 @@ class XrResourcesManagerTest {
 
     @Test
     fun clear_clearAllUpdatables() = createTestSessionAndRunTest {
-        val fakePerceptionManager = session.runtime.perceptionManager as FakePerceptionManager
+        val fakePerceptionManager = getFakePerceptionManager()
         val runtimeAnchor = fakePerceptionManager.createAnchor(Pose())
         val runtimeAnchor2 = fakePerceptionManager.createAnchor(Pose())
         val anchor = Anchor(runtimeAnchor, underTest)
@@ -241,10 +241,14 @@ class XrResourcesManagerTest {
                 session =
                     (Session.create(activity, StandardTestDispatcher()) as SessionCreateSuccess)
                         .session
-                underTest.lifecycleManager = session.runtime.lifecycleManager
+                underTest.lifecycleManager = session.perceptionRuntime.lifecycleManager
 
                 testBody()
             }
         }
+    }
+
+    private fun getFakePerceptionManager(): FakePerceptionManager {
+        return session.perceptionRuntime.perceptionManager as FakePerceptionManager
     }
 }

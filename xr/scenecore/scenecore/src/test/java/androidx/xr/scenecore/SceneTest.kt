@@ -21,22 +21,23 @@ import android.os.Looper
 import android.view.View
 import android.widget.TextView
 import androidx.activity.ComponentActivity
+import androidx.xr.runtime.Config
 import androidx.xr.runtime.Session
-import androidx.xr.runtime.internal.ActivityPanelEntity as RtActivityPanelEntity
-import androidx.xr.runtime.internal.ActivitySpace as RtActivitySpace
-import androidx.xr.runtime.internal.AnchorEntity as RtAnchorEntity
-import androidx.xr.runtime.internal.Entity as RtEntity
-import androidx.xr.runtime.internal.JxrPlatformAdapter
-import androidx.xr.runtime.internal.PanelEntity as RtPanelEntity
-import androidx.xr.runtime.internal.PixelDimensions as RtPixelDimensions
-import androidx.xr.runtime.internal.SpatialCapabilities as RtSpatialCapabilities
-import androidx.xr.runtime.internal.SpatialModeChangeListener as RtSpatialModeChangeListener
-import androidx.xr.runtime.internal.SpatialVisibility as RtSpatialVisibility
 import androidx.xr.runtime.math.FloatSize2d
 import androidx.xr.runtime.math.IntSize2d
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Vector3
-import androidx.xr.runtime.testing.FakeRuntimeFactory
+import androidx.xr.runtime.testing.FakePerceptionRuntimeFactory
+import androidx.xr.scenecore.internal.ActivityPanelEntity as RtActivityPanelEntity
+import androidx.xr.scenecore.internal.ActivitySpace as RtActivitySpace
+import androidx.xr.scenecore.internal.AnchorEntity as RtAnchorEntity
+import androidx.xr.scenecore.internal.Entity as RtEntity
+import androidx.xr.scenecore.internal.JxrPlatformAdapter
+import androidx.xr.scenecore.internal.PanelEntity as RtPanelEntity
+import androidx.xr.scenecore.internal.PixelDimensions as RtPixelDimensions
+import androidx.xr.scenecore.internal.SpatialCapabilities as RtSpatialCapabilities
+import androidx.xr.scenecore.internal.SpatialModeChangeListener as RtSpatialModeChangeListener
+import androidx.xr.scenecore.internal.SpatialVisibility as RtSpatialVisibility
 import com.google.common.truth.Truth.assertThat
 import com.google.common.util.concurrent.MoreExecutors.directExecutor
 import java.util.function.Consumer
@@ -59,7 +60,7 @@ import org.robolectric.Shadows.shadowOf
 
 @RunWith(RobolectricTestRunner::class)
 class SceneTest {
-    private val fakeRuntimeFactory = FakeRuntimeFactory()
+    private val fakePerceptionRuntimeFactory = FakePerceptionRuntimeFactory()
     private val activityController = Robolectric.buildActivity(ComponentActivity::class.java)
     private val activity = activityController.create().start().get()
     private val mockPlatformAdapter = mock<JxrPlatformAdapter>()
@@ -77,7 +78,16 @@ class SceneTest {
         whenever(mockPlatformAdapter.perceptionSpaceActivityPose).thenReturn(mock())
         whenever(mockAnchorEntity.state).thenReturn(RtAnchorEntity.State.UNANCHORED)
         whenever(mockPlatformAdapter.spatialCapabilities).thenReturn(RtSpatialCapabilities(0))
-        session = Session(activity, fakeRuntimeFactory.createRuntime(activity), mockPlatformAdapter)
+        session =
+            Session(
+                activity,
+                runtimes =
+                    listOf(
+                        fakePerceptionRuntimeFactory.createRuntime(activity),
+                        mockPlatformAdapter,
+                    ),
+            )
+        session.configure(Config(planeTracking = Config.PlaneTrackingMode.HORIZONTAL_AND_VERTICAL))
     }
 
     @Test

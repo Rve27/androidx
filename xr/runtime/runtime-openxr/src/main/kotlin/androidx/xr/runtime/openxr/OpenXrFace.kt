@@ -17,12 +17,12 @@
 package androidx.xr.runtime.openxr
 
 import androidx.annotation.RestrictTo
-import androidx.xr.runtime.FaceBlendShapeType
-import androidx.xr.runtime.FaceConfidenceRegionType
+import androidx.xr.arcore.FaceBlendShapeType
+import androidx.xr.arcore.FaceConfidenceRegionType
+import androidx.xr.arcore.internal.Face
 import androidx.xr.runtime.TrackingState
-import androidx.xr.runtime.internal.Face
 
-/** Wraps the native XrFaceStateANDROID with the [Face] interface. */
+/** Wraps the native XrFaceStateANDROID with the [androidx.xr.arcore.internal.Face] interface. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public class OpenXrFace : Updatable, Face {
     public override var trackingState: TrackingState = TrackingState.PAUSED

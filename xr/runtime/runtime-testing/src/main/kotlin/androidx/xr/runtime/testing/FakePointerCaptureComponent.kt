@@ -17,9 +17,9 @@
 package androidx.xr.runtime.testing
 
 import androidx.annotation.RestrictTo
-import androidx.xr.runtime.internal.PointerCaptureComponent
-import androidx.xr.runtime.internal.PointerCaptureComponent.PointerCaptureState
-import androidx.xr.runtime.internal.PointerCaptureComponent.StateListener
+import androidx.xr.scenecore.internal.PointerCaptureComponent
+import androidx.xr.scenecore.internal.PointerCaptureComponent.PointerCaptureState
+import androidx.xr.scenecore.internal.PointerCaptureComponent.StateListener
 import java.util.concurrent.Executor
 
 /** Test-only implementation of [FakePointerCaptureComponent] */

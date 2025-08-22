@@ -31,12 +31,6 @@ import static org.mockito.Mockito.when;
 import android.app.Activity;
 import android.util.Size;
 
-import androidx.xr.runtime.internal.ActivityPose.HitTestFilter;
-import androidx.xr.runtime.internal.ActivityPose.HitTestFilterValue;
-import androidx.xr.runtime.internal.ActivitySpace;
-import androidx.xr.runtime.internal.HitTestResult;
-import androidx.xr.runtime.internal.SceneRuntime;
-import androidx.xr.runtime.internal.Space;
 import androidx.xr.runtime.math.BoundingBox;
 import androidx.xr.runtime.math.Matrix4;
 import androidx.xr.runtime.math.Pose;
@@ -46,6 +40,12 @@ import androidx.xr.runtime.testing.FakeSpatialModeChangeListener;
 import androidx.xr.scenecore.impl.extensions.XrExtensionsProvider;
 import androidx.xr.scenecore.impl.perception.PerceptionLibrary;
 import androidx.xr.scenecore.impl.perception.Session;
+import androidx.xr.scenecore.internal.ActivityPose.HitTestFilter;
+import androidx.xr.scenecore.internal.ActivityPose.HitTestFilterValue;
+import androidx.xr.scenecore.internal.ActivitySpace;
+import androidx.xr.scenecore.internal.HitTestResult;
+import androidx.xr.scenecore.internal.SceneRuntime;
+import androidx.xr.scenecore.internal.Space;
 import androidx.xr.scenecore.testing.FakeScheduledExecutorService;
 
 import com.android.extensions.xr.ShadowXrExtensions;

@@ -27,6 +27,7 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.filters.SdkSuppress
+import androidx.xr.arcore.internal.PerceptionRuntime
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.SessionCreateSuccess
 import com.google.common.truth.Truth.assertThat
@@ -60,7 +61,13 @@ class OpenXrRuntimeFactoryTest {
         // true)
 
         activityRule.scenario.onActivity {
-            assertThat((Session.create(it) as SessionCreateSuccess).session.runtime)
+            assertThat(
+                    (Session.create(it) as SessionCreateSuccess)
+                        .session
+                        .runtimes
+                        .filterIsInstance<PerceptionRuntime>()
+                        .single()
+                )
                 .isInstanceOf(OpenXrRuntime::class.java)
         }
     }

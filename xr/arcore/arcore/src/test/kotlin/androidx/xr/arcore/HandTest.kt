@@ -22,7 +22,6 @@ import androidx.activity.ComponentActivity
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.xr.runtime.Config
 import androidx.xr.runtime.Config.HandTrackingMode
-import androidx.xr.runtime.HandJointType
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.SessionCreateSuccess
 import androidx.xr.runtime.TrackingState
@@ -31,8 +30,8 @@ import androidx.xr.runtime.math.Quaternion
 import androidx.xr.runtime.math.Vector3
 import androidx.xr.runtime.testing.FakeLifecycleManager
 import androidx.xr.runtime.testing.FakePerceptionManager
+import androidx.xr.runtime.testing.FakePerceptionRuntimeFactory
 import androidx.xr.runtime.testing.FakeRuntimeAnchor
-import androidx.xr.runtime.testing.FakeRuntimeFactory
 import androidx.xr.runtime.testing.FakeRuntimeHand
 import com.google.common.truth.Truth.assertThat
 import java.nio.ByteBuffer
@@ -85,21 +84,21 @@ class HandTest {
             shadowApplication.grantPermissions(permission)
         }
 
-        FakeRuntimeFactory.hasCreatePermission = true
+        FakePerceptionRuntimeFactory.hasCreatePermission = true
         FakeRuntimeAnchor.anchorsCreatedCount = 0
 
         activityController.create()
 
         session = (Session.create(activity, testDispatcher) as SessionCreateSuccess).session
         session.configure(Config(handTracking = HandTrackingMode.BOTH))
-        xrResourcesManager.lifecycleManager = session.runtime.lifecycleManager
+        xrResourcesManager.lifecycleManager = session.perceptionRuntime.lifecycleManager
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun left_returnsLeftHand() =
         runTest(testDispatcher) {
-            val perceptionManager = session.runtime.perceptionManager as FakePerceptionManager
+            val perceptionManager = getFakePerceptionManager()
             val leftHand = Hand.left(session)
             check(leftHand != null)
             check(leftHand.state.value.trackingState != (TrackingState.TRACKING))
@@ -143,7 +142,7 @@ class HandTest {
     @Test
     fun right_returnsRightHand() =
         runTest(testDispatcher) {
-            val perceptionManager = session.runtime.perceptionManager as FakePerceptionManager
+            val perceptionManager = getFakePerceptionManager()
             val rightHand = Hand.right(session)
             check(rightHand != null)
             check(rightHand.state.value.trackingState != (TrackingState.TRACKING))
@@ -255,5 +254,9 @@ class HandTest {
         assertThat(actual.y).isWithin(tolerance).of(expected.y)
         assertThat(actual.z).isWithin(tolerance).of(expected.z)
         assertThat(actual.w).isWithin(tolerance).of(expected.w)
+    }
+
+    private fun getFakePerceptionManager(): FakePerceptionManager {
+        return session.perceptionRuntime.perceptionManager as FakePerceptionManager
     }
 }

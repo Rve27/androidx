@@ -17,15 +17,15 @@
 package androidx.xr.runtime.openxr
 
 import androidx.annotation.RestrictTo
+import androidx.xr.arcore.internal.Anchor
+import androidx.xr.arcore.internal.AnchorResourcesExhaustedException
+import androidx.xr.arcore.internal.Plane
 import androidx.xr.runtime.TrackingState
-import androidx.xr.runtime.internal.Anchor
-import androidx.xr.runtime.internal.AnchorResourcesExhaustedException
-import androidx.xr.runtime.internal.Plane
 import androidx.xr.runtime.math.FloatSize2d
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Vector2
 
-/** Wraps the native [XrTrackableANDROID] with the [Plane] interface. */
+/** Wraps the native [XrTrackableANDROID] with the [androidx.xr.arcore.internal.Plane] interface. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public class OpenXrPlane
 internal constructor(
@@ -95,7 +95,10 @@ internal constructor(
     ): Long
 }
 
-/** Create a [Plane.Type] from an integer value corresponding to an [XrPlaneTypeANDROID]. */
+/**
+ * Create a [androidx.xr.arcore.internal.Plane.Type] from an integer value corresponding to an
+ * [XrPlaneTypeANDROID].
+ */
 internal fun Plane.Type.Companion.fromOpenXrType(type: Int): Plane.Type =
     when (type) {
         0 ->
@@ -108,7 +111,10 @@ internal fun Plane.Type.Companion.fromOpenXrType(type: Int): Plane.Type =
         }
     }
 
-/** Create a [Plane.Label] from an integer value corresponding to an [XrPlaneLabelANDROID]. */
+/**
+ * Create a [androidx.xr.arcore.internal.Plane.Label] from an integer value corresponding to an
+ * [XrPlaneLabelANDROID].
+ */
 internal fun Plane.Label.Companion.fromOpenXrLabel(label: Int): Plane.Label =
     when (label) {
         0 -> Plane.Label.UNKNOWN // XR_PLANE_LABEL_UNKNOWN_ANDROID

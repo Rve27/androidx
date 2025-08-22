@@ -17,11 +17,10 @@
 package androidx.xr.arcore
 
 import androidx.annotation.RestrictTo
+import androidx.xr.arcore.internal.Face as RuntimeFace
 import androidx.xr.runtime.Config.FaceTrackingMode
-import androidx.xr.runtime.FaceBlendShapeType
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.TrackingState
-import androidx.xr.runtime.internal.Face as RuntimeFace
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

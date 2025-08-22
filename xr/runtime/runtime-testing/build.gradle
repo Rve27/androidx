@@ -35,6 +35,9 @@ plugins {
 dependencies {
     api(libs.kotlinStdlib)
     api(libs.kotlinCoroutinesCore)
+    // TODO: b/409058039 - Remove arcore and scenecore dependencies once the Fakes have been moved.
+    api(project(":xr:arcore:arcore"))
+    api(project(":xr:scenecore:scenecore"))
     api(project(":xr:runtime:runtime"))
 
     implementation("androidx.annotation:annotation:1.8.1")
@@ -52,6 +55,10 @@ dependencies {
 }
 
 android {
+    // TODO: b/409058039 - Drop back to 23 (default) once dependency on scenecore is removed.
+    defaultConfig {
+        minSdk = 24
+    }
     namespace = "androidx.xr.runtime.testing"
 }
 

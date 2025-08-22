@@ -52,12 +52,12 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.xr.arcore.Face
+import androidx.xr.arcore.FaceBlendShapeType
+import androidx.xr.arcore.FaceConfidenceRegionType
 import androidx.xr.arcore.testapp.common.BackToMainActivityButton
 import androidx.xr.arcore.testapp.common.SessionLifecycleHelper
 import androidx.xr.arcore.testapp.ui.theme.GoogleYellow
 import androidx.xr.runtime.Config
-import androidx.xr.runtime.FaceBlendShapeType
-import androidx.xr.runtime.FaceConfidenceRegionType
 import androidx.xr.runtime.RequiredCalibrationType
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.TrackingState

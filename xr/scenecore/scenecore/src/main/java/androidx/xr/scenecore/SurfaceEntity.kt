@@ -24,12 +24,12 @@ import androidx.annotation.MainThread
 import androidx.annotation.RestrictTo
 import androidx.xr.runtime.Config
 import androidx.xr.runtime.Session
-import androidx.xr.runtime.internal.JxrPlatformAdapter
 import androidx.xr.runtime.internal.LifecycleManager
-import androidx.xr.runtime.internal.SurfaceEntity as RtSurfaceEntity
 import androidx.xr.runtime.math.FloatSize2d
 import androidx.xr.runtime.math.FloatSize3d
 import androidx.xr.runtime.math.Pose
+import androidx.xr.scenecore.internal.JxrPlatformAdapter
+import androidx.xr.scenecore.internal.SurfaceEntity as RtSurfaceEntity
 
 /**
  * SurfaceEntity is an [Entity] that hosts a [Surface], which will be texture mapped onto the
@@ -474,7 +474,7 @@ private constructor(
             surfaceProtection: Int = SurfaceProtection.SURFACE_PROTECTION_NONE,
         ): SurfaceEntity =
             SurfaceEntity.create(
-                session.runtime.lifecycleManager,
+                session.perceptionRuntime.lifecycleManager,
                 session.platformAdapter,
                 session.scene.entityManager,
                 stereoMode,

@@ -16,7 +16,7 @@
 
 package androidx.xr.runtime.testing
 
-import androidx.xr.runtime.internal.GltfModelResource
+import androidx.xr.scenecore.internal.GltfModelResource
 
-/** Test-only implementation of [GltfModelResource] */
+/** Test-only implementation of [androidx.xr.scenecore.internal.GltfModelResource] */
 internal class FakeGltfModelResource(public val mToken: Long) : GltfModelResource {}

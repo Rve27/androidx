@@ -19,11 +19,11 @@
 package androidx.xr.scenecore
 
 import androidx.annotation.RestrictTo
-import androidx.xr.runtime.internal.ActivitySpace as RtActivitySpace
-import androidx.xr.runtime.internal.JxrPlatformAdapter
 import androidx.xr.runtime.math.BoundingBox
 import androidx.xr.runtime.math.FloatSize3d
 import androidx.xr.runtime.math.Pose
+import androidx.xr.scenecore.internal.ActivitySpace as RtActivitySpace
+import androidx.xr.scenecore.internal.JxrPlatformAdapter
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentMap
 import java.util.concurrent.Executor

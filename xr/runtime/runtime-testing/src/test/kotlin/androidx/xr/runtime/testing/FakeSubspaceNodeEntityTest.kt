@@ -16,7 +16,7 @@
 
 package androidx.xr.runtime.testing
 
-import androidx.xr.runtime.internal.Dimensions
+import androidx.xr.scenecore.internal.Dimensions
 import com.android.extensions.xr.node.Node
 import com.google.androidxr.splitengine.SubspaceNode
 import com.google.common.truth.Truth.assertThat

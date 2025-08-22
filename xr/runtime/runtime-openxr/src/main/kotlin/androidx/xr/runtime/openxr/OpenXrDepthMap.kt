@@ -17,14 +17,17 @@
 package androidx.xr.runtime.openxr
 
 import androidx.annotation.RestrictTo
+import androidx.xr.arcore.internal.DepthMap
 import androidx.xr.runtime.Config
-import androidx.xr.runtime.internal.DepthMap
 import androidx.xr.runtime.math.IntSize2d
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
 
-/** Wraps the native [XrDepthSwapchainImageANDROID] with the [DepthMap] interface. */
+/**
+ * Wraps the native [XrDepthSwapchainImageANDROID] with the [androidx.xr.arcore.internal.DepthMap]
+ * interface.
+ */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public class OpenXrDepthMap internal constructor(private val viewIndex: Int) : DepthMap {
 

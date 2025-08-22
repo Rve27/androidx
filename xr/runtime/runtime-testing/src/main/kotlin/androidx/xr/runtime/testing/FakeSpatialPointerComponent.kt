@@ -17,9 +17,9 @@
 package androidx.xr.runtime.testing
 
 import androidx.annotation.RestrictTo
-import androidx.xr.runtime.internal.SpatialPointerComponent
-import androidx.xr.runtime.internal.SpatialPointerIcon
-import androidx.xr.runtime.internal.SpatialPointerIconType
+import androidx.xr.scenecore.internal.SpatialPointerComponent
+import androidx.xr.scenecore.internal.SpatialPointerIcon
+import androidx.xr.scenecore.internal.SpatialPointerIconType
 
 /** Test-only implementation of [FakeSpatialPointerComponent] */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
@@ -27,11 +27,14 @@ public class FakeSpatialPointerComponent : FakeComponent(), SpatialPointerCompon
 
     @SpatialPointerIconType private var spatialPointerIcon: Int = SpatialPointerIcon.TYPE_NONE
 
-    /** Sets the [SpatialPointerIconType]. */
+    /** Sets the [androidx.xr.scenecore.internal.SpatialPointerIconType]. */
     override fun setSpatialPointerIcon(@SpatialPointerIconType iconType: Int) {
         spatialPointerIcon = iconType
     }
 
-    /** Returns the [SpatialPointerIconType] set from [setSpatialPointerIcon] on this component. */
+    /**
+     * Returns the [androidx.xr.scenecore.internal.SpatialPointerIconType] set from
+     * [setSpatialPointerIcon] on this component.
+     */
     @SpatialPointerIconType override fun getSpatialPointerIcon(): Int = spatialPointerIcon
 }

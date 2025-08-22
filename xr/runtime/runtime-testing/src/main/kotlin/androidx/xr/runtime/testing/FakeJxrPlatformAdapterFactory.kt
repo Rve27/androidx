@@ -20,6 +20,7 @@ import android.app.Activity
 import androidx.annotation.RestrictTo
 import androidx.xr.runtime.internal.Feature
 import androidx.xr.runtime.internal.JxrPlatformAdapterFactory
+import androidx.xr.scenecore.internal.JxrPlatformAdapter
 
 /** Factory for creating test-only instances of [JxrPlatformAdapter]. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)

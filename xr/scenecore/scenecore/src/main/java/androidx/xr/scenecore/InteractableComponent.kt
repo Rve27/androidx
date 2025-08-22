@@ -19,8 +19,8 @@ package androidx.xr.scenecore
 import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.xr.runtime.Session
-import androidx.xr.runtime.internal.InputEventListener as RtInputEventListener
-import androidx.xr.runtime.internal.JxrPlatformAdapter
+import androidx.xr.scenecore.internal.InputEventListener as RtInputEventListener
+import androidx.xr.scenecore.internal.JxrPlatformAdapter
 import java.util.concurrent.Executor
 import java.util.function.Consumer
 

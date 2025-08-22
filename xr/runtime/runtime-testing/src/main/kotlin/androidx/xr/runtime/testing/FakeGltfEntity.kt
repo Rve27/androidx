@@ -17,11 +17,11 @@
 package androidx.xr.runtime.testing
 
 import androidx.annotation.RestrictTo
-import androidx.xr.runtime.internal.GltfEntity
-import androidx.xr.runtime.internal.MaterialResource
+import androidx.xr.scenecore.internal.GltfEntity
+import androidx.xr.scenecore.internal.MaterialResource
 
 // TODO: b/405218432 - Implement this correctly instead of stubbing it out.
-/** Test-only implementation of [GltfEntity] */
+/** Test-only implementation of [androidx.xr.scenecore.internal.GltfEntity] */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public class FakeGltfEntity : GltfEntity, FakeEntity() {
 

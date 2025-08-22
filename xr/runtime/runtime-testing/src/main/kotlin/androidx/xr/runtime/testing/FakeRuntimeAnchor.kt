@@ -16,14 +16,14 @@
 
 package androidx.xr.runtime.testing
 
+import androidx.xr.arcore.internal.Anchor as RuntimeAnchor
+import androidx.xr.arcore.internal.AnchorNotTrackingException
+import androidx.xr.arcore.internal.AnchorResourcesExhaustedException
 import androidx.xr.runtime.TrackingState
-import androidx.xr.runtime.internal.Anchor as RuntimeAnchor
-import androidx.xr.runtime.internal.AnchorNotTrackingException
-import androidx.xr.runtime.internal.AnchorResourcesExhaustedException
 import androidx.xr.runtime.math.Pose
 import java.util.UUID
 
-/** Test-only implementation of [RuntimeAnchor] */
+/** Test-only implementation of [androidx.xr.arcore.internal.Anchor] */
 public class FakeRuntimeAnchor
 internal constructor(
     override var pose: Pose,

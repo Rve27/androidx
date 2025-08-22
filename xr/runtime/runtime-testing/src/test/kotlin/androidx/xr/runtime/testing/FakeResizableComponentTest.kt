@@ -16,13 +16,11 @@
 
 package androidx.xr.runtime.testing
 
-import androidx.xr.runtime.internal.Dimensions
-import androidx.xr.runtime.internal.ResizeEvent
-import androidx.xr.runtime.internal.ResizeEventListener
+import androidx.xr.scenecore.internal.Dimensions
+import androidx.xr.scenecore.internal.ResizeEvent
+import androidx.xr.scenecore.internal.ResizeEventListener
 import com.google.common.truth.Truth.assertThat
 import java.util.concurrent.atomic.AtomicBoolean
-import kotlin.collections.component1
-import kotlin.collections.component2
 import kotlin.collections.iterator
 import org.junit.Before
 import org.junit.Test

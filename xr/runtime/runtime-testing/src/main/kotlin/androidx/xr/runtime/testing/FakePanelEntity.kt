@@ -17,12 +17,12 @@
 package androidx.xr.runtime.testing
 
 import androidx.annotation.RestrictTo
-import androidx.xr.runtime.internal.Dimensions
-import androidx.xr.runtime.internal.PanelEntity
-import androidx.xr.runtime.internal.PerceivedResolutionResult
-import androidx.xr.runtime.internal.PixelDimensions
+import androidx.xr.scenecore.internal.Dimensions
+import androidx.xr.scenecore.internal.PanelEntity
+import androidx.xr.scenecore.internal.PerceivedResolutionResult
+import androidx.xr.scenecore.internal.PixelDimensions
 
-/** Test-only implementation of [PanelEntity] */
+/** Test-only implementation of [androidx.xr.scenecore.internal.PanelEntity] */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public open class FakePanelEntity() : FakeEntity(), PanelEntity {
     /**
@@ -48,7 +48,8 @@ public open class FakePanelEntity() : FakeEntity(), PanelEntity {
      * Returns the spatial size of this Panel in meters, without considering any scaling applied to
      * this panel by itself or its parents.
      *
-     * @return [Dimensions] size of this panel in meters. (Z will be 0)
+     * @return [androidx.xr.scenecore.internal.Dimensions] size of this panel in meters. (Z will
+     *   be 0)
      */
     override var size: Dimensions = Dimensions(1.0f, 1.0f, 0.0f)
         set(value) {
@@ -69,7 +70,8 @@ public open class FakePanelEntity() : FakeEntity(), PanelEntity {
     /**
      * For test purposes only.
      *
-     * Sets the [PerceivedResolutionResult] that will be returned by [getPerceivedResolution].
+     * Sets the [androidx.xr.scenecore.internal.PerceivedResolutionResult] that will be returned by
+     * [getPerceivedResolution].
      */
     public fun setPerceivedResolution(perceivedResolution: PerceivedResolutionResult) {
         this.perceivedResolutionResult = perceivedResolution
@@ -79,20 +81,22 @@ public open class FakePanelEntity() : FakeEntity(), PanelEntity {
      * Gets the perceived resolution of the entity in the camera view.
      *
      * This API is only intended for use in Full Space Mode and will return
-     * [PerceivedResolutionResult.InvalidCameraView] in Home Space Mode.
+     * [androidx.xr.scenecore.internal.PerceivedResolutionResult.InvalidCameraView] in Home Space
+     * Mode.
      *
      * The entity's own rotation and the camera's viewing direction are disregarded; this value
      * represents the dimensions of the entity on the camera view if its largest surface was facing
      * the camera without changing the distance of the entity to the camera.
      *
-     * @return A [PerceivedResolutionResult] which encapsulates the outcome:
+     * @return A [androidx.xr.scenecore.internal.PerceivedResolutionResult] which encapsulates the
+     *   outcome:
      *     - [PerceivedResolutionResult.Success] containing the [PixelDimensions] if the calculation
      *       is successful.
      *     - [PerceivedResolutionResult.EntityTooClose] if the entity is too close to the camera.
      *     - [PerceivedResolutionResult.InvalidCameraView] if the camera information required for
      *       the calculation is invalid or unavailable.
      *
-     * @see PerceivedResolutionResult
+     * @see androidx.xr.scenecore.internal.PerceivedResolutionResult
      */
     override fun getPerceivedResolution(): PerceivedResolutionResult {
         return perceivedResolutionResult

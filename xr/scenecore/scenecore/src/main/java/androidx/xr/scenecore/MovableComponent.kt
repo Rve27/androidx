@@ -19,9 +19,9 @@
 package androidx.xr.scenecore
 
 import androidx.xr.runtime.Session
-import androidx.xr.runtime.internal.JxrPlatformAdapter
-import androidx.xr.runtime.internal.MoveEventListener as RtMoveEventListener
 import androidx.xr.runtime.math.FloatSize3d
+import androidx.xr.scenecore.internal.JxrPlatformAdapter
+import androidx.xr.scenecore.internal.MoveEventListener as RtMoveEventListener
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.Executor
 

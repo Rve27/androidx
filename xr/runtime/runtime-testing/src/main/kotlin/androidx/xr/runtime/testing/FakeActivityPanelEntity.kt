@@ -20,9 +20,9 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.annotation.RestrictTo
-import androidx.xr.runtime.internal.ActivityPanelEntity
+import androidx.xr.scenecore.internal.ActivityPanelEntity
 
-/** Test-only implementation of [ActivityPanelEntity] */
+/** Test-only implementation of [androidx.xr.scenecore.internal.ActivityPanelEntity] */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public class FakeActivityPanelEntity : FakePanelEntity(), ActivityPanelEntity {
 

@@ -19,7 +19,7 @@
 package androidx.xr.runtime.openxr
 
 import androidx.annotation.RestrictTo
-import androidx.xr.runtime.internal.Runtime
+import androidx.xr.arcore.internal.PerceptionRuntime
 
 /*
  * Returns the pointer to the native [XrSession](https://registry.khronos.org/OpenXR/specs/1.0/html/xrspec.html#XrSession)
@@ -31,7 +31,7 @@ import androidx.xr.runtime.internal.Runtime
  * @throws IllegalArgumentException if the session is not using an OpenXR-enabled runtime.
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public fun getXrSessionPointer(runtime: Runtime): Long {
+public fun getXrSessionPointer(runtime: PerceptionRuntime): Long {
     val manager = runtime.lifecycleManager
     require(manager is OpenXrManager) {
         "The provided session is not using an OpenXR-enabled runtime." +
@@ -54,7 +54,7 @@ public fun getXrSessionPointer(runtime: Runtime): Long {
  * @throws IllegalArgumentException if the session is not using an OpenXR-enabled runtime.
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public fun getXrInstancePointer(runtime: Runtime): Long {
+public fun getXrInstancePointer(runtime: PerceptionRuntime): Long {
     val manager = runtime.lifecycleManager
     require(manager is OpenXrManager) {
         "The provided session is not using an OpenXR-enabled runtime." +

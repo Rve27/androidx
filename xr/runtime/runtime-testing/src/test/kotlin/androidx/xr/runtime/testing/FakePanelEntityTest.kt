@@ -16,9 +16,9 @@
 
 package androidx.xr.runtime.testing
 
-import androidx.xr.runtime.internal.Dimensions
-import androidx.xr.runtime.internal.PerceivedResolutionResult
-import androidx.xr.runtime.internal.PixelDimensions
+import androidx.xr.scenecore.internal.Dimensions
+import androidx.xr.scenecore.internal.PerceivedResolutionResult
+import androidx.xr.scenecore.internal.PixelDimensions
 import com.google.common.truth.Truth.assertThat
 import org.junit.Before
 import org.junit.Test

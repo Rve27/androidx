@@ -20,15 +20,15 @@ import android.graphics.ImageFormat
 import android.media.ImageReader
 import android.view.Surface
 import androidx.annotation.RestrictTo
-import androidx.xr.runtime.internal.Dimensions
-import androidx.xr.runtime.internal.PerceivedResolutionResult
-import androidx.xr.runtime.internal.SurfaceEntity
-import androidx.xr.runtime.internal.SurfaceEntity.Shape
-import androidx.xr.runtime.internal.TextureResource
 import androidx.xr.runtime.math.FloatSize2d
+import androidx.xr.scenecore.internal.Dimensions
+import androidx.xr.scenecore.internal.PerceivedResolutionResult
+import androidx.xr.scenecore.internal.SurfaceEntity
+import androidx.xr.scenecore.internal.SurfaceEntity.Shape
+import androidx.xr.scenecore.internal.TextureResource
 
 /**
- * Test-only implementation of [SurfaceEntity].
+ * Test-only implementation of [androidx.xr.scenecore.internal.SurfaceEntity].
  *
  * Interface for a spatialized Entity which manages an Android Surface. Applications can render to
  * this Surface in various ways, such as via MediaPlayer, ExoPlayer, or custom rendering. The
@@ -52,7 +52,7 @@ public class FakeSurfaceEntity() : FakeEntity(), SurfaceEntity {
      * Retrieves the dimensions of the "spatial canvas" which the surface is mapped to. These values
      * are not impacted by scale.
      *
-     * @return The canvas [Dimensions].
+     * @return The canvas [androidx.xr.scenecore.internal.Dimensions].
      */
     override val dimensions: Dimensions
         get() = shape.dimensions
@@ -112,8 +112,9 @@ public class FakeSurfaceEntity() : FakeEntity(), SurfaceEntity {
     /**
      * For test purposes only.
      *
-     * The [PerceivedResolutionResult] that will be returned by [getPerceivedResolution]. This can
-     * be modified in tests to simulate different perceived resolution.
+     * The [androidx.xr.scenecore.internal.PerceivedResolutionResult] that will be returned by
+     * [getPerceivedResolution]. This can be modified in tests to simulate different perceived
+     * resolution.
      */
     public var perceivedResolutionResult: PerceivedResolutionResult =
         PerceivedResolutionResult.InvalidCameraView()
@@ -122,20 +123,22 @@ public class FakeSurfaceEntity() : FakeEntity(), SurfaceEntity {
      * Gets the perceived resolution of the entity in the camera view.
      *
      * This API is only intended for use in Full Space Mode and will return
-     * [PerceivedResolutionResult.InvalidCameraView] in Home Space Mode.
+     * [androidx.xr.scenecore.internal.PerceivedResolutionResult.InvalidCameraView] in Home Space
+     * Mode.
      *
      * The entity's own rotation and the camera's viewing direction are disregarded; this value
      * represents the dimensions of the entity on the camera view if its largest surface was facing
      * the camera without changing the distance of the entity to the camera.
      *
-     * @return A [PerceivedResolutionResult] which encapsulates the outcome:
+     * @return A [androidx.xr.scenecore.internal.PerceivedResolutionResult] which encapsulates the
+     *   outcome:
      *     - [PerceivedResolutionResult.Success] containing the [PixelDimensions] if the calculation
      *       is successful.
      *     - [PerceivedResolutionResult.EntityTooClose] if the entity is too close to the camera.
      *     - [PerceivedResolutionResult.InvalidCameraView] if the camera information required for
      *       the calculation is invalid or unavailable.
      *
-     * @see PerceivedResolutionResult
+     * @see androidx.xr.scenecore.internal.PerceivedResolutionResult
      */
     override fun getPerceivedResolution(): PerceivedResolutionResult {
         return perceivedResolutionResult
@@ -161,7 +164,8 @@ public class FakeSurfaceEntity() : FakeEntity(), SurfaceEntity {
 
     /**
      * The active color space of the media asset drawn on the surface. Use constants from
-     * [SurfaceEntity.ColorSpace]. This value is used if [contentColorMetadataSet] is `true`.
+     * [androidx.xr.scenecore.internal.SurfaceEntity.ColorSpace]. This value is used if
+     * [contentColorMetadataSet] is `true`.
      */
     override val colorSpace: Int
         get() = _colorSpace
@@ -170,8 +174,8 @@ public class FakeSurfaceEntity() : FakeEntity(), SurfaceEntity {
 
     /**
      * The active color transfer function of the media asset drawn on the surface. Use constants
-     * from [SurfaceEntity.ColorTransfer]. This value is used if [contentColorMetadataSet] is
-     * `true`.
+     * from [androidx.xr.scenecore.internal.SurfaceEntity.ColorTransfer]. This value is used if
+     * [contentColorMetadataSet] is `true`.
      */
     override val colorTransfer: Int
         get() = _colorTransfer
@@ -180,7 +184,8 @@ public class FakeSurfaceEntity() : FakeEntity(), SurfaceEntity {
 
     /**
      * The active color range of the media asset drawn on the surface. Use constants from
-     * [SurfaceEntity.ColorRange]. This value is used if [contentColorMetadataSet] is `true`.
+     * [androidx.xr.scenecore.internal.SurfaceEntity.ColorRange]. This value is used if
+     * [contentColorMetadataSet] is `true`.
      */
     override val colorRange: Int
         get() = _colorRange

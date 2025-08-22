@@ -17,10 +17,10 @@
 package androidx.xr.arcore
 
 import androidx.annotation.RestrictTo
+import androidx.xr.arcore.internal.ArDevice as RuntimeArDevice
+import androidx.xr.arcore.internal.RenderViewpoint as RuntimeRenderViewpoint
 import androidx.xr.runtime.FieldOfView
 import androidx.xr.runtime.Session
-import androidx.xr.runtime.internal.ArDevice as RuntimeArDevice
-import androidx.xr.runtime.internal.RenderViewpoint as RuntimeRenderViewpoint
 import androidx.xr.runtime.math.Pose
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

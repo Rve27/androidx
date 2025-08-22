@@ -16,17 +16,21 @@
 
 package androidx.xr.runtime.testing
 
-import androidx.xr.runtime.internal.Anchor
+import androidx.xr.arcore.internal.Anchor
 
-/** Object that holds [Anchor] instances. */
+/** Object that holds [androidx.xr.arcore.internal.Anchor] instances. */
 internal interface AnchorHolder {
 
-    /** Notifies the [AnchorHolder] that the given [Anchor] has been persisted. */
+    /**
+     * Notifies the [AnchorHolder] that the given [androidx.xr.arcore.internal.Anchor] has been
+     * persisted.
+     */
     public fun onAnchorPersisted(anchor: Anchor)
 
     /**
-     * Detaches the given [Anchor] from this trackable. Single [Anchor] instances rely on this
-     * function to remove themselves from the [AnchorHolder].
+     * Detaches the given [androidx.xr.arcore.internal.Anchor] from this trackable. Single
+     * [androidx.xr.arcore.internal.Anchor] instances rely on this function to remove themselves
+     * from the [AnchorHolder].
      */
     public fun detachAnchor(anchor: Anchor)
 }

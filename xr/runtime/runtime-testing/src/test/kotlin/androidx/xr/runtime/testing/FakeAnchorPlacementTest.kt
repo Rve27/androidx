@@ -16,8 +16,8 @@
 
 package androidx.xr.runtime.testing
 
-import androidx.xr.runtime.internal.PlaneSemantic
-import androidx.xr.runtime.internal.PlaneType
+import androidx.xr.scenecore.internal.PlaneSemantic
+import androidx.xr.scenecore.internal.PlaneType
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 

@@ -16,9 +16,9 @@
 
 package androidx.xr.runtime.testing
 
-import androidx.xr.runtime.internal.SpatialModeChangeListener
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Vector3
+import androidx.xr.scenecore.internal.SpatialModeChangeListener
 
 public class FakeSpatialModeChangeListener : SpatialModeChangeListener {
     public var lastRecommendedPose: Pose? = null

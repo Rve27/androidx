@@ -17,10 +17,12 @@
 package androidx.xr.runtime.openxr
 
 import androidx.annotation.RestrictTo
-import androidx.xr.runtime.internal.Runtime
+import androidx.xr.arcore.internal.PerceptionRuntime
+import androidx.xr.runtime.Config
+import kotlin.time.ComparableTimeMark
 
 /**
- * Implementation of the [Runtime] interface using OpenXR.
+ * Implementation of the [androidx.xr.arcore.internal.PerceptionRuntime] interface using OpenXR.
  *
  * @property lifecycleManager that manages the lifecycle of the OpenXR session.
  * @property perceptionManager that manages the perception capabilities of a runtime using OpenXR.
@@ -30,4 +32,28 @@ public class OpenXrRuntime
 internal constructor(
     override val lifecycleManager: OpenXrManager,
     override val perceptionManager: OpenXrPerceptionManager,
-) : Runtime {}
+) : PerceptionRuntime {
+    override fun initialize() {
+        lifecycleManager.create()
+    }
+
+    override fun resume() {
+        lifecycleManager.resume()
+    }
+
+    override fun pause() {
+        lifecycleManager.pause()
+    }
+
+    override suspend fun update(): ComparableTimeMark? {
+        return lifecycleManager.update()
+    }
+
+    override fun configure(config: Config) {
+        lifecycleManager.configure(config)
+    }
+
+    override fun destroy() {
+        lifecycleManager.stop()
+    }
+}

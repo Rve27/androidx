@@ -17,12 +17,12 @@
 package androidx.xr.runtime.openxr
 
 import android.annotation.SuppressLint
-import androidx.xr.runtime.internal.Trackable
+import androidx.xr.arcore.internal.Trackable
 import java.util.concurrent.CopyOnWriteArrayList
 
 /** Object that holds resources that are used in the XR session. */
 internal class XrResources {
-    /** Map of native trackable pointer to [Trackable]. */
+    /** Map of native trackable pointer to [androidx.xr.arcore.internal.Trackable]. */
     @SuppressLint("BanConcurrentHashMap")
     private val _trackablesMap = java.util.concurrent.ConcurrentHashMap<Long, Trackable>()
     val trackablesMap: Map<Long, Trackable> = _trackablesMap

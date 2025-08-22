@@ -17,14 +17,14 @@
 package androidx.xr.scenecore
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.xr.runtime.internal.ActivitySpace as RtActivitySpace
-import androidx.xr.runtime.internal.Dimensions
-import androidx.xr.runtime.internal.JxrPlatformAdapter
 import androidx.xr.runtime.math.BoundingBox
 import androidx.xr.runtime.math.FloatSize3d
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Quaternion
 import androidx.xr.runtime.math.Vector3
+import androidx.xr.scenecore.internal.ActivitySpace as RtActivitySpace
+import androidx.xr.scenecore.internal.Dimensions
+import androidx.xr.scenecore.internal.JxrPlatformAdapter
 import com.google.common.truth.Truth.assertThat
 import com.google.common.util.concurrent.MoreExecutors.directExecutor
 import java.util.function.Consumer

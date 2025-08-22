@@ -18,11 +18,11 @@ package androidx.xr.runtime.testing
 
 import android.media.MediaPlayer
 import androidx.annotation.RestrictTo
-import androidx.xr.runtime.internal.MediaPlayerExtensionsWrapper
-import androidx.xr.runtime.internal.PointSourceParams
-import androidx.xr.runtime.internal.SoundFieldAttributes
+import androidx.xr.scenecore.internal.MediaPlayerExtensionsWrapper
+import androidx.xr.scenecore.internal.PointSourceParams
+import androidx.xr.scenecore.internal.SoundFieldAttributes
 
-/** Test-only implementation of [MediaPlayerExtensionsWrapper] */
+/** Test-only implementation of [androidx.xr.scenecore.internal.MediaPlayerExtensionsWrapper] */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public class FakeMediaPlayerExtensionsWrapper : MediaPlayerExtensionsWrapper {
     private var _pointSourceParams: MutableMap<MediaPlayer, PointSourceParams> = mutableMapOf()
@@ -30,8 +30,8 @@ public class FakeMediaPlayerExtensionsWrapper : MediaPlayerExtensionsWrapper {
     /**
      * For test purposes only.
      *
-     * This read-only map stores the [PointSourceParams] that were last set for each [MediaPlayer]
-     * instance via the [setPointSourceParams] method.
+     * This read-only map stores the [androidx.xr.scenecore.internal.PointSourceParams] that were
+     * last set for each [MediaPlayer] instance via the [setPointSourceParams] method.
      *
      * Tests can inspect this map to verify that the code under test correctly applies the intended
      * `PointSourceParams` to the `MediaPlayer`.
@@ -55,8 +55,8 @@ public class FakeMediaPlayerExtensionsWrapper : MediaPlayerExtensionsWrapper {
     /**
      * For test purposes only.
      *
-     * This read-only map stores the [SoundFieldAttributes] that were last set for each
-     * [MediaPlayer] instance via the [setSoundFieldAttributes] method.
+     * This read-only map stores the [androidx.xr.scenecore.internal.SoundFieldAttributes] that were
+     * last set for each [MediaPlayer] instance via the [setSoundFieldAttributes] method.
      *
      * Tests can inspect this map to verify that the code under test correctly applies the intended
      * `SoundFieldAttributes` to the `MediaPlayer`.

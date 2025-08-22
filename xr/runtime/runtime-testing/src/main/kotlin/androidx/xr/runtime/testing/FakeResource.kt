@@ -17,13 +17,13 @@
 package androidx.xr.runtime.testing
 
 import androidx.annotation.RestrictTo
-import androidx.xr.runtime.internal.ExrImageResource
-import androidx.xr.runtime.internal.GltfModelResource
-import androidx.xr.runtime.internal.MaterialResource
-import androidx.xr.runtime.internal.Resource
-import androidx.xr.runtime.internal.TextureResource
+import androidx.xr.scenecore.internal.ExrImageResource
+import androidx.xr.scenecore.internal.GltfModelResource
+import androidx.xr.scenecore.internal.MaterialResource
+import androidx.xr.scenecore.internal.Resource
+import androidx.xr.scenecore.internal.TextureResource
 
-/** Fake implementation of [Resource] for testing. */
+/** Fake implementation of [androidx.xr.scenecore.internal.Resource] for testing. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 internal class FakeResource(internal val token: Long) :
     Resource, ExrImageResource, GltfModelResource, TextureResource, MaterialResource {}

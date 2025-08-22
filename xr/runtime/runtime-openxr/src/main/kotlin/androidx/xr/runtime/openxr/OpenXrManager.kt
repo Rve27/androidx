@@ -40,6 +40,10 @@ internal constructor(
     internal val timeSource: OpenXrTimeSource,
 ) : LifecycleManager {
 
+    private companion object {
+        private val activityList = mutableListOf<Activity>()
+    }
+
     /**
      * A pointer to the native OpenXrManager. Only valid after [create] and before [stop] have been
      * called.
@@ -65,6 +69,7 @@ internal constructor(
         nativePointer = nativeGetPointer()
         // Only initialize the OpenXrManager and bring up resources.
         check(nativeInit(activity, startPollingThread = false))
+        activityList.add(activity)
     }
 
     /** The current state of the runtime configuration for the session. */
@@ -229,9 +234,13 @@ internal constructor(
     }
 
     override fun stop() {
-        nativeDeInit()
-        nativePointer = 0L
-        perceptionManager.clear()
+        // TODO: b/422830134 - Remove this check once there are multiple OpenXrManagers.
+        activityList.remove(activity)
+        if (activityList.isEmpty()) {
+            nativeDeInit()
+            nativePointer = 0L
+            perceptionManager.clear()
+        }
     }
 
     private external fun nativeGetPointer(): Long
@@ -249,6 +258,7 @@ internal constructor(
         depthEstimation: Int,
         anchorPersistence: Int,
         faceTracking: Int = 0,
+        eyeTracking: Int = 0,
         objectTracking: Int,
         objectLabels: LongArray,
     ): Long

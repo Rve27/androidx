@@ -17,8 +17,11 @@
 package androidx.xr.runtime.testing
 
 import androidx.annotation.RestrictTo
-import androidx.xr.runtime.internal.HeadActivityPose
+import androidx.xr.scenecore.internal.HeadActivityPose
 
-/** A test double for [HeadActivityPose], designed for use in unit or integration tests. */
+/**
+ * A test double for [androidx.xr.scenecore.internal.HeadActivityPose], designed for use in unit or
+ * integration tests.
+ */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public class FakeHeadActivityPose() : FakeActivityPose(), HeadActivityPose

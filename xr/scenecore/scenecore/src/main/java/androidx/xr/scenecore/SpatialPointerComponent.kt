@@ -17,7 +17,7 @@
 package androidx.xr.scenecore
 
 import androidx.xr.runtime.Session
-import androidx.xr.runtime.internal.JxrPlatformAdapter
+import androidx.xr.scenecore.internal.JxrPlatformAdapter
 
 /**
  * [Component] that modifies the pointer icon that is rendered on the component's [Entity]. If this

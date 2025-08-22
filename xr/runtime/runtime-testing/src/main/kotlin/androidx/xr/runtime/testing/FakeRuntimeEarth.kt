@@ -17,14 +17,14 @@
 package androidx.xr.runtime.testing
 
 import androidx.annotation.RestrictTo
-import androidx.xr.runtime.internal.Anchor
-import androidx.xr.runtime.internal.Earth as RuntimeEarth
-import androidx.xr.runtime.internal.Earth.GeospatialPoseResult
+import androidx.xr.arcore.internal.Anchor
+import androidx.xr.arcore.internal.Earth as RuntimeEarth
+import androidx.xr.arcore.internal.Earth.GeospatialPoseResult
 import androidx.xr.runtime.math.GeospatialPose
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Quaternion
 
-/** Test-only implementation of [RuntimeEarth]. */
+/** Test-only implementation of [androidx.xr.arcore.internal.Earth]. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public class FakeRuntimeEarth(override var state: RuntimeEarth.State = RuntimeEarth.State.STOPPED) :
     RuntimeEarth {

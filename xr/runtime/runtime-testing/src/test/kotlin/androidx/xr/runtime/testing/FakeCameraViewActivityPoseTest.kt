@@ -16,8 +16,8 @@
 
 package androidx.xr.runtime.testing
 
-import androidx.xr.runtime.internal.CameraViewActivityPose.CameraType
-import androidx.xr.runtime.internal.PixelDimensions
+import androidx.xr.scenecore.internal.CameraViewActivityPose.CameraType
+import androidx.xr.scenecore.internal.PixelDimensions
 import org.junit.Test
 
 class FakeCameraViewActivityPoseTest {

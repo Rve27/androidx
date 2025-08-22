@@ -20,9 +20,9 @@ import androidx.annotation.IntDef
 import androidx.annotation.MainThread
 import androidx.annotation.RestrictTo
 import androidx.xr.runtime.Session
-import androidx.xr.runtime.internal.GltfEntity as RtGltfEntity
-import androidx.xr.runtime.internal.JxrPlatformAdapter
 import androidx.xr.runtime.math.Pose
+import androidx.xr.scenecore.internal.GltfEntity as RtGltfEntity
+import androidx.xr.scenecore.internal.JxrPlatformAdapter
 
 /**
  * GltfModelEntity is a concrete implementation of Entity that hosts a glTF model.

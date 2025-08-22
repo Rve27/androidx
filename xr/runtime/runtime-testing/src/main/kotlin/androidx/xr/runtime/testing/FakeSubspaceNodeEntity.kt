@@ -17,13 +17,16 @@
 package androidx.xr.runtime.testing
 
 import androidx.annotation.RestrictTo
-import androidx.xr.runtime.internal.Dimensions
-import androidx.xr.runtime.internal.SubspaceNodeEntity
+import androidx.xr.scenecore.internal.Dimensions
+import androidx.xr.scenecore.internal.SubspaceNodeEntity
 import com.google.androidxr.splitengine.SubspaceNode
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public class FakeSubspaceNodeEntity(
     public val subspaceNode: SubspaceNode,
-    /** The size of the [SubspaceNodeEntity] in meters, in unscaled local space. */
+    /**
+     * The size of the [androidx.xr.scenecore.internal.SubspaceNodeEntity] in meters, in unscaled
+     * local space.
+     */
     public override var size: Dimensions = Dimensions(2f, 1f, 0f),
 ) : SubspaceNodeEntity, FakeEntity()

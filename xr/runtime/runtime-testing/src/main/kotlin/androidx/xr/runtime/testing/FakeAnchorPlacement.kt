@@ -16,9 +16,9 @@
 
 package androidx.xr.runtime.testing
 
-import androidx.xr.runtime.internal.AnchorPlacement
-import androidx.xr.runtime.internal.PlaneSemantic
-import androidx.xr.runtime.internal.PlaneType
+import androidx.xr.scenecore.internal.AnchorPlacement
+import androidx.xr.scenecore.internal.PlaneSemantic
+import androidx.xr.scenecore.internal.PlaneType
 
 /**
  * A test implementation of the [AnchorPlacement] interface, used to define and inspect anchor

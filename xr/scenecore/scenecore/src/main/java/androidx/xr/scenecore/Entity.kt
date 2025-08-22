@@ -20,10 +20,10 @@ package androidx.xr.scenecore
 
 import android.util.Log
 import androidx.annotation.FloatRange
-import androidx.xr.runtime.internal.ActivityPose as RtActivityPose
-import androidx.xr.runtime.internal.Entity as RtEntity
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Vector3
+import androidx.xr.scenecore.internal.ActivityPose as RtActivityPose
+import androidx.xr.scenecore.internal.Entity as RtEntity
 
 /**
  * Interface for a spatial Entity. An Entity's [Pose]s are represented as being relative to their

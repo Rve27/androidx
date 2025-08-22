@@ -17,18 +17,21 @@
 package androidx.xr.runtime.testing
 
 import androidx.annotation.RestrictTo
-import androidx.xr.runtime.internal.ActivityPose
-import androidx.xr.runtime.internal.ActivitySpace
-import androidx.xr.runtime.internal.Dimensions
-import androidx.xr.runtime.internal.HitTestResult
 import androidx.xr.runtime.math.BoundingBox
 import androidx.xr.runtime.math.Vector3
+import androidx.xr.scenecore.internal.ActivityPose
+import androidx.xr.scenecore.internal.ActivitySpace
+import androidx.xr.scenecore.internal.Dimensions
+import androidx.xr.scenecore.internal.HitTestResult
 import com.google.common.util.concurrent.Futures.immediateFuture
 import com.google.common.util.concurrent.ListenableFuture
 import java.util.Collections
 import java.util.concurrent.atomic.AtomicReference
 
-/** A test double for [ActivitySpace], designed for use in unit or integration tests. */
+/**
+ * A test double for [androidx.xr.scenecore.internal.ActivitySpace], designed for use in unit or
+ * integration tests.
+ */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public class FakeActivitySpace() : FakeSystemSpaceEntity(), ActivitySpace {
     private val _bounds: AtomicReference<Dimensions> =
@@ -90,8 +93,9 @@ public class FakeActivitySpace() : FakeSystemSpaceEntity(), ActivitySpace {
     }
 
     /**
-     * The [HitTestResult] that will be returned by [hitTestRelativeToActivityPose]. This can be
-     * modified in tests to simulate different hit test outcomes.
+     * The [androidx.xr.scenecore.internal.HitTestResult] that will be returned by
+     * [hitTestRelativeToActivityPose]. This can be modified in tests to simulate different hit test
+     * outcomes.
      */
     public var activitySpaceHitTestResult: HitTestResult =
         HitTestResult(

@@ -17,10 +17,10 @@
 package androidx.xr.runtime.testing
 
 import androidx.annotation.RestrictTo
-import androidx.xr.runtime.internal.Component
-import androidx.xr.runtime.internal.Entity
+import androidx.xr.scenecore.internal.Component
+import androidx.xr.scenecore.internal.Entity
 
-/** Test-only implementation of [Component] */
+/** Test-only implementation of [androidx.xr.scenecore.internal.Component] */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public open class FakeComponent : Component {
     /**

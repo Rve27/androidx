@@ -18,7 +18,7 @@ package androidx.xr.runtime.testing
 
 import android.os.Build
 import androidx.test.filters.SdkSuppress
-import androidx.xr.runtime.internal.AnchorEntity
+import androidx.xr.scenecore.internal.AnchorEntity
 import com.google.common.truth.Truth.assertThat
 import org.junit.Before
 import org.junit.Test

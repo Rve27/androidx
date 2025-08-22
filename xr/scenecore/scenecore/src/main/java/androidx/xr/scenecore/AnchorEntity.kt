@@ -22,10 +22,10 @@ import androidx.annotation.RestrictTo
 import androidx.xr.arcore.Anchor
 import androidx.xr.runtime.Config.PlaneTrackingMode
 import androidx.xr.runtime.Session
-import androidx.xr.runtime.internal.AnchorEntity as RtAnchorEntity
-import androidx.xr.runtime.internal.JxrPlatformAdapter
 import androidx.xr.runtime.math.FloatSize2d
 import androidx.xr.runtime.math.Pose
+import androidx.xr.scenecore.internal.AnchorEntity as RtAnchorEntity
+import androidx.xr.scenecore.internal.JxrPlatformAdapter
 import java.time.Duration
 import java.util.UUID
 import java.util.concurrent.Executor

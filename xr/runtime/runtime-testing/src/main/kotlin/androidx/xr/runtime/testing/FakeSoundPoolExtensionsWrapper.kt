@@ -18,12 +18,12 @@ package androidx.xr.runtime.testing
 
 import android.media.SoundPool
 import androidx.annotation.RestrictTo
-import androidx.xr.runtime.internal.PointSourceParams
-import androidx.xr.runtime.internal.SoundFieldAttributes
-import androidx.xr.runtime.internal.SoundPoolExtensionsWrapper
-import androidx.xr.runtime.internal.SpatializerConstants
+import androidx.xr.scenecore.internal.PointSourceParams
+import androidx.xr.scenecore.internal.SoundFieldAttributes
+import androidx.xr.scenecore.internal.SoundPoolExtensionsWrapper
+import androidx.xr.scenecore.internal.SpatializerConstants
 
-/** Test-only implementation of [SoundPoolExtensionsWrapper] */
+/** Test-only implementation of [androidx.xr.scenecore.internal.SoundPoolExtensionsWrapper] */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public class FakeSoundPoolExtensionsWrapper : SoundPoolExtensionsWrapper {
 
@@ -110,7 +110,8 @@ public class FakeSoundPoolExtensionsWrapper : SoundPoolExtensionsWrapper {
     /**
      * For test purposes only.
      *
-     * Sets the result of a call to [SoundPoolExtensionsWrapper.getSpatialSourceType] like the
+     * Sets the result of a call to
+     * [androidx.xr.scenecore.internal.SoundPoolExtensionsWrapper.getSpatialSourceType] like the
      * setSourceType does in scenecore unit tests.
      */
     @SpatializerConstants.SourceType public var sourceType: Int = 0

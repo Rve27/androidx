@@ -17,11 +17,11 @@
 package androidx.xr.runtime.openxr
 
 import androidx.annotation.RestrictTo
+import androidx.xr.arcore.internal.Anchor
+import androidx.xr.arcore.internal.AnchorResourcesExhaustedException
+import androidx.xr.arcore.internal.AugmentedObject as RuntimeObject
 import androidx.xr.runtime.AugmentedObjectCategory
 import androidx.xr.runtime.TrackingState
-import androidx.xr.runtime.internal.Anchor
-import androidx.xr.runtime.internal.AnchorResourcesExhaustedException
-import androidx.xr.runtime.internal.AugmentedObject as RuntimeObject
 import androidx.xr.runtime.math.FloatSize3d
 import androidx.xr.runtime.math.Pose
 

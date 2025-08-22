@@ -17,13 +17,13 @@
 package androidx.xr.arcore
 
 import androidx.annotation.RestrictTo
+import androidx.xr.arcore.internal.Anchor
+import androidx.xr.arcore.internal.AnchorResourcesExhaustedException
+import androidx.xr.arcore.internal.AugmentedObject as RuntimeObject
 import androidx.xr.runtime.AugmentedObjectCategory as Category
 import androidx.xr.runtime.Config
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.TrackingState
-import androidx.xr.runtime.internal.Anchor
-import androidx.xr.runtime.internal.AnchorResourcesExhaustedException
-import androidx.xr.runtime.internal.AugmentedObject as RuntimeObject
 import androidx.xr.runtime.math.FloatSize3d
 import androidx.xr.runtime.math.Pose
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -82,7 +82,7 @@ internal constructor(
         /**
          * * The category of the augmented object.
          *
-         * @see androidx.xr.runtime.AugmentedObjectCategory
+         * @see AugmentedObjectCategory
          */
         public val category: Category,
         /**

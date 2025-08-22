@@ -17,15 +17,15 @@
 package androidx.xr.runtime.testing
 
 import androidx.annotation.RestrictTo
+import androidx.xr.arcore.internal.Anchor as RuntimeAnchor
+import androidx.xr.arcore.internal.Plane as RuntimePlane
 import androidx.xr.runtime.TrackingState
-import androidx.xr.runtime.internal.Anchor as RuntimeAnchor
-import androidx.xr.runtime.internal.Plane as RuntimePlane
 import androidx.xr.runtime.math.FloatSize2d
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Vector2
 
 /**
- * Test-only implementation of [RuntimePlane]
+ * Test-only implementation of [androidx.xr.arcore.internal.Plane]
  *
  * The properties of the [FakeRuntimePlane] can be set manually in order to simulate a runtime plane
  * in the environment.

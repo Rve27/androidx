@@ -18,11 +18,11 @@ package androidx.xr.runtime.testing
 
 import android.graphics.ImageFormat
 import android.media.ImageReader
-import androidx.xr.runtime.internal.PerceivedResolutionResult
-import androidx.xr.runtime.internal.PixelDimensions
-import androidx.xr.runtime.internal.SurfaceEntity
-import androidx.xr.runtime.internal.TextureResource
 import androidx.xr.runtime.math.FloatSize2d
+import androidx.xr.scenecore.internal.PerceivedResolutionResult
+import androidx.xr.scenecore.internal.PixelDimensions
+import androidx.xr.scenecore.internal.SurfaceEntity
+import androidx.xr.scenecore.internal.TextureResource
 import com.google.common.truth.Truth.assertThat
 import org.junit.After
 import org.junit.Before

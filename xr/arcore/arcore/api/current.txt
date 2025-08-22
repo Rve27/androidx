@@ -82,12 +82,41 @@ package androidx.xr.arcore {
   }
 
   public static final class Hand.State {
-    method public java.util.Map<androidx.xr.runtime.HandJointType,androidx.xr.runtime.math.Pose> getHandJoints();
+    method public java.util.Map<androidx.xr.arcore.HandJointType,androidx.xr.runtime.math.Pose> getHandJoints();
     method public java.nio.FloatBuffer getHandJointsBuffer();
     method public androidx.xr.runtime.TrackingState getTrackingState();
-    property public java.util.Map<androidx.xr.runtime.HandJointType,androidx.xr.runtime.math.Pose> handJoints;
+    property public java.util.Map<androidx.xr.arcore.HandJointType,androidx.xr.runtime.math.Pose> handJoints;
     property public java.nio.FloatBuffer handJointsBuffer;
     property public androidx.xr.runtime.TrackingState trackingState;
+  }
+
+  public enum HandJointType {
+    enum_constant public static final androidx.xr.arcore.HandJointType INDEX_DISTAL;
+    enum_constant public static final androidx.xr.arcore.HandJointType INDEX_INTERMEDIATE;
+    enum_constant public static final androidx.xr.arcore.HandJointType INDEX_METACARPAL;
+    enum_constant public static final androidx.xr.arcore.HandJointType INDEX_PROXIMAL;
+    enum_constant public static final androidx.xr.arcore.HandJointType INDEX_TIP;
+    enum_constant public static final androidx.xr.arcore.HandJointType LITTLE_DISTAL;
+    enum_constant public static final androidx.xr.arcore.HandJointType LITTLE_INTERMEDIATE;
+    enum_constant public static final androidx.xr.arcore.HandJointType LITTLE_METACARPAL;
+    enum_constant public static final androidx.xr.arcore.HandJointType LITTLE_PROXIMAL;
+    enum_constant public static final androidx.xr.arcore.HandJointType LITTLE_TIP;
+    enum_constant public static final androidx.xr.arcore.HandJointType MIDDLE_DISTAL;
+    enum_constant public static final androidx.xr.arcore.HandJointType MIDDLE_INTERMEDIATE;
+    enum_constant public static final androidx.xr.arcore.HandJointType MIDDLE_METACARPAL;
+    enum_constant public static final androidx.xr.arcore.HandJointType MIDDLE_PROXIMAL;
+    enum_constant public static final androidx.xr.arcore.HandJointType MIDDLE_TIP;
+    enum_constant public static final androidx.xr.arcore.HandJointType PALM;
+    enum_constant public static final androidx.xr.arcore.HandJointType RING_DISTAL;
+    enum_constant public static final androidx.xr.arcore.HandJointType RING_INTERMEDIATE;
+    enum_constant public static final androidx.xr.arcore.HandJointType RING_METACARPAL;
+    enum_constant public static final androidx.xr.arcore.HandJointType RING_PROXIMAL;
+    enum_constant public static final androidx.xr.arcore.HandJointType RING_TIP;
+    enum_constant public static final androidx.xr.arcore.HandJointType THUMB_DISTAL;
+    enum_constant public static final androidx.xr.arcore.HandJointType THUMB_METACARPAL;
+    enum_constant public static final androidx.xr.arcore.HandJointType THUMB_PROXIMAL;
+    enum_constant public static final androidx.xr.arcore.HandJointType THUMB_TIP;
+    enum_constant public static final androidx.xr.arcore.HandJointType WRIST;
   }
 
   public final class HitResult {

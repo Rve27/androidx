@@ -17,7 +17,7 @@
 package androidx.xr.runtime.testing
 
 import androidx.annotation.RestrictTo
-import androidx.xr.runtime.internal.ArDevice as RuntimeArDevice
+import androidx.xr.arcore.internal.ArDevice as RuntimeArDevice
 import androidx.xr.runtime.math.Pose
 
 // TODO: b/326481788 - Add more functionality to FakeRuntimeArDevice

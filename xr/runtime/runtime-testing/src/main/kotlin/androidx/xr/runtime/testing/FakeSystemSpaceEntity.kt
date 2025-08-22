@@ -17,10 +17,13 @@
 package androidx.xr.runtime.testing
 
 import androidx.annotation.RestrictTo
-import androidx.xr.runtime.internal.SystemSpaceEntity
+import androidx.xr.scenecore.internal.SystemSpaceEntity
 import java.util.concurrent.Executor
 
-/** A test double for [SystemSpaceEntity], designed for use in unit or integration tests. */
+/**
+ * A test double for [androidx.xr.scenecore.internal.SystemSpaceEntity], designed for use in unit or
+ * integration tests.
+ */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public open class FakeSystemSpaceEntity() : FakeEntity(), SystemSpaceEntity {
     private var onSpaceUpdatedListener: Runnable? = null

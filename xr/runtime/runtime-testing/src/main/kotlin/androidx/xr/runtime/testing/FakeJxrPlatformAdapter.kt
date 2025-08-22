@@ -23,47 +23,47 @@ import android.os.Bundle
 import android.view.View
 import androidx.annotation.RequiresApi
 import androidx.annotation.RestrictTo
+import androidx.xr.arcore.internal.Anchor
 import androidx.xr.runtime.SubspaceNodeHolder
 import androidx.xr.runtime.TypeHolder
-import androidx.xr.runtime.internal.ActivityPanelEntity
-import androidx.xr.runtime.internal.ActivitySpace
-import androidx.xr.runtime.internal.Anchor
-import androidx.xr.runtime.internal.AnchorPlacement
-import androidx.xr.runtime.internal.AudioTrackExtensionsWrapper
-import androidx.xr.runtime.internal.CameraViewActivityPose
-import androidx.xr.runtime.internal.Dimensions
-import androidx.xr.runtime.internal.Entity
-import androidx.xr.runtime.internal.ExrImageResource
-import androidx.xr.runtime.internal.GltfEntity
-import androidx.xr.runtime.internal.GltfModelResource
-import androidx.xr.runtime.internal.HeadActivityPose
-import androidx.xr.runtime.internal.InputEventListener
-import androidx.xr.runtime.internal.InteractableComponent
-import androidx.xr.runtime.internal.JxrPlatformAdapter
-import androidx.xr.runtime.internal.KhronosPbrMaterialSpec
-import androidx.xr.runtime.internal.LoggingEntity
-import androidx.xr.runtime.internal.MaterialResource
-import androidx.xr.runtime.internal.MediaPlayerExtensionsWrapper
-import androidx.xr.runtime.internal.PanelEntity
-import androidx.xr.runtime.internal.PerceptionSpaceActivityPose
-import androidx.xr.runtime.internal.PixelDimensions
-import androidx.xr.runtime.internal.PlaneSemantic
-import androidx.xr.runtime.internal.PlaneType
-import androidx.xr.runtime.internal.PointerCaptureComponent
-import androidx.xr.runtime.internal.SoundPoolExtensionsWrapper
-import androidx.xr.runtime.internal.SpatialCapabilities
-import androidx.xr.runtime.internal.SpatialEnvironment
-import androidx.xr.runtime.internal.SpatialModeChangeListener
-import androidx.xr.runtime.internal.SpatialPointerComponent
-import androidx.xr.runtime.internal.SpatialVisibility
-import androidx.xr.runtime.internal.SubspaceNodeEntity
-import androidx.xr.runtime.internal.SurfaceEntity
-import androidx.xr.runtime.internal.TextureResource
-import androidx.xr.runtime.internal.TextureSampler
 import androidx.xr.runtime.math.Matrix3
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Vector3
 import androidx.xr.runtime.math.Vector4
+import androidx.xr.scenecore.internal.ActivityPanelEntity
+import androidx.xr.scenecore.internal.ActivitySpace
+import androidx.xr.scenecore.internal.AnchorPlacement
+import androidx.xr.scenecore.internal.AudioTrackExtensionsWrapper
+import androidx.xr.scenecore.internal.CameraViewActivityPose
+import androidx.xr.scenecore.internal.Dimensions
+import androidx.xr.scenecore.internal.Entity
+import androidx.xr.scenecore.internal.ExrImageResource
+import androidx.xr.scenecore.internal.GltfEntity
+import androidx.xr.scenecore.internal.GltfModelResource
+import androidx.xr.scenecore.internal.HeadActivityPose
+import androidx.xr.scenecore.internal.InputEventListener
+import androidx.xr.scenecore.internal.InteractableComponent
+import androidx.xr.scenecore.internal.JxrPlatformAdapter
+import androidx.xr.scenecore.internal.KhronosPbrMaterialSpec
+import androidx.xr.scenecore.internal.LoggingEntity
+import androidx.xr.scenecore.internal.MaterialResource
+import androidx.xr.scenecore.internal.MediaPlayerExtensionsWrapper
+import androidx.xr.scenecore.internal.PanelEntity
+import androidx.xr.scenecore.internal.PerceptionSpaceActivityPose
+import androidx.xr.scenecore.internal.PixelDimensions
+import androidx.xr.scenecore.internal.PlaneSemantic
+import androidx.xr.scenecore.internal.PlaneType
+import androidx.xr.scenecore.internal.PointerCaptureComponent
+import androidx.xr.scenecore.internal.SoundPoolExtensionsWrapper
+import androidx.xr.scenecore.internal.SpatialCapabilities
+import androidx.xr.scenecore.internal.SpatialEnvironment
+import androidx.xr.scenecore.internal.SpatialModeChangeListener
+import androidx.xr.scenecore.internal.SpatialPointerComponent
+import androidx.xr.scenecore.internal.SpatialVisibility
+import androidx.xr.scenecore.internal.SubspaceNodeEntity
+import androidx.xr.scenecore.internal.SurfaceEntity
+import androidx.xr.scenecore.internal.TextureResource
+import androidx.xr.scenecore.internal.TextureSampler
 import com.google.androidxr.splitengine.SubspaceNode
 import com.google.common.util.concurrent.Futures.immediateFailedFuture
 import com.google.common.util.concurrent.Futures.immediateFuture
@@ -74,7 +74,7 @@ import java.util.concurrent.Executor
 import java.util.function.Consumer
 
 // TODO: b/405218432 - Implement this correctly instead of stubbing it out.
-/** Test-only implementation of [JxrPlatformAdapter] */
+/** Test-only implementation of [androidx.xr.scenecore.internal.JxrPlatformAdapter] */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public class FakeJxrPlatformAdapter : JxrPlatformAdapter {
     /* Tracks the current state of the adapter according to where it is in its lifecycle. */
@@ -180,8 +180,8 @@ public class FakeJxrPlatformAdapter : JxrPlatformAdapter {
     /**
      * For test purposes only.
      *
-     * A fake implementation of [MaterialResource] used to simulate a water material within the test
-     * environment.
+     * A fake implementation of [androidx.xr.scenecore.internal.MaterialResource] used to simulate a
+     * water material within the test environment.
      *
      * <p>Instances of this class are created by [createWaterMaterial] and can be accessed for
      * verification via the [createdWaterMaterials] list. Tests can inspect the public properties of
@@ -284,16 +284,16 @@ public class FakeJxrPlatformAdapter : JxrPlatformAdapter {
     /**
      * For test purposes only.
      *
-     * A fake implementation of [MaterialResource] used to simulate a Khronos PBR material within
-     * the test environment.
+     * A fake implementation of [androidx.xr.scenecore.internal.MaterialResource] used to simulate a
+     * Khronos PBR material within the test environment.
      *
      * <p>Instances of this class are created by [createKhronosPbrMaterial]. Tests can inspect the
      * public properties of this class (e.g., [baseColorTexture], [metallicFactor]) to confirm that
      * the code under test correctly configures the material's attributes according to the provided
      * specification.
      *
-     * @param spec The [KhronosPbrMaterialSpec] provided during creation, which defines the initial
-     *   configuration of the material.
+     * @param spec The [androidx.xr.scenecore.internal.KhronosPbrMaterialSpec] provided during
+     *   creation, which defines the initial configuration of the material.
      */
     public class FakeKhronosPbrMaterial(public val spec: KhronosPbrMaterialSpec) :
         MaterialResource {
@@ -339,6 +339,18 @@ public class FakeJxrPlatformAdapter : JxrPlatformAdapter {
         public var transmissionFactor: Float? = null
         public var indexOfRefraction: Float? = null
         public var alphaCutoff: Float? = null
+    }
+
+    override fun resume() {
+        startRenderer()
+    }
+
+    override fun pause() {
+        stopRenderer()
+    }
+
+    override fun destroy() {
+        dispose()
     }
 
     public val createdKhronosPbrMaterials: MutableList<FakeKhronosPbrMaterial> =

@@ -18,17 +18,17 @@ package androidx.xr.runtime.testing
 
 import android.app.Activity
 import androidx.annotation.RestrictTo
-import androidx.xr.runtime.internal.ActivityPanelEntity
-import androidx.xr.runtime.internal.ActivitySpace
-import androidx.xr.runtime.internal.CameraViewActivityPose
-import androidx.xr.runtime.internal.Entity
-import androidx.xr.runtime.internal.GltfEntity
-import androidx.xr.runtime.internal.GltfFeature
-import androidx.xr.runtime.internal.PixelDimensions
-import androidx.xr.runtime.internal.RenderingEntityFactory
-import androidx.xr.runtime.internal.SceneRuntime
-import androidx.xr.runtime.internal.SpatialCapabilities
 import androidx.xr.runtime.math.Pose
+import androidx.xr.scenecore.internal.ActivityPanelEntity
+import androidx.xr.scenecore.internal.ActivitySpace
+import androidx.xr.scenecore.internal.CameraViewActivityPose
+import androidx.xr.scenecore.internal.Entity
+import androidx.xr.scenecore.internal.GltfEntity
+import androidx.xr.scenecore.internal.GltfFeature
+import androidx.xr.scenecore.internal.PixelDimensions
+import androidx.xr.scenecore.internal.RenderingEntityFactory
+import androidx.xr.scenecore.internal.SceneRuntime
+import androidx.xr.scenecore.internal.SpatialCapabilities
 import java.util.concurrent.Executor
 import java.util.function.Consumer
 

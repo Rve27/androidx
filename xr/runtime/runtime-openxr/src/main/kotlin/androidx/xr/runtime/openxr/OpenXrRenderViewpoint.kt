@@ -17,8 +17,8 @@
 package androidx.xr.runtime.openxr
 
 import androidx.annotation.RestrictTo
+import androidx.xr.arcore.internal.RenderViewpoint
 import androidx.xr.runtime.FieldOfView
-import androidx.xr.runtime.internal.RenderViewpoint
 import androidx.xr.runtime.math.Pose
 
 /** Wraps the device tracking data. */

@@ -21,7 +21,9 @@ package androidx.xr.scenecore
 import android.app.Activity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
+import androidx.xr.arcore.internal.PerceptionRuntime
 import androidx.xr.runtime.Session
+import androidx.xr.scenecore.internal.JxrPlatformAdapter
 import java.util.Collections
 import java.util.WeakHashMap
 
@@ -72,5 +74,37 @@ internal fun removeSceneFromCache(scene: Scene) {
                 break
             }
         }
+    }
+}
+
+private val platformAdapterCache =
+    Collections.synchronizedMap(WeakHashMap<Session, JxrPlatformAdapter>())
+
+internal val Session.platformAdapter: JxrPlatformAdapter
+    get() = checkAndGetPlatformAdapter(this)
+
+private fun checkAndGetPlatformAdapter(session: Session): JxrPlatformAdapter {
+    check(session.activity.lifecycle.currentState != Lifecycle.State.DESTROYED) {
+        "Session has been destroyed."
+    }
+    return platformAdapterCache.getOrPut(session) {
+        // This lambda is executed only once per session instance.
+        session.runtimes.filterIsInstance<JxrPlatformAdapter>().single()
+    }
+}
+
+private val perceptionRuntimeCache =
+    Collections.synchronizedMap(WeakHashMap<Session, PerceptionRuntime>())
+
+internal val Session.perceptionRuntime: PerceptionRuntime
+    get() = checkAndGetPerceptionRuntime(this)
+
+private fun checkAndGetPerceptionRuntime(session: Session): PerceptionRuntime {
+    check(session.activity.lifecycle.currentState != Lifecycle.State.DESTROYED) {
+        "Session has been destroyed."
+    }
+    return perceptionRuntimeCache.getOrPut(session) {
+        // This lambda is executed only once per session instance.
+        session.runtimes.filterIsInstance<PerceptionRuntime>().single()
     }
 }

@@ -17,15 +17,15 @@
 package androidx.xr.runtime.testing
 
 import androidx.annotation.RestrictTo
+import androidx.xr.arcore.internal.Anchor as RuntimeAnchor
+import androidx.xr.arcore.internal.AugmentedObject as RuntimeObject
 import androidx.xr.runtime.AugmentedObjectCategory
 import androidx.xr.runtime.TrackingState
-import androidx.xr.runtime.internal.Anchor as RuntimeAnchor
-import androidx.xr.runtime.internal.AugmentedObject as RuntimeObject
 import androidx.xr.runtime.math.FloatSize3d
 import androidx.xr.runtime.math.Pose
 
 /**
- * Fake implementation of [RuntimeObject] for testing purposes.
+ * Fake implementation of [androidx.xr.arcore.internal.AugmentedObject] for testing purposes.
  *
  * @property centerPose The pose of the center of the augmented object.
  * @property extents The extents of the augmented object.

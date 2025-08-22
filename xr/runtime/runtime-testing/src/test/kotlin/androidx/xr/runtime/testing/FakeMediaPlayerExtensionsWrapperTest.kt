@@ -17,8 +17,8 @@
 package androidx.xr.runtime.testing
 
 import android.media.MediaPlayer
-import androidx.xr.runtime.internal.PointSourceParams
-import androidx.xr.runtime.internal.SoundFieldAttributes
+import androidx.xr.scenecore.internal.PointSourceParams
+import androidx.xr.scenecore.internal.SoundFieldAttributes
 import com.google.common.truth.Truth.assertThat
 import org.junit.Before
 import org.junit.Test

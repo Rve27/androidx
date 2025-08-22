@@ -19,7 +19,7 @@ package androidx.xr.runtime.testing
 import androidx.annotation.RestrictTo
 import androidx.xr.runtime.CoreState
 import androidx.xr.runtime.StateExtender
-import androidx.xr.runtime.internal.Runtime
+import androidx.xr.runtime.internal.JxrRuntime
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public class FakeStateExtender() : StateExtender {
@@ -30,7 +30,7 @@ public class FakeStateExtender() : StateExtender {
     /** List of [CoreState] instances that have been extended. */
     public val extended: MutableList<CoreState> = mutableListOf<CoreState>()
 
-    override fun initialize(runtime: Runtime) {
+    override fun initialize(runtimes: List<JxrRuntime>) {
         isInitialized = true
     }
 
@@ -48,7 +48,7 @@ public class AnotherFakeStateExtender() : StateExtender {
     /** List of [CoreState] instances that have been extended. */
     public val extended: MutableList<CoreState> = mutableListOf<CoreState>()
 
-    override fun initialize(runtime: Runtime) {
+    override fun initialize(runtimes: List<JxrRuntime>) {
         isInitialized = true
     }
 

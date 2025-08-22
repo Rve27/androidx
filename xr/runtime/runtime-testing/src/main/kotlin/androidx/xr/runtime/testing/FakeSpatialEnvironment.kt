@@ -17,8 +17,8 @@
 package androidx.xr.runtime.testing
 
 import androidx.annotation.RestrictTo
-import androidx.xr.runtime.internal.SpatialEnvironment
-import androidx.xr.runtime.internal.SpatialEnvironment.Companion.NO_PASSTHROUGH_OPACITY_PREFERENCE
+import androidx.xr.scenecore.internal.SpatialEnvironment
+import androidx.xr.scenecore.internal.SpatialEnvironment.Companion.NO_PASSTHROUGH_OPACITY_PREFERENCE
 import java.util.concurrent.Executor
 import java.util.function.Consumer
 

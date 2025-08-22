@@ -16,14 +16,14 @@
 
 package androidx.xr.runtime.testing
 
-import androidx.xr.runtime.internal.Dimensions
-import androidx.xr.runtime.internal.MovableComponent
-import androidx.xr.runtime.internal.MoveEvent
-import androidx.xr.runtime.internal.MoveEventListener
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Quaternion
 import androidx.xr.runtime.math.Ray
 import androidx.xr.runtime.math.Vector3
+import androidx.xr.scenecore.internal.Dimensions
+import androidx.xr.scenecore.internal.MovableComponent
+import androidx.xr.scenecore.internal.MoveEvent
+import androidx.xr.scenecore.internal.MoveEventListener
 import com.google.common.truth.Truth.assertThat
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.Executor

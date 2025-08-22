@@ -41,16 +41,18 @@ class FakeStateExtenderTest {
     @Test
     fun class_isDiscoverableViaServiceLoader() {
         val stateExtenders = ServiceLoader.load(StateExtender::class.java)
-        for (stateExtender in stateExtenders) {
-            assert(stateExtender is FakeStateExtender || stateExtender is AnotherFakeStateExtender)
-        }
+
+        assertThat(stateExtenders.any { it is FakeStateExtender }).isTrue()
     }
 
     @Test
     fun initialize_setsInitializedToTrue() {
         check(!underTest.isInitialized)
+        val lifecycleManager = FakeLifecycleManager()
 
-        underTest.initialize(FakeRuntime(FakeLifecycleManager(), FakePerceptionManager()))
+        underTest.initialize(
+            listOf(FakePerceptionRuntime(FakeLifecycleManager(), FakePerceptionManager()))
+        )
 
         assertThat(underTest.isInitialized).isTrue()
     }

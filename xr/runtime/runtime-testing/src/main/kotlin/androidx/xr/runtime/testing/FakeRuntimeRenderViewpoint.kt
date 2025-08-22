@@ -17,8 +17,8 @@
 package androidx.xr.runtime.testing
 
 import androidx.annotation.RestrictTo
+import androidx.xr.arcore.internal.RenderViewpoint as RuntimeRenderViewpoint
 import androidx.xr.runtime.FieldOfView
-import androidx.xr.runtime.internal.RenderViewpoint as RuntimeRenderViewpoint
 import androidx.xr.runtime.math.Pose
 
 // TODO: b/326481788 - Add more functionality to FakeRuntimeArDevice

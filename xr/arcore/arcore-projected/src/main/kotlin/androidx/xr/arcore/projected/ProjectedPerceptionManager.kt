@@ -17,17 +17,17 @@
 package androidx.xr.arcore.projected
 
 import androidx.annotation.RestrictTo
+import androidx.xr.arcore.internal.Anchor
+import androidx.xr.arcore.internal.ArDevice
+import androidx.xr.arcore.internal.DepthMap
+import androidx.xr.arcore.internal.Earth
+import androidx.xr.arcore.internal.Face
+import androidx.xr.arcore.internal.Hand
+import androidx.xr.arcore.internal.HitResult
+import androidx.xr.arcore.internal.PerceptionManager
+import androidx.xr.arcore.internal.RenderViewpoint
+import androidx.xr.arcore.internal.Trackable
 import androidx.xr.runtime.VpsAvailabilityResult
-import androidx.xr.runtime.internal.Anchor
-import androidx.xr.runtime.internal.ArDevice
-import androidx.xr.runtime.internal.DepthMap
-import androidx.xr.runtime.internal.Earth
-import androidx.xr.runtime.internal.Face
-import androidx.xr.runtime.internal.Hand
-import androidx.xr.runtime.internal.HitResult
-import androidx.xr.runtime.internal.PerceptionManager
-import androidx.xr.runtime.internal.RenderViewpoint
-import androidx.xr.runtime.internal.Trackable
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Ray
 import java.util.UUID

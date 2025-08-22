@@ -16,7 +16,7 @@
 
 package androidx.xr.runtime.testing
 
-import androidx.xr.runtime.internal.ExrImageResource
+import androidx.xr.scenecore.internal.ExrImageResource
 
-/** Test-only implementation of [ExrImageResource] */
+/** Test-only implementation of [androidx.xr.scenecore.internal.ExrImageResource] */
 internal class FakeExrImageResource(public val mToken: Long) : ExrImageResource {}

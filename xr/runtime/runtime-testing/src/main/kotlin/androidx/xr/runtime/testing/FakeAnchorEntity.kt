@@ -19,17 +19,17 @@ package androidx.xr.runtime.testing
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.annotation.RestrictTo
-import androidx.xr.runtime.internal.Anchor
-import androidx.xr.runtime.internal.AnchorEntity
-import androidx.xr.runtime.internal.AnchorEntity.OnStateChangedListener
-import androidx.xr.runtime.internal.Dimensions
-import androidx.xr.runtime.internal.PlaneSemantic
-import androidx.xr.runtime.internal.PlaneType
+import androidx.xr.arcore.internal.Anchor
 import androidx.xr.runtime.math.Pose
+import androidx.xr.scenecore.internal.AnchorEntity
+import androidx.xr.scenecore.internal.AnchorEntity.OnStateChangedListener
+import androidx.xr.scenecore.internal.Dimensions
+import androidx.xr.scenecore.internal.PlaneSemantic
+import androidx.xr.scenecore.internal.PlaneType
 import java.time.Duration
 import java.util.UUID
 
-/** Test-only implementation of [AnchorEntity] */
+/** Test-only implementation of [androidx.xr.scenecore.internal.AnchorEntity] */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 @RequiresApi(Build.VERSION_CODES.O)
 public class FakeAnchorEntity(
@@ -46,13 +46,14 @@ public class FakeAnchorEntity(
     internal val anchorCreationData: AnchorCreationData = AnchorCreationData(),
 
     /**
-     * The underlying [Anchor] instance that this fake entity represents.
+     * The underlying [androidx.xr.arcore.internal.Anchor] instance that this fake entity
+     * represents.
      *
      * In tests, this property can be accessed to inspect or modify the state of the underlying
      * (fake) anchor, such as its pose or tracking state. It is initialized by default with a
      * [FakeRuntimeAnchor] instance.
      *
-     * @see Anchor
+     * @see androidx.xr.arcore.internal.Anchor
      * @see FakeRuntimeAnchor
      */
     internal val anchor: Anchor = FakeRuntimeAnchor(Pose(), FakeRuntimePlane()),
@@ -100,9 +101,10 @@ public class FakeAnchorEntity(
     /**
      * Test function to invoke the onStateChanged listener callback.
      *
-     * This function is used to simulate the update of the underlying [AnchorEntity.State],
-     * triggering the registered listener. In tests, you can call this function to manually trigger
-     * the listener and verify that your code responds correctly to state updates.
+     * This function is used to simulate the update of the underlying
+     * [androidx.xr.scenecore.internal.AnchorEntity.State], triggering the registered listener. In
+     * tests, you can call this function to manually trigger the listener and verify that your code
+     * responds correctly to state updates.
      */
     public fun onStateChanged(newState: @AnchorEntity.State Int) {
         onStateChangedListener.onStateChanged(newState)

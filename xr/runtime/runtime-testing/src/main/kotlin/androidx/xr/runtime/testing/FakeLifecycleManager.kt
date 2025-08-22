@@ -25,7 +25,10 @@ import kotlin.time.ComparableTimeMark
 import kotlin.time.TestTimeSource
 import kotlinx.coroutines.sync.Semaphore
 
-/** Test-only implementation of [LifecycleManager] used to validate state transitions. */
+/**
+ * Test-only implementation of [androidx.xr.runtime.internal.LifecycleManager] used to validate
+ * state transitions.
+ */
 @Suppress("NotCloseable")
 public class FakeLifecycleManager(
     /** If false, [create] will throw an exception during testing. */
@@ -72,11 +75,11 @@ public class FakeLifecycleManager(
     override fun create() {
         check(state == State.NOT_INITIALIZED)
         if (!hasCreatePermission) throw SecurityException()
-        if (FakeRuntimeFactory.lifecycleCreateException != null) {
+        if (FakePerceptionRuntimeFactory.lifecycleCreateException != null) {
             // FakeRuntimeFactory will continue to throw exception on subsequent tests unless
             // cleared.
-            val exceptionToThrow = FakeRuntimeFactory.lifecycleCreateException!!
-            FakeRuntimeFactory.lifecycleCreateException = null
+            val exceptionToThrow = FakePerceptionRuntimeFactory.lifecycleCreateException!!
+            FakePerceptionRuntimeFactory.lifecycleCreateException = null
             throw exceptionToThrow
         }
         state = State.INITIALIZED

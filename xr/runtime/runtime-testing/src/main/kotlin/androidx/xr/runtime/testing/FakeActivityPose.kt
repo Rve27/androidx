@@ -17,21 +17,23 @@
 package androidx.xr.runtime.testing
 
 import androidx.annotation.RestrictTo
-import androidx.xr.runtime.internal.ActivityPose
-import androidx.xr.runtime.internal.HitTestResult
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Vector3
+import androidx.xr.scenecore.internal.ActivityPose
+import androidx.xr.scenecore.internal.HitTestResult
 import com.google.common.util.concurrent.Futures.immediateFuture
 import com.google.common.util.concurrent.ListenableFuture
 
 /**
- * A test double for [ActivityPose], designed for use in unit or integration tests.
+ * A test double for [androidx.xr.scenecore.internal.ActivityPose], designed for use in unit or
+ * integration tests.
  *
- * This test double offers greater control compared to the real [ActivityPose] by allowing:
+ * This test double offers greater control compared to the real
+ * [androidx.xr.scenecore.internal.ActivityPose] by allowing:
  * * Direct modification of most properties to simulate specific scenarios or states.
  * * Mocking of hit test results for predictable and verifiable interaction testing.
  *
- * @see ActivityPose
+ * @see androidx.xr.scenecore.internal.ActivityPose
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public open class FakeActivityPose : ActivityPose {
@@ -67,8 +69,8 @@ public open class FakeActivityPose : ActivityPose {
     /**
      * For test purposes only.
      *
-     * The [HitTestResult] that will be returned by [hitTest]. This can be modified in tests to
-     * simulate different hit test outcomes.
+     * The [androidx.xr.scenecore.internal.HitTestResult] that will be returned by [hitTest]. This
+     * can be modified in tests to simulate different hit test outcomes.
      */
     public var hitTestResult: HitTestResult =
         HitTestResult(

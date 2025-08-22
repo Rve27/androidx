@@ -26,7 +26,6 @@ import androidx.xr.runtime.Config
 import androidx.xr.runtime.internal.ConfigurationNotSupportedException
 import androidx.xr.runtime.internal.FaceTrackingNotCalibratedException
 import com.google.common.truth.Truth.assertThat
-import kotlin.check
 import kotlin.test.assertFailsWith
 import kotlinx.coroutines.test.runTest
 import org.junit.Before

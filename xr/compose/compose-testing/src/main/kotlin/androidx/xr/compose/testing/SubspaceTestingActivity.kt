@@ -31,12 +31,12 @@ import androidx.xr.compose.platform.LocalSpatialConfiguration
 import androidx.xr.compose.platform.SceneManager
 import androidx.xr.compose.subspace.SubspaceComposable
 import androidx.xr.runtime.Session
-import androidx.xr.runtime.internal.JxrPlatformAdapter
-import androidx.xr.runtime.testing.FakeRuntimeFactory
+import androidx.xr.runtime.testing.FakePerceptionRuntimeFactory
 import androidx.xr.scenecore.impl.JxrPlatformAdapterAxr
 import androidx.xr.scenecore.impl.extensions.XrExtensionsProvider
 import androidx.xr.scenecore.impl.impress.FakeImpressApiImpl
 import androidx.xr.scenecore.impl.perception.PerceptionLibrary
+import androidx.xr.scenecore.internal.JxrPlatformAdapter
 import androidx.xr.scenecore.testing.FakeScheduledExecutorService
 import com.android.extensions.xr.ShadowConfig
 import com.android.extensions.xr.XrExtensions
@@ -231,8 +231,13 @@ public fun createFakeSession(
 ): Session =
     Session(
         activity,
-        FakeRuntimeFactory().createRuntime(activity).apply { lifecycleManager.create() },
-        runtime,
+        runtimes =
+            listOf(
+                FakePerceptionRuntimeFactory().createRuntime(activity).apply {
+                    lifecycleManager.create()
+                },
+                runtime,
+            ),
     )
 
 /**

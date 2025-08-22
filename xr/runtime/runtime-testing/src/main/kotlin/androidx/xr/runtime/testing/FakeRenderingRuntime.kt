@@ -17,18 +17,18 @@
 package androidx.xr.runtime.testing
 
 import androidx.annotation.RestrictTo
-import androidx.xr.runtime.internal.ExrImageResource
-import androidx.xr.runtime.internal.GltfModelResource
-import androidx.xr.runtime.internal.KhronosPbrMaterialSpec
-import androidx.xr.runtime.internal.MaterialResource
-import androidx.xr.runtime.internal.RenderingEntityFactory
-import androidx.xr.runtime.internal.RenderingRuntime
-import androidx.xr.runtime.internal.SceneRuntime
-import androidx.xr.runtime.internal.TextureResource
-import androidx.xr.runtime.internal.TextureSampler
 import androidx.xr.runtime.math.Matrix3
 import androidx.xr.runtime.math.Vector3
 import androidx.xr.runtime.math.Vector4
+import androidx.xr.scenecore.internal.ExrImageResource
+import androidx.xr.scenecore.internal.GltfModelResource
+import androidx.xr.scenecore.internal.KhronosPbrMaterialSpec
+import androidx.xr.scenecore.internal.MaterialResource
+import androidx.xr.scenecore.internal.RenderingEntityFactory
+import androidx.xr.scenecore.internal.RenderingRuntime
+import androidx.xr.scenecore.internal.SceneRuntime
+import androidx.xr.scenecore.internal.TextureResource
+import androidx.xr.scenecore.internal.TextureSampler
 import com.google.common.util.concurrent.Futures.immediateFailedFuture
 import com.google.common.util.concurrent.Futures.immediateFuture
 import com.google.common.util.concurrent.ListenableFuture

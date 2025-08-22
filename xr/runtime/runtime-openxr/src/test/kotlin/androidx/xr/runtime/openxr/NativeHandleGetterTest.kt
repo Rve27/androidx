@@ -19,10 +19,11 @@ package androidx.xr.runtime.openxr
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.Lifecycle
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.xr.arcore.internal.PerceptionRuntime
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.SessionCreateSuccess
 import androidx.xr.runtime.testing.FakeLifecycleManager
-import androidx.xr.runtime.testing.FakeRuntimeFactory
+import androidx.xr.runtime.testing.FakePerceptionRuntimeFactory
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -54,7 +55,7 @@ class NativeHandleGetterTest {
             shadowApplication.grantPermissions(permission)
         }
 
-        FakeRuntimeFactory.hasCreatePermission = true
+        FakePerceptionRuntimeFactory.hasCreatePermission = true
     }
 
     @After
@@ -71,7 +72,7 @@ class NativeHandleGetterTest {
 
         var exception: IllegalArgumentException? = null
         try {
-            getXrSessionPointer(session.runtime)
+            getXrSessionPointer(session.runtimes.filterIsInstance<PerceptionRuntime>().single())
         } catch (e: IllegalArgumentException) {
             exception = e
         }
@@ -87,7 +88,7 @@ class NativeHandleGetterTest {
 
         var exception: IllegalArgumentException? = null
         try {
-            getXrInstancePointer(session.runtime)
+            getXrInstancePointer(session.runtimes.filterIsInstance<PerceptionRuntime>().single())
         } catch (e: IllegalArgumentException) {
             exception = e
         }
@@ -99,6 +100,6 @@ class NativeHandleGetterTest {
     private fun createSession(coroutineDispatcher: CoroutineDispatcher = testDispatcher): Session {
         val result = Session.create(activity, coroutineDispatcher)
         check(result is SessionCreateSuccess)
-        return (result as SessionCreateSuccess).session
+        return result.session
     }
 }

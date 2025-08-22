@@ -25,13 +25,13 @@ import static org.mockito.Mockito.when;
 
 import android.app.Activity;
 
-import androidx.xr.runtime.internal.Entity;
-import androidx.xr.runtime.internal.SpatialCapabilities;
 import androidx.xr.runtime.math.Pose;
 import androidx.xr.scenecore.impl.extensions.XrExtensionsProvider;
 import androidx.xr.scenecore.impl.perception.PerceptionLibrary;
 import androidx.xr.scenecore.impl.perception.Session;
 import androidx.xr.scenecore.impl.perception.exceptions.FailedToInitializeException;
+import androidx.xr.scenecore.internal.Entity;
+import androidx.xr.scenecore.internal.SpatialCapabilities;
 import androidx.xr.scenecore.testing.FakeScheduledExecutorService;
 
 import com.android.extensions.xr.ShadowXrExtensions;

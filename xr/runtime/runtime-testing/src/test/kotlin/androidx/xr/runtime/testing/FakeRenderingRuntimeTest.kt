@@ -18,9 +18,9 @@ package androidx.xr.runtime.testing
 
 import android.app.Activity
 import androidx.kruth.assertThat
-import androidx.xr.runtime.internal.RenderingEntityFactory
-import androidx.xr.runtime.internal.RenderingRuntime
-import androidx.xr.runtime.internal.SceneRuntime
+import androidx.xr.scenecore.internal.RenderingEntityFactory
+import androidx.xr.scenecore.internal.RenderingRuntime
+import androidx.xr.scenecore.internal.SceneRuntime
 import com.google.common.truth.Truth
 import org.junit.After
 import org.junit.Before
