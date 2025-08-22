@@ -71,7 +71,7 @@ android {
 
 androidx {
     name = "Glance Wear"
-    type = SoftwareType.PUBLISHED_LIBRARY
+    type = SoftwareType.PUBLISHED_LIBRARY_ONLY_USED_BY_KOTLIN_CONSUMERS
     inceptionYear = "2025"
     description = "Allows developers to build Widgets on Wear OS using Remote Compose."
     enableRobolectric()
