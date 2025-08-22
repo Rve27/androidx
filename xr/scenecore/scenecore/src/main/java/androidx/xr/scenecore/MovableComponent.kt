@@ -89,7 +89,7 @@ private constructor(
             return false
         }
         this.entity = entity
-        val attached = (entity as BaseEntity<*>).rtEntity.addComponent(rtMovableComponent)
+        val attached = (entity as BaseEntity<*>).rtEntity!!.addComponent(rtMovableComponent)
         if (attached && initialListener != null) {
             if (initialListenerExecutor != null) {
                 addMoveListener(initialListenerExecutor, initialListener)
@@ -101,7 +101,7 @@ private constructor(
     }
 
     override fun onDetach(entity: Entity) {
-        (entity as BaseEntity<*>).rtEntity.removeComponent(rtMovableComponent)
+        (entity as BaseEntity<*>).rtEntity!!.removeComponent(rtMovableComponent)
         this.entity = null
     }
 

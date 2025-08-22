@@ -44,7 +44,7 @@ private constructor(private val platformAdapter: JxrPlatformAdapter) : Component
         if (this.entity != null) {
             return false
         }
-        if ((entity as BaseEntity<*>).rtEntity.addComponent(rtComponent)) {
+        if ((entity as BaseEntity<*>).rtEntity!!.addComponent(rtComponent)) {
             this.entity = entity
             spatialPointerIcon = SpatialPointerIcon.DEFAULT
             return true
@@ -55,7 +55,7 @@ private constructor(private val platformAdapter: JxrPlatformAdapter) : Component
 
     override fun onDetach(entity: Entity) {
         spatialPointerIcon = SpatialPointerIcon.DEFAULT
-        (entity as BaseEntity<*>).rtEntity.removeComponent(rtComponent)
+        (entity as BaseEntity<*>).rtEntity!!.removeComponent(rtComponent)
         this.entity = null
     }
 

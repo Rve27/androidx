@@ -164,7 +164,7 @@ private constructor(
             return false
         }
         this.entity = entity
-        val attached = (entity as BaseEntity<*>).rtEntity.addComponent(rtResizableComponent)
+        val attached = (entity as BaseEntity<*>).rtEntity!!.addComponent(rtResizableComponent)
         if (!attached) {
             return false
         }
@@ -174,7 +174,7 @@ private constructor(
     }
 
     override fun onDetach(entity: Entity) {
-        (entity as BaseEntity<*>).rtEntity.removeComponent(rtResizableComponent)
+        (entity as BaseEntity<*>).rtEntity!!.removeComponent(rtResizableComponent)
         this.entity = null
     }
 

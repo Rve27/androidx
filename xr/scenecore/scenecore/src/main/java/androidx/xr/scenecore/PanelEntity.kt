@@ -46,9 +46,13 @@ internal constructor(
 
     /** The corner radius of the PanelEntity, in meters. */
     public var cornerRadius: Float
-        get() = rtEntity.cornerRadius
+        get() {
+            checkNotDisposed()
+            return rtEntity!!.cornerRadius
+        }
         set(value) {
-            rtEntity.cornerRadius = value
+            checkNotDisposed()
+            rtEntity!!.cornerRadius = value
         }
 
     /**
@@ -56,9 +60,13 @@ internal constructor(
      * Entity's parent.
      */
     public var size: FloatSize2d
-        get() = rtEntity.size.toFloatSize2d()
+        get() {
+            checkNotDisposed()
+            return rtEntity!!.size.toFloatSize2d()
+        }
         set(value) {
-            rtEntity.size = value.toRtDimensions()
+            checkNotDisposed()
+            rtEntity!!.size = value.toRtDimensions()
         }
 
     /**
@@ -68,9 +76,13 @@ internal constructor(
      * This API doesn't do any scale compensation to the pixel dimensions.
      */
     public var sizeInPixels: IntSize2d
-        get() = rtEntity.sizeInPixels.toIntSize2d()
+        get() {
+            checkNotDisposed()
+            return rtEntity!!.sizeInPixels.toIntSize2d()
+        }
         set(value) {
-            rtEntity.sizeInPixels = value.toRtPixelDimensions()
+            checkNotDisposed()
+            rtEntity!!.sizeInPixels = value.toRtPixelDimensions()
         }
 
     /**
@@ -95,10 +107,11 @@ internal constructor(
      * @see PerceivedResolutionResult
      */
     public fun getPerceivedResolution(): PerceivedResolutionResult {
+        checkNotDisposed()
         check(lifecycleManager.config.headTracking != Config.HeadTrackingMode.DISABLED) {
             "Config.HeadTrackingMode is set to Disabled."
         }
-        return rtEntity.getPerceivedResolution().toPerceivedResolutionResult()
+        return rtEntity!!.getPerceivedResolution().toPerceivedResolutionResult()
     }
 
     public companion object {

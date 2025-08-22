@@ -56,7 +56,8 @@ private constructor(rtEntity: RtGltfEntity, entityManager: EntityManager) :
     @AnimationStateValue
     public val animationState: Int
         get() {
-            return when (rtEntity.animationState) {
+            checkNotDisposed()
+            return when (rtEntity!!.animationState) {
                 RtGltfEntity.AnimationState.PLAYING -> return AnimationState.PLAYING
                 RtGltfEntity.AnimationState.STOPPED -> return AnimationState.STOPPED
                 else -> AnimationState.STOPPED
@@ -117,8 +118,9 @@ private constructor(rtEntity: RtGltfEntity, entityManager: EntityManager) :
      */
     @MainThread
     public fun startAnimation(loop: Boolean, animationName: String) {
+        checkNotDisposed()
         try {
-            rtEntity.startAnimation(loop, animationName)
+            rtEntity!!.startAnimation(loop, animationName)
         } catch (_: Exception) {
             throw IllegalArgumentException("Animation name is invalid.")
         }
@@ -137,8 +139,9 @@ private constructor(rtEntity: RtGltfEntity, entityManager: EntityManager) :
     @MainThread
     @JvmOverloads
     public fun startAnimation(loop: Boolean = true) {
+        checkNotDisposed()
         try {
-            rtEntity.startAnimation(loop, null)
+            rtEntity!!.startAnimation(loop, null)
         } catch (_: Exception) {
             throw IllegalArgumentException("Model doesn't contain any animations.")
         }
@@ -152,7 +155,8 @@ private constructor(rtEntity: RtGltfEntity, entityManager: EntityManager) :
      */
     @MainThread
     public fun stopAnimation() {
-        rtEntity.stopAnimation()
+        checkNotDisposed()
+        rtEntity!!.stopAnimation()
     }
 
     /**
@@ -170,6 +174,7 @@ private constructor(rtEntity: RtGltfEntity, entityManager: EntityManager) :
     @MainThread
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
     public fun setMaterialOverride(material: Material, meshName: String) {
-        rtEntity.setMaterialOverride(material.material!!, meshName)
+        checkNotDisposed()
+        rtEntity!!.setMaterialOverride(material.material!!, meshName)
     }
 }

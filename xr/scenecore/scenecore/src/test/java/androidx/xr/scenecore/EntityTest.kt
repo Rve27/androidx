@@ -66,7 +66,6 @@ import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.Mockito
 import org.mockito.Mockito.anyString
 import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
@@ -173,7 +172,7 @@ class EntityTest {
             return false
         }
 
-        override fun setHidden(hidden: Boolean): Unit {
+        override fun setHidden(hidden: Boolean) {
             setHiddenCalled = true
         }
 
@@ -279,7 +278,7 @@ class EntityTest {
         whenever(mockPlatformAdapter.headActivityPose).thenReturn(mock())
         whenever(mockPlatformAdapter.perceptionSpaceActivityPose).thenReturn(mock())
         whenever(mockPlatformAdapter.spatialCapabilities).thenReturn(RtSpatialCapabilities(0))
-        whenever(mockPlatformAdapter.loadGltfByAssetName(Mockito.anyString()))
+        whenever(mockPlatformAdapter.loadGltfByAssetName(anyString()))
             .thenReturn(Futures.immediateFuture(mock()))
         whenever(mockPlatformAdapter.createGltfEntity(any(), any(), any()))
             .thenReturn(mockGltfModelEntityImpl)
@@ -1273,14 +1272,44 @@ class EntityTest {
     }
 
     @Test
-    fun surfaceEntity_useAferDisposeRaisesIllegalStateException() {
+    fun anyEntity_useAfterDisposeRaisesIllegalStateException() {
+        panelEntity.dispose()
         surfaceEntity.dispose()
-        verify(mockSurfaceEntity).dispose()
+        anchorEntity.dispose()
+        groupEntity.dispose()
+        activityPanelEntity.dispose()
+        gltfModelEntity.dispose()
+        activitySpace.dispose()
+
+        assertFailsWith<IllegalStateException> { surfaceEntity.stereoMode }
+        assertFailsWith<IllegalStateException> { panelEntity.size }
+        assertFailsWith<IllegalStateException> { anchorEntity.getAnchor(session) }
+        assertFailsWith<IllegalStateException> { groupEntity.getScale() }
+        assertFailsWith<IllegalStateException> { activityPanelEntity.getPerceivedResolution() }
+        assertFailsWith<IllegalStateException> { gltfModelEntity.stopAnimation() }
+        assertFailsWith<IllegalStateException> { activitySpace.bounds }
+
+        val component = mock<Component>()
+
+        assertFailsWith<IllegalStateException> { panelEntity.addComponent(component) }
+        assertFailsWith<IllegalStateException> { panelEntity.removeComponent(component) }
     }
 
     @Test
-    fun surfaceEntity_disposeSupportsMultipleCalls() {
+    fun allEntity_disposeTwiceDoesNotCrash() {
+        panelEntity.dispose()
+        panelEntity.dispose()
         surfaceEntity.dispose()
         surfaceEntity.dispose()
+        anchorEntity.dispose()
+        anchorEntity.dispose()
+        groupEntity.dispose()
+        groupEntity.dispose()
+        activityPanelEntity.dispose()
+        activityPanelEntity.dispose()
+        gltfModelEntity.dispose()
+        gltfModelEntity.dispose()
+        activitySpace.dispose()
+        activitySpace.dispose()
     }
 }
