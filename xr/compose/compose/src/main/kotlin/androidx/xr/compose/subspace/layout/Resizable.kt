@@ -213,8 +213,7 @@ internal class ResizableNode(
      */
     fun handleResizeEvent(resizeEvent: ResizeEvent) {
         if (resizeEvent.resizeState == ResizeEvent.ResizeState.RESIZE_STATE_START) {
-            component.fixedAspectRatio =
-                if (maintainAspectRatio) getAspectRatioY(resizeEvent.newSize) else 0.0f
+            component.isFixedAspectRatioEnabled = maintainAspectRatio
         } else if (resizeEvent.resizeState == ResizeEvent.ResizeState.RESIZE_STATE_END) {
             resizeListener(resizeEvent.newSize)
         }
