@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.xr.compose.integration.layout.nestedsubspacesetsubspacecontentactivity
+package androidx.xr.compose.integration.layout.panelembeddedsubspacesetsubspacecontentactivity
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -57,7 +57,7 @@ import androidx.xr.compose.subspace.layout.width
 
 // This is a sample app that demonstrates how to use the setSubspaceContent (SSC) API to create a
 // nested Subspace within a 2D panel.
-class NestedSubspaceSetSubspaceContentActivity : ComponentActivity() {
+class PanelEmbeddedSubspaceSetSubspaceContentActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -74,10 +74,8 @@ class NestedSubspaceSetSubspaceContentActivity : ComponentActivity() {
                         Spacer(Modifier.background(Color.Magenta))
                         Spacer(Modifier.background(Color.White))
                         Box(Modifier.background(Color.Yellow).fillMaxHeight().weight(1.0f)) {
-                            // Here we have a nested Subspace that is capable of rendering a 3D
-                            // layout
-                            // within the
-                            // scope of this 2D panel.
+                            // Here we have a Subspace in panel that is capable of rendering a 3D
+                            // layout within the scope of this 2D panel.
                             Subspace {
                                 var count by remember { mutableIntStateOf(0) }
                                 SpatialRow(

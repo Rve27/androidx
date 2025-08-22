@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.xr.compose.integration.layout.nestedsubspaceapp
+package androidx.xr.compose.integration.layout.panelembeddedsubspaceapp
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -76,7 +76,7 @@ import androidx.xr.scenecore.GltfModel
 import androidx.xr.scenecore.GltfModelEntity
 import java.nio.file.Paths
 
-class NestedSubspaceActivity : ComponentActivity() {
+class PanelEmbeddedSubspaceActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -96,7 +96,8 @@ class NestedSubspaceActivity : ComponentActivity() {
                             Spacer(Modifier.background(Color.Magenta))
                             Spacer(Modifier.background(Color.White))
                             Box(Modifier.background(Color.Yellow).fillMaxHeight().weight(1.0f)) {
-                                // Here we have a nested Subspace that is capable of rendering a 3D
+                                // Here we have a Subspace in panel that is capable of rendering a
+                                // 3D
                                 // layout within the
                                 // scope of this 2D panel.
                                 Subspace {

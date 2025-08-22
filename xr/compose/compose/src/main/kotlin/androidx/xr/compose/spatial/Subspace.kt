@@ -107,7 +107,7 @@ public fun Subspace(content: @Composable @SubspaceComposable SpatialBoxScope.() 
         // We are already in a Subspace, so we can just render the content directly
         SpatialBox(content = content)
     } else if (LocalIsInApplicationSubspace.current) {
-        NestedSubspace(content)
+        PanelEmbeddedSubspace(content)
     } else {
         ApplicationSubspace(content = content)
     }
@@ -231,8 +231,14 @@ private fun ApplicationSubspace(
     }
 }
 
+/*
+ * Embedded Subspace whose parent is SpatialPanel.
+ * This Subspace is constrained by the parent's constraints in width and height.
+ */
 @Composable
-private fun NestedSubspace(content: @Composable @SubspaceComposable SpatialBoxScope.() -> Unit) {
+private fun PanelEmbeddedSubspace(
+    content: @Composable @SubspaceComposable SpatialBoxScope.() -> Unit
+) {
     // If not in XR, do nothing
     if (!LocalSpatialConfiguration.current.hasXrSpatialFeature) return
 

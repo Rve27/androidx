@@ -73,7 +73,7 @@ import androidx.xr.compose.testapp.depthstacking.DepthStacking
 import androidx.xr.compose.testapp.modechange.ModeChange
 import androidx.xr.compose.testapp.movable.MovableActivity
 import androidx.xr.compose.testapp.movablescalable.MovableScalable
-import androidx.xr.compose.testapp.nestedsubspace.NestedSubspace
+import androidx.xr.compose.testapp.panelembeddedsubspace.PanelEmbeddedSubspace
 import androidx.xr.compose.testapp.panelvolume.PanelVolume
 import androidx.xr.compose.testapp.permissionsdialog.PermissionsDialog
 import androidx.xr.compose.testapp.resizablepanel.ResizablePanel
@@ -295,8 +295,8 @@ class MainActivity : ComponentActivity() {
                     ) {
                         startTest<DepthStacking>()
                     }
-                    TestCaseColumnRowItem(getString(R.string.nested_subspace_test_case)) {
-                        startTest<NestedSubspace>()
+                    TestCaseColumnRowItem(getString(R.string.panel_embedded_subspace_test_case)) {
+                        startTest<PanelEmbeddedSubspace>()
                     }
                     TestCaseColumnRowItem(getString(R.string.panel_volume_test_case)) {
                         startTest<PanelVolume>()

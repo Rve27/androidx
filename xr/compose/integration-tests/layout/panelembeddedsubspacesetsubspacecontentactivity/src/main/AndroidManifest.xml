@@ -24,7 +24,7 @@
         android:value="XR_ACTIVITY_START_MODE_FULL_SPACE_MANAGED" />
 
     <activity
-        android:name=".NestedSubspaceSetSubspaceContentActivity"
+        android:name=".PanelEmbeddedSubspaceSetSubspaceContentActivity"
         android:configChanges="screenSize|smallestScreenSize|orientation|screenLayout"
         android:exported="true">
       <intent-filter>

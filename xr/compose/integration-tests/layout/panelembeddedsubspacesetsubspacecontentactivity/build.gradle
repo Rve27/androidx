@@ -24,7 +24,7 @@ plugins {
 }
 
 android {
-    namespace = "androidx.xr.compose.integration.layout.nestedsubspacesetsubspacecontentactivity"
+    namespace = "androidx.xr.compose.integration.layout.panelembeddedsubspacesetsubspacecontentactivity"
     compileSdk = 35
     defaultConfig {
         minSdk = 34

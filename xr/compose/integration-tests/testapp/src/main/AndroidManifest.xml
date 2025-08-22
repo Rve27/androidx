@@ -125,9 +125,9 @@
             android:label="DepthStacking"
             android:theme="@style/Theme.IntegrationTestsApp" />
         <activity
-            android:name=".nestedsubspace.NestedSubspace"
+            android:name=".panelembeddedsubspace.PanelEmbeddedSubspace"
             android:exported="true"
-            android:label="NestedSubspace"
+            android:label="PanelEmbeddedSubspace"
             android:theme="@style/Theme.IntegrationTestsApp" />
         <activity
             android:name=".panelvolume.PanelVolume"

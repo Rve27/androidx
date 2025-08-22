@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.xr.compose.testapp.nestedsubspace
+package androidx.xr.compose.testapp.panelembeddedsubspace
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -86,7 +86,7 @@ import androidx.xr.scenecore.GltfModel
 import androidx.xr.scenecore.GltfModelEntity
 import java.nio.file.Paths
 
-class NestedSubspace : ComponentActivity() {
+class PanelEmbeddedSubspace : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -117,7 +117,9 @@ class NestedSubspace : ComponentActivity() {
                                         tooltip = { PlainTooltip { Text("Back to main") } },
                                         state = plainTooltipState,
                                     ) {
-                                        IconButton(onClick = { this@NestedSubspace.finish() }) {
+                                        IconButton(
+                                            onClick = { this@PanelEmbeddedSubspace.finish() }
+                                        ) {
                                             Icon(
                                                 Icons.AutoMirrored.Filled.ArrowBack,
                                                 "backIcon",
@@ -131,9 +133,8 @@ class NestedSubspace : ComponentActivity() {
                             Spacer(Modifier.background(Color.Magenta))
                             Spacer(Modifier.background(Color.White))
                             Box(Modifier.background(Color.Yellow).fillMaxHeight().weight(1.0f)) {
-                                // Here we have a nested Subspace that is capable of rendering a 3D
-                                // layout within the
-                                // scope of this 2D panel.
+                                // Here we have a PanelEmbeddedSubspace that is capable of rendering
+                                // a 3D layout within the scope of this 2D panel.
                                 Subspace {
                                     var count by remember { mutableIntStateOf(0) }
                                     SpatialRow(

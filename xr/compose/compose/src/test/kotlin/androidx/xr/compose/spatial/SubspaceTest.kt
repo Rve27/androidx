@@ -239,7 +239,7 @@ class SubspaceTest {
     }
 
     @Test
-    fun subspace_nestedSubspace_contentIsParentedToContainingPanel() {
+    fun subspace_panelEmbedded_contentIsParentedToContainingPanel() {
         composeTestRule.setContent {
             TestSetup {
                 Subspace {
@@ -265,7 +265,7 @@ class SubspaceTest {
     }
 
     @Test
-    fun subspace_nestedSubspace_contentIsEnabledWhenContentSizeMatchesParentSize() {
+    fun subspace_panelEmbedded_contentIsEnabledWhenContentSizeMatchesParentSize() {
         composeTestRule.setContent {
             TestSetup {
                 Subspace {
@@ -287,7 +287,7 @@ class SubspaceTest {
     }
 
     @Test
-    fun applicationSubspace_recommendedBoxed_nestedSubspace_contentIsParentedToContainingPanel() {
+    fun applicationSubspace_recommendedBoxed_panelEmbedded_contentIsParentedToContainingPanel() {
         composeTestRule.setContent {
             TestSetup {
                 ApplicationSubspace {
@@ -405,7 +405,7 @@ class SubspaceTest {
     }
 
     @Test
-    fun applicationSubspace_recommendedBoxed_asNestedInSubspace_throwsError() {
+    fun applicationSubspace_recommendedBoxed_panelEmbedded_throwsError() {
         assertFailsWith<IllegalStateException>(
             message = "ApplicationSubspace cannot be nested within another Subspace."
         ) {
@@ -416,7 +416,7 @@ class SubspaceTest {
     }
 
     @Test
-    fun applicationSubspace_unbounded_asNestedInSubspace_throwsError() {
+    fun applicationSubspace_unbounded_panelEmbedded_throwsError() {
         assertFailsWith<IllegalStateException>(
             message = "ApplicationSubspace cannot be nested within another Subspace."
         ) {
@@ -431,7 +431,7 @@ class SubspaceTest {
     }
 
     @Test
-    fun applicationSubspace_customBounded_asNestedInSubspace_throwsError() {
+    fun applicationSubspace_customBounded_panelEmbedded_throwsError() {
         assertFailsWith<IllegalStateException>(
             message = "ApplicationSubspace cannot be nested within another Subspace."
         ) {
@@ -982,7 +982,7 @@ class SubspaceTest {
     }
 
     @Test
-    fun gravityAlignedSubspace_recommendedBoxed_nestedSubspace_contentIsParentedToContainingPanel() {
+    fun gravityAlignedSubspace_panelEmbedded_contentIsParentedToContainingPanel() {
         composeTestRule.setContent {
             TestSetup {
                 GravityAlignedSubspace {

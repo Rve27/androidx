@@ -18,13 +18,13 @@
 
   <uses-permission android:name="android.permission.SCENE_UNDERSTANDING_COARSE" />
 
-  <application android:label="Compose XR Nested Subspaces">
+  <application android:label="Compose XR PanelEmbedded Subspaces">
     <property
         android:name="android.window.PROPERTY_XR_ACTIVITY_START_MODE"
         android:value="XR_ACTIVITY_START_MODE_FULL_SPACE_MANAGED" />
 
     <activity
-        android:name=".NestedSubspaceActivity"
+        android:name=".PanelEmbeddedSubspaceActivity"
         android:configChanges="screenSize|smallestScreenSize|orientation|screenLayout"
         android:exported="true">
       <intent-filter>
