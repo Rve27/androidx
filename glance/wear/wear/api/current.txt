@@ -4,6 +4,7 @@ package androidx.glance.wear {
   public abstract class GlanceWearWidget {
     ctor public GlanceWearWidget();
     method @MainThread public abstract suspend Object? provideWidgetContent(android.content.Context context, androidx.glance.wear.WearWidgetRequest request, kotlin.coroutines.Continuation<? super androidx.glance.wear.WearWidgetContent>);
+    method public final void triggerUpdate(android.content.Context context, android.content.ComponentName provider, int instanceId);
   }
 
   public abstract class GlanceWearWidgetService extends androidx.lifecycle.LifecycleService {
