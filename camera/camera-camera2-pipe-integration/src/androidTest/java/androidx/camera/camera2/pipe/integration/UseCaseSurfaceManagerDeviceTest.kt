@@ -46,6 +46,9 @@ import androidx.camera.testing.impl.fakes.FakeUseCaseConfig
 import androidx.core.os.HandlerCompat
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
+import androidx.test.espresso.Espresso
+import androidx.test.espresso.IdlingRegistry
+import androidx.test.espresso.idling.CountingIdlingResource
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.filters.SdkSuppress
@@ -196,13 +199,33 @@ class UseCaseSurfaceManagerDeviceTest {
         assertThat(surfaceActiveCountDown.await(3, TimeUnit.SECONDS)).isTrue()
         val cameraOpenedUsageCount = testSessionParameters.deferrableSurface.useCount
 
-        // Act. Launch Camera2Activity to open the camera, it disconnects the CameraGraph.
-        ActivityScenario.launch<Camera2TestActivity>(
-                Intent(ApplicationProvider.getApplicationContext(), Camera2TestActivity::class.java)
-                    .apply { putExtra(Camera2TestActivity.EXTRA_CAMERA_ID, cameraId) }
-            )
-            .close()
-        // Close the CameraGraph to ensure the usage count does go back down.
+        // Act. Launch Camera2TestActivity to open the camera and wait until it is ready.
+        val intent =
+            Intent(ApplicationProvider.getApplicationContext(), Camera2TestActivity::class.java)
+                .apply { putExtra(Camera2TestActivity.EXTRA_CAMERA_ID, cameraId) }
+
+        var completionIdlingResource: CountingIdlingResource? = null
+        var wasPreviewReady = false
+        try {
+            ActivityScenario.launch<Camera2TestActivity>(intent).use { scenario ->
+                var previewStartedIdlingResource: CountingIdlingResource? = null
+                scenario.onActivity { activity ->
+                    completionIdlingResource = activity.completionIdlingResource
+                    previewStartedIdlingResource = activity.previewStartedIdlingResource
+                    IdlingRegistry.getInstance().register(completionIdlingResource)
+                }
+                Espresso.onIdle()
+                wasPreviewReady = previewStartedIdlingResource!!.isIdleNow
+            }
+        } finally {
+            completionIdlingResource?.let { IdlingRegistry.getInstance().unregister(it) }
+        }
+
+        // Assume/skip the test if the activity failed to start the preview.
+        assumeTrue("Camera2TestActivity failed to start preview.", wasPreviewReady)
+
+        // Now that Camera2TestActivity has run and closed, the camera graph should be disconnected.
+        // Close the CameraGraph to ensure the usage count goes back down.
         testUseCaseCamera.useCaseCameraGraphConfig.graph.close()
         testUseCaseCamera.useCaseSurfaceManager.stopAsync().awaitWithTimeout()
         assertThat(surfaceInactiveCountDown.await(3, TimeUnit.SECONDS)).isTrue()
