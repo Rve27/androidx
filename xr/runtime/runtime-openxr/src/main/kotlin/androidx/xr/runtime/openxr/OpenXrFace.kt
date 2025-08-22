@@ -17,12 +17,10 @@
 package androidx.xr.runtime.openxr
 
 import androidx.annotation.RestrictTo
-import androidx.xr.arcore.FaceBlendShapeType
-import androidx.xr.arcore.FaceConfidenceRegionType
 import androidx.xr.arcore.internal.Face
 import androidx.xr.runtime.TrackingState
 
-/** Wraps the native XrFaceStateANDROID with the [androidx.xr.arcore.internal.Face] interface. */
+/** Wraps the native XrFaceStateANDROID with the [Face] interface. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public class OpenXrFace : Updatable, Face {
     public override var trackingState: TrackingState = TrackingState.PAUSED
@@ -59,7 +57,7 @@ public class OpenXrFace : Updatable, Face {
 
     /** Holds OpenXR constants for reference */
     internal companion object {
-        internal val XR_FACE_PARAMETER_COUNT_ANDROID = FaceBlendShapeType.entries.size
-        internal val XR_FACE_REGION_CONFIDENCE_COUNT_ANDROID = FaceConfidenceRegionType.entries.size
+        internal const val XR_FACE_PARAMETER_COUNT_ANDROID: Int = 68
+        internal const val XR_FACE_REGION_CONFIDENCE_COUNT_ANDROID: Int = 3
     }
 }

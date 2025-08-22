@@ -20,11 +20,29 @@ import androidx.annotation.RestrictTo
 
 /** Represents the regions of face tracking confidence. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public enum class FaceConfidenceRegionType {
-    /** Represents the lower region of the face. */
-    LOWER,
-    /** Represents the left upper region of the face. */
-    LEFT_UPPER,
-    /** Represents the right upper region of the face. */
-    RIGHT_UPPER,
+public class FaceConfidenceRegionType private constructor(private val value: Int) {
+    public companion object {
+        /** Represents the lower region of the face. */
+        @JvmField
+        public val FACE_CONFIDENCE_REGION_TYPE_LOWER: FaceConfidenceRegionType =
+            FaceConfidenceRegionType(0)
+
+        /** Represents the left upper region of the face. */
+        @JvmField
+        public val FACE_CONFIDENCE_REGION_TYPE_LEFT_UPPER: FaceConfidenceRegionType =
+            FaceConfidenceRegionType(1)
+
+        /** Represents the right upper region of the face. */
+        @JvmField
+        public val FACE_CONFIDENCE_REGION_TYPE_RIGHT_UPPER: FaceConfidenceRegionType =
+            FaceConfidenceRegionType(2)
+    }
+
+    public override fun toString(): String =
+        when (value) {
+            0 -> "LOWER"
+            1 -> "LEFT_UPPER"
+            2 -> "RIGHT_UPPER"
+            else -> "UNKNOWN"
+        }
 }
