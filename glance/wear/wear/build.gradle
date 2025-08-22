@@ -28,6 +28,7 @@ plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
     id("androidx.stableaidl")
+    id("com.squareup.wire")
 }
 
 dependencies {
@@ -39,6 +40,15 @@ dependencies {
     testImplementation(libs.junit)
     testImplementation(libs.testRunner)
     testImplementation(libs.truth)
+    testImplementation(libs.mockitoKotlin4)
+}
+
+wire {
+    kotlin {}
+
+    sourcePath {
+        srcDir 'src/main/proto'
+    }
 }
 
 android {
