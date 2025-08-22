@@ -175,7 +175,7 @@ class PagerCacheWindowTest(val config: ParamConfig) : BasePagerTest(config) {
     }
 
     @Test
-    fun scrollBackward_shouldNotDisposeItemsInWindow() {
+    fun scrollBackward_shouldDisposeItemsInWindow() {
         // at first, item 6 is fully visible and item 5 is partially visible
         createPager(
             modifier =
@@ -212,15 +212,12 @@ class PagerCacheWindowTest(val config: ParamConfig) : BasePagerTest(config) {
         rule.onNodeWithTag("2").assertExists()
         rule.onNodeWithTag("3").assertIsDisplayed()
         rule.onNodeWithTag("4").assertIsDisplayed()
-        rule.onNodeWithTag("5").assertExists()
+
         if (config.beyondViewportPageCount == 0) {
-            rule.onNodeWithTag("6").assertDoesNotExist() // at this point we have removed this
-            rule.onNodeWithTag("7").assertDoesNotExist() // at this point we have removed this
-            rule.onNodeWithTag("8").assertDoesNotExist() // at this point we have removed this
+            rule.onNodeWithTag("5").assertDoesNotExist()
         } else {
-            rule.onNodeWithTag("7").assertDoesNotExist() // at this point we have removed this
-            rule.onNodeWithTag("8").assertDoesNotExist() // at this point we have removed this
-            rule.onNodeWithTag("9").assertDoesNotExist() // at this point we have removed this
+            rule.onNodeWithTag("5").assertExists()
+            rule.onNodeWithTag("6").assertDoesNotExist()
         }
     }
 
