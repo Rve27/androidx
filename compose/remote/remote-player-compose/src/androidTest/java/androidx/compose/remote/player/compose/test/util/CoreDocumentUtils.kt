@@ -25,15 +25,17 @@ import androidx.compose.remote.player.view.RemoteComposeDocument
 import java.io.ByteArrayInputStream
 import kotlin.apply
 
-fun getCoreDocument(content: RemoteComposeContextAndroid.() -> Unit): CoreDocument {
-    val rcContext =
-        RemoteComposeContextAndroid(
-            AndroidxPlatformServices(),
+fun getCoreDocument(
+    extraTags: Array<RemoteComposeWriter.HTag> = emptyArray(),
+    content: RemoteComposeContextAndroid.() -> Unit,
+): CoreDocument {
+    val tags =
+        arrayOf(
             RemoteComposeWriter.HTag(Header.DOC_CONTENT_DESCRIPTION, "Test"),
             RemoteComposeWriter.HTag(Header.DOC_DESIRED_FPS, 120),
-        ) {
-            apply(content)
-        }
+        ) + extraTags
+    val rcContext =
+        RemoteComposeContextAndroid(AndroidxPlatformServices(), *tags) { apply(content) }
     return RemoteComposeDocument(
             ByteArrayInputStream(rcContext.mRemoteWriter.buffer(), 0, rcContext.bufferSize())
         )
