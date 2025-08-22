@@ -282,7 +282,7 @@ class ResizableComponentTest {
     }
 
     @Test
-    fun resizableComponent_setAutoHideContentInvokesRuntimeResizableComponentSetAutoHideContent() {
+    fun resizableComponent_setAutoHideContentWhileResizingInvokesRuntimeResizableComponentSetAutoHideContent() {
         val entity = GroupEntity.create(session, "test")
         assertThat(entity).isNotNull()
 
@@ -300,9 +300,9 @@ class ResizableComponentTest {
             )
         assertThat(entity.addComponent(resizableComponent)).isTrue()
 
-        resizableComponent.shouldAutoHideContent = false // default is true
+        resizableComponent.isAutoHideContentWhileResizingEnabled = false // default is true
 
-        assertThat(resizableComponent.shouldAutoHideContent).isFalse()
+        assertThat(resizableComponent.isAutoHideContentWhileResizingEnabled).isFalse()
         val captor = ArgumentCaptor.forClass(Boolean::class.java)
         verify(mockRtResizableComponent).autoHideContent = captor.capture()
         assertThat(captor.value).isFalse()
@@ -336,7 +336,7 @@ class ResizableComponentTest {
     }
 
     @Test
-    fun resizableComponent_setForceShowResizeOverlayInvokesRuntimeResizableComponentSetForceShowResizeOverlay() {
+    fun resizableComponent_setAlwaysShowOverlayInvokesRuntimeResizableComponentSetForceShowResizeOverlay() {
         val entity = GroupEntity.create(session, "test")
         assertThat(entity).isNotNull()
 
@@ -354,9 +354,9 @@ class ResizableComponentTest {
             )
         assertThat(entity.addComponent(resizableComponent)).isTrue()
 
-        resizableComponent.shouldAlwaysShowOverlay = true // default is false
+        resizableComponent.isAlwaysShowOverlayEnabled = true // default is false
 
-        assertThat(resizableComponent.shouldAlwaysShowOverlay).isTrue()
+        assertThat(resizableComponent.isAlwaysShowOverlayEnabled).isTrue()
         val captor = ArgumentCaptor.forClass(Boolean::class.java)
         verify(mockRtResizableComponent).forceShowResizeOverlay = captor.capture()
         assertThat(captor.value).isTrue()

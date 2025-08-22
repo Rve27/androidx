@@ -107,11 +107,10 @@ private constructor(
         }
 
     /**
-     * Whether the content of the [Entity], and all child Entities, should be automatically hidden
+     * Whether the content of the [Entity], and all child Entities, will be automatically hidden
      * while it is being resized.
      */
-    @get:JvmName("shouldAutoHideContent")
-    public var shouldAutoHideContent: Boolean = true
+    public var isAutoHideContentWhileResizingEnabled: Boolean = true
         set(value) {
             if (field != value) {
                 field = value
@@ -134,12 +133,11 @@ private constructor(
         }
 
     /**
-     * Whether a resize overlay should be shown even if the entity is not being resized.
+     * Whether a resize overlay will be shown even if the entity is not being resized.
      *
      * This is useful for resizing multiple panels at once.
      */
-    @get:JvmName("shouldAlwaysShowOverlay")
-    public var shouldAlwaysShowOverlay: Boolean = false
+    public var isAlwaysShowOverlayEnabled: Boolean = false
         set(value) {
             if (field != value) {
                 field = value

@@ -487,24 +487,24 @@ package androidx.xr.scenecore {
     method public float getFixedAspectRatio();
     method public androidx.xr.runtime.math.FloatSize3d getMaximumEntitySize();
     method public androidx.xr.runtime.math.FloatSize3d getMinimumEntitySize();
+    method public boolean isAlwaysShowOverlayEnabled();
+    method public boolean isAutoHideContentWhileResizingEnabled();
     method public boolean onAttach(androidx.xr.scenecore.Entity entity);
     method public void onDetach(androidx.xr.scenecore.Entity entity);
     method public void removeResizeEventListener(java.util.function.Consumer<androidx.xr.scenecore.ResizeEvent> resizeEventListener);
     method public void setAffordanceSize(androidx.xr.runtime.math.FloatSize3d);
+    method public void setAlwaysShowOverlayEnabled(boolean);
+    method public void setAutoHideContentWhileResizingEnabled(boolean);
     method public void setFixedAspectRatio(float);
     method public void setMaximumEntitySize(androidx.xr.runtime.math.FloatSize3d);
     method public void setMinimumEntitySize(androidx.xr.runtime.math.FloatSize3d);
-    method public void setShouldAlwaysShowOverlay(boolean);
-    method public void setShouldAutoHideContent(boolean);
     method public void setShouldAutoUpdateOverlay(boolean);
-    method public boolean shouldAlwaysShowOverlay();
-    method public boolean shouldAutoHideContent();
     method public boolean shouldAutoUpdateOverlay();
     property public androidx.xr.runtime.math.FloatSize3d affordanceSize;
+    property public boolean isAlwaysShowOverlayEnabled;
+    property public boolean isAutoHideContentWhileResizingEnabled;
     property public androidx.xr.runtime.math.FloatSize3d maximumEntitySize;
     property public androidx.xr.runtime.math.FloatSize3d minimumEntitySize;
-    property public boolean shouldAlwaysShowOverlay;
-    property public boolean shouldAutoHideContent;
     field public static final androidx.xr.scenecore.ResizableComponent.Companion Companion;
   }
 
