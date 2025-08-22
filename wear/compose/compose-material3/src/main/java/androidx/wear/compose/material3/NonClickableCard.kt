@@ -18,8 +18,6 @@ package androidx.wear.compose.material3
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.interaction.Interaction
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
@@ -58,10 +56,6 @@ import androidx.wear.compose.material3.tokens.OutlinedCardTokens
  * @param border A BorderStroke object which is used for drawing outlines.
  * @param contentPadding The spacing values to apply internally between the container and the
  *   content
- * @param interactionSource an optional hoisted [MutableInteractionSource] for observing and
- *   emitting [Interaction]s for this card. You can use this to change the card's appearance or
- *   preview the card in different states. Note that if `null` is provided, interactions will still
- *   happen internally.
  * @param transformation Transformation to be used when card appears inside a container that needs
  *   to dynamically change its content separately from the background.
  * @param content The main slot for a content of this card
@@ -73,7 +67,6 @@ public fun Card(
     colors: CardColors = CardDefaults.cardColors(),
     border: BorderStroke? = null,
     contentPadding: PaddingValues = CardDefaults.ContentPadding,
-    interactionSource: MutableInteractionSource? = null,
     transformation: SurfaceTransformation? = null,
     content: @Composable ColumnScope.() -> Unit,
 ) {
@@ -86,7 +79,7 @@ public fun Card(
         enabled = false,
         colors = colors,
         border = border,
-        interactionSource = interactionSource,
+        interactionSource = null,
         contentPadding = contentPadding,
         shape = shape,
         transformation = transformation,
@@ -130,10 +123,6 @@ public fun Card(
  * @param border A BorderStroke object which is used for drawing outlines.
  * @param contentPadding The spacing values to apply internally between the container and the
  *   content
- * @param interactionSource an optional hoisted [MutableInteractionSource] for observing and
- *   emitting [Interaction]s for this card. You can use this to change the card's appearance or
- *   preview the card in different states. Note that if `null` is provided, interactions will still
- *   happen internally.
  * @param transformation Transformation to be used when card appears inside a container that needs
  *   to dynamically change its content separately from the background.
  * @param content The main slot for a content of this card
@@ -146,7 +135,6 @@ public fun Card(
     colors: CardColors = CardDefaults.cardWithContainerPainterColors(),
     border: BorderStroke? = null,
     contentPadding: PaddingValues = CardDefaults.CardWithContainerPainterContentPadding,
-    interactionSource: MutableInteractionSource? = null,
     transformation: SurfaceTransformation? = null,
     content: @Composable ColumnScope.() -> Unit,
 ): Unit =
@@ -159,7 +147,7 @@ public fun Card(
         enabled = false,
         colors = colors,
         border = border,
-        interactionSource = interactionSource,
+        interactionSource = null,
         contentPadding = contentPadding,
         shape = shape,
         transformation = transformation,
@@ -216,10 +204,6 @@ public fun Card(
  * @param border A BorderStroke object which is used for drawing outlines.
  * @param contentPadding The spacing values to apply internally between the container and the
  *   content
- * @param interactionSource an optional hoisted [MutableInteractionSource] for observing and
- *   emitting [Interaction]s for this card. You can use this to change the card's appearance or
- *   preview the card in different states. Note that if `null` is provided, interactions will still
- *   happen internally.
  * @param transformation Transformation to be used when card appears inside a container that needs
  *   to dynamically change its content separately from the background.
  * @param appImage A slot for a small ([CardDefaults.AppImageSize]x[CardDefaults.AppImageSize] )
@@ -237,7 +221,6 @@ public fun AppCard(
     colors: CardColors = CardDefaults.cardColors(),
     border: BorderStroke? = null,
     contentPadding: PaddingValues = CardDefaults.ContentPadding,
-    interactionSource: MutableInteractionSource? = null,
     transformation: SurfaceTransformation? = null,
     appImage: @Composable (RowScope.() -> Unit)? = null,
     time: @Composable (RowScope.() -> Unit)? = null,
@@ -253,7 +236,7 @@ public fun AppCard(
         colors = colors,
         border = border,
         contentPadding = contentPadding,
-        interactionSource = interactionSource,
+        interactionSource = null,
         transformation = transformation,
         appImage = appImage,
         time = time,
@@ -299,10 +282,6 @@ public fun AppCard(
  * @param border A BorderStroke object which is used for drawing outlines.
  * @param contentPadding The spacing values to apply internally between the container and the
  *   content
- * @param interactionSource an optional hoisted [MutableInteractionSource] for observing and
- *   emitting [Interaction]s for this card. You can use this to change the card's appearance or
- *   preview the card in different states. Note that if `null` is provided, interactions will still
- *   happen internally.
  * @param transformation Transformation to be used when card appears inside a container that needs
  *   to dynamically change its content separately from the background.
  * @param content The optional body content of the card. If not provided then title and subtitle are
@@ -318,7 +297,6 @@ public fun TitleCard(
     colors: CardColors = CardDefaults.cardColors(),
     border: BorderStroke? = null,
     contentPadding: PaddingValues = CardDefaults.ContentPadding,
-    interactionSource: MutableInteractionSource? = null,
     transformation: SurfaceTransformation? = null,
     content: @Composable (() -> Unit)? = null,
 ): Unit =
@@ -336,7 +314,7 @@ public fun TitleCard(
         colors = colors,
         border = border,
         contentPadding = contentPadding,
-        interactionSource = interactionSource,
+        interactionSource = null,
         transformation = transformation,
         content = content,
     )
@@ -391,10 +369,6 @@ public fun TitleCard(
  * @param border A BorderStroke object which is used for drawing outlines.
  * @param contentPadding The spacing values to apply internally between the container and the
  *   content
- * @param interactionSource an optional hoisted [MutableInteractionSource] for observing and
- *   emitting [Interaction]s for this card. You can use this to change the card's appearance or
- *   preview the card in different states. Note that if `null` is provided, interactions will still
- *   happen internally.
  * @param transformation Transformation to be used when card appears inside a container that needs
  *   to dynamically change its content separately from the background.
  * @param content The optional body content of the card. If not provided then title and subtitle are
@@ -411,7 +385,6 @@ public fun TitleCard(
     colors: CardColors = CardDefaults.cardWithContainerPainterColors(),
     border: BorderStroke? = null,
     contentPadding: PaddingValues = CardDefaults.CardWithContainerPainterContentPadding,
-    interactionSource: MutableInteractionSource? = null,
     transformation: SurfaceTransformation? = null,
     content: @Composable (() -> Unit)? = null,
 ): Unit =
@@ -429,7 +402,7 @@ public fun TitleCard(
         colors = colors,
         border = border,
         contentPadding = contentPadding,
-        interactionSource = interactionSource,
+        interactionSource = null,
         transformation = transformation,
         content = content,
     )
@@ -462,10 +435,6 @@ public fun TitleCard(
  * @param border A BorderStroke object which is used for the outline drawing.
  * @param contentPadding The spacing values to apply internally between the container and the
  *   content
- * @param interactionSource an optional hoisted [MutableInteractionSource] for observing and
- *   emitting [Interaction]s for this card. You can use this to change the card's appearance or
- *   preview the card in different states. Note that if `null` is provided, interactions will still
- *   happen internally.
  * @param transformation Transformation to be used when card appears inside a container that needs
  *   to dynamically change its content separately from the background.
  * @param content The main slot for a content of this card
@@ -477,7 +446,6 @@ public fun OutlinedCard(
     colors: CardColors = CardDefaults.outlinedCardColors(),
     border: BorderStroke = CardDefaults.outlinedCardBorder(),
     contentPadding: PaddingValues = CardDefaults.ContentPadding,
-    interactionSource: MutableInteractionSource? = null,
     transformation: SurfaceTransformation? = null,
     content: @Composable ColumnScope.() -> Unit,
 ) {
@@ -490,7 +458,7 @@ public fun OutlinedCard(
         enabled = false,
         colors = colors,
         border = border,
-        interactionSource = interactionSource,
+        interactionSource = null,
         contentPadding = contentPadding,
         shape = shape,
         transformation = transformation,
