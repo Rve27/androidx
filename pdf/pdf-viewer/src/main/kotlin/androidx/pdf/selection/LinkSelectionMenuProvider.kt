@@ -27,9 +27,13 @@ internal object LinkSelectionMenuProvider {
                     key = PdfSelectionMenuKeys.CopyKey,
                     label = context.getString(android.R.string.copy),
                 ) { pdfView ->
-                    // We can't copy the current selection if no text is selected
-                    val text = (pdfView.currentSelection as? LinkSelection)?.linkText
-                    if (text != null) ClipboardUtils.copyToClipboard(context, text.toString())
+                    val localCurrentSelection = pdfView.currentSelection
+                    if (localCurrentSelection is LinkSelection) {
+                        ClipboardUtils.copyToClipboard(
+                            context,
+                            localCurrentSelection.linkText.toString(),
+                        )
+                    }
                     // close the context menu upon copy action
                     close()
                     // After completion of action the selection should be cleared.

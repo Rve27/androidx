@@ -33,15 +33,19 @@ internal class GoToLinkSelectionMenuProvider(private val context: Context) :
 
     private fun getGoToMenuItem(selection: GoToLinkSelection): ContextMenuComponent {
         return DefaultSelectionMenuComponent(
-            key = PdfSelectionMenuKeys.CopyKey,
+            key = PdfSelectionMenuKeys.SmartActionKey,
             label = context.getString(R.string.desc_goto_link, selection.destination.pageNumber + 1),
         ) { pdfView ->
-            val destination = (pdfView.currentSelection as? GoToLinkSelection)?.destination
-            if (destination != null) {
+            val localCurrentSelection = pdfView.currentSelection
+            if (localCurrentSelection is GoToLinkSelection) {
                 val destination =
                     PdfPoint(
-                        pageNum = destination.pageNumber,
-                        pagePoint = PointF(destination.xCoordinate, destination.yCoordinate),
+                        pageNum = localCurrentSelection.destination.pageNumber,
+                        pagePoint =
+                            PointF(
+                                localCurrentSelection.destination.xCoordinate,
+                                localCurrentSelection.destination.yCoordinate,
+                            ),
                     )
                 pdfView.scrollToPosition(destination)
             }
