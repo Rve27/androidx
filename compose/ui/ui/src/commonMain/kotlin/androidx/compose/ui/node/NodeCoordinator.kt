@@ -340,9 +340,9 @@ internal abstract class NodeCoordinator(override val layoutNode: LayoutNode) :
     }
 
     fun onMeasured() {
-        if (hasNode(Nodes.LayoutAware)) {
+        if (hasNode(Nodes.OnRemeasured)) {
             Snapshot.withoutReadObservation {
-                visitNodes(Nodes.LayoutAware) { it.onRemeasured(measuredSize) }
+                visitNodes(Nodes.OnRemeasured) { it.onRemeasured(measuredSize) }
             }
         }
     }
@@ -492,7 +492,7 @@ internal abstract class NodeCoordinator(override val layoutNode: LayoutNode) :
     }
 
     fun onPlaced() {
-        visitNodes(Nodes.LayoutAware) { it.onPlaced(this) }
+        visitNodes(Nodes.OnPlaced) { it.onPlaced(this) }
     }
 
     private var drawBlockParentLayer: GraphicsLayer? = null

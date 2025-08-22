@@ -1381,7 +1381,7 @@ internal class LayoutNode(
     }
 
     override fun onLayoutComplete() {
-        innerCoordinator.visitNodes(Nodes.LayoutAware) { it.onPlaced(innerCoordinator) }
+        innerCoordinator.visitNodes(Nodes.OnPlaced) { it.onPlaced(innerCoordinator) }
     }
 
     /** Calls [block] on all [LayoutModifierNodeCoordinator]s in the NodeCoordinator chain. */
