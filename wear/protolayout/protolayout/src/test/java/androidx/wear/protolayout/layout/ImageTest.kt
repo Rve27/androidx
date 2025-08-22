@@ -49,7 +49,6 @@ class ImageTest {
     fun lottieResource_withTrigger_inflates() {
         val property = colorForSlot("s", COLOR.prop)
         val trigger = TriggerBuilders.createOnLoadTrigger()
-        val progress = DynamicFloat.constant(1f)
 
         val lottie =
             lottieResource(
@@ -69,7 +68,6 @@ class ImageTest {
     @Test
     fun lottieResource_withProgress_inflates() {
         val property = colorForSlot("s", COLOR.prop)
-        val trigger = TriggerBuilders.createOnLoadTrigger()
         val progress = DynamicFloat.constant(1f)
 
         val lottie =

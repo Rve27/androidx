@@ -836,7 +836,7 @@ public class LayoutElementBuildersTest {
     }
 
     @Test
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings("deprecation") // Intentionally testing deprecated value.
     public void image_withImageRes_withoutScope_throws() {
         Image.Builder builder = new Image.Builder();
 
@@ -844,7 +844,7 @@ public class LayoutElementBuildersTest {
     }
 
     @Test
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings("deprecation") // Intentionally testing deprecated value.
     public void image_withImageRes_withResId_throws() {
         Image.Builder builder =
                 new Image.Builder(new ProtoLayoutScope()).setImageResource(IMAGE_RESOURCE);
@@ -853,7 +853,7 @@ public class LayoutElementBuildersTest {
     }
 
     @Test
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings("deprecation") // Intentionally testing deprecated value.
     public void image_withResId_andScope_throws() {
         Image.Builder builder = new Image.Builder(new ProtoLayoutScope());
 
@@ -861,7 +861,7 @@ public class LayoutElementBuildersTest {
     }
 
     @Test
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings("deprecation") // Intentionally testing deprecated value.
     public void image_withResId_andImageRes_throws() {
         Image.Builder builder = new Image.Builder().setResourceId("id");
 

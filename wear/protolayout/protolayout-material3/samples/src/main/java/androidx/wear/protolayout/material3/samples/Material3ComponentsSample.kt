@@ -559,6 +559,7 @@ fun primaryLayoutWithTextNotImportantForAccessibility(
         )
     }
 
+@Suppress("ResourceType") // Just a sample, not a real resource.
 @Sampled
 fun lottieWithFadeIn(
     context: Context,

@@ -47,8 +47,9 @@ import androidx.wear.protolayout.types.LayoutColor
  * @param resource An Image resource, used in the layout in the place of this element
  * @param width The width of the image
  * @param height The height of the image
- * @param protoLayoutResourceId The optional ID for the resource. This is not required as it is
- *   handled automatically by the resource registration
+ * @param protoLayoutResourceId The optional String ID for the resource. This is optional as it has
+ *   a default value assigned by the automatic resource registration, but can be used to override it
+ *   if desired to mark the resource with readable ID.
  * @param modifier Modifiers to set to this element
  * @param contentScaleMode Defines how the content which does not match the dimensions of its bounds
  *   (e.g. an image resource being drawn inside an Image) will be resized to fit its bounds
@@ -80,8 +81,8 @@ fun ProtoLayoutScope.basicImage(
 
 /**
  * Builds a resource object for the image, based on the given resources types. This can hold
- * multiple underlying resource types, which the underlying runtime will pick according to what it
- * thinks is appropriate.
+ * multiple underlying resource types, which the underlying renderer will pick according to what it
+ * is supported in its version and what it thinks is appropriate.
  *
  * It is recommended to use this inside the APIs for the automatic resource registration, such as
  * [basicImage].
