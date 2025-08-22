@@ -57,6 +57,7 @@ import androidx.navigation3.ui.NavDisplay.TRANSITION_SPEC
 import androidx.navigationevent.NavigationEvent.Companion.EDGE_NONE
 import androidx.navigationevent.NavigationEvent.SwipeEdge
 import androidx.navigationevent.NavigationEventState.InProgress
+import androidx.navigationevent.compose.LocalNavigationEventDispatcherOwner
 import androidx.navigationevent.compose.NavigationEventHandler
 import kotlin.reflect.KClass
 import kotlinx.coroutines.flow.collect

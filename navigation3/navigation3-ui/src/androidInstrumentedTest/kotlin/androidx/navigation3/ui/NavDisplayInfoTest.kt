@@ -94,7 +94,7 @@ private const val KEY_3 = "KEY_3"
 private const val KEY_4 = "KEY_4"
 private const val KEY_5 = "KEY_5"
 
-private class TestScene<T : Any>(
+private data class TestScene<T : Any>(
     override val key: Any = Any(),
     override val entries: List<NavEntry<T>> = emptyList(),
     override val previousEntries: List<NavEntry<T>> = emptyList(),
