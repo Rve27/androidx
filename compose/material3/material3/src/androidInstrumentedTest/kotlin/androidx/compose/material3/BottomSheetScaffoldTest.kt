@@ -1124,7 +1124,7 @@ class BottomSheetScaffoldTest {
         rule.runOnIdle {
             assertThat(bottomSheetState.anchoredDraggableState.anchors.size).isEqualTo(1)
             assertThat(
-                    bottomSheetState.anchoredDraggableState.anchors.hasAnchorFor(
+                    bottomSheetState.anchoredDraggableState.anchors.hasPositionFor(
                         SheetValue.Expanded
                     )
                 )
