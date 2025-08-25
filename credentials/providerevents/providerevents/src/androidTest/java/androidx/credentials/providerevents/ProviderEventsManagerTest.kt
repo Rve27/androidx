@@ -75,7 +75,7 @@ class ProviderEventsManagerTest {
                                 "account",
                                 "user",
                                 Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888),
-                                setOf(CredentialTypes.BASIC_AUTH),
+                                setOf(CredentialTypes.CREDENTIAL_TYPE_BASIC_AUTH),
                             )
                         )
                     )
