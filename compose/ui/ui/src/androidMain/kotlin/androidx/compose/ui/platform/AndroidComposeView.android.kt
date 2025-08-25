@@ -908,8 +908,8 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
     private var indirectTouchNavigationGestureDetectorActiveForEventStream = false
     // Determines scroll/swipe to next or previous focusable element for indirect touch events.
     private val indirectTouchNavigationGestureDetector =
-        IndirectTouchNavigationGestureDetector(context) { direction ->
-            focusOwner.moveFocus(direction)
+        IndirectTouchNavigationGestureDetector(context) {
+            focusOwner.moveFocus(focusDirection = it, wrapAroundForOneDimensionalFocus = false)
         }
 
     /** Callback for [measureAndLayout] to update the pointer position 150ms after layout. */
