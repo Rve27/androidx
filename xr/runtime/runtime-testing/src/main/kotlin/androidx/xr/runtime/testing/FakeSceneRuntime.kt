@@ -30,6 +30,7 @@ import androidx.xr.scenecore.internal.GltfEntity
 import androidx.xr.scenecore.internal.GltfFeature
 import androidx.xr.scenecore.internal.HeadActivityPose
 import androidx.xr.scenecore.internal.PanelEntity
+import androidx.xr.scenecore.internal.PerceptionSpaceActivityPose
 import androidx.xr.scenecore.internal.PixelDimensions
 import androidx.xr.scenecore.internal.RenderingEntityFactory
 import androidx.xr.scenecore.internal.SceneRuntime
@@ -44,8 +45,10 @@ public class FakeSceneRuntime() : SceneRuntime, RenderingEntityFactory {
 
     override val activitySpace: ActivitySpace = FakeActivitySpace()
 
-    override val headActivityPose: HeadActivityPose? =
-        object : HeadActivityPose, FakeActivityPose() {}
+    override val headActivityPose: HeadActivityPose? = FakeHeadActivityPose()
+
+    override val perceptionSpaceActivityPose: PerceptionSpaceActivityPose =
+        FakePerceptionSpaceActivityPose()
 
     override val mainPanelEntity: PanelEntity = FakePanelEntity()
 

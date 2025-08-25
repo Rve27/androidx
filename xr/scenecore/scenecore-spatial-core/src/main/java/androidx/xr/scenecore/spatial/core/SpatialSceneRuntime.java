@@ -37,6 +37,7 @@ import androidx.xr.scenecore.internal.GltfEntity;
 import androidx.xr.scenecore.internal.GltfFeature;
 import androidx.xr.scenecore.internal.HeadActivityPose;
 import androidx.xr.scenecore.internal.PanelEntity;
+import androidx.xr.scenecore.internal.PerceptionSpaceActivityPose;
 import androidx.xr.scenecore.internal.PixelDimensions;
 import androidx.xr.scenecore.internal.RenderingEntityFactory;
 import androidx.xr.scenecore.internal.SceneRuntime;
@@ -100,6 +101,10 @@ class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory {
     private final HeadActivityPoseImpl mHeadActivityPose;
     private final List<CameraViewActivityPoseImpl> mCameraActivityPoses = new ArrayList<>();
 
+    /** Returns the PerceptionSpaceActivityPose for the Session. */
+    // TODO b/439932057 - Rename mPerceptionSpaceActivityPose to mPerceptionSpaceScenePose.
+    public final PerceptionSpaceActivityPoseImpl mPerceptionSpaceActivityPose;
+
     private final PanelEntity mMainPanelEntity;
 
     private SpatialSceneRuntime(
@@ -148,6 +153,9 @@ class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory {
         mHeadActivityPose =
                 new HeadActivityPoseImpl(mActivitySpace, mActivitySpace, perceptionLibrary);
         mEntityManager.addSystemSpaceActivityPose(mHeadActivityPose);
+        mPerceptionSpaceActivityPose =
+                new PerceptionSpaceActivityPoseImpl(mActivitySpace, mActivitySpace);
+        mEntityManager.addSystemSpaceActivityPose(mPerceptionSpaceActivityPose);
         mCameraActivityPoses.add(
                 new CameraViewActivityPoseImpl(
                         CameraViewActivityPose.CameraType.CAMERA_TYPE_LEFT_EYE,
@@ -296,6 +304,11 @@ class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory {
             return null;
         }
         return cameraViewActivityPose;
+    }
+
+    @Override
+    public @NonNull PerceptionSpaceActivityPose getPerceptionSpaceActivityPose() {
+        return mPerceptionSpaceActivityPose;
     }
 
     @Override

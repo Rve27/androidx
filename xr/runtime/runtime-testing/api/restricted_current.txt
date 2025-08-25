@@ -96,6 +96,13 @@ package androidx.xr.runtime.testing {
     property public java.util.Map<android.media.AudioTrack,java.lang.Integer> spatialSourceTypeMap;
   }
 
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public class FakeBaseRenderingFeature implements androidx.xr.runtime.internal.RenderingFeature {
+    ctor public FakeBaseRenderingFeature(androidx.xr.runtime.NodeHolder<? extends java.lang.Object?> nodeHolder);
+    method public void dispose();
+    method public androidx.xr.runtime.NodeHolder<? extends java.lang.Object?> getNodeHolder();
+    property public androidx.xr.runtime.NodeHolder<? extends java.lang.Object?> nodeHolder;
+  }
+
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public class FakeCameraViewActivityPose extends androidx.xr.runtime.testing.FakeActivityPose implements androidx.xr.scenecore.internal.CameraViewActivityPose {
     ctor public FakeCameraViewActivityPose();
     method public int getCameraType();
@@ -157,6 +164,21 @@ package androidx.xr.runtime.testing {
     method public void startAnimation(boolean loop, String? animationName);
     method public void stopAnimation();
     property @androidx.xr.scenecore.internal.GltfEntity.AnimationStateValue public int animationState;
+  }
+
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeGltfFeature extends androidx.xr.runtime.testing.FakeBaseRenderingFeature implements androidx.xr.scenecore.internal.GltfFeature {
+    ctor public FakeGltfFeature(androidx.xr.runtime.NodeHolder<? extends java.lang.Object?> nodeHolder);
+    method public int getAnimationState();
+    method public void setColliderEnabled(boolean enableCollider);
+    method public void setMaterialOverride(androidx.xr.scenecore.internal.MaterialResource material, String meshName);
+    method public void startAnimation(boolean loop, String? animationName, java.util.concurrent.Executor executor);
+    method public void stopAnimation();
+    property public int animationState;
+    field public static final androidx.xr.runtime.testing.FakeGltfFeature.Companion Companion;
+  }
+
+  public static final class FakeGltfFeature.Companion {
+    method public androidx.xr.scenecore.internal.GltfFeature createWithMockFeature(androidx.xr.scenecore.internal.GltfFeature feature, androidx.xr.runtime.NodeHolder<? extends java.lang.Object?> nodeHolder);
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeHeadActivityPose extends androidx.xr.runtime.testing.FakeActivityPose implements androidx.xr.scenecore.internal.HeadActivityPose {
@@ -1120,11 +1142,13 @@ package androidx.xr.runtime.testing {
     method public androidx.xr.scenecore.internal.CameraViewActivityPose? getCameraViewActivityPose(@androidx.xr.scenecore.internal.CameraViewActivityPose.CameraType int cameraType);
     method public androidx.xr.scenecore.internal.HeadActivityPose? getHeadActivityPose();
     method public androidx.xr.scenecore.internal.PanelEntity getMainPanelEntity();
+    method public androidx.xr.scenecore.internal.PerceptionSpaceActivityPose getPerceptionSpaceActivityPose();
     method public androidx.xr.scenecore.internal.SpatialCapabilities getSpatialCapabilities();
     method public void removeSpatialCapabilitiesChangedListener(java.util.function.Consumer<androidx.xr.scenecore.internal.SpatialCapabilities> listener);
     property public androidx.xr.scenecore.internal.ActivitySpace activitySpace;
     property public androidx.xr.scenecore.internal.HeadActivityPose? headActivityPose;
     property public androidx.xr.scenecore.internal.PanelEntity mainPanelEntity;
+    property public androidx.xr.scenecore.internal.PerceptionSpaceActivityPose perceptionSpaceActivityPose;
     property public androidx.xr.scenecore.internal.SpatialCapabilities spatialCapabilities;
   }
 

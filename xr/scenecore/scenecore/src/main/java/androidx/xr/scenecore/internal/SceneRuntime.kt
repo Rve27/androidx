@@ -49,6 +49,10 @@ public interface SceneRuntime : JxrRuntime {
     // TODO: b/439932057 - Rename HeadActivityPose to HeadScenePose.
     public val headActivityPose: HeadActivityPose?
 
+    /** Returns the PerceptionSpaceActivityPose for the Session. */
+    // TODO: b/439932057 - Rename PerceptionSpaceActivityPose to PerceptionSpaceScenePose.
+    public val perceptionSpaceActivityPose: PerceptionSpaceActivityPose
+
     /** Get the PanelEntity associated with the main window for the Runtime. */
     public val mainPanelEntity: PanelEntity
 
