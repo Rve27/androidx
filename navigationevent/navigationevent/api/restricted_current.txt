@@ -127,7 +127,7 @@ package androidx.navigationevent {
     ctor public OnBackInvokedInput(android.window.OnBackInvokedDispatcher onBackInvokedDispatcher);
   }
 
-  public final class ViewTreeNavigationEventDispatcherOwner_androidKt {
+  public final class ViewTreeNavigationEventDispatcherOwner {
     method public static androidx.navigationevent.NavigationEventDispatcherOwner? get(android.view.View);
     method public static void set(android.view.View, androidx.navigationevent.NavigationEventDispatcherOwner navigationEventDispatcherOwner);
   }
