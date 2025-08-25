@@ -42,8 +42,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.util.fastForEachReversed
 import androidx.compose.ui.util.fastMap
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.compose.LifecycleOwner
 import androidx.navigation3.runtime.DecoratedNavEntryProvider
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavEntryDecorator
@@ -177,9 +175,12 @@ public fun <T : Any> NavDisplay(
 ) {
     require(backStack.isNotEmpty()) { "NavDisplay backstack cannot be empty" }
 
+    val transitionAwareLifecycleNavEntryDecorator =
+        transitionAwareLifecycleNavEntryDecorator(backStack)
+
     DecoratedNavEntryProvider(
         backStack = backStack,
-        entryDecorators = entryDecorators,
+        entryDecorators = entryDecorators + transitionAwareLifecycleNavEntryDecorator,
         entryProvider = entryProvider,
     ) { entries ->
         val allScenes =
@@ -384,23 +385,14 @@ public fun <T : Any> NavDisplay(
             },
         ) { targetSceneKey ->
             val targetScene = scenes.getValue(targetSceneKey)
+            val isSettled = transition.currentState == transition.targetState
             CompositionLocalProvider(
+                LocalNavTransitionSettledState provides isSettled,
                 LocalNavAnimatedContentScope provides this,
                 LocalEntriesToRenderInCurrentScene provides
                     sceneToRenderableEntryMap.getValue(targetSceneKey),
             ) {
-                val isInBackStack = targetScene.key in backStack
-                val isSettled = transition.currentState == transition.targetState
-                LifecycleOwner(
-                    maxLifecycle =
-                        when {
-                            isInBackStack && isSettled -> Lifecycle.State.RESUMED
-                            isInBackStack && !isSettled -> Lifecycle.State.STARTED
-                            else /* !isInBackStack */ -> Lifecycle.State.CREATED
-                        }
-                ) {
-                    targetScene.content()
-                }
+                targetScene.content()
             }
         }
 
