@@ -28,6 +28,7 @@ import androidx.xr.scenecore.internal.Dimensions
 import androidx.xr.scenecore.internal.Entity
 import androidx.xr.scenecore.internal.GltfEntity
 import androidx.xr.scenecore.internal.GltfFeature
+import androidx.xr.scenecore.internal.HeadActivityPose
 import androidx.xr.scenecore.internal.PanelEntity
 import androidx.xr.scenecore.internal.PixelDimensions
 import androidx.xr.scenecore.internal.RenderingEntityFactory
@@ -42,6 +43,10 @@ public class FakeSceneRuntime() : SceneRuntime, RenderingEntityFactory {
     override val spatialCapabilities: SpatialCapabilities = SpatialCapabilities(0)
 
     override val activitySpace: ActivitySpace = FakeActivitySpace()
+
+    override val headActivityPose: HeadActivityPose? =
+        object : HeadActivityPose, FakeActivityPose() {}
+
     override val mainPanelEntity: PanelEntity = FakePanelEntity()
 
     override fun getCameraViewActivityPose(

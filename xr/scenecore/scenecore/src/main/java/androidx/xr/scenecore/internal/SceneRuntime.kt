@@ -45,6 +45,10 @@ public interface SceneRuntime : JxrRuntime {
     /** Returns the Activity Space entity at the root of the scene. */
     public val activitySpace: ActivitySpace
 
+    /** Returns the HeadActivityPose for the session or null if it not ready. */
+    // TODO: b/439932057 - Rename HeadActivityPose to HeadScenePose.
+    public val headActivityPose: HeadActivityPose?
+
     /** Get the PanelEntity associated with the main window for the Runtime. */
     public val mainPanelEntity: PanelEntity
 

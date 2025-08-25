@@ -2778,10 +2778,12 @@ package androidx.xr.scenecore.internal {
     method public void dispose();
     method public androidx.xr.scenecore.internal.ActivitySpace getActivitySpace();
     method public androidx.xr.scenecore.internal.CameraViewActivityPose? getCameraViewActivityPose(@androidx.xr.scenecore.internal.CameraViewActivityPose.CameraType int cameraType);
+    method public androidx.xr.scenecore.internal.HeadActivityPose? getHeadActivityPose();
     method public androidx.xr.scenecore.internal.PanelEntity getMainPanelEntity();
     method public androidx.xr.scenecore.internal.SpatialCapabilities getSpatialCapabilities();
     method public void removeSpatialCapabilitiesChangedListener(java.util.function.Consumer<androidx.xr.scenecore.internal.SpatialCapabilities> listener);
     property public abstract androidx.xr.scenecore.internal.ActivitySpace activitySpace;
+    property public abstract androidx.xr.scenecore.internal.HeadActivityPose? headActivityPose;
     property public abstract androidx.xr.scenecore.internal.PanelEntity mainPanelEntity;
     property public abstract androidx.xr.scenecore.internal.SpatialCapabilities spatialCapabilities;
   }

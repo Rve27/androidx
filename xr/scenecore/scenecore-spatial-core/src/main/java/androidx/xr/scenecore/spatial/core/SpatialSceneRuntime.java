@@ -35,6 +35,7 @@ import androidx.xr.scenecore.internal.Dimensions;
 import androidx.xr.scenecore.internal.Entity;
 import androidx.xr.scenecore.internal.GltfEntity;
 import androidx.xr.scenecore.internal.GltfFeature;
+import androidx.xr.scenecore.internal.HeadActivityPose;
 import androidx.xr.scenecore.internal.PanelEntity;
 import androidx.xr.scenecore.internal.PixelDimensions;
 import androidx.xr.scenecore.internal.RenderingEntityFactory;
@@ -96,9 +97,10 @@ class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory {
     private final Supplier<SpatialState> mLazySpatialStateProvider;
 
     private final ActivitySpaceImpl mActivitySpace;
-    private final PanelEntity mMainPanelEntity;
-
+    private final HeadActivityPoseImpl mHeadActivityPose;
     private final List<CameraViewActivityPoseImpl> mCameraActivityPoses = new ArrayList<>();
+
+    private final PanelEntity mMainPanelEntity;
 
     private SpatialSceneRuntime(
             @NonNull Activity activity,
@@ -143,6 +145,9 @@ class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory {
                         unscaledGravityAlignedActivitySpace,
                         executor);
         mEntityManager.addSystemSpaceActivityPose(mActivitySpace);
+        mHeadActivityPose =
+                new HeadActivityPoseImpl(mActivitySpace, mActivitySpace, perceptionLibrary);
+        mEntityManager.addSystemSpaceActivityPose(mHeadActivityPose);
         mCameraActivityPoses.add(
                 new CameraViewActivityPoseImpl(
                         CameraViewActivityPose.CameraType.CAMERA_TYPE_LEFT_EYE,
@@ -265,6 +270,15 @@ class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory {
     @Override
     public @NonNull ActivitySpace getActivitySpace() {
         return mActivitySpace;
+    }
+
+    @Override
+    public @Nullable HeadActivityPose getHeadActivityPose() {
+        // If it is unable to retrieve a pose the head in not yet loaded in openXR so return null.
+        if (mHeadActivityPose.getPoseInOpenXrReferenceSpace() == null) {
+            return null;
+        }
+        return mHeadActivityPose;
     }
 
     @Override

@@ -27,10 +27,16 @@ import android.app.Activity;
 
 import androidx.xr.runtime.math.Pose;
 import androidx.xr.scenecore.impl.extensions.XrExtensionsProvider;
+import androidx.xr.scenecore.impl.perception.Fov;
 import androidx.xr.scenecore.impl.perception.PerceptionLibrary;
 import androidx.xr.scenecore.impl.perception.Session;
+import androidx.xr.scenecore.impl.perception.ViewProjection;
+import androidx.xr.scenecore.impl.perception.ViewProjections;
 import androidx.xr.scenecore.impl.perception.exceptions.FailedToInitializeException;
+import androidx.xr.scenecore.internal.ActivitySpace;
+import androidx.xr.scenecore.internal.CameraViewActivityPose;
 import androidx.xr.scenecore.internal.Entity;
+import androidx.xr.scenecore.internal.HeadActivityPose;
 import androidx.xr.scenecore.internal.SpatialCapabilities;
 import androidx.xr.scenecore.testing.FakeScheduledExecutorService;
 
@@ -134,6 +140,89 @@ public class SpatialSceneRuntimeTest {
         // The perception library failed to initialize a session, but the runtime should still be
         // created.
         assertThat(mRuntime).isNotNull();
+    }
+
+    @Test
+    public void getActivitySpace_returnsEntity() {
+        ActivitySpace activitySpace = mRuntime.getActivitySpace();
+
+        assertThat(activitySpace).isNotNull();
+
+        // Verify that there is an underlying extension node.
+        ActivitySpaceImpl activitySpaceImpl = (ActivitySpaceImpl) activitySpace;
+        assertThat(activitySpaceImpl.getNode()).isNotNull();
+    }
+
+    @Test
+    public void getHeadActivityPose_returnsNullIfNotReady() {
+        when(mPerceptionLibrary.getSession()).thenReturn(mSession);
+        when(mSession.getHeadPose()).thenReturn(null);
+        HeadActivityPose headActivityPose = mRuntime.getHeadActivityPose();
+
+        assertThat(headActivityPose).isNull();
+    }
+
+    @Test
+    public void getHeadActivityPose_returnsActivityPose() {
+        when(mPerceptionLibrary.getSession()).thenReturn(mSession);
+        when(mSession.getHeadPose())
+                .thenReturn(androidx.xr.scenecore.impl.perception.Pose.identity());
+        HeadActivityPose headActivityPose = mRuntime.getHeadActivityPose();
+
+        assertThat(headActivityPose).isNotNull();
+    }
+
+    @Test
+    public void getCameraViewActivityPose_returnsNullIfNotReady() {
+        when(mPerceptionLibrary.getSession()).thenReturn(mSession);
+        when(mSession.getStereoViews()).thenReturn(new ViewProjections(null, null));
+
+        CameraViewActivityPose leftCameraViewActivityPose =
+                mRuntime.getCameraViewActivityPose(
+                        CameraViewActivityPose.CameraType.CAMERA_TYPE_LEFT_EYE);
+        CameraViewActivityPose rightCameraViewActivityPose =
+                mRuntime.getCameraViewActivityPose(
+                        CameraViewActivityPose.CameraType.CAMERA_TYPE_RIGHT_EYE);
+
+        assertThat(leftCameraViewActivityPose).isNull();
+        assertThat(rightCameraViewActivityPose).isNull();
+    }
+
+    @Test
+    public void getLeftCameraViewActivityPose_returnsActivityPose() {
+        when(mPerceptionLibrary.getSession()).thenReturn(mSession);
+        ViewProjection viewProjection =
+                new ViewProjection(
+                        androidx.xr.scenecore.impl.perception.Pose.identity(), new Fov(0, 0, 0, 0));
+        when(mSession.getStereoViews())
+                .thenReturn(new ViewProjections(viewProjection, viewProjection));
+        CameraViewActivityPose cameraViewActivityPose =
+                mRuntime.getCameraViewActivityPose(
+                        CameraViewActivityPose.CameraType.CAMERA_TYPE_LEFT_EYE);
+
+        assertThat(cameraViewActivityPose).isNotNull();
+    }
+
+    @Test
+    public void getRightCameraViewActivityPose_returnsActivityPose() {
+        when(mPerceptionLibrary.getSession()).thenReturn(mSession);
+        ViewProjection viewProjection =
+                new ViewProjection(
+                        androidx.xr.scenecore.impl.perception.Pose.identity(), new Fov(0, 0, 0, 0));
+        when(mSession.getStereoViews())
+                .thenReturn(new ViewProjections(viewProjection, viewProjection));
+        CameraViewActivityPose cameraViewActivityPose =
+                mRuntime.getCameraViewActivityPose(
+                        CameraViewActivityPose.CameraType.CAMERA_TYPE_RIGHT_EYE);
+
+        assertThat(cameraViewActivityPose).isNotNull();
+    }
+
+    @Test
+    public void getUnknownCameraViewActivityPose_returnsEmptyOptional() {
+        CameraViewActivityPose cameraViewActivityPose = mRuntime.getCameraViewActivityPose(555);
+
+        assertThat(cameraViewActivityPose).isNull();
     }
 
     @Test
