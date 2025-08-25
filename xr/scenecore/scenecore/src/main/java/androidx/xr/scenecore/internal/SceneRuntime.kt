@@ -45,6 +45,9 @@ public interface SceneRuntime : JxrRuntime {
     /** Returns the Activity Space entity at the root of the scene. */
     public val activitySpace: ActivitySpace
 
+    /** Get the PanelEntity associated with the main window for the Runtime. */
+    public val mainPanelEntity: PanelEntity
+
     /**
      * Returns the CameraViewActivityPose for the specified camera type or null if it is not
      * ready/available.

@@ -1118,9 +1118,11 @@ package androidx.xr.runtime.testing {
     method public void dispose();
     method public androidx.xr.scenecore.internal.ActivitySpace getActivitySpace();
     method public androidx.xr.scenecore.internal.CameraViewActivityPose? getCameraViewActivityPose(@androidx.xr.scenecore.internal.CameraViewActivityPose.CameraType int cameraType);
+    method public androidx.xr.scenecore.internal.PanelEntity getMainPanelEntity();
     method public androidx.xr.scenecore.internal.SpatialCapabilities getSpatialCapabilities();
     method public void removeSpatialCapabilitiesChangedListener(java.util.function.Consumer<androidx.xr.scenecore.internal.SpatialCapabilities> listener);
     property public androidx.xr.scenecore.internal.ActivitySpace activitySpace;
+    property public androidx.xr.scenecore.internal.PanelEntity mainPanelEntity;
     property public androidx.xr.scenecore.internal.SpatialCapabilities spatialCapabilities;
   }
 

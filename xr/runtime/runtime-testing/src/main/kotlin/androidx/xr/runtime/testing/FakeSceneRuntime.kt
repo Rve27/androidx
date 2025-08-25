@@ -42,6 +42,7 @@ public class FakeSceneRuntime() : SceneRuntime, RenderingEntityFactory {
     override val spatialCapabilities: SpatialCapabilities = SpatialCapabilities(0)
 
     override val activitySpace: ActivitySpace = FakeActivitySpace()
+    override val mainPanelEntity: PanelEntity = FakePanelEntity()
 
     override fun getCameraViewActivityPose(
         @CameraViewActivityPose.CameraType cameraType: Int

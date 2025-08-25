@@ -96,6 +96,8 @@ class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory {
     private final Supplier<SpatialState> mLazySpatialStateProvider;
 
     private final ActivitySpaceImpl mActivitySpace;
+    private final PanelEntity mMainPanelEntity;
+
     private final List<CameraViewActivityPoseImpl> mCameraActivityPoses = new ArrayList<>();
 
     private SpatialSceneRuntime(
@@ -154,6 +156,10 @@ class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory {
                         mActivitySpace,
                         perceptionLibrary));
         mCameraActivityPoses.forEach(mEntityManager::addSystemSpaceActivityPose);
+        mMainPanelEntity =
+                new MainPanelEntityImpl(
+                        activity, taskWindowLeashNode, extensions, entityManager, executor);
+        mMainPanelEntity.setParent(mActivitySpace);
     }
 
     static @NonNull SpatialSceneRuntime create(
@@ -326,6 +332,14 @@ class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory {
         panelEntity.setParent(parent);
         panelEntity.setPose(pose, Space.PARENT);
         return panelEntity;
+    }
+
+    @Override
+    public @NonNull PanelEntity getMainPanelEntity() {
+        try (NodeTransaction transaction = mExtensions.createNodeTransaction()) {
+            transaction.setVisibility(mTaskWindowLeashNode, true).apply();
+        }
+        return mMainPanelEntity;
     }
 
     @Override
