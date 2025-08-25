@@ -8,6 +8,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
 
     <application
         android:icon="@mipmap/ic_launcher"
@@ -138,6 +139,50 @@
             android:name=".resizablepanel.ResizablePanel"
             android:exported="true"
             android:label="ResizablePanel"
+            android:theme="@style/Theme.IntegrationTestsApp" />
+        <activity
+            android:name=".spacemodechange.SpaceModeActivity"
+            android:exported="true"
+            android:label="@string/lifecycle_resize_test"
+            android:theme="@style/Theme.IntegrationTestsApp" />
+        <activity
+            android:name=".spatialpanel.SpatialPanelActivity"
+            android:exported="true"
+            android:label="@string/spatial_panel_test"
+            android:theme="@style/Theme.IntegrationTestsApp" />
+        <activity
+            android:name=".focuschange.FocusStealerActivity"
+            android:label="FocusStealer Activity"
+            android:launchMode="singleInstance" />
+        <activity
+            android:name=".focuschange.HSMFocusChangeActivity"
+            android:exported="true"
+            android:label="@string/hsm_focus_change_test"
+            android:theme="@style/Theme.IntegrationTestsApp" />
+        <activity
+            android:name=".focuschange.FSMFocusChangeActivity"
+            android:exported="true"
+            android:label="@string/fsm_focus_change_test"
+            android:theme="@style/Theme.IntegrationTestsApp" />
+        <activity
+            android:name=".lifecycle.OpenCloseActivity"
+            android:exported="true"
+            android:label="@string/lifecycle_open_close_test"
+            android:theme="@style/Theme.IntegrationTestsApp" />
+        <activity
+            android:name=".lifecycle.OpenCloseChildActivity"
+            android:exported="true"
+            android:label="@string/lifecycle_open_close_test"
+            android:theme="@style/Theme.IntegrationTestsApp" />
+        <activity
+            android:name=".lifecycle.ResizeActivity"
+            android:exported="true"
+            android:label="@string/lifecycle_resize_test"
+            android:theme="@style/Theme.IntegrationTestsApp" />
+        <activity
+            android:name=".lifecycle.RuntimeSessionActivity"
+            android:exported="true"
+            android:label="@string/lifecycle_runtime_session_test"
             android:theme="@style/Theme.IntegrationTestsApp" />
         <activity
             android:name=".accessibility.AccessibilityActivity"
