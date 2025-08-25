@@ -52,7 +52,7 @@ package androidx.navigationevent {
     ctor public NavigationEventDispatcher(androidx.navigationevent.NavigationEventDispatcher parentDispatcher);
     ctor public NavigationEventDispatcher(optional kotlin.jvm.functions.Function0<kotlin.Unit>? fallbackOnBackPressed);
     method @KotlinOnly @MainThread public void addCallback(androidx.navigationevent.NavigationEventCallback<? extends java.lang.Object?> callback, optional androidx.navigationevent.NavigationEventPriority priority);
-    method @BytecodeOnly @MainThread public void addCallback-3owFMvg(androidx.navigationevent.NavigationEventCallback<? extends java.lang.Object!>, int);
+    method @MainThread public void addCallback(androidx.navigationevent.NavigationEventCallback<? extends java.lang.Object?> callback, optional int priority);
     method @MainThread public void addInput(androidx.navigationevent.NavigationEventInput input);
     method @MainThread public void dispose();
     method public kotlinx.coroutines.flow.StateFlow<androidx.navigationevent.NavigationEventState<androidx.navigationevent.NavigationEventInfo>> getState();
@@ -95,8 +95,8 @@ package androidx.navigationevent {
   }
 
   public static final class NavigationEventPriority.Companion {
-    method @BytecodeOnly public int getDefault-b1THaJE();
-    method @BytecodeOnly public int getOverlay-b1THaJE();
+    method public int getDefault();
+    method public int getOverlay();
     property public androidx.navigationevent.NavigationEventPriority Default;
     property public androidx.navigationevent.NavigationEventPriority Overlay;
   }
