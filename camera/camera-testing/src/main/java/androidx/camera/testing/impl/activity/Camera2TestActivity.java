@@ -57,7 +57,7 @@ public class Camera2TestActivity extends Activity {
     private static final int FRAMES_UNTIL_VIEW_IS_READY = 5;
     private static final Size GUARANTEED_RESOLUTION = new Size(640, 480);
     public static final String EXTRA_CAMERA_ID = "androidx.camera.cameraId";
-    private static final int MAX_OPEN_RETRIES = 5;
+    private static final int MAX_RETRIES = 5;
     private static final long RETRY_DELAY_MS = 500;
 
     final Semaphore mCameraOpenCloseLock = new Semaphore(1);
@@ -68,7 +68,7 @@ public class Camera2TestActivity extends Activity {
     private TextureView mTextureView;
     private @Nullable String mCameraId;
     private @Nullable HandlerThread mBackgroundThread;
-    private int mOpenRetries = 0;
+    private int mFailedRetries = 0;
     private final AtomicInteger mFrameCount = new AtomicInteger(0);
     private final AtomicBoolean mIsOpening = new AtomicBoolean(false);
     private final AtomicBoolean mIsHandlingFailure = new AtomicBoolean(false);
@@ -162,7 +162,7 @@ public class Camera2TestActivity extends Activity {
 
     @RequiresPermission(Manifest.permission.CAMERA)
     void openCamera() {
-        mOpenRetries = 0;
+        mFailedRetries = 0;
         tryOpenCamera();
     }
 
@@ -285,14 +285,14 @@ public class Camera2TestActivity extends Activity {
         }
         mCameraDevice = null;
 
-        if (mOpenRetries < MAX_OPEN_RETRIES) {
-            mOpenRetries++;
-            Logger.d(TAG, "Scheduling retry to open camera. Attempt " + (mOpenRetries + 1));
+        if (mFailedRetries < MAX_RETRIES) {
+            mFailedRetries++;
+            Logger.d(TAG, "Scheduling retry to open camera. Attempt " + (mFailedRetries + 1));
             if (mBackgroundHandler != null) {
                 mBackgroundHandler.postDelayed(this::tryOpenCamera, RETRY_DELAY_MS);
             }
         } else {
-            Logger.e(TAG, "Failed to open camera after " + MAX_OPEN_RETRIES + " retries.");
+            Logger.e(TAG, "Failed to open camera after " + MAX_RETRIES + " retries.");
             if (!completionIdlingResource.isIdleNow()) {
                 completionIdlingResource.decrement();
             }
@@ -308,7 +308,6 @@ public class Camera2TestActivity extends Activity {
             }
             mIsHandlingFailure.set(false);
             mCameraDevice = cameraDevice;
-            mOpenRetries = 0;
             createCameraPreviewSession();
         }
 
