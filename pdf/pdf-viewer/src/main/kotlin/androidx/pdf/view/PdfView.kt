@@ -2075,7 +2075,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                     getVisibleAreaInContentCoords(),
                 ) ?: return super.onSingleTapConfirmed(e)
 
-            pageManager?.getLinkAtTapPoint(touchPoint)?.let { links ->
+            pageManager?.getPageLinks(touchPoint.pageNum)?.let { links ->
                 val touchPointOnPage = PointF(touchPoint.x, touchPoint.y)
                 if (handleGotoLinks(links, touchPointOnPage)) return true
                 if (handleExternalLinks(links, touchPointOnPage)) return true
