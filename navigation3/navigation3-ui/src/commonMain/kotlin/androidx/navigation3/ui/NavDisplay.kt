@@ -32,12 +32,10 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -57,8 +55,8 @@ import androidx.navigation3.ui.NavDisplay.TRANSITION_SPEC
 import androidx.navigationevent.NavigationEvent.Companion.EDGE_NONE
 import androidx.navigationevent.NavigationEvent.SwipeEdge
 import androidx.navigationevent.NavigationEventState.InProgress
-import androidx.navigationevent.compose.LocalNavigationEventDispatcherOwner
 import androidx.navigationevent.compose.NavigationEventHandler
+import androidx.navigationevent.compose.rememberNavigationEventState
 import kotlin.reflect.KClass
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
@@ -205,27 +203,14 @@ public fun <T : Any> NavDisplay(
             }
 
         // Predictive Back Handling
-
-        val navigationEventDispatcher =
-            checkNotNull(LocalNavigationEventDispatcherOwner.current) {
-                    "No NavigationEventDispatcher was provided via LocalNavigationEventDispatcherOwner"
-                }
-                .navigationEventDispatcher
-
-        val gestureScope = rememberCoroutineScope()
         val currentInfo = NavDisplayInfo(scene.entries.fastMap { it.contentKey })
-        val gestureStateFlow = remember {
-            // Only treat as predictive back if the gesture came from NavDisplay itself.
-            // Without this, all `NavigationEventHandler` instances would match.
-            navigationEventDispatcher.getState(gestureScope, initialInfo = currentInfo)
-        }
-        val gestureState by gestureStateFlow.collectAsState()
+        val gestureState = rememberNavigationEventState(initialInfo = currentInfo)
 
         val inPredictiveBack = gestureState is InProgress
         val progress = gestureState.progress
         val swipeEdge =
-            when (val currentGestureState = gestureState) {
-                is InProgress -> currentGestureState.latestEvent.swipeEdge
+            when (gestureState) {
+                is InProgress -> gestureState.latestEvent.swipeEdge
                 else -> EDGE_NONE
             }
 
