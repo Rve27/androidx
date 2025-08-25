@@ -17,14 +17,18 @@
 package androidx.xr.runtime.testing
 
 import android.app.Activity
+import android.content.Context
+import android.view.View
 import androidx.annotation.RestrictTo
 import androidx.xr.runtime.math.Pose
 import androidx.xr.scenecore.internal.ActivityPanelEntity
 import androidx.xr.scenecore.internal.ActivitySpace
 import androidx.xr.scenecore.internal.CameraViewActivityPose
+import androidx.xr.scenecore.internal.Dimensions
 import androidx.xr.scenecore.internal.Entity
 import androidx.xr.scenecore.internal.GltfEntity
 import androidx.xr.scenecore.internal.GltfFeature
+import androidx.xr.scenecore.internal.PanelEntity
 import androidx.xr.scenecore.internal.PixelDimensions
 import androidx.xr.scenecore.internal.RenderingEntityFactory
 import androidx.xr.scenecore.internal.SceneRuntime
@@ -42,6 +46,24 @@ public class FakeSceneRuntime() : SceneRuntime, RenderingEntityFactory {
     override fun getCameraViewActivityPose(
         @CameraViewActivityPose.CameraType cameraType: Int
     ): CameraViewActivityPose? = FakeCameraViewActivityPose()
+
+    override fun createPanelEntity(
+        context: Context,
+        pose: Pose,
+        view: View,
+        dimensions: Dimensions,
+        name: String,
+        parent: Entity,
+    ): PanelEntity = FakePanelEntity()
+
+    override fun createPanelEntity(
+        context: Context,
+        pose: Pose,
+        view: View,
+        pixelDimensions: PixelDimensions,
+        name: String,
+        parent: Entity,
+    ): PanelEntity = FakePanelEntity()
 
     override fun createActivityPanelEntity(
         pose: Pose,

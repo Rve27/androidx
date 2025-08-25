@@ -17,9 +17,11 @@
 package androidx.xr.scenecore.spatial.core;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Rect;
 import android.os.Handler;
 import android.os.Looper;
+import android.view.View;
 
 import androidx.annotation.VisibleForTesting;
 import androidx.xr.runtime.math.Pose;
@@ -29,9 +31,11 @@ import androidx.xr.scenecore.impl.perception.Session;
 import androidx.xr.scenecore.internal.ActivityPanelEntity;
 import androidx.xr.scenecore.internal.ActivitySpace;
 import androidx.xr.scenecore.internal.CameraViewActivityPose;
+import androidx.xr.scenecore.internal.Dimensions;
 import androidx.xr.scenecore.internal.Entity;
 import androidx.xr.scenecore.internal.GltfEntity;
 import androidx.xr.scenecore.internal.GltfFeature;
+import androidx.xr.scenecore.internal.PanelEntity;
 import androidx.xr.scenecore.internal.PixelDimensions;
 import androidx.xr.scenecore.internal.RenderingEntityFactory;
 import androidx.xr.scenecore.internal.SceneRuntime;
@@ -272,6 +276,56 @@ class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory {
             return null;
         }
         return cameraViewActivityPose;
+    }
+
+    @Override
+    public @NonNull PanelEntity createPanelEntity(
+            @NonNull Context context,
+            @NonNull Pose pose,
+            @NonNull View view,
+            @NonNull Dimensions dimensions,
+            @NonNull String name,
+            @NonNull Entity parent) {
+
+        Node node = mExtensions.createNode();
+        PanelEntity panelEntity =
+                new PanelEntityImpl(
+                        context,
+                        node,
+                        view,
+                        mExtensions,
+                        mEntityManager,
+                        dimensions,
+                        name,
+                        mExecutor);
+        panelEntity.setParent(parent);
+        panelEntity.setPose(pose, Space.PARENT);
+        return panelEntity;
+    }
+
+    @Override
+    public @NonNull PanelEntity createPanelEntity(
+            @NonNull Context context,
+            @NonNull Pose pose,
+            @NonNull View view,
+            @NonNull PixelDimensions pixelDimensions,
+            @NonNull String name,
+            @NonNull Entity parent) {
+
+        Node node = mExtensions.createNode();
+        PanelEntity panelEntity =
+                new PanelEntityImpl(
+                        context,
+                        node,
+                        view,
+                        mExtensions,
+                        mEntityManager,
+                        pixelDimensions,
+                        name,
+                        mExecutor);
+        panelEntity.setParent(parent);
+        panelEntity.setPose(pose, Space.PARENT);
+        return panelEntity;
     }
 
     @Override

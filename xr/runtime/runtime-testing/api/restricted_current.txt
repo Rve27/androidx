@@ -1113,6 +1113,8 @@ package androidx.xr.runtime.testing {
     method public androidx.xr.scenecore.internal.ActivityPanelEntity createActivityPanelEntity(androidx.xr.runtime.math.Pose pose, androidx.xr.scenecore.internal.PixelDimensions windowBoundsPx, String name, android.app.Activity hostActivity, androidx.xr.scenecore.internal.Entity parent);
     method public androidx.xr.scenecore.internal.GltfEntity createGltfEntity(androidx.xr.scenecore.internal.GltfFeature feature, androidx.xr.runtime.math.Pose pose, androidx.xr.scenecore.internal.Entity parentEntity);
     method public androidx.xr.scenecore.internal.Entity createGroupEntity(androidx.xr.runtime.math.Pose pose, String name, androidx.xr.scenecore.internal.Entity parent);
+    method public androidx.xr.scenecore.internal.PanelEntity createPanelEntity(android.content.Context context, androidx.xr.runtime.math.Pose pose, android.view.View view, androidx.xr.scenecore.internal.Dimensions dimensions, String name, androidx.xr.scenecore.internal.Entity parent);
+    method public androidx.xr.scenecore.internal.PanelEntity createPanelEntity(android.content.Context context, androidx.xr.runtime.math.Pose pose, android.view.View view, androidx.xr.scenecore.internal.PixelDimensions pixelDimensions, String name, androidx.xr.scenecore.internal.Entity parent);
     method public void dispose();
     method public androidx.xr.scenecore.internal.ActivitySpace getActivitySpace();
     method public androidx.xr.scenecore.internal.CameraViewActivityPose? getCameraViewActivityPose(@androidx.xr.scenecore.internal.CameraViewActivityPose.CameraType int cameraType);

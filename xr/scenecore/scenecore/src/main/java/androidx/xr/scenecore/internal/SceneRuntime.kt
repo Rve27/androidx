@@ -17,6 +17,8 @@
 package androidx.xr.scenecore.internal
 
 import android.app.Activity
+import android.content.Context
+import android.view.View
 import androidx.annotation.RestrictTo
 import androidx.xr.runtime.internal.JxrRuntime
 import androidx.xr.runtime.math.Pose
@@ -52,6 +54,44 @@ public interface SceneRuntime : JxrRuntime {
     public fun getCameraViewActivityPose(
         @CameraViewActivityPose.CameraType cameraType: Int
     ): CameraViewActivityPose?
+
+    /**
+     * A factory function to create a platform PanelEntity. The parent can be any entity.
+     *
+     * @param context Application Context.
+     * @param pose Initial pose of the panel.
+     * @param view View inflating this panel.
+     * @param dimensions Size of the panel in meters.
+     * @param name Name of the panel.
+     * @param parent Parent entity.
+     */
+    public fun createPanelEntity(
+        context: Context,
+        pose: Pose,
+        view: View,
+        dimensions: Dimensions,
+        name: String,
+        parent: Entity,
+    ): PanelEntity
+
+    /**
+     * A factory function to create a platform PanelEntity. The parent can be any entity.
+     *
+     * @param context Application Context.
+     * @param pose Initial pose of the panel.
+     * @param view View inflating this panel.
+     * @param pixelDimensions Dimensions for the underlying surface for the given view in pixels.
+     * @param name Name of the panel.
+     * @param parent Parent entity.
+     */
+    public fun createPanelEntity(
+        context: Context,
+        pose: Pose,
+        view: View,
+        pixelDimensions: PixelDimensions,
+        name: String,
+        parent: Entity,
+    ): PanelEntity
 
     /**
      * Factory function to create ActivityPanel to launch/move activity into.
