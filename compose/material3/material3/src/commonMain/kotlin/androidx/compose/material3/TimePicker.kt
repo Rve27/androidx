@@ -123,7 +123,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.takeOrElse
 import androidx.compose.ui.input.key.onKeyEvent
-import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.utf16CodePoint
 import androidx.compose.ui.input.pointer.PointerEvent
 import androidx.compose.ui.input.pointer.PointerEventPass
@@ -153,6 +152,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.isTraversalGroup
+import androidx.compose.ui.semantics.maxTextLength
 import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.selectableGroup
@@ -1025,6 +1025,8 @@ private fun TimeInputImpl(modifier: Modifier, colors: TimePickerColors, state: T
                 color = colors.timeSelectorContentColor(true),
             )
 
+        val a11yServicesEnabled by rememberAccessibilityServiceState()
+
         CompositionLocalProvider(
             LocalTextStyle provides textStyle,
             // Always display the time input text field from left to right.
@@ -1054,6 +1056,7 @@ private fun TimeInputImpl(modifier: Modifier, colors: TimePickerColors, state: T
                             value = newValue,
                             prevValue = hourValue,
                             max = if (state.is24hour) 23 else 12,
+                            a11yServicesEnabled = a11yServicesEnabled,
                             userOverride = userOverride,
                         ) {
                             hourValue = it
@@ -1076,18 +1079,7 @@ private fun TimeInputImpl(modifier: Modifier, colors: TimePickerColors, state: T
                     Modifier.size(DisplaySeparatorWidth, PeriodSelectorContainerHeight)
                 )
                 TimePickerTextField(
-                    modifier =
-                        Modifier.onPreviewKeyEvent { event ->
-                            // 0 == KEYCODE_DEL
-                            val switchFocus =
-                                event.utf16CodePoint == 0 && minuteValue.selection.start == 0
-
-                            if (switchFocus) {
-                                state.selection = TimePickerSelectionMode.Hour
-                            }
-
-                            switchFocus
-                        },
+                    modifier = Modifier,
                     value = minuteValue,
                     onValueChange = { newValue ->
                         timeInputOnChange(
@@ -1097,6 +1089,7 @@ private fun TimeInputImpl(modifier: Modifier, colors: TimePickerColors, state: T
                             prevValue = minuteValue,
                             max = 59,
                             userOverride = userOverride,
+                            a11yServicesEnabled = a11yServicesEnabled,
                         ) {
                             minuteValue = it
                         }
@@ -1796,6 +1789,7 @@ private fun timeInputOnChange(
     prevValue: TextFieldValue,
     max: Int,
     userOverride: Ref<Boolean>,
+    a11yServicesEnabled: Boolean,
     onNewValue: (value: TextFieldValue) -> Unit,
 ) {
     userOverride.value = false
@@ -1833,7 +1827,7 @@ private fun timeInputOnChange(
                     } else {
                         newValue + if (state.isPm && !state.is24hour) 12 else 0
                     }
-                if (newValue > 1 && !state.is24hour) {
+                if (newValue > 1 && !state.is24hour && !a11yServicesEnabled) {
                     state.selection = TimePickerSelectionMode.Minute
                 }
             } else {
@@ -1906,7 +1900,10 @@ private fun TimePickerTextField(
                 modifier =
                     Modifier.focusRequester(focusRequester)
                         .size(TimeFieldContainerWidth, TimeFieldContainerHeight)
-                        .semantics { this.contentDescription = contentDescription },
+                        .semantics {
+                            this.contentDescription = contentDescription
+                            this.maxTextLength = 2
+                        },
                 interactionSource = interactionSource,
                 keyboardOptions = keyboardOptions,
                 keyboardActions = keyboardActions,
