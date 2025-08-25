@@ -88,7 +88,7 @@ fun Project.getRepositoryDirectory(): File {
     val directory =
         if (isSnapshotBuild()) {
             // For snapshot builds we put artifacts directly where downstream users can find them.
-            actualRootProject.getDistributionDirectory().file("repostiory").get().asFile
+            actualRootProject.getDistributionDirectory().file("repository").get().asFile
         } else {
             File(getOutDirectory(), "repository")
         }
