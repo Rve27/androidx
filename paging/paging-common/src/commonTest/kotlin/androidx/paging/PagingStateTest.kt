@@ -161,9 +161,35 @@ class PagingStateTest {
                 leadingPlaceholderCount = 0,
             )
 
+        // test negative out of bound anchorPosition
         assertEquals(0, pagingState.closestItemAroundPosition(-1) { true })
+        assertEquals(2, pagingState.closestItemAroundPosition(-1) { it == 2 })
+        assertEquals(5, pagingState.closestItemAroundPosition(-1) { it == 5 })
+        assertEquals(7, pagingState.closestItemAroundPosition(-1) { it == 7 })
+        assertEquals(null, pagingState.closestItemAroundPosition(-1) { false })
+
+        // test centered anchorPosition
+        assertEquals(4, pagingState.closestItemAroundPosition(5) { it != 5 })
         assertEquals(5, pagingState.closestItemAroundPosition(5) { it == 5 })
+        assertEquals(6, pagingState.closestItemAroundPosition(5) { it > 5 })
+        assertEquals(null, pagingState.closestItemAroundPosition(5) { false })
+
+        // test left-skewed anchorPosition
+        assertEquals(1, pagingState.closestItemAroundPosition(2) { it < 2 })
+        assertEquals(8, pagingState.closestItemAroundPosition(2) { it == 8 })
+        assertEquals(null, pagingState.closestItemAroundPosition(2) { false })
+
+        // test right-skewed anchorPosition
+        assertEquals(8, pagingState.closestItemAroundPosition(7) { it > 7 })
+        assertEquals(2, pagingState.closestItemAroundPosition(7) { it == 2 })
+        assertEquals(null, pagingState.closestItemAroundPosition(7) { false })
+
+        // test positive out of bound anchorPosition
         assertEquals(9, pagingState.closestItemAroundPosition(15) { true })
+        assertEquals(7, pagingState.closestItemAroundPosition(15) { it == 7 })
+        assertEquals(4, pagingState.closestItemAroundPosition(15) { it == 4 })
+        assertEquals(1, pagingState.closestItemAroundPosition(15) { it == 1 })
+        assertEquals(null, pagingState.closestItemAroundPosition(15) { false })
     }
 
     @Test
@@ -176,9 +202,35 @@ class PagingStateTest {
                 leadingPlaceholderCount = 10,
             )
 
-        assertEquals(0, pagingState.closestItemAroundPosition(5) { true })
+        // test negative out of bound anchorPosition
+        assertEquals(0, pagingState.closestItemAroundPosition(-1) { true })
+        assertEquals(2, pagingState.closestItemAroundPosition(-1) { it == 2 })
+        assertEquals(5, pagingState.closestItemAroundPosition(-1) { it == 5 })
+        assertEquals(7, pagingState.closestItemAroundPosition(-1) { it == 7 })
+        assertEquals(null, pagingState.closestItemAroundPosition(-1) { false })
+
+        // test centered anchorPosition
+        assertEquals(4, pagingState.closestItemAroundPosition(15) { it != 5 })
         assertEquals(5, pagingState.closestItemAroundPosition(15) { it == 5 })
+        assertEquals(6, pagingState.closestItemAroundPosition(15) { it > 5 })
+        assertEquals(null, pagingState.closestItemAroundPosition(15) { false })
+
+        // test left-skewed anchorPosition
+        assertEquals(1, pagingState.closestItemAroundPosition(12) { it < 2 })
+        assertEquals(8, pagingState.closestItemAroundPosition(12) { it == 8 })
+        assertEquals(null, pagingState.closestItemAroundPosition(12) { false })
+
+        // test right-skewed anchorPosition
+        assertEquals(8, pagingState.closestItemAroundPosition(17) { it > 7 })
+        assertEquals(2, pagingState.closestItemAroundPosition(17) { it == 2 })
+        assertEquals(null, pagingState.closestItemAroundPosition(17) { false })
+
+        // test positive out of bound anchorPosition
         assertEquals(9, pagingState.closestItemAroundPosition(25) { true })
+        assertEquals(7, pagingState.closestItemAroundPosition(25) { it == 7 })
+        assertEquals(4, pagingState.closestItemAroundPosition(25) { it == 4 })
+        assertEquals(1, pagingState.closestItemAroundPosition(25) { it == 1 })
+        assertEquals(null, pagingState.closestItemAroundPosition(25) { false })
     }
 
     @Test
@@ -193,9 +245,35 @@ class PagingStateTest {
                 leadingPlaceholderCount = 10,
             )
 
-        assertEquals(0, pagingState.closestItemAroundPosition(5) { true })
+        // test negative out of bound anchorPosition
+        assertEquals(0, pagingState.closestItemAroundPosition(-1) { true })
+        assertEquals(2, pagingState.closestItemAroundPosition(-1) { it == 2 })
+        assertEquals(5, pagingState.closestItemAroundPosition(-1) { it == 5 })
+        assertEquals(7, pagingState.closestItemAroundPosition(-1) { it == 7 })
+        assertEquals(null, pagingState.closestItemAroundPosition(-1) { false })
+
+        // test centered anchorPosition
+        assertEquals(4, pagingState.closestItemAroundPosition(15) { it != 5 })
         assertEquals(5, pagingState.closestItemAroundPosition(15) { it == 5 })
+        assertEquals(6, pagingState.closestItemAroundPosition(15) { it > 5 })
+        assertEquals(null, pagingState.closestItemAroundPosition(15) { false })
+
+        // test left-skewed anchorPosition
+        assertEquals(1, pagingState.closestItemAroundPosition(12) { it < 2 })
+        assertEquals(8, pagingState.closestItemAroundPosition(12) { it == 8 })
+        assertEquals(null, pagingState.closestItemAroundPosition(12) { false })
+
+        // test right-skewed anchorPosition
+        assertEquals(8, pagingState.closestItemAroundPosition(17) { it > 7 })
+        assertEquals(2, pagingState.closestItemAroundPosition(17) { it == 2 })
+        assertEquals(null, pagingState.closestItemAroundPosition(17) { false })
+
+        // test positive out of bound anchorPosition
         assertEquals(9, pagingState.closestItemAroundPosition(25) { true })
+        assertEquals(7, pagingState.closestItemAroundPosition(25) { it == 7 })
+        assertEquals(4, pagingState.closestItemAroundPosition(25) { it == 4 })
+        assertEquals(1, pagingState.closestItemAroundPosition(25) { it == 1 })
+        assertEquals(null, pagingState.closestItemAroundPosition(25) { false })
     }
 
     @Test

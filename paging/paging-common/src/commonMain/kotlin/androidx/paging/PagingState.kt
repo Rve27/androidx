@@ -116,73 +116,89 @@ constructor(
         if (pages.all { it.data.isEmpty() }) return null
 
         anchorPositionToPagedIndices(anchorPosition) { pageIndex, index ->
-            val firstNonEmptyPage = pages.first { it.data.isNotEmpty() }
-            val lastNonEmptyPage = pages.last { it.data.isNotEmpty() }
-            return when {
-                index < 0 -> firstNonEmptyPage.data.firstOrNull(predicate)
-                pageIndex == pages.lastIndex && index > pages.last().data.lastIndex -> {
-                    lastNonEmptyPage.data.lastOrNull(predicate)
+            val firstNonEmptyPageIndex = pages.indexOfFirst { it.data.isNotEmpty() }
+            val lastNonEmptyPageIndex = pages.indexOfLast { it.data.isNotEmpty() }
+            var prependComplete = false
+            var appendComplete = false
+
+            var prependedPageIndex = -1
+            var prependedPage: Page<Key, Value>? = null
+            var prependedLocalIndex = -1
+
+            var appendedPageIndex = -1
+            var appendedPage: Page<Key, Value>? = null
+            var appendedLocalIndex = -1
+
+            when {
+                // if anchorPos is in placeholdersBefore, only search towards the right
+                // starting from first loaded item
+                index < 0 -> {
+                    prependComplete = true
+                    appendedPageIndex = firstNonEmptyPageIndex
+                    appendedPage = pages[firstNonEmptyPageIndex]
+                    appendedLocalIndex = 0
                 }
+                // if anchorPos is in placeholdersAfter, only search towards the left
+                // starting from last loaded item
+                pageIndex == pages.lastIndex && index > pages.last().data.lastIndex -> {
+                    appendComplete = true
+                    prependedPageIndex = lastNonEmptyPageIndex
+                    prependedPage = pages[lastNonEmptyPageIndex]
+                    prependedLocalIndex = prependedPage.data.lastIndex
+                }
+                // otherwise, search both directions starting from the anchorPos
                 else -> {
-                    // first check if item at anchorPosition matches predicate
-                    pages[pageIndex].data[index].let { if (predicate(it)) return it }
+                    prependedPageIndex = pageIndex
+                    prependedPage = pages[pageIndex]
+                    prependedLocalIndex = index
 
-                    // if not, start looking prepended and appended items
-                    var prependedPageIndex = pageIndex
-                    var prependedLocalIndex = index - 1
-                    var prependedPage = pages[pageIndex]
-
-                    var appendedPageIndex = pageIndex
-                    var appendedLocalIndex = index + 1
-                    var appendedPage = pages[pageIndex]
-
-                    var prependComplete = false
-                    var appendComplete = false
-
-                    // on each loop, we move by one index in both directions
-                    while (!prependComplete && !appendComplete) {
-                        if (!prependComplete) {
-                            // iterate to next page if done with current page
-                            while (prependedLocalIndex < 0 && --prependedPageIndex >= 0) {
-                                prependedPage = pages[prependedPageIndex]
-                                prependedLocalIndex = prependedPage.data.lastIndex
-                            }
-                            // mark prependComplete if we reached the end of prepended pages
-                            if (prependedPageIndex < 0) {
-                                prependComplete = true
-                            } else {
-                                // check if next item matches predicate
-                                val prevItem = prependedPage.data[prependedLocalIndex]
-                                if (predicate(prevItem)) return prevItem
-                                prependedLocalIndex--
-                            }
-                        }
-
-                        if (!appendComplete) {
-                            // iterate to next page if done with current page
-                            while (
-                                appendedLocalIndex > appendedPage.data.lastIndex &&
-                                    ++appendedPageIndex <= pages.lastIndex
-                            ) {
-                                appendedPage = pages[appendedPageIndex]
-                                appendedLocalIndex =
-                                    if (appendedPage.data.isEmpty()) Int.MAX_VALUE else 0
-                            }
-                            // mark appendComplete if we reached the end of appended pages
-                            if (appendedPageIndex > pages.lastIndex) {
-                                appendComplete = true
-                            } else {
-                                // check if next item matches predicate
-                                val nextItem = appendedPage.data[appendedLocalIndex]
-                                if (predicate(nextItem)) return nextItem
-                                appendedLocalIndex++
-                            }
-                        }
-                    }
-                    // no items matching predicate found
-                    return null
+                    appendedPageIndex = pageIndex
+                    appendedPage = pages[pageIndex]
+                    appendedLocalIndex = index
                 }
             }
+
+            // on each loop, we move by one index in both directions
+            while (!prependComplete || !appendComplete) {
+                if (!prependComplete) {
+                    // iterate to next page if done with current page
+                    while (prependedLocalIndex < 0 && --prependedPageIndex >= 0) {
+                        prependedPage = pages[prependedPageIndex]
+                        prependedLocalIndex = prependedPage.data.lastIndex
+                    }
+                    // mark prependComplete if we reached the end of prepended pages
+                    if (prependedPageIndex < 0) {
+                        prependComplete = true
+                    } else {
+                        // otherwise check if next item matches predicate
+                        val prevItem = prependedPage!!.data[prependedLocalIndex]
+                        if (predicate(prevItem)) return prevItem
+                        prependedLocalIndex--
+                    }
+                }
+
+                if (!appendComplete) {
+                    // iterate to next page if done with current page
+                    while (
+                        appendedLocalIndex > appendedPage!!.data.lastIndex &&
+                            ++appendedPageIndex <= pages.lastIndex
+                    ) {
+                        appendedPage = pages[appendedPageIndex]
+                        appendedLocalIndex = if (appendedPage.data.isEmpty()) Int.MAX_VALUE else 0
+                    }
+                    // mark appendComplete if we reached the end of appended pages
+                    if (appendedPageIndex > pages.lastIndex) {
+                        appendComplete = true
+                    } else {
+                        // otherwise check if next item matches predicate
+                        val nextItem = appendedPage.data[appendedLocalIndex]
+                        if (predicate(nextItem)) return nextItem
+                        appendedLocalIndex++
+                    }
+                }
+            }
+            // no items matching predicate found
+            return null
         }
     }
 
