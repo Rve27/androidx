@@ -185,10 +185,16 @@ internal class PdfDocumentRemoteImpl(
             val pdfAnnotations = mutableListOf<PdfAnnotation>()
             for (aospAnnotation in aospAnnotations) {
                 val unused = aospAnnotation.first // <-- AOSP ID
-                val converter =
-                    PdfAnnotationConvertersFactory.create<AospPdfAnnotation>(aospAnnotation.second)
-                converter.convert(aospAnnotation.second, pageNum).let { pfdAnnotation ->
-                    pdfAnnotations.add(pfdAnnotation)
+                try {
+                    val converter =
+                        PdfAnnotationConvertersFactory.create<AospPdfAnnotation>(
+                            aospAnnotation.second
+                        )
+                    converter.convert(aospAnnotation.second, pageNum).let { pfdAnnotation ->
+                        pdfAnnotations.add(pfdAnnotation)
+                    }
+                } catch (e: UnsupportedOperationException) {
+                    // TODO: b/440966572 - Handle Unsupported Annotation like FreeTextAnnotation
                 }
             }
             pdfAnnotations
