@@ -43,6 +43,7 @@ import androidx.xr.scenecore.impl.perception.Session;
 import androidx.xr.scenecore.internal.ActivityPose.HitTestFilter;
 import androidx.xr.scenecore.internal.ActivityPose.HitTestFilterValue;
 import androidx.xr.scenecore.internal.ActivitySpace;
+import androidx.xr.scenecore.internal.Dimensions;
 import androidx.xr.scenecore.internal.HitTestResult;
 import androidx.xr.scenecore.internal.SceneRuntime;
 import androidx.xr.scenecore.internal.Space;
@@ -163,7 +164,33 @@ public final class ActivitySpaceImplTest extends SystemSpaceEntityImplTest {
                 /* sceneParentTransform= */ null);
     }
 
-    // TODO: b/430219226 Remove getBounds and addBoundsChangedListener
+    @Test
+    public void getBounds_returnsBounds() {
+        assertThat(mActivitySpace.getBounds().width).isPositiveInfinity();
+        assertThat(mActivitySpace.getBounds().height).isPositiveInfinity();
+        assertThat(mActivitySpace.getBounds().depth).isPositiveInfinity();
+
+        SpatialState spatialState =
+                createSpatialState(/* bounds= */ new Bounds(100.0f, 200.0f, 300.0f));
+        ShadowXrExtensions.extract(mXrExtensions).sendSpatialState(mActivity, spatialState);
+
+        assertThat(mActivitySpace.getBounds().width).isEqualTo(100f);
+        assertThat(mActivitySpace.getBounds().height).isEqualTo(200f);
+        assertThat(mActivitySpace.getBounds().depth).isEqualTo(300f);
+    }
+
+    @Test
+    public void addBoundsChangedListener_happyPath() {
+        ActivitySpace.OnBoundsChangedListener listener =
+                Mockito.mock(ActivitySpace.OnBoundsChangedListener.class);
+
+        SpatialState spatialState =
+                createSpatialState(/* bounds= */ new Bounds(100.0f, 200.0f, 300.0f));
+        mActivitySpace.addOnBoundsChangedListener(listener);
+        ShadowXrExtensions.extract(mXrExtensions).sendSpatialState(mActivity, spatialState);
+
+        verify(listener).onBoundsChanged(Mockito.refEq(new Dimensions(100.0f, 200.0f, 300.0f)));
+    }
 
     @Test
     public void removeOnBoundsChangedListener_happyPath() {

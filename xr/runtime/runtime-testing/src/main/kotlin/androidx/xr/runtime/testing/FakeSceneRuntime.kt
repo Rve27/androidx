@@ -18,11 +18,15 @@ package androidx.xr.runtime.testing
 
 import android.app.Activity
 import android.content.Context
+import android.os.Build
 import android.view.View
+import androidx.annotation.RequiresApi
 import androidx.annotation.RestrictTo
+import androidx.xr.arcore.internal.Anchor
 import androidx.xr.runtime.math.Pose
 import androidx.xr.scenecore.internal.ActivityPanelEntity
 import androidx.xr.scenecore.internal.ActivitySpace
+import androidx.xr.scenecore.internal.AnchorEntity
 import androidx.xr.scenecore.internal.CameraViewActivityPose
 import androidx.xr.scenecore.internal.Dimensions
 import androidx.xr.scenecore.internal.Entity
@@ -32,9 +36,16 @@ import androidx.xr.scenecore.internal.HeadActivityPose
 import androidx.xr.scenecore.internal.PanelEntity
 import androidx.xr.scenecore.internal.PerceptionSpaceActivityPose
 import androidx.xr.scenecore.internal.PixelDimensions
+import androidx.xr.scenecore.internal.PlaneSemantic
+import androidx.xr.scenecore.internal.PlaneType
 import androidx.xr.scenecore.internal.RenderingEntityFactory
 import androidx.xr.scenecore.internal.SceneRuntime
 import androidx.xr.scenecore.internal.SpatialCapabilities
+import androidx.xr.scenecore.internal.SpatialEnvironment
+import androidx.xr.scenecore.internal.SpatialModeChangeListener
+import androidx.xr.scenecore.internal.SpatialVisibility
+import java.time.Duration
+import java.util.UUID
 import java.util.concurrent.Executor
 import java.util.function.Consumer
 
@@ -51,6 +62,11 @@ public class FakeSceneRuntime() : SceneRuntime, RenderingEntityFactory {
         FakePerceptionSpaceActivityPose()
 
     override val mainPanelEntity: PanelEntity = FakePanelEntity()
+
+    override val spatialEnvironment: SpatialEnvironment = FakeSpatialEnvironment()
+
+    override var spatialModeChangeListener: SpatialModeChangeListener? =
+        FakeSpatialModeChangeListener()
 
     override fun getCameraViewActivityPose(
         @CameraViewActivityPose.CameraType cameraType: Int
@@ -82,6 +98,38 @@ public class FakeSceneRuntime() : SceneRuntime, RenderingEntityFactory {
         parent: Entity,
     ): ActivityPanelEntity = FakeActivityPanelEntity()
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun createAnchorEntity(
+        bounds: Dimensions,
+        planeType: PlaneType,
+        planeSemantic: PlaneSemantic,
+        searchTimeout: Duration,
+    ): AnchorEntity {
+        val anchorCreationData =
+            FakeAnchorEntity.AnchorCreationData(
+                bounds = bounds,
+                planeType = planeType,
+                planeSemantic = planeSemantic,
+                searchTimeout = searchTimeout,
+            )
+        return FakeAnchorEntity(anchorCreationData)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun createAnchorEntity(anchor: Anchor): AnchorEntity {
+        return FakeAnchorEntity(anchor = anchor)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun createPersistedAnchorEntity(
+        uuid: UUID,
+        searchTimeout: Duration,
+    ): FakeAnchorEntity {
+        val anchorCreationData =
+            FakeAnchorEntity.AnchorCreationData(searchTimeout = searchTimeout, uuid = uuid)
+        return FakeAnchorEntity(anchorCreationData)
+    }
+
     override fun createGltfEntity(
         feature: GltfFeature,
         pose: Pose,
@@ -98,6 +146,83 @@ public class FakeSceneRuntime() : SceneRuntime, RenderingEntityFactory {
     override fun removeSpatialCapabilitiesChangedListener(
         listener: Consumer<SpatialCapabilities>
     ) {}
+
+    /**
+     * For test purposes only.
+     *
+     * A map tracking the listener registered for spatial visibility changes. The key is the
+     * [Executor] on which the listener should be invoked, and the value is the [Consumer] listener
+     * itself.
+     *
+     * This map is populated by calls to [setSpatialVisibilityChangedListener] and cleared by
+     * [clearSpatialVisibilityChangedListener]. Tests can inspect its contents to verify that the
+     * correct listener is registered or that it has been successfully cleared.
+     */
+    public val spatialVisibilityChangedMap: Map<Executor, Consumer<SpatialVisibility>>
+        get() = _spatialVisibilityChangedMap
+
+    private val _spatialVisibilityChangedMap: MutableMap<Executor, Consumer<SpatialVisibility>> =
+        mutableMapOf()
+
+    override fun setSpatialVisibilityChangedListener(
+        callbackExecutor: Executor,
+        listener: Consumer<SpatialVisibility>,
+    ) {
+        _spatialVisibilityChangedMap[callbackExecutor] = listener
+    }
+
+    override fun clearSpatialVisibilityChangedListener() {
+        _spatialVisibilityChangedMap.clear()
+    }
+
+    /**
+     * For test purposes only.
+     *
+     * A map tracking the listeners registered for perceived resolution changes. The key is the
+     * [Executor] on which the listener should be invoked, and the value is the [Consumer] listener
+     * itself.
+     *
+     * This map is populated by calls to [addPerceivedResolutionChangedListener] and modified by
+     * [removePerceivedResolutionChangedListener]. Tests can inspect its contents to verify that the
+     * correct listeners are registered or that they have been successfully removed.
+     */
+    public val perceivedResolutionChangedMap: Map<Executor, Consumer<PixelDimensions>>
+        get() = _perceivedResolutionChangedMap
+
+    private val _perceivedResolutionChangedMap: MutableMap<Executor, Consumer<PixelDimensions>> =
+        mutableMapOf()
+
+    override fun addPerceivedResolutionChangedListener(
+        callbackExecutor: Executor,
+        listener: Consumer<PixelDimensions>,
+    ) {
+        _perceivedResolutionChangedMap[callbackExecutor] = listener
+    }
+
+    override fun removePerceivedResolutionChangedListener(listener: Consumer<PixelDimensions>) {
+        _perceivedResolutionChangedMap.values.remove(listener)
+    }
+
+    /**
+     * For test purposes only.
+     *
+     * Stores the [Activity] that was last provided to the [setPreferredAspectRatio] method. Tests
+     * can inspect this property to verify the correct activity was used.
+     */
+    public var lastSetPreferredAspectRatioActivity: Activity? = null
+
+    /**
+     * For test purposes only.
+     *
+     * Stores the ratio that was last provided to the [setPreferredAspectRatio] method. Tests can
+     * inspect this property to verify the correct ratio was set.
+     */
+    public var lastSetPreferredAspectRatioRatio: Float = -1f
+
+    override fun setPreferredAspectRatio(activity: Activity, preferredRatio: Float) {
+        lastSetPreferredAspectRatioActivity = activity
+        lastSetPreferredAspectRatioRatio = preferredRatio
+    }
 
     override fun dispose() {}
 }

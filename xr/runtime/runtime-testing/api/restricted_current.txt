@@ -1131,25 +1131,48 @@ package androidx.xr.runtime.testing {
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeSceneRuntime implements androidx.xr.scenecore.internal.RenderingEntityFactory androidx.xr.scenecore.internal.SceneRuntime {
     ctor public FakeSceneRuntime();
+    method public void addPerceivedResolutionChangedListener(java.util.concurrent.Executor callbackExecutor, java.util.function.Consumer<androidx.xr.scenecore.internal.PixelDimensions> listener);
     method public void addSpatialCapabilitiesChangedListener(java.util.concurrent.Executor callbackExecutor, java.util.function.Consumer<androidx.xr.scenecore.internal.SpatialCapabilities> listener);
+    method public void clearSpatialVisibilityChangedListener();
     method public androidx.xr.scenecore.internal.ActivityPanelEntity createActivityPanelEntity(androidx.xr.runtime.math.Pose pose, androidx.xr.scenecore.internal.PixelDimensions windowBoundsPx, String name, android.app.Activity hostActivity, androidx.xr.scenecore.internal.Entity parent);
+    method @RequiresApi(android.os.Build.VERSION_CODES.O) public androidx.xr.scenecore.internal.AnchorEntity createAnchorEntity(androidx.xr.arcore.internal.Anchor anchor);
+    method @RequiresApi(android.os.Build.VERSION_CODES.O) public androidx.xr.scenecore.internal.AnchorEntity createAnchorEntity(androidx.xr.scenecore.internal.Dimensions bounds, androidx.xr.scenecore.internal.PlaneType planeType, androidx.xr.scenecore.internal.PlaneSemantic planeSemantic, java.time.Duration searchTimeout);
     method public androidx.xr.scenecore.internal.GltfEntity createGltfEntity(androidx.xr.scenecore.internal.GltfFeature feature, androidx.xr.runtime.math.Pose pose, androidx.xr.scenecore.internal.Entity parentEntity);
     method public androidx.xr.scenecore.internal.Entity createGroupEntity(androidx.xr.runtime.math.Pose pose, String name, androidx.xr.scenecore.internal.Entity parent);
     method public androidx.xr.scenecore.internal.PanelEntity createPanelEntity(android.content.Context context, androidx.xr.runtime.math.Pose pose, android.view.View view, androidx.xr.scenecore.internal.Dimensions dimensions, String name, androidx.xr.scenecore.internal.Entity parent);
     method public androidx.xr.scenecore.internal.PanelEntity createPanelEntity(android.content.Context context, androidx.xr.runtime.math.Pose pose, android.view.View view, androidx.xr.scenecore.internal.PixelDimensions pixelDimensions, String name, androidx.xr.scenecore.internal.Entity parent);
+    method @RequiresApi(android.os.Build.VERSION_CODES.O) public androidx.xr.runtime.testing.FakeAnchorEntity createPersistedAnchorEntity(java.util.UUID uuid, java.time.Duration searchTimeout);
     method public void dispose();
     method public androidx.xr.scenecore.internal.ActivitySpace getActivitySpace();
     method public androidx.xr.scenecore.internal.CameraViewActivityPose? getCameraViewActivityPose(@androidx.xr.scenecore.internal.CameraViewActivityPose.CameraType int cameraType);
     method public androidx.xr.scenecore.internal.HeadActivityPose? getHeadActivityPose();
+    method public android.app.Activity? getLastSetPreferredAspectRatioActivity();
+    method public float getLastSetPreferredAspectRatioRatio();
     method public androidx.xr.scenecore.internal.PanelEntity getMainPanelEntity();
+    method public java.util.Map<java.util.concurrent.Executor,java.util.function.Consumer<androidx.xr.scenecore.internal.PixelDimensions>> getPerceivedResolutionChangedMap();
     method public androidx.xr.scenecore.internal.PerceptionSpaceActivityPose getPerceptionSpaceActivityPose();
     method public androidx.xr.scenecore.internal.SpatialCapabilities getSpatialCapabilities();
+    method public androidx.xr.scenecore.internal.SpatialEnvironment getSpatialEnvironment();
+    method public androidx.xr.scenecore.internal.SpatialModeChangeListener? getSpatialModeChangeListener();
+    method public java.util.Map<java.util.concurrent.Executor,java.util.function.Consumer<androidx.xr.scenecore.internal.SpatialVisibility>> getSpatialVisibilityChangedMap();
+    method public void removePerceivedResolutionChangedListener(java.util.function.Consumer<androidx.xr.scenecore.internal.PixelDimensions> listener);
     method public void removeSpatialCapabilitiesChangedListener(java.util.function.Consumer<androidx.xr.scenecore.internal.SpatialCapabilities> listener);
+    method public void setLastSetPreferredAspectRatioActivity(android.app.Activity?);
+    method public void setLastSetPreferredAspectRatioRatio(float);
+    method public void setPreferredAspectRatio(android.app.Activity activity, float preferredRatio);
+    method public void setSpatialModeChangeListener(androidx.xr.scenecore.internal.SpatialModeChangeListener?);
+    method public void setSpatialVisibilityChangedListener(java.util.concurrent.Executor callbackExecutor, java.util.function.Consumer<androidx.xr.scenecore.internal.SpatialVisibility> listener);
     property public androidx.xr.scenecore.internal.ActivitySpace activitySpace;
     property public androidx.xr.scenecore.internal.HeadActivityPose? headActivityPose;
+    property public android.app.Activity? lastSetPreferredAspectRatioActivity;
+    property public float lastSetPreferredAspectRatioRatio;
     property public androidx.xr.scenecore.internal.PanelEntity mainPanelEntity;
+    property public java.util.Map<java.util.concurrent.Executor,java.util.function.Consumer<androidx.xr.scenecore.internal.PixelDimensions>> perceivedResolutionChangedMap;
     property public androidx.xr.scenecore.internal.PerceptionSpaceActivityPose perceptionSpaceActivityPose;
     property public androidx.xr.scenecore.internal.SpatialCapabilities spatialCapabilities;
+    property public androidx.xr.scenecore.internal.SpatialEnvironment spatialEnvironment;
+    property public androidx.xr.scenecore.internal.SpatialModeChangeListener? spatialModeChangeListener;
+    property public java.util.Map<java.util.concurrent.Executor,java.util.function.Consumer<androidx.xr.scenecore.internal.SpatialVisibility>> spatialVisibilityChangedMap;
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeSceneRuntimeFactory implements androidx.xr.runtime.internal.SceneRuntimeFactory {

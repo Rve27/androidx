@@ -21,15 +21,18 @@ import android.content.Context;
 import android.graphics.Rect;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Pair;
 import android.view.View;
 
 import androidx.annotation.VisibleForTesting;
+import androidx.xr.arcore.internal.Anchor;
 import androidx.xr.runtime.math.Pose;
 import androidx.xr.scenecore.impl.extensions.XrExtensionsProvider;
 import androidx.xr.scenecore.impl.perception.PerceptionLibrary;
 import androidx.xr.scenecore.impl.perception.Session;
 import androidx.xr.scenecore.internal.ActivityPanelEntity;
 import androidx.xr.scenecore.internal.ActivitySpace;
+import androidx.xr.scenecore.internal.AnchorEntity;
 import androidx.xr.scenecore.internal.CameraViewActivityPose;
 import androidx.xr.scenecore.internal.Dimensions;
 import androidx.xr.scenecore.internal.Entity;
@@ -39,10 +42,15 @@ import androidx.xr.scenecore.internal.HeadActivityPose;
 import androidx.xr.scenecore.internal.PanelEntity;
 import androidx.xr.scenecore.internal.PerceptionSpaceActivityPose;
 import androidx.xr.scenecore.internal.PixelDimensions;
+import androidx.xr.scenecore.internal.PlaneSemantic;
+import androidx.xr.scenecore.internal.PlaneType;
 import androidx.xr.scenecore.internal.RenderingEntityFactory;
 import androidx.xr.scenecore.internal.SceneRuntime;
 import androidx.xr.scenecore.internal.Space;
 import androidx.xr.scenecore.internal.SpatialCapabilities;
+import androidx.xr.scenecore.internal.SpatialEnvironment;
+import androidx.xr.scenecore.internal.SpatialModeChangeListener;
+import androidx.xr.scenecore.internal.SpatialVisibility;
 
 import com.android.extensions.xr.XrExtensions;
 import com.android.extensions.xr.node.Node;
@@ -56,11 +64,13 @@ import com.google.common.util.concurrent.ListenableFuture;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledExecutorService;
@@ -89,6 +99,11 @@ class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory {
     private final Map<Consumer<SpatialCapabilities>, Executor>
             mSpatialCapabilitiesChangedListeners = new ConcurrentHashMap<>();
 
+    private @Nullable Pair<Executor, Consumer<SpatialVisibility>> mSpatialVisibilityHandler = null;
+    private final Map<Consumer<PixelDimensions>, Executor> mPerceivedResolutionChangedListeners =
+            new ConcurrentHashMap<>();
+    @VisibleForTesting boolean mIsExtensionVisibilityStateCallbackRegistered = false;
+
     // TODO b/373481538: remove lazy initialization once XR Extensions bug is fixed. This will allow
     // us to remove the lazySpatialStateProvider instance and pass the spatialState directly.
     private final AtomicReference<SpatialState> mSpatialState = new AtomicReference<>(null);
@@ -96,6 +111,8 @@ class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory {
     // Returns the currently-known spatial state, or fetches it from the extensions if it has never
     // been set. The spatial state is kept updated in the SpatialStateCallback.
     private final Supplier<SpatialState> mLazySpatialStateProvider;
+
+    private SpatialModeChangeListener mSpatialModeChangeListener = null;
 
     private final ActivitySpaceImpl mActivitySpace;
     private final HeadActivityPoseImpl mHeadActivityPose;
@@ -250,6 +267,13 @@ class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory {
             return;
         }
         mEnvironment.dispose();
+        mSpatialModeChangeListener = null;
+        mExtensions.clearSpatialStateCallback(mActivity);
+
+        clearSpatialVisibilityChangedListener();
+        mPerceivedResolutionChangedListeners.clear();
+        // This will trigger clearing the callback from XrExtensions if it was registered
+        updateExtensionsVisibilityCallback();
 
         // TODO: b/376934871 - Check async results.
         mExtensions.detachSpatialScene(mActivity, Runnable::run, (result) -> {});
@@ -309,6 +333,22 @@ class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory {
     @Override
     public @NonNull PerceptionSpaceActivityPose getPerceptionSpaceActivityPose() {
         return mPerceptionSpaceActivityPose;
+    }
+
+    @Override
+    public @NonNull SpatialEnvironment getSpatialEnvironment() {
+        return mEnvironment;
+    }
+
+    @Override
+    public void setSpatialModeChangeListener(SpatialModeChangeListener spatialModeChangeListener) {
+        mSpatialModeChangeListener = spatialModeChangeListener;
+        mActivitySpace.setSpatialModeChangeListener(spatialModeChangeListener);
+    }
+
+    @Override
+    public SpatialModeChangeListener getSpatialModeChangeListener() {
+        return mSpatialModeChangeListener;
     }
 
     @Override
@@ -397,6 +437,60 @@ class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory {
         activityPanelEntity.setParent(parent);
         activityPanelEntity.setPose(pose, Space.PARENT);
         return activityPanelEntity;
+    }
+
+    @Override
+    public @NonNull AnchorEntity createAnchorEntity(
+            @NonNull Dimensions bounds,
+            @NonNull PlaneType planeType,
+            @NonNull PlaneSemantic planeSemantic,
+            @NonNull Duration searchTimeout) {
+        Node node = mExtensions.createNode();
+        return AnchorEntityImpl.createSemanticAnchor(
+                mActivity,
+                node,
+                bounds,
+                planeType,
+                planeSemantic,
+                searchTimeout,
+                getActivitySpace(),
+                getActivitySpace(),
+                mExtensions,
+                mEntityManager,
+                mExecutor,
+                mPerceptionLibrary);
+    }
+
+    @Override
+    public @NonNull AnchorEntity createAnchorEntity(@NonNull Anchor anchor) {
+        Node node = mExtensions.createNode();
+        return AnchorEntityImpl.createAnchorFromRuntimeAnchor(
+                mActivity,
+                node,
+                anchor,
+                getActivitySpace(),
+                getActivitySpace(),
+                mExtensions,
+                mEntityManager,
+                mExecutor,
+                mPerceptionLibrary);
+    }
+
+    @Override
+    public @NonNull AnchorEntity createPersistedAnchorEntity(
+            @NonNull UUID uuid, @NonNull Duration searchTimeout) {
+        Node node = mExtensions.createNode();
+        return AnchorEntityImpl.createPersistedAnchor(
+                mActivity,
+                node,
+                uuid,
+                searchTimeout,
+                getActivitySpace(),
+                getActivitySpace(),
+                mExtensions,
+                mEntityManager,
+                mExecutor,
+                mPerceptionLibrary);
     }
 
     @Override
@@ -496,5 +590,92 @@ class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory {
     public void removeSpatialCapabilitiesChangedListener(
             @NonNull Consumer<SpatialCapabilities> listener) {
         mSpatialCapabilitiesChangedListeners.remove(listener);
+    }
+
+    @Override
+    public void setSpatialVisibilityChangedListener(
+            @NonNull Executor callbackExecutor, @NonNull Consumer<SpatialVisibility> listener) {
+        mSpatialVisibilityHandler = new Pair<>(callbackExecutor, listener);
+        updateExtensionsVisibilityCallback();
+    }
+
+    @Override
+    public void clearSpatialVisibilityChangedListener() {
+        mSpatialVisibilityHandler = null;
+        updateExtensionsVisibilityCallback();
+    }
+
+    @Override
+    public void addPerceivedResolutionChangedListener(
+            @NonNull Executor callbackExecutor, @NonNull Consumer<PixelDimensions> listener) {
+        mPerceivedResolutionChangedListeners.put(listener, callbackExecutor);
+        updateExtensionsVisibilityCallback();
+    }
+
+    @Override
+    public void removePerceivedResolutionChangedListener(
+            @NonNull Consumer<PixelDimensions> listener) {
+        mPerceivedResolutionChangedListeners.remove(listener);
+        updateExtensionsVisibilityCallback();
+    }
+
+    private synchronized void updateExtensionsVisibilityCallback() {
+        boolean shouldHaveCallback =
+                mSpatialVisibilityHandler != null
+                        || !mPerceivedResolutionChangedListeners.isEmpty();
+
+        if (shouldHaveCallback && !mIsExtensionVisibilityStateCallbackRegistered) {
+            // Register the combined callback
+            try {
+                mExtensions.setVisibilityStateCallback(
+                        mActivity,
+                        mExecutor, // Executor for the combined callback itself
+                        (com.android.extensions.xr.space.VisibilityState visibilityStateEvent) -> {
+                            // Dispatch to SpatialVisibility listener
+                            if (mSpatialVisibilityHandler != null) {
+                                SpatialVisibility jxrSpatialVisibility =
+                                        RuntimeUtils.convertSpatialVisibility(
+                                                visibilityStateEvent.getVisibility());
+                                mSpatialVisibilityHandler.first.execute(
+                                        () ->
+                                                mSpatialVisibilityHandler.second.accept(
+                                                        jxrSpatialVisibility));
+                            }
+
+                            // Dispatch to PerceivedResolution listeners
+                            if (!mPerceivedResolutionChangedListeners.isEmpty()) {
+                                PixelDimensions jxrPerceivedResolution =
+                                        RuntimeUtils.convertPerceivedResolution(
+                                                visibilityStateEvent.getPerceivedResolution());
+                                mPerceivedResolutionChangedListeners.forEach(
+                                        (listener, executor) ->
+                                                executor.execute(
+                                                        () ->
+                                                                listener.accept(
+                                                                        jxrPerceivedResolution)));
+                            }
+                        });
+                mIsExtensionVisibilityStateCallbackRegistered = true;
+            } catch (RuntimeException e) {
+                throw new RuntimeException(
+                        "Could not set combined VisibilityStateCallback: " + e.getMessage());
+            }
+        } else if (!shouldHaveCallback && mIsExtensionVisibilityStateCallbackRegistered) {
+            // Clear the combined callback
+            try {
+                mExtensions.clearVisibilityStateCallback(mActivity);
+                mIsExtensionVisibilityStateCallbackRegistered = false;
+            } catch (RuntimeException e) {
+                throw new RuntimeException(
+                        "Could not clear VisibilityStateCallback: " + e.getMessage());
+            }
+        }
+    }
+
+    @Override
+    public void setPreferredAspectRatio(@NonNull Activity activity, float preferredRatio) {
+        // TODO: b/376934871 - Check async results.
+        mExtensions.setPreferredAspectRatio(
+                activity, preferredRatio, Runnable::run, (result) -> {});
     }
 }
