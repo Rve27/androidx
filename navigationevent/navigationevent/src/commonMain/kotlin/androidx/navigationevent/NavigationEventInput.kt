@@ -18,7 +18,7 @@ package androidx.navigationevent
 
 import androidx.annotation.EmptySuper
 import androidx.annotation.MainThread
-import androidx.navigationevent.NavigationEventDirection.Companion.Backward
+import androidx.navigationevent.NavigationEventDirection.Companion.Back
 
 /** A class that can send events to a [NavigationEventDispatcher]. */
 public abstract class NavigationEventInput() {
@@ -74,7 +74,7 @@ public abstract class NavigationEventInput() {
     @MainThread
     protected fun dispatchOnStarted(event: NavigationEvent) {
         // TODO(kuanyingchou): Accept a direction parameter instead of hardcoding `Backward`.
-        dispatcher?.dispatchOnStarted(input = this, direction = Backward, event)
+        dispatcher?.dispatchOnStarted(input = this, direction = Back, event)
             ?: error("This input is not added to any dispatcher.")
     }
 
@@ -86,7 +86,7 @@ public abstract class NavigationEventInput() {
     @MainThread
     protected fun dispatchOnProgressed(event: NavigationEvent) {
         // TODO(kuanyingchou): Accept a direction parameter instead of hardcoding `Backward`.
-        dispatcher?.dispatchOnProgressed(input = this, direction = Backward, event)
+        dispatcher?.dispatchOnProgressed(input = this, direction = Back, event)
             ?: error("This input is not added to any dispatcher.")
     }
 
@@ -94,7 +94,7 @@ public abstract class NavigationEventInput() {
     @MainThread
     protected fun dispatchOnCancelled() {
         // TODO(kuanyingchou): Accept a direction parameter instead of hardcoding `Backward`.
-        dispatcher?.dispatchOnCancelled(input = this, direction = Backward)
+        dispatcher?.dispatchOnCancelled(input = this, direction = Back)
             ?: error("This input is not added to any dispatcher.")
     }
 
@@ -102,7 +102,7 @@ public abstract class NavigationEventInput() {
     @MainThread
     protected fun dispatchOnCompleted() {
         // TODO(kuanyingchou): Accept a direction parameter instead of hardcoding `Backward`.
-        dispatcher?.dispatchOnCompleted(input = this, direction = Backward)
+        dispatcher?.dispatchOnCompleted(input = this, direction = Back)
             ?: error("This input is not added to any dispatcher.")
     }
 }
