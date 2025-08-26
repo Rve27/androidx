@@ -1109,6 +1109,7 @@ package androidx.compose.foundation.lazy {
     property public boolean lastScrolledBackward;
     property public boolean lastScrolledForward;
     property @androidx.compose.runtime.annotation.FrequentlyChangingValue public androidx.compose.foundation.lazy.LazyListLayoutInfo layoutInfo;
+    property public androidx.compose.foundation.ScrollIndicatorState? scrollIndicatorState;
     field public static final androidx.compose.foundation.lazy.LazyListState.Companion Companion;
   }
 

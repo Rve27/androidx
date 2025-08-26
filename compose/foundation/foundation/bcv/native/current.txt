@@ -1055,6 +1055,8 @@ final class androidx.compose.foundation.lazy/LazyListState : androidx.compose.fo
         final fun <get-lastScrolledForward>(): kotlin/Boolean // androidx.compose.foundation.lazy/LazyListState.lastScrolledForward.<get-lastScrolledForward>|<get-lastScrolledForward>(){}[0]
     final val layoutInfo // androidx.compose.foundation.lazy/LazyListState.layoutInfo|{}layoutInfo[0]
         final fun <get-layoutInfo>(): androidx.compose.foundation.lazy/LazyListLayoutInfo // androidx.compose.foundation.lazy/LazyListState.layoutInfo.<get-layoutInfo>|<get-layoutInfo>(){}[0]
+    final val scrollIndicatorState // androidx.compose.foundation.lazy/LazyListState.scrollIndicatorState|{}scrollIndicatorState[0]
+        final fun <get-scrollIndicatorState>(): androidx.compose.foundation/ScrollIndicatorState? // androidx.compose.foundation.lazy/LazyListState.scrollIndicatorState.<get-scrollIndicatorState>|<get-scrollIndicatorState>(){}[0]
 
     final var canScrollBackward // androidx.compose.foundation.lazy/LazyListState.canScrollBackward|{}canScrollBackward[0]
         final fun <get-canScrollBackward>(): kotlin/Boolean // androidx.compose.foundation.lazy/LazyListState.canScrollBackward.<get-canScrollBackward>|<get-canScrollBackward>(){}[0]
