@@ -60,6 +60,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.currentStateAsState
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavDestination
@@ -238,7 +239,10 @@ internal fun PredictiveBackNavHost(
                 ) {
                     // while in the scope of the composable, we provide the navBackStackEntry as the
                     // ViewModelStoreOwner and LifecycleOwner
-                    if (currentEntry.lifecycle.currentState != Lifecycle.State.DESTROYED) {
+                    if (
+                        currentEntry.lifecycle.currentStateAsState().value !=
+                            Lifecycle.State.DESTROYED
+                    ) {
                         currentEntry.LocalOwnersProvider(stateHolder) {
                             DestinationContent(backStackEntry = currentEntry)
                         }
