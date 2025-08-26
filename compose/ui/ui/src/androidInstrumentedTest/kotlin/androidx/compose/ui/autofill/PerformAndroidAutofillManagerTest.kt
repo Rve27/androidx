@@ -20,7 +20,6 @@ import android.graphics.Rect
 import android.text.InputType
 import android.util.SparseArray
 import android.view.View
-import android.view.View.AUTOFILL_TYPE_DATE
 import android.view.View.AUTOFILL_TYPE_TEXT
 import android.view.ViewStructure
 import android.view.autofill.AutofillValue
@@ -48,6 +47,8 @@ import androidx.compose.ui.semantics.contentDataType
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.contentType
 import androidx.compose.ui.semantics.disabled
+import androidx.compose.ui.semantics.editableText
+import androidx.compose.ui.semantics.fillableData
 import androidx.compose.ui.semantics.hideFromAccessibility
 import androidx.compose.ui.semantics.maxTextLength
 import androidx.compose.ui.semantics.onLongClick
@@ -65,6 +66,7 @@ import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.requestFocus
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.view.accessibility.AccessibilityNodeProviderCompat
@@ -1391,17 +1393,25 @@ class PerformAndroidAutofillManagerTest {
             )
     }
 
+    @OptIn(ExperimentalComposeUiApi::class)
     @Test
     @SmallTest
     @SdkSuppress(minSdkVersion = 26)
-    fun populateViewStructure_contentDataType_date() {
+    fun populateViewStructure_autofillValueOverwrites_editableText() {
         // Arrange.
         lateinit var view: View
         val viewStructure: ViewStructure = FakeViewStructure()
+        val fillableDataText = checkNotNull(FillableData("fillableData-test"))
         rule.setContent {
             view = LocalView.current
             Box(
-                Modifier.semantics { contentDataType = ContentDataType.Date }
+                Modifier.semantics {
+                        contentType = ContentType.Username
+                        // This will set an autofill value from text
+                        fillableData = fillableDataText
+                        // This value will be overwritten.
+                        editableText = AnnotatedString("editableText-test")
+                    }
                     .size(height, width)
                     .testTag(contentTag)
             )
@@ -1419,7 +1429,8 @@ class PerformAndroidAutofillManagerTest {
                 ViewStructure(view) {
                     children.add(
                         ViewStructure(view) {
-                            autofillType = AUTOFILL_TYPE_DATE
+                            autofillHints = mutableListOf(HintConstants.AUTOFILL_HINT_USERNAME)
+                            autofillValue = AutofillValue.forText("fillableData-test")
                             virtualId = rule.onNodeWithTag(contentTag).semanticsId()
                         }
                     )

@@ -56,6 +56,7 @@ internal fun ViewStructure.populate(
     var contentTypeProp: ContentType? = null
     var editableTextProp: AnnotatedString? = null
     var isPasswordProp = false
+    var fillableDataProp: AndroidFillableData? = null
     var maxTextLengthProp: Int? = null
     var roleProp: Role? = null
     var selectedProp: Boolean? = null
@@ -76,6 +77,7 @@ internal fun ViewStructure.populate(
                     autofillApi.setContentDescription(this, it)
                 }
             properties.ContentType -> contentTypeProp = value as ContentType
+            properties.FillableData -> fillableDataProp = value as AndroidFillableData
             properties.EditableText -> editableTextProp = value as AnnotatedString
             properties.Focused -> autofillApi.setFocused(this, value as Boolean)
             properties.MaxTextLength -> maxTextLengthProp = value as Int
@@ -114,6 +116,14 @@ internal fun ViewStructure.populate(
                 else -> null
             }
     autofillType?.let { autofillApi.setAutofillType(this, it) }
+
+    // Use autofillTextValue first, and then overwrite it with autofillValue (if present).
+    editableTextProp?.let { textProp ->
+        autofillApi.setAutofillValue(this, autofillApi.getAutofillTextValue(textProp.text))
+    }
+    fillableDataProp?.let { fillableData ->
+        fillableData.autofillValue.let { autofillApi.setAutofillValue(this, it) }
+    }
 
     // Autofill Hints.
     contentTypeProp?.contentHints?.let { autofillApi.setAutofillHints(this, it) }
@@ -173,11 +183,6 @@ internal fun ViewStructure.populate(
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             maxTextLengthProp?.let { AutofillApi28Helper.setMaxTextLength(this, it) }
-        }
-
-        // Set the current value for autofill. (Used to save values during autofill commit).
-        editableTextProp?.let {
-            autofillApi.setAutofillValue(this, autofillApi.getAutofillTextValue(it.text))
         }
 
         // Password.
