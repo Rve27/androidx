@@ -47,7 +47,6 @@ import org.jspecify.annotations.NonNull;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Queue;
@@ -260,13 +259,13 @@ class SchemaCodeGenerator {
     private Set<String> getAllIndexableNestedProperties(
             @NonNull DocumentPropertyAnnotation documentPropertyAnnotation)
             throws ProcessingException {
-        Set<String> indexableNestedProperties = new HashSet<>(
+        Set<String> indexableNestedProperties = new LinkedHashSet<>(
                 documentPropertyAnnotation.getIndexableNestedPropertiesList());
 
         if (documentPropertyAnnotation.getShouldInheritIndexableNestedPropertiesFromSuperClass()) {
             // List of classes to expand into parent classes to search for the property annotation
             Queue<XTypeElement> classesToExpand = new ArrayDeque<>();
-            Set<XTypeElement> visited = new HashSet<>();
+            Set<XTypeElement> visited = new LinkedHashSet<>();
             classesToExpand.add(mModel.getClassElement());
             while (!classesToExpand.isEmpty()) {
                 XTypeElement currentClass = classesToExpand.poll();
