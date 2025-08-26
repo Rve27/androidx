@@ -58,6 +58,7 @@ androidx {
 
 android {
     namespace = "androidx.core.uwb"
+    compileSdk = 36
     buildFeatures {
         aidl = true
     }
