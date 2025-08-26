@@ -3548,6 +3548,14 @@ private class SlotTableGroup(
             else -> null
         }
     }
+
+    override fun equals(other: Any?): Boolean =
+        other is SlotTableGroup &&
+            other.group == group &&
+            other.version == version &&
+            other.table == table
+
+    override fun hashCode(): Int = group + 31 * table.hashCode()
 }
 
 private data class SourceInformationSlotTableGroupIdentity(val parentIdentity: Any, val index: Int)
@@ -3560,6 +3568,10 @@ private class AnchoredGroupPath(val group: Int) : SourceInformationGroupPath() {
     override fun getIdentity(table: SlotTable): Any {
         return table.anchor(group)
     }
+
+    override fun equals(other: Any?): Boolean = other is AnchoredGroupPath && other.group == group
+
+    override fun hashCode(): Int = group * 31
 }
 
 private class RelativeGroupPath(val parent: SourceInformationGroupPath, val index: Int) :
@@ -3567,6 +3579,11 @@ private class RelativeGroupPath(val parent: SourceInformationGroupPath, val inde
     override fun getIdentity(table: SlotTable): Any {
         return SourceInformationSlotTableGroupIdentity(parent.getIdentity(table), index)
     }
+
+    override fun equals(other: Any?): Boolean =
+        other is RelativeGroupPath && other.parent == parent && other.index == index
+
+    override fun hashCode(): Int = index * 31 + parent.hashCode()
 }
 
 private class SourceInformationSlotTableGroup(
@@ -3594,6 +3611,21 @@ private class SourceInformationSlotTableGroup(
 
     override fun iterator(): Iterator<CompositionGroup> =
         SourceInformationGroupIterator(table, parent, sourceInformation, identityPath)
+
+    override fun equals(other: Any?): Boolean =
+        other is SourceInformationSlotTableGroup &&
+            // sourceInformation is intentionally omitted from this list as its value is implied
+            // by parent, table and identityPath. In other words, these form a key to the
+            // sourceInformation and it will never compare unequal when the others are equal.
+            other.parent == parent &&
+            other.table == table &&
+            other.identityPath == identityPath
+
+    override fun hashCode(): Int {
+        var result = parent * 31 + table.hashCode()
+        result = result * 31 + identityPath.hashCode()
+        return result
+    }
 }
 
 private class GroupIterator(val table: SlotTable, start: Int, val end: Int) :
