@@ -67,6 +67,9 @@ import androidx.pdf.selection.SelectionUiSignal
 import androidx.pdf.util.Accessibility
 import androidx.pdf.util.MathUtils
 import androidx.pdf.util.ZoomUtils
+import androidx.pdf.view.PdfView.Companion.GESTURE_STATE_IDLE
+import androidx.pdf.view.PdfView.Companion.GESTURE_STATE_INTERACTING
+import androidx.pdf.view.PdfView.Companion.GESTURE_STATE_SETTLING
 import androidx.pdf.view.fastscroll.FastScrollCalculator
 import androidx.pdf.view.fastscroll.FastScrollDrawer
 import androidx.pdf.view.fastscroll.FastScrollGestureDetector
@@ -1648,14 +1651,17 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
     private fun reset() {
         // Stop any in progress fling when we open a new document
         scroller.forceFinished(true)
-        scrollTo(0, 0)
         pageManager?.cleanup()
-        zoom = DEFAULT_INIT_ZOOM
         pageManager = null
         pageMetadataLoader = null
         startedFetchingAllDimensions = false
         backgroundScope.coroutineContext.cancelChildren()
         stopCollectingData()
+
+        // Reset zoom and scroll after clearing pageMetadata loader, otherwise they can trigger
+        // onViewportChanged callback with outdated information.
+        scrollTo(0, 0)
+        zoom = DEFAULT_INIT_ZOOM
     }
 
     private fun maybeUpdatePageVisibility() {
