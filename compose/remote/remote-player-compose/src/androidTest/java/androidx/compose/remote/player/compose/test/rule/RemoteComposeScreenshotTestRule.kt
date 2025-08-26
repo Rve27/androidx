@@ -17,7 +17,6 @@
 package androidx.compose.remote.player.compose.test.rule
 
 import android.content.res.Resources
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
@@ -30,7 +29,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.testutils.assertAgainstGolden
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
@@ -124,7 +122,6 @@ class RemoteComposeScreenshotTestRule(moduleDirectory: String) : TestRule {
                 modifier =
                     Modifier.Companion.width(size.width.dp)
                         .height(size.height.dp)
-                        .background(Color.Companion.Black)
                         .testTag("playerRoot")
             ) {
                 val document: CoreDocument? by rememberRemoteDocument { content() }
