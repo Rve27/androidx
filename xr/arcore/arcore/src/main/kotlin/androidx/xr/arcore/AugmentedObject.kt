@@ -38,8 +38,14 @@ import kotlinx.coroutines.flow.transform
  *
  * Augmented Objects are detected by the XR system and provide information about their pose,
  * extents, and label.
+ *
+ * The pose represents the position and orientation of the center point of the object.
+ *
+ * The extents describe the size of the object, as axis-aligned half-widths.
+ *
+ * The label is an instance of [androidx.xr.runtime.AugmentedObjectCategory] that describes what the
+ * object is.
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public class AugmentedObject
 internal constructor(
     internal val runtimeObject: RuntimeObject,
@@ -49,9 +55,13 @@ internal constructor(
         /**
          * Subscribes to a flow of [AugmentedObject]s.
          *
+         * The flow emits a new collection of [AugmentedObject]s whenever the underlying XR system
+         * detects new objects or updates the state of existing ones. This typically happens on each
+         * frame update of the XR system.
+         *
          * @param session The [Session] to subscribe to.
-         * @return A [StateFlow] that emits a collection of [AugmentedObject]s.
-         * @throws IllegalStateException if [Config.augmentedObjectCategories] is empty.
+         * @throws IllegalStateException if the given [Session]'s [Config.augmentedObjectCategories]
+         *   is empty.
          */
         @JvmStatic
         public fun subscribe(session: Session): StateFlow<Collection<AugmentedObject>> {
@@ -76,13 +86,12 @@ internal constructor(
     }
 
     /** The representation of the current state of an [AugmentedObject]. */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
     public class State(
         public override val trackingState: TrackingState,
         /**
          * * The category of the augmented object.
          *
-         * @see AugmentedObjectCategory
+         * @see Category
          */
         public val category: Category,
         /**
@@ -115,6 +124,7 @@ internal constructor(
      * This function is used by the runtime to propagate internal state changes. It is not intended
      * to be called directly by a developer.
      */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
     override suspend fun update() {
         _state.emit(
             State(

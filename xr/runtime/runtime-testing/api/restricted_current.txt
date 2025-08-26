@@ -989,7 +989,7 @@ package androidx.xr.runtime.testing {
   public static final class FakeRuntimeArDevice.Companion {
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeRuntimeAugmentedObject implements androidx.xr.arcore.internal.AugmentedObject {
+  public final class FakeRuntimeAugmentedObject implements androidx.xr.arcore.internal.AugmentedObject {
     ctor public FakeRuntimeAugmentedObject();
     ctor public FakeRuntimeAugmentedObject(optional androidx.xr.runtime.math.Pose centerPose, optional androidx.xr.runtime.math.FloatSize3d extents, optional androidx.xr.runtime.AugmentedObjectCategory category, optional androidx.xr.runtime.TrackingState trackingState, optional java.util.Collection<androidx.xr.arcore.internal.Anchor> anchors);
     method public androidx.xr.arcore.internal.Anchor createAnchor(androidx.xr.runtime.math.Pose pose);
@@ -999,6 +999,7 @@ package androidx.xr.runtime.testing {
     method public androidx.xr.runtime.math.Pose getCenterPose();
     method public androidx.xr.runtime.math.FloatSize3d getExtents();
     method public androidx.xr.runtime.TrackingState getTrackingState();
+    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public void onAnchorPersisted(androidx.xr.arcore.internal.Anchor anchor);
     method public void setCategory(androidx.xr.runtime.AugmentedObjectCategory);
     method public void setCenterPose(androidx.xr.runtime.math.Pose);
     method public void setExtents(androidx.xr.runtime.math.FloatSize3d);

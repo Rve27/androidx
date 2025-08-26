@@ -1,7 +1,7 @@
 // Signature format: 4.0
 package androidx.xr.runtime {
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class AugmentedObjectCategory {
+  public final class AugmentedObjectCategory {
     method public static java.util.List<androidx.xr.runtime.AugmentedObjectCategory> all();
     field public static final androidx.xr.runtime.AugmentedObjectCategory.Companion Companion;
     field public static final androidx.xr.runtime.AugmentedObjectCategory KEYBOARD;

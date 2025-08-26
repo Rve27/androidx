@@ -33,7 +33,6 @@ import androidx.xr.runtime.math.Pose
  * @property trackingState The tracking state of the augmented object.
  * @property anchors The anchors attached to this object.
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public class FakeRuntimeAugmentedObject(
     override var centerPose: Pose = Pose(),
     override var extents: FloatSize3d = FloatSize3d(),
@@ -52,5 +51,6 @@ public class FakeRuntimeAugmentedObject(
         anchors.remove(anchor)
     }
 
-    @RestrictTo(RestrictTo.Scope.LIBRARY) override fun onAnchorPersisted(anchor: RuntimeAnchor) {}
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
+    override fun onAnchorPersisted(anchor: RuntimeAnchor) {}
 }
