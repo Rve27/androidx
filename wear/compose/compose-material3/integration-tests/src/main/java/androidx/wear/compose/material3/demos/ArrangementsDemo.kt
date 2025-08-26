@@ -36,6 +36,7 @@ import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -47,6 +48,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.foundation.CurvedLayout
@@ -56,9 +58,11 @@ import androidx.wear.compose.foundation.curvedBox
 import androidx.wear.compose.foundation.curvedComposable
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.TransformingLazyColumn
+import androidx.wear.compose.foundation.lazy.rememberTransformingLazyColumnState
 import androidx.wear.compose.material3.Button
 import androidx.wear.compose.material3.ButtonDefaults
 import androidx.wear.compose.material3.CompactButton
+import androidx.wear.compose.material3.SwitchButton
 import androidx.wear.compose.material3.Text
 import androidx.wear.compose.material3.lazy.rememberTransformationSpec
 import androidx.wear.compose.material3.lazy.transformedHeight
@@ -70,6 +74,8 @@ private fun ArrangementsDemoList(
     verticalArrangement: Arrangement.Vertical,
     itemCount: Int,
     contentPadding: Dp = 0.dp,
+    reverseLayout: Boolean = false,
+    anchorItemIndex: Int = -1,
 ) {
     @Composable
     fun demoItem(it: Int, modifier: Modifier = Modifier) {
@@ -79,41 +85,55 @@ private fun ArrangementsDemoList(
             style = TextStyle(color = Color.White, textAlign = TextAlign.Center),
         )
     }
-    if (listIx == 0) {
-        LazyColumn(
-            Modifier.fillMaxSize(),
-            verticalArrangement = verticalArrangement,
-            horizontalAlignment = Alignment.CenterHorizontally,
-            contentPadding = PaddingValues(vertical = contentPadding),
-        ) {
-            items(itemCount) { demoItem(it) }
+    when (listIx) {
+        0 -> {
+            LazyColumn(
+                Modifier.fillMaxSize(),
+                verticalArrangement = verticalArrangement,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                contentPadding = PaddingValues(vertical = contentPadding),
+                reverseLayout = reverseLayout,
+            ) {
+                items(itemCount) { demoItem(it) }
+            }
         }
-    } else if (listIx == 1) {
-        ScalingLazyColumn(
-            Modifier.fillMaxSize(),
-            autoCentering = null,
-            verticalArrangement = verticalArrangement,
-            contentPadding = PaddingValues(vertical = contentPadding),
-        ) {
-            items(itemCount) { demoItem(it) }
+        1 -> {
+            ScalingLazyColumn(
+                Modifier.fillMaxSize(),
+                autoCentering = null,
+                verticalArrangement = verticalArrangement,
+                contentPadding = PaddingValues(vertical = contentPadding),
+                reverseLayout = reverseLayout,
+            ) {
+                items(itemCount) { demoItem(it) }
+            }
         }
-    } else {
-        val spec = rememberTransformationSpec()
-        TransformingLazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = verticalArrangement,
-            contentPadding = PaddingValues(vertical = contentPadding),
-        ) {
-            items(itemCount) {
-                demoItem(
-                    it,
-                    Modifier.transformedHeight(this, spec).graphicsLayer {
-                        with(spec) {
-                            applyContainerTransformation(scrollProgress)
-                            applyContentTransformation(scrollProgress)
-                        }
-                    },
-                )
+        else -> {
+            val state =
+                if (anchorItemIndex < 0) {
+                    rememberTransformingLazyColumnState()
+                } else {
+                    rememberTransformingLazyColumnState(initialAnchorItemIndex = anchorItemIndex)
+                }
+            val spec = rememberTransformationSpec()
+            TransformingLazyColumn(
+                state = state,
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = verticalArrangement,
+                contentPadding = PaddingValues(vertical = contentPadding),
+                reverseLayout = reverseLayout,
+            ) {
+                items(itemCount) {
+                    demoItem(
+                        it,
+                        Modifier.transformedHeight(this, spec).graphicsLayer {
+                            with(spec) {
+                                applyContainerTransformation(scrollProgress)
+                                applyContentTransformation(scrollProgress)
+                            }
+                        },
+                    )
+                }
             }
         }
     }
@@ -154,6 +174,8 @@ fun ArrangementsDemo() {
     var itemCount by remember { mutableIntStateOf(4) }
     val contentPaddingPercent = listOf("0" to 0f, "S" to 0.25f, "M" to 0.5f, "L" to 0.75f)
     var contentPaddingPercentIx by remember { mutableIntStateOf(0) }
+    var reverseLayoutIx by remember { mutableStateOf(false) }
+    var anchorItemIndex by remember { mutableIntStateOf(-1) }
 
     val screenSizeDp =
         with(LocalDensity.current) {
@@ -184,6 +206,39 @@ fun ArrangementsDemo() {
         }
     }
 
+    @Composable
+    fun MinusAnchorIndexButton(modifier: Modifier = Modifier) {
+        CompactButton(
+            onClick = { anchorItemIndex = (anchorItemIndex - 1).coerceAtLeast(-1) },
+            modifier,
+        ) {
+            BasicText("-", style = TextStyle(color = Color.Black))
+        }
+    }
+
+    @Composable
+    fun AnchorIndexDisplay(modifier: Modifier = Modifier) {
+        Text(
+            if (anchorItemIndex >= 0) anchorItemIndex.toString() else "null",
+            modifier,
+            color = Color.White,
+            textAlign = TextAlign.Center,
+        )
+    }
+
+    @Composable
+    fun PlusAnchorIndexButton(modifier: Modifier = Modifier) {
+        CompactButton(
+            onClick = {
+                anchorItemIndex =
+                    (anchorItemIndex + 1).coerceAtMost(itemCount - 1) // The sky is the limit!
+            },
+            modifier,
+        ) {
+            BasicText("+", style = TextStyle(color = Color.Black))
+        }
+    }
+
     if (screenSizeDp > 400) {
         // Phone
         Column(Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -200,6 +255,8 @@ fun ArrangementsDemo() {
                     itemCount,
                     (screenSizeDp.toFloat() * contentPaddingPercent[contentPaddingPercentIx].second)
                         .dp,
+                    reverseLayout = reverseLayoutIx,
+                    anchorItemIndex = anchorItemIndex,
                 )
             }
 
@@ -236,6 +293,12 @@ fun ArrangementsDemo() {
                         BasicText(it.first, style = TextStyle(color = Color.Black))
                     }
                 }
+                Spacer(Modifier.size(5.dp))
+                SwitchButton(
+                    label = { Text("Reverse layout", overflow = TextOverflow.Ellipsis) },
+                    checked = reverseLayoutIx,
+                    onCheckedChange = { reverseLayoutIx = it },
+                )
             }
             BasicText(lists[listsIx].second, style = TextStyle(color = Color.White))
             Spacer(Modifier.size(5.dp))
@@ -262,6 +325,11 @@ fun ArrangementsDemo() {
                         BasicText(paddingPercent.first, style = TextStyle(color = Color.Black))
                     }
                 }
+                Spacer(Modifier.size(16.dp))
+                BasicText("anchor index = ", style = TextStyle(color = Color.White))
+                MinusAnchorIndexButton()
+                AnchorIndexDisplay(Modifier.weight(1f))
+                PlusAnchorIndexButton()
             }
             BasicText(
                 "Content padding = ${contentPaddingPercent[contentPaddingPercentIx].second * 100f}%",
