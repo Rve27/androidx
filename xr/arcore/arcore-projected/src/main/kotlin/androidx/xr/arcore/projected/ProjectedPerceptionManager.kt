@@ -27,10 +27,14 @@ import androidx.xr.arcore.internal.HitResult
 import androidx.xr.arcore.internal.PerceptionManager
 import androidx.xr.arcore.internal.RenderViewpoint
 import androidx.xr.arcore.internal.Trackable
+import androidx.xr.runtime.VpsAvailabilityErrorInternal
 import androidx.xr.runtime.VpsAvailabilityResult
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Ray
 import java.util.UUID
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlinx.coroutines.suspendCancellableCoroutine
 
 /**
  * Implementation of the perception capabilities of a runtime using Projected.
@@ -40,8 +44,8 @@ import java.util.UUID
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public class ProjectedPerceptionManager
 internal constructor(private val timeSource: ProjectedTimeSource) : PerceptionManager {
-
     private val xrResources = XrResources()
+    internal var service: IProjectedPerceptionService? = null
 
     /**
      * Creates an anchor in the scene.
@@ -111,10 +115,20 @@ internal constructor(private val timeSource: ProjectedTimeSource) : PerceptionMa
     override public suspend fun checkVpsAvailability(
         latitude: Double,
         longitude: Double,
-    ): VpsAvailabilityResult {
-        // Call the Stable AIDL interface to GlassesCore here. This should be wrapped in another
-        // class.
-        throw NotImplementedError("checkVpsAvailability is currently not supported by Projected.")
+    ): VpsAvailabilityResult = suspendCancellableCoroutine { continuation ->
+        val callback =
+            object : IVpsAvailabilityCallback.Stub() {
+                override fun onVpsAvailabilityChanged(vpsState: Int) {
+                    // TODO b/438071712 - map the vpsState to VpsResult
+                    val vpsResult = VpsAvailabilityErrorInternal()
+                    continuation.resume(vpsResult)
+                }
+            }
+        try {
+            this.service?.checkVpsAvailability(latitude, longitude, callback)
+        } catch (e: Exception) {
+            continuation.resumeWithException(e)
+        }
     }
 
     override val trackables: Collection<Trackable> = emptyList()

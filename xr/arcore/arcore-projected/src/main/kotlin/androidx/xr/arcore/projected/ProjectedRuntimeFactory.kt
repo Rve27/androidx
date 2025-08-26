@@ -25,7 +25,7 @@ import kotlin.coroutines.CoroutineContext
 /** Factory for creating instances of [ProjectedRuntime]. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public class ProjectedRuntimeFactory() : PerceptionRuntimeFactory {
-    override val requirements: Set<Feature> = setOf(Feature.PROJECTED)
+    override val requirements: Set<Feature> = setOf(Feature.PROJECTED, Feature.FULLSTACK)
 
     override fun createRuntime(
         activity: Activity,
