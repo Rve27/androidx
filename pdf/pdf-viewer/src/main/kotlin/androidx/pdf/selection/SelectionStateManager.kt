@@ -149,22 +149,29 @@ internal class SelectionStateManager(
      */
     fun getSelectionHandleBounds(currentZoom: Float): Pair<RectF, RectF>? {
         val currentSelection = selectionModel.value ?: return null
-        val touchTargetContentSize = handleTouchTargetSizePx / currentZoom
 
-        val start = currentSelection.startBoundary.location
-        val startTarget =
-            RectF(
-                start.x - touchTargetContentSize,
-                start.y,
-                start.x,
-                start.y + touchTargetContentSize,
-            )
+        // TODO(b/441196273): Drag handles for modifying a selection are currently only supported
+        // for selections that consist exclusively of text. For mixed-content or non-text
+        // selections, the handles are disabled as this functionality is not yet supported.
+        if (currentSelection.documentSelection.containsOnlyTextSelections) {
+            val touchTargetContentSize = handleTouchTargetSizePx / currentZoom
 
-        val end = currentSelection.endBoundary.location
-        val endTarget =
-            RectF(end.x, end.y, end.x + touchTargetContentSize, end.y + touchTargetContentSize)
+            val start = currentSelection.startBoundary.location
+            val startTarget =
+                RectF(
+                    start.x - touchTargetContentSize,
+                    start.y,
+                    start.x,
+                    start.y + touchTargetContentSize,
+                )
 
-        return Pair(startTarget, endTarget)
+            val end = currentSelection.endBoundary.location
+            val endTarget =
+                RectF(end.x, end.y, end.x + touchTargetContentSize, end.y + touchTargetContentSize)
+
+            return Pair(startTarget, endTarget)
+        }
+        return null
     }
 
     @HandlePositionDef
