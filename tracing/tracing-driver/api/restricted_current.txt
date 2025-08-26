@@ -10,19 +10,17 @@ package androidx.tracing.driver {
   }
 
   public final class ContextElementsKt {
-    method @kotlin.PublishedApi internal static suspend Object? obtainFlowContext(kotlin.coroutines.Continuation<? super androidx.tracing.driver.FlowContextElement?>);
+    method @kotlin.PublishedApi internal static suspend Object? obtainPlatformThreadContextElement(kotlin.coroutines.Continuation<? super androidx.tracing.driver.PlatformThreadContextElement<? extends java.lang.Object?>?>);
+  }
+
+  public final class ContextElements_androidKt {
+    method @kotlin.PublishedApi internal static androidx.tracing.driver.PlatformThreadContextElement<kotlin.Unit> buildThreadContextElement(String name, java.util.List<java.lang.Long> flowIds, kotlin.jvm.functions.Function1<? super kotlin.coroutines.CoroutineContext,kotlin.Unit> updateThreadContextBlock, kotlin.jvm.functions.Function1<? super kotlin.coroutines.CoroutineContext,kotlin.Unit> restoreThreadContextBlock);
   }
 
   public class CounterTrack extends androidx.tracing.driver.Track {
     ctor public CounterTrack(String name, androidx.tracing.driver.Track parent);
     method public final void setCounter(double value);
     method public final void setCounter(long value);
-  }
-
-  @kotlin.PublishedApi internal final class FlowContextElement extends kotlin.coroutines.AbstractCoroutineContextElement {
-    ctor public FlowContextElement(@kotlin.PublishedApi long flowId);
-    method @BytecodeOnly @kotlin.PublishedApi internal long getFlowId();
-    property @kotlin.PublishedApi internal long flowId;
   }
 
   public final class MetadataEntry {
@@ -39,6 +37,28 @@ package androidx.tracing.driver {
     field public String? name;
     field public String stringValue;
     field public int type;
+  }
+
+  @kotlin.PublishedApi internal abstract class PlatformThreadContextElement<S> extends kotlin.coroutines.AbstractCoroutineContextElement {
+    method public java.util.List<java.lang.Long> getFlowIds();
+    method public String getName();
+    method @BytecodeOnly @kotlin.PublishedApi internal final java.util.concurrent.atomic.AtomicInteger getStarted();
+    method @kotlin.PublishedApi internal abstract void restoreThreadContext(kotlin.coroutines.CoroutineContext context, S oldState);
+    method @kotlin.PublishedApi internal abstract S updateThreadContext(kotlin.coroutines.CoroutineContext context);
+    property public java.util.List<java.lang.Long> flowIds;
+    property public String name;
+    property @kotlin.PublishedApi internal final java.util.concurrent.atomic.AtomicInteger started;
+    field @kotlin.PublishedApi internal static final kotlin.coroutines.CoroutineContext.Key<androidx.tracing.driver.PlatformThreadContextElement<? extends java.lang.Object?>> KEY;
+    field @kotlin.PublishedApi internal static final int STATE_BEGIN = 1; // 0x1
+    field @kotlin.PublishedApi internal static final int STATE_END = 0; // 0x0
+    field @kotlin.PublishedApi internal final java.util.concurrent.atomic.AtomicInteger started;
+  }
+
+  @kotlin.PublishedApi internal static final class PlatformThreadContextElement.Companion {
+    method @BytecodeOnly @kotlin.PublishedApi internal kotlin.coroutines.CoroutineContext.Key<androidx.tracing.driver.PlatformThreadContextElement<? extends java.lang.Object!>!> getKEY();
+    property @kotlin.PublishedApi internal kotlin.coroutines.CoroutineContext.Key<androidx.tracing.driver.PlatformThreadContextElement<? extends java.lang.Object?>> KEY;
+    property @kotlin.PublishedApi internal static int STATE_BEGIN;
+    property @kotlin.PublishedApi internal static int STATE_END;
   }
 
   public abstract class Poolable<T extends androidx.tracing.driver.Poolable<T>> {
@@ -77,9 +97,9 @@ package androidx.tracing.driver {
     method public final void instant(String name);
     method public final inline <T> T trace(String name, kotlin.jvm.functions.Function0<? extends T> block);
     method public final inline <T> T trace(String name, optional kotlin.jvm.functions.Function1<? super androidx.tracing.driver.TraceEventScope,kotlin.Unit> metadataBlock, kotlin.jvm.functions.Function0<? extends T> block);
-    method public final suspend inline <T> Object? traceFlow(String name, kotlin.jvm.functions.Function1<? super kotlin.coroutines.Continuation<? super T>,? extends java.lang.Object?> block, optional kotlin.coroutines.Continuation<? super T>);
-    method public final suspend inline <T> Object? traceFlow(String name, optional long flowId, optional kotlin.jvm.functions.Function1<? super androidx.tracing.driver.TraceEventScope,kotlin.Unit> metadataBlock, kotlin.jvm.functions.Function1<? super kotlin.coroutines.Continuation<? super T>,? extends java.lang.Object?> block, kotlin.coroutines.Continuation<? super T>);
-    method public final suspend inline <T> Object? traceFlow(String name, optional long flowId, kotlin.jvm.functions.Function1<? super kotlin.coroutines.Continuation<? super T>,? extends java.lang.Object?> block, kotlin.coroutines.Continuation<? super T>);
+    method public final suspend inline <T> Object? traceCoroutine(String name, kotlin.jvm.functions.Function1<? super kotlin.coroutines.Continuation<? super T>,? extends java.lang.Object?> block, optional kotlin.coroutines.Continuation<? super T>);
+    method public final suspend inline <T> Object? traceCoroutine(String name, optional long flowId, optional kotlin.jvm.functions.Function1<? super androidx.tracing.driver.TraceEventScope,kotlin.Unit> metadataBlock, kotlin.jvm.functions.Function1<? super kotlin.coroutines.Continuation<? super T>,? extends java.lang.Object?> block, kotlin.coroutines.Continuation<? super T>);
+    method public final suspend inline <T> Object? traceCoroutine(String name, optional long flowId, kotlin.jvm.functions.Function1<? super kotlin.coroutines.Continuation<? super T>,? extends java.lang.Object?> block, kotlin.coroutines.Continuation<? super T>);
     property @kotlin.PublishedApi internal final Object packetLock;
     field @kotlin.PublishedApi internal final Object packetLock;
   }
