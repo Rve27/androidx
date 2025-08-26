@@ -19,12 +19,12 @@ package androidx.webkit;
 import org.jspecify.annotations.NonNull;
 
 /**
- * The code location where UI thread blocking WebView startup was triggered.
+ * The code location where WebView startup was triggered.
  * <p>
  * This is associated with {@link WebViewStartUpResult}.
  */
 @WebViewCompat.ExperimentalAsyncStartUp
-public interface BlockingStartUpLocation {
+public interface StartUpLocation {
     /**
      * Gets information about the code location including the stack trace.
      */

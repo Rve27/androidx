@@ -57,6 +57,7 @@ import androidx.webkit.WebViewClientCompat;
 import androidx.webkit.WebViewCompat;
 import androidx.webkit.WebViewFeature;
 import androidx.webkit.WebViewStartUpConfig;
+import androidx.webkit.WebViewStartUpResult;
 
 import org.chromium.support_lib_boundary.util.Features;
 import org.jspecify.annotations.NonNull;
@@ -709,6 +710,17 @@ public class WebViewFeatureInternal {
     public static final ApiFeature.NoFramework ASYNC_WEBVIEW_STARTUP =
             new ApiFeature.NoFramework("IMPLEMENTATION_ONLY_FEATURE",
                     Features.ASYNC_WEBVIEW_STARTUP);
+
+    /**
+     * Feature that is relevant for the implementation of
+     * {@link WebViewStartUpResult#getAsyncStartUpLocations()}
+     *
+     * This feature is not referred to by the app and is only used by the library to choose
+     * different code paths based on underlying support from WebView.
+     */
+    public static final ApiFeature.NoFramework ASYNC_WEBVIEW_STARTUP_ASYNC_STARTUP_LOCATIONS =
+            new ApiFeature.NoFramework("IMPLEMENTATION_ONLY_FEATURE",
+                    Features.ASYNC_WEBVIEW_STARTUP_ASYNC_STARTUP_LOCATIONS);
 
     /**
      * Feature for {@link WebViewFeature#isFeatureSupported(String)}.

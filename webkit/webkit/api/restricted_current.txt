@@ -1,10 +1,6 @@
 // Signature format: 4.0
 package androidx.webkit {
 
-  @SuppressCompatibility @androidx.webkit.WebViewCompat.ExperimentalAsyncStartUp public interface BlockingStartUpLocation {
-    method public String getStackInformation();
-  }
-
   @AnyThread public class CookieManagerCompat {
     method @RequiresFeature(name=androidx.webkit.WebViewFeature.GET_COOKIE_INFO, enforcement="androidx.webkit.WebViewFeature#isFeatureSupported") public static java.util.List<java.lang.String!> getCookieInfo(android.webkit.CookieManager, String);
   }
@@ -226,6 +222,10 @@ package androidx.webkit {
     method @SuppressCompatibility @RequiresFeature(name=androidx.webkit.WebViewFeature.PROFILE_URL_PREFETCH, enforcement="androidx.webkit.WebViewFeature#isFeatureSupported") @androidx.webkit.Profile.ExperimentalUrlPrefetch public androidx.webkit.SpeculativeLoadingParameters build();
     method @SuppressCompatibility @androidx.webkit.Profile.ExperimentalUrlPrefetch public androidx.webkit.SpeculativeLoadingParameters.Builder setExpectedNoVarySearchData(androidx.webkit.NoVarySearchHeader);
     method @SuppressCompatibility @androidx.webkit.Profile.ExperimentalUrlPrefetch public androidx.webkit.SpeculativeLoadingParameters.Builder setJavaScriptEnabled(boolean);
+  }
+
+  @SuppressCompatibility @androidx.webkit.WebViewCompat.ExperimentalAsyncStartUp public interface StartUpLocation {
+    method public String getStackInformation();
   }
 
   public class TracingConfig {
@@ -661,9 +661,10 @@ package androidx.webkit {
   }
 
   @SuppressCompatibility @androidx.webkit.WebViewCompat.ExperimentalAsyncStartUp public interface WebViewStartUpResult {
-    method public java.util.List<androidx.webkit.BlockingStartUpLocation!>? getBlockingStartUpLocations();
     method public Long? getMaxTimePerTaskInUiThreadMillis();
+    method public java.util.List<androidx.webkit.StartUpLocation!>? getNonUiThreadBlockingStartUpLocations();
     method public Long? getTotalTimeInUiThreadMillis();
+    method public java.util.List<androidx.webkit.StartUpLocation!>? getUiThreadBlockingStartUpLocations();
   }
 
 }
