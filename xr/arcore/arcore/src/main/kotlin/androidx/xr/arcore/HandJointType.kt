@@ -19,65 +19,65 @@ package androidx.xr.arcore
 /** Represents the type of hand joint. */
 public enum class HandJointType {
     /** The center of the palm. Often used as a reference point for hand tracking. */
-    PALM,
+    HAND_JOINT_TYPE_PALM,
     /** The wrist joint, where the hand connects to the forearm. */
-    WRIST,
+    HAND_JOINT_TYPE_WRIST,
 
     // Thumb Joints
     /** The base of the thumb (the first joint connecting the thumb to the palm). */
-    THUMB_METACARPAL,
+    HAND_JOINT_TYPE_THUMB_METACARPAL,
     /** The second joint of the thumb, closer to the palm. */
-    THUMB_PROXIMAL,
+    HAND_JOINT_TYPE_THUMB_PROXIMAL,
     /** The third joint of the thumb, further from the palm. */
-    THUMB_DISTAL,
+    HAND_JOINT_TYPE_THUMB_DISTAL,
     /** The tip of the thumb. */
-    THUMB_TIP,
+    HAND_JOINT_TYPE_THUMB_TIP,
 
     // Index Finger Joints
     /** The base of the index finger, connecting it to the hand. */
-    INDEX_METACARPAL,
+    HAND_JOINT_TYPE_INDEX_METACARPAL,
     /** The first joint of the index finger, closer to the palm. */
-    INDEX_PROXIMAL,
+    HAND_JOINT_TYPE_INDEX_PROXIMAL,
     /** The second joint of the index finger, between the proximal and distal joints. */
-    INDEX_INTERMEDIATE,
+    HAND_JOINT_TYPE_INDEX_INTERMEDIATE,
     /** The third joint of the index finger, closest to the fingertip. */
-    INDEX_DISTAL,
+    HAND_JOINT_TYPE_INDEX_DISTAL,
     /** The tip of the index finger. */
-    INDEX_TIP,
+    HAND_JOINT_TYPE_INDEX_TIP,
 
     // Middle Finger Joints
     /** The base of the middle finger, connecting it to the hand. */
-    MIDDLE_METACARPAL,
+    HAND_JOINT_TYPE_MIDDLE_METACARPAL,
     /** The first joint of the middle finger, closer to the palm. */
-    MIDDLE_PROXIMAL,
+    HAND_JOINT_TYPE_MIDDLE_PROXIMAL,
     /** The second joint of the middle finger, between the proximal and distal joints. */
-    MIDDLE_INTERMEDIATE,
+    HAND_JOINT_TYPE_MIDDLE_INTERMEDIATE,
     /** The third joint of the middle finger, closest to the fingertip. */
-    MIDDLE_DISTAL,
+    HAND_JOINT_TYPE_MIDDLE_DISTAL,
     /** The tip of the middle finger. */
-    MIDDLE_TIP,
+    HAND_JOINT_TYPE_MIDDLE_TIP,
 
     // Ring Finger Joints
     /** The base of the ring finger, connecting it to the hand. */
-    RING_METACARPAL,
+    HAND_JOINT_TYPE_RING_METACARPAL,
     /** The first joint of the ring finger, closer to the palm. */
-    RING_PROXIMAL,
+    HAND_JOINT_TYPE_RING_PROXIMAL,
     /** The second joint of the ring finger, between the proximal and distal joints. */
-    RING_INTERMEDIATE,
+    HAND_JOINT_TYPE_RING_INTERMEDIATE,
     /** The third joint of the ring finger, closest to the fingertip. */
-    RING_DISTAL,
+    HAND_JOINT_TYPE_RING_DISTAL,
     /** The tip of the ring finger. */
-    RING_TIP,
+    HAND_JOINT_TYPE_RING_TIP,
 
     // Little Finger (Pinky) Joints
     /** The base of the little finger (pinky), connecting it to the hand. */
-    LITTLE_METACARPAL,
+    HAND_JOINT_TYPE_LITTLE_METACARPAL,
     /** The first joint of the little finger, closer to the palm. */
-    LITTLE_PROXIMAL,
+    HAND_JOINT_TYPE_LITTLE_PROXIMAL,
     /** The second joint of the little finger, between the proximal and distal joints. */
-    LITTLE_INTERMEDIATE,
+    HAND_JOINT_TYPE_LITTLE_INTERMEDIATE,
     /** The third joint of the little finger, closest to the fingertip. */
-    LITTLE_DISTAL,
+    HAND_JOINT_TYPE_LITTLE_DISTAL,
     /** The tip of the little finger (pinky). */
-    LITTLE_TIP,
+    HAND_JOINT_TYPE_LITTLE_TIP,
 }
