@@ -74,10 +74,8 @@ import androidx.collection.MutableObjectList
 import androidx.collection.ScatterMap
 import androidx.collection.mutableIntObjectMapOf
 import androidx.collection.mutableObjectListOf
-import androidx.compose.runtime.ForgetfulRetainScope
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.RetainScope
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -236,11 +234,7 @@ import androidx.core.view.accessibility.AccessibilityNodeProviderCompat
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.findViewTreeLifecycleOwner
-import androidx.lifecycle.findViewTreeViewModelStoreOwner
-import androidx.lifecycle.get
 import androidx.savedstate.SavedStateRegistryOwner
 import androidx.savedstate.findViewTreeSavedStateRegistryOwner
 import java.lang.reflect.Method
@@ -300,9 +294,6 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
 
     override val view: View
         get() = this
-
-    override lateinit var retainScope: RetainScope
-        private set
 
     override var density by mutableStateOf(Density(context), referentialEqualityPolicy())
         private set
@@ -2199,23 +2190,15 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
 
         val lifecycleOwner = findViewTreeLifecycleOwner()
         val savedStateRegistryOwner = findViewTreeSavedStateRegistryOwner()
-        val viewModelStoreOwner = findViewTreeViewModelStoreOwner()
-
-        retainScope =
-            installLocalRetainScope(lifecycleOwner, viewModelStoreOwner) ?: ForgetfulRetainScope
 
         val oldViewTreeOwners = viewTreeOwners
         // We need to change the ViewTreeOwner if there isn't one yet (null)
-        // or if either the lifecycleOwner, savedStateRegistryOwner, viewModelStoreOwner has
-        // changed.
+        // or if either the lifecycleOwner or savedStateRegistryOwner has changed.
         val resetViewTreeOwner =
             oldViewTreeOwners == null ||
-                ((lifecycleOwner != null &&
-                    savedStateRegistryOwner != null &&
-                    viewModelStoreOwner != null) &&
+                ((lifecycleOwner != null && savedStateRegistryOwner != null) &&
                     (lifecycleOwner !== oldViewTreeOwners.lifecycleOwner ||
-                        savedStateRegistryOwner !== oldViewTreeOwners.savedStateRegistryOwner ||
-                        viewModelStoreOwner !== oldViewTreeOwners.viewModelStoreOwner))
+                        savedStateRegistryOwner !== oldViewTreeOwners.lifecycleOwner))
         if (resetViewTreeOwner) {
             if (lifecycleOwner == null) {
                 throw IllegalStateException(
@@ -2234,7 +2217,6 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
                 ViewTreeOwners(
                     lifecycleOwner = lifecycleOwner,
                     savedStateRegistryOwner = savedStateRegistryOwner,
-                    viewModelStoreOwner = viewModelStoreOwner,
                 )
             _viewTreeOwners = viewTreeOwners
             onViewTreeOwnersAvailable?.invoke(viewTreeOwners)
@@ -2262,21 +2244,6 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
         if (ComposeUiFlags.isContentCaptureOptimizationEnabled) {
             contentCaptureManager.let { semanticsOwner.listeners += it }
         }
-    }
-
-    private fun installLocalRetainScope(
-        lifecycleOwner: LifecycleOwner?,
-        viewModelStoreOwner: ViewModelStoreOwner?,
-    ): RetainScope? {
-        if (lifecycleOwner == null || viewModelStoreOwner == null) return null
-
-        return ViewModelProvider.create(
-                store = viewModelStoreOwner.viewModelStore,
-                factory = ViewModelProvider.NewInstanceFactory(),
-            )
-            .get<LifecycleRetainScopeOwner>()
-            .also { owner -> owner.installIn(lifecycleOwner, windowRecomposer) }
-            .retainScope
     }
 
     @OptIn(ExperimentalComposeUiApi::class)
@@ -3284,8 +3251,6 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
         val lifecycleOwner: LifecycleOwner,
         /** The [SavedStateRegistryOwner] associated with this owner. */
         val savedStateRegistryOwner: SavedStateRegistryOwner,
-        /** The [ViewModelStoreOwner] associated with this owner. */
-        val viewModelStoreOwner: ViewModelStoreOwner?,
     )
 
     private inner class RootModifierNode :

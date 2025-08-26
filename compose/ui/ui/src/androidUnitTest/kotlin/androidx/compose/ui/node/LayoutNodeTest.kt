@@ -19,7 +19,6 @@ package androidx.compose.ui.node
 
 import androidx.collection.IntObjectMap
 import androidx.collection.intObjectMapOf
-import androidx.compose.runtime.RetainScope
 import androidx.compose.testutils.TestViewConfiguration
 import androidx.compose.ui.InternalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -2376,9 +2375,6 @@ internal class MockOwner(
         get() = TODO("Not yet implemented")
 
     override val focusOwner: FocusOwner
-        get() = TODO("Not yet implemented")
-
-    override val retainScope: RetainScope
         get() = TODO("Not yet implemented")
 
     override val windowInfo: WindowInfo
