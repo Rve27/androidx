@@ -23,7 +23,13 @@ import androidx.annotation.RestrictTo
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
+import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.CreationExtras
+import androidx.pdf.PdfLoader
+import androidx.pdf.SandboxedPdfLoader
 import androidx.pdf.annotation.EditablePdfDocument
 import androidx.pdf.annotation.manager.AnnotationsManager
 import androidx.pdf.annotation.models.AnnotationsDisplayState
@@ -31,6 +37,9 @@ import androidx.pdf.annotation.models.PdfAnnotation
 import androidx.pdf.annotation.models.PdfAnnotationData
 import androidx.pdf.ink.edits.AnnotationEditOperationsHandler
 import androidx.pdf.ink.history.AnnotationEditsHistoryManager
+import androidx.pdf.viewer.fragment.PdfDocumentViewModel
+import java.util.concurrent.Executors
+import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -38,7 +47,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @RestrictTo(RestrictTo.Scope.LIBRARY)
-internal class EditableDocumentViewModel(private val state: SavedStateHandle) : ViewModel() {
+public class EditableDocumentViewModel(private val state: SavedStateHandle, loader: PdfLoader) :
+    PdfDocumentViewModel(state, loader) {
     private lateinit var editsHistoryManager: AnnotationEditsHistoryManager
     private lateinit var editOperationsHandler: AnnotationEditOperationsHandler
 
@@ -66,12 +76,19 @@ internal class EditableDocumentViewModel(private val state: SavedStateHandle) : 
         }
 
     @VisibleForTesting
+    public override fun resetState() {
+        super.resetState()
+        isEditModeEnabled = false
+        editablePdfDocument = null
+        _annotationDisplayStateFlow.value = AnnotationsDisplayState.EMPTY
+    }
+
+    @VisibleForTesting
     private fun maybeInitialiseForDocument(document: EditablePdfDocument) {
         val documentUri = document.uri
 
         // If the document has changed, reset the edit states
         if (documentUri != state.get<Uri>(DOCUMENT_URI_KEY)) {
-            state[EDIT_MODE_ENABLED_KEY] = false
             state[DOCUMENT_URI_KEY] = documentUri
             editablePdfDocument = document
             editsHistoryManager = AnnotationEditsHistoryManager()
@@ -89,17 +106,17 @@ internal class EditableDocumentViewModel(private val state: SavedStateHandle) : 
     }
 
     /** Adds a [PdfAnnotation] to the draft state. */
-    fun addDraftAnnotation(annotation: PdfAnnotation) =
+    internal fun addDraftAnnotation(annotation: PdfAnnotation) =
         editOperationsHandler.addDraftAnnotation(annotation)
 
     /** Undoes the last edit operation. */
-    fun undo() = editOperationsHandler.undo()
+    internal fun undo() = editOperationsHandler.undo()
 
     /** Redoes the last undo edit operation. */
-    fun redo() = editOperationsHandler.redo()
+    internal fun redo() = editOperationsHandler.redo()
 
     /** Updates the transformation matrices for rendering annotations. */
-    fun updateTransformationMatrices(transformationMatrices: Map<Int, Matrix>) {
+    internal fun updateTransformationMatrices(transformationMatrices: Map<Int, Matrix>) {
         if (editablePdfDocument != null) {
             _annotationDisplayStateFlow.update { displayState ->
                 displayState.copy(transformationMatrices = transformationMatrices)
@@ -113,7 +130,7 @@ internal class EditableDocumentViewModel(private val state: SavedStateHandle) : 
      * @param startPage The starting page number (inclusive).
      * @param endPage The ending page number (inclusive).
      */
-    fun fetchAnnotationsForPageRange(startPage: Int, endPage: Int) {
+    internal fun fetchAnnotationsForPageRange(startPage: Int, endPage: Int) {
         val document = editablePdfDocument
         if (document == null) {
             return
@@ -131,7 +148,7 @@ internal class EditableDocumentViewModel(private val state: SavedStateHandle) : 
     }
 
     /** Saves the draft annotations to the PDF document. */
-    fun saveEdits(dest: ParcelFileDescriptor, onCompletion: () -> Unit) {
+    internal fun saveEdits(dest: ParcelFileDescriptor, onCompletion: () -> Unit) {
         val document = editablePdfDocument ?: return
 
         val annotations =
@@ -153,10 +170,11 @@ internal class EditableDocumentViewModel(private val state: SavedStateHandle) : 
      * @return `true` if unsaved changes exist, `false` if the document is not loaded or there are
      *   no changes.
      */
-    fun hasUnsavedChanges(): Boolean = editablePdfDocument != null && editsHistoryManager.canUndo()
+    internal fun hasUnsavedChanges(): Boolean =
+        editablePdfDocument != null && editsHistoryManager.canUndo()
 
     /** Discards all uncommitted edits, reverting the document to its last saved state. */
-    fun discardUnsavedChanges() {
+    internal fun discardUnsavedChanges() {
         val document = editablePdfDocument ?: return
 
         document.clearUncommittedEdits()
@@ -170,5 +188,25 @@ internal class EditableDocumentViewModel(private val state: SavedStateHandle) : 
     internal companion object {
         const val DOCUMENT_URI_KEY = "documentUri"
         private const val EDIT_MODE_ENABLED_KEY = "isEditModeEnabled"
+
+        val Factory: ViewModelProvider.Factory =
+            object : ViewModelProvider.Factory {
+                override fun <T : ViewModel> create(
+                    modelClass: Class<T>,
+                    extras: CreationExtras,
+                ): T {
+                    // Get the Application object from extras
+                    val application = checkNotNull(extras[APPLICATION_KEY])
+                    // Create a SavedStateHandle for this ViewModel from extras
+                    val savedStateHandle = extras.createSavedStateHandle()
+
+                    val dispatcher = Executors.newSingleThreadExecutor().asCoroutineDispatcher()
+                    return (EditableDocumentViewModel(
+                        savedStateHandle,
+                        SandboxedPdfLoader(application, dispatcher),
+                    ))
+                        as T
+                }
+            }
     }
 }

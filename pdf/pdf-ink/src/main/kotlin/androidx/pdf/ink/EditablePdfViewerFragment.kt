@@ -71,7 +71,9 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
     private lateinit var onViewportChangedListener: PdfView.OnViewportChangedListener
     private lateinit var wetStrokesOnFinishedListener: WetStrokesOnFinishedListener
 
-    private val annotationsViewModel: EditableDocumentViewModel by viewModels()
+    override val documentViewModel: EditableDocumentViewModel by viewModels {
+        EditableDocumentViewModel.Factory
+    }
     private var strokeProcessor: StrokeProcessor? = null
     private var pageTransformCalculator: PageTransformCalculator = PageTransformCalculator()
 
@@ -84,18 +86,18 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
     public fun writeTo(dest: ParcelFileDescriptor, onCompletion: () -> Unit) {
         savingOverlay.visibility = VISIBLE
 
-        annotationsViewModel.saveEdits(dest) {
+        documentViewModel.saveEdits(dest) {
             savingOverlay.visibility = GONE
-            annotationsViewModel.isEditModeEnabled = false
+            documentViewModel.isEditModeEnabled = false
             onCompletion()
         }
     }
 
     /** Undoes the last edit. If there are no more edits to undo, this is a no-op. */
-    public fun undo(): Unit = annotationsViewModel.undo()
+    public fun undo(): Unit = documentViewModel.undo()
 
     /** Redoes the last undone edit. If there are no more edits to redo, this is a no-op. */
-    public fun redo(): Unit = annotationsViewModel.redo()
+    public fun redo(): Unit = documentViewModel.redo()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -144,12 +146,12 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
-                    annotationsViewModel.isEditModeEnabledFlow.collect { isEnabled ->
+                    documentViewModel.isEditModeEnabledFlow.collect { isEnabled ->
                         updateUiForEditMode(isEnabled)
                     }
                 }
                 launch {
-                    annotationsViewModel.annotationsDisplayStateFlow.collect { displayState ->
+                    documentViewModel.annotationsDisplayStateFlow.collect { displayState ->
                         updateAnnotationsView(displayState)
                     }
                 }
@@ -170,9 +172,9 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
     override fun onLoadDocumentSuccess(document: PdfDocument) {
         super.onLoadDocumentSuccess(document)
         if (documentUri != null && document is EditablePdfDocument) {
-            annotationsViewModel.editablePdfDocument = document
+            documentViewModel.editablePdfDocument = document
         } else {
-            annotationsViewModel.editablePdfDocument = null
+            documentViewModel.editablePdfDocument = null
         }
     }
 
@@ -190,14 +192,14 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
     }
 
     private fun setupTouchListeners() {
-        toolboxView.setOnEditClickListener { annotationsViewModel.isEditModeEnabled = true }
+        toolboxView.setOnEditClickListener { documentViewModel.isEditModeEnabled = true }
 
         wetStrokesOnFinishedListener =
             WetStrokesOnFinishedListener(
                 wetStrokesView = wetStrokesView,
                 strokeProcessor = strokeProcessor,
                 pdfViewZoomProvider = { pdfView.zoom },
-                annotationsViewModel = annotationsViewModel,
+                annotationsViewModel = documentViewModel,
             )
         wetStrokesView.apply {
             addFinishedStrokesListener(wetStrokesOnFinishedListener)
@@ -216,10 +218,10 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
         backPressedCallback =
             object : OnBackPressedCallback(enabled = false) {
                 override fun handleOnBackPressed() {
-                    if (annotationsViewModel.hasUnsavedChanges()) {
+                    if (documentViewModel.hasUnsavedChanges()) {
                         showDiscardChangesDialog()
                     } else {
-                        annotationsViewModel.isEditModeEnabled = false
+                        documentViewModel.isEditModeEnabled = false
                     }
                 }
             }
@@ -232,9 +234,7 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
         val dialog =
             (childFragmentManager.findFragmentByTag(DISCARD_CHANGES_DIALOG_TAG)
                 as? DiscardChangesDialog)
-                ?: DiscardChangesDialog(
-                    onDiscardChanges = annotationsViewModel::discardUnsavedChanges
-                )
+                ?: DiscardChangesDialog(onDiscardChanges = documentViewModel::discardUnsavedChanges)
 
         if (!dialog.isAdded) {
             dialog.show(childFragmentManager, DISCARD_CHANGES_DIALOG_TAG)
@@ -286,7 +286,7 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
                         pageLocations,
                         zoomLevel,
                     )
-                    annotationsViewModel.fetchAnnotationsForPageRange(
+                    documentViewModel.fetchAnnotationsForPageRange(
                         startPage = firstVisiblePage,
                         endPage = lastVisiblePage,
                     )
@@ -308,7 +308,7 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
                 pageLocations,
                 zoomLevel,
             )
-        annotationsViewModel.updateTransformationMatrices(transformationMatrices)
+        documentViewModel.updateTransformationMatrices(transformationMatrices)
     }
 
     /**

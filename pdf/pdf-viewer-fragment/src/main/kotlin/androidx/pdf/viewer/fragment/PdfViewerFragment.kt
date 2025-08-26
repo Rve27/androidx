@@ -263,7 +263,8 @@ public open class PdfViewerFragment constructor() : Fragment() {
      */
     @ExperimentalPdfApi public open fun onPdfViewCreated(pdfView: PdfView) {}
 
-    private val documentViewModel: PdfDocumentViewModel by viewModels {
+    @get:RestrictTo(RestrictTo.Scope.LIBRARY)
+    protected open val documentViewModel: PdfDocumentViewModel by viewModels {
         PdfDocumentViewModel.Factory
     }
 
