@@ -19,6 +19,7 @@ package androidx.xr.scenecore.spatial.core;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Rect;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Pair;
@@ -33,12 +34,15 @@ import androidx.xr.scenecore.impl.perception.Session;
 import androidx.xr.scenecore.internal.ActivityPanelEntity;
 import androidx.xr.scenecore.internal.ActivitySpace;
 import androidx.xr.scenecore.internal.AnchorEntity;
+import androidx.xr.scenecore.internal.AudioTrackExtensionsWrapper;
 import androidx.xr.scenecore.internal.CameraViewActivityPose;
 import androidx.xr.scenecore.internal.Dimensions;
 import androidx.xr.scenecore.internal.Entity;
 import androidx.xr.scenecore.internal.GltfEntity;
 import androidx.xr.scenecore.internal.GltfFeature;
 import androidx.xr.scenecore.internal.HeadActivityPose;
+import androidx.xr.scenecore.internal.LoggingEntity;
+import androidx.xr.scenecore.internal.MediaPlayerExtensionsWrapper;
 import androidx.xr.scenecore.internal.PanelEntity;
 import androidx.xr.scenecore.internal.PerceptionSpaceActivityPose;
 import androidx.xr.scenecore.internal.PixelDimensions;
@@ -46,6 +50,7 @@ import androidx.xr.scenecore.internal.PlaneSemantic;
 import androidx.xr.scenecore.internal.PlaneType;
 import androidx.xr.scenecore.internal.RenderingEntityFactory;
 import androidx.xr.scenecore.internal.SceneRuntime;
+import androidx.xr.scenecore.internal.SoundPoolExtensionsWrapper;
 import androidx.xr.scenecore.internal.Space;
 import androidx.xr.scenecore.internal.SpatialCapabilities;
 import androidx.xr.scenecore.internal.SpatialEnvironment;
@@ -95,6 +100,10 @@ class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory {
     private final EntityManager mEntityManager;
     private final PerceptionLibrary mPerceptionLibrary;
     private final SpatialEnvironmentImpl mEnvironment;
+
+    private final SoundPoolExtensionsWrapper mSoundPoolExtensionsWrapper;
+    private final AudioTrackExtensionsWrapper mAudioTrackExtensionsWrapper;
+    private final MediaPlayerExtensionsWrapper mMediaPlayerExtensionsWrapper;
 
     private final Map<Consumer<SpatialCapabilities>, Executor>
             mSpatialCapabilitiesChangedListeners = new ConcurrentHashMap<>();
@@ -152,6 +161,17 @@ class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory {
                                     return oldSpatialState;
                                 });
         setSpatialStateCallback();
+
+        mSoundPoolExtensionsWrapper =
+                new SoundPoolExtensionsWrapperImpl(
+                        extensions.getXrSpatialAudioExtensions().getSoundPoolExtensions());
+        mAudioTrackExtensionsWrapper =
+                new AudioTrackExtensionsWrapperImpl(
+                        extensions.getXrSpatialAudioExtensions().getAudioTrackExtensions(),
+                        entityManager);
+        mMediaPlayerExtensionsWrapper =
+                new MediaPlayerExtensionsWrapperImpl(
+                        extensions.getXrSpatialAudioExtensions().getMediaPlayerExtensions());
 
         mEnvironment =
                 new SpatialEnvironmentImpl(
@@ -352,6 +372,21 @@ class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory {
     }
 
     @Override
+    public @NonNull SoundPoolExtensionsWrapper getSoundPoolExtensionsWrapper() {
+        return mSoundPoolExtensionsWrapper;
+    }
+
+    @Override
+    public @NonNull AudioTrackExtensionsWrapper getAudioTrackExtensionsWrapper() {
+        return mAudioTrackExtensionsWrapper;
+    }
+
+    @Override
+    public @NonNull MediaPlayerExtensionsWrapper getMediaPlayerExtensionsWrapper() {
+        return mMediaPlayerExtensionsWrapper;
+    }
+
+    @Override
     public @NonNull PanelEntity createPanelEntity(
             @NonNull Context context,
             @NonNull Pose pose,
@@ -520,6 +555,13 @@ class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory {
         return entity;
     }
 
+    @Override
+    public @NonNull LoggingEntity createLoggingEntity(@NonNull Pose pose) {
+        LoggingEntityImpl entity = new LoggingEntityImpl(mActivity);
+        entity.setPose(pose, Space.PARENT);
+        return entity;
+    }
+
     // Note that this is called on the Activity's UI thread so we should be careful to not block it.
     // It is synchronized because we assume this.spatialState cannot be updated elsewhere during the
     // execution of this method.
@@ -670,6 +712,36 @@ class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory {
                         "Could not clear VisibilityStateCallback: " + e.getMessage());
             }
         }
+    }
+
+    @Override
+    public void requestFullSpaceMode() {
+        // TODO: b/376934871 - Check async results.
+        mExtensions.requestFullSpaceMode(
+                mActivity, /* requestEnter= */ true, Runnable::run, (result) -> {});
+    }
+
+    @Override
+    public void requestHomeSpaceMode() {
+        // TODO: b/376934871 - Check async results.
+        mExtensions.requestFullSpaceMode(
+                mActivity, /* requestEnter= */ false, Runnable::run, (result) -> {});
+    }
+
+    @Override
+    public @NonNull Bundle setFullSpaceMode(@NonNull Bundle bundle) {
+        return mExtensions.setFullSpaceStartMode(bundle);
+    }
+
+    @Override
+    public @NonNull Bundle setFullSpaceModeWithEnvironmentInherited(@NonNull Bundle bundle) {
+        return mExtensions.setFullSpaceStartModeWithEnvironmentInherited(bundle);
+    }
+
+    @Override
+    // TODO: b/441105591 - Add more unit tests.
+    public void enablePanelDepthTest(boolean enabled) {
+        mExtensions.enablePanelDepthTest(mActivity, enabled);
     }
 
     @Override

@@ -19,6 +19,7 @@ package androidx.xr.runtime.testing
 import android.app.Activity
 import android.content.Context
 import android.os.Build
+import android.os.Bundle
 import android.view.View
 import androidx.annotation.RequiresApi
 import androidx.annotation.RestrictTo
@@ -27,12 +28,15 @@ import androidx.xr.runtime.math.Pose
 import androidx.xr.scenecore.internal.ActivityPanelEntity
 import androidx.xr.scenecore.internal.ActivitySpace
 import androidx.xr.scenecore.internal.AnchorEntity
+import androidx.xr.scenecore.internal.AudioTrackExtensionsWrapper
 import androidx.xr.scenecore.internal.CameraViewActivityPose
 import androidx.xr.scenecore.internal.Dimensions
 import androidx.xr.scenecore.internal.Entity
 import androidx.xr.scenecore.internal.GltfEntity
 import androidx.xr.scenecore.internal.GltfFeature
 import androidx.xr.scenecore.internal.HeadActivityPose
+import androidx.xr.scenecore.internal.LoggingEntity
+import androidx.xr.scenecore.internal.MediaPlayerExtensionsWrapper
 import androidx.xr.scenecore.internal.PanelEntity
 import androidx.xr.scenecore.internal.PerceptionSpaceActivityPose
 import androidx.xr.scenecore.internal.PixelDimensions
@@ -40,6 +44,7 @@ import androidx.xr.scenecore.internal.PlaneSemantic
 import androidx.xr.scenecore.internal.PlaneType
 import androidx.xr.scenecore.internal.RenderingEntityFactory
 import androidx.xr.scenecore.internal.SceneRuntime
+import androidx.xr.scenecore.internal.SoundPoolExtensionsWrapper
 import androidx.xr.scenecore.internal.SpatialCapabilities
 import androidx.xr.scenecore.internal.SpatialEnvironment
 import androidx.xr.scenecore.internal.SpatialModeChangeListener
@@ -60,6 +65,15 @@ public class FakeSceneRuntime() : SceneRuntime, RenderingEntityFactory {
 
     override val perceptionSpaceActivityPose: PerceptionSpaceActivityPose =
         FakePerceptionSpaceActivityPose()
+
+    override val soundPoolExtensionsWrapper: SoundPoolExtensionsWrapper =
+        FakeSoundPoolExtensionsWrapper()
+
+    override val audioTrackExtensionsWrapper: AudioTrackExtensionsWrapper =
+        FakeAudioTrackExtensionsWrapper()
+
+    override val mediaPlayerExtensionsWrapper: MediaPlayerExtensionsWrapper =
+        FakeMediaPlayerExtensionsWrapper()
 
     override val mainPanelEntity: PanelEntity = FakePanelEntity()
 
@@ -137,6 +151,9 @@ public class FakeSceneRuntime() : SceneRuntime, RenderingEntityFactory {
     ): GltfEntity = FakeGltfEntity()
 
     override fun createGroupEntity(pose: Pose, name: String, parent: Entity): Entity = FakeEntity()
+
+    override fun createLoggingEntity(pose: Pose): LoggingEntity =
+        object : LoggingEntity, FakeEntity() {}
 
     override fun addSpatialCapabilitiesChangedListener(
         callbackExecutor: Executor,
@@ -222,6 +239,31 @@ public class FakeSceneRuntime() : SceneRuntime, RenderingEntityFactory {
     override fun setPreferredAspectRatio(activity: Activity, preferredRatio: Float) {
         lastSetPreferredAspectRatioActivity = activity
         lastSetPreferredAspectRatioRatio = preferredRatio
+    }
+
+    /** This value is used to verify [requestedFullSpaceMode] is invoked. */
+    public var requestedFullSpaceMode: Boolean = false
+
+    override fun requestFullSpaceMode() {
+        requestedFullSpaceMode = true
+    }
+
+    /** This value is used to verify [requestHomeSpaceMode] is invoked. */
+    public var requestedHomeSpaceMode: Boolean = false
+
+    override fun requestHomeSpaceMode() {
+        requestedHomeSpaceMode = true
+    }
+
+    override fun setFullSpaceMode(bundle: Bundle): Bundle = bundle
+
+    override fun setFullSpaceModeWithEnvironmentInherited(bundle: Bundle): Bundle = bundle
+
+    /** This value is used to verify the result of [enablePanelDepthTest] in tests. */
+    internal var enabledPanelDepthTest: Boolean = false
+
+    override fun enablePanelDepthTest(enabled: Boolean) {
+        enabledPanelDepthTest = enabled
     }
 
     override fun dispose() {}

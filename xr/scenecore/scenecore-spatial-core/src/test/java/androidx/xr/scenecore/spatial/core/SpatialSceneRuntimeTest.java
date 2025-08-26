@@ -31,9 +31,11 @@ import static org.mockito.Mockito.when;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.os.Bundle;
 import android.os.IBinder;
 
 import androidx.xr.runtime.math.Pose;
+import androidx.xr.runtime.math.Vector3;
 import androidx.xr.scenecore.impl.extensions.XrExtensionsProvider;
 import androidx.xr.scenecore.impl.perception.Anchor;
 import androidx.xr.scenecore.impl.perception.Fov;
@@ -45,13 +47,17 @@ import androidx.xr.scenecore.impl.perception.ViewProjections;
 import androidx.xr.scenecore.impl.perception.exceptions.FailedToInitializeException;
 import androidx.xr.scenecore.internal.ActivitySpace;
 import androidx.xr.scenecore.internal.AnchorEntity;
+import androidx.xr.scenecore.internal.AudioTrackExtensionsWrapper;
 import androidx.xr.scenecore.internal.CameraViewActivityPose;
 import androidx.xr.scenecore.internal.Dimensions;
 import androidx.xr.scenecore.internal.Entity;
 import androidx.xr.scenecore.internal.HeadActivityPose;
+import androidx.xr.scenecore.internal.LoggingEntity;
+import androidx.xr.scenecore.internal.MediaPlayerExtensionsWrapper;
 import androidx.xr.scenecore.internal.PixelDimensions;
 import androidx.xr.scenecore.internal.PlaneSemantic;
 import androidx.xr.scenecore.internal.PlaneType;
+import androidx.xr.scenecore.internal.SoundPoolExtensionsWrapper;
 import androidx.xr.scenecore.internal.SpatialCapabilities;
 import androidx.xr.scenecore.internal.SpatialEnvironment;
 import androidx.xr.scenecore.internal.SpatialModeChangeListener;
@@ -495,6 +501,52 @@ public class SpatialSceneRuntimeTest {
     }
 
     @Test
+    public void createLoggingEntity_returnsEntity() {
+        Pose pose = new Pose();
+        LoggingEntity loggingEntity = mRuntime.createLoggingEntity(pose);
+        Pose updatedPose =
+                new Pose(
+                        new Vector3(1f, pose.getTranslation().getY(), pose.getTranslation().getZ()),
+                        pose.getRotation());
+        loggingEntity.setPose(updatedPose);
+    }
+
+    @Test
+    public void loggingEntitySetParent() {
+        Pose pose = new Pose();
+        LoggingEntity childEntity = mRuntime.createLoggingEntity(pose);
+        LoggingEntity parentEntity = mRuntime.createLoggingEntity(pose);
+
+        childEntity.setParent(parentEntity);
+        parentEntity.addChild(childEntity);
+
+        assertThat(childEntity.getParent()).isEqualTo(parentEntity);
+        assertThat(parentEntity.getParent()).isEqualTo(null);
+        assertThat(childEntity.getChildren()).isEmpty();
+        assertThat(parentEntity.getChildren()).containsExactly(childEntity);
+    }
+
+    @Test
+    public void loggingEntityUpdateParent() {
+        Pose pose = new Pose();
+        LoggingEntity childEntity = mRuntime.createLoggingEntity(pose);
+        LoggingEntity parentEntity1 = mRuntime.createLoggingEntity(pose);
+        LoggingEntity parentEntity2 = mRuntime.createLoggingEntity(pose);
+
+        childEntity.setParent(parentEntity1);
+
+        assertThat(childEntity.getParent()).isEqualTo(parentEntity1);
+        assertThat(parentEntity1.getChildren()).containsExactly(childEntity);
+        assertThat(parentEntity2.getChildren()).isEmpty();
+
+        childEntity.setParent(parentEntity2);
+
+        assertThat(childEntity.getParent()).isEqualTo(parentEntity2);
+        assertThat(parentEntity2.getChildren()).containsExactly(childEntity);
+        assertThat(parentEntity1.getChildren()).isEmpty();
+    }
+
+    @Test
     public void createAnchorEntity_returnsAndInitsAnchor() throws Exception {
         Dimensions anchorDimensions = new Dimensions(2f, 5f, 0f);
         androidx.xr.scenecore.impl.perception.Pose perceptionPose =
@@ -854,9 +906,60 @@ public class SpatialSceneRuntimeTest {
     }
 
     @Test
+    public void requestHomeSpaceMode_callsExtensions() {
+        mRuntime.requestHomeSpaceMode();
+        assertThat(ShadowXrExtensions.extract(mXrExtensions).getSpaceMode(mActivity))
+                .isEqualTo(ShadowXrExtensions.SpaceMode.HOME_SPACE);
+    }
+
+    @Test
+    public void requestFullSpaceMode_callsExtensions() {
+        mRuntime.requestFullSpaceMode();
+        assertThat(ShadowXrExtensions.extract(mXrExtensions).getSpaceMode(mActivity))
+                .isEqualTo(ShadowXrExtensions.SpaceMode.FULL_SPACE);
+    }
+
+    @Test
+    public void setFullSpaceMode_callsExtensions() {
+        Bundle bundle = Bundle.EMPTY;
+        bundle = mRuntime.setFullSpaceMode(bundle);
+        // TODO: b/440191514 - Change to assertThat(bundle).isNotEqualTo(Bundle.EMPTY);
+        assertThat(bundle).isNotNull();
+    }
+
+    @Test
+    public void setFullSpaceModeWithEnvironmentInherited_callsExtensions() {
+        Bundle bundle = Bundle.EMPTY;
+        bundle = mRuntime.setFullSpaceModeWithEnvironmentInherited(bundle);
+        // TODO: b/440191514 - Change to assertThat(bundle).isNotEqualTo(Bundle.EMPTY);
+        assertThat(bundle).isNotNull();
+    }
+
+    @Test
     public void setPreferredAspectRatio_callsExtensions() {
         mRuntime.setPreferredAspectRatio(mActivity, 1.23f);
         assertThat(ShadowXrExtensions.extract(mXrExtensions).getPreferredAspectRatio(mActivity))
                 .isEqualTo(1.23f);
+    }
+
+    @Test
+    public void sceneRuntime_getSoundPoolExtensionsWrapper() {
+        SoundPoolExtensionsWrapper extensions = mRuntime.getSoundPoolExtensionsWrapper();
+
+        assertThat(extensions).isNotNull();
+    }
+
+    @Test
+    public void sceneRuntime_getAudioTrackExtensionsWrapper() {
+        AudioTrackExtensionsWrapper extensions = mRuntime.getAudioTrackExtensionsWrapper();
+
+        assertThat(extensions).isNotNull();
+    }
+
+    @Test
+    public void sceneRuntime_getMediaPlayerExtensionsWrapper() {
+        MediaPlayerExtensionsWrapper extensions = mRuntime.getMediaPlayerExtensionsWrapper();
+
+        assertThat(extensions).isNotNull();
     }
 }

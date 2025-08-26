@@ -18,6 +18,7 @@ package androidx.xr.scenecore.internal
 
 import android.app.Activity
 import android.content.Context
+import android.os.Bundle
 import android.view.View
 import androidx.annotation.RestrictTo
 import androidx.xr.arcore.internal.Anchor
@@ -68,6 +69,15 @@ public interface SceneRuntime : JxrRuntime {
      * Setting this property will update the handler that is used to process spatial mode changes.
      */
     public var spatialModeChangeListener: SpatialModeChangeListener?
+
+    /** Returns a [SoundPoolExtensionsWrapper] instance. */
+    public val soundPoolExtensionsWrapper: SoundPoolExtensionsWrapper
+
+    /** Returns a [AudioTrackExtensionsWrapper] instance. */
+    public val audioTrackExtensionsWrapper: AudioTrackExtensionsWrapper
+
+    /** Returns a [MediaPlayerExtensionsWrapper] instance. */
+    public val mediaPlayerExtensionsWrapper: MediaPlayerExtensionsWrapper
 
     /**
      * Returns the CameraViewActivityPose for the specified camera type or null if it is not
@@ -178,6 +188,9 @@ public interface SceneRuntime : JxrRuntime {
      */
     public fun createGroupEntity(pose: Pose, name: String, parent: Entity): Entity
 
+    /** A function to create a XR Runtime Entity. */
+    public fun createLoggingEntity(pose: Pose): LoggingEntity
+
     /**
      * Adds the given {@link Consumer} as a listener to be invoked when this Session's current
      * SpatialCapabilities change. {@link Consumer#accept(SpatialCapabilities)} will be invoked on
@@ -273,6 +286,73 @@ public interface SceneRuntime : JxrRuntime {
     public fun removePerceivedResolutionChangedListener(listener: Consumer<PixelDimensions>): Unit
 
     /**
+     * If the primary Activity for the Session that owns this object has focus, causes it to be
+     * placed in FullSpace Mode. Otherwise, this call does nothing.
+     */
+    public fun requestFullSpaceMode()
+
+    /**
+     * If the primary Activity for the Session that owns this object has focus, causes it to be
+     * placed in HomeSpace Mode. Otherwise, this call does nothing.
+     */
+    public fun requestHomeSpaceMode()
+
+    /**
+     * Sets the full space mode flag to the given {@link Bundle}.
+     *
+     * The {@link Bundle} then could be used to launch an {@link Activity} with requesting to enter
+     * full space mode through {@link Activity#startActivity}. If there's a bundle used for
+     * customizing how the {@link Activity} should be started by {@link ActivityOptions.toBundle} or
+     * {@link androidx.core.app.ActivityOptionsCompat.toBundle}, it's suggested to use the bundle to
+     * call this method.
+     *
+     * The flag will be ignored when no {@link Intent.FLAG_ACTIVITY_NEW_TASK} is set in the bundle,
+     * or it is not started from a focused Activity context.
+     *
+     * This flag is also ignored when the {@link android.window.PROPERTY_XR_ACTIVITY_START_MODE}
+     * property is set to a value other than XR_ACTIVITY_START_MODE_UNDEFINED in the
+     * AndroidManifest.xml file for the activity being launched.
+     *
+     * @param bundle the input bundle to set with the full space mode flag.
+     * @return the input {@code bundle} with the full space mode flag set.
+     */
+    public fun setFullSpaceMode(bundle: Bundle): Bundle
+
+    /**
+     * Sets the inherit full space mode environment flag to the given {@link Bundle}.
+     *
+     * The {@link Bundle} then could be used to launch an {@link Activity} with requesting to enter
+     * full space mode while inherit the existing environment through {@link
+     * Activity#startActivity}. If there's a bundle used for customizing how the {@link Activity}
+     * should be started by {@link ActivityOptions.toBundle} or {@link
+     * androidx.core.app.ActivityOptionsCompat.toBundle}, it's suggested to use the bundle to call
+     * this method.
+     *
+     * When launched, the activity will be in full space mode and also inherits the environment from
+     * the launching activity. If the inherited environment needs to be animated, the launching
+     * activity has to continue updating the environment even after the activity is put into the
+     * stopped state.
+     *
+     * The flag will be ignored when no {@link Intent.FLAG_ACTIVITY_NEW_TASK} is set in the intent,
+     * or it is not started from a focused Activity context.
+     *
+     * The flag will also be ignored when there is no environment to inherit or the activity has its
+     * own environment set already.
+     *
+     * This flag is ignored too when the {@link android.window.PROPERTY_XR_ACTIVITY_START_MODE}
+     * property is set to a value other than XR_ACTIVITY_START_MODE_UNDEFINED in the
+     * AndroidManifest.xml file for the activity being launched.
+     *
+     * For security reasons, Z testing for the new activity is disabled, and the activity is always
+     * drawn on top of the inherited environment. Because Z testing is disabled, the activity should
+     * not spatialize itself.
+     *
+     * @param bundle the input bundle to set with the inherit full space mode environment flag.
+     * @return the input {@code bundle} with the inherit full space mode flag set.
+     */
+    public fun setFullSpaceModeWithEnvironmentInherited(bundle: Bundle): Bundle
+
+    /**
      * Sets a preferred main panel aspect ratio for home space mode.
      *
      * The ratio is only applied to the activity. If the activity launches another activity in the
@@ -289,6 +369,29 @@ public interface SceneRuntime : JxrRuntime {
      *   height. A value <= 0.0f means there are no preferences.
      */
     public fun setPreferredAspectRatio(activity: Activity, preferredRatio: Float)
+
+    /**
+     * Sets whether the depth test is enabled for all panels in the Scene when the Scene is in full
+     * space mode. Panels in home space mode are unaffected.
+     *
+     * When the depth test for panels is enabled, panels in the Scene will undergo depth testing,
+     * where they can appear behind other content in the Scene. When the depth test is disabled,
+     * panels in the Scene do not undergo depth tests, that will always be drawn on top of other
+     * objects in the Scene that were already drawn. Panels and non-panel content (ex:
+     * SurfaceEntity, GltfEntity) are always drawn after the SpatialEnvironment in back to front
+     * order when such an order exists. Subsequent content will be drawn on top of panels with no
+     * depth test if the subsequent content is drawn later.
+     *
+     * This method says "panel" because it only affects panels. Other content in the Scene is
+     * unaffected by this setting.
+     *
+     * By default the depth test is enabled for all panels in the Scene. It can be disabled, or
+     * re-enabled, by using this method.
+     *
+     * @param enabled True to enable the depth test for all panels in the Scene (default), false to
+     *   disable the depth test for all panels in the Scene.
+     */
+    public fun enablePanelDepthTest(enabled: Boolean)
 
     /** Disposes of the resources used by this runtime */
     public fun dispose()
