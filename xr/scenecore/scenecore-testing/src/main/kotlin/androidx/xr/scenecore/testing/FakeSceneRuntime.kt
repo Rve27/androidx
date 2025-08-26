@@ -97,9 +97,21 @@ public class FakeSceneRuntime(public val executor: Executor? = null) :
     override var spatialModeChangeListener: SpatialModeChangeListener? =
         FakeSpatialModeChangeListener()
 
+    private val cameraViewActivityPoseL: FakeCameraViewActivityPose =
+        FakeCameraViewActivityPose(CameraViewActivityPose.CameraType.CAMERA_TYPE_LEFT_EYE)
+
+    private val cameraViewActivityPoseR: FakeCameraViewActivityPose =
+        FakeCameraViewActivityPose(CameraViewActivityPose.CameraType.CAMERA_TYPE_RIGHT_EYE)
+
     override fun getCameraViewActivityPose(
         @CameraViewActivityPose.CameraType cameraType: Int
-    ): CameraViewActivityPose? = FakeCameraViewActivityPose()
+    ): CameraViewActivityPose? {
+        return when (cameraType) {
+            CameraViewActivityPose.CameraType.CAMERA_TYPE_LEFT_EYE -> cameraViewActivityPoseL
+            CameraViewActivityPose.CameraType.CAMERA_TYPE_RIGHT_EYE -> cameraViewActivityPoseR
+            else -> null
+        }
+    }
 
     override fun createPanelEntity(
         context: Context,

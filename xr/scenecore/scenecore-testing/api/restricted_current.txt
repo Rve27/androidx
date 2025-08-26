@@ -583,7 +583,7 @@ package androidx.xr.scenecore.testing {
     ctor public FakeRenderingRuntime(androidx.xr.scenecore.internal.SceneRuntime sceneRuntime, optional androidx.xr.scenecore.internal.RenderingEntityFactory entityFactory);
     method public androidx.xr.scenecore.internal.TextureResource? borrowReflectionTexture();
     method public androidx.xr.scenecore.internal.GltfEntity createGltfEntity(androidx.xr.runtime.math.Pose pose, androidx.xr.scenecore.internal.GltfModelResource loadedGltf, androidx.xr.scenecore.internal.Entity parentEntity);
-    method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.internal.MaterialResource>? createKhronosPbrMaterial(androidx.xr.scenecore.internal.KhronosPbrMaterialSpec spec);
+    method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.internal.MaterialResource> createKhronosPbrMaterial(androidx.xr.scenecore.internal.KhronosPbrMaterialSpec spec);
     method public androidx.xr.scenecore.internal.SubspaceNodeEntity createSubspaceNodeEntity(androidx.xr.runtime.SubspaceNodeHolder<? extends java.lang.Object?> subspaceNodeHolder, androidx.xr.scenecore.internal.Dimensions size);
     method public androidx.xr.runtime.SubspaceNodeHolder<? extends java.lang.Object?> createSubspaceNodeHolder();
     method public androidx.xr.scenecore.internal.SurfaceEntity createSurfaceEntity(int stereoMode, androidx.xr.runtime.math.Pose pose, androidx.xr.scenecore.internal.SurfaceEntity.Shape shape, int surfaceProtection, int superSampling, androidx.xr.scenecore.internal.Entity parentEntity);
@@ -595,6 +595,7 @@ package androidx.xr.scenecore.testing {
     method @InaccessibleFromKotlin public java.util.List<androidx.xr.scenecore.testing.FakeRenderingRuntime.FakeKhronosPbrMaterial> getCreatedKhronosPbrMaterials();
     method @InaccessibleFromKotlin public java.util.List<androidx.xr.scenecore.testing.FakeRenderingRuntime.FakeWaterMaterial> getCreatedWaterMaterials();
     method public androidx.xr.scenecore.internal.TextureResource? getReflectionTextureFromIbl(androidx.xr.scenecore.internal.ExrImageResource iblToken);
+    method public Enum<androidx.xr.scenecore.testing.FakeRenderingRuntime.State> getState();
     method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.internal.ExrImageResource> loadExrImageByAssetName(String assetName);
     method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.internal.ExrImageResource> loadExrImageByByteArray(byte[] assetData, String assetKey);
     method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.internal.GltfModelResource> loadGltfByAssetName(String assetName);
@@ -812,6 +813,13 @@ package androidx.xr.scenecore.testing {
     property public float normalZ;
     property public androidx.xr.scenecore.internal.TextureResource? reflectionMap;
     property public androidx.xr.scenecore.internal.TextureSampler? reflectionMapSampler;
+  }
+
+  public enum FakeRenderingRuntime.State {
+    enum_constant public static final androidx.xr.scenecore.testing.FakeRenderingRuntime.State CREATED;
+    enum_constant public static final androidx.xr.scenecore.testing.FakeRenderingRuntime.State DESTROYED;
+    enum_constant public static final androidx.xr.scenecore.testing.FakeRenderingRuntime.State PAUSED;
+    enum_constant public static final androidx.xr.scenecore.testing.FakeRenderingRuntime.State STARTED;
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeRenderingRuntimeFactory implements androidx.xr.runtime.internal.RenderingRuntimeFactory {

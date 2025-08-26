@@ -21,8 +21,8 @@ import androidx.annotation.MainThread
 import androidx.annotation.RestrictTo
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.math.Vector4
-import androidx.xr.scenecore.internal.JxrPlatformAdapter
 import androidx.xr.scenecore.internal.MaterialResource as RtMaterial
+import androidx.xr.scenecore.internal.RenderingRuntime
 
 /**
  * Represents a [Material] in SceneCore.
@@ -67,7 +67,7 @@ internal constructor(
     /** Disposes the [KhronosUnlitMaterial] and releases its underlying graphics resources. */
     @MainThread
     override public fun dispose() {
-        session.platformAdapter.destroyKhronosPbrMaterial(material)
+        session.renderingRuntime.destroyKhronosPbrMaterial(material)
     }
 
     /**
@@ -82,7 +82,7 @@ internal constructor(
     @JvmOverloads
     @MainThread
     public fun setBaseColorTexture(texture: Texture, sampler: TextureSampler = TextureSampler()) {
-        session.platformAdapter.setBaseColorTextureOnKhronosPbrMaterial(
+        session.renderingRuntime.setBaseColorTextureOnKhronosPbrMaterial(
             material,
             texture.texture,
             sampler.toRtTextureSampler(),
@@ -99,7 +99,7 @@ internal constructor(
      */
     @MainThread
     public fun setBaseColorFactor(factor: Vector4) {
-        session.platformAdapter.setBaseColorFactorsOnKhronosPbrMaterial(material, factor)
+        session.renderingRuntime.setBaseColorFactorsOnKhronosPbrMaterial(material, factor)
     }
 
     /**
@@ -116,17 +116,17 @@ internal constructor(
         check(alphaMode == AlphaMode.ALPHA_MODE_MASK) {
             "Alpha cutoff can only be set when the material's alpha mode is set to ALPHA_MODE_MASK."
         }
-        session.platformAdapter.setAlphaCutoffOnKhronosPbrMaterial(material, alphaCutoff)
+        session.renderingRuntime.setAlphaCutoffOnKhronosPbrMaterial(material, alphaCutoff)
     }
 
     public companion object {
         internal suspend fun createAsync(
-            platformAdapter: JxrPlatformAdapter,
+            renderingRuntime: RenderingRuntime,
             @AlphaModeValues alphaMode: Int,
             session: Session,
         ): KhronosUnlitMaterial {
             val material =
-                platformAdapter
+                renderingRuntime
                     .createKhronosPbrMaterial(alphaMode.toRtKhronosUnlitMaterialSpec())
                     .awaitSuspending()
             return KhronosUnlitMaterial(material, alphaMode, session)
@@ -145,7 +145,7 @@ internal constructor(
             session: Session,
             @AlphaModeValues alphaMode: Int,
         ): KhronosUnlitMaterial {
-            return KhronosUnlitMaterial.createAsync(session.platformAdapter, alphaMode, session)
+            return KhronosUnlitMaterial.createAsync(session.renderingRuntime, alphaMode, session)
         }
     }
 }

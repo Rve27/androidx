@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package androidx.xr.scenecore
 
 import androidx.annotation.MainThread
 import androidx.xr.runtime.Session
-import androidx.xr.scenecore.internal.JxrPlatformAdapter
+import androidx.xr.scenecore.internal.RenderingRuntime
 import androidx.xr.scenecore.internal.TextureResource as RtTextureResource
 import java.io.File
 import java.nio.file.Path
@@ -49,16 +49,16 @@ internal constructor(internal val texture: RtTextureResource, internal val sessi
     // TODO(b/376277201): Provide Session.GltfModel.dispose().
     @MainThread
     public open fun dispose() {
-        session.runtimes.filterIsInstance<JxrPlatformAdapter>().single().destroyTexture(texture)
+        session.runtimes.filterIsInstance<RenderingRuntime>().single().destroyTexture(texture)
     }
 
     public companion object {
         internal suspend fun createAsync(
-            platformAdapter: JxrPlatformAdapter,
+            renderingRuntime: RenderingRuntime,
             name: String,
             session: Session,
         ): Texture {
-            val textureResource = platformAdapter.loadTexture(name)!!.awaitSuspending()
+            val textureResource = renderingRuntime.loadTexture(name)!!.awaitSuspending()
             return Texture(textureResource, session)
         }
 
@@ -81,7 +81,7 @@ internal constructor(internal val texture: RtTextureResource, internal val sessi
             require(!File(path.toString()).isAbsolute) {
                 "Texture.create() expects a path relative to `assets/`, received absolute path $path."
             }
-            return createAsync(session.platformAdapter, path.toString(), session)
+            return createAsync(session.renderingRuntime, path.toString(), session)
         }
     }
 }
