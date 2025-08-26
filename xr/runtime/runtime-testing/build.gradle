@@ -37,7 +37,6 @@ dependencies {
     api(libs.kotlinCoroutinesCore)
     // TODO: b/409058039 - Remove arcore and scenecore dependencies once the Fakes have been moved.
     api(project(":xr:arcore:arcore"))
-    api(project(":xr:scenecore:scenecore"))
     api(project(":xr:runtime:runtime"))
 
     implementation("androidx.annotation:annotation:1.8.1")

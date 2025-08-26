@@ -24,11 +24,11 @@ import static org.mockito.Mockito.when;
 import android.app.Activity;
 
 import androidx.xr.runtime.NodeHolder;
-import androidx.xr.runtime.testing.FakeGltfFeature;
 import androidx.xr.scenecore.impl.extensions.XrExtensionsProvider;
 import androidx.xr.scenecore.internal.GltfEntity;
 import androidx.xr.scenecore.internal.GltfFeature;
 import androidx.xr.scenecore.internal.MaterialResource;
+import androidx.xr.scenecore.testing.FakeGltfFeature;
 import androidx.xr.scenecore.testing.FakeScheduledExecutorService;
 
 import com.android.extensions.xr.ShadowXrExtensions;

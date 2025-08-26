@@ -258,13 +258,13 @@ public final class RuntimeUtilsTest {
                 .isTrue();
 
         assertThat(
-                caps.hasCapability(
-                        SpatialCapabilities.SPATIAL_CAPABILITY_UI
-                                | SpatialCapabilities.SPATIAL_CAPABILITY_3D_CONTENT
-                                | SpatialCapabilities.SPATIAL_CAPABILITY_PASSTHROUGH_CONTROL
-                                | SpatialCapabilities.SPATIAL_CAPABILITY_APP_ENVIRONMENT
-                                | SpatialCapabilities.SPATIAL_CAPABILITY_SPATIAL_AUDIO
-                                | SpatialCapabilities.SPATIAL_CAPABILITY_EMBED_ACTIVITY))
+                        caps.hasCapability(
+                                SpatialCapabilities.SPATIAL_CAPABILITY_UI
+                                        | SpatialCapabilities.SPATIAL_CAPABILITY_3D_CONTENT
+                                        | SpatialCapabilities.SPATIAL_CAPABILITY_PASSTHROUGH_CONTROL
+                                        | SpatialCapabilities.SPATIAL_CAPABILITY_APP_ENVIRONMENT
+                                        | SpatialCapabilities.SPATIAL_CAPABILITY_SPATIAL_AUDIO
+                                        | SpatialCapabilities.SPATIAL_CAPABILITY_EMBED_ACTIVITY))
                 .isTrue();
     }
 
@@ -367,17 +367,17 @@ public final class RuntimeUtilsTest {
 
         // Assert checking as a combination works too
         assertThat(
-                caps.hasCapability(
-                        SpatialCapabilities.SPATIAL_CAPABILITY_UI
-                                | SpatialCapabilities.SPATIAL_CAPABILITY_PASSTHROUGH_CONTROL
-                                | SpatialCapabilities.SPATIAL_CAPABILITY_APP_ENVIRONMENT
-                                | SpatialCapabilities.SPATIAL_CAPABILITY_EMBED_ACTIVITY))
+                        caps.hasCapability(
+                                SpatialCapabilities.SPATIAL_CAPABILITY_UI
+                                        | SpatialCapabilities.SPATIAL_CAPABILITY_PASSTHROUGH_CONTROL
+                                        | SpatialCapabilities.SPATIAL_CAPABILITY_APP_ENVIRONMENT
+                                        | SpatialCapabilities.SPATIAL_CAPABILITY_EMBED_ACTIVITY))
                 .isTrue();
 
         assertThat(
-                caps.hasCapability(
-                        SpatialCapabilities.SPATIAL_CAPABILITY_3D_CONTENT
-                                | SpatialCapabilities.SPATIAL_CAPABILITY_SPATIAL_AUDIO))
+                        caps.hasCapability(
+                                SpatialCapabilities.SPATIAL_CAPABILITY_3D_CONTENT
+                                        | SpatialCapabilities.SPATIAL_CAPABILITY_SPATIAL_AUDIO))
                 .isFalse();
     }
 

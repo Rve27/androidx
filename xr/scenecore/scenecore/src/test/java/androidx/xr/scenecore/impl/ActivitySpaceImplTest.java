@@ -36,7 +36,6 @@ import androidx.xr.runtime.math.Matrix4;
 import androidx.xr.runtime.math.Pose;
 import androidx.xr.runtime.math.Quaternion;
 import androidx.xr.runtime.math.Vector3;
-import androidx.xr.runtime.testing.FakeSpatialModeChangeListener;
 import androidx.xr.scenecore.impl.extensions.XrExtensionsProvider;
 import androidx.xr.scenecore.impl.impress.FakeImpressApiImpl;
 import androidx.xr.scenecore.impl.perception.PerceptionLibrary;
@@ -49,6 +48,7 @@ import androidx.xr.scenecore.internal.HitTestResult;
 import androidx.xr.scenecore.internal.JxrPlatformAdapter;
 import androidx.xr.scenecore.internal.Space;
 import androidx.xr.scenecore.testing.FakeScheduledExecutorService;
+import androidx.xr.scenecore.testing.FakeSpatialModeChangeListener;
 
 import com.android.extensions.xr.ShadowXrExtensions;
 import com.android.extensions.xr.XrExtensions;

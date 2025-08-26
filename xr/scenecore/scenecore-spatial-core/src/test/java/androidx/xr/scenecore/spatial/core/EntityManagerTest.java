@@ -35,7 +35,6 @@ import android.view.ViewGroup.LayoutParams;
 import androidx.xr.runtime.NodeHolder;
 import androidx.xr.runtime.math.Matrix4;
 import androidx.xr.runtime.math.Pose;
-import androidx.xr.runtime.testing.FakeGltfFeature;
 import androidx.xr.scenecore.impl.extensions.XrExtensionsProvider;
 import androidx.xr.scenecore.impl.perception.PerceptionLibrary;
 import androidx.xr.scenecore.impl.perception.Session;
@@ -52,6 +51,7 @@ import androidx.xr.scenecore.internal.PerceptionSpaceActivityPose;
 import androidx.xr.scenecore.internal.PixelDimensions;
 import androidx.xr.scenecore.internal.PlaneSemantic;
 import androidx.xr.scenecore.internal.PlaneType;
+import androidx.xr.scenecore.testing.FakeGltfFeature;
 import androidx.xr.scenecore.testing.FakeScheduledExecutorService;
 
 import com.android.extensions.xr.XrExtensions;

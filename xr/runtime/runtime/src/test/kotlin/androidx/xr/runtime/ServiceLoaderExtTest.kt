@@ -26,9 +26,9 @@ import androidx.xr.runtime.internal.Service
 import androidx.xr.runtime.manifest.FEATURE_XR_API_OPENXR
 import androidx.xr.runtime.manifest.FEATURE_XR_API_SPATIAL
 import androidx.xr.runtime.testing.AnotherFakeStateExtender
-import androidx.xr.runtime.testing.FakeJxrPlatformAdapterFactory
 import androidx.xr.runtime.testing.FakePerceptionRuntimeFactory
 import androidx.xr.runtime.testing.FakeStateExtender
+import androidx.xr.scenecore.testing.FakeJxrPlatformAdapterFactory
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -39,6 +39,7 @@ import org.robolectric.shadows.ShadowBuild
 class ServiceLoaderExtTest {
 
     @Test
+    // TODO(b/440615454) - Move this test to scenecore-testing/arcore-testing.
     fun loadProviders_loadsProviders() {
         assertThat(
                 loadProviders(

@@ -46,6 +46,7 @@ import androidx.xr.runtime.math.Vector2
  * }
  * ```
  */
+@SuppressWarnings("HiddenSuperclass")
 public class FakeRuntimePlane(
     override val type: RuntimePlane.Type = RuntimePlane.Type.HORIZONTAL_UPWARD_FACING,
     override val label: RuntimePlane.Label = RuntimePlane.Label.FLOOR,

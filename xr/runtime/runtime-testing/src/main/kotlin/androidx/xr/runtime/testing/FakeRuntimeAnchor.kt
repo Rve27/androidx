@@ -16,6 +16,7 @@
 
 package androidx.xr.runtime.testing
 
+import androidx.annotation.RestrictTo
 import androidx.xr.arcore.internal.Anchor as RuntimeAnchor
 import androidx.xr.arcore.internal.AnchorNotTrackingException
 import androidx.xr.arcore.internal.AnchorResourcesExhaustedException
@@ -25,7 +26,8 @@ import java.util.UUID
 
 /** Test-only implementation of [androidx.xr.arcore.internal.Anchor] */
 public class FakeRuntimeAnchor
-internal constructor(
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
+public constructor(
     override var pose: Pose,
     internal val anchorHolder: AnchorHolder? = null,
     /** Flag to represent available tracking state of the camera when creating the anchor. */

@@ -274,7 +274,7 @@ public constructor(
         private val JXR_PLATFORM_ADAPTER_FACTORY_PROVIDERS =
             listOf(
                 "androidx.xr.scenecore.impl.JxrPlatformAdapterFactoryAxr",
-                "androidx.xr.runtime.testing.FakeJxrPlatformAdapterFactory",
+                "androidx.xr.scenecore.testing.FakeJxrPlatformAdapterFactory",
             )
         private val STATE_EXTENDER_PROVIDERS =
             listOf(

@@ -38,6 +38,7 @@ import java.util.UUID
  * Test-only implementation of [androidx.xr.arcore.internal.PerceptionManager] used to validate
  * state transitions.
  */
+@SuppressWarnings("HiddenSuperclass")
 public class FakePerceptionManager : PerceptionManager, AnchorHolder {
 
     /** List of anchors created by this [FakePerceptionManager]. */

@@ -27,11 +27,11 @@ import androidx.xr.runtime.internal.ApkCheckAvailabilityErrorException
 import androidx.xr.runtime.internal.ApkCheckAvailabilityInProgressException
 import androidx.xr.runtime.internal.ApkNotInstalledException
 import androidx.xr.runtime.internal.UnsupportedDeviceException
-import androidx.xr.runtime.testing.FakeJxrPlatformAdapter
 import androidx.xr.runtime.testing.FakeLifecycleManager
 import androidx.xr.runtime.testing.FakePerceptionRuntime
 import androidx.xr.runtime.testing.FakePerceptionRuntimeFactory
 import androidx.xr.runtime.testing.FakeStateExtender
+import androidx.xr.scenecore.testing.FakeJxrPlatformAdapter
 import com.google.common.truth.Truth.assertThat
 import kotlin.test.assertFailsWith
 import kotlin.time.Duration.Companion.hours
@@ -52,6 +52,7 @@ import org.robolectric.Robolectric
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.android.controller.ActivityController
 
+// TODO(b/440615454) - Use local Fakes instead of FakeJxrPlatformAdapter/FakePerceptionRuntime.
 @RunWith(AndroidJUnit4::class)
 class SessionTest {
     private lateinit var underTest: Session

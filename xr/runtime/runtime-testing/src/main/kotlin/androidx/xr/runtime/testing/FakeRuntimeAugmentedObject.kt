@@ -33,6 +33,7 @@ import androidx.xr.runtime.math.Pose
  * @property trackingState The tracking state of the augmented object.
  * @property anchors The anchors attached to this object.
  */
+@SuppressWarnings("HiddenSuperclass")
 public class FakeRuntimeAugmentedObject(
     override var centerPose: Pose = Pose(),
     override var extents: FloatSize3d = FloatSize3d(),

@@ -16,10 +16,12 @@
 
 package androidx.xr.runtime.testing
 
+import androidx.annotation.RestrictTo
 import androidx.xr.arcore.internal.Anchor
 
 /** Object that holds [androidx.xr.arcore.internal.Anchor] instances. */
-internal interface AnchorHolder {
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
+public interface AnchorHolder {
 
     /**
      * Notifies the [AnchorHolder] that the given [androidx.xr.arcore.internal.Anchor] has been

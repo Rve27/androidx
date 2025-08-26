@@ -21,13 +21,13 @@ import static com.google.common.truth.Truth.assertThat;
 import android.app.Activity;
 
 import androidx.xr.runtime.internal.SceneRuntimeFactory;
-import androidx.xr.runtime.testing.FakeSceneRuntimeFactory;
 import androidx.xr.scenecore.impl.extensions.XrExtensionsProvider;
 import androidx.xr.scenecore.impl.impress.FakeImpressApiImpl;
 import androidx.xr.scenecore.internal.ExrImageResource;
 import androidx.xr.scenecore.internal.GltfModelResource;
 import androidx.xr.scenecore.internal.MaterialResource;
 import androidx.xr.scenecore.internal.SceneRuntime;
+import androidx.xr.scenecore.testing.FakeSceneRuntimeFactory;
 import androidx.xr.scenecore.testing.FakeScheduledExecutorService;
 
 import com.android.extensions.xr.ShadowXrExtensions;
