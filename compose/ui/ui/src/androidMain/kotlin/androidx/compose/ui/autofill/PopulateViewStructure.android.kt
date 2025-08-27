@@ -57,6 +57,11 @@ internal fun ViewStructure.populate(
     var editableTextProp: AnnotatedString? = null
     var isPasswordProp = false
     var fillableDataProp: AndroidFillableData? = null
+    // We will set the `isSensitiveData` prop to true by default; the only way this value is false
+    // is if the developer explicitly marks `isSensitiveData = false` on a node. This mirrors
+    // the `setDataIsSensitive` flag on `ViewStructure.java`, which states that "by default, all
+    // nodes are assumed to be sensitive."
+    var isSensitiveDataProp = true
     var maxTextLengthProp: Int? = null
     var roleProp: Role? = null
     var selectedProp: Boolean? = null
@@ -82,6 +87,7 @@ internal fun ViewStructure.populate(
             properties.Focused -> autofillApi.setFocused(this, value as Boolean)
             properties.MaxTextLength -> maxTextLengthProp = value as Int
             properties.Password -> isPasswordProp = true
+            properties.IsSensitiveData -> isSensitiveDataProp = value as Boolean
             properties.Role -> roleProp = value as Role
             properties.Selected -> selectedProp = value as Boolean
             properties.ToggleableState -> toggleableStateProp = value as ToggleableState
@@ -151,9 +157,8 @@ internal fun ViewStructure.populate(
     val passwordHint = ContentType.Password.contentHints.first()
     val contentTypePassword = contentTypeProp?.contentHints?.contains(passwordHint) == true
     val isPassword = isPasswordProp || contentTypePassword
-    if (isPassword) {
-        autofillApi.setDataIsSensitive(this, true)
-    }
+    val isSensitive = isPassword || isSensitiveDataProp
+    autofillApi.setDataIsSensitive(this, isSensitive)
 
     // Visibility.
     // TODO(b/383198004): This only checks transparency. We should also check whether the layoutNode

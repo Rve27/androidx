@@ -50,6 +50,7 @@ import androidx.compose.ui.semantics.disabled
 import androidx.compose.ui.semantics.editableText
 import androidx.compose.ui.semantics.fillableData
 import androidx.compose.ui.semantics.hideFromAccessibility
+import androidx.compose.ui.semantics.isSensitiveData
 import androidx.compose.ui.semantics.maxTextLength
 import androidx.compose.ui.semantics.onLongClick
 import androidx.compose.ui.semantics.password
@@ -191,10 +192,12 @@ class PerformAndroidAutofillManagerTest {
         assertThat(viewStructure)
             .isEqualTo(
                 FakeViewStructure().apply {
+                    dataIsSensitive = true
                     autofillId = view.autofillId
                     bounds = Rect(0, 0, width.dpToPx(), height.dpToPx())
                     children.add(
                         FakeViewStructure().apply {
+                            dataIsSensitive = true
                             autofillHints = mutableListOf(HintConstants.AUTOFILL_HINT_USERNAME)
                             autofillId = view.autofillId
                             bounds = Rect(0, 0, width.dpToPx(), height.dpToPx())
@@ -244,6 +247,7 @@ class PerformAndroidAutofillManagerTest {
                         ViewStructure(view) {
                             autofillHints = mutableListOf(HintConstants.AUTOFILL_HINT_USERNAME)
                             virtualId = rule.onNodeWithTag(contentTag).semanticsId()
+                            dataIsSensitive = true
                         }
                     )
                     virtualId = AccessibilityNodeProviderCompat.HOST_VIEW_ID
@@ -281,6 +285,7 @@ class PerformAndroidAutofillManagerTest {
                         ViewStructure(view) {
                             autofillType = AUTOFILL_TYPE_TEXT
                             virtualId = rule.onNodeWithTag(contentTag).semanticsId()
+                            dataIsSensitive = true
                         }
                     )
                     virtualId = AccessibilityNodeProviderCompat.HOST_VIEW_ID
@@ -321,6 +326,7 @@ class PerformAndroidAutofillManagerTest {
                             isClickable = true
                             isFocusable = true
                             virtualId = rule.onNodeWithTag(contentTag).semanticsId()
+                            dataIsSensitive = true
                         }
                     )
                     virtualId = AccessibilityNodeProviderCompat.HOST_VIEW_ID
@@ -362,6 +368,7 @@ class PerformAndroidAutofillManagerTest {
                             autofillHints = mutableListOf(HintConstants.AUTOFILL_HINT_USERNAME)
                             contentDescription = contentTag
                             virtualId = rule.onNodeWithTag(contentTag).semanticsId()
+                            dataIsSensitive = true
                         }
                     )
                     virtualId = AccessibilityNodeProviderCompat.HOST_VIEW_ID
@@ -410,6 +417,7 @@ class PerformAndroidAutofillManagerTest {
                             isFocusable = true
                             isSelected = true
                             virtualId = rule.onNodeWithTag(contentTag).semanticsId()
+                            dataIsSensitive = true
                         }
                     )
                     virtualId = AccessibilityNodeProviderCompat.HOST_VIEW_ID
@@ -461,6 +469,7 @@ class PerformAndroidAutofillManagerTest {
                             isFocusable = true
                             isSelected = true
                             virtualId = rule.onNodeWithTag(contentTag).semanticsId()
+                            dataIsSensitive = true
                         }
                     )
                     virtualId = AccessibilityNodeProviderCompat.HOST_VIEW_ID
@@ -512,6 +521,7 @@ class PerformAndroidAutofillManagerTest {
                             isFocusable = true
                             isSelected = true
                             virtualId = rule.onNodeWithTag(contentTag).semanticsId()
+                            dataIsSensitive = true
                         }
                     )
                     virtualId = AccessibilityNodeProviderCompat.HOST_VIEW_ID
@@ -563,6 +573,7 @@ class PerformAndroidAutofillManagerTest {
                             isFocusable = true
                             isSelected = true
                             virtualId = rule.onNodeWithTag(contentTag).semanticsId()
+                            dataIsSensitive = true
                         }
                     )
                     virtualId = AccessibilityNodeProviderCompat.HOST_VIEW_ID
@@ -605,6 +616,7 @@ class PerformAndroidAutofillManagerTest {
                             autofillHints = mutableListOf(HintConstants.AUTOFILL_HINT_USERNAME)
                             virtualId = rule.onNodeWithTag(contentTag).semanticsId()
                             visibility = View.VISIBLE
+                            dataIsSensitive = true
                         }
                     )
                     virtualId = AccessibilityNodeProviderCompat.HOST_VIEW_ID
@@ -645,6 +657,7 @@ class PerformAndroidAutofillManagerTest {
                             autofillHints = mutableListOf(HintConstants.AUTOFILL_HINT_USERNAME)
                             virtualId = rule.onNodeWithTag(contentTag).semanticsId()
                             visibility = View.INVISIBLE
+                            dataIsSensitive = true
                         }
                     )
                     virtualId = AccessibilityNodeProviderCompat.HOST_VIEW_ID
@@ -684,6 +697,7 @@ class PerformAndroidAutofillManagerTest {
                             autofillHints = mutableListOf(HintConstants.AUTOFILL_HINT_USERNAME)
                             virtualId = rule.onNodeWithTag(contentTag).semanticsId()
                             visibility = View.VISIBLE
+                            dataIsSensitive = true
                         }
                     )
                     virtualId = AccessibilityNodeProviderCompat.HOST_VIEW_ID
@@ -725,6 +739,7 @@ class PerformAndroidAutofillManagerTest {
                             autofillHints = mutableListOf(HintConstants.AUTOFILL_HINT_USERNAME)
                             virtualId = rule.onNodeWithTag(contentTag).semanticsId()
                             visibility = View.INVISIBLE
+                            dataIsSensitive = true
                         }
                     )
                 }
@@ -765,6 +780,7 @@ class PerformAndroidAutofillManagerTest {
                             autofillHints = mutableListOf(HintConstants.AUTOFILL_HINT_USERNAME)
                             isLongClickable = true
                             virtualId = rule.onNodeWithTag(contentTag).semanticsId()
+                            dataIsSensitive = true
                         }
                     )
                     virtualId = AccessibilityNodeProviderCompat.HOST_VIEW_ID
@@ -806,6 +822,7 @@ class PerformAndroidAutofillManagerTest {
                             autofillHints = mutableListOf(HintConstants.AUTOFILL_HINT_USERNAME)
                             isFocusable = true
                             virtualId = rule.onNodeWithTag(contentTag).semanticsId()
+                            dataIsSensitive = true
                         }
                     )
                     virtualId = AccessibilityNodeProviderCompat.HOST_VIEW_ID
@@ -847,6 +864,7 @@ class PerformAndroidAutofillManagerTest {
                             isFocusable = true
                             isFocused = true
                             virtualId = rule.onNodeWithTag(contentTag).semanticsId()
+                            dataIsSensitive = true
                         }
                     )
                     virtualId = AccessibilityNodeProviderCompat.HOST_VIEW_ID
@@ -885,6 +903,7 @@ class PerformAndroidAutofillManagerTest {
                             autofillHints = mutableListOf(HintConstants.AUTOFILL_HINT_USERNAME)
                             isEnabled = true
                             virtualId = rule.onNodeWithTag(contentTag).semanticsId()
+                            dataIsSensitive = true
                         }
                     )
                     virtualId = AccessibilityNodeProviderCompat.HOST_VIEW_ID
@@ -926,6 +945,7 @@ class PerformAndroidAutofillManagerTest {
                             autofillHints = mutableListOf(HintConstants.AUTOFILL_HINT_USERNAME)
                             isEnabled = false
                             virtualId = rule.onNodeWithTag(contentTag).semanticsId()
+                            dataIsSensitive = true
                         }
                     )
                     virtualId = AccessibilityNodeProviderCompat.HOST_VIEW_ID
@@ -970,6 +990,7 @@ class PerformAndroidAutofillManagerTest {
                             className = "android.widget.EditText"
                             maxTextLength = 5
                             virtualId = rule.onNodeWithTag(contentTag).semanticsId()
+                            dataIsSensitive = true
                         }
                     )
                     virtualId = AccessibilityNodeProviderCompat.HOST_VIEW_ID
@@ -1011,6 +1032,7 @@ class PerformAndroidAutofillManagerTest {
                             autofillHints = mutableListOf(HintConstants.AUTOFILL_HINT_USERNAME)
                             maxTextLength = -1
                             virtualId = rule.onNodeWithTag(contentTag).semanticsId()
+                            dataIsSensitive = true
                         }
                     )
                     virtualId = AccessibilityNodeProviderCompat.HOST_VIEW_ID
@@ -1053,6 +1075,7 @@ class PerformAndroidAutofillManagerTest {
                             autofillType = View.AUTOFILL_TYPE_TOGGLE
                             isCheckable = true
                             virtualId = rule.onNodeWithTag(contentTag).semanticsId()
+                            dataIsSensitive = true
                         }
                     )
                     virtualId = AccessibilityNodeProviderCompat.HOST_VIEW_ID
@@ -1096,6 +1119,7 @@ class PerformAndroidAutofillManagerTest {
                             isCheckable = true
                             isChecked = true
                             virtualId = rule.onNodeWithTag(contentTag).semanticsId()
+                            dataIsSensitive = true
                         }
                     )
                     virtualId = AccessibilityNodeProviderCompat.HOST_VIEW_ID
@@ -1139,6 +1163,7 @@ class PerformAndroidAutofillManagerTest {
                             isClickable = true
                             isFocusable = true
                             virtualId = rule.onNodeWithTag(contentTag).semanticsId()
+                            dataIsSensitive = true
                         }
                     )
                     virtualId = AccessibilityNodeProviderCompat.HOST_VIEW_ID
@@ -1188,6 +1213,7 @@ class PerformAndroidAutofillManagerTest {
                             text = ""
                             virtualId = rule.onNodeWithTag(contentTag).semanticsId()
                             visibility = View.VISIBLE
+                            dataIsSensitive = true
                         }
                     )
                     virtualId = AccessibilityNodeProviderCompat.HOST_VIEW_ID
@@ -1237,6 +1263,7 @@ class PerformAndroidAutofillManagerTest {
                             text = ""
                             virtualId = rule.onNodeWithTag(contentTag).semanticsId()
                             visibility = View.VISIBLE
+                            dataIsSensitive = true
                         }
                     )
                     virtualId = AccessibilityNodeProviderCompat.HOST_VIEW_ID
@@ -1432,6 +1459,50 @@ class PerformAndroidAutofillManagerTest {
                             autofillHints = mutableListOf(HintConstants.AUTOFILL_HINT_USERNAME)
                             autofillValue = AutofillValue.forText("fillableData-test")
                             virtualId = rule.onNodeWithTag(contentTag).semanticsId()
+                            dataIsSensitive = true
+                        }
+                    )
+                    virtualId = AccessibilityNodeProviderCompat.HOST_VIEW_ID
+                }
+            )
+    }
+
+    @Test
+    @SmallTest
+    @SdkSuppress(minSdkVersion = 26)
+    fun populateViewStructure_sensitiveSemanticProperty() {
+        // Arrange.
+        lateinit var view: View
+        val viewStructure = FakeViewStructure()
+
+        rule.setContent {
+            view = LocalView.current
+            Box(
+                modifier =
+                    Modifier.semantics {
+                            contentType = ContentType.Username
+                            isSensitiveData = false
+                        }
+                        .size(height, width)
+                        .testTag(contentTag)
+            )
+        }
+
+        // Act.
+        rule.runOnIdle {
+            // Compose does not use the Autofill flags parameter, passing in 0 as a placeholder flag
+            view.onProvideAutofillVirtualStructure(viewStructure, 0)
+        }
+
+        // Assert.
+        assertThat(viewStructure)
+            .isEqualTo(
+                ViewStructure(view) {
+                    children.add(
+                        ViewStructure(view) {
+                            autofillHints = mutableListOf(HintConstants.AUTOFILL_HINT_USERNAME)
+                            dataIsSensitive = false
+                            virtualId = rule.onNodeWithTag(contentTag).semanticsId()
                         }
                     )
                     virtualId = AccessibilityNodeProviderCompat.HOST_VIEW_ID
@@ -1544,6 +1615,7 @@ class PerformAndroidAutofillManagerTest {
             bounds = Rect(0, 0, width.dpToPx(), height.dpToPx())
             isEnabled = true
             packageName = view.context.applicationInfo.packageName
+            dataIsSensitive = true
             block()
         }
     }

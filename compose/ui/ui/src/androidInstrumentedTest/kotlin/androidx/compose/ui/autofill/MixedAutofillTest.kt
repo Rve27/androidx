@@ -162,6 +162,7 @@ class MixedAutofillTest {
                     bounds = AndroidRect(0, 0, width.dpToPx(), height.dpToPx())
                     autofillId = view.autofillId
                     isEnabled = true
+                    dataIsSensitive = true
                     children.add(
                         FakeViewStructure().apply {
                             virtualId = rule.onNodeWithTag("newApi").semanticsId()
@@ -175,6 +176,7 @@ class MixedAutofillTest {
                             isFocusable = false
                             isFocused = false
                             isEnabled = true
+                            dataIsSensitive = true
                         }
                     )
                     children.add(
@@ -243,6 +245,7 @@ class MixedAutofillTest {
                     bounds = AndroidRect(0, 0, width.dpToPx(), 2 * height.dpToPx())
                     autofillId = view.autofillId
                     isEnabled = true
+                    dataIsSensitive = true
                     children.add(
                         FakeViewStructure().apply {
                             virtualId = rule.onNodeWithTag("newApi").semanticsId()
@@ -256,6 +259,7 @@ class MixedAutofillTest {
                             isFocusable = false
                             isFocused = false
                             isEnabled = true
+                            dataIsSensitive = true
                         }
                     )
                     children.add(
