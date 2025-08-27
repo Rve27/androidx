@@ -209,22 +209,18 @@ public open class UiAutomatorTestScope protected constructor() {
      * Waits for an application to become visible. Note that internally it checks if an
      * accessibility node with the given [appPackageName] exists in the accessibility tree.
      *
-     * @param appPackageName the package name of the app to wait for. By default is the target app
-     *   package name.
+     * @param appPackageName the package name of the app to wait for.
      * @param timeoutMs a timeout for the app to become visible.
      * @return whether the app became visible in the given timeout.
      */
     @JvmOverloads
-    public fun waitForAppToBeVisible(
-        appPackageName: String = instrumentation.targetContext.packageName,
-        timeoutMs: Long = 10000L,
-    ): Boolean =
+    public fun waitForAppToBeVisible(appPackageName: String, timeoutMs: Long = 10000L): Boolean =
         device.waitForAppToBeVisible(appPackageName = appPackageName, timeoutMs = timeoutMs)
 
     /**
      * Types the given [text] string simulating key press through [Instrumentation.sendKeySync].
      * This is similar to tapping the keys on a virtual keyboard and will trigger the same listeners
-     * in the target app, as opposed to [AccessibilityNodeInfo.setText] that programmaticaly sets
+     * in the target app, as opposed to [AccessibilityNodeInfo.setText] that programmatically sets
      * the given text in the target node.
      *
      * @param text the text to type.
@@ -293,9 +289,6 @@ public open class UiAutomatorTestScope protected constructor() {
      * from there.
      */
     public fun activeWindowRoot(): AccessibilityNodeInfo = device.waitForRootInActiveWindow()
-
-    /** Starts the instrumentation test target app using the target app package name. */
-    public fun startApp(): Unit = startApp(instrumentation.targetContext.packageName)
 
     /**
      * Starts the app with the given [packageName].
