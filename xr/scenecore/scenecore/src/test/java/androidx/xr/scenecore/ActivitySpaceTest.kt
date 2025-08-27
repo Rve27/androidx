@@ -176,10 +176,18 @@ class ActivitySpaceTest {
     }
 
     @Test
-    fun setScale_throwsUnsupportedOperationException() {
+    fun setScale_float_throwsUnsupportedOperationException() {
         val activitySpace = ActivitySpace.create(mockPlatformAdapter, entityManager)
         assertThrows(UnsupportedOperationException::class.java) {
             activitySpace.setScale(1f, Space.PARENT)
+        }
+    }
+
+    @Test
+    fun setScale_vector_throwsUnsupportedOperationException() {
+        val activitySpace = ActivitySpace.create(mockPlatformAdapter, entityManager)
+        assertThrows(UnsupportedOperationException::class.java) {
+            activitySpace.setScale(Vector3.One, Space.PARENT)
         }
     }
 }

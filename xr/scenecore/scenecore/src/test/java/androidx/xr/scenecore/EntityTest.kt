@@ -604,8 +604,29 @@ class EntityTest {
     }
 
     @Test
-    fun allEntitySetScale_callsRuntimeEntityImplSetScale() {
+    fun allEntitySetScale_float_callsRuntimeEntityImplSetScale() {
         val scale = 0.1f
+
+        panelEntity.setScale(scale)
+        gltfModelEntity.setScale(scale, Space.PARENT)
+
+        // We expect this to raise an exception
+        assertThrows(UnsupportedOperationException::class.java) {
+            anchorEntity.setScale(scale, Space.ACTIVITY)
+        }
+        activityPanelEntity.setScale(scale, Space.REAL_WORLD)
+        groupEntity.setScale(scale)
+        assertThrows(UnsupportedOperationException::class.java) { activitySpace.setScale(scale) }
+
+        verify(mockPanelEntityImpl).setScale(any(), eq(RtSpace.PARENT))
+        verify(mockGltfModelEntityImpl).setScale(any(), eq(RtSpace.PARENT))
+        verify(mockActivityPanelEntity).setScale(any(), eq(RtSpace.REAL_WORLD))
+        verify(mockGroupEntity).setScale(any(), eq(RtSpace.PARENT))
+    }
+
+    @Test
+    fun allEntitySetScale_vector_callsRuntimeEntityImplSetScale() {
+        val scale = Vector3(0.1f, 0.1f, 0.1f)
 
         panelEntity.setScale(scale)
         gltfModelEntity.setScale(scale, Space.PARENT)

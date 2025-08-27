@@ -95,6 +95,7 @@ package androidx.xr.scenecore {
     method public void setEnabled(boolean enabled);
     method public void setParent(androidx.xr.scenecore.Entity?);
     method public void setPose(androidx.xr.runtime.math.Pose pose, @androidx.xr.scenecore.SpaceValue int relativeTo);
+    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public void setScale(androidx.xr.runtime.math.Vector3 scale, int relativeTo);
     method public void setScale(float scale, int relativeTo);
     property public CharSequence contentDescription;
     property public androidx.xr.scenecore.Entity? parent;
@@ -160,6 +161,7 @@ package androidx.xr.scenecore {
     method public void setParent(androidx.xr.scenecore.Entity?);
     method public default void setPose(androidx.xr.runtime.math.Pose pose);
     method public void setPose(androidx.xr.runtime.math.Pose pose, optional @androidx.xr.scenecore.SpaceValue int relativeTo);
+    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public void setScale(androidx.xr.runtime.math.Vector3 scale, optional @androidx.xr.scenecore.SpaceValue int relativeTo);
     method public default void setScale(@FloatRange(from=0.0) float scale);
     method public void setScale(@FloatRange(from=0.0) float scale, optional @androidx.xr.scenecore.SpaceValue int relativeTo);
     property public abstract CharSequence contentDescription;

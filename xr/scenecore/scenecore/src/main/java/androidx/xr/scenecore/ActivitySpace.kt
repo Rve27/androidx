@@ -22,6 +22,7 @@ import androidx.annotation.RestrictTo
 import androidx.xr.runtime.math.BoundingBox
 import androidx.xr.runtime.math.FloatSize3d
 import androidx.xr.runtime.math.Pose
+import androidx.xr.runtime.math.Vector3
 import androidx.xr.scenecore.internal.ActivitySpace as RtActivitySpace
 import androidx.xr.scenecore.internal.JxrPlatformAdapter
 import java.util.concurrent.ConcurrentHashMap
@@ -235,6 +236,21 @@ private constructor(rtActivitySpace: RtActivitySpace, entityManager: EntityManag
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     override fun setScale(scale: Float, @SpaceValue relativeTo: Int) {
         checkNotDisposed()
+        throw UnsupportedOperationException("Cannot set 'scale' on an ActivitySpace.")
+    }
+
+    /**
+     * Throws [UnsupportedOperationException] if called.
+     *
+     * **Note:** The scale of the `ActivitySpace` is managed by the system. Applications should not
+     * call this method, as any changes may be overwritten by the system.
+     *
+     * @param scale The new scale to set.
+     * @param relativeTo The space in which the scale is defined.
+     * @throws UnsupportedOperationException if called.
+     */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    override fun setScale(scale: Vector3, @SpaceValue relativeTo: Int) {
         throw UnsupportedOperationException("Cannot set 'scale' on an ActivitySpace.")
     }
 

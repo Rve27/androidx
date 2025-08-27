@@ -129,10 +129,18 @@ class AnchorEntityTest {
     }
 
     @Test
-    fun setScale_throwsUnsupportedOperationException() {
+    fun setScale_float_throwsUnsupportedOperationException() {
         val anchorEntity = AnchorEntity.create(mockAnchorEntityImpl, entityManager)
         assertThrows(UnsupportedOperationException::class.java) {
             anchorEntity.setScale(1f, Space.PARENT)
+        }
+    }
+
+    @Test
+    fun setScale_vector_throwsUnsupportedOperationException() {
+        val anchorEntity = AnchorEntity.create(mockAnchorEntityImpl, entityManager)
+        assertThrows(UnsupportedOperationException::class.java) {
+            anchorEntity.setScale(Vector3.One, Space.PARENT)
         }
     }
 }

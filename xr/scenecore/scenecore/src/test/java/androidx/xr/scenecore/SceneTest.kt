@@ -335,7 +335,7 @@ class SceneTest {
         rtListener.onSpatialModeChanged(pose1, scale1)
         shadowOf(Looper.getMainLooper()).idle()
         verify(mockKeyEntity, never()).setPose(any(), any())
-        verify(mockKeyEntity, never()).setScale(any(), any())
+        verify(mockKeyEntity, never()).setScale(eq(scale1), any())
 
         // Clear the listener
         session.scene.clearSpatialModeChangedListener()
@@ -368,7 +368,7 @@ class SceneTest {
 
         assertThat(listenerCalled).isTrue()
         verify(mockKeyEntity, never()).setPose(any(), any())
-        verify(mockKeyEntity, never()).setScale(any(), any())
+        verify(mockKeyEntity, never()).setScale(eq(Vector3.One), any())
     }
 
     @Test

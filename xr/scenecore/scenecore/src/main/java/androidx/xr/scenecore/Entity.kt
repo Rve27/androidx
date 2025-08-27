@@ -20,6 +20,7 @@ package androidx.xr.scenecore
 
 import android.util.Log
 import androidx.annotation.FloatRange
+import androidx.annotation.RestrictTo
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Vector3
 import androidx.xr.scenecore.internal.ActivityPose as RtActivityPose
@@ -80,9 +81,9 @@ public interface Entity : ScenePose {
     public fun getPose(): Pose = getPose(Space.PARENT)
 
     /**
-     * Sets the scale of this Entity relative to given Space. This value will affect the rendering
-     * of this Entity's children. As the scale increases, this will uniformly stretch the content of
-     * the Entity.
+     * Sets the scale of this Entity relative to the given Space. This value will affect the
+     * rendering of this Entity's children. As the scale increases, this will uniformly stretch the
+     * content of the Entity.
      *
      * @param scale The uniform scale factor.
      * @param relativeTo Set the scale relative to given Space. Default value is the parent Space.
@@ -91,6 +92,18 @@ public interface Entity : ScenePose {
         @FloatRange(from = 0.0) scale: Float,
         @SpaceValue relativeTo: Int = Space.PARENT,
     )
+
+    /**
+     * Sets the scale of this Entity relative to the given Space. This value will affect the
+     * rendering of this Entity's children. As the scale increases, this will strech the content of
+     * the Entity as specified along each axis.
+     *
+     * @param scale The scale factor for each axis.
+     * @param relativeTo Set the scale relative to given Space. Default value is the parent Space.
+     */
+    // TODO - b/440157781: Add a getter method for non uniform scale
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
+    public fun setScale(scale: Vector3, @SpaceValue relativeTo: Int = Space.PARENT)
 
     /**
      * Sets the scale of this Entity relative to its parent. This value will affect the rendering of
@@ -300,7 +313,13 @@ internal constructor(rtEntity: RtEntityType, private val entityManager: EntityMa
 
     override fun setScale(scale: Float, relativeTo: Int) {
         checkNotDisposed()
-        rtEntity!!.setScale(Vector3(scale, scale, scale), relativeTo.toRtSpace())
+        setScale(Vector3(scale, scale, scale), relativeTo.toRtSpace())
+    }
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
+    override fun setScale(scale: Vector3, relativeTo: Int) {
+        checkNotDisposed()
+        rtEntity!!.setScale(scale, relativeTo.toRtSpace())
     }
 
     override fun getScale(@SpaceValue relativeTo: Int): Float {
