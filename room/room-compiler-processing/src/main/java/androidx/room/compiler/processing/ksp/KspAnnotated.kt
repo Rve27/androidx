@@ -18,7 +18,6 @@ package androidx.room.compiler.processing.ksp
 
 import androidx.room.compiler.processing.InternalXAnnotated
 import androidx.room.compiler.processing.XAnnotation
-import androidx.room.compiler.processing.unwrapRepeatedAnnotationsFromContainer
 import com.google.devtools.ksp.symbol.AnnotationUseSiteTarget
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSAnnotation
@@ -27,20 +26,13 @@ import java.lang.annotation.ElementType
 import kotlin.reflect.KClass
 
 internal sealed class KspAnnotated(val env: KspProcessingEnv) : InternalXAnnotated {
-    abstract fun annotations(): Sequence<KSAnnotation>
+    protected abstract val ksAnnotations: Sequence<KSAnnotation>
 
-    private fun <T : Annotation> findAnnotations(annotation: KClass<T>): Sequence<KSAnnotation> {
-        return annotations().filter { it.isSameAnnotationClass(annotation) }
+    private val annotations: List<XAnnotation> by lazy {
+        ksAnnotations.map { KspAnnotation(env, it) }.toList()
     }
 
-    override fun getAllAnnotations(): List<XAnnotation> {
-        return annotations()
-            .map { ksAnnotated -> KspAnnotation(env, ksAnnotated) }
-            .flatMap { annotation ->
-                annotation.unwrapRepeatedAnnotationsFromContainer() ?: listOf(annotation)
-            }
-            .toList()
-    }
+    override fun getAllAnnotations() = annotations
 
     override fun <T : Annotation> getAnnotations(
         annotation: KClass<T>,
@@ -60,8 +52,12 @@ internal sealed class KspAnnotated(val env: KspProcessingEnv) : InternalXAnnotat
             .toList()
     }
 
+    private fun <T : Annotation> findAnnotations(annotation: KClass<T>): Sequence<KSAnnotation> {
+        return ksAnnotations.filter { it.isSameAnnotationClass(annotation) }
+    }
+
     override fun hasAnnotationWithPackage(pkg: String): Boolean {
-        return annotations().any {
+        return ksAnnotations.any {
             it.annotationType.resolve().declaration.packageName.asString() == pkg
         }
     }
@@ -70,7 +66,7 @@ internal sealed class KspAnnotated(val env: KspProcessingEnv) : InternalXAnnotat
         annotation: KClass<out Annotation>,
         containerAnnotation: KClass<out Annotation>?,
     ): Boolean {
-        return annotations().any {
+        return ksAnnotations.any {
             it.isSameAnnotationClass(annotation) ||
                 (containerAnnotation != null && it.isSameAnnotationClass(containerAnnotation))
         }
@@ -78,18 +74,16 @@ internal sealed class KspAnnotated(val env: KspProcessingEnv) : InternalXAnnotat
 
     private class KSAnnotatedDelegate(
         env: KspProcessingEnv,
-        private val delegate: KSAnnotated,
-        private val useSiteFilter: UseSiteFilter,
+        delegate: KSAnnotated,
+        useSiteFilter: UseSiteFilter,
     ) : KspAnnotated(env) {
-        override fun annotations(): Sequence<KSAnnotation> {
-            return delegate.annotations.filter { useSiteFilter.accept(env, it) }
+        override val ksAnnotations by lazy {
+            delegate.annotations.filter { useSiteFilter.accept(env, it) }
         }
     }
 
     private class NotAnnotated(env: KspProcessingEnv) : KspAnnotated(env) {
-        override fun annotations(): Sequence<KSAnnotation> {
-            return emptySequence()
-        }
+        override val ksAnnotations = emptySequence<KSAnnotation>()
     }
 
     /**
