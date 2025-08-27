@@ -96,13 +96,6 @@ class SceneTest {
     }
 
     @Test
-    fun getSceneAfterSessionDestroyed_throwsIllegalStateException() {
-        activityController.destroy()
-
-        assertFailsWith<IllegalStateException> { session.scene }
-    }
-
-    @Test
     fun getActivitySpace_returnsActivitySpace() {
         val activitySpace = session.scene.activitySpace
 

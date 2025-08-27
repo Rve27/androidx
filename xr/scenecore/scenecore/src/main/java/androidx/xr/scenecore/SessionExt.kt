@@ -44,6 +44,8 @@ private val Activity.lifecycle: Lifecycle
 /**
  * Gets the [Scene] associated with this Session.
  *
+ * Accessing the scene in a destroyed activity can be dangerous.
+ *
  * The `Scene` is the primary interface for creating and managing spatial content. There is a single
  * `Scene` instance for each `Session`.
  *
@@ -54,9 +56,6 @@ public val Session.scene: Scene
 
 /** Checks whether the Session has been destroyed. */
 private fun checkAndGetScene(session: Session): Scene {
-    check(session.activity.lifecycle.currentState != Lifecycle.State.DESTROYED) {
-        "Session has been destroyed."
-    }
     return sceneCache.getOrPut(session) {
         // This lambda is executed only once per session instance.
         session.sessionConnectors.filterIsInstance<Scene>().single()
