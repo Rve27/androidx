@@ -52,6 +52,7 @@ class NavDisplayLifecycleTest {
 
         assertThat(actualEvents)
             .containsExactly("A" to "ON_RESUME", "A" to "ON_PAUSE", "B" to "ON_RESUME")
+            .inOrder()
     }
 
     @Test
@@ -74,6 +75,7 @@ class NavDisplayLifecycleTest {
 
         assertThat(actualEvents)
             .containsExactly("B" to "ON_RESUME", "B" to "ON_PAUSE", "A" to "ON_RESUME")
+            .inOrder()
     }
 
     @Test
@@ -101,6 +103,7 @@ class NavDisplayLifecycleTest {
                 "A" to "ON_RESUME",
                 "B" to "ON_RESUME",
             )
+            .inOrder()
     }
 
     @Test
@@ -125,9 +128,10 @@ class NavDisplayLifecycleTest {
             .containsExactly(
                 "A" to "ON_RESUME",
                 "B" to "ON_RESUME",
-                "A" to "ON_PAUSE",
                 "B" to "ON_PAUSE",
+                "A" to "ON_PAUSE",
                 "A" to "ON_RESUME",
             )
+            .inOrder()
     }
 }
