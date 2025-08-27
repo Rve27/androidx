@@ -291,8 +291,8 @@ package androidx.test.uiautomator {
     method public final boolean pressHome();
     method public final void startActivity(Class<? extends java.lang.Object?> clazz);
     method public final void startActivity(String packageName, String activityName);
+    method public void startActivityIntent(android.content.Intent intent);
     method public final void startApp(String packageName);
-    method public final void startIntent(android.content.Intent intent);
     method public final void type(String text);
     method public final void unregisterWatchers();
     method public final boolean waitForAppToBeVisible(String appPackageName);

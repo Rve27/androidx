@@ -16,13 +16,15 @@
 
 package androidx.test.uiautomator
 
+import android.app.ActivityManager
 import android.app.Instrumentation
 import android.app.UiAutomation
+import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
 import android.view.accessibility.AccessibilityNodeInfo
 import android.view.accessibility.AccessibilityWindowInfo
 import androidx.test.platform.app.InstrumentationRegistry
-import androidx.test.uiautomator.internal.AppManager
 import androidx.test.uiautomator.watcher.ScopedUiWatcher
 import androidx.test.uiautomator.watcher.WatcherRegistration
 
@@ -73,8 +75,6 @@ public open class UiAutomatorTestScope protected constructor() {
     public val instrumentation: Instrumentation = InstrumentationRegistry.getInstrumentation()
     public val uiAutomation: UiAutomation = instrumentation.uiAutomation
     public val device: UiDevice = UiDevice.getInstance(instrumentation)
-
-    private val appManager = AppManager(context = instrumentation.targetContext)
     private val watcherRegistrations = mutableSetOf<WatcherRegistration>()
 
     /** Unregisters all the watchers previously registered with [watchFor]. */
@@ -284,9 +284,9 @@ public open class UiAutomatorTestScope protected constructor() {
 
     /**
      * Returns the active window root node. Note that calling this method after [startApp],
-     * [startActivity] or [startIntent] without waiting for the app to be visible, will return the
-     * active window root at the time of starting the app, i.e. the root of the launcher if starting
-     * from there.
+     * [startActivity] or [startActivityIntent] without waiting for the app to be visible, will
+     * return the active window root at the time of starting the app, i.e. the root of the launcher
+     * if starting from there.
      */
     public fun activeWindowRoot(): AccessibilityNodeInfo = device.waitForRootInActiveWindow()
 
@@ -295,7 +295,28 @@ public open class UiAutomatorTestScope protected constructor() {
      *
      * @param packageName the package name of the app to start
      */
-    public fun startApp(packageName: String): Unit = appManager.startApp(packageName = packageName)
+    public fun startApp(packageName: String) {
+        val packageManager = instrumentation.targetContext.packageManager
+        var intent = packageManager.getLaunchIntentForPackage(packageName)
+        if (intent == null) {
+            intent = packageManager.getLeanbackLaunchIntentForPackage(packageName)
+        }
+        if (intent == null) {
+            intent = Intent(Intent.ACTION_MAIN).apply { setPackage(packageName) }
+            val resolveInfo = packageManager.resolveActivity(intent, 0)
+            if (resolveInfo != null && resolveInfo.activityInfo != null) {
+                intent.setComponent(
+                    ComponentName(
+                        resolveInfo.activityInfo.packageName,
+                        resolveInfo.activityInfo.name,
+                    )
+                )
+            }
+        }
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        startActivityIntent(intent)
+    }
 
     /**
      * Starts an activity with the given [packageName] and [activityName].
@@ -304,22 +325,43 @@ public open class UiAutomatorTestScope protected constructor() {
      * @param activityName the name of the activity to start.
      */
     public fun startActivity(packageName: String, activityName: String): Unit =
-        appManager.startActivity(packageName = packageName, activityName = activityName)
+        startActivityIntent(
+            Intent().apply { setComponent(ComponentName(packageName, activityName)) }
+        )
 
     /**
      * Starts an activity with the given class.
      *
      * @param clazz the class of the activity to start.
      */
-    public fun startActivity(clazz: Class<*>): Unit = appManager.startActivity(clazz = clazz)
+    public fun startActivity(clazz: Class<*>): Unit =
+        startActivityIntent(
+            Intent().apply { setClass(instrumentation.targetContext.applicationContext, clazz) }
+        )
 
     /**
-     * Starts the given [intent].
+     * Starts the given [intent] for an activity.
      *
      * @param intent an intent to start
      */
-    public fun startIntent(intent: Intent): Unit = appManager.startIntent(intent = intent)
+    public open fun startActivityIntent(intent: Intent): Unit {
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        instrumentation.targetContext.startActivity(intent)
+
+        // Only wait if the intent is meant to start an activity
+        val componentName =
+            intent.resolveActivity(instrumentation.targetContext.packageManager)
+                ?: throw IllegalArgumentException("The given intent does not resolve any activity")
+
+        waitForAppToBeVisible(appPackageName = componentName.packageName)
+    }
 
     /** Clears the instrumentation test target app data. */
-    public fun clearAppData(): Unit = appManager.clearAppData()
+    public fun clearAppData() {
+        val activityManager =
+            instrumentation.targetContext.getSystemService(Context.ACTIVITY_SERVICE)
+                as ActivityManager
+        activityManager.clearApplicationUserData()
+    }
 }
