@@ -39,15 +39,21 @@ import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.unit.dp
 import androidx.test.filters.SdkSuppress
 import androidx.test.screenshot.AndroidXScreenshotTestRule
+import androidx.test.screenshot.matchers.BitmapMatcher
 import org.junit.rules.RuleChain
 import org.junit.rules.TestName
 import org.junit.rules.TestRule
 import org.junit.runner.Description
 import org.junit.runners.model.Statement
 
-/** A [TestRule] that takes screenshots of remote composable functions using devices. */
+/**
+ * A [TestRule] that takes screenshots of remote composable functions using devices.
+ *
+ * @param matcher The algorithm to be used to perform the matching. If null, it will let
+ *   [assertAgainstGolden] use its default.
+ */
 @SdkSuppress(minSdkVersion = 35, maxSdkVersion = 35)
-class RemoteComposeScreenshotTestRule() : TestRule {
+class RemoteComposeScreenshotTestRule(private val matcher: BitmapMatcher? = null) : TestRule {
     val composeTestRule = createComposeRule()
     val testName = TestName()
     val screenshotRule = AndroidXScreenshotTestRule(GOLDEN_REMOTE_COMPOSE)
@@ -143,7 +149,11 @@ class RemoteComposeScreenshotTestRule() : TestRule {
     ) {
         val goldenScreenshotName = testName.goldenIdentifier()
         val screenshot = onRoot().captureToImage()
-        screenshot.assertAgainstGolden(screenshotRule, goldenScreenshotName)
+        if (matcher != null) {
+            screenshot.assertAgainstGolden(screenshotRule, goldenScreenshotName, matcher)
+        } else {
+            screenshot.assertAgainstGolden(screenshotRule, goldenScreenshotName)
+        }
     }
 
     /**

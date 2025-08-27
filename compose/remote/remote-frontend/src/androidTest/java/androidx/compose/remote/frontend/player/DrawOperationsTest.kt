@@ -35,6 +35,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.test.filters.MediumTest
 import androidx.test.filters.SdkSuppress
+import androidx.test.screenshot.matchers.MSSIMMatcher
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -44,7 +45,9 @@ import org.junit.runners.JUnit4
 @SdkSuppress(minSdkVersion = 35, maxSdkVersion = 35)
 @RunWith(JUnit4::class)
 class DrawOperationsTest {
-    @get:Rule val remoteComposeTestRule = RemoteComposeScreenshotTestRule()
+    @get:Rule
+    val remoteComposeTestRule =
+        RemoteComposeScreenshotTestRule(matcher = MSSIMMatcher(threshold = 0.999))
 
     @Test
     fun drawOperationsInGrid() {

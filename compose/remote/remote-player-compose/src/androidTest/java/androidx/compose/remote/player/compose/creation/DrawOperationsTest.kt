@@ -37,6 +37,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.test.filters.MediumTest
 import androidx.test.filters.SdkSuppress
+import androidx.test.screenshot.matchers.MSSIMMatcher
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -47,7 +48,11 @@ import org.junit.runners.JUnit4
 @RunWith(JUnit4::class)
 class DrawOperationsTest {
     @get:Rule
-    val remoteComposeTestRule = RemoteComposeScreenshotTestRule(SCREENSHOT_GOLDEN_DIRECTORY)
+    val remoteComposeTestRule =
+        RemoteComposeScreenshotTestRule(
+            moduleDirectory = SCREENSHOT_GOLDEN_DIRECTORY,
+            matcher = MSSIMMatcher(threshold = 0.999),
+        )
 
     @Test
     fun drawOperationsInGrid() {
