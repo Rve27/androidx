@@ -42,10 +42,10 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
  */
 @ExperimentalMaterial3AdaptiveApi
 @Composable
-fun Scrim(
+fun LevitatedPaneScrim(
     modifier: Modifier = Modifier,
-    onClick: (() -> Unit) = ScrimDefaults.onClickAction,
-    color: Color = ScrimDefaults.color,
+    onClick: (() -> Unit) = LevitatedPaneScrimDefaults.onClickAction,
+    color: Color = LevitatedPaneScrimDefaults.Color,
 ) {
     Box(
         modifier =
@@ -53,7 +53,7 @@ fun Scrim(
                 .fillMaxSize()
                 .background(color)
                 .then(
-                    if (onClick === ScrimDefaults.onClickAction) {
+                    if (onClick === LevitatedPaneScrimDefaults.onClickAction) {
                         Modifier
                     } else {
                         // Disable a11y for the scrim to respect the no-op default onClick action.
@@ -64,11 +64,11 @@ fun Scrim(
     )
 }
 
-/** The objet to provide default values of [Scrim]. */
+/** The objet to provide default values of [LevitatedPaneScrim]. */
 @ExperimentalMaterial3AdaptiveApi
-object ScrimDefaults {
+object LevitatedPaneScrimDefaults {
     /** The default color of the scrim, which is a translucent black. */
-    val color = Color.Black.copy(alpha = 0.32f)
+    val Color = androidx.compose.ui.graphics.Color.Black.copy(alpha = 0.32f)
 
     internal val onClickAction: () -> Unit = {}
 }
