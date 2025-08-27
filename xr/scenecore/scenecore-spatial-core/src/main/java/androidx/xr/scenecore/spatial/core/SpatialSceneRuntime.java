@@ -46,6 +46,7 @@ import androidx.xr.scenecore.internal.InputEventListener;
 import androidx.xr.scenecore.internal.InteractableComponent;
 import androidx.xr.scenecore.internal.LoggingEntity;
 import androidx.xr.scenecore.internal.MediaPlayerExtensionsWrapper;
+import androidx.xr.scenecore.internal.MovableComponent;
 import androidx.xr.scenecore.internal.PanelEntity;
 import androidx.xr.scenecore.internal.PerceptionSpaceActivityPose;
 import androidx.xr.scenecore.internal.PixelDimensions;
@@ -769,5 +770,27 @@ class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory {
         anchorPlacement.mPlaneTypeFilter.addAll(planeTypeFilter);
         anchorPlacement.mPlaneSemanticFilter.addAll(planeSemanticFilter);
         return anchorPlacement;
+    }
+
+    @Override
+    public @NonNull MovableComponent createMovableComponent(
+            boolean systemMovable,
+            boolean scaleInZ,
+            @NonNull Set<AnchorPlacement> anchorPlacement,
+            boolean shouldDisposeParentAnchor) {
+        return new MovableComponentImpl(
+                systemMovable,
+                scaleInZ,
+                anchorPlacement,
+                shouldDisposeParentAnchor,
+                mPerceptionLibrary,
+                mExtensions,
+                mActivitySpace,
+                mActivitySpace,
+                mPerceptionSpaceActivityPose,
+                mEntityManager,
+                new PanelShadowRenderer(
+                        mActivitySpace, mPerceptionSpaceActivityPose, mActivity, mExtensions),
+                mExecutor);
     }
 }

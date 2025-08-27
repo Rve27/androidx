@@ -279,5 +279,12 @@ public class FakeSceneRuntime() : SceneRuntime, RenderingEntityFactory {
         planeSemanticFilter: Set<@JvmSuppressWildcards PlaneSemantic>,
     ): AnchorPlacement = object : AnchorPlacement {}
 
+    override fun createMovableComponent(
+        systemMovable: Boolean,
+        scaleInZ: Boolean,
+        anchorPlacement: Set<@JvmSuppressWildcards AnchorPlacement>,
+        shouldDisposeParentAnchor: Boolean,
+    ): FakeMovableComponent = FakeMovableComponent()
+
     override fun dispose() {}
 }

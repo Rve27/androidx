@@ -47,6 +47,7 @@ import androidx.xr.scenecore.impl.perception.ViewProjections;
 import androidx.xr.scenecore.impl.perception.exceptions.FailedToInitializeException;
 import androidx.xr.scenecore.internal.ActivitySpace;
 import androidx.xr.scenecore.internal.AnchorEntity;
+import androidx.xr.scenecore.internal.AnchorPlacement;
 import androidx.xr.scenecore.internal.AudioTrackExtensionsWrapper;
 import androidx.xr.scenecore.internal.CameraViewActivityPose;
 import androidx.xr.scenecore.internal.Dimensions;
@@ -56,6 +57,7 @@ import androidx.xr.scenecore.internal.InputEventListener;
 import androidx.xr.scenecore.internal.InteractableComponent;
 import androidx.xr.scenecore.internal.LoggingEntity;
 import androidx.xr.scenecore.internal.MediaPlayerExtensionsWrapper;
+import androidx.xr.scenecore.internal.MovableComponent;
 import androidx.xr.scenecore.internal.PixelDimensions;
 import androidx.xr.scenecore.internal.PlaneSemantic;
 import androidx.xr.scenecore.internal.PlaneType;
@@ -82,6 +84,7 @@ import com.android.extensions.xr.space.SpatialState;
 import com.android.extensions.xr.space.VisibilityState;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import org.jspecify.annotations.NonNull;
@@ -93,6 +96,7 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 
 import java.time.Duration;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -971,5 +975,20 @@ public class SpatialSceneRuntimeTest {
         InteractableComponent interactableComponent =
                 mRuntime.createInteractableComponent(directExecutor(), mockConsumer);
         assertThat(interactableComponent).isNotNull();
+    }
+
+    @Test
+    public void createAnchorPlacement_returnsAnchorPlacement() {
+        AnchorPlacement anchorPlacement =
+                mRuntime.createAnchorPlacementForPlanes(
+                        ImmutableSet.of(PlaneType.ANY), ImmutableSet.of(PlaneSemantic.ANY));
+        assertThat(anchorPlacement).isNotNull();
+    }
+
+    @Test
+    public void createMovableComponent_returnsComponent() {
+        MovableComponent movableComponent =
+                mRuntime.createMovableComponent(true, true, new HashSet<AnchorPlacement>(), true);
+        assertThat(movableComponent).isNotNull();
     }
 }

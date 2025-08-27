@@ -2782,6 +2782,7 @@ package androidx.xr.scenecore.internal {
     method public androidx.xr.scenecore.internal.Entity createGroupEntity(androidx.xr.runtime.math.Pose pose, String name, androidx.xr.scenecore.internal.Entity parent);
     method public androidx.xr.scenecore.internal.InteractableComponent createInteractableComponent(java.util.concurrent.Executor executor, androidx.xr.scenecore.internal.InputEventListener listener);
     method public androidx.xr.scenecore.internal.LoggingEntity createLoggingEntity(androidx.xr.runtime.math.Pose pose);
+    method public androidx.xr.scenecore.internal.MovableComponent createMovableComponent(boolean systemMovable, boolean scaleInZ, java.util.Set<androidx.xr.scenecore.internal.AnchorPlacement> anchorPlacement, boolean shouldDisposeParentAnchor);
     method public androidx.xr.scenecore.internal.PanelEntity createPanelEntity(android.content.Context context, androidx.xr.runtime.math.Pose pose, android.view.View view, androidx.xr.scenecore.internal.Dimensions dimensions, String name, androidx.xr.scenecore.internal.Entity parent);
     method public androidx.xr.scenecore.internal.PanelEntity createPanelEntity(android.content.Context context, androidx.xr.runtime.math.Pose pose, android.view.View view, androidx.xr.scenecore.internal.PixelDimensions pixelDimensions, String name, androidx.xr.scenecore.internal.Entity parent);
     method public androidx.xr.scenecore.internal.AnchorEntity createPersistedAnchorEntity(java.util.UUID uuid, java.time.Duration searchTimeout);

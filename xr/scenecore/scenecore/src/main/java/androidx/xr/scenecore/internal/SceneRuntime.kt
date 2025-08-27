@@ -420,6 +420,26 @@ public interface SceneRuntime : JxrRuntime {
         planeSemanticFilter: Set<@JvmSuppressWildcards PlaneSemantic>,
     ): AnchorPlacement
 
+    /**
+     * Create an instance of [MovableComponent]. This component allows the user to move the entity.
+     *
+     * @param systemMovable A [Boolean] which causes the system to automatically apply transform
+     *   updates to the entity in response to user interaction.
+     * @param scaleInZ A [Boolean] which tells the system to update the scale of the Entity as the
+     *   user moves it closer and further away. This is mostly useful for Panel auto-rescaling with
+     *   Distance
+     * @param anchorPlacement AnchorPlacement information for when to anchor the entity.
+     * @param shouldDisposeParentAnchor A [Boolean] which tells the system to dispose of the parent
+     *   anchor if that entity was created by the moveable component and is moved off of it.
+     * @return [MovableComponent] instance.
+     */
+    public fun createMovableComponent(
+        systemMovable: Boolean,
+        scaleInZ: Boolean,
+        anchorPlacement: Set<@JvmSuppressWildcards AnchorPlacement>,
+        shouldDisposeParentAnchor: Boolean,
+    ): MovableComponent
+
     /** Disposes of the resources used by this runtime */
     public fun dispose()
 }
