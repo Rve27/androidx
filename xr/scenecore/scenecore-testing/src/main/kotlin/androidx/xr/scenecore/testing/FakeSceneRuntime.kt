@@ -28,6 +28,7 @@ import androidx.xr.runtime.math.Pose
 import androidx.xr.scenecore.internal.ActivityPanelEntity
 import androidx.xr.scenecore.internal.ActivitySpace
 import androidx.xr.scenecore.internal.AnchorEntity
+import androidx.xr.scenecore.internal.AnchorPlacement
 import androidx.xr.scenecore.internal.AudioTrackExtensionsWrapper
 import androidx.xr.scenecore.internal.CameraViewActivityPose
 import androidx.xr.scenecore.internal.Dimensions
@@ -272,6 +273,11 @@ public class FakeSceneRuntime() : SceneRuntime, RenderingEntityFactory {
         executor: Executor,
         listener: InputEventListener,
     ): InteractableComponent = FakeInteractableComponent()
+
+    override fun createAnchorPlacementForPlanes(
+        planeTypeFilter: Set<@JvmSuppressWildcards PlaneType>,
+        planeSemanticFilter: Set<@JvmSuppressWildcards PlaneSemantic>,
+    ): AnchorPlacement = object : AnchorPlacement {}
 
     override fun dispose() {}
 }

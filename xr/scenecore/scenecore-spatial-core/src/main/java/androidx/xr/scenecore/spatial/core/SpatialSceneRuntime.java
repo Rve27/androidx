@@ -34,6 +34,7 @@ import androidx.xr.scenecore.impl.perception.Session;
 import androidx.xr.scenecore.internal.ActivityPanelEntity;
 import androidx.xr.scenecore.internal.ActivitySpace;
 import androidx.xr.scenecore.internal.AnchorEntity;
+import androidx.xr.scenecore.internal.AnchorPlacement;
 import androidx.xr.scenecore.internal.AudioTrackExtensionsWrapper;
 import androidx.xr.scenecore.internal.CameraViewActivityPose;
 import androidx.xr.scenecore.internal.Dimensions;
@@ -77,6 +78,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
@@ -757,5 +759,15 @@ class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory {
     public @NonNull InteractableComponent createInteractableComponent(
             @NonNull Executor executor, @NonNull InputEventListener listener) {
         return new InteractableComponentImpl(executor, listener);
+    }
+
+    @Override
+    public @NonNull AnchorPlacement createAnchorPlacementForPlanes(
+            @NonNull Set<PlaneType> planeTypeFilter,
+            @NonNull Set<PlaneSemantic> planeSemanticFilter) {
+        AnchorPlacementImpl anchorPlacement = new AnchorPlacementImpl();
+        anchorPlacement.mPlaneTypeFilter.addAll(planeTypeFilter);
+        anchorPlacement.mPlaneSemanticFilter.addAll(planeSemanticFilter);
+        return anchorPlacement;
     }
 }

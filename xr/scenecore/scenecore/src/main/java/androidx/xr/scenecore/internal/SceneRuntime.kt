@@ -406,6 +406,20 @@ public interface SceneRuntime : JxrRuntime {
         listener: InputEventListener,
     ): InteractableComponent
 
+    /**
+     * Creates an instance of an AnchorPlacement object.
+     *
+     * <p>This can be used in movable components to specify the anchor placement for the entity.
+     *
+     * @param planeTypeFilter A set of plane types to filter for.
+     * @param planeSemanticFilter A set of plane semantics to filter for.
+     * @return [AnchorPlacement] instance.
+     */
+    public fun createAnchorPlacementForPlanes(
+        planeTypeFilter: Set<@JvmSuppressWildcards PlaneType>,
+        planeSemanticFilter: Set<@JvmSuppressWildcards PlaneSemantic>,
+    ): AnchorPlacement
+
     /** Disposes of the resources used by this runtime */
     public fun dispose()
 }

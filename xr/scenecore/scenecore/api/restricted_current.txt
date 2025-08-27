@@ -2778,6 +2778,7 @@ package androidx.xr.scenecore.internal {
     method public androidx.xr.scenecore.internal.ActivityPanelEntity createActivityPanelEntity(androidx.xr.runtime.math.Pose pose, androidx.xr.scenecore.internal.PixelDimensions windowBoundsPx, String name, android.app.Activity hostActivity, androidx.xr.scenecore.internal.Entity parent);
     method public androidx.xr.scenecore.internal.AnchorEntity createAnchorEntity(androidx.xr.arcore.internal.Anchor anchor);
     method public androidx.xr.scenecore.internal.AnchorEntity createAnchorEntity(androidx.xr.scenecore.internal.Dimensions bounds, androidx.xr.scenecore.internal.PlaneType planeType, androidx.xr.scenecore.internal.PlaneSemantic planeSemantic, java.time.Duration searchTimeout);
+    method public androidx.xr.scenecore.internal.AnchorPlacement createAnchorPlacementForPlanes(java.util.Set<androidx.xr.scenecore.internal.PlaneType> planeTypeFilter, java.util.Set<androidx.xr.scenecore.internal.PlaneSemantic> planeSemanticFilter);
     method public androidx.xr.scenecore.internal.Entity createGroupEntity(androidx.xr.runtime.math.Pose pose, String name, androidx.xr.scenecore.internal.Entity parent);
     method public androidx.xr.scenecore.internal.InteractableComponent createInteractableComponent(java.util.concurrent.Executor executor, androidx.xr.scenecore.internal.InputEventListener listener);
     method public androidx.xr.scenecore.internal.LoggingEntity createLoggingEntity(androidx.xr.runtime.math.Pose pose);
