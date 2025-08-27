@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 The Android Open Source Project
+ * Copyright 2023 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,31 +14,31 @@
  * limitations under the License.
  */
 
-package androidx.compose.runtime.composer.gapbuffer.changelist
+package androidx.compose.runtime.changelist
 
+import androidx.compose.runtime.Anchor
+import androidx.compose.runtime.ComposerImpl
 import androidx.compose.runtime.Composition
 import androidx.compose.runtime.CompositionContext
 import androidx.compose.runtime.ControlledComposition
-import androidx.compose.runtime.GapComposer
+import androidx.compose.runtime.IntStack
 import androidx.compose.runtime.InternalComposeApi
 import androidx.compose.runtime.MovableContentState
 import androidx.compose.runtime.MovableContentStateReference
 import androidx.compose.runtime.RecomposeScopeImpl
 import androidx.compose.runtime.RememberObserverHolder
-import androidx.compose.runtime.collection.IntStack
-import androidx.compose.runtime.collection.Stack
-import androidx.compose.runtime.composer.gapbuffer.GapAnchor
-import androidx.compose.runtime.composer.gapbuffer.SlotReader
-import androidx.compose.runtime.composer.gapbuffer.SlotTable
+import androidx.compose.runtime.SlotReader
+import androidx.compose.runtime.SlotTable
+import androidx.compose.runtime.Stack
 import androidx.compose.runtime.internal.IntRef
 import androidx.compose.runtime.runtimeCheck
 
-internal class GapComposerChangeListWriter(
+internal class ComposerChangeListWriter(
     /**
-     * The [androidx.compose.runtime.Composer] that is building this ChangeList. The Composer's
-     * state may be used to determine how the ChangeList should be written to.
+     * The [Composer][ComposerImpl] that is building this ChangeList. The Composer's state may be
+     * used to determine how the ChangeList should be written to.
      */
-    private val composer: GapComposer,
+    private val composer: ComposerImpl,
     /** The ChangeList that will be written to */
     var changeList: ChangeList,
 ) {
@@ -150,7 +150,7 @@ internal class GapComposerChangeListWriter(
         }
     }
 
-    private fun ensureGroupStarted(anchor: GapAnchor) {
+    private fun ensureGroupStarted(anchor: Anchor) {
         pushSlotTableOperationPreamble()
         changeList.pushEnsureGroupStarted(anchor)
         startedGroup = true
@@ -210,12 +210,12 @@ internal class GapComposerChangeListWriter(
         changeList.pushUpdateValue(value, groupSlotIndex)
     }
 
-    fun updateAnchoredValue(value: Any?, anchor: GapAnchor, groupSlotIndex: Int) {
+    fun updateAnchoredValue(value: Any?, anchor: Anchor, groupSlotIndex: Int) {
         // Because this uses an anchor, it can be performed without positioning the writer.
         changeList.pushUpdateAnchoredValue(value, anchor, groupSlotIndex)
     }
 
-    fun appendValue(anchor: GapAnchor, value: Any?) {
+    fun appendValue(anchor: Anchor, value: Any?) {
         // Because this uses an anchor, it can be performed without positioning the writer.
         changeList.pushAppendValue(anchor, value)
     }
@@ -271,14 +271,14 @@ internal class GapComposerChangeListWriter(
         writersReaderDelta += reader.groupSize
     }
 
-    fun insertSlots(anchor: GapAnchor, from: SlotTable) {
+    fun insertSlots(anchor: Anchor, from: SlotTable) {
         pushPendingUpsAndDowns()
         pushSlotEditingOperationPreamble()
         realizeNodeMovementOperations()
         changeList.pushInsertSlots(anchor, from)
     }
 
-    fun insertSlots(anchor: GapAnchor, from: SlotTable, fixups: FixupList) {
+    fun insertSlots(anchor: Anchor, from: SlotTable, fixups: FixupList) {
         pushPendingUpsAndDowns()
         pushSlotEditingOperationPreamble()
         realizeNodeMovementOperations()
@@ -406,7 +406,7 @@ internal class GapComposerChangeListWriter(
         changeList.pushSideEffect(effect)
     }
 
-    fun determineMovableContentNodeIndex(effectiveNodeIndexOut: IntRef, anchor: GapAnchor) {
+    fun determineMovableContentNodeIndex(effectiveNodeIndexOut: IntRef, anchor: Anchor) {
         pushPendingUpsAndDowns()
         changeList.pushDetermineMovableContentNodeIndex(effectiveNodeIndexOut, anchor)
     }

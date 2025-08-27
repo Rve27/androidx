@@ -14,11 +14,20 @@
  * limitations under the License.
  */
 
-package androidx.compose.runtime
+package androidx.compose.runtime.changelist
 
-@TestOnly
-fun Composition.getSlots(): Iterable<Any?> = (this as CompositionImpl).slotTable.slots.asIterable()
+import androidx.compose.runtime.changelist.Operation.TestOperation
 
-@TestOnly
-fun Composer.getInsertTableSlots(): Iterable<Any?> =
-    (this as ComposerImpl).insertTable.slots.asIterable()
+internal object TestOperations {
+    val NoArgsOperation = TestOperation()
+
+    val OneIntOperation = TestOperation(ints = 1)
+    val TwoIntsOperation = TestOperation(ints = 2)
+    val ThreeIntsOperation = TestOperation(ints = 3)
+
+    val OneObjectOperation = TestOperation(objects = 1)
+    val TwoObjectsOperation = TestOperation(objects = 2)
+    val ThreeObjectsOperation = TestOperation(objects = 3)
+
+    val MixedOperation = TestOperation(ints = 2, objects = 2)
+}

@@ -16,7 +16,7 @@
 
 @file:Suppress("NOTHING_TO_INLINE", "KotlinRedundantDiagnosticSuppress")
 
-package androidx.compose.runtime.collection
+package androidx.compose.runtime
 
 import kotlin.jvm.JvmField
 import kotlin.jvm.JvmInline

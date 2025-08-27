@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 The Android Open Source Project
+ * Copyright 2023 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package androidx.compose.runtime.composer.gapbuffer.changelist
+package androidx.compose.runtime.changelist
 
+import androidx.compose.runtime.Anchor
 import androidx.compose.runtime.Applier
-import androidx.compose.runtime.Changes
 import androidx.compose.runtime.ComposeNodeLifecycleCallback
 import androidx.compose.runtime.Composition
 import androidx.compose.runtime.CompositionContext
@@ -26,75 +26,59 @@ import androidx.compose.runtime.InternalComposeApi
 import androidx.compose.runtime.MovableContentState
 import androidx.compose.runtime.MovableContentStateReference
 import androidx.compose.runtime.RecomposeScopeImpl
+import androidx.compose.runtime.RememberManager
 import androidx.compose.runtime.RememberObserverHolder
-import androidx.compose.runtime.SlotStorage
-import androidx.compose.runtime.composeRuntimeError
-import androidx.compose.runtime.composer.RememberManager
-import androidx.compose.runtime.composer.gapbuffer.GapAnchor
-import androidx.compose.runtime.composer.gapbuffer.SlotTable
-import androidx.compose.runtime.composer.gapbuffer.SlotWriter
-import androidx.compose.runtime.composer.gapbuffer.asGapBufferSlotTable
-import androidx.compose.runtime.composer.gapbuffer.changelist.Operation.AdvanceSlotsBy
-import androidx.compose.runtime.composer.gapbuffer.changelist.Operation.AppendValue
-import androidx.compose.runtime.composer.gapbuffer.changelist.Operation.ApplyChangeList
-import androidx.compose.runtime.composer.gapbuffer.changelist.Operation.CopyNodesToNewAnchorLocation
-import androidx.compose.runtime.composer.gapbuffer.changelist.Operation.CopySlotTableToAnchorLocation
-import androidx.compose.runtime.composer.gapbuffer.changelist.Operation.DeactivateCurrentGroup
-import androidx.compose.runtime.composer.gapbuffer.changelist.Operation.DetermineMovableContentNodeIndex
-import androidx.compose.runtime.composer.gapbuffer.changelist.Operation.Downs
-import androidx.compose.runtime.composer.gapbuffer.changelist.Operation.EndCompositionScope
-import androidx.compose.runtime.composer.gapbuffer.changelist.Operation.EndCurrentGroup
-import androidx.compose.runtime.composer.gapbuffer.changelist.Operation.EndMovableContentPlacement
-import androidx.compose.runtime.composer.gapbuffer.changelist.Operation.EndResumingScope
-import androidx.compose.runtime.composer.gapbuffer.changelist.Operation.EnsureGroupStarted
-import androidx.compose.runtime.composer.gapbuffer.changelist.Operation.EnsureRootGroupStarted
-import androidx.compose.runtime.composer.gapbuffer.changelist.Operation.InsertSlots
-import androidx.compose.runtime.composer.gapbuffer.changelist.Operation.InsertSlotsWithFixups
-import androidx.compose.runtime.composer.gapbuffer.changelist.Operation.MoveCurrentGroup
-import androidx.compose.runtime.composer.gapbuffer.changelist.Operation.MoveNode
-import androidx.compose.runtime.composer.gapbuffer.changelist.Operation.ReleaseMovableGroupAtCurrent
-import androidx.compose.runtime.composer.gapbuffer.changelist.Operation.Remember
-import androidx.compose.runtime.composer.gapbuffer.changelist.Operation.RememberPausingScope
-import androidx.compose.runtime.composer.gapbuffer.changelist.Operation.RemoveCurrentGroup
-import androidx.compose.runtime.composer.gapbuffer.changelist.Operation.RemoveNode
-import androidx.compose.runtime.composer.gapbuffer.changelist.Operation.ResetSlots
-import androidx.compose.runtime.composer.gapbuffer.changelist.Operation.SideEffect
-import androidx.compose.runtime.composer.gapbuffer.changelist.Operation.SkipToEndOfCurrentGroup
-import androidx.compose.runtime.composer.gapbuffer.changelist.Operation.StartResumingScope
-import androidx.compose.runtime.composer.gapbuffer.changelist.Operation.TrimParentValues
-import androidx.compose.runtime.composer.gapbuffer.changelist.Operation.UpdateAnchoredValue
-import androidx.compose.runtime.composer.gapbuffer.changelist.Operation.UpdateAuxData
-import androidx.compose.runtime.composer.gapbuffer.changelist.Operation.UpdateNode
-import androidx.compose.runtime.composer.gapbuffer.changelist.Operation.UpdateValue
-import androidx.compose.runtime.composer.gapbuffer.changelist.Operation.Ups
-import androidx.compose.runtime.composer.gapbuffer.changelist.Operation.UseCurrentNode
+import androidx.compose.runtime.SlotTable
+import androidx.compose.runtime.SlotWriter
+import androidx.compose.runtime.changelist.Operation.AdvanceSlotsBy
+import androidx.compose.runtime.changelist.Operation.AppendValue
+import androidx.compose.runtime.changelist.Operation.ApplyChangeList
+import androidx.compose.runtime.changelist.Operation.CopyNodesToNewAnchorLocation
+import androidx.compose.runtime.changelist.Operation.CopySlotTableToAnchorLocation
+import androidx.compose.runtime.changelist.Operation.DeactivateCurrentGroup
+import androidx.compose.runtime.changelist.Operation.DetermineMovableContentNodeIndex
+import androidx.compose.runtime.changelist.Operation.Downs
+import androidx.compose.runtime.changelist.Operation.EndCompositionScope
+import androidx.compose.runtime.changelist.Operation.EndCurrentGroup
+import androidx.compose.runtime.changelist.Operation.EndMovableContentPlacement
+import androidx.compose.runtime.changelist.Operation.EndResumingScope
+import androidx.compose.runtime.changelist.Operation.EnsureGroupStarted
+import androidx.compose.runtime.changelist.Operation.EnsureRootGroupStarted
+import androidx.compose.runtime.changelist.Operation.InsertSlots
+import androidx.compose.runtime.changelist.Operation.InsertSlotsWithFixups
+import androidx.compose.runtime.changelist.Operation.MoveCurrentGroup
+import androidx.compose.runtime.changelist.Operation.MoveNode
+import androidx.compose.runtime.changelist.Operation.ReleaseMovableGroupAtCurrent
+import androidx.compose.runtime.changelist.Operation.Remember
+import androidx.compose.runtime.changelist.Operation.RememberPausingScope
+import androidx.compose.runtime.changelist.Operation.RemoveCurrentGroup
+import androidx.compose.runtime.changelist.Operation.RemoveNode
+import androidx.compose.runtime.changelist.Operation.ResetSlots
+import androidx.compose.runtime.changelist.Operation.SideEffect
+import androidx.compose.runtime.changelist.Operation.SkipToEndOfCurrentGroup
+import androidx.compose.runtime.changelist.Operation.StartResumingScope
+import androidx.compose.runtime.changelist.Operation.TrimParentValues
+import androidx.compose.runtime.changelist.Operation.UpdateAnchoredValue
+import androidx.compose.runtime.changelist.Operation.UpdateAuxData
+import androidx.compose.runtime.changelist.Operation.UpdateNode
+import androidx.compose.runtime.changelist.Operation.UpdateValue
+import androidx.compose.runtime.changelist.Operation.Ups
+import androidx.compose.runtime.changelist.Operation.UseCurrentNode
 import androidx.compose.runtime.internal.IntRef
-import androidx.compose.runtime.tooling.CompositionErrorContextImpl
-import androidx.compose.runtime.tooling.OperationErrorContext
 
-internal class ChangeList : Changes() {
+internal class ChangeList : OperationsDebugStringFormattable() {
 
     private val operations = Operations()
 
     val size: Int
         get() = operations.size
 
-    override fun isEmpty() = operations.isEmpty()
+    fun isEmpty() = operations.isEmpty()
 
-    override fun clear() {
+    fun isNotEmpty() = operations.isNotEmpty()
+
+    fun clear() {
         operations.clear()
-    }
-
-    override fun execute(
-        slotStorage: SlotStorage,
-        applier: Applier<*>,
-        rememberManager: RememberManager,
-        errorContext: CompositionErrorContextImpl?,
-    ) {
-        val slotTable = slotStorage.asGapBufferSlotTable()
-        slotTable.write { slots ->
-            executeAndFlushAllPendingChanges(applier, slots, rememberManager, errorContext)
-        }
     }
 
     fun executeAndFlushAllPendingChanges(
@@ -133,14 +117,14 @@ internal class ChangeList : Changes() {
         }
     }
 
-    fun pushUpdateAnchoredValue(value: Any?, anchor: GapAnchor, groupSlotIndex: Int) {
+    fun pushUpdateAnchoredValue(value: Any?, anchor: Anchor, groupSlotIndex: Int) {
         operations.push(UpdateAnchoredValue) {
             setObjects(UpdateAnchoredValue.Value, value, UpdateAnchoredValue.Anchor, anchor)
             setInt(UpdateAnchoredValue.GroupSlotIndex, groupSlotIndex)
         }
     }
 
-    fun pushAppendValue(anchor: GapAnchor, value: Any?) {
+    fun pushAppendValue(anchor: Anchor, value: Any?) {
         operations.push(AppendValue) {
             setObjects(AppendValue.Anchor, anchor, AppendValue.Value, value)
         }
@@ -166,7 +150,7 @@ internal class ChangeList : Changes() {
         operations.push(EnsureRootGroupStarted)
     }
 
-    fun pushEnsureGroupStarted(anchor: GapAnchor) {
+    fun pushEnsureGroupStarted(anchor: Anchor) {
         operations.push(EnsureGroupStarted) { setObject(EnsureGroupStarted.Anchor, anchor) }
     }
 
@@ -182,13 +166,13 @@ internal class ChangeList : Changes() {
         operations.push(RemoveCurrentGroup)
     }
 
-    fun pushInsertSlots(anchor: GapAnchor, from: SlotTable) {
+    fun pushInsertSlots(anchor: Anchor, from: SlotTable) {
         operations.push(InsertSlots) {
             setObjects(InsertSlots.Anchor, anchor, InsertSlots.FromSlotTable, from)
         }
     }
 
-    fun pushInsertSlots(anchor: GapAnchor, from: SlotTable, fixups: FixupList) {
+    fun pushInsertSlots(anchor: Anchor, from: SlotTable, fixups: FixupList) {
         operations.push(InsertSlotsWithFixups) {
             setObjects(
                 InsertSlotsWithFixups.Anchor,
@@ -259,7 +243,7 @@ internal class ChangeList : Changes() {
         operations.push(SideEffect) { setObject(SideEffect.Effect, effect) }
     }
 
-    fun pushDetermineMovableContentNodeIndex(effectiveNodeIndexOut: IntRef, anchor: GapAnchor) {
+    fun pushDetermineMovableContentNodeIndex(effectiveNodeIndexOut: IntRef, anchor: Anchor) {
         operations.push(DetermineMovableContentNodeIndex) {
             setObjects(
                 DetermineMovableContentNodeIndex.EffectiveNodeIndexOut,
@@ -351,6 +335,3 @@ internal class ChangeList : Changes() {
         }
     }
 }
-
-internal fun Changes.asGapBufferChangeList() =
-    this as? ChangeList ?: composeRuntimeError("Inconsistent composition")

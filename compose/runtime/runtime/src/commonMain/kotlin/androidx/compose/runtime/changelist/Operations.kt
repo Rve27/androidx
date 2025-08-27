@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 The Android Open Source Project
+ * Copyright 2023 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,19 +16,17 @@
 
 @file:Suppress("NOTHING_TO_INLINE", "KotlinRedundantDiagnosticSuppress")
 
-package androidx.compose.runtime.composer.gapbuffer.changelist
+package androidx.compose.runtime.changelist
 
 import androidx.compose.runtime.Applier
 import androidx.compose.runtime.EnableDebugRuntimeChecks
 import androidx.compose.runtime.InternalComposeApi
+import androidx.compose.runtime.RememberManager
+import androidx.compose.runtime.SlotWriter
+import androidx.compose.runtime.changelist.Operation.ObjectParameter
 import androidx.compose.runtime.collection.fastCopyInto
-import androidx.compose.runtime.composer.DebugStringFormattable
-import androidx.compose.runtime.composer.RememberManager
-import androidx.compose.runtime.composer.gapbuffer.SlotWriter
-import androidx.compose.runtime.composer.gapbuffer.changelist.Operation.ObjectParameter
 import androidx.compose.runtime.debugRuntimeCheck
 import androidx.compose.runtime.requirePrecondition
-import androidx.compose.runtime.tooling.OperationErrorContext
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind.EXACTLY_ONCE
 import kotlin.contracts.contract
@@ -49,7 +47,7 @@ internal const val OperationsInitialCapacity = 16
  *
  * `Operations` is not a thread safe data structure.
  */
-internal class Operations : DebugStringFormattable() {
+internal class Operations : OperationsDebugStringFormattable() {
     // To create an array of non-nullable references, Kotlin would normally force us to pass an
     // initializer lambda to the array constructor, which could be expensive for larger arrays.
     // Using an array of Operation? allows us to bypass the initialization of every entry, but it
@@ -586,7 +584,7 @@ internal class Operations : DebugStringFormattable() {
         }
     }
 
-    private fun OpIterator.currentOpToDebugString(linePrefix: String): String {
+    private fun Operations.OpIterator.currentOpToDebugString(linePrefix: String): String {
         val operation = operation
         return if (operation.ints == 0 && operation.objects == 0) {
             operation.name
@@ -630,7 +628,7 @@ internal class Operations : DebugStringFormattable() {
             is FloatArray -> asIterable().toCollectionString(linePrefix)
             is DoubleArray -> asIterable().toCollectionString(linePrefix)
             is Iterable<*> -> toCollectionString(linePrefix)
-            is DebugStringFormattable -> toDebugString(linePrefix)
+            is OperationsDebugStringFormattable -> toDebugString(linePrefix)
             else -> toString()
         }
 
@@ -638,4 +636,8 @@ internal class Operations : DebugStringFormattable() {
         joinToString(prefix = "[", postfix = "]", separator = ", ") {
             it.formatOpArgumentToString(linePrefix)
         }
+}
+
+internal abstract class OperationsDebugStringFormattable {
+    abstract fun toDebugString(linePrefix: String = "  "): String
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 The Android Open Source Project
+ * Copyright 2023 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.compose.runtime.composer.gapbuffer.changelist
+package androidx.compose.runtime.changelist
 
+import androidx.compose.runtime.Anchor
 import androidx.compose.runtime.Applier
 import androidx.compose.runtime.Composition
 import androidx.compose.runtime.CompositionContext
@@ -26,17 +27,14 @@ import androidx.compose.runtime.MovableContentStateReference
 import androidx.compose.runtime.OffsetApplier
 import androidx.compose.runtime.RecomposeScopeImpl
 import androidx.compose.runtime.RecomposeScopeOwner
+import androidx.compose.runtime.RememberManager
 import androidx.compose.runtime.RememberObserverHolder
+import androidx.compose.runtime.SlotTable
+import androidx.compose.runtime.SlotWriter
 import androidx.compose.runtime.TestOnly
 import androidx.compose.runtime.composeRuntimeError
-import androidx.compose.runtime.composer.RememberManager
-import androidx.compose.runtime.composer.gapbuffer.GapAnchor
-import androidx.compose.runtime.composer.gapbuffer.SlotTable
-import androidx.compose.runtime.composer.gapbuffer.SlotWriter
-import androidx.compose.runtime.composer.gapbuffer.asGapBufferSlotTable
-import androidx.compose.runtime.composer.gapbuffer.buildTrace
-import androidx.compose.runtime.composer.gapbuffer.deactivateCurrentGroup
-import androidx.compose.runtime.composer.gapbuffer.extractMovableContentAtCurrent
+import androidx.compose.runtime.deactivateCurrentGroup
+import androidx.compose.runtime.extractMovableContentAtCurrent
 import androidx.compose.runtime.internal.IntRef
 import androidx.compose.runtime.internal.identityHashCode
 import androidx.compose.runtime.removeCurrentGroup
@@ -44,8 +42,8 @@ import androidx.compose.runtime.runtimeCheck
 import androidx.compose.runtime.snapshots.fastForEachIndexed
 import androidx.compose.runtime.tooling.ComposeStackTraceFrame
 import androidx.compose.runtime.tooling.ComposeToolingApi
-import androidx.compose.runtime.tooling.OperationErrorContext
 import androidx.compose.runtime.tooling.attachComposeStackTrace
+import androidx.compose.runtime.tooling.buildTrace
 import kotlin.jvm.JvmInline
 
 internal typealias IntParameter = Int
@@ -65,7 +63,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
         }
     }
 
-    protected open fun OperationArgContainer.getGroupAnchor(slots: SlotWriter): GapAnchor? = null
+    protected open fun OperationArgContainer.getGroupAnchor(slots: SlotWriter): Anchor? = null
 
     protected abstract fun OperationArgContainer.execute(
         applier: Applier<*>,
@@ -256,7 +254,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
 
     object AppendValue : Operation(objects = 2) {
         inline val Anchor
-            get() = ObjectParameter<GapAnchor>(0)
+            get() = ObjectParameter<Anchor>(0)
 
         inline val Value
             get() = ObjectParameter<Any?>(1)
@@ -356,7 +354,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
             get() = ObjectParameter<Any?>(0)
 
         inline val Anchor
-            get() = ObjectParameter<GapAnchor>(1)
+            get() = ObjectParameter<Anchor>(1)
 
         inline val GroupSlotIndex
             get() = 0
@@ -432,7 +430,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
 
     object EnsureGroupStarted : Operation(objects = 1) {
         inline val Anchor
-            get() = ObjectParameter<GapAnchor>(0)
+            get() = ObjectParameter<Anchor>(0)
 
         override fun objectParamName(parameter: ObjectParameter<*>) =
             when (parameter) {
@@ -621,7 +619,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
 
     object InsertSlots : Operation(objects = 2) {
         inline val Anchor
-            get() = ObjectParameter<GapAnchor>(0)
+            get() = ObjectParameter<Anchor>(0)
 
         inline val FromSlotTable
             get() = ObjectParameter<SlotTable>(1)
@@ -654,7 +652,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
 
     object InsertSlotsWithFixups : Operation(objects = 3) {
         inline val Anchor
-            get() = ObjectParameter<GapAnchor>(0)
+            get() = ObjectParameter<Anchor>(0)
 
         inline val FromSlotTable
             get() = ObjectParameter<SlotTable>(1)
@@ -706,7 +704,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
             get() = 0
 
         inline val GroupAnchor
-            get() = ObjectParameter<GapAnchor>(1)
+            get() = ObjectParameter<Anchor>(1)
 
         override fun intParamName(parameter: IntParameter) =
             when (parameter) {
@@ -721,7 +719,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
                 else -> super.objectParamName(parameter)
             }
 
-        override fun OperationArgContainer.getGroupAnchor(slots: SlotWriter): GapAnchor? =
+        override fun OperationArgContainer.getGroupAnchor(slots: SlotWriter): Anchor? =
             getObject(GroupAnchor)
 
         override fun OperationArgContainer.execute(
@@ -746,7 +744,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
             get() = 0
 
         inline val GroupAnchor
-            get() = ObjectParameter<GapAnchor>(0)
+            get() = ObjectParameter<Anchor>(0)
 
         override fun intParamName(parameter: IntParameter) =
             when (parameter) {
@@ -760,7 +758,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
                 else -> super.objectParamName(parameter)
             }
 
-        override fun OperationArgContainer.getGroupAnchor(slots: SlotWriter): GapAnchor? =
+        override fun OperationArgContainer.getGroupAnchor(slots: SlotWriter): Anchor? =
             getObject(GroupAnchor)
 
         override fun OperationArgContainer.execute(
@@ -809,7 +807,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
             get() = ObjectParameter<IntRef>(0)
 
         inline val Anchor
-            get() = ObjectParameter<GapAnchor>(1)
+            get() = ObjectParameter<Anchor>(1)
 
         override fun objectParamName(parameter: ObjectParameter<*>) =
             when (parameter) {
@@ -911,12 +909,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
             // state to be inserted. The state is at index 2 in the table (for the
             // two groups) and is inserted into the provider group at offset 1 from the
             // current location.
-            val anchors =
-                slots.moveIntoGroupFrom(
-                    offset = 1,
-                    table = resolvedState.slotStorage.asGapBufferSlotTable(),
-                    index = 2,
-                )
+            val anchors = slots.moveIntoGroupFrom(1, resolvedState.slotTable, 2)
 
             // For all the anchors that moved, if the anchor is tracking a recompose
             // scope, update it to reference its new composer.
@@ -1081,7 +1074,7 @@ private fun currentNodeIndex(slots: SlotWriter): Int {
     return index
 }
 
-private fun positionToInsert(slots: SlotWriter, anchor: GapAnchor, applier: Applier<Any?>): Int {
+private fun positionToInsert(slots: SlotWriter, anchor: Anchor, applier: Applier<Any?>): Int {
     val destination = slots.anchorIndex(anchor)
     runtimeCheck(slots.currentGroup < destination)
     positionToParentOf(slots, applier, destination)
@@ -1106,7 +1099,7 @@ private fun positionToInsert(slots: SlotWriter, anchor: GapAnchor, applier: Appl
 private inline fun withCurrentStackTrace(
     errorContext: OperationErrorContext?,
     writer: SlotWriter,
-    location: GapAnchor?,
+    location: Anchor?,
     block: () -> Unit,
 ) {
     try {
@@ -1121,7 +1114,7 @@ private inline fun withCurrentStackTrace(
 private fun Throwable.attachComposeStackTrace(
     errorContext: OperationErrorContext?,
     writer: SlotWriter,
-    anchor: GapAnchor?,
+    anchor: Anchor?,
 ): Throwable {
     if (errorContext == null) return this
     return attachComposeStackTrace {

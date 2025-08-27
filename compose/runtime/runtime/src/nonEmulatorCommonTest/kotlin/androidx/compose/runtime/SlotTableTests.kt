@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 The Android Open Source Project
+ * Copyright 2019 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,17 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.compose.runtime.composer.gapbuffer
+package androidx.compose.runtime
 
-import androidx.compose.runtime.Composer
-import androidx.compose.runtime.RememberObserver
-import androidx.compose.runtime.RememberObserverHolder
-import androidx.compose.runtime.expectError
-import androidx.compose.runtime.reuseKey
 import androidx.compose.runtime.snapshots.fastForEach
 import androidx.compose.runtime.tooling.CompositionData
 import androidx.compose.runtime.tooling.CompositionGroup
-import kotlin.collections.iterator
 import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -260,7 +254,7 @@ class SlotTableTests {
         val slots = testSlotsNumbered()
         val anchors =
             slots.read { reader ->
-                val anchors = mutableListOf<GapAnchor>()
+                val anchors = mutableListOf<Anchor>()
                 reader.startGroup()
                 repeat(7) {
                     repeat(10) { reader.skipGroup() }
@@ -283,7 +277,7 @@ class SlotTableTests {
         val slots = testSlotsNumbered()
         val anchors =
             slots.read { reader ->
-                val anchors = mutableListOf<GapAnchor>()
+                val anchors = mutableListOf<Anchor>()
                 reader.startGroup()
                 repeat(7) {
                     repeat(10) { reader.skipGroup() }
@@ -373,8 +367,8 @@ class SlotTableTests {
     fun testAnchorMoves() {
         val slots = SlotTable()
 
-        fun buildSlots(range: List<Int>): Map<GapAnchor, Any?> {
-            val anchors = mutableMapOf<GapAnchor, Any?>()
+        fun buildSlots(range: List<Int>): Map<Anchor, Any?> {
+            val anchors = mutableMapOf<Anchor, Any?>()
             slots.write { writer ->
                 fun item(value: Int, block: () -> Unit) {
                     writer.startGroup(value)
@@ -403,7 +397,7 @@ class SlotTableTests {
             return anchors
         }
 
-        fun validate(anchors: Map<GapAnchor, Any?>) {
+        fun validate(anchors: Map<Anchor, Any?>) {
             slots.verifyWellFormed()
             slots.read { reader ->
                 for (anchor in anchors) {
@@ -808,7 +802,7 @@ class SlotTableTests {
             reader.beginEmpty()
             reader.startGroup()
             assertEquals(true, reader.inEmpty)
-            assertEquals(Composer.Companion.Empty, reader.next())
+            assertEquals(Composer.Empty, reader.next())
             reader.endGroup()
             reader.endEmpty()
         }
@@ -853,7 +847,7 @@ class SlotTableTests {
     fun testMoveGroup() {
         val slots = SlotTable()
 
-        val anchors = mutableListOf<GapAnchor>()
+        val anchors = mutableListOf<Anchor>()
 
         fun buildSlots() {
             slots.write { writer ->
@@ -1183,7 +1177,7 @@ class SlotTableTests {
     @Test
     fun testMovingOneGroup() {
         val sourceTable = SlotTable()
-        val anchors = mutableListOf<GapAnchor>()
+        val anchors = mutableListOf<Anchor>()
         sourceTable.write { writer ->
             writer.beginInsert()
             anchors.add(writer.anchor())
@@ -1225,7 +1219,7 @@ class SlotTableTests {
     @Test
     fun testMovingANodeGroup() {
         val sourceTable = SlotTable()
-        val anchors = mutableListOf<GapAnchor>()
+        val anchors = mutableListOf<Anchor>()
         sourceTable.write { writer ->
             writer.beginInsert()
             anchors.add(writer.anchor())
@@ -1271,7 +1265,7 @@ class SlotTableTests {
     @Test
     fun testMovingMultipleRootGroups() {
         val sourceTable = SlotTable()
-        val anchors = mutableListOf<GapAnchor>()
+        val anchors = mutableListOf<Anchor>()
         val moveCount = 5
         sourceTable.write { writer ->
             writer.beginInsert()
@@ -1339,7 +1333,7 @@ class SlotTableTests {
                 }
             }
 
-        val movedAnchors = mutableSetOf<GapAnchor>()
+        val movedAnchors = mutableSetOf<Anchor>()
         slotsToMove.forEach { anchor ->
             if (anchor !in movedAnchors) {
                 destinationTable.write { writer ->
@@ -1384,7 +1378,7 @@ class SlotTableTests {
         val sourceTable = SlotTable()
         val destinationTable = SlotTable()
 
-        val anchors = mutableListOf<GapAnchor>()
+        val anchors = mutableListOf<Anchor>()
         sourceTable.write { writer ->
             writer.insert {
                 writer.group(10) {
@@ -1837,7 +1831,7 @@ class SlotTableTests {
         slots.write { writer ->
             assertEquals(object1, writer.groupAux(object1Index))
             assertEquals(object2, writer.groupAux(object2Index))
-            assertEquals(Composer.Companion.Empty, writer.groupAux(emptyIndex))
+            assertEquals(Composer.Empty, writer.groupAux(emptyIndex))
         }
     }
 
@@ -1914,7 +1908,7 @@ class SlotTableTests {
     @Test
     fun testUpdatingNodeWithStartNode() {
         val slots = SlotTable()
-        val anchors = mutableListOf<GapAnchor>()
+        val anchors = mutableListOf<Anchor>()
         slots.write { writer ->
             writer.insert {
                 writer.group(treeRoot) {
@@ -2111,7 +2105,7 @@ class SlotTableTests {
     @Test
     fun testUpdatingNodeWithUpdateParentNode() {
         val slots = SlotTable()
-        val anchors = mutableListOf<GapAnchor>()
+        val anchors = mutableListOf<Anchor>()
         slots.write { writer ->
             writer.insert {
                 writer.group(treeRoot) {
@@ -2160,7 +2154,7 @@ class SlotTableTests {
     @Test
     fun testUpdatingNodeWithUpdateNode() {
         val slots = SlotTable()
-        val anchors = mutableListOf<GapAnchor>()
+        val anchors = mutableListOf<Anchor>()
         slots.write { writer ->
             writer.insert {
                 writer.group(treeRoot) {
@@ -2205,7 +2199,7 @@ class SlotTableTests {
     @Test
     fun testUpdatingAuxWithUpdateAux() {
         val slots = SlotTable()
-        val anchors = mutableListOf<GapAnchor>()
+        val anchors = mutableListOf<Anchor>()
         slots.write { writer ->
             writer.insert {
                 writer.group(treeRoot) {
@@ -2254,7 +2248,7 @@ class SlotTableTests {
         val innerGroupKeyBase = 1000
         val dataCount = 5
 
-        data class SlotInfo(val anchor: GapAnchor, val index: Int, val value: Int)
+        data class SlotInfo(val anchor: Anchor, val index: Int, val value: Int)
 
         slots.write { writer ->
             writer.insert {
@@ -2425,7 +2419,7 @@ class SlotTableTests {
     @Test
     fun testMultipleRoots() {
         val slots = SlotTable()
-        val anchors = mutableListOf<GapAnchor>()
+        val anchors = mutableListOf<Anchor>()
         repeat(10) {
             slots.write { writer ->
                 anchors.add(writer.anchor())
@@ -2445,13 +2439,13 @@ class SlotTableTests {
 
     @Test
     fun testCanRestoreParent() {
-        val anchors = mutableMapOf<Int, List<GapAnchor>>()
+        val anchors = mutableMapOf<Int, List<Anchor>>()
         val slots = SlotTable()
         slots.write { writer ->
             writer.beginInsert()
             writer.startGroup(treeRoot)
             repeat(10) { outerKey ->
-                val nestedAnchors = mutableListOf<GapAnchor>()
+                val nestedAnchors = mutableListOf<Anchor>()
                 anchors[outerKey] = nestedAnchors
                 writer.startGroup(outerKey)
                 repeat(10) { innerKey ->
@@ -2589,7 +2583,7 @@ class SlotTableTests {
 
     @Test
     fun testInsertOfZeroGroups() {
-        val sourceAnchors = mutableListOf<GapAnchor>()
+        val sourceAnchors = mutableListOf<Anchor>()
         val sourceTable =
             SlotTable().also {
                 it.write { writer ->
@@ -2612,8 +2606,8 @@ class SlotTableTests {
                 }
             }
 
-        var container = GapAnchor(0)
-        val destinationAnchors = mutableListOf<GapAnchor>()
+        var container = Anchor(0)
+        val destinationAnchors = mutableListOf<Anchor>()
         val slots =
             SlotTable().also {
                 it.write { writer ->
@@ -3407,7 +3401,7 @@ class SlotTableTests {
     @Test
     fun canMoveTo() {
         val slots = SlotTable()
-        var anchor = GapAnchor(-1)
+        var anchor = Anchor(-1)
 
         // Create a slot table
         slots.write { writer ->
@@ -3516,8 +3510,8 @@ class SlotTableTests {
     @Test
     fun canDeleteAGroupAfterMovingPartOfItsContent() {
         val slots = SlotTable()
-        var deleteAnchor = GapAnchor(-1)
-        var moveAnchor = GapAnchor(-1)
+        var deleteAnchor = Anchor(-1)
+        var moveAnchor = Anchor(-1)
 
         // Create a slot table
         slots.write { writer ->
@@ -3588,9 +3582,9 @@ class SlotTableTests {
     @Test
     fun canMoveAndDeleteAfterAnInsert() {
         val slots = SlotTable()
-        var insertAnchor = GapAnchor(-1)
-        var deleteAnchor = GapAnchor(-1)
-        var moveAnchor = GapAnchor(-1)
+        var insertAnchor = Anchor(-1)
+        var deleteAnchor = Anchor(-1)
+        var moveAnchor = Anchor(-1)
 
         // Create a slot table
         slots.write { writer ->
@@ -3654,7 +3648,7 @@ class SlotTableTests {
     @Test
     fun canMoveAGroupFromATableIntoAnotherGroup() {
         val slots = SlotTable().apply { collectSourceInformation() }
-        var insertAnchor = GapAnchor(-1)
+        var insertAnchor = Anchor(-1)
 
         // Create a slot table
         slots.write { writer ->
@@ -4211,7 +4205,7 @@ class SlotTableTests {
     @Test
     fun canMoveAGroupFromATableIntoAnotherGroupAndModifyThatGroup() {
         val slots = SlotTable()
-        var insertAnchor = GapAnchor(-1)
+        var insertAnchor = Anchor(-1)
 
         // Create a slot table
         slots.write { writer ->
@@ -4361,7 +4355,7 @@ class SlotTableTests {
 
     @Test
     fun supportsAppendingSlots_first_empty() {
-        var anchor: GapAnchor? = null
+        var anchor: Anchor? = null
         val slots =
             SlotTable().apply {
                 write { writer ->
@@ -4410,7 +4404,7 @@ class SlotTableTests {
 
     @Test
     fun supportsAppendingSlots_first_occupied() {
-        var anchor: GapAnchor? = null
+        var anchor: Anchor? = null
         val slots =
             SlotTable().apply {
                 write { writer ->
@@ -4471,7 +4465,7 @@ class SlotTableTests {
 
     @Test
     fun supportsAppendingSlots_after_occupied() {
-        var anchor: GapAnchor? = null
+        var anchor: Anchor? = null
         val slots =
             SlotTable().apply {
                 write { writer ->
@@ -4540,7 +4534,7 @@ class SlotTableTests {
 
     @Test
     fun supportsAppendingSlots_middle() {
-        var anchor: GapAnchor? = null
+        var anchor: Anchor? = null
         val slots =
             SlotTable().apply {
                 write { writer ->
@@ -4611,7 +4605,7 @@ class SlotTableTests {
 
     @Test
     fun supportsAppendingSlots_end() {
-        var anchor: GapAnchor? = null
+        var anchor: Anchor? = null
         val slots =
             SlotTable().apply {
                 write { writer ->
@@ -4673,7 +4667,7 @@ class SlotTableTests {
 
     @Test
     fun supportsAppendingSlots_ensureStarted() {
-        var insertAnchor: GapAnchor? = null
+        var insertAnchor: Anchor? = null
         val slots =
             SlotTable().apply {
                 write { writer ->
@@ -5559,9 +5553,9 @@ private fun validateItems(slots: SlotTable) {
     }
 }
 
-private fun narrowTrees(): Pair<SlotTable, List<GapAnchor>> {
+private fun narrowTrees(): Pair<SlotTable, List<Anchor>> {
     val slots = SlotTable()
-    val anchors = mutableListOf<GapAnchor>()
+    val anchors = mutableListOf<Anchor>()
     slots.write { writer ->
         writer.beginInsert()
         writer.startGroup(treeRoot)
@@ -5620,7 +5614,7 @@ private fun SlotReader.expectStrictGroup(key: Int, block: () -> Unit = {}) {
     assertEquals(key, groupKey)
     startGroup()
     block()
-    expectData(Composer.Companion.Empty)
+    expectData(Composer.Empty)
     endGroup()
 }
 
@@ -5650,6 +5644,20 @@ private fun <T> Iterator<T>.toList(): List<T> {
         list.add(next())
     }
     return list
+}
+
+internal fun expectError(message: String, block: () -> Unit) {
+    var exceptionThrown = false
+    try {
+        block()
+    } catch (e: Throwable) {
+        exceptionThrown = true
+        assertTrue(
+            e.message?.contains(message) == true,
+            "Expected \"${e.message}\" to contain \"$message\"",
+        )
+    }
+    assertTrue(exceptionThrown, "Expected test to throw an exception containing \"$message\"")
 }
 
 data class SourceGroup(
