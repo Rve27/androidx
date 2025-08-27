@@ -16,7 +16,6 @@
 
 package androidx.xr.arcore
 
-import androidx.annotation.RestrictTo
 import androidx.xr.arcore.internal.ArDevice as RuntimeArDevice
 import androidx.xr.arcore.internal.RenderViewpoint as RuntimeRenderViewpoint
 import androidx.xr.runtime.FieldOfView
@@ -26,8 +25,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-/** Contains view cameras information. */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
+/**
+ * Represents a single viewpoint used for rendering, such as a left eye, right eye, or a mono view.
+ *
+ * This class provides access to the [State] of a specific render viewpoint, including its [pose],
+ * [localPose], and [fieldOfView].
+ */
 public class RenderViewpoint
 internal constructor(
     internal val runtimeRenderViewpoint: RuntimeRenderViewpoint,
@@ -83,11 +86,11 @@ internal constructor(
     }
 
     /**
-     * Data class that contains the current state of the render viewpoint.
+     * Class that contains the current state of the render viewpoint.
      *
      * @property pose The render viewpoint's pose in perception space, the global coordinate system
-     *   of the [Session]. This value is the underlying XR Device's pose plus the localPose offset.
-     *   Its update behavior is determined by [Config.HeadTrackingMode]:
+     *   of the [Session]. This value is the underlying AR Device's pose plus the localPose offset.
+     *   Its update behavior is determined by [Config.deviceTracking]:
      * - **LAST_KNOWN:** The device pose is updated each frame with the latest valid tracking data,
      *   reflecting physical movement.
      * - **DISABLED:** The device pose is not updated. It remains at the origin (an identity pose)

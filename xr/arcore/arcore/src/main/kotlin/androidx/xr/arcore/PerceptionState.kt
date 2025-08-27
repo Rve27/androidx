@@ -36,12 +36,9 @@ internal constructor(
     public val trackables: Collection<Trackable<Trackable.State>>,
     public val leftHand: Hand?,
     public val rightHand: Hand?,
-    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val arDevice: ArDevice,
-    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
+    public val arDevice: ArDevice,
     public val leftRenderViewpoint: RenderViewpoint?,
-    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
     public val rightRenderViewpoint: RenderViewpoint?,
-    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
     public val monoRenderViewpoint: RenderViewpoint?,
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val depthMaps: List<DepthMap>,
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val userFace: Face?,

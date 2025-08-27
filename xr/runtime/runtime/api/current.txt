@@ -69,6 +69,17 @@ package androidx.xr.runtime {
     property public androidx.xr.runtime.Config.DepthEstimationMode SMOOTH_ONLY;
   }
 
+  public static final class Config.DeviceTrackingMode {
+    field public static final androidx.xr.runtime.Config.DeviceTrackingMode.Companion Companion;
+    field public static final androidx.xr.runtime.Config.DeviceTrackingMode DISABLED;
+    field public static final androidx.xr.runtime.Config.DeviceTrackingMode LAST_KNOWN;
+  }
+
+  public static final class Config.DeviceTrackingMode.Companion {
+    property public androidx.xr.runtime.Config.DeviceTrackingMode DISABLED;
+    property public androidx.xr.runtime.Config.DeviceTrackingMode LAST_KNOWN;
+  }
+
   public static final class Config.HandTrackingMode {
     field public static final androidx.xr.runtime.Config.HandTrackingMode BOTH;
     field public static final androidx.xr.runtime.Config.HandTrackingMode.Companion Companion;

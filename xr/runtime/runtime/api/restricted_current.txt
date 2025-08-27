@@ -84,9 +84,9 @@ package androidx.xr.runtime {
     property public androidx.xr.runtime.Config.DepthEstimationMode SMOOTH_ONLY;
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static final class Config.DeviceTrackingMode {
+  public static final class Config.DeviceTrackingMode {
     method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public int getMode();
-    method public androidx.xr.runtime.Config.HeadTrackingMode toHeadTrackingMode();
+    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public androidx.xr.runtime.Config.HeadTrackingMode toHeadTrackingMode();
     property @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public int mode;
     field public static final androidx.xr.runtime.Config.DeviceTrackingMode.Companion Companion;
     field public static final androidx.xr.runtime.Config.DeviceTrackingMode DISABLED;
