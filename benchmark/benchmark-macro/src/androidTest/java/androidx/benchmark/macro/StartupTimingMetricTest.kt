@@ -46,6 +46,7 @@ import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 
+@SdkSuppress(minSdkVersion = 24) // b/438214932
 @RunWith(AndroidJUnit4::class)
 class StartupTimingMetricTest {
     @MediumTest

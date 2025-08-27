@@ -23,9 +23,11 @@ import androidx.benchmark.traceprocessor.PerfettoTrace
 import androidx.benchmark.traceprocessor.StartupInsights
 import androidx.benchmark.traceprocessor.TraceProcessor
 import androidx.test.filters.MediumTest
+import androidx.test.filters.SdkSuppress
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 
+@SdkSuppress(minSdkVersion = 24) // b/438214932
 class StartupInsightsTest {
     private val api35ColdStart =
         createTempFileFromAsset(prefix = "api35_startup_cold_classinit", suffix = ".perfetto-trace")

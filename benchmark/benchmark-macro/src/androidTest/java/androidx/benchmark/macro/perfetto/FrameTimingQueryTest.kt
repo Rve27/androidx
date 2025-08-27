@@ -27,12 +27,14 @@ import androidx.benchmark.perfetto.PerfettoHelper.Companion.isAbiSupported
 import androidx.benchmark.traceprocessor.TraceProcessor
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
+import androidx.test.filters.SdkSuppress
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import org.junit.Assume.assumeTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 
+@SdkSuppress(minSdkVersion = 24) // b/438214932
 @RunWith(AndroidJUnit4::class)
 class FrameTimingQueryTest {
     @MediumTest

@@ -20,6 +20,7 @@ import androidx.benchmark.perfetto.PerfettoHelper
 import androidx.benchmark.traceprocessor.TraceProcessor
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
+import androidx.test.filters.SdkSuppress
 import java.io.File
 import org.junit.Assert.assertEquals
 import org.junit.Assume.assumeTrue
@@ -57,6 +58,7 @@ class FrameTimingMetricTest {
 
     @MediumTest
     @Test
+    @SdkSuppress(minSdkVersion = 24) // b/438214932
     fun frameTimingMetric_defaultConstructor() {
         assumeTrue(PerfettoHelper.isAbiSupported())
         val traceFile = createTempFileFromAsset("api31_scroll", ".perfetto-trace")
@@ -82,6 +84,7 @@ class FrameTimingMetricTest {
         )
     }
 
+    @SdkSuppress(minSdkVersion = 24) // b/438214932
     @MediumTest
     @Test
     fun frameTimingMetric_processSuffixAndMetricSuffixSpecified() {

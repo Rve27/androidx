@@ -282,6 +282,7 @@ class MacrobenchmarkScopeTest {
         assertTrue(device.hasObject(By.text("UpdatedText")))
     }
 
+    @SdkSuppress(minSdkVersion = 24) // b/441548016
     @Test
     fun measureBlock_methodTracing() {
         val scope =
@@ -305,6 +306,7 @@ class MacrobenchmarkScopeTest {
         assertTrue(trace.outputRelativePath.startsWith("TEST-UNIQUE-NAME-methodTracing-"))
     }
 
+    @SdkSuppress(minSdkVersion = 24) // b/441548016
     @Test
     fun multipleMethodTraces_onProcessStartStop() {
         val scope = MacrobenchmarkScope(Packages.TARGET, launchWithClearTask = true)

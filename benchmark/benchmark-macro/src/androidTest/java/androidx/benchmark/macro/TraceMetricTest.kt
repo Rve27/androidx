@@ -19,9 +19,11 @@ package androidx.benchmark.macro
 import androidx.benchmark.perfetto.PerfettoHelper
 import androidx.benchmark.traceprocessor.TraceProcessor
 import androidx.test.filters.MediumTest
+import androidx.test.filters.SdkSuppress
 import org.junit.Assume.assumeTrue
 import org.junit.Test
 
+@SdkSuppress(minSdkVersion = 24) // b/438214932
 @MediumTest
 @OptIn(ExperimentalMetricApi::class)
 class TraceMetricTest {
