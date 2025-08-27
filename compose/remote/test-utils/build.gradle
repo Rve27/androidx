@@ -49,6 +49,8 @@ dependencies {
     implementation(project(":compose:test-utils"))
     implementation(project(":compose:remote:remote-core"))
     implementation(project(":compose:remote:remote-frontend"))
+    implementation(project(":compose:remote:remote-player-core"))
+    implementation(project(":compose:remote:remote-player-view"))
     implementation(project(":compose:remote:remote-player-compose"))
     implementation(project(":test:screenshot:screenshot"))
     implementation("org.yaml:snakeyaml:2.4")
