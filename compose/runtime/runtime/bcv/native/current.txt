@@ -854,7 +854,10 @@ final class androidx.compose.runtime/BroadcastFrameClock : androidx.compose.runt
     final suspend fun <#A1: kotlin/Any?> withFrameNanos(kotlin/Function1<kotlin/Long, #A1>): #A1 // androidx.compose.runtime/BroadcastFrameClock.withFrameNanos|withFrameNanos(kotlin.Function1<kotlin.Long,0:0>){0§<kotlin.Any?>}[0]
 }
 
-final class androidx.compose.runtime/CompositionLocalContext // androidx.compose.runtime/CompositionLocalContext|null[0]
+final class androidx.compose.runtime/CompositionLocalContext { // androidx.compose.runtime/CompositionLocalContext|null[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // androidx.compose.runtime/CompositionLocalContext.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // androidx.compose.runtime/CompositionLocalContext.hashCode|hashCode(){}[0]
+}
 
 final class androidx.compose.runtime/CompositionScopedCoroutineScopeCanceller : androidx.compose.runtime/RememberObserver { // androidx.compose.runtime/CompositionScopedCoroutineScopeCanceller|null[0]
     constructor <init>(kotlinx.coroutines/CoroutineScope) // androidx.compose.runtime/CompositionScopedCoroutineScopeCanceller.<init>|<init>(kotlinx.coroutines.CoroutineScope){}[0]
