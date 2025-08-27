@@ -30,6 +30,11 @@ import androidx.compose.runtime.changelist.ComposerChangeListWriter
 import androidx.compose.runtime.changelist.FixupList
 import androidx.compose.runtime.collection.MultiValueMap
 import androidx.compose.runtime.collection.ScopeMap
+import androidx.compose.runtime.composer.gapbuffer.Anchor
+import androidx.compose.runtime.composer.gapbuffer.KeyInfo
+import androidx.compose.runtime.composer.gapbuffer.SlotReader
+import androidx.compose.runtime.composer.gapbuffer.SlotTable
+import androidx.compose.runtime.composer.gapbuffer.SlotWriter
 import androidx.compose.runtime.internal.IntRef
 import androidx.compose.runtime.internal.invokeComposable
 import androidx.compose.runtime.internal.persistentCompositionLocalHashMapOf
