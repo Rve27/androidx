@@ -38,6 +38,7 @@ dependencies {
     api("androidx.lifecycle:lifecycle-service:2.9.2")
 
     testImplementation("androidx.core:core-ktx:1.17.0")
+    testImplementation(libs.kotlinCoroutinesTest)
     testImplementation(libs.junit)
     testImplementation(libs.mockitoKotlin4)
     testImplementation(libs.testExtJunit)
