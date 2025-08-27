@@ -35,6 +35,8 @@ import androidx.xr.scenecore.internal.Entity
 import androidx.xr.scenecore.internal.GltfEntity
 import androidx.xr.scenecore.internal.GltfFeature
 import androidx.xr.scenecore.internal.HeadActivityPose
+import androidx.xr.scenecore.internal.InputEventListener
+import androidx.xr.scenecore.internal.InteractableComponent
 import androidx.xr.scenecore.internal.LoggingEntity
 import androidx.xr.scenecore.internal.MediaPlayerExtensionsWrapper
 import androidx.xr.scenecore.internal.PanelEntity
@@ -265,6 +267,11 @@ public class FakeSceneRuntime() : SceneRuntime, RenderingEntityFactory {
     override fun enablePanelDepthTest(enabled: Boolean) {
         enabledPanelDepthTest = enabled
     }
+
+    override fun createInteractableComponent(
+        executor: Executor,
+        listener: InputEventListener,
+    ): InteractableComponent = FakeInteractableComponent()
 
     override fun dispose() {}
 }

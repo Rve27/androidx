@@ -52,6 +52,8 @@ import androidx.xr.scenecore.internal.CameraViewActivityPose;
 import androidx.xr.scenecore.internal.Dimensions;
 import androidx.xr.scenecore.internal.Entity;
 import androidx.xr.scenecore.internal.HeadActivityPose;
+import androidx.xr.scenecore.internal.InputEventListener;
+import androidx.xr.scenecore.internal.InteractableComponent;
 import androidx.xr.scenecore.internal.LoggingEntity;
 import androidx.xr.scenecore.internal.MediaPlayerExtensionsWrapper;
 import androidx.xr.scenecore.internal.PixelDimensions;
@@ -961,5 +963,13 @@ public class SpatialSceneRuntimeTest {
         MediaPlayerExtensionsWrapper extensions = mRuntime.getMediaPlayerExtensionsWrapper();
 
         assertThat(extensions).isNotNull();
+    }
+
+    @Test
+    public void createInteractableComponent_returnsComponent() {
+        InputEventListener mockConsumer = mock(InputEventListener.class);
+        InteractableComponent interactableComponent =
+                mRuntime.createInteractableComponent(directExecutor(), mockConsumer);
+        assertThat(interactableComponent).isNotNull();
     }
 }

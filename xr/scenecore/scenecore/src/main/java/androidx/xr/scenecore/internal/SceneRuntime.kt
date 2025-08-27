@@ -393,6 +393,19 @@ public interface SceneRuntime : JxrRuntime {
      */
     public fun enablePanelDepthTest(enabled: Boolean)
 
+    /**
+     * Create an Interactable component.
+     *
+     * @param executor Executor to use for input callbacks.
+     * @param listener [InputEventListener] for this component.
+     * @return InteractableComponent instance.
+     */
+    // @Suppress("ExecutorRegistration")
+    public fun createInteractableComponent(
+        executor: Executor,
+        listener: InputEventListener,
+    ): InteractableComponent
+
     /** Disposes of the resources used by this runtime */
     public fun dispose()
 }

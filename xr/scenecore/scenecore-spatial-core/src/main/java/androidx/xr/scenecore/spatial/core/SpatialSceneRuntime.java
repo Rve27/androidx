@@ -41,6 +41,8 @@ import androidx.xr.scenecore.internal.Entity;
 import androidx.xr.scenecore.internal.GltfEntity;
 import androidx.xr.scenecore.internal.GltfFeature;
 import androidx.xr.scenecore.internal.HeadActivityPose;
+import androidx.xr.scenecore.internal.InputEventListener;
+import androidx.xr.scenecore.internal.InteractableComponent;
 import androidx.xr.scenecore.internal.LoggingEntity;
 import androidx.xr.scenecore.internal.MediaPlayerExtensionsWrapper;
 import androidx.xr.scenecore.internal.PanelEntity;
@@ -749,5 +751,11 @@ class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory {
         // TODO: b/376934871 - Check async results.
         mExtensions.setPreferredAspectRatio(
                 activity, preferredRatio, Runnable::run, (result) -> {});
+    }
+
+    @Override
+    public @NonNull InteractableComponent createInteractableComponent(
+            @NonNull Executor executor, @NonNull InputEventListener listener) {
+        return new InteractableComponentImpl(executor, listener);
     }
 }
