@@ -257,7 +257,6 @@ class DrawOperationsTest {
     fun drawRoundRect() = getCoreDocument { drawRoundRect(10f, 20f, 90f, 80f, 15f, 15f) }
 
     fun drawTextOnPath() = getCoreDocument {
-        @Suppress("ConstantConditionIf") if (true) return@getCoreDocument // "b/440318500"
         val path = Path()
         path.moveTo(10f, 50f)
         path.lineTo(90f, 50f)
@@ -265,7 +264,6 @@ class DrawOperationsTest {
     }
 
     fun drawTextOnPathWithTextId() = getCoreDocument {
-        @Suppress("ConstantConditionIf") if (true) return@getCoreDocument // "b/440318500"
         val textId = textCreateId("Text on path")
         val path = Path()
         path.moveTo(10f, 50f)
