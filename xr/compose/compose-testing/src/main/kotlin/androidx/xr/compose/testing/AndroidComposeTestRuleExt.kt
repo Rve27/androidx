@@ -17,11 +17,13 @@
 package androidx.xr.compose.testing
 
 import android.app.Activity
-import android.view.Display
-import androidx.activity.ComponentActivity
+import android.content.pm.PackageManager
 import androidx.annotation.RestrictTo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
@@ -30,48 +32,34 @@ import androidx.xr.compose.platform.LocalSession
 import androidx.xr.compose.platform.LocalSpatialCapabilities
 import androidx.xr.compose.platform.LocalSpatialConfiguration
 import androidx.xr.compose.platform.SceneManager
-import androidx.xr.compose.subspace.SubspaceComposable
+import androidx.xr.compose.platform.SpatialCapabilities
+import androidx.xr.compose.platform.SpatialConfiguration
+import androidx.xr.compose.unit.DpVolumeSize
+import androidx.xr.compose.unit.Meter
 import androidx.xr.runtime.Session
+import androidx.xr.runtime.math.FloatSize3d
+import androidx.xr.scenecore.SpatialCapabilities.Companion.SPATIAL_CAPABILITY_3D_CONTENT
+import androidx.xr.scenecore.SpatialCapabilities.Companion.SPATIAL_CAPABILITY_APP_ENVIRONMENT
+import androidx.xr.scenecore.SpatialCapabilities.Companion.SPATIAL_CAPABILITY_PASSTHROUGH_CONTROL
+import androidx.xr.scenecore.SpatialCapabilities.Companion.SPATIAL_CAPABILITY_SPATIAL_AUDIO
+import androidx.xr.scenecore.SpatialCapabilities.Companion.SPATIAL_CAPABILITY_UI
 import androidx.xr.scenecore.impl.JxrPlatformAdapterAxr
 import androidx.xr.scenecore.impl.extensions.XrExtensionsProvider
 import androidx.xr.scenecore.impl.impress.FakeImpressApiImpl
 import androidx.xr.scenecore.impl.perception.PerceptionLibrary
 import androidx.xr.scenecore.internal.JxrPlatformAdapter
+import androidx.xr.scenecore.scene
+import androidx.xr.scenecore.testing.FakeJxrPlatformAdapterFactory
 import androidx.xr.scenecore.testing.FakeScheduledExecutorService
 import com.android.extensions.xr.ShadowConfig
-import com.android.extensions.xr.XrExtensions
 import com.google.androidxr.splitengine.SplitEngineSubspaceManager
 import com.google.ar.imp.view.splitengine.ImpSplitEngineRenderer
 import org.mockito.Mockito.mock
-import org.robolectric.shadows.ShadowDisplay
 
-/**
- * Custom test class that should be used for testing [SubspaceComposable] content.
- *
- * TODO(b/436320533): Deprecate SubspaceTestingActivity in favor of using
- *   setContentWithCompatibilityForXr
- */
-@Suppress("ForbiddenSuperClass")
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public class SubspaceTestingActivity : ComponentActivity() {
-    public val extensions: XrExtensions = XrExtensionsProvider.getXrExtensions()!!
-    @Suppress("MutableBareField") public var session: Session? = null
+private object SubspaceAndroidComposeTestRuleConstants {
+    const val DEFAULT_DP_PER_METER = 1151.856f
 
-    /** Throws an exception by default under test; return Robolectric Display impl instead. */
-    override fun getDisplay(): Display = ShadowDisplay.getDefaultDisplay()
-
-    override fun onStart() {
-        SceneManager.start()
-        super.onStart()
-
-        ShadowConfig.extract(XrExtensionsProvider.getXrExtensions()!!.config!!)
-            .setDefaultDpPerMeter(1151.856f)
-    }
-
-    override fun onDestroy() {
-        SceneManager.stop()
-        super.onDestroy()
-    }
+    const val USE_REAL_RUNTIME = "androidx.xr.compose.testing.USE_REAL_RUNTIME"
 }
 
 /**
@@ -89,10 +77,10 @@ public fun AndroidComposeTestRule<*, *>.setContentWithCompatibilityForXr(
 ) {
     SceneManager.start()
     ShadowConfig.extract(XrExtensionsProvider.getXrExtensions()!!.config!!)
-        .setDefaultDpPerMeter(1151.856f)
+        .setDefaultDpPerMeter(SubspaceAndroidComposeTestRuleConstants.DEFAULT_DP_PER_METER)
 
     if (session == null) {
-        session = createFakeSession(activity)
+        session = createTestSession(activity)
     }
 
     activity.lifecycle.addObserver(
@@ -216,19 +204,11 @@ public fun AndroidComposeTestRule<*, *>.onAllSubspaceNodesWithTag(
 ): SubspaceSemanticsNodeInteractionCollection = onAllSubspaceNodes(hasTestTag(testTag))
 
 /**
- * Create a fake [Session] for testing.
+ * Create a [Session] for testing.
  *
- * A convenience method that creates a fake [Session] for testing. If runtime is not provided, a
- * fake [JxrPlatformAdapter] will be created by default.
- *
- * @param activity The [SubspaceTestingActivity] to use for the [Session].
- * @param runtime The [JxrPlatformAdapter] to use for the [Session].
+ * @param activity The [Activity] to use for the [Session].
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public fun createFakeSession(
-    activity: Activity,
-    runtime: JxrPlatformAdapter = createFakeRuntime(activity),
-): Session =
+private fun createTestSession(activity: Activity): Session =
     Session(
         activity,
         runtimes =
@@ -236,26 +216,95 @@ public fun createFakeSession(
                 FakePerceptionRuntimeFactory().createRuntime(activity).apply {
                     lifecycleManager.create()
                 },
-                runtime,
+                createTestJxrPlatformAdapter(activity),
             ),
     )
 
 /**
- * Create a fake [JxrPlatformAdapter] for testing.
- *
- * A convenience method that creates a fake [JxrPlatformAdapter] for testing.
+ * Create a [JxrPlatformAdapter] for testing.
  *
  * @param activity The [Activity] to use for the [JxrPlatformAdapter].
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public fun createFakeRuntime(activity: Activity): JxrPlatformAdapter =
-    // FakeJxrPlatformAdapterFactory().createPlatformAdapter(activity)
-    JxrPlatformAdapterAxr.create(
-        /* activity = */ activity,
-        /* executor = */ FakeScheduledExecutorService(),
-        /* extensions = */ XrExtensionsProvider.getXrExtensions()!!,
-        /* impressApi = */ FakeImpressApiImpl(),
-        /* perceptionLibrary = */ PerceptionLibrary(),
-        /* splitEngineSubspaceManager = */ mock(SplitEngineSubspaceManager::class.java),
-        /* splitEngineRenderer = */ mock(ImpSplitEngineRenderer::class.java),
-    )
+private fun createTestJxrPlatformAdapter(activity: Activity): JxrPlatformAdapter =
+    if (shouldUseRealRuntime(activity)) {
+        JxrPlatformAdapterAxr.create(
+            /* activity = */ activity,
+            /* executor = */ FakeScheduledExecutorService(),
+            /* extensions = */ XrExtensionsProvider.getXrExtensions()!!,
+            /* impressApi = */ FakeImpressApiImpl(),
+            /* perceptionLibrary = */ PerceptionLibrary(),
+            /* splitEngineSubspaceManager = */ mock(SplitEngineSubspaceManager::class.java),
+            /* splitEngineRenderer = */ mock(ImpSplitEngineRenderer::class.java),
+        )
+    } else {
+        FakeJxrPlatformAdapterFactory().createPlatformAdapter(activity)
+    }
+
+/**
+ * Check the AndroidManifest for a <meta-data> indicating that the real JxrPlatformAdapterImpl
+ * should be used instead of the FakeJxrPlatformAdapter. By default, we will use the fake adapter.
+ */
+private fun shouldUseRealRuntime(activity: Activity) =
+    activity.packageManager
+        .getActivityInfo(activity.componentName, PackageManager.GET_META_DATA)
+        .metaData
+        ?.run {
+            containsKey(SubspaceAndroidComposeTestRuleConstants.USE_REAL_RUNTIME) &&
+                getBoolean(SubspaceAndroidComposeTestRuleConstants.USE_REAL_RUNTIME)
+        }
+        ?: activity.packageManager
+            .getApplicationInfo(activity.packageName, PackageManager.GET_META_DATA)
+            .metaData
+            ?.run {
+                containsKey(SubspaceAndroidComposeTestRuleConstants.USE_REAL_RUNTIME) &&
+                    getBoolean(SubspaceAndroidComposeTestRuleConstants.USE_REAL_RUNTIME)
+            }
+        ?: false
+
+private class TestSessionSpatialCapabilities(session: Session) : SpatialCapabilities {
+    private var capabilities by
+        mutableStateOf(session.scene.spatialCapabilities).apply {
+            session.scene.addSpatialCapabilitiesChangedListener { value = it }
+        }
+
+    override val isSpatialUiEnabled: Boolean
+        get() = capabilities.hasCapability(SPATIAL_CAPABILITY_UI)
+
+    override val isContent3dEnabled: Boolean
+        get() = capabilities.hasCapability(SPATIAL_CAPABILITY_3D_CONTENT)
+
+    override val isAppEnvironmentEnabled: Boolean
+        get() = capabilities.hasCapability(SPATIAL_CAPABILITY_APP_ENVIRONMENT)
+
+    override val isPassthroughControlEnabled: Boolean
+        get() = capabilities.hasCapability(SPATIAL_CAPABILITY_PASSTHROUGH_CONTROL)
+
+    override val isSpatialAudioEnabled: Boolean
+        get() = capabilities.hasCapability(SPATIAL_CAPABILITY_SPATIAL_AUDIO)
+}
+
+/** A [SpatialConfiguration] that is attached to the current [Session]. */
+private class TestSessionSpatialConfiguration(private val session: Session) : SpatialConfiguration {
+    override val hasXrSpatialFeature: Boolean = true
+
+    override val bounds: DpVolumeSize by
+        mutableStateOf(session.scene.activitySpace.bounds.toDpVolumeSize()).apply {
+            session.scene.activitySpace.addOnBoundsChangedListener { value = it.toDpVolumeSize() }
+        }
+
+    override fun requestHomeSpaceMode() {
+        session.scene.requestHomeSpaceMode()
+    }
+
+    override fun requestFullSpaceMode() {
+        session.scene.requestFullSpaceMode()
+    }
+}
+
+/**
+ * Creates a [DpVolumeSize] from a [FloatSize3d] object in meters.
+ *
+ * @return a [DpVolumeSize] object representing the same volume size in Dp.
+ */
+private fun FloatSize3d.toDpVolumeSize(): DpVolumeSize =
+    DpVolumeSize(Meter(width).toDp(), Meter(height).toDp(), Meter(depth).toDp())
