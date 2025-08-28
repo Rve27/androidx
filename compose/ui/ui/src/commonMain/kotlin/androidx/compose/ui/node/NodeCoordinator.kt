@@ -430,7 +430,7 @@ internal abstract class NodeCoordinator(override val layoutNode: LayoutNode) :
         if (!isPlacingForAlignment) {
             captureRulersIfNeeded(measureResult)
         }
-        if (this === layoutNode.outerCoordinator) {
+        if (this === layoutNode.outerCoordinator && layoutNode.isPlaced) {
             layoutNode
                 .requireOwner()
                 .rectManager
