@@ -37,6 +37,7 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.FragmentTransaction
 import androidx.pdf.ink.EditablePdfViewerFragment
+import androidx.pdf.testapp.ui.FeatureFlagListener
 import androidx.pdf.testapp.ui.FeaturePreferencesDialog
 import androidx.pdf.testapp.ui.v2.PdfViewerFragmentExtended
 import androidx.pdf.testapp.ui.v2.StyledPdfViewerFragment
@@ -58,7 +59,10 @@ internal class MainActivityV2 : AppCompatActivity() {
     private lateinit var redoPdfButton: MaterialButton
     private lateinit var preferenceButton: ImageButton
 
-    private val settingsDialog: FeaturePreferencesDialog by lazy { FeaturePreferencesDialog(this) }
+    private val settingsDialog: FeaturePreferencesDialog by lazy {
+        FeaturePreferencesDialog(this, listener = pdfViewerFragment as? FeatureFlagListener)
+    }
+
     private lateinit var savePdfButton: MaterialButton
 
     @VisibleForTesting
