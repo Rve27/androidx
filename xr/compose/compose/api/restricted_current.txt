@@ -405,6 +405,11 @@ package androidx.xr.compose.subspace.layout {
     method public static androidx.xr.compose.subspace.layout.SubspaceModifier aspectRatio(androidx.xr.compose.subspace.layout.SubspaceModifier, @FloatRange(from=0.0, fromInclusive=false) float ratio, optional boolean matchHeightConstraintsFirst);
   }
 
+  public interface DelegatableSubspaceNode {
+    method public androidx.xr.compose.subspace.layout.SubspaceModifier.Node getNode();
+    property public abstract androidx.xr.compose.subspace.layout.SubspaceModifier.Node node;
+  }
+
   public final class MovableKt {
     method @Deprecated @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static androidx.xr.compose.subspace.layout.SubspaceModifier anchorable(androidx.xr.compose.subspace.layout.SubspaceModifier, optional boolean enabled, optional java.util.Set<androidx.xr.compose.subspace.layout.PlaneOrientation> anchorPlaneOrientations, optional java.util.Set<androidx.xr.compose.subspace.layout.PlaneSemantic> anchorPlaneSemantics);
     method @Deprecated public static androidx.xr.compose.subspace.layout.SubspaceModifier movable(androidx.xr.compose.subspace.layout.SubspaceModifier, optional boolean enabled, optional boolean stickyPose, optional boolean scaleWithDistance, optional kotlin.jvm.functions.Function1<? super androidx.xr.compose.subspace.layout.SpatialMoveStartEvent,kotlin.Unit>? onMoveStart, optional kotlin.jvm.functions.Function1<? super androidx.xr.compose.subspace.layout.SpatialMoveEndEvent,kotlin.Unit>? onMoveEnd, optional kotlin.jvm.functions.Function1<? super androidx.xr.compose.subspace.layout.SpatialMoveEvent,java.lang.Boolean>? onMove);
@@ -833,12 +838,14 @@ package androidx.xr.compose.subspace.layout {
     method public infix androidx.xr.compose.subspace.layout.SubspaceModifier then(androidx.xr.compose.subspace.node.SubspaceModifierNodeElement<androidx.xr.compose.subspace.layout.SubspaceModifier.Node> other);
   }
 
-  public abstract static class SubspaceModifier.Node {
+  public abstract static class SubspaceModifier.Node implements androidx.xr.compose.subspace.layout.DelegatableSubspaceNode {
     ctor public SubspaceModifier.Node();
+    method public androidx.xr.compose.subspace.layout.SubspaceModifier.Node getNode();
     method public final boolean isAttached();
     method public void onAttach();
     method public void onDetach();
     property public final boolean isAttached;
+    property public androidx.xr.compose.subspace.layout.SubspaceModifier.Node node;
   }
 
   public abstract class SubspacePlaceable {
@@ -899,18 +906,18 @@ package androidx.xr.compose.subspace.node {
     property public kotlin.jvm.functions.Function2<androidx.xr.compose.subspace.node.ComposeSubspaceNode,androidx.xr.compose.subspace.layout.SubspaceModifier,kotlin.Unit> SetModifier;
   }
 
-  public interface CompositionLocalConsumerSubspaceModifierNode {
+  public interface CompositionLocalConsumerSubspaceModifierNode extends androidx.xr.compose.subspace.layout.DelegatableSubspaceNode {
   }
 
   public final class CompositionLocalConsumerSubspaceModifierNodeKt {
     method public static <T> T currentValueOf(androidx.xr.compose.subspace.node.CompositionLocalConsumerSubspaceModifierNode, androidx.compose.runtime.CompositionLocal<T> local);
   }
 
-  public interface LayoutCoordinatesAwareModifierNode {
+  public interface LayoutCoordinatesAwareModifierNode extends androidx.xr.compose.subspace.layout.DelegatableSubspaceNode {
     method public void onLayoutCoordinates(androidx.xr.compose.subspace.layout.SubspaceLayoutCoordinates coordinates);
   }
 
-  public interface SubspaceLayoutModifierNode {
+  public interface SubspaceLayoutModifierNode extends androidx.xr.compose.subspace.layout.DelegatableSubspaceNode {
     method public androidx.xr.compose.subspace.layout.SubspaceMeasureResult measure(androidx.xr.compose.subspace.layout.SubspaceMeasureScope, androidx.xr.compose.subspace.layout.SubspaceMeasurable measurable, androidx.xr.compose.unit.VolumeConstraints constraints);
   }
 
