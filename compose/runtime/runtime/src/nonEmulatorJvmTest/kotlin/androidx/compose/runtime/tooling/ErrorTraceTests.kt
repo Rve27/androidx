@@ -495,7 +495,7 @@ class ErrorTraceTests {
         exceptionTest(
             "<lambda>(ErrorTraceTests.kt:<unknown line>)",
             "<lambda>(MovableContent.kt:<line number>)",
-            "<lambda>(Composer.kt:<line number>)",
+            "<lambda>(ComposerImpl.kt:<line number>)",
             "<lambda>(MovableContent.kt:<unknown line>)",
             "MovableWrapper(ErrorTraceComposables.kt:156)",
             "<lambda>(ErrorTraceTests.kt:<line number>)",
@@ -508,7 +508,7 @@ class ErrorTraceTests {
         exceptionTest(
             "<lambda>(ErrorTraceTests.kt:<unknown line>)",
             "<lambda>(MovableContent.kt:<line number>)",
-            "<lambda>(Composer.kt:<line number>)",
+            "<lambda>(ComposerImpl.kt:<line number>)",
             "<lambda>(MovableContent.kt:<unknown line>)",
             "MovableWrapper(ErrorTraceComposables.kt:156)",
             "<lambda>(ErrorTraceTests.kt:<line number>)",
@@ -530,7 +530,7 @@ class ErrorTraceTests {
     fun moveMovableContentOf() =
         exceptionTest(
             "<lambda>(ErrorTraceTests.kt:<unknown line>)",
-            "<lambda>(Composer.kt:<line number>)",
+            "<lambda>(ComposerImpl.kt:<line number>)",
             "<lambda>(MovableContent.kt:<unknown line>)",
             "<lambda>(ErrorTraceTests.kt:<line number>)",
             "WrappedMovableContent(ErrorTraceComposables.kt:166)",
@@ -561,7 +561,7 @@ class ErrorTraceTests {
     fun moveMovableContentOfStateRead() =
         exceptionTest(
             "<lambda>(ErrorTraceTests.kt:<unknown line>)",
-            "<lambda>(Composer.kt:<line number>)",
+            "<lambda>(ComposerImpl.kt:<line number>)",
             "<lambda>(MovableContent.kt:<unknown line>)",
             "<lambda>(ErrorTraceTests.kt:<line number>)",
             "WrappedMovableContent(ErrorTraceComposables.kt:166)",
@@ -592,7 +592,7 @@ class ErrorTraceTests {
     fun moveMovableContentOfReverse() =
         exceptionTest(
             "<lambda>(ErrorTraceTests.kt:<unknown line>)",
-            "<lambda>(Composer.kt:<line number>)",
+            "<lambda>(ComposerImpl.kt:<line number>)",
             "<lambda>(MovableContent.kt:<unknown line>)",
             "<lambda>(ErrorTraceTests.kt:<line number>)",
             "Wrapper(ErrorTraceComposables.kt:149)",
