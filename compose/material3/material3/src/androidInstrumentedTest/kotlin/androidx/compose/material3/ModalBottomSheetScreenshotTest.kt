@@ -102,8 +102,8 @@ class ModalBottomSheetScreenshotTest {
                 predictiveBackProgress = remember { Animatable(initialValue = progress) },
                 scope = rememberCoroutineScope(),
                 sheetState = rememberSheetState(initialValue = SheetValue.Expanded),
-                onDismissRequest = {},
                 animateToDismiss = {},
+                settleToDismiss = {},
             ) {
                 Text(
                     "Modal Bottom Sheet Predictive Back\nProgress: $progress",

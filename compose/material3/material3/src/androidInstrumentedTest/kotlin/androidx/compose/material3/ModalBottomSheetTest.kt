@@ -71,7 +71,6 @@ import androidx.compose.ui.test.assertTopPositionInRootIsEqualTo
 import androidx.compose.ui.test.assertWidthIsEqualTo
 import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.isDialog
-import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithContentDescription
@@ -659,11 +658,9 @@ class ModalBottomSheetTest {
         rule.waitForIdle()
         assertThat(state.currentValue).isEqualTo(SheetValue.PartiallyExpanded) // We should
         // retain the current value if possible
-        assertTrue(state.anchoredDraggableState.anchors.hasPositionFor(SheetValue.Hidden))
-        assertTrue(
-            state.anchoredDraggableState.anchors.hasPositionFor(SheetValue.PartiallyExpanded)
-        )
-        assertTrue(state.anchoredDraggableState.anchors.hasPositionFor(SheetValue.Expanded))
+        assertTrue(state.anchoredDraggableState.anchors.hasAnchorFor(SheetValue.Hidden))
+        assertTrue(state.anchoredDraggableState.anchors.hasAnchorFor(SheetValue.PartiallyExpanded))
+        assertTrue(state.anchoredDraggableState.anchors.hasAnchorFor(SheetValue.Expanded))
 
         scope.launch { state.expand() }
         rule.waitForIdle()
@@ -673,20 +670,16 @@ class ModalBottomSheetTest {
         rule.waitForIdle()
         assertThat(state.currentValue).isEqualTo(SheetValue.Expanded)
         // We should retain the current value if possible
-        assertTrue(state.anchoredDraggableState.anchors.hasPositionFor(SheetValue.Hidden))
-        assertTrue(
-            state.anchoredDraggableState.anchors.hasPositionFor(SheetValue.PartiallyExpanded)
-        )
-        assertTrue(state.anchoredDraggableState.anchors.hasPositionFor(SheetValue.Expanded))
+        assertTrue(state.anchoredDraggableState.anchors.hasAnchorFor(SheetValue.Hidden))
+        assertTrue(state.anchoredDraggableState.anchors.hasAnchorFor(SheetValue.PartiallyExpanded))
+        assertTrue(state.anchoredDraggableState.anchors.hasAnchorFor(SheetValue.Expanded))
 
         amountOfItems = 0 // When the sheet height is 0, we should only have a hidden anchor
         rule.waitForIdle()
         assertThat(state.currentValue).isEqualTo(SheetValue.Hidden)
-        assertTrue(state.anchoredDraggableState.anchors.hasPositionFor(SheetValue.Hidden))
-        assertFalse(
-            state.anchoredDraggableState.anchors.hasPositionFor(SheetValue.PartiallyExpanded)
-        )
-        assertFalse(state.anchoredDraggableState.anchors.hasPositionFor(SheetValue.Expanded))
+        assertTrue(state.anchoredDraggableState.anchors.hasAnchorFor(SheetValue.Hidden))
+        assertFalse(state.anchoredDraggableState.anchors.hasAnchorFor(SheetValue.PartiallyExpanded))
+        assertFalse(state.anchoredDraggableState.anchors.hasAnchorFor(SheetValue.Expanded))
     }
 
     @Test
@@ -778,7 +771,6 @@ class ModalBottomSheetTest {
         rule.runOnIdle { assertThat(sheetState.currentValue).isEqualTo(SheetValue.Hidden) }
 
         showShortContent = true
-        rule.waitForIdle()
         scope.launch { sheetState.show() } // We can't use LaunchedEffect with Swipeable in tests
         // yet, so we're invoking this outside of composition. See b/254115946.
 
@@ -1116,24 +1108,19 @@ class ModalBottomSheetTest {
 
         assertThat(sheetState.currentValue).isEqualTo(SheetValue.Hidden)
         assertFalse(
-            sheetState.anchoredDraggableState.anchors.hasPositionFor(SheetValue.PartiallyExpanded)
+            sheetState.anchoredDraggableState.anchors.hasAnchorFor(SheetValue.PartiallyExpanded)
         )
-        assertFalse(sheetState.anchoredDraggableState.anchors.hasPositionFor(SheetValue.Expanded))
+        assertFalse(sheetState.anchoredDraggableState.anchors.hasAnchorFor(SheetValue.Expanded))
 
         scope.launch { sheetState.show() }
         rule.waitForIdle()
 
         assertThat(sheetState.isVisible).isTrue()
-        // animateTo with a non-existent targetValue will force currentValue to the targetValue
-        // (Expanded). TargetValue then returns to the nearest available anchor (Hidden).
-        assertThat(sheetState.currentValue).isEqualTo(SheetValue.Expanded)
-        assertThat(sheetState.targetValue).isEqualTo(SheetValue.Hidden)
-        assertThat(sheetState.requireOffset()).isEqualTo(rule.rootHeightPx())
+        assertThat(sheetState.currentValue).isEqualTo(sheetState.targetValue)
 
         hasSheetContent = true // Recompose with sheet content
         rule.waitForIdle()
         assertThat(sheetState.currentValue).isEqualTo(SheetValue.Expanded)
-        assertThat(sheetState.requireOffset()).isWithin(1f).of(rule.rootHeightPx() * 0.6f)
     }
 
     @Test
@@ -1169,21 +1156,19 @@ class ModalBottomSheetTest {
 
         assertThat(sheetState.currentValue).isEqualTo(SheetValue.Hidden)
         assertFalse(
-            sheetState.anchoredDraggableState.anchors.hasPositionFor(SheetValue.PartiallyExpanded)
+            sheetState.anchoredDraggableState.anchors.hasAnchorFor(SheetValue.PartiallyExpanded)
         )
-        assertFalse(sheetState.anchoredDraggableState.anchors.hasPositionFor(SheetValue.Expanded))
+        assertFalse(sheetState.anchoredDraggableState.anchors.hasAnchorFor(SheetValue.Expanded))
 
         scope.launch { sheetState.show() }
         rule.waitForIdle()
 
         assertThat(sheetState.isVisible).isTrue()
-        assertThat(sheetState.currentValue).isEqualTo(SheetValue.Expanded)
-        assertThat(sheetState.requireOffset()).isEqualTo(rule.rootHeightPx())
+        assertThat(sheetState.currentValue).isEqualTo(sheetState.targetValue)
 
         hasSheetContent = true // Recompose with sheet content
         rule.waitForIdle()
         assertThat(sheetState.currentValue).isEqualTo(SheetValue.PartiallyExpanded)
-        assertThat(sheetState.requireOffset()).isWithin(1f).of(rule.rootHeightPx() * 0.5f)
     }
 
     @Test
@@ -1481,7 +1466,4 @@ class ModalBottomSheetTest {
 
     private val Bundle.traversalBefore: Int
         get() = getInt("android.view.accessibility.extra.EXTRA_DATA_TEST_TRAVERSALBEFORE_VAL")
-
-    private fun ComposeTestRule.rootHeightPx(): Float =
-        with(density) { onAllNodes(isDialog()).onFirst().getUnclippedBoundsInRoot().height.toPx() }
 }

@@ -19,10 +19,7 @@ package androidx.compose.material3
 import androidx.compose.animation.core.FiniteAnimationSpec
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.AnchoredDraggableDefaults
-import androidx.compose.foundation.gestures.DraggableAnchors
 import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.anchoredDraggable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -34,8 +31,10 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.SheetValue.Expanded
 import androidx.compose.material3.SheetValue.Hidden
 import androidx.compose.material3.SheetValue.PartiallyExpanded
+import androidx.compose.material3.internal.DraggableAnchors
 import androidx.compose.material3.internal.Strings
-import androidx.compose.material3.internal.draggableAnchorsV2
+import androidx.compose.material3.internal.anchoredDraggable
+import androidx.compose.material3.internal.draggableAnchors
 import androidx.compose.material3.internal.getString
 import androidx.compose.material3.tokens.MotionSchemeKeyTokens
 import androidx.compose.runtime.Composable
@@ -250,12 +249,6 @@ private fun StandardBottomSheet(
     val scope = rememberCoroutineScope()
     val orientation = Orientation.Vertical
     val peekHeightPx = with(LocalDensity.current) { peekHeight.toPx() }
-    val anchoredDraggableFlingBehavior =
-        AnchoredDraggableDefaults.flingBehavior(
-            state = state.anchoredDraggableState,
-            positionalThreshold = { _ -> state.positionalThreshold.invoke() },
-            animationSpec = BottomSheetAnimationSpec,
-        )
     val nestedScroll =
         if (sheetSwipeEnabled) {
             Modifier.nestedScroll(
@@ -263,7 +256,7 @@ private fun StandardBottomSheet(
                     ConsumeSwipeWithinBottomSheetBoundsNestedScrollConnection(
                         sheetState = state,
                         orientation = orientation,
-                        flingBehavior = anchoredDraggableFlingBehavior,
+                        onFling = { scope.launch { state.settle(it) } },
                     )
                 }
             )
@@ -276,7 +269,7 @@ private fun StandardBottomSheet(
                 .fillMaxWidth()
                 .requiredHeightIn(min = peekHeight)
                 .then(nestedScroll)
-                .draggableAnchorsV2(state.anchoredDraggableState, orientation) {
+                .draggableAnchors(state.anchoredDraggableState, orientation) {
                     sheetSize,
                     constraints ->
                     val layoutHeight = constraints.maxHeight.toFloat()
@@ -296,27 +289,23 @@ private fun StandardBottomSheet(
                     }
                     val newTarget =
                         when (val oldTarget = state.anchoredDraggableState.targetValue) {
-                            Hidden -> if (newAnchors.hasPositionFor(Hidden)) Hidden else oldTarget
+                            Hidden -> if (newAnchors.hasAnchorFor(Hidden)) Hidden else oldTarget
                             PartiallyExpanded ->
                                 when {
-                                    newAnchors.hasPositionFor(PartiallyExpanded) ->
-                                        PartiallyExpanded
-
-                                    newAnchors.hasPositionFor(Expanded) -> Expanded
-                                    newAnchors.hasPositionFor(Hidden) -> Hidden
+                                    newAnchors.hasAnchorFor(PartiallyExpanded) -> PartiallyExpanded
+                                    newAnchors.hasAnchorFor(Expanded) -> Expanded
+                                    newAnchors.hasAnchorFor(Hidden) -> Hidden
                                     else -> oldTarget
                                 }
 
-                            Expanded ->
-                                if (newAnchors.hasPositionFor(Expanded)) Expanded else Hidden
+                            Expanded -> if (newAnchors.hasAnchorFor(Expanded)) Expanded else Hidden
                         }
-                    return@draggableAnchorsV2 newAnchors to newTarget
+                    return@draggableAnchors newAnchors to newTarget
                 }
                 .anchoredDraggable(
                     state = state.anchoredDraggableState,
                     orientation = orientation,
                     enabled = sheetSwipeEnabled,
-                    flingBehavior = anchoredDraggableFlingBehavior,
                 )
                 // Scale up the Surface vertically in case the sheet's offset overflows below the
                 // min anchor. This is done to avoid showing a gap when the sheet opens and bounces
@@ -369,14 +358,22 @@ private fun StandardBottomSheet(
                                                 sheetSwipeEnabled
                                         ) {
                                             if (currentValue == PartiallyExpanded) {
-                                                if (confirmValueChange(Expanded)) {
+                                                if (
+                                                    anchoredDraggableState.confirmValueChange(
+                                                        Expanded
+                                                    )
+                                                ) {
                                                     expand(expandActionLabel) {
                                                         scope.launch { expand() }
                                                         true
                                                     }
                                                 }
                                             } else {
-                                                if (confirmValueChange(PartiallyExpanded)) {
+                                                if (
+                                                    anchoredDraggableState.confirmValueChange(
+                                                        PartiallyExpanded
+                                                    )
+                                                ) {
                                                     collapse(partialExpandActionLabel) {
                                                         scope.launch { partialExpand() }
                                                         true
@@ -469,7 +466,7 @@ private fun BottomSheetScaffoldLayout(
 @OptIn(ExperimentalMaterial3Api::class)
 internal fun Modifier.verticalScaleUp(state: SheetState) = graphicsLayer {
     val offset = state.anchoredDraggableState.offset
-    val anchor = state.anchoredDraggableState.anchors.minPosition()
+    val anchor = state.anchoredDraggableState.anchors.minAnchor()
     val overflow = if (offset < anchor) anchor - offset else 0f
     scaleY = if (overflow > 0f) (size.height + overflow) / size.height else 1f
     transformOrigin = TransformOrigin(pivotFractionX = 0.5f, pivotFractionY = 0f)
@@ -487,7 +484,7 @@ internal fun Modifier.verticalScaleUp(state: SheetState) = graphicsLayer {
 @OptIn(ExperimentalMaterial3Api::class)
 internal fun Modifier.verticalScaleDown(state: SheetState) = graphicsLayer {
     val offset = state.anchoredDraggableState.offset
-    val anchor = state.anchoredDraggableState.anchors.minPosition()
+    val anchor = state.anchoredDraggableState.anchors.minAnchor()
     val overflow = if (offset < anchor) anchor - offset else 0f
     scaleY = if (overflow > 0f) 1 / ((size.height + overflow) / size.height) else 1f
     transformOrigin = TransformOrigin(pivotFractionX = 0.5f, pivotFractionY = 0f)
