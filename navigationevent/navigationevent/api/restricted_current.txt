@@ -11,7 +11,8 @@ package androidx.navigationevent {
 
   public final class NavigationEvent {
     ctor public NavigationEvent();
-    ctor public NavigationEvent(optional @FloatRange(from=0.0) float touchX, optional @FloatRange(from=0.0) float touchY, optional @FloatRange(from=0.0, to=1.0) float progress, optional int swipeEdge, optional long frameTimeMillis);
+    ctor @KotlinOnly public NavigationEvent(optional @FloatRange(from=0.0) float touchX, optional @FloatRange(from=0.0) float touchY, optional @FloatRange(from=0.0, to=1.0) float progress, optional androidx.navigationevent.NavigationEventSwipeEdge swipeEdge, optional long frameTimeMillis);
+    ctor @BytecodeOnly public NavigationEvent(@FloatRange(from=0.0) float, @FloatRange(from=0.0) float, @FloatRange(from=0.0, to=1.0) float, int, long, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public long getFrameTimeMillis();
     method public float getProgress();
     method public int getSwipeEdge();
@@ -19,19 +20,9 @@ package androidx.navigationevent {
     method public float getTouchY();
     property public long frameTimeMillis;
     property public float progress;
-    property public int swipeEdge;
+    property public androidx.navigationevent.NavigationEventSwipeEdge swipeEdge;
     property public float touchX;
     property public float touchY;
-    field public static final androidx.navigationevent.NavigationEvent.Companion Companion;
-    field public static final int EDGE_LEFT = 0; // 0x0
-    field public static final int EDGE_NONE = 2; // 0x2
-    field public static final int EDGE_RIGHT = 1; // 0x1
-  }
-
-  public static final class NavigationEvent.Companion {
-    property public static int EDGE_LEFT;
-    property public static int EDGE_NONE;
-    property public static int EDGE_RIGHT;
   }
 
   public abstract class NavigationEventCallback<T extends androidx.navigationevent.NavigationEventInfo> {
@@ -121,6 +112,21 @@ package androidx.navigationevent {
     property public T currentInfo;
     property public androidx.navigationevent.NavigationEvent latestEvent;
     property public T? previousInfo;
+  }
+
+  @kotlin.jvm.JvmInline public final value class NavigationEventSwipeEdge {
+    method @BytecodeOnly public static androidx.navigationevent.NavigationEventSwipeEdge! box-impl(int);
+    method @BytecodeOnly public int unbox-impl();
+    field public static final androidx.navigationevent.NavigationEventSwipeEdge.Companion Companion;
+  }
+
+  public static final class NavigationEventSwipeEdge.Companion {
+    method public int getLeft();
+    method public int getNone();
+    method public int getRight();
+    property public androidx.navigationevent.NavigationEventSwipeEdge Left;
+    property public androidx.navigationevent.NavigationEventSwipeEdge None;
+    property public androidx.navigationevent.NavigationEventSwipeEdge Right;
   }
 
   @RequiresApi(33) public final class OnBackInvokedInput extends androidx.navigationevent.NavigationEventInput {

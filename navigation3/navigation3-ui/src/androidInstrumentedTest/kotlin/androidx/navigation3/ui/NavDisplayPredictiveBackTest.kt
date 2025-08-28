@@ -34,6 +34,7 @@ import androidx.navigation3.runtime.NavEntry
 import androidx.navigationevent.DirectNavigationEventInput
 import androidx.navigationevent.NavigationEvent
 import androidx.navigationevent.NavigationEventDispatcher
+import androidx.navigationevent.NavigationEventSwipeEdge
 import androidx.navigationevent.compose.LocalNavigationEventDispatcherOwner
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
@@ -189,8 +190,8 @@ class NavDisplayPredictiveBackTest {
         assertThat(composeTestRule.onNodeWithText("numberOnScreen2: 4").isDisplayed()).isTrue()
 
         composeTestRule.runOnIdle {
-            input.start(NavigationEvent(0.1F, 0.1F, 0.1F, BackEvent.EDGE_LEFT))
-            input.progress(NavigationEvent(0.1F, 0.1F, 0.5F, BackEvent.EDGE_LEFT))
+            input.start(NavigationEvent(0.1F, 0.1F, 0.1F, NavigationEventSwipeEdge.Left))
+            input.progress(NavigationEvent(0.1F, 0.1F, 0.5F, NavigationEventSwipeEdge.Left))
         }
 
         composeTestRule.waitForIdle()
