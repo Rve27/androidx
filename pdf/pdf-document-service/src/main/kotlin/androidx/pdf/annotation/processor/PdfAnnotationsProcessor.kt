@@ -17,7 +17,10 @@
 package androidx.pdf.annotation.processor
 
 import androidx.annotation.RestrictTo
+import androidx.pdf.annotation.models.AddEditResult
 import androidx.pdf.annotation.models.AnnotationResult
+import androidx.pdf.annotation.models.EditId
+import androidx.pdf.annotation.models.ModifyEditResult
 import androidx.pdf.annotation.models.PdfAnnotationData
 
 /** Represents an interface for processing a list of [PdfAnnotationData]. */
@@ -31,4 +34,31 @@ public interface PdfAnnotationsProcessor {
      * @return [AnnotationResult] reporting the successful and failed annotations.
      */
     public fun process(annotations: List<PdfAnnotationData>): AnnotationResult
+
+    /**
+     * Processes a list of annotation edits to add and returns an [AddEditResult] that reports the
+     * success/failures.
+     *
+     * @param annotations list of [PdfAnnotationData]
+     * @return [AddEditResult] reporting the successful and failed annotation edits.
+     */
+    public fun processAddEdits(annotations: List<PdfAnnotationData>): AddEditResult
+
+    /**
+     * Processes a list of annotation edits to update and returns an [ModifyEditResult] that reports
+     * the success/failures.
+     *
+     * @param annotations list of [PdfAnnotationData]
+     * @return [ModifyEditResult] reporting the successful and failed annotation edits.
+     */
+    public fun processUpdateEdits(annotations: List<PdfAnnotationData>): ModifyEditResult
+
+    /**
+     * Processes a list of annotation edits to remove and returns an [ModifyEditResult] that reports
+     * the success/failures.
+     *
+     * @param editIds list of [EditId]
+     * @return [ModifyEditResult] reporting the successful and failed annotation edits.
+     */
+    public fun processRemoveEdits(editIds: List<EditId>): ModifyEditResult
 }
