@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.compose.remote.player.view.platform;
+package androidx.compose.remote.player.core.platform;
 
 import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 
@@ -22,13 +22,16 @@ import android.text.StaticLayout;
 import androidx.annotation.RestrictTo;
 import androidx.compose.remote.core.Platform;
 
+import org.jspecify.annotations.NonNull;
+
 @RestrictTo(LIBRARY_GROUP)
 public class AndroidComputedTextLayout implements Platform.ComputedTextLayout {
     StaticLayout mStaticLayout;
     float mWidth;
     float mHeight;
 
-    public AndroidComputedTextLayout(StaticLayout staticLayout, float width, float height) {
+    public AndroidComputedTextLayout(@NonNull StaticLayout staticLayout, float width,
+            float height) {
         mStaticLayout = staticLayout;
         mWidth = width;
         mHeight = height;
@@ -36,18 +39,15 @@ public class AndroidComputedTextLayout implements Platform.ComputedTextLayout {
 
     /**
      * Set a StaticLayout on this container
-     *
-     * @param layout
      */
-    public void set(StaticLayout layout) {
+    public void set(@NonNull StaticLayout layout) {
         mStaticLayout = layout;
     }
 
     /**
      * Retrieve the stored StaticLayout
-     *
-     * @return
      */
+    @NonNull
     public StaticLayout get() {
         return mStaticLayout;
     }

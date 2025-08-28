@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.compose.remote.player.view;
+package androidx.compose.remote.player.core;
 
 import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 
@@ -36,6 +36,7 @@ import java.util.Map;
 /**
  * Public API to create a new RemoteComposeDocument coming from an input stream
  */
+@RestrictTo(LIBRARY_GROUP)
 public class RemoteComposeDocument {
 
     private @NonNull CoreDocument mDocument;
@@ -151,6 +152,7 @@ public class RemoteComposeDocument {
      * @return
      */
     @RestrictTo(LIBRARY_GROUP)
+    @Nullable
     public String[] getNamedColors() {
         return mDocument.getNamedColors();
     }
@@ -162,6 +164,7 @@ public class RemoteComposeDocument {
      * @return array of name or null
      */
     @RestrictTo(LIBRARY_GROUP)
+    @NonNull
     public String[] getNamedVariables(int type) {
         return mDocument.getNamedVariables(type);
     }
@@ -173,6 +176,7 @@ public class RemoteComposeDocument {
      * @return the corresponding component or null if not found
      */
     @RestrictTo(LIBRARY_GROUP)
+    @Nullable
     public Component getComponent(int id) {
         return mDocument.getComponent(id);
     }
@@ -191,6 +195,7 @@ public class RemoteComposeDocument {
      * @return array of strings representing some useful statistics
      */
     @RestrictTo(LIBRARY_GROUP)
+    @NonNull
     public String[] getStats() {
         if (mDocument == null) {
             return new String[0];
@@ -205,7 +210,7 @@ public class RemoteComposeDocument {
      * @return
      */
     @RestrictTo(LIBRARY_GROUP)
-    public int hasSensorListeners(int[] ids) {
+    public int hasSensorListeners(int @NonNull [] ids) {
         return 0;
     }
 
@@ -234,7 +239,7 @@ public class RemoteComposeDocument {
      * @param serializer
      */
     @RestrictTo(LIBRARY_GROUP)
-    public void serialize(MapSerializer serializer) {
+    public void serialize(@NonNull MapSerializer serializer) {
         mDocument.serialize(serializer);
     }
 }
