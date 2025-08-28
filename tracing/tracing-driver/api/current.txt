@@ -7,8 +7,12 @@ package androidx.tracing.driver {
 
   public class CounterTrack extends androidx.tracing.driver.Track {
     ctor public CounterTrack(String name, androidx.tracing.driver.Track parent);
+    method public final String getName();
+    method public final androidx.tracing.driver.Track getParent();
     method public final void setCounter(double value);
     method public final void setCounter(long value);
+    property public final String name;
+    property public final androidx.tracing.driver.Track parent;
   }
 
   public final class MetadataEntry {
@@ -42,8 +46,12 @@ package androidx.tracing.driver {
 
   public class ProcessTrack extends androidx.tracing.driver.SliceTrack {
     ctor public ProcessTrack(androidx.tracing.driver.TraceContext context, int id, String name);
+    method public final int getId();
+    method public final String getName();
     method public androidx.tracing.driver.CounterTrack getOrCreateCounterTrack(String name);
     method public androidx.tracing.driver.ThreadTrack getOrCreateThreadTrack(int id, String name);
+    property public final int id;
+    property public final String name;
   }
 
   public abstract class SliceTrack extends androidx.tracing.driver.Track {
@@ -63,6 +71,12 @@ package androidx.tracing.driver {
 
   public class ThreadTrack extends androidx.tracing.driver.SliceTrack {
     ctor public ThreadTrack(int id, String name, androidx.tracing.driver.ProcessTrack process);
+    method public final int getId();
+    method public final String getName();
+    method public final androidx.tracing.driver.ProcessTrack getProcess();
+    property public final int id;
+    property public final String name;
+    property public final androidx.tracing.driver.ProcessTrack process;
   }
 
   public class TraceContext implements java.lang.AutoCloseable {
