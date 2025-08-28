@@ -16,24 +16,26 @@
 
 package androidx.benchmark.macro.perfetto
 
+import android.os.Build.VERSION.SDK_INT
+import androidx.benchmark.DeviceInfo.isEmulator
 import androidx.benchmark.macro.createTempFileFromAsset
 import androidx.benchmark.macro.runSingleSessionServer
 import androidx.benchmark.perfetto.PerfettoHelper
 import androidx.benchmark.traceprocessor.TraceProcessor
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
-import androidx.test.filters.SdkSuppress
 import kotlin.test.assertEquals
 import org.junit.Assume.assumeTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 
-@SdkSuppress(minSdkVersion = 24) // b/438214932
 @RunWith(AndroidJUnit4::class)
 class MemoryCountersQueryTest {
     @Test
     @MediumTest
     fun fixedTrace31() {
+        // Our API 23 emulators seem to be misconfigured b/438214932
+        assumeTrue(!isEmulator || SDK_INT != 23)
         assumeTrue(PerfettoHelper.isAbiSupported())
         val traceFile = createTempFileFromAsset("api31_startup_cold", ".perfetto-trace")
         val metrics =

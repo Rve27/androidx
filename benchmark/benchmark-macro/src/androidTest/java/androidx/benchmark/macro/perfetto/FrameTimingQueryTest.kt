@@ -16,6 +16,8 @@
 
 package androidx.benchmark.macro.perfetto
 
+import android.os.Build.VERSION.SDK_INT
+import androidx.benchmark.DeviceInfo.isEmulator
 import androidx.benchmark.macro.createTempFileFromAsset
 import androidx.benchmark.macro.perfetto.FrameTimingQuery.SubMetric.FrameDurationCpuNs
 import androidx.benchmark.macro.perfetto.FrameTimingQuery.SubMetric.FrameDurationFullNs
@@ -27,19 +29,19 @@ import androidx.benchmark.perfetto.PerfettoHelper.Companion.isAbiSupported
 import androidx.benchmark.traceprocessor.TraceProcessor
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
-import androidx.test.filters.SdkSuppress
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import org.junit.Assume.assumeTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 
-@SdkSuppress(minSdkVersion = 24) // b/438214932
 @RunWith(AndroidJUnit4::class)
 class FrameTimingQueryTest {
     @MediumTest
     @Test
     fun fixedTrace28() {
+        // Our API 23 emulators seem to be misconfigured b/438214932
+        assumeTrue(!isEmulator || SDK_INT != 23)
         assumeTrue(isAbiSupported())
         val traceFile = createTempFileFromAsset("api28_scroll", ".perfetto-trace")
 
@@ -71,6 +73,8 @@ class FrameTimingQueryTest {
     @MediumTest
     @Test
     fun fixedTrace31() {
+        // Our API 23 emulators seem to be misconfigured b/438214932
+        assumeTrue(!isEmulator || SDK_INT != 23)
         assumeTrue(isAbiSupported())
         val traceFile = createTempFileFromAsset("api31_scroll", ".perfetto-trace")
 
@@ -108,6 +112,8 @@ class FrameTimingQueryTest {
     @MediumTest
     @Test
     fun fixedTrace33_mismatchExpectedActualFrameIds() {
+        // Our API 23 emulators seem to be misconfigured b/438214932
+        assumeTrue(!isEmulator || SDK_INT != 23)
         assumeTrue(isAbiSupported())
         val traceFile = createTempFileFromAsset("api33_motionlayout_messagejson", ".perfetto-trace")
 
@@ -163,6 +169,8 @@ class FrameTimingQueryTest {
     @MediumTest
     @Test
     fun fixedTrace34_invalidExpectActual() {
+        // Our API 23 emulators seem to be misconfigured b/438214932
+        assumeTrue(!isEmulator || SDK_INT != 23)
         assumeTrue(isAbiSupported())
         val traceFile = createTempFileFromAsset("api34_invalid_expect_actual", ".perfetto-trace")
 
@@ -186,6 +194,8 @@ class FrameTimingQueryTest {
     @MediumTest
     @Test
     fun fixedTrace35_resynced() {
+        // Our API 23 emulators seem to be misconfigured b/438214932
+        assumeTrue(!isEmulator || SDK_INT != 23)
         assumeTrue(isAbiSupported())
         val traceFile = createTempFileFromAsset("api35_startup_cold_classinit", ".perfetto-trace")
         val packageName = "com.android.systemui"

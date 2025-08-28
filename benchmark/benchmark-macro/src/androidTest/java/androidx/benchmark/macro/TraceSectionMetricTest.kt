@@ -16,14 +16,14 @@
 
 package androidx.benchmark.macro
 
+import android.os.Build.VERSION.SDK_INT
+import androidx.benchmark.DeviceInfo.isEmulator
 import androidx.benchmark.perfetto.PerfettoHelper
 import androidx.benchmark.traceprocessor.TraceProcessor
 import androidx.test.filters.MediumTest
-import androidx.test.filters.SdkSuppress
 import org.junit.Assume.assumeTrue
 import org.junit.Test
 
-@SdkSuppress(minSdkVersion = 24) // b/438214932
 @MediumTest
 @OptIn(ExperimentalMetricApi::class)
 class TraceSectionMetricTest {
@@ -159,6 +159,8 @@ class TraceSectionMetricTest {
             targetPackageOnly: Boolean,
         ) {
             assumeTrue(PerfettoHelper.isAbiSupported())
+            // Our API 23 emulators seem to be misconfigured b/438214932
+            assumeTrue(!isEmulator || SDK_INT != 23)
 
             val metric = TraceSectionMetric(sectionName, mode, "testLabel", targetPackageOnly)
 

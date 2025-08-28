@@ -16,6 +16,8 @@
 
 package androidx.benchmark.macro
 
+import android.os.Build.VERSION.SDK_INT
+import androidx.benchmark.DeviceInfo.isEmulator
 import androidx.benchmark.InsightSummary
 import androidx.benchmark.createInsightSummaries
 import androidx.benchmark.traceprocessor.Insight
@@ -23,11 +25,10 @@ import androidx.benchmark.traceprocessor.PerfettoTrace
 import androidx.benchmark.traceprocessor.StartupInsights
 import androidx.benchmark.traceprocessor.TraceProcessor
 import androidx.test.filters.MediumTest
-import androidx.test.filters.SdkSuppress
 import com.google.common.truth.Truth.assertThat
+import org.junit.Assume.assumeTrue
 import org.junit.Test
 
-@SdkSuppress(minSdkVersion = 24) // b/438214932
 class StartupInsightsTest {
     private val api35ColdStart =
         createTempFileFromAsset(prefix = "api35_startup_cold_classinit", suffix = ".perfetto-trace")
@@ -116,6 +117,8 @@ class StartupInsightsTest {
     @MediumTest
     @Test
     fun queryInsights() {
+        // Our API 23 emulators seem to be misconfigured b/438214932
+        assumeTrue(!isEmulator || SDK_INT != 23)
         TraceProcessor.runSingleSessionServer(api35ColdStart) {
             assertThat(
                     insights.queryInsights(
@@ -142,6 +145,8 @@ class StartupInsightsTest {
     @MediumTest
     @Test
     fun createInsightSummaries_v2() {
+        // Our API 23 emulators seem to be misconfigured b/438214932
+        assumeTrue(!isEmulator || SDK_INT != 23)
         assertThat(canonicalTraceInsights.createInsightSummaries().map { it.observedV2 })
             .isEqualTo(canonicalTraceInsightSummary.map { it.observedV2 })
     }
@@ -149,6 +154,8 @@ class StartupInsightsTest {
     @MediumTest
     @Test
     fun createInsightSummaries_v3() {
+        // Our API 23 emulators seem to be misconfigured b/438214932
+        assumeTrue(!isEmulator || SDK_INT != 23)
         assertThat(canonicalTraceInsights.createInsightSummaries().map { it.observedV3 })
             .isEqualTo(canonicalTraceInsightSummary.map { it.observedV3 })
     }

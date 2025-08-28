@@ -16,11 +16,12 @@
 
 package androidx.benchmark.macro
 
+import android.os.Build.VERSION.SDK_INT
+import androidx.benchmark.DeviceInfo.isEmulator
 import androidx.benchmark.perfetto.PerfettoHelper
 import androidx.benchmark.traceprocessor.TraceProcessor
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
-import androidx.test.filters.SdkSuppress
 import java.io.File
 import org.junit.Assert.assertEquals
 import org.junit.Assume.assumeTrue
@@ -58,8 +59,9 @@ class FrameTimingMetricTest {
 
     @MediumTest
     @Test
-    @SdkSuppress(minSdkVersion = 24) // b/438214932
     fun frameTimingMetric_defaultConstructor() {
+        // Our API 23 emulators seem to be misconfigured b/438214932
+        assumeTrue(!isEmulator || SDK_INT != 23)
         assumeTrue(PerfettoHelper.isAbiSupported())
         val traceFile = createTempFileFromAsset("api31_scroll", ".perfetto-trace")
         val captureInfo =
@@ -84,10 +86,11 @@ class FrameTimingMetricTest {
         )
     }
 
-    @SdkSuppress(minSdkVersion = 24) // b/438214932
     @MediumTest
     @Test
     fun frameTimingMetric_processSuffixAndMetricSuffixSpecified() {
+        // Our API 23 emulators seem to be misconfigured b/438214932
+        assumeTrue(!isEmulator || SDK_INT != 23)
         assumeTrue(PerfettoHelper.isAbiSupported())
         val traceFile = createTempFileFromAsset("api31_scroll", ".perfetto-trace")
         val captureInfo =

@@ -16,6 +16,8 @@
 
 package androidx.benchmark.macro
 
+import android.os.Build.VERSION.SDK_INT
+import androidx.benchmark.DeviceInfo.isEmulator
 import androidx.benchmark.inMemoryTrace
 import androidx.benchmark.junit4.PerfettoTraceRule
 import androidx.benchmark.perfetto.ExperimentalPerfettoCaptureApi
@@ -24,7 +26,6 @@ import androidx.benchmark.traceprocessor.PerfettoTrace
 import androidx.benchmark.traceprocessor.TraceProcessor
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
-import androidx.test.filters.SdkSuppress
 import androidx.tracing.trace
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -40,7 +41,6 @@ import org.junit.runners.model.Statement
  *
  * This should be moved to `benchmark-junit` once trace validation can be done in its tests.
  */
-@SdkSuppress(minSdkVersion = 24) // b/438214932
 @LargeTest // recording is expensive
 @OptIn(ExperimentalPerfettoCaptureApi::class)
 @RunWith(AndroidJUnit4::class)
@@ -58,7 +58,8 @@ class PerfettoTraceRuleTest {
                 object : Statement() {
                     override fun evaluate() {
                         base.evaluate()
-                        if (PerfettoHelper.isAbiSupported()) {
+                        // Our API 23 emulators seem to be misconfigured b/438214932
+                        if (PerfettoHelper.isAbiSupported() && (!isEmulator || SDK_INT != 23)) {
                             assertNotNull(trace)
                             val sliceNameInstances =
                                 TraceProcessor.runSingleSessionServer(trace!!.path) {
