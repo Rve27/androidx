@@ -33,6 +33,8 @@ import androidx.xr.scenecore.internal.KhronosPbrMaterialSpec
 import androidx.xr.scenecore.internal.MaterialResource
 import androidx.xr.scenecore.internal.RenderingEntityFactory
 import androidx.xr.scenecore.internal.RenderingRuntime
+import androidx.xr.scenecore.internal.SceneRuntime
+import androidx.xr.scenecore.internal.SpatialEnvironmentExt
 import androidx.xr.scenecore.internal.SubspaceNodeEntity
 import androidx.xr.scenecore.internal.SurfaceEntity
 import androidx.xr.scenecore.internal.TextureResource
@@ -48,8 +50,18 @@ import com.google.common.util.concurrent.ListenableFuture
  *   [SceneRuntime] instance, which must also implement [RenderingEntityFactory].
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public class FakeRenderingRuntime(private val entityFactory: RenderingEntityFactory) :
-    RenderingRuntime {
+public class FakeRenderingRuntime(
+    private val sceneRuntime: SceneRuntime,
+    private val entityFactory: RenderingEntityFactory = sceneRuntime as RenderingEntityFactory,
+) : RenderingRuntime {
+    private var spatialEnvironmentFeature: FakeSpatialEnvironmentFeature =
+        FakeSpatialEnvironmentFeature()
+
+    init {
+        (sceneRuntime.spatialEnvironment as SpatialEnvironmentExt).onRenderingFeatureReady(
+            spatialEnvironmentFeature
+        )
+    }
 
     @Suppress("AsyncSuffixFuture")
     override fun loadGltfByAssetName(assetName: String): ListenableFuture<GltfModelResource> =
