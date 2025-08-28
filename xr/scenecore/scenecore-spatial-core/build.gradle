@@ -36,7 +36,7 @@ dependencies {
     api(libs.kotlinStdlib)
     api(project(":xr:runtime:runtime"))
     api(project(":xr:scenecore:scenecore"))
-    implementation(project(":xr:runtime:runtime-openxr"))
+    implementation(project(":xr:arcore:arcore-openxr"))
 
     implementation("androidx.annotation:annotation:1.8.1")
     implementation("androidx.concurrent:concurrent-futures:1.0.0")
