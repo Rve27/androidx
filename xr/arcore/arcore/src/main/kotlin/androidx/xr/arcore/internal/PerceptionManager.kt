@@ -91,8 +91,14 @@ public interface PerceptionManager {
     /** [androidx.xr.arcore.internal.Earth] tracking information. */
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val earth: Earth
 
-    /** Collection of [androidx.xr.arcore.internal.DepthMap]s for the current frame */
-    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val depthMaps: List<DepthMap>
+    /** Left [androidx.xr.arcore.internal.DepthMap]'s current frame information */
+    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val leftDepthMap: DepthMap?
+
+    /** Right [androidx.xr.arcore.internal.DepthMap]'s current frame information */
+    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val rightDepthMap: DepthMap?
+
+    /** Mono [androidx.xr.arcore.internal.DepthMap]'s current frame information */
+    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val monoDepthMap: DepthMap?
 
     /** Face tracking information for the face. Only available on supported platforms. */
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val userFace: Face?

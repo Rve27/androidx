@@ -124,8 +124,15 @@ internal constructor(private val timeSource: OpenXrTimeSource) : PerceptionManag
 
     override val earth: OpenXrEarth = xrResources.earth
 
-    override val depthMaps: List<DepthMap> =
-        listOf(xrResources.leftDepthMap, xrResources.rightDepthMap)
+    override val leftDepthMap: DepthMap?
+        get() = xrResources.leftDepthMap
+
+    override val rightDepthMap: DepthMap?
+        get() = xrResources.rightDepthMap
+
+    // Mono depth map is not supported in OpenXR.
+    override val monoDepthMap: DepthMap? = null
+
     internal var depthEstimationMode = Config.DepthEstimationMode.DISABLED
 
     private var lastUpdateXrTime: Long = 0L

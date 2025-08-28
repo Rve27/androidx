@@ -80,11 +80,14 @@ internal class XrResourcesManager {
         get() = checkNotNull(_earth)
 
     /** The depth map data */
-    lateinit var _depthMaps: List<DepthMap>
+    var leftDepthMap: DepthMap? = null
         private set
 
-    val depthMaps: List<DepthMap>
-        get() = if (::_depthMaps.isInitialized) _depthMaps else emptyList()
+    var rightDepthMap: DepthMap? = null
+        private set
+
+    var monoDepthMap: DepthMap? = null
+        private set
 
     internal fun initiateEarth(runtimeEarth: RuntimeEarth) {
         _earth = Earth(runtimeEarth, this)
@@ -113,8 +116,14 @@ internal class XrResourcesManager {
         }
     }
 
-    internal fun initiateDepthMaps(runtimeDepthMaps: List<RuntimeDepthMap>) {
-        _depthMaps = runtimeDepthMaps.map { DepthMap(it) }
+    internal fun initiateDepthMaps(
+        runtimeLeftDepthMap: RuntimeDepthMap?,
+        runtimeRightDepthMap: RuntimeDepthMap?,
+        runtimeMonoDepthMap: RuntimeDepthMap?,
+    ) {
+        runtimeLeftDepthMap?.let { leftDepthMap = DepthMap(it) }
+        runtimeRightDepthMap?.let { rightDepthMap = DepthMap(it) }
+        runtimeMonoDepthMap?.let { monoDepthMap = DepthMap(it) }
     }
 
     internal fun initiateFace(userFace: RuntimeFace?) {
@@ -147,10 +156,6 @@ internal class XrResourcesManager {
         // unit tests.
         if (_earth != null) {
             earth.update()
-        }
-
-        for (depthMap in depthMaps) {
-            depthMap.update()
         }
     }
 

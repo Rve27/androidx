@@ -40,7 +40,9 @@ internal constructor(
     public val leftRenderViewpoint: RenderViewpoint?,
     public val rightRenderViewpoint: RenderViewpoint?,
     public val monoRenderViewpoint: RenderViewpoint?,
-    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val depthMaps: List<DepthMap>,
+    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val leftDepthMap: DepthMap?,
+    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val rightDepthMap: DepthMap?,
+    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val monoDepthMap: DepthMap?,
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val userFace: Face?,
 ) {
     override fun equals(other: Any?): Boolean {
@@ -54,7 +56,9 @@ internal constructor(
         if (leftRenderViewpoint != other.leftRenderViewpoint) return false
         if (rightRenderViewpoint != other.rightRenderViewpoint) return false
         if (monoRenderViewpoint != other.monoRenderViewpoint) return false
-        if (depthMaps != other.depthMaps) return false
+        if (leftDepthMap != other.leftDepthMap) return false
+        if (rightDepthMap != other.rightDepthMap) return false
+        if (monoDepthMap != other.monoDepthMap) return false
         if (userFace != other.userFace) return false
         return true
     }
@@ -68,7 +72,9 @@ internal constructor(
         result = 31 * result + leftRenderViewpoint.hashCode()
         result = 31 * result + rightRenderViewpoint.hashCode()
         result = 31 * result + monoRenderViewpoint.hashCode()
-        result = 31 * result + depthMaps.hashCode()
+        result = 31 * result + leftDepthMap.hashCode()
+        result = 31 * result + rightDepthMap.hashCode()
+        result = 31 * result + monoDepthMap.hashCode()
         result = 31 * result + userFace.hashCode()
         return result
     }

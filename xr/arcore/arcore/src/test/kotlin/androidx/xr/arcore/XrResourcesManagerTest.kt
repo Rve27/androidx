@@ -223,16 +223,17 @@ class XrResourcesManagerTest {
     @Test
     fun update_updatesDepthMaps() = doBlocking {
         val runtimeDepthMap = FakeRuntimeDepthMap()
-        underTest.initiateDepthMaps(listOf(runtimeDepthMap))
+        underTest.initiateDepthMaps(runtimeDepthMap, null, null)
         underTest.update()
-        check(underTest.depthMaps.size == 1)
-        check(underTest.depthMaps[0].state.value.width == 0)
+        check(underTest.leftDepthMap != null)
+        check(underTest.leftDepthMap!!.state.value.width == 0)
         val expectedWidth: Int = 100
         runtimeDepthMap.width = expectedWidth
 
         underTest.update()
+        underTest.leftDepthMap!!.update()
 
-        assertThat(underTest.depthMaps[0].state.value.width).isEqualTo(expectedWidth)
+        assertThat(underTest.leftDepthMap!!.state.value.width).isEqualTo(expectedWidth)
     }
 
     private fun createTestSessionAndRunTest(testBody: () -> Unit) {

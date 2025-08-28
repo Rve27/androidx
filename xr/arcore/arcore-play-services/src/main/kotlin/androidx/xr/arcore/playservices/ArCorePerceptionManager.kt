@@ -251,12 +251,25 @@ internal constructor(private val timeSource: ArCoreTimeSource) : PerceptionManag
     override val monoRenderViewpoint: RenderViewpoint? = null
 
     /**
-     * Returns a list of [androidx.xr.arcore.internal.DepthMap] objects.
+     * Returns the left [DepthMap] object.
      *
-     * This is not currently implemented in ARCore, so this property will always be an empty list.
+     * This is not available in ARCore.
      */
-    override val depthMaps: List<DepthMap>
-        get() = emptyList()
+    override val leftDepthMap: DepthMap? = null
+
+    /**
+     * Returns the right [DepthMap] object.
+     *
+     * This is not available in ARCore.
+     */
+    override val rightDepthMap: DepthMap? = null
+
+    /**
+     * Returns the mono [DepthMap] object.
+     *
+     * This is not available in ARCore.
+     */
+    override val monoDepthMap: DepthMap? = null
 
     /**
      * Updates the perception manager.

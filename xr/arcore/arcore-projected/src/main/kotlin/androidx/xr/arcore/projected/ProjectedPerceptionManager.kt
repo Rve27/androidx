@@ -167,8 +167,16 @@ internal constructor(private val timeSource: ProjectedTimeSource) : PerceptionMa
     override val monoRenderViewpoint: RenderViewpoint
         get() = throw NotImplementedError("Not implemented on projected runtime.")
 
-    /** Returns a list of [DepthMap] objects. */
-    override val depthMaps: List<DepthMap>
+    /** Returns the left [DepthMap] object. */
+    override val leftDepthMap: DepthMap
+        get() = throw NotImplementedError("Not implemented on projected runtime.")
+
+    /** Returns the right [DepthMap] object. */
+    override val rightDepthMap: DepthMap
+        get() = throw NotImplementedError("Not implemented on projected runtime.")
+
+    /** Returns the mono [DepthMap] object. */
+    override val monoDepthMap: DepthMap
         get() = throw NotImplementedError("Not implemented on projected runtime.")
 
     /**

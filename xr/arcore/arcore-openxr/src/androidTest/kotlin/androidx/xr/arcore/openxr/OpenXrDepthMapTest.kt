@@ -41,9 +41,6 @@ import org.junit.runner.RunWith
 class OpenXrDepthMapTest {
 
     companion object {
-        private const val LEFT_VIEW_INDEX: Int = 0
-        private const val RIGHT_VIEW_INDEX: Int = 1
-
         init {
             System.loadLibrary("androidx.xr.runtime.openxr.test")
         }
@@ -61,8 +58,8 @@ class OpenXrDepthMapTest {
     fun setUp() {
         timeSource = OpenXrTimeSource()
         perceptionManager = OpenXrPerceptionManager(timeSource)
-        leftUnderTest = perceptionManager.depthMaps.get(LEFT_VIEW_INDEX) as OpenXrDepthMap
-        rightUnderTest = perceptionManager.depthMaps.get(RIGHT_VIEW_INDEX) as OpenXrDepthMap
+        leftUnderTest = perceptionManager.leftDepthMap as OpenXrDepthMap
+        rightUnderTest = perceptionManager.rightDepthMap as OpenXrDepthMap
     }
 
     @Test

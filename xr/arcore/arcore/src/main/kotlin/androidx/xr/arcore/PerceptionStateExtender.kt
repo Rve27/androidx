@@ -51,7 +51,11 @@ internal class PerceptionStateExtender : StateExtender {
             perceptionManager.monoRenderViewpoint,
         )
         xrResourcesManager.initiateEarth(perceptionManager.earth)
-        xrResourcesManager.initiateDepthMaps(perceptionManager.depthMaps)
+        xrResourcesManager.initiateDepthMaps(
+            perceptionManager.leftDepthMap,
+            perceptionManager.rightDepthMap,
+            perceptionManager.monoDepthMap,
+        )
         xrResourcesManager.initiateFace(perceptionManager.userFace)
     }
 
@@ -69,6 +73,9 @@ internal class PerceptionStateExtender : StateExtender {
         xrResourcesManager.leftRenderViewpoint?.update()
         xrResourcesManager.rightRenderViewpoint?.update()
         xrResourcesManager.monoRenderViewpoint?.update()
+        xrResourcesManager.leftDepthMap?.update()
+        xrResourcesManager.rightDepthMap?.update()
+        xrResourcesManager.monoDepthMap?.update()
 
         xrResourcesManager.userFace?.update()
 
@@ -93,7 +100,9 @@ internal class PerceptionStateExtender : StateExtender {
                 xrResourcesManager.leftRenderViewpoint,
                 xrResourcesManager.rightRenderViewpoint,
                 xrResourcesManager.monoRenderViewpoint,
-                xrResourcesManager.depthMaps,
+                xrResourcesManager.leftDepthMap,
+                xrResourcesManager.rightDepthMap,
+                xrResourcesManager.monoDepthMap,
                 xrResourcesManager.userFace,
             ),
         )

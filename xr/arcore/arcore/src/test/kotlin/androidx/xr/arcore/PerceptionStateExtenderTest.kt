@@ -395,18 +395,18 @@ class PerceptionStateExtenderTest {
         underTest.initialize(listOf(fakePerceptionRuntime))
         val coreState = CoreState(timeSource.markNow())
         underTest.extend(coreState)
-        check(coreState.perceptionState!!.depthMaps.isNotEmpty())
-        check(coreState.perceptionState!!.depthMaps[0].state.value.width == 0)
-        check(coreState.perceptionState!!.depthMaps[0].state.value.height == 0)
-        check(coreState.perceptionState!!.depthMaps[0].state.value.rawDepthMap == null)
-        check(coreState.perceptionState!!.depthMaps[0].state.value.rawConfidenceMap == null)
-        check(coreState.perceptionState!!.depthMaps[0].state.value.smoothDepthMap == null)
-        check(coreState.perceptionState!!.depthMaps[0].state.value.smoothConfidenceMap == null)
+        check(coreState.perceptionState!!.leftDepthMap != null)
+        check(coreState.perceptionState!!.leftDepthMap!!.state.value.width == 0)
+        check(coreState.perceptionState!!.leftDepthMap!!.state.value.height == 0)
+        check(coreState.perceptionState!!.leftDepthMap!!.state.value.rawDepthMap == null)
+        check(coreState.perceptionState!!.leftDepthMap!!.state.value.rawConfidenceMap == null)
+        check(coreState.perceptionState!!.leftDepthMap!!.state.value.smoothDepthMap == null)
+        check(coreState.perceptionState!!.leftDepthMap!!.state.value.smoothConfidenceMap == null)
 
         // act
         timeSource += 10.milliseconds
         val runtimeDepthMap =
-            fakePerceptionRuntime.perceptionManager.depthMaps[0] as FakeRuntimeDepthMap
+            fakePerceptionRuntime.perceptionManager.leftDepthMap as FakeRuntimeDepthMap
         val expectedWidth = 80
         val expectedHeight = 80
         val expectedRawDepthMap = FloatBuffer.wrap(FloatArray(6400) { 8.0f })
@@ -423,15 +423,15 @@ class PerceptionStateExtenderTest {
 
         // assert
         val perceptionState = coreState.perceptionState!!
-        assertThat(perceptionState.depthMaps[0].state.value.width).isEqualTo(expectedWidth)
-        assertThat(perceptionState.depthMaps[0].state.value.height).isEqualTo(expectedHeight)
-        assertThat(perceptionState.depthMaps[0].state.value.rawDepthMap)
+        assertThat(perceptionState.leftDepthMap!!.state.value.width).isEqualTo(expectedWidth)
+        assertThat(perceptionState.leftDepthMap!!.state.value.height).isEqualTo(expectedHeight)
+        assertThat(perceptionState.leftDepthMap!!.state.value.rawDepthMap)
             .isEqualTo(expectedRawDepthMap)
-        assertThat(perceptionState.depthMaps[0].state.value.rawConfidenceMap)
+        assertThat(perceptionState.leftDepthMap!!.state.value.rawConfidenceMap)
             .isEqualTo(expectedRawConfidenceMap)
-        assertThat(perceptionState.depthMaps[0].state.value.smoothDepthMap)
+        assertThat(perceptionState.leftDepthMap!!.state.value.smoothDepthMap)
             .isEqualTo(expectedSmoothDepthMap)
-        assertThat(perceptionState.depthMaps[0].state.value.smoothConfidenceMap)
+        assertThat(perceptionState.leftDepthMap!!.state.value.smoothConfidenceMap)
             .isEqualTo(expectedSmoothConfidenceMap)
     }
 
