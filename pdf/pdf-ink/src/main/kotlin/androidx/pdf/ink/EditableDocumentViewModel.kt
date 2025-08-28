@@ -66,6 +66,7 @@ public class EditableDocumentViewModel(private val state: SavedStateHandle, load
             state[EDIT_MODE_ENABLED_KEY] = value
         }
 
+    // TODO: b/441634479 Refactor to extract the document from `DocumentLoaded` UI state.
     internal var editablePdfDocument: EditablePdfDocument? = null
         set(value) {
             field = value
@@ -88,8 +89,8 @@ public class EditableDocumentViewModel(private val state: SavedStateHandle, load
         val documentUri = document.uri
 
         // If the document has changed, reset the edit states
-        if (documentUri != state.get<Uri>(DOCUMENT_URI_KEY)) {
-            state[DOCUMENT_URI_KEY] = documentUri
+        if (documentUri != state.get<Uri>(LOADED_DOCUMENT_URI_KEY)) {
+            state[LOADED_DOCUMENT_URI_KEY] = documentUri
             editablePdfDocument = document
             editsHistoryManager = AnnotationEditsHistoryManager()
             editOperationsHandler =
@@ -186,7 +187,7 @@ public class EditableDocumentViewModel(private val state: SavedStateHandle, load
 
     @Suppress("UNCHECKED_CAST")
     internal companion object {
-        const val DOCUMENT_URI_KEY = "documentUri"
+        const val LOADED_DOCUMENT_URI_KEY = "loadedDocumentUri"
         private const val EDIT_MODE_ENABLED_KEY = "isEditModeEnabled"
 
         val Factory: ViewModelProvider.Factory =

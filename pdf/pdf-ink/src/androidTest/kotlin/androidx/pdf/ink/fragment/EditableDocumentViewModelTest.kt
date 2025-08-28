@@ -181,7 +181,7 @@ class EditableDocumentViewModelTest {
         annotationsViewModel.addDraftAnnotation(initialAnnotation)
 
         val initialDocUri = Uri.fromFile(File("test1.pdf"))
-        savedStateHandle[EditableDocumentViewModel.DOCUMENT_URI_KEY] = initialDocUri
+        savedStateHandle[EditableDocumentViewModel.LOADED_DOCUMENT_URI_KEY] = initialDocUri
 
         assertThat(annotationsViewModel.annotationsDisplayStateFlow.value.edits.editsByPage)
             .isNotEmpty()
@@ -193,14 +193,14 @@ class EditableDocumentViewModelTest {
         // Verify state reset
         assertThat(annotationsViewModel.annotationsDisplayStateFlow.value.edits.editsByPage)
             .isEmpty()
-        assertThat(savedStateHandle.get<Uri>(EditableDocumentViewModel.DOCUMENT_URI_KEY))
+        assertThat(savedStateHandle.get<Uri>(EditableDocumentViewModel.LOADED_DOCUMENT_URI_KEY))
             .isEqualTo(newDocUri)
     }
 
     @Test
     fun maybeInitialiseForDocument_doesNotResetState_whenDocumentUriIsTheSame() = runTest {
         val docUri = Uri.fromFile(File("test.pdf"))
-        savedStateHandle[EditableDocumentViewModel.DOCUMENT_URI_KEY] = docUri
+        savedStateHandle[EditableDocumentViewModel.LOADED_DOCUMENT_URI_KEY] = docUri
 
         annotationsViewModel.editablePdfDocument = FakeEditablePdfDocument(uri = docUri)
 
@@ -211,7 +211,7 @@ class EditableDocumentViewModelTest {
 
         assertThat(annotationsViewModel.annotationsDisplayStateFlow.value.edits.editsByPage)
             .isEqualTo(initialEdits)
-        assertThat(savedStateHandle.get<Uri>(EditableDocumentViewModel.DOCUMENT_URI_KEY))
+        assertThat(savedStateHandle.get<Uri>(EditableDocumentViewModel.LOADED_DOCUMENT_URI_KEY))
             .isEqualTo(docUri)
     }
 
