@@ -89,11 +89,14 @@ internal constructor(
      * Gets the perceived resolution of this Entity in the [CameraView].
      *
      * This API is only intended for use in Full Space Mode and will return
-     * [PerceivedResolutionResult.InvalidCameraView] in Home Space Mode.
+     * [PerceivedResolutionResult.InvalidCameraView] in Home Space Mode. For applications requiring
+     * perceived resolution in Home Space Mode, see [MainPanelEntity.getPerceivedResolution].
      *
-     * The Entity's own rotation and the camera's viewing direction are disregarded; this value
-     * represents the dimensions of the Entity on the camera view if its largest surface was facing
-     * the camera without changing the distance of the Entity to the camera.
+     * This value represents the dimensions of the Entity on the camera view if its largest surface
+     * was facing the camera without changing the distance of the Entity to the camera. This can be
+     * used by clients to dynamically optimize the resolution of assets within the PanelEntity, for
+     * example by using lower-resolution assets within panels that are further from the viewer. The
+     * Entity's own rotation and the camera's viewing direction are disregarded.
      *
      * @return A [PerceivedResolutionResult] which encapsulates the outcome:
      *     - [PerceivedResolutionResult.Success] containing the [PixelDimensions] if the calculation
