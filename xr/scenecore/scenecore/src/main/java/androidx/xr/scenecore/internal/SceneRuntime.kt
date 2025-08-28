@@ -440,6 +440,19 @@ public interface SceneRuntime : JxrRuntime {
         shouldDisposeParentAnchor: Boolean,
     ): MovableComponent
 
+    /**
+     * Create an instance of [ResizableComponent]. This component allows the user to resize the
+     * entity.
+     *
+     * @param minimumSize Minimum size constraint.
+     * @param maximumSize Maximum size constraint.
+     * @return [ResizableComponent] instance.
+     */
+    public fun createResizableComponent(
+        minimumSize: Dimensions,
+        maximumSize: Dimensions,
+    ): ResizableComponent
+
     /** Disposes of the resources used by this runtime */
     public fun dispose()
 }

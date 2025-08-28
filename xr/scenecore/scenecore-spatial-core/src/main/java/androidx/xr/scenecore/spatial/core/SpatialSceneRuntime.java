@@ -53,6 +53,7 @@ import androidx.xr.scenecore.internal.PixelDimensions;
 import androidx.xr.scenecore.internal.PlaneSemantic;
 import androidx.xr.scenecore.internal.PlaneType;
 import androidx.xr.scenecore.internal.RenderingEntityFactory;
+import androidx.xr.scenecore.internal.ResizableComponent;
 import androidx.xr.scenecore.internal.SceneRuntime;
 import androidx.xr.scenecore.internal.SoundPoolExtensionsWrapper;
 import androidx.xr.scenecore.internal.Space;
@@ -792,5 +793,11 @@ class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory {
                 new PanelShadowRenderer(
                         mActivitySpace, mPerceptionSpaceActivityPose, mActivity, mExtensions),
                 mExecutor);
+    }
+
+    @Override
+    public @NonNull ResizableComponent createResizableComponent(
+            @NonNull Dimensions minimumSize, @NonNull Dimensions maximumSize) {
+        return new ResizableComponentImpl(mExecutor, mExtensions, minimumSize, maximumSize);
     }
 }

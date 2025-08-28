@@ -61,6 +61,7 @@ import androidx.xr.scenecore.internal.MovableComponent;
 import androidx.xr.scenecore.internal.PixelDimensions;
 import androidx.xr.scenecore.internal.PlaneSemantic;
 import androidx.xr.scenecore.internal.PlaneType;
+import androidx.xr.scenecore.internal.ResizableComponent;
 import androidx.xr.scenecore.internal.SoundPoolExtensionsWrapper;
 import androidx.xr.scenecore.internal.SpatialCapabilities;
 import androidx.xr.scenecore.internal.SpatialEnvironment;
@@ -990,5 +991,13 @@ public class SpatialSceneRuntimeTest {
         MovableComponent movableComponent =
                 mRuntime.createMovableComponent(true, true, new HashSet<AnchorPlacement>(), true);
         assertThat(movableComponent).isNotNull();
+    }
+
+    @Test
+    public void createResizableComponent_returnsComponent() {
+        ResizableComponent resizableComponent =
+                mRuntime.createResizableComponent(
+                        new Dimensions(0f, 0f, 0f), new Dimensions(5f, 5f, 5f));
+        assertThat(resizableComponent).isNotNull();
     }
 }

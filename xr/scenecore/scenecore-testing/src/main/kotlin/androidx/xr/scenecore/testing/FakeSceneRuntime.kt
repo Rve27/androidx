@@ -286,5 +286,14 @@ public class FakeSceneRuntime() : SceneRuntime, RenderingEntityFactory {
         shouldDisposeParentAnchor: Boolean,
     ): FakeMovableComponent = FakeMovableComponent()
 
+    override fun createResizableComponent(
+        minimumSize: Dimensions,
+        maximumSize: Dimensions,
+    ): FakeResizableComponent {
+        val resizableComponent = FakeResizableComponent(minimumSize, maximumSize)
+
+        return resizableComponent
+    }
+
     override fun dispose() {}
 }
