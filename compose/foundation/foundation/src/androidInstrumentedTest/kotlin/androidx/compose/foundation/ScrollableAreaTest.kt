@@ -46,6 +46,7 @@ import androidx.compose.ui.node.LayoutModifierNode
 import androidx.compose.ui.node.ModifierNodeElement
 import androidx.compose.ui.platform.InspectableValue
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.ValueElement
 import androidx.compose.ui.platform.isDebugInspectorInfoEnabled
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.captureToImage
@@ -60,7 +61,6 @@ import androidx.compose.ui.unit.LayoutDirection.Ltr
 import androidx.compose.ui.unit.LayoutDirection.Rtl
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.size
 import androidx.test.filters.MediumTest
 import androidx.test.filters.SdkSuppress
 import com.google.common.truth.Truth.assertThat
@@ -70,7 +70,7 @@ import org.junit.Rule
 import org.junit.Test
 
 @MediumTest
-class ScrollingContainerTest {
+class ScrollableAreaTest {
     @get:Rule val rule = createComposeRule()
 
     @Before
@@ -84,27 +84,62 @@ class ScrollingContainerTest {
     }
 
     @Test
-    fun testInspectorValue() {
+    fun testInspectorValue_nullOverscrollEffect() {
         rule.setContent {
             val modifiers =
-                (Modifier.scrollingContainer(
+                (Modifier.scrollableArea(
                         rememberScrollState(),
                         orientation = Horizontal,
                         enabled = true,
                         reverseScrolling = false,
                         flingBehavior = null,
                         interactionSource = null,
-                        useLocalOverscrollFactory = false,
                         overscrollEffect = null,
                         bringIntoViewSpec = null,
                     ) as CombinedModifier)
                     .toList()
             val clip = modifiers[0] as InspectableValue
             assertThat(clip.nameFallback).isEqualTo("graphicsLayer")
-            val scrollingContainer = modifiers[1] as InspectableValue
-            assertThat(scrollingContainer.nameFallback).isEqualTo("scrollingContainer")
-            assertThat(scrollingContainer.valueOverride).isNull()
-            assertThat(scrollingContainer.inspectableElements.map { it.name }.asIterable())
+            val scrollableArea = modifiers[1] as InspectableValue
+            assertThat(scrollableArea.nameFallback).isEqualTo("scrollableArea")
+            assertThat(scrollableArea.valueOverride).isNull()
+            assertThat(scrollableArea.inspectableElements.map { it.name }.asIterable())
+                .containsExactly(
+                    "state",
+                    "orientation",
+                    "overscrollEffect",
+                    "enabled",
+                    "reverseScrolling",
+                    "flingBehavior",
+                    "interactionSource",
+                    "bringIntoViewSpec",
+                )
+                .inOrder()
+            assertThat(scrollableArea.inspectableElements.asIterable())
+                .containsAtLeastElementsIn(listOf(ValueElement("overscrollEffect", null)))
+        }
+    }
+
+    @Test
+    fun testInspectorValue_defaultOverscrollEffect() {
+        rule.setContent {
+            val modifiers =
+                (Modifier.scrollableArea(
+                        rememberScrollState(),
+                        orientation = Horizontal,
+                        enabled = true,
+                        reverseScrolling = false,
+                        flingBehavior = null,
+                        interactionSource = null,
+                        bringIntoViewSpec = null,
+                    ) as CombinedModifier)
+                    .toList()
+            val clip = modifiers[0] as InspectableValue
+            assertThat(clip.nameFallback).isEqualTo("graphicsLayer")
+            val scrollableArea = modifiers[1] as InspectableValue
+            assertThat(scrollableArea.nameFallback).isEqualTo("scrollableArea")
+            assertThat(scrollableArea.valueOverride).isNull()
+            assertThat(scrollableArea.inspectableElements.map { it.name }.asIterable())
                 .containsExactly(
                     "state",
                     "orientation",
@@ -112,9 +147,48 @@ class ScrollingContainerTest {
                     "reverseScrolling",
                     "flingBehavior",
                     "interactionSource",
-                    "useLocalOverscrollFactory",
-                    "overscrollEffect",
                     "bringIntoViewSpec",
+                )
+                .inOrder()
+        }
+    }
+
+    @Test
+    fun testInspectorValue_customOverscrollEffect() {
+        val customOverscrollEffect = TestOverscrollEffect()
+        rule.setContent {
+            val modifiers =
+                (Modifier.scrollableArea(
+                        rememberScrollState(),
+                        orientation = Horizontal,
+                        enabled = true,
+                        reverseScrolling = false,
+                        flingBehavior = null,
+                        interactionSource = null,
+                        overscrollEffect = customOverscrollEffect,
+                        bringIntoViewSpec = null,
+                    ) as CombinedModifier)
+                    .toList()
+            val clip = modifiers[0] as InspectableValue
+            assertThat(clip.nameFallback).isEqualTo("graphicsLayer")
+            val scrollableArea = modifiers[1] as InspectableValue
+            assertThat(scrollableArea.nameFallback).isEqualTo("scrollableArea")
+            assertThat(scrollableArea.valueOverride).isNull()
+            assertThat(scrollableArea.inspectableElements.map { it.name }.asIterable())
+                .containsExactly(
+                    "state",
+                    "orientation",
+                    "overscrollEffect",
+                    "enabled",
+                    "reverseScrolling",
+                    "flingBehavior",
+                    "interactionSource",
+                    "bringIntoViewSpec",
+                )
+                .inOrder()
+            assertThat(scrollableArea.inspectableElements.asIterable())
+                .containsAtLeastElementsIn(
+                    listOf(ValueElement("overscrollEffect", customOverscrollEffect))
                 )
         }
     }
@@ -129,14 +203,13 @@ class ScrollingContainerTest {
                 Box(
                     Modifier.padding(20.dp)
                         .fillMaxSize()
-                        .scrollingContainer(
+                        .scrollableArea(
                             state = scrollState,
                             orientation = orientation,
                             enabled = true,
                             reverseScrolling = false,
                             flingBehavior = null,
                             interactionSource = null,
-                            useLocalOverscrollFactory = false,
                             overscrollEffect = null,
                         )
                 ) {
@@ -187,14 +260,13 @@ class ScrollingContainerTest {
                     Box(
                         Modifier.size(size)
                             .testTag("container")
-                            .scrollingContainer(
+                            .scrollableArea(
                                 state = scrollState,
                                 orientation = Horizontal,
                                 enabled = true,
                                 reverseScrolling = false,
                                 flingBehavior = null,
                                 interactionSource = null,
-                                useLocalOverscrollFactory = false,
                                 overscrollEffect = null,
                             )
                     )
@@ -221,14 +293,13 @@ class ScrollingContainerTest {
 
         rule.setContent {
             Box(
-                Modifier.scrollingContainer(
+                Modifier.scrollableArea(
                     rememberScrollState(),
                     orientation = Horizontal,
                     enabled = true,
                     reverseScrolling = false,
                     flingBehavior = null,
                     interactionSource = null,
-                    useLocalOverscrollFactory = false,
                     overscrollEffect = overscrollEffect,
                     bringIntoViewSpec = null,
                 )
@@ -247,14 +318,13 @@ class ScrollingContainerTest {
         rule.setContent {
             Box(
                 if (addModifier) {
-                    Modifier.scrollingContainer(
+                    Modifier.scrollableArea(
                         rememberScrollState(),
                         orientation = Horizontal,
                         enabled = true,
                         reverseScrolling = false,
                         flingBehavior = null,
                         interactionSource = null,
-                        useLocalOverscrollFactory = false,
                         overscrollEffect = overscrollEffect,
                         bringIntoViewSpec = null,
                     )
@@ -270,7 +340,7 @@ class ScrollingContainerTest {
             // to.
             assertThat(overscrollEffect.node.node).isNotEqualTo(overscrollEffect.node)
             assertThat(overscrollEffect.node.node.isAttached).isTrue()
-            // Remove the scrolling container modifier
+            // Remove the scrolling area modifier
             addModifier = false
         }
 
@@ -297,14 +367,13 @@ class ScrollingContainerTest {
 
         rule.setContent {
             Box(
-                Modifier.scrollingContainer(
+                Modifier.scrollableArea(
                     rememberScrollState(),
                     orientation = Horizontal,
                     enabled = true,
                     reverseScrolling = false,
                     flingBehavior = null,
                     interactionSource = null,
-                    useLocalOverscrollFactory = false,
                     overscrollEffect = effect,
                     bringIntoViewSpec = null,
                 )
@@ -344,20 +413,19 @@ class ScrollingContainerTest {
                 override fun hashCode() = -1
             }
 
-        var addScrollingContainer by mutableStateOf(false)
+        var addScrollableArea by mutableStateOf(false)
 
         rule.setContent {
             Box(
                 element.then(
-                    if (addScrollingContainer)
-                        Modifier.scrollingContainer(
+                    if (addScrollableArea)
+                        Modifier.scrollableArea(
                             rememberScrollState(),
                             orientation = Horizontal,
                             enabled = true,
                             reverseScrolling = false,
                             flingBehavior = null,
                             interactionSource = null,
-                            useLocalOverscrollFactory = false,
                             overscrollEffect = overscrollEffect,
                             bringIntoViewSpec = null,
                         )
@@ -368,16 +436,16 @@ class ScrollingContainerTest {
 
         rule.runOnIdle {
             assertThat(overscrollEffect.node.node.isAttached).isTrue()
-            addScrollingContainer = true
+            addScrollableArea = true
         }
 
-        // Should not crash - the node should not be added by Modifier.scrollingContainer
+        // Should not crash - the node should not be added by Modifier.scrollableArea
         rule.waitForIdle()
     }
 
     @Test
     fun attachesLocalOverscrollFactoryOverscrollEffectNode() {
-        val tag = "scrollingContainer"
+        val tag = "scrollableArea"
         val overscrollEffect = TestOverscrollEffect()
         val factory =
             object : OverscrollFactory {
@@ -393,15 +461,13 @@ class ScrollingContainerTest {
                 Box(
                     Modifier.fillMaxSize()
                         .testTag(tag)
-                        .scrollingContainer(
+                        .scrollableArea(
                             rememberScrollState(),
                             orientation = Horizontal,
                             enabled = true,
                             reverseScrolling = false,
                             flingBehavior = null,
                             interactionSource = null,
-                            useLocalOverscrollFactory = true,
-                            overscrollEffect = null,
                             bringIntoViewSpec = null,
                         )
                 )
@@ -423,7 +489,7 @@ class ScrollingContainerTest {
 
     @Test
     fun updatesToNewLocalOverscrollFactory() {
-        val tag = "scrollingContainer"
+        val tag = "scrollableArea"
         val overscrollEffect1 = TestOverscrollEffect()
         val overscrollEffect2 = TestOverscrollEffect()
 
@@ -452,15 +518,13 @@ class ScrollingContainerTest {
                 Box(
                     Modifier.fillMaxSize()
                         .testTag(tag)
-                        .scrollingContainer(
+                        .scrollableArea(
                             rememberScrollState(),
                             orientation = Horizontal,
                             enabled = true,
                             reverseScrolling = false,
                             flingBehavior = null,
                             interactionSource = null,
-                            useLocalOverscrollFactory = true,
-                            overscrollEffect = null,
                             bringIntoViewSpec = null,
                         )
                 )
@@ -507,7 +571,7 @@ class ScrollingContainerTest {
 
     @Test
     fun updatesBetweenProvidedOverscrollEffectAndLocalOverscrollFactory() {
-        val tag = "scrollingContainer"
+        val tag = "scrollableArea"
         val overscrollEffect1 = TestOverscrollEffect()
         val overscrollEffect2 = TestOverscrollEffect()
 
@@ -523,22 +587,31 @@ class ScrollingContainerTest {
         var useLocalOverscrollFactory by mutableStateOf(true)
 
         rule.setContent {
+            val scrollableArea =
+                if (useLocalOverscrollFactory) {
+                    Modifier.scrollableArea(
+                        rememberScrollState(),
+                        orientation = Horizontal,
+                        enabled = true,
+                        reverseScrolling = false,
+                        flingBehavior = null,
+                        interactionSource = null,
+                        bringIntoViewSpec = null,
+                    )
+                } else {
+                    Modifier.scrollableArea(
+                        rememberScrollState(),
+                        orientation = Horizontal,
+                        enabled = true,
+                        reverseScrolling = false,
+                        flingBehavior = null,
+                        interactionSource = null,
+                        overscrollEffect = overscrollEffect2,
+                        bringIntoViewSpec = null,
+                    )
+                }
             CompositionLocalProvider(LocalOverscrollFactory provides factory) {
-                Box(
-                    Modifier.fillMaxSize()
-                        .testTag(tag)
-                        .scrollingContainer(
-                            rememberScrollState(),
-                            orientation = Horizontal,
-                            enabled = true,
-                            reverseScrolling = false,
-                            flingBehavior = null,
-                            interactionSource = null,
-                            useLocalOverscrollFactory = useLocalOverscrollFactory,
-                            overscrollEffect = overscrollEffect2,
-                            bringIntoViewSpec = null,
-                        )
-                )
+                Box(Modifier.fillMaxSize().testTag(tag).then(scrollableArea))
             }
         }
 
@@ -603,68 +676,13 @@ class ScrollingContainerTest {
         }
     }
 
-    @Test
-    fun changesToProvidedOverscrollEffectIgnoredIfUseLocalOverscrollFactoryTrue() {
-        val overscrollEffect1 = TestOverscrollEffect()
-        val overscrollEffect2 = TestOverscrollEffect()
-        var creationCalls = 0
-
-        val factory =
-            object : OverscrollFactory {
-                override fun createOverscrollEffect(): OverscrollEffect {
-                    creationCalls++
-                    return overscrollEffect1
-                }
-
-                override fun equals(other: Any?): Boolean = other === this
-
-                override fun hashCode(): Int = -1
-            }
-
-        var overscrollEffect by mutableStateOf<OverscrollEffect?>(null)
-
-        rule.setContent {
-            CompositionLocalProvider(LocalOverscrollFactory provides factory) {
-                Box(
-                    Modifier.scrollingContainer(
-                        rememberScrollState(),
-                        orientation = Horizontal,
-                        enabled = true,
-                        reverseScrolling = false,
-                        flingBehavior = null,
-                        interactionSource = null,
-                        useLocalOverscrollFactory = true,
-                        overscrollEffect = overscrollEffect,
-                        bringIntoViewSpec = null,
-                    )
-                )
-            }
-        }
-
-        rule.runOnIdle {
-            assertThat(creationCalls).isEqualTo(1)
-            assertThat(overscrollEffect1.node.node.isAttached).isTrue()
-            assertThat(overscrollEffect2.node.node.isAttached).isFalse()
-            // Change the provided overscrollEffect - this should no-op as useLocalOverscrollFactory
-            // is true
-            overscrollEffect = overscrollEffect2
-        }
-
-        rule.runOnIdle {
-            // create should not be called again on the factory
-            assertThat(creationCalls).isEqualTo(1)
-            assertThat(overscrollEffect1.node.node.isAttached).isTrue()
-            assertThat(overscrollEffect2.node.node.isAttached).isFalse()
-        }
-    }
-
     /**
      * Test for b/392060494
      *
      * Currently LayoutModifierNodes cannot delegate measurement to other LayoutModifierNodes. So if
-     * scrollingContainer is a LayoutModifierNode, it prevents overscroll implementations from using
+     * scrollableArea is a LayoutModifierNode, it prevents overscroll implementations from using
      * LayoutModifierNode internally. This test ensures that an overscroll implementation using
-     * LayoutModifierNode works inside scrollingContainer.
+     * LayoutModifierNode works inside scrollableArea.
      */
     @Test
     fun doesNotIgnoreOverscrollEffectNodeLayout() {
@@ -700,14 +718,13 @@ class ScrollingContainerTest {
 
         rule.setContent {
             Box(
-                Modifier.scrollingContainer(
+                Modifier.scrollableArea(
                     rememberScrollState(),
                     orientation = Horizontal,
                     enabled = true,
                     reverseScrolling = false,
                     flingBehavior = null,
                     interactionSource = null,
-                    useLocalOverscrollFactory = false,
                     overscrollEffect = overscrollEffect,
                     bringIntoViewSpec = null,
                 )

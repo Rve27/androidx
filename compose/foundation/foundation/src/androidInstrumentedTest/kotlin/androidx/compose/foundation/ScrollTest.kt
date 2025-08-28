@@ -667,14 +667,14 @@ class ScrollTest(private val config: Config) {
                 }.toList()
 
             val clip = modifiers[0] as InspectableValue
-            val scrollableContainer = modifiers[1] as InspectableValue
+            val scrollableArea = modifiers[1] as InspectableValue
             val scroll = modifiers[2] as InspectableValue
 
             assertThat(clip.nameFallback).isEqualTo("graphicsLayer")
 
-            assertThat(scrollableContainer.nameFallback).isEqualTo("scrollingContainer")
-            assertThat(scrollableContainer.valueOverride).isNull()
-            assertThat(scrollableContainer.inspectableElements.map { it.name }.asIterable())
+            assertThat(scrollableArea.nameFallback).isEqualTo("scrollableArea")
+            assertThat(scrollableArea.valueOverride).isNull()
+            assertThat(scrollableArea.inspectableElements.map { it.name }.asIterable())
                 .containsExactly(
                     "state",
                     "orientation",
@@ -683,9 +683,8 @@ class ScrollTest(private val config: Config) {
                     "flingBehavior",
                     "interactionSource",
                     "bringIntoViewSpec",
-                    "useLocalOverscrollFactory",
-                    "overscrollEffect",
                 )
+                .inOrder()
 
             assertThat(scroll.nameFallback).isEqualTo("scroll")
             assertThat(scroll.valueOverride).isNull()
@@ -705,25 +704,25 @@ class ScrollTest(private val config: Config) {
                 }.toList()
 
             val clip = modifiers[0] as InspectableValue
-            val scrollableContainer = modifiers[1] as InspectableValue
+            val scrollableArea = modifiers[1] as InspectableValue
             val scroll = modifiers[2] as InspectableValue
 
             assertThat(clip.nameFallback).isEqualTo("graphicsLayer")
 
-            assertThat(scrollableContainer.nameFallback).isEqualTo("scrollingContainer")
-            assertThat(scrollableContainer.valueOverride).isNull()
-            assertThat(scrollableContainer.inspectableElements.map { it.name }.asIterable())
+            assertThat(scrollableArea.nameFallback).isEqualTo("scrollableArea")
+            assertThat(scrollableArea.valueOverride).isNull()
+            assertThat(scrollableArea.inspectableElements.map { it.name }.asIterable())
                 .containsExactly(
                     "state",
                     "orientation",
+                    "overscrollEffect",
                     "enabled",
                     "reverseScrolling",
                     "flingBehavior",
                     "interactionSource",
                     "bringIntoViewSpec",
-                    "useLocalOverscrollFactory",
-                    "overscrollEffect",
                 )
+                .inOrder()
 
             assertThat(scroll.nameFallback).isEqualTo("scroll")
             assertThat(scroll.valueOverride).isNull()
