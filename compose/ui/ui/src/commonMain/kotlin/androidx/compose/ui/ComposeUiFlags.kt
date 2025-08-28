@@ -163,11 +163,6 @@ object ComposeUiFlags {
      */
     @Suppress("MutableBareField") @JvmField var isAdaptiveRefreshRateEnabled: Boolean = true
 
-    /** Flag for enabling the fix for using the correct node for nested scroll operations. */
-    @Suppress("MutableBareField")
-    @JvmField
-    var isNestedScrollDispatcherNodeFixEnabled: Boolean = true
-
     /** Flag for enabling indirect touch event navigation gestures in Compose. */
     @Suppress("MutableBareField")
     @JvmField
