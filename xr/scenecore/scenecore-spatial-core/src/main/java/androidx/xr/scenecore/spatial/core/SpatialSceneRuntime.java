@@ -16,6 +16,7 @@
 
 package androidx.xr.scenecore.spatial.core;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Rect;
@@ -52,6 +53,7 @@ import androidx.xr.scenecore.internal.PerceptionSpaceActivityPose;
 import androidx.xr.scenecore.internal.PixelDimensions;
 import androidx.xr.scenecore.internal.PlaneSemantic;
 import androidx.xr.scenecore.internal.PlaneType;
+import androidx.xr.scenecore.internal.PointerCaptureComponent;
 import androidx.xr.scenecore.internal.RenderingEntityFactory;
 import androidx.xr.scenecore.internal.ResizableComponent;
 import androidx.xr.scenecore.internal.SceneRuntime;
@@ -60,6 +62,7 @@ import androidx.xr.scenecore.internal.Space;
 import androidx.xr.scenecore.internal.SpatialCapabilities;
 import androidx.xr.scenecore.internal.SpatialEnvironment;
 import androidx.xr.scenecore.internal.SpatialModeChangeListener;
+import androidx.xr.scenecore.internal.SpatialPointerComponent;
 import androidx.xr.scenecore.internal.SpatialVisibility;
 
 import com.android.extensions.xr.XrExtensions;
@@ -799,5 +802,21 @@ class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory {
     public @NonNull ResizableComponent createResizableComponent(
             @NonNull Dimensions minimumSize, @NonNull Dimensions maximumSize) {
         return new ResizableComponentImpl(mExecutor, mExtensions, minimumSize, maximumSize);
+    }
+
+    // Suppress warnings for factory function
+    @Override
+    @SuppressLint("ExecutorRegistration")
+    @SuppressWarnings("ExecutorRegistration")
+    public @NonNull PointerCaptureComponent createPointerCaptureComponent(
+            @NonNull Executor executor,
+            PointerCaptureComponent.@NonNull StateListener stateListener,
+            @NonNull InputEventListener inputListener) {
+        return new PointerCaptureComponentImpl(executor, stateListener, inputListener);
+    }
+
+    @Override
+    public @NonNull SpatialPointerComponent createSpatialPointerComponent() {
+        return new SpatialPointerComponentImpl(mExtensions);
     }
 }

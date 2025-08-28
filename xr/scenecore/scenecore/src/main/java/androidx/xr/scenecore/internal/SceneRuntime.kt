@@ -453,6 +453,31 @@ public interface SceneRuntime : JxrRuntime {
         maximumSize: Dimensions,
     ): ResizableComponent
 
+    /**
+     * Create an instance of {@link PointerCaptureComponent}. This component allows the user to
+     * capture and redirect to itself all input that would be received by entities other than the
+     * Entity it is attached to and that entity's children.
+     *
+     * <p>In order to enable pointer capture, an application must be in full space and the entity it
+     * is attached to must be visible.
+     *
+     * <p>Attach this component to the entity to enable pointer capture, detach the component to
+     * restore normal input flow.
+     *
+     * @param executor Executor used to propagate state and input events.
+     * @param stateListener Callback for updates to the state of pointer capture. Pointer capture
+     *   may be temporarily lost by the application for a variety of reasons and this callback will
+     *   notify of when that happens.
+     * @param inputListener Callback that will receive captured [InputEvent]s
+     */
+    public fun createPointerCaptureComponent(
+        executor: Executor,
+        stateListener: PointerCaptureComponent.StateListener,
+        inputListener: InputEventListener,
+    ): PointerCaptureComponent
+
+    public fun createSpatialPointerComponent(): SpatialPointerComponent
+
     /** Disposes of the resources used by this runtime */
     public fun dispose()
 }

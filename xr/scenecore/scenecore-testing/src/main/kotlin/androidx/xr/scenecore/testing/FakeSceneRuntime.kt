@@ -45,12 +45,14 @@ import androidx.xr.scenecore.internal.PerceptionSpaceActivityPose
 import androidx.xr.scenecore.internal.PixelDimensions
 import androidx.xr.scenecore.internal.PlaneSemantic
 import androidx.xr.scenecore.internal.PlaneType
+import androidx.xr.scenecore.internal.PointerCaptureComponent
 import androidx.xr.scenecore.internal.RenderingEntityFactory
 import androidx.xr.scenecore.internal.SceneRuntime
 import androidx.xr.scenecore.internal.SoundPoolExtensionsWrapper
 import androidx.xr.scenecore.internal.SpatialCapabilities
 import androidx.xr.scenecore.internal.SpatialEnvironment
 import androidx.xr.scenecore.internal.SpatialModeChangeListener
+import androidx.xr.scenecore.internal.SpatialPointerComponent
 import androidx.xr.scenecore.internal.SpatialVisibility
 import java.time.Duration
 import java.util.UUID
@@ -294,6 +296,18 @@ public class FakeSceneRuntime() : SceneRuntime, RenderingEntityFactory {
 
         return resizableComponent
     }
+
+    @Suppress("ExecutorRegistration")
+    override fun createPointerCaptureComponent(
+        executor: Executor,
+        stateListener: PointerCaptureComponent.StateListener,
+        inputListener: InputEventListener,
+    ): FakePointerCaptureComponent {
+        return FakePointerCaptureComponent(executor, stateListener)
+    }
+
+    override fun createSpatialPointerComponent(): SpatialPointerComponent =
+        FakeSpatialPointerComponent()
 
     override fun dispose() {}
 }
