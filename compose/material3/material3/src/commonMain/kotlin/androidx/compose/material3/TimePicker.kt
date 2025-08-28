@@ -35,7 +35,9 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.indication
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -122,7 +124,13 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.takeOrElse
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEvent
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.KeyEventType.Companion.KeyUp
+import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.input.key.utf16CodePoint
 import androidx.compose.ui.input.pointer.PointerEvent
 import androidx.compose.ui.input.pointer.PointerEventPass
@@ -142,10 +150,12 @@ import androidx.compose.ui.node.LayoutAwareModifierNode
 import androidx.compose.ui.node.ModifierNodeElement
 import androidx.compose.ui.node.PointerInputModifierNode
 import androidx.compose.ui.node.Ref
+import androidx.compose.ui.node.currentValueOf
 import androidx.compose.ui.node.requireDensity
 import androidx.compose.ui.platform.InspectorInfo
 import androidx.compose.ui.platform.InspectorValueInfo
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.debugInspectorInfo
 import androidx.compose.ui.semantics.Role
@@ -1494,10 +1504,12 @@ internal class ClockDialNode(
             SuspendingPointerInputModifierNode {
                 detectTapGestures(
                     onPress = {
+                        currentValueOf(LocalFocusManager).clearFocus()
                         offsetX = it.x
                         offsetY = it.y
                     },
                     onTap = {
+                        currentValueOf(LocalFocusManager).clearFocus()
                         coroutineScope.launch {
                             state.onTap(
                                 it.x,
@@ -1725,6 +1737,7 @@ private fun ClockText(
     var center by remember { mutableStateOf(Offset.Zero) }
     var parentCenter by remember { mutableStateOf(IntOffset.Zero) }
     var boundsInParent by remember { mutableStateOf(Rect.Zero) }
+    val interactionSource = remember { MutableInteractionSource() }
     val scope = rememberCoroutineScope()
     val contentDescription =
         numberContentDescription(
@@ -1743,6 +1756,19 @@ private fun ClockText(
             }
         }
 
+    val onClockTextClick: () -> Unit = {
+        scope.launch {
+            state.onTap(
+                x = center.x,
+                y = center.y,
+                maxDist = maxDist,
+                autoSwitchToMinute = autoSwitchToMinute,
+                center = parentCenter,
+                animationSpec = SnapSpec(),
+            )
+        }
+    }
+
     // TODO Load the motionScheme tokens from the component tokens file
     Box(
         contentAlignment = Alignment.Center,
@@ -1755,19 +1781,28 @@ private fun ClockText(
                 }
                 .minimumInteractiveComponentSize()
                 .size(MinimumInteractiveSize)
-                .focusable()
-                .semantics(mergeDescendants = true) {
-                    onClick {
+                .onKeyEvent {
+                    if (it.type == KeyEventType.KeyDown && it.isEnter) {
+                        // Emit ripple.
+                        scope.launch { interactionSource.emit(PressInteraction.Press(center)) }
+                    }
+                    if (it.isClick) {
+                        onClockTextClick()
+                        // Make sure indication is cleared.
                         scope.launch {
-                            state.onTap(
-                                x = center.x,
-                                y = center.y,
-                                maxDist = maxDist,
-                                autoSwitchToMinute = autoSwitchToMinute,
-                                center = parentCenter,
-                                animationSpec = SnapSpec(),
+                            interactionSource.emit(
+                                PressInteraction.Release(PressInteraction.Press(center))
                             )
                         }
+                        return@onKeyEvent true
+                    }
+                    false
+                }
+                .indication(interactionSource, ripple(radius = MinimumInteractiveSize / 2))
+                .focusable(interactionSource = interactionSource)
+                .semantics(mergeDescendants = true) {
+                    onClick {
+                        onClockTextClick()
                         true
                     }
                     this.selected = selected
@@ -2042,6 +2077,19 @@ private enum class LayoutId {
     Selector,
     InnerCircle,
 }
+
+private val KeyEvent.isClick: Boolean
+    get() = type == KeyUp && isEnter
+
+private val KeyEvent.isEnter: Boolean
+    get() =
+        when (key) {
+            Key.DirectionCenter,
+            Key.Enter,
+            Key.NumPadEnter,
+            Key.Spacebar -> true
+            else -> false
+        }
 
 // TODO(https://github.com/JetBrains/compose-multiplatform/issues/3373) fix expect composable getter
 @OptIn(ExperimentalMaterial3Api::class)
