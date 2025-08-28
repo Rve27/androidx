@@ -17,6 +17,7 @@
 package androidx.glance.wear
 
 import android.util.Log
+import androidx.annotation.RestrictTo
 import androidx.glance.wear.data.WearWidgetRequestData
 import androidx.glance.wear.proto.WearWidgetRequestProto
 import java.io.IOException
@@ -29,6 +30,13 @@ import java.io.IOException
  * TODO: also provide the widget type requested and sizing based on the device.
  */
 public class WearWidgetRequest(public val instanceId: Int) {
+
+    /** Convert this request to [WearWidgetRequestData]. */
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    public fun toData(): WearWidgetRequestData {
+        val requestProto = WearWidgetRequestProto(instance_id = instanceId)
+        return WearWidgetRequestData().apply { payload = requestProto.encode() }
+    }
 
     internal companion object {
         fun fromData(requestData: WearWidgetRequestData): WearWidgetRequest? {
