@@ -39,6 +39,7 @@ dependencies {
 
     testImplementation(libs.kotlinCoroutinesTest)
     testImplementation(project(":xr:runtime:runtime-testing"))
+    testImplementation(project(":xr:arcore:arcore-testing"))
     testImplementation(libs.junit)
     testImplementation(libs.testExtJunit)
     testImplementation(libs.testExtTruth)

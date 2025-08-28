@@ -24,14 +24,14 @@ import androidx.xr.arcore.internal.AnchorResourcesExhaustedException
 import androidx.xr.arcore.internal.AnchorUnsupportedLocationException
 import androidx.xr.arcore.internal.Earth as RuntimeEarth
 import androidx.xr.arcore.internal.GeospatialPoseNotTrackingException
+import androidx.xr.arcore.testing.FakePerceptionManager
+import androidx.xr.arcore.testing.FakeRuntimeEarth
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.SessionCreateSuccess
 import androidx.xr.runtime.math.GeospatialPose
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Quaternion
 import androidx.xr.runtime.math.Vector3
-import androidx.xr.runtime.testing.FakePerceptionManager
-import androidx.xr.runtime.testing.FakeRuntimeEarth
 import com.google.common.truth.Truth.assertThat
 import kotlin.test.assertFailsWith
 import kotlinx.coroutines.CoroutineDispatcher

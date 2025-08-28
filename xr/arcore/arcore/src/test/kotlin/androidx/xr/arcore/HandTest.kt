@@ -20,6 +20,11 @@ import android.content.ContentResolver
 import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.xr.arcore.testing.FakeLifecycleManager
+import androidx.xr.arcore.testing.FakePerceptionManager
+import androidx.xr.arcore.testing.FakePerceptionRuntimeFactory
+import androidx.xr.arcore.testing.FakeRuntimeAnchor
+import androidx.xr.arcore.testing.FakeRuntimeHand
 import androidx.xr.runtime.Config
 import androidx.xr.runtime.Config.HandTrackingMode
 import androidx.xr.runtime.Session
@@ -28,11 +33,6 @@ import androidx.xr.runtime.TrackingState
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Quaternion
 import androidx.xr.runtime.math.Vector3
-import androidx.xr.runtime.testing.FakeLifecycleManager
-import androidx.xr.runtime.testing.FakePerceptionManager
-import androidx.xr.runtime.testing.FakePerceptionRuntimeFactory
-import androidx.xr.runtime.testing.FakeRuntimeAnchor
-import androidx.xr.runtime.testing.FakeRuntimeHand
 import com.google.common.truth.Truth.assertThat
 import java.nio.ByteBuffer
 import java.nio.ByteOrder

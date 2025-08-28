@@ -25,13 +25,13 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
+import androidx.xr.arcore.testing.FakePerceptionRuntimeFactory
 import androidx.xr.compose.platform.LocalSession
 import androidx.xr.compose.platform.LocalSpatialCapabilities
 import androidx.xr.compose.platform.LocalSpatialConfiguration
 import androidx.xr.compose.platform.SceneManager
 import androidx.xr.compose.subspace.SubspaceComposable
 import androidx.xr.runtime.Session
-import androidx.xr.runtime.testing.FakePerceptionRuntimeFactory
 import androidx.xr.scenecore.impl.JxrPlatformAdapterAxr
 import androidx.xr.scenecore.impl.extensions.XrExtensionsProvider
 import androidx.xr.scenecore.impl.impress.FakeImpressApiImpl

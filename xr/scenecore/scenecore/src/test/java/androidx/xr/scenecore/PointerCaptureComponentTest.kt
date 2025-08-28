@@ -17,10 +17,10 @@
 package androidx.xr.scenecore
 
 import androidx.activity.ComponentActivity
+import androidx.xr.arcore.testing.FakePerceptionRuntimeFactory
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.math.Matrix4
 import androidx.xr.runtime.math.Vector3
-import androidx.xr.runtime.testing.FakePerceptionRuntimeFactory
 import androidx.xr.scenecore.internal.ActivitySpace as RtActivitySpace
 import androidx.xr.scenecore.internal.Entity as RtEntity
 import androidx.xr.scenecore.internal.InputEvent as RtInputEvent

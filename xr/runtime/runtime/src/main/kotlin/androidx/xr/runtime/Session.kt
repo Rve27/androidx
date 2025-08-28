@@ -269,7 +269,7 @@ public constructor(
             listOf(
                 "androidx.xr.arcore.playservices.ArCoreRuntimeFactory",
                 "androidx.xr.runtime.openxr.OpenXrRuntimeFactory",
-                "androidx.xr.runtime.testing.FakePerceptionRuntimeFactory",
+                "androidx.xr.arcore.testing.FakePerceptionRuntimeFactory",
             )
         private val JXR_PLATFORM_ADAPTER_FACTORY_PROVIDERS =
             listOf(
@@ -280,7 +280,7 @@ public constructor(
             listOf(
                 "androidx.xr.arcore.PerceptionStateExtender",
                 "androidx.xr.arcore.playservices.CameraStateExtender",
-                "androidx.xr.runtime.testing.FakeStateExtender",
+                "androidx.xr.arcore.testing.FakeStateExtender",
             )
         private val SESSION_CONNECTOR_PROVIDERS =
             listOf(

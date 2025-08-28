@@ -19,8 +19,8 @@ package androidx.xr.scenecore
 import androidx.activity.ComponentActivity
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SdkSuppress
+import androidx.xr.arcore.testing.FakePerceptionRuntimeFactory
 import androidx.xr.runtime.Session
-import androidx.xr.runtime.testing.FakePerceptionRuntimeFactory
 import androidx.xr.scenecore.internal.ActivitySpace as RtActivitySpace
 import androidx.xr.scenecore.internal.GltfModelResource as RtGltfModel
 import androidx.xr.scenecore.internal.JxrPlatformAdapter

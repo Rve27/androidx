@@ -31,11 +31,11 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.xr.arcore.Plane;
 import androidx.xr.arcore.SessionExtKt;
 import androidx.xr.arcore.XrResourcesManager;
+import androidx.xr.arcore.testing.FakeRuntimePlane;
 import androidx.xr.runtime.Config;
 import androidx.xr.runtime.Session;
 import androidx.xr.runtime.SessionCreateSuccess;
 import androidx.xr.runtime.math.Pose;
-import androidx.xr.runtime.testing.FakeRuntimePlane;
 
 import io.reactivex.rxjava3.subscribers.TestSubscriber;
 

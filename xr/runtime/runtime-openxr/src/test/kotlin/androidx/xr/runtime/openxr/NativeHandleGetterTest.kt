@@ -20,10 +20,10 @@ import androidx.activity.ComponentActivity
 import androidx.lifecycle.Lifecycle
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.xr.arcore.internal.PerceptionRuntime
+import androidx.xr.arcore.testing.FakeLifecycleManager
+import androidx.xr.arcore.testing.FakePerceptionRuntimeFactory
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.SessionCreateSuccess
-import androidx.xr.runtime.testing.FakeLifecycleManager
-import androidx.xr.runtime.testing.FakePerceptionRuntimeFactory
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.test.StandardTestDispatcher

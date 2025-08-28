@@ -18,8 +18,8 @@ package androidx.xr.scenecore
 
 import androidx.activity.ComponentActivity
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.xr.arcore.testing.FakePerceptionRuntimeFactory
 import androidx.xr.runtime.Session
-import androidx.xr.runtime.testing.FakePerceptionRuntimeFactory
 import androidx.xr.scenecore.internal.ActivitySpace as RtActivitySpace
 import androidx.xr.scenecore.internal.ExrImageResource as RtExrImage
 import androidx.xr.scenecore.internal.JxrPlatformAdapter

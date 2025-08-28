@@ -18,8 +18,8 @@ package androidx.xr.scenecore
 
 import android.media.AudioTrack
 import androidx.activity.ComponentActivity
+import androidx.xr.arcore.testing.FakePerceptionRuntimeFactory
 import androidx.xr.runtime.Session
-import androidx.xr.runtime.testing.FakePerceptionRuntimeFactory
 import androidx.xr.scenecore.internal.ActivitySpace as RtActivitySpace
 import androidx.xr.scenecore.internal.AudioTrackExtensionsWrapper as RtAudioTrackExtensionsWrapper
 import androidx.xr.scenecore.internal.Entity as RtEntity

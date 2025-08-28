@@ -23,6 +23,7 @@ import android.view.View
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.annotation.RequiresApi
+import androidx.xr.arcore.testing.FakePerceptionRuntimeFactory
 import androidx.xr.runtime.Config
 import androidx.xr.runtime.Config.PlaneTrackingMode
 import androidx.xr.runtime.Session
@@ -32,7 +33,6 @@ import androidx.xr.runtime.math.FloatSize2d
 import androidx.xr.runtime.math.IntSize2d
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Vector3
-import androidx.xr.runtime.testing.FakePerceptionRuntimeFactory
 import androidx.xr.scenecore.internal.ActivityPanelEntity as RtActivityPanelEntity
 import androidx.xr.scenecore.internal.ActivityPose as RtActivityPose
 import androidx.xr.scenecore.internal.ActivityPose.HitTestFilterValue as RtHitTestFilterValue

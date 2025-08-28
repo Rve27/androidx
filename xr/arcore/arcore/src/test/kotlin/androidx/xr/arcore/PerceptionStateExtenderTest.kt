@@ -19,19 +19,19 @@ package androidx.xr.arcore
 import android.app.Activity
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.xr.arcore.internal.Trackable as RuntimeTrackable
+import androidx.xr.arcore.testing.FakePerceptionRuntime
+import androidx.xr.arcore.testing.FakePerceptionRuntimeFactory
+import androidx.xr.arcore.testing.FakeRuntimeArDevice
+import androidx.xr.arcore.testing.FakeRuntimeDepthMap
+import androidx.xr.arcore.testing.FakeRuntimeFace
+import androidx.xr.arcore.testing.FakeRuntimeHand
+import androidx.xr.arcore.testing.FakeRuntimePlane
 import androidx.xr.runtime.CoreState
 import androidx.xr.runtime.FieldOfView
 import androidx.xr.runtime.TrackingState
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Quaternion
 import androidx.xr.runtime.math.Vector3
-import androidx.xr.runtime.testing.FakePerceptionRuntime
-import androidx.xr.runtime.testing.FakePerceptionRuntimeFactory
-import androidx.xr.runtime.testing.FakeRuntimeArDevice
-import androidx.xr.runtime.testing.FakeRuntimeDepthMap
-import androidx.xr.runtime.testing.FakeRuntimeFace
-import androidx.xr.runtime.testing.FakeRuntimeHand
-import androidx.xr.runtime.testing.FakeRuntimePlane
 import com.google.common.truth.Truth.assertThat
 import java.nio.ByteBuffer
 import java.nio.ByteOrder

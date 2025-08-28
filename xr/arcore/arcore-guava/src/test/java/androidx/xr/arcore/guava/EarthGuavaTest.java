@@ -40,12 +40,12 @@ import androidx.xr.arcore.XrResourcesManager;
 import androidx.xr.arcore.internal.AnchorNotAuthorizedException;
 import androidx.xr.arcore.internal.AnchorResourcesExhaustedException;
 import androidx.xr.arcore.internal.AnchorUnsupportedLocationException;
+import androidx.xr.arcore.testing.FakePerceptionManager;
+import androidx.xr.arcore.testing.FakeRuntimeEarth;
 import androidx.xr.runtime.Session;
 import androidx.xr.runtime.SessionCreateSuccess;
 import androidx.xr.runtime.math.Pose;
 import androidx.xr.runtime.math.Quaternion;
-import androidx.xr.runtime.testing.FakePerceptionManager;
-import androidx.xr.runtime.testing.FakeRuntimeEarth;
 
 import com.google.common.util.concurrent.ListenableFuture;
 

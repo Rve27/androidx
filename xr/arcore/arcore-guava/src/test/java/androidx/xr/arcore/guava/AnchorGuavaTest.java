@@ -32,12 +32,12 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.xr.arcore.Anchor;
 import androidx.xr.arcore.SessionExtKt;
 import androidx.xr.arcore.XrResourcesManager;
+import androidx.xr.arcore.testing.FakePerceptionManager;
 import androidx.xr.runtime.Config;
 import androidx.xr.runtime.Config.AnchorPersistenceMode;
 import androidx.xr.runtime.Session;
 import androidx.xr.runtime.SessionCreateSuccess;
 import androidx.xr.runtime.math.Pose;
-import androidx.xr.runtime.testing.FakePerceptionManager;
 
 import com.google.common.util.concurrent.ListenableFuture;
 

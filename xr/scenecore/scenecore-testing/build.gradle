@@ -37,6 +37,7 @@ dependencies {
     api(libs.kotlinStdlib)
     api(project(":xr:scenecore:scenecore"))
     api(project(":xr:runtime:runtime-testing"))
+    api(project(":xr:arcore:arcore-testing"))
 
     implementation("com.google.ar:impress:0.0.6")
     implementation(libs.testExtTruth)

@@ -18,6 +18,11 @@ package androidx.xr.arcore
 
 import androidx.activity.ComponentActivity
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.xr.arcore.testing.FakeLifecycleManager
+import androidx.xr.arcore.testing.FakePerceptionManager
+import androidx.xr.arcore.testing.FakePerceptionRuntimeFactory
+import androidx.xr.arcore.testing.FakeRuntimeAnchor
+import androidx.xr.arcore.testing.FakeRuntimeAugmentedObject as FakeRuntimeObject
 import androidx.xr.runtime.AugmentedObjectCategory
 import androidx.xr.runtime.Config
 import androidx.xr.runtime.Session
@@ -27,11 +32,6 @@ import androidx.xr.runtime.math.FloatSize3d
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Quaternion
 import androidx.xr.runtime.math.Vector3
-import androidx.xr.runtime.testing.FakeLifecycleManager
-import androidx.xr.runtime.testing.FakePerceptionManager
-import androidx.xr.runtime.testing.FakePerceptionRuntimeFactory
-import androidx.xr.runtime.testing.FakeRuntimeAnchor
-import androidx.xr.runtime.testing.FakeRuntimeAugmentedObject as FakeRuntimeObject
 import com.google.common.truth.Truth.assertThat
 import kotlin.test.assertFailsWith
 import kotlinx.coroutines.CoroutineStart

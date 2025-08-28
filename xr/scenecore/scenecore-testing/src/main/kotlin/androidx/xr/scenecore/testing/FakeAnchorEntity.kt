@@ -20,9 +20,9 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.annotation.RestrictTo
 import androidx.xr.arcore.internal.Anchor
+import androidx.xr.arcore.testing.FakeRuntimeAnchor
+import androidx.xr.arcore.testing.FakeRuntimePlane
 import androidx.xr.runtime.math.Pose
-import androidx.xr.runtime.testing.FakeRuntimeAnchor
-import androidx.xr.runtime.testing.FakeRuntimePlane
 import androidx.xr.scenecore.internal.AnchorEntity
 import androidx.xr.scenecore.internal.AnchorEntity.OnStateChangedListener
 import androidx.xr.scenecore.internal.Dimensions
@@ -53,10 +53,10 @@ public class FakeAnchorEntity(
      *
      * In tests, this property can be accessed to inspect or modify the state of the underlying
      * (fake) anchor, such as its pose or tracking state. It is initialized by default with a
-     * [androidx.xr.runtime.testing.FakeRuntimeAnchor] instance.
+     * [androidx.xr.arcore.testing.FakeRuntimeAnchor] instance.
      *
      * @see androidx.xr.arcore.internal.Anchor
-     * @see androidx.xr.runtime.testing.FakeRuntimeAnchor
+     * @see androidx.xr.arcore.testing.FakeRuntimeAnchor
      */
     internal val anchor: Anchor = FakeRuntimeAnchor(Pose(), FakeRuntimePlane()),
 ) : FakeSystemSpaceEntity(), AnchorEntity {

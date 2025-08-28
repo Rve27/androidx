@@ -22,6 +22,9 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
 import androidx.xr.arcore.internal.Anchor as RuntimeAnchor
 import androidx.xr.arcore.internal.AnchorInvalidUuidException
+import androidx.xr.arcore.testing.FakePerceptionManager
+import androidx.xr.arcore.testing.FakeRuntimeAnchor
+import androidx.xr.arcore.testing.FakeRuntimePlane
 import androidx.xr.runtime.Config
 import androidx.xr.runtime.Config.AnchorPersistenceMode
 import androidx.xr.runtime.Session
@@ -30,9 +33,6 @@ import androidx.xr.runtime.TrackingState
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Quaternion
 import androidx.xr.runtime.math.Vector3
-import androidx.xr.runtime.testing.FakePerceptionManager
-import androidx.xr.runtime.testing.FakeRuntimeAnchor
-import androidx.xr.runtime.testing.FakeRuntimePlane
 import com.google.common.truth.Truth.assertThat
 import java.util.UUID
 import kotlin.test.assertFailsWith

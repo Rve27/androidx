@@ -21,13 +21,13 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.test.filters.SdkSuppress
+import androidx.xr.arcore.testing.FakeRuntimeAnchor
+import androidx.xr.arcore.testing.FakeRuntimePlane
 import androidx.xr.runtime.TrackingState
 import androidx.xr.runtime.math.Matrix3
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Vector3
 import androidx.xr.runtime.math.Vector4
-import androidx.xr.runtime.testing.FakeRuntimeAnchor
-import androidx.xr.runtime.testing.FakeRuntimePlane
 import androidx.xr.scenecore.internal.AnchorPlacement
 import androidx.xr.scenecore.internal.Dimensions
 import androidx.xr.scenecore.internal.InputEvent

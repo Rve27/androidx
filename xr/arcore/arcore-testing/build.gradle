@@ -31,16 +31,29 @@ plugins {
 
 dependencies {
     api(libs.kotlinStdlib)
+    api(project(":xr:arcore:arcore"))
+    api(project(":xr:runtime:runtime"))
+
+    testImplementation(libs.kotlinCoroutinesTest)
+    testImplementation(libs.junit)
+    testImplementation(libs.testExtJunit)
+    testImplementation(libs.testRunner)
+    testImplementation(project(":kruth:kruth"))
+    testImplementation("androidx.appcompat:appcompat:1.2.0")
 }
 
 android {
     namespace = "androidx.xr.arcore.testing"
+    defaultConfig {
+        // TODO: b/409058039 - Drop back to 23 (default) once dependency on scenecore is removed.
+        minSdk = 24
+    }
 }
 
 androidx {
     name = "XR ARCore Testing"
-    // TODO(b/436933956) - Switch to PUBLISHED_LIBRARY once files have been moved from runtime-tesing.
-    type = SoftwareType.SNAPSHOT_ONLY_LIBRARY_WITH_API_TASKS
+    type = SoftwareType.PUBLISHED_TEST_LIBRARY
     inceptionYear = "2025"
     description = "Provides Fake implementations of ARCore classes for unit testing."
+    enableRobolectric()
 }

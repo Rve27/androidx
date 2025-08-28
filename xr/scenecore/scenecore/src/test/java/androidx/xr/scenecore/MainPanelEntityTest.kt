@@ -17,9 +17,9 @@
 package androidx.xr.scenecore
 
 import androidx.activity.ComponentActivity
+import androidx.xr.arcore.testing.FakePerceptionRuntimeFactory
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.math.IntSize2d
-import androidx.xr.runtime.testing.FakePerceptionRuntimeFactory
 import androidx.xr.scenecore.internal.ActivitySpace as RtActivitySpace
 import androidx.xr.scenecore.internal.JxrPlatformAdapter
 import androidx.xr.scenecore.internal.PixelDimensions as RtPixelDimensions
