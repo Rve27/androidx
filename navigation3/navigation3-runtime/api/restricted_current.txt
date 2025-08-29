@@ -63,12 +63,51 @@ package androidx.navigation3.runtime {
     method public static inline <T> kotlin.jvm.functions.Function1<T,androidx.navigation3.runtime.NavEntry<T>> entryProvider(optional kotlin.jvm.functions.Function1<? super T,? extends androidx.navigation3.runtime.NavEntry<T>> fallback, kotlin.jvm.functions.Function1<? super androidx.navigation3.runtime.EntryProviderBuilder<T>,kotlin.Unit> builder);
   }
 
+  public final class NavBackStack implements kotlin.jvm.internal.markers.KMutableList java.util.List<androidx.navigation3.runtime.NavKey> androidx.compose.runtime.snapshots.StateObject {
+    ctor public NavBackStack();
+    ctor public NavBackStack(androidx.compose.runtime.snapshots.SnapshotStateList<androidx.navigation3.runtime.NavKey> base);
+    ctor public NavBackStack(androidx.navigation3.runtime.NavKey... elements);
+    method @InaccessibleFromJava public boolean add(androidx.navigation3.runtime.NavKey element);
+    method @InaccessibleFromJava public void add(int index, androidx.navigation3.runtime.NavKey element);
+    method @InaccessibleFromJava public boolean addAll(int index, java.util.Collection<androidx.navigation3.runtime.NavKey> elements);
+    method @InaccessibleFromJava public boolean addAll(java.util.Collection<androidx.navigation3.runtime.NavKey> elements);
+    method @InaccessibleFromJava public void clear();
+    method @InaccessibleFromJava public operator boolean contains(androidx.navigation3.runtime.NavKey element);
+    method @BytecodeOnly public boolean contains(Object!);
+    method @InaccessibleFromJava public boolean containsAll(java.util.Collection<androidx.navigation3.runtime.NavKey> elements);
+    method @InaccessibleFromJava public operator androidx.navigation3.runtime.NavKey get(int index);
+    method @BytecodeOnly public androidx.compose.runtime.snapshots.StateRecord getFirstStateRecord();
+    method @BytecodeOnly public int getSize();
+    method @InaccessibleFromJava public int indexOf(androidx.navigation3.runtime.NavKey element);
+    method @BytecodeOnly public int indexOf(Object!);
+    method @InaccessibleFromJava public boolean isEmpty();
+    method @InaccessibleFromJava public operator java.util.Iterator<androidx.navigation3.runtime.NavKey> iterator();
+    method @InaccessibleFromJava public int lastIndexOf(androidx.navigation3.runtime.NavKey element);
+    method @BytecodeOnly public int lastIndexOf(Object!);
+    method @InaccessibleFromJava public java.util.ListIterator<androidx.navigation3.runtime.NavKey> listIterator();
+    method @InaccessibleFromJava public java.util.ListIterator<androidx.navigation3.runtime.NavKey> listIterator(int index);
+    method @InaccessibleFromJava public void prependStateRecord(androidx.compose.runtime.snapshots.StateRecord value);
+    method @InaccessibleFromJava public boolean remove(androidx.navigation3.runtime.NavKey element);
+    method @BytecodeOnly public androidx.navigation3.runtime.NavKey! remove(int);
+    method @BytecodeOnly public boolean remove(Object!);
+    method @InaccessibleFromJava public boolean removeAll(java.util.Collection<androidx.navigation3.runtime.NavKey> elements);
+    method @InaccessibleFromJava public androidx.navigation3.runtime.NavKey removeAt(int index);
+    method @InaccessibleFromJava public boolean retainAll(java.util.Collection<androidx.navigation3.runtime.NavKey> elements);
+    method @InaccessibleFromJava public operator androidx.navigation3.runtime.NavKey set(int index, androidx.navigation3.runtime.NavKey element);
+    method @BytecodeOnly public int size();
+    method @InaccessibleFromJava public java.util.List<androidx.navigation3.runtime.NavKey> subList(int fromIndex, int toIndex);
+    method @BytecodeOnly public Object![]! toArray();
+    method @BytecodeOnly public <T> T![]! toArray(T![]!);
+    property public androidx.compose.runtime.snapshots.StateRecord firstStateRecord;
+    property public int size;
+  }
+
   public final class NavBackStackSerializer_androidKt {
     method @KotlinOnly public static inline <reified T> kotlinx.serialization.KSerializer<androidx.compose.runtime.snapshots.SnapshotStateList<T>> NavBackStackSerializer(androidx.savedstate.serialization.SavedStateConfiguration configuration);
   }
 
   public final class NavBackStack_androidKt {
-    method @KotlinOnly @androidx.compose.runtime.Composable public static inline <reified T extends androidx.navigation3.runtime.NavKey> androidx.compose.runtime.snapshots.SnapshotStateList<androidx.navigation3.runtime.NavKey> rememberNavBackStack(T... elements, optional androidx.savedstate.serialization.SavedStateConfiguration configuration);
+    method @KotlinOnly @androidx.compose.runtime.Composable public static inline <reified T extends androidx.navigation3.runtime.NavKey> androidx.navigation3.runtime.NavBackStack rememberNavBackStack(T... elements, optional androidx.savedstate.serialization.SavedStateConfiguration configuration);
   }
 
   public class NavEntry<T> {
@@ -118,8 +157,6 @@ package androidx.navigation3.runtime {
     method @androidx.compose.runtime.Composable public static androidx.navigation3.runtime.NavEntryDecorator<java.lang.Object> rememberSavedStateNavEntryDecorator(optional androidx.compose.runtime.saveable.SaveableStateHolder saveableStateHolder);
     method @BytecodeOnly @androidx.compose.runtime.Composable public static androidx.navigation3.runtime.NavEntryDecorator<java.lang.Object!> rememberSavedStateNavEntryDecorator(androidx.compose.runtime.saveable.SaveableStateHolder?, androidx.compose.runtime.Composer?, int, int);
   }
-
-  public typealias NavBackStack = androidx.compose.runtime.snapshots.SnapshotStateList<androidx.navigation3.runtime.NavKey>;
 
 }
 
