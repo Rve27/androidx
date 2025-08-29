@@ -36,6 +36,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.FragmentTransaction
+import androidx.lifecycle.lifecycleScope
 import androidx.pdf.ink.EditablePdfViewerFragment
 import androidx.pdf.testapp.ui.FeatureFlagListener
 import androidx.pdf.testapp.ui.FeaturePreferencesDialog
@@ -44,6 +45,7 @@ import androidx.pdf.testapp.ui.v2.StyledPdfViewerFragment
 import androidx.pdf.viewer.fragment.PdfViewerFragment
 import com.google.android.material.button.MaterialButton
 import java.io.IOException
+import kotlinx.coroutines.launch
 
 // TODO(b/386721657): Remove this activity once the switch to V2 completes
 
@@ -81,7 +83,15 @@ internal class MainActivityV2 : AppCompatActivity() {
                 val pfd: ParcelFileDescriptor? =
                     getParcelFileDescriptorFromUri(contentResolver, uri)
                 pfd?.let {
-                    (pdfViewerFragment as EditablePdfViewerFragment).writeTo(it) { it.close() }
+                    lifecycleScope.launch {
+                        try {
+                            (pdfViewerFragment as EditablePdfViewerFragment).writeTo(it)
+                        } catch (e: IllegalStateException) {
+                            // Handle the scenario where the document is not available for saving.
+                        } finally {
+                            it.close()
+                        }
+                    }
                 }
             }
         }
@@ -134,7 +144,7 @@ internal class MainActivityV2 : AppCompatActivity() {
         searchButton.setOnClickListener { pdfViewerFragment.isTextSearchActive = true }
 
         preferenceButton.setOnClickListener { view -> settingsDialog.show() }
-        savePdfButton.setOnClickListener { createDocumentLauncher.launch(MIME_TYPE_PDF) }
+        savePdfButton.setOnClickListener { createDocumentLauncher.launch(SAMPLE_PDF_NAME) }
         undoPdfButton.setOnClickListener {
             val localFragment = pdfViewerFragment
             if (localFragment is EditablePdfViewerFragment) {
@@ -216,6 +226,7 @@ internal class MainActivityV2 : AppCompatActivity() {
         private const val MIME_TYPE_PDF = "application/pdf"
         private const val PDF_VIEWER_FRAGMENT_TAG = "pdf_viewer_fragment_tag"
         internal const val FRAGMENT_TYPE_KEY = "fragmentTypeKey"
+        private const val SAMPLE_PDF_NAME = "Sample.pdf"
 
         internal enum class FragmentType {
             BASIC_FRAGMENT,

@@ -84,8 +84,8 @@ public open class PdfDocumentViewModel(
      */
     private var searchJob: Job = SupervisorJob(viewModelScope.coroutineContext[Job])
 
-    private val _fragmentUiScreenState =
-        MutableStateFlow<PdfFragmentUiState>(PdfFragmentUiState.Loading)
+    protected val _fragmentUiScreenState: MutableStateFlow<PdfFragmentUiState> =
+        MutableStateFlow(PdfFragmentUiState.Loading)
 
     /**
      * Represents the UI state of the fragment.

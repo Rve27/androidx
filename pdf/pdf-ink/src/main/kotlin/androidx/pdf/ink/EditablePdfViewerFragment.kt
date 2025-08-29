@@ -28,7 +28,6 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresExtension
 import androidx.annotation.RestrictTo
@@ -66,7 +65,6 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
 
     private lateinit var wetStrokesView: InProgressStrokesView
     private lateinit var annotationView: AnnotationsView
-    private lateinit var savingOverlay: FrameLayout
     private lateinit var backPressedCallback: OnBackPressedCallback
     private lateinit var onViewportChangedListener: PdfView.OnViewportChangedListener
     private lateinit var wetStrokesOnFinishedListener: WetStrokesOnFinishedListener
@@ -81,16 +79,16 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
      * Writes the current state of the document, including any edits, to the given destination.
      *
      * @param dest The [ParcelFileDescriptor] to write the document to.
-     * @param onCompletion A callback function to be invoked when the write operation is complete.
+     * @throws IllegalStateException If the document is not available (e.g., not loaded or lost due
+     *   to process death).
      */
-    public fun writeTo(dest: ParcelFileDescriptor, onCompletion: () -> Unit) {
-        savingOverlay.visibility = VISIBLE
-
-        documentViewModel.saveEdits(dest) {
-            savingOverlay.visibility = GONE
-            documentViewModel.isEditModeEnabled = false
-            onCompletion()
+    public suspend fun writeTo(dest: ParcelFileDescriptor) {
+        val document = documentViewModel.editablePdfDocument
+        if (document == null) {
+            throw IllegalStateException("Document not available for saving.")
         }
+
+        documentViewModel.saveEdits(dest)
     }
 
     /** Undoes the last edit. If there are no more edits to undo, this is a no-op. */
@@ -133,9 +131,6 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
         pdfContentLayout.addView(annotationView)
         pdfContentLayout.addView(wetStrokesView)
 
-        savingOverlay =
-            inflater.inflate(R.layout.saving_progress_overlay, rootView, false) as FrameLayout
-        rootView.addView(savingOverlay)
         return rootView
     }
 

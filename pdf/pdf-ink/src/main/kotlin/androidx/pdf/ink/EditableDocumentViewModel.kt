@@ -38,13 +38,16 @@ import androidx.pdf.annotation.models.PdfAnnotationData
 import androidx.pdf.ink.edits.AnnotationEditOperationsHandler
 import androidx.pdf.ink.history.AnnotationEditsHistoryManager
 import androidx.pdf.viewer.fragment.PdfDocumentViewModel
+import androidx.pdf.viewer.fragment.model.PdfFragmentUiState
 import java.util.concurrent.Executors
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @RestrictTo(RestrictTo.Scope.LIBRARY)
 public class EditableDocumentViewModel(private val state: SavedStateHandle, loader: PdfLoader) :
@@ -149,19 +152,25 @@ public class EditableDocumentViewModel(private val state: SavedStateHandle, load
     }
 
     /** Saves the draft annotations to the PDF document. */
-    internal fun saveEdits(dest: ParcelFileDescriptor, onCompletion: () -> Unit) {
+    internal suspend fun saveEdits(dest: ParcelFileDescriptor) {
         val document = editablePdfDocument ?: return
 
-        val annotations =
-            document
-                .getAllEdits()
-                .editsByPage
-                .flatMap { it.value }
-                .filterIsInstance<PdfAnnotationData>()
-        viewModelScope.launch {
-            document.applyEdits(annotations)
-            document.write(dest)
-            onCompletion()
+        _fragmentUiScreenState.update { PdfFragmentUiState.SavingEdits }
+        try {
+            val annotations =
+                document
+                    .getAllEdits()
+                    .editsByPage
+                    .flatMap { it.value }
+                    .filterIsInstance<PdfAnnotationData>()
+
+            withContext(Dispatchers.IO) {
+                document.applyEdits(annotations)
+                document.write(dest)
+            }
+            isEditModeEnabled = false
+        } finally {
+            _fragmentUiScreenState.update { PdfFragmentUiState.DocumentLoaded(document) }
         }
     }
 
