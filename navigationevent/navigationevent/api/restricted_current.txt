@@ -3,10 +3,14 @@ package androidx.navigationevent {
 
   public final class DirectNavigationEventInput extends androidx.navigationevent.NavigationEventInput {
     ctor public DirectNavigationEventInput();
-    method @MainThread public void cancel();
-    method @MainThread public void complete();
-    method @MainThread public void progress(androidx.navigationevent.NavigationEvent event);
-    method @MainThread public void start(androidx.navigationevent.NavigationEvent event);
+    method @MainThread public void backCancelled();
+    method @MainThread public void backCompleted();
+    method @MainThread public void backProgressed(androidx.navigationevent.NavigationEvent event);
+    method @MainThread public void backStarted(androidx.navigationevent.NavigationEvent event);
+    method @MainThread public void forwardCancelled();
+    method @MainThread public void forwardCompleted();
+    method @MainThread public void forwardProgressed(androidx.navigationevent.NavigationEvent event);
+    method @MainThread public void forwardStarted(androidx.navigationevent.NavigationEvent event);
   }
 
   public final class NavigationEvent {
@@ -70,10 +74,14 @@ package androidx.navigationevent {
 
   public abstract class NavigationEventInput {
     ctor public NavigationEventInput();
-    method @MainThread protected final void dispatchOnCancelled();
-    method @MainThread protected final void dispatchOnCompleted();
-    method @MainThread protected final void dispatchOnProgressed(androidx.navigationevent.NavigationEvent event);
-    method @MainThread protected final void dispatchOnStarted(androidx.navigationevent.NavigationEvent event);
+    method @MainThread protected final void dispatchOnBackCancelled();
+    method @MainThread protected final void dispatchOnBackCompleted();
+    method @MainThread protected final void dispatchOnBackProgressed(androidx.navigationevent.NavigationEvent event);
+    method @MainThread protected final void dispatchOnBackStarted(androidx.navigationevent.NavigationEvent event);
+    method @MainThread protected final void dispatchOnForwardCancelled();
+    method @MainThread protected final void dispatchOnForwardCompleted();
+    method @MainThread protected final void dispatchOnForwardProgressed(androidx.navigationevent.NavigationEvent event);
+    method @MainThread protected final void dispatchOnForwardStarted(androidx.navigationevent.NavigationEvent event);
     method @EmptySuper @MainThread protected void onAdded(androidx.navigationevent.NavigationEventDispatcher dispatcher);
     method @EmptySuper @MainThread protected void onHasEnabledCallbacksChanged(boolean hasEnabledCallbacks);
     method @EmptySuper @MainThread protected void onRemoved();

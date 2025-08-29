@@ -16,8 +16,6 @@
 
 package androidx.navigationevent.compose
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.kruth.assertThat
 import androidx.navigationevent.DirectNavigationEventInput
@@ -79,7 +77,7 @@ internal class RememberNavigationEventStateTest {
         }
 
         // Start a gesture to move to InProgress<CustomInfo1>.
-        input.start(NavigationEvent())
+        input.backStarted(NavigationEvent())
 
         rule.runOnIdle { assertThat(state).isInstanceOf<InProgress<CustomInfo1>>() }
     }
@@ -101,12 +99,12 @@ internal class RememberNavigationEventStateTest {
         rule.runOnIdle { assertThat(state).isInstanceOf<Idle<CustomInfo1>>() }
 
         // 2. Start gesture -> InProgress.
-        input.start(NavigationEvent())
+        input.backStarted(NavigationEvent())
         rule.waitForIdle()
         rule.runOnIdle { assertThat(state).isInstanceOf<InProgress<CustomInfo1>>() }
 
         // 3. Complete gesture -> Idle.
-        input.complete()
+        input.backCompleted()
         rule.waitForIdle()
         rule.runOnIdle { assertThat(state).isInstanceOf<Idle<CustomInfo1>>() }
     }
@@ -133,7 +131,7 @@ internal class RememberNavigationEventStateTest {
             }
         }
 
-        input.start(NavigationEvent())
+        input.backStarted(NavigationEvent())
 
         rule.runOnIdle {
             assertThat(state).isInstanceOf<InProgress<CustomInfo1>>()
@@ -158,7 +156,7 @@ internal class RememberNavigationEventStateTest {
 
         // Emit events with CustomInfo2. Observer requests CustomInfo1, so it should ignore
         // these and remain Idle<CustomInfo1>.
-        input.start(NavigationEvent())
+        input.backStarted(NavigationEvent())
 
         rule.runOnIdle { assertThat(state).isInstanceOf<Idle<CustomInfo1>>() }
     }

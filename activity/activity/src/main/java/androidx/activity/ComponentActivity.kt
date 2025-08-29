@@ -595,7 +595,7 @@ open class ComponentActivity() :
       to one or more {@link OnBackPressedCallback} objects."""
     )
     override fun onBackPressed() {
-        onBackPressedInput.complete()
+        onBackPressedInput.backCompleted()
     }
 
     /**
