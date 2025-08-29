@@ -63,7 +63,7 @@ import java.util.UUID
 import java.util.concurrent.Executor
 import java.util.function.Consumer
 
-/** Test-only implementation of [androidx.xr.scenecore.internal.SceneRuntime] */
+/** Test-only implementation of [SceneRuntime] */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public class FakeSceneRuntime() : SceneRuntime, RenderingEntityFactory {
     override val spatialCapabilities: SpatialCapabilities = SpatialCapabilities(0)
