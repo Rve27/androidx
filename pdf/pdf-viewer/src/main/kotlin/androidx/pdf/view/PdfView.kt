@@ -779,13 +779,31 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
      * laid out yet.
      */
     public fun pdfToViewPoint(pdfPoint: PdfPoint): PointF? {
+        return pdfToViewPoint(pdfPoint, accountForScroll = true)
+    }
+
+    /**
+     * Returns the View coordinate location of [pdfPoint], or null if that PDF content has not been
+     * laid out yet.
+     *
+     * @param accountForScroll true to offset the final position by ([scrollX], [scrollY])
+     */
+    private fun pdfToViewPoint(pdfPoint: PdfPoint, accountForScroll: Boolean): PointF? {
         val pageLocation =
             pageMetadataLoader?.getPageLocation(pdfPoint.pageNum, getVisibleAreaInContentCoords())
                 ?: return null
         val ret =
             PointF(
-                toViewCoord(pageLocation.left + pdfPoint.x, zoom, scroll = scrollX),
-                toViewCoord(pageLocation.top + pdfPoint.y, zoom, scroll = scrollY),
+                toViewCoord(
+                    pageLocation.left + pdfPoint.x,
+                    zoom,
+                    scroll = if (accountForScroll) scrollX else 0,
+                ),
+                toViewCoord(
+                    pageLocation.top + pdfPoint.y,
+                    zoom,
+                    scroll = if (accountForScroll) scrollY else 0,
+                ),
             )
         return ret
     }
