@@ -38,6 +38,10 @@
             layout="@layout/preferences_switch_template" />
 
         <include
+            android:id="@+id/switch_link_selection"
+            layout="@layout/preferences_switch_template"/>
+
+        <include
             android:id="@+id/switch_smart_action_menu"
             layout="@layout/preferences_switch_template"/>
 
