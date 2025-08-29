@@ -857,6 +857,15 @@ public class WebViewFeatureInternal {
             new ApiFeature.NoFramework(WebViewFeature.PRECONNECT,
                     Features.PRECONNECT);
 
+    /**
+     * Feature for {@link WebSettingsFeature#isFeatureSupported(String)}.
+     * This feature covers
+     * {@link WebSettingsCompat#setHyperlinkContextMenuItems(WebSettings, int)},
+     */
+    public static final ApiFeature.NoFramework HYPERLINK_CONTEXT_MENU_ITEMS =
+            new ApiFeature.NoFramework(WebViewFeature.HYPERLINK_CONTEXT_MENU_ITEMS,
+                    Features.HYPERLINK_CONTEXT_MENU_ITEMS);
+
     // --- Add new feature constants above this line ---
 
     private WebViewFeatureInternal() {
