@@ -256,8 +256,8 @@ package androidx.xr.compose.subspace {
   }
 
   public final class SpatialColumnKt {
-    method @androidx.compose.runtime.Composable @androidx.xr.compose.subspace.SubspaceComposable public static void SpatialColumn(optional androidx.xr.compose.subspace.layout.SubspaceModifier modifier, optional androidx.xr.compose.subspace.layout.SpatialAlignment alignment, kotlin.jvm.functions.Function1<? super androidx.xr.compose.subspace.SpatialColumnScope,kotlin.Unit> content);
-    method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.xr.compose.subspace.SubspaceComposable public static void SpatialColumn(androidx.xr.compose.subspace.layout.SubspaceModifier?, androidx.xr.compose.subspace.layout.SpatialAlignment?, kotlin.jvm.functions.Function3<? super androidx.xr.compose.subspace.SpatialColumnScope!,? super androidx.compose.runtime.Composer!,? super java.lang.Integer!,kotlin.Unit!>, androidx.compose.runtime.Composer?, int, int);
+    method @androidx.compose.runtime.Composable @androidx.xr.compose.subspace.SubspaceComposable public static void SpatialColumn(optional androidx.xr.compose.subspace.layout.SubspaceModifier modifier, optional androidx.xr.compose.subspace.layout.SpatialAlignment alignment, optional androidx.xr.compose.subspace.layout.SpatialArrangement.Vertical verticalArrangement, kotlin.jvm.functions.Function1<? super androidx.xr.compose.subspace.SpatialColumnScope,kotlin.Unit> content);
+    method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.xr.compose.subspace.SubspaceComposable public static void SpatialColumn(androidx.xr.compose.subspace.layout.SubspaceModifier?, androidx.xr.compose.subspace.layout.SpatialAlignment?, androidx.xr.compose.subspace.layout.SpatialArrangement.Vertical?, kotlin.jvm.functions.Function3<? super androidx.xr.compose.subspace.SpatialColumnScope!,? super androidx.compose.runtime.Composer!,? super java.lang.Integer!,kotlin.Unit!>, androidx.compose.runtime.Composer?, int, int);
   }
 
   @androidx.compose.foundation.layout.LayoutScopeMarker public interface SpatialColumnScope {
@@ -303,10 +303,10 @@ package androidx.xr.compose.subspace {
   }
 
   public final class SpatialRowKt {
-    method @KotlinOnly @androidx.compose.runtime.Composable @androidx.xr.compose.subspace.SubspaceComposable public static void SpatialCurvedRow(optional androidx.xr.compose.subspace.layout.SubspaceModifier modifier, optional androidx.xr.compose.subspace.layout.SpatialAlignment alignment, optional androidx.compose.ui.unit.Dp curveRadius, kotlin.jvm.functions.Function1<androidx.xr.compose.subspace.SpatialRowScope,kotlin.Unit> content);
-    method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.xr.compose.subspace.SubspaceComposable public static void SpatialCurvedRow-942rkJo(androidx.xr.compose.subspace.layout.SubspaceModifier?, androidx.xr.compose.subspace.layout.SpatialAlignment?, float, kotlin.jvm.functions.Function3<? super androidx.xr.compose.subspace.SpatialRowScope!,? super androidx.compose.runtime.Composer!,? super java.lang.Integer!,kotlin.Unit!>, androidx.compose.runtime.Composer?, int, int);
-    method @androidx.compose.runtime.Composable @androidx.xr.compose.subspace.SubspaceComposable public static void SpatialRow(optional androidx.xr.compose.subspace.layout.SubspaceModifier modifier, optional androidx.xr.compose.subspace.layout.SpatialAlignment alignment, kotlin.jvm.functions.Function1<? super androidx.xr.compose.subspace.SpatialRowScope,kotlin.Unit> content);
-    method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.xr.compose.subspace.SubspaceComposable public static void SpatialRow(androidx.xr.compose.subspace.layout.SubspaceModifier?, androidx.xr.compose.subspace.layout.SpatialAlignment?, kotlin.jvm.functions.Function3<? super androidx.xr.compose.subspace.SpatialRowScope!,? super androidx.compose.runtime.Composer!,? super java.lang.Integer!,kotlin.Unit!>, androidx.compose.runtime.Composer?, int, int);
+    method @KotlinOnly @androidx.compose.runtime.Composable @androidx.xr.compose.subspace.SubspaceComposable public static void SpatialCurvedRow(optional androidx.xr.compose.subspace.layout.SubspaceModifier modifier, optional androidx.xr.compose.subspace.layout.SpatialAlignment alignment, optional androidx.xr.compose.subspace.layout.SpatialArrangement.Horizontal horizontalArrangement, optional androidx.compose.ui.unit.Dp curveRadius, kotlin.jvm.functions.Function1<androidx.xr.compose.subspace.SpatialRowScope,kotlin.Unit> content);
+    method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.xr.compose.subspace.SubspaceComposable public static void SpatialCurvedRow-hGBTI10(androidx.xr.compose.subspace.layout.SubspaceModifier?, androidx.xr.compose.subspace.layout.SpatialAlignment?, androidx.xr.compose.subspace.layout.SpatialArrangement.Horizontal?, float, kotlin.jvm.functions.Function3<? super androidx.xr.compose.subspace.SpatialRowScope!,? super androidx.compose.runtime.Composer!,? super java.lang.Integer!,kotlin.Unit!>, androidx.compose.runtime.Composer?, int, int);
+    method @androidx.compose.runtime.Composable @androidx.xr.compose.subspace.SubspaceComposable public static void SpatialRow(optional androidx.xr.compose.subspace.layout.SubspaceModifier modifier, optional androidx.xr.compose.subspace.layout.SpatialAlignment alignment, optional androidx.xr.compose.subspace.layout.SpatialArrangement.Horizontal horizontalArrangement, kotlin.jvm.functions.Function1<? super androidx.xr.compose.subspace.SpatialRowScope,kotlin.Unit> content);
+    method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.xr.compose.subspace.SubspaceComposable public static void SpatialRow(androidx.xr.compose.subspace.layout.SubspaceModifier?, androidx.xr.compose.subspace.layout.SpatialAlignment?, androidx.xr.compose.subspace.layout.SpatialArrangement.Horizontal?, kotlin.jvm.functions.Function3<? super androidx.xr.compose.subspace.SpatialRowScope!,? super androidx.compose.runtime.Composer!,? super java.lang.Integer!,kotlin.Unit!>, androidx.compose.runtime.Composer?, int, int);
   }
 
   @androidx.compose.foundation.layout.LayoutScopeMarker public interface SpatialRowScope {
@@ -613,6 +613,69 @@ package androidx.xr.compose.subspace.layout {
 
   public static interface SpatialAlignment.Vertical {
     method public int offset(int height, int space);
+  }
+
+  public final class SpatialArrangement {
+    method public androidx.xr.compose.subspace.layout.SpatialArrangement.Horizontal aligned(androidx.xr.compose.subspace.layout.SpatialAlignment.Horizontal spatialAlignment);
+    method public androidx.xr.compose.subspace.layout.SpatialArrangement.Vertical aligned(androidx.xr.compose.subspace.layout.SpatialAlignment.Vertical spatialAlignment);
+    method public androidx.xr.compose.subspace.layout.SpatialArrangement.Vertical getBottom();
+    method public androidx.xr.compose.subspace.layout.SpatialArrangement.AxisIndependent getCenter();
+    method public androidx.xr.compose.subspace.layout.SpatialArrangement.Horizontal getEnd();
+    method public androidx.xr.compose.subspace.layout.SpatialArrangement.AxisIndependent getSpaceAround();
+    method public androidx.xr.compose.subspace.layout.SpatialArrangement.AxisIndependent getSpaceBetween();
+    method public androidx.xr.compose.subspace.layout.SpatialArrangement.AxisIndependent getSpaceEvenly();
+    method public androidx.xr.compose.subspace.layout.SpatialArrangement.Horizontal getStart();
+    method public androidx.xr.compose.subspace.layout.SpatialArrangement.Vertical getTop();
+    method @KotlinOnly public androidx.xr.compose.subspace.layout.SpatialArrangement.AxisIndependent spacedBy(androidx.compose.ui.unit.Dp space);
+    method @KotlinOnly public androidx.xr.compose.subspace.layout.SpatialArrangement.Horizontal spacedBy(androidx.compose.ui.unit.Dp space, androidx.xr.compose.subspace.layout.SpatialAlignment.Horizontal spatialAlignment);
+    method @KotlinOnly public androidx.xr.compose.subspace.layout.SpatialArrangement.Vertical spacedBy(androidx.compose.ui.unit.Dp space, androidx.xr.compose.subspace.layout.SpatialAlignment.Vertical spatialAlignment);
+    method @BytecodeOnly public androidx.xr.compose.subspace.layout.SpatialArrangement.AxisIndependent spacedBy-0680j_4(float);
+    method @BytecodeOnly public androidx.xr.compose.subspace.layout.SpatialArrangement.Horizontal spacedBy-D5KLDUw(float, androidx.xr.compose.subspace.layout.SpatialAlignment.Horizontal);
+    method @BytecodeOnly public androidx.xr.compose.subspace.layout.SpatialArrangement.Vertical spacedBy-D5KLDUw(float, androidx.xr.compose.subspace.layout.SpatialAlignment.Vertical);
+    property public androidx.xr.compose.subspace.layout.SpatialArrangement.Vertical Bottom;
+    property public androidx.xr.compose.subspace.layout.SpatialArrangement.AxisIndependent Center;
+    property public androidx.xr.compose.subspace.layout.SpatialArrangement.Horizontal End;
+    property public androidx.xr.compose.subspace.layout.SpatialArrangement.AxisIndependent SpaceAround;
+    property public androidx.xr.compose.subspace.layout.SpatialArrangement.AxisIndependent SpaceBetween;
+    property public androidx.xr.compose.subspace.layout.SpatialArrangement.AxisIndependent SpaceEvenly;
+    property @androidx.compose.runtime.Stable public androidx.xr.compose.subspace.layout.SpatialArrangement.Horizontal Start;
+    property public androidx.xr.compose.subspace.layout.SpatialArrangement.Vertical Top;
+    field public static final androidx.xr.compose.subspace.layout.SpatialArrangement INSTANCE;
+  }
+
+  @androidx.compose.runtime.Immutable public static final class SpatialArrangement.Absolute {
+    method public androidx.xr.compose.subspace.layout.SpatialArrangement.Horizontal aligned(androidx.xr.compose.subspace.layout.SpatialAlignment.Horizontal spatialAlignment);
+    method public androidx.xr.compose.subspace.layout.SpatialArrangement.Horizontal getCenter();
+    method public androidx.xr.compose.subspace.layout.SpatialArrangement.Horizontal getLeft();
+    method public androidx.xr.compose.subspace.layout.SpatialArrangement.Horizontal getRight();
+    method public androidx.xr.compose.subspace.layout.SpatialArrangement.Horizontal getSpaceAround();
+    method public androidx.xr.compose.subspace.layout.SpatialArrangement.Horizontal getSpaceBetween();
+    method public androidx.xr.compose.subspace.layout.SpatialArrangement.Horizontal getSpaceEvenly();
+    method @KotlinOnly public androidx.xr.compose.subspace.layout.SpatialArrangement.Horizontal spacedBy(androidx.compose.ui.unit.Dp space, androidx.xr.compose.subspace.layout.SpatialAlignment.Horizontal spatialAlignment);
+    method @BytecodeOnly public androidx.xr.compose.subspace.layout.SpatialArrangement.Horizontal spacedBy-D5KLDUw(float, androidx.xr.compose.subspace.layout.SpatialAlignment.Horizontal);
+    property public androidx.xr.compose.subspace.layout.SpatialArrangement.Horizontal Center;
+    property public androidx.xr.compose.subspace.layout.SpatialArrangement.Horizontal Left;
+    property public androidx.xr.compose.subspace.layout.SpatialArrangement.Horizontal Right;
+    property public androidx.xr.compose.subspace.layout.SpatialArrangement.Horizontal SpaceAround;
+    property public androidx.xr.compose.subspace.layout.SpatialArrangement.Horizontal SpaceBetween;
+    property public androidx.xr.compose.subspace.layout.SpatialArrangement.Horizontal SpaceEvenly;
+    field public static final androidx.xr.compose.subspace.layout.SpatialArrangement.Absolute INSTANCE;
+  }
+
+  @androidx.compose.runtime.Stable @kotlin.jvm.JvmDefaultWithCompatibility public static interface SpatialArrangement.AxisIndependent extends androidx.xr.compose.subspace.layout.SpatialArrangement.Horizontal androidx.xr.compose.subspace.layout.SpatialArrangement.Vertical {
+    property public default androidx.compose.ui.unit.Dp spacing;
+  }
+
+  @androidx.compose.runtime.Stable @kotlin.jvm.JvmDefaultWithCompatibility public static interface SpatialArrangement.Horizontal {
+    method public void arrange(androidx.compose.ui.unit.Density, int totalSize, int[] sizes, androidx.compose.ui.unit.LayoutDirection layoutDirection, int[] outPositions);
+    method @BytecodeOnly public default float getSpacing-D9Ej5fM();
+    property public default androidx.compose.ui.unit.Dp spacing;
+  }
+
+  @androidx.compose.runtime.Stable @kotlin.jvm.JvmDefaultWithCompatibility public static interface SpatialArrangement.Vertical {
+    method public void arrange(androidx.compose.ui.unit.Density, int totalSize, int[] sizes, int[] outPositions);
+    method @BytecodeOnly public default float getSpacing-D9Ej5fM();
+    property public default androidx.compose.ui.unit.Dp spacing;
   }
 
   public final class SpatialBiasAbsoluteAlignment implements androidx.xr.compose.subspace.layout.SpatialAlignment {

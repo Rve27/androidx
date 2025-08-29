@@ -88,6 +88,7 @@ import androidx.xr.compose.testapp.resizablepanel.ResizablePanel
 import androidx.xr.compose.testapp.rotation.Rotation
 import androidx.xr.compose.testapp.spacemodechange.SpaceModeActivity
 import androidx.xr.compose.testapp.spatialalignmentusage.SpatialAlignmentUsageActivity
+import androidx.xr.compose.testapp.spatialarrangementusage.SpatialArrangementUsageActivity
 import androidx.xr.compose.testapp.spatialcompose.SpatialCompose
 import androidx.xr.compose.testapp.spatialelevation.SpatialElevation
 import androidx.xr.compose.testapp.spatialpanel.SpatialPanelActivity
@@ -321,6 +322,9 @@ class MainActivity : ComponentActivity() {
                     }
                     TestCaseColumnRowItem(getString(R.string.spatial_alignment_usage_test_case)) {
                         startTest<SpatialAlignmentUsageActivity>()
+                    }
+                    TestCaseColumnRowItem(getString(R.string.spatial_arrangement_usage_test_case)) {
+                        startTest<SpatialArrangementUsageActivity>()
                     }
                     TestCaseColumnRowItem(getString(R.string.space_mode_change_test)) {
                         startTest<SpaceModeActivity>()

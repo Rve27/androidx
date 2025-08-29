@@ -196,6 +196,13 @@
             android:enableOnBackInvokedCallback="true"
             android:label="SpatialAlignment"
             android:theme="@style/Theme.IntegrationTestsApp" />
+        <activity
+            android:name=".spatialarrangementusage.SpatialArrangementUsageActivity"
+            android:exported="true"
+            android:configChanges="screenSize|smallestScreenSize|orientation|screenLayout"
+            android:enableOnBackInvokedCallback="true"
+            android:label="SpatialArrangementUsage"
+            android:theme="@style/Theme.IntegrationTestsApp" />
 
 
         <property
