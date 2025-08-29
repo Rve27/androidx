@@ -184,13 +184,13 @@ class UseCaseSurfaceManagerDeviceTest {
             .addListener(
                 object : CameraSurfaceManager.SurfaceListener {
                     override fun onSurfaceActive(surface: Surface) {
-                        if (surface == testSessionParameters.deferrableSurface.surface.get()) {
+                        if (surface == testSessionParameters.surface) {
                             surfaceActiveCountDown.countDown()
                         }
                     }
 
                     override fun onSurfaceInactive(surface: Surface) {
-                        if (surface == testSessionParameters.deferrableSurface.surface.get()) {
+                        if (surface == testSessionParameters.surface) {
                             surfaceInactiveCountDown.countDown()
                         }
                     }
@@ -305,10 +305,10 @@ class UseCaseSurfaceManagerDeviceTest {
                 )
             }
 
+        val surface: Surface = imageReader.surface
+
         val deferrableSurface: DeferrableSurface =
-            ImmediateSurface(imageReader.surface).also {
-                DeferrableSurfaces.incrementAll(listOf(it))
-            }
+            ImmediateSurface(surface).also { DeferrableSurfaces.incrementAll(listOf(it)) }
 
         /** Latch to wait for first image data to appear. */
         val repeatingOutputDataLatch = CountDownLatch(1)
