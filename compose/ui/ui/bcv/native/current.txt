@@ -1029,6 +1029,8 @@ abstract interface androidx.compose.ui.platform/ViewConfiguration { // androidx.
 abstract interface androidx.compose.ui.platform/WindowInfo { // androidx.compose.ui.platform/WindowInfo|null[0]
     abstract val isWindowFocused // androidx.compose.ui.platform/WindowInfo.isWindowFocused|{}isWindowFocused[0]
         abstract fun <get-isWindowFocused>(): kotlin/Boolean // androidx.compose.ui.platform/WindowInfo.isWindowFocused.<get-isWindowFocused>|<get-isWindowFocused>(){}[0]
+    open val containerDpSize // androidx.compose.ui.platform/WindowInfo.containerDpSize|{}containerDpSize[0]
+        open fun <get-containerDpSize>(): androidx.compose.ui.unit/DpSize // androidx.compose.ui.platform/WindowInfo.containerDpSize.<get-containerDpSize>|<get-containerDpSize>(){}[0]
     open val containerSize // androidx.compose.ui.platform/WindowInfo.containerSize|{}containerSize[0]
         open fun <get-containerSize>(): androidx.compose.ui.unit/IntSize // androidx.compose.ui.platform/WindowInfo.containerSize.<get-containerSize>|<get-containerSize>(){}[0]
     open val keyboardModifiers // androidx.compose.ui.platform/WindowInfo.keyboardModifiers|{}keyboardModifiers[0]
