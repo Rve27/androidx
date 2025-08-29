@@ -47,14 +47,17 @@ class SelectionMenuManagerTest {
         val hyperLinkSelection = HyperLinkSelection(link, "Google", emptyList())
         val menuItems = selectionMenuManager.getSelectionMenuItems(hyperLinkSelection)
         assertThat(menuItems).isNotNull()
-        assertThat(menuItems.size).isGreaterThan(2) // Open, Copy, Select All.
+        assertThat(menuItems.size).isGreaterThan(3) // Open, CopyURL, Copy, Select All.
         val smartMenuItem = menuItems[0] as SmartSelectionMenuComponent
         assertThat(smartMenuItem).isNotNull()
         assertThat(smartMenuItem.label).isEqualTo("Open")
-        val copyMenuItem = menuItems[1] as DefaultSelectionMenuComponent
+        val copyUrlMenuItem = menuItems[1] as DefaultSelectionMenuComponent
+        assertThat(copyUrlMenuItem).isNotNull()
+        assertThat(copyUrlMenuItem.label).isEqualTo("Copy URL")
+        val copyMenuItem = menuItems[2] as DefaultSelectionMenuComponent
         assertThat(copyMenuItem).isNotNull()
         assertThat(copyMenuItem.label).isEqualTo("Copy")
-        val selectAllMenuItem = menuItems[2] as DefaultSelectionMenuComponent
+        val selectAllMenuItem = menuItems[3] as DefaultSelectionMenuComponent
         assertThat(selectAllMenuItem).isNotNull()
         assertThat(selectAllMenuItem.label).isEqualTo("Select all")
     }
@@ -65,10 +68,10 @@ class SelectionMenuManagerTest {
         val hyperLinkSelection = GoToLinkSelection(destination, "Page 2", emptyList())
         val menuItems = selectionMenuManager.getSelectionMenuItems(hyperLinkSelection)
         assertThat(menuItems).isNotNull()
-        assertThat(menuItems.size).isEqualTo(3) // Go to page 2, Copy, Select All.
+        assertThat(menuItems.size).isEqualTo(3) // Go to, Copy, Select All.
         val goToMenuItem = menuItems[0] as DefaultSelectionMenuComponent
         assertThat(goToMenuItem).isNotNull()
-        assertThat(goToMenuItem.label).isEqualTo("Go to page 2")
+        assertThat(goToMenuItem.label).isEqualTo("Go to")
         val copyMenuItem = menuItems[1] as DefaultSelectionMenuComponent
         assertThat(copyMenuItem).isNotNull()
         assertThat(copyMenuItem.label).isEqualTo("Copy")

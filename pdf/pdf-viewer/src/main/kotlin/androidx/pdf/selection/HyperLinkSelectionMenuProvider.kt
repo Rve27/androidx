@@ -16,38 +16,27 @@
 package androidx.pdf.selection
 
 import android.content.Context
-import android.graphics.PointF
-import androidx.pdf.PdfPoint
-import androidx.pdf.R
-import androidx.pdf.selection.model.GoToLinkSelection
+import androidx.pdf.selection.model.HyperLinkSelection
+import androidx.pdf.util.ClipboardUtils
 
-internal class GoToLinkSelectionMenuProvider(private val context: Context) :
-    SelectionMenuProvider<GoToLinkSelection> {
+internal class HyperLinkSelectionMenuProvider(private val context: Context) :
+    SelectionMenuProvider<HyperLinkSelection> {
 
-    override suspend fun getMenuItems(selection: GoToLinkSelection): List<ContextMenuComponent> {
+    override suspend fun getMenuItems(selection: HyperLinkSelection): List<ContextMenuComponent> {
         val menuItems: MutableList<ContextMenuComponent> = mutableListOf()
-        menuItems += getGoToMenuItem(selection)
+        menuItems += getHyperLinkMenuItem(selection)
         menuItems += LinkSelectionMenuProvider.getDefaultMenuItems(context)
         return menuItems
     }
 
-    private fun getGoToMenuItem(selection: GoToLinkSelection): ContextMenuComponent {
+    private fun getHyperLinkMenuItem(selection: HyperLinkSelection): ContextMenuComponent {
         return DefaultSelectionMenuComponent(
             key = PdfSelectionMenuKeys.SmartActionKey,
-            label = context.getString(R.string.desc_goto),
+            label = context.getString(android.R.string.copyUrl),
         ) { pdfView ->
             val localCurrentSelection = pdfView.currentSelection
-            if (localCurrentSelection is GoToLinkSelection) {
-                val destination =
-                    PdfPoint(
-                        pageNum = localCurrentSelection.destination.pageNumber,
-                        pagePoint =
-                            PointF(
-                                localCurrentSelection.destination.xCoordinate,
-                                localCurrentSelection.destination.yCoordinate,
-                            ),
-                    )
-                pdfView.scrollToPosition(destination)
+            if (localCurrentSelection is HyperLinkSelection) {
+                ClipboardUtils.copyToClipboard(context, localCurrentSelection.link.toString())
             }
             close()
             pdfView.clearSelection()
