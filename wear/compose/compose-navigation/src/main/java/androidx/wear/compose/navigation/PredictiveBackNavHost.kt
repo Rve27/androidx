@@ -105,6 +105,8 @@ internal fun PredictiveBackNavHost(
 
     val navigateBack: () -> Unit = { navController.popBackStack() }
 
+    val transitionsInProgress by wearNavigator.transitionsInProgress.collectAsState()
+
     DisposableEffect(lifecycleOwner) {
         // Setup the navController with proper owners
         navController.setLifecycleOwner(lifecycleOwner)
@@ -266,7 +268,7 @@ internal fun PredictiveBackNavHost(
     }
     LaunchedEffect(transition.currentState, transition.targetState) {
         if (transition.currentState == transition.targetState) {
-            backStack.forEach { entry -> wearNavigator.onTransitionComplete(entry) }
+            transitionsInProgress.forEach { entry -> wearNavigator.onTransitionComplete(entry) }
             zIndices.forEach { key, _ ->
                 if (key != transition.targetState.id) zIndices.remove(key)
             }
