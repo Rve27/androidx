@@ -15,6 +15,9 @@ package androidx.tracing.driver {
     property public final androidx.tracing.driver.Track parent;
   }
 
+  @SuppressCompatibility @kotlin.RequiresOptIn(message="Marks declarations in the Tracing API that are delicate.") @kotlin.annotation.Target(allowedTargets={kotlin.annotation.AnnotationTarget.CLASS, kotlin.annotation.AnnotationTarget.FUNCTION}) public @interface DelicateTracingApi {
+  }
+
   public final class MetadataEntry {
     method public void reset();
     property public boolean booleanValue;
@@ -35,7 +38,7 @@ package androidx.tracing.driver {
     method public abstract void recycle();
   }
 
-  public final class PooledTracePacketArray extends androidx.tracing.driver.Poolable<androidx.tracing.driver.PooledTracePacketArray> {
+  @SuppressCompatibility @androidx.tracing.driver.DelicateTracingApi public final class PooledTracePacketArray extends androidx.tracing.driver.Poolable<androidx.tracing.driver.PooledTracePacketArray> {
     method public inline void forEach(kotlin.jvm.functions.Function1<? super androidx.tracing.driver.TraceEvent,kotlin.Unit> block);
     method public void recycle();
     property public int fillCount;
@@ -97,7 +100,7 @@ package androidx.tracing.driver {
     property public androidx.tracing.driver.TraceContext context;
   }
 
-  public final class TraceEvent {
+  @SuppressCompatibility @androidx.tracing.driver.DelicateTracingApi public final class TraceEvent {
     ctor public TraceEvent();
     method public void reset();
     property public Double? counterDoubleValue;
