@@ -17,6 +17,7 @@
 package androidx.wear.compose.material3.demos
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -81,7 +82,8 @@ val ScaffoldDemos =
         ComposableDemo("Vertical Pager Scaffold (Fade Out Indicator)") {
             VerticalPagerScaffoldFadeOutIndicatorDemo()
         },
-        ComposableDemo("Complex Horizontal Pager") { ComplexHorizontalPager(it.navigateBack) },
+        ComposableDemo("Complex Horizontal Pager") { ComplexHorizontalPager() },
+        ComposableDemo("Nested Pagers") { NestedPagers() },
     )
 
 @Composable
@@ -205,7 +207,7 @@ fun ScaffoldLoadingSLCEdgeButtonSample() {
 }
 
 @Composable
-fun ComplexHorizontalPager(navigateBack: () -> Unit) {
+fun ComplexHorizontalPager() {
     AppScaffold {
         val pageCount = 3
         val pagerState = PagerState(currentPage = 0, currentPageOffsetFraction = 0f) { pageCount }
@@ -232,6 +234,28 @@ fun ComplexHorizontalPager(navigateBack: () -> Unit) {
                         modifier = Modifier.fillMaxSize(),
                     ) {
                         items(20) { Text("Item #$pageIndex-$it") }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun NestedPagers() {
+    val pageCount = 3
+    val horizontalPagerState =
+        PagerState(currentPage = 0, currentPageOffsetFraction = 0f) { pageCount }
+    val verticalPagerStates = remember {
+        Array(pageCount) { PagerState(currentPage = 0, currentPageOffsetFraction = 0f) { 5 } }
+    }
+
+    HorizontalPagerScaffold(pagerState = horizontalPagerState, modifier = Modifier.fillMaxSize()) {
+        HorizontalPager(state = horizontalPagerState) { pageIndex ->
+            VerticalPagerScaffold(pagerState = verticalPagerStates[pageIndex]) {
+                VerticalPager(state = verticalPagerStates[pageIndex]) { innerPage ->
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Text("Page #$pageIndex-$innerPage")
                     }
                 }
             }
