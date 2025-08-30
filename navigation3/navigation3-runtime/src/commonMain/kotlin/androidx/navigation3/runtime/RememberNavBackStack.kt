@@ -73,7 +73,7 @@ import kotlinx.serialization.modules.SerializersModule
 public inline fun <reified T : NavKey> rememberNavBackStack(
     vararg elements: T,
     configuration: SavedStateConfiguration = SavedStateConfiguration.DEFAULT,
-): NavBackStack {
+): NavBackStack<NavKey> {
     val base =
         rememberSerializable(
             configuration = configuration,

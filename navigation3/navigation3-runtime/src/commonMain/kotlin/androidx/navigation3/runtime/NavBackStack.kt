@@ -42,10 +42,10 @@ import androidx.compose.runtime.snapshots.StateObject
  * @constructor Creates a new back stack backed by the provided [SnapshotStateList].
  * @see rememberNavBackStack for lifecycle-aware persistence.
  */
-public class NavBackStack public constructor(base: SnapshotStateList<NavKey>) :
-    MutableList<NavKey> by base, StateObject by base {
+public class NavBackStack<T : NavKey> public constructor(base: SnapshotStateList<T>) :
+    MutableList<T> by base, StateObject by base {
 
     public constructor() : this(base = mutableStateListOf())
 
-    public constructor(vararg elements: NavKey) : this(base = mutableStateListOf(*elements))
+    public constructor(vararg elements: T) : this(base = mutableStateListOf(*elements))
 }
