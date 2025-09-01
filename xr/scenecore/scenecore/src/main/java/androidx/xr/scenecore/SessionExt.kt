@@ -71,11 +71,15 @@ private val Activity.lifecycle: Lifecycle
  * @see Scene
  */
 public val Session.scene: Scene
-    get() =
-        getOrPutFromCache(sceneCache) {
-            // This lambda is executed only once per session instance.
-            sessionConnectors.filterIsInstance<Scene>().single()
-        }
+    get() = checkAndGetScene(this)
+
+/** Gets the [Scene] associated with the given [Session], using a cache. */
+private fun checkAndGetScene(session: Session): Scene {
+    return sceneCache.getOrPut(session) {
+        // This lambda is executed only once per session instance.
+        session.sessionConnectors.filterIsInstance<Scene>().single()
+    }
+}
 
 internal fun removeSceneFromCache(scene: Scene) {
     synchronized(sceneCache) {

@@ -22,39 +22,35 @@ import androidx.xr.runtime.Session
 import androidx.xr.runtime.math.BoundingBox
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Vector3
-import androidx.xr.scenecore.impl.JxrPlatformAdapterAxr
-import androidx.xr.scenecore.impl.extensions.XrExtensionsProvider
-import androidx.xr.scenecore.impl.impress.FakeImpressApiImpl
-import androidx.xr.scenecore.impl.perception.PerceptionLibrary
 import androidx.xr.scenecore.internal.ActivityPose
 import androidx.xr.scenecore.internal.ActivitySpace
 import androidx.xr.scenecore.internal.CameraViewActivityPose
 import androidx.xr.scenecore.internal.CameraViewActivityPose.Fov
-import androidx.xr.scenecore.internal.Entity
 import androidx.xr.scenecore.internal.HeadActivityPose
 import androidx.xr.scenecore.internal.HitTestResult
-import androidx.xr.scenecore.internal.JxrPlatformAdapter
 import androidx.xr.scenecore.internal.PanelEntity
 import androidx.xr.scenecore.internal.PixelDimensions
+import androidx.xr.scenecore.internal.RenderingEntityFactory
+import androidx.xr.scenecore.internal.SceneRuntime
+import androidx.xr.scenecore.testing.FakeRenderingRuntime
 import androidx.xr.scenecore.testing.FakeScheduledExecutorService
-import com.google.androidxr.splitengine.SplitEngineSubspaceManager
-import com.google.ar.imp.view.splitengine.ImpSplitEngineRenderer
 import com.google.common.util.concurrent.ListenableFuture
+import java.lang.reflect.Method
 import java.util.concurrent.Executor
-import org.mockito.Mockito.mock
+import java.util.concurrent.ScheduledExecutorService
 
 /**
  * Create a fake [Session] for testing.
  *
  * A convenience method that creates a fake [Session] for testing. If runtime is not provided, a
- * fake [JxrPlatformAdapter] will be created by default.
+ * fake [SceneRuntime] will be created by default.
  *
  * @param activity The [Activity] to use for the [Session].
- * @param runtime The [JxrPlatformAdapter] to use for the [Session].
+ * @param sceneRuntime The [SceneRuntime] to use for the [Session].
  */
 fun createFakeSession(
     activity: Activity,
-    runtime: JxrPlatformAdapter = createFakeRuntime(activity),
+    sceneRuntime: SceneRuntime = createFakeRuntime(activity),
 ): Session =
     Session(
         activity,
@@ -63,51 +59,57 @@ fun createFakeSession(
                 FakePerceptionRuntimeFactory().createRuntime(activity).apply {
                     lifecycleManager.create()
                 },
-                runtime,
+                sceneRuntime,
+                FakeRenderingRuntime(sceneRuntime),
             ),
     )
 
 /**
- * Create a fake [JxrPlatformAdapter] for testing.
+ * Create a fake [SceneRuntime] for testing.
  *
- * A convenience method that creates a fake [JxrPlatformAdapter] for testing.
+ * A convenience method that creates a fake [SceneRuntime] for testing.
  *
- * @param activity The [Activity] to use for the [JxrPlatformAdapter].
+ * @param activity The [Activity] to use for the [SceneRuntime].
  */
-fun createFakeRuntime(activity: Activity): JxrPlatformAdapter =
-    // FakeJxrPlatformAdapterFactory().createPlatformAdapter(activity)
-    JxrPlatformAdapterAxr.create(
-        /* activity = */ activity,
-        /* executor = */ FakeScheduledExecutorService(),
-        /* extensions = */ XrExtensionsProvider.getXrExtensions()!!,
-        /* impressApi = */ FakeImpressApiImpl(),
-        /* perceptionLibrary = */ PerceptionLibrary(),
-        /* splitEngineSubspaceManager = */ mock(SplitEngineSubspaceManager::class.java),
-        /* splitEngineRenderer = */ mock(ImpSplitEngineRenderer::class.java),
-    )
+fun createFakeRuntime(activity: Activity): SceneRuntime {
+    // TODO (b/442359966): Use FakeSceneRuntime instead.
+    val spatialSceneRuntimeClass =
+        Class.forName("androidx.xr.scenecore.spatial.core.SpatialSceneRuntime")
+    val createMethod: Method? =
+        spatialSceneRuntimeClass.getDeclaredMethod(
+            "create",
+            Activity::class.java,
+            ScheduledExecutorService::class.java,
+        )
+
+    createMethod!!.isAccessible = true
+    val sceneRuntime =
+        createMethod.invoke(null, activity, FakeScheduledExecutorService()) as SceneRuntime
+    return sceneRuntime
+}
 
 /**
- * A test implementation of [JxrPlatformAdapter] that allows for setting custom values for the
+ * A test implementation of [SceneRuntime] that allows for setting custom values for the
  * ActivitySpace, HeadActivityPose, and CameraViewActivityPose.
  *
- * [fakeRuntimeBase] is the base [JxrPlatformAdapter] to use for the [JxrPlatformAdapter]
- * implementation.
+ * [fakeSceneRuntimeBase] is the base [SceneRuntime] to use for the [SceneRuntime] implementation.
  *
- * @param activitySpace The [ActivitySpace] to use for the [JxrPlatformAdapter] implementation.
- * @param headActivityPose The [TestHeadActivityPose] to use for the [JxrPlatformAdapter]
- *   implementation.
- * @param leftCameraViewPose The [TestCameraViewActivityPose] to use for the [JxrPlatformAdapter]
+ * @param activitySpace The [ActivitySpace] to use for the [SceneRuntime] implementation.
+ * @param headActivityPose The [TestHeadActivityPose] to use for the [SceneRuntime] implementation.
+ * @param leftCameraViewPose The [TestCameraViewActivityPose] to use for the [SceneRuntime]
  *   implementation for the left camera.
- * @param rightCameraViewPose The [TestCameraViewActivityPose] to use for the [JxrPlatformAdapter]
+ * @param rightCameraViewPose The [TestCameraViewActivityPose] to use for the [SceneRuntime]
  *   implementation for the right camera.
- * @param unknownCameraViewPose The [TestCameraViewActivityPose] to use for the [JxrPlatformAdapter]
+ * @param unknownCameraViewPose The [TestCameraViewActivityPose] to use for the [SceneRuntime]
  *   implementation for the unknown camera.
  */
-class TestJxrPlatformAdapter
+class TestSceneRuntime
 private constructor(
-    private val fakeRuntimeBase: JxrPlatformAdapter,
-    override var mainPanelEntity: PanelEntity = fakeRuntimeBase.mainPanelEntity,
-    override var activitySpace: ActivitySpace = fakeRuntimeBase.activitySpace,
+    private val fakeSceneRuntimeBase: SceneRuntime,
+    private val fakeRenderingEntityFactory: RenderingEntityFactory =
+        fakeSceneRuntimeBase as RenderingEntityFactory,
+    override var mainPanelEntity: PanelEntity = fakeSceneRuntimeBase.mainPanelEntity,
+    override var activitySpace: ActivitySpace = fakeSceneRuntimeBase.activitySpace,
     override var headActivityPose: TestHeadActivityPose? =
         TestHeadActivityPose(activitySpacePose = Pose(translation = Vector3(1f, 0f, 0f))),
     var leftCameraViewPose: TestCameraViewActivityPose? =
@@ -124,10 +126,7 @@ private constructor(
         TestCameraViewActivityPose(
             cameraType = CameraViewActivityPose.CameraType.CAMERA_TYPE_UNKNOWN
         ),
-) : JxrPlatformAdapter by fakeRuntimeBase {
-    override val activitySpaceRootImpl: Entity
-        get() = activitySpace
-
+) : SceneRuntime by fakeSceneRuntimeBase, RenderingEntityFactory by fakeRenderingEntityFactory {
     override fun getCameraViewActivityPose(
         @CameraViewActivityPose.CameraType cameraType: Int
     ): CameraViewActivityPose? {
@@ -139,18 +138,18 @@ private constructor(
     }
 
     /**
-     * Creates a [TestJxrPlatformAdapter] with the provided [fakeRuntimeBase].
+     * Creates a [TestSceneRuntime] with the provided [fakeSceneRuntimeBase].
      *
-     * @param fakeRuntimeBase The base [JxrPlatformAdapter] to use for the [JxrPlatformAdapter]
+     * @param fakeSceneRuntimeBase The base [SceneRuntime] to use for the [SceneRuntime]
      *   implementation.
-     * @return The [TestJxrPlatformAdapter] with the provided [fakeRuntimeBase].
+     * @return The [TestSceneRuntime] with the provided [fakeSceneRuntimeBase].
      */
     companion object {
-        fun create(fakeRuntimeBase: JxrPlatformAdapter): TestJxrPlatformAdapter =
-            TestJxrPlatformAdapter(fakeRuntimeBase = fakeRuntimeBase)
+        fun create(fakeSceneRuntimeBase: SceneRuntime): TestSceneRuntime =
+            TestSceneRuntime(fakeSceneRuntimeBase = fakeSceneRuntimeBase)
 
-        fun create(activity: Activity): TestJxrPlatformAdapter =
-            TestJxrPlatformAdapter(fakeRuntimeBase = createFakeRuntime(activity))
+        fun create(activity: Activity): TestSceneRuntime =
+            TestSceneRuntime(fakeSceneRuntimeBase = createFakeRuntime(activity))
     }
 }
 
