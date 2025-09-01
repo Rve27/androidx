@@ -1712,15 +1712,49 @@ class NavigationEventDispatcherTest {
 
         assertThat(combinedBackInfo).containsExactly(overlayInfo, defaultInfo).inOrder()
     }
+
     // endregion
+
+    // region Dispatching to Unimplemented Handlers
+
+    @Test
+    fun dispatch_onBackCompletedToUnimplementedHandler_throwsUnsupportedOperationException() {
+        class UnimplementedHandler :
+            NavigationEventHandler<TestInfo>(isBackEnabled = true, isForwardEnabled = false)
+
+        val dispatcher = NavigationEventDispatcher()
+        dispatcher.addHandler(UnimplementedHandler())
+        val input = DirectNavigationEventInput()
+        dispatcher.addInput(input)
+
+        val e = assertThrows<UnsupportedOperationException> { input.backCompleted() }
+        e.hasMessageThat().contains("must override 'onBackCompleted()' to handle the callback")
+    }
+
+    @Test
+    fun dispatch_onForwardCompletedToUnimplementedHandler_throwsUnsupportedOperationException() {
+        class UnimplementedHandler :
+            NavigationEventHandler<TestInfo>(isBackEnabled = false, isForwardEnabled = true)
+
+        val dispatcher = NavigationEventDispatcher()
+        dispatcher.addHandler(UnimplementedHandler())
+        val input = DirectNavigationEventInput()
+        dispatcher.addInput(input)
+
+        val e = assertThrows<UnsupportedOperationException> { input.forwardCompleted() }
+        e.hasMessageThat().contains("must override 'onForwardCompleted()' to handle the callback")
+    }
+
+    // endregion
+
 }
 
 /** A sealed interface for type-safe navigation information. */
-sealed interface TestInfo : NavigationEventInfo
+private sealed interface TestInfo : NavigationEventInfo
 
-data class HomeScreenInfo(val id: String) : TestInfo
+private data class HomeScreenInfo(val id: String) : TestInfo
 
-data class DetailsScreenInfo(val id: String) : TestInfo
+private data class DetailsScreenInfo(val id: String) : TestInfo
 
 /**
  * A test implementation of [NavigationEventInput] that records lifecycle events and invocation

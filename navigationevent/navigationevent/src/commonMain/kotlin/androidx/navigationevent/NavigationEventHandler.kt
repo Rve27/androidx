@@ -189,7 +189,7 @@ public constructor(isBackEnabled: Boolean, isForwardEnabled: Boolean) {
      * This is called when a user action, such as a swipe gesture, initiates a navigation. It's the
      * ideal place to prepare UI elements for a transition.
      *
-     * @param event The [NavigationEvent] that triggered this callback.
+     * @param event The [NavigationEvent] that triggered this handler.
      */
     @EmptySuper protected open fun onBackStarted(event: NavigationEvent) {}
 
@@ -228,8 +228,17 @@ public constructor(isBackEnabled: Boolean, isForwardEnabled: Boolean) {
      *
      * This is called when the user commits to the navigation action (e.g., by lifting their finger
      * at the end of a swipe), signaling that the navigation should be finalized.
+     *
+     * The default implementation throws an [UnsupportedOperationException]. Any handler that can be
+     * completed **must** override this method to handle the navigation.
      */
-    @EmptySuper protected open fun onBackCompleted() {}
+    @EmptySuper
+    protected open fun onBackCompleted() {
+        throw UnsupportedOperationException(
+            "A handler that receives a 'backCompleted' event must override " +
+                "'onBackCompleted()' to handle the callback."
+        )
+    }
 
     /**
      * Internal-only method for dispatching.
@@ -267,8 +276,19 @@ public constructor(isBackEnabled: Boolean, isForwardEnabled: Boolean) {
         onForwardCompleted()
     }
 
-    /** Override this to handle the completion of a forward navigation event. */
-    @EmptySuper protected open fun onForwardCompleted() {}
+    /**
+     * Override this to handle the completion of a forward navigation event.
+     *
+     * The default implementation throws an [UnsupportedOperationException]. Any handler that can be
+     * completed **must** override this method to handle the handler.
+     */
+    @EmptySuper
+    protected open fun onForwardCompleted() {
+        throw UnsupportedOperationException(
+            "A handler that receives a 'forwardCompleted' event must override " +
+                "'onForwardCompleted()' to handle the callback."
+        )
+    }
 
     internal fun doOnForwardCancelled() {
         onForwardCancelled()
