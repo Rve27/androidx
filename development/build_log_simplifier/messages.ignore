@@ -417,3 +417,7 @@ w: file://\$SUPPORT/glance/glance\-wear\-tiles/src/.* is deprecated\. glance\-we
 # b/438815669
 WARNING: skipping method .*
 Warning: mismatched arity: .*
+# b/439568035
+WARNING: The option setting 'android\.builtInKotlin=false' is deprecated\.
+The current default is 'true'\.
+It will be removed in version 10\.0 of the Android Gradle plugin\.
