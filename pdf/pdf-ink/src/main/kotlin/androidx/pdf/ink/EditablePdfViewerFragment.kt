@@ -82,14 +82,7 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
      * @throws IllegalStateException If the document is not available (e.g., not loaded or lost due
      *   to process death).
      */
-    public suspend fun writeTo(dest: ParcelFileDescriptor) {
-        val document = documentViewModel.editablePdfDocument
-        if (document == null) {
-            throw IllegalStateException("Document not available for saving.")
-        }
-
-        documentViewModel.saveEdits(dest)
-    }
+    public suspend fun writeTo(dest: ParcelFileDescriptor): Unit = documentViewModel.saveEdits(dest)
 
     /** Undoes the last edit. If there are no more edits to undo, this is a no-op. */
     public fun undo(): Unit = documentViewModel.undo()
@@ -166,11 +159,7 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
      */
     override fun onLoadDocumentSuccess(document: PdfDocument) {
         super.onLoadDocumentSuccess(document)
-        if (documentUri != null && document is EditablePdfDocument) {
-            documentViewModel.editablePdfDocument = document
-        } else {
-            documentViewModel.editablePdfDocument = null
-        }
+        documentViewModel.maybeInitialiseForDocument(document)
     }
 
     override fun onDestroyView() {
