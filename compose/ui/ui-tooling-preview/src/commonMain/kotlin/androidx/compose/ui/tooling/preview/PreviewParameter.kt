@@ -16,7 +16,7 @@
 
 package androidx.compose.ui.tooling.preview
 
-import kotlin.jvm.JvmDefaultWithCompatibility
+import androidx.compose.ui.tooling.preview.internal.JvmDefaultWithCompatibility
 import kotlin.reflect.KClass
 
 /**

@@ -49,7 +49,7 @@ import androidx.compose.runtime.Composable
  *   The @[Composable] will be render in the context of a full activity.
  * @param showBackground If true, the @[Composable] will use a default background color.
  * @param backgroundColor The 32-bit ARGB color int for the background or 0 if not set
- * @param uiMode Bit mask of the ui mode as per [android.content.res.Configuration.uiMode]
+ * @param uiMode Bit mask of the ui mode as per `android.content.res.Configuration.uiMode`
  * @param device Device string indicating the device to use in the preview. See the available
  *   devices in [Devices].
  * @param wallpaper Integer defining which wallpaper from those available in Android Studio to use
