@@ -110,7 +110,7 @@ internal abstract class AppFunctionDataSpec {
         targetKey: String,
         targetClass: Class<*>,
         isCollection: Boolean,
-        targetValue: Any? = null,
+        targetValue: Any,
     ) {
         val targetDataTypeMetadata = getDataType(targetKey)
         if (targetDataTypeMetadata == null) {
@@ -164,23 +164,30 @@ internal abstract class AppFunctionDataSpec {
         targetKey: String,
         targetValue: Any?,
     ) {
+        // targetValue == null is allowed when the data type is nullable or is marked optional in
+        // either ObjectSpec or ParameterSpec.
+        require(targetValue != null || isNullable || !isRequired(targetKey)) {
+            "\"$targetKey\" cannot be set to a null value."
+        }
+
+        // If null is allowed, no need to check for constraint conformance.
+        if (targetValue == null) return
+
         when (this) {
             is AppFunctionIntTypeMetadata -> {
-                if (targetValue == null) return
-
                 require(enumValues == null || enumValues.contains(targetValue)) {
                     "Invalid value for \"$targetKey\" got \"$targetValue\", expecting one of $enumValues"
                 }
             }
             is AppFunctionArrayTypeMetadata -> {
-                this.requireConstraintsConformance(targetKey, targetValue)
+                this.requireItemTypeConstraintsConformance(targetKey, targetValue)
             }
 
             else -> {}
         }
     }
 
-    private fun AppFunctionArrayTypeMetadata.requireConstraintsConformance(
+    private fun AppFunctionArrayTypeMetadata.requireItemTypeConstraintsConformance(
         targetKey: String,
         targetValue: Any?,
     ) {

@@ -817,6 +817,88 @@ class AppFunctionDataTest {
     }
 
     @Test
+    fun testRead_nonNullable_failsIfSetToNull() {
+        val parameterMetadata =
+            listOf(
+                AppFunctionParameterMetadata(
+                    name = "intParam",
+                    isRequired = true,
+                    dataType = AppFunctionIntTypeMetadata(isNullable = false),
+                ),
+                AppFunctionParameterMetadata(
+                    name = "stringParam",
+                    isRequired = true,
+                    dataType = AppFunctionStringTypeMetadata(isNullable = false),
+                ),
+                AppFunctionParameterMetadata(
+                    name = "longParam",
+                    isRequired = true,
+                    dataType = AppFunctionLongTypeMetadata(isNullable = false),
+                ),
+                AppFunctionParameterMetadata(
+                    name = "floatParam",
+                    isRequired = true,
+                    dataType = AppFunctionFloatTypeMetadata(isNullable = false),
+                ),
+                AppFunctionParameterMetadata(
+                    name = "doubleParam",
+                    isRequired = true,
+                    dataType = AppFunctionDoubleTypeMetadata(isNullable = false),
+                ),
+                AppFunctionParameterMetadata(
+                    name = "pendingIntentParam",
+                    isRequired = true,
+                    dataType = AppFunctionPendingIntentTypeMetadata(isNullable = false),
+                ),
+                AppFunctionParameterMetadata(
+                    name = "byteArrayParam",
+                    isRequired = true,
+                    dataType =
+                        AppFunctionArrayTypeMetadata(
+                            AppFunctionBytesTypeMetadata(isNullable = false),
+                            isNullable = false,
+                        ),
+                ),
+                AppFunctionParameterMetadata(
+                    name = "objectParam",
+                    isRequired = true,
+                    dataType =
+                        AppFunctionObjectTypeMetadata(
+                            properties = mapOf(),
+                            isNullable = false,
+                            required = listOf(),
+                            qualifiedName = "",
+                        ),
+                ),
+                AppFunctionParameterMetadata(
+                    name = "refParam",
+                    isRequired = true,
+                    dataType =
+                        AppFunctionReferenceTypeMetadata(
+                            referenceDataType = "customType",
+                            isNullable = false,
+                        ),
+                ),
+            )
+        val appFunctionData =
+            AppFunctionData.Builder(parameterMetadata, AppFunctionComponentsMetadata()).build()
+
+        assertFailsWith<IllegalArgumentException> { appFunctionData.getIntOrNull("intParam") }
+        assertFailsWith<IllegalArgumentException> { appFunctionData.getStringOrNull("stringParam") }
+        assertFailsWith<IllegalArgumentException> { appFunctionData.getLongOrNull("longParam") }
+        assertFailsWith<IllegalArgumentException> { appFunctionData.getByteArray("byteArrayParam") }
+        assertFailsWith<IllegalArgumentException> { appFunctionData.getFloatOrNull("floatParam") }
+        assertFailsWith<IllegalArgumentException> { appFunctionData.getDoubleOrNull("doubleParam") }
+        assertFailsWith<IllegalArgumentException> {
+            appFunctionData.getPendingIntentOrNull("pendingIntentParam")
+        }
+        assertFailsWith<IllegalArgumentException> {
+            appFunctionData.getAppFunctionData("objectParam")
+        }
+        assertFailsWith<IllegalArgumentException> { appFunctionData.getAppFunctionData("refParam") }
+    }
+
+    @Test
     fun testSerialize() {
         val note = Note(title = "Test Title", attachment = Attachment(uri = "Test Uri"))
 
