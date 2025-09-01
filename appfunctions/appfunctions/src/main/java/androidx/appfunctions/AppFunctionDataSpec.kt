@@ -179,6 +179,11 @@ internal abstract class AppFunctionDataSpec {
                     "Invalid value for \"$targetKey\" got \"$targetValue\", expecting one of $enumValues"
                 }
             }
+            is AppFunctionStringTypeMetadata -> {
+                require(enumValues == null || enumValues.contains(targetValue)) {
+                    "Invalid value for \"$targetKey\" got \"$targetValue\", expecting one of $enumValues"
+                }
+            }
             is AppFunctionArrayTypeMetadata -> {
                 this.requireItemTypeConstraintsConformance(targetKey, targetValue)
             }
@@ -195,6 +200,13 @@ internal abstract class AppFunctionDataSpec {
             is AppFunctionIntTypeMetadata -> {
                 val intArray = targetValue as? IntArray
                 for (item in intArray ?: intArrayOf()) {
+                    itemType.requireConstraintsConformance(targetKey, item)
+                }
+            }
+
+            is AppFunctionStringTypeMetadata -> {
+                @Suppress("UNCHECKED_CAST") val stringList = targetValue as? List<String>
+                for (item in stringList ?: emptyList()) {
                     itemType.requireConstraintsConformance(targetKey, item)
                 }
             }

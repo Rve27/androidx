@@ -434,6 +434,84 @@ class AppFunctionDataTest {
     }
 
     @Test
+    fun testWrite_stringEnumValue_conformanceFailsForInvalidValues() {
+        val afdBuilder =
+            AppFunctionData.Builder(
+                parameterMetadataList =
+                    listOf(
+                        AppFunctionParameterMetadata(
+                            name = "stringEnum",
+                            isRequired = false,
+                            dataType =
+                                AppFunctionStringTypeMetadata(
+                                    isNullable = false,
+                                    enumValues = setOf("A", "B"),
+                                ),
+                        ),
+                        AppFunctionParameterMetadata(
+                            name = "stringEnumArray",
+                            isRequired = false,
+                            dataType =
+                                AppFunctionArrayTypeMetadata(
+                                    isNullable = false,
+                                    itemType =
+                                        AppFunctionStringTypeMetadata(
+                                            isNullable = false,
+                                            enumValues = setOf("A", "B"),
+                                        ),
+                                ),
+                        ),
+                    ),
+                componentMetadata = AppFunctionComponentsMetadata(),
+            )
+
+        assertFailsWith<IllegalArgumentException> { afdBuilder.setString("stringEnum", "C") }
+        assertFailsWith<IllegalArgumentException> {
+            afdBuilder.setStringList("stringEnumArray", listOf("A", "B", "C"))
+        }
+    }
+
+    @Test
+    fun testReadWrite_stringEnumValues_conformanceSuccess() {
+        val afdBuilder =
+            AppFunctionData.Builder(
+                parameterMetadataList =
+                    listOf(
+                        AppFunctionParameterMetadata(
+                            name = "stringEnum",
+                            isRequired = false,
+                            dataType =
+                                AppFunctionStringTypeMetadata(
+                                    isNullable = false,
+                                    enumValues = setOf("A", "B"),
+                                ),
+                        ),
+                        AppFunctionParameterMetadata(
+                            name = "stringEnumList",
+                            isRequired = false,
+                            dataType =
+                                AppFunctionArrayTypeMetadata(
+                                    isNullable = false,
+                                    itemType =
+                                        AppFunctionStringTypeMetadata(
+                                            isNullable = false,
+                                            enumValues = setOf("A", "B"),
+                                        ),
+                                ),
+                        ),
+                    ),
+                componentMetadata = AppFunctionComponentsMetadata(),
+            )
+
+        afdBuilder.setString("stringEnum", "A")
+        afdBuilder.setStringList("stringEnumList", listOf("A", "B"))
+        val afd = afdBuilder.build()
+
+        assertThat(afd.getString("stringEnum")).isEqualTo("A")
+        assertThat(afd.getStringList("stringEnumList")).containsExactly("A", "B")
+    }
+
+    @Test
     fun testWrite_asObject_notConformSpec() {
         val builder = AppFunctionData.Builder(TEST_OBJECT_METADATA, AppFunctionComponentsMetadata())
 
