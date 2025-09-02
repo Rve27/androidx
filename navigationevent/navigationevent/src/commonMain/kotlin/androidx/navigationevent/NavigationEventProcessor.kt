@@ -123,7 +123,7 @@ internal class NavigationEventProcessor {
     fun updateEnabledCallbacks() {
         // `any` and `||` are efficient as they short-circuit on the first `true` result.
         hasEnabledCallbacks =
-            overlayCallbacks.any { it.isEnabled } || defaultCallbacks.any { it.isEnabled }
+            overlayCallbacks.any { it.isBackEnabled } || defaultCallbacks.any { it.isBackEnabled }
 
         // Whenever the set of enabled callbacks changes, we must immediately
         // synchronize the global navigation state. This picks the new highest-priority
@@ -160,7 +160,7 @@ internal class NavigationEventProcessor {
     }
 
     /**
-     * Returns `true` if there is at least one [NavigationEventCallback.isEnabled] callback
+     * Returns `true` if there is at least one [NavigationEventCallback.isBackEnabled] callback
      * registered globally within this processor.
      *
      * @return `true` if any callback is enabled, `false` otherwise.
@@ -231,7 +231,7 @@ internal class NavigationEventProcessor {
         // If the callback is the one currently being processed, it needs to be notified of
         // cancellation and then cleared from the in-progress state.
         if (callback == inProgressCallback) {
-            callback.doOnEventCancelled()
+            callback.doOnBackCancelled()
             inProgressCallback = null
         }
 
@@ -247,7 +247,7 @@ internal class NavigationEventProcessor {
     }
 
     /**
-     * Dispatches an [NavigationEventCallback.onEventStarted] event with the given event to the
+     * Dispatches an [NavigationEventCallback.onBackStarted] event with the given event to the
      * highest-priority enabled callback.
      *
      * If an event is currently in progress, it will be cancelled first to ensure a clean state for
@@ -280,7 +280,7 @@ internal class NavigationEventProcessor {
             // `onCancelled` can be correctly handled if the callback removes itself during
             // `onEventStarted`.
             inProgressCallback = callback
-            callback.doOnEventStarted(event)
+            callback.doOnBackStarted(event)
             _state.update {
                 InProgress(callback.currentInfo ?: NotProvided, callback.previousInfo, event)
             }
@@ -288,7 +288,7 @@ internal class NavigationEventProcessor {
     }
 
     /**
-     * Dispatches an [NavigationEventCallback.onEventProgressed] event with the given event.
+     * Dispatches an [NavigationEventCallback.onBackProgressed] event with the given event.
      *
      * If a callback is currently in progress (from a [dispatchOnStarted] call), only that callback
      * will be notified. Otherwise, the highest-priority enabled callback will receive the progress
@@ -313,7 +313,7 @@ internal class NavigationEventProcessor {
         // Progressed is not a terminal event, so `inProgressCallback` is not cleared.
 
         if (callback != null) {
-            callback.doOnEventProgressed(event)
+            callback.doOnBackProgressed(event)
             _state.update {
                 InProgress(callback.currentInfo ?: NotProvided, callback.previousInfo, event)
             }
@@ -321,7 +321,7 @@ internal class NavigationEventProcessor {
     }
 
     /**
-     * Dispatches an [NavigationEventCallback.onEventCompleted] event.
+     * Dispatches an [NavigationEventCallback.onBackCompleted] event.
      *
      * If a callback is currently in progress, only it will be notified. Otherwise, the
      * highest-priority enabled callback will be notified. This is a terminal event, clearing the
@@ -350,13 +350,13 @@ internal class NavigationEventProcessor {
         if (callback == null) {
             fallbackOnBackPressed?.invoke()
         } else {
-            callback.doOnEventCompleted()
+            callback.doOnBackCompleted()
             _state.update { Idle(callback.currentInfo ?: NotProvided) }
         }
     }
 
     /**
-     * Dispatches an [NavigationEventCallback.onEventCancelled] event.
+     * Dispatches an [NavigationEventCallback.onBackCancelled] event.
      *
      * If a callback is currently in progress, only it will be notified. Otherwise, the
      * highest-priority enabled callback will be notified. This is a terminal event, clearing the
@@ -376,7 +376,7 @@ internal class NavigationEventProcessor {
         inProgressCallback = null // Clear in-progress, as 'cancelled' is a terminal event.
 
         if (callback != null) {
-            callback.doOnEventCancelled()
+            callback.doOnBackCancelled()
             _state.update { Idle(callback.currentInfo ?: NotProvided) }
         }
     }
@@ -398,7 +398,7 @@ internal class NavigationEventProcessor {
      */
     fun resolveEnabledCallback(): NavigationEventCallback<*>? {
         // `firstOrNull` is efficient and respects the LIFO order of the ArrayDeque.
-        return overlayCallbacks.firstOrNull { it.isEnabled }
-            ?: defaultCallbacks.firstOrNull { it.isEnabled }
+        return overlayCallbacks.firstOrNull { it.isBackEnabled }
+            ?: defaultCallbacks.firstOrNull { it.isBackEnabled }
     }
 }

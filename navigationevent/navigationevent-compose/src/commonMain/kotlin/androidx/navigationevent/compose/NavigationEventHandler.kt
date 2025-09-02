@@ -199,7 +199,7 @@ private class OnBackInstance(
         Channel<NavigationEvent>(capacity = BUFFERED, onBufferOverflow = BufferOverflow.SUSPEND)
     val job =
         scope.launch {
-            if (callback.isEnabled) {
+            if (callback.isBackEnabled) {
                 var completed = false
                 onBack(channel.consumeAsFlow().onCompletion { completed = true })
                 check(completed) { "You must collect the progress flow" }
@@ -227,28 +227,28 @@ private class NavigationEventHandlerCallback<T : NavigationEventInfo>(
 
     fun setIsEnabled(enabled: Boolean) {
         // We are disabling a callback that was enabled.
-        if (!enabled && !isActive && isEnabled) {
+        if (!enabled && !isActive && isBackEnabled) {
             onBackInstance?.cancel()
         }
-        isEnabled = enabled
+        isBackEnabled = enabled
     }
 
-    override fun onEventStarted(event: NavigationEvent) {
+    override fun onBackStarted(event: NavigationEvent) {
         // in case the previous onBackInstance was started by a normal back gesture
         // we want to make sure it's still cancelled before we start a predictive
         // back gesture
         onBackInstance?.cancel()
-        if (isEnabled) {
+        if (isBackEnabled) {
             onBackInstance = OnBackInstance(onBackScope, true, currentOnBack, this)
         }
         isActive = true
     }
 
-    override fun onEventProgressed(event: NavigationEvent) {
+    override fun onBackProgressed(event: NavigationEvent) {
         onBackInstance?.send(event)
     }
 
-    override fun onEventCompleted() {
+    override fun onBackCompleted() {
         // handleOnBackPressed could be called by regular back to restart
         // a new back instance. If this is the case (where current back instance
         // was NOT started by handleOnBackStarted) then we need to reset the previous
@@ -270,7 +270,7 @@ private class NavigationEventHandlerCallback<T : NavigationEventInfo>(
         isActive = false
     }
 
-    override fun onEventCancelled() {
+    override fun onBackCancelled() {
         // cancel will purge the channel of any sent events that are yet to be received
         onBackInstance?.cancel()
         onBackInstance?.isPredictiveBack = false

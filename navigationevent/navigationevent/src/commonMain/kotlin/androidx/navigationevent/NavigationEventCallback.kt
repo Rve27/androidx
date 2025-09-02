@@ -25,11 +25,13 @@ import androidx.annotation.EmptySuper
  * added to a [NavigationEventDispatcher] and will only receive events when both the callback and
  * its dispatcher are enabled.
  *
- * @param isEnabled The initial enabled state for this callback. Defaults to `true`.
+ * @param isBackEnabled The initial enabled state for this callback. Defaults to `true`.
  * @see NavigationEventDispatcher
  * @see NavigationEventInput
  */
-public abstract class NavigationEventCallback<T : NavigationEventInfo>(isEnabled: Boolean = true) {
+public abstract class NavigationEventCallback<T : NavigationEventInfo>(
+    isBackEnabled: Boolean = true
+) {
 
     /** The most recent navigation info provided via [setInfo]. */
     internal var currentInfo: T? = null
@@ -40,7 +42,7 @@ public abstract class NavigationEventCallback<T : NavigationEventInfo>(isEnabled
         private set
 
     /**
-     * Controls whether this callback is active and should be considered for event dispatching.
+     * Controls whether this callback is active and should be considered for back event dispatching.
      *
      * A callback's effective enabled state is hierarchical; it is directly influenced by the
      * [NavigationEventDispatcher] it is registered with.
@@ -60,7 +62,7 @@ public abstract class NavigationEventCallback<T : NavigationEventInfo>(isEnabled
      * For a callback to be truly active, both its local `isEnabled` property and its dispatcher's
      * `isEnabled` property must evaluate to `true`.
      */
-    public var isEnabled: Boolean = isEnabled
+    public var isBackEnabled: Boolean = isBackEnabled
         get() = if (dispatcher?.isEnabled == false) false else field
         set(value) {
             // Only proceed if the enabled state is actually changing to avoid redundant work.
@@ -103,11 +105,11 @@ public abstract class NavigationEventCallback<T : NavigationEventInfo>(isEnabled
     /**
      * Internal-only method for dispatching.
      *
-     * @see onEventStarted
+     * @see onBackStarted
      * @see NavigationEventDispatcher.dispatchOnStarted
      */
-    internal fun doOnEventStarted(event: NavigationEvent) {
-        onEventStarted(event)
+    internal fun doOnBackStarted(event: NavigationEvent) {
+        onBackStarted(event)
     }
 
     /**
@@ -118,16 +120,16 @@ public abstract class NavigationEventCallback<T : NavigationEventInfo>(isEnabled
      *
      * @param event The [NavigationEvent] that triggered this callback.
      */
-    @EmptySuper protected open fun onEventStarted(event: NavigationEvent) {}
+    @EmptySuper protected open fun onBackStarted(event: NavigationEvent) {}
 
     /**
      * Internal-only method for dispatching.
      *
-     * @see onEventProgressed
+     * @see onBackProgressed
      * @see NavigationEventDispatcher.dispatchOnProgressed
      */
-    internal fun doOnEventProgressed(event: NavigationEvent) {
-        onEventProgressed(event)
+    internal fun doOnBackProgressed(event: NavigationEvent) {
+        onBackProgressed(event)
     }
 
     /**
@@ -138,16 +140,16 @@ public abstract class NavigationEventCallback<T : NavigationEventInfo>(isEnabled
      *
      * @param event The [NavigationEvent] containing progress information.
      */
-    @EmptySuper protected open fun onEventProgressed(event: NavigationEvent) {}
+    @EmptySuper protected open fun onBackProgressed(event: NavigationEvent) {}
 
     /**
      * Internal-only method for dispatching.
      *
-     * @see onEventCompleted
+     * @see onBackCompleted
      * @see NavigationEventDispatcher.dispatchOnCompleted
      */
-    internal fun doOnEventCompleted() {
-        onEventCompleted()
+    internal fun doOnBackCompleted() {
+        onBackCompleted()
     }
 
     /**
@@ -156,16 +158,16 @@ public abstract class NavigationEventCallback<T : NavigationEventInfo>(isEnabled
      * This is called when the user commits to the navigation action (e.g., by lifting their finger
      * at the end of a swipe), signaling that the navigation should be finalized.
      */
-    protected abstract fun onEventCompleted()
+    @EmptySuper protected open fun onBackCompleted() {}
 
     /**
      * Internal-only method for dispatching.
      *
-     * @see onEventCancelled
+     * @see onBackCancelled
      * @see NavigationEventDispatcher.dispatchOnCancelled
      */
-    internal fun doOnEventCancelled() {
-        onEventCancelled()
+    internal fun doOnBackCancelled() {
+        onBackCancelled()
     }
 
     /**
@@ -174,5 +176,5 @@ public abstract class NavigationEventCallback<T : NavigationEventInfo>(isEnabled
      * This is called when the user cancels the navigation action (e.g., by returning their finger
      * to the edge of the screen), signaling that the UI should return to its original state.
      */
-    @EmptySuper protected open fun onEventCancelled() {}
+    @EmptySuper protected open fun onBackCancelled() {}
 }
