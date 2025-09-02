@@ -175,7 +175,7 @@ class DocumentModel {
                 // Can show the error on any of the duplicates. Just pick the first first.
                 throw new XProcessingException(
                         "Duplicate member annotated with @"
-                                + annotation.getClassName().simpleName(),
+                                + annotation.getClassName().getSimpleName(),
                         gettersAndFields.get(0).getElement());
             }
         }
@@ -582,8 +582,8 @@ class DocumentModel {
                 throw new XProcessingException(
                         ("Property type must stay consistent when overriding annotated members "
                                 + "but changed from @%s -> @%s").formatted(
-                                existingAnnotation.getClassName().simpleName(),
-                                overriddenAnnotation.getClassName().simpleName()),
+                                existingAnnotation.getClassName().getSimpleName(),
+                                overriddenAnnotation.getClassName().getSimpleName()),
                         overriddenGetterOfField.getElement());
             }
         }
