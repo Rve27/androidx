@@ -24,4 +24,5 @@
     <string name="custom_link">Custom Link Handling</string>
     <string name="link_selection">Link Selection</string>
     <string name="thumbnail_preview">Thumbnail Preview</string>"
+    <string name="enable_form_filling">Enable Form Filling</string>"
 </resources>

@@ -46,4 +46,6 @@ public object PdfFeatureFlags {
 
     // Toggles availability of vertical thumbnail preview panel in the PDF viewer.
     public var isThumbnailPreviewEnabled: Boolean = false
+
+    public var isFormFillingEnabled: Boolean = false
 }
