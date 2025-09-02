@@ -44,5 +44,4 @@ androidx {
     type = SoftwareType.SNAPSHOT_ONLY_LIBRARY_WITH_API_TASKS
     inceptionYear = "2024"
     description = "An implementation of the XR runtime using OpenXR."
-    enableRobolectric()
 }

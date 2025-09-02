@@ -49,10 +49,6 @@ dependencies {
 
 android {
     namespace = "androidx.xr.runtime.testing"
-    defaultConfig {
-        // TODO: b/409058039 - Drop back to 23 (default) once dependency on scenecore is removed.
-        minSdk = 24
-    }
 }
 
 androidx {
