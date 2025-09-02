@@ -21,6 +21,7 @@ import android.text.InputType
 import android.util.SparseArray
 import android.view.View
 import android.view.View.AUTOFILL_TYPE_TEXT
+import android.view.View.AUTOFILL_TYPE_TOGGLE
 import android.view.ViewStructure
 import android.view.autofill.AutofillValue
 import android.view.inputmethod.EditorInfo
@@ -34,7 +35,10 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.ComposeUiFlags
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -52,6 +56,7 @@ import androidx.compose.ui.semantics.fillableData
 import androidx.compose.ui.semantics.hideFromAccessibility
 import androidx.compose.ui.semantics.isSensitiveData
 import androidx.compose.ui.semantics.maxTextLength
+import androidx.compose.ui.semantics.onFillData
 import androidx.compose.ui.semantics.onLongClick
 import androidx.compose.ui.semantics.password
 import androidx.compose.ui.semantics.requestFocus
@@ -286,6 +291,43 @@ class PerformAndroidAutofillManagerTest {
                             autofillType = AUTOFILL_TYPE_TEXT
                             virtualId = rule.onNodeWithTag(contentTag).semanticsId()
                             dataIsSensitive = true
+                        }
+                    )
+                    virtualId = AccessibilityNodeProviderCompat.HOST_VIEW_ID
+                }
+            )
+    }
+
+    @Test
+    @SmallTest
+    @SdkSuppress(minSdkVersion = 26)
+    fun populateViewStructure_contentDataType_toggle() {
+        // Arrange.
+        lateinit var view: View
+        val viewStructure: ViewStructure = FakeViewStructure()
+        rule.setContent {
+            view = LocalView.current
+            Box(
+                Modifier.semantics { contentDataType = ContentDataType.Toggle }
+                    .size(height, width)
+                    .testTag(contentTag)
+            )
+        }
+
+        // Act.
+        rule.runOnIdle {
+            // Compose does not use the Autofill flags parameter, passing in 0 as a placeholder flag
+            view.onProvideAutofillVirtualStructure(viewStructure, 0)
+        }
+
+        // Assert.
+        assertThat(viewStructure)
+            .isEqualTo(
+                ViewStructure(view) {
+                    children.add(
+                        ViewStructure(view) {
+                            autofillType = AUTOFILL_TYPE_TOGGLE
+                            virtualId = rule.onNodeWithTag(contentTag).semanticsId()
                         }
                     )
                     virtualId = AccessibilityNodeProviderCompat.HOST_VIEW_ID
@@ -1072,7 +1114,7 @@ class PerformAndroidAutofillManagerTest {
                     children.add(
                         ViewStructure(view) {
                             autofillHints = mutableListOf(HintConstants.AUTOFILL_HINT_USERNAME)
-                            autofillType = View.AUTOFILL_TYPE_TOGGLE
+                            autofillType = AUTOFILL_TYPE_TOGGLE
                             isCheckable = true
                             virtualId = rule.onNodeWithTag(contentTag).semanticsId()
                             dataIsSensitive = true
@@ -1115,7 +1157,7 @@ class PerformAndroidAutofillManagerTest {
                     children.add(
                         ViewStructure(view) {
                             autofillHints = mutableListOf(HintConstants.AUTOFILL_HINT_USERNAME)
-                            autofillType = View.AUTOFILL_TYPE_TOGGLE
+                            autofillType = AUTOFILL_TYPE_TOGGLE
                             isCheckable = true
                             isChecked = true
                             virtualId = rule.onNodeWithTag(contentTag).semanticsId()
@@ -1157,7 +1199,8 @@ class PerformAndroidAutofillManagerTest {
                     children.add(
                         ViewStructure(view) {
                             autofillHints = mutableListOf(HintConstants.AUTOFILL_HINT_USERNAME)
-                            autofillType = View.AUTOFILL_TYPE_TOGGLE
+                            autofillType = AUTOFILL_TYPE_TOGGLE
+                            autofillValue = AutofillValue.forToggle(true)
                             isCheckable = true
                             isChecked = true
                             isClickable = true
@@ -1599,6 +1642,85 @@ class PerformAndroidAutofillManagerTest {
         // Assert.
         rule.onNodeWithTag(creditCardTag).assertTextEquals("0123 4567 8910 1112")
         rule.onNodeWithTag(securityCodeTag).assertTextEquals("123")
+    }
+
+    @Test
+    @SmallTest
+    @SdkSuppress(minSdkVersion = 26)
+    fun performAutofill_toggle() {
+        // Arrange.
+        lateinit var view: View
+
+        val toggleTag = "toggle_id"
+
+        val newToggleValue = false
+        var checked = true
+        val onCheckedChange: (Boolean) -> Unit = { checked = it }
+
+        rule.setContent {
+            view = LocalView.current
+            Box(
+                Modifier.toggleable(value = checked, onValueChange = onCheckedChange)
+                    .testTag(toggleTag)
+            )
+        }
+
+        // Act.
+        val toggleId = rule.onNodeWithTag(toggleTag).semanticsId()
+        rule.runOnIdle {
+            view.autofill(
+                SparseArray<AutofillValue>().apply {
+                    append(toggleId, AutofillValue.forToggle(newToggleValue))
+                }
+            )
+        }
+
+        rule.onNodeWithTag(toggleTag).assert(toggleDataFalse(newToggleValue))
+    }
+
+    fun toggleDataFalse(bool: Boolean): SemanticsMatcher =
+        SemanticsMatcher.expectValue(SemanticsProperties.ToggleableState, ToggleableState(bool))
+
+    @Test
+    @SmallTest
+    @SdkSuppress(minSdkVersion = 26)
+    fun performAutofill_customToggle() {
+        // Arrange.
+        lateinit var view: View
+
+        val toggleTag = "toggle_id"
+        val newToggleValue = false
+        val actualIsCheckedState = mutableStateOf(true)
+
+        rule.setContent {
+            view = LocalView.current
+            var isChecked by actualIsCheckedState
+            Box(
+                modifier =
+                    Modifier.testTag(toggleTag)
+                        .clickable { isChecked = !isChecked }
+                        .semantics {
+                            FillableData(isChecked)?.let { this.fillableData = it }
+                            onFillData(label = "CustomToggle") { fillableData ->
+                                fillableData.booleanValue?.let { isChecked = it }
+                                true
+                            }
+                        }
+            )
+        }
+        rule.runOnIdle { assertThat(actualIsCheckedState.value).isEqualTo(true) }
+
+        // Act.
+        val toggleId = rule.onNodeWithTag(toggleTag).semanticsId()
+        rule.runOnIdle {
+            view.autofill(
+                SparseArray<AutofillValue>().apply {
+                    append(toggleId, AutofillValue.forToggle(newToggleValue))
+                }
+            )
+        }
+
+        rule.runOnIdle { assertThat(actualIsCheckedState.value).isEqualTo(newToggleValue) }
     }
 
     // ============================================================================================

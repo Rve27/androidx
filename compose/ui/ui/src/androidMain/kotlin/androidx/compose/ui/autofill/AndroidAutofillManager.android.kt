@@ -39,6 +39,7 @@ import androidx.compose.ui.semantics.SemanticsOwner
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.spatial.RectManager
+import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.util.fastForEach
 import androidx.core.util.size
@@ -138,6 +139,36 @@ internal class AndroidAutofillManager(
                             semanticsId,
                             AutofillApi26Helper.getAutofillTextValue(newText.toString()),
                         )
+                    }
+                }
+            }
+        }
+
+        // Check toggle value
+        val previousToggleValue = prevConfig?.getOrNull(SemanticsProperties.ToggleableState)
+        val newToggleValue = config?.getOrNull(SemanticsProperties.ToggleableState)
+        if (previousToggleValue != newToggleValue) {
+            when {
+                previousToggleValue == null ->
+                    platformAutofillManager.notifyViewVisibilityChanged(view, semanticsId, true)
+                newToggleValue == null ->
+                    platformAutofillManager.notifyViewVisibilityChanged(view, semanticsId, false)
+                else -> {
+                    val contentDataType = config.getOrNull(SemanticsProperties.ContentDataType)
+                    if (contentDataType == ContentDataType.Toggle) {
+                        val isToggled =
+                            when (newToggleValue) {
+                                ToggleableState.On -> true
+                                ToggleableState.Off -> false
+                                else -> null
+                            }
+                        if (isToggled != null) {
+                            platformAutofillManager.notifyValueChanged(
+                                view,
+                                semanticsId,
+                                AutofillApi26Helper.getAutofillToggleValue(isToggled),
+                            )
+                        }
                     }
                 }
             }
