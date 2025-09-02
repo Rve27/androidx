@@ -189,8 +189,8 @@ internal class SelectionStateManager(
                     val pageSelection =
                         pdfDocument.getSelectionBounds(
                             pdfPoint.pageNum,
-                            PointF(linkRect.left, linkRect.bottom),
-                            PointF(linkRect.right, linkRect.bottom),
+                            PointF(linkRect.left, (linkRect.bottom + linkRect.top) / 2),
+                            PointF(linkRect.right, (linkRect.bottom + linkRect.top) / 2),
                         ) ?: return@updateSelectionAsync null
 
                     val textSelection = pageSelection.toViewSelection().first() as TextSelection
