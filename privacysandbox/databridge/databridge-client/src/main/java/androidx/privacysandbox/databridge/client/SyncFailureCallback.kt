@@ -24,10 +24,10 @@ import androidx.privacysandbox.databridge.core.Key
 /**
  * A callback to notify of synchronization failures performed by [DataSynchronizationManager].
  *
- * The callback needs to be registered using [DataSynchronizationManager.addSyncCallback] to receive
- * notifications.
+ * The callback needs to be registered using [DataSynchronizationManager.addSyncFailureCallback] to
+ * receive notifications.
  */
-public interface SyncCallback {
+public interface SyncFailureCallback {
     /**
      * Callback invoked whenever some key value pair fails to sync after being added for
      * synchronization using the [DataSynchronizationManager.addKeys]
