@@ -71,6 +71,7 @@ import androidx.compose.ui.semantics.SemanticsConfiguration
 import androidx.compose.ui.semantics.SemanticsModifier
 import androidx.compose.ui.semantics.SemanticsOwner
 import androidx.compose.ui.semantics.SemanticsPropertyReceiver
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.spatial.RectManager
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -1428,11 +1429,15 @@ class LayoutNodeTest {
     fun hitTestSemantics_pointerInMinimumTouchTarget_closestHit() {
         val semanticsNode1 =
             object : SemanticsModifierNode, Modifier.Node() {
-                override fun SemanticsPropertyReceiver.applySemantics() {}
+                override fun SemanticsPropertyReceiver.applySemantics() {
+                    this.contentDescription = "node1"
+                }
             }
         val semanticsNode2 =
             object : SemanticsModifierNode, Modifier.Node() {
-                override fun SemanticsPropertyReceiver.applySemantics() {}
+                override fun SemanticsPropertyReceiver.applySemantics() {
+                    this.contentDescription = "node2"
+                }
             }
         data class TestSemanticsElement(private val node: Modifier.Node) :
             ModifierNodeElement<Modifier.Node>() {
@@ -1496,6 +1501,7 @@ class LayoutNodeTest {
     @Test
     fun hitTestSemantics_pointerInMinimumTouchTarget_closestHitWithOverlap() {
         val semanticsConfiguration = SemanticsConfiguration()
+        semanticsConfiguration.contentDescription = "test"
         val semanticsModifier1 =
             object : SemanticsModifier {
                 override val semanticsConfiguration: SemanticsConfiguration = semanticsConfiguration
