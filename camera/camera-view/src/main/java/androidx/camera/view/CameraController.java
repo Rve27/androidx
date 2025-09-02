@@ -631,7 +631,7 @@ public abstract class CameraController {
             return;
         }
         mPreviewTargetSize = targetSize;
-        unbindPreviewAndRecreate();
+        recreatePreview(/* unbindAllUseCases= */ true);
         startCameraAndTrackStates();
     }
 
@@ -669,7 +669,7 @@ public abstract class CameraController {
             return;
         }
         mPreviewResolutionSelector = resolutionSelector;
-        unbindPreviewAndRecreate();
+        recreatePreview(/* unbindAllUseCases= */ true);
         startCameraAndTrackStates();
     }
 
@@ -709,7 +709,7 @@ public abstract class CameraController {
     public void setPreviewDynamicRange(@NonNull DynamicRange dynamicRange) {
         checkMainThread();
         mPreviewDynamicRange = dynamicRange;
-        unbindPreviewAndRecreate();
+        recreatePreview(/* unbindAllUseCases= */ true);
         startCameraAndTrackStates();
     }
 
@@ -726,13 +726,14 @@ public abstract class CameraController {
     }
 
     /**
-     * Unbinds {@link Preview} and recreates with the latest parameters.
+     * Recreates {@link Preview} with the latest parameters.
      */
     @MainThread
-    private void unbindPreviewAndRecreate() {
-        if (isCameraInitialized()) {
-            mCameraProvider.unbind(mPreview);
+    private void recreatePreview(boolean unbindAllUseCases) {
+        if (unbindAllUseCases) {
+            unbindAllUseCases();
         }
+
         mPreview = createPreview();
         if (mSurfaceProvider != null) {
             mPreview.setSurfaceProvider(mSurfaceProvider);
@@ -980,7 +981,7 @@ public abstract class CameraController {
         if (mImageCapture.getCaptureMode() == captureMode) {
             return;
         }
-        unbindImageCaptureAndRecreate(captureMode);
+        recreateImageCapture(captureMode, /* unbindAllUseCases= */ true);
         startCameraAndTrackStates();
     }
 
@@ -1019,7 +1020,7 @@ public abstract class CameraController {
             return;
         }
         mImageCaptureTargetSize = targetSize;
-        unbindImageCaptureAndRecreate(getImageCaptureMode());
+        recreateImageCapture(getImageCaptureMode(), /* unbindAllUseCases= */ true);
         startCameraAndTrackStates();
     }
 
@@ -1058,7 +1059,7 @@ public abstract class CameraController {
             return;
         }
         mImageCaptureResolutionSelector = resolutionSelector;
-        unbindImageCaptureAndRecreate(getImageCaptureMode());
+        recreateImageCapture(getImageCaptureMode(), /* unbindAllUseCases= */ true);
         startCameraAndTrackStates();
     }
 
@@ -1095,7 +1096,7 @@ public abstract class CameraController {
             return;
         }
         mImageCaptureIoExecutor = executor;
-        unbindImageCaptureAndRecreate(getImageCaptureMode());
+        recreateImageCapture(getImageCaptureMode(), /* unbindAllUseCases= */ true);
         startCameraAndTrackStates();
     }
 
@@ -1109,13 +1110,14 @@ public abstract class CameraController {
     }
 
     /**
-     * Unbinds {@link ImageCapture} and recreates with the latest parameters.
+     * Recreates {@link ImageCapture} with the latest parameters.
      */
     @MainThread
-    private void unbindImageCaptureAndRecreate(Integer imageCaptureMode) {
-        if (isCameraInitialized()) {
-            mCameraProvider.unbind(mImageCapture);
+    private void recreateImageCapture(Integer imageCaptureMode, boolean unbindAllUseCases) {
+        if (unbindAllUseCases) {
+            unbindAllUseCases();
         }
+
         int flashMode = mImageCapture.getFlashMode();
         mImageCapture = createImageCapture(imageCaptureMode);
         setImageCaptureFlashMode(flashMode);
@@ -1218,8 +1220,9 @@ public abstract class CameraController {
                 newAnalyzer.getDefaultTargetResolution();
         if (!Objects.equals(oldResolution, newResolution)) {
             // Rebind ImageAnalysis to reconfigure target resolution.
-            unbindImageAnalysisAndRecreate(mImageAnalysis.getBackpressureStrategy(),
-                    mImageAnalysis.getImageQueueDepth(), mImageAnalysis.getOutputImageFormat());
+            recreateImageAnalysis(mImageAnalysis.getBackpressureStrategy(),
+                    mImageAnalysis.getImageQueueDepth(), mImageAnalysis.getOutputImageFormat(),
+                    /* unbindAllUseCases= */ true);
             startCameraAndTrackStates();
         }
     }
@@ -1261,8 +1264,8 @@ public abstract class CameraController {
             return;
         }
 
-        unbindImageAnalysisAndRecreate(strategy, mImageAnalysis.getImageQueueDepth(),
-                mImageAnalysis.getOutputImageFormat());
+        recreateImageAnalysis(strategy, mImageAnalysis.getImageQueueDepth(),
+                mImageAnalysis.getOutputImageFormat(), /* unbindAllUseCases= */ true);
         startCameraAndTrackStates();
     }
 
@@ -1285,8 +1288,8 @@ public abstract class CameraController {
         if (mImageAnalysis.getImageQueueDepth() == depth) {
             return;
         }
-        unbindImageAnalysisAndRecreate(mImageAnalysis.getBackpressureStrategy(), depth,
-                mImageAnalysis.getOutputImageFormat());
+        recreateImageAnalysis(mImageAnalysis.getBackpressureStrategy(), depth,
+                mImageAnalysis.getOutputImageFormat(), /* unbindAllUseCases= */ true);
         startCameraAndTrackStates();
     }
 
@@ -1327,10 +1330,11 @@ public abstract class CameraController {
             return;
         }
         mImageAnalysisTargetSize = targetSize;
-        unbindImageAnalysisAndRecreate(
+        recreateImageAnalysis(
                 mImageAnalysis.getBackpressureStrategy(),
                 mImageAnalysis.getImageQueueDepth(),
-                mImageAnalysis.getOutputImageFormat());
+                mImageAnalysis.getOutputImageFormat(),
+                /* unbindAllUseCases= */ true);
         startCameraAndTrackStates();
     }
 
@@ -1369,10 +1373,11 @@ public abstract class CameraController {
             return;
         }
         mImageAnalysisResolutionSelector = resolutionSelector;
-        unbindImageAnalysisAndRecreate(
+        recreateImageAnalysis(
                 mImageAnalysis.getBackpressureStrategy(),
                 mImageAnalysis.getImageQueueDepth(),
-                mImageAnalysis.getOutputImageFormat());
+                mImageAnalysis.getOutputImageFormat(),
+                /* unbindAllUseCases= */ true);
         startCameraAndTrackStates();
     }
 
@@ -1408,8 +1413,9 @@ public abstract class CameraController {
             return;
         }
         mAnalysisBackgroundExecutor = executor;
-        unbindImageAnalysisAndRecreate(mImageAnalysis.getBackpressureStrategy(),
-                mImageAnalysis.getImageQueueDepth(), mImageAnalysis.getOutputImageFormat());
+        recreateImageAnalysis(mImageAnalysis.getBackpressureStrategy(),
+                mImageAnalysis.getImageQueueDepth(),
+                mImageAnalysis.getOutputImageFormat(), /* unbindAllUseCases= */ true);
         startCameraAndTrackStates();
     }
 
@@ -1455,8 +1461,9 @@ public abstract class CameraController {
             // No-op if the value is not changed.
             return;
         }
-        unbindImageAnalysisAndRecreate(mImageAnalysis.getBackpressureStrategy(),
-                mImageAnalysis.getImageQueueDepth(), imageAnalysisOutputImageFormat);
+        recreateImageAnalysis(mImageAnalysis.getBackpressureStrategy(),
+                mImageAnalysis.getImageQueueDepth(),
+                imageAnalysisOutputImageFormat, /* unbindAllUseCases= */ true);
     }
 
     /**
@@ -1479,15 +1486,17 @@ public abstract class CameraController {
     }
 
     /**
-     * Unbinds {@link ImageAnalysis} and recreates with the latest parameters.
+     * Recreates {@link ImageAnalysis} with the latest parameters.
      */
     @MainThread
-    private void unbindImageAnalysisAndRecreate(Integer strategy, Integer imageQueueDepth,
-            Integer outputFormat) {
+    private void recreateImageAnalysis(Integer strategy, Integer imageQueueDepth,
+            Integer outputFormat, boolean unbindAllUseCases) {
         checkMainThread();
-        if (isCameraInitialized()) {
-            mCameraProvider.unbind(mImageAnalysis);
+
+        if (unbindAllUseCases) {
+            unbindAllUseCases();
         }
+
         mImageAnalysis = createImageAnalysis(strategy, imageQueueDepth, outputFormat);
         if (mAnalysisExecutor != null && mAnalysisAnalyzer != null) {
             mImageAnalysis.setAnalyzer(mAnalysisExecutor, mAnalysisAnalyzer);
@@ -1809,7 +1818,7 @@ public abstract class CameraController {
     public void setVideoCaptureQualitySelector(@NonNull QualitySelector qualitySelector) {
         checkMainThread();
         mVideoCaptureQualitySelector = qualitySelector;
-        unbindVideoAndRecreate();
+        recreateVideoCapture(/* unbindAllUseCases= */ true);
         startCameraAndTrackStates();
     }
 
@@ -1839,7 +1848,7 @@ public abstract class CameraController {
     public void setVideoCaptureMirrorMode(@MirrorMode.Mirror int mirrorMode) {
         checkMainThread();
         mVideoCaptureMirrorMode = mirrorMode;
-        unbindVideoAndRecreate();
+        recreateVideoCapture(/* unbindAllUseCases= */ true);
         startCameraAndTrackStates();
     }
 
@@ -1877,7 +1886,7 @@ public abstract class CameraController {
     public void setVideoCaptureDynamicRange(@NonNull DynamicRange dynamicRange) {
         checkMainThread();
         mVideoCaptureDynamicRange = dynamicRange;
-        unbindVideoAndRecreate();
+        recreateVideoCapture(/* unbindAllUseCases= */ true);
         startCameraAndTrackStates();
     }
 
@@ -1909,7 +1918,7 @@ public abstract class CameraController {
     public void setVideoCaptureTargetFrameRate(@NonNull Range<Integer> targetFrameRate) {
         checkMainThread();
         mVideoCaptureTargetFrameRate = targetFrameRate;
-        unbindVideoAndRecreate();
+        recreateVideoCapture(/* unbindAllUseCases= */ true);
         startCameraAndTrackStates();
     }
 
@@ -1923,12 +1932,12 @@ public abstract class CameraController {
     }
 
     /**
-     * Unbinds VideoCapture and recreate with the latest parameters.
+     * Recreates VideoCapture with the latest parameters.
      */
     @MainThread
-    private void unbindVideoAndRecreate() {
-        if (isCameraInitialized()) {
-            mCameraProvider.unbind(mVideoCapture);
+    private void recreateVideoCapture(boolean unbindAllUseCases) {
+        if (unbindAllUseCases) {
+            unbindAllUseCases();
         }
         mVideoCapture = createVideoCapture();
     }
@@ -2049,11 +2058,13 @@ public abstract class CameraController {
      */
     @MainThread
     private void unbindAllAndRecreate() {
-        unbindPreviewAndRecreate();
-        unbindImageCaptureAndRecreate(getImageCaptureMode());
-        unbindImageAnalysisAndRecreate(mImageAnalysis.getBackpressureStrategy(),
-                mImageAnalysis.getImageQueueDepth(), mImageAnalysis.getOutputImageFormat());
-        unbindVideoAndRecreate();
+        unbindAllUseCases();
+        recreatePreview(/* unbindAllUseCases= */ false);
+        recreateImageCapture(getImageCaptureMode(), /* unbindAllUseCases= */ false);
+        recreateImageAnalysis(mImageAnalysis.getBackpressureStrategy(),
+                mImageAnalysis.getImageQueueDepth(),
+                mImageAnalysis.getOutputImageFormat(), /* unbindAllUseCases= */ false);
+        recreateVideoCapture(/* unbindAllUseCases= */ false);
     }
 
     // -----------------
@@ -2647,7 +2658,7 @@ public abstract class CameraController {
         }
         if (mCameraProvider != null) {
             // Unbind to make sure the pipelines will be recreated.
-            mCameraProvider.unbindAll();
+            unbindAllUseCases();
         }
         mEffects.clear();
         mEffects.addAll(effects);
@@ -2664,7 +2675,7 @@ public abstract class CameraController {
         checkMainThread();
         if (mCameraProvider != null) {
             // Unbind to make sure the pipelines will be recreated.
-            mCameraProvider.unbindAll();
+            unbindAllUseCases();
         }
         mEffects.clear();
         startCameraAndTrackStates();
