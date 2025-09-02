@@ -18,7 +18,6 @@
 package androidx.compose.remote.frontend.layout
 
 import androidx.annotation.RestrictTo
-import androidx.annotation.RestrictTo.Scope
 import androidx.compose.runtime.ComposableTargetMarker
 
 @Retention(AnnotationRetention.BINARY)
@@ -29,4 +28,4 @@ import androidx.compose.runtime.ComposableTargetMarker
     AnnotationTarget.TYPE,
     AnnotationTarget.TYPE_PARAMETER,
 )
-annotation class RemoteComposable
+public annotation class RemoteComposable

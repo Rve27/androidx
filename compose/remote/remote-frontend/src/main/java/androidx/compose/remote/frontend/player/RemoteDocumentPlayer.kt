@@ -18,7 +18,6 @@
 package androidx.compose.remote.frontend.player
 
 import androidx.annotation.RestrictTo
-import androidx.annotation.RestrictTo.Scope
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.size
@@ -38,8 +37,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 @Composable
-fun RemoteDocumentPlayer(
+public fun RemoteDocumentPlayer(
     document: CoreDocument,
     documentWidth: Int,
     documentHeight: Int,
