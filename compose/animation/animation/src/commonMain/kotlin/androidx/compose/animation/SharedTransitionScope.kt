@@ -466,7 +466,7 @@ public interface SharedTransitionScope : LookaheadScope {
      */
     public fun Modifier.renderInSharedTransitionScopeOverlay(
         zIndexInOverlay: Float = 0f,
-        renderInOverlay: SharedTransitionScope.() -> Boolean = { isTransitionActive },
+        renderInOverlay: () -> Boolean = { isTransitionActive },
     ): Modifier
 
     /**
@@ -973,7 +973,7 @@ internal constructor(lookaheadScope: LookaheadScope, val coroutineScope: Corouti
 
     override fun Modifier.renderInSharedTransitionScopeOverlay(
         zIndexInOverlay: Float,
-        renderInOverlay: SharedTransitionScope.() -> Boolean,
+        renderInOverlay: () -> Boolean,
     ): Modifier =
         this.then(
             RenderInTransitionOverlayNodeElement(
