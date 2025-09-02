@@ -31,16 +31,23 @@ package androidx.navigationevent {
 
   public abstract class NavigationEventCallback<T extends androidx.navigationevent.NavigationEventInfo> {
     ctor public NavigationEventCallback();
-    ctor public NavigationEventCallback(optional boolean isBackEnabled);
+    ctor public NavigationEventCallback(optional boolean isBackEnabled, optional boolean isForwardEnabled);
     method public final boolean isBackEnabled();
+    method public final boolean isForwardEnabled();
     method @EmptySuper protected void onBackCancelled();
     method @EmptySuper protected void onBackCompleted();
     method @EmptySuper protected void onBackProgressed(androidx.navigationevent.NavigationEvent event);
     method @EmptySuper protected void onBackStarted(androidx.navigationevent.NavigationEvent event);
+    method @EmptySuper protected void onForwardCancelled();
+    method @EmptySuper protected void onForwardCompleted();
+    method @EmptySuper protected void onForwardProgressed(androidx.navigationevent.NavigationEvent event);
+    method @EmptySuper protected void onForwardStarted(androidx.navigationevent.NavigationEvent event);
     method public final void remove();
     method public final void setBackEnabled(boolean);
+    method public final void setForwardEnabled(boolean);
     method public final void setInfo(T currentInfo, T? previousInfo);
     property public final boolean isBackEnabled;
+    property public final boolean isForwardEnabled;
   }
 
   public final class NavigationEventDispatcher {

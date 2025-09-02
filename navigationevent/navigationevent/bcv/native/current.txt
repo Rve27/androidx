@@ -16,11 +16,14 @@ abstract interface androidx.navigationevent/NavigationEventInfo { // androidx.na
 }
 
 abstract class <#A: androidx.navigationevent/NavigationEventInfo> androidx.navigationevent/NavigationEventCallback { // androidx.navigationevent/NavigationEventCallback|null[0]
-    constructor <init>(kotlin/Boolean = ...) // androidx.navigationevent/NavigationEventCallback.<init>|<init>(kotlin.Boolean){}[0]
+    constructor <init>(kotlin/Boolean = ..., kotlin/Boolean = ...) // androidx.navigationevent/NavigationEventCallback.<init>|<init>(kotlin.Boolean;kotlin.Boolean){}[0]
 
     final var isBackEnabled // androidx.navigationevent/NavigationEventCallback.isBackEnabled|{}isBackEnabled[0]
         final fun <get-isBackEnabled>(): kotlin/Boolean // androidx.navigationevent/NavigationEventCallback.isBackEnabled.<get-isBackEnabled>|<get-isBackEnabled>(){}[0]
         final fun <set-isBackEnabled>(kotlin/Boolean) // androidx.navigationevent/NavigationEventCallback.isBackEnabled.<set-isBackEnabled>|<set-isBackEnabled>(kotlin.Boolean){}[0]
+    final var isForwardEnabled // androidx.navigationevent/NavigationEventCallback.isForwardEnabled|{}isForwardEnabled[0]
+        final fun <get-isForwardEnabled>(): kotlin/Boolean // androidx.navigationevent/NavigationEventCallback.isForwardEnabled.<get-isForwardEnabled>|<get-isForwardEnabled>(){}[0]
+        final fun <set-isForwardEnabled>(kotlin/Boolean) // androidx.navigationevent/NavigationEventCallback.isForwardEnabled.<set-isForwardEnabled>|<set-isForwardEnabled>(kotlin.Boolean){}[0]
 
     final fun remove() // androidx.navigationevent/NavigationEventCallback.remove|remove(){}[0]
     final fun setInfo(#A, #A?) // androidx.navigationevent/NavigationEventCallback.setInfo|setInfo(1:0;1:0?){}[0]
@@ -28,6 +31,10 @@ abstract class <#A: androidx.navigationevent/NavigationEventInfo> androidx.navig
     open fun onBackCompleted() // androidx.navigationevent/NavigationEventCallback.onBackCompleted|onBackCompleted(){}[0]
     open fun onBackProgressed(androidx.navigationevent/NavigationEvent) // androidx.navigationevent/NavigationEventCallback.onBackProgressed|onBackProgressed(androidx.navigationevent.NavigationEvent){}[0]
     open fun onBackStarted(androidx.navigationevent/NavigationEvent) // androidx.navigationevent/NavigationEventCallback.onBackStarted|onBackStarted(androidx.navigationevent.NavigationEvent){}[0]
+    open fun onForwardCancelled() // androidx.navigationevent/NavigationEventCallback.onForwardCancelled|onForwardCancelled(){}[0]
+    open fun onForwardCompleted() // androidx.navigationevent/NavigationEventCallback.onForwardCompleted|onForwardCompleted(){}[0]
+    open fun onForwardProgressed(androidx.navigationevent/NavigationEvent) // androidx.navigationevent/NavigationEventCallback.onForwardProgressed|onForwardProgressed(androidx.navigationevent.NavigationEvent){}[0]
+    open fun onForwardStarted(androidx.navigationevent/NavigationEvent) // androidx.navigationevent/NavigationEventCallback.onForwardStarted|onForwardStarted(androidx.navigationevent.NavigationEvent){}[0]
 }
 
 abstract class androidx.navigationevent/NavigationEventInput { // androidx.navigationevent/NavigationEventInput|null[0]

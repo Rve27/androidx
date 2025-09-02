@@ -128,7 +128,10 @@ internal class NavigationEventProcessor {
         // Whenever the set of enabled callbacks changes, we must immediately
         // synchronize the global navigation state. This picks the new highest-priority
         // active callback and updates the state to reflect its info, preventing stale data.
-        val enabledCallback = resolveEnabledCallback()
+        val enabledCallback =
+            inProgressCallback
+                ?: resolveEnabledCallback(direction = NavigationEventDirection.Back)
+                ?: resolveEnabledCallback(direction = NavigationEventDirection.Forward)
         if (enabledCallback != null) {
             updateEnabledCallbackState(enabledCallback)
         }
@@ -143,7 +146,10 @@ internal class NavigationEventProcessor {
      * overwriting the state.
      */
     internal fun updateEnabledCallbackState(callback: NavigationEventCallback<*>) {
-        val currentCallback = inProgressCallback ?: resolveEnabledCallback()
+        val currentCallback =
+            inProgressCallback
+                ?: resolveEnabledCallback(direction = NavigationEventDirection.Back)
+                ?: resolveEnabledCallback(direction = NavigationEventDirection.Forward)
         if (currentCallback != callback) return
 
         _state.update { state ->
@@ -265,7 +271,6 @@ internal class NavigationEventProcessor {
         event: NavigationEvent,
     ) {
         // TODO(mgalhardo): Update sharedProcessor to use input to distinguish events.
-        // TODO(mgalhardo): Update the sharedProcessor to handle NavigationEventDirection.
 
         if (inProgressCallback != null) {
             // It's important to ensure that any ongoing operations from previous events are
@@ -274,7 +279,7 @@ internal class NavigationEventProcessor {
         }
 
         // Find the highest-priority enabled callback to handle this event.
-        val callback = resolveEnabledCallback()
+        val callback = resolveEnabledCallback(direction)
         if (callback != null) {
             // Set this callback as the one in progress *before* execution. This ensures
             // `onCancelled` can be correctly handled if the callback removes itself during
@@ -305,11 +310,10 @@ internal class NavigationEventProcessor {
         event: NavigationEvent,
     ) {
         // TODO(mgalhardo): Update sharedProcessor to use input to distinguish events.
-        // TODO(mgalhardo): Update the sharedProcessor to handle NavigationEventDirection.
 
         // If there is a callback in progress, only that one is notified.
         // Otherwise, the highest-priority enabled callback is notified.
-        val callback = inProgressCallback ?: resolveEnabledCallback()
+        val callback = inProgressCallback ?: resolveEnabledCallback(direction)
         // Progressed is not a terminal event, so `inProgressCallback` is not cleared.
 
         if (callback != null) {
@@ -339,11 +343,10 @@ internal class NavigationEventProcessor {
         fallbackOnBackPressed: (() -> Unit)?,
     ) {
         // TODO(mgalhardo): Update sharedProcessor to use input to distinguish events.
-        // TODO(mgalhardo): Update the sharedProcessor to handle NavigationEventDirection.
 
         // If there is a callback in progress, only that one is notified.
         // Otherwise, the highest-priority enabled callback is notified.
-        val callback = inProgressCallback ?: resolveEnabledCallback()
+        val callback = inProgressCallback ?: resolveEnabledCallback(direction)
         inProgressCallback = null // Clear in-progress, as 'completed' is a terminal event.
 
         // If no callback is notified, use the fallback.
@@ -368,11 +371,10 @@ internal class NavigationEventProcessor {
     @MainThread
     fun dispatchOnCancelled(input: NavigationEventInput, direction: NavigationEventDirection) {
         // TODO(mgalhardo): Update sharedProcessor to use input to distinguish events.
-        // TODO(mgalhardo): Update the sharedProcessor to handle NavigationEventDirection.
 
         // If there is a callback in progress, only that one is notified.
         // Otherwise, the highest-priority enabled callback is notified.
-        val callback = inProgressCallback ?: resolveEnabledCallback()
+        val callback = inProgressCallback ?: resolveEnabledCallback(direction)
         inProgressCallback = null // Clear in-progress, as 'cancelled' is a terminal event.
 
         if (callback != null) {
@@ -396,9 +398,18 @@ internal class NavigationEventProcessor {
      * @return The single highest-priority [NavigationEventCallback] that is currently enabled, or
      *   `null` if no enabled callbacks exist.
      */
-    fun resolveEnabledCallback(): NavigationEventCallback<*>? {
+    fun resolveEnabledCallback(direction: NavigationEventDirection): NavigationEventCallback<*>? {
         // `firstOrNull` is efficient and respects the LIFO order of the ArrayDeque.
-        return overlayCallbacks.firstOrNull { it.isBackEnabled }
-            ?: defaultCallbacks.firstOrNull { it.isBackEnabled }
+        return when (direction) {
+            NavigationEventDirection.Back -> {
+                overlayCallbacks.firstOrNull { it.isBackEnabled }
+                    ?: defaultCallbacks.firstOrNull { it.isBackEnabled }
+            }
+            NavigationEventDirection.Forward -> {
+                overlayCallbacks.firstOrNull { it.isForwardEnabled }
+                    ?: defaultCallbacks.firstOrNull { it.isForwardEnabled }
+            }
+            else -> error("Unsupported NavigationEventDirection: '$direction'.")
+        }
     }
 }

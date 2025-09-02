@@ -25,12 +25,14 @@ import androidx.annotation.EmptySuper
  * added to a [NavigationEventDispatcher] and will only receive events when both the callback and
  * its dispatcher are enabled.
  *
- * @param isBackEnabled The initial enabled state for this callback. Defaults to `true`.
+ * @param isBackEnabled The initial enabled state for back callbacks. Defaults to `true`.
+ * @param isForwardEnabled The initial enabled state for forward callbacks. Defaults to `true`.
  * @see NavigationEventDispatcher
  * @see NavigationEventInput
  */
 public abstract class NavigationEventCallback<T : NavigationEventInfo>(
-    isBackEnabled: Boolean = true
+    isBackEnabled: Boolean = true,
+    isForwardEnabled: Boolean = true,
 ) {
 
     /** The most recent navigation info provided via [setInfo]. */
@@ -63,6 +65,23 @@ public abstract class NavigationEventCallback<T : NavigationEventInfo>(
      * `isEnabled` property must evaluate to `true`.
      */
     public var isBackEnabled: Boolean = isBackEnabled
+        get() = if (dispatcher?.isEnabled == false) false else field
+        set(value) {
+            // Only proceed if the enabled state is actually changing to avoid redundant work.
+            if (field == value) return
+
+            field = value
+            dispatcher?.updateEnabledCallbacks()
+        }
+
+    /**
+     * Controls whether this callback is active for forward events and should be considered for
+     * forward event dispatching.
+     *
+     * For a callback to be truly active for forward events, both its local `isForwardEnabled`
+     * property and its dispatcher's `isForwardEnabled` property must evaluate to `true`.
+     */
+    public var isForwardEnabled: Boolean = isForwardEnabled
         get() = if (dispatcher?.isEnabled == false) false else field
         set(value) {
             // Only proceed if the enabled state is actually changing to avoid redundant work.
@@ -177,4 +196,32 @@ public abstract class NavigationEventCallback<T : NavigationEventInfo>(
      * to the edge of the screen), signaling that the UI should return to its original state.
      */
     @EmptySuper protected open fun onBackCancelled() {}
+
+    internal fun doOnForwardStarted(event: NavigationEvent) {
+        onForwardStarted(event)
+    }
+
+    /** Override this to handle the beginning of a forward navigation event. */
+    @EmptySuper protected open fun onForwardStarted(event: NavigationEvent) {}
+
+    internal fun doOnForwardProgressed(event: NavigationEvent) {
+        onForwardProgressed(event)
+    }
+
+    /** Override this to handle the progress of an ongoing forward navigation event. */
+    @EmptySuper protected open fun onForwardProgressed(event: NavigationEvent) {}
+
+    internal fun doOnForwardCompleted() {
+        onForwardCompleted()
+    }
+
+    /** Override this to handle the completion of a forward navigation event. */
+    @EmptySuper protected open fun onForwardCompleted() {}
+
+    internal fun doOnForwardCancelled() {
+        onForwardCancelled()
+    }
+
+    /** Override this to handle the cancellation of a forward navigation event. */
+    @EmptySuper protected open fun onForwardCancelled() {}
 }
