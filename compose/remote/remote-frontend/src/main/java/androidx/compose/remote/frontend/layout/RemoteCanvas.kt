@@ -978,9 +978,9 @@ internal fun toPaint(
         if (this.filterQuality != filterQuality) this.filterQuality = filterQuality
     }
 
-public typealias ROffset = Offset
+internal typealias ROffset = Offset
 
-public typealias RSize = Size
+internal typealias RSize = Size
 
 public fun ROffset(x: Number, y: Number): ROffset {
     val ix: Float =

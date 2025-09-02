@@ -25,10 +25,9 @@ plugins {
 
 androidx {
     name = "Remote Compose Player Compose"
-    type = SoftwareType.SNAPSHOT_ONLY_LIBRARY_ONLY_USED_BY_KOTLIN_CONSUMERS
+    type = SoftwareType.PUBLISHED_LIBRARY_ONLY_USED_BY_KOTLIN_CONSUMERS
     inceptionYear = "2025"
     description = "Compose player for RemoteCompose documents"
-    doNotDocumentReason = "Not shipped externally"
     addGoldenImageAssets()
 }
 

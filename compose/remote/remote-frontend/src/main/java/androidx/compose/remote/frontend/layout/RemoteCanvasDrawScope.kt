@@ -75,9 +75,9 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 
-public typealias Remotable = Any
+internal typealias Remotable = Any
 
-public typealias RemotableFloat = Number
+internal typealias RemotableFloat = Number
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public open class RemoteCanvasDrawScope(

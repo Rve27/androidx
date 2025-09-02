@@ -20,6 +20,7 @@ package androidx.compose.remote.frontend.layout
 import androidx.annotation.RestrictTo
 import androidx.compose.runtime.ComposableTargetMarker
 
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 @Retention(AnnotationRetention.BINARY)
 @ComposableTargetMarker(description = "RemoteCompose Composable")
 @Target(
