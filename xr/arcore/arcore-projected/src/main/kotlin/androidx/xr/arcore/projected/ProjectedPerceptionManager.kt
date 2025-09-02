@@ -30,7 +30,9 @@ import androidx.xr.arcore.internal.Trackable
 import androidx.xr.runtime.VpsAvailabilityErrorInternal
 import androidx.xr.runtime.VpsAvailabilityResult
 import androidx.xr.runtime.math.Pose
+import androidx.xr.runtime.math.Quaternion
 import androidx.xr.runtime.math.Ray
+import androidx.xr.runtime.math.Vector3
 import java.util.UUID
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -153,31 +155,28 @@ internal constructor(private val timeSource: ProjectedTimeSource) : PerceptionMa
 
     /** Returns the [ArDevice] instance. */
     override val arDevice: ArDevice
-        get() = throw NotImplementedError("Not implemented on projected runtime.")
+        get() = xrResources.arDevice
 
     /** Returns the left [RenderViewpoint] object. */
-    override val leftRenderViewpoint: RenderViewpoint
-        get() = throw NotImplementedError("Not implemented on projected runtime.")
+    override val leftRenderViewpoint: ProjectedRuntimeRenderViewpoint? =
+        ProjectedRuntimeRenderViewpoint(Pose(Vector3(1f, 0f, 0f), Quaternion.Identity))
 
     /** Returns the right [RenderViewpoint] object. */
-    override val rightRenderViewpoint: RenderViewpoint
-        get() = throw NotImplementedError("Not implemented on projected runtime.")
+    override val rightRenderViewpoint: ProjectedRuntimeRenderViewpoint? =
+        ProjectedRuntimeRenderViewpoint(Pose(Vector3(0f, 1f, 0f), Quaternion.Identity))
 
     /** Returns the mono [RenderViewpoint] object. */
-    override val monoRenderViewpoint: RenderViewpoint
-        get() = throw NotImplementedError("Not implemented on projected runtime.")
+    override val monoRenderViewpoint: ProjectedRuntimeRenderViewpoint? =
+        ProjectedRuntimeRenderViewpoint(Pose(Vector3(0f, 0f, 1f), Quaternion.Identity))
 
-    /** Returns the left [DepthMap] object. */
-    override val leftDepthMap: DepthMap
-        get() = throw NotImplementedError("Not implemented on projected runtime.")
+    /** Left [androidx.xr.arcore.internal.DepthMap]'s current frame information */
+    override val leftDepthMap: DepthMap? = null
 
-    /** Returns the right [DepthMap] object. */
-    override val rightDepthMap: DepthMap
-        get() = throw NotImplementedError("Not implemented on projected runtime.")
+    /** Right [androidx.xr.arcore.internal.DepthMap]'s current frame information */
+    override val rightDepthMap: DepthMap? = null
 
-    /** Returns the mono [DepthMap] object. */
-    override val monoDepthMap: DepthMap
-        get() = throw NotImplementedError("Not implemented on projected runtime.")
+    /** Mono [androidx.xr.arcore.internal.DepthMap]'s current frame information */
+    override val monoDepthMap: DepthMap? = null
 
     /**
      * Returns the face

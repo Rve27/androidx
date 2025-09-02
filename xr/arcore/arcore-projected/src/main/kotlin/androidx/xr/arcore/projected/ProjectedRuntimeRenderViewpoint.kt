@@ -16,12 +16,13 @@
 
 package androidx.xr.arcore.projected
 
-/** Object that holds resources that are used in the XR session. */
-internal class XrResources {
+import androidx.annotation.RestrictTo
+import androidx.xr.arcore.internal.RenderViewpoint as RuntimeRenderViewpoint
+import androidx.xr.runtime.FieldOfView
+import androidx.xr.runtime.math.Pose
 
-    /** Pose */
-    val arDevice: ProjectedArDevice = ProjectedArDevice()
-
-    /** The data of the Earth */
-    val earth: ProjectedEarth = ProjectedEarth(this)
-}
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
+public class ProjectedRuntimeRenderViewpoint(
+    override var pose: Pose = Pose(),
+    override var fieldOfView: FieldOfView = FieldOfView(0f, 0f, 0f, 0f),
+) : RuntimeRenderViewpoint {}
