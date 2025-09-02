@@ -25,6 +25,10 @@ import org.jspecify.annotations.NonNull;
 public class SolidBackgroundModifier implements RecordingModifier.Element {
     int mColor;
 
+    public int getColor() {
+        return mColor;
+    }
+
     public SolidBackgroundModifier(int color) {
         this.mColor = color;
     }

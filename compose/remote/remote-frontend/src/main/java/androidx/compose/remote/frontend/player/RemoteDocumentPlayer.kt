@@ -47,6 +47,7 @@ public fun RemoteDocumentPlayer(
     modifier: Modifier = Modifier,
     init: (RemoteComposePlayer) -> Unit = {},
     update: (RemoteComposePlayer) -> Unit = {},
+    onAction: (actionId: Int, value: String?) -> Unit = { _, _ -> },
     onNamedAction: (name: String, value: Any?, stateUpdater: StateUpdater) -> Unit = { _, _, _ -> },
 ) {
     var inDarkTheme by remember { mutableStateOf(false) }
@@ -80,6 +81,9 @@ public fun RemoteDocumentPlayer(
             remoteComposePlayer.setDocument(remoteDoc)
             remoteComposePlayer.setDebug(debugMode)
             remoteComposePlayer.document.document.clearActionCallbacks()
+            remoteComposePlayer.document.document.addIdActionListener { id, value ->
+                onAction.invoke(id, value)
+            }
             remoteComposePlayer.document.document.addActionCallback(
                 object :
                     StateUpdaterActionCallback(
