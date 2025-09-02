@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -29,42 +29,45 @@ import org.jspecify.annotations.NonNull;
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public final class Texture extends BindingsResource implements TextureResource {
-    private final String TAG = getClass().getSimpleName();
+    private final String mTAG = getClass().getSimpleName();
 
     @SuppressWarnings("UnusedVariable")
-    private final ImpressApi impressApi;
+    private final ImpressApi mImpressApi;
 
     private Texture(Builder builder) {
-        super(builder.impressApi.getBindingsResourceManager(), builder.nativeTexture);
-        this.impressApi = builder.impressApi;
+        super(builder.mImpressapi.getBindingsResourceManager(), builder.mNativeTexture);
+        mImpressApi = builder.mImpressapi;
     }
 
     @Override
     protected void releaseBindingsResource(long nativeHandle) {
         // TODO(b/433934447): Call into the JNI to release the native bindings resource.
-        Log.d(TAG, "Texture is getting destroyed manually");
+        Log.d(mTAG, "Texture is getting destroyed manually");
     }
 
     /** Use Builder to construct a Texture object instance. */
     public static class Builder {
-        private ImpressApi impressApi;
-        private long nativeTexture = -1;
+        private ImpressApi mImpressapi;
+        private long mNativeTexture = -1;
 
+        /** Sets the Impress API. */
         @NonNull
         public Builder setImpressApi(@NonNull ImpressApi impressApi) {
-            this.impressApi = impressApi;
+            mImpressapi = impressApi;
             return this;
         }
 
+        /** Sets the native texture. */
         @NonNull
         public Builder setNativeTexture(long nativeTexture) {
-            this.nativeTexture = nativeTexture;
+            mNativeTexture = nativeTexture;
             return this;
         }
 
+        /** Builds the Texture. */
         @NonNull
         public Texture build() {
-            if (impressApi == null || nativeTexture == -1) {
+            if (mImpressapi == null || mNativeTexture == -1) {
                 throw new IllegalStateException("Texture not built properly.");
             }
             return new Texture(this);

@@ -41,13 +41,13 @@ import java.util.concurrent.ExecutionException;
 @SdkSuppress(minSdkVersion = 29)
 @RunWith(AndroidJUnit4.class)
 public class ImpressApiMarshallingTest {
-    private ImpressApi impressApi;
+    private ImpressApi mImpressApi;
 
     @Before
     public void setUp() {
         loadLibraryAsync("test_impress_api_jni");
         ImpressApiTestHelper.nativeResetTestState();
-        impressApi = new ImpressApiImpl();
+        mImpressApi = new ImpressApiImpl();
     }
 
     @After
@@ -61,7 +61,7 @@ public class ImpressApiMarshallingTest {
         long expectedToken = 12345L;
         ImpressApiTestHelper.nativeSetExpectedLoadGltfPath(expectedPath);
         ImpressApiTestHelper.nativeSetLoadGltfAssetSuccess(expectedToken);
-        ListenableFuture<Long> future = impressApi.loadGltfAsset(expectedPath);
+        ListenableFuture<Long> future = mImpressApi.loadGltfAsset(expectedPath);
         Long actualToken = future.get(5, SECONDS);
         assertThat(actualToken).isEqualTo(expectedToken);
     }
@@ -72,7 +72,7 @@ public class ImpressApiMarshallingTest {
         String expectedErrorMessage = "Test C++ Failure From Marshalling Test";
         ImpressApiTestHelper.nativeSetExpectedLoadGltfPath(expectedPath);
         ImpressApiTestHelper.nativeSetLoadGltfAssetFailure(expectedErrorMessage);
-        ListenableFuture<Long> future = impressApi.loadGltfAsset(expectedPath);
+        ListenableFuture<Long> future = mImpressApi.loadGltfAsset(expectedPath);
         ExecutionException exception =
                 assertThrows(ExecutionException.class, () -> future.get(5, SECONDS));
         assertThat(exception).hasCauseThat().isInstanceOf(Exception.class);

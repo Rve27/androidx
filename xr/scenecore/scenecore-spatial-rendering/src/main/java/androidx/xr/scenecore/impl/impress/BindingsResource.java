@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -27,19 +27,19 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /** Parent class for common bindings resource operations. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public abstract class BindingsResource {
-    private final String TAG = getClass().getSimpleName();
-    private final long nativeHandle;
-    private final AtomicBoolean isDestroyed = new AtomicBoolean(false);
+    private final String mTAG = getClass().getSimpleName();
+    private final long mNativeHandle;
+    private final AtomicBoolean mIsDestroyed = new AtomicBoolean(false);
 
     protected BindingsResource(
             @NonNull BindingsResourceManager resourceManager, long nativeHandle) {
-        this.nativeHandle = nativeHandle;
+        this.mNativeHandle = nativeHandle;
 
         Runnable cleanupCallback =
                 () -> {
-                    if (isDestroyed.compareAndSet(false, true)) {
+                    if (mIsDestroyed.compareAndSet(false, true)) {
                         Log.d(
-                                TAG,
+                                mTAG,
                                 "Bindings resource with handle "
                                         + nativeHandle
                                         + " is destroyed via GC");
@@ -51,20 +51,20 @@ public abstract class BindingsResource {
 
     /** Destroys the bindings resource. */
     public final void destroy() {
-        if (isDestroyed.compareAndSet(false, true)) {
-            releaseBindingsResource(nativeHandle);
+        if (mIsDestroyed.compareAndSet(false, true)) {
+            releaseBindingsResource(mNativeHandle);
         }
     }
 
     /** Returns the native handle of the bindings resource. */
     public long getNativeHandle() {
         throwIfDestroyed();
-        return nativeHandle;
+        return mNativeHandle;
     }
 
     protected void throwIfDestroyed() {
-        if (isDestroyed.get()) {
-            throw new IllegalStateException(TAG + " has already been destroyed.");
+        if (mIsDestroyed.get()) {
+            throw new IllegalStateException(mTAG + " has already been destroyed.");
         }
     }
 

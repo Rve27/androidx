@@ -24,12 +24,12 @@ import org.jspecify.annotations.NonNull;
 /** A Material which renders water effects using the built-in Impress water material. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public class WaterMaterial extends Material {
-    private final ImpressApi impressApi;
+    private final ImpressApi mImpressApi;
 
     private WaterMaterial(Builder builder) {
-        super(builder.impressApi, builder.nativeMaterial);
+        super(builder.mImpressApi, builder.mNativeMaterial);
 
-        this.impressApi = builder.impressApi;
+        mImpressApi = builder.mImpressApi;
     }
 
     /**
@@ -39,7 +39,7 @@ public class WaterMaterial extends Material {
      * @param sampler The sampler used for the reflection map texture.
      */
     public void setReflectionMap(long reflectionMap, @NonNull TextureSampler sampler) {
-        impressApi.setReflectionMapOnWaterMaterial(getNativeHandle(), reflectionMap, sampler);
+        mImpressApi.setReflectionMapOnWaterMaterial(getNativeHandle(), reflectionMap, sampler);
     }
 
     /**
@@ -49,7 +49,7 @@ public class WaterMaterial extends Material {
      * @param sampler The sampler used for the normal map texture.
      */
     public void setNormalMap(long normalMap, @NonNull TextureSampler sampler) {
-        impressApi.setNormalMapOnWaterMaterial(getNativeHandle(), normalMap, sampler);
+        mImpressApi.setNormalMapOnWaterMaterial(getNativeHandle(), normalMap, sampler);
     }
 
     /**
@@ -58,7 +58,7 @@ public class WaterMaterial extends Material {
      * @param normalTiling The tiling of the normal map.
      */
     public void setNormalTiling(float normalTiling) {
-        impressApi.setNormalTilingOnWaterMaterial(getNativeHandle(), normalTiling);
+        mImpressApi.setNormalTilingOnWaterMaterial(getNativeHandle(), normalTiling);
     }
 
     /**
@@ -67,7 +67,7 @@ public class WaterMaterial extends Material {
      * @param normalSpeed The speed of the normal map.
      */
     public void setNormalSpeed(float normalSpeed) {
-        impressApi.setNormalSpeedOnWaterMaterial(getNativeHandle(), normalSpeed);
+        mImpressApi.setNormalSpeedOnWaterMaterial(getNativeHandle(), normalSpeed);
     }
 
     /**
@@ -76,7 +76,7 @@ public class WaterMaterial extends Material {
      * @param alphaStepMultiplier The alpha step multiplier.
      */
     public void setAlphaStepMultiplier(float alphaStepMultiplier) {
-        impressApi.setAlphaStepMultiplierOnWaterMaterial(getNativeHandle(), alphaStepMultiplier);
+        mImpressApi.setAlphaStepMultiplierOnWaterMaterial(getNativeHandle(), alphaStepMultiplier);
     }
 
     /**
@@ -86,7 +86,7 @@ public class WaterMaterial extends Material {
      * @param sampler The sampler used for the alpha map texture.
      */
     public void setAlphaMap(long alphaMap, @NonNull TextureSampler sampler) {
-        impressApi.setAlphaMapOnWaterMaterial(getNativeHandle(), alphaMap, sampler);
+        mImpressApi.setAlphaMapOnWaterMaterial(getNativeHandle(), alphaMap, sampler);
     }
 
     /**
@@ -95,7 +95,7 @@ public class WaterMaterial extends Material {
      * @param normalZ The normal z.
      */
     public void setNormalZ(float normalZ) {
-        impressApi.setNormalZOnWaterMaterial(getNativeHandle(), normalZ);
+        mImpressApi.setNormalZOnWaterMaterial(getNativeHandle(), normalZ);
     }
 
     /**
@@ -104,29 +104,32 @@ public class WaterMaterial extends Material {
      * @param normalBoundary The normal boundary.
      */
     public void setNormalBoundary(float normalBoundary) {
-        impressApi.setNormalBoundaryOnWaterMaterial(getNativeHandle(), normalBoundary);
+        mImpressApi.setNormalBoundaryOnWaterMaterial(getNativeHandle(), normalBoundary);
     }
 
     /** Use Builder to construct a WaterMaterial object instance. */
     public static class Builder {
-        private ImpressApi impressApi;
-        private long nativeMaterial = -1;
+        private ImpressApi mImpressApi;
+        private long mNativeMaterial = -1;
 
+        /** Sets the Impress API. */
         @NonNull
         public Builder setImpressApi(@NonNull ImpressApi impressApi) {
-            this.impressApi = impressApi;
+            this.mImpressApi = impressApi;
             return this;
         }
 
+        /** Sets the native material. */
         @NonNull
         public Builder setNativeMaterial(long nativeMaterial) {
-            this.nativeMaterial = nativeMaterial;
+            this.mNativeMaterial = nativeMaterial;
             return this;
         }
 
+        /** Builds the WaterMaterial. */
         @NonNull
         public WaterMaterial build() {
-            if (impressApi == null || nativeMaterial == -1) {
+            if (mImpressApi == null || mNativeMaterial == -1) {
                 throw new IllegalStateException("Water material not built properly.");
             }
             return new WaterMaterial(this);

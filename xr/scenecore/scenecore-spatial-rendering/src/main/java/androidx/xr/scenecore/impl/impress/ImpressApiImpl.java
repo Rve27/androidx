@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -34,9 +34,8 @@ import org.jspecify.annotations.Nullable;
 /** Implementation of the JNI API for communicating with the Impress Split Engine instance. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public final class ImpressApiImpl implements ImpressApi {
-    private static final String TAG = ImpressApiImpl.class.getSimpleName();
-    private View view;
-    private BindingsResourceManager resourceManager;
+    private View mView;
+    private BindingsResourceManager mResourceManager;
 
     /*
      * This is mostly here to throw on unsupported values. The int cast works as long as
@@ -138,33 +137,33 @@ public final class ImpressApiImpl implements ImpressApi {
 
     @Override
     public void setup(@NonNull View view) {
-        this.view = view;
+        mView = view;
         nSetup(getViewNativeHandle(view));
-        resourceManager = new BindingsResourceManager(new Handler(Looper.getMainLooper()));
+        mResourceManager = new BindingsResourceManager(new Handler(Looper.getMainLooper()));
     }
 
     @Override
     public void onResume() {
-        view.onResume();
+        mView.onResume();
     }
 
     @Override
     public void onPause() {
-        view.onPause();
+        mView.onPause();
     }
 
     @Override
     @NonNull
     public BindingsResourceManager getBindingsResourceManager() {
-        if (resourceManager == null) {
+        if (mResourceManager == null) {
             throw new IllegalStateException("BindingsResourceManager is not initialized");
         }
-        return resourceManager;
+        return mResourceManager;
     }
 
     @Override
     public void releaseImageBasedLightingAsset(long iblToken) {
-        nReleaseImageBasedLightingAsset(getViewNativeHandle(view), iblToken);
+        nReleaseImageBasedLightingAsset(getViewNativeHandle(mView), iblToken);
     }
 
     @Override
@@ -175,7 +174,7 @@ public final class ImpressApiImpl implements ImpressApi {
                     // TODO: b/374216912 - Add a cancellationListener to the completer here when the
                     // loading APIs support cancellation.
                     nLoadImageBasedLightingAssetFromPath(
-                            getViewNativeHandle(view),
+                            getViewNativeHandle(mView),
                             // The underlying C++ code will hold a reference to this (anoynomous)
                             // AssetLoader until the load is complete.
                             new AssetLoader() {
@@ -220,7 +219,7 @@ public final class ImpressApiImpl implements ImpressApi {
                     // TODO: b/374216912 - Add a cancellationListener to the completer here when the
                     // loading APIs support cancellation.
                     nLoadImageBasedLightingAssetFromByteArray(
-                            getViewNativeHandle(view),
+                            getViewNativeHandle(mView),
                             // The underlying C++ code will hold a reference to this (anoynomous)
                             // AssetLoader until the load is complete.
                             new AssetLoader() {
@@ -265,7 +264,7 @@ public final class ImpressApiImpl implements ImpressApi {
                     // TODO: b/374216912 - Add a cancellationListener to the completer here when the
                     // loading APIs support cancellation.
                     nLoadGltfAssetFromPath(
-                            getViewNativeHandle(view),
+                            getViewNativeHandle(mView),
                             // The underlying C++ code will hold a reference to this (anoynomous)
                             // AssetLoader until the load is complete.
                             // TODO(b/394349866): Revisit the way C++ --> Java code is called back
@@ -311,7 +310,7 @@ public final class ImpressApiImpl implements ImpressApi {
                     // TODO: b/374216912 - Add a cancellationListener to the completer here when the
                     // loading APIs support cancellation.
                     nLoadGltfAssetFromByteArray(
-                            getViewNativeHandle(view),
+                            getViewNativeHandle(mView),
                             // The underlying C++ code will hold a reference to this (anoynomous)
                             // AssetLoader until the load is complete.
                             new AssetLoader() {
@@ -349,7 +348,7 @@ public final class ImpressApiImpl implements ImpressApi {
 
     @Override
     public void releaseGltfAsset(long gltfToken) {
-        nReleaseGltfAsset(getViewNativeHandle(view), gltfToken);
+        nReleaseGltfAsset(getViewNativeHandle(mView), gltfToken);
     }
 
     @Override
@@ -357,14 +356,14 @@ public final class ImpressApiImpl implements ImpressApi {
     public ImpressNode instanceGltfModel(long gltfToken) {
         return new ImpressNode(
                 nInstanceGltfModel(
-                        getViewNativeHandle(view), gltfToken, /* enableCollider= */ false));
+                        getViewNativeHandle(mView), gltfToken, /* enableCollider= */ false));
     }
 
     @Override
     @NonNull
     public ImpressNode instanceGltfModel(long gltfToken, boolean enableCollider) {
         return new ImpressNode(
-                nInstanceGltfModel(getViewNativeHandle(view), gltfToken, enableCollider));
+                nInstanceGltfModel(getViewNativeHandle(mView), gltfToken, enableCollider));
     }
 
     // TODO(b/376740308): Add support for toggling the collider on StereoSurface.
@@ -372,7 +371,7 @@ public final class ImpressApiImpl implements ImpressApi {
     public void setGltfModelColliderEnabled(
             @NonNull ImpressNode impressNode, boolean enableCollider) {
         nSetGltfModelColliderEnabled(
-                getViewNativeHandle(view), impressNode.getHandle(), enableCollider);
+                getViewNativeHandle(mView), impressNode.getHandle(), enableCollider);
     }
 
     /**
@@ -394,7 +393,7 @@ public final class ImpressApiImpl implements ImpressApi {
         return CallbackToFutureAdapter.getFuture(
                 completer -> {
                     nAnimateGltfModel(
-                            getViewNativeHandle(view),
+                            getViewNativeHandle(mView),
                             impressNode.getHandle(),
                             animationName,
                             looping,
@@ -452,25 +451,25 @@ public final class ImpressApiImpl implements ImpressApi {
      */
     @Override
     public void stopGltfModelAnimation(@NonNull ImpressNode impressNode) {
-        nStopGltfModelAnimation(getViewNativeHandle(view), impressNode.getHandle());
+        nStopGltfModelAnimation(getViewNativeHandle(mView), impressNode.getHandle());
     }
 
     @Override
     @NonNull
     public ImpressNode createImpressNode() {
-        return new ImpressNode(nCreateImpressNode(getViewNativeHandle(view)));
+        return new ImpressNode(nCreateImpressNode(getViewNativeHandle(mView)));
     }
 
     @Override
     public void destroyImpressNode(@NonNull ImpressNode impressNode) {
-        nDestroyImpressNode(getViewNativeHandle(view), impressNode.getHandle());
+        nDestroyImpressNode(getViewNativeHandle(mView), impressNode.getHandle());
     }
 
     @Override
     public void setImpressNodeParent(
             @NonNull ImpressNode impressNodeChild, @NonNull ImpressNode impressNodeParent) {
         nSetImpressNodeParent(
-                getViewNativeHandle(view),
+                getViewNativeHandle(mView),
                 impressNodeChild.getHandle(),
                 impressNodeParent.getHandle());
     }
@@ -480,7 +479,7 @@ public final class ImpressApiImpl implements ImpressApi {
     public ImpressNode createStereoSurface(@StereoMode int stereoMode) {
         return new ImpressNode(
                 nCreateStereoSurfaceEntity(
-                        getViewNativeHandle(view),
+                        getViewNativeHandle(mView),
                         validateStereoMode(stereoMode),
                         ContentSecurityLevel.NONE,
                         /* useSuperSampling= */ false));
@@ -492,7 +491,7 @@ public final class ImpressApiImpl implements ImpressApi {
             @StereoMode int stereoMode, @ContentSecurityLevel int contentSecurityLevel) {
         return new ImpressNode(
                 nCreateStereoSurfaceEntity(
-                        getViewNativeHandle(view),
+                        getViewNativeHandle(mView),
                         validateStereoMode(stereoMode),
                         validateContentSecurityLevel(contentSecurityLevel),
                         /* useSuperSampling= */ false));
@@ -506,7 +505,7 @@ public final class ImpressApiImpl implements ImpressApi {
             boolean useSuperSampling) {
         return new ImpressNode(
                 nCreateStereoSurfaceEntity(
-                        getViewNativeHandle(view),
+                        getViewNativeHandle(mView),
                         validateStereoMode(stereoMode),
                         validateContentSecurityLevel(contentSecurityLevel),
                         useSuperSampling));
@@ -516,28 +515,28 @@ public final class ImpressApiImpl implements ImpressApi {
     public void setStereoSurfaceEntityCanvasShapeQuad(
             @NonNull ImpressNode impressNode, float width, float height) {
         nSetStereoSurfaceEntityCanvasShapeQuad(
-                getViewNativeHandle(view), impressNode.getHandle(), width, height);
+                getViewNativeHandle(mView), impressNode.getHandle(), width, height);
     }
 
     @Override
     public void setStereoSurfaceEntityCanvasShapeSphere(
             @NonNull ImpressNode impressNode, float radius) {
         nSetStereoSurfaceEntityCanvasShapeSphere(
-                getViewNativeHandle(view), impressNode.getHandle(), radius);
+                getViewNativeHandle(mView), impressNode.getHandle(), radius);
     }
 
     @Override
     public void setStereoSurfaceEntityCanvasShapeHemisphere(
             @NonNull ImpressNode impressNode, float radius) {
         nSetStereoSurfaceEntityCanvasShapeHemisphere(
-                getViewNativeHandle(view), impressNode.getHandle(), radius);
+                getViewNativeHandle(mView), impressNode.getHandle(), radius);
     }
 
     @Override
     public void setStereoModeForStereoSurface(
             @NonNull ImpressNode panelImpressNode, @StereoMode int stereoMode) {
         nSetStereoModeForStereoSurfaceEntity(
-                getViewNativeHandle(view),
+                getViewNativeHandle(mView),
                 panelImpressNode.getHandle(),
                 validateStereoMode(stereoMode));
     }
@@ -550,7 +549,7 @@ public final class ImpressApiImpl implements ImpressApi {
             @ColorRange int colorRange,
             int maxLuminance) {
         nSetContentColorMetadataForStereoSurfaceEntity(
-                getViewNativeHandle(view),
+                getViewNativeHandle(mView),
                 stereoSurfaceNode.getHandle(),
                 validateColorSpace(colorSpace),
                 validateColorTransfer(colorTransfer),
@@ -561,35 +560,35 @@ public final class ImpressApiImpl implements ImpressApi {
     @Override
     public void resetContentColorMetadataForStereoSurface(@NonNull ImpressNode stereoSurfaceNode) {
         nResetContentColorMetadataForStereoSurfaceEntity(
-                getViewNativeHandle(view), stereoSurfaceNode.getHandle());
+                getViewNativeHandle(mView), stereoSurfaceNode.getHandle());
     }
 
     @Override
     public void setFeatherRadiusForStereoSurface(
             @NonNull ImpressNode panelImpressNode, float radiusX, float radiusY) {
         nSetFeatherRadiusForStereoSurfaceEntity(
-                getViewNativeHandle(view), panelImpressNode.getHandle(), radiusX, radiusY);
+                getViewNativeHandle(mView), panelImpressNode.getHandle(), radiusX, radiusY);
     }
 
     @Override
     @NonNull
     public Surface getSurfaceFromStereoSurface(@NonNull ImpressNode panelImpressNode) {
         return nGetSurfaceFromStereoSurfaceEntity(
-                getViewNativeHandle(view), panelImpressNode.getHandle());
+                getViewNativeHandle(mView), panelImpressNode.getHandle());
     }
 
     @Override
     public void setPrimaryAlphaMaskForStereoSurface(
             @NonNull ImpressNode panelImpressNode, long alphaMask) {
         nSetPrimaryAlphaMaskForStereoSurfaceEntity(
-                getViewNativeHandle(view), panelImpressNode.getHandle(), alphaMask);
+                getViewNativeHandle(mView), panelImpressNode.getHandle(), alphaMask);
     }
 
     @Override
     public void setAuxiliaryAlphaMaskForStereoSurface(
             @NonNull ImpressNode panelImpressNode, long alphaMask) {
         nSetAuxiliaryAlphaMaskForStereoSurfaceEntity(
-                getViewNativeHandle(view), panelImpressNode.getHandle(), alphaMask);
+                getViewNativeHandle(mView), panelImpressNode.getHandle(), alphaMask);
     }
 
     @Override
@@ -600,7 +599,7 @@ public final class ImpressApiImpl implements ImpressApi {
                     // TODO: b/374216912 - Add a cancellationListener to the completer here when the
                     // loading APIs support cancellation.
                     nLoadTexture(
-                            getViewNativeHandle(view),
+                            getViewNativeHandle(mView),
                             // The underlying C++ code will hold a reference to this (anoynomous)
                             // AssetLoader until the load is complete.
                             // TODO(b/394349866): Revisit the way C++ --> Java code is called back
@@ -646,7 +645,7 @@ public final class ImpressApiImpl implements ImpressApi {
     @Override
     @NonNull
     public Texture borrowReflectionTexture() {
-        long textureHandle = nBorrowReflectionTexture(getViewNativeHandle(view));
+        long textureHandle = nBorrowReflectionTexture(getViewNativeHandle(mView));
         return new Texture.Builder()
                 .setImpressApi(ImpressApiImpl.this)
                 .setNativeTexture(textureHandle)
@@ -656,7 +655,7 @@ public final class ImpressApiImpl implements ImpressApi {
     @Override
     @NonNull
     public Texture getReflectionTextureFromIbl(long iblToken) {
-        long textureHandle = nGetReflectionTextureFromIbl(getViewNativeHandle(view), iblToken);
+        long textureHandle = nGetReflectionTextureFromIbl(getViewNativeHandle(mView), iblToken);
         return new Texture.Builder()
                 .setImpressApi(ImpressApiImpl.this)
                 .setNativeTexture(textureHandle)
@@ -671,7 +670,7 @@ public final class ImpressApiImpl implements ImpressApi {
                     // TODO: b/374216912 - Add a cancellationListener to the completer here when the
                     // loading APIs support cancellation.
                     nCreateWaterMaterial(
-                            getViewNativeHandle(view),
+                            getViewNativeHandle(mView),
                             // The underlying C++ code will hold a reference to this (anoynomous)
                             // AssetLoader until the load is complete.
                             // TODO(b/394349866): Revisit the way C++ --> Java code is called back
@@ -718,7 +717,7 @@ public final class ImpressApiImpl implements ImpressApi {
     public void setReflectionMapOnWaterMaterial(
             long nativeWaterMaterial, long reflectionMap, @NonNull TextureSampler sampler) {
         nSetReflectionMapOnWaterMaterial(
-                getViewNativeHandle(view),
+                getViewNativeHandle(mView),
                 nativeWaterMaterial,
                 reflectionMap,
                 sampler.getMinFilter(),
@@ -735,7 +734,7 @@ public final class ImpressApiImpl implements ImpressApi {
     public void setNormalMapOnWaterMaterial(
             long nativeWaterMaterial, long normalMap, @NonNull TextureSampler sampler) {
         nSetNormalMapOnWaterMaterial(
-                getViewNativeHandle(view),
+                getViewNativeHandle(mView),
                 nativeWaterMaterial,
                 normalMap,
                 sampler.getMinFilter(),
@@ -751,26 +750,27 @@ public final class ImpressApiImpl implements ImpressApi {
     @Override
     public void setNormalTilingOnWaterMaterial(long nativeWaterMaterial, float normalTiling) {
         nSetNormalTilingOnWaterMaterial(
-                getViewNativeHandle(view), nativeWaterMaterial, normalTiling);
+                getViewNativeHandle(mView), nativeWaterMaterial, normalTiling);
     }
 
     @Override
     public void setNormalSpeedOnWaterMaterial(long nativeWaterMaterial, float normalSpeed) {
-        nSetNormalSpeedOnWaterMaterial(getViewNativeHandle(view), nativeWaterMaterial, normalSpeed);
+        nSetNormalSpeedOnWaterMaterial(
+                getViewNativeHandle(mView), nativeWaterMaterial, normalSpeed);
     }
 
     @Override
     public void setAlphaStepMultiplierOnWaterMaterial(
             long nativeWaterMaterial, float alphaStepMultiplier) {
         nSetAlphaStepMultiplierOnWaterMaterial(
-                getViewNativeHandle(view), nativeWaterMaterial, alphaStepMultiplier);
+                getViewNativeHandle(mView), nativeWaterMaterial, alphaStepMultiplier);
     }
 
     @Override
     public void setAlphaMapOnWaterMaterial(
             long nativeWaterMaterial, long alphaMap, @NonNull TextureSampler sampler) {
         nSetAlphaMapOnWaterMaterial(
-                getViewNativeHandle(view),
+                getViewNativeHandle(mView),
                 nativeWaterMaterial,
                 alphaMap,
                 sampler.getMinFilter(),
@@ -785,13 +785,13 @@ public final class ImpressApiImpl implements ImpressApi {
 
     @Override
     public void setNormalZOnWaterMaterial(long nativeWaterMaterial, float normalZ) {
-        nSetNormalZOnWaterMaterial(getViewNativeHandle(view), nativeWaterMaterial, normalZ);
+        nSetNormalZOnWaterMaterial(getViewNativeHandle(mView), nativeWaterMaterial, normalZ);
     }
 
     @Override
     public void setNormalBoundaryOnWaterMaterial(long nativeWaterMaterial, float normalBoundary) {
         nSetNormalBoundaryOnWaterMaterial(
-                getViewNativeHandle(view), nativeWaterMaterial, normalBoundary);
+                getViewNativeHandle(mView), nativeWaterMaterial, normalBoundary);
     }
 
     @Override
@@ -815,7 +815,7 @@ public final class ImpressApiImpl implements ImpressApi {
                     // TODO: b/374216912 - Add a cancellationListener to the completer here when the
                     // loading APIs support cancellation.
                     nCreateGenericMaterial(
-                            getViewNativeHandle(view),
+                            getViewNativeHandle(mView),
                             // The underlying C++ code will hold a reference to this (anoynomous)
                             // AssetLoader until the load is complete.
                             // TODO(b/394349866): Revisit the way C++ --> Java code is called back
@@ -864,7 +864,7 @@ public final class ImpressApiImpl implements ImpressApi {
     public void setBaseColorTextureOnKhronosPbrMaterial(
             long nativeKhronosPbrMaterial, long baseColorTexture, @NonNull TextureSampler sampler) {
         nSetBaseColorTextureOnGenericMaterial(
-                getViewNativeHandle(view),
+                getViewNativeHandle(mView),
                 nativeKhronosPbrMaterial,
                 baseColorTexture,
                 sampler.getMinFilter(),
@@ -890,7 +890,7 @@ public final class ImpressApiImpl implements ImpressApi {
             float wy,
             float wz) {
         nSetBaseColorUvTransformOnGenericMaterial(
-                getViewNativeHandle(view),
+                getViewNativeHandle(mView),
                 nativeKhronosPbrMaterial,
                 ux,
                 uy,
@@ -907,7 +907,7 @@ public final class ImpressApiImpl implements ImpressApi {
     public void setBaseColorFactorsOnKhronosPbrMaterial(
             long nativeKhronosPbrMaterial, float x, float y, float z, float w) {
         nSetBaseColorFactorsOnGenericMaterial(
-                getViewNativeHandle(view), nativeKhronosPbrMaterial, x, y, z, w);
+                getViewNativeHandle(mView), nativeKhronosPbrMaterial, x, y, z, w);
     }
 
     @Override
@@ -916,7 +916,7 @@ public final class ImpressApiImpl implements ImpressApi {
             long metallicRoughnessTexture,
             @NonNull TextureSampler sampler) {
         nSetMetallicRoughnessTextureOnGenericMaterial(
-                getViewNativeHandle(view),
+                getViewNativeHandle(mView),
                 nativeKhronosPbrMaterial,
                 metallicRoughnessTexture,
                 sampler.getMinFilter(),
@@ -942,7 +942,7 @@ public final class ImpressApiImpl implements ImpressApi {
             float wy,
             float wz) {
         nSetMetallicRoughnessUvTransformOnGenericMaterial(
-                getViewNativeHandle(view),
+                getViewNativeHandle(mView),
                 nativeKhronosPbrMaterial,
                 ux,
                 uy,
@@ -958,21 +958,21 @@ public final class ImpressApiImpl implements ImpressApi {
     @Override
     public void setMetallicFactorOnKhronosPbrMaterial(long nativeKhronosPbrMaterial, float factor) {
         nSetMetallicFactorOnGenericMaterial(
-                getViewNativeHandle(view), nativeKhronosPbrMaterial, factor);
+                getViewNativeHandle(mView), nativeKhronosPbrMaterial, factor);
     }
 
     @Override
     public void setRoughnessFactorOnKhronosPbrMaterial(
             long nativeKhronosPbrMaterial, float factor) {
         nSetRoughnessFactorOnGenericMaterial(
-                getViewNativeHandle(view), nativeKhronosPbrMaterial, factor);
+                getViewNativeHandle(mView), nativeKhronosPbrMaterial, factor);
     }
 
     @Override
     public void setNormalTextureOnKhronosPbrMaterial(
             long nativeKhronosPbrMaterial, long normalTexture, @NonNull TextureSampler sampler) {
         nSetNormalTextureOnGenericMaterial(
-                getViewNativeHandle(view),
+                getViewNativeHandle(mView),
                 nativeKhronosPbrMaterial,
                 normalTexture,
                 sampler.getMinFilter(),
@@ -998,7 +998,7 @@ public final class ImpressApiImpl implements ImpressApi {
             float wy,
             float wz) {
         nSetNormalUvTransformOnGenericMaterial(
-                getViewNativeHandle(view),
+                getViewNativeHandle(mView),
                 nativeKhronosPbrMaterial,
                 ux,
                 uy,
@@ -1014,7 +1014,7 @@ public final class ImpressApiImpl implements ImpressApi {
     @Override
     public void setNormalFactorOnKhronosPbrMaterial(long nativeKhronosPbrMaterial, float factor) {
         nSetNormalFactorOnGenericMaterial(
-                getViewNativeHandle(view), nativeKhronosPbrMaterial, factor);
+                getViewNativeHandle(mView), nativeKhronosPbrMaterial, factor);
     }
 
     @Override
@@ -1023,7 +1023,7 @@ public final class ImpressApiImpl implements ImpressApi {
             long ambientOcclusionTexture,
             @NonNull TextureSampler sampler) {
         nSetAmbientOcclusionTextureOnGenericMaterial(
-                getViewNativeHandle(view),
+                getViewNativeHandle(mView),
                 nativeKhronosPbrMaterial,
                 ambientOcclusionTexture,
                 sampler.getMinFilter(),
@@ -1049,7 +1049,7 @@ public final class ImpressApiImpl implements ImpressApi {
             float wy,
             float wz) {
         nSetAmbientOcclusionUvTransformOnGenericMaterial(
-                getViewNativeHandle(view),
+                getViewNativeHandle(mView),
                 nativeKhronosPbrMaterial,
                 ux,
                 uy,
@@ -1066,14 +1066,14 @@ public final class ImpressApiImpl implements ImpressApi {
     public void setAmbientOcclusionFactorOnKhronosPbrMaterial(
             long nativeKhronosPbrMaterial, float factor) {
         nSetAmbientOcclusionFactorOnGenericMaterial(
-                getViewNativeHandle(view), nativeKhronosPbrMaterial, factor);
+                getViewNativeHandle(mView), nativeKhronosPbrMaterial, factor);
     }
 
     @Override
     public void setEmissiveTextureOnKhronosPbrMaterial(
             long nativeKhronosPbrMaterial, long emissiveTexture, @NonNull TextureSampler sampler) {
         nSetEmissiveTextureOnGenericMaterial(
-                getViewNativeHandle(view),
+                getViewNativeHandle(mView),
                 nativeKhronosPbrMaterial,
                 emissiveTexture,
                 sampler.getMinFilter(),
@@ -1099,7 +1099,7 @@ public final class ImpressApiImpl implements ImpressApi {
             float wy,
             float wz) {
         nSetEmissiveUvTransformOnGenericMaterial(
-                getViewNativeHandle(view),
+                getViewNativeHandle(mView),
                 nativeKhronosPbrMaterial,
                 ux,
                 uy,
@@ -1116,14 +1116,14 @@ public final class ImpressApiImpl implements ImpressApi {
     public void setEmissiveFactorsOnKhronosPbrMaterial(
             long nativeKhronosPbrMaterial, float x, float y, float z) {
         nSetEmissiveFactorsOnGenericMaterial(
-                getViewNativeHandle(view), nativeKhronosPbrMaterial, x, y, z);
+                getViewNativeHandle(mView), nativeKhronosPbrMaterial, x, y, z);
     }
 
     @Override
     public void setClearcoatTextureOnKhronosPbrMaterial(
             long nativeKhronosPbrMaterial, long clearcoatTexture, @NonNull TextureSampler sampler) {
         nSetClearcoatTextureOnGenericMaterial(
-                getViewNativeHandle(view),
+                getViewNativeHandle(mView),
                 nativeKhronosPbrMaterial,
                 clearcoatTexture,
                 sampler.getMinFilter(),
@@ -1142,7 +1142,7 @@ public final class ImpressApiImpl implements ImpressApi {
             long clearcoatNormalTexture,
             @NonNull TextureSampler sampler) {
         nSetClearcoatNormalTextureOnGenericMaterial(
-                getViewNativeHandle(view),
+                getViewNativeHandle(mView),
                 nativeKhronosPbrMaterial,
                 clearcoatNormalTexture,
                 sampler.getMinFilter(),
@@ -1161,7 +1161,7 @@ public final class ImpressApiImpl implements ImpressApi {
             long clearcoatRoughnessTexture,
             @NonNull TextureSampler sampler) {
         nSetClearcoatRoughnessTextureOnGenericMaterial(
-                getViewNativeHandle(view),
+                getViewNativeHandle(mView),
                 nativeKhronosPbrMaterial,
                 clearcoatRoughnessTexture,
                 sampler.getMinFilter(),
@@ -1178,7 +1178,7 @@ public final class ImpressApiImpl implements ImpressApi {
     public void setClearcoatFactorsOnKhronosPbrMaterial(
             long nativeKhronosPbrMaterial, float intensity, float roughness, float normal) {
         nSetClearcoatFactorsOnGenericMaterial(
-                getViewNativeHandle(view), nativeKhronosPbrMaterial, intensity, roughness, normal);
+                getViewNativeHandle(mView), nativeKhronosPbrMaterial, intensity, roughness, normal);
     }
 
     @Override
@@ -1187,7 +1187,7 @@ public final class ImpressApiImpl implements ImpressApi {
             long sheenColorTexture,
             @NonNull TextureSampler sampler) {
         nSetSheenColorTextureOnGenericMaterial(
-                getViewNativeHandle(view),
+                getViewNativeHandle(mView),
                 nativeKhronosPbrMaterial,
                 sheenColorTexture,
                 sampler.getMinFilter(),
@@ -1204,7 +1204,7 @@ public final class ImpressApiImpl implements ImpressApi {
     public void setSheenColorFactorsOnKhronosPbrMaterial(
             long nativeKhronosPbrMaterial, float x, float y, float z) {
         nSetSheenColorFactorsOnGenericMaterial(
-                getViewNativeHandle(view), nativeKhronosPbrMaterial, x, y, z);
+                getViewNativeHandle(mView), nativeKhronosPbrMaterial, x, y, z);
     }
 
     @Override
@@ -1213,7 +1213,7 @@ public final class ImpressApiImpl implements ImpressApi {
             long sheenRoughnessTexture,
             @NonNull TextureSampler sampler) {
         nSetSheenRoughnessTextureOnGenericMaterial(
-                getViewNativeHandle(view),
+                getViewNativeHandle(mView),
                 nativeKhronosPbrMaterial,
                 sheenRoughnessTexture,
                 sampler.getMinFilter(),
@@ -1230,7 +1230,7 @@ public final class ImpressApiImpl implements ImpressApi {
     public void setSheenRoughnessFactorOnKhronosPbrMaterial(
             long nativeKhronosPbrMaterial, float factor) {
         nSetSheenRoughnessFactorOnGenericMaterial(
-                getViewNativeHandle(view), nativeKhronosPbrMaterial, factor);
+                getViewNativeHandle(mView), nativeKhronosPbrMaterial, factor);
     }
 
     @Override
@@ -1239,7 +1239,7 @@ public final class ImpressApiImpl implements ImpressApi {
             long transmissionTexture,
             @NonNull TextureSampler sampler) {
         nSetTransmissionTextureOnGenericMaterial(
-                getViewNativeHandle(view),
+                getViewNativeHandle(mView),
                 nativeKhronosPbrMaterial,
                 transmissionTexture,
                 sampler.getMinFilter(),
@@ -1265,7 +1265,7 @@ public final class ImpressApiImpl implements ImpressApi {
             float wy,
             float wz) {
         nSetTransmissionUvTransformOnGenericMaterial(
-                getViewNativeHandle(view),
+                getViewNativeHandle(mView),
                 nativeKhronosPbrMaterial,
                 ux,
                 uy,
@@ -1282,26 +1282,26 @@ public final class ImpressApiImpl implements ImpressApi {
     public void setTransmissionFactorOnKhronosPbrMaterial(
             long nativeKhronosPbrMaterial, float factor) {
         nSetTransmissionFactorOnGenericMaterial(
-                getViewNativeHandle(view), nativeKhronosPbrMaterial, factor);
+                getViewNativeHandle(mView), nativeKhronosPbrMaterial, factor);
     }
 
     @Override
     public void setIndexOfRefractionOnKhronosPbrMaterial(
             long nativeKhronosPbrMaterial, float indexOfRefraction) {
         nSetIndexOfRefractionOnGenericMaterial(
-                getViewNativeHandle(view), nativeKhronosPbrMaterial, indexOfRefraction);
+                getViewNativeHandle(mView), nativeKhronosPbrMaterial, indexOfRefraction);
     }
 
     @Override
     public void setAlphaCutoffOnKhronosPbrMaterial(
             long nativeKhronosPbrMaterial, float alphaCutoff) {
         nSetAlphaCutoffOnGenericMaterial(
-                getViewNativeHandle(view), nativeKhronosPbrMaterial, alphaCutoff);
+                getViewNativeHandle(mView), nativeKhronosPbrMaterial, alphaCutoff);
     }
 
     @Override
     public void destroyNativeObject(long nativeHandle) {
-        nDestroyNativeObject(getViewNativeHandle(view), nativeHandle);
+        nDestroyNativeObject(getViewNativeHandle(mView), nativeHandle);
     }
 
     @Override
@@ -1311,7 +1311,7 @@ public final class ImpressApiImpl implements ImpressApi {
             @NonNull String nodeName,
             int primitiveIndex) {
         nSetMaterialOverride(
-                getViewNativeHandle(view),
+                getViewNativeHandle(mView),
                 impressNode.getHandle(),
                 nativeMaterial,
                 nodeName,
@@ -1322,22 +1322,22 @@ public final class ImpressApiImpl implements ImpressApi {
     public void clearMaterialOverride(
             @NonNull ImpressNode impressNode, @NonNull String nodeName, int primitiveIndex) {
         nClearMaterialOverride(
-                getViewNativeHandle(view), impressNode.getHandle(), nodeName, primitiveIndex);
+                getViewNativeHandle(mView), impressNode.getHandle(), nodeName, primitiveIndex);
     }
 
     @Override
     public void setPreferredEnvironmentLight(long iblToken) {
-        nSetEnvironmentLight(getViewNativeHandle(view), iblToken);
+        nSetEnvironmentLight(getViewNativeHandle(mView), iblToken);
     }
 
     @Override
     public void clearPreferredEnvironmentIblAsset() {
-        nClearEnvironmentLight(getViewNativeHandle(view));
+        nClearEnvironmentLight(getViewNativeHandle(mView));
     }
 
     @Override
     public void disposeAllResources() {
-        nDisposeAllResources(getViewNativeHandle(view));
+        nDisposeAllResources(getViewNativeHandle(mView));
     }
 
     private long getViewNativeHandle(View view) {
@@ -1761,10 +1761,10 @@ public final class ImpressApiImpl implements ImpressApi {
     private static native void nDestroyNativeObject(long view, long nativeHandle);
 
     private static native void nSetMaterialOverride(
-            long view, int impressNode, long nativeMaterial, String nodeName, int primitive_index);
+            long view, int impressNode, long nativeMaterial, String nodeName, int primitiveIndex);
 
     private static native void nClearMaterialOverride(
-            long view, int impressNode, String nodeName, int primitive_index);
+            long view, int impressNode, String nodeName, int primitiveIndex);
 
     private static native void nSetEnvironmentLight(long view, long iblToken);
 

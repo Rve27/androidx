@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,19 +26,19 @@ import org.jspecify.annotations.NonNull;
 /** Interface defining the common functionality of all materials. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public abstract class Material extends BindingsResource implements MaterialResource {
-    private final String TAG = getClass().getSimpleName();
+    private final String mTAG = getClass().getSimpleName();
 
     @SuppressWarnings("UnusedVariable")
-    private final ImpressApi impressApi;
+    private final ImpressApi mImpressApi;
 
     protected Material(@NonNull ImpressApi impressApi, long nativeMaterial) {
         super(impressApi.getBindingsResourceManager(), nativeMaterial);
-        this.impressApi = impressApi;
+        mImpressApi = impressApi;
     }
 
     @Override
     protected void releaseBindingsResource(long nativeHandle) {
         // TODO(b/433934447): Call into the JNI to release the native bindings resource.
-        Log.d(TAG, "Material is getting destroyed manually");
+        Log.d(mTAG, "Material is getting destroyed manually");
     }
 }

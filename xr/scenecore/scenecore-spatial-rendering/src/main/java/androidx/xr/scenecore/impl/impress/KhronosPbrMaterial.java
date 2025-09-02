@@ -27,12 +27,12 @@ import org.jspecify.annotations.NonNull;
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public class KhronosPbrMaterial extends Material {
-    private final ImpressApi impressApi;
+    private final ImpressApi mImpressApi;
 
     private KhronosPbrMaterial(Builder builder) {
-        super(builder.impressApi, builder.nativeMaterial);
+        super(builder.mImpressApi, builder.mNativeMaterial);
 
-        this.impressApi = builder.impressApi;
+        this.mImpressApi = builder.mImpressApi;
     }
 
     /**
@@ -43,7 +43,7 @@ public class KhronosPbrMaterial extends Material {
      * @param sampler The sampler used for the base color texture
      */
     public void setBaseColorTexture(long baseColorTexture, @NonNull TextureSampler sampler) {
-        impressApi.setBaseColorTextureOnKhronosPbrMaterial(
+        mImpressApi.setBaseColorTextureOnKhronosPbrMaterial(
                 getNativeHandle(), baseColorTexture, sampler);
     }
 
@@ -71,7 +71,7 @@ public class KhronosPbrMaterial extends Material {
             float wx,
             float wy,
             float wz) {
-        impressApi.setBaseColorUvTransformOnKhronosPbrMaterial(
+        mImpressApi.setBaseColorUvTransformOnKhronosPbrMaterial(
                 getNativeHandle(), ux, uy, uz, vx, vy, vz, wx, wy, wz);
     }
 
@@ -85,7 +85,7 @@ public class KhronosPbrMaterial extends Material {
      * @param w The W component of the base color factors.
      */
     public void setBaseColorFactors(float x, float y, float z, float w) {
-        impressApi.setBaseColorFactorsOnKhronosPbrMaterial(getNativeHandle(), x, y, z, w);
+        mImpressApi.setBaseColorFactorsOnKhronosPbrMaterial(getNativeHandle(), x, y, z, w);
     }
 
     /**
@@ -97,7 +97,7 @@ public class KhronosPbrMaterial extends Material {
      */
     public void setMetallicRoughnessTexture(
             long metallicRoughnessTexture, @NonNull TextureSampler sampler) {
-        impressApi.setMetallicRoughnessTextureOnKhronosPbrMaterial(
+        mImpressApi.setMetallicRoughnessTextureOnKhronosPbrMaterial(
                 getNativeHandle(), metallicRoughnessTexture, sampler);
     }
 
@@ -125,7 +125,7 @@ public class KhronosPbrMaterial extends Material {
             float wx,
             float wy,
             float wz) {
-        impressApi.setMetallicRoughnessUvTransformOnKhronosPbrMaterial(
+        mImpressApi.setMetallicRoughnessUvTransformOnKhronosPbrMaterial(
                 getNativeHandle(), ux, uy, uz, vx, vy, vz, wx, wy, wz);
     }
 
@@ -136,7 +136,7 @@ public class KhronosPbrMaterial extends Material {
      * @param factor The metallic factor.
      */
     public void setMetallicFactor(float factor) {
-        impressApi.setMetallicFactorOnKhronosPbrMaterial(getNativeHandle(), factor);
+        mImpressApi.setMetallicFactorOnKhronosPbrMaterial(getNativeHandle(), factor);
     }
 
     /**
@@ -146,7 +146,7 @@ public class KhronosPbrMaterial extends Material {
      * @param factor The roughness factor.
      */
     public void setRoughnessFactor(float factor) {
-        impressApi.setRoughnessFactorOnKhronosPbrMaterial(getNativeHandle(), factor);
+        mImpressApi.setRoughnessFactorOnKhronosPbrMaterial(getNativeHandle(), factor);
     }
 
     /**
@@ -157,7 +157,7 @@ public class KhronosPbrMaterial extends Material {
      * @param sampler The sampler used for the normal map texture
      */
     public void setNormalTexture(long normalTexture, @NonNull TextureSampler sampler) {
-        impressApi.setNormalTextureOnKhronosPbrMaterial(getNativeHandle(), normalTexture, sampler);
+        mImpressApi.setNormalTextureOnKhronosPbrMaterial(getNativeHandle(), normalTexture, sampler);
     }
 
     /**
@@ -184,7 +184,7 @@ public class KhronosPbrMaterial extends Material {
             float wx,
             float wy,
             float wz) {
-        impressApi.setNormalUvTransformOnKhronosPbrMaterial(
+        mImpressApi.setNormalUvTransformOnKhronosPbrMaterial(
                 getNativeHandle(), ux, uy, uz, vx, vy, vz, wx, wy, wz);
     }
 
@@ -195,7 +195,7 @@ public class KhronosPbrMaterial extends Material {
      * @param factor The factor of the normal map.
      */
     public void setNormalFactor(float factor) {
-        impressApi.setNormalFactorOnKhronosPbrMaterial(getNativeHandle(), factor);
+        mImpressApi.setNormalFactorOnKhronosPbrMaterial(getNativeHandle(), factor);
     }
 
     /**
@@ -207,7 +207,7 @@ public class KhronosPbrMaterial extends Material {
      */
     public void setAmbientOcclusionTexture(
             long ambientOcclusionTexture, @NonNull TextureSampler sampler) {
-        impressApi.setAmbientOcclusionTextureOnKhronosPbrMaterial(
+        mImpressApi.setAmbientOcclusionTextureOnKhronosPbrMaterial(
                 getNativeHandle(), ambientOcclusionTexture, sampler);
     }
 
@@ -235,7 +235,7 @@ public class KhronosPbrMaterial extends Material {
             float wx,
             float wy,
             float wz) {
-        impressApi.setAmbientOcclusionUvTransformOnKhronosPbrMaterial(
+        mImpressApi.setAmbientOcclusionUvTransformOnKhronosPbrMaterial(
                 getNativeHandle(), ux, uy, uz, vx, vy, vz, wx, wy, wz);
     }
 
@@ -245,7 +245,7 @@ public class KhronosPbrMaterial extends Material {
      * @param factor The factor of the ambient occlusion.
      */
     public void setAmbientOcclusionFactor(float factor) {
-        impressApi.setAmbientOcclusionFactorOnKhronosPbrMaterial(getNativeHandle(), factor);
+        mImpressApi.setAmbientOcclusionFactorOnKhronosPbrMaterial(getNativeHandle(), factor);
     }
 
     /**
@@ -256,7 +256,7 @@ public class KhronosPbrMaterial extends Material {
      * @param sampler The sampler used for the emissive texture
      */
     public void setEmissiveTexture(long emissiveTexture, @NonNull TextureSampler sampler) {
-        impressApi.setEmissiveTextureOnKhronosPbrMaterial(
+        mImpressApi.setEmissiveTextureOnKhronosPbrMaterial(
                 getNativeHandle(), emissiveTexture, sampler);
     }
 
@@ -283,7 +283,7 @@ public class KhronosPbrMaterial extends Material {
             float wx,
             float wy,
             float wz) {
-        impressApi.setEmissiveUvTransformOnKhronosPbrMaterial(
+        mImpressApi.setEmissiveUvTransformOnKhronosPbrMaterial(
                 getNativeHandle(), ux, uy, uz, vx, vy, vz, wx, wy, wz);
     }
 
@@ -296,7 +296,7 @@ public class KhronosPbrMaterial extends Material {
      * @param z The Z component of the emissive factors.
      */
     public void setEmissiveFactors(float x, float y, float z) {
-        impressApi.setEmissiveFactorsOnKhronosPbrMaterial(getNativeHandle(), x, y, z);
+        mImpressApi.setEmissiveFactorsOnKhronosPbrMaterial(getNativeHandle(), x, y, z);
     }
 
     /**
@@ -307,7 +307,7 @@ public class KhronosPbrMaterial extends Material {
      * @param sampler The sampler used for the clearcoat texture
      */
     public void setClearcoatTexture(long clearcoatTexture, @NonNull TextureSampler sampler) {
-        impressApi.setClearcoatTextureOnKhronosPbrMaterial(
+        mImpressApi.setClearcoatTextureOnKhronosPbrMaterial(
                 getNativeHandle(), clearcoatTexture, sampler);
     }
 
@@ -320,7 +320,7 @@ public class KhronosPbrMaterial extends Material {
      */
     public void setClearcoatNormalTexture(
             long clearcoatNormalTexture, @NonNull TextureSampler sampler) {
-        impressApi.setClearcoatNormalTextureOnKhronosPbrMaterial(
+        mImpressApi.setClearcoatNormalTextureOnKhronosPbrMaterial(
                 getNativeHandle(), clearcoatNormalTexture, sampler);
     }
 
@@ -333,7 +333,7 @@ public class KhronosPbrMaterial extends Material {
      */
     public void setClearcoatRoughnessTexture(
             long clearcoatRoughnessTexture, @NonNull TextureSampler sampler) {
-        impressApi.setClearcoatRoughnessTextureOnKhronosPbrMaterial(
+        mImpressApi.setClearcoatRoughnessTextureOnKhronosPbrMaterial(
                 getNativeHandle(), clearcoatRoughnessTexture, sampler);
     }
 
@@ -346,7 +346,7 @@ public class KhronosPbrMaterial extends Material {
      * @param normal The normal of the clearcoat.
      */
     public void setClearcoatFactors(float intensity, float roughness, float normal) {
-        impressApi.setClearcoatFactorsOnKhronosPbrMaterial(
+        mImpressApi.setClearcoatFactorsOnKhronosPbrMaterial(
                 getNativeHandle(), intensity, roughness, normal);
     }
 
@@ -358,7 +358,7 @@ public class KhronosPbrMaterial extends Material {
      * @param sampler The sampler used for the sheen color texture
      */
     public void setSheenColorTexture(long sheenColorTexture, @NonNull TextureSampler sampler) {
-        impressApi.setSheenColorTextureOnKhronosPbrMaterial(
+        mImpressApi.setSheenColorTextureOnKhronosPbrMaterial(
                 getNativeHandle(), sheenColorTexture, sampler);
     }
 
@@ -371,7 +371,7 @@ public class KhronosPbrMaterial extends Material {
      * @param z The Z component of the sheen color factors.
      */
     public void setSheenColorFactors(float x, float y, float z) {
-        impressApi.setSheenColorFactorsOnKhronosPbrMaterial(getNativeHandle(), x, y, z);
+        mImpressApi.setSheenColorFactorsOnKhronosPbrMaterial(getNativeHandle(), x, y, z);
     }
 
     /**
@@ -383,7 +383,7 @@ public class KhronosPbrMaterial extends Material {
      */
     public void setSheenRoughnessTexture(
             long sheenRoughnessTexture, @NonNull TextureSampler sampler) {
-        impressApi.setSheenRoughnessTextureOnKhronosPbrMaterial(
+        mImpressApi.setSheenRoughnessTextureOnKhronosPbrMaterial(
                 getNativeHandle(), sheenRoughnessTexture, sampler);
     }
 
@@ -394,7 +394,7 @@ public class KhronosPbrMaterial extends Material {
      * @param factor The sheen roughness factor.
      */
     public void setSheenRoughnessFactor(float factor) {
-        impressApi.setSheenRoughnessFactorOnKhronosPbrMaterial(getNativeHandle(), factor);
+        mImpressApi.setSheenRoughnessFactorOnKhronosPbrMaterial(getNativeHandle(), factor);
     }
 
     /**
@@ -405,7 +405,7 @@ public class KhronosPbrMaterial extends Material {
      * @param sampler The sampler used for the transmission texture
      */
     public void setTransmissionTexture(long transmissionTexture, @NonNull TextureSampler sampler) {
-        impressApi.setTransmissionTextureOnKhronosPbrMaterial(
+        mImpressApi.setTransmissionTextureOnKhronosPbrMaterial(
                 getNativeHandle(), transmissionTexture, sampler);
     }
 
@@ -432,7 +432,7 @@ public class KhronosPbrMaterial extends Material {
             float wx,
             float wy,
             float wz) {
-        impressApi.setTransmissionUvTransformOnKhronosPbrMaterial(
+        mImpressApi.setTransmissionUvTransformOnKhronosPbrMaterial(
                 getNativeHandle(), ux, uy, uz, vx, vy, vz, wx, wy, wz);
     }
 
@@ -443,7 +443,7 @@ public class KhronosPbrMaterial extends Material {
      * @param factor The transmission factor.
      */
     public void setTransmissionFactor(float factor) {
-        impressApi.setTransmissionFactorOnKhronosPbrMaterial(getNativeHandle(), factor);
+        mImpressApi.setTransmissionFactorOnKhronosPbrMaterial(getNativeHandle(), factor);
     }
 
     /**
@@ -453,7 +453,7 @@ public class KhronosPbrMaterial extends Material {
      * @param indexOfRefraction The index of refraction.
      */
     public void setIndexOfRefraction(float indexOfRefraction) {
-        impressApi.setIndexOfRefractionOnKhronosPbrMaterial(getNativeHandle(), indexOfRefraction);
+        mImpressApi.setIndexOfRefractionOnKhronosPbrMaterial(getNativeHandle(), indexOfRefraction);
     }
 
     /**
@@ -463,29 +463,32 @@ public class KhronosPbrMaterial extends Material {
      * @param alphaCutoff The alpha cutoff value.
      */
     public void setAlphaCutoff(float alphaCutoff) {
-        impressApi.setAlphaCutoffOnKhronosPbrMaterial(getNativeHandle(), alphaCutoff);
+        mImpressApi.setAlphaCutoffOnKhronosPbrMaterial(getNativeHandle(), alphaCutoff);
     }
 
     /** Use Builder to construct a KhronosPbrMaterial object instance. */
     public static class Builder {
-        private ImpressApi impressApi;
-        private long nativeMaterial = -1;
+        private ImpressApi mImpressApi;
+        private long mNativeMaterial = -1;
 
+        /** Sets the Impress API. */
         @NonNull
         public Builder setImpressApi(@NonNull ImpressApi impressApi) {
-            this.impressApi = impressApi;
+            mImpressApi = impressApi;
             return this;
         }
 
+        /** Sets the native material. */
         @NonNull
         public Builder setNativeMaterial(long nativeMaterial) {
-            this.nativeMaterial = nativeMaterial;
+            mNativeMaterial = nativeMaterial;
             return this;
         }
 
+        /** Builds the Khronos PBR material. */
         @NonNull
         public KhronosPbrMaterial build() {
-            if (impressApi == null || nativeMaterial == -1) {
+            if (mImpressApi == null || mNativeMaterial == -1) {
                 throw new IllegalStateException("Khronos PBR material not built properly.");
             }
             return new KhronosPbrMaterial(this);

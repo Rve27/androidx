@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.impl;
+package androidx.xr.scenecore.impl.impress;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -23,16 +23,10 @@ import static org.junit.Assert.assertThrows;
 
 import android.view.Surface;
 
-import androidx.xr.scenecore.impl.impress.BindingsResourceManager;
-import androidx.xr.scenecore.impl.impress.FakeImpressApiImpl;
 import androidx.xr.scenecore.impl.impress.FakeImpressApiImpl.GltfNodeData;
 import androidx.xr.scenecore.impl.impress.FakeImpressApiImpl.StereoSurfaceEntityData;
 import androidx.xr.scenecore.impl.impress.FakeImpressApiImpl.StereoSurfaceEntityData.CanvasShape;
 import androidx.xr.scenecore.impl.impress.ImpressApi.StereoMode;
-import androidx.xr.scenecore.impl.impress.ImpressNode;
-import androidx.xr.scenecore.impl.impress.KhronosPbrMaterial;
-import androidx.xr.scenecore.impl.impress.Texture;
-import androidx.xr.scenecore.impl.impress.WaterMaterial;
 
 import com.google.common.collect.Iterables;
 import com.google.common.util.concurrent.ListenableFuture;

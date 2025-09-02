@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -34,15 +34,15 @@ import java.util.Set;
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public class BindingsResourceManager {
-    private final String TAG = getClass().getSimpleName();
+    private final String mTAG = getClass().getSimpleName();
     private static final String RESOURCE_MANAGER_THREAD = "resource_manager_thread";
-    private final Handler mainThreadHandler;
-    private final ReferenceQueue<Object> queue = new ReferenceQueue<>();
-    private final Set<BindingsObjectPhantomReference> phantomReferences =
+    private final Handler mMainThreadHandler;
+    private final ReferenceQueue<Object> mQueue = new ReferenceQueue<>();
+    private final Set<BindingsObjectPhantomReference> mPhantomReferences =
             Collections.synchronizedSet(new HashSet<>());
 
     public BindingsResourceManager(@NonNull Handler mainThreadHandler) {
-        this.mainThreadHandler = mainThreadHandler;
+        this.mMainThreadHandler = mainThreadHandler;
         Thread thread = new Thread(this::processQueue, RESOURCE_MANAGER_THREAD);
         thread.setDaemon(true);
         thread.start();
@@ -55,22 +55,22 @@ public class BindingsResourceManager {
      * @param callback The callback that gets triggered when the object is garbage collected.
      */
     public void register(@NonNull Object object, @NonNull Runnable callback) {
-        phantomReferences.add(new BindingsObjectPhantomReference(object, queue, callback));
+        mPhantomReferences.add(new BindingsObjectPhantomReference(object, mQueue, callback));
     }
 
     private void processQueue() {
         while (true) {
             try {
                 BindingsObjectPhantomReference ref =
-                        (BindingsObjectPhantomReference) queue.remove();
-                mainThreadHandler.post(
+                        (BindingsObjectPhantomReference) mQueue.remove();
+                mMainThreadHandler.post(
                         () -> {
                             ref.cleanup();
-                            phantomReferences.remove(ref);
+                            mPhantomReferences.remove(ref);
                         });
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
-                Log.w(TAG, "Queue processing thread was interrupted and is now terminating.");
+                Log.w(mTAG, "Queue processing thread was interrupted and is now terminating.");
                 break;
             }
         }

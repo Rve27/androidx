@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -150,6 +150,7 @@ public class FakeImpressApiImpl implements ImpressApi {
             this.mEntityId = entityId;
         }
 
+        /** Sets the material override for a specific mesh of a node */
         public void setMaterialOverride(
                 @Nullable MaterialData materialOverride,
                 @NonNull String nodeName,
@@ -157,6 +158,7 @@ public class FakeImpressApiImpl implements ImpressApi {
             this.mMaterialOverride = materialOverride;
         }
 
+        /** Clears a material override for a specific mesh of a node. */
         public void clearMaterialOverride(@NonNull String nodeName, int primitiveIndex) {
             this.mMaterialOverride = null;
         }

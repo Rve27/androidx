@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,17 +24,17 @@ import java.lang.ref.ReferenceQueue;
 /** Implementation of PhantomReference for managing the lifecycle of Impress objects. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public class BindingsObjectPhantomReference extends PhantomReference<Object> {
-    private final Runnable callback;
+    private final Runnable mCallback;
 
     BindingsObjectPhantomReference(
             Object referent, ReferenceQueue<? super Object> queue, Runnable callback) {
         super(referent, queue);
-        this.callback = callback;
+        mCallback = callback;
     }
 
     void cleanup() {
-        if (this.callback != null) {
-            this.callback.run();
+        if (mCallback != null) {
+            mCallback.run();
         }
     }
 }
