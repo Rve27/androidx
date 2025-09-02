@@ -40,9 +40,9 @@ internal constructor(
     public val leftRenderViewpoint: RenderViewpoint?,
     public val rightRenderViewpoint: RenderViewpoint?,
     public val monoRenderViewpoint: RenderViewpoint?,
-    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val leftDepthMap: DepthMap?,
-    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val rightDepthMap: DepthMap?,
-    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val monoDepthMap: DepthMap?,
+    public val leftDepthMap: DepthMap?,
+    public val rightDepthMap: DepthMap?,
+    public val monoDepthMap: DepthMap?,
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val userFace: Face?,
 ) {
     override fun equals(other: Any?): Boolean {

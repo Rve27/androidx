@@ -26,7 +26,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 /** Contains the depth map information corresponding to a specific [RenderViewpoint] */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public class DepthMap internal constructor(internal val runtimeDepthMap: RuntimeDepthMap) :
     Updatable {
     public companion object {
@@ -136,6 +135,7 @@ public class DepthMap internal constructor(internal val runtimeDepthMap: Runtime
     /** The current [State] of the depth map. */
     public val state: StateFlow<DepthMap.State> = _state.asStateFlow()
 
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     override suspend fun update() {
         _state.emit(
             State(

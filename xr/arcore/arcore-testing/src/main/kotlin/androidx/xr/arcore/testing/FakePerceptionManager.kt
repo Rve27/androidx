@@ -69,13 +69,10 @@ public class FakePerceptionManager : PerceptionManager, AnchorHolder {
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
     override val earth: Earth = FakeRuntimeEarth()
 
-    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
     override val leftDepthMap: DepthMap? = FakeRuntimeDepthMap()
 
-    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
     override val rightDepthMap: DepthMap? = FakeRuntimeDepthMap()
 
-    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
     override val monoDepthMap: DepthMap? = FakeRuntimeDepthMap()
 
     private val hitResults = mutableListOf<HitResult>()
