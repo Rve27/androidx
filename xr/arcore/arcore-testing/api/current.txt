@@ -151,6 +151,23 @@ package androidx.xr.arcore.testing {
     property public int width;
   }
 
+  public final class FakeRuntimeFace {
+    ctor public FakeRuntimeFace();
+    ctor public FakeRuntimeFace(optional androidx.xr.runtime.TrackingState trackingState, optional boolean isValid, optional float[] blendShapeValues, optional float[] confidenceValues);
+    method public float[] getBlendShapeValues();
+    method public float[] getConfidenceValues();
+    method public androidx.xr.runtime.TrackingState getTrackingState();
+    method public boolean isValid();
+    method public void setBlendShapeValues(float[]);
+    method public void setConfidenceValues(float[]);
+    method public void setTrackingState(androidx.xr.runtime.TrackingState);
+    method public void setValid(boolean);
+    property public float[] blendShapeValues;
+    property public float[] confidenceValues;
+    property public boolean isValid;
+    property public androidx.xr.runtime.TrackingState trackingState;
+  }
+
   public final class FakeRuntimeHand {
     ctor public FakeRuntimeHand();
     ctor public FakeRuntimeHand(optional androidx.xr.runtime.TrackingState trackingState, optional java.nio.FloatBuffer handJointsBuffer);

@@ -45,7 +45,6 @@ constructor(
     public val deviceTracking: DeviceTrackingMode = DeviceTrackingMode.DISABLED,
     public val depthEstimation: DepthEstimationMode = DepthEstimationMode.DISABLED,
     public val anchorPersistence: AnchorPersistenceMode = AnchorPersistenceMode.DISABLED,
-    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
     public val faceTracking: FaceTrackingMode = FaceTrackingMode.DISABLED,
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
     public val geospatial: GeospatialMode = GeospatialMode.DISABLED,
@@ -68,6 +67,8 @@ constructor(
      *   meshes. See [Config.DepthEstimationMode].
      * @param anchorPersistence Feature that allows anchors to be persisted through sessions. See
      *   [Config.AnchorPersistenceMode].
+     * @param faceTracking Feature that allows tracking of human faces. See
+     *   [Config.FaceTrackingMode].
      */
     @JvmOverloads
     public constructor(
@@ -76,6 +77,7 @@ constructor(
         headTracking: HeadTrackingMode = HeadTrackingMode.DISABLED,
         depthEstimation: DepthEstimationMode = DepthEstimationMode.DISABLED,
         anchorPersistence: AnchorPersistenceMode = AnchorPersistenceMode.DISABLED,
+        faceTracking: FaceTrackingMode = FaceTrackingMode.DISABLED,
     ) : this(
         planeTracking,
         /* augmentedObjectCategories= */ listOf(),
@@ -83,7 +85,7 @@ constructor(
         headTracking.toDeviceTrackingMode(),
         depthEstimation,
         anchorPersistence,
-        faceTracking = FaceTrackingMode.DISABLED,
+        faceTracking,
         geospatial = GeospatialMode.DISABLED,
     )
 
@@ -344,8 +346,10 @@ constructor(
      * Setting this feature to [FaceTrackingMode.USER] requires that the `FACE_TRACKING` Android
      * permission is granted by the calling application.
      */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-    public class FaceTrackingMode private constructor(public val mode: Int) {
+    public class FaceTrackingMode
+    private constructor(
+        @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val mode: Int
+    ) {
         public companion object {
             /** Faces will not be tracked. */
             @JvmField public val DISABLED: FaceTrackingMode = FaceTrackingMode(0)

@@ -230,28 +230,27 @@ package androidx.xr.arcore {
     property public androidx.xr.arcore.Earth.Surface TERRAIN;
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class Face {
+  public final class Face {
     method public kotlinx.coroutines.flow.StateFlow<androidx.xr.arcore.Face.State> getState();
-    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static androidx.xr.arcore.Face? getUserFace(androidx.xr.runtime.Session session);
-    method public suspend Object? update(kotlin.coroutines.Continuation<? super kotlin.Unit>);
+    method public static androidx.xr.arcore.Face? getUserFace(androidx.xr.runtime.Session session);
+    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public suspend Object? update(kotlin.coroutines.Continuation<? super kotlin.Unit>);
     property public kotlinx.coroutines.flow.StateFlow<androidx.xr.arcore.Face.State> state;
     field public static final androidx.xr.arcore.Face.Companion Companion;
   }
 
   public static final class Face.Companion {
-    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public androidx.xr.arcore.Face? getUserFace(androidx.xr.runtime.Session session);
+    method public androidx.xr.arcore.Face? getUserFace(androidx.xr.runtime.Session session);
   }
 
   public static final class Face.State {
-    ctor public Face.State(androidx.xr.runtime.TrackingState trackingState, float[] blendShapeValues, float[] confidenceValues);
     method public java.util.Map<androidx.xr.arcore.FaceBlendShapeType,java.lang.Float> getBlendShapes();
-    method public float getConfidence(androidx.xr.arcore.FaceConfidenceRegionType region);
+    method public float getConfidence(androidx.xr.arcore.FaceConfidenceRegion region);
     method public androidx.xr.runtime.TrackingState getTrackingState();
     property public java.util.Map<androidx.xr.arcore.FaceBlendShapeType,java.lang.Float> blendShapes;
     property public androidx.xr.runtime.TrackingState trackingState;
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FaceBlendShapeType {
+  public final class FaceBlendShapeType {
     field public static final androidx.xr.arcore.FaceBlendShapeType.Companion Companion;
     field public static final androidx.xr.arcore.FaceBlendShapeType FACE_BLEND_SHAPE_TYPE_BROW_LOWERER_LEFT;
     field public static final androidx.xr.arcore.FaceBlendShapeType FACE_BLEND_SHAPE_TYPE_BROW_LOWERER_RIGHT;
@@ -394,17 +393,17 @@ package androidx.xr.arcore {
     property public androidx.xr.arcore.FaceBlendShapeType FACE_BLEND_SHAPE_TYPE_UPPER_LIP_RAISER_RIGHT;
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FaceConfidenceRegionType {
-    field public static final androidx.xr.arcore.FaceConfidenceRegionType.Companion Companion;
-    field public static final androidx.xr.arcore.FaceConfidenceRegionType FACE_CONFIDENCE_REGION_TYPE_LEFT_UPPER;
-    field public static final androidx.xr.arcore.FaceConfidenceRegionType FACE_CONFIDENCE_REGION_TYPE_LOWER;
-    field public static final androidx.xr.arcore.FaceConfidenceRegionType FACE_CONFIDENCE_REGION_TYPE_RIGHT_UPPER;
+  public final class FaceConfidenceRegion {
+    field public static final androidx.xr.arcore.FaceConfidenceRegion.Companion Companion;
+    field public static final androidx.xr.arcore.FaceConfidenceRegion FACE_CONFIDENCE_REGION_LEFT_UPPER;
+    field public static final androidx.xr.arcore.FaceConfidenceRegion FACE_CONFIDENCE_REGION_LOWER;
+    field public static final androidx.xr.arcore.FaceConfidenceRegion FACE_CONFIDENCE_REGION_RIGHT_UPPER;
   }
 
-  public static final class FaceConfidenceRegionType.Companion {
-    property public androidx.xr.arcore.FaceConfidenceRegionType FACE_CONFIDENCE_REGION_TYPE_LEFT_UPPER;
-    property public androidx.xr.arcore.FaceConfidenceRegionType FACE_CONFIDENCE_REGION_TYPE_LOWER;
-    property public androidx.xr.arcore.FaceConfidenceRegionType FACE_CONFIDENCE_REGION_TYPE_RIGHT_UPPER;
+  public static final class FaceConfidenceRegion.Companion {
+    property public androidx.xr.arcore.FaceConfidenceRegion FACE_CONFIDENCE_REGION_LEFT_UPPER;
+    property public androidx.xr.arcore.FaceConfidenceRegion FACE_CONFIDENCE_REGION_LOWER;
+    property public androidx.xr.arcore.FaceConfidenceRegion FACE_CONFIDENCE_REGION_RIGHT_UPPER;
   }
 
   public final class Hand {
@@ -492,7 +491,7 @@ package androidx.xr.arcore {
     method public androidx.xr.arcore.RenderViewpoint? getRightRenderViewpoint();
     method public kotlin.time.ComparableTimeMark getTimeMark();
     method public java.util.Collection<androidx.xr.arcore.Trackable<androidx.xr.arcore.Trackable.State>> getTrackables();
-    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public androidx.xr.arcore.Face? getUserFace();
+    method public androidx.xr.arcore.Face? getUserFace();
     property public androidx.xr.arcore.ArDevice arDevice;
     property public androidx.xr.arcore.DepthMap? leftDepthMap;
     property public androidx.xr.arcore.Hand? leftHand;
@@ -504,7 +503,7 @@ package androidx.xr.arcore {
     property public androidx.xr.arcore.RenderViewpoint? rightRenderViewpoint;
     property public kotlin.time.ComparableTimeMark timeMark;
     property public java.util.Collection<androidx.xr.arcore.Trackable<androidx.xr.arcore.Trackable.State>> trackables;
-    property @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public androidx.xr.arcore.Face? userFace;
+    property public androidx.xr.arcore.Face? userFace;
   }
 
   public final class PerceptionStateExtenderKt {

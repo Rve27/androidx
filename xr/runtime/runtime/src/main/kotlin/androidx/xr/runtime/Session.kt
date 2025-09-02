@@ -340,7 +340,9 @@ public constructor(
         } catch (e: ConfigurationNotSupportedException) {
             return SessionConfigureConfigurationNotSupported()
         } catch (e: FaceTrackingNotCalibratedException) {
-            return SessionConfigureCalibrationRequired(RequiredCalibrationType.FACE_TRACKING)
+            return SessionConfigureCalibrationRequired(
+                RequiredCalibrationType.REQUIRED_CALIBRATION_TYPE_FACE_TRACKING
+            )
         }
         this.config = config
         return SessionConfigureSuccess()

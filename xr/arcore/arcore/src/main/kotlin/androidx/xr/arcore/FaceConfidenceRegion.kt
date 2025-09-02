@@ -16,26 +16,21 @@
 
 package androidx.xr.arcore
 
-import androidx.annotation.RestrictTo
-
 /** Represents the regions of face tracking confidence. */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public class FaceConfidenceRegionType private constructor(private val value: Int) {
+public class FaceConfidenceRegion private constructor(private val value: Int) {
     public companion object {
         /** Represents the lower region of the face. */
         @JvmField
-        public val FACE_CONFIDENCE_REGION_TYPE_LOWER: FaceConfidenceRegionType =
-            FaceConfidenceRegionType(0)
+        public val FACE_CONFIDENCE_REGION_LOWER: FaceConfidenceRegion = FaceConfidenceRegion(0)
 
         /** Represents the left upper region of the face. */
         @JvmField
-        public val FACE_CONFIDENCE_REGION_TYPE_LEFT_UPPER: FaceConfidenceRegionType =
-            FaceConfidenceRegionType(1)
+        public val FACE_CONFIDENCE_REGION_LEFT_UPPER: FaceConfidenceRegion = FaceConfidenceRegion(1)
 
         /** Represents the right upper region of the face. */
         @JvmField
-        public val FACE_CONFIDENCE_REGION_TYPE_RIGHT_UPPER: FaceConfidenceRegionType =
-            FaceConfidenceRegionType(2)
+        public val FACE_CONFIDENCE_REGION_RIGHT_UPPER: FaceConfidenceRegion =
+            FaceConfidenceRegion(2)
     }
 
     public override fun toString(): String =
