@@ -162,7 +162,11 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                 formWidgetMetadataLoader?.let { loader ->
                     pageManager?.maybeLoadFormWidgetMetadata(loader)
                 }
+            } else {
+                // remove any existing edit text
+                formFillingEditText = null
             }
+            invalidate()
         }
 
     /** The maximum scaling factor that can be applied to this View using the [zoom] property */
