@@ -284,12 +284,17 @@ public abstract class TileService extends Service {
      * happen on the first time a Tile is being loaded or whenever the resource version requested by
      * a Tile (in {@link #onTileRequest}) changes.
      *
+     * <p>If using methods that accept {@link ProtoLayoutScope} for creating image elements, this
+     * method shouldn't be implemented as resources bundle will be automatically registered by the
+     * {@link ProtoLayoutScope} itself.
+     *
      * <p>The returned future must complete after at most 10 seconds from the moment this method is
      * called (exact timeout length subject to change).
      *
      * <p>Note that this is called from your app's main thread, which is usually also the UI thread.
-     * If {@link #onTileResourcesRequest} is not implemented, the {@link TileService} will fallback
-     * to {@link #onResourcesRequest}.
+     *
+     * <p>If {@link #onTileResourcesRequest} is not implemented, the {@link TileService} will
+     * fallback to {@link #onResourcesRequest}.
      *
      * @param requestParams Parameters about the request. See {@link ResourcesRequest} for more
      *     info.
@@ -305,9 +310,12 @@ public abstract class TileService extends Service {
         ListenableFuture<androidx.wear.tiles.ResourceBuilders.Resources>
                 legacyResourcesRequestResult = onResourcesRequest(requestParams);
         if (legacyResourcesRequestResult == ON_RESOURCES_REQUEST_NOT_IMPLEMENTED) {
-            return createFailedFuture(
-                    new UnsupportedOperationException(
-                            "onTileResourcesRequest " + "not implemented."));
+            Log.w(
+                    TAG,
+                    "onTileResourcesRequest not implemented but it was called as tile is not using"
+                            + " ProtoLayoutScope concept. Tile won't show any resources.");
+            return createImmediateFuture(
+                    Resources.fromProto(ResourceProto.Resources.getDefaultInstance()));
         }
 
         ResolvableFuture<Resources> result = ResolvableFuture.create();
@@ -1221,9 +1229,17 @@ public abstract class TileService extends Service {
                 >= UPDATE_TILE_TIMESTAMP_PERIOD_MS;
     }
 
-    private static ListenableFuture<Void> createImmediateFuture() {
-        ResolvableFuture<Void> future = ResolvableFuture.create();
+    /** Creates immediate future with empty result of the given type. */
+    private static <T> ListenableFuture<T> createImmediateFuture() {
+        ResolvableFuture<T> future = ResolvableFuture.create();
         future.set(null);
+        return future;
+    }
+
+    /** Creates immediate future with the given result of the given type. */
+    private static <T> ListenableFuture<T> createImmediateFuture(T result) {
+        ResolvableFuture<T> future = ResolvableFuture.create();
+        future.set(result);
         return future;
     }
 
