@@ -151,8 +151,10 @@ internal class AndroidAutofillManager(
             when {
                 previousToggleValue == null ->
                     platformAutofillManager.notifyViewVisibilityChanged(view, semanticsId, true)
+
                 newToggleValue == null ->
                     platformAutofillManager.notifyViewVisibilityChanged(view, semanticsId, false)
+
                 else -> {
                     val contentDataType = config.getOrNull(SemanticsProperties.ContentDataType)
                     if (contentDataType == ContentDataType.Toggle) {
@@ -170,6 +172,25 @@ internal class AndroidAutofillManager(
                             )
                         }
                     }
+                }
+            }
+        }
+
+        // Check fillable data value
+        val previousFillableData = prevConfig?.getOrNull(SemanticsProperties.FillableData)
+        val newFillableData = config?.getOrNull(SemanticsProperties.FillableData)
+        if (previousFillableData != newFillableData) {
+            when {
+                previousFillableData == null ->
+                    platformAutofillManager.notifyViewVisibilityChanged(view, semanticsId, true)
+                newFillableData == null ->
+                    platformAutofillManager.notifyViewVisibilityChanged(view, semanticsId, false)
+                else -> {
+                    platformAutofillManager.notifyValueChanged(
+                        view,
+                        semanticsId,
+                        (newFillableData as AndroidFillableData).autofillValue,
+                    )
                 }
             }
         }
