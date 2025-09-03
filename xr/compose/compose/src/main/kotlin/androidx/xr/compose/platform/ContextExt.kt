@@ -20,11 +20,25 @@ import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
 
-/** Utility extension function to fetch the current [Activity] based on the [Context] object. */
-internal tailrec fun Context.getActivity(): Activity {
+/**
+ * Utility extension function to fetch the current [Activity] based on the [Context] object. Will
+ * throw an exception if not found.
+ */
+internal tailrec fun Context.requireActivity(): Activity {
     return when (this) {
         is Activity -> this
-        is ContextWrapper -> baseContext.getActivity()
+        is ContextWrapper -> baseContext.requireActivity()
         else -> error("Unexpected Context type when trying to resolve the context's Activity.")
     }
 }
+
+/**
+ * Utility extension function to fetch the current [Activity] based on the [Context] object or
+ * returns null if not found.
+ */
+internal tailrec fun Context.getActivity(): Activity? =
+    when (this) {
+        is Activity -> this
+        is ContextWrapper -> baseContext.getActivity()
+        else -> null
+    }
