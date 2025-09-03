@@ -185,7 +185,13 @@ public class Face internal constructor(internal val runtimeFace: RuntimeFace) : 
     }
 
     private val _state =
-        MutableStateFlow<State>(State(TrackingState.PAUSED, FloatArray(0), FloatArray(0)))
+        MutableStateFlow<State>(
+            State(
+                TrackingState.PAUSED,
+                FloatArray(blendShapeMapKeys.size),
+                FloatArray(confidenceRegions.size),
+            )
+        )
 
     /** The current [State] of this Face. */
     public val state: StateFlow<State> = _state.asStateFlow()
