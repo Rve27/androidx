@@ -14,21 +14,25 @@
  * limitations under the License.
  */
 
-package androidx.compose.remote.player.compose.test.rule
+package androidx.compose.remote.test.screenshot.rule
 
 import android.content.res.Resources
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.remote.core.CoreDocument
 import androidx.compose.remote.frontend.capture.rememberRemoteDocument
 import androidx.compose.remote.frontend.layout.RemoteComposable
-import androidx.compose.remote.player.compose.RemoteDocumentPlayer
+import androidx.compose.remote.frontend.player.RemoteDocumentPlayer as ViewRemoteDocumentPlayer
+import androidx.compose.remote.player.compose.RemoteDocumentPlayer as ComposeRemoteDocumentPlayer
+import androidx.compose.remote.test.screenshot.TargetPlayer
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.testutils.assertAgainstGolden
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
@@ -55,6 +59,7 @@ import org.junit.runners.model.Statement
 class RemoteComposeScreenshotTestRule(
     moduleDirectory: String,
     private val matcher: BitmapMatcher? = null,
+    private val targetPlayer: TargetPlayer,
 ) : TestRule {
     val composeTestRule = createComposeRule()
     val testName = TestName()
@@ -85,36 +90,39 @@ class RemoteComposeScreenshotTestRule(
     fun runScreenshotTest(
         screenshotName: TestName = testName,
         size: Size = displaySize(),
+        backgroundColor: Color? = null,
         content: @Composable @RemoteComposable () -> Unit,
     ) {
-        setContent(size = size) { content() }
+        setContent(size = size, backgroundColor = backgroundColor, content = content)
         composeTestRule.verifyScreenshot(screenshotName, screenshotRule)
     }
 
     fun runScreenshotTest(
         screenshotName: TestName = testName,
         size: Size = displaySize(),
+        backgroundColor: Color? = null,
         document: CoreDocument,
         outerContent: (@Composable (content: @Composable @RemoteComposable () -> Unit) -> Unit)? =
             null,
     ) {
+        val boxModifier =
+            Modifier.width(size.width.dp)
+                .height(size.height.dp)
+                .then(
+                    if (backgroundColor != null) {
+                        Modifier.background(backgroundColor)
+                    } else {
+                        Modifier
+                    }
+                )
+                .testTag("playerRoot")
         composeTestRule.setContent {
             val content: @Composable @RemoteComposable () -> Unit = {
-                RemoteDocumentPlayer(
-                    document,
-                    size.width.toInt(),
-                    size.height.toInt(),
-                    debugMode = 1,
-                )
+                RemoteDocumentPlayer(document, size)
             }
-            Box(
-                modifier =
-                    Modifier.Companion.width(size.width.dp)
-                        .height(size.height.dp)
-                        .testTag("playerRoot")
-            ) {
+            Box(modifier = boxModifier) {
                 if (outerContent != null) {
-                    outerContent { content() }
+                    outerContent(content)
                 } else {
                     content()
                 }
@@ -123,18 +131,49 @@ class RemoteComposeScreenshotTestRule(
         composeTestRule.verifyScreenshot(screenshotName, screenshotRule)
     }
 
-    private fun setContent(size: Size, content: @Composable @RemoteComposable () -> Unit) {
+    private fun setContent(
+        size: Size,
+        backgroundColor: Color?,
+        content: @Composable @RemoteComposable () -> Unit,
+    ) {
+        val boxModifier =
+            Modifier.width(size.width.dp)
+                .height(size.height.dp)
+                .then(
+                    if (backgroundColor != null) {
+                        Modifier.background(backgroundColor)
+                    } else {
+                        Modifier
+                    }
+                )
+                .testTag("playerRoot")
         composeTestRule.setContent {
-            Box(
-                modifier =
-                    Modifier.Companion.width(size.width.dp)
-                        .height(size.height.dp)
-                        .testTag("playerRoot")
-            ) {
-                val document: CoreDocument? by rememberRemoteDocument { content() }
-                document?.let {
-                    RemoteDocumentPlayer(it, size.width.toInt(), size.height.toInt(), debugMode = 1)
-                }
+            Box(modifier = boxModifier) {
+                val document: CoreDocument? by rememberRemoteDocument(content = content)
+                document?.let { RemoteDocumentPlayer(it, size) }
+            }
+        }
+    }
+
+    @Composable
+    private fun RemoteDocumentPlayer(document: CoreDocument, size: Size) {
+        when (targetPlayer) {
+            TargetPlayer.View -> {
+                ViewRemoteDocumentPlayer(
+                    document,
+                    size.width.toInt(),
+                    size.height.toInt(),
+                    debugMode = 1,
+                )
+            }
+
+            TargetPlayer.Compose -> {
+                ComposeRemoteDocumentPlayer(
+                    document,
+                    size.width.toInt(),
+                    size.height.toInt(),
+                    debugMode = 1,
+                )
             }
         }
     }

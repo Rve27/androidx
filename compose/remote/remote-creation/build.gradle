@@ -80,7 +80,6 @@ androidXMultiplatform {
                 implementation(project(":compose:remote:test-utils"))
                 implementation(project(":compose:remote:remote-player-view"))
                 implementation(project(":compose:ui:ui-test-junit4"))
-                implementation(project(":compose:ui:ui-test-manifest"))
             }
         }
     }
