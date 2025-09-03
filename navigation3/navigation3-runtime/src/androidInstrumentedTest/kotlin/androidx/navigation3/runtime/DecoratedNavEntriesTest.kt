@@ -32,7 +32,7 @@ import org.junit.runner.RunWith
 
 @LargeTest
 @RunWith(AndroidJUnit4::class)
-class DecoratedNavEntryProviderTest {
+class DecoratedNavEntriesTest {
     @get:Rule val composeTestRule = createComposeRule()
 
     @Test
