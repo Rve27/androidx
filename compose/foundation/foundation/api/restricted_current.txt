@@ -1315,6 +1315,7 @@ package androidx.compose.foundation.lazy.grid {
     property public boolean lastScrolledBackward;
     property public boolean lastScrolledForward;
     property @androidx.compose.runtime.annotation.FrequentlyChangingValue public androidx.compose.foundation.lazy.grid.LazyGridLayoutInfo layoutInfo;
+    property public androidx.compose.foundation.ScrollIndicatorState? scrollIndicatorState;
     field public static final androidx.compose.foundation.lazy.grid.LazyGridState.Companion Companion;
   }
 
