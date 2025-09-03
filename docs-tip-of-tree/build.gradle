@@ -440,7 +440,6 @@ dependencies {
     docs(project(":xr:glimmer:glimmer"))
     docs(project(":xr:runtime:runtime"))
     docs(project(":xr:runtime:runtime-manifest"))
-    docs(project(":xr:runtime:runtime-openxr"))
     docs(project(":xr:runtime:runtime-rxjava3"))
     docs(project(":xr:runtime:runtime-testing"))
     docs(project(":xr:scenecore:scenecore"))
