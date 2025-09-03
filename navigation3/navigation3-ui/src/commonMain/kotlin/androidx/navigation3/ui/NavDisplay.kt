@@ -50,10 +50,9 @@ import androidx.navigation3.ui.NavDisplay.PREDICTIVE_POP_TRANSITION_SPEC
 import androidx.navigation3.ui.NavDisplay.TRANSITION_SPEC
 import androidx.navigationevent.NavigationEventState.InProgress
 import androidx.navigationevent.NavigationEventSwipeEdge
-import androidx.navigationevent.compose.NavigationEventHandler
+import androidx.navigationevent.compose.NavigationBackHandler
 import androidx.navigationevent.compose.rememberNavigationEventState
 import kotlin.reflect.KClass
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 
@@ -212,20 +211,32 @@ public fun <T : Any> NavDisplay(
                 else -> NavigationEventSwipeEdge.None
             }
 
-        NavigationEventHandler(
-            currentInfo = currentInfo,
-            previousInfo = NavDisplayInfo(scene.previousEntries.fastMap { it.contentKey }),
-            enabled = scene.previousEntries.isNotEmpty(),
-        ) { progress ->
-            progress.collect()
-
-            // If `enabled` becomes stale (e.g., it was set to false but a gesture was
-            // dispatched in the same frame), this ensures that the calculated index is valid
-            // before calling onBack, avoiding IndexOutOfBoundsException in edge cases.
-            if (entries.size > scene.previousEntries.size) {
-                onBack(entries.size - scene.previousEntries.size)
+        // TODO(mgalhardo): Replace with SceneController API once available. It will expose "back
+        //  visible entries" directly, so this manual calculation can be removed.
+        val previousVisibleEntries =
+            if (scene.previousEntries.isEmpty()) {
+                // Avoid calling calculateScene on an empty list (it throws).
+                emptyList()
+            } else {
+                sceneStrategy
+                    .calculateSceneWithSinglePaneFallback(scene.previousEntries, onBack)
+                    .entries // From previousEntries passed into the calculation.
+                    .fastMap { it.contentKey }
             }
-        }
+
+        NavigationBackHandler(
+            currentInfo = currentInfo,
+            backInfo = listOf(NavDisplayInfo(visibleEntries = previousVisibleEntries)),
+            isBackEnabled = scene.previousEntries.isNotEmpty(),
+            onBackCompleted = {
+                // If `enabled` becomes stale (e.g., it was set to false but a gesture was
+                // dispatched in the same frame), this ensures that the calculated index is valid
+                // before calling onBack, avoiding IndexOutOfBoundsException in edge cases.
+                if (entries.size > scene.previousEntries.size) {
+                    onBack(entries.size - scene.previousEntries.size)
+                }
+            },
+        )
 
         // Scene Handling
         val sceneKey = scene::class to scene.key
