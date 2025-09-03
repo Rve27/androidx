@@ -138,6 +138,7 @@ package androidx.compose.ui {
     property public boolean areWindowInsetsRulersEnabled;
     property public boolean isAdaptiveRefreshRateEnabled;
     property public boolean isBypassUnfocusableComposeViewEnabled;
+    property public boolean isCanScrollUsingLastDownEventFixEnabled;
     property public boolean isClearFocusOnPointerDownEnabled;
     property @Deprecated public boolean isClearFocusOnResetEnabled;
     property public boolean isContentCaptureOptimizationEnabled;
@@ -159,6 +160,7 @@ package androidx.compose.ui {
     field public static boolean areWindowInsetsRulersEnabled;
     field public static boolean isAdaptiveRefreshRateEnabled;
     field public static boolean isBypassUnfocusableComposeViewEnabled;
+    field public static boolean isCanScrollUsingLastDownEventFixEnabled;
     field public static boolean isClearFocusOnPointerDownEnabled;
     field @Deprecated public static boolean isClearFocusOnResetEnabled;
     field public static boolean isContentCaptureOptimizationEnabled;

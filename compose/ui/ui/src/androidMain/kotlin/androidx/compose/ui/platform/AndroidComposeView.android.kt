@@ -53,7 +53,6 @@ import android.view.MotionEvent.ACTION_UP
 import android.view.MotionEvent.TOOL_TYPE_MOUSE
 import android.view.ScrollCaptureTarget
 import android.view.View
-import android.view.View.FOCUS_FORWARD
 import android.view.ViewGroup
 import android.view.ViewStructure
 import android.view.ViewTreeObserver
@@ -84,6 +83,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.Snapshot
 import androidx.compose.ui.ComposeUiFlags
 import androidx.compose.ui.ComposeUiFlags.isAdaptiveRefreshRateEnabled
+import androidx.compose.ui.ComposeUiFlags.isCanScrollUsingLastDownEventFixEnabled
 import androidx.compose.ui.ComposeUiFlags.isIndirectTouchNavigationGestureDetectorEnabled
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.ExperimentalIndirectTouchTypeApi
@@ -2625,13 +2625,14 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
         }
     }
 
-    @OptIn(InternalCoreApi::class)
+    @OptIn(InternalCoreApi::class, ExperimentalComposeUiApi::class)
     private fun sendMotionEvent(motionEvent: MotionEvent): ProcessResult {
         if (keyboardModifiersRequireUpdate) {
             keyboardModifiersRequireUpdate = false
             _windowInfo.keyboardModifiers = PointerKeyboardModifiers(motionEvent.metaState)
         }
         val pointerInputEvent = motionEventAdapter.convertToPointerInputEvent(motionEvent, this)
+        val action = motionEvent.actionMasked
         return if (pointerInputEvent != null) {
             // Cache the last position of the last pointer to go down so we can check if
             // it's in a scrollable region in canScroll{Vertically|Horizontally}. Those
@@ -2639,7 +2640,12 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
             // this view, the pointer _position_, not _positionOnScreen_, is the offset that
             // needs to be cached.
             pointerInputEvent.pointers
-                .fastLastOrNull { it.down }
+                .fastLastOrNull {
+                    it.down &&
+                        (action == ACTION_DOWN ||
+                            action == ACTION_POINTER_DOWN ||
+                            !isCanScrollUsingLastDownEventFixEnabled)
+                }
                 ?.position
                 ?.let { lastDownPointerPosition = it }
 
@@ -2647,7 +2653,7 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
                 pointerInputEventProcessor.process(pointerInputEvent, this, isInBounds(motionEvent))
             // Clear the MotionEvent reference after dispatching it.
             pointerInputEvent.motionEvent = null
-            val action = motionEvent.actionMasked
+
             if (
                 (action == ACTION_DOWN || action == ACTION_POINTER_DOWN) &&
                     !result.dispatchedToAPointerInputModifier
