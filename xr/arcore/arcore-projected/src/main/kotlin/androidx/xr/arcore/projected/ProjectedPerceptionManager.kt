@@ -21,6 +21,7 @@ import androidx.xr.arcore.internal.Anchor
 import androidx.xr.arcore.internal.ArDevice
 import androidx.xr.arcore.internal.DepthMap
 import androidx.xr.arcore.internal.Earth
+import androidx.xr.arcore.internal.Eye
 import androidx.xr.arcore.internal.Face
 import androidx.xr.arcore.internal.Hand
 import androidx.xr.arcore.internal.HitResult
@@ -134,6 +135,20 @@ internal constructor(private val timeSource: ProjectedTimeSource) : PerceptionMa
     }
 
     override val trackables: Collection<Trackable> = emptyList()
+
+    /**
+     * Returns the left eye.
+     *
+     * Projected does not support eye tracking, so this property is always null.
+     */
+    override val leftEye: Eye? = null
+
+    /**
+     * Returns the right eye.
+     *
+     * Projected does not supppot eye tracking, so this property is always null.
+     */
+    override val rightEye: Eye? = null
 
     /**
      * Returns the left hand.

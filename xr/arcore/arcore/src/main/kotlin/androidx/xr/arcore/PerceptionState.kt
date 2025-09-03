@@ -16,6 +16,7 @@
 
 package androidx.xr.arcore
 
+import androidx.annotation.RestrictTo
 import androidx.xr.runtime.CoreState
 import kotlin.time.ComparableTimeMark
 
@@ -44,6 +45,8 @@ internal constructor(
     public val rightDepthMap: DepthMap?,
     public val monoDepthMap: DepthMap?,
     public val userFace: Face?,
+    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val leftEye: Eye?,
+    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val rightEye: Eye?,
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -60,6 +63,8 @@ internal constructor(
         if (rightDepthMap != other.rightDepthMap) return false
         if (monoDepthMap != other.monoDepthMap) return false
         if (userFace != other.userFace) return false
+        if (leftEye != other.leftEye) return false
+        if (rightEye != other.rightEye) return false
         return true
     }
 

@@ -27,11 +27,11 @@ package androidx.xr.runtime {
     ctor public Config(optional androidx.xr.runtime.Config.PlaneTrackingMode planeTracking, optional androidx.xr.runtime.Config.HandTrackingMode handTracking, optional androidx.xr.runtime.Config.HeadTrackingMode headTracking, optional androidx.xr.runtime.Config.DepthEstimationMode depthEstimation);
     ctor public Config(optional androidx.xr.runtime.Config.PlaneTrackingMode planeTracking, optional androidx.xr.runtime.Config.HandTrackingMode handTracking, optional androidx.xr.runtime.Config.HeadTrackingMode headTracking, optional androidx.xr.runtime.Config.DepthEstimationMode depthEstimation, optional androidx.xr.runtime.Config.AnchorPersistenceMode anchorPersistence);
     ctor public Config(optional androidx.xr.runtime.Config.PlaneTrackingMode planeTracking, optional androidx.xr.runtime.Config.HandTrackingMode handTracking, optional androidx.xr.runtime.Config.HeadTrackingMode headTracking, optional androidx.xr.runtime.Config.DepthEstimationMode depthEstimation, optional androidx.xr.runtime.Config.AnchorPersistenceMode anchorPersistence, optional androidx.xr.runtime.Config.FaceTrackingMode faceTracking);
-    ctor @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public Config(optional androidx.xr.runtime.Config.PlaneTrackingMode planeTracking, optional java.util.List<androidx.xr.runtime.AugmentedObjectCategory> augmentedObjectCategories, optional androidx.xr.runtime.Config.HandTrackingMode handTracking, optional androidx.xr.runtime.Config.DeviceTrackingMode deviceTracking, optional androidx.xr.runtime.Config.DepthEstimationMode depthEstimation, optional androidx.xr.runtime.Config.AnchorPersistenceMode anchorPersistence, optional androidx.xr.runtime.Config.FaceTrackingMode faceTracking, optional androidx.xr.runtime.Config.GeospatialMode geospatial);
+    ctor @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public Config(optional androidx.xr.runtime.Config.PlaneTrackingMode planeTracking, optional java.util.List<androidx.xr.runtime.AugmentedObjectCategory> augmentedObjectCategories, optional androidx.xr.runtime.Config.HandTrackingMode handTracking, optional androidx.xr.runtime.Config.DeviceTrackingMode deviceTracking, optional androidx.xr.runtime.Config.DepthEstimationMode depthEstimation, optional androidx.xr.runtime.Config.AnchorPersistenceMode anchorPersistence, optional androidx.xr.runtime.Config.FaceTrackingMode faceTracking, optional androidx.xr.runtime.Config.GeospatialMode geospatial, optional androidx.xr.runtime.Config.EyeTrackingMode eyeTracking);
     method public androidx.xr.runtime.Config copy();
     method public androidx.xr.runtime.Config copy(optional androidx.xr.runtime.Config.PlaneTrackingMode planeTracking);
     method public androidx.xr.runtime.Config copy(optional androidx.xr.runtime.Config.PlaneTrackingMode planeTracking, optional androidx.xr.runtime.Config.HandTrackingMode handTracking);
-    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public androidx.xr.runtime.Config copy(optional androidx.xr.runtime.Config.PlaneTrackingMode planeTracking, optional androidx.xr.runtime.Config.HandTrackingMode handTracking, optional androidx.xr.runtime.Config.DeviceTrackingMode deviceTracking, optional androidx.xr.runtime.Config.DepthEstimationMode depthEstimation, optional androidx.xr.runtime.Config.AnchorPersistenceMode anchorPersistence, optional androidx.xr.runtime.Config.FaceTrackingMode faceTracking, optional androidx.xr.runtime.Config.GeospatialMode geospatial, optional java.util.List<androidx.xr.runtime.AugmentedObjectCategory> augmentedObjectCategories);
+    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public androidx.xr.runtime.Config copy(optional androidx.xr.runtime.Config.PlaneTrackingMode planeTracking, optional androidx.xr.runtime.Config.HandTrackingMode handTracking, optional androidx.xr.runtime.Config.DeviceTrackingMode deviceTracking, optional androidx.xr.runtime.Config.DepthEstimationMode depthEstimation, optional androidx.xr.runtime.Config.AnchorPersistenceMode anchorPersistence, optional androidx.xr.runtime.Config.FaceTrackingMode faceTracking, optional androidx.xr.runtime.Config.GeospatialMode geospatial, optional java.util.List<androidx.xr.runtime.AugmentedObjectCategory> augmentedObjectCategories, optional androidx.xr.runtime.Config.EyeTrackingMode eyeTracking);
     method public androidx.xr.runtime.Config copy(optional androidx.xr.runtime.Config.PlaneTrackingMode planeTracking, optional androidx.xr.runtime.Config.HandTrackingMode handTracking, optional androidx.xr.runtime.Config.HeadTrackingMode headTracking);
     method public androidx.xr.runtime.Config copy(optional androidx.xr.runtime.Config.PlaneTrackingMode planeTracking, optional androidx.xr.runtime.Config.HandTrackingMode handTracking, optional androidx.xr.runtime.Config.HeadTrackingMode headTracking, optional androidx.xr.runtime.Config.DepthEstimationMode depthEstimation);
     method public androidx.xr.runtime.Config copy(optional androidx.xr.runtime.Config.PlaneTrackingMode planeTracking, optional androidx.xr.runtime.Config.HandTrackingMode handTracking, optional androidx.xr.runtime.Config.HeadTrackingMode headTracking, optional androidx.xr.runtime.Config.DepthEstimationMode depthEstimation, optional androidx.xr.runtime.Config.AnchorPersistenceMode anchorPersistence);
@@ -39,6 +39,7 @@ package androidx.xr.runtime {
     method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public java.util.List<androidx.xr.runtime.AugmentedObjectCategory> getAugmentedObjectCategories();
     method public androidx.xr.runtime.Config.DepthEstimationMode getDepthEstimation();
     method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public androidx.xr.runtime.Config.DeviceTrackingMode getDeviceTracking();
+    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public androidx.xr.runtime.Config.EyeTrackingMode getEyeTracking();
     method public androidx.xr.runtime.Config.FaceTrackingMode getFaceTracking();
     method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public androidx.xr.runtime.Config.GeospatialMode getGeospatial();
     method public androidx.xr.runtime.Config.HandTrackingMode getHandTracking();
@@ -48,6 +49,7 @@ package androidx.xr.runtime {
     property @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public java.util.List<androidx.xr.runtime.AugmentedObjectCategory> augmentedObjectCategories;
     property public androidx.xr.runtime.Config.DepthEstimationMode depthEstimation;
     property @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public androidx.xr.runtime.Config.DeviceTrackingMode deviceTracking;
+    property @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public androidx.xr.runtime.Config.EyeTrackingMode eyeTracking;
     property public androidx.xr.runtime.Config.FaceTrackingMode faceTracking;
     property @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public androidx.xr.runtime.Config.GeospatialMode geospatial;
     property public androidx.xr.runtime.Config.HandTrackingMode handTracking;
@@ -97,6 +99,27 @@ package androidx.xr.runtime {
   public static final class Config.DeviceTrackingMode.Companion {
     property public androidx.xr.runtime.Config.DeviceTrackingMode DISABLED;
     property public androidx.xr.runtime.Config.DeviceTrackingMode LAST_KNOWN;
+  }
+
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static final class Config.EyeTrackingMode {
+    method public int getMode();
+    method public boolean isCoarseTrackingEnabled();
+    method public boolean isFineTrackingEnabled();
+    property public boolean isCoarseTrackingEnabled;
+    property public boolean isFineTrackingEnabled;
+    property public int mode;
+    field public static final androidx.xr.runtime.Config.EyeTrackingMode COARSE_AND_FINE_TRACKING;
+    field public static final androidx.xr.runtime.Config.EyeTrackingMode COARSE_TRACKING;
+    field public static final androidx.xr.runtime.Config.EyeTrackingMode.Companion Companion;
+    field public static final androidx.xr.runtime.Config.EyeTrackingMode DISABLED;
+    field public static final androidx.xr.runtime.Config.EyeTrackingMode FINE_TRACKING;
+  }
+
+  public static final class Config.EyeTrackingMode.Companion {
+    property public androidx.xr.runtime.Config.EyeTrackingMode COARSE_AND_FINE_TRACKING;
+    property public androidx.xr.runtime.Config.EyeTrackingMode COARSE_TRACKING;
+    property public androidx.xr.runtime.Config.EyeTrackingMode DISABLED;
+    property public androidx.xr.runtime.Config.EyeTrackingMode FINE_TRACKING;
   }
 
   public static final class Config.FaceTrackingMode {

@@ -48,6 +48,8 @@ constructor(
     public val faceTracking: FaceTrackingMode = FaceTrackingMode.DISABLED,
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
     public val geospatial: GeospatialMode = GeospatialMode.DISABLED,
+    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
+    public val eyeTracking: EyeTrackingMode = EyeTrackingMode.DISABLED,
 ) {
 
     /**
@@ -87,6 +89,7 @@ constructor(
         anchorPersistence,
         faceTracking,
         geospatial = GeospatialMode.DISABLED,
+        eyeTracking = EyeTrackingMode.DISABLED,
     )
 
     /** Feature that allows tracking of the user's head position. See [Config.HeadTrackingMode]. */
@@ -104,6 +107,7 @@ constructor(
         if (faceTracking != other.faceTracking) return false
         if (geospatial != other.geospatial) return false
         if (augmentedObjectCategories != other.augmentedObjectCategories) return false
+        if (eyeTracking != other.eyeTracking) return false
 
         return true
     }
@@ -117,6 +121,7 @@ constructor(
         result = 31 * result + faceTracking.hashCode()
         result = 31 * result + geospatial.hashCode()
         result = 31 * result + augmentedObjectCategories.hashCode()
+        result = 31 * result + eyeTracking.hashCode()
         return result
     }
 
@@ -137,6 +142,7 @@ constructor(
             anchorPersistence = anchorPersistence,
             faceTracking = this.faceTracking,
             geospatial = this.geospatial,
+            eyeTracking = this.eyeTracking,
         )
     }
 
@@ -151,6 +157,7 @@ constructor(
         faceTracking: FaceTrackingMode = this.faceTracking,
         geospatial: GeospatialMode = this.geospatial,
         augmentedObjectCategories: List<AugmentedObjectCategory> = this.augmentedObjectCategories,
+        eyeTracking: EyeTrackingMode = this.eyeTracking,
     ): Config {
         return Config(
             planeTracking = planeTracking,
@@ -161,6 +168,7 @@ constructor(
             anchorPersistence = anchorPersistence,
             faceTracking = faceTracking,
             geospatial = geospatial,
+            eyeTracking = eyeTracking,
         )
     }
 
@@ -433,5 +441,33 @@ constructor(
              */
             @JvmField public val EARTH: GeospatialMode = GeospatialMode(1)
         }
+    }
+
+    /**
+     * Feature that allows tracking of the user's eyes.
+     *
+     * Setting this feature to any mode other than [EyeTrackingMode.DISABLED] requires that the
+     * `EYE_TRACKING` Android permission is granted by the calling application.
+     */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
+    public class EyeTrackingMode private constructor(public val mode: Int) {
+        public companion object {
+            /** Eye tracking is disabled. */
+            @JvmField public val DISABLED: EyeTrackingMode = EyeTrackingMode(0)
+            /**
+             * Enables coarse eye tracking, providing general gaze direction without high precision.
+             */
+            @JvmField public val COARSE_TRACKING: EyeTrackingMode = EyeTrackingMode(1)
+            /** Enables fine eye tracking, providing more precise gaze direction. */
+            @JvmField public val FINE_TRACKING: EyeTrackingMode = EyeTrackingMode(2)
+            /** Enables both coarse and fine eye tracking. */
+            @JvmField public val COARSE_AND_FINE_TRACKING: EyeTrackingMode = EyeTrackingMode(3)
+        }
+
+        public val isCoarseTrackingEnabled: Boolean
+            get() = this == COARSE_TRACKING || this == COARSE_AND_FINE_TRACKING
+
+        public val isFineTrackingEnabled: Boolean
+            get() = this == FINE_TRACKING || this == COARSE_AND_FINE_TRACKING
     }
 }

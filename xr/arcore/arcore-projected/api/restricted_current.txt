@@ -36,12 +36,14 @@ package androidx.xr.arcore.projected {
     method public androidx.xr.arcore.internal.ArDevice getArDevice();
     method public androidx.xr.arcore.internal.Earth getEarth();
     method public androidx.xr.arcore.internal.DepthMap? getLeftDepthMap();
+    method public androidx.xr.arcore.internal.Eye? getLeftEye();
     method public androidx.xr.arcore.internal.Hand? getLeftHand();
     method public androidx.xr.arcore.projected.ProjectedRuntimeRenderViewpoint? getLeftRenderViewpoint();
     method public androidx.xr.arcore.internal.DepthMap? getMonoDepthMap();
     method public androidx.xr.arcore.projected.ProjectedRuntimeRenderViewpoint? getMonoRenderViewpoint();
     method public java.util.List<java.util.UUID> getPersistedAnchorUuids();
     method public androidx.xr.arcore.internal.DepthMap? getRightDepthMap();
+    method public androidx.xr.arcore.internal.Eye? getRightEye();
     method public androidx.xr.arcore.internal.Hand? getRightHand();
     method public androidx.xr.arcore.projected.ProjectedRuntimeRenderViewpoint? getRightRenderViewpoint();
     method public java.util.Collection<androidx.xr.arcore.internal.Trackable> getTrackables();
@@ -54,11 +56,13 @@ package androidx.xr.arcore.projected {
     property public androidx.xr.arcore.internal.ArDevice arDevice;
     property public androidx.xr.arcore.internal.Earth earth;
     property public androidx.xr.arcore.internal.DepthMap? leftDepthMap;
+    property public androidx.xr.arcore.internal.Eye? leftEye;
     property public androidx.xr.arcore.internal.Hand? leftHand;
     property public androidx.xr.arcore.projected.ProjectedRuntimeRenderViewpoint? leftRenderViewpoint;
     property public androidx.xr.arcore.internal.DepthMap? monoDepthMap;
     property public androidx.xr.arcore.projected.ProjectedRuntimeRenderViewpoint? monoRenderViewpoint;
     property public androidx.xr.arcore.internal.DepthMap? rightDepthMap;
+    property public androidx.xr.arcore.internal.Eye? rightEye;
     property public androidx.xr.arcore.internal.Hand? rightHand;
     property public androidx.xr.arcore.projected.ProjectedRuntimeRenderViewpoint? rightRenderViewpoint;
     property public java.util.Collection<androidx.xr.arcore.internal.Trackable> trackables;
