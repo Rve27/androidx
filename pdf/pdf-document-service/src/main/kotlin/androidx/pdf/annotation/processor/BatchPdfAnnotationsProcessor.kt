@@ -119,8 +119,7 @@ public class BatchPdfAnnotationsProcessor(private val remoteDocument: PdfDocumen
          * @param maxSizeInBytes max size limit for each sublist
          * @return 2D list divided into list of sublists
          */
-        @VisibleForTesting
-        internal fun <T : Parcelable> List<T>.unflatten(maxSizeInBytes: Int): List<List<T>> {
+        public fun <T : Parcelable> List<T>.unflatten(maxSizeInBytes: Int): List<List<T>> {
             return this.fold(emptyList()) { acc, edits ->
                 val lastSublist = acc.lastOrNull() ?: listOf()
                 val editsSize = edits.parcelSizeInBytes()
