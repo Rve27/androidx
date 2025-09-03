@@ -14,27 +14,16 @@
  * limitations under the License.
  */
 
-package androidx.xr.runtime.internal
+package androidx.xr.scenecore.testing
 
 import androidx.annotation.RestrictTo
 import androidx.xr.runtime.NodeHolder
 
-/**
- * Defines the internal rendering implementation for an entity.
- *
- * This feature provides the rendering logic and manages the underlying extension node and its
- * associated resources. An instance of a `RenderingFeature` is injected into an entity that
- * requires rendering API support.
- */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-// TODO(b/3725226) - Move this into scenecore module.
-public interface RenderingFeature {
-    /** Holds the underlying extension Node for the corresponding entity's creation. */
-    public val nodeHolder: NodeHolder<*>
+/** Test-only interface for XrExtensions Node. */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface FakeNode
 
-    /**
-     * Disposes the resources used by the feature. This is called by the corresponding entity's
-     * dispose method.
-     */
-    public fun dispose()
+/** Test-only interface for Impress SubspaceNode. */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
+public interface FakeSubspaceNode {
+    public val nodeHolder: NodeHolder<*>
 }

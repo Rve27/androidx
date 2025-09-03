@@ -466,12 +466,6 @@ package androidx.xr.runtime.internal {
     method public androidx.xr.runtime.internal.JxrRuntime createRuntime(android.app.Activity activity, kotlin.coroutines.CoroutineContext coroutineContext);
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface RenderingFeature {
-    method public void dispose();
-    method public androidx.xr.runtime.NodeHolder<? extends java.lang.Object?> getNodeHolder();
-    property public abstract androidx.xr.runtime.NodeHolder<? extends java.lang.Object?> nodeHolder;
-  }
-
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface RenderingRuntimeFactory extends androidx.xr.runtime.internal.Service {
     method public androidx.xr.runtime.internal.JxrRuntime create(java.util.List<? extends androidx.xr.runtime.internal.JxrRuntime> runtimes, android.app.Activity activity);
   }

@@ -14,18 +14,26 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.testing
+package androidx.xr.scenecore.internal
 
 import androidx.annotation.RestrictTo
 import androidx.xr.runtime.NodeHolder
-import androidx.xr.scenecore.internal.RenderingFeature
 
-/** Test-only implementation of [RenderingFeature] */
+/**
+ * Defines the internal rendering implementation for an entity.
+ *
+ * This feature provides the rendering logic and manages the underlying extension node and its
+ * associated resources. An instance of a `RenderingFeature` is injected into an entity that
+ * requires rendering API support.
+ */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public open class FakeBaseRenderingFeature(private val _nodeHolder: NodeHolder<*>) :
-    RenderingFeature {
+public interface RenderingFeature {
+    /** Return the holder of underlying extension Node for the corresponding entity's creation. */
+    public fun getNodeHolder(): NodeHolder<*>
 
-    override fun getNodeHolder(): NodeHolder<*> = _nodeHolder
-
-    override fun dispose() {}
+    /**
+     * Disposes the resources used by the feature. This is called by the corresponding entity's
+     * dispose method.
+     */
+    public fun dispose()
 }
