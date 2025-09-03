@@ -632,6 +632,7 @@ public class FakeCamera implements CameraInternal {
      * Returns true if {@link #onRemoved()} has been called on this instance.
      */
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    @Override
     public boolean isRemoved() {
         return mIsRemoved;
     }
