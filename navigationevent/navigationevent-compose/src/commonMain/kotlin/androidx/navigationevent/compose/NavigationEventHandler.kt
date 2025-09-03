@@ -155,7 +155,7 @@ public fun NavigationEventHandler(
 @Composable
 public fun <T : NavigationEventInfo> NavigationEventHandler(
     currentInfo: T,
-    previousInfo: T?,
+    previousInfo: T?, // TODO(mgalhardo): replace by back/forward info.
     enabled: Boolean = true,
     onEvent: suspend (progress: Flow<NavigationEvent>) -> Unit,
 ) {
@@ -171,7 +171,10 @@ public fun <T : NavigationEventInfo> NavigationEventHandler(
     SideEffect {
         navEventCallBack.currentOnBack = currentOnBack
         navEventCallBack.onBackScope = navEventScope
-        navEventCallBack.setInfo(currentInfo, previousInfo)
+        navEventCallBack.setInfo(
+            currentInfo = currentInfo,
+            backInfo = if (previousInfo == null) emptyList() else listOf(previousInfo),
+        )
     }
 
     LaunchedEffect(enabled) { navEventCallBack.setIsEnabled(enabled) }

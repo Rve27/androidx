@@ -43,7 +43,8 @@ public fun TestNavigationEventCallback(
 ): TestNavigationEventCallback<*> {
     return TestNavigationEventCallback(
         currentInfo = NavigationEventInfo.NotProvided,
-        previousInfo = null,
+        backInfo = emptyList(),
+        forwardInfo = emptyList(),
         // ---- Back Events ----
         isBackEnabled = isBackEnabled,
         onBackStarted = onBackStarted,
@@ -67,9 +68,10 @@ public fun TestNavigationEventCallback(
  * triggered as expected. It captures the [NavigationEvent] objects and counts how many times each
  * callback is fired.
  *
- * @param T The type of [NavigationEventInfo] this callback handles.
- * @param currentInfo The initial **current** navigation information for the callback.
- * @param previousInfo The initial **previous** navigation information. Defaults to `null`.
+ * @param T The [NavigationEventInfo] type this callback handles.
+ * @param currentInfo Initial current navigation info.
+ * @param backInfo Initial back stack info list. Defaults to empty.
+ * @param forwardInfo Initial forward stack info list. Defaults to empty.
  * @param isForwardEnabled Determines if forward callbacks should process events. Defaults to
  *   `true`.
  * @param onForwardStarted Optional lambda to execute when `onForwardStarted` is called.
@@ -84,7 +86,8 @@ public fun TestNavigationEventCallback(
  */
 public class TestNavigationEventCallback<T : NavigationEventInfo>(
     currentInfo: T,
-    previousInfo: T? = null,
+    backInfo: List<T> = emptyList(),
+    forwardInfo: List<T> = emptyList(),
     // ---- Forward Events ----
     isForwardEnabled: Boolean = true,
     private val onForwardStarted: TestNavigationEventCallback<T>.(event: NavigationEvent) -> Unit =
@@ -104,7 +107,7 @@ public class TestNavigationEventCallback<T : NavigationEventInfo>(
 ) : NavigationEventCallback<T>(isBackEnabled, isForwardEnabled) {
 
     init {
-        setInfo(currentInfo = currentInfo, previousInfo = previousInfo)
+        setInfo(currentInfo = currentInfo, backInfo = backInfo, forwardInfo = forwardInfo)
     }
 
     // ---- Back Events ----

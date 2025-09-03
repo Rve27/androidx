@@ -45,7 +45,7 @@ package androidx.navigationevent {
     method public final void remove();
     method public final void setBackEnabled(boolean);
     method public final void setForwardEnabled(boolean);
-    method public final void setInfo(T currentInfo, T? previousInfo);
+    method public final void setInfo(T currentInfo, optional java.util.List<? extends T> backInfo, optional java.util.List<? extends T> forwardInfo);
     property public final boolean isBackEnabled;
     property public final boolean isForwardEnabled;
   }
@@ -108,25 +108,35 @@ package androidx.navigationevent {
   }
 
   public abstract sealed class NavigationEventState<T extends androidx.navigationevent.NavigationEventInfo> {
+    method public abstract java.util.List<T> getBackInfo();
     method public abstract T getCurrentInfo();
+    method public abstract java.util.List<T> getForwardInfo();
     method public final float getProgress();
+    property public abstract java.util.List<T> backInfo;
     property public abstract T currentInfo;
+    property public abstract java.util.List<T> forwardInfo;
     property public final float progress;
   }
 
   public static final class NavigationEventState.Idle<T extends androidx.navigationevent.NavigationEventInfo> extends androidx.navigationevent.NavigationEventState<T> {
-    ctor @kotlin.PublishedApi internal NavigationEventState.Idle(T currentInfo);
+    ctor @kotlin.PublishedApi internal NavigationEventState.Idle(T currentInfo, optional java.util.List<? extends T> backInfo, optional java.util.List<? extends T> forwardInfo);
+    method public java.util.List<T> getBackInfo();
     method public T getCurrentInfo();
+    method public java.util.List<T> getForwardInfo();
+    property public java.util.List<T> backInfo;
     property public T currentInfo;
+    property public java.util.List<T> forwardInfo;
   }
 
   public static final class NavigationEventState.InProgress<T extends androidx.navigationevent.NavigationEventInfo> extends androidx.navigationevent.NavigationEventState<T> {
+    method public java.util.List<T> getBackInfo();
     method public T getCurrentInfo();
+    method public java.util.List<T> getForwardInfo();
     method public androidx.navigationevent.NavigationEvent getLatestEvent();
-    method public T? getPreviousInfo();
+    property public java.util.List<T> backInfo;
     property public T currentInfo;
+    property public java.util.List<T> forwardInfo;
     property public androidx.navigationevent.NavigationEvent latestEvent;
-    property public T? previousInfo;
   }
 
   @kotlin.jvm.JvmInline public final value class NavigationEventSwipeEdge {

@@ -609,7 +609,7 @@ class NavigationEventDispatcherTest {
         assertThat(dispatcher.state.value).isEqualTo(Idle(HomeScreenInfo("initial")))
 
         // Calling setInfo on the active callback should immediately update the dispatcher's state.
-        callback.setInfo(currentInfo = HomeScreenInfo("updated"), previousInfo = null)
+        callback.setInfo(currentInfo = HomeScreenInfo("updated"))
 
         assertThat(dispatcher.state.value).isEqualTo(Idle(HomeScreenInfo("updated")))
     }
@@ -627,7 +627,7 @@ class NavigationEventDispatcherTest {
         assertThat(dispatcher.state.value).isEqualTo(Idle(DetailsScreenInfo("details")))
 
         // Calling setInfo on an inactive callback should NOT affect the global state.
-        homeCallback.setInfo(currentInfo = HomeScreenInfo("home-updated"), previousInfo = null)
+        homeCallback.setInfo(currentInfo = HomeScreenInfo("home-updated"))
 
         // The state should remain unchanged because the update came from a non-active callback.
         assertThat(dispatcher.state.value).isEqualTo(Idle(DetailsScreenInfo("details")))
@@ -650,7 +650,7 @@ class NavigationEventDispatcherTest {
         input.start(startEvent)
         var state = dispatcher.state.value as InProgress
         assertThat(state.currentInfo).isEqualTo(callbackInfo)
-        assertThat(state.previousInfo).isNull()
+        assertThat(state.backInfo).isEmpty()
         assertThat(state.latestEvent).isEqualTo(startEvent)
 
         // Progressing the gesture should keep it InProgress but update to the latest event.
@@ -677,7 +677,8 @@ class NavigationEventDispatcherTest {
 
         // Starting a gesture moves the state to InProgress.
         input.start(startEvent)
-        assertThat(dispatcher.state.value).isEqualTo(InProgress(callbackInfo, null, startEvent))
+        assertThat(dispatcher.state.value)
+            .isEqualTo(InProgress(currentInfo = callbackInfo, latestEvent = startEvent))
 
         // Cancelling the gesture should also return the state to Idle.
         input.cancel()
@@ -699,22 +700,23 @@ class NavigationEventDispatcherTest {
         // At the start, previousInfo is null.
         var state = dispatcher.state.value as InProgress
         assertThat(state.currentInfo).isEqualTo(firstInfo)
-        assertThat(state.previousInfo).isNull()
+        assertThat(state.backInfo).isEmpty()
         assertThat(state.latestEvent).isEqualTo(startEvent)
 
         // Update the info mid-gesture.
         val secondInfo = HomeScreenInfo("updated")
-        callback.setInfo(currentInfo = secondInfo, previousInfo = firstInfo)
+        callback.setInfo(currentInfo = secondInfo, backInfo = listOf(firstInfo))
 
         // The state should now reflect the updated info. The `previousInfo` is now captured.
         state = dispatcher.state.value as InProgress
         assertThat(state.currentInfo).isEqualTo(secondInfo)
-        assertThat(state.previousInfo).isEqualTo(firstInfo)
+        assertThat(state.backInfo).containsExactly(firstInfo)
         assertThat(state.latestEvent).isEqualTo(startEvent) // Event hasn't changed yet.
 
         // Complete the gesture.
         input.complete()
-        assertThat(dispatcher.state.value).isEqualTo(Idle(secondInfo))
+        assertThat(dispatcher.state.value)
+            .isEqualTo(Idle(currentInfo = secondInfo, backInfo = listOf(firstInfo)))
     }
 
     @Test
@@ -727,7 +729,7 @@ class NavigationEventDispatcherTest {
 
         // FIRST GESTURE: Create a complex state.
         input.start(NavigationEvent(touchX = 0.1f))
-        callback.setInfo(currentInfo = HomeScreenInfo("updated"), previousInfo = null)
+        callback.setInfo(currentInfo = HomeScreenInfo("updated"))
         input.complete()
 
         // After the first gesture, the final state is Idle with the updated info.
@@ -742,7 +744,7 @@ class NavigationEventDispatcherTest {
         // from a previous, completed gesture.
         val state = dispatcher.state.value as InProgress
         assertThat(state.currentInfo).isEqualTo(finalInfo)
-        assertThat(state.previousInfo).isNull()
+        assertThat(state.backInfo).isEmpty()
         assertThat(state.latestEvent).isEqualTo(event2)
     }
 
@@ -839,10 +841,7 @@ class NavigationEventDispatcherTest {
             assertThat(collectedStates).hasSize(1)
 
             // Update the non-matching callback's info.
-            detailsCallback.setInfo(
-                currentInfo = DetailsScreenInfo("details-updated"),
-                previousInfo = null,
-            )
+            detailsCallback.setInfo(currentInfo = DetailsScreenInfo("details-updated"))
             advanceUntilIdle()
 
             // The collector should still not have emitted a new value.

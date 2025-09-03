@@ -35,7 +35,7 @@ import kotlinx.coroutines.flow.update
 internal class NavigationEventProcessor {
 
     /** The private, mutable source of truth for the navigation state. */
-    internal val _state = MutableStateFlow<NavigationEventState<*>>(Idle(NotProvided))
+    internal val _state = MutableStateFlow<NavigationEventState<*>>(Idle(currentInfo = NotProvided))
 
     /**
      * The [StateFlow] from the highest-priority, enabled navigation callback.
@@ -154,11 +154,17 @@ internal class NavigationEventProcessor {
 
         _state.update { state ->
             when (state) {
-                is Idle -> Idle(callback.currentInfo ?: NotProvided)
+                is Idle ->
+                    Idle(
+                        currentInfo = callback.currentInfo ?: NotProvided,
+                        forwardInfo = callback.forwardInfo,
+                        backInfo = callback.backInfo,
+                    )
                 is InProgress ->
                     InProgress(
                         currentInfo = callback.currentInfo ?: NotProvided,
-                        previousInfo = callback.previousInfo,
+                        forwardInfo = callback.forwardInfo,
+                        backInfo = callback.backInfo,
                         latestEvent = state.latestEvent,
                     )
             }
@@ -287,7 +293,12 @@ internal class NavigationEventProcessor {
             inProgressCallback = callback
             callback.doOnBackStarted(event)
             _state.update {
-                InProgress(callback.currentInfo ?: NotProvided, callback.previousInfo, event)
+                InProgress(
+                    currentInfo = callback.currentInfo ?: NotProvided,
+                    forwardInfo = callback.forwardInfo,
+                    backInfo = callback.backInfo,
+                    latestEvent = event,
+                )
             }
         }
     }
@@ -319,7 +330,12 @@ internal class NavigationEventProcessor {
         if (callback != null) {
             callback.doOnBackProgressed(event)
             _state.update {
-                InProgress(callback.currentInfo ?: NotProvided, callback.previousInfo, event)
+                InProgress(
+                    currentInfo = callback.currentInfo ?: NotProvided,
+                    forwardInfo = callback.forwardInfo,
+                    backInfo = callback.backInfo,
+                    latestEvent = event,
+                )
             }
         }
     }
@@ -354,7 +370,13 @@ internal class NavigationEventProcessor {
             fallbackOnBackPressed?.invoke()
         } else {
             callback.doOnBackCompleted()
-            _state.update { Idle(callback.currentInfo ?: NotProvided) }
+            _state.update {
+                Idle(
+                    currentInfo = callback.currentInfo ?: NotProvided,
+                    forwardInfo = callback.forwardInfo,
+                    backInfo = callback.backInfo,
+                )
+            }
         }
     }
 
@@ -379,7 +401,13 @@ internal class NavigationEventProcessor {
 
         if (callback != null) {
             callback.doOnBackCancelled()
-            _state.update { Idle(callback.currentInfo ?: NotProvided) }
+            _state.update {
+                Idle(
+                    currentInfo = callback.currentInfo ?: NotProvided,
+                    forwardInfo = callback.forwardInfo,
+                    backInfo = callback.backInfo,
+                )
+            }
         }
     }
 
