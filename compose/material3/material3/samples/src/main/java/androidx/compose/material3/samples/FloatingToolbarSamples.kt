@@ -63,10 +63,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.datasource.LoremIpsum
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Preview
@@ -77,6 +79,23 @@ fun ExpandableHorizontalFloatingToolbarSample() {
     Scaffold(
         content = { innerPadding ->
             Box(Modifier.padding(innerPadding)) {
+                // The toolbar should receive focus before the screen content, so place it first.
+                // Make sure to set its zIndex so it's above the screen content visually.
+                HorizontalFloatingToolbar(
+                    modifier =
+                        Modifier.align(Alignment.BottomCenter).offset(y = -ScreenOffset).zIndex(1f),
+                    expanded = expanded,
+                    leadingContent = { LeadingContent() },
+                    trailingContent = { TrailingContent() },
+                    content = {
+                        FilledIconButton(
+                            modifier = Modifier.width(64.dp),
+                            onClick = { /* doSomething() */ },
+                        ) {
+                            Icon(Icons.Filled.Add, contentDescription = "Localized description")
+                        }
+                    },
+                )
                 LazyColumn(
                     // Apply a floatingToolbarVerticalNestedScroll Modifier toggle the expanded
                     // state of the HorizontalFloatingToolbar.
@@ -99,20 +118,6 @@ fun ExpandableHorizontalFloatingToolbarSample() {
                         )
                     }
                 }
-                HorizontalFloatingToolbar(
-                    modifier = Modifier.align(Alignment.BottomCenter).offset(y = -ScreenOffset),
-                    expanded = expanded,
-                    leadingContent = { LeadingContent() },
-                    trailingContent = { TrailingContent() },
-                    content = {
-                        FilledIconButton(
-                            modifier = Modifier.width(64.dp),
-                            onClick = { /* doSomething() */ },
-                        ) {
-                            Icon(Icons.Filled.Add, contentDescription = "Localized description")
-                        }
-                    },
-                )
             }
         }
     )
@@ -126,22 +131,11 @@ fun OverflowingHorizontalFloatingToolbarSample() {
     Scaffold(
         content = { innerPadding ->
             Box(Modifier.padding(innerPadding)) {
-                LazyColumn(
-                    state = rememberLazyListState(),
-                    contentPadding = innerPadding,
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    val list = (0..75).map { it.toString() }
-                    items(count = list.size) {
-                        Text(
-                            text = list[it],
-                            style = MaterialTheme.typography.bodyLarge,
-                            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                        )
-                    }
-                }
+                // The toolbar should receive focus before the screen content, so place it first.
+                // Make sure to set its zIndex so it's above the screen content visually.
                 HorizontalFloatingToolbar(
-                    modifier = Modifier.align(Alignment.BottomCenter).offset(y = -ScreenOffset),
+                    modifier =
+                        Modifier.align(Alignment.BottomCenter).offset(y = -ScreenOffset).zIndex(1f),
                     expanded = true,
                     leadingContent = { LeadingContent() },
                     trailingContent = {
@@ -224,6 +218,20 @@ fun OverflowingHorizontalFloatingToolbarSample() {
                         }
                     },
                 )
+                LazyColumn(
+                    state = rememberLazyListState(),
+                    contentPadding = innerPadding,
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    val list = (0..75).map { it.toString() }
+                    items(count = list.size) {
+                        Text(
+                            text = list[it],
+                            style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                        )
+                    }
+                }
             }
         }
     )
@@ -240,6 +248,24 @@ fun ScrollableHorizontalFloatingToolbarSample() {
         modifier = Modifier.nestedScroll(exitAlwaysScrollBehavior),
         content = { innerPadding ->
             Box(Modifier.padding(innerPadding)) {
+                // The toolbar should receive focus before the screen content, so place it first.
+                // Make sure to set its zIndex so it's above the screen content visually.
+                HorizontalFloatingToolbar(
+                    modifier =
+                        Modifier.align(Alignment.BottomCenter).offset(y = -ScreenOffset).zIndex(1f),
+                    expanded = true,
+                    leadingContent = { LeadingContent() },
+                    trailingContent = { TrailingContent() },
+                    content = {
+                        FilledIconButton(
+                            modifier = Modifier.width(64.dp),
+                            onClick = { /* doSomething() */ },
+                        ) {
+                            Icon(Icons.Filled.Add, contentDescription = "Localized description")
+                        }
+                    },
+                    scrollBehavior = exitAlwaysScrollBehavior,
+                )
                 LazyColumn(
                     state = rememberLazyListState(),
                     contentPadding = innerPadding,
@@ -254,21 +280,6 @@ fun ScrollableHorizontalFloatingToolbarSample() {
                         )
                     }
                 }
-                HorizontalFloatingToolbar(
-                    modifier = Modifier.align(Alignment.BottomCenter).offset(y = -ScreenOffset),
-                    expanded = true,
-                    leadingContent = { LeadingContent() },
-                    trailingContent = { TrailingContent() },
-                    content = {
-                        FilledIconButton(
-                            modifier = Modifier.width(64.dp),
-                            onClick = { /* doSomething() */ },
-                        ) {
-                            Icon(Icons.Filled.Add, contentDescription = "Localized description")
-                        }
-                    },
-                    scrollBehavior = exitAlwaysScrollBehavior,
-                )
             }
         },
     )
@@ -283,6 +294,23 @@ fun ExpandableVerticalFloatingToolbarSample() {
     Scaffold(
         content = { innerPadding ->
             Box(Modifier.padding(innerPadding)) {
+                // The toolbar should receive focus before the screen content for a11y, so place it
+                // first. Make sure to set its zIndex so it's above the screen content visually.
+                VerticalFloatingToolbar(
+                    modifier =
+                        Modifier.align(Alignment.CenterEnd).offset(x = -ScreenOffset).zIndex(1f),
+                    expanded = expanded,
+                    leadingContent = { LeadingContent() },
+                    trailingContent = { TrailingContent() },
+                    content = {
+                        FilledIconButton(
+                            modifier = Modifier.height(64.dp),
+                            onClick = { /* doSomething() */ },
+                        ) {
+                            Icon(Icons.Filled.Add, contentDescription = "Localized description")
+                        }
+                    },
+                )
                 LazyColumn(
                     // Apply a floatingToolbarVerticalNestedScroll Modifier toggle the expanded
                     // state of the HorizontalFloatingToolbar.
@@ -305,20 +333,6 @@ fun ExpandableVerticalFloatingToolbarSample() {
                         )
                     }
                 }
-                VerticalFloatingToolbar(
-                    modifier = Modifier.align(Alignment.CenterEnd).offset(x = -ScreenOffset),
-                    expanded = expanded,
-                    leadingContent = { LeadingContent() },
-                    trailingContent = { TrailingContent() },
-                    content = {
-                        FilledIconButton(
-                            modifier = Modifier.height(64.dp),
-                            onClick = { /* doSomething() */ },
-                        ) {
-                            Icon(Icons.Filled.Add, contentDescription = "Localized description")
-                        }
-                    },
-                )
             }
         }
     )
@@ -332,22 +346,11 @@ fun OverflowingVerticalFloatingToolbarSample() {
     Scaffold(
         content = { innerPadding ->
             Box(Modifier.padding(innerPadding)) {
-                LazyColumn(
-                    state = rememberLazyListState(),
-                    contentPadding = innerPadding,
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    val list = (0..75).map { it.toString() }
-                    items(count = list.size) {
-                        Text(
-                            text = list[it],
-                            style = MaterialTheme.typography.bodyLarge,
-                            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                        )
-                    }
-                }
+                // The toolbar should receive focus before the screen content for a11y, so place it
+                // first. Make sure to set its zIndex so it's above the screen content visually.
                 VerticalFloatingToolbar(
-                    modifier = Modifier.align(Alignment.CenterEnd).offset(x = -ScreenOffset),
+                    modifier =
+                        Modifier.align(Alignment.CenterEnd).offset(x = -ScreenOffset).zIndex(1f),
                     expanded = true,
                     leadingContent = { LeadingContent() },
                     trailingContent = {
@@ -430,6 +433,20 @@ fun OverflowingVerticalFloatingToolbarSample() {
                         }
                     },
                 )
+                LazyColumn(
+                    state = rememberLazyListState(),
+                    contentPadding = innerPadding,
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    val list = (0..75).map { it.toString() }
+                    items(count = list.size) {
+                        Text(
+                            text = list[it],
+                            style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                        )
+                    }
+                }
             }
         }
     )
@@ -446,6 +463,24 @@ fun ScrollableVerticalFloatingToolbarSample() {
         modifier = Modifier.nestedScroll(exitAlwaysScrollBehavior),
         content = { innerPadding ->
             Box(Modifier.padding(innerPadding)) {
+                // The toolbar should receive focus before the screen content for a11y, so place it
+                // first. Make sure to set its zIndex so it's above the screen content visually.
+                VerticalFloatingToolbar(
+                    modifier =
+                        Modifier.align(Alignment.CenterEnd).offset(x = -ScreenOffset).zIndex(1f),
+                    expanded = true,
+                    leadingContent = { LeadingContent() },
+                    trailingContent = { TrailingContent() },
+                    content = {
+                        FilledIconButton(
+                            modifier = Modifier.height(64.dp),
+                            onClick = { /* doSomething() */ },
+                        ) {
+                            Icon(Icons.Filled.Add, contentDescription = "Localized description")
+                        }
+                    },
+                    scrollBehavior = exitAlwaysScrollBehavior,
+                )
                 LazyColumn(
                     state = rememberLazyListState(),
                     contentPadding = innerPadding,
@@ -460,21 +495,6 @@ fun ScrollableVerticalFloatingToolbarSample() {
                         )
                     }
                 }
-                VerticalFloatingToolbar(
-                    modifier = Modifier.align(Alignment.CenterEnd).offset(x = -ScreenOffset),
-                    expanded = true,
-                    leadingContent = { LeadingContent() },
-                    trailingContent = { TrailingContent() },
-                    content = {
-                        FilledIconButton(
-                            modifier = Modifier.height(64.dp),
-                            onClick = { /* doSomething() */ },
-                        ) {
-                            Icon(Icons.Filled.Add, contentDescription = "Localized description")
-                        }
-                    },
-                    scrollBehavior = exitAlwaysScrollBehavior,
-                )
             }
         },
     )
@@ -489,6 +509,52 @@ fun HorizontalFloatingToolbarWithFabSample() {
     val vibrantColors = FloatingToolbarDefaults.vibrantFloatingToolbarColors()
     Scaffold { innerPadding ->
         Box(Modifier.padding(innerPadding)) {
+            // The toolbar should receive focus before the screen content for a11y, so place it
+            // first. Make sure to set its zIndex so it's above the screen content visually.
+            HorizontalFloatingToolbar(
+                expanded = expanded,
+                floatingActionButton = {
+                    // Match the FAB to the vibrantColors. See also StandardFloatingActionButton.
+                    FloatingToolbarDefaults.VibrantFloatingActionButton(
+                        onClick = { expanded = !expanded }
+                    ) {
+                        Icon(Icons.Filled.Add, "Localized description")
+                    }
+                },
+                modifier =
+                    Modifier.align(Alignment.BottomEnd)
+                        .offset(x = -ScreenOffset, y = -ScreenOffset)
+                        .zIndex(1f),
+                colors = vibrantColors,
+                content = {
+                    // Make sure the buttons are not focusable if they are not visible, so that
+                    // keyboard focus doesn't go to an invisible element on the screen.
+                    IconButton(
+                        onClick = { /* doSomething() */ },
+                        Modifier.focusProperties { canFocus = expanded },
+                    ) {
+                        Icon(Icons.Filled.Person, contentDescription = "Localized description")
+                    }
+                    IconButton(
+                        onClick = { /* doSomething() */ },
+                        Modifier.focusProperties { canFocus = expanded },
+                    ) {
+                        Icon(Icons.Filled.Edit, contentDescription = "Localized description")
+                    }
+                    IconButton(
+                        onClick = { /* doSomething() */ },
+                        Modifier.focusProperties { canFocus = expanded },
+                    ) {
+                        Icon(Icons.Filled.Favorite, contentDescription = "Localized description")
+                    }
+                    IconButton(
+                        onClick = { /* doSomething() */ },
+                        Modifier.focusProperties { canFocus = expanded },
+                    ) {
+                        Icon(Icons.Filled.MoreVert, contentDescription = "Localized description")
+                    }
+                },
+            )
             Column(
                 Modifier.fillMaxWidth()
                     .padding(horizontal = 16.dp)
@@ -503,35 +569,6 @@ fun HorizontalFloatingToolbarWithFabSample() {
             ) {
                 Text(text = remember { LoremIpsum().values.first() })
             }
-            HorizontalFloatingToolbar(
-                expanded = expanded,
-                floatingActionButton = {
-                    // Match the FAB to the vibrantColors. See also StandardFloatingActionButton.
-                    FloatingToolbarDefaults.VibrantFloatingActionButton(
-                        onClick = { /* doSomething() */ }
-                    ) {
-                        Icon(Icons.Filled.Add, "Localized description")
-                    }
-                },
-                modifier =
-                    Modifier.align(Alignment.BottomEnd)
-                        .offset(x = -ScreenOffset, y = -ScreenOffset),
-                colors = vibrantColors,
-                content = {
-                    IconButton(onClick = { /* doSomething() */ }) {
-                        Icon(Icons.Filled.Person, contentDescription = "Localized description")
-                    }
-                    IconButton(onClick = { /* doSomething() */ }) {
-                        Icon(Icons.Filled.Edit, contentDescription = "Localized description")
-                    }
-                    IconButton(onClick = { /* doSomething() */ }) {
-                        Icon(Icons.Filled.Favorite, contentDescription = "Localized description")
-                    }
-                    IconButton(onClick = { /* doSomething() */ }) {
-                        Icon(Icons.Filled.MoreVert, contentDescription = "Localized description")
-                    }
-                },
-            )
         }
     }
 }
@@ -546,13 +583,8 @@ fun CenteredHorizontalFloatingToolbarWithFabSample() {
     val vibrantColors = FloatingToolbarDefaults.vibrantFloatingToolbarColors()
     Scaffold(modifier = Modifier.nestedScroll(exitAlwaysScrollBehavior)) { innerPadding ->
         Box(Modifier.padding(innerPadding)) {
-            Column(
-                Modifier.fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .verticalScroll(rememberScrollState())
-            ) {
-                Text(text = remember { LoremIpsum().values.first() })
-            }
+            // The toolbar should receive focus before the screen content for a11y, so place it
+            // first. Make sure to set its zIndex so it's above the screen content visually.
             HorizontalFloatingToolbar(
                 // Always expanded as the toolbar is bottom-centered. We will use a
                 // FloatingToolbarScrollBehavior to hide both the toolbar and its FAB on scroll.
@@ -565,7 +597,8 @@ fun CenteredHorizontalFloatingToolbarWithFabSample() {
                         Icon(Icons.Filled.Add, "Localized description")
                     }
                 },
-                modifier = Modifier.align(Alignment.BottomCenter).offset(y = -ScreenOffset),
+                modifier =
+                    Modifier.align(Alignment.BottomCenter).offset(y = -ScreenOffset).zIndex(1f),
                 colors = vibrantColors,
                 scrollBehavior = exitAlwaysScrollBehavior,
                 content = {
@@ -583,6 +616,13 @@ fun CenteredHorizontalFloatingToolbarWithFabSample() {
                     }
                 },
             )
+            Column(
+                Modifier.fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .verticalScroll(rememberScrollState())
+            ) {
+                Text(text = remember { LoremIpsum().values.first() })
+            }
         }
     }
 }
@@ -596,6 +636,52 @@ fun VerticalFloatingToolbarWithFabSample() {
     val vibrantColors = FloatingToolbarDefaults.vibrantFloatingToolbarColors()
     Scaffold { innerPadding ->
         Box(Modifier.padding(innerPadding)) {
+            // The toolbar should receive focus before the screen content for a11y, so place it
+            // first. Make sure to set its zIndex so it's above the screen content visually.
+            VerticalFloatingToolbar(
+                expanded = expanded,
+                floatingActionButton = {
+                    // Match the FAB to the vibrantColors. See also StandardFloatingActionButton.
+                    FloatingToolbarDefaults.VibrantFloatingActionButton(
+                        onClick = { expanded = !expanded }
+                    ) {
+                        Icon(Icons.Filled.Add, "Localized description")
+                    }
+                },
+                modifier =
+                    Modifier.align(Alignment.BottomEnd)
+                        .offset(x = -ScreenOffset, y = -ScreenOffset)
+                        .zIndex(1f),
+                colors = vibrantColors,
+                content = {
+                    // Make sure the buttons are not focusable if they are not visible, so that
+                    // keyboard focus doesn't go to an invisible element on the screen.
+                    IconButton(
+                        onClick = { /* doSomething() */ },
+                        Modifier.focusProperties { canFocus = expanded },
+                    ) {
+                        Icon(Icons.Filled.Person, contentDescription = "Localized description")
+                    }
+                    IconButton(
+                        onClick = { /* doSomething() */ },
+                        Modifier.focusProperties { canFocus = expanded },
+                    ) {
+                        Icon(Icons.Filled.Edit, contentDescription = "Localized description")
+                    }
+                    IconButton(
+                        onClick = { /* doSomething() */ },
+                        Modifier.focusProperties { canFocus = expanded },
+                    ) {
+                        Icon(Icons.Filled.Favorite, contentDescription = "Localized description")
+                    }
+                    IconButton(
+                        onClick = { /* doSomething() */ },
+                        Modifier.focusProperties { canFocus = expanded },
+                    ) {
+                        Icon(Icons.Filled.MoreVert, contentDescription = "Localized description")
+                    }
+                },
+            )
             Column(
                 Modifier.fillMaxWidth()
                     .padding(horizontal = 16.dp)
@@ -612,35 +698,6 @@ fun VerticalFloatingToolbarWithFabSample() {
             ) {
                 Text(text = remember { LoremIpsum().values.first() })
             }
-            VerticalFloatingToolbar(
-                expanded = expanded,
-                floatingActionButton = {
-                    // Match the FAB to the vibrantColors. See also StandardFloatingActionButton.
-                    FloatingToolbarDefaults.VibrantFloatingActionButton(
-                        onClick = { /* doSomething() */ }
-                    ) {
-                        Icon(Icons.Filled.Add, "Localized description")
-                    }
-                },
-                modifier =
-                    Modifier.align(Alignment.BottomEnd)
-                        .offset(x = -ScreenOffset, y = -ScreenOffset),
-                colors = vibrantColors,
-                content = {
-                    IconButton(onClick = { /* doSomething() */ }) {
-                        Icon(Icons.Filled.Person, contentDescription = "Localized description")
-                    }
-                    IconButton(onClick = { /* doSomething() */ }) {
-                        Icon(Icons.Filled.Edit, contentDescription = "Localized description")
-                    }
-                    IconButton(onClick = { /* doSomething() */ }) {
-                        Icon(Icons.Filled.Favorite, contentDescription = "Localized description")
-                    }
-                    IconButton(onClick = { /* doSomething() */ }) {
-                        Icon(Icons.Filled.MoreVert, contentDescription = "Localized description")
-                    }
-                },
-            )
         }
     }
 }
@@ -655,13 +712,8 @@ fun CenteredVerticalFloatingToolbarWithFabSample() {
     val vibrantColors = FloatingToolbarDefaults.vibrantFloatingToolbarColors()
     Scaffold(modifier = Modifier.nestedScroll(exitAlwaysScrollBehavior)) { innerPadding ->
         Box(Modifier.padding(innerPadding)) {
-            Column(
-                Modifier.fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .verticalScroll(rememberScrollState())
-            ) {
-                Text(text = remember { LoremIpsum().values.first() })
-            }
+            // The toolbar should receive focus before the screen content for a11y, so place it
+            // first. Make sure to set its zIndex so it's above the screen content visually.
             VerticalFloatingToolbar(
                 // Always expanded as the toolbar is right-centered. We will use a
                 // FloatingToolbarScrollBehavior to hide both the toolbar and its FAB on scroll.
@@ -674,7 +726,7 @@ fun CenteredVerticalFloatingToolbarWithFabSample() {
                         Icon(Icons.Filled.Add, "Localized description")
                     }
                 },
-                modifier = Modifier.align(Alignment.CenterEnd).offset(x = -ScreenOffset),
+                modifier = Modifier.align(Alignment.CenterEnd).offset(x = -ScreenOffset).zIndex(1f),
                 colors = vibrantColors,
                 scrollBehavior = exitAlwaysScrollBehavior,
                 content = {
@@ -692,6 +744,13 @@ fun CenteredVerticalFloatingToolbarWithFabSample() {
                     }
                 },
             )
+            Column(
+                Modifier.fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .verticalScroll(rememberScrollState())
+            ) {
+                Text(text = remember { LoremIpsum().values.first() })
+            }
         }
     }
 }
@@ -717,16 +776,30 @@ fun HorizontalFloatingToolbarAsScaffoldFabSample() {
                 },
                 colors = vibrantColors,
                 content = {
-                    IconButton(onClick = { /* doSomething() */ }) {
+                    // Make sure the buttons are not focusable if they are not visible, so that
+                    // keyboard focus doesn't go to an invisible element on the screen.
+                    IconButton(
+                        onClick = { /* doSomething() */ },
+                        Modifier.focusProperties { canFocus = expanded },
+                    ) {
                         Icon(Icons.Filled.Person, contentDescription = "Localized description")
                     }
-                    IconButton(onClick = { /* doSomething() */ }) {
+                    IconButton(
+                        onClick = { /* doSomething() */ },
+                        Modifier.focusProperties { canFocus = expanded },
+                    ) {
                         Icon(Icons.Filled.Edit, contentDescription = "Localized description")
                     }
-                    IconButton(onClick = { /* doSomething() */ }) {
+                    IconButton(
+                        onClick = { /* doSomething() */ },
+                        Modifier.focusProperties { canFocus = expanded },
+                    ) {
                         Icon(Icons.Filled.Favorite, contentDescription = "Localized description")
                     }
-                    IconButton(onClick = { /* doSomething() */ }) {
+                    IconButton(
+                        onClick = { /* doSomething() */ },
+                        Modifier.focusProperties { canFocus = expanded },
+                    ) {
                         Icon(Icons.Filled.MoreVert, contentDescription = "Localized description")
                     }
                 },
