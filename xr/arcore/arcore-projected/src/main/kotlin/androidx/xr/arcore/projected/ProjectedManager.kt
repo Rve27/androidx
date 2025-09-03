@@ -68,7 +68,6 @@ internal constructor(
      */
     override fun create() {
         checkProjectedSupportedAndUpToDate(activity)
-        val scope = CoroutineScope(coroutineContext)
         CoroutineScope(coroutineContext).launch {
             if (testPerceptionService != null) {
                 perceptionManager.service = testPerceptionService
@@ -76,7 +75,6 @@ internal constructor(
             }
 
             val binder = bindPerceptionService(activity)
-            println("ProjectedManager: create(): service connected after bindPerceptionService!")
         }
     }
 
@@ -90,9 +88,7 @@ internal constructor(
         return timeSource.markNow()
     }
 
-    override fun pause() {
-        println("ProjectedManager: resume() is a stub")
-    }
+    override fun pause() {}
 
     override fun stop() {
         if (testPerceptionService == null) {
@@ -132,11 +128,9 @@ internal constructor(
                     }
                 }
 
-            println("ProjectedManager: continuation calls unbind")
             // When the coroutine is cancelled, we must unbind the service.
             continuation.invokeOnCancellation { context.unbindService(serviceConnection) }
 
-            println("ProjectedManager: continuation create binding")
             val isBindingPermitted =
                 ProjectedServiceBinding.bindPerception(context, serviceConnection)
             check(isBindingPermitted) {
