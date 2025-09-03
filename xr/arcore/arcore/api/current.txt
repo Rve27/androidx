@@ -63,7 +63,6 @@ package androidx.xr.arcore {
   public final class ArDevice {
     method public static androidx.xr.arcore.ArDevice getInstance(androidx.xr.runtime.Session session);
     method public kotlinx.coroutines.flow.StateFlow<androidx.xr.arcore.ArDevice.State> getState();
-    method public suspend Object? update(kotlin.coroutines.Continuation<? super kotlin.Unit>);
     property public kotlinx.coroutines.flow.StateFlow<androidx.xr.arcore.ArDevice.State> state;
     field public static final androidx.xr.arcore.ArDevice.Companion Companion;
   }
@@ -73,7 +72,6 @@ package androidx.xr.arcore {
   }
 
   public static final class ArDevice.State {
-    ctor public ArDevice.State(androidx.xr.runtime.math.Pose devicePose);
     method public androidx.xr.runtime.math.Pose getDevicePose();
     property public androidx.xr.runtime.math.Pose devicePose;
   }
@@ -91,7 +89,6 @@ package androidx.xr.arcore {
   }
 
   public static final class AugmentedObject.State implements androidx.xr.arcore.Trackable.State {
-    ctor public AugmentedObject.State(androidx.xr.runtime.TrackingState trackingState, androidx.xr.runtime.AugmentedObjectCategory category, androidx.xr.runtime.math.Pose centerPose, androidx.xr.runtime.math.FloatSize3d extents);
     method public androidx.xr.runtime.AugmentedObjectCategory getCategory();
     method public androidx.xr.runtime.math.Pose getCenterPose();
     method public androidx.xr.runtime.math.FloatSize3d getExtents();
@@ -118,7 +115,6 @@ package androidx.xr.arcore {
   }
 
   public static final class DepthMap.State {
-    ctor public DepthMap.State(int width, int height, java.nio.FloatBuffer? rawDepthMap, java.nio.ByteBuffer? rawConfidenceMap, java.nio.FloatBuffer? smoothDepthMap, java.nio.ByteBuffer? smoothConfidenceMap);
     method public int getHeight();
     method public java.nio.ByteBuffer? getRawConfidenceMap();
     method public java.nio.FloatBuffer? getRawDepthMap();
@@ -472,7 +468,6 @@ package androidx.xr.arcore {
     method public static androidx.xr.arcore.RenderViewpoint? left(androidx.xr.runtime.Session session);
     method public static androidx.xr.arcore.RenderViewpoint? mono(androidx.xr.runtime.Session session);
     method public static androidx.xr.arcore.RenderViewpoint? right(androidx.xr.runtime.Session session);
-    method public suspend Object? update(kotlin.coroutines.Continuation<? super kotlin.Unit>);
     property public kotlinx.coroutines.flow.StateFlow<androidx.xr.arcore.RenderViewpoint.State> state;
     field public static final androidx.xr.arcore.RenderViewpoint.Companion Companion;
   }
@@ -484,7 +479,6 @@ package androidx.xr.arcore {
   }
 
   public static final class RenderViewpoint.State {
-    ctor public RenderViewpoint.State(androidx.xr.runtime.math.Pose pose, androidx.xr.runtime.math.Pose localPose, androidx.xr.runtime.FieldOfView fieldOfView);
     method public androidx.xr.runtime.FieldOfView getFieldOfView();
     method public androidx.xr.runtime.math.Pose getLocalPose();
     method public androidx.xr.runtime.math.Pose getPose();

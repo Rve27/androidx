@@ -90,7 +90,8 @@ public class DepthMap internal constructor(internal val runtimeDepthMap: Runtime
      * @property smoothConfidenceMap Confidence for each pixel in [smoothDepthMap], with 0
      *   representing the lowest confidence and 255 representing the highest confidence.
      */
-    public class State(
+    public class State
+    internal constructor(
         public val width: Int,
         public val height: Int,
         public val rawDepthMap: FloatBuffer?,
@@ -135,7 +136,7 @@ public class DepthMap internal constructor(internal val runtimeDepthMap: Runtime
     /** The current [State] of the depth map. */
     public val state: StateFlow<DepthMap.State> = _state.asStateFlow()
 
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
     override suspend fun update() {
         _state.emit(
             State(
