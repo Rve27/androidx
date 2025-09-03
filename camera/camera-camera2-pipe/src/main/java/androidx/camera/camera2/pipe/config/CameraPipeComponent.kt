@@ -50,11 +50,14 @@ import dagger.Reusable
 import javax.inject.Provider
 import javax.inject.Qualifier
 import javax.inject.Singleton
+import kotlinx.coroutines.Job
 
 @Qualifier internal annotation class DefaultCameraBackend
 
 /** Qualifier for requesting the CameraPipe scoped Context object */
 @Qualifier internal annotation class CameraPipeContext
+
+@Qualifier internal annotation class CameraPipeJob
 
 @Singleton
 @Component(modules = [CameraPipeModule::class, CameraPipeConfigModule::class, Camera2Module::class])
@@ -101,6 +104,8 @@ internal abstract class CameraPipeModule {
         @Provides
         @CameraPipeContext
         fun provideContext(config: CameraPipe.Config): Context = config.appContext
+
+        @Singleton @Provides @CameraPipeJob fun provideCameraPipeJob(): Job = Job()
 
         @Provides
         fun provideCameraMetadataConfig(config: CameraPipe.Config): CameraMetadataConfig =

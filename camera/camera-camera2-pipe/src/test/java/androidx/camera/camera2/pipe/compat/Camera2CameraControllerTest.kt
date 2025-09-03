@@ -46,8 +46,8 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.TestCoroutineScheduler
 import kotlinx.coroutines.test.TestScope
-import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.runner.RunWith
@@ -55,14 +55,15 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
-import org.robolectric.annotation.Config
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(RobolectricCameraPipeTestRunner::class)
 class Camera2CameraControllerTest {
     private val cameraId = CameraId.fromCamera2Id("0")
-    private val testScope = TestScope()
-    private val fakeThreads = FakeThreads.fromTestScope(testScope)
+    private val testScheduler = TestCoroutineScheduler()
+    private val testScope = TestScope(testScheduler)
+    private val testBackgroundScope = TestScope(testScheduler)
+    private val fakeThreads = FakeThreads.fromTestScope(testBackgroundScope)
     private val streamConfig1 =
         CameraStream.Config.create(size = Size(1280, 720), format = StreamFormat.YUV_420_888)
     private val streamId1 = StreamId(1)
@@ -89,7 +90,7 @@ class Camera2CameraControllerTest {
 
     private fun createCamera2CameraController(): Camera2CameraController {
         return Camera2CameraController(
-            testScope,
+            testBackgroundScope,
             fakeThreads,
             fakeGraphConfig,
             fakeGraphListener,
@@ -304,7 +305,7 @@ class Camera2CameraControllerTest {
     fun testCanCreateCamera2CameraController() =
         testScope.runTest {
             val cameraController = createCamera2CameraController()
-            testScope.advanceUntilIdle()
+            testScheduler.advanceUntilIdle()
             cameraController.close()
         }
 
@@ -315,7 +316,7 @@ class Camera2CameraControllerTest {
             cameraController.updateSurfaceMap(mapOf(streamId1 to fakeSurface))
             cameraController.start()
             fakeCamera2DeviceManager.simulateCameraOpen(cameraId)
-            testScope.advanceUntilIdle()
+            testScheduler.advanceUntilIdle()
             verify(fakeCaptureSessionFactory, times(1)).create(any(), any(), any())
             cameraController.close()
         }
@@ -326,18 +327,18 @@ class Camera2CameraControllerTest {
             val cameraController = createCamera2CameraController()
             cameraController.updateSurfaceMap(mapOf(streamId1 to fakeSurface))
             cameraController.start()
-            testScope.advanceUntilIdle()
+            testScheduler.advanceUntilIdle()
 
             cameraController.close()
-            testScope.advanceUntilIdle()
+            testScheduler.advanceUntilIdle()
             assertEquals(cameraController.controllerState, ControllerState.CLOSED)
 
             fakeCamera2DeviceManager.simulateCameraError(cameraId, CameraError.ERROR_CAMERA_DEVICE)
-            testScope.advanceUntilIdle()
+            testScheduler.advanceUntilIdle()
             assertEquals(cameraController.controllerState, ControllerState.CLOSED)
 
             fakeCamera2DeviceManager.simulateCameraError(cameraId, CameraError.ERROR_CAMERA_IN_USE)
-            testScope.advanceUntilIdle()
+            testScheduler.advanceUntilIdle()
             assertEquals(cameraController.controllerState, ControllerState.CLOSED)
         }
 
@@ -348,11 +349,11 @@ class Camera2CameraControllerTest {
             cameraController.updateSurfaceMap(mapOf(streamId1 to fakeSurface))
             cameraController.start()
             fakeCamera2DeviceManager.simulateCameraOpen(cameraId)
-            testScope.advanceUntilIdle()
+            testScheduler.advanceUntilIdle()
 
             fakeCameraStatusMonitor.simulateCameraUnavailable()
             fakeCamera2DeviceManager.simulateCameraError(cameraId, CameraError.ERROR_CAMERA_DEVICE)
-            testScope.advanceUntilIdle()
+            testScheduler.advanceUntilIdle()
 
             assertEquals(cameraController.controllerState, ControllerState.ERROR)
 
@@ -366,11 +367,11 @@ class Camera2CameraControllerTest {
             cameraController.updateSurfaceMap(mapOf(streamId1 to fakeSurface))
             cameraController.start()
             fakeCamera2DeviceManager.simulateCameraOpen(cameraId)
-            testScope.advanceUntilIdle()
+            testScheduler.advanceUntilIdle()
 
             fakeCameraStatusMonitor.simulateCameraUnavailable()
             fakeCamera2DeviceManager.simulateCameraError(cameraId, CameraError.ERROR_CAMERA_IN_USE)
-            testScope.advanceUntilIdle()
+            testScheduler.advanceUntilIdle()
 
             if (Build.VERSION.SDK_INT in (Build.VERSION_CODES.Q..Build.VERSION_CODES.S_V2)) {
                 // Between Android Q and S_V2, we have a quirk that institutes an immediate restart,
@@ -390,14 +391,14 @@ class Camera2CameraControllerTest {
             cameraController.updateSurfaceMap(mapOf(streamId1 to fakeSurface))
             cameraController.start()
             fakeCamera2DeviceManager.simulateCameraOpen(cameraId)
-            testScope.advanceUntilIdle()
+            testScheduler.advanceUntilIdle()
 
             fakeCameraStatusMonitor.simulateCameraUnavailable()
             fakeCamera2DeviceManager.simulateCameraError(cameraId, CameraError.ERROR_CAMERA_SERVICE)
-            testScope.advanceUntilIdle()
+            testScheduler.advanceUntilIdle()
 
             fakeCameraStatusMonitor.simulateCameraAvailable()
-            testScope.advanceUntilIdle()
+            testScheduler.advanceUntilIdle()
             assertEquals(cameraController.controllerState, ControllerState.STARTED)
             verify(fakeCaptureSessionFactory, times(1)).create(any(), any(), any())
 
@@ -411,14 +412,14 @@ class Camera2CameraControllerTest {
             cameraController.updateSurfaceMap(mapOf(streamId1 to fakeSurface))
             cameraController.start()
             fakeCamera2DeviceManager.simulateCameraOpen(cameraId)
-            testScope.advanceUntilIdle()
+            testScheduler.advanceUntilIdle()
 
             fakeCameraStatusMonitor.simulateCameraUnavailable()
             fakeCamera2DeviceManager.simulateCameraError(cameraId, CameraError.ERROR_CAMERA_IN_USE)
-            testScope.advanceUntilIdle()
+            testScheduler.advanceUntilIdle()
 
             fakeCameraStatusMonitor.simulateCameraAvailable()
-            testScope.advanceUntilIdle()
+            testScheduler.advanceUntilIdle()
             assertEquals(cameraController.controllerState, ControllerState.STARTED)
             verify(fakeCaptureSessionFactory, times(1)).create(any(), any(), any())
 
@@ -432,14 +433,14 @@ class Camera2CameraControllerTest {
             cameraController.updateSurfaceMap(mapOf(streamId1 to fakeSurface))
             cameraController.start()
             fakeCamera2DeviceManager.simulateCameraOpen(cameraId)
-            testScope.advanceUntilIdle()
+            testScheduler.advanceUntilIdle()
 
             fakeCameraStatusMonitor.simulateCameraUnavailable()
             fakeCamera2DeviceManager.simulateCameraError(cameraId, CameraError.ERROR_GRAPH_CONFIG)
-            testScope.advanceUntilIdle()
+            testScheduler.advanceUntilIdle()
 
             fakeCameraStatusMonitor.simulateCameraAvailable()
-            testScope.advanceUntilIdle()
+            testScheduler.advanceUntilIdle()
             assertEquals(cameraController.controllerState, ControllerState.ERROR)
 
             cameraController.close()
@@ -452,14 +453,14 @@ class Camera2CameraControllerTest {
             cameraController.updateSurfaceMap(mapOf(streamId1 to fakeSurface))
             cameraController.start()
             fakeCamera2DeviceManager.simulateCameraOpen(cameraId)
-            testScope.advanceUntilIdle()
+            testScheduler.advanceUntilIdle()
 
             fakeCameraStatusMonitor.simulateCameraUnavailable()
             fakeCamera2DeviceManager.simulateCameraError(cameraId, CameraError.ERROR_CAMERA_DEVICE)
-            testScope.advanceUntilIdle()
+            testScheduler.advanceUntilIdle()
 
             fakeCameraStatusMonitor.simulateCameraPrioritiesChanged()
-            testScope.advanceUntilIdle()
+            testScheduler.advanceUntilIdle()
             assertEquals(cameraController.controllerState, ControllerState.ERROR)
 
             cameraController.close()
@@ -472,15 +473,15 @@ class Camera2CameraControllerTest {
             cameraController.updateSurfaceMap(mapOf(streamId1 to fakeSurface))
             cameraController.start()
             fakeCamera2DeviceManager.simulateCameraOpen(cameraId)
-            testScope.advanceUntilIdle()
+            testScheduler.advanceUntilIdle()
 
             fakeCameraStatusMonitor.simulateCameraUnavailable()
             fakeCamera2DeviceManager.simulateCameraError(cameraId, CameraError.ERROR_CAMERA_IN_USE)
-            testScope.advanceUntilIdle()
+            testScheduler.advanceUntilIdle()
 
             fakeCameraStatusMonitor.simulateCameraPrioritiesChanged()
             fakeCameraStatusMonitor.simulateCameraAvailable()
-            testScope.advanceUntilIdle()
+            testScheduler.advanceUntilIdle()
             assertEquals(cameraController.controllerState, ControllerState.STARTED)
             verify(fakeCaptureSessionFactory, times(1)).create(any(), any(), any())
 
