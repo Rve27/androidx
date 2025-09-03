@@ -28,6 +28,13 @@ import androidx.navigationevent.NavigationEventInfo
  * is not relevant.
  */
 public fun TestNavigationEventCallback(
+    // ---- Forward Events ----
+    isForwardEnabled: Boolean = true,
+    onForwardStarted: TestNavigationEventCallback<*>.(event: NavigationEvent) -> Unit = {},
+    onForwardProgressed: TestNavigationEventCallback<*>.(event: NavigationEvent) -> Unit = {},
+    onForwardCancelled: TestNavigationEventCallback<*>.() -> Unit = {},
+    onForwardCompleted: TestNavigationEventCallback<*>.() -> Unit = {},
+    // ---- Back Events ----
     isBackEnabled: Boolean = true,
     onBackStarted: TestNavigationEventCallback<*>.(event: NavigationEvent) -> Unit = {},
     onBackProgressed: TestNavigationEventCallback<*>.(event: NavigationEvent) -> Unit = {},
@@ -37,11 +44,18 @@ public fun TestNavigationEventCallback(
     return TestNavigationEventCallback(
         currentInfo = NavigationEventInfo.NotProvided,
         previousInfo = null,
+        // ---- Back Events ----
         isBackEnabled = isBackEnabled,
         onBackStarted = onBackStarted,
         onBackProgressed = onBackProgressed,
         onBackCancelled = onBackCancelled,
         onBackCompleted = onBackCompleted,
+        // ---- Forward Events ----
+        isForwardEnabled = isForwardEnabled,
+        onForwardStarted = onForwardStarted,
+        onForwardProgressed = onForwardProgressed,
+        onForwardCancelled = onForwardCancelled,
+        onForwardCompleted = onForwardCompleted,
     )
 }
 
@@ -56,63 +70,78 @@ public fun TestNavigationEventCallback(
  * @param T The type of [NavigationEventInfo] this callback handles.
  * @param currentInfo The initial **current** navigation information for the callback.
  * @param previousInfo The initial **previous** navigation information. Defaults to `null`.
- * @param isBackEnabled Determines if the callback should process events. Defaults to `true`.
- * @param onBackStarted An optional lambda to execute when `onEventStarted` is called.
- * @param onBackProgressed An optional lambda to execute when `onEventProgressed` is called.
- * @param onBackCancelled An optional lambda to execute when `onEventCancelled` is called.
- * @param onBackCompleted An optional lambda to execute when `onEventCompleted` is called.
+ * @param isForwardEnabled Determines if forward callbacks should process events. Defaults to
+ *   `true`.
+ * @param onForwardStarted Optional lambda to execute when `onForwardStarted` is called.
+ * @param onForwardProgressed Optional lambda to execute when `onForwardProgressed` is called.
+ * @param onForwardCancelled Optional lambda to execute when `onForwardCancelled` is called.
+ * @param onForwardCompleted Optional lambda to execute when `onForwardCompleted` is called.
+ * @param isBackEnabled Determines if back callbacks should process events. Defaults to `true`.
+ * @param onBackStarted Optional lambda to execute when `onBackStarted` is called.
+ * @param onBackProgressed Optional lambda to execute when `onBackProgressed` is called.
+ * @param onBackCancelled Optional lambda to execute when `onBackCancelled` is called.
+ * @param onBackCompleted Optional lambda to execute when `onBackCompleted` is called.
  */
 public class TestNavigationEventCallback<T : NavigationEventInfo>(
     currentInfo: T,
     previousInfo: T? = null,
+    // ---- Forward Events ----
+    isForwardEnabled: Boolean = true,
+    private val onForwardStarted: TestNavigationEventCallback<T>.(event: NavigationEvent) -> Unit =
+        {},
+    private val onForwardProgressed:
+        TestNavigationEventCallback<T>.(event: NavigationEvent) -> Unit =
+        {},
+    private val onForwardCancelled: TestNavigationEventCallback<T>.() -> Unit = {},
+    private val onForwardCompleted: TestNavigationEventCallback<T>.() -> Unit = {},
+    // ---- Back Events ----
     isBackEnabled: Boolean = true,
     private val onBackStarted: TestNavigationEventCallback<T>.(event: NavigationEvent) -> Unit = {},
     private val onBackProgressed: TestNavigationEventCallback<T>.(event: NavigationEvent) -> Unit =
         {},
     private val onBackCancelled: TestNavigationEventCallback<T>.() -> Unit = {},
     private val onBackCompleted: TestNavigationEventCallback<T>.() -> Unit = {},
-) : NavigationEventCallback<T>(isBackEnabled) {
+) : NavigationEventCallback<T>(isBackEnabled, isForwardEnabled) {
 
     init {
         setInfo(currentInfo = currentInfo, previousInfo = previousInfo)
     }
 
+    // ---- Back Events ----
     private val _onBackStartedEvents = mutableListOf<NavigationEvent>()
-
-    /** A [List] of all events received by the [onBackStarted] callback. */
+    /** All events received by [onBackStarted]. */
     public val onBackStartedEvents: List<NavigationEvent>
         get() = _onBackStartedEvents.toList()
 
-    /** The number of times [onBackStarted] has been invoked. */
+    /** Number of times [onBackStarted] has been invoked. */
     public val onBackStartedInvocations: Int
         get() = _onBackStartedEvents.size
 
     private val _onBackProgressedEvents = mutableListOf<NavigationEvent>()
-
-    /** A [List] of all events received by the [onBackProgressed] callback. */
+    /** All events received by [onBackProgressed]. */
     public val onBackProgressedEvents: List<NavigationEvent>
         get() = _onBackProgressedEvents.toList()
 
-    /** The number of times [onBackProgressed] has been invoked. */
+    /** Number of times [onBackProgressed] has been invoked. */
     public val onBackProgressedInvocations: Int
         get() = _onBackProgressedEvents.size
 
-    /** The number of times [onBackCompleted] has been invoked. */
+    /** Number of times [onBackCompleted] has been invoked. */
     public var onBackCompletedInvocations: Int = 0
         private set
 
-    /** The number of times [onBackCancelled] has been invoked. */
+    /** Number of times [onBackCancelled] has been invoked. */
     public var onBackCancelledInvocations: Int = 0
         private set
 
     override fun onBackStarted(event: NavigationEvent) {
         _onBackStartedEvents += event
-        onBackStarted.invoke(this, event)
+        onBackStarted(this, event)
     }
 
     override fun onBackProgressed(event: NavigationEvent) {
         _onBackProgressedEvents += event
-        onBackProgressed.invoke(this, event)
+        onBackProgressed(this, event)
     }
 
     override fun onBackCompleted() {
@@ -123,5 +152,52 @@ public class TestNavigationEventCallback<T : NavigationEventInfo>(
     override fun onBackCancelled() {
         onBackCancelledInvocations++
         onBackCancelled(this)
+    }
+
+    // ---- Forward Events ----
+    private val _onForwardStartedEvents = mutableListOf<NavigationEvent>()
+    /** All events received by [onForwardStarted]. */
+    public val onForwardStartedEvents: List<NavigationEvent>
+        get() = _onForwardStartedEvents.toList()
+
+    /** Number of times [onForwardStarted] has been invoked. */
+    public val onForwardStartedInvocations: Int
+        get() = _onForwardStartedEvents.size
+
+    private val _onForwardProgressedEvents = mutableListOf<NavigationEvent>()
+    /** All events received by [onForwardProgressed]. */
+    public val onForwardProgressedEvents: List<NavigationEvent>
+        get() = _onForwardProgressedEvents.toList()
+
+    /** Number of times [onForwardProgressed] has been invoked. */
+    public val onForwardProgressedInvocations: Int
+        get() = _onForwardProgressedEvents.size
+
+    /** Number of times [onForwardCompleted] has been invoked. */
+    public var onForwardCompletedInvocations: Int = 0
+        private set
+
+    /** Number of times [onForwardCancelled] has been invoked. */
+    public var onForwardCancelledInvocations: Int = 0
+        private set
+
+    override fun onForwardStarted(event: NavigationEvent) {
+        _onForwardStartedEvents += event
+        onForwardStarted(this, event)
+    }
+
+    override fun onForwardProgressed(event: NavigationEvent) {
+        _onForwardProgressedEvents += event
+        onForwardProgressed(this, event)
+    }
+
+    override fun onForwardCompleted() {
+        onForwardCompletedInvocations++
+        onForwardCompleted(this)
+    }
+
+    override fun onForwardCancelled() {
+        onForwardCancelledInvocations++
+        onForwardCancelled(this)
     }
 }
