@@ -146,27 +146,23 @@ internal class NavigationEventProcessor {
      * overwriting the state.
      */
     internal fun updateEnabledCallbackState(callback: NavigationEventCallback<*>) {
+        // Pick the single callback that is allowed to control state right now.
         val currentCallback =
             inProgressCallback
                 ?: resolveEnabledCallback(direction = NavigationEventDirection.Back)
                 ?: resolveEnabledCallback(direction = NavigationEventDirection.Forward)
+
         if (currentCallback != callback) return
+
+        val currentInfo = currentCallback.currentInfo ?: NotProvided
+        val combinedBackInfo = resolveCombinedBackInfo()
+        val forwardInfo = currentCallback.forwardInfo
 
         _state.update { state ->
             when (state) {
-                is Idle ->
-                    Idle(
-                        currentInfo = callback.currentInfo ?: NotProvided,
-                        forwardInfo = callback.forwardInfo,
-                        backInfo = callback.backInfo,
-                    )
+                is Idle -> Idle(currentInfo, combinedBackInfo, forwardInfo)
                 is InProgress ->
-                    InProgress(
-                        currentInfo = callback.currentInfo ?: NotProvided,
-                        forwardInfo = callback.forwardInfo,
-                        backInfo = callback.backInfo,
-                        latestEvent = state.latestEvent,
-                    )
+                    InProgress(currentInfo, combinedBackInfo, forwardInfo, state.latestEvent)
             }
         }
     }
@@ -292,11 +288,11 @@ internal class NavigationEventProcessor {
             // `onEventStarted`.
             inProgressCallback = callback
             callback.doOnBackStarted(event)
-            _state.update {
+            _state.update { state ->
                 InProgress(
-                    currentInfo = callback.currentInfo ?: NotProvided,
-                    forwardInfo = callback.forwardInfo,
-                    backInfo = callback.backInfo,
+                    currentInfo = state.currentInfo,
+                    backInfo = state.backInfo,
+                    forwardInfo = state.forwardInfo,
                     latestEvent = event,
                 )
             }
@@ -329,11 +325,11 @@ internal class NavigationEventProcessor {
 
         if (callback != null) {
             callback.doOnBackProgressed(event)
-            _state.update {
+            _state.update { state ->
                 InProgress(
-                    currentInfo = callback.currentInfo ?: NotProvided,
-                    forwardInfo = callback.forwardInfo,
-                    backInfo = callback.backInfo,
+                    currentInfo = state.currentInfo,
+                    backInfo = state.backInfo,
+                    forwardInfo = state.forwardInfo,
                     latestEvent = event,
                 )
             }
@@ -370,11 +366,11 @@ internal class NavigationEventProcessor {
             fallbackOnBackPressed?.invoke()
         } else {
             callback.doOnBackCompleted()
-            _state.update {
+            _state.update { state ->
                 Idle(
-                    currentInfo = callback.currentInfo ?: NotProvided,
-                    forwardInfo = callback.forwardInfo,
-                    backInfo = callback.backInfo,
+                    currentInfo = state.currentInfo,
+                    backInfo = state.backInfo,
+                    forwardInfo = state.forwardInfo,
                 )
             }
         }
@@ -401,11 +397,11 @@ internal class NavigationEventProcessor {
 
         if (callback != null) {
             callback.doOnBackCancelled()
-            _state.update {
+            _state.update { state ->
                 Idle(
-                    currentInfo = callback.currentInfo ?: NotProvided,
-                    forwardInfo = callback.forwardInfo,
-                    backInfo = callback.backInfo,
+                    currentInfo = state.currentInfo,
+                    backInfo = state.backInfo,
+                    forwardInfo = state.forwardInfo,
                 )
             }
         }
@@ -439,5 +435,51 @@ internal class NavigationEventProcessor {
             }
             else -> error("Unsupported NavigationEventDirection: '$direction'.")
         }
+    }
+
+    /**
+     * Resolves and aggregates [NavigationEventCallback.backInfo] from all enabled callbacks to
+     * provide a comprehensive view of the back navigation history.
+     *
+     * This method constructs a unified list of [NavigationEventInfo] by traversing the registered
+     * callbacks in order of priority: it first collects `backInfo` from all enabled **overlay**
+     * callbacks, followed by all enabled **default** callbacks. This ordering ensures that the
+     * resulting list reflects the hierarchical navigation state, with higher-priority contexts
+     * appearing first.
+     *
+     * This is crucial for UIs that need to display a preview of the back stack, as it allows them
+     * to accurately represent the destinations that the user will navigate through when repeatedly
+     * going back.
+     *
+     * @return A `List<NavigationEventInfo>` containing the combined back navigation history,
+     *   ordered by callback priority. The list will be empty if no enabled callbacks provide
+     *   `backInfo`.
+     */
+    fun resolveCombinedBackInfo(): List<NavigationEventInfo> {
+        // TODO(b/436248277): Finalize back-info combination policy.
+        //  Ambiguity: when a parent (K4) hosts a child with its own back item (L1),
+        //  should the combined path be `L1 -> K4 -> parentStack` or `L1 -> parentStack`?
+        //  Decide if/when to include the host's current node, and document it.
+
+        // This function intentionally uses loops and a single mutable list. This is a
+        // performance optimization to avoid the intermediate list allocations that would
+        // be created by using chained collection functions like `filter` or `flatMap`.
+        val combinedBackInfo = mutableListOf<NavigationEventInfo>()
+
+        // Process overlay callbacks first to respect their higher priority.
+        for (callback in overlayCallbacks) {
+            if (callback.isBackEnabled && callback.backInfo.isNotEmpty()) {
+                combinedBackInfo.addAll(callback.backInfo)
+            }
+        }
+
+        // Process default callbacks second.
+        for (callback in defaultCallbacks) {
+            if (callback.isBackEnabled && callback.backInfo.isNotEmpty()) {
+                combinedBackInfo.addAll(callback.backInfo)
+            }
+        }
+
+        return combinedBackInfo
     }
 }

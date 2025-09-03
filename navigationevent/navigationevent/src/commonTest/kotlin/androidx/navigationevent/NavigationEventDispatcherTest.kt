@@ -1407,6 +1407,108 @@ class NavigationEventDispatcherTest {
     }
 
     // endregion Hierarchy APIs
+
+    // region Combined Info APIs
+    @Test
+    fun resolveBackInfo_withMultipleCallbacks_combinesInfoInPriorityOrder() {
+        val dispatcher = NavigationEventDispatcher()
+        val homeInfo = HomeScreenInfo("home")
+        val settingsInfo = DetailsScreenInfo("settings")
+        val profileInfo = DetailsScreenInfo("profile")
+
+        // A default callback with its own back stack.
+        val defaultCallback =
+            TestNavigationEventCallback(currentInfo = settingsInfo, backInfo = listOf(homeInfo))
+        dispatcher.addCallback(defaultCallback, NavigationEventPriority.Default)
+
+        // An overlay callback that should be prioritized.
+        val overlayCallback =
+            TestNavigationEventCallback(currentInfo = profileInfo, backInfo = listOf(settingsInfo))
+        dispatcher.addCallback(overlayCallback, NavigationEventPriority.Overlay)
+
+        // The combined back info should list the overlay's back info first,
+        // followed by the default callback's back info.
+        val combinedBackInfo = dispatcher.state.value.backInfo
+
+        assertThat(combinedBackInfo).containsExactly(settingsInfo, homeInfo).inOrder()
+    }
+
+    @Test
+    fun resolveBackInfo_withDisabledOverlay_ignoresItAndUsesDefault() {
+        val dispatcher = NavigationEventDispatcher()
+        val homeInfo = HomeScreenInfo("home")
+        val settingsInfo = DetailsScreenInfo("settings")
+        val profileInfo = DetailsScreenInfo("profile")
+
+        // A default callback that is enabled.
+        val defaultCallback =
+            TestNavigationEventCallback(currentInfo = settingsInfo, backInfo = listOf(homeInfo))
+        dispatcher.addCallback(defaultCallback, NavigationEventPriority.Default)
+
+        // An overlay callback that is DISABLED.
+        val overlayCallback =
+            TestNavigationEventCallback(
+                currentInfo = profileInfo,
+                backInfo = listOf(settingsInfo),
+                isBackEnabled = false, // This callback is disabled.
+            )
+        dispatcher.addCallback(overlayCallback, NavigationEventPriority.Overlay)
+
+        // The combined back info should ignore the disabled overlay callback
+        // and only contain the info from the enabled default callback.
+        val combinedBackInfo = dispatcher.state.value.backInfo
+
+        assertThat(combinedBackInfo).containsExactly(homeInfo)
+    }
+
+    @Test
+    fun resolveBackInfo_withTwoDefaultCallbacks_ordersLIFO() {
+        val dispatcher = NavigationEventDispatcher()
+        val infoA = HomeScreenInfo("A")
+        val infoB = HomeScreenInfo("B")
+        val infoC = DetailsScreenInfo("C")
+        val infoD = DetailsScreenInfo("D")
+
+        // First default callback added.
+        val firstCallback =
+            TestNavigationEventCallback(currentInfo = infoC, backInfo = listOf(infoA))
+        dispatcher.addCallback(firstCallback, NavigationEventPriority.Default)
+
+        // Second default callback added, which should have higher priority.
+        val secondCallback =
+            TestNavigationEventCallback(currentInfo = infoD, backInfo = listOf(infoB))
+        dispatcher.addCallback(secondCallback, NavigationEventPriority.Default)
+
+        // The combined back info should list the second callback's info first (LIFO),
+        // followed by the first callback's info.
+        val combinedBackInfo = dispatcher.state.value.backInfo
+
+        assertThat(combinedBackInfo).containsExactly(infoB, infoA).inOrder()
+    }
+
+    @Test
+    fun resolveBackInfo_whenOverlayAddedBeforeDefault_prioritizesOverlay() {
+        val dispatcher = NavigationEventDispatcher()
+        val defaultInfo = HomeScreenInfo("default")
+        val overlayInfo = DetailsScreenInfo("overlay")
+
+        // Add the overlay callback FIRST.
+        val overlayCallback =
+            TestNavigationEventCallback(currentInfo = overlayInfo, backInfo = listOf(overlayInfo))
+        dispatcher.addCallback(overlayCallback, NavigationEventPriority.Overlay)
+
+        // Add the default callback SECOND.
+        val defaultCallback =
+            TestNavigationEventCallback(currentInfo = defaultInfo, backInfo = listOf(defaultInfo))
+        dispatcher.addCallback(defaultCallback, NavigationEventPriority.Default)
+
+        // The combined back info must prioritize the overlay's info because its
+        // priority level is checked before the default level.
+        val combinedBackInfo = dispatcher.state.value.backInfo
+
+        assertThat(combinedBackInfo).containsExactly(overlayInfo, defaultInfo).inOrder()
+    }
+    // endregion
 }
 
 /** A sealed interface for type-safe navigation information. */
