@@ -107,6 +107,7 @@ import androidx.camera.video.internal.encoder.OutputConfig;
 import androidx.camera.video.internal.encoder.VideoEncoderConfig;
 import androidx.camera.video.internal.encoder.VideoEncoderInfo;
 import androidx.camera.video.internal.encoder.VideoEncoderInfoImpl;
+import androidx.camera.video.internal.muxer.Media3MuxerImpl;
 import androidx.camera.video.internal.muxer.MediaMuxerImpl;
 import androidx.camera.video.internal.muxer.Muxer;
 import androidx.camera.video.internal.muxer.MuxerException;
@@ -372,7 +373,19 @@ public final class Recorder implements VideoOutput {
     static final EncoderFactory DEFAULT_ENCODER_FACTORY = EncoderImpl::new;
     private static final VideoEncoderInfo.Finder DEFAULT_VIDEO_ENCODER_INFO_FINDER =
             VideoEncoderInfoImpl.FINDER;
-    private static final MuxerFactory DEFAULT_MUXER_FACTORY = MediaMuxerImpl::new;
+    private static final MuxerFactory DEFAULT_MUXER_FACTORY = outputFormat -> {
+        switch (outputFormat) {
+            case Muxer.MUXER_FORMAT_MPEG_4:
+            case Muxer.MUXER_FORMAT_3GPP:
+                // Media3 muxer doesn't support WebM.
+                Logger.d(TAG, "Create Media3MuxerImpl");
+                return new Media3MuxerImpl();
+            case Muxer.MUXER_FORMAT_WEBM:
+            default:
+                Logger.d(TAG, "Create MediaMuxerImpl");
+                return new MediaMuxerImpl();
+        }
+    };
     private static final OutputStorage.Factory OUTPUT_STORAGE_FACTORY_DEFAULT =
             OutputStorageImpl::new;
     private static final Executor AUDIO_EXECUTOR =
@@ -3285,7 +3298,7 @@ public final class Recorder implements VideoOutput {
 
             MuxerSupplier muxerSupplier =
                     (muxerOutputFormat, outputUriCreatedCallback) -> {
-                        Muxer muxer = muxerFactory.create();
+                        Muxer muxer = muxerFactory.create(muxerOutputFormat);
                         Uri outputUri = Uri.EMPTY;
                         if (outputOptions instanceof FileOutputOptions) {
                             FileOutputOptions fileOutputOptions = (FileOutputOptions) outputOptions;
@@ -3718,6 +3731,13 @@ public final class Recorder implements VideoOutput {
             return this;
         }
 
+        /** Sets the {@link MuxerFactory} of this Recorder. */
+        @RestrictTo(RestrictTo.Scope.LIBRARY)
+        public @NonNull Builder setMuxerFactory(@NonNull MuxerFactory muxerFactory) {
+            mMuxerFactory = muxerFactory;
+            return this;
+        }
+
         /**
          * Sets the video capabilities source.
          *
@@ -3852,11 +3872,6 @@ public final class Recorder implements VideoOutput {
         @RestrictTo(RestrictTo.Scope.LIBRARY)
         @NonNull Builder setAudioEncoderFactory(@NonNull EncoderFactory audioEncoderFactory) {
             mAudioEncoderFactory = audioEncoderFactory;
-            return this;
-        }
-
-        @NonNull Builder setMuxerFactory(@NonNull MuxerFactory muxerFactory) {
-            mMuxerFactory = muxerFactory;
             return this;
         }
 
