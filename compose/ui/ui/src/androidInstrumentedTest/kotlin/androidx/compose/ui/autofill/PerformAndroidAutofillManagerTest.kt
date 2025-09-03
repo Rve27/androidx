@@ -1509,7 +1509,7 @@ class PerformAndroidAutofillManagerTest {
         // Arrange.
         lateinit var view: View
         val viewStructure: ViewStructure = FakeViewStructure()
-        val fillableDataText = checkNotNull(FillableData("fillableData-test"))
+        val fillableDataText = checkNotNull(FillableData.createFrom("fillableData-test"))
         rule.setContent {
             view = LocalView.current
             Box(
@@ -1738,7 +1738,7 @@ class PerformAndroidAutofillManagerTest {
                     Modifier.testTag(toggleTag)
                         .clickable { isChecked = !isChecked }
                         .semantics {
-                            FillableData(isChecked)?.let { this.fillableData = it }
+                            FillableData.createFrom(isChecked)?.let { this.fillableData = it }
                             onFillData(label = "CustomToggle") { fillableData ->
                                 fillableData.booleanValue?.let { isChecked = it }
                                 true
