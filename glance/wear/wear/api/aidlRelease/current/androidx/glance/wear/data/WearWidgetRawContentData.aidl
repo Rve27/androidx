@@ -33,7 +33,7 @@
 
 package androidx.glance.wear.data;
 @JavaPassthrough(annotation="@androidx.annotation.RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY)")
-parcelable WearWidgetContentData {
+parcelable WearWidgetRawContentData {
   byte[] payload;
   android.os.Bundle extras;
 }

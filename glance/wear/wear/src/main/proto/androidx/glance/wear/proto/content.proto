@@ -13,16 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.glance.wear.data;
 
-import android.os.Bundle;
+syntax = "proto3";
 
+package androidx.glance.wear.proto;
 
-/**
-  * Contents of a widget.
-  */
-@JavaPassthrough(annotation="@androidx.annotation.RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY)")
-parcelable WearWidgetContentData {
-    byte[] payload;
-    Bundle extras;
+// Encodes data for the Widget raw content.
+message WearWidgetRawContentProto {
+
+  // The remote compose document.
+  bytes rc_document = 1;
 }
