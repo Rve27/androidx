@@ -40,8 +40,10 @@ import androidx.compose.ui.unit.toSize
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalSharedTransitionApi::class)
-internal class SkipToLookaheadNode(scaleToBounds: ScaleToBoundsImpl?, isEnabled: () -> Boolean) :
-    LayoutModifierNode, Modifier.Node() {
+internal class SkipToLookaheadSizeNode(
+    scaleToBounds: ScaleToBoundsImpl?,
+    isEnabled: () -> Boolean,
+) : LayoutModifierNode, Modifier.Node() {
     var scaleToBounds: ScaleToBoundsImpl? by mutableStateOf(scaleToBounds)
     var isEnabled: () -> Boolean by mutableStateOf(isEnabled)
 
@@ -154,15 +156,15 @@ internal class SkipToLookaheadNode(scaleToBounds: ScaleToBoundsImpl?, isEnabled:
 }
 
 @OptIn(ExperimentalSharedTransitionApi::class)
-internal data class SkipToLookaheadElement(
+internal class SkipToLookaheadSizeElement(
     val scaleToBounds: ScaleToBoundsImpl? = null,
     val isEnabled: () -> Boolean = DefaultEnabled,
-) : ModifierNodeElement<SkipToLookaheadNode>() {
-    override fun create(): SkipToLookaheadNode {
-        return SkipToLookaheadNode(scaleToBounds, isEnabled)
+) : ModifierNodeElement<SkipToLookaheadSizeNode>() {
+    override fun create(): SkipToLookaheadSizeNode {
+        return SkipToLookaheadSizeNode(scaleToBounds, isEnabled)
     }
 
-    override fun update(node: SkipToLookaheadNode) {
+    override fun update(node: SkipToLookaheadSizeNode) {
         node.scaleToBounds = scaleToBounds
         node.isEnabled = isEnabled
     }
@@ -171,6 +173,17 @@ internal data class SkipToLookaheadElement(
         name = "skipToLookahead"
         properties["scaleToBounds"] = scaleToBounds
         properties["isEnabled"] = isEnabled
+    }
+
+    override fun hashCode(): Int {
+        return isEnabled.hashCode() * 31 + scaleToBounds.hashCode()
+    }
+
+    override fun equals(other: Any?): Boolean {
+        return other is SkipToLookaheadSizeElement &&
+            // Reference equality check
+            other.isEnabled === isEnabled &&
+            other.scaleToBounds == scaleToBounds
     }
 }
 
@@ -185,4 +198,4 @@ internal fun Modifier.createContentScaleModifier(
         if (scaleToBounds.contentScale == ContentScale.Crop) {
             Modifier.graphicsLayer { clip = isEnabled() }
         } else Modifier
-    ) then SkipToLookaheadElement(scaleToBounds, isEnabled)
+    ) then SkipToLookaheadSizeElement(scaleToBounds, isEnabled)
