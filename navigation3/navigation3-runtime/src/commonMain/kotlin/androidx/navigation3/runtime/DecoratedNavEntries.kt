@@ -19,48 +19,99 @@
 package androidx.navigation3.runtime
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.runtime.setValue
 import kotlin.jvm.JvmSuppressWildcards
 
 /**
- * Function that provides all of the [NavEntry]s wrapped with the given [NavEntryDecorator]s. It is
- * responsible for executing the functions provided by each [NavEntryDecorator] appropriately.
+ * Remembers and returns a list of [NavEntry] decorated with the list of [entryDecorators]
  *
- * Note: the order in which the [NavEntryDecorator]s are added to the list determines their scope,
- * i.e. a [NavEntryDecorator] added earlier in a list has its data available to those added later.
+ * The returned list of [NavEntry] survives configuration change and recompositions but does not
+ * survive process death. To ensure that the backStack and its states are recovered properly, the
+ * [backStack] and the [entryDecorators]'s states passed into this function should be hoisted and
+ * saved across process death.
+ *
+ * For example:
+ * ```
+ * // backStack saved during process death
+ * val backStack = rememberNavBackStack()
+ *
+ * // the hoisted SaveableStateHolder used by the decorator is saved during process death
+ * val decorators = listOf(rememberSavedStateNavEntryDecorator())
+ *
+ * // finally, decorate the entries
+ * val entries = rememberDecoratedNavEntries(backStack, decorators, entryProvider)
+ * ```
+ *
+ * **HOW TO USE** The created list of entries should be stored and reused for the same backStack. If
+ * you want to support multiple backStacks (i.e. each bottom tab with their own backStack), then
+ * each backStack should be their own [rememberDecoratedNavEntries] with new [backStack] and
+ * [entryDecorators] passed in.
+ *
+ * **MUTABLE BACKSTACK NAVIGATE/POP** The [backStack] should be a hoisted OBSERVABLE list, and
+ * navigates or pops should be applied directly to this backStack. For example:
+ * ```
+ * val backStack = mutableStateListOf(A)
+ * val entries = rememberDecoratedNavEntries(backStack, ...)
+ *
+ * // to navigate
+ * backStack.add(B)
+ *
+ * // to pop
+ * backStack.removeLastOrNull()
+ * ```
+ *
+ * **IMMUTABLE BACKSTACK NAVIGATE/POP** This composable also supports navigates and pops with
+ * immutable backStack. Simply replace the previous [backStack] with a new one but DO NOT replace
+ * the decorator states. Also, DO NOT create a brand new [rememberDecoratedNavEntries]. For example
+ *
+ * ```
+ *  val backStack = mutableStateOf(listOf(1, 2))
+ *  val entries = rememberDecoratedNavEntries(backStack, ...)
+ *
+ *  // to navigate
+ *  backStack.value = listOf(1, 2, 3)
+ *
+ *  // to pop
+ *  backStack.value = listOf(1)
+ * ```
  *
  * @param T the type of the backStack key
- * @param backStack the list of keys that represent the backstack
- * @param entryDecorators the [NavEntryDecorator]s that are providing data to the content
+ * @param backStack the list of keys that represent the backstack. If this backStack is observable,
+ *   i.e. a [androidx.compose.runtime.snapshots.SnapshotStateList], then updates to this backStack
+ *   will automatically trigger a re-calculation of the list of [NavEntry] to reflect the new
+ *   backStack state.
+ * @param entryDecorators the [NavEntryDecorator]s that are providing data to the content. If this
+ *   list is observable (i.e. a [androidx.compose.runtime.snapshots.SnapshotStateList]), then
+ *   updates to this list of decorators will automatically trigger a re-calculation of the list of
+ *   [NavEntry] to reflect the new decorators state.
  * @param entryProvider a function that returns the [NavEntry] for a given key
- * @param content the content to be displayed
+ * @return a list of decorated [NavEntry]
  */
 @Composable
-public fun <T : Any> DecoratedNavEntryProvider(
+public fun <T : Any> rememberDecoratedNavEntries(
     backStack: List<T>,
+    entryDecorators: List<@JvmSuppressWildcards NavEntryDecorator<*>> = listOf(),
     entryProvider: (key: T) -> NavEntry<out T>,
-    entryDecorators: List<@JvmSuppressWildcards NavEntryDecorator<*>> =
-        listOf(rememberSavedStateNavEntryDecorator()),
-    content: @Composable (List<NavEntry<T>>) -> Unit,
-) {
+): List<NavEntry<T>> {
+    val keysInBackstack: MutableSet<Any> = remember { mutableSetOf() }
+    val keysInComposition: MutableSet<Any> = remember { mutableSetOf() }
     // Kotlin does not know these things are compatible so we need this explicit cast
     // to ensure our lambda below takes the correct type
     entryProvider as (T) -> NavEntry<T>
     val entries =
         backStack.fastMapOrMap { key ->
             val entry = entryProvider.invoke(key)
-            decorateEntry(entry, entryDecorators)
+            decorateEntry(entry, entryDecorators, keysInBackstack, keysInComposition)
         }
 
-    // Provides the entire backstack to the previously wrapped entries
-    val initial: @Composable () -> Unit = remember(entries) { { content(entries) } }
-
-    PrepareBackStack(entries, entryDecorators, initial)
+    PrepareBackStack(entries, entryDecorators, keysInBackstack, keysInComposition)
+    @Suppress("ListIterator")
+    return remember(backStack.toList(), entryDecorators.toList()) { entries }
 }
 
 /**
@@ -72,22 +123,23 @@ public fun <T : Any> DecoratedNavEntryProvider(
  * function to call onPop when animation finishes.
  */
 @Composable
-internal fun <T : Any> decorateEntry(
+private fun <T : Any> decorateEntry(
     entry: NavEntry<T>,
     decorators: List<NavEntryDecorator<*>>,
+    keysInBackstack: MutableSet<Any>,
+    keysInComposition: MutableSet<Any>,
 ): NavEntry<T> {
     val latestDecorators by rememberUpdatedState(decorators)
     val initial =
         object : NavEntryWrapper<T>(entry) {
             @Composable
             override fun Content() {
-                val localInfo = LocalNavEntryDecoratorLocalInfo.current
-                val idsInComposition = localInfo.idsInComposition
+                val keysInComposition = keysInComposition
                 DisposableEffect(key1 = contentKey) {
-                    idsInComposition.add(contentKey)
+                    keysInComposition.add(contentKey)
                     onDispose {
-                        val notInComposition = idsInComposition.remove(contentKey)
-                        val popped = !localInfo.contentKeys.contains(contentKey)
+                        val notInComposition = keysInComposition.remove(contentKey)
+                        val popped = !keysInBackstack.contains(contentKey)
                         if (popped && notInComposition) {
                             // we reverse the scopes before popping to imitate the order
                             // of onDispose calls if each scope/decorator had their own
@@ -107,21 +159,20 @@ internal fun <T : Any> decorateEntry(
 }
 
 /**
- * Sets up logic to track changes to the backstack and invokes the [DecoratedNavEntryProvider]
- * content.
+ * Sets up logic to track changes to the backstack
  *
  * Invokes pop callback for popped entries that:
  * 1. are not animating (i.e. no pop animations) AND / OR
  * 2. have never been composed (i.e. never invoked with [DecorateNavEntry])
  */
 @Composable
-internal fun <T : Any> PrepareBackStack(
+private fun <T : Any> PrepareBackStack(
     entries: List<NavEntry<T>>,
     decorators: List<NavEntryDecorator<*>>,
-    content: @Composable (() -> Unit),
+    keysInBackstack: MutableSet<Any>,
+    keysInComposition: MutableSet<Any>,
 ) {
-    val localInfo = remember { NavEntryDecoratorLocalInfo() }
-    val contentKeys = localInfo.contentKeys
+    val keysInBackStack = keysInBackstack
 
     // update this backStack so that onDispose has access to the latest backStack to check
     // if an entry has been popped
@@ -129,17 +180,17 @@ internal fun <T : Any> PrepareBackStack(
     val latestDecorators by rememberUpdatedState(decorators)
     entries.fastForEachOrForEach {
         val contentKey = it.contentKey
-        contentKeys.add(contentKey)
-
-        DisposableEffect(contentKey) {
+        keysInBackStack.add(contentKey)
+        @Suppress("ListIterator")
+        DisposableEffect(contentKey, entries.toList()) {
             onDispose {
                 val latestBackStack = latestEntries.fastMapOrMap { entry -> entry.contentKey }
                 val popped =
                     if (!latestBackStack.contains(contentKey)) {
-                        contentKeys.remove(contentKey)
+                        keysInBackStack.remove(contentKey)
                     } else false
                 // run onPop callback
-                if (popped && !localInfo.idsInComposition.contains(contentKey)) {
+                if (popped && !keysInComposition.contains(contentKey)) {
                     // we reverse the order before popping to imitate the order
                     // of onDispose calls if each scope/decorator had their own onDispose
                     // calls for clean up
@@ -148,18 +199,4 @@ internal fun <T : Any> PrepareBackStack(
             }
         }
     }
-    CompositionLocalProvider(LocalNavEntryDecoratorLocalInfo provides localInfo, content)
 }
-
-private class NavEntryDecoratorLocalInfo {
-    val contentKeys: MutableSet<Any> = mutableSetOf()
-    val idsInComposition: MutableSet<Any> = mutableSetOf()
-}
-
-private val LocalNavEntryDecoratorLocalInfo =
-    staticCompositionLocalOf<NavEntryDecoratorLocalInfo> {
-        error(
-            "CompositionLocal LocalProviderLocalInfo not present. You must call " +
-                "ProvideToBackStack before calling ProvideToEntry."
-        )
-    }
