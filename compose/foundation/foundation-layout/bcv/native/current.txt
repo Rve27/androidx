@@ -185,6 +185,26 @@ final object androidx.compose.foundation.layout/Arrangement { // androidx.compos
     }
 }
 
+final object androidx.compose.foundation.layout/BoxScopeInstance : androidx.compose.foundation.layout/BoxScope { // androidx.compose.foundation.layout/BoxScopeInstance|null[0]
+    final fun (androidx.compose.ui/Modifier).align(androidx.compose.ui/Alignment): androidx.compose.ui/Modifier // androidx.compose.foundation.layout/BoxScopeInstance.align|align@androidx.compose.ui.Modifier(androidx.compose.ui.Alignment){}[0]
+    final fun (androidx.compose.ui/Modifier).matchParentSize(): androidx.compose.ui/Modifier // androidx.compose.foundation.layout/BoxScopeInstance.matchParentSize|matchParentSize@androidx.compose.ui.Modifier(){}[0]
+}
+
+final object androidx.compose.foundation.layout/ColumnScopeInstance : androidx.compose.foundation.layout/ColumnScope { // androidx.compose.foundation.layout/ColumnScopeInstance|null[0]
+    final fun (androidx.compose.ui/Modifier).align(androidx.compose.ui/Alignment.Horizontal): androidx.compose.ui/Modifier // androidx.compose.foundation.layout/ColumnScopeInstance.align|align@androidx.compose.ui.Modifier(androidx.compose.ui.Alignment.Horizontal){}[0]
+    final fun (androidx.compose.ui/Modifier).alignBy(androidx.compose.ui.layout/VerticalAlignmentLine): androidx.compose.ui/Modifier // androidx.compose.foundation.layout/ColumnScopeInstance.alignBy|alignBy@androidx.compose.ui.Modifier(androidx.compose.ui.layout.VerticalAlignmentLine){}[0]
+    final fun (androidx.compose.ui/Modifier).alignBy(kotlin/Function1<androidx.compose.ui.layout/Measured, kotlin/Int>): androidx.compose.ui/Modifier // androidx.compose.foundation.layout/ColumnScopeInstance.alignBy|alignBy@androidx.compose.ui.Modifier(kotlin.Function1<androidx.compose.ui.layout.Measured,kotlin.Int>){}[0]
+    final fun (androidx.compose.ui/Modifier).weight(kotlin/Float, kotlin/Boolean): androidx.compose.ui/Modifier // androidx.compose.foundation.layout/ColumnScopeInstance.weight|weight@androidx.compose.ui.Modifier(kotlin.Float;kotlin.Boolean){}[0]
+}
+
+final object androidx.compose.foundation.layout/RowScopeInstance : androidx.compose.foundation.layout/RowScope { // androidx.compose.foundation.layout/RowScopeInstance|null[0]
+    final fun (androidx.compose.ui/Modifier).align(androidx.compose.ui/Alignment.Vertical): androidx.compose.ui/Modifier // androidx.compose.foundation.layout/RowScopeInstance.align|align@androidx.compose.ui.Modifier(androidx.compose.ui.Alignment.Vertical){}[0]
+    final fun (androidx.compose.ui/Modifier).alignBy(androidx.compose.ui.layout/HorizontalAlignmentLine): androidx.compose.ui/Modifier // androidx.compose.foundation.layout/RowScopeInstance.alignBy|alignBy@androidx.compose.ui.Modifier(androidx.compose.ui.layout.HorizontalAlignmentLine){}[0]
+    final fun (androidx.compose.ui/Modifier).alignBy(kotlin/Function1<androidx.compose.ui.layout/Measured, kotlin/Int>): androidx.compose.ui/Modifier // androidx.compose.foundation.layout/RowScopeInstance.alignBy|alignBy@androidx.compose.ui.Modifier(kotlin.Function1<androidx.compose.ui.layout.Measured,kotlin.Int>){}[0]
+    final fun (androidx.compose.ui/Modifier).alignByBaseline(): androidx.compose.ui/Modifier // androidx.compose.foundation.layout/RowScopeInstance.alignByBaseline|alignByBaseline@androidx.compose.ui.Modifier(){}[0]
+    final fun (androidx.compose.ui/Modifier).weight(kotlin/Float, kotlin/Boolean): androidx.compose.ui/Modifier // androidx.compose.foundation.layout/RowScopeInstance.weight|weight@androidx.compose.ui.Modifier(kotlin.Float;kotlin.Boolean){}[0]
+}
+
 final val androidx.compose.foundation.layout/DefaultColumnMeasurePolicy // androidx.compose.foundation.layout/DefaultColumnMeasurePolicy|{}DefaultColumnMeasurePolicy[0]
     final fun <get-DefaultColumnMeasurePolicy>(): androidx.compose.ui.layout/MeasurePolicy // androidx.compose.foundation.layout/DefaultColumnMeasurePolicy.<get-DefaultColumnMeasurePolicy>|<get-DefaultColumnMeasurePolicy>(){}[0]
 final val androidx.compose.foundation.layout/DefaultRowMeasurePolicy // androidx.compose.foundation.layout/DefaultRowMeasurePolicy|{}DefaultRowMeasurePolicy[0]
