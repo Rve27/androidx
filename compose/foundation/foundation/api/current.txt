@@ -1630,6 +1630,7 @@ package androidx.compose.foundation.lazy.staggeredgrid {
     property public boolean lastScrolledBackward;
     property public boolean lastScrolledForward;
     property public androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridLayoutInfo layoutInfo;
+    property public androidx.compose.foundation.ScrollIndicatorState? scrollIndicatorState;
     field public static final androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState.Companion Companion;
   }
 
