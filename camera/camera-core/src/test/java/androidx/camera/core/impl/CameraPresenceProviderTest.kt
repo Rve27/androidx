@@ -492,6 +492,63 @@ class CameraPresenceProviderTest {
         assertThat(publicListener.addedCameras).isEmpty()
     }
 
+    @Test
+    fun cameraStateError_onInitialCamera_triggersRetryScan() {
+        // Arrange: Start with one camera already in the factory.
+        val cameraInfo = FakeCameraInfoInternal(CAMERA_ID_0, 0, CameraSelector.LENS_FACING_BACK)
+        val camera = FakeCamera(CAMERA_ID_0, null, cameraInfo)
+        fakeCameraFactory.insertCamera(CameraSelector.LENS_FACING_BACK, CAMERA_ID_0) { camera }
+
+        // Act: Process the initial camera list. This should register the state observer.
+        sourceObservable.updateData(listOf(IDENTIFIER_0))
+
+        // Sanity check that no refresh scans have been triggered yet.
+        assertThat(sourceObservable.fetchCount).isEqualTo(0)
+
+        // Act: Trigger an error state change on the initial camera.
+        camera.setState(
+            CameraInternal.State.CLOSED,
+            CameraState.StateError.create(CameraState.ERROR_CAMERA_IN_USE),
+        )
+        Shadows.shadowOf(Looper.getMainLooper()).idle() // Ensure LiveData observer is notified
+        fakeScheduledExecutor.advanceTimeBy(0, TimeUnit.MILLISECONDS)
+
+        // Assert: A refresh scan is triggered because the observer was attached during startup.
+        assertThat(sourceObservable.fetchCount).isEqualTo(1)
+    }
+
+    @Test
+    fun updateSucceedsWithFallback_whenInterrogatorThrowsException() {
+        // Arrange: Start with a known, valid state of one camera.
+        fakeCameraFactory.insertCamera(CameraSelector.LENS_FACING_BACK, CAMERA_ID_0) {
+            FakeCamera(CAMERA_ID_0, null, FakeCameraInfoInternal())
+        }
+        sourceObservable.updateData(listOf(IDENTIFIER_0))
+        assertThat(testCameraRepository.updateCount).isEqualTo(1) // Sanity check
+        publicListener.addedCameras.clear() // Reset for the main assertion.
+
+        // Arrange: Prepare the factory for the next state so the fallback logic can succeed.
+        fakeCameraFactory.insertCamera(CameraSelector.LENS_FACING_FRONT, CAMERA_ID_1) {
+            FakeCamera(CAMERA_ID_1, null, FakeCameraInfoInternal())
+        }
+
+        // Arrange: Configure the factory's interrogator implementation to fail.
+        fakeCameraFactory.setShouldThrowOnInterrogate(true)
+
+        // Act: Trigger a new camera update.
+        sourceObservable.updateData(listOf(IDENTIFIER_0, IDENTIFIER_1))
+
+        // Assert: The provider should have caught the exception and fallen back,
+        // allowing the update to SUCCEED using the original logic.
+        assertThat(testCameraRepository.updateCount).isEqualTo(2)
+
+        // The repository's final state should be the new, correct list.
+        assertThat(testCameraRepository.lastReceivedIds).containsExactly(CAMERA_ID_0, CAMERA_ID_1)
+
+        // The public listener should have been correctly notified.
+        assertThat(publicListener.addedCameras).containsExactly(IDENTIFIER_1)
+    }
+
     private companion object {
         private const val CAMERA_ID_0 = "0"
         private const val CAMERA_ID_1 = "1"
