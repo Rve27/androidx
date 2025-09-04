@@ -22,9 +22,9 @@ import kotlin.jvm.JvmOverloads
 /**
  * Base class for handling navigation gestures dispatched by a [NavigationEventDispatcher].
  *
- * A [NavigationEventCallback] defines how an active component responds to system navigation
- * gestures (such as predictive back) and exposes the directional context needed to represent the
- * app’s current navigation affordances:
+ * A [NavigationEventHandler] defines how an active component responds to system navigation gestures
+ * (such as predictive back) and exposes the directional context needed to represent the app’s
+ * current navigation affordances:
  * - [backInfo]: contextual information describing what is available when navigating back.
  * - [currentInfo]: the single active destination represented by this callback.
  * - [forwardInfo]: contextual information describing what is available when navigating forward.
@@ -44,7 +44,7 @@ import kotlin.jvm.JvmOverloads
  * @see NavigationEventInput
  * @see NavigationEventState
  */
-public abstract class NavigationEventCallback<T : NavigationEventInfo>
+public abstract class NavigationEventHandler<T : NavigationEventInfo>
 @JvmOverloads
 public constructor(isBackEnabled: Boolean = true, isForwardEnabled: Boolean = true) {
 
@@ -105,7 +105,7 @@ public constructor(isBackEnabled: Boolean = true, isForwardEnabled: Boolean = tr
             if (field == value) return
 
             field = value
-            dispatcher?.updateEnabledCallbacks()
+            dispatcher?.updateEnabledHandlers()
         }
 
     /**
@@ -122,7 +122,7 @@ public constructor(isBackEnabled: Boolean = true, isForwardEnabled: Boolean = tr
             if (field == value) return
 
             field = value
-            dispatcher?.updateEnabledCallbacks()
+            dispatcher?.updateEnabledHandlers()
         }
 
     internal var dispatcher: NavigationEventDispatcher? = null
@@ -132,7 +132,7 @@ public constructor(isBackEnabled: Boolean = true, isForwardEnabled: Boolean = tr
      * callback is not registered, this call does nothing.
      */
     public fun remove() {
-        dispatcher?.removeCallback(this)
+        dispatcher?.removeHandler(this)
     }
 
     /**
@@ -164,7 +164,7 @@ public constructor(isBackEnabled: Boolean = true, isForwardEnabled: Boolean = tr
 
         // Simply notify the processor that info has changed.
         // The processor now owns all the logic for updating the shared state.
-        dispatcher?.sharedProcessor?.updateEnabledCallbackState(callback = this)
+        dispatcher?.sharedProcessor?.updateEnabledHandlerInfo(handler = this)
     }
 
     /**

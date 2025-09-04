@@ -33,8 +33,8 @@ import kotlinx.coroutines.flow.stateIn
 /**
  * A dispatcher for navigation events that can be organized hierarchically.
  *
- * This class acts as a localized entry point for registering [NavigationEventCallback] instances
- * and dispatching navigation events within a specific UI scope, such as a composable or a fragment.
+ * This class acts as a localized entry point for registering [NavigationEventHandler] instances and
+ * dispatching navigation events within a specific UI scope, such as a composable or a fragment.
  *
  * Dispatchers can be linked in a parent-child hierarchy. This structure allows for a sophisticated
  * system where nested UI components can handle navigation events independently while still
@@ -43,7 +43,7 @@ import kotlinx.coroutines.flow.stateIn
  * handling.
  *
  * It is important to call [dispose] when the owner of this dispatcher is destroyed (e.g., in a
- * `DisposableEffect`) to unregister callbacks and prevent memory leaks.
+ * `DisposableEffect`) to unregister handlers and prevent memory leaks.
  */
 public class NavigationEventDispatcher
 /**
@@ -56,7 +56,7 @@ public class NavigationEventDispatcher
  *   underlying [NavigationEventProcessor] as its parent. If `null`, this dispatcher acts as the
  *   root of its own event handling hierarchy.
  * @param fallbackOnBackPressed An optional lambda to be invoked if a navigation event completes and
- *   no registered [NavigationEventCallback] handles it. This provides a default "back" action.
+ *   no registered [NavigationEventHandler] handles it. This provides a default "back" action.
  */
 private constructor(
     private var parentDispatcher: NavigationEventDispatcher?,
@@ -70,7 +70,7 @@ private constructor(
      * `Activity` or a top-level composable. It creates its own internal [NavigationEventProcessor].
      *
      * If a navigation event completes without being handled by any registered
-     * [NavigationEventCallback], nothing further will happen.
+     * [NavigationEventHandler], nothing further will happen.
      */
     public constructor() : this(parentDispatcher = null, fallbackOnBackPressed = null)
 
@@ -81,7 +81,7 @@ private constructor(
      * `Activity` or a top-level composable. It creates its own internal [NavigationEventProcessor].
      *
      * @param fallbackOnBackPressed A lambda to be invoked if a navigation event **completes** and
-     *   no registered [NavigationEventCallback] handles it. This provides a default "back" action
+     *   no registered [NavigationEventHandler] handles it. This provides a default "back" action
      *   for the entire hierarchy. **It will not be invoked if the event is cancelled.**
      */
     public constructor(
@@ -142,12 +142,12 @@ private constructor(
             if (field == value) return
 
             field = value
-            updateEnabledCallbacks()
+            updateEnabledHandlers()
         }
 
     /**
      * The internal, shared [NavigationEventProcessor] responsible for managing all registered
-     * [NavigationEventCallback]s and orchestrating event dispatching.
+     * [NavigationEventHandler]s and orchestrating event dispatching.
      *
      * This processor ensures consistent ordering and state for all navigation events across the
      * application's hierarchy. It is initialized in one of two ways:
@@ -173,16 +173,16 @@ private constructor(
     internal val childDispatchers = mutableSetOf<NavigationEventDispatcher>()
 
     /**
-     * A set of [NavigationEventCallback] instances directly registered with *this specific*
+     * A set of [NavigationEventHandler] instances directly registered with *this specific*
      * [NavigationEventDispatcher] instance.
      *
-     * While the actual event processing and global callback management happen in the
-     * [sharedProcessor], this set provides a localized record of callbacks owned by this particular
+     * While the actual event processing and global handler management happen in the
+     * [sharedProcessor], this set provides a localized record of handlers owned by this particular
      * dispatcher.
      *
      * **This is primarily for cleanup when this dispatcher is no longer needed.**
      */
-    private val callbacks = mutableSetOf<NavigationEventCallback<*>>()
+    private val handlers = mutableSetOf<NavigationEventHandler<*>>()
 
     /**
      * A set of [NavigationEventInput] instances that are directly managed by this dispatcher.
@@ -195,7 +195,7 @@ private constructor(
     private val inputs = mutableSetOf<NavigationEventInput>()
 
     /**
-     * The [StateFlow] from the highest-priority, enabled navigation callback.
+     * The [StateFlow] from the highest-priority, enabled navigation handler.
      *
      * This represents the navigation state of the currently active component.
      */
@@ -243,56 +243,56 @@ private constructor(
     }
 
     /**
-     * Returns `true` if there is at least one [NavigationEventCallback.isBackEnabled] callback
+     * Returns `true` if there is at least one [NavigationEventHandler.isBackEnabled] handler
      * registered globally within this dispatcher hierarchy.
      *
-     * @return `true` if any callback is enabled, `false` otherwise.
+     * @return `true` if any handler is enabled, `false` otherwise.
      */
-    public fun hasEnabledCallbacks(): Boolean = sharedProcessor.hasEnabledCallbacks()
+    public fun hasEnabledHandler(): Boolean = sharedProcessor.hasEnabledHandler()
 
     /**
-     * Recomputes and updates the current [hasEnabledCallbacks] state based on the enabled status of
-     * all registered callbacks. This method should be called whenever a callback's enabled state or
+     * Recomputes and updates the current [hasEnabledHandler] state based on the enabled status of
+     * all registered handlers. This method should be called whenever a handler's enabled state or
      * its registration status (added/removed) changes.
      */
-    internal fun updateEnabledCallbacks() {
-        sharedProcessor.updateEnabledCallbacks()
+    internal fun updateEnabledHandlers() {
+        sharedProcessor.updateEnabledHandlers()
     }
 
     /**
-     * Adds a new [NavigationEventCallback] to receive navigation events.
+     * Adds a new [NavigationEventHandler] to receive navigation events.
      *
-     * **Callbacks are invoked based on [priority], and then by recency.** All [Overlay] callbacks
-     * are called before any [Default] callbacks. Within each priority group, callbacks are invoked
-     * in a Last-In, First-Out (LIFO) order—the most recently added callback is called first.
+     * **Handlers are invoked based on [priority], and then by recency.** All [Overlay] handlers are
+     * called before any [Default] handlers. Within each priority group, handlers are invoked in a
+     * Last-In, First-Out (LIFO) order—the most recently added handler is called first.
      *
-     * All callbacks are invoked on the main thread. To stop receiving events, a callback must be
-     * removed via [NavigationEventCallback.remove].
+     * All handlers are invoked on the main thread. To stop receiving events, a handler must be
+     * removed via [NavigationEventHandler.remove].
      *
-     * @param callback The callback instance to be added.
-     * @param priority The priority of the callback, determining its invocation order relative to
+     * @param handler The handler instance to be added.
+     * @param priority The priority of the handler, determining its invocation order relative to
      *   others. See [NavigationEventPriority].
-     * @throws IllegalArgumentException if the given callback is already registered with a different
+     * @throws IllegalArgumentException if the given handler is already registered with a different
      *   dispatcher.
      * @throws IllegalStateException if the dispatcher has already been disposed.
      */
-    @Suppress("PairedRegistration") // Callback is removed via `NavigationEventCallback.remove()`
-    @JvmName("addCallback") // Disable name mangling for Java
+    @Suppress("PairedRegistration") // handler is removed via `NavigationEventHandler.remove()`
+    @JvmName("addHandler") // Disable name mangling for Java
     @MainThread
     @JvmOverloads
-    public fun addCallback(
-        callback: NavigationEventCallback<*>,
+    public fun addHandler(
+        handler: NavigationEventHandler<*>,
         priority: NavigationEventPriority = Default,
     ) {
         checkInvariants()
 
-        sharedProcessor.addCallback(dispatcher = this, callback, priority)
-        callbacks += callback
+        sharedProcessor.addHandler(dispatcher = this, handler, priority)
+        handlers += handler
     }
 
-    internal fun removeCallback(callback: NavigationEventCallback<*>) {
-        sharedProcessor.removeCallback(callback)
-        callbacks -= callback
+    internal fun removeHandler(handler: NavigationEventHandler<*>) {
+        sharedProcessor.removeHandler(handler)
+        handlers -= handler
     }
 
     /**
@@ -300,7 +300,7 @@ private constructor(
      * lifecycle.
      *
      * The input is registered globally with the [sharedProcessor] to receive system-wide state
-     * updates (e.g., whether any callbacks are enabled). It is also tracked locally by this
+     * updates (e.g., whether any handlers are enabled). It is also tracked locally by this
      * dispatcher for lifecycle management.
      *
      * The input's [NavigationEventInput.onAdded] method is invoked immediately upon addition. It
@@ -350,12 +350,12 @@ private constructor(
     }
 
     /**
-     * Dispatch an [NavigationEventCallback.onBackStarted] event with the given event. This call is
+     * Dispatch an [NavigationEventHandler.onBackStarted] event with the given event. This call is
      * delegated to the shared [NavigationEventProcessor].
      *
      * @param input The [NavigationEventInput] that sourced this event.
      * @param direction The direction of the navigation event being started.
-     * @param event [NavigationEvent] to dispatch to the callbacks.
+     * @param event [NavigationEvent] to dispatch to the handlers.
      * @throws IllegalStateException if the dispatcher has already been disposed.
      */
     @MainThread
@@ -371,12 +371,12 @@ private constructor(
     }
 
     /**
-     * Dispatch an [NavigationEventCallback.onBackProgressed] event with the given event. This call
+     * Dispatch an [NavigationEventHandler.onBackProgressed] event with the given event. This call
      * is delegated to the shared [NavigationEventProcessor].
      *
      * @param input The [NavigationEventInput] that sourced this event.
      * @param direction The direction of the navigation event being started.
-     * @param event [NavigationEvent] to dispatch to the callbacks.
+     * @param event [NavigationEvent] to dispatch to the handlers.
      * @throws IllegalStateException if the dispatcher has already been disposed.
      */
     @MainThread
@@ -392,7 +392,7 @@ private constructor(
     }
 
     /**
-     * Dispatch an [NavigationEventCallback.onBackCompleted] event. This call is delegated to the
+     * Dispatch an [NavigationEventHandler.onBackCompleted] event. This call is delegated to the
      * shared [NavigationEventProcessor], passing the fallback action.
      *
      * @param input The [NavigationEventInput] that sourced this event.
@@ -411,7 +411,7 @@ private constructor(
     }
 
     /**
-     * Dispatch an [NavigationEventCallback.onBackCancelled] event. This call is delegated to the
+     * Dispatch an [NavigationEventHandler.onBackCancelled] event. This call is delegated to the
      * shared [NavigationEventProcessor].
      *
      * @param input The [NavigationEventInput] that sourced this event.
@@ -443,7 +443,7 @@ private constructor(
      * 2. For each dispatcher, it first detaches all registered [NavigationEventInput] instances by
      *    calling [NavigationEventInput.onRemoved]. This severs their lifecycle link to the
      *    dispatcher and allows them to release any tied resources.
-     * 3. It then removes all [NavigationEventCallback] instances registered with that dispatcher
+     * 3. It then removes all [NavigationEventHandler] instances registered with that dispatcher
      *    from the shared processor, preventing memory leaks.
      * 4. Finally, it removes the dispatcher from its parent's list of children, fully dismantling
      *    the hierarchy.
@@ -480,13 +480,13 @@ private constructor(
             }
             inputs.clear()
 
-            // Remove callbacks directly owned by the currentDispatcher from the shared processor.
-            for (callback in currentDispatcher.callbacks) {
+            // Remove handlers directly owned by the currentDispatcher from the shared processor.
+            for (handler in currentDispatcher.handlers) {
                 // Always use the public API for removal. This ensures the component's internal
                 // state is handled correctly and prevents unexpected behavior.
-                callback.remove()
+                handler.remove()
             }
-            currentDispatcher.callbacks.clear() // Clear local tracking for currentDispatcher
+            currentDispatcher.handlers.clear() // Clear local tracking for currentDispatcher
 
             // Clear the currentDispatcher's local tracking of its children, as they are either
             // added to the queue or have been processed.

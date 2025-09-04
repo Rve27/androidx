@@ -29,6 +29,9 @@ import kotlin.jvm.JvmOverloads
  *
  * Note that not all parameters apply to every type of navigation event. For example, [touchX] and
  * [touchY] are only relevant for gesture-based navigation.
+ *
+ * @see NavigationEventHandler
+ * @see NavigationEventDispatcher
  */
 public class NavigationEvent
 @JvmOverloads
