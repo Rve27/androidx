@@ -147,6 +147,90 @@ internal class NavigationEventDispatcherOwnerTest {
     }
 
     @Test
+    fun navigationEventDispatcherOwner_whenChildRecomposes_thenParentIsNotDisposed() {
+        // This test simulates a configuration change or navigation event where a child
+        // owner is disposed and replaced. It verifies that the parent's dispatcher
+        // remains functional and is not affected by its child's lifecycle.
+        lateinit var parentOwner: NavigationEventDispatcherOwner
+        lateinit var childOwner1: NavigationEventDispatcherOwner
+        var configuration by mutableStateOf(1)
+
+        rule.setContent {
+            NavigationEventDispatcherOwner(parent = null) {
+                parentOwner = LocalNavigationEventDispatcherOwner.current!!
+
+                // Use a state variable to switch between children, simulating recomposition.
+                if (configuration == 1) {
+                    NavigationEventDispatcherOwner {
+                        childOwner1 = LocalNavigationEventDispatcherOwner.current!!
+                    }
+                } else {
+                    // Composing a different child causes the first one to be disposed.
+                    NavigationEventDispatcherOwner {}
+                }
+            }
+        }
+        rule.waitForIdle() // Let the initial composition complete.
+
+        // Trigger a recomposition. This removes the first child from the composition,
+        // which calls its `onDispose` block.
+        configuration = 2
+        rule.waitForIdle()
+
+        // Verify the parent is still functional by using its dispatcher.
+        val parentCallback = TestNavigationEventCallback()
+        parentOwner.navigationEventDispatcher.addCallback(parentCallback)
+        val input = DirectNavigationEventInput()
+        parentOwner.navigationEventDispatcher.addInput(input)
+        input.backCompleted()
+
+        // The parent's callback should be invoked, proving it was not disposed.
+        assertThat(parentCallback.onBackCompletedInvocations).isEqualTo(1)
+
+        // Additionally, verify the original child owner was correctly disposed.
+        assertThrows<IllegalStateException> {
+                childOwner1.navigationEventDispatcher.addInput(DirectNavigationEventInput())
+            }
+            .hasMessageThat()
+            .contains("has already been disposed")
+    }
+
+    @Test
+    fun navigationEventDispatcherOwner_whenParentChanges_thenOldDispatcherIsDisposed() {
+        val parentOwner1 = TestNavigationEventDispatcherOwner()
+        val parentOwner2 = TestNavigationEventDispatcherOwner()
+        lateinit var childOwner1: NavigationEventDispatcherOwner
+
+        var currentParent by mutableStateOf(parentOwner1)
+
+        rule.setContent {
+            // Provide the parent via a mutable state to simulate it changing.
+            CompositionLocalProvider(LocalNavigationEventDispatcherOwner provides currentParent) {
+                NavigationEventDispatcherOwner {
+                    // Capture the first instance of the child owner.
+                    if (currentParent == parentOwner1) {
+                        childOwner1 = LocalNavigationEventDispatcherOwner.current!!
+                    }
+                }
+            }
+        }
+        rule.waitForIdle() // Let initial composition complete.
+
+        // Trigger a recomposition with a new parent. This should cause the
+        // original localDispatcher to be disposed.
+        currentParent = parentOwner2
+        rule.waitForIdle()
+
+        // Verify the original child owner was correctly disposed because its
+        // parent changed, triggering the DisposableEffect's cleanup.
+        assertThrows<IllegalStateException> {
+                childOwner1.navigationEventDispatcher.addInput(DirectNavigationEventInput())
+            }
+            .hasMessageThat()
+            .contains("has already been disposed")
+    }
+
+    @Test
     fun navigationEventDispatcherOwner_asRoot_whenNoParent_thenCreatesRootDispatcher() {
         val callback = TestNavigationEventCallback()
         lateinit var rootOwner: NavigationEventDispatcherOwner
