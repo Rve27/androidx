@@ -1780,6 +1780,143 @@ class DraggableTest {
         rule.runOnIdle { assertThat(deltas.absoluteValue).isEqualTo(0f) }
     }
 
+    // b/443031050
+    @Test
+    fun multiPointer_shouldNotLock() {
+        var innerDeltas = 0f
+        var outerDeltas = 0f
+        rule.setContent {
+            Box(
+                Modifier.fillMaxSize()
+                    .draggable(
+                        rememberDraggableState { outerDeltas += it },
+                        orientation = Orientation.Vertical,
+                    )
+            ) {
+                Box(
+                    Modifier.fillMaxSize()
+                        .draggable(
+                            rememberDraggableState { innerDeltas += it },
+                            orientation = Orientation.Horizontal,
+                        )
+                )
+            }
+        }
+
+        rule.onRoot().performTouchInput {
+            down(0, center)
+            down(1, center + Offset(50f, 0f))
+            repeat(5) {
+                moveBy(0, Offset(0f, 50f))
+                moveBy(1, Offset(0f, 50f))
+            }
+            up(0)
+            up(1)
+        }
+
+        rule.runOnIdle {
+            assertThat(outerDeltas).isNonZero()
+            assertThat(innerDeltas).isZero()
+        }
+
+        rule.onRoot().performTouchInput {
+            down(center)
+            moveBy(Offset(100f, 0f)) // moving completely on the cross axis
+            up()
+        }
+
+        rule.runOnIdle { assertThat(innerDeltas).isNonZero() }
+    }
+
+    // b/443031050
+    @Test
+    fun multiPointer_secondPointerTakesOver() {
+        var deltas = 0f
+        var touchSlop = 0f
+        rule.setContent {
+            touchSlop = LocalViewConfiguration.current.touchSlop
+            Box(
+                Modifier.fillMaxSize()
+                    .draggable(
+                        rememberDraggableState { deltas += it },
+                        orientation = Orientation.Vertical,
+                    )
+            )
+        }
+
+        rule.onRoot().performTouchInput {
+            down(0, center)
+            down(1, center + Offset(50f, 0f))
+
+            // start touch slop recognition
+            moveBy(0, Offset(0f, touchSlop / 2))
+            moveBy(1, Offset(0f, touchSlop / 2))
+
+            up(0) // main pointer leaves
+            repeat(5) {
+                // move pointer 1
+                moveBy(1, Offset(0f, 50f))
+            }
+            up(1)
+        }
+
+        rule.runOnIdle { assertThat(deltas).isNonZero() }
+    }
+
+    @Test
+    fun multiPointer_shouldNotMoveIfOnlySecondaryPointersMoves() {
+        var deltas = 0f
+        rule.setContent {
+            Box(
+                Modifier.fillMaxSize()
+                    .draggable(
+                        rememberDraggableState { deltas += it },
+                        orientation = Orientation.Vertical,
+                    )
+            )
+        }
+
+        rule.onRoot().performTouchInput {
+            down(0, center)
+            down(1, center + Offset(50f, 0f))
+            repeat(5) {
+                // only pointer 1 moved, we should not drag as it is the secondary pointer
+                moveBy(1, Offset(0f, 50f))
+            }
+            up(0)
+            up(1)
+        }
+
+        rule.runOnIdle { assertThat(deltas).isZero() }
+    }
+
+    @Test
+    fun multiPointer_shouldMoveIfOnlyMainPointersMoves() {
+        var deltas = 0f
+        rule.setContent {
+            Box(
+                Modifier.fillMaxSize()
+                    .draggable(
+                        rememberDraggableState { deltas += it },
+                        orientation = Orientation.Vertical,
+                    )
+            )
+        }
+
+        rule.onRoot().performTouchInput {
+            down(0, center)
+            down(1, center + Offset(50f, 0f))
+            repeat(5) {
+                // only pointer 0 moved, we should drag as it is the primary pointer
+                moveBy(0, Offset(0f, 50f))
+            }
+            up(0)
+            up(1)
+        }
+
+        rule.runOnIdle { assertThat(deltas).isNonZero() }
+    }
+
     private fun setDraggableContent(
         enableInitialFocus: Boolean = false,
         draggableFactory: @Composable () -> Modifier,
