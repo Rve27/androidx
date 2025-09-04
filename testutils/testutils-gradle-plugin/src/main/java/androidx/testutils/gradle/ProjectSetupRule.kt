@@ -74,11 +74,11 @@ class ProjectSetupRule(parentFolder: File? = null) : ExternalResource() {
         get() =
             """
             android {
-                compileSdk ${props.compileSdk}
-                buildToolsVersion "${props.buildToolsVersion}"
+                compileSdk = ${props.compileSdk}
+                buildToolsVersion = "${props.buildToolsVersion}"
 
                 defaultConfig {
-                    minSdkVersion ${props.minSdkVersion}
+                    minSdk = ${props.minSdkVersion}
                 }
 
                 signingConfigs {
