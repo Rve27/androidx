@@ -1,7 +1,11 @@
 // Baseline format: 1.0
-AddedClass: androidx.compose.material3.adaptive.layout.LevitatedPaneScrimKt:
-    Added class androidx.compose.material3.adaptive.layout.LevitatedPaneScrimKt
+RemovedClass: androidx.compose.material3.adaptive.layout.DockedEdge:
+    Binary breaking change: Removed class androidx.compose.material3.adaptive.layout.DockedEdge
+RemovedClass: androidx.compose.material3.adaptive.layout.DragToResizeState:
+    Binary breaking change: Removed class androidx.compose.material3.adaptive.layout.DragToResizeState
+RemovedClass: androidx.compose.material3.adaptive.layout.DragToResizeStateKt:
+    Binary breaking change: Removed class androidx.compose.material3.adaptive.layout.DragToResizeStateKt
 
 
-RemovedClass: androidx.compose.material3.adaptive.layout.ScrimKt:
-    Binary breaking change: Removed class androidx.compose.material3.adaptive.layout.ScrimKt
+RemovedMethod: androidx.compose.material3.adaptive.layout.PaneScaffoldScope#dragToResize(androidx.compose.ui.Modifier, androidx.compose.material3.adaptive.layout.DragToResizeState):
+    Binary breaking change: Removed method androidx.compose.material3.adaptive.layout.PaneScaffoldScope.dragToResize(androidx.compose.ui.Modifier,androidx.compose.material3.adaptive.layout.DragToResizeState)
