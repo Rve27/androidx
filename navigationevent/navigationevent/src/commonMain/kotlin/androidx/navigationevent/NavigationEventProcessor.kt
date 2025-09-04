@@ -415,7 +415,7 @@ internal class NavigationEventProcessor {
      *
      * If a callback is currently in progress, only it will be notified. Otherwise, the
      * highest-priority enabled callback will be notified. This is a terminal event, clearing the
-     * `inProgressCallback`.
+     * [inProgressCallback].
      *
      * @param input The [NavigationEventInput] that sourced this event.
      * @param direction The direction of the navigation event being started.

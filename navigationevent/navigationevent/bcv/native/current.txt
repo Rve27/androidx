@@ -67,7 +67,7 @@ final class androidx.navigationevent/DirectNavigationEventInput : androidx.navig
 }
 
 final class androidx.navigationevent/NavigationEvent { // androidx.navigationevent/NavigationEvent|null[0]
-    constructor <init>(kotlin/Float = ..., kotlin/Float = ..., kotlin/Float = ..., androidx.navigationevent/NavigationEventSwipeEdge = ..., kotlin/Long = ...) // androidx.navigationevent/NavigationEvent.<init>|<init>(kotlin.Float;kotlin.Float;kotlin.Float;androidx.navigationevent.NavigationEventSwipeEdge;kotlin.Long){}[0]
+    constructor <init>(androidx.navigationevent/NavigationEventSwipeEdge = ..., kotlin/Float = ..., kotlin/Float = ..., kotlin/Float = ..., kotlin/Long = ...) // androidx.navigationevent/NavigationEvent.<init>|<init>(androidx.navigationevent.NavigationEventSwipeEdge;kotlin.Float;kotlin.Float;kotlin.Float;kotlin.Long){}[0]
 
     final val frameTimeMillis // androidx.navigationevent/NavigationEvent.frameTimeMillis|{}frameTimeMillis[0]
         final fun <get-frameTimeMillis>(): kotlin/Long // androidx.navigationevent/NavigationEvent.frameTimeMillis.<get-frameTimeMillis>|<get-frameTimeMillis>(){}[0]
@@ -86,8 +86,9 @@ final class androidx.navigationevent/NavigationEvent { // androidx.navigationeve
 }
 
 final class androidx.navigationevent/NavigationEventDispatcher { // androidx.navigationevent/NavigationEventDispatcher|null[0]
+    constructor <init>() // androidx.navigationevent/NavigationEventDispatcher.<init>|<init>(){}[0]
     constructor <init>(androidx.navigationevent/NavigationEventDispatcher) // androidx.navigationevent/NavigationEventDispatcher.<init>|<init>(androidx.navigationevent.NavigationEventDispatcher){}[0]
-    constructor <init>(kotlin/Function0<kotlin/Unit>? = ...) // androidx.navigationevent/NavigationEventDispatcher.<init>|<init>(kotlin.Function0<kotlin.Unit>?){}[0]
+    constructor <init>(kotlin/Function0<kotlin/Unit>) // androidx.navigationevent/NavigationEventDispatcher.<init>|<init>(kotlin.Function0<kotlin.Unit>){}[0]
 
     final val state // androidx.navigationevent/NavigationEventDispatcher.state|{}state[0]
         final fun <get-state>(): kotlinx.coroutines.flow/StateFlow<androidx.navigationevent/NavigationEventState<androidx.navigationevent/NavigationEventInfo>> // androidx.navigationevent/NavigationEventDispatcher.state.<get-state>|<get-state>(){}[0]

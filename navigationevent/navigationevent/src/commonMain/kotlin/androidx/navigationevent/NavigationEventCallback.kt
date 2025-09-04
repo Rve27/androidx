@@ -17,6 +17,7 @@
 package androidx.navigationevent
 
 import androidx.annotation.EmptySuper
+import kotlin.jvm.JvmOverloads
 
 /**
  * Base class for handling navigation gestures dispatched by a [NavigationEventDispatcher].
@@ -43,10 +44,9 @@ import androidx.annotation.EmptySuper
  * @see NavigationEventInput
  * @see NavigationEventState
  */
-public abstract class NavigationEventCallback<T : NavigationEventInfo>(
-    isBackEnabled: Boolean = true,
-    isForwardEnabled: Boolean = true,
-) {
+public abstract class NavigationEventCallback<T : NavigationEventInfo>
+@JvmOverloads
+public constructor(isBackEnabled: Boolean = true, isForwardEnabled: Boolean = true) {
 
     /**
      * The contextual information representing the active destination for this callback.
@@ -152,6 +152,7 @@ public abstract class NavigationEventCallback<T : NavigationEventInfo>(
      * @param forwardInfo Context describing what is available when navigating forward
      *   (nearest-first).
      */
+    @JvmOverloads
     public fun setInfo(
         currentInfo: T,
         backInfo: List<T> = emptyList(),

@@ -22,6 +22,7 @@ import androidx.navigationevent.NavigationEventPriority.Companion.Overlay
 import androidx.navigationevent.NavigationEventState.Idle
 import androidx.navigationevent.NavigationEventState.InProgress
 import kotlin.jvm.JvmName
+import kotlin.jvm.JvmOverloads
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -63,29 +64,39 @@ private constructor(
 ) {
 
     /**
-     * Creates a **root** `NavigationEventDispatcher`.
+     * Creates a **root** `NavigationEventDispatcher` with no default fallback action.
      *
-     * This constructor is used to establish the top-level dispatcher for a new navigation
-     * hierarchy, typically within a scope like an `Activity` or a top-level composable. It creates
-     * its own internal [NavigationEventProcessor].
+     * Establishes the top-level dispatcher for a new navigation hierarchy, typically within an
+     * `Activity` or a top-level composable. It creates its own internal [NavigationEventProcessor].
      *
-     * @param fallbackOnBackPressed An optional lambda to be invoked if a navigation event completes
-     *   and no registered [NavigationEventCallback] handles it. This provides a default "back"
-     *   action for the entire hierarchy.
+     * If a navigation event completes without being handled by any registered
+     * [NavigationEventCallback], nothing further will happen.
+     */
+    public constructor() : this(parentDispatcher = null, fallbackOnBackPressed = null)
+
+    /**
+     * Creates a **root** `NavigationEventDispatcher` with a fallback action.
+     *
+     * Establishes the top-level dispatcher for a new navigation hierarchy, typically within an
+     * `Activity` or a top-level composable. It creates its own internal [NavigationEventProcessor].
+     *
+     * @param fallbackOnBackPressed A lambda to be invoked if a navigation event **completes** and
+     *   no registered [NavigationEventCallback] handles it. This provides a default "back" action
+     *   for the entire hierarchy. **It will not be invoked if the event is cancelled.**
      */
     public constructor(
-        fallbackOnBackPressed: (() -> Unit)? = null
+        fallbackOnBackPressed: () -> Unit
     ) : this(parentDispatcher = null, fallbackOnBackPressed = fallbackOnBackPressed)
 
     /**
      * Creates a **child** `NavigationEventDispatcher` linked to a parent.
      *
-     * This constructor is used to create nested dispatchers within an existing hierarchy. The new
-     * dispatcher will share the same underlying [NavigationEventProcessor] as its parent, allowing
-     * it to participate in the same event stream.
+     * Used to create nested dispatchers within an existing hierarchy. The new dispatcher shares the
+     * same underlying [NavigationEventProcessor] as its parent, allowing it to participate in the
+     * same event stream.
      *
-     * @param parentDispatcher The parent `NavigationEventDispatcher` to which this new dispatcher
-     *   will be attached.
+     * @param parentDispatcher The parent `NavigationEventDispatcher` to which this dispatcher will
+     *   be attached.
      */
     public constructor(
         parentDispatcher: NavigationEventDispatcher
@@ -233,9 +244,9 @@ private constructor(
 
     /**
      * Returns `true` if there is at least one [NavigationEventCallback.isBackEnabled] callback
-     * registered with this dispatcher.
+     * registered globally within this dispatcher hierarchy.
      *
-     * @return True if there is at least one enabled callback.
+     * @return `true` if any callback is enabled, `false` otherwise.
      */
     public fun hasEnabledCallbacks(): Boolean = sharedProcessor.hasEnabledCallbacks()
 
@@ -268,6 +279,7 @@ private constructor(
     @Suppress("PairedRegistration") // Callback is removed via `NavigationEventCallback.remove()`
     @JvmName("addCallback") // Disable name mangling for Java
     @MainThread
+    @JvmOverloads
     public fun addCallback(
         callback: NavigationEventCallback<*>,
         priority: NavigationEventPriority = Default,
