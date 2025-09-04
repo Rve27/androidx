@@ -72,6 +72,9 @@
             android:name=".headlockedui.HeadLockedUiActivity"
             android:exported="true" />
         <activity
+            android:name=".model.GltfModelActivity"
+            android:exported="true" />
+        <activity
             android:name=".movable.MovableActivity"
             android:exported="true" />
         <activity
