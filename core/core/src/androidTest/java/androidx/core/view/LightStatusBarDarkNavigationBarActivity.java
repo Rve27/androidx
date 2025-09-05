@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,5 +16,14 @@
 
 package androidx.core.view;
 
-public class LightSystemBarsActivity extends InsetsCompatActivity {
+import android.os.Bundle;
+
+public class LightStatusBarDarkNavigationBarActivity extends LightSystemBarsActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView())
+                .setAppearanceLightNavigationBars(false);
+    }
 }
