@@ -553,6 +553,7 @@ constructor(
                         )
                     )
                     .build()
+                    .also { it.getUseCaseCamera().start() }
 
             for (control in allControls) {
                 control.requestControl = camera?.requestControl
