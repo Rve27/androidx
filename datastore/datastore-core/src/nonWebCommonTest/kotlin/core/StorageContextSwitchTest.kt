@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.datastore.core
+package core
 
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.coroutineContext
+import kotlin.plus
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlinx.coroutines.CoroutineScope
@@ -31,7 +32,10 @@ class StorageContextSwitchTest {
     private val callerCtx = TestElement1("caller_key_1") + TestElement3("caller_key_3")
     private val testStorage = TestStorage()
     private val store =
-        DataStoreImpl(testStorage, scope = CoroutineScope(Dispatchers.IO + datastoreCtx))
+        _root_ide_package_.androidx.datastore.core.DataStoreImpl(
+            testStorage,
+            scope = CoroutineScope(Dispatchers.IO + datastoreCtx),
+        )
 
     @Test
     fun testContextSandwich() =
@@ -41,8 +45,14 @@ class StorageContextSwitchTest {
 
             val unused =
                 store.updateData {
-                    assertEquals(TestElement1("caller_key_1"), coroutineContext[TestKey1])
-                    assertEquals(TestElement3("caller_key_3"), coroutineContext[TestKey3])
+                    assertEquals(
+                        TestElement1("caller_key_1"),
+                        _root_ide_package_.kotlin.coroutines.coroutineContext[TestKey1],
+                    )
+                    assertEquals(
+                        TestElement3("caller_key_3"),
+                        _root_ide_package_.kotlin.coroutines.coroutineContext[TestKey3],
+                    )
                     TestData("updated")
                 }
         }
@@ -50,14 +60,15 @@ class StorageContextSwitchTest {
 
 private class TestData(var value: String)
 
-private class TestStorageConnection : StorageConnection<TestData> {
+private class TestStorageConnection : androidx.datastore.core.StorageConnection<TestData> {
     private var data: TestData = TestData("Initial Value")
 
     override suspend fun <R> readScope(
-        block: suspend ReadScope<TestData>.(locked: Boolean) -> R
+        block: suspend androidx.datastore.core.ReadScope<TestData>.(locked: Boolean) -> R
     ): R {
         return block(
-            object : ReadScope<TestData>, Closeable {
+            object :
+                androidx.datastore.core.ReadScope<TestData>, androidx.datastore.core.Closeable {
                 override suspend fun readData(): TestData {
                     // Context is caller + datastore so we assert that we have the keys from the
                     // datastoreCtx and any key in the callerCtx that was not present in
@@ -77,9 +88,13 @@ private class TestStorageConnection : StorageConnection<TestData> {
         )
     }
 
-    override suspend fun writeScope(block: suspend WriteScope<TestData>.() -> Unit) {
+    override suspend fun writeScope(
+        block: suspend androidx.datastore.core.WriteScope<TestData>.() -> Unit
+    ) {
         block(
-            object : WriteScope<TestData>, ReadScope<TestData> {
+            object :
+                androidx.datastore.core.WriteScope<TestData>,
+                androidx.datastore.core.ReadScope<TestData> {
                 override suspend fun readData(): TestData = data
 
                 override suspend fun writeData(value: TestData) {
@@ -100,8 +115,8 @@ private class TestStorageConnection : StorageConnection<TestData> {
         )
     }
 
-    override val coordinator: InterProcessCoordinator =
-        object : InterProcessCoordinator {
+    override val coordinator: androidx.datastore.core.InterProcessCoordinator =
+        object : androidx.datastore.core.InterProcessCoordinator {
             override val updateNotifications: Flow<Unit>
                 get() = TODO("Not yet implemented")
 
@@ -121,8 +136,8 @@ private class TestStorageConnection : StorageConnection<TestData> {
     override fun close() {}
 }
 
-private class TestStorage : Storage<TestData> {
-    override fun createConnection(): StorageConnection<TestData> {
+private class TestStorage : androidx.datastore.core.Storage<TestData> {
+    override fun createConnection(): androidx.datastore.core.StorageConnection<TestData> {
         return TestStorageConnection()
     }
 }

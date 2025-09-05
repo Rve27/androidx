@@ -23,6 +23,7 @@ import kotlin.reflect.KClass
 import okio.FileSystem
 import okio.IOException
 import okio.Path
+import okio.SYSTEM
 
 open class OkioTestIO(private val fileSystem: FileSystem = FileSystem.SYSTEM) :
     TestIO<OkioPath, IOException>(

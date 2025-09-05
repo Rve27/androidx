@@ -26,6 +26,7 @@ import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import okio.FileSystem
+import okio.SYSTEM
 
 @OptIn(
     kotlinx.coroutines.ExperimentalCoroutinesApi::class,
