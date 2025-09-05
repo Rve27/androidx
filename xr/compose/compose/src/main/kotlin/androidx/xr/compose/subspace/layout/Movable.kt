@@ -70,13 +70,7 @@ import kotlinx.coroutines.asExecutor
  *   the [SpatialMoveEvent] type.
  * @see [SpatialMoveEvent].
  */
-@Deprecated(
-    "The movable modifier is now deprecated. Use the appropriate SpatialPanel or " +
-        "SpatialExternalSurface composable with a MovePolicy instead. " +
-        "For example: SpatialPanel(dragPolicy = MovePolicy(...), content = { /* your content */ })",
-    level = DeprecationLevel.WARNING,
-)
-public fun SubspaceModifier.movable(
+internal fun SubspaceModifier.movable(
     enabled: Boolean = true,
     stickyPose: Boolean = false,
     scaleWithDistance: Boolean = true,
@@ -117,13 +111,7 @@ public fun SubspaceModifier.movable(
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 @Suppress("PrimitiveInCollection")
-@Deprecated(
-    "The anchorable modifier is now deprecated. Use the appropriate SpatialPanel or " +
-        "SpatialExternalSurface composable with a AnchorPolicy instead. " +
-        "For example: SpatialPanel(dragPolicy = AnchorPolicy(...), content = { /* your content */ })",
-    level = DeprecationLevel.WARNING,
-)
-public fun SubspaceModifier.anchorable(
+internal fun SubspaceModifier.anchorable(
     enabled: Boolean = true,
     anchorPlaneOrientations: Set<PlaneOrientation> = emptySet(),
     anchorPlaneSemantics: Set<PlaneSemantic> = emptySet(),

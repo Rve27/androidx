@@ -687,7 +687,6 @@ private class SpatialViewPanelMeasurePolicy(private val view: View) : SubspaceMe
  * @param resizePolicy An optional [ResizePolicy] to configure resizing behavior.
  * @return A [SubspaceModifier] with all applicable policies integrated.
  */
-@Suppress("DEPRECATION")
 internal fun buildSpatialPanelModifier(
     baseModifier: SubspaceModifier,
     dragPolicy: DragPolicy?,
