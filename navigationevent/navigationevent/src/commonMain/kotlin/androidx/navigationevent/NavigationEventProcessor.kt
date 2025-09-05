@@ -204,6 +204,19 @@ internal class NavigationEventProcessor {
                     InProgress(currentInfo, combinedBackInfo, forwardInfo, state.latestEvent)
             }
         }
+
+        // Notify inputs directly for immediate, synchronous updates. This avoids
+        // delays from the coroutine dispatcher, ensuring that consumers can react
+        // to the state change within the same frame.
+        for (input in overlayInputs) {
+            input.doOnInfoChanged(currentInfo, combinedBackInfo, forwardInfo)
+        }
+        for (input in defaultInputs) {
+            input.doOnInfoChanged(currentInfo, combinedBackInfo, forwardInfo)
+        }
+        for (input in unspecifiedInputs) {
+            input.doOnInfoChanged(currentInfo, combinedBackInfo, forwardInfo)
+        }
     }
 
     /**
