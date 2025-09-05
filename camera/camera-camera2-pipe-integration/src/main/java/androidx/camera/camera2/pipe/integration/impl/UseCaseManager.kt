@@ -420,7 +420,7 @@ constructor(
                 setOf(
                     CameraCallbackMap.createFor(
                         sessionConfig.repeatingCameraCaptureCallbacks,
-                        useCaseThreads.get().backgroundExecutor,
+                        useCaseThreads.get().sequentialExecutor,
                     )
                 ),
             template = RequestTemplate(sessionConfig.repeatingCaptureConfig.templateType),
