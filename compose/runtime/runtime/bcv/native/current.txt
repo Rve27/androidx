@@ -249,6 +249,11 @@ abstract interface androidx.compose.runtime.tooling/CompositionInstance { // and
     abstract fun findContextGroup(): androidx.compose.runtime.tooling/CompositionGroup? // androidx.compose.runtime.tooling/CompositionInstance.findContextGroup|findContextGroup(){}[0]
 }
 
+abstract interface androidx.compose.runtime.tooling/IdentifiableRecomposeScope { // androidx.compose.runtime.tooling/IdentifiableRecomposeScope|null[0]
+    abstract val identity // androidx.compose.runtime.tooling/IdentifiableRecomposeScope.identity|{}identity[0]
+        abstract fun <get-identity>(): kotlin/Any? // androidx.compose.runtime.tooling/IdentifiableRecomposeScope.identity.<get-identity>|<get-identity>(){}[0]
+}
+
 abstract interface androidx.compose.runtime/ComposeNodeLifecycleCallback { // androidx.compose.runtime/ComposeNodeLifecycleCallback|null[0]
     abstract fun onDeactivate() // androidx.compose.runtime/ComposeNodeLifecycleCallback.onDeactivate|onDeactivate(){}[0]
     abstract fun onRelease() // androidx.compose.runtime/ComposeNodeLifecycleCallback.onRelease|onRelease(){}[0]

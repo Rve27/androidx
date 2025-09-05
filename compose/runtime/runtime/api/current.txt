@@ -1410,6 +1410,11 @@ package androidx.compose.runtime.tooling {
     method public void onCompositionUnregistered(androidx.compose.runtime.tooling.ObservableComposition composition);
   }
 
+  @SuppressCompatibility @androidx.compose.runtime.tooling.ComposeToolingApi public interface IdentifiableRecomposeScope {
+    method public Object? getIdentity();
+    property public abstract Object? identity;
+  }
+
   public final class InspectionTablesKt {
     method public static androidx.compose.runtime.ProvidableCompositionLocal<java.util.Set<androidx.compose.runtime.tooling.CompositionData>?> getLocalInspectionTables();
     property public static androidx.compose.runtime.ProvidableCompositionLocal<java.util.Set<androidx.compose.runtime.tooling.CompositionData>?> LocalInspectionTables;
