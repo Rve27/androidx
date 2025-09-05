@@ -32,29 +32,32 @@ import com.google.devtools.ksp.symbol.Nullability
 import com.google.devtools.ksp.symbol.Variance
 import com.squareup.kotlinpoet.javapoet.JClassName
 
-internal fun KSType.replaceSuspendFunctionTypes(resolver: Resolver): KSType {
-    return if (!isSuspendFunctionType) {
-        this
-    } else {
-        // Find the JVM FunctionN type that will replace the suspend function and use that.
-        val functionN =
-            resolver.requireType(
-                (declaration.asJTypeName(resolver).rawTypeName() as JClassName).canonicalName()
-            )
-        functionN.replace(
-            buildList {
-                addAll(arguments.dropLast(1))
-                val continuationTypeRef =
-                    resolver
-                        .requireType("kotlin.coroutines.Continuation")
-                        .replace(arguments.takeLast(1))
-                        .createTypeReference()
-                add(resolver.getTypeArgument(continuationTypeRef, Variance.INVARIANT))
-                val objTypeRef = resolver.requireType("java.lang.Object").createTypeReference()
-                add(resolver.getTypeArgument(objTypeRef, Variance.INVARIANT))
-            }
-        )
+internal fun KSType.replaceSuspendFunctionTypes(resolver: Resolver): KSType? {
+    if (!isSuspendFunctionType) {
+        return this
     }
+    // Find the JVM kotlin.jvm.function.FunctionN type that will replace the suspend function and
+    // use that.
+    val functionFQN =
+        (declaration.asJTypeName(resolver).rawTypeName() as JClassName).canonicalName()
+    val functionN = resolver.findClass(functionFQN)?.asType(emptyList())
+    if (functionN == null) {
+        // Couldn't find the function interface, likely not processing for a JVM target.
+        return null
+    }
+    return functionN.replace(
+        buildList {
+            addAll(arguments.dropLast(1))
+            val continuationTypeRef =
+                resolver
+                    .requireType("kotlin.coroutines.Continuation")
+                    .replace(arguments.takeLast(1))
+                    .createTypeReference()
+            add(resolver.getTypeArgument(continuationTypeRef, Variance.INVARIANT))
+            val objTypeRef = resolver.requireType("java.lang.Object").createTypeReference()
+            add(resolver.getTypeArgument(objTypeRef, Variance.INVARIANT))
+        }
+    )
 }
 
 internal fun KSType.replaceTypeAliases(resolver: Resolver): KSType {

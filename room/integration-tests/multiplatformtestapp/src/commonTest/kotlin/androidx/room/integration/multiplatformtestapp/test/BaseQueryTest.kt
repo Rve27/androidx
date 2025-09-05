@@ -113,6 +113,16 @@ abstract class BaseQueryTest {
         // Perform multiple delete in transaction successfully
         dao.deleteList(pks = listOf(1L, 3L))
         assertThat(dao.getItemList().map { it.pk }).containsExactly(2L)
+
+        // Perform multiple insert but cancel them using transaction wrapper
+        assertThrows<IllegalStateException> {
+            dao.runInTransaction {
+                dao.insertItem(1)
+                dao.insertItem(3)
+                error("Cancel transaction")
+            }
+        }
+        assertThat(dao.getItemList().map { it.pk }).containsExactly(2L)
     }
 
     @Test

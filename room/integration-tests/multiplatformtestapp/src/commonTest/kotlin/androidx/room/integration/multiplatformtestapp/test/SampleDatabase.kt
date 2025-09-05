@@ -272,6 +272,8 @@ interface SampleDao {
         )
         val sample2s: List<StringSampleEntity2>,
     )
+
+    @Transaction suspend fun runInTransaction(tx: suspend () -> Unit) = tx()
 }
 
 @Database(

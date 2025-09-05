@@ -121,31 +121,33 @@ internal class KSTypeVarianceResolver(private val resolver: Resolver) {
 
     private fun KSTypeWrapper.replaceSuspendFunctionTypes(): KSTypeWrapper {
         val newArguments = arguments.map { it.replaceSuspendFunctionTypes() }
-        return if (!newType.isSuspendFunctionType) {
-            replace(newArguments)
-        } else {
-            val newKSType = newType.replaceSuspendFunctionTypes(resolver)
-            val newType = KSTypeWrapper(resolver, newKSType)
-            replaceType(newKSType)
-                .replace(
-                    buildList {
-                        addAll(newArguments.dropLast(1))
-                        val originalArg = newArguments.last()
-                        val continuationArg = newType.arguments[newType.arguments.lastIndex - 1]
-                        add(
-                            continuationArg.replace(
-                                continuationArg.type!!.replace(
-                                    continuationArg.type!!.arguments.map {
-                                        it.replace(originalArg.type!!, originalArg.variance)
-                                    }
-                                ),
-                                continuationArg.variance,
-                            )
-                        )
-                        add(newType.arguments.last())
-                    }
-                )
+        if (!newType.isSuspendFunctionType) {
+            return replace(newArguments)
         }
+        val newKSType = newType.replaceSuspendFunctionTypes(resolver)
+        if (newKSType == null) {
+            return replace(newArguments)
+        }
+        val newType = KSTypeWrapper(resolver, newKSType)
+        return replaceType(newKSType)
+            .replace(
+                buildList {
+                    addAll(newArguments.dropLast(1))
+                    val originalArg = newArguments.last()
+                    val continuationArg = newType.arguments[newType.arguments.lastIndex - 1]
+                    add(
+                        continuationArg.replace(
+                            continuationArg.type!!.replace(
+                                continuationArg.type!!.arguments.map {
+                                    it.replace(originalArg.type!!, originalArg.variance)
+                                }
+                            ),
+                            continuationArg.variance,
+                        )
+                    )
+                    add(newType.arguments.last())
+                }
+            )
     }
 
     private fun KSTypeArgumentWrapper.replaceSuspendFunctionTypes(): KSTypeArgumentWrapper {
