@@ -189,21 +189,23 @@ internal class AndroidPluginIntegration(private val common: CommonIntegration) {
         androidVariantsTaskNames: AndroidVariantsTaskNames,
         argumentProviderFactory: (Task) -> RoomArgumentProvider,
     ) =
-        project.plugins.withId("kotlin-kapt") {
-            project.tasks.withType(BaseKapt::class.java).configureEach { task ->
-                if (androidVariantsTaskNames.isKaptTask(task.name)) {
-                    val argProvider = argumentProviderFactory.invoke(task)
-                    // TODO: Update once KT-58009 is fixed.
-                    try {
-                        // Because of KT-58009, we need to add a `listOf(argProvider)` instead
-                        // of `argProvider`.
-                        @Suppress("DEPRECATION") // b/418799397
-                        task.annotationProcessorOptionProviders.add(listOf(argProvider))
-                    } catch (e: Throwable) {
-                        // Once KT-58009 is fixed, adding `listOf(argProvider)` will fail, we will
-                        // pass `argProvider` instead, which is the correct way.
-                        @Suppress("DEPRECATION") // b/418799397
-                        task.annotationProcessorOptionProviders.add(argProvider)
+        listOf("kotlin-kapt", "com.android.legacy-kapt").forEach { kaptPluginId ->
+            project.plugins.withId(kaptPluginId) {
+                project.tasks.withType(BaseKapt::class.java).configureEach { task ->
+                    if (androidVariantsTaskNames.isKaptTask(task.name)) {
+                        val argProvider = argumentProviderFactory.invoke(task)
+                        // TODO: Update once KT-58009 is fixed.
+                        try {
+                            // Because of KT-58009, we need to add a `listOf(argProvider)` instead
+                            // of `argProvider`.
+                            @Suppress("DEPRECATION") // b/418799397
+                            task.annotationProcessorOptionProviders.add(listOf(argProvider))
+                        } catch (e: Throwable) {
+                            // Once KT-58009 is fixed, adding `listOf(argProvider)` will fail, we
+                            // will pass `argProvider` instead, which is the correct way.
+                            @Suppress("DEPRECATION") // b/418799397
+                            task.annotationProcessorOptionProviders.add(argProvider)
+                        }
                     }
                 }
             }
