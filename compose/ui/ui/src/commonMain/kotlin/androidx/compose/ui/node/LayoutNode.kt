@@ -103,6 +103,7 @@ internal class LayoutNode(
     internal var lastSize: IntSize = IntSize.Zero
     internal var outerToInnerOffset: IntOffset = IntOffset.Max
     internal var outerToInnerOffsetDirty: Boolean = true
+    internal var addedToRectList: Boolean = true
 
     override var compositeKeyHash: Int = 0
 
@@ -1495,6 +1496,10 @@ internal class LayoutNode(
         }
         rescheduleRemeasureOrRelayout(this)
         owner?.onPostLayoutNodeReused(this, oldSemanticsId)
+        // Sometimes, while scrolling with reuse, a child LayoutNode, might not
+        // require measure or layout at all, but at a minimum we need to update RectManager with
+        // the correct information.
+        owner?.rectManager?.onLayoutPositionChanged(this, forceUpdate = true)
     }
 
     override fun onDeactivate() {
@@ -1517,6 +1522,10 @@ internal class LayoutNode(
             }
         }
         owner?.onLayoutNodeDeactivated(this)
+        @OptIn(ExperimentalComposeUiApi::class)
+        if (ComposeUiFlags.isRectTrackingEnabled) {
+            owner?.rectManager?.remove(this)
+        }
     }
 
     override fun onRelease() {
