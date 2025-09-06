@@ -158,8 +158,9 @@ package androidx.xr.scenecore.testing {
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeGltfEntity extends androidx.xr.scenecore.testing.FakeEntity implements androidx.xr.scenecore.internal.GltfEntity {
     ctor public FakeGltfEntity();
+    method public void clearMaterialOverride(String nodeName, int primitiveIndex);
     method public int getAnimationState();
-    method public void setMaterialOverride(androidx.xr.scenecore.internal.MaterialResource material, String meshName);
+    method public void setMaterialOverride(androidx.xr.scenecore.internal.MaterialResource material, String nodeName, int primitiveIndex);
     method public void startAnimation(boolean loop, String? animationName);
     method public void stopAnimation();
     property @androidx.xr.scenecore.internal.GltfEntity.AnimationStateValue public int animationState;
@@ -167,9 +168,10 @@ package androidx.xr.scenecore.testing {
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeGltfFeature extends androidx.xr.scenecore.testing.FakeBaseRenderingFeature implements androidx.xr.scenecore.internal.GltfFeature {
     ctor public FakeGltfFeature(androidx.xr.runtime.NodeHolder<? extends java.lang.Object?> nodeHolder);
+    method public void clearMaterialOverride(String nodeName, int primitiveIndex);
     method public int getAnimationState();
     method public void setColliderEnabled(boolean enableCollider);
-    method public void setMaterialOverride(androidx.xr.scenecore.internal.MaterialResource material, String meshName);
+    method public void setMaterialOverride(androidx.xr.scenecore.internal.MaterialResource material, String nodeName, int primitiveIndex);
     method public void startAnimation(boolean loop, String? animationName, java.util.concurrent.Executor executor);
     method public void stopAnimation();
     property public int animationState;

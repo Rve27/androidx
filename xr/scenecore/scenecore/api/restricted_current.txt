@@ -212,10 +212,13 @@ package androidx.xr.scenecore {
   }
 
   public final class GltfModelEntity extends androidx.xr.scenecore.BaseEntity<androidx.xr.scenecore.internal.GltfEntity> {
+    method @MainThread public void clearMaterialOverride(String nodeName);
+    method @MainThread public void clearMaterialOverride(String nodeName, optional int primitiveIndex);
     method @MainThread public static androidx.xr.scenecore.GltfModelEntity create(androidx.xr.runtime.Session session, androidx.xr.scenecore.GltfModel model);
     method @MainThread public static androidx.xr.scenecore.GltfModelEntity create(androidx.xr.runtime.Session session, androidx.xr.scenecore.GltfModel model, optional androidx.xr.runtime.math.Pose pose);
     method public int getAnimationState();
-    method @MainThread @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public void setMaterialOverride(androidx.xr.scenecore.Material material, String meshName);
+    method @MainThread public void setMaterialOverride(androidx.xr.scenecore.Material material, String nodeName);
+    method @MainThread public void setMaterialOverride(androidx.xr.scenecore.Material material, String nodeName, optional int primitiveIndex);
     method @MainThread public void startAnimation();
     method @MainThread public void startAnimation(optional boolean loop);
     method @MainThread public void startAnimation(boolean loop, String animationName);
@@ -766,8 +769,8 @@ package androidx.xr.scenecore {
   public static final class SpatialEnvironment.SpatialEnvironmentPreference {
     ctor public SpatialEnvironment.SpatialEnvironmentPreference(androidx.xr.scenecore.ExrImage? skybox, androidx.xr.scenecore.GltfModel? geometry);
     ctor @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public SpatialEnvironment.SpatialEnvironmentPreference(androidx.xr.scenecore.ExrImage? skybox, androidx.xr.scenecore.GltfModel? geometry, androidx.xr.scenecore.Material? geometryMaterial);
-    ctor @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public SpatialEnvironment.SpatialEnvironmentPreference(androidx.xr.scenecore.ExrImage? skybox, androidx.xr.scenecore.GltfModel? geometry, androidx.xr.scenecore.Material? geometryMaterial, optional String? geometryMeshName);
-    ctor @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public SpatialEnvironment.SpatialEnvironmentPreference(androidx.xr.scenecore.ExrImage? skybox, androidx.xr.scenecore.GltfModel? geometry, androidx.xr.scenecore.Material? geometryMaterial, optional String? geometryMeshName, optional String? geometryAnimationName);
+    ctor @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public SpatialEnvironment.SpatialEnvironmentPreference(androidx.xr.scenecore.ExrImage? skybox, androidx.xr.scenecore.GltfModel? geometry, androidx.xr.scenecore.Material? geometryMaterial, optional String? geometryNodeName);
+    ctor @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public SpatialEnvironment.SpatialEnvironmentPreference(androidx.xr.scenecore.ExrImage? skybox, androidx.xr.scenecore.GltfModel? geometry, androidx.xr.scenecore.Material? geometryMaterial, optional String? geometryNodeName, optional String? geometryAnimationName);
     method public androidx.xr.scenecore.GltfModel? getGeometry();
     method public androidx.xr.scenecore.ExrImage? getSkybox();
     property public androidx.xr.scenecore.GltfModel? geometry;
@@ -1367,6 +1370,7 @@ package androidx.xr.scenecore.impl.impress {
     ctor public FakeImpressApiImpl();
     method public com.google.common.util.concurrent.ListenableFuture<java.lang.Void!> animateGltfModel(androidx.xr.scenecore.impl.impress.ImpressNode, String?, boolean);
     method public androidx.xr.scenecore.impl.impress.Texture borrowReflectionTexture();
+    method public void clearMaterialOverride(androidx.xr.scenecore.impl.impress.ImpressNode, String, int);
     method public void clearPreferredEnvironmentIblAsset();
     method public androidx.xr.scenecore.impl.impress.ImpressNode createImpressNode();
     method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.impl.impress.KhronosPbrMaterial!> createKhronosPbrMaterial(androidx.xr.scenecore.internal.KhronosPbrMaterialSpec);
@@ -1428,7 +1432,7 @@ package androidx.xr.scenecore.impl.impress {
     method public void setGltfModelColliderEnabled(androidx.xr.scenecore.impl.impress.ImpressNode, boolean);
     method public void setImpressNodeParent(androidx.xr.scenecore.impl.impress.ImpressNode, androidx.xr.scenecore.impl.impress.ImpressNode);
     method public void setIndexOfRefractionOnKhronosPbrMaterial(long, float);
-    method public void setMaterialOverride(androidx.xr.scenecore.impl.impress.ImpressNode, long, String);
+    method public void setMaterialOverride(androidx.xr.scenecore.impl.impress.ImpressNode, long, String, int);
     method public void setMetallicFactorOnKhronosPbrMaterial(long, float);
     method public void setMetallicRoughnessTextureOnKhronosPbrMaterial(long, long, androidx.xr.scenecore.internal.TextureSampler);
     method public void setMetallicRoughnessUvTransformOnKhronosPbrMaterial(long, float, float, float, float, float, float, float, float, float);
@@ -1461,10 +1465,11 @@ package androidx.xr.scenecore.impl.impress {
 
   public static class FakeImpressApiImpl.GltfNodeData {
     ctor public FakeImpressApiImpl.GltfNodeData();
+    method public void clearMaterialOverride(String, int);
     method public int getEntityId();
     method public androidx.xr.scenecore.impl.impress.FakeImpressApiImpl.MaterialData? getMaterialOverride();
     method public void setEntityId(int);
-    method public void setMaterialOverride(androidx.xr.scenecore.impl.impress.FakeImpressApiImpl.MaterialData?);
+    method public void setMaterialOverride(androidx.xr.scenecore.impl.impress.FakeImpressApiImpl.MaterialData?, String, int);
   }
 
   public static class FakeImpressApiImpl.MaterialData {
@@ -1505,6 +1510,7 @@ package androidx.xr.scenecore.impl.impress {
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface ImpressApi {
     method public com.google.common.util.concurrent.ListenableFuture<java.lang.Void?> animateGltfModel(androidx.xr.scenecore.impl.impress.ImpressNode impressNode, String? animationName, boolean looping);
     method public androidx.xr.scenecore.impl.impress.Texture borrowReflectionTexture();
+    method public void clearMaterialOverride(androidx.xr.scenecore.impl.impress.ImpressNode impressNode, String nodeName, int primitiveIndex);
     method public void clearPreferredEnvironmentIblAsset();
     method public androidx.xr.scenecore.impl.impress.ImpressNode createImpressNode();
     method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.impl.impress.KhronosPbrMaterial> createKhronosPbrMaterial(androidx.xr.scenecore.internal.KhronosPbrMaterialSpec spec);
@@ -1554,7 +1560,7 @@ package androidx.xr.scenecore.impl.impress {
     method public void setGltfModelColliderEnabled(androidx.xr.scenecore.impl.impress.ImpressNode impressNode, boolean enableCollider);
     method public void setImpressNodeParent(androidx.xr.scenecore.impl.impress.ImpressNode impressNodeChild, androidx.xr.scenecore.impl.impress.ImpressNode impressNodeParent);
     method public void setIndexOfRefractionOnKhronosPbrMaterial(long nativeKhronosPbrMaterial, float indexOfRefraction);
-    method public void setMaterialOverride(androidx.xr.scenecore.impl.impress.ImpressNode impressNode, long nativeMaterial, String meshName);
+    method public void setMaterialOverride(androidx.xr.scenecore.impl.impress.ImpressNode impressNode, long nativeMaterial, String nodeName, int primitiveIndex);
     method public void setMetallicFactorOnKhronosPbrMaterial(long nativeKhronosPbrMaterial, float factor);
     method public void setMetallicRoughnessTextureOnKhronosPbrMaterial(long nativeKhronosPbrMaterial, long metallicRoughnessTexture, androidx.xr.scenecore.internal.TextureSampler sampler);
     method public void setMetallicRoughnessUvTransformOnKhronosPbrMaterial(long nativeKhronosPbrMaterial, float ux, float uy, float uz, float vx, float vy, float vz, float wx, float wy, float wz);
@@ -1697,6 +1703,7 @@ package androidx.xr.scenecore.impl.impress {
     ctor public ImpressApiImpl();
     method public com.google.common.util.concurrent.ListenableFuture<java.lang.Void!> animateGltfModel(androidx.xr.scenecore.impl.impress.ImpressNode, String?, boolean);
     method public androidx.xr.scenecore.impl.impress.Texture borrowReflectionTexture();
+    method public void clearMaterialOverride(androidx.xr.scenecore.impl.impress.ImpressNode, String, int);
     method public void clearPreferredEnvironmentIblAsset();
     method public androidx.xr.scenecore.impl.impress.ImpressNode createImpressNode();
     method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.impl.impress.KhronosPbrMaterial!> createKhronosPbrMaterial(androidx.xr.scenecore.internal.KhronosPbrMaterialSpec);
@@ -1746,7 +1753,7 @@ package androidx.xr.scenecore.impl.impress {
     method public void setGltfModelColliderEnabled(androidx.xr.scenecore.impl.impress.ImpressNode, boolean);
     method public void setImpressNodeParent(androidx.xr.scenecore.impl.impress.ImpressNode, androidx.xr.scenecore.impl.impress.ImpressNode);
     method public void setIndexOfRefractionOnKhronosPbrMaterial(long, float);
-    method public void setMaterialOverride(androidx.xr.scenecore.impl.impress.ImpressNode, long, String);
+    method public void setMaterialOverride(androidx.xr.scenecore.impl.impress.ImpressNode, long, String, int);
     method public void setMetallicFactorOnKhronosPbrMaterial(long, float);
     method public void setMetallicRoughnessTextureOnKhronosPbrMaterial(long, long, androidx.xr.scenecore.internal.TextureSampler);
     method public void setMetallicRoughnessUvTransformOnKhronosPbrMaterial(long, float, float, float, float, float, float, float, float, float);
@@ -2166,8 +2173,9 @@ package androidx.xr.scenecore.internal {
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface GltfEntity extends androidx.xr.scenecore.internal.Entity {
+    method public void clearMaterialOverride(String nodeName, int primitiveIndex);
     method public int getAnimationState();
-    method public void setMaterialOverride(androidx.xr.scenecore.internal.MaterialResource material, String meshName);
+    method public void setMaterialOverride(androidx.xr.scenecore.internal.MaterialResource material, String nodeName, int primitiveIndex);
     method public void startAnimation(boolean loop, String? animationName);
     method public void stopAnimation();
     property @androidx.xr.scenecore.internal.GltfEntity.AnimationStateValue public abstract int animationState;
@@ -2185,9 +2193,10 @@ package androidx.xr.scenecore.internal {
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface GltfFeature extends androidx.xr.scenecore.internal.RenderingFeature {
+    method public void clearMaterialOverride(String nodeName, int primitiveIndex);
     method public int getAnimationState();
     method public void setColliderEnabled(boolean enableCollider);
-    method public void setMaterialOverride(androidx.xr.scenecore.internal.MaterialResource material, String meshName);
+    method public void setMaterialOverride(androidx.xr.scenecore.internal.MaterialResource material, String nodeName, int primitiveIndex);
     method public void startAnimation(boolean loop, String? animationName, java.util.concurrent.Executor executor);
     method public void stopAnimation();
     property public abstract int animationState;
@@ -2892,17 +2901,17 @@ package androidx.xr.scenecore.internal {
   public static final class SpatialEnvironment.SpatialEnvironmentPreference {
     ctor public SpatialEnvironment.SpatialEnvironmentPreference(androidx.xr.scenecore.internal.ExrImageResource? skybox, androidx.xr.scenecore.internal.GltfModelResource? geometry);
     ctor public SpatialEnvironment.SpatialEnvironmentPreference(androidx.xr.scenecore.internal.ExrImageResource? skybox, androidx.xr.scenecore.internal.GltfModelResource? geometry, optional androidx.xr.scenecore.internal.MaterialResource? geometryMaterial);
-    ctor public SpatialEnvironment.SpatialEnvironmentPreference(androidx.xr.scenecore.internal.ExrImageResource? skybox, androidx.xr.scenecore.internal.GltfModelResource? geometry, optional androidx.xr.scenecore.internal.MaterialResource? geometryMaterial, optional String? geometryMeshName);
-    ctor public SpatialEnvironment.SpatialEnvironmentPreference(androidx.xr.scenecore.internal.ExrImageResource? skybox, androidx.xr.scenecore.internal.GltfModelResource? geometry, optional androidx.xr.scenecore.internal.MaterialResource? geometryMaterial, optional String? geometryMeshName, optional String? geometryAnimationName);
+    ctor public SpatialEnvironment.SpatialEnvironmentPreference(androidx.xr.scenecore.internal.ExrImageResource? skybox, androidx.xr.scenecore.internal.GltfModelResource? geometry, optional androidx.xr.scenecore.internal.MaterialResource? geometryMaterial, optional String? geometryNodeName);
+    ctor public SpatialEnvironment.SpatialEnvironmentPreference(androidx.xr.scenecore.internal.ExrImageResource? skybox, androidx.xr.scenecore.internal.GltfModelResource? geometry, optional androidx.xr.scenecore.internal.MaterialResource? geometryMaterial, optional String? geometryNodeName, optional String? geometryAnimationName);
     method public androidx.xr.scenecore.internal.GltfModelResource? getGeometry();
     method public String? getGeometryAnimationName();
     method public androidx.xr.scenecore.internal.MaterialResource? getGeometryMaterial();
-    method public String? getGeometryMeshName();
+    method public String? getGeometryNodeName();
     method public androidx.xr.scenecore.internal.ExrImageResource? getSkybox();
     property public androidx.xr.scenecore.internal.GltfModelResource? geometry;
     property public String? geometryAnimationName;
     property public androidx.xr.scenecore.internal.MaterialResource? geometryMaterial;
-    property public String? geometryMeshName;
+    property public String? geometryNodeName;
     property public androidx.xr.scenecore.internal.ExrImageResource? skybox;
   }
 

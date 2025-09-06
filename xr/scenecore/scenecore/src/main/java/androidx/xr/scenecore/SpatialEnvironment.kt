@@ -74,10 +74,10 @@ public class SpatialEnvironment internal constructor(private val runtime: JxrPla
             private set
 
         /**
-         * The name of the mesh to override with the material. If null, the material will not
-         * override any mesh.
+         * The name of the node containing the mesh to override with the material. If null, the
+         * material will not override any mesh.
          */
-        internal var geometryMeshName: String? = null
+        internal var geometryNodeName: String? = null
             private set
 
         /**
@@ -93,7 +93,8 @@ public class SpatialEnvironment internal constructor(private val runtime: JxrPla
          * @param skybox The preferred skybox for the environment.
          * @param geometry The preferred geometry for the environment.
          * @param geometryMaterial The material to override a given mesh in the geometry.
-         * @param geometryMeshName The name of the mesh to override with the material.
+         * @param geometryNodeName The name of the node which contains the mesh to override with the
+         *   material.
          * @param geometryAnimationName The name of the animation to play on the geometry.
          * @throws IllegalStateException if the material is not properly set up and if the geometry
          *   glTF model does not contain the mesh or the animation name.
@@ -104,11 +105,11 @@ public class SpatialEnvironment internal constructor(private val runtime: JxrPla
             skybox: ExrImage?,
             geometry: GltfModel?,
             geometryMaterial: Material?,
-            geometryMeshName: String? = null,
+            geometryNodeName: String? = null,
             geometryAnimationName: String? = null,
         ) : this(skybox, geometry) {
             this.geometryMaterial = geometryMaterial
-            this.geometryMeshName = geometryMeshName
+            this.geometryNodeName = geometryNodeName
             this.geometryAnimationName = geometryAnimationName
         }
 
@@ -320,7 +321,7 @@ internal fun SpatialEnvironment.SpatialEnvironmentPreference.toRtSpatialEnvironm
         skybox?.image,
         geometry?.model,
         geometryMaterial?.material,
-        geometryMeshName,
+        geometryNodeName,
         geometryAnimationName,
     )
 }
@@ -339,7 +340,7 @@ internal fun RtSpatialEnvironmentPreference.toSpatialEnvironmentPreference():
                 }
             }
         },
-        geometryMeshName,
+        geometryNodeName,
         geometryAnimationName,
     )
 }

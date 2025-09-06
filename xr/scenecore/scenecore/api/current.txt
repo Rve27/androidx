@@ -194,9 +194,13 @@ package androidx.xr.scenecore {
   }
 
   public final class GltfModelEntity extends androidx.xr.scenecore.BaseEntity<androidx.xr.scenecore.internal.GltfEntity> {
+    method @MainThread public void clearMaterialOverride(String nodeName);
+    method @MainThread public void clearMaterialOverride(String nodeName, optional int primitiveIndex);
     method @MainThread public static androidx.xr.scenecore.GltfModelEntity create(androidx.xr.runtime.Session session, androidx.xr.scenecore.GltfModel model);
     method @MainThread public static androidx.xr.scenecore.GltfModelEntity create(androidx.xr.runtime.Session session, androidx.xr.scenecore.GltfModel model, optional androidx.xr.runtime.math.Pose pose);
     method public int getAnimationState();
+    method @MainThread public void setMaterialOverride(androidx.xr.scenecore.Material material, String nodeName);
+    method @MainThread public void setMaterialOverride(androidx.xr.scenecore.Material material, String nodeName, optional int primitiveIndex);
     method @MainThread public void startAnimation();
     method @MainThread public void startAnimation(optional boolean loop);
     method @MainThread public void startAnimation(boolean loop, String animationName);

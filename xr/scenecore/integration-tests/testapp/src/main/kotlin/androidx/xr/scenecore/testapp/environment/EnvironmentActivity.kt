@@ -255,10 +255,10 @@ class EnvironmentActivity : AppCompatActivity() {
         skybox: ExrImage?,
         geometry: GltfModel?,
         material: Material? = null,
-        meshName: String? = null,
+        nodeName: String? = null,
         animationName: String? = null,
     ) {
-        if (material == null && meshName == null && animationName == null) {
+        if (material == null && nodeName == null && animationName == null) {
             spatialEnvironmentPreference =
                 SpatialEnvironment.SpatialEnvironmentPreference(skybox, geometry)
         } else {
@@ -267,7 +267,7 @@ class EnvironmentActivity : AppCompatActivity() {
                     skybox,
                     geometry,
                     material,
-                    meshName,
+                    nodeName,
                     animationName,
                 )
         }

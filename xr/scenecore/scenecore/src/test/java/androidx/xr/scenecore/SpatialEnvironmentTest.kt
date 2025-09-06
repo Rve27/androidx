@@ -152,14 +152,14 @@ class SpatialEnvironmentTest {
         val rtImageMock = mock<RtExrImageResource>()
         val rtModelMock = mock<RtGltfModelResource>()
         val rtMaterialMock = mock<RtMaterialResource>()
-        val rtMeshName = "meshName"
+        val rtNodeName = "nodeName"
         val rtAnimationName = "animationName"
         val rtPreference =
             RtSpatialEnvironment.SpatialEnvironmentPreference(
                 rtImageMock,
                 rtModelMock,
                 rtMaterialMock,
-                rtMeshName,
+                rtNodeName,
                 rtAnimationName,
             )
         val preference =
@@ -173,7 +173,7 @@ class SpatialEnvironmentTest {
                         // The lifecycle of this material is managed by the SpatialEnvironment.
                     }
                 },
-                rtMeshName,
+                rtNodeName,
                 rtAnimationName,
             )
 
@@ -187,19 +187,19 @@ class SpatialEnvironmentTest {
         val rtImageMock = mock<RtExrImageResource>()
         val rtModelMock = mock<RtGltfModelResource>()
         val rtMaterialMock = mock<RtMaterialResource>()
-        val rtMeshName = "meshName"
+        val rtNodeName = "nodeName"
         val rtAnimationName = "animationName"
         val rtImageMock2 = mock<RtExrImageResource>()
         val rtModelMock2 = mock<RtGltfModelResource>()
         val rtMaterialMock2 = mock<RtMaterialResource>()
-        val rtMeshName2 = "meshName2"
+        val rtNodeName2 = "nodeName2"
         val rtAnimationName2 = "animationName2"
         val rtPreference =
             RtSpatialEnvironment.SpatialEnvironmentPreference(
                 rtImageMock,
                 rtModelMock,
                 rtMaterialMock,
-                rtMeshName,
+                rtNodeName,
                 rtAnimationName,
             )
 
@@ -214,7 +214,7 @@ class SpatialEnvironmentTest {
                         // The lifecycle of this material is managed by the SpatialEnvironment.
                     }
                 },
-                rtMeshName2,
+                rtNodeName2,
                 rtAnimationName2,
             )
         assertThat(preferenceDiffGeometry)
@@ -233,7 +233,7 @@ class SpatialEnvironmentTest {
                         // The lifecycle of this material is managed by the SpatialEnvironment.
                     }
                 },
-                rtMeshName,
+                rtNodeName,
                 rtAnimationName,
             )
         assertThat(preferenceDiffSkybox).isNotEqualTo(rtPreference.toSpatialEnvironmentPreference())
