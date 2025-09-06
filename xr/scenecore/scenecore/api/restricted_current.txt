@@ -358,94 +358,46 @@ package androidx.xr.scenecore {
     method public androidx.xr.scenecore.InteractableComponent create(androidx.xr.runtime.Session session, java.util.function.Consumer<androidx.xr.scenecore.InputEvent> inputEventListener);
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class KhronosPbrMaterial implements androidx.xr.scenecore.Material {
-    method @MainThread public static suspend Object? create(androidx.xr.runtime.Session session, androidx.xr.scenecore.KhronosPbrMaterialSpec spec, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.KhronosPbrMaterial>);
+  public final class KhronosPbrMaterial implements androidx.xr.scenecore.Material {
+    method @MainThread public static suspend Object? create(androidx.xr.runtime.Session session, int alphaMode, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.KhronosPbrMaterial>);
     method @MainThread public void dispose();
-    method public androidx.xr.scenecore.internal.MaterialResource getMaterial();
-    method @MainThread public void setAlphaCutoff(float alphaCutoff);
-    method @MainThread public void setAmbientOcclusionFactor(float factor);
-    method @MainThread public void setAmbientOcclusionTexture(androidx.xr.scenecore.Texture texture, androidx.xr.scenecore.TextureSampler sampler);
-    method @MainThread public void setAmbientOcclusionUvTransform(androidx.xr.runtime.math.Matrix3 transform);
-    method @MainThread public void setBaseColorFactors(androidx.xr.runtime.math.Vector4 factors);
-    method @MainThread public void setBaseColorTexture(androidx.xr.scenecore.Texture texture, androidx.xr.scenecore.TextureSampler sampler);
-    method @MainThread public void setBaseColorUvTransform(androidx.xr.runtime.math.Matrix3 transform);
-    method @MainThread public void setClearcoatFactors(float intensity, float roughness, float normal);
-    method @MainThread public void setClearcoatNormalTexture(androidx.xr.scenecore.Texture texture, androidx.xr.scenecore.TextureSampler sampler);
-    method @MainThread public void setClearcoatRoughnessTexture(androidx.xr.scenecore.Texture texture, androidx.xr.scenecore.TextureSampler sampler);
-    method @MainThread public void setClearcoatTexture(androidx.xr.scenecore.Texture texture, androidx.xr.scenecore.TextureSampler sampler);
-    method @MainThread public void setEmissiveFactors(androidx.xr.runtime.math.Vector3 factors);
-    method @MainThread public void setEmissiveTexture(androidx.xr.scenecore.Texture texture, androidx.xr.scenecore.TextureSampler sampler);
-    method @MainThread public void setEmissiveUvTransform(androidx.xr.runtime.math.Matrix3 transform);
-    method @MainThread public void setIndexOfRefraction(float indexOfRefraction);
-    method @MainThread public void setMetallicFactor(float factor);
-    method @MainThread public void setMetallicRoughnessTexture(androidx.xr.scenecore.Texture texture, androidx.xr.scenecore.TextureSampler sampler);
-    method @MainThread public void setMetallicRoughnessUvTransform(androidx.xr.runtime.math.Matrix3 transform);
-    method @MainThread public void setNormalFactor(float factor);
-    method @MainThread public void setNormalTexture(androidx.xr.scenecore.Texture texture, androidx.xr.scenecore.TextureSampler sampler);
-    method @MainThread public void setNormalUvTransform(androidx.xr.runtime.math.Matrix3 transform);
-    method @MainThread public void setRoughnessFactor(float factor);
-    method @MainThread public void setSheenColorFactors(androidx.xr.runtime.math.Vector3 factors);
-    method @MainThread public void setSheenColorTexture(androidx.xr.scenecore.Texture texture, androidx.xr.scenecore.TextureSampler sampler);
-    method @MainThread public void setSheenRoughnessFactor(float factor);
-    method @MainThread public void setSheenRoughnessTexture(androidx.xr.scenecore.Texture texture, androidx.xr.scenecore.TextureSampler sampler);
-    method @MainThread public void setTransmissionFactor(float factor);
-    method @MainThread public void setTransmissionTexture(androidx.xr.scenecore.Texture texture, androidx.xr.scenecore.TextureSampler sampler);
-    method @MainThread public void setTransmissionUvTransform(androidx.xr.runtime.math.Matrix3 transform);
-    property public androidx.xr.scenecore.internal.MaterialResource material;
+    method @MainThread public void setAlphaCutoff(@FloatRange(from=0.0, to=1.0) float alphaCutoff);
+    method @MainThread public void setBaseColorFactor(androidx.xr.runtime.math.Vector4 factor);
+    method @MainThread public void setBaseColorTexture(androidx.xr.scenecore.Texture texture);
+    method @MainThread public void setBaseColorTexture(androidx.xr.scenecore.Texture texture, optional androidx.xr.scenecore.TextureSampler sampler);
+    method @MainThread public void setClearcoatFactor(@FloatRange(from=0.0, to=1.0) float factor);
+    method @MainThread public void setClearcoatNormalTexture(androidx.xr.scenecore.Texture texture);
+    method @MainThread public void setClearcoatNormalTexture(androidx.xr.scenecore.Texture texture, optional @FloatRange(from=0.0) float scale);
+    method @MainThread public void setClearcoatNormalTexture(androidx.xr.scenecore.Texture texture, optional @FloatRange(from=0.0) float scale, optional androidx.xr.scenecore.TextureSampler sampler);
+    method @MainThread public void setClearcoatRoughnessFactor(@FloatRange(from=0.0, to=1.0) float factor);
+    method @MainThread public void setClearcoatRoughnessTexture(androidx.xr.scenecore.Texture texture);
+    method @MainThread public void setClearcoatRoughnessTexture(androidx.xr.scenecore.Texture texture, optional androidx.xr.scenecore.TextureSampler sampler);
+    method @MainThread public void setClearcoatTexture(androidx.xr.scenecore.Texture texture);
+    method @MainThread public void setClearcoatTexture(androidx.xr.scenecore.Texture texture, optional androidx.xr.scenecore.TextureSampler sampler);
+    method @MainThread public void setEmissiveFactor(androidx.xr.runtime.math.Vector3 factor);
+    method @MainThread public void setEmissiveTexture(androidx.xr.scenecore.Texture texture);
+    method @MainThread public void setEmissiveTexture(androidx.xr.scenecore.Texture texture, optional androidx.xr.scenecore.TextureSampler sampler);
+    method @MainThread public void setMetallicFactor(@FloatRange(from=0.0, to=1.0) float factor);
+    method @MainThread public void setMetallicRoughnessTexture(androidx.xr.scenecore.Texture texture);
+    method @MainThread public void setMetallicRoughnessTexture(androidx.xr.scenecore.Texture texture, optional androidx.xr.scenecore.TextureSampler sampler);
+    method @MainThread public void setNormalTexture(androidx.xr.scenecore.Texture texture);
+    method @MainThread public void setNormalTexture(androidx.xr.scenecore.Texture texture, optional @FloatRange(from=0.0) float scale);
+    method @MainThread public void setNormalTexture(androidx.xr.scenecore.Texture texture, optional @FloatRange(from=0.0) float scale, optional androidx.xr.scenecore.TextureSampler sampler);
+    method @MainThread public void setOcclusionTexture(androidx.xr.scenecore.Texture texture);
+    method @MainThread public void setOcclusionTexture(androidx.xr.scenecore.Texture texture, optional @FloatRange(from=0.0, to=1.0) float strength);
+    method @MainThread public void setOcclusionTexture(androidx.xr.scenecore.Texture texture, optional @FloatRange(from=0.0, to=1.0) float strength, optional androidx.xr.scenecore.TextureSampler sampler);
+    method @MainThread public void setRoughnessFactor(@FloatRange(from=0.0, to=1.0) float factor);
+    method @MainThread public void setSheenColorFactor(androidx.xr.runtime.math.Vector3 factor);
+    method @MainThread public void setSheenColorTexture(androidx.xr.scenecore.Texture texture);
+    method @MainThread public void setSheenColorTexture(androidx.xr.scenecore.Texture texture, optional androidx.xr.scenecore.TextureSampler sampler);
+    method @MainThread public void setSheenRoughnessFactor(@FloatRange(from=0.0, to=1.0) float factor);
+    method @MainThread public void setSheenRoughnessTexture(androidx.xr.scenecore.Texture texture);
+    method @MainThread public void setSheenRoughnessTexture(androidx.xr.scenecore.Texture texture, optional androidx.xr.scenecore.TextureSampler sampler);
     field public static final androidx.xr.scenecore.KhronosPbrMaterial.Companion Companion;
   }
 
   public static final class KhronosPbrMaterial.Companion {
-    method @MainThread public suspend Object? create(androidx.xr.runtime.Session session, androidx.xr.scenecore.KhronosPbrMaterialSpec spec, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.KhronosPbrMaterial>);
-  }
-
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class KhronosPbrMaterialSpec {
-    method public static androidx.xr.scenecore.KhronosPbrMaterialSpec create();
-    method public static androidx.xr.scenecore.KhronosPbrMaterialSpec create(optional int lightingModel);
-    method public static androidx.xr.scenecore.KhronosPbrMaterialSpec create(optional int lightingModel, optional int blendMode);
-    method public static androidx.xr.scenecore.KhronosPbrMaterialSpec create(optional int lightingModel, optional int blendMode, optional int doubleSidedMode);
-    method public int getBlendMode();
-    method public int getDoubleSidedMode();
-    method public int getLightingModel();
-    property public int blendMode;
-    property public int doubleSidedMode;
-    property public int lightingModel;
-    field public static final androidx.xr.scenecore.KhronosPbrMaterialSpec.Companion Companion;
-  }
-
-  public static final class KhronosPbrMaterialSpec.BlendMode {
-    property public static int MASKED;
-    property public static int OPAQUE;
-    property public static int REFRACTIVE;
-    property public static int TRANSPARENT;
-    field public static final androidx.xr.scenecore.KhronosPbrMaterialSpec.BlendMode INSTANCE;
-    field public static final int MASKED = 1; // 0x1
-    field public static final int OPAQUE = 0; // 0x0
-    field public static final int REFRACTIVE = 3; // 0x3
-    field public static final int TRANSPARENT = 2; // 0x2
-  }
-
-  public static final class KhronosPbrMaterialSpec.Companion {
-    method public androidx.xr.scenecore.KhronosPbrMaterialSpec create();
-    method public androidx.xr.scenecore.KhronosPbrMaterialSpec create(optional int lightingModel);
-    method public androidx.xr.scenecore.KhronosPbrMaterialSpec create(optional int lightingModel, optional int blendMode);
-    method public androidx.xr.scenecore.KhronosPbrMaterialSpec create(optional int lightingModel, optional int blendMode, optional int doubleSidedMode);
-  }
-
-  public static final class KhronosPbrMaterialSpec.DoubleSidedMode {
-    property public static int DOUBLE_SIDED;
-    property public static int SINGLE_SIDED;
-    field public static final int DOUBLE_SIDED = 1; // 0x1
-    field public static final androidx.xr.scenecore.KhronosPbrMaterialSpec.DoubleSidedMode INSTANCE;
-    field public static final int SINGLE_SIDED = 0; // 0x0
-  }
-
-  public static final class KhronosPbrMaterialSpec.LightingModel {
-    property public static int LIT;
-    property public static int UNLIT;
-    field public static final androidx.xr.scenecore.KhronosPbrMaterialSpec.LightingModel INSTANCE;
-    field public static final int LIT = 0; // 0x0
-    field public static final int UNLIT = 1; // 0x1
+    method @MainThread public suspend Object? create(androidx.xr.runtime.Session session, int alphaMode, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.KhronosPbrMaterial>);
   }
 
   public final class KhronosUnlitMaterial implements androidx.xr.scenecore.Material {
