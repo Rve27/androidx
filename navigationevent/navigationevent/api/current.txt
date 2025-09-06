@@ -97,7 +97,7 @@ package androidx.navigationevent {
     property public final boolean isForwardEnabled;
   }
 
-  public interface NavigationEventInfo {
+  @androidx.compose.runtime.Immutable public interface NavigationEventInfo {
   }
 
   public static final class NavigationEventInfo.NotProvided implements androidx.navigationevent.NavigationEventInfo {
