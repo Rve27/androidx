@@ -20,6 +20,7 @@ package androidx.xr.scenecore
 
 import androidx.annotation.RestrictTo
 import androidx.xr.scenecore.internal.JxrPlatformAdapter
+import androidx.xr.scenecore.internal.MaterialResource as RtMaterial
 import androidx.xr.scenecore.internal.SpatialEnvironment as RtSpatialEnvironment
 import androidx.xr.scenecore.internal.SpatialEnvironment.SpatialEnvironmentPreference as RtSpatialEnvironmentPreference
 import java.util.concurrent.Executor
@@ -329,7 +330,15 @@ internal fun RtSpatialEnvironmentPreference.toSpatialEnvironmentPreference():
     return SpatialEnvironment.SpatialEnvironmentPreference(
         skybox?.let { ExrImage(it) },
         geometry?.let { GltfModel(it) },
-        geometryMaterial?.let { Material(it) },
+        geometryMaterial?.let { rtMaterial ->
+            object : Material {
+                override val material: RtMaterial = rtMaterial
+
+                override fun dispose() {
+                    // The lifecycle of this material is managed by the SpatialEnvironment.
+                }
+            }
+        },
         geometryMeshName,
         geometryAnimationName,
     )

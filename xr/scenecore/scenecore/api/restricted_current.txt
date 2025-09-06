@@ -27,6 +27,16 @@ package androidx.xr.scenecore {
     property public androidx.xr.runtime.math.BoundingBox recommendedContentBoxInFullSpace;
   }
 
+  public final class AlphaMode {
+    property public static int ALPHA_MODE_BLEND;
+    property public static int ALPHA_MODE_MASK;
+    property public static int ALPHA_MODE_OPAQUE;
+    field public static final int ALPHA_MODE_BLEND = 2; // 0x2
+    field public static final int ALPHA_MODE_MASK = 1; // 0x1
+    field public static final int ALPHA_MODE_OPAQUE = 0; // 0x0
+    field public static final androidx.xr.scenecore.AlphaMode INSTANCE;
+  }
+
   public final class AnchorEntity extends androidx.xr.scenecore.BaseEntity<androidx.xr.scenecore.internal.AnchorEntity> {
     method public static androidx.xr.scenecore.AnchorEntity create(androidx.xr.runtime.Session session, androidx.xr.arcore.Anchor anchor);
     method public static androidx.xr.scenecore.AnchorEntity create(androidx.xr.runtime.Session session, androidx.xr.runtime.math.FloatSize2d minimumPlaneExtents, int planeOrientation, int planeSemanticType);
@@ -348,9 +358,10 @@ package androidx.xr.scenecore {
     method public androidx.xr.scenecore.InteractableComponent create(androidx.xr.runtime.Session session, java.util.function.Consumer<androidx.xr.scenecore.InputEvent> inputEventListener);
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class KhronosPbrMaterial extends androidx.xr.scenecore.Material {
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class KhronosPbrMaterial implements androidx.xr.scenecore.Material {
     method @MainThread public static suspend Object? create(androidx.xr.runtime.Session session, androidx.xr.scenecore.KhronosPbrMaterialSpec spec, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.KhronosPbrMaterial>);
     method @MainThread public void dispose();
+    method public androidx.xr.scenecore.internal.MaterialResource getMaterial();
     method @MainThread public void setAlphaCutoff(float alphaCutoff);
     method @MainThread public void setAmbientOcclusionFactor(float factor);
     method @MainThread public void setAmbientOcclusionTexture(androidx.xr.scenecore.Texture texture, androidx.xr.scenecore.TextureSampler sampler);
@@ -380,6 +391,7 @@ package androidx.xr.scenecore {
     method @MainThread public void setTransmissionFactor(float factor);
     method @MainThread public void setTransmissionTexture(androidx.xr.scenecore.Texture texture, androidx.xr.scenecore.TextureSampler sampler);
     method @MainThread public void setTransmissionUvTransform(androidx.xr.runtime.math.Matrix3 transform);
+    property public androidx.xr.scenecore.internal.MaterialResource material;
     field public static final androidx.xr.scenecore.KhronosPbrMaterial.Companion Companion;
   }
 
@@ -436,6 +448,20 @@ package androidx.xr.scenecore {
     field public static final int UNLIT = 1; // 0x1
   }
 
+  public final class KhronosUnlitMaterial implements androidx.xr.scenecore.Material {
+    method @MainThread public static suspend Object? create(androidx.xr.runtime.Session session, int alphaMode, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.KhronosUnlitMaterial>);
+    method @MainThread public void dispose();
+    method @MainThread public void setAlphaCutoff(@FloatRange(from=0.0, to=1.0) float alphaCutoff);
+    method @MainThread public void setBaseColorFactor(androidx.xr.runtime.math.Vector4 factor);
+    method @MainThread public void setBaseColorTexture(androidx.xr.scenecore.Texture texture);
+    method @MainThread public void setBaseColorTexture(androidx.xr.scenecore.Texture texture, optional androidx.xr.scenecore.TextureSampler sampler);
+    field public static final androidx.xr.scenecore.KhronosUnlitMaterial.Companion Companion;
+  }
+
+  public static final class KhronosUnlitMaterial.Companion {
+    method @MainThread public suspend Object? create(androidx.xr.runtime.Session session, int alphaMode, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.KhronosUnlitMaterial>);
+  }
+
   public final class LaunchUtils {
     method public static android.os.Bundle createBundleForFullSpaceModeLaunch(androidx.xr.runtime.Session session, android.os.Bundle bundle);
     method public static android.os.Bundle createBundleForFullSpaceModeLaunchWithEnvironmentInherited(androidx.xr.runtime.Session session, android.os.Bundle bundle);
@@ -451,8 +477,8 @@ package androidx.xr.scenecore {
   public static final class MainPanelEntity.Companion {
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public class Material {
-    ctor public Material(androidx.xr.scenecore.internal.MaterialResource? material);
+  public interface Material {
+    method @MainThread public void dispose();
   }
 
   public final class MovableComponent implements androidx.xr.scenecore.Component {
@@ -1173,9 +1199,10 @@ package androidx.xr.scenecore {
     property public static int WRAP_MODE_REPEAT;
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class WaterMaterial extends androidx.xr.scenecore.Material {
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class WaterMaterial implements androidx.xr.scenecore.Material {
     method @MainThread public static suspend Object? create(androidx.xr.runtime.Session session, boolean isAlphaMapVersion, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.WaterMaterial>);
     method @MainThread public void dispose();
+    method public androidx.xr.scenecore.internal.MaterialResource getMaterial();
     method @MainThread public void setAlphaMap(androidx.xr.scenecore.Texture alphaMap, androidx.xr.scenecore.TextureSampler sampler);
     method @MainThread public void setAlphaStepMultiplier(float alphaStepMultiplier);
     method @MainThread public void setNormalBoundary(float normalBoundary);
@@ -1184,6 +1211,7 @@ package androidx.xr.scenecore {
     method @MainThread public void setNormalTiling(float normalTiling);
     method @MainThread public void setNormalZ(float normalZ);
     method @MainThread public void setReflectionMap(androidx.xr.scenecore.CubeMapTexture reflectionMap, androidx.xr.scenecore.TextureSampler sampler);
+    property public androidx.xr.scenecore.internal.MaterialResource material;
     field public static final androidx.xr.scenecore.WaterMaterial.Companion Companion;
   }
 

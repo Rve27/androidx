@@ -166,7 +166,13 @@ class SpatialEnvironmentTest {
             SpatialEnvironment.SpatialEnvironmentPreference(
                 ExrImage(rtImageMock),
                 GltfModel(rtModelMock),
-                Material(rtMaterialMock),
+                object : Material {
+                    override val material = rtMaterialMock
+
+                    override fun dispose() {
+                        // The lifecycle of this material is managed by the SpatialEnvironment.
+                    }
+                },
                 rtMeshName,
                 rtAnimationName,
             )
@@ -201,7 +207,13 @@ class SpatialEnvironmentTest {
             SpatialEnvironment.SpatialEnvironmentPreference(
                 ExrImage(rtImageMock),
                 GltfModel(rtModelMock2),
-                Material(rtMaterialMock2),
+                object : Material {
+                    override val material = rtMaterialMock2
+
+                    override fun dispose() {
+                        // The lifecycle of this material is managed by the SpatialEnvironment.
+                    }
+                },
                 rtMeshName2,
                 rtAnimationName2,
             )
@@ -214,7 +226,13 @@ class SpatialEnvironmentTest {
             SpatialEnvironment.SpatialEnvironmentPreference(
                 ExrImage(rtImageMock2),
                 GltfModel(rtModelMock),
-                Material(rtMaterialMock),
+                object : Material {
+                    override val material = rtMaterialMock
+
+                    override fun dispose() {
+                        // The lifecycle of this material is managed by the SpatialEnvironment.
+                    }
+                },
                 rtMeshName,
                 rtAnimationName,
             )

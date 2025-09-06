@@ -39,10 +39,10 @@ import java.util.concurrent.CancellationException
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public class KhronosPbrMaterial
 internal constructor(
-    internal val materialResource: RtMaterial,
+    override val material: RtMaterial,
     internal val spec: KhronosPbrMaterialSpec,
     internal val session: Session,
-) : Material(materialResource) {
+) : Material {
 
     /**
      * Disposes the given Khronos PBR material resource.
@@ -54,8 +54,8 @@ internal constructor(
      */
     // TODO(b/376277201): Provide Session.GltfModel.dispose().
     @MainThread
-    public fun dispose() {
-        session.platformAdapter.destroyKhronosPbrMaterial(materialResource)
+    override public fun dispose() {
+        session.platformAdapter.destroyKhronosPbrMaterial(material)
     }
 
     /**
@@ -72,7 +72,7 @@ internal constructor(
     @MainThread
     public fun setBaseColorTexture(texture: Texture, sampler: TextureSampler) {
         session.platformAdapter.setBaseColorTextureOnKhronosPbrMaterial(
-            materialResource,
+            material,
             texture.texture,
             sampler.toRtTextureSampler(),
         )
@@ -89,10 +89,7 @@ internal constructor(
      */
     @MainThread
     public fun setBaseColorUvTransform(transform: Matrix3) {
-        session.platformAdapter.setBaseColorUvTransformOnKhronosPbrMaterial(
-            materialResource,
-            transform,
-        )
+        session.platformAdapter.setBaseColorUvTransformOnKhronosPbrMaterial(material, transform)
     }
 
     /**
@@ -106,7 +103,7 @@ internal constructor(
      */
     @MainThread
     public fun setBaseColorFactors(factors: Vector4) {
-        session.platformAdapter.setBaseColorFactorsOnKhronosPbrMaterial(materialResource, factors)
+        session.platformAdapter.setBaseColorFactorsOnKhronosPbrMaterial(material, factors)
     }
 
     /**
@@ -123,7 +120,7 @@ internal constructor(
     @MainThread
     public fun setMetallicRoughnessTexture(texture: Texture, sampler: TextureSampler) {
         session.platformAdapter.setMetallicRoughnessTextureOnKhronosPbrMaterial(
-            materialResource,
+            material,
             texture.texture,
             sampler.toRtTextureSampler(),
         )
@@ -141,7 +138,7 @@ internal constructor(
     @MainThread
     public fun setMetallicRoughnessUvTransform(transform: Matrix3) {
         session.platformAdapter.setMetallicRoughnessUvTransformOnKhronosPbrMaterial(
-            materialResource,
+            material,
             transform,
         )
     }
@@ -157,7 +154,7 @@ internal constructor(
      */
     @MainThread
     public fun setMetallicFactor(factor: Float) {
-        session.platformAdapter.setMetallicFactorOnKhronosPbrMaterial(materialResource, factor)
+        session.platformAdapter.setMetallicFactorOnKhronosPbrMaterial(material, factor)
     }
 
     /**
@@ -171,7 +168,7 @@ internal constructor(
      */
     @MainThread
     public fun setRoughnessFactor(factor: Float) {
-        session.platformAdapter.setRoughnessFactorOnKhronosPbrMaterial(materialResource, factor)
+        session.platformAdapter.setRoughnessFactorOnKhronosPbrMaterial(material, factor)
     }
 
     /**
@@ -187,7 +184,7 @@ internal constructor(
     @MainThread
     public fun setNormalTexture(texture: Texture, sampler: TextureSampler) {
         session.platformAdapter.setNormalTextureOnKhronosPbrMaterial(
-            materialResource,
+            material,
             texture.texture,
             sampler.toRtTextureSampler(),
         )
@@ -204,10 +201,7 @@ internal constructor(
      */
     @MainThread
     public fun setNormalUvTransform(transform: Matrix3) {
-        session.platformAdapter.setNormalUvTransformOnKhronosPbrMaterial(
-            materialResource,
-            transform,
-        )
+        session.platformAdapter.setNormalUvTransformOnKhronosPbrMaterial(material, transform)
     }
 
     /**
@@ -221,7 +215,7 @@ internal constructor(
      */
     @MainThread
     public fun setNormalFactor(factor: Float) {
-        session.platformAdapter.setNormalFactorOnKhronosPbrMaterial(materialResource, factor)
+        session.platformAdapter.setNormalFactorOnKhronosPbrMaterial(material, factor)
     }
 
     /**
@@ -238,7 +232,7 @@ internal constructor(
     @MainThread
     public fun setAmbientOcclusionTexture(texture: Texture, sampler: TextureSampler) {
         session.platformAdapter.setAmbientOcclusionTextureOnKhronosPbrMaterial(
-            materialResource,
+            material,
             texture.texture,
             sampler.toRtTextureSampler(),
         )
@@ -256,7 +250,7 @@ internal constructor(
     @MainThread
     public fun setAmbientOcclusionUvTransform(transform: Matrix3) {
         session.platformAdapter.setAmbientOcclusionUvTransformOnKhronosPbrMaterial(
-            materialResource,
+            material,
             transform,
         )
     }
@@ -272,10 +266,7 @@ internal constructor(
      */
     @MainThread
     public fun setAmbientOcclusionFactor(factor: Float) {
-        session.platformAdapter.setAmbientOcclusionFactorOnKhronosPbrMaterial(
-            materialResource,
-            factor,
-        )
+        session.platformAdapter.setAmbientOcclusionFactorOnKhronosPbrMaterial(material, factor)
     }
 
     /**
@@ -291,7 +282,7 @@ internal constructor(
     @MainThread
     public fun setEmissiveTexture(texture: Texture, sampler: TextureSampler) {
         session.platformAdapter.setEmissiveTextureOnKhronosPbrMaterial(
-            materialResource,
+            material,
             texture.texture,
             sampler.toRtTextureSampler(),
         )
@@ -308,10 +299,7 @@ internal constructor(
      */
     @MainThread
     public fun setEmissiveUvTransform(transform: Matrix3) {
-        session.platformAdapter.setEmissiveUvTransformOnKhronosPbrMaterial(
-            materialResource,
-            transform,
-        )
+        session.platformAdapter.setEmissiveUvTransformOnKhronosPbrMaterial(material, transform)
     }
 
     /**
@@ -325,7 +313,7 @@ internal constructor(
      */
     @MainThread
     public fun setEmissiveFactors(factors: Vector3) {
-        session.platformAdapter.setEmissiveFactorsOnKhronosPbrMaterial(materialResource, factors)
+        session.platformAdapter.setEmissiveFactorsOnKhronosPbrMaterial(material, factors)
     }
 
     /**
@@ -341,7 +329,7 @@ internal constructor(
     @MainThread
     public fun setClearcoatTexture(texture: Texture, sampler: TextureSampler) {
         session.platformAdapter.setClearcoatTextureOnKhronosPbrMaterial(
-            materialResource,
+            material,
             texture.texture,
             sampler.toRtTextureSampler(),
         )
@@ -360,7 +348,7 @@ internal constructor(
     @MainThread
     public fun setClearcoatNormalTexture(texture: Texture, sampler: TextureSampler) {
         session.platformAdapter.setClearcoatNormalTextureOnKhronosPbrMaterial(
-            materialResource,
+            material,
             texture.texture,
             sampler.toRtTextureSampler(),
         )
@@ -379,7 +367,7 @@ internal constructor(
     @MainThread
     public fun setClearcoatRoughnessTexture(texture: Texture, sampler: TextureSampler) {
         session.platformAdapter.setClearcoatRoughnessTextureOnKhronosPbrMaterial(
-            materialResource,
+            material,
             texture.texture,
             sampler.toRtTextureSampler(),
         )
@@ -398,7 +386,7 @@ internal constructor(
     @MainThread
     public fun setClearcoatFactors(intensity: Float, roughness: Float, normal: Float) {
         session.platformAdapter.setClearcoatFactorsOnKhronosPbrMaterial(
-            materialResource,
+            material,
             intensity,
             roughness,
             normal,
@@ -418,7 +406,7 @@ internal constructor(
     @MainThread
     public fun setSheenColorTexture(texture: Texture, sampler: TextureSampler) {
         session.platformAdapter.setSheenColorTextureOnKhronosPbrMaterial(
-            materialResource,
+            material,
             texture.texture,
             sampler.toRtTextureSampler(),
         )
@@ -435,7 +423,7 @@ internal constructor(
      */
     @MainThread
     public fun setSheenColorFactors(factors: Vector3) {
-        session.platformAdapter.setSheenColorFactorsOnKhronosPbrMaterial(materialResource, factors)
+        session.platformAdapter.setSheenColorFactorsOnKhronosPbrMaterial(material, factors)
     }
 
     /**
@@ -451,7 +439,7 @@ internal constructor(
     @MainThread
     public fun setSheenRoughnessTexture(texture: Texture, sampler: TextureSampler) {
         session.platformAdapter.setSheenRoughnessTextureOnKhronosPbrMaterial(
-            materialResource,
+            material,
             texture.texture,
             sampler.toRtTextureSampler(),
         )
@@ -468,10 +456,7 @@ internal constructor(
      */
     @MainThread
     public fun setSheenRoughnessFactor(factor: Float) {
-        session.platformAdapter.setSheenRoughnessFactorOnKhronosPbrMaterial(
-            materialResource,
-            factor,
-        )
+        session.platformAdapter.setSheenRoughnessFactorOnKhronosPbrMaterial(material, factor)
     }
 
     /**
@@ -487,7 +472,7 @@ internal constructor(
     @MainThread
     public fun setTransmissionTexture(texture: Texture, sampler: TextureSampler) {
         session.platformAdapter.setTransmissionTextureOnKhronosPbrMaterial(
-            materialResource,
+            material,
             texture.texture,
             sampler.toRtTextureSampler(),
         )
@@ -504,10 +489,7 @@ internal constructor(
      */
     @MainThread
     public fun setTransmissionUvTransform(transform: Matrix3) {
-        session.platformAdapter.setTransmissionUvTransformOnKhronosPbrMaterial(
-            materialResource,
-            transform,
-        )
+        session.platformAdapter.setTransmissionUvTransformOnKhronosPbrMaterial(material, transform)
     }
 
     /**
@@ -521,7 +503,7 @@ internal constructor(
      */
     @MainThread
     public fun setTransmissionFactor(factor: Float) {
-        session.platformAdapter.setTransmissionFactorOnKhronosPbrMaterial(materialResource, factor)
+        session.platformAdapter.setTransmissionFactorOnKhronosPbrMaterial(material, factor)
     }
 
     /**
@@ -536,7 +518,7 @@ internal constructor(
     @MainThread
     public fun setIndexOfRefraction(indexOfRefraction: Float) {
         session.platformAdapter.setIndexOfRefractionOnKhronosPbrMaterial(
-            materialResource,
+            material,
             indexOfRefraction,
         )
     }
@@ -551,7 +533,7 @@ internal constructor(
      */
     @MainThread
     public fun setAlphaCutoff(alphaCutoff: Float) {
-        session.platformAdapter.setAlphaCutoffOnKhronosPbrMaterial(materialResource, alphaCutoff)
+        session.platformAdapter.setAlphaCutoffOnKhronosPbrMaterial(material, alphaCutoff)
     }
 
     public companion object {

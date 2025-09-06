@@ -362,6 +362,15 @@ internal fun KhronosPbrMaterialSpec.toRtKhronosPbrMaterialSpec(): RtKhronosPbrMa
     return RtKhronosPbrMaterialSpec(lightingModel, blendMode, doubleSidedMode)
 }
 
+/** Extension function that converts a [AlphaMode] to [RtKhronosPbrMaterialSpec]. */
+internal fun Int.toRtKhronosUnlitMaterialSpec(): RtKhronosPbrMaterialSpec {
+    return RtKhronosPbrMaterialSpec(
+        lightingModel = RtKhronosPbrMaterialSpec.UNLIT,
+        blendMode = this,
+        doubleSidedMode = RtKhronosPbrMaterialSpec.SINGLE_SIDED,
+    )
+}
+
 /**
  * Extension function that converts a [RtPerceivedResolutionResult] to [PerceivedResolutionResult].
  */
