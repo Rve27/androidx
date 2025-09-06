@@ -116,6 +116,7 @@ import kotlin.test.Ignore
 import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
+import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -7423,6 +7424,72 @@ class ClickableTest {
             assertThat(created).isTrue()
             assertThat(interactions).hasSize(1)
             assertThat(interactions.first()).isInstanceOf(PressInteraction.Press::class.java)
+        }
+    }
+
+    /**
+     * Regression test for b/414319919 - when inside a scrollable container (presses are delayed),
+     * if a press, release, and press happen before coroutines are dispatched (in real life this is
+     * only really reproducible if the main thread is blocked), and a follow up release happens
+     * before the initial press delay expires, previously we would 'lose' the press delay job
+     * tracking the initial press, and so the second release would neither cancel the press, nor
+     * emit a release.
+     */
+    @Test
+    fun interactionSource_scrollableContainer_fastSuccessivePressesAndReleases() {
+        val interactionSource = MutableInteractionSource()
+
+        lateinit var scope: CoroutineScope
+
+        rule.mainClock.autoAdvance = false
+
+        rule.setContent {
+            scope = rememberCoroutineScope()
+            Box(Modifier.verticalScroll(rememberScrollState())) {
+                BasicText(
+                    "ClickableText",
+                    modifier =
+                        Modifier.testTag("myClickable").clickable(
+                            interactionSource = interactionSource,
+                            indication = null,
+                        ) {},
+                )
+            }
+        }
+
+        val interactions = mutableListOf<Interaction>()
+
+        scope.launch { interactionSource.interactions.collect { interactions.add(it) } }
+
+        rule.runOnIdle { assertThat(interactions).isEmpty() }
+
+        rule.onNodeWithTag("myClickable").performTouchInput {
+            down(center)
+            up()
+            down(center)
+        }
+
+        // Wait a small amount of time before we inject the second release, to make sure that
+        // coroutines from the initial gestures are launched.
+        dispatcher.scheduler.advanceTimeBy(10.milliseconds)
+
+        // Inject the following release
+        rule.onNodeWithTag("myClickable").performTouchInput { up() }
+
+        // Run past the press delays
+        dispatcher.scheduler.advanceUntilIdle()
+
+        // We should receive a press -> release -> press -> release
+        rule.runOnIdle {
+            assertThat(interactions).hasSize(4)
+            assertThat(interactions.first()).isInstanceOf(PressInteraction.Press::class.java)
+            assertThat(interactions[1]).isInstanceOf(PressInteraction.Release::class.java)
+            assertThat((interactions[1] as PressInteraction.Release).press)
+                .isEqualTo(interactions[0])
+            assertThat(interactions[2]).isInstanceOf(PressInteraction.Press::class.java)
+            assertThat(interactions[3]).isInstanceOf(PressInteraction.Release::class.java)
+            assertThat((interactions[3] as PressInteraction.Release).press)
+                .isEqualTo(interactions[2])
         }
     }
 }

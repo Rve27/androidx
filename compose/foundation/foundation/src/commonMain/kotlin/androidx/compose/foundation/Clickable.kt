@@ -1787,9 +1787,17 @@ internal abstract class AbstractClickableNode(
      */
     protected fun handlePressInteractionRelease(offset: Offset, indirectTouch: Boolean) {
         interactionSource?.let { interactionSource ->
-            if (delayJob?.isActive == true) {
+            // To resolve b/414319919 it is important that we capture a reference to `delayJob`
+            // outside the coroutine block - when the CPU is busy we can end up handling
+            // press-release-press before the coroutine starts to execute, which means we can launch
+            // two jobs and mutate delayJob twice. At the time this function is called, delayJob
+            // points to the correct corresponding press event, so we just reference this instance
+            // to make sure that there is no issue if coroutines are executed after the next set of
+            // gestures have been processed.
+            val job = delayJob
+            if (job?.isActive == true) {
                 coroutineScope.launch {
-                    delayJob?.cancelAndJoin()
+                    job.cancelAndJoin()
                     // The press released successfully, before the timeout duration - emit the press
                     // interaction instantly.
                     val press = PressInteraction.Press(offset)
@@ -1802,6 +1810,9 @@ internal abstract class AbstractClickableNode(
                     if (indirectTouch) indirectTouchPressInteraction else pressInteraction
                 interaction?.let {
                     coroutineScope.launch {
+                        // Important that we capture `interaction` outside the `launch`, rather than
+                        // referring to it in here - the underlying fields are mutable and could
+                        // change by the time this coroutine is executed
                         val endInteraction = PressInteraction.Release(it)
                         interactionSource.emit(endInteraction)
                     }
