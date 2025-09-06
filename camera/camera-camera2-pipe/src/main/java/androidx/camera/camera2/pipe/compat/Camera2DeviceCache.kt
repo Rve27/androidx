@@ -296,6 +296,13 @@ constructor(
             } catch (e: CameraAccessException) {
                 Log.warn(e) { "Failed to query CameraManager#getCameraIdList!" }
                 return null
+            } catch (e: ArrayIndexOutOfBoundsException) {
+                // getCameraIdList() can throw ArrayIndexOutOfBoundsException: b/443332525
+                Log.warn(e) {
+                    "Failed to query CameraManager#getCameraIdList!" +
+                        "Unexpected ArrayIndexOutOfBoundsException thrown by framework."
+                }
+                return null
             }
         val cameraIds = cameraIdArray.map { CameraId(it) }
         if (isValidCameraIds(cameraIds)) {
