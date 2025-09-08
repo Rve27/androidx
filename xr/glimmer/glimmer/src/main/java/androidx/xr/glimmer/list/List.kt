@@ -16,17 +16,14 @@
 
 package androidx.xr.glimmer.list
 
-import androidx.compose.foundation.clipScrollableContainer
 import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.ScrollableDefaults
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.layout.LazyLayout
+import androidx.compose.foundation.scrollableArea
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.dp
 
 /**
@@ -161,18 +158,12 @@ internal fun List(
                 )
                 // TODO: b/433235501 - Behaviour conflicts between the AutoFocus and BeyondBounds.
                 .then(beyondBoundsModifier)
-                .clipScrollableContainer(orientation)
-                .scrollable(
+                .scrollableArea(
                     state = state,
                     orientation = orientation,
                     enabled = userScrollEnabled,
-                    reverseDirection =
-                        ScrollableDefaults.reverseDirection(
-                            layoutDirection = LocalLayoutDirection.current,
-                            orientation = orientation,
-                            reverseScrolling = reverseLayout,
-                        ),
                     interactionSource = state.internalInteractionSource,
+                    overscrollEffect = null,
                 ),
         itemProvider = itemProvider,
         measurePolicy = measurePolicy,
