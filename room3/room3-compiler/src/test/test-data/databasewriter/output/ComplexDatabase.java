@@ -1,13 +1,13 @@
 package foo.bar;
 
 import androidx.annotation.NonNull;
-import androidx.room.InvalidationTracker;
-import androidx.room.RoomOpenDelegate;
-import androidx.room.migration.AutoMigrationSpec;
-import androidx.room.migration.Migration;
-import androidx.room.util.DBUtil;
-import androidx.room.util.TableInfo;
-import androidx.room.util.ViewInfo;
+import androidx.room3.InvalidationTracker;
+import androidx.room3.RoomOpenDelegate;
+import androidx.room3.migration.AutoMigrationSpec;
+import androidx.room3.migration.Migration;
+import androidx.room3.util.DBUtil;
+import androidx.room3.util.TableInfo;
+import androidx.room3.util.ViewInfo;
 import androidx.sqlite.SQLite;
 import androidx.sqlite.SQLiteConnection;
 import java.lang.Class;
@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.Set;
 import javax.annotation.processing.Generated;
 
-@Generated("androidx.room.RoomProcessor")
+@Generated("androidx.room3.RoomProcessor")
 @SuppressWarnings({"unchecked", "deprecation", "removal"})
 public final class ComplexDatabase_Impl extends ComplexDatabase {
     private volatile ComplexDao _complexDao;

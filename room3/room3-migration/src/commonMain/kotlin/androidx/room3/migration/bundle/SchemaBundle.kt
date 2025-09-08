@@ -16,7 +16,7 @@
 
 @file:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 
-package androidx.room.migration.bundle
+package androidx.room3.migration.bundle
 
 import androidx.annotation.RestrictTo
 import kotlinx.serialization.DeserializationStrategy

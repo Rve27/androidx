@@ -36,21 +36,21 @@ would like a change:
 
 ## How To Use It
 
-The entry API is the [XProcessingEnv](src/main/java/androidx/room/compiler/processing/XProcessingEnv.kt)
+The entry API is the [XProcessingEnv](src/main/java/androidx/room3/compiler/processing/XProcessingEnv.kt)
 which has the necessary API's to access types etc.
 
 To find annotated elements, you need to subclass the
-[XProcessingStep](src/main/java/androidx/room/compiler/processing/XProcessingStep.kt).
+[XProcessingStep](src/main/java/androidx/room3/compiler/processing/XProcessingStep.kt).
 It is very similar to the
 [BasicAnnotationProcessor](https://github.com/google/auto/blob/master/common/src/main/java/com/google/auto/common/BasicAnnotationProcessor.java)
 API in [Google Auto](https://github.com/google/auto) and you can find Room's implementation
-[here](../compiler/src/main/kotlin/androidx/room/DatabaseProcessingStep.kt).
+[here](../compiler/src/main/kotlin/androidx/room3/DatabaseProcessingStep.kt).
 
 To initialize your `XProcessingStep` implementation, you still need to create your own
  AnnotationProcessor (JavaAP) or SymbolProcessor (KSP) implementations and tie it to the
  `XProcessingStep`.
-* Room's [KSP processor](../compiler/src/main/kotlin/androidx/room/RoomKspProcessor.kt)
-* Room's [JavaAP processor](../compiler/src/main/kotlin/androidx/room/RoomProcessor.kt)
+* Room's [KSP processor](../compiler/src/main/kotlin/androidx/room3/RoomKspProcessor.kt)
+* Room's [JavaAP processor](../compiler/src/main/kotlin/androidx/room3/RoomProcessor.kt)
 
 For everything else, the API docs in the library should be sufficient and if not, feel free to file
 bugs for more explanations.

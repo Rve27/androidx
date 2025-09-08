@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package androidx.room.gradle.integration
+package androidx.room3.gradle.integration
 
-import androidx.room.gradle.RoomArgumentProvider
-import androidx.room.gradle.RoomExtension.SchemaConfiguration
-import androidx.room.gradle.RoomOptions
-import androidx.room.gradle.util.isKspTask
+import androidx.room3.gradle.RoomArgumentProvider
+import androidx.room3.gradle.RoomExtension.SchemaConfiguration
+import androidx.room3.gradle.RoomOptions
+import androidx.room3.gradle.util.isKspTask
 import org.gradle.api.Task
 import org.gradle.api.file.Directory
 import org.gradle.api.file.ProjectLayout

@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing
+package androidx.room3.compiler.processing
 
 import androidx.kruth.assertThat
-import androidx.room.compiler.processing.ksp.KSClassDeclarationAsOriginatingElement
-import androidx.room.compiler.processing.ksp.KSFileAsOriginatingElement
-import androidx.room.compiler.processing.ksp.KspFileMemberContainer
-import androidx.room.compiler.processing.ksp.KspTypeElement
-import androidx.room.compiler.processing.ksp.synthetic.KspSyntheticPropertyMethodElement
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.XTestInvocation
-import androidx.room.compiler.processing.util.compileFiles
-import androidx.room.compiler.processing.util.runProcessorTest
+import androidx.room3.compiler.processing.ksp.KSClassDeclarationAsOriginatingElement
+import androidx.room3.compiler.processing.ksp.KSFileAsOriginatingElement
+import androidx.room3.compiler.processing.ksp.KspFileMemberContainer
+import androidx.room3.compiler.processing.ksp.KspTypeElement
+import androidx.room3.compiler.processing.ksp.synthetic.KspSyntheticPropertyMethodElement
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.XTestInvocation
+import androidx.room3.compiler.processing.util.compileFiles
+import androidx.room3.compiler.processing.util.runProcessorTest
 import com.squareup.javapoet.TypeSpec
 import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.TypeElement
@@ -252,7 +252,7 @@ class OriginatingElementsTest {
                         assertThat(e.message)
                             .isEqualTo(
                                 "Originating element is not" +
-                                    " implemented for class androidx.room.compiler.processing.ksp" +
+                                    " implemented for class androidx.room3.compiler.processing.ksp" +
                                     ".synthetic.KspSyntheticFileMemberContainer"
                             )
                     }

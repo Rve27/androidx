@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.room.integration.kotlintestapp.migration
+package androidx.room3.integration.kotlintestapp.migration
 
 import androidx.kruth.assertThat
-import androidx.room.testing.MigrationTestHelper
-import androidx.room.util.TableInfo.Companion.read
+import androidx.room3.testing.MigrationTestHelper
+import androidx.room3.util.TableInfo.Companion.read
 import androidx.sqlite.SQLiteException
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest

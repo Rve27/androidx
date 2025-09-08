@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.testapp.migration;
+package androidx.room3.integration.testapp.migration;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-import androidx.room.AutoMigration;
-import androidx.room.ColumnInfo;
-import androidx.room.Database;
-import androidx.room.Entity;
-import androidx.room.PrimaryKey;
-import androidx.room.ProvidedAutoMigrationSpec;
-import androidx.room.RoomDatabase;
-import androidx.room.migration.AutoMigrationSpec;
-import androidx.room.testing.MigrationTestHelper;
+import androidx.room3.AutoMigration;
+import androidx.room3.ColumnInfo;
+import androidx.room3.Database;
+import androidx.room3.Entity;
+import androidx.room3.PrimaryKey;
+import androidx.room3.ProvidedAutoMigrationSpec;
+import androidx.room3.RoomDatabase;
+import androidx.room3.migration.AutoMigrationSpec;
+import androidx.room3.testing.MigrationTestHelper;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -171,7 +171,7 @@ public class ProvidedAutoMigrationSpecTest {
             assertThat(
                     exception.getMessage(),
                     containsString(
-                            "A required auto migration spec (androidx.room.integration.testapp"
+                            "A required auto migration spec (androidx.room3.integration.testapp"
                                     + ".migration.ProvidedAutoMigrationSpecTest"
                                     + ".ProvidedAutoMigrationDb.MyProvidedAutoMigration) has not "
                                     + "been provided."

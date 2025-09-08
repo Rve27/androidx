@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package androidx.room.vo
+package androidx.room3.vo
 
-import androidx.room.FtsOptions.MatchInfo
-import androidx.room.FtsOptions.Order
-import androidx.room.migration.bundle.FtsOptionsBundle
+import androidx.room3.FtsOptions.MatchInfo
+import androidx.room3.FtsOptions.Order
+import androidx.room3.migration.bundle.FtsOptionsBundle
 import java.util.Locale
 
 data class FtsOptions(
@@ -49,7 +49,7 @@ data class FtsOptions(
         return mutableListOf<String>().apply {
             if (
                 includeTokenizer &&
-                    (tokenizer != androidx.room.FtsOptions.TOKENIZER_SIMPLE ||
+                    (tokenizer != androidx.room3.FtsOptions.TOKENIZER_SIMPLE ||
                         tokenizerArgs.isNotEmpty())
             ) {
                 val tokenizeAndArgs = listOf("tokenize=$tokenizer") + tokenizerArgs.map { "`$it`" }
@@ -95,14 +95,14 @@ data class FtsOptions(
     companion object {
         val defaultTokenizers =
             listOf(
-                androidx.room.FtsOptions.TOKENIZER_SIMPLE,
-                androidx.room.FtsOptions.TOKENIZER_PORTER,
+                androidx.room3.FtsOptions.TOKENIZER_SIMPLE,
+                androidx.room3.FtsOptions.TOKENIZER_PORTER,
                 // Even though ICU is one of the default tokenizer in Room's API and in Android, the
                 // SQLite JDBC library is not compiled with ICU turned ON and Room will fail to
                 // create
                 // the table, therefore treat it as a custom tokenizer. b/201753224
-                // androidx.room.FtsOptions.TOKENIZER_ICU,
-                androidx.room.FtsOptions.TOKENIZER_UNICODE61,
+                // androidx.room3.FtsOptions.TOKENIZER_ICU,
+                androidx.room3.FtsOptions.TOKENIZER_UNICODE61,
             )
     }
 }

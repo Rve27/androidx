@@ -1,8 +1,8 @@
-package androidx.room.integration.kotlintestapp.vo
+package androidx.room3.integration.kotlintestapp.vo
 
-import androidx.room.TypeConverter
-import androidx.room.util.joinIntoString
-import androidx.room.util.splitToIntList
+import androidx.room3.TypeConverter
+import androidx.room3.util.joinIntoString
+import androidx.room3.util.splitToIntList
 
 object StringToIntListConverters {
     @TypeConverter

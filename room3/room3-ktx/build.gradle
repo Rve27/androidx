@@ -58,5 +58,5 @@ androidx {
 }
 
 android {
-    namespace = "androidx.room.ktx"
+    namespace = "androidx.room3.ktx"
 }

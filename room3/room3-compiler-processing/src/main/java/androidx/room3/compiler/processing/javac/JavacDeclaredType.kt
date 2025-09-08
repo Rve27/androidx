@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.javac
+package androidx.room3.compiler.processing.javac
 
-import androidx.room.compiler.processing.XNullability
-import androidx.room.compiler.processing.javac.kotlin.KmTypeContainer
+import androidx.room3.compiler.processing.XNullability
+import androidx.room3.compiler.processing.javac.kotlin.KmTypeContainer
 import javax.lang.model.type.DeclaredType
 
 /**

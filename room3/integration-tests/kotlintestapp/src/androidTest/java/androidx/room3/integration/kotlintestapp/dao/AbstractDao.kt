@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.kotlintestapp.dao
+package androidx.room3.integration.kotlintestapp.dao
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.Query
-import androidx.room.Transaction
-import androidx.room.integration.kotlintestapp.vo.Author
-import androidx.room.integration.kotlintestapp.vo.Book
+import androidx.room3.Dao
+import androidx.room3.Insert
+import androidx.room3.Query
+import androidx.room3.Transaction
+import androidx.room3.integration.kotlintestapp.vo.Author
+import androidx.room3.integration.kotlintestapp.vo.Book
 
 @Dao
 abstract class AbstractDao {

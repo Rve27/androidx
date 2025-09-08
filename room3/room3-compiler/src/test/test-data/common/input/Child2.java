@@ -15,7 +15,7 @@
  */
 
 package foo.bar;
-import androidx.room.*;
+import androidx.room3.*;
 
 @Entity
 public class Child2 extends Parent {

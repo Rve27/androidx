@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package androidx.room.writer
+package androidx.room3.writer
 
-import androidx.room.DatabaseProcessingStep
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.XTestInvocation
-import androidx.room.compiler.processing.util.runKspTest
-import androidx.room.processor.Context
+import androidx.room3.DatabaseProcessingStep
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.XTestInvocation
+import androidx.room3.compiler.processing.util.runKspTest
+import androidx.room3.processor.Context
 import loadTestSource
 import org.junit.Rule
 import org.junit.Test
@@ -37,7 +37,7 @@ class DatabaseKotlinCodeGenTest {
             Source.kotlin(
                 "MyDatabase.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
 
             @Database(entities = [MyEntity::class], version = 1, exportSchema = false)
             abstract class MyDatabase : RoomDatabase() {
@@ -67,7 +67,7 @@ class DatabaseKotlinCodeGenTest {
             Source.kotlin(
                 "MyDatabase.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
 
             @Database(
                 entities = [
@@ -132,7 +132,7 @@ class DatabaseKotlinCodeGenTest {
             Source.kotlin(
                 "MyDatabase.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
 
             @Database(entities = [MyEntity::class], version = 1, exportSchema = false)
             internal abstract class MyDatabase : RoomDatabase() {
@@ -163,7 +163,7 @@ class DatabaseKotlinCodeGenTest {
             Source.java(
                 "MyDatabase",
                 """
-            import androidx.room.*;
+            import androidx.room3.*;
 
             @Database(entities = { MyEntity.class }, version = 1, exportSchema = false)
             public abstract class MyDatabase extends RoomDatabase {
@@ -177,7 +177,7 @@ class DatabaseKotlinCodeGenTest {
                 "MyDao",
                 """
             import androidx.annotation.NonNull;
-            import androidx.room.*;
+            import androidx.room3.*;
 
             @Dao
             public interface MyDao {
@@ -191,7 +191,7 @@ class DatabaseKotlinCodeGenTest {
             Source.java(
                 "MyEntity",
                 """
-            import androidx.room.*;
+            import androidx.room3.*;
 
             @Entity
             public class MyEntity {
@@ -213,7 +213,7 @@ class DatabaseKotlinCodeGenTest {
             Source.kotlin(
                 "MyDatabase.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
 
             @Database(entities = [MyEntity::class], version = 1, exportSchema = false)
             abstract class MyDatabase : RoomDatabase() {
@@ -251,7 +251,7 @@ class DatabaseKotlinCodeGenTest {
             options = mapOf(Context.BooleanProcessorOptions.GENERATE_KOTLIN.argName to "true"),
             kotlincArguments = listOf("-jvm-target=11"),
         ) {
-            val databaseFqn = "androidx.room.Database"
+            val databaseFqn = "androidx.room3.Database"
             DatabaseProcessingStep()
                 .process(
                     it.processingEnv,

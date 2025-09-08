@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.testapp.vo;
+package androidx.room3.integration.testapp.vo;
 
-import androidx.room.ColumnInfo;
-import androidx.room.Entity;
-import androidx.room.Fts4;
-import androidx.room.PrimaryKey;
+import androidx.room3.ColumnInfo;
+import androidx.room3.Entity;
+import androidx.room3.Fts4;
+import androidx.room3.PrimaryKey;
 
 @Entity
 @Fts4

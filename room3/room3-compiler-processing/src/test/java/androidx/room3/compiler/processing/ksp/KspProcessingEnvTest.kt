@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.ksp
+package androidx.room3.compiler.processing.ksp
 
 import androidx.kruth.assertThat
-import androidx.room.compiler.processing.XNullability
-import androidx.room.compiler.processing.util.kspResolver
-import androidx.room.compiler.processing.util.runKspTest
+import androidx.room3.compiler.processing.XNullability
+import androidx.room3.compiler.processing.util.kspResolver
+import androidx.room3.compiler.processing.util.runKspTest
 import com.squareup.javapoet.TypeName
 import org.junit.Test
 

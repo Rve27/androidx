@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package androidx.room.support
+package androidx.room3.support
 
-import androidx.room.DelegatingOpenHelper
-import androidx.room.RoomDatabase
+import androidx.room3.DelegatingOpenHelper
+import androidx.room3.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.sqlite.db.SupportSQLiteOpenHelper
 import kotlinx.coroutines.CoroutineScope

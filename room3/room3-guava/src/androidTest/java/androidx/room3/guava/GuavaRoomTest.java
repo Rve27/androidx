@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package androidx.room.guava;
+package androidx.room3.guava;
 
 import static com.google.common.truth.Truth.assertThat;
 
 import android.os.CancellationSignal;
 
-import androidx.room.InvalidationTracker;
-import androidx.room.RoomDatabase;
-import androidx.room.RoomSQLiteQuery;
+import androidx.room3.InvalidationTracker;
+import androidx.room3.RoomDatabase;
+import androidx.room3.RoomSQLiteQuery;
 import androidx.test.filters.SmallTest;
 
 import com.google.common.util.concurrent.ListenableFuture;

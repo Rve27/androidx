@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.room.util
+package androidx.room3.util
 
-import androidx.room.ColumnInfo
+import androidx.room3.ColumnInfo
 import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.SQLiteStatement
 import kotlin.collections.removeLast as removeLastKt

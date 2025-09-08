@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.room.integration.kotlintestapp.test
+package androidx.room3.integration.kotlintestapp.test
 
 import android.content.Context
 import androidx.kruth.assertThat
-import androidx.room.Room
-import androidx.room.integration.kotlintestapp.TestDatabase
-import androidx.room.integration.kotlintestapp.dao.PetDao
-import androidx.room.integration.kotlintestapp.dao.ToyDao
-import androidx.room.integration.kotlintestapp.vo.Pet
-import androidx.room.integration.kotlintestapp.vo.Toy
+import androidx.room3.Room
+import androidx.room3.integration.kotlintestapp.TestDatabase
+import androidx.room3.integration.kotlintestapp.dao.PetDao
+import androidx.room3.integration.kotlintestapp.dao.ToyDao
+import androidx.room3.integration.kotlintestapp.vo.Pet
+import androidx.room3.integration.kotlintestapp.vo.Toy
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest

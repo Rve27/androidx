@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package androidx.room.migration.bundle
+package androidx.room3.migration.bundle
 
 import androidx.annotation.RestrictTo
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-/** Data class that holds the schema information for an [androidx.room.Entity] property. */
+/** Data class that holds the schema information for an [androidx.room3.Entity] property. */
 @Serializable
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public class FieldBundle(

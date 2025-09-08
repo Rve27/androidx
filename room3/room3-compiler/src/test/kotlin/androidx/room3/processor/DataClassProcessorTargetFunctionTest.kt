@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package androidx.room.processor
+package androidx.room3.processor
 
-import androidx.room.compiler.codegen.XClassName
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.XTestInvocation
-import androidx.room.compiler.processing.util.runProcessorTest
-import androidx.room.testing.context
+import androidx.room3.compiler.codegen.XClassName
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.XTestInvocation
+import androidx.room3.compiler.processing.util.runProcessorTest
+import androidx.room3.testing.context
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
@@ -35,7 +35,7 @@ class DataClassProcessorTargetFunctionTest {
             """
             package foo.bar;
 
-            import androidx.room.*;
+            import androidx.room3.*;
             import java.util.*;
             import com.google.auto.value.*;
 
@@ -46,7 +46,7 @@ class DataClassProcessorTargetFunctionTest {
             """
             package foo.bar;
 
-            import androidx.room.*;
+            import androidx.room3.*;
             import java.util.*;
             import com.google.auto.value.*;
 
@@ -63,7 +63,7 @@ class DataClassProcessorTargetFunctionTest {
                 """
             package foo.bar;
 
-            import androidx.room.*;
+            import androidx.room3.*;
 
             class MyDataClass {
                 @PrimaryKey
@@ -91,7 +91,7 @@ class DataClassProcessorTargetFunctionTest {
                 """
             package foo.bar;
 
-            import androidx.room.*;
+            import androidx.room3.*;
 
             class MyDataClass {
                 @PrimaryKey
@@ -119,7 +119,7 @@ class DataClassProcessorTargetFunctionTest {
                 """
             package foo.bar;
 
-            import androidx.room.*;
+            import androidx.room3.*;
 
             abstract class MyDataClass {
                 @PrimaryKey
@@ -175,7 +175,7 @@ class DataClassProcessorTargetFunctionTest {
             """
             package foo.bar;
 
-            import androidx.room.*;
+            import androidx.room3.*;
 
             public abstract class ParentDataClass {
                 @ColumnInfo(name = "column_name")
@@ -188,7 +188,7 @@ class DataClassProcessorTargetFunctionTest {
             """
                 package foo.bar;
 
-                import androidx.room.*;
+                import androidx.room3.*;
                 import java.util.*;
                 import com.google.auto.value.*;
 
@@ -233,7 +233,7 @@ class DataClassProcessorTargetFunctionTest {
                 """
             package foo.bar;
 
-            import androidx.room.*;
+            import androidx.room3.*;
 
             class MyDataClass {
                 @PrimaryKey
@@ -252,7 +252,7 @@ class DataClassProcessorTargetFunctionTest {
                 """
             package foo.bar;
 
-            import androidx.room.*;
+            import androidx.room3.*;
 
             class MyDataClass {
                 @PrimaryKey
@@ -288,7 +288,7 @@ class DataClassProcessorTargetFunctionTest {
             """
             package foo.bar;
 
-            import androidx.room.*;
+            import androidx.room3.*;
 
             public abstract class ParentDataClass {
                 @ColumnInfo(name = "column_name")
@@ -299,7 +299,7 @@ class DataClassProcessorTargetFunctionTest {
             """
                 package foo.bar;
 
-                import androidx.room.*;
+                import androidx.room3.*;
                 import java.util.*;
                 import com.google.auto.value.*;
 
@@ -333,7 +333,7 @@ class DataClassProcessorTargetFunctionTest {
             """
             package foo.bar;
 
-            import androidx.room.*;
+            import androidx.room3.*;
 
             public interface InterfaceDataClass {
                 @ColumnInfo(name = "column_name")
@@ -344,7 +344,7 @@ class DataClassProcessorTargetFunctionTest {
             """
                 package foo.bar;
 
-                import androidx.room.*;
+                import androidx.room3.*;
                 import java.util.*;
                 import com.google.auto.value.*;
 
@@ -420,7 +420,7 @@ class DataClassProcessorTargetFunctionTest {
             """
             package foo.bar;
 
-            import androidx.room.*;
+            import androidx.room3.*;
 
             @Entity
             public class RelationDataClass {

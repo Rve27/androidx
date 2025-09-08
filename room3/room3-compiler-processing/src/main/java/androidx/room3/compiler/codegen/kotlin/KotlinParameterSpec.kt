@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.codegen.kotlin
+package androidx.room3.compiler.codegen.kotlin
 
-import androidx.room.compiler.codegen.KParameterSpec
-import androidx.room.compiler.codegen.KParameterSpecBuilder
-import androidx.room.compiler.codegen.XAnnotationSpec
-import androidx.room.compiler.codegen.XParameterSpec
-import androidx.room.compiler.codegen.XSpec
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.compiler.codegen.impl.XAnnotationSpecImpl
+import androidx.room3.compiler.codegen.KParameterSpec
+import androidx.room3.compiler.codegen.KParameterSpecBuilder
+import androidx.room3.compiler.codegen.XAnnotationSpec
+import androidx.room3.compiler.codegen.XParameterSpec
+import androidx.room3.compiler.codegen.XSpec
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.compiler.codegen.impl.XAnnotationSpecImpl
 
 internal class KotlinParameterSpec(
     override val name: String,

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.javac.kotlin
+package androidx.room3.compiler.processing.javac.kotlin
 
 import androidx.kruth.assertThat
 import com.google.auto.common.MoreElements
@@ -40,7 +40,7 @@ class JvmDescriptorUtilsTest {
 
     private val describeAnnotation =
         """
-        package androidx.room.test;
+        package androidx.room3.test;
 
         import java.lang.annotation.ElementType;
         import java.lang.annotation.Target;
@@ -48,13 +48,13 @@ class JvmDescriptorUtilsTest {
         @Target({ElementType.FIELD, ElementType.METHOD, ElementType.CONSTRUCTOR})
         public @interface Describe { }
         """
-            .toJFO("androidx.room.test.Describe")
+            .toJFO("androidx.room3.test.Describe")
 
     @Test
     fun descriptor_method_simple() {
         singleRun(
             """
-            package androidx.room.test;
+            package androidx.room3.test;
 
             public class DummyClass {
                 @Describe
@@ -62,7 +62,7 @@ class JvmDescriptorUtilsTest {
                 }
             }
             """
-                .toJFO("androidx.room.test.DummyClass")
+                .toJFO("androidx.room3.test.DummyClass")
         ) { descriptors ->
             assertThat(descriptors.first()).isEqualTo("emptyMethod()V")
         }
@@ -72,7 +72,7 @@ class JvmDescriptorUtilsTest {
     fun descriptor_field() {
         singleRun(
             """
-            package androidx.room.test;
+            package androidx.room3.test;
 
             import java.util.List;
 
@@ -90,7 +90,7 @@ class JvmDescriptorUtilsTest {
                 List<String> field4;
             }
             """
-                .toJFO("androidx.room.test.DummyClass")
+                .toJFO("androidx.room3.test.DummyClass")
         ) { descriptors ->
             assertThat(descriptors)
                 .isEqualTo(
@@ -108,7 +108,7 @@ class JvmDescriptorUtilsTest {
     fun descriptor_method_erasured() {
         singleRun(
             """
-            package androidx.room.test;
+            package androidx.room3.test;
 
             import java.util.ArrayList;
             import java.util.Collection;
@@ -144,7 +144,7 @@ class JvmDescriptorUtilsTest {
                 static <P extends String & List<Character>> P method9() { return null; }
             }
             """
-                .toJFO("androidx.room.test.DummyClass")
+                .toJFO("androidx.room3.test.DummyClass")
         ) { descriptors ->
             assertThat(descriptors)
                 .isEqualTo(
@@ -167,7 +167,7 @@ class JvmDescriptorUtilsTest {
     fun descriptor_method_primitiveParams() {
         singleRun(
             """
-            package androidx.room.test;
+            package androidx.room3.test;
 
             class DummyClass {
                 @Describe
@@ -183,7 +183,7 @@ class JvmDescriptorUtilsTest {
                 void method4(long bigNumber, short littlerNumber) { }
             }
             """
-                .toJFO("androidx.room.test.DummyClass")
+                .toJFO("androidx.room3.test.DummyClass")
         ) { descriptors ->
             assertThat(descriptors)
                 .isEqualTo(setOf("method1(ZI)V", "method2(C)B", "method3(DF)V", "method4(JS)V"))
@@ -194,7 +194,7 @@ class JvmDescriptorUtilsTest {
     fun descriptor_method_classParam_javaTypes() {
         singleRun(
             """
-            package androidx.room.test;
+            package androidx.room3.test;
 
             import java.util.ArrayList;
             import java.util.List;
@@ -214,7 +214,7 @@ class JvmDescriptorUtilsTest {
                 Map<String, Object> method4() { return null; }
             }
             """
-                .toJFO("androidx.room.test.DummyClass")
+                .toJFO("androidx.room3.test.DummyClass")
         ) { descriptors ->
             assertThat(descriptors)
                 .isEqualTo(
@@ -232,15 +232,15 @@ class JvmDescriptorUtilsTest {
     fun descriptor_method_classParam_testClass() {
         val extraJfo =
             """
-            package androidx.room.test;
+            package androidx.room3.test;
 
             class DataClass { }
             """
-                .toJFO("androidx.room.test.DataClass")
+                .toJFO("androidx.room3.test.DataClass")
 
         singleRun(
             """
-            package androidx.room.test;
+            package androidx.room3.test;
 
             class DummyClass {
                 @Describe
@@ -250,14 +250,14 @@ class JvmDescriptorUtilsTest {
                 DataClass method2() { return null; }
             }
             """
-                .toJFO("androidx.room.test.DummyClass"),
+                .toJFO("androidx.room3.test.DummyClass"),
             extraJfo,
         ) { descriptors ->
             assertThat(descriptors)
                 .isEqualTo(
                     setOf(
-                        "method1(Landroidx/room/test/DataClass;)V",
-                        "method2()Landroidx/room/test/DataClass;",
+                        "method1(Landroidx/room3/test/DataClass;)V",
+                        "method2()Landroidx/room3/test/DataClass;",
                     )
                 )
         }
@@ -267,7 +267,7 @@ class JvmDescriptorUtilsTest {
     fun descriptor_method_classParam_innerTestClass() {
         val extraJfo =
             """
-            package androidx.room.test;
+            package androidx.room3.test;
 
             class DataClass {
 
@@ -280,11 +280,11 @@ class JvmDescriptorUtilsTest {
                 }
             }
             """
-                .toJFO("androidx.room.test.DataClass")
+                .toJFO("androidx.room3.test.DataClass")
 
         singleRun(
             """
-            package androidx.room.test;
+            package androidx.room3.test;
 
             class DummyClass {
                 @Describe
@@ -300,16 +300,16 @@ class JvmDescriptorUtilsTest {
                 DataClass.StaticInnerData method4() { return null; }
             }
             """
-                .toJFO("androidx.room.test.DummyClass"),
+                .toJFO("androidx.room3.test.DummyClass"),
             extraJfo,
         ) { descriptors ->
             assertThat(descriptors)
                 .isEqualTo(
                     setOf(
-                        "method1(Landroidx/room/test/DataClass\$MemberInnerData;)V",
-                        "method2(Landroidx/room/test/DataClass\$StaticInnerData;)V",
-                        "method3(Landroidx/room/test/DataClass\$EnumData;)V",
-                        "method4()Landroidx/room/test/DataClass\$StaticInnerData;",
+                        "method1(Landroidx/room3/test/DataClass\$MemberInnerData;)V",
+                        "method2(Landroidx/room3/test/DataClass\$StaticInnerData;)V",
+                        "method3(Landroidx/room3/test/DataClass\$EnumData;)V",
+                        "method4()Landroidx/room3/test/DataClass\$StaticInnerData;",
                     )
                 )
         }
@@ -319,15 +319,15 @@ class JvmDescriptorUtilsTest {
     fun descriptor_method_arrayParams() {
         val extraJfo =
             """
-            package androidx.room.test;
+            package androidx.room3.test;
 
             class DataClass { }
             """
-                .toJFO("androidx.room.test.DataClass")
+                .toJFO("androidx.room3.test.DataClass")
 
         singleRun(
             """
-            package androidx.room.test;
+            package androidx.room3.test;
 
             class DummyClass {
                 @Describe
@@ -343,14 +343,14 @@ class JvmDescriptorUtilsTest {
                 void method4(int... array) { }
             }
             """
-                .toJFO("androidx.room.test.DummyClass"),
+                .toJFO("androidx.room3.test.DummyClass"),
             extraJfo,
         ) { descriptors ->
             assertThat(descriptors)
                 .isEqualTo(
                     setOf(
-                        "method1([Landroidx/room/test/DataClass;)V",
-                        "method2()[Landroidx/room/test/DataClass;",
+                        "method1([Landroidx/room3/test/DataClass;)V",
+                        "method2()[Landroidx/room3/test/DataClass;",
                         "method3([I)V",
                         "method4([I)V",
                     )
@@ -362,7 +362,7 @@ class JvmDescriptorUtilsTest {
     fun typeNameFromDescriptor() {
         val extraJfo =
             """
-            import androidx.room.test.Describe;
+            import androidx.room3.test.Describe;
             class Custom {
                 static class Nested1 {
                     static class Nested2 {
@@ -379,7 +379,7 @@ class JvmDescriptorUtilsTest {
                 .toJFO("Custom")
         singleRun(
             """
-            package androidx.room.test;
+            package androidx.room3.test;
 
             class Foo {
                 @Describe
@@ -398,7 +398,7 @@ class JvmDescriptorUtilsTest {
                 int[][] intArrayOfArray;
             }
             """
-                .toJFO("androidx.room.test.Foo"),
+                .toJFO("androidx.room3.test.Foo"),
             extraJfo,
         ) {
             assertThat(
@@ -455,7 +455,7 @@ class JvmDescriptorUtilsTest {
                     }
 
                     override fun getSupportedAnnotationTypes(): Set<String> {
-                        return setOf("androidx.room.test.Describe")
+                        return setOf("androidx.room3.test.Describe")
                     }
                 }
             )

@@ -139,7 +139,7 @@ function profile {
     $GRADLEW -p $PROJECT_DIR $GRADLE_ARGS
     local AGENT_PARAMETER_NAME="-Dorg.gradle.jvmargs"
     if [ $AGENT_TARGET = "test" ]; then
-        AGENT_PARAMETER_NAME="-Dandroidx.room.testJvmArgs"
+        AGENT_PARAMETER_NAME="-Dandroidx.room3.testJvmArgs"
     fi
     $GRADLEW --no-daemon \
         --init-script $SCRIPT_DIR/rerun-requested-task-init-script.gradle \

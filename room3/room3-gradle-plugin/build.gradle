@@ -92,8 +92,8 @@ tasks.withType(Test).configureEach { test ->
 gradlePlugin {
     plugins {
         room {
-            id = "androidx.room"
-            implementationClass = "androidx.room.gradle.RoomGradlePlugin"
+            id = "androidx.room3"
+            implementationClass = "androidx.room3.gradle.RoomGradlePlugin"
         }
     }
 }

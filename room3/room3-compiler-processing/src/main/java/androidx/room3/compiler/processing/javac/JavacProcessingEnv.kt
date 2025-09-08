@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.javac
+package androidx.room3.compiler.processing.javac
 
-import androidx.room.compiler.processing.XElement
-import androidx.room.compiler.processing.XMessager
-import androidx.room.compiler.processing.XNullability
-import androidx.room.compiler.processing.XProcessingEnv
-import androidx.room.compiler.processing.XProcessingEnvConfig
-import androidx.room.compiler.processing.XType
-import androidx.room.compiler.processing.XTypeElement
-import androidx.room.compiler.processing.javac.kotlin.KmTypeContainer
-import androidx.room.compiler.processing.javac.kotlin.KmTypeParameterContainer
+import androidx.room3.compiler.processing.XElement
+import androidx.room3.compiler.processing.XMessager
+import androidx.room3.compiler.processing.XNullability
+import androidx.room3.compiler.processing.XProcessingEnv
+import androidx.room3.compiler.processing.XProcessingEnvConfig
+import androidx.room3.compiler.processing.XType
+import androidx.room3.compiler.processing.XTypeElement
+import androidx.room3.compiler.processing.javac.kotlin.KmTypeContainer
+import androidx.room3.compiler.processing.javac.kotlin.KmTypeParameterContainer
 import com.google.auto.common.GeneratedAnnotations
 import com.google.auto.common.MoreTypes
 import java.util.Locale

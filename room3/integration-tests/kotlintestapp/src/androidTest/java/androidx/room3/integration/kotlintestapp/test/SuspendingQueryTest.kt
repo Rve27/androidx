@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.kotlintestapp.test
+package androidx.room3.integration.kotlintestapp.test
 
 import android.content.Context
 import android.os.StrictMode
@@ -23,13 +23,13 @@ import androidx.arch.core.executor.ArchTaskExecutor
 import androidx.arch.core.executor.TaskExecutor
 import androidx.kruth.assertThat
 import androidx.kruth.assertWithMessage
-import androidx.room.Room
-import androidx.room.RoomDatabase
-import androidx.room.integration.kotlintestapp.NewThreadDispatcher
-import androidx.room.integration.kotlintestapp.TestDatabase
-import androidx.room.integration.kotlintestapp.vo.Book
-import androidx.room.integration.kotlintestapp.vo.Counter
-import androidx.room.withTransaction
+import androidx.room3.Room
+import androidx.room3.RoomDatabase
+import androidx.room3.integration.kotlintestapp.NewThreadDispatcher
+import androidx.room3.integration.kotlintestapp.TestDatabase
+import androidx.room3.integration.kotlintestapp.vo.Book
+import androidx.room3.integration.kotlintestapp.vo.Counter
+import androidx.room3.withTransaction
 import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.sqlite.db.SupportSQLiteOpenHelper
 import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
@@ -150,7 +150,7 @@ class SuspendingQueryTest : TestDatabaseTest() {
         }
     }
 
-    @OptIn(androidx.room.ExperimentalRoomApi::class)
+    @OptIn(androidx.room3.ExperimentalRoomApi::class)
     @Test
     fun allBookSuspend_autoClose() {
         val context: Context = ApplicationProvider.getApplicationContext()

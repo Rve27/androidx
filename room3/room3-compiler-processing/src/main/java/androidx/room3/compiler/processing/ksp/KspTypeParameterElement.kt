@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.ksp
+package androidx.room3.compiler.processing.ksp
 
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.compiler.processing.XAnnotated
-import androidx.room.compiler.processing.XMemberContainer
-import androidx.room.compiler.processing.XType
-import androidx.room.compiler.processing.XTypeParameterElement
-import androidx.room.compiler.processing.ksp.KspAnnotated.UseSiteFilter.NO_USE_SITE_OR_FIELD
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.compiler.processing.XAnnotated
+import androidx.room3.compiler.processing.XMemberContainer
+import androidx.room3.compiler.processing.XType
+import androidx.room3.compiler.processing.XTypeParameterElement
+import androidx.room3.compiler.processing.ksp.KspAnnotated.UseSiteFilter.NO_USE_SITE_OR_FIELD
 import com.google.devtools.ksp.symbol.KSTypeParameter
 import com.squareup.javapoet.TypeVariableName
 

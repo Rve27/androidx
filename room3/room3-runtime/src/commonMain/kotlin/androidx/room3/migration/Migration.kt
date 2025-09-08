@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.migration
+package androidx.room3.migration
 
 import androidx.sqlite.SQLiteConnection
 

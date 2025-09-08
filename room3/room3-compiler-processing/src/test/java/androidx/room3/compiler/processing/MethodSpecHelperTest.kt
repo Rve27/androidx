@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing
+package androidx.room3.compiler.processing
 
 import androidx.kruth.assertThat
-import androidx.room.compiler.processing.javac.JavacMethodElement
-import androidx.room.compiler.processing.javac.JavacTypeElement
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.XTestInvocation
-import androidx.room.compiler.processing.util.compileFiles
-import androidx.room.compiler.processing.util.javaTypeUtils
-import androidx.room.compiler.processing.util.runKaptTest
-import androidx.room.compiler.processing.util.runProcessorTest
+import androidx.room3.compiler.processing.javac.JavacMethodElement
+import androidx.room3.compiler.processing.javac.JavacTypeElement
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.XTestInvocation
+import androidx.room3.compiler.processing.util.compileFiles
+import androidx.room3.compiler.processing.util.javaTypeUtils
+import androidx.room3.compiler.processing.util.runKaptTest
+import androidx.room3.compiler.processing.util.runProcessorTest
 import androidx.testutils.generateAllEnumerations
 import com.google.auto.common.MoreTypes
 import com.squareup.javapoet.MethodSpec
@@ -54,7 +54,7 @@ class MethodSpecHelperTest(
                 "foo.bar.Baz",
                 """
             package foo.bar;
-            import androidx.room.compiler.processing.testcode.OtherAnnotation;
+            import androidx.room3.compiler.processing.testcode.OtherAnnotation;
 
             public class Baz {
                 public void method1() {
@@ -97,7 +97,7 @@ class MethodSpecHelperTest(
                 "Foo.kt",
                 """
             package foo.bar;
-            import androidx.room.compiler.processing.testcode.OtherAnnotation;
+            import androidx.room3.compiler.processing.testcode.OtherAnnotation;
 
             object MyObject
             abstract class Baz {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.ext
+package androidx.room3.ext
 
 import java.util.Locale
 

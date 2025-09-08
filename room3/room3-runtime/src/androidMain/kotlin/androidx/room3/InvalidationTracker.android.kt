@@ -13,18 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.room
+package androidx.room3
 
 import android.content.Context
 import android.content.Intent
 import androidx.annotation.RestrictTo
 import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
-import androidx.room.InvalidationTracker.Observer
-import androidx.room.concurrent.ReentrantLock
-import androidx.room.concurrent.withLock
-import androidx.room.coroutines.runBlockingUninterruptible
-import androidx.room.support.AutoCloser
+import androidx.room3.InvalidationTracker.Observer
+import androidx.room3.concurrent.ReentrantLock
+import androidx.room3.concurrent.withLock
+import androidx.room3.coroutines.runBlockingUninterruptible
+import androidx.room3.support.AutoCloser
 import androidx.sqlite.SQLiteConnection
 import java.lang.ref.WeakReference
 import java.util.concurrent.Callable

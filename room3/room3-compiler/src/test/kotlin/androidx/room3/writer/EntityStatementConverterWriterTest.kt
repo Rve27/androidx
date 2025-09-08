@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package androidx.room.writer
+package androidx.room3.writer
 
-import androidx.room.compiler.codegen.CodeLanguage
-import androidx.room.compiler.codegen.XClassName
-import androidx.room.compiler.codegen.XTypeSpec
-import androidx.room.compiler.codegen.compat.XConverters.applyToJavaPoet
-import androidx.room.compiler.processing.XProcessingEnv.Platform
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.XTestInvocation
-import androidx.room.processor.BaseEntityParserTest
+import androidx.room3.compiler.codegen.CodeLanguage
+import androidx.room3.compiler.codegen.XClassName
+import androidx.room3.compiler.codegen.XTypeSpec
+import androidx.room3.compiler.codegen.compat.XConverters.applyToJavaPoet
+import androidx.room3.compiler.processing.XProcessingEnv.Platform
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.XTestInvocation
+import androidx.room3.processor.BaseEntityParserTest
 import javax.lang.model.element.Modifier
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -36,11 +36,11 @@ class EntityStatementConverterWriterTest : BaseEntityParserTest() {
             """
             package foo.bar;
             import androidx.annotation.NonNull;
-            import androidx.room.util.SQLiteStatementUtil;
+            import androidx.room3.util.SQLiteStatementUtil;
             import androidx.sqlite.SQLiteStatement;
             import java.lang.SuppressWarnings;
             import javax.annotation.processing.Generated;
-            @Generated("androidx.room.RoomProcessor")
+            @Generated("androidx.room3.RoomProcessor")
             @SuppressWarnings({"unchecked", "deprecation", "removal"})
             public final class MyContainerClass {
         """

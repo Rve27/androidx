@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.concurrent
+package androidx.room3.concurrent
 
 internal actual typealias SynchronizedObject = kotlinx.atomicfu.locks.SynchronizedObject
 

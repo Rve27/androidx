@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.javac
+package androidx.room3.compiler.processing.javac
 
-import androidx.room.compiler.processing.XConstructorElement
-import androidx.room.compiler.processing.XConstructorType
-import androidx.room.compiler.processing.XType
-import androidx.room.compiler.processing.XTypeParameterElement
-import androidx.room.compiler.processing.javac.kotlin.KmConstructorContainer
+import androidx.room3.compiler.processing.XConstructorElement
+import androidx.room3.compiler.processing.XConstructorType
+import androidx.room3.compiler.processing.XType
+import androidx.room3.compiler.processing.XTypeParameterElement
+import androidx.room3.compiler.processing.javac.kotlin.KmConstructorContainer
 import com.google.auto.common.MoreTypes
 import javax.lang.model.element.ElementKind
 import javax.lang.model.element.ExecutableElement

@@ -17,11 +17,11 @@
 @file:JvmMultifileClass
 @file:JvmName("RelationUtil")
 
-package androidx.room.util
+package androidx.room3.util
 
 import androidx.annotation.RestrictTo
 import androidx.collection.ArrayMap
-import androidx.room.RoomDatabase
+import androidx.room3.RoomDatabase
 
 /**
  * Utility function used in generated code to recursively fetch relationships when the amount of

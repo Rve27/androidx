@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package androidx.room.testing
+package androidx.room3.testing
 
-import androidx.room.DatabaseConfiguration
-import androidx.room.RoomDatabase
-import androidx.room.migration.AutoMigrationSpec
-import androidx.room.migration.Migration
-import androidx.room.migration.bundle.SchemaBundle
-import androidx.room.util.findDatabaseConstructorAndInitDatabaseImpl
+import androidx.room3.DatabaseConfiguration
+import androidx.room3.RoomDatabase
+import androidx.room3.migration.AutoMigrationSpec
+import androidx.room3.migration.Migration
+import androidx.room3.migration.bundle.SchemaBundle
+import androidx.room3.util.findDatabaseConstructorAndInitDatabaseImpl
 import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.SQLiteDriver
 import kotlin.reflect.KClass
@@ -68,8 +68,8 @@ import okio.Path.Companion.toPath
  * }
  * ```
  *
- * The helper relies on exported schemas so [androidx.room.Database.exportSchema] should be enabled.
- * Schema location should be configured via Room's Gradle Plugin (id 'androidx.room'):
+ * The helper relies on exported schemas so [androidx.room3.Database.exportSchema] should be
+ * enabled. Schema location should be configured via Room's Gradle Plugin (id 'androidx.room'):
  * ```
  * room {
  *   schemaDirectory("$projectDir/schemas")
@@ -83,11 +83,11 @@ import okio.Path.Companion.toPath
  * @param fileName Name of the database.
  * @param driver A driver that opens connection to a file database. A driver that opens connections
  *   to an in-memory database would be meaningless.
- * @param databaseClass The [androidx.room.Database] annotated class.
+ * @param databaseClass The [androidx.room3.Database] annotated class.
  * @param databaseFactory The factory function to create an instance of the [databaseClass]. Should
- *   be the same factory used when building the database via [androidx.room.Room.databaseBuilder].
- * @param autoMigrationSpecs The list of [androidx.room.ProvidedAutoMigrationSpec] instances for
- *   [androidx.room.AutoMigration]s that require them.
+ *   be the same factory used when building the database via [androidx.room3.Room.databaseBuilder].
+ * @param autoMigrationSpecs The list of [androidx.room3.ProvidedAutoMigrationSpec] instances for
+ *   [androidx.room3.AutoMigration]s that require them.
  */
 public actual class MigrationTestHelper(
     private val schemaDirectoryPath: String,
@@ -127,7 +127,7 @@ public actual class MigrationTestHelper(
      *
      * This function uses the same algorithm that Room performs to choose migrations such that the
      * [migrations] instances provided must be sufficient to bring the database from current version
-     * to the desired version. If the database contains [androidx.room.AutoMigration]s, then those
+     * to the desired version. If the database contains [androidx.room3.AutoMigration]s, then those
      * are already included in the list of migrations to execute if necessary. Note that provided
      * manual migrations take precedence over auto migrations if they overlap in migration paths.
      *

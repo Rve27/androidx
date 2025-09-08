@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.room.integration.kotlintestapp.vo
+package androidx.room3.integration.kotlintestapp.vo
 
-import androidx.room.Embedded
-import androidx.room.Junction
-import androidx.room.Relation
+import androidx.room3.Embedded
+import androidx.room3.Junction
+import androidx.room3.Relation
 
 data class PlaylistWithSongTitles(
     @Embedded var playlist: Playlist,

@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.javac.kotlin
+package androidx.room3.compiler.processing.javac.kotlin
 
-import androidx.room.compiler.processing.XArrayType
-import androidx.room.compiler.processing.XEnumTypeElement
-import androidx.room.compiler.processing.XMethodElement
-import androidx.room.compiler.processing.XNullability
-import androidx.room.compiler.processing.javac.JavacKmAnnotation
-import androidx.room.compiler.processing.javac.JavacKmAnnotationValue
-import androidx.room.compiler.processing.javac.JavacProcessingEnv
-import androidx.room.compiler.processing.util.sanitizeAsJavaParameterName
+import androidx.room3.compiler.processing.XArrayType
+import androidx.room3.compiler.processing.XEnumTypeElement
+import androidx.room3.compiler.processing.XMethodElement
+import androidx.room3.compiler.processing.XNullability
+import androidx.room3.compiler.processing.javac.JavacKmAnnotation
+import androidx.room3.compiler.processing.javac.JavacKmAnnotationValue
+import androidx.room3.compiler.processing.javac.JavacProcessingEnv
+import androidx.room3.compiler.processing.util.sanitizeAsJavaParameterName
 import javax.lang.model.element.Element
 import javax.lang.model.element.ElementKind
 import javax.lang.model.element.ExecutableElement

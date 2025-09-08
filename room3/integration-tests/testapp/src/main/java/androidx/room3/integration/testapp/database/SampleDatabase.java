@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.testapp.database;
+package androidx.room3.integration.testapp.database;
 
-import androidx.room.Database;
-import androidx.room.RoomDatabase;
+import androidx.room3.Database;
+import androidx.room3.RoomDatabase;
 
 /**
  * Sample database of customers.

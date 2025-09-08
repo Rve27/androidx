@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package androidx.room.writer
+package androidx.room3.writer
 
 import COMMON
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.compileFiles
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.compileFiles
 import com.google.testing.junit.testparameterinjector.TestParameter
 import com.google.testing.junit.testparameterinjector.TestParameterInjector
 import org.junit.Ignore
@@ -36,7 +36,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
         Source.kotlin(
             "MyDatabase.kt",
             """
-        import androidx.room.*
+        import androidx.room3.*
 
         @Database(entities = [MyEntity::class], version = 1, exportSchema = false)
         abstract class MyDatabase : RoomDatabase() {
@@ -52,7 +52,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
 
             @Dao
             interface MyDao {
@@ -87,7 +87,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
 
             @Dao
             interface MyDao {
@@ -105,7 +105,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
                 "MyEntity",
                 """
             import androidx.annotation.Nullable;
-            import androidx.room.*;
+            import androidx.room3.*;
             
             @Entity
             public class MyEntity {
@@ -143,7 +143,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
                         Source.kotlin(
                             "MyEntity.kt",
                             """
-                import androidx.room.*
+                import androidx.room3.*
 
                 @Entity
                 class MyEntity(
@@ -170,7 +170,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
 
             @Dao
             interface MyDao {
@@ -196,7 +196,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
 
             @Dao
             interface MyDao {
@@ -232,7 +232,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
 
             @Dao
             interface MyDao {
@@ -269,7 +269,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
 
             @Dao
             interface MyDao {
@@ -306,7 +306,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
 
             @Dao
             interface MyDao {
@@ -339,7 +339,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
 
             @Dao
             interface MyDao {
@@ -371,7 +371,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
 
             @Dao
             interface MyDao {
@@ -404,7 +404,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
 
             @Dao
             interface MyDao {
@@ -442,7 +442,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
             import java.util.UUID
 
             @Dao
@@ -481,7 +481,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
 
             @Dao
             interface MyDao {
@@ -521,7 +521,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
 
             @Dao
             interface MyDao {
@@ -563,7 +563,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
 
             @Dao
             interface MyDao {
@@ -591,7 +591,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.java(
                 "FooConverter",
                 """
-            import androidx.room.TypeConverter;
+            import androidx.room3.TypeConverter;
 
             public class FooConverter {
                 @TypeConverter
@@ -626,7 +626,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
 
             @Dao
             interface MyDao {
@@ -669,7 +669,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
 
             @Dao
             interface MyDao {
@@ -717,7 +717,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
 
             @Dao
             interface MyDao {
@@ -766,7 +766,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
 
             @Dao
             abstract class MyDao {
@@ -809,7 +809,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
             import java.util.UUID
 
             @Dao
@@ -838,7 +838,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
             import androidx.paging.*
             import androidx.paging.rxjava2.*
             import androidx.paging.rxjava3.*
@@ -892,7 +892,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
 
             @Dao
             interface MyDao {
@@ -923,7 +923,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
 
             @Dao
             interface MyDao {
@@ -960,7 +960,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
 
             @Dao
             interface MyDao {
@@ -1006,7 +1006,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
 
             @Dao
             interface MyDao {
@@ -1056,7 +1056,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
             import androidx.sqlite.db.SupportSQLiteQuery
             import kotlinx.coroutines.flow.Flow
 
@@ -1107,7 +1107,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
 
             @Dao
             interface MyDao {
@@ -1140,7 +1140,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
 
             interface BaseDao<T> {
                 fun getEntity(id: T): MyEntity
@@ -1181,7 +1181,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
 
             interface BaseDao {
                 @Transaction
@@ -1249,7 +1249,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
 
             interface BaseDao {
                 @Transaction
@@ -1304,7 +1304,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
 
             @Dao
             interface MyDao {
@@ -1342,7 +1342,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
 
             @Dao
             interface MyDao {
@@ -1392,7 +1392,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
 
             @Dao
             interface MyDao {
@@ -1426,7 +1426,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDatabase.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
 
             @Database(entities = [MyEntity::class, MyNullableEntity::class], version = 1, exportSchema = false)
             abstract class MyDatabase : RoomDatabase() {
@@ -1440,7 +1440,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
 
             @Dao
             interface MyDao {
@@ -1475,7 +1475,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDatabase.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
 
             @Database(entities = [MyEntity::class], version = 1, exportSchema = false)
             abstract class MyDatabase : RoomDatabase() {
@@ -1488,7 +1488,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
 
             @Dao
             interface MyDao {
@@ -1535,7 +1535,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
 
             @Dao
             abstract class MyDao(val db: RoomDatabase) {
@@ -1563,7 +1563,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
 
             @Dao
             interface MyDao {
@@ -1592,7 +1592,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
 
             @Dao
             interface MyDao {
@@ -1621,7 +1621,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
             import com.google.common.collect.ImmutableList
 
             @Dao
@@ -1651,7 +1651,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
 
             @Database(entities = [Artist::class, Song::class], version = 1, exportSchema = false)
             abstract class MyDatabase : RoomDatabase() {
@@ -1709,7 +1709,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
 
             @Database(
                 entities = [Artist::class, Song::class, Album::class, Playlist::class],
@@ -1780,7 +1780,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
 
             @Database(entities = [Artist::class, Song::class], version = 1, exportSchema = false)
             abstract class MyDatabase : RoomDatabase() {
@@ -1820,7 +1820,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
 
             @Database(entities = [Artist::class, Song::class], version = 1, exportSchema = false)
             abstract class MyDatabase : RoomDatabase() {
@@ -1857,7 +1857,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
 
             @Database(entities = [User::class, Comment::class], version = 1, exportSchema = false)
             abstract class MyDatabase : RoomDatabase() {
@@ -1904,7 +1904,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
             import java.nio.ByteBuffer
 
             @Database(
@@ -1956,7 +1956,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
 
             @Dao
             interface MyDao {
@@ -2012,7 +2012,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
             import androidx.paging.DataSource
 
             @Dao
@@ -2047,7 +2047,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
             import io.reactivex.*
 
             @Dao
@@ -2099,7 +2099,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
             import io.reactivex.rxjava3.core.*
 
             @Dao
@@ -2151,7 +2151,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
             import io.reactivex.*
 
             @Dao
@@ -2200,7 +2200,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
             import io.reactivex.rxjava3.core.*
 
             @Dao
@@ -2249,7 +2249,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
             import kotlinx.coroutines.flow.Flow
 
             @Dao
@@ -2309,7 +2309,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
             import io.reactivex.*
 
             @Dao
@@ -2373,7 +2373,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
             import io.reactivex.rxjava3.core.*
 
             @Dao
@@ -2438,7 +2438,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
                 "MyDao.kt",
                 """
             import com.google.common.util.concurrent.ListenableFuture
-            import androidx.room.*
+            import androidx.room3.*
 
             @Dao
             interface MyDao {
@@ -2489,7 +2489,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
                 "MyDao",
                 """
             import com.google.common.util.concurrent.ListenableFuture;
-            import androidx.room.*;
+            import androidx.room3.*;
 
             @Dao
             public interface MyDao {
@@ -2503,7 +2503,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyEntity.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
 
             @Entity
             data class MyEntity(
@@ -2527,7 +2527,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
             import androidx.lifecycle.*
 
             @Dao
@@ -2561,7 +2561,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
 
             @Dao
             interface MyDao {
@@ -2600,7 +2600,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.java(
                 "MyDao",
                 """
-            import androidx.room.*;
+            import androidx.room3.*;
             import java.util.List;
 
             @Dao
@@ -2636,7 +2636,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyEntity.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
 
             @Entity
             data class MyEntity(
@@ -2659,7 +2659,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
             import java.util.UUID
 
             @Dao
@@ -2715,7 +2715,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
 
             @Dao
             interface MyDao {

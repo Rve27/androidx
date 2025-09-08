@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.room
+package androidx.room3
 
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.kruth.assertThat
 import androidx.kruth.assertThrows
-import androidx.room.concurrent.AtomicBoolean
-import androidx.room.concurrent.AtomicInt
+import androidx.room3.concurrent.AtomicBoolean
+import androidx.room3.concurrent.AtomicInt
 import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.SQLiteDriver
 import androidx.sqlite.SQLiteStatement

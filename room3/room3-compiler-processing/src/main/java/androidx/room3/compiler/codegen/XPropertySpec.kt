@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.codegen
+package androidx.room3.compiler.codegen
 
-import androidx.room.compiler.codegen.impl.XPropertySpecImpl
-import androidx.room.compiler.codegen.java.JavaPropertySpec
-import androidx.room.compiler.codegen.java.NONNULL_ANNOTATION
-import androidx.room.compiler.codegen.java.NULLABLE_ANNOTATION
-import androidx.room.compiler.codegen.java.toJavaVisibilityModifier
-import androidx.room.compiler.codegen.kotlin.KotlinPropertySpec
-import androidx.room.compiler.codegen.kotlin.toKotlinVisibilityModifier
-import androidx.room.compiler.processing.XNullability
+import androidx.room3.compiler.codegen.impl.XPropertySpecImpl
+import androidx.room3.compiler.codegen.java.JavaPropertySpec
+import androidx.room3.compiler.codegen.java.NONNULL_ANNOTATION
+import androidx.room3.compiler.codegen.java.NULLABLE_ANNOTATION
+import androidx.room3.compiler.codegen.java.toJavaVisibilityModifier
+import androidx.room3.compiler.codegen.kotlin.KotlinPropertySpec
+import androidx.room3.compiler.codegen.kotlin.toKotlinVisibilityModifier
+import androidx.room3.compiler.processing.XNullability
 
 interface XPropertySpec {
 

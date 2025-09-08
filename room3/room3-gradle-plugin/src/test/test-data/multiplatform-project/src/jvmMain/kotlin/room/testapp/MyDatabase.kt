@@ -16,7 +16,7 @@
 
 package room.testapp
 
-import androidx.room.*
+import androidx.room3.*
 
 @Database(entities = [JvmEntity::class], version = 1)
 abstract class MyDatabase : RoomDatabase() {

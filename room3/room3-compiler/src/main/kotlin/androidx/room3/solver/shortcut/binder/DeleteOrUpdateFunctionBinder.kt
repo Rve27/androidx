@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package androidx.room.solver.shortcut.binder
+package androidx.room3.solver.shortcut.binder
 
-import androidx.room.compiler.codegen.XPropertySpec
-import androidx.room.compiler.codegen.XTypeSpec
-import androidx.room.solver.CodeGenScope
-import androidx.room.solver.shortcut.result.DeleteOrUpdateFunctionAdapter
-import androidx.room.vo.ShortcutQueryParameter
+import androidx.room3.compiler.codegen.XPropertySpec
+import androidx.room3.compiler.codegen.XTypeSpec
+import androidx.room3.solver.CodeGenScope
+import androidx.room3.solver.shortcut.result.DeleteOrUpdateFunctionAdapter
+import androidx.room3.vo.ShortcutQueryParameter
 
 /**
  * Connects the delete or update method, the database and the [DeleteOrUpdateFunctionAdapter].

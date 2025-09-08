@@ -14,34 +14,34 @@
  * limitations under the License.
  */
 
-package androidx.room.writer
+package androidx.room3.writer
 
-import androidx.room.compiler.codegen.CodeLanguage
-import androidx.room.compiler.codegen.KFunSpec
-import androidx.room.compiler.codegen.VisibilityModifier
-import androidx.room.compiler.codegen.XCodeBlock
-import androidx.room.compiler.codegen.XCodeBlock.Builder.Companion.applyTo
-import androidx.room.compiler.codegen.XFunSpec
-import androidx.room.compiler.codegen.XFunSpec.Builder.Companion.applyTo
-import androidx.room.compiler.codegen.XName
-import androidx.room.compiler.codegen.XPropertySpec
-import androidx.room.compiler.codegen.XPropertySpec.Builder.Companion.applyTo
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.compiler.codegen.XTypeSpec
-import androidx.room.compiler.codegen.XTypeSpec.Builder.Companion.applyTo
-import androidx.room.compiler.codegen.buildCodeBlock
-import androidx.room.compiler.codegen.compat.XConverters.applyToJavaPoet
-import androidx.room.compiler.codegen.compat.XConverters.applyToKotlinPoet
-import androidx.room.compiler.processing.PropertySpecHelper
-import androidx.room.ext.CommonTypeNames
-import androidx.room.ext.KotlinCollectionMemberNames
-import androidx.room.ext.KotlinTypeNames
-import androidx.room.ext.RoomTypeNames
-import androidx.room.ext.decapitalize
-import androidx.room.ext.stripNonJava
-import androidx.room.solver.CodeGenScope
-import androidx.room.vo.DaoFunction
-import androidx.room.vo.Database
+import androidx.room3.compiler.codegen.CodeLanguage
+import androidx.room3.compiler.codegen.KFunSpec
+import androidx.room3.compiler.codegen.VisibilityModifier
+import androidx.room3.compiler.codegen.XCodeBlock
+import androidx.room3.compiler.codegen.XCodeBlock.Builder.Companion.applyTo
+import androidx.room3.compiler.codegen.XFunSpec
+import androidx.room3.compiler.codegen.XFunSpec.Builder.Companion.applyTo
+import androidx.room3.compiler.codegen.XName
+import androidx.room3.compiler.codegen.XPropertySpec
+import androidx.room3.compiler.codegen.XPropertySpec.Builder.Companion.applyTo
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.compiler.codegen.XTypeSpec
+import androidx.room3.compiler.codegen.XTypeSpec.Builder.Companion.applyTo
+import androidx.room3.compiler.codegen.buildCodeBlock
+import androidx.room3.compiler.codegen.compat.XConverters.applyToJavaPoet
+import androidx.room3.compiler.codegen.compat.XConverters.applyToKotlinPoet
+import androidx.room3.compiler.processing.PropertySpecHelper
+import androidx.room3.ext.CommonTypeNames
+import androidx.room3.ext.KotlinCollectionMemberNames
+import androidx.room3.ext.KotlinTypeNames
+import androidx.room3.ext.RoomTypeNames
+import androidx.room3.ext.decapitalize
+import androidx.room3.ext.stripNonJava
+import androidx.room3.solver.CodeGenScope
+import androidx.room3.vo.DaoFunction
+import androidx.room3.vo.Database
 import java.util.Locale
 import javax.lang.model.element.Modifier
 

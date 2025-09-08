@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package androidx.room.coroutines
+package androidx.room3.coroutines
 
 import androidx.kruth.assertThat
 import androidx.kruth.assertThrows
-import androidx.room.concurrent.AtomicInt
+import androidx.room3.concurrent.AtomicInt
 import java.util.concurrent.Executors
 import kotlin.concurrent.thread
 import kotlinx.coroutines.CoroutineScope

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.testapp.test;
+package androidx.room3.integration.testapp.test;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -23,25 +23,25 @@ import static org.junit.Assert.fail;
 
 import android.content.Context;
 
-import androidx.room.Database;
-import androidx.room.Entity;
-import androidx.room.Insert;
-import androidx.room.PrimaryKey;
-import androidx.room.ProvidedTypeConverter;
-import androidx.room.Query;
-import androidx.room.Room;
-import androidx.room.RoomDatabase;
-import androidx.room.TypeConverter;
-import androidx.room.TypeConverters;
-import androidx.room.integration.testapp.TestDatabase;
-import androidx.room.integration.testapp.dao.PetDao;
-import androidx.room.integration.testapp.dao.RobotsDao;
-import androidx.room.integration.testapp.vo.Hivemind;
-import androidx.room.integration.testapp.vo.Pet;
-import androidx.room.integration.testapp.vo.PetWithUser;
-import androidx.room.integration.testapp.vo.Robot;
-import androidx.room.integration.testapp.vo.Toy;
-import androidx.room.integration.testapp.vo.User;
+import androidx.room3.Database;
+import androidx.room3.Entity;
+import androidx.room3.Insert;
+import androidx.room3.PrimaryKey;
+import androidx.room3.ProvidedTypeConverter;
+import androidx.room3.Query;
+import androidx.room3.Room;
+import androidx.room3.RoomDatabase;
+import androidx.room3.TypeConverter;
+import androidx.room3.TypeConverters;
+import androidx.room3.integration.testapp.TestDatabase;
+import androidx.room3.integration.testapp.dao.PetDao;
+import androidx.room3.integration.testapp.dao.RobotsDao;
+import androidx.room3.integration.testapp.vo.Hivemind;
+import androidx.room3.integration.testapp.vo.Pet;
+import androidx.room3.integration.testapp.vo.PetWithUser;
+import androidx.room3.integration.testapp.vo.Robot;
+import androidx.room3.integration.testapp.vo.Toy;
+import androidx.room3.integration.testapp.vo.User;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.MediumTest;
@@ -231,7 +231,7 @@ public class ProvidedTypeConverterTest {
             return Objects.hash(mId, mUsername);
         }
 
-        @androidx.room.Dao
+        @androidx.room3.Dao
         public interface Dao {
             @Insert
             void insert(ProvidedTypeConverterEntity entity);

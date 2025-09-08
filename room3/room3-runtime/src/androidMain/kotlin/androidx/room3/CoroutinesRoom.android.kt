@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package androidx.room
+package androidx.room3
 
 import android.os.CancellationSignal
 import androidx.annotation.RestrictTo
-import androidx.room.coroutines.createFlow as createFlowCommon
-import androidx.room.util.getCoroutineContext
+import androidx.room3.coroutines.createFlow as createFlowCommon
+import androidx.room3.util.getCoroutineContext
 import java.util.concurrent.Callable
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException

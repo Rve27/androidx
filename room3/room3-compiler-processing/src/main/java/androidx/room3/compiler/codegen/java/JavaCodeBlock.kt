@@ -14,26 +14,26 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.codegen.java
+package androidx.room3.compiler.codegen.java
 
-import androidx.room.compiler.codegen.JCodeBlock
-import androidx.room.compiler.codegen.JCodeBlockBuilder
-import androidx.room.compiler.codegen.XAnnotationSpec
-import androidx.room.compiler.codegen.XCodeBlock
-import androidx.room.compiler.codegen.XFunSpec
-import androidx.room.compiler.codegen.XMemberName
-import androidx.room.compiler.codegen.XName
-import androidx.room.compiler.codegen.XParameterSpec
-import androidx.room.compiler.codegen.XPropertySpec
-import androidx.room.compiler.codegen.XSpec
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.compiler.codegen.XTypeSpec
-import androidx.room.compiler.codegen.impl.XAnnotationSpecImpl
-import androidx.room.compiler.codegen.impl.XCodeBlockImpl
-import androidx.room.compiler.codegen.impl.XFunSpecImpl
-import androidx.room.compiler.codegen.impl.XParameterSpecImpl
-import androidx.room.compiler.codegen.impl.XPropertySpecImpl
-import androidx.room.compiler.codegen.impl.XTypeSpecImpl
+import androidx.room3.compiler.codegen.JCodeBlock
+import androidx.room3.compiler.codegen.JCodeBlockBuilder
+import androidx.room3.compiler.codegen.XAnnotationSpec
+import androidx.room3.compiler.codegen.XCodeBlock
+import androidx.room3.compiler.codegen.XFunSpec
+import androidx.room3.compiler.codegen.XMemberName
+import androidx.room3.compiler.codegen.XName
+import androidx.room3.compiler.codegen.XParameterSpec
+import androidx.room3.compiler.codegen.XPropertySpec
+import androidx.room3.compiler.codegen.XSpec
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.compiler.codegen.XTypeSpec
+import androidx.room3.compiler.codegen.impl.XAnnotationSpecImpl
+import androidx.room3.compiler.codegen.impl.XCodeBlockImpl
+import androidx.room3.compiler.codegen.impl.XFunSpecImpl
+import androidx.room3.compiler.codegen.impl.XParameterSpecImpl
+import androidx.room3.compiler.codegen.impl.XPropertySpecImpl
+import androidx.room3.compiler.codegen.impl.XTypeSpecImpl
 
 internal class JavaCodeBlock(override val actual: JCodeBlock) : JavaSpec<JCodeBlock>(), XCodeBlock {
 

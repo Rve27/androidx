@@ -14,30 +14,30 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.testapp.dao;
+package androidx.room3.integration.testapp.dao;
 
 import android.database.Cursor;
 
 import androidx.lifecycle.LiveData;
 import androidx.paging.DataSource;
-import androidx.room.Dao;
-import androidx.room.Delete;
-import androidx.room.Insert;
-import androidx.room.OnConflictStrategy;
-import androidx.room.Query;
-import androidx.room.RawQuery;
-import androidx.room.Transaction;
-import androidx.room.Update;
-import androidx.room.integration.testapp.TestDatabase;
-import androidx.room.integration.testapp.vo.AvgWeightByAge;
-import androidx.room.integration.testapp.vo.Day;
-import androidx.room.integration.testapp.vo.IdUsername;
-import androidx.room.integration.testapp.vo.NameAndLastName;
-import androidx.room.integration.testapp.vo.NameAndUsers;
-import androidx.room.integration.testapp.vo.User;
-import androidx.room.integration.testapp.vo.UserAndFriends;
-import androidx.room.integration.testapp.vo.UserSummary;
-import androidx.room.integration.testapp.vo.Username;
+import androidx.room3.Dao;
+import androidx.room3.Delete;
+import androidx.room3.Insert;
+import androidx.room3.OnConflictStrategy;
+import androidx.room3.Query;
+import androidx.room3.RawQuery;
+import androidx.room3.Transaction;
+import androidx.room3.Update;
+import androidx.room3.integration.testapp.TestDatabase;
+import androidx.room3.integration.testapp.vo.AvgWeightByAge;
+import androidx.room3.integration.testapp.vo.Day;
+import androidx.room3.integration.testapp.vo.IdUsername;
+import androidx.room3.integration.testapp.vo.NameAndLastName;
+import androidx.room3.integration.testapp.vo.NameAndUsers;
+import androidx.room3.integration.testapp.vo.User;
+import androidx.room3.integration.testapp.vo.UserAndFriends;
+import androidx.room3.integration.testapp.vo.UserSummary;
+import androidx.room3.integration.testapp.vo.Username;
 import androidx.sqlite.db.SupportSQLiteQuery;
 
 import com.google.common.util.concurrent.ListenableFuture;

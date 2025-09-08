@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package androidx.room.util
+package androidx.room3.util
 
 /**
  * Class representing a simple Java version.
  *
  * NOTE: This class is greatly simplified to be used by the
- * [androidx.room.RoomProcessor.methodParametersVisibleInClassFiles] check only. If you want to use
+ * [androidx.room3.RoomProcessor.methodParametersVisibleInClassFiles] check only. If you want to use
  * this class, consider expanding the implementation or use a different library.
  */
 data class SimpleJavaVersion(val major: Int, val minor: Int, val update: Int? = null) :

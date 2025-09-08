@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.room.writer
+package androidx.room3.writer
 
-import androidx.room.vo.Entity
+import androidx.room3.vo.Entity
 
 /**
  * Sorts the entities by their foreign key dependencies. For example, when Entity A depends on

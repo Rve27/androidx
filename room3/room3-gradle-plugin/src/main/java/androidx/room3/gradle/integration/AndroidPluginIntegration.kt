@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package androidx.room.gradle.integration
+package androidx.room3.gradle.integration
 
-import androidx.room.gradle.RoomArgumentProvider
-import androidx.room.gradle.RoomExtension
-import androidx.room.gradle.RoomExtension.SchemaConfiguration
-import androidx.room.gradle.RoomSimpleCopyTask
-import androidx.room.gradle.toOptions
-import androidx.room.gradle.util.capitalize
-import androidx.room.gradle.util.check
-import androidx.room.gradle.util.kspOneTaskClass
-import androidx.room.gradle.util.kspTwoTaskClass
+import androidx.room3.gradle.RoomArgumentProvider
+import androidx.room3.gradle.RoomExtension
+import androidx.room3.gradle.RoomExtension.SchemaConfiguration
+import androidx.room3.gradle.RoomSimpleCopyTask
+import androidx.room3.gradle.toOptions
+import androidx.room3.gradle.util.capitalize
+import androidx.room3.gradle.util.check
+import androidx.room3.gradle.util.kspOneTaskClass
+import androidx.room3.gradle.util.kspTwoTaskClass
 import com.android.build.api.AndroidPluginVersion
 import com.android.build.api.variant.AndroidComponentsExtension
 import com.android.build.api.variant.ComponentIdentity

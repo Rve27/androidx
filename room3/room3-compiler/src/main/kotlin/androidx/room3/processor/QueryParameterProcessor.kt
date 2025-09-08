@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package androidx.room.processor
+package androidx.room3.processor
 
-import androidx.room.compiler.processing.XExecutableParameterElement
-import androidx.room.compiler.processing.XType
-import androidx.room.parser.Section
-import androidx.room.vo.QueryParameter
+import androidx.room3.compiler.processing.XExecutableParameterElement
+import androidx.room3.compiler.processing.XType
+import androidx.room3.parser.Section
+import androidx.room3.vo.QueryParameter
 
 class QueryParameterProcessor(
     baseContext: Context,

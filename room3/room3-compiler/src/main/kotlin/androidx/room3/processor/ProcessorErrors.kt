@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package androidx.room.processor
+package androidx.room3.processor
 
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.Query
-import androidx.room.RawQuery
-import androidx.room.RewriteQueriesToDropUnusedColumns
-import androidx.room.Update
-import androidx.room.Upsert
-import androidx.room.ext.KotlinTypeNames
-import androidx.room.ext.RoomTypeNames
-import androidx.room.ext.RoomTypeNames.ROOM_DB
-import androidx.room.parser.QueryType
-import androidx.room.parser.SQLTypeAffinity
-import androidx.room.vo.CustomTypeConverter
-import androidx.room.vo.Property
+import androidx.room3.Delete
+import androidx.room3.Insert
+import androidx.room3.Query
+import androidx.room3.RawQuery
+import androidx.room3.RewriteQueriesToDropUnusedColumns
+import androidx.room3.Update
+import androidx.room3.Upsert
+import androidx.room3.ext.KotlinTypeNames
+import androidx.room3.ext.RoomTypeNames
+import androidx.room3.ext.RoomTypeNames.ROOM_DB
+import androidx.room3.parser.QueryType
+import androidx.room3.parser.SQLTypeAffinity
+import androidx.room3.vo.CustomTypeConverter
+import androidx.room3.vo.Property
 
 object ProcessorErrors {
     private fun String.trim(): String {
@@ -703,34 +703,34 @@ object ProcessorErrors {
 
     const val MISSING_ROOM_GUAVA_ARTIFACT =
         "To use Guava features, you must add `guava`" +
-            " artifact from Room as a dependency. androidx.room:room-guava:<version>"
+            " artifact from Room as a dependency. androidx.room3:room3-guava:<version>"
 
     const val MISSING_ROOM_RXJAVA2_ARTIFACT =
         "To use RxJava2 features, you must add `rxjava2`" +
-            " artifact from Room as a dependency. androidx.room:room-rxjava2:<version>"
+            " artifact from Room as a dependency. androidx.room3:room3-rxjava2:<version>"
 
     const val MISSING_ROOM_RXJAVA3_ARTIFACT =
         "To use RxJava3 features, you must add `rxjava3`" +
-            " artifact from Room as a dependency. androidx.room:room-rxjava3:<version>"
+            " artifact from Room as a dependency. androidx.room3:room3-rxjava3:<version>"
 
     const val MISSING_ROOM_PAGING_ARTIFACT =
         "To use PagingSource, you must add `room-paging`" +
-            " artifact from Room as a dependency. androidx.room:room-paging:<version>"
+            " artifact from Room as a dependency. androidx.room3:room3-paging:<version>"
 
     const val MISSING_ROOM_PAGING_GUAVA_ARTIFACT =
         "To use ListenableFuturePagingSource, you must " +
             "add `room-paging-guava` artifact from Room as a dependency. " +
-            "androidx.room:room-paging-guava:<version>"
+            "androidx.room3:room3-paging-guava:<version>"
 
     const val MISSING_ROOM_PAGING_RXJAVA2_ARTIFACT =
         "To use RxPagingSource, you must " +
             "add `room-paging-rxjava2` artifact from Room as a dependency. " +
-            "androidx.room:room-paging-rxjava2:<version>"
+            "androidx.room3:room3-paging-rxjava2:<version>"
 
     const val MISSING_ROOM_PAGING_RXJAVA3_ARTIFACT =
         "To use RxPagingSource, you must " +
             "add `room-paging-rxjava3` artifact from Room as a dependency. " +
-            "androidx.room:room-paging-rxjava3:<version>"
+            "androidx.room3:room3-paging-rxjava3:<version>"
 
     fun ambiguousConstructor(
         dataClass: String,

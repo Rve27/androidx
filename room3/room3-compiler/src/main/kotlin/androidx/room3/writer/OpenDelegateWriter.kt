@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package androidx.room.writer
+package androidx.room3.writer
 
 import androidx.annotation.VisibleForTesting
-import androidx.room.compiler.codegen.VisibilityModifier
-import androidx.room.compiler.codegen.XCodeBlock
-import androidx.room.compiler.codegen.XFunSpec
-import androidx.room.compiler.codegen.XTypeSpec
-import androidx.room.ext.RoomMemberNames
-import androidx.room.ext.RoomTypeNames
-import androidx.room.ext.SQLiteDriverMemberNames
-import androidx.room.ext.SQLiteDriverTypeNames
-import androidx.room.solver.CodeGenScope
-import androidx.room.vo.Database
-import androidx.room.vo.DatabaseView
-import androidx.room.vo.Entity
-import androidx.room.vo.FtsEntity
+import androidx.room3.compiler.codegen.VisibilityModifier
+import androidx.room3.compiler.codegen.XCodeBlock
+import androidx.room3.compiler.codegen.XFunSpec
+import androidx.room3.compiler.codegen.XTypeSpec
+import androidx.room3.ext.RoomMemberNames
+import androidx.room3.ext.RoomTypeNames
+import androidx.room3.ext.SQLiteDriverMemberNames
+import androidx.room3.ext.SQLiteDriverTypeNames
+import androidx.room3.solver.CodeGenScope
+import androidx.room3.vo.Database
+import androidx.room3.vo.DatabaseView
+import androidx.room3.vo.Entity
+import androidx.room3.vo.FtsEntity
 import java.util.ArrayDeque
 
 /**

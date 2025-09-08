@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.testapp.dao;
+package androidx.room3.integration.testapp.dao;
 
 import androidx.paging.PagingSource;
-import androidx.room.Dao;
-import androidx.room.Query;
-import androidx.room.integration.testapp.TestDatabase;
-import androidx.room.integration.testapp.vo.User;
+import androidx.room3.Dao;
+import androidx.room3.Query;
+import androidx.room3.integration.testapp.TestDatabase;
+import androidx.room3.integration.testapp.vo.User;
 
 @SuppressWarnings("SameParameterValue")
 @Dao

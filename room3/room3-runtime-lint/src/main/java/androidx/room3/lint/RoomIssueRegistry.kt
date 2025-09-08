@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.lint
+package androidx.room3.lint
 
 import com.android.tools.lint.client.api.IssueRegistry
 import com.android.tools.lint.client.api.Vendor
@@ -28,7 +28,7 @@ class RoomIssueRegistry : IssueRegistry() {
     override val vendor =
         Vendor(
             feedbackUrl = "https://issuetracker.google.com/issues/new?component=413107",
-            identifier = "androidx.room",
+            identifier = "androidx.room3",
             vendorName = "Android Open Source Project",
         )
 }

@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.javac
+package androidx.room3.compiler.processing.javac
 
-import androidx.room.compiler.processing.XMethodType
-import androidx.room.compiler.processing.XSuspendMethodType
-import androidx.room.compiler.processing.XType
+import androidx.room3.compiler.processing.XMethodType
+import androidx.room3.compiler.processing.XSuspendMethodType
+import androidx.room3.compiler.processing.XType
 import com.google.auto.common.MoreTypes
 import com.squareup.javapoet.TypeVariableName
 import javax.lang.model.type.ExecutableType
@@ -54,7 +54,7 @@ internal sealed class JavacMethodType(
         replaceWith =
             ReplaceWith(
                 "typeVariables.map { it.asTypeName().toJavaPoet() }",
-                "androidx.room.compiler.codegen.toJavaPoet",
+                "androidx.room3.compiler.codegen.toJavaPoet",
             ),
     )
     override val typeVariableNames by lazy {
@@ -76,7 +76,7 @@ internal sealed class JavacMethodType(
         XSuspendMethodType {
         override fun getSuspendFunctionReturnType(): XType {
             // the continuation parameter is always the last parameter of a suspend function and it
-            // only has one type parameter, e.g Continuation<? super T>
+            // only has one type parameter, e.g. Continuation<? super T>
             val typeParam =
                 MoreTypes.asDeclared(executableType.parameterTypes.last()).typeArguments.first()
             // kotlin generates ? extends Foo and we want Foo so get the extends bounds

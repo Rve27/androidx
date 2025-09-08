@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.ksp
+package androidx.room3.compiler.processing.ksp
 
-import androidx.room.compiler.processing.XElement
-import androidx.room.compiler.processing.XRoundEnv
-import androidx.room.compiler.processing.ksp.synthetic.KspSyntheticPropertyMethodElement
+import androidx.room3.compiler.processing.XElement
+import androidx.room3.compiler.processing.XRoundEnv
+import androidx.room3.compiler.processing.ksp.synthetic.KspSyntheticPropertyMethodElement
 import com.google.devtools.ksp.KspExperimental
 import com.google.devtools.ksp.symbol.ClassKind
 import com.google.devtools.ksp.symbol.KSClassDeclaration

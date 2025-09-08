@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.room.paging.util
+package androidx.room3.paging.util
 
 import androidx.annotation.RestrictTo
-import androidx.room.InvalidationTracker
-import androidx.room.RoomDatabase
+import androidx.room3.InvalidationTracker
+import androidx.room3.RoomDatabase
 import java.util.concurrent.atomic.AtomicBoolean
 
 @Suppress("UNCHECKED_CAST")

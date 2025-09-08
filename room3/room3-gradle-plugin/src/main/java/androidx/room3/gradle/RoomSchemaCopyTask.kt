@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.gradle
+package androidx.room3.gradle
 
 import java.io.File
 import java.security.MessageDigest

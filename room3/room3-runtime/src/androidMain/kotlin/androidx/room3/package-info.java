@@ -24,27 +24,27 @@
  * <p>
  * There are 3 major components in Room.
  * <ul>
- *     <li>{@link androidx.room.Database Database}: This annotation marks a class as a database.
- *     It should be an abstract class that extends {@link androidx.room.RoomDatabase RoomDatabase}.
- *     At runtime, you can acquire an instance of it via {@link androidx.room.Room#databaseBuilder(
+ *     <li>{@link androidx.room3.Database Database}: This annotation marks a class as a database.
+ *     It should be an abstract class that extends {@link androidx.room3.RoomDatabase RoomDatabase}.
+ *     At runtime, you can acquire an instance of it via {@link androidx.room3.Room#databaseBuilder(
  *     android.content.Context,java.lang.Class, java.lang.String) Room.databaseBuilder} or
- *     {@link androidx.room.Room#inMemoryDatabaseBuilder(android.content.Context, java.lang.Class)
+ *     {@link androidx.room3.Room#inMemoryDatabaseBuilder(android.content.Context, java.lang.Class)
  *     Room.inMemoryDatabaseBuilder}.
  *     <p>
  *     The database class defines the list of entities and data access objects in the database.
  *     It is also the main access point for the underlying connection.
  *     </li>
- *     <li>{@link androidx.room.Entity Entity}: This annotation marks a class as a database row.
- *     For each {@link androidx.room.Entity Entity}, a database table is created to hold the items.
+ *     <li>{@link androidx.room3.Entity Entity}: This annotation marks a class as a database row.
+ *     For each {@link androidx.room3.Entity Entity}, a database table is created to hold the items.
  *     The Entity class must be referenced in the
- *     {@link androidx.room.Database#entities() Database#entities} array. Each field of the Entity
+ *     {@link androidx.room3.Database#entities() Database#entities} array. Each field of the Entity
  *     (and its super class) is persisted in the database unless it is denoted otherwise
- *     (see {@link androidx.room.Entity Entity} docs for details).
+ *     (see {@link androidx.room3.Entity Entity} docs for details).
  *     </li>
- *     <li>{@link androidx.room.Dao Dao}: This annotation marks a class or interface as a
+ *     <li>{@link androidx.room3.Dao Dao}: This annotation marks a class or interface as a
  *     Data Access Object. Data access objects are the main components of Room that are
  *     responsible for defining the methods that access the database. The class that is annotated
- *     with {@link androidx.room.Database Database} must have an abstract method that has 0
+ *     with {@link androidx.room3.Database Database} must have an abstract method that has 0
  *     arguments and returns the class that is annotated with Dao. While generating the code at
  *     compile time, Room will generate an implementation of this class.
  *     <p>
@@ -95,12 +95,12 @@
  * are accessed by the query or what columns are present in the response.
  * <p>
  * You can observe a particular table for changes using the
- * {@link androidx.room.InvalidationTracker InvalidationTracker} class which you can acquire via
- * {@link androidx.room.RoomDatabase#getInvalidationTracker()
+ * {@link androidx.room3.InvalidationTracker InvalidationTracker} class which you can acquire via
+ * {@link androidx.room3.RoomDatabase#getInvalidationTracker()
  * RoomDatabase.getInvalidationTracker}.
  * <p>
  * For convenience, Room allows you to return {@link androidx.lifecycle.LiveData LiveData} from
- * {@link androidx.room.Query Query} methods. It will automatically observe the related tables as
+ * {@link androidx.room3.Query Query} methods. It will automatically observe the related tables as
  * long as the {@code LiveData} has active observers.
  * <pre>
  * // This live data will automatically dispatch changes as the database changes.
@@ -126,4 +126,4 @@
  * <p>
  * Please see the documentation of individual classes for details.
  */
-package androidx.room;
+package androidx.room3;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.paging
+package androidx.room3.paging
 
 import android.database.AbstractCursor
 import androidx.sqlite.SQLiteStatement

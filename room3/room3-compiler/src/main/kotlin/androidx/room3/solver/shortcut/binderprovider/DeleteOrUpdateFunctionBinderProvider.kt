@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package androidx.room.solver.shortcut.binderprovider
+package androidx.room3.solver.shortcut.binderprovider
 
-import androidx.room.compiler.processing.XType
-import androidx.room.solver.shortcut.binder.DeleteOrUpdateFunctionBinder
-import androidx.room.solver.shortcut.result.DeleteOrUpdateFunctionAdapter
+import androidx.room3.compiler.processing.XType
+import androidx.room3.solver.shortcut.binder.DeleteOrUpdateFunctionBinder
+import androidx.room3.solver.shortcut.result.DeleteOrUpdateFunctionAdapter
 
 /** Provider for delete or update binders */
 interface DeleteOrUpdateFunctionBinderProvider {

@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing
+package androidx.room3.compiler.processing
 
 import androidx.kruth.assertThat
 import androidx.kruth.assertWithMessage
-import androidx.room.compiler.codegen.JArrayTypeName
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.compiler.codegen.asClassName
-import androidx.room.compiler.processing.ksp.KspProcessingEnv
-import androidx.room.compiler.processing.ksp.createTypeReference
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.asJTypeName
-import androidx.room.compiler.processing.util.asKTypeName
-import androidx.room.compiler.processing.util.getField
-import androidx.room.compiler.processing.util.kspResolver
-import androidx.room.compiler.processing.util.runKspTest
-import androidx.room.compiler.processing.util.runProcessorTest
+import androidx.room3.compiler.codegen.JArrayTypeName
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.compiler.codegen.asClassName
+import androidx.room3.compiler.processing.ksp.KspProcessingEnv
+import androidx.room3.compiler.processing.ksp.createTypeReference
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.asJTypeName
+import androidx.room3.compiler.processing.util.asKTypeName
+import androidx.room3.compiler.processing.util.getField
+import androidx.room3.compiler.processing.util.kspResolver
+import androidx.room3.compiler.processing.util.runKspTest
+import androidx.room3.compiler.processing.util.runProcessorTest
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.javapoet.JTypeName
 import com.squareup.kotlinpoet.javapoet.KTypeName

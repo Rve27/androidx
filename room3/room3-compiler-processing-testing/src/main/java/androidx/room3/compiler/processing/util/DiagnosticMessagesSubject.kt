@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.util
+package androidx.room3.compiler.processing.util
 
 import com.google.common.truth.Fact.simpleFact
 import com.google.common.truth.FailureMetadata

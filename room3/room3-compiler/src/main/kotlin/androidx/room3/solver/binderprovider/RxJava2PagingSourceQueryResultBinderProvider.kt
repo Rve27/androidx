@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package androidx.room.solver.binderprovider
+package androidx.room3.solver.binderprovider
 
-import androidx.room.ext.PagingTypeNames
-import androidx.room.ext.RoomPagingRx2TypeNames
-import androidx.room.processor.Context
-import androidx.room.processor.ProcessorErrors.MISSING_ROOM_PAGING_RXJAVA2_ARTIFACT
-import androidx.room.solver.QueryResultBinderProvider
+import androidx.room3.ext.PagingTypeNames
+import androidx.room3.ext.RoomPagingRx2TypeNames
+import androidx.room3.processor.Context
+import androidx.room3.processor.ProcessorErrors.MISSING_ROOM_PAGING_RXJAVA2_ARTIFACT
+import androidx.room3.solver.QueryResultBinderProvider
 
 fun RxJava2PagingSourceQueryResultBinderProvider(context: Context): QueryResultBinderProvider {
     val rxjava2PagingSource = RoomPagingRx2TypeNames.LIMIT_OFFSET_RX_PAGING_SOURCE

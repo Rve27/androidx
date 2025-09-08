@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package androidx.room.processor
+package androidx.room3.processor
 
-import androidx.room.Upsert
-import androidx.room.compiler.processing.XMethodElement
-import androidx.room.compiler.processing.XType
-import androidx.room.processor.ProcessorErrors.CANNOT_FIND_UPSERT_RESULT_ADAPTER
-import androidx.room.processor.ProcessorErrors.UPSERT_DOES_NOT_HAVE_ANY_PARAMETERS_TO_UPSERT
-import androidx.room.processor.ProcessorErrors.UPSERT_MULTI_PARAM_SINGLE_RETURN_MISMATCH
-import androidx.room.processor.ProcessorErrors.UPSERT_SINGLE_PARAM_MULTI_RETURN_MISMATCH
-import androidx.room.vo.UpsertFunction
+import androidx.room3.Upsert
+import androidx.room3.compiler.processing.XMethodElement
+import androidx.room3.compiler.processing.XType
+import androidx.room3.processor.ProcessorErrors.CANNOT_FIND_UPSERT_RESULT_ADAPTER
+import androidx.room3.processor.ProcessorErrors.UPSERT_DOES_NOT_HAVE_ANY_PARAMETERS_TO_UPSERT
+import androidx.room3.processor.ProcessorErrors.UPSERT_MULTI_PARAM_SINGLE_RETURN_MISMATCH
+import androidx.room3.processor.ProcessorErrors.UPSERT_SINGLE_PARAM_MULTI_RETURN_MISMATCH
+import androidx.room3.vo.UpsertFunction
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 

@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package androidx.room.coroutines
+package androidx.room3.coroutines
 
 import androidx.collection.CircularArray
-import androidx.room.TransactionScope
-import androidx.room.Transactor
-import androidx.room.Transactor.SQLiteTransactionType
-import androidx.room.concurrent.AtomicBoolean
-import androidx.room.concurrent.ReentrantLock
-import androidx.room.concurrent.ThreadLocal
-import androidx.room.concurrent.asContextElement
-import androidx.room.concurrent.currentThreadId
-import androidx.room.concurrent.withLock
-import androidx.room.util.SQLiteResultCode.SQLITE_BUSY
-import androidx.room.util.SQLiteResultCode.SQLITE_ERROR
-import androidx.room.util.SQLiteResultCode.SQLITE_MISUSE
+import androidx.room3.TransactionScope
+import androidx.room3.Transactor
+import androidx.room3.Transactor.SQLiteTransactionType
+import androidx.room3.concurrent.AtomicBoolean
+import androidx.room3.concurrent.ReentrantLock
+import androidx.room3.concurrent.ThreadLocal
+import androidx.room3.concurrent.asContextElement
+import androidx.room3.concurrent.currentThreadId
+import androidx.room3.concurrent.withLock
+import androidx.room3.util.SQLiteResultCode.SQLITE_BUSY
+import androidx.room3.util.SQLiteResultCode.SQLITE_ERROR
+import androidx.room3.util.SQLiteResultCode.SQLITE_MISUSE
 import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.SQLiteDriver
 import androidx.sqlite.SQLiteException

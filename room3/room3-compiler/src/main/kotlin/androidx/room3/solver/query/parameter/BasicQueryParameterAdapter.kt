@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package androidx.room.solver.query.parameter
+package androidx.room3.solver.query.parameter
 
-import androidx.room.solver.CodeGenScope
-import androidx.room.solver.types.StatementValueBinder
+import androidx.room3.solver.CodeGenScope
+import androidx.room3.solver.types.StatementValueBinder
 
 /** Knows how to convert a query parameter into arguments */
 class BasicQueryParameterAdapter(private val bindAdapter: StatementValueBinder) :

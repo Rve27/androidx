@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package androidx.room.parser
+package androidx.room3.parser
 
 import androidx.kruth.assertThat
-import androidx.room.compiler.codegen.CodeLanguage
-import androidx.room.compiler.processing.XNullability
-import androidx.room.compiler.processing.XType
-import androidx.room.compiler.processing.util.runProcessorTest
+import androidx.room3.compiler.codegen.CodeLanguage
+import androidx.room3.compiler.processing.XNullability
+import androidx.room3.compiler.processing.XType
+import androidx.room3.compiler.processing.util.runProcessorTest
 import org.junit.Test
 
 class SQLTypeAffinityTest {

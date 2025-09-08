@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.noappcompat;
+package androidx.room3.integration.noappcompat;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import android.content.Context;
 
-import androidx.room.InvalidationTracker;
-import androidx.room.Room;
+import androidx.room3.InvalidationTracker;
+import androidx.room3.Room;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.SmallTest;
 import androidx.test.platform.app.InstrumentationRegistry;

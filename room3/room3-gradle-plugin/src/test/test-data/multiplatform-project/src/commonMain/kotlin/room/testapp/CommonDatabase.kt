@@ -16,7 +16,7 @@
 
 package room.testapp
 
-import androidx.room.*
+import androidx.room3.*
 
 @Database(entities = [CommonEntity::class], version = 1)
 @ConstructedBy(CommonDatabaseCtor::class)

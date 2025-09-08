@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package androidx.room.processor
+package androidx.room3.processor
 
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.XTestInvocation
-import androidx.room.compiler.processing.util.runProcessorTest
-import androidx.room.testing.context
-import androidx.room.vo.FtsEntity
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.XTestInvocation
+import androidx.room3.compiler.processing.util.runProcessorTest
+import androidx.room3.testing.context
+import androidx.room3.vo.FtsEntity
 import java.io.File
 
 abstract class BaseFtsEntityParserTest {
@@ -28,7 +28,7 @@ abstract class BaseFtsEntityParserTest {
         const val ENTITY_PREFIX =
             """
             package foo.bar;
-            import androidx.room.*;
+            import androidx.room3.*;
             import androidx.annotation.NonNull;
             import java.util.*;
             @Entity%s

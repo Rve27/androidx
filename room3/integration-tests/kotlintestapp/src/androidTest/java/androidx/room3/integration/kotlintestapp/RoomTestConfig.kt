@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.kotlintestapp
+package androidx.room3.integration.kotlintestapp
 
 import org.junit.AssumptionViolatedException
 

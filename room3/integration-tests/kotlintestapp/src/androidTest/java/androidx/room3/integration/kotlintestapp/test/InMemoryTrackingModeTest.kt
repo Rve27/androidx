@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.kotlintestapp.test
+package androidx.room3.integration.kotlintestapp.test
 
 import androidx.kruth.assertThat
-import androidx.room.ExperimentalRoomApi
-import androidx.room.Room
-import androidx.room.RoomDatabase
-import androidx.room.integration.kotlintestapp.TestDatabase
-import androidx.room.util.useCursor
+import androidx.room3.ExperimentalRoomApi
+import androidx.room3.Room
+import androidx.room3.RoomDatabase
+import androidx.room3.integration.kotlintestapp.TestDatabase
+import androidx.room3.util.useCursor
 import androidx.test.platform.app.InstrumentationRegistry
 import kotlin.test.Test
 import org.junit.Before

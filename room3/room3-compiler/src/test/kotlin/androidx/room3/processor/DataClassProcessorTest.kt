@@ -14,35 +14,35 @@
  * limitations under the License.
  */
 
-package androidx.room.processor
+package androidx.room3.processor
 
 import COMMON
 import androidx.kruth.assertThat
-import androidx.room.Embedded
-import androidx.room.compiler.codegen.XClassName
-import androidx.room.compiler.processing.XFieldElement
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.XTestInvocation
-import androidx.room.compiler.processing.util.runProcessorTest
-import androidx.room.ext.CommonTypeNames
-import androidx.room.parser.SQLTypeAffinity
-import androidx.room.processor.ProcessorErrors.CANNOT_FIND_GETTER_FOR_PROPERTY
-import androidx.room.processor.ProcessorErrors.DATA_CLASS_PROPERTY_HAS_DUPLICATE_COLUMN_NAME
-import androidx.room.processor.ProcessorErrors.MISSING_DATA_CLASS_CONSTRUCTOR
-import androidx.room.processor.ProcessorErrors.junctionColumnWithoutIndex
-import androidx.room.processor.ProcessorErrors.relationCannotFindEntityProperty
-import androidx.room.processor.ProcessorErrors.relationCannotFindJunctionEntityProperty
-import androidx.room.processor.ProcessorErrors.relationCannotFindJunctionParentProperty
-import androidx.room.processor.ProcessorErrors.relationCannotFindParentEntityProperty
-import androidx.room.testing.context
-import androidx.room.vo.CallType
-import androidx.room.vo.Constructor
-import androidx.room.vo.DataClass
-import androidx.room.vo.EmbeddedProperty
-import androidx.room.vo.Property
-import androidx.room.vo.PropertyGetter
-import androidx.room.vo.PropertySetter
-import androidx.room.vo.RelationCollector
+import androidx.room3.Embedded
+import androidx.room3.compiler.codegen.XClassName
+import androidx.room3.compiler.processing.XFieldElement
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.XTestInvocation
+import androidx.room3.compiler.processing.util.runProcessorTest
+import androidx.room3.ext.CommonTypeNames
+import androidx.room3.parser.SQLTypeAffinity
+import androidx.room3.processor.ProcessorErrors.CANNOT_FIND_GETTER_FOR_PROPERTY
+import androidx.room3.processor.ProcessorErrors.DATA_CLASS_PROPERTY_HAS_DUPLICATE_COLUMN_NAME
+import androidx.room3.processor.ProcessorErrors.MISSING_DATA_CLASS_CONSTRUCTOR
+import androidx.room3.processor.ProcessorErrors.junctionColumnWithoutIndex
+import androidx.room3.processor.ProcessorErrors.relationCannotFindEntityProperty
+import androidx.room3.processor.ProcessorErrors.relationCannotFindJunctionEntityProperty
+import androidx.room3.processor.ProcessorErrors.relationCannotFindJunctionParentProperty
+import androidx.room3.processor.ProcessorErrors.relationCannotFindParentEntityProperty
+import androidx.room3.testing.context
+import androidx.room3.vo.CallType
+import androidx.room3.vo.Constructor
+import androidx.room3.vo.DataClass
+import androidx.room3.vo.EmbeddedProperty
+import androidx.room3.vo.Property
+import androidx.room3.vo.PropertyGetter
+import androidx.room3.vo.PropertySetter
+import androidx.room3.vo.RelationCollector
 import java.io.File
 import org.hamcrest.CoreMatchers.instanceOf
 import org.hamcrest.CoreMatchers.`is`
@@ -66,7 +66,7 @@ class DataClassProcessorTest {
         val HEADER =
             """
             package foo.bar;
-            import androidx.room.*;
+            import androidx.room3.*;
             import java.util.*;
             public class MyDataClass {
             """
@@ -78,7 +78,7 @@ class DataClassProcessorTest {
         val parent =
             """
             package foo.bar.x;
-            import androidx.room.*;
+            import androidx.room3.*;
             public class BaseClass {
                 private String baseProperty;
                 public String getBaseProperty(){ return baseProperty; }
@@ -92,7 +92,7 @@ class DataClassProcessorTest {
                         MY_DATA_CLASS.canonicalName,
                         """
                     package foo.bar;
-                    import androidx.room.*;
+                    import androidx.room3.*;
                     public class ${MY_DATA_CLASS.simpleNames.single()} extends foo.bar.x.BaseClass {
                         public String myProperty;
                     }
@@ -725,7 +725,7 @@ class DataClassProcessorTest {
                 """
             package foo.bar;
 
-            import androidx.room.*;
+            import androidx.room3.*;
 
             @Entity(
                 primaryKeys = {"uid","friendId"},
@@ -785,7 +785,7 @@ class DataClassProcessorTest {
                 """
             package foo.bar;
 
-            import androidx.room.*;
+            import androidx.room3.*;
 
             @DatabaseView("SELECT 1, 2, FROM User")
             public class UserFriendsXRefView {
@@ -820,7 +820,7 @@ class DataClassProcessorTest {
                 """
             package foo.bar;
 
-            import androidx.room.*;
+            import androidx.room3.*;
 
             @Entity(
                 primaryKeys = {"uid","friendId"},
@@ -867,7 +867,7 @@ class DataClassProcessorTest {
                 """
             package foo.bar;
 
-            import androidx.room.*;
+            import androidx.room3.*;
 
             @Entity(primaryKeys = {"friendFrom","uid"})
             public class UserFriendsXRef {
@@ -908,7 +908,7 @@ class DataClassProcessorTest {
                 """
             package foo.bar;
 
-            import androidx.room.*;
+            import androidx.room3.*;
 
             @Entity(primaryKeys = {"friendA","friendB"})
             public class UserFriendsXRef {
@@ -949,7 +949,7 @@ class DataClassProcessorTest {
                 """
             package foo.bar;
 
-            import androidx.room.*;
+            import androidx.room3.*;
 
             @Entity(primaryKeys = {"friendA","friendB"})
             public class UserFriendsXRef {
@@ -992,7 +992,7 @@ class DataClassProcessorTest {
                 """
             package foo.bar;
 
-            import androidx.room.*;
+            import androidx.room3.*;
 
             @Entity(primaryKeys = {"friendA","friendB"})
             public class UserFriendsXRef {
@@ -1034,7 +1034,7 @@ class DataClassProcessorTest {
                 "foo.bar.UserFriendsXRef",
                 """
                 package foo.bar;
-                import androidx.room.*;
+                import androidx.room3.*;
                 @Entity
                 public class UserFriendsXRef {
                     @PrimaryKey(autoGenerate = true)
@@ -1770,7 +1770,7 @@ class DataClassProcessorTest {
                 MY_DATA_CLASS.canonicalName,
                 """
             package foo.bar;
-            import androidx.room.*;
+            import androidx.room3.*;
             @Entity(ignoredColumns = {"bar"})
             public class ${MY_DATA_CLASS.simpleNames.single()} {
                 public String foo;
@@ -1800,7 +1800,7 @@ class DataClassProcessorTest {
                     MY_DATA_CLASS.canonicalName,
                     """
                     package foo.bar;
-                    import androidx.room.*;
+                    import androidx.room3.*;
                     @Entity(ignoredColumns = {"bar"})
                     public class ${MY_DATA_CLASS.simpleNames.single()} {
                         private final String foo;
@@ -1839,7 +1839,7 @@ class DataClassProcessorTest {
                     MY_DATA_CLASS.canonicalName,
                     """
                     package foo.bar;
-                    import androidx.room.*;
+                    import androidx.room3.*;
                     @Entity(ignoredColumns = {"bar"})
                     public class ${MY_DATA_CLASS.simpleNames.single()} {
                         private String foo;
@@ -1876,7 +1876,7 @@ class DataClassProcessorTest {
                     MY_DATA_CLASS.canonicalName,
                     """
                     package foo.bar;
-                    import androidx.room.*;
+                    import androidx.room3.*;
                     @Entity(ignoredColumns = {"my_bar"})
                     public class ${MY_DATA_CLASS.simpleNames.single()} {
                         public String foo;
@@ -1908,7 +1908,7 @@ class DataClassProcessorTest {
                     MY_DATA_CLASS.canonicalName,
                     """
                     package foo.bar;
-                    import androidx.room.*;
+                    import androidx.room3.*;
                     @Entity(ignoredColumns = {"no_such_column"})
                     public class ${MY_DATA_CLASS.simpleNames.single()} {
                         public String foo;
@@ -1942,7 +1942,7 @@ class DataClassProcessorTest {
                     MY_DATA_CLASS.canonicalName,
                     """
                     package foo.bar;
-                    import androidx.room.*;
+                    import androidx.room3.*;
                     public class ${MY_DATA_CLASS.simpleNames.single()} {
                         private String foo;
                         private String bar;
@@ -1971,7 +1971,7 @@ class DataClassProcessorTest {
                     MY_DATA_CLASS.canonicalName,
                     """
                     package foo.bar;
-                    import androidx.room.*;
+                    import androidx.room3.*;
                     public class ${MY_DATA_CLASS.simpleNames.single()} {
                         private String foo;
                         private String bar;
@@ -2003,7 +2003,7 @@ class DataClassProcessorTest {
                     MY_DATA_CLASS.canonicalName,
                     """
                     package foo.bar;
-                    import androidx.room.*;
+                    import androidx.room3.*;
                     public class ${MY_DATA_CLASS.simpleNames.single()} {
                         private String foo;
                         private String bar;
@@ -2035,7 +2035,7 @@ class DataClassProcessorTest {
                     MY_DATA_CLASS.canonicalName,
                     """
                     package foo.bar;
-                    import androidx.room.*;
+                    import androidx.room3.*;
                     public class ${MY_DATA_CLASS.simpleNames.single()} {
                         private String foo;
                         private String bar;
@@ -2067,7 +2067,7 @@ class DataClassProcessorTest {
                     MY_DATA_CLASS.canonicalName,
                     """
                     package foo.bar;
-                    import androidx.room.*;
+                    import androidx.room3.*;
                     public class ${MY_DATA_CLASS.simpleNames.single()} {
                         private String foo;
                         private String bar;
@@ -2099,7 +2099,7 @@ class DataClassProcessorTest {
                     MY_DATA_CLASS.canonicalName,
                     """
                     package foo.bar;
-                    import androidx.room.*;
+                    import androidx.room3.*;
                     public class ${MY_DATA_CLASS.simpleNames.single()} {
                         private String foo;
                         private String bar;

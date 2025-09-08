@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.room.processor
+package androidx.room3.processor
 
-import androidx.room.OnConflictStrategy
-import androidx.room.Update
-import androidx.room.compiler.processing.XMethodElement
-import androidx.room.compiler.processing.XType
-import androidx.room.compiler.processing.util.Source
-import androidx.room.processor.ProcessorErrors.CANNOT_FIND_UPDATE_RESULT_ADAPTER
-import androidx.room.processor.ProcessorErrors.UPDATE_MISSING_PARAMS
-import androidx.room.vo.UpdateFunction
+import androidx.room3.OnConflictStrategy
+import androidx.room3.Update
+import androidx.room3.compiler.processing.XMethodElement
+import androidx.room3.compiler.processing.XType
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.processor.ProcessorErrors.CANNOT_FIND_UPDATE_RESULT_ADAPTER
+import androidx.room3.processor.ProcessorErrors.UPDATE_MISSING_PARAMS
+import androidx.room3.vo.UpdateFunction
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
@@ -78,7 +78,7 @@ class UpdateFunctionProcessorTest :
                 "foo.bar.Username",
                 """
             package foo.bar;
-            import androidx.room.*;
+            import androidx.room3.*;
 
             public class Username {
                 String name;

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.room.vo
+package androidx.room3.vo
 
-import androidx.room.compiler.processing.XMethodElement
+import androidx.room3.compiler.processing.XMethodElement
 
 /** References a function that returns a dao in a Database */
 data class DaoFunction(val element: XMethodElement, val dao: Dao) {

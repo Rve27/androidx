@@ -1,14 +1,14 @@
-package androidx.room.processor
+package androidx.room3.processor
 
 import COMMON
-import androidx.room.compiler.codegen.CodeLanguage
-import androidx.room.compiler.processing.XProcessingEnv
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.runProcessorTest
-import androidx.room.testing.context
-import androidx.room.vo.Dao
-import androidx.room.writer.DaoWriter
-import androidx.room.writer.TypeWriter
+import androidx.room3.compiler.codegen.CodeLanguage
+import androidx.room3.compiler.processing.XProcessingEnv
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.runProcessorTest
+import androidx.room3.testing.context
+import androidx.room3.vo.Dao
+import androidx.room3.writer.DaoWriter
+import androidx.room3.writer.TypeWriter
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
@@ -168,7 +168,7 @@ class BaseDaoTest {
             Source.kotlin(
                 "Foo.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
 
             interface Parent<T> {
                 @Delete
@@ -237,7 +237,7 @@ class BaseDaoTest {
                 "foo.bar.BaseDao",
                 """
                 package foo.bar;
-                import androidx.room.*;
+                import androidx.room3.*;
                 import java.util.List;
 
                 interface BaseDao<K, T> {
@@ -250,7 +250,7 @@ class BaseDaoTest {
                 "foo.bar.MyDao",
                 """
                 package foo.bar;
-                import androidx.room.*;
+                import androidx.room3.*;
                 @Dao
                 interface MyDao extends BaseDao<Integer, User> {
                 }
@@ -261,7 +261,7 @@ class BaseDaoTest {
                 "foo.bar.MyDb",
                 """
                 package foo.bar;
-                import androidx.room.*;
+                import androidx.room3.*;
                 // we need a RoomDatabase subclass in sources to match incremental compilation
                 // check requirements
                 abstract class MyDb extends RoomDatabase {

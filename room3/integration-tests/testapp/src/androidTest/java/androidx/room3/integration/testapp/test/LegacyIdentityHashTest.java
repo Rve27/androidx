@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.testapp.test;
+package androidx.room3.integration.testapp.test;
 
 import android.content.Context;
 
-import androidx.room.Database;
-import androidx.room.Entity;
-import androidx.room.PrimaryKey;
-import androidx.room.Room;
-import androidx.room.RoomDatabase;
-import androidx.room.RoomMasterTable;
+import androidx.room3.Database;
+import androidx.room3.Entity;
+import androidx.room3.PrimaryKey;
+import androidx.room3.Room;
+import androidx.room3.RoomDatabase;
+import androidx.room3.RoomMasterTable;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.SmallTest;
 import androidx.test.platform.app.InstrumentationRegistry;

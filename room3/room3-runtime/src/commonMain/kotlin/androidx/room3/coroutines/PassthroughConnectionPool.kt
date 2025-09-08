@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package androidx.room.coroutines
+package androidx.room3.coroutines
 
-import androidx.room.TransactionScope
-import androidx.room.Transactor
-import androidx.room.concurrent.AtomicInt
+import androidx.room3.TransactionScope
+import androidx.room3.Transactor
+import androidx.room3.concurrent.AtomicInt
 import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.SQLiteDriver
 import androidx.sqlite.SQLiteException

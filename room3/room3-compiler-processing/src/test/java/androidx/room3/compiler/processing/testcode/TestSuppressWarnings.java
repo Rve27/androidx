@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.testcode;
+package androidx.room3.compiler.processing.testcode;
 
 import static java.lang.annotation.ElementType.CONSTRUCTOR;
 import static java.lang.annotation.ElementType.FIELD;

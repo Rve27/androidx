@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.room.integration.kotlintestapp.dao
+package androidx.room3.integration.kotlintestapp.dao
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.Query
-import androidx.room.Transaction
-import androidx.room.integration.kotlintestapp.vo.Cluster
-import androidx.room.integration.kotlintestapp.vo.Hivemind
-import androidx.room.integration.kotlintestapp.vo.Robot
-import androidx.room.integration.kotlintestapp.vo.RobotAndHivemind
+import androidx.room3.Dao
+import androidx.room3.Insert
+import androidx.room3.Query
+import androidx.room3.Transaction
+import androidx.room3.integration.kotlintestapp.vo.Cluster
+import androidx.room3.integration.kotlintestapp.vo.Hivemind
+import androidx.room3.integration.kotlintestapp.vo.Robot
+import androidx.room3.integration.kotlintestapp.vo.RobotAndHivemind
 import java.util.UUID
 
 @Dao

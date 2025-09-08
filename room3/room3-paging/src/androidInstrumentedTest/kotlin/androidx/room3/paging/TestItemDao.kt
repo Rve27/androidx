@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package androidx.room.paging
+package androidx.room3.paging
 
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.Query
+import androidx.room3.Dao
+import androidx.room3.Delete
+import androidx.room3.Insert
+import androidx.room3.Query
 
 @Dao
 interface TestItemDao {

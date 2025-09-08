@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package androidx.room.solver.query.result
+package androidx.room3.solver.query.result
 
-import androidx.room.AmbiguousColumnResolver
-import androidx.room.compiler.codegen.XCodeBlock
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.ext.CommonTypeNames
-import androidx.room.ext.DoubleArrayLiteral
-import androidx.room.ext.RoomTypeNames
-import androidx.room.parser.ParsedQuery
-import androidx.room.solver.CodeGenScope
-import androidx.room.vo.ColumnIndexVar
+import androidx.room3.AmbiguousColumnResolver
+import androidx.room3.compiler.codegen.XCodeBlock
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.ext.CommonTypeNames
+import androidx.room3.ext.DoubleArrayLiteral
+import androidx.room3.ext.RoomTypeNames
+import androidx.room3.parser.ParsedQuery
+import androidx.room3.solver.CodeGenScope
+import androidx.room3.vo.ColumnIndexVar
 
 /**
  * An index adapter that uses [AmbiguousColumnResolver] to create the index variables for

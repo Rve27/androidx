@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.gradle.util
+package androidx.room3.gradle.util
 
 import java.util.Locale
 import kotlin.contracts.ExperimentalContracts

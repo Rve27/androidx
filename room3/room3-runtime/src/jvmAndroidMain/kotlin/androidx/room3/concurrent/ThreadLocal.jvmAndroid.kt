@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.concurrent
+package androidx.room3.concurrent
 
 import kotlin.coroutines.CoroutineContext
 import kotlinx.coroutines.asContextElement as asCoroutineContextElement

@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package androidx.room.processor.autovalue
+package androidx.room3.processor.autovalue
 
-import androidx.room.Ignore
-import androidx.room.compiler.processing.XExecutableElement
-import androidx.room.compiler.processing.XType
-import androidx.room.compiler.processing.XTypeElement
-import androidx.room.processor.Context
-import androidx.room.processor.DataClassProcessor
-import androidx.room.processor.DataClassProcessor.Companion.TARGET_METHOD_ANNOTATIONS
-import androidx.room.processor.ProcessorErrors
-import androidx.room.vo.Constructor
-import androidx.room.vo.DataClass
-import androidx.room.vo.EmbeddedProperty
-import androidx.room.vo.Property
-import androidx.room.vo.Warning
+import androidx.room3.Ignore
+import androidx.room3.compiler.processing.XExecutableElement
+import androidx.room3.compiler.processing.XType
+import androidx.room3.compiler.processing.XTypeElement
+import androidx.room3.processor.Context
+import androidx.room3.processor.DataClassProcessor
+import androidx.room3.processor.DataClassProcessor.Companion.TARGET_METHOD_ANNOTATIONS
+import androidx.room3.processor.ProcessorErrors
+import androidx.room3.vo.Constructor
+import androidx.room3.vo.DataClass
+import androidx.room3.vo.EmbeddedProperty
+import androidx.room3.vo.Property
+import androidx.room3.vo.Warning
 import com.google.auto.value.AutoValue.CopyAnnotations
 
 /** Delegate to process generated AutoValue class as a data class. */
@@ -46,7 +46,7 @@ class AutoValueDataClassProcessorDelegate(
 
         // Warn about missing @AutoValue.CopyAnnotations in the property getters.
         autoValueAbstractGetters.forEach {
-            val hasRoomAnnotation = it.hasAnnotationWithPackage("androidx.room")
+            val hasRoomAnnotation = it.hasAnnotationWithPackage("androidx.room3")
             if (hasRoomAnnotation && !it.hasAnnotation(CopyAnnotations::class)) {
                 context.logger.w(
                     Warning.MISSING_COPY_ANNOTATIONS,
@@ -84,7 +84,7 @@ class AutoValueDataClassProcessorDelegate(
         declaredType: XType,
         properties: List<Property>,
         embeddedProperties: List<EmbeddedProperty>,
-        relations: List<androidx.room.vo.Relation>,
+        relations: List<androidx.room3.vo.Relation>,
         constructor: Constructor?,
     ): DataClass {
         return DataClass(

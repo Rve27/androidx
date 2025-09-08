@@ -15,7 +15,7 @@
  */
 @file:JvmName("RoomMasterTable")
 
-package androidx.room
+package androidx.room3
 
 import androidx.annotation.RestrictTo
 import kotlin.jvm.JvmName

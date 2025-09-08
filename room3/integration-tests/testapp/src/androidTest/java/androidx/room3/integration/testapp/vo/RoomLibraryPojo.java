@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.testapp.vo;
+package androidx.room3.integration.testapp.vo;
 
-import androidx.room.Entity;
-import androidx.room.PrimaryKey;
-import androidx.room.RoomWarnings;
+import androidx.room3.Entity;
+import androidx.room3.PrimaryKey;
+import androidx.room3.RoomWarnings;
 
 /**
  * A Room POJO is just wraps a POJO provided by some library.

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.ksp
+package androidx.room3.compiler.processing.ksp
 
-import androidx.room.compiler.processing.ksp.synthetic.KspSyntheticFileMemberContainer
+import androidx.room3.compiler.processing.ksp.synthetic.KspSyntheticFileMemberContainer
 import com.google.devtools.ksp.KspExperimental
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSDeclaration

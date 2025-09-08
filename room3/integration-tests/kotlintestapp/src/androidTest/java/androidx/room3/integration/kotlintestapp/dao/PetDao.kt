@@ -13,19 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.room.integration.kotlintestapp.dao
+package androidx.room3.integration.kotlintestapp.dao
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
-import androidx.room.Transaction
-import androidx.room.integration.kotlintestapp.vo.Pet
-import androidx.room.integration.kotlintestapp.vo.PetAndOwner
-import androidx.room.integration.kotlintestapp.vo.PetWithToyIds
-import androidx.room.integration.kotlintestapp.vo.PetWithUser
+import androidx.room3.Dao
+import androidx.room3.Delete
+import androidx.room3.Insert
+import androidx.room3.OnConflictStrategy
+import androidx.room3.Query
+import androidx.room3.Transaction
+import androidx.room3.integration.kotlintestapp.vo.Pet
+import androidx.room3.integration.kotlintestapp.vo.PetAndOwner
+import androidx.room3.integration.kotlintestapp.vo.PetWithToyIds
+import androidx.room3.integration.kotlintestapp.vo.PetWithUser
 import com.google.common.base.Optional
 import com.google.common.util.concurrent.ListenableFuture
 import io.reactivex.Flowable

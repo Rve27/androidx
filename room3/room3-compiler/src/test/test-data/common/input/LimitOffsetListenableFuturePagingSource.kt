@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.room.paging.guava
+package androidx.room3.paging.guava
 
-import androidx.room.RoomDatabase
-import androidx.room.RoomSQLiteQuery
+import androidx.room3.RoomDatabase
+import androidx.room3.RoomSQLiteQuery
 import androidx.sqlite.SQLiteStatement
 
 abstract class LimitOffsetListenableFuturePagingSource<T : Any>(

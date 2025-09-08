@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.codegen.java
+package androidx.room3.compiler.codegen.java
 
-import androidx.room.compiler.codegen.XSpec
+import androidx.room3.compiler.codegen.XSpec
 
 internal abstract class JavaSpec<T> : XSpec() {
     abstract val actual: T

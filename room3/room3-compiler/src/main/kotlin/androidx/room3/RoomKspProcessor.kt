@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package androidx.room
+package androidx.room3
 
-import androidx.room.compiler.processing.XProcessingEnv
-import androidx.room.compiler.processing.XRoundEnv
-import androidx.room.compiler.processing.ksp.KspBasicAnnotationProcessor
-import androidx.room.processor.Context.BooleanProcessorOptions.USE_NULL_AWARE_CONVERTER
-import androidx.room.processor.ProcessorErrors
-import androidx.room.verifier.DatabaseVerifier
+import androidx.room3.compiler.processing.XProcessingEnv
+import androidx.room3.compiler.processing.XRoundEnv
+import androidx.room3.compiler.processing.ksp.KspBasicAnnotationProcessor
+import androidx.room3.processor.Context.BooleanProcessorOptions.USE_NULL_AWARE_CONVERTER
+import androidx.room3.processor.ProcessorErrors
+import androidx.room3.verifier.DatabaseVerifier
 import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.processing.SymbolProcessorProvider

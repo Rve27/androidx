@@ -15,13 +15,13 @@
  */
 @file:JvmName("RxRoom")
 
-package androidx.room.rxjava3
+package androidx.room3.rxjava3
 
 import androidx.annotation.RestrictTo
-import androidx.room.InvalidationTracker
-import androidx.room.RoomDatabase
-import androidx.room.coroutines.createFlow
-import androidx.room.util.performSuspending
+import androidx.room3.InvalidationTracker
+import androidx.room3.RoomDatabase
+import androidx.room3.coroutines.createFlow
+import androidx.room3.util.performSuspending
 import androidx.sqlite.SQLiteConnection
 import io.reactivex.rxjava3.core.BackpressureStrategy
 import io.reactivex.rxjava3.core.Completable

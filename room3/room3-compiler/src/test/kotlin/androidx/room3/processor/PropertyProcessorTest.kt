@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package androidx.room.processor
+package androidx.room3.processor
 
-import androidx.room.Entity
-import androidx.room.compiler.codegen.CodeLanguage
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.compiler.processing.XFieldElement
-import androidx.room.compiler.processing.XTypeElement
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.XTestInvocation
-import androidx.room.compiler.processing.util.runProcessorTest
-import androidx.room.ext.CommonTypeNames
-import androidx.room.parser.Collate
-import androidx.room.parser.SQLTypeAffinity
-import androidx.room.solver.types.ColumnTypeAdapter
-import androidx.room.testing.context
-import androidx.room.vo.Property
+import androidx.room3.Entity
+import androidx.room3.compiler.codegen.CodeLanguage
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.compiler.processing.XFieldElement
+import androidx.room3.compiler.processing.XTypeElement
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.XTestInvocation
+import androidx.room3.compiler.processing.util.runProcessorTest
+import androidx.room3.ext.CommonTypeNames
+import androidx.room3.parser.Collate
+import androidx.room3.parser.SQLTypeAffinity
+import androidx.room3.solver.types.ColumnTypeAdapter
+import androidx.room3.testing.context
+import androidx.room3.vo.Property
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.nullValue
@@ -45,7 +45,7 @@ class PropertyProcessorTest {
         const val ENTITY_PREFIX =
             """
                 package foo.bar;
-                import androidx.room.*;
+                import androidx.room3.*;
                 import androidx.annotation.NonNull;
                 import androidx.annotation.Nullable;
                 @Entity
@@ -77,7 +77,7 @@ class PropertyProcessorTest {
                 "foo.bar.MyConverter",
                 """
             |package foo.bar;
-            |import androidx.room.*;
+            |import androidx.room3.*;
             |public class MyConverter {
             |${
                 ALL_PRIMITIVES.joinToString("|\n") {

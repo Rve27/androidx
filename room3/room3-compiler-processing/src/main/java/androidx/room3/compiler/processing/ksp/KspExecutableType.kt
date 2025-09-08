@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.ksp
+package androidx.room3.compiler.processing.ksp
 
-import androidx.room.compiler.processing.XExecutableType
-import androidx.room.compiler.processing.XType
+import androidx.room3.compiler.processing.XExecutableType
+import androidx.room3.compiler.processing.XType
 
 internal abstract class KspExecutableType(
     val env: KspProcessingEnv,

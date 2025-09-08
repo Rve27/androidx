@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.codegen.kotlin
+package androidx.room3.compiler.codegen.kotlin
 
-import androidx.room.compiler.codegen.KAnnotationSpecBuilder
-import androidx.room.compiler.codegen.XAnnotationSpec
-import androidx.room.compiler.codegen.XCodeBlock
-import androidx.room.compiler.codegen.XSpec
-import androidx.room.compiler.codegen.impl.XCodeBlockImpl
+import androidx.room3.compiler.codegen.KAnnotationSpecBuilder
+import androidx.room3.compiler.codegen.XAnnotationSpec
+import androidx.room3.compiler.codegen.XCodeBlock
+import androidx.room3.compiler.codegen.XSpec
+import androidx.room3.compiler.codegen.impl.XCodeBlockImpl
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.javapoet.KAnnotationSpec
 

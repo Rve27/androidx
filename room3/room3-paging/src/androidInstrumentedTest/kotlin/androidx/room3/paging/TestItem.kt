@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.room.paging
+package androidx.room3.paging
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import androidx.room3.Entity
+import androidx.room3.PrimaryKey
 
 @Entity data class TestItem(@PrimaryKey val id: Int, val value: String = "item $id")

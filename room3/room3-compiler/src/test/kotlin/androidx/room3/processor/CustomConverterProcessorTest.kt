@@ -14,40 +14,40 @@
  * limitations under the License.
  */
 
-package androidx.room.processor
+package androidx.room3.processor
 
 import androidx.kruth.assertThat
-import androidx.room.RoomKspProcessor
-import androidx.room.RoomProcessor
-import androidx.room.compiler.codegen.CodeLanguage
-import androidx.room.compiler.codegen.VisibilityModifier
-import androidx.room.compiler.codegen.XAnnotationSpec
-import androidx.room.compiler.codegen.XClassName
-import androidx.room.compiler.codegen.XFunSpec
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.compiler.codegen.XTypeSpec
-import androidx.room.compiler.codegen.compat.XConverters.applyToJavaPoet
-import androidx.room.compiler.codegen.compat.XConverters.toString
-import androidx.room.compiler.processing.XElement
-import androidx.room.compiler.processing.XFiler
-import androidx.room.compiler.processing.XProcessingEnv
-import androidx.room.compiler.processing.XProcessingEnvConfig
-import androidx.room.compiler.processing.XProcessingStep
-import androidx.room.compiler.processing.javac.JavacBasicAnnotationProcessor
-import androidx.room.compiler.processing.ksp.KspBasicAnnotationProcessor
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.XTestInvocation
-import androidx.room.compiler.processing.util.runProcessorTest
-import androidx.room.ext.CommonTypeNames
-import androidx.room.ext.CommonTypeNames.MUTABLE_LIST
-import androidx.room.ext.CommonTypeNames.STRING
-import androidx.room.ext.RoomAnnotationTypeNames
-import androidx.room.processor.ProcessorErrors.TYPE_CONVERTER_EMPTY_CLASS
-import androidx.room.processor.ProcessorErrors.TYPE_CONVERTER_MISSING_NOARG_CONSTRUCTOR
-import androidx.room.processor.ProcessorErrors.TYPE_CONVERTER_MUST_BE_PUBLIC
-import androidx.room.processor.ProcessorErrors.TYPE_CONVERTER_UNBOUND_GENERIC
-import androidx.room.testing.context
-import androidx.room.vo.CustomTypeConverter
+import androidx.room3.RoomKspProcessor
+import androidx.room3.RoomProcessor
+import androidx.room3.compiler.codegen.CodeLanguage
+import androidx.room3.compiler.codegen.VisibilityModifier
+import androidx.room3.compiler.codegen.XAnnotationSpec
+import androidx.room3.compiler.codegen.XClassName
+import androidx.room3.compiler.codegen.XFunSpec
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.compiler.codegen.XTypeSpec
+import androidx.room3.compiler.codegen.compat.XConverters.applyToJavaPoet
+import androidx.room3.compiler.codegen.compat.XConverters.toString
+import androidx.room3.compiler.processing.XElement
+import androidx.room3.compiler.processing.XFiler
+import androidx.room3.compiler.processing.XProcessingEnv
+import androidx.room3.compiler.processing.XProcessingEnvConfig
+import androidx.room3.compiler.processing.XProcessingStep
+import androidx.room3.compiler.processing.javac.JavacBasicAnnotationProcessor
+import androidx.room3.compiler.processing.ksp.KspBasicAnnotationProcessor
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.XTestInvocation
+import androidx.room3.compiler.processing.util.runProcessorTest
+import androidx.room3.ext.CommonTypeNames
+import androidx.room3.ext.CommonTypeNames.MUTABLE_LIST
+import androidx.room3.ext.CommonTypeNames.STRING
+import androidx.room3.ext.RoomAnnotationTypeNames
+import androidx.room3.processor.ProcessorErrors.TYPE_CONVERTER_EMPTY_CLASS
+import androidx.room3.processor.ProcessorErrors.TYPE_CONVERTER_MISSING_NOARG_CONSTRUCTOR
+import androidx.room3.processor.ProcessorErrors.TYPE_CONVERTER_MUST_BE_PUBLIC
+import androidx.room3.processor.ProcessorErrors.TYPE_CONVERTER_UNBOUND_GENERIC
+import androidx.room3.testing.context
+import androidx.room3.vo.CustomTypeConverter
 import com.google.devtools.ksp.processing.SymbolProcessorProvider
 import com.squareup.javapoet.TypeVariableName
 import org.junit.Test
@@ -65,7 +65,7 @@ class CustomConverterProcessorTest {
                 "foo.bar.Container",
                 """
                 package foo.bar;
-                import androidx.room.*;
+                import androidx.room3.*;
                 @TypeConverters(foo.bar.MyConverter.class)
                 public class Container {}
                 """,
@@ -180,7 +180,7 @@ class CustomConverterProcessorTest {
                 CONVERTER_NAME,
                 """
                 package ${CONVERTER.packageName};
-                import androidx.room.TypeConverter;
+                import androidx.room3.TypeConverter;
 
                 public class ${CONVERTER.simpleNames.first()} {
                     public ${CONVERTER.simpleNames.first()}(int x) {}
@@ -203,7 +203,7 @@ class CustomConverterProcessorTest {
                 CONVERTER_NAME,
                 """
                 package ${CONVERTER.packageName};
-                import androidx.room.TypeConverter;
+                import androidx.room3.TypeConverter;
 
                 public class ${CONVERTER.simpleNames.first()} {
                     public ${CONVERTER.simpleNames.first()}(int x) {}
@@ -226,7 +226,7 @@ class CustomConverterProcessorTest {
                 CONVERTER_NAME,
                 """
                 package ${CONVERTER.packageName};
-                import androidx.room.TypeConverter;
+                import androidx.room3.TypeConverter;
 
                 public class ${CONVERTER.simpleNames.first()} {
                     @TypeConverter static int x(short y) {return 0;}
@@ -308,7 +308,7 @@ class CustomConverterProcessorTest {
                 "MyConverter.kt",
                 """
         package ${CONVERTER.packageName}
-        import androidx.room.*
+        import androidx.room3.*
         class ${CONVERTER.simpleNames.first()} {
             @TypeConverter
             fun nonNulls(input: Int): String {
@@ -344,7 +344,7 @@ class CustomConverterProcessorTest {
                 "foo.bar.Container",
                 """
                 package foo.bar;
-                import androidx.room.*;
+                import androidx.room3.*;
                 @TypeConverters(int.class)
                 public class Container {}
                 """,
@@ -373,14 +373,14 @@ class CustomConverterProcessorTest {
         class GenerateTypeConverterStep(private val language: CodeLanguage) : XProcessingStep {
             private var generatedClass = false
 
-            override fun annotations() = setOf("androidx.room.Database")
+            override fun annotations() = setOf("androidx.room3.Database")
 
             override fun process(
                 env: XProcessingEnv,
                 elementsByAnnotation: Map<String, Set<XElement>>,
                 isLastRound: Boolean,
             ): Set<XElement> {
-                elementsByAnnotation["androidx.room.Database"]?.singleOrNull()?.let {
+                elementsByAnnotation["androidx.room3.Database"]?.singleOrNull()?.let {
                     databaseElement ->
                     if (!generatedClass) {
                         generatedClass = true
@@ -405,7 +405,7 @@ class CustomConverterProcessorTest {
                     .use { output ->
                         output.write(
                             """
-                        import androidx.room.TypeConverter;
+                        import androidx.room3.TypeConverter;
                         
                         public class GeneratedTypeConverter {
                             @TypeConverter
@@ -436,7 +436,7 @@ class CustomConverterProcessorTest {
                     .use { output ->
                         output.write(
                             """
-                        import androidx.room.TypeConverter
+                        import androidx.room3.TypeConverter
                         
                         class GeneratedTypeConverter {
                             @TypeConverter
@@ -477,7 +477,7 @@ class CustomConverterProcessorTest {
             Source.kotlin(
                 "MyDatabase.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
 
             class TestId
 

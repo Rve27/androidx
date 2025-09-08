@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.room.integration.kotlintestapp.test
+package androidx.room3.integration.kotlintestapp.test
 
 import android.content.Context
 import androidx.arch.core.executor.testing.CountingTaskExecutorRule
@@ -24,17 +24,17 @@ import androidx.kruth.assertThat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.testing.TestLifecycleOwner
-import androidx.room.Room
-import androidx.room.integration.kotlintestapp.TestDatabase
-import androidx.room.integration.kotlintestapp.dao.MusicDao
-import androidx.room.integration.kotlintestapp.vo.Album
-import androidx.room.integration.kotlintestapp.vo.AlbumNameAndBandName
-import androidx.room.integration.kotlintestapp.vo.AlbumWithSongs
-import androidx.room.integration.kotlintestapp.vo.Artist
-import androidx.room.integration.kotlintestapp.vo.Image
-import androidx.room.integration.kotlintestapp.vo.ImageFormat
-import androidx.room.integration.kotlintestapp.vo.ReleasedAlbum
-import androidx.room.integration.kotlintestapp.vo.Song
+import androidx.room3.Room
+import androidx.room3.integration.kotlintestapp.TestDatabase
+import androidx.room3.integration.kotlintestapp.dao.MusicDao
+import androidx.room3.integration.kotlintestapp.vo.Album
+import androidx.room3.integration.kotlintestapp.vo.AlbumNameAndBandName
+import androidx.room3.integration.kotlintestapp.vo.AlbumWithSongs
+import androidx.room3.integration.kotlintestapp.vo.Artist
+import androidx.room3.integration.kotlintestapp.vo.Image
+import androidx.room3.integration.kotlintestapp.vo.ImageFormat
+import androidx.room3.integration.kotlintestapp.vo.ReleasedAlbum
+import androidx.room3.integration.kotlintestapp.vo.Song
 import androidx.sqlite.db.SimpleSQLiteQuery
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -193,7 +193,7 @@ class MultimapQueryTest {
         assertContentsOfResultMapWithSet(artistToSongsSet)
     }
 
-    /** Tests a JOIN using [androidx.room.RawQuery] between two tables. */
+    /** Tests a JOIN using [androidx.room3.RawQuery] between two tables. */
     @Test
     fun testJoinByArtistNameRawQuery() {
         mMusicDao.addSongs(mRhcpSong1, mRhcpSong2, mAcdcSong1, mPinkFloydSong1)
@@ -306,8 +306,8 @@ class MultimapQueryTest {
 
     /**
      * Tests a simple JOIN query between two tables with a return type of a map with a key that is
-     * an entity [Artist] and a POJO [AlbumWithSongs] that use [androidx.room.Embedded] and
-     * [androidx.room.Relation].
+     * an entity [Artist] and a POJO [AlbumWithSongs] that use [androidx.room3.Embedded] and
+     * [androidx.room3.Relation].
      */
     @Test
     fun testPojoWithEmbeddedAndRelation() {
@@ -342,7 +342,7 @@ class MultimapQueryTest {
     /**
      * Tests a simple JOIN query between two tables with a return type of a map with a key that is
      * an entity [Artist] and a list of entity POJOs [AlbumWithSongs] that use
-     * [androidx.room.Embedded] and [androidx.room.Relation].
+     * [androidx.room3.Embedded] and [androidx.room3.Relation].
      */
     @Test
     fun testPojoWithEmbeddedAndRelationList() {

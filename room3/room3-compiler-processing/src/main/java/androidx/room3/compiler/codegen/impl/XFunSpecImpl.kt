@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.codegen.impl
+package androidx.room3.compiler.codegen.impl
 
-import androidx.room.compiler.codegen.XAnnotationSpec
-import androidx.room.compiler.codegen.XCodeBlock
-import androidx.room.compiler.codegen.XFunSpec
-import androidx.room.compiler.codegen.XName
-import androidx.room.compiler.codegen.XParameterSpec
-import androidx.room.compiler.codegen.XSpec
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.compiler.codegen.java.JavaFunSpec
-import androidx.room.compiler.codegen.kotlin.KotlinFunSpec
+import androidx.room3.compiler.codegen.XAnnotationSpec
+import androidx.room3.compiler.codegen.XCodeBlock
+import androidx.room3.compiler.codegen.XFunSpec
+import androidx.room3.compiler.codegen.XName
+import androidx.room3.compiler.codegen.XParameterSpec
+import androidx.room3.compiler.codegen.XSpec
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.compiler.codegen.java.JavaFunSpec
+import androidx.room3.compiler.codegen.kotlin.KotlinFunSpec
 
 internal class XFunSpecImpl(override val java: JavaFunSpec, override val kotlin: KotlinFunSpec) :
     ImplSpec<JavaFunSpec, KotlinFunSpec>(), XFunSpec {

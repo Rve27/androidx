@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing
+package androidx.room3.compiler.processing
 
 import androidx.kruth.assertThat
 import androidx.kruth.assertWithMessage
-import androidx.room.compiler.codegen.XClassName
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.compiler.processing.javac.JavacBasicAnnotationProcessor
-import androidx.room.compiler.processing.javac.JavacProcessingEnv
-import androidx.room.compiler.processing.ksp.KspBasicAnnotationProcessor
-import androidx.room.compiler.processing.testcode.OtherAnnotation
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.compileFiles
-import androidx.room.compiler.processing.util.getDeclaredMethodByJvmName
-import androidx.room.compiler.processing.util.runKspTest
-import androidx.room.compiler.processing.util.runProcessorTest
+import androidx.room3.compiler.codegen.XClassName
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.compiler.processing.javac.JavacBasicAnnotationProcessor
+import androidx.room3.compiler.processing.javac.JavacProcessingEnv
+import androidx.room3.compiler.processing.ksp.KspBasicAnnotationProcessor
+import androidx.room3.compiler.processing.testcode.OtherAnnotation
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.compileFiles
+import androidx.room3.compiler.processing.util.getDeclaredMethodByJvmName
+import androidx.room3.compiler.processing.util.runKspTest
+import androidx.room3.compiler.processing.util.runProcessorTest
 import com.google.devtools.ksp.processing.SymbolProcessorProvider
 import com.squareup.kotlinpoet.INT
 import com.squareup.kotlinpoet.UNIT
@@ -43,7 +43,7 @@ class XRoundEnvTest {
             Source.kotlin(
                 "Baz.kt",
                 """
-            import androidx.room.compiler.processing.testcode.OtherAnnotation
+            import androidx.room3.compiler.processing.testcode.OtherAnnotation
             @OtherAnnotation(value="xx")
             class Baz {
                 @OtherAnnotation(value="xx")
@@ -85,7 +85,7 @@ class XRoundEnvTest {
             Source.kotlin(
                 "Baz.kt",
                 """
-            import androidx.room.compiler.processing.testcode.OtherAnnotation
+            import androidx.room3.compiler.processing.testcode.OtherAnnotation
             class Baz {
                 @get:OtherAnnotation(value="xx")
                 var myProperty1: Int = 0
@@ -136,7 +136,7 @@ class XRoundEnvTest {
                 """
             @OtherAnnotation(value = "xx")
             package foo.bar.foobar;
-            import androidx.room.compiler.processing.testcode.OtherAnnotation;
+            import androidx.room3.compiler.processing.testcode.OtherAnnotation;
             """
                     .trimIndent(),
             )
@@ -154,7 +154,7 @@ class XRoundEnvTest {
                 .single()
                 .apply {
                     assertThat(qualifiedName)
-                        .isEqualTo("androidx.room.compiler.processing.testcode.OtherAnnotation")
+                        .isEqualTo("androidx.room3.compiler.processing.testcode.OtherAnnotation")
                 }
                 .annotationValues
                 .single()
@@ -199,7 +199,7 @@ class XRoundEnvTest {
             Source.kotlin(
                 "Baz.kt",
                 """
-            import androidx.room.compiler.processing.XRoundEnvTest.PropertyAnnotation
+            import androidx.room3.compiler.processing.XRoundEnvTest.PropertyAnnotation
             class Baz {
                 @PropertyAnnotation
                 fun myFun(): Int = 0
@@ -219,7 +219,7 @@ class XRoundEnvTest {
             Source.kotlin(
                 "Baz.kt",
                 """
-            import androidx.room.compiler.processing.XRoundEnvTest.TopLevelAnnotation
+            import androidx.room3.compiler.processing.XRoundEnvTest.TopLevelAnnotation
             @TopLevelAnnotation
             fun myFun(): Int = 0
             """
@@ -246,7 +246,7 @@ class XRoundEnvTest {
                 """
             @file:JvmName("MyCustomClass")
             package foo.bar
-            import androidx.room.compiler.processing.XRoundEnvTest.TopLevelAnnotation
+            import androidx.room3.compiler.processing.XRoundEnvTest.TopLevelAnnotation
             @get:TopLevelAnnotation
             var myPropertyGetter: Int = 0
             @set:TopLevelAnnotation
@@ -405,7 +405,7 @@ class XRoundEnvTest {
                 Source.kotlin(
                     "Baz.kt",
                     """
-                    import androidx.room.compiler.processing.XRoundEnvTest.TopLevelAnnotation
+                    import androidx.room3.compiler.processing.XRoundEnvTest.TopLevelAnnotation
                     class Baz constructor(
                         @param:TopLevelAnnotation val ctorProperty: String,
                         @TopLevelAnnotation ctorParam: String

@@ -14,41 +14,41 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.kotlintestapp
+package androidx.room3.integration.kotlintestapp
 
-import androidx.room.Database
-import androidx.room.RoomDatabase
-import androidx.room.TypeConverter
-import androidx.room.TypeConverters
-import androidx.room.integration.kotlintestapp.dao.AbstractDao
-import androidx.room.integration.kotlintestapp.dao.BooksDao
-import androidx.room.integration.kotlintestapp.dao.CounterDao
-import androidx.room.integration.kotlintestapp.dao.DependencyDao
-import androidx.room.integration.kotlintestapp.dao.DerivedDao
-import androidx.room.integration.kotlintestapp.dao.MusicDao
-import androidx.room.integration.kotlintestapp.dao.PetDao
-import androidx.room.integration.kotlintestapp.dao.ToyDao
-import androidx.room.integration.kotlintestapp.dao.UsersDao
-import androidx.room.integration.kotlintestapp.vo.Album
-import androidx.room.integration.kotlintestapp.vo.Artist
-import androidx.room.integration.kotlintestapp.vo.Author
-import androidx.room.integration.kotlintestapp.vo.Book
-import androidx.room.integration.kotlintestapp.vo.BookAuthor
-import androidx.room.integration.kotlintestapp.vo.Counter
-import androidx.room.integration.kotlintestapp.vo.DataClassFromDependency
-import androidx.room.integration.kotlintestapp.vo.EntityWithJavaPojoList
-import androidx.room.integration.kotlintestapp.vo.Image
-import androidx.room.integration.kotlintestapp.vo.JavaEntity
-import androidx.room.integration.kotlintestapp.vo.NoArgClass
-import androidx.room.integration.kotlintestapp.vo.Pet
-import androidx.room.integration.kotlintestapp.vo.PetUser
-import androidx.room.integration.kotlintestapp.vo.PetWithUser
-import androidx.room.integration.kotlintestapp.vo.Playlist
-import androidx.room.integration.kotlintestapp.vo.PlaylistSongXRef
-import androidx.room.integration.kotlintestapp.vo.Publisher
-import androidx.room.integration.kotlintestapp.vo.Song
-import androidx.room.integration.kotlintestapp.vo.Toy
-import androidx.room.integration.kotlintestapp.vo.User
+import androidx.room3.Database
+import androidx.room3.RoomDatabase
+import androidx.room3.TypeConverter
+import androidx.room3.TypeConverters
+import androidx.room3.integration.kotlintestapp.dao.AbstractDao
+import androidx.room3.integration.kotlintestapp.dao.BooksDao
+import androidx.room3.integration.kotlintestapp.dao.CounterDao
+import androidx.room3.integration.kotlintestapp.dao.DependencyDao
+import androidx.room3.integration.kotlintestapp.dao.DerivedDao
+import androidx.room3.integration.kotlintestapp.dao.MusicDao
+import androidx.room3.integration.kotlintestapp.dao.PetDao
+import androidx.room3.integration.kotlintestapp.dao.ToyDao
+import androidx.room3.integration.kotlintestapp.dao.UsersDao
+import androidx.room3.integration.kotlintestapp.vo.Album
+import androidx.room3.integration.kotlintestapp.vo.Artist
+import androidx.room3.integration.kotlintestapp.vo.Author
+import androidx.room3.integration.kotlintestapp.vo.Book
+import androidx.room3.integration.kotlintestapp.vo.BookAuthor
+import androidx.room3.integration.kotlintestapp.vo.Counter
+import androidx.room3.integration.kotlintestapp.vo.DataClassFromDependency
+import androidx.room3.integration.kotlintestapp.vo.EntityWithJavaPojoList
+import androidx.room3.integration.kotlintestapp.vo.Image
+import androidx.room3.integration.kotlintestapp.vo.JavaEntity
+import androidx.room3.integration.kotlintestapp.vo.NoArgClass
+import androidx.room3.integration.kotlintestapp.vo.Pet
+import androidx.room3.integration.kotlintestapp.vo.PetUser
+import androidx.room3.integration.kotlintestapp.vo.PetWithUser
+import androidx.room3.integration.kotlintestapp.vo.Playlist
+import androidx.room3.integration.kotlintestapp.vo.PlaylistSongXRef
+import androidx.room3.integration.kotlintestapp.vo.Publisher
+import androidx.room3.integration.kotlintestapp.vo.Song
+import androidx.room3.integration.kotlintestapp.vo.Toy
+import androidx.room3.integration.kotlintestapp.vo.User
 import java.nio.ByteBuffer
 import java.util.Date
 import java.util.UUID
@@ -113,9 +113,9 @@ abstract class TestDatabase : RoomDatabase() {
         }
 
         @TypeConverter
-        fun decomposeDays(flags: Int): Set<androidx.room.integration.kotlintestapp.vo.Day> {
-            val result: MutableSet<androidx.room.integration.kotlintestapp.vo.Day> = HashSet()
-            for (day in androidx.room.integration.kotlintestapp.vo.Day.values()) {
+        fun decomposeDays(flags: Int): Set<androidx.room3.integration.kotlintestapp.vo.Day> {
+            val result: MutableSet<androidx.room3.integration.kotlintestapp.vo.Day> = HashSet()
+            for (day in androidx.room3.integration.kotlintestapp.vo.Day.values()) {
                 if (flags and (1 shl day.ordinal) != 0) {
                     result.add(day)
                 }
@@ -124,7 +124,7 @@ abstract class TestDatabase : RoomDatabase() {
         }
 
         @TypeConverter
-        fun composeDays(days: Set<androidx.room.integration.kotlintestapp.vo.Day>): Int {
+        fun composeDays(days: Set<androidx.room3.integration.kotlintestapp.vo.Day>): Int {
             var result = 0
             for (day in days) {
                 result = result or (1 shl day.ordinal)

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.room.parser
+package androidx.room3.parser
 
-import androidx.room.verifier.QueryResultInfo
+import androidx.room3.verifier.QueryResultInfo
 
 sealed class Section {
 

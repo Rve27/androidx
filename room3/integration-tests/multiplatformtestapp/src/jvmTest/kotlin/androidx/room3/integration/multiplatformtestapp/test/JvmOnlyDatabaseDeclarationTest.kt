@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.multiplatformtestapp.test
+package androidx.room3.integration.multiplatformtestapp.test
 
 import androidx.kruth.assertThat
-import androidx.room.Database
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-import androidx.room.Room
-import androidx.room.RoomDatabase
-import androidx.room.useReaderConnection
+import androidx.room3.Database
+import androidx.room3.Entity
+import androidx.room3.PrimaryKey
+import androidx.room3.Room
+import androidx.room3.RoomDatabase
+import androidx.room3.useReaderConnection
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import kotlin.test.Test
 import kotlinx.coroutines.test.runTest
 
 /**
  * This test validates that a [Database] declared in the Jvm source set does not required the usage
- * of [androidx.room.ConstructedBy] nor [androidx.room.RoomDatabaseConstructor].
+ * of [androidx.room3.ConstructedBy] nor [androidx.room3.RoomDatabaseConstructor].
  */
 class JvmOnlyDatabaseDeclarationTest {
 

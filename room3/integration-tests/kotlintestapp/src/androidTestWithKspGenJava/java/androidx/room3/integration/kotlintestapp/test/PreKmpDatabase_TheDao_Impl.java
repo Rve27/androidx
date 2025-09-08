@@ -1,12 +1,12 @@
-package androidx.room.integration.kotlintestapp.test;
+package androidx.room3.integration.kotlintestapp.test;
 
 import android.database.Cursor;
 import androidx.annotation.NonNull;
-import androidx.room.EntityInsertionAdapter;
-import androidx.room.RoomDatabase;
-import androidx.room.RoomSQLiteQuery;
-import androidx.room.util.CursorUtil;
-import androidx.room.util.DBUtil;
+import androidx.room3.EntityInsertionAdapter;
+import androidx.room3.RoomDatabase;
+import androidx.room3.RoomSQLiteQuery;
+import androidx.room3.util.CursorUtil;
+import androidx.room3.util.DBUtil;
 import androidx.sqlite.db.SupportSQLiteStatement;
 import java.lang.Class;
 import java.lang.Override;
@@ -17,7 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 import javax.annotation.processing.Generated;
 
-@Generated("androidx.room.RoomProcessor")
+@Generated("androidx.room3.RoomProcessor")
 @SuppressWarnings({"unchecked", "deprecation", "BanSynchronizedMethods", "RestrictedApiAndroidX", "UnknownNullness"})
 public final class PreKmpDatabase_TheDao_Impl implements PreKmpDatabase.TheDao {
     private final RoomDatabase __db;

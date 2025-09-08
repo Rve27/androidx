@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.javac
+package androidx.room3.compiler.processing.javac
 
-import androidx.room.compiler.processing.XElement
-import androidx.room.compiler.processing.XMemberContainer
-import androidx.room.compiler.processing.XPackageElement
-import androidx.room.compiler.processing.javac.kotlin.KmVisibility
+import androidx.room3.compiler.processing.XElement
+import androidx.room3.compiler.processing.XMemberContainer
+import androidx.room3.compiler.processing.XPackageElement
+import androidx.room3.compiler.processing.javac.kotlin.KmVisibility
 import javax.lang.model.element.PackageElement
 
 internal class JavacPackageElement(

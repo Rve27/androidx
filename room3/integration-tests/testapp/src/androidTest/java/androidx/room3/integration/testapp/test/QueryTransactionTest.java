@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.testapp.test;
+package androidx.room3.integration.testapp.test;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -36,19 +36,19 @@ import androidx.paging.DataSource;
 import androidx.paging.LivePagedListBuilder;
 import androidx.paging.PagedList;
 import androidx.paging.PositionalDataSource;
-import androidx.room.Dao;
-import androidx.room.Database;
-import androidx.room.Entity;
-import androidx.room.Ignore;
-import androidx.room.Insert;
-import androidx.room.PrimaryKey;
-import androidx.room.Query;
-import androidx.room.Relation;
-import androidx.room.Room;
-import androidx.room.RoomDatabase;
-import androidx.room.RoomWarnings;
-import androidx.room.Transaction;
-import androidx.room.paging.LimitOffsetDataSource;
+import androidx.room3.Dao;
+import androidx.room3.Database;
+import androidx.room3.Entity;
+import androidx.room3.Ignore;
+import androidx.room3.Insert;
+import androidx.room3.PrimaryKey;
+import androidx.room3.Query;
+import androidx.room3.Relation;
+import androidx.room3.Room;
+import androidx.room3.RoomDatabase;
+import androidx.room3.RoomWarnings;
+import androidx.room3.Transaction;
+import androidx.room3.paging.LimitOffsetDataSource;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 import androidx.sqlite.db.SupportSQLiteOpenHelper;
 import androidx.sqlite.db.SupportSQLiteQuery;

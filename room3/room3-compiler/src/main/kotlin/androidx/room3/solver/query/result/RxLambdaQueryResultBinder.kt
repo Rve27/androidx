@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package androidx.room.solver.query.result
+package androidx.room3.solver.query.result
 
-import androidx.room.compiler.codegen.CodeLanguage
-import androidx.room.compiler.codegen.XCodeBlock
-import androidx.room.compiler.codegen.XCodeBlock.Builder.Companion.applyTo
-import androidx.room.compiler.codegen.XPropertySpec
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.compiler.processing.XType
-import androidx.room.ext.InvokeWithLambdaParameter
-import androidx.room.ext.LambdaSpec
-import androidx.room.ext.SQLiteDriverTypeNames
-import androidx.room.solver.CodeGenScope
-import androidx.room.solver.RxType
+import androidx.room3.compiler.codegen.CodeLanguage
+import androidx.room3.compiler.codegen.XCodeBlock
+import androidx.room3.compiler.codegen.XCodeBlock.Builder.Companion.applyTo
+import androidx.room3.compiler.codegen.XPropertySpec
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.compiler.processing.XType
+import androidx.room3.ext.InvokeWithLambdaParameter
+import androidx.room3.ext.LambdaSpec
+import androidx.room3.ext.SQLiteDriverTypeNames
+import androidx.room3.solver.CodeGenScope
+import androidx.room3.solver.RxType
 
 /** Generic result binder for Rx classes that are not reactive. */
 internal class RxLambdaQueryResultBinder(

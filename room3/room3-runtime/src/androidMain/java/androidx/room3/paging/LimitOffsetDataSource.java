@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package androidx.room.paging;
+package androidx.room3.paging;
 
 import android.database.Cursor;
 
 import androidx.annotation.RestrictTo;
-import androidx.room.InvalidationTracker;
-import androidx.room.RoomDatabase;
-import androidx.room.RoomSQLiteQuery;
+import androidx.room3.InvalidationTracker;
+import androidx.room3.RoomDatabase;
+import androidx.room3.RoomSQLiteQuery;
 import androidx.sqlite.SQLiteStatement;
 import androidx.sqlite.db.SupportSQLiteQuery;
 

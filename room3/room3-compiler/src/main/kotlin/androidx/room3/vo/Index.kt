@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package androidx.room.vo
+package androidx.room3.vo
 
-import androidx.room.migration.bundle.IndexBundle
-import androidx.room.migration.bundle.TABLE_NAME_PLACEHOLDER
+import androidx.room3.migration.bundle.IndexBundle
+import androidx.room3.migration.bundle.TABLE_NAME_PLACEHOLDER
 
-private typealias IndexOrder = androidx.room.Index.Order
+private typealias IndexOrder = androidx.room3.Index.Order
 
 /** Represents a processed index. */
 data class Index(

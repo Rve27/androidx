@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.util
+package androidx.room3.compiler.processing.util
 
-import androidx.room.compiler.processing.XExecutableElement
-import androidx.room.compiler.processing.XType
-import androidx.room.compiler.processing.XTypeElement
+import androidx.room3.compiler.processing.XExecutableElement
+import androidx.room3.compiler.processing.XType
+import androidx.room3.compiler.processing.XTypeElement
 
 fun XTypeElement.getAllFieldNames() = getAllFieldsIncludingPrivateSupers().map { it.name }.toList()
 

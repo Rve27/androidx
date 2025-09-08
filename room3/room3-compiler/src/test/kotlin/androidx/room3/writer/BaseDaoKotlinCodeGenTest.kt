@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package androidx.room.writer
+package androidx.room3.writer
 
-import androidx.room.DatabaseProcessingStep
-import androidx.room.compiler.processing.util.KOTLINC_LANGUAGE_1_9_ARGS
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.XTestInvocation
-import androidx.room.compiler.processing.util.runKspTest
-import androidx.room.processor.Context
+import androidx.room3.DatabaseProcessingStep
+import androidx.room3.compiler.processing.util.KOTLINC_LANGUAGE_1_9_ARGS
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.XTestInvocation
+import androidx.room3.compiler.processing.util.runKspTest
+import androidx.room3.processor.Context
 import java.io.File
 import loadTestSource
 import writeTestSource
@@ -42,7 +42,7 @@ abstract class BaseDaoKotlinCodeGenTest {
         val options = mapOf(Context.BooleanProcessorOptions.GENERATE_KOTLIN.argName to "true")
         val kotlincArguments = listOf("-jvm-target=11", "-Xjvm-default=${jvmDefaultMode}")
         val invocationHandler: (XTestInvocation) -> Unit = {
-            val databaseFqn = "androidx.room.Database"
+            val databaseFqn = "androidx.room3.Database"
             DatabaseProcessingStep()
                 .process(
                     it.processingEnv,

@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.util
+package androidx.room3.compiler.processing.util
 
-import androidx.room.compiler.processing.util.compiler.DiagnosticsMessageCollector
-import androidx.room.compiler.processing.util.compiler.steps.RawDiagnosticMessage
-import androidx.room.compiler.processing.util.compiler.steps.RawDiagnosticMessage.Location
+import androidx.room3.compiler.processing.util.compiler.DiagnosticsMessageCollector
+import androidx.room3.compiler.processing.util.compiler.steps.RawDiagnosticMessage
+import androidx.room3.compiler.processing.util.compiler.steps.RawDiagnosticMessage.Location
 import com.google.common.truth.Truth.assertThat
 import javax.tools.Diagnostic
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity

@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.room.util
+package androidx.room3.util
 
 import androidx.annotation.IntDef
 import androidx.annotation.RestrictTo
-import androidx.room.ColumnInfo.SQLiteTypeAffinity
+import androidx.room3.ColumnInfo.SQLiteTypeAffinity
 import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.sqlite.driver.SupportSQLiteConnection
@@ -179,7 +179,7 @@ actual constructor(
         @JvmField public actual var orders: List<String>,
     ) {
         init {
-            orders = orders.ifEmpty { List(columns.size) { androidx.room.Index.Order.ASC.name } }
+            orders = orders.ifEmpty { List(columns.size) { androidx.room3.Index.Order.ASC.name } }
         }
 
         public actual companion object {
@@ -196,7 +196,7 @@ actual constructor(
             name,
             unique,
             columns,
-            List<String>(columns.size) { androidx.room.Index.Order.ASC.name },
+            List<String>(columns.size) { androidx.room3.Index.Order.ASC.name },
         )
 
         actual override fun equals(other: Any?): Boolean = equalsCommon(other)

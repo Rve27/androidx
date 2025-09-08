@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package androidx.room.testing
+package androidx.room3.testing
 
 import androidx.kruth.assertThat
-import androidx.room.compiler.processing.util.CompilationTestCapabilities
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.runProcessorTest
+import androidx.room3.compiler.processing.util.CompilationTestCapabilities
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.runProcessorTest
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -36,7 +36,7 @@ class InProcessorTest(private val kotlinCode: Boolean) {
                         """
                 package foo.bar
                 abstract class MyClass {
-                @androidx.room.Query("foo")
+                @androidx.room3.Query("foo")
                 abstract fun setFoo(foo: String):Unit
                 }
                 """
@@ -49,7 +49,7 @@ class InProcessorTest(private val kotlinCode: Boolean) {
                         """
                 package foo.bar;
                 abstract public class MyClass {
-                @androidx.room.Query("foo")
+                @androidx.room3.Query("foo")
                 abstract public void setFoo(String foo);
                 }
                 """

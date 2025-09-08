@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package androidx.room.processor
+package androidx.room3.processor
 
-import androidx.room.compiler.processing.XTypeElement
-import androidx.room.compiler.processing.isTypeElement
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.XTestInvocation
-import androidx.room.compiler.processing.util.runProcessorTest
-import androidx.room.parser.SqlParser
-import androidx.room.parser.expansion.ProjectionExpander
-import androidx.room.testing.context
+import androidx.room3.compiler.processing.XTypeElement
+import androidx.room3.compiler.processing.isTypeElement
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.XTestInvocation
+import androidx.room3.compiler.processing.util.runProcessorTest
+import androidx.room3.parser.SqlParser
+import androidx.room3.parser.expansion.ProjectionExpander
+import androidx.room3.testing.context
 import createVerifierFromEntitiesAndViews
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.CoreMatchers.`is`
@@ -39,7 +39,7 @@ class ProjectionExpanderTest {
         const val DATABASE_PREFIX =
             """
             package foo.bar;
-            import androidx.room.*;
+            import androidx.room3.*;
             import androidx.annotation.NonNull;
             import java.util.*;
         """
@@ -524,7 +524,7 @@ class ProjectionExpanderTest {
         runProcessorTest(sources = ENTITIES) { invocation ->
             val entities =
                 invocation.roundEnv
-                    .getElementsAnnotatedWith(androidx.room.Entity::class.qualifiedName!!)
+                    .getElementsAnnotatedWith(androidx.room3.Entity::class.qualifiedName!!)
                     .filterIsInstance<XTypeElement>()
                     .map { element -> TableEntityProcessor(invocation.context, element).process() }
             val entityElement = invocation.processingEnv.requireTypeElement("foo.bar.User")
@@ -616,7 +616,7 @@ class ProjectionExpanderTest {
         return runProcessorTest(sources = all) { invocation ->
             val entities =
                 invocation.roundEnv
-                    .getElementsAnnotatedWith(androidx.room.Entity::class.qualifiedName!!)
+                    .getElementsAnnotatedWith(androidx.room3.Entity::class.qualifiedName!!)
                     .filterIsInstance<XTypeElement>()
                     .map { element -> TableEntityProcessor(invocation.context, element).process() }
             val pojoElement = invocation.processingEnv.requireTypeElement(name)

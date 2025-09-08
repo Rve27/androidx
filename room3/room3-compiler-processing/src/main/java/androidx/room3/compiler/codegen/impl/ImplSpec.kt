@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.codegen.impl
+package androidx.room3.compiler.codegen.impl
 
-import androidx.room.compiler.codegen.XSpec
+import androidx.room3.compiler.codegen.XSpec
 
 internal abstract class ImplSpec<JavaT, KotlinT> : XSpec() {
     abstract val java: JavaT

@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.room
+package androidx.room3
 
 import android.content.Context
 import androidx.kruth.assertThat
 import androidx.kruth.assertThrows
-import androidx.room.Room.databaseBuilder
-import androidx.room.Room.inMemoryDatabaseBuilder
-import androidx.room.migration.Migration
+import androidx.room3.Room.databaseBuilder
+import androidx.room3.Room.inMemoryDatabaseBuilder
+import androidx.room3.migration.Migration
 import androidx.sqlite.SQLiteDriver
 import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.sqlite.db.SupportSQLiteOpenHelper

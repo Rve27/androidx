@@ -14,25 +14,25 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.testapp.test;
+package androidx.room3.integration.testapp.test;
 
 import android.content.Context;
 
-import androidx.room.Room;
-import androidx.room.integration.testapp.TestDatabase;
-import androidx.room.integration.testapp.dao.FunnyNamedDao;
-import androidx.room.integration.testapp.dao.PagingSourceOnlyUserDao;
-import androidx.room.integration.testapp.dao.PetCoupleDao;
-import androidx.room.integration.testapp.dao.PetDao;
-import androidx.room.integration.testapp.dao.RawDao;
-import androidx.room.integration.testapp.dao.RobotsDao;
-import androidx.room.integration.testapp.dao.SchoolDao;
-import androidx.room.integration.testapp.dao.SpecificDogDao;
-import androidx.room.integration.testapp.dao.ToyDao;
-import androidx.room.integration.testapp.dao.UserDao;
-import androidx.room.integration.testapp.dao.UserHouseDao;
-import androidx.room.integration.testapp.dao.UserPetDao;
-import androidx.room.integration.testapp.dao.WithClauseDao;
+import androidx.room3.Room;
+import androidx.room3.integration.testapp.TestDatabase;
+import androidx.room3.integration.testapp.dao.FunnyNamedDao;
+import androidx.room3.integration.testapp.dao.PagingSourceOnlyUserDao;
+import androidx.room3.integration.testapp.dao.PetCoupleDao;
+import androidx.room3.integration.testapp.dao.PetDao;
+import androidx.room3.integration.testapp.dao.RawDao;
+import androidx.room3.integration.testapp.dao.RobotsDao;
+import androidx.room3.integration.testapp.dao.SchoolDao;
+import androidx.room3.integration.testapp.dao.SpecificDogDao;
+import androidx.room3.integration.testapp.dao.ToyDao;
+import androidx.room3.integration.testapp.dao.UserDao;
+import androidx.room3.integration.testapp.dao.UserHouseDao;
+import androidx.room3.integration.testapp.dao.UserPetDao;
+import androidx.room3.integration.testapp.dao.WithClauseDao;
 import androidx.test.core.app.ApplicationProvider;
 
 import org.junit.After;

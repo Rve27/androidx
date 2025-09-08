@@ -15,7 +15,7 @@
  */
 
 package foo.bar;
-import androidx.room.TypeConverter;
+import androidx.room3.TypeConverter;
 
 import java.util.Date;
 

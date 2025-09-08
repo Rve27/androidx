@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.kotlintestapp.test
+package androidx.room3.integration.kotlintestapp.test
 
 import androidx.arch.core.executor.ArchTaskExecutor
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
-import androidx.room.integration.kotlintestapp.vo.Author
-import androidx.room.integration.kotlintestapp.vo.Book
-import androidx.room.integration.kotlintestapp.vo.BookAuthor
-import androidx.room.integration.kotlintestapp.vo.Lang
-import androidx.room.integration.kotlintestapp.vo.Pet
-import androidx.room.integration.kotlintestapp.vo.Publisher
+import androidx.room3.integration.kotlintestapp.vo.Author
+import androidx.room3.integration.kotlintestapp.vo.Book
+import androidx.room3.integration.kotlintestapp.vo.BookAuthor
+import androidx.room3.integration.kotlintestapp.vo.Lang
+import androidx.room3.integration.kotlintestapp.vo.Pet
+import androidx.room3.integration.kotlintestapp.vo.Publisher
 import java.util.Date
 import java.util.UUID
 import java.util.concurrent.FutureTask

@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.util
+package androidx.room3.compiler.processing.util
 
-import androidx.room.compiler.processing.ExperimentalProcessingApi
-import androidx.room.compiler.processing.XProcessingEnvConfig
-import androidx.room.compiler.processing.XProcessingEnvironmentTestConfigProvider
-import androidx.room.compiler.processing.XProcessingStep
-import androidx.room.compiler.processing.javac.JavacBasicAnnotationProcessor
-import androidx.room.compiler.processing.ksp.KspBasicAnnotationProcessor
-import androidx.room.compiler.processing.util.compiler.TestCompilationArguments
-import androidx.room.compiler.processing.util.compiler.compile
-import androidx.room.compiler.processing.util.runner.JavacCompilationTestRunner
-import androidx.room.compiler.processing.util.runner.KaptCompilationTestRunner
-import androidx.room.compiler.processing.util.runner.KspCompilationTestRunner
-import androidx.room.compiler.processing.util.runner.TestCompilationParameters
+import androidx.room3.compiler.processing.ExperimentalProcessingApi
+import androidx.room3.compiler.processing.XProcessingEnvConfig
+import androidx.room3.compiler.processing.XProcessingEnvironmentTestConfigProvider
+import androidx.room3.compiler.processing.XProcessingStep
+import androidx.room3.compiler.processing.javac.JavacBasicAnnotationProcessor
+import androidx.room3.compiler.processing.ksp.KspBasicAnnotationProcessor
+import androidx.room3.compiler.processing.util.compiler.TestCompilationArguments
+import androidx.room3.compiler.processing.util.compiler.compile
+import androidx.room3.compiler.processing.util.runner.JavacCompilationTestRunner
+import androidx.room3.compiler.processing.util.runner.KaptCompilationTestRunner
+import androidx.room3.compiler.processing.util.runner.KspCompilationTestRunner
+import androidx.room3.compiler.processing.util.runner.TestCompilationParameters
 import com.google.common.io.Files
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
@@ -165,7 +165,7 @@ fun runProcessorTest(
  * whether input has kotlin sources).
  *
  * The steps will be contained in implementations of
- * [androidx.room.compiler.processing.XBasicAnnotationProcessor] and are subject to its validation
+ * [androidx.room3.compiler.processing.XBasicAnnotationProcessor] and are subject to its validation
  * and element deferring behaviour.
  *
  * [onCompilationResult] will be called with a [CompilationResultSubject] after each compilation to

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing
+package androidx.room3.compiler.processing
 
-import androidx.room.compiler.codegen.XClassName
+import androidx.room3.compiler.codegen.XClassName
 import com.squareup.javapoet.ClassName
 import kotlin.reflect.KClass
 

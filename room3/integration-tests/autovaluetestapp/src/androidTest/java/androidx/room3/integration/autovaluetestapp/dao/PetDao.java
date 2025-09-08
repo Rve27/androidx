@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.autovaluetestapp.dao;
+package androidx.room3.integration.autovaluetestapp.dao;
 
-import androidx.room.Dao;
-import androidx.room.Insert;
-import androidx.room.Query;
-import androidx.room.integration.autovaluetestapp.vo.DogWithOwner;
-import androidx.room.integration.autovaluetestapp.vo.EmbeddedAutoValue;
-import androidx.room.integration.autovaluetestapp.vo.Pet;
+import androidx.room3.Dao;
+import androidx.room3.Insert;
+import androidx.room3.Query;
+import androidx.room3.integration.autovaluetestapp.vo.DogWithOwner;
+import androidx.room3.integration.autovaluetestapp.vo.EmbeddedAutoValue;
+import androidx.room3.integration.autovaluetestapp.vo.Pet;
 
 import java.util.List;
 

@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.util.runner
+package androidx.room3.compiler.processing.util.runner
 
-import androidx.room.compiler.processing.ExperimentalProcessingApi
-import androidx.room.compiler.processing.SyntheticJavacProcessor
-import androidx.room.compiler.processing.util.CompilationResult
-import androidx.room.compiler.processing.util.DiagnosticMessage
-import androidx.room.compiler.processing.util.JavaCompileTestingCompilationResult
-import androidx.room.compiler.processing.util.JavaFileObjectResource
-import androidx.room.compiler.processing.util.Resource
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.toDiagnosticMessages
+import androidx.room3.compiler.processing.ExperimentalProcessingApi
+import androidx.room3.compiler.processing.SyntheticJavacProcessor
+import androidx.room3.compiler.processing.util.CompilationResult
+import androidx.room3.compiler.processing.util.DiagnosticMessage
+import androidx.room3.compiler.processing.util.JavaCompileTestingCompilationResult
+import androidx.room3.compiler.processing.util.JavaFileObjectResource
+import androidx.room3.compiler.processing.util.Resource
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.toDiagnosticMessages
 import com.google.testing.compile.Compilation
 import com.google.testing.compile.Compiler
 import java.io.File

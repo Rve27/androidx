@@ -14,30 +14,30 @@
  * limitations under the License.
  */
 
-package androidx.room.processor
+package androidx.room3.processor
 
-import androidx.room.Query
-import androidx.room.SkipQueryVerification
-import androidx.room.Transaction
-import androidx.room.compiler.processing.XAnnotation
-import androidx.room.compiler.processing.XMethodElement
-import androidx.room.compiler.processing.XType
-import androidx.room.ext.isNotError
-import androidx.room.parser.ParsedQuery
-import androidx.room.parser.QueryType
-import androidx.room.parser.SqlParser
-import androidx.room.processor.ProcessorErrors.cannotMapSpecifiedColumn
-import androidx.room.solver.TypeAdapterExtras
-import androidx.room.solver.query.result.DataClassRowAdapter
-import androidx.room.verifier.ColumnInfo
-import androidx.room.verifier.DatabaseVerificationErrors
-import androidx.room.verifier.DatabaseVerifier
-import androidx.room.vo.MapInfo
-import androidx.room.vo.QueryFunction
-import androidx.room.vo.QueryParameter
-import androidx.room.vo.ReadQueryFunction
-import androidx.room.vo.Warning
-import androidx.room.vo.WriteQueryFunction
+import androidx.room3.Query
+import androidx.room3.SkipQueryVerification
+import androidx.room3.Transaction
+import androidx.room3.compiler.processing.XAnnotation
+import androidx.room3.compiler.processing.XMethodElement
+import androidx.room3.compiler.processing.XType
+import androidx.room3.ext.isNotError
+import androidx.room3.parser.ParsedQuery
+import androidx.room3.parser.QueryType
+import androidx.room3.parser.SqlParser
+import androidx.room3.processor.ProcessorErrors.cannotMapSpecifiedColumn
+import androidx.room3.solver.TypeAdapterExtras
+import androidx.room3.solver.query.result.DataClassRowAdapter
+import androidx.room3.verifier.ColumnInfo
+import androidx.room3.verifier.DatabaseVerificationErrors
+import androidx.room3.verifier.DatabaseVerifier
+import androidx.room3.vo.MapInfo
+import androidx.room3.vo.QueryFunction
+import androidx.room3.vo.QueryParameter
+import androidx.room3.vo.ReadQueryFunction
+import androidx.room3.vo.Warning
+import androidx.room3.vo.WriteQueryFunction
 
 class QueryFunctionProcessor(
     baseContext: Context,
@@ -243,7 +243,7 @@ private class InternalQueryProcessor(
     ): QueryFunction {
         val resultBinder =
             delegate.findResultBinder(returnType, query) {
-                delegate.executableElement.getAnnotation(androidx.room.MapInfo::class)?.let {
+                delegate.executableElement.getAnnotation(androidx.room3.MapInfo::class)?.let {
                     processMapInfo(it, query, delegate.executableElement, this)
                 }
             }
@@ -364,7 +364,7 @@ private class InternalQueryProcessor(
                 cannotMapSpecifiedColumn(
                     (if (keyTable != null) "$keyTable." else "") + keyColumn,
                     resultColumns.map { it.name },
-                    androidx.room.MapInfo::class.java.simpleName,
+                    androidx.room3.MapInfo::class.java.simpleName,
                 )
             }
             context.checker.check(
@@ -374,7 +374,7 @@ private class InternalQueryProcessor(
                 cannotMapSpecifiedColumn(
                     (if (valueTable != null) "$valueTable." else "") + valueColumn,
                     resultColumns.map { it.name },
-                    androidx.room.MapInfo::class.java.simpleName,
+                    androidx.room3.MapInfo::class.java.simpleName,
                 )
             }
         }

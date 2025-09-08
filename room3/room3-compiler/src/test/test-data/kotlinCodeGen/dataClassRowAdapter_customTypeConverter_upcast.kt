@@ -1,10 +1,10 @@
 import android.database.Cursor
-import androidx.room.EntityInsertionAdapter
-import androidx.room.RoomDatabase
-import androidx.room.RoomSQLiteQuery
-import androidx.room.RoomSQLiteQuery.Companion.acquire
-import androidx.room.util.getColumnIndexOrThrow
-import androidx.room.util.query
+import androidx.room3.EntityInsertionAdapter
+import androidx.room3.RoomDatabase
+import androidx.room3.RoomSQLiteQuery
+import androidx.room3.RoomSQLiteQuery.Companion.acquire
+import androidx.room3.util.getColumnIndexOrThrow
+import androidx.room3.util.query
 import androidx.sqlite.db.SupportSQLiteStatement
 import java.lang.Class
 import javax.`annotation`.processing.Generated
@@ -14,7 +14,7 @@ import kotlin.Suppress
 import kotlin.collections.List
 import kotlin.jvm.JvmStatic
 
-@Generated(value = ["androidx.room.RoomProcessor"])
+@Generated(value = ["androidx.room3.RoomProcessor"])
 @Suppress(names = ["UNCHECKED_CAST", "DEPRECATION", "REDUNDANT_PROJECTION", "REMOVAL"])
 public class MyDao_Impl(
     __db: RoomDatabase,

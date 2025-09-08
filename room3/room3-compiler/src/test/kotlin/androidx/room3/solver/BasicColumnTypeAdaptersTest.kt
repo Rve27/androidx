@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 
-package androidx.room.solver
+package androidx.room3.solver
 
-import androidx.room.compiler.codegen.CodeLanguage
-import androidx.room.compiler.codegen.VisibilityModifier
-import androidx.room.compiler.codegen.XClassName
-import androidx.room.compiler.codegen.XFunSpec
-import androidx.room.compiler.codegen.XPropertySpec
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.compiler.codegen.XTypeSpec
-import androidx.room.compiler.codegen.compat.XConverters.toString
-import androidx.room.compiler.processing.XType
-import androidx.room.compiler.processing.util.XTestInvocation
-import androidx.room.compiler.processing.util.runProcessorTest
-import androidx.room.compiler.processing.writeTo
-import androidx.room.ext.CommonTypeNames
-import androidx.room.ext.SQLiteDriverTypeNames
-import androidx.room.processor.Context
-import androidx.room.vo.BuiltInConverterFlags
+import androidx.room3.compiler.codegen.CodeLanguage
+import androidx.room3.compiler.codegen.VisibilityModifier
+import androidx.room3.compiler.codegen.XClassName
+import androidx.room3.compiler.codegen.XFunSpec
+import androidx.room3.compiler.codegen.XPropertySpec
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.compiler.codegen.XTypeSpec
+import androidx.room3.compiler.codegen.compat.XConverters.toString
+import androidx.room3.compiler.processing.XType
+import androidx.room3.compiler.processing.util.XTestInvocation
+import androidx.room3.compiler.processing.util.runProcessorTest
+import androidx.room3.compiler.processing.writeTo
+import androidx.room3.ext.CommonTypeNames
+import androidx.room3.ext.SQLiteDriverTypeNames
+import androidx.room3.processor.Context
+import androidx.room3.vo.BuiltInConverterFlags
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test

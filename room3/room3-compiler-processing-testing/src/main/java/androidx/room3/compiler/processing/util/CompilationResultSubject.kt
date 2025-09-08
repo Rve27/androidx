@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.util
+package androidx.room3.compiler.processing.util
 
-import androidx.room.compiler.processing.ExperimentalProcessingApi
-import androidx.room.compiler.processing.SyntheticJavacProcessor
-import androidx.room.compiler.processing.SyntheticProcessor
-import androidx.room.compiler.processing.util.compiler.TestCompilationResult
-import androidx.room.compiler.processing.util.runner.CompilationTestRunner
+import androidx.room3.compiler.processing.ExperimentalProcessingApi
+import androidx.room3.compiler.processing.SyntheticJavacProcessor
+import androidx.room3.compiler.processing.SyntheticProcessor
+import androidx.room3.compiler.processing.util.compiler.TestCompilationResult
+import androidx.room3.compiler.processing.util.runner.CompilationTestRunner
 import com.google.common.truth.Fact.fact
 import com.google.common.truth.Fact.simpleFact
 import com.google.common.truth.FailureMetadata

@@ -1,11 +1,11 @@
-import androidx.room.EntityDeleteOrUpdateAdapter
-import androidx.room.EntityInsertAdapter
-import androidx.room.EntityUpsertAdapter
-import androidx.room.RoomDatabase
-import androidx.room.guava.createListenableFuture
-import androidx.room.util.appendPlaceholders
-import androidx.room.util.getColumnIndexOrThrow
-import androidx.room.util.getLastInsertedRowId
+import androidx.room3.EntityDeleteOrUpdateAdapter
+import androidx.room3.EntityInsertAdapter
+import androidx.room3.EntityUpsertAdapter
+import androidx.room3.RoomDatabase
+import androidx.room3.guava.createListenableFuture
+import androidx.room3.util.appendPlaceholders
+import androidx.room3.util.getColumnIndexOrThrow
+import androidx.room3.util.getLastInsertedRowId
 import androidx.sqlite.SQLiteStatement
 import com.google.common.util.concurrent.ListenableFuture
 import java.lang.Void
@@ -18,7 +18,7 @@ import kotlin.collections.List
 import kotlin.reflect.KClass
 import kotlin.text.StringBuilder
 
-@Generated(value = ["androidx.room.RoomProcessor"])
+@Generated(value = ["androidx.room3.RoomProcessor"])
 @Suppress(names = ["UNCHECKED_CAST", "DEPRECATION", "REDUNDANT_PROJECTION", "REMOVAL"])
 public class MyDao_Impl(
   __db: RoomDatabase,

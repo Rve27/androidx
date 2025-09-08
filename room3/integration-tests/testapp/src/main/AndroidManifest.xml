@@ -23,6 +23,6 @@
             android:name=".SampleDatabaseService"
             android:label="Multi-process SampleDatabase"
             android:exported="false"
-            android:process="androidx.room.integration.testapp.service" />
+            android:process="androidx.room3.integration.testapp.service" />
     </application>
 </manifest>

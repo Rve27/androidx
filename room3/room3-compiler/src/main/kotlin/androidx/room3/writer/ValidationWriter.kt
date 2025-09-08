@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package androidx.room.writer
+package androidx.room3.writer
 
-import androidx.room.compiler.codegen.XCodeBlock
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.solver.CodeGenScope
+import androidx.room3.compiler.codegen.XCodeBlock
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.solver.CodeGenScope
 
 /** Common interface for database validation witters. */
 abstract class ValidationWriter {

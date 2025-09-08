@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.util
+package androidx.room3.compiler.processing.util
 
 /**
  * A [Sequence] implementation that caches values so that another collector can avoid re-computing

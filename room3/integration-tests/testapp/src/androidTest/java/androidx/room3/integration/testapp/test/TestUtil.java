@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.testapp.test;
+package androidx.room3.integration.testapp.test;
 
 import androidx.arch.core.executor.ArchTaskExecutor;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
-import androidx.room.integration.testapp.vo.Address;
-import androidx.room.integration.testapp.vo.Coordinates;
-import androidx.room.integration.testapp.vo.House;
-import androidx.room.integration.testapp.vo.Mail;
-import androidx.room.integration.testapp.vo.Pet;
-import androidx.room.integration.testapp.vo.School;
-import androidx.room.integration.testapp.vo.Toy;
-import androidx.room.integration.testapp.vo.User;
+import androidx.room3.integration.testapp.vo.Address;
+import androidx.room3.integration.testapp.vo.Coordinates;
+import androidx.room3.integration.testapp.vo.House;
+import androidx.room3.integration.testapp.vo.Mail;
+import androidx.room3.integration.testapp.vo.Pet;
+import androidx.room3.integration.testapp.vo.School;
+import androidx.room3.integration.testapp.vo.Toy;
+import androidx.room3.integration.testapp.vo.User;
 
 import java.util.ArrayList;
 import java.util.Date;

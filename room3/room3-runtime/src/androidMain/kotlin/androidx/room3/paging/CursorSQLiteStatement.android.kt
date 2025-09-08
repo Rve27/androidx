@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.paging
+package androidx.room3.paging
 
 import android.database.Cursor
 import android.database.Cursor.FIELD_TYPE_BLOB

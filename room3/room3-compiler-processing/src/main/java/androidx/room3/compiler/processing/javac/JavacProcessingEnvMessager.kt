@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.javac
+package androidx.room3.compiler.processing.javac
 
-import androidx.room.compiler.processing.XAnnotation
-import androidx.room.compiler.processing.XAnnotationValue
-import androidx.room.compiler.processing.XElement
-import androidx.room.compiler.processing.XMessager
+import androidx.room3.compiler.processing.XAnnotation
+import androidx.room3.compiler.processing.XAnnotationValue
+import androidx.room3.compiler.processing.XElement
+import androidx.room3.compiler.processing.XMessager
 import javax.annotation.processing.Messager
 import javax.lang.model.element.Element
 import javax.tools.Diagnostic

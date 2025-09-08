@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.room.processor
+package androidx.room3.processor
 
-import androidx.room.OnConflictStrategy
+import androidx.room3.OnConflictStrategy
 
 /** Processes on conflict fields in annotations */
 object OnConflictProcessor {

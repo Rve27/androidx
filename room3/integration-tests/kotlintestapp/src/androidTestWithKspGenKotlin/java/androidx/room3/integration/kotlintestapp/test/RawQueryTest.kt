@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.kotlintestapp.test
+package androidx.room3.integration.kotlintestapp.test
 
 import androidx.kruth.assertThrows
 import androidx.sqlite.db.SimpleSQLiteQuery

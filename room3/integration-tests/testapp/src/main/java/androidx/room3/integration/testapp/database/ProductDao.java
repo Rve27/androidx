@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.testapp.database;
+package androidx.room3.integration.testapp.database;
 
-import androidx.room.Dao;
-import androidx.room.Insert;
-import androidx.room.Query;
+import androidx.room3.Dao;
+import androidx.room3.Insert;
+import androidx.room3.Query;
 
 import java.util.List;
 

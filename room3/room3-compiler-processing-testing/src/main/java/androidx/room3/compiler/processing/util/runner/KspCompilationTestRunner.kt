@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.util.runner
+package androidx.room3.compiler.processing.util.runner
 
-import androidx.room.compiler.processing.ExperimentalProcessingApi
-import androidx.room.compiler.processing.SyntheticKspProcessor
-import androidx.room.compiler.processing.util.CompilationResult
-import androidx.room.compiler.processing.util.KotlinCompilationResult
-import androidx.room.compiler.processing.util.compiler.TestCompilationArguments
-import androidx.room.compiler.processing.util.compiler.compile
-import androidx.room.compiler.processing.util.compiler.withAtLeastOneKotlinSource
+import androidx.room3.compiler.processing.ExperimentalProcessingApi
+import androidx.room3.compiler.processing.SyntheticKspProcessor
+import androidx.room3.compiler.processing.util.CompilationResult
+import androidx.room3.compiler.processing.util.KotlinCompilationResult
+import androidx.room3.compiler.processing.util.compiler.TestCompilationArguments
+import androidx.room3.compiler.processing.util.compiler.compile
+import androidx.room3.compiler.processing.util.compiler.withAtLeastOneKotlinSource
 import com.google.devtools.ksp.processing.SymbolProcessorProvider
 import java.io.File
 

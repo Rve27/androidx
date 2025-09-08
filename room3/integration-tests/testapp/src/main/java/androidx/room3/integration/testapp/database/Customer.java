@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.testapp.database;
+package androidx.room3.integration.testapp.database;
 
 import androidx.recyclerview.widget.DiffUtil;
-import androidx.room.Entity;
-import androidx.room.PrimaryKey;
+import androidx.room3.Entity;
+import androidx.room3.PrimaryKey;
 
 import org.jspecify.annotations.NonNull;
 

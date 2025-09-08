@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.testapp.vo;
+package androidx.room3.integration.testapp.vo;
 
-import androidx.room.Relation;
+import androidx.room3.Relation;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing
+package androidx.room3.compiler.processing
 
 import androidx.kruth.assertThat
 import androidx.kruth.assertWithMessage
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.compiler.codegen.asClassName
-import androidx.room.compiler.processing.util.CONTINUATION_JCLASS_NAME
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.UNIT_JCLASS_NAME
-import androidx.room.compiler.processing.util.className
-import androidx.room.compiler.processing.util.compileFiles
-import androidx.room.compiler.processing.util.getDeclaredMethodByJvmName
-import androidx.room.compiler.processing.util.getMethodByJvmName
-import androidx.room.compiler.processing.util.getParameter
-import androidx.room.compiler.processing.util.kspProcessingEnv
-import androidx.room.compiler.processing.util.runProcessorTest
-import androidx.room.compiler.processing.util.typeName
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.compiler.codegen.asClassName
+import androidx.room3.compiler.processing.util.CONTINUATION_JCLASS_NAME
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.UNIT_JCLASS_NAME
+import androidx.room3.compiler.processing.util.className
+import androidx.room3.compiler.processing.util.compileFiles
+import androidx.room3.compiler.processing.util.getDeclaredMethodByJvmName
+import androidx.room3.compiler.processing.util.getMethodByJvmName
+import androidx.room3.compiler.processing.util.getParameter
+import androidx.room3.compiler.processing.util.kspProcessingEnv
+import androidx.room3.compiler.processing.util.runProcessorTest
+import androidx.room3.compiler.processing.util.typeName
 import com.google.testing.junit.testparameterinjector.TestParameter
 import com.google.testing.junit.testparameterinjector.TestParameterInjector
 import com.squareup.javapoet.ClassName

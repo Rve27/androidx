@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package androidx.room.solver
+package androidx.room3.solver
 
 import androidx.kruth.assertThat
-import androidx.room.compiler.codegen.CodeLanguage
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.runProcessorTest
-import androidx.room.processor.CustomConverterProcessor
-import androidx.room.solver.types.CompositeTypeConverter
-import androidx.room.solver.types.CustomTypeConverterWrapper
-import androidx.room.solver.types.TypeConverter
-import androidx.room.testing.context
-import androidx.room.vo.BuiltInConverterFlags
+import androidx.room3.compiler.codegen.CodeLanguage
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.runProcessorTest
+import androidx.room3.processor.CustomConverterProcessor
+import androidx.room3.solver.types.CompositeTypeConverter
+import androidx.room3.solver.types.CustomTypeConverterWrapper
+import androidx.room3.solver.types.TypeConverter
+import androidx.room3.testing.context
+import androidx.room3.vo.BuiltInConverterFlags
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
@@ -38,7 +38,7 @@ class TypeConverterStoreTest {
             Source.kotlin(
                 "Foo.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
             interface Type1_Super
             interface Type1 : Type1_Super
             interface Type1_Sub : Type1

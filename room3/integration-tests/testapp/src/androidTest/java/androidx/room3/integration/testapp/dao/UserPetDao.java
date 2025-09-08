@@ -14,29 +14,29 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.testapp.dao;
+package androidx.room3.integration.testapp.dao;
 
 import androidx.lifecycle.LiveData;
 import androidx.paging.DataSource;
-import androidx.room.Dao;
-import androidx.room.Delete;
-import androidx.room.Insert;
-import androidx.room.Query;
-import androidx.room.RoomWarnings;
-import androidx.room.Transaction;
-import androidx.room.Update;
-import androidx.room.integration.testapp.vo.EmbeddedUserAndAllPets;
-import androidx.room.integration.testapp.vo.Pet;
-import androidx.room.integration.testapp.vo.User;
-import androidx.room.integration.testapp.vo.UserAndAllPets;
-import androidx.room.integration.testapp.vo.UserAndAllPetsViaJunction;
-import androidx.room.integration.testapp.vo.UserAndGenericPet;
-import androidx.room.integration.testapp.vo.UserAndPet;
-import androidx.room.integration.testapp.vo.UserAndPetAdoptionDates;
-import androidx.room.integration.testapp.vo.UserAndPetNonNull;
-import androidx.room.integration.testapp.vo.UserIdAndPetIds;
-import androidx.room.integration.testapp.vo.UserIdAndPetNames;
-import androidx.room.integration.testapp.vo.UserWithPetsAndToys;
+import androidx.room3.Dao;
+import androidx.room3.Delete;
+import androidx.room3.Insert;
+import androidx.room3.Query;
+import androidx.room3.RoomWarnings;
+import androidx.room3.Transaction;
+import androidx.room3.Update;
+import androidx.room3.integration.testapp.vo.EmbeddedUserAndAllPets;
+import androidx.room3.integration.testapp.vo.Pet;
+import androidx.room3.integration.testapp.vo.User;
+import androidx.room3.integration.testapp.vo.UserAndAllPets;
+import androidx.room3.integration.testapp.vo.UserAndAllPetsViaJunction;
+import androidx.room3.integration.testapp.vo.UserAndGenericPet;
+import androidx.room3.integration.testapp.vo.UserAndPet;
+import androidx.room3.integration.testapp.vo.UserAndPetAdoptionDates;
+import androidx.room3.integration.testapp.vo.UserAndPetNonNull;
+import androidx.room3.integration.testapp.vo.UserIdAndPetIds;
+import androidx.room3.integration.testapp.vo.UserIdAndPetNames;
+import androidx.room3.integration.testapp.vo.UserWithPetsAndToys;
 
 import java.util.List;
 

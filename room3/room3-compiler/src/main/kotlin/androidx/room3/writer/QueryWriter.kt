@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package androidx.room.writer
+package androidx.room3.writer
 
-import androidx.room.compiler.codegen.CodeLanguage
-import androidx.room.compiler.codegen.XCodeBlock
-import androidx.room.compiler.codegen.XCodeBlock.Builder.Companion.applyTo
-import androidx.room.compiler.codegen.XMemberName.Companion.packageMember
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.ext.CommonTypeNames
-import androidx.room.ext.KotlinTypeNames
-import androidx.room.ext.RoomMemberNames
-import androidx.room.ext.RoomTypeNames
-import androidx.room.parser.ParsedQuery
-import androidx.room.parser.Section
-import androidx.room.solver.CodeGenScope
-import androidx.room.vo.QueryFunction
-import androidx.room.vo.QueryParameter
+import androidx.room3.compiler.codegen.CodeLanguage
+import androidx.room3.compiler.codegen.XCodeBlock
+import androidx.room3.compiler.codegen.XCodeBlock.Builder.Companion.applyTo
+import androidx.room3.compiler.codegen.XMemberName.Companion.packageMember
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.ext.CommonTypeNames
+import androidx.room3.ext.KotlinTypeNames
+import androidx.room3.ext.RoomMemberNames
+import androidx.room3.ext.RoomTypeNames
+import androidx.room3.parser.ParsedQuery
+import androidx.room3.parser.Section
+import androidx.room3.solver.CodeGenScope
+import androidx.room3.vo.QueryFunction
+import androidx.room3.vo.QueryParameter
 
 /** Writes the SQL query and arguments for a QueryMethod. */
 class QueryWriter(

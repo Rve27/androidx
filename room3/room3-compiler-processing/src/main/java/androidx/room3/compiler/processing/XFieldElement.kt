@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing
+package androidx.room3.compiler.processing
 
-import androidx.room.compiler.processing.ksp.KspFileMemberContainer
-import androidx.room.compiler.processing.ksp.synthetic.KspSyntheticFileMemberContainer
+import androidx.room3.compiler.processing.ksp.KspFileMemberContainer
+import androidx.room3.compiler.processing.ksp.synthetic.KspSyntheticFileMemberContainer
 
 /** Field in an [XTypeElement]. */
 interface XFieldElement : XVariableElement, XHasModifiers {

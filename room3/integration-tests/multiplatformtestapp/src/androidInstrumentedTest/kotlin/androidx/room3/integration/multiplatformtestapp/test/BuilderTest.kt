@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.multiplatformtestapp.test
+package androidx.room3.integration.multiplatformtestapp.test
 
 import androidx.kruth.assertThat
 import androidx.kruth.assertThrows
-import androidx.room.Room
-import androidx.room.RoomDatabase
+import androidx.room3.Room
+import androidx.room3.RoomDatabase
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import androidx.test.platform.app.InstrumentationRegistry
 import kotlin.test.AfterTest

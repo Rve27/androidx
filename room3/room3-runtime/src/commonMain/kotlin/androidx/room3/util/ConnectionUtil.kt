@@ -16,7 +16,7 @@
 
 @file:JvmName("SQLiteConnectionUtil")
 
-package androidx.room.util
+package androidx.room3.util
 
 import androidx.annotation.RestrictTo
 import androidx.sqlite.SQLiteConnection

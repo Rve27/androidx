@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package androidx.room.vo
+package androidx.room3.vo
 
-import androidx.room.compiler.codegen.XClassName
-import androidx.room.compiler.processing.XTypeElement
-import androidx.room.migration.bundle.BaseEntityBundle
-import androidx.room.migration.bundle.FieldBundle
-import androidx.room.util.SchemaDiffResult
+import androidx.room3.compiler.codegen.XClassName
+import androidx.room3.compiler.processing.XTypeElement
+import androidx.room3.migration.bundle.BaseEntityBundle
+import androidx.room3.migration.bundle.FieldBundle
+import androidx.room3.util.SchemaDiffResult
 
 /** Stores the changes detected in a database schema between the old and new versions. */
 data class AutoMigration(

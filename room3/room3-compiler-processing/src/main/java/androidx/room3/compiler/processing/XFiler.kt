@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing
+package androidx.room3.compiler.processing
 
-import androidx.room.compiler.codegen.CodeLanguage
-import androidx.room.compiler.codegen.XFileSpec
-import androidx.room.compiler.codegen.XTypeSpec
+import androidx.room3.compiler.codegen.CodeLanguage
+import androidx.room3.compiler.codegen.XFileSpec
+import androidx.room3.compiler.codegen.XTypeSpec
 import com.squareup.javapoet.JavaFile
 import com.squareup.kotlinpoet.FileSpec
 import java.io.OutputStream

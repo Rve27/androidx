@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.codegen.java
+package androidx.room3.compiler.codegen.java
 
-import androidx.room.compiler.codegen.JAnnotationSpecBuilder
-import androidx.room.compiler.codegen.XAnnotationSpec
-import androidx.room.compiler.codegen.XCodeBlock
-import androidx.room.compiler.codegen.XSpec
-import androidx.room.compiler.codegen.impl.XCodeBlockImpl
+import androidx.room3.compiler.codegen.JAnnotationSpecBuilder
+import androidx.room3.compiler.codegen.XAnnotationSpec
+import androidx.room3.compiler.codegen.XCodeBlock
+import androidx.room3.compiler.codegen.XSpec
+import androidx.room3.compiler.codegen.impl.XCodeBlockImpl
 import com.squareup.kotlinpoet.javapoet.JAnnotationSpec
 
 internal class JavaAnnotationSpec(override val actual: JAnnotationSpec) :

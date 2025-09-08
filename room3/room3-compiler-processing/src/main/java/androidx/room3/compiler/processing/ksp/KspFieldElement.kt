@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.ksp
+package androidx.room3.compiler.processing.ksp
 
-import androidx.room.compiler.processing.XAnnotated
-import androidx.room.compiler.processing.XFieldElement
-import androidx.room.compiler.processing.XHasModifiers
-import androidx.room.compiler.processing.XType
-import androidx.room.compiler.processing.ksp.KspAnnotated.UseSiteFilter.NO_USE_SITE_OR_FIELD
-import androidx.room.compiler.processing.ksp.synthetic.KspSyntheticPropertyMethodElement
+import androidx.room3.compiler.processing.XAnnotated
+import androidx.room3.compiler.processing.XFieldElement
+import androidx.room3.compiler.processing.XHasModifiers
+import androidx.room3.compiler.processing.XType
+import androidx.room3.compiler.processing.ksp.KspAnnotated.UseSiteFilter.NO_USE_SITE_OR_FIELD
+import androidx.room3.compiler.processing.ksp.synthetic.KspSyntheticPropertyMethodElement
 import com.google.devtools.ksp.isPrivate
 import com.google.devtools.ksp.symbol.KSPropertyAccessor
 import com.google.devtools.ksp.symbol.KSPropertyDeclaration

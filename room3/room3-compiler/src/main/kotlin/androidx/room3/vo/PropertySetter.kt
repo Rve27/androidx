@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package androidx.room.vo
+package androidx.room3.vo
 
-import androidx.room.compiler.codegen.CodeLanguage
-import androidx.room.compiler.codegen.XCodeBlock
-import androidx.room.compiler.codegen.XCodeBlock.Builder.Companion.applyTo
-import androidx.room.compiler.processing.XType
-import androidx.room.ext.capitalize
-import androidx.room.solver.CodeGenScope
-import androidx.room.solver.types.StatementValueReader
+import androidx.room3.compiler.codegen.CodeLanguage
+import androidx.room3.compiler.codegen.XCodeBlock
+import androidx.room3.compiler.codegen.XCodeBlock.Builder.Companion.applyTo
+import androidx.room3.compiler.processing.XType
+import androidx.room3.ext.capitalize
+import androidx.room3.solver.CodeGenScope
+import androidx.room3.solver.types.StatementValueReader
 import java.util.Locale
 
 data class PropertySetter(

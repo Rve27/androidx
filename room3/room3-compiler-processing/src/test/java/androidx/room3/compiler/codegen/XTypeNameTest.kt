@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.codegen
+package androidx.room3.compiler.codegen
 
 import androidx.kruth.assertThat
 import androidx.kruth.assertThrows
-import androidx.room.compiler.processing.KnownTypeNames
-import androidx.room.compiler.processing.XNullability
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.getDeclaredField
-import androidx.room.compiler.processing.util.getField
-import androidx.room.compiler.processing.util.getMethodByJvmName
-import androidx.room.compiler.processing.util.runProcessorTest
+import androidx.room3.compiler.processing.KnownTypeNames
+import androidx.room3.compiler.processing.XNullability
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.getDeclaredField
+import androidx.room3.compiler.processing.util.getField
+import androidx.room3.compiler.processing.util.getMethodByJvmName
+import androidx.room3.compiler.processing.util.runProcessorTest
 import com.squareup.kotlinpoet.ARRAY
 import com.squareup.kotlinpoet.INT
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy

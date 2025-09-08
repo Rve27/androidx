@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.ksp
+package androidx.room3.compiler.processing.ksp
 
-import androidx.room.compiler.processing.XMethodType
-import androidx.room.compiler.processing.XSuspendMethodType
-import androidx.room.compiler.processing.XType
-import androidx.room.compiler.processing.XTypeVariableType
+import androidx.room3.compiler.processing.XMethodType
+import androidx.room3.compiler.processing.XSuspendMethodType
+import androidx.room3.compiler.processing.XType
+import androidx.room3.compiler.processing.XTypeVariableType
 import com.squareup.javapoet.TypeVariableName
 
 internal sealed class KspMethodType(
@@ -37,7 +37,7 @@ internal sealed class KspMethodType(
         replaceWith =
             ReplaceWith(
                 "typeVariables.map { it.asTypeName().toJavaPoet() }",
-                "androidx.room.compiler.codegen.toJavaPoet",
+                "androidx.room3.compiler.codegen.toJavaPoet",
             ),
     )
     override val typeVariableNames: List<TypeVariableName> by lazy {

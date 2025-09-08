@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package androidx.room.solver.query.result
+package androidx.room3.solver.query.result
 
-import androidx.room.parser.ParsedQuery
-import androidx.room.processor.Context
-import androidx.room.solver.CodeGenScope
+import androidx.room3.parser.ParsedQuery
+import androidx.room3.processor.Context
+import androidx.room3.solver.CodeGenScope
 
 class MapQueryResultAdapter(
     context: Context,

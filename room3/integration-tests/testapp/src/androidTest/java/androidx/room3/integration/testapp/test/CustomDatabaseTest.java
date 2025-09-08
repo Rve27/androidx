@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.testapp.test;
+package androidx.room3.integration.testapp.test;
 
 import static org.mockito.AdditionalAnswers.delegatesTo;
 import static org.mockito.ArgumentMatchers.any;
@@ -26,10 +26,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
 import android.os.SystemClock;
 
-import androidx.room.Room;
-import androidx.room.RoomDatabase;
-import androidx.room.integration.testapp.database.Customer;
-import androidx.room.integration.testapp.database.SampleDatabase;
+import androidx.room3.Room;
+import androidx.room3.RoomDatabase;
+import androidx.room3.integration.testapp.database.Customer;
+import androidx.room3.integration.testapp.database.SampleDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 import androidx.sqlite.db.SupportSQLiteOpenHelper;
 import androidx.sqlite.db.SupportSQLiteQuery;

@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.util
+package androidx.room3.compiler.processing.util
 
-import androidx.room.compiler.processing.ExperimentalProcessingApi
-import androidx.room.compiler.processing.XProcessingEnv
-import androidx.room.compiler.processing.XRoundEnv
-import androidx.room.compiler.processing.compat.XConverters.toKS
+import androidx.room3.compiler.processing.ExperimentalProcessingApi
+import androidx.room3.compiler.processing.XProcessingEnv
+import androidx.room3.compiler.processing.XRoundEnv
+import androidx.room3.compiler.processing.compat.XConverters.toKS
 import com.google.common.truth.Truth
 import kotlin.reflect.KClass
 

@@ -14,28 +14,28 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.ksp
+package androidx.room3.compiler.processing.ksp
 
 import androidx.kruth.assertThat
 import androidx.kruth.assertThrows
-import androidx.room.compiler.codegen.XClassName
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.compiler.codegen.asClassName
-import androidx.room.compiler.processing.XNullability
-import androidx.room.compiler.processing.XNullability.NONNULL
-import androidx.room.compiler.processing.XNullability.NULLABLE
-import androidx.room.compiler.processing.XType
-import androidx.room.compiler.processing.XTypeElement
-import androidx.room.compiler.processing.isByte
-import androidx.room.compiler.processing.isInt
-import androidx.room.compiler.processing.isLong
-import androidx.room.compiler.processing.isVoid
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.getDeclaredField
-import androidx.room.compiler.processing.util.getField
-import androidx.room.compiler.processing.util.getMethodByJvmName
-import androidx.room.compiler.processing.util.runKspTest
-import androidx.room.compiler.processing.util.runProcessorTest
+import androidx.room3.compiler.codegen.XClassName
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.compiler.codegen.asClassName
+import androidx.room3.compiler.processing.XNullability
+import androidx.room3.compiler.processing.XNullability.NONNULL
+import androidx.room3.compiler.processing.XNullability.NULLABLE
+import androidx.room3.compiler.processing.XType
+import androidx.room3.compiler.processing.XTypeElement
+import androidx.room3.compiler.processing.isByte
+import androidx.room3.compiler.processing.isInt
+import androidx.room3.compiler.processing.isLong
+import androidx.room3.compiler.processing.isVoid
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.getDeclaredField
+import androidx.room3.compiler.processing.util.getField
+import androidx.room3.compiler.processing.util.getMethodByJvmName
+import androidx.room3.compiler.processing.util.runKspTest
+import androidx.room3.compiler.processing.util.runProcessorTest
 import com.squareup.kotlinpoet.TypeVariableName
 import com.squareup.kotlinpoet.UNIT
 import com.squareup.kotlinpoet.javapoet.JClassName

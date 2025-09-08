@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.ksp
+package androidx.room3.compiler.processing.ksp
 
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.compiler.processing.InternalXAnnotationValue
-import androidx.room.compiler.processing.XType
-import androidx.room.compiler.processing.isArray
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.compiler.processing.InternalXAnnotationValue
+import androidx.room3.compiler.processing.XType
+import androidx.room3.compiler.processing.isArray
 import com.google.devtools.ksp.getClassDeclarationByName
 import com.google.devtools.ksp.symbol.ClassKind
 import com.google.devtools.ksp.symbol.KSAnnotation

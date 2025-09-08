@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package androidx.room.processor
+package androidx.room3.processor
 
-import androidx.room.RawQuery
-import androidx.room.Transaction
-import androidx.room.compiler.processing.XMethodElement
-import androidx.room.compiler.processing.XNullability
-import androidx.room.compiler.processing.XType
-import androidx.room.compiler.processing.XVariableElement
-import androidx.room.ext.RoomTypeNames
-import androidx.room.ext.SupportDbTypeNames
-import androidx.room.ext.isEntityElement
-import androidx.room.parser.SqlParser
-import androidx.room.processor.ProcessorErrors.RAW_QUERY_STRING_PARAMETER_REMOVED
-import androidx.room.vo.MapInfo
-import androidx.room.vo.RawQueryFunction
+import androidx.room3.RawQuery
+import androidx.room3.Transaction
+import androidx.room3.compiler.processing.XMethodElement
+import androidx.room3.compiler.processing.XNullability
+import androidx.room3.compiler.processing.XType
+import androidx.room3.compiler.processing.XVariableElement
+import androidx.room3.ext.RoomTypeNames
+import androidx.room3.ext.SupportDbTypeNames
+import androidx.room3.ext.isEntityElement
+import androidx.room3.parser.SqlParser
+import androidx.room3.processor.ProcessorErrors.RAW_QUERY_STRING_PARAMETER_REMOVED
+import androidx.room3.vo.MapInfo
+import androidx.room3.vo.RawQueryFunction
 
 class RawQueryFunctionProcessor(
     baseContext: Context,
@@ -78,7 +78,7 @@ class RawQueryFunctionProcessor(
             delegate.findResultBinder(returnType, query) {
                 @Suppress("DEPRECATION") // Due to MapInfo
                 val annotation =
-                    delegate.executableElement.getAnnotation(androidx.room.MapInfo::class)
+                    delegate.executableElement.getAnnotation(androidx.room3.MapInfo::class)
                 if (annotation != null) {
                     val keyColumn = annotation["keyColumn"]?.asString() ?: ""
                     val valueColumn = annotation["valueColumn"]?.asString() ?: ""

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.room.solver.query.result
+package androidx.room3.solver.query.result
 
-import androidx.room.compiler.codegen.XCodeBlock
+import androidx.room3.compiler.codegen.XCodeBlock
 
 /** helper class to create correct transaction code. */
 interface TransactionWrapper {

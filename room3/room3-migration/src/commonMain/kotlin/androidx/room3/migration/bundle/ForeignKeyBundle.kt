@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.migration.bundle
+package androidx.room3.migration.bundle
 
 import androidx.annotation.RestrictTo
 import kotlinx.serialization.SerialName
@@ -22,7 +22,7 @@ import kotlinx.serialization.Serializable
 
 /**
  * Data class that holds the information about a foreign key reference, i.e.
- * [androidx.room.ForeignKey].
+ * [androidx.room3.ForeignKey].
  */
 @Serializable
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)

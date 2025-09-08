@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.parser
+package androidx.room3.parser
 
 object ParserErrors {
     val ANONYMOUS_BIND_ARGUMENT =

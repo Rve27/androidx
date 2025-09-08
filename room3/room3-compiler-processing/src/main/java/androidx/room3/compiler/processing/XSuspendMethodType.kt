@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing
+package androidx.room3.compiler.processing
 
 interface XSuspendMethodType : XMethodType {
     /** Returns the real suspend function return type as seen by Kotlin. */

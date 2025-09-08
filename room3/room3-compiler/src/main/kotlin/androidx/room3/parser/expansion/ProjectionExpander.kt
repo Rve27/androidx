@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package androidx.room.parser.expansion
+package androidx.room3.parser.expansion
 
 import androidx.annotation.VisibleForTesting
-import androidx.room.parser.ParsedQuery
-import androidx.room.parser.SqlParser
-import androidx.room.processor.QueryRewriter
-import androidx.room.solver.query.result.DataClassRowAdapter
-import androidx.room.solver.query.result.QueryResultAdapter
-import androidx.room.verifier.QueryResultInfo
-import androidx.room.vo.DataClass
-import androidx.room.vo.EmbeddedProperty
-import androidx.room.vo.Entity
-import androidx.room.vo.EntityOrView
-import androidx.room.vo.Property
-import androidx.room.vo.columnNames
+import androidx.room3.parser.ParsedQuery
+import androidx.room3.parser.SqlParser
+import androidx.room3.processor.QueryRewriter
+import androidx.room3.solver.query.result.DataClassRowAdapter
+import androidx.room3.solver.query.result.QueryResultAdapter
+import androidx.room3.verifier.QueryResultInfo
+import androidx.room3.vo.DataClass
+import androidx.room3.vo.EmbeddedProperty
+import androidx.room3.vo.Entity
+import androidx.room3.vo.EntityOrView
+import androidx.room3.vo.Property
+import androidx.room3.vo.columnNames
 import java.util.Locale
 
 /**

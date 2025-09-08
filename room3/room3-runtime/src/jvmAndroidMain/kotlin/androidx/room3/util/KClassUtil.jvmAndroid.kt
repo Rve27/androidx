@@ -17,7 +17,7 @@
 @file:JvmName("KClassUtil")
 @file:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) // used in generated code
 
-package androidx.room.util
+package androidx.room3.util
 
 import androidx.annotation.RestrictTo
 

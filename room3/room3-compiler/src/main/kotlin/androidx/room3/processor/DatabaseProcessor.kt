@@ -14,32 +14,32 @@
  * limitations under the License.
  */
 
-package androidx.room.processor
+package androidx.room3.processor
 
-import androidx.room.SkipQueryVerification
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.compiler.processing.XAnnotation
-import androidx.room.compiler.processing.XElement
-import androidx.room.compiler.processing.XTypeElement
-import androidx.room.ext.RoomTypeNames
-import androidx.room.migration.bundle.DatabaseBundle
-import androidx.room.migration.bundle.SchemaBundle
-import androidx.room.processor.ProcessorErrors.AUTO_MIGRATION_FOUND_BUT_EXPORT_SCHEMA_OFF
-import androidx.room.processor.ProcessorErrors.AUTO_MIGRATION_SCHEMA_IN_FOLDER_NULL
-import androidx.room.processor.ProcessorErrors.invalidAutoMigrationSchema
-import androidx.room.util.SchemaFileResolver
-import androidx.room.verifier.DatabaseVerificationErrors
-import androidx.room.verifier.DatabaseVerifier
-import androidx.room.vo.Dao
-import androidx.room.vo.DaoFunction
-import androidx.room.vo.Database
-import androidx.room.vo.DatabaseConstructor
-import androidx.room.vo.DatabaseView
-import androidx.room.vo.Entity
-import androidx.room.vo.FtsEntity
-import androidx.room.vo.Warning
-import androidx.room.vo.columnNames
-import androidx.room.vo.findPropertyByColumnName
+import androidx.room3.SkipQueryVerification
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.compiler.processing.XAnnotation
+import androidx.room3.compiler.processing.XElement
+import androidx.room3.compiler.processing.XTypeElement
+import androidx.room3.ext.RoomTypeNames
+import androidx.room3.migration.bundle.DatabaseBundle
+import androidx.room3.migration.bundle.SchemaBundle
+import androidx.room3.processor.ProcessorErrors.AUTO_MIGRATION_FOUND_BUT_EXPORT_SCHEMA_OFF
+import androidx.room3.processor.ProcessorErrors.AUTO_MIGRATION_SCHEMA_IN_FOLDER_NULL
+import androidx.room3.processor.ProcessorErrors.invalidAutoMigrationSchema
+import androidx.room3.util.SchemaFileResolver
+import androidx.room3.verifier.DatabaseVerificationErrors
+import androidx.room3.verifier.DatabaseVerifier
+import androidx.room3.vo.Dao
+import androidx.room3.vo.DaoFunction
+import androidx.room3.vo.Database
+import androidx.room3.vo.DatabaseConstructor
+import androidx.room3.vo.DatabaseView
+import androidx.room3.vo.Entity
+import androidx.room3.vo.FtsEntity
+import androidx.room3.vo.Warning
+import androidx.room3.vo.columnNames
+import androidx.room3.vo.findPropertyByColumnName
 import java.io.FileNotFoundException
 import java.io.IOException
 import java.nio.file.Path
@@ -61,7 +61,7 @@ class DatabaseProcessor(baseContext: Context, val element: XTypeElement) {
     }
 
     private fun doProcess(): Database {
-        val dbAnnotation = element.requireAnnotation(androidx.room.Database::class)
+        val dbAnnotation = element.requireAnnotation(androidx.room3.Database::class)
 
         val entities = processEntities(dbAnnotation, element)
         val viewsMap = processDatabaseViews(dbAnnotation)
@@ -158,7 +158,7 @@ class DatabaseProcessor(baseContext: Context, val element: XTypeElement) {
         element: XTypeElement,
         dbAnnotation: XAnnotation,
         latestDbSchema: DatabaseBundle,
-    ): List<androidx.room.vo.AutoMigration> {
+    ): List<androidx.room3.vo.AutoMigration> {
         val autoMigrationList = dbAnnotation["autoMigrations"]?.asAnnotationList() ?: emptyList()
         if (autoMigrationList.isEmpty()) {
             return emptyList()
@@ -537,7 +537,7 @@ class DatabaseProcessor(baseContext: Context, val element: XTypeElement) {
     }
 
     private fun processConstructorObject(element: XTypeElement): DatabaseConstructor? {
-        val annotation = element.getAnnotation(androidx.room.ConstructedBy::class)
+        val annotation = element.getAnnotation(androidx.room3.ConstructedBy::class)
         if (annotation == null) {
             // If no @ConstructedBy is present then validate target is JVM (including Android)
             // since reflection is available in those platforms and a database constructor is not

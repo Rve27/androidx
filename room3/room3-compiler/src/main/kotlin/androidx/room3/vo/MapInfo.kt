@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.vo
+package androidx.room3.vo
 
 /**
  * Represents the @MapInfo input of a @Query or @RawQuery function that has a return type of map or

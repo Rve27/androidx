@@ -17,13 +17,13 @@
 @file:JvmMultifileClass
 @file:JvmName("RoomDatabaseKt")
 
-package androidx.room
+package androidx.room3
 
 import androidx.annotation.RestrictTo
-import androidx.room.concurrent.CloseBarrier
-import androidx.room.migration.AutoMigrationSpec
-import androidx.room.migration.Migration
-import androidx.room.util.contains as containsCommon
+import androidx.room3.concurrent.CloseBarrier
+import androidx.room3.migration.AutoMigrationSpec
+import androidx.room3.migration.Migration
+import androidx.room3.util.contains as containsCommon
 import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.SQLiteDriver
 import kotlin.coroutines.ContinuationInterceptor

@@ -14,28 +14,28 @@
  * limitations under the License.
  */
 
-package androidx.room.writer
+package androidx.room3.writer
 
-import androidx.room.compiler.codegen.CodeLanguage
-import androidx.room.compiler.codegen.XCodeBlock
-import androidx.room.compiler.codegen.XCodeBlock.Builder.Companion.applyTo
-import androidx.room.compiler.codegen.XFunSpec
-import androidx.room.compiler.codegen.XMemberName.Companion.packageMember
-import androidx.room.compiler.codegen.XName
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.ext.CollectionTypeNames
-import androidx.room.ext.CollectionsSizeExprCode
-import androidx.room.ext.CommonTypeNames
-import androidx.room.ext.InvokeWithLambdaParameter
-import androidx.room.ext.KotlinTypeNames
-import androidx.room.ext.LambdaSpec
-import androidx.room.ext.MapKeySetExprCode
-import androidx.room.ext.RoomTypeNames
-import androidx.room.ext.RoomTypeNames.RELATION_UTIL
-import androidx.room.ext.SQLiteDriverTypeNames
-import androidx.room.ext.stripNonJava
-import androidx.room.solver.CodeGenScope
-import androidx.room.vo.RelationCollector
+import androidx.room3.compiler.codegen.CodeLanguage
+import androidx.room3.compiler.codegen.XCodeBlock
+import androidx.room3.compiler.codegen.XCodeBlock.Builder.Companion.applyTo
+import androidx.room3.compiler.codegen.XFunSpec
+import androidx.room3.compiler.codegen.XMemberName.Companion.packageMember
+import androidx.room3.compiler.codegen.XName
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.ext.CollectionTypeNames
+import androidx.room3.ext.CollectionsSizeExprCode
+import androidx.room3.ext.CommonTypeNames
+import androidx.room3.ext.InvokeWithLambdaParameter
+import androidx.room3.ext.KotlinTypeNames
+import androidx.room3.ext.LambdaSpec
+import androidx.room3.ext.MapKeySetExprCode
+import androidx.room3.ext.RoomTypeNames
+import androidx.room3.ext.RoomTypeNames.RELATION_UTIL
+import androidx.room3.ext.SQLiteDriverTypeNames
+import androidx.room3.ext.stripNonJava
+import androidx.room3.solver.CodeGenScope
+import androidx.room3.vo.RelationCollector
 
 /** Writes the function that fetches the relations of a POJO and assigns them into the given map. */
 class RelationCollectorFunctionWriter(private val collector: RelationCollector) :

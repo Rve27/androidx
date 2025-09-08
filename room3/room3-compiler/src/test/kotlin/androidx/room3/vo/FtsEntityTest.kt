@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package androidx.room.vo
+package androidx.room3.vo
 
-import androidx.room.compiler.processing.XElement
-import androidx.room.compiler.processing.XType
-import androidx.room.compiler.processing.XTypeElement
-import androidx.room.parser.FtsVersion
+import androidx.room3.compiler.processing.XElement
+import androidx.room3.compiler.processing.XType
+import androidx.room3.compiler.processing.XTypeElement
+import androidx.room3.parser.FtsVersion
 import mockElementAndType
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
@@ -63,14 +63,14 @@ class FtsEntityTest {
                 ftsVersion = FtsVersion.FTS4,
                 ftsOptions =
                     FtsOptions(
-                        tokenizer = androidx.room.FtsOptions.TOKENIZER_PORTER,
+                        tokenizer = androidx.room3.FtsOptions.TOKENIZER_PORTER,
                         tokenizerArgs = emptyList(),
                         contentEntity = null,
                         languageIdColumnName = "lid",
-                        matchInfo = androidx.room.FtsOptions.MatchInfo.FTS3,
+                        matchInfo = androidx.room3.FtsOptions.MatchInfo.FTS3,
                         notIndexedColumns = listOf("dontIndexMe1", "dontIndexMe2"),
                         prefixSizes = listOf(2, 4),
-                        preferredOrder = androidx.room.FtsOptions.Order.DESC,
+                        preferredOrder = androidx.room3.FtsOptions.Order.DESC,
                     ),
             )
 
@@ -115,14 +115,14 @@ class FtsEntityTest {
                 ftsVersion = FtsVersion.FTS4,
                 ftsOptions =
                     FtsOptions(
-                        tokenizer = androidx.room.FtsOptions.TOKENIZER_SIMPLE,
+                        tokenizer = androidx.room3.FtsOptions.TOKENIZER_SIMPLE,
                         tokenizerArgs = listOf("tokenchars=.=", "separators=X"),
                         contentEntity = null,
                         languageIdColumnName = "",
-                        matchInfo = androidx.room.FtsOptions.MatchInfo.FTS4,
+                        matchInfo = androidx.room3.FtsOptions.MatchInfo.FTS4,
                         notIndexedColumns = emptyList(),
                         prefixSizes = emptyList(),
-                        preferredOrder = androidx.room.FtsOptions.Order.ASC,
+                        preferredOrder = androidx.room3.FtsOptions.Order.ASC,
                     ),
             )
 
@@ -159,14 +159,14 @@ class FtsEntityTest {
                 ftsVersion = FtsVersion.FTS4,
                 ftsOptions =
                     FtsOptions(
-                        tokenizer = androidx.room.FtsOptions.TOKENIZER_SIMPLE,
+                        tokenizer = androidx.room3.FtsOptions.TOKENIZER_SIMPLE,
                         tokenizerArgs = emptyList(),
                         contentEntity = null,
                         languageIdColumnName = "",
-                        matchInfo = androidx.room.FtsOptions.MatchInfo.FTS4,
+                        matchInfo = androidx.room3.FtsOptions.MatchInfo.FTS4,
                         notIndexedColumns = emptyList(),
                         prefixSizes = emptyList(),
-                        preferredOrder = androidx.room.FtsOptions.Order.ASC,
+                        preferredOrder = androidx.room3.FtsOptions.Order.ASC,
                     ),
             )
 
@@ -198,14 +198,14 @@ class FtsEntityTest {
                 ftsVersion = FtsVersion.FTS4,
                 ftsOptions =
                     FtsOptions(
-                        tokenizer = androidx.room.FtsOptions.TOKENIZER_PORTER,
+                        tokenizer = androidx.room3.FtsOptions.TOKENIZER_PORTER,
                         tokenizerArgs = listOf("tokenchars=.=", "separators=X"),
                         contentEntity = null,
                         languageIdColumnName = "",
-                        matchInfo = androidx.room.FtsOptions.MatchInfo.FTS4,
+                        matchInfo = androidx.room3.FtsOptions.MatchInfo.FTS4,
                         notIndexedColumns = emptyList(),
                         prefixSizes = emptyList(),
-                        preferredOrder = androidx.room.FtsOptions.Order.ASC,
+                        preferredOrder = androidx.room3.FtsOptions.Order.ASC,
                     ),
             )
 
@@ -242,14 +242,14 @@ class FtsEntityTest {
                 ftsVersion = FtsVersion.FTS4,
                 ftsOptions =
                     FtsOptions(
-                        tokenizer = androidx.room.FtsOptions.TOKENIZER_PORTER,
+                        tokenizer = androidx.room3.FtsOptions.TOKENIZER_PORTER,
                         tokenizerArgs = emptyList(),
                         contentEntity = null,
                         languageIdColumnName = "",
-                        matchInfo = androidx.room.FtsOptions.MatchInfo.FTS4,
+                        matchInfo = androidx.room3.FtsOptions.MatchInfo.FTS4,
                         notIndexedColumns = emptyList(),
                         prefixSizes = emptyList(),
-                        preferredOrder = androidx.room.FtsOptions.Order.ASC,
+                        preferredOrder = androidx.room3.FtsOptions.Order.ASC,
                     ),
             )
 

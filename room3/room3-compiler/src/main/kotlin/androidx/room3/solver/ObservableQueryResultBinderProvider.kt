@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package androidx.room.solver
+package androidx.room3.solver
 
-import androidx.room.compiler.processing.XType
-import androidx.room.parser.ParsedQuery
-import androidx.room.processor.Context
-import androidx.room.processor.ProcessorErrors
-import androidx.room.solver.query.result.QueryResultAdapter
-import androidx.room.solver.query.result.QueryResultBinder
+import androidx.room3.compiler.processing.XType
+import androidx.room3.parser.ParsedQuery
+import androidx.room3.processor.Context
+import androidx.room3.processor.ProcessorErrors
+import androidx.room3.solver.query.result.QueryResultAdapter
+import androidx.room3.solver.query.result.QueryResultBinder
 
 /** Binder provider class that has common functionality for observables. */
 abstract class ObservableQueryResultBinderProvider(val context: Context) :

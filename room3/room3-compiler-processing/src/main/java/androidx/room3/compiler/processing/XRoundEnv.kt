@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing
+package androidx.room3.compiler.processing
 
-import androidx.room.compiler.processing.javac.JavacProcessingEnv
-import androidx.room.compiler.processing.javac.JavacRoundEnv
-import androidx.room.compiler.processing.ksp.KspProcessingEnv
-import androidx.room.compiler.processing.ksp.KspRoundEnv
+import androidx.room3.compiler.processing.javac.JavacProcessingEnv
+import androidx.room3.compiler.processing.javac.JavacRoundEnv
+import androidx.room3.compiler.processing.ksp.KspProcessingEnv
+import androidx.room3.compiler.processing.ksp.KspRoundEnv
 import javax.annotation.processing.RoundEnvironment
 import kotlin.reflect.KClass
 

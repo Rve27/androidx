@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package androidx.room.benchmark
+package androidx.room3.benchmark
 
 import androidx.benchmark.junit4.BenchmarkRule
 import androidx.benchmark.junit4.measureRepeated
-import androidx.room.benchmark.RoomDriverBenchmark.Companion.UseDriver
+import androidx.room3.benchmark.RoomDriverBenchmark.Companion.UseDriver
 import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.driver.AndroidSQLiteDriver
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver

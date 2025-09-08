@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package androidx.room.vo
+package androidx.room3.vo
 
-import androidx.room.compiler.processing.XMethodElement
-import androidx.room.compiler.processing.XType
-import androidx.room.solver.transaction.binder.TransactionFunctionBinder
+import androidx.room3.compiler.processing.XMethodElement
+import androidx.room3.compiler.processing.XType
+import androidx.room3.solver.transaction.binder.TransactionFunctionBinder
 
 class TransactionFunction(
     val element: XMethodElement,

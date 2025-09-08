@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.testapp.dao;
+package androidx.room3.integration.testapp.dao;
 
 import androidx.lifecycle.LiveData;
-import androidx.room.Dao;
-import androidx.room.Query;
-import androidx.room.RoomWarnings;
-import androidx.room.integration.testapp.vo.PetsToys;
+import androidx.room3.Dao;
+import androidx.room3.Query;
+import androidx.room3.RoomWarnings;
+import androidx.room3.integration.testapp.vo.PetsToys;
 
 @Dao
 public interface SpecificDogDao {

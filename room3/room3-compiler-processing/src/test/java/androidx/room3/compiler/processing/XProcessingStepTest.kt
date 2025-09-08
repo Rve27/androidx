@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing
+package androidx.room3.compiler.processing
 
 import androidx.kruth.assertThat
-import androidx.room.compiler.processing.javac.JavacBasicAnnotationProcessor
-import androidx.room.compiler.processing.ksp.KspBasicAnnotationProcessor
-import androidx.room.compiler.processing.ksp.KspElement
-import androidx.room.compiler.processing.testcode.AnywhereAnnotation
-import androidx.room.compiler.processing.testcode.MainAnnotation
-import androidx.room.compiler.processing.testcode.OtherAnnotation
-import androidx.room.compiler.processing.testcode.SingleTypeValueAnnotation
-import androidx.room.compiler.processing.util.CompilationTestCapabilities
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.asJClassName
-import androidx.room.compiler.processing.util.compiler.TestCompilationArguments
-import androidx.room.compiler.processing.util.compiler.compile
-import androidx.room.compiler.processing.util.runProcessorTest
+import androidx.room3.compiler.processing.javac.JavacBasicAnnotationProcessor
+import androidx.room3.compiler.processing.ksp.KspBasicAnnotationProcessor
+import androidx.room3.compiler.processing.ksp.KspElement
+import androidx.room3.compiler.processing.testcode.AnywhereAnnotation
+import androidx.room3.compiler.processing.testcode.MainAnnotation
+import androidx.room3.compiler.processing.testcode.OtherAnnotation
+import androidx.room3.compiler.processing.testcode.SingleTypeValueAnnotation
+import androidx.room3.compiler.processing.util.CompilationTestCapabilities
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.asJClassName
+import androidx.room3.compiler.processing.util.compiler.TestCompilationArguments
+import androidx.room3.compiler.processing.util.compiler.compile
+import androidx.room3.compiler.processing.util.runProcessorTest
 import com.google.common.truth.Truth.assertAbout
 import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
@@ -89,7 +89,7 @@ class XProcessingStepTest {
                 "foo.bar.Main",
                 """
             package foo.bar;
-            import androidx.room.compiler.processing.testcode.*;
+            import androidx.room3.compiler.processing.testcode.*;
             @MainAnnotation(
                 typeList = {},
                 singleType = Object.class,
@@ -106,7 +106,7 @@ class XProcessingStepTest {
                 "foo.bar.Other",
                 """
             package foo.bar;
-            import androidx.room.compiler.processing.testcode.*;
+            import androidx.room3.compiler.processing.testcode.*;
             @OtherAnnotation("x")
             class Other {
             }
@@ -176,7 +176,7 @@ class XProcessingStepTest {
                 "foo.bar.Main",
                 """
             package foo.bar;
-            import androidx.room.compiler.processing.testcode.*;
+            import androidx.room3.compiler.processing.testcode.*;
             @MainAnnotation(
                 typeList = {},
                 singleType = Object.class,
@@ -252,7 +252,7 @@ class XProcessingStepTest {
                 "foo.bar.Main",
                 """
             package foo.bar;
-            import androidx.room.compiler.processing.testcode.*;
+            import androidx.room3.compiler.processing.testcode.*;
             @MainAnnotation(
                 typeList = {},
                 singleType = Object.class,
@@ -294,7 +294,7 @@ class XProcessingStepTest {
                 "foo.bar.Main",
                 """
             package foo.bar;
-            import androidx.room.compiler.processing.testcode.*;
+            import androidx.room3.compiler.processing.testcode.*;
             @MainAnnotation(
                 typeList = {},
                 singleType = Object.class,
@@ -379,7 +379,7 @@ class XProcessingStepTest {
                 "foo.bar.Main",
                 """
             package foo.bar;
-            import androidx.room.compiler.processing.testcode.*;
+            import androidx.room3.compiler.processing.testcode.*;
             @MainAnnotation(
                 typeList = {},
                 singleType = Object.class,
@@ -473,7 +473,7 @@ class XProcessingStepTest {
                 "foo.bar.Main",
                 """
             package foo.bar;
-            import androidx.room.compiler.processing.testcode.*;
+            import androidx.room3.compiler.processing.testcode.*;
             @MainAnnotation(
                 typeList = {},
                 singleType = Object.class,
@@ -489,7 +489,7 @@ class XProcessingStepTest {
                 "foo.bar.Other",
                 """
             package foo.bar;
-            import androidx.room.compiler.processing.testcode.*;
+            import androidx.room3.compiler.processing.testcode.*;
             @OtherAnnotation("x")
             class Other {
             }
@@ -569,7 +569,7 @@ class XProcessingStepTest {
                 "foo.bar.Other",
                 """
             package foo.bar;
-            import androidx.room.compiler.processing.testcode.*;
+            import androidx.room3.compiler.processing.testcode.*;
             @OtherAnnotation("y")
             class Other {
             }
@@ -626,7 +626,7 @@ class XProcessingStepTest {
                 "Other.kt",
                 """
             package foo.bar
-            import androidx.room.compiler.processing.testcode.*
+            import androidx.room3.compiler.processing.testcode.*
             @OtherAnnotation("y")
             class Other {
             }
@@ -668,7 +668,7 @@ class XProcessingStepTest {
                 "foo.bar.Main",
                 """
             package foo.bar;
-            import androidx.room.compiler.processing.testcode.*;
+            import androidx.room3.compiler.processing.testcode.*;
             @MainAnnotation(
                 typeList = {},
                 singleType = Object.class,
@@ -685,7 +685,7 @@ class XProcessingStepTest {
                 "foo.bar.Other",
                 """
             package foo.bar;
-            import androidx.room.compiler.processing.testcode.*;
+            import androidx.room3.compiler.processing.testcode.*;
             @OtherAnnotation("x")
             class Other {
             }
@@ -751,7 +751,7 @@ class XProcessingStepTest {
                 "foo.bar.Main",
                 """
             package foo.bar;
-            import androidx.room.compiler.processing.testcode.*;
+            import androidx.room3.compiler.processing.testcode.*;
             @MainAnnotation(
                 typeList = {},
                 singleType = Object.class,
@@ -864,7 +864,7 @@ class XProcessingStepTest {
                 "foo.bar.Main",
                 """
             package foo.bar;
-            import androidx.room.compiler.processing.testcode.*;
+            import androidx.room3.compiler.processing.testcode.*;
             @MainAnnotation(
                 typeList = {},
                 singleType = AnotherSource.class,
@@ -880,7 +880,7 @@ class XProcessingStepTest {
                 "foo.bar.AnotherSource",
                 """
             package foo.bar;
-            import androidx.room.compiler.processing.testcode.*;
+            import androidx.room3.compiler.processing.testcode.*;
             @SingleTypeValueAnnotation(GeneratedType.class)
             class AnotherSource { }
             """
@@ -952,7 +952,7 @@ class XProcessingStepTest {
                 "foo.bar.Main",
                 """
             package foo.bar;
-            import androidx.room.compiler.processing.testcode.*;
+            import androidx.room3.compiler.processing.testcode.*;
             @MainAnnotation(
                 typeList = {},
                 singleType = Object.class,
@@ -1015,7 +1015,7 @@ class XProcessingStepTest {
                 "Classes.kt",
                 """
             package foo.bar
-            import androidx.room.compiler.processing.testcode.*
+            import androidx.room3.compiler.processing.testcode.*
             @MainAnnotation(
                 typeList = [],
                 singleType = Any::class,
@@ -1078,7 +1078,7 @@ class XProcessingStepTest {
                 "Classes.kt",
                 """
             package foo.bar
-            import androidx.room.compiler.processing.testcode.*
+            import androidx.room3.compiler.processing.testcode.*
             @MainAnnotation(
                 typeList = [],
                 singleType = Any::class,
@@ -1160,7 +1160,7 @@ class XProcessingStepTest {
                 "Classes.kt",
                 """
             package foo.bar
-            import androidx.room.compiler.processing.testcode.*
+            import androidx.room3.compiler.processing.testcode.*
             @MainAnnotation(
                 typeList = [],
                 singleType = Any::class,
@@ -1280,7 +1280,7 @@ class XProcessingStepTest {
                 "Classes.kt",
                 """
             package foo.bar
-            import androidx.room.compiler.processing.testcode.*
+            import androidx.room3.compiler.processing.testcode.*
             @MainAnnotation(
                 typeList = [],
                 singleType = Any::class,
@@ -1351,7 +1351,7 @@ class XProcessingStepTest {
                 "Main.kt",
                 """
             package foo.bar
-            import androidx.room.compiler.processing.testcode.*
+            import androidx.room3.compiler.processing.testcode.*
             class Main {
                 @AnywhereAnnotation fun mainMethod() {}
                 class InnerMain {
@@ -1366,7 +1366,7 @@ class XProcessingStepTest {
                 "Extra.kt",
                 """
             package foo.bar
-            import androidx.room.compiler.processing.testcode.*
+            import androidx.room3.compiler.processing.testcode.*
             class Extra {
                 fun mainMethod(@AnywhereAnnotation param: String) {}
             }
@@ -1478,7 +1478,7 @@ class XProcessingStepTest {
                 "foo.bar.Other",
                 """
             package foo.bar;
-            import androidx.room.compiler.processing.testcode.*;
+            import androidx.room3.compiler.processing.testcode.*;
             @OtherAnnotation("y")
             class Other extends ToBeGenerated {
             }
@@ -1544,7 +1544,7 @@ class XProcessingStepTest {
                 "Other.kt",
                 """
             package foo.bar
-            import androidx.room.compiler.processing.testcode.*
+            import androidx.room3.compiler.processing.testcode.*
             @OtherAnnotation("y")
             internal class Other : ToBeGenerated() {
             }
@@ -1574,7 +1574,7 @@ class XProcessingStepTest {
                     "foo.bar.Main",
                     """
             package foo.bar;
-            import androidx.room.compiler.processing.testcode.*;
+            import androidx.room3.compiler.processing.testcode.*;
             public class Main {
                 @AnywhereAnnotation void mainMethod() {}
                 static class InnerMain {
@@ -1590,7 +1590,7 @@ class XProcessingStepTest {
                     "foo.bar.Extra",
                     """
             package foo.bar;
-            import androidx.room.compiler.processing.testcode.*;
+            import androidx.room3.compiler.processing.testcode.*;
             public class Extra {
                 void mainMethod(@AnywhereAnnotation String param) {}
             }

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.room.verifier
+package androidx.room3.verifier
 
-import androidx.room.parser.SQLTypeAffinity
+import androidx.room3.parser.SQLTypeAffinity
 
 /** Represents a column in a query response */
 data class ColumnInfo(val name: String, val type: SQLTypeAffinity, val originTable: String?)

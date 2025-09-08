@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.codegen
+package androidx.room3.compiler.codegen
 
-import androidx.room.compiler.codegen.impl.XParameterSpecImpl
-import androidx.room.compiler.codegen.java.JavaParameterSpec
-import androidx.room.compiler.codegen.java.NONNULL_ANNOTATION
-import androidx.room.compiler.codegen.java.NULLABLE_ANNOTATION
-import androidx.room.compiler.codegen.kotlin.KotlinParameterSpec
-import androidx.room.compiler.processing.XNullability
+import androidx.room3.compiler.codegen.impl.XParameterSpecImpl
+import androidx.room3.compiler.codegen.java.JavaParameterSpec
+import androidx.room3.compiler.codegen.java.NONNULL_ANNOTATION
+import androidx.room3.compiler.codegen.java.NULLABLE_ANNOTATION
+import androidx.room3.compiler.codegen.kotlin.KotlinParameterSpec
+import androidx.room3.compiler.processing.XNullability
 
 interface XParameterSpec {
     val name: String

@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing
+package androidx.room3.compiler.processing
 
-import androidx.room.compiler.codegen.JArrayTypeName
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.compiler.processing.javac.JavacProcessingEnv
-import androidx.room.compiler.processing.ksp.KspProcessingEnv
+import androidx.room3.compiler.codegen.JArrayTypeName
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.compiler.processing.javac.JavacProcessingEnv
+import androidx.room3.compiler.processing.ksp.KspProcessingEnv
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.squareup.kotlinpoet.javapoet.JClassName

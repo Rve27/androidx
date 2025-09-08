@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package androidx.room.paging
+package androidx.room3.paging
 
 import android.database.Cursor
 import androidx.annotation.RestrictTo
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import androidx.room.RoomDatabase
-import androidx.room.RoomRawQuery
-import androidx.room.RoomSQLiteQuery
-import androidx.room.paging.CommonLimitOffsetImpl.Companion.BUG_LINK
-import androidx.room.paging.util.getClippedRefreshKey
-import androidx.room.util.performSuspending
+import androidx.room3.RoomDatabase
+import androidx.room3.RoomRawQuery
+import androidx.room3.RoomSQLiteQuery
+import androidx.room3.paging.CommonLimitOffsetImpl.Companion.BUG_LINK
+import androidx.room3.paging.util.getClippedRefreshKey
+import androidx.room3.util.performSuspending
 import androidx.sqlite.db.SupportSQLiteQuery
 
 /**

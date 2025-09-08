@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.testapp.dao;
+package androidx.room3.integration.testapp.dao;
 
-import static androidx.room.integration.testapp.vo.FunnyNamedEntity.COLUMN_ID;
-import static androidx.room.integration.testapp.vo.FunnyNamedEntity.TABLE_NAME;
+import static androidx.room3.integration.testapp.vo.FunnyNamedEntity.COLUMN_ID;
+import static androidx.room3.integration.testapp.vo.FunnyNamedEntity.TABLE_NAME;
 
 import androidx.lifecycle.LiveData;
-import androidx.room.Dao;
-import androidx.room.Delete;
-import androidx.room.Insert;
-import androidx.room.Query;
-import androidx.room.Update;
-import androidx.room.integration.testapp.vo.FunnyNamedEntity;
+import androidx.room3.Dao;
+import androidx.room3.Delete;
+import androidx.room3.Insert;
+import androidx.room3.Query;
+import androidx.room3.Update;
+import androidx.room3.integration.testapp.vo.FunnyNamedEntity;
 
 import java.util.List;
 

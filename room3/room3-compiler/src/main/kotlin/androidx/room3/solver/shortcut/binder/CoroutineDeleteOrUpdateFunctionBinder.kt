@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package androidx.room.solver.shortcut.binder
+package androidx.room3.solver.shortcut.binder
 
-import androidx.room.compiler.codegen.XCodeBlock
-import androidx.room.compiler.codegen.XPropertySpec
-import androidx.room.compiler.codegen.XTypeSpec
-import androidx.room.compiler.codegen.box
-import androidx.room.compiler.processing.XType
-import androidx.room.ext.InvokeWithLambdaParameter
-import androidx.room.ext.LambdaSpec
-import androidx.room.ext.RoomMemberNames.DB_UTIL_PERFORM_SUSPENDING
-import androidx.room.ext.SQLiteDriverTypeNames
-import androidx.room.solver.CodeGenScope
-import androidx.room.solver.shortcut.result.DeleteOrUpdateFunctionAdapter
-import androidx.room.vo.ShortcutQueryParameter
+import androidx.room3.compiler.codegen.XCodeBlock
+import androidx.room3.compiler.codegen.XPropertySpec
+import androidx.room3.compiler.codegen.XTypeSpec
+import androidx.room3.compiler.codegen.box
+import androidx.room3.compiler.processing.XType
+import androidx.room3.ext.InvokeWithLambdaParameter
+import androidx.room3.ext.LambdaSpec
+import androidx.room3.ext.RoomMemberNames.DB_UTIL_PERFORM_SUSPENDING
+import androidx.room3.ext.SQLiteDriverTypeNames
+import androidx.room3.solver.CodeGenScope
+import androidx.room3.solver.shortcut.result.DeleteOrUpdateFunctionAdapter
+import androidx.room3.vo.ShortcutQueryParameter
 
 /** Binder for suspending delete and update methods. */
 class CoroutineDeleteOrUpdateFunctionBinder(

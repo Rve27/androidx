@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.testapp.test;
+package androidx.room3.integration.testapp.test;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import android.content.Context;
 
-import androidx.room.Room;
-import androidx.room.integration.testapp.TestDatabase;
-import androidx.room.integration.testapp.dao.UserDao;
-import androidx.room.integration.testapp.database.ProductDao;
-import androidx.room.integration.testapp.database.Review;
-import androidx.room.integration.testapp.database.SampleDatabase;
-import androidx.room.integration.testapp.vo.AvgWeightByAge;
-import androidx.room.integration.testapp.vo.User;
+import androidx.room3.Room;
+import androidx.room3.integration.testapp.TestDatabase;
+import androidx.room3.integration.testapp.dao.UserDao;
+import androidx.room3.integration.testapp.database.ProductDao;
+import androidx.room3.integration.testapp.database.Review;
+import androidx.room3.integration.testapp.database.SampleDatabase;
+import androidx.room3.integration.testapp.vo.AvgWeightByAge;
+import androidx.room3.integration.testapp.vo.User;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;

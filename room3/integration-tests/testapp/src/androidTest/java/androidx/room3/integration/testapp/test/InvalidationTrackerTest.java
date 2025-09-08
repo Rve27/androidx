@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.testapp.test;
+package androidx.room3.integration.testapp.test;
 
-import static androidx.room.integration.testapp.test.TestUtil.forceGc;
+import static androidx.room3.integration.testapp.test.TestUtil.forceGc;
 
 import static junit.framework.TestCase.assertFalse;
 
@@ -32,16 +32,16 @@ import androidx.arch.core.executor.testing.CountingTaskExecutorRule;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.testing.TestLifecycleOwner;
-import androidx.room.Dao;
-import androidx.room.Database;
-import androidx.room.Entity;
-import androidx.room.Insert;
-import androidx.room.InvalidationTracker;
-import androidx.room.OnConflictStrategy;
-import androidx.room.PrimaryKey;
-import androidx.room.Query;
-import androidx.room.Room;
-import androidx.room.RoomDatabase;
+import androidx.room3.Dao;
+import androidx.room3.Database;
+import androidx.room3.Entity;
+import androidx.room3.Insert;
+import androidx.room3.InvalidationTracker;
+import androidx.room3.OnConflictStrategy;
+import androidx.room3.PrimaryKey;
+import androidx.room3.Query;
+import androidx.room3.Room;
+import androidx.room3.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;

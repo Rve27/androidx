@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.multiplatformtestapp.test
+package androidx.room3.integration.multiplatformtestapp.test
 
-import androidx.room.Room
-import androidx.room.RoomDatabase
-import androidx.room.testing.MigrationTestHelper
+import androidx.room3.Room
+import androidx.room3.RoomDatabase
+import androidx.room3.testing.MigrationTestHelper
 import androidx.sqlite.SQLiteDriver
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import kotlin.io.path.Path

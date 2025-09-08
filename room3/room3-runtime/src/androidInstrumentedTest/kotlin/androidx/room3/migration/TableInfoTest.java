@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.room.migration;
+package androidx.room3.migration;
 
-import static androidx.room.util.TableInfo.Column.defaultValueEquals;
+import static androidx.room3.util.TableInfo.Column.defaultValueEquals;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -31,7 +31,7 @@ import static java.util.Collections.singletonList;
 
 import android.util.Pair;
 
-import androidx.room.util.TableInfo;
+import androidx.room3.util.TableInfo;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 import androidx.sqlite.db.SupportSQLiteOpenHelper;
 import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory;

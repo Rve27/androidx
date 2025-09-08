@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.coroutines
+package androidx.room3.coroutines
 
 import kotlin.coroutines.ContinuationInterceptor
 import kotlinx.coroutines.CompletableDeferred

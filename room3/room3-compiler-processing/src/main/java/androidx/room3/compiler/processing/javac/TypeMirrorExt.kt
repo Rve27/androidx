@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.javac
+package androidx.room3.compiler.processing.javac
 
 import javax.lang.model.type.TypeMirror
 import javax.lang.model.type.WildcardType

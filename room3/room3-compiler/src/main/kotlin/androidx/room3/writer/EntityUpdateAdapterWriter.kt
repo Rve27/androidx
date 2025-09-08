@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package androidx.room.writer
+package androidx.room3.writer
 
-import androidx.room.compiler.codegen.VisibilityModifier
-import androidx.room.compiler.codegen.XFunSpec
-import androidx.room.compiler.codegen.XTypeSpec
-import androidx.room.ext.CommonTypeNames
-import androidx.room.ext.RoomTypeNames
-import androidx.room.ext.SQLiteDriverTypeNames
-import androidx.room.solver.CodeGenScope
-import androidx.room.vo.DataClass
-import androidx.room.vo.Properties
-import androidx.room.vo.PropertyWithIndex
-import androidx.room.vo.ShortcutEntity
-import androidx.room.vo.columnNames
+import androidx.room3.compiler.codegen.VisibilityModifier
+import androidx.room3.compiler.codegen.XFunSpec
+import androidx.room3.compiler.codegen.XTypeSpec
+import androidx.room3.ext.CommonTypeNames
+import androidx.room3.ext.RoomTypeNames
+import androidx.room3.ext.SQLiteDriverTypeNames
+import androidx.room3.solver.CodeGenScope
+import androidx.room3.vo.DataClass
+import androidx.room3.vo.Properties
+import androidx.room3.vo.PropertyWithIndex
+import androidx.room3.vo.ShortcutEntity
+import androidx.room3.vo.columnNames
 
 class EntityUpdateAdapterWriter
 private constructor(

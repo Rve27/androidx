@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.kotlintestapp.test
+package androidx.room3.integration.kotlintestapp.test
 
 import android.content.Context
 import androidx.kruth.assertThat
-import androidx.room.ExperimentalRoomApi
-import androidx.room.Room
-import androidx.room.integration.kotlintestapp.TestDatabase
-import androidx.room.integration.kotlintestapp.vo.Author
-import androidx.room.integration.kotlintestapp.vo.Book
-import androidx.room.integration.kotlintestapp.vo.Playlist
-import androidx.room.integration.kotlintestapp.vo.PlaylistSongXRef
-import androidx.room.integration.kotlintestapp.vo.PlaylistWithSongs
-import androidx.room.integration.kotlintestapp.vo.Publisher
-import androidx.room.integration.kotlintestapp.vo.Song
-import androidx.room.withTransaction
+import androidx.room3.ExperimentalRoomApi
+import androidx.room3.Room
+import androidx.room3.integration.kotlintestapp.TestDatabase
+import androidx.room3.integration.kotlintestapp.vo.Author
+import androidx.room3.integration.kotlintestapp.vo.Book
+import androidx.room3.integration.kotlintestapp.vo.Playlist
+import androidx.room3.integration.kotlintestapp.vo.PlaylistSongXRef
+import androidx.room3.integration.kotlintestapp.vo.PlaylistWithSongs
+import androidx.room3.integration.kotlintestapp.vo.Publisher
+import androidx.room3.integration.kotlintestapp.vo.Song
+import androidx.room3.withTransaction
 import androidx.sqlite.driver.AndroidSQLiteDriver
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import androidx.test.core.app.ApplicationProvider

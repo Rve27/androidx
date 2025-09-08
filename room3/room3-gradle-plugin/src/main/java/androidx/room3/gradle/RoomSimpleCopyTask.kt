@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.gradle
+package androidx.room3.gradle
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty

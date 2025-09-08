@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package androidx.room.solver.query.result
+package androidx.room3.solver.query.result
 
-import androidx.room.compiler.codegen.CodeLanguage
-import androidx.room.compiler.codegen.XCodeBlock.Builder.Companion.applyTo
-import androidx.room.compiler.processing.XNullability
-import androidx.room.solver.CodeGenScope
+import androidx.room3.compiler.codegen.CodeLanguage
+import androidx.room3.compiler.codegen.XCodeBlock.Builder.Companion.applyTo
+import androidx.room3.compiler.processing.XNullability
+import androidx.room3.solver.CodeGenScope
 
 /** Wraps a row adapter when there is only 1 item in the result */
 class SingleItemQueryResultAdapter(private val rowAdapter: RowAdapter) :

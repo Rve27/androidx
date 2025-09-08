@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package androidx.room.solver
+package androidx.room3.solver
 
-import androidx.room.compiler.processing.XTypeElement
-import androidx.room.compiler.processing.XVariableElement
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.XTestInvocation
-import androidx.room.compiler.processing.util.runProcessorTest
+import androidx.room3.compiler.processing.XTypeElement
+import androidx.room3.compiler.processing.XVariableElement
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.XTestInvocation
+import androidx.room3.compiler.processing.util.runProcessorTest
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test

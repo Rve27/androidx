@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.javac
+package androidx.room3.compiler.processing.javac
 
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.compiler.processing.InternalXAnnotated
-import androidx.room.compiler.processing.XAnnotation
-import androidx.room.compiler.processing.XEquality
-import androidx.room.compiler.processing.XNullability
-import androidx.room.compiler.processing.XRawType
-import androidx.room.compiler.processing.XType
-import androidx.room.compiler.processing.javac.kotlin.KmBaseTypeContainer
-import androidx.room.compiler.processing.javac.kotlin.KmClassContainer
-import androidx.room.compiler.processing.javac.kotlin.KmTypeContainer
-import androidx.room.compiler.processing.ksp.ERROR_JTYPE_NAME
-import androidx.room.compiler.processing.safeTypeName
-import androidx.room.compiler.processing.unwrapRepeatedAnnotationsFromContainer
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.compiler.processing.InternalXAnnotated
+import androidx.room3.compiler.processing.XAnnotation
+import androidx.room3.compiler.processing.XEquality
+import androidx.room3.compiler.processing.XNullability
+import androidx.room3.compiler.processing.XRawType
+import androidx.room3.compiler.processing.XType
+import androidx.room3.compiler.processing.javac.kotlin.KmBaseTypeContainer
+import androidx.room3.compiler.processing.javac.kotlin.KmClassContainer
+import androidx.room3.compiler.processing.javac.kotlin.KmTypeContainer
+import androidx.room3.compiler.processing.ksp.ERROR_JTYPE_NAME
+import androidx.room3.compiler.processing.safeTypeName
+import androidx.room3.compiler.processing.unwrapRepeatedAnnotationsFromContainer
 import com.google.auto.common.MoreElements
 import com.google.auto.common.MoreTypes
 import javax.lang.model.type.TypeKind

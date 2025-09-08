@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.paging.rxjava2
+package androidx.room3.paging.rxjava2
 
 import android.database.Cursor
 import androidx.arch.core.executor.testing.CountingTaskExecutorRule
@@ -24,17 +24,17 @@ import androidx.paging.LoadType
 import androidx.paging.PagingConfig
 import androidx.paging.PagingSource.LoadParams
 import androidx.paging.PagingSource.LoadResult
-import androidx.room.Dao
-import androidx.room.Database
-import androidx.room.Entity
-import androidx.room.Insert
-import androidx.room.PrimaryKey
-import androidx.room.Query
-import androidx.room.Room
-import androidx.room.RoomDatabase
-import androidx.room.RoomSQLiteQuery
-import androidx.room.paging.util.ThreadSafeInvalidationObserver
-import androidx.room.util.getColumnIndexOrThrow
+import androidx.room3.Dao
+import androidx.room3.Database
+import androidx.room3.Entity
+import androidx.room3.Insert
+import androidx.room3.PrimaryKey
+import androidx.room3.Query
+import androidx.room3.Room
+import androidx.room3.RoomDatabase
+import androidx.room3.RoomSQLiteQuery
+import androidx.room3.paging.util.ThreadSafeInvalidationObserver
+import androidx.room3.util.getColumnIndexOrThrow
 import androidx.sqlite.db.SimpleSQLiteQuery
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4

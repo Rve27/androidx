@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package androidx.room
+package androidx.room3
 
-import androidx.room.coroutines.ConnectionPool
-import androidx.room.coroutines.PassthroughConnectionPool
-import androidx.room.coroutines.newConnectionPool
-import androidx.room.coroutines.newSingleConnectionPool
+import androidx.room3.coroutines.ConnectionPool
+import androidx.room3.coroutines.PassthroughConnectionPool
+import androidx.room3.coroutines.newConnectionPool
+import androidx.room3.coroutines.newSingleConnectionPool
 import androidx.sqlite.SQLiteDriver
 
 internal actual class RoomConnectionManager(

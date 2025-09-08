@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.room.compiler.processing
+package androidx.room3.compiler.processing
 
-import androidx.room.compiler.processing.util.XTestInvocation
+import androidx.room3.compiler.processing.util.XTestInvocation
 
 /** Common interface for SyntheticProcessors that we create for testing. */
 @ExperimentalProcessingApi

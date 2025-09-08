@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing
+package androidx.room3.compiler.processing
 
 /** Utility class to change some behavior in tests, like adding more strict tests. */
 internal object XProcessingConfig {
@@ -24,5 +24,5 @@ internal object XProcessingConfig {
      */
     val STRICT_MODE by lazy { System.getProperty("$PROP_PREFIX.strict").toBoolean() }
 
-    private const val PROP_PREFIX = "androidx.room.compiler.processing"
+    private const val PROP_PREFIX = "androidx.room3.compiler.processing"
 }

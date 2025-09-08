@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-package androidx.room.solver.query.result
+package androidx.room3.solver.query.result
 
-import androidx.room.compiler.codegen.CodeLanguage
-import androidx.room.compiler.codegen.XCodeBlock
-import androidx.room.compiler.codegen.XCodeBlock.Builder.Companion.applyTo
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.compiler.codegen.buildCodeBlock
-import androidx.room.compiler.processing.XNullability
-import androidx.room.compiler.processing.XType
-import androidx.room.ext.CommonTypeNames
-import androidx.room.ext.CommonTypeNames.ARRAY_LIST
-import androidx.room.ext.CommonTypeNames.HASH_SET
-import androidx.room.ext.KotlinCollectionMemberNames
-import androidx.room.ext.KotlinTypeNames
-import androidx.room.solver.CodeGenScope
-import androidx.room.solver.query.result.MultimapQueryResultAdapter.MapType.Companion.isSparseArray
-import androidx.room.vo.ColumnIndexVar
+import androidx.room3.compiler.codegen.CodeLanguage
+import androidx.room3.compiler.codegen.XCodeBlock
+import androidx.room3.compiler.codegen.XCodeBlock.Builder.Companion.applyTo
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.compiler.codegen.buildCodeBlock
+import androidx.room3.compiler.processing.XNullability
+import androidx.room3.compiler.processing.XType
+import androidx.room3.ext.CommonTypeNames
+import androidx.room3.ext.CommonTypeNames.ARRAY_LIST
+import androidx.room3.ext.CommonTypeNames.HASH_SET
+import androidx.room3.ext.KotlinCollectionMemberNames
+import androidx.room3.ext.KotlinTypeNames
+import androidx.room3.solver.CodeGenScope
+import androidx.room3.solver.query.result.MultimapQueryResultAdapter.MapType.Companion.isSparseArray
+import androidx.room3.vo.ColumnIndexVar
 
 /**
  * This is an intermediary adapter class that enables nested multimap return types in DAOs.

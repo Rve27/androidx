@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package androidx.room.processor
+package androidx.room3.processor
 
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.runProcessorTest
-import androidx.room.migration.bundle.DatabaseBundle
-import androidx.room.migration.bundle.EntityBundle
-import androidx.room.migration.bundle.FieldBundle
-import androidx.room.migration.bundle.PrimaryKeyBundle
-import androidx.room.migration.bundle.SchemaBundle
-import androidx.room.processor.ProcessorErrors.AUTOMIGRATION_SPEC_MISSING_NOARG_CONSTRUCTOR
-import androidx.room.processor.ProcessorErrors.INNER_CLASS_AUTOMIGRATION_SPEC_MUST_BE_STATIC
-import androidx.room.testing.context
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.runProcessorTest
+import androidx.room3.migration.bundle.DatabaseBundle
+import androidx.room3.migration.bundle.EntityBundle
+import androidx.room3.migration.bundle.FieldBundle
+import androidx.room3.migration.bundle.PrimaryKeyBundle
+import androidx.room3.migration.bundle.SchemaBundle
+import androidx.room3.processor.ProcessorErrors.AUTOMIGRATION_SPEC_MISSING_NOARG_CONSTRUCTOR
+import androidx.room3.processor.ProcessorErrors.INNER_CLASS_AUTOMIGRATION_SPEC_MUST_BE_STATIC
+import androidx.room3.testing.context
 import org.junit.Test
 
 class AutoMigrationProcessorTest {
@@ -36,7 +36,7 @@ class AutoMigrationProcessorTest {
                 "foo.bar.MyAutoMigration",
                 """
             package foo.bar;
-            import androidx.room.migration.AutoMigrationSpec;
+            import androidx.room3.migration.AutoMigrationSpec;
             public class MyAutoMigration {
                 public MyAutoMigration (int x) {}
             }
@@ -65,7 +65,7 @@ class AutoMigrationProcessorTest {
                 "foo.bar.MyAutoMigration",
                 """
             package foo.bar;
-            import androidx.room.migration.AutoMigrationSpec;
+            import androidx.room3.migration.AutoMigrationSpec;
             public interface MyAutoMigration extends AutoMigrationSpec {}
             """
                     .trimIndent(),
@@ -92,7 +92,7 @@ class AutoMigrationProcessorTest {
                 "foo.bar.MyAutoMigrationDb",
                 """
             package foo.bar;
-            import androidx.room.migration.AutoMigrationSpec;
+            import androidx.room3.migration.AutoMigrationSpec;
             public class MyAutoMigrationDb {
                 class MyAutoMigration implements AutoMigrationSpec {}
             }
@@ -124,8 +124,8 @@ class AutoMigrationProcessorTest {
                 "foo.bar.MyAutoMigration",
                 """
             package foo.bar;
-            import androidx.room.migration.AutoMigrationSpec;
-            import androidx.room.AutoMigration;
+            import androidx.room3.migration.AutoMigrationSpec;
+            import androidx.room3.AutoMigration;
             import androidx.sqlite.db.SupportSQLiteDatabase;
             public class MyAutoMigration {}
             """

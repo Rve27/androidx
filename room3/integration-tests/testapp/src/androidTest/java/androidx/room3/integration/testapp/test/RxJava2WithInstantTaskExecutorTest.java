@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.testapp.test;
+package androidx.room3.integration.testapp.test;
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
-import androidx.room.Room;
-import androidx.room.integration.testapp.TestDatabase;
-import androidx.room.integration.testapp.vo.User;
+import androidx.room3.Room;
+import androidx.room3.integration.testapp.TestDatabase;
+import androidx.room3.integration.testapp.vo.User;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.SmallTest;

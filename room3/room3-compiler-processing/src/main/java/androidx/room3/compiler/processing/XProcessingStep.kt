@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing
+package androidx.room3.compiler.processing
 
 /** Processing step to simplify processing a set of annotations. */
 interface XProcessingStep {

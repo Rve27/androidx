@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.autovaluetestapp.vo;
+package androidx.room3.integration.autovaluetestapp.vo;
 
-import androidx.room.DatabaseView;
-import androidx.room.Embedded;
+import androidx.room3.DatabaseView;
+import androidx.room3.Embedded;
 
 import com.google.auto.value.AutoValue;
 import com.google.auto.value.AutoValue.CopyAnnotations;

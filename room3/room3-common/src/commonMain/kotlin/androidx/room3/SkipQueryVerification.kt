@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room
+package androidx.room3
 
 /**
  * Skips database verification for the annotated element.

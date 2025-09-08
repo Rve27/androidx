@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package androidx.room
+package androidx.room3
 
 import kotlin.reflect.KClass
 
 /**
  * Marks a method in a [Dao] annotated class as a raw query method where you can pass the query as a
- * [androidx.room.RoomRawQuery] or [androidx.sqlite.db.SupportSQLiteQuery].
+ * [androidx.room3.RoomRawQuery] or [androidx.sqlite.db.SupportSQLiteQuery].
  *
  * ```
  * @Dao
@@ -49,10 +49,10 @@ import kotlin.reflect.KClass
  * at runtime but still use Room to convert it into objects.
  *
  * `@RawQuery` methods must return a non-void type. If you want to execute a raw query that does not
- * return any value, use [androidx.room.RoomDatabase.query] methods.
+ * return any value, use [androidx.room3.RoomDatabase.query] methods.
  *
  * `@RawQuery` methods can only be used for read queries. For write queries, use
- * [androidx.room.RoomDatabase.openHelper].
+ * [androidx.room3.RoomDatabase.openHelper].
  *
  * **Observable Queries:**
  *

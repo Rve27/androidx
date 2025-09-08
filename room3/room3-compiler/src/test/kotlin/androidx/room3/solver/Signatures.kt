@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package androidx.room.solver
+package androidx.room3.solver
 
-import androidx.room.compiler.codegen.CodeLanguage
-import androidx.room.compiler.processing.XNullability
-import androidx.room.compiler.processing.XType
-import androidx.room.solver.types.CompositeTypeConverter
-import androidx.room.solver.types.CustomTypeConverterWrapper
-import androidx.room.solver.types.NullSafeTypeConverter
-import androidx.room.solver.types.RequireNotNullTypeConverter
-import androidx.room.solver.types.TypeConverter
-import androidx.room.solver.types.UpCastTypeConverter
+import androidx.room3.compiler.codegen.CodeLanguage
+import androidx.room3.compiler.processing.XNullability
+import androidx.room3.compiler.processing.XType
+import androidx.room3.solver.types.CompositeTypeConverter
+import androidx.room3.solver.types.CustomTypeConverterWrapper
+import androidx.room3.solver.types.NullSafeTypeConverter
+import androidx.room3.solver.types.RequireNotNullTypeConverter
+import androidx.room3.solver.types.TypeConverter
+import androidx.room3.solver.types.UpCastTypeConverter
 
 // Shared signatures for objects that make testing more readable
 private fun XNullability.toSignature() =

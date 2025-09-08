@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.ksp
+package androidx.room3.compiler.processing.ksp
 
 import androidx.kruth.assertThat
-import androidx.room.compiler.processing.XMethodType
-import androidx.room.compiler.processing.XType
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.XTestInvocation
-import androidx.room.compiler.processing.util.getDeclaredMethodByJvmName
-import androidx.room.compiler.processing.util.runKaptTest
-import androidx.room.compiler.processing.util.runKspTest
+import androidx.room3.compiler.processing.XMethodType
+import androidx.room3.compiler.processing.XType
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.XTestInvocation
+import androidx.room3.compiler.processing.util.getDeclaredMethodByJvmName
+import androidx.room3.compiler.processing.util.runKaptTest
+import androidx.room3.compiler.processing.util.runKspTest
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized

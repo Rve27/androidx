@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package androidx.room.processor
+package androidx.room3.processor
 
-import androidx.room.compiler.processing.XMethodElement
-import androidx.room.compiler.processing.XType
-import androidx.room.vo.DataClassFunction
+import androidx.room3.compiler.processing.XMethodElement
+import androidx.room3.compiler.processing.XType
+import androidx.room3.vo.DataClassFunction
 
 /** processes an executable element as member of the owning class */
 class DataClassFunctionProcessor(

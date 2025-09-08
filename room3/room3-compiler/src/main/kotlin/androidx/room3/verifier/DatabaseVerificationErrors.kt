@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.verifier
+package androidx.room3.verifier
 
 import java.sql.SQLException
 

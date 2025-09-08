@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.ksp
+package androidx.room3.compiler.processing.ksp
 
-import androidx.room.compiler.processing.XAnnotated
-import androidx.room.compiler.processing.XConstructorElement
-import androidx.room.compiler.processing.XConstructorType
-import androidx.room.compiler.processing.XExecutableParameterElement
-import androidx.room.compiler.processing.XType
+import androidx.room3.compiler.processing.XAnnotated
+import androidx.room3.compiler.processing.XConstructorElement
+import androidx.room3.compiler.processing.XConstructorType
+import androidx.room3.compiler.processing.XExecutableParameterElement
+import androidx.room3.compiler.processing.XType
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 
 internal open class KspConstructorElement(

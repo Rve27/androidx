@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package androidx.room.migration.bundle
+package androidx.room3.migration.bundle
 
 import androidx.annotation.RestrictTo
-import androidx.room.Index
+import androidx.room3.Index
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-/** Data class that holds the schema information about a table [androidx.room.Index] */
+/** Data class that holds the schema information about a table [androidx.room3.Index] */
 @Serializable
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public class IndexBundle(

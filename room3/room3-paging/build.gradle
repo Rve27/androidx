@@ -30,7 +30,7 @@ plugins {
 
 androidXMultiplatform {
     androidLibrary {
-        namespace = "androidx.room.paging"
+        namespace = "androidx.room3.paging"
     }
     jvm()
     mac()

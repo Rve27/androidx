@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.ksp
+package androidx.room3.compiler.processing.ksp
 
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.compiler.processing.XEquality
-import androidx.room.compiler.processing.XNullability
-import androidx.room.compiler.processing.XRawType
-import androidx.room.compiler.processing.XType
-import androidx.room.compiler.processing.XTypeElement
-import androidx.room.compiler.processing.XTypeVariableType
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.compiler.processing.XEquality
+import androidx.room3.compiler.processing.XNullability
+import androidx.room3.compiler.processing.XRawType
+import androidx.room3.compiler.processing.XType
+import androidx.room3.compiler.processing.XTypeElement
+import androidx.room3.compiler.processing.XTypeVariableType
 import com.google.devtools.ksp.symbol.KSTypeParameter
 import com.squareup.javapoet.TypeName
 import kotlin.reflect.KClass

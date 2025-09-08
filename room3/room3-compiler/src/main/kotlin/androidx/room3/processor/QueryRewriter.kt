@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package androidx.room.processor
+package androidx.room3.processor
 
-import androidx.room.parser.ParsedQuery
-import androidx.room.solver.query.result.QueryResultAdapter
+import androidx.room3.parser.ParsedQuery
+import androidx.room3.solver.query.result.QueryResultAdapter
 
 /** Interface to rewrite user queries */
 interface QueryRewriter {

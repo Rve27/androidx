@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package androidx.room.vo
+package androidx.room3.vo
 
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.compiler.processing.XMethodElement
-import androidx.room.compiler.processing.XType
-import androidx.room.compiler.processing.isKotlinUnit
-import androidx.room.ext.CommonTypeNames
-import androidx.room.ext.RoomTypeNames
-import androidx.room.ext.SupportDbTypeNames
-import androidx.room.ext.isNotVoid
-import androidx.room.solver.query.result.QueryResultBinder
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.compiler.processing.XMethodElement
+import androidx.room3.compiler.processing.XType
+import androidx.room3.compiler.processing.isKotlinUnit
+import androidx.room3.ext.CommonTypeNames
+import androidx.room3.ext.RoomTypeNames
+import androidx.room3.ext.SupportDbTypeNames
+import androidx.room3.ext.isNotVoid
+import androidx.room3.solver.query.result.QueryResultBinder
 
 /**
  * A class that holds information about a function annotated with RawQuery. It is self sufficient

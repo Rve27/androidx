@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing
+package androidx.room3.compiler.processing
 
-import androidx.room.compiler.codegen.XTypeName
+import androidx.room3.compiler.codegen.XTypeName
 import com.squareup.javapoet.TypeName
 
 /**
@@ -37,7 +37,7 @@ interface XRawType {
     //     message = "Use asTypeName().toJavaPoet() to be clear the name is for JavaPoet.",
     //     replaceWith = ReplaceWith(
     //         expression = "asTypeName().toJavaPoet()",
-    //         imports = ["androidx.room.compiler.codegen.toJavaPoet"]
+    //         imports = ["androidx.room3.compiler.codegen.toJavaPoet"]
     //     )
     // )
     val typeName: TypeName

@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.room
+package androidx.room3
 
 /**
  * The list of warnings that are produced by Room.
  *
  * You can use these values inside a [SuppressWarnings] annotation to disable the warnings.
  */
-// If you change this, don't forget to change androidx.room.vo.Warning
+// If you change this, don't forget to change androidx.room3.vo.Warning
 @Suppress("unused", "WeakerAccess")
 public open class RoomWarnings {
     public companion object {

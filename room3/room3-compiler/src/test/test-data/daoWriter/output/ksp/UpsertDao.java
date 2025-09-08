@@ -1,11 +1,11 @@
 package foo.bar;
 
 import androidx.annotation.NonNull;
-import androidx.room.EntityDeleteOrUpdateAdapter;
-import androidx.room.EntityInsertAdapter;
-import androidx.room.EntityUpsertAdapter;
-import androidx.room.RoomDatabase;
-import androidx.room.util.DBUtil;
+import androidx.room3.EntityDeleteOrUpdateAdapter;
+import androidx.room3.EntityInsertAdapter;
+import androidx.room3.EntityUpsertAdapter;
+import androidx.room3.RoomDatabase;
+import androidx.room3.util.DBUtil;
 import androidx.sqlite.SQLiteStatement;
 import java.lang.Class;
 import java.lang.Override;
@@ -15,7 +15,7 @@ import java.util.Collections;
 import java.util.List;
 import javax.annotation.processing.Generated;
 
-@Generated("androidx.room.RoomProcessor")
+@Generated("androidx.room3.RoomProcessor")
 @SuppressWarnings({"unchecked", "deprecation", "removal"})
 public final class UpsertDao_Impl implements UpsertDao {
   private final RoomDatabase __db;

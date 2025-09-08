@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room
+package androidx.room3
 
 /**
  * Marks a method in a [Dao] class as a transaction method.

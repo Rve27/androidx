@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.testapp.dao;
+package androidx.room3.integration.testapp.dao;
 
-import androidx.room.Dao;
-import androidx.room.Insert;
-import androidx.room.OnConflictStrategy;
-import androidx.room.Query;
-import androidx.room.RoomWarnings;
-import androidx.room.integration.testapp.vo.Coordinates;
-import androidx.room.integration.testapp.vo.School;
-import androidx.room.integration.testapp.vo.SchoolRef;
+import androidx.room3.Dao;
+import androidx.room3.Insert;
+import androidx.room3.OnConflictStrategy;
+import androidx.room3.Query;
+import androidx.room3.RoomWarnings;
+import androidx.room3.integration.testapp.vo.Coordinates;
+import androidx.room3.integration.testapp.vo.School;
+import androidx.room3.integration.testapp.vo.SchoolRef;
 
 import java.util.List;
 

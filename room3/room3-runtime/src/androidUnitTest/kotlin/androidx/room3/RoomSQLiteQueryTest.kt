@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package androidx.room
+package androidx.room3
 
 import androidx.kruth.assertThat
-import androidx.room.RoomSQLiteQuery.Companion.acquire
+import androidx.room3.RoomSQLiteQuery.Companion.acquire
 import androidx.sqlite.db.SupportSQLiteProgram
 import org.junit.Before
 import org.junit.Test

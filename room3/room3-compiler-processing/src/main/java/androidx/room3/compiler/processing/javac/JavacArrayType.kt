@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.javac
+package androidx.room3.compiler.processing.javac
 
-import androidx.room.compiler.codegen.JArrayTypeName
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.compiler.processing.XArrayType
-import androidx.room.compiler.processing.XNullability
-import androidx.room.compiler.processing.XType
-import androidx.room.compiler.processing.javac.kotlin.KmTypeContainer
+import androidx.room3.compiler.codegen.JArrayTypeName
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.compiler.processing.XArrayType
+import androidx.room3.compiler.processing.XNullability
+import androidx.room3.compiler.processing.XType
+import androidx.room3.compiler.processing.javac.kotlin.KmTypeContainer
 import javax.lang.model.type.ArrayType
 
 internal class JavacArrayType

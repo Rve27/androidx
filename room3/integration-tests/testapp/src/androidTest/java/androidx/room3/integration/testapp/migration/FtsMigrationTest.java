@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.testapp.migration;
+package androidx.room3.integration.testapp.migration;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
@@ -23,20 +23,20 @@ import static org.junit.Assert.fail;
 
 import android.content.Context;
 
-import androidx.room.ColumnInfo;
-import androidx.room.Dao;
-import androidx.room.Database;
-import androidx.room.Embedded;
-import androidx.room.Entity;
-import androidx.room.Fts4;
-import androidx.room.FtsOptions;
-import androidx.room.Insert;
-import androidx.room.PrimaryKey;
-import androidx.room.Query;
-import androidx.room.Room;
-import androidx.room.RoomDatabase;
-import androidx.room.migration.Migration;
-import androidx.room.testing.MigrationTestHelper;
+import androidx.room3.ColumnInfo;
+import androidx.room3.Dao;
+import androidx.room3.Database;
+import androidx.room3.Embedded;
+import androidx.room3.Entity;
+import androidx.room3.Fts4;
+import androidx.room3.FtsOptions;
+import androidx.room3.Insert;
+import androidx.room3.PrimaryKey;
+import androidx.room3.Query;
+import androidx.room3.Room;
+import androidx.room3.RoomDatabase;
+import androidx.room3.migration.Migration;
+import androidx.room3.testing.MigrationTestHelper;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;

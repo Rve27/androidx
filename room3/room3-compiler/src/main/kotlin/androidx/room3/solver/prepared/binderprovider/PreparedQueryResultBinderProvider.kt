@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package androidx.room.solver.prepared.binderprovider
+package androidx.room3.solver.prepared.binderprovider
 
-import androidx.room.compiler.processing.XType
-import androidx.room.parser.ParsedQuery
-import androidx.room.solver.prepared.binder.PreparedQueryResultBinder
+import androidx.room3.compiler.processing.XType
+import androidx.room3.parser.ParsedQuery
+import androidx.room3.solver.prepared.binder.PreparedQueryResultBinder
 
 /**
- * Interface for for providing the appropriate [PreparedQueryResultBinder] given a query and a
+ * Interface for providing the appropriate [PreparedQueryResultBinder] given a query and a
  * function's return type.
  */
 interface PreparedQueryResultBinderProvider {

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package androidx.room.solver
+package androidx.room3.solver
 
 import androidx.kruth.assertThat
-import androidx.room.solver.types.TypeConverter.Cost
+import androidx.room3.solver.types.TypeConverter.Cost
 import org.junit.Test
 
 class TypeConverterCostTest {

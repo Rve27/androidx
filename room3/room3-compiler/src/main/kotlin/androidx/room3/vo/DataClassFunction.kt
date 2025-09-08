@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package androidx.room.vo
+package androidx.room3.vo
 
-import androidx.room.compiler.processing.XMethodElement
-import androidx.room.compiler.processing.XMethodType
+import androidx.room3.compiler.processing.XMethodElement
+import androidx.room3.compiler.processing.XMethodType
 
 /** An executable element processed as member of a class (data class or entity) */
 class DataClassFunction(val element: XMethodElement, val resolvedType: XMethodType)

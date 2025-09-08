@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.room
+package androidx.room3
 
 import androidx.kruth.assertThat
-import androidx.room.ObservedTableStates.ObserveOp
+import androidx.room3.ObservedTableStates.ObserveOp
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertNull

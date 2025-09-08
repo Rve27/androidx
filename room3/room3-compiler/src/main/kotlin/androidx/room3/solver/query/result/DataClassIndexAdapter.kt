@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package androidx.room.solver.query.result
+package androidx.room3.solver.query.result
 
-import androidx.room.compiler.codegen.XCodeBlock
-import androidx.room.compiler.codegen.XMemberName.Companion.packageMember
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.ext.RoomTypeNames.STATEMENT_UTIL
-import androidx.room.ext.capitalize
-import androidx.room.ext.stripNonJava
-import androidx.room.parser.ParsedQuery
-import androidx.room.processor.ProcessorErrors
-import androidx.room.solver.CodeGenScope
-import androidx.room.verifier.QueryResultInfo
-import androidx.room.vo.ColumnIndexVar
+import androidx.room3.compiler.codegen.XCodeBlock
+import androidx.room3.compiler.codegen.XMemberName.Companion.packageMember
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.ext.RoomTypeNames.STATEMENT_UTIL
+import androidx.room3.ext.capitalize
+import androidx.room3.ext.stripNonJava
+import androidx.room3.parser.ParsedQuery
+import androidx.room3.processor.ProcessorErrors
+import androidx.room3.solver.CodeGenScope
+import androidx.room3.verifier.QueryResultInfo
+import androidx.room3.vo.ColumnIndexVar
 import java.util.Locale
 
 /** Creates the index variables to retrieve columns from a cursor for a [DataClassRowAdapter]. */

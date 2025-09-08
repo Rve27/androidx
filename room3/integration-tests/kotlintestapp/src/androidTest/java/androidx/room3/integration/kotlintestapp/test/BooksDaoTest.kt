@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.kotlintestapp.test
+package androidx.room3.integration.kotlintestapp.test
 
 import android.database.sqlite.SQLiteConstraintException
 import androidx.arch.core.executor.ArchTaskExecutor
 import androidx.kruth.assertThat
-import androidx.room.integration.kotlintestapp.vo.Author
-import androidx.room.integration.kotlintestapp.vo.Book
-import androidx.room.integration.kotlintestapp.vo.BookWithPublisher
-import androidx.room.integration.kotlintestapp.vo.Lang
-import androidx.room.integration.kotlintestapp.vo.Publisher
+import androidx.room3.integration.kotlintestapp.vo.Author
+import androidx.room3.integration.kotlintestapp.vo.Book
+import androidx.room3.integration.kotlintestapp.vo.BookWithPublisher
+import androidx.room3.integration.kotlintestapp.vo.Lang
+import androidx.room3.integration.kotlintestapp.vo.Publisher
 import androidx.sqlite.SQLiteException
 import androidx.test.filters.MediumTest
 import androidx.test.filters.SdkSuppress

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package androidx.room.parser
+package androidx.room3.parser
 
-import androidx.room.parser.expansion.ExpandableSection
-import androidx.room.parser.expansion.ExpandableSqlParser
+import androidx.room3.parser.expansion.ExpandableSection
+import androidx.room3.parser.expansion.ExpandableSqlParser
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.CoreMatchers.instanceOf
 import org.hamcrest.CoreMatchers.`is`

@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing
+package androidx.room3.compiler.processing
 
 import androidx.kruth.assertThat
-import androidx.room.compiler.processing.XNullability.NONNULL
-import androidx.room.compiler.processing.XNullability.NULLABLE
-import androidx.room.compiler.processing.XNullability.UNKNOWN
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.getField
-import androidx.room.compiler.processing.util.getMethodByJvmName
-import androidx.room.compiler.processing.util.getParameter
-import androidx.room.compiler.processing.util.runProcessorTest
-import androidx.room.compiler.processing.util.runProcessorTestWithoutKsp
+import androidx.room3.compiler.processing.XNullability.NONNULL
+import androidx.room3.compiler.processing.XNullability.NULLABLE
+import androidx.room3.compiler.processing.XNullability.UNKNOWN
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.getField
+import androidx.room3.compiler.processing.util.getMethodByJvmName
+import androidx.room3.compiler.processing.util.getParameter
+import androidx.room3.compiler.processing.util.runProcessorTest
+import androidx.room3.compiler.processing.util.runProcessorTestWithoutKsp
 import com.squareup.kotlinpoet.INT
 import com.squareup.kotlinpoet.UNIT
 import com.squareup.kotlinpoet.javapoet.JTypeName

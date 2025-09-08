@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package androidx.room.ext
+package androidx.room3.ext
 
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.compiler.processing.XNullability
-import androidx.room.compiler.processing.XType
-import androidx.room.compiler.processing.isArray
-import androidx.room.compiler.processing.isByte
-import androidx.room.compiler.processing.isEnum
-import androidx.room.compiler.processing.isKotlinUnit
-import androidx.room.compiler.processing.isVoid
-import androidx.room.compiler.processing.isVoidObject
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.compiler.processing.XNullability
+import androidx.room3.compiler.processing.XType
+import androidx.room3.compiler.processing.isArray
+import androidx.room3.compiler.processing.isByte
+import androidx.room3.compiler.processing.isEnum
+import androidx.room3.compiler.processing.isKotlinUnit
+import androidx.room3.compiler.processing.isVoid
+import androidx.room3.compiler.processing.isVoidObject
 
 /** Returns `true` if this type is not the `void` type. */
 fun XType.isNotVoid() = !isVoid()

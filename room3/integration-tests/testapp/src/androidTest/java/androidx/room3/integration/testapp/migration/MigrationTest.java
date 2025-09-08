@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.testapp.migration;
+package androidx.room3.integration.testapp.migration;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.endsWith;
@@ -30,13 +30,13 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import android.content.Context;
 import android.database.Cursor;
 
-import androidx.room.Room;
-import androidx.room.RoomDatabase;
-import androidx.room.migration.Migration;
-import androidx.room.migration.bundle.SchemaBundle;
-import androidx.room.testing.MigrationTestHelper;
-import androidx.room.util.TableInfo;
-import androidx.room.util.ViewInfo;
+import androidx.room3.Room;
+import androidx.room3.RoomDatabase;
+import androidx.room3.migration.Migration;
+import androidx.room3.migration.bundle.SchemaBundle;
+import androidx.room3.testing.MigrationTestHelper;
+import androidx.room3.util.TableInfo;
+import androidx.room3.util.ViewInfo;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 import androidx.sqlite.db.SupportSQLiteOpenHelper;
 import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory;

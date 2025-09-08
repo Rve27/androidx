@@ -7,7 +7,7 @@
         errorLine1="        Thread.sleep(100);"
         errorLine2="               ~~~~~">
         <location
-            file="src/androidTest/java/androidx/room/integration/testapp/test/AutoClosingRoomOpenHelperTest.java"/>
+            file="src/androidTest/java/androidx/room3/integration/testapp/test/AutoClosingRoomOpenHelperTest.java"/>
     </issue>
 
     <issue
@@ -16,7 +16,7 @@
         errorLine1="        Thread.sleep(30);"
         errorLine2="               ~~~~~">
         <location
-            file="src/androidTest/java/androidx/room/integration/testapp/test/AutoClosingRoomOpenHelperTest.java"/>
+            file="src/androidTest/java/androidx/room3/integration/testapp/test/AutoClosingRoomOpenHelperTest.java"/>
     </issue>
 
     <issue
@@ -25,7 +25,7 @@
         errorLine1="                        Thread.sleep(100);"
         errorLine2="                               ~~~~~">
         <location
-            file="src/androidTest/java/androidx/room/integration/testapp/test/AutoClosingRoomOpenHelperTest.java"/>
+            file="src/androidTest/java/androidx/room3/integration/testapp/test/AutoClosingRoomOpenHelperTest.java"/>
     </issue>
 
     <issue
@@ -34,7 +34,7 @@
         errorLine1="        Thread.sleep(100);"
         errorLine2="               ~~~~~">
         <location
-            file="src/androidTest/java/androidx/room/integration/testapp/test/AutoClosingRoomOpenHelperTest.java"/>
+            file="src/androidTest/java/androidx/room3/integration/testapp/test/AutoClosingRoomOpenHelperTest.java"/>
     </issue>
 
     <issue
@@ -43,7 +43,7 @@
         errorLine1="        Thread.sleep(100);"
         errorLine2="               ~~~~~">
         <location
-            file="src/androidTest/java/androidx/room/integration/testapp/test/AutoClosingRoomOpenHelperTest.java"/>
+            file="src/androidTest/java/androidx/room3/integration/testapp/test/AutoClosingRoomOpenHelperTest.java"/>
     </issue>
 
     <issue
@@ -52,7 +52,7 @@
         errorLine1="        Thread.sleep(100);"
         errorLine2="               ~~~~~">
         <location
-            file="src/androidTest/java/androidx/room/integration/testapp/test/AutoClosingRoomOpenHelperTest.java"/>
+            file="src/androidTest/java/androidx/room3/integration/testapp/test/AutoClosingRoomOpenHelperTest.java"/>
     </issue>
 
     <issue
@@ -61,7 +61,7 @@
         errorLine1="        Thread.sleep(100);"
         errorLine2="               ~~~~~">
         <location
-            file="src/androidTest/java/androidx/room/integration/testapp/test/AutoClosingRoomOpenHelperTest.java"/>
+            file="src/androidTest/java/androidx/room3/integration/testapp/test/AutoClosingRoomOpenHelperTest.java"/>
     </issue>
 
     <issue
@@ -70,7 +70,7 @@
         errorLine1="        Thread.sleep(100);"
         errorLine2="               ~~~~~">
         <location
-            file="src/androidTest/java/androidx/room/integration/testapp/test/AutoClosingRoomOpenHelperTest.java"/>
+            file="src/androidTest/java/androidx/room3/integration/testapp/test/AutoClosingRoomOpenHelperTest.java"/>
     </issue>
 
     <issue
@@ -79,7 +79,7 @@
         errorLine1="        Thread.sleep(100);"
         errorLine2="               ~~~~~">
         <location
-            file="src/androidTest/java/androidx/room/integration/testapp/test/AutoClosingRoomOpenHelperTest.java"/>
+            file="src/androidTest/java/androidx/room3/integration/testapp/test/AutoClosingRoomOpenHelperTest.java"/>
     </issue>
 
     <issue
@@ -88,7 +88,7 @@
         errorLine1="        Thread.sleep(15);"
         errorLine2="               ~~~~~">
         <location
-            file="src/androidTest/java/androidx/room/integration/testapp/test/AutoClosingRoomOpenHelperTest.java"/>
+            file="src/androidTest/java/androidx/room3/integration/testapp/test/AutoClosingRoomOpenHelperTest.java"/>
     </issue>
 
     <issue
@@ -97,7 +97,7 @@
         errorLine1="                            Thread.sleep(delayMillis, delayNanos);"
         errorLine2="                                   ~~~~~">
         <location
-            file="src/androidTest/java/androidx/room/integration/testapp/test/InvalidationTrackerBehavioralTest.java"/>
+            file="src/androidTest/java/androidx/room3/integration/testapp/test/InvalidationTrackerBehavioralTest.java"/>
     </issue>
 
     <issue
@@ -106,7 +106,7 @@
         errorLine1="                        Thread.sleep(200);"
         errorLine2="                               ~~~~~">
         <location
-            file="src/androidTest/java/androidx/room/integration/testapp/test/MultiInstanceInvalidationTest.java"/>
+            file="src/androidTest/java/androidx/room3/integration/testapp/test/MultiInstanceInvalidationTest.java"/>
     </issue>
 
     <issue
@@ -115,7 +115,7 @@
         errorLine1="    public String getName() {"
         errorLine2="           ~~~~~~">
         <location
-            file="src/main/java/androidx/room/integration/testapp/database/Customer.java"/>
+            file="src/main/java/androidx/room3/integration/testapp/database/Customer.java"/>
     </issue>
 
     <issue
@@ -124,7 +124,7 @@
         errorLine1="    public void setName(String name) {"
         errorLine2="                        ~~~~~~">
         <location
-            file="src/main/java/androidx/room/integration/testapp/database/Customer.java"/>
+            file="src/main/java/androidx/room3/integration/testapp/database/Customer.java"/>
     </issue>
 
     <issue
@@ -133,7 +133,7 @@
         errorLine1="    public String getLastName() {"
         errorLine2="           ~~~~~~">
         <location
-            file="src/main/java/androidx/room/integration/testapp/database/Customer.java"/>
+            file="src/main/java/androidx/room3/integration/testapp/database/Customer.java"/>
     </issue>
 
     <issue
@@ -142,7 +142,7 @@
         errorLine1="    public void setLastName(String lastName) {"
         errorLine2="                            ~~~~~~">
         <location
-            file="src/main/java/androidx/room/integration/testapp/database/Customer.java"/>
+            file="src/main/java/androidx/room3/integration/testapp/database/Customer.java"/>
     </issue>
 
     <issue
@@ -151,7 +151,7 @@
         errorLine1="    void insert(Customer customer);"
         errorLine2="                ~~~~~~~~">
         <location
-            file="src/main/java/androidx/room/integration/testapp/database/CustomerDao.java"/>
+            file="src/main/java/androidx/room3/integration/testapp/database/CustomerDao.java"/>
     </issue>
 
     <issue
@@ -160,7 +160,7 @@
         errorLine1="    void insertAll(Customer[] customers);"
         errorLine2="                   ~~~~~~~~~~">
         <location
-            file="src/main/java/androidx/room/integration/testapp/database/CustomerDao.java"/>
+            file="src/main/java/androidx/room3/integration/testapp/database/CustomerDao.java"/>
     </issue>
 
     <issue
@@ -169,7 +169,7 @@
         errorLine1="    LiveData&lt;List&lt;Customer>> all();"
         errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/androidx/room/integration/testapp/database/CustomerDao.java"/>
+            file="src/main/java/androidx/room3/integration/testapp/database/CustomerDao.java"/>
     </issue>
 
     <issue
@@ -178,7 +178,7 @@
         errorLine1="    boolean contains(int id, String name, String lastName);"
         errorLine2="                             ~~~~~~">
         <location
-            file="src/main/java/androidx/room/integration/testapp/database/CustomerDao.java"/>
+            file="src/main/java/androidx/room3/integration/testapp/database/CustomerDao.java"/>
     </issue>
 
     <issue
@@ -187,7 +187,7 @@
         errorLine1="    boolean contains(int id, String name, String lastName);"
         errorLine2="                                          ~~~~~~">
         <location
-            file="src/main/java/androidx/room/integration/testapp/database/CustomerDao.java"/>
+            file="src/main/java/androidx/room3/integration/testapp/database/CustomerDao.java"/>
     </issue>
 
     <issue
@@ -196,7 +196,7 @@
         errorLine1="    public Description(int productId, String text) {"
         errorLine2="                                      ~~~~~~">
         <location
-            file="src/main/java/androidx/room/integration/testapp/database/Description.java"/>
+            file="src/main/java/androidx/room3/integration/testapp/database/Description.java"/>
     </issue>
 
     <issue
@@ -205,7 +205,7 @@
         errorLine1="    public String getText() {"
         errorLine2="           ~~~~~~">
         <location
-            file="src/main/java/androidx/room/integration/testapp/database/Description.java"/>
+            file="src/main/java/androidx/room3/integration/testapp/database/Description.java"/>
     </issue>
 
     <issue
@@ -214,7 +214,7 @@
         errorLine1="    public Product(int id, String name) {"
         errorLine2="                           ~~~~~~">
         <location
-            file="src/main/java/androidx/room/integration/testapp/database/Product.java"/>
+            file="src/main/java/androidx/room3/integration/testapp/database/Product.java"/>
     </issue>
 
     <issue
@@ -223,7 +223,7 @@
         errorLine1="    public String getName() {"
         errorLine2="           ~~~~~~">
         <location
-            file="src/main/java/androidx/room/integration/testapp/database/Product.java"/>
+            file="src/main/java/androidx/room3/integration/testapp/database/Product.java"/>
     </issue>
 
     <issue
@@ -232,7 +232,7 @@
         errorLine1="    public void setName(String name) {"
         errorLine2="                        ~~~~~~">
         <location
-            file="src/main/java/androidx/room/integration/testapp/database/Product.java"/>
+            file="src/main/java/androidx/room3/integration/testapp/database/Product.java"/>
     </issue>
 
     <issue
@@ -241,7 +241,7 @@
         errorLine1="    void insert(Product product);"
         errorLine2="                ~~~~~~~">
         <location
-            file="src/main/java/androidx/room/integration/testapp/database/ProductDao.java"/>
+            file="src/main/java/androidx/room3/integration/testapp/database/ProductDao.java"/>
     </issue>
 
     <issue
@@ -250,7 +250,7 @@
         errorLine1="    void addReview(Review review);"
         errorLine2="                   ~~~~~~">
         <location
-            file="src/main/java/androidx/room/integration/testapp/database/ProductDao.java"/>
+            file="src/main/java/androidx/room3/integration/testapp/database/ProductDao.java"/>
     </issue>
 
     <issue
@@ -259,7 +259,7 @@
         errorLine1="    List&lt;Review> getProductReviews(int productId);"
         errorLine2="    ~~~~~~~~~~~~">
         <location
-            file="src/main/java/androidx/room/integration/testapp/database/ProductDao.java"/>
+            file="src/main/java/androidx/room3/integration/testapp/database/ProductDao.java"/>
     </issue>
 
     <issue
@@ -268,7 +268,7 @@
         errorLine1="    void addDescription(Description description);"
         errorLine2="                        ~~~~~~~~~~~">
         <location
-            file="src/main/java/androidx/room/integration/testapp/database/ProductFtsDao.java"/>
+            file="src/main/java/androidx/room3/integration/testapp/database/ProductFtsDao.java"/>
     </issue>
 
     <issue
@@ -277,7 +277,7 @@
         errorLine1="    List&lt;Product> getProductsWithDescription(String query);"
         errorLine2="    ~~~~~~~~~~~~~">
         <location
-            file="src/main/java/androidx/room/integration/testapp/database/ProductFtsDao.java"/>
+            file="src/main/java/androidx/room3/integration/testapp/database/ProductFtsDao.java"/>
     </issue>
 
     <issue
@@ -286,7 +286,7 @@
         errorLine1="    List&lt;Product> getProductsWithDescription(String query);"
         errorLine2="                                             ~~~~~~">
         <location
-            file="src/main/java/androidx/room/integration/testapp/database/ProductFtsDao.java"/>
+            file="src/main/java/androidx/room3/integration/testapp/database/ProductFtsDao.java"/>
     </issue>
 
     <issue
@@ -295,7 +295,7 @@
         errorLine1="    public abstract CustomerDao getCustomerDao();"
         errorLine2="                    ~~~~~~~~~~~">
         <location
-            file="src/main/java/androidx/room/integration/testapp/database/SampleDatabase.java"/>
+            file="src/main/java/androidx/room3/integration/testapp/database/SampleDatabase.java"/>
     </issue>
 
     <issue
@@ -304,7 +304,7 @@
         errorLine1="    public abstract ProductDao getProductDao();"
         errorLine2="                    ~~~~~~~~~~">
         <location
-            file="src/main/java/androidx/room/integration/testapp/database/SampleDatabase.java"/>
+            file="src/main/java/androidx/room3/integration/testapp/database/SampleDatabase.java"/>
     </issue>
 
     <issue
@@ -313,7 +313,7 @@
         errorLine1="    public abstract ProductFtsDao getProductDao();"
         errorLine2="                    ~~~~~~~~~~~~~">
         <location
-            file="src/main/java/androidx/room/integration/testapp/database/SampleFtsDatabase.java"/>
+            file="src/main/java/androidx/room3/integration/testapp/database/SampleFtsDatabase.java"/>
     </issue>
 
 </issues>

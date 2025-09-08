@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package androidx.room.processor
+package androidx.room3.processor
 
-import androidx.room.compiler.processing.XAnnotation
-import androidx.room.compiler.processing.XTypeElement
-import androidx.room.parser.ParsedQuery
-import androidx.room.parser.QueryType
-import androidx.room.parser.SqlParser
-import androidx.room.vo.DatabaseView
+import androidx.room3.compiler.processing.XAnnotation
+import androidx.room3.compiler.processing.XTypeElement
+import androidx.room3.parser.ParsedQuery
+import androidx.room3.parser.QueryType
+import androidx.room3.parser.SqlParser
+import androidx.room3.vo.DatabaseView
 
 class DatabaseViewProcessor(
     baseContext: Context,
@@ -34,10 +34,10 @@ class DatabaseViewProcessor(
     override fun process(): DatabaseView {
         context.checker.hasAnnotation(
             element,
-            androidx.room.DatabaseView::class,
+            androidx.room3.DatabaseView::class,
             ProcessorErrors.VIEW_MUST_BE_ANNOTATED_WITH_DATABASE_VIEW,
         )
-        val annotation = element.getAnnotation(androidx.room.DatabaseView::class)
+        val annotation = element.getAnnotation(androidx.room3.DatabaseView::class)
 
         val viewName: String =
             if (annotation != null) {

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.room.vo
+package androidx.room3.vo
 
-import androidx.room.BuiltInTypeConverters
+import androidx.room3.BuiltInTypeConverters
 
 data class BuiltInConverterFlags(
     val enums: BuiltInTypeConverters.State,

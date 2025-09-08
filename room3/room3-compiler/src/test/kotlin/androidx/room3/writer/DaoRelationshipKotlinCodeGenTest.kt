@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package androidx.room.writer
+package androidx.room3.writer
 
 import COMMON
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.compileFiles
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.compileFiles
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestName
@@ -31,7 +31,7 @@ class DaoRelationshipKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
         Source.kotlin(
             "MyDatabase.kt",
             """
-        import androidx.room.*
+        import androidx.room3.*
 
         @Database(
             entities = [
@@ -56,7 +56,7 @@ class DaoRelationshipKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
 
             @Dao
             @Suppress(
@@ -145,7 +145,7 @@ class DaoRelationshipKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
 
             @Dao
             @Suppress(
@@ -234,7 +234,7 @@ class DaoRelationshipKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
 
             @Dao
             @Suppress(
@@ -323,7 +323,7 @@ class DaoRelationshipKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
 
             @Dao
             @Suppress(
@@ -413,7 +413,7 @@ class DaoRelationshipKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
 
             @Dao
             @Suppress(
@@ -503,7 +503,7 @@ class DaoRelationshipKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
 
             @Database(
                 entities = [Artist::class, Song::class],
@@ -561,7 +561,7 @@ class DaoRelationshipKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
             import androidx.paging.DataSource
 
             @Dao

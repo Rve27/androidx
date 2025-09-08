@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.room.support
+package androidx.room3.support
 
 import android.os.SystemClock
 import androidx.annotation.GuardedBy
-import androidx.room.support.AutoCloser.Watch
+import androidx.room3.support.AutoCloser.Watch
 import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.sqlite.db.SupportSQLiteOpenHelper
 import java.util.concurrent.TimeUnit
@@ -93,7 +93,7 @@ internal class AutoCloser(
         }
 
     /**
-     * Since we need to construct the AutoCloser in the [androidx.room.RoomDatabase.Builder], we
+     * Since we need to construct the AutoCloser in the [androidx.room3.RoomDatabase.Builder], we
      * need to set the `delegateOpenHelper` after construction.
      *
      * @param delegateOpenHelper the open helper that is used to create new [SupportSQLiteDatabase].
@@ -104,7 +104,7 @@ internal class AutoCloser(
     }
 
     /**
-     * Since we need to construct the AutoCloser in the [androidx.room.RoomDatabase.Builder], we
+     * Since we need to construct the AutoCloser in the [androidx.room3.RoomDatabase.Builder], we
      * need to set the `coroutineScope` after construction.
      *
      * @param coroutineScope where the auto close will execute.

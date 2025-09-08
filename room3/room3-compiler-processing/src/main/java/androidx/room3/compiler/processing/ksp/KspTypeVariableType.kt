@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.ksp
+package androidx.room3.compiler.processing.ksp
 
-import androidx.room.compiler.processing.XType
-import androidx.room.compiler.processing.XTypeVariableType
+import androidx.room3.compiler.processing.XType
+import androidx.room3.compiler.processing.XTypeVariableType
 import com.google.devtools.ksp.symbol.KSAnnotation
 import com.google.devtools.ksp.symbol.KSType
 import com.google.devtools.ksp.symbol.KSTypeParameter

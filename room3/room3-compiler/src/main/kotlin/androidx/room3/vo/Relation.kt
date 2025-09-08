@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.room.vo
+package androidx.room3.vo
 
-import androidx.room.compiler.processing.XType
+import androidx.room3.compiler.processing.XType
 
 /** Value object created from processing a @Relation annotation. */
 class Relation(

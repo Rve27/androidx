@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.testapp.migration;
+package androidx.room3.integration.testapp.migration;
 
 
 import static com.google.common.truth.Truth.assertThat;
 
 import android.database.SQLException;
 
-import androidx.room.migration.Migration;
-import androidx.room.testing.MigrationTestHelper;
-import androidx.room.util.TableInfo;
+import androidx.room3.migration.Migration;
+import androidx.room3.testing.MigrationTestHelper;
+import androidx.room3.util.TableInfo;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;

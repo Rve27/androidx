@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room
+package androidx.room3
 
 /**
  * Marks the class as a Data Access Object.

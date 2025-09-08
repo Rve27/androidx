@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.vo
+package androidx.room3.vo
 
 import java.util.Locale
 import org.apache.commons.codec.digest.DigestUtils

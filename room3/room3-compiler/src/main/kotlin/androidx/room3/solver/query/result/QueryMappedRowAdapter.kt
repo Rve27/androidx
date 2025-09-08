@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.room.solver.query.result
+package androidx.room3.solver.query.result
 
-import androidx.room.compiler.processing.XType
+import androidx.room3.compiler.processing.XType
 
 /** A row adapter containing mapping information of the query and its result usage. */
 abstract class QueryMappedRowAdapter(out: XType) : RowAdapter(out) {

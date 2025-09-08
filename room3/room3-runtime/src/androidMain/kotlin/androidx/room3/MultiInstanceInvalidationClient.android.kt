@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.room
+package androidx.room3
 
 import android.content.ComponentName
 import android.content.Context
@@ -22,7 +22,7 @@ import android.content.ServiceConnection
 import android.os.IBinder
 import android.os.RemoteException
 import android.util.Log
-import androidx.room.Room.LOG_TAG
+import androidx.room3.Room.LOG_TAG
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow

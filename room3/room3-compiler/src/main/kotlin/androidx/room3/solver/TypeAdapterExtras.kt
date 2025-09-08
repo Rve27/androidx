@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.solver
+package androidx.room3.solver
 
 import kotlin.reflect.KClass
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.vo
+package androidx.room3.vo
 
 /**
  * A value object that associates a column with a generated local variable containing the result

@@ -1,4 +1,4 @@
-package androidx.room.compiler.processing.testcode
+package androidx.room3.compiler.processing.testcode
 
 @Retention(AnnotationRetention.RUNTIME)
 @Repeatable

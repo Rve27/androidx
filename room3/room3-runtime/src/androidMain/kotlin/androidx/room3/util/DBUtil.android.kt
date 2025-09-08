@@ -17,18 +17,18 @@
 @file:JvmMultifileClass
 @file:JvmName("DBUtil")
 
-package androidx.room.util
+package androidx.room3.util
 
 import android.database.AbstractWindowedCursor
 import android.database.Cursor
 import android.os.Build
 import android.os.CancellationSignal
 import androidx.annotation.RestrictTo
-import androidx.room.RoomDatabase
-import androidx.room.TransactionElement
-import androidx.room.coroutines.RawConnectionAccessor
-import androidx.room.coroutines.runBlockingUninterruptible
-import androidx.room.withTransactionContext
+import androidx.room3.RoomDatabase
+import androidx.room3.TransactionElement
+import androidx.room3.coroutines.RawConnectionAccessor
+import androidx.room3.coroutines.runBlockingUninterruptible
+import androidx.room3.withTransactionContext
 import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.sqlite.db.SupportSQLiteQuery
@@ -105,7 +105,7 @@ public actual suspend fun <R> performInTransactionSuspending(
 
 /**
  * Compatibility suspend function execution with driver usage. This will maintain the dispatcher
- * behaviour in [androidx.room.CoroutinesRoom.execute] when Room is in compatibility mode executing
+ * behaviour in [androidx.room3.CoroutinesRoom.execute] when Room is in compatibility mode executing
  * driver codegen utility functions.
  */
 private suspend inline fun <R> RoomDatabase.compatCoroutineExecute(

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.migration.bundle
+package androidx.room3.migration.bundle
 
 import androidx.annotation.RestrictTo
 import kotlinx.serialization.ExperimentalSerializationApi

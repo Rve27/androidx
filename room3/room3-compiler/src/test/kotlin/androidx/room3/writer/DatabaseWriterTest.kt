@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package androidx.room.writer
+package androidx.room3.writer
 
 import COMMON
-import androidx.room.RoomKspProcessor
-import androidx.room.RoomProcessor
-import androidx.room.compiler.processing.util.CompilationResultSubject
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.compileFiles
-import androidx.room.compiler.processing.util.runProcessorTest
-import androidx.room.processor.Context
+import androidx.room3.RoomKspProcessor
+import androidx.room3.RoomProcessor
+import androidx.room3.compiler.processing.util.CompilationResultSubject
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.compileFiles
+import androidx.room3.compiler.processing.util.runProcessorTest
+import androidx.room3.processor.Context
 import androidx.testutils.generateAllEnumerations
 import loadTestSource
 import org.junit.Test
@@ -88,7 +88,7 @@ class DatabaseWriterTest {
                             """
                     package foo.bar;
 
-                    import androidx.room.*;
+                    import androidx.room3.*;
 
                     @Entity
                     public class Entity$entityCount {
@@ -115,7 +115,7 @@ class DatabaseWriterTest {
                         """
                     package foo.bar;
 
-                    import androidx.room.*;
+                    import androidx.room3.*;
 
                     @Database(entities = {$entityClasses}, version = 1)
                     public abstract class TestDatabase extends RoomDatabase {}

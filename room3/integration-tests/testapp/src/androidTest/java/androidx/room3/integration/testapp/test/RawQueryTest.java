@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.testapp.test;
+package androidx.room3.integration.testapp.test;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -24,12 +24,12 @@ import static java.util.Collections.emptyList;
 
 import androidx.arch.core.executor.testing.CountingTaskExecutorRule;
 import androidx.lifecycle.LiveData;
-import androidx.room.integration.testapp.dao.RawDao;
-import androidx.room.integration.testapp.vo.NameAndLastName;
-import androidx.room.integration.testapp.vo.Pet;
-import androidx.room.integration.testapp.vo.User;
-import androidx.room.integration.testapp.vo.UserAndAllPets;
-import androidx.room.integration.testapp.vo.UserAndPet;
+import androidx.room3.integration.testapp.dao.RawDao;
+import androidx.room3.integration.testapp.vo.NameAndLastName;
+import androidx.room3.integration.testapp.vo.Pet;
+import androidx.room3.integration.testapp.vo.User;
+import androidx.room3.integration.testapp.vo.UserAndAllPets;
+import androidx.room3.integration.testapp.vo.UserAndPet;
 import androidx.sqlite.db.SimpleSQLiteQuery;
 import androidx.sqlite.db.SupportSQLiteQuery;
 import androidx.test.ext.junit.runners.AndroidJUnit4;

@@ -16,7 +16,7 @@
 @file:JvmMultifileClass
 @file:JvmName("RoomDatabaseKt")
 
-package androidx.room
+package androidx.room3
 
 import android.annotation.SuppressLint
 import android.app.ActivityManager
@@ -31,21 +31,21 @@ import androidx.annotation.IntRange
 import androidx.annotation.RestrictTo
 import androidx.annotation.WorkerThread
 import androidx.arch.core.executor.ArchTaskExecutor
-import androidx.room.Room.LOG_TAG
-import androidx.room.concurrent.CloseBarrier
-import androidx.room.coroutines.runBlockingUninterruptible
-import androidx.room.migration.AutoMigrationSpec
-import androidx.room.migration.Migration
-import androidx.room.support.AutoCloser
-import androidx.room.support.AutoClosingRoomOpenHelper
-import androidx.room.support.AutoClosingRoomOpenHelperFactory
-import androidx.room.support.PrePackagedCopyOpenHelper
-import androidx.room.support.PrePackagedCopyOpenHelperFactory
-import androidx.room.support.QueryInterceptorOpenHelperFactory
-import androidx.room.util.contains as containsCommon
-import androidx.room.util.findAndInstantiateDatabaseImpl
-import androidx.room.util.findMigrationPath as findMigrationPathExt
-import androidx.room.util.performBlocking
+import androidx.room3.Room.LOG_TAG
+import androidx.room3.concurrent.CloseBarrier
+import androidx.room3.coroutines.runBlockingUninterruptible
+import androidx.room3.migration.AutoMigrationSpec
+import androidx.room3.migration.Migration
+import androidx.room3.support.AutoCloser
+import androidx.room3.support.AutoClosingRoomOpenHelper
+import androidx.room3.support.AutoClosingRoomOpenHelperFactory
+import androidx.room3.support.PrePackagedCopyOpenHelper
+import androidx.room3.support.PrePackagedCopyOpenHelperFactory
+import androidx.room3.support.QueryInterceptorOpenHelperFactory
+import androidx.room3.util.contains as containsCommon
+import androidx.room3.util.findAndInstantiateDatabaseImpl
+import androidx.room3.util.findMigrationPath as findMigrationPathExt
+import androidx.room3.util.performBlocking
 import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.SQLiteDriver
 import androidx.sqlite.db.SimpleSQLiteQuery

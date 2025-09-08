@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 
-package androidx.room.ext
+package androidx.room3.ext
 
-import androidx.room.compiler.codegen.CodeLanguage
-import androidx.room.compiler.codegen.VisibilityModifier
-import androidx.room.compiler.codegen.XClassName
-import androidx.room.compiler.codegen.XCodeBlock
-import androidx.room.compiler.codegen.XFunSpec
-import androidx.room.compiler.codegen.XMemberName
-import androidx.room.compiler.codegen.XMemberName.Companion.companionMember
-import androidx.room.compiler.codegen.XMemberName.Companion.packageMember
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.compiler.codegen.XTypeSpec
-import androidx.room.compiler.codegen.asClassName
-import androidx.room.compiler.codegen.asMutableClassName
-import androidx.room.compiler.codegen.buildCodeBlock
-import androidx.room.compiler.codegen.compat.XConverters.applyToJavaPoet
-import androidx.room.ext.RoomGuavaTypeNames.GUAVA_ROOM
-import androidx.room.solver.CodeGenScope
+import androidx.room3.compiler.codegen.CodeLanguage
+import androidx.room3.compiler.codegen.VisibilityModifier
+import androidx.room3.compiler.codegen.XClassName
+import androidx.room3.compiler.codegen.XCodeBlock
+import androidx.room3.compiler.codegen.XFunSpec
+import androidx.room3.compiler.codegen.XMemberName
+import androidx.room3.compiler.codegen.XMemberName.Companion.companionMember
+import androidx.room3.compiler.codegen.XMemberName.Companion.packageMember
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.compiler.codegen.XTypeSpec
+import androidx.room3.compiler.codegen.asClassName
+import androidx.room3.compiler.codegen.asMutableClassName
+import androidx.room3.compiler.codegen.buildCodeBlock
+import androidx.room3.compiler.codegen.compat.XConverters.applyToJavaPoet
+import androidx.room3.ext.RoomGuavaTypeNames.GUAVA_ROOM
+import androidx.room3.solver.CodeGenScope
 import com.squareup.kotlinpoet.javapoet.JTypeName
 import java.util.concurrent.Callable
 
@@ -82,7 +82,7 @@ object RoomTypeNames {
     val AUTO_MIGRATION_SPEC = XClassName.get("$ROOM_PACKAGE.migration", "AutoMigrationSpec")
     val UUID_UTIL = XClassName.get("$ROOM_PACKAGE.util", "UUIDUtil")
     val AMBIGUOUS_COLUMN_RESOLVER = XClassName.get(ROOM_PACKAGE, "AmbiguousColumnResolver")
-    val RELATION_UTIL = XClassName.get("androidx.room.util", "RelationUtil")
+    val RELATION_UTIL = XClassName.get("androidx.room3.util", "RelationUtil")
     val ROOM_OPEN_DELEGATE = XClassName.get(ROOM_PACKAGE, "RoomOpenDelegate")
     val ROOM_OPEN_DELEGATE_VALIDATION_RESULT =
         XClassName.get(ROOM_PACKAGE, "RoomOpenDelegate", "ValidationResult")

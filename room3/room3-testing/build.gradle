@@ -34,7 +34,7 @@ plugins {
 
 androidXMultiplatform {
     androidLibrary {
-        namespace = "androidx.room.testing"
+        namespace = "androidx.room3.testing"
     }
     ios()
     jvm()

@@ -1,15 +1,15 @@
 package foo.bar;
 
 import androidx.annotation.NonNull;
-import androidx.room.migration.AutoMigrationSpec;
-import androidx.room.migration.Migration;
+import androidx.room3.migration.AutoMigrationSpec;
+import androidx.room3.migration.Migration;
 import androidx.sqlite.SQLite;
 import androidx.sqlite.SQLiteConnection;
 import java.lang.Override;
 import java.lang.SuppressWarnings;
 import javax.annotation.processing.Generated;
 
-@Generated("androidx.room.RoomProcessor")
+@Generated("androidx.room3.RoomProcessor")
 @SuppressWarnings({"unchecked", "deprecation", "removal"})
 final class MyDatabase_AutoMigration_1_2_Impl extends Migration {
     private final AutoMigrationSpec callback = new ValidAutoMigrationWithDefault();

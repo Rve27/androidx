@@ -1,13 +1,13 @@
 import androidx.paging.DataSource
-import androidx.room.RoomDatabase
-import androidx.room.RoomSQLiteQuery
-import androidx.room.RoomSQLiteQuery.Companion.acquire
-import androidx.room.paging.LimitOffsetDataSource
-import androidx.room.util.appendPlaceholders
-import androidx.room.util.getColumnIndex
-import androidx.room.util.getColumnIndexOrThrow
-import androidx.room.util.recursiveFetchMap
-import androidx.room.util.toSQLiteConnection
+import androidx.room3.RoomDatabase
+import androidx.room3.RoomSQLiteQuery
+import androidx.room3.RoomSQLiteQuery.Companion.acquire
+import androidx.room3.paging.LimitOffsetDataSource
+import androidx.room3.util.appendPlaceholders
+import androidx.room3.util.getColumnIndex
+import androidx.room3.util.getColumnIndexOrThrow
+import androidx.room3.util.recursiveFetchMap
+import androidx.room3.util.toSQLiteConnection
 import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.SQLiteStatement
 import javax.`annotation`.processing.Generated
@@ -24,7 +24,7 @@ import kotlin.collections.mutableMapOf
 import kotlin.reflect.KClass
 import kotlin.text.StringBuilder
 
-@Generated(value = ["androidx.room.RoomProcessor"])
+@Generated(value = ["androidx.room3.RoomProcessor"])
 @Suppress(names = ["UNCHECKED_CAST", "DEPRECATION", "REDUNDANT_PROJECTION", "REMOVAL"])
 public class MyDao_Impl(
   __db: RoomDatabase,

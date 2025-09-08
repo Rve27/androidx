@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.multiplatformtestapp.test
+package androidx.room3.integration.multiplatformtestapp.test
 
 /**
- * Gets the schema directory path for tests with [androidx.room.testing.MigrationTestHelper].
+ * Gets the schema directory path for tests with [androidx.room3.testing.MigrationTestHelper].
  *
  * For native (host OS targets), it will be the directory in the project.
  */

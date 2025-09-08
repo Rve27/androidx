@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package androidx.room.migration.bundle
+package androidx.room3.migration.bundle
 
 import androidx.annotation.RestrictTo
-import androidx.room.migration.bundle.SchemaEqualityUtil.checkSchemaEquality
+import androidx.room3.migration.bundle.SchemaEqualityUtil.checkSchemaEquality
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-/** Data class that holds the schema information about an [androidx.room.Entity]. */
+/** Data class that holds the schema information about an [androidx.room3.Entity]. */
 @Serializable
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public open class EntityBundle(

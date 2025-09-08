@@ -7,7 +7,7 @@
         errorLine1="                    Thread.sleep(3_500)"
         errorLine2="                           ~~~~~">
         <location
-            file="src/androidTest/java/androidx/room/integration/kotlintestapp/test/MultiTypedPagingSourceTest.kt"/>
+            file="src/androidTest/java/androidx/room3/integration/kotlintestapp/test/MultiTypedPagingSourceTest.kt"/>
     </issue>
 
     <issue
@@ -16,7 +16,7 @@
         errorLine1="                                .doOnSubscribe { Thread.sleep(500) }"
         errorLine2="                                                        ~~~~~">
         <location
-            file="src/androidTest/java/androidx/room/integration/kotlintestapp/test/Rx2PagingSourceTest.kt"/>
+            file="src/androidTest/java/androidx/room3/integration/kotlintestapp/test/Rx2PagingSourceTest.kt"/>
     </issue>
 
     <issue
@@ -25,7 +25,7 @@
         errorLine1="                                .doOnSubscribe { Thread.sleep(500) }"
         errorLine2="                                                        ~~~~~">
         <location
-            file="src/androidTest/java/androidx/room/integration/kotlintestapp/test/Rx2PagingSourceTest.kt"/>
+            file="src/androidTest/java/androidx/room3/integration/kotlintestapp/test/Rx2PagingSourceTest.kt"/>
     </issue>
 
     <issue
@@ -34,7 +34,7 @@
         errorLine1="                                .doOnSubscribe { Thread.sleep(500) }"
         errorLine2="                                                        ~~~~~">
         <location
-            file="src/androidTest/java/androidx/room/integration/kotlintestapp/test/Rx2PagingSourceTest.kt"/>
+            file="src/androidTest/java/androidx/room3/integration/kotlintestapp/test/Rx2PagingSourceTest.kt"/>
     </issue>
 
     <issue
@@ -43,7 +43,7 @@
         errorLine1="                                .doOnSubscribe { Thread.sleep(500) }"
         errorLine2="                                                        ~~~~~">
         <location
-            file="src/androidTest/java/androidx/room/integration/kotlintestapp/test/Rx3PagingSourceTest.kt"/>
+            file="src/androidTest/java/androidx/room3/integration/kotlintestapp/test/Rx3PagingSourceTest.kt"/>
     </issue>
 
     <issue
@@ -52,7 +52,7 @@
         errorLine1="                                .doOnSubscribe { Thread.sleep(500) }"
         errorLine2="                                                        ~~~~~">
         <location
-            file="src/androidTest/java/androidx/room/integration/kotlintestapp/test/Rx3PagingSourceTest.kt"/>
+            file="src/androidTest/java/androidx/room3/integration/kotlintestapp/test/Rx3PagingSourceTest.kt"/>
     </issue>
 
     <issue
@@ -61,7 +61,7 @@
         errorLine1="                                .doOnSubscribe { Thread.sleep(500) }"
         errorLine2="                                                        ~~~~~">
         <location
-            file="src/androidTest/java/androidx/room/integration/kotlintestapp/test/Rx3PagingSourceTest.kt"/>
+            file="src/androidTest/java/androidx/room3/integration/kotlintestapp/test/Rx3PagingSourceTest.kt"/>
     </issue>
 
 </issues>

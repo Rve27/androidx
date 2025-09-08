@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing
+package androidx.room3.compiler.processing
 
 /**
  * These APIs are experimental and are not designed to be used by external artifacts.

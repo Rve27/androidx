@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.kotlintestapp.test
+package androidx.room3.integration.kotlintestapp.test
 
-import androidx.room.Dao
-import androidx.room.Database
-import androidx.room.Embedded
-import androidx.room.Entity
-import androidx.room.Insert
-import androidx.room.PrimaryKey
-import androidx.room.Query
-import androidx.room.Relation
-import androidx.room.Room
-import androidx.room.RoomDatabase
-import androidx.room.Transaction
+import androidx.room3.Dao
+import androidx.room3.Database
+import androidx.room3.Embedded
+import androidx.room3.Entity
+import androidx.room3.Insert
+import androidx.room3.PrimaryKey
+import androidx.room3.Query
+import androidx.room3.Relation
+import androidx.room3.Room
+import androidx.room3.RoomDatabase
+import androidx.room3.Transaction
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
 import androidx.test.platform.app.InstrumentationRegistry

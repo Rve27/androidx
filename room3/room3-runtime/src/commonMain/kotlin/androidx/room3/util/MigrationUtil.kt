@@ -17,12 +17,12 @@
 @file:JvmName("MigrationUtil")
 @file:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 
-package androidx.room.util
+package androidx.room3.util
 
 import androidx.annotation.RestrictTo
-import androidx.room.DatabaseConfiguration
-import androidx.room.RoomDatabase.MigrationContainer
-import androidx.room.migration.Migration
+import androidx.room3.DatabaseConfiguration
+import androidx.room3.RoomDatabase.MigrationContainer
+import androidx.room3.migration.Migration
 import kotlin.jvm.JvmName
 
 /**

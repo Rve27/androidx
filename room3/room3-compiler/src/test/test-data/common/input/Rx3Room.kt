@@ -17,9 +17,9 @@
 // mock rx2 helper
 @file:JvmName("RxRoom")
 
-package androidx.room.rxjava3
+package androidx.room3.rxjava3
 
-import androidx.room.RoomDatabase
+import androidx.room3.RoomDatabase
 import androidx.sqlite.SQLiteConnection
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Flowable

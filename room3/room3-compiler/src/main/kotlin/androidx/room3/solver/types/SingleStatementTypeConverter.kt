@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package androidx.room.solver.types
+package androidx.room3.solver.types
 
-import androidx.room.compiler.codegen.XCodeBlock
-import androidx.room.compiler.processing.XType
-import androidx.room.solver.CodeGenScope
+import androidx.room3.compiler.codegen.XCodeBlock
+import androidx.room3.compiler.processing.XType
+import androidx.room3.solver.CodeGenScope
 
 /** A [TypeConverter] that has only 1 statement (e.g. foo ? bar : baz). */
 abstract class SingleStatementTypeConverter(from: XType, to: XType) : TypeConverter(from, to) {

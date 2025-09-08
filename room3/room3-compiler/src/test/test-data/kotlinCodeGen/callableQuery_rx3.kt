@@ -1,10 +1,10 @@
-import androidx.room.RoomDatabase
-import androidx.room.rxjava3.createFlowable
-import androidx.room.rxjava3.createMaybe
-import androidx.room.rxjava3.createObservable
-import androidx.room.rxjava3.createSingle
-import androidx.room.util.appendPlaceholders
-import androidx.room.util.getColumnIndexOrThrow
+import androidx.room3.RoomDatabase
+import androidx.room3.rxjava3.createFlowable
+import androidx.room3.rxjava3.createMaybe
+import androidx.room3.rxjava3.createObservable
+import androidx.room3.rxjava3.createSingle
+import androidx.room3.util.appendPlaceholders
+import androidx.room3.util.getColumnIndexOrThrow
 import androidx.sqlite.SQLiteStatement
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Maybe
@@ -18,7 +18,7 @@ import kotlin.collections.List
 import kotlin.reflect.KClass
 import kotlin.text.StringBuilder
 
-@Generated(value = ["androidx.room.RoomProcessor"])
+@Generated(value = ["androidx.room3.RoomProcessor"])
 @Suppress(names = ["UNCHECKED_CAST", "DEPRECATION", "REDUNDANT_PROJECTION", "REMOVAL"])
 public class MyDao_Impl(
   __db: RoomDatabase,

@@ -1,14 +1,14 @@
-package androidx.room.integration.kotlintestapp.test;
+package androidx.room3.integration.kotlintestapp.test;
 
 import androidx.annotation.NonNull;
-import androidx.room.migration.AutoMigrationSpec;
-import androidx.room.migration.Migration;
+import androidx.room3.migration.AutoMigrationSpec;
+import androidx.room3.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 import java.lang.Override;
 import java.lang.SuppressWarnings;
 import javax.annotation.processing.Generated;
 
-@Generated("androidx.room.RoomProcessor")
+@Generated("androidx.room3.RoomProcessor")
 @SuppressWarnings({"unchecked", "deprecation"})
 final class PreKmpDatabase_AutoMigration_1_2_Impl extends Migration {
     private final AutoMigrationSpec callback;

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.room.solver.query.parameter
+package androidx.room3.solver.query.parameter
 
-import androidx.room.solver.CodeGenScope
+import androidx.room3.solver.CodeGenScope
 
 /** Knows how to convert a query parameter into query arguments. */
 abstract class QueryParameterAdapter(val isMultiple: Boolean) {

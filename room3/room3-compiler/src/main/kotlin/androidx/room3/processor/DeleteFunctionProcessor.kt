@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.room.processor
+package androidx.room3.processor
 
-import androidx.room.Delete
-import androidx.room.compiler.processing.XMethodElement
-import androidx.room.compiler.processing.XType
-import androidx.room.vo.DeleteFunction
+import androidx.room3.Delete
+import androidx.room3.compiler.processing.XMethodElement
+import androidx.room3.compiler.processing.XType
+import androidx.room3.vo.DeleteFunction
 
 class DeleteFunctionProcessor(
     baseContext: Context,

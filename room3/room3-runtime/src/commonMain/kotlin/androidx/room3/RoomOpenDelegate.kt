@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room
+package androidx.room3
 
 import androidx.annotation.RestrictTo
 import androidx.sqlite.SQLiteConnection

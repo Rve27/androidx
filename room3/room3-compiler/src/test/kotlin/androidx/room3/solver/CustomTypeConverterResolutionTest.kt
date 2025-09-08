@@ -16,27 +16,27 @@
 
 @file:Suppress("HasPlatformType")
 
-package androidx.room.solver
+package androidx.room3.solver
 
-import androidx.room.DatabaseProcessingStep
-import androidx.room.TypeConverter
-import androidx.room.compiler.codegen.CodeLanguage
-import androidx.room.compiler.codegen.VisibilityModifier
-import androidx.room.compiler.codegen.XAnnotationSpec
-import androidx.room.compiler.codegen.XClassName
-import androidx.room.compiler.codegen.XCodeBlock
-import androidx.room.compiler.codegen.XFunSpec
-import androidx.room.compiler.codegen.XPropertySpec
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.compiler.codegen.XTypeSpec
-import androidx.room.compiler.codegen.compat.XConverters.toString
-import androidx.room.compiler.processing.util.CompilationResultSubject
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.runProcessorTest
-import androidx.room.ext.CommonTypeNames
-import androidx.room.ext.RoomAnnotationTypeNames
-import androidx.room.ext.RoomTypeNames.ROOM_DB
-import androidx.room.processor.ProcessorErrors.CANNOT_BIND_QUERY_PARAMETER_INTO_STMT
+import androidx.room3.DatabaseProcessingStep
+import androidx.room3.TypeConverter
+import androidx.room3.compiler.codegen.CodeLanguage
+import androidx.room3.compiler.codegen.VisibilityModifier
+import androidx.room3.compiler.codegen.XAnnotationSpec
+import androidx.room3.compiler.codegen.XClassName
+import androidx.room3.compiler.codegen.XCodeBlock
+import androidx.room3.compiler.codegen.XFunSpec
+import androidx.room3.compiler.codegen.XPropertySpec
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.compiler.codegen.XTypeSpec
+import androidx.room3.compiler.codegen.compat.XConverters.toString
+import androidx.room3.compiler.processing.util.CompilationResultSubject
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.runProcessorTest
+import androidx.room3.ext.CommonTypeNames
+import androidx.room3.ext.RoomAnnotationTypeNames
+import androidx.room3.ext.RoomTypeNames.ROOM_DB
+import androidx.room3.processor.ProcessorErrors.CANNOT_BIND_QUERY_PARAMETER_INTO_STMT
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4

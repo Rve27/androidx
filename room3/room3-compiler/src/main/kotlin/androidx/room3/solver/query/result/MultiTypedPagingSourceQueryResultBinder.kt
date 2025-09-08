@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package androidx.room.solver.query.result
+package androidx.room3.solver.query.result
 
-import androidx.room.compiler.codegen.VisibilityModifier
-import androidx.room.compiler.codegen.XClassName
-import androidx.room.compiler.codegen.XFunSpec
-import androidx.room.compiler.codegen.XPropertySpec
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.compiler.codegen.XTypeSpec
-import androidx.room.ext.CommonTypeNames
-import androidx.room.ext.SQLiteDriverTypeNames
-import androidx.room.solver.CodeGenScope
+import androidx.room3.compiler.codegen.VisibilityModifier
+import androidx.room3.compiler.codegen.XClassName
+import androidx.room3.compiler.codegen.XFunSpec
+import androidx.room3.compiler.codegen.XPropertySpec
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.compiler.codegen.XTypeSpec
+import androidx.room3.ext.CommonTypeNames
+import androidx.room3.ext.SQLiteDriverTypeNames
+import androidx.room3.solver.CodeGenScope
 
 /**
  * This Binder binds queries directly to Non-KMP compatible Paging3 PagingSource Binders. Used

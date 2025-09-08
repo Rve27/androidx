@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.profiling
+package androidx.room3.compiler.processing.profiling
 
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.nanoseconds

@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.kotlintestapp.dao
+package androidx.room3.integration.kotlintestapp.dao
 
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.RawQuery
-import androidx.room.Update
+import androidx.room3.Delete
+import androidx.room3.Insert
+import androidx.room3.OnConflictStrategy
+import androidx.room3.RawQuery
+import androidx.room3.Update
 import androidx.sqlite.db.SupportSQLiteQuery
 
 interface BaseDao<T> {

@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package androidx.room.vo
+package androidx.room3.vo
 
-import androidx.room.compiler.codegen.CodeLanguage
-import androidx.room.compiler.codegen.XCodeBlock
-import androidx.room.compiler.codegen.XCodeBlock.Builder.Companion.applyTo
-import androidx.room.compiler.processing.XExecutableElement
-import androidx.room.compiler.processing.isConstructor
-import androidx.room.compiler.processing.isMethod
+import androidx.room3.compiler.codegen.CodeLanguage
+import androidx.room3.compiler.codegen.XCodeBlock
+import androidx.room3.compiler.codegen.XCodeBlock.Builder.Companion.applyTo
+import androidx.room3.compiler.processing.XExecutableElement
+import androidx.room3.compiler.processing.isConstructor
+import androidx.room3.compiler.processing.isMethod
 
 /**
  * Each Entity / data class we process has a constructor. It might be the empty constructor or a

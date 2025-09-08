@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package androidx.room.solver.prepared.binderprovider
+package androidx.room3.solver.prepared.binderprovider
 
-import androidx.room.compiler.processing.XNullability
-import androidx.room.compiler.processing.XType
-import androidx.room.compiler.processing.isVoidObject
-import androidx.room.ext.GuavaUtilConcurrentTypeNames
-import androidx.room.ext.RoomGuavaMemberNames.GUAVA_ROOM_CREATE_LISTENABLE_FUTURE
-import androidx.room.ext.RoomGuavaTypeNames.GUAVA_ROOM_MARKER
-import androidx.room.parser.ParsedQuery
-import androidx.room.processor.Context
-import androidx.room.processor.ProcessorErrors
-import androidx.room.solver.prepared.binder.LambdaPreparedQueryResultBinder
-import androidx.room.solver.prepared.binder.PreparedQueryResultBinder
+import androidx.room3.compiler.processing.XNullability
+import androidx.room3.compiler.processing.XType
+import androidx.room3.compiler.processing.isVoidObject
+import androidx.room3.ext.GuavaUtilConcurrentTypeNames
+import androidx.room3.ext.RoomGuavaMemberNames.GUAVA_ROOM_CREATE_LISTENABLE_FUTURE
+import androidx.room3.ext.RoomGuavaTypeNames.GUAVA_ROOM_MARKER
+import androidx.room3.parser.ParsedQuery
+import androidx.room3.processor.Context
+import androidx.room3.processor.ProcessorErrors
+import androidx.room3.solver.prepared.binder.LambdaPreparedQueryResultBinder
+import androidx.room3.solver.prepared.binder.PreparedQueryResultBinder
 
 class GuavaListenableFuturePreparedQueryResultBinderProvider(val context: Context) :
     PreparedQueryResultBinderProvider {

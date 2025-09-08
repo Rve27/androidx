@@ -1,10 +1,10 @@
-import androidx.room.InvalidationTracker
-import androidx.room.RoomOpenDelegate
-import androidx.room.migration.AutoMigrationSpec
-import androidx.room.migration.Migration
-import androidx.room.util.TableInfo
-import androidx.room.util.TableInfo.Companion.read
-import androidx.room.util.dropFtsSyncTriggers
+import androidx.room3.InvalidationTracker
+import androidx.room3.RoomOpenDelegate
+import androidx.room3.migration.AutoMigrationSpec
+import androidx.room3.migration.Migration
+import androidx.room3.util.TableInfo
+import androidx.room3.util.TableInfo.Companion.read
+import androidx.room3.util.dropFtsSyncTriggers
 import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.execSQL
 import javax.`annotation`.processing.Generated
@@ -22,7 +22,7 @@ import kotlin.collections.mutableMapOf
 import kotlin.collections.mutableSetOf
 import kotlin.reflect.KClass
 
-@Generated(value = ["androidx.room.RoomProcessor"])
+@Generated(value = ["androidx.room3.RoomProcessor"])
 @Suppress(names = ["UNCHECKED_CAST", "DEPRECATION", "REDUNDANT_PROJECTION", "REMOVAL"])
 internal class MyDatabase_Impl : MyDatabase() {
   private val _myDao: Lazy<MyDao> = lazy {

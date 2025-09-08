@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.ksp
+package androidx.room3.compiler.processing.ksp
 
-import androidx.room.compiler.codegen.XClassName
-import androidx.room.compiler.processing.XAnnotated
-import androidx.room.compiler.processing.XElement
-import androidx.room.compiler.processing.XMemberContainer
-import androidx.room.compiler.processing.XNullability
+import androidx.room3.compiler.codegen.XClassName
+import androidx.room3.compiler.processing.XAnnotated
+import androidx.room3.compiler.processing.XElement
+import androidx.room3.compiler.processing.XMemberContainer
+import androidx.room3.compiler.processing.XNullability
 import com.google.devtools.ksp.symbol.AnnotationUseSiteTarget
 import com.google.devtools.ksp.symbol.KSDeclaration
 import com.google.devtools.ksp.symbol.KSFile
@@ -48,7 +48,7 @@ internal class KspFileMemberContainer(
     @Deprecated(
         "Use asClassName().toJavaPoet() to be clear the name is for JavaPoet.",
         replaceWith =
-            ReplaceWith("asClassName().toJavaPoet()", "androidx.room.compiler.codegen.toJavaPoet"),
+            ReplaceWith("asClassName().toJavaPoet()", "androidx.room3.compiler.codegen.toJavaPoet"),
     )
     override val className: ClassName by lazy { xClassName.java }
 

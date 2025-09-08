@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package androidx.room.solver.types
+package androidx.room3.solver.types
 
-import androidx.room.compiler.processing.XType
-import androidx.room.solver.CodeGenScope
+import androidx.room3.compiler.processing.XType
+import androidx.room3.solver.CodeGenScope
 
 /**
  * A column adapter that uses a type converter to do the conversion. The type converter may be a

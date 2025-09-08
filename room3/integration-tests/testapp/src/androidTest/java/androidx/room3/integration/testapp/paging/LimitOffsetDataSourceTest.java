@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.testapp.paging;
+package androidx.room3.integration.testapp.paging;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;
 
-import androidx.room.integration.testapp.test.TestDatabaseTest;
-import androidx.room.integration.testapp.test.TestUtil;
-import androidx.room.integration.testapp.vo.User;
-import androidx.room.paging.LimitOffsetDataSource;
+import androidx.room3.integration.testapp.test.TestDatabaseTest;
+import androidx.room3.integration.testapp.test.TestUtil;
+import androidx.room3.integration.testapp.vo.User;
+import androidx.room3.paging.LimitOffsetDataSource;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.MediumTest;
 

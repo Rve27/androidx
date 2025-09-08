@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room
+package androidx.room3
 
 /**
  * Flags to turn on/off extra type converters provided by Room.

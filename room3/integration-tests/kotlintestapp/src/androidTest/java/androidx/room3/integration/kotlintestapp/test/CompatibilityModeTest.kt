@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.kotlintestapp.test
+package androidx.room3.integration.kotlintestapp.test
 
 import androidx.kruth.assertThat
 import androidx.kruth.assertThrows
-import androidx.room.deferredTransaction
-import androidx.room.immediateTransaction
-import androidx.room.useReaderConnection
-import androidx.room.useWriterConnection
-import androidx.room.withTransaction
+import androidx.room3.deferredTransaction
+import androidx.room3.immediateTransaction
+import androidx.room3.useReaderConnection
+import androidx.room3.useWriterConnection
+import androidx.room3.withTransaction
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
 import kotlin.coroutines.ContinuationInterceptor

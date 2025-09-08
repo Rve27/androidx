@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package androidx.room.writer
+package androidx.room3.writer
 
 import COMMON
-import androidx.room.compiler.codegen.CodeLanguage
-import androidx.room.compiler.processing.XProcessingEnv
-import androidx.room.compiler.processing.XTypeElement
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.XTestInvocation
-import androidx.room.compiler.processing.util.compileFiles
-import androidx.room.compiler.processing.util.runProcessorTest
-import androidx.room.ext.RoomTypeNames.ROOM_DB
-import androidx.room.processor.DaoProcessor
-import androidx.room.testing.context
+import androidx.room3.compiler.codegen.CodeLanguage
+import androidx.room3.compiler.processing.XProcessingEnv
+import androidx.room3.compiler.processing.XTypeElement
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.XTestInvocation
+import androidx.room3.compiler.processing.util.compileFiles
+import androidx.room3.compiler.processing.util.runProcessorTest
+import androidx.room3.ext.RoomTypeNames.ROOM_DB
+import androidx.room3.processor.DaoProcessor
+import androidx.room3.testing.context
 import com.google.testing.junit.testparameterinjector.TestParameter
 import com.google.testing.junit.testparameterinjector.TestParameterInjector
 import createVerifierFromEntitiesAndViews
@@ -161,13 +161,13 @@ class DaoWriterTest {
             }
             val dao =
                 invocation.roundEnv
-                    .getElementsAnnotatedWith(androidx.room.Dao::class.qualifiedName!!)
+                    .getElementsAnnotatedWith(androidx.room3.Dao::class.qualifiedName!!)
                     .filterIsInstance<XTypeElement>()
                     .firstOrNull()
             if (dao != null) {
                 val db =
                     invocation.roundEnv
-                        .getElementsAnnotatedWith(androidx.room.Database::class.qualifiedName!!)
+                        .getElementsAnnotatedWith(androidx.room3.Database::class.qualifiedName!!)
                         .filterIsInstance<XTypeElement>()
                         .firstOrNull()
                         ?: invocation.context.processingEnv.requireTypeElement(ROOM_DB)

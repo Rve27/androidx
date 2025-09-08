@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.codegen.impl
+package androidx.room3.compiler.codegen.impl
 
-import androidx.room.compiler.codegen.VisibilityModifier
-import androidx.room.compiler.codegen.XAnnotationSpec
-import androidx.room.compiler.codegen.XFunSpec
-import androidx.room.compiler.codegen.XName
-import androidx.room.compiler.codegen.XPropertySpec
-import androidx.room.compiler.codegen.XSpec
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.compiler.codegen.XTypeSpec
-import androidx.room.compiler.codegen.java.JavaTypeSpec
-import androidx.room.compiler.codegen.kotlin.KotlinTypeSpec
-import androidx.room.compiler.processing.XElement
+import androidx.room3.compiler.codegen.VisibilityModifier
+import androidx.room3.compiler.codegen.XAnnotationSpec
+import androidx.room3.compiler.codegen.XFunSpec
+import androidx.room3.compiler.codegen.XName
+import androidx.room3.compiler.codegen.XPropertySpec
+import androidx.room3.compiler.codegen.XSpec
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.compiler.codegen.XTypeSpec
+import androidx.room3.compiler.codegen.java.JavaTypeSpec
+import androidx.room3.compiler.codegen.kotlin.KotlinTypeSpec
+import androidx.room3.compiler.processing.XElement
 
 internal class XTypeSpecImpl(override val java: JavaTypeSpec, override val kotlin: KotlinTypeSpec) :
     ImplSpec<JavaTypeSpec, KotlinTypeSpec>(), XTypeSpec {

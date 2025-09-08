@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.kotlintestapp.test
+package androidx.room3.integration.kotlintestapp.test
 
 import android.database.sqlite.SQLiteTransactionListener
 import androidx.kruth.assertThat
 import androidx.kruth.assertThrows
-import androidx.room.Room
-import androidx.room.RoomDatabase
-import androidx.room.integration.kotlintestapp.TestDatabase
-import androidx.room.integration.kotlintestapp.vo.Publisher
+import androidx.room3.Room
+import androidx.room3.RoomDatabase
+import androidx.room3.integration.kotlintestapp.TestDatabase
+import androidx.room3.integration.kotlintestapp.vo.Publisher
 import androidx.sqlite.SQLiteException
 import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver

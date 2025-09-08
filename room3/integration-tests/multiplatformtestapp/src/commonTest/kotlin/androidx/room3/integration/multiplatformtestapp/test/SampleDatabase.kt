@@ -14,32 +14,32 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.multiplatformtestapp.test
+package androidx.room3.integration.multiplatformtestapp.test
 
-import androidx.room.ColumnInfo
-import androidx.room.ConstructedBy
-import androidx.room.Dao
-import androidx.room.Database
-import androidx.room.Delete
-import androidx.room.Embedded
-import androidx.room.Entity
-import androidx.room.ForeignKey
-import androidx.room.Index
-import androidx.room.Insert
-import androidx.room.Junction
-import androidx.room.MapColumn
-import androidx.room.PrimaryKey
-import androidx.room.Query
-import androidx.room.RawQuery
-import androidx.room.Relation
-import androidx.room.RewriteQueriesToDropUnusedColumns
-import androidx.room.RoomDatabase
-import androidx.room.RoomDatabaseConstructor
-import androidx.room.RoomRawQuery
-import androidx.room.SkipQueryVerification
-import androidx.room.Transaction
-import androidx.room.Update
-import androidx.room.Upsert
+import androidx.room3.ColumnInfo
+import androidx.room3.ConstructedBy
+import androidx.room3.Dao
+import androidx.room3.Database
+import androidx.room3.Delete
+import androidx.room3.Embedded
+import androidx.room3.Entity
+import androidx.room3.ForeignKey
+import androidx.room3.Index
+import androidx.room3.Insert
+import androidx.room3.Junction
+import androidx.room3.MapColumn
+import androidx.room3.PrimaryKey
+import androidx.room3.Query
+import androidx.room3.RawQuery
+import androidx.room3.Relation
+import androidx.room3.RewriteQueriesToDropUnusedColumns
+import androidx.room3.RoomDatabase
+import androidx.room3.RoomDatabaseConstructor
+import androidx.room3.RoomRawQuery
+import androidx.room3.SkipQueryVerification
+import androidx.room3.Transaction
+import androidx.room3.Update
+import androidx.room3.Upsert
 import kotlinx.coroutines.flow.Flow
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

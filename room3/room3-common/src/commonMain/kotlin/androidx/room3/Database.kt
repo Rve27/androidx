@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package androidx.room
+package androidx.room3
 
 import kotlin.reflect.KClass
 
 /**
- * Marks a class as a [androidx.room.RoomDatabase].
+ * Marks a class as a [androidx.room3.RoomDatabase].
  *
- * The class should be an abstract class and extend [androidx.room.RoomDatabase].
+ * The class should be an abstract class and extend [androidx.room3.RoomDatabase].
  *
- * You can receive an implementation of the class via [androidx.room.Room.databaseBuilder] or
- * [androidx.room.Room.inMemoryDatabaseBuilder].
+ * You can receive an implementation of the class via [androidx.room3.Room.databaseBuilder] or
+ * [androidx.room3.Room.inMemoryDatabaseBuilder].
  *
  * ```
  * // Song and Album are classes annotated with @Entity.
@@ -61,7 +61,7 @@ import kotlin.reflect.KClass
  * @see [Dao]
  * @see [Entity]
  * @see [AutoMigration]
- * @see [androidx.room.RoomDatabase]
+ * @see [androidx.room3.RoomDatabase]
  * @see [ConstructedBy]
  */
 @Target(AnnotationTarget.CLASS)
@@ -113,8 +113,8 @@ public annotation class Database(
      * See [AutoMigration] for example code usage.
      *
      * For more complicated cases not covered by [AutoMigration], runtime defined
-     * [androidx.room.migration.Migration] added with
-     * [androidx.room.RoomDatabase.Builder.addMigrations] can still be used.
+     * [androidx.room3.migration.Migration] added with
+     * [androidx.room3.RoomDatabase.Builder.addMigrations] can still be used.
      *
      * @return List of [AutoMigration] annotations.
      */

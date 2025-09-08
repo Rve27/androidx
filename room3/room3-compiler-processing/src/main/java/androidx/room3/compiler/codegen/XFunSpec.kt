@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.codegen
+package androidx.room3.compiler.codegen
 
-import androidx.room.compiler.codegen.impl.XFunSpecImpl
-import androidx.room.compiler.codegen.java.JavaFunSpec
-import androidx.room.compiler.codegen.java.toJavaVisibilityModifier
-import androidx.room.compiler.codegen.kotlin.KotlinFunSpec
-import androidx.room.compiler.codegen.kotlin.toKotlinVisibilityModifier
-import androidx.room.compiler.processing.FunSpecHelper
-import androidx.room.compiler.processing.MethodSpecHelper
-import androidx.room.compiler.processing.XMethodElement
-import androidx.room.compiler.processing.XType
+import androidx.room3.compiler.codegen.impl.XFunSpecImpl
+import androidx.room3.compiler.codegen.java.JavaFunSpec
+import androidx.room3.compiler.codegen.java.toJavaVisibilityModifier
+import androidx.room3.compiler.codegen.kotlin.KotlinFunSpec
+import androidx.room3.compiler.codegen.kotlin.toKotlinVisibilityModifier
+import androidx.room3.compiler.processing.FunSpecHelper
+import androidx.room3.compiler.processing.MethodSpecHelper
+import androidx.room3.compiler.processing.XMethodElement
+import androidx.room3.compiler.processing.XType
 import com.squareup.kotlinpoet.KModifier
 
 interface XFunSpec {

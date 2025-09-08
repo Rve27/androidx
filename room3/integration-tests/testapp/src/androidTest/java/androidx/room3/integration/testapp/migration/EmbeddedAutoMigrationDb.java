@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.testapp.migration;
+package androidx.room3.integration.testapp.migration;
 
-import androidx.room.AutoMigration;
-import androidx.room.ColumnInfo;
-import androidx.room.Dao;
-import androidx.room.Database;
-import androidx.room.Embedded;
-import androidx.room.Entity;
-import androidx.room.PrimaryKey;
-import androidx.room.Query;
-import androidx.room.RoomDatabase;
-import androidx.room.RoomWarnings;
+import androidx.room3.AutoMigration;
+import androidx.room3.ColumnInfo;
+import androidx.room3.Dao;
+import androidx.room3.Database;
+import androidx.room3.Embedded;
+import androidx.room3.Entity;
+import androidx.room3.PrimaryKey;
+import androidx.room3.Query;
+import androidx.room3.RoomDatabase;
+import androidx.room3.RoomWarnings;
 
 import java.io.Serializable;
 import java.util.List;

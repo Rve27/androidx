@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.javac
+package androidx.room3.compiler.processing.javac
 
-import androidx.room.compiler.processing.XAnnotation
-import androidx.room.compiler.processing.XFieldElement
-import androidx.room.compiler.processing.XMethodElement
-import androidx.room.compiler.processing.javac.kotlin.KmPropertyContainer
-import androidx.room.compiler.processing.javac.kotlin.KmTypeContainer
-import androidx.room.compiler.processing.javac.kotlin.descriptor
+import androidx.room3.compiler.processing.XAnnotation
+import androidx.room3.compiler.processing.XFieldElement
+import androidx.room3.compiler.processing.XMethodElement
+import androidx.room3.compiler.processing.javac.kotlin.KmPropertyContainer
+import androidx.room3.compiler.processing.javac.kotlin.KmTypeContainer
+import androidx.room3.compiler.processing.javac.kotlin.descriptor
 import javax.lang.model.element.VariableElement
 
 internal class JavacFieldElement(env: JavacProcessingEnv, element: VariableElement) :

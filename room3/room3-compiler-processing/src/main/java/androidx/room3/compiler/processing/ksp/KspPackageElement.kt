@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.ksp
+package androidx.room3.compiler.processing.ksp
 
-import androidx.room.compiler.processing.XElement
-import androidx.room.compiler.processing.XMemberContainer
-import androidx.room.compiler.processing.XPackageElement
+import androidx.room3.compiler.processing.XElement
+import androidx.room3.compiler.processing.XMemberContainer
+import androidx.room3.compiler.processing.XPackageElement
 import com.google.devtools.ksp.KspExperimental
 import java.lang.UnsupportedOperationException
 

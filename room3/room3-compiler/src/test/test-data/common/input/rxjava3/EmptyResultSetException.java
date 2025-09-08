@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.rxjava3;
+package androidx.room3.rxjava3;
 
 /**
  * Thrown by Room when the query in a Single&lt;T&gt; DAO method needs to return a result but the

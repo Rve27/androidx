@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing
+package androidx.room3.compiler.processing
 
 import androidx.kruth.assertThat
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.compiler.codegen.asMutableClassName
-import androidx.room.compiler.processing.ksp.KspProcessingEnv
-import androidx.room.compiler.processing.util.CONTINUATION_JCLASS_NAME
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.UNIT_JCLASS_NAME
-import androidx.room.compiler.processing.util.XTestInvocation
-import androidx.room.compiler.processing.util.compileFiles
-import androidx.room.compiler.processing.util.getMethodByJvmName
-import androidx.room.compiler.processing.util.runProcessorTest
-import androidx.room.compiler.processing.util.typeName
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.compiler.codegen.asMutableClassName
+import androidx.room3.compiler.processing.ksp.KspProcessingEnv
+import androidx.room3.compiler.processing.util.CONTINUATION_JCLASS_NAME
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.UNIT_JCLASS_NAME
+import androidx.room3.compiler.processing.util.XTestInvocation
+import androidx.room3.compiler.processing.util.compileFiles
+import androidx.room3.compiler.processing.util.getMethodByJvmName
+import androidx.room3.compiler.processing.util.runProcessorTest
+import androidx.room3.compiler.processing.util.typeName
 import com.google.common.truth.Truth
 import com.squareup.javapoet.ClassName
 import com.squareup.javapoet.ParameterizedTypeName

@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package androidx.room.solver.query
+package androidx.room3.solver.query
 
 import androidx.kruth.assertThat
-import androidx.room.Dao
-import androidx.room.Query
-import androidx.room.compiler.codegen.CodeLanguage
-import androidx.room.compiler.codegen.compat.XConverters.toString
-import androidx.room.compiler.processing.XTypeElement
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.runProcessorTest
-import androidx.room.ext.RoomTypeNames.ROOM_SQL_QUERY
-import androidx.room.ext.RoomTypeNames.STRING_UTIL
-import androidx.room.processor.QueryFunctionProcessor
-import androidx.room.testing.context
-import androidx.room.writer.QueryWriter
+import androidx.room3.Dao
+import androidx.room3.Query
+import androidx.room3.compiler.codegen.CodeLanguage
+import androidx.room3.compiler.codegen.compat.XConverters.toString
+import androidx.room3.compiler.processing.XTypeElement
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.runProcessorTest
+import androidx.room3.ext.RoomTypeNames.ROOM_SQL_QUERY
+import androidx.room3.ext.RoomTypeNames.STRING_UTIL
+import androidx.room3.processor.QueryFunctionProcessor
+import androidx.room3.testing.context
+import androidx.room3.writer.QueryWriter
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
@@ -40,7 +40,7 @@ class QueryWriterTest {
         const val DAO_PREFIX =
             """
                 package foo.bar;
-                import androidx.room.*;
+                import androidx.room3.*;
                 import java.util.*;
                 import com.google.common.collect.ImmutableList;
                 @Dao

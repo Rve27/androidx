@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.kotlintestapp.test
+package androidx.room3.integration.kotlintestapp.test
 
-import androidx.room.integration.kotlintestapp.vo.Book
-import androidx.room.integration.kotlintestapp.vo.BookWithPublisher
-import androidx.room.integration.kotlintestapp.vo.Publisher
+import androidx.room3.integration.kotlintestapp.vo.Book
+import androidx.room3.integration.kotlintestapp.vo.BookWithPublisher
+import androidx.room3.integration.kotlintestapp.vo.Publisher
 import androidx.test.filters.MediumTest
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat

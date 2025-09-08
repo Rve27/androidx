@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing
+package androidx.room3.compiler.processing
 
 import java.util.ServiceLoader
 
@@ -24,7 +24,7 @@ import java.util.ServiceLoader
  *
  * XProcessingTesting will find the implementation via a [ServiceLoader]. To register your
  * implementation, add the following file
- * `androidx.room.compiler.processing.XProcessingEnvironmentTestConfigProvider` into
+ * `androidx.room3.compiler.processing.XProcessingEnvironmentTestConfigProvider` into
  * `resources/META-INF/services/` folder (test source path). The contents of the file should have
  * the fully qualified name of your implementation class.
  */

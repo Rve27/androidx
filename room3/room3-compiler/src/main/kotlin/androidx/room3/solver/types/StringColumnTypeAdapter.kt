@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package androidx.room.solver.types
+package androidx.room3.solver.types
 
-import androidx.room.compiler.processing.XNullability
-import androidx.room.compiler.processing.XProcessingEnv
-import androidx.room.compiler.processing.XType
-import androidx.room.ext.CommonTypeNames
-import androidx.room.parser.SQLTypeAffinity.TEXT
-import androidx.room.solver.CodeGenScope
+import androidx.room3.compiler.processing.XNullability
+import androidx.room3.compiler.processing.XProcessingEnv
+import androidx.room3.compiler.processing.XType
+import androidx.room3.ext.CommonTypeNames
+import androidx.room3.parser.SQLTypeAffinity.TEXT
+import androidx.room3.solver.CodeGenScope
 
 class StringColumnTypeAdapter private constructor(out: XType) :
     ColumnTypeAdapter(out = out, typeAffinity = TEXT) {

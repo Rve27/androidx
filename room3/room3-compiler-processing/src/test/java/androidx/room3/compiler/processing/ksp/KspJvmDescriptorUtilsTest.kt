@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.ksp
+package androidx.room3.compiler.processing.ksp
 
 import androidx.kruth.assertThat
-import androidx.room.compiler.processing.XElement
-import androidx.room.compiler.processing.XTypeElement
-import androidx.room.compiler.processing.isConstructor
-import androidx.room.compiler.processing.isField
-import androidx.room.compiler.processing.isMethod
-import androidx.room.compiler.processing.isTypeElement
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.XTestInvocation
-import androidx.room.compiler.processing.util.compileFiles
-import androidx.room.compiler.processing.util.runProcessorTest
+import androidx.room3.compiler.processing.XElement
+import androidx.room3.compiler.processing.XTypeElement
+import androidx.room3.compiler.processing.isConstructor
+import androidx.room3.compiler.processing.isField
+import androidx.room3.compiler.processing.isMethod
+import androidx.room3.compiler.processing.isTypeElement
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.XTestInvocation
+import androidx.room3.compiler.processing.util.compileFiles
+import androidx.room3.compiler.processing.util.runProcessorTest
 import com.squareup.javapoet.ClassName
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -36,9 +36,9 @@ import org.junit.runners.Parameterized
 class KspJvmDescriptorUtilsTest(private val isPreCompiled: Boolean) {
     private val describeAnnotation =
         Source.java(
-            "androidx.room.test.Describe",
+            "androidx.room3.test.Describe",
             """
-            package androidx.room.test;
+            package androidx.room3.test;
 
             import java.lang.annotation.ElementType;
             import java.lang.annotation.Target;
@@ -58,9 +58,9 @@ class KspJvmDescriptorUtilsTest(private val isPreCompiled: Boolean) {
         }
         checkSources(
             Source.java(
-                "androidx.room.test.DummyClass",
+                "androidx.room3.test.DummyClass",
                 """
-                package androidx.room.test;
+                package androidx.room3.test;
                 public class DummyClass {
                     @Describe public void emptyMethod() {}
                 }
@@ -69,9 +69,9 @@ class KspJvmDescriptorUtilsTest(private val isPreCompiled: Boolean) {
         )
         checkSources(
             Source.kotlin(
-                "androidx.room.test.DummyClass.kt",
+                "androidx.room3.test.DummyClass.kt",
                 """
-                package androidx.room.test
+                package androidx.room3.test
                 class DummyClass {
                     @Describe fun emptyMethod() {}
                 }
@@ -95,9 +95,9 @@ class KspJvmDescriptorUtilsTest(private val isPreCompiled: Boolean) {
         }
         checkSources(
             Source.java(
-                "androidx.room.test.DummyClass",
+                "androidx.room3.test.DummyClass",
                 """
-                package androidx.room.test;
+                package androidx.room3.test;
 
                 import java.util.List;
 
@@ -112,9 +112,9 @@ class KspJvmDescriptorUtilsTest(private val isPreCompiled: Boolean) {
         )
         checkSources(
             Source.kotlin(
-                "androidx.room.test.DummyClass.kt",
+                "androidx.room3.test.DummyClass.kt",
                 """
-                package androidx.room.test
+                package androidx.room3.test
                 class DummyClass<T> {
                     @Describe val field1: Int = TODO()
                     @Describe val field2: String = TODO()
@@ -132,25 +132,25 @@ class KspJvmDescriptorUtilsTest(private val isPreCompiled: Boolean) {
             runTest(sources = sources) { invocation ->
                 assertThat(invocation.annotatedElements().map(this::descriptor))
                     .containsAtLeast(
-                        "method1(Landroidx/room/test/Foo;)V",
-                        "method2()Landroidx/room/test/Foo;",
+                        "method1(Landroidx/room3/test/Foo;)V",
+                        "method2()Landroidx/room3/test/Foo;",
                         "method3()Ljava/util/List;",
                         "method4()Ljava/util/Map;",
                         "method5()Ljava/util/ArrayList;",
-                        "method6(Ljava/lang/Object;)Landroidx/room/test/Foo;",
+                        "method6(Ljava/lang/Object;)Landroidx/room3/test/Foo;",
                         "method7(Ljava/lang/Object;)Ljava/lang/Object;",
                         "method8(Ljava/lang/Object;)Ljava/lang/String;",
-                        "method9(Landroidx/room/test/Foo;)Landroidx/room/test/Foo;",
+                        "method9(Landroidx/room3/test/Foo;)Landroidx/room3/test/Foo;",
                         "method10()Ljava/util/Collection;",
-                        "method11()Landroidx/room/test/Foo;",
+                        "method11()Landroidx/room3/test/Foo;",
                     )
             }
         }
         checkSources(
             Source.java(
-                "androidx.room.test.DummyClass",
+                "androidx.room3.test.DummyClass",
                 """
-                package androidx.room.test;
+                package androidx.room3.test;
 
                 import java.util.ArrayList;
                 import java.util.Collection;
@@ -177,9 +177,9 @@ class KspJvmDescriptorUtilsTest(private val isPreCompiled: Boolean) {
         )
         checkSources(
             Source.kotlin(
-                "androidx.room.test.DummyClass.kt",
+                "androidx.room3.test.DummyClass.kt",
                 """
-                package androidx.room.test
+                package androidx.room3.test
                 class DummyClass<T: Foo> {
                     @Describe fun method1(param: T) {}
                     @Describe fun method2(): T = TODO()
@@ -211,16 +211,16 @@ class KspJvmDescriptorUtilsTest(private val isPreCompiled: Boolean) {
                         "method2(Ljava/lang/Object;)Ljava/lang/String;",
                         "method3(Ljava/lang/Object;)Ljava/lang/String;",
                         "method4(Ljava/lang/Object;)Ljava/lang/Object;",
-                        "method5(Landroidx/room/test/Outer\$Foo;)Landroidx/room/test/Outer\$Foo;",
-                        "method6(Landroidx/room/test/Outer\$Bar;)Landroidx/room/test/Outer\$Bar;",
+                        "method5(Landroidx/room3/test/Outer\$Foo;)Landroidx/room3/test/Outer\$Foo;",
+                        "method6(Landroidx/room3/test/Outer\$Bar;)Landroidx/room3/test/Outer\$Bar;",
                     )
             }
         }
         checkSources(
             Source.java(
-                "androidx.room.test.Outer",
+                "androidx.room3.test.Outer",
                 """
-                package androidx.room.test;
+                package androidx.room3.test;
                 class Outer {
                     class MyClass1<I, O extends I> {
                         @Describe O method1(I input) { return null; }
@@ -244,9 +244,9 @@ class KspJvmDescriptorUtilsTest(private val isPreCompiled: Boolean) {
         )
         checkSources(
             Source.kotlin(
-                "androidx.room.test.Outer.kt",
+                "androidx.room3.test.Outer.kt",
                 """
-                package androidx.room.test
+                package androidx.room3.test
                 class Outer {
                     class MyClass1<I, O: I> {
                         @Describe fun method1(input: I): O = TODO()
@@ -284,9 +284,9 @@ class KspJvmDescriptorUtilsTest(private val isPreCompiled: Boolean) {
         }
         checkSources(
             Source.java(
-                "androidx.room.test.DummyClass",
+                "androidx.room3.test.DummyClass",
                 """
-                package androidx.room.test;
+                package androidx.room3.test;
                 class DummyClass {
                     @Describe void method1(boolean yesOrNo, int number) { }
                     @Describe byte method2(char letter) { return 0; }
@@ -298,9 +298,9 @@ class KspJvmDescriptorUtilsTest(private val isPreCompiled: Boolean) {
         )
         checkSources(
             Source.kotlin(
-                "androidx.room.test.DummyClass.kt",
+                "androidx.room3.test.DummyClass.kt",
                 """
-                package androidx.room.test
+                package androidx.room3.test
                 class DummyClass {
                     @Describe fun method1(yesOrNo: Boolean, number: Int) {}
                     @Describe fun method2(letter: Char): Byte = TODO()
@@ -327,9 +327,9 @@ class KspJvmDescriptorUtilsTest(private val isPreCompiled: Boolean) {
         }
         checkSources(
             Source.java(
-                "androidx.room.test.DummyClass",
+                "androidx.room3.test.DummyClass",
                 """
-                package androidx.room.test;
+                package androidx.room3.test;
 
                 import java.util.ArrayList;
                 import java.util.List;
@@ -346,9 +346,9 @@ class KspJvmDescriptorUtilsTest(private val isPreCompiled: Boolean) {
         )
         checkSources(
             Source.kotlin(
-                "androidx.room.test.DummyClass.kt",
+                "androidx.room3.test.DummyClass.kt",
                 """
-                package androidx.room.test;
+                package androidx.room3.test;
                 class DummyClass {
                     @Describe fun method1(something: Object) {}
                     @Describe fun method2(): Object = TODO()
@@ -366,23 +366,23 @@ class KspJvmDescriptorUtilsTest(private val isPreCompiled: Boolean) {
             runTest(sources = sources) { invocation ->
                 assertThat(invocation.annotatedElements().map(this::descriptor))
                     .containsExactly(
-                        "method1(Landroidx/room/test/DataClass;)V",
-                        "method2()Landroidx/room/test/DataClass;",
+                        "method1(Landroidx/room3/test/DataClass;)V",
+                        "method2()Landroidx/room3/test/DataClass;",
                     )
             }
         }
         checkSources(
             Source.java(
-                "androidx.room.test.DataClass",
+                "androidx.room3.test.DataClass",
                 """
-                package androidx.room.test;
+                package androidx.room3.test;
                 class DataClass {}
                 """,
             ),
             Source.java(
-                "androidx.room.test.DummyClass",
+                "androidx.room3.test.DummyClass",
                 """
-                package androidx.room.test;
+                package androidx.room3.test;
                 class DummyClass {
                     @Describe void method1(DataClass data) { }
                     @Describe DataClass method2() { return null; }
@@ -392,9 +392,9 @@ class KspJvmDescriptorUtilsTest(private val isPreCompiled: Boolean) {
         )
         checkSources(
             Source.kotlin(
-                "androidx.room.test.DummyClass.kt",
+                "androidx.room3.test.DummyClass.kt",
                 """
-                package androidx.room.test;
+                package androidx.room3.test;
                 class DummyClass {
                     @Describe fun method1(data: DataClass) {}
                     @Describe fun method2(): DataClass = TODO()
@@ -411,18 +411,18 @@ class KspJvmDescriptorUtilsTest(private val isPreCompiled: Boolean) {
             runTest(sources = sources) { invocation ->
                 assertThat(invocation.annotatedElements().map(this::descriptor))
                     .containsExactly(
-                        "method1(Landroidx/room/test/DataClass\$MemberInnerData;)V",
-                        "method2(Landroidx/room/test/DataClass\$StaticInnerData;)V",
-                        "method3(Landroidx/room/test/DataClass\$EnumData;)V",
-                        "method4()Landroidx/room/test/DataClass\$StaticInnerData;",
+                        "method1(Landroidx/room3/test/DataClass\$MemberInnerData;)V",
+                        "method2(Landroidx/room3/test/DataClass\$StaticInnerData;)V",
+                        "method3(Landroidx/room3/test/DataClass\$EnumData;)V",
+                        "method4()Landroidx/room3/test/DataClass\$StaticInnerData;",
                     )
             }
         }
         checkSources(
             Source.java(
-                "androidx.room.test.DataClass",
+                "androidx.room3.test.DataClass",
                 """
-                package androidx.room.test;
+                package androidx.room3.test;
                 class DataClass {
                     class MemberInnerData { }
                     static class StaticInnerData { }
@@ -431,9 +431,9 @@ class KspJvmDescriptorUtilsTest(private val isPreCompiled: Boolean) {
                 """,
             ),
             Source.java(
-                "androidx.room.test.DummyClass",
+                "androidx.room3.test.DummyClass",
                 """
-                package androidx.room.test;
+                package androidx.room3.test;
                 class DummyClass {
                     @Describe void method1(DataClass.MemberInnerData data) { }
                     @Describe void method2(DataClass.StaticInnerData data) { }
@@ -445,9 +445,9 @@ class KspJvmDescriptorUtilsTest(private val isPreCompiled: Boolean) {
         )
         checkSources(
             Source.kotlin(
-                "androidx.room.test.DummyClass.kt",
+                "androidx.room3.test.DummyClass.kt",
                 """
-                package androidx.room.test
+                package androidx.room3.test
                 class DummyClass {
                     @Describe fun method1(data: DataClass.MemberInnerData) {}
                     @Describe fun method2(data: DataClass.StaticInnerData) {}
@@ -470,8 +470,8 @@ class KspJvmDescriptorUtilsTest(private val isPreCompiled: Boolean) {
             runTest(sources = sources) { invocation ->
                 assertThat(invocation.annotatedElements().map(this::descriptor))
                     .containsExactly(
-                        "method1([Landroidx/room/test/DataClass;)V",
-                        "method2()[Landroidx/room/test/DataClass;",
+                        "method1([Landroidx/room3/test/DataClass;)V",
+                        "method2()[Landroidx/room3/test/DataClass;",
                         "method3([I)V",
                         "method4([I)V",
                     )
@@ -479,16 +479,16 @@ class KspJvmDescriptorUtilsTest(private val isPreCompiled: Boolean) {
         }
         checkSources(
             Source.java(
-                "androidx.room.test.DataClass",
+                "androidx.room3.test.DataClass",
                 """
-                package androidx.room.test;
+                package androidx.room3.test;
                 class DataClass {}
                 """,
             ),
             Source.java(
-                "androidx.room.test.DummyClass",
+                "androidx.room3.test.DummyClass",
                 """
-                package androidx.room.test;
+                package androidx.room3.test;
                 class DummyClass {
                     @Describe void method1(DataClass[] data) { }
                     @Describe DataClass[] method2() { return null; }
@@ -500,9 +500,9 @@ class KspJvmDescriptorUtilsTest(private val isPreCompiled: Boolean) {
         )
         checkSources(
             Source.kotlin(
-                "androidx.room.test.DummyClass.kt",
+                "androidx.room3.test.DummyClass.kt",
                 """
-                package androidx.room.test;
+                package androidx.room3.test;
                 class DummyClass {
                     @Describe fun method1(data: Array<DataClass>) {}
                     @Describe fun method2(): Array<DataClass> = TODO()
@@ -550,10 +550,10 @@ class KspJvmDescriptorUtilsTest(private val isPreCompiled: Boolean) {
     private fun XTestInvocation.annotatedElements(): Set<XElement> {
         // RoundEnv.getElementsAnnotatedWith() only processes current round and could not see
         // precompiled classes.
-        val typeElements = processingEnv.getTypeElementsFromPackage("androidx.room.test")
+        val typeElements = processingEnv.getTypeElementsFromPackage("androidx.room3.test")
         return typeElements
             .flatMap {
-                it.getElementsAnnotatedWith(ClassName.get("androidx.room.test", "Describe"))
+                it.getElementsAnnotatedWith(ClassName.get("androidx.room3.test", "Describe"))
             }
             .toSet()
     }

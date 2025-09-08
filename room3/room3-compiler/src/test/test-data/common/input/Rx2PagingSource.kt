@@ -17,9 +17,9 @@ package androidx.paging.rxjava2
 
 import android.database.Cursor
 import androidx.paging.PagingState
-import androidx.room.RoomDatabase
-import androidx.room.RoomSQLiteQuery
-import androidx.room.paging.CursorSQLiteStatement
+import androidx.room3.RoomDatabase
+import androidx.room3.RoomSQLiteQuery
+import androidx.room3.paging.CursorSQLiteStatement
 import androidx.sqlite.SQLiteStatement
 
 @Suppress("UNUSED_PARAMETER")

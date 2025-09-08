@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.gradle
+package androidx.room3.gradle
 
 import androidx.kruth.assertThat
 import androidx.testutils.gradle.ProjectSetupRule
@@ -27,7 +27,7 @@ class RoomKmpGradlePluginTest {
     @get:Rule val projectSetup = ProjectSetupRule()
 
     private val roomVersion by lazy {
-        projectSetup.getLibraryLatestVersionInLocalRepo("androidx/room/room-compiler")
+        projectSetup.getLibraryLatestVersionInLocalRepo("androidx/room3/room3-compiler")
     }
 
     private fun setup(projectRoot: File = projectSetup.rootDir, generateKotlin: String = "true") {
@@ -48,7 +48,7 @@ class RoomKmpGradlePluginTest {
             |    id('com.android.application')
             |    id('kotlin-multiplatform')
             |    id('com.google.devtools.ksp')
-            |    id('androidx.room')
+            |    id('androidx.room3')
             |}
             |
             |$repositoriesBlock
@@ -62,7 +62,7 @@ class RoomKmpGradlePluginTest {
             |  sourceSets {
             |    commonMain {
             |      dependencies {
-            |        implementation "androidx.room:room-runtime:$roomVersion"
+            |        implementation "androidx.room3:room3-runtime:$roomVersion"
             |      }
             |    }
             |  }
@@ -73,10 +73,10 @@ class RoomKmpGradlePluginTest {
             |}
             |
             |dependencies {
-            |    add("kspCommonMainMetadata", "androidx.room:room-compiler:$roomVersion")
-            |    add("kspAndroid", "androidx.room:room-compiler:$roomVersion")
-            |    add("kspLinuxX64", "androidx.room:room-compiler:$roomVersion")
-            |    add("kspJvm", "androidx.room:room-compiler:$roomVersion")
+            |    add("kspCommonMainMetadata", "androidx.room3:room3-compiler:$roomVersion")
+            |    add("kspAndroid", "androidx.room3:room3-compiler:$roomVersion")
+            |    add("kspLinuxX64", "androidx.room3:room3-compiler:$roomVersion")
+            |    add("kspJvm", "androidx.room3:room3-compiler:$roomVersion")
             |}
             |
             |android {
@@ -90,7 +90,7 @@ class RoomKmpGradlePluginTest {
             |    }
             |}
             |
-            |room {
+            |room3 {
             |  schemaDirectory("metadata", "${'$'}projectDir/schemas/common")
             |  schemaDirectory("android", "${'$'}projectDir/schemas/android")
             |  schemaDirectory("linuxX64", "${'$'}projectDir/schemas/native")

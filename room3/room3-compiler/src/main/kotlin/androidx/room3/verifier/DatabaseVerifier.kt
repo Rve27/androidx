@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package androidx.room.verifier
+package androidx.room3.verifier
 
-import androidx.room.compiler.processing.XElement
-import androidx.room.processor.Context
-import androidx.room.vo.DatabaseView
-import androidx.room.vo.Entity
-import androidx.room.vo.EntityOrView
-import androidx.room.vo.FtsEntity
-import androidx.room.vo.FtsOptions
-import androidx.room.vo.Warning
+import androidx.room3.compiler.processing.XElement
+import androidx.room3.processor.Context
+import androidx.room3.vo.DatabaseView
+import androidx.room3.vo.Entity
+import androidx.room3.vo.EntityOrView
+import androidx.room3.vo.FtsEntity
+import androidx.room3.vo.FtsOptions
+import androidx.room3.vo.Warning
 import java.io.File
 import java.sql.Connection
 import java.sql.Driver

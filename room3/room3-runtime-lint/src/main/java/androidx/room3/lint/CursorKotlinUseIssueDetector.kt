@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.lint
+package androidx.room3.lint
 
 import com.android.tools.lint.detector.api.ApiConstraint
 import com.android.tools.lint.detector.api.Category

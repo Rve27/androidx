@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.vo
+package androidx.room3.vo
 
 /** Represents a shortcut function parameter entity. */
 data class ShortcutEntity(

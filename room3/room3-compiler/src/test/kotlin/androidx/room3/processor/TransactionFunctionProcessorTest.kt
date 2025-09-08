@@ -14,25 +14,25 @@
  * limitations under the License.
  */
 
-package androidx.room.processor
+package androidx.room3.processor
 
 import COMMON
-import androidx.room.Dao
-import androidx.room.Transaction
-import androidx.room.compiler.codegen.CodeLanguage
-import androidx.room.compiler.processing.XTypeElement
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.XTestInvocation
-import androidx.room.compiler.processing.util.runProcessorTest
-import androidx.room.ext.GuavaUtilConcurrentTypeNames.LISTENABLE_FUTURE
-import androidx.room.ext.KotlinTypeNames.FLOW
-import androidx.room.ext.LifecyclesTypeNames.COMPUTABLE_LIVE_DATA
-import androidx.room.ext.LifecyclesTypeNames.LIVE_DATA
-import androidx.room.ext.ReactiveStreamsTypeNames.PUBLISHER
-import androidx.room.ext.RxJava2TypeNames
-import androidx.room.ext.RxJava3TypeNames
-import androidx.room.testing.context
-import androidx.room.vo.TransactionFunction
+import androidx.room3.Dao
+import androidx.room3.Transaction
+import androidx.room3.compiler.codegen.CodeLanguage
+import androidx.room3.compiler.processing.XTypeElement
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.XTestInvocation
+import androidx.room3.compiler.processing.util.runProcessorTest
+import androidx.room3.ext.GuavaUtilConcurrentTypeNames.LISTENABLE_FUTURE
+import androidx.room3.ext.KotlinTypeNames.FLOW
+import androidx.room3.ext.LifecyclesTypeNames.COMPUTABLE_LIVE_DATA
+import androidx.room3.ext.LifecyclesTypeNames.LIVE_DATA
+import androidx.room3.ext.ReactiveStreamsTypeNames.PUBLISHER
+import androidx.room3.ext.RxJava2TypeNames
+import androidx.room3.ext.RxJava3TypeNames
+import androidx.room3.testing.context
+import androidx.room3.vo.TransactionFunction
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
@@ -47,7 +47,7 @@ class TransactionFunctionProcessorTest {
         const val DAO_PREFIX =
             """
                 package foo.bar;
-                import androidx.room.*;
+                import androidx.room3.*;
                 import java.util.*;
                 import androidx.lifecycle.*;
                 import com.google.common.util.concurrent.*;

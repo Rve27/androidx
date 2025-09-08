@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.codegen.java
+package androidx.room3.compiler.codegen.java
 
-import androidx.room.compiler.codegen.CodeLanguage
-import androidx.room.compiler.codegen.JFileSpec
-import androidx.room.compiler.codegen.JFileSpecBuilder
-import androidx.room.compiler.codegen.XCodeBlock
-import androidx.room.compiler.codegen.XFileSpec
-import androidx.room.compiler.codegen.impl.XCodeBlockImpl
-import androidx.room.compiler.processing.XFiler
+import androidx.room3.compiler.codegen.CodeLanguage
+import androidx.room3.compiler.codegen.JFileSpec
+import androidx.room3.compiler.codegen.JFileSpecBuilder
+import androidx.room3.compiler.codegen.XCodeBlock
+import androidx.room3.compiler.codegen.XFileSpec
+import androidx.room3.compiler.codegen.impl.XCodeBlockImpl
+import androidx.room3.compiler.processing.XFiler
 
 internal class JavaFileSpec(override val actual: JFileSpec) : JavaSpec<JFileSpec>(), XFileSpec {
 

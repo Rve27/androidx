@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package androidx.room.coroutines
+package androidx.room3.coroutines
 
 import androidx.kruth.assertThat
-import androidx.room.Dao
-import androidx.room.Database
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-import androidx.room.Room
-import androidx.room.RoomDatabase
-import androidx.room.Transaction
-import androidx.room.TransactionElement
+import androidx.room3.Dao
+import androidx.room3.Database
+import androidx.room3.Entity
+import androidx.room3.PrimaryKey
+import androidx.room3.Room
+import androidx.room3.RoomDatabase
+import androidx.room3.Transaction
+import androidx.room3.TransactionElement
 import androidx.test.platform.app.InstrumentationRegistry
 import kotlin.coroutines.coroutineContext
 import kotlinx.coroutines.test.runTest

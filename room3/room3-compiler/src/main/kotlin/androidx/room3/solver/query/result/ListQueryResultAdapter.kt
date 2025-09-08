@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package androidx.room.solver.query.result
+package androidx.room3.solver.query.result
 
-import androidx.room.compiler.codegen.CodeLanguage
-import androidx.room.compiler.codegen.XCodeBlock
-import androidx.room.compiler.codegen.XCodeBlock.Builder.Companion.applyTo
-import androidx.room.compiler.processing.XType
-import androidx.room.ext.CommonTypeNames
-import androidx.room.ext.CommonTypeNames.ARRAY_LIST
-import androidx.room.ext.KotlinCollectionMemberNames
-import androidx.room.solver.CodeGenScope
+import androidx.room3.compiler.codegen.CodeLanguage
+import androidx.room3.compiler.codegen.XCodeBlock
+import androidx.room3.compiler.codegen.XCodeBlock.Builder.Companion.applyTo
+import androidx.room3.compiler.processing.XType
+import androidx.room3.ext.CommonTypeNames
+import androidx.room3.ext.CommonTypeNames.ARRAY_LIST
+import androidx.room3.ext.KotlinCollectionMemberNames
+import androidx.room3.solver.CodeGenScope
 
 class ListQueryResultAdapter(private val typeArg: XType, private val rowAdapter: RowAdapter) :
     QueryResultAdapter(listOf(rowAdapter)) {

@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package androidx.room.solver
+package androidx.room3.solver
 
-import androidx.room.compiler.codegen.XClassName
-import androidx.room.compiler.codegen.XMemberName
-import androidx.room.ext.RoomRxJava2MemberNames
-import androidx.room.ext.RoomRxJava2TypeNames
-import androidx.room.ext.RoomRxJava3MemberNames
-import androidx.room.ext.RoomRxJava3TypeNames
-import androidx.room.ext.RxJava2TypeNames
-import androidx.room.ext.RxJava3TypeNames
-import androidx.room.processor.ProcessorErrors
+import androidx.room3.compiler.codegen.XClassName
+import androidx.room3.compiler.codegen.XMemberName
+import androidx.room3.ext.RoomRxJava2MemberNames
+import androidx.room3.ext.RoomRxJava2TypeNames
+import androidx.room3.ext.RoomRxJava3MemberNames
+import androidx.room3.ext.RoomRxJava3TypeNames
+import androidx.room3.ext.RxJava2TypeNames
+import androidx.room3.ext.RxJava3TypeNames
+import androidx.room3.processor.ProcessorErrors
 
 internal enum class RxType(
     val version: RxVersion,

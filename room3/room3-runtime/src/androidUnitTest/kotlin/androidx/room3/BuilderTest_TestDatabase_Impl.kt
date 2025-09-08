@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package androidx.room
+package androidx.room3
 
-import androidx.room.migration.AutoMigrationSpec
-import androidx.room.migration.Migration
+import androidx.room3.migration.AutoMigrationSpec
+import androidx.room3.migration.Migration
 import androidx.sqlite.db.SupportSQLiteOpenHelper
 import kotlin.reflect.KClass
 import org.mockito.kotlin.mock

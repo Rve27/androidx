@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.kotlintestapp.test
+package androidx.room3.integration.kotlintestapp.test
 
 import androidx.kruth.assertThat
-import androidx.room.EmptyResultSetException
-import androidx.room.integration.kotlintestapp.vo.BookWithPublisher
+import androidx.room3.EmptyResultSetException
+import androidx.room3.integration.kotlintestapp.vo.BookWithPublisher
 import androidx.test.filters.SmallTest
 import androidx.test.platform.app.InstrumentationRegistry
 import io.reactivex.schedulers.Schedulers

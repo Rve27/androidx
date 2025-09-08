@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.testapp.test;
+package androidx.room3.integration.testapp.test;
 
 import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
 
@@ -25,10 +25,10 @@ import static org.hamcrest.Matchers.greaterThan;
 import androidx.arch.core.executor.ArchTaskExecutor;
 import androidx.arch.core.executor.DefaultTaskExecutor;
 import androidx.lifecycle.LiveData;
-import androidx.room.Room;
-import androidx.room.integration.testapp.TestDatabase;
-import androidx.room.integration.testapp.dao.PetDao;
-import androidx.room.integration.testapp.vo.Pet;
+import androidx.room3.Room;
+import androidx.room3.integration.testapp.TestDatabase;
+import androidx.room3.integration.testapp.dao.PetDao;
+import androidx.room3.integration.testapp.vo.Pet;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.SmallTest;

@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.testapp.dao;
+package androidx.room3.integration.testapp.dao;
 
 import androidx.lifecycle.LiveData;
-import androidx.room.Dao;
-import androidx.room.Delete;
-import androidx.room.Insert;
-import androidx.room.OnConflictStrategy;
-import androidx.room.Query;
-import androidx.room.Transaction;
-import androidx.room.integration.testapp.vo.Pet;
-import androidx.room.integration.testapp.vo.PetAndOwner;
-import androidx.room.integration.testapp.vo.PetWithToyIds;
-import androidx.room.integration.testapp.vo.PetWithUser;
+import androidx.room3.Dao;
+import androidx.room3.Delete;
+import androidx.room3.Insert;
+import androidx.room3.OnConflictStrategy;
+import androidx.room3.Query;
+import androidx.room3.Transaction;
+import androidx.room3.integration.testapp.vo.Pet;
+import androidx.room3.integration.testapp.vo.PetAndOwner;
+import androidx.room3.integration.testapp.vo.PetWithToyIds;
+import androidx.room3.integration.testapp.vo.PetWithUser;
 
 import com.google.common.base.Optional;
 import com.google.common.util.concurrent.ListenableFuture;

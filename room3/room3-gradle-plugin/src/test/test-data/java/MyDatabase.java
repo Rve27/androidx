@@ -16,8 +16,8 @@
 
 package room.testapp;
 
-import androidx.room.Database;
-import androidx.room.RoomDatabase;
+import androidx.room3.Database;
+import androidx.room3.RoomDatabase;
 
 @Database(entities = { MyEntity.class }, version = 1)
 public abstract class MyDatabase extends RoomDatabase {

@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package androidx.room.test
+package androidx.room3.test
 
 import android.app.Instrumentation
-import androidx.room.Database
-import androidx.room.DatabaseConfiguration
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-import androidx.room.RoomDatabase
+import androidx.room3.Database
+import androidx.room3.DatabaseConfiguration
+import androidx.room3.Entity
+import androidx.room3.PrimaryKey
+import androidx.room3.RoomDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asExecutor
 

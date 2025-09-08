@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.kotlintestapp.testutil
+package androidx.room3.integration.kotlintestapp.testutil
 
 import androidx.recyclerview.widget.DiffUtil
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import androidx.room3.Entity
+import androidx.room3.PrimaryKey
 
 @Entity
 data class PagingEntity(@PrimaryKey val id: Int, val value: String = "item_$id") {

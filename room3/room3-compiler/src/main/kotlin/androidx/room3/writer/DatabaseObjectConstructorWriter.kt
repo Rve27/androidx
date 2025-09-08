@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package androidx.room.writer
+package androidx.room3.writer
 
-import androidx.room.compiler.codegen.toKotlinPoet
-import androidx.room.compiler.processing.XProcessingEnv
-import androidx.room.compiler.processing.addOriginatingElement
-import androidx.room.ext.RoomTypeNames.ROOM_DB_CONSTRUCTOR
-import androidx.room.vo.Database
-import androidx.room.vo.DatabaseConstructor
+import androidx.room3.compiler.codegen.toKotlinPoet
+import androidx.room3.compiler.processing.XProcessingEnv
+import androidx.room3.compiler.processing.addOriginatingElement
+import androidx.room3.ext.RoomTypeNames.ROOM_DB_CONSTRUCTOR
+import androidx.room3.vo.Database
+import androidx.room3.vo.DatabaseConstructor
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier

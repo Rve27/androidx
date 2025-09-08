@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package androidx.room.solver.types
+package androidx.room3.solver.types
 
-import androidx.room.compiler.processing.XType
-import androidx.room.solver.CodeGenScope
+import androidx.room3.compiler.processing.XType
+import androidx.room3.solver.CodeGenScope
 
 /**
  * We have a special class for upcasting types in type converters. (e.g. Int to Number) It is used

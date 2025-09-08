@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package androidx.room.solver.transaction.binder
+package androidx.room3.solver.transaction.binder
 
-import androidx.room.compiler.codegen.CodeLanguage
-import androidx.room.compiler.codegen.XClassName
-import androidx.room.compiler.codegen.XCodeBlock
-import androidx.room.compiler.codegen.XPropertySpec
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.compiler.processing.XType
-import androidx.room.ext.InvokeWithLambdaParameter
-import androidx.room.ext.KotlinTypeNames
-import androidx.room.ext.LambdaSpec
-import androidx.room.ext.RoomMemberNames.DB_UTIL_PERFORM_IN_TRANSACTION_SUSPENDING
-import androidx.room.solver.CodeGenScope
-import androidx.room.solver.transaction.result.TransactionFunctionAdapter
+import androidx.room3.compiler.codegen.CodeLanguage
+import androidx.room3.compiler.codegen.XClassName
+import androidx.room3.compiler.codegen.XCodeBlock
+import androidx.room3.compiler.codegen.XPropertySpec
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.compiler.processing.XType
+import androidx.room3.ext.InvokeWithLambdaParameter
+import androidx.room3.ext.KotlinTypeNames
+import androidx.room3.ext.LambdaSpec
+import androidx.room3.ext.RoomMemberNames.DB_UTIL_PERFORM_IN_TRANSACTION_SUSPENDING
+import androidx.room3.solver.CodeGenScope
+import androidx.room3.solver.transaction.result.TransactionFunctionAdapter
 
 /** Binder that knows how to write suspending transaction wrapper methods. */
 class CoroutineTransactionFunctionBinder(

@@ -1,9 +1,9 @@
-import androidx.room.RoomDatabase
-import androidx.room.RoomRawQuery
-import androidx.room.RoomSQLiteQuery
-import androidx.room.coroutines.createFlow
-import androidx.room.util.getColumnIndex
-import androidx.room.util.performBlocking
+import androidx.room3.RoomDatabase
+import androidx.room3.RoomRawQuery
+import androidx.room3.RoomSQLiteQuery
+import androidx.room3.coroutines.createFlow
+import androidx.room3.util.getColumnIndex
+import androidx.room3.util.performBlocking
 import androidx.sqlite.SQLiteStatement
 import androidx.sqlite.db.SupportSQLiteQuery
 import javax.`annotation`.processing.Generated
@@ -17,7 +17,7 @@ import kotlin.collections.List
 import kotlin.reflect.KClass
 import kotlinx.coroutines.flow.Flow
 
-@Generated(value = ["androidx.room.RoomProcessor"])
+@Generated(value = ["androidx.room3.RoomProcessor"])
 @Suppress(names = ["UNCHECKED_CAST", "DEPRECATION", "REDUNDANT_PROJECTION", "REMOVAL"])
 public class MyDao_Impl(
   __db: RoomDatabase,

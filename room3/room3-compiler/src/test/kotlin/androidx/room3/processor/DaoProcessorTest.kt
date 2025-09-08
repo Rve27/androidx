@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-package androidx.room.processor
+package androidx.room3.processor
 
 import COMMON
 import androidx.kruth.assertThat
-import androidx.room.compiler.processing.isTypeElement
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.XTestInvocation
-import androidx.room.compiler.processing.util.compileFiles
-import androidx.room.compiler.processing.util.runKspTest
-import androidx.room.compiler.processing.util.runProcessorTest
-import androidx.room.ext.RoomTypeNames.ROOM_DB
-import androidx.room.processor.ProcessorErrors.nullableCollectionOrArrayReturnTypeInDaoFunction
-import androidx.room.processor.ProcessorErrors.nullableComponentInDaoFunctionReturnType
-import androidx.room.testing.context
-import androidx.room.vo.Dao
-import androidx.room.vo.ReadQueryFunction
-import androidx.room.vo.Warning
+import androidx.room3.compiler.processing.isTypeElement
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.XTestInvocation
+import androidx.room3.compiler.processing.util.compileFiles
+import androidx.room3.compiler.processing.util.runKspTest
+import androidx.room3.compiler.processing.util.runProcessorTest
+import androidx.room3.ext.RoomTypeNames.ROOM_DB
+import androidx.room3.processor.ProcessorErrors.nullableCollectionOrArrayReturnTypeInDaoFunction
+import androidx.room3.processor.ProcessorErrors.nullableComponentInDaoFunctionReturnType
+import androidx.room3.testing.context
+import androidx.room3.vo.Dao
+import androidx.room3.vo.ReadQueryFunction
+import androidx.room3.vo.Warning
 import createVerifierFromEntitiesAndViews
 import java.io.File
 import org.hamcrest.CoreMatchers.`is`
@@ -46,7 +46,7 @@ class DaoProcessorTest(private val enableVerification: Boolean) {
         const val DAO_PREFIX =
             """
             package foo.bar;
-            import androidx.room.*;
+            import androidx.room3.*;
             """
 
         @Parameterized.Parameters(name = "enableDbVerification={0}")
@@ -254,7 +254,7 @@ class DaoProcessorTest(private val enableVerification: Boolean) {
                 "MyDao.kt",
                 """
             package foo.bar
-            import androidx.room.*
+            import androidx.room3.*
             @Dao
             @Suppress(RoomWarnings.QUERY_MISMATCH)
             interface MyDao {
@@ -267,7 +267,7 @@ class DaoProcessorTest(private val enableVerification: Boolean) {
         runProcessorTest(sources = listOf(daoSrc) + COMMON.USER) { invocation ->
             val dao =
                 invocation.roundEnv
-                    .getElementsAnnotatedWith(androidx.room.Dao::class.qualifiedName!!)
+                    .getElementsAnnotatedWith(androidx.room3.Dao::class.qualifiedName!!)
                     .first()
             if (!dao.isTypeElement()) {
                 error("Expected DAO to be a type")
@@ -442,7 +442,7 @@ class DaoProcessorTest(private val enableVerification: Boolean) {
             Source.kotlin(
                 "MyDao.kt",
                 """
-            import androidx.room.*;
+            import androidx.room3.*;
             @Dao
             interface MyDao {
                 @Suppress("INAPPLICABLE_JVM_NAME")
@@ -475,7 +475,7 @@ class DaoProcessorTest(private val enableVerification: Boolean) {
             Source.kotlin(
                 "MyDatabase.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
 
             @Dao
             interface MyDao {
@@ -514,7 +514,7 @@ class DaoProcessorTest(private val enableVerification: Boolean) {
             Source.kotlin(
                 "MyDatabase.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
 
             @Dao
             interface MyDao {
@@ -554,7 +554,7 @@ class DaoProcessorTest(private val enableVerification: Boolean) {
             Source.kotlin(
                 "MyDatabase.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
 
             @Dao
             interface MyDao {
@@ -595,7 +595,7 @@ class DaoProcessorTest(private val enableVerification: Boolean) {
             Source.kotlin(
                 "MyDatabase.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
             import com.google.common.collect.ImmutableList
 
             @Dao
@@ -721,7 +721,7 @@ class DaoProcessorTest(private val enableVerification: Boolean) {
             Source.kotlin(
                 "MyDatabase.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
             import com.google.common.collect.ImmutableList
 
             @Dao
@@ -850,7 +850,7 @@ class DaoProcessorTest(private val enableVerification: Boolean) {
         ) { invocation: XTestInvocation ->
             val dao =
                 invocation.roundEnv
-                    .getElementsAnnotatedWith(androidx.room.Dao::class.qualifiedName!!)
+                    .getElementsAnnotatedWith(androidx.room3.Dao::class.qualifiedName!!)
                     .first()
             check(dao.isTypeElement())
             val dbVerifier =

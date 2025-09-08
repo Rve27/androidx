@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.testapp.vo;
+package androidx.room3.integration.testapp.vo;
 
-import androidx.room.ColumnInfo;
+import androidx.room3.ColumnInfo;
 
 public class Username {
     @ColumnInfo(name = "mName")

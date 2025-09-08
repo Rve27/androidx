@@ -17,7 +17,7 @@
 @file:JvmMultifileClass
 @file:JvmName("SQLiteStatementUtil")
 
-package androidx.room.util
+package androidx.room3.util
 
 import androidx.annotation.RestrictTo
 import androidx.sqlite.SQLiteStatement

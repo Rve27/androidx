@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.javac
+package androidx.room3.compiler.processing.javac
 
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.compiler.processing.XNullability
-import androidx.room.compiler.processing.XRawType
-import androidx.room.compiler.processing.safeTypeName
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.compiler.processing.XNullability
+import androidx.room3.compiler.processing.XRawType
+import androidx.room3.compiler.processing.safeTypeName
 
 internal class JavacRawType(env: JavacProcessingEnv, original: JavacType) : XRawType {
     private val erased = env.typeUtils.erasure(original.typeMirror)

@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package androidx.room.processor
+package androidx.room3.processor
 
 import COMMON
-import androidx.room.DatabaseProcessingStep
-import androidx.room.RewriteQueriesToDropUnusedColumns
-import androidx.room.compiler.processing.util.CompilationResultSubject
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.runProcessorTest
+import androidx.room3.DatabaseProcessingStep
+import androidx.room3.RewriteQueriesToDropUnusedColumns
+import androidx.room3.compiler.processing.util.CompilationResultSubject
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.runProcessorTest
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
@@ -135,7 +135,7 @@ class RemoveUnusedColumnsTest {
                     "foo.bar.MyDao",
                     """
                     package foo.bar;
-                    import androidx.room.*;
+                    import androidx.room3.*;
                     @Dao
                     ${annotationText(annotateDao)}
                     public interface MyDao {
@@ -151,7 +151,7 @@ class RemoveUnusedColumnsTest {
                     "foo.bar.MyDb",
                     """
                     package foo.bar;
-                    import androidx.room.*;
+                    import androidx.room3.*;
                     @Database(
                         entities = {User.class},
                         version = 1,

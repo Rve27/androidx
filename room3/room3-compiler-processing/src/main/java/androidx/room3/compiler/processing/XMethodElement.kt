@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing
+package androidx.room3.compiler.processing
 
-import androidx.room.compiler.processing.util.isValidJavaSourceName
+import androidx.room3.compiler.processing.util.isValidJavaSourceName
 
 /**
  * Represents a method in a class / interface.

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package androidx.room.solver
+package androidx.room3.solver
 
-import androidx.room.compiler.codegen.XCodeBlock
-import androidx.room.writer.TypeWriter
+import androidx.room3.compiler.codegen.XCodeBlock
+import androidx.room3.writer.TypeWriter
 
 /**
  * Defines a code generation scope where we can provide temporary variables, global variables etc

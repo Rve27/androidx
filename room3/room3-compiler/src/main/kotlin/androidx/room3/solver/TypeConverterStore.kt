@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package androidx.room.solver
+package androidx.room3.solver
 
-import androidx.room.compiler.processing.XType
-import androidx.room.processor.Context
-import androidx.room.solver.types.CompositeTypeConverter
-import androidx.room.solver.types.NoOpConverter
-import androidx.room.solver.types.RequireNotNullTypeConverter
-import androidx.room.solver.types.TypeConverter
-import androidx.room.solver.types.UpCastTypeConverter
+import androidx.room3.compiler.processing.XType
+import androidx.room3.processor.Context
+import androidx.room3.solver.types.CompositeTypeConverter
+import androidx.room3.solver.types.NoOpConverter
+import androidx.room3.solver.types.RequireNotNullTypeConverter
+import androidx.room3.solver.types.TypeConverter
+import androidx.room3.solver.types.UpCastTypeConverter
 
 interface TypeConverterStore {
     val typeConverters: List<TypeConverter>

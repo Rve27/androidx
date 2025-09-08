@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package androidx.room.solver.query.result
+package androidx.room3.solver.query.result
 
-import androidx.room.solver.CodeGenScope
-import androidx.room.solver.types.StatementValueReader
-import androidx.room.vo.ColumnIndexVar
+import androidx.room3.solver.CodeGenScope
+import androidx.room3.solver.types.StatementValueReader
+import androidx.room3.vo.ColumnIndexVar
 
 /** Wraps a row adapter when there is only 1 item with 1 column in the response. */
 class SingleColumnRowAdapter(val reader: StatementValueReader) : RowAdapter(reader.typeMirror()) {

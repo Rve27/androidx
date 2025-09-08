@@ -16,14 +16,14 @@
 
 @file:Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
 
-package androidx.room.processor
+package androidx.room3.processor
 
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.compiler.processing.XMethodElement
-import androidx.room.compiler.processing.XType
-import androidx.room.vo.InsertFunction
-import androidx.room.vo.findPropertyByColumnName
+import androidx.room3.Insert
+import androidx.room3.OnConflictStrategy
+import androidx.room3.compiler.processing.XMethodElement
+import androidx.room3.compiler.processing.XType
+import androidx.room3.vo.InsertFunction
+import androidx.room3.vo.findPropertyByColumnName
 
 class InsertFunctionProcessor(
     baseContext: Context,

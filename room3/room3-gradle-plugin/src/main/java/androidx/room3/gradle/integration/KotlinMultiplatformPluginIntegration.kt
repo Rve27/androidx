@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package androidx.room.gradle.integration
+package androidx.room3.gradle.integration
 
-import androidx.room.gradle.RoomArgumentProvider
-import androidx.room.gradle.RoomExtension
-import androidx.room.gradle.RoomExtension.SchemaConfiguration
-import androidx.room.gradle.toOptions
-import androidx.room.gradle.util.check
-import androidx.room.gradle.util.kspOneTaskClass
-import androidx.room.gradle.util.kspTwoTaskClass
+import androidx.room3.gradle.RoomArgumentProvider
+import androidx.room3.gradle.RoomExtension
+import androidx.room3.gradle.RoomExtension.SchemaConfiguration
+import androidx.room3.gradle.toOptions
+import androidx.room3.gradle.util.check
+import androidx.room3.gradle.util.kspOneTaskClass
+import androidx.room3.gradle.util.kspTwoTaskClass
 import com.google.devtools.ksp.gradle.KspAATask
 import com.google.devtools.ksp.gradle.KspTask
 import kotlin.reflect.KClass

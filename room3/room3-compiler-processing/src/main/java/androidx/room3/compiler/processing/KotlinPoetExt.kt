@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing
+package androidx.room3.compiler.processing
 
-import androidx.room.compiler.codegen.XTypeName
+import androidx.room3.compiler.codegen.XTypeName
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.OriginatingElementsHolder
@@ -26,7 +26,7 @@ import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.javapoet.KClassName
 
 internal val KOTLIN_NONE_TYPE_NAME: KClassName =
-    KClassName("androidx.room.compiler.processing.error", "NotAType")
+    KClassName("androidx.room3.compiler.processing.error", "NotAType")
 
 /**
  * Adds the given element as an originating element for compilation. see

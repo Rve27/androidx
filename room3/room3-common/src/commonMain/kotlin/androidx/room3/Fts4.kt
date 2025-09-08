@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.room
+package androidx.room3
 
-import androidx.room.FtsOptions.TOKENIZER_SIMPLE
+import androidx.room3.FtsOptions.TOKENIZER_SIMPLE
 import kotlin.reflect.KClass
 
 /**

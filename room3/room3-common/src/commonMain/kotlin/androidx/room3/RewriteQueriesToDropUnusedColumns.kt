@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room
+package androidx.room3
 
 /**
  * When present, [RewriteQueriesToDropUnusedColumns] annotation will cause Room to rewrite your

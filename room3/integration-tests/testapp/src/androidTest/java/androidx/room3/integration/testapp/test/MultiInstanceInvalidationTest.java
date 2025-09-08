@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.testapp.test;
+package androidx.room3.integration.testapp.test;
 
 import static com.google.common.truth.Truth.assertThat;
 import static com.google.common.truth.Truth.assertWithMessage;
@@ -26,16 +26,16 @@ import androidx.arch.core.executor.testing.CountingTaskExecutorRule;
 import androidx.collection.SimpleArrayMap;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
-import androidx.room.InvalidationTracker;
-import androidx.room.Room;
-import androidx.room.RoomDatabase;
-import androidx.room.integration.testapp.ISampleDatabaseService;
-import androidx.room.integration.testapp.SampleDatabaseService;
-import androidx.room.integration.testapp.database.Customer;
-import androidx.room.integration.testapp.database.Description;
-import androidx.room.integration.testapp.database.Product;
-import androidx.room.integration.testapp.database.SampleDatabase;
-import androidx.room.integration.testapp.database.SampleFtsDatabase;
+import androidx.room3.InvalidationTracker;
+import androidx.room3.Room;
+import androidx.room3.RoomDatabase;
+import androidx.room3.integration.testapp.ISampleDatabaseService;
+import androidx.room3.integration.testapp.SampleDatabaseService;
+import androidx.room3.integration.testapp.database.Customer;
+import androidx.room3.integration.testapp.database.Description;
+import androidx.room3.integration.testapp.database.Product;
+import androidx.room3.integration.testapp.database.SampleDatabase;
+import androidx.room3.integration.testapp.database.SampleFtsDatabase;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;

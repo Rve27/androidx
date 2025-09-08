@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package androidx.room.processor
+package androidx.room3.processor
 
-import androidx.room.ForeignKey.Companion.NO_ACTION
-import androidx.room.Fts3
-import androidx.room.Fts4
-import androidx.room.compiler.processing.XAnnotation
-import androidx.room.compiler.processing.XType
-import androidx.room.compiler.processing.XTypeElement
-import androidx.room.vo.ForeignKeyAction
-import androidx.room.vo.Index
+import androidx.room3.ForeignKey.Companion.NO_ACTION
+import androidx.room3.Fts3
+import androidx.room3.Fts4
+import androidx.room3.compiler.processing.XAnnotation
+import androidx.room3.compiler.processing.XType
+import androidx.room3.compiler.processing.XTypeElement
+import androidx.room3.vo.ForeignKeyAction
+import androidx.room3.vo.Index
 
 interface EntityProcessor : EntityOrViewProcessor {
-    override fun process(): androidx.room.vo.Entity
+    override fun process(): androidx.room3.vo.Entity
 
     companion object {
         fun extractTableName(element: XTypeElement, annotation: XAnnotation): String {
@@ -46,7 +46,7 @@ interface EntityProcessor : EntityOrViewProcessor {
                 val columns = indexAnnotation["value"]?.asStringList() ?: emptyList()
                 val orders =
                     (indexAnnotation["orders"]?.asEnumList() ?: emptyList()).map {
-                        androidx.room.Index.Order.valueOf(it.name)
+                        androidx.room3.Index.Order.valueOf(it.name)
                     }
                 val name =
                     if (nameValue == "") {
@@ -89,7 +89,7 @@ data class IndexInput(
     val name: String,
     val unique: Boolean,
     val columnNames: List<String>,
-    val orders: List<androidx.room.Index.Order>,
+    val orders: List<androidx.room3.Index.Order>,
 )
 
 /** ForeignKey, before it is processed in the context of a database. */

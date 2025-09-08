@@ -17,11 +17,11 @@
 @file:JvmMultifileClass
 @file:JvmName("DBUtil")
 
-package androidx.room.util
+package androidx.room3.util
 
 import androidx.annotation.RestrictTo
-import androidx.room.RoomDatabase
-import androidx.room.coroutines.RawConnectionAccessor
+import androidx.room3.RoomDatabase
+import androidx.room3.coroutines.RawConnectionAccessor
 import androidx.sqlite.SQLiteConnection
 import kotlin.coroutines.CoroutineContext
 import kotlin.jvm.JvmMultifileClass

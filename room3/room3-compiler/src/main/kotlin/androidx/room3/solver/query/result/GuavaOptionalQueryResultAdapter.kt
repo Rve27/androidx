@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package androidx.room.solver.query.result
+package androidx.room3.solver.query.result
 
-import androidx.room.compiler.codegen.XCodeBlock
-import androidx.room.compiler.processing.XType
-import androidx.room.ext.GuavaTypeNames
-import androidx.room.solver.CodeGenScope
+import androidx.room3.compiler.codegen.XCodeBlock
+import androidx.room3.compiler.processing.XType
+import androidx.room3.ext.GuavaTypeNames
+import androidx.room3.solver.CodeGenScope
 
 /**
  * Wraps a row adapter when there is only 1 item in the result, and the result's outer type is

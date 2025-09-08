@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.codegen.java
+package androidx.room3.compiler.codegen.java
 
-import androidx.room.compiler.codegen.JCodeBlock
-import androidx.room.compiler.codegen.JFunSpec
-import androidx.room.compiler.codegen.JFunSpecBuilder
-import androidx.room.compiler.codegen.L
-import androidx.room.compiler.codegen.VisibilityModifier
-import androidx.room.compiler.codegen.XAnnotationSpec
-import androidx.room.compiler.codegen.XCodeBlock
-import androidx.room.compiler.codegen.XFunSpec
-import androidx.room.compiler.codegen.XName
-import androidx.room.compiler.codegen.XParameterSpec
-import androidx.room.compiler.codegen.XSpec
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.compiler.codegen.impl.XAnnotationSpecImpl
-import androidx.room.compiler.codegen.impl.XCodeBlockImpl
-import androidx.room.compiler.codegen.impl.XParameterSpecImpl
-import androidx.room.compiler.processing.XNullability
+import androidx.room3.compiler.codegen.JCodeBlock
+import androidx.room3.compiler.codegen.JFunSpec
+import androidx.room3.compiler.codegen.JFunSpecBuilder
+import androidx.room3.compiler.codegen.L
+import androidx.room3.compiler.codegen.VisibilityModifier
+import androidx.room3.compiler.codegen.XAnnotationSpec
+import androidx.room3.compiler.codegen.XCodeBlock
+import androidx.room3.compiler.codegen.XFunSpec
+import androidx.room3.compiler.codegen.XName
+import androidx.room3.compiler.codegen.XParameterSpec
+import androidx.room3.compiler.codegen.XSpec
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.compiler.codegen.impl.XAnnotationSpecImpl
+import androidx.room3.compiler.codegen.impl.XCodeBlockImpl
+import androidx.room3.compiler.codegen.impl.XParameterSpecImpl
+import androidx.room3.compiler.processing.XNullability
 import com.squareup.kotlinpoet.javapoet.JTypeName
 import com.squareup.kotlinpoet.javapoet.JTypeVariableName
 import javax.lang.model.element.Modifier

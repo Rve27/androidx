@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.javac
+package androidx.room3.compiler.processing.javac
 
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.compiler.processing.XElement
-import androidx.room.compiler.processing.XMemberContainer
-import androidx.room.compiler.processing.XNullability
-import androidx.room.compiler.processing.XType
-import androidx.room.compiler.processing.XTypeParameterElement
-import androidx.room.compiler.processing.javac.kotlin.KmTypeParameterContainer
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.compiler.processing.XElement
+import androidx.room3.compiler.processing.XMemberContainer
+import androidx.room3.compiler.processing.XNullability
+import androidx.room3.compiler.processing.XType
+import androidx.room3.compiler.processing.XTypeParameterElement
+import androidx.room3.compiler.processing.javac.kotlin.KmTypeParameterContainer
 import com.squareup.javapoet.TypeVariableName
 import javax.lang.model.element.TypeParameterElement
 

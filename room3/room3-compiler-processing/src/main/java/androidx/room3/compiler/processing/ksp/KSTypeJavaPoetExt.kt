@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.ksp
+package androidx.room3.compiler.processing.ksp
 
-import androidx.room.compiler.codegen.JArrayTypeName
-import androidx.room.compiler.processing.javac.kotlin.typeNameFromJvmSignature
-import androidx.room.compiler.processing.tryBox
-import androidx.room.compiler.processing.util.ISSUE_TRACKER_LINK
+import androidx.room3.compiler.codegen.JArrayTypeName
+import androidx.room3.compiler.processing.javac.kotlin.typeNameFromJvmSignature
+import androidx.room3.compiler.processing.tryBox
+import androidx.room3.compiler.processing.util.ISSUE_TRACKER_LINK
 import com.google.devtools.ksp.KspExperimental
 import com.google.devtools.ksp.outerType
 import com.google.devtools.ksp.processing.Resolver

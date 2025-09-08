@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.kotlintestapp.test
+package androidx.room3.integration.kotlintestapp.test
 
 import androidx.kruth.assertThat
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingSource
-import androidx.room.InvalidationTracker
-import androidx.room.Room
-import androidx.room.RoomDatabase
-import androidx.room.integration.kotlintestapp.testutil.ItemStore
-import androidx.room.integration.kotlintestapp.testutil.PagingDb
-import androidx.room.integration.kotlintestapp.testutil.PagingEntity
-import androidx.room.integration.kotlintestapp.testutil.PagingEntityDao
-import androidx.room.paging.LimitOffsetPagingSource
+import androidx.room3.InvalidationTracker
+import androidx.room3.Room
+import androidx.room3.RoomDatabase
+import androidx.room3.integration.kotlintestapp.testutil.ItemStore
+import androidx.room3.integration.kotlintestapp.testutil.PagingDb
+import androidx.room3.integration.kotlintestapp.testutil.PagingEntity
+import androidx.room3.integration.kotlintestapp.testutil.PagingEntityDao
+import androidx.room3.paging.LimitOffsetPagingSource
 import androidx.sqlite.db.SimpleSQLiteQuery
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.filters.MediumTest

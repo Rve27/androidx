@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.kotlintestapp
+package androidx.room3.integration.kotlintestapp
 
 import android.database.Cursor
 import androidx.kruth.assertThat
 import androidx.kruth.assertWithMessage
-import androidx.room.Dao
-import androidx.room.Database
-import androidx.room.Entity
-import androidx.room.Insert
-import androidx.room.PrimaryKey
-import androidx.room.ProvidedTypeConverter
-import androidx.room.Query
-import androidx.room.Room
-import androidx.room.RoomDatabase
-import androidx.room.TypeConverter
-import androidx.room.TypeConverters
-import androidx.room.util.useCursor
+import androidx.room3.Dao
+import androidx.room3.Database
+import androidx.room3.Entity
+import androidx.room3.Insert
+import androidx.room3.PrimaryKey
+import androidx.room3.ProvidedTypeConverter
+import androidx.room3.Query
+import androidx.room3.Room
+import androidx.room3.RoomDatabase
+import androidx.room3.TypeConverter
+import androidx.room3.TypeConverters
+import androidx.room3.util.useCursor
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest

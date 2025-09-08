@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.javac
+package androidx.room3.compiler.processing.javac
 
-import androidx.room.compiler.processing.XTypeElement
+import androidx.room3.compiler.processing.XTypeElement
 import java.lang.ref.WeakReference
 
 /** Utility class to cache type element wrappers. */

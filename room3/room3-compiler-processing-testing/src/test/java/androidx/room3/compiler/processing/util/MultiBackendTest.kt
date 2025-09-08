@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.util
+package androidx.room3.compiler.processing.util
 
-import androidx.room.compiler.processing.ExperimentalProcessingApi
+import androidx.room3.compiler.processing.ExperimentalProcessingApi
 import org.junit.AssumptionViolatedException
 import org.junit.runners.Parameterized
 

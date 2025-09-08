@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.gradle
+package androidx.room3.gradle
 
 import androidx.kruth.assertThat
 import androidx.testutils.gradle.ProjectSetupRule

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.codegen
+package androidx.room3.compiler.codegen
 
 import com.squareup.kotlinpoet.MemberName.Companion.member
 
@@ -64,7 +64,7 @@ internal constructor(
          * Creates a [XMemberName] is that is contained by the receiving class's package, i.e. a
          * top-level function or property.
          *
-         * @see [androidx.room.compiler.processing.XMemberContainer.asClassName]
+         * @see [androidx.room3.compiler.processing.XMemberContainer.asClassName]
          */
         fun XClassName.packageMember(simpleName: String) = packageMember(XName.of(simpleName))
 
@@ -72,7 +72,7 @@ internal constructor(
          * Creates a [XMemberName] is that is contained by the receiving class's package, i.e. a
          * top-level function or property.
          *
-         * @see [androidx.room.compiler.processing.XMemberContainer.asClassName]
+         * @see [androidx.room3.compiler.processing.XMemberContainer.asClassName]
          */
         fun XClassName.packageMember(simpleName: XName): XMemberName {
             return XMemberName(

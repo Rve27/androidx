@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.javac.kotlin
+package androidx.room3.compiler.processing.javac.kotlin
 
 import androidx.kruth.assertThat
 import androidx.kruth.assertWithMessage
-import androidx.room.compiler.processing.XNullability
-import androidx.room.compiler.processing.javac.JavacProcessingEnv
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.XTestInvocation
-import androidx.room.compiler.processing.util.compileFiles
-import androidx.room.compiler.processing.util.runJavaProcessorTest
-import androidx.room.compiler.processing.util.runKaptTest
-import androidx.room.compiler.processing.util.sanitizeAsJavaParameterName
+import androidx.room3.compiler.processing.XNullability
+import androidx.room3.compiler.processing.javac.JavacProcessingEnv
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.XTestInvocation
+import androidx.room3.compiler.processing.util.compileFiles
+import androidx.room3.compiler.processing.util.runJavaProcessorTest
+import androidx.room3.compiler.processing.util.runKaptTest
+import androidx.room3.compiler.processing.util.sanitizeAsJavaParameterName
 import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.TypeElement
 import javax.lang.model.util.ElementFilter

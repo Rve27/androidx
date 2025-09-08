@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.room.paging
+package androidx.room3.paging
 
 import androidx.paging.PagingState
-import androidx.room.RoomDatabase
-import androidx.room.RoomRawQuery
+import androidx.room3.RoomDatabase
+import androidx.room3.RoomRawQuery
 import androidx.sqlite.SQLiteConnection
 
 @Suppress("UNUSED_PARAMETER")

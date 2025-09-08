@@ -52,7 +52,7 @@ dependencies {
 def writeTestPropsTask = tasks.register("prepareTestConfiguration", WriteProperties.class) {
     description = "Generates a properties file with the current environment for compilation tests"
     destinationFile.set(project.layout.buildDirectory.dir("test-config").map {
-        it.file("androidx.room.compiler.processing.util.CompilationTestCapabilities.Config" +
+        it.file("androidx.room3.compiler.processing.util.CompilationTestCapabilities.Config" +
                 ".properties")
     })
     property("kotlinVersion", libs.versions.kotlin.get())
@@ -76,7 +76,7 @@ java {
 tasks.named("compileTestKotlin", KotlinCompile.class).configure {
     it.kotlinOptions {
         freeCompilerArgs += [
-                "-opt-in=androidx.room.compiler.processing.ExperimentalProcessingApi"
+                "-opt-in=androidx.room3.compiler.processing.ExperimentalProcessingApi"
         ]
     }
 }

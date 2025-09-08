@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package androidx.room.benchmark
+package androidx.room3.benchmark
 
 import androidx.benchmark.junit4.BenchmarkRule
 import androidx.benchmark.junit4.measureRepeated
-import androidx.room.AmbiguousColumnResolver
+import androidx.room3.AmbiguousColumnResolver
 import androidx.test.filters.LargeTest
 import androidx.testutils.generateAllEnumerations
 import kotlin.random.Random

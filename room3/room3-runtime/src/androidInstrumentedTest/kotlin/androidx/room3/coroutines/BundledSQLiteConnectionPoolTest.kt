@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package androidx.room.coroutines
+package androidx.room3.coroutines
 
 import androidx.kruth.assertThat
-import androidx.room.Transactor
-import androidx.room.concurrent.AtomicInt
+import androidx.room3.Transactor
+import androidx.room3.concurrent.AtomicInt
 import androidx.sqlite.SQLiteDriver
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import androidx.test.filters.LargeTest

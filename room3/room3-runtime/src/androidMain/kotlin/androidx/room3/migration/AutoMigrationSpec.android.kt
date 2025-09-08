@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.room.migration
+package androidx.room3.migration
 
 import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.db.SupportSQLiteDatabase
@@ -26,14 +26,14 @@ import androidx.sqlite.driver.SupportSQLiteConnection
  * in Room's builder. It is important to note that the methods are all in a transaction when it is
  * called.
  *
- * @see [androidx.room.AutoMigration]
+ * @see [androidx.room3.AutoMigration]
  */
 public actual interface AutoMigrationSpec {
     /**
      * Invoked after the migration is completed.
      *
      * This function is only called when Room is configured without a driver. If a driver is set
-     * using [androidx.room.RoomDatabase.Builder.setDriver], then only the version that receives a
+     * using [androidx.room3.RoomDatabase.Builder.setDriver], then only the version that receives a
      * [SQLiteConnection] is called.
      *
      * @param db The SQLite database.

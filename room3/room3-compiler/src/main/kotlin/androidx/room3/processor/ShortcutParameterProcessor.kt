@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package androidx.room.processor
+package androidx.room3.processor
 
-import androidx.room.compiler.processing.XExecutableParameterElement
-import androidx.room.compiler.processing.XNullability
-import androidx.room.compiler.processing.XType
-import androidx.room.compiler.processing.isArray
-import androidx.room.vo.ShortcutQueryParameter
+import androidx.room3.compiler.processing.XExecutableParameterElement
+import androidx.room3.compiler.processing.XNullability
+import androidx.room3.compiler.processing.XType
+import androidx.room3.compiler.processing.isArray
+import androidx.room3.vo.ShortcutQueryParameter
 
 /** Processes parameters of functions that are annotated with Insert, Update or Delete. */
 class ShortcutParameterProcessor(

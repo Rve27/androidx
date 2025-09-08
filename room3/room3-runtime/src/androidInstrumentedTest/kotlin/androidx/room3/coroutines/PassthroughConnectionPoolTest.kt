@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package androidx.room.coroutines
+package androidx.room3.coroutines
 
 import androidx.kruth.assertThat
-import androidx.room.Room
-import androidx.room.test.TestDatabase
-import androidx.room.test.TestDatabase_Impl
-import androidx.room.test.createDefaultConfiguration
-import androidx.room.useReaderConnection
+import androidx.room3.Room
+import androidx.room3.test.TestDatabase
+import androidx.room3.test.TestDatabase_Impl
+import androidx.room3.test.createDefaultConfiguration
+import androidx.room3.useReaderConnection
 import androidx.sqlite.SQLiteDriver
 import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
 import androidx.sqlite.driver.AndroidSQLiteDriver

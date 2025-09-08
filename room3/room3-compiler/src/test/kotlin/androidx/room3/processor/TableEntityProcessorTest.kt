@@ -14,27 +14,27 @@
  * limitations under the License.
  */
 
-package androidx.room.processor
+package androidx.room3.processor
 
 import COMMON
 import androidx.kruth.assertThat
-import androidx.room.compiler.codegen.CodeLanguage
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.compiler.codegen.XTypeName.Companion.PRIMITIVE_LONG
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.compileFiles
-import androidx.room.compiler.processing.util.runProcessorTest
-import androidx.room.parser.SQLTypeAffinity
-import androidx.room.processor.ProcessorErrors.RELATION_IN_ENTITY
-import androidx.room.testing.context
-import androidx.room.vo.CallType
-import androidx.room.vo.DataClass
-import androidx.room.vo.Index
-import androidx.room.vo.Properties
-import androidx.room.vo.Property
-import androidx.room.vo.PropertyGetter
-import androidx.room.vo.PropertySetter
-import androidx.room.vo.columnNames
+import androidx.room3.compiler.codegen.CodeLanguage
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.compiler.codegen.XTypeName.Companion.PRIMITIVE_LONG
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.compileFiles
+import androidx.room3.compiler.processing.util.runProcessorTest
+import androidx.room3.parser.SQLTypeAffinity
+import androidx.room3.processor.ProcessorErrors.RELATION_IN_ENTITY
+import androidx.room3.testing.context
+import androidx.room3.vo.CallType
+import androidx.room3.vo.DataClass
+import androidx.room3.vo.Index
+import androidx.room3.vo.Properties
+import androidx.room3.vo.Property
+import androidx.room3.vo.PropertyGetter
+import androidx.room3.vo.PropertySetter
+import androidx.room3.vo.columnNames
 import org.hamcrest.CoreMatchers.hasItems
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
@@ -42,7 +42,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 
-private typealias IndexOrder = androidx.room.Index.Order
+private typealias IndexOrder = androidx.room3.Index.Order
 
 @RunWith(JUnit4::class)
 class TableEntityProcessorTest : BaseEntityParserTest() {
@@ -112,7 +112,7 @@ class TableEntityProcessorTest : BaseEntityParserTest() {
                             "test.library.MissingGetterEntity",
                             """
                     package test.library;
-                    import androidx.room.*;
+                    import androidx.room3.*;
                     @Entity
                     public class MissingGetterEntity {
                         @PrimaryKey
@@ -853,7 +853,7 @@ class TableEntityProcessorTest : BaseEntityParserTest() {
                 code =
                     """
                 package foo.bar;
-                import androidx.room.*;
+                import androidx.room3.*;
                 public class Base {
                     @PrimaryKey
                     long baseId;
@@ -892,7 +892,7 @@ class TableEntityProcessorTest : BaseEntityParserTest() {
                 code =
                     """
                 package foo.bar;
-                import androidx.room.*;
+                import androidx.room3.*;
                 @Entity(indices = @Index({"name", "lastName"}))
                 public class Base {
                     @PrimaryKey
@@ -907,7 +907,7 @@ class TableEntityProcessorTest : BaseEntityParserTest() {
                 code =
                     """
                 package foo.bar;
-                import androidx.room.*;
+                import androidx.room3.*;
 
                 public class Parent extends Base {
                     String iHaveAField;
@@ -947,7 +947,7 @@ class TableEntityProcessorTest : BaseEntityParserTest() {
                 code =
                     """
                 package foo.bar;
-                import androidx.room.*;
+                import androidx.room3.*;
                 @Entity(indices = @Index({"name", "lastName"}))
                 public class Base {
                     @PrimaryKey
@@ -989,7 +989,7 @@ class TableEntityProcessorTest : BaseEntityParserTest() {
                 code =
                     """
                 package foo.bar;
-                import androidx.room.*;
+                import androidx.room3.*;
                 public class Base {
                     String name;
                     String tmp1;
@@ -1020,7 +1020,7 @@ class TableEntityProcessorTest : BaseEntityParserTest() {
                 code =
                     """
                 package foo.bar;
-                import androidx.room.*;
+                import androidx.room3.*;
                 public class Base {
                     @PrimaryKey
                     long baseId;
@@ -1063,7 +1063,7 @@ class TableEntityProcessorTest : BaseEntityParserTest() {
                 code =
                     """
                 package foo.bar;
-                import androidx.room.*;
+                import androidx.room3.*;
                 @Entity(indices = @Index({"name", "lastName"}))
                 public class Base {
                     @PrimaryKey
@@ -1078,7 +1078,7 @@ class TableEntityProcessorTest : BaseEntityParserTest() {
                 code =
                     """
                 package foo.bar;
-                import androidx.room.*;
+                import androidx.room3.*;
 
                 public class Parent extends Base {
                     String iHaveAField;
@@ -1113,7 +1113,7 @@ class TableEntityProcessorTest : BaseEntityParserTest() {
                 code =
                     """
                 package foo.bar;
-                import androidx.room.*;
+                import androidx.room3.*;
                 @Entity(indices = @Index({"name", "lastName"}))
                 public class Base {
                     @PrimaryKey
@@ -1314,7 +1314,7 @@ class TableEntityProcessorTest : BaseEntityParserTest() {
                 code =
                     """
                 package foo.bar;
-                import androidx.room.*;
+                import androidx.room3.*;
                 public class Base {
                     @PrimaryKey
                     long baseId;
@@ -1342,7 +1342,7 @@ class TableEntityProcessorTest : BaseEntityParserTest() {
                 code =
                     """
                 package foo.bar;
-                import androidx.room.*;
+                import androidx.room3.*;
                 @Entity(primaryKeys = "baseId")
                 public class Base {
                     long baseId;
@@ -1370,7 +1370,7 @@ class TableEntityProcessorTest : BaseEntityParserTest() {
                 code =
                     """
                 package foo.bar;
-                import androidx.room.*;
+                import androidx.room3.*;
                 public class Base {
                     @PrimaryKey
                     long baseId;
@@ -1403,7 +1403,7 @@ class TableEntityProcessorTest : BaseEntityParserTest() {
                 code =
                     """
                 package foo.bar;
-                import androidx.room.*;
+                import androidx.room3.*;
                 @Entity(primaryKeys = "baseId")
                 public class Base {
                     long baseId;
@@ -1435,7 +1435,7 @@ class TableEntityProcessorTest : BaseEntityParserTest() {
                 code =
                     """
                 package foo.bar;
-                import androidx.room.*;
+                import androidx.room3.*;
                 @Entity(primaryKeys = "baseId")
                 public class Base {
                     long baseId;
@@ -1542,7 +1542,7 @@ class TableEntityProcessorTest : BaseEntityParserTest() {
                     """
                 package foo.bar;
                 import androidx.annotation.NonNull;
-                import androidx.room.*;
+                import androidx.room3.*;
 
                 public class Base {
                     long baseId;
@@ -1579,7 +1579,7 @@ class TableEntityProcessorTest : BaseEntityParserTest() {
                 code =
                     """
                 package foo.bar;
-                import androidx.room.*;
+                import androidx.room3.*;
 
                 @Entity(primaryKeys = "baseId")
                 public class Base {
@@ -1622,7 +1622,7 @@ class TableEntityProcessorTest : BaseEntityParserTest() {
                     """
                 package foo.bar;
                 import androidx.annotation.NonNull;
-                import androidx.room.*;
+                import androidx.room3.*;
 
                 public class Base {
                     long baseId;
@@ -1837,7 +1837,7 @@ class TableEntityProcessorTest : BaseEntityParserTest() {
                     """
                 package foo.bar;
                 import androidx.annotation.NonNull;
-                import androidx.room.*;
+                import androidx.room3.*;
 
                 public class Base {
                     long baseId;
@@ -1877,7 +1877,7 @@ class TableEntityProcessorTest : BaseEntityParserTest() {
                 code =
                     """
                 package foo.bar;
-                import androidx.room.*;
+                import androidx.room3.*;
 
                 @Entity(primaryKeys = "baseId")
                 public class Base {
@@ -1922,7 +1922,7 @@ class TableEntityProcessorTest : BaseEntityParserTest() {
                     """
                 package foo.bar;
                 import androidx.annotation.NonNull;
-                import androidx.room.*;
+                import androidx.room3.*;
 
                 public class Base {
                     long baseId;
@@ -1965,7 +1965,7 @@ class TableEntityProcessorTest : BaseEntityParserTest() {
                     """
                 package foo.bar;
                 import androidx.annotation.NonNull;
-                import androidx.room.*;
+                import androidx.room3.*;
 
                 public class Base {
                     long baseId;
@@ -2003,7 +2003,7 @@ class TableEntityProcessorTest : BaseEntityParserTest() {
                     """
                 package foo.bar;
                 import androidx.annotation.NonNull;
-                import androidx.room.*;
+                import androidx.room3.*;
 
                 public class Base {
                     long baseId;
@@ -2631,7 +2631,7 @@ class TableEntityProcessorTest : BaseEntityParserTest() {
             Source.kotlin(
                 "Entity.kt",
                 """
-            import androidx.room.*;
+            import androidx.room3.*;
 
             typealias MyLong = Long
             @Entity(tableName = "par_table")

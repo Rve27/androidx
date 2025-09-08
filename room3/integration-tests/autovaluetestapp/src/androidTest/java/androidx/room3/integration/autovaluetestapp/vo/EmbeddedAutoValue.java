@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.autovaluetestapp.vo;
+package androidx.room3.integration.autovaluetestapp.vo;
 
-import androidx.room.Embedded;
+import androidx.room3.Embedded;
 
 public class EmbeddedAutoValue {
 

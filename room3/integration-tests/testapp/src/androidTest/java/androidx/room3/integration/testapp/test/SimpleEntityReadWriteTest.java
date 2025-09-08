@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.testapp.test;
+package androidx.room3.integration.testapp.test;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItems;
@@ -33,23 +33,23 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteException;
 
-import androidx.room.Room;
-import androidx.room.integration.testapp.TestDatabase;
-import androidx.room.integration.testapp.dao.BlobEntityDao;
-import androidx.room.integration.testapp.dao.PetDao;
-import androidx.room.integration.testapp.dao.ProductDao;
-import androidx.room.integration.testapp.dao.UserDao;
-import androidx.room.integration.testapp.dao.UserPetDao;
-import androidx.room.integration.testapp.vo.BlobEntity;
-import androidx.room.integration.testapp.vo.Day;
-import androidx.room.integration.testapp.vo.IdUsername;
-import androidx.room.integration.testapp.vo.NameAndLastName;
-import androidx.room.integration.testapp.vo.Pet;
-import androidx.room.integration.testapp.vo.Product;
-import androidx.room.integration.testapp.vo.User;
-import androidx.room.integration.testapp.vo.UserAndAllPets;
-import androidx.room.integration.testapp.vo.UserSummary;
-import androidx.room.integration.testapp.vo.Username;
+import androidx.room3.Room;
+import androidx.room3.integration.testapp.TestDatabase;
+import androidx.room3.integration.testapp.dao.BlobEntityDao;
+import androidx.room3.integration.testapp.dao.PetDao;
+import androidx.room3.integration.testapp.dao.ProductDao;
+import androidx.room3.integration.testapp.dao.UserDao;
+import androidx.room3.integration.testapp.dao.UserPetDao;
+import androidx.room3.integration.testapp.vo.BlobEntity;
+import androidx.room3.integration.testapp.vo.Day;
+import androidx.room3.integration.testapp.vo.IdUsername;
+import androidx.room3.integration.testapp.vo.NameAndLastName;
+import androidx.room3.integration.testapp.vo.Pet;
+import androidx.room3.integration.testapp.vo.Product;
+import androidx.room3.integration.testapp.vo.User;
+import androidx.room3.integration.testapp.vo.UserAndAllPets;
+import androidx.room3.integration.testapp.vo.UserSummary;
+import androidx.room3.integration.testapp.vo.Username;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.SmallTest;

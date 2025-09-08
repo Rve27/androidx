@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing
+package androidx.room3.compiler.processing
 
-import androidx.room.compiler.codegen.XClassName
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.compiler.codegen.asClassName
+import androidx.room3.compiler.codegen.XClassName
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.compiler.codegen.asClassName
 import com.squareup.javapoet.TypeName
 import kotlin.contracts.contract
 import kotlin.reflect.KClass
@@ -36,7 +36,7 @@ interface XType : XAnnotated {
     //     message = "Use asTypeName().toJavaPoet() to be clear the name is for JavaPoet.",
     //     replaceWith = ReplaceWith(
     //         expression = "asTypeName().toJavaPoet()",
-    //         imports = ["androidx.room.compiler.codegen.toJavaPoet"]
+    //         imports = ["androidx.room3.compiler.codegen.toJavaPoet"]
     //     )
     // )
     val typeName: TypeName

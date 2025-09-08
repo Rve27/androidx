@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room
+package androidx.room3
 
 /**
  * Defines a class that can instantiate the Room generated implementation of an 'abstract'

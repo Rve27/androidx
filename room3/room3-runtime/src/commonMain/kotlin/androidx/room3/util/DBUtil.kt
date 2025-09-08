@@ -17,12 +17,12 @@
 @file:JvmMultifileClass
 @file:JvmName("DBUtil")
 
-package androidx.room.util
+package androidx.room3.util
 
 import androidx.annotation.RestrictTo
-import androidx.room.PooledConnection
-import androidx.room.RoomDatabase
-import androidx.room.Transactor
+import androidx.room3.PooledConnection
+import androidx.room3.RoomDatabase
+import androidx.room3.Transactor
 import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.SQLiteException
 import androidx.sqlite.SQLiteStatement

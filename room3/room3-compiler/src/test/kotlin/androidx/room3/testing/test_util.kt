@@ -14,31 +14,31 @@
  * limitations under the License.
  */
 
-import androidx.room.DatabaseView
-import androidx.room.Entity
-import androidx.room.compiler.codegen.CodeLanguage
-import androidx.room.compiler.codegen.XClassName
-import androidx.room.compiler.codegen.XTypeSpec
-import androidx.room.compiler.processing.XElement
-import androidx.room.compiler.processing.XFieldElement
-import androidx.room.compiler.processing.XProcessingEnv.Platform
-import androidx.room.compiler.processing.XType
-import androidx.room.compiler.processing.XTypeElement
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.XTestInvocation
-import androidx.room.ext.CollectionTypeNames
-import androidx.room.ext.GuavaUtilConcurrentTypeNames
-import androidx.room.ext.KotlinTypeNames
-import androidx.room.ext.LifecyclesTypeNames
-import androidx.room.ext.ReactiveStreamsTypeNames
-import androidx.room.ext.RxJava2TypeNames
-import androidx.room.ext.RxJava3TypeNames
-import androidx.room.processor.DatabaseViewProcessor
-import androidx.room.processor.TableEntityProcessor
-import androidx.room.solver.CodeGenScope
-import androidx.room.testing.context
-import androidx.room.verifier.DatabaseVerifier
-import androidx.room.writer.TypeWriter
+import androidx.room3.DatabaseView
+import androidx.room3.Entity
+import androidx.room3.compiler.codegen.CodeLanguage
+import androidx.room3.compiler.codegen.XClassName
+import androidx.room3.compiler.codegen.XTypeSpec
+import androidx.room3.compiler.processing.XElement
+import androidx.room3.compiler.processing.XFieldElement
+import androidx.room3.compiler.processing.XProcessingEnv.Platform
+import androidx.room3.compiler.processing.XType
+import androidx.room3.compiler.processing.XTypeElement
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.XTestInvocation
+import androidx.room3.ext.CollectionTypeNames
+import androidx.room3.ext.GuavaUtilConcurrentTypeNames
+import androidx.room3.ext.KotlinTypeNames
+import androidx.room3.ext.LifecyclesTypeNames
+import androidx.room3.ext.ReactiveStreamsTypeNames
+import androidx.room3.ext.RxJava2TypeNames
+import androidx.room3.ext.RxJava3TypeNames
+import androidx.room3.processor.DatabaseViewProcessor
+import androidx.room3.processor.TableEntityProcessor
+import androidx.room3.solver.CodeGenScope
+import androidx.room3.testing.context
+import androidx.room3.verifier.DatabaseVerifier
+import androidx.room3.writer.TypeWriter
 import java.io.File
 import org.mockito.Mockito.doReturn
 import org.mockito.Mockito.mock
@@ -180,14 +180,14 @@ object COMMON {
     val RX2_EMPTY_RESULT_SET_EXCEPTION by lazy {
         loadJavaCode(
             "common/input/rxjava2/EmptyResultSetException.java",
-            "androidx.room.EmptyResultSetException",
+            "androidx.room3.EmptyResultSetException",
         )
     }
 
     val RX3_EMPTY_RESULT_SET_EXCEPTION by lazy {
         loadJavaCode(
             "common/input/rxjava3/EmptyResultSetException.java",
-            "androidx.room.rxjava3.EmptyResultSetException",
+            "androidx.room3.rxjava3.EmptyResultSetException",
         )
     }
 
@@ -273,14 +273,14 @@ fun createVerifierFromEntitiesAndViews(invocation: XTestInvocation): DatabaseVer
     )!!
 }
 
-fun XTestInvocation.getViews(): List<androidx.room.vo.DatabaseView> {
+fun XTestInvocation.getViews(): List<androidx.room3.vo.DatabaseView> {
     return roundEnv
         .getElementsAnnotatedWith(DatabaseView::class.qualifiedName!!)
         .filterIsInstance<XTypeElement>()
         .map { DatabaseViewProcessor(context, it).process() }
 }
 
-fun XTestInvocation.getEntities(): List<androidx.room.vo.Entity> {
+fun XTestInvocation.getEntities(): List<androidx.room3.vo.Entity> {
     val entities =
         roundEnv
             .getElementsAnnotatedWith(Entity::class.qualifiedName!!)
@@ -291,7 +291,7 @@ fun XTestInvocation.getEntities(): List<androidx.room.vo.Entity> {
 
 /**
  * Create mocks of [XElement] and [XType] so that they can be used for instantiating a fake
- * [androidx.room.vo.Property].
+ * [androidx.room3.vo.Property].
  */
 fun mockElementAndType(): Pair<XFieldElement, XType> {
     val element = mock(XFieldElement::class.java)

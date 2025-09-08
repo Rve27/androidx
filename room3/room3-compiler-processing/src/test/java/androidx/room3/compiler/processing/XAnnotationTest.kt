@@ -14,38 +14,38 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing
+package androidx.room3.compiler.processing
 
 import androidx.kruth.assertThat
 import androidx.kruth.assertWithMessage
-import androidx.room.compiler.codegen.XClassName
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.compiler.codegen.asClassName
-import androidx.room.compiler.processing.compat.XConverters.toJavac
-import androidx.room.compiler.processing.testcode.JavaAnnotationWithDefaults
-import androidx.room.compiler.processing.testcode.JavaAnnotationWithEnum
-import androidx.room.compiler.processing.testcode.JavaAnnotationWithEnumArray
-import androidx.room.compiler.processing.testcode.JavaAnnotationWithPrimitiveArray
-import androidx.room.compiler.processing.testcode.JavaAnnotationWithTypeReferences
-import androidx.room.compiler.processing.testcode.JavaEnum
-import androidx.room.compiler.processing.testcode.MainAnnotation
-import androidx.room.compiler.processing.testcode.OtherAnnotation
-import androidx.room.compiler.processing.testcode.RepeatableJavaAnnotation
-import androidx.room.compiler.processing.testcode.RepeatableKotlinAnnotation
-import androidx.room.compiler.processing.testcode.TestSuppressWarnings
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.XTestInvocation
-import androidx.room.compiler.processing.util.asJTypeName
-import androidx.room.compiler.processing.util.asKTypeName
-import androidx.room.compiler.processing.util.compileFiles
-import androidx.room.compiler.processing.util.getDeclaredField
-import androidx.room.compiler.processing.util.getDeclaredMethodByJvmName
-import androidx.room.compiler.processing.util.getField
-import androidx.room.compiler.processing.util.getMethodByJvmName
-import androidx.room.compiler.processing.util.getParameter
-import androidx.room.compiler.processing.util.runKspTest
-import androidx.room.compiler.processing.util.runProcessorTest
-import androidx.room.compiler.processing.util.runProcessorTestWithoutKsp
+import androidx.room3.compiler.codegen.XClassName
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.compiler.codegen.asClassName
+import androidx.room3.compiler.processing.compat.XConverters.toJavac
+import androidx.room3.compiler.processing.testcode.JavaAnnotationWithDefaults
+import androidx.room3.compiler.processing.testcode.JavaAnnotationWithEnum
+import androidx.room3.compiler.processing.testcode.JavaAnnotationWithEnumArray
+import androidx.room3.compiler.processing.testcode.JavaAnnotationWithPrimitiveArray
+import androidx.room3.compiler.processing.testcode.JavaAnnotationWithTypeReferences
+import androidx.room3.compiler.processing.testcode.JavaEnum
+import androidx.room3.compiler.processing.testcode.MainAnnotation
+import androidx.room3.compiler.processing.testcode.OtherAnnotation
+import androidx.room3.compiler.processing.testcode.RepeatableJavaAnnotation
+import androidx.room3.compiler.processing.testcode.RepeatableKotlinAnnotation
+import androidx.room3.compiler.processing.testcode.TestSuppressWarnings
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.XTestInvocation
+import androidx.room3.compiler.processing.util.asJTypeName
+import androidx.room3.compiler.processing.util.asKTypeName
+import androidx.room3.compiler.processing.util.compileFiles
+import androidx.room3.compiler.processing.util.getDeclaredField
+import androidx.room3.compiler.processing.util.getDeclaredMethodByJvmName
+import androidx.room3.compiler.processing.util.getField
+import androidx.room3.compiler.processing.util.getMethodByJvmName
+import androidx.room3.compiler.processing.util.getParameter
+import androidx.room3.compiler.processing.util.runKspTest
+import androidx.room3.compiler.processing.util.runProcessorTest
+import androidx.room3.compiler.processing.util.runProcessorTestWithoutKsp
 import com.squareup.kotlinpoet.javapoet.JAnnotationSpec
 import com.squareup.kotlinpoet.javapoet.JClassName
 import org.junit.Test
@@ -221,7 +221,7 @@ class XAnnotationTest(private val preCompiled: Boolean) {
                 "test.MyClass",
                 """
             package test;
-            import androidx.room.compiler.processing.testcode.TestSuppressWarnings;
+            import androidx.room3.compiler.processing.testcode.TestSuppressWarnings;
             @TestSuppressWarnings("test")
             public class MyClass {}
             """
@@ -299,7 +299,7 @@ class XAnnotationTest(private val preCompiled: Boolean) {
             Source.kotlin(
                 "MyClass.kt",
                 """
-            import androidx.room.compiler.processing.testcode.TestSuppressWarnings
+            import androidx.room3.compiler.processing.testcode.TestSuppressWarnings
             @TestSuppressWarnings("a", "b")
             class MyClass
             """
@@ -324,7 +324,7 @@ class XAnnotationTest(private val preCompiled: Boolean) {
                 "foo.bar.Baz",
                 """
             package foo.bar;
-            import androidx.room.compiler.processing.testcode.TestSuppressWarnings;
+            import androidx.room3.compiler.processing.testcode.TestSuppressWarnings;
             @TestSuppressWarnings({"warning1", "warning 2"})
             public class Baz {
             }
@@ -348,7 +348,7 @@ class XAnnotationTest(private val preCompiled: Boolean) {
                 "foo.bar.Baz",
                 """
             package foo.bar;
-            import androidx.room.compiler.processing.testcode.TestSuppressWarnings;
+            import androidx.room3.compiler.processing.testcode.TestSuppressWarnings;
             @TestSuppressWarnings({"warning1", "warning 2"})
             public class Baz {
             }
@@ -373,8 +373,8 @@ class XAnnotationTest(private val preCompiled: Boolean) {
                 "foo.bar.Baz",
                 """
             package foo.bar;
-            import androidx.room.compiler.processing.testcode.MainAnnotation;
-            import androidx.room.compiler.processing.testcode.OtherAnnotation;
+            import androidx.room3.compiler.processing.testcode.MainAnnotation;
+            import androidx.room3.compiler.processing.testcode.OtherAnnotation;
             @MainAnnotation(
                 typeList = {String.class, Integer.class},
                 singleType = Long.class,
@@ -424,7 +424,7 @@ class XAnnotationTest(private val preCompiled: Boolean) {
             Source.kotlin(
                 "Foo.kt",
                 """
-            import androidx.room.compiler.processing.testcode.TestSuppressWarnings
+            import androidx.room3.compiler.processing.testcode.TestSuppressWarnings
             @TestSuppressWarnings("warning1", "warning 2")
             class Subject {
             }
@@ -447,8 +447,8 @@ class XAnnotationTest(private val preCompiled: Boolean) {
             Source.kotlin(
                 "Foo.kt",
                 """
-            import androidx.room.compiler.processing.testcode.MainAnnotation
-            import androidx.room.compiler.processing.testcode.OtherAnnotation
+            import androidx.room3.compiler.processing.testcode.MainAnnotation
+            import androidx.room3.compiler.processing.testcode.OtherAnnotation
 
             @MainAnnotation(
                 typeList = [String::class, Int::class],
@@ -538,7 +538,7 @@ class XAnnotationTest(private val preCompiled: Boolean) {
             Source.java(
                 "Subject",
                 """
-            import androidx.room.compiler.processing.testcode.JavaAnnotationWithTypeReferences;
+            import androidx.room3.compiler.processing.testcode.JavaAnnotationWithTypeReferences;
             @JavaAnnotationWithTypeReferences(String.class)
             class Subject {
             }
@@ -560,8 +560,8 @@ class XAnnotationTest(private val preCompiled: Boolean) {
             Source.kotlin(
                 "Foo.kt",
                 """
-            import androidx.room.compiler.processing.testcode.OtherAnnotation
-            import androidx.room.compiler.processing.testcode.TestSuppressWarnings
+            import androidx.room3.compiler.processing.testcode.OtherAnnotation
+            import androidx.room3.compiler.processing.testcode.TestSuppressWarnings
             class Subject {
                 @TestSuppressWarnings("onProp1")
                 var prop1:Int = TODO()
@@ -639,8 +639,8 @@ class XAnnotationTest(private val preCompiled: Boolean) {
             Source.kotlin(
                 "Foo.kt",
                 """
-            import androidx.room.compiler.processing.testcode.OtherAnnotation
-            import androidx.room.compiler.processing.testcode.TestSuppressWarnings
+            import androidx.room3.compiler.processing.testcode.OtherAnnotation
+            import androidx.room3.compiler.processing.testcode.TestSuppressWarnings
             class Subject {
                 fun noAnnotations(x:Int): Unit = TODO()
                 @TestSuppressWarnings("onMethod")
@@ -672,7 +672,7 @@ class XAnnotationTest(private val preCompiled: Boolean) {
             Source.kotlin(
                 "Foo.kt",
                 """
-            import androidx.room.compiler.processing.testcode.TestSuppressWarnings
+            import androidx.room3.compiler.processing.testcode.TestSuppressWarnings
             @TestSuppressWarnings("onClass")
             data class Subject(
                 @field:TestSuppressWarnings("onField")
@@ -702,7 +702,7 @@ class XAnnotationTest(private val preCompiled: Boolean) {
             Source.kotlin(
                 "KotlinClass.kt",
                 """
-            import androidx.room.compiler.processing.testcode.JavaAnnotationWithDefaults
+            import androidx.room3.compiler.processing.testcode.JavaAnnotationWithDefaults
             @JavaAnnotationWithDefaults
             class KotlinClass
             """
@@ -712,7 +712,7 @@ class XAnnotationTest(private val preCompiled: Boolean) {
             Source.java(
                 "JavaClass",
                 """
-            import androidx.room.compiler.processing.testcode.JavaAnnotationWithDefaults;
+            import androidx.room3.compiler.processing.testcode.JavaAnnotationWithDefaults;
             @JavaAnnotationWithDefaults
             class JavaClass {}
             """
@@ -803,7 +803,7 @@ class XAnnotationTest(private val preCompiled: Boolean) {
             Source.java(
                 "JavaSubject",
                 """
-            import androidx.room.compiler.processing.testcode.*;
+            import androidx.room3.compiler.processing.testcode.*;
             class JavaSubject {
                 @JavaAnnotationWithPrimitiveArray(intArray = {1, 2, 3})
                 Object annotated1;
@@ -815,7 +815,7 @@ class XAnnotationTest(private val preCompiled: Boolean) {
             Source.kotlin(
                 "KotlinSubject.kt",
                 """
-            import androidx.room.compiler.processing.testcode.*
+            import androidx.room3.compiler.processing.testcode.*
             class KotlinSubject {
                 @JavaAnnotationWithPrimitiveArray(intArray = [1, 2, 3])
                 val annotated1:Any = TODO()
@@ -842,7 +842,7 @@ class XAnnotationTest(private val preCompiled: Boolean) {
             Source.java(
                 "JavaSubject",
                 """
-            import androidx.room.compiler.processing.testcode.*;
+            import androidx.room3.compiler.processing.testcode.*;
             class JavaSubject {
                 @JavaAnnotationWithEnum(JavaEnum.VAL1)
                 Object annotated1;
@@ -854,7 +854,7 @@ class XAnnotationTest(private val preCompiled: Boolean) {
             Source.kotlin(
                 "KotlinSubject.kt",
                 """
-            import androidx.room.compiler.processing.testcode.*
+            import androidx.room3.compiler.processing.testcode.*
             class KotlinSubject {
                 @JavaAnnotationWithEnum(JavaEnum.VAL1)
                 val annotated1: Any = TODO()
@@ -879,7 +879,7 @@ class XAnnotationTest(private val preCompiled: Boolean) {
             Source.java(
                 "JavaSubject",
                 """
-            import androidx.room.compiler.processing.testcode.*;
+            import androidx.room3.compiler.processing.testcode.*;
             class JavaSubject {
                 @JavaAnnotationWithEnumArray(enumArray = {JavaEnum.VAL1, JavaEnum.VAL2})
                 Object annotated1;
@@ -891,7 +891,7 @@ class XAnnotationTest(private val preCompiled: Boolean) {
             Source.kotlin(
                 "KotlinSubject.kt",
                 """
-            import androidx.room.compiler.processing.testcode.*;
+            import androidx.room3.compiler.processing.testcode.*;
             class KotlinSubject {
                 @JavaAnnotationWithEnumArray(enumArray = [JavaEnum.VAL1, JavaEnum.VAL2])
                 val annotated1: Any = TODO()
@@ -1089,7 +1089,7 @@ class XAnnotationTest(private val preCompiled: Boolean) {
                 "foo.bar.Baz",
                 """
             package foo.bar;
-            import androidx.room.compiler.processing.testcode.JavaAnnotationWithDefaults;
+            import androidx.room3.compiler.processing.testcode.JavaAnnotationWithDefaults;
             @JavaAnnotationWithDefaults(stringVal = "test")
             public class Baz {
             }

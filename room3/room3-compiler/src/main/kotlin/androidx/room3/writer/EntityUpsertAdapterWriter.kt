@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package androidx.room.writer
+package androidx.room3.writer
 
-import androidx.room.compiler.codegen.XCodeBlock
-import androidx.room.ext.RoomTypeNames
-import androidx.room.vo.DataClass
-import androidx.room.vo.ShortcutEntity
+import androidx.room3.compiler.codegen.XCodeBlock
+import androidx.room3.ext.RoomTypeNames
+import androidx.room3.vo.DataClass
+import androidx.room3.vo.ShortcutEntity
 
 class EntityUpsertAdapterWriter
 private constructor(val tableName: String, val dataClass: DataClass) {

@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package androidx.room.paging
+package androidx.room3.paging
 
 import androidx.annotation.RestrictTo
 import androidx.paging.PagingSource
 import androidx.paging.PagingSource.LoadParams
 import androidx.paging.PagingSource.LoadResult
 import androidx.paging.PagingState
-import androidx.room.RoomDatabase
-import androidx.room.RoomRawQuery
-import androidx.room.Transactor.SQLiteTransactionType
-import androidx.room.concurrent.AtomicBoolean
-import androidx.room.concurrent.AtomicInt
-import androidx.room.paging.util.INITIAL_ITEM_COUNT
-import androidx.room.paging.util.queryDatabase
-import androidx.room.paging.util.queryItemCount
+import androidx.room3.RoomDatabase
+import androidx.room3.RoomRawQuery
+import androidx.room3.Transactor.SQLiteTransactionType
+import androidx.room3.concurrent.AtomicBoolean
+import androidx.room3.concurrent.AtomicInt
+import androidx.room3.paging.util.INITIAL_ITEM_COUNT
+import androidx.room3.paging.util.queryDatabase
+import androidx.room3.paging.util.queryItemCount
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect

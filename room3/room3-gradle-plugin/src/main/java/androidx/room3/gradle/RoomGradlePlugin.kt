@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package androidx.room.gradle
+package androidx.room3.gradle
 
-import androidx.room.gradle.integration.AndroidPluginIntegration
-import androidx.room.gradle.integration.CommonIntegration
-import androidx.room.gradle.integration.KotlinMultiplatformPluginIntegration
+import androidx.room3.gradle.integration.AndroidPluginIntegration
+import androidx.room3.gradle.integration.CommonIntegration
+import androidx.room3.gradle.integration.KotlinMultiplatformPluginIntegration
 import javax.inject.Inject
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -34,7 +34,7 @@ constructor(projectLayout: ProjectLayout, providerFactory: ProviderFactory) : Pl
     private val kmpIntegration by lazy { KotlinMultiplatformPluginIntegration(commonIntegration) }
 
     override fun apply(project: Project) {
-        val roomExtension = project.extensions.create("room", RoomExtension::class.java)
+        val roomExtension = project.extensions.create("room3", RoomExtension::class.java)
         androidIntegration.withAndroid(project, roomExtension)
         kmpIntegration.withKotlin(project, roomExtension)
     }

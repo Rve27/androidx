@@ -14,25 +14,25 @@
  * limitations under the License.
  */
 
-package androidx.room.processor
+package androidx.room3.processor
 
-import androidx.room.DeleteColumn
-import androidx.room.DeleteTable
-import androidx.room.ProvidedAutoMigrationSpec
-import androidx.room.RenameColumn
-import androidx.room.RenameTable
-import androidx.room.compiler.codegen.asClassName
-import androidx.room.compiler.processing.XType
-import androidx.room.compiler.processing.get
-import androidx.room.ext.RoomTypeNames
-import androidx.room.migration.bundle.DatabaseBundle
-import androidx.room.processor.ProcessorErrors.AUTOMIGRATION_SPEC_MUST_BE_CLASS
-import androidx.room.processor.ProcessorErrors.INNER_CLASS_AUTOMIGRATION_SPEC_MUST_BE_STATIC
-import androidx.room.processor.ProcessorErrors.autoMigrationElementMustImplementSpec
-import androidx.room.processor.ProcessorErrors.autoMigrationToVersionMustBeGreaterThanFrom
-import androidx.room.util.DiffException
-import androidx.room.util.SchemaDiffer
-import androidx.room.vo.AutoMigration
+import androidx.room3.DeleteColumn
+import androidx.room3.DeleteTable
+import androidx.room3.ProvidedAutoMigrationSpec
+import androidx.room3.RenameColumn
+import androidx.room3.RenameTable
+import androidx.room3.compiler.codegen.asClassName
+import androidx.room3.compiler.processing.XType
+import androidx.room3.compiler.processing.get
+import androidx.room3.ext.RoomTypeNames
+import androidx.room3.migration.bundle.DatabaseBundle
+import androidx.room3.processor.ProcessorErrors.AUTOMIGRATION_SPEC_MUST_BE_CLASS
+import androidx.room3.processor.ProcessorErrors.INNER_CLASS_AUTOMIGRATION_SPEC_MUST_BE_STATIC
+import androidx.room3.processor.ProcessorErrors.autoMigrationElementMustImplementSpec
+import androidx.room3.processor.ProcessorErrors.autoMigrationToVersionMustBeGreaterThanFrom
+import androidx.room3.util.DiffException
+import androidx.room3.util.SchemaDiffer
+import androidx.room3.vo.AutoMigration
 
 // TODO: (b/183435544) Support downgrades in AutoMigrations.
 class AutoMigrationProcessor(

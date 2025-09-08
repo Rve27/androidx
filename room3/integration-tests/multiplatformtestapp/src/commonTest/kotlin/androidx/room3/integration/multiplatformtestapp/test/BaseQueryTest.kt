@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.multiplatformtestapp.test
+package androidx.room3.integration.multiplatformtestapp.test
 
 import androidx.kruth.assertThat
 import androidx.kruth.assertThrows
-import androidx.room.RoomRawQuery
-import androidx.room.execSQL
-import androidx.room.immediateTransaction
-import androidx.room.useReaderConnection
-import androidx.room.useWriterConnection
+import androidx.room3.RoomRawQuery
+import androidx.room3.execSQL
+import androidx.room3.immediateTransaction
+import androidx.room3.useReaderConnection
+import androidx.room3.useWriterConnection
 import androidx.sqlite.SQLiteException
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest

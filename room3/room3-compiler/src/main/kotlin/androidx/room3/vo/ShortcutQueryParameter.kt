@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package androidx.room.vo
+package androidx.room3.vo
 
-import androidx.room.compiler.processing.XNullability
-import androidx.room.compiler.processing.XType
-import androidx.room.compiler.processing.XVariableElement
+import androidx.room3.compiler.processing.XNullability
+import androidx.room3.compiler.processing.XType
+import androidx.room3.compiler.processing.XVariableElement
 
 /** Parameters used in DAO functions that are annotated with Insert, Delete, Update, and Upsert. */
 data class ShortcutQueryParameter(

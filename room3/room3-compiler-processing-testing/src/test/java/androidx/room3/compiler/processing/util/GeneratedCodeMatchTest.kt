@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.util
+package androidx.room3.compiler.processing.util
 
-import androidx.room.compiler.processing.ExperimentalProcessingApi
-import androidx.room.compiler.processing.XElement
-import androidx.room.compiler.processing.compat.XConverters.toXProcessing
+import androidx.room3.compiler.processing.ExperimentalProcessingApi
+import androidx.room3.compiler.processing.XElement
+import androidx.room3.compiler.processing.compat.XConverters.toXProcessing
 import com.google.common.truth.Truth.assertThat
 import com.squareup.javapoet.JavaFile
 import com.squareup.javapoet.TypeName

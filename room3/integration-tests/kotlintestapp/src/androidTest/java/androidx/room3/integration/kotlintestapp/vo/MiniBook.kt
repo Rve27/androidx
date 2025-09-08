@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.kotlintestapp.vo
+package androidx.room3.integration.kotlintestapp.vo
 
-import androidx.room.PrimaryKey
+import androidx.room3.PrimaryKey
 
 data class MiniBook(@PrimaryKey val bookId: String, val title: String, val bookPublisherId: String)

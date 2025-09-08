@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package androidx.room.vo
+package androidx.room3.vo
 
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.compiler.processing.XFieldElement
-import androidx.room.compiler.processing.XNullability
-import androidx.room.compiler.processing.XType
-import androidx.room.ext.capitalize
-import androidx.room.ext.decapitalize
-import androidx.room.migration.bundle.FieldBundle
-import androidx.room.parser.Collate
-import androidx.room.parser.SQLTypeAffinity
-import androidx.room.solver.types.StatementValueBinder
-import androidx.room.solver.types.StatementValueReader
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.compiler.processing.XFieldElement
+import androidx.room3.compiler.processing.XNullability
+import androidx.room3.compiler.processing.XType
+import androidx.room3.ext.capitalize
+import androidx.room3.ext.decapitalize
+import androidx.room3.migration.bundle.FieldBundle
+import androidx.room3.parser.Collate
+import androidx.room3.parser.SQLTypeAffinity
+import androidx.room3.solver.types.StatementValueBinder
+import androidx.room3.solver.types.StatementValueReader
 import java.util.Locale
 
 // used in cache matching, must stay as a data class or implement equals

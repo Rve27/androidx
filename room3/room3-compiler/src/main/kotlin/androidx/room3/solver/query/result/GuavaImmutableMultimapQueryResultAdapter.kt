@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package androidx.room.solver.query.result
+package androidx.room3.solver.query.result
 
-import androidx.room.compiler.codegen.XClassName
-import androidx.room.compiler.codegen.XCodeBlock
-import androidx.room.compiler.processing.XType
-import androidx.room.ext.GuavaTypeNames
-import androidx.room.parser.ParsedQuery
-import androidx.room.processor.Context
-import androidx.room.solver.CodeGenScope
+import androidx.room3.compiler.codegen.XClassName
+import androidx.room3.compiler.codegen.XCodeBlock
+import androidx.room3.compiler.processing.XType
+import androidx.room3.ext.GuavaTypeNames
+import androidx.room3.parser.ParsedQuery
+import androidx.room3.processor.Context
+import androidx.room3.solver.CodeGenScope
 
 class GuavaImmutableMultimapQueryResultAdapter(
     context: Context,

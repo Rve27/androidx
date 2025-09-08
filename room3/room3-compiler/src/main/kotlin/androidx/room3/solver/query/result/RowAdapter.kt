@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package androidx.room.solver.query.result
+package androidx.room3.solver.query.result
 
-import androidx.room.compiler.processing.XType
-import androidx.room.solver.CodeGenScope
-import androidx.room.vo.ColumnIndexVar
+import androidx.room3.compiler.processing.XType
+import androidx.room3.solver.CodeGenScope
+import androidx.room3.vo.ColumnIndexVar
 
 /**
  * Converts a row of a statement result into an object or a primitive.

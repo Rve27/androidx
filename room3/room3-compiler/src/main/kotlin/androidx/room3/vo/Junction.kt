@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.vo
+package androidx.room3.vo
 
 /** Value object defining a junction table for a [Relation]. */
 data class Junction(

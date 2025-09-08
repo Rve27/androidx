@@ -14,28 +14,28 @@
  * limitations under the License.
  */
 
-package androidx.room.solver.query.result
+package androidx.room3.solver.query.result
 
-import androidx.room.MapColumn
-import androidx.room.compiler.codegen.CodeLanguage
-import androidx.room.compiler.codegen.XClassName
-import androidx.room.compiler.codegen.XCodeBlock
-import androidx.room.compiler.codegen.asClassName
-import androidx.room.compiler.codegen.buildCodeBlock
-import androidx.room.compiler.processing.XType
-import androidx.room.ext.CollectionTypeNames
-import androidx.room.ext.CommonTypeNames
-import androidx.room.ext.implementsEqualsAndHashcode
-import androidx.room.parser.ParsedQuery
-import androidx.room.processor.Context
-import androidx.room.processor.ProcessorErrors
-import androidx.room.processor.ProcessorErrors.AmbiguousColumnLocation.DATA_CLASS
-import androidx.room.processor.ProcessorErrors.AmbiguousColumnLocation.ENTITY
-import androidx.room.processor.ProcessorErrors.AmbiguousColumnLocation.MAP_INFO
-import androidx.room.solver.types.StatementValueReader
-import androidx.room.verifier.ColumnInfo
-import androidx.room.vo.ColumnIndexVar
-import androidx.room.vo.Warning
+import androidx.room3.MapColumn
+import androidx.room3.compiler.codegen.CodeLanguage
+import androidx.room3.compiler.codegen.XClassName
+import androidx.room3.compiler.codegen.XCodeBlock
+import androidx.room3.compiler.codegen.asClassName
+import androidx.room3.compiler.codegen.buildCodeBlock
+import androidx.room3.compiler.processing.XType
+import androidx.room3.ext.CollectionTypeNames
+import androidx.room3.ext.CommonTypeNames
+import androidx.room3.ext.implementsEqualsAndHashcode
+import androidx.room3.parser.ParsedQuery
+import androidx.room3.processor.Context
+import androidx.room3.processor.ProcessorErrors
+import androidx.room3.processor.ProcessorErrors.AmbiguousColumnLocation.DATA_CLASS
+import androidx.room3.processor.ProcessorErrors.AmbiguousColumnLocation.ENTITY
+import androidx.room3.processor.ProcessorErrors.AmbiguousColumnLocation.MAP_INFO
+import androidx.room3.solver.types.StatementValueReader
+import androidx.room3.verifier.ColumnInfo
+import androidx.room3.vo.ColumnIndexVar
+import androidx.room3.vo.Warning
 
 /** Abstract class for Map and Multimap result adapters. */
 abstract class MultimapQueryResultAdapter(

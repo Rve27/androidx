@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package androidx.room.solver.query.parameter
+package androidx.room3.solver.query.parameter
 
-import androidx.room.compiler.codegen.XCodeBlock
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.compiler.processing.XNullability
-import androidx.room.ext.CollectionsSizeExprCode
-import androidx.room.solver.CodeGenScope
-import androidx.room.solver.types.StatementValueBinder
+import androidx.room3.compiler.codegen.XCodeBlock
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.compiler.processing.XNullability
+import androidx.room3.ext.CollectionsSizeExprCode
+import androidx.room3.solver.CodeGenScope
+import androidx.room3.solver.types.StatementValueBinder
 
 /** Binds Collection<T> (e.g. List<T>) into String[] query args. */
 class CollectionQueryParameterAdapter(

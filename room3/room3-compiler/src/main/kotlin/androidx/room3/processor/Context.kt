@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package androidx.room.processor
+package androidx.room3.processor
 
-import androidx.room.RewriteQueriesToDropUnusedColumns
-import androidx.room.compiler.codegen.CodeLanguage
-import androidx.room.compiler.processing.XElement
-import androidx.room.compiler.processing.XProcessingEnv
-import androidx.room.log.RLog
-import androidx.room.parser.expansion.ProjectionExpander
-import androidx.room.parser.optimization.RemoveUnusedColumnQueryRewriter
-import androidx.room.preconditions.Checks
-import androidx.room.processor.cache.Cache
-import androidx.room.solver.TypeAdapterStore
-import androidx.room.verifier.DatabaseVerifier
-import androidx.room.vo.BuiltInConverterFlags
-import androidx.room.vo.Warning
+import androidx.room3.RewriteQueriesToDropUnusedColumns
+import androidx.room3.compiler.codegen.CodeLanguage
+import androidx.room3.compiler.processing.XElement
+import androidx.room3.compiler.processing.XProcessingEnv
+import androidx.room3.log.RLog
+import androidx.room3.parser.expansion.ProjectionExpander
+import androidx.room3.parser.optimization.RemoveUnusedColumnQueryRewriter
+import androidx.room3.preconditions.Checks
+import androidx.room3.processor.cache.Cache
+import androidx.room3.solver.TypeAdapterStore
+import androidx.room3.verifier.DatabaseVerifier
+import androidx.room3.vo.BuiltInConverterFlags
+import androidx.room3.vo.Warning
 
 class Context
 private constructor(

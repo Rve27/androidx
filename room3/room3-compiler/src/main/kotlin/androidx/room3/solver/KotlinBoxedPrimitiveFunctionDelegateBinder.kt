@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package androidx.room.solver
+package androidx.room3.solver
 
-import androidx.room.compiler.codegen.CodeLanguage
-import androidx.room.compiler.codegen.XCodeBlock.Builder.Companion.applyTo
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.compiler.codegen.unbox
-import androidx.room.compiler.processing.XType
-import androidx.room.compiler.processing.isVoid
-import androidx.room.vo.KotlinBoxedPrimitiveFunctionDelegate
+import androidx.room3.compiler.codegen.CodeLanguage
+import androidx.room3.compiler.codegen.XCodeBlock.Builder.Companion.applyTo
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.compiler.codegen.unbox
+import androidx.room3.compiler.processing.XType
+import androidx.room3.compiler.processing.isVoid
+import androidx.room3.vo.KotlinBoxedPrimitiveFunctionDelegate
 
 /**
  * Function binder that delegates to a sibling DAO function in a Kotlin interface or abstract class

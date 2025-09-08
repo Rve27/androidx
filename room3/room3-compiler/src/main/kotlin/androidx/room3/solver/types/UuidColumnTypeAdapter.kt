@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package androidx.room.solver.types
+package androidx.room3.solver.types
 
-import androidx.room.compiler.codegen.XCodeBlock
-import androidx.room.compiler.codegen.XMemberName.Companion.packageMember
-import androidx.room.compiler.processing.XNullability
-import androidx.room.compiler.processing.XType
-import androidx.room.ext.RoomTypeNames
-import androidx.room.parser.SQLTypeAffinity
-import androidx.room.solver.CodeGenScope
+import androidx.room3.compiler.codegen.XCodeBlock
+import androidx.room3.compiler.codegen.XMemberName.Companion.packageMember
+import androidx.room3.compiler.processing.XNullability
+import androidx.room3.compiler.processing.XType
+import androidx.room3.ext.RoomTypeNames
+import androidx.room3.parser.SQLTypeAffinity
+import androidx.room3.solver.CodeGenScope
 
 class UuidColumnTypeAdapter(out: XType) :
     ColumnTypeAdapter(out = out, typeAffinity = SQLTypeAffinity.BLOB) {

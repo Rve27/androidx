@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.codegen
+package androidx.room3.compiler.codegen
 
-import androidx.room.compiler.codegen.XCodeBlock.Builder.Companion.applyTo
-import androidx.room.compiler.codegen.impl.XCodeBlockImpl
-import androidx.room.compiler.codegen.java.JavaCodeBlock
-import androidx.room.compiler.codegen.kotlin.KotlinCodeBlock
+import androidx.room3.compiler.codegen.XCodeBlock.Builder.Companion.applyTo
+import androidx.room3.compiler.codegen.impl.XCodeBlockImpl
+import androidx.room3.compiler.codegen.java.JavaCodeBlock
+import androidx.room3.compiler.codegen.kotlin.KotlinCodeBlock
 
 /**
  * A fragment of a .java or .kt file, potentially containing declarations, statements.

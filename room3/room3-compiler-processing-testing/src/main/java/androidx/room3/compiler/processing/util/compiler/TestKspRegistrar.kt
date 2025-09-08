@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.room.compiler.processing.util.compiler
+package androidx.room3.compiler.processing.util.compiler
 
 import com.google.devtools.ksp.AbstractKotlinSymbolProcessingExtension
 import com.google.devtools.ksp.KspCliOption

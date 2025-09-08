@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.autovaluetestapp.test;
+package androidx.room3.integration.autovaluetestapp.test;
 
 import static androidx.test.espresso.matcher.ViewMatchers.assertThat;
 
@@ -22,7 +22,7 @@ import static org.hamcrest.CoreMatchers.is;
 
 import android.os.Bundle;
 
-import androidx.room.integration.autovaluetestapp.vo.ParcelableEntity;
+import androidx.room3.integration.autovaluetestapp.vo.ParcelableEntity;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.SmallTest;
 

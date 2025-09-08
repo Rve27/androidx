@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.testapp.test;
+package androidx.room3.integration.testapp.test;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
@@ -29,25 +29,25 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.testing.TestLifecycleOwner;
-import androidx.room.Room;
-import androidx.room.integration.testapp.FtsTestDatabase;
-import androidx.room.integration.testapp.MusicTestDatabase;
-import androidx.room.integration.testapp.dao.MailDao;
-import androidx.room.integration.testapp.dao.MusicDao;
-import androidx.room.integration.testapp.dao.SongDao;
-import androidx.room.integration.testapp.vo.AvgWeightByAge;
-import androidx.room.integration.testapp.vo.Mail;
-import androidx.room.integration.testapp.vo.Pet;
-import androidx.room.integration.testapp.vo.PetWithUser;
-import androidx.room.integration.testapp.vo.PetsToys;
-import androidx.room.integration.testapp.vo.Playlist;
-import androidx.room.integration.testapp.vo.PlaylistSongXRef;
-import androidx.room.integration.testapp.vo.PlaylistWithSongs;
-import androidx.room.integration.testapp.vo.Song;
-import androidx.room.integration.testapp.vo.SongDescription;
-import androidx.room.integration.testapp.vo.Toy;
-import androidx.room.integration.testapp.vo.User;
-import androidx.room.integration.testapp.vo.UserAndAllPets;
+import androidx.room3.Room;
+import androidx.room3.integration.testapp.FtsTestDatabase;
+import androidx.room3.integration.testapp.MusicTestDatabase;
+import androidx.room3.integration.testapp.dao.MailDao;
+import androidx.room3.integration.testapp.dao.MusicDao;
+import androidx.room3.integration.testapp.dao.SongDao;
+import androidx.room3.integration.testapp.vo.AvgWeightByAge;
+import androidx.room3.integration.testapp.vo.Mail;
+import androidx.room3.integration.testapp.vo.Pet;
+import androidx.room3.integration.testapp.vo.PetWithUser;
+import androidx.room3.integration.testapp.vo.PetsToys;
+import androidx.room3.integration.testapp.vo.Playlist;
+import androidx.room3.integration.testapp.vo.PlaylistSongXRef;
+import androidx.room3.integration.testapp.vo.PlaylistWithSongs;
+import androidx.room3.integration.testapp.vo.Song;
+import androidx.room3.integration.testapp.vo.SongDescription;
+import androidx.room3.integration.testapp.vo.Toy;
+import androidx.room3.integration.testapp.vo.User;
+import androidx.room3.integration.testapp.vo.UserAndAllPets;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.MediumTest;

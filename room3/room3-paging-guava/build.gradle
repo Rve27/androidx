@@ -61,6 +61,6 @@ androidx {
 }
 
 android {
-    namespace = "androidx.room.paging.guava"
+    namespace = "androidx.room3.paging.guava"
 }
 

@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.multiplatformtestapp.test
+package androidx.room3.integration.multiplatformtestapp.test
 
 import androidx.kruth.assertThat
 import androidx.paging.PagingSource
-import androidx.room.ColumnInfo
-import androidx.room.ConstructedBy
-import androidx.room.Dao
-import androidx.room.Database
-import androidx.room.Insert
-import androidx.room.Query
-import androidx.room.Relation
-import androidx.room.RoomDatabase
-import androidx.room.RoomDatabaseConstructor
-import androidx.room.Transaction
+import androidx.room3.ColumnInfo
+import androidx.room3.ConstructedBy
+import androidx.room3.Dao
+import androidx.room3.Database
+import androidx.room3.Insert
+import androidx.room3.Query
+import androidx.room3.Relation
+import androidx.room3.RoomDatabase
+import androidx.room3.RoomDatabaseConstructor
+import androidx.room3.Transaction
 import kotlin.test.Test
 import kotlinx.coroutines.test.runTest
 

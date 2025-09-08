@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package androidx.room.solver
+package androidx.room3.solver
 
-import androidx.room.compiler.processing.XType
-import androidx.room.parser.ParsedQuery
-import androidx.room.solver.query.result.QueryResultBinder
+import androidx.room3.compiler.processing.XType
+import androidx.room3.parser.ParsedQuery
+import androidx.room3.solver.query.result.QueryResultBinder
 
 interface QueryResultBinderProvider {
     fun provide(declared: XType, query: ParsedQuery, extras: TypeAdapterExtras): QueryResultBinder

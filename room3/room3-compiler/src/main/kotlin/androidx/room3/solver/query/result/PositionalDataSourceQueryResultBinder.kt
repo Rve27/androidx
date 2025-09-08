@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package androidx.room.solver.query.result
+package androidx.room3.solver.query.result
 
-import androidx.room.compiler.codegen.CodeLanguage
-import androidx.room.compiler.codegen.VisibilityModifier
-import androidx.room.compiler.codegen.XCodeBlock.Builder.Companion.applyTo
-import androidx.room.compiler.codegen.XFunSpec
-import androidx.room.compiler.codegen.XPropertySpec
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.compiler.codegen.XTypeSpec
-import androidx.room.ext.CommonTypeNames.LIST
-import androidx.room.ext.RoomMemberNames.DB_UTIL_SUPPORT_DB_TO_CONNECTION
-import androidx.room.ext.RoomTypeNames
-import androidx.room.ext.SQLiteDriverTypeNames
-import androidx.room.ext.SQLiteDriverTypeNames.CONNECTION
-import androidx.room.solver.CodeGenScope
+import androidx.room3.compiler.codegen.CodeLanguage
+import androidx.room3.compiler.codegen.VisibilityModifier
+import androidx.room3.compiler.codegen.XCodeBlock.Builder.Companion.applyTo
+import androidx.room3.compiler.codegen.XFunSpec
+import androidx.room3.compiler.codegen.XPropertySpec
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.compiler.codegen.XTypeSpec
+import androidx.room3.ext.CommonTypeNames.LIST
+import androidx.room3.ext.RoomMemberNames.DB_UTIL_SUPPORT_DB_TO_CONNECTION
+import androidx.room3.ext.RoomTypeNames
+import androidx.room3.ext.SQLiteDriverTypeNames
+import androidx.room3.ext.SQLiteDriverTypeNames.CONNECTION
+import androidx.room3.solver.CodeGenScope
 
 /** Used by Paging2 pipeline */
 class PositionalDataSourceQueryResultBinder(

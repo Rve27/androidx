@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.util.compiler
+package androidx.room3.compiler.processing.util.compiler
 
-import androidx.room.compiler.processing.util.DiagnosticMessage
-import androidx.room.compiler.processing.util.Resource
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.compiler.steps.CompilationStepArguments
-import androidx.room.compiler.processing.util.compiler.steps.CompilationStepResult
-import androidx.room.compiler.processing.util.compiler.steps.JavaSourceCompilationStep
-import androidx.room.compiler.processing.util.compiler.steps.KaptCompilationStep
-import androidx.room.compiler.processing.util.compiler.steps.KotlinSourceCompilationStep
-import androidx.room.compiler.processing.util.compiler.steps.KspCompilationStep
+import androidx.room3.compiler.processing.util.DiagnosticMessage
+import androidx.room3.compiler.processing.util.Resource
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.compiler.steps.CompilationStepArguments
+import androidx.room3.compiler.processing.util.compiler.steps.CompilationStepResult
+import androidx.room3.compiler.processing.util.compiler.steps.JavaSourceCompilationStep
+import androidx.room3.compiler.processing.util.compiler.steps.KaptCompilationStep
+import androidx.room3.compiler.processing.util.compiler.steps.KotlinSourceCompilationStep
+import androidx.room3.compiler.processing.util.compiler.steps.KspCompilationStep
 import com.google.devtools.ksp.processing.SymbolProcessorProvider
 import java.io.File
 import javax.annotation.processing.Processor

@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package androidx.room.solver.prepared.binderprovider
+package androidx.room3.solver.prepared.binderprovider
 
-import androidx.room.compiler.processing.XType
-import androidx.room.parser.ParsedQuery
-import androidx.room.processor.Context
-import androidx.room.solver.prepared.binder.InstantPreparedQueryResultBinder
+import androidx.room3.compiler.processing.XType
+import androidx.room3.parser.ParsedQuery
+import androidx.room3.processor.Context
+import androidx.room3.solver.prepared.binder.InstantPreparedQueryResultBinder
 
 class InstantPreparedQueryResultBinderProvider(val context: Context) :
     PreparedQueryResultBinderProvider {

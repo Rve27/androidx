@@ -14,26 +14,26 @@
  * limitations under the License.
  */
 
-package androidx.room
+package androidx.room3
 
-import androidx.room.compiler.codegen.CodeLanguage
-import androidx.room.compiler.processing.XElement
-import androidx.room.compiler.processing.XProcessingEnv
-import androidx.room.compiler.processing.XProcessingEnvConfig
-import androidx.room.compiler.processing.XProcessingStep
-import androidx.room.compiler.processing.XTypeElement
-import androidx.room.log.RLog
-import androidx.room.processor.Context
-import androidx.room.processor.Context.BooleanProcessorOptions.GENERATE_KOTLIN
-import androidx.room.processor.DatabaseProcessor
-import androidx.room.processor.ProcessorErrors
-import androidx.room.vo.DaoFunction
-import androidx.room.vo.Warning
-import androidx.room.writer.AutoMigrationWriter
-import androidx.room.writer.DaoWriter
-import androidx.room.writer.DatabaseObjectConstructorWriter
-import androidx.room.writer.DatabaseWriter
-import androidx.room.writer.TypeWriter
+import androidx.room3.compiler.codegen.CodeLanguage
+import androidx.room3.compiler.processing.XElement
+import androidx.room3.compiler.processing.XProcessingEnv
+import androidx.room3.compiler.processing.XProcessingEnvConfig
+import androidx.room3.compiler.processing.XProcessingStep
+import androidx.room3.compiler.processing.XTypeElement
+import androidx.room3.log.RLog
+import androidx.room3.processor.Context
+import androidx.room3.processor.Context.BooleanProcessorOptions.GENERATE_KOTLIN
+import androidx.room3.processor.DatabaseProcessor
+import androidx.room3.processor.ProcessorErrors
+import androidx.room3.vo.DaoFunction
+import androidx.room3.vo.Warning
+import androidx.room3.writer.AutoMigrationWriter
+import androidx.room3.writer.DaoWriter
+import androidx.room3.writer.DatabaseObjectConstructorWriter
+import androidx.room3.writer.DatabaseWriter
+import androidx.room3.writer.TypeWriter
 import java.nio.file.Path
 
 class DatabaseProcessingStep : XProcessingStep {
@@ -170,7 +170,7 @@ class DatabaseProcessingStep : XProcessingStep {
      * Traverses all dao functions and assigns them suffix if they are used in multiple databases.
      */
     private fun prepareDaosForWriting(
-        databases: List<androidx.room.vo.Database>,
+        databases: List<androidx.room3.vo.Database>,
         daoFunctions: List<DaoFunction>,
     ) {
         daoFunctions

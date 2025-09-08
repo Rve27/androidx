@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.solver.query.result
+package androidx.room3.solver.query.result
 
 /**
  * Base class for query result binders that observe the database. It includes common functionality

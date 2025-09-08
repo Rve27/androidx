@@ -17,7 +17,7 @@
 package foo.bar;
 import androidx.lifecycle.LiveData;
 import androidx.paging.PagingSource;
-import androidx.room.*;
+import androidx.room3.*;
 import androidx.sqlite.db.SupportSQLiteQuery;
 import com.google.common.util.concurrent.ListenableFuture;
 import java.util.List;

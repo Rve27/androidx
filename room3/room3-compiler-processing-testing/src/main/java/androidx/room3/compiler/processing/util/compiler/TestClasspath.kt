@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.util.compiler
+package androidx.room3.compiler.processing.util.compiler
 
-import androidx.room.compiler.processing.util.getSystemClasspaths
+import androidx.room3.compiler.processing.util.getSystemClasspaths
 import java.io.File
 import java.net.URLClassLoader
 

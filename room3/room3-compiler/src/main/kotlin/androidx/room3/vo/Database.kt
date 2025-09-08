@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package androidx.room.vo
+package androidx.room3.vo
 
-import androidx.room.RoomMasterTable
-import androidx.room.compiler.codegen.XClassName
-import androidx.room.compiler.processing.XType
-import androidx.room.compiler.processing.XTypeElement
-import androidx.room.migration.bundle.DatabaseBundle
-import androidx.room.migration.bundle.SCHEMA_LATEST_FORMAT_VERSION
-import androidx.room.migration.bundle.SchemaBundle
-import androidx.room.util.SchemaFileResolver
+import androidx.room3.RoomMasterTable
+import androidx.room3.compiler.codegen.XClassName
+import androidx.room3.compiler.processing.XType
+import androidx.room3.compiler.processing.XTypeElement
+import androidx.room3.migration.bundle.DatabaseBundle
+import androidx.room3.migration.bundle.SCHEMA_LATEST_FORMAT_VERSION
+import androidx.room3.migration.bundle.SchemaBundle
+import androidx.room3.util.SchemaFileResolver
 import java.io.IOException
 import java.io.OutputStream
 import java.nio.file.Path

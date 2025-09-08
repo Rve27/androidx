@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.util.compiler
+package androidx.room3.compiler.processing.util.compiler
 
-import androidx.room.compiler.processing.util.compiler.steps.CompilationStepArguments
-import androidx.room.compiler.processing.util.compiler.steps.RawDiagnosticMessage
+import androidx.room3.compiler.processing.util.compiler.steps.CompilationStepArguments
+import androidx.room3.compiler.processing.util.compiler.steps.RawDiagnosticMessage
 import java.io.File
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments

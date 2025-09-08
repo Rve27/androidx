@@ -28,13 +28,13 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 plugins {
     id("AndroidXPlugin")
     id("com.google.devtools.ksp")
-    id("androidx.room")
+    id("androidx.room3")
     alias(libs.plugins.kotlinSerialization)
 }
 
 androidXMultiplatform {
     androidLibrary {
-        namespace = "androidx.room.integration.multiplatformtestapp"
+        namespace = "androidx.room3.integration.multiplatformtestapp"
         androidResources.enable = true
     }
     ios()
@@ -164,7 +164,7 @@ tasks.withType(KotlinNativeLink).configureEach { task ->
     }
 }
 
-room {
+room3 {
     schemaDirectory(layout.projectDirectory.dir("schemas-ksp").getAsFile().getAbsolutePath())
 }
 

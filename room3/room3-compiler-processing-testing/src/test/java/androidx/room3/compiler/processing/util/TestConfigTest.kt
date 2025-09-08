@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.util
+package androidx.room3.compiler.processing.util
 
-import androidx.room.compiler.processing.util.CompilationTestCapabilities.Config
+import androidx.room3.compiler.processing.util.CompilationTestCapabilities.Config
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 

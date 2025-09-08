@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.javac
+package androidx.room3.compiler.processing.javac
 
-import androidx.room.compiler.codegen.XClassName
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.compiler.processing.XEnumEntry
-import androidx.room.compiler.processing.XEnumTypeElement
-import androidx.room.compiler.processing.XFieldElement
-import androidx.room.compiler.processing.XMemberContainer
-import androidx.room.compiler.processing.XMethodElement
-import androidx.room.compiler.processing.XNullability
-import androidx.room.compiler.processing.XTypeElement
-import androidx.room.compiler.processing.XTypeParameterElement
-import androidx.room.compiler.processing.collectAllMethods
-import androidx.room.compiler.processing.collectFieldsIncludingPrivateSupers
-import androidx.room.compiler.processing.filterMethodsByConfig
-import androidx.room.compiler.processing.javac.kotlin.KmClassContainer
-import androidx.room.compiler.processing.util.MemoizedSequence
+import androidx.room3.compiler.codegen.XClassName
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.compiler.processing.XEnumEntry
+import androidx.room3.compiler.processing.XEnumTypeElement
+import androidx.room3.compiler.processing.XFieldElement
+import androidx.room3.compiler.processing.XMemberContainer
+import androidx.room3.compiler.processing.XMethodElement
+import androidx.room3.compiler.processing.XNullability
+import androidx.room3.compiler.processing.XTypeElement
+import androidx.room3.compiler.processing.XTypeParameterElement
+import androidx.room3.compiler.processing.collectAllMethods
+import androidx.room3.compiler.processing.collectFieldsIncludingPrivateSupers
+import androidx.room3.compiler.processing.filterMethodsByConfig
+import androidx.room3.compiler.processing.javac.kotlin.KmClassContainer
+import androidx.room3.compiler.processing.util.MemoizedSequence
 import com.google.auto.common.MoreElements
 import com.google.auto.common.MoreTypes
 import com.squareup.javapoet.ClassName
@@ -61,7 +61,7 @@ internal sealed class JavacTypeElement(env: JavacProcessingEnv, override val ele
     @Deprecated(
         "Use asClassName().toJavaPoet() to be clear the name is for JavaPoet.",
         replaceWith =
-            ReplaceWith("asClassName().toJavaPoet()", "androidx.room.compiler.codegen.toJavaPoet"),
+            ReplaceWith("asClassName().toJavaPoet()", "androidx.room3.compiler.codegen.toJavaPoet"),
     )
     override val className: ClassName by lazy { xClassName.java }
 

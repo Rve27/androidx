@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.ksp
+package androidx.room3.compiler.processing.ksp
 
-import androidx.room.compiler.processing.XMemberContainer
+import androidx.room3.compiler.processing.XMemberContainer
 import com.google.devtools.ksp.symbol.KSDeclaration
 
 internal interface KspMemberContainer : XMemberContainer {

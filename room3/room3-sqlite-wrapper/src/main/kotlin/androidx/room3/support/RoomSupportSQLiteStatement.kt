@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.support
+package androidx.room3.support
 
 import androidx.sqlite.SQLITE_DATA_BLOB
 import androidx.sqlite.SQLITE_DATA_FLOAT

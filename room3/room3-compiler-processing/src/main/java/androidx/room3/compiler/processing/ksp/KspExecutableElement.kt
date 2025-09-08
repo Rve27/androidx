@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.ksp
+package androidx.room3.compiler.processing.ksp
 
-import androidx.room.compiler.processing.XExecutableElement
-import androidx.room.compiler.processing.XHasModifiers
-import androidx.room.compiler.processing.XMemberContainer
-import androidx.room.compiler.processing.XType
-import androidx.room.compiler.processing.XTypeParameterElement
-import androidx.room.compiler.processing.util.ISSUE_TRACKER_LINK
+import androidx.room3.compiler.processing.XExecutableElement
+import androidx.room3.compiler.processing.XHasModifiers
+import androidx.room3.compiler.processing.XMemberContainer
+import androidx.room3.compiler.processing.XType
+import androidx.room3.compiler.processing.XTypeParameterElement
+import androidx.room3.compiler.processing.util.ISSUE_TRACKER_LINK
 import com.google.devtools.ksp.KspExperimental
 import com.google.devtools.ksp.isConstructor
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration

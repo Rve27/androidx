@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package androidx.room.processor.autovalue
+package androidx.room3.processor.autovalue
 
-import androidx.room.compiler.codegen.XClassName
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.XTestInvocation
-import androidx.room.compiler.processing.util.compileFiles
-import androidx.room.compiler.processing.util.runProcessorTest
-import androidx.room.processor.DataClassProcessor
-import androidx.room.processor.ProcessorErrors
-import androidx.room.processor.PropertyProcessor
-import androidx.room.testing.context
-import androidx.room.vo.DataClass
+import androidx.room3.compiler.codegen.XClassName
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.XTestInvocation
+import androidx.room3.compiler.processing.util.compileFiles
+import androidx.room3.compiler.processing.util.runProcessorTest
+import androidx.room3.processor.DataClassProcessor
+import androidx.room3.processor.ProcessorErrors
+import androidx.room3.processor.PropertyProcessor
+import androidx.room3.testing.context
+import androidx.room3.vo.DataClass
 import com.google.auto.value.processor.AutoValueProcessor
 import java.io.File
 import org.hamcrest.CoreMatchers.`is`
@@ -45,7 +45,7 @@ class AutoValueDataClassProcessorDelegateTest {
             """
             package foo.bar;
 
-            import androidx.room.*;
+            import androidx.room3.*;
             import java.util.*;
             import com.google.auto.value.*;
 
@@ -56,7 +56,7 @@ class AutoValueDataClassProcessorDelegateTest {
             """
             package foo.bar;
 
-            import androidx.room.*;
+            import androidx.room3.*;
             import java.util.*;
             import com.google.auto.value.*;
 
@@ -153,7 +153,7 @@ class AutoValueDataClassProcessorDelegateTest {
             """
             package foo.bar;
 
-            import androidx.room.*;
+            import androidx.room3.*;
 
             public abstract class ParentDataClass {
                 @ColumnInfo(name = "column_name")
@@ -164,7 +164,7 @@ class AutoValueDataClassProcessorDelegateTest {
             """
                 package foo.bar;
 
-                import androidx.room.*;
+                import androidx.room3.*;
                 import java.util.*;
                 import com.google.auto.value.*;
 
@@ -201,7 +201,7 @@ class AutoValueDataClassProcessorDelegateTest {
             """
             package foo.bar;
 
-            import androidx.room.*;
+            import androidx.room3.*;
 
             public interface InterfaceDataClass {
                 @ColumnInfo(name = "column_name")
@@ -212,7 +212,7 @@ class AutoValueDataClassProcessorDelegateTest {
             """
                 package foo.bar;
 
-                import androidx.room.*;
+                import androidx.room3.*;
                 import java.util.*;
                 import com.google.auto.value.*;
 

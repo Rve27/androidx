@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package androidx.room.solver.query.result
+package androidx.room3.solver.query.result
 
-import androidx.room.solver.CodeGenScope
-import androidx.room.vo.ColumnIndexVar
+import androidx.room3.solver.CodeGenScope
+import androidx.room3.vo.ColumnIndexVar
 
 /**
  * Creates the index variables used by [RowAdapter]s from a statement.

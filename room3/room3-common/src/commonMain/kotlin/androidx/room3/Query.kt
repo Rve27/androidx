@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room
+package androidx.room3
 
 /**
  * Marks a method in a `Dao` annotated class as a query method.
@@ -95,7 +95,7 @@ package androidx.room
  * Both `Flowable<T>` and `Publisher<T>` will observe the database for changes and re-dispatch if
  * data changes. If you want to query the database without observing changes, you can use `Maybe<T>`
  * or `Single<T>`. If a `Single<T>` query returns `null`, Room will throw
- * [androidx.room.EmptyResultSetException].
+ * [androidx.room3.EmptyResultSetException].
  *
  * Additionally if the statement is an INSERT, UPDATE or DELETE then the return types, `Single<T>`,
  * `Maybe<T>` and `Completable` are supported.

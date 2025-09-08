@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.room
+package androidx.room3
 
 import androidx.annotation.MainThread
 import androidx.arch.core.executor.ArchTaskExecutor
 import androidx.lifecycle.LiveData
-import androidx.room.util.performSuspending
+import androidx.room3.util.performSuspending
 import androidx.sqlite.SQLiteConnection
 import java.util.concurrent.Callable
 import java.util.concurrent.atomic.AtomicBoolean

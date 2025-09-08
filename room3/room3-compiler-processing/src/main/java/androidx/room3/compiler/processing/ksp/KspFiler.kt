@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.ksp
+package androidx.room3.compiler.processing.ksp
 
-import androidx.room.compiler.processing.XElement
-import androidx.room.compiler.processing.XFiler
-import androidx.room.compiler.processing.XMessager
-import androidx.room.compiler.processing.originatingElementForPoet
-import androidx.room.compiler.processing.util.ISSUE_TRACKER_LINK
+import androidx.room3.compiler.processing.XElement
+import androidx.room3.compiler.processing.XFiler
+import androidx.room3.compiler.processing.XMessager
+import androidx.room3.compiler.processing.originatingElementForPoet
+import androidx.room3.compiler.processing.util.ISSUE_TRACKER_LINK
 import com.google.devtools.ksp.processing.CodeGenerator
 import com.google.devtools.ksp.processing.Dependencies
 import com.google.devtools.ksp.symbol.KSClassDeclaration

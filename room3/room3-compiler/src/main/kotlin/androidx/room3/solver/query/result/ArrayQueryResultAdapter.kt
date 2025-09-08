@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package androidx.room.solver.query.result
+package androidx.room3.solver.query.result
 
-import androidx.room.compiler.codegen.CodeLanguage
-import androidx.room.compiler.codegen.XCodeBlock
-import androidx.room.compiler.codegen.XCodeBlock.Builder.Companion.applyTo
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.compiler.processing.XArrayType
-import androidx.room.ext.getToArrayFunction
-import androidx.room.solver.CodeGenScope
+import androidx.room3.compiler.codegen.CodeLanguage
+import androidx.room3.compiler.codegen.XCodeBlock
+import androidx.room3.compiler.codegen.XCodeBlock.Builder.Companion.applyTo
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.compiler.processing.XArrayType
+import androidx.room3.ext.getToArrayFunction
+import androidx.room3.solver.CodeGenScope
 
 class ArrayQueryResultAdapter(
     private val arrayType: XArrayType,

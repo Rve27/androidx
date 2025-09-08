@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.kotlintestapp.vo
+package androidx.room3.integration.kotlintestapp.vo
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import androidx.room3.Entity
+import androidx.room3.PrimaryKey
 
 @Entity data class Counter(@PrimaryKey val id: Long, val value: Int)

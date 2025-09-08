@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.room;
+package androidx.room3;
 
-import androidx.room.IMultiInstanceInvalidationCallback;
+import androidx.room3.IMultiInstanceInvalidationCallback;
 
 /**
  * RPC Service that controls interaction about multi-instance invalidation.

@@ -16,32 +16,32 @@
 
 @file:Suppress("DEPRECATION") // For @MapInfo
 
-package androidx.room.integration.kotlintestapp.dao
+package androidx.room3.integration.kotlintestapp.dao
 
 import androidx.collection.ArrayMap
 import androidx.collection.LongSparseArray
 import androidx.collection.SparseArrayCompat
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.MapColumn
-import androidx.room.MapInfo
-import androidx.room.Query
-import androidx.room.RawQuery
-import androidx.room.RewriteQueriesToDropUnusedColumns
-import androidx.room.Transaction
-import androidx.room.integration.kotlintestapp.vo.Album
-import androidx.room.integration.kotlintestapp.vo.AlbumNameAndBandName
-import androidx.room.integration.kotlintestapp.vo.AlbumWithSongs
-import androidx.room.integration.kotlintestapp.vo.Artist
-import androidx.room.integration.kotlintestapp.vo.Image
-import androidx.room.integration.kotlintestapp.vo.ImageFormat
-import androidx.room.integration.kotlintestapp.vo.Playlist
-import androidx.room.integration.kotlintestapp.vo.PlaylistSongXRef
-import androidx.room.integration.kotlintestapp.vo.PlaylistWithSongs
-import androidx.room.integration.kotlintestapp.vo.ReleasedAlbum
-import androidx.room.integration.kotlintestapp.vo.Song
+import androidx.room3.Dao
+import androidx.room3.Delete
+import androidx.room3.Insert
+import androidx.room3.MapColumn
+import androidx.room3.MapInfo
+import androidx.room3.Query
+import androidx.room3.RawQuery
+import androidx.room3.RewriteQueriesToDropUnusedColumns
+import androidx.room3.Transaction
+import androidx.room3.integration.kotlintestapp.vo.Album
+import androidx.room3.integration.kotlintestapp.vo.AlbumNameAndBandName
+import androidx.room3.integration.kotlintestapp.vo.AlbumWithSongs
+import androidx.room3.integration.kotlintestapp.vo.Artist
+import androidx.room3.integration.kotlintestapp.vo.Image
+import androidx.room3.integration.kotlintestapp.vo.ImageFormat
+import androidx.room3.integration.kotlintestapp.vo.Playlist
+import androidx.room3.integration.kotlintestapp.vo.PlaylistSongXRef
+import androidx.room3.integration.kotlintestapp.vo.PlaylistWithSongs
+import androidx.room3.integration.kotlintestapp.vo.ReleasedAlbum
+import androidx.room3.integration.kotlintestapp.vo.Song
 import androidx.sqlite.db.SupportSQLiteQuery
 import com.google.common.collect.ImmutableListMultimap
 import com.google.common.collect.ImmutableMap

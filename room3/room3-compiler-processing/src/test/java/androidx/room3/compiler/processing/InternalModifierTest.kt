@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing
+package androidx.room3.compiler.processing
 
 import androidx.kruth.assertThat
-import androidx.room.compiler.processing.util.CompilationTestCapabilities
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.compileFiles
-import androidx.room.compiler.processing.util.runKaptTest
-import androidx.room.compiler.processing.util.runKspTest
+import androidx.room3.compiler.processing.util.CompilationTestCapabilities
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.compileFiles
+import androidx.room3.compiler.processing.util.runKaptTest
+import androidx.room3.compiler.processing.util.runKspTest
 import org.junit.Test
 
 class InternalModifierTest {

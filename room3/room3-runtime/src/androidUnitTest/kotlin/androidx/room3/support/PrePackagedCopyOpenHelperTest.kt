@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package androidx.room.support
+package androidx.room3.support
 
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.AssetManager
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.room.DatabaseConfiguration
+import androidx.room3.DatabaseConfiguration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.sqlite.db.SupportSQLiteOpenHelper
 import androidx.test.filters.SdkSuppress

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.testcode;
+package androidx.room3.compiler.processing.testcode;
 
 import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;

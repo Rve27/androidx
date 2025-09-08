@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.gradle
+package androidx.room3.gradle
 
 import androidx.kruth.assertThat
 import androidx.testutils.gradle.ProjectSetupRule
@@ -32,7 +32,7 @@ class RoomAndroidGradlePluginTest {
     @get:Rule val projectSetup = ProjectSetupRule()
 
     private val roomVersion by lazy {
-        projectSetup.getLibraryLatestVersionInLocalRepo("androidx/room/room-compiler")
+        projectSetup.getLibraryLatestVersionInLocalRepo("androidx/room3/room3-compiler")
     }
 
     private fun setup(
@@ -112,7 +112,7 @@ class RoomAndroidGradlePluginTest {
                 """
             |plugins {
             |    id('com.android.application')
-            |    id('androidx.room')
+            |    id('androidx.room3')
             |    $additionalPluginsBlock
             |}
             |
@@ -122,8 +122,8 @@ class RoomAndroidGradlePluginTest {
             |
             |dependencies {
             |    // Uses latest Room built from tip of tree
-            |    implementation "androidx.room:room-runtime:$roomVersion"
-            |    $processorConfig "androidx.room:room-compiler:$roomVersion"
+            |    implementation "androidx.room3:room3-runtime:$roomVersion"
+            |    $processorConfig "androidx.room3:room3-compiler:$roomVersion"
             |}
             |
             |android {
@@ -136,7 +136,7 @@ class RoomAndroidGradlePluginTest {
             |
             |$kotlinJvmTargetBlock
             |
-            |room {
+            |room3 {
             |${schemaDslLines.joinToString(separator = "\n")}
             |    generateKotlin = false
             |}

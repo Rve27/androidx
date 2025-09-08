@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.parser
+package androidx.room3.parser
 
 import org.antlr.v4.runtime.BaseErrorListener
 import org.antlr.v4.runtime.CharStreams

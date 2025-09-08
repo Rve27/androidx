@@ -13,18 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.room.processor
+package androidx.room3.processor
 
-import androidx.room.compiler.processing.XAnnotation
-import androidx.room.compiler.processing.XMethodElement
-import androidx.room.compiler.processing.XType
-import androidx.room.compiler.processing.XTypeElement
-import androidx.room.ext.isEntityElement
-import androidx.room.vo.DataClass
-import androidx.room.vo.Entity
-import androidx.room.vo.ShortcutEntity
-import androidx.room.vo.ShortcutQueryParameter
-import androidx.room.vo.findPropertyByColumnName
+import androidx.room3.compiler.processing.XAnnotation
+import androidx.room3.compiler.processing.XMethodElement
+import androidx.room3.compiler.processing.XType
+import androidx.room3.compiler.processing.XTypeElement
+import androidx.room3.ext.isEntityElement
+import androidx.room3.vo.DataClass
+import androidx.room3.vo.Entity
+import androidx.room3.vo.ShortcutEntity
+import androidx.room3.vo.ShortcutQueryParameter
+import androidx.room3.vo.findPropertyByColumnName
 import kotlin.reflect.KClass
 
 /** Common functionality for shortcut function processors */

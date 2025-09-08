@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package androidx.room.migration.bundle
+package androidx.room3.migration.bundle
 
 import androidx.annotation.RestrictTo
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-/** Data class that holds the schema information about a [androidx.room.PrimaryKey]. */
+/** Data class that holds the schema information about a [androidx.room3.PrimaryKey]. */
 @Serializable
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public class PrimaryKeyBundle(

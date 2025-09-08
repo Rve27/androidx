@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.room.vo
+package androidx.room3.vo
 
-import androidx.room.compiler.processing.XMethodElement
-import androidx.room.solver.shortcut.binder.DeleteOrUpdateFunctionBinder
+import androidx.room3.compiler.processing.XMethodElement
+import androidx.room3.solver.shortcut.binder.DeleteOrUpdateFunctionBinder
 
 class DeleteFunction(
     element: XMethodElement,

@@ -1,8 +1,8 @@
-import androidx.room.RoomDatabase
-import androidx.room.RxRoom.Companion.createCompletable
-import androidx.room.RxRoom.Companion.createMaybe
-import androidx.room.RxRoom.Companion.createSingle
-import androidx.room.util.getLastInsertedRowId
+import androidx.room3.RoomDatabase
+import androidx.room3.RxRoom.Companion.createCompletable
+import androidx.room3.RxRoom.Companion.createMaybe
+import androidx.room3.RxRoom.Companion.createSingle
+import androidx.room3.util.getLastInsertedRowId
 import androidx.sqlite.SQLiteStatement
 import io.reactivex.Completable
 import io.reactivex.Maybe
@@ -15,7 +15,7 @@ import kotlin.Suppress
 import kotlin.collections.List
 import kotlin.reflect.KClass
 
-@Generated(value = ["androidx.room.RoomProcessor"])
+@Generated(value = ["androidx.room3.RoomProcessor"])
 @Suppress(names = ["UNCHECKED_CAST", "DEPRECATION", "REDUNDANT_PROJECTION", "REMOVAL"])
 public class MyDao_Impl(
   __db: RoomDatabase,

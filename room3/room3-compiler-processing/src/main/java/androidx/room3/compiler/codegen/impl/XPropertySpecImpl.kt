@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.codegen.impl
+package androidx.room3.compiler.codegen.impl
 
-import androidx.room.compiler.codegen.XAnnotationSpec
-import androidx.room.compiler.codegen.XCodeBlock
-import androidx.room.compiler.codegen.XPropertySpec
-import androidx.room.compiler.codegen.XSpec
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.compiler.codegen.java.JavaPropertySpec
-import androidx.room.compiler.codegen.kotlin.KotlinPropertySpec
+import androidx.room3.compiler.codegen.XAnnotationSpec
+import androidx.room3.compiler.codegen.XCodeBlock
+import androidx.room3.compiler.codegen.XPropertySpec
+import androidx.room3.compiler.codegen.XSpec
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.compiler.codegen.java.JavaPropertySpec
+import androidx.room3.compiler.codegen.kotlin.KotlinPropertySpec
 
 internal class XPropertySpecImpl(
     override val name: String,

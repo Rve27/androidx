@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.testapp.dao;
+package androidx.room3.integration.testapp.dao;
 
 import androidx.lifecycle.LiveData;
-import androidx.room.ColumnInfo;
-import androidx.room.Dao;
-import androidx.room.RawQuery;
-import androidx.room.integration.testapp.vo.NameAndLastName;
-import androidx.room.integration.testapp.vo.User;
-import androidx.room.integration.testapp.vo.UserAndAllPets;
-import androidx.room.integration.testapp.vo.UserAndPet;
+import androidx.room3.ColumnInfo;
+import androidx.room3.Dao;
+import androidx.room3.RawQuery;
+import androidx.room3.integration.testapp.vo.NameAndLastName;
+import androidx.room3.integration.testapp.vo.User;
+import androidx.room3.integration.testapp.vo.UserAndAllPets;
+import androidx.room3.integration.testapp.vo.UserAndPet;
 import androidx.sqlite.db.SupportSQLiteQuery;
 
 import com.google.common.util.concurrent.ListenableFuture;

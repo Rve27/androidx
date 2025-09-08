@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing
+package androidx.room3.compiler.processing
 
 import androidx.kruth.assertThat
-import androidx.room.compiler.processing.util.runProcessorTest
+import androidx.room3.compiler.processing.util.runProcessorTest
 import kotlin.io.path.Path
 import org.junit.Assert.fail
 import org.junit.Test

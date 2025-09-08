@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.room
+package androidx.room3
 
-import androidx.room.Transactor.SQLiteTransactionType
+import androidx.room3.Transactor.SQLiteTransactionType
 import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.SQLiteStatement
 

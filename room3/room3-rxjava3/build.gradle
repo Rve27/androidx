@@ -58,6 +58,6 @@ androidx {
 }
 
 android {
-    namespace = "androidx.room.rxjava3"
+    namespace = "androidx.room3.rxjava3"
     testOptions.unitTests.returnDefaultValues = true
 }

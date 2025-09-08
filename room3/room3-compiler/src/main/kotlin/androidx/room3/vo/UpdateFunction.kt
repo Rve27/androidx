@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package androidx.room.vo
+package androidx.room3.vo
 
-import androidx.room.OnConflictStrategy
-import androidx.room.compiler.processing.XMethodElement
-import androidx.room.solver.shortcut.binder.DeleteOrUpdateFunctionBinder
+import androidx.room3.OnConflictStrategy
+import androidx.room3.compiler.processing.XMethodElement
+import androidx.room3.solver.shortcut.binder.DeleteOrUpdateFunctionBinder
 
 class UpdateFunction(
     element: XMethodElement,

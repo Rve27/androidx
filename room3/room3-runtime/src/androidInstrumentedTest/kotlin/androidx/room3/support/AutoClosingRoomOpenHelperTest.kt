@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package androidx.room.support
+package androidx.room3.support
 
 import android.content.Context
 import android.database.sqlite.SQLiteException
 import androidx.kruth.assertThat
 import androidx.kruth.assertWithMessage
-import androidx.room.util.useCursor
+import androidx.room3.util.useCursor
 import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.sqlite.db.SupportSQLiteOpenHelper
 import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory

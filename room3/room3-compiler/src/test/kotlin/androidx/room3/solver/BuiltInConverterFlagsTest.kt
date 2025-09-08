@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package androidx.room.solver
+package androidx.room3.solver
 
-import androidx.room.BuiltInTypeConverters
-import androidx.room.BuiltInTypeConverters.State.DISABLED
-import androidx.room.BuiltInTypeConverters.State.ENABLED
-import androidx.room.Database
-import androidx.room.DatabaseProcessingStep
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.XTestInvocation
-import androidx.room.compiler.processing.util.runProcessorTest
-import androidx.room.processor.Context
-import androidx.room.processor.ProcessorErrors.CANNOT_FIND_COLUMN_TYPE_ADAPTER
-import androidx.room.processor.ProcessorErrors.CANNOT_FIND_STMT_READER
+import androidx.room3.BuiltInTypeConverters
+import androidx.room3.BuiltInTypeConverters.State.DISABLED
+import androidx.room3.BuiltInTypeConverters.State.ENABLED
+import androidx.room3.Database
+import androidx.room3.DatabaseProcessingStep
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.XTestInvocation
+import androidx.room3.compiler.processing.util.runProcessorTest
+import androidx.room3.processor.Context
+import androidx.room3.processor.ProcessorErrors.CANNOT_FIND_COLUMN_TYPE_ADAPTER
+import androidx.room3.processor.ProcessorErrors.CANNOT_FIND_STMT_READER
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
@@ -165,7 +165,7 @@ class BuiltInConverterFlagsTest {
         return Source.kotlin(
             "Foo.kt",
             """
-            import androidx.room.*import java.nio.ByteBuffer
+            import androidx.room3.*import java.nio.ByteBuffer
             import java.util.UUID
             enum class MyEnum {
                 VAL_1,

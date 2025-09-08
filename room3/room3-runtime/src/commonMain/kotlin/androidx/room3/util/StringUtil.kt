@@ -17,7 +17,7 @@
 @file:JvmName("StringUtil")
 @file:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) // used in generated code
 
-package androidx.room.util
+package androidx.room3.util
 
 import androidx.annotation.RestrictTo
 import kotlin.jvm.JvmField

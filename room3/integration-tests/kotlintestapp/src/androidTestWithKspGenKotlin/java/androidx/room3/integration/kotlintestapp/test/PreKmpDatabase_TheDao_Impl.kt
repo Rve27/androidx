@@ -1,13 +1,13 @@
 @file:Suppress("DEPRECATION", "ktlint") // Due to old entity adapter usage.
 
-package androidx.room.integration.kotlintestapp.test
+package androidx.room3.integration.kotlintestapp.test
 
 import android.database.Cursor
-import androidx.room.EntityInsertionAdapter
-import androidx.room.RoomDatabase
-import androidx.room.RoomSQLiteQuery
-import androidx.room.RoomSQLiteQuery.Companion.acquire
-import androidx.room.util.getColumnIndexOrThrow
+import androidx.room3.EntityInsertionAdapter
+import androidx.room3.RoomDatabase
+import androidx.room3.RoomSQLiteQuery
+import androidx.room3.RoomSQLiteQuery.Companion.acquire
+import androidx.room3.util.getColumnIndexOrThrow
 import androidx.sqlite.db.SupportSQLiteStatement
 import java.lang.Class
 import java.util.ArrayList
@@ -22,7 +22,7 @@ import kotlin.collections.List
 import kotlin.collections.MutableList
 import kotlin.jvm.JvmStatic
 
-@Generated(value = ["androidx.room.RoomProcessor"])
+@Generated(value = ["androidx.room3.RoomProcessor"])
 @Suppress(
     names = ["UNCHECKED_CAST", "DEPRECATION", "REDUNDANT_PROJECTION", "RestrictedApiAndroidX"]
 )
@@ -69,7 +69,7 @@ public class PreKmpDatabase_TheDao_Impl(__db: RoomDatabase) : PreKmpDatabase.The
         val _sql: String = "SELECT * FROM TheEntity"
         val _statement: RoomSQLiteQuery = acquire(_sql, 0)
         __db.assertNotSuspendingTransaction()
-        val _cursor: Cursor = androidx.room.util.query(__db, _statement, false, null)
+        val _cursor: Cursor = androidx.room3.util.query(__db, _statement, false, null)
         try {
             val _cursorIndexOfId: Int = getColumnIndexOrThrow(_cursor, "id")
             val _cursorIndexOfText: Int = getColumnIndexOrThrow(_cursor, "text")

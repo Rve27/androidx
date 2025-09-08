@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.codegen
+package androidx.room3.compiler.codegen
 
-import androidx.room.compiler.processing.XNullability
+import androidx.room3.compiler.processing.XNullability
 import com.squareup.kotlinpoet.MUTABLE_COLLECTION
 import com.squareup.kotlinpoet.MUTABLE_ITERABLE
 import com.squareup.kotlinpoet.MUTABLE_LIST
@@ -36,7 +36,7 @@ import kotlin.reflect.KClass
  *
  * It simply contains a [com.squareup.javapoet.ClassName] and a [com.squareup.kotlinpoet.ClassName].
  *
- * @see [androidx.room.compiler.processing.XTypeElement.asClassName]
+ * @see [androidx.room3.compiler.processing.XTypeElement.asClassName]
  */
 class XClassName
 internal constructor(

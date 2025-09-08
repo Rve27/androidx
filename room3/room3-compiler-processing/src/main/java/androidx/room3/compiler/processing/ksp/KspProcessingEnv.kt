@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.ksp
+package androidx.room3.compiler.processing.ksp
 
-import androidx.room.compiler.processing.XConstructorType
-import androidx.room.compiler.processing.XElement
-import androidx.room.compiler.processing.XExecutableElementStore
-import androidx.room.compiler.processing.XExecutableType
-import androidx.room.compiler.processing.XFiler
-import androidx.room.compiler.processing.XMessager
-import androidx.room.compiler.processing.XMethodType
-import androidx.room.compiler.processing.XProcessingEnv
-import androidx.room.compiler.processing.XProcessingEnvConfig
-import androidx.room.compiler.processing.XType
-import androidx.room.compiler.processing.XTypeElement
-import androidx.room.compiler.processing.javac.XTypeElementStore
+import androidx.room3.compiler.processing.XConstructorType
+import androidx.room3.compiler.processing.XElement
+import androidx.room3.compiler.processing.XExecutableElementStore
+import androidx.room3.compiler.processing.XExecutableType
+import androidx.room3.compiler.processing.XFiler
+import androidx.room3.compiler.processing.XMessager
+import androidx.room3.compiler.processing.XMethodType
+import androidx.room3.compiler.processing.XProcessingEnv
+import androidx.room3.compiler.processing.XProcessingEnvConfig
+import androidx.room3.compiler.processing.XType
+import androidx.room3.compiler.processing.XTypeElement
+import androidx.room3.compiler.processing.javac.XTypeElementStore
 import com.google.devtools.ksp.KspExperimental
 import com.google.devtools.ksp.getClassDeclarationByName
 import com.google.devtools.ksp.processing.JsPlatformInfo

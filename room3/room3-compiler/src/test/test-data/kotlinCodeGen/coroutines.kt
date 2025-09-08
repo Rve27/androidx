@@ -1,10 +1,10 @@
-import androidx.room.RoomDatabase
-import androidx.room.coroutines.createFlow
-import androidx.room.util.appendPlaceholders
-import androidx.room.util.getColumnIndexOrThrow
-import androidx.room.util.getLastInsertedRowId
-import androidx.room.util.getTotalChangedRows
-import androidx.room.util.performSuspending
+import androidx.room3.RoomDatabase
+import androidx.room3.coroutines.createFlow
+import androidx.room3.util.appendPlaceholders
+import androidx.room3.util.getColumnIndexOrThrow
+import androidx.room3.util.getLastInsertedRowId
+import androidx.room3.util.getTotalChangedRows
+import androidx.room3.util.performSuspending
 import androidx.sqlite.SQLiteStatement
 import javax.`annotation`.processing.Generated
 import kotlin.Int
@@ -18,7 +18,7 @@ import kotlin.reflect.KClass
 import kotlin.text.StringBuilder
 import kotlinx.coroutines.flow.Flow
 
-@Generated(value = ["androidx.room.RoomProcessor"])
+@Generated(value = ["androidx.room3.RoomProcessor"])
 @Suppress(names = ["UNCHECKED_CAST", "DEPRECATION", "REDUNDANT_PROJECTION", "REMOVAL"])
 public class MyDao_Impl(
   __db: RoomDatabase,

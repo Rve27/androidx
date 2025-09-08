@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.javac
+package androidx.room3.compiler.processing.javac
 
-import androidx.room.compiler.processing.InternalXAnnotated
-import androidx.room.compiler.processing.XAnnotation
-import androidx.room.compiler.processing.XElement
-import androidx.room.compiler.processing.XEquality
-import androidx.room.compiler.processing.XHasModifiers
-import androidx.room.compiler.processing.javac.kotlin.KmData
-import androidx.room.compiler.processing.javac.kotlin.KmVisibility
-import androidx.room.compiler.processing.unwrapRepeatedAnnotationsFromContainer
+import androidx.room3.compiler.processing.InternalXAnnotated
+import androidx.room3.compiler.processing.XAnnotation
+import androidx.room3.compiler.processing.XElement
+import androidx.room3.compiler.processing.XEquality
+import androidx.room3.compiler.processing.XHasModifiers
+import androidx.room3.compiler.processing.javac.kotlin.KmData
+import androidx.room3.compiler.processing.javac.kotlin.KmVisibility
+import androidx.room3.compiler.processing.unwrapRepeatedAnnotationsFromContainer
 import com.google.auto.common.MoreElements
 import com.google.auto.common.MoreElements.isAnnotationPresent
 import com.google.auto.common.SuperficialValidation

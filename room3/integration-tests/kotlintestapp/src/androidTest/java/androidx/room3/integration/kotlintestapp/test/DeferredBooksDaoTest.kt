@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.kotlintestapp.test
+package androidx.room3.integration.kotlintestapp.test
 
 import androidx.test.filters.SmallTest
 import io.reactivex.observers.TestObserver

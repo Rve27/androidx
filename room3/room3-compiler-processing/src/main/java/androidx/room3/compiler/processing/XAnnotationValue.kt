@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing
+package androidx.room3.compiler.processing
 
 /** This wraps information about an argument in an annotation. */
 interface XAnnotationValue {

@@ -14,26 +14,26 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.kotlintestapp.test
+package androidx.room3.integration.kotlintestapp.test
 
 import android.content.Context
 import androidx.kruth.assertThat
-import androidx.room.ColumnInfo
-import androidx.room.Dao
-import androidx.room.DeleteTable
-import androidx.room.Entity
-import androidx.room.Insert
-import androidx.room.PrimaryKey
-import androidx.room.ProvidedAutoMigrationSpec
-import androidx.room.ProvidedTypeConverter
-import androidx.room.Query
-import androidx.room.Room
-import androidx.room.RoomDatabase
-import androidx.room.TypeConverter
-import androidx.room.TypeConverters
-import androidx.room.migration.AutoMigrationSpec
-import androidx.room.testing.MigrationTestHelper
-import androidx.room.util.useCursor
+import androidx.room3.ColumnInfo
+import androidx.room3.Dao
+import androidx.room3.DeleteTable
+import androidx.room3.Entity
+import androidx.room3.Insert
+import androidx.room3.PrimaryKey
+import androidx.room3.ProvidedAutoMigrationSpec
+import androidx.room3.ProvidedTypeConverter
+import androidx.room3.Query
+import androidx.room3.Room
+import androidx.room3.RoomDatabase
+import androidx.room3.TypeConverter
+import androidx.room3.TypeConverters
+import androidx.room3.migration.AutoMigrationSpec
+import androidx.room3.testing.MigrationTestHelper
+import androidx.room3.util.useCursor
 import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing
+package androidx.room3.compiler.processing
 
 /** Common interface for elements which might have modifiers (e.g. field, method, class) */
 interface XHasModifiers {

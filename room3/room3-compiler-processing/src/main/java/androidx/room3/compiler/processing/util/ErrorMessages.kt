@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.util
+package androidx.room3.compiler.processing.util
 
 /** Link to the issue tracker to report bugs. */
 internal val ISSUE_TRACKER_LINK = "https://issuetracker.google.com/issues/new?component=413107"

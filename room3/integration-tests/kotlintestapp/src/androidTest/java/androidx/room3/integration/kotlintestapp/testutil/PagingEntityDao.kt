@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.kotlintestapp.testutil
+package androidx.room3.integration.kotlintestapp.testutil
 
 import androidx.paging.ListenableFuturePagingSource
 import androidx.paging.PagingSource
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.Query
-import androidx.room.RawQuery
+import androidx.room3.Dao
+import androidx.room3.Insert
+import androidx.room3.Query
+import androidx.room3.RawQuery
 import androidx.sqlite.db.SupportSQLiteQuery
 
 @Dao

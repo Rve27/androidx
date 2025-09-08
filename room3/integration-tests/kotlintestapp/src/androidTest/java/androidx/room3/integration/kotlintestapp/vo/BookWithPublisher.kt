@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.kotlintestapp.vo
+package androidx.room3.integration.kotlintestapp.vo
 
-import androidx.room.Embedded
+import androidx.room3.Embedded
 
 data class BookWithPublisher(
     val bookId: String,

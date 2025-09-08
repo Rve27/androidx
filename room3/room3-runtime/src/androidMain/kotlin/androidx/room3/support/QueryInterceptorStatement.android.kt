@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.room.support
+package androidx.room3.support
 
-import androidx.room.RoomDatabase
+import androidx.room3.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteStatement
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch

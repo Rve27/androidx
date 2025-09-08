@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.room.vo
+package androidx.room3.vo
 
-import androidx.room.compiler.processing.XTypeElement
+import androidx.room3.compiler.processing.XTypeElement
 
-/** Represents the declared [androidx.room.ConstructedBy] referenced object. */
+/** Represents the declared [androidx.room3.ConstructedBy] referenced object. */
 data class DatabaseConstructor(val element: XTypeElement, val overridesInitialize: Boolean)

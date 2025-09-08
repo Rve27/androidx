@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.room.support
+package androidx.room3.support
 
 import android.content.Context
 import android.util.Log
-import androidx.room.DatabaseConfiguration
-import androidx.room.DelegatingOpenHelper
-import androidx.room.Room.LOG_TAG
-import androidx.room.util.copy
-import androidx.room.util.readVersion
+import androidx.room3.DatabaseConfiguration
+import androidx.room3.DelegatingOpenHelper
+import androidx.room3.Room.LOG_TAG
+import androidx.room3.util.copy
+import androidx.room3.util.readVersion
 import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.sqlite.db.SupportSQLiteOpenHelper
 import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
@@ -36,7 +36,7 @@ import java.nio.channels.ReadableByteChannel
 import java.util.concurrent.Callable
 
 /**
- * An open helper that will copy & open a pre-populated database if it doesn't exists in internal
+ * An open helper that will copy & open a pre-populated database if it doesn't exist in internal
  * storage.
  */
 @Suppress("BanSynchronizedMethods")

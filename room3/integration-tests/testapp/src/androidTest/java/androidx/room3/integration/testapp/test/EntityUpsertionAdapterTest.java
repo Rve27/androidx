@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.testapp.test;
+package androidx.room3.integration.testapp.test;
 
 import static com.google.common.truth.Truth.assertThat;
 
 import android.database.sqlite.SQLiteConstraintException;
 
-import androidx.room.EntityDeletionOrUpdateAdapter;
-import androidx.room.EntityInsertionAdapter;
-import androidx.room.EntityUpsertionAdapter;
-import androidx.room.Room;
-import androidx.room.integration.testapp.TestDatabase;
-import androidx.room.integration.testapp.dao.PetDao;
-import androidx.room.integration.testapp.dao.ToyDao;
-import androidx.room.integration.testapp.vo.Pet;
-import androidx.room.integration.testapp.vo.Toy;
+import androidx.room3.EntityDeletionOrUpdateAdapter;
+import androidx.room3.EntityInsertionAdapter;
+import androidx.room3.EntityUpsertionAdapter;
+import androidx.room3.Room;
+import androidx.room3.integration.testapp.TestDatabase;
+import androidx.room3.integration.testapp.dao.PetDao;
+import androidx.room3.integration.testapp.dao.ToyDao;
+import androidx.room3.integration.testapp.vo.Pet;
+import androidx.room3.integration.testapp.vo.Toy;
 import androidx.sqlite.db.SupportSQLiteStatement;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;

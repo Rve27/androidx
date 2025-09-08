@@ -14,29 +14,29 @@
  * limitations under the License.
  */
 
-package androidx.room.solver.query.result
+package androidx.room3.solver.query.result
 
-import androidx.room.compiler.codegen.CodeLanguage
-import androidx.room.compiler.codegen.XClassName
-import androidx.room.compiler.codegen.XCodeBlock
-import androidx.room.compiler.codegen.XCodeBlock.Builder.Companion.applyTo
-import androidx.room.compiler.codegen.XFunSpec
-import androidx.room.compiler.codegen.XPropertySpec
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.compiler.codegen.XTypeSpec
-import androidx.room.ext.Function1TypeSpec
-import androidx.room.ext.InvokeWithLambdaParameter
-import androidx.room.ext.KotlinTypeNames
-import androidx.room.ext.LambdaSpec
-import androidx.room.ext.RoomMemberNames.DB_UTIL_PERFORM_SUSPENDING
-import androidx.room.ext.RoomTypeNames.RAW_QUERY
-import androidx.room.ext.SQLiteDriverTypeNames
-import androidx.room.solver.CodeGenScope
-import androidx.room.solver.binderprovider.ConvertRowsOverrideInfo
+import androidx.room3.compiler.codegen.CodeLanguage
+import androidx.room3.compiler.codegen.XClassName
+import androidx.room3.compiler.codegen.XCodeBlock
+import androidx.room3.compiler.codegen.XCodeBlock.Builder.Companion.applyTo
+import androidx.room3.compiler.codegen.XFunSpec
+import androidx.room3.compiler.codegen.XPropertySpec
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.compiler.codegen.XTypeSpec
+import androidx.room3.ext.Function1TypeSpec
+import androidx.room3.ext.InvokeWithLambdaParameter
+import androidx.room3.ext.KotlinTypeNames
+import androidx.room3.ext.LambdaSpec
+import androidx.room3.ext.RoomMemberNames.DB_UTIL_PERFORM_SUSPENDING
+import androidx.room3.ext.RoomTypeNames.RAW_QUERY
+import androidx.room3.ext.SQLiteDriverTypeNames
+import androidx.room3.solver.CodeGenScope
+import androidx.room3.solver.binderprovider.ConvertRowsOverrideInfo
 
 /**
  * This Binder binds queries directly to KMP Compatible Paging3 PagingSource (i.e.
- * [androidx.room.paging.LimitOffsetPagingSource]). Used solely by KMP Paging3.
+ * [androidx.room3.paging.LimitOffsetPagingSource]). Used solely by KMP Paging3.
  */
 class Paging3PagingSourceQueryResultBinder(
     private val listAdapter: ListQueryResultAdapter?,

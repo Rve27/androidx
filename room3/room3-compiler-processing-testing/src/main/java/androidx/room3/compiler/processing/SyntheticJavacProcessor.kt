@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing
+package androidx.room3.compiler.processing
 
-import androidx.room.compiler.processing.javac.JavacBasicAnnotationProcessor
-import androidx.room.compiler.processing.util.XTestInvocation
+import androidx.room3.compiler.processing.javac.JavacBasicAnnotationProcessor
+import androidx.room3.compiler.processing.util.XTestInvocation
 import javax.lang.model.SourceVersion
 
 @Suppress("VisibleForTests")

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.util.compiler
+package androidx.room3.compiler.processing.util.compiler
 
-import androidx.room.compiler.processing.util.compiler.steps.RawDiagnosticMessage
+import androidx.room3.compiler.processing.util.compiler.steps.RawDiagnosticMessage
 import javax.tools.Diagnostic
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation

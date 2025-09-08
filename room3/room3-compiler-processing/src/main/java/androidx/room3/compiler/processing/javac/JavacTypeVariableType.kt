@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.javac
+package androidx.room3.compiler.processing.javac
 
-import androidx.room.compiler.processing.XNullability
-import androidx.room.compiler.processing.XType
-import androidx.room.compiler.processing.XTypeVariableType
-import androidx.room.compiler.processing.javac.kotlin.KmBaseTypeContainer
+import androidx.room3.compiler.processing.XNullability
+import androidx.room3.compiler.processing.XType
+import androidx.room3.compiler.processing.XTypeVariableType
+import androidx.room3.compiler.processing.javac.kotlin.KmBaseTypeContainer
 import com.google.auto.common.MoreTypes.asIntersection
 import javax.lang.model.type.TypeKind
 import javax.lang.model.type.TypeVariable

@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package androidx.room.coroutines
+package androidx.room3.coroutines
 
 import androidx.kruth.ThrowableSubject
 import androidx.kruth.assertThat
 import androidx.kruth.assertThrows
-import androidx.room.PooledConnection
-import androidx.room.Transactor
-import androidx.room.concurrent.AtomicBoolean
-import androidx.room.concurrent.AtomicInt
-import androidx.room.deferredTransaction
-import androidx.room.exclusiveTransaction
-import androidx.room.execSQL
-import androidx.room.immediateTransaction
+import androidx.room3.PooledConnection
+import androidx.room3.Transactor
+import androidx.room3.concurrent.AtomicBoolean
+import androidx.room3.concurrent.AtomicInt
+import androidx.room3.deferredTransaction
+import androidx.room3.exclusiveTransaction
+import androidx.room3.execSQL
+import androidx.room3.immediateTransaction
 import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.SQLiteDriver
 import androidx.sqlite.SQLiteException

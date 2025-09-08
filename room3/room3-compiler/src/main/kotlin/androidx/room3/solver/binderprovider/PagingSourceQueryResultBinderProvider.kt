@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package androidx.room.solver.binderprovider
+package androidx.room3.solver.binderprovider
 
-import androidx.room.ext.PagingTypeNames
-import androidx.room.ext.RoomPagingTypeNames
-import androidx.room.processor.Context
-import androidx.room.processor.ProcessorErrors
-import androidx.room.solver.QueryResultBinderProvider
+import androidx.room3.ext.PagingTypeNames
+import androidx.room3.ext.RoomPagingTypeNames
+import androidx.room3.processor.Context
+import androidx.room3.processor.ProcessorErrors
+import androidx.room3.solver.QueryResultBinderProvider
 
 @Suppress("FunctionName")
 fun PagingSourceQueryResultBinderProvider(context: Context): QueryResultBinderProvider {

@@ -16,11 +16,11 @@
 
 @file:JvmName("FlowUtil")
 
-package androidx.room.coroutines
+package androidx.room3.coroutines
 
 import androidx.annotation.RestrictTo
-import androidx.room.RoomDatabase
-import androidx.room.util.performSuspending
+import androidx.room3.RoomDatabase
+import androidx.room3.util.performSuspending
 import androidx.sqlite.SQLiteConnection
 import kotlin.jvm.JvmName
 import kotlinx.coroutines.flow.Flow

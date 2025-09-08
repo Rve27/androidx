@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.javac.kotlin
+package androidx.room3.compiler.processing.javac.kotlin
 
 import com.squareup.javapoet.ArrayTypeName
 import com.squareup.javapoet.ClassName

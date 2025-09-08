@@ -1,8 +1,8 @@
-import androidx.room.EntityDeleteOrUpdateAdapter
-import androidx.room.EntityInsertAdapter
-import androidx.room.EntityUpsertAdapter
-import androidx.room.RoomDatabase
-import androidx.room.util.performSuspending
+import androidx.room3.EntityDeleteOrUpdateAdapter
+import androidx.room3.EntityInsertAdapter
+import androidx.room3.EntityUpsertAdapter
+import androidx.room3.RoomDatabase
+import androidx.room3.util.performSuspending
 import androidx.sqlite.SQLiteStatement
 import javax.`annotation`.processing.Generated
 import kotlin.Int
@@ -12,7 +12,7 @@ import kotlin.Suppress
 import kotlin.collections.List
 import kotlin.reflect.KClass
 
-@Generated(value = ["androidx.room.RoomProcessor"])
+@Generated(value = ["androidx.room3.RoomProcessor"])
 @Suppress(names = ["UNCHECKED_CAST", "DEPRECATION", "REDUNDANT_PROJECTION", "REMOVAL"])
 public class MyDao_Impl(
   __db: RoomDatabase,

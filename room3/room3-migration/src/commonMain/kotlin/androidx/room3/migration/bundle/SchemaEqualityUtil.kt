@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.migration.bundle
+package androidx.room3.migration.bundle
 
 /** Utility class to run schema equality on collections. */
 internal object SchemaEqualityUtil {

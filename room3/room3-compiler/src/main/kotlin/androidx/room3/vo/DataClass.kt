@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package androidx.room.vo
+package androidx.room3.vo
 
-import androidx.room.compiler.codegen.XClassName
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.compiler.codegen.asClassName
-import androidx.room.compiler.processing.XType
-import androidx.room.compiler.processing.XTypeElement
-import androidx.room.processor.DatabaseViewProcessor
-import androidx.room.processor.EntityProcessor
+import androidx.room3.compiler.codegen.XClassName
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.compiler.codegen.asClassName
+import androidx.room3.compiler.processing.XType
+import androidx.room3.compiler.processing.XTypeElement
+import androidx.room3.processor.DatabaseViewProcessor
+import androidx.room3.processor.EntityProcessor
 
 /** A class is turned into a data class if it is used in a query response. */
 open class DataClass(
@@ -43,11 +43,11 @@ open class DataClass(
      * or Relation.
      */
     fun accessedTableNames(): List<String> {
-        val entityAnnotation = element.getAnnotation(androidx.room.Entity::class)
+        val entityAnnotation = element.getAnnotation(androidx.room3.Entity::class)
         return if (entityAnnotation != null) {
             listOf(EntityProcessor.extractTableName(element, entityAnnotation))
         } else {
-            val viewAnnotation = element.getAnnotation(androidx.room.DatabaseView::class)
+            val viewAnnotation = element.getAnnotation(androidx.room3.DatabaseView::class)
             if (viewAnnotation != null) {
                 listOf(DatabaseViewProcessor.extractViewName(element, viewAnnotation))
             } else {

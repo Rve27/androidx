@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.room.concurrent
+package androidx.room3.concurrent
 
-import androidx.room.util.stringError
+import androidx.room3.util.stringError
 import kotlinx.cinterop.cValue
 import kotlinx.cinterop.memScoped
 import platform.posix.F_SETLK

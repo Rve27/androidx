@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.testapp.vo;
+package androidx.room3.integration.testapp.vo;
 
-import androidx.room.ColumnInfo;
-import androidx.room.Embedded;
+import androidx.room3.ColumnInfo;
+import androidx.room3.Embedded;
 
 public class Address {
     @ColumnInfo(name = "street")

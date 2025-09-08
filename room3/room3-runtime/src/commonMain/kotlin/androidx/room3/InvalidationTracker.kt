@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package androidx.room
+package androidx.room3
 
 import androidx.annotation.RestrictTo
-import androidx.room.ObservedTableStates.ObserveOp
-import androidx.room.Transactor.SQLiteTransactionType
-import androidx.room.concurrent.AtomicBoolean
-import androidx.room.concurrent.ReentrantLock
-import androidx.room.concurrent.ifNotClosed
-import androidx.room.concurrent.withLock
-import androidx.room.util.getCoroutineContext
+import androidx.room3.ObservedTableStates.ObserveOp
+import androidx.room3.Transactor.SQLiteTransactionType
+import androidx.room3.concurrent.AtomicBoolean
+import androidx.room3.concurrent.ReentrantLock
+import androidx.room3.concurrent.ifNotClosed
+import androidx.room3.concurrent.withLock
+import androidx.room3.util.getCoroutineContext
 import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.SQLiteException
 import androidx.sqlite.execSQL

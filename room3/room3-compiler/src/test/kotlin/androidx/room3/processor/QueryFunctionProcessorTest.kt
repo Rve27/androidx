@@ -14,50 +14,50 @@
  * limitations under the License.
  */
 
-package androidx.room.processor
+package androidx.room3.processor
 
 import COMMON
 import androidx.kruth.assertThat
-import androidx.room.Dao
-import androidx.room.Query
-import androidx.room.compiler.codegen.CodeLanguage
-import androidx.room.compiler.codegen.XClassName
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.compiler.processing.XType
-import androidx.room.compiler.processing.XTypeElement
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.XTestInvocation
-import androidx.room.compiler.processing.util.runProcessorTest
-import androidx.room.ext.CommonTypeNames
-import androidx.room.ext.CommonTypeNames.LIST
-import androidx.room.ext.CommonTypeNames.MUTABLE_LIST
-import androidx.room.ext.CommonTypeNames.STRING
-import androidx.room.ext.GuavaUtilConcurrentTypeNames
-import androidx.room.ext.KotlinTypeNames
-import androidx.room.ext.LifecyclesTypeNames
-import androidx.room.ext.PagingTypeNames
-import androidx.room.ext.ReactiveStreamsTypeNames
-import androidx.room.ext.RxJava2TypeNames
-import androidx.room.ext.RxJava3TypeNames
-import androidx.room.parser.QueryType
-import androidx.room.parser.Table
-import androidx.room.processor.ProcessorErrors.CANNOT_USE_MAP_COLUMN_AND_MAP_INFO_SIMULTANEOUSLY
-import androidx.room.processor.ProcessorErrors.DO_NOT_USE_GENERIC_IMMUTABLE_MULTIMAP
-import androidx.room.processor.ProcessorErrors.MAP_INFO_MUST_HAVE_AT_LEAST_ONE_COLUMN_PROVIDED
-import androidx.room.processor.ProcessorErrors.cannotFindQueryResultAdapter
-import androidx.room.processor.ProcessorErrors.mayNeedMapColumn
-import androidx.room.solver.query.result.DataClassRowAdapter
-import androidx.room.solver.query.result.DataSourceFactoryQueryResultBinder
-import androidx.room.solver.query.result.ListQueryResultAdapter
-import androidx.room.solver.query.result.LiveDataQueryResultBinder
-import androidx.room.solver.query.result.SingleColumnRowAdapter
-import androidx.room.solver.query.result.SingleItemQueryResultAdapter
-import androidx.room.testing.context
-import androidx.room.vo.Property
-import androidx.room.vo.QueryFunction
-import androidx.room.vo.ReadQueryFunction
-import androidx.room.vo.Warning
-import androidx.room.vo.WriteQueryFunction
+import androidx.room3.Dao
+import androidx.room3.Query
+import androidx.room3.compiler.codegen.CodeLanguage
+import androidx.room3.compiler.codegen.XClassName
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.compiler.processing.XType
+import androidx.room3.compiler.processing.XTypeElement
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.XTestInvocation
+import androidx.room3.compiler.processing.util.runProcessorTest
+import androidx.room3.ext.CommonTypeNames
+import androidx.room3.ext.CommonTypeNames.LIST
+import androidx.room3.ext.CommonTypeNames.MUTABLE_LIST
+import androidx.room3.ext.CommonTypeNames.STRING
+import androidx.room3.ext.GuavaUtilConcurrentTypeNames
+import androidx.room3.ext.KotlinTypeNames
+import androidx.room3.ext.LifecyclesTypeNames
+import androidx.room3.ext.PagingTypeNames
+import androidx.room3.ext.ReactiveStreamsTypeNames
+import androidx.room3.ext.RxJava2TypeNames
+import androidx.room3.ext.RxJava3TypeNames
+import androidx.room3.parser.QueryType
+import androidx.room3.parser.Table
+import androidx.room3.processor.ProcessorErrors.CANNOT_USE_MAP_COLUMN_AND_MAP_INFO_SIMULTANEOUSLY
+import androidx.room3.processor.ProcessorErrors.DO_NOT_USE_GENERIC_IMMUTABLE_MULTIMAP
+import androidx.room3.processor.ProcessorErrors.MAP_INFO_MUST_HAVE_AT_LEAST_ONE_COLUMN_PROVIDED
+import androidx.room3.processor.ProcessorErrors.cannotFindQueryResultAdapter
+import androidx.room3.processor.ProcessorErrors.mayNeedMapColumn
+import androidx.room3.solver.query.result.DataClassRowAdapter
+import androidx.room3.solver.query.result.DataSourceFactoryQueryResultBinder
+import androidx.room3.solver.query.result.ListQueryResultAdapter
+import androidx.room3.solver.query.result.LiveDataQueryResultBinder
+import androidx.room3.solver.query.result.SingleColumnRowAdapter
+import androidx.room3.solver.query.result.SingleItemQueryResultAdapter
+import androidx.room3.testing.context
+import androidx.room3.vo.Property
+import androidx.room3.vo.QueryFunction
+import androidx.room3.vo.ReadQueryFunction
+import androidx.room3.vo.Warning
+import androidx.room3.vo.WriteQueryFunction
 import createVerifierFromEntitiesAndViews
 import mockElementAndType
 import org.junit.AssumptionViolatedException
@@ -73,7 +73,7 @@ class QueryFunctionProcessorTest(private val enableVerification: Boolean) {
             """
                 package foo.bar;
                 import androidx.annotation.NonNull;
-                import androidx.room.*;
+                import androidx.room3.*;
                 import java.util.*;
                 import com.google.common.collect.*;
                 @Dao
@@ -82,7 +82,7 @@ class QueryFunctionProcessorTest(private val enableVerification: Boolean) {
         const val DAO_PREFIX_KT =
             """
                 package foo.bar
-                import androidx.room.*
+                import androidx.room3.*
                 import java.util.*
                 import io.reactivex.*         
                 import io.reactivex.rxjava3.core.*
@@ -913,7 +913,7 @@ class QueryFunctionProcessorTest(private val enableVerification: Boolean) {
                 "foo.bar.Relation",
                 """
             package foo.bar;
-            import androidx.room.*;
+            import androidx.room3.*;
             @Entity
             public class Relation {
               @PrimaryKey

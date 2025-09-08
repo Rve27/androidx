@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.testapp.dao;
+package androidx.room3.integration.testapp.dao;
 
-import androidx.room.Dao;
-import androidx.room.Insert;
-import androidx.room.Query;
-import androidx.room.RoomWarnings;
-import androidx.room.integration.testapp.vo.Cluster;
-import androidx.room.integration.testapp.vo.Hivemind;
-import androidx.room.integration.testapp.vo.Robot;
-import androidx.room.integration.testapp.vo.RobotAndHivemind;
+import androidx.room3.Dao;
+import androidx.room3.Insert;
+import androidx.room3.Query;
+import androidx.room3.RoomWarnings;
+import androidx.room3.integration.testapp.vo.Cluster;
+import androidx.room3.integration.testapp.vo.Hivemind;
+import androidx.room3.integration.testapp.vo.Robot;
+import androidx.room3.integration.testapp.vo.RobotAndHivemind;
 
 import java.util.List;
 import java.util.UUID;

@@ -29,17 +29,17 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.kotlintestapp.test
+package androidx.room3.integration.kotlintestapp.test
 
 import androidx.kruth.assertThat
 import androidx.paging.ListenableFuturePagingSource
 import androidx.paging.Pager
 import androidx.paging.PagingState
-import androidx.room.Room
-import androidx.room.RoomDatabase
-import androidx.room.integration.kotlintestapp.testutil.ItemStore
-import androidx.room.integration.kotlintestapp.testutil.PagingDb
-import androidx.room.integration.kotlintestapp.testutil.PagingEntity
+import androidx.room3.Room
+import androidx.room3.RoomDatabase
+import androidx.room3.integration.kotlintestapp.testutil.ItemStore
+import androidx.room3.integration.kotlintestapp.testutil.PagingDb
+import androidx.room3.integration.kotlintestapp.testutil.PagingEntity
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest

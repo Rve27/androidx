@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package androidx.room.solver
+package androidx.room3.solver
 
-import androidx.room.compiler.processing.XNullability
-import androidx.room.compiler.processing.XNullability.NONNULL
-import androidx.room.compiler.processing.XNullability.NULLABLE
-import androidx.room.compiler.processing.XNullability.UNKNOWN
-import androidx.room.compiler.processing.XProcessingEnv.Backend
-import androidx.room.compiler.processing.XType
-import androidx.room.ext.isAssignableFromWithNullability
-import androidx.room.processor.Context
-import androidx.room.solver.types.CompositeTypeConverter
-import androidx.room.solver.types.NoOpConverter
-import androidx.room.solver.types.NullSafeTypeConverter
-import androidx.room.solver.types.RequireNotNullTypeConverter
-import androidx.room.solver.types.TypeConverter
-import androidx.room.solver.types.UpCastTypeConverter
+import androidx.room3.compiler.processing.XNullability
+import androidx.room3.compiler.processing.XNullability.NONNULL
+import androidx.room3.compiler.processing.XNullability.NULLABLE
+import androidx.room3.compiler.processing.XNullability.UNKNOWN
+import androidx.room3.compiler.processing.XProcessingEnv.Backend
+import androidx.room3.compiler.processing.XType
+import androidx.room3.ext.isAssignableFromWithNullability
+import androidx.room3.processor.Context
+import androidx.room3.solver.types.CompositeTypeConverter
+import androidx.room3.solver.types.NoOpConverter
+import androidx.room3.solver.types.NullSafeTypeConverter
+import androidx.room3.solver.types.RequireNotNullTypeConverter
+import androidx.room3.solver.types.TypeConverter
+import androidx.room3.solver.types.UpCastTypeConverter
 import java.util.PriorityQueue
 
 /**

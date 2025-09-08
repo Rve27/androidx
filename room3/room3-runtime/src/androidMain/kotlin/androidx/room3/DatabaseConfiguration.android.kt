@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.room
+package androidx.room3
 
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import androidx.annotation.RestrictTo
-import androidx.room.migration.AutoMigrationSpec
-import androidx.room.util.isMigrationRequired as isMigrationRequiredExt
+import androidx.room3.migration.AutoMigrationSpec
+import androidx.room3.util.isMigrationRequired as isMigrationRequiredExt
 import androidx.sqlite.SQLiteDriver
 import androidx.sqlite.db.SupportSQLiteOpenHelper
 import java.io.File

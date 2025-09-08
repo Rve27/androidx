@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.util.compiler.steps
+package androidx.room3.compiler.processing.util.compiler.steps
 
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.getSystemClasspathFiles
-import androidx.room.compiler.processing.util.toDiagnosticMessages
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.getSystemClasspathFiles
+import androidx.room3.compiler.processing.util.toDiagnosticMessages
 import com.google.testing.compile.Compilation
 import com.google.testing.compile.Compiler
 import java.io.File

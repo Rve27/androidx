@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package androidx.room.vo
+package androidx.room3.vo
 
-import androidx.room.compiler.processing.XMethodElement
-import androidx.room.compiler.processing.XType
-import androidx.room.parser.ParsedQuery
-import androidx.room.solver.prepared.binder.PreparedQueryResultBinder
-import androidx.room.solver.query.result.QueryResultBinder
+import androidx.room3.compiler.processing.XMethodElement
+import androidx.room3.compiler.processing.XType
+import androidx.room3.parser.ParsedQuery
+import androidx.room3.solver.prepared.binder.PreparedQueryResultBinder
+import androidx.room3.solver.query.result.QueryResultBinder
 
 /**
  * A class that holds information about a QueryFunction. It is self sufficient and must have all

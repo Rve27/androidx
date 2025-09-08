@@ -14,28 +14,28 @@
  * limitations under the License.
  */
 
-package androidx.room.processor
+package androidx.room3.processor
 
-import androidx.room.BuiltInTypeConverters
-import androidx.room.ProvidedTypeConverter
-import androidx.room.TypeConverter
-import androidx.room.TypeConverters
-import androidx.room.compiler.codegen.asClassName
-import androidx.room.compiler.processing.XElement
-import androidx.room.compiler.processing.XMethodElement
-import androidx.room.compiler.processing.XType
-import androidx.room.compiler.processing.XTypeElement
-import androidx.room.compiler.processing.isVoid
-import androidx.room.processor.ProcessorErrors.INNER_CLASS_TYPE_CONVERTER_MUST_BE_STATIC
-import androidx.room.processor.ProcessorErrors.TYPE_CONVERTER_BAD_RETURN_TYPE
-import androidx.room.processor.ProcessorErrors.TYPE_CONVERTER_EMPTY_CLASS
-import androidx.room.processor.ProcessorErrors.TYPE_CONVERTER_MISSING_NOARG_CONSTRUCTOR
-import androidx.room.processor.ProcessorErrors.TYPE_CONVERTER_MUST_BE_PUBLIC
-import androidx.room.processor.ProcessorErrors.TYPE_CONVERTER_MUST_RECEIVE_1_PARAM
-import androidx.room.processor.ProcessorErrors.TYPE_CONVERTER_UNBOUND_GENERIC
-import androidx.room.solver.types.CustomTypeConverterWrapper
-import androidx.room.vo.BuiltInConverterFlags
-import androidx.room.vo.CustomTypeConverter
+import androidx.room3.BuiltInTypeConverters
+import androidx.room3.ProvidedTypeConverter
+import androidx.room3.TypeConverter
+import androidx.room3.TypeConverters
+import androidx.room3.compiler.codegen.asClassName
+import androidx.room3.compiler.processing.XElement
+import androidx.room3.compiler.processing.XMethodElement
+import androidx.room3.compiler.processing.XType
+import androidx.room3.compiler.processing.XTypeElement
+import androidx.room3.compiler.processing.isVoid
+import androidx.room3.processor.ProcessorErrors.INNER_CLASS_TYPE_CONVERTER_MUST_BE_STATIC
+import androidx.room3.processor.ProcessorErrors.TYPE_CONVERTER_BAD_RETURN_TYPE
+import androidx.room3.processor.ProcessorErrors.TYPE_CONVERTER_EMPTY_CLASS
+import androidx.room3.processor.ProcessorErrors.TYPE_CONVERTER_MISSING_NOARG_CONSTRUCTOR
+import androidx.room3.processor.ProcessorErrors.TYPE_CONVERTER_MUST_BE_PUBLIC
+import androidx.room3.processor.ProcessorErrors.TYPE_CONVERTER_MUST_RECEIVE_1_PARAM
+import androidx.room3.processor.ProcessorErrors.TYPE_CONVERTER_UNBOUND_GENERIC
+import androidx.room3.solver.types.CustomTypeConverterWrapper
+import androidx.room3.vo.BuiltInConverterFlags
+import androidx.room3.vo.CustomTypeConverter
 
 /** Processes classes that are referenced in TypeConverters annotations. */
 class CustomConverterProcessor(val context: Context, val element: XTypeElement) {

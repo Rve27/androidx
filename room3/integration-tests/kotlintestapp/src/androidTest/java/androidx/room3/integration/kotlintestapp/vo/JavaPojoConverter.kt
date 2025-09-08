@@ -17,13 +17,13 @@
 // Not used by gen code, but tests an annotation processor case.
 @file:Suppress("unused", "UNUSED_PARAMETER")
 
-package androidx.room.integration.kotlintestapp.vo
+package androidx.room3.integration.kotlintestapp.vo
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-import androidx.room.RoomWarnings
-import androidx.room.TypeConverter
-import androidx.room.TypeConverters
+import androidx.room3.Entity
+import androidx.room3.PrimaryKey
+import androidx.room3.RoomWarnings
+import androidx.room3.TypeConverter
+import androidx.room3.TypeConverters
 
 @Entity
 @TypeConverters(CategoryListConverter::class)

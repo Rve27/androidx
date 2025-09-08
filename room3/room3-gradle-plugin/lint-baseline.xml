@@ -7,7 +7,7 @@
         errorLine1="            .withPluginClasspath()"
         errorLine2="             ~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/test/java/androidx/room/gradle/GradleTestUtils.kt"/>
+            file="src/test/java/androidx/room3/gradle/GradleTestUtils.kt"/>
     </issue>
 
 </issues>

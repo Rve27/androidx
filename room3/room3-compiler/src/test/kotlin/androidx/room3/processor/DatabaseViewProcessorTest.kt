@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package androidx.room.processor
+package androidx.room3.processor
 
 import androidx.kruth.assertThat
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.XTestInvocation
-import androidx.room.compiler.processing.util.runProcessorTest
-import androidx.room.parser.ParserErrors
-import androidx.room.parser.SQLTypeAffinity
-import androidx.room.testing.context
-import androidx.room.verifier.ColumnInfo
-import androidx.room.vo.DatabaseView
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.XTestInvocation
+import androidx.room3.compiler.processing.util.runProcessorTest
+import androidx.room3.parser.ParserErrors
+import androidx.room3.parser.SQLTypeAffinity
+import androidx.room3.testing.context
+import androidx.room3.verifier.ColumnInfo
+import androidx.room3.vo.DatabaseView
 import createVerifierFromEntitiesAndViews
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -37,7 +37,7 @@ class DatabaseViewProcessorTest {
         const val DATABASE_PREFIX =
             """
             package foo.bar;
-            import androidx.room.*;
+            import androidx.room3.*;
             import androidx.annotation.NonNull;
             import java.util.*;
         """

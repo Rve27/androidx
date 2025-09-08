@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package androidx.room.solver
+package androidx.room3.solver
 
-import androidx.room.compiler.processing.XType
-import androidx.room.solver.types.CompositeTypeConverter
-import androidx.room.solver.types.NoOpConverter
-import androidx.room.solver.types.TypeConverter
+import androidx.room3.compiler.processing.XType
+import androidx.room3.solver.types.CompositeTypeConverter
+import androidx.room3.solver.types.NoOpConverter
+import androidx.room3.solver.types.TypeConverter
 import java.util.LinkedList
 
 /**

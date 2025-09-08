@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package androidx.room.concurrent
+package androidx.room3.concurrent
 
 import androidx.kruth.assertThat
 import androidx.kruth.assertWithMessage
-import androidx.room.util.stringError
+import androidx.room3.util.stringError
 import kotlin.random.Random
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest

@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.room
+package androidx.room3
 
 import androidx.annotation.RestrictTo
-import androidx.room.coroutines.createFlow
-import androidx.room.util.performSuspending
+import androidx.room3.coroutines.createFlow
+import androidx.room3.util.performSuspending
 import androidx.sqlite.SQLiteConnection
 import io.reactivex.BackpressureStrategy
 import io.reactivex.Completable

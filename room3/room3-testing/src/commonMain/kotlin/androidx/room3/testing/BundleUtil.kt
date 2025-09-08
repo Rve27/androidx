@@ -17,19 +17,19 @@
 @file:JvmName("BundleUtil")
 @file:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 
-package androidx.room.testing
+package androidx.room3.testing
 
 import androidx.annotation.RestrictTo
-import androidx.room.migration.bundle.BaseEntityBundle
-import androidx.room.migration.bundle.DatabaseViewBundle
-import androidx.room.migration.bundle.EntityBundle
-import androidx.room.migration.bundle.FieldBundle
-import androidx.room.migration.bundle.ForeignKeyBundle
-import androidx.room.migration.bundle.FtsEntityBundle
-import androidx.room.migration.bundle.IndexBundle
-import androidx.room.util.FtsTableInfo
-import androidx.room.util.TableInfo
-import androidx.room.util.ViewInfo
+import androidx.room3.migration.bundle.BaseEntityBundle
+import androidx.room3.migration.bundle.DatabaseViewBundle
+import androidx.room3.migration.bundle.EntityBundle
+import androidx.room3.migration.bundle.FieldBundle
+import androidx.room3.migration.bundle.ForeignKeyBundle
+import androidx.room3.migration.bundle.FtsEntityBundle
+import androidx.room3.migration.bundle.IndexBundle
+import androidx.room3.util.FtsTableInfo
+import androidx.room3.util.TableInfo
+import androidx.room3.util.ViewInfo
 import kotlin.jvm.JvmName
 
 internal fun EntityBundle.toTableInfo(): TableInfo {

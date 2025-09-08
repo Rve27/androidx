@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package androidx.room.parser.expansion
+package androidx.room3.parser.expansion
 
-import androidx.room.parser.QueryType
-import androidx.room.parser.SQLiteParser
-import androidx.room.parser.SQLiteParserBaseVisitor
-import androidx.room.parser.SingleQuerySqlParser
-import androidx.room.parser.Table
+import androidx.room3.parser.QueryType
+import androidx.room3.parser.SQLiteParser
+import androidx.room3.parser.SQLiteParserBaseVisitor
+import androidx.room3.parser.SingleQuerySqlParser
+import androidx.room3.parser.Table
 import org.antlr.v4.runtime.RuleContext
 import org.antlr.v4.runtime.tree.ParseTree
 import org.antlr.v4.runtime.tree.TerminalNode

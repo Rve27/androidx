@@ -14,30 +14,30 @@
  * limitations under the License.
  */
 
-package androidx.room.solver
+package androidx.room3.solver
 
 import androidx.kruth.assertThat
-import androidx.room.RoomKspProcessor
-import androidx.room.compiler.codegen.CodeLanguage
-import androidx.room.compiler.codegen.XClassName
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.compiler.processing.XProcessingEnv
-import androidx.room.compiler.processing.XType
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.XTestInvocation
-import androidx.room.compiler.processing.util.compiler.TestCompilationArguments
-import androidx.room.compiler.processing.util.compiler.compile
-import androidx.room.compiler.processing.util.runKspTest
-import androidx.room.compiler.processing.util.runProcessorTest
-import androidx.room.processor.Context.BooleanProcessorOptions.USE_NULL_AWARE_CONVERTER
-import androidx.room.processor.CustomConverterProcessor
-import androidx.room.processor.DaoProcessor
-import androidx.room.solver.types.CustomTypeConverterWrapper
-import androidx.room.solver.types.TypeConverter
-import androidx.room.testing.context
-import androidx.room.vo.BuiltInConverterFlags
-import androidx.room.writer.DaoWriter
-import androidx.room.writer.TypeWriter
+import androidx.room3.RoomKspProcessor
+import androidx.room3.compiler.codegen.CodeLanguage
+import androidx.room3.compiler.codegen.XClassName
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.compiler.processing.XProcessingEnv
+import androidx.room3.compiler.processing.XType
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.XTestInvocation
+import androidx.room3.compiler.processing.util.compiler.TestCompilationArguments
+import androidx.room3.compiler.processing.util.compiler.compile
+import androidx.room3.compiler.processing.util.runKspTest
+import androidx.room3.compiler.processing.util.runProcessorTest
+import androidx.room3.processor.Context.BooleanProcessorOptions.USE_NULL_AWARE_CONVERTER
+import androidx.room3.processor.CustomConverterProcessor
+import androidx.room3.processor.DaoProcessor
+import androidx.room3.solver.types.CustomTypeConverterWrapper
+import androidx.room3.solver.types.TypeConverter
+import androidx.room3.testing.context
+import androidx.room3.vo.BuiltInConverterFlags
+import androidx.room3.writer.DaoWriter
+import androidx.room3.writer.TypeWriter
 import javax.tools.Diagnostic
 import org.junit.Rule
 import org.junit.Test
@@ -52,7 +52,7 @@ class NullabilityAwareTypeConverterStoreTest {
         Source.kotlin(
             "Foo.kt",
             """
-            import androidx.room.*
+            import androidx.room3.*
             class MyClass
             class NonNullConverters {
                 @TypeConverter
@@ -91,7 +91,7 @@ class NullabilityAwareTypeConverterStoreTest {
         Source.java(
             "MyPlatformConverters",
             """
-        import androidx.room.TypeConverter;
+        import androidx.room3.TypeConverter;
         public class MyPlatformConverters {
             @TypeConverter
             public static MyClass boxedIntegerToPlatformMyClass(Integer input) {
@@ -384,7 +384,7 @@ class NullabilityAwareTypeConverterStoreTest {
             Source.java(
                 "User",
                 """
-            import androidx.room.*;
+            import androidx.room3.*;
             import java.util.*;
             @TypeConverters({TestConverters.class})
             @Entity
@@ -400,7 +400,7 @@ class NullabilityAwareTypeConverterStoreTest {
             Source.java(
                 "TestConverters",
                 """
-            import androidx.room.*;
+            import androidx.room3.*;
             import java.util.Date;
             import java.util.HashSet;
             import java.util.Set;
@@ -448,7 +448,7 @@ class NullabilityAwareTypeConverterStoreTest {
             Source.java(
                 "MyDao",
                 """
-            import androidx.room.*;
+            import androidx.room3.*;
             @Dao
             interface MyDao {
                 @Insert
@@ -465,13 +465,13 @@ class NullabilityAwareTypeConverterStoreTest {
                 DaoProcessor(
                     baseContext = invocation.context,
                     element = invocation.processingEnv.requireTypeElement("MyDao"),
-                    dbType = invocation.processingEnv.requireType("androidx.room.RoomDatabase"),
+                    dbType = invocation.processingEnv.requireType("androidx.room3.RoomDatabase"),
                     dbVerifier = null,
                 )
             DaoWriter(
                     dao = daoProcessor.process(),
                     dbElement =
-                        invocation.processingEnv.requireTypeElement("androidx.room.RoomDatabase"),
+                        invocation.processingEnv.requireTypeElement("androidx.room3.RoomDatabase"),
                     writerContext =
                         TypeWriter.WriterContext(
                             codeLanguage = CodeLanguage.JAVA,
@@ -642,7 +642,7 @@ class NullabilityAwareTypeConverterStoreTest {
             Source.kotlin(
                 "Subject.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
             object MyByteArrayConverter {
                 @TypeConverter
                 fun toByteArray(input:String): ByteArray { TODO() }
@@ -713,7 +713,7 @@ class NullabilityAwareTypeConverterStoreTest {
             Source.kotlin(
                 "Converters.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
             class TypeA
             class TypeB
             object MyConverters {
@@ -759,7 +759,7 @@ class NullabilityAwareTypeConverterStoreTest {
             Source.kotlin(
                 "Foo.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
             import java.time.Instant
             enum class Awesomeness {
                 AWESOME,

@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.multiplatformtestapp.test
+package androidx.room3.integration.multiplatformtestapp.test
 
 import platform.Foundation.NSBundle
 
 /**
- * Gets the schema directory path for tests with [androidx.room.testing.MigrationTestHelper].
+ * Gets the schema directory path for tests with [androidx.room3.testing.MigrationTestHelper].
  *
  * For iOS, watchOS and tvOS, it will be the main resource directory in the bundle.
  */

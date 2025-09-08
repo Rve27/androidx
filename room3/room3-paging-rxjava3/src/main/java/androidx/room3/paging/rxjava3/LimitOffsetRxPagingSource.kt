@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-package androidx.room.paging.rxjava3
+package androidx.room3.paging.rxjava3
 
 import android.database.Cursor
 import androidx.annotation.RestrictTo
 import androidx.annotation.VisibleForTesting
 import androidx.paging.PagingState
 import androidx.paging.rxjava3.RxPagingSource
-import androidx.room.RoomDatabase
-import androidx.room.RoomSQLiteQuery
-import androidx.room.paging.CursorSQLiteStatement
-import androidx.room.paging.util.INITIAL_ITEM_COUNT
-import androidx.room.paging.util.INVALID
-import androidx.room.paging.util.ThreadSafeInvalidationObserver
-import androidx.room.paging.util.getClippedRefreshKey
-import androidx.room.paging.util.queryDatabase
-import androidx.room.paging.util.queryItemCount
-import androidx.room.rxjava3.createSingle
+import androidx.room3.RoomDatabase
+import androidx.room3.RoomSQLiteQuery
+import androidx.room3.paging.CursorSQLiteStatement
+import androidx.room3.paging.util.INITIAL_ITEM_COUNT
+import androidx.room3.paging.util.INVALID
+import androidx.room3.paging.util.ThreadSafeInvalidationObserver
+import androidx.room3.paging.util.getClippedRefreshKey
+import androidx.room3.paging.util.queryDatabase
+import androidx.room3.paging.util.queryItemCount
+import androidx.room3.rxjava3.createSingle
 import androidx.sqlite.SQLiteStatement
 import androidx.sqlite.db.SupportSQLiteQuery
 import io.reactivex.rxjava3.core.Single

@@ -14,33 +14,33 @@
  * limitations under the License.
  */
 
-package androidx.room.processor
+package androidx.room3.processor
 
-import androidx.room.compiler.processing.XType
-import androidx.room.compiler.processing.XTypeElement
-import androidx.room.ext.isNotError
-import androidx.room.ext.isNotNone
-import androidx.room.parser.SQLTypeAffinity
-import androidx.room.parser.SqlParser
-import androidx.room.processor.EntityProcessor.Companion.createIndexName
-import androidx.room.processor.EntityProcessor.Companion.extractForeignKeys
-import androidx.room.processor.EntityProcessor.Companion.extractIndices
-import androidx.room.processor.EntityProcessor.Companion.extractTableName
-import androidx.room.processor.ProcessorErrors.INDEX_COLUMNS_CANNOT_BE_EMPTY
-import androidx.room.processor.ProcessorErrors.INVALID_INDEX_ORDERS_SIZE
-import androidx.room.processor.ProcessorErrors.RELATION_IN_ENTITY
-import androidx.room.processor.cache.Cache
-import androidx.room.vo.DataClass
-import androidx.room.vo.EmbeddedProperty
-import androidx.room.vo.Entity
-import androidx.room.vo.ForeignKey
-import androidx.room.vo.Index
-import androidx.room.vo.PrimaryKey
-import androidx.room.vo.Properties
-import androidx.room.vo.Property
-import androidx.room.vo.Warning
-import androidx.room.vo.columnNames
-import androidx.room.vo.findPropertyByColumnName
+import androidx.room3.compiler.processing.XType
+import androidx.room3.compiler.processing.XTypeElement
+import androidx.room3.ext.isNotError
+import androidx.room3.ext.isNotNone
+import androidx.room3.parser.SQLTypeAffinity
+import androidx.room3.parser.SqlParser
+import androidx.room3.processor.EntityProcessor.Companion.createIndexName
+import androidx.room3.processor.EntityProcessor.Companion.extractForeignKeys
+import androidx.room3.processor.EntityProcessor.Companion.extractIndices
+import androidx.room3.processor.EntityProcessor.Companion.extractTableName
+import androidx.room3.processor.ProcessorErrors.INDEX_COLUMNS_CANNOT_BE_EMPTY
+import androidx.room3.processor.ProcessorErrors.INVALID_INDEX_ORDERS_SIZE
+import androidx.room3.processor.ProcessorErrors.RELATION_IN_ENTITY
+import androidx.room3.processor.cache.Cache
+import androidx.room3.vo.DataClass
+import androidx.room3.vo.EmbeddedProperty
+import androidx.room3.vo.Entity
+import androidx.room3.vo.ForeignKey
+import androidx.room3.vo.Index
+import androidx.room3.vo.PrimaryKey
+import androidx.room3.vo.Properties
+import androidx.room3.vo.Property
+import androidx.room3.vo.Warning
+import androidx.room3.vo.columnNames
+import androidx.room3.vo.findPropertyByColumnName
 
 class TableEntityProcessor
 internal constructor(
@@ -72,10 +72,10 @@ internal constructor(
         }
         context.checker.hasAnnotation(
             element,
-            androidx.room.Entity::class,
+            androidx.room3.Entity::class,
             ProcessorErrors.ENTITY_MUST_BE_ANNOTATED_WITH_ENTITY,
         )
-        val annotation = element.getAnnotation(androidx.room.Entity::class)
+        val annotation = element.getAnnotation(androidx.room3.Entity::class)
         val tableName: String
         val entityIndices: List<IndexInput>
         val foreignKeyInputs: List<ForeignKeyInput>
@@ -265,7 +265,7 @@ internal constructor(
                     context.logger.e(element, ProcessorErrors.FOREIGN_KEY_CANNOT_FIND_PARENT)
                     return@map null
                 }
-                val parentAnnotation = parentElement.getAnnotation(androidx.room.Entity::class)
+                val parentAnnotation = parentElement.getAnnotation(androidx.room3.Entity::class)
                 if (parentAnnotation == null) {
                     context.logger.e(
                         element,
@@ -370,7 +370,7 @@ internal constructor(
     ): List<PrimaryKey> {
         return fields.mapNotNull { field ->
             val primaryKeyAnnotation =
-                field.element.getAnnotation(androidx.room.PrimaryKey::class)
+                field.element.getAnnotation(androidx.room3.PrimaryKey::class)
                     ?: return@mapNotNull null
             if (field.parent != null) {
                 // the field in the entity that contains this error.
@@ -404,7 +404,7 @@ internal constructor(
         availableProperties: List<Property>,
     ): List<PrimaryKey> {
         val myPkeys =
-            typeElement.getAnnotation(androidx.room.Entity::class)?.let {
+            typeElement.getAnnotation(androidx.room3.Entity::class)?.let {
                 val primaryKeyColumns = it["primaryKeys"]?.asStringList() ?: emptyList()
                 if (primaryKeyColumns.isEmpty()) {
                     emptyList()
@@ -450,7 +450,7 @@ internal constructor(
         embeddedProperties: List<EmbeddedProperty>
     ): List<PrimaryKey> {
         return embeddedProperties.mapNotNull { embeddedProperty ->
-            embeddedProperty.property.element.getAnnotation(androidx.room.PrimaryKey::class)?.let {
+            embeddedProperty.property.element.getAnnotation(androidx.room3.PrimaryKey::class)?.let {
                 val autoGenerate = it["autoGenerate"]?.asBoolean() ?: false
                 context.checker.check(
                     !autoGenerate || embeddedProperty.dataClass.properties.size == 1,
@@ -558,7 +558,7 @@ internal constructor(
         // see if any embedded property is an entity with indices, if so, report a warning
         dataClass.embeddedProperties.forEach { embedded ->
             val embeddedElement = embedded.dataClass.element
-            embeddedElement.getAnnotation(androidx.room.Entity::class)?.let {
+            embeddedElement.getAnnotation(androidx.room3.Entity::class)?.let {
                 val subIndices = extractIndices(it, "")
                 if (subIndices.isNotEmpty()) {
                     context.logger.w(
@@ -592,7 +592,7 @@ internal constructor(
             return emptyList()
         }
         val myIndices =
-            parentTypeElement.getAnnotation(androidx.room.Entity::class)?.let { annotation ->
+            parentTypeElement.getAnnotation(androidx.room3.Entity::class)?.let { annotation ->
                 val indices = extractIndices(annotation, tableName = "super")
                 if (indices.isEmpty()) {
                     emptyList()

@@ -16,12 +16,12 @@
 
 @file:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 
-package androidx.room.util
+package androidx.room3.util
 
 import androidx.annotation.RestrictTo
-import androidx.room.ConstructedBy
-import androidx.room.RoomDatabase
-import androidx.room.RoomDatabaseConstructor
+import androidx.room3.ConstructedBy
+import androidx.room3.RoomDatabase
+import androidx.room3.RoomDatabaseConstructor
 import kotlin.reflect.ExperimentalAssociatedObjects
 import kotlin.reflect.KClass
 import kotlin.reflect.findAssociatedObject

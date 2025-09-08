@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package androidx.room.writer
+package androidx.room3.writer
 
-import androidx.room.compiler.codegen.XCodeBlock
-import androidx.room.compiler.codegen.XFunSpec
-import androidx.room.compiler.codegen.XMemberName.Companion.packageMember
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.ext.RoomTypeNames.STATEMENT_UTIL
-import androidx.room.ext.SQLiteDriverTypeNames
-import androidx.room.ext.capitalize
-import androidx.room.ext.stripNonJava
-import androidx.room.solver.CodeGenScope
-import androidx.room.vo.Entity
-import androidx.room.vo.PropertyWithIndex
+import androidx.room3.compiler.codegen.XCodeBlock
+import androidx.room3.compiler.codegen.XFunSpec
+import androidx.room3.compiler.codegen.XMemberName.Companion.packageMember
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.ext.RoomTypeNames.STATEMENT_UTIL
+import androidx.room3.ext.SQLiteDriverTypeNames
+import androidx.room3.ext.capitalize
+import androidx.room3.ext.stripNonJava
+import androidx.room3.solver.CodeGenScope
+import androidx.room3.vo.Entity
+import androidx.room3.vo.PropertyWithIndex
 import java.util.Locale
 
 class EntityStatementConverterWriter(private val entity: Entity) :

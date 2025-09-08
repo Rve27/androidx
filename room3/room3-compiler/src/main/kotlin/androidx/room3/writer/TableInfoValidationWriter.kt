@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package androidx.room.writer
+package androidx.room3.writer
 
-import androidx.room.compiler.codegen.CodeLanguage
-import androidx.room.compiler.codegen.XCodeBlock
-import androidx.room.compiler.codegen.buildCodeBlock
-import androidx.room.ext.CommonTypeNames
-import androidx.room.ext.KotlinCollectionMemberNames
-import androidx.room.ext.RoomMemberNames
-import androidx.room.ext.RoomTypeNames
-import androidx.room.ext.capitalize
-import androidx.room.ext.stripNonJava
-import androidx.room.parser.SQLTypeAffinity
-import androidx.room.vo.Entity
-import androidx.room.vo.columnNames
+import androidx.room3.compiler.codegen.CodeLanguage
+import androidx.room3.compiler.codegen.XCodeBlock
+import androidx.room3.compiler.codegen.buildCodeBlock
+import androidx.room3.ext.CommonTypeNames
+import androidx.room3.ext.KotlinCollectionMemberNames
+import androidx.room3.ext.RoomMemberNames
+import androidx.room3.ext.RoomTypeNames
+import androidx.room3.ext.capitalize
+import androidx.room3.ext.stripNonJava
+import androidx.room3.parser.SQLTypeAffinity
+import androidx.room3.vo.Entity
+import androidx.room3.vo.columnNames
 import java.util.Locale
 
 class TableInfoValidationWriter(val entity: Entity) : ValidationWriter() {

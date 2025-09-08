@@ -14,28 +14,28 @@
  * limitations under the License.
  */
 
-package androidx.room.solver.shortcut.result
+package androidx.room3.solver.shortcut.result
 
-import androidx.room.compiler.codegen.CodeLanguage
-import androidx.room.compiler.codegen.XCodeBlock
-import androidx.room.compiler.codegen.XPropertySpec
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.compiler.processing.XType
-import androidx.room.compiler.processing.isArray
-import androidx.room.compiler.processing.isKotlinUnit
-import androidx.room.compiler.processing.isLong
-import androidx.room.compiler.processing.isVoid
-import androidx.room.compiler.processing.isVoidObject
-import androidx.room.ext.CommonTypeNames
-import androidx.room.ext.KotlinTypeNames
-import androidx.room.ext.isList
-import androidx.room.ext.isNotKotlinUnit
-import androidx.room.ext.isNotVoid
-import androidx.room.ext.isNotVoidObject
-import androidx.room.processor.Context
-import androidx.room.processor.ProcessorErrors
-import androidx.room.solver.CodeGenScope
-import androidx.room.vo.ShortcutQueryParameter
+import androidx.room3.compiler.codegen.CodeLanguage
+import androidx.room3.compiler.codegen.XCodeBlock
+import androidx.room3.compiler.codegen.XPropertySpec
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.compiler.processing.XType
+import androidx.room3.compiler.processing.isArray
+import androidx.room3.compiler.processing.isKotlinUnit
+import androidx.room3.compiler.processing.isLong
+import androidx.room3.compiler.processing.isVoid
+import androidx.room3.compiler.processing.isVoidObject
+import androidx.room3.ext.CommonTypeNames
+import androidx.room3.ext.KotlinTypeNames
+import androidx.room3.ext.isList
+import androidx.room3.ext.isNotKotlinUnit
+import androidx.room3.ext.isNotVoid
+import androidx.room3.ext.isNotVoidObject
+import androidx.room3.processor.Context
+import androidx.room3.processor.ProcessorErrors
+import androidx.room3.solver.CodeGenScope
+import androidx.room3.vo.ShortcutQueryParameter
 
 class InsertOrUpsertFunctionAdapter private constructor(private val functionInfo: FunctionInfo) {
     internal val returnType = functionInfo.returnType

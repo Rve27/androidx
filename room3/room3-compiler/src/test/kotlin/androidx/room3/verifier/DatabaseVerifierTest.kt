@@ -14,32 +14,32 @@
  * limitations under the License.
  */
 
-package androidx.room.verifier
+package androidx.room3.verifier
 
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.compiler.processing.XConstructorElement
-import androidx.room.compiler.processing.XElement
-import androidx.room.compiler.processing.XFieldElement
-import androidx.room.compiler.processing.XType
-import androidx.room.compiler.processing.XTypeElement
-import androidx.room.compiler.processing.util.XTestInvocation
-import androidx.room.compiler.processing.util.runProcessorTest
-import androidx.room.ext.CommonTypeNames
-import androidx.room.parser.Collate
-import androidx.room.parser.SQLTypeAffinity
-import androidx.room.parser.SqlParser
-import androidx.room.processor.Context
-import androidx.room.testing.context
-import androidx.room.vo.CallType
-import androidx.room.vo.Constructor
-import androidx.room.vo.Database
-import androidx.room.vo.DatabaseView
-import androidx.room.vo.Entity
-import androidx.room.vo.PrimaryKey
-import androidx.room.vo.Properties
-import androidx.room.vo.Property
-import androidx.room.vo.PropertyGetter
-import androidx.room.vo.PropertySetter
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.compiler.processing.XConstructorElement
+import androidx.room3.compiler.processing.XElement
+import androidx.room3.compiler.processing.XFieldElement
+import androidx.room3.compiler.processing.XType
+import androidx.room3.compiler.processing.XTypeElement
+import androidx.room3.compiler.processing.util.XTestInvocation
+import androidx.room3.compiler.processing.util.runProcessorTest
+import androidx.room3.ext.CommonTypeNames
+import androidx.room3.parser.Collate
+import androidx.room3.parser.SQLTypeAffinity
+import androidx.room3.parser.SqlParser
+import androidx.room3.processor.Context
+import androidx.room3.testing.context
+import androidx.room3.vo.CallType
+import androidx.room3.vo.Constructor
+import androidx.room3.vo.Database
+import androidx.room3.vo.DatabaseView
+import androidx.room3.vo.Entity
+import androidx.room3.vo.PrimaryKey
+import androidx.room3.vo.Properties
+import androidx.room3.vo.Property
+import androidx.room3.vo.PropertyGetter
+import androidx.room3.vo.PropertySetter
 import java.sql.Connection
 import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.CoreMatchers.hasItem

@@ -16,7 +16,7 @@
 
 @file:JvmName("FtsOptions")
 
-package androidx.room
+package androidx.room3
 
 import kotlin.jvm.JvmName
 

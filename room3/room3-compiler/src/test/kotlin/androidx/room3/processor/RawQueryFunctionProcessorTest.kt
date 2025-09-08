@@ -14,29 +14,29 @@
  * limitations under the License.
  */
 
-package androidx.room.processor
+package androidx.room3.processor
 
 import COMMON
-import androidx.room.Dao
-import androidx.room.RawQuery
-import androidx.room.compiler.codegen.XClassName
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.compiler.processing.XTypeElement
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.XTestInvocation
-import androidx.room.compiler.processing.util.runProcessorTest
-import androidx.room.ext.CommonTypeNames
-import androidx.room.ext.GuavaUtilConcurrentTypeNames
-import androidx.room.ext.KotlinTypeNames
-import androidx.room.ext.LifecyclesTypeNames
-import androidx.room.ext.PagingTypeNames
-import androidx.room.ext.ReactiveStreamsTypeNames
-import androidx.room.ext.RxJava2TypeNames
-import androidx.room.ext.RxJava3TypeNames
-import androidx.room.ext.SupportDbTypeNames
-import androidx.room.processor.ProcessorErrors.RAW_QUERY_STRING_PARAMETER_REMOVED
-import androidx.room.testing.context
-import androidx.room.vo.RawQueryFunction
+import androidx.room3.Dao
+import androidx.room3.RawQuery
+import androidx.room3.compiler.codegen.XClassName
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.compiler.processing.XTypeElement
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.XTestInvocation
+import androidx.room3.compiler.processing.util.runProcessorTest
+import androidx.room3.ext.CommonTypeNames
+import androidx.room3.ext.GuavaUtilConcurrentTypeNames
+import androidx.room3.ext.KotlinTypeNames
+import androidx.room3.ext.LifecyclesTypeNames
+import androidx.room3.ext.PagingTypeNames
+import androidx.room3.ext.ReactiveStreamsTypeNames
+import androidx.room3.ext.RxJava2TypeNames
+import androidx.room3.ext.RxJava3TypeNames
+import androidx.room3.ext.SupportDbTypeNames
+import androidx.room3.processor.ProcessorErrors.RAW_QUERY_STRING_PARAMETER_REMOVED
+import androidx.room3.testing.context
+import androidx.room3.vo.RawQueryFunction
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
@@ -221,7 +221,7 @@ class RawQueryFunctionProcessorTest {
                     Source.kotlin(
                         "RawQuerySuspendUnitDao.kt",
                         """
-                    import androidx.room.RawQuery
+                    import androidx.room3.RawQuery
                     import androidx.sqlite.db.SupportSQLiteQuery
                     interface RawQuerySuspendUnitDao {
                         @RawQuery suspend fun foo(query: SupportSQLiteQuery)
@@ -735,7 +735,7 @@ class RawQueryFunctionProcessorTest {
             """
                 package foo.bar;
                 import androidx.annotation.NonNull;
-                import androidx.room.*;
+                import androidx.room3.*;
                 import androidx.sqlite.db.SupportSQLiteQuery;
                 import androidx.lifecycle.LiveData;
                 import java.util.*;
@@ -746,7 +746,7 @@ class RawQueryFunctionProcessorTest {
         const val DAO_PREFIX_KT =
             """
                 package foo.bar
-                import androidx.room.*
+                import androidx.room3.*
                 import java.util.*
                 import io.reactivex.*         
                 import io.reactivex.rxjava3.core.*

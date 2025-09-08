@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room
+package androidx.room3
 
 /** Entry point for building and initializing a [RoomDatabase]. */
 public expect object Room {

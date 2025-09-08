@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing
+package androidx.room3.compiler.processing
 
-import androidx.room.compiler.processing.javac.JavacElement
-import androidx.room.compiler.processing.ksp.KSFileAsOriginatingElement
-import androidx.room.compiler.processing.ksp.KspFileMemberContainer
-import androidx.room.compiler.processing.ksp.KspTypeElement
-import androidx.room.compiler.processing.ksp.wrapAsOriginatingElement
+import androidx.room3.compiler.processing.javac.JavacElement
+import androidx.room3.compiler.processing.ksp.KSFileAsOriginatingElement
+import androidx.room3.compiler.processing.ksp.KspFileMemberContainer
+import androidx.room3.compiler.processing.ksp.KspTypeElement
+import androidx.room3.compiler.processing.ksp.wrapAsOriginatingElement
 import javax.lang.model.element.Element
 import kotlin.contracts.contract
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing
+package androidx.room3.compiler.processing
 
 /**
  * Helper interface to enforce implementing equality in wrappers so that we don't by mistake create

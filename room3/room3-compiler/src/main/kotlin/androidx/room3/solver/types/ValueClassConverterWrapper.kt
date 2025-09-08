@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package androidx.room.solver.types
+package androidx.room3.solver.types
 
-import androidx.room.compiler.codegen.XCodeBlock
-import androidx.room.compiler.processing.XNullability
-import androidx.room.compiler.processing.XType
-import androidx.room.parser.SQLTypeAffinity
-import androidx.room.solver.CodeGenScope
+import androidx.room3.compiler.codegen.XCodeBlock
+import androidx.room3.compiler.processing.XNullability
+import androidx.room3.compiler.processing.XType
+import androidx.room3.parser.SQLTypeAffinity
+import androidx.room3.solver.CodeGenScope
 
 /**
  * ColumnTypeAdapter for Kotlin value classes that simply wraps and forwards calls to a found

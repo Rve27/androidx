@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.ksp
+package androidx.room3.compiler.processing.ksp
 
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.compiler.processing.XRawType
-import androidx.room.compiler.processing.rawTypeName
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.compiler.processing.XRawType
+import androidx.room3.compiler.processing.rawTypeName
 
 internal class KspRawType constructor(private val original: KspType) : XRawType {
     private val ksType by lazy { original.ksType.starProjection().makeNotNullable() }

@@ -14,25 +14,25 @@
  * limitations under the License.
  */
 
-package androidx.room.solver.binderprovider
+package androidx.room3.solver.binderprovider
 
-import androidx.room.compiler.codegen.XClassName
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.compiler.processing.XMethodElement
-import androidx.room.compiler.processing.XRawType
-import androidx.room.compiler.processing.XType
-import androidx.room.ext.CommonTypeNames
-import androidx.room.ext.CommonTypeNames.LIST
-import androidx.room.ext.PagingTypeNames
-import androidx.room.parser.ParsedQuery
-import androidx.room.processor.Context
-import androidx.room.processor.ProcessorErrors
-import androidx.room.solver.QueryResultBinderProvider
-import androidx.room.solver.TypeAdapterExtras
-import androidx.room.solver.query.result.ListQueryResultAdapter
-import androidx.room.solver.query.result.MultiTypedPagingSourceQueryResultBinder
-import androidx.room.solver.query.result.Paging3PagingSourceQueryResultBinder
-import androidx.room.solver.query.result.QueryResultBinder
+import androidx.room3.compiler.codegen.XClassName
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.compiler.processing.XMethodElement
+import androidx.room3.compiler.processing.XRawType
+import androidx.room3.compiler.processing.XType
+import androidx.room3.ext.CommonTypeNames
+import androidx.room3.ext.CommonTypeNames.LIST
+import androidx.room3.ext.PagingTypeNames
+import androidx.room3.parser.ParsedQuery
+import androidx.room3.processor.Context
+import androidx.room3.processor.ProcessorErrors
+import androidx.room3.solver.QueryResultBinderProvider
+import androidx.room3.solver.TypeAdapterExtras
+import androidx.room3.solver.query.result.ListQueryResultAdapter
+import androidx.room3.solver.query.result.MultiTypedPagingSourceQueryResultBinder
+import androidx.room3.solver.query.result.Paging3PagingSourceQueryResultBinder
+import androidx.room3.solver.query.result.QueryResultBinder
 
 class MultiTypedPagingSourceQueryResultBinderProvider(
     private val context: Context,

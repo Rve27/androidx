@@ -15,7 +15,7 @@
  */
 @file:JvmName("MigrationKt")
 
-package androidx.room.migration
+package androidx.room3.migration
 
 import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.db.SupportSQLiteDatabase
@@ -50,7 +50,7 @@ actual constructor(
      * composite transaction of all necessary `Migration`s.
      *
      * This function is only called when Room is configured without a driver. If a driver is set
-     * using [androidx.room.RoomDatabase.Builder.setDriver], then only the version that receives a
+     * using [androidx.room3.RoomDatabase.Builder.setDriver], then only the version that receives a
      * [SQLiteConnection] is called.
      *
      * @param db The database instance

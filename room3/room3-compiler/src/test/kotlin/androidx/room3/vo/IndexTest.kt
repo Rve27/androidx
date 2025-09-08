@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.room.vo
+package androidx.room3.vo
 
-import androidx.room.parser.SQLTypeAffinity
+import androidx.room3.parser.SQLTypeAffinity
 import mockElementAndType
 import org.hamcrest.CoreMatchers
 import org.hamcrest.MatcherAssert
@@ -24,7 +24,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 
-private typealias IndexOrder = androidx.room.Index.Order
+private typealias IndexOrder = androidx.room3.Index.Order
 
 @RunWith(JUnit4::class)
 class IndexTest {

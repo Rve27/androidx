@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.testapp.test;
+package androidx.room3.integration.testapp.test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 import android.content.Context;
 
-import androidx.room.Room;
-import androidx.room.integration.testapp.MusicTestDatabase;
-import androidx.room.integration.testapp.dao.MusicDao;
-import androidx.room.integration.testapp.vo.MultiSongPlaylistWithSongs;
-import androidx.room.integration.testapp.vo.Playlist;
-import androidx.room.integration.testapp.vo.PlaylistSongXRef;
-import androidx.room.integration.testapp.vo.PlaylistWithSongTitles;
-import androidx.room.integration.testapp.vo.PlaylistWithSongs;
-import androidx.room.integration.testapp.vo.Song;
+import androidx.room3.Room;
+import androidx.room3.integration.testapp.MusicTestDatabase;
+import androidx.room3.integration.testapp.dao.MusicDao;
+import androidx.room3.integration.testapp.vo.MultiSongPlaylistWithSongs;
+import androidx.room3.integration.testapp.vo.Playlist;
+import androidx.room3.integration.testapp.vo.PlaylistSongXRef;
+import androidx.room3.integration.testapp.vo.PlaylistWithSongTitles;
+import androidx.room3.integration.testapp.vo.PlaylistWithSongs;
+import androidx.room3.integration.testapp.vo.Song;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.MediumTest;

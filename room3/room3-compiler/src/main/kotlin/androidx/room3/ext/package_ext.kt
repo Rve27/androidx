@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.room.ext
+package androidx.room3.ext
 
-import androidx.room.RoomProcessor
+import androidx.room3.RoomProcessor
 
 /**
  * Map of dejetified packages names. Useful for letting Room know which packages names to use when
@@ -47,7 +47,7 @@ private val PACKAGE_NAME_OVERRIDES: Map<String, String> by lazy {
 }
 
 val SQLITE_PACKAGE = getOrDefault("androidx.sqlite")
-val ROOM_PACKAGE = getOrDefault("androidx.room")
+val ROOM_PACKAGE = getOrDefault("androidx.room3")
 val PAGING_PACKAGE = getOrDefault("androidx.paging")
 val LIFECYCLE_PACKAGE = getOrDefault("androidx.lifecycle")
 val COLLECTION_PACKAGE = getOrDefault("androidx.collection")

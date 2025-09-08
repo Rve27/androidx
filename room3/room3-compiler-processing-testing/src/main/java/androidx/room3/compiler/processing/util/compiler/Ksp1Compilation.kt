@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.util.compiler
+package androidx.room3.compiler.processing.util.compiler
 
-import androidx.room.compiler.processing.util.FileResource
-import androidx.room.compiler.processing.util.compiler.steps.CompilationStepArguments
-import androidx.room.compiler.processing.util.compiler.steps.CompilationStepResult
-import androidx.room.compiler.processing.util.compiler.steps.resolveDiagnostics
+import androidx.room3.compiler.processing.util.FileResource
+import androidx.room3.compiler.processing.util.compiler.steps.CompilationStepArguments
+import androidx.room3.compiler.processing.util.compiler.steps.CompilationStepResult
+import androidx.room3.compiler.processing.util.compiler.steps.resolveDiagnostics
 import com.google.devtools.ksp.KspOptions
 import com.google.devtools.ksp.processing.SymbolProcessorProvider
 import java.io.File

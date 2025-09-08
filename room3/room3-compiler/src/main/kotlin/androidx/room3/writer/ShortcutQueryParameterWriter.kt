@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package androidx.room.writer
+package androidx.room3.writer
 
-import androidx.room.compiler.codegen.CodeLanguage
-import androidx.room.compiler.codegen.XCodeBlock
-import androidx.room.compiler.codegen.asClassName
-import androidx.room.solver.CodeGenScope
-import androidx.room.vo.ShortcutQueryParameter
+import androidx.room3.compiler.codegen.CodeLanguage
+import androidx.room3.compiler.codegen.XCodeBlock
+import androidx.room3.compiler.codegen.asClassName
+import androidx.room3.solver.CodeGenScope
+import androidx.room3.vo.ShortcutQueryParameter
 
 /** Writer for [ShortcutQueryParameter] related statements. */
 object ShortcutQueryParameterWriter {

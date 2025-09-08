@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package androidx.room.vo
+package androidx.room3.vo
 
 import java.util.Locale
 
 /** Internal representation of supported warnings */
-// If these warnings are updated also update androidx.room.RoomWarnings
+// If these warnings are updated also update androidx.room3.RoomWarnings
 enum class Warning(val publicKey: String) {
     ALL("ALL"),
     @Deprecated("Replaced by QUERY_MISMATCH.", ReplaceWith("QUERY_MISMATCH"))

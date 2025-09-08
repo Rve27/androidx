@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.testapp.vo;
+package androidx.room3.integration.testapp.vo;
 
-import androidx.room.DatabaseView;
+import androidx.room3.DatabaseView;
 
 // View of join table with playlists with more than 1 song
 @DatabaseView("SELECT * FROM PlaylistSongXRef WHERE mPlaylistId IN (SELECT mPlaylistId FROM"

@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package androidx.room.solver.transaction.result
+package androidx.room3.solver.transaction.result
 
-import androidx.room.compiler.codegen.CodeLanguage
-import androidx.room.compiler.codegen.XClassName
-import androidx.room.compiler.codegen.XCodeBlock
-import androidx.room.ext.DEFAULT_IMPLS_CLASS_NAME
-import androidx.room.solver.CodeGenScope
-import androidx.room.vo.TransactionFunction
+import androidx.room3.compiler.codegen.CodeLanguage
+import androidx.room3.compiler.codegen.XClassName
+import androidx.room3.compiler.codegen.XCodeBlock
+import androidx.room3.ext.DEFAULT_IMPLS_CLASS_NAME
+import androidx.room3.solver.CodeGenScope
+import androidx.room3.vo.TransactionFunction
 
 /**
  * Class that knows how to generate the transaction function delegate code. Callers should take care

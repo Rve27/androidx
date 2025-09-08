@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.codegen
+package androidx.room3.compiler.codegen
 
 /** Represents a name (e.g. method name) which may differ in Java and Kotlin. */
 class XName internal constructor(internal val java: String, internal val kotlin: String) {

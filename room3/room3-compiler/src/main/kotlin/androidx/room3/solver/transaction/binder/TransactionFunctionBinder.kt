@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package androidx.room.solver.transaction.binder
+package androidx.room3.solver.transaction.binder
 
-import androidx.room.compiler.codegen.XClassName
-import androidx.room.compiler.codegen.XPropertySpec
-import androidx.room.solver.CodeGenScope
-import androidx.room.solver.transaction.result.TransactionFunctionAdapter
+import androidx.room3.compiler.codegen.XClassName
+import androidx.room3.compiler.codegen.XPropertySpec
+import androidx.room3.solver.CodeGenScope
+import androidx.room3.solver.transaction.result.TransactionFunctionAdapter
 
 /**
  * Connects a transaction function, database and a [TransactionFunctionAdapter].

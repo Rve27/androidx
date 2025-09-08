@@ -1,14 +1,14 @@
-package androidx.room.integration.kotlintestapp.test;
+package androidx.room3.integration.kotlintestapp.test;
 
 import androidx.annotation.NonNull;
-import androidx.room.DatabaseConfiguration;
-import androidx.room.InvalidationTracker;
-import androidx.room.RoomDatabase;
-import androidx.room.RoomOpenHelper;
-import androidx.room.migration.AutoMigrationSpec;
-import androidx.room.migration.Migration;
-import androidx.room.util.DBUtil;
-import androidx.room.util.TableInfo;
+import androidx.room3.DatabaseConfiguration;
+import androidx.room3.InvalidationTracker;
+import androidx.room3.RoomDatabase;
+import androidx.room3.RoomOpenHelper;
+import androidx.room3.migration.AutoMigrationSpec;
+import androidx.room3.migration.Migration;
+import androidx.room3.util.DBUtil;
+import androidx.room3.util.TableInfo;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 import androidx.sqlite.db.SupportSQLiteOpenHelper;
 import java.lang.Class;
@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.Set;
 import javax.annotation.processing.Generated;
 
-@Generated("androidx.room.RoomProcessor")
+@Generated("androidx.room3.RoomProcessor")
 @SuppressWarnings({"unchecked", "deprecation", "RestrictedApiAndroidX", "UnknownNullness"})
 public final class PreKmpDatabase_Impl extends PreKmpDatabase {
     private volatile PreKmpDatabase.TheDao _preKmpDatabase;
@@ -94,7 +94,7 @@ public final class PreKmpDatabase_Impl extends PreKmpDatabase {
                 final TableInfo _infoTheEntity = new TableInfo("TheEntity", _columnsTheEntity, _foreignKeysTheEntity, _indicesTheEntity);
                 final TableInfo _existingTheEntity = TableInfo.read(db, "TheEntity");
                 if (!_infoTheEntity.equals(_existingTheEntity)) {
-                    return new RoomOpenHelper.ValidationResult(false, "TheEntity(androidx.room.integration.kotlintestapp.test.PreKmpDatabase.TheEntity).\n"
+                    return new RoomOpenHelper.ValidationResult(false, "TheEntity(androidx.room3.integration.kotlintestapp.test.PreKmpDatabase.TheEntity).\n"
                             + " Expected:\n" + _infoTheEntity + "\n"
                             + " Found:\n" + _existingTheEntity);
                 }

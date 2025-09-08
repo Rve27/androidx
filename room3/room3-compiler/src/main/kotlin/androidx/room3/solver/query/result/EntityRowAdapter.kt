@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-package androidx.room.solver.query.result
+package androidx.room3.solver.query.result
 
-import androidx.room.compiler.codegen.XCodeBlock
-import androidx.room.compiler.codegen.XFunSpec
-import androidx.room.compiler.codegen.XMemberName.Companion.packageMember
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.compiler.codegen.compat.XConverters.toString
-import androidx.room.compiler.processing.XType
-import androidx.room.ext.ArrayLiteral
-import androidx.room.ext.CommonTypeNames
-import androidx.room.ext.RoomTypeNames.STATEMENT_UTIL
-import androidx.room.ext.SQLiteDriverTypeNames
-import androidx.room.solver.CodeGenScope
-import androidx.room.vo.ColumnIndexVar
-import androidx.room.vo.Entity
-import androidx.room.vo.columnNames
-import androidx.room.writer.EntityStatementConverterWriter
+import androidx.room3.compiler.codegen.XCodeBlock
+import androidx.room3.compiler.codegen.XFunSpec
+import androidx.room3.compiler.codegen.XMemberName.Companion.packageMember
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.compiler.codegen.compat.XConverters.toString
+import androidx.room3.compiler.processing.XType
+import androidx.room3.ext.ArrayLiteral
+import androidx.room3.ext.CommonTypeNames
+import androidx.room3.ext.RoomTypeNames.STATEMENT_UTIL
+import androidx.room3.ext.SQLiteDriverTypeNames
+import androidx.room3.solver.CodeGenScope
+import androidx.room3.vo.ColumnIndexVar
+import androidx.room3.vo.Entity
+import androidx.room3.vo.columnNames
+import androidx.room3.writer.EntityStatementConverterWriter
 
 class EntityRowAdapter(val entity: Entity, out: XType) : QueryMappedRowAdapter(out) {
     override val mapping = EntityMapping(entity)

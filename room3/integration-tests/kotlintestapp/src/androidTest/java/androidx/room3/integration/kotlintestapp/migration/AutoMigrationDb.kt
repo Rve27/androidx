@@ -13,27 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.room.integration.kotlintestapp.migration
+package androidx.room3.integration.kotlintestapp.migration
 
-import androidx.room.AutoMigration
-import androidx.room.ColumnInfo
-import androidx.room.Dao
-import androidx.room.Database
-import androidx.room.DatabaseView
-import androidx.room.DeleteColumn
-import androidx.room.DeleteTable
-import androidx.room.Entity
-import androidx.room.ForeignKey
-import androidx.room.Fts3
-import androidx.room.Fts4
-import androidx.room.FtsOptions
-import androidx.room.Index
-import androidx.room.PrimaryKey
-import androidx.room.Query
-import androidx.room.RenameColumn
-import androidx.room.RenameTable
-import androidx.room.RoomDatabase
-import androidx.room.migration.AutoMigrationSpec
+import androidx.room3.AutoMigration
+import androidx.room3.ColumnInfo
+import androidx.room3.Dao
+import androidx.room3.Database
+import androidx.room3.DatabaseView
+import androidx.room3.DeleteColumn
+import androidx.room3.DeleteTable
+import androidx.room3.Entity
+import androidx.room3.ForeignKey
+import androidx.room3.Fts3
+import androidx.room3.Fts4
+import androidx.room3.FtsOptions
+import androidx.room3.Index
+import androidx.room3.PrimaryKey
+import androidx.room3.Query
+import androidx.room3.RenameColumn
+import androidx.room3.RenameTable
+import androidx.room3.RoomDatabase
+import androidx.room3.migration.AutoMigrationSpec
 import androidx.sqlite.db.SupportSQLiteDatabase
 
 @Database(

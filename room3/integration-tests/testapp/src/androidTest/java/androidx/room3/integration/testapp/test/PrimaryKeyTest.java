@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.testapp.test;
+package androidx.room3.integration.testapp.test;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -24,12 +24,12 @@ import static org.junit.Assert.assertNotNull;
 
 import android.database.sqlite.SQLiteConstraintException;
 
-import androidx.room.Room;
-import androidx.room.integration.testapp.PKeyTestDatabase;
-import androidx.room.integration.testapp.vo.IntAutoIncPKeyEntity;
-import androidx.room.integration.testapp.vo.IntegerAutoIncPKeyEntity;
-import androidx.room.integration.testapp.vo.IntegerPKeyEntity;
-import androidx.room.integration.testapp.vo.ObjectPKeyEntity;
+import androidx.room3.Room;
+import androidx.room3.integration.testapp.PKeyTestDatabase;
+import androidx.room3.integration.testapp.vo.IntAutoIncPKeyEntity;
+import androidx.room3.integration.testapp.vo.IntegerAutoIncPKeyEntity;
+import androidx.room3.integration.testapp.vo.IntegerPKeyEntity;
+import androidx.room3.integration.testapp.vo.ObjectPKeyEntity;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.SmallTest;

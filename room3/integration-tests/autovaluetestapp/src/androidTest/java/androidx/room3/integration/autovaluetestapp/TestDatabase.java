@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.autovaluetestapp;
+package androidx.room3.integration.autovaluetestapp;
 
-import androidx.room.Database;
-import androidx.room.RoomDatabase;
-import androidx.room.integration.autovaluetestapp.dao.ParcelableEntityDao;
-import androidx.room.integration.autovaluetestapp.dao.PersonDao;
-import androidx.room.integration.autovaluetestapp.dao.PetDao;
-import androidx.room.integration.autovaluetestapp.vo.DogWithOwner;
-import androidx.room.integration.autovaluetestapp.vo.ParcelableEntity;
-import androidx.room.integration.autovaluetestapp.vo.Person;
-import androidx.room.integration.autovaluetestapp.vo.Pet;
+import androidx.room3.Database;
+import androidx.room3.RoomDatabase;
+import androidx.room3.integration.autovaluetestapp.dao.ParcelableEntityDao;
+import androidx.room3.integration.autovaluetestapp.dao.PersonDao;
+import androidx.room3.integration.autovaluetestapp.dao.PetDao;
+import androidx.room3.integration.autovaluetestapp.vo.DogWithOwner;
+import androidx.room3.integration.autovaluetestapp.vo.ParcelableEntity;
+import androidx.room3.integration.autovaluetestapp.vo.Person;
+import androidx.room3.integration.autovaluetestapp.vo.Pet;
 
 @Database(entities = {Person.class, Pet.Cat.class, Pet.Dog.class, ParcelableEntity.class},
         views = {DogWithOwner.class},

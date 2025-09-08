@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.util
+package androidx.room3.compiler.processing.util
 
-import androidx.room.compiler.processing.XProcessingEnvConfig
-import androidx.room.compiler.processing.XProcessingEnvironmentTestConfigProvider
+import androidx.room3.compiler.processing.XProcessingEnvConfig
+import androidx.room3.compiler.processing.XProcessingEnvironmentTestConfigProvider
 
 class TestDefaultEnvironmentConfigProvider : XProcessingEnvironmentTestConfigProvider {
     init {

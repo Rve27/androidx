@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room
+package androidx.room3
 
 /**
  * Marks a method as a type converter. A class can have as many @TypeConverter methods as it needs.

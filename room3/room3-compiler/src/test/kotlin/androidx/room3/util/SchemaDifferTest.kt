@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package androidx.room.util
+package androidx.room3.util
 
 import androidx.kruth.assertThat
-import androidx.room.migration.bundle.DatabaseBundle
-import androidx.room.migration.bundle.EntityBundle
-import androidx.room.migration.bundle.FieldBundle
-import androidx.room.migration.bundle.ForeignKeyBundle
-import androidx.room.migration.bundle.IndexBundle
-import androidx.room.migration.bundle.PrimaryKeyBundle
-import androidx.room.migration.bundle.SchemaBundle
-import androidx.room.migration.bundle.TABLE_NAME_PLACEHOLDER
-import androidx.room.processor.ProcessorErrors
-import androidx.room.vo.AutoMigration
+import androidx.room3.migration.bundle.DatabaseBundle
+import androidx.room3.migration.bundle.EntityBundle
+import androidx.room3.migration.bundle.FieldBundle
+import androidx.room3.migration.bundle.ForeignKeyBundle
+import androidx.room3.migration.bundle.IndexBundle
+import androidx.room3.migration.bundle.PrimaryKeyBundle
+import androidx.room3.migration.bundle.SchemaBundle
+import androidx.room3.migration.bundle.TABLE_NAME_PLACEHOLDER
+import androidx.room3.processor.ProcessorErrors
+import androidx.room3.vo.AutoMigration
 import org.junit.Assert.fail
 import org.junit.Test
 

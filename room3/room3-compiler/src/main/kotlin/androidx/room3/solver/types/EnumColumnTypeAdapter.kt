@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package androidx.room.solver.types
+package androidx.room3.solver.types
 
-import androidx.room.compiler.codegen.CodeLanguage
-import androidx.room.compiler.codegen.XCodeBlock
-import androidx.room.compiler.codegen.XFunSpec
-import androidx.room.compiler.codegen.buildCodeBlock
-import androidx.room.compiler.processing.XEnumTypeElement
-import androidx.room.compiler.processing.XNullability
-import androidx.room.compiler.processing.XType
-import androidx.room.ext.CommonTypeNames
-import androidx.room.ext.ExceptionTypeNames
-import androidx.room.parser.SQLTypeAffinity.TEXT
-import androidx.room.solver.CodeGenScope
-import androidx.room.writer.TypeWriter
+import androidx.room3.compiler.codegen.CodeLanguage
+import androidx.room3.compiler.codegen.XCodeBlock
+import androidx.room3.compiler.codegen.XFunSpec
+import androidx.room3.compiler.codegen.buildCodeBlock
+import androidx.room3.compiler.processing.XEnumTypeElement
+import androidx.room3.compiler.processing.XNullability
+import androidx.room3.compiler.processing.XType
+import androidx.room3.ext.CommonTypeNames
+import androidx.room3.ext.ExceptionTypeNames
+import androidx.room3.parser.SQLTypeAffinity.TEXT
+import androidx.room3.solver.CodeGenScope
+import androidx.room3.writer.TypeWriter
 
 /** Uses enum string representation. */
 class EnumColumnTypeAdapter(private val enumTypeElement: XEnumTypeElement, out: XType) :

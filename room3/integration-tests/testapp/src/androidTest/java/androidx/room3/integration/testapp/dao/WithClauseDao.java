@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.testapp.dao;
+package androidx.room3.integration.testapp.dao;
 
 import android.os.Build;
 
 import androidx.annotation.RequiresApi;
 import androidx.lifecycle.LiveData;
-import androidx.room.Dao;
-import androidx.room.Query;
+import androidx.room3.Dao;
+import androidx.room3.Query;
 
 import java.util.List;
 

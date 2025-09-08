@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package androidx.room
+package androidx.room3
 
-import androidx.room.compiler.processing.XProcessingEnvConfig
-import androidx.room.compiler.processing.XProcessingEnvironmentTestConfigProvider
+import androidx.room3.compiler.processing.XProcessingEnvConfig
+import androidx.room3.compiler.processing.XProcessingEnvironmentTestConfigProvider
 
 class RoomTestEnvConfigProvider : XProcessingEnvironmentTestConfigProvider {
     override fun configure(options: Map<String, String>): XProcessingEnvConfig {

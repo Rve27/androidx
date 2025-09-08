@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package androidx.room
+package androidx.room3
 
-import androidx.room.compiler.processing.XProcessingEnv
-import androidx.room.compiler.processing.XRoundEnv
-import androidx.room.compiler.processing.javac.JavacBasicAnnotationProcessor
-import androidx.room.processor.Context
-import androidx.room.processor.ProcessorErrors
-import androidx.room.util.SimpleJavaVersion
-import androidx.room.verifier.DatabaseVerifier
-import androidx.room.vo.Warning
+import androidx.room3.compiler.processing.XProcessingEnv
+import androidx.room3.compiler.processing.XRoundEnv
+import androidx.room3.compiler.processing.javac.JavacBasicAnnotationProcessor
+import androidx.room3.processor.Context
+import androidx.room3.processor.ProcessorErrors
+import androidx.room3.util.SimpleJavaVersion
+import androidx.room3.verifier.DatabaseVerifier
+import androidx.room3.vo.Warning
 import javax.lang.model.SourceVersion
 
 /** Annotation processor option to tell Gradle that Room is an isolating annotation processor. */

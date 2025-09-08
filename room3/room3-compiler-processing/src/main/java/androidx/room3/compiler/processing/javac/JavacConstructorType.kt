@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.javac
+package androidx.room3.compiler.processing.javac
 
-import androidx.room.compiler.processing.XConstructorType
+import androidx.room3.compiler.processing.XConstructorType
 import javax.lang.model.type.ExecutableType
 
 internal class JavacConstructorType(

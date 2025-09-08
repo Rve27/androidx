@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.room.gradle
+package androidx.room3.gradle
 
-import androidx.room.gradle.util.capitalize
+import androidx.room3.gradle.util.capitalize
 import javax.inject.Inject
 import org.gradle.api.Project
 import org.gradle.api.file.Directory

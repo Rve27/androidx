@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.testapp.dao;
+package androidx.room3.integration.testapp.dao;
 
-import androidx.room.Dao;
-import androidx.room.Insert;
-import androidx.room.Query;
-import androidx.room.integration.testapp.vo.Product;
+import androidx.room3.Dao;
+import androidx.room3.Insert;
+import androidx.room3.Query;
+import androidx.room3.integration.testapp.vo.Product;
 
 import org.jspecify.annotations.NonNull;
 

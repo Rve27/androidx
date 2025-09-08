@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing
+package androidx.room3.compiler.processing
 
 import androidx.kruth.assertThat
-import androidx.room.compiler.codegen.JArrayTypeName
-import androidx.room.compiler.processing.util.KOTLINC_LANGUAGE_1_9_ARGS
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.XTestInvocation
-import androidx.room.compiler.processing.util.asJClassName
-import androidx.room.compiler.processing.util.asKClassName
-import androidx.room.compiler.processing.util.compileFiles
-import androidx.room.compiler.processing.util.runProcessorTest
+import androidx.room3.compiler.codegen.JArrayTypeName
+import androidx.room3.compiler.processing.util.KOTLINC_LANGUAGE_1_9_ARGS
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.XTestInvocation
+import androidx.room3.compiler.processing.util.asJClassName
+import androidx.room3.compiler.processing.util.asKClassName
+import androidx.room3.compiler.processing.util.compileFiles
+import androidx.room3.compiler.processing.util.runProcessorTest
 import com.squareup.kotlinpoet.ARRAY
 import com.squareup.kotlinpoet.BOOLEAN
 import com.squareup.kotlinpoet.BOOLEAN_ARRAY

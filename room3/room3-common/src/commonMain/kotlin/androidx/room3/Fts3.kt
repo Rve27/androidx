@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.room
+package androidx.room3
 
-import androidx.room.FtsOptions.TOKENIZER_SIMPLE
+import androidx.room3.FtsOptions.TOKENIZER_SIMPLE
 
 /**
  * Marks an [Entity] annotated class as a FTS3 entity. This class will have a mapping SQLite FTS3

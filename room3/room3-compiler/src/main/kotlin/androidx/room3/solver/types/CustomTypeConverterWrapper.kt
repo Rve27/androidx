@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-package androidx.room.solver.types
+package androidx.room3.solver.types
 
-import androidx.room.ProvidedTypeConverter
-import androidx.room.compiler.codegen.CodeLanguage
-import androidx.room.compiler.codegen.XClassName
-import androidx.room.compiler.codegen.XCodeBlock
-import androidx.room.compiler.codegen.XFunSpec
-import androidx.room.compiler.codegen.XPropertySpec
-import androidx.room.compiler.codegen.XPropertySpec.Builder.Companion.applyTo
-import androidx.room.compiler.codegen.buildCodeBlock
-import androidx.room.compiler.codegen.compat.XConverters.applyToJavaPoet
-import androidx.room.ext.KotlinTypeNames
-import androidx.room.ext.decapitalize
-import androidx.room.solver.CodeGenScope
-import androidx.room.vo.CustomTypeConverter
-import androidx.room.writer.DaoWriter
-import androidx.room.writer.TypeWriter
+import androidx.room3.ProvidedTypeConverter
+import androidx.room3.compiler.codegen.CodeLanguage
+import androidx.room3.compiler.codegen.XClassName
+import androidx.room3.compiler.codegen.XCodeBlock
+import androidx.room3.compiler.codegen.XFunSpec
+import androidx.room3.compiler.codegen.XPropertySpec
+import androidx.room3.compiler.codegen.XPropertySpec.Builder.Companion.applyTo
+import androidx.room3.compiler.codegen.buildCodeBlock
+import androidx.room3.compiler.codegen.compat.XConverters.applyToJavaPoet
+import androidx.room3.ext.KotlinTypeNames
+import androidx.room3.ext.decapitalize
+import androidx.room3.solver.CodeGenScope
+import androidx.room3.vo.CustomTypeConverter
+import androidx.room3.writer.DaoWriter
+import androidx.room3.writer.TypeWriter
 import java.util.Locale
 import javax.lang.model.element.Modifier
 

@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package androidx.room.vo
+package androidx.room3.vo
 
-import androidx.room.compiler.processing.XType
-import androidx.room.compiler.processing.XTypeElement
-import androidx.room.migration.bundle.DatabaseViewBundle
-import androidx.room.migration.bundle.VIEW_NAME_PLACEHOLDER
-import androidx.room.parser.ParsedQuery
+import androidx.room3.compiler.processing.XType
+import androidx.room3.compiler.processing.XTypeElement
+import androidx.room3.migration.bundle.DatabaseViewBundle
+import androidx.room3.migration.bundle.VIEW_NAME_PLACEHOLDER
+import androidx.room3.parser.ParsedQuery
 
 class DatabaseView(
     element: XTypeElement,

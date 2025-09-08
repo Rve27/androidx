@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package androidx.room.processor
+package androidx.room3.processor
 
-import androidx.room.Upsert
-import androidx.room.compiler.processing.XMethodElement
-import androidx.room.compiler.processing.XType
-import androidx.room.vo.UpsertFunction
-import androidx.room.vo.findPropertyByColumnName
+import androidx.room3.Upsert
+import androidx.room3.compiler.processing.XMethodElement
+import androidx.room3.compiler.processing.XType
+import androidx.room3.vo.UpsertFunction
+import androidx.room3.vo.findPropertyByColumnName
 
 class UpsertFunctionProcessor(
     baseContext: Context,

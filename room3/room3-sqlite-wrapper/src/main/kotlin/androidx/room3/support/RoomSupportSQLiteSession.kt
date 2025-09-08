@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package androidx.room.support
+package androidx.room3.support
 
 import android.database.sqlite.SQLiteTransactionListener
 import androidx.concurrent.futures.CallbackToFutureAdapter
-import androidx.room.RoomDatabase
-import androidx.room.Transactor
-import androidx.room.Transactor.SQLiteTransactionType
-import androidx.room.useReaderConnection
-import androidx.room.useWriterConnection
+import androidx.room3.RoomDatabase
+import androidx.room3.Transactor
+import androidx.room3.Transactor.SQLiteTransactionType
+import androidx.room3.useReaderConnection
+import androidx.room3.useWriterConnection
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.atomic.AtomicBoolean

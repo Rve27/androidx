@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room
+package androidx.room3
 
 /**
  * Declares which column(s) are used to build a map or multimap return value in a [Dao] query

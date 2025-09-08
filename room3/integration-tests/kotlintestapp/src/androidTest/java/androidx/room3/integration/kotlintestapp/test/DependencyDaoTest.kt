@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.room.integration.kotlintestapp.test
+package androidx.room3.integration.kotlintestapp.test
 
-import androidx.room.integration.kotlintestapp.dao.DependencyDao
-import androidx.room.integration.kotlintestapp.vo.DataClassFromDependency
-import androidx.room.integration.kotlintestapp.vo.EmbeddedFromDependency
-import androidx.room.integration.kotlintestapp.vo.PojoFromDependency
+import androidx.room3.integration.kotlintestapp.dao.DependencyDao
+import androidx.room3.integration.kotlintestapp.vo.DataClassFromDependency
+import androidx.room3.integration.kotlintestapp.vo.EmbeddedFromDependency
+import androidx.room3.integration.kotlintestapp.vo.PojoFromDependency
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
 import org.hamcrest.CoreMatchers.`is`

@@ -30,18 +30,18 @@
  * limitations under the License.
  */
 
-package androidx.room.processor
+package androidx.room3.processor
 
-import androidx.room.FtsOptions
-import androidx.room.compiler.codegen.CodeLanguage
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.parser.FtsVersion
-import androidx.room.parser.SQLTypeAffinity
-import androidx.room.vo.CallType
-import androidx.room.vo.Properties
-import androidx.room.vo.Property
-import androidx.room.vo.PropertyGetter
-import androidx.room.vo.PropertySetter
+import androidx.room3.FtsOptions
+import androidx.room3.compiler.codegen.CodeLanguage
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.parser.FtsVersion
+import androidx.room3.parser.SQLTypeAffinity
+import androidx.room3.vo.CallType
+import androidx.room3.vo.Properties
+import androidx.room3.vo.Property
+import androidx.room3.vo.PropertyGetter
+import androidx.room3.vo.PropertySetter
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test

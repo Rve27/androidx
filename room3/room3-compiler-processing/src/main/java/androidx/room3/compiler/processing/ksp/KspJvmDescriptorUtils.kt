@@ -14,26 +14,26 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.ksp
+package androidx.room3.compiler.processing.ksp
 
-import androidx.room.compiler.processing.XConstructorType
-import androidx.room.compiler.processing.XExecutableType
-import androidx.room.compiler.processing.XMethodType
-import androidx.room.compiler.processing.XType
-import androidx.room.compiler.processing.isArray
-import androidx.room.compiler.processing.isBoolean
-import androidx.room.compiler.processing.isByte
-import androidx.room.compiler.processing.isChar
-import androidx.room.compiler.processing.isDouble
-import androidx.room.compiler.processing.isFloat
-import androidx.room.compiler.processing.isInt
-import androidx.room.compiler.processing.isKotlinUnit
-import androidx.room.compiler.processing.isLong
-import androidx.room.compiler.processing.isShort
-import androidx.room.compiler.processing.isTypeVariable
-import androidx.room.compiler.processing.isVoid
-import androidx.room.compiler.processing.isVoidObject
-import androidx.room.compiler.processing.ksp.synthetic.KspSyntheticPropertyMethodElement
+import androidx.room3.compiler.processing.XConstructorType
+import androidx.room3.compiler.processing.XExecutableType
+import androidx.room3.compiler.processing.XMethodType
+import androidx.room3.compiler.processing.XType
+import androidx.room3.compiler.processing.isArray
+import androidx.room3.compiler.processing.isBoolean
+import androidx.room3.compiler.processing.isByte
+import androidx.room3.compiler.processing.isChar
+import androidx.room3.compiler.processing.isDouble
+import androidx.room3.compiler.processing.isFloat
+import androidx.room3.compiler.processing.isInt
+import androidx.room3.compiler.processing.isKotlinUnit
+import androidx.room3.compiler.processing.isLong
+import androidx.room3.compiler.processing.isShort
+import androidx.room3.compiler.processing.isTypeVariable
+import androidx.room3.compiler.processing.isVoid
+import androidx.room3.compiler.processing.isVoidObject
+import androidx.room3.compiler.processing.ksp.synthetic.KspSyntheticPropertyMethodElement
 
 /**
  * Returns the method descriptor of this KSP field element.

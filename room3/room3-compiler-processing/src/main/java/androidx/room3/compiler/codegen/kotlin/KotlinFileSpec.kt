@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.codegen.kotlin
+package androidx.room3.compiler.codegen.kotlin
 
-import androidx.room.compiler.codegen.CodeLanguage
-import androidx.room.compiler.codegen.KFileSpec
-import androidx.room.compiler.codegen.KFileSpecBuilder
-import androidx.room.compiler.codegen.XCodeBlock
-import androidx.room.compiler.codegen.XFileSpec
-import androidx.room.compiler.codegen.impl.XCodeBlockImpl
-import androidx.room.compiler.processing.XFiler
+import androidx.room3.compiler.codegen.CodeLanguage
+import androidx.room3.compiler.codegen.KFileSpec
+import androidx.room3.compiler.codegen.KFileSpecBuilder
+import androidx.room3.compiler.codegen.XCodeBlock
+import androidx.room3.compiler.codegen.XFileSpec
+import androidx.room3.compiler.codegen.impl.XCodeBlockImpl
+import androidx.room3.compiler.processing.XFiler
 
 internal class KotlinFileSpec(override val actual: KFileSpec) : KotlinSpec<KFileSpec>(), XFileSpec {
 

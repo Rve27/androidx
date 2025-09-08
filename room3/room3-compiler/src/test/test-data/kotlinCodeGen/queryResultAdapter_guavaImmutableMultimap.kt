@@ -1,6 +1,6 @@
-import androidx.room.RoomDatabase
-import androidx.room.util.getColumnIndexOrThrow
-import androidx.room.util.performBlocking
+import androidx.room3.RoomDatabase
+import androidx.room3.util.getColumnIndexOrThrow
+import androidx.room3.util.performBlocking
 import androidx.sqlite.SQLiteStatement
 import com.google.common.collect.ImmutableListMultimap
 import com.google.common.collect.ImmutableSetMultimap
@@ -11,7 +11,7 @@ import kotlin.Suppress
 import kotlin.collections.List
 import kotlin.reflect.KClass
 
-@Generated(value = ["androidx.room.RoomProcessor"])
+@Generated(value = ["androidx.room3.RoomProcessor"])
 @Suppress(names = ["UNCHECKED_CAST", "DEPRECATION", "REDUNDANT_PROJECTION", "REMOVAL"])
 public class MyDao_Impl(
   __db: RoomDatabase,

@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package androidx.room.processor
+package androidx.room3.processor
 
 import androidx.kruth.assertThat
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.compiler.processing.XMethodElement
-import androidx.room.compiler.processing.XType
-import androidx.room.processor.ProcessorErrors.CANNOT_FIND_INSERT_RESULT_ADAPTER
-import androidx.room.processor.ProcessorErrors.INSERT_DOES_NOT_HAVE_ANY_PARAMETERS_TO_INSERT
-import androidx.room.processor.ProcessorErrors.INSERT_MULTI_PARAM_SINGLE_RETURN_MISMATCH
-import androidx.room.processor.ProcessorErrors.INSERT_SINGLE_PARAM_MULTI_RETURN_MISMATCH
-import androidx.room.vo.InsertFunction
+import androidx.room3.Insert
+import androidx.room3.OnConflictStrategy
+import androidx.room3.compiler.processing.XMethodElement
+import androidx.room3.compiler.processing.XType
+import androidx.room3.processor.ProcessorErrors.CANNOT_FIND_INSERT_RESULT_ADAPTER
+import androidx.room3.processor.ProcessorErrors.INSERT_DOES_NOT_HAVE_ANY_PARAMETERS_TO_INSERT
+import androidx.room3.processor.ProcessorErrors.INSERT_MULTI_PARAM_SINGLE_RETURN_MISMATCH
+import androidx.room3.processor.ProcessorErrors.INSERT_SINGLE_PARAM_MULTI_RETURN_MISMATCH
+import androidx.room3.vo.InsertFunction
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4

@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.testapp.paging;
+package androidx.room3.integration.testapp.paging;
 
 import static com.google.common.truth.Truth.assertThat;
 
 import androidx.paging.PagingSource;
-import androidx.room.integration.testapp.test.TestDatabaseTest;
-import androidx.room.integration.testapp.vo.User;
+import androidx.room3.integration.testapp.test.TestDatabaseTest;
+import androidx.room3.integration.testapp.vo.User;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 

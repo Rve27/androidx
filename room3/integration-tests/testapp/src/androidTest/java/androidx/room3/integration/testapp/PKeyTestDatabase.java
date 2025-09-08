@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.testapp;
+package androidx.room3.integration.testapp;
 
-import androidx.room.Dao;
-import androidx.room.Database;
-import androidx.room.Insert;
-import androidx.room.Query;
-import androidx.room.RoomDatabase;
-import androidx.room.integration.testapp.vo.IntAutoIncPKeyEntity;
-import androidx.room.integration.testapp.vo.IntegerAutoIncPKeyEntity;
-import androidx.room.integration.testapp.vo.IntegerPKeyEntity;
-import androidx.room.integration.testapp.vo.ObjectPKeyEntity;
+import androidx.room3.Dao;
+import androidx.room3.Database;
+import androidx.room3.Insert;
+import androidx.room3.Query;
+import androidx.room3.RoomDatabase;
+import androidx.room3.integration.testapp.vo.IntAutoIncPKeyEntity;
+import androidx.room3.integration.testapp.vo.IntegerAutoIncPKeyEntity;
+import androidx.room3.integration.testapp.vo.IntegerPKeyEntity;
+import androidx.room3.integration.testapp.vo.ObjectPKeyEntity;
 
 import java.util.List;
 

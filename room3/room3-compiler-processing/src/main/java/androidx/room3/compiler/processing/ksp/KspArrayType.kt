@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.ksp
+package androidx.room3.compiler.processing.ksp
 
-import androidx.room.compiler.codegen.JArrayTypeName
-import androidx.room.compiler.processing.XArrayType
-import androidx.room.compiler.processing.XNullability
-import androidx.room.compiler.processing.XType
+import androidx.room3.compiler.codegen.JArrayTypeName
+import androidx.room3.compiler.processing.XArrayType
+import androidx.room3.compiler.processing.XNullability
+import androidx.room3.compiler.processing.XType
 import com.google.devtools.ksp.symbol.KSAnnotation
 import com.google.devtools.ksp.symbol.KSType
 import com.google.devtools.ksp.symbol.Variance

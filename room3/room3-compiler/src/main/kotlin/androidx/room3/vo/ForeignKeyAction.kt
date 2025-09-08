@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.room.vo
+package androidx.room3.vo
 
-import androidx.room.ForeignKey
+import androidx.room3.ForeignKey
 
 /** Compiler representation of ForeignKey#Action. */
 enum class ForeignKeyAction(val annotationValue: Int, val sqlName: String) {

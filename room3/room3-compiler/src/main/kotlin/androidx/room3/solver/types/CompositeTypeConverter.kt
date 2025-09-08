@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.room.solver.types
+package androidx.room3.solver.types
 
-import androidx.room.solver.CodeGenScope
+import androidx.room3.solver.CodeGenScope
 
 /** combines 2 type converters */
 class CompositeTypeConverter(val conv1: TypeConverter, val conv2: TypeConverter) :

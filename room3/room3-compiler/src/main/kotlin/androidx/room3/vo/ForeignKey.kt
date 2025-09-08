@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.room.vo
+package androidx.room3.vo
 
-import androidx.room.migration.bundle.ForeignKeyBundle
+import androidx.room3.migration.bundle.ForeignKeyBundle
 
 /** Keeps information about a foreign key. */
 data class ForeignKey(

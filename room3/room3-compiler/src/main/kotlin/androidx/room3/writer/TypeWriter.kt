@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package androidx.room.writer
+package androidx.room3.writer
 
-import androidx.room.RoomProcessor
-import androidx.room.compiler.codegen.CodeLanguage
-import androidx.room.compiler.codegen.VisibilityModifier
-import androidx.room.compiler.codegen.XFunSpec
-import androidx.room.compiler.codegen.XPropertySpec
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.compiler.codegen.XTypeSpec
-import androidx.room.compiler.codegen.compat.XConverters.applyToJavaPoet
-import androidx.room.compiler.codegen.compat.XConverters.applyToKotlinPoet
-import androidx.room.compiler.processing.XProcessingEnv
-import androidx.room.compiler.processing.writeTo
-import androidx.room.processor.Context
-import androidx.room.solver.CodeGenScope
+import androidx.room3.RoomProcessor
+import androidx.room3.compiler.codegen.CodeLanguage
+import androidx.room3.compiler.codegen.VisibilityModifier
+import androidx.room3.compiler.codegen.XFunSpec
+import androidx.room3.compiler.codegen.XPropertySpec
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.compiler.codegen.XTypeSpec
+import androidx.room3.compiler.codegen.compat.XConverters.applyToJavaPoet
+import androidx.room3.compiler.codegen.compat.XConverters.applyToKotlinPoet
+import androidx.room3.compiler.processing.XProcessingEnv
+import androidx.room3.compiler.processing.writeTo
+import androidx.room3.processor.Context
+import androidx.room3.solver.CodeGenScope
 import com.squareup.kotlinpoet.javapoet.JAnnotationSpec
 import com.squareup.kotlinpoet.javapoet.JClassName
 import com.squareup.kotlinpoet.javapoet.KAnnotationSpec

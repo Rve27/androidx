@@ -16,12 +16,12 @@
 
 @file:JvmName("RoomSupportSQLite")
 
-package androidx.room.support
+package androidx.room3.support
 
 import android.database.Cursor
 import android.database.MatrixCursor
-import androidx.room.PooledConnection
-import androidx.room.RoomDatabase
+import androidx.room3.PooledConnection
+import androidx.room3.RoomDatabase
 import androidx.sqlite.SQLITE_DATA_BLOB
 import androidx.sqlite.SQLITE_DATA_FLOAT
 import androidx.sqlite.SQLITE_DATA_INTEGER

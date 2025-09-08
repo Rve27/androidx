@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-package androidx.room.writer
+package androidx.room3.writer
 
-import androidx.room.compiler.codegen.CodeLanguage
-import androidx.room.compiler.codegen.XCodeBlock
-import androidx.room.compiler.codegen.XCodeBlock.Builder.Companion.applyTo
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.compiler.processing.XNullability
-import androidx.room.ext.capitalize
-import androidx.room.ext.defaultValue
-import androidx.room.solver.CodeGenScope
-import androidx.room.vo.CallType
-import androidx.room.vo.Constructor
-import androidx.room.vo.DataClass
-import androidx.room.vo.EmbeddedProperty
-import androidx.room.vo.Property
-import androidx.room.vo.PropertyWithIndex
-import androidx.room.vo.RelationCollector
+import androidx.room3.compiler.codegen.CodeLanguage
+import androidx.room3.compiler.codegen.XCodeBlock
+import androidx.room3.compiler.codegen.XCodeBlock.Builder.Companion.applyTo
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.compiler.processing.XNullability
+import androidx.room3.ext.capitalize
+import androidx.room3.ext.defaultValue
+import androidx.room3.solver.CodeGenScope
+import androidx.room3.vo.CallType
+import androidx.room3.vo.Constructor
+import androidx.room3.vo.DataClass
+import androidx.room3.vo.EmbeddedProperty
+import androidx.room3.vo.Property
+import androidx.room3.vo.PropertyWithIndex
+import androidx.room3.vo.RelationCollector
 import java.util.Locale
 
 /** Handles writing a property into statement or reading it from statement. */

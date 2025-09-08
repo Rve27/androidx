@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.room.solver.query.result
+package androidx.room3.solver.query.result
 
-import androidx.room.solver.CodeGenScope
+import androidx.room3.solver.CodeGenScope
 
 /** Gets a Statement and converts it into the return type of a function annotated with @Query. */
 abstract class QueryResultAdapter(val rowAdapters: List<RowAdapter>) {

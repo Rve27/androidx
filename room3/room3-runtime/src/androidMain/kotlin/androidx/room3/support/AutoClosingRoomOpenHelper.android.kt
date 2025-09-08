@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.room.support
+package androidx.room3.support
 
 import android.content.ContentValues
 import android.database.Cursor
@@ -23,7 +23,7 @@ import android.os.Build
 import android.os.CancellationSignal
 import android.util.Pair
 import androidx.annotation.RequiresApi
-import androidx.room.DelegatingOpenHelper
+import androidx.room3.DelegatingOpenHelper
 import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.sqlite.db.SupportSQLiteOpenHelper
 import androidx.sqlite.db.SupportSQLiteProgram

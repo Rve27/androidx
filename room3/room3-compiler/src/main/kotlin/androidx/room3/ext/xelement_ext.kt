@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package androidx.room.ext
+package androidx.room3.ext
 
-import androidx.room.compiler.processing.XConstructorElement
-import androidx.room.compiler.processing.XElement
-import androidx.room.compiler.processing.XExecutableParameterElement
-import androidx.room.compiler.processing.XMethodElement
-import androidx.room.compiler.processing.XTypeElement
+import androidx.room3.compiler.processing.XConstructorElement
+import androidx.room3.compiler.processing.XElement
+import androidx.room3.compiler.processing.XExecutableParameterElement
+import androidx.room3.compiler.processing.XMethodElement
+import androidx.room3.compiler.processing.XTypeElement
 import kotlin.contracts.contract
 
 fun XElement.isEntityElement(): Boolean {
     contract { returns(true) implies (this@isEntityElement is XTypeElement) }
-    return this.hasAnnotation(androidx.room.Entity::class)
+    return this.hasAnnotation(androidx.room3.Entity::class)
 }
 
 fun XTypeElement.getValueClassUnderlyingInfo(): ValueClassInfo {

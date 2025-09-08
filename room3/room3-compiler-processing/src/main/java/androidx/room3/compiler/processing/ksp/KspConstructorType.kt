@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.ksp
+package androidx.room3.compiler.processing.ksp
 
-import androidx.room.compiler.processing.XConstructorElement
-import androidx.room.compiler.processing.XConstructorType
+import androidx.room3.compiler.processing.XConstructorElement
+import androidx.room3.compiler.processing.XConstructorType
 
 internal class KspConstructorType<ConstructorElement>(
     env: KspProcessingEnv,

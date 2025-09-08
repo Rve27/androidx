@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package androidx.room.solver.shortcut.binder
+package androidx.room3.solver.shortcut.binder
 
-import androidx.room.compiler.codegen.XPropertySpec
-import androidx.room.solver.CodeGenScope
-import androidx.room.solver.shortcut.result.InsertOrUpsertFunctionAdapter
-import androidx.room.vo.ShortcutQueryParameter
+import androidx.room3.compiler.codegen.XPropertySpec
+import androidx.room3.solver.CodeGenScope
+import androidx.room3.solver.shortcut.result.InsertOrUpsertFunctionAdapter
+import androidx.room3.vo.ShortcutQueryParameter
 
 /** Connects the insert and upsert method, the database and the [InsertOrUpsertFunctionAdapter]. */
 abstract class InsertOrUpsertFunctionBinder(val adapter: InsertOrUpsertFunctionAdapter?) {

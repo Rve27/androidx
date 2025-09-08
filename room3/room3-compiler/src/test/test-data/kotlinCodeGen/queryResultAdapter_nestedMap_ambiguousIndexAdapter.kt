@@ -1,6 +1,6 @@
-import androidx.room.AmbiguousColumnResolver
-import androidx.room.RoomDatabase
-import androidx.room.util.performBlocking
+import androidx.room3.AmbiguousColumnResolver
+import androidx.room3.RoomDatabase
+import androidx.room3.util.performBlocking
 import androidx.sqlite.SQLiteStatement
 import java.nio.ByteBuffer
 import javax.`annotation`.processing.Generated
@@ -17,7 +17,7 @@ import kotlin.collections.MutableMap
 import kotlin.collections.mutableListOf
 import kotlin.reflect.KClass
 
-@Generated(value = ["androidx.room.RoomProcessor"])
+@Generated(value = ["androidx.room3.RoomProcessor"])
 @Suppress(names = ["UNCHECKED_CAST", "DEPRECATION", "REDUNDANT_PROJECTION", "REMOVAL"])
 public class MyDao_Impl(
   __db: RoomDatabase,

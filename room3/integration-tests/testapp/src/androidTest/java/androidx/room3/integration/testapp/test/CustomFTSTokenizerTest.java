@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.testapp.test;
+package androidx.room3.integration.testapp.test;
 
-import androidx.room.Dao;
-import androidx.room.Database;
-import androidx.room.Entity;
-import androidx.room.Fts4;
-import androidx.room.FtsOptions;
-import androidx.room.Query;
-import androidx.room.RoomDatabase;
+import androidx.room3.Dao;
+import androidx.room3.Database;
+import androidx.room3.Entity;
+import androidx.room3.Fts4;
+import androidx.room3.FtsOptions;
+import androidx.room3.Query;
+import androidx.room3.RoomDatabase;
 
 /**
  * Not an actual JUnit test class, but it is here so that we can test that room-compiler will

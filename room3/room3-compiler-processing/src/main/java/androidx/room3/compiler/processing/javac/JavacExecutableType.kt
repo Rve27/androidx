@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.javac
+package androidx.room3.compiler.processing.javac
 
-import androidx.room.compiler.processing.XExecutableType
-import androidx.room.compiler.processing.XType
+import androidx.room3.compiler.processing.XExecutableType
+import androidx.room3.compiler.processing.XType
 import javax.lang.model.type.ExecutableType
 
 internal abstract class JavacExecutableType(

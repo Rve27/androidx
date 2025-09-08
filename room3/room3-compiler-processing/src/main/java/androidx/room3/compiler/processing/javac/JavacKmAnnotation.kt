@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.javac
+package androidx.room3.compiler.processing.javac
 
-import androidx.room.compiler.processing.InternalXAnnotation
-import androidx.room.compiler.processing.XAnnotationValue
-import androidx.room.compiler.processing.XType
-import androidx.room.compiler.processing.javac.kotlin.KmAnnotationContainer
+import androidx.room3.compiler.processing.InternalXAnnotation
+import androidx.room3.compiler.processing.XAnnotationValue
+import androidx.room3.compiler.processing.XType
+import androidx.room3.compiler.processing.javac.kotlin.KmAnnotationContainer
 
 internal class JavacKmAnnotation(
     private val env: JavacProcessingEnv,

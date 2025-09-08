@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.room.vo
+package androidx.room3.vo
 
-import androidx.room.compiler.processing.XElement
-import androidx.room.migration.bundle.PrimaryKeyBundle
+import androidx.room3.compiler.processing.XElement
+import androidx.room3.migration.bundle.PrimaryKeyBundle
 
 /** Represents a PrimaryKey for an Entity. */
 data class PrimaryKey(

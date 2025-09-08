@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.javac.kotlin
+package androidx.room3.compiler.processing.javac.kotlin
 
 /**
  * Helper methods to match ABI rules for Kotlin java bytecode generation.

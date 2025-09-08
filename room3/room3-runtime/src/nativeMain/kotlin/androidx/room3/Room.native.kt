@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.room
+package androidx.room3
 
-import androidx.room.util.findDatabaseConstructorAndInitDatabaseImpl
+import androidx.room3.util.findDatabaseConstructorAndInitDatabaseImpl
 
 /** Entry point for building and initializing a [RoomDatabase]. */
 public actual object Room {

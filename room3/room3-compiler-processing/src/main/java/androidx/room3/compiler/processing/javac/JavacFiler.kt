@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.javac
+package androidx.room3.compiler.processing.javac
 
-import androidx.room.compiler.processing.XElement
-import androidx.room.compiler.processing.XFiler
-import androidx.room.compiler.processing.XProcessingEnv
+import androidx.room3.compiler.processing.XElement
+import androidx.room3.compiler.processing.XFiler
+import androidx.room3.compiler.processing.XProcessingEnv
 import com.squareup.javapoet.JavaFile
 import com.squareup.kotlinpoet.FileSpec
 import java.io.OutputStream

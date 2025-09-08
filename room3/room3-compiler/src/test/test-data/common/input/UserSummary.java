@@ -15,7 +15,7 @@
  */
 
 package foo.bar;
-import androidx.room.DatabaseView;
+import androidx.room3.DatabaseView;
 
 @DatabaseView("SELECT uid, name FROM User")
 public class UserSummary {

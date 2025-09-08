@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.profiling
+package androidx.room3.compiler.processing.profiling
 
-import androidx.room.compiler.processing.XProcessingEnvConfig
-import androidx.room.compiler.processing.XTypeElement
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.runKspTest
+import androidx.room3.compiler.processing.XProcessingEnvConfig
+import androidx.room3.compiler.processing.XTypeElement
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.runKspTest
 import org.junit.Rule
 import org.junit.Test
 

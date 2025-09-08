@@ -16,7 +16,7 @@
 
 @file:Suppress("unused")
 
-package androidx.room.compiler.processing.testcode
+package androidx.room3.compiler.processing.testcode
 
 @Suppress("UNUSED_PARAMETER", "RedundantSuspendModifier")
 class KotlinTestClass {

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package androidx.room.vo
+package androidx.room3.vo
 
-import androidx.room.compiler.processing.XType
-import androidx.room.solver.query.parameter.QueryParameterAdapter
+import androidx.room3.compiler.processing.XType
+import androidx.room3.solver.query.parameter.QueryParameterAdapter
 
 /** Holds the parameter for a {@link QueryMethod}. */
 data class QueryParameter(

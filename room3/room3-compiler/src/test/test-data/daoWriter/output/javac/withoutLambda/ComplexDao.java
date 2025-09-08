@@ -4,14 +4,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.paging.PagingSource;
-import androidx.room.RoomDatabase;
-import androidx.room.RoomRawQuery;
-import androidx.room.RoomSQLiteQuery;
-import androidx.room.guava.GuavaRoom;
-import androidx.room.paging.LimitOffsetPagingSource;
-import androidx.room.util.DBUtil;
-import androidx.room.util.SQLiteStatementUtil;
-import androidx.room.util.StringUtil;
+import androidx.room3.RoomDatabase;
+import androidx.room3.RoomRawQuery;
+import androidx.room3.RoomSQLiteQuery;
+import androidx.room3.guava.GuavaRoom;
+import androidx.room3.paging.LimitOffsetPagingSource;
+import androidx.room3.util.DBUtil;
+import androidx.room3.util.SQLiteStatementUtil;
+import androidx.room3.util.StringUtil;
 import androidx.sqlite.SQLiteConnection;
 import androidx.sqlite.SQLiteStatement;
 import androidx.sqlite.db.SupportSQLiteQuery;
@@ -31,7 +31,7 @@ import javax.annotation.processing.Generated;
 import kotlin.coroutines.Continuation;
 import kotlin.jvm.functions.Function1;
 
-@Generated("androidx.room.RoomProcessor")
+@Generated("androidx.room3.RoomProcessor")
 @SuppressWarnings({"unchecked", "deprecation", "removal"})
 public final class ComplexDao_Impl extends ComplexDao {
   private final RoomDatabase __db;

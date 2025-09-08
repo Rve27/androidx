@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.gradle
+package androidx.room3.gradle
 
 import androidx.testutils.gradle.ProjectSetupRule
 import com.google.common.truth.Expect
@@ -107,7 +107,7 @@ class RoomIncrementalAnnotationProcessingTest(
      * gradle to find a newer version from prebuilts (SNAPSHOT).
      */
     private val roomVersion by lazy {
-        projectSetup.getLibraryLatestVersionInLocalRepo("androidx/room/room-compiler")
+        projectSetup.getLibraryLatestVersionInLocalRepo("androidx/room3/room3-compiler")
     }
 
     @Before
@@ -193,8 +193,8 @@ class RoomIncrementalAnnotationProcessingTest(
 
             dependencies {
                 // Uses latest Room built from tip of tree
-                implementation "androidx.room:room-runtime:$roomVersion"
-                $processorConfiguration "androidx.room:room-compiler:$roomVersion"
+                implementation "androidx.room3:room3-runtime:$roomVersion"
+                $processorConfiguration "androidx.room3:room3-compiler:$roomVersion"
             }
 
             tasks.withType(
@@ -407,7 +407,7 @@ class RoomIncrementalAnnotationProcessingTest(
             srcEntity1,
             "// Insert a change here",
             """
-            @androidx.room.ColumnInfo(name = "name")
+            @androidx.room3.ColumnInfo(name = "name")
             private String mName = "";
 
             public String getName() {

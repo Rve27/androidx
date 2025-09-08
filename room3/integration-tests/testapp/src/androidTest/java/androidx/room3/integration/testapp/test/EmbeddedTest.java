@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.testapp.test;
+package androidx.room3.integration.testapp.test;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -23,22 +23,22 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 import android.content.Context;
 
-import androidx.room.Room;
-import androidx.room.integration.testapp.TestDatabase;
-import androidx.room.integration.testapp.dao.PetCoupleDao;
-import androidx.room.integration.testapp.dao.PetDao;
-import androidx.room.integration.testapp.dao.SchoolDao;
-import androidx.room.integration.testapp.dao.UserDao;
-import androidx.room.integration.testapp.dao.UserPetDao;
-import androidx.room.integration.testapp.vo.Coordinates;
-import androidx.room.integration.testapp.vo.Pet;
-import androidx.room.integration.testapp.vo.PetCouple;
-import androidx.room.integration.testapp.vo.School;
-import androidx.room.integration.testapp.vo.SchoolRef;
-import androidx.room.integration.testapp.vo.User;
-import androidx.room.integration.testapp.vo.UserAndGenericPet;
-import androidx.room.integration.testapp.vo.UserAndPet;
-import androidx.room.integration.testapp.vo.UserAndPetNonNull;
+import androidx.room3.Room;
+import androidx.room3.integration.testapp.TestDatabase;
+import androidx.room3.integration.testapp.dao.PetCoupleDao;
+import androidx.room3.integration.testapp.dao.PetDao;
+import androidx.room3.integration.testapp.dao.SchoolDao;
+import androidx.room3.integration.testapp.dao.UserDao;
+import androidx.room3.integration.testapp.dao.UserPetDao;
+import androidx.room3.integration.testapp.vo.Coordinates;
+import androidx.room3.integration.testapp.vo.Pet;
+import androidx.room3.integration.testapp.vo.PetCouple;
+import androidx.room3.integration.testapp.vo.School;
+import androidx.room3.integration.testapp.vo.SchoolRef;
+import androidx.room3.integration.testapp.vo.User;
+import androidx.room3.integration.testapp.vo.UserAndGenericPet;
+import androidx.room3.integration.testapp.vo.UserAndPet;
+import androidx.room3.integration.testapp.vo.UserAndPetNonNull;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.SmallTest;

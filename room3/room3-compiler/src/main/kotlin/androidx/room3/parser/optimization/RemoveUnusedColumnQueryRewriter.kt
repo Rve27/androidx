@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package androidx.room.parser.optimization
+package androidx.room3.parser.optimization
 
-import androidx.room.parser.ParsedQuery
-import androidx.room.parser.SqlParser
-import androidx.room.processor.QueryRewriter
-import androidx.room.solver.query.result.QueryResultAdapter
+import androidx.room3.parser.ParsedQuery
+import androidx.room3.parser.SqlParser
+import androidx.room3.processor.QueryRewriter
+import androidx.room3.solver.query.result.QueryResultAdapter
 
 /**
  * If the query response has unused columns, this rewrites the query to only fetch those columns.

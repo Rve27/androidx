@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.javac
+package androidx.room3.compiler.processing.javac
 
-import androidx.room.compiler.processing.XEnumEntry
-import androidx.room.compiler.processing.XEnumTypeElement
+import androidx.room3.compiler.processing.XEnumEntry
+import androidx.room3.compiler.processing.XEnumTypeElement
 import javax.lang.model.element.Element
 
 internal class JavacEnumEntry(

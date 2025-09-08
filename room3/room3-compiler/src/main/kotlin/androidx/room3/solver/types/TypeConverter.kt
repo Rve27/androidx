@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package androidx.room.solver.types
+package androidx.room3.solver.types
 
-import androidx.room.compiler.processing.XType
-import androidx.room.solver.CodeGenScope
+import androidx.room3.compiler.processing.XType
+import androidx.room3.solver.CodeGenScope
 
 /** A code generator that can convert from 1 type to another */
 abstract class TypeConverter(val from: XType, val to: XType, val cost: Cost = Cost.CONVERTER) {

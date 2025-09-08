@@ -14,30 +14,30 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing
+package androidx.room3.compiler.processing
 
 import androidx.kruth.Subject
 import androidx.kruth.assertThat
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.compiler.codegen.asClassName
-import androidx.room.compiler.processing.javac.JavacTypeElement
-import androidx.room.compiler.processing.ksp.KspExecutableElement
-import androidx.room.compiler.processing.ksp.KspFieldElement
-import androidx.room.compiler.processing.ksp.KspFileMemberContainer
-import androidx.room.compiler.processing.ksp.synthetic.KspSyntheticFileMemberContainer
-import androidx.room.compiler.processing.testcode.OtherAnnotation
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.XTestInvocation
-import androidx.room.compiler.processing.util.asJClassName
-import androidx.room.compiler.processing.util.compileFiles
-import androidx.room.compiler.processing.util.getDeclaredField
-import androidx.room.compiler.processing.util.getField
-import androidx.room.compiler.processing.util.getMethodByJvmName
-import androidx.room.compiler.processing.util.getParameter
-import androidx.room.compiler.processing.util.kspProcessingEnv
-import androidx.room.compiler.processing.util.kspResolver
-import androidx.room.compiler.processing.util.runProcessorTest
-import androidx.room.compiler.processing.util.runProcessorTestWithoutKsp
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.compiler.codegen.asClassName
+import androidx.room3.compiler.processing.javac.JavacTypeElement
+import androidx.room3.compiler.processing.ksp.KspExecutableElement
+import androidx.room3.compiler.processing.ksp.KspFieldElement
+import androidx.room3.compiler.processing.ksp.KspFileMemberContainer
+import androidx.room3.compiler.processing.ksp.synthetic.KspSyntheticFileMemberContainer
+import androidx.room3.compiler.processing.testcode.OtherAnnotation
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.XTestInvocation
+import androidx.room3.compiler.processing.util.asJClassName
+import androidx.room3.compiler.processing.util.compileFiles
+import androidx.room3.compiler.processing.util.getDeclaredField
+import androidx.room3.compiler.processing.util.getField
+import androidx.room3.compiler.processing.util.getMethodByJvmName
+import androidx.room3.compiler.processing.util.getParameter
+import androidx.room3.compiler.processing.util.kspProcessingEnv
+import androidx.room3.compiler.processing.util.kspResolver
+import androidx.room3.compiler.processing.util.runProcessorTest
+import androidx.room3.compiler.processing.util.runProcessorTestWithoutKsp
 import com.google.devtools.ksp.KspExperimental
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.google.devtools.ksp.symbol.KSPropertyDeclaration
@@ -304,7 +304,7 @@ class XElementTest {
             import org.junit.*;
             import org.junit.runner.*;
             import org.junit.runners.*;
-            import androidx.room.compiler.processing.testcode.OtherAnnotation;
+            import androidx.room3.compiler.processing.testcode.OtherAnnotation;
 
             @RunWith(JUnit4.class)
             class Baz {
@@ -346,7 +346,7 @@ class XElementTest {
             import org.junit.*;
             import org.junit.runner.*;
             import org.junit.runners.*;
-            import androidx.room.compiler.processing.testcode.OtherAnnotation;
+            import androidx.room3.compiler.processing.testcode.OtherAnnotation;
 
             @RunWith(JUnit4.class)
             class Baz {
@@ -497,7 +497,7 @@ class XElementTest {
             import org.junit.*;
             import org.junit.runner.*;
             import org.junit.runners.*;
-            import androidx.room.compiler.processing.testcode.OtherAnnotation;
+            import androidx.room3.compiler.processing.testcode.OtherAnnotation;
 
             @RunWith(JUnit4.class)
             class Baz {

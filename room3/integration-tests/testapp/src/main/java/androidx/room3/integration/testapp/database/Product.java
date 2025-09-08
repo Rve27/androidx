@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.testapp.database;
+package androidx.room3.integration.testapp.database;
 
-import androidx.room.Entity;
-import androidx.room.Ignore;
-import androidx.room.PrimaryKey;
+import androidx.room3.Entity;
+import androidx.room3.Ignore;
+import androidx.room3.PrimaryKey;
 
 /**
  * Product.

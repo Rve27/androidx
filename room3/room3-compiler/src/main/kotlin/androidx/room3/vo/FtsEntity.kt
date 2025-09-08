@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package androidx.room.vo
+package androidx.room3.vo
 
-import androidx.room.compiler.processing.XType
-import androidx.room.compiler.processing.XTypeElement
-import androidx.room.migration.bundle.FtsEntityBundle
-import androidx.room.migration.bundle.TABLE_NAME_PLACEHOLDER
-import androidx.room.parser.FtsVersion
+import androidx.room3.compiler.processing.XType
+import androidx.room3.compiler.processing.XTypeElement
+import androidx.room3.migration.bundle.FtsEntityBundle
+import androidx.room3.migration.bundle.TABLE_NAME_PLACEHOLDER
+import androidx.room3.parser.FtsVersion
 
 /** An Entity with a mapping FTS table. */
 class FtsEntity(

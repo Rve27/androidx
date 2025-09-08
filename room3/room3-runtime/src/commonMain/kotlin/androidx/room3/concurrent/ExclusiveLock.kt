@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.concurrent
+package androidx.room3.concurrent
 
 /**
  * An exclusive lock for in-process and multi-process synchronization.

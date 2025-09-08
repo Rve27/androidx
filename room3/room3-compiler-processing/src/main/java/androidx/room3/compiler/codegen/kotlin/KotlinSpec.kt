@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.codegen.kotlin
+package androidx.room3.compiler.codegen.kotlin
 
-import androidx.room.compiler.codegen.XSpec
+import androidx.room3.compiler.codegen.XSpec
 
 internal abstract class KotlinSpec<T> : XSpec() {
     abstract val actual: T

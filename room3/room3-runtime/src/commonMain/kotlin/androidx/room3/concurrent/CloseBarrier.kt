@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.concurrent
+package androidx.room3.concurrent
 
 /**
  * A barrier that can be used to perform a cleanup action once, waiting for registered parties

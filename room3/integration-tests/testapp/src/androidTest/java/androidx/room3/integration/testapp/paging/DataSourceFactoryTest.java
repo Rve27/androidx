@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.testapp.paging;
+package androidx.room3.integration.testapp.paging;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -32,11 +32,11 @@ import androidx.lifecycle.testing.TestLifecycleOwner;
 import androidx.paging.DataSource;
 import androidx.paging.LivePagedListBuilder;
 import androidx.paging.PagedList;
-import androidx.room.integration.testapp.test.TestDatabaseTest;
-import androidx.room.integration.testapp.test.TestUtil;
-import androidx.room.integration.testapp.vo.Pet;
-import androidx.room.integration.testapp.vo.User;
-import androidx.room.integration.testapp.vo.UserAndAllPets;
+import androidx.room3.integration.testapp.test.TestDatabaseTest;
+import androidx.room3.integration.testapp.test.TestUtil;
+import androidx.room3.integration.testapp.vo.Pet;
+import androidx.room3.integration.testapp.vo.User;
+import androidx.room3.integration.testapp.vo.UserAndAllPets;
 import androidx.sqlite.db.SimpleSQLiteQuery;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;

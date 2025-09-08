@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 
-package androidx.room.util
+package androidx.room3.util
 
-import androidx.room.migration.bundle.BaseEntityBundle
-import androidx.room.migration.bundle.DatabaseBundle
-import androidx.room.migration.bundle.DatabaseViewBundle
-import androidx.room.migration.bundle.EntityBundle
-import androidx.room.migration.bundle.FieldBundle
-import androidx.room.migration.bundle.ForeignKeyBundle
-import androidx.room.migration.bundle.FtsEntityBundle
-import androidx.room.migration.bundle.IndexBundle
-import androidx.room.processor.ProcessorErrors.conflictingRenameColumnAnnotationsFound
-import androidx.room.processor.ProcessorErrors.conflictingRenameTableAnnotationsFound
-import androidx.room.processor.ProcessorErrors.deletedOrRenamedColumnFound
-import androidx.room.processor.ProcessorErrors.deletedOrRenamedTableFound
-import androidx.room.processor.ProcessorErrors.newNotNullColumnMustHaveDefaultValue
-import androidx.room.processor.ProcessorErrors.tableRenameError
-import androidx.room.processor.ProcessorErrors.tableWithConflictingPrefixFound
-import androidx.room.vo.AutoMigration
+import androidx.room3.migration.bundle.BaseEntityBundle
+import androidx.room3.migration.bundle.DatabaseBundle
+import androidx.room3.migration.bundle.DatabaseViewBundle
+import androidx.room3.migration.bundle.EntityBundle
+import androidx.room3.migration.bundle.FieldBundle
+import androidx.room3.migration.bundle.ForeignKeyBundle
+import androidx.room3.migration.bundle.FtsEntityBundle
+import androidx.room3.migration.bundle.IndexBundle
+import androidx.room3.processor.ProcessorErrors.conflictingRenameColumnAnnotationsFound
+import androidx.room3.processor.ProcessorErrors.conflictingRenameTableAnnotationsFound
+import androidx.room3.processor.ProcessorErrors.deletedOrRenamedColumnFound
+import androidx.room3.processor.ProcessorErrors.deletedOrRenamedTableFound
+import androidx.room3.processor.ProcessorErrors.newNotNullColumnMustHaveDefaultValue
+import androidx.room3.processor.ProcessorErrors.tableRenameError
+import androidx.room3.processor.ProcessorErrors.tableWithConflictingPrefixFound
+import androidx.room3.vo.AutoMigration
 
 /**
  * This RuntimeException should be thrown to abandon processing an @AutoMigration.
@@ -279,7 +279,7 @@ class SchemaDiffer(
             renamedTables.remove(fromTable.tableName)
 
             // If the table is already marked as a complex change, then we want to add a new entry
-            // to it's renamedColumnMap
+            // to its renamedColumnMap
             val renamedColumnsMap =
                 complexChangedTables[fromTable.tableName]?.renamedColumnsMap ?: mutableMapOf()
 

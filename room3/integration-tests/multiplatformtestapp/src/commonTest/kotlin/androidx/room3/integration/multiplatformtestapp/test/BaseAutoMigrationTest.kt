@@ -14,25 +14,25 @@
  * limitations under the License.
  */
 //
-package androidx.room.integration.multiplatformtestapp.test
+package androidx.room3.integration.multiplatformtestapp.test
 
 import androidx.kruth.assertThat
 import androidx.kruth.assertThrows
-import androidx.room.AutoMigration
-import androidx.room.ColumnInfo
-import androidx.room.ConstructedBy
-import androidx.room.Dao
-import androidx.room.Database
-import androidx.room.Entity
-import androidx.room.Insert
-import androidx.room.PrimaryKey
-import androidx.room.ProvidedAutoMigrationSpec
-import androidx.room.Query
-import androidx.room.RoomDatabase
-import androidx.room.RoomDatabaseConstructor
-import androidx.room.integration.multiplatformtestapp.test.BaseAutoMigrationTest.AutoMigrationDatabase
-import androidx.room.migration.AutoMigrationSpec
-import androidx.room.testing.MigrationTestHelper
+import androidx.room3.AutoMigration
+import androidx.room3.ColumnInfo
+import androidx.room3.ConstructedBy
+import androidx.room3.Dao
+import androidx.room3.Database
+import androidx.room3.Entity
+import androidx.room3.Insert
+import androidx.room3.PrimaryKey
+import androidx.room3.ProvidedAutoMigrationSpec
+import androidx.room3.Query
+import androidx.room3.RoomDatabase
+import androidx.room3.RoomDatabaseConstructor
+import androidx.room3.integration.multiplatformtestapp.test.BaseAutoMigrationTest.AutoMigrationDatabase
+import androidx.room3.migration.AutoMigrationSpec
+import androidx.room3.testing.MigrationTestHelper
 import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.execSQL
 import kotlin.test.Test

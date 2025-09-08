@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.kotlintestapp.vo
+package androidx.room3.integration.kotlintestapp.vo
 
-import androidx.room.Embedded
-import androidx.room.Relation
+import androidx.room3.Embedded
+import androidx.room3.Relation
 
 class PublisherWithBooks {
     @Embedded var publisher: Publisher? = null

@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package androidx.room.solver.shortcut.binderprovider
+package androidx.room3.solver.shortcut.binderprovider
 
-import androidx.room.compiler.processing.XType
-import androidx.room.processor.Context
-import androidx.room.solver.shortcut.binder.DeleteOrUpdateFunctionBinder
-import androidx.room.solver.shortcut.binder.InstantDeleteOrUpdateFunctionBinder
+import androidx.room3.compiler.processing.XType
+import androidx.room3.processor.Context
+import androidx.room3.solver.shortcut.binder.DeleteOrUpdateFunctionBinder
+import androidx.room3.solver.shortcut.binder.InstantDeleteOrUpdateFunctionBinder
 
 /** Provider for instant (blocking) delete or update function binder */
 class InstantDeleteOrUpdateFunctionBinderProvider(private val context: Context) :

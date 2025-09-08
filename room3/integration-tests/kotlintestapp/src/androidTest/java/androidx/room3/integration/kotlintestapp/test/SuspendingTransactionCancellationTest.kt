@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.kotlintestapp.test
+package androidx.room3.integration.kotlintestapp.test
 
 import androidx.kruth.assertThat
-import androidx.room.integration.kotlintestapp.vo.Book
-import androidx.room.withTransaction
+import androidx.room3.integration.kotlintestapp.vo.Book
+import androidx.room3.withTransaction
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.filters.MediumTest

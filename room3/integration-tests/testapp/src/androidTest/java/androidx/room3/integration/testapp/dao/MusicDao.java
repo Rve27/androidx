@@ -14,33 +14,33 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.testapp.dao;
+package androidx.room3.integration.testapp.dao;
 
 import androidx.collection.ArrayMap;
 import androidx.collection.LongSparseArray;
 import androidx.collection.SparseArrayCompat;
 import androidx.lifecycle.LiveData;
-import androidx.room.Dao;
-import androidx.room.Insert;
-import androidx.room.MapColumn;
-import androidx.room.MapInfo;
-import androidx.room.Query;
-import androidx.room.RawQuery;
-import androidx.room.RewriteQueriesToDropUnusedColumns;
-import androidx.room.Transaction;
-import androidx.room.integration.testapp.vo.Album;
-import androidx.room.integration.testapp.vo.AlbumNameAndBandName;
-import androidx.room.integration.testapp.vo.AlbumWithSongs;
-import androidx.room.integration.testapp.vo.Artist;
-import androidx.room.integration.testapp.vo.Image;
-import androidx.room.integration.testapp.vo.ImageFormat;
-import androidx.room.integration.testapp.vo.MultiSongPlaylistWithSongs;
-import androidx.room.integration.testapp.vo.Playlist;
-import androidx.room.integration.testapp.vo.PlaylistSongXRef;
-import androidx.room.integration.testapp.vo.PlaylistWithSongTitles;
-import androidx.room.integration.testapp.vo.PlaylistWithSongs;
-import androidx.room.integration.testapp.vo.ReleasedAlbum;
-import androidx.room.integration.testapp.vo.Song;
+import androidx.room3.Dao;
+import androidx.room3.Insert;
+import androidx.room3.MapColumn;
+import androidx.room3.MapInfo;
+import androidx.room3.Query;
+import androidx.room3.RawQuery;
+import androidx.room3.RewriteQueriesToDropUnusedColumns;
+import androidx.room3.Transaction;
+import androidx.room3.integration.testapp.vo.Album;
+import androidx.room3.integration.testapp.vo.AlbumNameAndBandName;
+import androidx.room3.integration.testapp.vo.AlbumWithSongs;
+import androidx.room3.integration.testapp.vo.Artist;
+import androidx.room3.integration.testapp.vo.Image;
+import androidx.room3.integration.testapp.vo.ImageFormat;
+import androidx.room3.integration.testapp.vo.MultiSongPlaylistWithSongs;
+import androidx.room3.integration.testapp.vo.Playlist;
+import androidx.room3.integration.testapp.vo.PlaylistSongXRef;
+import androidx.room3.integration.testapp.vo.PlaylistWithSongTitles;
+import androidx.room3.integration.testapp.vo.PlaylistWithSongs;
+import androidx.room3.integration.testapp.vo.ReleasedAlbum;
+import androidx.room3.integration.testapp.vo.Song;
 import androidx.sqlite.db.SupportSQLiteQuery;
 
 import com.google.common.collect.ImmutableListMultimap;

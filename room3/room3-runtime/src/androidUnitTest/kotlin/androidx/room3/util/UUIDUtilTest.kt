@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.util
+package androidx.room3.util
 
 import androidx.kruth.assertThat
 import java.nio.ByteBuffer

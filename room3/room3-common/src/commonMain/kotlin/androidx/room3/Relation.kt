@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room
+package androidx.room3
 
 import kotlin.reflect.KClass
 
@@ -153,7 +153,7 @@ public annotation class Relation(
     /**
      * If sub columns should be fetched from the entity, you can specify them using this field.
      *
-     * By default, inferred from the the return type.
+     * By default, inferred from the return type.
      *
      * @return The list of columns to be selected from the [entity].
      */

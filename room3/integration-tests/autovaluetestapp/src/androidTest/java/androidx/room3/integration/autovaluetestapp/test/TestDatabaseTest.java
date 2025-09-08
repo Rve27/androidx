@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.autovaluetestapp.test;
+package androidx.room3.integration.autovaluetestapp.test;
 
 import android.content.Context;
 
 import androidx.arch.core.executor.testing.CountingTaskExecutorRule;
-import androidx.room.Room;
-import androidx.room.integration.autovaluetestapp.TestDatabase;
-import androidx.room.integration.autovaluetestapp.dao.ParcelableEntityDao;
-import androidx.room.integration.autovaluetestapp.dao.PersonDao;
-import androidx.room.integration.autovaluetestapp.dao.PetDao;
+import androidx.room3.Room;
+import androidx.room3.integration.autovaluetestapp.TestDatabase;
+import androidx.room3.integration.autovaluetestapp.dao.ParcelableEntityDao;
+import androidx.room3.integration.autovaluetestapp.dao.PersonDao;
+import androidx.room3.integration.autovaluetestapp.dao.PetDao;
 import androidx.test.core.app.ApplicationProvider;
 
 import org.junit.Before;

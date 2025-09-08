@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.util
+package androidx.room3.util
 
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.toKString

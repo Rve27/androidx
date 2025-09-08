@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.room.integration.testapp.migration;
+package androidx.room3.integration.testapp.migration;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -27,17 +27,17 @@ import android.text.TextUtils;
 
 import androidx.arch.core.executor.testing.CountingTaskExecutorRule;
 import androidx.lifecycle.LiveData;
-import androidx.room.ColumnInfo;
-import androidx.room.Dao;
-import androidx.room.Database;
-import androidx.room.Entity;
-import androidx.room.Insert;
-import androidx.room.OnConflictStrategy;
-import androidx.room.PrimaryKey;
-import androidx.room.Query;
-import androidx.room.Room;
-import androidx.room.RoomDatabase;
-import androidx.room.migration.Migration;
+import androidx.room3.ColumnInfo;
+import androidx.room3.Dao;
+import androidx.room3.Database;
+import androidx.room3.Entity;
+import androidx.room3.Insert;
+import androidx.room3.OnConflictStrategy;
+import androidx.room3.PrimaryKey;
+import androidx.room3.Query;
+import androidx.room3.Room;
+import androidx.room3.RoomDatabase;
+import androidx.room3.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;

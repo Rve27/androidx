@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package androidx.room.solver.binderprovider
+package androidx.room3.solver.binderprovider
 
-import androidx.room.compiler.processing.XRawType
-import androidx.room.compiler.processing.XType
-import androidx.room.processor.Context
-import androidx.room.solver.ObservableQueryResultBinderProvider
-import androidx.room.solver.RxType
-import androidx.room.solver.query.result.QueryResultAdapter
-import androidx.room.solver.query.result.QueryResultBinder
-import androidx.room.solver.query.result.RxQueryResultBinder
+import androidx.room3.compiler.processing.XRawType
+import androidx.room3.compiler.processing.XType
+import androidx.room3.processor.Context
+import androidx.room3.solver.ObservableQueryResultBinderProvider
+import androidx.room3.solver.RxType
+import androidx.room3.solver.query.result.QueryResultAdapter
+import androidx.room3.solver.query.result.QueryResultBinder
+import androidx.room3.solver.query.result.RxQueryResultBinder
 
 /** Generic result binder for Rx classes that are reactive. */
 class RxQueryResultBinderProvider

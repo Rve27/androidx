@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package androidx.room.testing
+package androidx.room3.testing
 
-import androidx.room.compiler.processing.XProcessingStep
-import androidx.room.compiler.processing.XTypeElement
-import androidx.room.compiler.processing.util.XTestInvocation
+import androidx.room3.compiler.processing.XProcessingStep
+import androidx.room3.compiler.processing.XTypeElement
+import androidx.room3.compiler.processing.util.XTestInvocation
 
 /**
  * Turns a database processing step to an invocation handler where it will be automatically invoked

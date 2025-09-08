@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.ksp
+package androidx.room3.compiler.processing.ksp
 
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.compiler.processing.XEquality
-import androidx.room.compiler.processing.XNullability
-import androidx.room.compiler.processing.XType
-import androidx.room.compiler.processing.isArray
-import androidx.room.compiler.processing.tryBox
-import androidx.room.compiler.processing.tryUnbox
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.compiler.processing.XEquality
+import androidx.room3.compiler.processing.XNullability
+import androidx.room3.compiler.processing.XType
+import androidx.room3.compiler.processing.isArray
+import androidx.room3.compiler.processing.tryBox
+import androidx.room3.compiler.processing.tryUnbox
 import com.google.devtools.ksp.KspExperimental
 import com.google.devtools.ksp.symbol.KSAnnotation
 import com.google.devtools.ksp.symbol.KSClassDeclaration

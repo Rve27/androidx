@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.codegen.kotlin
+package androidx.room3.compiler.codegen.kotlin
 
-import androidx.room.compiler.codegen.KFunSpec
-import androidx.room.compiler.codegen.KTypeSpecBuilder
-import androidx.room.compiler.codegen.VisibilityModifier
-import androidx.room.compiler.codegen.XAnnotationSpec
-import androidx.room.compiler.codegen.XFunSpec
-import androidx.room.compiler.codegen.XName
-import androidx.room.compiler.codegen.XPropertySpec
-import androidx.room.compiler.codegen.XSpec
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.compiler.codegen.XTypeSpec
-import androidx.room.compiler.codegen.impl.XAnnotationSpecImpl
-import androidx.room.compiler.codegen.impl.XFunSpecImpl
-import androidx.room.compiler.codegen.impl.XPropertySpecImpl
-import androidx.room.compiler.codegen.impl.XTypeSpecImpl
-import androidx.room.compiler.processing.XElement
-import androidx.room.compiler.processing.addOriginatingElement
+import androidx.room3.compiler.codegen.KFunSpec
+import androidx.room3.compiler.codegen.KTypeSpecBuilder
+import androidx.room3.compiler.codegen.VisibilityModifier
+import androidx.room3.compiler.codegen.XAnnotationSpec
+import androidx.room3.compiler.codegen.XFunSpec
+import androidx.room3.compiler.codegen.XName
+import androidx.room3.compiler.codegen.XPropertySpec
+import androidx.room3.compiler.codegen.XSpec
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.compiler.codegen.XTypeSpec
+import androidx.room3.compiler.codegen.impl.XAnnotationSpecImpl
+import androidx.room3.compiler.codegen.impl.XFunSpecImpl
+import androidx.room3.compiler.codegen.impl.XPropertySpecImpl
+import androidx.room3.compiler.codegen.impl.XTypeSpecImpl
+import androidx.room3.compiler.processing.XElement
+import androidx.room3.compiler.processing.addOriginatingElement
 import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.javapoet.KTypeSpec
 import com.squareup.kotlinpoet.javapoet.KTypeVariableName

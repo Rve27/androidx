@@ -53,7 +53,7 @@ configurations {
 androidXMultiplatform {
     androidLibrary {
         withJava()
-        namespace = "androidx.room"
+        namespace = "androidx.room3"
         optimization {
             it.consumerKeepRules.publish = true
             it.consumerKeepRules.files.add(

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.codegen.java
+package androidx.room3.compiler.codegen.java
 
 import com.squareup.javapoet.ClassName
 

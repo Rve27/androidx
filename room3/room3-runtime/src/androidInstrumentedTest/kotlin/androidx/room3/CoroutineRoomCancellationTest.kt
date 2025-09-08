@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room
+package androidx.room3
 
 import android.database.sqlite.SQLiteException
 import android.os.CancellationSignal

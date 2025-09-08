@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.vo
+package androidx.room3.vo
 
 /**
  * A common value object when we need to associate a Property with an Index variable.

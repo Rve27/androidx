@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.testapp;
+package androidx.room3.integration.testapp;
 
 import android.app.Service;
 import android.content.Context;
@@ -22,11 +22,11 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.os.Process;
 
-import androidx.room.ExperimentalRoomApi;
-import androidx.room.InvalidationTracker;
-import androidx.room.Room;
-import androidx.room.integration.testapp.database.Customer;
-import androidx.room.integration.testapp.database.SampleDatabase;
+import androidx.room3.ExperimentalRoomApi;
+import androidx.room3.InvalidationTracker;
+import androidx.room3.Room;
+import androidx.room3.integration.testapp.database.Customer;
+import androidx.room3.integration.testapp.database.SampleDatabase;
 
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;

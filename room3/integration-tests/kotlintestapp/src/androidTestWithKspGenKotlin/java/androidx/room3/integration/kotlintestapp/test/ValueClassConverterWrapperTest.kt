@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.kotlintestapp.test
+package androidx.room3.integration.kotlintestapp.test
 
 import android.content.Context
 import androidx.kruth.assertThat
 import androidx.kruth.assertThrows
-import androidx.room.Dao
-import androidx.room.Database
-import androidx.room.Entity
-import androidx.room.Insert
-import androidx.room.PrimaryKey
-import androidx.room.Query
-import androidx.room.Room
-import androidx.room.RoomDatabase
-import androidx.room.TypeConverters
-import androidx.room.androidx.room.integration.kotlintestapp.vo.Experiment
-import androidx.room.androidx.room.integration.kotlintestapp.vo.Schrodinger
-import androidx.room.androidx.room.integration.kotlintestapp.vo.SchrodingerConverter
-import androidx.room.integration.kotlintestapp.vo.DateConverter
+import androidx.room3.Dao
+import androidx.room3.Database
+import androidx.room3.Entity
+import androidx.room3.Insert
+import androidx.room3.PrimaryKey
+import androidx.room3.Query
+import androidx.room3.Room
+import androidx.room3.RoomDatabase
+import androidx.room3.TypeConverters
+import androidx.room3.androidx.room3.integration.kotlintestapp.vo.Experiment
+import androidx.room3.androidx.room3.integration.kotlintestapp.vo.Schrodinger
+import androidx.room3.androidx.room3.integration.kotlintestapp.vo.SchrodingerConverter
+import androidx.room3.integration.kotlintestapp.vo.DateConverter
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest

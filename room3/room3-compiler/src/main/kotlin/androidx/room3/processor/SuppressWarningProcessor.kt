@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package androidx.room.processor
+package androidx.room3.processor
 
-import androidx.room.compiler.processing.XElement
-import androidx.room.vo.Warning
+import androidx.room3.compiler.processing.XElement
+import androidx.room3.vo.Warning
 
 /** A visitor that reads SuppressWarnings annotations and keeps the ones we know about. */
 object SuppressWarningProcessor {

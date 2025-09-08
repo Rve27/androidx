@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.kotlintestapp.testutil
+package androidx.room3.integration.kotlintestapp.testutil
 
 import androidx.paging.AsyncPagingDataDiffer
 import androidx.paging.ItemSnapshotList

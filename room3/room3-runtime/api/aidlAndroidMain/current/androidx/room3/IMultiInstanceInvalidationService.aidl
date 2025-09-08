@@ -31,10 +31,10 @@
 // with such a backward incompatible change, it has a high risk of breaking
 // later when a module using the interface is updated, e.g., Mainline modules.
 
-package androidx.room;
+package androidx.room3;
 @JavaPassthrough(annotation="@androidx.annotation.RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY)")
 interface IMultiInstanceInvalidationService {
-  int registerCallback(androidx.room.IMultiInstanceInvalidationCallback callback, String name);
-  void unregisterCallback(androidx.room.IMultiInstanceInvalidationCallback callback, int clientId);
+  int registerCallback(androidx.room3.IMultiInstanceInvalidationCallback callback, String name);
+  void unregisterCallback(androidx.room3.IMultiInstanceInvalidationCallback callback, int clientId);
   oneway void broadcastInvalidation(int clientId, in String[] tables);
 }

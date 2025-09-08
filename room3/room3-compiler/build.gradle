@@ -41,12 +41,12 @@ repackage {
     // Must match what is in room/room-external-antlr/build.gradle
     addRelocation {
         sourcePackage = "org.antlr"
-        targetPackage = "androidx.room.jarjarred.org.antlr"
+        targetPackage = "androidx.room3.jarjarred.org.antlr"
     }
     // Must match what is in room/room-external-antlr/build.gradle
     addRelocation {
         sourcePackage = "org.stringtemplate"
-        targetPackage =  "androidx.room.jarjarred.org.stringtemplate"
+        targetPackage =  "androidx.room3.jarjarred.org.stringtemplate"
     }
 }
 
@@ -139,8 +139,8 @@ abstract class GenerateAntlrGrammar extends DefaultTask {
             args(
                  *getSourceFiles().get().collect { it.getAsFile().absolutePath },
                  "-visitor",
-                 "-o", new File(outputDirectoryFile, "androidx/room/parser").path,
-                 "-package", "androidx.room.parser"
+                 "-o", new File(outputDirectoryFile, "androidx/room3/parser").path,
+                 "-package", "androidx.room3.parser"
             )
         }
     }
@@ -221,14 +221,14 @@ tasks.withType(KotlinCompile).configureEach {
     kotlinOptions {
         freeCompilerArgs += [
                 "-opt-in=kotlin.contracts.ExperimentalContracts",
-                "-opt-in=androidx.room.compiler.processing.ExperimentalProcessingApi",
+                "-opt-in=androidx.room3.compiler.processing.ExperimentalProcessingApi",
                 "-opt-in=com.squareup.kotlinpoet.javapoet.KotlinPoetJavaPoetPreview"
         ]
     }
 }
 
 tasks.withType(Test).configureEach {
-    it.systemProperty("androidx.room.compiler.processing.strict", "true")
+    it.systemProperty("androidx.room3.compiler.processing.strict", "true")
     it.maxParallelForks = 8
     if (project.providers.environmentVariable("GITHUB_ACTIONS").present) {
         // limit memory usage to avoid running out of memory in the docker container.

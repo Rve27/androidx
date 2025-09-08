@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package androidx.room.writer
+package androidx.room3.writer
 
-import androidx.room.compiler.codegen.CodeLanguage
-import androidx.room.compiler.processing.XProcessingEnv
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.XTestInvocation
-import androidx.room.compiler.processing.util.runJavaProcessorTest
-import androidx.room.compiler.processing.util.runKspTest
-import androidx.room.migration.bundle.FieldBundle
-import androidx.room.processor.Context
-import androidx.room.util.SchemaDiffResult
-import androidx.room.vo.AutoMigration
+import androidx.room3.compiler.codegen.CodeLanguage
+import androidx.room3.compiler.processing.XProcessingEnv
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.XTestInvocation
+import androidx.room3.compiler.processing.util.runJavaProcessorTest
+import androidx.room3.compiler.processing.util.runKspTest
+import androidx.room3.migration.bundle.FieldBundle
+import androidx.room3.processor.Context
+import androidx.room3.util.SchemaDiffResult
+import androidx.room3.vo.AutoMigration
 import loadTestSource
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -39,7 +39,7 @@ class AutoMigrationWriterTest(private val codeLanguage: CodeLanguage) {
             "foo.bar.MyDatabase",
             """
         package foo.bar;
-        import androidx.room.*;
+        import androidx.room3.*;
         @Database(entities = {}, version = 1)
         public abstract class MyDatabase extends RoomDatabase {
         }
@@ -52,7 +52,7 @@ class AutoMigrationWriterTest(private val codeLanguage: CodeLanguage) {
             "MyDatabase.kt",
             """
         package foo.bar
-        import androidx.room.*
+        import androidx.room3.*
         @Database(entities = [], version = 1)
         abstract class MyDatabase : RoomDatabase() {
         }
@@ -69,7 +69,7 @@ class AutoMigrationWriterTest(private val codeLanguage: CodeLanguage) {
                         "foo.bar.ValidAutoMigrationWithDefault",
                         """
                 package foo.bar;
-                import androidx.room.migration.AutoMigrationSpec;
+                import androidx.room3.migration.AutoMigrationSpec;
                 import androidx.sqlite.db.SupportSQLiteDatabase;
                 public class ValidAutoMigrationWithDefault implements AutoMigrationSpec {}
                 """
@@ -80,7 +80,7 @@ class AutoMigrationWriterTest(private val codeLanguage: CodeLanguage) {
                         "ValidAutoMigrationWithDefault.kt",
                         """
                 package foo.bar
-                import androidx.room.migration.AutoMigrationSpec
+                import androidx.room3.migration.AutoMigrationSpec
                 import androidx.sqlite.db.SupportSQLiteDatabase
                 class ValidAutoMigrationWithDefault : AutoMigrationSpec {}
                 """
@@ -153,7 +153,7 @@ class AutoMigrationWriterTest(private val codeLanguage: CodeLanguage) {
                         "foo.bar.ValidAutoMigrationWithoutDefault",
                         """
                 package foo.bar;
-                import androidx.room.migration.AutoMigrationSpec;
+                import androidx.room3.migration.AutoMigrationSpec;
                 import androidx.sqlite.db.SupportSQLiteDatabase;
                 public class ValidAutoMigrationWithoutDefault implements AutoMigrationSpec {}
                 """
@@ -164,7 +164,7 @@ class AutoMigrationWriterTest(private val codeLanguage: CodeLanguage) {
                         "ValidAutoMigrationWithoutDefault.kt",
                         """
                 package foo.bar
-                import androidx.room.migration.AutoMigrationSpec
+                import androidx.room3.migration.AutoMigrationSpec
                 import androidx.sqlite.db.SupportSQLiteDatabase
                 class ValidAutoMigrationWithoutDefault : AutoMigrationSpec {}
                 """
@@ -237,8 +237,8 @@ class AutoMigrationWriterTest(private val codeLanguage: CodeLanguage) {
                         "foo.bar.AutoMigrationWithProvidedSpec",
                         """
                 package foo.bar;
-                import androidx.room.ProvidedAutoMigrationSpec;
-                import androidx.room.migration.AutoMigrationSpec;
+                import androidx.room3.ProvidedAutoMigrationSpec;
+                import androidx.room3.migration.AutoMigrationSpec;
                 import androidx.sqlite.db.SupportSQLiteDatabase;
                 
                 @ProvidedAutoMigrationSpec
@@ -253,8 +253,8 @@ class AutoMigrationWriterTest(private val codeLanguage: CodeLanguage) {
                         "AutoMigrationWithProvidedSpec.kt",
                         """
                 package foo.bar
-                import androidx.room.ProvidedAutoMigrationSpec
-                import androidx.room.migration.AutoMigrationSpec
+                import androidx.room3.ProvidedAutoMigrationSpec
+                import androidx.room3.migration.AutoMigrationSpec
                 import androidx.sqlite.db.SupportSQLiteDatabase
                 
                 @ProvidedAutoMigrationSpec

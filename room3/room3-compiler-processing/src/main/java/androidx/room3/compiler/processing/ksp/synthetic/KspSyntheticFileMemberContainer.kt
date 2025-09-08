@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.ksp.synthetic
+package androidx.room3.compiler.processing.ksp.synthetic
 
-import androidx.room.compiler.codegen.XClassName
-import androidx.room.compiler.processing.XAnnotation
-import androidx.room.compiler.processing.XElement
-import androidx.room.compiler.processing.XEquality
-import androidx.room.compiler.processing.XNullability
-import androidx.room.compiler.processing.ksp.KspMemberContainer
-import androidx.room.compiler.processing.ksp.KspProcessingEnv
-import androidx.room.compiler.processing.ksp.KspType
+import androidx.room3.compiler.codegen.XClassName
+import androidx.room3.compiler.processing.XAnnotation
+import androidx.room3.compiler.processing.XElement
+import androidx.room3.compiler.processing.XEquality
+import androidx.room3.compiler.processing.XNullability
+import androidx.room3.compiler.processing.ksp.KspMemberContainer
+import androidx.room3.compiler.processing.ksp.KspProcessingEnv
+import androidx.room3.compiler.processing.ksp.KspType
 import com.google.devtools.ksp.symbol.KSDeclaration
 import com.squareup.javapoet.ClassName
 import com.squareup.kotlinpoet.javapoet.toKClassName
@@ -51,7 +51,7 @@ internal class KspSyntheticFileMemberContainer(
     @Deprecated(
         "Use asClassName().toJavaPoet() to be clear the name is for JavaPoet.",
         replaceWith =
-            ReplaceWith("asClassName().toJavaPoet()", "androidx.room.compiler.codegen.toJavaPoet"),
+            ReplaceWith("asClassName().toJavaPoet()", "androidx.room3.compiler.codegen.toJavaPoet"),
     )
     override val className: ClassName by lazy { xClassName.java }
 
@@ -76,7 +76,7 @@ internal class KspSyntheticFileMemberContainer(
     override fun asClassName() = xClassName
 
     override fun kindName(): String {
-        return "synthethic top level file"
+        return "synthetic top level file"
     }
 
     override val fallbackLocationText: String

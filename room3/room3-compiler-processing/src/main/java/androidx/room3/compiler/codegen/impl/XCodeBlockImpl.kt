@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.codegen.impl
+package androidx.room3.compiler.codegen.impl
 
-import androidx.room.compiler.codegen.XCodeBlock
-import androidx.room.compiler.codegen.XSpec
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.compiler.codegen.java.JavaCodeBlock
-import androidx.room.compiler.codegen.kotlin.KotlinCodeBlock
+import androidx.room3.compiler.codegen.XCodeBlock
+import androidx.room3.compiler.codegen.XSpec
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.compiler.codegen.java.JavaCodeBlock
+import androidx.room3.compiler.codegen.kotlin.KotlinCodeBlock
 
 internal class XCodeBlockImpl(
     override val java: JavaCodeBlock,

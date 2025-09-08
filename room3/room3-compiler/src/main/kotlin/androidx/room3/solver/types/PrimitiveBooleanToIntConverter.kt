@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package androidx.room.solver.types
+package androidx.room3.solver.types
 
-import androidx.room.compiler.codegen.CodeLanguage
-import androidx.room.compiler.codegen.XCodeBlock
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.compiler.codegen.buildCodeBlock
-import androidx.room.compiler.processing.XProcessingEnv
-import androidx.room.solver.CodeGenScope
+import androidx.room3.compiler.codegen.CodeLanguage
+import androidx.room3.compiler.codegen.XCodeBlock
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.compiler.codegen.buildCodeBlock
+import androidx.room3.compiler.processing.XProcessingEnv
+import androidx.room3.solver.CodeGenScope
 
 /** int to boolean adapter. */
 object PrimitiveBooleanToIntConverter {

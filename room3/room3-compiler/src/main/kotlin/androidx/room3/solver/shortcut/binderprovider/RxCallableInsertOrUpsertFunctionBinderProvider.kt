@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package androidx.room.solver.shortcut.binderprovider
+package androidx.room3.solver.shortcut.binderprovider
 
-import androidx.room.compiler.processing.XRawType
-import androidx.room.compiler.processing.XType
-import androidx.room.ext.KotlinTypeNames
-import androidx.room.processor.Context
-import androidx.room.solver.RxType
-import androidx.room.solver.shortcut.binder.InsertOrUpsertFunctionBinder
-import androidx.room.solver.shortcut.binder.LambdaInsertOrUpsertFunctionBinder
-import androidx.room.vo.ShortcutQueryParameter
+import androidx.room3.compiler.processing.XRawType
+import androidx.room3.compiler.processing.XType
+import androidx.room3.ext.KotlinTypeNames
+import androidx.room3.processor.Context
+import androidx.room3.solver.RxType
+import androidx.room3.solver.shortcut.binder.InsertOrUpsertFunctionBinder
+import androidx.room3.solver.shortcut.binder.LambdaInsertOrUpsertFunctionBinder
+import androidx.room3.vo.ShortcutQueryParameter
 
 /** Provider for Rx Callable binders. */
 open class RxCallableInsertOrUpsertFunctionBinderProvider

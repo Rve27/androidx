@@ -14,71 +14,71 @@
  * limitations under the License.
  */
 
-package androidx.room.solver
+package androidx.room3.solver
 
 import COMMON
 import androidx.kruth.assertThat
 import androidx.paging.DataSource
 import androidx.paging.PagingSource
-import androidx.room.Dao
-import androidx.room.compiler.codegen.CodeLanguage
-import androidx.room.compiler.codegen.XCodeBlock
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.compiler.codegen.compat.XConverters.toString
-import androidx.room.compiler.processing.XProcessingEnv
-import androidx.room.compiler.processing.XRawType
-import androidx.room.compiler.processing.isTypeElement
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.XTestInvocation
-import androidx.room.compiler.processing.util.compileFiles
-import androidx.room.compiler.processing.util.runKspTest
-import androidx.room.compiler.processing.util.runProcessorTest
-import androidx.room.ext.CommonTypeNames
-import androidx.room.ext.GuavaUtilConcurrentTypeNames
-import androidx.room.ext.LifecyclesTypeNames
-import androidx.room.ext.PagingTypeNames
-import androidx.room.ext.ReactiveStreamsTypeNames
-import androidx.room.ext.RoomTypeNames.ROOM_DB
-import androidx.room.ext.RoomTypeNames.STRING_UTIL
-import androidx.room.ext.RxJava2TypeNames
-import androidx.room.ext.RxJava3TypeNames
-import androidx.room.ext.implementsEqualsAndHashcode
-import androidx.room.parser.SQLTypeAffinity
-import androidx.room.processor.Context
-import androidx.room.processor.CustomConverterProcessor
-import androidx.room.processor.DaoProcessor
-import androidx.room.processor.DaoProcessorTest
-import androidx.room.processor.ProcessorErrors
-import androidx.room.solver.binderprovider.DataSourceFactoryQueryResultBinderProvider
-import androidx.room.solver.binderprovider.DataSourceQueryResultBinderProvider
-import androidx.room.solver.binderprovider.ListenableFuturePagingSourceQueryResultBinderProvider
-import androidx.room.solver.binderprovider.LiveDataQueryResultBinderProvider
-import androidx.room.solver.binderprovider.PagingSourceQueryResultBinderProvider
-import androidx.room.solver.binderprovider.RxJava2PagingSourceQueryResultBinderProvider
-import androidx.room.solver.binderprovider.RxJava3PagingSourceQueryResultBinderProvider
-import androidx.room.solver.binderprovider.RxQueryResultBinderProvider
-import androidx.room.solver.query.parameter.CollectionQueryParameterAdapter
-import androidx.room.solver.query.result.MultiTypedPagingSourceQueryResultBinder
-import androidx.room.solver.query.result.Paging3PagingSourceQueryResultBinder
-import androidx.room.solver.shortcut.binderprovider.GuavaListenableFutureDeleteOrUpdateFunctionBinderProvider
-import androidx.room.solver.shortcut.binderprovider.GuavaListenableFutureInsertOrUpsertFunctionBinderProvider
-import androidx.room.solver.shortcut.binderprovider.RxCallableDeleteOrUpdateFunctionBinderProvider
-import androidx.room.solver.shortcut.binderprovider.RxCallableInsertOrUpsertFunctionBinderProvider
-import androidx.room.solver.types.BoxedPrimitiveColumnTypeAdapter
-import androidx.room.solver.types.ByteBufferColumnTypeAdapter
-import androidx.room.solver.types.ColumnTypeAdapter
-import androidx.room.solver.types.CompositeAdapter
-import androidx.room.solver.types.CustomTypeConverterWrapper
-import androidx.room.solver.types.EnumColumnTypeAdapter
-import androidx.room.solver.types.PrimitiveColumnTypeAdapter
-import androidx.room.solver.types.SingleStatementTypeConverter
-import androidx.room.solver.types.StringColumnTypeAdapter
-import androidx.room.solver.types.TypeConverter
-import androidx.room.solver.types.UuidColumnTypeAdapter
-import androidx.room.solver.types.ValueClassConverterWrapper
-import androidx.room.testing.context
-import androidx.room.vo.BuiltInConverterFlags
-import androidx.room.vo.ReadQueryFunction
+import androidx.room3.Dao
+import androidx.room3.compiler.codegen.CodeLanguage
+import androidx.room3.compiler.codegen.XCodeBlock
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.compiler.codegen.compat.XConverters.toString
+import androidx.room3.compiler.processing.XProcessingEnv
+import androidx.room3.compiler.processing.XRawType
+import androidx.room3.compiler.processing.isTypeElement
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.XTestInvocation
+import androidx.room3.compiler.processing.util.compileFiles
+import androidx.room3.compiler.processing.util.runKspTest
+import androidx.room3.compiler.processing.util.runProcessorTest
+import androidx.room3.ext.CommonTypeNames
+import androidx.room3.ext.GuavaUtilConcurrentTypeNames
+import androidx.room3.ext.LifecyclesTypeNames
+import androidx.room3.ext.PagingTypeNames
+import androidx.room3.ext.ReactiveStreamsTypeNames
+import androidx.room3.ext.RoomTypeNames.ROOM_DB
+import androidx.room3.ext.RoomTypeNames.STRING_UTIL
+import androidx.room3.ext.RxJava2TypeNames
+import androidx.room3.ext.RxJava3TypeNames
+import androidx.room3.ext.implementsEqualsAndHashcode
+import androidx.room3.parser.SQLTypeAffinity
+import androidx.room3.processor.Context
+import androidx.room3.processor.CustomConverterProcessor
+import androidx.room3.processor.DaoProcessor
+import androidx.room3.processor.DaoProcessorTest
+import androidx.room3.processor.ProcessorErrors
+import androidx.room3.solver.binderprovider.DataSourceFactoryQueryResultBinderProvider
+import androidx.room3.solver.binderprovider.DataSourceQueryResultBinderProvider
+import androidx.room3.solver.binderprovider.ListenableFuturePagingSourceQueryResultBinderProvider
+import androidx.room3.solver.binderprovider.LiveDataQueryResultBinderProvider
+import androidx.room3.solver.binderprovider.PagingSourceQueryResultBinderProvider
+import androidx.room3.solver.binderprovider.RxJava2PagingSourceQueryResultBinderProvider
+import androidx.room3.solver.binderprovider.RxJava3PagingSourceQueryResultBinderProvider
+import androidx.room3.solver.binderprovider.RxQueryResultBinderProvider
+import androidx.room3.solver.query.parameter.CollectionQueryParameterAdapter
+import androidx.room3.solver.query.result.MultiTypedPagingSourceQueryResultBinder
+import androidx.room3.solver.query.result.Paging3PagingSourceQueryResultBinder
+import androidx.room3.solver.shortcut.binderprovider.GuavaListenableFutureDeleteOrUpdateFunctionBinderProvider
+import androidx.room3.solver.shortcut.binderprovider.GuavaListenableFutureInsertOrUpsertFunctionBinderProvider
+import androidx.room3.solver.shortcut.binderprovider.RxCallableDeleteOrUpdateFunctionBinderProvider
+import androidx.room3.solver.shortcut.binderprovider.RxCallableInsertOrUpsertFunctionBinderProvider
+import androidx.room3.solver.types.BoxedPrimitiveColumnTypeAdapter
+import androidx.room3.solver.types.ByteBufferColumnTypeAdapter
+import androidx.room3.solver.types.ColumnTypeAdapter
+import androidx.room3.solver.types.CompositeAdapter
+import androidx.room3.solver.types.CustomTypeConverterWrapper
+import androidx.room3.solver.types.EnumColumnTypeAdapter
+import androidx.room3.solver.types.PrimitiveColumnTypeAdapter
+import androidx.room3.solver.types.SingleStatementTypeConverter
+import androidx.room3.solver.types.StringColumnTypeAdapter
+import androidx.room3.solver.types.TypeConverter
+import androidx.room3.solver.types.UuidColumnTypeAdapter
+import androidx.room3.solver.types.ValueClassConverterWrapper
+import androidx.room3.testing.context
+import androidx.room3.vo.BuiltInConverterFlags
+import androidx.room3.vo.ReadQueryFunction
 import org.hamcrest.CoreMatchers.instanceOf
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.notNullValue
@@ -102,7 +102,7 @@ class TypeAdapterStoreTest {
                 "foo.bar.EmptyClass",
                 """
             package foo.bar;
-            import androidx.room.*;
+            import androidx.room3.*;
             public class EmptyClass {
                 public enum Color {
                     RED,
@@ -127,7 +127,7 @@ class TypeAdapterStoreTest {
                 "foo.bar.EntityWithOneWayEnum",
                 """
             package foo.bar;
-            import androidx.room.*;
+            import androidx.room3.*;
             @Entity
             @TypeConverters(EmptyClass.ColorTypeConverter.class)
             public class EntityWithOneWayEnum {
@@ -452,7 +452,7 @@ class TypeAdapterStoreTest {
                 "foo.bar.Point",
                 """
             package foo.bar;
-            import androidx.room.*;
+            import androidx.room3.*;
             @Entity
             public class Point {
                 public int x, y;
@@ -587,7 +587,7 @@ class TypeAdapterStoreTest {
             assertThat(bindScope.generate().toString(CodeLanguage.JAVA).trim())
                 .isEqualTo(
                     """
-                |final java.lang.String ${tmp(0)} = androidx.room.util.StringUtil.joinIntoString(fooVar);
+                |final java.lang.String ${tmp(0)} = androidx.room3.util.StringUtil.joinIntoString(fooVar);
                 |$expectedAdapterCode
                 """
                         .trimMargin()
@@ -1698,7 +1698,7 @@ class TypeAdapterStoreTest {
             Source.kotlin(
                 "Foo.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
             typealias MyLongAlias = Long
             typealias MyNullableLongAlias = Long?
 
@@ -1927,7 +1927,7 @@ class TypeAdapterStoreTest {
             Source.kotlin(
                 "Foo.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
             class Subject {
                val anInteger = 0
                val aBoolean = true

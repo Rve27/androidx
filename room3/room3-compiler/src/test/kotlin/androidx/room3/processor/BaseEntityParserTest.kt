@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package androidx.room.processor
+package androidx.room3.processor
 
-import androidx.room.compiler.processing.XTypeElement
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.XTestInvocation
-import androidx.room.compiler.processing.util.runProcessorTest
-import androidx.room.testing.context
-import androidx.room.vo.Entity
+import androidx.room3.compiler.processing.XTypeElement
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.XTestInvocation
+import androidx.room3.compiler.processing.util.runProcessorTest
+import androidx.room3.testing.context
+import androidx.room3.vo.Entity
 import java.io.File
 
 abstract class BaseEntityParserTest {
@@ -29,7 +29,7 @@ abstract class BaseEntityParserTest {
         const val ENTITY_PREFIX =
             """
             package foo.bar;
-            import androidx.room.*;
+            import androidx.room3.*;
             import androidx.annotation.NonNull;
             import java.util.*;
             @Entity%s
@@ -77,7 +77,7 @@ abstract class BaseEntityParserTest {
         ) { invocation ->
             val entity =
                 invocation.roundEnv
-                    .getElementsAnnotatedWith(androidx.room.Entity::class.qualifiedName!!)
+                    .getElementsAnnotatedWith(androidx.room3.Entity::class.qualifiedName!!)
                     .filterIsInstance<XTypeElement>()
                     .first { it.qualifiedName == "foo.bar.MyEntity" }
             val parser = TableEntityProcessor(invocation.context, entity)

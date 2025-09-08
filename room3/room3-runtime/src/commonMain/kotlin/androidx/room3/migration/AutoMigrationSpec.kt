@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.migration
+package androidx.room3.migration
 
 import androidx.sqlite.SQLiteConnection
 
@@ -25,7 +25,7 @@ import androidx.sqlite.SQLiteConnection
  * set in Room's builder. It is important to note that the functions are all in a transaction when
  * it is called.
  *
- * @see [androidx.room.AutoMigration]
+ * @see [androidx.room3.AutoMigration]
  */
 public expect interface AutoMigrationSpec {
     /**

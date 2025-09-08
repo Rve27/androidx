@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package androidx.room.solver
+package androidx.room3.solver
 
-import androidx.room.compiler.codegen.CodeLanguage
-import androidx.room.compiler.codegen.XClassName
-import androidx.room.compiler.codegen.XCodeBlock.Builder.Companion.applyTo
-import androidx.room.compiler.processing.XType
-import androidx.room.compiler.processing.isVoid
-import androidx.room.ext.DEFAULT_IMPLS_CLASS_NAME
-import androidx.room.vo.KotlinDefaultFunctionDelegate
+import androidx.room3.compiler.codegen.CodeLanguage
+import androidx.room3.compiler.codegen.XClassName
+import androidx.room3.compiler.codegen.XCodeBlock.Builder.Companion.applyTo
+import androidx.room3.compiler.processing.XType
+import androidx.room3.compiler.processing.isVoid
+import androidx.room3.ext.DEFAULT_IMPLS_CLASS_NAME
+import androidx.room3.vo.KotlinDefaultFunctionDelegate
 
 /**
  * Function binder that delegates to concrete DAO function in a Kotlin interface, specifically to a

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.room.vo
+package androidx.room3.vo
 
-import androidx.room.compiler.processing.XElement
+import androidx.room3.compiler.processing.XElement
 
 /** Represents the 'languageid' column of an FTS entity. */
 data class LanguageId(val declaredIn: XElement?, val field: Property?) {

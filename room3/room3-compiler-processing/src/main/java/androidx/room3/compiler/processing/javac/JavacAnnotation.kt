@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.javac
+package androidx.room3.compiler.processing.javac
 
-import androidx.room.compiler.processing.InternalXAnnotation
-import androidx.room.compiler.processing.XAnnotationValue
-import androidx.room.compiler.processing.XNullability
-import androidx.room.compiler.processing.XType
+import androidx.room3.compiler.processing.InternalXAnnotation
+import androidx.room3.compiler.processing.XAnnotationValue
+import androidx.room3.compiler.processing.XNullability
+import androidx.room3.compiler.processing.XType
 import com.google.auto.common.AnnotationMirrors
 import com.google.auto.common.MoreTypes
 import javax.lang.model.element.AnnotationMirror

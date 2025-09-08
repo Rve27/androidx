@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.testapp;
+package androidx.room3.integration.testapp;
 
 interface ISampleDatabaseService {
 

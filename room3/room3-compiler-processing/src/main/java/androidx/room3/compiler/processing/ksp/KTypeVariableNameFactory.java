@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.ksp;
+package androidx.room3.compiler.processing.ksp;
 
 import com.squareup.kotlinpoet.TypeName;
 import com.squareup.kotlinpoet.TypeVariableName;

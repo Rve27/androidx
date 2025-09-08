@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.room
+package androidx.room3
 
-import androidx.room.migration.AutoMigrationSpec
+import androidx.room3.migration.AutoMigrationSpec
 import androidx.sqlite.SQLiteDriver
 import kotlin.coroutines.CoroutineContext
 

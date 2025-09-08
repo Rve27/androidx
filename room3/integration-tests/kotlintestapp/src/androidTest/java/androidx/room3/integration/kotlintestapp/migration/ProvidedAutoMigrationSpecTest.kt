@@ -13,17 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.room.integration.kotlintestapp.migration
+package androidx.room3.integration.kotlintestapp.migration
 
-import androidx.room.AutoMigration
-import androidx.room.ColumnInfo
-import androidx.room.Database
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-import androidx.room.ProvidedAutoMigrationSpec
-import androidx.room.RoomDatabase
-import androidx.room.migration.AutoMigrationSpec
-import androidx.room.testing.MigrationTestHelper
+import androidx.room3.AutoMigration
+import androidx.room3.ColumnInfo
+import androidx.room3.Database
+import androidx.room3.Entity
+import androidx.room3.PrimaryKey
+import androidx.room3.ProvidedAutoMigrationSpec
+import androidx.room3.RoomDatabase
+import androidx.room3.migration.AutoMigrationSpec
+import androidx.room3.testing.MigrationTestHelper
 import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -144,7 +144,7 @@ class ProvidedAutoMigrationSpecTest {
             MatcherAssert.assertThat(
                 exception.message,
                 CoreMatchers.containsString(
-                    "A required auto migration spec (androidx.room.integration." +
+                    "A required auto migration spec (androidx.room3.integration." +
                         "kotlintestapp" +
                         ".migration.ProvidedAutoMigrationSpecTest" +
                         ".ProvidedAutoMigrationDb.MyProvidedAutoMigration) has not " +

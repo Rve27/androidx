@@ -14,29 +14,29 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.testapp.test;
+package androidx.room3.integration.testapp.test;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-import androidx.room.integration.testapp.vo.Cluster;
-import androidx.room.integration.testapp.vo.EmbeddedUserAndAllPets;
-import androidx.room.integration.testapp.vo.Hivemind;
-import androidx.room.integration.testapp.vo.House;
-import androidx.room.integration.testapp.vo.Pet;
-import androidx.room.integration.testapp.vo.PetAndOwner;
-import androidx.room.integration.testapp.vo.PetWithToyIds;
-import androidx.room.integration.testapp.vo.Robot;
-import androidx.room.integration.testapp.vo.RobotAndHivemind;
-import androidx.room.integration.testapp.vo.Toy;
-import androidx.room.integration.testapp.vo.User;
-import androidx.room.integration.testapp.vo.UserAndAllPets;
-import androidx.room.integration.testapp.vo.UserAndAllPetsViaJunction;
-import androidx.room.integration.testapp.vo.UserAndPetAdoptionDates;
-import androidx.room.integration.testapp.vo.UserAndPetsAndHouses;
-import androidx.room.integration.testapp.vo.UserIdAndPetNames;
-import androidx.room.integration.testapp.vo.UserWithPetsAndToys;
+import androidx.room3.integration.testapp.vo.Cluster;
+import androidx.room3.integration.testapp.vo.EmbeddedUserAndAllPets;
+import androidx.room3.integration.testapp.vo.Hivemind;
+import androidx.room3.integration.testapp.vo.House;
+import androidx.room3.integration.testapp.vo.Pet;
+import androidx.room3.integration.testapp.vo.PetAndOwner;
+import androidx.room3.integration.testapp.vo.PetWithToyIds;
+import androidx.room3.integration.testapp.vo.Robot;
+import androidx.room3.integration.testapp.vo.RobotAndHivemind;
+import androidx.room3.integration.testapp.vo.Toy;
+import androidx.room3.integration.testapp.vo.User;
+import androidx.room3.integration.testapp.vo.UserAndAllPets;
+import androidx.room3.integration.testapp.vo.UserAndAllPetsViaJunction;
+import androidx.room3.integration.testapp.vo.UserAndPetAdoptionDates;
+import androidx.room3.integration.testapp.vo.UserAndPetsAndHouses;
+import androidx.room3.integration.testapp.vo.UserIdAndPetNames;
+import androidx.room3.integration.testapp.vo.UserWithPetsAndToys;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 

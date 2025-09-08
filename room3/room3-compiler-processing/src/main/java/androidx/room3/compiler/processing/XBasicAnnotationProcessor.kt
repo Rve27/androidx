@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing
+package androidx.room3.compiler.processing
 
 import javax.tools.Diagnostic
 
@@ -22,8 +22,8 @@ import javax.tools.Diagnostic
  * Common interface for basic annotation processors.
  *
  * A processor should not implement this interface directly and instead should extend
- * [androidx.room.compiler.processing.javac.JavacBasicAnnotationProcessor] or
- * [androidx.room.compiler.processing.ksp.KspBasicAnnotationProcessor].
+ * [androidx.room3.compiler.processing.javac.JavacBasicAnnotationProcessor] or
+ * [androidx.room3.compiler.processing.ksp.KspBasicAnnotationProcessor].
  *
  * The XProcessing Javac and KSP implementations of this interface will automatically validate and
  * defer annotated elements for the steps, unless disabled via

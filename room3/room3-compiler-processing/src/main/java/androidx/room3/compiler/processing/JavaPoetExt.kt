@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.room.compiler.processing
+package androidx.room3.compiler.processing
 
-import androidx.room.compiler.processing.util.sanitizeAsJavaMethodName
+import androidx.room3.compiler.processing.util.sanitizeAsJavaMethodName
 import com.squareup.javapoet.AnnotationSpec
 import com.squareup.javapoet.MethodSpec
 import com.squareup.javapoet.ParameterSpec
@@ -40,7 +40,7 @@ import javax.lang.model.type.TypeMirror
  * We should still strive to avoid these cases, maybe turn it to an error in tests.
  */
 internal val JAVA_NONE_TYPE_NAME: JClassName =
-    JClassName.get("androidx.room.compiler.processing.error", "NotAType")
+    JClassName.get("androidx.room3.compiler.processing.error", "NotAType")
 
 @JvmOverloads
 fun XAnnotation.toAnnotationSpec(includeDefaultValues: Boolean = true): AnnotationSpec {

@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.room.integration.kotlintestapp.vo
+package androidx.room3.integration.kotlintestapp.vo
 
-import androidx.room.Embedded
-import androidx.room.Relation
-import androidx.room.RoomWarnings
+import androidx.room3.Embedded
+import androidx.room3.Relation
+import androidx.room3.RoomWarnings
 
 @SuppressWarnings(RoomWarnings.MISMATCHED_GETTER)
 class BookWithJavaEntity {

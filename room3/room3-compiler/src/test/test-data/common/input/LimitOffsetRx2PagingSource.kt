@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.room.paging.rxjava2
+package androidx.room3.paging.rxjava2
 
-import androidx.room.RoomDatabase
-import androidx.room.RoomSQLiteQuery
+import androidx.room3.RoomDatabase
+import androidx.room3.RoomSQLiteQuery
 import androidx.sqlite.SQLiteStatement
 
 abstract class LimitOffsetRxPagingSource<T : Any>(

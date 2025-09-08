@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.javac
+package androidx.room3.compiler.processing.javac
 
-import androidx.room.compiler.processing.XElement
-import androidx.room.compiler.processing.XRoundEnv
+import androidx.room3.compiler.processing.XElement
+import androidx.room3.compiler.processing.XRoundEnv
 import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.element.Element
 import kotlin.reflect.KClass

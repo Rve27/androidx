@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.ksp
+package androidx.room3.compiler.processing.ksp
 
 import androidx.kruth.assertThat
 import androidx.kruth.assertWithMessage
-import androidx.room.compiler.processing.XConstructorElement
-import androidx.room.compiler.processing.XExecutableElement
-import androidx.room.compiler.processing.XMethodElement
-import androidx.room.compiler.processing.XTypeElement
-import androidx.room.compiler.processing.util.CompilationTestCapabilities
-import androidx.room.compiler.processing.util.KOTLINC_LANGUAGE_1_9_ARGS
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.XTestInvocation
-import androidx.room.compiler.processing.util.compileFiles
-import androidx.room.compiler.processing.util.runKaptTest
-import androidx.room.compiler.processing.util.runKspTest
+import androidx.room3.compiler.processing.XConstructorElement
+import androidx.room3.compiler.processing.XExecutableElement
+import androidx.room3.compiler.processing.XMethodElement
+import androidx.room3.compiler.processing.XTypeElement
+import androidx.room3.compiler.processing.util.CompilationTestCapabilities
+import androidx.room3.compiler.processing.util.KOTLINC_LANGUAGE_1_9_ARGS
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.XTestInvocation
+import androidx.room3.compiler.processing.util.compileFiles
+import androidx.room3.compiler.processing.util.runKaptTest
+import androidx.room3.compiler.processing.util.runKspTest
 import com.squareup.javapoet.TypeName
 import java.io.File
 import org.junit.Before

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.util
+package androidx.room3.compiler.processing.util
 
-import androidx.room.compiler.processing.util.compiler.SourceSet
+import androidx.room3.compiler.processing.util.compiler.SourceSet
 import com.google.common.truth.Truth.assertThat
 import org.jetbrains.kotlin.konan.file.File
 import org.junit.Rule

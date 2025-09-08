@@ -14,39 +14,39 @@
  * limitations under the License.
  */
 
-package androidx.room.processor
+package androidx.room3.processor
 
-import androidx.room.compiler.codegen.CodeLanguage
-import androidx.room.compiler.codegen.XCodeBlock
-import androidx.room.compiler.codegen.XPropertySpec
-import androidx.room.compiler.codegen.XTypeSpec
-import androidx.room.compiler.processing.XExecutableParameterElement
-import androidx.room.compiler.processing.XMethodElement
-import androidx.room.compiler.processing.XMethodType
-import androidx.room.compiler.processing.XSuspendMethodType
-import androidx.room.compiler.processing.XType
-import androidx.room.compiler.processing.XVariableElement
-import androidx.room.compiler.processing.isSuspendFunction
-import androidx.room.ext.DEFERRED_TYPES
-import androidx.room.ext.KotlinTypeNames
-import androidx.room.ext.RoomCoroutinesTypeNames.COROUTINES_ROOM
-import androidx.room.parser.ParsedQuery
-import androidx.room.solver.TypeAdapterExtras
-import androidx.room.solver.prepared.binder.CoroutinePreparedQueryResultBinder
-import androidx.room.solver.prepared.binder.PreparedQueryResultBinder
-import androidx.room.solver.query.result.CoroutineResultBinder
-import androidx.room.solver.query.result.QueryResultBinder
-import androidx.room.solver.shortcut.binder.CoroutineDeleteOrUpdateFunctionBinder
-import androidx.room.solver.shortcut.binder.CoroutineInsertOrUpsertFunctionBinder
-import androidx.room.solver.shortcut.binder.DeleteOrUpdateFunctionBinder
-import androidx.room.solver.shortcut.binder.InsertOrUpsertFunctionBinder
-import androidx.room.solver.transaction.binder.CoroutineTransactionFunctionBinder
-import androidx.room.solver.transaction.binder.InstantTransactionFunctionBinder
-import androidx.room.solver.transaction.binder.TransactionFunctionBinder
-import androidx.room.solver.transaction.result.TransactionFunctionAdapter
-import androidx.room.vo.QueryParameter
-import androidx.room.vo.ShortcutQueryParameter
-import androidx.room.vo.TransactionFunction
+import androidx.room3.compiler.codegen.CodeLanguage
+import androidx.room3.compiler.codegen.XCodeBlock
+import androidx.room3.compiler.codegen.XPropertySpec
+import androidx.room3.compiler.codegen.XTypeSpec
+import androidx.room3.compiler.processing.XExecutableParameterElement
+import androidx.room3.compiler.processing.XMethodElement
+import androidx.room3.compiler.processing.XMethodType
+import androidx.room3.compiler.processing.XSuspendMethodType
+import androidx.room3.compiler.processing.XType
+import androidx.room3.compiler.processing.XVariableElement
+import androidx.room3.compiler.processing.isSuspendFunction
+import androidx.room3.ext.DEFERRED_TYPES
+import androidx.room3.ext.KotlinTypeNames
+import androidx.room3.ext.RoomCoroutinesTypeNames.COROUTINES_ROOM
+import androidx.room3.parser.ParsedQuery
+import androidx.room3.solver.TypeAdapterExtras
+import androidx.room3.solver.prepared.binder.CoroutinePreparedQueryResultBinder
+import androidx.room3.solver.prepared.binder.PreparedQueryResultBinder
+import androidx.room3.solver.query.result.CoroutineResultBinder
+import androidx.room3.solver.query.result.QueryResultBinder
+import androidx.room3.solver.shortcut.binder.CoroutineDeleteOrUpdateFunctionBinder
+import androidx.room3.solver.shortcut.binder.CoroutineInsertOrUpsertFunctionBinder
+import androidx.room3.solver.shortcut.binder.DeleteOrUpdateFunctionBinder
+import androidx.room3.solver.shortcut.binder.InsertOrUpsertFunctionBinder
+import androidx.room3.solver.transaction.binder.CoroutineTransactionFunctionBinder
+import androidx.room3.solver.transaction.binder.InstantTransactionFunctionBinder
+import androidx.room3.solver.transaction.binder.TransactionFunctionBinder
+import androidx.room3.solver.transaction.result.TransactionFunctionAdapter
+import androidx.room3.vo.QueryParameter
+import androidx.room3.vo.ShortcutQueryParameter
+import androidx.room3.vo.TransactionFunction
 
 /** Delegate class with common functionality for DAO function processors. */
 abstract class FunctionProcessorDelegate(

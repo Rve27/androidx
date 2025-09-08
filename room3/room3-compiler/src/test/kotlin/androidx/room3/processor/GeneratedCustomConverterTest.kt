@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package androidx.room.processor
+package androidx.room3.processor
 
-import androidx.room.RoomKspProcessor
-import androidx.room.RoomProcessor
-import androidx.room.compiler.processing.XElement
-import androidx.room.compiler.processing.XFiler
-import androidx.room.compiler.processing.XProcessingEnv
-import androidx.room.compiler.processing.XProcessingStep
-import androidx.room.compiler.processing.addOriginatingElement
-import androidx.room.compiler.processing.javac.JavacBasicAnnotationProcessor
-import androidx.room.compiler.processing.ksp.KspBasicAnnotationProcessor
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.runProcessorTest
+import androidx.room3.RoomKspProcessor
+import androidx.room3.RoomProcessor
+import androidx.room3.compiler.processing.XElement
+import androidx.room3.compiler.processing.XFiler
+import androidx.room3.compiler.processing.XProcessingEnv
+import androidx.room3.compiler.processing.XProcessingStep
+import androidx.room3.compiler.processing.addOriginatingElement
+import androidx.room3.compiler.processing.javac.JavacBasicAnnotationProcessor
+import androidx.room3.compiler.processing.ksp.KspBasicAnnotationProcessor
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.runProcessorTest
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.processing.SymbolProcessorProvider
 import com.squareup.javapoet.ClassName
@@ -48,7 +48,7 @@ class GeneratedCustomConverterTest {
             Source.kotlin(
                 "Sources.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
 
             @Database(entities = [MyEntity::class], version = 1, exportSchema = false)
             @TypeConverters(Generated_CustomConverters::class)
@@ -101,7 +101,7 @@ class GeneratedCustomConverterTest {
                     .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                     .addMethod(
                         MethodSpec.methodBuilder("fooToString")
-                            .addAnnotation(ClassName.get("androidx.room", "TypeConverter"))
+                            .addAnnotation(ClassName.get("androidx.room3", "TypeConverter"))
                             .addModifiers(Modifier.PUBLIC)
                             .returns(ClassName.get("java.lang", "String"))
                             .addParameter(ClassName.get("", "Foo"), "f")
@@ -110,7 +110,7 @@ class GeneratedCustomConverterTest {
                     )
                     .addMethod(
                         MethodSpec.methodBuilder("stringToFoo")
-                            .addAnnotation(ClassName.get("androidx.room", "TypeConverter"))
+                            .addAnnotation(ClassName.get("androidx.room3", "TypeConverter"))
                             .addModifiers(Modifier.PUBLIC)
                             .returns(ClassName.get("", "Foo"))
                             .addParameter(ClassName.get("java.lang", "String"), "s")

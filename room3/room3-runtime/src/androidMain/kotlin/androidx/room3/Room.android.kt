@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.room
+package androidx.room3
 
 import android.content.Context
-import androidx.room.util.findAndInstantiateDatabaseImpl
+import androidx.room3.util.findAndInstantiateDatabaseImpl
 
 /** Entry point for building and initializing a [RoomDatabase]. */
 public actual object Room {

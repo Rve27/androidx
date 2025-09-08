@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.testapp.test;
+package androidx.room3.integration.testapp.test;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -30,17 +30,17 @@ import androidx.collection.SparseArrayCompat;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.testing.TestLifecycleOwner;
-import androidx.room.Room;
-import androidx.room.integration.testapp.MusicTestDatabase;
-import androidx.room.integration.testapp.dao.MusicDao;
-import androidx.room.integration.testapp.vo.Album;
-import androidx.room.integration.testapp.vo.AlbumNameAndBandName;
-import androidx.room.integration.testapp.vo.AlbumWithSongs;
-import androidx.room.integration.testapp.vo.Artist;
-import androidx.room.integration.testapp.vo.Image;
-import androidx.room.integration.testapp.vo.ImageFormat;
-import androidx.room.integration.testapp.vo.ReleasedAlbum;
-import androidx.room.integration.testapp.vo.Song;
+import androidx.room3.Room;
+import androidx.room3.integration.testapp.MusicTestDatabase;
+import androidx.room3.integration.testapp.dao.MusicDao;
+import androidx.room3.integration.testapp.vo.Album;
+import androidx.room3.integration.testapp.vo.AlbumNameAndBandName;
+import androidx.room3.integration.testapp.vo.AlbumWithSongs;
+import androidx.room3.integration.testapp.vo.Artist;
+import androidx.room3.integration.testapp.vo.Image;
+import androidx.room3.integration.testapp.vo.ImageFormat;
+import androidx.room3.integration.testapp.vo.ReleasedAlbum;
+import androidx.room3.integration.testapp.vo.Song;
 import androidx.sqlite.db.SimpleSQLiteQuery;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -285,7 +285,7 @@ public class MultimapQueryTest {
     }
 
     /**
-     * Tests a JOIN using {@link androidx.room.RawQuery} between two tables.
+     * Tests a JOIN using {@link androidx.room3.RawQuery} between two tables.
      */
     @Test
     public void testJoinByArtistNameRawQuery() {
@@ -412,7 +412,7 @@ public class MultimapQueryTest {
     /**
      * Tests a simple JOIN query between two tables with a return type of a map with a key that
      * is an entity {@link Artist} and a POJO {@link AlbumWithSongs} that use
-     * {@link androidx.room.Embedded} and {@link androidx.room.Relation}.
+     * {@link androidx.room3.Embedded} and {@link androidx.room3.Relation}.
      */
     @Test
     public void testPojoWithEmbeddedAndRelation() {
@@ -452,7 +452,7 @@ public class MultimapQueryTest {
     /**
      * Tests a simple JOIN query between two tables with a return type of a map with a key that
      * is an entity {@link Artist} and a list of entity POJOs {@link AlbumWithSongs} that use
-     * {@link androidx.room.Embedded} and {@link androidx.room.Relation}.
+     * {@link androidx.room3.Embedded} and {@link androidx.room3.Relation}.
      */
     @Test
     public void testPojoWithEmbeddedAndRelationList() {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room
+package androidx.room3
 
 import androidx.kruth.assertThat
 import com.google.common.reflect.ClassPath
@@ -30,7 +30,7 @@ class AnnotationRetentionPolicyTest {
         val annotations: List<Class<*>> =
             ClassPath.from(Database::class.java.classLoader)
                 .allClasses
-                .filter { it.name.startsWith("androidx.room") }
+                .filter { it.name.startsWith("androidx.room3") }
                 .map { it.load() }
                 .filter { it.isAnnotation }
 

@@ -16,7 +16,7 @@
 @file:JvmName("FileUtil")
 @file:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) // used in generated code
 
-package androidx.room.util
+package androidx.room3.util
 
 import android.annotation.SuppressLint
 import android.os.Build

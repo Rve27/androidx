@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package androidx.room.writer
+package androidx.room3.writer
 
-import androidx.room.compiler.processing.XTypeElement
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.XTestInvocation
-import androidx.room.compiler.processing.util.runProcessorTest
-import androidx.room.processor.DatabaseProcessor
-import androidx.room.testing.context
-import androidx.room.vo.Database
+import androidx.room3.compiler.processing.XTypeElement
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.XTestInvocation
+import androidx.room3.compiler.processing.util.runProcessorTest
+import androidx.room3.processor.DatabaseProcessor
+import androidx.room3.testing.context
+import androidx.room3.vo.Database
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
@@ -36,7 +36,7 @@ class OpenDelegateWriterTest {
             """
             package foo.bar;
             import androidx.annotation.NonNull;
-            import androidx.room.*;
+            import androidx.room3.*;
         """
         private const val ENTITY_PREFIX =
             DATABASE_PREFIX +
@@ -213,7 +213,7 @@ class OpenDelegateWriterTest {
                 "foo.bar.MyDatabase",
                 """
             package foo.bar;
-            import androidx.room.*;
+            import androidx.room3.*;
             @Database(entities = {MyEntity.class}, $databaseAttribute version = 3)
             abstract public class MyDatabase extends RoomDatabase {
             }
@@ -222,7 +222,7 @@ class OpenDelegateWriterTest {
         runProcessorTest(sources = sources + databaseCode) { invocation ->
             val db =
                 invocation.roundEnv
-                    .getElementsAnnotatedWith(androidx.room.Database::class.qualifiedName!!)
+                    .getElementsAnnotatedWith(androidx.room3.Database::class.qualifiedName!!)
                     .filterIsInstance<XTypeElement>()
                     .first()
             handler(DatabaseProcessor(invocation.context, db).process(), invocation)

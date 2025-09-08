@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package androidx.room.vo
+package androidx.room3.vo
 
-import androidx.room.compiler.processing.XType
-import androidx.room.compiler.processing.XTypeElement
-import androidx.room.migration.bundle.BaseEntityBundle
-import androidx.room.migration.bundle.EntityBundle
-import androidx.room.migration.bundle.TABLE_NAME_PLACEHOLDER
+import androidx.room3.compiler.processing.XType
+import androidx.room3.compiler.processing.XTypeElement
+import androidx.room3.migration.bundle.BaseEntityBundle
+import androidx.room3.migration.bundle.EntityBundle
+import androidx.room3.migration.bundle.TABLE_NAME_PLACEHOLDER
 
 /** A data class with a mapping SQLite table. */
 open class Entity(

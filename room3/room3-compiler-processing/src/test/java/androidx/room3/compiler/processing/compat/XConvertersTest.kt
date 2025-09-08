@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.compat
+package androidx.room3.compiler.processing.compat
 
 import androidx.kruth.assertThat
-import androidx.room.compiler.processing.XType
-import androidx.room.compiler.processing.compat.XConverters.getProcessingEnv
-import androidx.room.compiler.processing.compat.XConverters.toJavac
-import androidx.room.compiler.processing.compat.XConverters.toKS
-import androidx.room.compiler.processing.compat.XConverters.toXProcessing
-import androidx.room.compiler.processing.javac.JavacProcessingEnv
-import androidx.room.compiler.processing.ksp.KspProcessingEnv
-import androidx.room.compiler.processing.ksp.synthetic.KspSyntheticPropertyMethodElement
-import androidx.room.compiler.processing.testcode.TestSuppressWarnings
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.XTestInvocation
-import androidx.room.compiler.processing.util.getDeclaredField
-import androidx.room.compiler.processing.util.getDeclaredMethodByJvmName
-import androidx.room.compiler.processing.util.runKaptTest
-import androidx.room.compiler.processing.util.runProcessorTest
+import androidx.room3.compiler.processing.XType
+import androidx.room3.compiler.processing.compat.XConverters.getProcessingEnv
+import androidx.room3.compiler.processing.compat.XConverters.toJavac
+import androidx.room3.compiler.processing.compat.XConverters.toKS
+import androidx.room3.compiler.processing.compat.XConverters.toXProcessing
+import androidx.room3.compiler.processing.javac.JavacProcessingEnv
+import androidx.room3.compiler.processing.ksp.KspProcessingEnv
+import androidx.room3.compiler.processing.ksp.synthetic.KspSyntheticPropertyMethodElement
+import androidx.room3.compiler.processing.testcode.TestSuppressWarnings
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.XTestInvocation
+import androidx.room3.compiler.processing.util.getDeclaredField
+import androidx.room3.compiler.processing.util.getDeclaredMethodByJvmName
+import androidx.room3.compiler.processing.util.runKaptTest
+import androidx.room3.compiler.processing.util.runProcessorTest
 import com.google.auto.common.MoreElements
 import com.google.auto.common.MoreTypes
 import com.google.devtools.ksp.getDeclaredFunctions
@@ -51,7 +51,7 @@ class XConvertersTest {
         Source.kotlin(
             "KotlinClass.kt",
             """
-        @androidx.room.compiler.processing.testcode.TestSuppressWarnings("warning1")
+        @androidx.room3.compiler.processing.testcode.TestSuppressWarnings("warning1")
         class KotlinClass {
           var field = 1
           fun foo(param: Int) {
@@ -64,7 +64,7 @@ class XConvertersTest {
         Source.java(
             "JavaClass",
             """
-        @androidx.room.compiler.processing.testcode.TestSuppressWarnings("warning1")
+        @androidx.room3.compiler.processing.testcode.TestSuppressWarnings("warning1")
         public class JavaClass {
           public int field = 1;
           public void foo(int param) {

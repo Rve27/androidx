@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.kotlintestapp.migration
+package androidx.room3.integration.kotlintestapp.migration
 
 import androidx.kruth.assertThrows
-import androidx.room.Room
-import androidx.room.integration.kotlintestapp.TestDatabase
-import androidx.room.migration.Migration
-import androidx.room.testing.MigrationTestHelper
-import androidx.room.util.TableInfo
+import androidx.room3.Room
+import androidx.room3.integration.kotlintestapp.TestDatabase
+import androidx.room3.migration.Migration
+import androidx.room3.testing.MigrationTestHelper
+import androidx.room3.util.TableInfo
 import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.sqlite.driver.AndroidSQLiteDriver
 import androidx.test.filters.MediumTest

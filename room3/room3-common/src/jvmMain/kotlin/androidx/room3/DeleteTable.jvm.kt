@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room
+package androidx.room3
 
 /**
  * Repeatable annotation declaring the deleted tables in the [AutoMigration.to] version of an auto

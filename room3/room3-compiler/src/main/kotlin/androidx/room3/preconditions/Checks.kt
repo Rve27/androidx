@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package androidx.room.preconditions
+package androidx.room3.preconditions
 
-import androidx.room.compiler.processing.XElement
-import androidx.room.compiler.processing.XType
-import androidx.room.compiler.processing.isTypeVariable
-import androidx.room.log.RLog
+import androidx.room3.compiler.processing.XElement
+import androidx.room3.compiler.processing.XType
+import androidx.room3.compiler.processing.isTypeVariable
+import androidx.room3.log.RLog
 import kotlin.contracts.contract
 import kotlin.reflect.KClass
 

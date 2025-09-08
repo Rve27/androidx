@@ -14,31 +14,31 @@
  * limitations under the License.
  */
 
-package androidx.room.processor
+package androidx.room3.processor
 
 import COMMON
 import androidx.kruth.assertThat
-import androidx.room.Dao
-import androidx.room.compiler.codegen.CodeLanguage
-import androidx.room.compiler.codegen.XClassName
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.compiler.codegen.asMutableClassName
-import androidx.room.compiler.processing.XMethodElement
-import androidx.room.compiler.processing.XType
-import androidx.room.compiler.processing.XTypeElement
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.XTestInvocation
-import androidx.room.compiler.processing.util.runProcessorTest
-import androidx.room.ext.CommonTypeNames
-import androidx.room.ext.GuavaUtilConcurrentTypeNames
-import androidx.room.ext.KotlinTypeNames
-import androidx.room.ext.LifecyclesTypeNames
-import androidx.room.ext.ReactiveStreamsTypeNames
-import androidx.room.ext.RxJava2TypeNames
-import androidx.room.ext.RxJava3TypeNames
-import androidx.room.solver.shortcut.result.InsertOrUpsertFunctionAdapter
-import androidx.room.testing.context
-import androidx.room.vo.InsertOrUpsertShortcutFunction
+import androidx.room3.Dao
+import androidx.room3.compiler.codegen.CodeLanguage
+import androidx.room3.compiler.codegen.XClassName
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.compiler.codegen.asMutableClassName
+import androidx.room3.compiler.processing.XMethodElement
+import androidx.room3.compiler.processing.XType
+import androidx.room3.compiler.processing.XTypeElement
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.XTestInvocation
+import androidx.room3.compiler.processing.util.runProcessorTest
+import androidx.room3.ext.CommonTypeNames
+import androidx.room3.ext.GuavaUtilConcurrentTypeNames
+import androidx.room3.ext.KotlinTypeNames
+import androidx.room3.ext.LifecyclesTypeNames
+import androidx.room3.ext.ReactiveStreamsTypeNames
+import androidx.room3.ext.RxJava2TypeNames
+import androidx.room3.ext.RxJava3TypeNames
+import androidx.room3.solver.shortcut.result.InsertOrUpsertFunctionAdapter
+import androidx.room3.testing.context
+import androidx.room3.vo.InsertOrUpsertShortcutFunction
 import kotlin.reflect.KClass
 import org.junit.Test
 
@@ -50,7 +50,7 @@ abstract class InsertOrUpsertShortcutFunctionProcessorTest<out T : InsertOrUpser
         const val DAO_PREFIX =
             """
                 package foo.bar;
-                import androidx.room.*;
+                import androidx.room3.*;
                 import java.util.*;
                 @Dao
                 abstract class MyClass {
@@ -58,7 +58,7 @@ abstract class InsertOrUpsertShortcutFunctionProcessorTest<out T : InsertOrUpser
         const val DAO_PREFIX_KT =
             """
                 package foo.bar
-                import androidx.room.*
+                import androidx.room3.*
                 import java.util.*
                 import io.reactivex.*
                 import io.reactivex.rxjava3.core.*
@@ -699,7 +699,7 @@ abstract class InsertOrUpsertShortcutFunctionProcessorTest<out T : InsertOrUpser
                 "foo.bar.Username",
                 """
             package foo.bar;
-            import androidx.room.*;
+            import androidx.room3.*;
 
             public class Username {
                 int uid;
@@ -756,7 +756,7 @@ abstract class InsertOrUpsertShortcutFunctionProcessorTest<out T : InsertOrUpser
                 "foo.bar.Username",
                 """
             package foo.bar;
-            import androidx.room.*;
+            import androidx.room3.*;
 
             public class Username {
                 int uid;
@@ -783,7 +783,7 @@ abstract class InsertOrUpsertShortcutFunctionProcessorTest<out T : InsertOrUpser
                 "foo.bar.Username",
                 """
             package foo.bar;
-            import androidx.room.*;
+            import androidx.room3.*;
 
             public class Username {
                 int uid;
@@ -816,7 +816,7 @@ abstract class InsertOrUpsertShortcutFunctionProcessorTest<out T : InsertOrUpser
                 "foo.bar.PetName",
                 """
             package foo.bar;
-            import androidx.room.*;
+            import androidx.room3.*;
 
             public class PetName {
                 @ColumnInfo(name = "name")
@@ -829,7 +829,7 @@ abstract class InsertOrUpsertShortcutFunctionProcessorTest<out T : InsertOrUpser
                 "foo.bar.Pet",
                 """
             package foo.bar;
-            import androidx.room.*;
+            import androidx.room3.*;
 
             @Entity
             public class Pet {
@@ -858,7 +858,7 @@ abstract class InsertOrUpsertShortcutFunctionProcessorTest<out T : InsertOrUpser
                 "foo.bar.PetName",
                 """
             package foo.bar;
-            import androidx.room.*;
+            import androidx.room3.*;
 
             public class PetName {
                 @ColumnInfo(name = "name")
@@ -871,7 +871,7 @@ abstract class InsertOrUpsertShortcutFunctionProcessorTest<out T : InsertOrUpser
                 "foo.bar.Pet",
                 """
             package foo.bar;
-            import androidx.room.*;
+            import androidx.room3.*;
 
             @Entity
             public class Pet {
@@ -903,7 +903,7 @@ abstract class InsertOrUpsertShortcutFunctionProcessorTest<out T : InsertOrUpser
                 "foo.bar.PetName",
                 """
             package foo.bar;
-            import androidx.room.*;
+            import androidx.room3.*;
 
             public class PetName {
                 @ColumnInfo(name = "name")
@@ -916,7 +916,7 @@ abstract class InsertOrUpsertShortcutFunctionProcessorTest<out T : InsertOrUpser
                 "foo.bar.Pet",
                 """
             package foo.bar;
-            import androidx.room.*;
+            import androidx.room3.*;
 
             @Entity
             public class Pet {
@@ -943,7 +943,7 @@ abstract class InsertOrUpsertShortcutFunctionProcessorTest<out T : InsertOrUpser
                 "foo.bar.Username",
                 """
             package foo.bar;
-            import androidx.room.*;
+            import androidx.room3.*;
 
             public class Username {
                 int uid;
@@ -972,7 +972,7 @@ abstract class InsertOrUpsertShortcutFunctionProcessorTest<out T : InsertOrUpser
                 "foo.bar.Username",
                 """
             package foo.bar;
-            import androidx.room.*;
+            import androidx.room3.*;
 
             public class Username {
                 int uid;
@@ -1001,7 +1001,7 @@ abstract class InsertOrUpsertShortcutFunctionProcessorTest<out T : InsertOrUpser
                 "foo.bar.Username",
                 """
             package foo.bar;
-            import androidx.room.*;
+            import androidx.room3.*;
 
             public class Username {
                 int uid;
@@ -1017,7 +1017,7 @@ abstract class InsertOrUpsertShortcutFunctionProcessorTest<out T : InsertOrUpser
                 "foo.bar.Fullname",
                 """
             package foo.bar;
-            import androidx.room.*;
+            import androidx.room3.*;
 
             public class Fullname {
                 @ColumnInfo(name = "name")
@@ -1043,7 +1043,7 @@ abstract class InsertOrUpsertShortcutFunctionProcessorTest<out T : InsertOrUpser
                 "foo.bar.UserPets",
                 """
             package foo.bar;
-            import androidx.room.*;
+            import androidx.room3.*;
             import java.util.List;
 
             public class UserPets {
@@ -1058,7 +1058,7 @@ abstract class InsertOrUpsertShortcutFunctionProcessorTest<out T : InsertOrUpser
                 "foo.bar.Pet",
                 """
             package foo.bar;
-            import androidx.room.*;
+            import androidx.room3.*;
 
             @Entity
             public class Pet {

@@ -16,15 +16,15 @@
 @file:JvmName("RoomPagingUtil")
 @file:JvmMultifileClass
 
-package androidx.room.paging.util
+package androidx.room3.paging.util
 
 import android.database.Cursor
 import android.os.CancellationSignal
 import androidx.annotation.RestrictTo
 import androidx.paging.PagingSource.LoadParams
 import androidx.paging.PagingSource.LoadResult
-import androidx.room.RoomDatabase
-import androidx.room.RoomSQLiteQuery
+import androidx.room3.RoomDatabase
+import androidx.room3.RoomSQLiteQuery
 
 /**
  * A [LoadResult] that can be returned to trigger a new generation of PagingSource

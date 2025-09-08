@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.codegen
+package androidx.room3.compiler.codegen
 
-import androidx.room.compiler.processing.XNullability
+import androidx.room3.compiler.processing.XNullability
 import com.squareup.kotlinpoet.ARRAY
 import com.squareup.kotlinpoet.BOOLEAN_ARRAY
 import com.squareup.kotlinpoet.BYTE_ARRAY
@@ -47,7 +47,7 @@ import kotlin.reflect.KClass
  * If the name comes from xprocessing APIs then the KotlinPoet name will default to 'Unavailable' if
  * the processing backend is not KSP.
  *
- * @see [androidx.room.compiler.processing.XType.asTypeName]
+ * @see [androidx.room3.compiler.processing.XType.asTypeName]
  */
 open class XTypeName
 protected constructor(
@@ -197,7 +197,7 @@ protected constructor(
 
         /** The default [KTypeName] returned by xprocessing APIs when the backend is not KSP. */
         internal val UNAVAILABLE_KTYPE_NAME =
-            KClassName("androidx.room.compiler.codegen", "Unavailable")
+            KClassName("androidx.room3.compiler.codegen", "Unavailable")
 
         operator fun invoke(
             java: JTypeName,

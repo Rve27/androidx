@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.kotlintestapp
+package androidx.room3.integration.kotlintestapp
 
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.concurrent.thread

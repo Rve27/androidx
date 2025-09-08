@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package androidx.room.processor
+package androidx.room3.processor
 
-import androidx.room.ColumnInfo
-import androidx.room.compiler.codegen.CodeLanguage
-import androidx.room.compiler.processing.XFieldElement
-import androidx.room.compiler.processing.XType
-import androidx.room.parser.Collate
-import androidx.room.parser.SQLTypeAffinity
-import androidx.room.vo.EmbeddedProperty
-import androidx.room.vo.Property
+import androidx.room3.ColumnInfo
+import androidx.room3.compiler.codegen.CodeLanguage
+import androidx.room3.compiler.processing.XFieldElement
+import androidx.room3.compiler.processing.XType
+import androidx.room3.parser.Collate
+import androidx.room3.parser.SQLTypeAffinity
+import androidx.room3.vo.EmbeddedProperty
+import androidx.room3.vo.Property
 import java.util.Locale
 
 class PropertyProcessor(

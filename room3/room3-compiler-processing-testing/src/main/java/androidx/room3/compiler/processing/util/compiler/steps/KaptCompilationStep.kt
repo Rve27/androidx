@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.util.compiler.steps
+package androidx.room3.compiler.processing.util.compiler.steps
 
-import androidx.room.compiler.processing.util.FileResource
-import androidx.room.compiler.processing.util.compiler.KotlinCliRunner
-import androidx.room.compiler.processing.util.compiler.toSourceSet
+import androidx.room3.compiler.processing.util.FileResource
+import androidx.room3.compiler.processing.util.compiler.KotlinCliRunner
+import androidx.room3.compiler.processing.util.compiler.toSourceSet
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.ObjectOutputStream

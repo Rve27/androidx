@@ -13,4 +13,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-androidx.room.compiler.processing.util.TestDefaultEnvironmentConfigProvider
+androidx.room3.compiler.processing.util.TestDefaultEnvironmentConfigProvider

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.room.parser
+package androidx.room3.parser
 
 import androidx.kruth.assertThat
 import org.hamcrest.CoreMatchers.`is`

@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.room.integration.kotlintestapp.vo
+package androidx.room3.integration.kotlintestapp.vo
 
-import androidx.room.DatabaseView
-import androidx.room.Embedded
+import androidx.room3.DatabaseView
+import androidx.room3.Embedded
 
 @DatabaseView("SELECT Pet.*, PetUser.* FROM Pet INNER JOIN PetUser ON Pet.mUserId = PetUser.mId")
 data class PetWithUser(@Embedded var mPet: Pet, @Embedded var mUser: PetUser)

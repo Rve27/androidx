@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package androidx.room
+package androidx.room3
 
 import androidx.annotation.RestrictTo
-import androidx.room.RoomDatabase.JournalMode.TRUNCATE
-import androidx.room.RoomDatabase.JournalMode.WRITE_AHEAD_LOGGING
-import androidx.room.concurrent.ExclusiveLock
-import androidx.room.util.findMigrationPath
-import androidx.room.util.isMigrationRequired
+import androidx.room3.RoomDatabase.JournalMode.TRUNCATE
+import androidx.room3.RoomDatabase.JournalMode.WRITE_AHEAD_LOGGING
+import androidx.room3.concurrent.ExclusiveLock
+import androidx.room3.util.findMigrationPath
+import androidx.room3.util.isMigrationRequired
 import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.SQLiteDriver
 import androidx.sqlite.execSQL

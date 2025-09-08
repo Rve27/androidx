@@ -8,17 +8,17 @@
     "RestrictedApiAndroidX",
 ) // Generated code
 
-package androidx.room.integration.kotlintestapp.test
+package androidx.room3.integration.kotlintestapp.test
 
-import androidx.room.DatabaseConfiguration
-import androidx.room.InvalidationTracker
-import androidx.room.RoomDatabase
-import androidx.room.RoomOpenHelper
-import androidx.room.migration.AutoMigrationSpec
-import androidx.room.migration.Migration
-import androidx.room.util.TableInfo
-import androidx.room.util.TableInfo.Companion.read
-import androidx.room.util.dropFtsSyncTriggers
+import androidx.room3.DatabaseConfiguration
+import androidx.room3.InvalidationTracker
+import androidx.room3.RoomDatabase
+import androidx.room3.RoomOpenHelper
+import androidx.room3.migration.AutoMigrationSpec
+import androidx.room3.migration.Migration
+import androidx.room3.util.TableInfo
+import androidx.room3.util.TableInfo.Companion.read
+import androidx.room3.util.dropFtsSyncTriggers
 import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.sqlite.db.SupportSQLiteOpenHelper
 import java.lang.Class
@@ -35,7 +35,7 @@ import kotlin.collections.Map
 import kotlin.collections.MutableList
 import kotlin.collections.Set
 
-@Generated(value = ["androidx.room.RoomProcessor"])
+@Generated(value = ["androidx.room3.RoomProcessor"])
 public class PreKmpDatabase_Impl : PreKmpDatabase() {
     private val _preKmpDatabase: Lazy<PreKmpDatabase.TheDao> = lazy {
         PreKmpDatabase_TheDao_Impl(this)
@@ -150,7 +150,7 @@ public class PreKmpDatabase_Impl : PreKmpDatabase() {
                             return RoomOpenHelper.ValidationResult(
                                 false,
                                 """
-              |TheEntity(androidx.room.integration.kotlintestapp.test.PreKmpDatabase.TheEntity).
+              |TheEntity(androidx.room3.integration.kotlintestapp.test.PreKmpDatabase.TheEntity).
               | Expected:
               |"""
                                     .trimMargin() +

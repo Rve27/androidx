@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.codegen
+package androidx.room3.compiler.codegen
 
 typealias JCodeBlock = com.squareup.javapoet.CodeBlock
 

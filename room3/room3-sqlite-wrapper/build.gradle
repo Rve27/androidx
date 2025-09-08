@@ -51,11 +51,11 @@ dependencies {
 }
 
 android {
-    namespace = "androidx.room.sqlite.wrapper"
+    namespace = "androidx.room3.sqlite.wrapper"
 }
 
 androidx {
-    name = "androidx.room:room-sqlite-wrapper"
+    name = "androidx.room3:room3-sqlite-wrapper"
     type = SoftwareType.PUBLISHED_LIBRARY
     inceptionYear = "2025"
     description = "Use SupportSQLite APIs backed by a RoomDatabase"

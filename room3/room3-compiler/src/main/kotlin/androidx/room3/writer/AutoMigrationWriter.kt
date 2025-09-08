@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-package androidx.room.writer
+package androidx.room3.writer
 
-import androidx.room.compiler.codegen.CodeLanguage
-import androidx.room.compiler.codegen.VisibilityModifier
-import androidx.room.compiler.codegen.XCodeBlock
-import androidx.room.compiler.codegen.XFunSpec
-import androidx.room.compiler.codegen.XTypeSpec
-import androidx.room.compiler.codegen.XTypeSpec.Builder.Companion.applyTo
-import androidx.room.compiler.processing.XTypeElement
-import androidx.room.ext.RoomMemberNames.DB_UTIL_FOREIGN_KEY_CHECK
-import androidx.room.ext.RoomTypeNames
-import androidx.room.ext.SQLiteDriverMemberNames
-import androidx.room.ext.SQLiteDriverTypeNames.CONNECTION
-import androidx.room.migration.bundle.BaseEntityBundle
-import androidx.room.migration.bundle.EntityBundle
-import androidx.room.migration.bundle.FtsEntityBundle
-import androidx.room.vo.AutoMigration
+import androidx.room3.compiler.codegen.CodeLanguage
+import androidx.room3.compiler.codegen.VisibilityModifier
+import androidx.room3.compiler.codegen.XCodeBlock
+import androidx.room3.compiler.codegen.XFunSpec
+import androidx.room3.compiler.codegen.XTypeSpec
+import androidx.room3.compiler.codegen.XTypeSpec.Builder.Companion.applyTo
+import androidx.room3.compiler.processing.XTypeElement
+import androidx.room3.ext.RoomMemberNames.DB_UTIL_FOREIGN_KEY_CHECK
+import androidx.room3.ext.RoomTypeNames
+import androidx.room3.ext.SQLiteDriverMemberNames
+import androidx.room3.ext.SQLiteDriverTypeNames.CONNECTION
+import androidx.room3.migration.bundle.BaseEntityBundle
+import androidx.room3.migration.bundle.EntityBundle
+import androidx.room3.migration.bundle.FtsEntityBundle
+import androidx.room3.vo.AutoMigration
 
 /** Writes the implementation of migrations that were annotated with @AutoMigration. */
 class AutoMigrationWriter(

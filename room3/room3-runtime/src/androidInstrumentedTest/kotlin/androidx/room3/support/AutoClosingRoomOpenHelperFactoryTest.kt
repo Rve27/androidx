@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.support
+package androidx.room3.support
 
 import android.annotation.SuppressLint
 import android.content.Context

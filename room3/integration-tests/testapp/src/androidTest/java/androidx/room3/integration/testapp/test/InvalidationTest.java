@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.testapp.test;
+package androidx.room3.integration.testapp.test;
 
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -24,13 +24,13 @@ import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import android.content.Context;
 
 import androidx.arch.core.executor.testing.CountingTaskExecutorRule;
-import androidx.room.InvalidationTracker;
-import androidx.room.Room;
-import androidx.room.integration.testapp.TestDatabase;
-import androidx.room.integration.testapp.dao.PetDao;
-import androidx.room.integration.testapp.dao.UserDao;
-import androidx.room.integration.testapp.vo.Pet;
-import androidx.room.integration.testapp.vo.User;
+import androidx.room3.InvalidationTracker;
+import androidx.room3.Room;
+import androidx.room3.integration.testapp.TestDatabase;
+import androidx.room3.integration.testapp.dao.PetDao;
+import androidx.room3.integration.testapp.dao.UserDao;
+import androidx.room3.integration.testapp.vo.Pet;
+import androidx.room3.integration.testapp.vo.User;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.SmallTest;

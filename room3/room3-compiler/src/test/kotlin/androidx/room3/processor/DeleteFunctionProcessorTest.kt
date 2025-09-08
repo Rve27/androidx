@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.room.processor
+package androidx.room3.processor
 
-import androidx.room.Delete
-import androidx.room.compiler.processing.XMethodElement
-import androidx.room.compiler.processing.XType
-import androidx.room.processor.ProcessorErrors.CANNOT_FIND_DELETE_RESULT_ADAPTER
-import androidx.room.processor.ProcessorErrors.DELETE_MISSING_PARAMS
-import androidx.room.vo.DeleteFunction
+import androidx.room3.Delete
+import androidx.room3.compiler.processing.XMethodElement
+import androidx.room3.compiler.processing.XType
+import androidx.room3.processor.ProcessorErrors.CANNOT_FIND_DELETE_RESULT_ADAPTER
+import androidx.room3.processor.ProcessorErrors.DELETE_MISSING_PARAMS
+import androidx.room3.vo.DeleteFunction
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 

@@ -17,11 +17,11 @@
 @file:JvmName("GuavaRoom")
 @file:Suppress("UNUSED_PARAMETER")
 
-package androidx.room.guava
+package androidx.room3.guava
 
 import android.os.CancellationSignal
-import androidx.room.RoomDatabase
-import androidx.room.RoomSQLiteQuery
+import androidx.room3.RoomDatabase
+import androidx.room3.RoomSQLiteQuery
 import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.db.SupportSQLiteQuery
 import com.google.common.util.concurrent.ListenableFuture

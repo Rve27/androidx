@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.room.rxjava3
+package androidx.room3.rxjava3
 
 import androidx.arch.core.executor.ArchTaskExecutor
 import androidx.arch.core.executor.testing.CountingTaskExecutorRule
 import androidx.kruth.assertThat
-import androidx.room.InvalidationTracker
-import androidx.room.RoomDatabase
+import androidx.room3.InvalidationTracker
+import androidx.room3.RoomDatabase
 import io.reactivex.rxjava3.functions.Consumer
 import io.reactivex.rxjava3.observers.TestObserver
 import io.reactivex.rxjava3.subscribers.TestSubscriber

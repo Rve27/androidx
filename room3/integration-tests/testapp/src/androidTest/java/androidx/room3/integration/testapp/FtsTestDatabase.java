@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.testapp;
+package androidx.room3.integration.testapp;
 
-import androidx.room.Database;
-import androidx.room.RoomDatabase;
-import androidx.room.integration.testapp.dao.MailDao;
-import androidx.room.integration.testapp.dao.SongDao;
-import androidx.room.integration.testapp.vo.Mail;
-import androidx.room.integration.testapp.vo.Song;
-import androidx.room.integration.testapp.vo.SongDescription;
+import androidx.room3.Database;
+import androidx.room3.RoomDatabase;
+import androidx.room3.integration.testapp.dao.MailDao;
+import androidx.room3.integration.testapp.dao.SongDao;
+import androidx.room3.integration.testapp.vo.Mail;
+import androidx.room3.integration.testapp.vo.Song;
+import androidx.room3.integration.testapp.vo.SongDescription;
 
 @Database(entities = {Mail.class, SongDescription.class, Song.class},
         version = 1, exportSchema = false)

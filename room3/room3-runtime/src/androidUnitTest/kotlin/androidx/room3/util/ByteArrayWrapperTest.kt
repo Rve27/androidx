@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.util
+package androidx.room3.util
 
 import kotlin.test.Test
 import kotlin.test.assertEquals

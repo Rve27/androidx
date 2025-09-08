@@ -16,7 +16,7 @@
 
 @file:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 
-package androidx.room.concurrent
+package androidx.room3.concurrent
 
 import androidx.annotation.RestrictTo
 import kotlin.concurrent.AtomicInt as KotlinAtomicInt

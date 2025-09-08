@@ -14,25 +14,25 @@
  * limitations under the License.
  */
 
-package androidx.room.processor
+package androidx.room3.processor
 
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.Query
-import androidx.room.RawQuery
-import androidx.room.SkipQueryVerification
-import androidx.room.Transaction
-import androidx.room.Update
-import androidx.room.Upsert
-import androidx.room.compiler.processing.XConstructorElement
-import androidx.room.compiler.processing.XMethodElement
-import androidx.room.compiler.processing.XType
-import androidx.room.compiler.processing.XTypeElement
-import androidx.room.verifier.DatabaseVerifier
-import androidx.room.vo.Dao
-import androidx.room.vo.KotlinBoxedPrimitiveFunctionDelegate
-import androidx.room.vo.KotlinDefaultFunctionDelegate
-import androidx.room.vo.Warning
+import androidx.room3.Delete
+import androidx.room3.Insert
+import androidx.room3.Query
+import androidx.room3.RawQuery
+import androidx.room3.SkipQueryVerification
+import androidx.room3.Transaction
+import androidx.room3.Update
+import androidx.room3.Upsert
+import androidx.room3.compiler.processing.XConstructorElement
+import androidx.room3.compiler.processing.XMethodElement
+import androidx.room3.compiler.processing.XType
+import androidx.room3.compiler.processing.XTypeElement
+import androidx.room3.verifier.DatabaseVerifier
+import androidx.room3.vo.Dao
+import androidx.room3.vo.KotlinBoxedPrimitiveFunctionDelegate
+import androidx.room3.vo.KotlinDefaultFunctionDelegate
+import androidx.room3.vo.Warning
 
 class DaoProcessor(
     baseContext: Context,
@@ -74,7 +74,7 @@ class DaoProcessor(
         }
         context.checker.hasAnnotation(
             element,
-            androidx.room.Dao::class,
+            androidx.room3.Dao::class,
             ProcessorErrors.DAO_MUST_BE_ANNOTATED_WITH_DAO,
         )
         context.checker.check(

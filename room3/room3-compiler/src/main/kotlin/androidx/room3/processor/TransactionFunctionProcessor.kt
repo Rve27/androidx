@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package androidx.room.processor
+package androidx.room3.processor
 
-import androidx.room.compiler.codegen.CodeLanguage
-import androidx.room.compiler.processing.XMethodElement
-import androidx.room.compiler.processing.XType
-import androidx.room.compiler.processing.XTypeElement
-import androidx.room.ext.DEFERRED_TYPES
-import androidx.room.vo.TransactionFunction
+import androidx.room3.compiler.codegen.CodeLanguage
+import androidx.room3.compiler.processing.XMethodElement
+import androidx.room3.compiler.processing.XType
+import androidx.room3.compiler.processing.XTypeElement
+import androidx.room3.ext.DEFERRED_TYPES
+import androidx.room3.vo.TransactionFunction
 
 class TransactionFunctionProcessor(
     baseContext: Context,

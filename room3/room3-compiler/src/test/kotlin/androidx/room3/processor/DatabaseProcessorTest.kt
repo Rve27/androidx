@@ -14,34 +14,34 @@
  * limitations under the License.
  */
 
-package androidx.room.processor
+package androidx.room3.processor
 
 import COMMON
 import androidx.kruth.assertThat
-import androidx.room.DatabaseProcessingStep
-import androidx.room.RoomKspProcessor
-import androidx.room.RoomProcessor
-import androidx.room.compiler.codegen.CodeLanguage
-import androidx.room.compiler.processing.XType
-import androidx.room.compiler.processing.XTypeElement
-import androidx.room.compiler.processing.util.CompilationResultSubject
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.XTestInvocation
-import androidx.room.compiler.processing.util.compileFiles
-import androidx.room.compiler.processing.util.compileFilesIntoJar
-import androidx.room.compiler.processing.util.runKspTest
-import androidx.room.compiler.processing.util.runProcessorTest
-import androidx.room.parser.ParsedQuery
-import androidx.room.parser.QueryType
-import androidx.room.parser.Table
-import androidx.room.processor.ProcessorErrors.invalidAutoMigrationSchema
-import androidx.room.solver.query.result.DataClassRowAdapter
-import androidx.room.solver.query.result.EntityRowAdapter
-import androidx.room.testing.context
-import androidx.room.vo.Database
-import androidx.room.vo.DatabaseView
-import androidx.room.vo.ReadQueryFunction
-import androidx.room.vo.Warning
+import androidx.room3.DatabaseProcessingStep
+import androidx.room3.RoomKspProcessor
+import androidx.room3.RoomProcessor
+import androidx.room3.compiler.codegen.CodeLanguage
+import androidx.room3.compiler.processing.XType
+import androidx.room3.compiler.processing.XTypeElement
+import androidx.room3.compiler.processing.util.CompilationResultSubject
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.XTestInvocation
+import androidx.room3.compiler.processing.util.compileFiles
+import androidx.room3.compiler.processing.util.compileFilesIntoJar
+import androidx.room3.compiler.processing.util.runKspTest
+import androidx.room3.compiler.processing.util.runProcessorTest
+import androidx.room3.parser.ParsedQuery
+import androidx.room3.parser.QueryType
+import androidx.room3.parser.Table
+import androidx.room3.processor.ProcessorErrors.invalidAutoMigrationSchema
+import androidx.room3.solver.query.result.DataClassRowAdapter
+import androidx.room3.solver.query.result.EntityRowAdapter
+import androidx.room3.testing.context
+import androidx.room3.vo.Database
+import androidx.room3.vo.DatabaseView
+import androidx.room3.vo.ReadQueryFunction
+import androidx.room3.vo.Warning
 import com.google.auto.service.processor.AutoServiceProcessor
 import com.google.testing.junit.testparameterinjector.TestParameter
 import com.google.testing.junit.testparameterinjector.TestParameterInjector
@@ -70,7 +70,7 @@ class DatabaseProcessorTest {
         const val DATABASE_PREFIX =
             """
             package foo.bar;
-            import androidx.room.*;
+            import androidx.room3.*;
             """
         val DB1 =
             Source.java(
@@ -109,7 +109,7 @@ class DatabaseProcessorTest {
                 "foo.bar.User",
                 """
                 package foo.bar;
-                import androidx.room.*;
+                import androidx.room3.*;
                 @Entity
                 public class User {
                     @PrimaryKey
@@ -123,7 +123,7 @@ class DatabaseProcessorTest {
                 "foo.bar.UserDao",
                 """
                 package foo.bar;
-                import androidx.room.*;
+                import androidx.room3.*;
                 @Dao
                 public interface UserDao {
                     @Query("SELECT * FROM user")
@@ -165,7 +165,7 @@ class DatabaseProcessorTest {
                 "foo.bar.Book",
                 """
                 package foo.bar;
-                import androidx.room.*;
+                import androidx.room3.*;
                 @Entity
                 public class Book {
                     @PrimaryKey
@@ -178,7 +178,7 @@ class DatabaseProcessorTest {
                 "foo.bar.BookDao",
                 """
                 package foo.bar;
-                import androidx.room.*;
+                import androidx.room3.*;
                 @Dao
                 public interface BookDao {
                     @Query("SELECT * FROM book")
@@ -194,7 +194,7 @@ class DatabaseProcessorTest {
                 "foo.bar.Publisher",
                 """
                 package foo.bar;
-                import androidx.room.*;
+                import androidx.room3.*;
                 @Entity
                 public class Publisher {
                     @PrimaryKey
@@ -208,7 +208,7 @@ class DatabaseProcessorTest {
                 "foo.bar.PublisherDao",
                 """
                 package foo.bar;
-                import androidx.room.*;
+                import androidx.room3.*;
                 @Dao
                 public interface PublisherDao {
                     @Upsert
@@ -223,7 +223,7 @@ class DatabaseProcessorTest {
                 """
             package foo.bar;
             import androidx.annotation.NonNull;
-            import androidx.room.migration.AutoMigrationSpec;
+            import androidx.room3.migration.AutoMigrationSpec;
             import androidx.sqlite.db.SupportSQLiteDatabase;
             class MyAutoMigration implements AutoMigrationSpec {
                 @Override
@@ -311,7 +311,7 @@ class DatabaseProcessorTest {
                 "foo.bar.BookDao",
                 """
                 package foo.bar;
-                import androidx.room.*;
+                import androidx.room3.*;
                 @Dao
                 public interface BookDao {
                     @Query("SELECT * FROM nonExistentTable")
@@ -341,7 +341,7 @@ class DatabaseProcessorTest {
                 "foo.bar.AnotherClass",
                 """
                 package foo.bar;
-                import androidx.room.*;
+                import androidx.room3.*;
                 @Entity(tableName="user")
                 public class AnotherClass {
                     @PrimaryKey
@@ -369,7 +369,7 @@ class DatabaseProcessorTest {
                 "test.library.MissingEntityAnnotationDataClass",
                 """
             package test.library;
-            import androidx.room.*;
+            import androidx.room3.*;
             public class MissingEntityAnnotationDataClass {
                 @PrimaryKey
                 private long id;
@@ -406,7 +406,7 @@ class DatabaseProcessorTest {
                 "test.library.MissingAnnotationsBaseDao",
                 """
             package test.library;
-            import androidx.room.*;
+            import androidx.room3.*;
             public interface MissingAnnotationsBaseDao {
                 int getFoo();
             }
@@ -441,7 +441,7 @@ class DatabaseProcessorTest {
                 "foo.bar.UserNameFts",
                 """
                 package foo.bar;
-                import androidx.room.*;
+                import androidx.room3.*;
 
                 @Entity
                 @Fts4(contentEntity = User.class)
@@ -484,7 +484,7 @@ class DatabaseProcessorTest {
                 "foo.bar.BookDao",
                 """
                 package foo.bar;
-                import androidx.room.*;
+                import androidx.room3.*;
                 @Dao
                 public interface BookDao {
                     @Query("SELECT nonExistingField FROM Book")
@@ -503,7 +503,7 @@ class DatabaseProcessorTest {
                 "foo.barx.Db1",
                 """
                 package foo.barx;
-                import androidx.room.*;
+                import androidx.room3.*;
                 import foo.bar.*;
                 @Database(entities = {Book.class}, version = 42)
                 public abstract class Db1 extends RoomDatabase {
@@ -574,7 +574,7 @@ class DatabaseProcessorTest {
                 "foo.bar.Entity1",
                 """
                 package foo.bar;
-                import androidx.room.*;
+                import androidx.room3.*;
                 @Entity(indices = {@Index(name ="index_name", value = {"name"})})
                 public class Entity1 {
                     @PrimaryKey
@@ -589,7 +589,7 @@ class DatabaseProcessorTest {
                 "foo.bar.Entity2",
                 """
                 package foo.bar;
-                import androidx.room.*;
+                import androidx.room3.*;
                 @Entity(indices = {@Index(name ="index_name", value = {"anotherName"})})
                 public class Entity2 {
                     @PrimaryKey
@@ -625,7 +625,7 @@ class DatabaseProcessorTest {
                 "foo.bar.Entity1",
                 """
                 package foo.bar;
-                import androidx.room.*;
+                import androidx.room3.*;
                 @Entity(foreignKeys = @ForeignKey(
                         entity = ${COMMON.USER_TYPE_NAME.canonicalName}.class,
                         parentColumns = "lastName",
@@ -664,7 +664,7 @@ class DatabaseProcessorTest {
                 "foo.bar.Entity1",
                 """
                 package foo.bar;
-                import androidx.room.*;
+                import androidx.room3.*;
                 @Entity(foreignKeys = @ForeignKey(
                         entity = ${COMMON.USER_TYPE_NAME.canonicalName}.class,
                         parentColumns = "lastName",
@@ -705,7 +705,7 @@ class DatabaseProcessorTest {
                 "foo.bar.Entity1",
                 """
                 package foo.bar;
-                import androidx.room.*;
+                import androidx.room3.*;
                 @Entity(foreignKeys = @ForeignKey(entity = Entity2.class,
                     parentColumns = "uid",
                     childColumns = "parentId"))
@@ -723,7 +723,7 @@ class DatabaseProcessorTest {
                 "foo.bar.Entity2",
                 """
                 package foo.bar;
-                import androidx.room.*;
+                import androidx.room3.*;
                 @Entity
                 public class Entity2 {
                     @PrimaryKey
@@ -751,7 +751,7 @@ class DatabaseProcessorTest {
                 "foo.bar.Entity1",
                 """
                 package foo.bar;
-                import androidx.room.*;
+                import androidx.room3.*;
                 @Entity(foreignKeys = @ForeignKey(entity = Entity2.class,
                     parentColumns = {"anotherName", "anotherName2"},
                     childColumns = {"name", "name2"}))
@@ -769,7 +769,7 @@ class DatabaseProcessorTest {
                 "foo.bar.Entity2",
                 """
                 package foo.bar;
-                import androidx.room.*;
+                import androidx.room3.*;
                 @Entity
                 public class Entity2 {
                     @PrimaryKey
@@ -806,7 +806,7 @@ class DatabaseProcessorTest {
                 "foo.bar.Entity1",
                 """
                 package foo.bar;
-                import androidx.room.*;
+                import androidx.room3.*;
                 @Entity(foreignKeys = @ForeignKey(entity = Entity2.class,
                     parentColumns = {"anotherName", "anotherName2"},
                     childColumns = {"name", "name2"}))
@@ -824,7 +824,7 @@ class DatabaseProcessorTest {
                 "foo.bar.Entity2",
                 """
                 package foo.bar;
-                import androidx.room.*;
+                import androidx.room3.*;
                 @Entity(indices = @Index(value = {"anotherName2", "anotherName"}, unique = true))
                 public class Entity2 {
                     @PrimaryKey
@@ -1074,7 +1074,7 @@ class DatabaseProcessorTest {
                 "foo.bar.View1",
                 """
                 package foo.bar;
-                import androidx.room.*;
+                import androidx.room3.*;
                 @DatabaseView(value = "SELECT * FROM User", viewName = "SameName")
                 public class View1 {}
                 """,
@@ -1084,7 +1084,7 @@ class DatabaseProcessorTest {
                 "foo.bar.View2",
                 """
                 package foo.bar;
-                import androidx.room.*;
+                import androidx.room3.*;
                 @DatabaseView(value = "SELECT * FROM User", viewName = "SameName")
                 public class View2 {}
                 """,
@@ -1119,7 +1119,7 @@ class DatabaseProcessorTest {
                 "foo.bar.View1",
                 """
                 package foo.bar;
-                import androidx.room.*;
+                import androidx.room3.*;
                 @DatabaseView(value = "SELECT * FROM User", viewName = "Book")
                 public class View1 {}
                 """,
@@ -1154,7 +1154,7 @@ class DatabaseProcessorTest {
                 "foo.bar.View1",
                 """
                 package foo.bar;
-                import androidx.room.*;
+                import androidx.room3.*;
                 @DatabaseView("SELECT * FROM View2")
                 public class View1 {}
                 """,
@@ -1164,7 +1164,7 @@ class DatabaseProcessorTest {
                 "foo.bar.View2",
                 """
                 package foo.bar;
-                import androidx.room.*;
+                import androidx.room3.*;
                 @DatabaseView("SELECT * FROM View1")
                 public class View2 {}
                 """,
@@ -1253,7 +1253,7 @@ class DatabaseProcessorTest {
                 "foo.bar.MyDb",
                 """
                 package foo.bar;
-                import androidx.room.*;
+                import androidx.room3.*;
                 @Database(version = 1, entities = {})
                 public abstract class MyDb extends RoomDatabase {
                     abstract long getDao();
@@ -1278,7 +1278,7 @@ class DatabaseProcessorTest {
                 "foo.bar.MyDb",
                 """
                 package foo.bar;
-                import androidx.room.*;
+                import androidx.room3.*;
                 @Database(version = 1, entities = {long.class}, views = {int.class})
                 public abstract class MyDb extends RoomDatabase {
                 }
@@ -1460,7 +1460,7 @@ class DatabaseProcessorTest {
                 "foo.bar.TestResolver",
                 """
             package foo.bar;
-            import androidx.room.util.SchemaFileResolver;
+            import androidx.room3.util.SchemaFileResolver;
             import com.google.auto.service.AutoService;
             import java.io.File;
             import java.io.IOException;
@@ -1500,7 +1500,7 @@ class DatabaseProcessorTest {
                 "foo.bar.MyDb",
                 """
             package foo.bar;
-            import androidx.room.*;
+            import androidx.room3.*;
             @Database(entities = {User.class}, version = 1, exportSchema = true)
             public abstract class MyDb extends RoomDatabase {}
             """
@@ -1510,7 +1510,7 @@ class DatabaseProcessorTest {
             sources = listOf(dbSource, USER),
             options = mapOf("room.schemaLocation" to "schemas/", "room.generateKotlin" to "false"),
         ) { invocation ->
-            val dbAnnotationName = "androidx.room.Database"
+            val dbAnnotationName = "androidx.room3.Database"
             val roundElements =
                 mapOf(
                     dbAnnotationName to
@@ -1546,7 +1546,7 @@ class DatabaseProcessorTest {
                     "foo/bar/MyDb.kt",
                     """
                     package foo.bar
-                    import androidx.room.*
+                    import androidx.room3.*
                     @Database(entities = [User::class], version = 1, exportSchema = true)
                     abstract class MyDb : RoomDatabase()
                     """
@@ -1557,7 +1557,7 @@ class DatabaseProcessorTest {
                     "foo.bar.MyDb",
                     """
                     package foo.bar;
-                    import androidx.room.*;
+                    import androidx.room3.*;
                     @Database(entities = {User.class}, version = 1, exportSchema = true)
                     public abstract class MyDb extends RoomDatabase {}
                     """
@@ -1581,7 +1581,7 @@ class DatabaseProcessorTest {
                 "MyDb.kt",
                 """
                 package foo.bar;
-                import androidx.room.*;
+                import androidx.room3.*;
                 @Dao
                 interface MyDao
                 @Entity
@@ -1612,7 +1612,7 @@ class DatabaseProcessorTest {
             Source.kotlin(
                 "MyDatabase.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
 
             @Database(entities = [MyEntity::class], version = 1, exportSchema = false)
             abstract class MyDatabase : RoomDatabase() {
@@ -1672,7 +1672,7 @@ class DatabaseProcessorTest {
         ) { invocation ->
             val database =
                 invocation.roundEnv
-                    .getElementsAnnotatedWith(androidx.room.Database::class.qualifiedName!!)
+                    .getElementsAnnotatedWith(androidx.room3.Database::class.qualifiedName!!)
                     .filterIsInstance<XTypeElement>()
                     .first()
             val processor = DatabaseProcessor(invocation.context, database)
@@ -1712,7 +1712,7 @@ class DatabaseProcessorTest {
                 "foo.bar.BookDao",
                 """
                 package foo.bar;
-                import androidx.room.*;
+                import androidx.room3.*;
                 @Dao
                 public abstract class BookDao {
                     $constructor
@@ -1745,7 +1745,7 @@ class DatabaseProcessorTest {
         ) { invocation ->
             val entity =
                 invocation.roundEnv
-                    .getElementsAnnotatedWith(androidx.room.Database::class.qualifiedName!!)
+                    .getElementsAnnotatedWith(androidx.room3.Database::class.qualifiedName!!)
                     .filterIsInstance<XTypeElement>()
                     .first()
             val parser = DatabaseProcessor(invocation.context, entity)

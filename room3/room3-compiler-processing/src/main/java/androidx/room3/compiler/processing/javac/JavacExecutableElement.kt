@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.javac
+package androidx.room3.compiler.processing.javac
 
-import androidx.room.compiler.processing.XExecutableElement
-import androidx.room.compiler.processing.XNullability
-import androidx.room.compiler.processing.javac.kotlin.KmFunctionContainer
-import androidx.room.compiler.processing.javac.kotlin.descriptor
+import androidx.room3.compiler.processing.XExecutableElement
+import androidx.room3.compiler.processing.XNullability
+import androidx.room3.compiler.processing.javac.kotlin.KmFunctionContainer
+import androidx.room3.compiler.processing.javac.kotlin.descriptor
 import javax.lang.model.element.ExecutableElement
 
 internal abstract class JavacExecutableElement(

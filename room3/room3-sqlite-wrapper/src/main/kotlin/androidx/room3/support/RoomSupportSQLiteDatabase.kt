@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.support
+package androidx.room3.support
 
 import android.content.ContentValues
 import android.database.Cursor
@@ -22,9 +22,9 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteTransactionListener
 import android.os.CancellationSignal
 import android.util.Pair
-import androidx.room.RoomDatabase
-import androidx.room.Transactor.SQLiteTransactionType
-import androidx.room.execSQL
+import androidx.room3.RoomDatabase
+import androidx.room3.Transactor.SQLiteTransactionType
+import androidx.room3.execSQL
 import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.sqlite.db.SupportSQLiteQuery
 import androidx.sqlite.db.SupportSQLiteStatement

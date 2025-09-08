@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.ksp.synthetic
+package androidx.room3.compiler.processing.ksp.synthetic
 
-import androidx.room.compiler.processing.XAnnotated
-import androidx.room.compiler.processing.XEquality
-import androidx.room.compiler.processing.XExecutableParameterElement
-import androidx.room.compiler.processing.XMemberContainer
-import androidx.room.compiler.processing.XType
-import androidx.room.compiler.processing.ksp.KSTypeVarianceResolverScope
-import androidx.room.compiler.processing.ksp.KspAnnotated
-import androidx.room.compiler.processing.ksp.KspMethodElement
-import androidx.room.compiler.processing.ksp.KspProcessingEnv
-import androidx.room.compiler.processing.ksp.KspType
+import androidx.room3.compiler.processing.XAnnotated
+import androidx.room3.compiler.processing.XEquality
+import androidx.room3.compiler.processing.XExecutableParameterElement
+import androidx.room3.compiler.processing.XMemberContainer
+import androidx.room3.compiler.processing.XType
+import androidx.room3.compiler.processing.ksp.KSTypeVarianceResolverScope
+import androidx.room3.compiler.processing.ksp.KspAnnotated
+import androidx.room3.compiler.processing.ksp.KspMethodElement
+import androidx.room3.compiler.processing.ksp.KspProcessingEnv
+import androidx.room3.compiler.processing.ksp.KspType
 import com.google.devtools.ksp.symbol.KSTypeReference
 
 internal class KspSyntheticReceiverParameterElement(

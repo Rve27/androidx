@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room
+package androidx.room3
 
 /**
  * Marks a field of an [Entity] or POJO to allow nested fields (i.e. fields of the annotated field's

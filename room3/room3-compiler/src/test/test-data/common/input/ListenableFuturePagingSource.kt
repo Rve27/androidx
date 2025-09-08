@@ -16,8 +16,8 @@
 package androidx.paging
 
 import androidx.paging.PagingState
-import androidx.room.RoomDatabase
-import androidx.room.RoomSQLiteQuery
+import androidx.room3.RoomDatabase
+import androidx.room3.RoomSQLiteQuery
 import androidx.sqlite.SQLiteStatement
 
 @Suppress("UNUSED_PARAMETER")

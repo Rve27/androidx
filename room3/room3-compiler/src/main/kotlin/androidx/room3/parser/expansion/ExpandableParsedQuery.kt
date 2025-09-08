@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package androidx.room.parser.expansion
+package androidx.room3.parser.expansion
 
-import androidx.room.parser.ParserErrors
-import androidx.room.parser.QueryType
-import androidx.room.parser.Table
-import androidx.room.verifier.QueryResultInfo
+import androidx.room3.parser.ParserErrors
+import androidx.room3.parser.QueryType
+import androidx.room3.parser.Table
+import androidx.room3.verifier.QueryResultInfo
 
 /**
  * ExpandableSqlParser parses the query in more detail such that we know when an ALL projection is

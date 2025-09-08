@@ -16,7 +16,7 @@
 @file:JvmName("RoomPagingUtil")
 @file:JvmMultifileClass
 
-package androidx.room.paging.util
+package androidx.room3.paging.util
 
 import androidx.annotation.RestrictTo
 import androidx.paging.PagingSource
@@ -26,8 +26,8 @@ import androidx.paging.PagingSource.LoadParams.Prepend
 import androidx.paging.PagingSource.LoadParams.Refresh
 import androidx.paging.PagingSource.LoadResult
 import androidx.paging.PagingState
-import androidx.room.RoomDatabase
-import androidx.room.RoomRawQuery
+import androidx.room3.RoomDatabase
+import androidx.room3.RoomRawQuery
 import kotlin.jvm.JvmMultifileClass
 import kotlin.jvm.JvmName
 import kotlinx.coroutines.withContext

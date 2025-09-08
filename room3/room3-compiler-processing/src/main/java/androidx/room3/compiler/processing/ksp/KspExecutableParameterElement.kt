@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.ksp
+package androidx.room3.compiler.processing.ksp
 
-import androidx.room.compiler.processing.XAnnotated
-import androidx.room.compiler.processing.XExecutableParameterElement
-import androidx.room.compiler.processing.XMemberContainer
-import androidx.room.compiler.processing.XType
-import androidx.room.compiler.processing.isArray
-import androidx.room.compiler.processing.ksp.KspAnnotated.UseSiteFilter.NO_USE_SITE_OR_METHOD_PARAMETER
-import androidx.room.compiler.processing.ksp.synthetic.KspSyntheticPropertyMethodElement
-import androidx.room.compiler.processing.util.sanitizeAsJavaParameterName
+import androidx.room3.compiler.processing.XAnnotated
+import androidx.room3.compiler.processing.XExecutableParameterElement
+import androidx.room3.compiler.processing.XMemberContainer
+import androidx.room3.compiler.processing.XType
+import androidx.room3.compiler.processing.isArray
+import androidx.room3.compiler.processing.ksp.KspAnnotated.UseSiteFilter.NO_USE_SITE_OR_METHOD_PARAMETER
+import androidx.room3.compiler.processing.ksp.synthetic.KspSyntheticPropertyMethodElement
+import androidx.room3.compiler.processing.util.sanitizeAsJavaParameterName
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.google.devtools.ksp.symbol.KSPropertySetter
 import com.google.devtools.ksp.symbol.KSValueParameter

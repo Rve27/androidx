@@ -14,31 +14,31 @@
  * limitations under the License.
  */
 
-package androidx.room.processor
+package androidx.room3.processor
 
-import androidx.room.Fts3
-import androidx.room.Fts4
-import androidx.room.FtsOptions.MatchInfo
-import androidx.room.FtsOptions.Order
-import androidx.room.FtsOptions.TOKENIZER_SIMPLE
-import androidx.room.compiler.codegen.asClassName
-import androidx.room.compiler.processing.XAnnotation
-import androidx.room.compiler.processing.XType
-import androidx.room.compiler.processing.XTypeElement
-import androidx.room.parser.FtsVersion
-import androidx.room.parser.SQLTypeAffinity
-import androidx.room.processor.EntityProcessor.Companion.extractForeignKeys
-import androidx.room.processor.EntityProcessor.Companion.extractIndices
-import androidx.room.processor.EntityProcessor.Companion.extractTableName
-import androidx.room.processor.cache.Cache
-import androidx.room.vo.Entity
-import androidx.room.vo.FtsEntity
-import androidx.room.vo.FtsOptions
-import androidx.room.vo.LanguageId
-import androidx.room.vo.PrimaryKey
-import androidx.room.vo.Properties
-import androidx.room.vo.Property
-import androidx.room.vo.columnNames
+import androidx.room3.Fts3
+import androidx.room3.Fts4
+import androidx.room3.FtsOptions.MatchInfo
+import androidx.room3.FtsOptions.Order
+import androidx.room3.FtsOptions.TOKENIZER_SIMPLE
+import androidx.room3.compiler.codegen.asClassName
+import androidx.room3.compiler.processing.XAnnotation
+import androidx.room3.compiler.processing.XType
+import androidx.room3.compiler.processing.XTypeElement
+import androidx.room3.parser.FtsVersion
+import androidx.room3.parser.SQLTypeAffinity
+import androidx.room3.processor.EntityProcessor.Companion.extractForeignKeys
+import androidx.room3.processor.EntityProcessor.Companion.extractIndices
+import androidx.room3.processor.EntityProcessor.Companion.extractTableName
+import androidx.room3.processor.cache.Cache
+import androidx.room3.vo.Entity
+import androidx.room3.vo.FtsEntity
+import androidx.room3.vo.FtsOptions
+import androidx.room3.vo.LanguageId
+import androidx.room3.vo.PrimaryKey
+import androidx.room3.vo.Properties
+import androidx.room3.vo.Property
+import androidx.room3.vo.columnNames
 
 class FtsTableEntityProcessor
 internal constructor(
@@ -81,10 +81,10 @@ internal constructor(
         }
         context.checker.hasAnnotation(
             element,
-            androidx.room.Entity::class,
+            androidx.room3.Entity::class,
             ProcessorErrors.ENTITY_MUST_BE_ANNOTATED_WITH_ENTITY,
         )
-        val entityAnnotation = element.getAnnotation(androidx.room.Entity::class)
+        val entityAnnotation = element.getAnnotation(androidx.room3.Entity::class)
         val tableName: String
         if (entityAnnotation != null) {
             tableName = extractTableName(element, entityAnnotation)
@@ -115,7 +115,7 @@ internal constructor(
         context.checker.check(pojo.relations.isEmpty(), element, ProcessorErrors.RELATION_IN_ENTITY)
 
         val (ftsVersion, ftsOptions) =
-            if (element.hasAnnotation(androidx.room.Fts3::class)) {
+            if (element.hasAnnotation(androidx.room3.Fts3::class)) {
                 FtsVersion.FTS3 to getFts3Options(element.requireAnnotation(Fts3::class))
             } else {
                 FtsVersion.FTS4 to getFts4Options(element.requireAnnotation(Fts4::class))
@@ -212,7 +212,7 @@ internal constructor(
             context.logger.e(element, ProcessorErrors.FTS_EXTERNAL_CONTENT_CANNOT_FIND_ENTITY)
             return null
         }
-        if (!contentEntityElement.hasAnnotation(androidx.room.Entity::class)) {
+        if (!contentEntityElement.hasAnnotation(androidx.room3.Entity::class)) {
             context.logger.e(
                 contentEntityElement,
                 ProcessorErrors.externalContentNotAnEntity(
@@ -250,7 +250,7 @@ internal constructor(
 
         val keysFromPrimaryKeyAnnotations =
             properties.mapNotNull { property ->
-                if (property.element.hasAnnotation(androidx.room.PrimaryKey::class)) {
+                if (property.element.hasAnnotation(androidx.room3.PrimaryKey::class)) {
                     PrimaryKey(
                         declaredIn = property.element.enclosingElement,
                         properties = Properties(property),
@@ -266,7 +266,7 @@ internal constructor(
                 .firstOrNull { it.columnName == "rowid" }
                 ?.let {
                     context.checker.check(
-                        it.element.hasAnnotation(androidx.room.PrimaryKey::class),
+                        it.element.hasAnnotation(androidx.room3.PrimaryKey::class),
                         it.element,
                         ProcessorErrors.MISSING_PRIMARY_KEYS_ANNOTATION_IN_ROW_ID,
                     )

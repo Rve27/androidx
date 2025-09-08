@@ -1,7 +1,7 @@
 /**
  * A gradle init script that will attach given Jvm Args to each Test task.
  */
-def jvmArgs = startParameter.systemPropertiesArgs.get("androidx.room.testJvmArgs")
+def jvmArgs = startParameter.systemPropertiesArgs.get("androidx.room3.testJvmArgs")
 taskGraph.addTaskExecutionGraphListener { graph ->
     graph.beforeTask { task ->
         if (task instanceof Test) {

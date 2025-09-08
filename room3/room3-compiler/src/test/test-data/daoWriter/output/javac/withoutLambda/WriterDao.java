@@ -1,9 +1,9 @@
 package foo.bar;
 
 import androidx.annotation.NonNull;
-import androidx.room.EntityInsertAdapter;
-import androidx.room.RoomDatabase;
-import androidx.room.util.DBUtil;
+import androidx.room3.EntityInsertAdapter;
+import androidx.room3.RoomDatabase;
+import androidx.room3.util.DBUtil;
 import androidx.sqlite.SQLiteConnection;
 import androidx.sqlite.SQLiteStatement;
 import java.lang.Class;
@@ -16,7 +16,7 @@ import java.util.List;
 import javax.annotation.processing.Generated;
 import kotlin.jvm.functions.Function1;
 
-@Generated("androidx.room.RoomProcessor")
+@Generated("androidx.room3.RoomProcessor")
 @SuppressWarnings({"unchecked", "deprecation", "removal"})
 public final class WriterDao_Impl implements WriterDao {
   private final RoomDatabase __db;

@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.testapp.dao;
+package androidx.room3.integration.testapp.dao;
 
-import androidx.room.Dao;
-import androidx.room.Insert;
-import androidx.room.OnConflictStrategy;
-import androidx.room.Query;
-import androidx.room.Update;
-import androidx.room.integration.testapp.vo.Toy;
+import androidx.room3.Dao;
+import androidx.room3.Insert;
+import androidx.room3.OnConflictStrategy;
+import androidx.room3.Query;
+import androidx.room3.Update;
+import androidx.room3.integration.testapp.vo.Toy;
 
 @Dao
 public interface ToyDao {

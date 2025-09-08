@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.room.integration.kotlintestapp.vo
+package androidx.room3.integration.kotlintestapp.vo
 
-import androidx.room.Relation
+import androidx.room3.Relation
 
 class RelationFromDependency(val sharedName: String) {
     @Relation(parentColumn = "sharedName", entityColumn = "name")

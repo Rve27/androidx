@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package androidx.room.solver.types
+package androidx.room3.solver.types
 
-import androidx.room.compiler.processing.XType
-import androidx.room.parser.SQLTypeAffinity
-import androidx.room.solver.CodeGenScope
+import androidx.room3.compiler.processing.XType
+import androidx.room3.parser.SQLTypeAffinity
+import androidx.room3.solver.CodeGenScope
 
 /** Reads value from a statement at the given index. see: StatementValueBinder */
 interface StatementValueReader {

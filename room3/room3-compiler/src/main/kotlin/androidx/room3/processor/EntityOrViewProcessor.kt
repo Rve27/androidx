@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package androidx.room.processor
+package androidx.room3.processor
 
-import androidx.room.DatabaseView
-import androidx.room.Entity
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.compiler.processing.XTypeElement
-import androidx.room.vo.EntityOrView
-import androidx.room.vo.Properties
+import androidx.room3.DatabaseView
+import androidx.room3.Entity
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.compiler.processing.XTypeElement
+import androidx.room3.vo.EntityOrView
+import androidx.room3.vo.Properties
 
 interface EntityOrViewProcessor {
     fun process(): EntityOrView

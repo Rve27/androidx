@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-package androidx.room.solver.prepared.result
+package androidx.room3.solver.prepared.result
 
-import androidx.room.compiler.codegen.CodeLanguage
-import androidx.room.compiler.codegen.XCodeBlock.Builder.Companion.applyTo
-import androidx.room.compiler.codegen.XMemberName.Companion.packageMember
-import androidx.room.compiler.codegen.XPropertySpec
-import androidx.room.compiler.processing.XType
-import androidx.room.compiler.processing.isInt
-import androidx.room.compiler.processing.isKotlinUnit
-import androidx.room.compiler.processing.isLong
-import androidx.room.compiler.processing.isVoid
-import androidx.room.compiler.processing.isVoidObject
-import androidx.room.ext.KotlinTypeNames
-import androidx.room.ext.RoomTypeNames
-import androidx.room.parser.QueryType
-import androidx.room.solver.CodeGenScope
-import androidx.room.solver.prepared.binder.PreparedQueryResultBinder
+import androidx.room3.compiler.codegen.CodeLanguage
+import androidx.room3.compiler.codegen.XCodeBlock.Builder.Companion.applyTo
+import androidx.room3.compiler.codegen.XMemberName.Companion.packageMember
+import androidx.room3.compiler.codegen.XPropertySpec
+import androidx.room3.compiler.processing.XType
+import androidx.room3.compiler.processing.isInt
+import androidx.room3.compiler.processing.isKotlinUnit
+import androidx.room3.compiler.processing.isLong
+import androidx.room3.compiler.processing.isVoid
+import androidx.room3.compiler.processing.isVoidObject
+import androidx.room3.ext.KotlinTypeNames
+import androidx.room3.ext.RoomTypeNames
+import androidx.room3.parser.QueryType
+import androidx.room3.solver.CodeGenScope
+import androidx.room3.solver.prepared.binder.PreparedQueryResultBinder
 
 /**
  * An adapter for [PreparedQueryResultBinder] that executes queries with INSERT, UPDATE or DELETE

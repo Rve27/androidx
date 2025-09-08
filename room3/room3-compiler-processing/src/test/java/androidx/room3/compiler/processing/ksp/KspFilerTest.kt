@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.ksp
+package androidx.room3.compiler.processing.ksp
 
 import androidx.kruth.assertThat
-import androidx.room.compiler.processing.XAnnotation
-import androidx.room.compiler.processing.XAnnotationValue
-import androidx.room.compiler.processing.XElement
-import androidx.room.compiler.processing.XMessager
-import androidx.room.compiler.processing.addOriginatingElement
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.runKspTest
+import androidx.room3.compiler.processing.XAnnotation
+import androidx.room3.compiler.processing.XAnnotationValue
+import androidx.room3.compiler.processing.XElement
+import androidx.room3.compiler.processing.XMessager
+import androidx.room3.compiler.processing.addOriginatingElement
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.runKspTest
 import com.google.devtools.ksp.processing.CodeGenerator
 import com.google.devtools.ksp.processing.Dependencies
 import com.google.devtools.ksp.symbol.KSClassDeclaration

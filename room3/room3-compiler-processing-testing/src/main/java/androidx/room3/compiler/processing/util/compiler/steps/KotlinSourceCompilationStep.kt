@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.util.compiler.steps
+package androidx.room3.compiler.processing.util.compiler.steps
 
-import androidx.room.compiler.processing.util.compiler.KotlinCliRunner
+import androidx.room3.compiler.processing.util.compiler.KotlinCliRunner
 import java.io.File
 import org.jetbrains.kotlin.cli.common.ExitCode
 

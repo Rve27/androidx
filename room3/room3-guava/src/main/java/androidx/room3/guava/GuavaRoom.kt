@@ -16,16 +16,16 @@
 @file:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 @file:JvmName("GuavaRoom")
 
-package androidx.room.guava
+package androidx.room3.guava
 
 import android.annotation.SuppressLint
 import android.os.CancellationSignal
 import androidx.annotation.RestrictTo
 import androidx.arch.core.executor.ArchTaskExecutor
 import androidx.concurrent.futures.ResolvableFuture
-import androidx.room.RoomDatabase
-import androidx.room.RoomSQLiteQuery
-import androidx.room.util.performSuspending
+import androidx.room3.RoomDatabase
+import androidx.room3.RoomSQLiteQuery
+import androidx.room3.util.performSuspending
 import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.db.SupportSQLiteQuery
 import com.google.common.util.concurrent.ListenableFuture

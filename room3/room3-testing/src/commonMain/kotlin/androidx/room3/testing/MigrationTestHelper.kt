@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package androidx.room.testing
+package androidx.room3.testing
 
-import androidx.room.BaseRoomConnectionManager
-import androidx.room.DatabaseConfiguration
-import androidx.room.Room
-import androidx.room.RoomDatabase
-import androidx.room.RoomOpenDelegate
-import androidx.room.Transactor
-import androidx.room.migration.AutoMigrationSpec
-import androidx.room.migration.Migration
-import androidx.room.migration.bundle.DatabaseBundle
-import androidx.room.migration.bundle.EntityBundle
-import androidx.room.migration.bundle.FtsEntityBundle
-import androidx.room.util.FtsTableInfo
-import androidx.room.util.TableInfo
-import androidx.room.util.ViewInfo
+import androidx.room3.BaseRoomConnectionManager
+import androidx.room3.DatabaseConfiguration
+import androidx.room3.Room
+import androidx.room3.RoomDatabase
+import androidx.room3.RoomOpenDelegate
+import androidx.room3.Transactor
+import androidx.room3.migration.AutoMigrationSpec
+import androidx.room3.migration.Migration
+import androidx.room3.migration.bundle.DatabaseBundle
+import androidx.room3.migration.bundle.EntityBundle
+import androidx.room3.migration.bundle.FtsEntityBundle
+import androidx.room3.util.FtsTableInfo
+import androidx.room3.util.TableInfo
+import androidx.room3.util.ViewInfo
 import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.execSQL
 import kotlin.reflect.KClass
@@ -63,8 +63,8 @@ import kotlin.reflect.safeCast
  * }
  * ```
  *
- * The helper relies on exported schemas so [androidx.room.Database.exportSchema] should be enabled.
- * Schema location should be configured via Room's Gradle Plugin (id 'androidx.room'):
+ * The helper relies on exported schemas so [androidx.room3.Database.exportSchema] should be
+ * enabled. Schema location should be configured via Room's Gradle Plugin (id 'androidx.room'):
  * ```
  * room {
  *   schemaDirectory("$projectDir/schemas")
@@ -91,7 +91,7 @@ public expect class MigrationTestHelper {
      *
      * This function uses the same algorithm that Room performs to choose migrations such that the
      * [migrations] instances provided must be sufficient to bring the database from current version
-     * to the desired version. If the database contains [androidx.room.AutoMigration]s, then those
+     * to the desired version. If the database contains [androidx.room3.AutoMigration]s, then those
      * are already included in the list of migrations to execute if necessary. Note that provided
      * manual migrations take precedence over auto migrations if they overlap in migration paths.
      *

@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package androidx.room.processor
+package androidx.room3.processor
 
-import androidx.room.OnConflictStrategy
-import androidx.room.Update
-import androidx.room.compiler.processing.XMethodElement
-import androidx.room.compiler.processing.XType
-import androidx.room.vo.UpdateFunction
-import androidx.room.vo.findPropertyByColumnName
+import androidx.room3.OnConflictStrategy
+import androidx.room3.Update
+import androidx.room3.compiler.processing.XMethodElement
+import androidx.room3.compiler.processing.XType
+import androidx.room3.vo.UpdateFunction
+import androidx.room3.vo.findPropertyByColumnName
 
 class UpdateFunctionProcessor(
     baseContext: Context,

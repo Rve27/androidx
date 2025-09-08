@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.kotlintestapp.test
+package androidx.room3.integration.kotlintestapp.test
 
 import androidx.arch.core.executor.testing.CountingTaskExecutorRule
-import androidx.room.Room
-import androidx.room.integration.kotlintestapp.TestDatabase
-import androidx.room.integration.kotlintestapp.dao.BooksDao
-import androidx.room.integration.kotlintestapp.dao.UsersDao
-import androidx.room.integration.kotlintestapp.testutil.TestObserver
+import androidx.room3.Room
+import androidx.room3.integration.kotlintestapp.TestDatabase
+import androidx.room3.integration.kotlintestapp.dao.BooksDao
+import androidx.room3.integration.kotlintestapp.dao.UsersDao
+import androidx.room3.integration.kotlintestapp.testutil.TestObserver
 import androidx.sqlite.driver.AndroidSQLiteDriver
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import androidx.test.core.app.ApplicationProvider

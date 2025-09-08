@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing
+package androidx.room3.compiler.processing
 
 import com.squareup.javapoet.TypeVariableName
 import kotlin.contracts.contract
@@ -36,7 +36,7 @@ interface XMethodType : XExecutableType {
         replaceWith =
             ReplaceWith(
                 expression = "typeVariables.map { it.asTypeName().toJavaPoet() }",
-                imports = ["androidx.room.compiler.codegen.toJavaPoet"],
+                imports = ["androidx.room3.compiler.codegen.toJavaPoet"],
             ),
     )
     val typeVariableNames: List<TypeVariableName>

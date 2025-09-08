@@ -32,11 +32,11 @@ plugins {
 repackage {
     addRelocation {
         sourcePackage = "org.antlr"
-        targetPackage = "androidx.room.jarjarred.org.antlr"
+        targetPackage = "androidx.room3.jarjarred.org.antlr"
     }
     addRelocation {
         sourcePackage = "org.stringtemplate"
-        targetPackage =  "androidx.room.jarjarred.org.stringtemplate"
+        targetPackage =  "androidx.room3.jarjarred.org.stringtemplate"
     }
     artifactId = "room-external-antlr"
 }

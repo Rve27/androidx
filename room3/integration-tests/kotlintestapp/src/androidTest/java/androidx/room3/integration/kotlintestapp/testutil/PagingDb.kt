@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.kotlintestapp.testutil
+package androidx.room3.integration.kotlintestapp.testutil
 
-import androidx.room.Database
-import androidx.room.RoomDatabase
+import androidx.room3.Database
+import androidx.room3.RoomDatabase
 
 @Database(version = 1, exportSchema = false, entities = [PagingEntity::class])
 abstract class PagingDb : RoomDatabase() {

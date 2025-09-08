@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.room.solver.binderprovider
+package androidx.room3.solver.binderprovider
 
-import androidx.room.compiler.codegen.XClassName
-import androidx.room.compiler.processing.XType
-import androidx.room.parser.ParsedQuery
-import androidx.room.processor.Context
-import androidx.room.solver.QueryResultBinderProvider
-import androidx.room.solver.TypeAdapterExtras
-import androidx.room.solver.query.result.QueryResultBinder
+import androidx.room3.compiler.codegen.XClassName
+import androidx.room3.compiler.processing.XType
+import androidx.room3.parser.ParsedQuery
+import androidx.room3.processor.Context
+import androidx.room3.solver.QueryResultBinderProvider
+import androidx.room3.solver.TypeAdapterExtras
+import androidx.room3.solver.query.result.QueryResultBinder
 
 /** Common functionality for binder providers that require an additional artifact */
 fun QueryResultBinderProvider.requireArtifact(

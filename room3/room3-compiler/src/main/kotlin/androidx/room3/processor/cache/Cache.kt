@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package androidx.room.processor.cache
+package androidx.room3.processor.cache
 
-import androidx.room.compiler.processing.XElement
-import androidx.room.compiler.processing.XTypeElement
-import androidx.room.processor.PropertyProcessor
-import androidx.room.vo.BuiltInConverterFlags
-import androidx.room.vo.DataClass
-import androidx.room.vo.EmbeddedProperty
-import androidx.room.vo.Entity
-import androidx.room.vo.Warning
+import androidx.room3.compiler.processing.XElement
+import androidx.room3.compiler.processing.XTypeElement
+import androidx.room3.processor.PropertyProcessor
+import androidx.room3.vo.BuiltInConverterFlags
+import androidx.room3.vo.DataClass
+import androidx.room3.vo.EmbeddedProperty
+import androidx.room3.vo.Entity
+import androidx.room3.vo.Warning
 
 /**
  * A cache key can be used to avoid re-processing elements.

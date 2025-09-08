@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.testapp.vo;
+package androidx.room3.integration.testapp.vo;
 
-import androidx.room.DatabaseView;
-import androidx.room.Embedded;
+import androidx.room3.DatabaseView;
+import androidx.room3.Embedded;
 
 @DatabaseView("SELECT Pet.*, User.* "
         + "FROM Pet INNER JOIN User ON Pet.mUserId = User.mId"

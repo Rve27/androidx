@@ -1,3 +1,3 @@
--keep class * extends androidx.room.RoomDatabase { void <init>(); }
--dontwarn androidx.room.paging.**
+-keep class * extends androidx.room3.RoomDatabase { void <init>(); }
+-dontwarn androidx.room3.paging.**
 -dontwarn androidx.lifecycle.LiveData

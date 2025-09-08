@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package androidx.room.processor
+package androidx.room3.processor
 
-import androidx.room.compiler.processing.XTypeElement
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.XTestInvocation
-import androidx.room.compiler.processing.util.runKspTest
-import androidx.room.testing.context
+import androidx.room3.compiler.processing.XTypeElement
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.XTestInvocation
+import androidx.room3.compiler.processing.util.runKspTest
+import androidx.room3.testing.context
 import org.junit.Test
 
 class DatabaseConstructorProcessorTest {
@@ -31,7 +31,7 @@ class DatabaseConstructorProcessorTest {
             """
         package test
 
-        import androidx.room.*
+        import androidx.room3.*
 
         @Database(entities = [TestEntity::class], version = 1, exportSchemas = false)
         @ConstructedBy(TestDatabaseCtor::class)
@@ -51,7 +51,7 @@ class DatabaseConstructorProcessorTest {
                 """
                 package test
 
-                import androidx.room.*
+                import androidx.room3.*
 
                 expect class TestDatabaseCtor : RoomDatabaseConstructor<TestDatabase>
                 """
@@ -72,7 +72,7 @@ class DatabaseConstructorProcessorTest {
                 """
                 package test
 
-                import androidx.room.*
+                import androidx.room3.*
 
                 object TestDatabaseCtor : RoomDatabaseConstructor<TestDatabase>
                 """
@@ -93,7 +93,7 @@ class DatabaseConstructorProcessorTest {
                 """
                 package test
 
-                import androidx.room.*
+                import androidx.room3.*
 
                 expect object TestDatabaseCtor
                 """
@@ -103,7 +103,7 @@ class DatabaseConstructorProcessorTest {
             it.assertCompilationResult {
                 hasErrorContaining(
                     ProcessorErrors.invalidConstructedBySuperInterface(
-                        "androidx.room.RoomDatabaseConstructor<test.TestDatabase>"
+                        "androidx.room3.RoomDatabaseConstructor<test.TestDatabase>"
                     )
                 )
             }
@@ -118,7 +118,7 @@ class DatabaseConstructorProcessorTest {
                 """
                 package test
 
-                import androidx.room.*
+                import androidx.room3.*
 
                 expect object TestDatabaseCtor : RoomDatabaseConstructor<RoomDatabase>
                 """
@@ -128,7 +128,7 @@ class DatabaseConstructorProcessorTest {
             it.assertCompilationResult {
                 hasErrorContaining(
                     ProcessorErrors.invalidConstructedBySuperInterface(
-                        "androidx.room.RoomDatabaseConstructor<test.TestDatabase>"
+                        "androidx.room3.RoomDatabaseConstructor<test.TestDatabase>"
                     )
                 )
             }
@@ -139,7 +139,7 @@ class DatabaseConstructorProcessorTest {
         runKspTest(sources = listOf(databaseSource, constructorSource)) { invocation ->
             val entity =
                 invocation.roundEnv
-                    .getElementsAnnotatedWith(androidx.room.Database::class.qualifiedName!!)
+                    .getElementsAnnotatedWith(androidx.room3.Database::class.qualifiedName!!)
                     .filterIsInstance<XTypeElement>()
                     .first()
             DatabaseProcessor(invocation.context, entity).process()

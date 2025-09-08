@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.processing.util
+package androidx.room3.compiler.processing.util
 
-import androidx.room.compiler.processing.javac.JavacProcessingEnv
-import androidx.room.compiler.processing.ksp.KspProcessingEnv
+import androidx.room3.compiler.processing.javac.JavacProcessingEnv
+import androidx.room3.compiler.processing.ksp.KspProcessingEnv
 import com.google.devtools.ksp.processing.Resolver
 import javax.lang.model.util.Elements
 import javax.lang.model.util.Types

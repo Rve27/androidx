@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package androidx.room.parser
+package androidx.room3.parser
 
-import androidx.room.ColumnInfo
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.compiler.processing.XProcessingEnv
-import androidx.room.compiler.processing.XType
-import androidx.room.ext.CommonTypeNames
-import androidx.room.parser.expansion.isCoreSelect
+import androidx.room3.ColumnInfo
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.compiler.processing.XProcessingEnv
+import androidx.room3.compiler.processing.XType
+import androidx.room3.ext.CommonTypeNames
+import androidx.room3.parser.expansion.isCoreSelect
 import java.util.Locale
 import org.antlr.v4.runtime.tree.ParseTree
 import org.antlr.v4.runtime.tree.TerminalNode

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package androidx.room.testing
+package androidx.room3.testing
 
-import androidx.room.compiler.processing.util.XTestInvocation
-import androidx.room.processor.Context
+import androidx.room3.compiler.processing.util.XTestInvocation
+import androidx.room3.processor.Context
 
 val XTestInvocation.context
     get() = getOrPutUserData(Context::class) { Context(processingEnv) }

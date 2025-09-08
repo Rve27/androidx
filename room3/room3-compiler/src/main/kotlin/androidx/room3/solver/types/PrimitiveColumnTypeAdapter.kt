@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-package androidx.room.solver.types
+package androidx.room3.solver.types
 
-import androidx.room.compiler.codegen.CodeLanguage
-import androidx.room.compiler.codegen.XCodeBlock
-import androidx.room.compiler.codegen.XTypeName
-import androidx.room.compiler.codegen.XTypeName.Companion.PRIMITIVE_BYTE
-import androidx.room.compiler.codegen.XTypeName.Companion.PRIMITIVE_CHAR
-import androidx.room.compiler.codegen.XTypeName.Companion.PRIMITIVE_DOUBLE
-import androidx.room.compiler.codegen.XTypeName.Companion.PRIMITIVE_FLOAT
-import androidx.room.compiler.codegen.XTypeName.Companion.PRIMITIVE_INT
-import androidx.room.compiler.codegen.XTypeName.Companion.PRIMITIVE_LONG
-import androidx.room.compiler.codegen.XTypeName.Companion.PRIMITIVE_SHORT
-import androidx.room.compiler.codegen.buildCodeBlock
-import androidx.room.compiler.processing.XProcessingEnv
-import androidx.room.compiler.processing.XType
-import androidx.room.parser.SQLTypeAffinity
-import androidx.room.solver.CodeGenScope
+import androidx.room3.compiler.codegen.CodeLanguage
+import androidx.room3.compiler.codegen.XCodeBlock
+import androidx.room3.compiler.codegen.XTypeName
+import androidx.room3.compiler.codegen.XTypeName.Companion.PRIMITIVE_BYTE
+import androidx.room3.compiler.codegen.XTypeName.Companion.PRIMITIVE_CHAR
+import androidx.room3.compiler.codegen.XTypeName.Companion.PRIMITIVE_DOUBLE
+import androidx.room3.compiler.codegen.XTypeName.Companion.PRIMITIVE_FLOAT
+import androidx.room3.compiler.codegen.XTypeName.Companion.PRIMITIVE_INT
+import androidx.room3.compiler.codegen.XTypeName.Companion.PRIMITIVE_LONG
+import androidx.room3.compiler.codegen.XTypeName.Companion.PRIMITIVE_SHORT
+import androidx.room3.compiler.codegen.buildCodeBlock
+import androidx.room3.compiler.processing.XProcessingEnv
+import androidx.room3.compiler.processing.XType
+import androidx.room3.parser.SQLTypeAffinity
+import androidx.room3.solver.CodeGenScope
 
 /** Adapters for all primitives that has direct cursor mappings. */
 class PrimitiveColumnTypeAdapter(

@@ -14,40 +14,40 @@
  * limitations under the License.
  */
 
-package androidx.room.processor
+package androidx.room3.processor
 
-import androidx.room.ColumnInfo
-import androidx.room.Embedded
-import androidx.room.Ignore
-import androidx.room.Junction
-import androidx.room.PrimaryKey
-import androidx.room.Relation
-import androidx.room.compiler.processing.XExecutableElement
-import androidx.room.compiler.processing.XFieldElement
-import androidx.room.compiler.processing.XType
-import androidx.room.compiler.processing.XTypeElement
-import androidx.room.compiler.processing.XVariableElement
-import androidx.room.compiler.processing.isVoid
-import androidx.room.ext.isCollection
-import androidx.room.ext.isNotVoid
-import androidx.room.processor.ProcessorErrors.CANNOT_FIND_GETTER_FOR_PROPERTY
-import androidx.room.processor.ProcessorErrors.CANNOT_FIND_SETTER_FOR_PROPERTY
-import androidx.room.processor.ProcessorErrors.DATA_CLASS_PROPERTY_HAS_DUPLICATE_COLUMN_NAME
-import androidx.room.processor.autovalue.AutoValueDataClassProcessorDelegate
-import androidx.room.processor.cache.Cache
-import androidx.room.vo.CallType
-import androidx.room.vo.Constructor
-import androidx.room.vo.DataClass
-import androidx.room.vo.DataClassFunction
-import androidx.room.vo.EmbeddedProperty
-import androidx.room.vo.Entity
-import androidx.room.vo.EntityOrView
-import androidx.room.vo.Property
-import androidx.room.vo.PropertyGetter
-import androidx.room.vo.PropertySetter
-import androidx.room.vo.Warning
-import androidx.room.vo.columnNames
-import androidx.room.vo.findPropertyByColumnName
+import androidx.room3.ColumnInfo
+import androidx.room3.Embedded
+import androidx.room3.Ignore
+import androidx.room3.Junction
+import androidx.room3.PrimaryKey
+import androidx.room3.Relation
+import androidx.room3.compiler.processing.XExecutableElement
+import androidx.room3.compiler.processing.XFieldElement
+import androidx.room3.compiler.processing.XType
+import androidx.room3.compiler.processing.XTypeElement
+import androidx.room3.compiler.processing.XVariableElement
+import androidx.room3.compiler.processing.isVoid
+import androidx.room3.ext.isCollection
+import androidx.room3.ext.isNotVoid
+import androidx.room3.processor.ProcessorErrors.CANNOT_FIND_GETTER_FOR_PROPERTY
+import androidx.room3.processor.ProcessorErrors.CANNOT_FIND_SETTER_FOR_PROPERTY
+import androidx.room3.processor.ProcessorErrors.DATA_CLASS_PROPERTY_HAS_DUPLICATE_COLUMN_NAME
+import androidx.room3.processor.autovalue.AutoValueDataClassProcessorDelegate
+import androidx.room3.processor.cache.Cache
+import androidx.room3.vo.CallType
+import androidx.room3.vo.Constructor
+import androidx.room3.vo.DataClass
+import androidx.room3.vo.DataClassFunction
+import androidx.room3.vo.EmbeddedProperty
+import androidx.room3.vo.Entity
+import androidx.room3.vo.EntityOrView
+import androidx.room3.vo.Property
+import androidx.room3.vo.PropertyGetter
+import androidx.room3.vo.PropertySetter
+import androidx.room3.vo.Warning
+import androidx.room3.vo.columnNames
+import androidx.room3.vo.findPropertyByColumnName
 import com.google.auto.value.AutoValue
 
 /** Processes any class as if it is a data class. */
@@ -161,7 +161,7 @@ private constructor(
 
         val ignoredColumns =
             element
-                .getAnnotation(androidx.room.Entity::class)
+                .getAnnotation(androidx.room3.Entity::class)
                 ?.get("ignoredColumns")
                 ?.asStringList()
                 ?.toSet() ?: emptySet()
@@ -292,7 +292,7 @@ private constructor(
     private fun chooseConstructor(
         myProperties: List<Property>,
         embedded: List<EmbeddedProperty>,
-        relations: List<androidx.room.vo.Relation>,
+        relations: List<androidx.room3.vo.Relation>,
     ): Constructor? {
         val constructors = delegate.findConstructors(element)
         val propertyMap = myProperties.associateBy { it.name }
@@ -479,7 +479,7 @@ private constructor(
         myProperties: List<Property>,
         container: XType,
         relationElement: XFieldElement,
-    ): androidx.room.vo.Relation? {
+    ): androidx.room3.vo.Relation? {
         val annotation = relationElement.requireAnnotation(Relation::class)
 
         val parentColumnName = annotation.getAsString("parentColumn")
@@ -651,7 +651,7 @@ private constructor(
                     return null
                 }
 
-                androidx.room.vo.Junction(
+                androidx.room3.vo.Junction(
                     entity = entityOrView,
                     parentProperty = junctionParentField,
                     entityProperty = junctionEntityField,
@@ -680,7 +680,7 @@ private constructor(
                 projectionNames
             }
         // if types don't match, row adapter prints a warning
-        return androidx.room.vo.Relation(
+        return androidx.room3.vo.Relation(
             entity = entity,
             dataClassType = asType,
             property = property,
@@ -1012,7 +1012,7 @@ private constructor(
             declaredType: XType,
             properties: List<Property>,
             embeddedProperties: List<EmbeddedProperty>,
-            relations: List<androidx.room.vo.Relation>,
+            relations: List<androidx.room3.vo.Relation>,
             constructor: Constructor?,
         ): DataClass
     }
@@ -1054,7 +1054,7 @@ private constructor(
             declaredType: XType,
             properties: List<Property>,
             embeddedProperties: List<EmbeddedProperty>,
-            relations: List<androidx.room.vo.Relation>,
+            relations: List<androidx.room3.vo.Relation>,
             constructor: Constructor?,
         ): DataClass {
             return DataClass(
@@ -1078,7 +1078,7 @@ private constructor(
             declaredType: XType,
             properties: List<Property>,
             embeddedProperties: List<EmbeddedProperty>,
-            relations: List<androidx.room.vo.Relation>,
+            relations: List<androidx.room3.vo.Relation>,
             constructor: Constructor?,
         ): DataClass {
             return DataClass(

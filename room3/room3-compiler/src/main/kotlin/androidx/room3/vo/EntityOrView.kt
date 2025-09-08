@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.room.vo
+package androidx.room3.vo
 
-import androidx.room.compiler.codegen.XTypeName
+import androidx.room3.compiler.codegen.XTypeName
 
 /** Common interface between [Entity] and [DatabaseView]. */
 interface EntityOrView : HasProperties {

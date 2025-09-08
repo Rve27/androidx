@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package androidx.room.compiler.codegen.impl
+package androidx.room3.compiler.codegen.impl
 
-import androidx.room.compiler.codegen.XAnnotationSpec
-import androidx.room.compiler.codegen.XCodeBlock
-import androidx.room.compiler.codegen.XSpec
-import androidx.room.compiler.codegen.java.JavaAnnotationSpec
-import androidx.room.compiler.codegen.kotlin.KotlinAnnotationSpec
+import androidx.room3.compiler.codegen.XAnnotationSpec
+import androidx.room3.compiler.codegen.XCodeBlock
+import androidx.room3.compiler.codegen.XSpec
+import androidx.room3.compiler.codegen.java.JavaAnnotationSpec
+import androidx.room3.compiler.codegen.kotlin.KotlinAnnotationSpec
 
 internal class XAnnotationSpecImpl(
     override val java: JavaAnnotationSpec,

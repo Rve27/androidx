@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.testapp.test;
+package androidx.room3.integration.testapp.test;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -25,12 +25,12 @@ import static org.junit.Assert.fail;
 import android.content.Context;
 
 import androidx.core.content.ContextCompat;
-import androidx.room.Database;
-import androidx.room.Room;
-import androidx.room.RoomDatabase;
-import androidx.room.integration.testapp.dao.ProductDao;
-import androidx.room.integration.testapp.vo.Product;
-import androidx.room.migration.Migration;
+import androidx.room3.Database;
+import androidx.room3.Room;
+import androidx.room3.RoomDatabase;
+import androidx.room3.integration.testapp.dao.ProductDao;
+import androidx.room3.integration.testapp.vo.Product;
+import androidx.room3.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;

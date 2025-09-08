@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package androidx.room.writer
+package androidx.room3.writer
 
 import COMMON
-import androidx.room.compiler.codegen.CodeLanguage
-import androidx.room.compiler.processing.XProcessingEnv
-import androidx.room.compiler.processing.XTypeElement
-import androidx.room.compiler.processing.util.Source
-import androidx.room.compiler.processing.util.runProcessorTest
-import androidx.room.ext.RoomTypeNames.ROOM_DB
-import androidx.room.processor.DaoProcessor
-import androidx.room.testing.context
+import androidx.room3.compiler.codegen.CodeLanguage
+import androidx.room3.compiler.processing.XProcessingEnv
+import androidx.room3.compiler.processing.XTypeElement
+import androidx.room3.compiler.processing.util.Source
+import androidx.room3.compiler.processing.util.runProcessorTest
+import androidx.room3.ext.RoomTypeNames.ROOM_DB
+import androidx.room3.processor.DaoProcessor
+import androidx.room3.testing.context
 import com.google.common.truth.StringSubject
 import createVerifierFromEntitiesAndViews
 import org.junit.Test
@@ -55,7 +55,7 @@ class DefaultsInDaoTest(private val jvmDefaultMode: String) {
             Source.kotlin(
                 "Foo.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
             class User
             interface BaseDao<T> {
                 @Transaction
@@ -84,7 +84,7 @@ class DefaultsInDaoTest(private val jvmDefaultMode: String) {
             Source.kotlin(
                 "Foo.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
             class User
             interface BaseDao<T> {
                 @Transaction
@@ -117,7 +117,7 @@ class DefaultsInDaoTest(private val jvmDefaultMode: String) {
             Source.kotlin(
                 "Foo.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
             class User
             interface BaseDao<T> {
                 @Transaction
@@ -153,7 +153,7 @@ class DefaultsInDaoTest(private val jvmDefaultMode: String) {
             Source.kotlin(
                 "Foo.kt",
                 """
-            import androidx.room.*
+            import androidx.room3.*
             @Dao
             interface SubjectDao {
                 private fun upsert() {
@@ -184,7 +184,7 @@ class DefaultsInDaoTest(private val jvmDefaultMode: String) {
             kotlincArguments = listOf("-jvm-target=$jvmTarget", "-Xjvm-default=${jvmDefaultMode}"),
         ) { invocation ->
             invocation.roundEnv
-                .getElementsAnnotatedWith(androidx.room.Dao::class.qualifiedName!!)
+                .getElementsAnnotatedWith(androidx.room3.Dao::class.qualifiedName!!)
                 .filterIsInstance<XTypeElement>()
                 .forEach { dao ->
                     val db = invocation.context.processingEnv.requireTypeElement(ROOM_DB)

@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.autovaluetestapp.test;
+package androidx.room3.integration.autovaluetestapp.test;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import android.content.Context;
 
-import androidx.room.Room;
-import androidx.room.integration.autovaluetestapp.FtsTestDatabase;
-import androidx.room.integration.autovaluetestapp.vo.Mail;
+import androidx.room3.Room;
+import androidx.room3.integration.autovaluetestapp.FtsTestDatabase;
+import androidx.room3.integration.autovaluetestapp.vo.Mail;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.SmallTest;

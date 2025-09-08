@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.room.vo
+package androidx.room3.vo
 
-import androidx.room.compiler.processing.XMethodElement
+import androidx.room3.compiler.processing.XMethodElement
 
 /**
  * Represents a DAO bridge function that to supported the boxed version of a generic abstract class

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room
+package androidx.room3
 
 import android.app.ActivityManager
 import android.content.Context
@@ -22,7 +22,7 @@ import android.os.Build
 import androidx.arch.core.executor.testing.CountingTaskExecutorRule
 import androidx.kruth.assertThat
 import androidx.kruth.assertWithMessage
-import androidx.room.support.AutoClosingRoomOpenHelper
+import androidx.room3.support.AutoClosingRoomOpenHelper
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.filters.SdkSuppress
 import java.util.concurrent.CountDownLatch

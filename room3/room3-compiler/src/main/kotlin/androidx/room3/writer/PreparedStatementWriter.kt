@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.room.writer
+package androidx.room3.writer
 
-import androidx.room.compiler.codegen.VisibilityModifier
-import androidx.room.compiler.codegen.XFunSpec
-import androidx.room.compiler.codegen.XPropertySpec
-import androidx.room.compiler.codegen.XTypeSpec
-import androidx.room.ext.CommonTypeNames
-import androidx.room.ext.RoomTypeNames
-import androidx.room.solver.CodeGenScope
+import androidx.room3.compiler.codegen.VisibilityModifier
+import androidx.room3.compiler.codegen.XFunSpec
+import androidx.room3.compiler.codegen.XPropertySpec
+import androidx.room3.compiler.codegen.XTypeSpec
+import androidx.room3.ext.CommonTypeNames
+import androidx.room3.ext.RoomTypeNames
+import androidx.room3.solver.CodeGenScope
 
 /** Creates anonymous classes for RoomTypeNames#SHARED_SQLITE_STMT. */
 class PreparedStatementWriter(val queryWriter: QueryWriter) {

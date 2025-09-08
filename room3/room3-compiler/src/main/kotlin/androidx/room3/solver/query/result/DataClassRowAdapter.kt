@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package androidx.room.solver.query.result
+package androidx.room3.solver.query.result
 
-import androidx.room.compiler.processing.XType
-import androidx.room.parser.ParsedQuery
-import androidx.room.processor.Context
-import androidx.room.processor.ProcessorErrors
-import androidx.room.solver.CodeGenScope
-import androidx.room.verifier.QueryResultInfo
-import androidx.room.vo.ColumnIndexVar
-import androidx.room.vo.DataClass
-import androidx.room.vo.Property
-import androidx.room.vo.PropertyWithIndex
-import androidx.room.vo.RelationCollector
-import androidx.room.writer.PropertyReadWriteWriter
+import androidx.room3.compiler.processing.XType
+import androidx.room3.parser.ParsedQuery
+import androidx.room3.processor.Context
+import androidx.room3.processor.ProcessorErrors
+import androidx.room3.solver.CodeGenScope
+import androidx.room3.verifier.QueryResultInfo
+import androidx.room3.vo.ColumnIndexVar
+import androidx.room3.vo.DataClass
+import androidx.room3.vo.Property
+import androidx.room3.vo.PropertyWithIndex
+import androidx.room3.vo.RelationCollector
+import androidx.room3.writer.PropertyReadWriteWriter
 
 /**
  * Creates the entity from the given info.

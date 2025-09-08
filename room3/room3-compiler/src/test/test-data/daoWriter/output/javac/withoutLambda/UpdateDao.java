@@ -2,11 +2,11 @@ package foo.bar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.room.EntityDeleteOrUpdateAdapter;
-import androidx.room.RoomDatabase;
-import androidx.room.RxRoom;
-import androidx.room.util.DBUtil;
-import androidx.room.util.SQLiteConnectionUtil;
+import androidx.room3.EntityDeleteOrUpdateAdapter;
+import androidx.room3.RoomDatabase;
+import androidx.room3.RxRoom;
+import androidx.room3.util.DBUtil;
+import androidx.room3.util.SQLiteConnectionUtil;
 import androidx.sqlite.SQLiteConnection;
 import androidx.sqlite.SQLiteStatement;
 import io.reactivex.Completable;
@@ -24,7 +24,7 @@ import javax.annotation.processing.Generated;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 
-@Generated("androidx.room.RoomProcessor")
+@Generated("androidx.room3.RoomProcessor")
 @SuppressWarnings({"unchecked", "deprecation", "removal"})
 public final class UpdateDao_Impl implements UpdateDao {
   private final RoomDatabase __db;

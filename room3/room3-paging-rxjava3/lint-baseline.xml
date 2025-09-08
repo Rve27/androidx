@@ -7,7 +7,7 @@
         errorLine1="                    .doOnSubscribe { Thread.sleep(300) } // subscribe but delay the load"
         errorLine2="                                            ~~~~~">
         <location
-            file="src/androidTest/kotlin/androidx/room/paging/rxjava3/LimitOffsetRxPagingSourceTest.kt"/>
+            file="src/androidTest/kotlin/androidx/room3/paging/rxjava3/LimitOffsetRxPagingSourceTest.kt"/>
     </issue>
 
 </issues>

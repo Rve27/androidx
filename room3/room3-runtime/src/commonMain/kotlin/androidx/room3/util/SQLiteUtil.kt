@@ -17,7 +17,7 @@
 @file:JvmName("SQLiteUtil")
 @file:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 
-package androidx.room.util
+package androidx.room3.util
 
 import androidx.annotation.RestrictTo
 import kotlin.jvm.JvmName

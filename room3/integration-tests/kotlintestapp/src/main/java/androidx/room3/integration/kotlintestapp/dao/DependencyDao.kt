@@ -13,17 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.room.integration.kotlintestapp.dao
+package androidx.room3.integration.kotlintestapp.dao
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
-import androidx.room.Transaction
-import androidx.room.integration.kotlintestapp.vo.DataClassFromDependency
-import androidx.room.integration.kotlintestapp.vo.EmbeddedFromDependency
-import androidx.room.integration.kotlintestapp.vo.PojoFromDependency
-import androidx.room.integration.kotlintestapp.vo.RelationFromDependency
+import androidx.room3.Dao
+import androidx.room3.Insert
+import androidx.room3.OnConflictStrategy
+import androidx.room3.Query
+import androidx.room3.Transaction
+import androidx.room3.integration.kotlintestapp.vo.DataClassFromDependency
+import androidx.room3.integration.kotlintestapp.vo.EmbeddedFromDependency
+import androidx.room3.integration.kotlintestapp.vo.PojoFromDependency
+import androidx.room3.integration.kotlintestapp.vo.RelationFromDependency
 
 @Dao
 interface DependencyDao {

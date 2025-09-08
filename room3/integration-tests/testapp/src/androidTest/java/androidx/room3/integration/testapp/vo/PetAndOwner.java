@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.testapp.vo;
+package androidx.room3.integration.testapp.vo;
 
-import androidx.room.Embedded;
-import androidx.room.Relation;
+import androidx.room3.Embedded;
+import androidx.room3.Relation;
 
 public class PetAndOwner {
     @Embedded

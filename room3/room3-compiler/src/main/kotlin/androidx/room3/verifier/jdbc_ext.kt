@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package androidx.room.verifier
+package androidx.room3.verifier
 
-import androidx.room.ext.capitalize
-import androidx.room.parser.SQLTypeAffinity
+import androidx.room3.ext.capitalize
+import androidx.room3.parser.SQLTypeAffinity
 import java.sql.PreparedStatement
 import java.sql.ResultSet
 import java.sql.ResultSetMetaData

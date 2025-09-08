@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package androidx.room.integration.testapp.vo;
+package androidx.room3.integration.testapp.vo;
 
-import static androidx.room.ForeignKey.CASCADE;
+import static androidx.room3.ForeignKey.CASCADE;
 
-import androidx.room.Entity;
-import androidx.room.ForeignKey;
-import androidx.room.RoomWarnings;
+import androidx.room3.Entity;
+import androidx.room3.ForeignKey;
+import androidx.room3.RoomWarnings;
 
 @Entity(
         primaryKeys = {"friendA", "friendB"},
