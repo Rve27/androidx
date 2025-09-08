@@ -221,7 +221,7 @@ class RoomIncrementalAnnotationProcessingTest(
             }
 
             android {
-                namespace "room.testapp"
+                namespace = "room.testapp"
                 defaultConfig {
                     javaCompileOptions {
                         annotationProcessorOptions {
@@ -279,6 +279,9 @@ class RoomIncrementalAnnotationProcessingTest(
             ksp.version.check=false
             # TODO: Remove this b/442016756
             android.builtInKotlin=false
+            android.enableLegacyVariantApi=true
+            android.newDsl=false
+            android.compatibility.enableLegacyApi=true
             """
                     .trimIndent()
             )
