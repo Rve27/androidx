@@ -36,17 +36,23 @@ import kotlin.jvm.JvmOverloads
  * A callback must be registered with a [NavigationEventDispatcher] to receive events. It will only
  * be invoked while both the dispatcher and this callback are enabled.
  *
- * @param isBackEnabled Whether this callback should initially handle back gestures. Defaults to
- *   `true`.
- * @param isForwardEnabled Whether this callback should initially handle forward gestures. Defaults
- *   to `true`.
+ * @param isBackEnabled If `true`, this handler will process back navigation gestures.
+ * @param isForwardEnabled If `true`, this handler will process forward navigation gestures.
  * @see NavigationEventDispatcher
  * @see NavigationEventInput
  * @see NavigationEventState
  */
 public abstract class NavigationEventHandler<T : NavigationEventInfo>
-@JvmOverloads
-public constructor(isBackEnabled: Boolean = true, isForwardEnabled: Boolean = true) {
+public constructor(isBackEnabled: Boolean, isForwardEnabled: Boolean) {
+
+    /**
+     * Creates a handler that is only enabled for back navigation gestures.
+     *
+     * Forward navigation will be disabled by default.
+     *
+     * @param isBackEnabled If `true`, this handler will process back navigation gestures.
+     */
+    public constructor(isBackEnabled: Boolean) : this(isBackEnabled, isForwardEnabled = false)
 
     /**
      * The contextual information representing the active destination for this callback.

@@ -54,9 +54,8 @@ package androidx.navigationevent {
   }
 
   public abstract class NavigationEventHandler<T extends androidx.navigationevent.NavigationEventInfo> {
-    ctor public NavigationEventHandler();
-    ctor public NavigationEventHandler(optional boolean isBackEnabled);
-    ctor public NavigationEventHandler(optional boolean isBackEnabled, optional boolean isForwardEnabled);
+    ctor public NavigationEventHandler(boolean isBackEnabled);
+    ctor public NavigationEventHandler(boolean isBackEnabled, boolean isForwardEnabled);
     method public final boolean isBackEnabled();
     method public final boolean isForwardEnabled();
     method @EmptySuper protected void onBackCancelled();
