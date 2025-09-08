@@ -115,12 +115,10 @@ package androidx.room3 {
     method @Deprecated public void setTransactionSuccessful();
     property public androidx.room3.InvalidationTracker invalidationTracker;
     property public boolean isOpen;
-    property @Deprecated protected final androidx.sqlite.db.SupportSQLiteDatabase? mDatabase;
     property public androidx.sqlite.db.SupportSQLiteOpenHelper openHelper;
     property public java.util.concurrent.Executor queryExecutor;
     property public java.util.concurrent.Executor transactionExecutor;
     field public static final androidx.room3.RoomDatabase.Companion Companion;
-    field @Deprecated @kotlin.jvm.Volatile protected volatile androidx.sqlite.db.SupportSQLiteDatabase? mDatabase;
   }
 
   public static class RoomDatabase.Builder<T extends androidx.room3.RoomDatabase> {
