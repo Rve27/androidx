@@ -16,6 +16,8 @@
 
 package androidx.navigationevent
 
+import androidx.compose.runtime.Immutable
+
 /**
  * Represents the directional state of system navigation gestures, such as predictive back.
  *
@@ -34,6 +36,7 @@ package androidx.navigationevent
  *
  * @param T The type of contextual information associated with the navigation state.
  */
+@Immutable
 public sealed class NavigationEventState<out T : NavigationEventInfo> {
 
     /**
