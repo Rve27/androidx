@@ -558,18 +558,18 @@ package androidx.xr.scenecore {
     method public static androidx.xr.scenecore.ResizableComponent create(androidx.xr.runtime.Session session, optional androidx.xr.runtime.math.FloatSize3d minimumSize, java.util.function.Consumer<androidx.xr.scenecore.ResizeEvent> resizeEventListener);
     method public static androidx.xr.scenecore.ResizableComponent create(androidx.xr.runtime.Session session, java.util.function.Consumer<androidx.xr.scenecore.ResizeEvent> resizeEventListener);
     method public androidx.xr.runtime.math.FloatSize3d getAffordanceSize();
-    method public float getFixedAspectRatio();
     method public androidx.xr.runtime.math.FloatSize3d getMaximumEntitySize();
     method public androidx.xr.runtime.math.FloatSize3d getMinimumEntitySize();
     method public boolean isAlwaysShowOverlayEnabled();
     method public boolean isAutoHideContentWhileResizingEnabled();
+    method public boolean isFixedAspectRatioEnabled();
     method public boolean onAttach(androidx.xr.scenecore.Entity entity);
     method public void onDetach(androidx.xr.scenecore.Entity entity);
     method public void removeResizeEventListener(java.util.function.Consumer<androidx.xr.scenecore.ResizeEvent> resizeEventListener);
     method public void setAffordanceSize(androidx.xr.runtime.math.FloatSize3d);
     method public void setAlwaysShowOverlayEnabled(boolean);
     method public void setAutoHideContentWhileResizingEnabled(boolean);
-    method public void setFixedAspectRatio(float);
+    method public void setFixedAspectRatioEnabled(boolean);
     method public void setMaximumEntitySize(androidx.xr.runtime.math.FloatSize3d);
     method public void setMinimumEntitySize(androidx.xr.runtime.math.FloatSize3d);
     method public void setShouldAutoUpdateOverlay(boolean);
@@ -577,6 +577,7 @@ package androidx.xr.scenecore {
     property public androidx.xr.runtime.math.FloatSize3d affordanceSize;
     property public boolean isAlwaysShowOverlayEnabled;
     property public boolean isAutoHideContentWhileResizingEnabled;
+    property public boolean isFixedAspectRatioEnabled;
     property public androidx.xr.runtime.math.FloatSize3d maximumEntitySize;
     property public androidx.xr.runtime.math.FloatSize3d minimumEntitySize;
     field public static final androidx.xr.scenecore.ResizableComponent.Companion Companion;
