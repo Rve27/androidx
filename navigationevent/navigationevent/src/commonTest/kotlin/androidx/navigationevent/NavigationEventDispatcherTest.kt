@@ -37,7 +37,7 @@ class NavigationEventDispatcherTest {
     // region Core API
 
     @Test
-    fun dispatch_onStarted_sendsEventToCallback() {
+    fun dispatch_onBackStarted_sendsEventToCallback() {
         val dispatcher = NavigationEventDispatcher()
         val callback = TestNavigationEventCallback()
         dispatcher.addCallback(callback)
@@ -50,10 +50,28 @@ class NavigationEventDispatcherTest {
         assertThat(callback.onBackProgressedInvocations).isEqualTo(0)
         assertThat(callback.onBackCompletedInvocations).isEqualTo(0)
         assertThat(callback.onBackCancelledInvocations).isEqualTo(0)
+        assertThat(callback.onForwardStartedInvocations).isEqualTo(0)
     }
 
     @Test
-    fun dispatch_onProgressed_sendsEventToCallback() {
+    fun dispatch_onForwardStarted_sendsEventToCallback() {
+        val dispatcher = NavigationEventDispatcher()
+        val callback = TestNavigationEventCallback()
+        dispatcher.addCallback(callback)
+
+        val input = TestNavigationEventInput()
+        dispatcher.addInput(input)
+        input.forwardStarted(NavigationEvent())
+
+        assertThat(callback.onForwardStartedInvocations).isEqualTo(1)
+        assertThat(callback.onForwardProgressedInvocations).isEqualTo(0)
+        assertThat(callback.onForwardCompletedInvocations).isEqualTo(0)
+        assertThat(callback.onForwardCancelledInvocations).isEqualTo(0)
+        assertThat(callback.onBackStartedInvocations).isEqualTo(0)
+    }
+
+    @Test
+    fun dispatch_onBackProgressed_sendsEventToCallback() {
         val dispatcher = NavigationEventDispatcher()
         val callback = TestNavigationEventCallback()
         dispatcher.addCallback(callback)
@@ -69,7 +87,23 @@ class NavigationEventDispatcherTest {
     }
 
     @Test
-    fun dispatch_onCompleted_sendsEventToCallback() {
+    fun dispatch_onForwardProgressed_sendsEventToCallback() {
+        val dispatcher = NavigationEventDispatcher()
+        val callback = TestNavigationEventCallback()
+        dispatcher.addCallback(callback)
+
+        val input = TestNavigationEventInput()
+        dispatcher.addInput(input)
+        input.forwardProgressed(NavigationEvent())
+
+        assertThat(callback.onForwardStartedInvocations).isEqualTo(0)
+        assertThat(callback.onForwardProgressedInvocations).isEqualTo(1)
+        assertThat(callback.onForwardCompletedInvocations).isEqualTo(0)
+        assertThat(callback.onForwardCancelledInvocations).isEqualTo(0)
+    }
+
+    @Test
+    fun dispatch_onBackCompleted_sendsEventToCallback() {
         val dispatcher = NavigationEventDispatcher()
         val callback = TestNavigationEventCallback()
         dispatcher.addCallback(callback)
@@ -85,7 +119,23 @@ class NavigationEventDispatcherTest {
     }
 
     @Test
-    fun dispatch_onCancelled_sendsEventToCallback() {
+    fun dispatch_onForwardCompleted_sendsEventToCallback() {
+        val dispatcher = NavigationEventDispatcher()
+        val callback = TestNavigationEventCallback()
+        dispatcher.addCallback(callback)
+
+        val input = TestNavigationEventInput()
+        dispatcher.addInput(input)
+        input.forwardCompleted()
+
+        assertThat(callback.onForwardStartedInvocations).isEqualTo(0)
+        assertThat(callback.onForwardProgressedInvocations).isEqualTo(0)
+        assertThat(callback.onForwardCompletedInvocations).isEqualTo(1)
+        assertThat(callback.onForwardCancelledInvocations).isEqualTo(0)
+    }
+
+    @Test
+    fun dispatch_onBackCancelled_sendsEventToCallback() {
         val dispatcher = NavigationEventDispatcher()
         val callback = TestNavigationEventCallback()
         dispatcher.addCallback(callback)
@@ -101,10 +151,26 @@ class NavigationEventDispatcherTest {
     }
 
     @Test
-    fun removeCallback_duringInProgressNavigation_sendsCancellation() {
+    fun dispatch_onForwardCancelled_sendsEventToCallback() {
+        val dispatcher = NavigationEventDispatcher()
+        val callback = TestNavigationEventCallback()
+        dispatcher.addCallback(callback)
+
+        val input = TestNavigationEventInput()
+        dispatcher.addInput(input)
+        input.forwardCancelled()
+
+        assertThat(callback.onForwardStartedInvocations).isEqualTo(0)
+        assertThat(callback.onForwardProgressedInvocations).isEqualTo(0)
+        assertThat(callback.onForwardCompletedInvocations).isEqualTo(0)
+        assertThat(callback.onForwardCancelledInvocations).isEqualTo(1)
+    }
+
+    @Test
+    fun removeCallback_duringInProgressBackNavigation_sendsCancellation() {
         val dispatcher = NavigationEventDispatcher()
 
-        // We need to capture the state when onEventCancelled is called to verify the order.
+        // We need to capture the state when onBackCancelled is called to verify the order.
         var startedInvocationsAtCancelTime = 0
         val callback =
             TestNavigationEventCallback(
@@ -121,13 +187,41 @@ class NavigationEventDispatcherTest {
         // must trigger a cancellation event on that callback first.
         callback.remove()
 
-        // Assert that onEventCancelled was called once, and it happened after onEventStarted.
+        // Assert that onBackCancelled was called once, and it happened after onBackStarted.
         assertThat(callback.onBackCancelledInvocations).isEqualTo(1)
         assertThat(startedInvocationsAtCancelTime).isEqualTo(1)
     }
 
     @Test
-    fun dispatch_callbackDisablesItself_doesNotSendCancellation() {
+    fun removeCallback_duringInProgressForwardNavigation_sendsCancellation() {
+        val dispatcher = NavigationEventDispatcher()
+
+        // We need to capture the state when onForwardCancelled is called to verify the order.
+        var startedInvocationsAtCancelTime = 0
+        val callback =
+            TestNavigationEventCallback(
+                onForwardCancelled = {
+                    startedInvocationsAtCancelTime = this.onForwardStartedInvocations
+                }
+            )
+        dispatcher.addCallback(callback)
+
+        val input = TestNavigationEventInput()
+        dispatcher.addInput(input)
+        input.forwardStarted(NavigationEvent())
+        assertThat(callback.onForwardStartedInvocations).isEqualTo(1)
+
+        // Removing a callback that is handling an in-progress navigation
+        // must trigger a cancellation event on that callback first.
+        callback.remove()
+
+        // Assert that onForwardCancelled was called once, and it happened after onForwardStarted.
+        assertThat(callback.onForwardCancelledInvocations).isEqualTo(1)
+        assertThat(startedInvocationsAtCancelTime).isEqualTo(1)
+    }
+
+    @Test
+    fun dispatch_callbackDisablesBack_doesNotSendCancellation() {
         val dispatcher = NavigationEventDispatcher()
         val callback = TestNavigationEventCallback(onBackStarted = { isBackEnabled = false })
         dispatcher.addCallback(callback)
@@ -142,6 +236,24 @@ class NavigationEventDispatcherTest {
         assertThat(callback.onBackStartedInvocations).isEqualTo(1)
         assertThat(callback.onBackCancelledInvocations).isEqualTo(0)
         assertThat(callback.onBackCompletedInvocations).isEqualTo(1)
+    }
+
+    @Test
+    fun dispatch_callbackDisablesForward_doesNotSendCancellation() {
+        val dispatcher = NavigationEventDispatcher()
+        val callback = TestNavigationEventCallback(onForwardStarted = { isForwardEnabled = false })
+        dispatcher.addCallback(callback)
+
+        val input = TestNavigationEventInput()
+        dispatcher.addInput(input)
+        input.forwardStarted(NavigationEvent())
+        input.forwardCompleted()
+
+        // The callback was disabled, but cancellation should not be triggered.
+        // The 'completed' event should still be received because the navigation was in progress.
+        assertThat(callback.onForwardStartedInvocations).isEqualTo(1)
+        assertThat(callback.onForwardCancelledInvocations).isEqualTo(0)
+        assertThat(callback.onForwardCompletedInvocations).isEqualTo(1)
     }
 
     @Test
@@ -164,7 +276,7 @@ class NavigationEventDispatcherTest {
     }
 
     @Test
-    fun dispatch_callbackRemovesItselfOnStarted_sendsCancellation() {
+    fun dispatch_callbackRemovesItselfOnBackStarted_sendsCancellation() {
         val dispatcher = NavigationEventDispatcher()
         var cancelledInvocationsAtStartTime = 0
         val callback =
@@ -180,21 +292,44 @@ class NavigationEventDispatcherTest {
         dispatcher.addInput(input)
         input.backStarted(NavigationEvent())
 
-        // Assert that 'onEventStarted' was called.
+        // Assert that 'onBackStarted' was called.
         assertThat(callback.onBackStartedInvocations).isEqualTo(1)
-        // Assert that 'onEventCancelled' was called from within 'onEventStarted'.
+        // Assert that 'onBackCancelled' was called from within 'onBackStarted'.
         assertThat(callback.onBackCancelledInvocations).isEqualTo(1)
-        // Assert that 'onEventCancelled' had not been called before 'remove()'.
+        // Assert that 'onBackCancelled' had not been called before 'remove()'.
         assertThat(cancelledInvocationsAtStartTime).isEqualTo(0)
     }
 
     @Test
-    fun dispatch_newNavigationDuringExisting_cancelsPrevious() {
+    fun dispatch_callbackRemovesItselfOnForwardStarted_sendsCancellation() {
         val dispatcher = NavigationEventDispatcher()
+        var cancelledInvocationsAtStartTime = 0
+        val callback =
+            TestNavigationEventCallback(
+                onForwardStarted = {
+                    cancelledInvocationsAtStartTime = this.onForwardCancelledInvocations
+                    remove()
+                }
+            )
+        dispatcher.addCallback(callback)
 
+        val input = TestNavigationEventInput()
+        dispatcher.addInput(input)
+        input.forwardStarted(NavigationEvent())
+
+        // Assert that 'onForwardStarted' was called.
+        assertThat(callback.onForwardStartedInvocations).isEqualTo(1)
+        // Assert that 'onForwardCancelled' was called from within 'onForwardStarted'.
+        assertThat(callback.onForwardCancelledInvocations).isEqualTo(1)
+        // Assert that 'onForwardCancelled' had not been called before 'remove()'.
+        assertThat(cancelledInvocationsAtStartTime).isEqualTo(0)
+    }
+
+    @Test
+    fun dispatch_newBackNavigationDuringExisting_cancelsPrevious() {
+        val dispatcher = NavigationEventDispatcher()
         val callback1 = TestNavigationEventCallback()
         dispatcher.addCallback(callback1)
-
         val input = TestNavigationEventInput()
         dispatcher.addInput(input)
         input.backStarted(NavigationEvent())
@@ -215,6 +350,33 @@ class NavigationEventDispatcherTest {
 
         // Verify the cancelled callback receives no further events.
         assertThat(callback1.onBackCompletedInvocations).isEqualTo(0)
+    }
+
+    @Test
+    fun dispatch_newForwardNavigationDuringExisting_cancelsPrevious() {
+        val dispatcher = NavigationEventDispatcher()
+        val callback1 = TestNavigationEventCallback()
+        dispatcher.addCallback(callback1)
+        val input = TestNavigationEventInput()
+        dispatcher.addInput(input)
+        input.forwardStarted(NavigationEvent())
+        assertThat(callback1.onForwardStartedInvocations).isEqualTo(1)
+
+        val callback2 = TestNavigationEventCallback()
+        dispatcher.addCallback(callback2)
+
+        // Starting a new navigation must implicitly cancel any gesture already in progress
+        // to ensure a predictable state.
+        input.forwardStarted(NavigationEvent())
+
+        assertThat(callback1.onForwardCancelledInvocations).isEqualTo(1)
+        assertThat(callback2.onForwardStartedInvocations).isEqualTo(1)
+
+        input.forwardCompleted()
+        assertThat(callback2.onForwardCompletedInvocations).isEqualTo(1)
+
+        // Verify the cancelled callback receives no further events.
+        assertThat(callback1.onForwardCompletedInvocations).isEqualTo(0)
     }
 
     @Test
@@ -252,7 +414,7 @@ class NavigationEventDispatcherTest {
     }
 
     @Test
-    fun dispatch_withNoEnabledCallbacks_invokesFallback() {
+    fun dispatch_withNoEnabledCallbacks_invokesBackFallback() {
         var fallbackCalled = false
         val dispatcher =
             NavigationEventDispatcher(fallbackOnBackPressed = { fallbackCalled = true })
@@ -359,7 +521,7 @@ class NavigationEventDispatcherTest {
     }
 
     @Test
-    fun dispatch_withNoCallbacks_invokesFallback() {
+    fun dispatch_withNoCallbacks_invokesBackFallback() {
         var fallbackCalled = false
         val dispatcher =
             NavigationEventDispatcher(fallbackOnBackPressed = { fallbackCalled = true })
@@ -634,7 +796,7 @@ class NavigationEventDispatcherTest {
     }
 
     @Test
-    fun state_onFullGestureLifecycle_transitionsToInProgressThenIdle() {
+    fun state_onFullBackGestureLifecycle_transitionsToInProgressThenIdle() {
         val dispatcher = NavigationEventDispatcher()
         val input = TestNavigationEventInput().also { dispatcher.addInput(it) }
         val callbackInfo = HomeScreenInfo("home")
@@ -660,6 +822,35 @@ class NavigationEventDispatcherTest {
 
         // Completing the gesture should return the state to Idle.
         input.backCompleted()
+        assertThat(dispatcher.state.value).isEqualTo(Idle(callbackInfo))
+    }
+
+    @Test
+    fun state_onFullForwardGestureLifecycle_transitionsToInProgressThenIdle() {
+        val dispatcher = NavigationEventDispatcher()
+        val input = TestNavigationEventInput().also { dispatcher.addInput(it) }
+        val callbackInfo = HomeScreenInfo("home")
+        val callback = TestNavigationEventCallback(currentInfo = callbackInfo)
+        dispatcher.addCallback(callback)
+
+        val startEvent = NavigationEvent(touchX = 0.1F)
+        val progressEvent = NavigationEvent(touchX = 0.3f)
+
+        assertThat(dispatcher.state.value).isEqualTo(Idle(callbackInfo))
+
+        // Starting a gesture should move the state to InProgress with the start event.
+        input.forwardStarted(startEvent)
+        var state = dispatcher.state.value as InProgress
+        assertThat(state.currentInfo).isEqualTo(callbackInfo)
+        assertThat(state.latestEvent).isEqualTo(startEvent)
+
+        // Progressing the gesture should keep it InProgress but update to the latest event.
+        input.forwardProgressed(progressEvent)
+        state = dispatcher.state.value as InProgress
+        assertThat(state.latestEvent).isEqualTo(progressEvent)
+
+        // Completing the gesture should return the state to Idle.
+        input.forwardCompleted()
         assertThat(dispatcher.state.value).isEqualTo(Idle(callbackInfo))
     }
 
@@ -697,7 +888,7 @@ class NavigationEventDispatcherTest {
 
         input.backStarted(startEvent)
 
-        // At the start, previousInfo is null.
+        // At the start, backInfo is empty.
         var state = dispatcher.state.value as InProgress
         assertThat(state.currentInfo).isEqualTo(firstInfo)
         assertThat(state.backInfo).isEmpty()
@@ -707,7 +898,7 @@ class NavigationEventDispatcherTest {
         val secondInfo = HomeScreenInfo("updated")
         callback.setInfo(currentInfo = secondInfo, backInfo = listOf(firstInfo))
 
-        // The state should now reflect the updated info. The `previousInfo` is now captured.
+        // The state should now reflect the updated info. The `backInfo` is now captured.
         state = dispatcher.state.value as InProgress
         assertThat(state.currentInfo).isEqualTo(secondInfo)
         assertThat(state.backInfo).containsExactly(firstInfo)
@@ -740,7 +931,7 @@ class NavigationEventDispatcherTest {
         val event2 = NavigationEvent(touchX = 0.3f)
         input.backStarted(event2)
 
-        // When a new gesture starts, `previousInfo` must be null, not stale data
+        // When a new gesture starts, `backInfo` must be empty, not stale data
         // from a previous, completed gesture.
         val state = dispatcher.state.value as InProgress
         assertThat(state.currentInfo).isEqualTo(finalInfo)
@@ -1523,9 +1714,8 @@ data class DetailsScreenInfo(val id: String) : TestInfo
  * counts.
  *
  * Use this class in tests to verify that `onAdded`, `onRemoved`, and `onHasEnabledCallbacksChanged`
- * are called correctly. It counts how many times each lifecycle method is invoked and stores a
- * reference to the most recently added dispatcher. It also provides helper methods to simulate
- * dispatching navigation events.
+ * are called correctly. It provides helper methods to simulate dispatching both back and forward
+ * navigation events.
  *
  * @param onAdded An optional lambda to execute when [onAdded] is called.
  * @param onRemoved An optional lambda to execute when [onRemoved] is called.
@@ -1588,6 +1778,38 @@ private class TestNavigationEventInput(
     @MainThread
     fun backCancelled() {
         dispatchOnBackCancelled()
+    }
+
+    /**
+     * Test helper to simulate the start of a forward navigation event.
+     *
+     * @param event The [NavigationEvent] to dispatch.
+     */
+    @MainThread
+    fun forwardStarted(event: NavigationEvent = NavigationEvent()) {
+        dispatchOnForwardStarted(event)
+    }
+
+    /**
+     * Test helper to simulate the progress of a forward navigation event.
+     *
+     * @param event The [NavigationEvent] to dispatch.
+     */
+    @MainThread
+    fun forwardProgressed(event: NavigationEvent = NavigationEvent()) {
+        dispatchOnForwardProgressed(event)
+    }
+
+    /** Test helper to simulate the completion of a forward navigation event. */
+    @MainThread
+    fun forwardCompleted() {
+        dispatchOnForwardCompleted()
+    }
+
+    /** Test helper to simulate the cancellation of a forward navigation event. */
+    @MainThread
+    fun forwardCancelled() {
+        dispatchOnForwardCancelled()
     }
 
     override fun onAdded(dispatcher: NavigationEventDispatcher) {
