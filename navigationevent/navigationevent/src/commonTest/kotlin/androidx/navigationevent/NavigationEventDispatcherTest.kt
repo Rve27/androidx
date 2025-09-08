@@ -44,7 +44,7 @@ class NavigationEventDispatcherTest {
 
         val input = TestNavigationEventInput()
         dispatcher.addInput(input)
-        input.start(NavigationEvent())
+        input.backStarted(NavigationEvent())
 
         assertThat(callback.onBackStartedInvocations).isEqualTo(1)
         assertThat(callback.onBackProgressedInvocations).isEqualTo(0)
@@ -60,7 +60,7 @@ class NavigationEventDispatcherTest {
 
         val input = TestNavigationEventInput()
         dispatcher.addInput(input)
-        input.progress(NavigationEvent())
+        input.backProgressed(NavigationEvent())
 
         assertThat(callback.onBackStartedInvocations).isEqualTo(0)
         assertThat(callback.onBackProgressedInvocations).isEqualTo(1)
@@ -76,7 +76,7 @@ class NavigationEventDispatcherTest {
 
         val input = TestNavigationEventInput()
         dispatcher.addInput(input)
-        input.complete()
+        input.backCompleted()
 
         assertThat(callback.onBackStartedInvocations).isEqualTo(0)
         assertThat(callback.onBackProgressedInvocations).isEqualTo(0)
@@ -92,7 +92,7 @@ class NavigationEventDispatcherTest {
 
         val input = TestNavigationEventInput()
         dispatcher.addInput(input)
-        input.cancel()
+        input.backCancelled()
 
         assertThat(callback.onBackStartedInvocations).isEqualTo(0)
         assertThat(callback.onBackProgressedInvocations).isEqualTo(0)
@@ -114,7 +114,7 @@ class NavigationEventDispatcherTest {
 
         val input = TestNavigationEventInput()
         dispatcher.addInput(input)
-        input.start(NavigationEvent())
+        input.backStarted(NavigationEvent())
         assertThat(callback.onBackStartedInvocations).isEqualTo(1)
 
         // Removing a callback that is handling an in-progress navigation
@@ -134,8 +134,8 @@ class NavigationEventDispatcherTest {
 
         val input = TestNavigationEventInput()
         dispatcher.addInput(input)
-        input.start(NavigationEvent())
-        input.complete()
+        input.backStarted(NavigationEvent())
+        input.backCompleted()
 
         // The callback was disabled, but cancellation should not be triggered.
         // The 'completed' event should still be received because the navigation was in progress.
@@ -152,7 +152,7 @@ class NavigationEventDispatcherTest {
 
         val input = TestNavigationEventInput()
         dispatcher.addInput(input)
-        input.start(NavigationEvent())
+        input.backStarted(NavigationEvent())
         assertThat(callback.onBackStartedInvocations).isEqualTo(1)
 
         // Disabling a callback should not automatically cancel an in-progress navigation.
@@ -178,7 +178,7 @@ class NavigationEventDispatcherTest {
 
         val input = TestNavigationEventInput()
         dispatcher.addInput(input)
-        input.start(NavigationEvent())
+        input.backStarted(NavigationEvent())
 
         // Assert that 'onEventStarted' was called.
         assertThat(callback.onBackStartedInvocations).isEqualTo(1)
@@ -197,7 +197,7 @@ class NavigationEventDispatcherTest {
 
         val input = TestNavigationEventInput()
         dispatcher.addInput(input)
-        input.start(NavigationEvent())
+        input.backStarted(NavigationEvent())
         assertThat(callback1.onBackStartedInvocations).isEqualTo(1)
 
         val callback2 = TestNavigationEventCallback()
@@ -205,12 +205,12 @@ class NavigationEventDispatcherTest {
 
         // Starting a new navigation must implicitly cancel any gesture already in progress
         // to ensure a predictable state.
-        input.start(NavigationEvent())
+        input.backStarted(NavigationEvent())
 
         assertThat(callback1.onBackCancelledInvocations).isEqualTo(1)
         assertThat(callback2.onBackStartedInvocations).isEqualTo(1)
 
-        input.complete()
+        input.backCompleted()
         assertThat(callback2.onBackCompletedInvocations).isEqualTo(1)
 
         // Verify the cancelled callback receives no further events.
@@ -225,7 +225,7 @@ class NavigationEventDispatcherTest {
         dispatcher.addCallback(callback1)
         val input = TestNavigationEventInput()
         dispatcher.addInput(input)
-        input.start(NavigationEvent())
+        input.backStarted(NavigationEvent())
         assertThat(callback1.onBackStartedInvocations).isEqualTo(1)
 
         // Add a new callback while a navigation is active.
@@ -234,15 +234,15 @@ class NavigationEventDispatcherTest {
 
         // The dispatcher should be locked to the callback that started the navigation.
         // The new callback should not receive the completion event for the current navigation.
-        input.complete()
+        input.backCompleted()
 
         assertThat(callback1.onBackCompletedInvocations).isEqualTo(1)
         assertThat(callback2.onBackStartedInvocations).isEqualTo(0)
         assertThat(callback2.onBackCompletedInvocations).isEqualTo(0)
 
         // Start and complete a second navigation.
-        input.start(NavigationEvent())
-        input.complete()
+        input.backStarted(NavigationEvent())
+        input.backCompleted()
 
         // The second navigation should be handled by the new top callback (callback2).
         assertThat(callback1.onBackStartedInvocations).isEqualTo(1)
@@ -261,13 +261,13 @@ class NavigationEventDispatcherTest {
 
         val input = TestNavigationEventInput()
         dispatcher.addInput(input)
-        input.complete()
+        input.backCompleted()
         assertThat(callback.onBackCompletedInvocations).isEqualTo(1)
         assertThat(fallbackCalled).isFalse()
 
         // After disabling the only callback, the fallback should be triggered.
         callback.isBackEnabled = false
-        input.complete()
+        input.backCompleted()
         assertThat(callback.onBackCompletedInvocations).isEqualTo(1) // Unchanged
         assertThat(fallbackCalled).isTrue()
     }
@@ -283,7 +283,7 @@ class NavigationEventDispatcherTest {
 
         val input = TestNavigationEventInput()
         dispatcher.addInput(input)
-        input.complete()
+        input.backCompleted()
 
         // The overlay callback should handle the event, and the normal one should not.
         assertThat(overlayCallback.onBackCompletedInvocations).isEqualTo(1)
@@ -304,7 +304,7 @@ class NavigationEventDispatcherTest {
 
         val input = TestNavigationEventInput()
         dispatcher.addInput(input)
-        input.complete()
+        input.backCompleted()
 
         // The event should skip the disabled overlay and be handled by the default.
         assertThat(overlayCallback.onBackCompletedInvocations).isEqualTo(0)
@@ -350,7 +350,7 @@ class NavigationEventDispatcherTest {
 
         val input = TestNavigationEventInput()
         dispatcher.addInput(input)
-        input.complete()
+        input.backCompleted()
 
         // Only the last-added overlay callback should handle the event.
         assertThat(secondOverlayCallback.onBackCompletedInvocations).isEqualTo(1)
@@ -367,7 +367,7 @@ class NavigationEventDispatcherTest {
         // With no callbacks registered at all, the fallback should still work.
         val input = TestNavigationEventInput()
         dispatcher.addInput(input)
-        input.complete()
+        input.backCompleted()
 
         assertThat(fallbackCalled).isTrue()
     }
@@ -382,12 +382,12 @@ class NavigationEventDispatcherTest {
         callback.isBackEnabled = false
         val input = TestNavigationEventInput()
         dispatcher.addInput(input)
-        input.complete()
+        input.backCompleted()
         assertThat(callback.onBackCompletedInvocations).isEqualTo(0)
 
         // Re-enable the callback.
         callback.isBackEnabled = true
-        input.complete()
+        input.backCompleted()
 
         // It should now receive the event.
         assertThat(callback.onBackCompletedInvocations).isEqualTo(1)
@@ -403,10 +403,10 @@ class NavigationEventDispatcherTest {
         // This handles simple, non-gesture back events.
         val input = TestNavigationEventInput()
         dispatcher.addInput(input)
-        input.progress(NavigationEvent())
+        input.backProgressed(NavigationEvent())
         assertThat(callback.onBackProgressedInvocations).isEqualTo(1)
 
-        input.complete()
+        input.backCompleted()
         assertThat(callback.onBackCompletedInvocations).isEqualTo(1)
 
         // Ensure no cancellation was ever triggered.
@@ -422,18 +422,18 @@ class NavigationEventDispatcherTest {
 
         val input = TestNavigationEventInput()
         dispatcher.addInput(input)
-        input.complete()
+        input.backCompleted()
         assertThat(callback.onBackCompletedInvocations).isEqualTo(1)
 
         // Remove the callback.
         callback.remove()
-        input.complete()
+        input.backCompleted()
         // Invocations should not increase.
         assertThat(callback.onBackCompletedInvocations).isEqualTo(1)
 
         // Re-adding the same callback instance should treat it as a new registration.
         dispatcher.addCallback(callback)
-        input.complete()
+        input.backCompleted()
         // Invocations should increase again.
         assertThat(callback.onBackCompletedInvocations).isEqualTo(2)
     }
@@ -647,19 +647,19 @@ class NavigationEventDispatcherTest {
         assertThat(dispatcher.state.value).isEqualTo(Idle(callbackInfo))
 
         // Starting a gesture should move the state to InProgress with the start event.
-        input.start(startEvent)
+        input.backStarted(startEvent)
         var state = dispatcher.state.value as InProgress
         assertThat(state.currentInfo).isEqualTo(callbackInfo)
         assertThat(state.backInfo).isEmpty()
         assertThat(state.latestEvent).isEqualTo(startEvent)
 
         // Progressing the gesture should keep it InProgress but update to the latest event.
-        input.progress(progressEvent)
+        input.backProgressed(progressEvent)
         state = dispatcher.state.value as InProgress
         assertThat(state.latestEvent).isEqualTo(progressEvent)
 
         // Completing the gesture should return the state to Idle.
-        input.complete()
+        input.backCompleted()
         assertThat(dispatcher.state.value).isEqualTo(Idle(callbackInfo))
     }
 
@@ -676,12 +676,12 @@ class NavigationEventDispatcherTest {
         assertThat(dispatcher.state.value).isEqualTo(Idle(callbackInfo))
 
         // Starting a gesture moves the state to InProgress.
-        input.start(startEvent)
+        input.backStarted(startEvent)
         assertThat(dispatcher.state.value)
             .isEqualTo(InProgress(currentInfo = callbackInfo, latestEvent = startEvent))
 
         // Cancelling the gesture should also return the state to Idle.
-        input.cancel()
+        input.backCancelled()
         assertThat(dispatcher.state.value).isEqualTo(Idle(callbackInfo))
     }
 
@@ -695,7 +695,7 @@ class NavigationEventDispatcherTest {
 
         val startEvent = NavigationEvent(touchX = 0.1F)
 
-        input.start(startEvent)
+        input.backStarted(startEvent)
 
         // At the start, previousInfo is null.
         var state = dispatcher.state.value as InProgress
@@ -714,7 +714,7 @@ class NavigationEventDispatcherTest {
         assertThat(state.latestEvent).isEqualTo(startEvent) // Event hasn't changed yet.
 
         // Complete the gesture.
-        input.complete()
+        input.backCompleted()
         assertThat(dispatcher.state.value)
             .isEqualTo(Idle(currentInfo = secondInfo, backInfo = listOf(firstInfo)))
     }
@@ -728,9 +728,9 @@ class NavigationEventDispatcherTest {
         dispatcher.addCallback(callback)
 
         // FIRST GESTURE: Create a complex state.
-        input.start(NavigationEvent(touchX = 0.1f))
+        input.backStarted(NavigationEvent(touchX = 0.1f))
         callback.setInfo(currentInfo = HomeScreenInfo("updated"))
-        input.complete()
+        input.backCompleted()
 
         // After the first gesture, the final state is Idle with the updated info.
         val finalInfo = HomeScreenInfo("updated")
@@ -738,7 +738,7 @@ class NavigationEventDispatcherTest {
 
         // SECOND GESTURE: Start a new gesture.
         val event2 = NavigationEvent(touchX = 0.3f)
-        input.start(event2)
+        input.backStarted(event2)
 
         // When a new gesture starts, `previousInfo` must be null, not stale data
         // from a previous, completed gesture.
@@ -860,15 +860,15 @@ class NavigationEventDispatcherTest {
         assertThat(dispatcher.state.value.progress).isEqualTo(0f)
 
         // Start a gesture.
-        input.start(NavigationEvent(progress = 0.1f))
+        input.backStarted(NavigationEvent(progress = 0.1f))
         assertThat(dispatcher.state.value.progress).isEqualTo(0.1f)
 
         // InProgress state should reflect the event's progress.
-        input.progress(NavigationEvent(progress = 0.5f))
+        input.backProgressed(NavigationEvent(progress = 0.5f))
         assertThat(dispatcher.state.value.progress).isEqualTo(0.5f)
 
         // Complete the gesture.
-        input.complete()
+        input.backCompleted()
 
         // After the gesture, the state is Idle again and progress should be 0.
         assertThat(dispatcher.state.value.progress).isEqualTo(0f)
@@ -891,7 +891,7 @@ class NavigationEventDispatcherTest {
         val event = NavigationEvent()
         val input = TestNavigationEventInput()
         parentDispatcher.addInput(input)
-        input.start(event)
+        input.backStarted(event)
 
         // Callbacks from child dispatchers are prioritized over their parents (LIFO).
         assertThat(parentCallback.onBackStartedInvocations).isEqualTo(0)
@@ -912,7 +912,7 @@ class NavigationEventDispatcherTest {
         val event = NavigationEvent()
         val parentInput = TestNavigationEventInput()
         parentDispatcher.addInput(parentInput)
-        parentInput.start(event)
+        parentInput.backStarted(event)
 
         // Only the parent's callback should be invoked.
         assertThat(parentCallback.onBackStartedInvocations).isEqualTo(1)
@@ -921,7 +921,7 @@ class NavigationEventDispatcherTest {
         // Dispatch an event through the child.
         val childInput = TestNavigationEventInput()
         childDispatcher.addInput(childInput)
-        childInput.start(event)
+        childInput.backStarted(event)
 
         // Only the child's callback should be invoked.
         assertThat(parentCallback.onBackStartedInvocations).isEqualTo(1)
@@ -940,7 +940,7 @@ class NavigationEventDispatcherTest {
         val event = NavigationEvent()
         val input = TestNavigationEventInput()
         parentDispatcher.addInput(input)
-        input.start(event)
+        input.backStarted(event)
         assertThat(callback.onBackStartedInvocations).isEqualTo(1)
     }
 
@@ -958,7 +958,7 @@ class NavigationEventDispatcherTest {
         val event = NavigationEvent()
         val input = TestNavigationEventInput()
         parentDispatcher.addInput(input)
-        input.start(event)
+        input.backStarted(event)
 
         assertThat(parentCallback.onBackStartedInvocations).isEqualTo(0)
         assertThat(childCallback.onBackStartedInvocations).isEqualTo(1)
@@ -983,7 +983,7 @@ class NavigationEventDispatcherTest {
         val event = NavigationEvent()
         val input = TestNavigationEventInput()
         parentDispatcher.addInput(input)
-        input.start(event)
+        input.backStarted(event)
 
         assertThat(parentCallback.onBackStartedInvocations).isEqualTo(0)
         assertThat(childCallback2.onBackStartedInvocations).isEqualTo(0)
@@ -1007,7 +1007,7 @@ class NavigationEventDispatcherTest {
         val event = NavigationEvent()
         val input = TestNavigationEventInput()
         parentDispatcher.addInput(input)
-        input.start(event)
+        input.backStarted(event)
         assertThat(parentCallback.onBackStartedInvocations).isEqualTo(1)
         assertThat(childCallback.onBackStartedInvocations).isEqualTo(0)
     }
@@ -1024,14 +1024,14 @@ class NavigationEventDispatcherTest {
         assertThrows<IllegalStateException> {
                 val input = TestNavigationEventInput()
                 parentDispatcher.addInput(input)
-                input.start(event)
+                input.backStarted(event)
             }
             .hasMessageThat()
             .contains("has already been disposed")
         assertThrows<IllegalStateException> {
                 val input = TestNavigationEventInput()
                 childDispatcher.addInput(input)
-                input.start(event)
+                input.backStarted(event)
             }
             .hasMessageThat()
             .contains("has already been disposed")
@@ -1051,21 +1051,21 @@ class NavigationEventDispatcherTest {
         assertThrows<IllegalStateException> {
                 val input = TestNavigationEventInput()
                 grandparentDispatcher.addInput(input)
-                input.start(event)
+                input.backStarted(event)
             }
             .hasMessageThat()
             .contains("has already been disposed")
         assertThrows<IllegalStateException> {
                 val input = TestNavigationEventInput()
                 parentDispatcher.addInput(input)
-                input.start(event)
+                input.backStarted(event)
             }
             .hasMessageThat()
             .contains("has already been disposed")
         assertThrows<IllegalStateException> {
                 val input = TestNavigationEventInput()
                 childDispatcher.addInput(input)
-                input.start(event)
+                input.backStarted(event)
             }
             .hasMessageThat()
             .contains("has already been disposed")
@@ -1082,7 +1082,7 @@ class NavigationEventDispatcherTest {
         val event = NavigationEvent()
         val input = TestNavigationEventInput()
         dispatcher.addInput(input)
-        input.start(event)
+        input.backStarted(event)
         assertThat(callback.onBackStartedInvocations).isEqualTo(1)
     }
 
@@ -1097,7 +1097,7 @@ class NavigationEventDispatcherTest {
         val event = NavigationEvent()
         val input = TestNavigationEventInput()
         dispatcher.addInput(input)
-        input.start(event)
+        input.backStarted(event)
         assertThat(callback.onBackStartedInvocations).isEqualTo(0)
     }
 
@@ -1116,7 +1116,7 @@ class NavigationEventDispatcherTest {
         val event = NavigationEvent()
         val input = TestNavigationEventInput()
         childDispatcher.addInput(input)
-        input.start(event)
+        input.backStarted(event)
 
         assertThat(parentCallback.onBackStartedInvocations).isEqualTo(0)
         assertThat(childCallback.onBackStartedInvocations).isEqualTo(0)
@@ -1137,7 +1137,7 @@ class NavigationEventDispatcherTest {
         val event = NavigationEvent()
         val input = TestNavigationEventInput()
         childDispatcher.addInput(input)
-        input.start(event)
+        input.backStarted(event)
 
         assertThat(childCallback.onBackStartedInvocations).isEqualTo(0)
         assertThat(parentCallback.onBackStartedInvocations).isEqualTo(0)
@@ -1159,7 +1159,7 @@ class NavigationEventDispatcherTest {
         val event = NavigationEvent()
         val input = TestNavigationEventInput()
         parentDispatcher.addInput(input)
-        input.start(event)
+        input.backStarted(event)
 
         assertThat(childCallback.onBackStartedInvocations).isEqualTo(0)
         assertThat(parentCallback.onBackStartedInvocations).isEqualTo(1)
@@ -1178,13 +1178,13 @@ class NavigationEventDispatcherTest {
         val initialEvent = NavigationEvent()
         val input = TestNavigationEventInput()
         childDispatcher.addInput(input)
-        input.start(initialEvent)
+        input.backStarted(initialEvent)
         assertThat(childCallback.onBackStartedInvocations).isEqualTo(0)
 
         parentDispatcher.isEnabled = true
 
         val reEnabledEvent = NavigationEvent()
-        input.start(reEnabledEvent)
+        input.backStarted(reEnabledEvent)
 
         assertThat(childCallback.onBackStartedInvocations).isEqualTo(1)
         assertThat(parentCallback.onBackStartedInvocations).isEqualTo(0)
@@ -1203,14 +1203,14 @@ class NavigationEventDispatcherTest {
         val initialEvent = NavigationEvent()
         val input = TestNavigationEventInput()
         parentDispatcher.addInput(input)
-        input.start(initialEvent)
+        input.backStarted(initialEvent)
         assertThat(parentCallback.onBackStartedInvocations).isEqualTo(0)
         assertThat(childCallback.onBackStartedInvocations).isEqualTo(0)
 
         parentDispatcher.isEnabled = true
 
         val reEnabledEvent = NavigationEvent()
-        input.start(reEnabledEvent)
+        input.backStarted(reEnabledEvent)
         assertThat(parentCallback.onBackStartedInvocations).isEqualTo(0)
         assertThat(childCallback.onBackStartedInvocations).isEqualTo(1)
     }
@@ -1234,7 +1234,7 @@ class NavigationEventDispatcherTest {
         val event = NavigationEvent()
         val input = TestNavigationEventInput()
         childDispatcher.addInput(input)
-        input.start(event)
+        input.backStarted(event)
 
         assertThat(grandparentCallback.onBackStartedInvocations).isEqualTo(0)
         assertThat(parentCallback.onBackStartedInvocations).isEqualTo(0)
@@ -1259,7 +1259,7 @@ class NavigationEventDispatcherTest {
         val event = NavigationEvent()
         val input = TestNavigationEventInput()
         grandparentDispatcher.addInput(input)
-        input.start(event)
+        input.backStarted(event)
 
         assertThat(grandparentCallback.onBackStartedInvocations).isEqualTo(0)
         assertThat(parentCallback.onBackStartedInvocations).isEqualTo(0)
@@ -1274,14 +1274,14 @@ class NavigationEventDispatcherTest {
         val preDisableEvent = NavigationEvent()
         val input = TestNavigationEventInput()
         dispatcher.addInput(input)
-        input.start(preDisableEvent)
+        input.backStarted(preDisableEvent)
         assertThat(callback.onBackStartedInvocations).isEqualTo(1)
 
         dispatcher.isEnabled = false
 
         // An enabled callback on a disabled dispatcher should not receive events.
         val event = NavigationEvent()
-        input.start(event)
+        input.backStarted(event)
 
         assertThat(callback.onBackStartedInvocations).isEqualTo(1)
     }
@@ -1296,13 +1296,13 @@ class NavigationEventDispatcherTest {
         val preEnableEvent = NavigationEvent()
         val input = TestNavigationEventInput()
         dispatcher.addInput(input)
-        input.start(preEnableEvent)
+        input.backStarted(preEnableEvent)
         assertThat(callback.onBackStartedInvocations).isEqualTo(0)
 
         dispatcher.isEnabled = true
 
         val reEnabledEvent = NavigationEvent()
-        input.start(reEnabledEvent)
+        input.backStarted(reEnabledEvent)
 
         assertThat(callback.onBackStartedInvocations).isEqualTo(1)
     }
@@ -1327,7 +1327,7 @@ class NavigationEventDispatcherTest {
         assertThrows<IllegalStateException> {
                 val input = TestNavigationEventInput()
                 dispatcher.addInput(input)
-                input.start(NavigationEvent())
+                input.backStarted(NavigationEvent())
             }
             .hasMessageThat()
             .contains("has already been disposed")
@@ -1341,7 +1341,7 @@ class NavigationEventDispatcherTest {
         assertThrows<IllegalStateException> {
                 val input = TestNavigationEventInput()
                 dispatcher.addInput(input)
-                input.progress(NavigationEvent())
+                input.backProgressed(NavigationEvent())
             }
             .hasMessageThat()
             .contains("has already been disposed")
@@ -1355,7 +1355,7 @@ class NavigationEventDispatcherTest {
         assertThrows<IllegalStateException> {
                 val input = TestNavigationEventInput()
                 dispatcher.addInput(input)
-                input.complete()
+                input.backCompleted()
             }
             .hasMessageThat()
             .contains("has already been disposed")
@@ -1369,7 +1369,7 @@ class NavigationEventDispatcherTest {
         assertThrows<IllegalStateException> {
                 val input = TestNavigationEventInput()
                 dispatcher.addInput(input)
-                input.cancel()
+                input.backCancelled()
             }
             .hasMessageThat()
             .contains("has already been disposed")
@@ -1559,47 +1559,34 @@ private class TestNavigationEventInput(
         private set
 
     /**
-     * Test helper to simulate the start of a navigation event.
-     *
-     * This directly calls `dispatchOnStarted`, notifying any registered callbacks. Use this to
-     * trigger the beginning of a navigation flow in your tests.
+     * Test helper to simulate the start of a back navigation event.
      *
      * @param event The [NavigationEvent] to dispatch.
      */
     @MainThread
-    fun start(event: NavigationEvent = NavigationEvent()) {
+    fun backStarted(event: NavigationEvent = NavigationEvent()) {
         dispatchOnBackStarted(event)
     }
 
     /**
-     * Test helper to simulate the progress of a navigation event.
-     *
-     * This directly calls `dispatchOnProgressed`, notifying any registered callbacks.
+     * Test helper to simulate the progress of a back navigation event.
      *
      * @param event The [NavigationEvent] to dispatch.
      */
     @MainThread
-    fun progress(event: NavigationEvent = NavigationEvent()) {
+    fun backProgressed(event: NavigationEvent = NavigationEvent()) {
         dispatchOnBackProgressed(event)
     }
 
-    /**
-     * Test helper to simulate the completion of a navigation event.
-     *
-     * This directly calls `dispatchOnCompleted`, notifying any registered callbacks.
-     */
+    /** Test helper to simulate the completion of a back navigation event. */
     @MainThread
-    fun complete() {
+    fun backCompleted() {
         dispatchOnBackCompleted()
     }
 
-    /**
-     * Test helper to simulate the cancellation of a navigation event.
-     *
-     * This directly calls `dispatchOnCancelled`, notifying any registered callbacks.
-     */
+    /** Test helper to simulate the cancellation of a back navigation event. */
     @MainThread
-    fun cancel() {
+    fun backCancelled() {
         dispatchOnBackCancelled()
     }
 
