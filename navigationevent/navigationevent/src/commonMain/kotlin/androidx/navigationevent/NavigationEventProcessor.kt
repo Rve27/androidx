@@ -356,16 +356,22 @@ internal class NavigationEventProcessor {
     }
 
     /**
-     * Dispatches an [NavigationEventCallback.onBackCompleted] event.
+     * Dispatches a navigation completion event to the appropriate callback.
      *
-     * If a callback is currently in progress, only it will be notified. Otherwise, the
-     * highest-priority enabled callback will be notified. This is a terminal event, clearing the
-     * `inProgressCallback`. If no callback handles the event, the `fallbackOnBackPressed` action is
-     * invoked.
+     * If a callback is currently in progress, only that one will be notified. Otherwise, the
+     * highest-priority enabled callback for the given [direction] is chosen. Completion is a
+     * terminal event, so [inProgressCallback] is always cleared afterward.
+     *
+     * If no callback handles the event:
+     * - For [NavigationEventDirection.Back], the [fallbackOnBackPressed] action is invoked.
+     * - For [NavigationEventDirection.Forward], no fallback is triggered.
+     *
+     * After dispatching, the dispatcher always transitions back to [Idle] state.
      *
      * @param input The [NavigationEventInput] that sourced this event.
-     * @param direction The direction of the navigation event being started.
-     * @param fallbackOnBackPressed The action to invoke if no callback handles the completion.
+     * @param direction The direction of the navigation event that completed.
+     * @param fallbackOnBackPressed The action to invoke if no callback handles a back completion
+     *   event.
      */
     @MainThread
     fun dispatchOnCompleted(
@@ -383,21 +389,24 @@ internal class NavigationEventProcessor {
         inProgressCallback = null
         inProgressDirection = null
 
-        // If no callback is notified, use the fallback.
-        if (callback == null) {
+        // No callback: only back events have a fallback to invoke.
+        if (callback == null && direction == NavigationEventDirection.Back) {
             fallbackOnBackPressed?.invoke()
-        } else {
-            when (direction) {
-                NavigationEventDirection.Back -> callback.doOnBackCompleted()
-                NavigationEventDirection.Forward -> callback.doOnForwardCompleted()
-            }
-            _state.update { state ->
-                Idle(
-                    currentInfo = state.currentInfo,
-                    backInfo = state.backInfo,
-                    forwardInfo = state.forwardInfo,
-                )
-            }
+        }
+
+        // No callback: does nothing.
+        when (direction) {
+            NavigationEventDirection.Back -> callback?.doOnBackCompleted()
+            NavigationEventDirection.Forward -> callback?.doOnForwardCompleted()
+        }
+
+        // Completion is terminal regardless of handler outcome; return to Idle.
+        _state.update { state ->
+            Idle(
+                currentInfo = state.currentInfo,
+                backInfo = state.backInfo,
+                forwardInfo = state.forwardInfo,
+            )
         }
     }
 

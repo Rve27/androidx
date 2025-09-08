@@ -435,6 +435,24 @@ class NavigationEventDispatcherTest {
     }
 
     @Test
+    fun dispatch_withNoEnabledCallbacks_doesNotInvokeBackFallbackForForward() {
+        var fallbackCalled = false
+        val dispatcher =
+            NavigationEventDispatcher(fallbackOnBackPressed = { fallbackCalled = true })
+        val callback = TestNavigationEventCallback()
+        callback.isForwardEnabled = false
+        dispatcher.addCallback(callback)
+
+        val input = TestNavigationEventInput()
+        dispatcher.addInput(input)
+
+        // A forward navigation event should not trigger the back fallback.
+        input.forwardCompleted()
+        assertThat(callback.onForwardCompletedInvocations).isEqualTo(0)
+        assertThat(fallbackCalled).isFalse()
+    }
+
+    @Test
     fun dispatch_withOverlayCallback_prioritizesOverlay() {
         val dispatcher = NavigationEventDispatcher()
         val overlayCallback = TestNavigationEventCallback()
