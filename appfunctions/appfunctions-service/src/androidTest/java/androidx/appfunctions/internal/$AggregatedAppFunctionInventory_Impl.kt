@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package androidx.appfunctions.service.internal
+package androidx.appfunctions.internal
 
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.appfunctions.core.AppFunctionMetadataTestHelper
+import androidx.appfunctions.metadata.AppFunctionComponentsMetadata
 import androidx.appfunctions.metadata.AppFunctionLongTypeMetadata
 import androidx.appfunctions.metadata.AppFunctionParameterMetadata
 import androidx.appfunctions.metadata.AppFunctionResponseMetadata
@@ -68,5 +69,8 @@ class `$AggregatedAppFunctionInventory_Impl` : AggregatedAppFunctionInventory() 
                                 ),
                         ),
                 )
+
+        override val componentsMetadata: AppFunctionComponentsMetadata
+            get() = AppFunctionComponentsMetadata()
     }
 }
