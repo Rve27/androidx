@@ -5,7 +5,7 @@
 // - Show manifest properties: true
 // - Show declarations: true
 
-// Library unique name: <androidx.room:room-migration>
+// Library unique name: <androidx.room3:room3-migration>
 abstract interface <#A: kotlin/Any?> androidx.room.migration.bundle/SchemaEquality { // androidx.room.migration.bundle/SchemaEquality|null[0]
     abstract fun isSchemaEqual(#A): kotlin/Boolean // androidx.room.migration.bundle/SchemaEquality.isSchemaEqual|isSchemaEqual(1:0){}[0]
 }

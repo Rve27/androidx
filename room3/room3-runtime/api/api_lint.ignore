@@ -30,7 +30,7 @@ ExecutorRegistration: androidx.room.RoomDatabase.Builder#createFromInputStream(j
 
 
 InvalidNullabilityOverride: androidx.room.MultiInstanceInvalidationService#onBind(android.content.Intent) parameter #0:
-    Invalid nullability on parameter `intent` in method `onBind`. Parameters of overrides cannot be NonNull if the super parameter is unannotated.
+    Invalid nullability on type android.content.Intent in parameter `intent` in method `onBind`. Parameter in method override cannot use a non-null type when the corresponding type from the super method is platform-nullness.
 
 
 MissingGetterMatchingBuilder: androidx.room.RoomDatabase.Builder#addCallback(androidx.room.RoomDatabase.Callback):
@@ -48,9 +48,9 @@ NotCloseable: androidx.room.RoomDatabase:
 
 
 NullableCollection: androidx.room.DatabaseConfiguration#callbacks:
-    Type of field androidx.room.DatabaseConfiguration.callbacks is a nullable collection (`java.util.List`); must be non-null
+    Type of field androidx.room.DatabaseConfiguration.callbacks uses a nullable collection (`java.util.List`); must be non-null
 NullableCollection: androidx.room.RoomDatabase.MigrationContainer#findMigrationPath(int, int):
-    Return type of method androidx.room.RoomDatabase.MigrationContainer.findMigrationPath(int,int) is a nullable collection (`java.util.List`); must be non-null
+    Return type of method androidx.room.RoomDatabase.MigrationContainer.findMigrationPath(int,int) uses a nullable collection (`java.util.List`); must be non-null
 
 
 PairedRegistration: androidx.room.RoomDatabase.Builder#addCallback(androidx.room.RoomDatabase.Callback):

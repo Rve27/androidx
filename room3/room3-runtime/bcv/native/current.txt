@@ -5,7 +5,7 @@
 // - Show manifest properties: true
 // - Show declarations: true
 
-// Library unique name: <androidx.room:room-runtime>
+// Library unique name: <androidx.room3:room3-runtime>
 abstract interface <#A: androidx.room/RoomDatabase> androidx.room/RoomDatabaseConstructor { // androidx.room/RoomDatabaseConstructor|null[0]
     abstract fun initialize(): #A // androidx.room/RoomDatabaseConstructor.initialize|initialize(){}[0]
 }

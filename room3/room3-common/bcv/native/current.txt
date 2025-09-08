@@ -5,7 +5,7 @@
 // - Show manifest properties: true
 // - Show declarations: true
 
-// Library unique name: <androidx.room:room-common>
+// Library unique name: <androidx.room3:room3-common>
 open annotation class androidx.room/AutoMigration : kotlin/Annotation { // androidx.room/AutoMigration|null[0]
     constructor <init>(kotlin/Int, kotlin/Int, kotlin.reflect/KClass<*> = ...) // androidx.room/AutoMigration.<init>|<init>(kotlin.Int;kotlin.Int;kotlin.reflect.KClass<*>){}[0]
 
