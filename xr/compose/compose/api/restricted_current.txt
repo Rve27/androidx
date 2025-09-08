@@ -410,10 +410,6 @@ package androidx.xr.compose.subspace.layout {
     property public abstract androidx.xr.compose.subspace.layout.SubspaceModifier.Node node;
   }
 
-  public final class MovableKt {
-    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) internal static androidx.xr.compose.subspace.layout.SubspaceModifier anchorable(androidx.xr.compose.subspace.layout.SubspaceModifier, optional boolean enabled, optional java.util.Set<androidx.xr.compose.subspace.layout.PlaneOrientation> anchorPlaneOrientations, optional java.util.Set<androidx.xr.compose.subspace.layout.PlaneSemantic> anchorPlaneSemantics);
-  }
-
   public final class OffsetKt {
     method @KotlinOnly public static androidx.xr.compose.subspace.layout.SubspaceModifier offset(androidx.xr.compose.subspace.layout.SubspaceModifier, optional androidx.compose.ui.unit.Dp x, optional androidx.compose.ui.unit.Dp y, optional androidx.compose.ui.unit.Dp z);
     method @BytecodeOnly public static androidx.xr.compose.subspace.layout.SubspaceModifier offset-qQh39rQ(androidx.xr.compose.subspace.layout.SubspaceModifier, float, float, float);
