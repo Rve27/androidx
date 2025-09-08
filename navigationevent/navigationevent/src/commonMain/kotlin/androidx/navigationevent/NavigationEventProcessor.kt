@@ -83,6 +83,14 @@ internal class NavigationEventProcessor {
     private var inProgressCallback: NavigationEventCallback<*>? = null
 
     /**
+     * The direction of the navigation event currently in progress.
+     *
+     * This is non-null only when [inProgressCallback] is also non-null. Its lifecycle is tied
+     * directly to the active navigation event.
+     */
+    private var inProgressDirection: NavigationEventDirection? = null
+
+    /**
      * A central registry of all active [NavigationEventInput] instances associated with this
      * processor.
      *
@@ -239,8 +247,12 @@ internal class NavigationEventProcessor {
         // If the callback is the one currently being processed, it needs to be notified of
         // cancellation and then cleared from the in-progress state.
         if (callback == inProgressCallback) {
-            callback.doOnBackCancelled()
+            when (inProgressDirection) {
+                NavigationEventDirection.Back -> callback.doOnBackCancelled()
+                NavigationEventDirection.Forward -> callback.doOnForwardCancelled()
+            }
             inProgressCallback = null
+            inProgressDirection = null
         }
 
         // The `remove()` operation on ArrayDeque is efficient and simply returns `false` if the
@@ -287,7 +299,11 @@ internal class NavigationEventProcessor {
             // `onCancelled` can be correctly handled if the callback removes itself during
             // `onEventStarted`.
             inProgressCallback = callback
-            callback.doOnBackStarted(event)
+            inProgressDirection = direction
+            when (direction) {
+                NavigationEventDirection.Back -> callback.doOnBackStarted(event)
+                NavigationEventDirection.Forward -> callback.doOnForwardStarted(event)
+            }
             _state.update { state ->
                 InProgress(
                     currentInfo = state.currentInfo,
@@ -321,10 +337,13 @@ internal class NavigationEventProcessor {
         // If there is a callback in progress, only that one is notified.
         // Otherwise, the highest-priority enabled callback is notified.
         val callback = inProgressCallback ?: resolveEnabledCallback(direction)
-        // Progressed is not a terminal event, so `inProgressCallback` is not cleared.
+        // Progressed is not a terminal event, so `inProgress` is not cleared.
 
         if (callback != null) {
-            callback.doOnBackProgressed(event)
+            when (direction) {
+                NavigationEventDirection.Back -> callback.doOnBackProgressed(event)
+                NavigationEventDirection.Forward -> callback.doOnForwardProgressed(event)
+            }
             _state.update { state ->
                 InProgress(
                     currentInfo = state.currentInfo,
@@ -359,13 +378,19 @@ internal class NavigationEventProcessor {
         // If there is a callback in progress, only that one is notified.
         // Otherwise, the highest-priority enabled callback is notified.
         val callback = inProgressCallback ?: resolveEnabledCallback(direction)
-        inProgressCallback = null // Clear in-progress, as 'completed' is a terminal event.
+
+        // Clear in-progress, as 'completed' is a terminal event.
+        inProgressCallback = null
+        inProgressDirection = null
 
         // If no callback is notified, use the fallback.
         if (callback == null) {
             fallbackOnBackPressed?.invoke()
         } else {
-            callback.doOnBackCompleted()
+            when (direction) {
+                NavigationEventDirection.Back -> callback.doOnBackCompleted()
+                NavigationEventDirection.Forward -> callback.doOnForwardCompleted()
+            }
             _state.update { state ->
                 Idle(
                     currentInfo = state.currentInfo,
@@ -393,10 +418,17 @@ internal class NavigationEventProcessor {
         // If there is a callback in progress, only that one is notified.
         // Otherwise, the highest-priority enabled callback is notified.
         val callback = inProgressCallback ?: resolveEnabledCallback(direction)
-        inProgressCallback = null // Clear in-progress, as 'cancelled' is a terminal event.
+
+        // Clear in-progress, as 'cancelled' is a terminal event.
+        inProgressCallback = null
+        inProgressDirection = null
 
         if (callback != null) {
-            callback.doOnBackCancelled()
+            when (direction) {
+                NavigationEventDirection.Back -> callback.doOnBackCancelled()
+                NavigationEventDirection.Forward -> callback.doOnForwardCancelled()
+            }
+
             _state.update { state ->
                 Idle(
                     currentInfo = state.currentInfo,
