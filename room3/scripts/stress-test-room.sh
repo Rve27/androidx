@@ -38,10 +38,10 @@ for (( i=0; i<$REPEAT; i++ ))
 do
    echo "START RUN $i"
    ./gradlew --no-build-cache --stacktrace  \
-         :room:integration-tests:room-testapp-noappcompat:asAnTest \
-         :room:integration-tests:room-testapp-autovalue:asAnTest \
-         :room:integration-tests:room-testapp:asAnTest \
-         :room:integration-tests:room-testapp-kotlin:asAnTest \
+         :room3:integration-tests:room-testapp-noappcompat:asAnTest \
+         :room3:integration-tests:room-testapp-autovalue:asAnTest \
+         :room3:integration-tests:room-testapp:asAnTest \
+         :room3:integration-tests:room-testapp-kotlin:asAnTest \
          > "${OUTPUT_FOLDER}/${OUTPUT_PREFIX}${i}" 2>"${OUTPUT_FOLDER}/${ERROR_PREFIX}${i}" || true
    echo "END RUN $i"
    printResult "${OUTPUT_FOLDER}/${OUTPUT_PREFIX}${i}"

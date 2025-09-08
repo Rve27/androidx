@@ -21,15 +21,15 @@ plugins {
 
 dependencies {
     implementation(libs.jspecify)
-    implementation(project(":room:room-common"))
-    implementation(project(":room:room-runtime"))
+    implementation(project(":room3:room3-common"))
+    implementation(project(":room3:room3-runtime"))
     implementation("androidx.arch.core:core-runtime:2.2.0")
 
-    androidTestAnnotationProcessor(project(":room:room-compiler"))
+    androidTestAnnotationProcessor(project(":room3:room3-compiler"))
     androidTestAnnotationProcessor(libs.autoValue)
     androidTestAnnotationProcessor(libs.autoValueParcel)
 
-    androidTestImplementation(project(":room:room-testing"))
+    androidTestImplementation(project(":room3:room3-testing"))
     androidTestImplementation("androidx.arch.core:core-testing:2.2.0")
     androidTestImplementation(libs.autoValueAnnotations)
     androidTestImplementation(libs.testExtJunit)

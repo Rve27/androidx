@@ -110,7 +110,7 @@ androidXMultiplatform {
         commonMain {
             dependencies {
                 api(libs.kotlinStdlib)
-                api(project(":room:room-common"))
+                api(project(":room3:room3-common"))
                 api(project(":sqlite:sqlite"))
                 api("androidx.collection:collection:1.5.0")
                 api("androidx.annotation:annotation:1.9.1")
@@ -220,9 +220,9 @@ androidXMultiplatform {
 }
 
 dependencies {
-    lintChecks(project(":room:room-runtime-lint"))
+    lintChecks(project(":room3:room3-runtime-lint"))
     sqliteSharedArchive(project(":sqlite:sqlite-bundled"))
-    add("kspAndroidInstrumentedTest", project(":room:room-compiler"))
+    add("kspAndroidInstrumentedTest", project(":room3:room3-compiler"))
 }
 
 androidx {

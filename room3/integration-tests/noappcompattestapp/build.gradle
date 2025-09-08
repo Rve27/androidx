@@ -21,9 +21,9 @@ plugins {
 
 dependencies {
     implementation(libs.jspecify)
-    implementation(project(":room:room-runtime"))
-    annotationProcessor(project(":room:room-compiler"))
-    androidTestAnnotationProcessor(project(":room:room-compiler"))
+    implementation(project(":room3:room3-runtime"))
+    annotationProcessor(project(":room3:room3-compiler"))
+    androidTestAnnotationProcessor(project(":room3:room3-compiler"))
     androidTestImplementation("androidx.annotation:annotation:1.8.1")
     androidTestImplementation(libs.testExtJunit)
     androidTestImplementation(libs.testCore)

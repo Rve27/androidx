@@ -32,7 +32,7 @@ plugins {
 }
 
 dependencies {
-    api(project(":room:room-compiler-processing"))
+    api(project(":room3:room3-compiler-processing"))
     // For Java source compilation
     implementation(libs.googleCompileTesting)
     // For KSP processing

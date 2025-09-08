@@ -1453,7 +1453,7 @@ internal fun getDefaultTargetJavaVersion(
 ): JavaVersion {
     return when {
         // TODO(b/353328300): Move room-compiler-processing to Java 17 once Dagger is ready.
-        projectName != null && projectName.contains("room-compiler-processing") -> VERSION_11
+        projectName != null && projectName.contains("room3-compiler-processing") -> VERSION_11
         projectName != null && projectName.contains("desktop") -> VERSION_11
         targetName != null && (targetName == "desktop" || targetName == "jvmStubs") -> VERSION_11
         softwareType.compilationTarget == CompilationTarget.HOST -> VERSION_17

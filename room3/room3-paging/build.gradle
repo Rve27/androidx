@@ -47,7 +47,7 @@ androidXMultiplatform {
             dependencies {
                 api(libs.kotlinStdlib)
                 api("androidx.paging:paging-common:3.3.2")
-                api(project(":room:room-runtime"))
+                api(project(":room3:room3-runtime"))
             }
         }
 
@@ -101,7 +101,7 @@ androidXMultiplatform {
 }
 
 dependencies {
-    add("kspAndroidInstrumentedTest", project(":room:room-compiler"))
+    add("kspAndroidInstrumentedTest", project(":room3:room3-compiler"))
 }
 
 androidx {

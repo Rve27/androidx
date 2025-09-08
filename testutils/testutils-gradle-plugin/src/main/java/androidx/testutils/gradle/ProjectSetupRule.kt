@@ -141,10 +141,10 @@ class ProjectSetupRule(parentFolder: File? = null) : ExternalResource() {
      * be done in test by adding :publish as a test dependency, for example:
      * ```
      * tasks.findByPath("test")
-     *   .dependsOn(tasks.findByPath(":room:room-compiler:publish")
+     *   .dependsOn(tasks.findByPath(":room3:room3-compiler:publish")
      * ```
      *
-     * @param path - The library m2 path e.g. "androidx/room/room-compiler"
+     * @param path - The library m2 path e.g. "androidx/room3/room3-compiler"
      */
     fun getLibraryLatestVersionInLocalRepo(path: String): String {
         val metadataFile =

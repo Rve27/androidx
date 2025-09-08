@@ -34,7 +34,7 @@ plugins {
 
 dependencies {
     api(libs.kotlinStdlib)
-    api(project(":room:room-runtime"))
+    api(project(":room3:room3-runtime"))
     api(project(":sqlite:sqlite"))
     implementation(libs.kotlinCoroutinesAndroid)
     implementation("androidx.concurrent:concurrent-futures:1.2.0")
@@ -45,8 +45,8 @@ dependencies {
     androidTestImplementation(libs.testRunner)
     androidTestImplementation(libs.kotlinCoroutinesTest)
     androidTestImplementation(project(":kruth:kruth"))
-    androidTestImplementation(project(":room:room-runtime"))
-    kspAndroidTest(project(":room:room-compiler"))
+    androidTestImplementation(project(":room3:room3-runtime"))
+    kspAndroidTest(project(":room3:room3-compiler"))
     androidTestImplementation(project(":sqlite:sqlite-bundled"))
 }
 

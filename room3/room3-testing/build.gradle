@@ -49,10 +49,10 @@ androidXMultiplatform {
         commonMain {
             dependencies {
                 api(libs.kotlinStdlib)
-                api(project(":room:room-common"))
-                api(project(":room:room-runtime"))
+                api(project(":room3:room3-common"))
+                api(project(":room3:room3-runtime"))
                 api(project(":sqlite:sqlite"))
-                implementation(project(":room:room-migration"))
+                implementation(project(":room3:room3-migration"))
             }
         }
         commonTest {

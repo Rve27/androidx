@@ -257,10 +257,10 @@ meta\-data\#androidx\.emoji[0-9]+\.text\.EmojiCompatInitializer was tagged at An
 To honour the JVM settings for this build a single\-use Daemon process will be forked.*
 # > Tasks configureCMakeRelWithDebInfo or configureCMakeDebug
 C/C\+\+: Compiling for ARM
-w: \[ksp\] \$SUPPORT/room/integration\-tests/kotlintestapp/src/androidTest/java/androidx/room/integration/kotlintestapp/test/JvmNameInDaoTest\.kt:[0-9]+: Using @JvmName annotation on a function or accessor that will be overridden by Room is not supported\. If this is important for your use case, please file a bug at https://issuetracker\.google\.com/issues/new\?component=[0-9]+ with details\.
+w: \[ksp\] \$SUPPORT/room3/integration\-tests/kotlintestapp/src/androidTest/java/androidx/room/integration/kotlintestapp/test/JvmNameInDaoTest\.kt:[0-9]+: Using @JvmName annotation on a function or accessor that will be overridden by Room is not supported\. If this is important for your use case, please file a bug at https://issuetracker\.google\.com/issues/new\?component=[0-9]+ with details\.
 w: \[ksp\] Using @JvmName annotation on a function or accessor that will be overridden by Room is not supported\. If this is important for your use case, please file a bug at https://issuetracker\.google\.com/issues/new\?component=[0-9]+ with details\.
-# > Task :room:integration-tests:room-testapp-kotlin:kaptWithKaptDebugAndroidTestKotlin
-\$OUT_DIR/androidx/room/integration\-tests/room\-testapp\-kotlin/build/tmp/kapt[0-9]+/stubs/withKaptDebugAndroidTest/androidx/room/integration/kotlintestapp/test/JvmNameInDaoTest\.java:[0-9]+: warning: Using @JvmName annotation on a function or accessor that will be overridden by Room is not supported\. If this is important for your use case, please file a bug at https://issuetracker\.google\.com/issues/new\?component=[0-9]+ with details\.
+# > Task :room3:integration-tests:room-testapp-kotlin:kaptWithKaptDebugAndroidTestKotlin
+\$OUT_DIR/androidx/room3/integration\-tests/room\-testapp\-kotlin/build/tmp/kapt[0-9]+/stubs/withKaptDebugAndroidTest/androidx/room/integration/kotlintestapp/test/JvmNameInDaoTest\.java:[0-9]+: warning: Using @JvmName annotation on a function or accessor that will be overridden by Room is not supported\. If this is important for your use case, please file a bug at https://issuetracker\.google\.com/issues/new\?component=[0-9]+ with details\.
 public abstract void jvmDelete\(T t\);
 public abstract void jvmInsert\(@org\.jetbrains\.annotations\.NotNull.*
 public abstract java\.util\.List<androidx\.room\.integration\.kotlintestapp\.test\.JvmNameInDaoTest\.JvmNameEntity> jvmQuery\(\);
@@ -381,8 +381,8 @@ Completed
 > Transform sdk\-interface\-descriptors\.jar \(project :privacysandbox:ui:integration\-tests:mediateesdkproviderwrapper\) with ExtractCompileSdkShimTransform
 > Transform sdk\-interface\-descriptors\.jar \(project :privacysandbox:ui:macrobenchmark:testapp:testsdkproviderwrapper\) with ExtractCompileSdkShimTransform
 > Transform sdk\-interface\-descriptors\.jar \(project :privacysandbox:ui:macrobenchmark:testapp:mediateesdkproviderwrapper\) with ExtractCompileSdkShimTransform
-# > Task :room:integration-tests:room-testapp:runErrorProneWithPreKmpCompilerRelease
-\$OUT_DIR/androidx/room/integration\-tests/room\-testapp/build/errorProne/WithPreKmpCompilerRelease/androidx/room/integration/testapp/database/CustomerDao_Impl\.java:[0-9]+: warning: \[removal\] finalize\(\) in Object has been deprecated and marked for removal
+# > Task :room3:integration-tests:room-testapp:runErrorProneWithPreKmpCompilerRelease
+\$OUT_DIR/androidx/room3/integration\-tests/room\-testapp/build/errorProne/WithPreKmpCompilerRelease/androidx/room/integration/testapp/database/CustomerDao_Impl\.java:[0-9]+: warning: \[removal\] finalize\(\) in Object has been deprecated and marked for removal
 protected void finalize\(\) \{
 1 warning
 # b/399029837

@@ -37,8 +37,8 @@ plugins {
 dependencies {
     api(libs.kotlinStdlib)
     api("androidx.paging:paging-rxjava3:3.1.1")
-    implementation(project(":room:room-paging"))
-    implementation(project(":room:room-rxjava3"))
+    implementation(project(":room3:room3-paging"))
+    implementation(project(":room3:room3-rxjava3"))
 
     androidTestImplementation(project(":kruth:kruth"))
     androidTestImplementation(libs.testExtJunitKtx)
@@ -48,7 +48,7 @@ dependencies {
     androidTestImplementation(libs.kotlinCoroutinesTest)
     androidTestImplementation("androidx.arch.core:core-testing:2.2.0")
     androidTestImplementation(project(":internal-testutils-common"))
-    kspAndroidTest(project(":room:room-compiler"))
+    kspAndroidTest(project(":room3:room3-compiler"))
 }
 
 androidx {

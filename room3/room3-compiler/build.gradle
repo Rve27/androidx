@@ -53,10 +53,10 @@ repackage {
 androidx.configureAarAsJarForConfiguration("testImplementation")
 
 dependencies {
-    implementation(project(":room:room-common"))
-    implementation(project(":room:room-external-antlr"))
-    implementation(project(":room:room-migration"))
-    implementation(project(":room:room-compiler-processing"))
+    implementation(project(":room3:room3-common"))
+    implementation(project(":room3:room3-external-antlr"))
+    implementation(project(":room3:room3-migration"))
+    implementation(project(":room3:room3-compiler-processing"))
     implementation(libs.kotlinStdlib)
     implementation(libs.autoCommon)
     implementation(libs.autoValueAnnotations)
@@ -66,7 +66,7 @@ dependencies {
     implementation(libs.kspApi)
     // Must be compileOnly to not bring in antlr4 in runtime
     // Repackaged antlr4 brought in by
-    // project(":room:room-external-antlr") and used at runtime
+    // project(":room3:room3-external-antlr") and used at runtime
     compileOnly(libs.antlr4) {
         // antlr has dependencies on unrelated projects for its gui stuff, do not include them
         exclude group: "org.abego.treelayout"
@@ -83,13 +83,13 @@ dependencies {
     testImplementation(libs.autoServiceAnnotations)
     testImplementation(libs.autoService) // to access the processor in tests
     testImplementation(project(":paging:paging-common"))
-    testImplementation(project(":room:room-compiler-processing-testing"))
+    testImplementation(project(":room3:room3-compiler-processing-testing"))
     testImplementation(libs.junit)
     testImplementation(libs.jsr250)
     testImplementation(libs.mockitoCore4)
     testImplementation(libs.antlr4)
     testImplementation(SdkHelperKt.getSdkDependency(project))
-    testImplementationAarAsJar(project(":room:room-runtime"))
+    testImplementationAarAsJar(project(":room3:room3-runtime"))
     testImplementationAarAsJar(project(":sqlite:sqlite"))
     testImplementation(project(":internal-testutils-common"))
 }

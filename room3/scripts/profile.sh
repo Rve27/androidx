@@ -6,11 +6,11 @@ function usage {
     echo "usage: ./profile.sh <gradle tasks>
     ./profile.sh --name my_run \
         --target gradle \
-        :room:integration-tests:room-testapp-kotlin:kspWithKspGenJavaDebugAndroidTestKotlin \
+        :room3:integration-tests:room-testapp-kotlin:kspWithKspGenJavaDebugAndroidTestKotlin \
         --filter *K2JVMCompiler*
     ./profile.sh --name my_run \
         --target test \
-        :room:room-compiler-processing:test \
+        :room3:room3-compiler-processing:test \
         --tests RawTypeCreationScenarioTest
 
 
@@ -88,12 +88,12 @@ while [ $# -gt 0 ]; do
             ;;
         --preset)
             if [ "$2" = "kapt" ]; then
-                GRADLE_ARGS=":room:integration-tests:room-testapp-kotlin:kaptGenerateStubsWithKaptDebugAndroidTestKotlin \
-                    :room:integration-tests:room-testapp-kotlin:kaptWithKaptDebugAndroidTestKotlin"
+                GRADLE_ARGS=":room3:integration-tests:room-testapp-kotlin:kaptGenerateStubsWithKaptDebugAndroidTestKotlin \
+                    :room3:integration-tests:room-testapp-kotlin:kaptWithKaptDebugAndroidTestKotlin"
                 ADDITIONAL_AGENT_PARAMS="$ADDITIONAL_AGENT_PARAMS,include=*AbstractKapt3Extension*"
                 AGENT_TARGET="gradle"
             elif [ "$2" = "ksp" ]; then
-                GRADLE_ARGS=":room:integration-tests:room-testapp-kotlin:kspWithKspGenJavaDebugAndroidTestKotlin"
+                GRADLE_ARGS=":room3:integration-tests:room-testapp-kotlin:kspWithKspGenJavaDebugAndroidTestKotlin"
                 ADDITIONAL_AGENT_PARAMS="$ADDITIONAL_AGENT_PARAMS,include=*AbstractKotlinSymbolProcessingExtension*"
                 AGENT_TARGET="gradle"
             else

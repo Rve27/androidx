@@ -78,12 +78,12 @@ tasks.withType(Test).configureEach { test ->
     // Configure publishing tasks to be dependencies of 'test' so those artifacts are available for
     // the test project executed with Gradle Test Kit.
     test.dependsOn(
-            ":room:room-common:publish",
-            ":room:room-runtime:publish",
-            ":room:room-migration:publish",
-            ":room:room-compiler:publish",
-            ":room:room-compiler-processing:publish",
-            ":room:room-external-antlr:publish",
+            ":room3:room3-common:publish",
+            ":room3:room3-runtime:publish",
+            ":room3:room3-migration:publish",
+            ":room3:room3-compiler:publish",
+            ":room3:room3-compiler-processing:publish",
+            ":room3:room3-external-antlr:publish",
             ":sqlite:sqlite:publish",
             ":sqlite:sqlite-framework:publish",
     )

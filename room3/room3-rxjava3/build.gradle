@@ -33,8 +33,8 @@ plugins {
 }
 
 dependencies {
-    api(project(":room:room-common"))
-    api(project(":room:room-runtime"))
+    api(project(":room3:room3-common"))
+    api(project(":room3:room3-runtime"))
     api(libs.rxjava3)
 
     implementation("androidx.arch.core:core-runtime:2.2.0")

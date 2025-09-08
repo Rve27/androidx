@@ -271,7 +271,7 @@ abstract class StudioTask : DefaultTask() {
                     """
                     Please specify which set of projects you'd like to open in studio
                     with ANDROIDX_PROJECTS=MAIN ./gradlew studio
-                    or PROJECT_PREFIX=:room: ./gradlew studio
+                    or PROJECT_PREFIX=:room3: ./gradlew studio
 
                     For possible options see settings.gradle
                     """

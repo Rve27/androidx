@@ -18,12 +18,12 @@
 
 set -eu
 
-JAVA_GEN_TASKS=":room:integration-tests:room-testapp-kotlin:kspWithKspGenJavaDebugAndroidTestKotlin \
-:room:integration-tests:room-testapp-kotlin:compileWithKspGenJavaDebugAndroidTestKotlin \
-:room:integration-tests:room-testapp-kotlin:compileWithKspGenJavaDebugAndroidTestJavaWithJavac"
-KOTLIN_GEN_TASKS=":room:integration-tests:room-testapp-kotlin:kspWithKspGenKotlinDebugAndroidTestKotlin \
-:room:integration-tests:room-testapp-kotlin:compileWithKspGenKotlinDebugAndroidTestKotlin \
-:room:integration-tests:room-testapp-kotlin:compileWithKspGenKotlinDebugAndroidTestJavaWithJavac"
+JAVA_GEN_TASKS=":room3:integration-tests:room-testapp-kotlin:kspWithKspGenJavaDebugAndroidTestKotlin \
+:room3:integration-tests:room-testapp-kotlin:compileWithKspGenJavaDebugAndroidTestKotlin \
+:room3:integration-tests:room-testapp-kotlin:compileWithKspGenJavaDebugAndroidTestJavaWithJavac"
+KOTLIN_GEN_TASKS=":room3:integration-tests:room-testapp-kotlin:kspWithKspGenKotlinDebugAndroidTestKotlin \
+:room3:integration-tests:room-testapp-kotlin:compileWithKspGenKotlinDebugAndroidTestKotlin \
+:room3:integration-tests:room-testapp-kotlin:compileWithKspGenKotlinDebugAndroidTestJavaWithJavac"
 
 kotlinc -script $(dirname $0)/tasks-comparison.kts -- \
   -t "java-codegen" $JAVA_GEN_TASKS \

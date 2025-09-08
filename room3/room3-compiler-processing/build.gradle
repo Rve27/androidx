@@ -50,7 +50,7 @@ dependencies {
     testImplementation(libs.jsr250)
     testImplementation(libs.kotlinMetadataJvm) // Due to being shadowed in main dependency
     testImplementation(libs.testParameterInjector)
-    testImplementation(project(":room:room-compiler-processing-testing"))
+    testImplementation(project(":room3:room3-compiler-processing-testing"))
     testImplementation(project(":internal-testutils-common"))
     testImplementation(project(":kruth:kruth"))
 }
