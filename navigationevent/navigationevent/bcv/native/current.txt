@@ -100,6 +100,7 @@ final class androidx.navigationevent/NavigationEventDispatcher { // androidx.nav
 
     final fun addHandler(androidx.navigationevent/NavigationEventHandler<*>, kotlin/Int = ...) // androidx.navigationevent/NavigationEventDispatcher.addHandler|addHandler(androidx.navigationevent.NavigationEventHandler<*>;kotlin.Int){}[0]
     final fun addInput(androidx.navigationevent/NavigationEventInput) // androidx.navigationevent/NavigationEventDispatcher.addInput|addInput(androidx.navigationevent.NavigationEventInput){}[0]
+    final fun addInput(androidx.navigationevent/NavigationEventInput, kotlin/Int) // androidx.navigationevent/NavigationEventDispatcher.addInput|addInput(androidx.navigationevent.NavigationEventInput;kotlin.Int){}[0]
     final fun dispose() // androidx.navigationevent/NavigationEventDispatcher.dispose|dispose(){}[0]
     final fun hasEnabledHandler(): kotlin/Boolean // androidx.navigationevent/NavigationEventDispatcher.hasEnabledHandler|hasEnabledHandler(){}[0]
     final fun removeInput(androidx.navigationevent/NavigationEventInput) // androidx.navigationevent/NavigationEventDispatcher.removeInput|removeInput(androidx.navigationevent.NavigationEventInput){}[0]

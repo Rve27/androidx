@@ -57,7 +57,7 @@ class OnBackInvokedInputTest {
         val input = OnBackInvokedInput(invoker)
         dispatcher.addInput(input)
 
-        val handler = TestNavigationEventHandler()
+        val handler = TestNavigationEventHandler(isBackEnabled = true, isForwardEnabled = false)
 
         dispatcher.addHandler(handler)
 
@@ -74,7 +74,7 @@ class OnBackInvokedInputTest {
 
     @Test
     fun testhandlerEnabledDisabled() {
-        val handler = TestNavigationEventHandler(isBackEnabled = false)
+        val handler = TestNavigationEventHandler(isBackEnabled = false, isForwardEnabled = false)
         assertThat(handler.isBackEnabled).isFalse()
 
         handler.isBackEnabled = true
@@ -90,7 +90,7 @@ class OnBackInvokedInputTest {
 
         val dispatcher = NavigationEventDispatcher {}
 
-        val handler = TestNavigationEventHandler(isBackEnabled = false)
+        val handler = TestNavigationEventHandler(isBackEnabled = false, isForwardEnabled = false)
 
         val input = OnBackInvokedInput(invoker)
         dispatcher.addInput(input)
@@ -114,7 +114,7 @@ class OnBackInvokedInputTest {
 
         val dispatcher = NavigationEventDispatcher {}
 
-        val handler = TestNavigationEventHandler()
+        val handler = TestNavigationEventHandler(isBackEnabled = true, isForwardEnabled = false)
 
         dispatcher.addHandler(handler)
 

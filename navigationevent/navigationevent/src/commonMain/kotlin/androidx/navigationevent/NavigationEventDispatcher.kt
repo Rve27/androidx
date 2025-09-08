@@ -161,7 +161,7 @@ private constructor(
             if (field == value) return
 
             field = value
-            updateEnabledHandlers()
+            refreshEnabledCallbacks()
         }
 
     /**
@@ -274,8 +274,8 @@ private constructor(
      * all registered handlers. This method should be called whenever a handler's enabled state or
      * its registration status (added/removed) changes.
      */
-    internal fun updateEnabledHandlers() {
-        sharedProcessor.updateEnabledHandlers()
+    internal fun refreshEnabledCallbacks() {
+        sharedProcessor.refreshEnabledHandlers()
     }
 
     /**
@@ -315,8 +315,8 @@ private constructor(
     }
 
     /**
-     * Adds an input, registering it with the shared processor and binding it to this dispatcher's
-     * lifecycle.
+     * Adds an input with an unspecified priority, registering it with the shared processor and
+     * binding it to this dispatcher's lifecycle.
      *
      * The input is registered globally with the [sharedProcessor] to receive system-wide state
      * updates (e.g., whether any handlers are enabled). It is also tracked locally by this
@@ -339,7 +339,49 @@ private constructor(
             check(input.dispatcher == null) {
                 "This input is already added to dispatcher ${input.dispatcher}."
             }
-            sharedProcessor.inputs += input
+            sharedProcessor.unspecifiedInputs.add(input)
+            input.dispatcher = this
+            input.doOnAdded(this)
+        }
+    }
+
+    /**
+     * Adds an input with a specific priority, registering it with the shared processor and binding
+     * it to this dispatcher's lifecycle.
+     *
+     * The input is registered globally with the [sharedProcessor] to receive system-wide state
+     * updates (e.g., whether any handlers are enabled). It is also tracked locally by this
+     * dispatcher for lifecycle management.
+     *
+     * The input's [NavigationEventInput.onAdded] method is invoked immediately upon addition. It
+     * will be automatically detached when this dispatcher [dispose] is called.
+     *
+     * @param input The input to add.
+     * @param priority The priority to associate with this input. Must be one of the supported
+     *   constants: [PRIORITY_OVERLAY], [PRIORITY_DEFAULT].
+     * @throws IllegalStateException if the dispatcher has already been disposed or if [input] is
+     *   already added to a dispatcher.
+     * @throws IllegalArgumentException if [priority] is not one of the supported constants.
+     * @see removeInput
+     * @see NavigationEventInput.onRemoved
+     */
+    @MainThread
+    public fun addInput(input: NavigationEventInput, @Priority priority: Int) {
+        checkInvariants()
+
+        if (inputs.add(input)) {
+            check(input.dispatcher == null) {
+                "This input is already added to dispatcher ${input.dispatcher}."
+            }
+            when (priority) {
+                PRIORITY_OVERLAY -> sharedProcessor.overlayInputs.add(input)
+                PRIORITY_DEFAULT -> sharedProcessor.defaultInputs.add(input)
+                else -> {
+                    // Since this method may be called from other targets (e.g., Swift),
+                    // IntDef lint checks may not be available. We must validate at runtime.
+                    throw IllegalArgumentException("Unsupported priority value: $priority")
+                }
+            }
             input.dispatcher = this
             input.doOnAdded(this)
         }
@@ -362,7 +404,11 @@ private constructor(
         checkInvariants()
 
         if (inputs.remove(input)) {
-            sharedProcessor.inputs -= input
+            // The `remove()` operation on `Set` is efficient and simply returns `false` if the
+            // element is not found. There's no need for a preceding `contains()` check.
+            sharedProcessor.unspecifiedInputs.remove(input)
+            sharedProcessor.defaultInputs.remove(input)
+            sharedProcessor.overlayInputs.remove(input)
             input.dispatcher = null
             input.doOnRemoved()
         }
@@ -493,7 +539,11 @@ private constructor(
             // This gives them a chance to clean up their own state, severing the lifecycle link
             // and preventing them from interacting with a disposed object.
             for (input in currentDispatcher.inputs) {
-                sharedProcessor.inputs -= input
+                // The `remove()` operation on `Set` is efficient and simply returns `false` if the
+                // element is not found. There's no need for a preceding `contains()` check.
+                sharedProcessor.unspecifiedInputs.remove(input)
+                sharedProcessor.defaultInputs.remove(input)
+                sharedProcessor.overlayInputs.remove(input)
                 input.dispatcher = null
                 input.doOnRemoved()
             }

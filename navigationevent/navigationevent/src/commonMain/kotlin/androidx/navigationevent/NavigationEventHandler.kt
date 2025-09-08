@@ -111,7 +111,7 @@ public constructor(isBackEnabled: Boolean, isForwardEnabled: Boolean) {
             if (field == value) return
 
             field = value
-            dispatcher?.updateEnabledHandlers()
+            dispatcher?.refreshEnabledCallbacks()
         }
 
     /**
@@ -128,7 +128,7 @@ public constructor(isBackEnabled: Boolean, isForwardEnabled: Boolean) {
             if (field == value) return
 
             field = value
-            dispatcher?.updateEnabledHandlers()
+            dispatcher?.refreshEnabledCallbacks()
         }
 
     internal var dispatcher: NavigationEventDispatcher? = null
