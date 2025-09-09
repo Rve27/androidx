@@ -566,6 +566,8 @@ final class androidx.compose.material3/ButtonGroupMenuState { // androidx.compos
 
     final var isExpanded // androidx.compose.material3/ButtonGroupMenuState.isExpanded|{}isExpanded[0]
         final fun <get-isExpanded>(): kotlin/Boolean // androidx.compose.material3/ButtonGroupMenuState.isExpanded.<get-isExpanded>|<get-isExpanded>(){}[0]
+    final var isShowing // androidx.compose.material3/ButtonGroupMenuState.isShowing|{}isShowing[0]
+        final fun <get-isShowing>(): kotlin/Boolean // androidx.compose.material3/ButtonGroupMenuState.isShowing.<get-isShowing>|<get-isShowing>(){}[0]
 
     final fun dismiss() // androidx.compose.material3/ButtonGroupMenuState.dismiss|dismiss(){}[0]
     final fun show() // androidx.compose.material3/ButtonGroupMenuState.show|show(){}[0]
