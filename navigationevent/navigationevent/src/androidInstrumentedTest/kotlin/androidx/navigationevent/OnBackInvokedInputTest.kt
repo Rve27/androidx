@@ -73,7 +73,7 @@ class OnBackInvokedInputTest {
     }
 
     @Test
-    fun testhandlerEnabledDisabled() {
+    fun testHandlerEnabledDisabled() {
         val handler = TestNavigationEventHandler(isBackEnabled = false, isForwardEnabled = false)
         assertThat(handler.isBackEnabled).isFalse()
 
@@ -85,7 +85,7 @@ class OnBackInvokedInputTest {
     }
 
     @Test
-    fun testInvokerAddDisabledhandler() {
+    fun testInvokerAddDisabledHandler() {
         val invoker = TestOnBackInvokedDispatcher()
 
         val dispatcher = NavigationEventDispatcher {}
@@ -109,7 +109,7 @@ class OnBackInvokedInputTest {
     }
 
     @Test
-    fun testInvokerAddEnabledhandlerBeforeSet() {
+    fun testInvokerAddEnabledHandlerBeforeSet() {
         val invoker = TestOnBackInvokedDispatcher()
 
         val dispatcher = NavigationEventDispatcher {}
@@ -130,7 +130,7 @@ class OnBackInvokedInputTest {
 
     @Test
     @SdkSuppress(minSdkVersion = 34)
-    fun testSimpleAnimatedhandler() {
+    fun testSimpleAnimatedHandler() {
         val invoker = TestOnBackInvokedDispatcher()
 
         val dispatcher = NavigationEventDispatcher {}
@@ -160,7 +160,7 @@ class OnBackInvokedInputTest {
 
     @Test
     @SdkSuppress(minSdkVersion = 34)
-    fun testSimpleAnimatedhandlerRemovedCancel() {
+    fun testSimpleAnimatedHandlerRemovedCancel() {
         val invoker = TestOnBackInvokedDispatcher()
 
         val dispatcher = NavigationEventDispatcher {}
@@ -184,7 +184,7 @@ class OnBackInvokedInputTest {
 
     @Test
     @SdkSuppress(minSdkVersion = 34)
-    fun testSimpleAnimatedhandlerRemovedCancelInHandleOnStarted() {
+    fun testSimpleAnimatedHandlerRemovedCancelInHandleOnStarted() {
         val invoker = TestOnBackInvokedDispatcher()
 
         val dispatcher = NavigationEventDispatcher {}
@@ -207,7 +207,7 @@ class OnBackInvokedInputTest {
 
     @Test
     @SdkSuppress(minSdkVersion = 34)
-    fun testSimpleAnimatedhandlerAddedContinue() {
+    fun testSimpleAnimatedHandlerAddedContinue() {
         val invoker = TestOnBackInvokedDispatcher()
         val dispatcher = NavigationEventDispatcher {}
 
@@ -231,7 +231,7 @@ class OnBackInvokedInputTest {
 
     @Test
     @SdkSuppress(minSdkVersion = 34)
-    fun testDoubleStarthandlerCausesCancel() {
+    fun testDoubleStartHandlerCausesCancel() {
         val invoker = TestOnBackInvokedDispatcher()
 
         val dispatcher = NavigationEventDispatcher {}
