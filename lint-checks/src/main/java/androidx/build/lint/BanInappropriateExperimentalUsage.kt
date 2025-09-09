@@ -212,7 +212,8 @@ class BanInappropriateExperimentalUsage : Detector(), Detector.UastScanner {
                 .message(
                     "Could not find associated group for annotation " +
                         "${annotation.getQualifiedName()}, which is used in " +
-                        "${context.project.mavenCoordinate.groupId}."
+                        "${context.project.mavenCoordinate.groupId}. " +
+                        "File a bug in the AndroidX lint component."
                 )
                 .report()
             return
@@ -336,7 +337,7 @@ class BanInappropriateExperimentalUsage : Detector(), Detector.UastScanner {
                 briefDescription = "Maven group associated with an annotation could not be found",
                 explanation =
                     "An annotation's group could not be found using `getProject` or " +
-                        "`getLibrary`.",
+                        "`getLibrary`. File a bug in the AndroidX lint component.",
                 category = Category.CORRECTNESS,
                 priority = 5,
                 severity = Severity.ERROR,
