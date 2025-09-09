@@ -81,6 +81,10 @@ class BanInappropriateExperimentalUsageTest :
             getMavenCoordinatesFromPath(
                 "/path/to/checkout/out/androidx/compose/ui/ui-test/build/libs/ui-test-jvmstubs-1.8.0-beta01.jar"
             )
+        val classFileTest =
+            getMavenCoordinatesFromPath(
+                "/path/to/checkout/out/androidx/compose/runtime/runtime/build/classes/kotlin/desktop/main/androidx/compose/runtime/InternalComposeApi.class"
+            )
 
         assertNotNull(paging!!)
         assertEquals("androidx.paging", paging.groupId)
@@ -96,6 +100,11 @@ class BanInappropriateExperimentalUsageTest :
         assertEquals("androidx.compose.ui", uiTest.groupId)
         assertEquals("ui-test", uiTest.artifactId)
         assertEquals("jvmstubs-1.8.0-beta01", uiTest.version)
+
+        assertNotNull(classFileTest)
+        assertEquals("androidx.compose.runtime", classFileTest!!.groupId)
+        assertEquals("runtime", classFileTest.artifactId)
+        assertEquals("", classFileTest.version) // No version information
 
         val invalid = getMavenCoordinatesFromPath("/foo/bar/baz")
         assertNull(invalid)
