@@ -73,23 +73,29 @@ public abstract class Track(
         currentPacketArraySize = currentPacketArray.packets.size
     }
 
-    /** Emit is internal, but it must be sure to only access */
+    /** Useful when we need to conditionally emit a trace event based on a predicate. */
     @PublishedApi
     // All usages of the API are also marked and tracked as experimental.
     @Suppress("BanInlineOptIn")
-    internal inline fun emitTraceEvent(
+    internal inline fun conditionalEmitTraceEvent(
         immediateDispatch: Boolean = false,
-        block: (TraceEvent) -> Unit,
+        block: (TraceEvent) -> Boolean,
     ) {
         currentPacketArray.apply {
-            block(packets[fillCount])
-            fillCount++
-            if (fillCount == currentPacketArraySize || immediateDispatch) {
-                context.sink.enqueue(this)
+            val shouldEmit = block(packets[fillCount])
+            if (shouldEmit) {
+                fillCount++
+                if (fillCount == currentPacketArraySize || immediateDispatch) {
+                    context.sink.enqueue(this)
 
-                // greedy reset / reallocate array
-                currentPacketArray = pool.obtainTracePacketArray()
-                currentPacketArraySize = currentPacketArray.packets.size
+                    // greedy reset / reallocate array
+                    currentPacketArray = pool.obtainTracePacketArray()
+                    currentPacketArraySize = currentPacketArray.packets.size
+                }
+            } else {
+                // We effectively cancelled the emit. So we need to reset the trace packet
+                // on the producer side.
+                packets[fillCount].reset()
             }
         }
     }
@@ -97,8 +103,9 @@ public abstract class Track(
     /** Test API for benchmarking */
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public fun enqueueSingleUnmodifiedEvent() {
-        emitTraceEvent(immediateDispatch = true) {
+        conditionalEmitTraceEvent(immediateDispatch = true) {
             // noop
+            true
         }
     }
 
