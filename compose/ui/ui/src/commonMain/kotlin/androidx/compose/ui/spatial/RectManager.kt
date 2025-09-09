@@ -19,8 +19,6 @@ package androidx.compose.ui.spatial
 import androidx.collection.IntObjectMap
 import androidx.collection.intObjectMapOf
 import androidx.collection.mutableObjectListOf
-import androidx.compose.ui.ComposeUiFlags
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.currentTimeMillis
 import androidx.compose.ui.focus.FocusTargetModifierNode
 import androidx.compose.ui.geometry.MutableRect
@@ -210,7 +208,6 @@ internal class RectManager(
     }
 
     fun onLayoutLayerPositionalPropertiesChanged(layoutNode: LayoutNode) {
-        @OptIn(ExperimentalComposeUiApi::class) if (!ComposeUiFlags.isRectTrackingEnabled) return
         // no need to update the positions on not placed items, as technically not placed items
         // doesn't have a position. they will get the correct position once they became placed.
         if (!layoutNode.isPlaced) return
@@ -235,7 +232,6 @@ internal class RectManager(
         // no need to update the positions on not placed items, as technically not placed items
         // doesn't have a position. they will get the correct position once they became placed.
         if (!layoutNode.isPlaced) return
-        @OptIn(ExperimentalComposeUiApi::class) if (!ComposeUiFlags.isRectTrackingEnabled) return
         // Our goal here is to get the right "root" coordinates for every layout. We can use
         // LayoutCoordinates.localToRoot to calculate this somewhat readily, however this function
         // is getting called with a very high frequency and so it is important that extracting these

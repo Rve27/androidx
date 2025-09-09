@@ -1397,10 +1397,7 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
         layoutNodes.remove(node.semanticsId)
         measureAndLayoutDelegate.onNodeDetached(node)
         requestClearInvalidObservations()
-        @OptIn(ExperimentalComposeUiApi::class)
-        if (ComposeUiFlags.isRectTrackingEnabled) {
-            rectManager.remove(node)
-        }
+        rectManager.remove(node)
         @OptIn(ExperimentalComposeUiApi::class)
         if (autofillSupported() && ComposeUiFlags.isSemanticAutofillEnabled) {
             _autofillManager?.onDetach(node)
@@ -1735,10 +1732,7 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
                 measureAndLayoutDelegate.dispatchOnPositionedCallbacks()
                 dispatchPendingInteropLayoutCallbacks()
             }
-            @OptIn(ExperimentalComposeUiApi::class)
-            if (ComposeUiFlags.isRectTrackingEnabled) {
-                rectManager.dispatchCallbacks()
-            }
+            rectManager.dispatchCallbacks()
             scheduleSendPendingContentCaptureEvents()
         }
     }
@@ -1918,10 +1912,7 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
             rootView.height,
         )
         measureAndLayoutDelegate.dispatchOnPositionedCallbacks(forceDispatch = positionChanged)
-        @OptIn(ExperimentalComposeUiApi::class)
-        if (ComposeUiFlags.isRectTrackingEnabled) {
-            rectManager.dispatchCallbacks()
-        }
+        rectManager.dispatchCallbacks()
     }
 
     override fun onDraw(canvas: android.graphics.Canvas) {}
@@ -2110,9 +2101,7 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
             currentFrameRate = Float.NaN
             currentFrameRateCategory = Float.NaN
         }
-        if (ComposeUiFlags.isRectTrackingEnabled) {
-            rectManager.dispatchCallbacks()
-        }
+        rectManager.dispatchCallbacks()
     }
 
     internal fun notifyLayerIsDirty(layer: OwnedLayer, isDirty: Boolean) {
