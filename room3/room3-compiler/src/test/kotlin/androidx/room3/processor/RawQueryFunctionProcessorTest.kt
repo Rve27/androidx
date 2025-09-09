@@ -130,34 +130,6 @@ class RawQueryFunctionProcessorTest {
     }
 
     @Test
-    fun observableWithoutEntities_dataSourceFactory() {
-        singleQueryMethod(
-            """
-                @RawQuery
-                abstract public ${PagingTypeNames.DATA_SOURCE_FACTORY.canonicalName}<Integer, User> getOne();
-                """
-        ) { _, invocation ->
-            invocation.assertCompilationResult {
-                hasErrorContaining(ProcessorErrors.OBSERVABLE_QUERY_NOTHING_TO_OBSERVE)
-            }
-        }
-    }
-
-    @Test
-    fun observableWithoutEntities_positionalDataSource() {
-        singleQueryMethod(
-            """
-                @RawQuery
-                abstract public ${PagingTypeNames.POSITIONAL_DATA_SOURCE.canonicalName}<User> getOne();
-                """
-        ) { _, invocation ->
-            invocation.assertCompilationResult {
-                hasErrorContaining(ProcessorErrors.OBSERVABLE_QUERY_NOTHING_TO_OBSERVE)
-            }
-        }
-    }
-
-    @Test
     fun positionalDataSource() {
         singleQueryMethod(
             """

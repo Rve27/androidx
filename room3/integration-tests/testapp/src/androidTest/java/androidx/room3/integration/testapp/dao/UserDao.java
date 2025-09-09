@@ -19,13 +19,11 @@ package androidx.room3.integration.testapp.dao;
 import android.database.Cursor;
 
 import androidx.lifecycle.LiveData;
-import androidx.paging.DataSource;
 import androidx.room3.Dao;
 import androidx.room3.Delete;
 import androidx.room3.Insert;
 import androidx.room3.OnConflictStrategy;
 import androidx.room3.Query;
-import androidx.room3.RawQuery;
 import androidx.room3.Transaction;
 import androidx.room3.Update;
 import androidx.room3.integration.testapp.TestDatabase;
@@ -38,7 +36,6 @@ import androidx.room3.integration.testapp.vo.User;
 import androidx.room3.integration.testapp.vo.UserAndFriends;
 import androidx.room3.integration.testapp.vo.UserSummary;
 import androidx.room3.integration.testapp.vo.Username;
-import androidx.sqlite.db.SupportSQLiteQuery;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -267,20 +264,6 @@ public abstract class UserDao {
             }
         });
     }
-
-    @Query("SELECT * FROM user where mAge > :age")
-    public abstract DataSource.Factory<Integer, User> loadPagedByAge(int age);
-
-    @Query("SELECT * FROM user where mLastName = :name")
-    public abstract DataSource.Factory<Integer, User> loadPagedByLastname(String name);
-
-    @RawQuery(observedEntities = User.class)
-    public abstract DataSource.Factory<Integer, User> loadPagedByAgeWithObserver(
-            SupportSQLiteQuery query);
-
-    // TODO: switch to PositionalDataSource once Room supports it
-    @Query("SELECT * FROM user ORDER BY mAge DESC")
-    public abstract DataSource.Factory<Integer, User> loadUsersByAgeDesc();
 
     @Query("DELETE FROM User WHERE mId IN (:ids) AND mAge == :age")
     public abstract int deleteByAgeAndIds(int age, List<Integer> ids);
