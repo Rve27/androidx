@@ -62,11 +62,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.addOutline
 import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.LookaheadScope
@@ -84,6 +86,7 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.round
 import androidx.compose.ui.util.fastForEach
 import kotlinx.coroutines.CoroutineScope
@@ -205,6 +208,12 @@ private class SharedTransitionScopeRootModifierNode(sharedScope: SharedTransitio
     override fun ContentDrawScope.draw() {
         drawContent()
         sharedScope.drawInOverlay(this)
+        if (VisualDebugging) {
+            drawRect(
+                if (sharedScope.isTransitionActive) Color.Red else Color.Green,
+                style = Stroke(3f),
+            )
+        }
     }
 }
 
@@ -786,9 +795,6 @@ public interface SharedTransitionScope : LookaheadScope {
      * Creates and remembers a [SharedContentState] with a given [key] and a given
      * [SharedContentConfig].
      *
-     * [key] will be used to match a shared element against others in the same
-     * [SharedTransitionScope].
-     *
      * [config] defines whether the shared element is enabled or disabled, and the alternative
      * target bounds if the shared element is disposed amid animation (e.g., scrolled out of the
      * viewport and subsequently disposed). By default, the shared element is enabled and the
@@ -796,6 +802,11 @@ public interface SharedTransitionScope : LookaheadScope {
      * animation when the target shared element (i.e. shared element in the incoming/target content)
      * is removed.
      *
+     * @param key will be used to match a shared element against others in the same
+     *   [SharedTransitionScope].
+     * @param config defines whether the shared element is enabled or disabled, and the alternative
+     *   target bounds if the shared element is disposed amid animation (e.g., scrolled out of the
+     *   viewport and subsequently disposed).
      * @sample androidx.compose.animation.samples.DynamicallyEnabledSharedElementInPagerSample
      * @sample androidx.compose.animation.samples.DynamicallyEnableSharedElementsSample
      */
@@ -815,11 +826,15 @@ public interface SharedTransitionScope : LookaheadScope {
      * is a parent [sharedBounds] in the layout tree.
      */
     public class SharedContentState
-    internal constructor(public val key: Any, config: SharedContentConfig) {
+    internal constructor(
+        public val key: Any,
+        config: SharedContentConfig = SharedTransitionDefaults.SharedContentConfig,
+    ) {
         internal val isAnimating: Boolean
             get() = internalState?.boundsAnimation?.animationState != null
 
         internal var config by mutableStateOf(config)
+
         internal val isEnabledByUser: Boolean
             get() =
                 with(config) { isEnabled || (isAnimating && shouldKeepEnabledForOngoingAnimation) }
@@ -835,6 +850,32 @@ public interface SharedTransitionScope : LookaheadScope {
          */
         public val isMatchFound: Boolean
             get() = internalState?.sharedElement?.foundMatch ?: false
+
+        /**
+         * [prepareTransitionWithInitialVelocity] sets up the initial velocity for the upcoming
+         * shared element transition. This function should be called during the gesture handling to
+         * allow the system to acquire the animation start time in the next (i.e. earliest)
+         * animation frame to ensure a smooth velocity handoff.
+         *
+         * The velocity will used for both incoming and outgoing shared content defined with the
+         * same key once shared element transition starts. The animationSpec used to animate the
+         * momentum will be the same as what is used by the incoming shared element's bounds
+         * transform to keep consistent motion. If the incoming shared element uses a duration-based
+         * animation, a default spring will be used instead.
+         *
+         * Note: This function will have no effect if the shared element is not enabled (i.e.
+         * [SharedContentConfig.isEnabled] is false). This velocity will only apply to the next
+         * shared element transition.
+         *
+         * @param initialVelocity The velocity from the gesture system (e.g., from `onDragEnd`).
+         * @sample androidx.compose.animation.samples.SharedElementWithFlingSample
+         */
+        public fun prepareTransitionWithInitialVelocity(initialVelocity: Velocity) {
+            nonNullInternalState.let {
+                if (with(config) { !isEnabled }) return
+                it.sharedElement.updateExitVelocity(initialVelocity)
+            }
+        }
 
         /**
          * The resolved clip path in overlay based on the [OverlayClip] defined for the shared
@@ -854,7 +895,7 @@ public interface SharedTransitionScope : LookaheadScope {
             get() =
                 requireNotNull(internalState) {
                     "Error: SharedContentState has not been added to a sharedElement/sharedBounds" +
-                        "modifier yet. Therefore the internal state has not bee initialized."
+                        "modifier yet. Therefore the internal state has not been initialized."
                 }
     }
 
@@ -1170,14 +1211,6 @@ internal constructor(lookaheadScope: LookaheadScope, val coroutineScope: Corouti
 
     override fun OverlayClip(clipShape: Shape): OverlayClip = ShapeBasedClip(clipShape)
 
-    @Composable
-    override fun rememberSharedContentState(
-        key: Any,
-        config: SharedTransitionScope.SharedContentConfig,
-    ): SharedContentState {
-        return remember(key) { SharedContentState(key, config) }.also { it.config = config }
-    }
-
     // Called from the observation in SharedTransitionScopeRootModifierNode
     internal val observeAnimatingBlock: () -> Unit = {
         sharedElements.any { _, element -> element.isAnimating() }
@@ -1218,7 +1251,6 @@ internal constructor(lookaheadScope: LookaheadScope, val coroutineScope: Corouti
         val sharedElementState =
             key(key) {
                 val sharedElement = remember { sharedElementsFor(key) }
-
                 val boundsAnimation =
                     key(parentTransition) {
                         val boundsTransition =
@@ -1261,6 +1293,7 @@ internal constructor(lookaheadScope: LookaheadScope, val coroutineScope: Corouti
                                     boundsTransition,
                                     animation,
                                     boundsTransform,
+                                    sharedElement.momentumAnimationOffset,
                                 )
                             }
                             .also {
