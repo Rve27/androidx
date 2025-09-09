@@ -253,7 +253,6 @@ public class ConcurrentCameraActivity extends AppCompatActivity {
         setupPermissions();
     }
 
-    @SuppressLint("NullAnnotationGroup")
     @OptIn(markerClass = ExperimentalCameraProviderConfiguration.class)
     private void startCamera() {
         if (mIsCameraPipeEnabled) {
@@ -366,7 +365,7 @@ public class ConcurrentCameraActivity extends AppCompatActivity {
                 mBackPreviewView);
     }
 
-    @SuppressLint({"NullAnnotationGroup", "RestrictedApiAndroidX"})
+    @SuppressLint("RestrictedApiAndroidX")
     @OptIn(markerClass = {ExperimentalCamera2Interop.class, ExperimentalMirrorMode.class,
             androidx.camera.camera2.pipe.integration.interop.ExperimentalCamera2Interop.class})
     private void bindToLifecycleForConcurrentCamera(
@@ -527,7 +526,6 @@ public class ConcurrentCameraActivity extends AppCompatActivity {
         }
     }
 
-    @SuppressLint("NullAnnotationGroup")
     @OptIn(markerClass = { ExperimentalCamera2Interop.class,
             androidx.camera.camera2.pipe.integration.interop.ExperimentalCamera2Interop.class })
     private boolean isPrimaryCamera(@NonNull CameraInfo info) {
@@ -835,7 +833,7 @@ public class ConcurrentCameraActivity extends AppCompatActivity {
         return "Unknown quality";
     }
 
-    @SuppressLint({"MissingPermission", "NullAnnotationGroup"})
+    @SuppressLint("MissingPermission")
     @OptIn(markerClass = ExperimentalPersistentRecording.class)
     private void setUpRecordButton() {
         mRecordUi.getButtonRecord().setOnClickListener((view) -> {

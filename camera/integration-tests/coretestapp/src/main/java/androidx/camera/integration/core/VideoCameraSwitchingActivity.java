@@ -20,7 +20,6 @@ import static androidx.camera.core.MirrorMode.MIRROR_MODE_OFF;
 import static androidx.camera.core.MirrorMode.MIRROR_MODE_ON;
 import static androidx.camera.core.MirrorMode.MIRROR_MODE_ON_FRONT_ONLY;
 
-import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.OrientationEventListener;
@@ -240,7 +239,6 @@ public class VideoCameraSwitchingActivity extends AppCompatActivity {
         mCamera = mCameraProvider.bindToLifecycle(this, newLensFacing, mPreview, mVideoCapture);
     }
 
-    @SuppressLint("NullAnnotationGroup")
     @SuppressWarnings("FutureReturnValueIgnored")
     @OptIn(markerClass = ExperimentalPersistentRecording.class)
     private void startRecording() {
