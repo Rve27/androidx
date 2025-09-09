@@ -40,15 +40,6 @@ private constructor(
 ) {
     val checker: Checks = Checks(logger)
 
-    /**
-     * Checks whether we should use the TypeConverter store that has a specific heuristic for
-     * nullability. Defaults to true in KSP, false in javac.
-     */
-    val useNullAwareConverter: Boolean by lazy {
-        BooleanProcessorOptions.USE_NULL_AWARE_CONVERTER.getInputValue(processingEnv)
-            ?: (processingEnv.backend == XProcessingEnv.Backend.KSP)
-    }
-
     val typeAdapterStore by lazy {
         if (inheritedAdapterStore != null) {
             TypeAdapterStore.copy(this, inheritedAdapterStore)
@@ -261,7 +252,6 @@ private constructor(
 
     enum class BooleanProcessorOptions(val argName: String, private val defaultValue: Boolean) {
         INCREMENTAL("room.incremental", defaultValue = true),
-        USE_NULL_AWARE_CONVERTER("room.useNullAwareTypeAnalysis", defaultValue = false),
         GENERATE_KOTLIN("room.generateKotlin", defaultValue = true),
         EXPORT_SCHEMA_RESOURCE("room.exportSchemaResource", defaultValue = false);
 
