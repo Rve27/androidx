@@ -1787,9 +1787,17 @@ internal abstract class AbstractClickableNode(
      */
     protected fun handlePressInteractionRelease(offset: Offset, indirectTouch: Boolean) {
         interactionSource?.let { interactionSource ->
-            if (delayJob?.isActive == true) {
+            // To resolve b/414319919 it is important that we capture a reference to `delayJob`
+            // outside the coroutine block - when the CPU is busy we can end up handling
+            // press-release-press before the coroutine starts to execute, which means we can launch
+            // two jobs and mutate delayJob twice. At the time this function is called, delayJob
+            // points to the correct corresponding press event, so we just reference this instance
+            // to make sure that there is no issue if coroutines are executed after the next set of
+            // gestures have been processed.
+            val job = delayJob
+            if (job?.isActive == true) {
                 coroutineScope.launch {
-                    delayJob?.cancelAndJoin()
+                    job.cancelAndJoin()
                     // The press released successfully, before the timeout duration - emit the press
                     // interaction instantly.
                     val press = PressInteraction.Press(offset)
@@ -1802,6 +1810,9 @@ internal abstract class AbstractClickableNode(
                     if (indirectTouch) indirectTouchPressInteraction else pressInteraction
                 interaction?.let {
                     coroutineScope.launch {
+                        // Important that we capture `interaction` outside the `launch`, rather than
+                        // referring to it in here - the underlying fields are mutable and could
+                        // change by the time this coroutine is executed
                         val endInteraction = PressInteraction.Release(it)
                         interactionSource.emit(endInteraction)
                     }
@@ -1831,9 +1842,20 @@ internal abstract class AbstractClickableNode(
                 val interaction =
                     if (indirectTouch) indirectTouchPressInteraction else pressInteraction
                 interaction?.let {
+                    val endInteraction = PressInteraction.Cancel(it)
+                    // If this is being called from inside onDetach(), we are still attached, but
+                    // the scope will be cancelled soon after - so the launch {} might not even
+                    // start before it is cancelled. We don't want to use
+                    // CoroutineStart.UNDISPATCHED, or always call tryEmit() as this will break
+                    // other timing / cause some events to be missed for other cases. Instead just
+                    // make sure we call tryEmit if we cancel the scope, before we finish emitting.
+                    val handler =
+                        coroutineScope.coroutineContext[Job]?.invokeOnCompletion {
+                            interactionSource.tryEmit(endInteraction)
+                        }
                     coroutineScope.launch {
-                        val endInteraction = PressInteraction.Cancel(it)
                         interactionSource.emit(endInteraction)
+                        handler?.dispose()
                     }
                 }
             }
