@@ -17,13 +17,14 @@
 package androidx.navigationevent
 
 import androidx.annotation.EmptySuper
+import kotlin.jvm.JvmOverloads
 
 /**
  * Base class for handling navigation gestures dispatched by a [NavigationEventDispatcher].
  *
- * A [NavigationEventCallback] defines how an active component responds to system navigation
- * gestures (such as predictive back) and exposes the directional context needed to represent the
- * app’s current navigation affordances:
+ * A [NavigationEventHandler] defines how an active component responds to system navigation gestures
+ * (such as predictive back) and exposes the directional context needed to represent the app’s
+ * current navigation affordances:
  * - [backInfo]: contextual information describing what is available when navigating back.
  * - [currentInfo]: the single active destination represented by this callback.
  * - [forwardInfo]: contextual information describing what is available when navigating forward.
@@ -35,18 +36,23 @@ import androidx.annotation.EmptySuper
  * A callback must be registered with a [NavigationEventDispatcher] to receive events. It will only
  * be invoked while both the dispatcher and this callback are enabled.
  *
- * @param isBackEnabled Whether this callback should initially handle back gestures. Defaults to
- *   `true`.
- * @param isForwardEnabled Whether this callback should initially handle forward gestures. Defaults
- *   to `true`.
+ * @param isBackEnabled If `true`, this handler will process back navigation gestures.
+ * @param isForwardEnabled If `true`, this handler will process forward navigation gestures.
  * @see NavigationEventDispatcher
  * @see NavigationEventInput
  * @see NavigationEventState
  */
-public abstract class NavigationEventCallback<T : NavigationEventInfo>(
-    isBackEnabled: Boolean = true,
-    isForwardEnabled: Boolean = true,
-) {
+public abstract class NavigationEventHandler<T : NavigationEventInfo>
+public constructor(isBackEnabled: Boolean, isForwardEnabled: Boolean) {
+
+    /**
+     * Creates a handler that is only enabled for back navigation gestures.
+     *
+     * Forward navigation will be disabled by default.
+     *
+     * @param isBackEnabled If `true`, this handler will process back navigation gestures.
+     */
+    public constructor(isBackEnabled: Boolean) : this(isBackEnabled, isForwardEnabled = false)
 
     /**
      * The contextual information representing the active destination for this callback.
@@ -105,7 +111,7 @@ public abstract class NavigationEventCallback<T : NavigationEventInfo>(
             if (field == value) return
 
             field = value
-            dispatcher?.updateEnabledCallbacks()
+            dispatcher?.updateEnabledHandlers()
         }
 
     /**
@@ -122,7 +128,7 @@ public abstract class NavigationEventCallback<T : NavigationEventInfo>(
             if (field == value) return
 
             field = value
-            dispatcher?.updateEnabledCallbacks()
+            dispatcher?.updateEnabledHandlers()
         }
 
     internal var dispatcher: NavigationEventDispatcher? = null
@@ -132,7 +138,7 @@ public abstract class NavigationEventCallback<T : NavigationEventInfo>(
      * callback is not registered, this call does nothing.
      */
     public fun remove() {
-        dispatcher?.removeCallback(this)
+        dispatcher?.removeHandler(this)
     }
 
     /**
@@ -152,6 +158,7 @@ public abstract class NavigationEventCallback<T : NavigationEventInfo>(
      * @param forwardInfo Context describing what is available when navigating forward
      *   (nearest-first).
      */
+    @JvmOverloads
     public fun setInfo(
         currentInfo: T,
         backInfo: List<T> = emptyList(),
@@ -163,7 +170,7 @@ public abstract class NavigationEventCallback<T : NavigationEventInfo>(
 
         // Simply notify the processor that info has changed.
         // The processor now owns all the logic for updating the shared state.
-        dispatcher?.sharedProcessor?.updateEnabledCallbackState(callback = this)
+        dispatcher?.sharedProcessor?.updateEnabledHandlerInfo(handler = this)
     }
 
     /**

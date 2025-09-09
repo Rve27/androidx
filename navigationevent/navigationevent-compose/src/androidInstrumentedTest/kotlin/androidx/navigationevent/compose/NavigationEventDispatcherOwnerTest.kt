@@ -25,8 +25,8 @@ import androidx.kruth.assertThat
 import androidx.kruth.assertThrows
 import androidx.navigationevent.DirectNavigationEventInput
 import androidx.navigationevent.NavigationEventDispatcherOwner
-import androidx.navigationevent.testing.TestNavigationEventCallback
 import androidx.navigationevent.testing.TestNavigationEventDispatcherOwner
+import androidx.navigationevent.testing.TestNavigationEventHandler
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
 import org.junit.Rule
@@ -41,7 +41,7 @@ internal class NavigationEventDispatcherOwnerTest {
 
     @Test
     fun navigationEventDispatcherOwner_asChild_whenInComposition_thenCreatesChildDispatcher() {
-        val callback = TestNavigationEventCallback()
+        val handler = TestNavigationEventHandler()
         val parentOwner = TestNavigationEventDispatcherOwner()
         lateinit var childOwner: NavigationEventDispatcherOwner
 
@@ -57,7 +57,7 @@ internal class NavigationEventDispatcherOwnerTest {
             }
         }
 
-        childOwner.navigationEventDispatcher.addCallback(callback)
+        childOwner.navigationEventDispatcher.addHandler(handler)
         val input = DirectNavigationEventInput()
         childOwner.navigationEventDispatcher.addInput(input)
         input.backCompleted()
@@ -66,10 +66,10 @@ internal class NavigationEventDispatcherOwnerTest {
         assertThat(childOwner).isNotEqualTo(parentOwner)
 
         // Verify that the child's dispatcher was invoked.
-        assertThat(callback.onBackStartedInvocations).isEqualTo(0)
-        assertThat(callback.onBackProgressedInvocations).isEqualTo(0)
-        assertThat(callback.onBackCompletedInvocations).isEqualTo(1)
-        assertThat(callback.onBackCancelledInvocations).isEqualTo(0)
+        assertThat(handler.onBackStartedInvocations).isEqualTo(0)
+        assertThat(handler.onBackProgressedInvocations).isEqualTo(0)
+        assertThat(handler.onBackCompletedInvocations).isEqualTo(1)
+        assertThat(handler.onBackCancelledInvocations).isEqualTo(0)
     }
 
     @Test
@@ -107,7 +107,7 @@ internal class NavigationEventDispatcherOwnerTest {
 
     @Test
     fun navigationEventDispatcherOwner_asChild_whenEnabledStateChanges_thenUpdatesDispatcher() {
-        val callback = TestNavigationEventCallback()
+        val handler = TestNavigationEventHandler()
         val parentOwner = TestNavigationEventDispatcherOwner()
         lateinit var childOwner: NavigationEventDispatcherOwner
 
@@ -130,7 +130,7 @@ internal class NavigationEventDispatcherOwnerTest {
         rule.waitForIdle()
 
         // Attempt to dispatch an event while the dispatcher is disabled.
-        childOwner.navigationEventDispatcher.addCallback(callback)
+        childOwner.navigationEventDispatcher.addHandler(handler)
         val input = DirectNavigationEventInput()
         childOwner.navigationEventDispatcher.addInput(input)
         input.backCompleted()
@@ -138,12 +138,12 @@ internal class NavigationEventDispatcherOwnerTest {
         assertThat(childOwner).isNotEqualTo(parentOwner)
         assertThat(childOwner.navigationEventDispatcher.isEnabled).isFalse()
 
-        // Verify that the callback was never invoked because the dispatcher was disabled.
-        assertThat(callback.isBackEnabled).isFalse()
-        assertThat(callback.onBackStartedInvocations).isEqualTo(0)
-        assertThat(callback.onBackProgressedInvocations).isEqualTo(0)
-        assertThat(callback.onBackCompletedInvocations).isEqualTo(0)
-        assertThat(callback.onBackCancelledInvocations).isEqualTo(0)
+        // Verify that the handler was never invoked because the dispatcher was disabled.
+        assertThat(handler.isBackEnabled).isFalse()
+        assertThat(handler.onBackStartedInvocations).isEqualTo(0)
+        assertThat(handler.onBackProgressedInvocations).isEqualTo(0)
+        assertThat(handler.onBackCompletedInvocations).isEqualTo(0)
+        assertThat(handler.onBackCancelledInvocations).isEqualTo(0)
     }
 
     @Test
@@ -178,14 +178,14 @@ internal class NavigationEventDispatcherOwnerTest {
         rule.waitForIdle()
 
         // Verify the parent is still functional by using its dispatcher.
-        val parentCallback = TestNavigationEventCallback()
-        parentOwner.navigationEventDispatcher.addCallback(parentCallback)
+        val parentHandler = TestNavigationEventHandler()
+        parentOwner.navigationEventDispatcher.addHandler(parentHandler)
         val input = DirectNavigationEventInput()
         parentOwner.navigationEventDispatcher.addInput(input)
         input.backCompleted()
 
-        // The parent's callback should be invoked, proving it was not disposed.
-        assertThat(parentCallback.onBackCompletedInvocations).isEqualTo(1)
+        // The parent's handler should be invoked, proving it was not disposed.
+        assertThat(parentHandler.onBackCompletedInvocations).isEqualTo(1)
 
         // Additionally, verify the original child owner was correctly disposed.
         assertThrows<IllegalStateException> {
@@ -232,7 +232,7 @@ internal class NavigationEventDispatcherOwnerTest {
 
     @Test
     fun navigationEventDispatcherOwner_asRoot_whenNoParent_thenCreatesRootDispatcher() {
-        val callback = TestNavigationEventCallback()
+        val handler = TestNavigationEventHandler()
         lateinit var rootOwner: NavigationEventDispatcherOwner
 
         rule.setContent {
@@ -245,18 +245,18 @@ internal class NavigationEventDispatcherOwnerTest {
         }
 
         // Verify the root dispatcher can operate independently.
-        rootOwner.navigationEventDispatcher.addCallback(callback)
+        rootOwner.navigationEventDispatcher.addHandler(handler)
         val input = DirectNavigationEventInput()
         rootOwner.navigationEventDispatcher.addInput(input)
         input.backCompleted()
 
         assertThat(rootOwner.navigationEventDispatcher.isEnabled).isTrue()
 
-        // Verify the callback was invoked correctly.
-        assertThat(callback.onBackStartedInvocations).isEqualTo(0)
-        assertThat(callback.onBackProgressedInvocations).isEqualTo(0)
-        assertThat(callback.onBackCompletedInvocations).isEqualTo(1)
-        assertThat(callback.onBackCancelledInvocations).isEqualTo(0)
+        // Verify the handler was invoked correctly.
+        assertThat(handler.onBackStartedInvocations).isEqualTo(0)
+        assertThat(handler.onBackProgressedInvocations).isEqualTo(0)
+        assertThat(handler.onBackCompletedInvocations).isEqualTo(1)
+        assertThat(handler.onBackCancelledInvocations).isEqualTo(0)
     }
 
     @Test
@@ -288,7 +288,7 @@ internal class NavigationEventDispatcherOwnerTest {
 
     @Test
     fun navigationEventDispatcherOwner_asRoot_whenEnabledStateChanges_thenUpdatesDispatcher() {
-        val callback = TestNavigationEventCallback()
+        val handler = TestNavigationEventHandler()
         lateinit var rootOwner: NavigationEventDispatcherOwner
         var enabled by mutableStateOf(true)
 
@@ -306,18 +306,18 @@ internal class NavigationEventDispatcherOwnerTest {
         rule.waitForIdle()
 
         // Attempt to dispatch an event while disabled.
-        rootOwner.navigationEventDispatcher.addCallback(callback)
+        rootOwner.navigationEventDispatcher.addHandler(handler)
         val input = DirectNavigationEventInput()
         rootOwner.navigationEventDispatcher.addInput(input)
         input.backCompleted()
 
         assertThat(rootOwner.navigationEventDispatcher.isEnabled).isFalse()
 
-        // Verify no callbacks were invoked because the dispatcher was off.
-        assertThat(callback.onBackStartedInvocations).isEqualTo(0)
-        assertThat(callback.onBackProgressedInvocations).isEqualTo(0)
-        assertThat(callback.onBackCompletedInvocations).isEqualTo(0)
-        assertThat(callback.onBackCancelledInvocations).isEqualTo(0)
+        // Verify no handlers were invoked because the dispatcher was off.
+        assertThat(handler.onBackStartedInvocations).isEqualTo(0)
+        assertThat(handler.onBackProgressedInvocations).isEqualTo(0)
+        assertThat(handler.onBackCompletedInvocations).isEqualTo(0)
+        assertThat(handler.onBackCancelledInvocations).isEqualTo(0)
     }
 
     @Test

@@ -17,31 +17,31 @@
 package androidx.navigationevent.testing
 
 import androidx.navigationevent.NavigationEvent
-import androidx.navigationevent.NavigationEventCallback
+import androidx.navigationevent.NavigationEventHandler
 import androidx.navigationevent.NavigationEventInfo
 
 /**
- * Creates an instance of [TestNavigationEventCallback] without requiring an explicit generic type.
+ * Creates an instance of [TestNavigationEventHandler] without requiring an explicit generic type.
  *
- * This function is a convenience wrapper around the [TestNavigationEventCallback] constructor that
+ * This function is a convenience wrapper around the [TestNavigationEventHandler] constructor that
  * defaults its info type to `*`. Use this in tests where the specific type of [NavigationEventInfo]
  * is not relevant.
  */
-public fun TestNavigationEventCallback(
+public fun TestNavigationEventHandler(
     // ---- Forward Events ----
     isForwardEnabled: Boolean = true,
-    onForwardStarted: TestNavigationEventCallback<*>.(event: NavigationEvent) -> Unit = {},
-    onForwardProgressed: TestNavigationEventCallback<*>.(event: NavigationEvent) -> Unit = {},
-    onForwardCancelled: TestNavigationEventCallback<*>.() -> Unit = {},
-    onForwardCompleted: TestNavigationEventCallback<*>.() -> Unit = {},
+    onForwardStarted: TestNavigationEventHandler<*>.(event: NavigationEvent) -> Unit = {},
+    onForwardProgressed: TestNavigationEventHandler<*>.(event: NavigationEvent) -> Unit = {},
+    onForwardCancelled: TestNavigationEventHandler<*>.() -> Unit = {},
+    onForwardCompleted: TestNavigationEventHandler<*>.() -> Unit = {},
     // ---- Back Events ----
     isBackEnabled: Boolean = true,
-    onBackStarted: TestNavigationEventCallback<*>.(event: NavigationEvent) -> Unit = {},
-    onBackProgressed: TestNavigationEventCallback<*>.(event: NavigationEvent) -> Unit = {},
-    onBackCancelled: TestNavigationEventCallback<*>.() -> Unit = {},
-    onBackCompleted: TestNavigationEventCallback<*>.() -> Unit = {},
-): TestNavigationEventCallback<*> {
-    return TestNavigationEventCallback(
+    onBackStarted: TestNavigationEventHandler<*>.(event: NavigationEvent) -> Unit = {},
+    onBackProgressed: TestNavigationEventHandler<*>.(event: NavigationEvent) -> Unit = {},
+    onBackCancelled: TestNavigationEventHandler<*>.() -> Unit = {},
+    onBackCompleted: TestNavigationEventHandler<*>.() -> Unit = {},
+): TestNavigationEventHandler<*> {
+    return TestNavigationEventHandler(
         currentInfo = NavigationEventInfo.NotProvided,
         backInfo = emptyList(),
         forwardInfo = emptyList(),
@@ -61,7 +61,7 @@ public fun TestNavigationEventCallback(
 }
 
 /**
- * A test implementation of [NavigationEventCallback] that records received events and invocation
+ * A test implementation of [NavigationEventHandler] that records received events and invocation
  * counts.
  *
  * This class is primarily used in tests to verify that specific navigation event callbacks are
@@ -84,27 +84,27 @@ public fun TestNavigationEventCallback(
  * @param onBackCancelled Optional lambda to execute when `onBackCancelled` is called.
  * @param onBackCompleted Optional lambda to execute when `onBackCompleted` is called.
  */
-public class TestNavigationEventCallback<T : NavigationEventInfo>(
+public class TestNavigationEventHandler<T : NavigationEventInfo>(
     currentInfo: T,
     backInfo: List<T> = emptyList(),
     forwardInfo: List<T> = emptyList(),
     // ---- Forward Events ----
     isForwardEnabled: Boolean = true,
-    private val onForwardStarted: TestNavigationEventCallback<T>.(event: NavigationEvent) -> Unit =
+    private val onForwardStarted: TestNavigationEventHandler<T>.(event: NavigationEvent) -> Unit =
         {},
     private val onForwardProgressed:
-        TestNavigationEventCallback<T>.(event: NavigationEvent) -> Unit =
+        TestNavigationEventHandler<T>.(event: NavigationEvent) -> Unit =
         {},
-    private val onForwardCancelled: TestNavigationEventCallback<T>.() -> Unit = {},
-    private val onForwardCompleted: TestNavigationEventCallback<T>.() -> Unit = {},
+    private val onForwardCancelled: TestNavigationEventHandler<T>.() -> Unit = {},
+    private val onForwardCompleted: TestNavigationEventHandler<T>.() -> Unit = {},
     // ---- Back Events ----
     isBackEnabled: Boolean = true,
-    private val onBackStarted: TestNavigationEventCallback<T>.(event: NavigationEvent) -> Unit = {},
-    private val onBackProgressed: TestNavigationEventCallback<T>.(event: NavigationEvent) -> Unit =
+    private val onBackStarted: TestNavigationEventHandler<T>.(event: NavigationEvent) -> Unit = {},
+    private val onBackProgressed: TestNavigationEventHandler<T>.(event: NavigationEvent) -> Unit =
         {},
-    private val onBackCancelled: TestNavigationEventCallback<T>.() -> Unit = {},
-    private val onBackCompleted: TestNavigationEventCallback<T>.() -> Unit = {},
-) : NavigationEventCallback<T>(isBackEnabled, isForwardEnabled) {
+    private val onBackCancelled: TestNavigationEventHandler<T>.() -> Unit = {},
+    private val onBackCompleted: TestNavigationEventHandler<T>.() -> Unit = {},
+) : NavigationEventHandler<T>(isBackEnabled, isForwardEnabled) {
 
     init {
         setInfo(currentInfo = currentInfo, backInfo = backInfo, forwardInfo = forwardInfo)
