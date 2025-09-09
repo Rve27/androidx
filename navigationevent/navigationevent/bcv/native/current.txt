@@ -98,24 +98,22 @@ final class androidx.navigationevent/NavigationEventDispatcher { // androidx.nav
         final fun <get-isEnabled>(): kotlin/Boolean // androidx.navigationevent/NavigationEventDispatcher.isEnabled.<get-isEnabled>|<get-isEnabled>(){}[0]
         final fun <set-isEnabled>(kotlin/Boolean) // androidx.navigationevent/NavigationEventDispatcher.isEnabled.<set-isEnabled>|<set-isEnabled>(kotlin.Boolean){}[0]
 
-    final fun addHandler(androidx.navigationevent/NavigationEventHandler<*>, androidx.navigationevent/NavigationEventPriority = ...) // androidx.navigationevent/NavigationEventDispatcher.addHandler|addHandler(androidx.navigationevent.NavigationEventHandler<*>;androidx.navigationevent.NavigationEventPriority){}[0]
+    final fun addHandler(androidx.navigationevent/NavigationEventHandler<*>, kotlin/Int = ...) // androidx.navigationevent/NavigationEventDispatcher.addHandler|addHandler(androidx.navigationevent.NavigationEventHandler<*>;kotlin.Int){}[0]
     final fun addInput(androidx.navigationevent/NavigationEventInput) // androidx.navigationevent/NavigationEventDispatcher.addInput|addInput(androidx.navigationevent.NavigationEventInput){}[0]
     final fun dispose() // androidx.navigationevent/NavigationEventDispatcher.dispose|dispose(){}[0]
     final fun hasEnabledHandler(): kotlin/Boolean // androidx.navigationevent/NavigationEventDispatcher.hasEnabledHandler|hasEnabledHandler(){}[0]
     final fun removeInput(androidx.navigationevent/NavigationEventInput) // androidx.navigationevent/NavigationEventDispatcher.removeInput|removeInput(androidx.navigationevent.NavigationEventInput){}[0]
     final inline fun <#A1: reified androidx.navigationevent/NavigationEventInfo> getState(kotlinx.coroutines/CoroutineScope, #A1): kotlinx.coroutines.flow/StateFlow<androidx.navigationevent/NavigationEventState<#A1>> // androidx.navigationevent/NavigationEventDispatcher.getState|getState(kotlinx.coroutines.CoroutineScope;0:0){0§<androidx.navigationevent.NavigationEventInfo>}[0]
-}
 
-final value class androidx.navigationevent/NavigationEventPriority { // androidx.navigationevent/NavigationEventPriority|null[0]
-    final fun equals(kotlin/Any?): kotlin/Boolean // androidx.navigationevent/NavigationEventPriority.equals|equals(kotlin.Any?){}[0]
-    final fun hashCode(): kotlin/Int // androidx.navigationevent/NavigationEventPriority.hashCode|hashCode(){}[0]
-    final fun toString(): kotlin/String // androidx.navigationevent/NavigationEventPriority.toString|toString(){}[0]
+    open annotation class Priority : kotlin/Annotation { // androidx.navigationevent/NavigationEventDispatcher.Priority|null[0]
+        constructor <init>() // androidx.navigationevent/NavigationEventDispatcher.Priority.<init>|<init>(){}[0]
+    }
 
-    final object Companion { // androidx.navigationevent/NavigationEventPriority.Companion|null[0]
-        final val Default // androidx.navigationevent/NavigationEventPriority.Companion.Default|{}Default[0]
-            final fun <get-Default>(): androidx.navigationevent/NavigationEventPriority // androidx.navigationevent/NavigationEventPriority.Companion.Default.<get-Default>|<get-Default>(){}[0]
-        final val Overlay // androidx.navigationevent/NavigationEventPriority.Companion.Overlay|{}Overlay[0]
-            final fun <get-Overlay>(): androidx.navigationevent/NavigationEventPriority // androidx.navigationevent/NavigationEventPriority.Companion.Overlay.<get-Overlay>|<get-Overlay>(){}[0]
+    final object Companion { // androidx.navigationevent/NavigationEventDispatcher.Companion|null[0]
+        final const val PRIORITY_DEFAULT // androidx.navigationevent/NavigationEventDispatcher.Companion.PRIORITY_DEFAULT|{}PRIORITY_DEFAULT[0]
+            final fun <get-PRIORITY_DEFAULT>(): kotlin/Int // androidx.navigationevent/NavigationEventDispatcher.Companion.PRIORITY_DEFAULT.<get-PRIORITY_DEFAULT>|<get-PRIORITY_DEFAULT>(){}[0]
+        final const val PRIORITY_OVERLAY // androidx.navigationevent/NavigationEventDispatcher.Companion.PRIORITY_OVERLAY|{}PRIORITY_OVERLAY[0]
+            final fun <get-PRIORITY_OVERLAY>(): kotlin/Int // androidx.navigationevent/NavigationEventDispatcher.Companion.PRIORITY_OVERLAY.<get-PRIORITY_OVERLAY>|<get-PRIORITY_OVERLAY>(){}[0]
     }
 }
 
