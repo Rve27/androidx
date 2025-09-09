@@ -40,8 +40,20 @@ package androidx.compose.runtime
 @Suppress("id")
 public interface RetainObserver {
     /**
-     * Called when this object is first returned as the result of the `calculation` block to
-     * [retain].
+     * Called when this object is successfully [retain]ed. This occurs when the result of a [retain]
+     * call is successfully created and installed in a [RetainScope] and has the same timing as
+     * [RememberObserver.onRemembered] for the initial retention of a value.
+     *
+     * When the composition is successful, this call will be immediately followed by a call to
+     * [onEnteredComposition].
+     *
+     * If the composition is abandoned and the associated [RetainScope] is currently keeping exited
+     * values, the value will be retained and may be used in a future (successful) composition. This
+     * is the only scenario in which it is possible for a RetainObserver to experience a lifecycle
+     * of Retained -> Retired without receiving any calls to [onEnteredComposition].
+     *
+     * If the composition is unsuccessful and the associated [RetainScope] is not keeping exited
+     * values, this callback will be skipped and [onUnused] will be called instead.
      */
     public fun onRetained()
 
@@ -90,4 +102,13 @@ public interface RetainObserver {
      * later.
      */
     public fun onRetired()
+
+    /**
+     * Called when this object is returned by [retain] but not successfully applied in a
+     * composition. This is analogous to [RememberObserver.onAbandoned].
+     *
+     * This method is only called when this value is returned by [retain] and will not receive a
+     * call to [onRetained].
+     */
+    public fun onUnused()
 }

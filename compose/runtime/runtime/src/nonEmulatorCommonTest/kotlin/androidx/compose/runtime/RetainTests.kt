@@ -23,6 +23,7 @@ import androidx.compose.runtime.mock.expectChanges
 import androidx.compose.runtime.mock.expectNoChanges
 import androidx.compose.runtime.mock.validate
 import kotlin.test.Test
+import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotSame
@@ -30,6 +31,8 @@ import kotlin.test.assertNull
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
 import kotlin.test.fail
+import kotlinx.test.IgnoreJsTarget
+import kotlinx.test.IgnoreWasmTarget
 
 class RetainTests {
 
@@ -965,6 +968,82 @@ class RetainTests {
         }
     }
 
+    // Ignore JS targets: b/444012850
+    @IgnoreWasmTarget
+    @IgnoreJsTarget
+    @Test
+    fun abandonCompositionTest() {
+        var failComposition by mutableStateOf(false)
+        val notKeepingRetainScope = ControlledRetainScope()
+        val keepingRetainScope = ControlledRetainScope().apply { startKeepingExitedValues() }
+        val events = mutableListOf<String>()
+
+        try {
+            compositionTest {
+                compose {
+                    CompositionLocalProvider(LocalRetainScope provides notKeepingRetainScope) {
+                        retain<LoggingRetainObject> { LoggingRetainObject("A", events) }
+                        if (failComposition) {
+                            retain<LoggingRetainObject> { LoggingRetainObject("B", events) }
+                        }
+                    }
+
+                    CompositionLocalProvider(LocalRetainScope provides keepingRetainScope) {
+                        retain<LoggingRetainObject> { LoggingRetainObject("C", events) }
+                        if (failComposition) {
+                            retain<LoggingRetainObject> { LoggingRetainObject("D", events) }
+                        }
+                    }
+
+                    if (failComposition) {
+                        events += "throw"
+                        throw RuntimeException("Abandoning composition")
+                    }
+                }
+
+                assertContentEquals(
+                    listOf("Retain(A)", "EnterComposition(A)", "Retain(C)", "EnterComposition(C)"),
+                    events,
+                )
+                failComposition = true
+                events += "recompose"
+                advance()
+            }
+        } catch (t: Throwable) {
+            if (!failComposition) throw t
+        }
+
+        assertContent(events) {
+            eq("Retain(A)")
+            eq("EnterComposition(A)")
+            eq("Retain(C)")
+            eq("EnterComposition(C)")
+            eq("recompose")
+            eq("throw")
+            inAnyOrder("Unused(B)", "Retain(D)")
+            eq("ExitComposition(C)")
+            eq("ExitComposition(A)")
+            eq("Retire(A)")
+        }
+
+        events += "stopKeepingExitedValues"
+        keepingRetainScope.stopKeepingExitedValues()
+        assertContent(events) {
+            eq("Retain(A)")
+            eq("EnterComposition(A)")
+            eq("Retain(C)")
+            eq("EnterComposition(C)")
+            eq("recompose")
+            eq("throw")
+            inAnyOrder("Unused(B)", "Retain(D)")
+            eq("ExitComposition(C)")
+            eq("ExitComposition(A)")
+            eq("Retire(A)")
+            eq("stopKeepingExitedValues")
+            inAnyOrder("Retire(D)", "Retire(C)")
+        }
+    }
+
     private inline fun <reified T : Throwable> assertThrows(block: () -> Unit) {
         var didSucceed = false
         try {
@@ -974,6 +1053,56 @@ class RetainTests {
             assertEquals(T::class, t::class, "Block threw unexpected exception type")
         } finally {
             if (didSucceed) fail("Expected an exception of type ${T::class.simpleName}")
+        }
+    }
+
+    private fun <T : Any> assertContent(
+        actual: List<T>,
+        comparison: ContentAssertionBlock<T>.() -> Unit,
+    ) {
+        ContentAssertionBlock(actual).apply {
+            comparison()
+            finish()
+        }
+    }
+
+    private class ContentAssertionBlock<T : Any>(val actual: List<T>) {
+        private var index = 0
+        private val messages = mutableListOf<String>()
+
+        fun eq(value: T) {
+            if (index >= actual.size) {
+                messages += "Missing item at index $index: <$value>"
+            } else if (actual[index] != value) {
+                messages += "Wrong item at index $index. Was <${actual[index]}>, expected <$value>."
+            }
+            index++
+        }
+
+        fun inAnyOrder(vararg values: T) {
+            val remainingValues = values.toMutableSet()
+            val targetIndex = index + values.size
+            while (remainingValues.isNotEmpty() && index < targetIndex) {
+                anyOf(remainingValues)?.let { remainingValues -= it }
+            }
+        }
+
+        fun anyOf(values: Set<T>): T? {
+            if (index >= actual.size) {
+                messages +=
+                    "Missing item at index $index: One of " + "[${values.joinToString { "<$it>" }}]"
+            } else if (actual[index] !in values) {
+                messages +=
+                    "Wrong item at index $index. Was <${actual[index]}>, expected one of " +
+                        "[${values.joinToString { "<$it>" }}]"
+            }
+            return actual.getOrNull(index++)
+        }
+
+        fun finish() {
+            if (messages.isNotEmpty()) {
+                fail("Element comparison failed:" + messages.joinToString { "\n\t$it" })
+            }
         }
     }
 
@@ -989,6 +1118,9 @@ class RetainTests {
             private set
 
         var retired = 0
+            private set
+
+        var unused = 0
             private set
 
         override fun onRetained() {
@@ -1010,16 +1142,23 @@ class RetainTests {
             assertValidCounts()
         }
 
+        override fun onUnused() {
+            unused++
+            assertValidCounts()
+        }
+
         fun assertCounts(
             retained: Int = this.retained,
             entered: Int = this.entered,
             exited: Int = this.exited,
             retired: Int = this.retired,
+            unused: Int = this.unused,
         ) {
             assertEquals(
-                "[Retained: $retained, Entered: $entered, Exited: $exited, Retired: $retired]",
+                "[Retained: $retained, Entered: $entered, Exited: $exited, Retired: $retired, " +
+                    "Unused: $unused]",
                 "[Retained: ${this.retained}, Entered: ${this.entered}, Exited: ${this.exited}, " +
-                    "Retired: ${this.retired}]",
+                    "Retired: ${this.retired}, Unused: ${this.unused}]",
                 "Received an unexpected number of callback invocations",
             )
         }
@@ -1061,6 +1200,10 @@ class RetainTests {
 
         override fun onRetired() {
             output += "Retire($name)"
+        }
+
+        override fun onUnused() {
+            output += "Unused($name)"
         }
     }
 
