@@ -25,7 +25,7 @@ import androidx.xr.scenecore.internal.RenderingEntityFactory
 import androidx.xr.scenecore.internal.RenderingRuntime
 import androidx.xr.scenecore.internal.SceneRuntime
 
-/** Factory for creating test-only instances of [androidx.xr.scenecore.internal.SceneRuntime]. */
+/** Factory for creating test-only instances of [RenderingRuntime]. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public class FakeRenderingRuntimeFactory() : RenderingRuntimeFactory {
     override val requirements: Set<Feature> = emptySet()
