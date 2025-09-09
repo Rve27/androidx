@@ -51,15 +51,15 @@ public class NavigationEventDispatcher
  *
  * All public constructors delegate to this one to perform the actual initialization.
  *
- * @param parentDispatcher An optional reference to a parent [NavigationEventDispatcher]. Providing
- *   a parent allows this dispatcher to participate in a hierarchical event system, sharing the same
+ * @param parent An optional reference to a parent [NavigationEventDispatcher]. Providing a parent
+ *   allows this dispatcher to participate in a hierarchical event system, sharing the same
  *   underlying [NavigationEventProcessor] as its parent. If `null`, this dispatcher acts as the
  *   root of its own event handling hierarchy.
  * @param fallbackOnBackPressed An optional lambda to be invoked if a navigation event completes and
  *   no registered [NavigationEventHandler] handles it. This provides a default "back" action.
  */
 private constructor(
-    private var parentDispatcher: NavigationEventDispatcher?,
+    private var parent: NavigationEventDispatcher?,
     private val fallbackOnBackPressed: (() -> Unit)?,
 ) {
 
@@ -72,7 +72,7 @@ private constructor(
      * If a navigation event completes without being handled by any registered
      * [NavigationEventHandler], nothing further will happen.
      */
-    public constructor() : this(parentDispatcher = null, fallbackOnBackPressed = null)
+    public constructor() : this(parent = null, fallbackOnBackPressed = null)
 
     /**
      * Creates a **root** `NavigationEventDispatcher` with a fallback action.
@@ -86,7 +86,7 @@ private constructor(
      */
     public constructor(
         fallbackOnBackPressed: () -> Unit
-    ) : this(parentDispatcher = null, fallbackOnBackPressed = fallbackOnBackPressed)
+    ) : this(parent = null, fallbackOnBackPressed = fallbackOnBackPressed)
 
     /**
      * Creates a **child** `NavigationEventDispatcher` linked to a parent.
@@ -95,22 +95,22 @@ private constructor(
      * same underlying [NavigationEventProcessor] as its parent, allowing it to participate in the
      * same event stream.
      *
-     * @param parentDispatcher The parent `NavigationEventDispatcher` to which this dispatcher will
-     *   be attached.
+     * @param parent The parent `NavigationEventDispatcher` to which this dispatcher will be
+     *   attached.
      */
     public constructor(
-        parentDispatcher: NavigationEventDispatcher
-    ) : this(parentDispatcher = parentDispatcher, fallbackOnBackPressed = null)
+        parent: NavigationEventDispatcher
+    ) : this(parent = parent, fallbackOnBackPressed = null)
 
     /**
      * Returns `true` if this dispatcher is in a terminal state and can no longer be used.
      *
-     * A dispatcher is considered disposed if it has been explicitly disposed or if its
-     * [parentDispatcher] has been disposed. This state is checked by [checkInvariants] to prevent
-     * use-after-dispose errors.
+     * A dispatcher is considered disposed if it has been explicitly disposed or if its [parent] has
+     * been disposed. This state is checked by [checkInvariants] to prevent use-after-dispose
+     * errors.
      */
     internal var isDisposed: Boolean = false
-        get() = if (parentDispatcher?.isDisposed == true) true else field
+        get() = if (parent?.isDisposed == true) true else field
         private set // The setter is private and should only be modified by the dispose() method.
 
     /**
@@ -134,7 +134,7 @@ private constructor(
      * the `isEnabled` properties of all its ancestors must also be `true`.
      */
     public var isEnabled: Boolean = true
-        get() = if (parentDispatcher?.isEnabled == false) false else field
+        get() = if (parent?.isEnabled == false) false else field
         set(value) {
             checkInvariants()
 
@@ -151,15 +151,15 @@ private constructor(
      *
      * This processor ensures consistent ordering and state for all navigation events across the
      * application's hierarchy. It is initialized in one of two ways:
-     * - If a [parentDispatcher] is provided, this dispatcher will share its parent's processor,
-     *   allowing for a hierarchical event handling structure where child dispatchers defer to their
-     *   parents for core event management.
-     * - If no [parentDispatcher] is provided (i.e., this is a root dispatcher), a new
+     * - If a [parent] is provided, this dispatcher will share its parent's processor, allowing for
+     *   a hierarchical event handling structure where child dispatchers defer to their parents for
+     *   core event management.
+     * - If no [parent] is provided (i.e., this is a root dispatcher), a new
      *   [NavigationEventProcessor] instance is created, becoming the root of its own event handling
      *   tree.
      */
     internal val sharedProcessor: NavigationEventProcessor =
-        parentDispatcher?.sharedProcessor ?: NavigationEventProcessor()
+        parent?.sharedProcessor ?: NavigationEventProcessor()
 
     /**
      * A collection of child [NavigationEventDispatcher] instances that have registered with this
@@ -239,7 +239,7 @@ private constructor(
         // If a parent dispatcher is provided, register this dispatcher as its child.
         // This establishes the hierarchical relationship and ensures the parent is aware
         // of its direct descendants for proper event propagation and cleanup.
-        parentDispatcher?.childDispatchers += this
+        parent?.childDispatchers += this
     }
 
     /**
@@ -494,8 +494,8 @@ private constructor(
 
             // Remove the currentDispatcher from its parent's list of children.
             // This step breaks upward references in the hierarchy.
-            currentDispatcher.parentDispatcher?.childDispatchers?.remove(currentDispatcher)
-            currentDispatcher.parentDispatcher = null // Clear local parent reference
+            currentDispatcher.parent?.childDispatchers?.remove(currentDispatcher)
+            currentDispatcher.parent = null // Clear local parent reference
         }
     }
 

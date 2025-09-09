@@ -958,7 +958,7 @@ class NavigationEventDispatcherTest {
     @Test
     fun state_onDispatcherDisabled_fallsBackToSibling() {
         val dispatcher = NavigationEventDispatcher()
-        val childDispatcher = NavigationEventDispatcher(parentDispatcher = dispatcher)
+        val childDispatcher = NavigationEventDispatcher(parent = dispatcher)
 
         val handlerA = TestNavigationEventHandler(currentInfo = HomeScreenInfo("A"))
         dispatcher.addHandler(handlerA)

@@ -31,7 +31,7 @@ package androidx.navigationevent {
 
   public final class NavigationEventDispatcher {
     ctor public NavigationEventDispatcher();
-    ctor public NavigationEventDispatcher(androidx.navigationevent.NavigationEventDispatcher parentDispatcher);
+    ctor public NavigationEventDispatcher(androidx.navigationevent.NavigationEventDispatcher parent);
     ctor public NavigationEventDispatcher(kotlin.jvm.functions.Function0<kotlin.Unit> fallbackOnBackPressed);
     method @MainThread public void addHandler(androidx.navigationevent.NavigationEventHandler<? extends java.lang.Object?> handler);
     method @KotlinOnly @MainThread public void addHandler(androidx.navigationevent.NavigationEventHandler<? extends java.lang.Object?> handler, optional androidx.navigationevent.NavigationEventPriority priority);

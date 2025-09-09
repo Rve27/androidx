@@ -41,9 +41,10 @@ import androidx.navigationevent.NavigationEventInfo
  * ## Timing Consideration
  * There are cases where a predictive back or forward gesture may be dispatched within a rendering
  * frame before the corresponding `enabled` flag is updated, which can cause unexpected behavior
- * (see b/375343407, b/384186542). For example, if [isBackEnabled] is set to `false`, a back gesture
- * initiated in the same frame may still trigger this handler because the system sees the stale
- * `true` value.
+ * (see [b/375343407](https://issuetracker.google.com/375343407),
+ * [b/384186542](https://issuetracker.google.com/384186542)). For example, if [isBackEnabled] is set
+ * to `false`, a back gesture initiated in the same frame may still trigger this handler because the
+ * system sees the stale `true` value.
  *
  * @param T The type of the navigation information.
  * @param currentInfo An object containing information about the current destination.
