@@ -359,4 +359,47 @@ class OnVisibilityChangedTest {
             assertEquals(true, isVisible)
         }
     }
+
+    @Test
+    fun testVisibleCalledWhenUnplacedAndThenPlacedAgain() {
+        var called = 0
+        val shouldPlace = mutableStateOf(true)
+        var isVisible = false
+        rule.setContent {
+            Layout(
+                content = {
+                    Box(
+                        Modifier.onVisibilityChanged(minFractionVisible = 1f) { visible ->
+                                called++
+                                isVisible = visible
+                            }
+                            .size(100.dp)
+                    )
+                }
+            ) { measurables, constraints ->
+                val placeable = measurables.first().measure(constraints)
+                layout(placeable.width, placeable.height) {
+                    if (shouldPlace.value) {
+                        placeable.place(0, 0)
+                    }
+                }
+            }
+        }
+        rule.runOnIdle {
+            assertEquals(1, called)
+            assertEquals(true, isVisible)
+
+            shouldPlace.value = false
+        }
+        rule.runOnIdle {
+            assertEquals(2, called)
+            assertEquals(false, isVisible)
+            shouldPlace.value = true
+            shouldPlace.value = true
+        }
+        rule.runOnIdle {
+            assertEquals(3, called)
+            assertEquals(true, isVisible)
+        }
+    }
 }

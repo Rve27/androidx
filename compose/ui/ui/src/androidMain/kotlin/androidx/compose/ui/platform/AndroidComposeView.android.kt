@@ -2016,10 +2016,6 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
 
     override fun onLayoutNodeDeactivated(layoutNode: LayoutNode) {
         @OptIn(ExperimentalComposeUiApi::class)
-        if (ComposeUiFlags.isRectTrackingEnabled) {
-            rectManager.remove(layoutNode)
-        }
-        @OptIn(ExperimentalComposeUiApi::class)
         if (autofillSupported() && ComposeUiFlags.isSemanticAutofillEnabled) {
             _autofillManager?.onLayoutNodeDeactivated(layoutNode)
         }
@@ -2036,10 +2032,6 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
         if (autofillSupported() && ComposeUiFlags.isSemanticAutofillEnabled) {
             _autofillManager?.onPostLayoutNodeReused(layoutNode, oldSemanticsId)
         }
-        // Sometimes, while scrolling with reuse, a child LayoutNode, might not
-        // require measure or layout at all, but at a minimum we need to update RectManager with
-        // the correct information.
-        rectManager.onLayoutPositionChanged(layoutNode, true)
     }
 
     override fun onInteropViewLayoutChange(view: InteropView) {

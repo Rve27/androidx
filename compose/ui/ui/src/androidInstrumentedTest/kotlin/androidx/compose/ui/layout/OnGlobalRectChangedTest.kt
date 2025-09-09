@@ -537,6 +537,116 @@ class OnGlobalRectChangedTest {
     }
 
     @Test
+    fun callbackIsReexecutedOnPlacingAgainWithTheSameOffset() {
+        var called = 0
+        val shouldPlace = mutableStateOf(true)
+        rule.setContent {
+            Layout(
+                content = { Box(Modifier.onLayoutRectChanged(0, 0) { called++ }.size(100.dp)) }
+            ) { measurables, constraints ->
+                val placeable = measurables.first().measure(constraints)
+                layout(placeable.width, placeable.height) {
+                    if (shouldPlace.value) {
+                        placeable.place(0, 0)
+                    }
+                }
+            }
+        }
+        rule.runOnIdle {
+            assertEquals(1, called)
+            shouldPlace.value = false
+        }
+        rule.runOnIdle {
+            assertEquals(1, called)
+            shouldPlace.value = true
+        }
+        rule.runOnIdle { assertEquals(2, called) }
+    }
+
+    @Test
+    fun callbackIsReexecutedWithCorrectCoordinatesWhenParentMovesWhileNotPlaced() {
+        val shouldPlace = mutableStateOf(true)
+        var offset by mutableStateOf(0)
+        var reportedOffset: IntOffset? = null
+        rule.setContent {
+            Layout(
+                content = {
+                    Layout(
+                        content = {
+                            Box(
+                                Modifier.onLayoutRectChanged(0, 0) {
+                                        reportedOffset = it.positionInRoot
+                                    }
+                                    .size(100.dp)
+                            )
+                        }
+                    ) { measurables, constraints ->
+                        val placeable = measurables.first().measure(constraints)
+                        layout(placeable.width, placeable.height) {
+                            if (shouldPlace.value) {
+                                placeable.place(0, 0)
+                            }
+                        }
+                    }
+                }
+            ) { measurables, constraints ->
+                val placeable = measurables.first().measure(constraints)
+                layout(placeable.width, placeable.height) { placeable.place(offset, 0) }
+            }
+        }
+        rule.runOnIdle {
+            assertEquals(reportedOffset, IntOffset(0, 0))
+            reportedOffset = null
+            shouldPlace.value = false
+            offset = 5
+        }
+        rule.runOnIdle {
+            assertEquals(reportedOffset, null)
+            shouldPlace.value = true
+        }
+        rule.runOnIdle { assertEquals(reportedOffset, IntOffset(5, 0)) }
+    }
+
+    @Test
+    fun changingLayerPropertyWhileNotPlacedNotCausingCallback() {
+        val shouldPlace = mutableStateOf(true)
+        var offset by mutableStateOf(0f)
+        var reportedOffset: IntOffset? = null
+        rule.setContent {
+            Layout(
+                content = {
+                    Box(
+                        Modifier.graphicsLayer { translationX = offset }
+                            .onLayoutRectChanged(0, 0) { reportedOffset = it.positionInRoot }
+                            .size(100.dp)
+                    )
+                }
+            ) { measurables, constraints ->
+                val placeable = measurables.first().measure(constraints)
+                layout(placeable.width, placeable.height) {
+                    if (shouldPlace.value) {
+                        placeable.place(0, 0)
+                    }
+                }
+            }
+        }
+        rule.runOnIdle {
+            assertEquals(reportedOffset, IntOffset(0, 0))
+            reportedOffset = null
+            shouldPlace.value = false
+        }
+        rule.runOnIdle { offset = 5f }
+        rule.runOnIdle {
+            assertEquals(reportedOffset, null)
+            shouldPlace.value = true
+        }
+        rule.runOnIdle {
+            assertEquals(reportedOffset, IntOffset(5, 0))
+            shouldPlace.value = true
+        }
+    }
+
+    @Test
     fun callbackIsCalledWhenAddedLater() {
         with(rule.density) {
             val size = 10

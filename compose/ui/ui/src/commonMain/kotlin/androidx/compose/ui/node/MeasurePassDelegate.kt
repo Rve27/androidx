@@ -275,6 +275,11 @@ internal class MeasurePassDelegate(private val layoutNodeLayoutDelegate: LayoutN
             if (!wasPlaced) {
                 innerCoordinator.onPlaced()
 
+                // force update the layout position as we want to trigger the callbacks when the
+                // node became placed even if the final position didn't change while it wasn't
+                // placed.
+                requireOwner().rectManager.onLayoutPositionChanged(layoutNode, forceUpdate = true)
+
                 // if the node was not placed previous remeasure request could have been ignored
                 if (measurePending) {
                     requestRemeasure(forceRequest = true)
