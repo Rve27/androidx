@@ -89,6 +89,7 @@ import androidx.camera.core.impl.CameraMode.ULTRA_HIGH_RESOLUTION_CAMERA
 import androidx.camera.core.impl.CameraThreadConfig
 import androidx.camera.core.impl.EncoderProfilesProxy
 import androidx.camera.core.impl.EncoderProfilesProxy.VideoProfileProxy
+import androidx.camera.core.impl.FrameRates.FRAME_RATE_UNLIMITED
 import androidx.camera.core.impl.ImageFormatConstants
 import androidx.camera.core.impl.ImageInputConfig
 import androidx.camera.core.impl.MutableOptionsBundle
@@ -2578,6 +2579,7 @@ class SupportedSurfaceCombinationTest {
                 SESSION_TYPE_REGULAR,
                 FRAME_RATE_RANGE_UNSPECIFIED,
                 /*isStrictFrameRateRequired=*/ false,
+                FRAME_RATE_UNLIMITED,
             )
         val attachedAnalysis =
             AttachedSurfaceInfo.create(
@@ -2590,6 +2592,7 @@ class SupportedSurfaceCombinationTest {
                 SESSION_TYPE_REGULAR,
                 FRAME_RATE_RANGE_UNSPECIFIED,
                 /*isStrictFrameRateRequired=*/ false,
+                FRAME_RATE_UNLIMITED,
             )
 
         Assert.assertThrows(IllegalArgumentException::class.java) {
@@ -2625,6 +2628,7 @@ class SupportedSurfaceCombinationTest {
                 SESSION_TYPE_REGULAR,
                 FRAME_RATE_RANGE_UNSPECIFIED,
                 /*isStrictFrameRateRequired=*/ false,
+                FRAME_RATE_UNLIMITED,
             )
         val attachedPriv2 =
             AttachedSurfaceInfo.create(
@@ -2637,6 +2641,7 @@ class SupportedSurfaceCombinationTest {
                 SESSION_TYPE_REGULAR,
                 FRAME_RATE_RANGE_UNSPECIFIED,
                 /*isStrictFrameRateRequired=*/ false,
+                FRAME_RATE_UNLIMITED,
             )
 
         // These constraints say HDR10 and HDR10_PLUS can be combined, but not HLG
@@ -2687,6 +2692,7 @@ class SupportedSurfaceCombinationTest {
                 SESSION_TYPE_REGULAR,
                 FRAME_RATE_RANGE_UNSPECIFIED,
                 /*isStrictFrameRateRequired=*/ false,
+                FRAME_RATE_UNLIMITED,
             )
         val attachedPriv2 =
             AttachedSurfaceInfo.create(
@@ -2699,6 +2705,7 @@ class SupportedSurfaceCombinationTest {
                 SESSION_TYPE_REGULAR,
                 FRAME_RATE_RANGE_UNSPECIFIED,
                 /*isStrictFrameRateRequired=*/ false,
+                FRAME_RATE_UNLIMITED,
             )
 
         getSuggestedSpecsAndVerify(
@@ -2912,6 +2919,7 @@ class SupportedSurfaceCombinationTest {
                 SESSION_TYPE_REGULAR,
                 Range(40, 50),
                 /*isStrictFrameRateRequired=*/ false,
+                FRAME_RATE_UNLIMITED,
             )
         getSuggestedSpecsAndVerify(
             useCaseExpectedResultMap,
@@ -2942,6 +2950,7 @@ class SupportedSurfaceCombinationTest {
                 SESSION_TYPE_REGULAR,
                 Range(40, 50),
                 /*isStrictFrameRateRequired=*/ false,
+                FRAME_RATE_UNLIMITED,
             )
         getSuggestedSpecsAndVerify(
             useCaseExpectedResultMap,
@@ -2972,6 +2981,7 @@ class SupportedSurfaceCombinationTest {
                 SESSION_TYPE_REGULAR,
                 Range(40, 50),
                 /*isStrictFrameRateRequired=*/ false,
+                FRAME_RATE_UNLIMITED,
             )
         getSuggestedSpecsAndVerify(
             useCaseExpectedResultMap,
@@ -3237,6 +3247,112 @@ class SupportedSurfaceCombinationTest {
             useCaseExpectedResultMap,
             hardwareLevel = CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_FULL,
             compareExpectedFps = FRAME_RATE_RANGE_UNSPECIFIED,
+        )
+    }
+
+    @Test
+    fun getSuggestedStreamSpec_withCustomMaxFrameRate_isRespected() {
+        // Arrange.
+        // Device supports 60fps for 1080p.
+        val maxFpsBySizeMap = mapOf(RESOLUTION_1080P to 60)
+        // Use case with custom max frame rate set to 30fps for 1080p.
+        val useCase =
+            createUseCase(
+                CaptureType.PREVIEW,
+                targetFrameRate = Range(30, 30),
+                customMaxFpsMap = mapOf(RESOLUTION_1080P to 30),
+            )
+        val useCaseExpectedResultMap = mapOf(useCase to RESOLUTION_1080P)
+        val useCasesOutputSizesMap = mapOf(useCase to listOf(RESOLUTION_1080P))
+
+        // Act & Assert.
+        // The final fps should be capped at 30fps.
+        getSuggestedSpecsAndVerify(
+            useCasesExpectedResultMap = useCaseExpectedResultMap,
+            useCasesOutputSizesMap = useCasesOutputSizesMap,
+            maxFpsBySizeMap = maxFpsBySizeMap,
+            compareExpectedFps = Range(30, 30),
+            deviceFPSRanges = arrayOf(Range(30, 30), Range(60, 60)),
+        )
+    }
+
+    @Test
+    fun getSuggestedStreamSpec_withCustomMaxFrameRateHigherThanDevice_deviceMaxIsUsed() {
+        // Arrange.
+        // Device supports 30fps for 1080p.
+        val maxFpsBySizeMap = mapOf(RESOLUTION_1080P to 30)
+        // Use case with custom max frame rate set to 60fps for 1080p.
+        val useCase =
+            createUseCase(
+                CaptureType.PREVIEW,
+                targetFrameRate = Range(30, 30),
+                customMaxFpsMap = mapOf(RESOLUTION_1080P to 60),
+            )
+        val useCaseExpectedResultMap = mapOf(useCase to RESOLUTION_1080P)
+        val useCasesOutputSizesMap = mapOf(useCase to listOf(RESOLUTION_1080P))
+
+        // Act & Assert.
+        // The final fps should be capped at 30fps by the device.
+        getSuggestedSpecsAndVerify(
+            useCasesExpectedResultMap = useCaseExpectedResultMap,
+            useCasesOutputSizesMap = useCasesOutputSizesMap,
+            maxFpsBySizeMap = maxFpsBySizeMap,
+            compareExpectedFps = Range(30, 30),
+            deviceFPSRanges = arrayOf(Range(30, 30), Range(60, 60)),
+        )
+    }
+
+    @Test
+    fun getSuggestedStreamSpec_targetFpsHigherThanCustomMax_customMaxIsUsed() {
+        // Arrange.
+        // Device supports 60fps for 1080p.
+        val maxFpsBySizeMap = mapOf(RESOLUTION_1080P to 60)
+        // Use case with custom max frame rate set to 30fps for 1080p, but target is 60fps.
+        val useCase =
+            createUseCase(
+                CaptureType.PREVIEW,
+                targetFrameRate = Range(60, 60),
+                customMaxFpsMap = mapOf(RESOLUTION_1080P to 30),
+            )
+        val useCaseExpectedResultMap = mapOf(useCase to RESOLUTION_1080P)
+        val useCasesOutputSizesMap = mapOf(useCase to listOf(RESOLUTION_1080P))
+
+        // Act & Assert.
+        // The final fps should drop to 30fps.
+        getSuggestedSpecsAndVerify(
+            useCasesExpectedResultMap = useCaseExpectedResultMap,
+            useCasesOutputSizesMap = useCasesOutputSizesMap,
+            maxFpsBySizeMap = maxFpsBySizeMap,
+            compareExpectedFps = Range(30, 30),
+            deviceFPSRanges = arrayOf(Range(30, 30), Range(60, 60)),
+        )
+    }
+
+    @Test
+    fun getSuggestedStreamSpec_multipleUseCasesOneWithCustomMax_isRespectedForBoth() {
+        // Arrange.
+        // Device supports 60fps for 720p.
+        val maxFpsBySizeMap = mapOf(RESOLUTION_720P to 60)
+        val useCase1 = createUseCase(CaptureType.PREVIEW, targetFrameRate = Range(60, 60))
+        val useCase2 =
+            createUseCase(
+                CaptureType.VIDEO_CAPTURE,
+                targetFrameRate = Range(60, 60),
+                customMaxFpsMap = mapOf(RESOLUTION_720P to 30),
+            )
+        val useCaseExpectedResultMap =
+            mapOf(useCase1 to RESOLUTION_720P, useCase2 to RESOLUTION_720P)
+        val useCasesOutputSizesMap =
+            mapOf(useCase1 to listOf(RESOLUTION_720P), useCase2 to listOf(RESOLUTION_720P))
+
+        // Act & Assert.
+        // The final fps should drop to 30fps.
+        getSuggestedSpecsAndVerify(
+            useCasesExpectedResultMap = useCaseExpectedResultMap,
+            useCasesOutputSizesMap = useCasesOutputSizesMap,
+            maxFpsBySizeMap = maxFpsBySizeMap,
+            compareExpectedFps = Range(30, 30),
+            deviceFPSRanges = arrayOf(Range(30, 30), Range(60, 60)),
         )
     }
 
@@ -3925,6 +4041,7 @@ class SupportedSurfaceCombinationTest {
             SESSION_TYPE_REGULAR,
             FRAME_RATE_RANGE_UNSPECIFIED,
             false,
+            FRAME_RATE_UNLIMITED,
         )
 
     private fun createVideoCaptureAttachedSurfaceInfo() =
@@ -3938,6 +4055,7 @@ class SupportedSurfaceCombinationTest {
             SESSION_TYPE_REGULAR,
             FRAME_RATE_RANGE_UNSPECIFIED,
             false,
+            FRAME_RATE_UNLIMITED,
         )
 
     @Config(minSdk = Build.VERSION_CODES.M)
@@ -4876,16 +4994,18 @@ class SupportedSurfaceCombinationTest {
         sessionType: Int? = null,
         targetFrameRate: Range<Int>? = null,
         isStrictFpsRequired: Boolean = false,
+        customMaxFpsMap: Map<Size, Int>? = null,
         dynamicRange: DynamicRange = DynamicRange.UNSPECIFIED,
         surfaceOccupancyPriority: Int? = null,
         streamUseCase: StreamUseCase? = null,
     ): UseCase {
         return createUseCase(
-            captureType,
-            sessionType,
-            targetFrameRate,
-            isStrictFpsRequired,
-            dynamicRange,
+            captureType = captureType,
+            sessionType = sessionType,
+            targetFrameRate = targetFrameRate,
+            isStrictFpsRequired = isStrictFpsRequired,
+            customMaxFpsMap = customMaxFpsMap,
+            dynamicRange = dynamicRange,
             surfaceOccupancyPriority = surfaceOccupancyPriority,
             streamUseCase = streamUseCase,
             streamUseCaseOverride = null,
@@ -4904,6 +5024,7 @@ class SupportedSurfaceCombinationTest {
         sessionType: Int? = null,
         targetFrameRate: Range<Int>? = null,
         isStrictFpsRequired: Boolean? = null,
+        customMaxFpsMap: Map<Size, Int>? = null,
         dynamicRange: DynamicRange? = DynamicRange.UNSPECIFIED,
         imageFormat: Int? = null,
         surfaceOccupancyPriority: Int? = null,
@@ -4931,6 +5052,12 @@ class SupportedSurfaceCombinationTest {
         isStrictFpsRequired?.let {
             builder.mutableConfig.insertOption(
                 UseCaseConfig.OPTION_IS_STRICT_FRAME_RATE_REQUIRED,
+                it,
+            )
+        }
+        customMaxFpsMap?.let {
+            builder.mutableConfig.insertOption(
+                UseCaseConfig.OPTION_RESOLUTION_TO_MAX_FRAME_RATES,
                 it,
             )
         }
