@@ -47,8 +47,8 @@ import kotlin.jvm.JvmSuppressWildcards
  * val entries = rememberDecoratedNavEntries(backStack, decorators, entryProvider)
  * ```
  *
- * **HOW TO USE** The created list of entries should be stored and reused for the same backStack. If
- * you want to support multiple backStacks (i.e. each bottom tab with their own backStack), then
+ * **HOW TO USE** The returned list of entries should be stored and reused for the same backStack.
+ * If you want to support multiple backStacks (i.e. each bottom tab with their own backStack), then
  * each backStack should be their own [rememberDecoratedNavEntries] with new [backStack] and
  * [entryDecorators] passed in.
  *
@@ -79,6 +79,31 @@ import kotlin.jvm.JvmSuppressWildcards
  *  // to pop
  *  backStack.value = listOf(1)
  * ```
+ *
+ * **MULTIPLE BACKSTACKS** Each call to [rememberDecoratedNavEntries] represents a single backStack.
+ * To support multiple backStack, there should be one [rememberDecoratedNavEntries] for each
+ * backStack. For example
+ *
+ * ```
+ * val homeBackStack = mutableStateListOf(HomeKey)
+ * val homeDecorators = mutableStateListOf(rememberSavedStateNavEntryDecorator(), ...)
+ * val homeTabEntries = rememberDecoratedNavEntries(homeBackStack, homeDecorators, ...)
+ *
+ * val favoritesBackStack = mutableStateListOf(FavoritesKey)
+ * val favoritesDecorators = mutableStateListOf(rememberSavedStateNavEntryDecorator(),...)
+ * val favoritesTabEntries = rememberDecoratedNavEntries(favoritesBackStack, favoritesDecorators, ...)
+ * ```
+ *
+ * You can also concatenate multiple backStacks to form a larger one. So, given the above setup:
+ * ```
+ * val concatenatedEntries = homeTabEntries + favoritesTabEntries
+ *
+ * // To navigate within the favorites backStack
+ * favoritesBackStack.add(FavoritesDetailKey)
+ * ```
+ *
+ * In this case, the updated favoritesBackStack and updated states will be reflected in
+ * concatenatedEntries.
  *
  * @param T the type of the backStack key
  * @param backStack the list of keys that represent the backstack. If this backStack is observable,
