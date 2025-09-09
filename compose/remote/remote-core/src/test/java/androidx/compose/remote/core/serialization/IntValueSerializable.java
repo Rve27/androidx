@@ -13,10 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.compose.remote.core.operations;
+package androidx.compose.remote.core.serialization;
 
-import androidx.annotation.RestrictTo;
+import androidx.compose.remote.core.serialize.MapSerializer;
+import androidx.compose.remote.core.serialize.Serializable;
 
-/** Tagging interface to operations providing data within a component */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public interface ComponentData {}
+import org.jspecify.annotations.NonNull;
+
+public class IntValueSerializable implements Serializable {
+
+    private final int mValue;
+
+    public IntValueSerializable(int value) {
+        mValue = value;
+    }
+
+    @Override
+    public void serialize(@NonNull MapSerializer serializer) {
+        serializer.addType("Value").add("value", mValue);
+    }
+}
