@@ -217,7 +217,7 @@ package androidx.tracing.driver {
 
   public abstract class Track {
     ctor public Track(@kotlin.PublishedApi androidx.tracing.driver.TraceContext context, @kotlin.PublishedApi long uuid);
-    method @kotlin.PublishedApi internal final inline void emitTraceEvent(optional boolean immediateDispatch, kotlin.jvm.functions.Function1<? super androidx.tracing.driver.TraceEvent,kotlin.Unit> block);
+    method @kotlin.PublishedApi internal final inline void conditionalEmitTraceEvent(optional boolean immediateDispatch, kotlin.jvm.functions.Function1<? super androidx.tracing.driver.TraceEvent,java.lang.Boolean> block);
     method @kotlin.PublishedApi internal final void flush();
     method @BytecodeOnly @kotlin.PublishedApi internal final androidx.tracing.driver.ProtoPool getPool();
     property @kotlin.PublishedApi internal final androidx.tracing.driver.TraceContext context;
