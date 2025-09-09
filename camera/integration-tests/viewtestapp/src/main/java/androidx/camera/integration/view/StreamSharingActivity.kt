@@ -180,7 +180,6 @@ class StreamSharingActivity : AppCompatActivity() {
         }
     }
 
-    @SuppressLint("NullAnnotationGroup")
     @OptIn(ExperimentalCameraProviderConfiguration::class)
     private fun configureCameraProvider() {
         ProcessCameraProvider.configureInstance(cameraXConfig)

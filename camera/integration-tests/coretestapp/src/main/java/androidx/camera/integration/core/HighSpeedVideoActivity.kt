@@ -84,7 +84,7 @@ import java.util.concurrent.TimeUnit
 
 /** Activity for verifying behavior of high speed video recording. */
 @kotlin.OptIn(ExperimentalSessionConfig::class, ExperimentalHighSpeedVideo::class)
-@SuppressLint("RestrictedApiAndroidX", "NullAnnotationGroup")
+@SuppressLint("RestrictedApiAndroidX")
 class HighSpeedVideoActivity : AppCompatActivity() {
 
     // Views
