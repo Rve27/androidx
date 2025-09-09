@@ -209,53 +209,17 @@ fun Modifier.clickable(
     interactionSource: MutableInteractionSource? = null,
     onClick: () -> Unit,
 ): Modifier {
-    @OptIn(ExperimentalFoundationApi::class)
-    return if (ComposeFoundationFlags.isNonComposedClickableEnabled) {
-        this.then(
-            ClickableElement(
-                interactionSource = interactionSource,
-                indicationNodeFactory = null,
-                useLocalIndication = true,
-                enabled = enabled,
-                onClickLabel = onClickLabel,
-                role = role,
-                onClick = onClick,
-            )
+    return this.then(
+        ClickableElement(
+            interactionSource = interactionSource,
+            indicationNodeFactory = null,
+            useLocalIndication = true,
+            enabled = enabled,
+            onClickLabel = onClickLabel,
+            role = role,
+            onClick = onClick,
         )
-    } else {
-        composed(
-            inspectorInfo =
-                debugInspectorInfo {
-                    name = "clickable"
-                    properties["enabled"] = enabled
-                    properties["onClickLabel"] = onClickLabel
-                    properties["role"] = role
-                    properties["interactionSource"] = interactionSource
-                    properties["onClick"] = onClick
-                }
-        ) {
-            val localIndication = LocalIndication.current
-            val intSource =
-                interactionSource
-                    ?: if (localIndication is IndicationNodeFactory) {
-                        // We can fast path here as it will be created inside clickable lazily
-                        null
-                    } else {
-                        // We need an interaction source to pass between the indication modifier and
-                        // clickable, so
-                        // by creating here we avoid another composed down the line
-                        remember { MutableInteractionSource() }
-                    }
-            Modifier.clickable(
-                enabled = enabled,
-                onClickLabel = onClickLabel,
-                onClick = onClick,
-                role = role,
-                indication = localIndication,
-                interactionSource = intSource,
-            )
-        }
-    }
+    )
 }
 
 /**
@@ -468,63 +432,21 @@ fun Modifier.combinedClickable(
     interactionSource: MutableInteractionSource? = null,
     onClick: () -> Unit,
 ): Modifier {
-    @OptIn(ExperimentalFoundationApi::class)
-    return if (ComposeFoundationFlags.isNonComposedClickableEnabled) {
-        this.then(
-            CombinedClickableElement(
-                enabled = enabled,
-                onClickLabel = onClickLabel,
-                onLongClickLabel = onLongClickLabel,
-                onLongClick = onLongClick,
-                onDoubleClick = onDoubleClick,
-                onClick = onClick,
-                role = role,
-                interactionSource = interactionSource,
-                indicationNodeFactory = null,
-                useLocalIndication = true,
-                hapticFeedbackEnabled = hapticFeedbackEnabled,
-            )
+    return this.then(
+        CombinedClickableElement(
+            enabled = enabled,
+            onClickLabel = onClickLabel,
+            onLongClickLabel = onLongClickLabel,
+            onLongClick = onLongClick,
+            onDoubleClick = onDoubleClick,
+            onClick = onClick,
+            role = role,
+            interactionSource = interactionSource,
+            indicationNodeFactory = null,
+            useLocalIndication = true,
+            hapticFeedbackEnabled = hapticFeedbackEnabled,
         )
-    } else
-        composed(
-            inspectorInfo =
-                debugInspectorInfo {
-                    name = "combinedClickable"
-                    properties["enabled"] = enabled
-                    properties["onClickLabel"] = onClickLabel
-                    properties["role"] = role
-                    properties["onClick"] = onClick
-                    properties["onDoubleClick"] = onDoubleClick
-                    properties["onLongClick"] = onLongClick
-                    properties["onLongClickLabel"] = onLongClickLabel
-                    properties["hapticFeedbackEnabled"] = hapticFeedbackEnabled
-                }
-        ) {
-            val localIndication = LocalIndication.current
-            val intSource =
-                interactionSource
-                    ?: if (localIndication is IndicationNodeFactory) {
-                        // We can fast path here as it will be created inside clickable lazily
-                        null
-                    } else {
-                        // We need an interaction source to pass between the indication modifier and
-                        // clickable, so
-                        // by creating here we avoid another composed down the line
-                        remember { MutableInteractionSource() }
-                    }
-            Modifier.combinedClickable(
-                enabled = enabled,
-                onClickLabel = onClickLabel,
-                onLongClickLabel = onLongClickLabel,
-                onLongClick = onLongClick,
-                onDoubleClick = onDoubleClick,
-                onClick = onClick,
-                role = role,
-                indication = localIndication,
-                interactionSource = intSource,
-                hapticFeedbackEnabled = hapticFeedbackEnabled,
-            )
-        }
+    )
 }
 
 @Deprecated(message = "Maintained for binary compatibility", level = DeprecationLevel.HIDDEN)
@@ -1947,8 +1869,6 @@ private fun unsupportedIndicationExceptionMessage(indication: Indication): Strin
     return "clickable only supports IndicationNodeFactory instances provided to LocalIndication, " +
         "but Indication was provided instead. Either migrate the Indication implementation to " +
         "implement IndicationNodeFactory, or use the other clickable overload that takes an " +
-        "Indication parameter, and explicitly pass LocalIndication.current there. You can also " +
-        "use ComposeFoundationFlags.isNonComposedClickableEnabled to temporarily opt-out; note " +
-        "that this flag will be removed in a future release and is only intended to be a " +
-        "temporary migration aid. The Indication instance provided here was: $indication"
+        "Indication parameter, and explicitly pass LocalIndication.current there. The Indication" +
+        " instance provided here was: $indication"
 }

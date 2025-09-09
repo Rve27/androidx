@@ -4798,29 +4798,6 @@ class ClickableTest {
         }
     }
 
-    @OptIn(ExperimentalFoundationApi::class)
-    @Test
-    fun localIndication_indication_flagDisabled_stillSupported() {
-        try {
-            var created = false
-            val indication = TestIndication { created = true }
-            ComposeFoundationFlags.isNonComposedClickableEnabled = false
-            rule.setContent {
-                CompositionLocalProvider(LocalIndication provides indication) {
-                    Box(Modifier.padding(10.dp)) {
-                        BasicText(
-                            "ClickableText",
-                            modifier = Modifier.testTag("clickable").clickable {},
-                        )
-                    }
-                }
-            }
-            rule.runOnIdle { assertThat(created).isTrue() }
-        } finally {
-            ComposeFoundationFlags.isNonComposedClickableEnabled = true
-        }
-    }
-
     @Test
     fun localIndication_interactionSource_eagerlyCreated() {
         val interactionSource = MutableInteractionSource()
