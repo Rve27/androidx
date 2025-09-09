@@ -61,6 +61,9 @@ public object NavDisplay {
     /**
      * Function to be called on the [NavEntry.metadata] to notify the [NavDisplay] that the content
      * should be animated using the provided [ContentTransform].
+     *
+     * @param transitionSpec the [ContentTransform] to be used when adding to the backstack. If this
+     *   is null, the transition will fallback to the transition set on the [NavDisplay]
      */
     public fun transitionSpec(
         transitionSpec: AnimatedContentTransitionScope<*>.() -> ContentTransform?
@@ -69,6 +72,9 @@ public object NavDisplay {
     /**
      * Function to be called on the [NavEntry.metadata] to notify the [NavDisplay] that, when
      * popping from backstack, the content should be animated using the provided [ContentTransform].
+     *
+     * @param popTransitionSpec the [ContentTransform] to be used when popping from backstack. If
+     *   this is null, the transition will fallback to the transition set on the [NavDisplay]
      */
     public fun popTransitionSpec(
         popTransitionSpec: AnimatedContentTransitionScope<*>.() -> ContentTransform?
@@ -78,6 +84,10 @@ public object NavDisplay {
      * Function to be called on the [NavEntry.metadata] to notify the [NavDisplay] that, when
      * popping from backstack using a Predictive back gesture, the content should be animated using
      * the provided [ContentTransform].
+     *
+     * @param predictivePopTransitionSpec the [ContentTransform] to be used when popping from
+     *   backStack with predictive back gesture. If this is null, the transition will fallback to
+     *   the transition set on the [NavDisplay]
      */
     public fun predictivePopTransitionSpec(
         predictivePopTransitionSpec:
