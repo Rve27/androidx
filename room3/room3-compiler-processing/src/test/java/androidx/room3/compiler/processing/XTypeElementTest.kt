@@ -21,6 +21,8 @@ import androidx.kruth.assertWithMessage
 import androidx.room3.compiler.codegen.XClassName
 import androidx.room3.compiler.codegen.XTypeName
 import androidx.room3.compiler.codegen.asClassName
+import androidx.room3.compiler.processing.javac.JavacFieldElement
+import androidx.room3.compiler.processing.javac.JavacMethodElement
 import androidx.room3.compiler.processing.javac.JavacType
 import androidx.room3.compiler.processing.ksp.KspProcessingEnv
 import androidx.room3.compiler.processing.util.Source
@@ -1476,31 +1478,24 @@ class XTypeElementTest(private val isPreCompiled: Boolean) {
             assertThat(subClass.getAllMethods().jvmNames() - objectMethodNames)
                 .containsExactlyElementsIn(expectedMethodNames)
 
-            // TODO(b/443344468): Skip these checks in KAPT because isKotlinProperty* methods are
-            //  currently broken for companion objects.
-            if (invocation.isKsp) {
-                subject
-                    .getDeclaredMethods()
-                    .filter { it.isKotlinPropertyMethod() }
-                    .let {
-                        assertThat(it.jvmNames())
-                            .containsExactlyElementsIn(expectedPropertyMethodNames)
-                    }
-                subject
-                    .getDeclaredMethods()
-                    .filter { it.isKotlinPropertyGetter() }
-                    .let {
-                        assertThat(it.jvmNames())
-                            .containsExactlyElementsIn(expectedGetterMethodNames)
-                    }
-                subject
-                    .getDeclaredMethods()
-                    .filter { it.isKotlinPropertySetter() }
-                    .let {
-                        assertThat(it.jvmNames())
-                            .containsExactlyElementsIn(expectedSetterMethodNames)
-                    }
-            }
+            subject
+                .getDeclaredMethods()
+                .filter { it.isKotlinPropertyMethod() }
+                .let {
+                    assertThat(it.jvmNames()).containsExactlyElementsIn(expectedPropertyMethodNames)
+                }
+            subject
+                .getDeclaredMethods()
+                .filter { it.isKotlinPropertyGetter() }
+                .let {
+                    assertThat(it.jvmNames()).containsExactlyElementsIn(expectedGetterMethodNames)
+                }
+            subject
+                .getDeclaredMethods()
+                .filter { it.isKotlinPropertySetter() }
+                .let {
+                    assertThat(it.jvmNames()).containsExactlyElementsIn(expectedSetterMethodNames)
+                }
 
             // make sure everything coming from companion is marked as static
             subject.getDeclaredFields().forEach {
@@ -1524,6 +1519,29 @@ class XTypeElementTest(private val isPreCompiled: Boolean) {
                     it.asMemberOf(subClassType)
                 } catch (th: Throwable) {
                     throw AssertionError("Couldn't run asMemberOf for ${it.jvmName}")
+                }
+            }
+
+            // For KAPT, make sure we find the kotlin metadata for all fields and methods.
+            if (!invocation.isKsp) {
+                subject
+                    .getDeclaredFields()
+                    .filter { it.name != "Companion" }
+                    .forEach {
+                        assertWithMessage("Field: ${it.name}")
+                            .that((it as JavacFieldElement).kotlinMetadata)
+                            .isNotNull()
+                    }
+                subject.getDeclaredMethods().forEach {
+                    assertWithMessage("Method: ${it.jvmName}")
+                        .that((it as JavacMethodElement).kotlinMetadata)
+                        .isNotNull()
+                }
+                subject.companionObject!!.getDeclaredFields().isEmpty()
+                subject.companionObject!!.getDeclaredMethods().forEach {
+                    assertWithMessage("Companion method: ${it.jvmName}")
+                        .that((it as JavacMethodElement).kotlinMetadata)
+                        .isNotNull()
                 }
             }
         }

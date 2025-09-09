@@ -1203,13 +1203,7 @@ class XExecutableElementTest {
                         .isEqualTo(Int::class.asClassName())
                 }
                 element.getDeclaredMethodByJvmName("extStatic").let { method ->
-                    if (invocation.isKsp) {
-                        assertThat(method.isExtensionFunction()).isTrue()
-                    } else {
-                        // TODO(b/443344468): isExtensionFunction is broken in KAPT for companion
-                        //  objects.
-                        assertThat(method.isExtensionFunction()).isFalse()
-                    }
+                    assertThat(method.isExtensionFunction()).isTrue()
                     assertThat(method.isStatic()).isTrue()
                     if (!invocation.isKsp) {
                         // TODO(b/443342969): Calling `.type` on a parameter throws an exception
