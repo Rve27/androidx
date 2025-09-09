@@ -788,6 +788,8 @@ abstract class androidx.compose.foundation.pager/PagerState : androidx.compose.f
         open fun <get-lastScrolledBackward>(): kotlin/Boolean // androidx.compose.foundation.pager/PagerState.lastScrolledBackward.<get-lastScrolledBackward>|<get-lastScrolledBackward>(){}[0]
     open val lastScrolledForward // androidx.compose.foundation.pager/PagerState.lastScrolledForward|{}lastScrolledForward[0]
         open fun <get-lastScrolledForward>(): kotlin/Boolean // androidx.compose.foundation.pager/PagerState.lastScrolledForward.<get-lastScrolledForward>|<get-lastScrolledForward>(){}[0]
+    open val scrollIndicatorState // androidx.compose.foundation.pager/PagerState.scrollIndicatorState|{}scrollIndicatorState[0]
+        open fun <get-scrollIndicatorState>(): androidx.compose.foundation/ScrollIndicatorState? // androidx.compose.foundation.pager/PagerState.scrollIndicatorState.<get-scrollIndicatorState>|<get-scrollIndicatorState>(){}[0]
 
     final var canScrollBackward // androidx.compose.foundation.pager/PagerState.canScrollBackward|{}canScrollBackward[0]
         final fun <get-canScrollBackward>(): kotlin/Boolean // androidx.compose.foundation.pager/PagerState.canScrollBackward.<get-canScrollBackward>|<get-canScrollBackward>(){}[0]

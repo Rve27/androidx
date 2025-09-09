@@ -1798,6 +1798,7 @@ package androidx.compose.foundation.pager {
     property public boolean lastScrolledForward;
     property public final androidx.compose.foundation.pager.PagerLayoutInfo layoutInfo;
     property public abstract int pageCount;
+    property public androidx.compose.foundation.ScrollIndicatorState? scrollIndicatorState;
     property public final int settledPage;
     property public final int targetPage;
   }
