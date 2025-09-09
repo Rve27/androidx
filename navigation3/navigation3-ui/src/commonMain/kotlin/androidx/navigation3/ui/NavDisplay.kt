@@ -320,9 +320,15 @@ public fun <T : Any> NavDisplay(
         val peekScene =
             sceneStrategy.calculateSceneWithSinglePaneFallback(scene.previousEntries, onBack)
         val peekSceneKey = peekScene::class to peekScene.key
-        scenes[peekSceneKey] = peekScene
+        LaunchedEffect(peekSceneKey) {
+            // Insert only on key change to prevent recomposition loop.
+            scenes[peekSceneKey] = peekScene
+        }
         if (transitionState.currentState != peekSceneKey) {
-            LaunchedEffect(progress) { transitionState.seekTo(progress, peekSceneKey) }
+            LaunchedEffect(peekSceneKey, progress) {
+                // Retarget on key change; seek on progress updates.
+                transitionState.seekTo(progress, peekSceneKey)
+            }
         }
     } else {
         LaunchedEffect(sceneKey) {
