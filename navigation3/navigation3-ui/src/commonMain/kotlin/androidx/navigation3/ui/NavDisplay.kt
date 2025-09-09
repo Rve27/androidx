@@ -316,7 +316,9 @@ public fun <T : Any> NavDisplay(
             scenes[targetKey]!!.entries.last()
         }
 
-    if (inPredictiveBack) {
+    // TODO(b/441933162): During predictive back, only build a peek scene when there is a
+    //  previous entry. Empty previousEntries used to crash calculateScene(...).
+    if (inPredictiveBack && scene.previousEntries.isNotEmpty()) {
         val peekScene =
             sceneStrategy.calculateSceneWithSinglePaneFallback(scene.previousEntries, onBack)
         val peekSceneKey = peekScene::class to peekScene.key
