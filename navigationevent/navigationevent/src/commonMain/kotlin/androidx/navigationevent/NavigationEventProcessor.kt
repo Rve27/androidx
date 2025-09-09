@@ -17,9 +17,9 @@
 package androidx.navigationevent
 
 import androidx.annotation.MainThread
+import androidx.navigationevent.NavigationEventDispatcher.Companion.PRIORITY_DEFAULT
+import androidx.navigationevent.NavigationEventDispatcher.Companion.PRIORITY_OVERLAY
 import androidx.navigationevent.NavigationEventInfo.NotProvided
-import androidx.navigationevent.NavigationEventPriority.Companion.Default
-import androidx.navigationevent.NavigationEventPriority.Companion.Overlay
 import androidx.navigationevent.NavigationEventState.Idle
 import androidx.navigationevent.NavigationEventState.InProgress
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -196,9 +196,11 @@ internal class NavigationEventProcessor {
      * Adds a new [NavigationEventHandler] to receive navigation events, associating it with its
      * [NavigationEventDispatcher].
      *
-     * Handlers are placed into priority-specific queues ([Overlay] or [Default]) and within those
-     * queues, they are ordered in Last-In, First-Out (LIFO) manner. This ensures that the most
-     * recently added handler of a given priority is considered first.
+     * Handlers are placed into priority-specific queues
+     * ([NavigationEventDispatcher.PRIORITY_OVERLAY] or
+     * [NavigationEventDispatcher.PRIORITY_DEFAULT]) and within those queues, they are ordered in
+     * Last-In, First-Out (LIFO) manner. This ensures that the most recently added handler of a
+     * given priority is considered first.
      *
      * All handlers are invoked on the main thread. To stop receiving events, a handler must be
      * removed via [NavigationEventHandler.remove].
@@ -207,7 +209,7 @@ internal class NavigationEventProcessor {
      *   link is stored on the handler itself to enable self-removal and state tracking.
      * @param handler The handler instance to be added.
      * @param priority The priority of the handler, determining its invocation order relative to
-     *   others. See [NavigationEventPriority].
+     *   others. See [NavigationEventDispatcher.Priority].
      * @throws IllegalArgumentException if the given handler is already registered with a different
      *   dispatcher.
      */
@@ -216,7 +218,7 @@ internal class NavigationEventProcessor {
     fun addHandler(
         dispatcher: NavigationEventDispatcher,
         handler: NavigationEventHandler<*>,
-        priority: NavigationEventPriority = Default,
+        @NavigationEventDispatcher.Priority priority: Int = PRIORITY_DEFAULT,
     ) {
         // Enforce that a handler is not already registered with another dispatcher.
         require(handler.dispatcher == null) {
@@ -225,8 +227,8 @@ internal class NavigationEventProcessor {
 
         // Add to the front of the appropriate queue to achieve LIFO ordering.
         when (priority) {
-            Overlay -> overlayHandlers.addFirst(handler)
-            Default -> defaultHandler.addFirst(handler)
+            PRIORITY_OVERLAY -> overlayHandlers.addFirst(handler)
+            PRIORITY_DEFAULT -> defaultHandler.addFirst(handler)
         }
 
         // Store the dispatcher reference on the handler for self-management and internal tracking.

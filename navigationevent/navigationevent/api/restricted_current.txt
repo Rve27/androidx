@@ -34,7 +34,6 @@ package androidx.navigationevent {
     ctor public NavigationEventDispatcher(androidx.navigationevent.NavigationEventDispatcher parent);
     ctor public NavigationEventDispatcher(kotlin.jvm.functions.Function0<kotlin.Unit> fallbackOnBackPressed);
     method @MainThread public void addHandler(androidx.navigationevent.NavigationEventHandler<? extends java.lang.Object?> handler);
-    method @KotlinOnly @MainThread public void addHandler(androidx.navigationevent.NavigationEventHandler<? extends java.lang.Object?> handler, optional androidx.navigationevent.NavigationEventPriority priority);
     method @MainThread public void addHandler(androidx.navigationevent.NavigationEventHandler<? extends java.lang.Object?> handler, optional int priority);
     method @MainThread public void addInput(androidx.navigationevent.NavigationEventInput input);
     method @MainThread public void dispose();
@@ -46,6 +45,14 @@ package androidx.navigationevent {
     method public void setEnabled(boolean);
     property public boolean isEnabled;
     property public kotlinx.coroutines.flow.StateFlow<androidx.navigationevent.NavigationEventState<androidx.navigationevent.NavigationEventInfo>> state;
+    field public static final androidx.navigationevent.NavigationEventDispatcher.Companion Companion;
+    field public static final int PRIORITY_DEFAULT = 1; // 0x1
+    field public static final int PRIORITY_OVERLAY = 0; // 0x0
+  }
+
+  public static final class NavigationEventDispatcher.Companion {
+    property public static int PRIORITY_DEFAULT;
+    property public static int PRIORITY_OVERLAY;
   }
 
   public interface NavigationEventDispatcherOwner {
@@ -96,21 +103,6 @@ package androidx.navigationevent {
     method @EmptySuper @MainThread protected void onAdded(androidx.navigationevent.NavigationEventDispatcher dispatcher);
     method @EmptySuper @MainThread protected void onHasEnabledHandlerChanged(boolean hasEnabledHandler);
     method @EmptySuper @MainThread protected void onRemoved();
-  }
-
-  @kotlin.jvm.JvmInline public final value class NavigationEventPriority {
-    method @BytecodeOnly public static androidx.navigationevent.NavigationEventPriority! box-impl(int);
-    method @BytecodeOnly public static int getDefault();
-    method @BytecodeOnly public static int getOverlay();
-    method @BytecodeOnly public int unbox-impl();
-    field public static final androidx.navigationevent.NavigationEventPriority.Companion Companion;
-  }
-
-  public static final class NavigationEventPriority.Companion {
-    method public int getDefault();
-    method public int getOverlay();
-    property public static androidx.navigationevent.NavigationEventPriority Default;
-    property public static androidx.navigationevent.NavigationEventPriority Overlay;
   }
 
   public abstract sealed class NavigationEventState<T extends androidx.navigationevent.NavigationEventInfo> {

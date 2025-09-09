@@ -16,12 +16,11 @@
 
 package androidx.navigationevent
 
+import androidx.annotation.IntDef
 import androidx.annotation.MainThread
-import androidx.navigationevent.NavigationEventPriority.Companion.Default
-import androidx.navigationevent.NavigationEventPriority.Companion.Overlay
+import androidx.annotation.RestrictTo
 import androidx.navigationevent.NavigationEventState.Idle
 import androidx.navigationevent.NavigationEventState.InProgress
-import kotlin.jvm.JvmName
 import kotlin.jvm.JvmOverloads
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
@@ -101,6 +100,26 @@ private constructor(
     public constructor(
         parent: NavigationEventDispatcher
     ) : this(parent = parent, fallbackOnBackPressed = null)
+
+    /**
+     * Defines priorities when adding a [NavigationEventHandler] to a
+     * [androidx.navigationevent.NavigationEventDispatcher].
+     */
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    @Retention(AnnotationRetention.SOURCE)
+    @IntDef(PRIORITY_OVERLAY, PRIORITY_DEFAULT)
+    public annotation class Priority
+
+    public companion object {
+        /**
+         * Priority level of [NavigationEventHandler]s for overlays such as menus and navigation
+         * drawers that should receive event dispatch before non-overlays.
+         */
+        public const val PRIORITY_OVERLAY: Int = 0
+
+        /** Default priority level of [NavigationEventHandler]s. */
+        public const val PRIORITY_DEFAULT: Int = 1
+    }
 
     /**
      * Returns `true` if this dispatcher is in a terminal state and can no longer be used.
@@ -262,27 +281,27 @@ private constructor(
     /**
      * Adds a new [NavigationEventHandler] to receive navigation events.
      *
-     * **Handlers are invoked based on [priority], and then by recency.** All [Overlay] handlers are
-     * called before any [Default] handlers. Within each priority group, handlers are invoked in a
-     * Last-In, First-Out (LIFO) order—the most recently added handler is called first.
+     * **Handlers are invoked based on [priority], and then by recency.** All [PRIORITY_OVERLAY]
+     * handlers are called before any [PRIORITY_DEFAULT] handlers. Within each priority group,
+     * handlers are invoked in a Last-In, First-Out (LIFO) order—the most recently added handler is
+     * called first.
      *
      * All handlers are invoked on the main thread. To stop receiving events, a handler must be
      * removed via [NavigationEventHandler.remove].
      *
      * @param handler The handler instance to be added.
      * @param priority The priority of the handler, determining its invocation order relative to
-     *   others. See [NavigationEventPriority].
+     *   others. See [NavigationEventDispatcher.Priority].
      * @throws IllegalArgumentException if the given handler is already registered with a different
      *   dispatcher.
      * @throws IllegalStateException if the dispatcher has already been disposed.
      */
     @Suppress("PairedRegistration") // handler is removed via `NavigationEventHandler.remove()`
-    @JvmName("addHandler") // Disable name mangling for Java
     @MainThread
     @JvmOverloads
     public fun addHandler(
         handler: NavigationEventHandler<*>,
-        priority: NavigationEventPriority = Default,
+        @Priority priority: Int = PRIORITY_DEFAULT,
     ) {
         checkInvariants()
 
