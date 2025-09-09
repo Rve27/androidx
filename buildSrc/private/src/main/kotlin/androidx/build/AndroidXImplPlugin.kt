@@ -121,6 +121,7 @@ import org.gradle.plugin.devel.tasks.ValidatePlugins
 import org.gradle.process.CommandLineArgumentProvider
 import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
@@ -565,6 +566,17 @@ abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
                 } else {
                     ExplicitApiMode.Disabled
                 }
+            // TODO(b/443080559): Remove when built-in Kotlin adds kotlin-test-junit automatically
+            if (plugin is KotlinBaseApiPlugin) {
+                (kotlinExtension as KotlinAndroidProjectExtension)
+                    .target
+                    .compilations
+                    .configureEach { compilation ->
+                        if (!compilation.name.contains("test", ignoreCase = true))
+                            return@configureEach
+                        compilation.dependencies { implementation(kotlin("test-junit")) }
+                    }
+            }
         }
     }
 
