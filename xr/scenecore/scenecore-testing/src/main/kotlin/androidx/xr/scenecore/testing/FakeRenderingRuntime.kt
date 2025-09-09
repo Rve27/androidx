@@ -42,11 +42,10 @@ import com.google.common.util.concurrent.Futures.immediateFuture
 import com.google.common.util.concurrent.ListenableFuture
 
 /**
- * Test-only implementation of [androidx.xr.scenecore.internal.RenderingRuntime].
+ * Test-only implementation of [RenderingRuntime].
  *
  * @param entityFactory The factory used to create rendering-related entities. This is typically the
- *   [androidx.xr.scenecore.internal.SceneRuntime] instance, which must also implement
- *   [androidx.xr.scenecore.internal.RenderingEntityFactory].
+ *   [SceneRuntime] instance, which must also implement [RenderingEntityFactory].
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public class FakeRenderingRuntime(private val entityFactory: RenderingEntityFactory) :
@@ -104,8 +103,8 @@ public class FakeRenderingRuntime(private val entityFactory: RenderingEntityFact
     /**
      * For test purposes only.
      *
-     * A fake implementation of [androidx.xr.scenecore.internal.MaterialResource] used to simulate a
-     * water material within the test environment.
+     * A fake implementation of [MaterialResource] used to simulate a water material within the test
+     * senvironment.
      *
      * <p>Instances of this class are created by [createWaterMaterial] and can be accessed for
      * verification via the [createdWaterMaterials] list. Tests can inspect the public properties of
@@ -142,16 +141,16 @@ public class FakeRenderingRuntime(private val entityFactory: RenderingEntityFact
     /**
      * For test purposes only.
      *
-     * A fake implementation of [androidx.xr.scenecore.internal.MaterialResource] used to simulate a
-     * Khronos PBR material within the test environment.
+     * A fake implementation of [MaterialResource] used to simulate a Khronos PBR material within
+     * the test environment.
      *
      * <p>Instances of this class are created by [createKhronosPbrMaterial]. Tests can inspect the
      * public properties of this class (e.g., [baseColorTexture], [metallicFactor]) to confirm that
      * the code under test correctly configures the material's attributes according to the provided
      * specification.
      *
-     * @param spec The [androidx.xr.scenecore.internal.KhronosPbrMaterialSpec] provided during
-     *   creation, which defines the initial configuration of the material.
+     * @param spec The [KhronosPbrMaterialSpec] provided during creation, which defines the initial
+     *   configuration of the material.
      */
     public class FakeKhronosPbrMaterial(public val spec: KhronosPbrMaterialSpec) :
         MaterialResource {

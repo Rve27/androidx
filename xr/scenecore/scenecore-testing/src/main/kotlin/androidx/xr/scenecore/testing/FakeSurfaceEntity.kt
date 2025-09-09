@@ -32,9 +32,9 @@ import androidx.xr.scenecore.internal.TextureResource
  *
  * Interface for a spatialized Entity which manages an Android Surface. Applications can render to
  * this Surface in various ways, such as via MediaPlayer, ExoPlayer, or custom rendering. The
- * Surface content is texture mapped to the geometric shape defined by the [CanvasShape]. The
- * application can render stereoscopic content into the Surface and specify how it is routed to the
- * User's eyes for stereo viewing using the [stereoMode] property.
+ * Surface content is texture mapped to the geometric shape defined by the [Shape]. The application
+ * can render stereoscopic content into the Surface and specify how it is routed to the User's eyes
+ * for stereo viewing using the [stereoMode] property.
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public class FakeSurfaceEntity() : FakeEntity(), SurfaceEntity {
@@ -151,8 +151,8 @@ public class FakeSurfaceEntity() : FakeEntity(), SurfaceEntity {
      * Indicates whether explicit color information has been set for the surface content. If
      * `false`, the runtime should signal the backend to use its best effort color correction and
      * tonemapping. If `true`, the runtime should inform the backend to use the values specified in
-     * [colorSpace], [colorTransfer], [colorRange], and [maxCLL] for color correction and
-     * tonemapping of the surface content.
+     * [colorSpace], [colorTransfer], [colorRange], and [maxContentLightLevel] for color correction
+     * and tonemapping of the surface content.
      *
      * This property is typically managed by the `setContentColorMetadata` and
      * `resetContentColorMetadata` methods.
@@ -209,7 +209,7 @@ public class FakeSurfaceEntity() : FakeEntity(), SurfaceEntity {
      *   [androidx.xr.scenecore.internal.SurfaceEntity.ColorTransfer.Companion.SRGB]).
      * @param colorRange The runtime color range value (e.g.,
      *   [androidx.xr.scenecore.internal.SurfaceEntity.ColorRange.Companion.FULL]).
-     * @param maxCLL The maximum content light level in nits.
+     * @param maxContentLightLevel The maximum content light level in nits.
      */
     override fun setContentColorMetadata(
         colorSpace: Int,
@@ -226,7 +226,7 @@ public class FakeSurfaceEntity() : FakeEntity(), SurfaceEntity {
     /**
      * Resets the color information to the runtime's default handling. This will set
      * [contentColorMetadataSet] to `false` and typically involves reverting [colorSpace],
-     * [colorTransfer], [colorRange], and [maxCLL] to their default runtime values.
+     * [colorTransfer], [colorRange], and [maxContentLightLevel] to their default runtime values.
      */
     override fun resetContentColorMetadata() {
         _colorSpace = SurfaceEntity.ColorSpace.BT709
