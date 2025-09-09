@@ -267,7 +267,9 @@ class BanInappropriateExperimentalUsage : Detector(), Detector.UastScanner {
         val findJarPath = findJarPath(element)
         return if (findJarPath != null) {
             val file = File(findJarPath)
-            getLibrary(file) ?: getMavenCoordinatesFromPath(file.path)
+            getLibrary(file)
+                ?: getMavenCoordinatesFromPath(file.path)
+                ?: getMavenCoordinatesFromPrebuiltsPath(file.path)
         } else {
             // Sometimes, dependencies are from class files not contained in jars. Handle this case
             // as well.
@@ -398,6 +400,25 @@ class BanInappropriateExperimentalUsage : Detector(), Detector.UastScanner {
                 }
 
             return DefaultLintModelMavenName(groupId, artifactId, version)
+        }
+
+        /**
+         * Work around b/443957693: lint should have been able to find the coordinates for a
+         * prebuilt jar, but can't when the project isn't android.
+         *
+         * Find the maven coordinates of a jar from prebuilts/androidx/internal.
+         */
+        internal fun getMavenCoordinatesFromPrebuiltsPath(filePath: String): LintModelMavenName? {
+            return if (filePath.contains("prebuilts/androidx/internal")) {
+                val coordinateParts =
+                    filePath.substringAfter("prebuilts/androidx/internal/").split("/")
+                val groupId = coordinateParts.subList(0, coordinateParts.size - 3).joinToString(".")
+                val artifactId = coordinateParts[coordinateParts.size - 3]
+                val version = coordinateParts[coordinateParts.size - 2]
+                DefaultLintModelMavenName(groupId, artifactId, version)
+            } else {
+                null
+            }
         }
     }
 }

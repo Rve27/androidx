@@ -19,6 +19,7 @@
 package androidx.build.lint
 
 import androidx.build.lint.BanInappropriateExperimentalUsage.Companion.getMavenCoordinatesFromPath
+import androidx.build.lint.BanInappropriateExperimentalUsage.Companion.getMavenCoordinatesFromPrebuiltsPath
 import androidx.build.lint.BanInappropriateExperimentalUsage.Companion.isAnnotationAlwaysAllowed
 import androidx.build.lint.Stubs.Companion.JetpackOptIn
 import androidx.build.lint.Stubs.Companion.JetpackRequiresOptIn
@@ -108,6 +109,27 @@ class BanInappropriateExperimentalUsageTest :
 
         val invalid = getMavenCoordinatesFromPath("/foo/bar/baz")
         assertNull(invalid)
+    }
+
+    @Test
+    fun `getMavenCoordinatesFromPrebuiltsPath should return correct Maven coordinates`() {
+        val paging =
+            getMavenCoordinatesFromPrebuiltsPath(
+                "/path/to/checkout/prebuilts/androidx/internal/androidx/paging/paging-common/3.2.0-alpha01/paging-common-3.2.0-alpha01.jar"
+            )
+        assertNotNull(paging)
+        assertEquals("androidx.paging", paging!!.groupId)
+        assertEquals("paging-common", paging.artifactId)
+        assertEquals("3.2.0-alpha01", paging.version)
+
+        val uiTest =
+            getMavenCoordinatesFromPrebuiltsPath(
+                "/path/to/checkout/prebuilts/androidx/internal/androidx/compose/ui/ui-test/1.8.0-beta01/ui-test-jvmstubs-1.8.0-beta01.jar"
+            )
+        assertNotNull(uiTest)
+        assertEquals("androidx.compose.ui", uiTest!!.groupId)
+        assertEquals("ui-test", uiTest.artifactId)
+        assertEquals("1.8.0-beta01", uiTest.version)
     }
 
     @Test
