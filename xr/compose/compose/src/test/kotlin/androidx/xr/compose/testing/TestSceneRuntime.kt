@@ -17,11 +17,14 @@
 package androidx.xr.compose.testing
 
 import android.app.Activity
+import android.content.pm.PackageManager
+import android.os.Build
 import androidx.xr.arcore.testing.FakePerceptionRuntimeFactory
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.math.BoundingBox
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Vector3
+import androidx.xr.scenecore.impl.extensions.XrExtensionsProvider
 import androidx.xr.scenecore.runtime.ActivityPose
 import androidx.xr.scenecore.runtime.ActivitySpace
 import androidx.xr.scenecore.runtime.CameraViewActivityPose
@@ -33,11 +36,19 @@ import androidx.xr.scenecore.runtime.PixelDimensions
 import androidx.xr.scenecore.runtime.RenderingEntityFactory
 import androidx.xr.scenecore.runtime.SceneRuntime
 import androidx.xr.scenecore.testing.FakeRenderingRuntime
+import androidx.xr.scenecore.testing.FakeSceneRuntimeFactory
 import androidx.xr.scenecore.testing.FakeScheduledExecutorService
+import com.android.extensions.xr.ShadowConfig
 import com.google.common.util.concurrent.ListenableFuture
 import java.lang.reflect.Method
 import java.util.concurrent.Executor
 import java.util.concurrent.ScheduledExecutorService
+
+private object SubspaceAndroidComposeTestRuleConstants {
+    const val DEFAULT_DP_PER_METER = 1151.856f
+
+    const val USE_REAL_RUNTIME = "androidx.xr.compose.testing.USE_REAL_RUNTIME"
+}
 
 /**
  * Create a fake [Session] for testing.
@@ -72,22 +83,69 @@ fun createFakeSession(
  *
  * @param activity The [Activity] to use for the [androidx.xr.scenecore.runtime.SceneRuntime].
  */
-fun createFakeRuntime(activity: Activity): SceneRuntime {
-    // TODO (b/442359966): Use FakeSceneRuntime instead.
-    val spatialSceneRuntimeClass =
-        Class.forName("androidx.xr.scenecore.spatial.core.SpatialSceneRuntime")
-    val createMethod: Method? =
-        spatialSceneRuntimeClass.getDeclaredMethod(
-            "create",
-            Activity::class.java,
-            ScheduledExecutorService::class.java,
-        )
+fun createFakeRuntime(
+    activity: Activity,
+    defaultDpPerMeter: Float = SubspaceAndroidComposeTestRuleConstants.DEFAULT_DP_PER_METER,
+): SceneRuntime {
+    if (shouldUseRealRuntime(activity)) {
+        ShadowConfig.extract(XrExtensionsProvider.getXrExtensions()!!.config!!)
+            .setDefaultDpPerMeter(defaultDpPerMeter)
 
-    createMethod!!.isAccessible = true
-    val sceneRuntime =
-        createMethod.invoke(null, activity, FakeScheduledExecutorService()) as SceneRuntime
-    return sceneRuntime
+        // Check version to pass lint rule, "BanUncheckedReflection".
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N) {
+            try {
+                // TODO (b/442359966): Use FakeSceneRuntime instead.
+                val spatialSceneRuntimeClass =
+                    Class.forName("androidx.xr.scenecore.spatial.core.SpatialSceneRuntime")
+
+                val createMethod: Method? =
+                    spatialSceneRuntimeClass.getDeclaredMethod(
+                        "create",
+                        Activity::class.java,
+                        ScheduledExecutorService::class.java,
+                    )
+                createMethod!!.isAccessible = true
+                return createMethod.invoke(null, activity, FakeScheduledExecutorService())
+                    as SceneRuntime
+            } catch (e: Exception) {
+                throw e
+            }
+        } else {
+            throw IllegalStateException(
+                "This method is not available on this SDK version" + Build.VERSION.SDK_INT
+            )
+        }
+    } else {
+        // TODO(b/447211302) Remove once direct dependency on XrExtensions in Compose XR is removed.
+        ShadowConfig.extract(XrExtensionsProvider.getXrExtensions()!!.config!!)
+            .setDefaultDpPerMeter(defaultDpPerMeter)
+
+        return FakeSceneRuntimeFactory().create(activity).apply {
+            deviceDpPerMeter = defaultDpPerMeter
+        }
+    }
 }
+
+/**
+ * Check the AndroidManifest for a <meta-data> indicating that the real SceneRuntimeImpl should be
+ * used instead of the FakeSceneRuntime. By default, we will use the fake adapter.
+ */
+private fun shouldUseRealRuntime(activity: Activity) =
+    activity.packageManager
+        .getActivityInfo(activity.componentName, PackageManager.GET_META_DATA)
+        .metaData
+        ?.run {
+            containsKey(SubspaceAndroidComposeTestRuleConstants.USE_REAL_RUNTIME) &&
+                getBoolean(SubspaceAndroidComposeTestRuleConstants.USE_REAL_RUNTIME)
+        }
+        ?: activity.packageManager
+            .getApplicationInfo(activity.packageName, PackageManager.GET_META_DATA)
+            .metaData
+            ?.run {
+                containsKey(SubspaceAndroidComposeTestRuleConstants.USE_REAL_RUNTIME) &&
+                    getBoolean(SubspaceAndroidComposeTestRuleConstants.USE_REAL_RUNTIME)
+            }
+        ?: false
 
 /**
  * A test implementation of [androidx.xr.scenecore.runtime.SceneRuntime] that allows for setting
