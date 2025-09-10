@@ -785,15 +785,15 @@ public abstract class CameraController {
      *
      * <p>If {@link ImageCapture#FLASH_MODE_SCREEN} is set, a valid {@link android.view.Window}
      * instance must be set to a {@link PreviewView} or {@link ScreenFlashView} which this
-     * controller is set to. Trying to use {@link ImageCapture#FLASH_MODE_SCREEN} with a
-     * non-front camera or without setting a non-null window will be no-op. While switching the
+     * controller is set to. Trying to use {@link ImageCapture#FLASH_MODE_SCREEN} with a non-front
+     * camera or without setting a non-null window will throw an exception. While switching the
      * camera, it is the application's responsibility to change flash mode to the desired one if
      * it leads to a no-op case (e.g. switching to rear camera while {@code FLASH_MODE_SCREEN} is
      * still set). Otherwise, {@code FLASH_MODE_OFF} will be set.
      *
      * @param flashMode the flash mode for {@link ImageCapture}.
      * @throws IllegalArgumentException If flash mode is invalid or
-     * {@link ImageCapture#FLASH_MODE_SCREEN} is used without a front camera.
+     * {@link ImageCapture#FLASH_MODE_SCREEN} is used without a front camera or a non-null window.
      * @see PreviewView#setScreenFlashWindow(Window)
      * @see ScreenFlashView#setScreenFlashWindow(Window)
      */
