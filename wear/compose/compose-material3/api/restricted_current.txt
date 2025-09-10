@@ -18,9 +18,9 @@ package androidx.wear.compose.material3 {
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.foundation.layout.PaddingValues contentPadding(androidx.compose.runtime.Composer?, int);
     method @androidx.compose.runtime.Composable public androidx.compose.foundation.layout.PaddingValues contentWithIconPadding();
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.foundation.layout.PaddingValues contentWithIconPadding(androidx.compose.runtime.Composer?, int);
-    method public kotlin.jvm.functions.Function1<androidx.compose.foundation.layout.RowScope,kotlin.Unit> getConfirmIcon();
-    method public kotlin.jvm.functions.Function1<androidx.compose.foundation.layout.RowScope,kotlin.Unit> getDismissIcon();
-    method public androidx.compose.foundation.layout.Arrangement.Vertical getVerticalArrangement();
+    method @InaccessibleFromKotlin public kotlin.jvm.functions.Function1<androidx.compose.foundation.layout.RowScope,kotlin.Unit> getConfirmIcon();
+    method @InaccessibleFromKotlin public kotlin.jvm.functions.Function1<androidx.compose.foundation.layout.RowScope,kotlin.Unit> getDismissIcon();
+    method @InaccessibleFromKotlin public androidx.compose.foundation.layout.Arrangement.Vertical getVerticalArrangement();
     property public kotlin.jvm.functions.Function1<androidx.compose.foundation.layout.RowScope,kotlin.Unit> ConfirmIcon;
     property public kotlin.jvm.functions.Function1<androidx.compose.foundation.layout.RowScope,kotlin.Unit> DismissIcon;
     property public androidx.compose.foundation.layout.Arrangement.Vertical VerticalArrangement;
@@ -56,7 +56,7 @@ package androidx.wear.compose.material3 {
   }
 
   @RequiresApi(31) public final class AnimatedTextDefaults {
-    method public int getCacheSize();
+    method @InaccessibleFromKotlin public int getCacheSize();
     property public int CacheSize;
     field public static final androidx.wear.compose.material3.AnimatedTextDefaults INSTANCE;
   }
@@ -81,8 +81,8 @@ package androidx.wear.compose.material3 {
   public final class ArcProgressIndicatorDefaults {
     method @KotlinOnly public androidx.compose.ui.unit.Dp calculateRecommendedGapSize(androidx.compose.ui.unit.Dp strokeWidth);
     method @BytecodeOnly public float calculateRecommendedGapSize-5rwHm24(float);
-    method public float getIndeterminateEndAngle();
-    method public float getIndeterminateStartAngle();
+    method @InaccessibleFromKotlin public float getIndeterminateEndAngle();
+    method @InaccessibleFromKotlin public float getIndeterminateStartAngle();
     method @BytecodeOnly public float getIndeterminateStrokeWidth-D9Ej5fM();
     method @BytecodeOnly @androidx.compose.runtime.Composable public float getRecommendedIndeterminateDiameter(androidx.compose.runtime.Composer?, int);
     property public float IndeterminateEndAngle;
@@ -148,17 +148,17 @@ package androidx.wear.compose.material3 {
     method @BytecodeOnly public float getButtonHorizontalPadding-D9Ej5fM();
     method @BytecodeOnly public float getButtonLargeIconStartPadding-D9Ej5fM();
     method @BytecodeOnly public float getButtonVerticalPadding-D9Ej5fM();
-    method public androidx.compose.foundation.layout.PaddingValues getButtonWithExtraLargeIconContentPadding();
-    method public androidx.compose.foundation.layout.PaddingValues getButtonWithLargeIconContentPadding();
-    method public androidx.compose.foundation.layout.PaddingValues getCompactButtonContentPadding();
+    method @InaccessibleFromKotlin public androidx.compose.foundation.layout.PaddingValues getButtonWithExtraLargeIconContentPadding();
+    method @InaccessibleFromKotlin public androidx.compose.foundation.layout.PaddingValues getButtonWithLargeIconContentPadding();
+    method @InaccessibleFromKotlin public androidx.compose.foundation.layout.PaddingValues getCompactButtonContentPadding();
     method @BytecodeOnly public float getCompactButtonHeight-D9Ej5fM();
     method @BytecodeOnly public float getCompactButtonHorizontalPadding-D9Ej5fM();
-    method @androidx.compose.runtime.Composable public androidx.compose.foundation.shape.RoundedCornerShape getCompactButtonShape();
+    method @InaccessibleFromKotlin @androidx.compose.runtime.Composable public androidx.compose.foundation.shape.RoundedCornerShape getCompactButtonShape();
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.foundation.shape.RoundedCornerShape getCompactButtonShape(androidx.compose.runtime.Composer?, int);
-    method public androidx.compose.foundation.layout.PaddingValues getCompactButtonTapTargetPadding();
+    method @InaccessibleFromKotlin public androidx.compose.foundation.layout.PaddingValues getCompactButtonTapTargetPadding();
     method @BytecodeOnly public float getCompactButtonVerticalPadding-D9Ej5fM();
-    method public androidx.compose.foundation.layout.PaddingValues getContentPadding();
-    method public float getDisabledContainerAlpha();
+    method @InaccessibleFromKotlin public androidx.compose.foundation.layout.PaddingValues getContentPadding();
+    method @InaccessibleFromKotlin public float getDisabledContainerAlpha();
     method @BytecodeOnly public float getExtraLargeIconSize-D9Ej5fM();
     method @BytecodeOnly public float getExtraSmallIconSize-D9Ej5fM();
     method @BytecodeOnly public float getHeight-D9Ej5fM();
@@ -167,7 +167,7 @@ package androidx.wear.compose.material3 {
     method @BytecodeOnly public float getLargeIconSize-D9Ej5fM();
     method @BytecodeOnly @androidx.compose.runtime.Composable public long getScrimGradientEndColor(androidx.compose.runtime.Composer?, int);
     method @BytecodeOnly @androidx.compose.runtime.Composable public long getScrimGradientStartColor(androidx.compose.runtime.Composer?, int);
-    method @androidx.compose.runtime.Composable public androidx.compose.foundation.shape.RoundedCornerShape getShape();
+    method @InaccessibleFromKotlin @androidx.compose.runtime.Composable public androidx.compose.foundation.shape.RoundedCornerShape getShape();
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.foundation.shape.RoundedCornerShape getShape(androidx.compose.runtime.Composer?, int);
     method @BytecodeOnly public float getSmallIconSize-D9Ej5fM();
     method @KotlinOnly @androidx.compose.runtime.Composable public androidx.compose.foundation.BorderStroke outlinedButtonBorder(boolean enabled, optional androidx.compose.ui.graphics.Color borderColor, optional androidx.compose.ui.graphics.Color disabledBorderColor, optional androidx.compose.ui.unit.Dp borderWidth);
@@ -285,12 +285,12 @@ package androidx.wear.compose.material3 {
     method @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.painter.Painter containerPainter(androidx.compose.ui.graphics.painter.Painter image, optional androidx.compose.ui.graphics.Brush scrim, optional boolean sizeToIntrinsics, optional androidx.compose.ui.Alignment alignment, optional androidx.compose.ui.layout.ContentScale contentScale, optional float alpha);
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.painter.Painter containerPainter(androidx.compose.ui.graphics.painter.Painter, androidx.compose.ui.graphics.Brush?, boolean, androidx.compose.ui.Alignment?, androidx.compose.ui.layout.ContentScale?, float, androidx.compose.runtime.Composer?, int, int);
     method @BytecodeOnly public float getAppImageSize-D9Ej5fM();
-    method public androidx.compose.foundation.layout.PaddingValues getCardWithContainerPainterContentPadding();
-    method public androidx.compose.foundation.layout.PaddingValues getContentPadding();
+    method @InaccessibleFromKotlin public androidx.compose.foundation.layout.PaddingValues getCardWithContainerPainterContentPadding();
+    method @InaccessibleFromKotlin public androidx.compose.foundation.layout.PaddingValues getContentPadding();
     method @BytecodeOnly public float getHeight-D9Ej5fM();
     method @BytecodeOnly public float getImageBottomPadding-D9Ej5fM();
     method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public long getScrimColor(androidx.compose.runtime.Composer?, int);
-    method @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.Shape getShape();
+    method @InaccessibleFromKotlin @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.Shape getShape();
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.Shape getShape(androidx.compose.runtime.Composer?, int);
     method @KotlinOnly @androidx.compose.runtime.Composable public androidx.compose.foundation.BorderStroke outlinedCardBorder(optional androidx.compose.ui.graphics.Color outlineColor, optional androidx.compose.ui.unit.Dp borderWidth);
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.foundation.BorderStroke outlinedCardBorder-iPRSM58(long, float, androidx.compose.runtime.Composer?, int, int);
@@ -381,10 +381,10 @@ package androidx.wear.compose.material3 {
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.wear.compose.material3.CheckboxButtonColors checkboxButtonColors(androidx.compose.runtime.Composer?, int);
     method @KotlinOnly @androidx.compose.runtime.Composable public androidx.wear.compose.material3.CheckboxButtonColors checkboxButtonColors(optional androidx.compose.ui.graphics.Color checkedContainerColor, optional androidx.compose.ui.graphics.Color checkedContentColor, optional androidx.compose.ui.graphics.Color checkedSecondaryContentColor, optional androidx.compose.ui.graphics.Color checkedIconColor, optional androidx.compose.ui.graphics.Color checkedBoxColor, optional androidx.compose.ui.graphics.Color checkedCheckmarkColor, optional androidx.compose.ui.graphics.Color uncheckedContainerColor, optional androidx.compose.ui.graphics.Color uncheckedContentColor, optional androidx.compose.ui.graphics.Color uncheckedSecondaryContentColor, optional androidx.compose.ui.graphics.Color uncheckedIconColor, optional androidx.compose.ui.graphics.Color uncheckedBoxColor, optional androidx.compose.ui.graphics.Color disabledCheckedContainerColor, optional androidx.compose.ui.graphics.Color disabledCheckedContentColor, optional androidx.compose.ui.graphics.Color disabledCheckedSecondaryContentColor, optional androidx.compose.ui.graphics.Color disabledCheckedIconColor, optional androidx.compose.ui.graphics.Color disabledCheckedBoxColor, optional androidx.compose.ui.graphics.Color disabledCheckedCheckmarkColor, optional androidx.compose.ui.graphics.Color disabledUncheckedContainerColor, optional androidx.compose.ui.graphics.Color disabledUncheckedContentColor, optional androidx.compose.ui.graphics.Color disabledUncheckedSecondaryContentColor, optional androidx.compose.ui.graphics.Color disabledUncheckedIconColor, optional androidx.compose.ui.graphics.Color disabledUncheckedBoxColor);
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.wear.compose.material3.CheckboxButtonColors checkboxButtonColors-DlUQjxs(long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, androidx.compose.runtime.Composer?, int, int, int, int);
-    method @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.Shape getCheckboxButtonShape();
+    method @InaccessibleFromKotlin @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.Shape getCheckboxButtonShape();
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.Shape getCheckboxButtonShape(androidx.compose.runtime.Composer?, int);
-    method public androidx.compose.foundation.layout.PaddingValues getContentPadding();
-    method @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.Shape getSplitCheckboxButtonShape();
+    method @InaccessibleFromKotlin public androidx.compose.foundation.layout.PaddingValues getContentPadding();
+    method @InaccessibleFromKotlin @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.Shape getSplitCheckboxButtonShape();
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.Shape getSplitCheckboxButtonShape(androidx.compose.runtime.Composer?, int);
     method @androidx.compose.runtime.Composable public androidx.wear.compose.material3.SplitCheckboxButtonColors splitCheckboxButtonColors();
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.wear.compose.material3.SplitCheckboxButtonColors splitCheckboxButtonColors(androidx.compose.runtime.Composer?, int);
@@ -410,7 +410,7 @@ package androidx.wear.compose.material3 {
     method @BytecodeOnly public float getIndeterminateStrokeWidth-D9Ej5fM();
     method @BytecodeOnly @androidx.compose.runtime.Composable public float getLargeStrokeWidth(androidx.compose.runtime.Composer?, int);
     method @BytecodeOnly @androidx.compose.runtime.Composable public float getSmallStrokeWidth(androidx.compose.runtime.Composer?, int);
-    method public float getStartAngle();
+    method @InaccessibleFromKotlin public float getStartAngle();
     property public androidx.compose.ui.unit.Dp FullScreenPadding;
     property public androidx.compose.ui.unit.Dp IndeterminateStrokeWidth;
     property public float StartAngle;
@@ -527,9 +527,9 @@ package androidx.wear.compose.material3 {
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.wear.compose.material3.ConfirmationDialogColors failureColors(androidx.compose.runtime.Composer?, int);
     method @KotlinOnly @androidx.compose.runtime.Composable public androidx.wear.compose.material3.ConfirmationDialogColors failureColors(optional androidx.compose.ui.graphics.Color iconColor, optional androidx.compose.ui.graphics.Color iconContainerColor, optional androidx.compose.ui.graphics.Color textColor);
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.wear.compose.material3.ConfirmationDialogColors failureColors-RGew2ao(long, long, long, androidx.compose.runtime.Composer?, int, int);
-    method @androidx.compose.runtime.Composable public androidx.wear.compose.foundation.CurvedTextStyle getCurvedTextStyle();
+    method @InaccessibleFromKotlin @androidx.compose.runtime.Composable public androidx.wear.compose.foundation.CurvedTextStyle getCurvedTextStyle();
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.wear.compose.foundation.CurvedTextStyle getCurvedTextStyle(androidx.compose.runtime.Composer?, int);
-    method public long getDurationMillis();
+    method @InaccessibleFromKotlin public long getDurationMillis();
     method @BytecodeOnly public float getIconSize-D9Ej5fM();
     method @BytecodeOnly public float getSmallIconSize-D9Ej5fM();
     method @androidx.compose.runtime.Composable public androidx.wear.compose.material3.ConfirmationDialogColors successColors();
@@ -564,15 +564,15 @@ package androidx.wear.compose.material3 {
   }
 
   public final class ContentColorKt {
-    method public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.compose.ui.graphics.Color> getLocalContentColor();
+    method @InaccessibleFromKotlin public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.compose.ui.graphics.Color> getLocalContentColor();
     property public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.compose.ui.graphics.Color> LocalContentColor;
   }
 
   public final class CurvedTextDefaults {
     method @KotlinOnly @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.Color backgroundColor();
     method @BytecodeOnly @androidx.compose.runtime.Composable public long backgroundColor-WaAFU9c(androidx.compose.runtime.Composer?, int);
-    method public float getScrollableContentMaxSweepAngle();
-    method public float getStaticContentMaxSweepAngle();
+    method @InaccessibleFromKotlin public float getScrollableContentMaxSweepAngle();
+    method @InaccessibleFromKotlin public float getStaticContentMaxSweepAngle();
     property public float ScrollableContentMaxSweepAngle;
     property public float StaticContentMaxSweepAngle;
     field public static final androidx.wear.compose.material3.CurvedTextDefaults INSTANCE;
@@ -682,7 +682,7 @@ package androidx.wear.compose.material3 {
   }
 
   public final class FadingExpandingLabelDefaults {
-    method @androidx.compose.runtime.Composable public androidx.compose.animation.core.FiniteAnimationSpec<java.lang.Float> getAnimationSpec();
+    method @InaccessibleFromKotlin @androidx.compose.runtime.Composable public androidx.compose.animation.core.FiniteAnimationSpec<java.lang.Float> getAnimationSpec();
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.animation.core.FiniteAnimationSpec<java.lang.Float!> getAnimationSpec(androidx.compose.runtime.Composer?, int);
     property @androidx.compose.runtime.Composable public androidx.compose.animation.core.FiniteAnimationSpec<java.lang.Float> animationSpec;
     field public static final androidx.wear.compose.material3.FadingExpandingLabelDefaults INSTANCE;
@@ -727,13 +727,13 @@ package androidx.wear.compose.material3 {
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.wear.compose.material3.IconButtonColors filledVariantIconButtonColors-ro_MJ88(long, long, long, long, androidx.compose.runtime.Composer?, int, int);
     method @BytecodeOnly public float getDefaultButtonSize-D9Ej5fM();
     method @BytecodeOnly public float getDefaultIconSize-D9Ej5fM();
-    method public float getDisabledImageOpacity();
+    method @InaccessibleFromKotlin public float getDisabledImageOpacity();
     method @BytecodeOnly public float getExtraSmallButtonSize-D9Ej5fM();
     method @BytecodeOnly public float getLargeButtonSize-D9Ej5fM();
     method @BytecodeOnly public float getLargeIconSize-D9Ej5fM();
-    method @androidx.compose.runtime.Composable public androidx.compose.foundation.shape.CornerBasedShape getPressedShape();
+    method @InaccessibleFromKotlin @androidx.compose.runtime.Composable public androidx.compose.foundation.shape.CornerBasedShape getPressedShape();
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.foundation.shape.CornerBasedShape getPressedShape(androidx.compose.runtime.Composer?, int);
-    method @androidx.compose.runtime.Composable public androidx.compose.foundation.shape.RoundedCornerShape getShape();
+    method @InaccessibleFromKotlin @androidx.compose.runtime.Composable public androidx.compose.foundation.shape.RoundedCornerShape getShape();
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.foundation.shape.RoundedCornerShape getShape(androidx.compose.runtime.Composer?, int);
     method @BytecodeOnly public float getSmallButtonSize-D9Ej5fM();
     method @BytecodeOnly public float getSmallIconSize-D9Ej5fM();
@@ -778,8 +778,8 @@ package androidx.wear.compose.material3 {
   public final class IconButtonShapes {
     ctor public IconButtonShapes(androidx.compose.ui.graphics.Shape shape, optional androidx.compose.ui.graphics.Shape pressedShape);
     method public androidx.wear.compose.material3.IconButtonShapes copy(optional androidx.compose.ui.graphics.Shape? shape, optional androidx.compose.ui.graphics.Shape? pressedShape);
-    method public androidx.compose.ui.graphics.Shape getPressedShape();
-    method public androidx.compose.ui.graphics.Shape getShape();
+    method @InaccessibleFromKotlin public androidx.compose.ui.graphics.Shape getPressedShape();
+    method @InaccessibleFromKotlin public androidx.compose.ui.graphics.Shape getShape();
     property public androidx.compose.ui.graphics.Shape pressedShape;
     property public androidx.compose.ui.graphics.Shape shape;
   }
@@ -825,16 +825,16 @@ package androidx.wear.compose.material3 {
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.wear.compose.material3.IconToggleButtonColors colors(androidx.compose.runtime.Composer?, int);
     method @KotlinOnly @androidx.compose.runtime.Composable public androidx.wear.compose.material3.IconToggleButtonColors colors(optional androidx.compose.ui.graphics.Color checkedContainerColor, optional androidx.compose.ui.graphics.Color checkedContentColor, optional androidx.compose.ui.graphics.Color uncheckedContainerColor, optional androidx.compose.ui.graphics.Color uncheckedContentColor, optional androidx.compose.ui.graphics.Color disabledCheckedContainerColor, optional androidx.compose.ui.graphics.Color disabledCheckedContentColor, optional androidx.compose.ui.graphics.Color disabledUncheckedContainerColor, optional androidx.compose.ui.graphics.Color disabledUncheckedContentColor);
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.wear.compose.material3.IconToggleButtonColors colors-oq7We08(long, long, long, long, long, long, long, long, androidx.compose.runtime.Composer?, int, int);
-    method @androidx.compose.runtime.Composable public androidx.compose.foundation.shape.CornerBasedShape getCheckedShape();
+    method @InaccessibleFromKotlin @androidx.compose.runtime.Composable public androidx.compose.foundation.shape.CornerBasedShape getCheckedShape();
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.foundation.shape.CornerBasedShape getCheckedShape(androidx.compose.runtime.Composer?, int);
     method @BytecodeOnly public float getDefaultIconSize-D9Ej5fM();
     method @BytecodeOnly public float getExtraLargeIconSize-D9Ej5fM();
     method @BytecodeOnly public float getExtraLargeSize-D9Ej5fM();
     method @BytecodeOnly public float getLargeIconSize-D9Ej5fM();
     method @BytecodeOnly public float getLargeSize-D9Ej5fM();
-    method @androidx.compose.runtime.Composable public androidx.compose.foundation.shape.CornerBasedShape getPressedShape();
+    method @InaccessibleFromKotlin @androidx.compose.runtime.Composable public androidx.compose.foundation.shape.CornerBasedShape getPressedShape();
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.foundation.shape.CornerBasedShape getPressedShape(androidx.compose.runtime.Composer?, int);
-    method @androidx.compose.runtime.Composable public androidx.compose.foundation.shape.RoundedCornerShape getShape();
+    method @InaccessibleFromKotlin @androidx.compose.runtime.Composable public androidx.compose.foundation.shape.RoundedCornerShape getShape();
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.foundation.shape.RoundedCornerShape getShape(androidx.compose.runtime.Composer?, int);
     method @BytecodeOnly public float getSize-D9Ej5fM();
     method @BytecodeOnly public float getSmallIconSize-D9Ej5fM();
@@ -871,10 +871,10 @@ package androidx.wear.compose.material3 {
   public final class IconToggleButtonShapes {
     ctor public IconToggleButtonShapes(androidx.compose.ui.graphics.Shape uncheckedShape, optional androidx.compose.ui.graphics.Shape checkedShape, optional androidx.compose.ui.graphics.Shape uncheckedPressedShape, optional androidx.compose.ui.graphics.Shape checkedPressedShape);
     method public androidx.wear.compose.material3.IconToggleButtonShapes copy(optional androidx.compose.ui.graphics.Shape? uncheckedShape, optional androidx.compose.ui.graphics.Shape? checkedShape, optional androidx.compose.ui.graphics.Shape? uncheckedPressedShape, optional androidx.compose.ui.graphics.Shape? checkedPressedShape);
-    method public androidx.compose.ui.graphics.Shape getCheckedPressedShape();
-    method public androidx.compose.ui.graphics.Shape getCheckedShape();
-    method public androidx.compose.ui.graphics.Shape getUncheckedPressedShape();
-    method public androidx.compose.ui.graphics.Shape getUncheckedShape();
+    method @InaccessibleFromKotlin public androidx.compose.ui.graphics.Shape getCheckedPressedShape();
+    method @InaccessibleFromKotlin public androidx.compose.ui.graphics.Shape getCheckedShape();
+    method @InaccessibleFromKotlin public androidx.compose.ui.graphics.Shape getUncheckedPressedShape();
+    method @InaccessibleFromKotlin public androidx.compose.ui.graphics.Shape getUncheckedShape();
     property public androidx.compose.ui.graphics.Shape checkedPressedShape;
     property public androidx.compose.ui.graphics.Shape checkedShape;
     property public androidx.compose.ui.graphics.Shape uncheckedPressedShape;
@@ -906,7 +906,7 @@ package androidx.wear.compose.material3 {
     method @KotlinOnly @androidx.compose.runtime.Composable public androidx.wear.compose.material3.LevelIndicatorColors colors(optional androidx.compose.ui.graphics.Color indicatorColor, optional androidx.compose.ui.graphics.Color trackColor, optional androidx.compose.ui.graphics.Color disabledIndicatorColor, optional androidx.compose.ui.graphics.Color disabledTrackColor);
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.wear.compose.material3.LevelIndicatorColors colors-ro_MJ88(long, long, long, long, androidx.compose.runtime.Composer?, int, int);
     method @BytecodeOnly public float getStrokeWidth-D9Ej5fM();
-    method public float getSweepAngle();
+    method @InaccessibleFromKotlin public float getSweepAngle();
     property public androidx.compose.ui.unit.Dp StrokeWidth;
     property public float SweepAngle;
     field public static final androidx.wear.compose.material3.LevelIndicatorDefaults INSTANCE;
@@ -936,9 +936,9 @@ package androidx.wear.compose.material3 {
 
   public final class ListHeaderDefaults {
     method @BytecodeOnly @androidx.compose.runtime.Composable public long getContentColor(androidx.compose.runtime.Composer?, int);
-    method public androidx.compose.foundation.layout.PaddingValues getContentPadding();
+    method @InaccessibleFromKotlin public androidx.compose.foundation.layout.PaddingValues getContentPadding();
     method @BytecodeOnly @androidx.compose.runtime.Composable public long getSubHeaderContentColor(androidx.compose.runtime.Composer?, int);
-    method public androidx.compose.foundation.layout.PaddingValues getSubHeaderContentPadding();
+    method @InaccessibleFromKotlin public androidx.compose.foundation.layout.PaddingValues getSubHeaderContentPadding();
     property public androidx.compose.foundation.layout.PaddingValues ContentPadding;
     property public androidx.compose.foundation.layout.PaddingValues SubHeaderContentPadding;
     property public androidx.compose.ui.graphics.Color contentColor;
@@ -954,13 +954,13 @@ package androidx.wear.compose.material3 {
   }
 
   public final class MaterialTheme {
-    method @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.wear.compose.material3.ColorScheme getColorScheme();
+    method @InaccessibleFromKotlin @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.wear.compose.material3.ColorScheme getColorScheme();
     method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.wear.compose.material3.ColorScheme getColorScheme(androidx.compose.runtime.Composer?, int);
-    method @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.wear.compose.material3.MotionScheme getMotionScheme();
+    method @InaccessibleFromKotlin @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.wear.compose.material3.MotionScheme getMotionScheme();
     method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.wear.compose.material3.MotionScheme getMotionScheme(androidx.compose.runtime.Composer?, int);
-    method @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.wear.compose.material3.Shapes getShapes();
+    method @InaccessibleFromKotlin @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.wear.compose.material3.Shapes getShapes();
     method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.wear.compose.material3.Shapes getShapes(androidx.compose.runtime.Composer?, int);
-    method @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.wear.compose.material3.Typography getTypography();
+    method @InaccessibleFromKotlin @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.wear.compose.material3.Typography getTypography();
     method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.wear.compose.material3.Typography getTypography(androidx.compose.runtime.Composer?, int);
     property @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.wear.compose.material3.ColorScheme colorScheme;
     property @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.wear.compose.material3.MotionScheme motionScheme;
@@ -1028,10 +1028,10 @@ package androidx.wear.compose.material3 {
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.wear.compose.material3.OpenOnPhoneDialogColors colors(androidx.compose.runtime.Composer?, int);
     method @KotlinOnly @androidx.compose.runtime.Composable public androidx.wear.compose.material3.OpenOnPhoneDialogColors colors(optional androidx.compose.ui.graphics.Color iconColor, optional androidx.compose.ui.graphics.Color iconContainerColor, optional androidx.compose.ui.graphics.Color progressIndicatorColor, optional androidx.compose.ui.graphics.Color progressTrackColor, optional androidx.compose.ui.graphics.Color textColor);
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.wear.compose.material3.OpenOnPhoneDialogColors colors-zjMxDiM(long, long, long, long, long, androidx.compose.runtime.Composer?, int, int);
-    method @androidx.compose.runtime.Composable public androidx.wear.compose.foundation.CurvedTextStyle getCurvedTextStyle();
+    method @InaccessibleFromKotlin @androidx.compose.runtime.Composable public androidx.wear.compose.foundation.CurvedTextStyle getCurvedTextStyle();
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.wear.compose.foundation.CurvedTextStyle getCurvedTextStyle(androidx.compose.runtime.Composer?, int);
-    method public long getDurationMillis();
-    method @androidx.compose.runtime.Composable public String getText();
+    method @InaccessibleFromKotlin public long getDurationMillis();
+    method @InaccessibleFromKotlin @androidx.compose.runtime.Composable public String getText();
     method @BytecodeOnly @androidx.compose.runtime.Composable public String getText(androidx.compose.runtime.Composer?, int);
     property public long DurationMillis;
     property @androidx.compose.runtime.Composable public androidx.wear.compose.foundation.CurvedTextStyle curvedTextStyle;
@@ -1065,7 +1065,7 @@ package androidx.wear.compose.material3 {
   }
 
   public final class PagerScaffoldDefaults {
-    method public androidx.compose.animation.core.AnimationSpec<java.lang.Float> getFadeOutAnimationSpec();
+    method @InaccessibleFromKotlin public androidx.compose.animation.core.AnimationSpec<java.lang.Float> getFadeOutAnimationSpec();
     method @androidx.compose.runtime.Composable public androidx.compose.foundation.gestures.TargetedFlingBehavior snapWithSpringFlingBehavior(androidx.wear.compose.foundation.pager.PagerState state);
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.foundation.gestures.TargetedFlingBehavior snapWithSpringFlingBehavior(androidx.wear.compose.foundation.pager.PagerState, androidx.compose.runtime.Composer?, int);
     property public androidx.compose.animation.core.AnimationSpec<java.lang.Float> FadeOutAnimationSpec;
@@ -1082,7 +1082,7 @@ package androidx.wear.compose.material3 {
   }
 
   public final class PickerDefaults {
-    method public float getGradientRatio();
+    method @InaccessibleFromKotlin public float getGradientRatio();
     method @androidx.compose.runtime.Composable public androidx.wear.compose.foundation.rotary.RotaryScrollableBehavior rotarySnapBehavior(androidx.wear.compose.material3.PickerState state);
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.wear.compose.foundation.rotary.RotaryScrollableBehavior rotarySnapBehavior(androidx.wear.compose.material3.PickerState, androidx.compose.runtime.Composer?, int);
     property public float GradientRatio;
@@ -1108,7 +1108,7 @@ package androidx.wear.compose.material3 {
   }
 
   public interface PickerScope {
-    method public int getSelectedOptionIndex();
+    method @InaccessibleFromKotlin public int getSelectedOptionIndex();
     property public abstract int selectedOptionIndex;
   }
 
@@ -1116,13 +1116,13 @@ package androidx.wear.compose.material3 {
     ctor public PickerState(@IntRange(from=1L) int initialNumberOfOptions, optional @IntRange(from=0L) int initiallySelectedIndex, optional boolean shouldRepeatOptions);
     method public suspend Object? animateScrollToOption(int index, kotlin.coroutines.Continuation<? super kotlin.Unit>);
     method public float dispatchRawDelta(float delta);
-    method public int getNumberOfOptions();
-    method public int getSelectedOptionIndex();
-    method public boolean getShouldRepeatOptions();
-    method public boolean isScrollInProgress();
+    method @InaccessibleFromKotlin public int getNumberOfOptions();
+    method @InaccessibleFromKotlin public int getSelectedOptionIndex();
+    method @InaccessibleFromKotlin public boolean getShouldRepeatOptions();
+    method @InaccessibleFromKotlin public boolean isScrollInProgress();
     method public suspend Object? scroll(androidx.compose.foundation.MutatePriority scrollPriority, kotlin.jvm.functions.Function2<? super androidx.compose.foundation.gestures.ScrollScope,? super kotlin.coroutines.Continuation<? super kotlin.Unit>,? extends java.lang.Object?> block, kotlin.coroutines.Continuation<? super kotlin.Unit>);
     method public suspend Object? scrollToOption(int index, kotlin.coroutines.Continuation<? super kotlin.Unit>);
-    method public void setNumberOfOptions(int);
+    method @InaccessibleFromKotlin public void setNumberOfOptions(int);
     property public boolean canScrollBackward;
     property public boolean canScrollForward;
     property public boolean isScrollInProgress;
@@ -1133,13 +1133,13 @@ package androidx.wear.compose.material3 {
   }
 
   public static final class PickerState.Companion {
-    method public androidx.compose.runtime.saveable.Saver<androidx.wear.compose.material3.PickerState,java.lang.Object> getSaver();
+    method @InaccessibleFromKotlin public androidx.compose.runtime.saveable.Saver<androidx.wear.compose.material3.PickerState,java.lang.Object> getSaver();
     property public androidx.compose.runtime.saveable.Saver<androidx.wear.compose.material3.PickerState,java.lang.Object> Saver;
   }
 
   public final class PlaceholderDefaults {
     method @BytecodeOnly @androidx.compose.runtime.Composable public long getColor(androidx.compose.runtime.Composer?, int);
-    method @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.Shape getShape();
+    method @InaccessibleFromKotlin @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.Shape getShape();
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.Shape getShape(androidx.compose.runtime.Composer?, int);
     method @BytecodeOnly @androidx.compose.runtime.Composable public long getShimmerColor(androidx.compose.runtime.Composer?, int);
     property public androidx.compose.ui.graphics.Color color;
@@ -1159,8 +1159,8 @@ package androidx.wear.compose.material3 {
 
   @androidx.compose.runtime.Stable public final class PlaceholderState {
     ctor public PlaceholderState(boolean isVisible);
-    method public boolean isVisible();
-    method public void setVisible(boolean);
+    method @InaccessibleFromKotlin public boolean isVisible();
+    method @InaccessibleFromKotlin public void setVisible(boolean);
     property public boolean isVisible;
   }
 
@@ -1169,12 +1169,12 @@ package androidx.wear.compose.material3 {
     method public androidx.wear.compose.material3.ProgressIndicatorColors copy(optional androidx.compose.ui.graphics.Brush? indicatorBrush, optional androidx.compose.ui.graphics.Brush? trackBrush, optional androidx.compose.ui.graphics.Brush? overflowTrackBrush, optional androidx.compose.ui.graphics.Brush? disabledIndicatorBrush, optional androidx.compose.ui.graphics.Brush? disabledTrackBrush, optional androidx.compose.ui.graphics.Brush? disabledOverflowTrackBrush);
     method @KotlinOnly public androidx.wear.compose.material3.ProgressIndicatorColors copy(optional androidx.compose.ui.graphics.Color indicatorColor, optional androidx.compose.ui.graphics.Color trackColor, optional androidx.compose.ui.graphics.Color overflowTrackColor, optional androidx.compose.ui.graphics.Color disabledIndicatorColor, optional androidx.compose.ui.graphics.Color disabledTrackColor, optional androidx.compose.ui.graphics.Color disabledOverflowTrackColor);
     method @BytecodeOnly public androidx.wear.compose.material3.ProgressIndicatorColors copy-tNS2XkQ(long, long, long, long, long, long);
-    method public androidx.compose.ui.graphics.Brush getDisabledIndicatorBrush();
-    method public androidx.compose.ui.graphics.Brush getDisabledOverflowTrackBrush();
-    method public androidx.compose.ui.graphics.Brush getDisabledTrackBrush();
-    method public androidx.compose.ui.graphics.Brush getIndicatorBrush();
-    method public androidx.compose.ui.graphics.Brush getOverflowTrackBrush();
-    method public androidx.compose.ui.graphics.Brush getTrackBrush();
+    method @InaccessibleFromKotlin public androidx.compose.ui.graphics.Brush getDisabledIndicatorBrush();
+    method @InaccessibleFromKotlin public androidx.compose.ui.graphics.Brush getDisabledOverflowTrackBrush();
+    method @InaccessibleFromKotlin public androidx.compose.ui.graphics.Brush getDisabledTrackBrush();
+    method @InaccessibleFromKotlin public androidx.compose.ui.graphics.Brush getIndicatorBrush();
+    method @InaccessibleFromKotlin public androidx.compose.ui.graphics.Brush getOverflowTrackBrush();
+    method @InaccessibleFromKotlin public androidx.compose.ui.graphics.Brush getTrackBrush();
     property public androidx.compose.ui.graphics.Brush disabledIndicatorBrush;
     property public androidx.compose.ui.graphics.Brush disabledOverflowTrackBrush;
     property public androidx.compose.ui.graphics.Brush disabledTrackBrush;
@@ -1241,10 +1241,10 @@ package androidx.wear.compose.material3 {
   }
 
   public final class RadioButtonDefaults {
-    method public androidx.compose.foundation.layout.PaddingValues getContentPadding();
-    method @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.Shape getRadioButtonShape();
+    method @InaccessibleFromKotlin public androidx.compose.foundation.layout.PaddingValues getContentPadding();
+    method @InaccessibleFromKotlin @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.Shape getRadioButtonShape();
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.Shape getRadioButtonShape(androidx.compose.runtime.Composer?, int);
-    method @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.Shape getSplitRadioButtonShape();
+    method @InaccessibleFromKotlin @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.Shape getSplitRadioButtonShape();
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.Shape getSplitRadioButtonShape(androidx.compose.runtime.Composer?, int);
     method @androidx.compose.runtime.Composable public androidx.wear.compose.material3.RadioButtonColors radioButtonColors();
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.wear.compose.material3.RadioButtonColors radioButtonColors(androidx.compose.runtime.Composer?, int);
@@ -1290,9 +1290,9 @@ package androidx.wear.compose.material3 {
     method @KotlinOnly public suspend Object? animateTo(androidx.wear.compose.material3.RevealValue targetValue, kotlin.coroutines.Continuation<? super java.lang.Void>);
     method @BytecodeOnly public Object? animateTo-1PKuNuk(int, kotlin.coroutines.Continuation<? super kotlin.Unit!>);
     method @BytecodeOnly public int getCurrentValue-OMiAi4w();
-    method public float getOffset();
+    method @InaccessibleFromKotlin public float getOffset();
     method @BytecodeOnly public int getTargetValue-OMiAi4w();
-    method public boolean isAnimationRunning();
+    method @InaccessibleFromKotlin public boolean isAnimationRunning();
     method @KotlinOnly public suspend Object? snapTo(androidx.wear.compose.material3.RevealValue targetValue, kotlin.coroutines.Continuation<? super java.lang.Void>);
     method @BytecodeOnly public Object? snapTo-1PKuNuk(int, kotlin.coroutines.Continuation<? super kotlin.Unit!>);
     property public androidx.wear.compose.material3.RevealValue currentValue;
@@ -1328,7 +1328,7 @@ package androidx.wear.compose.material3 {
   }
 
   public final class ScreenScaffoldDefaults {
-    method @androidx.compose.runtime.Composable public androidx.compose.foundation.layout.PaddingValues getContentPadding();
+    method @InaccessibleFromKotlin @androidx.compose.runtime.Composable public androidx.compose.foundation.layout.PaddingValues getContentPadding();
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.foundation.layout.PaddingValues getContentPadding(androidx.compose.runtime.Composer?, int);
     method @BytecodeOnly public float getEdgeButtonMinSpacing-D9Ej5fM();
     method @BytecodeOnly public float getEdgeButtonSpacing-D9Ej5fM();
@@ -1394,7 +1394,7 @@ package androidx.wear.compose.material3 {
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.wear.compose.material3.ScrollIndicatorColors colors(androidx.compose.runtime.Composer?, int);
     method @KotlinOnly @androidx.compose.runtime.Composable public androidx.wear.compose.material3.ScrollIndicatorColors colors(optional androidx.compose.ui.graphics.Color indicatorColor, optional androidx.compose.ui.graphics.Color trackColor);
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.wear.compose.material3.ScrollIndicatorColors colors-dgg9oW8(long, long, androidx.compose.runtime.Composer?, int, int);
-    method public androidx.compose.animation.core.AnimationSpec<java.lang.Float> getPositionAnimationSpec();
+    method @InaccessibleFromKotlin public androidx.compose.animation.core.AnimationSpec<java.lang.Float> getPositionAnimationSpec();
     property public androidx.compose.animation.core.AnimationSpec<java.lang.Float> PositionAnimationSpec;
     field public static final androidx.wear.compose.material3.ScrollIndicatorDefaults INSTANCE;
   }
@@ -1418,11 +1418,11 @@ package androidx.wear.compose.material3 {
   }
 
   public final class ShapeDefaults {
-    method public androidx.compose.foundation.shape.RoundedCornerShape getExtraLarge();
-    method public androidx.compose.foundation.shape.RoundedCornerShape getExtraSmall();
-    method public androidx.compose.foundation.shape.RoundedCornerShape getLarge();
-    method public androidx.compose.foundation.shape.RoundedCornerShape getMedium();
-    method public androidx.compose.foundation.shape.RoundedCornerShape getSmall();
+    method @InaccessibleFromKotlin public androidx.compose.foundation.shape.RoundedCornerShape getExtraLarge();
+    method @InaccessibleFromKotlin public androidx.compose.foundation.shape.RoundedCornerShape getExtraSmall();
+    method @InaccessibleFromKotlin public androidx.compose.foundation.shape.RoundedCornerShape getLarge();
+    method @InaccessibleFromKotlin public androidx.compose.foundation.shape.RoundedCornerShape getMedium();
+    method @InaccessibleFromKotlin public androidx.compose.foundation.shape.RoundedCornerShape getSmall();
     property public androidx.compose.foundation.shape.RoundedCornerShape ExtraLarge;
     property public androidx.compose.foundation.shape.RoundedCornerShape ExtraSmall;
     property public androidx.compose.foundation.shape.RoundedCornerShape Large;
@@ -1435,11 +1435,11 @@ package androidx.wear.compose.material3 {
     ctor public Shapes();
     ctor public Shapes(optional androidx.compose.foundation.shape.CornerBasedShape extraSmall, optional androidx.compose.foundation.shape.CornerBasedShape small, optional androidx.compose.foundation.shape.CornerBasedShape medium, optional androidx.compose.foundation.shape.CornerBasedShape large, optional androidx.compose.foundation.shape.CornerBasedShape extraLarge);
     method public androidx.wear.compose.material3.Shapes copy(optional androidx.compose.foundation.shape.CornerBasedShape extraSmall, optional androidx.compose.foundation.shape.CornerBasedShape small, optional androidx.compose.foundation.shape.CornerBasedShape medium, optional androidx.compose.foundation.shape.CornerBasedShape large, optional androidx.compose.foundation.shape.CornerBasedShape extraLarge);
-    method public androidx.compose.foundation.shape.CornerBasedShape getExtraLarge();
-    method public androidx.compose.foundation.shape.CornerBasedShape getExtraSmall();
-    method public androidx.compose.foundation.shape.CornerBasedShape getLarge();
-    method public androidx.compose.foundation.shape.CornerBasedShape getMedium();
-    method public androidx.compose.foundation.shape.CornerBasedShape getSmall();
+    method @InaccessibleFromKotlin public androidx.compose.foundation.shape.CornerBasedShape getExtraLarge();
+    method @InaccessibleFromKotlin public androidx.compose.foundation.shape.CornerBasedShape getExtraSmall();
+    method @InaccessibleFromKotlin public androidx.compose.foundation.shape.CornerBasedShape getLarge();
+    method @InaccessibleFromKotlin public androidx.compose.foundation.shape.CornerBasedShape getMedium();
+    method @InaccessibleFromKotlin public androidx.compose.foundation.shape.CornerBasedShape getSmall();
     property public androidx.compose.foundation.shape.CornerBasedShape extraLarge;
     property public androidx.compose.foundation.shape.CornerBasedShape extraSmall;
     property public androidx.compose.foundation.shape.CornerBasedShape large;
@@ -1483,13 +1483,13 @@ package androidx.wear.compose.material3 {
     method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.compose.runtime.ComposableTarget(applier="androidx.compose.ui.UiComposable") public void DecreaseIcon(androidx.compose.ui.Modifier?, String?, androidx.compose.runtime.Composer?, int, int);
     method @androidx.compose.runtime.Composable public void IncreaseIcon(optional androidx.compose.ui.Modifier modifier, optional String contentDescription);
     method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.compose.runtime.ComposableTarget(applier="androidx.compose.ui.UiComposable") public void IncreaseIcon(androidx.compose.ui.Modifier?, String?, androidx.compose.runtime.Composer?, int, int);
-    method @androidx.compose.runtime.Composable public String getDecreaseIconContentDescription();
+    method @InaccessibleFromKotlin @androidx.compose.runtime.Composable public String getDecreaseIconContentDescription();
     method @BytecodeOnly @androidx.compose.runtime.Composable public String getDecreaseIconContentDescription(androidx.compose.runtime.Composer?, int);
     method @BytecodeOnly public float getIconSize-D9Ej5fM();
-    method @androidx.compose.runtime.Composable public String getIncreaseIconContentDescription();
+    method @InaccessibleFromKotlin @androidx.compose.runtime.Composable public String getIncreaseIconContentDescription();
     method @BytecodeOnly @androidx.compose.runtime.Composable public String getIncreaseIconContentDescription(androidx.compose.runtime.Composer?, int);
-    method public int getMaxSegmentSteps();
-    method @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.Shape getShape();
+    method @InaccessibleFromKotlin public int getMaxSegmentSteps();
+    method @InaccessibleFromKotlin @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.Shape getShape();
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.Shape getShape(androidx.compose.runtime.Composer?, int);
     method @androidx.compose.runtime.Composable public androidx.wear.compose.material3.SliderColors sliderColors();
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.wear.compose.material3.SliderColors sliderColors(androidx.compose.runtime.Composer?, int);
@@ -1732,9 +1732,9 @@ package androidx.wear.compose.material3 {
 
   public final class SwipeToRevealDefaults {
     method public androidx.wear.compose.foundation.GestureInclusion gestureInclusion(androidx.wear.compose.material3.RevealState state, optional @FloatRange(from=0.0, to=1.0) float edgeZoneFraction);
-    method public androidx.wear.compose.foundation.GestureInclusion getBidirectionalGestureInclusion();
+    method @InaccessibleFromKotlin public androidx.wear.compose.foundation.GestureInclusion getBidirectionalGestureInclusion();
     method @BytecodeOnly public float getLargeActionButtonHeight-D9Ej5fM();
-    method public float getLeftEdgeZoneFraction();
+    method @InaccessibleFromKotlin public float getLeftEdgeZoneFraction();
     property public androidx.compose.ui.unit.Dp LargeActionButtonHeight;
     property public float LeftEdgeZoneFraction;
     property public androidx.wear.compose.foundation.GestureInclusion bidirectionalGestureInclusion;
@@ -1823,10 +1823,10 @@ package androidx.wear.compose.material3 {
   }
 
   public final class SwitchButtonDefaults {
-    method public androidx.compose.foundation.layout.PaddingValues getContentPadding();
-    method @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.Shape getSplitSwitchButtonShape();
+    method @InaccessibleFromKotlin public androidx.compose.foundation.layout.PaddingValues getContentPadding();
+    method @InaccessibleFromKotlin @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.Shape getSplitSwitchButtonShape();
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.Shape getSplitSwitchButtonShape(androidx.compose.runtime.Composer?, int);
-    method @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.Shape getSwitchButtonShape();
+    method @InaccessibleFromKotlin @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.Shape getSwitchButtonShape();
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.Shape getSwitchButtonShape(androidx.compose.runtime.Composer?, int);
     method @androidx.compose.runtime.Composable public androidx.wear.compose.material3.SplitSwitchButtonColors splitSwitchButtonColors();
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.wear.compose.material3.SplitSwitchButtonColors splitSwitchButtonColors(androidx.compose.runtime.Composer?, int);
@@ -1882,17 +1882,17 @@ package androidx.wear.compose.material3 {
     method @KotlinOnly @androidx.compose.runtime.Composable public androidx.wear.compose.material3.TextButtonColors filledVariantTextButtonColors(optional androidx.compose.ui.graphics.Color containerColor, optional androidx.compose.ui.graphics.Color contentColor, optional androidx.compose.ui.graphics.Color disabledContainerColor, optional androidx.compose.ui.graphics.Color disabledContentColor);
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.wear.compose.material3.TextButtonColors filledVariantTextButtonColors-ro_MJ88(long, long, long, long, androidx.compose.runtime.Composer?, int, int);
     method @BytecodeOnly public float getDefaultButtonSize-D9Ej5fM();
-    method @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.compose.ui.text.TextStyle getDefaultButtonTextStyle();
+    method @InaccessibleFromKotlin @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.compose.ui.text.TextStyle getDefaultButtonTextStyle();
     method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.compose.ui.text.TextStyle getDefaultButtonTextStyle(androidx.compose.runtime.Composer?, int);
     method @BytecodeOnly public float getLargeButtonSize-D9Ej5fM();
-    method @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.compose.ui.text.TextStyle getLargeButtonTextStyle();
+    method @InaccessibleFromKotlin @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.compose.ui.text.TextStyle getLargeButtonTextStyle();
     method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.compose.ui.text.TextStyle getLargeButtonTextStyle(androidx.compose.runtime.Composer?, int);
-    method @androidx.compose.runtime.Composable public androidx.compose.foundation.shape.CornerBasedShape getPressedShape();
+    method @InaccessibleFromKotlin @androidx.compose.runtime.Composable public androidx.compose.foundation.shape.CornerBasedShape getPressedShape();
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.foundation.shape.CornerBasedShape getPressedShape(androidx.compose.runtime.Composer?, int);
-    method @androidx.compose.runtime.Composable public androidx.compose.foundation.shape.RoundedCornerShape getShape();
+    method @InaccessibleFromKotlin @androidx.compose.runtime.Composable public androidx.compose.foundation.shape.RoundedCornerShape getShape();
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.foundation.shape.RoundedCornerShape getShape(androidx.compose.runtime.Composer?, int);
     method @BytecodeOnly public float getSmallButtonSize-D9Ej5fM();
-    method @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.compose.ui.text.TextStyle getSmallButtonTextStyle();
+    method @InaccessibleFromKotlin @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.compose.ui.text.TextStyle getSmallButtonTextStyle();
     method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.compose.ui.text.TextStyle getSmallButtonTextStyle(androidx.compose.runtime.Composer?, int);
     method @androidx.compose.runtime.Composable public androidx.wear.compose.material3.TextButtonColors outlinedTextButtonColors();
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.wear.compose.material3.TextButtonColors outlinedTextButtonColors(androidx.compose.runtime.Composer?, int);
@@ -1925,8 +1925,8 @@ package androidx.wear.compose.material3 {
   public final class TextButtonShapes {
     ctor public TextButtonShapes(androidx.compose.ui.graphics.Shape shape, optional androidx.compose.ui.graphics.Shape pressedShape);
     method public androidx.wear.compose.material3.TextButtonShapes copy(optional androidx.compose.ui.graphics.Shape? shape, optional androidx.compose.ui.graphics.Shape? pressedShape);
-    method public androidx.compose.ui.graphics.Shape getPressedShape();
-    method public androidx.compose.ui.graphics.Shape getShape();
+    method @InaccessibleFromKotlin public androidx.compose.ui.graphics.Shape getPressedShape();
+    method @InaccessibleFromKotlin public androidx.compose.ui.graphics.Shape getShape();
     property public androidx.compose.ui.graphics.Shape pressedShape;
     property public androidx.compose.ui.graphics.Shape shape;
   }
@@ -1934,7 +1934,7 @@ package androidx.wear.compose.material3 {
   public final class TextConfiguration {
     ctor @KotlinOnly public TextConfiguration(androidx.compose.ui.text.style.TextAlign? textAlign, androidx.compose.ui.text.style.TextOverflow overflow, int maxLines);
     ctor @BytecodeOnly public TextConfiguration(androidx.compose.ui.text.style.TextAlign!, int, int, kotlin.jvm.internal.DefaultConstructorMarker!);
-    method public int getMaxLines();
+    method @InaccessibleFromKotlin public int getMaxLines();
     method @BytecodeOnly public int getOverflow-gIe3tQ8();
     method @BytecodeOnly public androidx.compose.ui.text.style.TextAlign? getTextAlign-buA522U();
     property public int maxLines;
@@ -1943,7 +1943,7 @@ package androidx.wear.compose.material3 {
   }
 
   public final class TextConfigurationDefaults {
-    method public int getMaxLines();
+    method @InaccessibleFromKotlin public int getMaxLines();
     method @BytecodeOnly public int getOverflow-gIe3tQ8();
     method @BytecodeOnly public androidx.compose.ui.text.style.TextAlign? getTextAlign-buA522U();
     property public int MaxLines;
@@ -1959,8 +1959,8 @@ package androidx.wear.compose.material3 {
     method @KotlinOnly @androidx.compose.runtime.Composable public static void Text(String text, optional androidx.compose.ui.Modifier modifier, optional androidx.compose.ui.graphics.Color color, optional androidx.compose.ui.unit.TextUnit fontSize, optional androidx.compose.ui.text.font.FontStyle? fontStyle, optional androidx.compose.ui.text.font.FontWeight? fontWeight, optional androidx.compose.ui.text.font.FontFamily? fontFamily, optional androidx.compose.ui.unit.TextUnit letterSpacing, optional androidx.compose.ui.text.style.TextDecoration? textDecoration, optional androidx.compose.ui.text.style.TextAlign? textAlign, optional androidx.compose.ui.unit.TextUnit lineHeight, optional androidx.compose.ui.text.style.TextOverflow overflow, optional boolean softWrap, optional int maxLines, optional int minLines, optional kotlin.jvm.functions.Function1<androidx.compose.ui.text.TextLayoutResult,kotlin.Unit> onTextLayout, optional androidx.compose.ui.text.TextStyle style);
     method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.compose.runtime.ComposableTarget(applier="androidx.compose.ui.UiComposable") public static void Text--4IGK_g(String, androidx.compose.ui.Modifier?, long, long, androidx.compose.ui.text.font.FontStyle?, androidx.compose.ui.text.font.FontWeight?, androidx.compose.ui.text.font.FontFamily?, long, androidx.compose.ui.text.style.TextDecoration?, androidx.compose.ui.text.style.TextAlign?, long, int, boolean, int, int, kotlin.jvm.functions.Function1<? super androidx.compose.ui.text.TextLayoutResult!,kotlin.Unit!>?, androidx.compose.ui.text.TextStyle?, androidx.compose.runtime.Composer?, int, int, int);
     method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.compose.runtime.ComposableTarget(applier="androidx.compose.ui.UiComposable") public static void Text-IbK3jfQ(androidx.compose.ui.text.AnnotatedString, androidx.compose.ui.Modifier?, long, long, androidx.compose.ui.text.font.FontStyle?, androidx.compose.ui.text.font.FontWeight?, androidx.compose.ui.text.font.FontFamily?, long, androidx.compose.ui.text.style.TextDecoration?, androidx.compose.ui.text.style.TextAlign?, long, int, boolean, int, int, java.util.Map<java.lang.String!,androidx.compose.foundation.text.InlineTextContent!>?, kotlin.jvm.functions.Function1<? super androidx.compose.ui.text.TextLayoutResult!,kotlin.Unit!>?, androidx.compose.ui.text.TextStyle?, androidx.compose.runtime.Composer?, int, int, int);
-    method public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.wear.compose.material3.TextConfiguration> getLocalTextConfiguration();
-    method public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.compose.ui.text.TextStyle> getLocalTextStyle();
+    method @InaccessibleFromKotlin public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.wear.compose.material3.TextConfiguration> getLocalTextConfiguration();
+    method @InaccessibleFromKotlin public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.compose.ui.text.TextStyle> getLocalTextStyle();
     property public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.wear.compose.material3.TextConfiguration> LocalTextConfiguration;
     property public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.compose.ui.text.TextStyle> LocalTextStyle;
   }
@@ -1997,20 +1997,20 @@ package androidx.wear.compose.material3 {
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.wear.compose.material3.TextToggleButtonColors colors(androidx.compose.runtime.Composer?, int);
     method @KotlinOnly @androidx.compose.runtime.Composable public androidx.wear.compose.material3.TextToggleButtonColors colors(optional androidx.compose.ui.graphics.Color checkedContainerColor, optional androidx.compose.ui.graphics.Color checkedContentColor, optional androidx.compose.ui.graphics.Color uncheckedContainerColor, optional androidx.compose.ui.graphics.Color uncheckedContentColor, optional androidx.compose.ui.graphics.Color disabledCheckedContainerColor, optional androidx.compose.ui.graphics.Color disabledCheckedContentColor, optional androidx.compose.ui.graphics.Color disabledUncheckedContainerColor, optional androidx.compose.ui.graphics.Color disabledUncheckedContentColor);
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.wear.compose.material3.TextToggleButtonColors colors-oq7We08(long, long, long, long, long, long, long, long, androidx.compose.runtime.Composer?, int, int);
-    method @androidx.compose.runtime.Composable public androidx.compose.foundation.shape.CornerBasedShape getCheckedShape();
+    method @InaccessibleFromKotlin @androidx.compose.runtime.Composable public androidx.compose.foundation.shape.CornerBasedShape getCheckedShape();
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.foundation.shape.CornerBasedShape getCheckedShape(androidx.compose.runtime.Composer?, int);
     method @BytecodeOnly public float getExtraLargeSize-D9Ej5fM();
-    method @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.compose.ui.text.TextStyle getExtraLargeTextStyle();
+    method @InaccessibleFromKotlin @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.compose.ui.text.TextStyle getExtraLargeTextStyle();
     method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.compose.ui.text.TextStyle getExtraLargeTextStyle(androidx.compose.runtime.Composer?, int);
     method @BytecodeOnly public float getLargeSize-D9Ej5fM();
-    method @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.compose.ui.text.TextStyle getLargeTextStyle();
+    method @InaccessibleFromKotlin @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.compose.ui.text.TextStyle getLargeTextStyle();
     method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.compose.ui.text.TextStyle getLargeTextStyle(androidx.compose.runtime.Composer?, int);
-    method @androidx.compose.runtime.Composable public androidx.compose.foundation.shape.CornerBasedShape getPressedShape();
+    method @InaccessibleFromKotlin @androidx.compose.runtime.Composable public androidx.compose.foundation.shape.CornerBasedShape getPressedShape();
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.foundation.shape.CornerBasedShape getPressedShape(androidx.compose.runtime.Composer?, int);
-    method @androidx.compose.runtime.Composable public androidx.compose.foundation.shape.RoundedCornerShape getShape();
+    method @InaccessibleFromKotlin @androidx.compose.runtime.Composable public androidx.compose.foundation.shape.RoundedCornerShape getShape();
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.foundation.shape.RoundedCornerShape getShape(androidx.compose.runtime.Composer?, int);
     method @BytecodeOnly public float getSize-D9Ej5fM();
-    method @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.compose.ui.text.TextStyle getTextStyle();
+    method @InaccessibleFromKotlin @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.compose.ui.text.TextStyle getTextStyle();
     method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.compose.ui.text.TextStyle getTextStyle(androidx.compose.runtime.Composer?, int);
     method @androidx.compose.runtime.Composable public androidx.wear.compose.material3.TextToggleButtonShapes shapes();
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.wear.compose.material3.TextToggleButtonShapes shapes(androidx.compose.runtime.Composer?, int);
@@ -2040,10 +2040,10 @@ package androidx.wear.compose.material3 {
   public final class TextToggleButtonShapes {
     ctor public TextToggleButtonShapes(androidx.compose.ui.graphics.Shape uncheckedShape, optional androidx.compose.ui.graphics.Shape checkedShape, optional androidx.compose.ui.graphics.Shape uncheckedPressedShape, optional androidx.compose.ui.graphics.Shape checkedPressedShape);
     method public androidx.wear.compose.material3.TextToggleButtonShapes copy(optional androidx.compose.ui.graphics.Shape? uncheckedShape, optional androidx.compose.ui.graphics.Shape? checkedShape, optional androidx.compose.ui.graphics.Shape? uncheckedPressedShape, optional androidx.compose.ui.graphics.Shape? checkedPressedShape);
-    method public androidx.compose.ui.graphics.Shape getCheckedPressedShape();
-    method public androidx.compose.ui.graphics.Shape getCheckedShape();
-    method public androidx.compose.ui.graphics.Shape getUncheckedPressedShape();
-    method public androidx.compose.ui.graphics.Shape getUncheckedShape();
+    method @InaccessibleFromKotlin public androidx.compose.ui.graphics.Shape getCheckedPressedShape();
+    method @InaccessibleFromKotlin public androidx.compose.ui.graphics.Shape getCheckedShape();
+    method @InaccessibleFromKotlin public androidx.compose.ui.graphics.Shape getUncheckedPressedShape();
+    method @InaccessibleFromKotlin public androidx.compose.ui.graphics.Shape getUncheckedShape();
     property public androidx.compose.ui.graphics.Shape checkedPressedShape;
     property public androidx.compose.ui.graphics.Shape checkedShape;
     property public androidx.compose.ui.graphics.Shape uncheckedPressedShape;
@@ -2109,10 +2109,10 @@ package androidx.wear.compose.material3 {
   public final class TimeTextDefaults {
     method @KotlinOnly @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.Color backgroundColor();
     method @BytecodeOnly @androidx.compose.runtime.Composable public long backgroundColor-WaAFU9c(androidx.compose.runtime.Composer?, int);
-    method public androidx.compose.foundation.layout.PaddingValues getContentPadding();
-    method public float getMaxSweepAngle();
-    method public String getTimeFormat12Hours();
-    method public String getTimeFormat24Hours();
+    method @InaccessibleFromKotlin public androidx.compose.foundation.layout.PaddingValues getContentPadding();
+    method @InaccessibleFromKotlin public float getMaxSweepAngle();
+    method @InaccessibleFromKotlin public String getTimeFormat12Hours();
+    method @InaccessibleFromKotlin public String getTimeFormat24Hours();
     method @androidx.compose.runtime.Composable public androidx.wear.compose.material3.TimeSource rememberTimeSource(String timeFormat);
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.wear.compose.material3.TimeSource rememberTimeSource(String, androidx.compose.runtime.Composer?, int);
     method @androidx.compose.runtime.Composable public String timeFormat();
@@ -2141,27 +2141,27 @@ package androidx.wear.compose.material3 {
   @androidx.compose.runtime.Immutable public final class Typography {
     ctor public Typography(optional androidx.compose.ui.text.font.FontFamily defaultFontFamily, optional androidx.wear.compose.foundation.CurvedTextStyle arcLarge, optional androidx.wear.compose.foundation.CurvedTextStyle arcMedium, optional androidx.wear.compose.foundation.CurvedTextStyle arcSmall, optional androidx.compose.ui.text.TextStyle displayLarge, optional androidx.compose.ui.text.TextStyle displayMedium, optional androidx.compose.ui.text.TextStyle displaySmall, optional androidx.compose.ui.text.TextStyle titleLarge, optional androidx.compose.ui.text.TextStyle titleMedium, optional androidx.compose.ui.text.TextStyle titleSmall, optional androidx.compose.ui.text.TextStyle labelLarge, optional androidx.compose.ui.text.TextStyle labelMedium, optional androidx.compose.ui.text.TextStyle labelSmall, optional androidx.compose.ui.text.TextStyle bodyLarge, optional androidx.compose.ui.text.TextStyle bodyMedium, optional androidx.compose.ui.text.TextStyle bodySmall, optional androidx.compose.ui.text.TextStyle bodyExtraSmall, optional androidx.compose.ui.text.TextStyle numeralExtraLarge, optional androidx.compose.ui.text.TextStyle numeralLarge, optional androidx.compose.ui.text.TextStyle numeralMedium, optional androidx.compose.ui.text.TextStyle numeralSmall, optional androidx.compose.ui.text.TextStyle numeralExtraSmall);
     method public androidx.wear.compose.material3.Typography copy(optional androidx.wear.compose.foundation.CurvedTextStyle arcLarge, optional androidx.wear.compose.foundation.CurvedTextStyle arcMedium, optional androidx.wear.compose.foundation.CurvedTextStyle arcSmall, optional androidx.compose.ui.text.TextStyle displayLarge, optional androidx.compose.ui.text.TextStyle displayMedium, optional androidx.compose.ui.text.TextStyle displaySmall, optional androidx.compose.ui.text.TextStyle titleLarge, optional androidx.compose.ui.text.TextStyle titleMedium, optional androidx.compose.ui.text.TextStyle titleSmall, optional androidx.compose.ui.text.TextStyle labelLarge, optional androidx.compose.ui.text.TextStyle labelMedium, optional androidx.compose.ui.text.TextStyle labelSmall, optional androidx.compose.ui.text.TextStyle bodyLarge, optional androidx.compose.ui.text.TextStyle bodyMedium, optional androidx.compose.ui.text.TextStyle bodySmall, optional androidx.compose.ui.text.TextStyle bodyExtraSmall, optional androidx.compose.ui.text.TextStyle numeralExtraLarge, optional androidx.compose.ui.text.TextStyle numeralLarge, optional androidx.compose.ui.text.TextStyle numeralMedium, optional androidx.compose.ui.text.TextStyle numeralSmall, optional androidx.compose.ui.text.TextStyle numeralExtraSmall);
-    method public androidx.wear.compose.foundation.CurvedTextStyle getArcLarge();
-    method public androidx.wear.compose.foundation.CurvedTextStyle getArcMedium();
-    method public androidx.wear.compose.foundation.CurvedTextStyle getArcSmall();
-    method public androidx.compose.ui.text.TextStyle getBodyExtraSmall();
-    method public androidx.compose.ui.text.TextStyle getBodyLarge();
-    method public androidx.compose.ui.text.TextStyle getBodyMedium();
-    method public androidx.compose.ui.text.TextStyle getBodySmall();
-    method public androidx.compose.ui.text.TextStyle getDisplayLarge();
-    method public androidx.compose.ui.text.TextStyle getDisplayMedium();
-    method public androidx.compose.ui.text.TextStyle getDisplaySmall();
-    method public androidx.compose.ui.text.TextStyle getLabelLarge();
-    method public androidx.compose.ui.text.TextStyle getLabelMedium();
-    method public androidx.compose.ui.text.TextStyle getLabelSmall();
-    method public androidx.compose.ui.text.TextStyle getNumeralExtraLarge();
-    method public androidx.compose.ui.text.TextStyle getNumeralExtraSmall();
-    method public androidx.compose.ui.text.TextStyle getNumeralLarge();
-    method public androidx.compose.ui.text.TextStyle getNumeralMedium();
-    method public androidx.compose.ui.text.TextStyle getNumeralSmall();
-    method public androidx.compose.ui.text.TextStyle getTitleLarge();
-    method public androidx.compose.ui.text.TextStyle getTitleMedium();
-    method public androidx.compose.ui.text.TextStyle getTitleSmall();
+    method @InaccessibleFromKotlin public androidx.wear.compose.foundation.CurvedTextStyle getArcLarge();
+    method @InaccessibleFromKotlin public androidx.wear.compose.foundation.CurvedTextStyle getArcMedium();
+    method @InaccessibleFromKotlin public androidx.wear.compose.foundation.CurvedTextStyle getArcSmall();
+    method @InaccessibleFromKotlin public androidx.compose.ui.text.TextStyle getBodyExtraSmall();
+    method @InaccessibleFromKotlin public androidx.compose.ui.text.TextStyle getBodyLarge();
+    method @InaccessibleFromKotlin public androidx.compose.ui.text.TextStyle getBodyMedium();
+    method @InaccessibleFromKotlin public androidx.compose.ui.text.TextStyle getBodySmall();
+    method @InaccessibleFromKotlin public androidx.compose.ui.text.TextStyle getDisplayLarge();
+    method @InaccessibleFromKotlin public androidx.compose.ui.text.TextStyle getDisplayMedium();
+    method @InaccessibleFromKotlin public androidx.compose.ui.text.TextStyle getDisplaySmall();
+    method @InaccessibleFromKotlin public androidx.compose.ui.text.TextStyle getLabelLarge();
+    method @InaccessibleFromKotlin public androidx.compose.ui.text.TextStyle getLabelMedium();
+    method @InaccessibleFromKotlin public androidx.compose.ui.text.TextStyle getLabelSmall();
+    method @InaccessibleFromKotlin public androidx.compose.ui.text.TextStyle getNumeralExtraLarge();
+    method @InaccessibleFromKotlin public androidx.compose.ui.text.TextStyle getNumeralExtraSmall();
+    method @InaccessibleFromKotlin public androidx.compose.ui.text.TextStyle getNumeralLarge();
+    method @InaccessibleFromKotlin public androidx.compose.ui.text.TextStyle getNumeralMedium();
+    method @InaccessibleFromKotlin public androidx.compose.ui.text.TextStyle getNumeralSmall();
+    method @InaccessibleFromKotlin public androidx.compose.ui.text.TextStyle getTitleLarge();
+    method @InaccessibleFromKotlin public androidx.compose.ui.text.TextStyle getTitleMedium();
+    method @InaccessibleFromKotlin public androidx.compose.ui.text.TextStyle getTitleSmall();
     property public androidx.wear.compose.foundation.CurvedTextStyle arcLarge;
     property public androidx.wear.compose.foundation.CurvedTextStyle arcMedium;
     property public androidx.wear.compose.foundation.CurvedTextStyle arcSmall;
@@ -2233,11 +2233,11 @@ package androidx.wear.compose.material3.lazy {
   public final class TransformationVariableSpec {
     ctor public TransformationVariableSpec(@FloatRange(from=0.0, to=1.0) float topValue, optional @FloatRange(from=0.0, to=1.0) float targetValue, optional @FloatRange(from=0.0, to=1.0) float bottomValue, optional @FloatRange(from=0.0, to=1.0) float transformationZoneEnterFraction, optional @FloatRange(from=0.0, to=1.0) float transformationZoneExitFraction);
     method public androidx.wear.compose.material3.lazy.TransformationVariableSpec copy(optional float topValue, optional float targetValue, optional float bottomValue, optional float transformationZoneEnterFraction, optional float transformationZoneExitFraction);
-    method public float getBottomValue();
-    method public float getTargetValue();
-    method public float getTopValue();
-    method public float getTransformationZoneEnterFraction();
-    method public float getTransformationZoneExitFraction();
+    method @InaccessibleFromKotlin public float getBottomValue();
+    method @InaccessibleFromKotlin public float getTargetValue();
+    method @InaccessibleFromKotlin public float getTopValue();
+    method @InaccessibleFromKotlin public float getTransformationZoneEnterFraction();
+    method @InaccessibleFromKotlin public float getTransformationZoneExitFraction();
     property public float bottomValue;
     property public float targetValue;
     property public float topValue;
@@ -2246,7 +2246,7 @@ package androidx.wear.compose.material3.lazy {
   }
 
   public interface TransformedContainerPainterScope {
-    method public float getItemHeight(androidx.compose.ui.graphics.drawscope.DrawScope);
+    method @InaccessibleFromKotlin public float getItemHeight(androidx.compose.ui.graphics.drawscope.DrawScope);
     method @BytecodeOnly public long getScrollProgress-CyslRjo(androidx.compose.ui.graphics.drawscope.DrawScope);
     property public abstract float androidx.compose.ui.graphics.drawscope.DrawScope.itemHeight;
     property public abstract androidx.wear.compose.foundation.lazy.TransformingLazyColumnItemScrollProgress androidx.compose.ui.graphics.drawscope.DrawScope.scrollProgress;

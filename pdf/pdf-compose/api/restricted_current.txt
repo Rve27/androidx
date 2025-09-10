@@ -19,14 +19,14 @@ package androidx.pdf.compose {
   public final class PdfViewerState {
     ctor public PdfViewerState();
     method public void clearSelection();
-    method public androidx.pdf.selection.Selection? getCurrentSelection();
-    method public int getFirstVisiblePage();
+    method @InaccessibleFromKotlin public androidx.pdf.selection.Selection? getCurrentSelection();
+    method @InaccessibleFromKotlin public int getFirstVisiblePage();
     method @BytecodeOnly @androidx.compose.runtime.annotation.FrequentlyChangingValue public long getFirstVisiblePageOffset-F1C5BW0();
-    method public int getGestureState();
+    method @InaccessibleFromKotlin public int getGestureState();
     method @KotlinOnly public androidx.compose.ui.geometry.Offset? getVisiblePageOffset(@IntRange(from=0L) int visiblePageNumber);
     method @BytecodeOnly public androidx.compose.ui.geometry.Offset? getVisiblePageOffset-x-9fifI(@IntRange(from=0L) int);
-    method public int getVisiblePagesCount();
-    method @androidx.compose.runtime.annotation.FrequentlyChangingValue public float getZoom();
+    method @InaccessibleFromKotlin public int getVisiblePagesCount();
+    method @InaccessibleFromKotlin @androidx.compose.runtime.annotation.FrequentlyChangingValue public float getZoom();
     method @KotlinOnly public androidx.compose.ui.geometry.Offset? pdfPointToVisibleOffset(androidx.pdf.PdfPoint pdfPoint);
     method @BytecodeOnly public androidx.compose.ui.geometry.Offset? pdfPointToVisibleOffset-x-9fifI(androidx.pdf.PdfPoint);
     method public suspend Object? scrollToPage(@IntRange(from=0L) int pageNum, kotlin.coroutines.Continuation<? super kotlin.Unit>);

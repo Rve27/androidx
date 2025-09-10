@@ -19,6 +19,26 @@ RemovedFromBytecode: androidx.compose.material3.adaptive.navigationsuite.Navigat
     Binary breaking change: method androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults.navigationSuiteType(androidx.compose.material3.adaptive.WindowAdaptiveInfo) has been removed from bytecode
 
 
+RemovedFromKotlin: androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteColors#getWideNavigationRailColors():
+    Source breaking change: method androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteColors.getWideNavigationRailColors() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteDefaults#getVerticalArrangement():
+    Source breaking change: method androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteDefaults.getVerticalArrangement() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteItemColors#getNavigationBarItemColors():
+    Source breaking change: method androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteItemColors.getNavigationBarItemColors() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteItemColors#getNavigationDrawerItemColors():
+    Source breaking change: method androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteItemColors.getNavigationDrawerItemColors() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteItemColors#getNavigationRailItemColors():
+    Source breaking change: method androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteItemColors.getNavigationRailItemColors() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults#getPrimaryActionContentAlignment():
+    Source breaking change: method androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults.getPrimaryActionContentAlignment() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldState#getCurrentValue():
+    Source breaking change: method androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldState.getCurrentValue() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldState#getTargetValue():
+    Source breaking change: method androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldState.getTargetValue() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldState#isAnimating():
+    Source breaking change: method androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldState.isAnimating() can no longer be resolved from Kotlin source
+
+
 RemovedMethod: androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteDefaults#colors(long, long, androidx.compose.material3.WideNavigationRailColors, long, long, long, long, long, long):
     Binary breaking change: Removed method androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteDefaults.colors(long,long,androidx.compose.material3.WideNavigationRailColors,long,long,long,long,long,long)
 RemovedMethod: androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldKt#NavigationSuite(String, androidx.compose.ui.Modifier, androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteColors, androidx.compose.foundation.layout.Arrangement.Vertical, kotlin.jvm.functions.Function0<kotlin.Unit>, kotlin.jvm.functions.Function0<kotlin.Unit>):

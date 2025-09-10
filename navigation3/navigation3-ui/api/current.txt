@@ -13,12 +13,12 @@ package androidx.navigation3.ui {
   }
 
   public final class LocalNavAnimatedContentScopeKt {
-    method public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.compose.animation.AnimatedContentScope> getLocalNavAnimatedContentScope();
+    method @InaccessibleFromKotlin public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.compose.animation.AnimatedContentScope> getLocalNavAnimatedContentScope();
     property public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.compose.animation.AnimatedContentScope> LocalNavAnimatedContentScope;
   }
 
   public final class NavDisplay {
-    method public kotlin.jvm.functions.Function2<androidx.compose.animation.AnimatedContentTransitionScope<? extends java.lang.Object?>,java.lang.Integer,androidx.compose.animation.ContentTransform> getDefaultPredictivePopTransitionSpec();
+    method @InaccessibleFromKotlin public kotlin.jvm.functions.Function2<androidx.compose.animation.AnimatedContentTransitionScope<? extends java.lang.Object?>,java.lang.Integer,androidx.compose.animation.ContentTransform> getDefaultPredictivePopTransitionSpec();
     method public java.util.Map<java.lang.String,java.lang.Object> popTransitionSpec(kotlin.jvm.functions.Function1<? super androidx.compose.animation.AnimatedContentTransitionScope<? extends java.lang.Object?>,androidx.compose.animation.ContentTransform?> popTransitionSpec);
     method public java.util.Map<java.lang.String,java.lang.Object> predictivePopTransitionSpec(kotlin.jvm.functions.Function2<? super androidx.compose.animation.AnimatedContentTransitionScope<? extends java.lang.Object?>,? super java.lang.Integer,androidx.compose.animation.ContentTransform?> predictivePopTransitionSpec);
     method public java.util.Map<java.lang.String,java.lang.Object> transitionSpec(kotlin.jvm.functions.Function1<? super androidx.compose.animation.AnimatedContentTransitionScope<? extends java.lang.Object?>,androidx.compose.animation.ContentTransform?> transitionSpec);
@@ -27,7 +27,7 @@ package androidx.navigation3.ui {
   }
 
   public final class NavDisplayInfo implements androidx.navigationevent.NavigationEventInfo {
-    method public java.util.List<java.lang.Object> getVisibleEntries();
+    method @InaccessibleFromKotlin public java.util.List<java.lang.Object> getVisibleEntries();
     property public java.util.List<java.lang.Object> visibleEntries;
   }
 
@@ -37,15 +37,15 @@ package androidx.navigation3.ui {
   }
 
   public interface OverlayScene<T> extends androidx.navigation3.ui.Scene<T> {
-    method public java.util.List<androidx.navigation3.runtime.NavEntry<T>> getOverlaidEntries();
+    method @InaccessibleFromKotlin public java.util.List<androidx.navigation3.runtime.NavEntry<T>> getOverlaidEntries();
     property public abstract java.util.List<androidx.navigation3.runtime.NavEntry<T>> overlaidEntries;
   }
 
   public interface Scene<T> {
-    method public kotlin.jvm.functions.Function0<kotlin.Unit> getContent();
-    method public java.util.List<androidx.navigation3.runtime.NavEntry<T>> getEntries();
-    method public Object getKey();
-    method public java.util.List<androidx.navigation3.runtime.NavEntry<T>> getPreviousEntries();
+    method @InaccessibleFromKotlin public kotlin.jvm.functions.Function0<kotlin.Unit> getContent();
+    method @InaccessibleFromKotlin public java.util.List<androidx.navigation3.runtime.NavEntry<T>> getEntries();
+    method @InaccessibleFromKotlin public Object getKey();
+    method @InaccessibleFromKotlin public java.util.List<androidx.navigation3.runtime.NavEntry<T>> getPreviousEntries();
     property public abstract kotlin.jvm.functions.Function0<kotlin.Unit> content;
     property public abstract java.util.List<androidx.navigation3.runtime.NavEntry<T>> entries;
     property public abstract Object key;
@@ -54,7 +54,7 @@ package androidx.navigation3.ui {
 
   public final class SceneSetupNavEntryDecoratorKt {
     method public static androidx.navigation3.runtime.NavEntryDecorator<java.lang.Object> SceneSetupNavEntryDecorator();
-    method public static androidx.compose.runtime.ProvidableCompositionLocal<java.util.Set<java.lang.Object>> getLocalEntriesToRenderInCurrentScene();
+    method @InaccessibleFromKotlin public static androidx.compose.runtime.ProvidableCompositionLocal<java.util.Set<java.lang.Object>> getLocalEntriesToRenderInCurrentScene();
     method @androidx.compose.runtime.Composable public static androidx.navigation3.runtime.NavEntryDecorator<java.lang.Object> rememberSceneSetupNavEntryDecorator();
     method @BytecodeOnly @androidx.compose.runtime.Composable public static androidx.navigation3.runtime.NavEntryDecorator<java.lang.Object!> rememberSceneSetupNavEntryDecorator(androidx.compose.runtime.Composer?, int);
     property public static androidx.compose.runtime.ProvidableCompositionLocal<java.util.Set<java.lang.Object>> LocalEntriesToRenderInCurrentScene;

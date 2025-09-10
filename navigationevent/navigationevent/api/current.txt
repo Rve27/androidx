@@ -20,11 +20,11 @@ package androidx.navigationevent {
     ctor public NavigationEvent(optional int swipeEdge, optional @FloatRange(from=0.0, to=1.0) float progress, optional @FloatRange(from=0.0) float touchX);
     ctor public NavigationEvent(optional int swipeEdge, optional @FloatRange(from=0.0, to=1.0) float progress, optional @FloatRange(from=0.0) float touchX, optional @FloatRange(from=0.0) float touchY);
     ctor public NavigationEvent(optional int swipeEdge, optional @FloatRange(from=0.0, to=1.0) float progress, optional @FloatRange(from=0.0) float touchX, optional @FloatRange(from=0.0) float touchY, optional long frameTimeMillis);
-    method public long getFrameTimeMillis();
-    method public float getProgress();
-    method public int getSwipeEdge();
-    method public float getTouchX();
-    method public float getTouchY();
+    method @InaccessibleFromKotlin public long getFrameTimeMillis();
+    method @InaccessibleFromKotlin public float getProgress();
+    method @InaccessibleFromKotlin public int getSwipeEdge();
+    method @InaccessibleFromKotlin public float getTouchX();
+    method @InaccessibleFromKotlin public float getTouchY();
     property public long frameTimeMillis;
     property public float progress;
     property public int swipeEdge;
@@ -51,12 +51,12 @@ package androidx.navigationevent {
     method @MainThread public void addInput(androidx.navigationevent.NavigationEventInput input);
     method @MainThread public void addInput(androidx.navigationevent.NavigationEventInput input, int priority);
     method @MainThread public void dispose();
-    method public kotlinx.coroutines.flow.StateFlow<androidx.navigationevent.NavigationEventState<androidx.navigationevent.NavigationEventInfo>> getState();
+    method @InaccessibleFromKotlin public kotlinx.coroutines.flow.StateFlow<androidx.navigationevent.NavigationEventState<androidx.navigationevent.NavigationEventInfo>> getState();
     method @KotlinOnly public inline <reified T extends androidx.navigationevent.NavigationEventInfo> kotlinx.coroutines.flow.StateFlow<androidx.navigationevent.NavigationEventState<T>> getState(kotlinx.coroutines.CoroutineScope scope, T initialInfo);
     method public boolean hasEnabledHandler();
-    method public boolean isEnabled();
+    method @InaccessibleFromKotlin public boolean isEnabled();
     method @MainThread public void removeInput(androidx.navigationevent.NavigationEventInput input);
-    method public void setEnabled(boolean);
+    method @InaccessibleFromKotlin public void setEnabled(boolean);
     property public boolean isEnabled;
     property public kotlinx.coroutines.flow.StateFlow<androidx.navigationevent.NavigationEventState<androidx.navigationevent.NavigationEventInfo>> state;
     field public static final androidx.navigationevent.NavigationEventDispatcher.Companion Companion;
@@ -70,15 +70,15 @@ package androidx.navigationevent {
   }
 
   public interface NavigationEventDispatcherOwner {
-    method public androidx.navigationevent.NavigationEventDispatcher getNavigationEventDispatcher();
+    method @InaccessibleFromKotlin public androidx.navigationevent.NavigationEventDispatcher getNavigationEventDispatcher();
     property public abstract androidx.navigationevent.NavigationEventDispatcher navigationEventDispatcher;
   }
 
   public abstract class NavigationEventHandler<T extends androidx.navigationevent.NavigationEventInfo> {
     ctor public NavigationEventHandler(boolean isBackEnabled);
     ctor public NavigationEventHandler(boolean isBackEnabled, boolean isForwardEnabled);
-    method public final boolean isBackEnabled();
-    method public final boolean isForwardEnabled();
+    method @InaccessibleFromKotlin public final boolean isBackEnabled();
+    method @InaccessibleFromKotlin public final boolean isForwardEnabled();
     method @EmptySuper protected void onBackCancelled();
     method @EmptySuper protected void onBackCompleted();
     method @EmptySuper protected void onBackProgressed(androidx.navigationevent.NavigationEvent event);
@@ -88,8 +88,8 @@ package androidx.navigationevent {
     method @EmptySuper protected void onForwardProgressed(androidx.navigationevent.NavigationEvent event);
     method @EmptySuper protected void onForwardStarted(androidx.navigationevent.NavigationEvent event);
     method public final void remove();
-    method public final void setBackEnabled(boolean);
-    method public final void setForwardEnabled(boolean);
+    method @InaccessibleFromKotlin public final void setBackEnabled(boolean);
+    method @InaccessibleFromKotlin public final void setForwardEnabled(boolean);
     method public final void setInfo(T currentInfo);
     method public final void setInfo(T currentInfo, optional java.util.List<? extends T> backInfo);
     method public final void setInfo(T currentInfo, optional java.util.List<? extends T> backInfo, optional java.util.List<? extends T> forwardInfo);
@@ -120,10 +120,10 @@ package androidx.navigationevent {
   }
 
   public abstract sealed class NavigationEventState<T extends androidx.navigationevent.NavigationEventInfo> {
-    method public abstract java.util.List<T> getBackInfo();
-    method public abstract T getCurrentInfo();
-    method public abstract java.util.List<T> getForwardInfo();
-    method public final float getProgress();
+    method @InaccessibleFromKotlin public abstract java.util.List<T> getBackInfo();
+    method @InaccessibleFromKotlin public abstract T getCurrentInfo();
+    method @InaccessibleFromKotlin public abstract java.util.List<T> getForwardInfo();
+    method @InaccessibleFromKotlin public final float getProgress();
     property public abstract java.util.List<T> backInfo;
     property public abstract T currentInfo;
     property public abstract java.util.List<T> forwardInfo;
@@ -131,19 +131,19 @@ package androidx.navigationevent {
   }
 
   public static final class NavigationEventState.Idle<T extends androidx.navigationevent.NavigationEventInfo> extends androidx.navigationevent.NavigationEventState<T> {
-    method public java.util.List<T> getBackInfo();
-    method public T getCurrentInfo();
-    method public java.util.List<T> getForwardInfo();
+    method @InaccessibleFromKotlin public java.util.List<T> getBackInfo();
+    method @InaccessibleFromKotlin public T getCurrentInfo();
+    method @InaccessibleFromKotlin public java.util.List<T> getForwardInfo();
     property public java.util.List<T> backInfo;
     property public T currentInfo;
     property public java.util.List<T> forwardInfo;
   }
 
   public static final class NavigationEventState.InProgress<T extends androidx.navigationevent.NavigationEventInfo> extends androidx.navigationevent.NavigationEventState<T> {
-    method public java.util.List<T> getBackInfo();
-    method public T getCurrentInfo();
-    method public java.util.List<T> getForwardInfo();
-    method public androidx.navigationevent.NavigationEvent getLatestEvent();
+    method @InaccessibleFromKotlin public java.util.List<T> getBackInfo();
+    method @InaccessibleFromKotlin public T getCurrentInfo();
+    method @InaccessibleFromKotlin public java.util.List<T> getForwardInfo();
+    method @InaccessibleFromKotlin public androidx.navigationevent.NavigationEvent getLatestEvent();
     property public java.util.List<T> backInfo;
     property public T currentInfo;
     property public java.util.List<T> forwardInfo;

@@ -8,9 +8,9 @@ package androidx.paging.compose {
 
   public final class LazyPagingItems<T> {
     method public operator T? get(int index);
-    method public int getItemCount();
-    method public androidx.paging.ItemSnapshotList<T> getItemSnapshotList();
-    method public androidx.paging.CombinedLoadStates getLoadState();
+    method @InaccessibleFromKotlin public int getItemCount();
+    method @InaccessibleFromKotlin public androidx.paging.ItemSnapshotList<T> getItemSnapshotList();
+    method @InaccessibleFromKotlin public androidx.paging.CombinedLoadStates getLoadState();
     method public T? peek(int index);
     method public void refresh();
     method public void retry();

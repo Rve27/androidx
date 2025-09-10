@@ -55,12 +55,254 @@ RemovedFromBytecode: androidx.compose.runtime.collection.MutableVectorKt#mutable
     Binary breaking change: method androidx.compose.runtime.collection.MutableVectorKt.mutableVectorOf(T...) has been removed from bytecode
 
 
+RemovedFromKotlin: androidx.compose.runtime.AbstractApplier#getCurrent():
+    Source breaking change: method androidx.compose.runtime.AbstractApplier.getCurrent() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.AbstractApplier#getRoot():
+    Source breaking change: method androidx.compose.runtime.AbstractApplier.getRoot() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.AbstractApplier#setCurrent(T):
+    Source breaking change: method androidx.compose.runtime.AbstractApplier.setCurrent(T) can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.ActualAndroid_androidKt#getDefaultMonotonicFrameClock():
+    Source breaking change: method androidx.compose.runtime.ActualAndroid_androidKt.getDefaultMonotonicFrameClock() can no longer be resolved from Kotlin source
 RemovedFromKotlin: androidx.compose.runtime.ActualJvm_jvmKt#synchronized(Object, kotlin.jvm.functions.Function0<? extends R>):
     Source breaking change: method androidx.compose.runtime.ActualJvm_jvmKt.synchronized(Object,kotlin.jvm.functions.Function0<? extends R>) can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.Applier#getCurrent():
+    Source breaking change: method androidx.compose.runtime.Applier.getCurrent() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.BroadcastFrameClock#getHasAwaiters():
+    Source breaking change: method androidx.compose.runtime.BroadcastFrameClock.getHasAwaiters() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.ComposableOpenTarget#index():
+    Source breaking change: method androidx.compose.runtime.ComposableOpenTarget.index() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.ComposableTarget#applier():
+    Source breaking change: method androidx.compose.runtime.ComposableTarget.applier() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.ComposableTargetMarker#description():
+    Source breaking change: method androidx.compose.runtime.ComposableTargetMarker.description() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.ComposablesKt#getCurrentComposer():
+    Source breaking change: method androidx.compose.runtime.ComposablesKt.getCurrentComposer() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.ComposablesKt#getCurrentCompositeKeyHash():
+    Source breaking change: method androidx.compose.runtime.ComposablesKt.getCurrentCompositeKeyHash() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.ComposablesKt#getCurrentCompositeKeyHashCode():
+    Source breaking change: method androidx.compose.runtime.ComposablesKt.getCurrentCompositeKeyHashCode() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.ComposablesKt#getCurrentCompositionLocalContext():
+    Source breaking change: method androidx.compose.runtime.ComposablesKt.getCurrentCompositionLocalContext() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.ComposablesKt#getCurrentRecomposeScope():
+    Source breaking change: method androidx.compose.runtime.ComposablesKt.getCurrentRecomposeScope() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.Composer#getApplier():
+    Source breaking change: method androidx.compose.runtime.Composer.getApplier() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.Composer#getComposition():
+    Source breaking change: method androidx.compose.runtime.Composer.getComposition() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.Composer#getCompositionData():
+    Source breaking change: method androidx.compose.runtime.Composer.getCompositionData() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.Composer#getCurrentCompositionLocalMap():
+    Source breaking change: method androidx.compose.runtime.Composer.getCurrentCompositionLocalMap() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.Composer#getCurrentMarker():
+    Source breaking change: method androidx.compose.runtime.Composer.getCurrentMarker() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.Composer#getDefaultsInvalid():
+    Source breaking change: method androidx.compose.runtime.Composer.getDefaultsInvalid() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.Composer#getInserting():
+    Source breaking change: method androidx.compose.runtime.Composer.getInserting() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.Composer#getRecomposeScopeIdentity():
+    Source breaking change: method androidx.compose.runtime.Composer.getRecomposeScopeIdentity() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.Composer#getSkipping():
+    Source breaking change: method androidx.compose.runtime.Composer.getSkipping() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.Composer.Companion#getEmpty():
+    Source breaking change: method androidx.compose.runtime.Composer.Companion.getEmpty() can no longer be resolved from Kotlin source
 RemovedFromKotlin: androidx.compose.runtime.ComposerKt#traceEventStart(int, String):
     Source breaking change: method androidx.compose.runtime.ComposerKt.traceEventStart(int,String) can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.Composition#getHasInvalidations():
+    Source breaking change: method androidx.compose.runtime.Composition.getHasInvalidations() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.Composition#isDisposed():
+    Source breaking change: method androidx.compose.runtime.Composition.isDisposed() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.CompositionContext#getEffectCoroutineContext():
+    Source breaking change: method androidx.compose.runtime.CompositionContext.getEffectCoroutineContext() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.CompositionLocal#getCurrent():
+    Source breaking change: method androidx.compose.runtime.CompositionLocal.getCurrent() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.CompositionLocalAccessorScope#getCurrentValue(androidx.compose.runtime.CompositionLocal<T>):
+    Source breaking change: method androidx.compose.runtime.CompositionLocalAccessorScope.getCurrentValue(androidx.compose.runtime.CompositionLocal<T>) can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.CompositionLocalMap.Companion#getEmpty():
+    Source breaking change: method androidx.compose.runtime.CompositionLocalMap.Companion.getEmpty() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.CompositionScopedCoroutineScopeCanceller#getCoroutineScope():
+    Source breaking change: method androidx.compose.runtime.CompositionScopedCoroutineScopeCanceller.getCoroutineScope() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.ControlledComposition#getHasPendingChanges():
+    Source breaking change: method androidx.compose.runtime.ControlledComposition.getHasPendingChanges() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.ControlledComposition#isComposing():
+    Source breaking change: method androidx.compose.runtime.ControlledComposition.isComposing() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.DoubleState#getDoubleValue():
+    Source breaking change: method androidx.compose.runtime.DoubleState.getDoubleValue() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.DoubleState#getValue():
+    Source breaking change: method androidx.compose.runtime.DoubleState.getValue() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.FloatState#getFloatValue():
+    Source breaking change: method androidx.compose.runtime.FloatState.getFloatValue() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.FloatState#getValue():
+    Source breaking change: method androidx.compose.runtime.FloatState.getValue() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.IntState#getIntValue():
+    Source breaking change: method androidx.compose.runtime.IntState.getIntValue() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.IntState#getValue():
+    Source breaking change: method androidx.compose.runtime.IntState.getValue() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.LongState#getLongValue():
+    Source breaking change: method androidx.compose.runtime.LongState.getLongValue() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.LongState#getValue():
+    Source breaking change: method androidx.compose.runtime.LongState.getValue() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.MonotonicFrameClock#getKey():
+    Source breaking change: method androidx.compose.runtime.MonotonicFrameClock.getKey() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.MutableDoubleState#setDoubleValue(double):
+    Source breaking change: method androidx.compose.runtime.MutableDoubleState.setDoubleValue(double) can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.MutableDoubleState#setValue(double):
+    Source breaking change: method androidx.compose.runtime.MutableDoubleState.setValue(double) can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.MutableFloatState#setFloatValue(float):
+    Source breaking change: method androidx.compose.runtime.MutableFloatState.setFloatValue(float) can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.MutableFloatState#setValue(float):
+    Source breaking change: method androidx.compose.runtime.MutableFloatState.setValue(float) can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.MutableIntState#setIntValue(int):
+    Source breaking change: method androidx.compose.runtime.MutableIntState.setIntValue(int) can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.MutableIntState#setValue(int):
+    Source breaking change: method androidx.compose.runtime.MutableIntState.setValue(int) can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.MutableLongState#setLongValue(long):
+    Source breaking change: method androidx.compose.runtime.MutableLongState.setLongValue(long) can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.MutableLongState#setValue(long):
+    Source breaking change: method androidx.compose.runtime.MutableLongState.setValue(long) can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.MutableState#setValue(T):
+    Source breaking change: method androidx.compose.runtime.MutableState.setValue(T) can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.PausableMonotonicFrameClock#isPaused():
+    Source breaking change: method androidx.compose.runtime.PausableMonotonicFrameClock.isPaused() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.PausedComposition#isApplied():
+    Source breaking change: method androidx.compose.runtime.PausedComposition.isApplied() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.PausedComposition#isCancelled():
+    Source breaking change: method androidx.compose.runtime.PausedComposition.isCancelled() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.PausedComposition#isComplete():
+    Source breaking change: method androidx.compose.runtime.PausedComposition.isComplete() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.ProvidedValue#getCanOverride():
+    Source breaking change: method androidx.compose.runtime.ProvidedValue.getCanOverride() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.ProvidedValue#getCompositionLocal():
+    Source breaking change: method androidx.compose.runtime.ProvidedValue.getCompositionLocal() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.ProvidedValue#getValue():
+    Source breaking change: method androidx.compose.runtime.ProvidedValue.getValue() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.Recomposer#getChangeCount():
+    Source breaking change: method androidx.compose.runtime.Recomposer.getChangeCount() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.Recomposer#getCurrentState():
+    Source breaking change: method androidx.compose.runtime.Recomposer.getCurrentState() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.Recomposer#getEffectCoroutineContext():
+    Source breaking change: method androidx.compose.runtime.Recomposer.getEffectCoroutineContext() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.Recomposer#getHasPendingWork():
+    Source breaking change: method androidx.compose.runtime.Recomposer.getHasPendingWork() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.Recomposer#getState():
+    Source breaking change: method androidx.compose.runtime.Recomposer.getState() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.Recomposer.Companion#getRunningRecomposers():
+    Source breaking change: method androidx.compose.runtime.Recomposer.Companion.getRunningRecomposers() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.RecomposerInfo#getChangeCount():
+    Source breaking change: method androidx.compose.runtime.RecomposerInfo.getChangeCount() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.RecomposerInfo#getHasPendingWork():
+    Source breaking change: method androidx.compose.runtime.RecomposerInfo.getHasPendingWork() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.RecomposerInfo#getState():
+    Source breaking change: method androidx.compose.runtime.RecomposerInfo.getState() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.State#getValue():
+    Source breaking change: method androidx.compose.runtime.State.getValue() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.collection.MutableVector#getIndices():
+    Source breaking change: method androidx.compose.runtime.collection.MutableVector.getIndices() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.collection.MutableVector#getLastIndex():
+    Source breaking change: method androidx.compose.runtime.collection.MutableVector.getLastIndex() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.collection.MutableVector#getSize():
+    Source breaking change: method androidx.compose.runtime.collection.MutableVector.getSize() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.internal.FunctionKeyMeta#endOffset():
+    Source breaking change: method androidx.compose.runtime.internal.FunctionKeyMeta.endOffset() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.internal.FunctionKeyMeta#key():
+    Source breaking change: method androidx.compose.runtime.internal.FunctionKeyMeta.key() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.internal.FunctionKeyMeta#startOffset():
+    Source breaking change: method androidx.compose.runtime.internal.FunctionKeyMeta.startOffset() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.internal.FunctionKeyMetaClass#file():
+    Source breaking change: method androidx.compose.runtime.internal.FunctionKeyMetaClass.file() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.internal.LiveLiteralFileInfo#file():
+    Source breaking change: method androidx.compose.runtime.internal.LiveLiteralFileInfo.file() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.internal.LiveLiteralInfo#key():
+    Source breaking change: method androidx.compose.runtime.internal.LiveLiteralInfo.key() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.internal.LiveLiteralInfo#offset():
+    Source breaking change: method androidx.compose.runtime.internal.LiveLiteralInfo.offset() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.internal.StabilityInferred#parameters():
+    Source breaking change: method androidx.compose.runtime.internal.StabilityInferred.parameters() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.reflect.ComposableMethod#getParameterCount():
+    Source breaking change: method androidx.compose.runtime.reflect.ComposableMethod.getParameterCount() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.reflect.ComposableMethod#getParameterTypes():
+    Source breaking change: method androidx.compose.runtime.reflect.ComposableMethod.getParameterTypes() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.reflect.ComposableMethod#getParameters():
+    Source breaking change: method androidx.compose.runtime.reflect.ComposableMethod.getParameters() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.snapshots.AutoboxingStateValueProperty#preferredPropertyName():
+    Source breaking change: method androidx.compose.runtime.snapshots.AutoboxingStateValueProperty.preferredPropertyName() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.snapshots.MutableSnapshot#getReadOnly():
+    Source breaking change: method androidx.compose.runtime.snapshots.MutableSnapshot.getReadOnly() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.snapshots.MutableSnapshot#getRoot():
+    Source breaking change: method androidx.compose.runtime.snapshots.MutableSnapshot.getRoot() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.snapshots.Snapshot#getId():
+    Source breaking change: method androidx.compose.runtime.snapshots.Snapshot.getId() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.snapshots.Snapshot#getReadOnly():
+    Source breaking change: method androidx.compose.runtime.snapshots.Snapshot.getReadOnly() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.snapshots.Snapshot#getRoot():
+    Source breaking change: method androidx.compose.runtime.snapshots.Snapshot.getRoot() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.snapshots.Snapshot#getSnapshotId():
+    Source breaking change: method androidx.compose.runtime.snapshots.Snapshot.getSnapshotId() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.snapshots.Snapshot.Companion#getCurrent():
+    Source breaking change: method androidx.compose.runtime.snapshots.Snapshot.Companion.getCurrent() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.snapshots.Snapshot.Companion#isApplyObserverNotificationPending():
+    Source breaking change: method androidx.compose.runtime.snapshots.Snapshot.Companion.isApplyObserverNotificationPending() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.snapshots.Snapshot.Companion#isInSnapshot():
+    Source breaking change: method androidx.compose.runtime.snapshots.Snapshot.Companion.isInSnapshot() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.snapshots.SnapshotApplyConflictException#getSnapshot():
+    Source breaking change: method androidx.compose.runtime.snapshots.SnapshotApplyConflictException.getSnapshot() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.snapshots.SnapshotApplyResult#getSucceeded():
+    Source breaking change: method androidx.compose.runtime.snapshots.SnapshotApplyResult.getSucceeded() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.snapshots.SnapshotApplyResult.Failure#getSnapshot():
+    Source breaking change: method androidx.compose.runtime.snapshots.SnapshotApplyResult.Failure.getSnapshot() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.snapshots.SnapshotApplyResult.Failure#getSucceeded():
+    Source breaking change: method androidx.compose.runtime.snapshots.SnapshotApplyResult.Failure.getSucceeded() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.snapshots.SnapshotApplyResult.Success#getSucceeded():
+    Source breaking change: method androidx.compose.runtime.snapshots.SnapshotApplyResult.Success.getSucceeded() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.snapshots.SnapshotMutableState#getPolicy():
+    Source breaking change: method androidx.compose.runtime.snapshots.SnapshotMutableState.getPolicy() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.snapshots.SnapshotStateList#getFirstStateRecord():
+    Source breaking change: method androidx.compose.runtime.snapshots.SnapshotStateList.getFirstStateRecord() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.snapshots.SnapshotStateList#getSize():
+    Source breaking change: method androidx.compose.runtime.snapshots.SnapshotStateList.getSize() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.snapshots.SnapshotStateMap#getEntries():
+    Source breaking change: method androidx.compose.runtime.snapshots.SnapshotStateMap.getEntries() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.snapshots.SnapshotStateMap#getFirstStateRecord():
+    Source breaking change: method androidx.compose.runtime.snapshots.SnapshotStateMap.getFirstStateRecord() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.snapshots.SnapshotStateMap#getKeys():
+    Source breaking change: method androidx.compose.runtime.snapshots.SnapshotStateMap.getKeys() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.snapshots.SnapshotStateMap#getSize():
+    Source breaking change: method androidx.compose.runtime.snapshots.SnapshotStateMap.getSize() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.snapshots.SnapshotStateMap#getValues():
+    Source breaking change: method androidx.compose.runtime.snapshots.SnapshotStateMap.getValues() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.snapshots.SnapshotStateSet#getFirstStateRecord():
+    Source breaking change: method androidx.compose.runtime.snapshots.SnapshotStateSet.getFirstStateRecord() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.snapshots.SnapshotStateSet#getSize():
+    Source breaking change: method androidx.compose.runtime.snapshots.SnapshotStateSet.getSize() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.snapshots.StateObject#getFirstStateRecord():
+    Source breaking change: method androidx.compose.runtime.snapshots.StateObject.getFirstStateRecord() can no longer be resolved from Kotlin source
 RemovedFromKotlin: androidx.compose.runtime.snapshots.StateRecord#create(int):
     Source breaking change: method androidx.compose.runtime.snapshots.StateRecord.create(int) can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.tooling.CompositionData#getCompositionGroups():
+    Source breaking change: method androidx.compose.runtime.tooling.CompositionData.getCompositionGroups() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.tooling.CompositionData#isEmpty():
+    Source breaking change: method androidx.compose.runtime.tooling.CompositionData.isEmpty() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.tooling.CompositionErrorContextKt#getLocalCompositionErrorContext():
+    Source breaking change: method androidx.compose.runtime.tooling.CompositionErrorContextKt.getLocalCompositionErrorContext() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.tooling.CompositionGroup#getData():
+    Source breaking change: method androidx.compose.runtime.tooling.CompositionGroup.getData() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.tooling.CompositionGroup#getGroupSize():
+    Source breaking change: method androidx.compose.runtime.tooling.CompositionGroup.getGroupSize() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.tooling.CompositionGroup#getIdentity():
+    Source breaking change: method androidx.compose.runtime.tooling.CompositionGroup.getIdentity() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.tooling.CompositionGroup#getKey():
+    Source breaking change: method androidx.compose.runtime.tooling.CompositionGroup.getKey() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.tooling.CompositionGroup#getNode():
+    Source breaking change: method androidx.compose.runtime.tooling.CompositionGroup.getNode() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.tooling.CompositionGroup#getSlotsSize():
+    Source breaking change: method androidx.compose.runtime.tooling.CompositionGroup.getSlotsSize() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.tooling.CompositionGroup#getSourceInfo():
+    Source breaking change: method androidx.compose.runtime.tooling.CompositionGroup.getSourceInfo() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.tooling.CompositionInstance#getData():
+    Source breaking change: method androidx.compose.runtime.tooling.CompositionInstance.getData() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.tooling.CompositionInstance#getParent():
+    Source breaking change: method androidx.compose.runtime.tooling.CompositionInstance.getParent() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.runtime.tooling.InspectionTablesKt#getLocalInspectionTables():
+    Source breaking change: method androidx.compose.runtime.tooling.InspectionTablesKt.getLocalInspectionTables() can no longer be resolved from Kotlin source
 
 
 RemovedMethod: androidx.compose.runtime.ComposablesKt#ComposeNode(kotlin.jvm.functions.Function0<? extends T>, kotlin.jvm.functions.Function1<? super androidx.compose.runtime.Updater<T>,kotlin.Unit>, androidx.compose.runtime.Composer, int):

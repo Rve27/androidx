@@ -1,0 +1,5 @@
+// Baseline format: 1.0
+RemovedFromKotlin: androidx.compose.animation.graphics.vector.AnimatedImageVector#getImageVector():
+    Source breaking change: method androidx.compose.animation.graphics.vector.AnimatedImageVector.getImageVector() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.animation.graphics.vector.AnimatedImageVector#getTotalDuration():
+    Source breaking change: method androidx.compose.animation.graphics.vector.AnimatedImageVector.getTotalDuration() can no longer be resolved from Kotlin source
