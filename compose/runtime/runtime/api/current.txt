@@ -705,6 +705,7 @@ package androidx.compose.runtime {
     method public void onExitedComposition();
     method public void onRetained();
     method public void onRetired();
+    method public void onUnused();
   }
 
   public abstract class RetainScope implements androidx.compose.runtime.RetainStateProvider {

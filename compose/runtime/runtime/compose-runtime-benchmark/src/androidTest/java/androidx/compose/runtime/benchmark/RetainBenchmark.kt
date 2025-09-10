@@ -162,6 +162,8 @@ class RetainBenchmark : ComposeBenchmarkBase() {
 
         override fun onRetired() {}
 
+        override fun onUnused() {}
+
         override fun onRemembered() {}
 
         override fun onForgotten() {}
