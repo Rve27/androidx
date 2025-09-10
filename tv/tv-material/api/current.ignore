@@ -11,6 +11,236 @@ RemovedFromBytecode: androidx.tv.material3.TabRowDefaults#contentColor():
     Binary breaking change: method androidx.tv.material3.TabRowDefaults.contentColor() has been removed from bytecode
 
 
+RemovedFromKotlin: androidx.tv.material3.Border#getBorder():
+    Source breaking change: method androidx.tv.material3.Border.getBorder() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.Border#getShape():
+    Source breaking change: method androidx.tv.material3.Border.getShape() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.Border.Companion#getNone():
+    Source breaking change: method androidx.tv.material3.Border.Companion.getNone() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.ButtonDefaults#getButtonWithIconContentPadding():
+    Source breaking change: method androidx.tv.material3.ButtonDefaults.getButtonWithIconContentPadding() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.ButtonDefaults#getContentPadding():
+    Source breaking change: method androidx.tv.material3.ButtonDefaults.getContentPadding() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.ButtonScale.Companion#getNone():
+    Source breaking change: method androidx.tv.material3.ButtonScale.Companion.getNone() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.CardDefaults#getScrimBrush():
+    Source breaking change: method androidx.tv.material3.CardDefaults.getScrimBrush() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.CardScale.Companion#getNone():
+    Source breaking change: method androidx.tv.material3.CardScale.Companion.getNone() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.ClickableSurfaceScale.Companion#getNone():
+    Source breaking change: method androidx.tv.material3.ClickableSurfaceScale.Companion.getNone() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.ContentColorKt#getLocalContentColor():
+    Source breaking change: method androidx.tv.material3.ContentColorKt.getLocalContentColor() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.DrawerState#getCurrentValue():
+    Source breaking change: method androidx.tv.material3.DrawerState.getCurrentValue() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.DrawerState.Companion#getSaver():
+    Source breaking change: method androidx.tv.material3.DrawerState.Companion.getSaver() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.Glow.Companion#getNone():
+    Source breaking change: method androidx.tv.material3.Glow.Companion.getNone() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.ListItemBorder#getBorder():
+    Source breaking change: method androidx.tv.material3.ListItemBorder.getBorder() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.ListItemBorder#getDisabledBorder():
+    Source breaking change: method androidx.tv.material3.ListItemBorder.getDisabledBorder() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.ListItemBorder#getFocusedBorder():
+    Source breaking change: method androidx.tv.material3.ListItemBorder.getFocusedBorder() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.ListItemBorder#getFocusedDisabledBorder():
+    Source breaking change: method androidx.tv.material3.ListItemBorder.getFocusedDisabledBorder() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.ListItemBorder#getFocusedSelectedBorder():
+    Source breaking change: method androidx.tv.material3.ListItemBorder.getFocusedSelectedBorder() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.ListItemBorder#getPressedBorder():
+    Source breaking change: method androidx.tv.material3.ListItemBorder.getPressedBorder() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.ListItemBorder#getPressedSelectedBorder():
+    Source breaking change: method androidx.tv.material3.ListItemBorder.getPressedSelectedBorder() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.ListItemBorder#getSelectedBorder():
+    Source breaking change: method androidx.tv.material3.ListItemBorder.getSelectedBorder() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.ListItemGlow#getFocusedGlow():
+    Source breaking change: method androidx.tv.material3.ListItemGlow.getFocusedGlow() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.ListItemGlow#getFocusedSelectedGlow():
+    Source breaking change: method androidx.tv.material3.ListItemGlow.getFocusedSelectedGlow() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.ListItemGlow#getGlow():
+    Source breaking change: method androidx.tv.material3.ListItemGlow.getGlow() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.ListItemGlow#getPressedGlow():
+    Source breaking change: method androidx.tv.material3.ListItemGlow.getPressedGlow() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.ListItemGlow#getPressedSelectedGlow():
+    Source breaking change: method androidx.tv.material3.ListItemGlow.getPressedSelectedGlow() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.ListItemGlow#getSelectedGlow():
+    Source breaking change: method androidx.tv.material3.ListItemGlow.getSelectedGlow() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.ListItemScale#getDisabledScale():
+    Source breaking change: method androidx.tv.material3.ListItemScale.getDisabledScale() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.ListItemScale#getFocusedDisabledScale():
+    Source breaking change: method androidx.tv.material3.ListItemScale.getFocusedDisabledScale() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.ListItemScale#getFocusedScale():
+    Source breaking change: method androidx.tv.material3.ListItemScale.getFocusedScale() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.ListItemScale#getFocusedSelectedScale():
+    Source breaking change: method androidx.tv.material3.ListItemScale.getFocusedSelectedScale() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.ListItemScale#getPressedScale():
+    Source breaking change: method androidx.tv.material3.ListItemScale.getPressedScale() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.ListItemScale#getPressedSelectedScale():
+    Source breaking change: method androidx.tv.material3.ListItemScale.getPressedSelectedScale() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.ListItemScale#getScale():
+    Source breaking change: method androidx.tv.material3.ListItemScale.getScale() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.ListItemScale#getSelectedScale():
+    Source breaking change: method androidx.tv.material3.ListItemScale.getSelectedScale() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.ListItemScale.Companion#getNone():
+    Source breaking change: method androidx.tv.material3.ListItemScale.Companion.getNone() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.ListItemShape#getDisabledShape():
+    Source breaking change: method androidx.tv.material3.ListItemShape.getDisabledShape() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.ListItemShape#getFocusedDisabledShape():
+    Source breaking change: method androidx.tv.material3.ListItemShape.getFocusedDisabledShape() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.ListItemShape#getFocusedSelectedShape():
+    Source breaking change: method androidx.tv.material3.ListItemShape.getFocusedSelectedShape() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.ListItemShape#getFocusedShape():
+    Source breaking change: method androidx.tv.material3.ListItemShape.getFocusedShape() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.ListItemShape#getPressedSelectedShape():
+    Source breaking change: method androidx.tv.material3.ListItemShape.getPressedSelectedShape() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.ListItemShape#getPressedShape():
+    Source breaking change: method androidx.tv.material3.ListItemShape.getPressedShape() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.ListItemShape#getSelectedShape():
+    Source breaking change: method androidx.tv.material3.ListItemShape.getSelectedShape() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.ListItemShape#getShape():
+    Source breaking change: method androidx.tv.material3.ListItemShape.getShape() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.MaterialTheme#getColorScheme():
+    Source breaking change: method androidx.tv.material3.MaterialTheme.getColorScheme() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.MaterialTheme#getShapes():
+    Source breaking change: method androidx.tv.material3.MaterialTheme.getShapes() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.MaterialTheme#getTypography():
+    Source breaking change: method androidx.tv.material3.MaterialTheme.getTypography() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.NavigationDrawerItemBorder#getBorder():
+    Source breaking change: method androidx.tv.material3.NavigationDrawerItemBorder.getBorder() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.NavigationDrawerItemBorder#getDisabledBorder():
+    Source breaking change: method androidx.tv.material3.NavigationDrawerItemBorder.getDisabledBorder() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.NavigationDrawerItemBorder#getFocusedBorder():
+    Source breaking change: method androidx.tv.material3.NavigationDrawerItemBorder.getFocusedBorder() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.NavigationDrawerItemBorder#getFocusedDisabledBorder():
+    Source breaking change: method androidx.tv.material3.NavigationDrawerItemBorder.getFocusedDisabledBorder() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.NavigationDrawerItemBorder#getFocusedSelectedBorder():
+    Source breaking change: method androidx.tv.material3.NavigationDrawerItemBorder.getFocusedSelectedBorder() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.NavigationDrawerItemBorder#getPressedBorder():
+    Source breaking change: method androidx.tv.material3.NavigationDrawerItemBorder.getPressedBorder() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.NavigationDrawerItemBorder#getPressedSelectedBorder():
+    Source breaking change: method androidx.tv.material3.NavigationDrawerItemBorder.getPressedSelectedBorder() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.NavigationDrawerItemBorder#getSelectedBorder():
+    Source breaking change: method androidx.tv.material3.NavigationDrawerItemBorder.getSelectedBorder() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.NavigationDrawerItemDefaults#getContentAnimationEnter():
+    Source breaking change: method androidx.tv.material3.NavigationDrawerItemDefaults.getContentAnimationEnter() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.NavigationDrawerItemDefaults#getContentAnimationExit():
+    Source breaking change: method androidx.tv.material3.NavigationDrawerItemDefaults.getContentAnimationExit() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.NavigationDrawerItemDefaults#getDefaultBorder():
+    Source breaking change: method androidx.tv.material3.NavigationDrawerItemDefaults.getDefaultBorder() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.NavigationDrawerItemDefaults#getTrailingBadgeTextStyle():
+    Source breaking change: method androidx.tv.material3.NavigationDrawerItemDefaults.getTrailingBadgeTextStyle() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.NavigationDrawerItemGlow#getFocusedGlow():
+    Source breaking change: method androidx.tv.material3.NavigationDrawerItemGlow.getFocusedGlow() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.NavigationDrawerItemGlow#getFocusedSelectedGlow():
+    Source breaking change: method androidx.tv.material3.NavigationDrawerItemGlow.getFocusedSelectedGlow() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.NavigationDrawerItemGlow#getGlow():
+    Source breaking change: method androidx.tv.material3.NavigationDrawerItemGlow.getGlow() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.NavigationDrawerItemGlow#getPressedGlow():
+    Source breaking change: method androidx.tv.material3.NavigationDrawerItemGlow.getPressedGlow() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.NavigationDrawerItemGlow#getPressedSelectedGlow():
+    Source breaking change: method androidx.tv.material3.NavigationDrawerItemGlow.getPressedSelectedGlow() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.NavigationDrawerItemGlow#getSelectedGlow():
+    Source breaking change: method androidx.tv.material3.NavigationDrawerItemGlow.getSelectedGlow() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.NavigationDrawerItemScale#getDisabledScale():
+    Source breaking change: method androidx.tv.material3.NavigationDrawerItemScale.getDisabledScale() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.NavigationDrawerItemScale#getFocusedDisabledScale():
+    Source breaking change: method androidx.tv.material3.NavigationDrawerItemScale.getFocusedDisabledScale() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.NavigationDrawerItemScale#getFocusedScale():
+    Source breaking change: method androidx.tv.material3.NavigationDrawerItemScale.getFocusedScale() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.NavigationDrawerItemScale#getFocusedSelectedScale():
+    Source breaking change: method androidx.tv.material3.NavigationDrawerItemScale.getFocusedSelectedScale() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.NavigationDrawerItemScale#getPressedScale():
+    Source breaking change: method androidx.tv.material3.NavigationDrawerItemScale.getPressedScale() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.NavigationDrawerItemScale#getPressedSelectedScale():
+    Source breaking change: method androidx.tv.material3.NavigationDrawerItemScale.getPressedSelectedScale() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.NavigationDrawerItemScale#getScale():
+    Source breaking change: method androidx.tv.material3.NavigationDrawerItemScale.getScale() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.NavigationDrawerItemScale#getSelectedScale():
+    Source breaking change: method androidx.tv.material3.NavigationDrawerItemScale.getSelectedScale() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.NavigationDrawerItemScale.Companion#getNone():
+    Source breaking change: method androidx.tv.material3.NavigationDrawerItemScale.Companion.getNone() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.NavigationDrawerItemShape#getDisabledShape():
+    Source breaking change: method androidx.tv.material3.NavigationDrawerItemShape.getDisabledShape() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.NavigationDrawerItemShape#getFocusedDisabledShape():
+    Source breaking change: method androidx.tv.material3.NavigationDrawerItemShape.getFocusedDisabledShape() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.NavigationDrawerItemShape#getFocusedSelectedShape():
+    Source breaking change: method androidx.tv.material3.NavigationDrawerItemShape.getFocusedSelectedShape() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.NavigationDrawerItemShape#getFocusedShape():
+    Source breaking change: method androidx.tv.material3.NavigationDrawerItemShape.getFocusedShape() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.NavigationDrawerItemShape#getPressedSelectedShape():
+    Source breaking change: method androidx.tv.material3.NavigationDrawerItemShape.getPressedSelectedShape() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.NavigationDrawerItemShape#getPressedShape():
+    Source breaking change: method androidx.tv.material3.NavigationDrawerItemShape.getPressedShape() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.NavigationDrawerItemShape#getSelectedShape():
+    Source breaking change: method androidx.tv.material3.NavigationDrawerItemShape.getSelectedShape() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.NavigationDrawerItemShape#getShape():
+    Source breaking change: method androidx.tv.material3.NavigationDrawerItemShape.getShape() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.NavigationDrawerScope#getHasFocus():
+    Source breaking change: method androidx.tv.material3.NavigationDrawerScope.getHasFocus() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.OutlinedButtonDefaults#getButtonWithIconContentPadding():
+    Source breaking change: method androidx.tv.material3.OutlinedButtonDefaults.getButtonWithIconContentPadding() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.OutlinedButtonDefaults#getContentPadding():
+    Source breaking change: method androidx.tv.material3.OutlinedButtonDefaults.getContentPadding() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.SelectableSurfaceScale.Companion#getNone():
+    Source breaking change: method androidx.tv.material3.SelectableSurfaceScale.Companion.getNone() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.ShapeDefaults#getExtraLarge():
+    Source breaking change: method androidx.tv.material3.ShapeDefaults.getExtraLarge() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.ShapeDefaults#getExtraSmall():
+    Source breaking change: method androidx.tv.material3.ShapeDefaults.getExtraSmall() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.ShapeDefaults#getLarge():
+    Source breaking change: method androidx.tv.material3.ShapeDefaults.getLarge() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.ShapeDefaults#getMedium():
+    Source breaking change: method androidx.tv.material3.ShapeDefaults.getMedium() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.ShapeDefaults#getSmall():
+    Source breaking change: method androidx.tv.material3.ShapeDefaults.getSmall() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.Shapes#getExtraLarge():
+    Source breaking change: method androidx.tv.material3.Shapes.getExtraLarge() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.Shapes#getExtraSmall():
+    Source breaking change: method androidx.tv.material3.Shapes.getExtraSmall() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.Shapes#getLarge():
+    Source breaking change: method androidx.tv.material3.Shapes.getLarge() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.Shapes#getMedium():
+    Source breaking change: method androidx.tv.material3.Shapes.getMedium() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.Shapes#getSmall():
+    Source breaking change: method androidx.tv.material3.Shapes.getSmall() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.SurfaceDefaults#getShape():
+    Source breaking change: method androidx.tv.material3.SurfaceDefaults.getShape() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.TabRowScope#getHasFocus():
+    Source breaking change: method androidx.tv.material3.TabRowScope.getHasFocus() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.TextKt#getLocalTextStyle():
+    Source breaking change: method androidx.tv.material3.TextKt.getLocalTextStyle() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.Typography#getBodyLarge():
+    Source breaking change: method androidx.tv.material3.Typography.getBodyLarge() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.Typography#getBodyMedium():
+    Source breaking change: method androidx.tv.material3.Typography.getBodyMedium() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.Typography#getBodySmall():
+    Source breaking change: method androidx.tv.material3.Typography.getBodySmall() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.Typography#getDisplayLarge():
+    Source breaking change: method androidx.tv.material3.Typography.getDisplayLarge() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.Typography#getDisplayMedium():
+    Source breaking change: method androidx.tv.material3.Typography.getDisplayMedium() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.Typography#getDisplaySmall():
+    Source breaking change: method androidx.tv.material3.Typography.getDisplaySmall() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.Typography#getHeadlineLarge():
+    Source breaking change: method androidx.tv.material3.Typography.getHeadlineLarge() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.Typography#getHeadlineMedium():
+    Source breaking change: method androidx.tv.material3.Typography.getHeadlineMedium() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.Typography#getHeadlineSmall():
+    Source breaking change: method androidx.tv.material3.Typography.getHeadlineSmall() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.Typography#getLabelLarge():
+    Source breaking change: method androidx.tv.material3.Typography.getLabelLarge() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.Typography#getLabelMedium():
+    Source breaking change: method androidx.tv.material3.Typography.getLabelMedium() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.Typography#getLabelSmall():
+    Source breaking change: method androidx.tv.material3.Typography.getLabelSmall() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.Typography#getTitleLarge():
+    Source breaking change: method androidx.tv.material3.Typography.getTitleLarge() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.Typography#getTitleMedium():
+    Source breaking change: method androidx.tv.material3.Typography.getTitleMedium() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.tv.material3.Typography#getTitleSmall():
+    Source breaking change: method androidx.tv.material3.Typography.getTitleSmall() can no longer be resolved from Kotlin source
+
+
 RemovedMethod: androidx.tv.material3.Border#Border(androidx.compose.foundation.BorderStroke, float, androidx.compose.ui.graphics.Shape):
     Binary breaking change: Removed constructor androidx.tv.material3.Border(androidx.compose.foundation.BorderStroke,float,androidx.compose.ui.graphics.Shape)
 RemovedMethod: androidx.tv.material3.Border#getInset():

@@ -21,8 +21,8 @@ package androidx.compose.ui.tooling.animation {
 
   public final class ToolingState<T> implements androidx.compose.runtime.State<T> {
     ctor public ToolingState(T default);
-    method public T getValue();
-    method public void setValue(T);
+    method @InaccessibleFromKotlin public T getValue();
+    method @InaccessibleFromKotlin public void setValue(T);
     property public T value;
   }
 

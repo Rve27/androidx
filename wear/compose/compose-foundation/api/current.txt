@@ -46,10 +46,10 @@ package androidx.wear.compose.foundation {
   }
 
   public final class CompositionLocalsKt {
-    method public static androidx.compose.runtime.ProvidableCompositionLocal<java.lang.Boolean> getLocalReduceMotion();
-    method public static androidx.compose.runtime.ProvidableCompositionLocal<java.lang.Boolean> getLocalScreenIsActive();
-    method public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.compose.ui.graphics.Color> getLocalSwipeToDismissBackgroundScrimColor();
-    method public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.compose.ui.graphics.Color> getLocalSwipeToDismissContentScrimColor();
+    method @InaccessibleFromKotlin public static androidx.compose.runtime.ProvidableCompositionLocal<java.lang.Boolean> getLocalReduceMotion();
+    method @InaccessibleFromKotlin public static androidx.compose.runtime.ProvidableCompositionLocal<java.lang.Boolean> getLocalScreenIsActive();
+    method @InaccessibleFromKotlin public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.compose.ui.graphics.Color> getLocalSwipeToDismissBackgroundScrimColor();
+    method @InaccessibleFromKotlin public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.compose.ui.graphics.Color> getLocalSwipeToDismissContentScrimColor();
     property public static androidx.compose.runtime.ProvidableCompositionLocal<java.lang.Boolean> LocalReduceMotion;
     property public static androidx.compose.runtime.ProvidableCompositionLocal<java.lang.Boolean> LocalScreenIsActive;
     property public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.compose.ui.graphics.Color> LocalSwipeToDismissBackgroundScrimColor;
@@ -204,10 +204,10 @@ package androidx.wear.compose.foundation {
 
   public final class CurvedSemanticsScope {
     ctor public CurvedSemanticsScope();
-    method public String? getContentDescription();
-    method public float getTraversalIndex();
-    method public void setContentDescription(String?);
-    method public void setTraversalIndex(float);
+    method @InaccessibleFromKotlin public String? getContentDescription();
+    method @InaccessibleFromKotlin public float getTraversalIndex();
+    method @InaccessibleFromKotlin public void setContentDescription(String?);
+    method @InaccessibleFromKotlin public void setTraversalIndex(float);
     property public String? contentDescription;
     property public float traversalIndex;
   }
@@ -241,11 +241,11 @@ package androidx.wear.compose.foundation {
     method @BytecodeOnly @Deprecated public androidx.wear.compose.foundation.CurvedTextStyle! copy-zt0DKyk(long, long, long, androidx.compose.ui.text.font.FontFamily!, androidx.compose.ui.text.font.FontWeight!, androidx.compose.ui.text.font.FontStyle!, androidx.compose.ui.text.font.FontSynthesis!, long, long, long);
     method @BytecodeOnly public long getBackground-0d7_KjU();
     method @BytecodeOnly public long getColor-0d7_KjU();
-    method public androidx.compose.ui.text.font.FontFamily? getFontFamily();
+    method @InaccessibleFromKotlin public androidx.compose.ui.text.font.FontFamily? getFontFamily();
     method @BytecodeOnly public long getFontSize-XSAIIZE();
     method @BytecodeOnly public androidx.compose.ui.text.font.FontStyle? getFontStyle-4Lr2A7w();
     method @BytecodeOnly public androidx.compose.ui.text.font.FontSynthesis? getFontSynthesis-ZQGJjVo();
-    method public androidx.compose.ui.text.font.FontWeight? getFontWeight();
+    method @InaccessibleFromKotlin public androidx.compose.ui.text.font.FontWeight? getFontWeight();
     method @BytecodeOnly public long getLetterSpacing-XSAIIZE();
     method @BytecodeOnly public long getLetterSpacingCounterClockwise-XSAIIZE();
     method @BytecodeOnly public long getLineHeight-XSAIIZE();
@@ -295,8 +295,8 @@ package androidx.wear.compose.foundation {
   }
 
   public final class ExpandableItemsDefaults {
-    method public androidx.compose.animation.core.AnimationSpec<java.lang.Float> getCollapseAnimationSpec();
-    method public androidx.compose.animation.core.AnimationSpec<java.lang.Float> getExpandAnimationSpec();
+    method @InaccessibleFromKotlin public androidx.compose.animation.core.AnimationSpec<java.lang.Float> getCollapseAnimationSpec();
+    method @InaccessibleFromKotlin public androidx.compose.animation.core.AnimationSpec<java.lang.Float> getExpandAnimationSpec();
     property public androidx.compose.animation.core.AnimationSpec<java.lang.Float> collapseAnimationSpec;
     property public androidx.compose.animation.core.AnimationSpec<java.lang.Float> expandAnimationSpec;
     field public static final androidx.wear.compose.foundation.ExpandableItemsDefaults INSTANCE;
@@ -316,9 +316,9 @@ package androidx.wear.compose.foundation {
   }
 
   public final class ExpandableState {
-    method public float getExpandProgress();
-    method public boolean isExpanded();
-    method public void setExpanded(boolean);
+    method @InaccessibleFromKotlin public float getExpandProgress();
+    method @InaccessibleFromKotlin public boolean isExpanded();
+    method @InaccessibleFromKotlin public void setExpanded(boolean);
     property public float expandProgress;
     property public boolean expanded;
     field public static final androidx.wear.compose.foundation.ExpandableState.Companion Companion;
@@ -357,7 +357,7 @@ package androidx.wear.compose.foundation {
 
   @Deprecated @SuppressCompatibility @androidx.wear.compose.foundation.ExperimentalWearFoundationApi @kotlin.jvm.JvmInline public final value class RevealActionType {
     method @BytecodeOnly @Deprecated public static androidx.wear.compose.foundation.RevealActionType! box-impl(int);
-    method @Deprecated public int getValue();
+    method @InaccessibleFromKotlin @Deprecated public int getValue();
     method @BytecodeOnly @Deprecated public int unbox-impl();
     property @Deprecated public int value;
     field @Deprecated public static final androidx.wear.compose.foundation.RevealActionType.Companion Companion;
@@ -376,7 +376,7 @@ package androidx.wear.compose.foundation {
 
   @Deprecated @SuppressCompatibility @androidx.wear.compose.foundation.ExperimentalWearFoundationApi @kotlin.jvm.JvmInline public final value class RevealDirection {
     method @BytecodeOnly @Deprecated public static androidx.wear.compose.foundation.RevealDirection! box-impl(int);
-    method @Deprecated public int getValue();
+    method @InaccessibleFromKotlin @Deprecated public int getValue();
     method @BytecodeOnly @Deprecated public int unbox-impl();
     property @Deprecated public int value;
     field @Deprecated public static final androidx.wear.compose.foundation.RevealDirection.Companion Companion;
@@ -394,12 +394,12 @@ package androidx.wear.compose.foundation {
     method @BytecodeOnly @Deprecated public Object? animateTo-HVQT5Qc(int, kotlin.coroutines.Continuation<? super kotlin.Unit!>);
     method @BytecodeOnly @Deprecated public int getCurrentValue-EhNvi2Q();
     method @BytecodeOnly @Deprecated public int getLastActionType-Bxv7xxc();
-    method @Deprecated public float getOffset();
-    method @Deprecated public float getRevealThreshold();
-    method @Deprecated public java.util.Map<androidx.wear.compose.foundation.RevealValue,java.lang.Float> getSwipeAnchors();
+    method @InaccessibleFromKotlin @Deprecated public float getOffset();
+    method @InaccessibleFromKotlin @Deprecated public float getRevealThreshold();
+    method @InaccessibleFromKotlin @Deprecated public java.util.Map<androidx.wear.compose.foundation.RevealValue,java.lang.Float> getSwipeAnchors();
     method @BytecodeOnly @Deprecated public int getTargetValue-EhNvi2Q();
-    method @Deprecated public androidx.compose.runtime.MutableFloatState getWidth();
-    method @Deprecated public boolean isAnimationRunning();
+    method @InaccessibleFromKotlin @Deprecated public androidx.compose.runtime.MutableFloatState getWidth();
+    method @InaccessibleFromKotlin @Deprecated public boolean isAnimationRunning();
     method @BytecodeOnly @Deprecated public void setLastActionType-zcPJnak(int);
     method @KotlinOnly @Deprecated public suspend Object? snapTo(androidx.wear.compose.foundation.RevealValue targetValue, kotlin.coroutines.Continuation<? super java.lang.Void>);
     method @BytecodeOnly @Deprecated public Object? snapTo-HVQT5Qc(int, kotlin.coroutines.Continuation<? super kotlin.Unit!>);
@@ -415,7 +415,7 @@ package androidx.wear.compose.foundation {
 
   @Deprecated @SuppressCompatibility @androidx.wear.compose.foundation.ExperimentalWearFoundationApi @kotlin.jvm.JvmInline public final value class RevealValue {
     method @BytecodeOnly @Deprecated public static androidx.wear.compose.foundation.RevealValue! box-impl(int);
-    method @Deprecated public int getValue();
+    method @InaccessibleFromKotlin @Deprecated public int getValue();
     method @BytecodeOnly @Deprecated public int unbox-impl();
     property @Deprecated public int value;
     field @Deprecated public static final androidx.wear.compose.foundation.RevealValue.Companion Companion;
@@ -435,11 +435,11 @@ package androidx.wear.compose.foundation {
   }
 
   public interface ScrollInfoProvider {
-    method public float getAnchorItemOffset();
-    method public float getLastItemOffset();
-    method public boolean isScrollAwayValid();
-    method public boolean isScrollInProgress();
-    method public boolean isScrollable();
+    method @InaccessibleFromKotlin public float getAnchorItemOffset();
+    method @InaccessibleFromKotlin public float getLastItemOffset();
+    method @InaccessibleFromKotlin public boolean isScrollAwayValid();
+    method @InaccessibleFromKotlin public boolean isScrollInProgress();
+    method @InaccessibleFromKotlin public boolean isScrollable();
     property public abstract float anchorItemOffset;
     property public abstract boolean isScrollAwayValid;
     property public abstract boolean isScrollInProgress;
@@ -456,7 +456,7 @@ package androidx.wear.compose.foundation {
   }
 
   public final class SwipeToDismissBoxDefaults {
-    method public androidx.compose.animation.core.SpringSpec<java.lang.Float> getAnimationSpec();
+    method @InaccessibleFromKotlin public androidx.compose.animation.core.SpringSpec<java.lang.Float> getAnimationSpec();
     method @BytecodeOnly public float getEdgeWidth-D9Ej5fM();
     property public androidx.compose.animation.core.SpringSpec<java.lang.Float> AnimationSpec;
     property public androidx.compose.ui.unit.Dp EdgeWidth;
@@ -466,10 +466,10 @@ package androidx.wear.compose.foundation {
   @androidx.compose.runtime.Stable public final class SwipeToDismissBoxState {
     ctor public SwipeToDismissBoxState();
     ctor public SwipeToDismissBoxState(optional androidx.compose.animation.core.AnimationSpec<java.lang.Float> animationSpec, optional kotlin.jvm.functions.Function1<? super androidx.wear.compose.foundation.SwipeToDismissValue,java.lang.Boolean> confirmStateChange);
-    method public androidx.wear.compose.foundation.SwipeToDismissValue getCurrentValue();
-    method public float getOffset();
-    method public androidx.wear.compose.foundation.SwipeToDismissValue getTargetValue();
-    method public boolean isAnimationRunning();
+    method @InaccessibleFromKotlin public androidx.wear.compose.foundation.SwipeToDismissValue getCurrentValue();
+    method @InaccessibleFromKotlin public float getOffset();
+    method @InaccessibleFromKotlin public androidx.wear.compose.foundation.SwipeToDismissValue getTargetValue();
+    method @InaccessibleFromKotlin public boolean isAnimationRunning();
     method public float requireOffset();
     method public suspend Object? snapTo(androidx.wear.compose.foundation.SwipeToDismissValue targetValue, kotlin.coroutines.Continuation<? super kotlin.Unit>);
     property public androidx.wear.compose.foundation.SwipeToDismissValue currentValue;
@@ -490,10 +490,10 @@ package androidx.wear.compose.foundation {
 
   @Deprecated @SuppressCompatibility @androidx.wear.compose.foundation.ExperimentalWearFoundationApi public final class SwipeToRevealDefaults {
     method @Deprecated public androidx.wear.compose.foundation.GestureInclusion gestureInclusion(androidx.wear.compose.foundation.RevealState state, optional @FloatRange(from=0.0, to=1.0) float edgeZoneFraction);
-    method @Deprecated public androidx.wear.compose.foundation.GestureInclusion getBidirectionalGestureInclusion();
-    method @Deprecated public float getLeftEdgeZoneFraction();
-    method @Deprecated public kotlin.jvm.functions.Function1<java.lang.Float,java.lang.Float> getPositionalThreshold();
-    method @Deprecated public float getRevealingRatio();
+    method @InaccessibleFromKotlin @Deprecated public androidx.wear.compose.foundation.GestureInclusion getBidirectionalGestureInclusion();
+    method @InaccessibleFromKotlin @Deprecated public float getLeftEdgeZoneFraction();
+    method @InaccessibleFromKotlin @Deprecated public kotlin.jvm.functions.Function1<java.lang.Float,java.lang.Float> getPositionalThreshold();
+    method @InaccessibleFromKotlin @Deprecated public float getRevealingRatio();
     property @Deprecated public float LeftEdgeZoneFraction;
     property @Deprecated public kotlin.jvm.functions.Function1<java.lang.Float,java.lang.Float> PositionalThreshold;
     property @Deprecated public float RevealingRatio;
@@ -555,14 +555,14 @@ package androidx.wear.compose.foundation.lazy {
   }
 
   public sealed interface ScalingLazyListItemInfo {
-    method public float getAlpha();
-    method public int getIndex();
-    method public Object getKey();
-    method public int getOffset();
-    method public float getScale();
-    method public int getSize();
-    method public int getUnadjustedOffset();
-    method public int getUnadjustedSize();
+    method @InaccessibleFromKotlin public float getAlpha();
+    method @InaccessibleFromKotlin public int getIndex();
+    method @InaccessibleFromKotlin public Object getKey();
+    method @InaccessibleFromKotlin public int getOffset();
+    method @InaccessibleFromKotlin public float getScale();
+    method @InaccessibleFromKotlin public int getSize();
+    method @InaccessibleFromKotlin public int getUnadjustedOffset();
+    method @InaccessibleFromKotlin public int getUnadjustedSize();
     property public abstract float alpha;
     property public abstract int index;
     property public abstract Object key;
@@ -580,18 +580,18 @@ package androidx.wear.compose.foundation.lazy {
   }
 
   public sealed interface ScalingLazyListLayoutInfo {
-    method public int getAfterAutoCenteringPadding();
-    method public int getAfterContentPadding();
+    method @InaccessibleFromKotlin public int getAfterAutoCenteringPadding();
+    method @InaccessibleFromKotlin public int getAfterContentPadding();
     method @BytecodeOnly public int getAnchorType-ZuIr4RU();
-    method public int getBeforeAutoCenteringPadding();
-    method public int getBeforeContentPadding();
-    method public androidx.compose.foundation.gestures.Orientation getOrientation();
-    method public boolean getReverseLayout();
-    method public int getTotalItemsCount();
-    method public int getViewportEndOffset();
+    method @InaccessibleFromKotlin public int getBeforeAutoCenteringPadding();
+    method @InaccessibleFromKotlin public int getBeforeContentPadding();
+    method @InaccessibleFromKotlin public androidx.compose.foundation.gestures.Orientation getOrientation();
+    method @InaccessibleFromKotlin public boolean getReverseLayout();
+    method @InaccessibleFromKotlin public int getTotalItemsCount();
+    method @InaccessibleFromKotlin public int getViewportEndOffset();
     method @BytecodeOnly public long getViewportSize-YbymL2g();
-    method public int getViewportStartOffset();
-    method public java.util.List<androidx.wear.compose.foundation.lazy.ScalingLazyListItemInfo> getVisibleItemsInfo();
+    method @InaccessibleFromKotlin public int getViewportStartOffset();
+    method @InaccessibleFromKotlin public java.util.List<androidx.wear.compose.foundation.lazy.ScalingLazyListItemInfo> getVisibleItemsInfo();
     property public abstract int afterAutoCenteringPadding;
     property public abstract int afterContentPadding;
     property public abstract androidx.wear.compose.foundation.lazy.ScalingLazyListAnchorType anchorType;
@@ -618,10 +618,10 @@ package androidx.wear.compose.foundation.lazy {
     ctor public ScalingLazyListState(optional int initialCenterItemIndex, optional int initialCenterItemScrollOffset);
     method public suspend Object? animateScrollToItem(int index, optional int scrollOffset, kotlin.coroutines.Continuation<? super kotlin.Unit>);
     method public float dispatchRawDelta(float delta);
-    method public int getCenterItemIndex();
-    method public int getCenterItemScrollOffset();
-    method public androidx.wear.compose.foundation.lazy.ScalingLazyListLayoutInfo getLayoutInfo();
-    method public boolean isScrollInProgress();
+    method @InaccessibleFromKotlin public int getCenterItemIndex();
+    method @InaccessibleFromKotlin public int getCenterItemScrollOffset();
+    method @InaccessibleFromKotlin public androidx.wear.compose.foundation.lazy.ScalingLazyListLayoutInfo getLayoutInfo();
+    method @InaccessibleFromKotlin public boolean isScrollInProgress();
     method public suspend Object? scroll(androidx.compose.foundation.MutatePriority scrollPriority, kotlin.jvm.functions.Function2<? super androidx.compose.foundation.gestures.ScrollScope,? super kotlin.coroutines.Continuation<? super kotlin.Unit>,? extends java.lang.Object?> block, kotlin.coroutines.Continuation<? super kotlin.Unit>);
     method public suspend Object? scrollToItem(int index, optional int scrollOffset, kotlin.coroutines.Continuation<? super kotlin.Unit>);
     property public boolean canScrollBackward;
@@ -636,7 +636,7 @@ package androidx.wear.compose.foundation.lazy {
   }
 
   public static final class ScalingLazyListState.Companion {
-    method public androidx.compose.runtime.saveable.Saver<androidx.wear.compose.foundation.lazy.ScalingLazyListState,java.lang.Object> getSaver();
+    method @InaccessibleFromKotlin public androidx.compose.runtime.saveable.Saver<androidx.wear.compose.foundation.lazy.ScalingLazyListState,java.lang.Object> getSaver();
     property public androidx.compose.runtime.saveable.Saver<androidx.wear.compose.foundation.lazy.ScalingLazyListState,java.lang.Object> Saver;
   }
 
@@ -649,13 +649,13 @@ package androidx.wear.compose.foundation.lazy {
   }
 
   @androidx.compose.runtime.Stable public interface ScalingParams {
-    method @FloatRange(from=0.0, to=1.0) public float getEdgeAlpha();
-    method @FloatRange(from=0.0, to=1.0) public float getEdgeScale();
-    method @FloatRange(from=0.0, to=1.0) public float getMaxElementHeight();
-    method @FloatRange(from=0.0, to=1.0) public float getMaxTransitionArea();
-    method @FloatRange(from=0.0, to=1.0) public float getMinElementHeight();
-    method @FloatRange(from=0.0, to=1.0) public float getMinTransitionArea();
-    method public androidx.compose.animation.core.Easing getScaleInterpolator();
+    method @InaccessibleFromKotlin @FloatRange(from=0.0, to=1.0) public float getEdgeAlpha();
+    method @InaccessibleFromKotlin @FloatRange(from=0.0, to=1.0) public float getEdgeScale();
+    method @InaccessibleFromKotlin @FloatRange(from=0.0, to=1.0) public float getMaxElementHeight();
+    method @InaccessibleFromKotlin @FloatRange(from=0.0, to=1.0) public float getMaxTransitionArea();
+    method @InaccessibleFromKotlin @FloatRange(from=0.0, to=1.0) public float getMinElementHeight();
+    method @InaccessibleFromKotlin @FloatRange(from=0.0, to=1.0) public float getMinTransitionArea();
+    method @InaccessibleFromKotlin public androidx.compose.animation.core.Easing getScaleInterpolator();
     method @KotlinOnly public int resolveViewportVerticalOffset(androidx.compose.ui.unit.Constraints viewportConstraints);
     method @BytecodeOnly public int resolveViewportVerticalOffset-BRTryo0(long);
     property @FloatRange(from=0.0, to=1.0) public abstract float edgeAlpha;
@@ -710,11 +710,11 @@ package androidx.wear.compose.foundation.lazy {
   }
 
   public sealed interface TransformingLazyColumnLayoutInfo {
-    method public int getAfterContentPadding();
-    method public int getBeforeContentPadding();
-    method public int getTotalItemsCount();
+    method @InaccessibleFromKotlin public int getAfterContentPadding();
+    method @InaccessibleFromKotlin public int getBeforeContentPadding();
+    method @InaccessibleFromKotlin public int getTotalItemsCount();
     method @BytecodeOnly public long getViewportSize-YbymL2g();
-    method public java.util.List<androidx.wear.compose.foundation.lazy.TransformingLazyColumnVisibleItemInfo> getVisibleItems();
+    method @InaccessibleFromKotlin public java.util.List<androidx.wear.compose.foundation.lazy.TransformingLazyColumnVisibleItemInfo> getVisibleItems();
     property public abstract int afterContentPadding;
     property public abstract int beforeContentPadding;
     property public abstract int totalItemsCount;
@@ -737,10 +737,10 @@ package androidx.wear.compose.foundation.lazy {
     ctor public TransformingLazyColumnState(optional int initialAnchorItemIndex, optional int initialAnchorItemScrollOffset);
     method public suspend Object? animateScrollToItem(@IntRange(from=0L) int index, optional int scrollOffset, kotlin.coroutines.Continuation<? super kotlin.Unit>);
     method public float dispatchRawDelta(float delta);
-    method public int getAnchorItemIndex();
-    method public int getAnchorItemScrollOffset();
-    method public androidx.wear.compose.foundation.lazy.TransformingLazyColumnLayoutInfo getLayoutInfo();
-    method public boolean isScrollInProgress();
+    method @InaccessibleFromKotlin public int getAnchorItemIndex();
+    method @InaccessibleFromKotlin public int getAnchorItemScrollOffset();
+    method @InaccessibleFromKotlin public androidx.wear.compose.foundation.lazy.TransformingLazyColumnLayoutInfo getLayoutInfo();
+    method @InaccessibleFromKotlin public boolean isScrollInProgress();
     method public void requestScrollToItem(@IntRange(from=0L) int index, optional int scrollOffset);
     method public suspend Object? scroll(androidx.compose.foundation.MutatePriority scrollPriority, kotlin.jvm.functions.Function2<? super androidx.compose.foundation.gestures.ScrollScope,? super kotlin.coroutines.Continuation<? super kotlin.Unit>,? extends java.lang.Object?> block, kotlin.coroutines.Continuation<? super kotlin.Unit>);
     method public suspend Object? scrollToItem(@IntRange(from=0L) int index, optional int scrollOffset, kotlin.coroutines.Continuation<? super kotlin.Unit>);
@@ -760,13 +760,13 @@ package androidx.wear.compose.foundation.lazy {
   }
 
   public sealed interface TransformingLazyColumnVisibleItemInfo {
-    method public Object? getContentType();
-    method public int getIndex();
-    method public Object getKey();
-    method public int getMeasuredHeight();
-    method public int getOffset();
+    method @InaccessibleFromKotlin public Object? getContentType();
+    method @InaccessibleFromKotlin public int getIndex();
+    method @InaccessibleFromKotlin public Object getKey();
+    method @InaccessibleFromKotlin public int getMeasuredHeight();
+    method @InaccessibleFromKotlin public int getOffset();
     method @BytecodeOnly public long getScrollProgress-xlmz8Ag();
-    method public int getTransformedHeight();
+    method @InaccessibleFromKotlin public int getTransformedHeight();
     property public abstract Object? contentType;
     property public abstract int index;
     property public abstract Object key;
@@ -783,9 +783,9 @@ package androidx.wear.compose.foundation.pager {
   public final class PagerDefaults {
     method @androidx.compose.runtime.Composable public androidx.wear.compose.foundation.GestureInclusion gestureInclusion(androidx.wear.compose.foundation.pager.PagerState state, optional float edgeZoneFraction);
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.wear.compose.foundation.GestureInclusion gestureInclusion(androidx.wear.compose.foundation.pager.PagerState, float, androidx.compose.runtime.Composer?, int, int);
-    method public int getBeyondViewportPageCount();
-    method public float getLeftEdgeZoneFraction();
-    method public androidx.compose.animation.core.AnimationSpec<java.lang.Float> getSnapAnimationSpec();
+    method @InaccessibleFromKotlin public int getBeyondViewportPageCount();
+    method @InaccessibleFromKotlin public float getLeftEdgeZoneFraction();
+    method @InaccessibleFromKotlin public androidx.compose.animation.core.AnimationSpec<java.lang.Float> getSnapAnimationSpec();
     method @androidx.compose.runtime.Composable public androidx.compose.foundation.gestures.TargetedFlingBehavior snapFlingBehavior(androidx.wear.compose.foundation.pager.PagerState state, optional int maxFlingPages, optional androidx.compose.animation.core.DecayAnimationSpec<java.lang.Float> decayAnimationSpec, optional androidx.compose.animation.core.AnimationSpec<java.lang.Float> snapAnimationSpec, optional @FloatRange(from=0.0, to=1.0) float snapPositionalThreshold);
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.foundation.gestures.TargetedFlingBehavior snapFlingBehavior(androidx.wear.compose.foundation.pager.PagerState, int, androidx.compose.animation.core.DecayAnimationSpec<java.lang.Float!>?, androidx.compose.animation.core.AnimationSpec<java.lang.Float!>?, @FloatRange(from=0.0, to=1.0) float, androidx.compose.runtime.Composer?, int, int);
     property public int BeyondViewportPageCount;
@@ -802,8 +802,8 @@ package androidx.wear.compose.foundation.pager {
   }
 
   public sealed interface PagerLayoutInfo {
-    method public androidx.compose.foundation.gestures.Orientation getOrientation();
-    method public int getPageSize();
+    method @InaccessibleFromKotlin public androidx.compose.foundation.gestures.Orientation getOrientation();
+    method @InaccessibleFromKotlin public int getPageSize();
     property public abstract androidx.compose.foundation.gestures.Orientation orientation;
     property public abstract int pageSize;
   }
@@ -815,14 +815,14 @@ package androidx.wear.compose.foundation.pager {
     ctor public PagerState(optional @IntRange(from=0L) int currentPage, optional @FloatRange(from=-0.5, to=0.5) float currentPageOffsetFraction, @IntRange(from=1L) kotlin.jvm.functions.Function0<java.lang.Integer> pageCount);
     method public suspend Object? animateScrollToPage(int page, optional @FloatRange(from=-0.5, to=0.5) float pageOffsetFraction, optional androidx.compose.animation.core.AnimationSpec<java.lang.Float> animationSpec, kotlin.coroutines.Continuation<? super kotlin.Unit>);
     method public float dispatchRawDelta(float delta);
-    method public int getCurrentPage();
-    method public float getCurrentPageOffsetFraction();
-    method public androidx.compose.foundation.interaction.InteractionSource getInteractionSource();
-    method public androidx.wear.compose.foundation.pager.PagerLayoutInfo getLayoutInfo();
-    method public int getPageCount();
-    method public int getSettledPage();
-    method public int getTargetPage();
-    method public boolean isScrollInProgress();
+    method @InaccessibleFromKotlin public int getCurrentPage();
+    method @InaccessibleFromKotlin public float getCurrentPageOffsetFraction();
+    method @InaccessibleFromKotlin public androidx.compose.foundation.interaction.InteractionSource getInteractionSource();
+    method @InaccessibleFromKotlin public androidx.wear.compose.foundation.pager.PagerLayoutInfo getLayoutInfo();
+    method @InaccessibleFromKotlin public int getPageCount();
+    method @InaccessibleFromKotlin public int getSettledPage();
+    method @InaccessibleFromKotlin public int getTargetPage();
+    method @InaccessibleFromKotlin public boolean isScrollInProgress();
     method public suspend Object? scroll(androidx.compose.foundation.MutatePriority scrollPriority, kotlin.jvm.functions.Function2<? super androidx.compose.foundation.gestures.ScrollScope,? super kotlin.coroutines.Continuation<? super kotlin.Unit>,? extends java.lang.Object?> block, kotlin.coroutines.Continuation<? super kotlin.Unit>);
     method public suspend Object? scrollToPage(int page, optional @FloatRange(from=-0.5, to=0.5) float pageOffsetFraction, kotlin.coroutines.Continuation<? super kotlin.Unit>);
     property public int currentPage;
@@ -837,7 +837,7 @@ package androidx.wear.compose.foundation.pager {
   }
 
   public static final class PagerState.Companion {
-    method public androidx.compose.runtime.saveable.Saver<androidx.wear.compose.foundation.pager.PagerState,? extends java.lang.Object?> getSaver();
+    method @InaccessibleFromKotlin public androidx.compose.runtime.saveable.Saver<androidx.wear.compose.foundation.pager.PagerState,? extends java.lang.Object?> getSaver();
     property public androidx.compose.runtime.saveable.Saver<androidx.wear.compose.foundation.pager.PagerState,? extends java.lang.Object?> Saver;
   }
 
@@ -872,10 +872,10 @@ package androidx.wear.compose.foundation.rotary {
   }
 
   public interface RotarySnapLayoutInfoProvider {
-    method public float getAverageItemSize();
-    method public int getCurrentItemIndex();
-    method public float getCurrentItemOffset();
-    method public int getTotalItemCount();
+    method @InaccessibleFromKotlin public float getAverageItemSize();
+    method @InaccessibleFromKotlin public int getCurrentItemIndex();
+    method @InaccessibleFromKotlin public float getCurrentItemOffset();
+    method @InaccessibleFromKotlin public int getTotalItemCount();
     property public abstract float averageItemSize;
     property public abstract int currentItemIndex;
     property public abstract float currentItemOffset;

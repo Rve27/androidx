@@ -1,36 +1,4 @@
 // Baseline format: 1.0
-BecameUnchecked: androidx.compose.material3.BasicAlertDialogOverrideScope:
-    Removed class androidx.compose.material3.BasicAlertDialogOverrideScope from compatibility checked API surface
-BecameUnchecked: androidx.compose.material3.BasicAlertDialogOverrideScope#content:
-    Removed property BasicAlertDialogOverrideScope.content from compatibility checked API surface
-BecameUnchecked: androidx.compose.material3.BasicAlertDialogOverrideScope#getContent():
-    Removed method androidx.compose.material3.BasicAlertDialogOverrideScope.getContent() from compatibility checked API surface
-BecameUnchecked: androidx.compose.material3.BasicAlertDialogOverrideScope#getModifier():
-    Removed method androidx.compose.material3.BasicAlertDialogOverrideScope.getModifier() from compatibility checked API surface
-BecameUnchecked: androidx.compose.material3.BasicAlertDialogOverrideScope#getOnDismissRequest():
-    Removed method androidx.compose.material3.BasicAlertDialogOverrideScope.getOnDismissRequest() from compatibility checked API surface
-BecameUnchecked: androidx.compose.material3.BasicAlertDialogOverrideScope#getProperties():
-    Removed method androidx.compose.material3.BasicAlertDialogOverrideScope.getProperties() from compatibility checked API surface
-BecameUnchecked: androidx.compose.material3.BasicAlertDialogOverrideScope#modifier:
-    Removed property BasicAlertDialogOverrideScope.modifier from compatibility checked API surface
-BecameUnchecked: androidx.compose.material3.BasicAlertDialogOverrideScope#onDismissRequest:
-    Removed property BasicAlertDialogOverrideScope.onDismissRequest from compatibility checked API surface
-BecameUnchecked: androidx.compose.material3.BasicAlertDialogOverrideScope#properties:
-    Removed property BasicAlertDialogOverrideScope.properties from compatibility checked API surface
-BecameUnchecked: androidx.compose.material3.pulltorefresh.PullToRefreshDefaults#containerColor:
-    Removed property PullToRefreshDefaults.containerColor from compatibility checked API surface
-BecameUnchecked: androidx.compose.material3.pulltorefresh.PullToRefreshDefaults#getContainerColor(androidx.compose.runtime.Composer, int):
-    Removed method androidx.compose.material3.pulltorefresh.PullToRefreshDefaults.getContainerColor(androidx.compose.runtime.Composer,int) from compatibility checked API surface
-BecameUnchecked: androidx.compose.material3.pulltorefresh.PullToRefreshDefaults#getContainerColor(androidx.compose.runtime.Composer, int) parameter #0:
-    Removed parameter arg1 in androidx.compose.material3.pulltorefresh.PullToRefreshDefaults.getContainerColor(androidx.compose.runtime.Composer arg1, int arg2) from compatibility checked API surface
-BecameUnchecked: androidx.compose.material3.pulltorefresh.PullToRefreshDefaults#getContainerColor(androidx.compose.runtime.Composer, int) parameter #1:
-    Removed parameter arg2 in androidx.compose.material3.pulltorefresh.PullToRefreshDefaults.getContainerColor(androidx.compose.runtime.Composer arg1, int arg2) from compatibility checked API surface
-BecameUnchecked: androidx.compose.material3.pulltorefresh.PullToRefreshDefaults#getShape():
-    Removed method androidx.compose.material3.pulltorefresh.PullToRefreshDefaults.getShape() from compatibility checked API surface
-BecameUnchecked: androidx.compose.material3.pulltorefresh.PullToRefreshDefaults#shape:
-    Removed property PullToRefreshDefaults.shape from compatibility checked API surface
-
-
 ChangedType: androidx.compose.material3.NavigationItemColors#iconColor(boolean, boolean):
     Source breaking change: Method androidx.compose.material3.NavigationItemColors.iconColor has changed return type from long to androidx.compose.ui.graphics.Color
 ChangedType: androidx.compose.material3.NavigationItemColors#textColor(boolean, boolean):
@@ -145,6 +113,320 @@ RemovedFromBytecode: androidx.compose.material3.NavigationItemColors#textColor(b
     Binary breaking change: method androidx.compose.material3.NavigationItemColors.textColor(boolean,boolean) has been removed from bytecode
 RemovedFromBytecode: androidx.compose.material3.WideNavigationRailItemDefaults#iconPositionFor(boolean):
     Binary breaking change: method androidx.compose.material3.WideNavigationRailItemDefaults.iconPositionFor(boolean) has been removed from bytecode
+
+
+RemovedFromKotlin: androidx.compose.material3.AlertDialogDefaults#getShape():
+    Source breaking change: method androidx.compose.material3.AlertDialogDefaults.getShape() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.AppBarMenuState#isExpanded():
+    Source breaking change: method androidx.compose.material3.AppBarMenuState.isExpanded() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.AssistChipDefaults#getShape():
+    Source breaking change: method androidx.compose.material3.AssistChipDefaults.getShape() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.BottomAppBarDefaults#getContentPadding():
+    Source breaking change: method androidx.compose.material3.BottomAppBarDefaults.getContentPadding() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.BottomAppBarDefaults#getWindowInsets():
+    Source breaking change: method androidx.compose.material3.BottomAppBarDefaults.getWindowInsets() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.ButtonDefaults#getButtonWithIconContentPadding():
+    Source breaking change: method androidx.compose.material3.ButtonDefaults.getButtonWithIconContentPadding() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.ButtonDefaults#getContentPadding():
+    Source breaking change: method androidx.compose.material3.ButtonDefaults.getContentPadding() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.ButtonDefaults#getElevatedShape():
+    Source breaking change: method androidx.compose.material3.ButtonDefaults.getElevatedShape() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.ButtonDefaults#getFilledTonalShape():
+    Source breaking change: method androidx.compose.material3.ButtonDefaults.getFilledTonalShape() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.ButtonDefaults#getOutlinedButtonBorder():
+    Source breaking change: method androidx.compose.material3.ButtonDefaults.getOutlinedButtonBorder() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.ButtonDefaults#getOutlinedShape():
+    Source breaking change: method androidx.compose.material3.ButtonDefaults.getOutlinedShape() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.ButtonDefaults#getShape():
+    Source breaking change: method androidx.compose.material3.ButtonDefaults.getShape() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.ButtonDefaults#getTextButtonContentPadding():
+    Source breaking change: method androidx.compose.material3.ButtonDefaults.getTextButtonContentPadding() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.ButtonDefaults#getTextButtonWithIconContentPadding():
+    Source breaking change: method androidx.compose.material3.ButtonDefaults.getTextButtonWithIconContentPadding() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.ButtonDefaults#getTextShape():
+    Source breaking change: method androidx.compose.material3.ButtonDefaults.getTextShape() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.CardDefaults#getElevatedShape():
+    Source breaking change: method androidx.compose.material3.CardDefaults.getElevatedShape() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.CardDefaults#getOutlinedShape():
+    Source breaking change: method androidx.compose.material3.CardDefaults.getOutlinedShape() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.CardDefaults#getShape():
+    Source breaking change: method androidx.compose.material3.CardDefaults.getShape() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.ColorSchemeKt#getLocalTonalElevationEnabled():
+    Source breaking change: method androidx.compose.material3.ColorSchemeKt.getLocalTonalElevationEnabled() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.ContentColorKt#getLocalContentColor():
+    Source breaking change: method androidx.compose.material3.ContentColorKt.getLocalContentColor() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.DatePickerColors#getDateTextFieldColors():
+    Source breaking change: method androidx.compose.material3.DatePickerColors.getDateTextFieldColors() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.DatePickerDefaults#getAllDates():
+    Source breaking change: method androidx.compose.material3.DatePickerDefaults.getAllDates() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.DatePickerDefaults#getShape():
+    Source breaking change: method androidx.compose.material3.DatePickerDefaults.getShape() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.DatePickerDefaults#getYearRange():
+    Source breaking change: method androidx.compose.material3.DatePickerDefaults.getYearRange() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.DatePickerState#getDisplayedMonthMillis():
+    Source breaking change: method androidx.compose.material3.DatePickerState.getDisplayedMonthMillis() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.DatePickerState#getLocale():
+    Source breaking change: method androidx.compose.material3.DatePickerState.getLocale() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.DatePickerState#getSelectableDates():
+    Source breaking change: method androidx.compose.material3.DatePickerState.getSelectableDates() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.DatePickerState#getSelectedDateMillis():
+    Source breaking change: method androidx.compose.material3.DatePickerState.getSelectedDateMillis() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.DatePickerState#getYearRange():
+    Source breaking change: method androidx.compose.material3.DatePickerState.getYearRange() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.DatePickerState#setDisplayedMonthMillis(long):
+    Source breaking change: method androidx.compose.material3.DatePickerState.setDisplayedMonthMillis(long) can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.DatePickerState#setSelectedDateMillis(Long):
+    Source breaking change: method androidx.compose.material3.DatePickerState.setSelectedDateMillis(Long) can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.DateRangePickerState#getDisplayedMonthMillis():
+    Source breaking change: method androidx.compose.material3.DateRangePickerState.getDisplayedMonthMillis() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.DateRangePickerState#getLocale():
+    Source breaking change: method androidx.compose.material3.DateRangePickerState.getLocale() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.DateRangePickerState#getSelectableDates():
+    Source breaking change: method androidx.compose.material3.DateRangePickerState.getSelectableDates() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.DateRangePickerState#getSelectedEndDateMillis():
+    Source breaking change: method androidx.compose.material3.DateRangePickerState.getSelectedEndDateMillis() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.DateRangePickerState#getSelectedStartDateMillis():
+    Source breaking change: method androidx.compose.material3.DateRangePickerState.getSelectedStartDateMillis() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.DateRangePickerState#getYearRange():
+    Source breaking change: method androidx.compose.material3.DateRangePickerState.getYearRange() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.DateRangePickerState#setDisplayedMonthMillis(long):
+    Source breaking change: method androidx.compose.material3.DateRangePickerState.setDisplayedMonthMillis(long) can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.DragHandleShapes#getDraggedShape():
+    Source breaking change: method androidx.compose.material3.DragHandleShapes.getDraggedShape() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.DragHandleShapes#getPressedShape():
+    Source breaking change: method androidx.compose.material3.DragHandleShapes.getPressedShape() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.DragHandleShapes#getShape():
+    Source breaking change: method androidx.compose.material3.DragHandleShapes.getShape() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.DrawerDefaults#getShape():
+    Source breaking change: method androidx.compose.material3.DrawerDefaults.getShape() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.DrawerDefaults#getWindowInsets():
+    Source breaking change: method androidx.compose.material3.DrawerDefaults.getWindowInsets() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.DrawerState#getCurrentOffset():
+    Source breaking change: method androidx.compose.material3.DrawerState.getCurrentOffset() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.DrawerState#getCurrentValue():
+    Source breaking change: method androidx.compose.material3.DrawerState.getCurrentValue() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.DrawerState#getOffset():
+    Source breaking change: method androidx.compose.material3.DrawerState.getOffset() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.DrawerState#getTargetValue():
+    Source breaking change: method androidx.compose.material3.DrawerState.getTargetValue() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.DrawerState#isAnimationRunning():
+    Source breaking change: method androidx.compose.material3.DrawerState.isAnimationRunning() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.DrawerState#isClosed():
+    Source breaking change: method androidx.compose.material3.DrawerState.isClosed() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.DrawerState#isOpen():
+    Source breaking change: method androidx.compose.material3.DrawerState.isOpen() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.FilterChipDefaults#getShape():
+    Source breaking change: method androidx.compose.material3.FilterChipDefaults.getShape() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.FloatingActionButtonDefaults#getExtendedFabShape():
+    Source breaking change: method androidx.compose.material3.FloatingActionButtonDefaults.getExtendedFabShape() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.FloatingActionButtonDefaults#getLargeShape():
+    Source breaking change: method androidx.compose.material3.FloatingActionButtonDefaults.getLargeShape() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.FloatingActionButtonDefaults#getShape():
+    Source breaking change: method androidx.compose.material3.FloatingActionButtonDefaults.getShape() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.FloatingActionButtonDefaults#getSmallShape():
+    Source breaking change: method androidx.compose.material3.FloatingActionButtonDefaults.getSmallShape() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.IconButtonDefaults#getFilledShape():
+    Source breaking change: method androidx.compose.material3.IconButtonDefaults.getFilledShape() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.IconButtonDefaults#getOutlinedShape():
+    Source breaking change: method androidx.compose.material3.IconButtonDefaults.getOutlinedShape() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.IconButtonDefaults#getStandardShape():
+    Source breaking change: method androidx.compose.material3.IconButtonDefaults.getStandardShape() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.InputChipDefaults#getShape():
+    Source breaking change: method androidx.compose.material3.InputChipDefaults.getShape() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.InteractiveComponentSizeKt#getLocalMinimumInteractiveComponentSize():
+    Source breaking change: method androidx.compose.material3.InteractiveComponentSizeKt.getLocalMinimumInteractiveComponentSize() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.ListItemDefaults#getShape():
+    Source breaking change: method androidx.compose.material3.ListItemDefaults.getShape() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.MaterialTheme#getColorScheme():
+    Source breaking change: method androidx.compose.material3.MaterialTheme.getColorScheme() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.MaterialTheme#getShapes():
+    Source breaking change: method androidx.compose.material3.MaterialTheme.getShapes() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.MaterialTheme#getTypography():
+    Source breaking change: method androidx.compose.material3.MaterialTheme.getTypography() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.MenuDefaults#getDropdownMenuItemContentPadding():
+    Source breaking change: method androidx.compose.material3.MenuDefaults.getDropdownMenuItemContentPadding() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.MenuDefaults#getShape():
+    Source breaking change: method androidx.compose.material3.MenuDefaults.getShape() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.ModalWideNavigationRailProperties#getSecurePolicy():
+    Source breaking change: method androidx.compose.material3.ModalWideNavigationRailProperties.getSecurePolicy() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.ModalWideNavigationRailProperties#getShouldDismissOnBackPress():
+    Source breaking change: method androidx.compose.material3.ModalWideNavigationRailProperties.getShouldDismissOnBackPress() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.NavigationBarDefaults#getWindowInsets():
+    Source breaking change: method androidx.compose.material3.NavigationBarDefaults.getWindowInsets() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.NavigationDrawerItemDefaults#getItemPadding():
+    Source breaking change: method androidx.compose.material3.NavigationDrawerItemDefaults.getItemPadding() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.NavigationRailDefaults#getWindowInsets():
+    Source breaking change: method androidx.compose.material3.NavigationRailDefaults.getWindowInsets() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.OutlinedTextFieldDefaults#getShape():
+    Source breaking change: method androidx.compose.material3.OutlinedTextFieldDefaults.getShape() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.ProgressIndicatorDefaults#getProgressAnimationSpec():
+    Source breaking change: method androidx.compose.material3.ProgressIndicatorDefaults.getProgressAnimationSpec() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.RippleConfiguration#getRippleAlpha():
+    Source breaking change: method androidx.compose.material3.RippleConfiguration.getRippleAlpha() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.RippleDefaults#getRippleAlpha():
+    Source breaking change: method androidx.compose.material3.RippleDefaults.getRippleAlpha() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.RippleKt#getLocalRippleConfiguration():
+    Source breaking change: method androidx.compose.material3.RippleKt.getLocalRippleConfiguration() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.ScaffoldDefaults#getContentWindowInsets():
+    Source breaking change: method androidx.compose.material3.ScaffoldDefaults.getContentWindowInsets() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.SegmentedButtonDefaults#getBaseShape():
+    Source breaking change: method androidx.compose.material3.SegmentedButtonDefaults.getBaseShape() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.SegmentedButtonDefaults#getContentPadding():
+    Source breaking change: method androidx.compose.material3.SegmentedButtonDefaults.getContentPadding() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.ShapeDefaults#getExtraLarge():
+    Source breaking change: method androidx.compose.material3.ShapeDefaults.getExtraLarge() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.ShapeDefaults#getExtraSmall():
+    Source breaking change: method androidx.compose.material3.ShapeDefaults.getExtraSmall() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.ShapeDefaults#getLarge():
+    Source breaking change: method androidx.compose.material3.ShapeDefaults.getLarge() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.ShapeDefaults#getMedium():
+    Source breaking change: method androidx.compose.material3.ShapeDefaults.getMedium() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.ShapeDefaults#getSmall():
+    Source breaking change: method androidx.compose.material3.ShapeDefaults.getSmall() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.Shapes#getExtraLarge():
+    Source breaking change: method androidx.compose.material3.Shapes.getExtraLarge() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.Shapes#getExtraSmall():
+    Source breaking change: method androidx.compose.material3.Shapes.getExtraSmall() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.Shapes#getLarge():
+    Source breaking change: method androidx.compose.material3.Shapes.getLarge() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.Shapes#getMedium():
+    Source breaking change: method androidx.compose.material3.Shapes.getMedium() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.Shapes#getSmall():
+    Source breaking change: method androidx.compose.material3.Shapes.getSmall() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.ShortNavigationBarDefaults#getWindowInsets():
+    Source breaking change: method androidx.compose.material3.ShortNavigationBarDefaults.getWindowInsets() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.SliderPositions#getActiveRange():
+    Source breaking change: method androidx.compose.material3.SliderPositions.getActiveRange() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.SliderPositions#getTickFractions():
+    Source breaking change: method androidx.compose.material3.SliderPositions.getTickFractions() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.SnackbarData#getVisuals():
+    Source breaking change: method androidx.compose.material3.SnackbarData.getVisuals() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.SnackbarDefaults#getShape():
+    Source breaking change: method androidx.compose.material3.SnackbarDefaults.getShape() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.SnackbarHostState#getCurrentSnackbarData():
+    Source breaking change: method androidx.compose.material3.SnackbarHostState.getCurrentSnackbarData() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.SnackbarVisuals#getActionLabel():
+    Source breaking change: method androidx.compose.material3.SnackbarVisuals.getActionLabel() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.SnackbarVisuals#getDuration():
+    Source breaking change: method androidx.compose.material3.SnackbarVisuals.getDuration() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.SnackbarVisuals#getMessage():
+    Source breaking change: method androidx.compose.material3.SnackbarVisuals.getMessage() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.SnackbarVisuals#getWithDismissAction():
+    Source breaking change: method androidx.compose.material3.SnackbarVisuals.getWithDismissAction() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.SuggestionChipDefaults#getShape():
+    Source breaking change: method androidx.compose.material3.SuggestionChipDefaults.getShape() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.SurfaceKt#getLocalAbsoluteTonalElevation():
+    Source breaking change: method androidx.compose.material3.SurfaceKt.getLocalAbsoluteTonalElevation() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.SwipeToDismissBoxDefaults#getPositionalThreshold():
+    Source breaking change: method androidx.compose.material3.SwipeToDismissBoxDefaults.getPositionalThreshold() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.SwipeToDismissBoxState#getCurrentValue():
+    Source breaking change: method androidx.compose.material3.SwipeToDismissBoxState.getCurrentValue() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.SwipeToDismissBoxState#getDismissDirection():
+    Source breaking change: method androidx.compose.material3.SwipeToDismissBoxState.getDismissDirection() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.SwipeToDismissBoxState#getProgress():
+    Source breaking change: method androidx.compose.material3.SwipeToDismissBoxState.getProgress() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.SwipeToDismissBoxState#getSettledValue():
+    Source breaking change: method androidx.compose.material3.SwipeToDismissBoxState.getSettledValue() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.SwipeToDismissBoxState#getTargetValue():
+    Source breaking change: method androidx.compose.material3.SwipeToDismissBoxState.getTargetValue() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.TextFieldColors#getTextSelectionColors():
+    Source breaking change: method androidx.compose.material3.TextFieldColors.getTextSelectionColors() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.TextFieldDefaults#getFilledShape():
+    Source breaking change: method androidx.compose.material3.TextFieldDefaults.getFilledShape() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.TextFieldDefaults#getOutlinedShape():
+    Source breaking change: method androidx.compose.material3.TextFieldDefaults.getOutlinedShape() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.TextFieldDefaults#getShape():
+    Source breaking change: method androidx.compose.material3.TextFieldDefaults.getShape() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.TextFieldLabelPosition.Above#getAlignment():
+    Source breaking change: method androidx.compose.material3.TextFieldLabelPosition.Above.getAlignment() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.TextFieldLabelPosition.Attached#getAlwaysMinimize():
+    Source breaking change: method androidx.compose.material3.TextFieldLabelPosition.Attached.getAlwaysMinimize() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.TextFieldLabelPosition.Attached#getExpandedAlignment():
+    Source breaking change: method androidx.compose.material3.TextFieldLabelPosition.Attached.getExpandedAlignment() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.TextFieldLabelPosition.Attached#getMinimizedAlignment():
+    Source breaking change: method androidx.compose.material3.TextFieldLabelPosition.Attached.getMinimizedAlignment() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.TextFieldLabelScope#getLabelMinimizedProgress():
+    Source breaking change: method androidx.compose.material3.TextFieldLabelScope.getLabelMinimizedProgress() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.TextKt#getLocalTextStyle():
+    Source breaking change: method androidx.compose.material3.TextKt.getLocalTextStyle() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.TimePickerDialogDefaults#getShape():
+    Source breaking change: method androidx.compose.material3.TimePickerDialogDefaults.getShape() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.TimePickerKt#isPm(androidx.compose.material3.TimePickerState):
+    Source breaking change: method androidx.compose.material3.TimePickerKt.isPm(androidx.compose.material3.TimePickerState) can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.TopAppBarDefaults#getWindowInsets():
+    Source breaking change: method androidx.compose.material3.TopAppBarDefaults.getWindowInsets() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.TopAppBarState#getCollapsedFraction():
+    Source breaking change: method androidx.compose.material3.TopAppBarState.getCollapsedFraction() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.TopAppBarState#getContentOffset():
+    Source breaking change: method androidx.compose.material3.TopAppBarState.getContentOffset() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.TopAppBarState#getHeightOffset():
+    Source breaking change: method androidx.compose.material3.TopAppBarState.getHeightOffset() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.TopAppBarState#getHeightOffsetLimit():
+    Source breaking change: method androidx.compose.material3.TopAppBarState.getHeightOffsetLimit() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.TopAppBarState#getOverlappedFraction():
+    Source breaking change: method androidx.compose.material3.TopAppBarState.getOverlappedFraction() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.TopAppBarState#setContentOffset(float):
+    Source breaking change: method androidx.compose.material3.TopAppBarState.setContentOffset(float) can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.TopAppBarState#setHeightOffset(float):
+    Source breaking change: method androidx.compose.material3.TopAppBarState.setHeightOffset(float) can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.TopAppBarState#setHeightOffsetLimit(float):
+    Source breaking change: method androidx.compose.material3.TopAppBarState.setHeightOffsetLimit(float) can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.TopAppBarState.Companion#getSaver():
+    Source breaking change: method androidx.compose.material3.TopAppBarState.Companion.getSaver() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.Typography#getBodyLarge():
+    Source breaking change: method androidx.compose.material3.Typography.getBodyLarge() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.Typography#getBodyMedium():
+    Source breaking change: method androidx.compose.material3.Typography.getBodyMedium() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.Typography#getBodySmall():
+    Source breaking change: method androidx.compose.material3.Typography.getBodySmall() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.Typography#getDisplayLarge():
+    Source breaking change: method androidx.compose.material3.Typography.getDisplayLarge() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.Typography#getDisplayMedium():
+    Source breaking change: method androidx.compose.material3.Typography.getDisplayMedium() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.Typography#getDisplaySmall():
+    Source breaking change: method androidx.compose.material3.Typography.getDisplaySmall() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.Typography#getHeadlineLarge():
+    Source breaking change: method androidx.compose.material3.Typography.getHeadlineLarge() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.Typography#getHeadlineMedium():
+    Source breaking change: method androidx.compose.material3.Typography.getHeadlineMedium() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.Typography#getHeadlineSmall():
+    Source breaking change: method androidx.compose.material3.Typography.getHeadlineSmall() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.Typography#getLabelLarge():
+    Source breaking change: method androidx.compose.material3.Typography.getLabelLarge() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.Typography#getLabelMedium():
+    Source breaking change: method androidx.compose.material3.Typography.getLabelMedium() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.Typography#getLabelSmall():
+    Source breaking change: method androidx.compose.material3.Typography.getLabelSmall() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.Typography#getTitleLarge():
+    Source breaking change: method androidx.compose.material3.Typography.getTitleLarge() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.Typography#getTitleMedium():
+    Source breaking change: method androidx.compose.material3.Typography.getTitleMedium() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.Typography#getTitleSmall():
+    Source breaking change: method androidx.compose.material3.Typography.getTitleSmall() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.WideNavigationRailDefaults#getArrangement():
+    Source breaking change: method androidx.compose.material3.WideNavigationRailDefaults.getArrangement() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.WideNavigationRailDefaults#getModalCollapsedShape():
+    Source breaking change: method androidx.compose.material3.WideNavigationRailDefaults.getModalCollapsedShape() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.WideNavigationRailDefaults#getModalExpandedProperties():
+    Source breaking change: method androidx.compose.material3.WideNavigationRailDefaults.getModalExpandedProperties() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.WideNavigationRailDefaults#getModalExpandedShape():
+    Source breaking change: method androidx.compose.material3.WideNavigationRailDefaults.getModalExpandedShape() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.WideNavigationRailDefaults#getShape():
+    Source breaking change: method androidx.compose.material3.WideNavigationRailDefaults.getShape() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.WideNavigationRailDefaults#getWindowInsets():
+    Source breaking change: method androidx.compose.material3.WideNavigationRailDefaults.getWindowInsets() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.WideNavigationRailState#getCurrentValue():
+    Source breaking change: method androidx.compose.material3.WideNavigationRailState.getCurrentValue() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.WideNavigationRailState#getTargetValue():
+    Source breaking change: method androidx.compose.material3.WideNavigationRailState.getTargetValue() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.WideNavigationRailState#isAnimating():
+    Source breaking change: method androidx.compose.material3.WideNavigationRailState.isAnimating() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.pulltorefresh.PullToRefreshDefaults#getIndicatorShape():
+    Source breaking change: method androidx.compose.material3.pulltorefresh.PullToRefreshDefaults.getIndicatorShape() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.pulltorefresh.PullToRefreshState#getDistanceFraction():
+    Source breaking change: method androidx.compose.material3.pulltorefresh.PullToRefreshState.getDistanceFraction() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.material3.pulltorefresh.PullToRefreshState#isAnimating():
+    Source breaking change: method androidx.compose.material3.pulltorefresh.PullToRefreshState.isAnimating() can no longer be resolved from Kotlin source
 
 
 RemovedMethod: androidx.compose.material3.AndroidAlertDialog_androidKt#AlertDialog(kotlin.jvm.functions.Function0<kotlin.Unit>, kotlin.jvm.functions.Function0<kotlin.Unit>, androidx.compose.ui.Modifier, kotlin.jvm.functions.Function0<kotlin.Unit>, kotlin.jvm.functions.Function0<kotlin.Unit>, kotlin.jvm.functions.Function0<kotlin.Unit>, kotlin.jvm.functions.Function0<kotlin.Unit>, androidx.compose.ui.graphics.Shape, long, long, long, long, float, androidx.compose.ui.window.DialogProperties):
