@@ -168,10 +168,6 @@ package androidx.xr.runtime {
     property public androidx.xr.runtime.RequiredCalibrationType calibrationType;
   }
 
-  public final class SessionConfigureConfigurationNotSupported extends androidx.xr.runtime.SessionConfigureResult {
-    ctor public SessionConfigureConfigurationNotSupported();
-  }
-
   public final class SessionConfigureGooglePlayServicesLocationLibraryNotLinked extends androidx.xr.runtime.SessionConfigureResult {
     ctor public SessionConfigureGooglePlayServicesLocationLibraryNotLinked();
   }
