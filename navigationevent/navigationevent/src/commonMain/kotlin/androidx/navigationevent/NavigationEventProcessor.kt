@@ -19,6 +19,7 @@ package androidx.navigationevent
 import androidx.annotation.MainThread
 import androidx.navigationevent.NavigationEventDispatcher.Companion.PRIORITY_DEFAULT
 import androidx.navigationevent.NavigationEventDispatcher.Companion.PRIORITY_OVERLAY
+import androidx.navigationevent.NavigationEventDispatcher.Priority
 import androidx.navigationevent.NavigationEventInfo.NotProvided
 import androidx.navigationevent.NavigationEventState.Idle
 import androidx.navigationevent.NavigationEventState.InProgress
@@ -239,6 +240,7 @@ internal class NavigationEventProcessor {
      * @param handler The handler instance to be added.
      * @param priority The priority of the handler, determining its invocation order relative to
      *   others. See [NavigationEventDispatcher.Priority].
+     * @throws IllegalArgumentException if [priority] is not one of the supported constants.
      * @throws IllegalArgumentException if the given handler is already registered with a different
      *   dispatcher.
      */
@@ -247,7 +249,7 @@ internal class NavigationEventProcessor {
     fun addHandler(
         dispatcher: NavigationEventDispatcher,
         handler: NavigationEventHandler<*>,
-        @NavigationEventDispatcher.Priority priority: Int = PRIORITY_DEFAULT,
+        @Priority priority: Int = PRIORITY_DEFAULT,
     ) {
         // Enforce that a handler is not already registered with another dispatcher.
         require(handler.dispatcher == null) {
@@ -258,6 +260,11 @@ internal class NavigationEventProcessor {
         when (priority) {
             PRIORITY_OVERLAY -> overlayHandlers.addFirst(handler)
             PRIORITY_DEFAULT -> defaultHandlers.addFirst(handler)
+            else -> {
+                // Since this method may be called from other targets (e.g., Swift),
+                // IntDef lint checks may not be available. We must validate at runtime.
+                throw IllegalArgumentException("Unsupported priority value: $priority")
+            }
         }
 
         // Store the dispatcher reference on the callback for self-management and internal tracking.

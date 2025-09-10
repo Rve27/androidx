@@ -520,6 +520,26 @@ class NavigationEventDispatcherTest {
     }
 
     @Test
+    fun addHandler_withInvalidPriority_throwsException() {
+        val dispatcher = NavigationEventDispatcher()
+        val handler = TestNavigationEventHandler()
+        val invalidPriority = -99
+
+        // The @Priority IntDef provides compile-time safety for Kotlin/Java
+        // callers within an Android environment. However, that static check is
+        // not enforced for callers from other platforms (e.g., Swift via KMP).
+        // This test verifies the runtime check that guarantees API safety for
+        // all callers, regardless of their platform.
+        assertThrows<IllegalArgumentException> {
+                // Suppress lint warning because we are intentionally passing an
+                // invalid constant to test the runtime validation.
+                @Suppress("WrongConstant") dispatcher.addHandler(handler, invalidPriority)
+            }
+            .hasMessageThat()
+            .contains("Unsupported priority value: $invalidPriority")
+    }
+
+    @Test
     fun addHandler_multipleOverlays_prioritizesLastAdded() {
         val dispatcher = NavigationEventDispatcher()
         val firstOverlayHandler = TestNavigationEventHandler()

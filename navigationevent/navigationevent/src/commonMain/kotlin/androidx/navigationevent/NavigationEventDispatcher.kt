@@ -294,6 +294,7 @@ private constructor(
      *   others. See [NavigationEventDispatcher.Priority].
      * @throws IllegalArgumentException if the given handler is already registered with a different
      *   dispatcher.
+     * @throws IllegalArgumentException if [priority] is not one of the supported constants.
      * @throws IllegalStateException if the dispatcher has already been disposed.
      */
     @Suppress("PairedRegistration") // handler is removed via `NavigationEventHandler.remove()`
