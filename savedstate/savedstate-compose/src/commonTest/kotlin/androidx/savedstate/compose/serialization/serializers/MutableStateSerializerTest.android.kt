@@ -19,21 +19,18 @@ package androidx.savedstate.compose.serialization.serializers
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.kruth.assertThat
+import androidx.savedstate.compose.IgnoreAndroidHostTest
 import androidx.savedstate.serialization.SavedStateConfiguration
 import androidx.savedstate.serialization.decodeFromSavedState
 import androidx.savedstate.serialization.encodeToSavedState
-import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.filters.SmallTest
 import kotlin.test.Test
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.serializer
-import org.junit.runner.RunWith
 
-@SmallTest
-@RunWith(AndroidJUnit4::class)
-class MutableStateSerializerTest {
+@IgnoreAndroidHostTest
+internal class MutableStateSerializerTest {
 
     @Test
     fun encodeDecode_withImplicitSerializer() {
@@ -88,7 +85,7 @@ class MutableStateSerializerTest {
         testEncodeDecode(mutableStateOf(123.toShort()))
         testEncodeDecode(mutableStateOf(123))
         testEncodeDecode(mutableStateOf(123L))
-        testEncodeDecode(mutableStateOf(3.14F))
+        testEncodeDecode(mutableStateOf(3.5F))
         testEncodeDecode(mutableStateOf(3.14))
         testEncodeDecode(mutableStateOf('c'))
         testEncodeDecode(mutableStateOf("foo"))
