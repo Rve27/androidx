@@ -825,6 +825,7 @@ constructor(
                         streamSpec.sessionType,
                         streamSpec.expectedFrameRateRange,
                         useCase.currentConfig.isStrictFrameRateRequired,
+                        useCase.currentConfig.getCustomMaxFrameRate(surfaceResolution),
                     )
                 )
             }
