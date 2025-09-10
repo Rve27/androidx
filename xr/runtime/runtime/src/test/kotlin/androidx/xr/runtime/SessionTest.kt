@@ -252,7 +252,7 @@ class SessionTest {
     }
 
     @Test
-    fun configure_unsupportedMode_returnsConfigurationNotSupportedResult() {
+    fun configure_unsupportedMode_throwsUnsupportedOperationException() {
         activityController.create().start().resume()
         underTest = createSession()
         val lifecycleManager = getLifecycleManager()
@@ -260,12 +260,11 @@ class SessionTest {
         val currentConfig = underTest.config
         lifecycleManager.shouldSupportPlaneTracking = false
 
-        val result =
+        assertFailsWith<UnsupportedOperationException> {
             underTest.configure(
                 currentConfig.copy(planeTracking = Config.PlaneTrackingMode.HORIZONTAL_AND_VERTICAL)
             )
-
-        assertThat(result).isInstanceOf(SessionConfigureConfigurationNotSupported::class.java)
+        }
         assertThat(underTest.config).isEqualTo(currentConfig)
         lifecycleManager.shouldSupportPlaneTracking = true
     }
