@@ -483,11 +483,11 @@ package androidx.compose.ui.autofill {
   }
 
   public final class FillableData_androidKt {
-    method public static androidx.compose.ui.autofill.FillableData? createFrom(androidx.compose.ui.autofill.FillableData.Companion, android.view.autofill.AutofillValue autofillValue);
-    method public static androidx.compose.ui.autofill.FillableData? createFrom(androidx.compose.ui.autofill.FillableData.Companion, boolean booleanValue);
-    method public static androidx.compose.ui.autofill.FillableData? createFrom(androidx.compose.ui.autofill.FillableData.Companion, int listIndexValue);
-    method public static androidx.compose.ui.autofill.FillableData? createFrom(androidx.compose.ui.autofill.FillableData.Companion, CharSequence textValue);
-    method public static androidx.compose.ui.autofill.FillableData? createFrom(androidx.compose.ui.autofill.FillableData.Companion, long dateMillisValue);
+    method public static androidx.compose.ui.autofill.FillableData? createFromAutofillValue(androidx.compose.ui.autofill.FillableData.Companion, android.view.autofill.AutofillValue autofillValue);
+    method public static androidx.compose.ui.autofill.FillableData? createFromBoolean(androidx.compose.ui.autofill.FillableData.Companion, boolean booleanValue);
+    method public static androidx.compose.ui.autofill.FillableData? createFromDateMillis(androidx.compose.ui.autofill.FillableData.Companion, long dateMillisValue);
+    method public static androidx.compose.ui.autofill.FillableData? createFromListIndex(androidx.compose.ui.autofill.FillableData.Companion, int listIndexValue);
+    method public static androidx.compose.ui.autofill.FillableData? createFromText(androidx.compose.ui.autofill.FillableData.Companion, CharSequence textValue);
     method public static android.view.autofill.AutofillValue? toAutofillValue(androidx.compose.ui.autofill.FillableData);
   }
 
