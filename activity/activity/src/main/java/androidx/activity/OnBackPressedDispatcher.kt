@@ -28,7 +28,8 @@ import androidx.navigationevent.DirectNavigationEventInput
 import androidx.navigationevent.NavigationEventDispatcher
 import androidx.navigationevent.NavigationEventHandler
 import androidx.navigationevent.NavigationEventInput
-import androidx.navigationevent.OnBackInvokedInput
+import androidx.navigationevent.OnBackInvokedDefaultInput
+import androidx.navigationevent.OnBackInvokedOverlayInput
 
 /**
  * Dispatcher that can be used to register [OnBackPressedCallback] instances for handling the
@@ -107,8 +108,14 @@ class OnBackPressedDispatcher(
      */
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     fun setOnBackInvokedDispatcher(invoker: OnBackInvokedDispatcher) {
-        val input = OnBackInvokedInput(invoker)
-        eventDispatcher.addInput(input)
+        eventDispatcher.addInput(
+            OnBackInvokedDefaultInput(invoker),
+            NavigationEventDispatcher.PRIORITY_DEFAULT,
+        )
+        eventDispatcher.addInput(
+            OnBackInvokedOverlayInput(invoker),
+            NavigationEventDispatcher.PRIORITY_OVERLAY,
+        )
     }
 
     /**
