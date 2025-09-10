@@ -16,8 +16,8 @@
 
 package androidx.compose.ui.test
 
-import androidx.compose.runtime.RetainObserver
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.retain.RetainObserver
 import kotlin.test.assertEquals
 import kotlin.test.fail
 

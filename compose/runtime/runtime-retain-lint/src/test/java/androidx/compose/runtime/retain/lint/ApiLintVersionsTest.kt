@@ -14,9 +14,24 @@
  * limitations under the License.
  */
 
-package androidx.compose.runtime.internal
+package androidx.compose.runtime.retain.lint
 
-@PublishedApi
-internal actual inline fun <reified T> classHash(): Int {
-    return T::class.hashCode()
+import com.android.tools.lint.client.api.LintClient
+import com.android.tools.lint.detector.api.CURRENT_API
+import com.google.common.truth.Truth.assertThat
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.JUnit4
+
+@RunWith(JUnit4::class)
+class ApiLintVersionsTest {
+
+    @Test
+    fun versionsCheck() {
+        LintClient.clientName = LintClient.CLIENT_UNIT_TESTS
+
+        val registry = RetainIssueRegistry()
+        assertThat(registry.api).isEqualTo(CURRENT_API)
+        assertThat(registry.minApi).isEqualTo(16)
+    }
 }

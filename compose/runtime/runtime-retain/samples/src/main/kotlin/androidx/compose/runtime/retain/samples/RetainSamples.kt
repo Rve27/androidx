@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package androidx.compose.runtime.samples
+package androidx.compose.runtime.retain.samples
 
 import androidx.annotation.Sampled
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.lazy.LazyColumn
@@ -27,14 +26,43 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LocalRetainScope
-import androidx.compose.runtime.RetainedContentHost
-import androidx.compose.runtime.RetainedEffect
 import androidx.compose.runtime.currentComposer
-import androidx.compose.runtime.retain
-import androidx.compose.runtime.retainControlledRetainScope
-import androidx.compose.runtime.retainRetainScopeHolder
+import androidx.compose.runtime.retain.LocalRetainScope
+import androidx.compose.runtime.retain.RetainedContentHost
+import androidx.compose.runtime.retain.RetainedEffect
+import androidx.compose.runtime.retain.retain
+import androidx.compose.runtime.retain.retainControlledRetainScope
+import androidx.compose.runtime.retain.retainRetainScopeHolder
 import androidx.compose.ui.graphics.painter.Painter
+
+@Sampled
+fun retainedEffectSample() {
+    @Composable
+    fun VideoPlayer(mediaUri: String) {
+        val player = retain(mediaUri) { MediaPlayer(mediaUri) }
+
+        // Initialize each player only once after we retain it.
+        // If the uri (and therefore the player) change, we need to dispose the old player
+        // and initialize the new one. Likewise, the player needs to be disposed of when
+        // it stops being retained.
+        RetainedEffect(player) {
+            player.initialize()
+            onRetire { player.close() }
+        }
+
+        // ...
+    }
+}
+
+internal class MediaPlayer(val uri: String = "") {
+    fun initialize() {}
+
+    fun close() {}
+
+    fun play() {}
+
+    fun stop() {}
+}
 
 @Sampled
 fun retainedContentHostSample() {
@@ -55,7 +83,7 @@ fun retainedContentHostSample() {
     }
 }
 
-@OptIn(ExperimentalAnimationApi::class)
+@Suppress("UnnecessaryLambdaCreation")
 @Sampled
 fun retainControlledRetainScopeSample() {
     @Composable

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.compose.runtime.lint
+package androidx.compose.runtime.retain.lint
 
 import androidx.compose.lint.test.Stubs
 import androidx.compose.lint.test.bytecodeStub
@@ -48,7 +48,7 @@ class RetainDetectorTest : LintDetectorTest() {
                 package androidx.compose.runtime.foo
 
                 import androidx.compose.runtime.Composable
-                import androidx.compose.runtime.retain
+                import androidx.compose.runtime.retain.retain
 
                 @Composable
                 fun Test() {
@@ -91,7 +91,7 @@ src/androidx/compose/runtime/foo/test.kt:11: Error: retain calls must not return
                 package androidx.compose.runtime.foo
 
                 import androidx.compose.runtime.Composable
-                import androidx.compose.runtime.retain
+                import androidx.compose.runtime.retain.retain
 
                 @Composable
                 fun Test() {
@@ -119,8 +119,9 @@ src/androidx/compose/runtime/foo/test.kt:11: Error: retain calls must not return
                 package androidx.compose.runtime.foo
 
                 import androidx.compose.runtime.Composable
-                import androidx.compose.runtime.retain
                 import androidx.compose.runtime.RememberObserver
+                import androidx.compose.runtime.retain.retain
+                import androidx.compose.runtime.retain.RetainObserver
 
                 @Composable
                 fun Test() {
@@ -142,7 +143,7 @@ src/androidx/compose/runtime/foo/test.kt:11: Error: retain calls must not return
             .run()
             .expect(
                 """
-src/androidx/compose/runtime/foo/Foo.kt:10: Error: Declared retained type androidx.compose.runtime.foo.Foo implements RememberObserver but not RetainObserver. [RetainRememberObserver]
+src/androidx/compose/runtime/foo/Foo.kt:11: Error: Declared retained type androidx.compose.runtime.foo.Foo implements RememberObserver but not RetainObserver. [RetainRememberObserver]
                     val foo = retain { Foo() }
                               ~~~~~~
 1 errors, 0 warnings
@@ -159,9 +160,9 @@ src/androidx/compose/runtime/foo/Foo.kt:10: Error: Declared retained type androi
                 package androidx.compose.runtime.foo
 
                 import androidx.compose.runtime.Composable
-                import androidx.compose.runtime.retain
                 import androidx.compose.runtime.RememberObserver
-                import androidx.compose.runtime.RetainObserver
+                import androidx.compose.runtime.retain.retain
+                import androidx.compose.runtime.retain.RetainObserver
 
                 @Composable
                 fun Test() {
@@ -197,9 +198,9 @@ src/androidx/compose/runtime/foo/Foo.kt:10: Error: Declared retained type androi
                 package androidx.compose.runtime.foo
 
                 import androidx.compose.runtime.Composable
-                import androidx.compose.runtime.retain
                 import androidx.compose.runtime.RememberObserver
-                import androidx.compose.runtime.RetainObserver
+                import androidx.compose.runtime.retain.retain
+                import androidx.compose.runtime.retain.RetainObserver
 
                 @Composable
                 fun Test() {
@@ -238,7 +239,7 @@ src/androidx/compose/runtime/foo/Foo.kt:10: Error: Declared retained type androi
                 import android.view.View
                 import android.view.TextView
                 import androidx.compose.runtime.Composable
-                import androidx.compose.runtime.retain
+                import androidx.compose.runtime.retain.retain
 
                 @Composable
                 fun Test(context: Context) {
@@ -263,9 +264,9 @@ src/androidx/compose/runtime/foo/test.kt:14: Error: Retaining android.content.Co
                 """
 Autofix for src/androidx/compose/runtime/foo/test.kt line 14: Replace with `remember`:
 @@ -10 +10,2 @@
--                import androidx.compose.runtime.retain
+-                import androidx.compose.runtime.retain.retain
 +                import androidx.compose.runtime.remember
-+import androidx.compose.runtime.retain
++import androidx.compose.runtime.retain.retain
 @@ -14 +15 @@
 -                    val foo = retain { context }
 +                    val foo = remember { context }
@@ -287,7 +288,7 @@ Autofix for src/androidx/compose/runtime/foo/test.kt line 14: Replace with `reme
                 import android.view.View
                 import android.view.TextView
                 import androidx.compose.runtime.Composable
-                import androidx.compose.runtime.retain
+                import androidx.compose.runtime.retain.retain
 
                 @Composable
                 fun Test(context: Activity) {
@@ -312,9 +313,9 @@ src/androidx/compose/runtime/foo/test.kt:14: Error: Retaining android.app.Activi
                 """
 Autofix for src/androidx/compose/runtime/foo/test.kt line 14: Replace with `remember`:
 @@ -10 +10,2 @@
--                import androidx.compose.runtime.retain
+-                import androidx.compose.runtime.retain.retain
 +                import androidx.compose.runtime.remember
-+import androidx.compose.runtime.retain
++import androidx.compose.runtime.retain.retain
 @@ -14 +15 @@
 -                    val foo = retain { context }
 +                    val foo = remember { context }
@@ -336,7 +337,7 @@ Autofix for src/androidx/compose/runtime/foo/test.kt line 14: Replace with `reme
                 import android.view.View
                 import android.view.TextView
                 import androidx.compose.runtime.Composable
-                import androidx.compose.runtime.retain
+                import androidx.compose.runtime.retain.retain
 
                 @Composable
                 fun Test() {
@@ -366,17 +367,17 @@ src/androidx/compose/runtime/foo/test.kt:16: Error: Retaining android.view.TextV
                 """
 Autofix for src/androidx/compose/runtime/foo/test.kt line 15: Replace with `remember`:
 @@ -10 +10,2 @@
--                import androidx.compose.runtime.retain
+-                import androidx.compose.runtime.retain.retain
 +                import androidx.compose.runtime.remember
-+import androidx.compose.runtime.retain
++import androidx.compose.runtime.retain.retain
 @@ -15 +16 @@
 -                    val foo = retain { retain }
 +                    val foo = remember { retain }
 Autofix for src/androidx/compose/runtime/foo/test.kt line 16: Replace with `remember`:
 @@ -10 +10,2 @@
--                import androidx.compose.runtime.retain
+-                import androidx.compose.runtime.retain.retain
 +                import androidx.compose.runtime.remember
-+import androidx.compose.runtime.retain
++import androidx.compose.runtime.retain.retain
 @@ -16 +17 @@
 -                    val bar = retain { TextView() }
 +                    val bar = remember { TextView() }
@@ -398,7 +399,7 @@ Autofix for src/androidx/compose/runtime/foo/test.kt line 16: Replace with `reme
                 import android.view.View
                 import android.view.TextView
                 import androidx.compose.runtime.Composable
-                import androidx.compose.runtime.retain
+                import androidx.compose.runtime.retain.retain
 
                 @Composable
                 fun Test() {
@@ -431,25 +432,25 @@ src/androidx/compose/runtime/foo/test.kt:16: Error: Retaining java.util.Set<? ex
                 """
 Autofix for src/androidx/compose/runtime/foo/test.kt line 14: Replace with `remember`:
 @@ -10 +10,2 @@
--                import androidx.compose.runtime.retain
+-                import androidx.compose.runtime.retain.retain
 +                import androidx.compose.runtime.remember
-+import androidx.compose.runtime.retain
++import androidx.compose.runtime.retain.retain
 @@ -14 +15 @@
 -                    val contextList = retain { listOf<Context>() }
 +                    val contextList = remember { listOf<Context>() }
 Autofix for src/androidx/compose/runtime/foo/test.kt line 15: Replace with `remember`:
 @@ -10 +10,2 @@
--                import androidx.compose.runtime.retain
+-                import androidx.compose.runtime.retain.retain
 +                import androidx.compose.runtime.remember
-+import androidx.compose.runtime.retain
++import androidx.compose.runtime.retain.retain
 @@ -15 +16 @@
 -                    val contextDerivedMap = retain { mapOf<String, ContextWrapper>() }
 +                    val contextDerivedMap = remember { mapOf<String, ContextWrapper>() }
 Autofix for src/androidx/compose/runtime/foo/test.kt line 16: Replace with `remember`:
 @@ -10 +10,2 @@
--                import androidx.compose.runtime.retain
+-                import androidx.compose.runtime.retain.retain
 +                import androidx.compose.runtime.remember
-+import androidx.compose.runtime.retain
++import androidx.compose.runtime.retain.retain
 @@ -16 +17 @@
 -                    val viewSet = retain { setOf<View>() }
 +                    val viewSet = remember { setOf<View>() }
@@ -466,8 +467,8 @@ Autofix for src/androidx/compose/runtime/foo/test.kt line 16: Replace with `reme
                 package androidx.compose.runtime.foo
 
                 import androidx.compose.runtime.Composable
-                import androidx.compose.runtime.retain
                 import androidx.compose.runtime.annotation.DoNotRetain
+                import androidx.compose.runtime.retain.retain
 
                 @Composable
                 fun Test() {
@@ -507,26 +508,26 @@ src/androidx/compose/runtime/foo/UnretainableTypeWithCause.kt:12: Error: android
             .expectFixDiffs(
                 """
 Autofix for src/androidx/compose/runtime/foo/UnretainableTypeWithCause.kt line 10: Replace with `remember`:
-@@ -5 +5,2 @@
--                import androidx.compose.runtime.retain
+@@ -6 +6,2 @@
+-                import androidx.compose.runtime.retain.retain
 +                import androidx.compose.runtime.remember
-+import androidx.compose.runtime.retain
++import androidx.compose.runtime.retain.retain
 @@ -10 +11 @@
 -                    val foo = retain { UnretainableTypeWithCause() }
 +                    val foo = remember { UnretainableTypeWithCause() }
 Autofix for src/androidx/compose/runtime/foo/UnretainableTypeWithCause.kt line 11: Replace with `remember`:
-@@ -5 +5,2 @@
--                import androidx.compose.runtime.retain
+@@ -6 +6,2 @@
+-                import androidx.compose.runtime.retain.retain
 +                import androidx.compose.runtime.remember
-+import androidx.compose.runtime.retain
++import androidx.compose.runtime.retain.retain
 @@ -11 +12 @@
 -                    val bar = retain { UnretainableTypeWithoutCause() }
 +                    val bar = remember { UnretainableTypeWithoutCause() }
 Autofix for src/androidx/compose/runtime/foo/UnretainableTypeWithCause.kt line 12: Replace with `remember`:
-@@ -5 +5,2 @@
--                import androidx.compose.runtime.retain
+@@ -6 +6,2 @@
+-                import androidx.compose.runtime.retain.retain
 +                import androidx.compose.runtime.remember
-+import androidx.compose.runtime.retain
++import androidx.compose.runtime.retain.retain
 @@ -12 +13 @@
 -                    val baz = retain { SubclassOfUnretainableType() }
 +                    val baz = remember { SubclassOfUnretainableType() }
@@ -543,8 +544,8 @@ Autofix for src/androidx/compose/runtime/foo/UnretainableTypeWithCause.kt line 1
                 package androidx.compose.runtime.foo
 
                 import androidx.compose.runtime.Composable
-                import androidx.compose.runtime.retain
                 import androidx.compose.runtime.annotation.DoNotRetain
+                import androidx.compose.runtime.retain.retain
 
                 @Composable
                 fun Test() {
@@ -584,26 +585,26 @@ src/androidx/compose/runtime/foo/UnretainableTypeWithCause.kt:12: Error: kotlin.
             .expectFixDiffs(
                 """
 Autofix for src/androidx/compose/runtime/foo/UnretainableTypeWithCause.kt line 10: Replace with `remember`:
-@@ -5 +5,2 @@
--                import androidx.compose.runtime.retain
+@@ -6 +6,2 @@
+-                import androidx.compose.runtime.retain.retain
 +                import androidx.compose.runtime.remember
-+import androidx.compose.runtime.retain
++import androidx.compose.runtime.retain.retain
 @@ -10 +11 @@
 -                    val foo = retain { listOf(UnretainableTypeWithCause()) }
 +                    val foo = remember { listOf(UnretainableTypeWithCause()) }
 Autofix for src/androidx/compose/runtime/foo/UnretainableTypeWithCause.kt line 11: Replace with `remember`:
-@@ -5 +5,2 @@
--                import androidx.compose.runtime.retain
+@@ -6 +6,2 @@
+-                import androidx.compose.runtime.retain.retain
 +                import androidx.compose.runtime.remember
-+import androidx.compose.runtime.retain
++import androidx.compose.runtime.retain.retain
 @@ -11 +12 @@
 -                    val bar = retain { mapOf("Bar" to UnretainableTypeWithoutCause()) }
 +                    val bar = remember { mapOf("Bar" to UnretainableTypeWithoutCause()) }
 Autofix for src/androidx/compose/runtime/foo/UnretainableTypeWithCause.kt line 12: Replace with `remember`:
-@@ -5 +5,2 @@
--                import androidx.compose.runtime.retain
+@@ -6 +6,2 @@
+-                import androidx.compose.runtime.retain.retain
 +                import androidx.compose.runtime.remember
-+import androidx.compose.runtime.retain
++import androidx.compose.runtime.retain.retain
 @@ -12 +13 @@
 -                    val baz = retain { SubclassOfUnretainableType() to 20 }
 +                    val baz = remember { SubclassOfUnretainableType() to 20 }
@@ -625,7 +626,7 @@ Autofix for src/androidx/compose/runtime/foo/UnretainableTypeWithCause.kt line 1
                 import android.view.View
                 import android.view.TextView
                 import androidx.compose.runtime.Composable
-                import androidx.compose.runtime.retain
+                import androidx.compose.runtime.retain.retain
 
                 @Composable
                 fun Test(context: Context) {
@@ -650,9 +651,9 @@ src/androidx/compose/runtime/foo/test.kt:14: Error: Retaining a key of type andr
                 """
 Autofix for src/androidx/compose/runtime/foo/test.kt line 14: Replace with `remember`:
 @@ -10 +10,2 @@
--                import androidx.compose.runtime.retain
+-                import androidx.compose.runtime.retain.retain
 +                import androidx.compose.runtime.remember
-+import androidx.compose.runtime.retain
++import androidx.compose.runtime.retain.retain
 @@ -14 +15 @@
 -                    val foo = retain(context) { 42 }
 +                    val foo = remember(context) { 42 }
@@ -674,7 +675,7 @@ Autofix for src/androidx/compose/runtime/foo/test.kt line 14: Replace with `reme
                 import android.view.View
                 import android.view.TextView
                 import androidx.compose.runtime.Composable
-                import androidx.compose.runtime.retain
+                import androidx.compose.runtime.retain.retain
 
                 @Composable
                 fun Test(context: Activity) {
@@ -699,9 +700,9 @@ src/androidx/compose/runtime/foo/test.kt:14: Error: Retaining a key of type andr
                 """
 Autofix for src/androidx/compose/runtime/foo/test.kt line 14: Replace with `remember`:
 @@ -10 +10,2 @@
--                import androidx.compose.runtime.retain
+-                import androidx.compose.runtime.retain.retain
 +                import androidx.compose.runtime.remember
-+import androidx.compose.runtime.retain
++import androidx.compose.runtime.retain.retain
 @@ -14 +15 @@
 -                    val foo = retain(context) { 42 }
 +                    val foo = remember(context) { 42 }
@@ -723,7 +724,7 @@ Autofix for src/androidx/compose/runtime/foo/test.kt line 14: Replace with `reme
                 import android.view.View
                 import android.view.TextView
                 import androidx.compose.runtime.Composable
-                import androidx.compose.runtime.retain
+                import androidx.compose.runtime.retain.retain
 
                 @Composable
                 fun Test() {
@@ -753,17 +754,17 @@ src/androidx/compose/runtime/foo/test.kt:16: Error: Retaining a key of type andr
                 """
 Autofix for src/androidx/compose/runtime/foo/test.kt line 15: Replace with `remember`:
 @@ -10 +10,2 @@
--                import androidx.compose.runtime.retain
+-                import androidx.compose.runtime.retain.retain
 +                import androidx.compose.runtime.remember
-+import androidx.compose.runtime.retain
++import androidx.compose.runtime.retain.retain
 @@ -15 +16 @@
 -                    val foo = retain(retain) { 42 }
 +                    val foo = remember(retain) { 42 }
 Autofix for src/androidx/compose/runtime/foo/test.kt line 16: Replace with `remember`:
 @@ -10 +10,2 @@
--                import androidx.compose.runtime.retain
+-                import androidx.compose.runtime.retain.retain
 +                import androidx.compose.runtime.remember
-+import androidx.compose.runtime.retain
++import androidx.compose.runtime.retain.retain
 @@ -16 +17 @@
 -                    val bar = retain(TextView()) { 42 }
 +                    val bar = remember(TextView()) { 42 }
@@ -785,7 +786,7 @@ Autofix for src/androidx/compose/runtime/foo/test.kt line 16: Replace with `reme
                 import android.view.View
                 import android.view.TextView
                 import androidx.compose.runtime.Composable
-                import androidx.compose.runtime.retain
+                import androidx.compose.runtime.retain.retain
 
                 @Composable
                 fun Test() {
@@ -818,25 +819,25 @@ src/androidx/compose/runtime/foo/test.kt:16: Error: Retaining a key of type java
                 """
 Autofix for src/androidx/compose/runtime/foo/test.kt line 14: Replace with `remember`:
 @@ -10 +10,2 @@
--                import androidx.compose.runtime.retain
+-                import androidx.compose.runtime.retain.retain
 +                import androidx.compose.runtime.remember
-+import androidx.compose.runtime.retain
++import androidx.compose.runtime.retain.retain
 @@ -14 +15 @@
 -                    val contextList = retain(listOf<Context>()) { 42 }
 +                    val contextList = remember(listOf<Context>()) { 42 }
 Autofix for src/androidx/compose/runtime/foo/test.kt line 15: Replace with `remember`:
 @@ -10 +10,2 @@
--                import androidx.compose.runtime.retain
+-                import androidx.compose.runtime.retain.retain
 +                import androidx.compose.runtime.remember
-+import androidx.compose.runtime.retain
++import androidx.compose.runtime.retain.retain
 @@ -15 +16 @@
 -                    val contextDerivedMap = retain(mapOf<String, ContextWrapper>()) { 42 }
 +                    val contextDerivedMap = remember(mapOf<String, ContextWrapper>()) { 42 }
 Autofix for src/androidx/compose/runtime/foo/test.kt line 16: Replace with `remember`:
 @@ -10 +10,2 @@
--                import androidx.compose.runtime.retain
+-                import androidx.compose.runtime.retain.retain
 +                import androidx.compose.runtime.remember
-+import androidx.compose.runtime.retain
++import androidx.compose.runtime.retain.retain
 @@ -16 +17 @@
 -                    val viewSet = retain(setOf<View>()) { 42 }
 +                    val viewSet = remember(setOf<View>()) { 42 }
@@ -853,8 +854,8 @@ Autofix for src/androidx/compose/runtime/foo/test.kt line 16: Replace with `reme
                 package androidx.compose.runtime.foo
 
                 import androidx.compose.runtime.Composable
-                import androidx.compose.runtime.retain
                 import androidx.compose.runtime.annotation.DoNotRetain
+                import androidx.compose.runtime.retain.retain
 
                 @Composable
                 fun Test() {
@@ -894,26 +895,26 @@ src/androidx/compose/runtime/foo/UnretainableTypeWithCause.kt:12: Error: Key typ
             .expectFixDiffs(
                 """
 Autofix for src/androidx/compose/runtime/foo/UnretainableTypeWithCause.kt line 10: Replace with `remember`:
-@@ -5 +5,2 @@
--                import androidx.compose.runtime.retain
+@@ -6 +6,2 @@
+-                import androidx.compose.runtime.retain.retain
 +                import androidx.compose.runtime.remember
-+import androidx.compose.runtime.retain
++import androidx.compose.runtime.retain.retain
 @@ -10 +11 @@
 -                    val foo = retain(UnretainableTypeWithCause()) { 42 }
 +                    val foo = remember(UnretainableTypeWithCause()) { 42 }
 Autofix for src/androidx/compose/runtime/foo/UnretainableTypeWithCause.kt line 11: Replace with `remember`:
-@@ -5 +5,2 @@
--                import androidx.compose.runtime.retain
+@@ -6 +6,2 @@
+-                import androidx.compose.runtime.retain.retain
 +                import androidx.compose.runtime.remember
-+import androidx.compose.runtime.retain
++import androidx.compose.runtime.retain.retain
 @@ -11 +12 @@
 -                    val bar = retain(UnretainableTypeWithoutCause()) { 42 }
 +                    val bar = remember(UnretainableTypeWithoutCause()) { 42 }
 Autofix for src/androidx/compose/runtime/foo/UnretainableTypeWithCause.kt line 12: Replace with `remember`:
-@@ -5 +5,2 @@
--                import androidx.compose.runtime.retain
+@@ -6 +6,2 @@
+-                import androidx.compose.runtime.retain.retain
 +                import androidx.compose.runtime.remember
-+import androidx.compose.runtime.retain
++import androidx.compose.runtime.retain.retain
 @@ -12 +13 @@
 -                    val baz = retain(SubclassOfUnretainableType()) { 42 }
 +                    val baz = remember(SubclassOfUnretainableType()) { 42 }
@@ -930,8 +931,8 @@ Autofix for src/androidx/compose/runtime/foo/UnretainableTypeWithCause.kt line 1
                 package androidx.compose.runtime.foo
 
                 import androidx.compose.runtime.Composable
-                import androidx.compose.runtime.retain
                 import androidx.compose.runtime.annotation.DoNotRetain
+                import androidx.compose.runtime.retain.retain
 
                 @Composable
                 fun Test() {
@@ -971,26 +972,26 @@ src/androidx/compose/runtime/foo/UnretainableTypeWithCause.kt:12: Error: Key typ
             .expectFixDiffs(
                 """
 Autofix for src/androidx/compose/runtime/foo/UnretainableTypeWithCause.kt line 10: Replace with `remember`:
-@@ -5 +5,2 @@
--                import androidx.compose.runtime.retain
+@@ -6 +6,2 @@
+-                import androidx.compose.runtime.retain.retain
 +                import androidx.compose.runtime.remember
-+import androidx.compose.runtime.retain
++import androidx.compose.runtime.retain.retain
 @@ -10 +11 @@
 -                    val foo = retain(listOf(UnretainableTypeWithCause())) { 42 }
 +                    val foo = remember(listOf(UnretainableTypeWithCause())) { 42 }
 Autofix for src/androidx/compose/runtime/foo/UnretainableTypeWithCause.kt line 11: Replace with `remember`:
-@@ -5 +5,2 @@
--                import androidx.compose.runtime.retain
+@@ -6 +6,2 @@
+-                import androidx.compose.runtime.retain.retain
 +                import androidx.compose.runtime.remember
-+import androidx.compose.runtime.retain
++import androidx.compose.runtime.retain.retain
 @@ -11 +12 @@
 -                    val bar = retain(mapOf("Bar" to UnretainableTypeWithoutCause())) { 42 }
 +                    val bar = remember(mapOf("Bar" to UnretainableTypeWithoutCause())) { 42 }
 Autofix for src/androidx/compose/runtime/foo/UnretainableTypeWithCause.kt line 12: Replace with `remember`:
-@@ -5 +5,2 @@
--                import androidx.compose.runtime.retain
+@@ -6 +6,2 @@
+-                import androidx.compose.runtime.retain.retain
 +                import androidx.compose.runtime.remember
-+import androidx.compose.runtime.retain
++import androidx.compose.runtime.retain.retain
 @@ -12 +13 @@
 -                    val baz = retain(SubclassOfUnretainableType() to 20) { 42 }
 +                    val baz = remember(SubclassOfUnretainableType() to 20) { 42 }
@@ -1002,11 +1003,11 @@ Autofix for src/androidx/compose/runtime/foo/UnretainableTypeWithCause.kt line 1
         val RetainStub: TestFile =
             bytecodeStub(
                 filename = "Retain.kt",
-                filepath = "androidx/compose/runtime",
-                checksum = 0xcdc5d7aa,
+                filepath = "androidx/compose/runtime/retain",
+                checksum = 0xcf96ef46,
                 source =
                     """
-        package androidx.compose.runtime
+        package androidx.compose.runtime.retain
 
         import androidx.compose.runtime.Composable
 
@@ -1040,37 +1041,37 @@ Autofix for src/androidx/compose/runtime/foo/UnretainableTypeWithCause.kt line 1
         """,
                 """
                 META-INF/main.kotlin_module:
-                H4sIAAAAAAAA/2NgYGBmYGBgAmJGBijgUuGSSMxLKcrPTKnQS87PLcgvTtUr
-                Ks0rycxNFeIISi1JzMzzLuFS5ZLBpUovLT9fiNUtP9+7RIlBiwEA9+K1PWUA
-                AAA=
+                H4sIAAAAAAAA/2NgYGBmYGBggmIw4FLjkknMSynKz0yp0EvOzy3IL07VKyrN
+                K8nMTdVLy88XYgtJLS7xLuHS5pLHqa4otSQxM0+IIwhMe5coMWgxAACnVhm7
+                bQAAAA==
                 """,
                 """
-                androidx/compose/runtime/RetainKt.class:
-                H4sIAAAAAAAA/61V21IbRxA9sxLSaqWAEAaDsAkXEetCvDIhNwtIFBLMBnEJ
-                KLxQeVikBRatdqndFWXeqLzkG/KaL8ijnKq4KPKWn8kfpNIzkgwCEZdTqdJO
-                z3T3nD7T09P68+/fXgNYQJlhSrerrmNWX6oVp37qeIbqNmzfrBvqjuHrpr3u
-                h8EY4if6ma5aun2kbh2cGBXSBhhCrvBhWEiXao5vmbZ6clZXDxt2xTcd21NX
-                27N8IVO6jVBgKC6Wn9/VL78NbDFXLheWCxkaGWZL955gRaz1A8sgv2hFtyoN
-                S+cIMiIMEzeCmLZvuLZuqZrtu6btmRUvjCjDcOXYqNQ2HX+zYVnbuqvXDXJk
-                eJK+S/uGZpeDHBUyezG8h34FMQwwsLKMQYYR1zAPTaO6dWq4gsyG7tY45kha
-                6w0xhAccYvgeyjvGoWWIxITxkGCODH/LXXEN3TfWhfuKpXseQ/YmZ6GjS2kD
-                ui0Mdb2lj2EMSQWjGKcU9HQJ4zGDfKx7xytO1WAIpDNaDO9jMooJTDGspbX9
-                Hil69yKJoQ8zCiSk6ApTZuow1ak5pjFMvg2R4UX6/yHCUL6nWt8dv6uAgzXj
-                3JOR6zyyhm9aatF19XPK8of0yCrO6fnWIUOmVyQt00MZg4q8gqd4xjDUw87w
-                /T1n+Q+31nWY4Y7zduPAMr1jo1o8NUk/U3LcI/XE8A9cujxP1W3b8fUWUvt5
-                Fbrru0ekMD6ldJj2mVOjknuQ7lkun+N5FJ+B0GT//NRYoxJlGOzQ2qDiqeq+
-                TmapfhagLijxgfEBVFM10r80+SpPsyrl76/LiwlFkgOKNCqRpC8+SN/lRXsh
-                K5cXyQytk9Iamw7JlxdxNsrm+2U5LiXlRDBB6nxg7eon+Y8mu7y4+iUkxYPJ
-                4p0NI/G+ZCwhyywRHGX5cD40LeS/A8nXQEEBNB+KR5JSXrkXLtYFxgRK9OpH
-                Kaz0yVc/z+cZP/Y8Q6KTsZtviTIUaf0tPK35VLmttz9QMm1js1E/MNwyb7Z8
-                s0Pddk93Tb5uKyO75pGt+w2X5uM7rRat2WemZ5K5eF0PDKnb1jedt8tN2XUa
-                bsVYNTn6WHvP3h08PKPuEeT3i0B8jNpJCAGUaPUDSYnkVDahNBEPLIYTiSZG
-                EsEmHr3CNDW13xHMNjH7Ky8TbNDYT1uGEMUj6sePoWCTdCNkk6lhfoAnlB+C
-                QwRpkltiVxjbJENkkQERPtMO75HkhZbJJuYofK5FYuk2iWz2dRPzuS4aCTrP
-                GAWewEOkqE3PYlhQmSTAfowLKvxkGeTwkTh5RpBibVLZm6TASc0QIif1HVk5
-                qaGcIDUnSM29wiLDdXi+kTf7TkhyxxKFhJjxkEzMeEipHXJBhOSN/GOSsggF
-                DIjHh0/ejBJ2xLiOXZFChmVi98U+Ahq+1FDU8BVWaIqvNXyD1X0wDy+wto+Y
-                hz4Pgx4iHjQPIQ85D9+KX8bDkpjM/ANVtVgb+QgAAA==
+                androidx/compose/runtime/retain/RetainKt.class:
+                H4sIAAAAAAAA/61VX1MiRxD/zYKwLEQRT0/xzniKORbMLWfMv0MvISaeRBSj
+                xBcrDyusurLsWruLdb5ZeclnyGs+QR65VOXKMm/5MvkGqfQMcIpiri6VKnZ6
+                prvn17/p6Wn+/Pu31wAWscOQ1u2a65i1l1rVaZw4nqG5Tds3GyQNXzdtbVuI
+                dT8MxhA/1k91zdLtQ628f2xUSRtgCLVdGRbTpbrjW7Tr+LShHTTtqm86tqet
+                dma5vFq6iZBnKCxVnt3WP38b2FK2Usk/z6s0MsyV7jzIiljr+5ZBftGqblWb
+                ls4RZEQYpq4FMW3fcG3d0oq275q2Z1a9MKIMo9Ujo1rfdPzNpmVt6a7eMMiR
+                4XH6Nu1rmh0OcphXd2N4D4MKYhhiYBUZwwxjrmEemEatfGK4gsyG7tY55li6
+                2B9iBPc4xOgdlLeNA8sQiQnjPsEcGn7ZXXEN3TfWhfuKpXseQ+Y6Z6GjS+kA
+                um0Mbb2tj2ECSQXjmKQU9HUJ4yGDfKR7RytOzWAIpNViDO9jOoopPGJYSxf3
+                +qTo3YskhgHMKpCQoitMmamDVLfmWJFh+m2IDC/S/w8Rhsod1fru+D0FHKwb
+                Z56MbPeRNX3T0gquq59Rlj+kR1Z1Ts7KBwxqv0hFtY8yBg05BU/wlGGkj53h
+                +zvO8h9urecwo13nrea+ZXpHRq1wYpJ+tuS4h9qx4e+7dHmeptu24+ttpM7z
+                yvfWd59IYXxK6TDtU6dOJXcv3bdcPsezKD4Docn+2YmxRiXKMNyltUHFU9N9
+                ncxS4zRAzVDiA6ic6qR6afJVjmY1St1fF+dTiiQHFGlcIklffJi+i/POQlYu
+                zpMqrZPSGpsJyRfncTbOFgZlOS4l5UQwQepcYO3yJ/mPFrs4v/wlJMWDycKt
+                DWPxgWQsIcssERxnuXAuNCPkvwPJV0BBAbQQikeSUk65Ey7WA8YESvTyRyms
+                DMiXPy/kGD/2AkOim6zrz4gyFGn/Izyp+1S07Wc/VDJtY7PZ2DfcCu+zfLND
+                jXZXd02+7igjO+ahrftNl+aT2+3uXLRPTc8kc+GqFBhSN61vmm6Pm7LjNN2q
+                sWpy9InOnt1beHhKjSPI7xeB+AR1khACWKfVDyQlko8yCaWFeGApnEi0MJYI
+                tvDgFWaon/2OYKaFuV95haBE4yBtGUEUD6gVP4SCDdKNkU2mXvkBHlN+CA4R
+                pEluil1hlEmGyCIDIrzaCe+R5IWmZhLzFD7bJrF8k0Qm87qFhWwPjQSdZ4IC
+                T+E+UtSh5zAqqEwT4CAmBRV+MhVZfCROrgpSrEMqc50UOKlZQuSkviMrJzWS
+                FaTmBan5V1hiuArPN/I+3w1J7limkBAzHpKJGQ8pdUIuipC8h39Mkofdom8o
+                IJ7dJ29GiRjw8VtskyyT9jmx+2IPgSK+FL8CviKJlSK+xjd7YB5W8WIPMQ8D
+                HoY9RDyseQh5yHooip/qYVlMZv8Bh1u79vsIAAA=
                 """,
             )
 

@@ -27,9 +27,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LocalRetainScope
-import androidx.compose.runtime.RetainScope
-import androidx.compose.runtime.retain
+import androidx.compose.runtime.retain.LocalRetainScope
+import androidx.compose.runtime.retain.RetainScope
+import androidx.compose.runtime.retain.retain
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.node.RootForTest
