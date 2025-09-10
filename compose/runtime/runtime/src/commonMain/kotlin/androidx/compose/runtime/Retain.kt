@@ -441,7 +441,12 @@ public abstract class RetainScope : RetainStateProvider {
         }
 
         override fun onAbandoned() {
-            if (value is RetainObserver) value.onRetired()
+            if (owner.isKeepingExitedValues) {
+                if (value is RetainObserver) value.onRetained()
+                owner.saveExitingValue(key, value)
+            } else if (value is RetainObserver) {
+                value.onUnused()
+            }
         }
     }
 }

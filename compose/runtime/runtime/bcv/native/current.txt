@@ -380,6 +380,7 @@ abstract interface androidx.compose.runtime/RetainObserver { // androidx.compose
     abstract fun onExitedComposition() // androidx.compose.runtime/RetainObserver.onExitedComposition|onExitedComposition(){}[0]
     abstract fun onRetained() // androidx.compose.runtime/RetainObserver.onRetained|onRetained(){}[0]
     abstract fun onRetired() // androidx.compose.runtime/RetainObserver.onRetired|onRetired(){}[0]
+    abstract fun onUnused() // androidx.compose.runtime/RetainObserver.onUnused|onUnused(){}[0]
 }
 
 abstract interface androidx.compose.runtime/RetainStateProvider { // androidx.compose.runtime/RetainStateProvider|null[0]
