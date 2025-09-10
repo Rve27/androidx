@@ -51,7 +51,7 @@ internal class NavigationEventProcessor {
      * maintaining a Last-In, First-Out (LIFO) dispatch order. This means the most recently added
      * overlay handler is the first to be checked.
      *
-     * @see [defaultHandler]
+     * @see [defaultHandlers]
      * @see [inProgressHandler]
      */
     private val overlayHandlers = ArrayDeque<NavigationEventHandler<*>>()
@@ -65,7 +65,7 @@ internal class NavigationEventProcessor {
      * @see [overlayHandlers]
      * @see [inProgressHandler]
      */
-    private val defaultHandler = ArrayDeque<NavigationEventHandler<*>>()
+    private val defaultHandlers = ArrayDeque<NavigationEventHandler<*>>()
 
     /**
      * The handler for a navigation event that is currently in progress.
@@ -78,7 +78,7 @@ internal class NavigationEventProcessor {
      * as a terminal event and receives a cancellation call before being removed.
      *
      * @see [overlayHandlers]
-     * @see [defaultHandler]
+     * @see [defaultHandlers]
      */
     private var inProgressHandler: NavigationEventHandler<*>? = null
 
@@ -131,7 +131,7 @@ internal class NavigationEventProcessor {
         // 1) Snapshot new truth from current callbacks.
         // Use `any` instead of `filter` to avoid allocating intermediate lists.
         // (`any` also short-circuits on the first match, making it strictly cheaper.)
-        val newDefaultEnabled = defaultHandler.any { it.isBackEnabled || it.isForwardEnabled }
+        val newDefaultEnabled = defaultHandlers.any { it.isBackEnabled || it.isForwardEnabled }
         val newOverlayEnabled = overlayHandlers.any { it.isBackEnabled || it.isForwardEnabled }
 
         val defaultEnabledChanged = hasDefaultEnabledCallbacks != newDefaultEnabled
@@ -219,7 +219,7 @@ internal class NavigationEventProcessor {
      * @return `true` if there is at least one overlay handler or one normal handler registered,
      *   `false` otherwise.
      */
-    fun hasHandlers(): Boolean = overlayHandlers.isNotEmpty() || defaultHandler.isNotEmpty()
+    fun hasHandlers(): Boolean = overlayHandlers.isNotEmpty() || defaultHandlers.isNotEmpty()
 
     /**
      * Adds a new [NavigationEventHandler] to receive navigation events, associating it with its
@@ -257,7 +257,7 @@ internal class NavigationEventProcessor {
         // Add to the front of the appropriate queue to achieve LIFO ordering.
         when (priority) {
             PRIORITY_OVERLAY -> overlayHandlers.addFirst(handler)
-            PRIORITY_DEFAULT -> defaultHandler.addFirst(handler)
+            PRIORITY_DEFAULT -> defaultHandlers.addFirst(handler)
         }
 
         // Store the dispatcher reference on the callback for self-management and internal tracking.
@@ -290,7 +290,7 @@ internal class NavigationEventProcessor {
         // The `remove()` operation on ArrayDeque is efficient and simply returns `false` if the
         // element is not found. There's no need for a preceding `contains()` check.
         overlayHandlers.remove(handler)
-        defaultHandler.remove(handler)
+        defaultHandlers.remove(handler)
 
         // Clear the dispatcher reference to mark the handler as unregistered and available for
         // re-registration.
@@ -502,11 +502,11 @@ internal class NavigationEventProcessor {
         return when (direction) {
             NavigationEventDirection.Back -> {
                 overlayHandlers.firstOrNull { it.isBackEnabled }
-                    ?: defaultHandler.firstOrNull { it.isBackEnabled }
+                    ?: defaultHandlers.firstOrNull { it.isBackEnabled }
             }
             NavigationEventDirection.Forward -> {
                 overlayHandlers.firstOrNull { it.isForwardEnabled }
-                    ?: defaultHandler.firstOrNull { it.isForwardEnabled }
+                    ?: defaultHandlers.firstOrNull { it.isForwardEnabled }
             }
             else -> error("Unsupported NavigationEventDirection: '$direction'.")
         }
@@ -549,7 +549,7 @@ internal class NavigationEventProcessor {
         }
 
         // Process default handlers second.
-        for (handler in defaultHandler) {
+        for (handler in defaultHandlers) {
             if (handler.isBackEnabled && handler.backInfo.isNotEmpty()) {
                 combinedBackInfo.addAll(handler.backInfo)
             }
