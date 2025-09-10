@@ -23,7 +23,7 @@
 package androidx.compose.animation
 
 import android.annotation.SuppressLint
-import androidx.compose.animation.SharedTransitionScope.PlaceHolderSize.Companion.animatedSize
+import androidx.compose.animation.SharedTransitionScope.PlaceholderSize.Companion.AnimatedSize
 import androidx.compose.animation.SharedTransitionScope.ResizeMode.Companion.RemeasureToBounds
 import androidx.compose.animation.SharedTransitionScope.ResizeMode.Companion.scaleToBounds
 import androidx.compose.animation.core.LinearEasing
@@ -1181,7 +1181,7 @@ class SharedTransitionTest {
     }
 
     @Test
-    fun testPlaceHolderSize() {
+    fun testPlaceholderSize() {
         var transitionScope: SharedTransitionScope? = null
         var visible by mutableStateOf(true)
         var parent1Size: IntSize? = null
@@ -1223,8 +1223,8 @@ class SharedTransitionTest {
                                 .sharedElement(
                                     rememberSharedContentState(key = "child"),
                                     this@AnimatedVisibility,
-                                    placeHolderSize =
-                                        SharedTransitionScope.PlaceHolderSize { _, _ ->
+                                    placeholderSize =
+                                        SharedTransitionScope.PlaceholderSize { _, _ ->
                                             expectedSize
                                         },
                                 )
@@ -1858,7 +1858,7 @@ class SharedTransitionTest {
                                         exit = ExitTransition.None,
                                         resizeMode = scaleToBounds(ContentScale.Fit),
                                         boundsTransform = boundsTransform,
-                                        placeHolderSize = animatedSize,
+                                        placeholderSize = AnimatedSize,
                                     )
                                     .size(80.dp)
                                     .background(Color.Red)
@@ -1872,7 +1872,7 @@ class SharedTransitionTest {
                                         exit = ExitTransition.None,
                                         resizeMode = scaleToBounds(ContentScale.Fit),
                                         boundsTransform = boundsTransform,
-                                        placeHolderSize = animatedSize,
+                                        placeholderSize = AnimatedSize,
                                     )
                                     .size(40.dp, 160.dp)
                                     .background(Color.Gray)
@@ -1960,7 +1960,7 @@ class SharedTransitionTest {
                                         ExitTransition.None,
                                         resizeMode = scaleToBounds(ContentScale.FillHeight),
                                         boundsTransform = boundsTransform,
-                                        placeHolderSize = animatedSize,
+                                        placeholderSize = AnimatedSize,
                                     )
                                     .size(80.dp)
                                     .background(Color.Red)
@@ -1974,7 +1974,7 @@ class SharedTransitionTest {
                                         ExitTransition.None,
                                         resizeMode = scaleToBounds(ContentScale.FillWidth),
                                         boundsTransform = boundsTransform,
-                                        placeHolderSize = animatedSize,
+                                        placeholderSize = AnimatedSize,
                                     )
                                     .size(40.dp, 160.dp)
                                     .background(Color.Gray)
@@ -2073,7 +2073,7 @@ class SharedTransitionTest {
                                         resizeMode =
                                             scaleToBounds(ContentScale.Fit, Alignment.TopStart),
                                         boundsTransform = boundsTransform,
-                                        placeHolderSize = animatedSize,
+                                        placeholderSize = AnimatedSize,
                                     )
                                     .size(80.dp)
                                     .background(Color.Red)
@@ -2088,7 +2088,7 @@ class SharedTransitionTest {
                                         resizeMode =
                                             scaleToBounds(ContentScale.Fit, Alignment.BottomStart),
                                         boundsTransform = boundsTransform,
-                                        placeHolderSize = animatedSize,
+                                        placeholderSize = AnimatedSize,
                                     )
                                     .size(40.dp, 160.dp)
                                     .background(Color.Gray)
@@ -2176,7 +2176,7 @@ class SharedTransitionTest {
                                         ExitTransition.None,
                                         resizeMode = scaleToBounds(ContentScale.Crop),
                                         boundsTransform = boundsTransform,
-                                        placeHolderSize = animatedSize,
+                                        placeholderSize = AnimatedSize,
                                     )
                                     .size(80.dp)
                                     .background(Color.Red)
@@ -2190,7 +2190,7 @@ class SharedTransitionTest {
                                         ExitTransition.None,
                                         resizeMode = scaleToBounds(ContentScale.FillWidth),
                                         boundsTransform = boundsTransform,
-                                        placeHolderSize = animatedSize,
+                                        placeholderSize = AnimatedSize,
                                     )
                                     .size(40.dp, 160.dp)
                                     .background(Color.Gray)
@@ -2663,7 +2663,7 @@ class SharedTransitionTest {
     }
 
     @Test
-    fun testPlaceHolderLogicSkippedWhenNoMatch() {
+    fun testPlaceholderLogicSkippedWhenNoMatch() {
         var parentSize: IntSize? = null
         val changeInProgress = true
         var testSize by mutableStateOf(IntSize.Zero)
