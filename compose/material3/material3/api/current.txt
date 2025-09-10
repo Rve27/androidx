@@ -42,11 +42,17 @@ package androidx.compose.material3 {
   }
 
   public final class AppBarColumnKt {
-    method @androidx.compose.runtime.Composable public static void AppBarColumn(kotlin.jvm.functions.Function1<? super androidx.compose.material3.AppBarMenuState,kotlin.Unit> overflowIndicator, optional androidx.compose.ui.Modifier modifier, optional int maxItemCount, kotlin.jvm.functions.Function1<? super androidx.compose.material3.AppBarColumnScope,kotlin.Unit> content);
-    method @BytecodeOnly @androidx.compose.runtime.Composable public static void AppBarColumn(kotlin.jvm.functions.Function3<? super androidx.compose.material3.AppBarMenuState!,? super androidx.compose.runtime.Composer!,? super java.lang.Integer!,kotlin.Unit!>, androidx.compose.ui.Modifier?, int, kotlin.jvm.functions.Function1<? super androidx.compose.material3.AppBarColumnScope!,kotlin.Unit!>, androidx.compose.runtime.Composer?, int, int);
+    method @androidx.compose.runtime.Composable public static void AppBarColumn(optional androidx.compose.ui.Modifier modifier, optional kotlin.jvm.functions.Function1<? super androidx.compose.material3.AppBarMenuState,kotlin.Unit> overflowIndicator, optional int maxItemCount, kotlin.jvm.functions.Function1<? super androidx.compose.material3.AppBarColumnScope,kotlin.Unit> content);
+    method @BytecodeOnly @androidx.compose.runtime.Composable public static void AppBarColumn(androidx.compose.ui.Modifier?, kotlin.jvm.functions.Function3<? super androidx.compose.material3.AppBarMenuState!,? super androidx.compose.runtime.Composer!,? super java.lang.Integer!,kotlin.Unit!>?, int, kotlin.jvm.functions.Function1<? super androidx.compose.material3.AppBarColumnScope!,kotlin.Unit!>, androidx.compose.runtime.Composer?, int, int);
+    method @BytecodeOnly @Deprecated @androidx.compose.runtime.Composable public static void AppBarColumn(kotlin.jvm.functions.Function3!, androidx.compose.ui.Modifier!, int, kotlin.jvm.functions.Function1!, androidx.compose.runtime.Composer!, int, int);
   }
 
   public interface AppBarColumnScope extends androidx.compose.material3.AppBarScope {
+  }
+
+  public final class AppBarDslKt {
+    method @androidx.compose.runtime.Composable public static void AppBarOverflowIndicator(androidx.compose.material3.AppBarMenuState menuState, optional androidx.compose.ui.Modifier modifier, optional boolean enabled, optional androidx.compose.ui.graphics.Shape shape, optional androidx.compose.material3.IconButtonColors colors, optional androidx.compose.foundation.interaction.MutableInteractionSource? interactionSource);
+    method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.compose.runtime.ComposableTarget(applier="androidx.compose.ui.UiComposable") public static void AppBarOverflowIndicator(androidx.compose.material3.AppBarMenuState, androidx.compose.ui.Modifier?, boolean, androidx.compose.ui.graphics.Shape?, androidx.compose.material3.IconButtonColors?, androidx.compose.foundation.interaction.MutableInteractionSource?, androidx.compose.runtime.Composer?, int, int);
   }
 
   public final class AppBarKt {
@@ -96,14 +102,16 @@ package androidx.compose.material3 {
   public final class AppBarMenuState {
     ctor public AppBarMenuState();
     method public void dismiss();
-    method @InaccessibleFromKotlin public boolean isExpanded();
+    method @BytecodeOnly @Deprecated public boolean isExpanded();
+    method @InaccessibleFromKotlin public boolean isShowing();
     method public void show();
-    property public boolean isExpanded;
+    property public boolean isShowing;
   }
 
   public final class AppBarRowKt {
-    method @androidx.compose.runtime.Composable public static void AppBarRow(kotlin.jvm.functions.Function1<? super androidx.compose.material3.AppBarMenuState,kotlin.Unit> overflowIndicator, optional androidx.compose.ui.Modifier modifier, optional int maxItemCount, kotlin.jvm.functions.Function1<? super androidx.compose.material3.AppBarRowScope,kotlin.Unit> content);
-    method @BytecodeOnly @androidx.compose.runtime.Composable public static void AppBarRow(kotlin.jvm.functions.Function3<? super androidx.compose.material3.AppBarMenuState!,? super androidx.compose.runtime.Composer!,? super java.lang.Integer!,kotlin.Unit!>, androidx.compose.ui.Modifier?, int, kotlin.jvm.functions.Function1<? super androidx.compose.material3.AppBarRowScope!,kotlin.Unit!>, androidx.compose.runtime.Composer?, int, int);
+    method @androidx.compose.runtime.Composable public static void AppBarRow(optional androidx.compose.ui.Modifier modifier, optional kotlin.jvm.functions.Function1<? super androidx.compose.material3.AppBarMenuState,kotlin.Unit> overflowIndicator, optional int maxItemCount, kotlin.jvm.functions.Function1<? super androidx.compose.material3.AppBarRowScope,kotlin.Unit> content);
+    method @BytecodeOnly @androidx.compose.runtime.Composable public static void AppBarRow(androidx.compose.ui.Modifier?, kotlin.jvm.functions.Function3<? super androidx.compose.material3.AppBarMenuState!,? super androidx.compose.runtime.Composer!,? super java.lang.Integer!,kotlin.Unit!>?, int, kotlin.jvm.functions.Function1<? super androidx.compose.material3.AppBarRowScope!,kotlin.Unit!>, androidx.compose.runtime.Composer?, int, int);
+    method @BytecodeOnly @Deprecated @androidx.compose.runtime.Composable public static void AppBarRow(kotlin.jvm.functions.Function3!, androidx.compose.ui.Modifier!, int, kotlin.jvm.functions.Function1!, androidx.compose.runtime.Composer!, int, int);
   }
 
   public interface AppBarRowScope extends androidx.compose.material3.AppBarScope {
