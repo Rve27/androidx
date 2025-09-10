@@ -49,6 +49,7 @@ package androidx.navigationevent {
     method @MainThread public void addHandler(androidx.navigationevent.NavigationEventHandler<? extends java.lang.Object?> handler);
     method @MainThread public void addHandler(androidx.navigationevent.NavigationEventHandler<? extends java.lang.Object?> handler, optional int priority);
     method @MainThread public void addInput(androidx.navigationevent.NavigationEventInput input);
+    method @MainThread public void addInput(androidx.navigationevent.NavigationEventInput input, int priority);
     method @MainThread public void dispose();
     method public kotlinx.coroutines.flow.StateFlow<androidx.navigationevent.NavigationEventState<androidx.navigationevent.NavigationEventInfo>> getState();
     method @KotlinOnly public inline <reified T extends androidx.navigationevent.NavigationEventInfo> kotlinx.coroutines.flow.StateFlow<androidx.navigationevent.NavigationEventState<T>> getState(kotlinx.coroutines.CoroutineScope scope, T initialInfo);

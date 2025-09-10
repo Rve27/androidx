@@ -20,6 +20,8 @@ package androidx.navigationevent
 import androidx.annotation.MainThread
 import androidx.kruth.assertThat
 import androidx.kruth.assertThrows
+import androidx.navigationevent.NavigationEventDispatcher.Companion.PRIORITY_DEFAULT
+import androidx.navigationevent.NavigationEventDispatcher.Companion.PRIORITY_OVERLAY
 import androidx.navigationevent.NavigationEventInfo.NotProvided
 import androidx.navigationevent.NavigationEventState.Idle
 import androidx.navigationevent.NavigationEventState.InProgress
@@ -719,6 +721,7 @@ class NavigationEventDispatcherTest {
 
         // Disabling the handler should trigger it again.
         handler.isBackEnabled = false
+        handler.isForwardEnabled = false
         assertThat(input.onHasEnabledHandlersChangedInvocations).isEqualTo(2)
     }
 
@@ -757,6 +760,84 @@ class NavigationEventDispatcherTest {
         assertThat(childInput.removedInvocations).isEqualTo(1)
         assertThat(parentInput.currentDispatcher).isNull()
         assertThat(childInput.currentDispatcher).isNull()
+    }
+
+    @Test
+    fun onHasEnabledCallbacksChanged_notifiesInputsByPriority() {
+        val dispatcher = NavigationEventDispatcher()
+
+        // Arrange: Create and register one input for each priority level.
+        val unspecifiedInput = TestNavigationEventInput()
+        val defaultInput = TestNavigationEventInput()
+        val overlayInput = TestNavigationEventInput()
+
+        dispatcher.addInput(unspecifiedInput)
+        dispatcher.addInput(defaultInput, priority = PRIORITY_DEFAULT)
+        dispatcher.addInput(overlayInput, priority = PRIORITY_OVERLAY)
+
+        // Act 1: Add an Overlay callback.
+        val overlayHandler =
+            TestNavigationEventHandler(isBackEnabled = true, isForwardEnabled = false)
+        dispatcher.addHandler(overlayHandler, priority = PRIORITY_OVERLAY)
+
+        // Assert 1:
+        // - Default input is not notified.
+        // - Overlay input is notified.
+        // - Unspecified input is notified because the global flag's setter notifies it.
+        assertThat(defaultInput.onHasEnabledHandlersChangedInvocations).isEqualTo(0)
+        assertThat(overlayInput.onHasEnabledHandlersChangedInvocations).isEqualTo(1)
+        assertThat(unspecifiedInput.onHasEnabledHandlersChangedInvocations).isEqualTo(1)
+
+        // Act 2: Add a Default handler.
+        val defaultHandler =
+            TestNavigationEventHandler(isBackEnabled = true, isForwardEnabled = false)
+        dispatcher.addHandler(defaultHandler, priority = PRIORITY_DEFAULT)
+
+        // Assert 2:
+        // - Default input is notified.
+        // - Overlay input is not notified.
+        // - Unspecified input is notified because the global flag's setter notifies it.
+        assertThat(defaultInput.onHasEnabledHandlersChangedInvocations).isEqualTo(1)
+        assertThat(overlayInput.onHasEnabledHandlersChangedInvocations).isEqualTo(1)
+        assertThat(unspecifiedInput.onHasEnabledHandlersChangedInvocations).isEqualTo(2)
+    }
+
+    @Test
+    fun removeInput_withPriority_stopsReceivingNotifications() {
+        val dispatcher = NavigationEventDispatcher()
+        val overlayInput = TestNavigationEventInput()
+        dispatcher.addInput(overlayInput, priority = PRIORITY_OVERLAY)
+
+        // Arrange: Add a callback to trigger an initial notification.
+        val handler = TestNavigationEventHandler()
+        dispatcher.addHandler(handler, priority = PRIORITY_OVERLAY)
+        assertThat(overlayInput.onHasEnabledHandlersChangedInvocations).isEqualTo(1)
+
+        // Act: Remove the input.
+        dispatcher.removeInput(overlayInput)
+
+        // Assert: Trigger another notification event. The removed input's count should not
+        // increase.
+        handler.isBackEnabled = false
+        assertThat(overlayInput.onHasEnabledHandlersChangedInvocations).isEqualTo(1) // Unchanged
+    }
+
+    @Test
+    fun addInput_withInvalidPriority_throwsException() {
+        val dispatcher = NavigationEventDispatcher()
+        val input = TestNavigationEventInput()
+        val invalidPriority = -99
+
+        // The @Priority IntDef provides compile-time safety for Kotlin/Java
+        // callers within an Android environment. However, that static check is
+        // not enforced for callers from other platforms (e.g., Swift via KMP).
+        // This test verifies the runtime check that guarantees API safety for
+        // all callers, regardless of their platform.
+        assertThrows<IllegalArgumentException> {
+                @Suppress("WrongConstant") dispatcher.addInput(input, invalidPriority)
+            }
+            .hasMessageThat()
+            .contains("Unsupported priority value: $invalidPriority")
     }
 
     // endregion Core API
