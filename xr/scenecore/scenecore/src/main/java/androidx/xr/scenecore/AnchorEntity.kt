@@ -59,10 +59,11 @@ private constructor(rtEntity: RtAnchorEntity, entityManager: EntityManager) :
         }
 
     /** Specifies the current tracking state of the Anchor. */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    @Retention(AnnotationRetention.SOURCE)
     @Target(AnnotationTarget.TYPE)
     @IntDef(State.ANCHORED, State.UNANCHORED, State.TIMEDOUT, State.ERROR)
-    @Retention(AnnotationRetention.SOURCE)
-    internal annotation class StateValue
+    public annotation class StateValue
 
     public object State {
         /**
