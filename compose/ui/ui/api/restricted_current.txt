@@ -3709,6 +3709,10 @@ package androidx.compose.ui.node {
     method public static <T extends androidx.compose.ui.node.TraversableNode> void traverseDescendants(T, kotlin.jvm.functions.Function1<? super T,? extends androidx.compose.ui.node.TraversableNode.Companion.TraverseDescendantsAction> block);
   }
 
+  public interface UnplacedStateAwareModifierNode extends androidx.compose.ui.node.DelegatableNode {
+    method public void onUnplaced();
+  }
+
 }
 
 package androidx.compose.ui.platform {
