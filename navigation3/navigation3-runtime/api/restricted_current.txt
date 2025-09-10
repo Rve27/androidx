@@ -2,6 +2,8 @@
 package androidx.navigation3.runtime {
 
   public final class DecoratedNavEntriesKt {
+    method @androidx.compose.runtime.Composable public static <T> java.util.List<androidx.navigation3.runtime.NavEntry<T>> rememberDecoratedNavEntries(java.util.List<? extends androidx.navigation3.runtime.NavEntry<T>> entries, optional java.util.List<androidx.navigation3.runtime.NavEntryDecorator<T>> entryDecorators);
+    method @BytecodeOnly @androidx.compose.runtime.Composable public static <T> java.util.List<androidx.navigation3.runtime.NavEntry<T!>!> rememberDecoratedNavEntries(java.util.List<? extends androidx.navigation3.runtime.NavEntry<T!>!>, java.util.List<androidx.navigation3.runtime.NavEntryDecorator<T!>!>?, androidx.compose.runtime.Composer?, int, int);
     method @androidx.compose.runtime.Composable public static <T> java.util.List<androidx.navigation3.runtime.NavEntry<T>> rememberDecoratedNavEntries(java.util.List<? extends T> backStack, optional java.util.List<androidx.navigation3.runtime.NavEntryDecorator<T>> entryDecorators, kotlin.jvm.functions.Function1<? super T,? extends androidx.navigation3.runtime.NavEntry<T>> entryProvider);
     method @BytecodeOnly @androidx.compose.runtime.Composable public static <T> java.util.List<androidx.navigation3.runtime.NavEntry<T!>!> rememberDecoratedNavEntries(java.util.List<? extends T!>, java.util.List<androidx.navigation3.runtime.NavEntryDecorator<T!>!>?, kotlin.jvm.functions.Function1<? super T!,? extends androidx.navigation3.runtime.NavEntry<T!>!>, androidx.compose.runtime.Composer?, int, int);
   }
