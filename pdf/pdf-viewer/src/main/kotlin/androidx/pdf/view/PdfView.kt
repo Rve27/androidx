@@ -1670,7 +1670,28 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                     context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 imm.showSoftInput(formFillingEditText?.editText, 0)
             }
+            adjustScroll(it.pageNum, it.formWidget)
         }
+    }
+
+    /**
+     * Adjusts the scroll to bring the top left of the edit text which overlays the [formWidget] to
+     * the center of the view.
+     */
+    private fun adjustScroll(pageNum: Int, formWidget: FormWidgetInfo) {
+        val widgetTopLeftViewCoordinates =
+            pdfToViewPoint(
+                PdfPoint(
+                    pageNum,
+                    formWidget.widgetRect.left.toFloat(),
+                    formWidget.widgetRect.top.toFloat(),
+                )
+            )
+        if (widgetTopLeftViewCoordinates == null) return
+
+        val xScrollOffset = (widgetTopLeftViewCoordinates.x - (width / 2)).roundToInt()
+        val yScrollOffset = (widgetTopLeftViewCoordinates.y - (height / 2)).roundToInt()
+        scrollBy(xScrollOffset, yScrollOffset)
     }
 
     private fun dispatchViewportChanged() {
