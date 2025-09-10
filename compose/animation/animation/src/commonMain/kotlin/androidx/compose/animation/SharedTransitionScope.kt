@@ -19,9 +19,9 @@ package androidx.compose.animation
 import androidx.annotation.VisibleForTesting
 import androidx.collection.MutableScatterMap
 import androidx.compose.animation.SharedTransitionScope.OverlayClip
-import androidx.compose.animation.SharedTransitionScope.PlaceHolderSize
-import androidx.compose.animation.SharedTransitionScope.PlaceHolderSize.Companion.animatedSize
-import androidx.compose.animation.SharedTransitionScope.PlaceHolderSize.Companion.contentSize
+import androidx.compose.animation.SharedTransitionScope.PlaceholderSize
+import androidx.compose.animation.SharedTransitionScope.PlaceholderSize.Companion.AnimatedSize
+import androidx.compose.animation.SharedTransitionScope.PlaceholderSize.Companion.ContentSize
 import androidx.compose.animation.SharedTransitionScope.ResizeMode
 import androidx.compose.animation.SharedTransitionScope.ResizeMode.Companion.RemeasureToBounds
 import androidx.compose.animation.SharedTransitionScope.ResizeMode.Companion.scaleToBounds
@@ -248,46 +248,48 @@ public fun interface BoundsTransform {
  * element or shared bounds will render the content in the overlay. The rendering will remain in the
  * overlay until all other animations in the [SharedTransitionScope] are finished (i.e. when
  * [isTransitionActive] == false).
+ *
+ * @sample androidx.compose.animation.samples.SharedElementInAnimatedContentSample
  */
 @Stable
 @ExperimentalSharedTransitionApi
 public interface SharedTransitionScope : LookaheadScope {
 
     /**
-     * PlaceHolderSize defines the size of the space that was or will be occupied by the exiting or
+     * PlaceholderSize defines the size of the space that was or will be occupied by the exiting or
      * entering [sharedElement]/[sharedBounds].
      */
-    public fun interface PlaceHolderSize {
+    public fun interface PlaceholderSize {
         public companion object {
             /**
-             * [animatedSize] is a pre-defined [SharedTransitionScope.PlaceHolderSize] that lets the
+             * [AnimatedSize] is a pre-defined [SharedTransitionScope.PlaceholderSize] that lets the
              * parent layout of shared elements or shared bounds observe the animated size during an
              * active shared transition. Therefore the layout parent will most likely resize itself
              * and re-layout its children to adjust to the new animated size.
              *
-             * @see [contentSize]
-             * @see [SharedTransitionScope.PlaceHolderSize]
+             * @see [ContentSize]
+             * @see [SharedTransitionScope.PlaceholderSize]
              */
-            public val animatedSize: PlaceHolderSize = PlaceHolderSize { _, animatedSize ->
+            public val AnimatedSize: PlaceholderSize = PlaceholderSize { _, animatedSize ->
                 animatedSize
             }
 
             /**
-             * [contentSize] is a pre-defined [SharedTransitionScope.PlaceHolderSize] that allows
+             * [ContentSize] is a pre-defined [SharedTransitionScope.PlaceholderSize] that allows
              * the parent layout of shared elements or shared bounds to see the content size of the
              * shared content during an active shared transition. For outgoing content, this
-             * [contentSize] is the initial size before the animation, whereas for incoming content
-             * [contentSize] will return the lookahead/target size of the content. This is the
+             * [ContentSize] is the initial size before the animation, whereas for incoming content
+             * [ContentSize] will return the lookahead/target size of the content. This is the
              * default value for shared elements and shared bounds. The effect is that the parent
              * layout does not resize during the shared element transition, hence giving a sense of
              * stability, rather than dynamic motion. If it's preferred to have parent layout
              * dynamically adjust its layout based on the shared element's animated size, consider
-             * using [animatedSize].
+             * using [AnimatedSize].
              *
-             * @see [contentSize]
-             * @see [SharedTransitionScope.PlaceHolderSize]
+             * @see [AnimatedSize]
+             * @see [SharedTransitionScope.PlaceholderSize]
              */
-            public val contentSize: PlaceHolderSize = PlaceHolderSize { contentSize, _ ->
+            public val ContentSize: PlaceholderSize = PlaceholderSize { contentSize, _ ->
                 contentSize
             }
         }
@@ -557,9 +559,9 @@ public interface SharedTransitionScope : LookaheadScope {
      *
      * During a shared element transition, the space that was occupied by the exiting shared element
      * and the space that the entering shared element will take up are considered place holders.
-     * Their sizes during the shared element transition can be configured through [placeHolderSize].
+     * Their sizes during the shared element transition can be configured through [placeholderSize].
      * By default, it will be the same as the content size of the respective shared element. It can
-     * also be set to [animatedSize] or any other [PlaceHolderSize] to report to their parent layout
+     * also be set to [AnimatedSize] or any other [PlaceholderSize] to report to their parent layout
      * an animated size to create a visual effect where the parent layout dynamically adjusts the
      * layout to accommodate the animated size of the shared elements.
      *
@@ -574,7 +576,7 @@ public interface SharedTransitionScope : LookaheadScope {
      *   declared. This helps the system determine if the shared element is incoming or outgoing.
      * @param boundsTransform A [BoundsTransform] to customize the animation specification based on
      *   the shared element's initial and target bounds during the transition.
-     * @param placeHolderSize A [PlaceHolderSize] that defines the size the transforming layout
+     * @param placeholderSize A [PlaceholderSize] that defines the size the transforming layout
      *   reports to the layout system during the transition. By default, this is the shared
      *   element's content size (without any scaling or transformation).
      * @param renderInOverlayDuringTransition Whether the shared element should be rendered in the
@@ -590,7 +592,7 @@ public interface SharedTransitionScope : LookaheadScope {
         sharedContentState: SharedContentState,
         animatedVisibilityScope: AnimatedVisibilityScope,
         boundsTransform: BoundsTransform = SharedTransitionDefaults.BoundsTransform,
-        placeHolderSize: PlaceHolderSize = contentSize,
+        placeholderSize: PlaceholderSize = ContentSize,
         renderInOverlayDuringTransition: Boolean = true,
         zIndexInOverlay: Float = 0f,
         clipInOverlayDuringTransition: OverlayClip = ParentClip,
@@ -649,9 +651,9 @@ public interface SharedTransitionScope : LookaheadScope {
      *
      * During a shared bounds transition, the space that was occupied by the exiting shared bounds
      * and the space that the entering shared bounds will take up are considered place holders.
-     * Their sizes during the shared element transition can be configured through [placeHolderSize].
+     * Their sizes during the shared element transition can be configured through [placeholderSize].
      * By default, it will be the same as the content size of the respective shared bounds. It can
-     * also be set to [animatedSize] or any other [PlaceHolderSize] to report to their parent layout
+     * also be set to [AnimatedSize] or any other [PlaceholderSize] to report to their parent layout
      * an animated size to create a visual effect where the parent layout dynamically adjusts the
      * layout to accommodate the animated size of the shared elements.
      *
@@ -676,7 +678,7 @@ public interface SharedTransitionScope : LookaheadScope {
      * @param resizeMode A [ResizeMode] that defines how the child layout of [sharedBounds] should
      *   be resized during [boundsTransform]. By default, [scaleToBounds] is used to scale the child
      *   content to fit the transforming bounds.
-     * @param placeHolderSize A [PlaceHolderSize] that defines the size the transforming layout
+     * @param placeholderSize A [PlaceholderSize] that defines the size the transforming layout
      *   reports to the layout system during the transition. By default, this is the shared bounds'
      *   content size (without any scaling or transformation).
      * @param renderInOverlayDuringTransition Whether the shared bounds should be rendered in the
@@ -694,7 +696,7 @@ public interface SharedTransitionScope : LookaheadScope {
         exit: ExitTransition = fadeOut(),
         boundsTransform: BoundsTransform = SharedTransitionDefaults.BoundsTransform,
         resizeMode: ResizeMode = scaleToBounds(ContentScale.FillWidth, Center),
-        placeHolderSize: PlaceHolderSize = contentSize,
+        placeholderSize: PlaceholderSize = ContentSize,
         renderInOverlayDuringTransition: Boolean = true,
         zIndexInOverlay: Float = 0f,
         clipInOverlayDuringTransition: OverlayClip = ParentClip,
@@ -756,9 +758,9 @@ public interface SharedTransitionScope : LookaheadScope {
      *
      * During a shared element transition, the space that was occupied by the exiting shared element
      * and the space that the entering shared element will take up are considered place holders.
-     * Their sizes during the shared element transition can be configured through [placeHolderSize].
+     * Their sizes during the shared element transition can be configured through [placeholderSize].
      * By default, it will be the same as the content size of the respective shared element. It can
-     * also be set to [animatedSize] or any other [PlaceHolderSize] to report to their parent layout
+     * also be set to [AnimatedSize] or any other [PlaceholderSize] to report to their parent layout
      * an animated size to create a visual effect where the parent layout dynamically adjusts the
      * layout to accommodate the animated size of the shared elements.
      *
@@ -768,7 +770,7 @@ public interface SharedTransitionScope : LookaheadScope {
      * @param visible Whether the shared element is visible.
      * @param boundsTransform A [BoundsTransform] to customize the animation specification based on
      *   the shared element's initial and target bounds during the transition.
-     * @param placeHolderSize A [PlaceHolderSize] that defines the size the transforming layout
+     * @param placeholderSize A [PlaceholderSize] that defines the size the transforming layout
      *   reports to the layout system during the transition. By default, this is the shared
      *   element's content size (without any scaling or transformation).
      * @param renderInOverlayDuringTransition Whether the shared element should be rendered in the
@@ -782,7 +784,7 @@ public interface SharedTransitionScope : LookaheadScope {
         sharedContentState: SharedContentState,
         visible: Boolean,
         boundsTransform: BoundsTransform = SharedTransitionDefaults.BoundsTransform,
-        placeHolderSize: PlaceHolderSize = contentSize,
+        placeholderSize: PlaceholderSize = ContentSize,
         renderInOverlayDuringTransition: Boolean = true,
         zIndexInOverlay: Float = 0f,
         clipInOverlayDuringTransition: OverlayClip = ParentClip,
@@ -1034,7 +1036,7 @@ internal constructor(lookaheadScope: LookaheadScope, val coroutineScope: Corouti
         sharedContentState: SharedContentState,
         animatedVisibilityScope: AnimatedVisibilityScope,
         boundsTransform: BoundsTransform,
-        placeHolderSize: PlaceHolderSize,
+        placeholderSize: PlaceholderSize,
         renderInOverlayDuringTransition: Boolean,
         zIndexInOverlay: Float,
         clipInOverlayDuringTransition: OverlayClip,
@@ -1044,7 +1046,7 @@ internal constructor(lookaheadScope: LookaheadScope, val coroutineScope: Corouti
             parentTransition = animatedVisibilityScope.transition,
             visible = { it == EnterExitState.Visible },
             boundsTransform = boundsTransform,
-            placeHolderSize = placeHolderSize,
+            placeholderSize = placeholderSize,
             renderOnlyWhenVisible = true,
             renderInOverlayDuringTransition = renderInOverlayDuringTransition,
             zIndexInOverlay = zIndexInOverlay,
@@ -1058,7 +1060,7 @@ internal constructor(lookaheadScope: LookaheadScope, val coroutineScope: Corouti
         exit: ExitTransition,
         boundsTransform: BoundsTransform,
         resizeMode: ResizeMode,
-        placeHolderSize: PlaceHolderSize,
+        placeholderSize: PlaceholderSize,
         renderInOverlayDuringTransition: Boolean,
         zIndexInOverlay: Float,
         clipInOverlayDuringTransition: OverlayClip,
@@ -1068,7 +1070,7 @@ internal constructor(lookaheadScope: LookaheadScope, val coroutineScope: Corouti
                 animatedVisibilityScope.transition,
                 visible = { it == EnterExitState.Visible },
                 boundsTransform,
-                placeHolderSize = placeHolderSize,
+                placeholderSize = placeholderSize,
                 renderInOverlayDuringTransition = renderInOverlayDuringTransition,
                 zIndexInOverlay = zIndexInOverlay,
                 clipInOverlayDuringTransition = clipInOverlayDuringTransition,
@@ -1107,7 +1109,7 @@ internal constructor(lookaheadScope: LookaheadScope, val coroutineScope: Corouti
         sharedContentState: SharedContentState,
         visible: Boolean,
         boundsTransform: BoundsTransform,
-        placeHolderSize: PlaceHolderSize,
+        placeholderSize: PlaceholderSize,
         renderInOverlayDuringTransition: Boolean,
         zIndexInOverlay: Float,
         clipInOverlayDuringTransition: OverlayClip,
@@ -1117,7 +1119,7 @@ internal constructor(lookaheadScope: LookaheadScope, val coroutineScope: Corouti
             null,
             { visible },
             boundsTransform,
-            placeHolderSize,
+            placeholderSize,
             renderOnlyWhenVisible = true,
             renderInOverlayDuringTransition = renderInOverlayDuringTransition,
             zIndexInOverlay = zIndexInOverlay,
@@ -1180,9 +1182,9 @@ internal constructor(lookaheadScope: LookaheadScope, val coroutineScope: Corouti
      *
      * During a shared bounds transition, the space that was occupied by the exiting shared bounds
      * and the space that the entering shared bounds will take up are considered place holders.
-     * Their sizes during the shared bounds transition can be configured through [placeHolderSize].
+     * Their sizes during the shared bounds transition can be configured through [placeholderSize].
      * By default, it will be the same as the content size of the respective shared bounds. It can
-     * also be set to [animatedSize] or any other [PlaceHolderSize] to report to their parent layout
+     * also be set to [AnimatedSize] or any other [PlaceholderSize] to report to their parent layout
      * an animated size to create a visual effect where the parent layout dynamically adjusts the
      * layout to accommodate the animated size of the shared bounds.
      *
@@ -1192,7 +1194,7 @@ internal constructor(lookaheadScope: LookaheadScope, val coroutineScope: Corouti
         sharedContentState: SharedContentState,
         visible: Boolean,
         boundsTransform: BoundsTransform = SharedTransitionDefaults.BoundsTransform,
-        placeHolderSize: PlaceHolderSize = contentSize,
+        placeholderSize: PlaceholderSize = ContentSize,
         renderInOverlayDuringTransition: Boolean = true,
         zIndexInOverlay: Float = 0f,
         clipInOverlayDuringTransition: OverlayClip = ParentClip,
@@ -1202,7 +1204,7 @@ internal constructor(lookaheadScope: LookaheadScope, val coroutineScope: Corouti
             null,
             { visible },
             boundsTransform,
-            placeHolderSize,
+            placeholderSize,
             renderOnlyWhenVisible = false,
             renderInOverlayDuringTransition = renderInOverlayDuringTransition,
             zIndexInOverlay = zIndexInOverlay,
@@ -1241,7 +1243,7 @@ internal constructor(lookaheadScope: LookaheadScope, val coroutineScope: Corouti
         parentTransition: Transition<T>?,
         visible: (T) -> Boolean,
         boundsTransform: BoundsTransform,
-        placeHolderSize: PlaceHolderSize = contentSize,
+        placeholderSize: PlaceholderSize = ContentSize,
         renderOnlyWhenVisible: Boolean,
         renderInOverlayDuringTransition: Boolean,
         zIndexInOverlay: Float,
@@ -1310,7 +1312,7 @@ internal constructor(lookaheadScope: LookaheadScope, val coroutineScope: Corouti
                 rememberSharedElementState(
                     sharedElement = sharedElement,
                     boundsAnimation = boundsAnimation,
-                    placeHolderSize = placeHolderSize,
+                    placeholderSize = placeholderSize,
                     renderOnlyWhenVisible = renderOnlyWhenVisible,
                     sharedContentState = sharedContentState,
                     clipInOverlayDuringTransition = clipInOverlayDuringTransition,
@@ -1326,7 +1328,7 @@ internal constructor(lookaheadScope: LookaheadScope, val coroutineScope: Corouti
     private fun rememberSharedElementState(
         sharedElement: SharedElement,
         boundsAnimation: BoundsAnimation,
-        placeHolderSize: PlaceHolderSize,
+        placeholderSize: PlaceholderSize,
         renderOnlyWhenVisible: Boolean,
         sharedContentState: SharedContentState,
         clipInOverlayDuringTransition: OverlayClip,
@@ -1337,7 +1339,7 @@ internal constructor(lookaheadScope: LookaheadScope, val coroutineScope: Corouti
                 SharedElementEntry(
                     sharedElement,
                     boundsAnimation,
-                    placeHolderSize,
+                    placeholderSize,
                     renderOnlyWhenVisible = renderOnlyWhenVisible,
                     userState = sharedContentState,
                     overlayClip = clipInOverlayDuringTransition,
@@ -1351,7 +1353,7 @@ internal constructor(lookaheadScope: LookaheadScope, val coroutineScope: Corouti
                 it.sharedElement = sharedElement
                 it.renderOnlyWhenVisible = renderOnlyWhenVisible
                 it.boundsAnimation = boundsAnimation
-                it.placeHolderSize = placeHolderSize
+                it.placeholderSize = placeholderSize
                 it.overlayClip = clipInOverlayDuringTransition
                 it.zIndex = zIndexInOverlay
                 it.renderInOverlayDuringTransition = renderInOverlayDuringTransition
