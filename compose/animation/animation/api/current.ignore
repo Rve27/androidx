@@ -19,6 +19,32 @@ RemovedDeprecatedMethod: androidx.compose.animation.TransitionKt#animateColor(an
     Binary breaking change: Removed deprecated method androidx.compose.animation.TransitionKt.animateColor(androidx.compose.animation.core.InfiniteTransition,long,long,androidx.compose.animation.core.InfiniteRepeatableSpec<androidx.compose.ui.graphics.Color>)
 
 
+RemovedFromKotlin: androidx.compose.animation.AnimatedContentTransitionScope#getContentAlignment():
+    Source breaking change: method androidx.compose.animation.AnimatedContentTransitionScope.getContentAlignment() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.animation.AnimatedContentTransitionScope#getKeepUntilTransitionsFinished(androidx.compose.animation.ExitTransition.Companion):
+    Source breaking change: method androidx.compose.animation.AnimatedContentTransitionScope.getKeepUntilTransitionsFinished(androidx.compose.animation.ExitTransition.Companion) can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.animation.AnimatedVisibilityScope#getTransition():
+    Source breaking change: method androidx.compose.animation.AnimatedVisibilityScope.getTransition() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.animation.ColorVectorConverterKt#getVectorConverter(androidx.compose.ui.graphics.Color.Companion):
+    Source breaking change: method androidx.compose.animation.ColorVectorConverterKt.getVectorConverter(androidx.compose.ui.graphics.Color.Companion) can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.animation.ContentTransform#getInitialContentExit():
+    Source breaking change: method androidx.compose.animation.ContentTransform.getInitialContentExit() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.animation.ContentTransform#getSizeTransform():
+    Source breaking change: method androidx.compose.animation.ContentTransform.getSizeTransform() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.animation.ContentTransform#getTargetContentEnter():
+    Source breaking change: method androidx.compose.animation.ContentTransform.getTargetContentEnter() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.animation.ContentTransform#getTargetContentZIndex():
+    Source breaking change: method androidx.compose.animation.ContentTransform.getTargetContentZIndex() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.animation.ContentTransform#setTargetContentZIndex(float):
+    Source breaking change: method androidx.compose.animation.ContentTransform.setTargetContentZIndex(float) can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.animation.EnterTransition.Companion#getNone():
+    Source breaking change: method androidx.compose.animation.EnterTransition.Companion.getNone() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.animation.ExitTransition.Companion#getNone():
+    Source breaking change: method androidx.compose.animation.ExitTransition.Companion.getNone() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.animation.SizeTransform#getClip():
+    Source breaking change: method androidx.compose.animation.SizeTransform.getClip() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.animation.SplineBasedFloatDecayAnimationSpec#getAbsVelocityThreshold():
+    Source breaking change: method androidx.compose.animation.SplineBasedFloatDecayAnimationSpec.getAbsVelocityThreshold() can no longer be resolved from Kotlin source
 RemovedFromKotlin: androidx.compose.animation.SplineBasedFloatDecayAnimationSpec_androidKt#splineBasedDecay(androidx.compose.ui.unit.Density):
     Source breaking change: method androidx.compose.animation.SplineBasedFloatDecayAnimationSpec_androidKt.splineBasedDecay(androidx.compose.ui.unit.Density) can no longer be resolved from Kotlin source
 

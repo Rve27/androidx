@@ -19,9 +19,9 @@ package androidx.compose.material3.windowsizeclass {
   }
 
   public static final class WindowHeightSizeClass.Companion {
-    method public java.util.Set<androidx.compose.material3.windowsizeclass.WindowHeightSizeClass> getAllSizeClasses();
+    method @InaccessibleFromKotlin public java.util.Set<androidx.compose.material3.windowsizeclass.WindowHeightSizeClass> getAllSizeClasses();
     method @BytecodeOnly public int getCompact-Pt018CI();
-    method public java.util.Set<androidx.compose.material3.windowsizeclass.WindowHeightSizeClass> getDefaultSizeClasses();
+    method @InaccessibleFromKotlin public java.util.Set<androidx.compose.material3.windowsizeclass.WindowHeightSizeClass> getDefaultSizeClasses();
     method @BytecodeOnly public int getExpanded-Pt018CI();
     method @BytecodeOnly public int getMedium-Pt018CI();
     property public java.util.Set<androidx.compose.material3.windowsizeclass.WindowHeightSizeClass> AllSizeClasses;
@@ -54,9 +54,9 @@ package androidx.compose.material3.windowsizeclass {
   }
 
   public static final class WindowWidthSizeClass.Companion {
-    method public java.util.Set<androidx.compose.material3.windowsizeclass.WindowWidthSizeClass> getAllSizeClasses();
+    method @InaccessibleFromKotlin public java.util.Set<androidx.compose.material3.windowsizeclass.WindowWidthSizeClass> getAllSizeClasses();
     method @BytecodeOnly public int getCompact-Y0FxcvE();
-    method public java.util.Set<androidx.compose.material3.windowsizeclass.WindowWidthSizeClass> getDefaultSizeClasses();
+    method @InaccessibleFromKotlin public java.util.Set<androidx.compose.material3.windowsizeclass.WindowWidthSizeClass> getDefaultSizeClasses();
     method @BytecodeOnly public int getExpanded-Y0FxcvE();
     method @BytecodeOnly public int getMedium-Y0FxcvE();
     property public java.util.Set<androidx.compose.material3.windowsizeclass.WindowWidthSizeClass> AllSizeClasses;

@@ -2,9 +2,9 @@
 package androidx.xr.projected {
 
   public final class ProjectedAudioConfig {
-    method public int[] getChannelCounts();
-    method public int[] getSampleRatesHz();
-    method public int getSourceType();
+    method @InaccessibleFromKotlin public int[] getChannelCounts();
+    method @InaccessibleFromKotlin public int[] getSampleRatesHz();
+    method @InaccessibleFromKotlin public int getSourceType();
     property public int[] channelCounts;
     property public int[] sampleRatesHz;
     property public int sourceType;
@@ -43,8 +43,8 @@ package androidx.xr.projected.permissions {
 
   public final class ProjectedPermissionsRequestParams {
     ctor public ProjectedPermissionsRequestParams(java.util.List<java.lang.String> permissions, String? rationale);
-    method public java.util.List<java.lang.String> getPermissions();
-    method public String? getRationale();
+    method @InaccessibleFromKotlin public java.util.List<java.lang.String> getPermissions();
+    method @InaccessibleFromKotlin public String? getRationale();
     property public java.util.List<java.lang.String> permissions;
     property public String? rationale;
   }

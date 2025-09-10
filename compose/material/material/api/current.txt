@@ -18,11 +18,11 @@ package androidx.compose.material {
 
   public final class AppBarDefaults {
     method @BytecodeOnly public float getBottomAppBarElevation-D9Ej5fM();
-    method @androidx.compose.runtime.Composable public androidx.compose.foundation.layout.WindowInsets getBottomAppBarWindowInsets();
+    method @InaccessibleFromKotlin @androidx.compose.runtime.Composable public androidx.compose.foundation.layout.WindowInsets getBottomAppBarWindowInsets();
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.foundation.layout.WindowInsets getBottomAppBarWindowInsets(androidx.compose.runtime.Composer?, int);
-    method public androidx.compose.foundation.layout.PaddingValues getContentPadding();
+    method @InaccessibleFromKotlin public androidx.compose.foundation.layout.PaddingValues getContentPadding();
     method @BytecodeOnly public float getTopAppBarElevation-D9Ej5fM();
-    method @androidx.compose.runtime.Composable public androidx.compose.foundation.layout.WindowInsets getTopAppBarWindowInsets();
+    method @InaccessibleFromKotlin @androidx.compose.runtime.Composable public androidx.compose.foundation.layout.WindowInsets getTopAppBarWindowInsets();
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.foundation.layout.WindowInsets getTopAppBarWindowInsets(androidx.compose.runtime.Composer?, int);
     property public androidx.compose.ui.unit.Dp BottomAppBarElevation;
     property public androidx.compose.foundation.layout.PaddingValues ContentPadding;
@@ -48,10 +48,10 @@ package androidx.compose.material {
   }
 
   public final class BackdropScaffoldDefaults {
-    method public androidx.compose.animation.core.AnimationSpec<java.lang.Float> getAnimationSpec();
+    method @InaccessibleFromKotlin public androidx.compose.animation.core.AnimationSpec<java.lang.Float> getAnimationSpec();
     method @BytecodeOnly public float getFrontLayerElevation-D9Ej5fM();
     method @BytecodeOnly @androidx.compose.runtime.Composable public long getFrontLayerScrimColor(androidx.compose.runtime.Composer?, int);
-    method @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.Shape getFrontLayerShape();
+    method @InaccessibleFromKotlin @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.Shape getFrontLayerShape();
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.Shape getFrontLayerShape(androidx.compose.runtime.Composer?, int);
     method @BytecodeOnly public float getHeaderHeight-D9Ej5fM();
     method @BytecodeOnly public float getPeekHeight-D9Ej5fM();
@@ -75,12 +75,12 @@ package androidx.compose.material {
   @androidx.compose.runtime.Stable public final class BackdropScaffoldState {
     ctor @Deprecated public BackdropScaffoldState(androidx.compose.material.BackdropValue initialValue, optional androidx.compose.animation.core.AnimationSpec<java.lang.Float> animationSpec, optional kotlin.jvm.functions.Function1<? super androidx.compose.material.BackdropValue,java.lang.Boolean> confirmValueChange, optional androidx.compose.material.SnackbarHostState snackbarHostState);
     method public suspend Object? conceal(kotlin.coroutines.Continuation<? super kotlin.Unit>);
-    method public kotlin.jvm.functions.Function1<androidx.compose.material.BackdropValue,java.lang.Boolean> getConfirmValueChange();
-    method public androidx.compose.material.BackdropValue getCurrentValue();
-    method public androidx.compose.material.SnackbarHostState getSnackbarHostState();
-    method public androidx.compose.material.BackdropValue getTargetValue();
-    method public boolean isConcealed();
-    method public boolean isRevealed();
+    method @InaccessibleFromKotlin public kotlin.jvm.functions.Function1<androidx.compose.material.BackdropValue,java.lang.Boolean> getConfirmValueChange();
+    method @InaccessibleFromKotlin public androidx.compose.material.BackdropValue getCurrentValue();
+    method @InaccessibleFromKotlin public androidx.compose.material.SnackbarHostState getSnackbarHostState();
+    method @InaccessibleFromKotlin public androidx.compose.material.BackdropValue getTargetValue();
+    method @InaccessibleFromKotlin public boolean isConcealed();
+    method @InaccessibleFromKotlin public boolean isRevealed();
     method @FloatRange(from=0.0, to=1.0) public float progress(androidx.compose.material.BackdropValue from, androidx.compose.material.BackdropValue to);
     method public float requireOffset();
     method public suspend Object? reveal(kotlin.coroutines.Continuation<? super kotlin.Unit>);
@@ -113,13 +113,13 @@ package androidx.compose.material {
     ctor public BottomDrawerState(androidx.compose.material.BottomDrawerValue initialValue, androidx.compose.ui.unit.Density density, optional kotlin.jvm.functions.Function1<? super androidx.compose.material.BottomDrawerValue,java.lang.Boolean> confirmStateChange, optional androidx.compose.animation.core.AnimationSpec<java.lang.Float> animationSpec);
     method public suspend Object? close(kotlin.coroutines.Continuation<? super kotlin.Unit>);
     method public suspend Object? expand(kotlin.coroutines.Continuation<? super kotlin.Unit>);
-    method public androidx.compose.material.BottomDrawerValue getCurrentValue();
-    method public float getOffset();
-    method @Deprecated @SuppressCompatibility @FloatRange(from=0.0, to=1.0) @androidx.compose.material.ExperimentalMaterialApi public float getProgress();
-    method public androidx.compose.material.BottomDrawerValue getTargetValue();
-    method public boolean isClosed();
-    method public boolean isExpanded();
-    method public boolean isOpen();
+    method @InaccessibleFromKotlin public androidx.compose.material.BottomDrawerValue getCurrentValue();
+    method @InaccessibleFromKotlin public float getOffset();
+    method @InaccessibleFromKotlin @Deprecated @SuppressCompatibility @FloatRange(from=0.0, to=1.0) @androidx.compose.material.ExperimentalMaterialApi public float getProgress();
+    method @InaccessibleFromKotlin public androidx.compose.material.BottomDrawerValue getTargetValue();
+    method @InaccessibleFromKotlin public boolean isClosed();
+    method @InaccessibleFromKotlin public boolean isExpanded();
+    method @InaccessibleFromKotlin public boolean isOpen();
     method public suspend Object? open(kotlin.coroutines.Continuation<? super kotlin.Unit>);
     method @FloatRange(from=0.0, to=1.0) public float progress(androidx.compose.material.BottomDrawerValue from, androidx.compose.material.BottomDrawerValue to);
     property public androidx.compose.material.BottomDrawerValue currentValue;
@@ -144,7 +144,7 @@ package androidx.compose.material {
 
   public final class BottomNavigationDefaults {
     method @BytecodeOnly public float getElevation-D9Ej5fM();
-    method @androidx.compose.runtime.Composable public androidx.compose.foundation.layout.WindowInsets getWindowInsets();
+    method @InaccessibleFromKotlin @androidx.compose.runtime.Composable public androidx.compose.foundation.layout.WindowInsets getWindowInsets();
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.foundation.layout.WindowInsets getWindowInsets(androidx.compose.runtime.Composer?, int);
     property public androidx.compose.ui.unit.Dp Elevation;
     property @androidx.compose.runtime.Composable public androidx.compose.foundation.layout.WindowInsets windowInsets;
@@ -161,7 +161,7 @@ package androidx.compose.material {
   }
 
   public final class BottomSheetScaffoldDefaults {
-    method public androidx.compose.animation.core.AnimationSpec<java.lang.Float> getAnimationSpec();
+    method @InaccessibleFromKotlin public androidx.compose.animation.core.AnimationSpec<java.lang.Float> getAnimationSpec();
     method @BytecodeOnly public float getSheetElevation-D9Ej5fM();
     method @BytecodeOnly public float getSheetPeekHeight-D9Ej5fM();
     property public androidx.compose.animation.core.AnimationSpec<java.lang.Float> AnimationSpec;
@@ -181,8 +181,8 @@ package androidx.compose.material {
 
   @androidx.compose.runtime.Stable public final class BottomSheetScaffoldState {
     ctor public BottomSheetScaffoldState(androidx.compose.material.BottomSheetState bottomSheetState, androidx.compose.material.SnackbarHostState snackbarHostState);
-    method public androidx.compose.material.BottomSheetState getBottomSheetState();
-    method public androidx.compose.material.SnackbarHostState getSnackbarHostState();
+    method @InaccessibleFromKotlin public androidx.compose.material.BottomSheetState getBottomSheetState();
+    method @InaccessibleFromKotlin public androidx.compose.material.SnackbarHostState getSnackbarHostState();
     property public androidx.compose.material.BottomSheetState bottomSheetState;
     property public androidx.compose.material.SnackbarHostState snackbarHostState;
   }
@@ -191,11 +191,11 @@ package androidx.compose.material {
     ctor public BottomSheetState(androidx.compose.material.BottomSheetValue initialValue, androidx.compose.ui.unit.Density density, optional androidx.compose.animation.core.AnimationSpec<java.lang.Float> animationSpec, optional kotlin.jvm.functions.Function1<? super androidx.compose.material.BottomSheetValue,java.lang.Boolean> confirmValueChange);
     method public suspend Object? collapse(kotlin.coroutines.Continuation<? super kotlin.Unit>);
     method public suspend Object? expand(kotlin.coroutines.Continuation<? super kotlin.Unit>);
-    method public androidx.compose.material.BottomSheetValue getCurrentValue();
-    method @Deprecated @SuppressCompatibility @FloatRange(from=0.0, to=1.0) @androidx.compose.material.ExperimentalMaterialApi public float getProgress();
-    method public androidx.compose.material.BottomSheetValue getTargetValue();
-    method public boolean isCollapsed();
-    method public boolean isExpanded();
+    method @InaccessibleFromKotlin public androidx.compose.material.BottomSheetValue getCurrentValue();
+    method @InaccessibleFromKotlin @Deprecated @SuppressCompatibility @FloatRange(from=0.0, to=1.0) @androidx.compose.material.ExperimentalMaterialApi public float getProgress();
+    method @InaccessibleFromKotlin public androidx.compose.material.BottomSheetValue getTargetValue();
+    method @InaccessibleFromKotlin public boolean isCollapsed();
+    method @InaccessibleFromKotlin public boolean isExpanded();
     method @FloatRange(from=0.0, to=1.0) public float progress(androidx.compose.material.BottomSheetValue from, androidx.compose.material.BottomSheetValue to);
     method public float requireOffset();
     property public androidx.compose.material.BottomSheetValue currentValue;
@@ -228,15 +228,15 @@ package androidx.compose.material {
     method @KotlinOnly @androidx.compose.runtime.Composable public androidx.compose.material.ButtonElevation elevation(optional androidx.compose.ui.unit.Dp defaultElevation, optional androidx.compose.ui.unit.Dp pressedElevation, optional androidx.compose.ui.unit.Dp disabledElevation, optional androidx.compose.ui.unit.Dp hoveredElevation, optional androidx.compose.ui.unit.Dp focusedElevation);
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.material.ButtonElevation elevation-R_JCAzs(float, float, float, float, float, androidx.compose.runtime.Composer?, int, int);
     method @BytecodeOnly @Deprecated @androidx.compose.runtime.Composable public androidx.compose.material.ButtonElevation! elevation-yajeYGU(float, float, float, androidx.compose.runtime.Composer!, int, int);
-    method public androidx.compose.foundation.layout.PaddingValues getContentPadding();
+    method @InaccessibleFromKotlin public androidx.compose.foundation.layout.PaddingValues getContentPadding();
     method @BytecodeOnly public float getIconSize-D9Ej5fM();
     method @BytecodeOnly public float getIconSpacing-D9Ej5fM();
     method @BytecodeOnly public float getMinHeight-D9Ej5fM();
     method @BytecodeOnly public float getMinWidth-D9Ej5fM();
-    method @androidx.compose.runtime.Composable public androidx.compose.foundation.BorderStroke getOutlinedBorder();
+    method @InaccessibleFromKotlin @androidx.compose.runtime.Composable public androidx.compose.foundation.BorderStroke getOutlinedBorder();
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.foundation.BorderStroke getOutlinedBorder(androidx.compose.runtime.Composer?, int);
     method @BytecodeOnly public float getOutlinedBorderSize-D9Ej5fM();
-    method public androidx.compose.foundation.layout.PaddingValues getTextButtonContentPadding();
+    method @InaccessibleFromKotlin public androidx.compose.foundation.layout.PaddingValues getTextButtonContentPadding();
     method @KotlinOnly @androidx.compose.runtime.Composable public androidx.compose.material.ButtonColors outlinedButtonColors(optional androidx.compose.ui.graphics.Color backgroundColor, optional androidx.compose.ui.graphics.Color contentColor, optional androidx.compose.ui.graphics.Color disabledContentColor);
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.material.ButtonColors outlinedButtonColors-RGew2ao(long, long, long, androidx.compose.runtime.Composer?, int, int);
     method @KotlinOnly @androidx.compose.runtime.Composable public androidx.compose.material.ButtonColors textButtonColors(optional androidx.compose.ui.graphics.Color backgroundColor, optional androidx.compose.ui.graphics.Color contentColor, optional androidx.compose.ui.graphics.Color disabledContentColor);
@@ -313,7 +313,7 @@ package androidx.compose.material {
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.material.SelectableChipColors filterChipColors-J08w3-E(long, long, long, long, long, long, long, long, long, androidx.compose.runtime.Composer?, int, int);
     method @BytecodeOnly public float getLeadingIconSize-D9Ej5fM();
     method @BytecodeOnly public float getMinHeight-D9Ej5fM();
-    method @androidx.compose.runtime.Composable public androidx.compose.foundation.BorderStroke getOutlinedBorder();
+    method @InaccessibleFromKotlin @androidx.compose.runtime.Composable public androidx.compose.foundation.BorderStroke getOutlinedBorder();
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.foundation.BorderStroke getOutlinedBorder(androidx.compose.runtime.Composer?, int);
     method @BytecodeOnly public float getOutlinedBorderSize-D9Ej5fM();
     method @BytecodeOnly public float getSelectedIconSize-D9Ej5fM();
@@ -359,7 +359,7 @@ package androidx.compose.material {
     method @BytecodeOnly public long getSecondary-0d7_KjU();
     method @BytecodeOnly public long getSecondaryVariant-0d7_KjU();
     method @BytecodeOnly public long getSurface-0d7_KjU();
-    method public boolean isLight();
+    method @InaccessibleFromKotlin public boolean isLight();
     property public androidx.compose.ui.graphics.Color background;
     property public androidx.compose.ui.graphics.Color error;
     property public boolean isLight;
@@ -389,11 +389,11 @@ package androidx.compose.material {
   }
 
   public final class ContentAlpha {
-    method @androidx.compose.runtime.Composable public float getDisabled();
+    method @InaccessibleFromKotlin @androidx.compose.runtime.Composable public float getDisabled();
     method @BytecodeOnly @androidx.compose.runtime.Composable public float getDisabled(androidx.compose.runtime.Composer?, int);
-    method @androidx.compose.runtime.Composable public float getHigh();
+    method @InaccessibleFromKotlin @androidx.compose.runtime.Composable public float getHigh();
     method @BytecodeOnly @androidx.compose.runtime.Composable public float getHigh(androidx.compose.runtime.Composer?, int);
-    method @androidx.compose.runtime.Composable public float getMedium();
+    method @InaccessibleFromKotlin @androidx.compose.runtime.Composable public float getMedium();
     method @BytecodeOnly @androidx.compose.runtime.Composable public float getMedium(androidx.compose.runtime.Composer?, int);
     property @androidx.compose.runtime.Composable public float disabled;
     property @androidx.compose.runtime.Composable public float high;
@@ -402,12 +402,12 @@ package androidx.compose.material {
   }
 
   public final class ContentAlphaKt {
-    method public static androidx.compose.runtime.ProvidableCompositionLocal<java.lang.Float> getLocalContentAlpha();
+    method @InaccessibleFromKotlin public static androidx.compose.runtime.ProvidableCompositionLocal<java.lang.Float> getLocalContentAlpha();
     property public static androidx.compose.runtime.ProvidableCompositionLocal<java.lang.Float> LocalContentAlpha;
   }
 
   public final class ContentColorKt {
-    method public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.compose.ui.graphics.Color> getLocalContentColor();
+    method @InaccessibleFromKotlin public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.compose.ui.graphics.Color> getLocalContentColor();
     property public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.compose.ui.graphics.Color> LocalContentColor;
   }
 
@@ -419,7 +419,7 @@ package androidx.compose.material {
   @SuppressCompatibility @androidx.compose.material.ExperimentalMaterialApi public final class DismissState extends androidx.compose.material.SwipeableState<androidx.compose.material.DismissValue> {
     ctor public DismissState(androidx.compose.material.DismissValue initialValue, optional kotlin.jvm.functions.Function1<? super androidx.compose.material.DismissValue,java.lang.Boolean> confirmStateChange);
     method public suspend Object? dismiss(androidx.compose.material.DismissDirection direction, kotlin.coroutines.Continuation<? super kotlin.Unit>);
-    method public androidx.compose.material.DismissDirection? getDismissDirection();
+    method @InaccessibleFromKotlin public androidx.compose.material.DismissDirection? getDismissDirection();
     method public boolean isDismissed(androidx.compose.material.DismissDirection direction);
     method public suspend Object? reset(kotlin.coroutines.Continuation<? super kotlin.Unit>);
     property public androidx.compose.material.DismissDirection? dismissDirection;
@@ -442,11 +442,11 @@ package androidx.compose.material {
   }
 
   public final class DrawerDefaults {
-    method public androidx.compose.animation.core.TweenSpec<java.lang.Float> getAnimationSpec();
+    method @InaccessibleFromKotlin public androidx.compose.animation.core.TweenSpec<java.lang.Float> getAnimationSpec();
     method @BytecodeOnly @androidx.compose.runtime.Composable public long getBackgroundColor(androidx.compose.runtime.Composer?, int);
     method @BytecodeOnly public float getElevation-D9Ej5fM();
     method @BytecodeOnly @androidx.compose.runtime.Composable public long getScrimColor(androidx.compose.runtime.Composer?, int);
-    method @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.Shape getShape();
+    method @InaccessibleFromKotlin @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.Shape getShape();
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.Shape getShape(androidx.compose.runtime.Composer?, int);
     property public androidx.compose.animation.core.TweenSpec<java.lang.Float> AnimationSpec;
     property public androidx.compose.ui.unit.Dp Elevation;
@@ -473,12 +473,12 @@ package androidx.compose.material {
     ctor public DrawerState(androidx.compose.material.DrawerValue initialValue, optional kotlin.jvm.functions.Function1<? super androidx.compose.material.DrawerValue,java.lang.Boolean> confirmStateChange);
     method @Deprecated @SuppressCompatibility @androidx.compose.material.ExperimentalMaterialApi public suspend Object? animateTo(androidx.compose.material.DrawerValue targetValue, androidx.compose.animation.core.AnimationSpec<java.lang.Float> anim, kotlin.coroutines.Continuation<? super kotlin.Unit>);
     method public suspend Object? close(kotlin.coroutines.Continuation<? super kotlin.Unit>);
-    method public androidx.compose.material.DrawerValue getCurrentValue();
-    method @SuppressCompatibility @androidx.compose.material.ExperimentalMaterialApi public float getOffset();
-    method @SuppressCompatibility @androidx.compose.material.ExperimentalMaterialApi public androidx.compose.material.DrawerValue getTargetValue();
-    method public boolean isAnimationRunning();
-    method public boolean isClosed();
-    method public boolean isOpen();
+    method @InaccessibleFromKotlin public androidx.compose.material.DrawerValue getCurrentValue();
+    method @InaccessibleFromKotlin @SuppressCompatibility @androidx.compose.material.ExperimentalMaterialApi public float getOffset();
+    method @InaccessibleFromKotlin @SuppressCompatibility @androidx.compose.material.ExperimentalMaterialApi public androidx.compose.material.DrawerValue getTargetValue();
+    method @InaccessibleFromKotlin public boolean isAnimationRunning();
+    method @InaccessibleFromKotlin public boolean isClosed();
+    method @InaccessibleFromKotlin public boolean isOpen();
     method public suspend Object? open(kotlin.coroutines.Continuation<? super kotlin.Unit>);
     method public suspend Object? snapTo(androidx.compose.material.DrawerValue targetValue, kotlin.coroutines.Continuation<? super kotlin.Unit>);
     property public androidx.compose.material.DrawerValue currentValue;
@@ -505,8 +505,8 @@ package androidx.compose.material {
   }
 
   public final class ElevationOverlayKt {
-    method public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.compose.ui.unit.Dp> getLocalAbsoluteElevation();
-    method public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.compose.material.ElevationOverlay?> getLocalElevationOverlay();
+    method @InaccessibleFromKotlin public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.compose.ui.unit.Dp> getLocalAbsoluteElevation();
+    method @InaccessibleFromKotlin public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.compose.material.ElevationOverlay?> getLocalElevationOverlay();
     property public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.compose.ui.unit.Dp> LocalAbsoluteElevation;
     property public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.compose.material.ElevationOverlay?> LocalElevationOverlay;
   }
@@ -601,8 +601,8 @@ package androidx.compose.material {
   }
 
   public final class InteractiveComponentSizeKt {
-    method @SuppressCompatibility @androidx.compose.material.ExperimentalMaterialApi public static androidx.compose.runtime.ProvidableCompositionLocal<java.lang.Boolean> getLocalMinimumInteractiveComponentEnforcement();
-    method @Deprecated @SuppressCompatibility @androidx.compose.material.ExperimentalMaterialApi public static androidx.compose.runtime.ProvidableCompositionLocal<java.lang.Boolean> getLocalMinimumTouchTargetEnforcement();
+    method @InaccessibleFromKotlin @SuppressCompatibility @androidx.compose.material.ExperimentalMaterialApi public static androidx.compose.runtime.ProvidableCompositionLocal<java.lang.Boolean> getLocalMinimumInteractiveComponentEnforcement();
+    method @InaccessibleFromKotlin @Deprecated @SuppressCompatibility @androidx.compose.material.ExperimentalMaterialApi public static androidx.compose.runtime.ProvidableCompositionLocal<java.lang.Boolean> getLocalMinimumTouchTargetEnforcement();
     method public static androidx.compose.ui.Modifier minimumInteractiveComponentSize(androidx.compose.ui.Modifier);
     property @SuppressCompatibility @androidx.compose.material.ExperimentalMaterialApi public static androidx.compose.runtime.ProvidableCompositionLocal<java.lang.Boolean> LocalMinimumInteractiveComponentEnforcement;
     property @Deprecated @SuppressCompatibility @androidx.compose.material.ExperimentalMaterialApi public static androidx.compose.runtime.ProvidableCompositionLocal<java.lang.Boolean> LocalMinimumTouchTargetEnforcement;
@@ -614,11 +614,11 @@ package androidx.compose.material {
   }
 
   public final class MaterialTheme {
-    method @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.compose.material.Colors getColors();
+    method @InaccessibleFromKotlin @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.compose.material.Colors getColors();
     method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.compose.material.Colors getColors(androidx.compose.runtime.Composer?, int);
-    method @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.compose.material.Shapes getShapes();
+    method @InaccessibleFromKotlin @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.compose.material.Shapes getShapes();
     method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.compose.material.Shapes getShapes(androidx.compose.runtime.Composer?, int);
-    method @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.compose.material.Typography getTypography();
+    method @InaccessibleFromKotlin @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.compose.material.Typography getTypography();
     method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.compose.material.Typography getTypography(androidx.compose.runtime.Composer?, int);
     property @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.compose.material.Colors colors;
     property @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.compose.material.Shapes shapes;
@@ -632,13 +632,13 @@ package androidx.compose.material {
   }
 
   public final class MenuDefaults {
-    method public androidx.compose.foundation.layout.PaddingValues getDropdownMenuItemContentPadding();
+    method @InaccessibleFromKotlin public androidx.compose.foundation.layout.PaddingValues getDropdownMenuItemContentPadding();
     property public androidx.compose.foundation.layout.PaddingValues DropdownMenuItemContentPadding;
     field public static final androidx.compose.material.MenuDefaults INSTANCE;
   }
 
   public final class ModalBottomSheetDefaults {
-    method public androidx.compose.animation.core.AnimationSpec<java.lang.Float> getAnimationSpec();
+    method @InaccessibleFromKotlin public androidx.compose.animation.core.AnimationSpec<java.lang.Float> getAnimationSpec();
     method @BytecodeOnly public float getElevation-D9Ej5fM();
     method @BytecodeOnly @androidx.compose.runtime.Composable public long getScrimColor(androidx.compose.runtime.Composer?, int);
     property public androidx.compose.animation.core.AnimationSpec<java.lang.Float> AnimationSpec;
@@ -656,11 +656,11 @@ package androidx.compose.material {
 
   public final class ModalBottomSheetState {
     ctor public ModalBottomSheetState(androidx.compose.material.ModalBottomSheetValue initialValue, androidx.compose.ui.unit.Density density, optional kotlin.jvm.functions.Function1<? super androidx.compose.material.ModalBottomSheetValue,java.lang.Boolean> confirmValueChange, optional androidx.compose.animation.core.AnimationSpec<java.lang.Float> animationSpec, optional boolean isSkipHalfExpanded);
-    method public androidx.compose.material.ModalBottomSheetValue getCurrentValue();
-    method @Deprecated @SuppressCompatibility @FloatRange(from=0.0, to=1.0) @androidx.compose.material.ExperimentalMaterialApi public float getProgress();
-    method public androidx.compose.material.ModalBottomSheetValue getTargetValue();
+    method @InaccessibleFromKotlin public androidx.compose.material.ModalBottomSheetValue getCurrentValue();
+    method @InaccessibleFromKotlin @Deprecated @SuppressCompatibility @FloatRange(from=0.0, to=1.0) @androidx.compose.material.ExperimentalMaterialApi public float getProgress();
+    method @InaccessibleFromKotlin public androidx.compose.material.ModalBottomSheetValue getTargetValue();
     method public suspend Object? hide(kotlin.coroutines.Continuation<? super kotlin.Unit>);
-    method public boolean isVisible();
+    method @InaccessibleFromKotlin public boolean isVisible();
     method @FloatRange(from=0.0, to=1.0) public float progress(androidx.compose.material.ModalBottomSheetValue from, androidx.compose.material.ModalBottomSheetValue to);
     method public suspend Object? show(kotlin.coroutines.Continuation<? super kotlin.Unit>);
     property public androidx.compose.material.ModalBottomSheetValue currentValue;
@@ -682,7 +682,7 @@ package androidx.compose.material {
 
   public final class NavigationRailDefaults {
     method @BytecodeOnly public float getElevation-D9Ej5fM();
-    method @androidx.compose.runtime.Composable public androidx.compose.foundation.layout.WindowInsets getWindowInsets();
+    method @InaccessibleFromKotlin @androidx.compose.runtime.Composable public androidx.compose.foundation.layout.WindowInsets getWindowInsets();
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.foundation.layout.WindowInsets getWindowInsets(androidx.compose.runtime.Composer?, int);
     property public androidx.compose.ui.unit.Dp Elevation;
     property @androidx.compose.runtime.Composable public androidx.compose.foundation.layout.WindowInsets windowInsets;
@@ -710,7 +710,7 @@ package androidx.compose.material {
   }
 
   public final class ProgressIndicatorDefaults {
-    method public androidx.compose.animation.core.SpringSpec<java.lang.Float> getProgressAnimationSpec();
+    method @InaccessibleFromKotlin public androidx.compose.animation.core.SpringSpec<java.lang.Float> getProgressAnimationSpec();
     method @BytecodeOnly public float getStrokeWidth-D9Ej5fM();
     property public static float IndicatorBackgroundOpacity;
     property public androidx.compose.animation.core.SpringSpec<java.lang.Float> ProgressAnimationSpec;
@@ -753,9 +753,9 @@ package androidx.compose.material {
   @Deprecated @androidx.compose.runtime.Immutable public final class ResistanceConfig {
     ctor @Deprecated public ResistanceConfig(float basis, optional float factorAtMin, optional float factorAtMax);
     method @Deprecated public float computeResistance(float overflow);
-    method @Deprecated public float getBasis();
-    method @Deprecated public float getFactorAtMax();
-    method @Deprecated public float getFactorAtMin();
+    method @InaccessibleFromKotlin @Deprecated public float getBasis();
+    method @InaccessibleFromKotlin @Deprecated public float getFactorAtMax();
+    method @InaccessibleFromKotlin @Deprecated public float getFactorAtMin();
     property @Deprecated public float basis;
     property @Deprecated public float factorAtMax;
     property @Deprecated public float factorAtMin;
@@ -766,7 +766,7 @@ package androidx.compose.material {
     ctor @KotlinOnly public RippleConfiguration(optional androidx.compose.ui.graphics.Color color, optional androidx.compose.material.ripple.RippleAlpha? rippleAlpha);
     ctor @BytecodeOnly public RippleConfiguration(long, androidx.compose.material.ripple.RippleAlpha!, kotlin.jvm.internal.DefaultConstructorMarker!);
     method @BytecodeOnly public long getColor-0d7_KjU();
-    method public androidx.compose.material.ripple.RippleAlpha? getRippleAlpha();
+    method @InaccessibleFromKotlin public androidx.compose.material.ripple.RippleAlpha? getRippleAlpha();
     property public androidx.compose.ui.graphics.Color color;
     property public androidx.compose.material.ripple.RippleAlpha? rippleAlpha;
   }
@@ -780,7 +780,7 @@ package androidx.compose.material {
   }
 
   public final class RippleKt {
-    method public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.compose.material.RippleConfiguration?> getLocalRippleConfiguration();
+    method @InaccessibleFromKotlin public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.compose.material.RippleConfiguration?> getLocalRippleConfiguration();
     method @KotlinOnly @androidx.compose.runtime.Stable public static androidx.compose.foundation.IndicationNodeFactory ripple(androidx.compose.ui.graphics.ColorProducer color, optional boolean bounded, optional androidx.compose.ui.unit.Dp radius);
     method @KotlinOnly @androidx.compose.runtime.Stable public static androidx.compose.foundation.IndicationNodeFactory ripple(optional boolean bounded, optional androidx.compose.ui.unit.Dp radius, optional androidx.compose.ui.graphics.Color color);
     method @BytecodeOnly @androidx.compose.runtime.Stable public static androidx.compose.foundation.IndicationNodeFactory ripple-H2RKhps(boolean, float, long);
@@ -789,7 +789,7 @@ package androidx.compose.material {
   }
 
   public final class ScaffoldDefaults {
-    method @androidx.compose.runtime.Composable public androidx.compose.foundation.layout.WindowInsets getContentWindowInsets();
+    method @InaccessibleFromKotlin @androidx.compose.runtime.Composable public androidx.compose.foundation.layout.WindowInsets getContentWindowInsets();
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.foundation.layout.WindowInsets getContentWindowInsets(androidx.compose.runtime.Composer?, int);
     property @androidx.compose.runtime.Composable public androidx.compose.foundation.layout.WindowInsets contentWindowInsets;
     field public static final androidx.compose.material.ScaffoldDefaults INSTANCE;
@@ -806,8 +806,8 @@ package androidx.compose.material {
 
   @androidx.compose.runtime.Stable public final class ScaffoldState {
     ctor public ScaffoldState(androidx.compose.material.DrawerState drawerState, androidx.compose.material.SnackbarHostState snackbarHostState);
-    method public androidx.compose.material.DrawerState getDrawerState();
-    method public androidx.compose.material.SnackbarHostState getSnackbarHostState();
+    method @InaccessibleFromKotlin public androidx.compose.material.DrawerState getDrawerState();
+    method @InaccessibleFromKotlin public androidx.compose.material.SnackbarHostState getSnackbarHostState();
     property public androidx.compose.material.DrawerState drawerState;
     property public androidx.compose.material.SnackbarHostState snackbarHostState;
   }
@@ -832,9 +832,9 @@ package androidx.compose.material {
     ctor public Shapes();
     ctor public Shapes(optional androidx.compose.foundation.shape.CornerBasedShape small, optional androidx.compose.foundation.shape.CornerBasedShape medium, optional androidx.compose.foundation.shape.CornerBasedShape large);
     method public androidx.compose.material.Shapes copy(optional androidx.compose.foundation.shape.CornerBasedShape small, optional androidx.compose.foundation.shape.CornerBasedShape medium, optional androidx.compose.foundation.shape.CornerBasedShape large);
-    method public androidx.compose.foundation.shape.CornerBasedShape getLarge();
-    method public androidx.compose.foundation.shape.CornerBasedShape getMedium();
-    method public androidx.compose.foundation.shape.CornerBasedShape getSmall();
+    method @InaccessibleFromKotlin public androidx.compose.foundation.shape.CornerBasedShape getLarge();
+    method @InaccessibleFromKotlin public androidx.compose.foundation.shape.CornerBasedShape getMedium();
+    method @InaccessibleFromKotlin public androidx.compose.foundation.shape.CornerBasedShape getSmall();
     property public androidx.compose.foundation.shape.CornerBasedShape large;
     property public androidx.compose.foundation.shape.CornerBasedShape medium;
     property public androidx.compose.foundation.shape.CornerBasedShape small;
@@ -874,9 +874,9 @@ package androidx.compose.material {
 
   public interface SnackbarData {
     method public void dismiss();
-    method public String? getActionLabel();
-    method public androidx.compose.material.SnackbarDuration getDuration();
-    method public String getMessage();
+    method @InaccessibleFromKotlin public String? getActionLabel();
+    method @InaccessibleFromKotlin public androidx.compose.material.SnackbarDuration getDuration();
+    method @InaccessibleFromKotlin public String getMessage();
     method public void performAction();
     property public abstract String? actionLabel;
     property public abstract androidx.compose.material.SnackbarDuration duration;
@@ -904,7 +904,7 @@ package androidx.compose.material {
 
   @androidx.compose.runtime.Stable public final class SnackbarHostState {
     ctor public SnackbarHostState();
-    method public androidx.compose.material.SnackbarData? getCurrentSnackbarData();
+    method @InaccessibleFromKotlin public androidx.compose.material.SnackbarData? getCurrentSnackbarData();
     method public suspend Object? showSnackbar(String message, optional String? actionLabel, optional androidx.compose.material.SnackbarDuration duration, kotlin.coroutines.Continuation<? super androidx.compose.material.SnackbarResult>);
     property public androidx.compose.material.SnackbarData? currentSnackbarData;
   }
@@ -934,9 +934,9 @@ package androidx.compose.material {
 
   @Deprecated @SuppressCompatibility @androidx.compose.material.ExperimentalMaterialApi @androidx.compose.runtime.Immutable public final class SwipeProgress<T> {
     ctor @Deprecated public SwipeProgress(T from, T to, float fraction);
-    method @Deprecated public float getFraction();
-    method @Deprecated public T getFrom();
-    method @Deprecated public T getTo();
+    method @InaccessibleFromKotlin @Deprecated public float getFraction();
+    method @InaccessibleFromKotlin @Deprecated public T getFrom();
+    method @InaccessibleFromKotlin @Deprecated public T getTo();
     property @Deprecated public float fraction;
     property @Deprecated public T from;
     property @Deprecated public T to;
@@ -950,7 +950,7 @@ package androidx.compose.material {
   }
 
   @Deprecated public final class SwipeableDefaults {
-    method @Deprecated public androidx.compose.animation.core.SpringSpec<java.lang.Float> getAnimationSpec();
+    method @InaccessibleFromKotlin @Deprecated public androidx.compose.animation.core.SpringSpec<java.lang.Float> getAnimationSpec();
     method @BytecodeOnly @Deprecated public float getVelocityThreshold-D9Ej5fM();
     method @Deprecated public androidx.compose.material.ResistanceConfig? resistanceConfig(java.util.Set<java.lang.Float> anchors, optional float factorAtMin, optional float factorAtMax);
     property @Deprecated public androidx.compose.animation.core.SpringSpec<java.lang.Float> AnimationSpec;
@@ -972,13 +972,13 @@ package androidx.compose.material {
   @Deprecated @SuppressCompatibility @androidx.compose.material.ExperimentalMaterialApi @androidx.compose.runtime.Stable public class SwipeableState<T> {
     ctor @Deprecated public SwipeableState(T initialValue, optional androidx.compose.animation.core.AnimationSpec<java.lang.Float> animationSpec, optional kotlin.jvm.functions.Function1<? super T,java.lang.Boolean> confirmStateChange);
     method @Deprecated @SuppressCompatibility @androidx.compose.material.ExperimentalMaterialApi public final suspend Object? animateTo(T targetValue, optional androidx.compose.animation.core.AnimationSpec<java.lang.Float> anim, kotlin.coroutines.Continuation<? super kotlin.Unit>);
-    method @Deprecated public final T getCurrentValue();
-    method @Deprecated @SuppressCompatibility @androidx.compose.material.ExperimentalMaterialApi public final float getDirection();
-    method @Deprecated public final androidx.compose.runtime.State<java.lang.Float> getOffset();
-    method @Deprecated public final androidx.compose.runtime.State<java.lang.Float> getOverflow();
-    method @Deprecated @SuppressCompatibility @androidx.compose.material.ExperimentalMaterialApi public final androidx.compose.material.SwipeProgress<T> getProgress();
-    method @Deprecated @SuppressCompatibility @androidx.compose.material.ExperimentalMaterialApi public final T getTargetValue();
-    method @Deprecated public final boolean isAnimationRunning();
+    method @InaccessibleFromKotlin @Deprecated public final T getCurrentValue();
+    method @InaccessibleFromKotlin @Deprecated @SuppressCompatibility @androidx.compose.material.ExperimentalMaterialApi public final float getDirection();
+    method @InaccessibleFromKotlin @Deprecated public final androidx.compose.runtime.State<java.lang.Float> getOffset();
+    method @InaccessibleFromKotlin @Deprecated public final androidx.compose.runtime.State<java.lang.Float> getOverflow();
+    method @InaccessibleFromKotlin @Deprecated @SuppressCompatibility @androidx.compose.material.ExperimentalMaterialApi public final androidx.compose.material.SwipeProgress<T> getProgress();
+    method @InaccessibleFromKotlin @Deprecated @SuppressCompatibility @androidx.compose.material.ExperimentalMaterialApi public final T getTargetValue();
+    method @InaccessibleFromKotlin @Deprecated public final boolean isAnimationRunning();
     method @Deprecated public final float performDrag(float delta);
     method @Deprecated public final suspend Object? performFling(float velocity, kotlin.coroutines.Continuation<? super kotlin.Unit>);
     method @Deprecated @SuppressCompatibility @androidx.compose.material.ExperimentalMaterialApi public final suspend Object? snapTo(T targetValue, kotlin.coroutines.Continuation<? super kotlin.Unit>);
@@ -1094,9 +1094,9 @@ package androidx.compose.material {
     method @BytecodeOnly public float getFocusedBorderThickness-D9Ej5fM();
     method @BytecodeOnly public float getMinHeight-D9Ej5fM();
     method @BytecodeOnly public float getMinWidth-D9Ej5fM();
-    method @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.compose.ui.graphics.Shape getOutlinedTextFieldShape();
+    method @InaccessibleFromKotlin @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.compose.ui.graphics.Shape getOutlinedTextFieldShape();
     method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.compose.ui.graphics.Shape getOutlinedTextFieldShape(androidx.compose.runtime.Composer?, int);
-    method @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.compose.ui.graphics.Shape getTextFieldShape();
+    method @InaccessibleFromKotlin @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.compose.ui.graphics.Shape getTextFieldShape();
     method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.compose.ui.graphics.Shape getTextFieldShape(androidx.compose.runtime.Composer?, int);
     method @BytecodeOnly public float getUnfocusedBorderThickness-D9Ej5fM();
     method @KotlinOnly public androidx.compose.ui.Modifier indicatorLine(androidx.compose.ui.Modifier, boolean enabled, boolean isError, androidx.compose.foundation.interaction.InteractionSource interactionSource, androidx.compose.material.TextFieldColors colors, optional androidx.compose.ui.unit.Dp focusedIndicatorLineThickness, optional androidx.compose.ui.unit.Dp unfocusedIndicatorLineThickness);
@@ -1146,7 +1146,7 @@ package androidx.compose.material {
     method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.compose.runtime.ComposableTarget(applier="androidx.compose.ui.UiComposable") public static void Text--4IGK_g(String, androidx.compose.ui.Modifier?, long, long, androidx.compose.ui.text.font.FontStyle?, androidx.compose.ui.text.font.FontWeight?, androidx.compose.ui.text.font.FontFamily?, long, androidx.compose.ui.text.style.TextDecoration?, androidx.compose.ui.text.style.TextAlign?, long, int, boolean, int, int, kotlin.jvm.functions.Function1<? super androidx.compose.ui.text.TextLayoutResult!,kotlin.Unit!>?, androidx.compose.ui.text.TextStyle?, androidx.compose.runtime.Composer?, int, int, int);
     method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.compose.runtime.ComposableTarget(applier="androidx.compose.ui.UiComposable") public static void Text-IbK3jfQ(androidx.compose.ui.text.AnnotatedString, androidx.compose.ui.Modifier?, long, long, androidx.compose.ui.text.font.FontStyle?, androidx.compose.ui.text.font.FontWeight?, androidx.compose.ui.text.font.FontFamily?, long, androidx.compose.ui.text.style.TextDecoration?, androidx.compose.ui.text.style.TextAlign?, long, int, boolean, int, int, java.util.Map<java.lang.String!,androidx.compose.foundation.text.InlineTextContent!>?, kotlin.jvm.functions.Function1<? super androidx.compose.ui.text.TextLayoutResult!,kotlin.Unit!>?, androidx.compose.ui.text.TextStyle?, androidx.compose.runtime.Composer?, int, int, int);
     method @BytecodeOnly @Deprecated @androidx.compose.runtime.Composable @androidx.compose.runtime.ComposableTarget(applier="androidx.compose.ui.UiComposable") public static void Text-fLXpl1I(String!, androidx.compose.ui.Modifier!, long, long, androidx.compose.ui.text.font.FontStyle!, androidx.compose.ui.text.font.FontWeight!, androidx.compose.ui.text.font.FontFamily!, long, androidx.compose.ui.text.style.TextDecoration!, androidx.compose.ui.text.style.TextAlign!, long, int, boolean, int, kotlin.jvm.functions.Function1!, androidx.compose.ui.text.TextStyle!, androidx.compose.runtime.Composer!, int, int, int);
-    method public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.compose.ui.text.TextStyle> getLocalTextStyle();
+    method @InaccessibleFromKotlin public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.compose.ui.text.TextStyle> getLocalTextStyle();
     property public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.compose.ui.text.TextStyle> LocalTextStyle;
   }
 
@@ -1157,19 +1157,19 @@ package androidx.compose.material {
   @androidx.compose.runtime.Immutable public final class Typography {
     ctor public Typography(optional androidx.compose.ui.text.font.FontFamily defaultFontFamily, optional androidx.compose.ui.text.TextStyle h1, optional androidx.compose.ui.text.TextStyle h2, optional androidx.compose.ui.text.TextStyle h3, optional androidx.compose.ui.text.TextStyle h4, optional androidx.compose.ui.text.TextStyle h5, optional androidx.compose.ui.text.TextStyle h6, optional androidx.compose.ui.text.TextStyle subtitle1, optional androidx.compose.ui.text.TextStyle subtitle2, optional androidx.compose.ui.text.TextStyle body1, optional androidx.compose.ui.text.TextStyle body2, optional androidx.compose.ui.text.TextStyle button, optional androidx.compose.ui.text.TextStyle caption, optional androidx.compose.ui.text.TextStyle overline);
     method public androidx.compose.material.Typography copy(optional androidx.compose.ui.text.TextStyle h1, optional androidx.compose.ui.text.TextStyle h2, optional androidx.compose.ui.text.TextStyle h3, optional androidx.compose.ui.text.TextStyle h4, optional androidx.compose.ui.text.TextStyle h5, optional androidx.compose.ui.text.TextStyle h6, optional androidx.compose.ui.text.TextStyle subtitle1, optional androidx.compose.ui.text.TextStyle subtitle2, optional androidx.compose.ui.text.TextStyle body1, optional androidx.compose.ui.text.TextStyle body2, optional androidx.compose.ui.text.TextStyle button, optional androidx.compose.ui.text.TextStyle caption, optional androidx.compose.ui.text.TextStyle overline);
-    method public androidx.compose.ui.text.TextStyle getBody1();
-    method public androidx.compose.ui.text.TextStyle getBody2();
-    method public androidx.compose.ui.text.TextStyle getButton();
-    method public androidx.compose.ui.text.TextStyle getCaption();
-    method public androidx.compose.ui.text.TextStyle getH1();
-    method public androidx.compose.ui.text.TextStyle getH2();
-    method public androidx.compose.ui.text.TextStyle getH3();
-    method public androidx.compose.ui.text.TextStyle getH4();
-    method public androidx.compose.ui.text.TextStyle getH5();
-    method public androidx.compose.ui.text.TextStyle getH6();
-    method public androidx.compose.ui.text.TextStyle getOverline();
-    method public androidx.compose.ui.text.TextStyle getSubtitle1();
-    method public androidx.compose.ui.text.TextStyle getSubtitle2();
+    method @InaccessibleFromKotlin public androidx.compose.ui.text.TextStyle getBody1();
+    method @InaccessibleFromKotlin public androidx.compose.ui.text.TextStyle getBody2();
+    method @InaccessibleFromKotlin public androidx.compose.ui.text.TextStyle getButton();
+    method @InaccessibleFromKotlin public androidx.compose.ui.text.TextStyle getCaption();
+    method @InaccessibleFromKotlin public androidx.compose.ui.text.TextStyle getH1();
+    method @InaccessibleFromKotlin public androidx.compose.ui.text.TextStyle getH2();
+    method @InaccessibleFromKotlin public androidx.compose.ui.text.TextStyle getH3();
+    method @InaccessibleFromKotlin public androidx.compose.ui.text.TextStyle getH4();
+    method @InaccessibleFromKotlin public androidx.compose.ui.text.TextStyle getH5();
+    method @InaccessibleFromKotlin public androidx.compose.ui.text.TextStyle getH6();
+    method @InaccessibleFromKotlin public androidx.compose.ui.text.TextStyle getOverline();
+    method @InaccessibleFromKotlin public androidx.compose.ui.text.TextStyle getSubtitle1();
+    method @InaccessibleFromKotlin public androidx.compose.ui.text.TextStyle getSubtitle2();
     property public androidx.compose.ui.text.TextStyle body1;
     property public androidx.compose.ui.text.TextStyle body2;
     property public androidx.compose.ui.text.TextStyle button;
@@ -1212,7 +1212,7 @@ package androidx.compose.material.pullrefresh {
   }
 
   @SuppressCompatibility @androidx.compose.material.ExperimentalMaterialApi public final class PullRefreshState {
-    method public float getProgress();
+    method @InaccessibleFromKotlin public float getProgress();
     property public float progress;
   }
 

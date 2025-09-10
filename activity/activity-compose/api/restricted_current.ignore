@@ -1,0 +1,11 @@
+// Baseline format: 1.0
+RemovedFromKotlin: androidx.activity.compose.LocalActivityKt#getLocalActivity():
+    Source breaking change: method androidx.activity.compose.LocalActivityKt.getLocalActivity() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.activity.compose.LocalActivityResultRegistryOwner#getCurrent():
+    Source breaking change: method androidx.activity.compose.LocalActivityResultRegistryOwner.getCurrent() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.activity.compose.LocalFullyDrawnReporterOwner#getCurrent():
+    Source breaking change: method androidx.activity.compose.LocalFullyDrawnReporterOwner.getCurrent() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.activity.compose.LocalOnBackPressedDispatcherOwner#getCurrent():
+    Source breaking change: method androidx.activity.compose.LocalOnBackPressedDispatcherOwner.getCurrent() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.activity.compose.ManagedActivityResultLauncher#getContract():
+    Source breaking change: method androidx.activity.compose.ManagedActivityResultLauncher.getContract() can no longer be resolved from Kotlin source

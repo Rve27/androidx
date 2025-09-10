@@ -3,10 +3,10 @@ package androidx.compose.material.ripple {
 
   @androidx.compose.runtime.Immutable public final class RippleAlpha {
     ctor public RippleAlpha(float draggedAlpha, float focusedAlpha, float hoveredAlpha, float pressedAlpha);
-    method public float getDraggedAlpha();
-    method public float getFocusedAlpha();
-    method public float getHoveredAlpha();
-    method public float getPressedAlpha();
+    method @InaccessibleFromKotlin public float getDraggedAlpha();
+    method @InaccessibleFromKotlin public float getFocusedAlpha();
+    method @InaccessibleFromKotlin public float getHoveredAlpha();
+    method @InaccessibleFromKotlin public float getPressedAlpha();
     property public float draggedAlpha;
     property public float focusedAlpha;
     property public float hoveredAlpha;
@@ -36,7 +36,7 @@ package androidx.compose.material.ripple {
   }
 
   public final class RippleThemeKt {
-    method @Deprecated public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.compose.material.ripple.RippleTheme> getLocalRippleTheme();
+    method @InaccessibleFromKotlin @Deprecated public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.compose.material.ripple.RippleTheme> getLocalRippleTheme();
     property @Deprecated public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.compose.material.ripple.RippleTheme> LocalRippleTheme;
   }
 

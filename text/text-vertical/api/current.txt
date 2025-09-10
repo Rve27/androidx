@@ -4,9 +4,9 @@ package androidx.text.vertical {
   public final class EmphasisSpan extends android.text.style.MetricAffectingSpan {
     ctor public EmphasisSpan();
     ctor public EmphasisSpan(optional int style, optional boolean isFilled, optional float scale);
-    method public float getScale();
-    method public int getStyle();
-    method public boolean isFilled();
+    method @InaccessibleFromKotlin public float getScale();
+    method @InaccessibleFromKotlin public int getStyle();
+    method @InaccessibleFromKotlin public boolean isFilled();
     method public void updateDrawState(android.text.TextPaint? p0);
     method public void updateMeasureState(android.text.TextPaint p0);
     property public boolean isFilled;
@@ -37,7 +37,7 @@ package androidx.text.vertical {
   public final class FontShearSpan extends android.text.style.MetricAffectingSpan {
     ctor public FontShearSpan();
     ctor public FontShearSpan(optional float fontShear);
-    method public float getFontShear();
+    method @InaccessibleFromKotlin public float getFontShear();
     method public void updateDrawState(android.text.TextPaint? p0);
     method public void updateMeasureState(android.text.TextPaint p0);
     property public float fontShear;
@@ -50,9 +50,9 @@ package androidx.text.vertical {
   }
 
   public final class RubySpan {
-    method public int getOrientation();
-    method public CharSequence getText();
-    method public float getTextScale();
+    method @InaccessibleFromKotlin public int getOrientation();
+    method @InaccessibleFromKotlin public CharSequence getText();
+    method @InaccessibleFromKotlin public float getTextScale();
     property public int orientation;
     property public CharSequence text;
     property public float textScale;
@@ -92,13 +92,13 @@ package androidx.text.vertical {
 
   public final class VerticalTextLayout {
     method public void draw(android.graphics.Canvas canvas, @Px float x, @Px float y);
-    method public int getEnd();
-    method public float getHeight();
-    method public int getOrientation();
-    method public android.text.TextPaint getPaint();
-    method public int getStart();
-    method public CharSequence getText();
-    method @Px public float getWidth();
+    method @InaccessibleFromKotlin public int getEnd();
+    method @InaccessibleFromKotlin public float getHeight();
+    method @InaccessibleFromKotlin public int getOrientation();
+    method @InaccessibleFromKotlin public android.text.TextPaint getPaint();
+    method @InaccessibleFromKotlin public int getStart();
+    method @InaccessibleFromKotlin public CharSequence getText();
+    method @InaccessibleFromKotlin @Px public float getWidth();
     property public int end;
     property public float height;
     property public int orientation;

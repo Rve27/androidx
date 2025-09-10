@@ -60,14 +60,14 @@ package androidx.lifecycle.compose {
 
   public final class LifecycleResumePauseEffectScope implements androidx.lifecycle.LifecycleOwner {
     ctor public LifecycleResumePauseEffectScope(androidx.lifecycle.Lifecycle lifecycle);
-    method public androidx.lifecycle.Lifecycle getLifecycle();
+    method @InaccessibleFromKotlin public androidx.lifecycle.Lifecycle getLifecycle();
     method public inline androidx.lifecycle.compose.LifecyclePauseOrDisposeEffectResult onPauseOrDispose(kotlin.jvm.functions.Function1<? super androidx.lifecycle.LifecycleOwner,kotlin.Unit> onPauseOrDisposeEffect);
     property public androidx.lifecycle.Lifecycle lifecycle;
   }
 
   public final class LifecycleStartStopEffectScope implements androidx.lifecycle.LifecycleOwner {
     ctor public LifecycleStartStopEffectScope(androidx.lifecycle.Lifecycle lifecycle);
-    method public androidx.lifecycle.Lifecycle getLifecycle();
+    method @InaccessibleFromKotlin public androidx.lifecycle.Lifecycle getLifecycle();
     method public inline androidx.lifecycle.compose.LifecycleStopOrDisposeEffectResult onStopOrDispose(kotlin.jvm.functions.Function1<? super androidx.lifecycle.LifecycleOwner,kotlin.Unit> onStopOrDisposeEffect);
     property public androidx.lifecycle.Lifecycle lifecycle;
   }
@@ -77,7 +77,7 @@ package androidx.lifecycle.compose {
   }
 
   public final class LocalLifecycleOwnerKt {
-    method public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.lifecycle.LifecycleOwner> getLocalLifecycleOwner();
+    method @InaccessibleFromKotlin public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.lifecycle.LifecycleOwner> getLocalLifecycleOwner();
     property public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.lifecycle.LifecycleOwner> LocalLifecycleOwner;
   }
 

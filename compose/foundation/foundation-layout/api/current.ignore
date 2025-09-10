@@ -151,6 +151,68 @@ RemovedFromBytecode: androidx.compose.foundation.layout.PaddingValues.Absolute#c
     Binary breaking change: method androidx.compose.foundation.layout.PaddingValues.Absolute.calculateTopPadding() has been removed from bytecode
 
 
+RemovedFromKotlin: androidx.compose.foundation.layout.Arrangement#getBottom():
+    Source breaking change: method androidx.compose.foundation.layout.Arrangement.getBottom() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.foundation.layout.Arrangement#getCenter():
+    Source breaking change: method androidx.compose.foundation.layout.Arrangement.getCenter() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.foundation.layout.Arrangement#getEnd():
+    Source breaking change: method androidx.compose.foundation.layout.Arrangement.getEnd() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.foundation.layout.Arrangement#getSpaceAround():
+    Source breaking change: method androidx.compose.foundation.layout.Arrangement.getSpaceAround() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.foundation.layout.Arrangement#getSpaceBetween():
+    Source breaking change: method androidx.compose.foundation.layout.Arrangement.getSpaceBetween() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.foundation.layout.Arrangement#getSpaceEvenly():
+    Source breaking change: method androidx.compose.foundation.layout.Arrangement.getSpaceEvenly() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.foundation.layout.Arrangement#getStart():
+    Source breaking change: method androidx.compose.foundation.layout.Arrangement.getStart() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.foundation.layout.Arrangement#getTop():
+    Source breaking change: method androidx.compose.foundation.layout.Arrangement.getTop() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.foundation.layout.Arrangement.Absolute#getCenter():
+    Source breaking change: method androidx.compose.foundation.layout.Arrangement.Absolute.getCenter() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.foundation.layout.Arrangement.Absolute#getLeft():
+    Source breaking change: method androidx.compose.foundation.layout.Arrangement.Absolute.getLeft() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.foundation.layout.Arrangement.Absolute#getRight():
+    Source breaking change: method androidx.compose.foundation.layout.Arrangement.Absolute.getRight() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.foundation.layout.Arrangement.Absolute#getSpaceAround():
+    Source breaking change: method androidx.compose.foundation.layout.Arrangement.Absolute.getSpaceAround() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.foundation.layout.Arrangement.Absolute#getSpaceBetween():
+    Source breaking change: method androidx.compose.foundation.layout.Arrangement.Absolute.getSpaceBetween() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.foundation.layout.Arrangement.Absolute#getSpaceEvenly():
+    Source breaking change: method androidx.compose.foundation.layout.Arrangement.Absolute.getSpaceEvenly() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.foundation.layout.PaddingValues.Companion#getZero():
+    Source breaking change: method androidx.compose.foundation.layout.PaddingValues.Companion.getZero() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.foundation.layout.WindowInsets_androidKt#getCaptionBar(androidx.compose.foundation.layout.WindowInsets.Companion):
+    Source breaking change: method androidx.compose.foundation.layout.WindowInsets_androidKt.getCaptionBar(androidx.compose.foundation.layout.WindowInsets.Companion) can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.foundation.layout.WindowInsets_androidKt#getConsumeWindowInsets(androidx.compose.ui.platform.AbstractComposeView):
+    Source breaking change: method androidx.compose.foundation.layout.WindowInsets_androidKt.getConsumeWindowInsets(androidx.compose.ui.platform.AbstractComposeView) can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.foundation.layout.WindowInsets_androidKt#getDisplayCutout(androidx.compose.foundation.layout.WindowInsets.Companion):
+    Source breaking change: method androidx.compose.foundation.layout.WindowInsets_androidKt.getDisplayCutout(androidx.compose.foundation.layout.WindowInsets.Companion) can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.foundation.layout.WindowInsets_androidKt#getIme(androidx.compose.foundation.layout.WindowInsets.Companion):
+    Source breaking change: method androidx.compose.foundation.layout.WindowInsets_androidKt.getIme(androidx.compose.foundation.layout.WindowInsets.Companion) can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.foundation.layout.WindowInsets_androidKt#getMandatorySystemGestures(androidx.compose.foundation.layout.WindowInsets.Companion):
+    Source breaking change: method androidx.compose.foundation.layout.WindowInsets_androidKt.getMandatorySystemGestures(androidx.compose.foundation.layout.WindowInsets.Companion) can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.foundation.layout.WindowInsets_androidKt#getNavigationBars(androidx.compose.foundation.layout.WindowInsets.Companion):
+    Source breaking change: method androidx.compose.foundation.layout.WindowInsets_androidKt.getNavigationBars(androidx.compose.foundation.layout.WindowInsets.Companion) can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.foundation.layout.WindowInsets_androidKt#getSafeContent(androidx.compose.foundation.layout.WindowInsets.Companion):
+    Source breaking change: method androidx.compose.foundation.layout.WindowInsets_androidKt.getSafeContent(androidx.compose.foundation.layout.WindowInsets.Companion) can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.foundation.layout.WindowInsets_androidKt#getSafeDrawing(androidx.compose.foundation.layout.WindowInsets.Companion):
+    Source breaking change: method androidx.compose.foundation.layout.WindowInsets_androidKt.getSafeDrawing(androidx.compose.foundation.layout.WindowInsets.Companion) can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.foundation.layout.WindowInsets_androidKt#getSafeGestures(androidx.compose.foundation.layout.WindowInsets.Companion):
+    Source breaking change: method androidx.compose.foundation.layout.WindowInsets_androidKt.getSafeGestures(androidx.compose.foundation.layout.WindowInsets.Companion) can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.foundation.layout.WindowInsets_androidKt#getStatusBars(androidx.compose.foundation.layout.WindowInsets.Companion):
+    Source breaking change: method androidx.compose.foundation.layout.WindowInsets_androidKt.getStatusBars(androidx.compose.foundation.layout.WindowInsets.Companion) can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.foundation.layout.WindowInsets_androidKt#getSystemBars(androidx.compose.foundation.layout.WindowInsets.Companion):
+    Source breaking change: method androidx.compose.foundation.layout.WindowInsets_androidKt.getSystemBars(androidx.compose.foundation.layout.WindowInsets.Companion) can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.foundation.layout.WindowInsets_androidKt#getSystemGestures(androidx.compose.foundation.layout.WindowInsets.Companion):
+    Source breaking change: method androidx.compose.foundation.layout.WindowInsets_androidKt.getSystemGestures(androidx.compose.foundation.layout.WindowInsets.Companion) can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.foundation.layout.WindowInsets_androidKt#getTappableElement(androidx.compose.foundation.layout.WindowInsets.Companion):
+    Source breaking change: method androidx.compose.foundation.layout.WindowInsets_androidKt.getTappableElement(androidx.compose.foundation.layout.WindowInsets.Companion) can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.foundation.layout.WindowInsets_androidKt#getWaterfall(androidx.compose.foundation.layout.WindowInsets.Companion):
+    Source breaking change: method androidx.compose.foundation.layout.WindowInsets_androidKt.getWaterfall(androidx.compose.foundation.layout.WindowInsets.Companion) can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.foundation.layout.WindowInsets_androidKt#setConsumeWindowInsets(androidx.compose.ui.platform.AbstractComposeView, boolean):
+    Source breaking change: method androidx.compose.foundation.layout.WindowInsets_androidKt.setConsumeWindowInsets(androidx.compose.ui.platform.AbstractComposeView,boolean) can no longer be resolved from Kotlin source
+
+
 RemovedMethod: androidx.compose.foundation.layout.AlignmentLineKt#paddingFrom(androidx.compose.ui.Modifier, androidx.compose.ui.layout.AlignmentLine, float, float):
     Binary breaking change: Removed method androidx.compose.foundation.layout.AlignmentLineKt.paddingFrom(androidx.compose.ui.Modifier,androidx.compose.ui.layout.AlignmentLine,float,float)
 RemovedMethod: androidx.compose.foundation.layout.AlignmentLineKt#paddingFrom(androidx.compose.ui.Modifier, androidx.compose.ui.layout.AlignmentLine, long, long):
