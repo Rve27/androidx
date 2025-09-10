@@ -91,57 +91,86 @@ internal class NavigationEventProcessor {
     private var inProgressDirection: NavigationEventDirection? = null
 
     /**
-     * A central registry of all active [NavigationEventInput] instances associated with this
-     * processor.
+     * Holds inputs that were registered without a specific priority.
      *
-     * This set is managed by the [NavigationEventDispatcher] and allows the processor to
-     * communicate global state changes—such as whether any handlers are enabled—to all relevant
-     * input sources.
-     *
-     * It is not intended for direct public use and is exposed internally for the dispatcher.
+     * These are typically treated as the lowest priority level, processed only after
+     * [defaultInputs] and [overlayInputs].
      */
-    val inputs = mutableSetOf<NavigationEventInput>()
+    val unspecifiedInputs = mutableSetOf<NavigationEventInput>()
 
     /**
-     * Represents whether there is at least one enabled handler registered across all dispatchers.
+     * Holds inputs registered with the [PRIORITY_DEFAULT] priority.
      *
-     * This property serves as a global flag that input handlers can observe to enable or disable
-     * system back gestures. For example, on Android, this would control `OnBackInvokedDispatcher.`
-     * `OnBackPressedDispatcher.setEnabled()`.
-     *
-     * It is updated automatically when handlers are added, removed, or their enabled state changes.
-     * When its value changes, it notifies all registered [NavigationEventInput] instances.
+     * This level is for primary UI content and is processed before [unspecifiedInputs] but after
+     * [overlayInputs].
      */
-    private var hasEnabledHandlers: Boolean = false
-        set(value) {
-            // Only proceed if the enabled state is actually changing to avoid redundant work.
-            if (field == value) return
+    val defaultInputs = mutableSetOf<NavigationEventInput>()
 
-            field = value
-            for (input in inputs) {
-                input.doOnHasEnabledHandlerChanged(hasEnabledHandler = value)
+    /**
+     * Holds inputs registered with the [PRIORITY_OVERLAY] priority.
+     *
+     * This is the highest priority level, intended for UI elements like dialogs or bottom sheets
+     * that appear on top of other content.
+     */
+    val overlayInputs = mutableSetOf<NavigationEventInput>()
+
+    /** Whether at least one callback with `Default` priority is enabled. */
+    private var hasDefaultEnabledCallbacks: Boolean = false
+
+    /** Whether at least one callback with `Overlay` priority is enabled. */
+    private var hasOverlayEnabledCallbacks: Boolean = false
+
+    /**
+     * Recalculates the enabled status for all callback priorities, notifies listeners of any
+     * changes, and synchronizes the global navigation state.
+     *
+     * This is the central update method and should be called whenever a callback is added, removed,
+     * or its own enabled status changes.
+     */
+    fun refreshEnabledHandlers() {
+        // 1) Snapshot new truth from current callbacks.
+        // Use `any` instead of `filter` to avoid allocating intermediate lists.
+        // (`any` also short-circuits on the first match, making it strictly cheaper.)
+        val newDefaultEnabled = defaultHandler.any { it.isBackEnabled || it.isForwardEnabled }
+        val newOverlayEnabled = overlayHandlers.any { it.isBackEnabled || it.isForwardEnabled }
+
+        val defaultEnabledChanged = hasDefaultEnabledCallbacks != newDefaultEnabled
+        val overlayEnabledChanged = hasOverlayEnabledCallbacks != newOverlayEnabled
+
+        // 2) Notify only when a priority’s state actually changed.
+        if (defaultEnabledChanged) {
+            for (input in defaultInputs) {
+                input.doOnHasEnabledHandlerChanged(hasEnabledHandler = newDefaultEnabled)
             }
         }
 
-    /**
-     * Recomputes and updates [hasEnabledHandler] based on the enabled status of all registered
-     * handlers. This should be called whenever a handler’s enabled state or its registration status
-     * (added or removed) changes.
-     */
-    fun updateEnabledHandlers() {
-        // `any` and `||` are efficient as they short-circuit on the first `true` result.
-        hasEnabledHandlers =
-            overlayHandlers.any { it.isBackEnabled } || defaultHandler.any { it.isBackEnabled }
+        if (overlayEnabledChanged) {
+            for (input in overlayInputs) {
+                input.doOnHasEnabledHandlerChanged(hasEnabledHandler = newOverlayEnabled)
+            }
+        }
 
-        // Whenever the set of enabled handlers changes, we must immediately
-        // synchronize the global navigation state. This picks the new highest-priority
-        // active handler and updates the state to reflect its info, preventing stale data.
+        // Unspecified listeners reflect the aggregate flag; notify only if either priority changed.
+        if (defaultEnabledChanged || overlayEnabledChanged) {
+            val anyEnabled = newDefaultEnabled || newOverlayEnabled
+            for (input in unspecifiedInputs) {
+                input.doOnHasEnabledHandlerChanged(hasEnabledHandler = anyEnabled)
+            }
+        }
+
+        // 3) Commit new flags *after* notifications so change detection compares against the
+        // previous published state. This prevents spurious notifications within the same cycle.
+        hasDefaultEnabledCallbacks = newDefaultEnabled
+        hasOverlayEnabledCallbacks = newOverlayEnabled
+
+        // 4) Synchronize the global navigation state to the active (highest-priority) enabled
+        // callback. Order: in-progress > back > forward.
         val enabledHandler =
             inProgressHandler
                 ?: resolveEnabledHandler(direction = NavigationEventDirection.Back)
                 ?: resolveEnabledHandler(direction = NavigationEventDirection.Forward)
         if (enabledHandler != null) {
-            updateEnabledHandlerInfo(enabledHandler)
+            updateEnabledHandlerInfo(handler = enabledHandler)
         }
     }
 
@@ -177,12 +206,12 @@ internal class NavigationEventProcessor {
     }
 
     /**
-     * Returns `true` if there is at least one [NavigationEventHandler.isBackEnabled] handler
-     * registered globally within this processor.
+     * Returns `true` if there is at least one [NavigationEventHandler] registered globally within
+     * this processor is enabled.
      *
      * @return `true` if any handler is enabled, `false` otherwise.
      */
-    fun hasEnabledHandler(): Boolean = hasEnabledHandlers
+    fun hasEnabledHandler(): Boolean = hasOverlayEnabledCallbacks || hasDefaultEnabledCallbacks
 
     /**
      * Checks if there are any registered handlers, either overlay or normal.
@@ -231,9 +260,9 @@ internal class NavigationEventProcessor {
             PRIORITY_DEFAULT -> defaultHandler.addFirst(handler)
         }
 
-        // Store the dispatcher reference on the handler for self-management and internal tracking.
+        // Store the dispatcher reference on the callback for self-management and internal tracking.
         handler.dispatcher = dispatcher
-        updateEnabledHandlers()
+        refreshEnabledHandlers()
     }
 
     /**
@@ -266,7 +295,7 @@ internal class NavigationEventProcessor {
         // Clear the dispatcher reference to mark the handler as unregistered and available for
         // re-registration.
         handler.dispatcher = null
-        updateEnabledHandlers()
+        refreshEnabledHandlers()
     }
 
     /**
