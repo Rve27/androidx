@@ -34,12 +34,14 @@ import androidx.test.uiautomator.UiObject2
 import androidx.test.uiautomator.Until
 import androidx.testutils.createCompilationParams
 import androidx.testutils.defaultComposeScrollingMetrics
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.RuleChain
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 
+@Ignore("Disabling due to b/443949117")
 @LargeTest
 @RunWith(Parameterized::class)
 class PokedexScrollBenchmark(
