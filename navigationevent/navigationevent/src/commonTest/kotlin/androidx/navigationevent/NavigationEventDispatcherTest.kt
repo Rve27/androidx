@@ -811,6 +811,62 @@ class NavigationEventDispatcherTest {
     }
 
     @Test
+    fun onInfoChanged_onInfoIsUpdated_isTriggeredOnlyOnActualChange() {
+        val dispatcher = NavigationEventDispatcher()
+        val input = TestNavigationEventInput()
+        dispatcher.addInput(input)
+
+        val currentInfo1 = HomeScreenInfo("current1")
+        val backInfo1 = listOf(DetailsScreenInfo("back1"))
+        val forwardInfo1 = listOf(DetailsScreenInfo("forward1"))
+
+        val handler =
+            TestNavigationEventHandler(
+                currentInfo = currentInfo1,
+                backInfo = backInfo1,
+                forwardInfo = forwardInfo1,
+            )
+        dispatcher.addHandler(handler)
+        assertThat(input.onInfoChangedInvocations).isEqualTo(1)
+
+        // Trigger update with the exact same info values.
+        // Invocations should not increase because the state hasn't changed.
+        handler.setInfo(
+            currentInfo = currentInfo1,
+            backInfo = backInfo1,
+            forwardInfo = forwardInfo1,
+        )
+        assertThat(input.onInfoChangedInvocations).isEqualTo(1)
+
+        // Trigger update with a new `currentInfo`.
+        val currentInfo2 = HomeScreenInfo("current2")
+        handler.setInfo(
+            currentInfo = currentInfo2,
+            backInfo = backInfo1,
+            forwardInfo = forwardInfo1,
+        )
+        assertThat(input.onInfoChangedInvocations).isEqualTo(2)
+
+        // Trigger update with a new `backInfo`.
+        val backInfo2 = listOf(DetailsScreenInfo("back2"))
+        handler.setInfo(
+            currentInfo = currentInfo2,
+            backInfo = backInfo2,
+            forwardInfo = forwardInfo1,
+        )
+        assertThat(input.onInfoChangedInvocations).isEqualTo(3)
+
+        // Trigger update with a new `forwardInfo`.
+        val forwardInfo2 = listOf(DetailsScreenInfo("forward2"))
+        handler.setInfo(
+            currentInfo = currentInfo2,
+            backInfo = backInfo2,
+            forwardInfo = forwardInfo2,
+        )
+        assertThat(input.onInfoChangedInvocations).isEqualTo(4)
+    }
+
+    @Test
     fun onHasEnabledHandlerChanged_afterInputRemoved_doesNotNotify() {
         val dispatcher = NavigationEventDispatcher()
         val input = TestNavigationEventInput()
