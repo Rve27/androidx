@@ -166,10 +166,7 @@ internal class NavigationEventProcessor {
 
         // 4) Synchronize the global navigation state to the active (highest-priority) enabled
         // callback. Order: in-progress > back > forward.
-        val enabledHandler =
-            inProgressHandler
-                ?: resolveEnabledHandler(direction = NavigationEventDirection.Back)
-                ?: resolveEnabledHandler(direction = NavigationEventDirection.Forward)
+        val enabledHandler = inProgressHandler ?: resolveEnabledHandler()
         if (enabledHandler != null) {
             updateEnabledHandlerInfo(handler = enabledHandler)
         }
@@ -186,10 +183,7 @@ internal class NavigationEventProcessor {
      */
     internal fun updateEnabledHandlerInfo(handler: NavigationEventHandler<*>) {
         // Pick the single handler that is allowed to control state right now.
-        val activeHandler =
-            inProgressHandler
-                ?: resolveEnabledHandler(direction = NavigationEventDirection.Back)
-                ?: resolveEnabledHandler(direction = NavigationEventDirection.Forward)
+        val activeHandler = inProgressHandler ?: resolveEnabledHandler()
 
         if (activeHandler != handler) {
             return
@@ -516,35 +510,52 @@ internal class NavigationEventProcessor {
     }
 
     /**
-     * Resolves which handler should handle a navigation event based on priority and enabled state.
+     * Resolves which handler should handle a navigation event based on priority and its enabled
+     * state for a given direction.
      *
      * This function is the core of the priority dispatch system. It ensures that only one handler
-     * is selected to receive an event by strictly enforcing dispatch order. The resolution process
-     * is:
+     * is selected by strictly enforcing a Last-In, First-Out (LIFO) dispatch order:
      * 1. It first scans **overlay** handlers, from most-to-least recently added.
      * 2. If no enabled overlay handler is found, it then scans **default** handlers in the same
      *    LIFO order.
      *
-     * The very first handler that is found to be `isEnabled` is returned immediately.
+     * The very first handler found to be enabled for the requested direction is returned
+     * immediately.
      *
-     * @return The single highest-priority [NavigationEventHandler] that is currently enabled, or
-     *   `null` if no enabled handlers exist.
+     * @param direction The navigation direction to check for. If `null` (the default), the function
+     *   looks for a handler enabled for **either** back or forward navigation.
+     * @return The highest-priority [NavigationEventHandler] that is enabled for the specified
+     *   `direction`, or `null` if none is found. If `direction` is `null`, it returns the first
+     *   handler enabled for any direction.
      */
     private fun resolveEnabledHandler(
-        direction: NavigationEventDirection
+        direction: NavigationEventDirection? = null
     ): NavigationEventHandler<*>? {
-        // `firstOrNull` is efficient and respects the LIFO order of the ArrayDeque.
         return when (direction) {
-            NavigationEventDirection.Back -> {
-                overlayHandlers.firstOrNull { it.isBackEnabled }
-                    ?: defaultHandlers.firstOrNull { it.isBackEnabled }
-            }
-            NavigationEventDirection.Forward -> {
-                overlayHandlers.firstOrNull { it.isForwardEnabled }
-                    ?: defaultHandlers.firstOrNull { it.isForwardEnabled }
-            }
+            // For a 'null' direction, find the first available handler for any direction.
+            null -> findHandler { it.isBackEnabled || it.isForwardEnabled }
+            NavigationEventDirection.Back -> findHandler { it.isBackEnabled }
+            NavigationEventDirection.Forward -> findHandler { it.isForwardEnabled }
             else -> error("Unsupported NavigationEventDirection: '$direction'.")
         }
+    }
+
+    /**
+     * Finds the highest-priority handler that matches the given [predicate].
+     *
+     * Handlers are searched in last-in-first-out (LIFO) order: it scans [overlayHandlers] first
+     * (most recent to oldest), then [defaultHandlers]. The first handler for which [predicate]
+     * returns `true` is returned.
+     *
+     * @param predicate Condition to test against each handler.
+     * @return The first matching [NavigationEventHandler], or `null` if none match.
+     */
+    private inline fun findHandler(
+        predicate: (NavigationEventHandler<*>) -> Boolean
+    ): NavigationEventHandler<*>? {
+        // Inlined, so no function call overhead or lambda allocation.
+        // 'firstOrNull' is efficient and respects the LIFO order of the ArrayDeque.
+        return overlayHandlers.firstOrNull(predicate) ?: defaultHandlers.firstOrNull(predicate)
     }
 
     /**
