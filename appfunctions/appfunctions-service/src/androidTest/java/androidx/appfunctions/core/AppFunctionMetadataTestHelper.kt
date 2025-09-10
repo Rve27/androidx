@@ -310,7 +310,10 @@ internal class AppFunctionMetadataTestHelper(private val context: Context) {
                     AppFunctionResponseMetadata(
                         AppFunctionReferenceTypeMetadata("test", isNullable = false)
                     ),
-                components = AppFunctionComponentsMetadata(emptyMap()),
+                // TODO: b/444163595 - Remove once components are added to package metadata.
+                // Components are now aggregated hence they are appearing for this as well from
+                // Schema Inventory.
+                components = sharedComponents,
             )
     }
 

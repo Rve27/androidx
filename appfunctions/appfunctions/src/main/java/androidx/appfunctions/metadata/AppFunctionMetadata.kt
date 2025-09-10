@@ -158,6 +158,7 @@ public data class CompileTimeAppFunctionMetadata(
     public val parameters: List<AppFunctionParameterMetadata>,
     /** The response of the AppFunction. */
     public val response: AppFunctionResponseMetadata,
+    // TODO: b/444163595 - Remove once components are moved to package metadata
     /** Reusable components that could be shared within the function specification. */
     public val components: AppFunctionComponentsMetadata = AppFunctionComponentsMetadata(),
     /** A description of the AppFunction and its intended use. */
