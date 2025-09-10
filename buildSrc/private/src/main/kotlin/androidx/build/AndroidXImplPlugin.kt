@@ -330,12 +330,13 @@ abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
         val kotlinVersionStringProvider = androidXConfiguration.kotlinBomVersion
 
         // Resolve unspecified Kotlin versions to the target version.
+        // TODO(b/443037365): Remove when bug fixed as built-in Kotlin would handle this
         configurations.configureEach { configuration ->
             configuration.resolutionStrategy { strategy ->
                 strategy.eachDependency { details ->
                     if (
                         details.requested.group == "org.jetbrains.kotlin" &&
-                            details.requested.version == null
+                            details.requested.version.isNullOrBlank()
                     ) {
                         details.useVersion(kotlinVersionStringProvider.get())
                     }
