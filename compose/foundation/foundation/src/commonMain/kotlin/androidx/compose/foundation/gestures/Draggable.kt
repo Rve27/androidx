@@ -854,7 +854,28 @@ internal abstract class DragGestureNode(
     ) {
         /** Slop detection only cares about the main and final passes */
         if (pass == PointerEventPass.Initial) return
-        val dragEvent = pointerEvent.changes.fastFirstOrNull { it.id == state.pointerId } ?: return
+        val eventFromPointerId = pointerEvent.changes.fastFirstOrNull { it.id == state.pointerId }
+
+        /**
+         * We lost this pointer, try to replace it. This is to cover the case where multiple
+         * pointers were down, but the original one we tracked (state.pointerId) is no longer down,
+         * try to move tracking to a different pointer
+         */
+        val dragEvent =
+            if (eventFromPointerId == null) {
+                val otherDown = pointerEvent.changes.fastFirstOrNull { it.pressed }
+                if (otherDown == null) {
+                    // There are no other pointers down, reset the state
+                    moveToAwaitDownState()
+                    return
+                } else {
+                    // a new pointer was found, update the current state.
+                    state.pointerId = otherDown.id
+                }
+                otherDown
+            } else {
+                eventFromPointerId
+            }
 
         /**
          * Slop detection routines happens during the Main pass. Do we have unconsumed events for
