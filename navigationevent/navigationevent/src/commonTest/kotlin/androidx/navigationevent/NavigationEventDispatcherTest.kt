@@ -460,8 +460,8 @@ class NavigationEventDispatcherTest {
         val overlayHandler = TestNavigationEventHandler()
         val normalHandler = TestNavigationEventHandler()
 
-        dispatcher.addHandler(overlayHandler, NavigationEventDispatcher.PRIORITY_OVERLAY)
-        dispatcher.addHandler(normalHandler, NavigationEventDispatcher.PRIORITY_DEFAULT)
+        dispatcher.addHandler(overlayHandler, priority = PRIORITY_OVERLAY)
+        dispatcher.addHandler(normalHandler, priority = PRIORITY_DEFAULT)
 
         val input = TestNavigationEventInput()
         dispatcher.addInput(input)
@@ -478,8 +478,8 @@ class NavigationEventDispatcherTest {
         val overlayHandler = TestNavigationEventHandler()
         val normalHandler = TestNavigationEventHandler()
 
-        dispatcher.addHandler(overlayHandler, NavigationEventDispatcher.PRIORITY_OVERLAY)
-        dispatcher.addHandler(normalHandler, NavigationEventDispatcher.PRIORITY_DEFAULT)
+        dispatcher.addHandler(overlayHandler, priority = PRIORITY_OVERLAY)
+        dispatcher.addHandler(normalHandler, priority = PRIORITY_DEFAULT)
 
         // The highest priority handler is disabled.
         overlayHandler.isBackEnabled = false
@@ -546,9 +546,9 @@ class NavigationEventDispatcherTest {
         val secondOverlayHandler = TestNavigationEventHandler()
         val normalHandler = TestNavigationEventHandler()
 
-        dispatcher.addHandler(normalHandler, NavigationEventDispatcher.PRIORITY_DEFAULT)
-        dispatcher.addHandler(firstOverlayHandler, NavigationEventDispatcher.PRIORITY_OVERLAY)
-        dispatcher.addHandler(secondOverlayHandler, NavigationEventDispatcher.PRIORITY_OVERLAY)
+        dispatcher.addHandler(normalHandler, priority = PRIORITY_DEFAULT)
+        dispatcher.addHandler(firstOverlayHandler, priority = PRIORITY_OVERLAY)
+        dispatcher.addHandler(secondOverlayHandler, priority = PRIORITY_OVERLAY)
 
         val input = TestNavigationEventInput()
         dispatcher.addInput(input)
@@ -1725,12 +1725,12 @@ class NavigationEventDispatcherTest {
         // A default handler with its own back stack.
         val defaultHandler =
             TestNavigationEventHandler(currentInfo = settingsInfo, backInfo = listOf(homeInfo))
-        dispatcher.addHandler(defaultHandler, NavigationEventDispatcher.PRIORITY_DEFAULT)
+        dispatcher.addHandler(defaultHandler, priority = PRIORITY_DEFAULT)
 
         // An overlay handler that should be prioritized.
         val overlayHandler =
             TestNavigationEventHandler(currentInfo = profileInfo, backInfo = listOf(settingsInfo))
-        dispatcher.addHandler(overlayHandler, NavigationEventDispatcher.PRIORITY_OVERLAY)
+        dispatcher.addHandler(overlayHandler, priority = PRIORITY_OVERLAY)
 
         // The combined back info should list the overlay's back info first,
         // followed by the default handler's back info.
@@ -1749,7 +1749,7 @@ class NavigationEventDispatcherTest {
         // A default handler that is enabled.
         val defaultHandler =
             TestNavigationEventHandler(currentInfo = settingsInfo, backInfo = listOf(homeInfo))
-        dispatcher.addHandler(defaultHandler, NavigationEventDispatcher.PRIORITY_DEFAULT)
+        dispatcher.addHandler(defaultHandler, priority = PRIORITY_DEFAULT)
 
         // An overlay handler that is DISABLED.
         val overlayHandler =
@@ -1758,7 +1758,7 @@ class NavigationEventDispatcherTest {
                 backInfo = listOf(settingsInfo),
                 isBackEnabled = false, // This handler is disabled.
             )
-        dispatcher.addHandler(overlayHandler, NavigationEventDispatcher.PRIORITY_OVERLAY)
+        dispatcher.addHandler(overlayHandler, priority = PRIORITY_OVERLAY)
 
         // The combined back info should ignore the disabled overlay handler
         // and only contain the info from the enabled default handler.
@@ -1777,12 +1777,12 @@ class NavigationEventDispatcherTest {
 
         // First default handler added.
         val firstHandler = TestNavigationEventHandler(currentInfo = infoC, backInfo = listOf(infoA))
-        dispatcher.addHandler(firstHandler, NavigationEventDispatcher.PRIORITY_DEFAULT)
+        dispatcher.addHandler(firstHandler, priority = PRIORITY_DEFAULT)
 
         // Second default handler added, which should have higher priority.
         val secondHandler =
             TestNavigationEventHandler(currentInfo = infoD, backInfo = listOf(infoB))
-        dispatcher.addHandler(secondHandler, NavigationEventDispatcher.PRIORITY_DEFAULT)
+        dispatcher.addHandler(secondHandler, priority = PRIORITY_DEFAULT)
 
         // The combined back info should list the second handler's info first (LIFO),
         // followed by the first handler's info.
@@ -1800,12 +1800,12 @@ class NavigationEventDispatcherTest {
         // Add the overlay handler FIRST.
         val overlayHandler =
             TestNavigationEventHandler(currentInfo = overlayInfo, backInfo = listOf(overlayInfo))
-        dispatcher.addHandler(overlayHandler, NavigationEventDispatcher.PRIORITY_OVERLAY)
+        dispatcher.addHandler(overlayHandler, priority = PRIORITY_OVERLAY)
 
         // Add the default handler SECOND.
         val defaultHandler =
             TestNavigationEventHandler(currentInfo = defaultInfo, backInfo = listOf(defaultInfo))
-        dispatcher.addHandler(defaultHandler, NavigationEventDispatcher.PRIORITY_DEFAULT)
+        dispatcher.addHandler(defaultHandler, priority = PRIORITY_DEFAULT)
 
         // The combined back info must prioritize the overlay's info because its
         // priority level is checked before the default level.
