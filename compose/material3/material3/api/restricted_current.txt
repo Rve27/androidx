@@ -486,9 +486,10 @@ package androidx.compose.material3 {
     ctor public ButtonGroupMenuState();
     ctor public ButtonGroupMenuState(optional boolean initialIsShowing);
     method public void dismiss();
-    method public boolean isExpanded();
+    method @BytecodeOnly @Deprecated public boolean isExpanded();
+    method public boolean isShowing();
     method public void show();
-    property public boolean isExpanded;
+    property public boolean isShowing;
   }
 
   @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ExpressiveApi public interface ButtonGroupScope {
