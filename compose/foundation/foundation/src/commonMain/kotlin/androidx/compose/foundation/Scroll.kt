@@ -18,6 +18,7 @@ package androidx.compose.foundation
 
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.SpringSpec
+import androidx.compose.foundation.ScrollState.Companion.Saver
 import androidx.compose.foundation.gestures.FlingBehavior
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.ScrollScope
@@ -341,17 +342,28 @@ private fun Modifier.scroll(
     overscrollEffect: OverscrollEffect? = null,
 ): Modifier {
     val orientation = if (isVertical) Orientation.Vertical else Orientation.Horizontal
-    return scrollingContainer(
-            state = state,
-            orientation = orientation,
-            enabled = isScrollable,
-            reverseScrolling = reverseScrolling,
-            flingBehavior = flingBehavior,
-            interactionSource = state.internalInteractionSource,
-            useLocalOverscrollFactory = useLocalOverscrollFactory,
-            overscrollEffect = overscrollEffect,
-        )
-        .then(ScrollingLayoutElement(state, reverseScrolling, isVertical))
+    val scrollableArea =
+        if (useLocalOverscrollFactory) {
+            scrollableArea(
+                state = state,
+                orientation = orientation,
+                interactionSource = state.internalInteractionSource,
+                enabled = isScrollable,
+                reverseScrolling = reverseScrolling,
+                flingBehavior = flingBehavior,
+            )
+        } else {
+            scrollableArea(
+                state = state,
+                orientation = orientation,
+                overscrollEffect = overscrollEffect,
+                interactionSource = state.internalInteractionSource,
+                enabled = isScrollable,
+                reverseScrolling = reverseScrolling,
+                flingBehavior = flingBehavior,
+            )
+        }
+    return scrollableArea.then(ScrollingLayoutElement(state, reverseScrolling, isVertical))
 }
 
 internal class ScrollingLayoutElement(
