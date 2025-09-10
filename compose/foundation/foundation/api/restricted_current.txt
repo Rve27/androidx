@@ -370,6 +370,11 @@ package androidx.compose.foundation {
     property public androidx.compose.runtime.saveable.Saver<androidx.compose.foundation.ScrollState,? extends java.lang.Object?> Saver;
   }
 
+  public final class ScrollableAreaKt {
+    method public static androidx.compose.ui.Modifier scrollableArea(androidx.compose.ui.Modifier, androidx.compose.foundation.gestures.ScrollableState state, androidx.compose.foundation.gestures.Orientation orientation, androidx.compose.foundation.OverscrollEffect? overscrollEffect, optional boolean enabled, optional boolean reverseScrolling, optional androidx.compose.foundation.gestures.FlingBehavior? flingBehavior, optional androidx.compose.foundation.interaction.MutableInteractionSource? interactionSource, optional androidx.compose.foundation.gestures.BringIntoViewSpec? bringIntoViewSpec);
+    method public static androidx.compose.ui.Modifier scrollableArea(androidx.compose.ui.Modifier, androidx.compose.foundation.gestures.ScrollableState state, androidx.compose.foundation.gestures.Orientation orientation, optional boolean enabled, optional boolean reverseScrolling, optional androidx.compose.foundation.gestures.FlingBehavior? flingBehavior, optional androidx.compose.foundation.interaction.MutableInteractionSource? interactionSource, optional androidx.compose.foundation.gestures.BringIntoViewSpec? bringIntoViewSpec);
+  }
+
   public interface SurfaceCoroutineScope extends androidx.compose.foundation.SurfaceScope kotlinx.coroutines.CoroutineScope {
   }
 
