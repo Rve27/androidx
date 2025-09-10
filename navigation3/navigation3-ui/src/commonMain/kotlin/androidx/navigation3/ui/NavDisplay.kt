@@ -326,13 +326,21 @@ public fun <T : Any> NavDisplay(
             scenes[targetKey]!!.entries.last()
         }
 
-    if (inPredictiveBack) {
+    // TODO(b/441933162): During predictive back, only build a peek scene when there is a
+    //  previous entry. Empty previousEntries used to crash calculateScene(...).
+    if (inPredictiveBack && scene.previousEntries.isNotEmpty()) {
         val peekScene =
             sceneStrategy.calculateSceneWithSinglePaneFallback(scene.previousEntries, onBack)
         val peekSceneKey = peekScene::class to peekScene.key
-        scenes[peekSceneKey] = peekScene
+        LaunchedEffect(peekSceneKey) {
+            // Insert only on key change to prevent recomposition loop.
+            scenes[peekSceneKey] = peekScene
+        }
         if (transitionState.currentState != peekSceneKey) {
-            LaunchedEffect(progress) { transitionState.seekTo(progress, peekSceneKey) }
+            LaunchedEffect(peekSceneKey, progress) {
+                // Retarget on key change; seek on progress updates.
+                transitionState.seekTo(progress, peekSceneKey)
+            }
         }
     } else {
         LaunchedEffect(sceneKey) {
