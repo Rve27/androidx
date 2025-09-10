@@ -457,6 +457,16 @@ package androidx.compose.runtime {
     method @BytecodeOnly @androidx.compose.runtime.Composable public static void LaunchedEffect(Object![], kotlin.jvm.functions.Function2<? super kotlinx.coroutines.CoroutineScope!,? super kotlin.coroutines.Continuation<? super kotlin.Unit!>!,? extends java.lang.Object!>, androidx.compose.runtime.Composer?, int);
     method @Deprecated @androidx.compose.runtime.Composable public static void LaunchedEffect(kotlin.jvm.functions.Function2<? super kotlinx.coroutines.CoroutineScope,? super kotlin.coroutines.Continuation<? super kotlin.Unit>,? extends java.lang.Object?> block);
     method @BytecodeOnly @Deprecated @androidx.compose.runtime.Composable public static void LaunchedEffect(kotlin.jvm.functions.Function2<? super kotlinx.coroutines.CoroutineScope!,? super kotlin.coroutines.Continuation<? super kotlin.Unit!>!,? extends java.lang.Object!>, androidx.compose.runtime.Composer?, int);
+    method @androidx.compose.runtime.Composable @androidx.compose.runtime.NonRestartableComposable public static void RetainedEffect(Object? key1, Object? key2, Object? key3, kotlin.jvm.functions.Function1<? super androidx.compose.runtime.RetainedEffectScope,? extends androidx.compose.runtime.RetainedEffectResult> effect);
+    method @BytecodeOnly @androidx.compose.runtime.Composable public static void RetainedEffect(Object?, Object?, Object?, kotlin.jvm.functions.Function1<? super androidx.compose.runtime.RetainedEffectScope!,? extends androidx.compose.runtime.RetainedEffectResult!>, androidx.compose.runtime.Composer?, int);
+    method @androidx.compose.runtime.Composable @androidx.compose.runtime.NonRestartableComposable public static void RetainedEffect(Object? key1, Object? key2, kotlin.jvm.functions.Function1<? super androidx.compose.runtime.RetainedEffectScope,? extends androidx.compose.runtime.RetainedEffectResult> effect);
+    method @BytecodeOnly @androidx.compose.runtime.Composable public static void RetainedEffect(Object?, Object?, kotlin.jvm.functions.Function1<? super androidx.compose.runtime.RetainedEffectScope!,? extends androidx.compose.runtime.RetainedEffectResult!>, androidx.compose.runtime.Composer?, int);
+    method @androidx.compose.runtime.Composable @androidx.compose.runtime.NonRestartableComposable public static void RetainedEffect(Object? key1, kotlin.jvm.functions.Function1<? super androidx.compose.runtime.RetainedEffectScope,? extends androidx.compose.runtime.RetainedEffectResult> effect);
+    method @BytecodeOnly @androidx.compose.runtime.Composable public static void RetainedEffect(Object?, kotlin.jvm.functions.Function1<? super androidx.compose.runtime.RetainedEffectScope!,? extends androidx.compose.runtime.RetainedEffectResult!>, androidx.compose.runtime.Composer?, int);
+    method @androidx.compose.runtime.Composable @androidx.compose.runtime.NonRestartableComposable public static void RetainedEffect(Object?[] keys, kotlin.jvm.functions.Function1<? super androidx.compose.runtime.RetainedEffectScope,? extends androidx.compose.runtime.RetainedEffectResult> effect);
+    method @BytecodeOnly @androidx.compose.runtime.Composable public static void RetainedEffect(Object![], kotlin.jvm.functions.Function1<? super androidx.compose.runtime.RetainedEffectScope!,? extends androidx.compose.runtime.RetainedEffectResult!>, androidx.compose.runtime.Composer?, int);
+    method @Deprecated @androidx.compose.runtime.Composable @androidx.compose.runtime.NonRestartableComposable public static void RetainedEffect(kotlin.jvm.functions.Function1<? super androidx.compose.runtime.RetainedEffectScope,? extends androidx.compose.runtime.RetainedEffectResult> effect);
+    method @BytecodeOnly @Deprecated @androidx.compose.runtime.Composable public static void RetainedEffect(kotlin.jvm.functions.Function1<? super androidx.compose.runtime.RetainedEffectScope!,? extends androidx.compose.runtime.RetainedEffectResult!>, androidx.compose.runtime.Composer?, int);
     method @androidx.compose.runtime.Composable @androidx.compose.runtime.ExplicitGroupsComposable @androidx.compose.runtime.NonRestartableComposable public static void SideEffect(kotlin.jvm.functions.Function0<kotlin.Unit> effect);
     method @BytecodeOnly @androidx.compose.runtime.Composable public static void SideEffect(kotlin.jvm.functions.Function0<kotlin.Unit!>, androidx.compose.runtime.Composer?, int);
     method @kotlin.PublishedApi internal static kotlinx.coroutines.CoroutineScope createCompositionCoroutineScope(kotlin.coroutines.CoroutineContext coroutineContext, androidx.compose.runtime.Composer composer);
@@ -797,6 +807,15 @@ package androidx.compose.runtime {
   public static interface RetainStateProvider.RetainStateObserver {
     method public void onStartKeepingExitedValues();
     method public void onStopKeepingExitedValues();
+  }
+
+  public interface RetainedEffectResult {
+    method public void retire();
+  }
+
+  public final class RetainedEffectScope {
+    ctor public RetainedEffectScope();
+    method public inline androidx.compose.runtime.RetainedEffectResult onRetire(kotlin.jvm.functions.Function0<kotlin.Unit> onRetiredEffect);
   }
 
   public sealed interface ReusableComposition extends androidx.compose.runtime.Composition {
