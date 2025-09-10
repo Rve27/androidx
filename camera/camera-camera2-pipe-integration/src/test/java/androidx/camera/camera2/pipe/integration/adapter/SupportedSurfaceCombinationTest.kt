@@ -158,6 +158,7 @@ import org.robolectric.annotation.internal.DoNotInstrument
 import org.robolectric.shadow.api.Shadow
 import org.robolectric.shadows.ShadowCameraCharacteristics
 import org.robolectric.shadows.ShadowCameraManager
+import org.robolectric.shadows.ShadowLooper
 import org.robolectric.util.ReflectionHelpers
 
 @Suppress("DEPRECATION")
@@ -273,6 +274,9 @@ class SupportedSurfaceCombinationTest {
     @After
     fun tearDown() {
         CameraXUtil.shutdown()[10000, TimeUnit.MILLISECONDS]
+
+        // Drain the main looper to clear LiveData observers triggered by shutdown
+        ShadowLooper.idleMainLooper()
     }
 
     // //////////////////////////////////////////////////////////////////////////////////////////
