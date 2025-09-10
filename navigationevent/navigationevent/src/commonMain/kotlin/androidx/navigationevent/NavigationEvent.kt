@@ -17,7 +17,8 @@
 package androidx.navigationevent
 
 import androidx.annotation.FloatRange
-import kotlin.jvm.JvmName
+import androidx.annotation.IntDef
+import androidx.annotation.RestrictTo
 import kotlin.jvm.JvmOverloads
 
 /**
@@ -38,10 +39,9 @@ public class NavigationEvent
 public constructor(
     /**
      * Indicates which screen edge a swipe-based navigation gesture originates from. For non-swipe
-     * events, this will be [NavigationEventSwipeEdge.None].
+     * events, this will be [EDGE_NONE].
      */
-    @get:JvmName("getSwipeEdge") // Disable name mangling for Java
-    public val swipeEdge: NavigationEventSwipeEdge = NavigationEventSwipeEdge.None,
+    @param:SwipeEdge @get:SwipeEdge public val swipeEdge: Int = EDGE_NONE,
     /**
      * A normalized value from `0.0F` to `1.0F` indicating how far the navigation action has
      * progressed.
@@ -69,6 +69,39 @@ public constructor(
      */
     public val frameTimeMillis: Long = 0,
 ) {
+    /** Defines the swipe edge of a [NavigationEvent]. */
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    @Retention(AnnotationRetention.SOURCE)
+    @Target(
+        AnnotationTarget.CLASS,
+        AnnotationTarget.PROPERTY,
+        AnnotationTarget.FIELD,
+        AnnotationTarget.LOCAL_VARIABLE,
+        AnnotationTarget.VALUE_PARAMETER,
+        AnnotationTarget.CONSTRUCTOR,
+        AnnotationTarget.FUNCTION,
+        AnnotationTarget.PROPERTY_GETTER,
+        AnnotationTarget.PROPERTY_SETTER,
+        // Adding this so we can use the annotation on a type, e.g. `(@SwipeEdge Int) -> Unit`.
+        // Note that Android Lint doesn't yet check this: b/444159275.
+        AnnotationTarget.TYPE,
+    )
+    @IntDef(EDGE_LEFT, EDGE_RIGHT, EDGE_NONE)
+    public annotation class SwipeEdge
+
+    public companion object {
+        /** Indicates the navigation gesture originates from the left edge of the screen. */
+        public const val EDGE_LEFT: Int = 0
+
+        /** Indicates the navigation gesture originates from the right edge of the screen. */
+        public const val EDGE_RIGHT: Int = 1
+
+        /**
+         * Indicates the navigation event was not caused by an edge swipe. This applies to actions
+         * like a 3-button navigation press or a hardware back button event.
+         */
+        public const val EDGE_NONE: Int = 2
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
