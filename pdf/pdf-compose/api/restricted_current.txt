@@ -11,9 +11,13 @@ package androidx.pdf.compose {
     method @BytecodeOnly public androidx.pdf.compose.FastScrollConfiguration withDrawableIdsAndDp-4j6BHR0(@DrawableRes int, @DrawableRes int, float, float);
   }
 
+  public final class PdfSelectionMenuBuilderScope {
+    method public void item(Object key, String label, String contentDescription, kotlin.jvm.functions.Function1<? super androidx.pdf.selection.SelectionMenuSession,kotlin.Unit> onClick);
+  }
+
   public final class PdfViewerKt {
-    method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.compose.runtime.ComposableTarget(applier="androidx.compose.ui.UiComposable") public static void PdfViewer(androidx.pdf.PdfDocument?, androidx.pdf.compose.PdfViewerState, androidx.compose.ui.Modifier?, float, float, androidx.pdf.compose.FastScrollConfiguration?, kotlin.jvm.functions.Function1<? super android.net.Uri!,java.lang.Boolean!>?, androidx.compose.runtime.Composer?, int, int);
-    method @KotlinOnly @androidx.compose.runtime.Composable public static void PdfViewer(androidx.pdf.PdfDocument? pdfDocument, androidx.pdf.compose.PdfViewerState state, optional androidx.compose.ui.Modifier modifier, optional float minZoom, optional float maxZoom, optional androidx.pdf.compose.FastScrollConfiguration fastScrollConfig, optional kotlin.jvm.functions.Function1<android.net.Uri,java.lang.Boolean>? onUrlLinkClicked);
+    method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.compose.runtime.ComposableTarget(applier="androidx.compose.ui.UiComposable") public static void PdfViewer(androidx.pdf.PdfDocument?, androidx.pdf.compose.PdfViewerState, androidx.compose.ui.Modifier?, float, float, androidx.pdf.compose.FastScrollConfiguration?, kotlin.jvm.functions.Function1<? super androidx.pdf.compose.PdfSelectionMenuBuilderScope!,kotlin.Unit!>?, kotlin.jvm.functions.Function1<? super androidx.pdf.selection.ContextMenuComponent!,java.lang.Boolean!>?, kotlin.jvm.functions.Function1<? super android.net.Uri!,java.lang.Boolean!>?, androidx.compose.runtime.Composer?, int, int);
+    method @KotlinOnly @androidx.compose.runtime.Composable public static void PdfViewer(androidx.pdf.PdfDocument? pdfDocument, androidx.pdf.compose.PdfViewerState state, optional androidx.compose.ui.Modifier modifier, optional float minZoom, optional float maxZoom, optional androidx.pdf.compose.FastScrollConfiguration fastScrollConfig, optional kotlin.jvm.functions.Function1<androidx.pdf.compose.PdfSelectionMenuBuilderScope,kotlin.Unit>? appendContextMenuComponents, optional kotlin.jvm.functions.Function1<androidx.pdf.selection.ContextMenuComponent,java.lang.Boolean>? filterContextMenuComponents, optional kotlin.jvm.functions.Function1<android.net.Uri,java.lang.Boolean>? onUrlLinkClicked);
   }
 
   public final class PdfViewerState {
