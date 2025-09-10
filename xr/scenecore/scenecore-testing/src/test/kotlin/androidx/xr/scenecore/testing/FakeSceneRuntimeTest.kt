@@ -257,8 +257,7 @@ class FakeSceneRuntimeTest {
                 fakeSceneRuntime.createMovableComponent(
                     systemMovable = false,
                     scaleInZ = false,
-                    anchorPlacement = anchorPlacement,
-                    shouldDisposeParentAnchor = false,
+                    userAnchorable = false,
                 )
             )
             .isInstanceOf(FakeMovableComponent::class.java)

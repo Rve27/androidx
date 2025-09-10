@@ -63,8 +63,6 @@ import com.android.extensions.xr.node.ReformOptions;
 import com.android.extensions.xr.node.ShadowReformEvent;
 import com.android.extensions.xr.node.Vec3;
 
-import com.google.common.collect.ImmutableSet;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -1095,14 +1093,8 @@ public class ResizableComponentImplTest {
                 new MovableComponentImpl(
                         true,
                         true,
-                        ImmutableSet.of(),
-                        /* shouldDisposeParentAnchor= */ true,
-                        mPerceptionLibrary,
-                        mXrExtensions,
+                        false,
                         mActivitySpaceImpl,
-                        mActivitySpaceRoot,
-                        mPerceptionSpaceScenePose,
-                        mEntityManager,
                         mPanelShadowRenderer,
                         mFakeExecutor);
         ResizableComponentImpl resizableComponent =
@@ -1128,14 +1120,8 @@ public class ResizableComponentImplTest {
                 new MovableComponentImpl(
                         true,
                         true,
-                        ImmutableSet.of(),
-                        /* shouldDisposeParentAnchor= */ true,
-                        mPerceptionLibrary,
-                        mXrExtensions,
+                        false,
                         mActivitySpaceImpl,
-                        mActivitySpaceRoot,
-                        mPerceptionSpaceScenePose,
-                        mEntityManager,
                         mPanelShadowRenderer,
                         mFakeExecutor);
         ResizableComponentImpl resizableComponent =
@@ -1194,14 +1180,8 @@ public class ResizableComponentImplTest {
                 new MovableComponentImpl(
                         true,
                         true,
-                        ImmutableSet.of(),
-                        /* shouldDisposeParentAnchor= */ true,
-                        mPerceptionLibrary,
-                        mXrExtensions,
+                        false,
                         mActivitySpaceImpl,
-                        mActivitySpaceRoot,
-                        mPerceptionSpaceScenePose,
-                        mEntityManager,
                         mPanelShadowRenderer,
                         mFakeExecutor);
         ResizableComponentImpl resizableComponent =
