@@ -267,10 +267,6 @@ package androidx.xr.runtime {
     property public androidx.xr.runtime.RequiredCalibrationType calibrationType;
   }
 
-  public final class SessionConfigureConfigurationNotSupported extends androidx.xr.runtime.SessionConfigureResult {
-    ctor public SessionConfigureConfigurationNotSupported();
-  }
-
   public final class SessionConfigureGooglePlayServicesLocationLibraryNotLinked extends androidx.xr.runtime.SessionConfigureResult {
     ctor public SessionConfigureGooglePlayServicesLocationLibraryNotLinked();
   }
@@ -403,11 +399,6 @@ package androidx.xr.runtime.internal {
     ctor public ApkNotInstalledException(String requiredApk);
     method public String getRequiredApk();
     property public String requiredApk;
-  }
-
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class ConfigurationNotSupportedException extends androidx.xr.runtime.internal.LifecycleException {
-    ctor public ConfigurationNotSupportedException();
-    ctor public ConfigurationNotSupportedException(optional String message, optional Throwable? cause);
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FaceTrackingNotCalibratedException extends androidx.xr.runtime.internal.LifecycleException {

@@ -27,7 +27,6 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.xr.runtime.internal.ApkCheckAvailabilityErrorException
 import androidx.xr.runtime.internal.ApkCheckAvailabilityInProgressException
 import androidx.xr.runtime.internal.ApkNotInstalledException
-import androidx.xr.runtime.internal.ConfigurationNotSupportedException
 import androidx.xr.runtime.internal.FaceTrackingNotCalibratedException
 import androidx.xr.runtime.internal.JxrPlatformAdapterFactory
 import androidx.xr.runtime.internal.JxrRuntime
@@ -334,6 +333,7 @@ public constructor(
      *   configuration was successful, or another [SessionConfigureResult] if a certain
      *   configuration criteria was not met.
      * @throws [IllegalStateException] if the session has been destroyed.
+     * @throws [UnsupportedOperationException] if the configuration is not supported.
      * @throws [SecurityException] if the necessary permissions have not been granted to the calling
      *   application for the provided configuration.
      */
@@ -347,8 +347,6 @@ public constructor(
                     for (runtime in runtimes) {
                         runtime.configure(config)
                     }
-                } catch (e: ConfigurationNotSupportedException) {
-                    return@withLock SessionConfigureConfigurationNotSupported()
                 } catch (e: FaceTrackingNotCalibratedException) {
                     return@withLock SessionConfigureCalibrationRequired(
                         RequiredCalibrationType.REQUIRED_CALIBRATION_TYPE_FACE_TRACKING
