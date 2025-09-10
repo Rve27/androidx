@@ -192,6 +192,7 @@ fun getApiLintArgs(targetsJavaConsumers: Boolean): List<String> {
                     "HiddenSuperclass",
                     "KotlinOperator",
                     "DataClassDefinition",
+                    "TypeParameterName",
                 )
                 .joinToString(),
         )
