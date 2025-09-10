@@ -50,6 +50,42 @@ class GlanceWearWidgetServiceTest {
     }
 
     @Test
+    fun onBind_withTileIntentAndSupportsWidgetProvider_returnsWidgetProvider() {
+        val service: TestService = Robolectric.setupService(TestService::class.java)
+        val bindIntent =
+            Intent(GlanceWearWidgetService.ACTION_BIND_TILE_PROVIDER).apply {
+                putExtra(GlanceWearWidgetService.EXTRA_KEY_WEAR_WIDGET_PROVIDER_SUPPORTED, true)
+            }
+
+        val binder: IBinder? = service.onBind(bindIntent)
+
+        assertThat(binder).isInstanceOf(IWearWidgetProvider::class.java)
+    }
+
+    @Test
+    fun onBind_withTileIntentAndDoesNotSupportWidgetProvider_returnsNull() {
+        val service: TestService = Robolectric.setupService(TestService::class.java)
+        val bindIntent =
+            Intent(GlanceWearWidgetService.ACTION_BIND_TILE_PROVIDER).apply {
+                putExtra(GlanceWearWidgetService.EXTRA_KEY_WEAR_WIDGET_PROVIDER_SUPPORTED, false)
+            }
+
+        val binder: IBinder? = service.onBind(bindIntent)
+
+        assertThat(binder).isNull()
+    }
+
+    @Test
+    fun onBind_withTileIntentAndNoExtras_returnsNull() {
+        val service: TestService = Robolectric.setupService(TestService::class.java)
+        val bindIntent = Intent(GlanceWearWidgetService.ACTION_BIND_TILE_PROVIDER)
+
+        val binder: IBinder? = service.onBind(bindIntent)
+
+        assertThat(binder).isNull()
+    }
+
+    @Test
     fun onBind_withWrongIntent_returnsNull() {
         val service: TestService = Robolectric.setupService(TestService::class.java)
 
