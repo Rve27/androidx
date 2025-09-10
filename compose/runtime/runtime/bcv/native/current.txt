@@ -412,6 +412,10 @@ abstract interface androidx.compose.runtime/RetainStateProvider { // androidx.co
     }
 }
 
+abstract interface androidx.compose.runtime/RetainedEffectResult { // androidx.compose.runtime/RetainedEffectResult|null[0]
+    abstract fun retire() // androidx.compose.runtime/RetainedEffectResult.retire|retire(){}[0]
+}
+
 abstract interface androidx.compose.runtime/ScopeUpdateScope { // androidx.compose.runtime/ScopeUpdateScope|null[0]
     abstract fun updateScope(kotlin/Function2<androidx.compose.runtime/Composer, kotlin/Int, kotlin/Unit>) // androidx.compose.runtime/ScopeUpdateScope.updateScope|updateScope(kotlin.Function2<androidx.compose.runtime.Composer,kotlin.Int,kotlin.Unit>){}[0]
 }
@@ -950,6 +954,12 @@ final class androidx.compose.runtime/Recomposer : androidx.compose.runtime/Compo
     }
 }
 
+final class androidx.compose.runtime/RetainedEffectScope { // androidx.compose.runtime/RetainedEffectScope|null[0]
+    constructor <init>() // androidx.compose.runtime/RetainedEffectScope.<init>|<init>(){}[0]
+
+    final inline fun onRetire(crossinline kotlin/Function0<kotlin/Unit>): androidx.compose.runtime/RetainedEffectResult // androidx.compose.runtime/RetainedEffectScope.onRetire|onRetire(kotlin.Function0<kotlin.Unit>){}[0]
+}
+
 final value class <#A: kotlin/Any?> androidx.compose.runtime/SkippableUpdater { // androidx.compose.runtime/SkippableUpdater|null[0]
     constructor <init>(androidx.compose.runtime/Composer) // androidx.compose.runtime/SkippableUpdater.<init>|<init>(androidx.compose.runtime.Composer){}[0]
 
@@ -1351,6 +1361,7 @@ final val androidx.compose.runtime/androidx_compose_runtime_RetainScope$stablepr
 final val androidx.compose.runtime/androidx_compose_runtime_RetainScope_RetainedValueHolder$stableprop // androidx.compose.runtime/androidx_compose_runtime_RetainScope_RetainedValueHolder$stableprop|#static{}androidx_compose_runtime_RetainScope_RetainedValueHolder$stableprop[0]
 final val androidx.compose.runtime/androidx_compose_runtime_RetainStateProvider_AlwaysKeepExitedValues$stableprop // androidx.compose.runtime/androidx_compose_runtime_RetainStateProvider_AlwaysKeepExitedValues$stableprop|#static{}androidx_compose_runtime_RetainStateProvider_AlwaysKeepExitedValues$stableprop[0]
 final val androidx.compose.runtime/androidx_compose_runtime_RetainStateProvider_NeverKeepExitedValues$stableprop // androidx.compose.runtime/androidx_compose_runtime_RetainStateProvider_NeverKeepExitedValues$stableprop|#static{}androidx_compose_runtime_RetainStateProvider_NeverKeepExitedValues$stableprop[0]
+final val androidx.compose.runtime/androidx_compose_runtime_RetainedEffectScope$stableprop // androidx.compose.runtime/androidx_compose_runtime_RetainedEffectScope$stableprop|#static{}androidx_compose_runtime_RetainedEffectScope$stableprop[0]
 final val androidx.compose.runtime/androidx_compose_runtime_ReusableRememberObserverHolder$stableprop // androidx.compose.runtime/androidx_compose_runtime_ReusableRememberObserverHolder$stableprop|#static{}androidx_compose_runtime_ReusableRememberObserverHolder$stableprop[0]
 final val androidx.compose.runtime/androidx_compose_runtime_ScopeInvalidated$stableprop // androidx.compose.runtime/androidx_compose_runtime_ScopeInvalidated$stableprop|#static{}androidx_compose_runtime_ScopeInvalidated$stableprop[0]
 final val androidx.compose.runtime/androidx_compose_runtime_SlotReader$stableprop // androidx.compose.runtime/androidx_compose_runtime_SlotReader$stableprop|#static{}androidx_compose_runtime_SlotReader$stableprop[0]
@@ -1636,6 +1647,11 @@ final fun androidx.compose.runtime/LaunchedEffect(kotlin/Any?, kotlin/Any?, kotl
 final fun androidx.compose.runtime/LaunchedEffect(kotlin/Any?, kotlin/Any?, kotlin/Any?, kotlin.coroutines/SuspendFunction1<kotlinx.coroutines/CoroutineScope, kotlin/Unit>, androidx.compose.runtime/Composer?, kotlin/Int) // androidx.compose.runtime/LaunchedEffect|LaunchedEffect(kotlin.Any?;kotlin.Any?;kotlin.Any?;kotlin.coroutines.SuspendFunction1<kotlinx.coroutines.CoroutineScope,kotlin.Unit>;androidx.compose.runtime.Composer?;kotlin.Int){}[0]
 final fun androidx.compose.runtime/LaunchedEffect(kotlin/Array<out kotlin/Any?>..., kotlin.coroutines/SuspendFunction1<kotlinx.coroutines/CoroutineScope, kotlin/Unit>, androidx.compose.runtime/Composer?, kotlin/Int) // androidx.compose.runtime/LaunchedEffect|LaunchedEffect(kotlin.Array<out|kotlin.Any?>...;kotlin.coroutines.SuspendFunction1<kotlinx.coroutines.CoroutineScope,kotlin.Unit>;androidx.compose.runtime.Composer?;kotlin.Int){}[0]
 final fun androidx.compose.runtime/PausableComposition(androidx.compose.runtime/Applier<*>, androidx.compose.runtime/CompositionContext): androidx.compose.runtime/PausableComposition // androidx.compose.runtime/PausableComposition|PausableComposition(androidx.compose.runtime.Applier<*>;androidx.compose.runtime.CompositionContext){}[0]
+final fun androidx.compose.runtime/RetainedEffect(kotlin/Any?, kotlin/Any?, kotlin/Any?, kotlin/Function1<androidx.compose.runtime/RetainedEffectScope, androidx.compose.runtime/RetainedEffectResult>, androidx.compose.runtime/Composer?, kotlin/Int) // androidx.compose.runtime/RetainedEffect|RetainedEffect(kotlin.Any?;kotlin.Any?;kotlin.Any?;kotlin.Function1<androidx.compose.runtime.RetainedEffectScope,androidx.compose.runtime.RetainedEffectResult>;androidx.compose.runtime.Composer?;kotlin.Int){}[0]
+final fun androidx.compose.runtime/RetainedEffect(kotlin/Any?, kotlin/Any?, kotlin/Function1<androidx.compose.runtime/RetainedEffectScope, androidx.compose.runtime/RetainedEffectResult>, androidx.compose.runtime/Composer?, kotlin/Int) // androidx.compose.runtime/RetainedEffect|RetainedEffect(kotlin.Any?;kotlin.Any?;kotlin.Function1<androidx.compose.runtime.RetainedEffectScope,androidx.compose.runtime.RetainedEffectResult>;androidx.compose.runtime.Composer?;kotlin.Int){}[0]
+final fun androidx.compose.runtime/RetainedEffect(kotlin/Any?, kotlin/Function1<androidx.compose.runtime/RetainedEffectScope, androidx.compose.runtime/RetainedEffectResult>, androidx.compose.runtime/Composer?, kotlin/Int) // androidx.compose.runtime/RetainedEffect|RetainedEffect(kotlin.Any?;kotlin.Function1<androidx.compose.runtime.RetainedEffectScope,androidx.compose.runtime.RetainedEffectResult>;androidx.compose.runtime.Composer?;kotlin.Int){}[0]
+final fun androidx.compose.runtime/RetainedEffect(kotlin/Array<out kotlin/Any?>..., kotlin/Function1<androidx.compose.runtime/RetainedEffectScope, androidx.compose.runtime/RetainedEffectResult>, androidx.compose.runtime/Composer?, kotlin/Int) // androidx.compose.runtime/RetainedEffect|RetainedEffect(kotlin.Array<out|kotlin.Any?>...;kotlin.Function1<androidx.compose.runtime.RetainedEffectScope,androidx.compose.runtime.RetainedEffectResult>;androidx.compose.runtime.Composer?;kotlin.Int){}[0]
+final fun androidx.compose.runtime/RetainedEffect(kotlin/Function1<androidx.compose.runtime/RetainedEffectScope, androidx.compose.runtime/RetainedEffectResult>, androidx.compose.runtime/Composer?, kotlin/Int) // androidx.compose.runtime/RetainedEffect|RetainedEffect(kotlin.Function1<androidx.compose.runtime.RetainedEffectScope,androidx.compose.runtime.RetainedEffectResult>;androidx.compose.runtime.Composer?;kotlin.Int){}[0]
 final fun androidx.compose.runtime/ReusableComposition(androidx.compose.runtime/Applier<*>, androidx.compose.runtime/CompositionContext): androidx.compose.runtime/ReusableComposition // androidx.compose.runtime/ReusableComposition|ReusableComposition(androidx.compose.runtime.Applier<*>;androidx.compose.runtime.CompositionContext){}[0]
 final fun androidx.compose.runtime/SideEffect(kotlin/Function0<kotlin/Unit>, androidx.compose.runtime/Composer?, kotlin/Int) // androidx.compose.runtime/SideEffect|SideEffect(kotlin.Function0<kotlin.Unit>;androidx.compose.runtime.Composer?;kotlin.Int){}[0]
 final fun androidx.compose.runtime/androidx_compose_runtime_AbstractApplier$stableprop_getter(): kotlin/Int // androidx.compose.runtime/androidx_compose_runtime_AbstractApplier$stableprop_getter|androidx_compose_runtime_AbstractApplier$stableprop_getter(){}[0]
@@ -1689,6 +1705,7 @@ final fun androidx.compose.runtime/androidx_compose_runtime_RetainScope$stablepr
 final fun androidx.compose.runtime/androidx_compose_runtime_RetainScope_RetainedValueHolder$stableprop_getter(): kotlin/Int // androidx.compose.runtime/androidx_compose_runtime_RetainScope_RetainedValueHolder$stableprop_getter|androidx_compose_runtime_RetainScope_RetainedValueHolder$stableprop_getter(){}[0]
 final fun androidx.compose.runtime/androidx_compose_runtime_RetainStateProvider_AlwaysKeepExitedValues$stableprop_getter(): kotlin/Int // androidx.compose.runtime/androidx_compose_runtime_RetainStateProvider_AlwaysKeepExitedValues$stableprop_getter|androidx_compose_runtime_RetainStateProvider_AlwaysKeepExitedValues$stableprop_getter(){}[0]
 final fun androidx.compose.runtime/androidx_compose_runtime_RetainStateProvider_NeverKeepExitedValues$stableprop_getter(): kotlin/Int // androidx.compose.runtime/androidx_compose_runtime_RetainStateProvider_NeverKeepExitedValues$stableprop_getter|androidx_compose_runtime_RetainStateProvider_NeverKeepExitedValues$stableprop_getter(){}[0]
+final fun androidx.compose.runtime/androidx_compose_runtime_RetainedEffectScope$stableprop_getter(): kotlin/Int // androidx.compose.runtime/androidx_compose_runtime_RetainedEffectScope$stableprop_getter|androidx_compose_runtime_RetainedEffectScope$stableprop_getter(){}[0]
 final fun androidx.compose.runtime/androidx_compose_runtime_ReusableRememberObserverHolder$stableprop_getter(): kotlin/Int // androidx.compose.runtime/androidx_compose_runtime_ReusableRememberObserverHolder$stableprop_getter|androidx_compose_runtime_ReusableRememberObserverHolder$stableprop_getter(){}[0]
 final fun androidx.compose.runtime/androidx_compose_runtime_ScopeInvalidated$stableprop_getter(): kotlin/Int // androidx.compose.runtime/androidx_compose_runtime_ScopeInvalidated$stableprop_getter|androidx_compose_runtime_ScopeInvalidated$stableprop_getter(){}[0]
 final fun androidx.compose.runtime/androidx_compose_runtime_SlotReader$stableprop_getter(): kotlin/Int // androidx.compose.runtime/androidx_compose_runtime_SlotReader$stableprop_getter|androidx_compose_runtime_SlotReader$stableprop_getter(){}[0]
