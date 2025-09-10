@@ -374,7 +374,8 @@ object ButtonGroupDefaults {
 class ButtonGroupMenuState(initialIsShowing: Boolean = false) {
     /** Indicates whether the overflow menu is currently expanded. */
     @Deprecated("Keeping for binary compatibility", level = DeprecationLevel.HIDDEN)
-    var isExpanded by mutableStateOf(initialIsShowing)
+    var isExpanded = initialIsShowing
+        get() = isShowing
         private set
 
     /** Indicates whether the overflow menu is currently showing. */
