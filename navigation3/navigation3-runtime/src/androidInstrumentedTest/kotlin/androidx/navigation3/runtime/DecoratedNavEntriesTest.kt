@@ -38,12 +38,12 @@ class DecoratedNavEntriesTest {
 
     @Test
     fun decoratedEntriesRemembered() {
-        var entries: List<NavEntry<Any>>? = null
+        var entries: List<NavEntry<Int>>? = null
         val state = mutableStateOf(2) // force into else branch
 
         val backStack = mutableStateListOf(1)
         val entryDecorators = listOf(createTestNavEntryDecorator<Int> {})
-        val entryProvider: (key: Any) -> NavEntry<out Any> = { NavEntry(1) {} }
+        val entryProvider: (key: Int) -> NavEntry<Int> = { NavEntry(1) {} }
         composeTestRule.setContent {
             if (state.value == 1) {
                 fail("Should not reach this branch")
@@ -60,12 +60,12 @@ class DecoratedNavEntriesTest {
 
     @Test
     fun decoratedEntriesRecreated() {
-        var entries: List<NavEntry<Any>>? = null
+        var entries: List<NavEntry<Int>>? = null
         val state = mutableStateOf(1)
 
         val backStack = mutableStateListOf(1)
         val entryDecorators = listOf(createTestNavEntryDecorator<Int> {})
-        val entryProvider: (key: Any) -> NavEntry<out Any> = { NavEntry(1) {} }
+        val entryProvider: (key: Int) -> NavEntry<Int> = { NavEntry(1) {} }
         composeTestRule.setContent {
             if (state.value == 1) {
                 entries = rememberDecoratedNavEntries(backStack, entryDecorators, entryProvider)
@@ -194,8 +194,9 @@ class DecoratedNavEntriesTest {
         val entriesRendered = mutableListOf<String>()
 
         val decorator =
-            createTestNavEntryDecorator<Any>(onPop = { key -> entriesOnPop.add(key as String) }) {
-                entry ->
+            createTestNavEntryDecorator<String>(
+                onPop = { key -> entriesOnPop.add(key as String) }
+            ) { entry ->
                 entry.Content()
             }
         lateinit var backStack: SnapshotStateList<String>
@@ -517,7 +518,7 @@ class DecoratedNavEntriesTest {
     fun decoratorState_sameContentKeySharedState() {
         var popCalled = false
         val decorator =
-            createTestNavEntryDecorator<Any>(onPop = { popCalled = true }) { entry ->
+            createTestNavEntryDecorator<Int>(onPop = { popCalled = true }) { entry ->
                 entry.Content()
             }
         val entry1 = NavEntry(1, contentKey = "sameKey") {}
@@ -761,7 +762,7 @@ class DecoratedNavEntriesTest {
                     entry.Content()
                 }
             )
-        val entryProvider: (key: Any) -> NavEntry<out Any> = entryProvider {
+        val entryProvider: (key: Any) -> NavEntry<Any> = entryProvider {
             entry<DataClass>({ it.arg }) {}
         }
         composeTestRule.setContent {
@@ -796,7 +797,7 @@ class DecoratedNavEntriesTest {
                     entry.Content()
                 }
             )
-        val entryProvider: (key: Any) -> NavEntry<out Any> = entryProvider {
+        val entryProvider: (key: Any) -> NavEntry<Any> = entryProvider {
             entry<DataClass>({ it.arg }) {}
         }
         composeTestRule.setContent {
@@ -830,7 +831,7 @@ class DecoratedNavEntriesTest {
                     entry.Content()
                 }
             )
-        val entryProvider: (key: Any) -> NavEntry<out Any> = entryProvider {
+        val entryProvider: (key: Any) -> NavEntry<Any> = entryProvider {
             entry<DataClass>({ it.arg }) {}
         }
         composeTestRule.setContent {
@@ -878,7 +879,7 @@ class DecoratedNavEntriesTest {
                     entry.Content()
                 }
             )
-        val entryProvider: (key: Any) -> NavEntry<out Any> = entryProvider {
+        val entryProvider: (key: Any) -> NavEntry<Any> = entryProvider {
             entry<DataClass>({ it.arg }) {}
         }
         composeTestRule.setContent {
@@ -925,7 +926,7 @@ class DecoratedNavEntriesTest {
                     entry.Content()
                 }
             )
-        val entryProvider: (key: Any) -> NavEntry<out Any> = entryProvider {
+        val entryProvider: (key: Any) -> NavEntry<Any> = entryProvider {
             entry<DataClass>({ it.arg }) {}
         }
         composeTestRule.setContent {
@@ -965,7 +966,7 @@ class DecoratedNavEntriesTest {
                 }
             )
 
-        val entryProvider: (key: Any) -> NavEntry<out Any> = entryProvider {
+        val entryProvider: (key: Any) -> NavEntry<Any> = entryProvider {
             entry<DataClass>({ it.arg }) {}
         }
         composeTestRule.setContent {
@@ -1516,8 +1517,8 @@ class DecoratedNavEntriesTest {
 @Composable
 private fun <T : Any> WithDecoratedNavEntries(
     backStack: List<T>,
-    entryDecorators: List<@JvmSuppressWildcards NavEntryDecorator<*>> = listOf(),
-    entryProvider: (key: T) -> NavEntry<out T>,
+    entryDecorators: List<NavEntryDecorator<T>> = listOf(),
+    entryProvider: (key: T) -> NavEntry<T>,
     content: @Composable (List<NavEntry<T>>) -> Unit,
 ) {
     val decoratedEntries = rememberDecoratedNavEntries(backStack, entryDecorators, entryProvider)

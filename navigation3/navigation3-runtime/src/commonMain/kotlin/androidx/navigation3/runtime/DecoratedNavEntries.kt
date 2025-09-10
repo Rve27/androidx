@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:Suppress("UNCHECKED_CAST")
-
 package androidx.navigation3.runtime
 
 import androidx.compose.runtime.Composable
@@ -120,14 +118,11 @@ import kotlin.jvm.JvmSuppressWildcards
 @Composable
 public fun <T : Any> rememberDecoratedNavEntries(
     backStack: List<T>,
-    entryDecorators: List<@JvmSuppressWildcards NavEntryDecorator<*>> = listOf(),
-    entryProvider: (key: T) -> NavEntry<out T>,
+    entryDecorators: List<@JvmSuppressWildcards NavEntryDecorator<T>> = listOf(),
+    entryProvider: (key: T) -> NavEntry<T>,
 ): List<NavEntry<T>> {
     val keysInBackstack: MutableSet<Any> = remember { mutableSetOf() }
     val keysInComposition: MutableSet<Any> = remember { mutableSetOf() }
-    // Kotlin does not know these things are compatible so we need this explicit cast
-    // to ensure our lambda below takes the correct type
-    entryProvider as (T) -> NavEntry<T>
     val entries =
         backStack.fastMapOrMap { key ->
             val entry = entryProvider.invoke(key)
@@ -150,7 +145,7 @@ public fun <T : Any> rememberDecoratedNavEntries(
 @Composable
 private fun <T : Any> decorateEntry(
     entry: NavEntry<T>,
-    decorators: List<NavEntryDecorator<*>>,
+    decorators: List<NavEntryDecorator<T>>,
     keysInBackstack: MutableSet<Any>,
     keysInComposition: MutableSet<Any>,
 ): NavEntry<T> {
@@ -193,7 +188,7 @@ private fun <T : Any> decorateEntry(
 @Composable
 private fun <T : Any> PrepareBackStack(
     entries: List<NavEntry<T>>,
-    decorators: List<NavEntryDecorator<*>>,
+    decorators: List<NavEntryDecorator<T>>,
     keysInBackstack: MutableSet<Any>,
     keysInComposition: MutableSet<Any>,
 ) {
