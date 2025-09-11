@@ -77,9 +77,10 @@ public class WindowLayoutInfo {
     private final @EngagementModeFlags int mEngagementModeFlags;
 
     /**
-     * Use the {@link Builder} instead.
-     * TODO(b/423990404): Officially deprecate this constructor.
+     * @deprecated Use the {@link Builder} instead.
      */
+    @RequiresVendorApiLevel(level = 1, deprecatedSince = 10)
+    @Deprecated
     public WindowLayoutInfo(@NonNull List<DisplayFeature> displayFeatures) {
         this(displayFeatures, DEFAULT_ENGAGEMENT_MODE);
     }
