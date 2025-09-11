@@ -731,18 +731,21 @@ class NavigationEventDispatcherTest {
         val input = TestNavigationEventInput()
         dispatcher.addInput(input)
 
-        assertThat(input.onHasEnabledHandlersChangedInvocations).isEqualTo(0)
+        // The input should be notified of the initial state immediately when it's added.
+        assertThat(input.onHasEnabledHandlersChangedValues).containsExactly(false).inOrder()
 
-        // Adding a handler should trigger the onHasEnabledHandlersChanged listener.
+        // Adding a new, enabled handler should trigger another notification.
         val handler = TestNavigationEventHandler()
         dispatcher.addHandler(handler)
 
-        assertThat(input.onHasEnabledHandlersChangedInvocations).isEqualTo(1)
+        assertThat(input.onHasEnabledHandlersChangedValues).containsExactly(false, true).inOrder()
 
-        // Disabling the handler should trigger it again.
+        // Disabling an existing handler should also trigger a notification.
         handler.isBackEnabled = false
         handler.isForwardEnabled = false
-        assertThat(input.onHasEnabledHandlersChangedInvocations).isEqualTo(2)
+        assertThat(input.onHasEnabledHandlersChangedValues)
+            .containsExactly(false, true, false)
+            .inOrder()
     }
 
     @Test
@@ -872,16 +875,21 @@ class NavigationEventDispatcherTest {
         val input = TestNavigationEventInput()
         dispatcher.addInput(input)
 
+        // The input should be notified of the initial state immediately when it's added.
+        assertThat(input.onHasEnabledHandlersChangedValues).containsExactly(false).inOrder()
+
         val handler1 = TestNavigationEventHandler()
         dispatcher.addHandler(handler1)
-        assertThat(input.onHasEnabledHandlersChangedInvocations).isEqualTo(1)
+        assertThat(input.onHasEnabledHandlersChangedValues).containsExactly(false, true).inOrder()
 
         dispatcher.removeInput(input)
 
         // Add another handler; the removed input should not be notified.
         val handler2 = TestNavigationEventHandler()
         dispatcher.addHandler(handler2)
-        assertThat(input.onHasEnabledHandlersChangedInvocations).isEqualTo(1) // Unchanged
+        assertThat(input.onHasEnabledHandlersChangedValues)
+            .containsExactly(false, true) // Unchanged
+            .inOrder()
     }
 
     @Test
@@ -907,7 +915,8 @@ class NavigationEventDispatcherTest {
     fun onHasEnabledCallbacksChanged_notifiesInputsByPriority() {
         val dispatcher = NavigationEventDispatcher()
 
-        // Arrange: Create and register one input for each priority level.
+        // Create and register one input for each priority level. Each `addInput` call
+        // triggers an immediate "initial state" emission, setting all counts to 1.
         val unspecifiedInput = TestNavigationEventInput()
         val defaultInput = TestNavigationEventInput()
         val overlayInput = TestNavigationEventInput()
@@ -916,31 +925,37 @@ class NavigationEventDispatcherTest {
         dispatcher.addInput(defaultInput, priority = PRIORITY_DEFAULT)
         dispatcher.addInput(overlayInput, priority = PRIORITY_OVERLAY)
 
-        // Act 1: Add an Overlay callback.
+        // Add an enabled Overlay handler, flipping the overlay state to `true`.
         val overlayHandler =
             TestNavigationEventHandler(isBackEnabled = true, isForwardEnabled = false)
         dispatcher.addHandler(overlayHandler, priority = PRIORITY_OVERLAY)
 
-        // Assert 1:
-        // - Default input is not notified.
-        // - Overlay input is notified.
-        // - Unspecified input is notified because the global flag's setter notifies it.
-        assertThat(defaultInput.onHasEnabledHandlersChangedInvocations).isEqualTo(0)
-        assertThat(overlayInput.onHasEnabledHandlersChangedInvocations).isEqualTo(1)
-        assertThat(unspecifiedInput.onHasEnabledHandlersChangedInvocations).isEqualTo(1)
+        // Only inputs listening to the overlay state (or all states) are notified.
+        // `defaultInput` remains at 1, while `overlayInput` and `unspecifiedInput` increase to 2.
+        assertThat(defaultInput.onHasEnabledHandlersChangedValues).containsExactly(false).inOrder()
+        assertThat(overlayInput.onHasEnabledHandlersChangedValues)
+            .containsExactly(false, true)
+            .inOrder()
+        assertThat(unspecifiedInput.onHasEnabledHandlersChangedValues)
+            .containsExactly(false, true)
+            .inOrder()
 
-        // Act 2: Add a Default handler.
+        // Add an enabled Default handler, flipping the default state to `true`.
         val defaultHandler =
             TestNavigationEventHandler(isBackEnabled = true, isForwardEnabled = false)
         dispatcher.addHandler(defaultHandler, priority = PRIORITY_DEFAULT)
 
-        // Assert 2:
-        // - Default input is notified.
-        // - Overlay input is not notified.
-        // - Unspecified input is notified because the global flag's setter notifies it.
-        assertThat(defaultInput.onHasEnabledHandlersChangedInvocations).isEqualTo(1)
-        assertThat(overlayInput.onHasEnabledHandlersChangedInvocations).isEqualTo(1)
-        assertThat(unspecifiedInput.onHasEnabledHandlersChangedInvocations).isEqualTo(2)
+        // Only inputs listening to the default state (or all states) are notified.
+        // `overlayInput` remains at 2, while `defaultInput` and `unspecifiedInput` increase.
+        assertThat(defaultInput.onHasEnabledHandlersChangedValues)
+            .containsExactly(false, true)
+            .inOrder()
+        assertThat(overlayInput.onHasEnabledHandlersChangedValues)
+            .containsExactly(false, true)
+            .inOrder()
+        assertThat(unspecifiedInput.onHasEnabledHandlersChangedValues)
+            .containsExactly(false, true, true)
+            .inOrder()
     }
 
     @Test
@@ -949,18 +964,24 @@ class NavigationEventDispatcherTest {
         val overlayInput = TestNavigationEventInput()
         dispatcher.addInput(overlayInput, priority = PRIORITY_OVERLAY)
 
-        // Arrange: Add a callback to trigger an initial notification.
+        // The count becomes 2 here due to two distinct emissions:
+        // 1. Initial State Emission: `addInput` immediately emitted the initial `false` state.
+        // 2. Update Emission: `addHandler` flipped the state to `true`, causing another emission.
         val handler = TestNavigationEventHandler()
         dispatcher.addHandler(handler, priority = PRIORITY_OVERLAY)
-        assertThat(overlayInput.onHasEnabledHandlersChangedInvocations).isEqualTo(1)
+        assertThat(overlayInput.onHasEnabledHandlersChangedValues)
+            .containsExactly(false, true)
+            .inOrder()
 
-        // Act: Remove the input.
+        // Remove the input from the dispatcher.
         dispatcher.removeInput(overlayInput)
 
-        // Assert: Trigger another notification event. The removed input's count should not
-        // increase.
+        // After being removed, the input's count does not increase, even when a state
+        // change occurs that would have previously notified it.
         handler.isBackEnabled = false
-        assertThat(overlayInput.onHasEnabledHandlersChangedInvocations).isEqualTo(1) // Unchanged
+        assertThat(overlayInput.onHasEnabledHandlersChangedValues)
+            .containsExactly(false, true)
+            .inOrder()
     }
 
     @Test
@@ -2038,9 +2059,8 @@ private class TestNavigationEventInput(
     var removedInvocations: Int = 0
         private set
 
-    /** The number of times [onHasEnabledHandlersChanged] has been invoked. */
-    var onHasEnabledHandlersChangedInvocations: Int = 0
-        private set
+    /** All values received by [onHasEnabledHandlersChanged]. */
+    val onHasEnabledHandlersChangedValues = mutableListOf<Boolean>()
 
     /** The number of times [onInfoChanged] has been invoked. */
     var onInfoChangedInvocations: Int = 0
@@ -2143,7 +2163,7 @@ private class TestNavigationEventInput(
     }
 
     override fun onHasEnabledHandlerChanged(hasEnabledHandler: Boolean) {
-        onHasEnabledHandlersChangedInvocations++
+        onHasEnabledHandlersChangedValues += hasEnabledHandler
         onHasEnabledHandlersChanged.invoke(hasEnabledHandler)
     }
 
