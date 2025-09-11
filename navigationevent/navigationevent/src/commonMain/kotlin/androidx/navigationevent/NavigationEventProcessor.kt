@@ -116,10 +116,10 @@ internal class NavigationEventProcessor {
     val overlayInputs = mutableSetOf<NavigationEventInput>()
 
     /** Whether at least one callback with `Default` priority is enabled. */
-    private var hasDefaultEnabledCallbacks: Boolean = false
+    private var hasEnabledDefaultHandlers: Boolean = false
 
     /** Whether at least one callback with `Overlay` priority is enabled. */
-    private var hasOverlayEnabledCallbacks: Boolean = false
+    private var hasEnabledOverlayHandlers: Boolean = false
 
     /**
      * Recalculates the enabled status for all callback priorities, notifies listeners of any
@@ -135,8 +135,8 @@ internal class NavigationEventProcessor {
         val newDefaultEnabled = defaultHandlers.any { it.isBackEnabled || it.isForwardEnabled }
         val newOverlayEnabled = overlayHandlers.any { it.isBackEnabled || it.isForwardEnabled }
 
-        val defaultEnabledChanged = hasDefaultEnabledCallbacks != newDefaultEnabled
-        val overlayEnabledChanged = hasOverlayEnabledCallbacks != newOverlayEnabled
+        val defaultEnabledChanged = hasEnabledDefaultHandlers != newDefaultEnabled
+        val overlayEnabledChanged = hasEnabledOverlayHandlers != newOverlayEnabled
 
         // 2) Notify only when a priority’s state actually changed.
         if (defaultEnabledChanged) {
@@ -161,8 +161,8 @@ internal class NavigationEventProcessor {
 
         // 3) Commit new flags *after* notifications so change detection compares against the
         // previous published state. This prevents spurious notifications within the same cycle.
-        hasDefaultEnabledCallbacks = newDefaultEnabled
-        hasOverlayEnabledCallbacks = newOverlayEnabled
+        hasEnabledDefaultHandlers = newDefaultEnabled
+        hasEnabledOverlayHandlers = newOverlayEnabled
 
         // 4) Synchronize the global navigation state to the active (highest-priority) enabled
         // callback. Order: in-progress > back > forward.
@@ -212,7 +212,7 @@ internal class NavigationEventProcessor {
      *
      * @return `true` if any handler is enabled, `false` otherwise.
      */
-    fun hasEnabledHandler(): Boolean = hasOverlayEnabledCallbacks || hasDefaultEnabledCallbacks
+    fun hasEnabledHandler(): Boolean = hasEnabledOverlayHandlers || hasEnabledDefaultHandlers
 
     /**
      * Checks if there are any registered handlers, either overlay or normal.
