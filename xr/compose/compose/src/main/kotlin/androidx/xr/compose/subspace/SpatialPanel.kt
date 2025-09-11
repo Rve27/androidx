@@ -497,11 +497,34 @@ public fun SpatialPanel(
 }
 
 /**
- * Creates a [SpatialPanel] backed by the main Window content.
+ * A composable that renders the Activity's main window's 2D UI content, defined in
+ * [androidx.activity.compose.setContent], as a panel in a Subspace.
  *
- * This panel requires the following specific configuration in the Android Manifest for proper
- * sizing/resizing behavior:
- * ```
+ * This composable acts as the bridge between the traditional 2D Android UI hierarchy and the 3D
+ * Subspace environment. Unlike [SpatialPanel], which renders its own specific composable content,
+ * [SpatialMainPanel] takes the entire view hierarchy from the Activity's main window and presents
+ * it on a movable, resizable panel in the Compose for XR's Spatial Scene Graph.
+ *
+ * For the main window to be visible when [androidx.xr.compose.spatial.Subspace] is present in the
+ * UI hierarchy, a [SpatialMainPanel] *must* be included in the Subspace composition. If it is not
+ * composed, the underlying main panel entity is disabled by default. When [SpatialMainPanel] is
+ * removed from the composition, it will again be disable (hidden).
+ *
+ * ### How It Works
+ * [SpatialMainPanel] operates on a single, shared CoreMainPanelEntity instance. This ensures that
+ * there is only one source of truth for the main panel's state, which is crucial for predictable
+ * interactions with other framework components like [androidx.xr.compose.spatial.Orbiter].
+ *
+ * The size of the panel in the Subspace is controlled by the standard Compose layout system, driven
+ * by the SubspaceModifier applied to it. Modifiers like SubspaceModifier.width directly dictate the
+ * panel's dimensions, following the same measurement and layout rules as other
+ * [SubspaceComposable]. To ensure stability, if the panel's layout size results in a width or
+ * height of zero, it will be automatically disabled to prevent crashes.
+ *
+ * ### Manifest Configuration
+ * This panel requires the following specific configuration in the `AndroidManifest.xml` for proper
+ * sizing and resizing behavior:
+ * ```xml
  * <activity
  * android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize>
  * <!--suppress AndroidElementNotAllowed -->
@@ -510,7 +533,35 @@ public fun SpatialPanel(
  * </activity>
  * ```
  *
- * @param modifier SubspaceModifier to apply to the MainPanel.
+ * ### Example Usage
+ *
+ * ```
+ * // In your Activity's onCreate:
+ * setContent {
+ *     // Your standard 2D UI goes here.
+ *     // This content will be displayed on the SpatialMainPanel.
+ *     My2dAppScaffold()
+ *
+ *     // Your 3D content goes in a Subspace.
+ *     Subspace {
+ *         SpatialColumn(
+ *             modifier = SubspaceModifier.offset(z = -2.meters.toDp())
+ *         ) {
+ *             // This places the main 2D UI into the Spatial Scene.
+ *             SpatialMainPanel(
+ *                 modifier = SubspaceModifier
+ *                 .width(800.dp)
+ *                 .height(600.dp),
+ *                 dragPolicy = MovePolicy(isEnabled = true),
+ *                 resizePolicy = ResizePolicy(isEnabled = true)
+ *             )
+ *         }
+ *     }
+ * }
+ * ```
+ *
+ * @param modifier The [SubspaceModifier] to be applied to this panel, controlling its layout, size,
+ *   and position within the parent.
  * @param shape The shape of this Spatial Panel.
  * @param dragPolicy An optional [DragPolicy] that defines the motion behavior of the
  *   [SpatialPanel]. This can be either a [MovePolicy] for free movement or an [AnchorPolicy] for
