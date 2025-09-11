@@ -156,14 +156,32 @@ package androidx.xr.scenecore.testing {
     property public androidx.xr.scenecore.internal.Entity? parent;
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeGltfEntity extends androidx.xr.scenecore.testing.FakeEntity implements androidx.xr.scenecore.internal.GltfEntity {
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public class FakeGltfEntity extends androidx.xr.scenecore.testing.FakeEntity implements androidx.xr.scenecore.internal.GltfEntity {
     ctor public FakeGltfEntity();
     method public void clearMaterialOverride(String nodeName, int primitiveIndex);
     method @InaccessibleFromKotlin public int getAnimationState();
+    method @InaccessibleFromKotlin public final String? getCurrentAnimationName();
+    method @InaccessibleFromKotlin public final androidx.xr.scenecore.testing.FakeGltfEntity.Node getNode();
+    method @InaccessibleFromKotlin public final java.util.List<java.lang.String> getSupportedAnimationNames();
+    method @InaccessibleFromKotlin public final boolean isLooping();
+    method @InaccessibleFromKotlin public final void setLooping(boolean);
     method public void setMaterialOverride(androidx.xr.scenecore.internal.MaterialResource material, String nodeName, int primitiveIndex);
+    method @InaccessibleFromKotlin public final void setSupportedAnimationNames(java.util.List<java.lang.String>);
     method public void startAnimation(boolean loop, String? animationName);
     method public void stopAnimation();
     property @androidx.xr.scenecore.internal.GltfEntity.AnimationStateValue public int animationState;
+    property public final String? currentAnimationName;
+    property public final boolean isLooping;
+    property public final androidx.xr.scenecore.testing.FakeGltfEntity.Node node;
+    property public final java.util.List<java.lang.String> supportedAnimationNames;
+  }
+
+  public static final class FakeGltfEntity.Node {
+    ctor public FakeGltfEntity.Node();
+    method @InaccessibleFromKotlin public androidx.xr.scenecore.testing.FakeResource[] getMaterialArray();
+    method @InaccessibleFromKotlin public String getNodeName();
+    property public androidx.xr.scenecore.testing.FakeResource[] materialArray;
+    property public String nodeName;
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeGltfFeature extends androidx.xr.scenecore.testing.FakeBaseRenderingFeature implements androidx.xr.scenecore.internal.GltfFeature {
@@ -832,8 +850,10 @@ package androidx.xr.scenecore.testing {
     property public androidx.xr.scenecore.internal.Dimensions size;
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) internal final class FakeResource implements androidx.xr.scenecore.internal.ExrImageResource androidx.xr.scenecore.internal.GltfModelResource androidx.xr.scenecore.internal.MaterialResource androidx.xr.scenecore.internal.Resource androidx.xr.scenecore.internal.TextureResource {
-    ctor public FakeResource(long token);
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeResource implements androidx.xr.scenecore.internal.ExrImageResource androidx.xr.scenecore.internal.GltfModelResource androidx.xr.scenecore.internal.MaterialResource androidx.xr.scenecore.internal.Resource androidx.xr.scenecore.internal.TextureResource {
+    ctor public FakeResource();
+    ctor public FakeResource(optional long token);
+    method public androidx.xr.scenecore.testing.FakeResource copy(optional long token);
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeSceneRuntime implements androidx.xr.scenecore.internal.RenderingEntityFactory androidx.xr.scenecore.internal.SceneRuntime {
