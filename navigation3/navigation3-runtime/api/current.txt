@@ -110,8 +110,12 @@ package androidx.navigation3.runtime {
     property public kotlinx.serialization.descriptors.SerialDescriptor descriptor;
   }
 
-  public final class NavBackStackSerializer_androidKt {
+  public final class NavBackStackSerializerKt {
     method @KotlinOnly public static inline <reified T> kotlinx.serialization.KSerializer<androidx.compose.runtime.snapshots.SnapshotStateList<T>> NavBackStackSerializer(androidx.savedstate.serialization.SavedStateConfiguration configuration);
+  }
+
+  public final class NavBackStackSerializer_androidKt {
+    method public static <T> kotlinx.serialization.KSerializer<androidx.compose.runtime.snapshots.SnapshotStateList<T>> NavBackStackSerializer();
   }
 
   public class NavEntry<T> {

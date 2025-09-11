@@ -110,8 +110,12 @@ package androidx.navigation3.runtime {
     property public kotlinx.serialization.descriptors.SerialDescriptor descriptor;
   }
 
-  public final class NavBackStackSerializer_androidKt {
+  public final class NavBackStackSerializerKt {
     method @KotlinOnly public static inline <reified T> kotlinx.serialization.KSerializer<androidx.compose.runtime.snapshots.SnapshotStateList<T>> NavBackStackSerializer(androidx.savedstate.serialization.SavedStateConfiguration configuration);
+  }
+
+  public final class NavBackStackSerializer_androidKt {
+    method public static <T> kotlinx.serialization.KSerializer<androidx.compose.runtime.snapshots.SnapshotStateList<T>> NavBackStackSerializer();
   }
 
   public class NavEntry<T> {
@@ -147,13 +151,6 @@ package androidx.navigation3.runtime {
   }
 
   public interface NavKey {
-  }
-
-  @kotlin.PublishedApi internal final class ReflectivePolymorphicSerializer<T> implements kotlinx.serialization.KSerializer<T> {
-    method public T deserialize(kotlinx.serialization.encoding.Decoder decoder);
-    method @InaccessibleFromKotlin public kotlinx.serialization.descriptors.SerialDescriptor getDescriptor();
-    method public void serialize(kotlinx.serialization.encoding.Encoder encoder, T value);
-    property public kotlinx.serialization.descriptors.SerialDescriptor descriptor;
   }
 
   public final class RememberNavBackStackKt {
