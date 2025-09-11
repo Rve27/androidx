@@ -171,13 +171,18 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
         }
 
     /**
-     * Indicates whether a pointer down within this view should automatically clear focus, even for
-     * components that remain focusable in touch mode.
+     * Controls behavior for how focus should be automatically cleared for this [ComposeView] when
+     * responding to input. The default value is [AutoClearFocusBehavior.Default].
      *
      * This property should be set prior to first composition.
      */
     @OptIn(ExperimentalComposeUiApi::class)
-    var isClearFocusOnPointerDownEnabled = ComposeUiFlags.isClearFocusOnPointerDownEnabled
+    var autoClearFocusBehavior: AutoClearFocusBehavior =
+        if (ComposeUiFlags.isClearFocusOnPointerDownEnabled) {
+            AutoClearFocusBehavior.Default
+        } else {
+            AutoClearFocusBehavior.None
+        }
 
     /**
      * The Jetpack Compose UI content for this view. Subclasses must implement this method to
