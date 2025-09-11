@@ -104,13 +104,13 @@ package androidx.xr.scenecore.testing {
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public class FakeCameraViewActivityPose extends androidx.xr.scenecore.testing.FakeActivityPose implements androidx.xr.scenecore.internal.CameraViewActivityPose {
     ctor public FakeCameraViewActivityPose();
+    ctor public FakeCameraViewActivityPose(optional @androidx.xr.scenecore.internal.CameraViewActivityPose.CameraType int cameraType);
     method @InaccessibleFromKotlin public int getCameraType();
     method @InaccessibleFromKotlin public androidx.xr.scenecore.internal.PixelDimensions getDisplayResolutionInPixels();
     method @InaccessibleFromKotlin public androidx.xr.scenecore.internal.CameraViewActivityPose.Fov getFov();
-    method @InaccessibleFromKotlin public void setCameraType(int);
     method @InaccessibleFromKotlin public void setDisplayResolutionInPixels(androidx.xr.scenecore.internal.PixelDimensions);
     method @InaccessibleFromKotlin public void setFov(androidx.xr.scenecore.internal.CameraViewActivityPose.Fov);
-    property @androidx.xr.scenecore.internal.CameraViewActivityPose.CameraType public int cameraType;
+    property public int cameraType;
     property public androidx.xr.scenecore.internal.PixelDimensions displayResolutionInPixels;
     property public androidx.xr.scenecore.internal.CameraViewActivityPose.Fov fov;
   }
