@@ -16,6 +16,8 @@
 
 package androidx.navigationevent
 
+import androidx.compose.runtime.Immutable
+
 /**
  * Provides contextual information about a navigation state (e.g., a screen or route).
  *
@@ -34,6 +36,7 @@ package androidx.navigationevent
  *
  * @see NavigationEventState
  */
+@Immutable
 public interface NavigationEventInfo {
 
     /**
