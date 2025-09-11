@@ -327,7 +327,7 @@ package androidx.core.os {
 
   public final class BundleKt {
     method public static android.os.Bundle bundleOf();
-    method public static android.os.Bundle bundleOf(kotlin.Pair<java.lang.String,? extends java.lang.Object?>... pairs);
+    method @Deprecated public static android.os.Bundle bundleOf(kotlin.Pair<java.lang.String,? extends java.lang.Object?>... pairs);
   }
 
   public final class HandlerKt {
@@ -345,7 +345,7 @@ package androidx.core.os {
 
   public final class PersistableBundleKt {
     method public static android.os.PersistableBundle persistableBundleOf();
-    method public static android.os.PersistableBundle persistableBundleOf(kotlin.Pair<java.lang.String,? extends java.lang.Object?>... pairs);
+    method @Deprecated public static android.os.PersistableBundle persistableBundleOf(kotlin.Pair<java.lang.String,? extends java.lang.Object?>... pairs);
     method public static android.os.PersistableBundle toPersistableBundle(java.util.Map<java.lang.String,? extends java.lang.Object?>);
   }
 
