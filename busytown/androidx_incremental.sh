@@ -66,6 +66,18 @@ function deleteOldOutDir() {
 }
 deleteOldOutDir
 
+# b/430983364: Remove cache to avoid privacySandbox flakiness
+function deletePrivacySandbox() {
+    rm -rf "$OUT_DIR/androidx/privacysandbox/databridge/integration-tests/testsdk"
+    rm -rf "$OUT_DIR/androidx/privacysandbox/tools/integration-tests/testsdk"
+    rm -rf "$OUT_DIR/androidx/privacysandbox/ui/integration-tests/testsdkprovider"
+    rm -rf "$OUT_DIR/androidx/privacysandbox/ui/integration-tests/mediateesdkprovider"
+    rm -rf "$OUT_DIR/androidx/privacysandbox/ui/macrobenchmark/testapp/mediateesdkprovider"
+    rm -rf "$OUT_DIR/androidx/privacysandbox/ui/macrobenchmark/testapp/testsdkprovider"
+}
+
+deletePrivacySandbox
+
 mkdir -p "$OUT_DIR"
 export DIST_DIR="$DIST_DIR/incremental"
 mkdir -p "$DIST_DIR"
