@@ -56,6 +56,8 @@ internal class LifecycleRetainScopeOwner : ViewModel() {
         fun startKeepingExitedValues() {
             if (!controlledRetainScope.isKeepingExitedValues) {
                 controlledRetainScope.startKeepingExitedValues()
+            } else {
+                endRetainCancellationHandle = null
             }
         }
 
@@ -78,6 +80,7 @@ internal class LifecycleRetainScopeOwner : ViewModel() {
         }
 
         fun onCleared() {
+            endRetainCancellationHandle = null
             if (controlledRetainScope.isKeepingExitedValues) {
                 controlledRetainScope.stopKeepingExitedValues()
             }
