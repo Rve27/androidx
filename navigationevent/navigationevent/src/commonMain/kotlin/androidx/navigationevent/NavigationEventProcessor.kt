@@ -20,7 +20,7 @@ import androidx.annotation.MainThread
 import androidx.navigationevent.NavigationEventDispatcher.Companion.PRIORITY_DEFAULT
 import androidx.navigationevent.NavigationEventDispatcher.Companion.PRIORITY_OVERLAY
 import androidx.navigationevent.NavigationEventDispatcher.Priority
-import androidx.navigationevent.NavigationEventInfo.NotProvided
+import androidx.navigationevent.NavigationEventInfo.None
 import androidx.navigationevent.NavigationEventState.Idle
 import androidx.navigationevent.NavigationEventState.InProgress
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -36,7 +36,7 @@ import kotlinx.coroutines.flow.update
 internal class NavigationEventProcessor {
 
     /** The private, mutable source of truth for the navigation state. */
-    internal val _state = MutableStateFlow<NavigationEventState<*>>(Idle(currentInfo = NotProvided))
+    internal val _state = MutableStateFlow<NavigationEventState<*>>(Idle(currentInfo = None))
 
     /**
      * The [StateFlow] from the highest-priority, enabled navigation handler.
@@ -190,7 +190,7 @@ internal class NavigationEventProcessor {
         }
 
         // Calculate the new state information from the active handler.
-        val newCurrentInfo = activeHandler.currentInfo ?: NotProvided
+        val newCurrentInfo = activeHandler.currentInfo ?: None
         val newBackInfo = resolveCombinedBackInfo()
         val newForwardInfo = activeHandler.forwardInfo
 
