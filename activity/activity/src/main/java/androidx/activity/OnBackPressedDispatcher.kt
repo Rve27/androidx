@@ -66,6 +66,8 @@ class OnBackPressedDispatcher(
     @Suppress("unused") private val onHasEnabledCallbacksChanged: Consumer<Boolean>?,
 ) {
 
+    private var hasEnabledCallbacks = false
+
     /**
      * This [OnBackPressedDispatcher] class will delegate all interactions to [eventDispatcher],
      * which provides a KMP-compatible API while preserving behavior compatibility with existing
@@ -78,15 +80,14 @@ class OnBackPressedDispatcher(
             NavigationEventDispatcher(fallbackOnBackPressed = { fallbackOnBackPressed?.run() })
         // This is to implement `OnBackPressedDispatcher.onHasEnabledCallbacksChanged`, which
         // can be set through OnBackPressedDispatcher's public constructor.
-        onHasEnabledCallbacksChanged?.let { callback ->
-            dispatcher.addInput(
-                object : NavigationEventInput() {
-                    override fun onHasEnabledHandlerChanged(hasEnabledHandler: Boolean) {
-                        callback.accept(hasEnabledHandler)
-                    }
+        dispatcher.addInput(
+            object : NavigationEventInput() {
+                override fun onHasEnabledHandlerChanged(hasEnabledHandler: Boolean) {
+                    hasEnabledCallbacks = hasEnabledHandler
+                    onHasEnabledCallbacksChanged?.accept(hasEnabledHandler)
                 }
-            )
-        }
+            }
+        )
         dispatcher
     }
 
@@ -209,7 +210,7 @@ class OnBackPressedDispatcher(
      *
      * @return True if there is at least one enabled callback.
      */
-    @MainThread fun hasEnabledCallbacks(): Boolean = eventDispatcher.hasEnabledHandler()
+    @MainThread fun hasEnabledCallbacks(): Boolean = hasEnabledCallbacks
 
     @VisibleForTesting
     @MainThread
