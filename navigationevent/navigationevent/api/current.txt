@@ -150,6 +150,10 @@ package androidx.navigationevent {
     property public androidx.navigationevent.NavigationEvent latestEvent;
   }
 
+  public fun interface OnBackCompletedFallback {
+    method public void onBackCompletedFallback();
+  }
+
   @RequiresApi(33) public final class OnBackInvokedInput extends androidx.navigationevent.NavigationEventInput {
     ctor public OnBackInvokedInput(android.window.OnBackInvokedDispatcher onBackInvokedDispatcher);
   }

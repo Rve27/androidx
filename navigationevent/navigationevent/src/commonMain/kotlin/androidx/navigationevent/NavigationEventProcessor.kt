@@ -430,21 +430,21 @@ internal class NavigationEventProcessor {
      * terminal event, so [inProgressHandler] is always cleared afterward.
      *
      * If no handler handles the event:
-     * - For [NavigationEventDirection.Back], the [fallbackOnBackPressed] action is invoked.
+     * - For [NavigationEventDirection.Back], the [onBackCompletedFallback] action is invoked.
      * - For [NavigationEventDirection.Forward], no fallback is triggered.
      *
      * After dispatching, the dispatcher always transitions back to [Idle] state.
      *
      * @param input The [NavigationEventInput] that sourced this event.
      * @param direction The direction of the navigation event that completed.
-     * @param fallbackOnBackPressed The action to invoke if no handler handles a back completion
+     * @param onBackCompletedFallback The action to invoke if no handler handles a back completion
      *   event.
      */
     @MainThread
     fun dispatchOnCompleted(
         input: NavigationEventInput,
         direction: NavigationEventDirection,
-        fallbackOnBackPressed: (() -> Unit)?,
+        onBackCompletedFallback: OnBackCompletedFallback?,
     ) {
         // TODO(mgalhardo): Update sharedProcessor to use input to distinguish events.
 
@@ -458,7 +458,7 @@ internal class NavigationEventProcessor {
 
         // No handler: only back events have a fallback to invoke.
         if (handler == null && direction == NavigationEventDirection.Back) {
-            fallbackOnBackPressed?.invoke()
+            onBackCompletedFallback?.onBackCompletedFallback()
         }
 
         // No handler: does nothing.
