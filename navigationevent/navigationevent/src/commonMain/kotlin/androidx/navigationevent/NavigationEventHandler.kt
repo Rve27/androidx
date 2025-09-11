@@ -26,15 +26,15 @@ import kotlin.jvm.JvmOverloads
  * (such as predictive back) and exposes the directional context needed to represent the app’s
  * current navigation affordances:
  * - [backInfo]: contextual information describing what is available when navigating back.
- * - [currentInfo]: the single active destination represented by this callback.
+ * - [currentInfo]: the single active destination represented by this handler.
  * - [forwardInfo]: contextual information describing what is available when navigating forward.
  *
  * Subclasses can override lifecycle methods (e.g., `onBackStarted`, `onBackProgressed`,
  * `onBackCompleted`, `onBackCancelled`, and their forward equivalents) to respond to gesture
  * progression and terminal outcomes.
  *
- * A callback must be registered with a [NavigationEventDispatcher] to receive events. It will only
- * be invoked while both the dispatcher and this callback are enabled.
+ * A handler must be registered with a [NavigationEventDispatcher] to receive events. It will only
+ * be invoked while both the dispatcher and this handler are enabled.
  *
  * @param isBackEnabled If `true`, this handler will process back navigation gestures.
  * @param isForwardEnabled If `true`, this handler will process forward navigation gestures.
@@ -55,7 +55,7 @@ public constructor(isBackEnabled: Boolean, isForwardEnabled: Boolean) {
     public constructor(isBackEnabled: Boolean) : this(isBackEnabled, isForwardEnabled = false)
 
     /**
-     * The contextual information representing the active destination for this callback.
+     * The contextual information representing the active destination for this handler.
      *
      * This is always a single value, provided by the currently active handler, and reflects the
      * foreground navigation state at this point in time.
@@ -64,7 +64,7 @@ public constructor(isBackEnabled: Boolean, isForwardEnabled: Boolean) {
         private set
 
     /**
-     * Contextual information describing the application's *back* state for this callback.
+     * Contextual information describing the application's *back* state for this handler.
      *
      * This is **not** a back stack. Instead, it contains app-defined [NavigationEventInfo] values
      * (for example, titles or metadata) that help render back affordances in the UI. The list may
@@ -74,7 +74,7 @@ public constructor(isBackEnabled: Boolean, isForwardEnabled: Boolean) {
         private set
 
     /**
-     * Contextual information describing the application's *forward* state for this callback.
+     * Contextual information describing the application's *forward* state for this handler.
      *
      * This is **not** a forward stack. Instead, it contains app-defined [NavigationEventInfo]
      * values that help render forward affordances in the UI. The list may be empty if no forward
@@ -84,24 +84,24 @@ public constructor(isBackEnabled: Boolean, isForwardEnabled: Boolean) {
         private set
 
     /**
-     * Controls whether this callback is active and should be considered for back event dispatching.
+     * Controls whether this handler is active and should be considered for back event dispatching.
      *
-     * A callback's effective enabled state is hierarchical; it is directly influenced by the
+     * A handler's effective enabled state is hierarchical; it is directly influenced by the
      * [NavigationEventDispatcher] it is registered with.
      *
      * **Getting the value**:
      * - This will return `false` if the associated `dispatcher` exists and its `isEnabled` state is
-     *   `false`, regardless of the callback's own local setting. This provides a powerful mechanism
-     *   to disable a whole group of callbacks at once by simply disabling their dispatcher.
-     * - Otherwise, it returns the callback's own locally stored state.
+     *   `false`, regardless of the handler's own local setting. This provides a powerful mechanism
+     *   to disable a whole group of handlers at once by simply disabling their dispatcher.
+     * - Otherwise, it returns the handler's own locally stored state.
      *
      * **Setting the value**:
-     * - This updates the local enabled state of the callback itself.
+     * - This updates the local enabled state of the handler itself.
      * - More importantly, it immediately notifies the `dispatcher` (if one is attached) that its
-     *   list of enabled callbacks might have changed, prompting a re-evaluation. This ensures the
+     *   list of enabled handlers might have changed, prompting a re-evaluation. This ensures the
      *   system's state remains consistent and responsive to changes.
      *
-     * For a callback to be truly active, both its local `isEnabled` property and its dispatcher's
+     * For a handler to be truly active, both its local `isEnabled` property and its dispatcher's
      * `isEnabled` property must evaluate to `true`.
      */
     public var isBackEnabled: Boolean = isBackEnabled
@@ -115,10 +115,10 @@ public constructor(isBackEnabled: Boolean, isForwardEnabled: Boolean) {
         }
 
     /**
-     * Controls whether this callback is active for forward events and should be considered for
+     * Controls whether this handler is active for forward events and should be considered for
      * forward event dispatching.
      *
-     * For a callback to be truly active for forward events, both its local `isForwardEnabled`
+     * For a handler to be truly active for forward events, both its local `isForwardEnabled`
      * property and its dispatcher's `isForwardEnabled` property must evaluate to `true`.
      */
     public var isForwardEnabled: Boolean = isForwardEnabled
@@ -134,15 +134,15 @@ public constructor(isBackEnabled: Boolean, isForwardEnabled: Boolean) {
     internal var dispatcher: NavigationEventDispatcher? = null
 
     /**
-     * Removes this callback from the [NavigationEventDispatcher] it is registered with. If the
-     * callback is not registered, this call does nothing.
+     * Removes this handler from the [NavigationEventDispatcher] it is registered with. If the
+     * handler is not registered, this call does nothing.
      */
     public fun remove() {
         dispatcher?.removeHandler(this)
     }
 
     /**
-     * Sets the directional navigation context for this callback.
+     * Sets the directional navigation context for this handler.
      *
      * Updates the three pieces of contextual information used to describe navigation affordances:
      * - [currentInfo]: the active destination.
