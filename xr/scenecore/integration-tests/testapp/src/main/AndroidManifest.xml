@@ -40,6 +40,7 @@
             android:exported="false" />
         <activity
             android:name=".fsmhsmtransition.FsmHsmTransitionActivity"
+            android:configChanges="screenSize|smallestScreenSize|orientation|screenLayout"
             android:exported="true" />
         <activity
             android:name=".visibility.VisibilityActivity"
