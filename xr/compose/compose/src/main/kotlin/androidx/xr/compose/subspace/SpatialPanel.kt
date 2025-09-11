@@ -32,6 +32,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.currentComposer
+import androidx.compose.runtime.currentCompositeKeyHashCode
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.UiComposable
@@ -427,6 +428,7 @@ public fun SpatialPanel(
     val view = rememberComposeView()
     val session = checkNotNull(LocalSession.current) { "session must be initialized" }
     val density = LocalDensity.current
+    val entityName = "SpatialPanel-${currentCompositeKeyHashCode}"
 
     val corePanelEntity: CorePanelEntity = remember {
         CorePanelEntity(
@@ -434,7 +436,7 @@ public fun SpatialPanel(
                     session = session,
                     view = view,
                     dimensions = SpatialPanelDimensions.minimumPanelDimension,
-                    name = entityName("SpatialPanel"),
+                    name = entityName,
                     pose = Pose.Identity,
                 )
             )
@@ -582,17 +584,12 @@ public fun SpatialActivityPanel(
     val session = checkNotNull(LocalSession.current) { "session must be initialized" }
     val dialogManager = LocalDialogManager.current
     val density = LocalDensity.current
+    val entityName = "ActivityPanel-${intent.action}-${currentCompositeKeyHashCode}"
 
     val pixelDimensions = IntSize2d(DEFAULT_SIZE_PX, DEFAULT_SIZE_PX)
 
     val corePanelEntity: CoreActivityPanelEntity = remember {
-        CoreActivityPanelEntity(
-            ActivityPanelEntity.create(
-                session,
-                pixelDimensions,
-                entityName("ActivityPanel-${intent.action}"),
-            )
-        )
+        CoreActivityPanelEntity(ActivityPanelEntity.create(session, pixelDimensions, entityName))
     }
 
     SideEffect { corePanelEntity.setShape(shape, density) }
@@ -614,6 +611,7 @@ public fun SpatialActivityPanel(
                     View(localContext).apply { foreground = DEFAULT_SCRIM_ALPHA.toDrawable() }
                 }
 
+            val entityName = "ScrimPanel-${currentCompositeKeyHashCode}"
             val scrimPanelEntity by
                 remember(session, scrimView) {
                     disposableValueOf(
@@ -623,7 +621,7 @@ public fun SpatialActivityPanel(
                                     view = scrimView,
                                     pixelDimensions =
                                         corePanelEntity.size.run { IntSize2d(width, height) },
-                                    name = entityName("ScrimPanel"),
+                                    name = entityName,
                                     pose = Pose.Identity,
                                 )
                             )

@@ -240,10 +240,6 @@ package androidx.xr.compose.subspace {
     property public boolean shouldScaleWithDistance;
   }
 
-  public final class RememberCoreEntityKt {
-    method @kotlin.PublishedApi internal static String entityName(String name);
-  }
-
   public final class ResizePolicy {
     ctor public ResizePolicy();
     ctor public ResizePolicy(optional boolean isEnabled, optional androidx.xr.compose.unit.DpVolumeSize minimumSize, optional androidx.xr.compose.unit.DpVolumeSize maximumSize, optional boolean shouldMaintainAspectRatio, optional kotlin.jvm.functions.Function1<? super androidx.xr.compose.unit.IntVolumeSize,java.lang.Boolean>? onSizeChange);
