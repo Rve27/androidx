@@ -315,8 +315,8 @@ RemovedFromKotlin: androidx.compose.ui.BiasAlignment.Horizontal#getBias():
     Source breaking change: method androidx.compose.ui.BiasAlignment.Horizontal.getBias() can no longer be resolved from Kotlin source
 RemovedFromKotlin: androidx.compose.ui.BiasAlignment.Vertical#getBias():
     Source breaking change: method androidx.compose.ui.BiasAlignment.Vertical.getBias() can no longer be resolved from Kotlin source
-RemovedFromKotlin: androidx.compose.ui.ComposedModifierKt#materialize(androidx.compose.runtime.Composer, androidx.compose.ui.Modifier):
-    Source breaking change: method androidx.compose.ui.ComposedModifierKt.materialize(androidx.compose.runtime.Composer,androidx.compose.ui.Modifier) can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.ui.ComposedModifierKt#materializeModifier(androidx.compose.runtime.Composer, androidx.compose.ui.Modifier):
+    Source breaking change: method androidx.compose.ui.ComposedModifierKt.materializeModifier(androidx.compose.runtime.Composer,androidx.compose.ui.Modifier) can no longer be resolved from Kotlin source
 RemovedFromKotlin: androidx.compose.ui.Modifier.Node#getCoroutineScope():
     Source breaking change: method androidx.compose.ui.Modifier.Node.getCoroutineScope() can no longer be resolved from Kotlin source
 RemovedFromKotlin: androidx.compose.ui.Modifier.Node#getNode():
