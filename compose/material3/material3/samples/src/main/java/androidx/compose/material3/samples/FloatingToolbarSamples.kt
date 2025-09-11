@@ -145,24 +145,7 @@ fun OverflowingHorizontalFloatingToolbarSample() {
                     expanded = true,
                     leadingContent = { LeadingContent() },
                     trailingContent = {
-                        AppBarRow(
-                            overflowIndicator = { menuState ->
-                                IconButton(
-                                    onClick = {
-                                        if (menuState.isExpanded) {
-                                            menuState.dismiss()
-                                        } else {
-                                            menuState.show()
-                                        }
-                                    }
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Filled.MoreVert,
-                                        contentDescription = "Localized description",
-                                    )
-                                }
-                            }
-                        ) {
+                        AppBarRow {
                             clickableItem(
                                 onClick = { /* doSomething() */ },
                                 icon = {
@@ -351,24 +334,7 @@ fun OverflowingVerticalFloatingToolbarSample() {
                     expanded = true,
                     leadingContent = { LeadingContent() },
                     trailingContent = {
-                        AppBarColumn(
-                            overflowIndicator = { menuState ->
-                                IconButton(
-                                    onClick = {
-                                        if (menuState.isExpanded) {
-                                            menuState.dismiss()
-                                        } else {
-                                            menuState.show()
-                                        }
-                                    }
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Filled.MoreVert,
-                                        contentDescription = "Localized description",
-                                    )
-                                }
-                            }
-                        ) {
+                        AppBarColumn {
                             clickableItem(
                                 onClick = { /* doSomething() */ },
                                 icon = {
