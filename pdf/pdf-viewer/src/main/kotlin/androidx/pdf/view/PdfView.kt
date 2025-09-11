@@ -495,6 +495,12 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
             else if (value == FastScrollVisibility.ALWAYS_HIDE) fastScroller?.hide()
         }
 
+    /**
+     * Controls whether the fast scroller renders by default. If `false`, [drawFastScroller] must be
+     * called explicitly to render it.
+     */
+    internal var enableDefaultFastScrollerRendering: Boolean = true
+
     // Stores width set from onSizeChanged or while restoring state
     private var oldWidth: Int? = null
 
@@ -902,11 +908,22 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
 
         // Fast scroller is non-content and shouldn't be affected by zoom. It's drawn after
         // restoring the Canvas to its unscaled state
+        if (!enableDefaultFastScrollerRendering) {
+            canvas.save()
+            // Adjust the canvas based on current scroll position to draw fast scroller in view
+            // coordinates.
+            canvas.translate(scrollX.toFloat(), scrollY.toFloat())
+            drawFastScroller(canvas)
+            canvas.restore()
+        }
+    }
+
+    /** Draws the fast scroller UI in view coordinates. */
+    internal fun drawFastScroller(canvas: Canvas) {
         val documentPageCount = pdfDocument?.pageCount ?: 0
         if (documentPageCount > 1) {
             fastScroller?.drawScroller(
                 canvas = canvas,
-                scrollX = scrollX,
                 scrollY = scrollY,
                 viewWidth = width,
                 viewHeight = height,
