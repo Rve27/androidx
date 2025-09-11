@@ -173,6 +173,10 @@ androidXMultiplatform {
                 // KT-57848
                 nativeCompilation.freeArgs.addAll("-Dat_quick_exit=atexit", "-Dquick_exit=exit")
             }
+            if (nativeCompilation.konanTarget.family == Family.LINUX) {
+                // b/444260629: Compile with no exceptions, not used and reduces linking deps
+                nativeCompilation.freeArgs.add("-fno-exceptions")
+            }
         }
         configureTargets(requiredNativeTargets)
     }
