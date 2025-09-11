@@ -30,6 +30,13 @@ dependencies {
     androidTestImplementation(libs.testRules)
     androidTestImplementation(libs.truth)
     androidTestImplementation(project(":internal-testutils-truth"))
+
+    testImplementation(libs.junit)
+    testImplementation(libs.testCore)
+    testImplementation(libs.testRunner)
+    testImplementation(libs.testRules)
+    testImplementation(libs.truth)
+    testImplementation(project(":internal-testutils-truth"))
 }
 
 androidx {
@@ -39,6 +46,8 @@ androidx {
     inceptionYear = "2018"
     description = "Kotlin extensions for 'core' artifact"
     legacyDisableKotlinStrictApiMode = true
+
+    enableRobolectric()
 }
 
 android {

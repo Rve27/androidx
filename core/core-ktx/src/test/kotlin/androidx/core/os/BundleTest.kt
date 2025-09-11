@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("DEPRECATION")
+
 package androidx.core.os
 
 import android.content.Context
@@ -25,7 +27,6 @@ import android.util.Size
 import android.util.SizeF
 import android.view.View
 import androidx.test.core.app.ApplicationProvider
-import androidx.test.filters.SmallTest
 import androidx.testutils.assertThrows
 import com.google.common.truth.Truth.assertThat
 import java.util.concurrent.atomic.AtomicInteger
@@ -34,10 +35,12 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertSame
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 
-@SmallTest
+@RunWith(RobolectricTestRunner::class)
 class BundleTest {
-    @Suppress("DEPRECATION")
+    @Suppress("JavaDefaultMethodsNotOverriddenByDelegation")
     @Test
     fun bundleOfValid() {
         val bundleValue = Bundle()
@@ -45,6 +48,8 @@ class BundleTest {
         val parcelableValue = Rect(1, 2, 3, 4)
         val serializableValue = AtomicInteger(1)
         val binderValue = object : IBinder by Binder() {}
+        val sizeValue = Size(1, 1)
+        val sizeFValue = SizeF(1f, 1f)
 
         val bundle =
             bundleOf(
@@ -74,9 +79,11 @@ class BundleTest {
                 "charSequenceArray" to arrayOf<CharSequence>("hey"),
                 "serializableArray" to arrayOf(serializableValue),
                 "serializable" to serializableValue,
+                "size" to sizeValue,
+                "sizeF" to sizeFValue,
             )
 
-        assertEquals(26, bundle.size())
+        assertEquals(28, bundle.size())
 
         assertNull(bundle["null"])
 
@@ -111,15 +118,6 @@ class BundleTest {
             .containsExactly(serializableValue)
 
         assertSame(serializableValue, bundle["serializable"])
-    }
-
-    @Suppress("DEPRECATION")
-    @Test
-    fun bundleOfValidApi21() {
-        val sizeValue = Size(1, 1)
-        val sizeFValue = SizeF(1f, 1f)
-
-        val bundle = bundleOf("size" to sizeValue, "sizeF" to sizeFValue)
 
         assertSame(sizeValue, bundle["size"])
         assertSame(sizeFValue, bundle["sizeF"])
