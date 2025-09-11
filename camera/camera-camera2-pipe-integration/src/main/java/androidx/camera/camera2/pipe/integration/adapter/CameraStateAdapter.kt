@@ -247,6 +247,8 @@ public class CameraStateAdapter @Inject constructor() {
                     CameraError.ERROR_DO_NOT_DISTURB_ENABLED ->
                         CameraState.ERROR_DO_NOT_DISTURB_MODE_ENABLED
                     CameraError.ERROR_UNKNOWN_EXCEPTION -> CameraState.ERROR_CAMERA_FATAL_ERROR
+                    CameraError.ERROR_CAMERA_OPENER -> CameraState.ERROR_CAMERA_FATAL_ERROR
+                    CameraError.ERROR_CAMERA_OPEN_TIMEOUT -> CameraState.ERROR_CAMERA_FATAL_ERROR
                     else -> throw IllegalArgumentException("Unexpected CameraError: $this")
                 }
             )
