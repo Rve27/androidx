@@ -150,7 +150,8 @@ public final class WindowLayoutInfoTest {
     }
 
     @Test
-    public void testConstructor_defaultEngagementModeFlags() {
+    @SuppressWarnings("deprecation")
+    public void testDeprecatedConstructor_defaultEngagementModeFlags() {
         WindowLayoutInfo info = new WindowLayoutInfo(Collections.emptyList());
 
         int expected = ENGAGEMENT_MODE_FLAG_VISUALS_ON | ENGAGEMENT_MODE_FLAG_AUDIO_ON;

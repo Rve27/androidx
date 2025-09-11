@@ -401,7 +401,7 @@ package androidx.window.extensions.layout {
   }
 
   public class WindowLayoutInfo {
-    ctor public WindowLayoutInfo(java.util.List<androidx.window.extensions.layout.DisplayFeature!>);
+    ctor @Deprecated public WindowLayoutInfo(java.util.List<androidx.window.extensions.layout.DisplayFeature!>);
     method public java.util.List<androidx.window.extensions.layout.DisplayFeature!> getDisplayFeatures();
     method public int getEngagementModeFlags();
     method public boolean hasFlag(int);
