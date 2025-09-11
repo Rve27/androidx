@@ -36,10 +36,6 @@ public class OnBackInvokedInput(private val onBackInvokedDispatcher: OnBackInvok
 
     private var backInvokedCallbackRegistered = false
 
-    override fun onAdded(dispatcher: NavigationEventDispatcher) {
-        updateBackInvokedCallbackState(dispatcher.hasEnabledHandler())
-    }
-
     override fun onRemoved() {
         updateBackInvokedCallbackState(false)
     }

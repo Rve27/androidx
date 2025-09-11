@@ -53,7 +53,6 @@ package androidx.navigationevent {
     method @MainThread public void dispose();
     method @InaccessibleFromKotlin public kotlinx.coroutines.flow.StateFlow<androidx.navigationevent.NavigationEventState<androidx.navigationevent.NavigationEventInfo>> getState();
     method @KotlinOnly public inline <reified T extends androidx.navigationevent.NavigationEventInfo> kotlinx.coroutines.flow.StateFlow<androidx.navigationevent.NavigationEventState<T>> getState(kotlinx.coroutines.CoroutineScope scope, T initialInfo);
-    method public boolean hasEnabledHandler();
     method @InaccessibleFromKotlin public boolean isEnabled();
     method @MainThread public void removeInput(androidx.navigationevent.NavigationEventInput input);
     method @InaccessibleFromKotlin public void setEnabled(boolean);
