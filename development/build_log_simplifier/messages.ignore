@@ -35,6 +35,7 @@ Configuration cache entry reused\.
 Configuration cache entry stored\.
 Calculating task graph as no cached configuration is available for tasks.*
 Calculating task graph as configuration cache cannot be reused because the file system entry.*
+Calculating task graph as configuration cache cannot be reused because directory.*
 See the profiling report at\: file\:\/\/\$OUT_DIR\/androidx\/build\/reports\/profile\/profile\-[0-9]+\-[0-9]+\-[0-9]+\-[0-9]+\-[0-9]+\-[0-9]+\.html
 # > Task :lifecycle:lifecycle-common:compileJava
 Note: \$[^ ]+ uses or overrides a deprecated API\.
