@@ -1935,6 +1935,38 @@ class NavigationEventDispatcherTest {
         assertThat(combinedBackInfo).containsExactly(overlayInfo, defaultInfo).inOrder()
     }
 
+    @Test
+    fun resolveEnabledHandler_anyDirection_honorsLifoAcrossDirections() {
+        val dispatcher = NavigationEventDispatcher()
+
+        // Add an older BACK-only handler.
+        val backInfo = HomeScreenInfo("back")
+        val backOnly =
+            TestNavigationEventHandler(
+                currentInfo = backInfo,
+                isBackEnabled = true,
+                isForwardEnabled = false,
+            )
+        dispatcher.addHandler(backOnly)
+
+        // Add a newer FORWARD-only handler.
+        val forwardInfo = DetailsScreenInfo("forward")
+        val forwardOnly =
+            TestNavigationEventHandler(
+                currentInfo = forwardInfo,
+                isBackEnabled = false,
+                isForwardEnabled = true,
+            )
+        dispatcher.addHandler(forwardOnly)
+
+        // The most recently added enabled handler should always win, regardless of direction.
+        assertThat(dispatcher.state.value).isEqualTo(Idle(forwardInfo))
+
+        // After removing the newer handler, the older one should become active.
+        forwardOnly.remove()
+        assertThat(dispatcher.state.value).isEqualTo(Idle(backInfo))
+    }
+
     // endregion
 
     // region Dispatching to Unimplemented Handlers
