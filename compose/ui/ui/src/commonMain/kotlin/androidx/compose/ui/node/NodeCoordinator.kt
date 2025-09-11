@@ -1218,6 +1218,9 @@ internal abstract class NodeCoordinator(override val layoutNode: LayoutNode) :
     fun onLayoutNodeDetach() {
         // we release the layer as the node might be moved to another owner
         releaseLayer()
+        if (layoutNode.isPlaced) {
+            onUnplaced()
+        }
     }
 
     /**
