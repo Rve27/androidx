@@ -115,11 +115,14 @@ internal class NavigationEventProcessor {
      */
     val overlayInputs = mutableSetOf<NavigationEventInput>()
 
-    /** Whether at least one callback with `Default` priority is enabled. */
+    /** Whether at least one handler with [PRIORITY_DEFAULT] is enabled. */
     var hasEnabledDefaultHandlers: Boolean = false
 
-    /** Whether at least one callback with `Overlay` priority is enabled. */
+    /** Whether at least one handler with [PRIORITY_OVERLAY] is enabled. */
     var hasEnabledOverlayHandlers: Boolean = false
+
+    /** Whether at least one handler with is enabled. */
+    var hasEnabledAnyHandlers: Boolean = false
 
     /**
      * Recalculates the enabled status for all callback priorities, notifies listeners of any
@@ -134,9 +137,11 @@ internal class NavigationEventProcessor {
         // (`any` also short-circuits on the first match, making it strictly cheaper.)
         val newDefaultEnabled = defaultHandlers.any { it.isBackEnabled || it.isForwardEnabled }
         val newOverlayEnabled = overlayHandlers.any { it.isBackEnabled || it.isForwardEnabled }
+        val newAnyEnabled = newDefaultEnabled || newOverlayEnabled
 
         val defaultEnabledChanged = hasEnabledDefaultHandlers != newDefaultEnabled
         val overlayEnabledChanged = hasEnabledOverlayHandlers != newOverlayEnabled
+        val anyEnabledChanged = hasEnabledAnyHandlers != newAnyEnabled
 
         // 2) Notify only when a priority’s state actually changed.
         if (defaultEnabledChanged) {
@@ -151,11 +156,9 @@ internal class NavigationEventProcessor {
             }
         }
 
-        // Unspecified listeners reflect the aggregate flag; notify only if either priority changed.
-        if (defaultEnabledChanged || overlayEnabledChanged) {
-            val anyEnabled = newDefaultEnabled || newOverlayEnabled
+        if (anyEnabledChanged) {
             for (input in unspecifiedInputs) {
-                input.doOnHasEnabledHandlersChanged(hasEnabledHandlers = anyEnabled)
+                input.doOnHasEnabledHandlersChanged(hasEnabledHandlers = newAnyEnabled)
             }
         }
 
@@ -163,6 +166,7 @@ internal class NavigationEventProcessor {
         // previous published state. This prevents spurious notifications within the same cycle.
         hasEnabledDefaultHandlers = newDefaultEnabled
         hasEnabledOverlayHandlers = newOverlayEnabled
+        hasEnabledAnyHandlers = newAnyEnabled
 
         // 4) Synchronize the global navigation state to the active (highest-priority) enabled
         // callback. Order: in-progress > back > forward.
