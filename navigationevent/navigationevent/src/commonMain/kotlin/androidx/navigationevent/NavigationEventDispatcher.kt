@@ -343,7 +343,7 @@ private constructor(
                 sharedProcessor.hasEnabledDefaultHandlers ||
                     sharedProcessor.hasEnabledOverlayHandlers
             // Input must get the enablement state immediately, otherwise it may miss it.
-            input.doOnHasEnabledHandlerChanged(hasEnabledHandler)
+            input.doOnHasEnabledHandlersChanged(hasEnabledHandler)
         }
     }
 
@@ -396,7 +396,7 @@ private constructor(
                     else -> error("unreachable")
                 }
             // Input must get the enablement state immediately, otherwise it may miss it.
-            input.doOnHasEnabledHandlerChanged(hasEnabledHandler)
+            input.doOnHasEnabledHandlersChanged(hasEnabledHandler)
         }
     }
 
