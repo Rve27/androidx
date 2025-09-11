@@ -765,7 +765,7 @@ private constructor(
             extras.getData(ObservableQueryResultBinderProvider.OriginalTypeArg::class)?.original
                 ?: searchingType
 
-        if (collectionType.nullability != XNullability.NONNULL) {
+        if (collectionType.nullability == XNullability.NULLABLE) {
             context.logger.w(
                 Warning.UNNECESSARY_NULLABILITY_IN_DAO_RETURN_TYPE,
                 ProcessorErrors.nullableCollectionOrArrayReturnTypeInDaoFunction(
@@ -776,7 +776,7 @@ private constructor(
         }
 
         // Since Array has typeArg in the componentType and not typeArguments, need a special check.
-        if (arrayComponentType != null && arrayComponentType.nullability != XNullability.NONNULL) {
+        if (arrayComponentType != null && arrayComponentType.nullability == XNullability.NULLABLE) {
             context.logger.w(
                 Warning.UNNECESSARY_NULLABILITY_IN_DAO_RETURN_TYPE,
                 ProcessorErrors.nullableComponentInDaoFunctionReturnType(
@@ -787,7 +787,7 @@ private constructor(
         }
 
         collectionType.typeArguments.forEach { typeArg ->
-            if (typeArg.nullability != XNullability.NONNULL) {
+            if (typeArg.nullability == XNullability.NULLABLE) {
                 context.logger.w(
                     Warning.UNNECESSARY_NULLABILITY_IN_DAO_RETURN_TYPE,
                     ProcessorErrors.nullableComponentInDaoFunctionReturnType(

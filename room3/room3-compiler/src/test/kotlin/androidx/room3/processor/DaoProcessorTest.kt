@@ -834,6 +834,57 @@ class DaoProcessorTest(private val enableVerification: Boolean) {
         }
     }
 
+    @Test
+    fun testSelectQueryWithNullableCollectionReturnJavaSource() {
+        val dao =
+            Source.java(
+                "MyDao",
+                """
+            import androidx.room3.*;
+            import java.util.List;
+
+            @Dao
+            public interface MyDao {
+              @Query("SELECT * FROM MyEntity")
+              List<MyEntity> nullableList();
+
+              @Query("SELECT * FROM MyEntity")
+              MyEntity[] nullableArray();
+            }
+            """
+                    .trimIndent(),
+            )
+        val entity =
+            Source.java(
+                "MyEntity",
+                """
+                import androidx.room3.*;
+
+                @Entity
+                public class MyEntity {
+                    @PrimaryKey
+                    public int pk;
+                }
+            """
+                    .trimIndent(),
+            )
+        runKspTest(
+            sources = listOf(dao, entity),
+            options = mapOf(Context.BooleanProcessorOptions.GENERATE_KOTLIN.argName to "true"),
+        ) { invocation ->
+            val dao = invocation.processingEnv.requireTypeElement("MyDao")
+            val dbType = invocation.context.processingEnv.requireType(ROOM_DB)
+            DaoProcessor(
+                    baseContext = invocation.context,
+                    element = dao,
+                    dbType = dbType,
+                    dbVerifier = null,
+                )
+                .process()
+            invocation.assertCompilationResult { hasNoWarnings() }
+        }
+    }
+
     private fun singleDao(
         vararg inputs: String,
         classpathFiles: List<File> = emptyList(),
