@@ -107,6 +107,14 @@ ChangedType: androidx.compose.ui.semantics.SemanticsOwnerKt#getAllSemanticsNodes
     Binary breaking change: Method androidx.compose.ui.semantics.SemanticsOwnerKt.getAllSemanticsNodes has changed return type from java.util.List<androidx.compose.ui.semantics.SemanticsNode> to java.util.List
 
 
+DefaultValueChange: androidx.compose.ui.window.AndroidDialog_androidKt#Dialog(kotlin.jvm.functions.Function0<kotlin.Unit>, androidx.compose.ui.window.DialogProperties, kotlin.jvm.functions.Function0<kotlin.Unit>) parameter #1:
+    Source breaking change: Attempted to remove default value from parameter properties in androidx.compose.ui.window.AndroidDialog_androidKt.Dialog
+DefaultValueChange: androidx.compose.ui.window.AndroidPopup_androidKt#Popup(androidx.compose.ui.window.PopupPositionProvider, kotlin.jvm.functions.Function0<kotlin.Unit>, androidx.compose.ui.window.PopupProperties, kotlin.jvm.functions.Function0<kotlin.Unit>) parameter #1:
+    Source breaking change: Attempted to remove default value from parameter onDismissRequest in androidx.compose.ui.window.AndroidPopup_androidKt.Popup
+DefaultValueChange: androidx.compose.ui.window.AndroidPopup_androidKt#Popup(androidx.compose.ui.window.PopupPositionProvider, kotlin.jvm.functions.Function0<kotlin.Unit>, androidx.compose.ui.window.PopupProperties, kotlin.jvm.functions.Function0<kotlin.Unit>) parameter #2:
+    Source breaking change: Attempted to remove default value from parameter properties in androidx.compose.ui.window.AndroidPopup_androidKt.Popup
+
+
 ParameterNameChange: androidx.compose.ui.FrameRateKt#preferredFrameRate(androidx.compose.ui.Modifier, float) parameter #1:
     Source breaking change: Attempted to change parameter name from frameRateCategory to frameRate in method androidx.compose.ui.FrameRateKt.preferredFrameRate
 
@@ -143,14 +151,32 @@ RemovedDeprecatedMethod: androidx.compose.ui.semantics.SemanticsPropertiesKt#set
     Binary breaking change: Removed deprecated method androidx.compose.ui.semantics.SemanticsPropertiesKt.setImeAction(androidx.compose.ui.semantics.SemanticsPropertyReceiver,int)
 
 
+RemovedFromBytecode: androidx.compose.ui.graphics.GraphicsLayerScopeKt#rememberGraphicsLayer():
+    Binary breaking change: method androidx.compose.ui.graphics.GraphicsLayerScopeKt.rememberGraphicsLayer() has been removed from bytecode
 RemovedFromBytecode: androidx.compose.ui.graphics.TransformOrigin#component1():
     Binary breaking change: method androidx.compose.ui.graphics.TransformOrigin.component1() has been removed from bytecode
 RemovedFromBytecode: androidx.compose.ui.graphics.TransformOrigin#component2():
     Binary breaking change: method androidx.compose.ui.graphics.TransformOrigin.component2() has been removed from bytecode
 RemovedFromBytecode: androidx.compose.ui.graphics.TransformOrigin#copy(float, float):
     Binary breaking change: method androidx.compose.ui.graphics.TransformOrigin.copy(float,float) has been removed from bytecode
+RemovedFromBytecode: androidx.compose.ui.graphics.vector.VectorComposeKt#Group(String, float, float, float, float, float, float, float, java.util.List<? extends androidx.compose.ui.graphics.vector.PathNode>, kotlin.jvm.functions.Function0<kotlin.Unit>):
+    Binary breaking change: method androidx.compose.ui.graphics.vector.VectorComposeKt.Group(String,float,float,float,float,float,float,float,java.util.List<androidx.compose.ui.graphics.vector.PathNode>,kotlin.jvm.functions.Function0<kotlin.Unit>) has been removed from bytecode
+RemovedFromBytecode: androidx.compose.ui.graphics.vector.VectorPainterKt#RenderVectorGroup(androidx.compose.ui.graphics.vector.VectorGroup, java.util.Map<java.lang.String,? extends androidx.compose.ui.graphics.vector.VectorConfig>):
+    Binary breaking change: method androidx.compose.ui.graphics.vector.VectorPainterKt.RenderVectorGroup(androidx.compose.ui.graphics.vector.VectorGroup,java.util.Map<java.lang.String,androidx.compose.ui.graphics.vector.VectorConfig>) has been removed from bytecode
+RemovedFromBytecode: androidx.compose.ui.graphics.vector.VectorPainterKt#rememberVectorPainter(androidx.compose.ui.graphics.vector.ImageVector):
+    Binary breaking change: method androidx.compose.ui.graphics.vector.VectorPainterKt.rememberVectorPainter(androidx.compose.ui.graphics.vector.ImageVector) has been removed from bytecode
 RemovedFromBytecode: androidx.compose.ui.input.pointer.util.VelocityTracker#calculateVelocity():
     Binary breaking change: method androidx.compose.ui.input.pointer.util.VelocityTracker.calculateVelocity() has been removed from bytecode
+RemovedFromBytecode: androidx.compose.ui.layout.LayoutKt#Layout(androidx.compose.ui.Modifier, androidx.compose.ui.layout.MeasurePolicy):
+    Binary breaking change: method androidx.compose.ui.layout.LayoutKt.Layout(androidx.compose.ui.Modifier,androidx.compose.ui.layout.MeasurePolicy) has been removed from bytecode
+RemovedFromBytecode: androidx.compose.ui.layout.LayoutKt#Layout(java.util.List<? extends kotlin.jvm.functions.Function0<kotlin.Unit>>, androidx.compose.ui.Modifier, androidx.compose.ui.layout.MultiContentMeasurePolicy):
+    Binary breaking change: method androidx.compose.ui.layout.LayoutKt.Layout(java.util.List<kotlin.jvm.functions.Function0<kotlin.Unit>>,androidx.compose.ui.Modifier,androidx.compose.ui.layout.MultiContentMeasurePolicy) has been removed from bytecode
+RemovedFromBytecode: androidx.compose.ui.layout.LayoutKt#Layout(kotlin.jvm.functions.Function0<kotlin.Unit>, androidx.compose.ui.Modifier, androidx.compose.ui.layout.MeasurePolicy):
+    Binary breaking change: method androidx.compose.ui.layout.LayoutKt.Layout(kotlin.jvm.functions.Function0<kotlin.Unit>,androidx.compose.ui.Modifier,androidx.compose.ui.layout.MeasurePolicy) has been removed from bytecode
+RemovedFromBytecode: androidx.compose.ui.layout.LayoutKt#MultiMeasureLayout(androidx.compose.ui.Modifier, kotlin.jvm.functions.Function0<kotlin.Unit>, androidx.compose.ui.layout.MeasurePolicy):
+    Binary breaking change: method androidx.compose.ui.layout.LayoutKt.MultiMeasureLayout(androidx.compose.ui.Modifier,kotlin.jvm.functions.Function0<kotlin.Unit>,androidx.compose.ui.layout.MeasurePolicy) has been removed from bytecode
+RemovedFromBytecode: androidx.compose.ui.layout.LookaheadScopeKt#LookaheadScope(kotlin.jvm.functions.Function1<? super androidx.compose.ui.layout.LookaheadScope,kotlin.Unit>):
+    Binary breaking change: method androidx.compose.ui.layout.LookaheadScopeKt.LookaheadScope(kotlin.jvm.functions.Function1<androidx.compose.ui.layout.LookaheadScope,kotlin.Unit>) has been removed from bytecode
 RemovedFromBytecode: androidx.compose.ui.layout.ScaleFactor#component1():
     Binary breaking change: method androidx.compose.ui.layout.ScaleFactor.component1() has been removed from bytecode
 RemovedFromBytecode: androidx.compose.ui.layout.ScaleFactor#component2():
@@ -161,16 +187,60 @@ RemovedFromBytecode: androidx.compose.ui.layout.ScaleFactor#div(float):
     Binary breaking change: method androidx.compose.ui.layout.ScaleFactor.div(float) has been removed from bytecode
 RemovedFromBytecode: androidx.compose.ui.layout.ScaleFactor#times(float):
     Binary breaking change: method androidx.compose.ui.layout.ScaleFactor.times(float) has been removed from bytecode
+RemovedFromBytecode: androidx.compose.ui.layout.SubcomposeLayoutKt#SubcomposeLayout(androidx.compose.ui.Modifier, kotlin.jvm.functions.Function2<? super androidx.compose.ui.layout.SubcomposeMeasureScope,? super androidx.compose.ui.unit.Constraints,? extends androidx.compose.ui.layout.MeasureResult>):
+    Binary breaking change: method androidx.compose.ui.layout.SubcomposeLayoutKt.SubcomposeLayout(androidx.compose.ui.Modifier,kotlin.jvm.functions.Function2<androidx.compose.ui.layout.SubcomposeMeasureScope,androidx.compose.ui.unit.Constraints,androidx.compose.ui.layout.MeasureResult>) has been removed from bytecode
+RemovedFromBytecode: androidx.compose.ui.layout.SubcomposeLayoutKt#SubcomposeLayout(androidx.compose.ui.layout.SubcomposeLayoutState, androidx.compose.ui.Modifier, kotlin.jvm.functions.Function2<? super androidx.compose.ui.layout.SubcomposeMeasureScope,? super androidx.compose.ui.unit.Constraints,? extends androidx.compose.ui.layout.MeasureResult>):
+    Binary breaking change: method androidx.compose.ui.layout.SubcomposeLayoutKt.SubcomposeLayout(androidx.compose.ui.layout.SubcomposeLayoutState,androidx.compose.ui.Modifier,kotlin.jvm.functions.Function2<androidx.compose.ui.layout.SubcomposeMeasureScope,androidx.compose.ui.unit.Constraints,androidx.compose.ui.layout.MeasureResult>) has been removed from bytecode
 RemovedFromBytecode: androidx.compose.ui.layout.SubcomposeLayoutState.PrecomposedSlotHandle#getSize(int):
     Binary breaking change: method androidx.compose.ui.layout.SubcomposeLayoutState.PrecomposedSlotHandle.getSize(int) has been removed from bytecode
 RemovedFromBytecode: androidx.compose.ui.node.DpTouchBoundsExpansion#roundToTouchBoundsExpansion(androidx.compose.ui.unit.Density):
     Binary breaking change: method androidx.compose.ui.node.DpTouchBoundsExpansion.roundToTouchBoundsExpansion(androidx.compose.ui.unit.Density) has been removed from bytecode
 RemovedFromBytecode: androidx.compose.ui.node.TouchBoundsExpansion.Companion#Absolute(int, int, int, int):
     Binary breaking change: method androidx.compose.ui.node.TouchBoundsExpansion.Companion.Absolute(int,int,int,int) has been removed from bytecode
+RemovedFromBytecode: androidx.compose.ui.platform.AbstractComposeView#Content():
+    Binary breaking change: method androidx.compose.ui.platform.AbstractComposeView.Content() has been removed from bytecode
+RemovedFromBytecode: androidx.compose.ui.platform.ComposeView#Content():
+    Binary breaking change: method androidx.compose.ui.platform.ComposeView.Content() has been removed from bytecode
+RemovedFromBytecode: androidx.compose.ui.platform.NestedScrollInteropConnectionKt#rememberNestedScrollInteropConnection(android.view.View):
+    Binary breaking change: method androidx.compose.ui.platform.NestedScrollInteropConnectionKt.rememberNestedScrollInteropConnection(android.view.View) has been removed from bytecode
 RemovedFromBytecode: androidx.compose.ui.res.ColorResources_androidKt#colorResource(int):
     Binary breaking change: method androidx.compose.ui.res.ColorResources_androidKt.colorResource(int) has been removed from bytecode
+RemovedFromBytecode: androidx.compose.ui.res.FontResources_androidKt#fontResource(androidx.compose.ui.text.font.FontFamily):
+    Binary breaking change: method androidx.compose.ui.res.FontResources_androidKt.fontResource(androidx.compose.ui.text.font.FontFamily) has been removed from bytecode
+RemovedFromBytecode: androidx.compose.ui.res.ImageResources_androidKt#imageResource(androidx.compose.ui.graphics.ImageBitmap.Companion, int):
+    Binary breaking change: method androidx.compose.ui.res.ImageResources_androidKt.imageResource(androidx.compose.ui.graphics.ImageBitmap.Companion,int) has been removed from bytecode
+RemovedFromBytecode: androidx.compose.ui.res.PainterResources_androidKt#painterResource(int):
+    Binary breaking change: method androidx.compose.ui.res.PainterResources_androidKt.painterResource(int) has been removed from bytecode
+RemovedFromBytecode: androidx.compose.ui.res.PrimitiveResources_androidKt#booleanResource(int):
+    Binary breaking change: method androidx.compose.ui.res.PrimitiveResources_androidKt.booleanResource(int) has been removed from bytecode
 RemovedFromBytecode: androidx.compose.ui.res.PrimitiveResources_androidKt#dimensionResource(int):
     Binary breaking change: method androidx.compose.ui.res.PrimitiveResources_androidKt.dimensionResource(int) has been removed from bytecode
+RemovedFromBytecode: androidx.compose.ui.res.PrimitiveResources_androidKt#integerArrayResource(int):
+    Binary breaking change: method androidx.compose.ui.res.PrimitiveResources_androidKt.integerArrayResource(int) has been removed from bytecode
+RemovedFromBytecode: androidx.compose.ui.res.PrimitiveResources_androidKt#integerResource(int):
+    Binary breaking change: method androidx.compose.ui.res.PrimitiveResources_androidKt.integerResource(int) has been removed from bytecode
+RemovedFromBytecode: androidx.compose.ui.res.StringResources_androidKt#pluralStringResource(int, int):
+    Binary breaking change: method androidx.compose.ui.res.StringResources_androidKt.pluralStringResource(int,int) has been removed from bytecode
+RemovedFromBytecode: androidx.compose.ui.res.StringResources_androidKt#pluralStringResource(int, int, java.lang.Object...):
+    Binary breaking change: method androidx.compose.ui.res.StringResources_androidKt.pluralStringResource(int,int,java.lang.Object...) has been removed from bytecode
+RemovedFromBytecode: androidx.compose.ui.res.StringResources_androidKt#stringArrayResource(int):
+    Binary breaking change: method androidx.compose.ui.res.StringResources_androidKt.stringArrayResource(int) has been removed from bytecode
+RemovedFromBytecode: androidx.compose.ui.res.StringResources_androidKt#stringResource(int):
+    Binary breaking change: method androidx.compose.ui.res.StringResources_androidKt.stringResource(int) has been removed from bytecode
+RemovedFromBytecode: androidx.compose.ui.res.StringResources_androidKt#stringResource(int, java.lang.Object...):
+    Binary breaking change: method androidx.compose.ui.res.StringResources_androidKt.stringResource(int,java.lang.Object...) has been removed from bytecode
+RemovedFromBytecode: androidx.compose.ui.res.VectorResources_androidKt#vectorResource(androidx.compose.ui.graphics.vector.ImageVector.Companion, int):
+    Binary breaking change: method androidx.compose.ui.res.VectorResources_androidKt.vectorResource(androidx.compose.ui.graphics.vector.ImageVector.Companion,int) has been removed from bytecode
+RemovedFromBytecode: androidx.compose.ui.text.TextMeasurerHelperKt#rememberTextMeasurer(int):
+    Binary breaking change: method androidx.compose.ui.text.TextMeasurerHelperKt.rememberTextMeasurer(int) has been removed from bytecode
+RemovedFromBytecode: androidx.compose.ui.viewinterop.AndroidView_androidKt#AndroidView(kotlin.jvm.functions.Function1<? super android.content.Context,? extends T>, androidx.compose.ui.Modifier, kotlin.jvm.functions.Function1<? super T,kotlin.Unit>):
+    Binary breaking change: method androidx.compose.ui.viewinterop.AndroidView_androidKt.AndroidView(kotlin.jvm.functions.Function1<android.content.Context,T>,androidx.compose.ui.Modifier,kotlin.jvm.functions.Function1<T,kotlin.Unit>) has been removed from bytecode
+RemovedFromBytecode: androidx.compose.ui.viewinterop.AndroidView_androidKt#AndroidView(kotlin.jvm.functions.Function1<? super android.content.Context,? extends T>, androidx.compose.ui.Modifier, kotlin.jvm.functions.Function1<? super T,kotlin.Unit>, kotlin.jvm.functions.Function1<? super T,kotlin.Unit>, kotlin.jvm.functions.Function1<? super T,kotlin.Unit>):
+    Binary breaking change: method androidx.compose.ui.viewinterop.AndroidView_androidKt.AndroidView(kotlin.jvm.functions.Function1<android.content.Context,T>,androidx.compose.ui.Modifier,kotlin.jvm.functions.Function1<T,kotlin.Unit>,kotlin.jvm.functions.Function1<T,kotlin.Unit>,kotlin.jvm.functions.Function1<T,kotlin.Unit>) has been removed from bytecode
+RemovedFromBytecode: androidx.compose.ui.window.AndroidDialog_androidKt#Dialog(kotlin.jvm.functions.Function0<kotlin.Unit>, androidx.compose.ui.window.DialogProperties, kotlin.jvm.functions.Function0<kotlin.Unit>):
+    Binary breaking change: method androidx.compose.ui.window.AndroidDialog_androidKt.Dialog(kotlin.jvm.functions.Function0<kotlin.Unit>,androidx.compose.ui.window.DialogProperties,kotlin.jvm.functions.Function0<kotlin.Unit>) has been removed from bytecode
+RemovedFromBytecode: androidx.compose.ui.window.AndroidPopup_androidKt#Popup(androidx.compose.ui.window.PopupPositionProvider, kotlin.jvm.functions.Function0<kotlin.Unit>, androidx.compose.ui.window.PopupProperties, kotlin.jvm.functions.Function0<kotlin.Unit>):
+    Binary breaking change: method androidx.compose.ui.window.AndroidPopup_androidKt.Popup(androidx.compose.ui.window.PopupPositionProvider,kotlin.jvm.functions.Function0<kotlin.Unit>,androidx.compose.ui.window.PopupProperties,kotlin.jvm.functions.Function0<kotlin.Unit>) has been removed from bytecode
 
 
 RemovedFromKotlin: androidx.compose.ui.AbsoluteAlignment#getBottomLeft():

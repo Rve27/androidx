@@ -2,7 +2,7 @@
 package androidx.glance.wear.tiles {
 
   public final class AndroidLayoutElementKt {
-    method @Deprecated @androidx.compose.runtime.Composable public static void AndroidLayoutElement(androidx.wear.tiles.LayoutElementBuilders.LayoutElement layoutElement);
+    method @KotlinOnly @Deprecated @androidx.compose.runtime.Composable public static void AndroidLayoutElement(androidx.wear.tiles.LayoutElementBuilders.LayoutElement layoutElement);
     method @BytecodeOnly @Deprecated @androidx.compose.runtime.Composable public static void AndroidLayoutElement(androidx.wear.tiles.LayoutElementBuilders.LayoutElement, androidx.compose.runtime.Composer?, int);
   }
 
@@ -23,7 +23,7 @@ package androidx.glance.wear.tiles {
   @Deprecated public abstract class GlanceTileService extends androidx.wear.tiles.TileService {
     ctor @Deprecated public GlanceTileService();
     ctor @Deprecated public GlanceTileService(optional androidx.wear.tiles.LayoutElementBuilders.LayoutElement? errorUiLayout);
-    method @Deprecated @androidx.compose.runtime.Composable @androidx.glance.GlanceComposable public abstract void Content();
+    method @KotlinOnly @Deprecated @androidx.compose.runtime.Composable @androidx.glance.GlanceComposable public abstract void Content();
     method @BytecodeOnly @Deprecated @androidx.compose.runtime.Composable @androidx.glance.GlanceComposable public abstract void Content(androidx.compose.runtime.Composer?, int);
     method @InaccessibleFromKotlin @Deprecated public androidx.glance.state.GlanceStateDefinition<? extends java.lang.Object?>? getStateDefinition();
     method @Deprecated public final suspend <T> Object? getTileState(kotlin.coroutines.Continuation<? super T>);

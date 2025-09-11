@@ -2,13 +2,13 @@
 package androidx.compose.material3.adaptive.navigationsuite {
 
   @SuppressCompatibility @androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveComponentOverrideApi public final class DefaultNavigationSuiteScaffoldOverride implements androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldOverride {
-    method @androidx.compose.runtime.Composable public void NavigationSuiteScaffold(androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldOverrideScope);
+    method @KotlinOnly @androidx.compose.runtime.Composable public void NavigationSuiteScaffold(androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldOverrideScope);
     method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.compose.runtime.ComposableTarget(applier="androidx.compose.ui.UiComposable") public void NavigationSuiteScaffold(androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldOverrideScope, androidx.compose.runtime.Composer?, int);
     field public static final androidx.compose.material3.adaptive.navigationsuite.DefaultNavigationSuiteScaffoldOverride INSTANCE;
   }
 
   @SuppressCompatibility @androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveComponentOverrideApi public final class DefaultNavigationSuiteScaffoldWithPrimaryActionOverride implements androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldWithPrimaryActionOverride {
-    method @androidx.compose.runtime.Composable public void NavigationSuiteScaffoldWithPrimaryAction(androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldWithPrimaryActionOverrideScope);
+    method @KotlinOnly @androidx.compose.runtime.Composable public void NavigationSuiteScaffoldWithPrimaryAction(androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldWithPrimaryActionOverrideScope);
     method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.compose.runtime.ComposableTarget(applier="androidx.compose.ui.UiComposable") public void NavigationSuiteScaffoldWithPrimaryAction(androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldWithPrimaryActionOverrideScope, androidx.compose.runtime.Composer?, int);
     field public static final androidx.compose.material3.adaptive.navigationsuite.DefaultNavigationSuiteScaffoldWithPrimaryActionOverride INSTANCE;
   }
@@ -42,7 +42,7 @@ package androidx.compose.material3.adaptive.navigationsuite {
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteColors colors-0SPqQx0(long, long, androidx.compose.material3.WideNavigationRailColors?, long, long, long, long, long, long, androidx.compose.runtime.Composer?, int, int);
     method @BytecodeOnly @Deprecated @androidx.compose.runtime.Composable public androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteColors! colors-5tl4gsc(long, long, long, long, long, long, androidx.compose.runtime.Composer!, int, int);
     method @InaccessibleFromKotlin public androidx.compose.foundation.layout.Arrangement.Vertical getVerticalArrangement();
-    method @androidx.compose.runtime.Composable public androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteItemColors itemColors(optional androidx.compose.material3.NavigationBarItemColors navigationBarItemColors, optional androidx.compose.material3.NavigationRailItemColors navigationRailItemColors, optional androidx.compose.material3.NavigationDrawerItemColors navigationDrawerItemColors);
+    method @KotlinOnly @androidx.compose.runtime.Composable public androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteItemColors itemColors(optional androidx.compose.material3.NavigationBarItemColors navigationBarItemColors, optional androidx.compose.material3.NavigationRailItemColors navigationRailItemColors, optional androidx.compose.material3.NavigationDrawerItemColors navigationDrawerItemColors);
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteItemColors itemColors(androidx.compose.material3.NavigationBarItemColors?, androidx.compose.material3.NavigationRailItemColors?, androidx.compose.material3.NavigationDrawerItemColors?, androidx.compose.runtime.Composer?, int, int);
     property public androidx.compose.foundation.layout.Arrangement.Vertical verticalArrangement;
     field public static final androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteDefaults INSTANCE;
@@ -98,14 +98,14 @@ package androidx.compose.material3.adaptive.navigationsuite {
     method @BytecodeOnly @Deprecated @androidx.compose.runtime.Composable public static void NavigationSuiteScaffoldLayout-zTpdPhI(kotlin.jvm.functions.Function2!, String!, kotlin.jvm.functions.Function2!, androidx.compose.runtime.Composer!, int, int);
     method @InaccessibleFromKotlin @SuppressCompatibility @androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveComponentOverrideApi public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldOverride> getLocalNavigationSuiteScaffoldOverride();
     method @InaccessibleFromKotlin @SuppressCompatibility @androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveComponentOverrideApi public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldWithPrimaryActionOverride> getLocalNavigationSuiteScaffoldWithPrimaryActionOverride();
-    method @androidx.compose.runtime.Composable public static androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldState rememberNavigationSuiteScaffoldState(optional androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldValue initialValue);
+    method @KotlinOnly @androidx.compose.runtime.Composable public static androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldState rememberNavigationSuiteScaffoldState(optional androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldValue initialValue);
     method @BytecodeOnly @androidx.compose.runtime.Composable public static androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldState rememberNavigationSuiteScaffoldState(androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldValue?, androidx.compose.runtime.Composer?, int, int);
     property @SuppressCompatibility @androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveComponentOverrideApi public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldOverride> LocalNavigationSuiteScaffoldOverride;
     property @SuppressCompatibility @androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveComponentOverrideApi public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldWithPrimaryActionOverride> LocalNavigationSuiteScaffoldWithPrimaryActionOverride;
   }
 
   @SuppressCompatibility @androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveComponentOverrideApi public interface NavigationSuiteScaffoldOverride {
-    method @androidx.compose.runtime.Composable public void NavigationSuiteScaffold(androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldOverrideScope);
+    method @KotlinOnly @androidx.compose.runtime.Composable public void NavigationSuiteScaffold(androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldOverrideScope);
     method @BytecodeOnly @androidx.compose.runtime.Composable public void NavigationSuiteScaffold(androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldOverrideScope, androidx.compose.runtime.Composer?, int);
   }
 
@@ -147,7 +147,7 @@ package androidx.compose.material3.adaptive.navigationsuite {
   }
 
   @SuppressCompatibility @androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveComponentOverrideApi public interface NavigationSuiteScaffoldWithPrimaryActionOverride {
-    method @androidx.compose.runtime.Composable public void NavigationSuiteScaffoldWithPrimaryAction(androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldWithPrimaryActionOverrideScope);
+    method @KotlinOnly @androidx.compose.runtime.Composable public void NavigationSuiteScaffoldWithPrimaryAction(androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldWithPrimaryActionOverrideScope);
     method @BytecodeOnly @androidx.compose.runtime.Composable public void NavigationSuiteScaffoldWithPrimaryAction(androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldWithPrimaryActionOverrideScope, androidx.compose.runtime.Composer?, int);
   }
 
