@@ -2130,9 +2130,9 @@ private class TestNavigationEventInput(
         onRemoved.invoke()
     }
 
-    override fun onHasEnabledHandlerChanged(hasEnabledHandler: Boolean) {
-        onHasEnabledHandlersChangedValues += hasEnabledHandler
-        onHasEnabledHandlersChanged.invoke(hasEnabledHandler)
+    override fun onHasEnabledHandlersChanged(hasEnabledHandlers: Boolean) {
+        onHasEnabledHandlersChangedValues += hasEnabledHandlers
+        onHasEnabledHandlersChanged.invoke(hasEnabledHandlers)
     }
 
     override fun onInfoChanged(

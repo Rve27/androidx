@@ -141,13 +141,13 @@ internal class NavigationEventProcessor {
         // 2) Notify only when a priority’s state actually changed.
         if (defaultEnabledChanged) {
             for (input in defaultInputs) {
-                input.doOnHasEnabledHandlerChanged(hasEnabledHandler = newDefaultEnabled)
+                input.doOnHasEnabledHandlersChanged(hasEnabledHandlers = newDefaultEnabled)
             }
         }
 
         if (overlayEnabledChanged) {
             for (input in overlayInputs) {
-                input.doOnHasEnabledHandlerChanged(hasEnabledHandler = newOverlayEnabled)
+                input.doOnHasEnabledHandlersChanged(hasEnabledHandlers = newOverlayEnabled)
             }
         }
 
@@ -155,7 +155,7 @@ internal class NavigationEventProcessor {
         if (defaultEnabledChanged || overlayEnabledChanged) {
             val anyEnabled = newDefaultEnabled || newOverlayEnabled
             for (input in unspecifiedInputs) {
-                input.doOnHasEnabledHandlerChanged(hasEnabledHandler = anyEnabled)
+                input.doOnHasEnabledHandlersChanged(hasEnabledHandlers = anyEnabled)
             }
         }
 

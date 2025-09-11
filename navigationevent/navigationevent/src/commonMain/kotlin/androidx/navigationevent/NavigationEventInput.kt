@@ -54,18 +54,18 @@ public abstract class NavigationEventInput() {
     @MainThread @EmptySuper protected open fun onRemoved() {}
 
     @MainThread
-    internal fun doOnHasEnabledHandlerChanged(hasEnabledHandler: Boolean) {
-        onHasEnabledHandlerChanged(hasEnabledHandler)
+    internal fun doOnHasEnabledHandlersChanged(hasEnabledHandlers: Boolean) {
+        onHasEnabledHandlersChanged(hasEnabledHandlers)
     }
 
     /**
      * Handler that will be notified when the connected dispatcher's `hasEnabledHandlers` changes.
      *
-     * @param hasEnabledHandler Whether the connected dispatcher has any enabled handlers.
+     * @param hasEnabledHandlers Whether the connected dispatcher has any enabled handlers.
      */
     @MainThread
     @EmptySuper
-    protected open fun onHasEnabledHandlerChanged(hasEnabledHandler: Boolean) {}
+    protected open fun onHasEnabledHandlersChanged(hasEnabledHandlers: Boolean) {}
 
     @MainThread
     internal fun doOnInfoChanged(
