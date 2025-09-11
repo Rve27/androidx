@@ -19,6 +19,8 @@ package androidx.navigationevent
 import androidx.annotation.IntDef
 import androidx.annotation.MainThread
 import androidx.annotation.RestrictTo
+import androidx.navigationevent.NavigationEventDispatcher.Companion.PRIORITY_DEFAULT
+import androidx.navigationevent.NavigationEventDispatcher.Companion.PRIORITY_OVERLAY
 import androidx.navigationevent.NavigationEventState.Idle
 import androidx.navigationevent.NavigationEventState.InProgress
 import kotlin.jvm.JvmOverloads
@@ -340,9 +342,16 @@ private constructor(
             check(input.dispatcher == null) {
                 "This input is already added to dispatcher ${input.dispatcher}."
             }
+
             sharedProcessor.unspecifiedInputs.add(input)
             input.dispatcher = this
-            input.doOnAdded(this)
+            input.doOnAdded(dispatcher = this)
+
+            val hasEnabledHandler =
+                sharedProcessor.hasEnabledDefaultHandlers ||
+                    sharedProcessor.hasEnabledOverlayHandlers
+            // Input must get the enablement state immediately, otherwise it may miss it.
+            input.doOnHasEnabledHandlerChanged(hasEnabledHandler)
         }
     }
 
@@ -369,22 +378,33 @@ private constructor(
     @MainThread
     public fun addInput(input: NavigationEventInput, @Priority priority: Int) {
         checkInvariants()
+        require(priority == PRIORITY_DEFAULT || priority == PRIORITY_OVERLAY) {
+            // Since this method may be called from other targets (e.g., Swift),
+            // IntDef lint checks may not be available. We must validate at runtime.
+            "Unsupported priority value: $priority"
+        }
 
         if (inputs.add(input)) {
             check(input.dispatcher == null) {
                 "This input is already added to dispatcher ${input.dispatcher}."
             }
+
             when (priority) {
                 PRIORITY_OVERLAY -> sharedProcessor.overlayInputs.add(input)
                 PRIORITY_DEFAULT -> sharedProcessor.defaultInputs.add(input)
-                else -> {
-                    // Since this method may be called from other targets (e.g., Swift),
-                    // IntDef lint checks may not be available. We must validate at runtime.
-                    throw IllegalArgumentException("Unsupported priority value: $priority")
-                }
             }
+
             input.dispatcher = this
-            input.doOnAdded(this)
+            input.doOnAdded(dispatcher = this)
+
+            val hasEnabledHandler =
+                when (priority) {
+                    PRIORITY_OVERLAY -> sharedProcessor.hasEnabledOverlayHandlers
+                    PRIORITY_DEFAULT -> sharedProcessor.hasEnabledDefaultHandlers
+                    else -> error("unreachable")
+                }
+            // Input must get the enablement state immediately, otherwise it may miss it.
+            input.doOnHasEnabledHandlerChanged(hasEnabledHandler)
         }
     }
 

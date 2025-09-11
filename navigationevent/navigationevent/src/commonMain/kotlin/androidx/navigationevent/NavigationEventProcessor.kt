@@ -116,10 +116,10 @@ internal class NavigationEventProcessor {
     val overlayInputs = mutableSetOf<NavigationEventInput>()
 
     /** Whether at least one callback with `Default` priority is enabled. */
-    private var hasEnabledDefaultHandlers: Boolean = false
+    var hasEnabledDefaultHandlers: Boolean = false
 
     /** Whether at least one callback with `Overlay` priority is enabled. */
-    private var hasEnabledOverlayHandlers: Boolean = false
+    var hasEnabledOverlayHandlers: Boolean = false
 
     /**
      * Recalculates the enabled status for all callback priorities, notifies listeners of any
