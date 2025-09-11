@@ -63,6 +63,7 @@ public class TextLayout extends LayoutManager implements VariableSupport, Access
     private int mTextId = -1;
     private int mColor = 0;
     private float mFontSize = 16f;
+    private float mFontSizeValue = 16f;
     private int mFontStyle = 0;
     private float mFontWeight = 400f;
     private int mFontFamilyId = -1;
@@ -94,10 +95,27 @@ public class TextLayout extends LayoutManager implements VariableSupport, Access
         if (mTextId != -1) {
             context.listensTo(mTextId, this);
         }
+        if (isAtLeastVersion7(context)) {
+            if (Float.isNaN(mFontSize)) {
+                context.listensTo(Utils.idFromNan(mFontSize), this);
+            }
+        }
+    }
+
+    private static boolean isAtLeastVersion7(@NonNull RemoteContext context) {
+        return context.supportsVersion(1, 1, 0);
     }
 
     @Override
     public void updateVariables(@NonNull RemoteContext context) {
+        if (isAtLeastVersion7(context)) {
+            mFontSizeValue =
+                    Float.isNaN(mFontSize)
+                            ? context.getFloat(Utils.idFromNan(mFontSize))
+                            : mFontSize;
+        } else {
+            mFontSizeValue = mFontSize;
+        }
         String cachedString = context.getText(mTextId);
         if (cachedString != null && cachedString.equalsIgnoreCase(mCachedString)) {
             return;
@@ -153,6 +171,9 @@ public class TextLayout extends LayoutManager implements VariableSupport, Access
         mTextId = textId;
         mColor = color;
         mFontSize = fontSize;
+        if (!Float.isNaN(mFontSize)) {
+            mFontSizeValue = fontSize;
+        }
         mFontStyle = fontStyle;
         mFontWeight = fontWeight;
         mFontFamilyId = fontFamilyId;
@@ -221,7 +242,7 @@ public class TextLayout extends LayoutManager implements VariableSupport, Access
         mPaint.reset();
         mPaint.setStyle(PaintBundle.STYLE_FILL);
         mPaint.setColor(mColor);
-        mPaint.setTextSize(mFontSize);
+        mPaint.setTextSize(mFontSizeValue);
         mPaint.setTextStyle(mType, (int) mFontWeight, mFontStyle == 1);
         context.replacePaint(mPaint);
         if (mCachedString == null) {
@@ -362,7 +383,7 @@ public class TextLayout extends LayoutManager implements VariableSupport, Access
             @NonNull Size size) {
         context.savePaint();
         mPaint.reset();
-        mPaint.setTextSize(mFontSize);
+        mPaint.setTextSize(mFontSizeValue);
         mPaint.setTextStyle(mType, (int) mFontWeight, mFontStyle == 1);
         mPaint.setColor(mColor);
         context.replacePaint(mPaint);
@@ -574,7 +595,7 @@ public class TextLayout extends LayoutManager implements VariableSupport, Access
         super.serialize(serializer);
         serializer.add("textId", mTextId);
         serializer.add("color", Utils.colorInt(mColor));
-        serializer.add("fontSize", mFontSize);
+        serializer.add("fontSize", mFontSize, mFontSizeValue);
         serializer.add("fontStyle", mFontStyle);
         serializer.add("fontWeight", mFontWeight);
         serializer.add("fontFamilyId", mFontFamilyId);
