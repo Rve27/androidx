@@ -60,6 +60,7 @@ import androidx.compose.ui.layout.PinnableContainer
 import androidx.compose.ui.layout.PinnableContainer.PinnedHandle
 import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.platform.AbstractComposeView
+import androidx.compose.ui.platform.AutoClearFocusBehavior
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.InspectableValue
 import androidx.compose.ui.platform.LocalDensity
@@ -749,26 +750,7 @@ class FocusableTest {
     }
 
     @Test
-    fun clickingOutside_clearsFocus() =
-        withFlags(isClearFocusOnPointerDownEnabled = true) {
-            rule.setFocusableContent {
-                Column {
-                    Spacer(Modifier.size(32.dp).testTag("emptySpace"))
-                    Spacer(Modifier.size(32.dp).testTag(focusTag).focusable())
-                }
-            }
-
-            rule.onNodeWithTag(focusTag).requestFocus()
-
-            rule.onNodeWithTag(focusTag).assertIsFocused()
-
-            rule.onNodeWithTag("emptySpace").performMouseInput { click() }
-
-            rule.onNodeWithTag(focusTag).assertIsNotFocused()
-        }
-
-    @Test
-    fun clickingOutside_doesNotClearFocusWithViewTagDisabled() =
+    fun clickingOutside_clearsFocus_withDefaultAutoClearFocusBehavior() =
         withFlags(isClearFocusOnPointerDownEnabled = true) {
             lateinit var view: View
 
@@ -780,7 +762,35 @@ class FocusableTest {
                 }
             }
 
-            (view.parent as AbstractComposeView).isClearFocusOnPointerDownEnabled = false
+            assertThat((view.parent as AbstractComposeView).autoClearFocusBehavior)
+                .isEqualTo(AutoClearFocusBehavior.Default)
+            assertThat((view.parent as AbstractComposeView).autoClearFocusBehavior)
+                .isEqualTo(AutoClearFocusBehavior.CursorBased)
+
+            rule.onNodeWithTag(focusTag).requestFocus()
+
+            rule.onNodeWithTag(focusTag).assertIsFocused()
+
+            rule.onNodeWithTag("emptySpace").performMouseInput { click() }
+
+            rule.onNodeWithTag(focusTag).assertIsNotFocused()
+        }
+
+    @Test
+    fun clickingOutside_doesNotClearFocusWithNonAutoClearFocusBehavior() =
+        withFlags(isClearFocusOnPointerDownEnabled = true) {
+            lateinit var view: View
+
+            rule.setFocusableContent {
+                view = LocalView.current
+                Column {
+                    Spacer(Modifier.size(32.dp).testTag("emptySpace"))
+                    Spacer(Modifier.size(32.dp).testTag(focusTag).focusable())
+                }
+            }
+
+            (view.parent as AbstractComposeView).autoClearFocusBehavior =
+                AutoClearFocusBehavior.None
 
             rule.onNodeWithTag(focusTag).requestFocus()
 

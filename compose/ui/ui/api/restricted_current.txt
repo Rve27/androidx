@@ -3725,18 +3725,18 @@ package androidx.compose.ui.platform {
     method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.compose.ui.UiComposable public abstract void Content(androidx.compose.runtime.Composer?, int);
     method public final void createComposition();
     method public final void disposeComposition();
+    method @BytecodeOnly public final int getAutoClearFocusBehavior-4UtRPd4();
     method @InaccessibleFromKotlin public final boolean getHasComposition();
     method @InaccessibleFromKotlin protected boolean getShouldCreateCompositionOnAttachedToWindow();
     method @InaccessibleFromKotlin @SuppressCompatibility @androidx.compose.ui.InternalComposeUiApi public final boolean getShowLayoutBounds();
-    method @InaccessibleFromKotlin public final boolean isClearFocusOnPointerDownEnabled();
     method protected final void onLayout(boolean changed, int left, int top, int right, int bottom);
     method protected final void onMeasure(int widthMeasureSpec, int heightMeasureSpec);
-    method @InaccessibleFromKotlin public final void setClearFocusOnPointerDownEnabled(boolean);
+    method @BytecodeOnly public final void setAutoClearFocusBehavior-17tfJxM(int);
     method public final void setParentCompositionContext(androidx.compose.runtime.CompositionContext? parent);
     method @InaccessibleFromKotlin @SuppressCompatibility @androidx.compose.ui.InternalComposeUiApi public final void setShowLayoutBounds(boolean);
     method public final void setViewCompositionStrategy(androidx.compose.ui.platform.ViewCompositionStrategy strategy);
+    property public final androidx.compose.ui.platform.AutoClearFocusBehavior autoClearFocusBehavior;
     property public final boolean hasComposition;
-    property public final boolean isClearFocusOnPointerDownEnabled;
     property protected boolean shouldCreateCompositionOnAttachedToWindow;
     property @SuppressCompatibility @androidx.compose.ui.InternalComposeUiApi public final boolean showLayoutBounds;
   }
@@ -3817,6 +3817,21 @@ package androidx.compose.ui.platform {
     property public float maximumFlingVelocity;
     property public float minimumFlingVelocity;
     property public float touchSlop;
+  }
+
+  @kotlin.jvm.JvmInline public final value class AutoClearFocusBehavior {
+    method @BytecodeOnly public static androidx.compose.ui.platform.AutoClearFocusBehavior! box-impl(int);
+    method @BytecodeOnly public int unbox-impl();
+    field public static final androidx.compose.ui.platform.AutoClearFocusBehavior.Companion Companion;
+  }
+
+  public static final class AutoClearFocusBehavior.Companion {
+    method @BytecodeOnly public int getCursorBased-4UtRPd4();
+    method @BytecodeOnly public int getDefault-4UtRPd4();
+    method @BytecodeOnly public int getNone-4UtRPd4();
+    property public androidx.compose.ui.platform.AutoClearFocusBehavior CursorBased;
+    property public androidx.compose.ui.platform.AutoClearFocusBehavior Default;
+    property public androidx.compose.ui.platform.AutoClearFocusBehavior None;
   }
 
   public final class ClipEntry {
