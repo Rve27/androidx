@@ -46,10 +46,12 @@ import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDe
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavEntryDecorator
 import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.runtime.Scene
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.navEntryDecorator
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSavedStateNavEntryDecorator
+import androidx.navigation3.runtime.rememberSceneSetupNavEntryDecorator
 import androidx.navigation3.runtime.samples.Dashboard
 import androidx.navigation3.runtime.samples.DialogBase
 import androidx.navigation3.runtime.samples.DialogContent
@@ -59,8 +61,6 @@ import androidx.navigation3.runtime.samples.ProfileViewModel
 import androidx.navigation3.runtime.samples.Scrollable
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import androidx.navigation3.ui.NavDisplay
-import androidx.navigation3.ui.Scene
-import androidx.navigation3.ui.rememberSceneSetupNavEntryDecorator
 import androidx.navigationevent.NavigationEvent
 import kotlinx.serialization.Serializable
 

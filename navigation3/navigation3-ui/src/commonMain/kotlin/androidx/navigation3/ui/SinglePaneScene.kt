@@ -18,6 +18,8 @@ package androidx.navigation3.ui
 
 import androidx.compose.runtime.Composable
 import androidx.navigation3.runtime.NavEntry
+import androidx.navigation3.runtime.Scene
+import androidx.navigation3.runtime.SceneStrategy
 
 internal data class SinglePaneScene<T : Any>(
     override val key: Any,

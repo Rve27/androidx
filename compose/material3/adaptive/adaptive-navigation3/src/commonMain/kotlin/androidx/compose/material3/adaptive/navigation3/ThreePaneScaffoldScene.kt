@@ -41,7 +41,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.navigation3.runtime.NavEntry
-import androidx.navigation3.ui.Scene
+import androidx.navigation3.runtime.Scene
 import androidx.navigationevent.NavigationEventInfo
 import androidx.navigationevent.NavigationEventState
 import androidx.navigationevent.compose.LocalNavigationEventDispatcherOwner

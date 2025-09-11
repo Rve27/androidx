@@ -20,6 +20,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation3.runtime.NavEntry
+import androidx.navigation3.runtime.OverlayScene
+import androidx.navigation3.runtime.Scene
+import androidx.navigation3.runtime.SceneStrategy
 
 /** An [OverlayScene] that renders an [entry] within a [Dialog]. */
 internal class DialogScene<T : Any>(
