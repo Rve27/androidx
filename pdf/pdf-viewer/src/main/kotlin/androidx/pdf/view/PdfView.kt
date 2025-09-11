@@ -59,6 +59,7 @@ import androidx.pdf.content.ExternalLink
 import androidx.pdf.event.PdfTrackingEvent
 import androidx.pdf.event.RequestFailureEvent
 import androidx.pdf.exceptions.RequestFailedException
+import androidx.pdf.formfilling.FormFillingEditTextState
 import androidx.pdf.models.FormWidgetInfo
 import androidx.pdf.selection.ContextMenuComponent
 import androidx.pdf.selection.Selection
@@ -1153,6 +1154,12 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         oldWidth = null
     }
 
+    private fun getFormFillingEditTextState(): FormFillingEditTextState? {
+        return formFillingEditText?.let {
+            FormFillingEditTextState(it.editText.text.toString(), it.pageNum, it.formWidget)
+        }
+    }
+
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         stopCollectingData()
@@ -1200,6 +1207,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         state.pdfFormFillingState = pageMetadataLoader?.pdfFormFillingState
         state.pdfFormEditRecords = pdfDocument?.formEditRecords
         state.selectionModel = selectionStateManager?.selectionModel?.value
+        state.pdfFormFillingEditTextState = getFormFillingEditTextState()
         return state
     }
 
@@ -1339,6 +1347,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         setAccessibility()
 
         restoreFormFillingState()
+        restoreFormFillingEditText()
 
         stateToRestore = null
         return true
@@ -1353,6 +1362,18 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         }
 
         pdfFormFillingStateManager?.restoreFormFillingState(localStateToRestore.pdfFormEditRecords)
+    }
+
+    private fun restoreFormFillingEditText() {
+        val localStateToRestore = stateToRestore ?: return
+        val formFillingEditTextState = localStateToRestore.pdfFormFillingEditTextState
+        if (formFillingEditTextState != null) {
+            formWidgetInteractionHandler?.handleInteractionWithTextWidget(
+                formFillingEditTextState.pageNumber,
+                formFillingEditTextState.formWidgetInfo!!,
+                formFillingEditTextState.currentText,
+            )
+        }
     }
 
     private fun scrollToRestoredPosition(position: PointF, zoom: Float) {
