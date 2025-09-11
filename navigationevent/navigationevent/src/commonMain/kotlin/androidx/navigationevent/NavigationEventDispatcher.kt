@@ -548,7 +548,7 @@ private constructor(
                 input.dispatcher = null
                 input.doOnRemoved()
             }
-            inputs.clear()
+            currentDispatcher.inputs.clear()
 
             // Remove handlers directly owned by the currentDispatcher from the shared processor.
             for (handler in currentDispatcher.handlers) {
