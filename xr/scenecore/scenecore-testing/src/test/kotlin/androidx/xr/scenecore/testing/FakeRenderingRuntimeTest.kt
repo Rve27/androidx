@@ -45,7 +45,7 @@ class FakeRenderingRuntimeTest {
 
         assertThat(activity).isNotNull()
 
-        sceneRuntime = FakeSceneRuntime()
+        sceneRuntime = FakeSceneRuntime(FakeScheduledExecutorService())
         fakeRenderingRuntime = FakeRenderingRuntime(sceneRuntime)
         renderingRuntime = fakeRenderingRuntime
     }

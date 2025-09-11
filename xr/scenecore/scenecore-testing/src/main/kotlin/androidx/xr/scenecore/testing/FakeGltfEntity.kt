@@ -18,11 +18,16 @@ package androidx.xr.scenecore.testing
 
 import androidx.annotation.RestrictTo
 import androidx.xr.scenecore.internal.GltfEntity
+import androidx.xr.scenecore.internal.GltfFeature
 import androidx.xr.scenecore.internal.MaterialResource
+import java.util.concurrent.Executor
 
 /** Test-only implementation of [GltfEntity] */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public open class FakeGltfEntity() : FakeEntity(), GltfEntity {
+public open class FakeGltfEntity(
+    private val feature: GltfFeature? = null,
+    private val executor: Executor? = null,
+) : FakeEntity(), GltfEntity {
     public class Node {
         public val nodeName: String = "glTF node"
         public val materialArray: Array<FakeResource> =
@@ -37,7 +42,9 @@ public open class FakeGltfEntity() : FakeEntity(), GltfEntity {
     /** Returns the current animation state of the glTF entity. */
     @GltfEntity.AnimationStateValue
     override val animationState: Int
-        get() = _animationState
+        get() {
+            return feature?.animationState ?: _animationState
+        }
 
     /**
      * Indicates whether the animation is currently looping. In tests, you can
@@ -53,12 +60,14 @@ public open class FakeGltfEntity() : FakeEntity(), GltfEntity {
         nodeName: String,
         primitiveIndex: Int,
     ) {
+        feature?.setMaterialOverride(material, nodeName, primitiveIndex)
         if (nodeName == node.nodeName && primitiveIndex < node.materialArray.size) {
             node.materialArray[primitiveIndex] = material as FakeResource
         }
     }
 
     override fun clearMaterialOverride(nodeName: String, primitiveIndex: Int) {
+        feature?.clearMaterialOverride(nodeName, primitiveIndex)
         if (nodeName == node.nodeName && primitiveIndex < node.materialArray.size) {
             node.materialArray[primitiveIndex] = FakeResource(primitiveIndex.toLong())
         }
@@ -90,6 +99,7 @@ public open class FakeGltfEntity() : FakeEntity(), GltfEntity {
      * @param loop Whether the animation should loop.
      */
     override fun startAnimation(loop: Boolean, animationName: String?) {
+        feature?.startAnimation(loop, animationName, executor!!)
         if (
             supportedAnimationNames.contains(animationName) &&
                 _animationState == GltfEntity.AnimationState.STOPPED
@@ -104,6 +114,7 @@ public open class FakeGltfEntity() : FakeEntity(), GltfEntity {
 
     /** Stops the animation of the glTF entity. */
     override fun stopAnimation() {
+        feature?.stopAnimation()
         if (_animationState == GltfEntity.AnimationState.PLAYING) {
             _animationState = GltfEntity.AnimationState.STOPPED
 
