@@ -15,40 +15,10 @@
  */
 package androidx.appsearch.compiler
 
-import androidx.room.compiler.processing.util.Source.Companion.kotlin
-import androidx.room.compiler.processing.util.compiler.TestCompilationArguments
-import androidx.room.compiler.processing.util.compiler.compile
-import com.google.auto.value.processor.AutoValueProcessor
-import com.google.common.io.CharStreams
-import com.google.common.io.Files
-import com.google.common.truth.Truth.assertThat
-import com.google.common.truth.Truth.assertWithMessage
-import com.google.testing.compile.Compilation
 import com.google.testing.compile.CompilationSubject
-import com.google.testing.compile.Compiler
-import com.google.testing.compile.JavaFileObjects
-import java.io.File
-import java.io.InputStreamReader
-import java.nio.charset.StandardCharsets
-import java.util.logging.Logger
-import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
-import org.junit.rules.TemporaryFolder
-import org.junit.rules.TestName
 
-class AppSearchCompilerTest {
-    @Rule @JvmField val temporaryFolder: TemporaryFolder = TemporaryFolder()
-
-    @Rule @JvmField val testName: TestName = TestName()
-
-    private lateinit var genFilesDir: File
-
-    @Before
-    fun setUp() {
-        genFilesDir = temporaryFolder.newFolder("genFilesDir")
-    }
-
+class AppSearchCompilerTest : CompilerTestBase() {
     @Test
     fun testPrivate() {
         val compilation =
@@ -1567,7 +1537,6 @@ class AppSearchCompilerTest {
 
     @Test
     fun testToGenericDocument_allSupportedTypes() {
-        // TODO(b/156296904): Uncomment Gift and GenericDocument when it's supported
         val compilation =
             compile(
                 """
@@ -1631,6 +1600,76 @@ class AppSearchCompilerTest {
             )
 
         CompilationSubject.assertThat(compilation).succeededWithoutWarnings()
+        checkEqualsGolden("Gift.java")
+    }
+
+    @Test
+    fun testToGenericDocument_allSupportedTypes_kotlin() {
+        val compilation =
+            compileKotlin(
+                """
+                import androidx.appsearch.app.AppSearchBlobHandle
+                import androidx.appsearch.app.EmbeddingVector
+                import androidx.appsearch.app.GenericDocument
+
+                @Document
+                data class Gift(
+                  @Namespace val namespace: String,
+                  @Id val id: String,
+
+                  // Collections
+                  @LongProperty val collectLong: Collection<Long>, // 1a
+                  @LongProperty val collectInteger: Collection<Int>, // 1a
+                  @LongProperty val collectNullInteger: Collection<Int?>, // 1a
+                  @LongProperty val nullCollectInteger: Collection<Int>?, // 1a
+                  @LongProperty val nullCollectNullInteger: Collection<Int?>?, // 1a
+                  @DoubleProperty val collectDouble: Collection<Double>, // 1a
+                  @DoubleProperty val collectFloat: Collection<Float>, // 1a
+                  @BooleanProperty val collectBoolean: Collection<Boolean>, // 1a
+                  @BytesProperty val collectByteArr: Collection<ByteArray>, // 1a
+                  @StringProperty val collectString: Collection<String>, // 1b
+                  @DocumentProperty val collectGift: Collection<Gift>, // 1c
+                  @EmbeddingProperty val collectVec: Collection<EmbeddingVector>, // 1b
+                  @BlobHandleProperty val collectBlob: Collection<AppSearchBlobHandle>, // 1b
+
+                  // Arrays
+                  @LongProperty val arrBoxLong: Array<Long>, // 2a
+                  @LongProperty val arrUnboxLong: LongArray, // 2b
+                  @LongProperty val arrBoxInteger: Array<Int>, // 2a
+                  @LongProperty val arrNullBoxInteger: Array<Int?>, // 2a
+                  @LongProperty val nullArrBoxInteger: Array<Int>?, // 2a
+                  @LongProperty val nullArrNullBoxInteger: Array<Int?>?, // 2a
+                  @LongProperty val arrUnboxInt: IntArray, // 2a
+                  @DoubleProperty val arrBoxDouble: Array<Double>, // 2a
+                  @DoubleProperty val arrUnboxDouble: DoubleArray, // 2b
+                  @DoubleProperty val arrBoxFloat: Array<Float>, // 2a
+                  @DoubleProperty val arrUnboxFloat: FloatArray, // 2a
+                  @BooleanProperty val arrBoxBoolean: Array<Boolean>, // 2a
+                  @BooleanProperty val arrUnboxBoolean: BooleanArray, // 2b
+                  @BytesProperty val arrUnboxByteArr: Array<ByteArray>, // 2b
+                  @StringProperty val arrString: Array<String>, // 2b
+                  @DocumentProperty val arrGift: Array<Gift>, // 2c
+                  @EmbeddingProperty val arrVec: Array<EmbeddingVector>, // 2b
+                  @BlobHandleProperty val arrBlob: Array<AppSearchBlobHandle>, // 2b
+
+                  // Single values
+                  @StringProperty val string: String, // 3a
+                  @LongProperty val nonNullLong: Long, // 3a
+                  @LongProperty val nullLong: Long?, // 3b
+                  @LongProperty val nonNullInteger: Int, // 3a
+                  @DoubleProperty val nonNullDouble: Double, // 3a
+                  @DoubleProperty val nonNullFloat: Float, // 3a
+                  @BooleanProperty val nonNullBoolean: Boolean, // 3a
+                  @BytesProperty val byteArr: ByteArray, // 3a
+                  @DocumentProperty val gift: Gift, // 3c
+                  @DocumentProperty val nullGift: Gift?, // 3c
+                  @EmbeddingProperty val vec: EmbeddingVector, // 3a
+                  @BlobHandleProperty val blob: AppSearchBlobHandle, // 3a
+                )
+                """
+                    .trimIndent()
+            )
+        checkKotlinCompilation(compilation)
         checkEqualsGolden("Gift.java")
     }
 
@@ -4322,8 +4361,9 @@ class AppSearchCompilerTest {
 
     @Test
     fun testKotlinNullability() {
-        compileKotlin(
-            """
+        val compilation =
+            compileKotlin(
+                """
                 @Document
                 data class KotlinGift(
                     @Document.Namespace val namespace: String,
@@ -4334,8 +4374,9 @@ class AppSearchCompilerTest {
                     @Document.BooleanProperty val nullableBoolean: Boolean?,
                 ) {}
                 """
-                .trimIndent()
-        )
+                    .trimIndent()
+            )
+        checkKotlinCompilation(compilation)
 
         checkEqualsGolden("KotlinGift.java")
         checkResultContains(
@@ -4352,14 +4393,16 @@ class AppSearchCompilerTest {
 
     @Test
     fun testKotlinNullability_nullabilityLists() {
-        compileKotlin(
-            """
+        val compilation =
+            compileKotlin(
+                """
                 import androidx.appsearch.app.EmbeddingVector
+
                 @Document
-                data class Gift {
-                    @Document.Namespace String namespace
-                    @Document.Id String id
-                }
+                data class Gift(
+                    @Document.Namespace val namespace: String,
+                    @Document.Id val id: String)
+
                 @Document
                 data class KotlinGift(
                     @Document.Namespace val namespace: String,
@@ -4374,10 +4417,11 @@ class AppSearchCompilerTest {
                     @Document.DocumentProperty val nullableCustomTypes: List<Gift>?,
                     @Document.EmbeddingProperty val nonNullEmbeddings: List<EmbeddingVector>,
                     @Document.EmbeddingProperty val nullableEmbeddings: List<EmbeddingVector>?,
-                ) {}
+                )
                 """
-                .trimIndent()
-        )
+                    .trimIndent()
+            )
+        checkKotlinCompilation(compilation)
 
         checkEqualsGolden("KotlinGift.java")
 
@@ -4409,143 +4453,5 @@ class AppSearchCompilerTest {
             "KotlinGift.java",
             "List<EmbeddingVector> nullableEmbeddingsConv = null;",
         )
-    }
-
-    private fun compileKotlin(classBody: String) {
-        val src =
-            ("package com.example.appsearch\n" +
-                "import androidx.appsearch.annotation.Document\n" +
-                "import androidx.appsearch.annotation.Document.*\n")
-
-        val kotlinSource = kotlin("KotlinGift.kt", src + classBody)
-        // We're compiling kotlin a bit differently, we need a fresh folder here
-        val kotlinCompilationDir = temporaryFolder.newFolder("kt")
-        compile(
-            kotlinCompilationDir,
-            TestCompilationArguments(
-                listOf(kotlinSource),
-                inheritClasspath = true,
-                kotlincArguments = listOf("-language-version=1.9", "-api-version=1.9"),
-                kaptProcessors = listOf(AppSearchCompiler()),
-                symbolProcessorProviders = listOf(),
-                processorOptions =
-                    mapOf(
-                        "AppSearchCompiler.OutputDir" to genFilesDir.absolutePath,
-                        "AppSearchCompiler.RestrictGeneratedCodeToLib" to "false",
-                    ),
-            ),
-        )
-    }
-
-    private fun compile(classBody: String): Compilation {
-        return compile("Gift", classBody, restrictGeneratedCodeToLibrary = false)
-    }
-
-    private fun compile(
-        classSimpleName: String,
-        classBody: String,
-        restrictGeneratedCodeToLibrary: Boolean,
-    ): Compilation {
-        val src =
-            ("package com.example.appsearch;\n" +
-                "import androidx.appsearch.annotation.Document;\n" +
-                "import androidx.appsearch.annotation.Document.*;\n" +
-                classBody)
-        val jfo = JavaFileObjects.forSourceString("com.example.appsearch.$classSimpleName", src)
-        // Fully compiling this source code requires AppSearch to be on the classpath, but it only
-        // builds on Android. Instead, this test configures the annotation processor to write to a
-        // test-controlled path which is then diffed.
-        val outputDirFlag = "-A${AppSearchCompiler.OUTPUT_DIR_OPTION}=${genFilesDir.absolutePath}"
-        val restrictGeneratedCodeToLibraryFlag =
-            "-A${AppSearchCompiler.RESTRICT_GENERATED_CODE_TO_LIB_OPTION}=" +
-                restrictGeneratedCodeToLibrary
-        return Compiler.javac()
-            .withProcessors(AppSearchCompiler(), AutoValueProcessor())
-            .withOptions(outputDirFlag, restrictGeneratedCodeToLibraryFlag)
-            .compile(jfo)
-    }
-
-    private fun checkEqualsGolden(className: String) {
-        val goldenResPath = "goldens/${testName.methodName}.JAVA"
-        val actualPackageDir = File(genFilesDir, "com/example/appsearch")
-        val actualPath = File(actualPackageDir, IntrospectionHelper.GEN_CLASS_PREFIX + className)
-        checkEqualsGoldenHelper(goldenResPath, actualPath)
-    }
-
-    private fun checkDocumentMapEqualsGolden(roundIndex: Int) {
-        val goldenResPath = "goldens/${testName.methodName}DocumentMap_${roundIndex}.JAVA"
-        val actualPackageDir = File(genFilesDir, "com/example/appsearch")
-        val files: Array<File>? =
-            actualPackageDir.listFiles { dir: File, name: String ->
-                name.startsWith("${IntrospectionHelper.GEN_CLASS_PREFIX}DocumentClassMap") &&
-                    name.endsWith("_$roundIndex.java")
-            }
-        assertThat(files).isNotNull()
-        assertThat(files).hasLength(1)
-        checkEqualsGoldenHelper(goldenResPath, files!![0])
-    }
-
-    private fun checkEqualsGoldenHelper(goldenResPath: String, actualPath: File) {
-        // Get the expected file contents
-        var expected = ""
-        javaClass.getResourceAsStream(goldenResPath).use { `is` ->
-            if (`is` == null) {
-                LOG.warning("Failed to find resource \"$goldenResPath\"; treating as empty")
-            } else {
-                val reader = InputStreamReader(`is`, StandardCharsets.UTF_8)
-                expected = CharStreams.toString(reader)
-            }
-        }
-        // Get the actual file contents
-        assertWithMessage("Path $actualPath is not a file").that(actualPath.isFile()).isTrue()
-        val actual = Files.asCharSource(actualPath, StandardCharsets.UTF_8).read()
-
-        // Compare!
-        if (expected == actual) {
-            return
-        }
-
-        // Sadness. If we're running in an environment where source is available, rewrite the golden
-        // to match the actual content for ease of updating the goldens.
-        try {
-            // At runtime, our resources come from the build tree. However, our cwd is
-            // frameworks/support, so find the source tree from that.
-            val goldenSrcDir = File("src/test/resources/androidx/appsearch/compiler")
-            if (!goldenSrcDir.isDirectory()) {
-                LOG.warning(
-                    "Failed to update goldens: golden dir \"${goldenSrcDir.absolutePath} \"" +
-                        " does not exist or is not a folder"
-                )
-                return
-            }
-            val goldenFile = File(goldenSrcDir, goldenResPath)
-            Files.asCharSink(goldenFile, StandardCharsets.UTF_8).write(actual)
-            LOG.info("Successfully updated golden file \"$goldenFile\"")
-        } finally {
-            // Now produce the real exception for the test runner.
-            assertThat(actual).isEqualTo(expected)
-        }
-    }
-
-    private fun checkResultContains(className: String, content: String) {
-        val fileContents = getClassFileContents(className)
-        assertThat(fileContents).contains(content)
-    }
-
-    private fun checkResultDoesNotContain(className: String, content: String) {
-        val fileContents = getClassFileContents(className)
-        assertThat(fileContents).doesNotContain(content)
-    }
-
-    private fun getClassFileContents(className: String): String {
-        val actualPackageDir = File(genFilesDir, "com/example/appsearch")
-        val actualPath = File(actualPackageDir, IntrospectionHelper.GEN_CLASS_PREFIX + className)
-        assertWithMessage("Path $actualPath is not a file").that(actualPath.isFile()).isTrue()
-        return Files.asCharSource(actualPath, StandardCharsets.UTF_8).read()
-    }
-
-    companion object {
-        private val LOG: Logger =
-            Logger.getLogger(AppSearchCompilerTest::class.java.getSimpleName())
     }
 }
