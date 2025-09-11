@@ -186,23 +186,51 @@ internal class NavigationEventProcessor {
      */
     internal fun updateEnabledHandlerInfo(handler: NavigationEventHandler<*>) {
         // Pick the single handler that is allowed to control state right now.
-        val currentHandler =
+        val activeHandler =
             inProgressHandler
                 ?: resolveEnabledHandler(direction = NavigationEventDirection.Back)
                 ?: resolveEnabledHandler(direction = NavigationEventDirection.Forward)
 
-        if (currentHandler != handler) return
+        if (activeHandler != handler) {
+            return
+        }
 
-        val currentInfo = currentHandler.currentInfo ?: NotProvided
-        val combinedBackInfo = resolveCombinedBackInfo()
-        val forwardInfo = currentHandler.forwardInfo
+        // Calculate the new state information from the active handler.
+        val newCurrentInfo = activeHandler.currentInfo ?: NotProvided
+        val newBackInfo = resolveCombinedBackInfo()
+        val newForwardInfo = activeHandler.forwardInfo
 
+        // To avoid redundant state updates and notifications, exit if nothing has changed.
+        val oldState = _state.value
+        if (
+            oldState.currentInfo == newCurrentInfo &&
+                oldState.backInfo == newBackInfo &&
+                oldState.forwardInfo == newForwardInfo
+        ) {
+            return
+        }
+
+        // Atomically commit the new information to the state flow.
+        // When a gesture is in progress, we must preserve its event data.
         _state.update { state ->
             when (state) {
-                is Idle -> Idle(currentInfo, combinedBackInfo, forwardInfo)
+                is Idle -> Idle(newCurrentInfo, newBackInfo, newForwardInfo)
                 is InProgress ->
-                    InProgress(currentInfo, combinedBackInfo, forwardInfo, state.latestEvent)
+                    InProgress(newCurrentInfo, newBackInfo, newForwardInfo, state.latestEvent)
             }
+        }
+
+        // Notify inputs directly for immediate, synchronous updates. This avoids
+        // delays from the coroutine dispatcher, ensuring that consumers can react
+        // to the state change within the same frame.
+        for (input in overlayInputs) {
+            input.doOnInfoChanged(newCurrentInfo, newBackInfo, newForwardInfo)
+        }
+        for (input in defaultInputs) {
+            input.doOnInfoChanged(newCurrentInfo, newBackInfo, newForwardInfo)
+        }
+        for (input in unspecifiedInputs) {
+            input.doOnInfoChanged(newCurrentInfo, newBackInfo, newForwardInfo)
         }
     }
 

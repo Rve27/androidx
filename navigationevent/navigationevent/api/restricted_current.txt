@@ -116,6 +116,7 @@ package androidx.navigationevent {
     method @MainThread protected final void dispatchOnForwardStarted(androidx.navigationevent.NavigationEvent event);
     method @EmptySuper @MainThread protected void onAdded(androidx.navigationevent.NavigationEventDispatcher dispatcher);
     method @EmptySuper @MainThread protected void onHasEnabledHandlerChanged(boolean hasEnabledHandler);
+    method @EmptySuper @MainThread protected void onInfoChanged(androidx.navigationevent.NavigationEventInfo currentInfo, java.util.List<? extends androidx.navigationevent.NavigationEventInfo> backInfo, java.util.List<? extends androidx.navigationevent.NavigationEventInfo> forwardInfo);
     method @EmptySuper @MainThread protected void onRemoved();
   }
 
