@@ -806,7 +806,22 @@ package androidx.window.layout {
 
   public final class WindowLayoutInfo {
     method @InaccessibleFromKotlin public java.util.List<androidx.window.layout.DisplayFeature> getDisplayFeatures();
+    method @InaccessibleFromKotlin public java.util.Set<androidx.window.layout.WindowLayoutInfo.EngagementMode> getEngagementModes();
+    method public boolean hasEngagementMode(androidx.window.layout.WindowLayoutInfo.EngagementMode mode);
+    method public boolean hasEngagementModes(androidx.window.layout.WindowLayoutInfo.EngagementMode... modes);
     property public java.util.List<androidx.window.layout.DisplayFeature> displayFeatures;
+    property public java.util.Set<androidx.window.layout.WindowLayoutInfo.EngagementMode> engagementModes;
+  }
+
+  public static final class WindowLayoutInfo.EngagementMode {
+    field public static final androidx.window.layout.WindowLayoutInfo.EngagementMode AUDIO_ON;
+    field public static final androidx.window.layout.WindowLayoutInfo.EngagementMode.Companion Companion;
+    field public static final androidx.window.layout.WindowLayoutInfo.EngagementMode VISUALS_ON;
+  }
+
+  public static final class WindowLayoutInfo.EngagementMode.Companion {
+    property public androidx.window.layout.WindowLayoutInfo.EngagementMode AUDIO_ON;
+    property public androidx.window.layout.WindowLayoutInfo.EngagementMode VISUALS_ON;
   }
 
   public final class WindowMetrics {
