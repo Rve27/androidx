@@ -16,8 +16,6 @@
 
 package androidx.xr.scenecore.impl.impress;
 
-import android.util.Log;
-
 import androidx.annotation.RestrictTo;
 import androidx.xr.scenecore.internal.TextureResource;
 
@@ -29,9 +27,6 @@ import org.jspecify.annotations.NonNull;
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public final class Texture extends BindingsResource implements TextureResource {
-    private final String mTAG = getClass().getSimpleName();
-
-    @SuppressWarnings("UnusedVariable")
     private final ImpressApi mImpressApi;
 
     private Texture(Builder builder) {
@@ -41,8 +36,7 @@ public final class Texture extends BindingsResource implements TextureResource {
 
     @Override
     protected void releaseBindingsResource(long nativeHandle) {
-        // TODO(b/433934447): Call into the JNI to release the native bindings resource.
-        Log.d(mTAG, "Texture is getting destroyed manually");
+        mImpressApi.destroyNativeObject(nativeHandle);
     }
 
     /** Use Builder to construct a Texture object instance. */

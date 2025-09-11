@@ -16,8 +16,6 @@
 
 package androidx.xr.scenecore.impl.impress;
 
-import android.util.Log;
-
 import androidx.annotation.RestrictTo;
 import androidx.xr.scenecore.internal.MaterialResource;
 
@@ -26,9 +24,6 @@ import org.jspecify.annotations.NonNull;
 /** Interface defining the common functionality of all materials. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public abstract class Material extends BindingsResource implements MaterialResource {
-    private final String mTAG = getClass().getSimpleName();
-
-    @SuppressWarnings("UnusedVariable")
     private final ImpressApi mImpressApi;
 
     protected Material(@NonNull ImpressApi impressApi, long nativeMaterial) {
@@ -38,7 +33,6 @@ public abstract class Material extends BindingsResource implements MaterialResou
 
     @Override
     protected void releaseBindingsResource(long nativeHandle) {
-        // TODO(b/433934447): Call into the JNI to release the native bindings resource.
-        Log.d(mTAG, "Material is getting destroyed manually");
+        mImpressApi.destroyNativeObject(nativeHandle);
     }
 }
