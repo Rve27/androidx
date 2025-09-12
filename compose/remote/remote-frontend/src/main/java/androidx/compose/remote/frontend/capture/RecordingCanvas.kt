@@ -42,9 +42,12 @@ import androidx.compose.remote.frontend.capture.shaders.colorFilterModeToInt
 import androidx.compose.remote.frontend.state.MutableRemoteFloat
 import androidx.compose.remote.frontend.state.RemoteBitmap
 import androidx.compose.remote.frontend.state.RemoteBitmapFont
+import androidx.compose.remote.frontend.state.RemoteBlendModeColorFilter
 import androidx.compose.remote.frontend.state.RemoteBoolean
+import androidx.compose.remote.frontend.state.RemoteColorFilter
 import androidx.compose.remote.frontend.state.RemoteFloat
 import androidx.compose.remote.frontend.state.RemoteInt
+import androidx.compose.remote.frontend.state.RemotePaint
 import androidx.compose.remote.frontend.state.RemoteString
 import androidx.compose.remote.frontend.state.getFloatIdForCreationState
 import androidx.compose.runtime.mutableFloatStateOf
@@ -96,6 +99,7 @@ public class RecordingCanvas(bitmap: Bitmap) : Canvas(bitmap) {
     private var lastColorFilterMode: Int = -1
     private var lastRemoteShader: RemoteShader? = null
     private var lastBlendMode: BlendMode? = null
+    private var lastRemoteColorFilter: RemoteColorFilter? = null
     public lateinit var document: RemoteComposeWriter
     public lateinit var creationState: RemoteComposeCreationState
 
@@ -192,6 +196,12 @@ public class RecordingCanvas(bitmap: Bitmap) : Canvas(bitmap) {
             } else {
                 -1
             }
+        val tmpLastRemoteColorFilter =
+            if (paint is RemotePaint) {
+                paint.remoteColorFilter
+            } else {
+                null
+            }
         var send = forceSendingPaint
 
         if (forceSendingPaint || lastColor != tmpLastColorLong) {
@@ -250,12 +260,26 @@ public class RecordingCanvas(bitmap: Bitmap) : Canvas(bitmap) {
             forceSendingPaint ||
                 lastColorFilter != tmpLastColorFilter ||
                 lastColorFilterMode != tmpLastColorFilterMode ||
-                lastColorFilterColor != tmpLastColorFilterColor
+                lastColorFilterColor != tmpLastColorFilterColor ||
+                lastRemoteColorFilter != tmpLastRemoteColorFilter
         ) {
-            if (tmpLastColorFilter is BlendModeColorFilter) {
+            if (tmpLastRemoteColorFilter != null) {
+                lastColorFilterColor = tmpLastColorFilterColor
+                lastColorFilterMode = tmpLastColorFilterMode
+                lastRemoteColorFilter = tmpLastRemoteColorFilter
+                when (tmpLastRemoteColorFilter) {
+                    is RemoteBlendModeColorFilter ->
+                        paintBundle.setColorFilterId(
+                            tmpLastRemoteColorFilter.color.getIdForCreationState(creationState),
+                            colorFilterModeToInt(tmpLastRemoteColorFilter.blendMode),
+                        )
+                }
+                send = true
+            } else if (tmpLastColorFilter is BlendModeColorFilter) {
                 lastColorFilter = tmpLastColorFilter
                 lastColorFilterColor = tmpLastColorFilterColor
                 lastColorFilterMode = tmpLastColorFilterMode
+                lastRemoteColorFilter = tmpLastRemoteColorFilter
                 paintBundle.setColorFilter(
                     tmpLastColorFilter.color,
                     colorFilterModeToInt(tmpLastColorFilter.mode),

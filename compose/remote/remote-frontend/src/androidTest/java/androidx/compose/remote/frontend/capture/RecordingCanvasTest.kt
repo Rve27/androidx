@@ -16,16 +16,24 @@
 
 package androidx.compose.remote.frontend.capture
 
+import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.BlendMode
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import androidx.compose.remote.core.CoreDocument
 import androidx.compose.remote.core.Operations
 import androidx.compose.remote.creation.platform.AndroidxPlatformServices
+import androidx.compose.remote.frontend.state.RemoteBlendModeColorFilter
 import androidx.compose.remote.frontend.state.RemoteBoolean
+import androidx.compose.remote.frontend.state.RemoteColor
+import androidx.compose.remote.frontend.state.RemotePaint
+import androidx.compose.remote.frontend.test.R
 import androidx.compose.remote.player.view.platform.AndroidRemoteContext
 import androidx.compose.ui.geometry.Size
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
 import androidx.test.filters.SdkSuppress
@@ -46,6 +54,7 @@ private const val HEIGHT = 400
 class RecordingCanvasTest {
     private val SCREENSHOT_GOLDEN_DIRECTORY = "compose/remote/remote-frontend"
 
+    private val context: Context = ApplicationProvider.getApplicationContext()
     @get:Rule val screenshotRule = AndroidXScreenshotTestRule(SCREENSHOT_GOLDEN_DIRECTORY)
 
     private val creationState =
@@ -65,6 +74,17 @@ class RecordingCanvasTest {
     @Before
     fun setUp() {
         recordingCanvas.setRemoteComposeCreationState(creationState)
+    }
+
+    @Test
+    fun remotePaint() {
+        val paint = RemotePaint()
+        paint.remoteColorFilter =
+            RemoteBlendModeColorFilter(RemoteColor(0xffffee70.toInt()), BlendMode.MULTIPLY)
+        val bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.android_image)
+        recordingCanvas.drawBitmap(bitmap, 0f, 0f, paint)
+        val document = constructDocument()
+        assertScreenshot(document, "remotePaint")
     }
 
     @Test
