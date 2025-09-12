@@ -264,17 +264,9 @@ private constructor(
     }
 
     /**
-     * Returns `true` if there is at least one [NavigationEventHandler.isBackEnabled] handler
-     * registered globally within this dispatcher hierarchy.
-     *
-     * @return `true` if any handler is enabled, `false` otherwise.
-     */
-    public fun hasEnabledHandler(): Boolean = sharedProcessor.hasEnabledHandler()
-
-    /**
-     * Recomputes and updates the current [hasEnabledHandler] state based on the enabled status of
-     * all registered handlers. This method should be called whenever a handler's enabled state or
-     * its registration status (added/removed) changes.
+     * Recomputes and updates the current handler state based on the enabled status of all
+     * registered handlers. This method should be called whenever a handler's enabled state or its
+     * registration status (added/removed) changes.
      */
     internal fun refreshEnabledCallbacks() {
         sharedProcessor.refreshEnabledHandlers()
