@@ -56,12 +56,12 @@ public class NavigationEventDispatcher
  *   allows this dispatcher to participate in a hierarchical event system, sharing the same
  *   underlying [NavigationEventProcessor] as its parent. If `null`, this dispatcher acts as the
  *   root of its own event handling hierarchy.
- * @param fallbackOnBackPressed An optional lambda to be invoked if a navigation event completes and
- *   no registered [NavigationEventHandler] handles it. This provides a default "back" action.
+ * @param onBackCompletedFallback An optional lambda to be invoked if a back event completes and no
+ *   registered [NavigationEventHandler] handles it. This provides a default "back" action.
  */
 private constructor(
     private var parent: NavigationEventDispatcher?,
-    private val fallbackOnBackPressed: (() -> Unit)?,
+    private val onBackCompletedFallback: OnBackCompletedFallback?,
 ) {
 
     /**
@@ -73,7 +73,7 @@ private constructor(
      * If a navigation event completes without being handled by any registered
      * [NavigationEventHandler], nothing further will happen.
      */
-    public constructor() : this(parent = null, fallbackOnBackPressed = null)
+    public constructor() : this(parent = null, onBackCompletedFallback = null)
 
     /**
      * Creates a **root** `NavigationEventDispatcher` with a fallback action.
@@ -87,7 +87,7 @@ private constructor(
      */
     public constructor(
         fallbackOnBackPressed: () -> Unit
-    ) : this(parent = null, fallbackOnBackPressed = fallbackOnBackPressed)
+    ) : this(parent = null, onBackCompletedFallback = fallbackOnBackPressed)
 
     /**
      * Creates a **child** `NavigationEventDispatcher` linked to a parent.
@@ -101,7 +101,7 @@ private constructor(
      */
     public constructor(
         parent: NavigationEventDispatcher
-    ) : this(parent = parent, fallbackOnBackPressed = null)
+    ) : this(parent = parent, onBackCompletedFallback = null)
 
     /**
      * Defines priorities when adding a [NavigationEventHandler] to a
@@ -485,7 +485,7 @@ private constructor(
         checkInvariants()
 
         if (!isEnabled) return
-        sharedProcessor.dispatchOnCompleted(input, direction, fallbackOnBackPressed)
+        sharedProcessor.dispatchOnCompleted(input, direction, onBackCompletedFallback)
     }
 
     /**
