@@ -515,6 +515,10 @@ public fun SpatialPanel(
  * there is only one source of truth for the main panel's state, which is crucial for predictable
  * interactions with other framework components like [androidx.xr.compose.spatial.Orbiter].
  *
+ * Note: It is crucial to ensure that only one [SpatialMainPanel] is active (composed) at any given
+ * time. The underlying system is designed around a single main panel instance, and having multiple
+ * active instances can lead to undefined behavior.
+ *
  * The size of the panel in the Subspace is controlled by the standard Compose layout system, driven
  * by the SubspaceModifier applied to it. Modifiers like SubspaceModifier.width directly dictate the
  * panel's dimensions, following the same measurement and layout rules as other
