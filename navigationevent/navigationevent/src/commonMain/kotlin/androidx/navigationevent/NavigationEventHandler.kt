@@ -65,7 +65,7 @@ public constructor(initialInfo: T, isBackEnabled: Boolean, isForwardEnabled: Boo
      * This is always a single value, provided by the currently active handler, and reflects the
      * foreground navigation state at this point in time.
      */
-    internal var currentInfo: T = initialInfo
+    public var currentInfo: T = initialInfo
         private set
 
     /**
@@ -75,7 +75,7 @@ public constructor(initialInfo: T, isBackEnabled: Boolean, isForwardEnabled: Boo
      * (for example, titles or metadata) that help render back affordances in the UI. The list may
      * be empty if no back navigation is possible in this scope.
      */
-    internal var backInfo: List<T> = emptyList()
+    public var backInfo: List<T> = emptyList()
         private set
 
     /**
@@ -85,7 +85,7 @@ public constructor(initialInfo: T, isBackEnabled: Boolean, isForwardEnabled: Boo
      * values that help render forward affordances in the UI. The list may be empty if no forward
      * navigation is possible in this scope.
      */
-    internal var forwardInfo: List<T> = emptyList()
+    public var forwardInfo: List<T> = emptyList()
         private set
 
     /**
