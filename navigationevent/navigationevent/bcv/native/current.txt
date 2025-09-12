@@ -6,6 +6,10 @@
 // - Show declarations: true
 
 // Library unique name: <androidx.navigationevent:navigationevent>
+abstract fun interface androidx.navigationevent/OnBackCompletedFallback { // androidx.navigationevent/OnBackCompletedFallback|null[0]
+    abstract fun onBackCompletedFallback() // androidx.navigationevent/OnBackCompletedFallback.onBackCompletedFallback|onBackCompletedFallback(){}[0]
+}
+
 abstract interface androidx.navigationevent/NavigationEventDispatcherOwner { // androidx.navigationevent/NavigationEventDispatcherOwner|null[0]
     abstract val navigationEventDispatcher // androidx.navigationevent/NavigationEventDispatcherOwner.navigationEventDispatcher|{}navigationEventDispatcher[0]
         abstract fun <get-navigationEventDispatcher>(): androidx.navigationevent/NavigationEventDispatcher // androidx.navigationevent/NavigationEventDispatcherOwner.navigationEventDispatcher.<get-navigationEventDispatcher>|<get-navigationEventDispatcher>(){}[0]
