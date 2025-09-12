@@ -25,9 +25,9 @@ import androidx.lifecycle.compose.LifecycleOwner
 import androidx.navigation3.runtime.navEntryDecorator
 
 @Composable
-internal fun rememberTransitionAwareLifecycleNavEntryDecorator(backStack: List<Any>) =
+internal fun <T : Any> rememberTransitionAwareLifecycleNavEntryDecorator(backStack: List<T>) =
     remember(backStack) {
-        navEntryDecorator<Any> { entry ->
+        navEntryDecorator<T> { entry ->
             val isSettled = LocalNavTransitionSettledState.current
             val isInBackStack = entry.isInBackStack(backStack)
             val maxLifecycle =
