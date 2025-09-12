@@ -40,8 +40,8 @@ public class OnBackInvokedInput(private val onBackInvokedDispatcher: OnBackInvok
         updateBackInvokedCallbackState(false)
     }
 
-    override fun onHasEnabledHandlerChanged(hasEnabledHandler: Boolean) {
-        updateBackInvokedCallbackState(hasEnabledHandler)
+    override fun onHasEnabledHandlersChanged(hasEnabledHandlers: Boolean) {
+        updateBackInvokedCallbackState(hasEnabledHandlers)
     }
 
     private fun updateBackInvokedCallbackState(shouldBeRegistered: Boolean) {

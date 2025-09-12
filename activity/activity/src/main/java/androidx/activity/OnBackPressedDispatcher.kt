@@ -73,7 +73,7 @@ class OnBackPressedDispatcher(
      * which provides a KMP-compatible API while preserving behavior compatibility with existing
      * callback mechanisms.
      *
-     * @see [OnBackPressedCallback.eventCallbacks]
+     * @see [OnBackPressedCallback.eventHandlers]
      */
     internal val eventDispatcher: NavigationEventDispatcher by lazy {
         val dispatcher =
@@ -82,9 +82,9 @@ class OnBackPressedDispatcher(
         // can be set through OnBackPressedDispatcher's public constructor.
         dispatcher.addInput(
             object : NavigationEventInput() {
-                override fun onHasEnabledHandlerChanged(hasEnabledHandler: Boolean) {
-                    hasEnabledCallbacks = hasEnabledHandler
-                    onHasEnabledCallbacksChanged?.accept(hasEnabledHandler)
+                override fun onHasEnabledHandlersChanged(hasEnabledHandlers: Boolean) {
+                    hasEnabledCallbacks = hasEnabledHandlers
+                    onHasEnabledCallbacksChanged?.accept(hasEnabledHandlers)
                 }
             }
         )
