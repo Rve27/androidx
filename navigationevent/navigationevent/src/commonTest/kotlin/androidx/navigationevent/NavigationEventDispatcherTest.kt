@@ -22,7 +22,7 @@ import androidx.kruth.assertThat
 import androidx.kruth.assertThrows
 import androidx.navigationevent.NavigationEventDispatcher.Companion.PRIORITY_DEFAULT
 import androidx.navigationevent.NavigationEventDispatcher.Companion.PRIORITY_OVERLAY
-import androidx.navigationevent.NavigationEventInfo.NotProvided
+import androidx.navigationevent.NavigationEventInfo.None
 import androidx.navigationevent.NavigationEventState.Idle
 import androidx.navigationevent.NavigationEventState.InProgress
 import androidx.navigationevent.testing.TestNavigationEventHandler
@@ -1055,7 +1055,7 @@ class NavigationEventDispatcherTest {
         val homeHandler = TestNavigationEventHandler(currentInfo = HomeScreenInfo("home"))
         val detailsHandler = TestNavigationEventHandler(currentInfo = DetailsScreenInfo("details"))
 
-        assertThat(dispatcher.state.value).isEqualTo(Idle(NotProvided))
+        assertThat(dispatcher.state.value).isEqualTo(Idle(None))
 
         dispatcher.addHandler(homeHandler)
         assertThat(dispatcher.state.value).isEqualTo(Idle(HomeScreenInfo("home")))

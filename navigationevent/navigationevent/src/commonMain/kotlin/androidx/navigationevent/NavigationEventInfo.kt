@@ -44,5 +44,5 @@ public interface NavigationEventInfo {
      *
      * This serves as a null object when context about the UI state is unavailable or not needed.
      */
-    public object NotProvided : NavigationEventInfo
+    public object None : NavigationEventInfo
 }
