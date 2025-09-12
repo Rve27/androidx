@@ -19,16 +19,18 @@ package androidx.glance.wear.data.legacy;
 import org.jspecify.annotations.NonNull;
 
 /**
- * Holder for parameters, used when a Tile update request is triggered. This is currently a
- * placeholder to allow for future expansion, and should be filled in with an empty byte array.
+ * Holder for Tiles' {@link androidx.glance.wear.data.proto.legacy.TileRemoveEvent} class, to be
+ * parceled and transferred to a Tile Service.
+ *
+ * <p>All this does is to serialize {@link androidx.glance.wear.data.proto.legacy.TileRemoveEvent}
+ * as a protobuf and transmit it.
  */
-public final class TileUpdateRequestData extends ProtoParcelable {
-    public static final int VERSION_1 = 1;
+public final class TileAddEventData extends ProtoParcelable {
+    public static final int VERSION_PROTOBUF = 1;
+    public static final Creator<TileAddEventData> CREATOR =
+            newCreator(TileAddEventData.class, TileAddEventData::new);
 
-    public static final Creator<TileUpdateRequestData> CREATOR =
-            newCreator(TileUpdateRequestData.class, TileUpdateRequestData::new);
-
-    public TileUpdateRequestData(byte @NonNull [] params, int version) {
+    public TileAddEventData(byte @NonNull [] params, int version) {
         super(params, version);
     }
 }
