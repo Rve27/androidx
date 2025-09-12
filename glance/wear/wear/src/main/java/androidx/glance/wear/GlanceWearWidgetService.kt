@@ -16,11 +16,14 @@
 
 package androidx.glance.wear
 
+import android.content.ComponentName
 import android.content.Intent
 import android.os.IBinder
 import androidx.annotation.RestrictTo
 import androidx.glance.wear.data.IWearWidgetProvider
+import androidx.glance.wear.data.LegacyTileProviderImpl
 import androidx.glance.wear.data.WearWidgetProviderImpl
+import androidx.glance.wear.data.legacy.TileProvider
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
 
@@ -44,15 +47,26 @@ public abstract class GlanceWearWidgetService() : LifecycleService() {
             WearWidgetProviderImpl(this, lifecycleScope, widget)
         }
 
+    private val legacyProvider: TileProvider.Stub by
+        lazy(LazyThreadSafetyMode.PUBLICATION) {
+            LegacyTileProviderImpl(
+                this,
+                ComponentName(this, this.javaClass),
+                lifecycleScope,
+                widget,
+            )
+        }
+
     final override fun onBind(intent: Intent): IBinder? {
         super.onBind(intent)
         return when (intent.action) {
             ACTION_BIND_WIDGET_PROVIDER -> provider
             ACTION_BIND_TILE_PROVIDER ->
                 if (intent.extras?.getBoolean(EXTRA_KEY_WEAR_WIDGET_PROVIDER_SUPPORTED) == true) {
+                    // TODO: b/444391060 - Add an SDK check also to allow R8 optimization.
                     provider
                 } else {
-                    null // TODO: return legacy TileProvider interface.
+                    legacyProvider
                 }
             else -> null
         }

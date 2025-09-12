@@ -51,6 +51,28 @@ internal constructor(private val updateClient: WidgetUpdateClient) {
     ): WearWidgetContent
 
     /**
+     * Called when a widget provider linked to this widget class becomes active in the host.
+     *
+     * This method is called from the main thread.
+     *
+     * @param context the context from which this method is called
+     * @param widgetHandle the handle of the active widget.
+     */
+    @MainThread
+    public open suspend fun onActivated(context: Context, widgetHandle: ActiveWearWidgetHandle) {}
+
+    /**
+     * Called when a widget provider linked to this widget class becomes deactivated in the host.
+     *
+     * This method is called from the main thread.
+     *
+     * @param context the context from which this method is called
+     * @param widgetHandle the handle of the widget.
+     */
+    @MainThread
+    public open suspend fun onDeactivated(context: Context, widgetHandle: ActiveWearWidgetHandle) {}
+
+    /**
      * Notify the host that it should fetch a new layout for this widget.
      *
      * <p>If sdk version is API 36 or lower, or the widget [instanceId] is invalid (i.e. doesn't

@@ -23,6 +23,7 @@ import android.os.Looper
 import androidx.glance.wear.data.IWearWidgetCallback
 import androidx.glance.wear.data.IWearWidgetProvider
 import androidx.glance.wear.data.WearWidgetRequestData
+import androidx.glance.wear.data.legacy.TileProvider
 import androidx.glance.wear.proto.WearWidgetRequestProto
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
@@ -63,7 +64,7 @@ class GlanceWearWidgetServiceTest {
     }
 
     @Test
-    fun onBind_withTileIntentAndDoesNotSupportWidgetProvider_returnsNull() {
+    fun onBind_withTileIntentAndDoesNotSupportWidgetProvider_returnsLegacyProvider() {
         val service: TestService = Robolectric.setupService(TestService::class.java)
         val bindIntent =
             Intent(GlanceWearWidgetService.ACTION_BIND_TILE_PROVIDER).apply {
@@ -72,17 +73,17 @@ class GlanceWearWidgetServiceTest {
 
         val binder: IBinder? = service.onBind(bindIntent)
 
-        assertThat(binder).isNull()
+        assertThat(binder).isInstanceOf(TileProvider::class.java)
     }
 
     @Test
-    fun onBind_withTileIntentAndNoExtras_returnsNull() {
+    fun onBind_withTileIntentAndNoExtras_returnsLegacyProvider() {
         val service: TestService = Robolectric.setupService(TestService::class.java)
         val bindIntent = Intent(GlanceWearWidgetService.ACTION_BIND_TILE_PROVIDER)
 
         val binder: IBinder? = service.onBind(bindIntent)
 
-        assertThat(binder).isNull()
+        assertThat(binder).isInstanceOf(TileProvider::class.java)
     }
 
     @Test
