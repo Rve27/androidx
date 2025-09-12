@@ -31,6 +31,7 @@ import android.graphics.Typeface
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.annotation.RestrictTo
+import androidx.compose.remote.core.operations.ConditionalOperations
 import androidx.compose.remote.core.operations.PaintData
 import androidx.compose.remote.core.operations.Utils
 import androidx.compose.remote.core.operations.paint.PaintBundle
@@ -41,6 +42,7 @@ import androidx.compose.remote.frontend.capture.shaders.colorFilterModeToInt
 import androidx.compose.remote.frontend.state.MutableRemoteFloat
 import androidx.compose.remote.frontend.state.RemoteBitmap
 import androidx.compose.remote.frontend.state.RemoteBitmapFont
+import androidx.compose.remote.frontend.state.RemoteBoolean
 import androidx.compose.remote.frontend.state.RemoteFloat
 import androidx.compose.remote.frontend.state.RemoteInt
 import androidx.compose.remote.frontend.state.RemoteString
@@ -1349,6 +1351,25 @@ public class RecordingCanvas(bitmap: Bitmap) : Canvas(bitmap) {
             tangentalOffset.getFloatIdForCreationState(creationState),
             3,
         )
+    }
+
+    /**
+     * Instructs the player to conditionally execute [drawCommands] if [condition] evaluates to
+     * true.
+     *
+     * @param condition The condition that controls whether or not the player executes
+     *   [drawCommands].
+     * @param drawCommands The commands the player will execute if [condition] evaluate to true.
+     */
+    public fun drawConditionally(condition: RemoteBoolean, drawCommands: () -> Unit) {
+        document.conditionalOperations(
+            ConditionalOperations.TYPE_NEQ,
+            condition.toRemoteInt().toRemoteFloat().getFloatIdForCreationState(creationState),
+            0f,
+        )
+        forceSendingPaint(true)
+        drawCommands()
+        document.endConditionalOperations()
     }
 
     public companion object {
