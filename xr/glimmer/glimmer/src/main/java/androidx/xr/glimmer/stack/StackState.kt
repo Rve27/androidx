@@ -16,6 +16,7 @@
 
 package androidx.xr.glimmer.stack
 
+import androidx.annotation.IntRange
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.MutatePriority
@@ -42,14 +43,15 @@ import androidx.compose.runtime.setValue
  * Warning: A single [StackState] instance must not be shared across multiple [VerticalStack]
  * composables.
  *
+ * @param initialTopItem The index of the item to show at the top of the stack initially. Must be
+ *   non-negative. Defaults to 0.
  * @see StackState
  * @see VerticalStack
  */
-// TODO(b/413429531): expose a way to set the initial item.
 @Composable
-public fun rememberStackState(): StackState =
+public fun rememberStackState(@IntRange(from = 0) initialTopItem: Int = 0): StackState =
     // TODO(b/413429531): switch to rememberSaveable with a public Saver.
-    remember { StackState() }
+    remember { StackState(initialTopItem) }
 
 /**
  * The [VerticalStack] state that allows programmatic control and observation of the stack's state.
@@ -61,16 +63,25 @@ public fun rememberStackState(): StackState =
  *
  * Warning: A single [StackState] instance must not be shared across multiple [VerticalStack]
  * composables.
+ *
+ * @param initialTopItem The index of the item to show at the top of the stack initially. Must be
+ *   non-negative. Defaults to 0.
+ * @see rememberStackState
+ * @see VerticalStack
  */
 // TODO(b/413429531): add layout info to the state.
 // TODO(b/413429531): add InteractionSource.
 // TODO(b/413429531): add ScrollIndicatorState.
 @Stable
-public class StackState : ScrollableState {
+public class StackState(@IntRange(from = 0) initialTopItem: Int = 0) : ScrollableState {
+
+    init {
+        require(initialTopItem >= 0) { "initialTopItem must be non-negative" }
+    }
 
     internal var itemCount by mutableIntStateOf(0)
 
-    internal val pagerState = PagerState(pageCount = { itemCount })
+    internal val pagerState = PagerState(currentPage = initialTopItem, pageCount = { itemCount })
 
     /** The index of the item that's currently at the top of the stack, defaults to 0. */
     public val topItem: Int

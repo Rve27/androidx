@@ -363,6 +363,7 @@ package androidx.xr.glimmer.stack {
 
   @androidx.compose.runtime.Stable public final class StackState implements androidx.compose.foundation.gestures.ScrollableState {
     ctor public StackState();
+    ctor public StackState(optional @IntRange(from=0L) int initialTopItem);
     method public suspend Object? animateScrollToItem(int item, optional androidx.compose.animation.core.AnimationSpec<java.lang.Float> animationSpec, kotlin.coroutines.Continuation<? super kotlin.Unit>);
     method public float dispatchRawDelta(float delta);
     method @InaccessibleFromKotlin public int getTopItem();
@@ -380,8 +381,8 @@ package androidx.xr.glimmer.stack {
   }
 
   public final class StackStateKt {
-    method @androidx.compose.runtime.Composable public static androidx.xr.glimmer.stack.StackState rememberStackState();
-    method @BytecodeOnly @androidx.compose.runtime.Composable public static androidx.xr.glimmer.stack.StackState rememberStackState(androidx.compose.runtime.Composer?, int);
+    method @androidx.compose.runtime.Composable public static androidx.xr.glimmer.stack.StackState rememberStackState(optional @IntRange(from=0L) int initialTopItem);
+    method @BytecodeOnly @androidx.compose.runtime.Composable public static androidx.xr.glimmer.stack.StackState rememberStackState(@IntRange(from=0L) int, androidx.compose.runtime.Composer?, int, int);
   }
 
 }

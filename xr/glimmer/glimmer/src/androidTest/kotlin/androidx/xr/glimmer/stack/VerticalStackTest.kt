@@ -91,6 +91,50 @@ class VerticalStackTest {
     }
 
     @Test
+    fun multipleItems_customInitialTopItem_displaysRequestedItem() {
+        val state = StackState(initialTopItem = 1)
+        rule.setContent {
+            VerticalStack(modifier = Modifier.size(100.dp), state = state) {
+                items(5) { index -> Box(modifier = Modifier.fillMaxSize()) { Text("Item $index") } }
+            }
+        }
+
+        rule.onNodeWithText("Item 0").assertIsNotDisplayed()
+        rule.onNodeWithText("Item 1").assertIsDisplayed()
+        rule.onNodeWithText("Item 2").assertIsNotDisplayed()
+        assertThat(state.topItem).isEqualTo(1)
+        assertThat(state.topItemOffsetFraction).isEqualTo(0f)
+    }
+
+    @Test
+    fun multipleItems_lastInitialTopItem_displaysLastItem() {
+        val state = StackState(initialTopItem = 4)
+        rule.setContent {
+            VerticalStack(modifier = Modifier.size(100.dp), state = state) {
+                items(5) { index -> Box(modifier = Modifier.fillMaxSize()) { Text("Item $index") } }
+            }
+        }
+
+        rule.onNodeWithText("Item 4").assertIsDisplayed()
+        assertThat(state.topItem).isEqualTo(4)
+        assertThat(state.topItemOffsetFraction).isEqualTo(0f)
+    }
+
+    @Test
+    fun multipleItems_outOfRangeInitialTopItem_displaysLastItem() {
+        val state = StackState(initialTopItem = 10)
+        rule.setContent {
+            VerticalStack(modifier = Modifier.size(100.dp), state = state) {
+                items(5) { index -> Box(modifier = Modifier.fillMaxSize()) { Text("Item $index") } }
+            }
+        }
+
+        rule.onNodeWithText("Item 4").assertIsDisplayed()
+        assertThat(state.topItem).isEqualTo(4)
+        assertThat(state.topItemOffsetFraction).isEqualTo(0f)
+    }
+
+    @Test
     fun multipleItems_stateChanges_maintainsItemCount() {
         val state1 = StackState()
         val state2 = StackState()

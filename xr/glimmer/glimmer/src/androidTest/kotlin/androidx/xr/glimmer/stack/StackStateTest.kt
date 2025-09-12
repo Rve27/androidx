@@ -40,6 +40,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertThrows
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -60,6 +61,11 @@ class StackStateTest {
         assertThat(state.canScrollBackward).isFalse()
         assertThat(state.lastScrolledForward).isFalse()
         assertThat(state.lastScrolledBackward).isFalse()
+    }
+
+    @Test
+    fun negativeInitialTopItem_throws() {
+        assertThrows(IllegalArgumentException::class.java) { StackState(initialTopItem = -1) }
     }
 
     @Test
