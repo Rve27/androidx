@@ -203,4 +203,10 @@ object ComposeUiFlags {
     @Suppress("MutableBareField")
     @JvmField
     var isCanScrollUsingLastDownEventFixEnabled: Boolean = true
+
+    /**
+     * Enable fix to scroll target rect to the center when performing scroll capture, thus generally
+     * avoiding floating content at the top and bottom of the UI.
+     */
+    @Suppress("MutableBareField") @JvmField var isScrollCaptureCenteringEnabled: Boolean = true
 }
