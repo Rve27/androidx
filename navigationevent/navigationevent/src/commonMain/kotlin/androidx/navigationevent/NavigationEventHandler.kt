@@ -17,6 +17,10 @@
 package androidx.navigationevent
 
 import androidx.annotation.EmptySuper
+import androidx.navigationevent.NavigationEventTransitionState.Companion.TRANSITIONING_BACK
+import androidx.navigationevent.NavigationEventTransitionState.Companion.TRANSITIONING_FORWARD
+import androidx.navigationevent.NavigationEventTransitionState.Idle
+import androidx.navigationevent.NavigationEventTransitionState.InProgress
 import kotlin.jvm.JvmOverloads
 
 /**
@@ -86,6 +90,9 @@ public constructor(initialInfo: T, isBackEnabled: Boolean, isForwardEnabled: Boo
      * navigation is possible in this scope.
      */
     public var forwardInfo: List<T> = emptyList()
+        private set
+
+    public var transitionState: NavigationEventTransitionState = Idle()
         private set
 
     /**
@@ -185,6 +192,7 @@ public constructor(initialInfo: T, isBackEnabled: Boolean, isForwardEnabled: Boo
      * @see NavigationEventDispatcher.dispatchOnStarted
      */
     internal fun doOnBackStarted(event: NavigationEvent) {
+        transitionState = InProgress(latestEvent = event, direction = TRANSITIONING_BACK)
         onBackStarted(event)
     }
 
@@ -205,6 +213,7 @@ public constructor(initialInfo: T, isBackEnabled: Boolean, isForwardEnabled: Boo
      * @see NavigationEventDispatcher.dispatchOnProgressed
      */
     internal fun doOnBackProgressed(event: NavigationEvent) {
+        transitionState = InProgress(latestEvent = event, direction = TRANSITIONING_BACK)
         onBackProgressed(event)
     }
 
@@ -225,6 +234,7 @@ public constructor(initialInfo: T, isBackEnabled: Boolean, isForwardEnabled: Boo
      * @see NavigationEventDispatcher.dispatchOnCompleted
      */
     internal fun doOnBackCompleted() {
+        transitionState = Idle()
         onBackCompleted()
     }
 
@@ -252,6 +262,7 @@ public constructor(initialInfo: T, isBackEnabled: Boolean, isForwardEnabled: Boo
      * @see NavigationEventDispatcher.dispatchOnCancelled
      */
     internal fun doOnBackCancelled() {
+        transitionState = Idle()
         onBackCancelled()
     }
 
@@ -264,6 +275,7 @@ public constructor(initialInfo: T, isBackEnabled: Boolean, isForwardEnabled: Boo
     @EmptySuper protected open fun onBackCancelled() {}
 
     internal fun doOnForwardStarted(event: NavigationEvent) {
+        transitionState = InProgress(latestEvent = event, direction = TRANSITIONING_FORWARD)
         onForwardStarted(event)
     }
 
@@ -271,6 +283,7 @@ public constructor(initialInfo: T, isBackEnabled: Boolean, isForwardEnabled: Boo
     @EmptySuper protected open fun onForwardStarted(event: NavigationEvent) {}
 
     internal fun doOnForwardProgressed(event: NavigationEvent) {
+        transitionState = InProgress(latestEvent = event, direction = TRANSITIONING_FORWARD)
         onForwardProgressed(event)
     }
 
@@ -278,6 +291,7 @@ public constructor(initialInfo: T, isBackEnabled: Boolean, isForwardEnabled: Boo
     @EmptySuper protected open fun onForwardProgressed(event: NavigationEvent) {}
 
     internal fun doOnForwardCompleted() {
+        transitionState = Idle()
         onForwardCompleted()
     }
 
@@ -296,6 +310,7 @@ public constructor(initialInfo: T, isBackEnabled: Boolean, isForwardEnabled: Boo
     }
 
     internal fun doOnForwardCancelled() {
+        transitionState = Idle()
         onForwardCancelled()
     }
 
