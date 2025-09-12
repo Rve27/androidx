@@ -18,7 +18,7 @@ package androidx.activity
 import androidx.annotation.MainThread
 import androidx.navigationevent.NavigationEvent
 import androidx.navigationevent.NavigationEventHandler
-import androidx.navigationevent.NavigationEventInfo.NotProvided
+import androidx.navigationevent.NavigationEventInfo.None
 import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.collections.minusAssign
 import kotlin.collections.plusAssign
@@ -134,7 +134,7 @@ abstract class OnBackPressedCallback(enabled: Boolean) {
 
     private class OnBackPressedEventHandler(
         private val onBackPressedCallback: OnBackPressedCallback
-    ) : NavigationEventHandler<NotProvided>(isBackEnabled = onBackPressedCallback.isEnabled) {
+    ) : NavigationEventHandler<None>(isBackEnabled = onBackPressedCallback.isEnabled) {
 
         override fun onBackStarted(event: NavigationEvent) {
             onBackPressedCallback.handleOnBackStarted(BackEventCompat(event))
