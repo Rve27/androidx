@@ -42,7 +42,7 @@ public fun TestNavigationEventHandler(
     onBackCompleted: TestNavigationEventHandler<*>.() -> Unit = {},
 ): TestNavigationEventHandler<*> {
     return TestNavigationEventHandler(
-        currentInfo = NavigationEventInfo.NotProvided,
+        currentInfo = NavigationEventInfo.None,
         backInfo = emptyList(),
         forwardInfo = emptyList(),
         // ---- Back Events ----

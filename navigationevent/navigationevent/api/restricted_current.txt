@@ -99,8 +99,8 @@ package androidx.navigationevent {
   @androidx.compose.runtime.Immutable public interface NavigationEventInfo {
   }
 
-  public static final class NavigationEventInfo.NotProvided implements androidx.navigationevent.NavigationEventInfo {
-    field public static final androidx.navigationevent.NavigationEventInfo.NotProvided INSTANCE;
+  public static final class NavigationEventInfo.None implements androidx.navigationevent.NavigationEventInfo {
+    field public static final androidx.navigationevent.NavigationEventInfo.None INSTANCE;
   }
 
   public abstract class NavigationEventInput {

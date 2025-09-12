@@ -16,7 +16,7 @@ abstract interface androidx.navigationevent/NavigationEventDispatcherOwner { // 
 }
 
 abstract interface androidx.navigationevent/NavigationEventInfo { // androidx.navigationevent/NavigationEventInfo|null[0]
-    final object NotProvided : androidx.navigationevent/NavigationEventInfo // androidx.navigationevent/NavigationEventInfo.NotProvided|null[0]
+    final object None : androidx.navigationevent/NavigationEventInfo // androidx.navigationevent/NavigationEventInfo.None|null[0]
 }
 
 abstract class <#A: androidx.navigationevent/NavigationEventInfo> androidx.navigationevent/NavigationEventHandler { // androidx.navigationevent/NavigationEventHandler|null[0]
