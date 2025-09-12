@@ -130,10 +130,14 @@ public class SpatialRenderingRuntimeTest {
         mFakeExecutor.runAll();
         GltfModelResource model = modelFuture.get();
 
-        GltfFeature feature = new GltfFeatureImpl((GltfModelResourceImpl) model, mFakeImpressApi,
-                mSplitEngineSubspaceManager, mXrExtensions);
-        return mRenderingEntityFactory.createGltfEntity(feature, pose,
-                mSceneRuntime.getActivitySpace());
+        GltfFeature feature =
+                new GltfFeatureImpl(
+                        (GltfModelResourceImpl) model,
+                        mFakeImpressApi,
+                        mSplitEngineSubspaceManager,
+                        mXrExtensions);
+        return mRenderingEntityFactory.createGltfEntity(
+                feature, pose, mSceneRuntime.getActivitySpace());
     }
 
     TextureResource loadTexture() throws Exception {
@@ -155,7 +159,6 @@ public class SpatialRenderingRuntimeTest {
         mFakeExecutor.runAll();
         return materialFuture.get();
     }
-
 
     @Test
     public void loadExrImageByAssetName_returnsModel() throws Exception {
@@ -383,6 +386,28 @@ public class SpatialRenderingRuntimeTest {
 
         assertThat(entity).isNotNull();
         assertThat(entity.getSize()).isEqualTo(size);
+    }
+
+    @Test
+    public void dispose_clearsAllApiResources() throws Exception {
+        mRenderingRuntime.loadExrImageByAssetName("FakeAsset.zip");
+        mRenderingRuntime.loadGltfByAssetName("FakeAsset.glb");
+        createWaterMaterial();
+        createGltfEntity();
+
+        mFakeExecutor.runAll();
+
+        assertThat(mFakeImpressApi.getImageBasedLightingAssets()).isNotEmpty();
+        assertThat(mFakeImpressApi.getGltfModels()).isNotEmpty();
+        assertThat(mFakeImpressApi.getMaterials()).isNotEmpty();
+        assertThat(mFakeImpressApi.getImpressNodes()).isNotEmpty();
+
+        mRenderingRuntime.dispose();
+
+        assertThat(mFakeImpressApi.getImageBasedLightingAssets()).isEmpty();
+        assertThat(mFakeImpressApi.getGltfModels()).isEmpty();
+        assertThat(mFakeImpressApi.getMaterials()).isEmpty();
+        assertThat(mFakeImpressApi.getImpressNodes()).isEmpty();
     }
 
     @Test
