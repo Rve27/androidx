@@ -86,6 +86,14 @@ public class RemoteBoolean internal constructor(internal val v: RemoteInt) : Rem
     public fun toRemoteInt(): RemoteInt = v
 
     /**
+     * If this [RemoteBoolean] represents a constant value, then this method evaluates it and
+     * returns it, otherwise it returns null.
+     */
+    public fun evaluateIfConstant(creationState: RemoteComposeCreationState): Boolean? {
+        return v.evaluateIfConstant(creationState)?.let { it != 0 }
+    }
+
+    /**
      * If this RemoteBoolean evaluates to `true` then the returned value evaluates to [ifTrue]
      * otherwise it evaluates to [ifFalse].
      *
