@@ -289,4 +289,20 @@ public class RemoteBoolean internal constructor(internal val v: RemoteInt) : Rem
      * @return A new [RemoteBoolean] representing the result of the logical XOR.
      */
     public infix fun xor(b: RemoteBoolean): RemoteBoolean = RemoteBoolean(v xor b.v)
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public companion object {
+        /**
+         * Creates a named [RemoteBoolean] with an initial value. Named remote booleans can be set
+         * via AndroidRemoteContext.setNamedBoolean.
+         *
+         * @param name The unique name for this remote boolean.
+         * @param initialValue The initial [Boolean] value for the named remote boolean.
+         * @return A [RemoteBoolean] representing the named boolean.
+         */
+        @JvmStatic
+        public fun createNamedRemoteBoolean(name: String, initialValue: Boolean): RemoteBoolean {
+            return RemoteBoolean(RemoteInt.createNamedRemoteInt(name, if (initialValue) 1 else 0))
+        }
+    }
 }
