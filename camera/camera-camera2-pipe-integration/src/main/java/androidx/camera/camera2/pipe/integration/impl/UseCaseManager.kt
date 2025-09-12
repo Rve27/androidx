@@ -569,7 +569,6 @@ constructor(
                         UseCaseCameraConfig(
                             useCases,
                             sessionConfigAdapter,
-                            cameraStateAdapter,
                             cameraGraph,
                             streamConfigMap,
                         )
