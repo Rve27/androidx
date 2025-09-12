@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.navigation3.ui
-
-import androidx.navigation3.runtime.NavEntry
+package androidx.navigation3.runtime
 
 /**
  * A specific scene to render 1 or more [NavEntry] instances as an overlay.
