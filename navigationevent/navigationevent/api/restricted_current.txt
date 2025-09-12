@@ -155,8 +155,15 @@ package androidx.navigationevent {
     method public void onBackCompletedFallback();
   }
 
-  @RequiresApi(33) public final class OnBackInvokedInput extends androidx.navigationevent.NavigationEventInput {
-    ctor public OnBackInvokedInput(android.window.OnBackInvokedDispatcher onBackInvokedDispatcher);
+  @RequiresApi(33) public final class OnBackInvokedDefaultInput extends androidx.navigationevent.OnBackInvokedInput {
+    ctor public OnBackInvokedDefaultInput(android.window.OnBackInvokedDispatcher onBackInvokedDispatcher);
+  }
+
+  @RequiresApi(33) public abstract sealed class OnBackInvokedInput extends androidx.navigationevent.NavigationEventInput {
+  }
+
+  @RequiresApi(33) public final class OnBackInvokedOverlayInput extends androidx.navigationevent.OnBackInvokedInput {
+    ctor public OnBackInvokedOverlayInput(android.window.OnBackInvokedDispatcher onBackInvokedDispatcher);
   }
 
   public final class ViewTreeNavigationEventDispatcherOwner {

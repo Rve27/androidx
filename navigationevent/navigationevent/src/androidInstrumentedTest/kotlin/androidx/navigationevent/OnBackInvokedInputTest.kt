@@ -16,6 +16,7 @@
 
 package androidx.navigationevent
 
+import android.window.OnBackInvokedDispatcher
 import androidx.navigationevent.testing.TestNavigationEventHandler
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SdkSuppress
@@ -27,14 +28,14 @@ import org.junit.runner.RunWith
 @SmallTest
 @RunWith(AndroidJUnit4::class)
 @SdkSuppress(minSdkVersion = 33)
-class OnBackInvokedInputTest {
+class OnBackInvokedDefaultInputTest {
 
     @Test
     fun testSimpleInvoker() {
         val invoker = TestOnBackInvokedDispatcher()
 
         val dispatcher = NavigationEventDispatcher {}
-        val input = OnBackInvokedInput(invoker)
+        val input = OnBackInvokedDefaultInput(invoker)
         dispatcher.addInput(input)
 
         val handler = TestNavigationEventHandler()
@@ -54,7 +55,7 @@ class OnBackInvokedInputTest {
 
         val dispatcher = NavigationEventDispatcher {}
 
-        val input = OnBackInvokedInput(invoker)
+        val input = OnBackInvokedDefaultInput(invoker)
         dispatcher.addInput(input)
 
         val handler = TestNavigationEventHandler(isBackEnabled = true, isForwardEnabled = false)
@@ -92,7 +93,7 @@ class OnBackInvokedInputTest {
 
         val handler = TestNavigationEventHandler(isBackEnabled = false, isForwardEnabled = false)
 
-        val input = OnBackInvokedInput(invoker)
+        val input = OnBackInvokedDefaultInput(invoker)
         dispatcher.addInput(input)
 
         dispatcher.addHandler(handler)
@@ -118,7 +119,7 @@ class OnBackInvokedInputTest {
 
         dispatcher.addHandler(handler)
 
-        val input = OnBackInvokedInput(invoker)
+        val input = OnBackInvokedDefaultInput(invoker)
         dispatcher.addInput(input)
 
         assertThat(invoker.registerCount).isEqualTo(1)
@@ -135,7 +136,7 @@ class OnBackInvokedInputTest {
 
         val dispatcher = NavigationEventDispatcher {}
 
-        val input = OnBackInvokedInput(invoker)
+        val input = OnBackInvokedDefaultInput(invoker)
         dispatcher.addInput(input)
 
         val handler = TestNavigationEventHandler()
@@ -165,7 +166,7 @@ class OnBackInvokedInputTest {
 
         val dispatcher = NavigationEventDispatcher {}
 
-        val input = OnBackInvokedInput(invoker)
+        val input = OnBackInvokedDefaultInput(invoker)
         dispatcher.addInput(input)
 
         val handler = TestNavigationEventHandler()
@@ -189,7 +190,7 @@ class OnBackInvokedInputTest {
 
         val dispatcher = NavigationEventDispatcher {}
 
-        val input = OnBackInvokedInput(invoker)
+        val input = OnBackInvokedDefaultInput(invoker)
         dispatcher.addInput(input)
 
         val handler = TestNavigationEventHandler(onBackStarted = { remove() })
@@ -211,7 +212,7 @@ class OnBackInvokedInputTest {
         val invoker = TestOnBackInvokedDispatcher()
         val dispatcher = NavigationEventDispatcher {}
 
-        val input = OnBackInvokedInput(invoker)
+        val input = OnBackInvokedDefaultInput(invoker)
         dispatcher.addInput(input)
 
         val handler = TestNavigationEventHandler()
@@ -235,7 +236,7 @@ class OnBackInvokedInputTest {
         val invoker = TestOnBackInvokedDispatcher()
 
         val dispatcher = NavigationEventDispatcher {}
-        val input = OnBackInvokedInput(invoker)
+        val input = OnBackInvokedDefaultInput(invoker)
         dispatcher.addInput(input)
 
         val handler1 = TestNavigationEventHandler()
@@ -257,5 +258,65 @@ class OnBackInvokedInputTest {
         assertThat(handler1.onBackCancelledInvocations).isEqualTo(1)
 
         assertThat(handler2.onBackStartedInvocations).isEqualTo(1)
+    }
+
+    @Test
+    fun testDefaultPriority() {
+        val invoker = TestOnBackInvokedDispatcher()
+
+        val dispatcher = NavigationEventDispatcher()
+        dispatcher.addInput(OnBackInvokedDefaultInput(invoker))
+
+        val handler = TestNavigationEventHandler()
+        dispatcher.addHandler(handler, NavigationEventDispatcher.PRIORITY_DEFAULT)
+
+        assertThat(invoker.registerCount).isEqualTo(1)
+        assertThat(invoker.priority).isEqualTo(OnBackInvokedDispatcher.PRIORITY_DEFAULT)
+    }
+
+    @Test
+    fun testOverlayPriority() {
+        val invoker = TestOnBackInvokedDispatcher()
+
+        val dispatcher = NavigationEventDispatcher()
+        dispatcher.addInput(OnBackInvokedOverlayInput(invoker))
+
+        val handler = TestNavigationEventHandler()
+        dispatcher.addHandler(handler, NavigationEventDispatcher.PRIORITY_OVERLAY)
+
+        assertThat(invoker.registerCount).isEqualTo(1)
+        assertThat(invoker.priority).isEqualTo(OnBackInvokedDispatcher.PRIORITY_OVERLAY)
+    }
+
+    @Test
+    fun defaultInputCanDispatchToOverlayHandler() {
+        val invoker = TestOnBackInvokedDispatcher()
+        val dispatcher = NavigationEventDispatcher()
+        val defaultInput = OnBackInvokedDefaultInput(invoker)
+        dispatcher.addInput(defaultInput, NavigationEventDispatcher.PRIORITY_DEFAULT)
+
+        val defaultHandler = TestNavigationEventHandler()
+        dispatcher.addHandler(defaultHandler, NavigationEventDispatcher.PRIORITY_DEFAULT)
+
+        val overlayHandler = TestNavigationEventHandler()
+        dispatcher.addHandler(overlayHandler, NavigationEventDispatcher.PRIORITY_OVERLAY)
+
+        invoker.dispatchOnBackInvoked()
+        assertThat(defaultHandler.onBackCompletedInvocations).isEqualTo(0)
+        assertThat(overlayHandler.onBackCompletedInvocations).isEqualTo(1)
+    }
+
+    @Test
+    fun overlayInputCanNotDispatchToDefaultHandler() {
+        val invoker = TestOnBackInvokedDispatcher()
+        val dispatcher = NavigationEventDispatcher()
+        val overlayInput = OnBackInvokedOverlayInput(invoker)
+        dispatcher.addInput(overlayInput, NavigationEventDispatcher.PRIORITY_OVERLAY)
+
+        val defaultHandler = TestNavigationEventHandler()
+        dispatcher.addHandler(defaultHandler, NavigationEventDispatcher.PRIORITY_DEFAULT)
+
+        invoker.dispatchOnBackInvoked()
+        assertThat(defaultHandler.onBackCompletedInvocations).isEqualTo(0)
     }
 }
