@@ -946,7 +946,7 @@ class NavigationEventDispatcherTest {
         dispatcher.addHandler(defaultHandler, priority = PRIORITY_DEFAULT)
 
         // Only inputs listening to the default state (or all states) are notified.
-        // `overlayInput` remains at 2, while `defaultInput` and `unspecifiedInput` increase.
+        // `overlayInput` and `unspecifiedInput` remains at 2, while `defaultInput` increase.
         assertThat(defaultInput.onHasEnabledHandlersChangedValues)
             .containsExactly(false, true)
             .inOrder()
@@ -954,7 +954,50 @@ class NavigationEventDispatcherTest {
             .containsExactly(false, true)
             .inOrder()
         assertThat(unspecifiedInput.onHasEnabledHandlersChangedValues)
-            .containsExactly(false, true, true)
+            .containsExactly(false, true)
+            .inOrder()
+    }
+
+    @Test
+    fun onHasEnabledHandlerChanged_unspecifiedInput_notifiedOnlyOnAggregateChange() {
+        val dispatcher = NavigationEventDispatcher()
+        val unspecifiedInput = TestNavigationEventInput()
+        dispatcher.addInput(unspecifiedInput)
+
+        // After adding, the input receives the initial `false` state.
+        assertThat(unspecifiedInput.onHasEnabledHandlersChangedValues)
+            .containsExactly(false)
+            .inOrder()
+
+        // Add a default handler. The aggregate state flips from false to true, causing a
+        // notification.
+        val defaultHandler = TestNavigationEventHandler(isBackEnabled = true)
+        dispatcher.addHandler(defaultHandler, PRIORITY_DEFAULT)
+        assertThat(unspecifiedInput.onHasEnabledHandlersChangedValues)
+            .containsExactly(false, true)
+            .inOrder()
+
+        // Add an overlay handler. The aggregate state was already `true` and remains `true`.
+        // The input should NOT receive a redundant notification.
+        val overlayHandler = TestNavigationEventHandler(isBackEnabled = true)
+        dispatcher.addHandler(overlayHandler, PRIORITY_OVERLAY)
+        assertThat(unspecifiedInput.onHasEnabledHandlersChangedValues)
+            .containsExactly(false, true) // Unchanged
+            .inOrder()
+
+        // Remove the default handler. The aggregate state is still `true` due to the overlay
+        // handler.
+        // The input should NOT receive a notification.
+        defaultHandler.remove()
+        assertThat(unspecifiedInput.onHasEnabledHandlersChangedValues)
+            .containsExactly(false, true) // Unchanged
+            .inOrder()
+
+        // Remove the final handler. The aggregate state flips from true to false, causing a
+        // notification.
+        overlayHandler.remove()
+        assertThat(unspecifiedInput.onHasEnabledHandlersChangedValues)
+            .containsExactly(false, true, false)
             .inOrder()
     }
 
