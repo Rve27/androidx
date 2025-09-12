@@ -1706,6 +1706,49 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
     }
 
     @Test
+    fun abstractClassWithParam_java() {
+        val dao =
+            Source.java(
+                "MyDao",
+                """
+            import androidx.room3.*;
+
+            @Dao
+            public abstract class MyDao {
+
+              private RoomDatabase mDb;
+
+              public MyDao(RoomDatabase db) {
+                mDb = db;
+              }
+
+              @Query("SELECT * FROM MyEntity")
+              abstract MyEntity getEntity();
+            }
+            """
+                    .trimIndent(),
+            )
+        val entity =
+            Source.java(
+                "MyEntity",
+                """
+            import androidx.room3.*;
+
+            @Entity
+            public class MyEntity {
+                @PrimaryKey
+                public long pk;
+            }
+        """
+                    .trimIndent(),
+            )
+        runTest(
+            sources = listOf(dao, entity, databaseSrc),
+            expectedFilePath = getTestGoldenPath(testName.methodName),
+        )
+    }
+
+    @Test
     fun queryResultAdapter_optional() {
         val src =
             Source.kotlin(

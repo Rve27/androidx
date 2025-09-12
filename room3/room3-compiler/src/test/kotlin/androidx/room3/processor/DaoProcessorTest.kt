@@ -885,6 +885,44 @@ class DaoProcessorTest(private val enableVerification: Boolean) {
         }
     }
 
+    @Test
+    fun invalidNullableDatabaseParameter() {
+        val src =
+            Source.kotlin(
+                "MyDao.kt",
+                """
+            import androidx.room3.*
+
+            @Dao
+            abstract class MyDao(private val db: RoomDatabase?) {
+              @Query("SELECT * FROM MyEntity")
+              abstract fun getEntities(): List<MyEntity>
+            }
+
+            @Entity
+            data class MyEntity(@PrimaryKey val pk: Int)
+            """
+                    .trimIndent(),
+            )
+        runKspTest(
+            sources = listOf(src),
+            options = mapOf(Context.BooleanProcessorOptions.GENERATE_KOTLIN.argName to "true"),
+        ) { invocation ->
+            val dao = invocation.processingEnv.requireTypeElement("MyDao")
+            val dbType = invocation.context.processingEnv.requireType(ROOM_DB)
+            DaoProcessor(
+                    baseContext = invocation.context,
+                    element = dao,
+                    dbType = dbType,
+                    dbVerifier = null,
+                )
+                .process()
+            invocation.assertCompilationResult {
+                hasErrorContaining(ProcessorErrors.INVALID_NULLABLE_DAO_CONSTRUCTOR_PARAM)
+            }
+        }
+    }
+
     private fun singleDao(
         vararg inputs: String,
         classpathFiles: List<File> = emptyList(),
