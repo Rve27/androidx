@@ -381,9 +381,15 @@ class NavDisplayTest {
             val backStack1 = rememberNavBackStack(First)
             val backStack2 = rememberNavBackStack(Second)
             val decorator1 =
-                listOf(rememberSceneSetupNavEntryDecorator(), rememberSavedStateNavEntryDecorator())
+                listOf(
+                    rememberSceneSetupNavEntryDecorator<NavKey>(),
+                    rememberSavedStateNavEntryDecorator(),
+                )
             val decorator2 =
-                listOf(rememberSceneSetupNavEntryDecorator(), rememberSavedStateNavEntryDecorator())
+                listOf(
+                    rememberSceneSetupNavEntryDecorator<NavKey>(),
+                    rememberSavedStateNavEntryDecorator(),
+                )
             backStackState = remember { mutableStateOf(1) }
             decoratorState = remember { mutableStateOf(1) }
 
