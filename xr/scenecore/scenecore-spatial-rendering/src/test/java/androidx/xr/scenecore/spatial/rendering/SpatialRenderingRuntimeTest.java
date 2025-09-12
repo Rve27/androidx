@@ -27,6 +27,7 @@ import androidx.xr.runtime.math.FloatSize2d;
 import androidx.xr.runtime.math.Pose;
 import androidx.xr.scenecore.impl.extensions.XrExtensionsProvider;
 import androidx.xr.scenecore.impl.impress.FakeImpressApiImpl;
+import androidx.xr.scenecore.impl.impress.Material;
 import androidx.xr.scenecore.internal.Dimensions;
 import androidx.xr.scenecore.internal.ExrImageResource;
 import androidx.xr.scenecore.internal.GltfEntity;
@@ -44,7 +45,6 @@ import androidx.xr.scenecore.testing.FakeScheduledExecutorService;
 import com.android.extensions.xr.ShadowXrExtensions;
 import com.android.extensions.xr.XrExtensions;
 import com.android.extensions.xr.node.Node;
-
 
 import com.google.androidxr.splitengine.SplitEngineSubspaceManager;
 import com.google.androidxr.splitengine.SubspaceNode;
@@ -277,10 +277,10 @@ public class SpatialRenderingRuntimeTest {
 
     @Test
     public void destroyWaterMaterial_removesWaterMaterial() throws Exception {
-        MaterialResourceImpl material = (MaterialResourceImpl) createWaterMaterial();
+        Material material = (Material) createWaterMaterial();
         int initialMaterialCount = mFakeImpressApi.getMaterials().size();
 
-        mFakeImpressApi.destroyNativeObject(material.getMaterialToken());
+        mFakeImpressApi.destroyNativeObject(material.getNativeHandle());
 
         int finalMaterialCount = mFakeImpressApi.getMaterials().size();
         assertThat(finalMaterialCount).isEqualTo(initialMaterialCount - 1);
