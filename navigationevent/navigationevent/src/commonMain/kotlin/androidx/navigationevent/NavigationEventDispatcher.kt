@@ -339,11 +339,19 @@ private constructor(
             input.dispatcher = this
             input.doOnAdded(dispatcher = this)
 
-            val hasEnabledHandler =
+            // Input must get 'info' immediately to avoid missing initial state.
+            val state = sharedProcessor.state.value
+            input.doOnInfoChanged(
+                currentInfo = state.currentInfo,
+                backInfo = state.backInfo,
+                forwardInfo = state.forwardInfo,
+            )
+
+            // Input must get 'hasEnabledHandlers' immediately to avoid missing initial state.
+            val hasEnabledHandlers =
                 sharedProcessor.hasEnabledDefaultHandlers ||
                     sharedProcessor.hasEnabledOverlayHandlers
-            // Input must get the enablement state immediately, otherwise it may miss it.
-            input.doOnHasEnabledHandlersChanged(hasEnabledHandler)
+            input.doOnHasEnabledHandlersChanged(hasEnabledHandlers)
         }
     }
 
@@ -389,14 +397,22 @@ private constructor(
             input.dispatcher = this
             input.doOnAdded(dispatcher = this)
 
-            val hasEnabledHandler =
+            // Input must get 'info' immediately to avoid missing initial state.
+            val state = sharedProcessor.state.value
+            input.doOnInfoChanged(
+                currentInfo = state.currentInfo,
+                backInfo = state.backInfo,
+                forwardInfo = state.forwardInfo,
+            )
+
+            // Input must get 'hasEnabledHandlers' immediately to avoid missing initial state.
+            val hasEnabledHandlers =
                 when (priority) {
                     PRIORITY_OVERLAY -> sharedProcessor.hasEnabledOverlayHandlers
                     PRIORITY_DEFAULT -> sharedProcessor.hasEnabledDefaultHandlers
                     else -> error("unreachable")
                 }
-            // Input must get the enablement state immediately, otherwise it may miss it.
-            input.doOnHasEnabledHandlersChanged(hasEnabledHandler)
+            input.doOnHasEnabledHandlersChanged(hasEnabledHandlers)
         }
     }
 

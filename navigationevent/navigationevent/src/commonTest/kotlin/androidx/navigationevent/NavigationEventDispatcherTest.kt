@@ -664,6 +664,50 @@ class NavigationEventDispatcherTest {
     }
 
     @Test
+    fun addInput_allPriorities_invokesCallbacksInOrder() {
+        val dispatcher = NavigationEventDispatcher()
+        val callOrder = mutableListOf<String>()
+
+        // The callback order here is deliberate: Inputs must receive contextual information
+        // (onInfoChanged) *before* they receive handler enablement (onHasEnabledHandlersChanged).
+        // Otherwise, an input might think navigation is "enabled" before it has the required
+        // context (e.g. backInfo), leading to incorrect state. An add/remove cycle should yield:
+        val expectedOrder =
+            listOf("onAdded", "onInfoChanged", "onHasEnabledHandlersChanged", "onRemoved")
+
+        // We reuse the same input across blocks. Even if it maintains state internally, this test
+        // only inspects the emitted callback order via callOrder, so reuse is fine.
+        val input =
+            TestNavigationEventInput(
+                onAdded = { callOrder += "onAdded" },
+                onRemoved = { callOrder += "onRemoved" },
+                onHasEnabledHandlersChanged = { callOrder += "onHasEnabledHandlersChanged" },
+                onInfoChanged = { _, _, _ -> callOrder += "onInfoChanged" },
+            )
+
+        // Sanity check: removing an input that was never added must be a no-op (no callbacks).
+        dispatcher.removeInput(input = input)
+        assertThat(callOrder).isEmpty()
+
+        dispatcher.addInput(input = input)
+        dispatcher.removeInput(input = input)
+        assertThat(callOrder).containsExactlyElementsIn(expectedOrder).inOrder()
+        callOrder.clear()
+
+        // Priority must NOT affect callback order; exercise DEFAULT path to guard against
+        // regressions.
+        dispatcher.addInput(input = input, priority = PRIORITY_DEFAULT)
+        dispatcher.removeInput(input = input)
+        assertThat(callOrder).containsExactlyElementsIn(expectedOrder).inOrder()
+        callOrder.clear()
+
+        // And OVERLAY path for completeness; order must match the same contract.
+        dispatcher.addInput(input = input, priority = PRIORITY_OVERLAY)
+        dispatcher.removeInput(input = input)
+        assertThat(callOrder).containsExactlyElementsIn(expectedOrder).inOrder()
+    }
+
+    @Test
     fun removeInput_onRemove_callsOnDetach() {
         val dispatcher = NavigationEventDispatcher()
         val input = TestNavigationEventInput()
@@ -754,15 +798,15 @@ class NavigationEventDispatcherTest {
         val input = TestNavigationEventInput()
         dispatcher.addInput(input)
 
-        // Input should not be notified until a state change occurs.
-        assertThat(input.onInfoChangedInvocations).isEqualTo(0)
+        // The input should be notified of the initial state immediately when it's added.
+        assertThat(input.onInfoChangedInvocations).isEqualTo(1)
 
         // Add the first handler, triggering a notification.
         val infoA = HomeScreenInfo("A")
         val handlerA = TestNavigationEventHandler(currentInfo = infoA)
         dispatcher.addHandler(handlerA)
 
-        assertThat(input.onInfoChangedInvocations).isEqualTo(1)
+        assertThat(input.onInfoChangedInvocations).isEqualTo(2)
         assertThat(input.latestCurrentInfo).isEqualTo(infoA)
         assertThat(input.latestBackInfo).isEmpty()
         assertThat(input.latestForwardInfo).isEmpty()
@@ -777,7 +821,7 @@ class NavigationEventDispatcherTest {
             )
         dispatcher.addHandler(handlerB)
 
-        assertThat(input.onInfoChangedInvocations).isEqualTo(2)
+        assertThat(input.onInfoChangedInvocations).isEqualTo(3)
         assertThat(input.latestCurrentInfo).isEqualTo(infoB)
         assertThat(input.latestBackInfo).containsExactly(infoA)
         assertThat(input.latestForwardInfo).isEmpty()
@@ -790,7 +834,7 @@ class NavigationEventDispatcherTest {
             forwardInfo = listOf(infoB),
         )
 
-        assertThat(input.onInfoChangedInvocations).isEqualTo(3)
+        assertThat(input.onInfoChangedInvocations).isEqualTo(4)
         assertThat(input.latestCurrentInfo).isEqualTo(infoBUpdated)
         assertThat(input.latestBackInfo).containsExactly(infoA)
         assertThat(input.latestForwardInfo).containsExactly(infoB)
@@ -798,7 +842,7 @@ class NavigationEventDispatcherTest {
         // Remove the active handler, causing state to fall back and notify.
         handlerB.remove()
 
-        assertThat(input.onInfoChangedInvocations).isEqualTo(4)
+        assertThat(input.onInfoChangedInvocations).isEqualTo(5)
         assertThat(input.latestCurrentInfo).isEqualTo(infoA)
         assertThat(input.latestBackInfo).isEmpty()
         assertThat(input.latestForwardInfo).isEmpty()
@@ -810,7 +854,7 @@ class NavigationEventDispatcherTest {
         dispatcher.addHandler(handlerC)
 
         // Assert the removed input was not notified.
-        assertThat(input.onInfoChangedInvocations).isEqualTo(4)
+        assertThat(input.onInfoChangedInvocations).isEqualTo(5)
     }
 
     @Test
@@ -818,6 +862,9 @@ class NavigationEventDispatcherTest {
         val dispatcher = NavigationEventDispatcher()
         val input = TestNavigationEventInput()
         dispatcher.addInput(input)
+
+        // The input should be notified of the initial state immediately when it's added.
+        assertThat(input.onInfoChangedInvocations).isEqualTo(1)
 
         val currentInfo1 = HomeScreenInfo("current1")
         val backInfo1 = listOf(DetailsScreenInfo("back1"))
@@ -830,7 +877,7 @@ class NavigationEventDispatcherTest {
                 forwardInfo = forwardInfo1,
             )
         dispatcher.addHandler(handler)
-        assertThat(input.onInfoChangedInvocations).isEqualTo(1)
+        assertThat(input.onInfoChangedInvocations).isEqualTo(2)
 
         // Trigger update with the exact same info values.
         // Invocations should not increase because the state hasn't changed.
@@ -839,7 +886,7 @@ class NavigationEventDispatcherTest {
             backInfo = backInfo1,
             forwardInfo = forwardInfo1,
         )
-        assertThat(input.onInfoChangedInvocations).isEqualTo(1)
+        assertThat(input.onInfoChangedInvocations).isEqualTo(2)
 
         // Trigger update with a new `currentInfo`.
         val currentInfo2 = HomeScreenInfo("current2")
@@ -848,7 +895,7 @@ class NavigationEventDispatcherTest {
             backInfo = backInfo1,
             forwardInfo = forwardInfo1,
         )
-        assertThat(input.onInfoChangedInvocations).isEqualTo(2)
+        assertThat(input.onInfoChangedInvocations).isEqualTo(3)
 
         // Trigger update with a new `backInfo`.
         val backInfo2 = listOf(DetailsScreenInfo("back2"))
@@ -857,7 +904,7 @@ class NavigationEventDispatcherTest {
             backInfo = backInfo2,
             forwardInfo = forwardInfo1,
         )
-        assertThat(input.onInfoChangedInvocations).isEqualTo(3)
+        assertThat(input.onInfoChangedInvocations).isEqualTo(4)
 
         // Trigger update with a new `forwardInfo`.
         val forwardInfo2 = listOf(DetailsScreenInfo("forward2"))
@@ -866,7 +913,7 @@ class NavigationEventDispatcherTest {
             backInfo = backInfo2,
             forwardInfo = forwardInfo2,
         )
-        assertThat(input.onInfoChangedInvocations).isEqualTo(4)
+        assertThat(input.onInfoChangedInvocations).isEqualTo(5)
     }
 
     @Test
@@ -2092,7 +2139,17 @@ private class TestNavigationEventInput(
     private val onAdded: (dispatcher: NavigationEventDispatcher) -> Unit = {},
     private val onRemoved: () -> Unit = {},
     private val onHasEnabledHandlersChanged: (hasEnabledHandlers: Boolean) -> Unit = {},
+    private val onInfoChanged:
+        (
+            currentInfo: NavigationEventInfo,
+            backInfo: List<NavigationEventInfo>,
+            forwardInfo: List<NavigationEventInfo>,
+        ) -> Unit =
+        { _, _, _ ->
+        },
 ) : NavigationEventInput() {
+
+    val invocationOrder = mutableListOf<String>()
 
     /** The number of times [onAdded] has been invoked. */
     var addedInvocations: Int = 0
@@ -2219,5 +2276,6 @@ private class TestNavigationEventInput(
         latestCurrentInfo = currentInfo
         latestBackInfo = backInfo
         latestForwardInfo = forwardInfo
+        onInfoChanged.invoke(currentInfo, backInfo, forwardInfo)
     }
 }
