@@ -62,6 +62,7 @@ import androidx.compose.ui.unit.LayoutDirection
  * default. See the other overload to manually provide an [OverscrollEffect] instance, or disable
  * overscroll.
  *
+ * @sample androidx.compose.foundation.samples.ScrollableAreaSample
  * @param state The [ScrollableState] of the component.
  * @param orientation The [Orientation] of scrolling.
  * @param enabled Whether scrolling is enabled.
@@ -134,6 +135,7 @@ fun Modifier.scrollableArea(
  * area. See the other overload of `scrollableArea` in order to use a default [OverscrollEffect]
  * provided by [LocalOverscrollFactory].
  *
+ * @sample androidx.compose.foundation.samples.ScrollableAreaSample
  * @param state The [ScrollableState] of the component.
  * @param orientation The [Orientation] of scrolling.
  * @param overscrollEffect the [OverscrollEffect] that will be used to render overscroll for this
