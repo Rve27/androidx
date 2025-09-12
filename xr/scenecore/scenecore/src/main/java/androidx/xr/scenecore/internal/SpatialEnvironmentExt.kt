@@ -14,21 +14,14 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.testing
+package androidx.xr.scenecore.internal
 
-import android.app.Activity
 import androidx.annotation.RestrictTo
-import androidx.xr.runtime.internal.Feature
-import androidx.xr.runtime.internal.JxrRuntime
-import androidx.xr.runtime.internal.RenderingRuntimeFactory
-import androidx.xr.scenecore.internal.RenderingRuntime
-import androidx.xr.scenecore.internal.SceneRuntime
 
-/** Factory for creating test-only instances of [RenderingRuntime]. */
+/* Defined the injected rendering implementation into SceneRuntime. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public class FakeRenderingRuntimeFactory() : RenderingRuntimeFactory {
-    override val requirements: Set<Feature> = emptySet()
-
-    override fun create(runtimes: List<JxrRuntime>, activity: Activity): RenderingRuntime =
-        FakeRenderingRuntime(runtimes.filterIsInstance<SceneRuntime>().first())
+public interface SpatialEnvironmentExt {
+    // If SceneRuntime is available, but RenderingRuntime is not, use SceneRuntime
+    // SpatialEnvironmentImpl
+    public fun onRenderingFeatureReady(feature: SpatialEnvironmentFeature)
 }
