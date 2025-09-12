@@ -119,7 +119,7 @@ package androidx.navigationevent {
     method @EmptySuper @MainThread protected void onRemoved();
   }
 
-  public abstract sealed class NavigationEventState<T extends androidx.navigationevent.NavigationEventInfo> {
+  @androidx.compose.runtime.Immutable public abstract sealed class NavigationEventState<T extends androidx.navigationevent.NavigationEventInfo> {
     method @InaccessibleFromKotlin public abstract java.util.List<T> getBackInfo();
     method @InaccessibleFromKotlin public abstract T getCurrentInfo();
     method @InaccessibleFromKotlin public abstract java.util.List<T> getForwardInfo();
