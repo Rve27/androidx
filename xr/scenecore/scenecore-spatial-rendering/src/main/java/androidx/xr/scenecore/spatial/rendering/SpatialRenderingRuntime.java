@@ -43,6 +43,8 @@ import androidx.xr.scenecore.internal.MaterialResource;
 import androidx.xr.scenecore.internal.RenderingEntityFactory;
 import androidx.xr.scenecore.internal.RenderingRuntime;
 import androidx.xr.scenecore.internal.SceneRuntime;
+import androidx.xr.scenecore.internal.SpatialEnvironmentExt;
+import androidx.xr.scenecore.internal.SpatialEnvironmentFeature;
 import androidx.xr.scenecore.internal.SubspaceNodeEntity;
 import androidx.xr.scenecore.internal.SubspaceNodeFeature;
 import androidx.xr.scenecore.internal.SurfaceEntity;
@@ -73,6 +75,7 @@ class SpatialRenderingRuntime implements RenderingRuntime {
     private final @NonNull RenderingEntityFactory mRenderingEntityFactory;
 
     private @Nullable Activity mActivity;
+    private @Nullable SpatialEnvironmentFeature mSpatialEnvironmentFeature;
 
     @SuppressWarnings("UnusedVariable")
     private final XrExtensions mExtensions;
@@ -100,8 +103,16 @@ class SpatialRenderingRuntime implements RenderingRuntime {
         mImpressApi = impressApi;
         mSplitEngineRenderer = renderer;
         mSplitEngineSubspaceManager = subspaceManager;
+        mSpatialEnvironmentFeature = new SpatialEnvironmentFeatureImpl(
+                mActivity,
+                mImpressApi,
+                mSplitEngineSubspaceManager,
+                mExtensions);
 
         startRenderer();
+
+        ((SpatialEnvironmentExt) sceneRuntime.getSpatialEnvironment())
+                .onRenderingFeatureReady(mSpatialEnvironmentFeature);
     }
 
     /** Create a new @c RenderingRuntime. */

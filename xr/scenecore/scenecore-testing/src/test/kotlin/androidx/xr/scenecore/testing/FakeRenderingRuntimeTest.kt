@@ -21,7 +21,6 @@ import androidx.kruth.assertThat
 import androidx.xr.runtime.math.FloatSize2d
 import androidx.xr.runtime.math.Pose
 import androidx.xr.scenecore.internal.Dimensions
-import androidx.xr.scenecore.internal.RenderingEntityFactory
 import androidx.xr.scenecore.internal.RenderingRuntime
 import androidx.xr.scenecore.internal.SceneRuntime
 import androidx.xr.scenecore.internal.SurfaceEntity
@@ -47,7 +46,7 @@ class FakeRenderingRuntimeTest {
         assertThat(activity).isNotNull()
 
         sceneRuntime = FakeSceneRuntime()
-        fakeRenderingRuntime = FakeRenderingRuntime(sceneRuntime as RenderingEntityFactory)
+        fakeRenderingRuntime = FakeRenderingRuntime(sceneRuntime)
         renderingRuntime = fakeRenderingRuntime
     }
 
