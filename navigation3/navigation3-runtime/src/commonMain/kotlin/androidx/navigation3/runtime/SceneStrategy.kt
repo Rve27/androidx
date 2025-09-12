@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.navigation3.ui
+package androidx.navigation3.runtime
 
 import androidx.compose.runtime.Composable
-import androidx.navigation3.runtime.NavEntry
 
 /**
  * A strategy that tries to calculate a [Scene] given a list of [NavEntry].
