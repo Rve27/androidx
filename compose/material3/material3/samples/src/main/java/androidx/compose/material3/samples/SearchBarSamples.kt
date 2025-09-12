@@ -128,6 +128,7 @@ fun FullScreenSearchBarScaffoldSample() {
     val searchBarState = rememberSearchBarState()
     val scope = rememberCoroutineScope()
     val scrollBehavior = SearchBarDefaults.enterAlwaysSearchBarScrollBehavior()
+    val appBarWithSearchColors = SearchBarDefaults.appBarWithSearchColors()
 
     val inputField =
         @Composable {
@@ -223,6 +224,7 @@ fun FullScreenSearchBarScaffoldSample() {
                         }
                     }
                 },
+                colors = appBarWithSearchColors,
             )
             ExpandedFullScreenSearchBar(state = searchBarState, inputField = inputField) {
                 SampleSearchResults(
@@ -299,7 +301,9 @@ fun DockedSearchBarScaffoldSample() {
                 inputField = inputField,
                 colors =
                     SearchBarDefaults.appBarWithSearchColors(
-                        appBarContainerColor = Color.Transparent
+                        scrolledSearchBarContainerColor = Color.Unspecified,
+                        appBarContainerColor = Color.Transparent,
+                        scrolledAppBarContainerColor = Color.Unspecified,
                     ),
             )
             ExpandedDockedSearchBar(state = searchBarState, inputField = inputField) {
