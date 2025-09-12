@@ -112,6 +112,14 @@ class DebugPlayerContext : RemoteContext() {
         stringBuilder.append("clearNamedStringOverride([$stringName])\n")
     }
 
+    override fun setNamedBooleanOverride(booleanName: String, value: Boolean) {
+        stringBuilder.append("setNamedBooleanOverride([$booleanName])= " + value + "\n")
+    }
+
+    override fun clearNamedBooleanOverride(booleanName: String) {
+        stringBuilder.append("clearNamedBooleanOverride([$booleanName])\n")
+    }
+
     override fun setNamedIntegerOverride(integerName: String, value: Int) {
         stringBuilder.append("setNamedIntegerOverride([$integerName])= " + value + "\n")
     }
