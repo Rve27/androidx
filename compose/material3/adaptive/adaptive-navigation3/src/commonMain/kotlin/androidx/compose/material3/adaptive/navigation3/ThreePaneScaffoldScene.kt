@@ -278,6 +278,42 @@ internal class ThreePaneScaffoldScene<T : Any>(
             extraPane = lastExtra?.let { { AnimatedPane { it.Content() } } },
         )
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
+
+        other as ThreePaneScaffoldScene<*>
+
+        return key == other.key &&
+            backNavBehavior == other.backNavBehavior &&
+            directive == other.directive &&
+            adaptStrategies == other.adaptStrategies &&
+            allEntries == other.allEntries &&
+            previousEntries == other.previousEntries &&
+            scaffoldEntries == other.scaffoldEntries &&
+            scaffoldEntryIndices == scaffoldEntryIndices &&
+            entriesAsNavItems == other.entriesAsNavItems
+    }
+
+    override fun hashCode(): Int {
+        return key.hashCode() * 31 +
+            backNavBehavior.hashCode() * 31 +
+            directive.hashCode() * 31 +
+            adaptStrategies.hashCode() * 31 +
+            allEntries.hashCode() * 31 +
+            previousEntries.hashCode() * 31 +
+            scaffoldEntries.hashCode() * 31 +
+            scaffoldEntryIndices.hashCode() * 31 +
+            entriesAsNavItems.hashCode() * 31
+    }
+
+    override fun toString(): String {
+        return "ThreePaneScaffoldScene(key=$key, backNavBehavior=$backNavBehavior" +
+            ", directive=$directive, adaptStrategies=$adaptStrategies, allEntries=$allEntries, " +
+            "previousEntries=$previousEntries, scaffoldEntries=$scaffoldEntries, " +
+            "scaffoldEntryIndices=$scaffoldEntryIndices, entriesAsNavItems=$entriesAsNavItems)"
+    }
 }
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)

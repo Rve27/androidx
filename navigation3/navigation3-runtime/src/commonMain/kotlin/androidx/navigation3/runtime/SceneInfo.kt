@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.navigation3.ui
+package androidx.navigation3.runtime
 
 import androidx.navigationevent.NavigationEventHistory
 import androidx.navigationevent.NavigationEventInfo
@@ -25,26 +25,24 @@ import androidx.navigationevent.NavigationEventInfo
  * This class provides the necessary context for building animations during navigation gestures,
  * like predictive back. It's a simple data holder that feeds into the [NavigationEventHistory].
  *
- * @property visibleEntries A list of unique keys for the visible navigation destinations, typically
- *   ordered from the bottom to the top of the back stack.
+ * @property scene The scene whose state is used by the NavigationEvent
  */
-public class NavDisplayInfo internal constructor(public val visibleEntries: List<Any>) :
-    NavigationEventInfo() {
+public class SceneInfo<T : Any>(public val scene: Scene<T>) : NavigationEventInfo() {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other == null || this::class != other::class) return false
 
-        other as NavDisplayInfo
+        other as SceneInfo<*>
 
-        return visibleEntries == other.visibleEntries
+        return scene == other.scene
     }
 
     override fun hashCode(): Int {
-        return visibleEntries.hashCode()
+        return scene.hashCode()
     }
 
     override fun toString(): String {
-        return "NavDisplayInfo(visibleEntries=$visibleEntries)"
+        return "SceneInfo(scene=$scene)"
     }
 }
