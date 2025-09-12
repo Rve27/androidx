@@ -168,33 +168,3 @@ public fun <T : NavigationEventInfo> NavigationForwardHandler(
         isBackEnabled = false, // disable back
     )
 }
-
-/** A simple [NavigationEventHandler] that delegates its methods to lambda functions. */
-private class ComposeNavigationEventHandler<T : NavigationEventInfo>(initialInfo: T) :
-    NavigationEventHandler<T>(
-        initialInfo = initialInfo,
-        isBackEnabled = false,
-        isForwardEnabled = false,
-    ) {
-
-    var currentOnForwardCancelled: () -> Unit = {}
-    var currentOnForwardCompleted: () -> Unit = {}
-    var currentOnBackCancelled: () -> Unit = {}
-    var currentOnBackCompleted: () -> Unit = {}
-
-    override fun onForwardCancelled() {
-        currentOnForwardCancelled.invoke()
-    }
-
-    override fun onForwardCompleted() {
-        currentOnForwardCompleted.invoke()
-    }
-
-    override fun onBackCancelled() {
-        currentOnBackCancelled.invoke()
-    }
-
-    override fun onBackCompleted() {
-        currentOnBackCompleted.invoke()
-    }
-}
