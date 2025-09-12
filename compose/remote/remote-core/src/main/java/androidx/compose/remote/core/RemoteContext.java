@@ -687,6 +687,7 @@ public abstract class RemoteContext {
     /**
      * Notify commands with variables have changed
      *
+     *
      * @return the number of ms to next update
      */
     public abstract int updateOps();
