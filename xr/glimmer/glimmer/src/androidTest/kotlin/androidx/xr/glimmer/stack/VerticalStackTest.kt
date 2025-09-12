@@ -19,6 +19,7 @@ package androidx.xr.glimmer.stack
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -28,6 +29,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.getBoundsInRoot
 import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -297,5 +299,44 @@ class VerticalStackTest {
         rule.onNodeWithTag("stack").performTouchInput { swipeDown() }
         rule.onNodeWithText("First").assertIsDisplayed()
         assertThat(state.topItem).isEqualTo(0)
+    }
+
+    @Test
+    fun stateRestoration_restoresTopItem() {
+        val restorationTester = StateRestorationTester(rule)
+        var targetItem by mutableStateOf<Int?>(null)
+        lateinit var state: StackState
+
+        restorationTester.setContent {
+            state = rememberStackState(initialTopItem = 0)
+
+            VerticalStack(modifier = Modifier.size(100.dp), state = state) {
+                items(5) { index -> Box(modifier = Modifier.fillMaxSize()) { Text("Item $index") } }
+            }
+
+            LaunchedEffect(targetItem) { targetItem?.let { state.scrollToItem(it) } }
+        }
+
+        // Verify the initial state
+        rule.onNodeWithText("Item 0").assertIsDisplayed()
+        rule.onNodeWithText("Item 2").assertIsNotDisplayed()
+        assertThat(state.topItem).isEqualTo(0)
+
+        // Scroll to a new item
+        rule.runOnIdle { targetItem = 2 }
+        rule.waitForIdle()
+
+        rule.onNodeWithText("Item 0").assertIsNotDisplayed()
+        rule.onNodeWithText("Item 2").assertIsDisplayed()
+        assertThat(state.topItem).isEqualTo(2)
+
+        // Simulate recreation
+        restorationTester.emulateSavedInstanceStateRestore()
+        rule.waitForIdle()
+
+        // Verify the restored state
+        rule.onNodeWithText("Item 0").assertIsNotDisplayed()
+        rule.onNodeWithText("Item 2").assertIsDisplayed()
+        assertThat(state.topItem).isEqualTo(2)
     }
 }

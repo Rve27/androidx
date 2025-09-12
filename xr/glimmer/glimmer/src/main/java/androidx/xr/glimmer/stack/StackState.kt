@@ -27,7 +27,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 
 /**
@@ -50,8 +51,7 @@ import androidx.compose.runtime.setValue
  */
 @Composable
 public fun rememberStackState(@IntRange(from = 0) initialTopItem: Int = 0): StackState =
-    // TODO(b/413429531): switch to rememberSaveable with a public Saver.
-    remember { StackState(initialTopItem) }
+    rememberSaveable(saver = StackState.Saver) { StackState(initialTopItem) }
 
 /**
  * The [VerticalStack] state that allows programmatic control and observation of the stack's state.
@@ -156,4 +156,10 @@ public class StackState(@IntRange(from = 0) initialTopItem: Int = 0) : Scrollabl
     @get:Suppress("GetterSetterNames")
     override val lastScrolledBackward: Boolean
         get() = pagerState.lastScrolledBackward
+
+    public companion object {
+        /** The default [Saver] implementation for [StackState]. */
+        public val Saver: Saver<StackState, Int> =
+            Saver(save = { it.topItem }, restore = { StackState(it) })
+    }
 }

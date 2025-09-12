@@ -378,6 +378,12 @@ package androidx.xr.glimmer.stack {
     property public boolean lastScrolledForward;
     property public int topItem;
     property public float topItemOffsetFraction;
+    field public static final androidx.xr.glimmer.stack.StackState.Companion Companion;
+  }
+
+  public static final class StackState.Companion {
+    method @InaccessibleFromKotlin public androidx.compose.runtime.saveable.Saver<androidx.xr.glimmer.stack.StackState,java.lang.Integer> getSaver();
+    property public androidx.compose.runtime.saveable.Saver<androidx.xr.glimmer.stack.StackState,java.lang.Integer> Saver;
   }
 
   public final class StackStateKt {
