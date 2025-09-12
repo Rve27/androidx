@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.impl;
+package androidx.xr.scenecore.spatial.core;
 
 import static java.lang.Math.min;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
 import android.util.TypedValue;
@@ -41,7 +40,6 @@ import org.jspecify.annotations.NonNull;
 import java.util.concurrent.ScheduledExecutorService;
 
 /** BasePanelEntity provides implementations of capabilities common to PanelEntities. */
-@SuppressLint("NewApi") // TODO: b/413661481 - Remove this suppression prior to JXR stable release.
 abstract class BasePanelEntity extends AndroidXrEntity implements PanelEntity {
     private static final float DEFAULT_CORNER_RADIUS_DP = 32.0f;
     protected PixelDimensions mPixelDimensions;
@@ -77,8 +75,7 @@ abstract class BasePanelEntity extends AndroidXrEntity implements PanelEntity {
         float radiusDp = DEFAULT_CORNER_RADIUS_DP;
 
         // If the pixel dimensions are smaller than the default corner radius, use the smaller of
-        // the
-        // two dimensions as the corner radius.
+        // the two dimensions as the corner radius.
         if (mPixelDimensions != null
                 && (widthDp < DEFAULT_CORNER_RADIUS_DP * 2
                         || heightDp < DEFAULT_CORNER_RADIUS_DP * 2)) {
@@ -156,8 +153,7 @@ abstract class BasePanelEntity extends AndroidXrEntity implements PanelEntity {
 
     // Sets just the value of the corner radius, without updating the node. This should be only be
     // used when constructing the entity so that the stored value is consistent with the value set
-    // in
-    // the node transaction.
+    // in the node transaction.
     public void setCornerRadiusValue(float value) {
         mCornerRadius = value;
     }

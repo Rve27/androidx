@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.impl;
+package androidx.xr.scenecore.spatial.core;
 
 import static com.google.common.truth.Truth.assertThat;
 import static com.google.common.util.concurrent.Futures.immediateFuture;
@@ -29,13 +29,12 @@ import android.graphics.Rect;
 
 import androidx.xr.runtime.math.Pose;
 import androidx.xr.scenecore.impl.extensions.XrExtensionsProvider;
-import androidx.xr.scenecore.impl.impress.FakeImpressApiImpl;
 import androidx.xr.scenecore.impl.perception.PerceptionLibrary;
 import androidx.xr.scenecore.impl.perception.Session;
 import androidx.xr.scenecore.internal.ActivityPanelEntity;
 import androidx.xr.scenecore.internal.Dimensions;
-import androidx.xr.scenecore.internal.JxrPlatformAdapter;
 import androidx.xr.scenecore.internal.PixelDimensions;
+import androidx.xr.scenecore.internal.SceneRuntime;
 import androidx.xr.scenecore.testing.FakeScheduledExecutorService;
 
 import com.android.extensions.xr.ShadowXrExtensions;
@@ -43,9 +42,6 @@ import com.android.extensions.xr.XrExtensions;
 import com.android.extensions.xr.node.NodeRepository;
 import com.android.extensions.xr.space.ActivityPanel;
 import com.android.extensions.xr.space.ShadowActivityPanel;
-
-import com.google.androidxr.splitengine.SplitEngineSubspaceManager;
-import com.google.ar.imp.view.splitengine.ImpSplitEngineRenderer;
 
 import org.junit.After;
 import org.junit.Before;
@@ -59,18 +55,13 @@ import org.robolectric.android.controller.ActivityController;
 @RunWith(RobolectricTestRunner.class)
 public class ActivityPanelEntityImplTest {
     private final XrExtensions mXrExtensions = XrExtensionsProvider.getXrExtensions();
-    private final FakeImpressApiImpl mFakeImpressApi = new FakeImpressApiImpl();
     private final ActivityController<Activity> mActivityController =
             Robolectric.buildActivity(Activity.class);
     private final Activity mHostActivity = mActivityController.create().start().get();
     private final PixelDimensions mWindowBoundsPx = new PixelDimensions(640, 480);
     private final FakeScheduledExecutorService mFakeExecutor = new FakeScheduledExecutorService();
     private final PerceptionLibrary mPerceptionLibrary = Mockito.mock(PerceptionLibrary.class);
-    private final SplitEngineSubspaceManager mSplitEngineSubspaceManager =
-            Mockito.mock(SplitEngineSubspaceManager.class);
-    private final ImpSplitEngineRenderer mSplitEngineRenderer =
-            Mockito.mock(ImpSplitEngineRenderer.class);
-    private JxrPlatformAdapter mFakeRuntime;
+    private SceneRuntime mFakeRuntime;
     private final NodeRepository mNodeRepository = NodeRepository.getInstance();
 
     @Before
@@ -79,16 +70,12 @@ public class ActivityPanelEntityImplTest {
                 .thenReturn(immediateFuture(Mockito.mock(Session.class)));
 
         mFakeRuntime =
-                JxrPlatformAdapterAxr.create(
+                SpatialSceneRuntime.create(
                         mHostActivity,
                         mFakeExecutor,
                         mXrExtensions,
-                        mFakeImpressApi,
                         new EntityManager(),
                         mPerceptionLibrary,
-                        mSplitEngineSubspaceManager,
-                        mSplitEngineRenderer,
-                        /* useSplitEngine= */ false,
                         /* unscaledGravityAlignedActivitySpace= */ false);
     }
 
@@ -106,11 +93,7 @@ public class ActivityPanelEntityImplTest {
         Pose mPose = new Pose();
 
         return mFakeRuntime.createActivityPanelEntity(
-                mPose,
-                windowBoundsPx,
-                "test",
-                mHostActivity,
-                mFakeRuntime.getActivitySpaceRootImpl());
+                mPose, windowBoundsPx, "test", mHostActivity, mFakeRuntime.getActivitySpace());
     }
 
     @Test
@@ -208,6 +191,7 @@ public class ActivityPanelEntityImplTest {
 
         // SetSize redirects to setSizeInPixels, so we check the same thing here.
         PixelDimensions viewDimensions = activityPanelEntity.getSizeInPixels();
+
         assertThat(viewDimensions.width).isEqualTo((int) dimensions.width);
         assertThat(viewDimensions.height).isEqualTo((int) dimensions.height);
     }
@@ -225,6 +209,7 @@ public class ActivityPanelEntityImplTest {
                 .isEqualTo(new Rect(0, 0, dimensions.width, dimensions.height));
 
         PixelDimensions viewDimensions = activityPanelEntity.getSizeInPixels();
+
         assertThat(viewDimensions.width).isEqualTo(dimensions.width);
         assertThat(viewDimensions.height).isEqualTo(dimensions.height);
     }

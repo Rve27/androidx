@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.impl;
+package androidx.xr.scenecore.spatial.core;
 
 import android.content.Context;
-import android.util.Log;
 
 import androidx.xr.runtime.math.Matrix4;
 import androidx.xr.runtime.math.Pose;
@@ -85,7 +84,7 @@ abstract class SystemSpaceEntityImpl extends AndroidXrEntity implements SystemSp
      * Returns the pose relative to an OpenXR reference space.
      *
      * <p>The OpenXR reference space is the space returned by {@link
-     * XrExtensions#getOpenXrActivitySpaceType()}
+     * XrExtensions#getOpenXrWorldReferenceSpaceType()}
      */
     public Pose getPoseInOpenXrReferenceSpace() {
         return mOpenXrReferenceSpacePose;
@@ -97,7 +96,7 @@ abstract class SystemSpaceEntityImpl extends AndroidXrEntity implements SystemSp
      *
      * @param openXrReferenceSpaceTransform 4x4 transformation matrix of the entity in an OpenXR
      *     reference space. The OpenXR reference space is of the type defined by the {@link
-     *     XrExtensions#getOpenXrActivitySpaceType()} method.
+     *     XrExtensions#getOpenXrWorldReferenceSpaceType()} method.
      */
     protected void setOpenXrReferenceSpacePose(Matrix4 openXrReferenceSpaceTransform) {
         if (openXrReferenceSpaceTransform.equals(Matrix4.Zero)) {
@@ -105,18 +104,13 @@ abstract class SystemSpaceEntityImpl extends AndroidXrEntity implements SystemSp
         }
         mOpenXrReferenceSpaceTransform.set(openXrReferenceSpaceTransform);
         // TODO: b/353511649 - Make SystemSpaceEntityImpl thread safe.
-        mOpenXrReferenceSpacePose = Matrix4Ext.getUnscaled(openXrReferenceSpaceTransform).getPose();
+        mOpenXrReferenceSpacePose = openXrReferenceSpaceTransform.unscaled().getPose();
 
         // Matrix4.scale returns either a positive or negative scale based on the rotation
         // matrix determinant, but we keep it positive for now to avoid any unexpected issues.
         // SpaceFlinger might apply a scale to the task node, for example if the user caused the
         // main panel to scale in Homespace mode.
         Vector3 actualScale = openXrReferenceSpaceTransform.getScale();
-        if (actualScale.getX() < 0 || actualScale.getY() < 0 || actualScale.getZ() < 0) {
-            Log.d(
-                    "SystemSpaceEntity",
-                    "Received an OpenXrReferenceSpaceTransform with negative scale");
-        }
         // TODO: b/367780918 - Use the original scale, when the new matrix decomposition is tested
         // thoroughly.
         mWorldSpaceScale = Vector3.abs(actualScale);
@@ -150,8 +144,7 @@ abstract class SystemSpaceEntityImpl extends AndroidXrEntity implements SystemSp
         try {
             mNodeTransformCloseable.close();
         } catch (Exception e) {
-            Log.w(
-                    "SystemSpaceEntity",
+            throw new RuntimeException(
                     "Could not close node transform subscription with error: " + e.getMessage());
         }
     }

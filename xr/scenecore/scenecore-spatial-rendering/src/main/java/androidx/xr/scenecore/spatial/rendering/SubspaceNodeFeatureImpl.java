@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,25 +14,22 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.impl;
-
-import android.content.Context;
+package androidx.xr.scenecore.spatial.rendering;
 
 import androidx.annotation.RestrictTo;
 import androidx.xr.runtime.math.Pose;
 import androidx.xr.runtime.math.Vector3;
+import androidx.xr.scenecore.impl.impress.ImpressApi;
 import androidx.xr.scenecore.internal.Dimensions;
-import androidx.xr.scenecore.internal.Space;
-import androidx.xr.scenecore.internal.SpaceValue;
-import androidx.xr.scenecore.internal.SubspaceNodeEntity;
+import androidx.xr.scenecore.internal.SubspaceNodeFeature;
 
 import com.android.extensions.xr.XrExtensions;
 import com.android.extensions.xr.node.Node;
 import com.android.extensions.xr.node.NodeTransaction;
 
-import org.jspecify.annotations.NonNull;
+import com.google.androidxr.splitengine.SplitEngineSubspaceManager;
 
-import java.util.concurrent.ScheduledExecutorService;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Represents an entity that manages a subspace node.
@@ -43,26 +40,23 @@ import java.util.concurrent.ScheduledExecutorService;
  * disjointed from scene graph and applies all transformations to it explicitly.
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public final class SubspaceNodeEntityImpl extends AndroidXrEntity implements SubspaceNodeEntity {
+final class SubspaceNodeFeatureImpl extends BaseRenderingFeature implements SubspaceNodeFeature {
     private final Node mSubspaceNode;
     private Dimensions mSize;
     private Vector3 mScale = Vector3.One;
 
-    SubspaceNodeEntityImpl(
-            Context context,
+    SubspaceNodeFeatureImpl(
+            ImpressApi impressApi,
+            SplitEngineSubspaceManager splitEngineSubspaceManager,
             XrExtensions extensions,
-            EntityManager entityManager,
-            ScheduledExecutorService executor,
             Node subspaceNode,
             Dimensions size) {
-        super(context, extensions.createNode(), extensions, entityManager, executor);
-        this.mSubspaceNode = subspaceNode;
-        setSize(size);
+        super(impressApi, splitEngineSubspaceManager, extensions);
+        mSubspaceNode = subspaceNode;
     }
 
     @Override
-    public void setPose(@NonNull Pose pose, @SpaceValue int relativeTo) {
-        super.setPose(pose, relativeTo);
+    public void setPose(@NonNull Pose pose) {
         try (NodeTransaction transaction = mExtensions.createNodeTransaction()) {
             transaction
                     .setPosition(
@@ -81,9 +75,8 @@ public final class SubspaceNodeEntityImpl extends AndroidXrEntity implements Sub
     }
 
     @Override
-    public void setScale(@NonNull Vector3 scale, @SpaceValue int relativeTo) {
-        super.setScale(scale, relativeTo);
-        mScale = super.getScale(Space.ACTIVITY);
+    public void setScale(@NonNull Vector3 scaleActivity) {
+        mScale = scaleActivity;
         Dimensions size =
                 new Dimensions(
                         mSize.width * mScale.getX(),
@@ -95,8 +88,7 @@ public final class SubspaceNodeEntityImpl extends AndroidXrEntity implements Sub
     }
 
     @Override
-    public void setAlpha(float alpha, @SpaceValue int relativeTo) {
-        super.setAlpha(alpha, relativeTo);
+    public void setAlpha(float alpha) {
         try (NodeTransaction transaction = mExtensions.createNodeTransaction()) {
             transaction.setAlpha(mSubspaceNode, alpha).apply();
         }
@@ -123,9 +115,13 @@ public final class SubspaceNodeEntityImpl extends AndroidXrEntity implements Sub
 
     @Override
     public void setHidden(boolean hidden) {
-        super.setHidden(hidden);
         try (NodeTransaction transaction = mExtensions.createNodeTransaction()) {
             transaction.setVisibility(mSubspaceNode, !hidden).apply();
         }
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.impl;
-
-import android.util.Log;
+package androidx.xr.scenecore.spatial.core;
 
 import androidx.xr.scenecore.internal.Dimensions;
 import androidx.xr.scenecore.internal.Entity;
@@ -36,6 +34,7 @@ import org.jspecify.annotations.NonNull;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
+import java.util.function.BiConsumer;
 
 /** Implementation of ResizableComponent. */
 @SuppressWarnings({"BanConcurrentHashMap"})
@@ -55,12 +54,12 @@ class ResizableComponentImpl implements ResizableComponent {
     /** Follows scenecore/ResizableComponent.create document, the default minimum size is 0. */
     private final Dimensions mMinimumSize = new Dimensions(0.0f, 0.0f, 0.0f);
 
-    @NonNull private Dimensions mMinSize = mMinimumSize;
+    private @NonNull Dimensions mMinSize = mMinimumSize;
 
     /** Follows scenecore/ResizableComponent.create document, the default maximum size is 10. */
     private final Dimensions mMaximumSize = new Dimensions(10.0f, 10.0f, 10.0f);
 
-    @NonNull private Dimensions mMaxSize = mMaximumSize;
+    private @NonNull Dimensions mMaxSize = mMaximumSize;
     private float mFixedAspectRatio = 0.0f;
     private boolean mAutoHideContent = true;
     private boolean mAutoUpdateSize = true;
@@ -95,7 +94,6 @@ class ResizableComponentImpl implements ResizableComponent {
     @Override
     public boolean onAttach(@NonNull Entity entity) {
         if (mEntity != null) {
-            Log.e(TAG, "Already attached to entity " + mEntity);
             return false;
         }
         mEntity = entity;
@@ -116,7 +114,6 @@ class ResizableComponentImpl implements ResizableComponent {
                     || mCurrentSize.width > mMaxSize.width
                     || mCurrentSize.height < mMinSize.height
                     || mCurrentSize.height > mMaxSize.height) {
-                Log.e(TAG, "Size of attached panel entity is not within minsize and maxsize.");
                 return false;
             }
             if (mFixedAspectRatio != 0) {
@@ -158,7 +155,6 @@ class ResizableComponentImpl implements ResizableComponent {
     @Override
     public Dimensions getSize() {
         if (mCurrentSize == null) {
-            Log.e(TAG, "This component isn't attached to a PanelEntity and never called setSize.");
             return mDefaultSize;
         }
         return mCurrentSize;
@@ -175,7 +171,6 @@ class ResizableComponentImpl implements ResizableComponent {
         }
         mCurrentSize = size;
         if (mEntity == null) {
-            Log.i(TAG, "This component isn't attached to an entity.");
             return;
         }
         ReformOptions reformOptions = ((AndroidXrEntity) mEntity).getReformOptions();
@@ -189,9 +184,8 @@ class ResizableComponentImpl implements ResizableComponent {
         ((AndroidXrEntity) mEntity).updateReformOptions();
     }
 
-    @NonNull
     @Override
-    public Dimensions getMinimumSize() {
+    public @NonNull Dimensions getMinimumSize() {
         return mMinSize;
     }
 
@@ -203,7 +197,6 @@ class ResizableComponentImpl implements ResizableComponent {
         }
         mMinSize = minSize;
         if (mEntity == null) {
-            Log.i(TAG, "This component isn't attached to an entity.");
             return;
         }
         ReformOptions reformOptions = ((AndroidXrEntity) mEntity).getReformOptions();
@@ -213,9 +206,8 @@ class ResizableComponentImpl implements ResizableComponent {
         ((AndroidXrEntity) mEntity).updateReformOptions();
     }
 
-    @NonNull
     @Override
-    public Dimensions getMaximumSize() {
+    public @NonNull Dimensions getMaximumSize() {
         return mMaxSize;
     }
 
@@ -227,7 +219,6 @@ class ResizableComponentImpl implements ResizableComponent {
         }
         mMaxSize = maxSize;
         if (mEntity == null) {
-            Log.i(TAG, "This component isn't attached to an entity.");
             return;
         }
         ReformOptions reformOptions = ((AndroidXrEntity) mEntity).getReformOptions();
@@ -251,7 +242,6 @@ class ResizableComponentImpl implements ResizableComponent {
             return;
         }
         if (mEntity == null) {
-            Log.i(TAG, "This component isn't attached to an entity.");
             return;
         }
         ReformOptions reformOptions = ((AndroidXrEntity) mEntity).getReformOptions();
@@ -302,12 +292,71 @@ class ResizableComponentImpl implements ResizableComponent {
     public void setForceShowResizeOverlay(boolean show) {
         mForceShowResizeOverlay = show;
         if (mEntity == null) {
-            Log.i(TAG, "This component isn't attached to an entity.");
             return;
         }
         ReformOptions reformOptions = ((AndroidXrEntity) mEntity).getReformOptions();
         ReformOptions unused = reformOptions.setForceShowResizeOverlay(show);
         ((AndroidXrEntity) mEntity).updateReformOptions();
+    }
+
+    private void reformEventConsumer(ReformEvent reformEvent) {
+        if (reformEvent.getType() != ReformEvent.REFORM_TYPE_RESIZE) {
+            return;
+        }
+        Dimensions newSize =
+                getSanitizedSizeForResize(
+                        new Dimensions(
+                                reformEvent.getProposedSize().x,
+                                reformEvent.getProposedSize().y,
+                                reformEvent.getProposedSize().z));
+        if (mAutoUpdateSize) {
+            // Update the resize affordance size.
+            setSize(newSize);
+        }
+
+        BiConsumer<ResizeEventListener, Executor> resizeEventListenerAction =
+                (listener, listenerExecutor) ->
+                        listenerExecutor.execute(
+                                () -> {
+                                    // Set the alpha to 0 when the resize starts before any app
+                                    // callbacks, and restore when the resize ends after any app
+                                    // callbacks, to hide the entity content while it's being
+                                    // resized.
+                                    int reformState = reformEvent.getState();
+                                    if (mAutoHideContent
+                                            && reformState == ReformEvent.REFORM_STATE_START) {
+                                        try (NodeTransaction transaction =
+                                                mExtensions.createNodeTransaction()) {
+                                            transaction
+                                                    .setAlpha(
+                                                            ((AndroidXrEntity) mEntity).getNode(),
+                                                            0f)
+                                                    .apply();
+                                        }
+                                    }
+                                    listener.onResizeEvent(
+                                            new ResizeEvent(
+                                                    RuntimeUtils.getResizeEventState(
+                                                            reformEvent.getState()),
+                                                    newSize));
+                                    if (mAutoHideContent
+                                            && reformState == ReformEvent.REFORM_STATE_END) {
+                                        // Restore the entity alpha to its original value after the
+                                        // resize callback. We can't guarantee that the app has
+                                        // finished resizing when this is called, since the panel
+                                        // resize itself is asynchronous, or the app can use this
+                                        // callback to schedule resize call on a different thread.
+                                        try (NodeTransaction transaction =
+                                                mExtensions.createNodeTransaction()) {
+                                            transaction
+                                                    .setAlpha(
+                                                            ((AndroidXrEntity) mEntity).getNode(),
+                                                            mEntity.getAlpha())
+                                                    .apply();
+                                        }
+                                    }
+                                });
+        mResizeEventListenerMap.forEach(resizeEventListenerAction);
     }
 
     @Override
@@ -317,75 +366,8 @@ class ResizableComponentImpl implements ResizableComponent {
         if (mReformEventConsumer != null) {
             return;
         }
-        mReformEventConsumer =
-                reformEvent -> {
-                    if (reformEvent.getType() != ReformEvent.REFORM_TYPE_RESIZE) {
-                        return;
-                    }
-                    Dimensions newSize =
-                            getSanitizedSizeForResize(
-                                    new Dimensions(
-                                            reformEvent.getProposedSize().x,
-                                            reformEvent.getProposedSize().y,
-                                            reformEvent.getProposedSize().z));
-                    if (mAutoUpdateSize) {
-                        // Update the resize affordance size.
-                        setSize(newSize);
-                    }
-                    mResizeEventListenerMap.forEach(
-                            (listener, listenerExecutor) ->
-                                    listenerExecutor.execute(
-                                            () -> {
-                                                // Set the alpha to 0 when the resize starts before
-                                                // any app callbacks, and
-                                                // restore when the resize ends after any app
-                                                // callbacks, to hide the entity
-                                                // content while it's being resized.
-                                                int reformState = reformEvent.getState();
-                                                if (mAutoHideContent
-                                                        && reformState
-                                                                == ReformEvent.REFORM_STATE_START) {
-                                                    try (NodeTransaction transaction =
-                                                            mExtensions.createNodeTransaction()) {
-                                                        transaction
-                                                                .setAlpha(
-                                                                        ((AndroidXrEntity) mEntity)
-                                                                                .getNode(),
-                                                                        0f)
-                                                                .apply();
-                                                    }
-                                                }
-                                                listener.onResizeEvent(
-                                                        new ResizeEvent(
-                                                                RuntimeUtils.getResizeEventState(
-                                                                        reformEvent.getState()),
-                                                                newSize));
-                                                if (mAutoHideContent
-                                                        && reformState
-                                                                == ReformEvent.REFORM_STATE_END) {
-                                                    // Restore the entity alpha to its original
-                                                    // value after the resize
-                                                    // callback. We can't guarantee that the app has
-                                                    // finished resizing when
-                                                    // this is called, since the panel resize itself
-                                                    // is asynchronous, or the
-                                                    // app can use this callback to schedule resize
-                                                    // call on a different
-                                                    // thread.
-                                                    try (NodeTransaction transaction =
-                                                            mExtensions.createNodeTransaction()) {
-                                                        transaction
-                                                                .setAlpha(
-                                                                        ((AndroidXrEntity) mEntity)
-                                                                                .getNode(),
-                                                                        mEntity.getAlpha())
-                                                                .apply();
-                                                    }
-                                                }
-                                            }));
-                };
+        mReformEventConsumer = this::reformEventConsumer;
         if (mEntity == null) {
-            Log.i(TAG, "This component isn't attached to an entity.");
             return;
         }
         ((AndroidXrEntity) mEntity).addReformEventConsumer(mReformEventConsumer, mExecutor);

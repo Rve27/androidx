@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.impl;
+package androidx.xr.scenecore.spatial.core;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -36,10 +36,14 @@ import com.android.extensions.xr.XrExtensions;
 import com.android.extensions.xr.node.Node;
 import com.android.extensions.xr.node.NodeTransaction;
 
+import org.jspecify.annotations.NonNull;
+
 import java.util.Objects;
 
 /** Class for rendering the border of a panel onto a perception plane. */
-@SuppressLint("NewApi") // TODO: b/413661481 - Remove this suppression prior to JXR stable release.
+// TODO: b/413661481 - Remove this suppression prior to JXR stable release.
+// For SurfaceControlViewHost and getDisplay
+@SuppressLint("NewApi")
 class PanelShadowRenderer {
     private static final float STROKE_WIDTH = 20f;
     private static final float HALF_STROKE_WIDTH = STROKE_WIDTH / 2;
@@ -62,7 +66,7 @@ class PanelShadowRenderer {
         }
 
         @Override
-        public void onDrawForeground(Canvas canvas) {
+        public void onDrawForeground(@NonNull Canvas canvas) {
             super.onDrawForeground(canvas);
             Path border = new Path();
             border.addRoundRect(

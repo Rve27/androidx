@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.impl;
+package androidx.xr.scenecore.spatial.core;
 
 import androidx.xr.runtime.math.Matrix4;
 import androidx.xr.runtime.math.Quaternion;
@@ -33,8 +33,7 @@ final class PlaneUtils {
      */
     static Quaternion rotateEntityToPlane(Quaternion proposedRotation, Quaternion planeRotation) {
         // The y-vector of the plane is the normal of the plane. We need to rotate the panel so that
-        // the
-        // y-vector of the panel points along the plane and the z-vector is normal to the plane.
+        // the y-vector of the panel points along the plane and the z-vector is normal to the plane.
         // Otherwise the panel will be sticking out of the plane.
 
         // Create a rotation matrix from the quaternion of the plane to extract the normal.
@@ -56,8 +55,7 @@ final class PlaneUtils {
         // The y-vector is the cross product of the panel x-vector and the z-vector.
         Vector3 yRotation = zRotation.cross(poseVectorX).toNormalized();
         // The x-vector is the cross product of the y-vector and the z-vector so that they will all
-        // be
-        // orthogonal.
+        // be orthogonal.
         Vector3 xRotation = yRotation.cross(zRotation).toNormalized();
         // Create a new rotation matrix from the x, y, and z vectors.
         Matrix4 rotationMatrix = getRotationMatrixFromAxes(xRotation, yRotation, zRotation);

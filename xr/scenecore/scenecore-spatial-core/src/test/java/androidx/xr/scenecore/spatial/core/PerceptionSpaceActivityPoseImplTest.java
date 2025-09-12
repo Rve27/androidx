@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,41 +14,37 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.impl;
+package androidx.xr.scenecore.spatial.core;
 
 import static androidx.xr.runtime.testing.math.MathAssertions.assertPose;
 import static androidx.xr.runtime.testing.math.MathAssertions.assertVector3;
 
 import android.app.Activity;
 
+import androidx.xr.runtime.NodeHolder;
 import androidx.xr.runtime.math.Matrix4;
 import androidx.xr.runtime.math.Pose;
 import androidx.xr.runtime.math.Quaternion;
 import androidx.xr.runtime.math.Vector3;
 import androidx.xr.scenecore.impl.extensions.XrExtensionsProvider;
-import androidx.xr.scenecore.impl.impress.FakeImpressApiImpl;
+import androidx.xr.scenecore.testing.FakeGltfFeature;
 import androidx.xr.scenecore.testing.FakeScheduledExecutorService;
 
 import com.android.extensions.xr.XrExtensions;
 import com.android.extensions.xr.node.Mat4f;
+import com.android.extensions.xr.node.Node;
 import com.android.extensions.xr.node.NodeTransform;
 import com.android.extensions.xr.node.ShadowNode;
 import com.android.extensions.xr.node.ShadowNodeTransform;
 
-import com.google.androidxr.splitengine.SplitEngineSubspaceManager;
-import com.google.common.util.concurrent.ListenableFuture;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 
 @RunWith(RobolectricTestRunner.class)
 public final class PerceptionSpaceActivityPoseImplTest {
-
-    private final AndroidXrEntity mActivitySpaceRoot = Mockito.mock(AndroidXrEntity.class);
     private final XrExtensions mXrExtensions = XrExtensionsProvider.getXrExtensions();
     private final FakeScheduledExecutorService mExecutor = new FakeScheduledExecutorService();
     private final EntityManager mEntityManager = new EntityManager();
@@ -63,9 +59,6 @@ public final class PerceptionSpaceActivityPoseImplTest {
                     () -> mXrExtensions.getSpatialState(mActivity),
                     /* unscaledGravityAlignedActivitySpace= */ false,
                     mExecutor);
-    private final FakeImpressApiImpl mFakeImpressApi = new FakeImpressApiImpl();
-    private final SplitEngineSubspaceManager mSplitEngineSubspaceManager =
-            Mockito.mock(SplitEngineSubspaceManager.class);
 
     private PerceptionSpaceActivityPoseImpl mPerceptionSpaceActivityPose;
 
@@ -78,26 +71,11 @@ public final class PerceptionSpaceActivityPoseImplTest {
 
     /** Creates a generic glTF entity. */
     private GltfEntityImpl createGltfEntity() {
-        long modelToken = -1;
-        try {
-            ListenableFuture<Long> modelTokenFuture =
-                    mFakeImpressApi.loadGltfAsset("FakeGltfAsset.glb");
-            // This resolves the transformation of the Future from a SplitEngine token to the JXR
-            // GltfModelResource.  This is a hidden detail from the API surface's perspective.
-            mExecutor.runAll();
-            modelToken = modelTokenFuture.get();
-        } catch (Exception e) {
-            if (e instanceof InterruptedException) {
-                Thread.currentThread().interrupt();
-            }
-        }
-        GltfModelResourceImpl model = new GltfModelResourceImpl(modelToken);
+        NodeHolder<?> node = new NodeHolder<>(mXrExtensions.createNode(), Node.class);
         return new GltfEntityImpl(
                 mActivity,
-                model,
+                new FakeGltfFeature(node),
                 mActivitySpace,
-                mFakeImpressApi,
-                mSplitEngineSubspaceManager,
                 mXrExtensions,
                 mEntityManager,
                 mExecutor);
@@ -106,7 +84,7 @@ public final class PerceptionSpaceActivityPoseImplTest {
     @Before
     public void setUp() {
         mPerceptionSpaceActivityPose =
-                new PerceptionSpaceActivityPoseImpl(mActivitySpace, mActivitySpaceRoot);
+                new PerceptionSpaceActivityPoseImpl(mActivitySpace, mActivitySpace);
     }
 
     @Test
@@ -122,6 +100,7 @@ public final class PerceptionSpaceActivityPoseImplTest {
         Pose poseInActivitySpace = mPerceptionSpaceActivityPose.getPoseInActivitySpace();
 
         Pose expectedPose = activitySpaceMatrix.getInverse().getPose();
+
         assertPose(poseInActivitySpace, expectedPose);
     }
 
@@ -139,6 +118,7 @@ public final class PerceptionSpaceActivityPoseImplTest {
                 mPerceptionSpaceActivityPose.transformPoseTo(new Pose(), mActivitySpace);
 
         Pose expectedPose = activitySpaceMatrix.getInverse().getPose();
+
         assertPose(transformedPose, expectedPose);
     }
 
@@ -161,6 +141,7 @@ public final class PerceptionSpaceActivityPoseImplTest {
                 new Pose(
                         unscaledPose.getTranslation().scale(new Vector3(0.5f, 0.5f, 0.5f)),
                         unscaledPose.getRotation());
+
         assertPose(transformedPose, expectedPose);
     }
 
@@ -168,6 +149,7 @@ public final class PerceptionSpaceActivityPoseImplTest {
     public void getActivitySpaceScale_returnsInverseOfActivitySpaceWorldScale() throws Exception {
         float activitySpaceScale = 5f;
         mActivitySpace.setOpenXrReferenceSpacePose(Matrix4.fromScale(activitySpaceScale));
+
         assertVector3(
                 mPerceptionSpaceActivityPose.getActivitySpaceScale(),
                 new Vector3(1f, 1f, 1f).div(activitySpaceScale));

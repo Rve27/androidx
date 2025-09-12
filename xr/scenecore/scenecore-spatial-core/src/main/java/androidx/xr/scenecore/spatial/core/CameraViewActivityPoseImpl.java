@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.impl;
+package androidx.xr.scenecore.spatial.core;
 
 import android.app.Activity;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 
@@ -42,7 +41,6 @@ import org.jspecify.annotations.Nullable;
  * of view of the camera.
  */
 final class CameraViewActivityPoseImpl extends BaseActivityPose implements CameraViewActivityPose {
-    private static final String TAG = "CameraViewActivityPose";
     private final PerceptionLibrary mPerceptionLibrary;
     @CameraType private final int mCameraType;
     private final ActivitySpaceImpl mActivitySpace;
@@ -62,7 +60,7 @@ final class CameraViewActivityPoseImpl extends BaseActivityPose implements Camer
     }
 
     @Override
-    public Pose getPoseInActivitySpace() {
+    public @NonNull Pose getPoseInActivitySpace() {
         return mOpenXrActivityPoseHelper.getPoseInActivitySpace(getPoseInOpenXrReferenceSpace());
     }
 
@@ -88,12 +86,12 @@ final class CameraViewActivityPoseImpl extends BaseActivityPose implements Camer
     private @Nullable ViewProjection getViewProjection() {
         final Session session = mPerceptionLibrary.getSession();
         if (session == null) {
-            Log.w(TAG, "Cannot retrieve the camera pose with a null perception session.");
+            // Cannot retrieve the camera pose with a null perception session.
             return null;
         }
         ViewProjections perceptionViews = session.getStereoViews();
         if (perceptionViews == null) {
-            Log.e(TAG, "Error retrieving the camera.");
+            // Error retrieving the camera.
             return null;
         }
         if (mCameraType == CameraViewActivityPose.CameraType.CAMERA_TYPE_LEFT_EYE) {
@@ -101,7 +99,7 @@ final class CameraViewActivityPoseImpl extends BaseActivityPose implements Camer
         } else if (mCameraType == CameraViewActivityPose.CameraType.CAMERA_TYPE_RIGHT_EYE) {
             return perceptionViews.getRightEye();
         } else {
-            Log.w(TAG, "Unsupported camera type: " + mCameraType);
+            // Unsupported camera type: mCameraType
             return null;
         }
     }
@@ -130,24 +128,20 @@ final class CameraViewActivityPoseImpl extends BaseActivityPose implements Camer
         return RuntimeUtils.fovFromPerceptionFov(viewProjection.getFov());
     }
 
+    // Suppress warnings: windowManager's getDefaultDisplay and getRealMetrics.
+    @SuppressWarnings("deprecation")
     @Override
     public @NonNull PixelDimensions getDisplayResolutionInPixels() {
         Activity activity = mPerceptionLibrary.getActivity();
         WindowManager windowManager = activity.getSystemService(WindowManager.class);
         if (windowManager == null) {
-            Log.w(
-                    TAG,
-                    "WindowManager not available, cannot get display resolution. Returning (0,"
-                            + "0).");
+            // WindowManager not available, cannot get display resolution. Returning (0, 0).
             return new PixelDimensions(0, 0); // Fallback if WindowManager is not available
         }
 
         Display display = windowManager.getDefaultDisplay();
         if (display == null) {
-            Log.w(
-                    TAG,
-                    "Default display not available, cannot get display resolution. Returning "
-                            + "(0,0).");
+            // Default display not available, cannot get display resolution. Returning (0,0).
             return new PixelDimensions(0, 0); // Fallback if display is not available
         }
 

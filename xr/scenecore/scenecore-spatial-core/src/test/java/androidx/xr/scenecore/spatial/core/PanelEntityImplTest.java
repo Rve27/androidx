@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.impl;
+package androidx.xr.scenecore.spatial.core;
 
 import static com.google.common.truth.Truth.assertThat;
 import static com.google.common.util.concurrent.Futures.immediateFuture;
@@ -35,7 +35,6 @@ import androidx.xr.runtime.math.Pose;
 import androidx.xr.runtime.math.Quaternion;
 import androidx.xr.runtime.math.Vector3;
 import androidx.xr.scenecore.impl.extensions.XrExtensionsProvider;
-import androidx.xr.scenecore.impl.impress.FakeImpressApiImpl;
 import androidx.xr.scenecore.impl.perception.PerceptionLibrary;
 import androidx.xr.scenecore.impl.perception.Session;
 import androidx.xr.scenecore.internal.CameraViewActivityPose;
@@ -48,8 +47,6 @@ import com.android.extensions.xr.XrExtensions;
 import com.android.extensions.xr.node.Node;
 import com.android.extensions.xr.node.NodeRepository;
 
-import com.google.androidxr.splitengine.SplitEngineSubspaceManager;
-import com.google.ar.imp.view.splitengine.ImpSplitEngineRenderer;
 import com.google.common.truth.Truth;
 
 import org.junit.After;
@@ -66,7 +63,6 @@ public class PanelEntityImplTest {
     private static final Dimensions kVgaResolutionPx = new Dimensions(640f, 480f, 0f);
     private static final Dimensions kHdResolutionPx = new Dimensions(1280f, 720f, 0f);
     private final XrExtensions mXrExtensions = XrExtensionsProvider.getXrExtensions();
-    FakeImpressApiImpl mFakeImpressApi = new FakeImpressApiImpl();
     private final ActivityController<Activity> mActivityController =
             Robolectric.buildActivity(Activity.class);
     private final Activity mActivity = mActivityController.create().start().get();
@@ -74,36 +70,28 @@ public class PanelEntityImplTest {
             new FakeScheduledExecutorService();
     private final PerceptionLibrary mPerceptionLibrary = mock(PerceptionLibrary.class);
     private final EntityManager mEntityManager = new EntityManager();
-    private JxrPlatformAdapterAxr mTestPlatformAdapter;
+    private SpatialSceneRuntime mRuntime;
     private final NodeRepository mNodeRepository = NodeRepository.getInstance();
-
-    SplitEngineSubspaceManager mSplitEngineSubspaceManager =
-            Mockito.mock(SplitEngineSubspaceManager.class);
-    ImpSplitEngineRenderer mSplitEngineRenderer = Mockito.mock(ImpSplitEngineRenderer.class);
 
     @Before
     public void setUp() {
         when(mPerceptionLibrary.initSession(eq(mActivity), anyInt(), eq(mMakeFakeExecutor)))
                 .thenReturn(immediateFuture(Mockito.mock(Session.class)));
 
-        mTestPlatformAdapter =
-                JxrPlatformAdapterAxr.create(
+        mRuntime =
+                SpatialSceneRuntime.create(
                         mActivity,
                         mMakeFakeExecutor,
                         mXrExtensions,
-                        mFakeImpressApi,
                         mEntityManager,
                         mPerceptionLibrary,
-                        mSplitEngineSubspaceManager,
-                        mSplitEngineRenderer,
-                        /* useSplitEngine= */ false,
                         /* unscaledGravityAlignedActivitySpace= */ false);
     }
 
     @After
     public void tearDown() {
         // Dispose the runtime between test cases to clean up lingering references.
-        mTestPlatformAdapter.dispose();
+        mRuntime.dispose();
         mEntityManager.clear();
     }
 
@@ -127,7 +115,7 @@ public class PanelEntityImplTest {
                         mMakeFakeExecutor);
 
         // TODO(b/352829122): introduce a TestRootEntity which can serve as a parent
-        panelEntity.setParent(mTestPlatformAdapter.getActivitySpaceRootImpl());
+        panelEntity.setParent(mRuntime.getActivitySpace());
         return panelEntity;
     }
 
@@ -195,7 +183,6 @@ public class PanelEntityImplTest {
         assertThat(panelEntity.getSize().width).isEqualTo(640f);
         assertThat(panelEntity.getSize().height).isEqualTo(480f);
         assertThat(panelEntity.getSize().depth).isEqualTo(0f);
-
         assertThat(panelEntity.getSizeInPixels().width).isEqualTo(640);
         assertThat(panelEntity.getSizeInPixels().height).isEqualTo(480);
     }
@@ -257,6 +244,7 @@ public class PanelEntityImplTest {
         PerceivedResolutionResult result = panelEntity.getPerceivedResolution();
 
         assertThat(result).isInstanceOf(PerceivedResolutionResult.Success.class);
+
         PerceivedResolutionResult.Success successResult =
                 (PerceivedResolutionResult.Success) result;
 
@@ -318,6 +306,7 @@ public class PanelEntityImplTest {
         PerceivedResolutionResult result = panelEntity.getPerceivedResolution();
 
         assertThat(result).isInstanceOf(PerceivedResolutionResult.Success.class);
+
         PerceivedResolutionResult.Success successResult =
                 (PerceivedResolutionResult.Success) result;
 

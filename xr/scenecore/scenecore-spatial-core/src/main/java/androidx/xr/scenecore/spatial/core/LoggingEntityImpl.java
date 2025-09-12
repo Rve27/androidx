@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.impl;
+package androidx.xr.scenecore.spatial.core;
 
 import android.content.Context;
 import android.util.Log;
@@ -36,7 +36,8 @@ import org.jspecify.annotations.NonNull;
 import java.util.List;
 import java.util.concurrent.Executor;
 
-/** Implementation of a SceneCore Entity that logs its function calls. */
+/** Implementation of a RealityCore Entity that logs its function calls. */
+// TODO: b/441103135 - Revaluate existence of LoggingEntity.
 class LoggingEntityImpl extends BaseEntity implements LoggingEntity {
 
     private static final String TAG = "SceneCore";

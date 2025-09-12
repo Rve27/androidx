@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.impl;
+package androidx.xr.scenecore.spatial.core;
 
 import static androidx.xr.runtime.testing.math.MathAssertions.assertPose;
 import static androidx.xr.runtime.testing.math.MathAssertions.assertVector3;
@@ -37,7 +37,6 @@ import androidx.xr.runtime.math.Pose;
 import androidx.xr.runtime.math.Quaternion;
 import androidx.xr.runtime.math.Vector3;
 import androidx.xr.scenecore.impl.extensions.XrExtensionsProvider;
-import androidx.xr.scenecore.impl.impress.FakeImpressApiImpl;
 import androidx.xr.scenecore.impl.perception.PerceptionLibrary;
 import androidx.xr.scenecore.impl.perception.Session;
 import androidx.xr.scenecore.internal.ActivityPose.HitTestFilter;
@@ -45,7 +44,7 @@ import androidx.xr.scenecore.internal.ActivityPose.HitTestFilterValue;
 import androidx.xr.scenecore.internal.ActivitySpace;
 import androidx.xr.scenecore.internal.Dimensions;
 import androidx.xr.scenecore.internal.HitTestResult;
-import androidx.xr.scenecore.internal.JxrPlatformAdapter;
+import androidx.xr.scenecore.internal.SceneRuntime;
 import androidx.xr.scenecore.internal.Space;
 import androidx.xr.scenecore.testing.FakeScheduledExecutorService;
 import androidx.xr.scenecore.testing.FakeSpatialModeChangeListener;
@@ -65,8 +64,6 @@ import com.android.extensions.xr.space.ShadowSpatialState;
 import com.android.extensions.xr.space.SpatialCapabilities;
 import com.android.extensions.xr.space.SpatialState;
 
-import com.google.androidxr.splitengine.SplitEngineSubspaceManager;
-import com.google.ar.imp.view.splitengine.ImpSplitEngineRenderer;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import org.junit.After;
@@ -80,48 +77,34 @@ import org.robolectric.android.controller.ActivityController;
 
 @RunWith(RobolectricTestRunner.class)
 public final class ActivitySpaceImplTest extends SystemSpaceEntityImplTest {
-    // TODO(b/329902726): Move this boilerplate for creating a TestJxrPlatformAdapter into a test
-    // util
+    // TODO(b/329902726): Move this boilerplate for creating a TestSceneRuntime into a test util
     private final ActivityController<Activity> mActivityController =
             Robolectric.buildActivity(Activity.class);
     private final Activity mActivity = mActivityController.create().start().get();
     private final FakeScheduledExecutorService mFakeExecutor = new FakeScheduledExecutorService();
     private final PerceptionLibrary mPerceptionLibrary = Mockito.mock(PerceptionLibrary.class);
-    private final SplitEngineSubspaceManager mSplitEngineSubspaceManager =
-            Mockito.mock(SplitEngineSubspaceManager.class);
-    private final ImpSplitEngineRenderer mSplitEngineRenderer =
-            Mockito.mock(ImpSplitEngineRenderer.class);
-
-    private XrExtensions mXrExtensions;
-    private FakeImpressApiImpl mFakeImpressApi;
-    private JxrPlatformAdapter mTestRuntime;
-    private ActivitySpaceImpl mActivitySpace;
     private final NodeRepository mNodeRepository = NodeRepository.getInstance();
+    private XrExtensions mXrExtensions;
+    private SceneRuntime mTestRuntime;
+    private ActivitySpaceImpl mActivitySpace;
 
-    private JxrPlatformAdapter createTestJxrPlatformAdapter(
-            boolean unScaledGravityAlignedActivitySpace) {
-        return JxrPlatformAdapterAxr.create(
+    private SceneRuntime createTestSceneRuntime(boolean unScaledGravityAlignedActivitySpace) {
+        return SpatialSceneRuntime.create(
                 mActivity,
                 mFakeExecutor,
                 mXrExtensions,
-                mFakeImpressApi,
                 new EntityManager(),
                 mPerceptionLibrary,
-                mSplitEngineSubspaceManager,
-                mSplitEngineRenderer,
-                /* useSplitEngine= */ false,
                 unScaledGravityAlignedActivitySpace);
     }
 
     @Before
     public void setUp() {
         mXrExtensions = XrExtensionsProvider.getXrExtensions();
-        mFakeImpressApi = new FakeImpressApiImpl();
         when(mPerceptionLibrary.initSession(eq(mActivity), anyInt(), eq(mFakeExecutor)))
                 .thenReturn(immediateFuture(Mockito.mock(Session.class)));
 
-        mTestRuntime =
-                createTestJxrPlatformAdapter(/* unScaledGravityAlignedActivitySpace= */ false);
+        mTestRuntime = createTestSceneRuntime(/* unScaledGravityAlignedActivitySpace= */ false);
 
         mActivitySpace = (ActivitySpaceImpl) mTestRuntime.getActivitySpace();
 
@@ -140,7 +123,7 @@ public final class ActivitySpaceImplTest extends SystemSpaceEntityImplTest {
 
     @Override
     protected SystemSpaceEntityImpl getSystemSpaceEntityImpl() {
-        return (SystemSpaceEntityImpl) mActivitySpace;
+        return mActivitySpace;
     }
 
     @Override
@@ -156,7 +139,7 @@ public final class ActivitySpaceImplTest extends SystemSpaceEntityImplTest {
 
     @Override
     protected ActivitySpaceImpl getActivitySpaceEntity() {
-        return (ActivitySpaceImpl) mActivitySpace;
+        return mActivitySpace;
     }
 
     private SpatialState createSpatialState(Bounds bounds) {
@@ -225,14 +208,14 @@ public final class ActivitySpaceImplTest extends SystemSpaceEntityImplTest {
 
     @Test
     public void getPoseInActivitySpace_returnsIdentity() {
-        ActivitySpaceImpl activitySpaceImpl = (ActivitySpaceImpl) mActivitySpace;
+        ActivitySpaceImpl activitySpaceImpl = mActivitySpace;
 
         assertPose(activitySpaceImpl.getPoseInActivitySpace(), new Pose());
     }
 
     @Test
     public void getActivitySpaceScale_returnsUnitScale() {
-        ActivitySpaceImpl activitySpaceImpl = (ActivitySpaceImpl) mActivitySpace;
+        ActivitySpaceImpl activitySpaceImpl = mActivitySpace;
         activitySpaceImpl.setOpenXrReferenceSpacePose(Matrix4.fromScale(5f));
         assertVector3(activitySpaceImpl.getActivitySpaceScale(), new Vector3(1f, 1f, 1f));
     }
@@ -292,8 +275,7 @@ public final class ActivitySpaceImplTest extends SystemSpaceEntityImplTest {
     public void
             handleOriginUpdate_unscaledGravityAlignedTrue_scaleAndRotationApplied_handlerCalled() {
         FakeSpatialModeChangeListener handler = new FakeSpatialModeChangeListener();
-        mTestRuntime =
-                createTestJxrPlatformAdapter(/* unScaledGravityAlignedActivitySpace= */ true);
+        mTestRuntime = createTestSceneRuntime(/* unScaledGravityAlignedActivitySpace= */ true);
         mActivitySpace = (ActivitySpaceImpl) mTestRuntime.getActivitySpace();
         mActivitySpace.setSpatialModeChangeListener(handler);
 
@@ -329,8 +311,7 @@ public final class ActivitySpaceImplTest extends SystemSpaceEntityImplTest {
     @Test
     public void handleOriginUpdate_noHandler_doesNotCallHandler() {
         FakeSpatialModeChangeListener handler = new FakeSpatialModeChangeListener();
-        mTestRuntime =
-                createTestJxrPlatformAdapter(/* unScaledGravityAlignedActivitySpace= */ true);
+        mTestRuntime = createTestSceneRuntime(/* unScaledGravityAlignedActivitySpace= */ true);
         mActivitySpace = (ActivitySpaceImpl) mTestRuntime.getActivitySpace();
         mActivitySpace.setSpatialModeChangeListener(null);
 
@@ -351,8 +332,7 @@ public final class ActivitySpaceImplTest extends SystemSpaceEntityImplTest {
         Quaternion activitySpaceRotation =
                 RuntimeUtils.getQuaternion(
                         mNodeRepository.getOrientation(mActivitySpace.getNode()));
-        Quaternion expectedRotation =
-                Matrix4Ext.getUnscaled(newTransform).getRotation().getInverse();
+        Quaternion expectedRotation = newTransform.unscaled().getRotation().getInverse();
         assertThat(activitySpaceRotation.getX()).isWithin(0.001f).of(expectedRotation.getX());
         assertThat(activitySpaceRotation.getY()).isWithin(0.001f).of(expectedRotation.getY());
         assertThat(activitySpaceRotation.getZ()).isWithin(0.001f).of(expectedRotation.getZ());
@@ -378,23 +358,20 @@ public final class ActivitySpaceImplTest extends SystemSpaceEntityImplTest {
 
     @Test
     public void activitySpaceSetPose_throwsException() throws Exception {
-        ActivitySpaceImpl activitySpaceImpl = (ActivitySpaceImpl) mActivitySpace;
         Pose pose = new Pose();
 
-        assertThrows(UnsupportedOperationException.class, () -> activitySpaceImpl.setPose(pose));
+        assertThrows(UnsupportedOperationException.class, () -> mActivitySpace.setPose(pose));
     }
 
     @Test
     public void getPoseRelativeToParentSpace_throwsException() throws Exception {
-        ActivitySpaceImpl activitySpaceImpl = (ActivitySpaceImpl) mActivitySpace;
-
         assertThrows(
-                UnsupportedOperationException.class, () -> activitySpaceImpl.getPose(Space.PARENT));
+                UnsupportedOperationException.class, () -> mActivitySpace.getPose(Space.PARENT));
     }
 
     @Test
     public void getPoseRelativeToActivitySpace_returnsIdentity() {
-        ActivitySpaceImpl activitySpaceImpl = (ActivitySpaceImpl) mActivitySpace;
+        ActivitySpaceImpl activitySpaceImpl = mActivitySpace;
 
         assertPose(
                 activitySpaceImpl.getPose(Space.ACTIVITY),
@@ -403,7 +380,7 @@ public final class ActivitySpaceImplTest extends SystemSpaceEntityImplTest {
 
     @Test
     public void getPoseRelativeToRealWorldSpace_returnsPerceptionSpacePose() {
-        ActivitySpaceImpl activitySpaceImpl = (ActivitySpaceImpl) mActivitySpace;
+        ActivitySpaceImpl activitySpaceImpl = mActivitySpace;
 
         assertPose(
                 activitySpaceImpl.getPose(Space.REAL_WORLD),
@@ -412,7 +389,7 @@ public final class ActivitySpaceImplTest extends SystemSpaceEntityImplTest {
 
     @Test
     public void getScaleRelativeToParentSpace_throwsException() throws Exception {
-        ActivitySpaceImpl activitySpaceImpl = (ActivitySpaceImpl) mActivitySpace;
+        ActivitySpaceImpl activitySpaceImpl = mActivitySpace;
 
         assertThrows(
                 UnsupportedOperationException.class,
@@ -421,7 +398,7 @@ public final class ActivitySpaceImplTest extends SystemSpaceEntityImplTest {
 
     @Test
     public void getScaleRelativeToActivitySpace_returnsActivitySpaceScale() {
-        ActivitySpaceImpl activitySpaceImpl = (ActivitySpaceImpl) mActivitySpace;
+        ActivitySpaceImpl activitySpaceImpl = mActivitySpace;
 
         assertVector3(
                 activitySpaceImpl.getScale(Space.ACTIVITY),
@@ -430,7 +407,7 @@ public final class ActivitySpaceImplTest extends SystemSpaceEntityImplTest {
 
     @Test
     public void getScaleRelativeToRealWorldSpace_returnsVector3One() {
-        ActivitySpaceImpl activitySpaceImpl = (ActivitySpaceImpl) mActivitySpace;
+        ActivitySpaceImpl activitySpaceImpl = mActivitySpace;
 
         assertVector3(activitySpaceImpl.getScale(Space.REAL_WORLD), new Vector3(1f, 1f, 1f));
     }

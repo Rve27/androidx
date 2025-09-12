@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,29 +14,26 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.impl
+package androidx.xr.scenecore.spatial.core
 
 import android.app.Activity
-import androidx.annotation.RestrictTo
 import androidx.xr.runtime.internal.Feature
-import androidx.xr.runtime.internal.JxrPlatformAdapterFactory
-import androidx.xr.scenecore.internal.JxrPlatformAdapter
+import androidx.xr.runtime.internal.SceneRuntimeFactory
+import androidx.xr.scenecore.internal.SceneRuntime
 import java.util.concurrent.Executors
 import java.util.concurrent.ThreadFactory
 
-/** Factory for creating instances of [JxrPlatformAdapter] for Android XR devices. */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public class JxrPlatformAdapterFactoryAxr() : JxrPlatformAdapterFactory {
+/**
+ * Factory for creating instances of [SceneRuntime] for devices that support the [Feature.SPATIAL]
+ * feature.
+ */
+internal class SpatialSceneRuntimeFactory() : SceneRuntimeFactory {
     override val requirements: Set<Feature> =
         setOf(Feature.FULLSTACK, Feature.OPEN_XR, Feature.SPATIAL)
 
-    override fun createPlatformAdapter(
-        activity: Activity,
-        unscaledGravityAlignedActivitySpace: Boolean,
-    ): JxrPlatformAdapterAxr =
-        JxrPlatformAdapterAxr.create(
+    override fun create(activity: Activity): SceneRuntime =
+        SpatialSceneRuntime.create(
             activity,
-            unscaledGravityAlignedActivitySpace,
             Executors.newSingleThreadScheduledExecutor(
                 object : ThreadFactory {
                     override fun newThread(r: Runnable): Thread {

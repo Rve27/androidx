@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.impl;
+package androidx.xr.scenecore.spatial.core;
 
 import static com.google.common.truth.Truth.assertThat;
 import static com.google.common.util.concurrent.Futures.immediateFuture;
@@ -32,10 +32,10 @@ import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 
+import androidx.xr.runtime.NodeHolder;
 import androidx.xr.runtime.math.Matrix4;
 import androidx.xr.runtime.math.Pose;
 import androidx.xr.scenecore.impl.extensions.XrExtensionsProvider;
-import androidx.xr.scenecore.impl.impress.FakeImpressApiImpl;
 import androidx.xr.scenecore.impl.perception.PerceptionLibrary;
 import androidx.xr.scenecore.impl.perception.Session;
 import androidx.xr.scenecore.internal.ActivityPanelEntity;
@@ -51,20 +51,16 @@ import androidx.xr.scenecore.internal.PerceptionSpaceActivityPose;
 import androidx.xr.scenecore.internal.PixelDimensions;
 import androidx.xr.scenecore.internal.PlaneSemantic;
 import androidx.xr.scenecore.internal.PlaneType;
+import androidx.xr.scenecore.testing.FakeGltfFeature;
 import androidx.xr.scenecore.testing.FakeScheduledExecutorService;
 
 import com.android.extensions.xr.XrExtensions;
 import com.android.extensions.xr.node.Node;
 
-import com.google.androidxr.splitengine.SplitEngineSubspaceManager;
-import com.google.ar.imp.view.splitengine.ImpSplitEngineRenderer;
-import com.google.common.util.concurrent.ListenableFuture;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.android.controller.ActivityController;
@@ -75,7 +71,6 @@ public class EntityManagerTest {
     private static final int VGA_WIDTH = 640;
     private static final int VGA_HEIGHT = 480;
     private final XrExtensions mXrExtensions = XrExtensionsProvider.getXrExtensions();
-    private final FakeImpressApiImpl mFakeImpressApi = new FakeImpressApiImpl();
     private final FakeScheduledExecutorService mFakeExecutor = new FakeScheduledExecutorService();
     private final PerceptionLibrary mPerceptionLibrary = mock(PerceptionLibrary.class);
     private final Session mSession = mock(Session.class);
@@ -84,14 +79,10 @@ public class EntityManagerTest {
     private final Node mPanelEntityNode = mXrExtensions.createNode();
     private final Node mAnchorEntityNode = mXrExtensions.createNode();
     private final EntityManager mEntityManager = new EntityManager();
-    private final SplitEngineSubspaceManager mSplitEngineSubspaceManager =
-            Mockito.mock(SplitEngineSubspaceManager.class);
-    private final ImpSplitEngineRenderer mSplitEngineRenderer =
-            Mockito.mock(ImpSplitEngineRenderer.class);
     private Node mGroupEntityNode;
     private Node mGltfEntityNode;
     private Activity mActivity;
-    private JxrPlatformAdapterAxr mPlatformAdapterAxr;
+    private SpatialSceneRuntime mSpatialSceneRuntime;
     private ActivitySpaceImpl mActivitySpace;
 
     @Before
@@ -103,18 +94,14 @@ public class EntityManagerTest {
         when(mPerceptionLibrary.initSession(eq(mActivity), anyInt(), eq(mFakeExecutor)))
                 .thenReturn(immediateFuture(mSession));
         when(mPerceptionLibrary.getActivity()).thenReturn(mActivity);
-        mPlatformAdapterAxr =
-                JxrPlatformAdapterAxr.create(
+        mSpatialSceneRuntime =
+                SpatialSceneRuntime.create(
                         mActivity,
                         mFakeExecutor,
                         mXrExtensions,
-                        mFakeImpressApi,
                         mEntityManager,
                         mPerceptionLibrary,
-                        mSplitEngineSubspaceManager,
-                        mSplitEngineRenderer,
-                        /* useSplitEngine= */ true,
-                        /* unscaledGravityAlignedActivitySpace= */ false);
+                        false);
         Node taskNode = mXrExtensions.createNode();
         mActivitySpace =
                 new ActivitySpaceImpl(
@@ -135,7 +122,7 @@ public class EntityManagerTest {
     @After
     public void tearDown() {
         // Dispose the runtime between test cases to clean up lingering references.
-        mPlatformAdapterAxr.dispose();
+        mSpatialSceneRuntime.dispose();
     }
 
     @Test
@@ -233,8 +220,8 @@ public class EntityManagerTest {
         assertThat(mEntityManager.getAllSystemSpaceActivityPoses().size()).isAtLeast(4);
         assertThat(mEntityManager.getAllSystemSpaceActivityPoses())
                 .containsAtLeast(
-                        mPlatformAdapterAxr.getActivitySpace(),
-                        mPlatformAdapterAxr.getPerceptionSpaceActivityPose());
+                        mSpatialSceneRuntime.getActivitySpace(),
+                        mSpatialSceneRuntime.getPerceptionSpaceActivityPose());
     }
 
     @Test
@@ -277,28 +264,12 @@ public class EntityManagerTest {
 
     /** Creates a generic glTF entity. */
     private GltfEntity createGltfEntity() {
-        long modelToken = -1;
-        try {
-            ListenableFuture<Long> modelTokenFuture =
-                    mFakeImpressApi.loadGltfAsset("FakeGltfAsset.glb");
-            assertThat(modelTokenFuture).isNotNull();
-            // This resolves the transformation of the Future from a SplitEngine token to the JXR
-            // GltfModelResource.  This is a hidden detail from the API surface's perspective.
-            mExecutor.runAll();
-            modelToken = modelTokenFuture.get();
-        } catch (Exception e) {
-            if (e instanceof InterruptedException) {
-                Thread.currentThread().interrupt();
-            }
-        }
-        GltfModelResourceImpl model = new GltfModelResourceImpl(modelToken);
+        NodeHolder<?> nodeHolder = new NodeHolder<>(mXrExtensions.createNode(), Node.class);
         GltfEntityImpl gltfEntity =
                 new GltfEntityImpl(
                         mActivity,
-                        model,
+                        new FakeGltfFeature(nodeHolder),
                         mActivitySpaceRoot,
-                        mFakeImpressApi,
-                        mSplitEngineSubspaceManager,
                         mXrExtensions,
                         mEntityManager,
                         mExecutor);
@@ -328,8 +299,8 @@ public class EntityManagerTest {
 
     private Entity createGroupEntity() {
         Entity groupEntity =
-                mPlatformAdapterAxr.createGroupEntity(
-                        new Pose(), "testGroup", mPlatformAdapterAxr.getActivitySpace());
+                mSpatialSceneRuntime.createGroupEntity(
+                        new Pose(), "testGroup", mSpatialSceneRuntime.getActivitySpace());
         mGroupEntityNode = ((AndroidXrEntity) groupEntity).getNode();
         mEntityManager.setEntityForNode(mGroupEntityNode, groupEntity);
         return groupEntity;
@@ -355,7 +326,7 @@ public class EntityManagerTest {
     }
 
     private ActivityPanelEntity createActivityPanelEntity() {
-        return mPlatformAdapterAxr.createActivityPanelEntity(
+        return mSpatialSceneRuntime.createActivityPanelEntity(
                 new Pose(),
                 new PixelDimensions(VGA_WIDTH, VGA_HEIGHT),
                 "test",

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.impl;
+package androidx.xr.scenecore.spatial.core;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.os.Binder;
-import android.util.Log;
 import android.view.SurfaceControlViewHost;
 import android.view.SurfaceControlViewHost.SurfacePackage;
 import android.view.View;
@@ -54,7 +53,6 @@ import java.util.concurrent.ScheduledExecutorService;
  */
 @SuppressLint("NewApi") // TODO: b/413661481 - Remove this suppression prior to JXR stable release.
 final class PanelEntityImpl extends BasePanelEntity implements PanelEntity {
-    private static final String TAG = "PanelEntity";
     private final SurfaceControlViewHost mSurfaceControlViewHost;
 
     PanelEntityImpl(
@@ -68,7 +66,7 @@ final class PanelEntityImpl extends BasePanelEntity implements PanelEntity {
             ScheduledExecutorService executor) {
         super(context, node, extensions, entityManager, executor);
 
-        View reparentedView = maybeReparentView(view, name, context);
+        View reparentedView = maybeReparentView(view, context);
         mSurfaceControlViewHost =
                 new SurfaceControlViewHost(
                         context, Objects.requireNonNull(context.getDisplay()), new Binder());
@@ -92,7 +90,7 @@ final class PanelEntityImpl extends BasePanelEntity implements PanelEntity {
                         (int) (surfaceDimensions.width * unscaledPixelDensity),
                         (int) (surfaceDimensions.height * unscaledPixelDensity));
 
-        View reparentedView = maybeReparentView(view, name, context);
+        View reparentedView = maybeReparentView(view, context);
         mSurfaceControlViewHost =
                 new SurfaceControlViewHost(
                         context, Objects.requireNonNull(context.getDisplay()), new Binder());
@@ -102,19 +100,13 @@ final class PanelEntityImpl extends BasePanelEntity implements PanelEntity {
 
     // Adds a FrameLayout as a parent of the contentView if it doesn't already have one. Adding the
     // FrameLayout ensures compatibility with LayoutInspector without visually impacting the layout
-    // of
-    // the view.
-    private static View maybeReparentView(View contentView, String name, Context context) {
+    // of the view.
+    private static View maybeReparentView(View contentView, Context context) {
         if (contentView instanceof FrameLayout) {
             return contentView;
         }
         if (contentView.getParent() != null) {
-            Log.w(
-                    TAG,
-                    "Panel "
-                            + name
-                            + " already has a parent. LayoutInspector may not work properly for"
-                            + " this panel.");
+            // Already has a parent. LayoutInspector may not work properly for this panel.
             return contentView;
         }
         try {
@@ -128,15 +120,7 @@ final class PanelEntityImpl extends BasePanelEntity implements PanelEntity {
             frameLayout.addView(contentView);
             return frameLayout;
         } catch (Throwable t) {
-            // This error only impacts the effectiveness of LayoutInspector, so we can just log it
-            // and
-            // return the original contentView rather than rethrowing.
-            Log.e(
-                    TAG,
-                    "Could not set a new parent View for Panel "
-                            + name
-                            + ". LayoutInspector may not work properly for this panel.",
-                    t);
+            // This error only impacts the effectiveness of LayoutInspector.  Not to rethrow it.
         }
 
         return contentView;
@@ -154,8 +138,7 @@ final class PanelEntityImpl extends BasePanelEntity implements PanelEntity {
                 Objects.requireNonNull(mSurfaceControlViewHost.getSurfacePackage());
 
         // We need to manually inform our base class of the pixelDimensions, even though the
-        // Extensions
-        // are initialized in the factory method. (ext.setWindowBounds, etc)
+        // Extensions are initialized in the factory method. (ext.setWindowBounds, etc)
         super.setSizeInPixels(surfaceDimensionsPx);
         float cornerRadius = getDefaultCornerRadiusInMeters();
         try (NodeTransaction transaction = mExtensions.createNodeTransaction()) {
@@ -178,8 +161,8 @@ final class PanelEntityImpl extends BasePanelEntity implements PanelEntity {
         OnBackInvokedCallback onBackInvokedCallback =
                 () -> {
                     Context context = view.getContext();
-                    // The context is not necessarily an activity, we need to find the activity
-                    // to forward the onBackPressed()
+                    // The context is not necessarily an activity, we need to find the activity to
+                    // forward the onBackPressed()
                     while (context instanceof ContextWrapper) {
                         if (context instanceof Activity) {
                             ((Activity) context).onBackPressed();
@@ -214,7 +197,6 @@ final class PanelEntityImpl extends BasePanelEntity implements PanelEntity {
     @SuppressWarnings("ObjectToString")
     @Override
     public void dispose() {
-        Log.i(TAG, "Disposing " + this);
         mSurfaceControlViewHost.release();
         super.dispose();
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.impl;
+package androidx.xr.scenecore.spatial.core;
 
 import static androidx.xr.runtime.testing.math.MathAssertions.assertPose;
 import static androidx.xr.runtime.testing.math.MathAssertions.assertVector3;
@@ -156,11 +156,11 @@ public abstract class SystemSpaceEntityImplTest {
     @Test
     public void getPoseInOpenXrReferenceSpace_returnsPoseFromSubscribeToNodeTransform() {
         SystemSpaceEntityImpl systemSpaceEntity = getSystemSpaceEntityImpl();
+        // Column major, right handed 4x4 Transformation Matrix with translation of (4, 8, 12) and
+        // rotation 90 (@) around Z axis
         Mat4f mat4f =
-                new Mat4f( // --                Column major, right handed 4x4 Transformation Matrix
-                        // with
-                        new float[] { // --         translation of (4, 8, 12) and rotation 90 (@)
-                            // around Z axis
+                new Mat4f(
+                        new float[] {
                             0f, 1f, 0f, 0f, // --     cos(@),   sin(@), 0,  0
                             -1f, 0f, 0f, 0f, // --    -sin(@),  cos(@), 0,  0
                             0f, 0f, 1f, 0f, // --     0,        0,      1,  0
@@ -313,11 +313,11 @@ public abstract class SystemSpaceEntityImplTest {
     @Test
     public void setPoseInOpenXrReferenceSpace_updatesPose() {
         SystemSpaceEntityImpl systemSpaceEntity = getSystemSpaceEntityImpl();
+        // Column major, right handed 4x4 Transformation Matrix with translation of (4, 8, 12)
+        // and rotation 90 (@) around Z axis
         Matrix4 matrix =
-                new Matrix4( // --               Column major, right handed 4x4 Transformation
-                        // Matrix with
-                        new float[] { // --         translation of (4, 8, 12) and rotation 90 (@)
-                            // around Z axis
+                new Matrix4(
+                        new float[] {
                             0f, 1f, 0f, 0f, // --     cos(@),   sin(@), 0,  0
                             -1f, 0f, 0f, 0f, // --    -sin(@),  cos(@), 0,  0
                             0f, 0f, 1f, 0f, // --     0,        0,      1,  0
@@ -335,12 +335,11 @@ public abstract class SystemSpaceEntityImplTest {
     @Test
     public void setPoseInOpenXrReferenceSpace_updatesScale() {
         SystemSpaceEntityImpl systemSpaceEntity = getSystemSpaceEntityImpl();
+        // Column major, right handed 4x4 Transformation Matrix with translation of (4, 8, 12) and
+        // rotation 90 (@) around Z axis, and scale of 3.3.
         Matrix4 matrix =
-                new Matrix4( // --               Column major, right handed 4x4 Transformation
-                        // Matrix with
-                        new float // --             translation of (4, 8, 12) and rotation 90 (@)
-                                // around Z axis,
-                                [] { // --              and scale of 3.3.
+                new Matrix4(
+                        new float[] {
                             0f, 3.3f, 0f, 0f, // --     cos(@),   sin(@), 0,  0
                             -3.3f, 0f, 0f, 0f, // --    -sin(@),  cos(@), 0,  0
                             0f, 0f, 3.3f, 0f, // --     0,        0,      1,  0

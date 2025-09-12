@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.impl;
+package androidx.xr.scenecore.spatial.core;
 
 import android.content.Context;
-import android.util.Log;
 
 import androidx.xr.runtime.math.Pose;
 import androidx.xr.runtime.math.Quaternion;
@@ -81,7 +80,7 @@ abstract class AndroidXrEntity extends BaseEntity implements Entity {
         mExtensions = extensions;
         mEntityManager = entityManager;
         mExecutor = executor;
-        mEntityManager.setEntityForNode(node, (Entity) this);
+        mEntityManager.setEntityForNode(node, this);
     }
 
     @Override
@@ -146,7 +145,7 @@ abstract class AndroidXrEntity extends BaseEntity implements Entity {
 
     /** Returns the pose for this entity, relative to the activity space root. */
     @Override
-    public Pose getPoseInActivitySpace() {
+    public @NonNull Pose getPoseInActivitySpace() {
         // This code might produce unexpected results when non-uniform scale
         // is involved in the parent-child entity hierarchy.
 
@@ -206,7 +205,6 @@ abstract class AndroidXrEntity extends BaseEntity implements Entity {
     @Override
     public void setParent(Entity parent) {
         if ((parent != null) && !(parent instanceof AndroidXrEntity)) {
-            Log.e("SceneCore", "Cannot set non-AndroidXrEntity as a parent of a AndroidXrEntity");
             return;
         }
         super.setParent(parent);
@@ -291,7 +289,8 @@ abstract class AndroidXrEntity extends BaseEntity implements Entity {
                                         PointerCaptureComponent.PointerCaptureState
                                                 .POINTER_CAPTURE_STATE_STOPPED);
                             } else {
-                                Log.e("Runtime", "Invalid state received for pointer capture");
+                                throw new IllegalStateException(
+                                        "Invalid state received for pointer capture");
                             }
                         });
 
@@ -307,35 +306,38 @@ abstract class AndroidXrEntity extends BaseEntity implements Entity {
     }
 
     private void maybeSetupInputListeners() {
+        // Only set up the listener if it doesn't already exist.
         if (mInputEventListenerMap.isEmpty() && mPointerCaptureInputEventListener.isEmpty()) {
-            mNode.listenForInput(
-                    mExecutor,
-                    (xrInputEvent) -> {
-                        if (xrInputEvent.getDispatchFlags()
-                                == InputEvent.DISPATCH_FLAG_CAPTURED_POINTER) {
-                            mPointerCaptureInputEventListener.ifPresent(
-                                    (listener) ->
-                                            mPointerCaptureExecutor
-                                                    .orElse(mExecutor)
-                                                    .execute(
-                                                            () ->
-                                                                    listener.onInputEvent(
-                                                                            RuntimeUtils
-                                                                                    .getInputEvent(
-                                                                                            xrInputEvent,
-                                                                                            mEntityManager))));
-                        } else {
-                            mInputEventListenerMap.forEach(
-                                    (inputEventListener, listenerExecutor) ->
-                                            listenerExecutor.execute(
-                                                    () ->
-                                                            inputEventListener.onInputEvent(
-                                                                    RuntimeUtils.getInputEvent(
-                                                                            xrInputEvent,
-                                                                            mEntityManager))));
-                        }
-                    });
+            mNode.listenForInput(mExecutor, this::handleInputEvent);
         }
+    }
+
+    /** Handles an incoming input event from the underlying node and dispatches it appropriately. */
+    private void handleInputEvent(InputEvent xrInputEvent) {
+        if (xrInputEvent.getDispatchFlags() == InputEvent.DISPATCH_FLAG_CAPTURED_POINTER) {
+            dispatchCapturedPointerEvent(xrInputEvent);
+        } else {
+            dispatchStandardEvent(xrInputEvent);
+        }
+    }
+
+    /** Dispatches an event to the active pointer capture listener. */
+    private void dispatchCapturedPointerEvent(InputEvent xrInputEvent) {
+        mPointerCaptureInputEventListener.ifPresent(
+                (listener) -> {
+                    Executor executor = mPointerCaptureExecutor.orElse(mExecutor);
+                    executor.execute(() -> listener.onInputEvent(
+                            RuntimeUtils.getInputEvent(xrInputEvent, mEntityManager)
+                    ));
+                });
+    }
+
+    /** Dispatches an event to all standard input listeners. */
+    private void dispatchStandardEvent(InputEvent xrInputEvent) {
+        mInputEventListenerMap.forEach(
+                (listener, executor) -> executor.execute(
+                        () -> listener.onInputEvent(
+                                RuntimeUtils.getInputEvent(xrInputEvent, mEntityManager))));
     }
 
     @Override

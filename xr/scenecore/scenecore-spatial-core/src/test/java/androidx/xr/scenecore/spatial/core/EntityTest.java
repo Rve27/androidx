@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.impl;
+package androidx.xr.scenecore.spatial.core;
 
 import static androidx.xr.runtime.testing.math.MathAssertions.assertPose;
 import static androidx.xr.runtime.testing.math.MathAssertions.assertVector3;
@@ -34,7 +34,6 @@ import androidx.xr.runtime.math.Pose;
 import androidx.xr.runtime.math.Quaternion;
 import androidx.xr.runtime.math.Vector3;
 import androidx.xr.scenecore.impl.extensions.XrExtensionsProvider;
-import androidx.xr.scenecore.impl.impress.FakeImpressApiImpl;
 import androidx.xr.scenecore.impl.perception.PerceptionLibrary;
 import androidx.xr.scenecore.impl.perception.PerceptionLibraryConstants;
 import androidx.xr.scenecore.impl.perception.Session;
@@ -48,8 +47,6 @@ import com.android.extensions.xr.XrExtensions;
 import com.android.extensions.xr.node.Node;
 import com.android.extensions.xr.node.Vec3;
 
-import com.google.androidxr.splitengine.SplitEngineSubspaceManager;
-import com.google.ar.imp.view.splitengine.ImpSplitEngineRenderer;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import org.junit.After;
@@ -63,12 +60,12 @@ import java.util.concurrent.ScheduledExecutorService;
 
 @RunWith(RobolectricTestRunner.class)
 public final class EntityTest {
-    private final XrExtensions mXrExtensions = XrExtensionsProvider.getXrExtensions();
+    private XrExtensions mXrExtensions = XrExtensionsProvider.getXrExtensions();
     private final EntityManager mEntityManager = new EntityManager();
     private final FakeScheduledExecutorService mFakeScheduledExecutorService =
             new FakeScheduledExecutorService();
     private final Pose mTestPose = new Pose(new Vector3(1f, 2f, 3f), Quaternion.Identity);
-    private JxrPlatformAdapterAxr mJxrPlatformAdapterAxr;
+    private SpatialSceneRuntime mSpatialSceneRuntime;
     private TestEntity mEntity;
     private Activity mActivity;
 
@@ -85,6 +82,8 @@ public final class EntityTest {
 
     @Before
     public void setUp() {
+        if (mXrExtensions == null) throw new RuntimeException("XrExtensions not found");
+
         mActivity = Robolectric.buildActivity(Activity.class).create().start().get();
 
         PerceptionLibrary perceptionLibrary = mock(PerceptionLibrary.class);
@@ -96,17 +95,13 @@ public final class EntityTest {
                         mFakeScheduledExecutorService))
                 .thenReturn(immediateFuture(mock(Session.class)));
         when(perceptionLibrary.getActivity()).thenReturn(mActivity);
-        mJxrPlatformAdapterAxr =
-                JxrPlatformAdapterAxr.create(
+        mSpatialSceneRuntime =
+                SpatialSceneRuntime.create(
                         mActivity,
                         mFakeScheduledExecutorService,
                         mXrExtensions,
-                        new FakeImpressApiImpl(),
                         mEntityManager,
                         perceptionLibrary,
-                        mock(SplitEngineSubspaceManager.class),
-                        mock(ImpSplitEngineRenderer.class),
-                        false,
                         /* unscaledGravityAlignedActivitySpace= */ false);
         mEntity =
                 new TestEntity(
@@ -115,13 +110,14 @@ public final class EntityTest {
                         mXrExtensions,
                         mEntityManager,
                         mFakeScheduledExecutorService);
-        mEntity.setParent(mJxrPlatformAdapterAxr.getActivitySpace());
+        mEntity.setParent(mSpatialSceneRuntime.getActivitySpace());
     }
 
     @After
     public void tearDown() {
-        mJxrPlatformAdapterAxr.dispose();
-        mJxrPlatformAdapterAxr = null;
+        mSpatialSceneRuntime.dispose();
+        mSpatialSceneRuntime = null;
+        mXrExtensions = null;
     }
 
     @Test
@@ -133,7 +129,7 @@ public final class EntityTest {
     @Test
     public void getPose_parentSpace_returnsParentPose() {
         ActivitySpaceImpl activitySpace =
-                (ActivitySpaceImpl) mJxrPlatformAdapterAxr.getActivitySpace();
+                (ActivitySpaceImpl) mSpatialSceneRuntime.getActivitySpace();
         activitySpace.setOpenXrReferenceSpacePose(
                 Matrix4.fromTrs(
                         new Vector3(5f, 6f, 7f),
@@ -148,7 +144,7 @@ public final class EntityTest {
     @Test
     public void getPose_activitySpace_returnsActivitySpacePose() {
         ActivitySpaceImpl activitySpace =
-                (ActivitySpaceImpl) mJxrPlatformAdapterAxr.getActivitySpace();
+                (ActivitySpaceImpl) mSpatialSceneRuntime.getActivitySpace();
         activitySpace.setOpenXrReferenceSpacePose(
                 Matrix4.fromTrs(
                         new Vector3(5f, 6f, 7f),
@@ -231,7 +227,7 @@ public final class EntityTest {
     @Test
     public void getScale_worldSpace_returnsWorldSpaceScale() {
         ActivitySpaceImpl activitySpace =
-                (ActivitySpaceImpl) mJxrPlatformAdapterAxr.getActivitySpace();
+                (ActivitySpaceImpl) mSpatialSceneRuntime.getActivitySpace();
         activitySpace.mWorldSpaceScale = new Vector3(2.0f, 2.0f, 2.0f);
         Vector3 scale = new Vector3(1.0f, 2.0f, 3.0f);
         mEntity.setScale(scale, Space.PARENT);
@@ -268,7 +264,7 @@ public final class EntityTest {
     @Test
     public void setScale_worldSpace_setsWorldSpaceScale() {
         ActivitySpaceImpl activitySpace =
-                (ActivitySpaceImpl) mJxrPlatformAdapterAxr.getActivitySpace();
+                (ActivitySpaceImpl) mSpatialSceneRuntime.getActivitySpace();
         activitySpace.mWorldSpaceScale = new Vector3(2.0f, 2.0f, 2.0f);
         Vector3 scale = new Vector3(1.0f, 2.0f, 3.0f);
         mEntity.setScale(scale, Space.PARENT);
@@ -311,7 +307,7 @@ public final class EntityTest {
         grandchild.setPose(mTestPose, Space.PARENT);
         grandchild.setParent(child);
         ActivitySpaceImpl activitySpace =
-                (ActivitySpaceImpl) mJxrPlatformAdapterAxr.getActivitySpace();
+                (ActivitySpaceImpl) mSpatialSceneRuntime.getActivitySpace();
         activitySpace.setOpenXrReferenceSpacePose(
                 Matrix4.fromTrs(
                         new Vector3(5f, 6f, 7f),
@@ -400,7 +396,7 @@ public final class EntityTest {
 
     @Test
     public void setAlpha_worldSpace_setsWorldSpaceAlpha() {
-        mJxrPlatformAdapterAxr.getActivitySpace().setAlpha(4f, Space.PARENT);
+        mSpatialSceneRuntime.getActivitySpace().setAlpha(4f, Space.PARENT);
         mEntity.setAlpha(0.5f, Space.PARENT);
         TestEntity child =
                 new TestEntity(
@@ -447,8 +443,7 @@ public final class EntityTest {
 
         assertThat(hitTestResult.getDistance()).isEqualTo(distance);
         // Since the entity is rotated 90 degrees about the x axis, the hit position should be
-        // rotated
-        // 90 degrees about the x axis.
+        // rotated 90 degrees about the x axis.
         assertVector3(hitTestResult.getHitPosition(), new Vector3(0f, 2f, -1f));
         assertVector3(hitTestResult.getSurfaceNormal(), new Vector3(0f, 0f, -1f));
         assertThat(hitTestResult.getSurfaceType())
@@ -461,7 +456,7 @@ public final class EntityTest {
         Vec3 hitPosition = new Vec3(0.5f, 1.0f, 1.5f);
         Vec3 surfaceNormal = new Vec3(0.0f, 1.0f, 0.0f);
         int surfaceType = com.android.extensions.xr.space.HitTestResult.SURFACE_PANEL;
-        ((ActivitySpaceImpl) mJxrPlatformAdapterAxr.getActivitySpace())
+        ((ActivitySpaceImpl) mSpatialSceneRuntime.getActivitySpace())
                 .setOpenXrReferenceSpacePose(Matrix4.fromScale(2f));
         com.android.extensions.xr.space.HitTestResult extensionsHitTestResult =
                 new com.android.extensions.xr.space.HitTestResult.Builder(
@@ -484,8 +479,7 @@ public final class EntityTest {
 
         assertThat(hitTestResult.getDistance()).isEqualTo(distance);
         // Since the entity is rotated 90 degrees about the x axis, the hit position should be
-        // rotated
-        // 90 degrees about the x axis.
+        // rotated 90 degrees about the x axis.
         assertVector3(hitTestResult.getHitPosition(), new Vector3(0f, 1f, -0.5f));
         assertVector3(hitTestResult.getSurfaceNormal(), new Vector3(0f, 0f, -1f));
         assertThat(hitTestResult.getSurfaceType())

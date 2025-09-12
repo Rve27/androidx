@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.impl;
+package androidx.xr.scenecore.spatial.core;
 
 import static com.google.common.truth.Truth.assertThat;
 import static com.google.common.util.concurrent.Futures.immediateFuture;
@@ -26,7 +26,6 @@ import static org.mockito.Mockito.when;
 import android.app.Activity;
 
 import androidx.xr.scenecore.impl.extensions.XrExtensionsProvider;
-import androidx.xr.scenecore.impl.impress.FakeImpressApiImpl;
 import androidx.xr.scenecore.impl.perception.PerceptionLibrary;
 import androidx.xr.scenecore.impl.perception.Session;
 import androidx.xr.scenecore.internal.Dimensions;
@@ -36,9 +35,6 @@ import androidx.xr.scenecore.testing.FakeScheduledExecutorService;
 import com.android.extensions.xr.ShadowXrExtensions;
 import com.android.extensions.xr.XrExtensions;
 import com.android.extensions.xr.node.NodeRepository;
-
-import com.google.androidxr.splitengine.SplitEngineSubspaceManager;
-import com.google.ar.imp.view.splitengine.ImpSplitEngineRenderer;
 
 import org.junit.After;
 import org.junit.Before;
@@ -52,16 +48,12 @@ import org.robolectric.android.controller.ActivityController;
 @RunWith(RobolectricTestRunner.class)
 public class MainPanelEntityImplTest {
     private final XrExtensions mXrExtensions = XrExtensionsProvider.getXrExtensions();
-    private final FakeImpressApiImpl mFakeImpressApi = new FakeImpressApiImpl();
     private final ActivityController<Activity> mActivityController =
             Robolectric.buildActivity(Activity.class);
     private final Activity mHostActivity = mActivityController.create().start().get();
     private final FakeScheduledExecutorService mFakeExecutor = new FakeScheduledExecutorService();
     private final PerceptionLibrary mPerceptionLibrary = Mockito.mock(PerceptionLibrary.class);
-    SplitEngineSubspaceManager mSplitEngineSubspaceManager =
-            Mockito.mock(SplitEngineSubspaceManager.class);
-    ImpSplitEngineRenderer mSplitEngineRenderer = Mockito.mock(ImpSplitEngineRenderer.class);
-    private JxrPlatformAdapterAxr mTestRuntime;
+    private SpatialSceneRuntime mTestRuntime;
     private MainPanelEntityImpl mMainPanelEntity;
 
     @Before
@@ -70,16 +62,12 @@ public class MainPanelEntityImplTest {
                 .thenReturn(immediateFuture(Mockito.mock(Session.class)));
 
         mTestRuntime =
-                JxrPlatformAdapterAxr.create(
+                SpatialSceneRuntime.create(
                         mHostActivity,
                         mFakeExecutor,
                         mXrExtensions,
-                        mFakeImpressApi,
                         new EntityManager(),
                         mPerceptionLibrary,
-                        mSplitEngineSubspaceManager,
-                        mSplitEngineRenderer,
-                        /* useSplitEngine= */ false,
                         /* unscaledGravityAlignedActivitySpace= */ false);
 
         mMainPanelEntity = (MainPanelEntityImpl) mTestRuntime.getMainPanelEntity();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.impl;
+package androidx.xr.scenecore.spatial.core;
 
 import static androidx.xr.runtime.testing.math.MathAssertions.assertPose;
 import static androidx.xr.runtime.testing.math.MathAssertions.assertVector3;
@@ -40,13 +40,13 @@ import android.os.SystemClock;
 import androidx.test.rule.GrantPermissionRule;
 import androidx.xr.arcore.internal.Anchor.PersistenceState;
 import androidx.xr.arcore.internal.ExportableAnchor;
+import androidx.xr.runtime.NodeHolder;
 import androidx.xr.runtime.TrackingState;
 import androidx.xr.runtime.math.Matrix4;
 import androidx.xr.runtime.math.Pose;
 import androidx.xr.runtime.math.Quaternion;
 import androidx.xr.runtime.math.Vector3;
 import androidx.xr.scenecore.impl.extensions.XrExtensionsProvider;
-import androidx.xr.scenecore.impl.impress.FakeImpressApiImpl;
 import androidx.xr.scenecore.impl.perception.PerceptionLibrary;
 import androidx.xr.scenecore.impl.perception.Plane;
 import androidx.xr.scenecore.impl.perception.Session;
@@ -56,16 +56,16 @@ import androidx.xr.scenecore.internal.Dimensions;
 import androidx.xr.scenecore.internal.PlaneSemantic;
 import androidx.xr.scenecore.internal.PlaneType;
 import androidx.xr.scenecore.internal.Space;
+import androidx.xr.scenecore.testing.FakeGltfFeature;
 import androidx.xr.scenecore.testing.FakeScheduledExecutorService;
 
 import com.android.extensions.xr.XrExtensions;
 import com.android.extensions.xr.node.Node;
 import com.android.extensions.xr.node.NodeRepository;
 
-import com.google.androidxr.splitengine.SplitEngineSubspaceManager;
 import com.google.common.collect.ImmutableList;
-import com.google.common.util.concurrent.ListenableFuture;
 
+import org.jspecify.annotations.NonNull;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -89,7 +89,7 @@ public final class AnchorEntityImplTest extends SystemSpaceEntityImplTest {
         private final PersistenceState mPersistenceState;
         private final UUID mUuid;
 
-        public FakeExportableAnchor(
+        FakeExportableAnchor(
                 long nativePointer,
                 IBinder anchorToken,
                 Pose pose,
@@ -110,22 +110,22 @@ public final class AnchorEntityImplTest extends SystemSpaceEntityImplTest {
         }
 
         @Override
-        public IBinder getAnchorToken() {
+        public @NonNull IBinder getAnchorToken() {
             return mAnchorToken;
         }
 
         @Override
-        public Pose getPose() {
+        public @NonNull Pose getPose() {
             return mPose;
         }
 
         @Override
-        public TrackingState getTrackingState() {
+        public @NonNull TrackingState getTrackingState() {
             return mTrackingState;
         }
 
         @Override
-        public PersistenceState getPersistenceState() {
+        public @NonNull PersistenceState getPersistenceState() {
             return mPersistenceState;
         }
 
@@ -145,7 +145,6 @@ public final class AnchorEntityImplTest extends SystemSpaceEntityImplTest {
     private static final Plane.Type PLANE_TYPE = Plane.Type.VERTICAL;
     private static final Plane.Label PLANE_LABEL = Plane.Label.WALL;
     private static final long NATIVE_POINTER = 1234567890L;
-    private final AndroidXrEntity mActivitySpaceRoot = Mockito.mock(AndroidXrEntity.class);
     private final XrExtensions mXrExtensions = XrExtensionsProvider.getXrExtensions();
     private final PerceptionLibrary mPerceptionLibrary = Mockito.mock(PerceptionLibrary.class);
     private final Session mSession = Mockito.mock(Session.class);
@@ -162,9 +161,6 @@ public final class AnchorEntityImplTest extends SystemSpaceEntityImplTest {
     private long mCurrentTimeMillis = 1000000000L;
     private ActivitySpaceImpl mActivitySpace;
     private final NodeRepository mNodeRepository = NodeRepository.getInstance();
-    private final FakeImpressApiImpl mFakeImpressApi = new FakeImpressApiImpl();
-    private final SplitEngineSubspaceManager mSplitEngineSubspaceManager =
-            Mockito.mock(SplitEngineSubspaceManager.class);
 
     @Rule
     public GrantPermissionRule mGrantPermissionRule =
@@ -190,7 +186,7 @@ public final class AnchorEntityImplTest extends SystemSpaceEntityImplTest {
         // By default, set the activity space to the root of the underlying OpenXR reference space.
         mActivitySpace.setOpenXrReferenceSpacePose(Matrix4.Identity);
         mEntityManager.addSystemSpaceActivityPose(
-                new PerceptionSpaceActivityPoseImpl(mActivitySpace, mActivitySpaceRoot));
+                new PerceptionSpaceActivityPoseImpl(mActivitySpace, mActivitySpace));
     }
 
     /**
@@ -244,7 +240,7 @@ public final class AnchorEntityImplTest extends SystemSpaceEntityImplTest {
                 PlaneSemantic.WALL,
                 anchorSearchTimeout,
                 mActivitySpace,
-                mActivitySpaceRoot,
+                mActivitySpace,
                 mXrExtensions,
                 mEntityManager,
                 mExecutor,
@@ -266,7 +262,7 @@ public final class AnchorEntityImplTest extends SystemSpaceEntityImplTest {
                 uuid,
                 anchorSearchTimeout,
                 mActivitySpace,
-                mActivitySpaceRoot,
+                mActivitySpace,
                 mXrExtensions,
                 mEntityManager,
                 mExecutor,
@@ -289,7 +285,7 @@ public final class AnchorEntityImplTest extends SystemSpaceEntityImplTest {
                 uuid,
                 /* anchorSearchTimeout= */ null,
                 mActivitySpace,
-                mActivitySpaceRoot,
+                mActivitySpace,
                 mXrExtensions,
                 mEntityManager,
                 mExecutor,
@@ -329,7 +325,7 @@ public final class AnchorEntityImplTest extends SystemSpaceEntityImplTest {
                 new Pose(),
                 MILLISECONDS.toNanos(mCurrentTimeMillis),
                 mActivitySpace,
-                mActivitySpaceRoot,
+                mActivitySpace,
                 mXrExtensions,
                 mEntityManager,
                 mExecutor,
@@ -347,7 +343,7 @@ public final class AnchorEntityImplTest extends SystemSpaceEntityImplTest {
                 node,
                 perceptionAnchor.getRuntimeAnchor(),
                 mActivitySpace,
-                mActivitySpaceRoot,
+                mActivitySpace,
                 mXrExtensions,
                 mEntityManager,
                 mExecutor,
@@ -356,28 +352,13 @@ public final class AnchorEntityImplTest extends SystemSpaceEntityImplTest {
 
     /** Creates a generic glTF entity. */
     private GltfEntityImpl createGltfEntity() {
-        long modelToken = -1;
         ActivityController<Activity> activityController = Robolectric.buildActivity(Activity.class);
         Activity activity = activityController.create().start().get();
-        try {
-            ListenableFuture<Long> modelTokenFuture =
-                    mFakeImpressApi.loadGltfAsset("FakeGltfAsset.glb");
-            // This resolves the transformation of the Future from a SplitEngine token to the JXR
-            // GltfModelResource.  This is a hidden detail from the API surface's perspective.
-            mExecutor.runAll();
-            modelToken = modelTokenFuture.get();
-        } catch (Exception e) {
-            if (e instanceof InterruptedException) {
-                Thread.currentThread().interrupt();
-            }
-        }
-        GltfModelResourceImpl model = new GltfModelResourceImpl(modelToken);
+        NodeHolder<?> nodeHolder = new NodeHolder<>(mXrExtensions.createNode(), Node.class);
         return new GltfEntityImpl(
                 activity,
-                model,
+                new FakeGltfFeature(nodeHolder),
                 mActivitySpace,
-                mFakeImpressApi,
-                mSplitEngineSubspaceManager,
                 mXrExtensions,
                 mEntityManager,
                 mExecutor);
@@ -876,7 +857,7 @@ public final class AnchorEntityImplTest extends SystemSpaceEntityImplTest {
                         /* planeSemantic= */ null,
                         /* anchorSearchTimeout= */ null,
                         /* activitySpace= */ null,
-                        mActivitySpaceRoot,
+                        mActivitySpace,
                         mXrExtensions,
                         mEntityManager,
                         mExecutor,
@@ -886,22 +867,21 @@ public final class AnchorEntityImplTest extends SystemSpaceEntityImplTest {
         assertThrows(IllegalStateException.class, anchorEntity::getPoseInActivitySpace);
     }
 
+    // Modified for no ActivitySpaceRoot case.
     @Test
-    public void getActivitySpacePose_whenAtSamePose_returnsIdentityPose() {
+    public void getActivitySpacePose_whenAtSamePose_returnsSamePose() {
         AnchorEntityImpl anchorEntity = createAndInitAnchorEntity();
         Pose pose = new Pose(new Vector3(1, 1, 1), new Quaternion(0, 1, 0, 1).toNormalized());
-        when(mActivitySpaceRoot.getPoseInActivitySpace()).thenReturn(pose);
 
         anchorEntity.setOpenXrReferenceSpacePose(Matrix4.fromPose(pose));
 
-        assertPose(anchorEntity.getActivitySpacePose(), new Pose());
+        assertPose(anchorEntity.getActivitySpacePose(), pose);
     }
 
     @Test
     public void getActivitySpacePose_returnsDifferencePose() {
         AnchorEntityImpl anchorEntity = createAndInitAnchorEntity();
         Pose pose = new Pose(new Vector3(1, 1, 1), new Quaternion(0, 1, 0, 1).toNormalized());
-        when(mActivitySpaceRoot.getPoseInActivitySpace()).thenReturn(new Pose());
 
         anchorEntity.setOpenXrReferenceSpacePose(Matrix4.fromPose(pose));
 

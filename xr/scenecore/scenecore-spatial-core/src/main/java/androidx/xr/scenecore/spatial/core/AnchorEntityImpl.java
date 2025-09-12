@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.impl;
+package androidx.xr.scenecore.spatial.core;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.SystemClock;
-import android.util.Log;
 
 import androidx.annotation.IntDef;
 import androidx.xr.arcore.internal.ExportableAnchor;
@@ -69,10 +68,6 @@ class AnchorEntityImpl extends SystemSpaceEntityImpl implements AnchorEntity {
     private static final String TAG = "AnchorEntityImpl";
     private final ActivitySpaceImpl mActivitySpace;
     private final AndroidXrEntity mActivitySpaceRoot;
-
-    @SuppressWarnings("HidingField") // super class AndroidXrEntity has mEntityManager
-    private final EntityManager mEntityManager;
-
     private final PerceptionLibrary mPerceptionLibrary;
     private OnStateChangedListener mOnStateChangedListener;
     private @State int mState = State.UNANCHORED;
@@ -245,20 +240,16 @@ class AnchorEntityImpl extends SystemSpaceEntityImpl implements AnchorEntity {
             ScheduledExecutorService executor,
             PerceptionLibrary perceptionLibrary) {
         super(context, node, extensions, entityManager, executor);
-        mEntityManager = entityManager;
         mPerceptionLibrary = perceptionLibrary;
 
         try (NodeTransaction transaction = extensions.createNodeTransaction()) {
             transaction.setName(node, ANCHOR_NODE_NAME).apply();
         }
 
+        // TODO: b/440143443 - Pass in an ActivitySpaceImpl instead of ActivitySpace.
         if (activitySpace instanceof ActivitySpaceImpl) {
             mActivitySpace = (ActivitySpaceImpl) activitySpace;
         } else {
-            Log.e(
-                    TAG,
-                    "ActivitySpace is not an instance of ActivitySpaceImpl.Anchor is in Error"
-                            + " state.");
             mState = State.ERROR;
             mActivitySpace = null;
         }
@@ -266,10 +257,6 @@ class AnchorEntityImpl extends SystemSpaceEntityImpl implements AnchorEntity {
         if (activitySpaceRoot instanceof AndroidXrEntity) {
             mActivitySpaceRoot = (AndroidXrEntity) activitySpaceRoot;
         } else {
-            Log.e(
-                    TAG,
-                    "ActivitySpaceRoot is not an instance of AndroidXrEntity. Anchor is in Error"
-                            + " state.");
             mState = State.ERROR;
             mActivitySpaceRoot = null;
         }
@@ -356,7 +343,6 @@ class AnchorEntityImpl extends SystemSpaceEntityImpl implements AnchorEntity {
 
     private synchronized void cancelAnchorSearch() {
         if (mState == State.UNANCHORED) {
-            Log.i(TAG, "Stopping search for anchor, reached timeout.");
             updateState(State.TIMED_OUT);
         }
     }
@@ -365,7 +351,6 @@ class AnchorEntityImpl extends SystemSpaceEntityImpl implements AnchorEntity {
     // then the search is scheduled again if the deadline has not been exceeded.
     private void tryFindAnchor(AnchorCreationData anchorCreationData) {
         if (mActivitySpace == null) {
-            Log.e(TAG, "Skipping search for anchor there is no valid parent.");
             return;
         }
         synchronized (this) {
@@ -375,7 +360,6 @@ class AnchorEntityImpl extends SystemSpaceEntityImpl implements AnchorEntity {
                 // ANCHORED then the anchor was already found, if it is ERROR then the entity no
                 // longer can
                 // use the anchor. Return here to stop the search.
-                Log.i(TAG, "Stopping search for anchor, the state is: " + mState);
                 return;
             }
         }
@@ -396,18 +380,12 @@ class AnchorEntityImpl extends SystemSpaceEntityImpl implements AnchorEntity {
                 == AnchorCreationData.ANCHOR_CREATION_PERSISTED) {
             mAnchor =
                     mPerceptionLibrary.getSession().createAnchorFromUuid(anchorCreationData.mUuid);
-        } else {
-            Log.e(
-                    TAG,
-                    "Searching for anchor creation type is not supported: "
-                            + anchorCreationData.mAnchorCreationType);
         }
 
         if (mAnchor == null || mAnchor.getAnchorToken() == null) {
             scheduleTryFindAnchor(anchorCreationData);
             return;
         }
-        Log.i(TAG, "Received anchor: " + mAnchor.getAnchorToken());
         // TODO: b/330933143 - Handle Additional anchor states (e.g. Error/ Becoming unanchored)
         synchronized (this) {
             // Make sure that we are still looking for the anchor before updating the state. The
@@ -416,14 +394,11 @@ class AnchorEntityImpl extends SystemSpaceEntityImpl implements AnchorEntity {
             // active on another thread.
             if (mState != State.UNANCHORED
                     || searchDeadlineExceeded(anchorCreationData.mAnchorSearchDeadline)) {
-                Log.i(TAG, "Found anchor but no longer searching.");
                 if (searchDeadlineExceeded(anchorCreationData.mAnchorSearchDeadline)) {
                     cancelAnchorSearch();
                 }
                 // Detach the found anchor since it is no longer needed.
-                if (!mAnchor.detach()) {
-                    Log.e(TAG, "Error when detaching anchor.");
-                }
+                mAnchor.detach();
                 return;
             }
             updateState(State.ANCHORED);
@@ -442,19 +417,8 @@ class AnchorEntityImpl extends SystemSpaceEntityImpl implements AnchorEntity {
             long timeNow = SystemClock.uptimeMillis() * 1000000;
             PlaneData planeData = plane.getData(timeNow);
             if (planeData == null) {
-                Log.e(TAG, "Plane data is null for plane");
                 continue;
             }
-            Log.i(
-                    TAG,
-                    "Found a matching plane with Extent Width: "
-                            + planeData.extentWidth
-                            + ", Extent Height: "
-                            + planeData.extentHeight
-                            + ", Type: "
-                            + planeData.type
-                            + ", Label: "
-                            + planeData.label);
             Plane.Type perceptionType = RuntimeUtils.getPlaneType(anchorCreationData.mPlaneType);
             Plane.Label perceptionLabel =
                     RuntimeUtils.getPlaneLabel(anchorCreationData.mPlaneSemantic);
@@ -550,7 +514,7 @@ class AnchorEntityImpl extends SystemSpaceEntityImpl implements AnchorEntity {
     }
 
     @Override
-    public Pose getPoseInActivitySpace() {
+    public @NonNull Pose getPoseInActivitySpace() {
         synchronized (this) {
             if (mActivitySpace == null || mOpenXrActivityPoseHelper == null) {
                 throw new IllegalStateException(
@@ -558,10 +522,6 @@ class AnchorEntityImpl extends SystemSpaceEntityImpl implements AnchorEntity {
             }
 
             if (mState != State.ANCHORED) {
-                Log.w(
-                        TAG,
-                        "Cannot retrieve pose in underlying space. Ensure that the anchor is"
-                                + " anchored before calling this method. Returning identity pose.");
                 return new Pose();
             }
 
@@ -597,26 +557,19 @@ class AnchorEntityImpl extends SystemSpaceEntityImpl implements AnchorEntity {
         throw new UnsupportedOperationException("Cannot set 'parent' on an  AnchorEntity.");
     }
 
-    @SuppressWarnings("ObjectToString")
     @Override
     public void dispose() {
-        Log.i(TAG, "Disposing " + this);
-
         synchronized (this) {
             // Return early if it is already in the error state.
             if (mState == AnchorEntity.State.ERROR) {
                 return;
             }
             updateState(AnchorEntity.State.ERROR);
-            if (mAnchor != null && !mAnchor.detach()) {
-                Log.e(TAG, "Error when detaching anchor.");
-            }
             mAnchor = null;
         }
 
         // Set the parent of the CPM node to null; to hide the anchored content.The parent of the
-        // entity
-        // was always null so does not need to be reset.
+        // entity was always null so does not need to be reset.
         try (NodeTransaction transaction = mExtensions.createNodeTransaction()) {
             transaction.setAnchorId(mNode, null).setParent(mNode, null).apply();
         }

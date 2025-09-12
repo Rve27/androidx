@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.impl;
+package androidx.xr.scenecore.spatial.core;
 
 import static com.google.common.truth.Truth.assertThat;
 import static com.google.common.util.concurrent.Futures.immediateFuture;
@@ -32,19 +32,16 @@ import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 
 import androidx.xr.scenecore.impl.extensions.XrExtensionsProvider;
-import androidx.xr.scenecore.impl.impress.FakeImpressApiImpl;
 import androidx.xr.scenecore.impl.perception.PerceptionLibrary;
 import androidx.xr.scenecore.impl.perception.Session;
 import androidx.xr.scenecore.internal.Dimensions;
 import androidx.xr.scenecore.internal.PixelDimensions;
+import androidx.xr.scenecore.internal.SceneRuntime;
 import androidx.xr.scenecore.internal.SpatialPointerIcon;
 import androidx.xr.scenecore.testing.FakeScheduledExecutorService;
 
 import com.android.extensions.xr.XrExtensions;
 import com.android.extensions.xr.node.Node;
-
-import com.google.androidxr.splitengine.SplitEngineSubspaceManager;
-import com.google.ar.imp.view.splitengine.ImpSplitEngineRenderer;
 
 import org.junit.After;
 import org.junit.Before;
@@ -67,35 +64,27 @@ public final class SpatialPointerComponentImplTest {
             new FakeScheduledExecutorService();
     private final PerceptionLibrary mPerceptionLibrary = mock(PerceptionLibrary.class);
     private final EntityManager mEntityManager = new EntityManager();
-    private JxrPlatformAdapterAxr mTestPlatformAdapter;
-
-    SplitEngineSubspaceManager mSplitEngineSubspaceManager =
-            Mockito.mock(SplitEngineSubspaceManager.class);
-    ImpSplitEngineRenderer mSplitEngineRenderer = Mockito.mock(ImpSplitEngineRenderer.class);
+    private SceneRuntime mRuntime;
 
     @Before
     public void setUp() {
         when(mPerceptionLibrary.initSession(eq(mActivity), anyInt(), eq(mMakeFakeExecutor)))
                 .thenReturn(immediateFuture(Mockito.mock(Session.class)));
 
-        mTestPlatformAdapter =
-                JxrPlatformAdapterAxr.create(
+        mRuntime =
+                SpatialSceneRuntime.create(
                         mActivity,
                         mMakeFakeExecutor,
                         mXrExtensions,
-                        new FakeImpressApiImpl(),
                         new EntityManager(),
                         mPerceptionLibrary,
-                        mSplitEngineSubspaceManager,
-                        mSplitEngineRenderer,
-                        /* useSplitEngine= */ false,
                         /* unscaledGravityAlignedActivitySpace= */ false);
     }
 
     @After
     public void tearDown() {
         // Dispose the runtime between test cases to clean up lingering references.
-        mTestPlatformAdapter.dispose();
+        mRuntime.dispose();
     }
 
     private PanelEntityImpl createTestPanelEntity() {
@@ -117,7 +106,7 @@ public final class SpatialPointerComponentImplTest {
                         "panel",
                         mMakeFakeExecutor);
 
-        panelEntity.setParent(mTestPlatformAdapter.getActivitySpaceRootImpl());
+        panelEntity.setParent(mRuntime.getActivitySpace());
         return panelEntity;
     }
 

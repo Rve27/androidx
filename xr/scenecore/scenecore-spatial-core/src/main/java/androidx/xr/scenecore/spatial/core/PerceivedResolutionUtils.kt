@@ -16,7 +16,7 @@
 
 @file:JvmName("PerceivedResolutionUtils")
 
-package androidx.xr.scenecore.impl
+package androidx.xr.scenecore.spatial.core
 
 import androidx.annotation.VisibleForTesting
 import androidx.xr.runtime.math.Vector3

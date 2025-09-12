@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.impl;
+package androidx.xr.scenecore.spatial.core;
 
 import static androidx.xr.runtime.testing.math.MathAssertions.assertPose;
 import static androidx.xr.runtime.testing.math.MathAssertions.assertVector3;
@@ -53,7 +53,6 @@ import androidx.xr.runtime.math.Pose;
 import androidx.xr.runtime.math.Quaternion;
 import androidx.xr.runtime.math.Vector3;
 import androidx.xr.scenecore.impl.extensions.XrExtensionsProvider;
-import androidx.xr.scenecore.impl.impress.FakeImpressApiImpl;
 import androidx.xr.scenecore.impl.perception.Anchor;
 import androidx.xr.scenecore.impl.perception.PerceptionLibrary;
 import androidx.xr.scenecore.impl.perception.Plane;
@@ -63,7 +62,6 @@ import androidx.xr.scenecore.internal.AnchorEntity;
 import androidx.xr.scenecore.internal.AnchorPlacement;
 import androidx.xr.scenecore.internal.Dimensions;
 import androidx.xr.scenecore.internal.Entity;
-import androidx.xr.scenecore.internal.JxrPlatformAdapter;
 import androidx.xr.scenecore.internal.MovableComponent;
 import androidx.xr.scenecore.internal.MoveEvent;
 import androidx.xr.scenecore.internal.MoveEventListener;
@@ -86,8 +84,6 @@ import com.android.extensions.xr.node.ShadowNodeTransform;
 import com.android.extensions.xr.node.ShadowReformEvent;
 import com.android.extensions.xr.node.Vec3;
 
-import com.google.androidxr.splitengine.SplitEngineSubspaceManager;
-import com.google.ar.imp.view.splitengine.ImpSplitEngineRenderer;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.truth.Expect;
@@ -115,14 +111,9 @@ public class MovableComponentImplTest {
     private final FakeScheduledExecutorService mFakeExecutor = new FakeScheduledExecutorService();
     private final PerceptionLibrary mPerceptionLibrary = mock(PerceptionLibrary.class);
     private final XrExtensions mXrExtensions = XrExtensionsProvider.getXrExtensions();
-    private final FakeImpressApiImpl mFakeImpressApi = new FakeImpressApiImpl();
     private final EntityManager mEntityManager = new EntityManager();
 
-    private final SplitEngineSubspaceManager mSplitEngineSubspaceManager =
-            Mockito.mock(SplitEngineSubspaceManager.class);
-    private final ImpSplitEngineRenderer mSplitEngineRenderer =
-            Mockito.mock(ImpSplitEngineRenderer.class);
-    private JxrPlatformAdapter mFakeRuntime;
+    private SpatialSceneRuntime mFakeRuntime;
     private ActivitySpaceImpl mActivitySpaceImpl;
     private Node mActivitySpaceNode;
     private final AndroidXrEntity mActivitySpaceRoot = Mockito.mock(AndroidXrEntity.class);
@@ -143,16 +134,12 @@ public class MovableComponentImplTest {
                 .thenReturn(immediateFuture(mock(Session.class)));
         when(mPerceptionLibrary.getActivity()).thenReturn(mActivity);
         mFakeRuntime =
-                JxrPlatformAdapterAxr.create(
+                SpatialSceneRuntime.create(
                         mActivity,
                         mFakeExecutor,
                         mXrExtensions,
-                        mFakeImpressApi,
                         mEntityManager,
                         mPerceptionLibrary,
-                        mSplitEngineSubspaceManager,
-                        mSplitEngineRenderer,
-                        /* useSplitEngine= */ false,
                         /* unscaledGravityAlignedActivitySpace= */ false);
         mActivitySpaceImpl = (ActivitySpaceImpl) mFakeRuntime.getActivitySpace();
         mActivitySpaceNode = mActivitySpaceImpl.getNode();
@@ -240,8 +227,10 @@ public class MovableComponentImplTest {
                         mEntityManager,
                         mPanelShadowRenderer,
                         mFakeExecutor);
+
         assertThat(movableComponent).isNotNull();
         assertThat(entity.addComponent(movableComponent)).isTrue();
+
         ReformOptions options = mNodeRepository.getReformOptions(getEntityNode(entity));
 
         assertThat(options.getEnabledReform()).isEqualTo(ALLOW_MOVE);
@@ -267,8 +256,10 @@ public class MovableComponentImplTest {
                         mEntityManager,
                         mPanelShadowRenderer,
                         mFakeExecutor);
+
         assertThat(movableComponent).isNotNull();
         assertThat(entity.addComponent(movableComponent)).isTrue();
+
         ReformOptions options = mNodeRepository.getReformOptions(getEntityNode(entity));
 
         assertThat(options.getEnabledReform()).isEqualTo(ALLOW_MOVE);
@@ -295,8 +286,10 @@ public class MovableComponentImplTest {
                         mEntityManager,
                         mPanelShadowRenderer,
                         mFakeExecutor);
+
         assertThat(movableComponent).isNotNull();
         assertThat(entity.addComponent(movableComponent)).isTrue();
+
         ReformOptions options = mNodeRepository.getReformOptions(getEntityNode(entity));
 
         assertThat(options.getEnabledReform()).isEqualTo(ALLOW_MOVE);
@@ -323,8 +316,10 @@ public class MovableComponentImplTest {
                         mEntityManager,
                         mPanelShadowRenderer,
                         mFakeExecutor);
+
         assertThat(movableComponent).isNotNull();
         assertThat(entity.addComponent(movableComponent)).isTrue();
+
         ReformOptions options = mNodeRepository.getReformOptions(getEntityNode(entity));
 
         assertThat(options.getEnabledReform()).isEqualTo(ALLOW_MOVE);
@@ -352,7 +347,9 @@ public class MovableComponentImplTest {
                         mEntityManager,
                         mPanelShadowRenderer,
                         mFakeExecutor);
+
         assertThat(entity.addComponent(movableComponent)).isTrue();
+
         Pose expectedPose =
                 new Pose(new Vector3(2f, 2f, 2f), new Quaternion(0.5f, 0.5f, 0.5f, 0.5f));
         Vector3 expectedScale = new Vector3(1.2f, 1.2f, 1.2f);
@@ -390,7 +387,9 @@ public class MovableComponentImplTest {
                         mEntityManager,
                         mPanelShadowRenderer,
                         mFakeExecutor);
+
         assertThat(entity.addComponent(movableComponent)).isTrue();
+
         Pose expectedPose = new Pose(new Vector3(1f, 1f, 1f), new Quaternion(0f, 0f, 0f, 1f));
         Vector3 expectedScale = new Vector3(1f, 1f, 1f);
         entity.setPose(new Pose(new Vector3(1f, 1f, 1f), new Quaternion(0f, 0f, 0f, 1f)));
@@ -426,8 +425,10 @@ public class MovableComponentImplTest {
                         mEntityManager,
                         mPanelShadowRenderer,
                         mFakeExecutor);
+
         assertThat(movableComponent).isNotNull();
         assertThat(entity.addComponent(movableComponent)).isTrue();
+
         ReformOptions options = mNodeRepository.getReformOptions(getEntityNode(entity));
 
         movableComponent.setSize(new Dimensions(2f, 2f, 2f));
@@ -482,6 +483,7 @@ public class MovableComponentImplTest {
                         mEntityManager,
                         mPanelShadowRenderer,
                         mFakeExecutor);
+
         assertThat(entity.addComponent(movableComponent)).isTrue();
 
         movableComponent.setScaleWithDistanceMode(MovableComponent.ScaleWithDistanceMode.DMM);
@@ -512,10 +514,13 @@ public class MovableComponentImplTest {
                         mEntityManager,
                         mPanelShadowRenderer,
                         mFakeExecutor);
+
         assertThat(movableComponent).isNotNull();
+
         movableComponent.setSize(new Dimensions(2f, 2f, 2f));
         MoveEventListener mockMoveEventListener = mock(MoveEventListener.class);
         movableComponent.addMoveEventListener(directExecutor(), mockMoveEventListener);
+
         assertThat(movableComponent.mReformEventConsumer).isNotNull();
         assertThat(entity.addComponent(movableComponent)).isTrue();
         ReformOptions options = mNodeRepository.getReformOptions(entity.getNode());
@@ -549,12 +554,15 @@ public class MovableComponentImplTest {
                         mEntityManager,
                         mPanelShadowRenderer,
                         mFakeExecutor);
+
         assertThat(movableComponent).isNotNull();
         assertThat(entity.addComponent(movableComponent)).isTrue();
+
         ReformOptions options = mNodeRepository.getReformOptions(entity.getNode());
         MoveEventListener mockMoveEventListener = mock(MoveEventListener.class);
 
         movableComponent.addMoveEventListener(directExecutor(), mockMoveEventListener);
+
         assertThat(options.getEventCallback()).isNotNull();
         assertThat(options.getEventExecutor()).isNotNull();
         assertThat(entity.mReformEventConsumerMap).isNotEmpty();
@@ -566,6 +574,7 @@ public class MovableComponentImplTest {
                         /* id= */ 0);
 
         sendReformEvent(entity.getNode(), resizeReformEvent);
+
         verify(mockMoveEventListener, never()).onMoveEvent(any());
 
         ReformEvent moveReformEvent =
@@ -574,9 +583,12 @@ public class MovableComponentImplTest {
 
         sendReformEvent(entity.getNode(), moveReformEvent);
         ArgumentCaptor<MoveEvent> moveEventCaptor = ArgumentCaptor.forClass(MoveEvent.class);
+
         verify(mockMoveEventListener).onMoveEvent(moveEventCaptor.capture());
+
         List<MoveEvent> capturedEvents = moveEventCaptor.getAllValues();
         MoveEvent moveEvent = capturedEvents.get(0);
+
         assertThat(moveEvent.getPreviousPose().getTranslation()).isEqualTo(initialTranslation);
         assertThat(moveEvent.getPreviousScale()).isEqualTo(initialScale);
     }
@@ -600,6 +612,7 @@ public class MovableComponentImplTest {
                         mFakeExecutor);
         assertThat(movableComponent).isNotNull();
         assertThat(entity.addComponent(movableComponent)).isTrue();
+
         ReformOptions options = mNodeRepository.getReformOptions(getEntityNode(entity));
         MoveEventListener mockMoveEventListener = mock(MoveEventListener.class);
         MoveEventListener mockMoveEventListener2 = mock(MoveEventListener.class);
@@ -607,6 +620,7 @@ public class MovableComponentImplTest {
 
         movableComponent.addMoveEventListener(executorService, mockMoveEventListener);
         movableComponent.addMoveEventListener(directExecutor(), mockMoveEventListener2);
+
         assertThat(options.getEventCallback()).isNotNull();
         assertThat(options.getEventExecutor()).isNotNull();
 
@@ -615,8 +629,11 @@ public class MovableComponentImplTest {
                         /* type= */ REFORM_TYPE_MOVE, /* state= */ REFORM_STATE_START, /* id= */ 0);
 
         sendReformEvent(getEntityNode(entity), reformEvent);
+
         assertThat(executorService.hasNext()).isTrue();
+
         executorService.runAll();
+
         verify(mockMoveEventListener).onMoveEvent(any());
         verify(mockMoveEventListener2).onMoveEvent(any());
     }
@@ -638,7 +655,9 @@ public class MovableComponentImplTest {
                         mEntityManager,
                         mPanelShadowRenderer,
                         mFakeExecutor);
+
         assertThat(entity.addComponent(movableComponent)).isTrue();
+
         MoveEventListener mockMoveEventListener1 = mock(MoveEventListener.class);
         MoveEventListener mockMoveEventListener2 = mock(MoveEventListener.class);
         FakeScheduledExecutorService executorService = new FakeScheduledExecutorService();
@@ -650,7 +669,9 @@ public class MovableComponentImplTest {
                         /* type= */ REFORM_TYPE_MOVE, /* state= */ REFORM_STATE_START, /* id= */ 0);
 
         sendReformEvent(getEntityNode(entity), reformEvent);
+
         assertThat(executorService.hasNext()).isTrue();
+
         executorService.runAll();
 
         verify(mockMoveEventListener1).onMoveEvent(any());
@@ -674,7 +695,9 @@ public class MovableComponentImplTest {
                         mEntityManager,
                         mPanelShadowRenderer,
                         mFakeExecutor);
+
         assertThat(entity.addComponent(movableComponent)).isTrue();
+
         MoveEventListener mockMoveEventListener1 = mock(MoveEventListener.class);
         MoveEventListener mockMoveEventListener2 = mock(MoveEventListener.class);
         FakeScheduledExecutorService executorService = new FakeScheduledExecutorService();
@@ -694,7 +717,9 @@ public class MovableComponentImplTest {
 
         movableComponent.removeMoveEventListener(mockMoveEventListener1);
         sendReformEvent(getEntityNode(entity), reformEvent);
+
         assertThat(executorService.hasNext()).isTrue();
+
         executorService.runAll();
 
         // The first listener, which we removed, should not be invoked again.
@@ -719,15 +744,19 @@ public class MovableComponentImplTest {
                         mEntityManager,
                         mPanelShadowRenderer,
                         mFakeExecutor);
+
         assertThat(movableComponent).isNotNull();
         assertThat(entity.addComponent(movableComponent)).isTrue();
+
         MoveEventListener mockMoveEventListener = mock(MoveEventListener.class);
 
         movableComponent.addMoveEventListener(directExecutor(), mockMoveEventListener);
+
         assertThat(movableComponent.mReformEventConsumer).isNotNull();
         assertThat(((AndroidXrEntity) entity).mReformEventConsumerMap).isNotEmpty();
 
         entity.removeComponent(movableComponent);
+
         assertThat(mNodeRepository.getReformOptions(getEntityNode(entity))).isNull();
         assertThat(movableComponent.mReformEventConsumer).isNull();
         assertThat(((AndroidXrEntity) entity).mReformEventConsumerMap).isEmpty();
@@ -736,7 +765,9 @@ public class MovableComponentImplTest {
     @Test
     public void movableComponent_canAttachAgainAfterDetach() {
         Entity entity = createTestEntity();
+
         assertThat(entity).isNotNull();
+
         MovableComponentImpl movableComponent =
                 new MovableComponentImpl(
                         /* systemMovable= */ true,
@@ -795,13 +826,16 @@ public class MovableComponentImplTest {
                         mEntityManager,
                         mPanelShadowRenderer,
                         mFakeExecutor);
+
         assertThat(movableComponent).isNotNull();
         assertThat(entity.addComponent(movableComponent)).isTrue();
+
         ReformOptions options = mNodeRepository.getReformOptions(getEntityNode(entity));
         TestMoveEventListener moveEventListener = new TestMoveEventListener();
         FakeScheduledExecutorService executorService = new FakeScheduledExecutorService();
 
         movableComponent.addMoveEventListener(executorService, moveEventListener);
+
         // The reform options for parenting and moving should not be set when it is anchorable.
         assertThat(options.getFlags()).isEqualTo(0);
         assertThat(options.getEventCallback()).isNotNull();
@@ -816,15 +850,16 @@ public class MovableComponentImplTest {
         ShadowReformEvent.extract(reformEvent).setProposedPosition(new Vec3(1f, 1f, 1f));
 
         sendReformEvent(getEntityNode(entity), reformEvent);
+
         assertThat(executorService.hasNext()).isTrue();
+
         executorService.runAll();
 
         // The expected position should be 3 unit above the activity in order to rest on the plane.
-        // It
-        // is 3 units because the activity space is 1 unit below of the origin and the plane is 2
-        // units
-        // above it.
+        // It is 3 units because the activity space is 1 unit below of the origin and the plane is 2
+        // units above it.
         Pose expectedPosition = new Pose(new Vector3(1f, 3f, 1f), new Quaternion(0f, 0f, 0f, 1f));
+
         assertPose(moveEventListener.mLastMoveEvent.getCurrentPose(), expectedPosition);
         assertThat(moveEventListener.mCallCount).isEqualTo(1);
         assertThat(moveEventListener.mLastMoveEvent.getUpdatedParent()).isNull();
@@ -877,13 +912,16 @@ public class MovableComponentImplTest {
                         mEntityManager,
                         mPanelShadowRenderer,
                         mFakeExecutor);
+
         assertThat(movableComponent).isNotNull();
         assertThat(entity.addComponent(movableComponent)).isTrue();
+
         ReformOptions options = mNodeRepository.getReformOptions(getEntityNode(entity));
         TestMoveEventListener moveEventListener = new TestMoveEventListener();
         FakeScheduledExecutorService executorService = new FakeScheduledExecutorService();
 
         movableComponent.addMoveEventListener(executorService, moveEventListener);
+
         // The reform options for parenting and moving should not be set when it is anchorable.
         assertThat(options.getFlags()).isEqualTo(0);
         assertThat(options.getEventCallback()).isNotNull();
@@ -898,15 +936,16 @@ public class MovableComponentImplTest {
         ShadowReformEvent.extract(reformEvent).setProposedPosition(new Vec3(1f, 1f, 1f));
 
         sendReformEvent(getEntityNode(entity), reformEvent);
+
         assertThat(executorService.hasNext()).isTrue();
+
         executorService.runAll();
 
         // The expected position should be 3 unit above the activity in order to rest on the plane.
-        // It
-        // is 3 units because the activity space is 1 unit below of the origin and the plane is 2
-        // units
-        // above it.
+        // It is 3 units because the activity space is 1 unit below of the origin and the plane is 2
+        // units above it.
         Pose expectedPosition = new Pose(new Vector3(1f, 3f, 1f), new Quaternion(0f, 0f, 0f, 1f));
+
         assertPose(moveEventListener.mLastMoveEvent.getCurrentPose(), expectedPosition);
         assertThat(moveEventListener.mCallCount).isEqualTo(1);
         assertThat(moveEventListener.mLastMoveEvent.getUpdatedParent()).isNull();
@@ -953,13 +992,16 @@ public class MovableComponentImplTest {
                         mEntityManager,
                         mPanelShadowRenderer,
                         mFakeExecutor);
+
         assertThat(movableComponent).isNotNull();
         assertThat(entity.addComponent(movableComponent)).isTrue();
+
         ReformOptions options = mNodeRepository.getReformOptions(getEntityNode(entity));
         TestMoveEventListener moveEventListener = new TestMoveEventListener();
         FakeScheduledExecutorService executorService = new FakeScheduledExecutorService();
 
         movableComponent.addMoveEventListener(executorService, moveEventListener);
+
         // The reform options for parenting and moving should not be set when it is anchorable.
         assertThat(options.getFlags()).isEqualTo(ReformOptions.FLAG_SCALE_WITH_DISTANCE);
         assertThat(options.getEventCallback()).isNotNull();
@@ -974,14 +1016,14 @@ public class MovableComponentImplTest {
         ShadowReformEvent.extract(reformEvent).setProposedPosition(new Vec3(1f, 1f, 1f));
 
         sendReformEvent(getEntityNode(entity), reformEvent);
+
         assertThat(executorService.hasNext()).isTrue();
+
         executorService.runAll();
 
         // The expected position should be 3 unit above the activity in order to rest on the plane.
-        // It
-        // is 3 units because the activity space is 1 unit below of the origin and the plane is 2
-        // units
-        // above it.
+        // It is 3 units because the activity space is 1 unit below of the origin and the plane is 2
+        // units above it.
         Pose expectedPosition = new Pose(new Vector3(1f, 3f, 1f), new Quaternion(0f, 0f, 0f, 1f));
 
         assertPose(moveEventListener.mLastMoveEvent.getCurrentPose(), expectedPosition);
@@ -1038,13 +1080,16 @@ public class MovableComponentImplTest {
                         mEntityManager,
                         mPanelShadowRenderer,
                         mFakeExecutor);
+
         assertThat(movableComponent).isNotNull();
         assertThat(entity.addComponent(movableComponent)).isTrue();
+
         ReformOptions options = mNodeRepository.getReformOptions(getEntityNode(entity));
         TestMoveEventListener moveEventListener = new TestMoveEventListener();
         FakeScheduledExecutorService executorService = new FakeScheduledExecutorService();
 
         movableComponent.addMoveEventListener(executorService, moveEventListener);
+
         // The reform options for parenting and moving should not be set when it is anchorable.
         assertThat(options.getFlags()).isEqualTo(ReformOptions.FLAG_SCALE_WITH_DISTANCE);
         assertThat(options.getEventCallback()).isNotNull();
@@ -1059,17 +1104,17 @@ public class MovableComponentImplTest {
         ShadowReformEvent.extract(reformEvent).setProposedPosition(new Vec3(1f, 1f, 1f));
 
         sendReformEvent(getEntityNode(entity), reformEvent);
+
         assertThat(executorService.hasNext()).isTrue();
+
         executorService.runAll();
 
         // The expected position should be 3 unit above the activity in order to rest on the plane.
-        // It
-        // is 3 units because the activity space is 1 unit below of the origin and the plane is 2
-        // units
-        // above it. Since the parent is 1 unit below the activity space, the expected position
-        // should
-        // be 4 units above the parent.
+        // It is 3 units because the activity space is 1 unit below of the origin and the plane is 2
+        // units above it. Since the parent is 1 unit below the activity space, the expected
+        // position should be 4 units above the parent.
         Pose expectedPosition = new Pose(new Vector3(1f, 4f, 1f), new Quaternion(0f, 0f, 0f, 1f));
+
         assertPose(moveEventListener.mLastMoveEvent.getCurrentPose(), expectedPosition);
         assertThat(moveEventListener.mCallCount).isEqualTo(1);
         assertThat(moveEventListener.mLastMoveEvent.getUpdatedParent()).isNull();
@@ -1116,13 +1161,16 @@ public class MovableComponentImplTest {
                         mEntityManager,
                         mPanelShadowRenderer,
                         mFakeExecutor);
+
         assertThat(movableComponent).isNotNull();
         assertThat(entity.addComponent(movableComponent)).isTrue();
+
         ReformOptions options = mNodeRepository.getReformOptions(getEntityNode(entity));
         TestMoveEventListener moveEventListener = new TestMoveEventListener();
         FakeScheduledExecutorService executorService = new FakeScheduledExecutorService();
 
         movableComponent.addMoveEventListener(executorService, moveEventListener);
+
         // The reform options for parenting and moving should not be set when it is anchorable.
         assertThat(options.getFlags()).isEqualTo(ReformOptions.FLAG_SCALE_WITH_DISTANCE);
         assertThat(options.getEventCallback()).isNotNull();
@@ -1137,15 +1185,17 @@ public class MovableComponentImplTest {
         ShadowReformEvent.extract(reformEvent).setProposedPosition(new Vec3(.5f, .5f, .5f));
 
         sendReformEvent(getEntityNode(entity), reformEvent);
+
         assertThat(executorService.hasNext()).isTrue();
+
         executorService.runAll();
 
         // The expected position should be 3 unit above the activity in order to rest on the plane.
-        // It
-        // is 1.5 units because the activity space is 1 unit below of the origin and the plane is 2
-        // units above it and the activity space is scaled by 2.
+        // It is 1.5 units because the activity space is 1 unit below of the origin and the plane is
+        // 2 units above it and the activity space is scaled by 2.
         Pose expectedPosition =
                 new Pose(new Vector3(.5f, 1.5f, .5f), new Quaternion(0f, 0f, 0f, 1f));
+
         assertPose(moveEventListener.mLastMoveEvent.getCurrentPose(), expectedPosition);
         assertThat(moveEventListener.mCallCount).isEqualTo(1);
         assertThat(moveEventListener.mLastMoveEvent.getUpdatedParent()).isNull();
@@ -1195,12 +1245,14 @@ public class MovableComponentImplTest {
                         mFakeExecutor);
         assertThat(movableComponent).isNotNull();
         assertThat(entity.addComponent(movableComponent)).isTrue();
+
         ReformOptions options = mNodeRepository.getReformOptions(getEntityNode(entity));
         TestMoveEventListener moveEventListener = new TestMoveEventListener();
         FakeScheduledExecutorService executorService = new FakeScheduledExecutorService();
 
         // Add the move event listener and the anchored event listener.
         movableComponent.addMoveEventListener(executorService, moveEventListener);
+
         // The reform options for parenting and moving should not be set when it is anchorable.
         assertThat(options.getFlags()).isEqualTo(ReformOptions.FLAG_SCALE_WITH_DISTANCE);
         assertThat(options.getEventCallback()).isNotNull();
@@ -1221,13 +1273,14 @@ public class MovableComponentImplTest {
         ShadowReformEvent.extract(reformEvent).setProposedPosition(new Vec3(1f, 1f, 1f));
 
         sendReformEvent(getEntityNode(entity), reformEvent);
+
         assertThat(executorService.hasNext()).isTrue();
+
         executorService.runAll();
 
         // Moving from (1, 3, 1) relative to the activity space to be relative to the anchor which
-        // is
-        // (1, 3, 0) relative to the activity space. which results in an updated pose of (0, 0, 1)
-        // relative to the anchor.The (-0.707f, 0f, 0f, 0.707f) Quaternion represents a 90 degree
+        // is (1, 3, 0) relative to the activity space. which results in an updated pose of
+        // (0, 0, 1) relative to the anchor.The (-0.707f, 0f, 0f, 0.707f) Quaternion represents a 90
         // rotation around the x-axis Which is expected when the panel is rotated into the plane's
         // reference space.
         Pose expectedPosition =
@@ -1284,14 +1337,17 @@ public class MovableComponentImplTest {
                         mEntityManager,
                         mPanelShadowRenderer,
                         mFakeExecutor);
+
         assertThat(movableComponent).isNotNull();
         assertThat(entity.addComponent(movableComponent)).isTrue();
+
         ReformOptions options = mNodeRepository.getReformOptions(getEntityNode(entity));
         TestMoveEventListener moveEventListener = new TestMoveEventListener();
         FakeScheduledExecutorService executorService = new FakeScheduledExecutorService();
 
         // Add the move event listener and the anchored event listener.
         movableComponent.addMoveEventListener(executorService, moveEventListener);
+
         // The reform options for parenting and moving should not be set when it is anchorable.
         assertThat(options.getFlags()).isEqualTo(ReformOptions.FLAG_SCALE_WITH_DISTANCE);
         assertThat(options.getEventCallback()).isNotNull();
@@ -1308,22 +1364,22 @@ public class MovableComponentImplTest {
                         /* type= */ REFORM_TYPE_MOVE, /* state= */ REFORM_STATE_END, /* id= */ 0);
 
         // Put the proposed position at 2 + half the MIN_PLANE_ANCHOR_DISTANCE above the origin. So
-        // it
-        // would be right above the plane.
+        // it would be right above the plane.
         ShadowReformEvent.extract(reformEvent)
                 .setProposedPosition(
                         new Vec3(1f, 3f + MovableComponentImpl.MIN_PLANE_ANCHOR_DISTANCE / 2f, 1f));
 
         sendReformEvent(getEntityNode(entity), reformEvent);
+
         assertThat(executorService.hasNext()).isTrue();
+
         executorService.runAll();
 
         // Moving from (1, 3, 1) relative to the activity space to be relative to the anchor which
-        // is
-        // (1, 3, 0) relative to the activity space. which results in an updated pose of (0, 0, 1)
-        // relative to the anchor.The (-0.707f, 0f, 0f, 0.707f) Quaternion represents a 90 degree
-        // rotation around the x-axis Which is expected when the panel is rotated into the plane's
-        // reference space.
+        // is (1, 3, 0) relative to the activity space. which results in an updated pose of
+        // (0, 0, 1) relative to the anchor.The (-0.707f, 0f, 0f, 0.707f) Quaternion represents a 90
+        // degree rotation around the x-axis Which is expected when the panel is rotated into the
+        // plane's reference space.
         Pose expectedPosition =
                 new Pose(new Vector3(0f, 0f, 1f), new Quaternion(-0.707f, 0f, 0f, 0.707f));
 
@@ -1384,14 +1440,17 @@ public class MovableComponentImplTest {
                         mEntityManager,
                         mPanelShadowRenderer,
                         mFakeExecutor);
+
         assertThat(movableComponent).isNotNull();
         assertThat(entity.addComponent(movableComponent)).isTrue();
+
         ReformOptions options = mNodeRepository.getReformOptions(getEntityNode(entity));
         TestMoveEventListener moveEventListener = new TestMoveEventListener();
         FakeScheduledExecutorService executorService = new FakeScheduledExecutorService();
 
         // Add the move event listener and the anchored event listener.
         movableComponent.addMoveEventListener(executorService, moveEventListener);
+
         // The reform options for parenting and moving should not be set when it is anchorable.
         assertThat(options.getFlags()).isEqualTo(ReformOptions.FLAG_SCALE_WITH_DISTANCE);
         assertThat(options.getEventCallback()).isNotNull();
@@ -1406,16 +1465,17 @@ public class MovableComponentImplTest {
         ShadowReformEvent.extract(reformEvent).setProposedPosition(new Vec3(1f, 1f, 1f));
 
         sendReformEvent(getEntityNode(entity), reformEvent);
+
         assertThat(executorService.hasNext()).isTrue();
+
         executorService.runAll();
 
         // The expected position should be 3 unit above the activity in order to rest on the plane.
-        // It
-        // is 3 units because the activity space is 1 unit below of the origin and the plane is 2
-        // units
-        // above it. However, since the plane is not a table plane, the anchor should not be
+        // It is 3 units because the activity space is 1 unit below of the origin and the plane is 2
+        // units above it. However, since the plane is not a table plane, the anchor should not be
         // created.
         Pose expectedPosition = new Pose(new Vector3(1f, 3f, 1f), new Quaternion(0f, 0f, 0f, 1f));
+
         assertThat(moveEventListener.mCallCount).isEqualTo(1);
         assertPose(moveEventListener.mLastMoveEvent.getCurrentPose(), expectedPosition);
         // Check that the anchor entity was not set.
@@ -1425,8 +1485,7 @@ public class MovableComponentImplTest {
     @Test
     public void anchorable_withinAnchorDistanceAndScale_setsAnchorEntityAndScales() {
         // Set the activity space pose to be 1 unit to the left of the OpenXR origin and add a scale
-        // of
-        // 2.
+        // of 2.
         float activityScale = 2f;
         setActivitySpacePose(
                 new Pose(new Vector3(-1f, -1f, 0f), new Quaternion(0f, 0f, 0f, 1f)), activityScale);
@@ -1469,14 +1528,17 @@ public class MovableComponentImplTest {
                         mEntityManager,
                         mPanelShadowRenderer,
                         mFakeExecutor);
+
         assertThat(movableComponent).isNotNull();
         assertThat(entity.addComponent(movableComponent)).isTrue();
+
         ReformOptions options = mNodeRepository.getReformOptions(getEntityNode(entity));
         TestMoveEventListener moveEventListener = new TestMoveEventListener();
         FakeScheduledExecutorService executorService = new FakeScheduledExecutorService();
 
         // Add the move event listener and the anchored event listener.
         movableComponent.addMoveEventListener(executorService, moveEventListener);
+
         // The reform options for parenting and moving should not be set when it is anchorable.
         assertThat(options.getFlags()).isEqualTo(ReformOptions.FLAG_SCALE_WITH_DISTANCE);
         assertThat(options.getEventCallback()).isNotNull();
@@ -1497,15 +1559,16 @@ public class MovableComponentImplTest {
         ShadowReformEvent.extract(reformEvent).setProposedPosition(new Vec3(.5f, .5f, .5f));
 
         sendReformEvent(getEntityNode(entity), reformEvent);
+
         assertThat(executorService.hasNext()).isTrue();
+
         executorService.runAll();
 
         // Moving from (1, 3, 1) relative to the activity space to be relative to the anchor which
-        // is
-        // (1, 3, 0) relative to the activity space. which results in an updated pose of (0, 0, 1)
-        // relative to the anchor. The (-0.707f, 0f, 0f, 0.707f) Quaternion represents a 90 degree
-        // rotation around the x-axis. Which is expected when the panel is rotated into the plane's
-        // reference space.
+        // is (1, 3, 0) relative to the activity space. which results in an updated pose of
+        // (0, 0, 1) relative to the anchor. The (-0.707f, 0f, 0f, 0.707f) Quaternion represents a
+        // 90 degree rotation around the x-axis. Which is expected when the panel is rotated into
+        // the plane's reference space.
         Pose expectedPosition =
                 new Pose(new Vector3(0f, 0f, 1f), new Quaternion(-0.707f, 0f, 0f, 0.707f));
 
@@ -1544,13 +1607,16 @@ public class MovableComponentImplTest {
                         mEntityManager,
                         mPanelShadowRenderer,
                         mFakeExecutor);
+
         assertThat(movableComponent).isNotNull();
         assertThat(entity.addComponent(movableComponent)).isTrue();
+
         ReformOptions options = mNodeRepository.getReformOptions(getEntityNode(entity));
         TestMoveEventListener moveEventListener = new TestMoveEventListener();
         FakeScheduledExecutorService executorService = new FakeScheduledExecutorService();
 
         movableComponent.addMoveEventListener(executorService, moveEventListener);
+
         // The reform options for parenting and moving should not be set when it is anchorable.
         assertThat(options.getFlags()).isEqualTo(ReformOptions.FLAG_SCALE_WITH_DISTANCE);
         assertThat(options.getEventCallback()).isNotNull();
@@ -1562,7 +1628,9 @@ public class MovableComponentImplTest {
         ShadowReformEvent.extract(reformEvent).setProposedPosition(new Vec3(1f, 1f, 1f));
 
         sendReformEvent(getEntityNode(entity), reformEvent);
+
         assertThat(executorService.hasNext()).isTrue();
+
         executorService.runAll();
 
         // The expected position should be unchanged from the proposed event
@@ -1599,13 +1667,16 @@ public class MovableComponentImplTest {
                         mEntityManager,
                         mPanelShadowRenderer,
                         mFakeExecutor);
+
         assertThat(movableComponent).isNotNull();
         assertThat(entity.addComponent(movableComponent)).isTrue();
+
         ReformOptions options = mNodeRepository.getReformOptions(getEntityNode(entity));
         TestMoveEventListener moveEventListener = new TestMoveEventListener();
         FakeScheduledExecutorService executorService = new FakeScheduledExecutorService();
 
         movableComponent.addMoveEventListener(executorService, moveEventListener);
+
         // The reform options for parenting and moving should not be set when it is anchorable.
         assertThat(options.getFlags()).isEqualTo(ReformOptions.FLAG_SCALE_WITH_DISTANCE);
         assertThat(options.getEventCallback()).isNotNull();
@@ -1666,13 +1737,16 @@ public class MovableComponentImplTest {
                         mEntityManager,
                         mPanelShadowRenderer,
                         mFakeExecutor);
+
         assertThat(movableComponent).isNotNull();
         assertThat(entity.addComponent(movableComponent)).isTrue();
+
         ReformOptions options = mNodeRepository.getReformOptions(getEntityNode(entity));
         TestMoveEventListener moveEventListener = new TestMoveEventListener();
         FakeScheduledExecutorService executorService = new FakeScheduledExecutorService();
 
         movableComponent.addMoveEventListener(executorService, moveEventListener);
+
         // The reform options for parenting and moving should not be set when it is anchorable.
         assertThat(options.getFlags()).isEqualTo(ReformOptions.FLAG_SCALE_WITH_DISTANCE);
         assertThat(options.getEventCallback()).isNotNull();
@@ -1684,7 +1758,9 @@ public class MovableComponentImplTest {
         ShadowReformEvent.extract(reformEvent).setProposedPosition(new Vec3(1f, 1f, 1f));
 
         sendReformEvent(getEntityNode(entity), reformEvent);
+
         assertThat(executorService.hasNext()).isTrue();
+
         executorService.runAll();
 
         // The expected position should be unchanged from the proposed event
@@ -1737,14 +1813,17 @@ public class MovableComponentImplTest {
                         mEntityManager,
                         mPanelShadowRenderer,
                         mFakeExecutor);
+
         assertThat(movableComponent).isNotNull();
         assertThat(entity.addComponent(movableComponent)).isTrue();
+
         ReformOptions options = mNodeRepository.getReformOptions(getEntityNode(entity));
         TestMoveEventListener moveEventListener = new TestMoveEventListener();
         FakeScheduledExecutorService executorService = new FakeScheduledExecutorService();
 
         // Add the move event listener and the anchored event listener.
         movableComponent.addMoveEventListener(executorService, moveEventListener);
+
         // The reform options for parenting and moving should not be set when it is anchorable.
         assertThat(options.getFlags()).isEqualTo(ReformOptions.FLAG_SCALE_WITH_DISTANCE);
         assertThat(options.getEventCallback()).isNotNull();
@@ -1765,15 +1844,16 @@ public class MovableComponentImplTest {
         ShadowReformEvent.extract(reformEvent).setProposedPosition(new Vec3(1f, 1f, 1f));
 
         sendReformEvent(getEntityNode(entity), reformEvent);
+
         assertThat(executorService.hasNext()).isTrue();
+
         executorService.runAll();
 
         // Moving from (1, 3, 1) relative to the activity space to be relative to the anchor which
-        // is
-        // (1, 3, 0) relative to the activity space. which results in an updated pose of (0, 0, 1)
-        // relative to the anchor.The (-0.707f, 0f, 0f, 0.707f) Quaternion represents a 90 degree
-        // rotation around the x-axis Which is expected when the panel is rotated into the plane's
-        // reference space.
+        // is (1, 3, 0) relative to the activity space. which results in an updated pose of
+        // (0, 0, 1) relative to the anchor.The (-0.707f, 0f, 0f, 0.707f) Quaternion represents a 90
+        // degree rotation around the x-axis Which is expected when the panel is rotated into the
+        // plane's reference space.
         Pose expectedPosition =
                 new Pose(new Vector3(0f, 0f, 1f), new Quaternion(-0.707f, 0f, 0f, 0.707f));
 
@@ -1794,12 +1874,13 @@ public class MovableComponentImplTest {
         ShadowReformEvent.extract(secondReformEvent).setProposedPosition(new Vec3(1f, 4f, 1f));
 
         sendReformEvent(getEntityNode(entity), secondReformEvent);
+
         assertThat(executorService.hasNext()).isTrue();
+
         executorService.runAll();
 
         // Moving to (1, 4, 1) relative to the activity space. This should pull the entity away from
-        // the
-        // anchor and it should be reparented to the activity space.
+        // the anchor and it should be reparented to the activity space.
         expectedPosition = new Pose(new Vector3(1f, 4f, 1f), new Quaternion(0f, 0f, 0f, 1f));
 
         assertThat(moveEventListener.mCallCount).isEqualTo(3);
@@ -1815,8 +1896,7 @@ public class MovableComponentImplTest {
     @Test
     public void anchorable_resetsAndScaleToActivityPoseAfterAnchoring() {
         // Set the activity space pose to be 1 unit to the left of the OpenXR origin and add a scale
-        // of
-        // 2.
+        // of 2.
         float activityScale = 2f;
         setActivitySpacePose(
                 new Pose(new Vector3(-1f, -1f, 0f), new Quaternion(0f, 0f, 0f, 1f)), activityScale);
@@ -1861,12 +1941,14 @@ public class MovableComponentImplTest {
                         mFakeExecutor);
         assertThat(movableComponent).isNotNull();
         assertThat(entity.addComponent(movableComponent)).isTrue();
+
         ReformOptions options = mNodeRepository.getReformOptions(getEntityNode(entity));
         TestMoveEventListener moveEventListener = new TestMoveEventListener();
         FakeScheduledExecutorService executorService = new FakeScheduledExecutorService();
 
         // Add the move event listener and the anchored event listener.
         movableComponent.addMoveEventListener(executorService, moveEventListener);
+
         // The reform options for parenting and moving should not be set when it is anchorable.
         assertThat(options.getFlags()).isEqualTo(ReformOptions.FLAG_SCALE_WITH_DISTANCE);
         assertThat(options.getEventCallback()).isNotNull();
@@ -1887,15 +1969,16 @@ public class MovableComponentImplTest {
         ShadowReformEvent.extract(reformEvent).setProposedPosition(new Vec3(.5f, .5f, .5f));
 
         sendReformEvent(getEntityNode(entity), reformEvent);
+
         assertThat(executorService.hasNext()).isTrue();
+
         executorService.runAll();
 
         // Moving from (1, 3, 1) relative to the activity space to be relative to the anchor which
-        // is
-        // (1, 3, 0) relative to the activity space. Which results in an updated pose of (0, 0, 1)
-        // relative to the anchor. The (-0.707f, 0f, 0f, 0.707f) Quaternion represents a 90 degree
-        // rotation around the x-axis. Which is expected when the panel is rotated into the plane's
-        // reference space.
+        // is (1, 3, 0) relative to the activity space. Which results in an updated pose of
+        // (0, 0, 1) relative to the anchor. The (-0.707f, 0f, 0f, 0.707f) Quaternion represents a
+        // 90 degree rotation around the x-axis. Which is expected when the panel is rotated into
+        // the plane's reference space.
         Pose expectedPosition =
                 new Pose(new Vector3(0f, 0f, 1f), new Quaternion(-0.707f, 0f, 0f, 0.707f));
 
@@ -1919,12 +2002,13 @@ public class MovableComponentImplTest {
         ShadowReformEvent.extract(secondReformEvent).setProposedPosition(new Vec3(1f, 4f, 1f));
 
         sendReformEvent(getEntityNode(entity), secondReformEvent);
+
         assertThat(executorService.hasNext()).isTrue();
+
         executorService.runAll();
 
         // Moving to (1, 4, 1) relative to the activity space. This should pull the entity away from
-        // the
-        // anchor and it should be reparented to the activity space.
+        // the anchor and it should be reparented to the activity space.
         expectedPosition = new Pose(new Vector3(1f, 4f, 1f), new Quaternion(0f, 0f, 0f, 1f));
 
         assertThat(moveEventListener.mCallCount).isEqualTo(3);
@@ -1986,14 +2070,17 @@ public class MovableComponentImplTest {
                         mEntityManager,
                         mPanelShadowRenderer,
                         mFakeExecutor);
+
         assertThat(movableComponent).isNotNull();
         assertThat(entity.addComponent(movableComponent)).isTrue();
+
         ReformOptions options = mNodeRepository.getReformOptions(getEntityNode(entity));
         TestMoveEventListener moveEventListener = new TestMoveEventListener();
         FakeScheduledExecutorService executorService = new FakeScheduledExecutorService();
 
         // Add the move event listener and the anchored event listener.
         movableComponent.addMoveEventListener(executorService, moveEventListener);
+
         // The reform options for parenting and moving should not be set when it is anchorable.
         assertThat(options.getFlags()).isEqualTo(ReformOptions.FLAG_SCALE_WITH_DISTANCE);
         assertThat(options.getEventCallback()).isNotNull();
@@ -2010,20 +2097,20 @@ public class MovableComponentImplTest {
                         /* type= */ REFORM_TYPE_MOVE, /* state= */ REFORM_STATE_END, /* id= */ 0);
 
         // Put the proposed position at 1 above the origin. It would need to move up 1 unit to be on
-        // the
-        // plane.
+        // the plane.
         ShadowReformEvent.extract(reformEvent).setProposedPosition(new Vec3(1.0f, 1.0f, 1.0f));
 
         sendReformEvent(getEntityNode(entity), reformEvent);
+
         assertThat(executorService.hasNext()).isTrue();
+
         executorService.runAll();
 
         // Moving from (1, 3, 1) relative to the activity space to be relative to the anchor which
-        // is
-        // (1, 3, 0) relative to the activity space. which results in an updated pose of (0, 0, 1)
-        // relative to the anchor.The (-0.707f, 0f, 0f, 0.707f) Quaternion represents a 90 degree
-        // rotation around the x-axis Which is expected when the panel is rotated into the plane's
-        // reference space.
+        // is (1, 3, 0) relative to the activity space. which results in an updated pose of
+        // (0, 0, 1) relative to the anchor.The (-0.707f, 0f, 0f, 0.707f) Quaternion represents a 90
+        // degree rotation around the x-axis Which is expected when the panel is rotated into the
+        // plane's reference space.
         Pose expectedPosition =
                 new Pose(new Vector3(0f, 0f, 1f), new Quaternion(-0.707f, 0f, 0f, 0.707f));
 
@@ -2044,12 +2131,13 @@ public class MovableComponentImplTest {
         ShadowReformEvent.extract(secondReformEvent).setProposedPosition(new Vec3(1f, 4f, 1f));
 
         sendReformEvent(getEntityNode(entity), secondReformEvent);
+
         assertThat(executorService.hasNext()).isTrue();
+
         executorService.runAll();
 
         // Moving to (1, 4, 1) relative to the activity space. This should pull the entity away from
-        // the
-        // anchor and it should be reparented to the activity space not the original parent..
+        // the anchor and it should be reparented to the activity space not the original parent..
         expectedPosition = new Pose(new Vector3(1f, 4f, 1f), new Quaternion(0f, 0f, 0f, 1f));
 
         assertThat(moveEventListener.mCallCount).isEqualTo(3);
@@ -2104,14 +2192,17 @@ public class MovableComponentImplTest {
                         mEntityManager,
                         mPanelShadowRenderer,
                         mFakeExecutor);
+
         assertThat(movableComponent).isNotNull();
         assertThat(entity.addComponent(movableComponent)).isTrue();
+
         ReformOptions options = mNodeRepository.getReformOptions(getEntityNode(entity));
         TestMoveEventListener moveEventListener = new TestMoveEventListener();
         FakeScheduledExecutorService executorService = new FakeScheduledExecutorService();
 
         // Add the move event listener and the anchored event listener.
         movableComponent.addMoveEventListener(executorService, moveEventListener);
+
         // The reform options for parenting and moving should not be set when it is anchorable.
         assertThat(options.getFlags()).isEqualTo(ReformOptions.FLAG_SCALE_WITH_DISTANCE);
         assertThat(options.getEventCallback()).isNotNull();
@@ -2132,15 +2223,16 @@ public class MovableComponentImplTest {
         ShadowReformEvent.extract(reformEvent).setProposedPosition(new Vec3(1.0f, 1.0f, 1.0f));
 
         sendReformEvent(getEntityNode(entity), reformEvent);
+
         assertThat(executorService.hasNext()).isTrue();
+
         executorService.runAll();
 
         // Moving from (1, 3, 1) relative to the activity space to be relative to the anchor which
-        // is
-        // (1, 3, 0) relative to the activity space. which results in an updated pose of (0, 0, 1)
-        // relative to the anchor.The (-0.707f, 0f, 0f, 0.707f) Quaternion represents a 90 degree
-        // rotation around the x-axis Which is expected when the panel is rotated into the plane's
-        // reference space.
+        // is (1, 3, 0) relative to the activity space. which results in an updated pose of
+        // (0, 0, 1) relative to the anchor The (-0.707f, 0f, 0f, 0.707f) Quaternion represents a 90
+        // degree rotation around the x-axis Which is expected when the panel is rotated into the
+        // plane's reference space.
         Pose expectedPosition =
                 new Pose(new Vector3(0f, 0f, 1f), new Quaternion(-0.707f, 0f, 0f, 0.707f));
 
@@ -2151,6 +2243,7 @@ public class MovableComponentImplTest {
                 .isInstanceOf(AnchorEntity.class);
         assertThat(moveEventListener.mLastMoveEvent.getUpdatedParent())
                 .isEqualTo(entity.getParent());
+
         // Cache the anchor entity.
         Entity anchorEntity = moveEventListener.mLastMoveEvent.getUpdatedParent();
 
@@ -2163,12 +2256,13 @@ public class MovableComponentImplTest {
         ShadowReformEvent.extract(secondReformEvent).setProposedPosition(new Vec3(1f, 4f, 1f));
 
         sendReformEvent(getEntityNode(entity), secondReformEvent);
+
         assertThat(executorService.hasNext()).isTrue();
+
         executorService.runAll();
 
         // Moving to (1, 4, 1) relative to the activity space. This should pull the entity away from
-        // the
-        // anchor and it should be reparented to the activity space.
+        // the anchor and it should be reparented to the activity space.
         expectedPosition = new Pose(new Vector3(1f, 4f, 1f), new Quaternion(0f, 0f, 0f, 1f));
 
         assertThat(moveEventListener.mCallCount).isEqualTo(3);
@@ -2227,14 +2321,17 @@ public class MovableComponentImplTest {
                         mEntityManager,
                         mPanelShadowRenderer,
                         mFakeExecutor);
+
         assertThat(movableComponent).isNotNull();
         assertThat(entity.addComponent(movableComponent)).isTrue();
+
         ReformOptions options = mNodeRepository.getReformOptions(getEntityNode(entity));
         TestMoveEventListener moveEventListener = new TestMoveEventListener();
         FakeScheduledExecutorService executorService = new FakeScheduledExecutorService();
 
         // Add the move event listener and the anchored event listener.
         movableComponent.addMoveEventListener(executorService, moveEventListener);
+
         // The reform options for parenting and moving should not be set when it is anchorable.
         assertThat(options.getFlags()).isEqualTo(ReformOptions.FLAG_SCALE_WITH_DISTANCE);
         assertThat(options.getEventCallback()).isNotNull();
@@ -2255,15 +2352,16 @@ public class MovableComponentImplTest {
         ShadowReformEvent.extract(reformEvent).setProposedPosition(new Vec3(1.0f, 1.0f, 1.0f));
 
         sendReformEvent(getEntityNode(entity), reformEvent);
+
         assertThat(executorService.hasNext()).isTrue();
+
         executorService.runAll();
 
         // Moving from (1, 3, 1) relative to the activity space to be relative to the anchor which
-        // is
-        // (1, 3, 0) relative to the activity space. which results in an updated pose of (0, 0, 1)
-        // relative to the anchor.The (-0.707f, 0f, 0f, 0.707f) Quaternion represents a 90 degree
-        // rotation around the x-axis Which is expected when the panel is rotated into the plane's
-        // reference space.
+        // is  (1, 3, 0) relative to the activity space. which results in an updated pose of
+        // (0, 0, 1) relative to the anchor.The (-0.707f, 0f, 0f, 0.707f) Quaternion represents a 90
+        // degree rotation around the x-axis Which is expected when the panel is rotated into the
+        // plane's reference space.
         Pose expectedPosition =
                 new Pose(new Vector3(0f, 0f, 1f), new Quaternion(-0.707f, 0f, 0f, 0.707f));
 
@@ -2274,6 +2372,7 @@ public class MovableComponentImplTest {
                 .isInstanceOf(AnchorEntity.class);
         assertThat(moveEventListener.mLastMoveEvent.getUpdatedParent())
                 .isEqualTo(entity.getParent());
+
         // Cache the anchor entity.
         Entity anchorEntity = moveEventListener.mLastMoveEvent.getUpdatedParent();
 
@@ -2289,12 +2388,13 @@ public class MovableComponentImplTest {
         ShadowReformEvent.extract(secondReformEvent)
                 .setProposedPosition(new Vec3(1.0f, 4.0f, 1.0f));
         sendReformEvent(getEntityNode(entity), secondReformEvent);
+
         assertThat(executorService.hasNext()).isTrue();
+
         executorService.runAll();
 
         // Moving to (1, 4, 1) relative to the activity space. This should pull the entity away from
-        // the
-        // anchor and it should be reparented to the activity space.
+        // the anchor and it should be reparented to the activity space.
         expectedPosition = new Pose(new Vector3(1f, 4f, 1f), new Quaternion(0f, 0f, 0f, 1f));
 
         assertThat(moveEventListener.mCallCount).isEqualTo(3);
@@ -2362,13 +2462,16 @@ public class MovableComponentImplTest {
                         mEntityManager,
                         mPanelShadowRenderer,
                         mFakeExecutor);
+
         assertThat(movableComponent).isNotNull();
         assertThat(entity.addComponent(movableComponent)).isTrue();
+
         ReformOptions options = mNodeRepository.getReformOptions(getEntityNode(entity));
         TestMoveEventListener moveEventListener = new TestMoveEventListener();
         FakeScheduledExecutorService executorService = new FakeScheduledExecutorService();
 
         movableComponent.addMoveEventListener(executorService, moveEventListener);
+
         // The reform options for parenting and moving should not be set when it is anchorable.
         assertThat(options.getFlags()).isEqualTo(0);
         assertThat(options.getEventCallback()).isNotNull();
@@ -2383,13 +2486,16 @@ public class MovableComponentImplTest {
         ShadowReformEvent.extract(reformEvent).setProposedPosition(new Vec3(1f, 1f, 1f));
 
         sendReformEvent(getEntityNode(entity), reformEvent);
+
         assertThat(executorService.hasNext()).isTrue();
+
         executorService.runAll();
 
         // The expected position should be 3 unit above the activity in order to rest on the plane.
         // It is 3 units because the activity space is 1 unit below of the origin and the plane is 2
         // units above it.
         Pose expectedPosition = new Pose(new Vector3(1f, 3f, 1f), new Quaternion(0f, 0f, 0f, 1f));
+
         assertPose(moveEventListener.mLastMoveEvent.getCurrentPose(), expectedPosition);
         assertThat(moveEventListener.mCallCount).isEqualTo(1);
         assertThat(moveEventListener.mLastMoveEvent.getUpdatedParent()).isNull();
@@ -2441,6 +2547,7 @@ public class MovableComponentImplTest {
                         mEntityManager,
                         mPanelShadowRenderer,
                         mFakeExecutor);
+
         assertThat(movableComponent).isNotNull();
         assertThat(entity.addComponent(movableComponent)).isTrue();
 
@@ -2502,6 +2609,7 @@ public class MovableComponentImplTest {
                         mEntityManager,
                         mPanelShadowRenderer,
                         mFakeExecutor);
+
         assertThat(movableComponent).isNotNull();
         assertThat(entity.addComponent(movableComponent)).isTrue();
 
@@ -2558,6 +2666,7 @@ public class MovableComponentImplTest {
                         mEntityManager,
                         mPanelShadowRenderer,
                         mFakeExecutor);
+
         assertThat(movableComponent).isNotNull();
         assertThat(entity.addComponent(movableComponent)).isTrue();
 

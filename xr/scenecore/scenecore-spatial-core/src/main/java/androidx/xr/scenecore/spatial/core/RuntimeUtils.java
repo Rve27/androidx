@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.impl;
-
-import android.util.Log;
+package androidx.xr.scenecore.spatial.core;
 
 import androidx.annotation.VisibleForTesting;
 import androidx.xr.runtime.math.Matrix4;
@@ -59,13 +57,12 @@ import java.util.List;
 final class RuntimeUtils {
     private RuntimeUtils() {}
 
-    /** Convert JXRCore PlaneType to a PerceptionLibrary Plane.Type. */
+    /** Convert SceneCore PlaneType to a PerceptionLibrary Plane.Type. */
     static Plane.Type getPlaneType(PlaneType planeType) {
         switch (planeType) {
             case HORIZONTAL:
                 // TODO: b/329888869 - Allow Horizontal to work as both upward and downward facing.
-                // To do
-                // this it would have to return a collection.
+                // To do this it would have to return a collection.
                 return Plane.Type.HORIZONTAL_UPWARD_FACING;
             case VERTICAL:
                 return Plane.Type.VERTICAL;
@@ -75,7 +72,7 @@ final class RuntimeUtils {
         return Plane.Type.ARBITRARY;
     }
 
-    /** Convert a Perception Plane.Type to a JXRCore PlaneType. */
+    /** Convert a Perception Plane.Type to a SceneCore PlaneType. */
     static PlaneType getPlaneType(Plane.Type planeType) {
         switch (planeType) {
             case HORIZONTAL_UPWARD_FACING:
@@ -88,7 +85,7 @@ final class RuntimeUtils {
         }
     }
 
-    /** Convert a JXRCore PlaneSemantic to a PerceptionLibrary Plane.Label. */
+    /** Convert a SceneCore PlaneSemantic to a PerceptionLibrary Plane.Label. */
     static Plane.Label getPlaneLabel(PlaneSemantic planeSemantic) {
         switch (planeSemantic) {
             case WALL:
@@ -105,7 +102,7 @@ final class RuntimeUtils {
         return Plane.Label.UNKNOWN;
     }
 
-    /** Convert a PerceptionLibrary Plane.Label to a JXRCore PlaneSemantic. */
+    /** Convert a PerceptionLibrary Plane.Label to a SceneCore PlaneSemantic. */
     static PlaneSemantic getPlaneSemantic(Plane.Label planeLabel) {
         switch (planeLabel) {
             case WALL:
@@ -144,7 +141,7 @@ final class RuntimeUtils {
     }
 
     /**
-     * Converts an XR InputEvent to a JXRCore InputEvent.
+     * Converts an XR InputEvent to a SceneCore InputEvent.
      *
      * @param xrInputEvent an {@link com.android.extensions.xr.node.InputEvent} instance to be
      *     converted.
@@ -306,7 +303,7 @@ final class RuntimeUtils {
     }
 
     /**
-     * Converts to a JXRCore FOV from a perception FOV type.
+     * Converts to a SceneCore FOV from a perception FOV type.
      *
      * @param perceptionFov a {@code androidx.xr.scenecore.impl.perception.Fov} instance
      *     representing the FOV.
@@ -320,7 +317,7 @@ final class RuntimeUtils {
     }
 
     /**
-     * Converts to a perception FOV from a JXRCore FOV type.
+     * Converts to a perception FOV from a SceneCore FOV type.
      *
      * @param fov a {@code androidx.xr.runtime.internal.CameraViewActivityPose.Fov} instance
      *     representing the FOV.
@@ -428,12 +425,6 @@ final class RuntimeUtils {
                 return opacity;
             } else {
                 // When passthrough is enabled, the opacity should be greater than zero.
-                Log.e(
-                        "RuntimeUtils",
-                        "Passthrough is enabled, but active opacity value is "
-                                + opacity
-                                + ". Opacity should be greater than zero when Passthrough is"
-                                + " enabled.");
                 return 1.0f;
             }
         }
@@ -451,7 +442,7 @@ final class RuntimeUtils {
     }
 
     /**
-     * Converts from the Extensions hit test result to the platform adapter hit test result.
+     * Converts from the Extensions hit test result to the runtime hit test result.
      *
      * @param hitTestResultExt a {@link com.android.extensions.xr.space.HitTestResult} instance to
      *     be converted.
@@ -497,7 +488,6 @@ final class RuntimeUtils {
             case SpatialPointerIcon.TYPE_CIRCLE:
                 return NodeTransaction.POINTER_ICON_TYPE_CIRCLE;
             default:
-                Log.e("RuntimeUtils", "Unknown Spatial Pointer Icon Type: " + rtIconType);
                 return NodeTransaction.POINTER_ICON_TYPE_DEFAULT;
         }
     }

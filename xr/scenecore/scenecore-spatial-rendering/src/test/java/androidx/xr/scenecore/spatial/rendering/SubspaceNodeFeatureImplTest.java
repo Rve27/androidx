@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.impl;
+package androidx.xr.scenecore.spatial.rendering;
 
 import static com.google.common.truth.Truth.assertThat;
-
-import android.app.Activity;
 
 import androidx.xr.runtime.math.Pose;
 import androidx.xr.runtime.math.Quaternion;
@@ -36,53 +34,38 @@ import com.google.androidxr.splitengine.SubspaceNode;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 
 @RunWith(RobolectricTestRunner.class)
-public final class SubspaceNodeEntityImplTest {
+public final class SubspaceNodeFeatureImplTest {
     private XrExtensions mXrExtensions;
-    private Activity mActivity;
-    private SubspaceNodeEntityImpl mSubspaceNodeEntity;
+    private SubspaceNodeFeatureImpl mSubspaceNodeFeature;
     private Node mSubSpaceNode;
     private final NodeRepository mNodeRepository = NodeRepository.getInstance();
 
     @Before
     public void setUp() {
-        mActivity = Robolectric.buildActivity(Activity.class).create().get();
         mXrExtensions = XrExtensionsProvider.getXrExtensions();
-        EntityManager entityManager = new EntityManager();
         FakeScheduledExecutorService executor = new FakeScheduledExecutorService();
-        /* unscaledGravityAlignedActivitySpace= */ ActivitySpaceImpl activitySpace =
-                new ActivitySpaceImpl(
-                        mXrExtensions.createNode(),
-                        mActivity,
-                        mXrExtensions,
-                        entityManager,
-                        () -> mXrExtensions.getSpatialState(mActivity),
-                        /* unscaledGravityAlignedActivitySpace= */ false,
-                        executor);
 
         mSubSpaceNode = mXrExtensions.createNode();
         SubspaceNode subspaceNode = new SubspaceNode(0, mSubSpaceNode);
         Dimensions size = new Dimensions(1.0f, 2.0f, 3.0f);
 
-        mSubspaceNodeEntity =
-                new SubspaceNodeEntityImpl(
-                        mActivity,
+        mSubspaceNodeFeature =
+                new SubspaceNodeFeatureImpl(
+                        null,
+                        null,
                         mXrExtensions,
-                        entityManager,
-                        executor,
                         subspaceNode.getSubspaceNode(),
                         size);
-        mSubspaceNodeEntity.setParent(activitySpace);
     }
 
     @Test
     public void setSize_updatesInnerNodeSize() {
         Dimensions size = new Dimensions(3.0f, 4.0f, 5.0f);
 
-        mSubspaceNodeEntity.setSize(size);
+        mSubspaceNodeFeature.setSize(size);
 
         assertThat(mNodeRepository.getScale(mSubSpaceNode).x).isEqualTo(size.width);
         assertThat(mNodeRepository.getScale(mSubSpaceNode).y).isEqualTo(size.height);
@@ -98,7 +81,7 @@ public final class SubspaceNodeEntityImplTest {
                                 .toNormalized() // Ensure normalized
                         );
 
-        mSubspaceNodeEntity.setPose(testPose);
+        mSubspaceNodeFeature.setPose(testPose);
 
         // Assert entity's pose
         assertThat(mNodeRepository.getPosition(mSubSpaceNode).x)
@@ -122,8 +105,8 @@ public final class SubspaceNodeEntityImplTest {
         Vector3 scale = new Vector3(1.0f, 2.0f, 3.0f);
         Dimensions size = new Dimensions(2f, 2f, 2f);
 
-        mSubspaceNodeEntity.setSize(size);
-        mSubspaceNodeEntity.setScale(scale);
+        mSubspaceNodeFeature.setSize(size);
+        mSubspaceNodeFeature.setScale(scale);
 
         assertThat(mNodeRepository.getScale(mSubSpaceNode).x).isEqualTo(scale.getX() * size.width);
         assertThat(mNodeRepository.getScale(mSubSpaceNode).y).isEqualTo(scale.getY() * size.height);
@@ -134,7 +117,7 @@ public final class SubspaceNodeEntityImplTest {
     public void setAlpha_updatesInnerNodeAlpha() {
         float alpha = 0.5f;
 
-        mSubspaceNodeEntity.setAlpha(alpha);
+        mSubspaceNodeFeature.setAlpha(alpha);
 
         assertThat(mNodeRepository.getAlpha(mSubSpaceNode)).isEqualTo(alpha);
     }
@@ -143,7 +126,7 @@ public final class SubspaceNodeEntityImplTest {
     public void setHidden_updatesInnerNodeVisibility() {
         boolean hidden = true;
 
-        mSubspaceNodeEntity.setHidden(hidden);
+        mSubspaceNodeFeature.setHidden(hidden);
 
         assertThat(mNodeRepository.isVisible(mSubSpaceNode)).isFalse();
     }

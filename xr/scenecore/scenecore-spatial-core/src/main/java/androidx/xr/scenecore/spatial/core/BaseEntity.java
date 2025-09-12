@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.impl;
+package androidx.xr.scenecore.spatial.core;
 
 import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -36,7 +35,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Implementation of a subset of core SceneCore Entity functionality. */
+/** Implementation of a subset of core Entity functionality. */
 abstract class BaseEntity extends BaseActivityPose implements Entity {
     private final List<Entity> mChildren = new ArrayList<>();
     private final List<Component> mComponentList = new ArrayList<>();
@@ -54,15 +53,14 @@ abstract class BaseEntity extends BaseActivityPose implements Entity {
 
     protected void addChildInternal(@NonNull Entity child) {
         if (mChildren.contains(child)) {
-            Log.w("SceneCore", "Trying to add child who is already a child.");
+            throw new IllegalStateException("Trying to add child who is already a child.");
         }
         mChildren.add(child);
     }
 
     protected void removeChildInternal(@NonNull Entity child) {
         if (!mChildren.contains(child)) {
-            Log.w("SceneCore", "Trying to remove child who is not a child.");
-            return;
+            throw new IllegalStateException("Trying to remove child who is not a child.");
         }
         mChildren.remove(child);
     }
@@ -70,8 +68,8 @@ abstract class BaseEntity extends BaseActivityPose implements Entity {
     private View getAccessibilityView() {
         Activity activity = getActivity();
         if (activity == null) {
-            Log.w("SceneCore", "Activity is not set and unable to create accessibility view");
-            return null;
+            throw new IllegalStateException(
+                    "Activity is not set and unable to create accessibility view");
         }
         if (mAccessibilityLayout == null) {
             ViewGroup mainLayout = (ViewGroup) activity.getWindow().getDecorView();
@@ -131,8 +129,8 @@ abstract class BaseEntity extends BaseActivityPose implements Entity {
     @Override
     public void setParent(@Nullable Entity parent) {
         if ((parent != null) && !(parent instanceof BaseEntity)) {
-            Log.e("SceneCore", "Cannot set non-BaseEntity as a parent of a BaseEntity");
-            return;
+            throw new IllegalStateException(
+                    "Cannot set non-BaseEntity as a parent of a BaseEntity");
         }
         if (mParent != null) {
             mParent.removeChildInternal(this);
@@ -157,15 +155,14 @@ abstract class BaseEntity extends BaseActivityPose implements Entity {
                 return view.getContentDescription();
             }
         }
-        Log.w("SceneCore", "getContentDescription content description not provided");
+        // content description is not provided
         return "";
     }
 
     @Override
     public void setContentDescription(@NonNull CharSequence text) {
-        Log.d("SceneCore", "setContentDescription: " + text);
         if (text.length() == 0) {
-            Log.d("SceneCore", "setContentDescription ignoring empty/null string.");
+            // setContentDescription ignoring empty string.
             if (mAccessibilityLayout != null) {
                 destroyAccessibilityView();
             }
@@ -175,7 +172,7 @@ abstract class BaseEntity extends BaseActivityPose implements Entity {
         if (view != null) {
             view.setContentDescription(text);
         } else {
-            Log.e("SceneCore", "setContentDescription is unable to get view.");
+            throw new IllegalStateException("setContentDescription is unable to get view.");
         }
     }
 
@@ -307,8 +304,7 @@ abstract class BaseEntity extends BaseActivityPose implements Entity {
     @Override
     public void dispose() {
         // Create a copy to avoid concurrent modification issues since the children detach
-        // themselves
-        // from their parents as they are disposed.
+        // themselves from their parents as they are disposed.
         destroyAccessibilityView();
         List<Entity> childrenToDispose = new ArrayList<>(mChildren);
         for (Entity child : childrenToDispose) {

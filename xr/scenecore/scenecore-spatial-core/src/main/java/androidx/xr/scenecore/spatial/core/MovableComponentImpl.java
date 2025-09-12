@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.impl;
+package androidx.xr.scenecore.spatial.core;
 
 import static java.lang.Math.max;
 
 import android.content.Context;
 import android.os.SystemClock;
-import android.util.Log;
 import android.util.Pair;
 
 import androidx.xr.runtime.math.Pose;
@@ -47,8 +46,6 @@ import com.android.extensions.xr.function.Consumer;
 import com.android.extensions.xr.node.ReformEvent;
 import com.android.extensions.xr.node.ReformOptions;
 import com.android.extensions.xr.node.Vec3;
-
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -123,7 +120,6 @@ class MovableComponentImpl implements MovableComponent {
     @Override
     public boolean onAttach(@NonNull Entity entity) {
         if (mEntity != null) {
-            Log.e(TAG, "Already attached to entity " + mEntity);
             return false;
         }
         mEntity = entity;
@@ -155,7 +151,7 @@ class MovableComponentImpl implements MovableComponent {
                             new Vec3(mCurrentSize.width, mCurrentSize.height, mCurrentSize.depth));
         }
         if (mUserAnchorable && mSystemMovable && mReformEventConsumer == null) {
-            mReformEventConsumer = reformEvent -> getUpdatedReformEventPoseAndParent(reformEvent);
+            mReformEventConsumer = this::getUpdatedReformEventPoseAndParent;
         }
         mLastPose = entity.getPose(Space.PARENT);
         mLastScale = entity.getScale(Space.PARENT);
@@ -194,7 +190,6 @@ class MovableComponentImpl implements MovableComponent {
     public void setSize(@NonNull Dimensions dimensions) {
         mCurrentSize = dimensions;
         if (mEntity == null) {
-            Log.i(TAG, "setSize called before component is attached to an Entity.");
             return;
         }
         ReformOptions reformOptions = ((AndroidXrEntity) mEntity).getReformOptions();
@@ -205,7 +200,7 @@ class MovableComponentImpl implements MovableComponent {
     }
 
     @Override
-    public Dimensions getSize() {
+    public @NonNull Dimensions getSize() {
         return mCurrentSize;
     }
 
@@ -219,9 +214,6 @@ class MovableComponentImpl implements MovableComponent {
     public void setScaleWithDistanceMode(@ScaleWithDistanceMode int scaleWithDistanceMode) {
         mScaleWithDistanceMode = scaleWithDistanceMode;
         if (mEntity == null) {
-            Log.w(
-                    TAG,
-                    "setScaleWithDistanceMode called before component is attached to an Entity.");
             return;
         }
         ReformOptions reformOptions = ((AndroidXrEntity) mEntity).getReformOptions();
@@ -229,6 +221,36 @@ class MovableComponentImpl implements MovableComponent {
                 reformOptions.setScaleWithDistanceMode(
                         translateScaleWithDistanceMode(scaleWithDistanceMode));
         ((AndroidXrEntity) mEntity).updateReformOptions();
+    }
+
+    private MoveEvent createMoveEvent(
+            ReformEvent reformEvent,
+            Pose lastPose,
+            Pose newPose,
+            Vector3 lastScale,
+            Vector3 newScale,
+            Entity initialParent,
+            Entity updatedParent,
+            Entity disposedEntity) {
+        Ray initialRay =
+                new Ray(
+                        RuntimeUtils.getVector3(reformEvent.getInitialRayOrigin()),
+                        RuntimeUtils.getVector3(reformEvent.getInitialRayDirection()));
+        Ray currentRay =
+                new Ray(
+                        RuntimeUtils.getVector3(reformEvent.getCurrentRayOrigin()),
+                        RuntimeUtils.getVector3(reformEvent.getCurrentRayDirection()));
+        return new MoveEvent(
+                reformEvent.getState(),
+                initialRay,
+                currentRay,
+                lastPose,
+                newPose,
+                lastScale,
+                newScale,
+                initialParent,
+                updatedParent,
+                disposedEntity);
     }
 
     @Override
@@ -267,42 +289,25 @@ class MovableComponentImpl implements MovableComponent {
                                     ? RuntimeUtils.getVector3(reformEvent.getProposedScale())
                                     : mLastScale;
                     Entity disposeEntity = null;
-
                     Entity parent = updatedParent;
                     mMoveEventListenersMap.forEach(
                             (listener, listenerExecutor) ->
                                     listenerExecutor.execute(
-                                            () ->
-                                                    listener.onMoveEvent(
-                                                            new MoveEvent(
-                                                                    reformEvent.getState(),
-                                                                    new Ray(
-                                                                            RuntimeUtils.getVector3(
-                                                                                    reformEvent
-                                                                                            .getInitialRayOrigin()),
-                                                                            RuntimeUtils.getVector3(
-                                                                                    reformEvent
-                                                                                            .getInitialRayDirection())),
-                                                                    new Ray(
-                                                                            RuntimeUtils.getVector3(
-                                                                                    reformEvent
-                                                                                            .getCurrentRayOrigin()),
-                                                                            RuntimeUtils.getVector3(
-                                                                                    reformEvent
-                                                                                            .getCurrentRayDirection())),
-                                                                    mLastPose,
-                                                                    newPose,
-                                                                    mLastScale,
-                                                                    newScale,
-                                                                    mInitialParent,
-                                                                    parent,
-                                                                    disposeEntity))));
+                                            () -> listener.onMoveEvent(createMoveEvent(
+                                                    reformEvent,
+                                                    mLastPose,
+                                                    newPose,
+                                                    mLastScale,
+                                                    newScale,
+                                                    mInitialParent,
+                                                    parent,
+                                                    disposeEntity
+                                            ))));
                     mLastPose = newPose;
                     mLastScale = newScale;
                 };
         mMoveEventListenersMap.put(moveEventListener, executor);
         if (mEntity == null) {
-            Log.i(TAG, "setMoveEventListener called before component is attached to an Entity.");
             return;
         }
         ((AndroidXrEntity) mEntity).addReformEventConsumer(mReformEventConsumer, executor);
@@ -334,7 +339,6 @@ class MovableComponentImpl implements MovableComponent {
         mMoveEventListenersMap.remove(moveEventListener);
     }
 
-    @CanIgnoreReturnValue
     private Pair<Pose, Entity> getUpdatedReformEventPoseAndParent(ReformEvent reformEvent) {
         if (reformEvent.getState() == ReformEvent.REFORM_STATE_END && shouldRenderPlaneShadow()) {
             mPanelShadowRenderer.destroy();
@@ -352,7 +356,6 @@ class MovableComponentImpl implements MovableComponent {
     private Pair<Pose, Entity> updatePoseWithPlanes(Pose proposedPose, ReformEvent reformEvent) {
         Session session = mPerceptionLibrary.getSession();
         if (session == null) {
-            Log.w(TAG, "Unable to load perception session, cannot anchor object to a plane.");
             return Pair.create(proposedPose, null);
         }
         List<Plane> planes = session.getAllPlanes();
@@ -427,8 +430,7 @@ class MovableComponentImpl implements MovableComponent {
 
         // If the entity was anchored and the reform is complete, update the entity to be in the
         // activity space and remove the previously created anchor data. If
-        // shouldDisposeParentAnchor is
-        // true dispose the previously created anchor entity.
+        // shouldDisposeParentAnchor is true dispose the previously created anchor entity.
         if (mCreatedAnchorEntity != null
                 && mEntity.getParent() == mCreatedAnchorEntity
                 && reformEvent.getState() == ReformEvent.REFORM_STATE_END) {
@@ -522,8 +524,7 @@ class MovableComponentImpl implements MovableComponent {
         // TODO: b/367754233: Fix the flashing when parented to a new anchor.
         // Check the scale of the entity before the move so we can rescale when we move it to the
         // AnchorEntity. Note the AnchorEntity has a scale of 1 so we don't need to also scale by
-        // the
-        // anchor entity's scale.
+        // the anchor entity's scale.
         Vector3 entityScale = mEntity.getWorldSpaceScale();
         mEntity.setScale(entityScale, Space.PARENT);
         Quaternion planeRotation =
@@ -544,8 +545,7 @@ class MovableComponentImpl implements MovableComponent {
                         poseToAnchor.getRotation());
         mEntity.setParent(anchorEntity);
         // If the anchor placement settings specify that the anchor should be disposed, dispose of
-        // the
-        // previously created anchor entity.
+        // the previously created anchor entity.
         checkAndDisposeAnchorEntity();
         mCreatedAnchorEntity = anchorEntity;
         mCreatedAnchorPlacement = anchorPlacement;
@@ -559,8 +559,7 @@ class MovableComponentImpl implements MovableComponent {
         Pose centerPoseToProposedPose = centerPose.getInverse().compose(proposedPoseInOpenXr);
 
         // The extents of the plane are in the X and Z directions so we can use those to determine
-        // if
-        // the point is outside the plane.
+        // if the point is outside the plane.
         if (centerPoseToProposedPose.getTranslation().getX() < -planeData.extentWidth
                 || centerPoseToProposedPose.getTranslation().getX() > planeData.extentWidth
                 || centerPoseToProposedPose.getTranslation().getZ() < -planeData.extentHeight
@@ -598,8 +597,7 @@ class MovableComponentImpl implements MovableComponent {
     }
 
     // Checks if there is a created anchor entity and if it should be disposed. If so, disposes of
-    // the
-    // anchor entity. Resets the createdAnchorEntity and createdAnchorPlacement to null.
+    // the anchor entity. Resets the createdAnchorEntity and createdAnchorPlacement to null.
     private void checkAndDisposeAnchorEntity() {
         if (mCreatedAnchorEntity != null
                 && mCreatedAnchorEntity.getChildren().isEmpty()

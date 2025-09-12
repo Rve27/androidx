@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.impl;
+package androidx.xr.scenecore.spatial.core;
 
-import androidx.annotation.RestrictTo;
 import androidx.xr.scenecore.internal.PointSourceParams;
 import androidx.xr.scenecore.internal.SoundFieldAttributes;
 import androidx.xr.scenecore.internal.SpatializerConstants;
@@ -25,8 +24,7 @@ import com.android.extensions.xr.media.SpatializerExtensions;
 import com.android.extensions.xr.node.Node;
 
 /** Utils for the runtime media class conversions. */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public class MediaUtils {
+class MediaUtils {
     private MediaUtils() {}
 
     static com.android.extensions.xr.media.PointSourceParams convertPointSourceParamsToExtensions(

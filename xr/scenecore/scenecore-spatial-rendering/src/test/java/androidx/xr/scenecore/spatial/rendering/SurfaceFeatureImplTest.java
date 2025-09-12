@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.impl;
+package androidx.xr.scenecore.spatial.rendering;
 
 import static com.google.common.truth.Truth.assertThat;
 
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import android.app.Activity;
+import android.view.Surface;
 
 import androidx.xr.runtime.math.FloatSize2d;
 import androidx.xr.runtime.math.Pose;
@@ -31,46 +33,40 @@ import androidx.xr.runtime.math.Quaternion;
 import androidx.xr.runtime.math.Vector3;
 import androidx.xr.scenecore.impl.extensions.XrExtensionsProvider;
 import androidx.xr.scenecore.impl.impress.FakeImpressApiImpl;
-import androidx.xr.scenecore.impl.impress.ImpressNode;
+import androidx.xr.scenecore.impl.impress.ImpressApi;
 import androidx.xr.scenecore.internal.CameraViewActivityPose;
-import androidx.xr.scenecore.internal.Entity;
-import androidx.xr.scenecore.internal.PerceivedResolutionResult;
+import androidx.xr.scenecore.internal.Dimensions;
 import androidx.xr.scenecore.internal.PixelDimensions;
-import androidx.xr.scenecore.internal.Space;
 import androidx.xr.scenecore.internal.SurfaceEntity;
 import androidx.xr.scenecore.internal.SurfaceEntity.Shape;
-import androidx.xr.scenecore.testing.FakeScheduledExecutorService;
 
 import com.android.extensions.xr.XrExtensions;
 import com.android.extensions.xr.node.Node;
-import com.android.extensions.xr.space.ShadowSpatialState;
-import com.android.extensions.xr.space.SpatialState;
 
 import com.google.androidxr.splitengine.SplitEngineSubspaceManager;
 import com.google.androidxr.splitengine.SubspaceNode;
-import com.google.common.truth.Truth;
 
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.android.controller.ActivityController;
 
-import java.util.function.Supplier;
-
 @RunWith(RobolectricTestRunner.class)
-public final class SurfaceEntityImplTest {
+public final class SurfaceFeatureImplTest {
     private static final int SUBSPACE_ID = 5;
 
-    private SurfaceEntityImpl mSurfaceEntity;
-    private EntityManager mEntityManager;
+    private SurfaceFeatureImpl mSurfaceFeature;
     // TODO: Update this test to handle Entity.dispose() for Exceptions when FakeImpress is
     //       updated.
-    private FakeImpressApiImpl mImpressApi;
+    private ImpressApi mImpressApi;
+    private FakeImpressApiImpl mFakeImpressApi = new FakeImpressApiImpl();
+    private XrExtensions mXrExtensions = XrExtensionsProvider.getXrExtensions();
+    SplitEngineSubspaceManager mSplitEngineSubspaceManager =
+            mock(SplitEngineSubspaceManager.class);
 
     private final ActivityController<Activity> mActivityController =
             Robolectric.buildActivity(Activity.class);
@@ -78,71 +74,42 @@ public final class SurfaceEntityImplTest {
 
     @Before
     public void setUp() {
-        mImpressApi = new FakeImpressApiImpl();
+        mImpressApi = mock(ImpressApi.class);
+        when(mImpressApi.createImpressNode()).thenReturn(mFakeImpressApi.createImpressNode());
+
+        Assert.assertNotNull(mXrExtensions);
+        Node node = mXrExtensions.createNode();
+        SubspaceNode expectedSubspaceNode = new SubspaceNode(SUBSPACE_ID, node);
+
+        when(mSplitEngineSubspaceManager.createSubspace(anyString(), anyInt()))
+                .thenReturn(expectedSubspaceNode);
+
         createDefaultSurfaceEntity(new SurfaceEntity.Shape.Quad(new FloatSize2d(1f, 1f)));
     }
 
     @After
     public void tearDown() {
-        mEntityManager.clear();
-        if (mSurfaceEntity != null) {
-            mSurfaceEntity.dispose();
+        if (mSurfaceFeature != null) {
+            mSurfaceFeature.dispose();
         }
     }
 
-    private SurfaceEntityImpl createDefaultSurfaceEntity(Shape shape) {
-        XrExtensions xrExtensions = XrExtensionsProvider.getXrExtensions();
-
-        SplitEngineSubspaceManager splitEngineSubspaceManager =
-                mock(SplitEngineSubspaceManager.class);
-
-        Assert.assertNotNull(xrExtensions);
-        Node node = xrExtensions.createNode();
-        SubspaceNode expectedSubspaceNode = new SubspaceNode(SUBSPACE_ID, node);
-
-        when(splitEngineSubspaceManager.createSubspace(anyString(), anyInt()))
-                .thenReturn(expectedSubspaceNode);
-
-        ImpressNode subspaceImpressNode = mImpressApi.createImpressNode();
-        String subspaceName = "stereo_surface_panel_entity_subspace_"
-                + subspaceImpressNode.getHandle();
-        SubspaceNode subspaceNode = splitEngineSubspaceManager.createSubspace(
-                subspaceName, subspaceImpressNode.getHandle());
-
-        mEntityManager = new EntityManager();
-        FakeScheduledExecutorService executor = new FakeScheduledExecutorService();
-        Supplier<SpatialState> spatialStateProvider = ShadowSpatialState::create;
-        Entity parentEntity =
-                new ActivitySpaceImpl(
-                        subspaceNode.getSubspaceNode(),
-                        mActivity,
-                        xrExtensions,
-                        mEntityManager,
-                        spatialStateProvider,
-                        false,
-                        executor);
-
+    private SurfaceFeatureImpl createDefaultSurfaceEntity(Shape shape) {
         int stereoMode = SurfaceEntity.StereoMode.MONO;
-        Pose pose = Pose.Identity;
         int surfaceProtection = 0;
         int useSuperSampling = 0;
 
-        mSurfaceEntity =
-                new SurfaceEntityImpl(
-                        mActivity,
-                        parentEntity,
+        mSurfaceFeature =
+                new SurfaceFeatureImpl(
                         mImpressApi,
-                        splitEngineSubspaceManager,
-                        xrExtensions,
-                        mEntityManager,
-                        executor,
+                        mSplitEngineSubspaceManager,
+                        mXrExtensions,
                         stereoMode,
                         shape,
                         surfaceProtection,
                         useSuperSampling);
-        mSurfaceEntity.setPose(pose, Space.PARENT);
 
-        return mSurfaceEntity;
+        return mSurfaceFeature;
     }
 
     private CameraViewActivityPose setupDefaultMockCameraView() {
@@ -158,171 +125,200 @@ public final class SurfaceEntityImplTest {
                         (float) Math.atan(1.0), (float) Math.atan(1.0));
         when(cameraView.getFov()).thenReturn(fov);
         when(cameraView.getDisplayResolutionInPixels()).thenReturn(new PixelDimensions(1000, 1000));
-        mEntityManager.clear();
-        mEntityManager.addSystemSpaceActivityPose(cameraView);
         return cameraView;
     }
 
-    @Ignore // b/428211243 this test currently leaks android.view.Surface
+    //@Ignore // b/428211243 this test currently leaks android.view.Surface
     @Test
     public void setShape_setsShape() {
         SurfaceEntity.Shape expectedShape = new SurfaceEntity.Shape.Quad(new FloatSize2d(12f, 12f));
-        mSurfaceEntity.setShape(expectedShape);
-        SurfaceEntity.Shape shape = mSurfaceEntity.getShape();
+        mSurfaceFeature.setShape(expectedShape);
+        SurfaceEntity.Shape shape = mSurfaceFeature.getShape();
 
         assertThat(shape.getClass()).isEqualTo(expectedShape.getClass());
         assertThat(shape.getDimensions()).isEqualTo(expectedShape.getDimensions());
+        verify(mImpressApi).setStereoSurfaceEntityCanvasShapeQuad(
+                mSurfaceFeature.getEntityImpressNode(), 12f, 12f);
 
         expectedShape = new SurfaceEntity.Shape.Sphere(11f);
-        mSurfaceEntity.setShape(expectedShape);
-        shape = mSurfaceEntity.getShape();
+        mSurfaceFeature.setShape(expectedShape);
+        shape = mSurfaceFeature.getShape();
 
         assertThat(shape.getClass()).isEqualTo(expectedShape.getClass());
         assertThat(shape.getDimensions()).isEqualTo(expectedShape.getDimensions());
+        verify(mImpressApi).setStereoSurfaceEntityCanvasShapeSphere(
+                mSurfaceFeature.getEntityImpressNode(), 11f);
 
         expectedShape = new SurfaceEntity.Shape.Hemisphere(10f);
-        mSurfaceEntity.setShape(expectedShape);
-        shape = mSurfaceEntity.getShape();
+        mSurfaceFeature.setShape(expectedShape);
+        shape = mSurfaceFeature.getShape();
 
         assertThat(shape.getClass()).isEqualTo(expectedShape.getClass());
         assertThat(shape.getDimensions()).isEqualTo(expectedShape.getDimensions());
+        verify(mImpressApi).setStereoSurfaceEntityCanvasShapeHemisphere(
+                mSurfaceFeature.getEntityImpressNode(), 10f);
     }
 
-    @Ignore // b/428211243 this test currently leaks android.view.Surface
+    //@Ignore // b/428211243 this test currently leaks android.view.Surface
     @Test
     public void setStereoMode_setsStereoMode() {
         int expectedStereoMode = SurfaceEntity.StereoMode.MONO;
-        mSurfaceEntity.setStereoMode(expectedStereoMode);
-        int stereoMode = mSurfaceEntity.getStereoMode();
+        mSurfaceFeature.setStereoMode(expectedStereoMode);
+        int stereoMode = mSurfaceFeature.getStereoMode();
 
         assertThat(stereoMode).isEqualTo(expectedStereoMode);
+        verify(mImpressApi).setStereoModeForStereoSurface(
+                mSurfaceFeature.getEntityImpressNode(), expectedStereoMode);
 
         expectedStereoMode = SurfaceEntity.StereoMode.TOP_BOTTOM;
-        mSurfaceEntity.setStereoMode(expectedStereoMode);
-        stereoMode = mSurfaceEntity.getStereoMode();
+        mSurfaceFeature.setStereoMode(expectedStereoMode);
+        stereoMode = mSurfaceFeature.getStereoMode();
 
         assertThat(stereoMode).isEqualTo(expectedStereoMode);
+        verify(mImpressApi).setStereoModeForStereoSurface(
+                mSurfaceFeature.getEntityImpressNode(), expectedStereoMode);
     }
 
-    @Ignore // b/428211243 this test currently leaks android.view.Surface
+    //@Ignore // b/428211243 this test currently leaks android.view.Surface
     @Test
     public void dispose_supports_reentry() {
         Shape.Quad quadShape = new Shape.Quad(new FloatSize2d(1.0f, 1.0f)); // 1m x 1m local
-        mSurfaceEntity = createDefaultSurfaceEntity(quadShape);
+        mSurfaceFeature = createDefaultSurfaceEntity(quadShape);
 
         // Note that we don't test that dispose prevents manipulating other properties because that
         // is enforced at the API level, rather than the implementation level.
-        mSurfaceEntity.dispose();
-        mSurfaceEntity.dispose(); // shouldn't crash
+        mSurfaceFeature.dispose();
+        mSurfaceFeature.dispose(); // shouldn't crash
     }
 
-    @Ignore // b/428211243 this test currently leaks android.view.Surface
+    //@Ignore // b/428211243 this test currently leaks android.view.Surface
     @Test
     public void setEdgeFeather_forwardsToImpress() {
         float kFeatherRadiusX = 0.14f;
         float kFeatherRadiusY = 0.28f;
         SurfaceEntity.EdgeFeather expectedFeather =
                 new SurfaceEntity.EdgeFeather.RectangleFeather(kFeatherRadiusX, kFeatherRadiusY);
-        mSurfaceEntity.setEdgeFeather(expectedFeather);
-        SurfaceEntity.EdgeFeather returnedFeather = mSurfaceEntity.getEdgeFeather();
-        assertThat(returnedFeather).isEqualTo(expectedFeather);
+        mSurfaceFeature.setEdgeFeather(expectedFeather);
+        SurfaceEntity.EdgeFeather returnedFeather = mSurfaceFeature.getEdgeFeather();
 
-        // Apply Fake Impress checks
-        FakeImpressApiImpl.StereoSurfaceEntityData surfaceEntityData =
-                mImpressApi.getStereoSurfaceEntities().get(mSurfaceEntity.getEntityImpressNode());
-        assertThat(surfaceEntityData.getFeatherRadiusX()).isEqualTo(kFeatherRadiusX);
-        assertThat(surfaceEntityData.getFeatherRadiusY()).isEqualTo(kFeatherRadiusY);
+        assertThat(returnedFeather).isEqualTo(expectedFeather);
+        verify(mImpressApi).setFeatherRadiusForStereoSurface(
+                mSurfaceFeature.getEntityImpressNode(), kFeatherRadiusX, kFeatherRadiusY);
 
         // Set back to NoFeathering to simulate turning feathering off
         expectedFeather = new SurfaceEntity.EdgeFeather.NoFeathering();
-        mSurfaceEntity.setEdgeFeather(expectedFeather);
-        returnedFeather = mSurfaceEntity.getEdgeFeather();
-        assertThat(surfaceEntityData.getFeatherRadiusX()).isEqualTo(0.0f);
-        assertThat(surfaceEntityData.getFeatherRadiusY()).isEqualTo(0.0f);
+        mSurfaceFeature.setEdgeFeather(expectedFeather);
+        returnedFeather = mSurfaceFeature.getEdgeFeather();
+
+        assertThat(returnedFeather).isEqualTo(expectedFeather);
+        verify(mImpressApi).setFeatherRadiusForStereoSurface(
+                mSurfaceFeature.getEntityImpressNode(), 0f, 0f);
     }
 
-    @Ignore // b/428211243 this test currently leaks android.view.Surface
     @Test
-    public void getPerceivedResolution_noCameraView_returnsInvalidCameraView() {
-        mEntityManager.clear(); // Ensure no camera views
-        PerceivedResolutionResult result = mSurfaceEntity.getPerceivedResolution();
-        assertThat(result).isInstanceOf(PerceivedResolutionResult.InvalidCameraView.class);
+    public void createSurfaceEntity_returnsStereoSurface() {
+        final float kTestWidth = 14.0f;
+        final float kTestHeight = 28.0f;
+        final float kTestSphereRadius = 7.0f;
+        final float kTestHemisphereRadius = 11.0f;
+
+        SurfaceFeatureImpl surfaceEntityQuad =
+                new SurfaceFeatureImpl(
+                        mFakeImpressApi,
+                        mSplitEngineSubspaceManager,
+                        mXrExtensions,
+                        SurfaceEntity.StereoMode.SIDE_BY_SIDE,
+                        new SurfaceEntity.Shape.Quad(new FloatSize2d(kTestWidth, kTestHeight)),
+                        SurfaceEntity.SurfaceProtection.NONE,
+                        SurfaceEntity.SuperSampling.DEFAULT);
+        FakeImpressApiImpl.StereoSurfaceEntityData quadData =
+                mFakeImpressApi
+                        .getStereoSurfaceEntities()
+                        .get(surfaceEntityQuad.getEntityImpressNode());
+
+        SurfaceFeatureImpl surfaceEntitySphere =
+                new SurfaceFeatureImpl(
+                        mFakeImpressApi,
+                        mSplitEngineSubspaceManager,
+                        mXrExtensions,
+                        SurfaceEntity.StereoMode.TOP_BOTTOM,
+                        new SurfaceEntity.Shape.Sphere(kTestSphereRadius),
+                        SurfaceEntity.SurfaceProtection.NONE,
+                        SurfaceEntity.SuperSampling.DEFAULT);
+        FakeImpressApiImpl.StereoSurfaceEntityData sphereData =
+                mFakeImpressApi
+                        .getStereoSurfaceEntities()
+                        .get(surfaceEntitySphere.getEntityImpressNode());
+
+        SurfaceFeatureImpl surfaceEntityHemisphere =
+                new SurfaceFeatureImpl(
+                        mFakeImpressApi,
+                        mSplitEngineSubspaceManager,
+                        mXrExtensions,
+                        SurfaceEntity.StereoMode.MONO,
+                        new SurfaceEntity.Shape.Hemisphere(kTestHemisphereRadius),
+                        SurfaceEntity.SurfaceProtection.NONE,
+                        SurfaceEntity.SuperSampling.DEFAULT);
+        FakeImpressApiImpl.StereoSurfaceEntityData hemisphereData =
+                mFakeImpressApi
+                        .getStereoSurfaceEntities()
+                        .get(surfaceEntityHemisphere.getEntityImpressNode());
+
+        assertThat(mFakeImpressApi.getStereoSurfaceEntities()).hasSize(3);
+
+        // TODO: b/366588688 - Move these into tests for SurfaceEntityImpl
+        assertThat(quadData.getStereoMode()).isEqualTo(SurfaceEntity.StereoMode.SIDE_BY_SIDE);
+        assertThat(quadData.getCanvasShape())
+                .isEqualTo(FakeImpressApiImpl.StereoSurfaceEntityData.CanvasShape.QUAD);
+        assertThat(sphereData.getStereoMode()).isEqualTo(SurfaceEntity.StereoMode.TOP_BOTTOM);
+        assertThat(sphereData.getCanvasShape())
+                .isEqualTo(FakeImpressApiImpl.StereoSurfaceEntityData.CanvasShape.VR_360_SPHERE);
+        assertThat(hemisphereData.getStereoMode()).isEqualTo(SurfaceEntity.StereoMode.MONO);
+        assertThat(hemisphereData.getCanvasShape())
+                .isEqualTo(
+                        FakeImpressApiImpl.StereoSurfaceEntityData.CanvasShape.VR_180_HEMISPHERE);
+
+        assertThat(quadData.getWidth()).isEqualTo(kTestWidth);
+        assertThat(quadData.getHeight()).isEqualTo(kTestHeight);
+        Dimensions quadDimensions = surfaceEntityQuad.getDimensions();
+        assertThat(quadDimensions.width).isEqualTo(kTestWidth);
+        assertThat(quadDimensions.height).isEqualTo(kTestHeight);
+        assertThat(quadDimensions.depth).isEqualTo(0.0f);
+
+        assertThat(sphereData.getRadius()).isEqualTo(kTestSphereRadius);
+        Dimensions sphereDimensions = surfaceEntitySphere.getDimensions();
+        assertThat(sphereDimensions.width).isEqualTo(kTestSphereRadius * 2.0f);
+        assertThat(sphereDimensions.height).isEqualTo(kTestSphereRadius * 2.0f);
+        assertThat(sphereDimensions.depth).isEqualTo(kTestSphereRadius * 2.0f);
+
+        assertThat(hemisphereData.getRadius()).isEqualTo(kTestHemisphereRadius);
+        Dimensions hemisphereDimensions = surfaceEntityHemisphere.getDimensions();
+        assertThat(hemisphereDimensions.width).isEqualTo(kTestHemisphereRadius * 2.0f);
+        assertThat(hemisphereDimensions.height).isEqualTo(kTestHemisphereRadius * 2.0f);
+        assertThat(hemisphereDimensions.depth).isEqualTo(kTestHemisphereRadius);
+
+        assertThat(quadData.getSurface()).isEqualTo(surfaceEntityQuad.getSurface());
+        assertThat(sphereData.getSurface()).isEqualTo(surfaceEntitySphere.getSurface());
+        assertThat(hemisphereData.getSurface()).isEqualTo(surfaceEntityHemisphere.getSurface());
+
+        // Check that calls to set the Shape and StereoMode after construction call through
+        // Change the Quad to a Sphere
+        surfaceEntityQuad.setShape(new SurfaceEntity.Shape.Sphere(kTestSphereRadius));
+        // change the StereoMode to Top/Bottom from Side/Side
+        surfaceEntityQuad.setStereoMode(SurfaceEntity.StereoMode.TOP_BOTTOM);
+        quadData =
+                mFakeImpressApi
+                        .getStereoSurfaceEntities()
+                        .get(surfaceEntityQuad.getEntityImpressNode());
+
+        assertThat(quadData.getCanvasShape())
+                .isEqualTo(FakeImpressApiImpl.StereoSurfaceEntityData.CanvasShape.VR_360_SPHERE);
+        assertThat(quadData.getStereoMode()).isEqualTo(SurfaceEntity.StereoMode.TOP_BOTTOM);
+
+        Surface surface = surfaceEntityQuad.getSurface();
+
+        assertThat(surface).isNotNull();
+        assertThat(surface).isEqualTo(quadData.getSurface());
     }
 
-    @Ignore // b/428211243 this test currently leaks android.view.Surface
-    @Test
-    public void getPerceivedResolution_quadInFront_returnsSuccess() {
-        Shape.Quad quadShape = new Shape.Quad(new FloatSize2d(2.0f, 1.0f)); // 2m wide, 1m high
-        // Recreate mSurfaceEntity with the specific shape for this test
-        mSurfaceEntity = createDefaultSurfaceEntity(quadShape);
-        setupDefaultMockCameraView();
-
-        mSurfaceEntity.setPose(new Pose(new Vector3(0f, 0f, -2f), Quaternion.Identity)); // 2m away
-        mSurfaceEntity.setScale(new Vector3(1f, 1f, 1f));
-
-        PerceivedResolutionResult result = mSurfaceEntity.getPerceivedResolution();
-        assertThat(result).isInstanceOf(PerceivedResolutionResult.Success.class);
-        PerceivedResolutionResult.Success successResult =
-                (PerceivedResolutionResult.Success) result;
-
-        Truth.assertThat(successResult.getPerceivedResolution().width).isEqualTo(500);
-        Truth.assertThat(successResult.getPerceivedResolution().height).isEqualTo(250);
-    }
-
-    @Ignore // b/428211243 this test currently leaks android.view.Surface
-    @Test
-    public void getPerceivedResolution_sphereInFront_returnsSuccess() {
-        Shape.Sphere sphereShape = new Shape.Sphere(1.0f); // radius 1m
-        mSurfaceEntity = createDefaultSurfaceEntity(sphereShape);
-        setupDefaultMockCameraView();
-
-        mSurfaceEntity.setPose(new Pose(new Vector3(0f, 0f, -3f), Quaternion.Identity)); //
-        // Center 3m away
-        mSurfaceEntity.setScale(new Vector3(1f, 1f, 1f));
-
-        PerceivedResolutionResult result = mSurfaceEntity.getPerceivedResolution();
-        assertThat(result).isInstanceOf(PerceivedResolutionResult.Success.class);
-        PerceivedResolutionResult.Success successResult =
-                (PerceivedResolutionResult.Success) result;
-
-        Truth.assertThat(successResult.getPerceivedResolution().width).isEqualTo(500);
-        Truth.assertThat(successResult.getPerceivedResolution().height).isEqualTo(500);
-    }
-
-    @Ignore // b/428211243 this test currently leaks android.view.Surface
-    @Test
-    public void getPerceivedResolution_quadTooClose_returnsEntityTooClose() {
-        Shape.Quad quadShape = new Shape.Quad(new FloatSize2d(2.0f, 1.0f));
-        mSurfaceEntity = createDefaultSurfaceEntity(quadShape);
-        setupDefaultMockCameraView();
-
-        float veryCloseDistance = PerceivedResolutionUtils.PERCEIVED_RESOLUTION_EPSILON / 2f;
-        mSurfaceEntity.setPose(
-                new Pose(new Vector3(0f, 0f, -veryCloseDistance), Quaternion.Identity));
-        mSurfaceEntity.setScale(new Vector3(1f, 1f, 1f));
-
-        PerceivedResolutionResult result = mSurfaceEntity.getPerceivedResolution();
-        assertThat(result).isInstanceOf(PerceivedResolutionResult.EntityTooClose.class);
-    }
-
-    @Ignore // b/428211243 this test currently leaks android.view.Surface
-    @Test
-    public void getPerceivedResolution_quadWithScale_calculatesCorrectly() {
-        Shape.Quad quadShape = new Shape.Quad(new FloatSize2d(1.0f, 1.0f)); // 1m x 1m local
-        mSurfaceEntity = createDefaultSurfaceEntity(quadShape);
-        setupDefaultMockCameraView();
-
-        mSurfaceEntity.setPose(new Pose(new Vector3(0f, 0f, -2f), Quaternion.Identity)); // 2m away
-        mSurfaceEntity.setScale(new Vector3(2f, 3f, 1f)); // Scaled to 2m wide, 3m high
-
-        PerceivedResolutionResult result = mSurfaceEntity.getPerceivedResolution();
-        assertThat(result).isInstanceOf(PerceivedResolutionResult.Success.class);
-        PerceivedResolutionResult.Success successResult =
-                (PerceivedResolutionResult.Success) result;
-
-        // The width and height are flipped because perceivedResolution calculations will
-        // always place the largest dimension as the width, and the second as height.
-        Truth.assertThat(successResult.getPerceivedResolution().width).isEqualTo(750);
-        Truth.assertThat(successResult.getPerceivedResolution().height).isEqualTo(500);
-    }
 }

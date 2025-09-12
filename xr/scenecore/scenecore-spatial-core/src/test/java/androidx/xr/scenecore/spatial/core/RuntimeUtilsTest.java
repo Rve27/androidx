@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.impl;
+package androidx.xr.scenecore.spatial.core;
 
 import static androidx.xr.runtime.testing.math.MathAssertions.assertPose;
 import static androidx.xr.runtime.testing.math.MathAssertions.assertVector3;
@@ -34,14 +34,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import android.app.Activity;
-import android.util.Log;
 
 import androidx.xr.runtime.math.Matrix4;
 import androidx.xr.runtime.math.Pose;
 import androidx.xr.runtime.math.Quaternion;
 import androidx.xr.runtime.math.Vector3;
 import androidx.xr.scenecore.impl.extensions.XrExtensionsProvider;
-import androidx.xr.scenecore.impl.impress.FakeImpressApiImpl;
 import androidx.xr.scenecore.impl.perception.PerceptionLibrary;
 import androidx.xr.scenecore.impl.perception.Plane;
 import androidx.xr.scenecore.impl.perception.Session;
@@ -71,29 +69,23 @@ import com.android.extensions.xr.space.PerceivedResolution;
 import com.android.extensions.xr.space.ShadowSpatialCapabilities;
 import com.android.extensions.xr.space.VisibilityState;
 
-import com.google.androidxr.splitengine.SplitEngineSubspaceManager;
-import com.google.ar.imp.view.splitengine.ImpSplitEngineRenderer;
-
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.android.controller.ActivityController;
 import org.robolectric.junit.rules.ExpectedLogMessagesRule;
 
 import java.util.Objects;
-import java.util.regex.Pattern;
 
-// TODO: b/431305622 - Add unit tests for getInputEvent.
 @RunWith(RobolectricTestRunner.class)
 public final class RuntimeUtilsTest {
 
     @Rule
     public final ExpectedLogMessagesRule expectedLogMessagesRule = new ExpectedLogMessagesRule();
 
-    JxrPlatformAdapterAxr createPlatformAdapter(EntityManager entityManager) {
+    SpatialSceneRuntime createSceneRuntime(EntityManager entityManager) {
         ActivityController<Activity> mActivityController;
         Activity mActivity;
         mActivityController = Robolectric.buildActivity(Activity.class);
@@ -101,26 +93,16 @@ public final class RuntimeUtilsTest {
 
         FakeScheduledExecutorService mFakeExecutor = new FakeScheduledExecutorService();
         XrExtensions xrExtensions = XrExtensionsProvider.getXrExtensions();
-        FakeImpressApiImpl mFakeImpressApi = new FakeImpressApiImpl();
+        if (xrExtensions == null) {
+            throw new IllegalStateException("XrExtensions is null. Stop testing");
+        }
         PerceptionLibrary mPerceptionLibrary = mock(PerceptionLibrary.class);
         Session mSession = mock(Session.class);
         when(mPerceptionLibrary.initSession(eq(mActivity), anyInt(), eq(mFakeExecutor)))
                 .thenReturn(immediateFuture(mSession));
         when(mPerceptionLibrary.getActivity()).thenReturn(mActivity);
-        SplitEngineSubspaceManager mSplitEngineSubspaceManager =
-                Mockito.mock(SplitEngineSubspaceManager.class);
-        ImpSplitEngineRenderer mSplitEngineRenderer = Mockito.mock(ImpSplitEngineRenderer.class);
-        return JxrPlatformAdapterAxr.create(
-                mActivity,
-                mFakeExecutor,
-                xrExtensions,
-                mFakeImpressApi,
-                entityManager,
-                mPerceptionLibrary,
-                mSplitEngineSubspaceManager,
-                mSplitEngineRenderer,
-                /* useSplitEngine= */ true,
-                /* unscaledGravityAlignedActivitySpace= */ false);
+        return SpatialSceneRuntime.create(
+                mActivity, mFakeExecutor, xrExtensions, entityManager, mPerceptionLibrary, false);
     }
 
     @Test
@@ -247,6 +229,7 @@ public final class RuntimeUtilsTest {
         com.android.extensions.xr.space.SpatialCapabilities extensionCapabilities =
                 ShadowSpatialCapabilities.create();
         SpatialCapabilities caps = RuntimeUtils.convertSpatialCapabilities(extensionCapabilities);
+
         assertThat(caps.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_UI)).isFalse();
         assertThat(caps.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_3D_CONTENT)).isFalse();
         assertThat(caps.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_PASSTHROUGH_CONTROL))
@@ -264,6 +247,7 @@ public final class RuntimeUtilsTest {
         com.android.extensions.xr.space.SpatialCapabilities extensionCapabilities =
                 ShadowSpatialCapabilities.createAll();
         SpatialCapabilities caps = RuntimeUtils.convertSpatialCapabilities(extensionCapabilities);
+
         assertThat(caps.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_UI)).isTrue();
         assertThat(caps.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_3D_CONTENT)).isTrue();
         assertThat(caps.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_PASSTHROUGH_CONTROL))
@@ -294,6 +278,7 @@ public final class RuntimeUtilsTest {
                 ShadowSpatialCapabilities.create(
                         com.android.extensions.xr.space.SpatialCapabilities.SPATIAL_UI_CAPABLE);
         SpatialCapabilities caps = RuntimeUtils.convertSpatialCapabilities(extensionCapabilities);
+
         assertThat(caps.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_UI)).isTrue();
         assertThat(caps.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_3D_CONTENT)).isFalse();
         assertThat(caps.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_PASSTHROUGH_CONTROL))
@@ -310,6 +295,7 @@ public final class RuntimeUtilsTest {
                         com.android.extensions.xr.space.SpatialCapabilities
                                 .SPATIAL_3D_CONTENTS_CAPABLE);
         caps = RuntimeUtils.convertSpatialCapabilities(extensionCapabilities);
+
         assertThat(caps.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_UI)).isFalse();
         assertThat(caps.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_3D_CONTENT)).isTrue();
         assertThat(caps.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_PASSTHROUGH_CONTROL))
@@ -325,6 +311,7 @@ public final class RuntimeUtilsTest {
                 ShadowSpatialCapabilities.create(
                         com.android.extensions.xr.space.SpatialCapabilities.SPATIAL_AUDIO_CAPABLE);
         caps = RuntimeUtils.convertSpatialCapabilities(extensionCapabilities);
+
         assertThat(caps.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_UI)).isFalse();
         assertThat(caps.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_3D_CONTENT)).isFalse();
         assertThat(caps.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_PASSTHROUGH_CONTROL))
@@ -346,6 +333,7 @@ public final class RuntimeUtilsTest {
                         com.android.extensions.xr.space.SpatialCapabilities
                                 .SPATIAL_3D_CONTENTS_CAPABLE);
         SpatialCapabilities caps = RuntimeUtils.convertSpatialCapabilities(extensionCapabilities);
+
         assertThat(caps.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_UI)).isFalse();
         assertThat(caps.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_3D_CONTENT)).isTrue();
         assertThat(caps.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_PASSTHROUGH_CONTROL))
@@ -367,6 +355,7 @@ public final class RuntimeUtilsTest {
                         com.android.extensions.xr.space.SpatialCapabilities
                                 .SPATIAL_ACTIVITY_EMBEDDING_CAPABLE);
         caps = RuntimeUtils.convertSpatialCapabilities(extensionCapabilities);
+
         assertThat(caps.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_UI)).isTrue();
         assertThat(caps.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_3D_CONTENT)).isFalse();
         assertThat(caps.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_PASSTHROUGH_CONTROL))
@@ -416,10 +405,12 @@ public final class RuntimeUtilsTest {
     public void getPassthroughOpacity_returnsZeroFromDisabledExtensionState() {
         PassthroughVisibilityState passthroughVisibilityState =
                 ShadowPassthroughVisibilityState.create(PassthroughVisibilityState.DISABLED, 0.0f);
+
         assertThat(RuntimeUtils.getPassthroughOpacity(passthroughVisibilityState)).isEqualTo(0.0f);
 
         passthroughVisibilityState =
                 ShadowPassthroughVisibilityState.create(PassthroughVisibilityState.DISABLED, 1.0f);
+
         assertThat(RuntimeUtils.getPassthroughOpacity(passthroughVisibilityState)).isEqualTo(0.0f);
     }
 
@@ -427,14 +418,17 @@ public final class RuntimeUtilsTest {
     public void getPassthroughOpacity_convertsValidValuesFromExtensionState() {
         PassthroughVisibilityState passthroughVisibilityState =
                 ShadowPassthroughVisibilityState.create(PassthroughVisibilityState.HOME, 0.5f);
+
         assertThat(RuntimeUtils.getPassthroughOpacity(passthroughVisibilityState)).isEqualTo(0.5f);
 
         passthroughVisibilityState =
                 ShadowPassthroughVisibilityState.create(PassthroughVisibilityState.APP, 0.75f);
+
         assertThat(RuntimeUtils.getPassthroughOpacity(passthroughVisibilityState)).isEqualTo(0.75f);
 
         passthroughVisibilityState =
                 ShadowPassthroughVisibilityState.create(PassthroughVisibilityState.SYSTEM, 1.0f);
+
         assertThat(RuntimeUtils.getPassthroughOpacity(passthroughVisibilityState)).isEqualTo(1.0f);
     }
 
@@ -442,30 +436,35 @@ public final class RuntimeUtilsTest {
     public void getPassthroughOpacity_convertsInvalidValuesFromExtensionStateToOneAndLogsError() {
         PassthroughVisibilityState passthroughVisibilityState =
                 ShadowPassthroughVisibilityState.create(PassthroughVisibilityState.HOME, 0.0f);
+
         assertThat(RuntimeUtils.getPassthroughOpacity(passthroughVisibilityState)).isEqualTo(1.0f);
 
         passthroughVisibilityState =
                 ShadowPassthroughVisibilityState.create(
                         PassthroughVisibilityState.APP, -0.0000001f);
+
         assertThat(RuntimeUtils.getPassthroughOpacity(passthroughVisibilityState)).isEqualTo(1.0f);
 
         passthroughVisibilityState =
                 ShadowPassthroughVisibilityState.create(PassthroughVisibilityState.SYSTEM, -1.0f);
+
         assertThat(RuntimeUtils.getPassthroughOpacity(passthroughVisibilityState)).isEqualTo(1.0f);
 
-        expectedLogMessagesRule.expectLogMessagePattern(
-                Log.ERROR,
-                "RuntimeUtils",
-                Pattern.compile(".* Opacity should be greater than zero.*"));
+        // Log is removed from RuntimeUtils
+        //expectedLogMessagesRule.expectLogMessagePattern(
+        //        Log.ERROR,
+        //        "RuntimeUtils",
+        //        Pattern.compile(".* Opacity should be greater than zero.*"));
     }
 
     @Test
     public void getHitInfo_convertsFromHitInfo() {
+
         EntityManager entityManager = new EntityManager();
-        JxrPlatformAdapterAxr platformAdapter = createPlatformAdapter(entityManager);
+        SpatialSceneRuntime sceneRuntime = createSceneRuntime(entityManager);
         Entity testEntity =
-                platformAdapter.createGroupEntity(
-                        new Pose(), "testGroup", platformAdapter.getActivitySpace());
+                sceneRuntime.createGroupEntity(
+                        new Pose(), "testGroup", sceneRuntime.getActivitySpace());
         Node testNode = ((AndroidXrEntity) testEntity).getNode();
 
         float[] expectedTransform =
@@ -492,16 +491,17 @@ public final class RuntimeUtilsTest {
     @Test
     public void getHitInfo_nullHitInfo_returnsNull() {
         EntityManager entityManager = new EntityManager();
+
         assertThat(RuntimeUtils.getHitInfo(null, entityManager)).isNull();
     }
 
     @Test
     public void getHitInfo_nullInputNode_returnsNull() {
         EntityManager entityManager = new EntityManager();
-        JxrPlatformAdapterAxr platformAdapter = createPlatformAdapter(entityManager);
+        SpatialSceneRuntime sceneRuntime = createSceneRuntime(entityManager);
         Entity testEntity =
-                platformAdapter.createGroupEntity(
-                        new Pose(), "testGroup", platformAdapter.getActivitySpace());
+                sceneRuntime.createGroupEntity(
+                        new Pose(), "testGroup", sceneRuntime.getActivitySpace());
         Node testNode = ((AndroidXrEntity) testEntity).getNode();
 
         float[] transformData = new float[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
@@ -512,16 +512,17 @@ public final class RuntimeUtilsTest {
                 new com.android.extensions.xr.node.InputEvent.HitInfo(
                         1, null, transform, hitPosition);
         InputEvent.HitInfo hitInfo = RuntimeUtils.getHitInfo(extensionHitInfo, entityManager);
+
         assertThat(hitInfo).isNull();
     }
 
     @Test
     public void getHitInfo_nullTransform_returnsNull() {
         EntityManager entityManager = new EntityManager();
-        JxrPlatformAdapterAxr platformAdapter = createPlatformAdapter(entityManager);
+        SpatialSceneRuntime sceneRuntime = createSceneRuntime(entityManager);
         Entity testEntity =
-                platformAdapter.createGroupEntity(
-                        new Pose(), "testGroup", platformAdapter.getActivitySpace());
+                sceneRuntime.createGroupEntity(
+                        new Pose(), "testGroup", sceneRuntime.getActivitySpace());
         Node testNode = ((AndroidXrEntity) testEntity).getNode();
 
         Vec3 hitPosition = new Vec3(1, 2, 3);
@@ -530,6 +531,7 @@ public final class RuntimeUtilsTest {
                 new com.android.extensions.xr.node.InputEvent.HitInfo(
                         1, testNode, null, hitPosition);
         InputEvent.HitInfo hitInfo = RuntimeUtils.getHitInfo(extensionHitInfo, entityManager);
+
         assertThat(hitInfo).isNull();
     }
 
@@ -537,7 +539,7 @@ public final class RuntimeUtilsTest {
     public void getHitInfo_nullHitEntity_returnsNull() {
         // Create the entity manager but do not set the hit entity.
         EntityManager entityManager = new EntityManager();
-        JxrPlatformAdapterAxr platformAdapter = createPlatformAdapter(entityManager);
+        SpatialSceneRuntime sceneRuntime = createSceneRuntime(entityManager);
 
         float[] transformData = new float[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
         Mat4f transform = new Mat4f(transformData);
@@ -547,16 +549,17 @@ public final class RuntimeUtilsTest {
                 new com.android.extensions.xr.node.InputEvent.HitInfo(
                         1, null, transform, hitPosition);
         InputEvent.HitInfo hitInfo = RuntimeUtils.getHitInfo(extensionHitInfo, entityManager);
+
         assertThat(hitInfo).isNull();
     }
 
     @Test
     public void getHitInfo_unKnownNode_returnsNull() {
         EntityManager entityManager = new EntityManager();
-        JxrPlatformAdapterAxr platformAdapter = createPlatformAdapter(entityManager);
+        SpatialSceneRuntime sceneRuntime = createSceneRuntime(entityManager);
         Entity testEntity =
-                platformAdapter.createGroupEntity(
-                        new Pose(), "testGroup", platformAdapter.getActivitySpace());
+                sceneRuntime.createGroupEntity(
+                        new Pose(), "testGroup", sceneRuntime.getActivitySpace());
         Node testNode = Objects.requireNonNull(XrExtensionsProvider.getXrExtensions()).createNode();
 
         float[] transformData = new float[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
@@ -567,16 +570,17 @@ public final class RuntimeUtilsTest {
                 new com.android.extensions.xr.node.InputEvent.HitInfo(
                         1, testNode, transform, hitPosition);
         InputEvent.HitInfo hitInfo = RuntimeUtils.getHitInfo(extensionHitInfo, entityManager);
+
         assertThat(hitInfo).isNull();
     }
 
     @Test
     public void getHitInfo_nullHitPosition_convertsFromHitInfo() {
         EntityManager entityManager = new EntityManager();
-        JxrPlatformAdapterAxr platformAdapter = createPlatformAdapter(entityManager);
+        SpatialSceneRuntime sceneRuntime = createSceneRuntime(entityManager);
         Entity testEntity =
-                platformAdapter.createGroupEntity(
-                        new Pose(), "testGroup", platformAdapter.getActivitySpace());
+                sceneRuntime.createGroupEntity(
+                        new Pose(), "testGroup", sceneRuntime.getActivitySpace());
         Node testNode = ((AndroidXrEntity) testEntity).getNode();
 
         float[] expectedTransform =
@@ -790,6 +794,7 @@ public final class RuntimeUtilsTest {
     public void convertSpatialVisibility_convertsFromExtensionVisibility() {
         com.android.extensions.xr.space.PerceivedResolution perceivedResolution =
                 new com.android.extensions.xr.space.PerceivedResolution(0, 0);
+
         assertThat(RuntimeUtils.convertSpatialVisibility(VisibilityState.FULLY_VISIBLE))
                 .isEqualTo(new SpatialVisibility(SpatialVisibility.WITHIN_FOV));
 

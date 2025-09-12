@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.impl;
+package androidx.xr.scenecore.spatial.core;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.util.Log;
 
 import androidx.xr.scenecore.internal.ActivityPanelEntity;
 import androidx.xr.scenecore.internal.PixelDimensions;
@@ -39,11 +38,10 @@ import java.util.concurrent.ScheduledExecutorService;
 
 /** Implementation of {@link ActivityPanelEntity}. */
 class ActivityPanelEntityImpl extends BasePanelEntity implements ActivityPanelEntity {
-    private static final String TAG = ActivityPanelEntityImpl.class.getSimpleName();
     private final ActivityPanel mActivityPanel;
 
     // TODO(b/352630140): Add a static factory method and remove the business logic from
-    //                    JxrPlatformAdapterAxr.
+    //                    SpatialSceneRuntime.
 
     ActivityPanelEntityImpl(
             Context context,
@@ -75,16 +73,15 @@ class ActivityPanelEntityImpl extends BasePanelEntity implements ActivityPanelEn
         // Note that launching an Activity into the Panel doesn't actually update the size. The
         // application is expected to set the size of the ActivityPanel at construction time, before
         // launching an Activity into it. The Activity will then render into the size the
-        // application
-        // specified, and the system will apply letterboxing if necessary.
+        // application specified, and the system will apply letterboxing if necessary.
         mActivityPanel.launchActivity(intent, bundle);
     }
 
     @Override
     public void moveActivity(@NonNull Activity activity) {
         // Note that moving an Activity into the Panel doesn't actually update the size. The
-        // application
-        // should explicitly call setPixelDimensions() to update the size of an ActivityPanel.
+        // application should explicitly call setPixelDimensions() to update the size of an
+        // ActivityPanel.
         mActivityPanel.moveActivity(activity);
     }
 
@@ -95,7 +92,6 @@ class ActivityPanelEntityImpl extends BasePanelEntity implements ActivityPanelEn
 
         // Avoid updating the bounds if we were called with the same values.
         if (Objects.equals(oldDimensions, dimensions)) {
-            Log.i(TAG, "setPixelDimensions called with same dimensions - " + dimensions);
             return;
         }
 

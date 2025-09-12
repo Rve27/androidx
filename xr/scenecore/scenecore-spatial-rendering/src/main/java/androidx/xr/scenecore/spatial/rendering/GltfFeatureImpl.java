@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,29 +14,26 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.impl;
+package androidx.xr.scenecore.spatial.rendering;
 
-import android.content.Context;
 import android.util.Log;
 
 import androidx.xr.scenecore.impl.impress.ImpressApi;
 import androidx.xr.scenecore.impl.impress.ImpressNode;
 import androidx.xr.scenecore.impl.impress.Material;
-import androidx.xr.scenecore.internal.Entity;
 import androidx.xr.scenecore.internal.GltfEntity;
+import androidx.xr.scenecore.internal.GltfFeature;
 import androidx.xr.scenecore.internal.MaterialResource;
 
 import com.android.extensions.xr.XrExtensions;
-import com.android.extensions.xr.node.NodeTransaction;
 
 import com.google.androidxr.splitengine.SplitEngineSubspaceManager;
-import com.google.androidxr.splitengine.SubspaceNode;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
-import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.Executor;
 
 /**
  * Implementation of a SceneCore GltfEntity.
@@ -44,100 +41,67 @@ import java.util.concurrent.ScheduledExecutorService;
  * <p>This is used to create an entity that contains a glTF object.
  */
 // TODO: b/375520647 - Add unit tests for this class.
-class GltfEntityImpl extends AndroidXrEntity implements GltfEntity {
-    private final ImpressApi mImpressApi;
-
-    @SuppressWarnings("UnusedVariable")
-    private final SplitEngineSubspaceManager mSplitEngineSubspaceManager;
-
-    private final SubspaceNode mSubspace;
+class GltfFeatureImpl extends BaseRenderingFeature implements GltfFeature {
     private final ImpressNode mModelImpressNode;
-    private final ImpressNode mSubspaceImpressNode;
-    @AnimationStateValue private int mAnimationState = AnimationState.STOPPED;
+    @GltfEntity.AnimationStateValue private int mAnimationState = GltfEntity.AnimationState.STOPPED;
 
-    GltfEntityImpl(
-            Context context,
+    GltfFeatureImpl(
             GltfModelResourceImpl gltfModelResource,
-            Entity parentEntity,
             ImpressApi impressApi,
             SplitEngineSubspaceManager splitEngineSubspaceManager,
-            XrExtensions extensions,
-            EntityManager entityManager,
-            ScheduledExecutorService executor) {
-        super(context, extensions.createNode(), extensions, entityManager, executor);
-        mImpressApi = impressApi;
-        mSplitEngineSubspaceManager = splitEngineSubspaceManager;
-        setParent(parentEntity);
+            XrExtensions extensions) {
+        super(impressApi, splitEngineSubspaceManager, extensions);
 
-        // System will only render Impress nodes that are parented by this subspace node.
-        mSubspaceImpressNode = impressApi.createImpressNode();
-        String subspaceName = "gltf_entity_subspace_" + mSubspaceImpressNode.getHandle();
-
-        mSubspace =
-                splitEngineSubspaceManager.createSubspace(
-                        subspaceName, mSubspaceImpressNode.getHandle());
-
-        if (mSubspace != null) {
-            try (NodeTransaction transaction = extensions.createNodeTransaction()) {
-                // Make the Entity node a parent of the subspace node.
-                transaction.setParent(mSubspace.getSubspaceNode(), mNode).apply();
-            }
-        }
         mModelImpressNode =
                 impressApi.instanceGltfModel(gltfModelResource.getExtensionModelToken());
-        impressApi.setImpressNodeParent(mModelImpressNode, mSubspaceImpressNode);
-        // The Impress node hierarchy is: Subspace Impress node --- parent of ---> model Impress
-        // node.
-        // The CPM node hierarchy is: Entity CPM node --- parent of ---> Subspace CPM node.
+        bindImpressNodeToSubspace("gltf_entity_subspace_", mModelImpressNode);
     }
 
     @Override
-    public void startAnimation(boolean looping, @Nullable String animationName) {
+    public void startAnimation(
+            boolean looping, @Nullable String animationName, @NonNull Executor executor) {
         // TODO: b/362826747 - Add a listener interface so that the application can be
         // notified that the animation has stopped, been cancelled (by starting another animation)
         // and / or shown an error state if something went wrong.
 
         ListenableFuture<Void> future =
                 mImpressApi.animateGltfModel(mModelImpressNode, animationName, looping);
-        mAnimationState = AnimationState.PLAYING;
+        mAnimationState = GltfEntity.AnimationState.PLAYING;
 
         // At the moment, we don't do anything interesting on failure except for logging. If we
-        // didn't
-        // care about logging the failure, we could just not register a listener at all if the
-        // animation
-        // is looping, since it will never terminate normally.
+        // didn't care about logging the failure, we could just not register a listener at all if
+        // the animation is looping, since it will never terminate normally.
         future.addListener(
                 () -> {
                     try {
                         future.get();
                         // The animation played to completion and has stopped
-                        mAnimationState = AnimationState.STOPPED;
+                        mAnimationState = GltfEntity.AnimationState.STOPPED;
                     } catch (Exception e) {
                         if (e instanceof InterruptedException) {
                             // If this happened, then it's likely Impress is shutting down and we
-                            // need to
-                            // shut down as well.
+                            // need to shut down as well.
                             Thread.currentThread().interrupt();
                         } else {
                             // Some other error happened.  Log it and stop the animation.
                             Log.e("GltfEntityImpl", "Could not start animation: " + e);
-                            mAnimationState = AnimationState.STOPPED;
+                            mAnimationState = GltfEntity.AnimationState.STOPPED;
                         }
                     }
                 },
-                mExecutor);
+                executor);
     }
 
     @Override
     public void stopAnimation() {
-        if (mAnimationState == AnimationState.PLAYING) {
+        if (mAnimationState == GltfEntity.AnimationState.PLAYING) {
             mImpressApi.stopGltfModelAnimation(mModelImpressNode);
-            mAnimationState = AnimationState.STOPPED;
+            mAnimationState = GltfEntity.AnimationState.STOPPED;
         }
     }
 
     @Override
-    @AnimationStateValue
+    @GltfEntity.AnimationStateValue
     public int getAnimationState() {
         return mAnimationState;
     }
@@ -160,6 +124,11 @@ class GltfEntityImpl extends AndroidXrEntity implements GltfEntity {
         mImpressApi.clearMaterialOverride(mModelImpressNode, nodeName, primitiveIndex);
     }
 
+    @Override
+    public void setColliderEnabled(boolean enableCollider) {
+        mImpressApi.setGltfModelColliderEnabled(mModelImpressNode, enableCollider);
+    }
+
     @SuppressWarnings("ObjectToString")
     @Override
     public void dispose() {
@@ -171,9 +140,5 @@ class GltfEntityImpl extends AndroidXrEntity implements GltfEntity {
         //  mSplitEngineSubspaceManager.deleteSubspace(mSubspace.subspaceId);
         // }
         super.dispose();
-    }
-
-    public void setColliderEnabled(boolean enableCollider) {
-        mImpressApi.setGltfModelColliderEnabled(mModelImpressNode, enableCollider);
     }
 }

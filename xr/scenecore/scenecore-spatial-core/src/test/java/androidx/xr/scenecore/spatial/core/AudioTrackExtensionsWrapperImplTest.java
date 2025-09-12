@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.impl;
+package androidx.xr.scenecore.spatial.core;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -61,8 +61,7 @@ public class AudioTrackExtensionsWrapperImplTest {
 
         // Clear the sound fields before each test.
         // Because the mAudioTrackExtensions are fetched from the XrExtensions singleton it is
-        // reused
-        // across tests.
+        // reused across tests.
         // TODO(b/401557718): Consider adding a reset method to the XrExtensions shadow.
         ShadowAudioTrackExtensions.extract(mAudioTrackExtensions).setSoundFieldAttributes(null);
 
@@ -204,6 +203,7 @@ public class AudioTrackExtensionsWrapperImplTest {
                 new AudioTrackExtensionsWrapperImpl(mAudioTrackExtensions, mEntityManager);
 
         int actualSourceType = wrapper.getSpatialSourceType(track);
+
         assertThat(actualSourceType).isEqualTo(expected);
     }
 }

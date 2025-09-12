@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.impl;
+package androidx.xr.scenecore.spatial.core;
 
 import androidx.xr.runtime.math.Pose;
 import androidx.xr.runtime.math.Vector3;
@@ -23,6 +23,7 @@ import androidx.xr.scenecore.internal.PerceptionSpaceActivityPose;
 import org.jspecify.annotations.NonNull;
 
 /** A ActivityPose representing the origin of the OpenXR reference space. */
+// TODO: b/439932057 - Rename ActivityPose to ScenePose.
 final class PerceptionSpaceActivityPoseImpl extends BaseActivityPose
         implements PerceptionSpaceActivityPose {
 
@@ -34,7 +35,7 @@ final class PerceptionSpaceActivityPoseImpl extends BaseActivityPose
     }
 
     @Override
-    public Pose getPoseInActivitySpace() {
+    public @NonNull Pose getPoseInActivitySpace() {
         return mOpenXrActivityPoseHelper.getPoseInActivitySpace(new Pose());
     }
 
@@ -44,6 +45,7 @@ final class PerceptionSpaceActivityPoseImpl extends BaseActivityPose
     }
 
     @Override
+    // TODO: b/378680989 - Remove getPoseInActivitySpace from Impl.
     public @NonNull Vector3 getActivitySpaceScale() {
         // This ActivityPose is assumed to always have a scale of 1.0f in the OpenXR reference
         // space.

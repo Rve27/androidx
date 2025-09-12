@@ -14,17 +14,25 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.impl;
+package androidx.xr.scenecore.spatial.rendering;
 
 import static com.google.common.truth.Truth.assertThat;
 
-import android.app.Activity;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import androidx.concurrent.futures.ResolvableFuture;
 import androidx.xr.scenecore.impl.extensions.XrExtensionsProvider;
 import androidx.xr.scenecore.impl.impress.FakeImpressApiImpl;
+import androidx.xr.scenecore.impl.impress.ImpressApi;
+import androidx.xr.scenecore.impl.impress.ImpressNode;
+import androidx.xr.scenecore.impl.impress.Material;
 import androidx.xr.scenecore.impl.impress.WaterMaterial;
 import androidx.xr.scenecore.internal.GltfEntity;
+import androidx.xr.scenecore.internal.GltfFeature;
 import androidx.xr.scenecore.internal.MaterialResource;
 import androidx.xr.scenecore.testing.FakeScheduledExecutorService;
 
@@ -33,78 +41,75 @@ import com.android.extensions.xr.XrExtensions;
 import com.android.extensions.xr.node.Node;
 
 import com.google.androidxr.splitengine.SplitEngineSubspaceManager;
+import com.google.androidxr.splitengine.SubspaceNode;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import org.jspecify.annotations.Nullable;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
-import org.robolectric.android.controller.ActivityController;
 
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 @RunWith(RobolectricTestRunner.class)
-public class GltfEntityImplTest {
+public class GltfFeatureImplTest {
     private static final int OPEN_XR_REFERENCE_SPACE_TYPE = 1;
+
     private final XrExtensions mXrExtensions = XrExtensionsProvider.getXrExtensions();
-    private final EntityManager mEntityManager = new EntityManager();
     private final FakeScheduledExecutorService mExecutor = new FakeScheduledExecutorService();
-    private ActivitySpaceImpl mActivitySpace;
+    private final ImpressApi mMockImpressApi = mock(ImpressApi.class);
     private final FakeImpressApiImpl mFakeImpressApi = new FakeImpressApiImpl();
     private final SplitEngineSubspaceManager mSplitEngineSubspaceManager =
             Mockito.mock(SplitEngineSubspaceManager.class);
-    private GltfEntityImpl mGltfEntity;
+    private ImpressNode mModelImpressNode;
+
+    private static final int SUBSPACE_ID = 5;
+    private final Node mSubspaceNode = Objects.requireNonNull(mXrExtensions).createNode();
+    private final SubspaceNode mExpectedSubspace = new SubspaceNode(SUBSPACE_ID, mSubspaceNode);
+
+    private GltfFeature mGltfFeature;
 
     @Before
     public void setUp() throws ExecutionException, InterruptedException {
-        ActivityController<Activity> activityController = Robolectric.buildActivity(Activity.class);
-        Activity activity = activityController.create().start().get();
+        when(mSplitEngineSubspaceManager.createSubspace(anyString(), anyInt()))
+                .thenReturn(mExpectedSubspace);
 
         assertThat(mXrExtensions).isNotNull();
-
         ShadowXrExtensions.extract(mXrExtensions)
                 .setOpenXrWorldSpaceType(OPEN_XR_REFERENCE_SPACE_TYPE);
-
-        Node taskNode = mXrExtensions.createNode();
-        mActivitySpace =
-                new ActivitySpaceImpl(
-                        taskNode,
-                        activity,
-                        mXrExtensions,
-                        mEntityManager,
-                        () -> mXrExtensions.getSpatialState(activity),
-                        /* unscaledGravityAlignedActivitySpace= */ false,
-                        mExecutor);
-
-        mGltfEntity = createGltfEntity(activity);
+        mGltfFeature = createGltfFeature();
     }
 
-    private GltfEntityImpl createGltfEntity(Activity activity)
-            throws ExecutionException, InterruptedException {
+    @After
+    public void tearDown() {
+        mGltfFeature.dispose();
+    }
+
+    private GltfFeature createGltfFeature() throws ExecutionException, InterruptedException {
         long modelToken = -1;
         ListenableFuture<Long> modelTokenFuture =
                 mFakeImpressApi.loadGltfAsset("FakeGltfAsset.glb");
         modelToken = modelTokenFuture.get();
         GltfModelResourceImpl modelResource = new GltfModelResourceImpl(modelToken);
-        return new GltfEntityImpl(
-                activity,
-                modelResource,
-                mActivitySpace,
-                mFakeImpressApi,
-                mSplitEngineSubspaceManager,
-                mXrExtensions,
-                mEntityManager,
-                mExecutor);
+        mModelImpressNode =
+                mFakeImpressApi.instanceGltfModel(modelResource.getExtensionModelToken());
+        when(mMockImpressApi.createImpressNode()).thenReturn(mFakeImpressApi.createImpressNode());
+        when(mMockImpressApi.instanceGltfModel(modelResource.getExtensionModelToken()))
+                .thenReturn(mModelImpressNode);
+
+        return new GltfFeatureImpl(
+                modelResource, mMockImpressApi, mSplitEngineSubspaceManager, mXrExtensions);
     }
 
     @Nullable
     private MaterialResource createWaterMaterial(boolean isAlphaMapVersion)
             throws ExecutionException, InterruptedException {
         ResolvableFuture<MaterialResource> materialResourceFuture = ResolvableFuture.create();
-        ListenableFuture<androidx.xr.scenecore.impl.impress.WaterMaterial> materialFuture =
+        ListenableFuture<WaterMaterial> materialFuture =
                 mFakeImpressApi.createWaterMaterial(isAlphaMapVersion);
 
         WaterMaterial material = materialFuture.get();
@@ -115,32 +120,49 @@ public class GltfEntityImplTest {
 
     @Test
     public void startAnimation_startsAnimation() {
-        mGltfEntity.startAnimation(/* looping= */ true, "test_animation");
+        String animationName = "test_animation";
+        when(mMockImpressApi.animateGltfModel(mModelImpressNode, animationName, true))
+                .thenReturn(
+                        mFakeImpressApi.animateGltfModel(mModelImpressNode, animationName, true));
+        mGltfFeature.startAnimation(/* looping= */ true, animationName, mExecutor);
 
-        assertThat(mGltfEntity.getAnimationState()).isEqualTo(GltfEntity.AnimationState.PLAYING);
+        assertThat(mGltfFeature.getAnimationState()).isEqualTo(GltfEntity.AnimationState.PLAYING);
+        verify(mMockImpressApi).animateGltfModel(mModelImpressNode, animationName, true);
     }
 
     @Test
     public void stopAnimation_stopsAnimation() {
-        mGltfEntity.startAnimation(/* looping= */ true, "test_animation");
+        String animationName = "test_animation";
+        when(mMockImpressApi.animateGltfModel(mModelImpressNode, animationName, true))
+                .thenReturn(
+                        mFakeImpressApi.animateGltfModel(mModelImpressNode, animationName, true));
+        mGltfFeature.startAnimation(/* looping= */ true, animationName, mExecutor);
 
-        assertThat(mGltfEntity.getAnimationState()).isEqualTo(GltfEntity.AnimationState.PLAYING);
+        assertThat(mGltfFeature.getAnimationState()).isEqualTo(GltfEntity.AnimationState.PLAYING);
 
-        mGltfEntity.stopAnimation();
+        mGltfFeature.stopAnimation();
+        mFakeImpressApi.stopGltfModelAnimation(mModelImpressNode);
 
-        assertThat(mGltfEntity.getAnimationState()).isEqualTo(GltfEntity.AnimationState.STOPPED);
+        assertThat(mGltfFeature.getAnimationState()).isEqualTo(GltfEntity.AnimationState.STOPPED);
+        verify(mMockImpressApi).stopGltfModelAnimation(mModelImpressNode);
     }
 
     @Test
     public void setMaterialOverrideGltfEntity_materialOverridesNode() throws Exception {
         MaterialResource material = createWaterMaterial(/* isAlphaMapVersion= */ false);
-        String nodeName = "fake_node_name";
-        int primitiveIndex = 0;
+        long nativeHandle = ((Material) material).getNativeHandle();
 
         assertThat(material).isNotNull();
 
-        mGltfEntity.setMaterialOverride(material, nodeName, primitiveIndex);
+        String nodeName = "fake_node_name";
+        int primitiveIndex = 0;
 
+        mGltfFeature.setMaterialOverride(material, nodeName, primitiveIndex);
+        mFakeImpressApi.setMaterialOverride(
+                mModelImpressNode, nativeHandle, nodeName, primitiveIndex);
+
+        verify(mMockImpressApi)
+                .setMaterialOverride(mModelImpressNode, nativeHandle, nodeName, primitiveIndex);
         assertThat(
                         mFakeImpressApi.getImpressNodes().keySet().stream()
                                 .filter(
@@ -159,8 +181,8 @@ public class GltfEntityImplTest {
         String nodeName = "fake_node_name";
         int primitiveIndex = 0;
 
-        mGltfEntity.setMaterialOverride(material, nodeName, primitiveIndex);
-        mGltfEntity.clearMaterialOverride(nodeName, primitiveIndex);
+        mGltfFeature.setMaterialOverride(material, nodeName, primitiveIndex);
+        mGltfFeature.clearMaterialOverride(nodeName, primitiveIndex);
 
         assertThat(
                         mFakeImpressApi.getImpressNodes().keySet().stream()

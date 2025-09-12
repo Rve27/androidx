@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.impl;
+package androidx.xr.scenecore.spatial.core;
 
 import static com.google.common.truth.Truth.assertThat;
 import static com.google.common.util.concurrent.Futures.immediateFuture;
@@ -31,7 +31,6 @@ import android.app.Activity;
 
 import androidx.xr.runtime.math.Pose;
 import androidx.xr.scenecore.impl.extensions.XrExtensionsProvider;
-import androidx.xr.scenecore.impl.impress.FakeImpressApiImpl;
 import androidx.xr.scenecore.impl.perception.PerceptionLibrary;
 import androidx.xr.scenecore.impl.perception.Session;
 import androidx.xr.scenecore.internal.Entity;
@@ -45,14 +44,10 @@ import com.android.extensions.xr.node.ShadowInputEvent;
 import com.android.extensions.xr.node.ShadowNode;
 import com.android.extensions.xr.node.Vec3;
 
-import com.google.androidxr.splitengine.SplitEngineSubspaceManager;
-import com.google.ar.imp.view.splitengine.ImpSplitEngineRenderer;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.android.controller.ActivityController;
@@ -67,27 +62,19 @@ public class InteractableComponentImplTest {
     private final FakeScheduledExecutorService mFakeExecutor = new FakeScheduledExecutorService();
     private final PerceptionLibrary mPerceptionLibrary = mock(PerceptionLibrary.class);
     private final XrExtensions mXrExtensions = XrExtensionsProvider.getXrExtensions();
-    private final FakeImpressApiImpl mFakeImpressApi = new FakeImpressApiImpl();
-    private JxrPlatformAdapterAxr mFakeRuntime;
-    SplitEngineSubspaceManager mSplitEngineSubspaceManager =
-            Mockito.mock(SplitEngineSubspaceManager.class);
-    ImpSplitEngineRenderer mSplitEngineRenderer = Mockito.mock(ImpSplitEngineRenderer.class);
+    private SpatialSceneRuntime mFakeRuntime;
 
     @Before
     public void setUp() {
         when(mPerceptionLibrary.initSession(eq(mActivity), anyInt(), eq(mFakeExecutor)))
                 .thenReturn(immediateFuture(mock(Session.class)));
         mFakeRuntime =
-                JxrPlatformAdapterAxr.create(
+                SpatialSceneRuntime.create(
                         mActivity,
                         mFakeExecutor,
                         mXrExtensions,
-                        mFakeImpressApi,
                         new EntityManager(),
                         mPerceptionLibrary,
-                        mSplitEngineSubspaceManager,
-                        mSplitEngineRenderer,
-                        /* useSplitEngine= */ false,
                         /* unscaledGravityAlignedActivitySpace= */ false);
     }
 
@@ -112,7 +99,9 @@ public class InteractableComponentImplTest {
         InputEventListener inputEventListener = mock(InputEventListener.class);
         InteractableComponent interactableComponent =
                 new InteractableComponentImpl(executor, inputEventListener);
+
         assertThat(entity.addComponent(interactableComponent)).isTrue();
+
         ShadowNode node = ShadowNode.extract(((AndroidXrEntity) entity).getNode());
 
         assertThat(node.getInputListener()).isNotNull();
@@ -135,7 +124,9 @@ public class InteractableComponentImplTest {
         InputEventListener inputEventListener = mock(InputEventListener.class);
         InteractableComponent interactableComponent =
                 new InteractableComponentImpl(executor, inputEventListener);
+
         assertThat(entity.addComponent(interactableComponent)).isTrue();
+
         ShadowNode node = ShadowNode.extract(((AndroidXrEntity) entity).getNode());
 
         assertThat(node.getInputListener()).isNotNull();
@@ -151,6 +142,7 @@ public class InteractableComponentImplTest {
         verify(inputEventListener).onInputEvent(any());
 
         entity.removeComponent(interactableComponent);
+
         assertThat(node.getInputListener()).isNull();
         assertThat(node.getInputExecutor()).isNull();
     }
@@ -163,6 +155,7 @@ public class InteractableComponentImplTest {
         InputEventListener inputEventListener = mock(InputEventListener.class);
         InteractableComponent interactableComponent =
                 new InteractableComponentImpl(executor, inputEventListener);
+
         assertThat(entity.addComponent(interactableComponent)).isTrue();
         assertThat(entity2.addComponent(interactableComponent)).isFalse();
     }
@@ -174,8 +167,11 @@ public class InteractableComponentImplTest {
         InputEventListener inputEventListener = mock(InputEventListener.class);
         InteractableComponent interactableComponent =
                 new InteractableComponentImpl(executor, inputEventListener);
+
         assertThat(entity.addComponent(interactableComponent)).isTrue();
+
         entity.removeComponent(interactableComponent);
+
         assertThat(entity.addComponent(interactableComponent)).isTrue();
     }
 
@@ -186,6 +182,7 @@ public class InteractableComponentImplTest {
         InputEventListener inputEventListener = mock(InputEventListener.class);
         InteractableComponent interactableComponent =
                 new InteractableComponentImpl(executor, inputEventListener);
+
         assertThat(interactableComponent.onAttach(gltfEntity)).isTrue();
         verify(gltfEntity).setColliderEnabled(true);
     }

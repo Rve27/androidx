@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.impl;
+package androidx.xr.scenecore.spatial.core;
 
 import android.app.Activity;
-import android.util.Log;
 
 import androidx.concurrent.futures.ResolvableFuture;
 import androidx.xr.runtime.math.BoundingBox;
@@ -62,9 +61,6 @@ import java.util.function.Supplier;
  */
 @SuppressWarnings({"UnnecessarilyFullyQualified"})
 final class ActivitySpaceImpl extends SystemSpaceEntityImpl implements ActivitySpace {
-
-    private static final String TAG = "ActivitySpaceImpl";
-
     private final Set<OnBoundsChangedListener> mBoundsListeners =
             Collections.synchronizedSet(new HashSet<>());
 
@@ -94,10 +90,6 @@ final class ActivitySpaceImpl extends SystemSpaceEntityImpl implements ActivityS
         mEntityManager = entityManager;
         mSpatialStateProvider = spatialStateProvider;
         mUnscaledGravityAlignedActivitySpace = unscaledGravityAlignedActivitySpace;
-        Log.i(
-                TAG,
-                "ActivitySpaceImpl: mUnscaledGravityAlignedActivitySpace: "
-                        + mUnscaledGravityAlignedActivitySpace);
     }
 
     @Override
@@ -143,7 +135,7 @@ final class ActivitySpaceImpl extends SystemSpaceEntityImpl implements ActivityS
 
     @Override
     public void setParent(Entity parent) {
-        Log.e(TAG, "Cannot set parent for the ActivitySpace.");
+        throw new UnsupportedOperationException("Cannot set 'parent' on an ActivitySpace.");
     }
 
     @Override
@@ -174,7 +166,6 @@ final class ActivitySpaceImpl extends SystemSpaceEntityImpl implements ActivityS
     @SuppressWarnings("ObjectToString")
     @Override
     public void dispose() {
-        Log.i(TAG, "Disposing " + this);
         super.dispose();
     }
 
@@ -216,7 +207,7 @@ final class ActivitySpaceImpl extends SystemSpaceEntityImpl implements ActivityS
                             Math.abs(transformScale.getY()),
                             Math.abs(transformScale.getZ()));
             // Get the unscaled rotation of the activity space.
-            activitySpaceRotation = Matrix4Ext.getUnscaled(newTransform).getRotation();
+            activitySpaceRotation = newTransform.unscaled().getRotation();
             Quaternion gravityAlignedRotation = activitySpaceRotation.getInverse();
             try (NodeTransaction transaction = mExtensions.createNodeTransaction()) {
                 transaction
@@ -236,8 +227,7 @@ final class ActivitySpaceImpl extends SystemSpaceEntityImpl implements ActivityS
         }
 
         // The translation is zero - since the activity space origin has been already translated by
-        // system.
-        // SceneCore is relaying the same rotation and scale that activity space would have
+        // system. SceneCore is relaying the same rotation and scale that activity space would have
         // inherited if it was in HOME_SPACE mode for continuity in FULL_SPACE_MANAGED mode.
         if (mSpatialModeChangeListener != null) {
             mSpatialModeChangeListener.onSpatialModeChanged(
@@ -248,8 +238,7 @@ final class ActivitySpaceImpl extends SystemSpaceEntityImpl implements ActivityS
     @Override
     public @NonNull Dimensions getBounds() {
         // The bounds are kept in sync with the Extensions in the onBoundsChangedEvent callback. We
-        // only
-        // invoke getSpatialState if they've never been set.
+        // only invoke getSpatialState if they've never been set.
         return mBounds.updateAndGet(
                 oldBounds -> {
                     if (oldBounds == null) {
@@ -314,7 +303,7 @@ final class ActivitySpaceImpl extends SystemSpaceEntityImpl implements ActivityS
 
     @Override
     @SuppressWarnings("RestrictTo")
-    public ListenableFuture<HitTestResult> hitTest(
+    public @NonNull ListenableFuture<HitTestResult> hitTest(
             @NonNull Vector3 origin,
             @NonNull Vector3 direction,
             @HitTestFilterValue int hitTestFilter) {
@@ -333,7 +322,7 @@ final class ActivitySpaceImpl extends SystemSpaceEntityImpl implements ActivityS
 
     @Override
     @SuppressWarnings("RestrictTo")
-    public ListenableFuture<HitTestResult> hitTestRelativeToActivityPose(
+    public @NonNull ListenableFuture<HitTestResult> hitTestRelativeToActivityPose(
             @NonNull Vector3 origin,
             @NonNull Vector3 direction,
             @HitTestFilterValue int hitTestFilter,
@@ -395,7 +384,7 @@ final class ActivitySpaceImpl extends SystemSpaceEntityImpl implements ActivityS
                                         result.getSurfaceType(),
                                         result.getDistance()));
                     } catch (InterruptedException | ExecutionException e) {
-                        Log.e(TAG, "Failed to get hit test result: " + e.getMessage());
+                        // Failed to get hit test result
                         updatedHitTestFuture.setException(e);
                     }
                 },

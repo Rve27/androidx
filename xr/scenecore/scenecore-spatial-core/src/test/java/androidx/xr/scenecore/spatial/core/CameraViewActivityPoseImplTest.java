@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.impl;
+package androidx.xr.scenecore.spatial.core;
 
 import static androidx.xr.runtime.testing.math.MathAssertions.assertPose;
 import static androidx.xr.runtime.testing.math.MathAssertions.assertVector3;
@@ -52,6 +52,8 @@ import org.mockito.stubbing.Answer;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 
+// Suppress warnings: windowManager's getDefaultDisplay and getRealMetrics.
+@SuppressWarnings("deprecation")
 @RunWith(RobolectricTestRunner.class)
 public final class CameraViewActivityPoseImplTest {
 
@@ -83,12 +85,14 @@ public final class CameraViewActivityPoseImplTest {
         CameraViewActivityPoseImpl cameraActivityPoseLeft =
                 createCameraViewActivityPose(
                         CameraViewActivityPose.CameraType.CAMERA_TYPE_LEFT_EYE);
+
         assertThat(cameraActivityPoseLeft.getCameraType())
                 .isEqualTo(CameraViewActivityPose.CameraType.CAMERA_TYPE_LEFT_EYE);
 
         CameraViewActivityPoseImpl cameraActivityPoseRight =
                 createCameraViewActivityPose(
                         CameraViewActivityPose.CameraType.CAMERA_TYPE_RIGHT_EYE);
+
         assertThat(cameraActivityPoseRight.getCameraType())
                 .isEqualTo(CameraViewActivityPose.CameraType.CAMERA_TYPE_RIGHT_EYE);
     }
@@ -113,6 +117,7 @@ public final class CameraViewActivityPoseImplTest {
         CameraViewActivityPoseImpl cameraActivityPoseLeft =
                 createCameraViewActivityPose(
                         CameraViewActivityPose.CameraType.CAMERA_TYPE_LEFT_EYE);
+
         assertThat(cameraActivityPoseLeft.getFov().getAngleLeft())
                 .isEqualTo(fovLeft.getAngleLeft());
         assertThat(cameraActivityPoseLeft.getFov().getAngleRight())
@@ -124,6 +129,7 @@ public final class CameraViewActivityPoseImplTest {
         CameraViewActivityPoseImpl cameraActivityPoseRight =
                 createCameraViewActivityPose(
                         CameraViewActivityPose.CameraType.CAMERA_TYPE_RIGHT_EYE);
+
         assertThat(cameraActivityPoseRight.getFov().getAngleLeft())
                 .isEqualTo(fovRight.getAngleLeft());
         assertThat(cameraActivityPoseRight.getFov().getAngleRight())
@@ -173,6 +179,7 @@ public final class CameraViewActivityPoseImplTest {
         CameraViewActivityPoseImpl cameraActivityPoseLeft =
                 createCameraViewActivityPose(
                         CameraViewActivityPose.CameraType.CAMERA_TYPE_LEFT_EYE);
+
         assertVector3(
                 cameraActivityPoseLeft.getActivitySpaceScale(),
                 new Vector3(1f, 1f, 1f).div(activitySpaceScale));
@@ -180,6 +187,7 @@ public final class CameraViewActivityPoseImplTest {
         CameraViewActivityPoseImpl cameraActivityPoseRight =
                 createCameraViewActivityPose(
                         CameraViewActivityPose.CameraType.CAMERA_TYPE_RIGHT_EYE);
+
         assertVector3(
                 cameraActivityPoseRight.getActivitySpaceScale(),
                 new Vector3(1f, 1f, 1f).div(activitySpaceScale));
