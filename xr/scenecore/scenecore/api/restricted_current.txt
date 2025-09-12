@@ -2893,12 +2893,12 @@ package androidx.xr.scenecore.internal {
     field public static final float NO_PASSTHROUGH_OPACITY_PREFERENCE = (-1.0f/0.0f);
   }
 
-  public static final class SpatialEnvironment.Companion {
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static final class SpatialEnvironment.Companion {
     property public static float NO_PASSTHROUGH_OPACITY_PREFERENCE;
     field public static final float NO_PASSTHROUGH_OPACITY_PREFERENCE = (-1.0f/0.0f);
   }
 
-  public static final class SpatialEnvironment.SpatialEnvironmentPreference {
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static final class SpatialEnvironment.SpatialEnvironmentPreference {
     ctor public SpatialEnvironment.SpatialEnvironmentPreference(androidx.xr.scenecore.internal.ExrImageResource? skybox, androidx.xr.scenecore.internal.GltfModelResource? geometry);
     ctor public SpatialEnvironment.SpatialEnvironmentPreference(androidx.xr.scenecore.internal.ExrImageResource? skybox, androidx.xr.scenecore.internal.GltfModelResource? geometry, optional androidx.xr.scenecore.internal.MaterialResource? geometryMaterial);
     ctor public SpatialEnvironment.SpatialEnvironmentPreference(androidx.xr.scenecore.internal.ExrImageResource? skybox, androidx.xr.scenecore.internal.GltfModelResource? geometry, optional androidx.xr.scenecore.internal.MaterialResource? geometryMaterial, optional String? geometryNodeName);
@@ -2913,6 +2913,16 @@ package androidx.xr.scenecore.internal {
     property public androidx.xr.scenecore.internal.MaterialResource? geometryMaterial;
     property public String? geometryNodeName;
     property public androidx.xr.scenecore.internal.ExrImageResource? skybox;
+  }
+
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface SpatialEnvironmentExt {
+    method public void onRenderingFeatureReady(androidx.xr.scenecore.internal.SpatialEnvironmentFeature feature);
+  }
+
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface SpatialEnvironmentFeature {
+    method @InaccessibleFromKotlin public androidx.xr.scenecore.internal.SpatialEnvironment.SpatialEnvironmentPreference? getPreferredSpatialEnvironment();
+    method @InaccessibleFromKotlin public void setPreferredSpatialEnvironment(androidx.xr.scenecore.internal.SpatialEnvironment.SpatialEnvironmentPreference?);
+    property public abstract androidx.xr.scenecore.internal.SpatialEnvironment.SpatialEnvironmentPreference? preferredSpatialEnvironment;
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public fun interface SpatialModeChangeListener {

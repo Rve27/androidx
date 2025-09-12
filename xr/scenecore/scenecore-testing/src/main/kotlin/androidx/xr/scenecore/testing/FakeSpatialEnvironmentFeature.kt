@@ -16,19 +16,20 @@
 
 package androidx.xr.scenecore.testing
 
-import android.app.Activity
 import androidx.annotation.RestrictTo
-import androidx.xr.runtime.internal.Feature
-import androidx.xr.runtime.internal.JxrRuntime
-import androidx.xr.runtime.internal.RenderingRuntimeFactory
-import androidx.xr.scenecore.internal.RenderingRuntime
-import androidx.xr.scenecore.internal.SceneRuntime
+import androidx.xr.runtime.NodeHolder
+import androidx.xr.scenecore.internal.SpatialEnvironment.SpatialEnvironmentPreference
+import androidx.xr.scenecore.internal.SpatialEnvironmentFeature
 
-/** Factory for creating test-only instances of [RenderingRuntime]. */
+/** Test-only implementation of [SpatialEnvironmentFeature]. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public class FakeRenderingRuntimeFactory() : RenderingRuntimeFactory {
-    override val requirements: Set<Feature> = emptySet()
-
-    override fun create(runtimes: List<JxrRuntime>, activity: Activity): RenderingRuntime =
-        FakeRenderingRuntime(runtimes.filterIsInstance<SceneRuntime>().first())
+public class FakeSpatialEnvironmentFeature :
+    FakeBaseRenderingFeature(NodeHolder<FakeNode>(object : FakeNode {}, FakeNode::class.java)),
+    SpatialEnvironmentFeature {
+    private var _preferredSpatialEnvironment: SpatialEnvironmentPreference? = null
+    override var preferredSpatialEnvironment: SpatialEnvironmentPreference?
+        get() = _preferredSpatialEnvironment
+        set(value) {
+            _preferredSpatialEnvironment = value
+        }
 }

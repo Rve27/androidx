@@ -579,7 +579,7 @@ package androidx.xr.scenecore.testing {
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeRenderingRuntime implements androidx.xr.scenecore.internal.RenderingRuntime {
-    ctor public FakeRenderingRuntime(androidx.xr.scenecore.internal.RenderingEntityFactory entityFactory);
+    ctor public FakeRenderingRuntime(androidx.xr.scenecore.internal.SceneRuntime sceneRuntime, optional androidx.xr.scenecore.internal.RenderingEntityFactory entityFactory);
     method public androidx.xr.scenecore.internal.TextureResource? borrowReflectionTexture();
     method public androidx.xr.scenecore.internal.GltfEntity createGltfEntity(androidx.xr.runtime.math.Pose pose, androidx.xr.scenecore.internal.GltfModelResource loadedGltf, androidx.xr.scenecore.internal.Entity parentEntity);
     method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.internal.MaterialResource>? createKhronosPbrMaterial(androidx.xr.scenecore.internal.KhronosPbrMaterialSpec spec);
@@ -969,7 +969,7 @@ package androidx.xr.scenecore.testing {
     property @androidx.xr.scenecore.internal.SpatializerConstants.SourceType public int sourceType;
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeSpatialEnvironment implements androidx.xr.scenecore.internal.SpatialEnvironment {
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeSpatialEnvironment implements androidx.xr.scenecore.internal.SpatialEnvironment androidx.xr.scenecore.internal.SpatialEnvironmentExt {
     ctor public FakeSpatialEnvironment();
     method public void addOnPassthroughOpacityChangedListener(java.util.concurrent.Executor executor, java.util.function.Consumer<java.lang.Float> listener);
     method public void addOnSpatialEnvironmentChangedListener(java.util.concurrent.Executor executor, java.util.function.Consumer<java.lang.Boolean> listener);
@@ -979,6 +979,7 @@ package androidx.xr.scenecore.testing {
     method @InaccessibleFromKotlin public androidx.xr.scenecore.internal.SpatialEnvironment.SpatialEnvironmentPreference? getPreferredSpatialEnvironment();
     method @InaccessibleFromKotlin public java.util.Map<java.util.concurrent.Executor,java.util.function.Consumer<java.lang.Boolean>> getSpatialEnvironmentChangedListenerMap();
     method @InaccessibleFromKotlin public boolean isPreferredSpatialEnvironmentActive();
+    method public void onRenderingFeatureReady(androidx.xr.scenecore.internal.SpatialEnvironmentFeature feature);
     method public void removeOnPassthroughOpacityChangedListener(java.util.function.Consumer<java.lang.Float> listener);
     method public void removeOnSpatialEnvironmentChangedListener(java.util.function.Consumer<java.lang.Boolean> listener);
     method @InaccessibleFromKotlin public void setPreferredPassthroughOpacity(float);
@@ -989,6 +990,13 @@ package androidx.xr.scenecore.testing {
     property public float preferredPassthroughOpacity;
     property public androidx.xr.scenecore.internal.SpatialEnvironment.SpatialEnvironmentPreference? preferredSpatialEnvironment;
     property public java.util.Map<java.util.concurrent.Executor,java.util.function.Consumer<java.lang.Boolean>> spatialEnvironmentChangedListenerMap;
+  }
+
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeSpatialEnvironmentFeature extends androidx.xr.scenecore.testing.FakeBaseRenderingFeature implements androidx.xr.scenecore.internal.SpatialEnvironmentFeature {
+    ctor public FakeSpatialEnvironmentFeature();
+    method @InaccessibleFromKotlin public androidx.xr.scenecore.internal.SpatialEnvironment.SpatialEnvironmentPreference? getPreferredSpatialEnvironment();
+    method @InaccessibleFromKotlin public void setPreferredSpatialEnvironment(androidx.xr.scenecore.internal.SpatialEnvironment.SpatialEnvironmentPreference?);
+    property public androidx.xr.scenecore.internal.SpatialEnvironment.SpatialEnvironmentPreference? preferredSpatialEnvironment;
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeSpatialModeChangeListener implements androidx.xr.scenecore.internal.SpatialModeChangeListener {
