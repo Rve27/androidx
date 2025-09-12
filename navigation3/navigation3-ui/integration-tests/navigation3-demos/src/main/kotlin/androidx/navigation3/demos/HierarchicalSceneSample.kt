@@ -83,7 +83,7 @@ fun HierarchicalSceneSample() {
      * [Scene].
      */
     val sharedEntryInSceneNavEntryDecorator =
-        navEntryDecorator<Any> { entry ->
+        navEntryDecorator<ColorEntry> { entry ->
             with(LocalNavSharedTransitionScope.current) {
                 Box(
                     Modifier.sharedElement(

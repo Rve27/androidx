@@ -158,7 +158,7 @@ public fun <T : Any> NavDisplay(
             repeat(it) { backStack.removeAt(backStack.lastIndex) }
         }
     },
-    entryDecorators: List<NavEntryDecorator<*>> =
+    entryDecorators: List<NavEntryDecorator<T>> =
         listOf(rememberSceneSetupNavEntryDecorator(), rememberSavedStateNavEntryDecorator()),
     sceneStrategy: SceneStrategy<T> = SinglePaneSceneStrategy(),
     sizeTransform: SizeTransform? = null,

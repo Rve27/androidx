@@ -43,8 +43,8 @@ class ViewModelStoreNavEntryDecoratorTest {
 
     @Test
     fun testViewModelProvided() {
-        lateinit var savedStateWrapper: NavEntryDecorator<Any>
-        lateinit var viewModelWrapper: NavEntryDecorator<Any>
+        lateinit var savedStateWrapper: NavEntryDecorator<String>
+        lateinit var viewModelWrapper: NavEntryDecorator<String>
         lateinit var viewModel1: MyViewModel
         lateinit var viewModel2: MyViewModel
         val entry1Arg = "entry1 Arg"
@@ -79,7 +79,7 @@ class ViewModelStoreNavEntryDecoratorTest {
 
     @Test
     fun testViewModelNoSavedStateNavEntryDecorator() {
-        lateinit var viewModelWrapper: NavEntryDecorator<Any>
+        lateinit var viewModelWrapper: NavEntryDecorator<String>
         lateinit var viewModel1: MyViewModel
         val entry1Arg = "entry1 Arg"
         val entry1 =
