@@ -2085,7 +2085,11 @@ class NavigationEventDispatcherTest {
     @Test
     fun dispatch_onBackCompletedToUnimplementedHandler_throwsUnsupportedOperationException() {
         class UnimplementedHandler :
-            NavigationEventHandler<TestInfo>(isBackEnabled = true, isForwardEnabled = false)
+            NavigationEventHandler<None>(
+                initialInfo = None,
+                isBackEnabled = true,
+                isForwardEnabled = false,
+            )
 
         val dispatcher = NavigationEventDispatcher()
         dispatcher.addHandler(UnimplementedHandler())
@@ -2099,7 +2103,11 @@ class NavigationEventDispatcherTest {
     @Test
     fun dispatch_onForwardCompletedToUnimplementedHandler_throwsUnsupportedOperationException() {
         class UnimplementedHandler :
-            NavigationEventHandler<TestInfo>(isBackEnabled = false, isForwardEnabled = true)
+            NavigationEventHandler<None>(
+                initialInfo = None,
+                isBackEnabled = false,
+                isForwardEnabled = true,
+            )
 
         val dispatcher = NavigationEventDispatcher()
         dispatcher.addHandler(UnimplementedHandler())

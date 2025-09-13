@@ -80,7 +80,7 @@ public fun <T : NavigationEventInfo> NavigationEventHandler(
             }
             .navigationEventDispatcher
 
-    val handler = remember { ComposeNavigationEventHandler<T>() }
+    val handler = remember { ComposeNavigationEventHandler<T>(currentInfo) }
 
     SideEffect {
         handler.isForwardEnabled = isForwardEnabled
@@ -170,8 +170,12 @@ public fun <T : NavigationEventInfo> NavigationForwardHandler(
 }
 
 /** A simple [NavigationEventHandler] that delegates its methods to lambda functions. */
-private class ComposeNavigationEventHandler<T : NavigationEventInfo> :
-    NavigationEventHandler<T>(isBackEnabled = false, isForwardEnabled = false) {
+private class ComposeNavigationEventHandler<T : NavigationEventInfo>(initialInfo: T) :
+    NavigationEventHandler<T>(
+        initialInfo = initialInfo,
+        isBackEnabled = false,
+        isForwardEnabled = false,
+    ) {
 
     var currentOnForwardCancelled: () -> Unit = {}
     var currentOnForwardCompleted: () -> Unit = {}
