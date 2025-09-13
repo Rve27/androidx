@@ -21,7 +21,6 @@ import android.content.Intent
 import android.graphics.Color
 import android.view.View
 import android.view.View.MeasureSpec
-import androidx.annotation.RestrictTo
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.shape.CornerSize
@@ -511,9 +510,11 @@ public fun SpatialPanel(
  * removed from the composition, it will again be disable (hidden).
  *
  * ### How It Works
- * [SpatialMainPanel] operates on a single, shared CoreMainPanelEntity instance. This ensures that
- * there is only one source of truth for the main panel's state, which is crucial for predictable
- * interactions with other framework components like [androidx.xr.compose.spatial.Orbiter].
+ * [SpatialMainPanel] is backed by a single shared instance that will move to the main content to
+ * its active usage. When the main content panel moves inside the composition, its state moves with
+ * it regardless of whether it is in a [MovableContent] block or not. Components that depend on the
+ * main panel's state (such as [androidx.xr.compose.spatial.Orbiter]), will always access a single
+ * deterministic instance of the panel.
  *
  * Note: It is crucial to ensure that only one [SpatialMainPanel] is active (composed) at any given
  * time. The underlying system is designed around a single main panel instance, and having multiple
@@ -526,42 +527,14 @@ public fun SpatialPanel(
  * height of zero, it will be automatically disabled to prevent crashes.
  *
  * ### Manifest Configuration
- * This panel requires the following specific configuration in the `AndroidManifest.xml` for proper
- * sizing and resizing behavior:
+ * This panel requires the following specific configuration in the `AndroidManifest.xml` on the
+ * *base* activity for proper sizing and resizing behavior. Without it, resizing the main panel will
+ * cause a crash.
+ *
  * ```xml
- * <activity
- * android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize>
- * <!--suppress AndroidElementNotAllowed -->
- * <layout android:defaultWidth="50dp" android:defaultHeight="50dp" android:minHeight="50dp"
- * android:minWidth="50dp"/>
+ * <activity android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize">
+ *   ...
  * </activity>
- * ```
- *
- * ### Example Usage
- *
- * ```
- * // In your Activity's onCreate:
- * setContent {
- *     // Your standard 2D UI goes here.
- *     // This content will be displayed on the SpatialMainPanel.
- *     My2dAppScaffold()
- *
- *     // Your 3D content goes in a Subspace.
- *     Subspace {
- *         SpatialColumn(
- *             modifier = SubspaceModifier.offset(z = -2.meters.toDp())
- *         ) {
- *             // This places the main 2D UI into the Spatial Scene.
- *             SpatialMainPanel(
- *                 modifier = SubspaceModifier
- *                 .width(800.dp)
- *                 .height(600.dp),
- *                 dragPolicy = MovePolicy(isEnabled = true),
- *                 resizePolicy = ResizePolicy(isEnabled = true)
- *             )
- *         }
- *     }
- * }
  * ```
  *
  * @param modifier The [SubspaceModifier] to be applied to this panel, controlling its layout, size,
@@ -574,10 +547,10 @@ public fun SpatialPanel(
  * @param resizePolicy An optional [ResizePolicy] configuration object that resizing behavior of
  *   this [SpatialPanel]. The draggable UI controls will be shown that allow the user to resize the
  *   element in 3D space. If null, there is no resize behavior applied to the element.
+ * @sample androidx.xr.compose.samples.SpatialMainPanelSample
  */
 @Composable
 @SubspaceComposable
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public fun SpatialMainPanel(
     modifier: SubspaceModifier = SubspaceModifier,
     shape: SpatialShape = SpatialPanelDefaults.shape,
