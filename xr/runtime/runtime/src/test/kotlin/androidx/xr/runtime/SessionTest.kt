@@ -31,7 +31,8 @@ import androidx.xr.runtime.internal.ApkCheckAvailabilityErrorException
 import androidx.xr.runtime.internal.ApkCheckAvailabilityInProgressException
 import androidx.xr.runtime.internal.ApkNotInstalledException
 import androidx.xr.runtime.internal.UnsupportedDeviceException
-import androidx.xr.scenecore.testing.FakeJxrPlatformAdapter
+import androidx.xr.scenecore.testing.FakeRenderingRuntime
+import androidx.xr.scenecore.testing.FakeSceneRuntime
 import com.google.common.truth.Truth.assertThat
 import kotlin.test.assertFailsWith
 import kotlin.time.Duration.Companion.hours
@@ -52,7 +53,7 @@ import org.robolectric.Robolectric
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.android.controller.ActivityController
 
-// TODO(b/440615454) - Use local Fakes instead of FakeJxrPlatformAdapter/FakePerceptionRuntime.
+// TODO(b/440615454) - Use local Fakes instead of FakeSceneRuntime/FakePerceptionRuntime.
 @RunWith(AndroidJUnit4::class)
 class SessionTest {
     private lateinit var underTest: Session
@@ -112,14 +113,13 @@ class SessionTest {
     }
 
     @Test
-    fun create_initializesPlatformAdapter() {
+    fun create_initializesRuntime() {
         activityController.create()
 
         underTest = createSession()
 
-        val platformAdapter = underTest.runtimes.filterIsInstance<FakeJxrPlatformAdapter>().first()
-        assertThat(platformAdapter).isNotNull()
-        assertThat(platformAdapter.state.name).isEqualTo("CREATED")
+        assertThat(getSceneRuntime()).isNotNull()
+        assertThat(getRenderingRuntime().getState().name).isEqualTo("CREATED")
     }
 
     @Test
@@ -288,8 +288,8 @@ class SessionTest {
 
         activityController.resume()
 
-        assertThat(getPlatformAdapter().state)
-            .isEqualTo(FakeJxrPlatformAdapter.State.STARTED) // Corresponds to resumed
+        assertThat(getRenderingRuntime().getState())
+            .isEqualTo(FakeRenderingRuntime.State.STARTED) // Corresponds to resumed
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -351,14 +351,14 @@ class SessionTest {
     }
 
     @Test
-    fun pause_setsPlatformAdapterToPaused() {
+    fun pause_setsRuntimeToPaused() {
         activityController.create().start().resume()
         underTest = createSession()
 
         activityController.pause()
 
-        val platformAdapter = getPlatformAdapter()
-        assertThat(platformAdapter.state).isEqualTo(FakeJxrPlatformAdapter.State.PAUSED)
+        val renderingRuntime = getRenderingRuntime()
+        assertThat(renderingRuntime.getState()).isEqualTo(FakeRenderingRuntime.State.PAUSED)
     }
 
     @Test
@@ -384,14 +384,14 @@ class SessionTest {
     }
 
     @Test
-    fun destroy_setsPlatformAdapterToDestroyed() {
+    fun destroy_setsRuntimeToDestroyed() {
         activityController.create().start().resume()
         underTest = createSession()
 
         activityController.destroy()
 
-        val platformAdapter = getPlatformAdapter()
-        assertThat(platformAdapter.state).isEqualTo(FakeJxrPlatformAdapter.State.DESTROYED)
+        val renderingRuntime = getRenderingRuntime()
+        assertThat(renderingRuntime.getState()).isEqualTo(FakeRenderingRuntime.State.DESTROYED)
     }
 
     fun destroy_withMultiple_doesNotSetFinalActivity() {
@@ -474,8 +474,12 @@ class SessionTest {
         return underTest.runtimes.filterIsInstance<FakePerceptionRuntime>().first().lifecycleManager
     }
 
-    private fun getPlatformAdapter(): FakeJxrPlatformAdapter {
-        return underTest.runtimes.filterIsInstance<FakeJxrPlatformAdapter>().first()
+    private fun getSceneRuntime(): FakeSceneRuntime {
+        return underTest.runtimes.filterIsInstance<FakeSceneRuntime>().first()
+    }
+
+    private fun getRenderingRuntime(): FakeRenderingRuntime {
+        return underTest.runtimes.filterIsInstance<FakeRenderingRuntime>().first()
     }
 
     private companion object {

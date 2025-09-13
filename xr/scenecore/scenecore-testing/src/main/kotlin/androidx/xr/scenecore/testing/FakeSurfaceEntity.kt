@@ -25,6 +25,7 @@ import androidx.xr.scenecore.internal.Dimensions
 import androidx.xr.scenecore.internal.PerceivedResolutionResult
 import androidx.xr.scenecore.internal.SurfaceEntity
 import androidx.xr.scenecore.internal.SurfaceEntity.Shape
+import androidx.xr.scenecore.internal.SurfaceFeature
 import androidx.xr.scenecore.internal.TextureResource
 
 /**
@@ -37,16 +38,41 @@ import androidx.xr.scenecore.internal.TextureResource
  * for stereo viewing using the [stereoMode] property.
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public class FakeSurfaceEntity() : FakeEntity(), SurfaceEntity {
+public class FakeSurfaceEntity(private val feature: SurfaceFeature? = null) :
+    FakeEntity(), SurfaceEntity {
+    private var _stereoMode = SurfaceEntity.StereoMode.SIDE_BY_SIDE
+
     /**
      * Specifies how the surface content will be routed for stereo viewing. Applications must render
      * into the surface in accordance with what is specified here in order for the compositor to
      * correctly produce a stereoscopic view to the user.
      */
-    override var stereoMode: Int = SurfaceEntity.StereoMode.SIDE_BY_SIDE
+    override var stereoMode: Int
+        get() {
+            return feature?.stereoMode ?: _stereoMode
+        }
+        set(value) {
+            if (feature == null) {
+                _stereoMode = value
+            } else {
+                feature.stereoMode = value
+            }
+        }
+
+    private var _shape: Shape = Shape.Quad(FloatSize2d(0f, 0f))
 
     /** Specifies the shape of the spatial canvas which the surface is texture mapped to. */
-    override var shape: Shape = Shape.Quad(FloatSize2d(0f, 0f))
+    override var shape: Shape
+        get() {
+            return feature?.shape ?: _shape
+        }
+        set(value) {
+            if (feature == null) {
+                _shape = value
+            } else {
+                feature.shape = value
+            }
+        }
 
     /**
      * Retrieves the dimensions of the "spatial canvas" which the surface is mapped to. These values
@@ -55,10 +81,11 @@ public class FakeSurfaceEntity() : FakeEntity(), SurfaceEntity {
      * @return The canvas [androidx.xr.scenecore.internal.Dimensions].
      */
     override val dimensions: Dimensions
-        get() = shape.dimensions
+        get() {
+            return feature?.shape?.dimensions ?: shape.dimensions
+        }
 
-    private var _surface: Surface =
-        ImageReader.newInstance(1, 1, ImageFormat.YUV_420_888, 1).surface
+    private var _surface: Surface? = null
 
     /**
      * Retrieves the surface that the Entity will display. The app can write into this surface
@@ -67,7 +94,15 @@ public class FakeSurfaceEntity() : FakeEntity(), SurfaceEntity {
      * @return an Android [Surface]
      */
     override val surface: Surface
-        get() = _surface
+        get() {
+            if (feature == null) {
+                if (_surface == null)
+                    _surface = ImageReader.newInstance(1, 1, ImageFormat.YUV_420_888, 1).surface
+                return _surface!!
+            } else {
+                return feature.surface
+            }
+        }
 
     /**
      * For test purposes only. Sets or replaces the underlying [Surface] for this fake entity.
@@ -92,7 +127,8 @@ public class FakeSurfaceEntity() : FakeEntity(), SurfaceEntity {
      * @param alphaMask The primary alpha mask texture.
      */
     override fun setPrimaryAlphaMaskTexture(alphaMask: TextureResource?) {
-        primaryAlphaMask = alphaMask
+        if (feature == null) primaryAlphaMask = alphaMask
+        else feature.setPrimaryAlphaMaskTexture(alphaMask)
     }
 
     /** For test purposes only. Represents the result of [setAuxiliaryAlphaMaskTexture] */
@@ -106,7 +142,8 @@ public class FakeSurfaceEntity() : FakeEntity(), SurfaceEntity {
      * @param alphaMask The auxiliary alpha mask texture.
      */
     override fun setAuxiliaryAlphaMaskTexture(alphaMask: TextureResource?) {
-        auxiliaryAlphaMask = alphaMask
+        if (feature == null) auxiliaryAlphaMask = alphaMask
+        else feature.setAuxiliaryAlphaMaskTexture(alphaMask)
     }
 
     /**

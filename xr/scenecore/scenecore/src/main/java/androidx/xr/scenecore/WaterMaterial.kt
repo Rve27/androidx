@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,8 @@ import androidx.annotation.MainThread
 import androidx.annotation.RestrictTo
 import androidx.concurrent.futures.ResolvableFuture
 import androidx.xr.runtime.Session
-import androidx.xr.scenecore.internal.JxrPlatformAdapter
 import androidx.xr.scenecore.internal.MaterialResource as RtMaterial
+import androidx.xr.scenecore.internal.RenderingRuntime
 import com.google.common.util.concurrent.ListenableFuture
 import java.util.concurrent.CancellationException
 
@@ -49,7 +49,7 @@ internal constructor(
     // TODO(b/376277201): Provide Session.GltfModel.dispose().
     @MainThread
     override public fun dispose() {
-        session.platformAdapter.destroyWaterMaterial(material)
+        session.renderingRuntime.destroyWaterMaterial(material)
     }
 
     /**
@@ -63,7 +63,7 @@ internal constructor(
      */
     @MainThread
     public fun setReflectionMap(reflectionMap: CubeMapTexture, sampler: TextureSampler) {
-        session.platformAdapter.setReflectionMapOnWaterMaterial(
+        session.renderingRuntime.setReflectionMapOnWaterMaterial(
             material,
             reflectionMap.texture,
             sampler.toRtTextureSampler(),
@@ -81,7 +81,7 @@ internal constructor(
      */
     @MainThread
     public fun setNormalMap(normalMap: Texture, sampler: TextureSampler) {
-        session.platformAdapter.setNormalMapOnWaterMaterial(
+        session.renderingRuntime.setNormalMapOnWaterMaterial(
             material,
             normalMap.texture,
             sampler.toRtTextureSampler(),
@@ -98,7 +98,7 @@ internal constructor(
      */
     @MainThread
     public fun setNormalTiling(normalTiling: Float) {
-        session.platformAdapter.setNormalTilingOnWaterMaterial(material, normalTiling)
+        session.renderingRuntime.setNormalTilingOnWaterMaterial(material, normalTiling)
     }
 
     /**
@@ -111,7 +111,7 @@ internal constructor(
      */
     @MainThread
     public fun setNormalSpeed(normalSpeed: Float) {
-        session.platformAdapter.setNormalSpeedOnWaterMaterial(material, normalSpeed)
+        session.renderingRuntime.setNormalSpeedOnWaterMaterial(material, normalSpeed)
     }
 
     /**
@@ -126,7 +126,7 @@ internal constructor(
     @MainThread
     public fun setAlphaStepMultiplier(alphaStepMultiplier: Float) {
         if (isAlphaMapVersion) {
-            session.platformAdapter.setAlphaStepMultiplierOnWaterMaterial(
+            session.renderingRuntime.setAlphaStepMultiplierOnWaterMaterial(
                 material,
                 alphaStepMultiplier,
             )
@@ -150,7 +150,7 @@ internal constructor(
     @MainThread
     public fun setAlphaMap(alphaMap: Texture, sampler: TextureSampler) {
         if (isAlphaMapVersion) {
-            session.platformAdapter.setAlphaMapOnWaterMaterial(
+            session.renderingRuntime.setAlphaMapOnWaterMaterial(
                 material,
                 alphaMap.texture,
                 sampler.toRtTextureSampler(),
@@ -174,7 +174,7 @@ internal constructor(
     @MainThread
     public fun setNormalZ(normalZ: Float) {
         if (isAlphaMapVersion) {
-            session.platformAdapter.setNormalZOnWaterMaterial(material, normalZ)
+            session.renderingRuntime.setNormalZOnWaterMaterial(material, normalZ)
         } else {
             throw IllegalStateException(
                 "The normal Z can only be set for alpha map version of the water material.."
@@ -194,7 +194,7 @@ internal constructor(
     @MainThread
     public fun setNormalBoundary(normalBoundary: Float) {
         if (isAlphaMapVersion) {
-            session.platformAdapter.setNormalBoundaryOnWaterMaterial(material, normalBoundary)
+            session.renderingRuntime.setNormalBoundaryOnWaterMaterial(material, normalBoundary)
         } else {
             throw IllegalStateException(
                 "The normal boundary can only be set for alpha map version of the water material."
@@ -209,11 +209,11 @@ internal constructor(
         // warning, however, we get a build error - go/bugpattern/RestrictTo.
         @SuppressWarnings("RestrictTo")
         internal fun createAsync(
-            platformAdapter: JxrPlatformAdapter,
+            renderingRuntime: RenderingRuntime,
             isAlphaMapVersion: Boolean,
             session: Session,
         ): ListenableFuture<WaterMaterial> {
-            val materialResourceFuture = platformAdapter.createWaterMaterial(isAlphaMapVersion)
+            val materialResourceFuture = renderingRuntime.createWaterMaterial(isAlphaMapVersion)
             val materialFuture = ResolvableFuture.create<WaterMaterial>()
 
             materialResourceFuture.addListener(
@@ -252,7 +252,7 @@ internal constructor(
         @JvmStatic
         @Suppress("AsyncSuffixFuture")
         public suspend fun create(session: Session, isAlphaMapVersion: Boolean): WaterMaterial {
-            return WaterMaterial.createAsync(session.platformAdapter, isAlphaMapVersion, session)
+            return WaterMaterial.createAsync(session.renderingRuntime, isAlphaMapVersion, session)
                 .awaitSuspending()
         }
     }

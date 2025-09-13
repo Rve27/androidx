@@ -205,8 +205,7 @@ abstract class AndroidXrEntity extends BaseEntity implements Entity {
     @Override
     public void setParent(Entity parent) {
         if ((parent != null) && !(parent instanceof AndroidXrEntity)) {
-            throw new IllegalArgumentException(
-                    "Cannot set non-AndroidXrEntity as a parent of a AndroidXrEntity");
+            return;
         }
         super.setParent(parent);
 
@@ -327,19 +326,18 @@ abstract class AndroidXrEntity extends BaseEntity implements Entity {
         mPointerCaptureInputEventListener.ifPresent(
                 (listener) -> {
                     Executor executor = mPointerCaptureExecutor.orElse(mExecutor);
-                    androidx.xr.scenecore.internal.InputEvent event =
-                            RuntimeUtils.getInputEvent(xrInputEvent, mEntityManager);
-                    executor.execute(() -> listener.onInputEvent(event));
+                    executor.execute(() -> listener.onInputEvent(
+                            RuntimeUtils.getInputEvent(xrInputEvent, mEntityManager)
+                    ));
                 });
     }
 
     /** Dispatches an event to all standard input listeners. */
     private void dispatchStandardEvent(InputEvent xrInputEvent) {
-        // Convert the event once before dispatching to multiple listeners.
-        androidx.xr.scenecore.internal.InputEvent event =
-                RuntimeUtils.getInputEvent(xrInputEvent, mEntityManager);
         mInputEventListenerMap.forEach(
-                (listener, executor) -> executor.execute(() -> listener.onInputEvent(event)));
+                (listener, executor) -> executor.execute(
+                        () -> listener.onInputEvent(
+                                RuntimeUtils.getInputEvent(xrInputEvent, mEntityManager))));
     }
 
     @Override
