@@ -42,6 +42,8 @@ android {
 dependencies {
     implementation(project(":xr:compose:compose"))
     implementation(project(":xr:scenecore:scenecore"))
+    implementation(project(":xr:scenecore:scenecore-spatial-core"))
+    implementation(project(":xr:scenecore:scenecore-spatial-rendering"))
     implementation(project(":xr:runtime:runtime-manifest"))
 
     implementation("androidx.activity:activity-compose:1.10.0")

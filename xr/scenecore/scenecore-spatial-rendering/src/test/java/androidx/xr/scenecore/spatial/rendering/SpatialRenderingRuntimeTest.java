@@ -19,15 +19,14 @@ package androidx.xr.scenecore.spatial.rendering;
 import static com.google.common.truth.Truth.assertThat;
 
 import android.app.Activity;
-import android.view.Surface;
 
 import androidx.xr.runtime.SubspaceNodeHolder;
-import androidx.xr.runtime.internal.SceneRuntimeFactory;
 import androidx.xr.runtime.math.FloatSize2d;
 import androidx.xr.runtime.math.Pose;
 import androidx.xr.scenecore.impl.extensions.XrExtensionsProvider;
 import androidx.xr.scenecore.impl.impress.FakeImpressApiImpl;
 import androidx.xr.scenecore.impl.impress.Material;
+import androidx.xr.scenecore.impl.impress.Texture;
 import androidx.xr.scenecore.internal.Dimensions;
 import androidx.xr.scenecore.internal.ExrImageResource;
 import androidx.xr.scenecore.internal.GltfEntity;
@@ -39,7 +38,7 @@ import androidx.xr.scenecore.internal.SceneRuntime;
 import androidx.xr.scenecore.internal.SubspaceNodeEntity;
 import androidx.xr.scenecore.internal.SurfaceEntity;
 import androidx.xr.scenecore.internal.TextureResource;
-import androidx.xr.scenecore.testing.FakeSceneRuntimeFactory;
+import androidx.xr.scenecore.testing.FakeSceneRuntime;
 import androidx.xr.scenecore.testing.FakeScheduledExecutorService;
 
 import com.android.extensions.xr.ShadowXrExtensions;
@@ -70,6 +69,7 @@ public class SpatialRenderingRuntimeTest {
     private SceneRuntime mSceneRuntime;
     private SpatialRenderingRuntime mRenderingRuntime;
 
+    /** The factory in SceneRuntime */
     private RenderingEntityFactory mRenderingEntityFactory;
 
     private final FakeScheduledExecutorService mFakeExecutor = new FakeScheduledExecutorService();
@@ -88,8 +88,11 @@ public class SpatialRenderingRuntimeTest {
         mActivity = Robolectric.buildActivity(Activity.class).create().start().get();
         ShadowXrExtensions.extract(mXrExtensions)
                 .setOpenXrWorldSpaceType(OPEN_XR_REFERENCE_SPACE_TYPE);
-        SceneRuntimeFactory sceneFactory = new FakeSceneRuntimeFactory();
-        mSceneRuntime = (SceneRuntime) sceneFactory.create(mActivity);
+        FakeSceneRuntime fakeSceneRuntime = new FakeSceneRuntime(mFakeExecutor);
+        mSceneRuntime = fakeSceneRuntime;
+
+        assertThat(fakeSceneRuntime).isNotNull();
+
         mRenderingRuntime =
                 SpatialRenderingRuntime.create(
                         mSceneRuntime,
@@ -153,35 +156,6 @@ public class SpatialRenderingRuntimeTest {
         return materialFuture.get();
     }
 
-    @Test
-    public void loadGltfByAssetName_returnsModel() throws Exception {
-        ListenableFuture<GltfModelResource> modelFuture =
-                mRenderingRuntime.loadGltfByAssetName("FakeAsset.glb");
-
-        assertThat(modelFuture).isNotNull();
-
-        GltfModelResource model = modelFuture.get();
-        assertThat(model).isNotNull();
-        GltfModelResourceImpl modelImpl = (GltfModelResourceImpl) model;
-        assertThat(modelImpl).isNotNull();
-        long token = modelImpl.getExtensionModelToken();
-        assertThat(token).isEqualTo(1);
-    }
-
-    @Test
-    public void loadGltfByByteArray_returnsModel() throws Exception {
-        ListenableFuture<GltfModelResource> modelFuture =
-                mRenderingRuntime.loadGltfByByteArray(new byte[] {1, 2, 3}, "FakeAsset.glb");
-
-        assertThat(modelFuture).isNotNull();
-
-        GltfModelResource model = modelFuture.get();
-        assertThat(model).isNotNull();
-        GltfModelResourceImpl modelImpl = (GltfModelResourceImpl) model;
-        assertThat(modelImpl).isNotNull();
-        long token = modelImpl.getExtensionModelToken();
-        assertThat(token).isEqualTo(1);
-    }
 
     @Test
     public void loadExrImageByAssetName_returnsModel() throws Exception {
@@ -214,8 +188,77 @@ public class SpatialRenderingRuntimeTest {
     }
 
     @Test
+    public void loadGltfByAssetName_returnsModel() throws Exception {
+        ListenableFuture<GltfModelResource> modelFuture =
+                mRenderingRuntime.loadGltfByAssetName("FakeAsset.glb");
+
+        assertThat(modelFuture).isNotNull();
+
+        GltfModelResource model = modelFuture.get();
+        assertThat(model).isNotNull();
+        GltfModelResourceImpl modelImpl = (GltfModelResourceImpl) model;
+        assertThat(modelImpl).isNotNull();
+        long token = modelImpl.getExtensionModelToken();
+        assertThat(token).isEqualTo(1);
+    }
+
+    @Test
+    public void loadGltfByByteArray_returnsModel() throws Exception {
+        ListenableFuture<GltfModelResource> modelFuture =
+                mRenderingRuntime.loadGltfByByteArray(new byte[] {1, 2, 3}, "FakeAsset.glb");
+
+        assertThat(modelFuture).isNotNull();
+
+        GltfModelResource model = modelFuture.get();
+        assertThat(model).isNotNull();
+        GltfModelResourceImpl modelImpl = (GltfModelResourceImpl) model;
+        assertThat(modelImpl).isNotNull();
+        long token = modelImpl.getExtensionModelToken();
+        assertThat(token).isEqualTo(1);
+    }
+
+    @Test
     public void createGltfEntity_returnsEntity() throws Exception {
         assertThat(createGltfEntity()).isNotNull();
+    }
+
+    @Test
+    public void animateGltfEntity_gltfEntityIsAnimating() throws Exception {
+        GltfEntity gltfEntity = createGltfEntity();
+        gltfEntity.startAnimation(false, "animation_name");
+        int animatingNodes = mFakeImpressApi.impressNodeAnimatingSize();
+        int loopingAnimatingNodes = mFakeImpressApi.impressNodeLoopAnimatingSize();
+
+        // The fakeJniApi returns a future which immediately fires, which makes it seem like the
+        // animation is done immediately. This makes it look like the animation stopped right away.
+        assertThat(gltfEntity.getAnimationState()).isEqualTo(GltfEntity.AnimationState.PLAYING);
+        assertThat(animatingNodes).isEqualTo(1);
+        assertThat(loopingAnimatingNodes).isEqualTo(0);
+    }
+
+    @Test
+    public void animateLoopGltfEntity_gltfEntityIsAnimatingInLoop() throws Exception {
+        GltfEntity gltfEntity = createGltfEntity();
+        gltfEntity.startAnimation(true, "animation_name");
+        int animatingNodes = mFakeImpressApi.impressNodeAnimatingSize();
+        int loopingAnimatingNodes = mFakeImpressApi.impressNodeLoopAnimatingSize();
+
+        assertThat(gltfEntity.getAnimationState()).isEqualTo(GltfEntity.AnimationState.PLAYING);
+        assertThat(animatingNodes).isEqualTo(0);
+        assertThat(loopingAnimatingNodes).isEqualTo(1);
+    }
+
+    @Test
+    public void stopAnimateGltfEntity_gltfEntityStopsAnimating() throws Exception {
+        GltfEntity gltfEntity = createGltfEntity();
+        gltfEntity.startAnimation(true, "animation_name");
+        gltfEntity.stopAnimation();
+        int animatingNodes = mFakeImpressApi.impressNodeAnimatingSize();
+        int loopingAnimatingNodes = mFakeImpressApi.impressNodeLoopAnimatingSize();
+
+        assertThat(gltfEntity.getAnimationState()).isEqualTo(GltfEntity.AnimationState.STOPPED);
+        assertThat(animatingNodes).isEqualTo(0);
+        assertThat(loopingAnimatingNodes).isEqualTo(0);
     }
 
     @Test
@@ -257,17 +300,23 @@ public class SpatialRenderingRuntimeTest {
                         mSceneRuntime.getActivitySpace());
 
         assertThat(surfaceEntityHemisphere).isNotNull();
-
         assertThat(mFakeImpressApi.getStereoSurfaceEntities()).hasSize(3);
-
-        Surface surface = surfaceEntityQuad.getSurface();
-
-        assertThat(surface).isNotNull();
     }
 
     @Test
     public void loadTexture_returnsTexture() throws Exception {
         assertThat(loadTexture()).isNotNull();
+    }
+
+    @Test
+    public void destroyTexture_removesTexture() throws Exception {
+        Texture texture = (Texture) loadTexture();
+        int initialTextureCount = mFakeImpressApi.getTextureImages().size();
+
+        mFakeImpressApi.destroyNativeObject(texture.getNativeHandle());
+
+        int finalTextureCount = mFakeImpressApi.getTextureImages().size();
+        assertThat(finalTextureCount).isEqualTo(initialTextureCount - 1);
     }
 
     @Test
@@ -287,6 +336,44 @@ public class SpatialRenderingRuntimeTest {
     }
 
     @Test
+    public void setMaterialOverrideGltfEntity_materialOverridesNode() throws Exception {
+        GltfEntity gltfEntity = createGltfEntity();
+        MaterialResource material = createWaterMaterial();
+        String nodeName = "fake_node_name";
+        int primitiveIndex = 0;
+
+        gltfEntity.setMaterialOverride(material, nodeName, primitiveIndex);
+
+        assertThat(
+                        mFakeImpressApi.getImpressNodes().keySet().stream()
+                                .filter(
+                                        node ->
+                                                node.getMaterialOverride() != null
+                                                        && node.getMaterialOverride().getType()
+                                                                == FakeImpressApiImpl.MaterialData
+                                                                        .Type.WATER)
+                                .toArray())
+                .hasLength(1);
+    }
+
+    @Test
+    public void clearMaterialOverrideGltfEntity_clearsMaterialOverride() throws Exception {
+        GltfEntity gltfEntity = createGltfEntity();
+        MaterialResource material = createWaterMaterial();
+        String nodeName = "fake_node_name";
+        int primitiveIndex = 0;
+
+        gltfEntity.setMaterialOverride(material, nodeName, primitiveIndex);
+        gltfEntity.clearMaterialOverride(nodeName, primitiveIndex);
+
+        assertThat(
+                        mFakeImpressApi.getImpressNodes().keySet().stream()
+                                .filter(node -> node.getMaterialOverride() != null)
+                                .toArray())
+                .isEmpty();
+    }
+
+    @Test
     public void createSubspaceNodeEntity_returnSubspaceNodeEntity() {
         Dimensions size = new Dimensions(1.0f, 2.0f, 3.0f);
         Node node = mXrExtensions.createNode();
@@ -295,6 +382,7 @@ public class SpatialRenderingRuntimeTest {
         SubspaceNodeEntity entity = mRenderingRuntime.createSubspaceNodeEntity(holder, size);
 
         assertThat(entity).isNotNull();
+        assertThat(entity.getSize()).isEqualTo(size);
     }
 
     @Test

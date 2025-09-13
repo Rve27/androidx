@@ -60,6 +60,8 @@ dependencies {
     implementation(project(":xr:runtime:runtime"))
     implementation(project(":xr:scenecore:integration-tests:commontestview"))
     implementation(project(":xr:scenecore:scenecore"))
+    implementation(project(":xr:scenecore:scenecore-spatial-core"))
+    implementation(project(":xr:scenecore:scenecore-spatial-rendering"))
 
     implementation("androidx.activity:activity:1.9.3")
     implementation("androidx.appcompat:appcompat:1.7.0")

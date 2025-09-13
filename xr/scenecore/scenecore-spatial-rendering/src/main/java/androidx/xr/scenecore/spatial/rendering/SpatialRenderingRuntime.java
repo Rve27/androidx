@@ -1049,6 +1049,10 @@ class SpatialRenderingRuntime implements RenderingRuntime {
             @SurfaceEntity.SurfaceProtection int contentSecurityLevel,
             @SurfaceEntity.SuperSampling int superSampling,
             @NonNull Entity parentEntity) {
+        if (!Looper.getMainLooper().isCurrentThread()) {
+            throw new IllegalStateException("This method must be called on the main thread.");
+        }
+
         SurfaceFeatureImpl feature = new SurfaceFeatureImpl(
                 mImpressApi,
                 mSplitEngineSubspaceManager,

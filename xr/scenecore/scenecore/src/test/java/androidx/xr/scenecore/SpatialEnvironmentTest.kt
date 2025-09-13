@@ -18,8 +18,8 @@ package androidx.xr.scenecore
 
 import androidx.xr.scenecore.internal.ExrImageResource as RtExrImageResource
 import androidx.xr.scenecore.internal.GltfModelResource as RtGltfModelResource
-import androidx.xr.scenecore.internal.JxrPlatformAdapter
 import androidx.xr.scenecore.internal.MaterialResource as RtMaterialResource
+import androidx.xr.scenecore.internal.SceneRuntime
 import androidx.xr.scenecore.internal.SpatialEnvironment as RtSpatialEnvironment
 import com.google.common.truth.Truth.assertThat
 import com.google.common.util.concurrent.MoreExecutors.directExecutor
@@ -44,7 +44,7 @@ import org.mockito.kotlin.whenever
 @RunWith(JUnit4::class)
 class SpatialEnvironmentTest {
 
-    private var mockRuntime: JxrPlatformAdapter = mock<JxrPlatformAdapter>()
+    private var mockRuntime: SceneRuntime = mock<SceneRuntime>()
     private var mockRtEnvironment: RtSpatialEnvironment? = null
     private var environment: SpatialEnvironment? = null
 
