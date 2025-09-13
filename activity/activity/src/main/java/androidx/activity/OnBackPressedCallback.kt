@@ -20,8 +20,6 @@ import androidx.navigationevent.NavigationEvent
 import androidx.navigationevent.NavigationEventHandler
 import androidx.navigationevent.NavigationEventInfo.None
 import java.util.concurrent.CopyOnWriteArrayList
-import kotlin.collections.minusAssign
-import kotlin.collections.plusAssign
 
 /**
  * Class for handling [OnBackPressedDispatcher.onBackPressed] callbacks without strongly coupling
@@ -134,7 +132,11 @@ abstract class OnBackPressedCallback(enabled: Boolean) {
 
     private class OnBackPressedEventHandler(
         private val onBackPressedCallback: OnBackPressedCallback
-    ) : NavigationEventHandler<None>(isBackEnabled = onBackPressedCallback.isEnabled) {
+    ) :
+        NavigationEventHandler<None>(
+            initialInfo = None,
+            isBackEnabled = onBackPressedCallback.isEnabled,
+        ) {
 
         override fun onBackStarted(event: NavigationEvent) {
             onBackPressedCallback.handleOnBackStarted(BackEventCompat(event))

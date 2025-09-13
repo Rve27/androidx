@@ -20,8 +20,8 @@ abstract interface androidx.navigationevent/NavigationEventInfo { // androidx.na
 }
 
 abstract class <#A: androidx.navigationevent/NavigationEventInfo> androidx.navigationevent/NavigationEventHandler { // androidx.navigationevent/NavigationEventHandler|null[0]
-    constructor <init>(kotlin/Boolean) // androidx.navigationevent/NavigationEventHandler.<init>|<init>(kotlin.Boolean){}[0]
-    constructor <init>(kotlin/Boolean, kotlin/Boolean) // androidx.navigationevent/NavigationEventHandler.<init>|<init>(kotlin.Boolean;kotlin.Boolean){}[0]
+    constructor <init>(#A, kotlin/Boolean) // androidx.navigationevent/NavigationEventHandler.<init>|<init>(1:0;kotlin.Boolean){}[0]
+    constructor <init>(#A, kotlin/Boolean, kotlin/Boolean) // androidx.navigationevent/NavigationEventHandler.<init>|<init>(1:0;kotlin.Boolean;kotlin.Boolean){}[0]
 
     final var isBackEnabled // androidx.navigationevent/NavigationEventHandler.isBackEnabled|{}isBackEnabled[0]
         final fun <get-isBackEnabled>(): kotlin/Boolean // androidx.navigationevent/NavigationEventHandler.isBackEnabled.<get-isBackEnabled>|<get-isBackEnabled>(){}[0]
