@@ -26,6 +26,8 @@ plugins {
 dependencies {
     implementation(project(":xr:compose:compose"))
     implementation(project(":xr:scenecore:scenecore"))
+    implementation(project(":xr:scenecore:scenecore-spatial-core"))
+    implementation(project(":xr:scenecore:scenecore-spatial-rendering"))
     implementation(project(":compose:material3:material3"))
 
     compileOnly(project(":annotation:annotation-sampled"))

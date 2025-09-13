@@ -282,7 +282,7 @@ public class FakeRenderingRuntime(
     @Suppress("AsyncSuffixFuture")
     override fun createKhronosPbrMaterial(
         spec: KhronosPbrMaterialSpec
-    ): ListenableFuture<MaterialResource>? {
+    ): ListenableFuture<MaterialResource> {
         val newMaterial = FakeKhronosPbrMaterial(spec)
         createdKhronosPbrMaterials.add(newMaterial)
         return immediateFuture(newMaterial)
@@ -568,9 +568,47 @@ public class FakeRenderingRuntime(
         )
     }
 
-    override fun startRenderer() {}
+    /* Tracks the current state of the adapter according to where it is in its lifecycle. */
+    public enum class State {
+        CREATED,
+        STARTED,
+        PAUSED,
+        DESTROYED,
+    }
 
-    override fun stopRenderer() {}
+    private var _state: Enum<State> = State.CREATED
 
-    override fun dispose() {}
+    /**
+     * The current state of the adapter will transition based on the lifecycle of the adapter. It
+     * starts off as [State.CREATED] and transitions to [State.STARTED] when startRenderer is
+     * called. When stopRenderer is called, it transitions to [State.PAUSED]. When dispose is
+     * called, it transitions to [State.DESTROYED].
+     */
+    public fun getState(): Enum<State> {
+        return _state
+    }
+
+    override fun startRenderer() {
+        _state = State.STARTED
+    }
+
+    override fun stopRenderer() {
+        _state = State.PAUSED
+    }
+
+    override fun dispose() {
+        _state = State.DESTROYED
+    }
+
+    override fun resume() {
+        startRenderer()
+    }
+
+    override fun pause() {
+        stopRenderer()
+    }
+
+    override fun destroy() {
+        dispose()
+    }
 }

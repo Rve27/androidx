@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import androidx.xr.runtime.internal.LifecycleManager
 import androidx.xr.runtime.math.IntSize2d
 import androidx.xr.runtime.math.Pose
 import androidx.xr.scenecore.internal.ActivityPanelEntity as RtActivityPanelEntity
-import androidx.xr.scenecore.internal.JxrPlatformAdapter
+import androidx.xr.scenecore.internal.SceneRuntime
 
 /**
  * ActivityPanelEntity creates a spatial panel for embedding an [Activity] in Android XR. Users can
@@ -65,7 +65,7 @@ private constructor(
     public companion object {
         internal fun create(
             lifecycleManager: LifecycleManager,
-            adapter: JxrPlatformAdapter,
+            sceneRuntime: SceneRuntime,
             entityManager: EntityManager,
             pixelDimensions: IntSize2d,
             name: String,
@@ -74,12 +74,12 @@ private constructor(
         ): ActivityPanelEntity =
             ActivityPanelEntity(
                 lifecycleManager,
-                adapter.createActivityPanelEntity(
+                sceneRuntime.createActivityPanelEntity(
                     pose,
                     pixelDimensions.toRtPixelDimensions(),
                     name,
                     hostActivity,
-                    adapter.activitySpaceRootImpl,
+                    sceneRuntime.activitySpace,
                 ),
                 entityManager,
             )
@@ -104,7 +104,7 @@ private constructor(
         ): ActivityPanelEntity =
             ActivityPanelEntity.create(
                 session.perceptionRuntime.lifecycleManager,
-                session.platformAdapter,
+                session.sceneRuntime,
                 session.scene.entityManager,
                 pixelDimensions,
                 name,

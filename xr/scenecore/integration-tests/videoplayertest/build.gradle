@@ -64,6 +64,8 @@ dependencies {
     implementation(project(":xr:runtime:runtime"))
     implementation(project(":xr:scenecore:integration-tests:commontestview"))
     implementation(project(":xr:scenecore:scenecore"))
+    implementation(project(":xr:scenecore:scenecore-spatial-core"))
+    implementation(project(":xr:scenecore:scenecore-spatial-rendering"))
 
     implementation(libs.kotlinCoroutinesGuava)
     implementation("androidx.activity:activity:1.9.3")

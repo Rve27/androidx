@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,9 +28,10 @@ import androidx.xr.runtime.internal.ApkCheckAvailabilityErrorException
 import androidx.xr.runtime.internal.ApkCheckAvailabilityInProgressException
 import androidx.xr.runtime.internal.ApkNotInstalledException
 import androidx.xr.runtime.internal.FaceTrackingNotCalibratedException
-import androidx.xr.runtime.internal.JxrPlatformAdapterFactory
 import androidx.xr.runtime.internal.JxrRuntime
 import androidx.xr.runtime.internal.PerceptionRuntimeFactory
+import androidx.xr.runtime.internal.RenderingRuntimeFactory
+import androidx.xr.runtime.internal.SceneRuntimeFactory
 import androidx.xr.runtime.internal.UnsupportedDeviceException
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.coroutines.CoroutineContext
@@ -220,20 +221,24 @@ public constructor(
             }
             perceptionRuntime?.let { runtimes.add(it) }
 
-            val jxrPlatformAdapterFactory =
+            val sceneRuntimeFactory =
+                selectProvider(
+                    loadProviders(SceneRuntimeFactory::class.java, SCENE_RUNTIME_FACTORY_PROVIDERS),
+                    features,
+                )
+            val sceneRuntime = sceneRuntimeFactory?.create(activity)
+            sceneRuntime?.let { runtimes.add(it) }
+
+            val renderingRuntimeFactory =
                 selectProvider(
                     loadProviders(
-                        JxrPlatformAdapterFactory::class.java,
-                        JXR_PLATFORM_ADAPTER_FACTORY_PROVIDERS,
+                        RenderingRuntimeFactory::class.java,
+                        RENDERING_RUNTIME_FACTORY_PROVIDERS,
                     ),
                     features,
                 )
-            val jxrPlatformAdapter =
-                jxrPlatformAdapterFactory?.createPlatformAdapter(
-                    activity,
-                    unscaledGravityAlignedActivitySpace,
-                )
-            jxrPlatformAdapter?.let { runtimes.add(it) }
+            val renderingRuntime = renderingRuntimeFactory?.create(runtimes, activity)
+            renderingRuntime?.let { runtimes.add(it) }
 
             check(runtimes.isNotEmpty()) {
                 "Neither ARCore nor SceneCore are available. Did you forget to add a dependency?"
@@ -275,11 +280,19 @@ public constructor(
                 "androidx.xr.arcore.openxr.OpenXrRuntimeFactory",
                 "androidx.xr.arcore.testing.FakePerceptionRuntimeFactory",
             )
-        private val JXR_PLATFORM_ADAPTER_FACTORY_PROVIDERS =
+
+        private val SCENE_RUNTIME_FACTORY_PROVIDERS =
             listOf(
-                "androidx.xr.scenecore.impl.JxrPlatformAdapterFactoryAxr",
-                "androidx.xr.scenecore.testing.FakeJxrPlatformAdapterFactory",
+                "androidx.xr.scenecore.spatial.core.SpatialSceneRuntimeFactory",
+                "androidx.xr.scenecore.testing.FakeSceneRuntimeFactory",
             )
+
+        private val RENDERING_RUNTIME_FACTORY_PROVIDERS =
+            listOf(
+                "androidx.xr.scenecore.spatial.rendering.SpatialRenderingRuntimeFactory",
+                "androidx.xr.scenecore.testing.FakeRenderingRuntimeFactory",
+            )
+
         private val STATE_EXTENDER_PROVIDERS =
             listOf(
                 "androidx.xr.arcore.PerceptionStateExtender",

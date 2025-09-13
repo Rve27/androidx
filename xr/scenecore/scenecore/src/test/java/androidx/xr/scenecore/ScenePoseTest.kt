@@ -23,11 +23,11 @@ import androidx.xr.runtime.math.Vector3
 import androidx.xr.scenecore.ScenePose.HitTestFilter
 import androidx.xr.scenecore.internal.CameraViewActivityPose as RtCameraViewActivityPose
 import androidx.xr.scenecore.internal.HitTestResult as RtHitTestResult
-import androidx.xr.scenecore.internal.JxrPlatformAdapter
+import androidx.xr.scenecore.internal.SceneRuntime
 import androidx.xr.scenecore.testing.FakeCameraViewActivityPose
 import androidx.xr.scenecore.testing.FakeHeadActivityPose
-import androidx.xr.scenecore.testing.FakeJxrPlatformAdapterFactory
 import androidx.xr.scenecore.testing.FakePerceptionSpaceActivityPose
+import androidx.xr.scenecore.testing.FakeSceneRuntimeFactory
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
@@ -46,12 +46,12 @@ class ScenePoseTest {
     private lateinit var perceptionSpace: PerceptionSpace
 
     private val activity = Robolectric.buildActivity(Activity::class.java).create().start().get()
-    private lateinit var fakeRuntime: JxrPlatformAdapter
+    private lateinit var fakeRuntime: SceneRuntime
 
     @Before
     fun setUp() {
-        val fakeRuntimeFactory = FakeJxrPlatformAdapterFactory()
-        fakeRuntime = fakeRuntimeFactory.createPlatformAdapter(activity)
+        val fakeRuntimeFactory = FakeSceneRuntimeFactory()
+        fakeRuntime = fakeRuntimeFactory.create(activity)
 
         head = Head.create(fakeRuntime)
         camera = CameraView.createLeft(fakeRuntime)

@@ -280,6 +280,7 @@ class SpatialEnvironmentFeatureImpl extends BaseRenderingFeature implements
         mRootEnvironmentNode = null;
         mGeometrySubspaceSplitEngine = null;
         mGeometrySubspaceImpressNode = null;
+        mRootEnvironmentNode = null;
         mSpatialEnvironmentPreference.set(null);
         // TODO: b/376934871 - Check async results.
         mExtensions.detachSpatialEnvironment(mActivity, Runnable::run, (result) -> {});

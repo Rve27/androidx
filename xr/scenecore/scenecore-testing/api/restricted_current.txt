@@ -158,6 +158,7 @@ package androidx.xr.scenecore.testing {
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public class FakeGltfEntity extends androidx.xr.scenecore.testing.FakeEntity implements androidx.xr.scenecore.internal.GltfEntity {
     ctor public FakeGltfEntity();
+    ctor public FakeGltfEntity(optional androidx.xr.scenecore.internal.GltfFeature? feature, optional java.util.concurrent.Executor? executor);
     method public void clearMaterialOverride(String nodeName, int primitiveIndex);
     method @InaccessibleFromKotlin public int getAnimationState();
     method @InaccessibleFromKotlin public final String? getCurrentAnimationName();
@@ -582,7 +583,7 @@ package androidx.xr.scenecore.testing {
     ctor public FakeRenderingRuntime(androidx.xr.scenecore.internal.SceneRuntime sceneRuntime, optional androidx.xr.scenecore.internal.RenderingEntityFactory entityFactory);
     method public androidx.xr.scenecore.internal.TextureResource? borrowReflectionTexture();
     method public androidx.xr.scenecore.internal.GltfEntity createGltfEntity(androidx.xr.runtime.math.Pose pose, androidx.xr.scenecore.internal.GltfModelResource loadedGltf, androidx.xr.scenecore.internal.Entity parentEntity);
-    method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.internal.MaterialResource>? createKhronosPbrMaterial(androidx.xr.scenecore.internal.KhronosPbrMaterialSpec spec);
+    method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.internal.MaterialResource> createKhronosPbrMaterial(androidx.xr.scenecore.internal.KhronosPbrMaterialSpec spec);
     method public androidx.xr.scenecore.internal.SubspaceNodeEntity createSubspaceNodeEntity(androidx.xr.runtime.SubspaceNodeHolder<? extends java.lang.Object?> subspaceNodeHolder, androidx.xr.scenecore.internal.Dimensions size);
     method public androidx.xr.runtime.SubspaceNodeHolder<? extends java.lang.Object?> createSubspaceNodeHolder();
     method public androidx.xr.scenecore.internal.SurfaceEntity createSurfaceEntity(int stereoMode, androidx.xr.runtime.math.Pose pose, androidx.xr.scenecore.internal.SurfaceEntity.Shape shape, int surfaceProtection, int superSampling, androidx.xr.scenecore.internal.Entity parentEntity);
@@ -594,6 +595,7 @@ package androidx.xr.scenecore.testing {
     method @InaccessibleFromKotlin public java.util.List<androidx.xr.scenecore.testing.FakeRenderingRuntime.FakeKhronosPbrMaterial> getCreatedKhronosPbrMaterials();
     method @InaccessibleFromKotlin public java.util.List<androidx.xr.scenecore.testing.FakeRenderingRuntime.FakeWaterMaterial> getCreatedWaterMaterials();
     method public androidx.xr.scenecore.internal.TextureResource? getReflectionTextureFromIbl(androidx.xr.scenecore.internal.ExrImageResource iblToken);
+    method public Enum<androidx.xr.scenecore.testing.FakeRenderingRuntime.State> getState();
     method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.internal.ExrImageResource> loadExrImageByAssetName(String assetName);
     method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.internal.ExrImageResource> loadExrImageByByteArray(byte[] assetData, String assetKey);
     method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.internal.GltfModelResource> loadGltfByAssetName(String assetName);
@@ -813,6 +815,13 @@ package androidx.xr.scenecore.testing {
     property public androidx.xr.scenecore.internal.TextureSampler? reflectionMapSampler;
   }
 
+  public enum FakeRenderingRuntime.State {
+    enum_constant public static final androidx.xr.scenecore.testing.FakeRenderingRuntime.State CREATED;
+    enum_constant public static final androidx.xr.scenecore.testing.FakeRenderingRuntime.State DESTROYED;
+    enum_constant public static final androidx.xr.scenecore.testing.FakeRenderingRuntime.State PAUSED;
+    enum_constant public static final androidx.xr.scenecore.testing.FakeRenderingRuntime.State STARTED;
+  }
+
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeRenderingRuntimeFactory implements androidx.xr.runtime.internal.RenderingRuntimeFactory {
     ctor public FakeRenderingRuntimeFactory();
     method public androidx.xr.scenecore.internal.RenderingRuntime create(java.util.List<? extends androidx.xr.runtime.internal.JxrRuntime> runtimes, android.app.Activity activity);
@@ -858,6 +867,7 @@ package androidx.xr.scenecore.testing {
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeSceneRuntime implements androidx.xr.scenecore.internal.RenderingEntityFactory androidx.xr.scenecore.internal.SceneRuntime {
     ctor public FakeSceneRuntime();
+    ctor public FakeSceneRuntime(optional java.util.concurrent.Executor? executor);
     method public void addPerceivedResolutionChangedListener(java.util.concurrent.Executor callbackExecutor, java.util.function.Consumer<androidx.xr.scenecore.internal.PixelDimensions> listener);
     method public void addSpatialCapabilitiesChangedListener(java.util.concurrent.Executor callbackExecutor, java.util.function.Consumer<androidx.xr.scenecore.internal.SpatialCapabilities> listener);
     method public void clearSpatialVisibilityChangedListener();
@@ -883,6 +893,7 @@ package androidx.xr.scenecore.testing {
     method @InaccessibleFromKotlin public androidx.xr.scenecore.internal.ActivitySpace getActivitySpace();
     method @InaccessibleFromKotlin public androidx.xr.scenecore.internal.AudioTrackExtensionsWrapper getAudioTrackExtensionsWrapper();
     method public androidx.xr.scenecore.internal.CameraViewActivityPose? getCameraViewActivityPose(@androidx.xr.scenecore.internal.CameraViewActivityPose.CameraType int cameraType);
+    method @InaccessibleFromKotlin public java.util.concurrent.Executor? getExecutor();
     method @InaccessibleFromKotlin public androidx.xr.scenecore.internal.HeadActivityPose? getHeadActivityPose();
     method @InaccessibleFromKotlin public android.app.Activity? getLastSetPreferredAspectRatioActivity();
     method @InaccessibleFromKotlin public float getLastSetPreferredAspectRatioRatio();
@@ -912,6 +923,7 @@ package androidx.xr.scenecore.testing {
     method public void setSpatialVisibilityChangedListener(java.util.concurrent.Executor callbackExecutor, java.util.function.Consumer<androidx.xr.scenecore.internal.SpatialVisibility> listener);
     property public androidx.xr.scenecore.internal.ActivitySpace activitySpace;
     property public androidx.xr.scenecore.internal.AudioTrackExtensionsWrapper audioTrackExtensionsWrapper;
+    property public java.util.concurrent.Executor? executor;
     property public androidx.xr.scenecore.internal.HeadActivityPose? headActivityPose;
     property public android.app.Activity? lastSetPreferredAspectRatioActivity;
     property public float lastSetPreferredAspectRatioRatio;
@@ -1051,6 +1063,7 @@ package androidx.xr.scenecore.testing {
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeSurfaceEntity extends androidx.xr.scenecore.testing.FakeEntity implements androidx.xr.scenecore.internal.SurfaceEntity {
     ctor public FakeSurfaceEntity();
+    ctor public FakeSurfaceEntity(optional androidx.xr.scenecore.internal.SurfaceFeature? feature);
     method @InaccessibleFromKotlin public androidx.xr.scenecore.internal.TextureResource? getAuxiliaryAlphaMask();
     method @InaccessibleFromKotlin public int getColorRange();
     method @InaccessibleFromKotlin public int getColorSpace();
