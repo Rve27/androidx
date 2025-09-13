@@ -36,6 +36,7 @@ import kotlin.jvm.JvmOverloads
  * A handler must be registered with a [NavigationEventDispatcher] to receive events. It will only
  * be invoked while both the dispatcher and this handler are enabled.
  *
+ * @param initialInfo The initial value for [currentInfo].
  * @param isBackEnabled If `true`, this handler will process back navigation gestures.
  * @param isForwardEnabled If `true`, this handler will process forward navigation gestures.
  * @see NavigationEventDispatcher
@@ -43,16 +44,20 @@ import kotlin.jvm.JvmOverloads
  * @see NavigationEventState
  */
 public abstract class NavigationEventHandler<T : NavigationEventInfo>
-public constructor(isBackEnabled: Boolean, isForwardEnabled: Boolean) {
+public constructor(initialInfo: T, isBackEnabled: Boolean, isForwardEnabled: Boolean) {
 
     /**
      * Creates a handler that is only enabled for back navigation gestures.
      *
      * Forward navigation will be disabled by default.
      *
+     * @param initialInfo The initial value for [currentInfo].
      * @param isBackEnabled If `true`, this handler will process back navigation gestures.
      */
-    public constructor(isBackEnabled: Boolean) : this(isBackEnabled, isForwardEnabled = false)
+    public constructor(
+        initialInfo: T,
+        isBackEnabled: Boolean,
+    ) : this(initialInfo, isBackEnabled, isForwardEnabled = false)
 
     /**
      * The contextual information representing the active destination for this handler.
@@ -60,7 +65,7 @@ public constructor(isBackEnabled: Boolean, isForwardEnabled: Boolean) {
      * This is always a single value, provided by the currently active handler, and reflects the
      * foreground navigation state at this point in time.
      */
-    internal var currentInfo: T? = null
+    internal var currentInfo: T = initialInfo
         private set
 
     /**
