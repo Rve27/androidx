@@ -23,6 +23,12 @@ abstract class <#A: androidx.navigationevent/NavigationEventInfo> androidx.navig
     constructor <init>(#A, kotlin/Boolean) // androidx.navigationevent/NavigationEventHandler.<init>|<init>(1:0;kotlin.Boolean){}[0]
     constructor <init>(#A, kotlin/Boolean, kotlin/Boolean) // androidx.navigationevent/NavigationEventHandler.<init>|<init>(1:0;kotlin.Boolean;kotlin.Boolean){}[0]
 
+    final var backInfo // androidx.navigationevent/NavigationEventHandler.backInfo|{}backInfo[0]
+        final fun <get-backInfo>(): kotlin.collections/List<#A> // androidx.navigationevent/NavigationEventHandler.backInfo.<get-backInfo>|<get-backInfo>(){}[0]
+    final var currentInfo // androidx.navigationevent/NavigationEventHandler.currentInfo|{}currentInfo[0]
+        final fun <get-currentInfo>(): #A // androidx.navigationevent/NavigationEventHandler.currentInfo.<get-currentInfo>|<get-currentInfo>(){}[0]
+    final var forwardInfo // androidx.navigationevent/NavigationEventHandler.forwardInfo|{}forwardInfo[0]
+        final fun <get-forwardInfo>(): kotlin.collections/List<#A> // androidx.navigationevent/NavigationEventHandler.forwardInfo.<get-forwardInfo>|<get-forwardInfo>(){}[0]
     final var isBackEnabled // androidx.navigationevent/NavigationEventHandler.isBackEnabled|{}isBackEnabled[0]
         final fun <get-isBackEnabled>(): kotlin/Boolean // androidx.navigationevent/NavigationEventHandler.isBackEnabled.<get-isBackEnabled>|<get-isBackEnabled>(){}[0]
         final fun <set-isBackEnabled>(kotlin/Boolean) // androidx.navigationevent/NavigationEventHandler.isBackEnabled.<set-isBackEnabled>|<set-isBackEnabled>(kotlin.Boolean){}[0]

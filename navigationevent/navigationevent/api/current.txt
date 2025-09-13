@@ -76,6 +76,9 @@ package androidx.navigationevent {
   public abstract class NavigationEventHandler<T extends androidx.navigationevent.NavigationEventInfo> {
     ctor public NavigationEventHandler(T initialInfo, boolean isBackEnabled);
     ctor public NavigationEventHandler(T initialInfo, boolean isBackEnabled, boolean isForwardEnabled);
+    method @InaccessibleFromKotlin public final java.util.List<T> getBackInfo();
+    method @InaccessibleFromKotlin public final T getCurrentInfo();
+    method @InaccessibleFromKotlin public final java.util.List<T> getForwardInfo();
     method @InaccessibleFromKotlin public final boolean isBackEnabled();
     method @InaccessibleFromKotlin public final boolean isForwardEnabled();
     method @EmptySuper protected void onBackCancelled();
@@ -92,6 +95,9 @@ package androidx.navigationevent {
     method public final void setInfo(T currentInfo);
     method public final void setInfo(T currentInfo, optional java.util.List<? extends T> backInfo);
     method public final void setInfo(T currentInfo, optional java.util.List<? extends T> backInfo, optional java.util.List<? extends T> forwardInfo);
+    property public final java.util.List<T> backInfo;
+    property public final T currentInfo;
+    property public final java.util.List<T> forwardInfo;
     property public final boolean isBackEnabled;
     property public final boolean isForwardEnabled;
   }
