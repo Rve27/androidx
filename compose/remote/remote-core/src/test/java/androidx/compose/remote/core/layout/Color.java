@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.compose.remote.core.operations;
 
-import androidx.annotation.RestrictTo;
+package androidx.compose.remote.core.layout;
 
-/** Tagging interface to operations providing data within a component */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public interface ComponentData {}
+public class Color {
+    public static final int YELLOW = 0xFFFFFF00;
+    public static final int GREEN = 0xFF00FF00;
+    public static final int RED = 0xFFFF0000;
+}
