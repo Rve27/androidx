@@ -16,13 +16,16 @@
 
 package androidx.text.vertical
 
+import android.os.Build
 import android.text.TextPaint
+import androidx.test.filters.SdkSuppress
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 
 @RunWith(JUnit4::class)
+@SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA)
 class VerticalTextLayoutTest {
     // The detailed behavior tests are written in LineBreakerTests and underlying LayoutRunTests.
     // In this test case, just check the set in builder and get in instance.
@@ -35,7 +38,7 @@ class VerticalTextLayoutTest {
     val JP_TEXT = "吾輩は猫である。\n1904年(明治39年)生まれである。\n英名はI Am a Catである。"
 
     @Test
-    fun `create default params`() {
+    fun verticalTextLayout_CreateDefaultParams() {
         VerticalTextLayout.Builder(JP_TEXT, 0, JP_TEXT.length, PAINT, 100f).build().run {
             assertThat(text).isEqualTo(JP_TEXT)
             assertThat(start).isEqualTo(0)
@@ -47,7 +50,7 @@ class VerticalTextLayoutTest {
     }
 
     @Test
-    fun `create upright orientation`() {
+    fun verticalTextLayout_CreateUprightOrientation() {
         VerticalTextLayout.Builder(JP_TEXT, 0, JP_TEXT.length, PAINT, 100f)
             .setOrientation(TextOrientation.UPRIGHT)
             .build()
