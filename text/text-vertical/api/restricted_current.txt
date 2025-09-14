@@ -110,7 +110,7 @@ package androidx.text.vertical {
 
   public static final class VerticalTextLayout.Builder {
     ctor public VerticalTextLayout.Builder(CharSequence text, int start, int end, android.text.TextPaint paint, @Px float height);
-    method public androidx.text.vertical.VerticalTextLayout build();
+    method @RequiresApi(android.os.Build.VERSION_CODES.TIRAMISU) public androidx.text.vertical.VerticalTextLayout build();
     method public androidx.text.vertical.VerticalTextLayout.Builder setOrientation(int orientation);
   }
 

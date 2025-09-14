@@ -17,8 +17,10 @@
 package androidx.text.vertical
 
 import android.graphics.Canvas
+import android.os.Build
 import android.text.TextPaint
 import androidx.annotation.Px
+import androidx.annotation.RequiresApi
 
 /**
  * Represents the result of laying out text vertically.
@@ -91,6 +93,7 @@ private constructor(
          *
          * @return The constructed [VerticalTextLayout].
          */
+        @RequiresApi(Build.VERSION_CODES.TIRAMISU)
         public fun build(): VerticalTextLayout {
             val lines =
                 LineBreaker.breakTextIntoLines(text, start, end, paint, height, _orientation)
