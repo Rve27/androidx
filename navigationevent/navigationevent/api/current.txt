@@ -53,11 +53,13 @@ package androidx.navigationevent {
     method @MainThread public void dispose();
     method @InaccessibleFromKotlin public kotlinx.coroutines.flow.StateFlow<androidx.navigationevent.NavigationEventState<androidx.navigationevent.NavigationEventInfo>> getState();
     method @KotlinOnly public inline <reified T extends androidx.navigationevent.NavigationEventInfo> kotlinx.coroutines.flow.StateFlow<androidx.navigationevent.NavigationEventState<T>> getState(kotlinx.coroutines.CoroutineScope scope, T initialInfo);
+    method @InaccessibleFromKotlin public kotlinx.coroutines.flow.StateFlow<androidx.navigationevent.NavigationEventTransitionState> getTransitionState();
     method @InaccessibleFromKotlin public boolean isEnabled();
     method @MainThread public void removeInput(androidx.navigationevent.NavigationEventInput input);
     method @InaccessibleFromKotlin public void setEnabled(boolean);
     property public boolean isEnabled;
     property public kotlinx.coroutines.flow.StateFlow<androidx.navigationevent.NavigationEventState<androidx.navigationevent.NavigationEventInfo>> state;
+    property public kotlinx.coroutines.flow.StateFlow<androidx.navigationevent.NavigationEventTransitionState> transitionState;
     field public static final androidx.navigationevent.NavigationEventDispatcher.Companion Companion;
     field public static final int PRIORITY_DEFAULT = 1; // 0x1
     field public static final int PRIORITY_OVERLAY = 0; // 0x0

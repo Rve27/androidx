@@ -119,6 +119,8 @@ final class androidx.navigationevent/NavigationEventDispatcher { // androidx.nav
 
     final val state // androidx.navigationevent/NavigationEventDispatcher.state|{}state[0]
         final fun <get-state>(): kotlinx.coroutines.flow/StateFlow<androidx.navigationevent/NavigationEventState<androidx.navigationevent/NavigationEventInfo>> // androidx.navigationevent/NavigationEventDispatcher.state.<get-state>|<get-state>(){}[0]
+    final val transitionState // androidx.navigationevent/NavigationEventDispatcher.transitionState|{}transitionState[0]
+        final fun <get-transitionState>(): kotlinx.coroutines.flow/StateFlow<androidx.navigationevent/NavigationEventTransitionState> // androidx.navigationevent/NavigationEventDispatcher.transitionState.<get-transitionState>|<get-transitionState>(){}[0]
 
     final var isEnabled // androidx.navigationevent/NavigationEventDispatcher.isEnabled|{}isEnabled[0]
         final fun <get-isEnabled>(): kotlin/Boolean // androidx.navigationevent/NavigationEventDispatcher.isEnabled.<get-isEnabled>|<get-isEnabled>(){}[0]

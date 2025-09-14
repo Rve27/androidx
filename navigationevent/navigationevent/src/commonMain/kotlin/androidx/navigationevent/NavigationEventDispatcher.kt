@@ -224,6 +224,23 @@ private constructor(
     public val state: StateFlow<NavigationEventState<NavigationEventInfo>> = sharedProcessor.state
 
     /**
+     * The globally observable, read-only state of the physical navigation gesture.
+     *
+     * This flow represents *only* the gesture's progress (e.g.,
+     * [NavigationEventTransitionState.Idle] or [NavigationEventTransitionState.InProgress]) and is
+     * separate from the navigation history state.
+     *
+     * System-level components or UI animations can subscribe to this flow to react to the start,
+     * progress, and end of a gesture without needing to know about the specific, generic
+     * [NavigationEventInfo] types involved in the history.
+     *
+     * This state is derived from the [NavigationEventTransitionState] of the currently active
+     * [NavigationEventHandler].
+     */
+    public val transitionState: StateFlow<NavigationEventTransitionState>
+        get() = sharedProcessor.transitionState
+
+    /**
      * Creates a [StateFlow] that only emits states for a specific [NavigationEventInfo] type.
      *
      * @param T The [NavigationEventInfo] type to filter for.

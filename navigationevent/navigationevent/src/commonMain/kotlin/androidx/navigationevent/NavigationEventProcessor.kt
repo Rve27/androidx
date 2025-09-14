@@ -49,6 +49,16 @@ internal class NavigationEventProcessor {
     val state: StateFlow<NavigationEventState<*>> = _state.asStateFlow()
 
     /**
+     * The private, mutable source of truth for the global [NavigationEventTransitionState]. This
+     * flow is updated by the processor based on the active handler's gesture state.
+     */
+    private val _transitionState =
+        MutableStateFlow<NavigationEventTransitionState>(NavigationEventTransitionState.Idle())
+
+    /** @see [NavigationEventDispatcher.transitionState] */
+    val transitionState = _transitionState.asStateFlow()
+
+    /**
      * Stores high-priority handlers that should be evaluated before default handlers.
      *
      * [ArrayDeque] is used for efficient `addFirst()` and `remove()` operations, which is ideal for
@@ -381,6 +391,9 @@ internal class NavigationEventProcessor {
                 )
             }
         }
+
+        _transitionState.value =
+            NavigationEventTransitionState.InProgress(latestEvent = event, direction = direction)
     }
 
     /**
@@ -421,6 +434,9 @@ internal class NavigationEventProcessor {
                 )
             }
         }
+
+        _transitionState.value =
+            NavigationEventTransitionState.InProgress(latestEvent = event, direction = direction)
     }
 
     /**
@@ -476,6 +492,8 @@ internal class NavigationEventProcessor {
                 forwardInfo = state.forwardInfo,
             )
         }
+
+        _transitionState.value = NavigationEventTransitionState.Idle()
     }
 
     /**
@@ -514,6 +532,8 @@ internal class NavigationEventProcessor {
                 )
             }
         }
+
+        _transitionState.value = NavigationEventTransitionState.Idle()
     }
 
     /**

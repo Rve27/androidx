@@ -2120,6 +2120,164 @@ class NavigationEventDispatcherTest {
 
     // endregion
 
+    // region TransitionState APIs
+
+    @Test
+    fun transitionState_initialState_isIdle() {
+        val dispatcher = NavigationEventDispatcher()
+        assertThat(dispatcher.transitionState.value)
+            .isEqualTo(NavigationEventTransitionState.Idle())
+    }
+
+    @Test
+    fun transitionState_onFullBackCompleted_emitsInProgressThenIdle() =
+        runTest(UnconfinedTestDispatcher()) {
+            val dispatcher = NavigationEventDispatcher()
+            val input = TestNavigationEventInput()
+            dispatcher.addInput(input)
+            val handler = TestNavigationEventHandler()
+            dispatcher.addHandler(handler)
+
+            val collectedStates = mutableListOf<NavigationEventTransitionState>()
+            dispatcher.transitionState.onEach { collectedStates.add(it) }.launchIn(backgroundScope)
+            advanceUntilIdle()
+
+            // Initial state is Idle
+            assertThat(collectedStates).hasSize(1)
+            assertThat(collectedStates.last()).isEqualTo(NavigationEventTransitionState.Idle())
+
+            // Start gesture
+            val startEvent = NavigationEvent(progress = 0.1f)
+            input.backStarted(startEvent)
+            advanceUntilIdle()
+
+            assertThat(collectedStates).hasSize(2)
+            val inProgressState =
+                collectedStates.last() as NavigationEventTransitionState.InProgress
+            assertThat(inProgressState.latestEvent).isEqualTo(startEvent)
+            assertThat(inProgressState.direction)
+                .isEqualTo(NavigationEventTransitionState.TRANSITIONING_BACK)
+
+            // Progress gesture
+            val progressEvent = NavigationEvent(progress = 0.5f)
+            input.backProgressed(progressEvent)
+            advanceUntilIdle()
+
+            assertThat(collectedStates).hasSize(3)
+            val updatedProgressState =
+                collectedStates.last() as NavigationEventTransitionState.InProgress
+            assertThat(updatedProgressState.latestEvent).isEqualTo(progressEvent)
+            assertThat(updatedProgressState.direction)
+                .isEqualTo(NavigationEventTransitionState.TRANSITIONING_BACK)
+
+            // Complete gesture
+            input.backCompleted()
+            advanceUntilIdle()
+
+            assertThat(collectedStates).hasSize(4)
+            assertThat(collectedStates.last()).isEqualTo(NavigationEventTransitionState.Idle())
+        }
+
+    @Test
+    fun transitionState_onFullBackCancelled_returnsToIdle() =
+        runTest(UnconfinedTestDispatcher()) {
+            val dispatcher = NavigationEventDispatcher()
+            val input = TestNavigationEventInput()
+            dispatcher.addInput(input)
+            val handler = TestNavigationEventHandler()
+            dispatcher.addHandler(handler)
+
+            val collectedStates = mutableListOf<NavigationEventTransitionState>()
+            dispatcher.transitionState.onEach { collectedStates.add(it) }.launchIn(backgroundScope)
+            advanceUntilIdle()
+
+            // Start gesture
+            val startEvent = NavigationEvent(progress = 0.1f)
+            input.backStarted(startEvent)
+            advanceUntilIdle()
+            assertThat(collectedStates).hasSize(2)
+            assertThat(collectedStates.last())
+                .isInstanceOf<NavigationEventTransitionState.InProgress>()
+
+            // Cancel gesture
+            input.backCancelled()
+            advanceUntilIdle()
+
+            // State returns to Idle
+            assertThat(collectedStates).hasSize(3)
+            assertThat(collectedStates.last()).isEqualTo(NavigationEventTransitionState.Idle())
+        }
+
+    @Test
+    fun transitionState_onFullForwardCompleted_emitsInProgressThenIdle() =
+        runTest(UnconfinedTestDispatcher()) {
+            val dispatcher = NavigationEventDispatcher()
+            val input = TestNavigationEventInput()
+            dispatcher.addInput(input)
+            val handler = TestNavigationEventHandler()
+            dispatcher.addHandler(handler)
+
+            val collectedStates = mutableListOf<NavigationEventTransitionState>()
+            dispatcher.transitionState.onEach { collectedStates.add(it) }.launchIn(backgroundScope)
+            advanceUntilIdle()
+
+            // Initial state
+            assertThat(collectedStates.last()).isEqualTo(NavigationEventTransitionState.Idle())
+
+            // Start forward gesture
+            val startEvent = NavigationEvent(progress = 0.1f)
+            input.forwardStarted(startEvent)
+            advanceUntilIdle()
+
+            assertThat(collectedStates).hasSize(2)
+            val inProgressState =
+                collectedStates.last() as NavigationEventTransitionState.InProgress
+            assertThat(inProgressState.latestEvent).isEqualTo(startEvent)
+            assertThat(inProgressState.direction)
+                .isEqualTo(NavigationEventTransitionState.TRANSITIONING_FORWARD)
+
+            // Progress forward gesture
+            val progressEvent = NavigationEvent(progress = 0.5f)
+            input.forwardProgressed(progressEvent)
+            advanceUntilIdle()
+
+            assertThat(collectedStates).hasSize(3)
+            val updatedProgressState =
+                collectedStates.last() as NavigationEventTransitionState.InProgress
+            assertThat(updatedProgressState.latestEvent).isEqualTo(progressEvent)
+
+            // Complete forward gesture
+            input.forwardCompleted()
+            advanceUntilIdle()
+
+            assertThat(collectedStates).hasSize(4)
+            assertThat(collectedStates.last()).isEqualTo(NavigationEventTransitionState.Idle())
+        }
+
+    @Test
+    fun transitionState_onFullForwardCancelled_returnsToIdle() =
+        runTest(UnconfinedTestDispatcher()) {
+            val dispatcher = NavigationEventDispatcher()
+            val input = TestNavigationEventInput()
+            dispatcher.addInput(input)
+            val handler = TestNavigationEventHandler()
+            dispatcher.addHandler(handler)
+
+            val collectedStates = mutableListOf<NavigationEventTransitionState>()
+            dispatcher.transitionState.onEach { collectedStates.add(it) }.launchIn(backgroundScope)
+            advanceUntilIdle()
+
+            input.forwardStarted(NavigationEvent())
+            advanceUntilIdle()
+            assertThat(collectedStates.last())
+                .isInstanceOf<NavigationEventTransitionState.InProgress>()
+
+            input.forwardCancelled()
+            advanceUntilIdle()
+            assertThat(collectedStates.last()).isEqualTo(NavigationEventTransitionState.Idle())
+        }
+
+    // endregion
 }
 
 /** A sealed interface for type-safe navigation information. */
