@@ -68,28 +68,16 @@ public abstract class NavigationEventInput() {
     protected open fun onHasEnabledHandlersChanged(hasEnabledHandlers: Boolean) {}
 
     @MainThread
-    internal fun doOnInfoChanged(
-        currentInfo: NavigationEventInfo,
-        backInfo: List<NavigationEventInfo>,
-        forwardInfo: List<NavigationEventInfo>,
-    ) {
-        onInfoChanged(currentInfo, backInfo, forwardInfo)
+    internal fun doOnHistoryChanged(history: NavigationEventHistory) {
+        onHistoryChanged(history)
     }
 
     /**
-     * Callback that will be notified when the navigation history changes.
+     * Callback that will be notified when the navigation history information changes.
      *
-     * @param currentInfo The contextual information representing the active destination.
-     * @param backInfo Context describing what is available when navigating back.
-     * @param forwardInfo Context describing what is available when navigating forward.
+     * @param history The immutable snapshot of the navigation history information.
      */
-    @MainThread
-    @EmptySuper
-    protected open fun onInfoChanged(
-        currentInfo: NavigationEventInfo,
-        backInfo: List<NavigationEventInfo>,
-        forwardInfo: List<NavigationEventInfo>,
-    ) {}
+    @MainThread @EmptySuper protected open fun onHistoryChanged(history: NavigationEventHistory) {}
 
     /**
      * Dispatch a back started event with the connected dispatcher.

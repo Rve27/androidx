@@ -374,13 +374,8 @@ private constructor(
             input.dispatcher = this
             input.doOnAdded(dispatcher = this)
 
-            // Input must get 'info' immediately to avoid missing initial state.
-            val state = sharedProcessor.state.value
-            input.doOnInfoChanged(
-                currentInfo = state.currentInfo,
-                backInfo = state.backInfo,
-                forwardInfo = state.forwardInfo,
-            )
+            // Input must get 'history' immediately to avoid missing initial state.
+            input.doOnHistoryChanged(history = sharedProcessor.history.value)
 
             // Input must get 'hasEnabledHandlers' immediately to avoid missing initial state.
             val hasEnabledHandlers =
@@ -432,13 +427,8 @@ private constructor(
             input.dispatcher = this
             input.doOnAdded(dispatcher = this)
 
-            // Input must get 'info' immediately to avoid missing initial state.
-            val state = sharedProcessor.state.value
-            input.doOnInfoChanged(
-                currentInfo = state.currentInfo,
-                backInfo = state.backInfo,
-                forwardInfo = state.forwardInfo,
-            )
+            // Input must get 'history' immediately to avoid missing initial state.
+            input.doOnHistoryChanged(history = sharedProcessor.history.value)
 
             // Input must get 'hasEnabledHandlers' immediately to avoid missing initial state.
             val hasEnabledHandlers =

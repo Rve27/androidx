@@ -674,7 +674,7 @@ class NavigationEventDispatcherTest {
         // Otherwise, an input might think navigation is "enabled" before it has the required
         // context (e.g. backInfo), leading to incorrect state. An add/remove cycle should yield:
         val expectedOrder =
-            listOf("onAdded", "onInfoChanged", "onHasEnabledHandlersChanged", "onRemoved")
+            listOf("onAdded", "onHistoryChanged", "onHasEnabledHandlersChanged", "onRemoved")
 
         // We reuse the same input across blocks. Even if it maintains state internally, this test
         // only inspects the emitted callback order via callOrder, so reuse is fine.
@@ -683,7 +683,7 @@ class NavigationEventDispatcherTest {
                 onAdded = { callOrder += "onAdded" },
                 onRemoved = { callOrder += "onRemoved" },
                 onHasEnabledHandlersChanged = { callOrder += "onHasEnabledHandlersChanged" },
-                onInfoChanged = { _, _, _ -> callOrder += "onInfoChanged" },
+                onHistoryChanged = { callOrder += "onHistoryChanged" },
             )
 
         // Sanity check: removing an input that was never added must be a no-op (no callbacks).
@@ -799,33 +799,34 @@ class NavigationEventDispatcherTest {
         val input = TestNavigationEventInput()
         dispatcher.addInput(input)
 
-        // The input should be notified of the initial state immediately when it's added.
-        assertThat(input.onInfoChangedInvocations).isEqualTo(1)
+        // The input should be notified of the initial (empty) state immediately when it's added.
+        assertThat(input.onHistoryChangedInvocations).isEqualTo(1)
+        assertThat(input.currentHistory).isEqualTo(NavigationEventHistory(emptyList(), -1))
 
         // Add the first handler, triggering a notification.
         val infoA = HomeScreenInfo("A")
-        val handlerA = TestNavigationEventHandler(currentInfo = infoA)
+        val handlerA = TestNavigationEventHandler<TestInfo>(currentInfo = infoA)
         dispatcher.addHandler(handlerA)
 
-        assertThat(input.onInfoChangedInvocations).isEqualTo(2)
-        assertThat(input.latestCurrentInfo).isEqualTo(infoA)
-        assertThat(input.latestBackInfo).isEmpty()
-        assertThat(input.latestForwardInfo).isEmpty()
+        assertThat(input.onHistoryChangedInvocations).isEqualTo(2)
+        assertThat(input.currentHistory)
+            .isEqualTo(NavigationEventHistory(mergedHistory = listOf(infoA), currentIndex = 0))
 
         // Add a second, active handler, triggering a notification with the new state.
         val infoB = DetailsScreenInfo("B")
         val handlerB =
-            TestNavigationEventHandler(
+            TestNavigationEventHandler<TestInfo>(
                 currentInfo = infoB,
                 backInfo = listOf(infoA),
                 forwardInfo = listOf(),
             )
         dispatcher.addHandler(handlerB)
 
-        assertThat(input.onInfoChangedInvocations).isEqualTo(3)
-        assertThat(input.latestCurrentInfo).isEqualTo(infoB)
-        assertThat(input.latestBackInfo).containsExactly(infoA)
-        assertThat(input.latestForwardInfo).isEmpty()
+        assertThat(input.onHistoryChangedInvocations).isEqualTo(3)
+        assertThat(input.currentHistory)
+            .isEqualTo(
+                NavigationEventHistory(mergedHistory = listOf(infoA, infoB), currentIndex = 1)
+            )
 
         // Update info on the active handler, triggering another notification.
         val infoBUpdated = DetailsScreenInfo("B_updated")
@@ -835,27 +836,30 @@ class NavigationEventDispatcherTest {
             forwardInfo = listOf(infoB),
         )
 
-        assertThat(input.onInfoChangedInvocations).isEqualTo(4)
-        assertThat(input.latestCurrentInfo).isEqualTo(infoBUpdated)
-        assertThat(input.latestBackInfo).containsExactly(infoA)
-        assertThat(input.latestForwardInfo).containsExactly(infoB)
+        assertThat(input.onHistoryChangedInvocations).isEqualTo(4)
+        assertThat(input.currentHistory)
+            .isEqualTo(
+                NavigationEventHistory(
+                    mergedHistory = listOf(infoA, infoBUpdated, infoB),
+                    currentIndex = 1,
+                )
+            )
 
         // Remove the active handler, causing state to fall back and notify.
         handlerB.remove()
 
-        assertThat(input.onInfoChangedInvocations).isEqualTo(5)
-        assertThat(input.latestCurrentInfo).isEqualTo(infoA)
-        assertThat(input.latestBackInfo).isEmpty()
-        assertThat(input.latestForwardInfo).isEmpty()
+        assertThat(input.onHistoryChangedInvocations).isEqualTo(5)
+        assertThat(input.currentHistory)
+            .isEqualTo(NavigationEventHistory(mergedHistory = listOf(infoA), currentIndex = 0))
 
         // Remove the input and trigger another state change.
         dispatcher.removeInput(input)
         val infoC = HomeScreenInfo("C")
-        val handlerC = TestNavigationEventHandler(currentInfo = infoC)
+        val handlerC = TestNavigationEventHandler<TestInfo>(currentInfo = infoC)
         dispatcher.addHandler(handlerC)
 
         // Assert the removed input was not notified.
-        assertThat(input.onInfoChangedInvocations).isEqualTo(5)
+        assertThat(input.onHistoryChangedInvocations).isEqualTo(5)
     }
 
     @Test
@@ -865,20 +869,21 @@ class NavigationEventDispatcherTest {
         dispatcher.addInput(input)
 
         // The input should be notified of the initial state immediately when it's added.
-        assertThat(input.onInfoChangedInvocations).isEqualTo(1)
+        assertThat(input.onHistoryChangedInvocations).isEqualTo(1)
+        assertThat(input.currentHistory).isEqualTo(NavigationEventHistory(emptyList(), -1))
 
         val currentInfo1 = HomeScreenInfo("current1")
         val backInfo1 = listOf(DetailsScreenInfo("back1"))
         val forwardInfo1 = listOf(DetailsScreenInfo("forward1"))
 
         val handler =
-            TestNavigationEventHandler(
+            TestNavigationEventHandler<TestInfo>(
                 currentInfo = currentInfo1,
                 backInfo = backInfo1,
                 forwardInfo = forwardInfo1,
             )
         dispatcher.addHandler(handler)
-        assertThat(input.onInfoChangedInvocations).isEqualTo(2)
+        assertThat(input.onHistoryChangedInvocations).isEqualTo(2)
 
         // Trigger update with the exact same info values.
         // Invocations should not increase because the state hasn't changed.
@@ -887,7 +892,7 @@ class NavigationEventDispatcherTest {
             backInfo = backInfo1,
             forwardInfo = forwardInfo1,
         )
-        assertThat(input.onInfoChangedInvocations).isEqualTo(2)
+        assertThat(input.onHistoryChangedInvocations).isEqualTo(2)
 
         // Trigger update with a new `currentInfo`.
         val currentInfo2 = HomeScreenInfo("current2")
@@ -896,7 +901,7 @@ class NavigationEventDispatcherTest {
             backInfo = backInfo1,
             forwardInfo = forwardInfo1,
         )
-        assertThat(input.onInfoChangedInvocations).isEqualTo(3)
+        assertThat(input.onHistoryChangedInvocations).isEqualTo(3)
 
         // Trigger update with a new `backInfo`.
         val backInfo2 = listOf(DetailsScreenInfo("back2"))
@@ -905,7 +910,7 @@ class NavigationEventDispatcherTest {
             backInfo = backInfo2,
             forwardInfo = forwardInfo1,
         )
-        assertThat(input.onInfoChangedInvocations).isEqualTo(4)
+        assertThat(input.onHistoryChangedInvocations).isEqualTo(4)
 
         // Trigger update with a new `forwardInfo`.
         val forwardInfo2 = listOf(DetailsScreenInfo("forward2"))
@@ -914,7 +919,7 @@ class NavigationEventDispatcherTest {
             backInfo = backInfo2,
             forwardInfo = forwardInfo2,
         )
-        assertThat(input.onInfoChangedInvocations).isEqualTo(5)
+        assertThat(input.onHistoryChangedInvocations).isEqualTo(5)
     }
 
     @Test
@@ -2533,9 +2538,10 @@ private data class DetailsScreenInfo(val id: String) : TestInfo
  * counts.
  *
  * Use this class in tests to verify that [onAdded], [onRemoved], [onHasEnabledHandlersChanged], and
- * [onInfoChanged] are called correctly. It counts how many times each lifecycle method is invoked,
- * stores a reference to the most recently added dispatcher, and captures the latest data from
- * [onInfoChanged]. It also provides helper methods to simulate dispatching navigation events.
+ * [onHistoryChanged] are called correctly. It counts how many times each lifecycle method is
+ * invoked, stores a reference to the most recently added dispatcher, and captures the latest data
+ * from [onHistoryChanged]. It also provides helper methods to simulate dispatching navigation
+ * events.
  *
  * @param onAdded An optional lambda to execute when [onAdded] is called.
  * @param onRemoved An optional lambda to execute when [onRemoved] is called.
@@ -2546,17 +2552,8 @@ private class TestNavigationEventInput(
     private val onAdded: (dispatcher: NavigationEventDispatcher) -> Unit = {},
     private val onRemoved: () -> Unit = {},
     private val onHasEnabledHandlersChanged: (hasEnabledHandlers: Boolean) -> Unit = {},
-    private val onInfoChanged:
-        (
-            currentInfo: NavigationEventInfo,
-            backInfo: List<NavigationEventInfo>,
-            forwardInfo: List<NavigationEventInfo>,
-        ) -> Unit =
-        { _, _, _ ->
-        },
+    private val onHistoryChanged: (history: NavigationEventHistory) -> Unit = {},
 ) : NavigationEventInput() {
-
-    val invocationOrder = mutableListOf<String>()
 
     /** The number of times [onAdded] has been invoked. */
     var addedInvocations: Int = 0
@@ -2569,20 +2566,13 @@ private class TestNavigationEventInput(
     /** All values received by [onHasEnabledHandlersChanged]. */
     val onHasEnabledHandlersChangedValues = mutableListOf<Boolean>()
 
-    /** The number of times [onInfoChanged] has been invoked. */
-    var onInfoChangedInvocations: Int = 0
+    /** The number of times [onHistoryChanged] has been invoked. */
+    var onHistoryChangedInvocations: Int = 0
         private set
 
-    /** The last `currentInfo` received by [onInfoChanged]. */
-    var latestCurrentInfo: NavigationEventInfo? = null
-        private set
-
-    /** The last `backInfo` list received by [onInfoChanged]. */
-    var latestBackInfo: List<NavigationEventInfo>? = null
-        private set
-
-    /** The last `forwardInfo` list received by [onInfoChanged]. */
-    var latestForwardInfo: List<NavigationEventInfo>? = null
+    /** The last `currentInfo` received by [onHistoryChanged]. */
+    var currentHistory: NavigationEventHistory =
+        NavigationEventHistory(mergedHistory = emptyList(), currentIndex = -1)
         private set
 
     /**
@@ -2674,15 +2664,9 @@ private class TestNavigationEventInput(
         onHasEnabledHandlersChanged.invoke(hasEnabledHandlers)
     }
 
-    override fun onInfoChanged(
-        currentInfo: NavigationEventInfo,
-        backInfo: List<NavigationEventInfo>,
-        forwardInfo: List<NavigationEventInfo>,
-    ) {
-        onInfoChangedInvocations++
-        latestCurrentInfo = currentInfo
-        latestBackInfo = backInfo
-        latestForwardInfo = forwardInfo
-        onInfoChanged.invoke(currentInfo, backInfo, forwardInfo)
+    override fun onHistoryChanged(history: NavigationEventHistory) {
+        onHistoryChangedInvocations++
+        currentHistory = history
+        onHistoryChanged.invoke(history)
     }
 }

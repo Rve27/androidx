@@ -265,13 +265,13 @@ internal class NavigationEventProcessor {
         // delays from the coroutine dispatcher, ensuring that consumers can react
         // to the state change within the same frame.
         for (input in overlayInputs) {
-            input.doOnInfoChanged(newCurrentInfo, newBackInfo, newForwardInfo)
+            input.doOnHistoryChanged(newHistory)
         }
         for (input in defaultInputs) {
-            input.doOnInfoChanged(newCurrentInfo, newBackInfo, newForwardInfo)
+            input.doOnHistoryChanged(newHistory)
         }
         for (input in unspecifiedInputs) {
-            input.doOnInfoChanged(newCurrentInfo, newBackInfo, newForwardInfo)
+            input.doOnHistoryChanged(newHistory)
         }
     }
 
