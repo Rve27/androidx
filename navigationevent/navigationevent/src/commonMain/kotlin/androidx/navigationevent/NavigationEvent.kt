@@ -78,6 +78,36 @@ public constructor(
      */
     public val frameTimeMillis: Long = 0,
 ) {
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
+
+        other as NavigationEvent
+
+        if (touchX != other.touchX) return false
+        if (touchY != other.touchY) return false
+        if (progress != other.progress) return false
+        if (swipeEdge != other.swipeEdge) return false
+        if (frameTimeMillis != other.frameTimeMillis) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = touchX.hashCode()
+        result = 31 * result + touchY.hashCode()
+        result = 31 * result + progress.hashCode()
+        result = 31 * result + swipeEdge.hashCode()
+        result = 31 * result + frameTimeMillis.hashCode()
+        return result
+    }
+
+    override fun toString(): String {
+        return "NavigationEvent(touchX=$touchX, touchY=$touchY, progress=$progress, " +
+            "swipeEdge=$swipeEdge, frameTimeMillis=$frameTimeMillis)"
+    }
+
     /** Defines the swipe edge of a [NavigationEvent]. */
     @RestrictTo(RestrictTo.Scope.LIBRARY)
     @Retention(AnnotationRetention.SOURCE)
@@ -110,34 +140,5 @@ public constructor(
          * like a 3-button navigation press or a hardware back button event.
          */
         public const val EDGE_NONE: Int = 2
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other == null || this::class != other::class) return false
-
-        other as NavigationEvent
-
-        if (touchX != other.touchX) return false
-        if (touchY != other.touchY) return false
-        if (progress != other.progress) return false
-        if (swipeEdge != other.swipeEdge) return false
-        if (frameTimeMillis != other.frameTimeMillis) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = touchX.hashCode()
-        result = 31 * result + touchY.hashCode()
-        result = 31 * result + progress.hashCode()
-        result = 31 * result + swipeEdge.hashCode()
-        result = 31 * result + frameTimeMillis.hashCode()
-        return result
-    }
-
-    override fun toString(): String {
-        return "NavigationEvent(touchX=$touchX, touchY=$touchY, progress=$progress, " +
-            "swipeEdge=$swipeEdge, frameTimeMillis=$frameTimeMillis)"
     }
 }

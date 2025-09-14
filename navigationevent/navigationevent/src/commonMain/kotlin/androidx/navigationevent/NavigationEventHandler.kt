@@ -123,7 +123,7 @@ public constructor(initialInfo: T, isBackEnabled: Boolean, isForwardEnabled: Boo
             if (field == value) return
 
             field = value
-            dispatcher?.refreshEnabledCallbacks()
+            dispatcher?.sharedProcessor?.refreshEnabledHandlers()
         }
 
     /**
@@ -140,7 +140,7 @@ public constructor(initialInfo: T, isBackEnabled: Boolean, isForwardEnabled: Boo
             if (field == value) return
 
             field = value
-            dispatcher?.refreshEnabledCallbacks()
+            dispatcher?.sharedProcessor?.refreshEnabledHandlers()
         }
 
     internal var dispatcher: NavigationEventDispatcher? = null
