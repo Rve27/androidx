@@ -241,6 +241,23 @@ private constructor(
         get() = sharedProcessor.transitionState
 
     /**
+     * The globally observable, read-only state of the navigation history stack.
+     *
+     * This flow represents *only* the navigation stack (the [NavigationEventHistory.mergedHistory]
+     * and [NavigationEventHistory.currentIndex]) and is the counterpart to transition state.
+     *
+     * A key contract of this state is that it remains **stable** during a navigation gesture. It
+     * only updates when the navigation stack itself changes (e.g., when a new handler becomes
+     * active, or the active handler's info is updated), which typically occurs *after* a gesture
+     * completes or *before* one begins.
+     *
+     * This allows UI components to subscribe only to changes in the history stack without being
+     * notified of rapid gesture progress updates from transition state.
+     */
+    public val history: StateFlow<NavigationEventHistory>
+        get() = sharedProcessor.history
+
+    /**
      * Creates a [StateFlow] that only emits states for a specific [NavigationEventInfo] type.
      *
      * @param T The [NavigationEventInfo] type to filter for.

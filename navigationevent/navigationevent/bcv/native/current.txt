@@ -117,6 +117,8 @@ final class androidx.navigationevent/NavigationEventDispatcher { // androidx.nav
     constructor <init>(androidx.navigationevent/NavigationEventDispatcher) // androidx.navigationevent/NavigationEventDispatcher.<init>|<init>(androidx.navigationevent.NavigationEventDispatcher){}[0]
     constructor <init>(kotlin/Function0<kotlin/Unit>) // androidx.navigationevent/NavigationEventDispatcher.<init>|<init>(kotlin.Function0<kotlin.Unit>){}[0]
 
+    final val history // androidx.navigationevent/NavigationEventDispatcher.history|{}history[0]
+        final fun <get-history>(): kotlinx.coroutines.flow/StateFlow<androidx.navigationevent/NavigationEventHistory> // androidx.navigationevent/NavigationEventDispatcher.history.<get-history>|<get-history>(){}[0]
     final val state // androidx.navigationevent/NavigationEventDispatcher.state|{}state[0]
         final fun <get-state>(): kotlinx.coroutines.flow/StateFlow<androidx.navigationevent/NavigationEventState<androidx.navigationevent/NavigationEventInfo>> // androidx.navigationevent/NavigationEventDispatcher.state.<get-state>|<get-state>(){}[0]
     final val transitionState // androidx.navigationevent/NavigationEventDispatcher.transitionState|{}transitionState[0]

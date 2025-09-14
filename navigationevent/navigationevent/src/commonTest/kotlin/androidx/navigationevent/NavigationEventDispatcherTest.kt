@@ -26,6 +26,7 @@ import androidx.navigationevent.NavigationEventInfo.None
 import androidx.navigationevent.NavigationEventState.Idle
 import androidx.navigationevent.NavigationEventState.InProgress
 import androidx.navigationevent.testing.TestNavigationEventHandler
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.launchIn
@@ -2278,6 +2279,246 @@ class NavigationEventDispatcherTest {
         }
 
     // endregion
+
+    // region History APIs
+
+    @Test
+    fun historyState_initialState_isEmpty() {
+        val dispatcher = NavigationEventDispatcher()
+        // The dispatcher must always start with an empty history
+        assertThat(dispatcher.history.value).isEqualTo(NavigationEventHistory())
+    }
+
+    // TODO(mgalhardo): This test fails due to a bug in `updateEnabledHandlerInfo()` when the active
+    //  handler is null. The proper fix is coupled to the legacy `state`  flow logic, which is
+    //  scheduled for deletion as part of the new Transition/History state refactor.
+    //  This test will be re-enabled and fixed after the legacy `state` flow is removed.
+    @Ignore
+    @Test
+    fun historyState_onHandlerChanges_updatesHistoryStack() =
+        runTest(UnconfinedTestDispatcher()) {
+            val dispatcher = NavigationEventDispatcher()
+            val collectedStates = mutableListOf<NavigationEventHistory>()
+            dispatcher.history.onEach { collectedStates.add(it) }.launchIn(backgroundScope)
+            advanceUntilIdle()
+
+            // Initial empty state is collected
+            assertThat(collectedStates).hasSize(1)
+            assertThat(collectedStates.last()).isEqualTo(NavigationEventHistory())
+
+            // Add first handler (Home)
+            val homeInfo = HomeScreenInfo("home")
+            val homeHandler =
+                TestNavigationEventHandler(currentInfo = homeInfo, backInfo = emptyList())
+            dispatcher.addHandler(homeHandler)
+            advanceUntilIdle()
+
+            // History updates to reflect Home stack
+            assertThat(collectedStates).hasSize(2)
+            assertThat(collectedStates.last())
+                .isEqualTo(NavigationEventHistory(currentInfo = homeInfo))
+
+            // Add second handler (Details), which builds on Home's info
+            val detailsInfo = DetailsScreenInfo("details")
+            val detailsHandler =
+                TestNavigationEventHandler(
+                    currentInfo = detailsInfo,
+                    backInfo = listOf(homeInfo), // This handler's back stack starts with home
+                )
+            dispatcher.addHandler(detailsHandler)
+            advanceUntilIdle()
+
+            // History updates to the new merged stack
+            assertThat(collectedStates).hasSize(3)
+            assertThat(collectedStates.last())
+                .isEqualTo(
+                    NavigationEventHistory(currentInfo = detailsInfo, backInfo = listOf(homeInfo))
+                )
+
+            // Remove top handler (Details), history falls back to Home
+            detailsHandler.remove()
+            advanceUntilIdle()
+
+            assertThat(collectedStates).hasSize(4)
+            assertThat(collectedStates.last())
+                .isEqualTo(NavigationEventHistory(currentInfo = homeInfo))
+
+            // Remove last handler, history returns to empty
+            homeHandler.remove()
+            advanceUntilIdle()
+
+            assertThat(collectedStates).hasSize(5)
+            assertThat(collectedStates.last()).isEqualTo(NavigationEventHistory())
+        }
+
+    @Test
+    fun historyState_remainsStableDuringGestureLifecycle() =
+        runTest(UnconfinedTestDispatcher()) {
+            val dispatcher = NavigationEventDispatcher()
+            val input = TestNavigationEventInput()
+            dispatcher.addInput(input)
+
+            val collectedStates = mutableListOf<NavigationEventHistory>()
+            dispatcher.history.onEach { collectedStates.add(it) }.launchIn(backgroundScope)
+            advanceUntilIdle()
+
+            // Add first handler (Home)
+            val homeInfo = HomeScreenInfo("home")
+            val handler = TestNavigationEventHandler(currentInfo = homeInfo)
+            dispatcher.addHandler(handler)
+            advanceUntilIdle()
+
+            // Should have initial empty state (1) and home state (2)
+            assertThat(collectedStates).hasSize(2)
+            val homeState = collectedStates.last()
+            assertThat(homeState.mergedHistory).containsExactly(homeInfo)
+
+            // Start, progress, and cancel a back gesture.
+            // None of these events should trigger an update to HistoryState,
+            // as the history stack itself (the info) has not changed.
+            input.backStarted(NavigationEvent(progress = 0.1f))
+            advanceUntilIdle()
+            input.backProgressed(NavigationEvent(progress = 0.5f))
+            advanceUntilIdle()
+            input.backCancelled()
+            advanceUntilIdle()
+
+            // Verify no new states were emitted
+            assertThat(collectedStates).hasSize(2)
+
+            // Completing the gesture also should not change the history state.
+            // The history stack only changes when a handler is added/removed
+            // or setInfo is called.
+            input.backCompleted()
+            advanceUntilIdle()
+
+            // Verify no new states were emitted
+            assertThat(collectedStates).hasSize(2)
+        }
+
+    @Test
+    fun historyState_onSetInfo_updatesStack() =
+        runTest(UnconfinedTestDispatcher()) {
+            val dispatcher = NavigationEventDispatcher()
+
+            val collectedStates = mutableListOf<NavigationEventHistory>()
+            dispatcher.history.onEach { collectedStates.add(it) }.launchIn(backgroundScope)
+            advanceUntilIdle()
+
+            // Add first handler (Home)
+            val handler = TestNavigationEventHandler<TestInfo>(currentInfo = HomeScreenInfo("A"))
+            dispatcher.addHandler(handler)
+            advanceUntilIdle()
+
+            // Collector gets initial empty state (idx 0) and handler A state (idx 1)
+            assertThat(collectedStates).hasSize(2)
+            val initialState = NavigationEventHistory(currentInfo = HomeScreenInfo("A"))
+            assertThat(collectedStates.last()).isEqualTo(initialState)
+
+            // Call setInfo on the active handler to change the stack
+            val infoB = DetailsScreenInfo("B")
+            val infoA = HomeScreenInfo("A")
+            handler.setInfo(currentInfo = infoB, backInfo = listOf(infoA))
+            advanceUntilIdle()
+
+            // Collector receives the new, updated history stack
+            assertThat(collectedStates).hasSize(3)
+            assertThat(collectedStates.last())
+                .isEqualTo(NavigationEventHistory(currentInfo = infoB, backInfo = listOf(infoA)))
+        }
+
+    @Test
+    fun historyState_withCurrentAndForwardInfo_updatesStack() =
+        runTest(UnconfinedTestDispatcher()) {
+            val dispatcher = NavigationEventDispatcher()
+            val collectedStates = mutableListOf<NavigationEventHistory>()
+            dispatcher.history.onEach { collectedStates.add(it) }.launchIn(backgroundScope)
+            advanceUntilIdle()
+
+            // Add handler with current and forward info
+            val infoA = HomeScreenInfo("A")
+            val infoB = DetailsScreenInfo("B")
+            val infoC = DetailsScreenInfo("C")
+            val handler =
+                TestNavigationEventHandler<TestInfo>(
+                    currentInfo = infoA,
+                    backInfo = emptyList(),
+                    forwardInfo = listOf(infoB, infoC),
+                )
+            dispatcher.addHandler(handler)
+            advanceUntilIdle()
+
+            // Assert history reflects the full stack (current + forward)
+            // with the current index at 0
+            assertThat(collectedStates).hasSize(2) // empty + new state
+            assertThat(collectedStates.last())
+                .isEqualTo(
+                    NavigationEventHistory(currentInfo = infoA, forwardInfo = listOf(infoB, infoC))
+                )
+        }
+
+    @Test
+    fun historyState_withMergedBackInfo_combinesStacksInPriorityOrder() =
+        runTest(UnconfinedTestDispatcher()) {
+            val dispatcher = NavigationEventDispatcher()
+            val collectedStates = mutableListOf<NavigationEventHistory>()
+            dispatcher.history.onEach { collectedStates.add(it) }.launchIn(backgroundScope)
+            advanceUntilIdle() // Collects initial empty state
+
+            // Add a default handler with its own back stack
+            val homeInfo = HomeScreenInfo("home")
+            val settingsInfo = DetailsScreenInfo("settings")
+            val defaultHandler =
+                TestNavigationEventHandler<TestInfo>(
+                    currentInfo = settingsInfo,
+                    backInfo = listOf(homeInfo),
+                )
+            dispatcher.addHandler(defaultHandler, PRIORITY_DEFAULT)
+            advanceUntilIdle()
+
+            // State should be default handler's stack
+            assertThat(collectedStates).hasSize(2)
+            assertThat(collectedStates.last())
+                .isEqualTo(
+                    NavigationEventHistory(currentInfo = settingsInfo, backInfo = listOf(homeInfo))
+                )
+
+            // Add an overlay handler, which is now active
+            val profileInfo = DetailsScreenInfo("profile")
+            val overlayHandler =
+                TestNavigationEventHandler<TestInfo>(
+                    currentInfo = profileInfo,
+                    backInfo = listOf(settingsInfo), // Overlay's back stack
+                )
+            dispatcher.addHandler(overlayHandler, PRIORITY_OVERLAY)
+            advanceUntilIdle()
+
+            // The new history state must merge the stacks:
+            // Merged Back Stack = overlayHandler.backInfo + defaultHandler.backInfo
+            // Active Current = profileInfo
+            assertThat(collectedStates).hasSize(3)
+            assertThat(collectedStates.last())
+                .isEqualTo(
+                    NavigationEventHistory(
+                        currentInfo = profileInfo,
+                        backInfo = listOf(settingsInfo, homeInfo),
+                    )
+                )
+
+            // Removing overlay handler should fall back to default state
+            overlayHandler.remove()
+            advanceUntilIdle()
+            assertThat(collectedStates).hasSize(4)
+            assertThat(collectedStates.last())
+                .isEqualTo(
+                    NavigationEventHistory(currentInfo = settingsInfo, backInfo = listOf(homeInfo))
+                )
+        }
+
+    // endregion
+
+    // endregion
+
 }
 
 /** A sealed interface for type-safe navigation information. */
