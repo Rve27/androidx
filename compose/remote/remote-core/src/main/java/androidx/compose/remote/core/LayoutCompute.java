@@ -14,37 +14,20 @@
  * limitations under the License.
  */
 package androidx.compose.remote.core;
-
 import androidx.annotation.RestrictTo;
 
-import java.time.Clock;
-import java.time.Instant;
-import java.time.ZoneId;
+import org.jspecify.annotations.NonNull;
 
 /**
- * An implementation of {@link Clock} which returns the current time in the system default time
- * zone.
+ * Interface for operations that can participate in the layout computations
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public class SystemClock extends RemoteClock {
-    @Override
-    public ZoneId getZone() {
-        System.nanoTime();
-        return ZoneId.systemDefault();
-    }
+public interface LayoutCompute {
 
-    @Override
-    public Clock withZone(ZoneId zone) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Instant instant() {
-        return Instant.now();
-    }
-
-    @Override
-    public long nanoTime() {
-        return System.nanoTime();
-    }
+    /**
+     * evaluate the operation before the component layout pass
+     *
+     * @param context
+     */
+    boolean evaluateInLayout(@NonNull RemoteContext context);
 }

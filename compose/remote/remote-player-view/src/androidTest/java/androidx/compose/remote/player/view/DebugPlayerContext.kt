@@ -577,6 +577,7 @@ class DebugPlayerContext : RemoteContext() {
 
     override fun overrideInteger(id: Int, value: Int) {
         stringBuilder.append("overrideInteger($id)$value\n")
+        integerCache.put(id, value)
     }
 
     override fun overrideText(id: Int, valueId: Int) {
