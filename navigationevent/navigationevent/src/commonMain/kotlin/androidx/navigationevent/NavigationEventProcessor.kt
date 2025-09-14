@@ -189,11 +189,8 @@ internal class NavigationEventProcessor {
         hasEnabledAnyHandlers = newAnyEnabled
 
         // 4) Synchronize the global navigation state to the active (highest-priority) enabled
-        // callback. Order: in-progress > back > forward.
-        val enabledHandler = inProgressHandler ?: resolveEnabledHandler()
-        if (enabledHandler != null) {
-            updateEnabledHandlerInfo(handler = enabledHandler)
-        }
+        // callback.
+        updateEnabledHandlerInfo(handler = inProgressHandler ?: resolveEnabledHandler())
     }
 
     /**
@@ -205,7 +202,7 @@ internal class NavigationEventProcessor {
      * before updating the shared `_state`. This prevents lower-priority handlers from incorrectly
      * overwriting the state.
      */
-    internal fun updateEnabledHandlerInfo(handler: NavigationEventHandler<*>) {
+    internal fun updateEnabledHandlerInfo(handler: NavigationEventHandler<*>?) {
         // Pick the single handler that is allowed to control state right now.
         val activeHandler = inProgressHandler ?: resolveEnabledHandler()
 
@@ -213,20 +210,19 @@ internal class NavigationEventProcessor {
             return
         }
 
-        // Calculate the new state information from the active handler.
-        val newCurrentInfo = activeHandler.currentInfo
-        val newBackInfo = resolveCombinedBackInfo()
-        val newForwardInfo = activeHandler.forwardInfo
         val newHistory =
-            NavigationEventHistory(
-                mergedHistory =
-                    buildList {
-                        addAll(newBackInfo)
-                        add(newCurrentInfo)
-                        addAll(newForwardInfo)
-                    },
-                currentIndex = newBackInfo.size,
-            )
+            if (activeHandler == null) {
+                // If all handlers are removed or disabled (making 'activeHandler' null),
+                // we must reset the global state to the default empty history or we will
+                // get stuck on the state of the last-known active handler.
+                NavigationEventHistory()
+            } else {
+                NavigationEventHistory(
+                    backInfo = resolveCombinedBackInfo(),
+                    currentInfo = activeHandler.currentInfo,
+                    forwardInfo = activeHandler.forwardInfo,
+                )
+            }
 
         // To avoid redundant state updates and notifications, exit if nothing has changed.
         val oldHistory = _history.value

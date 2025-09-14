@@ -24,7 +24,6 @@ import androidx.navigationevent.NavigationEventDispatcher.Companion.PRIORITY_DEF
 import androidx.navigationevent.NavigationEventDispatcher.Companion.PRIORITY_OVERLAY
 import androidx.navigationevent.NavigationEventInfo.None
 import androidx.navigationevent.testing.TestNavigationEventHandler
-import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.launchIn
@@ -1836,11 +1835,6 @@ class NavigationEventDispatcherTest {
         assertThat(dispatcher.history.value).isEqualTo(NavigationEventHistory())
     }
 
-    // TODO(mgalhardo): This test fails due to a bug in `updateEnabledHandlerInfo()` when the active
-    //  handler is null. The proper fix is coupled to the legacy `state`  flow logic, which is
-    //  scheduled for deletion as part of the new Transition/History state refactor.
-    //  This test will be re-enabled and fixed after the legacy `state` flow is removed.
-    @Ignore
     @Test
     fun historyState_onHandlerChanges_updatesHistoryStack() =
         runTest(UnconfinedTestDispatcher()) {
