@@ -117,10 +117,11 @@ package androidx.navigationevent {
     property public java.util.List<androidx.navigationevent.NavigationEventInfo> mergedHistory;
   }
 
-  @androidx.compose.runtime.Immutable public interface NavigationEventInfo {
+  @androidx.compose.runtime.Immutable public abstract class NavigationEventInfo {
+    ctor public NavigationEventInfo();
   }
 
-  public static final class NavigationEventInfo.None implements androidx.navigationevent.NavigationEventInfo {
+  public static final class NavigationEventInfo.None extends androidx.navigationevent.NavigationEventInfo {
     field public static final androidx.navigationevent.NavigationEventInfo.None INSTANCE;
   }
 

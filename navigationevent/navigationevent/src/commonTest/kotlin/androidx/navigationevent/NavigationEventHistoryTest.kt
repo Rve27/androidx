@@ -144,7 +144,7 @@ internal class NavigationEventHistoryTest {
     }
 
     /** A simple [NavigationEventInfo] for testing. */
-    private data class TestInfo(val id: String) : NavigationEventInfo
+    private data class TestInfo(val id: String) : NavigationEventInfo()
 
     private companion object {
         private val infoA = TestInfo("A")

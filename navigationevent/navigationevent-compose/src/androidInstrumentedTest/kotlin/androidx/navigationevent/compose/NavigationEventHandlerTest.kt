@@ -308,5 +308,5 @@ internal class NavigationEventHandlerTest {
     }
 
     // A simple data class for testing the info-based handler.
-    private data class TestInfo(val id: Int = -1) : NavigationEventInfo
+    private data class TestInfo(val id: Int = -1) : NavigationEventInfo()
 }
