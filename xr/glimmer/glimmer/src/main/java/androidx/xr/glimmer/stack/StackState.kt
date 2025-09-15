@@ -1,0 +1,148 @@
+/*
+ * Copyright 2025 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package androidx.xr.glimmer.stack
+
+import androidx.compose.animation.core.AnimationSpec
+import androidx.compose.animation.core.spring
+import androidx.compose.foundation.MutatePriority
+import androidx.compose.foundation.gestures.ScrollScope
+import androidx.compose.foundation.gestures.ScrollableState
+import androidx.compose.foundation.pager.PagerState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+
+/**
+ * Creates and remembers a [StackState] for a [VerticalStack].
+ *
+ * The returned [StackState] is remembered across compositions and can be used to control or observe
+ * the state of a [VerticalStack]. It's essential to pass this state to the `state` parameter of the
+ * corresponding [VerticalStack] composable.
+ *
+ * Note: Properties of the state will only be correctly populated after the [VerticalStack] it is
+ * associated with has been composed for the first time.
+ *
+ * Warning: A single [StackState] instance must not be shared across multiple [VerticalStack]
+ * composables.
+ *
+ * @see StackState
+ * @see VerticalStack
+ */
+// TODO(b/413429531): expose a way to set the initial item.
+@Composable
+public fun rememberStackState(): StackState =
+    // TODO(b/413429531): switch to rememberSaveable with a public Saver.
+    remember { StackState() }
+
+/**
+ * The [VerticalStack] state that allows programmatic control and observation of the stack's state.
+ *
+ * A [StackState] object can be created and remembered using [rememberStackState].
+ *
+ * Note: Properties of the state will only be correctly populated after the [VerticalStack] it is
+ * associated with has been composed for the first time.
+ *
+ * Warning: A single [StackState] instance must not be shared across multiple [VerticalStack]
+ * composables.
+ */
+// TODO(b/413429531): add layout info to the state.
+// TODO(b/413429531): add InteractionSource.
+// TODO(b/413429531): add ScrollIndicatorState.
+@Stable
+public class StackState : ScrollableState {
+
+    internal var itemCount by mutableIntStateOf(0)
+
+    internal val pagerState = PagerState(pageCount = { itemCount })
+
+    /** The index of the item that's currently at the top of the stack, defaults to 0. */
+    public val topItem: Int
+        get() = pagerState.currentPage
+
+    /**
+     * The offset of the top item as a fraction of the stack item container size. This value ranges
+     * between -0.5 and 0.5 and indicates how much the item is offset from the snapped position. A
+     * value of 0.0 indicates that the item is perfectly snapped to the center.
+     */
+    public val topItemOffsetFraction: Float
+        get() = pagerState.currentPageOffsetFraction
+
+    /**
+     * Scroll (jump immediately) to a given [item] index.
+     *
+     * @param item The index of the destination item
+     */
+    public suspend fun scrollToItem(item: Int) {
+        if (itemCount == 0) return
+        pagerState.scrollToPage(item.coerceIn(0, itemCount - 1))
+    }
+
+    /**
+     * Scroll animate to a given [item]'s closest snap position. If the [item] is too far away from
+     * [topItem], not all the items in the range will be composed. Instead, the stack will jump to a
+     * nearer item, then compose and animate the rest of the items until the destination [item].
+     *
+     * @param item The index of the destination item
+     * @param animationSpec An [AnimationSpec] to move between items
+     */
+    public suspend fun animateScrollToItem(
+        item: Int,
+        animationSpec: AnimationSpec<Float> = spring(),
+    ) {
+        if (itemCount == 0) return
+        pagerState.animateScrollToPage(
+            item.coerceIn(0, itemCount - 1),
+            pageOffsetFraction = 0f,
+            animationSpec,
+        )
+    }
+
+    override suspend fun scroll(
+        scrollPriority: MutatePriority,
+        block: suspend ScrollScope.() -> Unit,
+    ) {
+        if (itemCount == 0) return
+        pagerState.scroll(scrollPriority, block)
+    }
+
+    override fun dispatchRawDelta(delta: Float): Float {
+        if (itemCount == 0) return 0f
+        return pagerState.dispatchRawDelta(delta)
+    }
+
+    override val isScrollInProgress: Boolean
+        get() = pagerState.isScrollInProgress
+
+    @get:Suppress("GetterSetterNames")
+    override val canScrollForward: Boolean
+        get() = pagerState.currentPage < pagerState.pageCount - 1
+
+    @get:Suppress("GetterSetterNames")
+    override val canScrollBackward: Boolean
+        get() = pagerState.currentPage > 0
+
+    @get:Suppress("GetterSetterNames")
+    override val lastScrolledForward: Boolean
+        get() = pagerState.lastScrolledForward
+
+    @get:Suppress("GetterSetterNames")
+    override val lastScrolledBackward: Boolean
+        get() = pagerState.lastScrolledBackward
+}
