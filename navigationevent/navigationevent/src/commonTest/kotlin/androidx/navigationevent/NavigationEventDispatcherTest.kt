@@ -2063,11 +2063,11 @@ class NavigationEventDispatcherTest {
 }
 
 /** A sealed interface for type-safe navigation information. */
-private sealed interface TestInfo : NavigationEventInfo
+private sealed class TestInfo : NavigationEventInfo()
 
-private data class HomeScreenInfo(val id: String) : TestInfo
+private data class HomeScreenInfo(val id: String) : TestInfo()
 
-private data class DetailsScreenInfo(val id: String) : TestInfo
+private data class DetailsScreenInfo(val id: String) : TestInfo()
 
 /**
  * A test implementation of [NavigationEventInput] that records lifecycle events and invocation
