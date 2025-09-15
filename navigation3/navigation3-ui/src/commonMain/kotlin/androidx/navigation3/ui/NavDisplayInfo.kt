@@ -29,7 +29,7 @@ import androidx.navigationevent.NavigationEventInfo
  *   ordered from the bottom to the top of the back stack.
  */
 public class NavDisplayInfo internal constructor(public val visibleEntries: List<Any>) :
-    NavigationEventInfo {
+    NavigationEventInfo() {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
