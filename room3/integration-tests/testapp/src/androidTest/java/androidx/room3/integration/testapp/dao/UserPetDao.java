@@ -17,7 +17,6 @@
 package androidx.room3.integration.testapp.dao;
 
 import androidx.lifecycle.LiveData;
-import androidx.paging.DataSource;
 import androidx.room3.Dao;
 import androidx.room3.Delete;
 import androidx.room3.Insert;
@@ -56,11 +55,6 @@ public interface UserPetDao {
 
     @Query("SELECT * FROM Pet p LEFT OUTER JOIN User u ON u.mId = p.mUserId")
     List<UserAndPet> loadPets();
-
-    @SuppressWarnings({RoomWarnings.QUERY_MISMATCH, RoomWarnings.CURSOR_MISMATCH})
-    @Transaction
-    @Query("SELECT * FROM User u LEFT OUTER JOIN Pet p ON u.mId = p.mUserId")
-    DataSource.Factory<Integer, UserAndAllPets> dataSourceFactoryMultiTable();
 
     @Transaction
     @Query("SELECT * FROM User u")

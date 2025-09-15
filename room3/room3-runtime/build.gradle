@@ -150,7 +150,6 @@ androidXMultiplatform {
                 api(libs.kotlinCoroutinesAndroid)
                 implementation("androidx.arch.core:core-runtime:2.2.0")
                 compileOnly("androidx.lifecycle:lifecycle-livedata-core:2.0.0")
-                compileOnly("androidx.paging:paging-common:2.0.0")
                 implementation("androidx.annotation:annotation-experimental:1.5.0")
             }
         }
