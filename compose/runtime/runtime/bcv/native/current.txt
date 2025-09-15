@@ -978,6 +978,7 @@ final value class <#A: kotlin/Any?> androidx.compose.runtime/Updater { // androi
     final val composer // androidx.compose.runtime/Updater.composer|{}composer[0]
         final fun <get-composer>(): androidx.compose.runtime/Composer // androidx.compose.runtime/Updater.composer.<get-composer>|<get-composer>(){}[0]
 
+    final fun <#A1: kotlin/Any?> init(#A1, kotlin/Function2<#A, #A1, kotlin/Unit>) // androidx.compose.runtime/Updater.init|init(0:0;kotlin.Function2<1:0,0:0,kotlin.Unit>){0§<kotlin.Any?>}[0]
     final fun <#A1: kotlin/Any?> set(#A1, kotlin/Function2<#A, #A1, kotlin/Unit>) // androidx.compose.runtime/Updater.set|set(0:0;kotlin.Function2<1:0,0:0,kotlin.Unit>){0§<kotlin.Any?>}[0]
     final fun <#A1: kotlin/Any?> update(#A1, kotlin/Function2<#A, #A1, kotlin/Unit>) // androidx.compose.runtime/Updater.update|update(0:0;kotlin.Function2<1:0,0:0,kotlin.Unit>){0§<kotlin.Any?>}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // androidx.compose.runtime/Updater.equals|equals(kotlin.Any?){}[0]
