@@ -23,6 +23,7 @@ import androidx.navigationevent.NavigationEventDispatcher.Companion.PRIORITY_DEF
 import androidx.navigationevent.NavigationEventDispatcher.Companion.PRIORITY_OVERLAY
 import androidx.navigationevent.NavigationEventState.Idle
 import androidx.navigationevent.NavigationEventState.InProgress
+import androidx.navigationevent.NavigationEventTransitionState.Direction
 import kotlin.jvm.JvmOverloads
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
@@ -455,7 +456,7 @@ private constructor(
     @MainThread
     internal fun dispatchOnStarted(
         input: NavigationEventInput,
-        direction: NavigationEventDirection,
+        direction: @Direction Int,
         event: NavigationEvent,
     ) {
         checkInvariants()
@@ -476,7 +477,7 @@ private constructor(
     @MainThread
     internal fun dispatchOnProgressed(
         input: NavigationEventInput,
-        direction: NavigationEventDirection,
+        direction: @Direction Int,
         event: NavigationEvent,
     ) {
         checkInvariants()
@@ -494,10 +495,7 @@ private constructor(
      * @throws IllegalStateException if the dispatcher has already been disposed.
      */
     @MainThread
-    internal fun dispatchOnCompleted(
-        input: NavigationEventInput,
-        direction: NavigationEventDirection,
-    ) {
+    internal fun dispatchOnCompleted(input: NavigationEventInput, direction: @Direction Int) {
         checkInvariants()
 
         if (!isEnabled) return
@@ -513,10 +511,7 @@ private constructor(
      * @throws IllegalStateException if the dispatcher has already been disposed.
      */
     @MainThread
-    internal fun dispatchOnCancelled(
-        input: NavigationEventInput,
-        direction: NavigationEventDirection,
-    ) {
+    internal fun dispatchOnCancelled(input: NavigationEventInput, direction: @Direction Int) {
         checkInvariants()
 
         if (!isEnabled) return
