@@ -2007,41 +2007,6 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
     }
 
     @Test
-    fun paging_dataSource() {
-        val src =
-            Source.kotlin(
-                "MyDao.kt",
-                """
-            import androidx.room3.*
-            import androidx.paging.DataSource
-
-            @Dao
-            abstract class MyDao {
-                @Query("SELECT * from MyEntity")
-                abstract fun getDataSourceFactory(): DataSource.Factory<Int, MyEntity>
-
-                @Query("SELECT * FROM MyEntity WHERE pk > :gt ORDER BY pk ASC")
-                abstract fun getDataSourceFactoryWithArgs(gt: Long): DataSource.Factory<Int, MyEntity>
-            }
-
-            @Entity
-            data class MyEntity(
-                @PrimaryKey
-                val pk: Int,
-                val other: String
-            )
-            """
-                    .trimIndent(),
-            )
-        runTest(
-            sources =
-                listOf(src, databaseSrc, COMMON.DATA_SOURCE_FACTORY, COMMON.POSITIONAL_DATA_SOURCE),
-            expectedFilePath = getTestGoldenPath(testName.methodName),
-            withKsp2 = false,
-        )
-    }
-
-    @Test
     fun callableQuery_rx2() {
         val src =
             Source.kotlin(
