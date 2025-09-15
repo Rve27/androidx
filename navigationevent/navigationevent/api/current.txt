@@ -156,6 +156,29 @@ package androidx.navigationevent {
     property public androidx.navigationevent.NavigationEvent latestEvent;
   }
 
+  @androidx.compose.runtime.Immutable public abstract sealed class NavigationEventTransitionState {
+    field public static final androidx.navigationevent.NavigationEventTransitionState.Companion Companion;
+    field public static final int TRANSITIONING_BACK = -1; // 0xffffffff
+    field public static final int TRANSITIONING_FORWARD = 1; // 0x1
+  }
+
+  public static final class NavigationEventTransitionState.Companion {
+    property public static int TRANSITIONING_BACK;
+    property public static int TRANSITIONING_FORWARD;
+  }
+
+  public static final class NavigationEventTransitionState.Idle extends androidx.navigationevent.NavigationEventTransitionState {
+    ctor public NavigationEventTransitionState.Idle();
+  }
+
+  public static final class NavigationEventTransitionState.InProgress extends androidx.navigationevent.NavigationEventTransitionState {
+    ctor public NavigationEventTransitionState.InProgress(androidx.navigationevent.NavigationEvent latestEvent, int direction);
+    method @InaccessibleFromKotlin public int getDirection();
+    method @InaccessibleFromKotlin public androidx.navigationevent.NavigationEvent getLatestEvent();
+    property public int direction;
+    property public androidx.navigationevent.NavigationEvent latestEvent;
+  }
+
   public fun interface OnBackCompletedFallback {
     method public void onBackCompletedFallback();
   }

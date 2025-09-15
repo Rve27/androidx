@@ -181,3 +181,37 @@ sealed class <#A: out androidx.navigationevent/NavigationEventInfo> androidx.nav
         final fun toString(): kotlin/String // androidx.navigationevent/NavigationEventState.InProgress.toString|toString(){}[0]
     }
 }
+
+sealed class androidx.navigationevent/NavigationEventTransitionState { // androidx.navigationevent/NavigationEventTransitionState|null[0]
+    open annotation class Direction : kotlin/Annotation { // androidx.navigationevent/NavigationEventTransitionState.Direction|null[0]
+        constructor <init>() // androidx.navigationevent/NavigationEventTransitionState.Direction.<init>|<init>(){}[0]
+    }
+
+    final class Idle : androidx.navigationevent/NavigationEventTransitionState { // androidx.navigationevent/NavigationEventTransitionState.Idle|null[0]
+        constructor <init>() // androidx.navigationevent/NavigationEventTransitionState.Idle.<init>|<init>(){}[0]
+
+        final fun equals(kotlin/Any?): kotlin/Boolean // androidx.navigationevent/NavigationEventTransitionState.Idle.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // androidx.navigationevent/NavigationEventTransitionState.Idle.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // androidx.navigationevent/NavigationEventTransitionState.Idle.toString|toString(){}[0]
+    }
+
+    final class InProgress : androidx.navigationevent/NavigationEventTransitionState { // androidx.navigationevent/NavigationEventTransitionState.InProgress|null[0]
+        constructor <init>(androidx.navigationevent/NavigationEvent, kotlin/Int) // androidx.navigationevent/NavigationEventTransitionState.InProgress.<init>|<init>(androidx.navigationevent.NavigationEvent;kotlin.Int){}[0]
+
+        final val direction // androidx.navigationevent/NavigationEventTransitionState.InProgress.direction|{}direction[0]
+            final fun <get-direction>(): kotlin/Int // androidx.navigationevent/NavigationEventTransitionState.InProgress.direction.<get-direction>|<get-direction>(){}[0]
+        final val latestEvent // androidx.navigationevent/NavigationEventTransitionState.InProgress.latestEvent|{}latestEvent[0]
+            final fun <get-latestEvent>(): androidx.navigationevent/NavigationEvent // androidx.navigationevent/NavigationEventTransitionState.InProgress.latestEvent.<get-latestEvent>|<get-latestEvent>(){}[0]
+
+        final fun equals(kotlin/Any?): kotlin/Boolean // androidx.navigationevent/NavigationEventTransitionState.InProgress.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // androidx.navigationevent/NavigationEventTransitionState.InProgress.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // androidx.navigationevent/NavigationEventTransitionState.InProgress.toString|toString(){}[0]
+    }
+
+    final object Companion { // androidx.navigationevent/NavigationEventTransitionState.Companion|null[0]
+        final const val TRANSITIONING_BACK // androidx.navigationevent/NavigationEventTransitionState.Companion.TRANSITIONING_BACK|{}TRANSITIONING_BACK[0]
+            final fun <get-TRANSITIONING_BACK>(): kotlin/Int // androidx.navigationevent/NavigationEventTransitionState.Companion.TRANSITIONING_BACK.<get-TRANSITIONING_BACK>|<get-TRANSITIONING_BACK>(){}[0]
+        final const val TRANSITIONING_FORWARD // androidx.navigationevent/NavigationEventTransitionState.Companion.TRANSITIONING_FORWARD|{}TRANSITIONING_FORWARD[0]
+            final fun <get-TRANSITIONING_FORWARD>(): kotlin/Int // androidx.navigationevent/NavigationEventTransitionState.Companion.TRANSITIONING_FORWARD.<get-TRANSITIONING_FORWARD>|<get-TRANSITIONING_FORWARD>(){}[0]
+    }
+}
