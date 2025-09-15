@@ -26,7 +26,7 @@ package androidx.navigation3.ui {
     field public static final androidx.navigation3.ui.NavDisplay INSTANCE;
   }
 
-  public final class NavDisplayInfo implements androidx.navigationevent.NavigationEventInfo {
+  public final class NavDisplayInfo extends androidx.navigationevent.NavigationEventInfo {
     method @InaccessibleFromKotlin public java.util.List<java.lang.Object> getVisibleEntries();
     property public java.util.List<java.lang.Object> visibleEntries;
   }

@@ -33,16 +33,14 @@ import androidx.compose.runtime.Immutable
  * - Ensure equality reflects the logical identity of the navigation state.
  *
  * This allows you to associate custom, comparable data with a system navigation event emissions.
- *
- * @see NavigationEventState
  */
 @Immutable
-public interface NavigationEventInfo {
+public abstract class NavigationEventInfo() {
 
     /**
      * A default used when no specific information is associated with a navigation event.
      *
      * This serves as a null object when context about the UI state is unavailable or not needed.
      */
-    public object None : NavigationEventInfo
+    public object None : NavigationEventInfo()
 }
