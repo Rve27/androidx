@@ -23,6 +23,9 @@ import androidx.navigationevent.NavigationEventDispatcher.Priority
 import androidx.navigationevent.NavigationEventInfo.None
 import androidx.navigationevent.NavigationEventState.Idle
 import androidx.navigationevent.NavigationEventState.InProgress
+import androidx.navigationevent.NavigationEventTransitionState.Companion.TRANSITIONING_BACK
+import androidx.navigationevent.NavigationEventTransitionState.Companion.TRANSITIONING_FORWARD
+import androidx.navigationevent.NavigationEventTransitionState.Direction
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -89,7 +92,7 @@ internal class NavigationEventProcessor {
      * This is non-null only when [inProgressHandler] is also non-null. Its lifecycle is tied
      * directly to the active navigation event.
      */
-    private var inProgressDirection: NavigationEventDirection? = null
+    private var inProgressDirection: @Direction Int? = null
 
     /**
      * Holds inputs that were registered without a specific priority.
@@ -313,8 +316,8 @@ internal class NavigationEventProcessor {
         // cancellation and then cleared from the in-progress state.
         if (handler == inProgressHandler) {
             when (inProgressDirection) {
-                NavigationEventDirection.Back -> handler.doOnBackCancelled()
-                NavigationEventDirection.Forward -> handler.doOnForwardCancelled()
+                TRANSITIONING_BACK -> handler.doOnBackCancelled()
+                TRANSITIONING_FORWARD -> handler.doOnForwardCancelled()
             }
             inProgressHandler = null
             inProgressDirection = null
@@ -346,7 +349,7 @@ internal class NavigationEventProcessor {
     @MainThread
     fun dispatchOnStarted(
         input: NavigationEventInput,
-        direction: NavigationEventDirection,
+        direction: @Direction Int,
         event: NavigationEvent,
     ) {
         // TODO(mgalhardo): Update sharedProcessor to use input to distinguish events.
@@ -366,8 +369,8 @@ internal class NavigationEventProcessor {
             inProgressHandler = handler
             inProgressDirection = direction
             when (direction) {
-                NavigationEventDirection.Back -> handler.doOnBackStarted(event)
-                NavigationEventDirection.Forward -> handler.doOnForwardStarted(event)
+                TRANSITIONING_BACK -> handler.doOnBackStarted(event)
+                TRANSITIONING_FORWARD -> handler.doOnForwardStarted(event)
             }
             _state.update { state ->
                 InProgress(
@@ -394,7 +397,7 @@ internal class NavigationEventProcessor {
     @MainThread
     fun dispatchOnProgressed(
         input: NavigationEventInput,
-        direction: NavigationEventDirection,
+        direction: @Direction Int,
         event: NavigationEvent,
     ) {
         // TODO(mgalhardo): Update sharedProcessor to use input to distinguish events.
@@ -406,8 +409,8 @@ internal class NavigationEventProcessor {
 
         if (handler != null) {
             when (direction) {
-                NavigationEventDirection.Back -> handler.doOnBackProgressed(event)
-                NavigationEventDirection.Forward -> handler.doOnForwardProgressed(event)
+                TRANSITIONING_BACK -> handler.doOnBackProgressed(event)
+                TRANSITIONING_FORWARD -> handler.doOnForwardProgressed(event)
             }
             _state.update { state ->
                 InProgress(
@@ -428,8 +431,8 @@ internal class NavigationEventProcessor {
      * terminal event, so [inProgressHandler] is always cleared afterward.
      *
      * If no handler handles the event:
-     * - For [NavigationEventDirection.Back], the [onBackCompletedFallback] action is invoked.
-     * - For [NavigationEventDirection.Forward], no fallback is triggered.
+     * - For [TRANSITIONING_BACK], the [onBackCompletedFallback] action is invoked.
+     * - For [TRANSITIONING_FORWARD], no fallback is triggered.
      *
      * After dispatching, the dispatcher always transitions back to [Idle] state.
      *
@@ -441,7 +444,7 @@ internal class NavigationEventProcessor {
     @MainThread
     fun dispatchOnCompleted(
         input: NavigationEventInput,
-        direction: NavigationEventDirection,
+        direction: @Direction Int,
         onBackCompletedFallback: OnBackCompletedFallback?,
     ) {
         // TODO(mgalhardo): Update sharedProcessor to use input to distinguish events.
@@ -455,14 +458,14 @@ internal class NavigationEventProcessor {
         inProgressDirection = null
 
         // No handler: only back events have a fallback to invoke.
-        if (handler == null && direction == NavigationEventDirection.Back) {
+        if (handler == null && direction == TRANSITIONING_BACK) {
             onBackCompletedFallback?.onBackCompletedFallback()
         }
 
         // No handler: does nothing.
         when (direction) {
-            NavigationEventDirection.Back -> handler?.doOnBackCompleted()
-            NavigationEventDirection.Forward -> handler?.doOnForwardCompleted()
+            TRANSITIONING_BACK -> handler?.doOnBackCompleted()
+            TRANSITIONING_FORWARD -> handler?.doOnForwardCompleted()
         }
 
         // Completion is terminal regardless of handler outcome; return to Idle.
@@ -486,7 +489,7 @@ internal class NavigationEventProcessor {
      * @param direction The direction of the navigation event being started.
      */
     @MainThread
-    fun dispatchOnCancelled(input: NavigationEventInput, direction: NavigationEventDirection) {
+    fun dispatchOnCancelled(input: NavigationEventInput, direction: @Direction Int) {
         // TODO(mgalhardo): Update sharedProcessor to use input to distinguish events.
 
         // If there is a handler in progress, only that one is notified.
@@ -499,8 +502,8 @@ internal class NavigationEventProcessor {
 
         if (handler != null) {
             when (direction) {
-                NavigationEventDirection.Back -> handler.doOnBackCancelled()
-                NavigationEventDirection.Forward -> handler.doOnForwardCancelled()
+                TRANSITIONING_BACK -> handler.doOnBackCancelled()
+                TRANSITIONING_FORWARD -> handler.doOnForwardCancelled()
             }
 
             _state.update { state ->
@@ -532,15 +535,13 @@ internal class NavigationEventProcessor {
      *   `direction`, or `null` if none is found. If `direction` is `null`, it returns the first
      *   handler enabled for any direction.
      */
-    private fun resolveEnabledHandler(
-        direction: NavigationEventDirection? = null
-    ): NavigationEventHandler<*>? {
+    private fun resolveEnabledHandler(direction: @Direction Int = 0): NavigationEventHandler<*>? {
         return when (direction) {
             // For a 'null' direction, find the first available handler for any direction.
-            null -> findHandler { it.isBackEnabled || it.isForwardEnabled }
-            NavigationEventDirection.Back -> findHandler { it.isBackEnabled }
-            NavigationEventDirection.Forward -> findHandler { it.isForwardEnabled }
-            else -> error("Unsupported NavigationEventDirection: '$direction'.")
+            0 -> findHandler { it.isBackEnabled || it.isForwardEnabled }
+            TRANSITIONING_BACK -> findHandler { it.isBackEnabled }
+            TRANSITIONING_FORWARD -> findHandler { it.isForwardEnabled }
+            else -> error("Unsupported direction: '$direction'.")
         }
     }
 
