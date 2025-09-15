@@ -16,13 +16,14 @@
 
 package androidx.navigationevent
 
-import androidx.annotation.MainThread
 import androidx.navigationevent.NavigationEventDispatcher.Companion.PRIORITY_DEFAULT
 import androidx.navigationevent.NavigationEventDispatcher.Companion.PRIORITY_OVERLAY
 import androidx.navigationevent.NavigationEventDispatcher.Priority
 import androidx.navigationevent.NavigationEventTransitionState.Companion.TRANSITIONING_BACK
 import androidx.navigationevent.NavigationEventTransitionState.Companion.TRANSITIONING_FORWARD
 import androidx.navigationevent.NavigationEventTransitionState.Direction
+import androidx.navigationevent.NavigationEventTransitionState.Idle
+import androidx.navigationevent.NavigationEventTransitionState.InProgress
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
@@ -37,8 +38,7 @@ internal class NavigationEventProcessor {
      * The private, mutable source of truth for the global [NavigationEventTransitionState]. This
      * flow is updated by the processor based on the active handler's gesture state.
      */
-    private val _transitionState =
-        MutableStateFlow<NavigationEventTransitionState>(NavigationEventTransitionState.Idle())
+    private val _transitionState = MutableStateFlow<NavigationEventTransitionState>(Idle())
 
     /** @see [NavigationEventDispatcher.transitionState] */
     val transitionState = _transitionState.asStateFlow()
@@ -117,7 +117,7 @@ internal class NavigationEventProcessor {
      * These are typically treated as the lowest priority level, processed only after
      * [defaultInputs] and [overlayInputs].
      */
-    val unspecifiedInputs = mutableSetOf<NavigationEventInput>()
+    private val unspecifiedInputs = mutableSetOf<NavigationEventInput>()
 
     /**
      * Holds inputs registered with the [PRIORITY_DEFAULT] priority.
@@ -125,7 +125,7 @@ internal class NavigationEventProcessor {
      * This level is for primary UI content and is processed before [unspecifiedInputs] but after
      * [overlayInputs].
      */
-    val defaultInputs = mutableSetOf<NavigationEventInput>()
+    private val defaultInputs = mutableSetOf<NavigationEventInput>()
 
     /**
      * Holds inputs registered with the [PRIORITY_OVERLAY] priority.
@@ -133,16 +133,16 @@ internal class NavigationEventProcessor {
      * This is the highest priority level, intended for UI elements like dialogs or bottom sheets
      * that appear on top of other content.
      */
-    val overlayInputs = mutableSetOf<NavigationEventInput>()
+    private val overlayInputs = mutableSetOf<NavigationEventInput>()
 
     /** Whether at least one handler with [PRIORITY_DEFAULT] is enabled. */
-    var hasEnabledDefaultHandlers: Boolean = false
+    private var hasEnabledDefaultHandlers = false
 
     /** Whether at least one handler with [PRIORITY_OVERLAY] is enabled. */
-    var hasEnabledOverlayHandlers: Boolean = false
+    private var hasEnabledOverlayHandlers = false
 
     /** Whether at least one handler with is enabled. */
-    var hasEnabledAnyHandlers: Boolean = false
+    private var hasEnabledAnyHandlers = false
 
     /**
      * Recalculates the enabled status for all callback priorities, notifies listeners of any
@@ -155,24 +155,24 @@ internal class NavigationEventProcessor {
         // 1) Snapshot new truth from current callbacks.
         // Use `any` instead of `filter` to avoid allocating intermediate lists.
         // (`any` also short-circuits on the first match, making it strictly cheaper.)
-        val newDefaultEnabled = defaultHandlers.any { it.isBackEnabled || it.isForwardEnabled }
         val newOverlayEnabled = overlayHandlers.any { it.isBackEnabled || it.isForwardEnabled }
-        val newAnyEnabled = newDefaultEnabled || newOverlayEnabled
+        val newDefaultEnabled = defaultHandlers.any { it.isBackEnabled || it.isForwardEnabled }
+        val newAnyEnabled = newOverlayEnabled || newDefaultEnabled
 
-        val defaultEnabledChanged = hasEnabledDefaultHandlers != newDefaultEnabled
         val overlayEnabledChanged = hasEnabledOverlayHandlers != newOverlayEnabled
+        val defaultEnabledChanged = hasEnabledDefaultHandlers != newDefaultEnabled
         val anyEnabledChanged = hasEnabledAnyHandlers != newAnyEnabled
 
         // 2) Notify only when a priority’s state actually changed.
-        if (defaultEnabledChanged) {
-            for (input in defaultInputs) {
-                input.doOnHasEnabledHandlersChanged(hasEnabledHandlers = newDefaultEnabled)
-            }
-        }
-
         if (overlayEnabledChanged) {
             for (input in overlayInputs) {
                 input.doOnHasEnabledHandlersChanged(hasEnabledHandlers = newOverlayEnabled)
+            }
+        }
+
+        if (defaultEnabledChanged) {
+            for (input in defaultInputs) {
+                input.doOnHasEnabledHandlersChanged(hasEnabledHandlers = newDefaultEnabled)
             }
         }
 
@@ -184,16 +184,13 @@ internal class NavigationEventProcessor {
 
         // 3) Commit new flags *after* notifications so change detection compares against the
         // previous published state. This prevents spurious notifications within the same cycle.
-        hasEnabledDefaultHandlers = newDefaultEnabled
         hasEnabledOverlayHandlers = newOverlayEnabled
+        hasEnabledDefaultHandlers = newDefaultEnabled
         hasEnabledAnyHandlers = newAnyEnabled
 
         // 4) Synchronize the global navigation state to the active (highest-priority) enabled
-        // callback. Order: in-progress > back > forward.
-        val enabledHandler = inProgressHandler ?: resolveEnabledHandler()
-        if (enabledHandler != null) {
-            updateEnabledHandlerInfo(handler = enabledHandler)
-        }
+        // callback.
+        updateEnabledHandlerInfo(handler = inProgressHandler ?: resolveEnabledHandler())
     }
 
     /**
@@ -205,7 +202,7 @@ internal class NavigationEventProcessor {
      * before updating the shared `_state`. This prevents lower-priority handlers from incorrectly
      * overwriting the state.
      */
-    internal fun updateEnabledHandlerInfo(handler: NavigationEventHandler<*>) {
+    internal fun updateEnabledHandlerInfo(handler: NavigationEventHandler<*>?) {
         // Pick the single handler that is allowed to control state right now.
         val activeHandler = inProgressHandler ?: resolveEnabledHandler()
 
@@ -213,20 +210,19 @@ internal class NavigationEventProcessor {
             return
         }
 
-        // Calculate the new state information from the active handler.
-        val newCurrentInfo = activeHandler.currentInfo
-        val newBackInfo = resolveCombinedBackInfo()
-        val newForwardInfo = activeHandler.forwardInfo
         val newHistory =
-            NavigationEventHistory(
-                mergedHistory =
-                    buildList {
-                        addAll(newBackInfo)
-                        add(newCurrentInfo)
-                        addAll(newForwardInfo)
-                    },
-                currentIndex = newBackInfo.size,
-            )
+            if (activeHandler == null) {
+                // If all handlers are removed or disabled (making 'activeHandler' null),
+                // we must reset the global state to the default empty history or we will
+                // get stuck on the state of the last-known active handler.
+                NavigationEventHistory()
+            } else {
+                NavigationEventHistory(
+                    backInfo = resolveCombinedBackInfo(),
+                    currentInfo = activeHandler.currentInfo,
+                    forwardInfo = activeHandler.forwardInfo,
+                )
+            }
 
         // To avoid redundant state updates and notifications, exit if nothing has changed.
         val oldHistory = _history.value
@@ -250,46 +246,7 @@ internal class NavigationEventProcessor {
         }
     }
 
-    /**
-     * Returns `true` if there is at least one [NavigationEventHandler] registered globally within
-     * this processor is enabled.
-     *
-     * @return `true` if any handler is enabled, `false` otherwise.
-     */
-    fun hasEnabledHandler(): Boolean = hasEnabledOverlayHandlers || hasEnabledDefaultHandlers
-
-    /**
-     * Checks if there are any registered handlers, either overlay or normal.
-     *
-     * @return `true` if there is at least one overlay handler or one normal handler registered,
-     *   `false` otherwise.
-     */
-    fun hasHandlers(): Boolean = overlayHandlers.isNotEmpty() || defaultHandlers.isNotEmpty()
-
-    /**
-     * Adds a new [NavigationEventHandler] to receive navigation events, associating it with its
-     * [NavigationEventDispatcher].
-     *
-     * Handlers are placed into priority-specific queues
-     * ([NavigationEventDispatcher.PRIORITY_OVERLAY] or
-     * [NavigationEventDispatcher.PRIORITY_DEFAULT]) and within those queues, they are ordered in
-     * Last-In, First-Out (LIFO) manner. This ensures that the most recently added handler of a
-     * given priority is considered first.
-     *
-     * All handlers are invoked on the main thread. To stop receiving events, a handler must be
-     * removed via [NavigationEventHandler.remove].
-     *
-     * @param dispatcher The [NavigationEventDispatcher] instance registering this handler. This
-     *   link is stored on the handler itself to enable self-removal and state tracking.
-     * @param handler The handler instance to be added.
-     * @param priority The priority of the handler, determining its invocation order relative to
-     *   others. See [NavigationEventDispatcher.Priority].
-     * @throws IllegalArgumentException if [priority] is not one of the supported constants.
-     * @throws IllegalArgumentException if the given handler is already registered with a different
-     *   dispatcher.
-     */
-    @Suppress("PairedRegistration") // Handler is removed via `NavigationEventHandler.remove()`
-    @MainThread
+    /** [NavigationEventDispatcher.addHandler] */
     fun addHandler(
         dispatcher: NavigationEventDispatcher,
         handler: NavigationEventHandler<*>,
@@ -316,16 +273,7 @@ internal class NavigationEventProcessor {
         refreshEnabledHandlers()
     }
 
-    /**
-     * Removes a [NavigationEventHandler] from the processor's registry.
-     *
-     * If the handler is currently part of an active event (i.e., it is the [inProgressHandler]), it
-     * will be notified of cancellation before being removed. This method is idempotent and can be
-     * called safely even if the handler is not currently registered.
-     *
-     * @param handler The [NavigationEventHandler] to remove.
-     */
-    @MainThread
+    /** [NavigationEventHandler.remove] */
     fun removeHandler(handler: NavigationEventHandler<*>) {
         // If the handler is the one currently being processed, it needs to be notified of
         // cancellation and then cleared from the in-progress state.
@@ -349,6 +297,47 @@ internal class NavigationEventProcessor {
         refreshEnabledHandlers()
     }
 
+    /** [NavigationEventDispatcher.addInput] */
+    fun addInput(
+        dispatcher: NavigationEventDispatcher,
+        input: NavigationEventInput,
+        priority: Int,
+    ) {
+        val inputs =
+            when (priority) {
+                PRIORITY_OVERLAY -> overlayInputs
+                PRIORITY_DEFAULT -> defaultInputs
+                else -> unspecifiedInputs
+            }
+        inputs += input
+
+        input.dispatcher = dispatcher
+        input.doOnAdded(dispatcher)
+
+        // Input must get 'history' immediately to avoid missing initial state.
+        input.doOnHistoryChanged(history = history.value)
+
+        // Input must get 'hasEnabledHandlers' immediately to avoid missing initial state.
+        val hasEnabledHandlers =
+            when (priority) {
+                PRIORITY_OVERLAY -> hasEnabledOverlayHandlers
+                PRIORITY_DEFAULT -> hasEnabledDefaultHandlers
+                else -> hasEnabledAnyHandlers
+            }
+        input.doOnHasEnabledHandlersChanged(hasEnabledHandlers)
+    }
+
+    /** [NavigationEventDispatcher.removeInput] */
+    fun removeInput(dispatcher: NavigationEventDispatcher, input: NavigationEventInput) {
+        // The `remove()` operation on `Set` is efficient and simply returns `false` if the
+        // element is not found. There's no need for a preceding `contains()` check.
+        overlayInputs.remove(input)
+        defaultInputs.remove(input)
+        unspecifiedInputs.remove(input)
+        input.dispatcher = null
+        input.doOnRemoved()
+    }
+
     /**
      * Dispatches an [NavigationEventHandler.onBackStarted] event with the given event to the
      * highest-priority enabled handler.
@@ -361,7 +350,6 @@ internal class NavigationEventProcessor {
      * @param direction The direction of the navigation event being started.
      * @param event [NavigationEvent] to dispatch to the handler.
      */
-    @MainThread
     fun dispatchOnStarted(
         input: NavigationEventInput,
         direction: @Direction Int,
@@ -389,8 +377,7 @@ internal class NavigationEventProcessor {
             }
         }
 
-        _transitionState.value =
-            NavigationEventTransitionState.InProgress(latestEvent = event, direction = direction)
+        _transitionState.value = InProgress(latestEvent = event, direction = direction)
     }
 
     /**
@@ -404,7 +391,6 @@ internal class NavigationEventProcessor {
      * @param direction The direction of the navigation event being started.
      * @param event [NavigationEvent] to dispatch to the handler.
      */
-    @MainThread
     fun dispatchOnProgressed(
         input: NavigationEventInput,
         direction: @Direction Int,
@@ -422,8 +408,7 @@ internal class NavigationEventProcessor {
             TRANSITIONING_FORWARD -> handler?.doOnForwardProgressed(event)
         }
 
-        _transitionState.value =
-            NavigationEventTransitionState.InProgress(latestEvent = event, direction = direction)
+        _transitionState.value = InProgress(latestEvent = event, direction = direction)
     }
 
     /**
@@ -445,7 +430,6 @@ internal class NavigationEventProcessor {
      * @param onBackCompletedFallback The action to invoke if no handler handles a back completion
      *   event.
      */
-    @MainThread
     fun dispatchOnCompleted(
         input: NavigationEventInput,
         direction: @Direction Int,
@@ -461,19 +445,20 @@ internal class NavigationEventProcessor {
         inProgressHandler = null
         inProgressDirection = null
 
-        // No handler: only back events have a fallback to invoke.
-        if (handler == null && direction == TRANSITIONING_BACK) {
-            onBackCompletedFallback?.onBackCompletedFallback()
-        }
-
-        // No handler: does nothing.
         when (direction) {
-            TRANSITIONING_BACK -> handler?.doOnBackCompleted()
+            TRANSITIONING_BACK -> {
+                if (handler == null) {
+                    // No handler: only back events have a fallback to invoke.
+                    onBackCompletedFallback?.onBackCompletedFallback()
+                } else {
+                    handler.doOnBackCompleted()
+                }
+            }
             TRANSITIONING_FORWARD -> handler?.doOnForwardCompleted()
         }
 
         // Completion is terminal regardless of handler outcome; return to Idle.
-        _transitionState.value = NavigationEventTransitionState.Idle()
+        _transitionState.value = Idle()
     }
 
     /**
@@ -486,7 +471,6 @@ internal class NavigationEventProcessor {
      * @param input The [NavigationEventInput] that sourced this event.
      * @param direction The direction of the navigation event being started.
      */
-    @MainThread
     fun dispatchOnCancelled(input: NavigationEventInput, direction: @Direction Int) {
         // TODO(mgalhardo): Update sharedProcessor to use input to distinguish events.
 
@@ -503,7 +487,7 @@ internal class NavigationEventProcessor {
             TRANSITIONING_FORWARD -> handler?.doOnForwardCancelled()
         }
 
-        _transitionState.value = NavigationEventTransitionState.Idle()
+        _transitionState.value = Idle()
     }
 
     /**
