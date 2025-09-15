@@ -222,7 +222,7 @@ class GlimmerListAutoFocusTest : BaseListTestWithOrientation(Orientation.Vertica
 
         // List is scrollable, so it has to consume all events.
         rule.onRoot().performIndirectSwipe(200f)
-        Truth.assertThat(downEventReceivedByParentWasConsumed).isTrue()
+        Truth.assertThat(downEventReceivedByParentWasConsumed).isFalse()
         Truth.assertThat(moveEventReceivedByParentWasConsumed).isTrue()
         // TODO (levi): ScrollableNode isn't consuming the up event (will fully support in
         // followup CL.

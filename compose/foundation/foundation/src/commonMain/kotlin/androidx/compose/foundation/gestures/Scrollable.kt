@@ -60,7 +60,6 @@ import androidx.compose.ui.input.nestedscroll.nestedScrollModifierNode
 import androidx.compose.ui.input.pointer.PointerEvent
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.PointerEventType
-import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.PointerType
 import androidx.compose.ui.node.CompositionLocalConsumerModifierNode
 import androidx.compose.ui.node.DelegatableNode
@@ -550,7 +549,7 @@ internal class ScrollableNode(
         pass: PointerEventPass,
         bounds: IntSize,
     ) {
-        if (pointerEvent.changes.fastAny { canDrag.invoke(it) }) {
+        if (pointerEvent.changes.fastAny { canDrag.invoke(it.type) }) {
             super.onPointerEvent(pointerEvent, pass, bounds)
         }
         if (enabled) {
@@ -683,9 +682,7 @@ internal interface ScrollConfig {
 internal expect fun CompositionLocalConsumerModifierNode.platformScrollConfig(): ScrollConfig
 
 // TODO: provide public way to drag by mouse (especially requested for Pager)
-internal val CanDragCalculation: (PointerInputChange) -> Boolean = { change ->
-    change.type != PointerType.Mouse
-}
+internal val CanDragCalculation: (PointerType) -> Boolean = { type -> type != PointerType.Mouse }
 
 /**
  * Holds all scrolling related logic: controls nested scrolling, flinging, overscroll and delta

@@ -71,7 +71,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
 import com.google.common.truth.Truth.assertThat
 import kotlin.math.absoluteValue
-import kotlin.test.Ignore
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import kotlinx.coroutines.CoroutineScope
@@ -544,7 +543,6 @@ class DraggableTest {
     }
 
     @Test
-    @Ignore("Fixed in follow up CL (aosp/3768764)")
     fun draggable_indirectTouchCancel_callsDragStop() {
         var total = 0f
         var dragStopped = 0
@@ -831,11 +829,14 @@ class DraggableTest {
         var currentTime = SystemClock.uptimeMillis()
         var currentValue = Offset(TouchPadStart, 0f)
 
-        rule.onNodeWithTag(draggableBoxTag).sendIndirectTouchPressEvent(currentTime, currentValue)
+        val downEvent =
+            rule
+                .onNodeWithTag(draggableBoxTag)
+                .sendIndirectTouchPressEvent(currentTime, currentValue)
         currentTime += 16L
         currentValue += stepSize
 
-        val (newCurrentTime, newCurrentValue) =
+        val (newCurrentTime, newCurrentValue, lastMove) =
             rule
                 .onNodeWithTag(draggableBoxTag)
                 .sendIndirectTouchMoveEvents(
@@ -845,6 +846,7 @@ class DraggableTest {
                     16L,
                     stepSize,
                     IndirectTouchEventPrimaryDirectionalMotionAxis.X,
+                    previousEvent = downEvent,
                 )
 
         val prevTotal =
@@ -861,7 +863,11 @@ class DraggableTest {
 
         rule
             .onNodeWithTag(draggableBoxTag)
-            .sendIndirectTouchReleaseEvent(newCurrentTime, newCurrentValue)
+            .sendIndirectTouchReleaseEvent(
+                newCurrentTime,
+                newCurrentValue,
+                previousEvent = lastMove,
+            )
         rule.onNodeWithTag(draggableBoxTag).sendIndirectSwipeForward()
         rule.runOnIdle { assertThat(total).isGreaterThan(prevTotal + 123f) }
     }
@@ -962,11 +968,14 @@ class DraggableTest {
         var currentTime = SystemClock.uptimeMillis()
         var currentValue = Offset(TouchPadStart, 0f)
 
-        rule.onNodeWithTag(draggableBoxTag).sendIndirectTouchPressEvent(currentTime, currentValue)
+        val downEvent =
+            rule
+                .onNodeWithTag(draggableBoxTag)
+                .sendIndirectTouchPressEvent(currentTime, currentValue)
         currentTime += 16L
         currentValue += stepSize
 
-        val (newCurrentTime, newCurrentValue) =
+        val (newCurrentTime, newCurrentValue, lastMove) =
             rule
                 .onNodeWithTag(draggableBoxTag)
                 .sendIndirectTouchMoveEvents(
@@ -976,6 +985,7 @@ class DraggableTest {
                     16L,
                     stepSize,
                     IndirectTouchEventPrimaryDirectionalMotionAxis.X,
+                    previousEvent = downEvent,
                 )
 
         rule.runOnIdle {
@@ -985,7 +995,11 @@ class DraggableTest {
 
         rule
             .onNodeWithTag(draggableBoxTag)
-            .sendIndirectTouchReleaseEvent(newCurrentTime, newCurrentValue)
+            .sendIndirectTouchReleaseEvent(
+                newCurrentTime,
+                newCurrentValue,
+                previousEvent = lastMove,
+            )
 
         rule.runOnIdle {
             assertThat(interactions).hasSize(2)
