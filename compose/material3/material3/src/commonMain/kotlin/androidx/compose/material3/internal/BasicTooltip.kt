@@ -107,9 +107,7 @@ internal fun BasicTooltipBox(
     val forceFocusableForKeyboardNav = remember { mutableStateOf(false) }
     // The focusable value will be forced to true for correct a11y or keyboard navigation behaviors.
     val shouldForceFocusableForA11y =
-        hasAction &&
-            (rememberTouchExplorationOrSwitchAccessServiceState().value ||
-                forceFocusableForKeyboardNav.value)
+        hasAction && shouldForceFocusableForA11y(forceFocusableForKeyboardNav.value)
 
     Box {
         if (state.isVisible) {
@@ -135,6 +133,12 @@ internal fun BasicTooltipBox(
     }
 
     DisposableEffect(state) { onDispose { state.onDispose() } }
+}
+
+@Composable
+private fun shouldForceFocusableForA11y(forceFocusableForKeyboardNav: Boolean): Boolean {
+    val accessibilityState = rememberTouchExplorationOrSwitchAccessServiceState()
+    return accessibilityState.value || forceFocusableForKeyboardNav
 }
 
 @Composable
