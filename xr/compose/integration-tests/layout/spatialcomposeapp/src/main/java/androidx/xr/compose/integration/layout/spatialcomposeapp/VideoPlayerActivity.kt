@@ -37,7 +37,6 @@ import androidx.compose.foundation.hoverable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -208,7 +207,7 @@ class VideoPlayerActivity : ComponentActivity() {
         if (videoPlaying && surfaceType == SpatialExternalSurfaceType.HEMISPHERE) {
             // Size and offset shouldn't get passed down from the box to the sphere, they are here
             // just for verification purposes and should be a no-op.
-            SpatialBox(modifier = SubspaceModifier.size(500.dp).offset(x = 20000.dp)) {
+            SpatialBox {
                 // Simple animation to verify radius and layout recomposition.
                 val animatedRadius = remember { Animatable(500f) }
                 val animatedOffset = remember { Animatable(initialValue = -1000f) }
@@ -252,35 +251,33 @@ class VideoPlayerActivity : ComponentActivity() {
                         exoPlayer?.release()
                         exoPlayer = null
                     }
-
-                    SphereVideoControlPanel(includeAnimationPanel = true)
                 }
+                SphereVideoControlPanel()
             }
         } else if (videoPlaying && surfaceType == SpatialExternalSurfaceType.SPHERE) {
-            SpatialExternalSurface360Sphere(
-                modifier =
-                    if (rotateSphereVideoState.value) SubspaceModifier.rotate(Vector3(z = 1f), 15f)
-                    else SubspaceModifier,
-                stereoMode = stereoMode,
-                featheringEffect = getFeatheringEffect(featheringValue, featheringType),
-                surfaceProtection =
-                    if (useDrmState.value) SurfaceProtection.Protected else SurfaceProtection.None,
-            ) {
-                onSurfaceCreated {
-                    val player = ExoPlayer.Builder(this@VideoPlayerActivity).build()
-                    exoPlayer = player
-                    player.setVideoSurface(it)
-                    player.setMediaItem(getMediaItem())
-                    player.repeatMode = Player.REPEAT_MODE_ONE
-                    player.playWhenReady = true
-                    player.prepare()
-                }
+            SpatialBox {
+                SpatialExternalSurface360Sphere(
+                    stereoMode = stereoMode,
+                    featheringEffect = getFeatheringEffect(featheringValue, featheringType),
+                    surfaceProtection =
+                        if (useDrmState.value) SurfaceProtection.Protected
+                        else SurfaceProtection.None,
+                ) {
+                    onSurfaceCreated {
+                        val player = ExoPlayer.Builder(this@VideoPlayerActivity).build()
+                        exoPlayer = player
+                        player.setVideoSurface(it)
+                        player.setMediaItem(getMediaItem())
+                        player.repeatMode = Player.REPEAT_MODE_ONE
+                        player.playWhenReady = true
+                        player.prepare()
+                    }
 
-                onSurfaceDestroyed {
-                    exoPlayer?.release()
-                    exoPlayer = null
+                    onSurfaceDestroyed {
+                        exoPlayer?.release()
+                        exoPlayer = null
+                    }
                 }
-
                 SphereVideoControlPanel()
             }
         } else {
@@ -506,23 +503,6 @@ class VideoPlayerActivity : ComponentActivity() {
                                         }
                                     }
 
-                                    if (
-                                        surfaceType == SpatialExternalSurfaceType.HEMISPHERE ||
-                                            surfaceType == SpatialExternalSurfaceType.SPHERE
-                                    ) {
-                                        Row(verticalAlignment = Alignment.CenterVertically) {
-                                            Text("Rotate sphere video and child content")
-                                            Switch(
-                                                modifier = Modifier.padding(start = 8.dp),
-                                                checked = rotateSphereVideoState.value,
-                                                onCheckedChange = {
-                                                    rotateSphereVideoState.value =
-                                                        !rotateSphereVideoState.value
-                                                },
-                                            )
-                                        }
-                                    }
-
                                     Text(
                                         modifier = Modifier.padding(top = 24.dp),
                                         fontSize = 20.sp,
@@ -624,7 +604,7 @@ class VideoPlayerActivity : ComponentActivity() {
     }
 
     @Composable
-    fun SphereVideoControlPanel(includeAnimationPanel: Boolean = false) {
+    fun SphereVideoControlPanel() {
         SpatialBox(modifier = SubspaceModifier.fillMaxSize()) {
             val interactionSource = remember { MutableInteractionSource() }
             val isHovered by interactionSource.collectIsHoveredAsState()
@@ -661,23 +641,6 @@ class VideoPlayerActivity : ComponentActivity() {
                     }
                     Spacer(modifier = Modifier.weight(1f))
                     Button(onClick = { videoPlayingState.value = false }) { Text("End Video") }
-                }
-            }
-            if (includeAnimationPanel) {
-                SpatialPanel(
-                    modifier =
-                        SubspaceModifier.size(1000.dp)
-                            .align(SpatialAlignment.CenterStart)
-                            .rotate(axisAngle = Vector3(y = 1.0f), 90f)
-                ) {
-                    Box(
-                        modifier =
-                            Modifier.fillMaxSize()
-                                .background(Color.Black.copy(alpha = 0.5f))
-                                .padding(16.dp)
-                    ) {
-                        Text(text = "Animation\nTest", color = Color.White, fontSize = 200.sp)
-                    }
                 }
             }
         }
