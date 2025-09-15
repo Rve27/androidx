@@ -16,7 +16,6 @@
 
 package androidx.credentials.registry.digitalcredentials.mdoc
 
-import androidx.annotation.RestrictTo
 import androidx.credentials.registry.provider.digitalcredentials.InlineIssuanceEntry
 
 /**
@@ -31,14 +30,15 @@ import androidx.credentials.registry.provider.digitalcredentials.InlineIssuanceE
  * still succeed.
  *
  * @property id the provider unique identifier of this credential entry, which can be used to
- *   identify the exact credential that the user has chosen
+ *   identify the exact credential that the user has chosen; it is recommended that you generate
+ *   this `id` with enough entropy that it cannot be guessed by a third party, e.g. through
+ *   encrypting this `id` or randomizing it.
  * @property display the display properties associated with the given entry
- * @property supportedMdocs supported mdocs to offer the inline issuance flow
+ * @property supportedMdocs supported mdocs to offer the inline issuance flow; cannot be empty
  * @constructor
  * @throws IllegalArgumentException if [id] length is greater than 64 characters
  * @throws IllegalArgumentException if [supportedMdocs] is empty
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY)
 public class MdocInlineIssuanceEntry(
     id: String,
     display: InlineIssuanceDisplayProperties,
@@ -52,7 +52,8 @@ public class MdocInlineIssuanceEntry(
      * Configuration determining whether the [MdocInlineIssuanceEntry] should be offered for a
      * presentation request
      *
-     * @property docType the supported mdoc document type
+     * @property docType the supported mdoc document type as defined in
+     *   [the ISO/IEC 18013-5:2021 specification](https://www.iso.org/standard/69084.html)
      * @constructor
      * @throws IllegalArgumentException if `docType` is empty
      */

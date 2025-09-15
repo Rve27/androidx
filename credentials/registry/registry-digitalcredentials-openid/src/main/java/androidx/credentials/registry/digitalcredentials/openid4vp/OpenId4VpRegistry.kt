@@ -17,7 +17,6 @@
 package androidx.credentials.registry.digitalcredentials.openid4vp
 
 import android.graphics.Bitmap
-import androidx.annotation.RestrictTo
 import androidx.credentials.registry.digitalcredentials.mdoc.MdocEntry
 import androidx.credentials.registry.digitalcredentials.mdoc.MdocInlineIssuanceEntry
 import androidx.credentials.registry.digitalcredentials.openid4vp.OpenId4VpDefaults.DEFAULT_MATCHER
@@ -49,6 +48,9 @@ import org.json.JSONObject
  * use cases (most often you only need one) so that you can later use them to update the same
  * registry record.
  *
+ * If both [credentialEntries] and [inlineIssuanceEntries], the registry will never be used to
+ * answer a request.
+ *
  * @param credentialEntries the list of entries to register
  * @param id the unique id for this registry
  * @param intentAction the intent action that will be used to launch your fulfillment activity when
@@ -57,27 +59,24 @@ import org.json.JSONObject
  *   fulfillment activity, it will build an intent with the given `intentAction` targeting your
  *   package, so this is useful when you need to define different fulfillment activities for
  *   different registries
+ * @param inlineIssuanceEntries the list of inline issuance entries to add the user credentials on
+ *   the fly, if applicable
  * @throws IllegalArgumentException if [id] or [intentAction] length is greater than 64 characters
  */
-public class OpenId4VpRegistry(
+public class OpenId4VpRegistry
+@JvmOverloads
+public constructor(
     credentialEntries: List<DigitalCredentialEntry>,
     id: String,
     intentAction: String = RegistryManager.ACTION_GET_CREDENTIAL,
+    inlineIssuanceEntries: List<InlineIssuanceEntry> = emptyList(),
 ) :
     DigitalCredentialRegistry(
         id = id,
-        credentials = toCredentialBytes(credentialEntries, emptyList()),
+        credentials = toCredentialBytes(credentialEntries, inlineIssuanceEntries),
         matcher = DEFAULT_MATCHER,
         intentAction = intentAction,
     ) {
-
-    @RestrictTo(RestrictTo.Scope.LIBRARY)
-    public constructor(
-        credentialEntries: List<DigitalCredentialEntry>,
-        id: String,
-        intentAction: String = RegistryManager.ACTION_GET_CREDENTIAL,
-        inlineIssuanceEntries: List<InlineIssuanceEntry>,
-    ) : this(credentialEntries, id, intentAction)
 
     private companion object {
         private const val CREDENTIALS = "credentials"
