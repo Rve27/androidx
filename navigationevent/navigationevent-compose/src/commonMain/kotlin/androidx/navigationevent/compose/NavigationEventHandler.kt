@@ -19,13 +19,22 @@ package androidx.navigationevent.compose
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.remember
 import androidx.navigationevent.NavigationEventHandler
 import androidx.navigationevent.NavigationEventInfo
+import androidx.navigationevent.NavigationEventTransitionState
 
 /**
- * A composable that handles navigation events using simple lambda handlers, providing contextual
- * information about both back and forward navigation destinations.
+ * A composable that handles navigation events using simple lambda handlers, driven by a manually
+ * hoisted [NavigationEventState].
+ *
+ * This is the core implementation of the navigation event handler. This overload must be used when
+ * you need to hoist the [NavigationEventState] (by calling [rememberNavigationEventState] at a
+ * higher level). Hoisting is necessary when other composables need to react to the gesture's
+ * [NavigationEventTransitionState] (held within the `state` object), for example, to drive custom
+ * animations.
+ *
+ * For the simple case of registering a handler without needing to observe its state, use the
+ * convenience overload that accepts `currentInfo`.
  *
  * ## Precedence
  * When multiple [NavigationEventHandler] are present in the composition, the one that is composed
@@ -45,6 +54,63 @@ import androidx.navigationevent.NavigationEventInfo
  * [b/384186542](https://issuetracker.google.com/384186542)). For example, if [isBackEnabled] is set
  * to `false`, a back gesture initiated in the same frame may still trigger this handler because the
  * system sees the stale `true` value.
+ *
+ * @param T The type of the navigation information held in the state.
+ * @param state The hoisted [NavigationEventState] (returned from [rememberNavigationEventState]) to
+ *   be registered. This object links this handler's callbacks to the unique handler instance that
+ *   is producing the state.
+ * @param isForwardEnabled Controls whether forward navigation gestures are handled.
+ * @param onForwardCancelled Called if a forward navigation gesture is cancelled.
+ * @param onForwardCompleted Called when a forward navigation gesture completes.
+ * @param isBackEnabled Controls whether back navigation gestures are handled.
+ * @param onBackCancelled Called if a back navigation gesture is cancelled.
+ * @param onBackCompleted Called when a back navigation gesture completes.
+ */
+@Composable
+public fun <T : NavigationEventInfo> NavigationEventHandler(
+    state: NavigationEventState<T>,
+    // ---- Forward Events ----
+    isForwardEnabled: Boolean = true,
+    onForwardCancelled: () -> Unit = {},
+    onForwardCompleted: () -> Unit = {},
+    // ---- Back Events ----
+    isBackEnabled: Boolean = true,
+    onBackCancelled: () -> Unit = {},
+    onBackCompleted: () -> Unit = {},
+) {
+    val dispatcher =
+        checkNotNull(LocalNavigationEventDispatcherOwner.current) {
+                "No NavigationEventDispatcher was provided via LocalNavigationEventDispatcherOwner"
+            }
+            .navigationEventDispatcher
+
+    SideEffect {
+        state.handler.isForwardEnabled = isForwardEnabled
+        state.handler.currentOnForwardCancelled = onForwardCancelled
+        state.handler.currentOnForwardCompleted = onForwardCompleted
+
+        state.handler.isBackEnabled = isBackEnabled
+        state.handler.currentOnBackCancelled = onBackCancelled
+        state.handler.currentOnBackCompleted = onBackCompleted
+    }
+
+    DisposableEffect(state) {
+        dispatcher.addHandler(state.handler)
+        onDispose { state.handler.remove() }
+    }
+}
+
+/**
+ * A composable that handles navigation events using simple lambda handlers, providing contextual
+ * information about both back and forward navigation destinations.
+ *
+ * This convenience overload automatically creates and remembers the [NavigationEventState]
+ * internally. Use this version for the common case of registering a handler that does not need its
+ * state hoisted. For advanced use cases where state must be hoisted (e.g., for custom animations),
+ * use the primary overload that accepts a [NavigationEventState] parameter.
+ *
+ * Refer to the primary [NavigationEventHandler] KDoc for details on precedence, unconditional
+ * usage, and timing considerations.
  *
  * @param T The type of the navigation information.
  * @param currentInfo An object containing information about the current destination.
@@ -74,37 +140,69 @@ public fun <T : NavigationEventInfo> NavigationEventHandler(
     onBackCancelled: () -> Unit = {},
     onBackCompleted: () -> Unit = {},
 ) {
-    val dispatcher =
-        checkNotNull(LocalNavigationEventDispatcherOwner.current) {
-                "No NavigationEventDispatcher was provided via LocalNavigationEventDispatcherOwner"
-            }
-            .navigationEventDispatcher
+    NavigationEventHandler(
+        state =
+            rememberNavigationEventState(
+                currentInfo = currentInfo,
+                backInfo = backInfo,
+                forwardInfo = forwardInfo,
+            ),
+        isForwardEnabled = isForwardEnabled,
+        onForwardCancelled = onForwardCancelled,
+        onForwardCompleted = onForwardCompleted,
+        isBackEnabled = isBackEnabled,
+        onBackCancelled = onBackCancelled,
+        onBackCompleted = onBackCompleted,
+    )
+}
 
-    val handler = remember { ComposeNavigationEventHandler<T>(currentInfo) }
-
-    SideEffect {
-        handler.isForwardEnabled = isForwardEnabled
-        handler.currentOnForwardCancelled = onForwardCancelled
-        handler.currentOnForwardCompleted = onForwardCompleted
-
-        handler.isBackEnabled = isBackEnabled
-        handler.currentOnBackCancelled = onBackCancelled
-        handler.currentOnBackCompleted = onBackCompleted
-
-        handler.setInfo(currentInfo, backInfo, forwardInfo)
-    }
-
-    DisposableEffect(dispatcher, handler) {
-        dispatcher.addHandler(handler)
-        onDispose { handler.remove() }
-    }
+/**
+ * A composable that handles only back navigation gestures, driven by a manually hoisted
+ * [NavigationEventState].
+ *
+ * This is a convenience wrapper around the core [NavigationEventHandler] overload for cases where
+ * forward navigation is not relevant. Use this overload when hoisting state (e.g., for custom
+ * animations).
+ *
+ * For the simple case, use the convenience overload that accepts `currentInfo`.
+ *
+ * Refer to the primary [NavigationEventHandler] KDoc for details on precedence, unconditional
+ * usage, and timing considerations.
+ *
+ * @param T The type of the navigation information.
+ * @param state The hoisted [NavigationEventState] (returned from [rememberNavigationEventState]) to
+ *   be registered.
+ * @param isBackEnabled Controls whether back navigation gestures are handled.
+ * @param onBackCancelled Called if a back navigation gesture is cancelled.
+ * @param onBackCompleted Called when a back navigation gesture completes and navigation occurs.
+ */
+@Composable
+public fun <T : NavigationEventInfo> NavigationBackHandler(
+    state: NavigationEventState<T>,
+    isBackEnabled: Boolean = true,
+    onBackCancelled: () -> Unit = {},
+    onBackCompleted: () -> Unit,
+) {
+    NavigationEventHandler(
+        state = state,
+        onForwardCancelled = {},
+        onForwardCompleted = {},
+        isForwardEnabled = false, // disable forward
+        onBackCancelled = onBackCancelled,
+        onBackCompleted = onBackCompleted,
+        isBackEnabled = isBackEnabled,
+    )
 }
 
 /**
  * A composable that handles only back navigation gestures.
  *
- * This is a convenience wrapper around [NavigationEventHandler] for cases where forward navigation
- * is not relevant.
+ * This convenience overload (which accepts `currentInfo`) automatically creates and remembers the
+ * [NavigationEventState] internally. This is a wrapper around [NavigationEventHandler] for cases
+ * where forward navigation is not relevant.
+ *
+ * Refer to the primary [NavigationEventHandler] KDoc for details on precedence, unconditional
+ * usage, and timing considerations.
  *
  * @param T The type of the navigation information.
  * @param currentInfo Information about the current destination.
@@ -122,9 +220,7 @@ public fun <T : NavigationEventInfo> NavigationBackHandler(
     onBackCompleted: () -> Unit,
 ) {
     NavigationEventHandler(
-        currentInfo = currentInfo,
-        backInfo = backInfo,
-        forwardInfo = emptyList(),
+        state = rememberNavigationEventState(currentInfo = currentInfo, backInfo = backInfo),
         onForwardCancelled = {},
         onForwardCompleted = {},
         isForwardEnabled = false, // disable forward
@@ -135,10 +231,52 @@ public fun <T : NavigationEventInfo> NavigationBackHandler(
 }
 
 /**
+ * A composable that handles only forward navigation gestures, driven by a manually hoisted
+ * [NavigationEventState].
+ *
+ * This is a convenience wrapper around the core [NavigationEventHandler] overload for cases where
+ * back navigation is not relevant. Use this overload when hoisting state.
+ *
+ * For the simple case, use the convenience overload that accepts `currentInfo`.
+ *
+ * Refer to the primary [NavigationEventHandler] KDoc for details on precedence, unconditional
+ * usage, and timing considerations.
+ *
+ * @param T The type of the navigation information.
+ * @param state The hoisted [NavigationEventState] (returned from [rememberNavigationEventState]) to
+ *   be registered.
+ * @param isForwardEnabled Controls whether forward navigation gestures are handled.
+ * @param onForwardCancelled Called if a forward navigation gesture is cancelled.
+ * @param onForwardCompleted Called when a forward navigation gesture completes and navigation
+ *   occurs.
+ */
+@Composable
+public fun <T : NavigationEventInfo> NavigationForwardHandler(
+    state: NavigationEventState<T>,
+    isForwardEnabled: Boolean = true,
+    onForwardCancelled: () -> Unit = {},
+    onForwardCompleted: () -> Unit,
+) {
+    NavigationEventHandler(
+        state = state,
+        onForwardCancelled = onForwardCancelled,
+        onForwardCompleted = onForwardCompleted,
+        isForwardEnabled = isForwardEnabled,
+        onBackCancelled = {},
+        onBackCompleted = {},
+        isBackEnabled = false, // disable back
+    )
+}
+
+/**
  * A composable that handles only forward navigation gestures.
  *
- * This is a convenience wrapper around [NavigationEventHandler] for cases where back navigation is
- * not relevant.
+ * This convenience overload (which accepts `currentInfo`) automatically creates and remembers the
+ * [NavigationEventState] internally. This is a wrapper around [NavigationEventHandler] for cases
+ * where back navigation is not relevant.
+ *
+ * Refer to the primary [NavigationEventHandler] KDoc for details on precedence, unconditional
+ * usage, and timing considerations.
  *
  * @param T The type of the navigation information.
  * @param currentInfo Information about the current destination.
@@ -157,9 +295,7 @@ public fun <T : NavigationEventInfo> NavigationForwardHandler(
     onForwardCompleted: () -> Unit,
 ) {
     NavigationEventHandler(
-        currentInfo = currentInfo,
-        backInfo = emptyList(),
-        forwardInfo = forwardInfo,
+        state = rememberNavigationEventState(currentInfo = currentInfo, forwardInfo = forwardInfo),
         onForwardCancelled = onForwardCancelled,
         onForwardCompleted = onForwardCompleted,
         isForwardEnabled = isForwardEnabled,

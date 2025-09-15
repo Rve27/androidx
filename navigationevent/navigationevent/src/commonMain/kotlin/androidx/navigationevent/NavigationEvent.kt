@@ -19,6 +19,8 @@ package androidx.navigationevent
 import androidx.annotation.FloatRange
 import androidx.annotation.IntDef
 import androidx.annotation.RestrictTo
+import androidx.compose.runtime.Immutable
+import androidx.navigationevent.NavigationEvent.Companion.EDGE_NONE
 import kotlin.jvm.JvmOverloads
 
 /**
@@ -34,6 +36,7 @@ import kotlin.jvm.JvmOverloads
  * @see NavigationEventHandler
  * @see NavigationEventDispatcher
  */
+@Immutable
 public class NavigationEvent
 @JvmOverloads
 public constructor(
