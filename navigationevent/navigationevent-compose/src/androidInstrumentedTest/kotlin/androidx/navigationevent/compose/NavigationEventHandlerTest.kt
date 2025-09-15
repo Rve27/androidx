@@ -28,8 +28,8 @@ import androidx.compose.ui.test.performClick
 import androidx.kruth.assertThat
 import androidx.navigationevent.DirectNavigationEventInput
 import androidx.navigationevent.NavigationEvent
+import androidx.navigationevent.NavigationEventHistory
 import androidx.navigationevent.NavigationEventInfo
-import androidx.navigationevent.NavigationEventState.InProgress
 import androidx.navigationevent.testing.TestNavigationEventDispatcherOwner
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
@@ -48,9 +48,9 @@ internal class NavigationEventHandlerTest {
     private val input = DirectNavigationEventInput().also { dispatcher.addInput(it) }
 
     @Test
-    fun infoHandler_whenInfoChanges_providesUpdatedInfoToLambda() {
-        // This test verifies that when `currentInfo` and `previousInfo` change,
-        // the handler correctly uses the new values.
+    fun infoHandler_whenInfoChanges_updatesGlobalHistoryState() {
+        // This test verifies that when `currentInfo` and `backInfo` change on
+        // recomposition, the handler correctly updates the global dispatcher state.
         var currentInfo by mutableStateOf(TestInfo(id = 1))
         val backInfo = mutableStateListOf<TestInfo>()
 
@@ -64,28 +64,28 @@ internal class NavigationEventHandlerTest {
             }
         }
 
-        // 1. Trigger with initial state.
-        input.backStarted(NavigationEvent())
+        // Check the initial state after the handler registers.
         rule.runOnIdle {
-            @Suppress("UNCHECKED_CAST")
-            val state = owner.navigationEventDispatcher.state.value as InProgress<TestInfo>
-
-            assertThat(state.currentInfo).isEqualTo(TestInfo(id = 1))
-            assertThat(state.backInfo).isEmpty()
+            val history = owner.navigationEventDispatcher.history.value
+            assertThat(history).isEqualTo(NavigationEventHistory(currentInfo = TestInfo(id = 1)))
         }
 
-        // 2. Update the state, which triggers a recomposition.
+        // Update the state, which triggers a recomposition and SideEffect update.
         currentInfo = TestInfo(id = 2)
         backInfo += TestInfo(id = 1)
         rule.waitForIdle() // Wait for recomposition to apply the SideEffect.
 
-        // 3. Verify the new, updated state is received.
+        // Verify the new, updated state is reflected in the global history flow.
+        // The merged stack should be [backInfo, currentInfo]
         rule.runOnIdle {
-            @Suppress("UNCHECKED_CAST")
-            val state = owner.navigationEventDispatcher.state.value as InProgress<TestInfo>
-
-            assertThat(state.currentInfo).isEqualTo(currentInfo)
-            assertThat(state.backInfo).containsExactly(TestInfo(id = 1))
+            val history = owner.navigationEventDispatcher.history.value
+            assertThat(history)
+                .isEqualTo(
+                    NavigationEventHistory(
+                        currentInfo = TestInfo(id = 2),
+                        backInfo = listOf(TestInfo(id = 1)),
+                    )
+                )
         }
     }
 
