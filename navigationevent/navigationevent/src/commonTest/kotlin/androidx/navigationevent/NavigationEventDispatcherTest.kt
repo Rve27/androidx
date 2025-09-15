@@ -573,7 +573,7 @@ class NavigationEventDispatcherTest {
     }
 
     @Test
-    fun setEnabled_onDisabledHandler_reenablesEventReceiving() {
+    fun setEnabled_onDisabledHandler_reEnablesEventReceiving() {
         val dispatcher = NavigationEventDispatcher()
         val handler = TestNavigationEventHandler()
         dispatcher.addHandler(handler)
@@ -798,7 +798,7 @@ class NavigationEventDispatcherTest {
 
         // The input should be notified of the initial (empty) state immediately when it's added.
         assertThat(input.onHistoryChangedInvocations).isEqualTo(1)
-        assertThat(input.currentHistory).isEqualTo(NavigationEventHistory(emptyList(), -1))
+        assertThat(input.currentHistory).isEqualTo(NavigationEventHistory())
 
         // Add the first handler, triggering a notification.
         val infoA = HomeScreenInfo("A")
@@ -806,13 +806,12 @@ class NavigationEventDispatcherTest {
         dispatcher.addHandler(handlerA)
 
         assertThat(input.onHistoryChangedInvocations).isEqualTo(2)
-        assertThat(input.currentHistory)
-            .isEqualTo(NavigationEventHistory(mergedHistory = listOf(infoA), currentIndex = 0))
+        assertThat(input.currentHistory).isEqualTo(NavigationEventHistory(currentInfo = infoA))
 
         // Add a second, active handler, triggering a notification with the new state.
         val infoB = DetailsScreenInfo("B")
         val handlerB =
-            TestNavigationEventHandler<TestInfo>(
+            TestNavigationEventHandler(
                 currentInfo = infoB,
                 backInfo = listOf(infoA),
                 forwardInfo = listOf(),
@@ -821,9 +820,7 @@ class NavigationEventDispatcherTest {
 
         assertThat(input.onHistoryChangedInvocations).isEqualTo(3)
         assertThat(input.currentHistory)
-            .isEqualTo(
-                NavigationEventHistory(mergedHistory = listOf(infoA, infoB), currentIndex = 1)
-            )
+            .isEqualTo(NavigationEventHistory(currentInfo = infoB, backInfo = listOf(infoA)))
 
         // Update info on the active handler, triggering another notification.
         val infoBUpdated = DetailsScreenInfo("B_updated")
@@ -837,8 +834,9 @@ class NavigationEventDispatcherTest {
         assertThat(input.currentHistory)
             .isEqualTo(
                 NavigationEventHistory(
-                    mergedHistory = listOf(infoA, infoBUpdated, infoB),
-                    currentIndex = 1,
+                    currentInfo = infoBUpdated,
+                    backInfo = listOf(infoA),
+                    forwardInfo = listOf(infoB),
                 )
             )
 
@@ -846,8 +844,7 @@ class NavigationEventDispatcherTest {
         handlerB.remove()
 
         assertThat(input.onHistoryChangedInvocations).isEqualTo(5)
-        assertThat(input.currentHistory)
-            .isEqualTo(NavigationEventHistory(mergedHistory = listOf(infoA), currentIndex = 0))
+        assertThat(input.currentHistory).isEqualTo(NavigationEventHistory(currentInfo = infoA))
 
         // Remove the input and trigger another state change.
         dispatcher.removeInput(input)
@@ -867,14 +864,14 @@ class NavigationEventDispatcherTest {
 
         // The input should be notified of the initial state immediately when it's added.
         assertThat(input.onHistoryChangedInvocations).isEqualTo(1)
-        assertThat(input.currentHistory).isEqualTo(NavigationEventHistory(emptyList(), -1))
+        assertThat(input.currentHistory).isEqualTo(NavigationEventHistory())
 
         val currentInfo1 = HomeScreenInfo("current1")
         val backInfo1 = listOf(DetailsScreenInfo("back1"))
         val forwardInfo1 = listOf(DetailsScreenInfo("forward1"))
 
         val handler =
-            TestNavigationEventHandler<TestInfo>(
+            TestNavigationEventHandler(
                 currentInfo = currentInfo1,
                 backInfo = backInfo1,
                 forwardInfo = forwardInfo1,
@@ -1387,7 +1384,7 @@ class NavigationEventDispatcherTest {
     }
 
     @Test
-    fun isEnabled_parentReenabled_reenablesChildDispatch() {
+    fun isEnabled_parentReEnabled_reEnablesChildDispatch() {
         val parentDispatcher = NavigationEventDispatcher()
         val childDispatcher = NavigationEventDispatcher(parentDispatcher)
         val parentHandler = TestNavigationEventHandler()
@@ -1412,7 +1409,7 @@ class NavigationEventDispatcherTest {
     }
 
     @Test
-    fun isEnabled_parentReenabled_childHandlerReceivesEvents() {
+    fun isEnabled_parentReEnabled_childHandlerReceivesEvents() {
         val parentDispatcher = NavigationEventDispatcher()
         val childDispatcher = NavigationEventDispatcher(parentDispatcher)
         val parentHandler = TestNavigationEventHandler()
@@ -1508,7 +1505,7 @@ class NavigationEventDispatcherTest {
     }
 
     @Test
-    fun handlerIsEnabled_whenDispatcherReenabled_receivesEvents() {
+    fun handlerIsEnabled_whenDispatcherReEnabled_receivesEvents() {
         val dispatcher = NavigationEventDispatcher()
         val handler = TestNavigationEventHandler()
         dispatcher.addHandler(handler)
@@ -1981,7 +1978,7 @@ class NavigationEventDispatcherTest {
             val infoB = DetailsScreenInfo("B")
             val infoC = DetailsScreenInfo("C")
             val handler =
-                TestNavigationEventHandler<TestInfo>(
+                TestNavigationEventHandler(
                     currentInfo = infoA,
                     backInfo = emptyList(),
                     forwardInfo = listOf(infoB, infoC),
@@ -2010,10 +2007,7 @@ class NavigationEventDispatcherTest {
             val homeInfo = HomeScreenInfo("home")
             val settingsInfo = DetailsScreenInfo("settings")
             val defaultHandler =
-                TestNavigationEventHandler<TestInfo>(
-                    currentInfo = settingsInfo,
-                    backInfo = listOf(homeInfo),
-                )
+                TestNavigationEventHandler(currentInfo = settingsInfo, backInfo = listOf(homeInfo))
             dispatcher.addHandler(defaultHandler, PRIORITY_DEFAULT)
             advanceUntilIdle()
 
@@ -2107,8 +2101,7 @@ private class TestNavigationEventInput(
         private set
 
     /** The last `currentInfo` received by [onHistoryChanged]. */
-    var currentHistory: NavigationEventHistory =
-        NavigationEventHistory(mergedHistory = emptyList(), currentIndex = -1)
+    var currentHistory: NavigationEventHistory = NavigationEventHistory()
         private set
 
     /**

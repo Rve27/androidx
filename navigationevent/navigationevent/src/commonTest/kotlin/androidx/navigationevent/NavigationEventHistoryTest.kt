@@ -17,17 +17,9 @@
 package androidx.navigationevent
 
 import androidx.kruth.assertThat
-import androidx.kruth.assertThrows
 import kotlin.test.Test
 
 internal class NavigationEventHistoryTest {
-
-    @Test
-    fun primaryConstructor_withValidData_createsState() {
-        val history = NavigationEventHistory(mergedHistory = listOf(infoA, infoB), currentIndex = 1)
-        assertThat(history.mergedHistory).containsExactly(infoA, infoB).inOrder()
-        assertThat(history.currentIndex).isEqualTo(1)
-    }
 
     @Test
     fun emptyConstructor_createsEmptyState() {
@@ -75,48 +67,13 @@ internal class NavigationEventHistoryTest {
     }
 
     @Test
-    fun init_emptyHistory_withInvalidIndex_throwsException() {
-        val e =
-            assertThrows<IllegalArgumentException> {
-                // Invalid: empty list must have index -1
-                NavigationEventHistory(mergedHistory = emptyList(), currentIndex = 0)
-            }
-        e.hasMessageThat().contains("Invalid 'NavigationEventHistory' state")
-        e.hasMessageThat().contains("Received: currentIndex = '0'")
-        e.hasMessageThat().contains("bounds = '0..-1'")
-    }
-
-    @Test
-    fun init_populatedHistory_withIndexNegativeOne_throwsException() {
-        val e =
-            assertThrows<IllegalArgumentException> {
-                // Invalid: populated list must have an index >= 0
-                NavigationEventHistory(mergedHistory = listOf(infoA), currentIndex = -1)
-            }
-        e.hasMessageThat().contains("Invalid 'NavigationEventHistory' state")
-        e.hasMessageThat().contains("Received: currentIndex = '-1'")
-        e.hasMessageThat().contains("bounds = '0..0'")
-    }
-
-    @Test
-    fun init_populatedHistory_withIndexOutOfBounds_throwsException() {
-        val e =
-            assertThrows<IllegalArgumentException> {
-                // Invalid: Index 2 is out of bounds for a list of size 2 (valid indices are 0, 1)
-                NavigationEventHistory(mergedHistory = listOf(infoA, infoB), currentIndex = 2)
-            }
-
-        e.hasMessageThat().contains("Invalid 'NavigationEventHistory' state")
-        e.hasMessageThat().contains("Received: currentIndex = '2'")
-        e.hasMessageThat().contains("bounds = '0..1'")
-    }
-
-    @Test
     fun equals_and_hashCode_contract() {
-        val history1 = NavigationEventHistory(listOf(infoA, infoB), 1)
-        val history2 = NavigationEventHistory(listOf(infoA, infoB), 1)
-        val history3 = NavigationEventHistory(listOf(infoA, infoB), 0) // Diff index
-        val history4 = NavigationEventHistory(listOf(infoA), 0) // Diff list
+        // Create states using the public partition constructor
+        val history1 = NavigationEventHistory(currentInfo = infoB, backInfo = listOf(infoA))
+        val history2 = NavigationEventHistory(currentInfo = infoB, backInfo = listOf(infoA))
+        val history3 =
+            NavigationEventHistory(currentInfo = infoA, forwardInfo = listOf(infoB)) // Diff index
+        val history4 = NavigationEventHistory(currentInfo = infoA) // Diff list
 
         // Equals
         assertThat(history1).isEqualTo(history2)
