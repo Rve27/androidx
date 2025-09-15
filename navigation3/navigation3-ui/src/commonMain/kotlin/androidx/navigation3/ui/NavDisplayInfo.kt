@@ -16,22 +16,14 @@
 
 package androidx.navigation3.ui
 
+import androidx.navigationevent.NavigationEventHistory
 import androidx.navigationevent.NavigationEventInfo
-import androidx.navigationevent.NavigationEventState
-import androidx.navigationevent.NavigationEventState.InProgress
 
 /**
  * Represents a snapshot of the visible destinations in a navigation container.
  *
  * This class provides the necessary context for building animations during navigation gestures,
- * like predictive back. It's a simple data holder that feeds into the [NavigationEventState].
- *
- * During a gesture, the [InProgress] state provides two instances of this info:
- * - [InProgress.currentInfo]: The state you're navigating *to*.
- * - [InProgress.previousInfo]: The state you're navigating *from*.
- *
- * You can use these two snapshots, along with [NavigationEventState.progress], to create a smooth
- * visual transition between destinations.
+ * like predictive back. It's a simple data holder that feeds into the [NavigationEventHistory].
  *
  * @property visibleEntries A list of unique keys for the visible navigation destinations, typically
  *   ordered from the bottom to the top of the back stack.

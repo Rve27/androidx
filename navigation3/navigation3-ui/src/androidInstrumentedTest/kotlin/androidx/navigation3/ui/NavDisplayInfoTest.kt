@@ -24,7 +24,7 @@ import androidx.navigation3.runtime.Scene
 import androidx.navigation3.runtime.SceneStrategy
 import androidx.navigationevent.DirectNavigationEventInput
 import androidx.navigationevent.NavigationEvent
-import androidx.navigationevent.NavigationEventState.InProgress
+import androidx.navigationevent.NavigationEventTransitionState
 import androidx.navigationevent.compose.NavigationEventDispatcherOwner
 import androidx.navigationevent.testing.TestNavigationEventDispatcherOwner
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -75,16 +75,22 @@ internal class NavDisplayInfoTest {
 
         // Assert the state correctly reflects the in-progress gesture.
         rule.runOnIdle {
-            @Suppress("UNCHECKED_CAST")
-            val currentState = dispatcher.state.value as InProgress<NavDisplayInfo>
+            // Assert the gesture is physically in progress
+            val transitionState = dispatcher.transitionState.value
+            assertThat(transitionState).isInstanceOf<NavigationEventTransitionState.InProgress>()
 
-            // The `currentInfo` should reflect the current back stack.
-            assertThat(currentState.currentInfo.visibleEntries)
-                .containsExactlyElementsIn(currentBackStack)
+            // Get the navigation stack state
+            val history = dispatcher.history.value
 
-            // The `previousInfo` should reflect the back stack after a pop,
-            // as calculated by the SceneStrategy.
-            assertThat(currentState.backInfo.lastOrNull()?.visibleEntries)
+            // Assert the "current" entry (at currentIndex) matches the full back stack
+            val currentInfo = history.mergedHistory[history.currentIndex] as NavDisplayInfo
+            assertThat(currentInfo.visibleEntries).containsExactlyElementsIn(currentBackStack)
+
+            // Assert the "back" stack (everything before currentIndex)
+            // matches the state *after* the pop, as calculated by the SceneStrategy.
+            val backInfoStack = history.mergedHistory.subList(0, history.currentIndex)
+            val previousInfo = backInfoStack.lastOrNull() as? NavDisplayInfo
+            assertThat(previousInfo?.visibleEntries)
                 .containsExactlyElementsIn(currentBackStack.dropLast(2))
         }
     }
