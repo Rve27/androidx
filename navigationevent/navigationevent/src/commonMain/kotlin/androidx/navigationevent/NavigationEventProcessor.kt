@@ -49,6 +49,38 @@ internal class NavigationEventProcessor {
     val state: StateFlow<NavigationEventState<*>> = _state.asStateFlow()
 
     /**
+     * The private, mutable source of truth for the global [NavigationEventTransitionState]. This
+     * flow is updated by the processor based on the active handler's gesture state.
+     */
+    private val _transitionState =
+        MutableStateFlow<NavigationEventTransitionState>(NavigationEventTransitionState.Idle())
+
+    /** @see [NavigationEventDispatcher.transitionState] */
+    val transitionState = _transitionState.asStateFlow()
+
+    /**
+     * The private, mutable source of truth for the global [NavigationEventHistory]. This flow is
+     * updated by the processor whenever the active handler changes or updates its info.
+     */
+    private val _history = MutableStateFlow(NavigationEventHistory())
+
+    /**
+     * The globally observable, read-only state of the navigation history stack.
+     *
+     * This flow represents *only* the navigation stack (the [NavigationEventHistory.mergedHistory]
+     * and [NavigationEventHistory.currentIndex]) and is the counterpart to [transitionState].
+     *
+     * A key contract of this state is that it remains **stable** during a navigation gesture. It
+     * only updates when the navigation stack itself changes (e.g., when a new handler becomes
+     * active, or the active handler's info is updated), which typically occurs *after* a gesture
+     * completes or *before* one begins.
+     *
+     * This allows UI components to subscribe only to changes in the history stack without being
+     * notified of rapid gesture progress updates from [transitionState].
+     */
+    val history = _history.asStateFlow()
+
+    /**
      * Stores high-priority handlers that should be evaluated before default handlers.
      *
      * [ArrayDeque] is used for efficient `addFirst()` and `remove()` operations, which is ideal for
@@ -197,19 +229,27 @@ internal class NavigationEventProcessor {
         }
 
         // Calculate the new state information from the active handler.
-        val newCurrentInfo = activeHandler.currentInfo ?: None
+        val newCurrentInfo = activeHandler.currentInfo
         val newBackInfo = resolveCombinedBackInfo()
         val newForwardInfo = activeHandler.forwardInfo
+        val newHistory =
+            NavigationEventHistory(
+                mergedHistory =
+                    buildList {
+                        addAll(newBackInfo)
+                        add(newCurrentInfo)
+                        addAll(newForwardInfo)
+                    },
+                currentIndex = newBackInfo.size,
+            )
 
         // To avoid redundant state updates and notifications, exit if nothing has changed.
-        val oldState = _state.value
-        if (
-            oldState.currentInfo == newCurrentInfo &&
-                oldState.backInfo == newBackInfo &&
-                oldState.forwardInfo == newForwardInfo
-        ) {
+        val oldHistory = _history.value
+        if (oldHistory == newHistory) {
             return
         }
+
+        _history.value = newHistory
 
         // Atomically commit the new information to the state flow.
         // When a gesture is in progress, we must preserve its event data.
@@ -225,13 +265,13 @@ internal class NavigationEventProcessor {
         // delays from the coroutine dispatcher, ensuring that consumers can react
         // to the state change within the same frame.
         for (input in overlayInputs) {
-            input.doOnInfoChanged(newCurrentInfo, newBackInfo, newForwardInfo)
+            input.doOnHistoryChanged(newHistory)
         }
         for (input in defaultInputs) {
-            input.doOnInfoChanged(newCurrentInfo, newBackInfo, newForwardInfo)
+            input.doOnHistoryChanged(newHistory)
         }
         for (input in unspecifiedInputs) {
-            input.doOnInfoChanged(newCurrentInfo, newBackInfo, newForwardInfo)
+            input.doOnHistoryChanged(newHistory)
         }
     }
 
@@ -381,6 +421,9 @@ internal class NavigationEventProcessor {
                 )
             }
         }
+
+        _transitionState.value =
+            NavigationEventTransitionState.InProgress(latestEvent = event, direction = direction)
     }
 
     /**
@@ -421,6 +464,9 @@ internal class NavigationEventProcessor {
                 )
             }
         }
+
+        _transitionState.value =
+            NavigationEventTransitionState.InProgress(latestEvent = event, direction = direction)
     }
 
     /**
@@ -476,6 +522,8 @@ internal class NavigationEventProcessor {
                 forwardInfo = state.forwardInfo,
             )
         }
+
+        _transitionState.value = NavigationEventTransitionState.Idle()
     }
 
     /**
@@ -514,6 +562,8 @@ internal class NavigationEventProcessor {
                 )
             }
         }
+
+        _transitionState.value = NavigationEventTransitionState.Idle()
     }
 
     /**

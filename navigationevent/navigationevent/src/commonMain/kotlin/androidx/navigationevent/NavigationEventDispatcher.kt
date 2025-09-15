@@ -224,6 +224,40 @@ private constructor(
     public val state: StateFlow<NavigationEventState<NavigationEventInfo>> = sharedProcessor.state
 
     /**
+     * The globally observable, read-only state of the physical navigation gesture.
+     *
+     * This flow represents *only* the gesture's progress (e.g.,
+     * [NavigationEventTransitionState.Idle] or [NavigationEventTransitionState.InProgress]) and is
+     * separate from the navigation history state.
+     *
+     * System-level components or UI animations can subscribe to this flow to react to the start,
+     * progress, and end of a gesture without needing to know about the specific, generic
+     * [NavigationEventInfo] types involved in the history.
+     *
+     * This state is derived from the [NavigationEventTransitionState] of the currently active
+     * [NavigationEventHandler].
+     */
+    public val transitionState: StateFlow<NavigationEventTransitionState>
+        get() = sharedProcessor.transitionState
+
+    /**
+     * The globally observable, read-only state of the navigation history stack.
+     *
+     * This flow represents *only* the navigation stack (the [NavigationEventHistory.mergedHistory]
+     * and [NavigationEventHistory.currentIndex]) and is the counterpart to transition state.
+     *
+     * A key contract of this state is that it remains **stable** during a navigation gesture. It
+     * only updates when the navigation stack itself changes (e.g., when a new handler becomes
+     * active, or the active handler's info is updated), which typically occurs *after* a gesture
+     * completes or *before* one begins.
+     *
+     * This allows UI components to subscribe only to changes in the history stack without being
+     * notified of rapid gesture progress updates from transition state.
+     */
+    public val history: StateFlow<NavigationEventHistory>
+        get() = sharedProcessor.history
+
+    /**
      * Creates a [StateFlow] that only emits states for a specific [NavigationEventInfo] type.
      *
      * @param T The [NavigationEventInfo] type to filter for.
@@ -340,13 +374,8 @@ private constructor(
             input.dispatcher = this
             input.doOnAdded(dispatcher = this)
 
-            // Input must get 'info' immediately to avoid missing initial state.
-            val state = sharedProcessor.state.value
-            input.doOnInfoChanged(
-                currentInfo = state.currentInfo,
-                backInfo = state.backInfo,
-                forwardInfo = state.forwardInfo,
-            )
+            // Input must get 'history' immediately to avoid missing initial state.
+            input.doOnHistoryChanged(history = sharedProcessor.history.value)
 
             // Input must get 'hasEnabledHandlers' immediately to avoid missing initial state.
             val hasEnabledHandlers =
@@ -398,13 +427,8 @@ private constructor(
             input.dispatcher = this
             input.doOnAdded(dispatcher = this)
 
-            // Input must get 'info' immediately to avoid missing initial state.
-            val state = sharedProcessor.state.value
-            input.doOnInfoChanged(
-                currentInfo = state.currentInfo,
-                backInfo = state.backInfo,
-                forwardInfo = state.forwardInfo,
-            )
+            // Input must get 'history' immediately to avoid missing initial state.
+            input.doOnHistoryChanged(history = sharedProcessor.history.value)
 
             // Input must get 'hasEnabledHandlers' immediately to avoid missing initial state.
             val hasEnabledHandlers =
