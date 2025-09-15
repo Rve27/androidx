@@ -18,8 +18,8 @@ package androidx.navigationevent
 
 import androidx.annotation.EmptySuper
 import androidx.annotation.MainThread
-import androidx.navigationevent.NavigationEventDirection.Companion.Back
-import androidx.navigationevent.NavigationEventDirection.Companion.Forward
+import androidx.navigationevent.NavigationEventTransitionState.Companion.TRANSITIONING_BACK
+import androidx.navigationevent.NavigationEventTransitionState.Companion.TRANSITIONING_FORWARD
 
 /** A class that can send events to a [NavigationEventDispatcher]. */
 public abstract class NavigationEventInput() {
@@ -98,7 +98,7 @@ public abstract class NavigationEventInput() {
      */
     @MainThread
     protected fun dispatchOnBackStarted(event: NavigationEvent) {
-        dispatcher?.dispatchOnStarted(input = this, direction = Back, event)
+        dispatcher?.dispatchOnStarted(input = this, direction = TRANSITIONING_BACK, event)
             ?: error("This input is not added to any dispatcher.")
     }
 
@@ -109,21 +109,21 @@ public abstract class NavigationEventInput() {
      */
     @MainThread
     protected fun dispatchOnBackProgressed(event: NavigationEvent) {
-        dispatcher?.dispatchOnProgressed(input = this, direction = Back, event)
+        dispatcher?.dispatchOnProgressed(input = this, direction = TRANSITIONING_BACK, event)
             ?: error("This input is not added to any dispatcher.")
     }
 
     /** Dispatch a back cancelled event with the connected dispatcher. */
     @MainThread
     protected fun dispatchOnBackCancelled() {
-        dispatcher?.dispatchOnCancelled(input = this, direction = Back)
+        dispatcher?.dispatchOnCancelled(input = this, direction = TRANSITIONING_BACK)
             ?: error("This input is not added to any dispatcher.")
     }
 
     /** Dispatch a back completed event with the connected dispatcher. */
     @MainThread
     protected fun dispatchOnBackCompleted() {
-        dispatcher?.dispatchOnCompleted(input = this, direction = Back)
+        dispatcher?.dispatchOnCompleted(input = this, direction = TRANSITIONING_BACK)
             ?: error("This input is not added to any dispatcher.")
     }
 
@@ -134,7 +134,7 @@ public abstract class NavigationEventInput() {
      */
     @MainThread
     protected fun dispatchOnForwardStarted(event: NavigationEvent) {
-        dispatcher?.dispatchOnStarted(input = this, direction = Forward, event)
+        dispatcher?.dispatchOnStarted(input = this, direction = TRANSITIONING_FORWARD, event)
             ?: error("This input is not added to any dispatcher.")
     }
 
@@ -145,21 +145,21 @@ public abstract class NavigationEventInput() {
      */
     @MainThread
     protected fun dispatchOnForwardProgressed(event: NavigationEvent) {
-        dispatcher?.dispatchOnProgressed(input = this, direction = Forward, event)
+        dispatcher?.dispatchOnProgressed(input = this, direction = TRANSITIONING_FORWARD, event)
             ?: error("This input is not added to any dispatcher.")
     }
 
     /** Dispatch a forward cancelled event with the connected dispatcher. */
     @MainThread
     protected fun dispatchOnForwardCancelled() {
-        dispatcher?.dispatchOnCancelled(input = this, direction = Forward)
+        dispatcher?.dispatchOnCancelled(input = this, direction = TRANSITIONING_FORWARD)
             ?: error("This input is not added to any dispatcher.")
     }
 
     /** Dispatch a forward completed event with the connected dispatcher. */
     @MainThread
     protected fun dispatchOnForwardCompleted() {
-        dispatcher?.dispatchOnCompleted(input = this, direction = Forward)
+        dispatcher?.dispatchOnCompleted(input = this, direction = TRANSITIONING_FORWARD)
             ?: error("This input is not added to any dispatcher.")
     }
 }
