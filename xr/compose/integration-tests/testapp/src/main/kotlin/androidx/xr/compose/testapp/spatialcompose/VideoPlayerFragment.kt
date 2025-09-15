@@ -18,19 +18,21 @@ package androidx.xr.compose.testapp.spatialcompose
 
 import android.os.Bundle
 import android.os.Environment
-import android.util.Log
-import android.widget.Toast
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.ExperimentalComposeApi
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.unit.dp
+import androidx.fragment.app.Fragment
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaItem.DrmConfiguration
@@ -43,7 +45,6 @@ import androidx.xr.compose.spatial.Subspace
 import androidx.xr.compose.subspace.MovePolicy
 import androidx.xr.compose.subspace.ResizePolicy
 import androidx.xr.compose.subspace.SpatialBox
-import androidx.xr.compose.subspace.SpatialColumn
 import androidx.xr.compose.subspace.SpatialExternalSurface
 import androidx.xr.compose.subspace.SpatialPanel
 import androidx.xr.compose.subspace.StereoMode
@@ -54,19 +55,10 @@ import androidx.xr.compose.subspace.layout.fillMaxSize
 import androidx.xr.compose.subspace.layout.height
 import androidx.xr.compose.subspace.layout.offset
 import androidx.xr.compose.subspace.layout.width
-import androidx.xr.runtime.Config
-import androidx.xr.runtime.Session
-import androidx.xr.runtime.SessionCreateSuccess
-import androidx.xr.scenecore.scene
-import java.io.File
 
-/**
- * For quickly playing a video in SpatialExternalSurface, without configurations. Requires adb
- * pushing video assets with matching file paths.
- */
-class NonCustomizableVideoPlayer : ComponentActivity() {
-    private val TAG = "NonCustomizableVideoPlayer"
-    private val session by lazy { (Session.create(this) as SessionCreateSuccess).session }
+/** A Fragment using spatial UI. */
+class VideoPlayerFragment : Fragment() {
+
     private val useDrmState = mutableStateOf(false)
 
     private val drmLicenseUrl = "https://proxy.uat.widevine.com/proxy?provider=widevine_test"
@@ -76,26 +68,25 @@ class NonCustomizableVideoPlayer : ComponentActivity() {
         Environment.getExternalStorageDirectory().path + "/Download/vid_bigbuckbunny.mp4"
     private var exoPlayer: ExoPlayer? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        session.configure(Config(headTracking = Config.HeadTrackingMode.LAST_KNOWN))
-        session.scene.spatialEnvironment.preferredPassthroughOpacity = 0.0f
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
+    ): View {
+        // Create a ComposeView, which is the bridge between the View system and Compose.
+        return ComposeView(requireContext()).apply {
 
-        checkFile(drmVideoUri)
-        checkFile(regularVideoUri)
+            // This strategy handles disposing the Composition when the Fragment's
+            // View lifecycle is destroyed, preventing memory leaks.
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnDetachedFromWindow)
 
-        setContent {
-            Subspace {
-                SpatialColumn { VideoInSpatialExternalSurface(stereoMode = StereoMode.Mono) }
+            // Set the Compose content for this Fragment.
+            setContent {
+                MaterialTheme { Subspace { VideoInSpatialExternalSurface(StereoMode.Mono) } }
             }
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-    }
-
-    @OptIn(ExperimentalComposeApi::class)
     @Composable
     private fun VideoInSpatialExternalSurface(stereoMode: StereoMode) {
         var videoWidth by remember { mutableStateOf(600.dp) }
@@ -115,7 +106,7 @@ class NonCustomizableVideoPlayer : ComponentActivity() {
                 if (useDrmState.value) SurfaceProtection.Protected else SurfaceProtection.None,
         ) {
             onSurfaceCreated {
-                val player = ExoPlayer.Builder(this@NonCustomizableVideoPlayer).build()
+                val player = ExoPlayer.Builder(requireActivity()).build()
                 exoPlayer = player
                 player.setVideoSurface(it)
                 player.setMediaItem(getMediaItem())
@@ -146,7 +137,7 @@ class NonCustomizableVideoPlayer : ComponentActivity() {
                 alignment = SpatialAlignment.TopEnd,
             ) {
                 SpatialPanel(SubspaceModifier.offset(z = 30.dp)) {
-                    Button(onClick = { finish() }) { Text("Close") }
+                    Button(onClick = { requireActivity().finish() }) { Text("Close") }
                 }
             }
 
@@ -168,20 +159,6 @@ class NonCustomizableVideoPlayer : ComponentActivity() {
                 .build()
         } else {
             MediaItem.fromUri(regularVideoUri)
-        }
-    }
-
-    private fun checkFile(filePath: String) {
-        val file = File(filePath)
-        if (!file.exists()) {
-            Log.e(TAG, "$filePath does not exist. Did you adb push the asset?")
-            Toast.makeText(
-                    this@NonCustomizableVideoPlayer,
-                    "$filePath does not exist. Did you adb push the asset?",
-                    Toast.LENGTH_LONG,
-                )
-                .show()
-            finish()
         }
     }
 }
