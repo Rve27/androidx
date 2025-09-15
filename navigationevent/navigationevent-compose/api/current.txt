@@ -23,6 +23,18 @@ package androidx.navigationevent.compose {
     method @BytecodeOnly @androidx.compose.runtime.Composable public static <T extends androidx.navigationevent.NavigationEventInfo> void NavigationForwardHandler(T, java.util.List<? extends T!>?, boolean, kotlin.jvm.functions.Function0<kotlin.Unit!>?, kotlin.jvm.functions.Function0<kotlin.Unit!>, androidx.compose.runtime.Composer?, int, int);
   }
 
+  @androidx.compose.runtime.Stable public final class NavigationEventState<T extends androidx.navigationevent.NavigationEventInfo> {
+    ctor public NavigationEventState(T initialInfo);
+    method @InaccessibleFromKotlin public java.util.List<androidx.navigationevent.NavigationEventInfo> getBackInfo();
+    method @InaccessibleFromKotlin public androidx.navigationevent.NavigationEventInfo getCurrentInfo();
+    method @InaccessibleFromKotlin public java.util.List<androidx.navigationevent.NavigationEventInfo> getForwardInfo();
+    method @InaccessibleFromKotlin public androidx.navigationevent.NavigationEventTransitionState getTransitionState();
+    property public java.util.List<androidx.navigationevent.NavigationEventInfo> backInfo;
+    property public androidx.navigationevent.NavigationEventInfo currentInfo;
+    property public java.util.List<androidx.navigationevent.NavigationEventInfo> forwardInfo;
+    property public androidx.navigationevent.NavigationEventTransitionState transitionState;
+  }
+
   public final class RememberNavigationEventStateKt {
     method @KotlinOnly @androidx.compose.runtime.Composable public static inline <reified T extends androidx.navigationevent.NavigationEventInfo> androidx.navigationevent.NavigationEventState<T> rememberNavigationEventState(T initialInfo);
   }
