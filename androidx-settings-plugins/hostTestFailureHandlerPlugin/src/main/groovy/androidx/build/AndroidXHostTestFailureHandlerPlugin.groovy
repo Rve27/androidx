@@ -73,6 +73,9 @@ class RecordTestFailureFlowAction implements FlowAction<HostTestFailureFlowParam
             }
 
             File signalFile = parameters.onlyTestTaskFailedSignalFileProperty.get()
+            if (signalFile.exists()) {
+                signalFile.delete()
+            }
             try {
                 signalFile.parentFile?.mkdirs()
                 String messageToLog = "Only test tasks failed. Build continued due to --continue.\n" +
@@ -98,16 +101,17 @@ abstract class AndroidXHostTestFailureHandlerPlugin implements Plugin<Settings> 
 
     @Override
     void apply(Settings settings) {
-        def outDir = new File(System.getenv("OUT_DIR"), "androidx-settings-plugins")
-        File onlyTestTaskFailedSignalFile = new File(outDir, "only_test_task_failed_signal.txt")
+        def outDirProvider = settings.providers.environmentVariable("OUT_DIR")
 
-        onlyTestTaskFailedSignalFile.delete()
+        def signalFileProvider = outDirProvider.map { out ->
+            new File(new File(out, "androidx-settings-plugins"), "only_test_task_failed_signal.txt")
+        }
 
         getFlowScope().always(RecordTestFailureFlowAction.class) { spec ->
             spec.parameters.failure.set(getFlowProviders().buildWorkResult.map {
                 it.failure.orElse(null)
             })
-            spec.parameters.onlyTestTaskFailedSignalFileProperty.set(onlyTestTaskFailedSignalFile)
+            spec.parameters.onlyTestTaskFailedSignalFileProperty.set(signalFileProvider)
         }
     }
 }
