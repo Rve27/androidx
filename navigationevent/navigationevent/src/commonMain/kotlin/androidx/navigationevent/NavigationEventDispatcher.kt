@@ -22,6 +22,8 @@ import androidx.annotation.RestrictTo
 import androidx.navigationevent.NavigationEventDispatcher.Companion.PRIORITY_DEFAULT
 import androidx.navigationevent.NavigationEventDispatcher.Companion.PRIORITY_OVERLAY
 import androidx.navigationevent.NavigationEventTransitionState.Direction
+import androidx.navigationevent.NavigationEventTransitionState.Idle
+import androidx.navigationevent.NavigationEventTransitionState.InProgress
 import kotlin.jvm.JvmOverloads
 import kotlinx.coroutines.flow.StateFlow
 
@@ -98,35 +100,14 @@ private constructor(
     ) : this(parent = parent, onBackCompletedFallback = null)
 
     /**
-     * Defines priorities when adding a [NavigationEventHandler] to a
-     * [androidx.navigationevent.NavigationEventDispatcher].
-     */
-    @RestrictTo(RestrictTo.Scope.LIBRARY)
-    @Retention(AnnotationRetention.SOURCE)
-    @IntDef(PRIORITY_OVERLAY, PRIORITY_DEFAULT)
-    public annotation class Priority
-
-    public companion object {
-        /**
-         * Priority level of [NavigationEventHandler]s for overlays such as menus and navigation
-         * drawers that should receive event dispatch before non-overlays.
-         */
-        public const val PRIORITY_OVERLAY: Int = 0
-
-        /** Default priority level of [NavigationEventHandler]s. */
-        public const val PRIORITY_DEFAULT: Int = 1
-    }
-
-    /**
      * Returns `true` if this dispatcher is in a terminal state and can no longer be used.
      *
      * A dispatcher is considered disposed if it has been explicitly disposed or if its [parent] has
      * been disposed. This state is checked by [checkInvariants] to prevent use-after-dispose
      * errors.
      */
-    internal var isDisposed: Boolean = false
+    private var isDisposed: Boolean = false
         get() = if (parent?.isDisposed == true) true else field
-        private set // The setter is private and should only be modified by the dispose() method.
 
     /**
      * Controls whether this dispatcher is active and will process navigation events.
@@ -157,7 +138,7 @@ private constructor(
             if (field == value) return
 
             field = value
-            refreshEnabledCallbacks()
+            sharedProcessor.refreshEnabledHandlers()
         }
 
     /**
@@ -212,8 +193,7 @@ private constructor(
     /**
      * The globally observable, read-only state of the physical navigation gesture.
      *
-     * This flow represents *only* the gesture's progress (e.g.,
-     * [NavigationEventTransitionState.Idle] or [NavigationEventTransitionState.InProgress]) and is
+     * This flow represents *only* the gesture's progress (e.g., [Idle] or [InProgress]) and is
      * separate from the navigation history state.
      *
      * System-level components or UI animations can subscribe to this flow to react to the start,
@@ -251,15 +231,6 @@ private constructor(
     }
 
     /**
-     * Recomputes and updates the current handler state based on the enabled status of all
-     * registered handlers. This method should be called whenever a handler's enabled state or its
-     * registration status (added/removed) changes.
-     */
-    internal fun refreshEnabledCallbacks() {
-        sharedProcessor.refreshEnabledHandlers()
-    }
-
-    /**
      * Adds a new [NavigationEventHandler] to receive navigation events.
      *
      * **Handlers are invoked based on [priority], and then by recency.** All [PRIORITY_OVERLAY]
@@ -291,6 +262,7 @@ private constructor(
         handlers += handler
     }
 
+    /** [NavigationEventHandler.remove] */
     internal fun removeHandler(handler: NavigationEventHandler<*>) {
         sharedProcessor.removeHandler(handler)
         handlers -= handler
@@ -322,18 +294,7 @@ private constructor(
                 "This input is already added to dispatcher ${input.dispatcher}."
             }
 
-            sharedProcessor.unspecifiedInputs.add(input)
-            input.dispatcher = this
-            input.doOnAdded(dispatcher = this)
-
-            // Input must get 'history' immediately to avoid missing initial state.
-            input.doOnHistoryChanged(history = sharedProcessor.history.value)
-
-            // Input must get 'hasEnabledHandlers' immediately to avoid missing initial state.
-            val hasEnabledHandlers =
-                sharedProcessor.hasEnabledDefaultHandlers ||
-                    sharedProcessor.hasEnabledOverlayHandlers
-            input.doOnHasEnabledHandlersChanged(hasEnabledHandlers)
+            sharedProcessor.addInput(dispatcher = this, input, priority = -1)
         }
     }
 
@@ -371,25 +332,7 @@ private constructor(
                 "This input is already added to dispatcher ${input.dispatcher}."
             }
 
-            when (priority) {
-                PRIORITY_OVERLAY -> sharedProcessor.overlayInputs.add(input)
-                PRIORITY_DEFAULT -> sharedProcessor.defaultInputs.add(input)
-            }
-
-            input.dispatcher = this
-            input.doOnAdded(dispatcher = this)
-
-            // Input must get 'history' immediately to avoid missing initial state.
-            input.doOnHistoryChanged(history = sharedProcessor.history.value)
-
-            // Input must get 'hasEnabledHandlers' immediately to avoid missing initial state.
-            val hasEnabledHandlers =
-                when (priority) {
-                    PRIORITY_OVERLAY -> sharedProcessor.hasEnabledOverlayHandlers
-                    PRIORITY_DEFAULT -> sharedProcessor.hasEnabledDefaultHandlers
-                    else -> error("unreachable")
-                }
-            input.doOnHasEnabledHandlersChanged(hasEnabledHandlers)
+            sharedProcessor.addInput(dispatcher = this, input, priority)
         }
     }
 
@@ -410,26 +353,11 @@ private constructor(
         checkInvariants()
 
         if (inputs.remove(input)) {
-            // The `remove()` operation on `Set` is efficient and simply returns `false` if the
-            // element is not found. There's no need for a preceding `contains()` check.
-            sharedProcessor.unspecifiedInputs.remove(input)
-            sharedProcessor.defaultInputs.remove(input)
-            sharedProcessor.overlayInputs.remove(input)
-            input.dispatcher = null
-            input.doOnRemoved()
+            sharedProcessor.removeInput(dispatcher = this, input)
         }
     }
 
-    /**
-     * Dispatch an [NavigationEventHandler.onBackStarted] event with the given event. This call is
-     * delegated to the shared [NavigationEventProcessor].
-     *
-     * @param input The [NavigationEventInput] that sourced this event.
-     * @param direction The direction of the navigation event being started.
-     * @param event [NavigationEvent] to dispatch to the handlers.
-     * @throws IllegalStateException if the dispatcher has already been disposed.
-     */
-    @MainThread
+    /** @see [NavigationEventProcessor.dispatchOnStarted] */
     internal fun dispatchOnStarted(
         input: NavigationEventInput,
         direction: @Direction Int,
@@ -441,16 +369,7 @@ private constructor(
         sharedProcessor.dispatchOnStarted(input, direction, event)
     }
 
-    /**
-     * Dispatch an [NavigationEventHandler.onBackProgressed] event with the given event. This call
-     * is delegated to the shared [NavigationEventProcessor].
-     *
-     * @param input The [NavigationEventInput] that sourced this event.
-     * @param direction The direction of the navigation event being started.
-     * @param event [NavigationEvent] to dispatch to the handlers.
-     * @throws IllegalStateException if the dispatcher has already been disposed.
-     */
-    @MainThread
+    /** @see [NavigationEventProcessor.dispatchOnProgressed] */
     internal fun dispatchOnProgressed(
         input: NavigationEventInput,
         direction: @Direction Int,
@@ -462,15 +381,7 @@ private constructor(
         sharedProcessor.dispatchOnProgressed(input, direction, event)
     }
 
-    /**
-     * Dispatch an [NavigationEventHandler.onBackCompleted] event. This call is delegated to the
-     * shared [NavigationEventProcessor], passing the fallback action.
-     *
-     * @param input The [NavigationEventInput] that sourced this event.
-     * @param direction The direction of the navigation event being started.
-     * @throws IllegalStateException if the dispatcher has already been disposed.
-     */
-    @MainThread
+    /** @see [NavigationEventProcessor.dispatchOnCompleted] */
     internal fun dispatchOnCompleted(input: NavigationEventInput, direction: @Direction Int) {
         checkInvariants()
 
@@ -478,15 +389,7 @@ private constructor(
         sharedProcessor.dispatchOnCompleted(input, direction, onBackCompletedFallback)
     }
 
-    /**
-     * Dispatch an [NavigationEventHandler.onBackCancelled] event. This call is delegated to the
-     * shared [NavigationEventProcessor].
-     *
-     * @param input The [NavigationEventInput] that sourced this event.
-     * @param direction The direction of the navigation event being started.
-     * @throws IllegalStateException if the dispatcher has already been disposed.
-     */
-    @MainThread
+    /** @see [NavigationEventProcessor.dispatchOnCancelled] */
     internal fun dispatchOnCancelled(input: NavigationEventInput, direction: @Direction Int) {
         checkInvariants()
 
@@ -539,13 +442,7 @@ private constructor(
             // This gives them a chance to clean up their own state, severing the lifecycle link
             // and preventing them from interacting with a disposed object.
             for (input in currentDispatcher.inputs) {
-                // The `remove()` operation on `Set` is efficient and simply returns `false` if the
-                // element is not found. There's no need for a preceding `contains()` check.
-                sharedProcessor.unspecifiedInputs.remove(input)
-                sharedProcessor.defaultInputs.remove(input)
-                sharedProcessor.overlayInputs.remove(input)
-                input.dispatcher = null
-                input.doOnRemoved()
+                sharedProcessor.removeInput(currentDispatcher, input)
             }
             currentDispatcher.inputs.clear()
 
@@ -578,5 +475,25 @@ private constructor(
         check(!isDisposed) {
             "This NavigationEventDispatcher has already been disposed and cannot be used."
         }
+    }
+
+    /**
+     * Defines priorities when adding a [NavigationEventHandler] to a
+     * [androidx.navigationevent.NavigationEventDispatcher].
+     */
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    @Retention(AnnotationRetention.SOURCE)
+    @IntDef(PRIORITY_OVERLAY, PRIORITY_DEFAULT)
+    public annotation class Priority
+
+    public companion object {
+        /**
+         * Priority level of [NavigationEventHandler]s for overlays such as menus and navigation
+         * drawers that should receive event dispatch before non-overlays.
+         */
+        public const val PRIORITY_OVERLAY: Int = 0
+
+        /** Default priority level of [NavigationEventHandler]s. */
+        public const val PRIORITY_DEFAULT: Int = 1
     }
 }
