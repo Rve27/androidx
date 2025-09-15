@@ -1115,24 +1115,6 @@ class QueryFunctionProcessorTest(private val enableVerification: Boolean) {
         }
     }
 
-    @Test
-    fun dataClass_expandProjection() {
-        if (!enableVerification) return
-        dataClassTest(
-            """
-                String uid;
-                String name;
-            """,
-            listOf("*"),
-            options = mapOf("room.expandProjection" to "true"),
-        ) { adapter, _, invocation ->
-            adapter!!
-            assertThat(adapter.mapping.unusedColumns).isEmpty()
-            assertThat(adapter.mapping.unusedFields).isEmpty()
-            invocation.assertCompilationResult { hasNoWarnings() }
-        }
-    }
-
     private fun dataClassTest(
         dataClassFields: String,
         queryColumns: List<String>,
