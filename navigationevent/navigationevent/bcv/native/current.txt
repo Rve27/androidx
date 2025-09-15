@@ -119,8 +119,6 @@ final class androidx.navigationevent/NavigationEventDispatcher { // androidx.nav
 
     final val history // androidx.navigationevent/NavigationEventDispatcher.history|{}history[0]
         final fun <get-history>(): kotlinx.coroutines.flow/StateFlow<androidx.navigationevent/NavigationEventHistory> // androidx.navigationevent/NavigationEventDispatcher.history.<get-history>|<get-history>(){}[0]
-    final val state // androidx.navigationevent/NavigationEventDispatcher.state|{}state[0]
-        final fun <get-state>(): kotlinx.coroutines.flow/StateFlow<androidx.navigationevent/NavigationEventState<androidx.navigationevent/NavigationEventInfo>> // androidx.navigationevent/NavigationEventDispatcher.state.<get-state>|<get-state>(){}[0]
     final val transitionState // androidx.navigationevent/NavigationEventDispatcher.transitionState|{}transitionState[0]
         final fun <get-transitionState>(): kotlinx.coroutines.flow/StateFlow<androidx.navigationevent/NavigationEventTransitionState> // androidx.navigationevent/NavigationEventDispatcher.transitionState.<get-transitionState>|<get-transitionState>(){}[0]
 
@@ -133,7 +131,6 @@ final class androidx.navigationevent/NavigationEventDispatcher { // androidx.nav
     final fun addInput(androidx.navigationevent/NavigationEventInput, kotlin/Int) // androidx.navigationevent/NavigationEventDispatcher.addInput|addInput(androidx.navigationevent.NavigationEventInput;kotlin.Int){}[0]
     final fun dispose() // androidx.navigationevent/NavigationEventDispatcher.dispose|dispose(){}[0]
     final fun removeInput(androidx.navigationevent/NavigationEventInput) // androidx.navigationevent/NavigationEventDispatcher.removeInput|removeInput(androidx.navigationevent.NavigationEventInput){}[0]
-    final inline fun <#A1: reified androidx.navigationevent/NavigationEventInfo> getState(kotlinx.coroutines/CoroutineScope, #A1): kotlinx.coroutines.flow/StateFlow<androidx.navigationevent/NavigationEventState<#A1>> // androidx.navigationevent/NavigationEventDispatcher.getState|getState(kotlinx.coroutines.CoroutineScope;0:0){0§<androidx.navigationevent.NavigationEventInfo>}[0]
 
     open annotation class Priority : kotlin/Annotation { // androidx.navigationevent/NavigationEventDispatcher.Priority|null[0]
         constructor <init>() // androidx.navigationevent/NavigationEventDispatcher.Priority.<init>|<init>(){}[0]
@@ -160,47 +157,6 @@ final class androidx.navigationevent/NavigationEventHistory { // androidx.naviga
     final fun equals(kotlin/Any?): kotlin/Boolean // androidx.navigationevent/NavigationEventHistory.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // androidx.navigationevent/NavigationEventHistory.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // androidx.navigationevent/NavigationEventHistory.toString|toString(){}[0]
-}
-
-sealed class <#A: out androidx.navigationevent/NavigationEventInfo> androidx.navigationevent/NavigationEventState { // androidx.navigationevent/NavigationEventState|null[0]
-    abstract val backInfo // androidx.navigationevent/NavigationEventState.backInfo|{}backInfo[0]
-        abstract fun <get-backInfo>(): kotlin.collections/List<#A> // androidx.navigationevent/NavigationEventState.backInfo.<get-backInfo>|<get-backInfo>(){}[0]
-    abstract val currentInfo // androidx.navigationevent/NavigationEventState.currentInfo|{}currentInfo[0]
-        abstract fun <get-currentInfo>(): #A // androidx.navigationevent/NavigationEventState.currentInfo.<get-currentInfo>|<get-currentInfo>(){}[0]
-    abstract val forwardInfo // androidx.navigationevent/NavigationEventState.forwardInfo|{}forwardInfo[0]
-        abstract fun <get-forwardInfo>(): kotlin.collections/List<#A> // androidx.navigationevent/NavigationEventState.forwardInfo.<get-forwardInfo>|<get-forwardInfo>(){}[0]
-    final val progress // androidx.navigationevent/NavigationEventState.progress|{}progress[0]
-        final fun <get-progress>(): kotlin/Float // androidx.navigationevent/NavigationEventState.progress.<get-progress>|<get-progress>(){}[0]
-
-    final class <#A1: out androidx.navigationevent/NavigationEventInfo> Idle : androidx.navigationevent/NavigationEventState<#A1> { // androidx.navigationevent/NavigationEventState.Idle|null[0]
-        constructor <init>(#A1, kotlin.collections/List<#A1> = ..., kotlin.collections/List<#A1> = ...) // androidx.navigationevent/NavigationEventState.Idle.<init>|<init>(1:0;kotlin.collections.List<1:0>;kotlin.collections.List<1:0>){}[0]
-
-        final val backInfo // androidx.navigationevent/NavigationEventState.Idle.backInfo|{}backInfo[0]
-            final fun <get-backInfo>(): kotlin.collections/List<#A1> // androidx.navigationevent/NavigationEventState.Idle.backInfo.<get-backInfo>|<get-backInfo>(){}[0]
-        final val currentInfo // androidx.navigationevent/NavigationEventState.Idle.currentInfo|{}currentInfo[0]
-            final fun <get-currentInfo>(): #A1 // androidx.navigationevent/NavigationEventState.Idle.currentInfo.<get-currentInfo>|<get-currentInfo>(){}[0]
-        final val forwardInfo // androidx.navigationevent/NavigationEventState.Idle.forwardInfo|{}forwardInfo[0]
-            final fun <get-forwardInfo>(): kotlin.collections/List<#A1> // androidx.navigationevent/NavigationEventState.Idle.forwardInfo.<get-forwardInfo>|<get-forwardInfo>(){}[0]
-
-        final fun equals(kotlin/Any?): kotlin/Boolean // androidx.navigationevent/NavigationEventState.Idle.equals|equals(kotlin.Any?){}[0]
-        final fun hashCode(): kotlin/Int // androidx.navigationevent/NavigationEventState.Idle.hashCode|hashCode(){}[0]
-        final fun toString(): kotlin/String // androidx.navigationevent/NavigationEventState.Idle.toString|toString(){}[0]
-    }
-
-    final class <#A1: out androidx.navigationevent/NavigationEventInfo> InProgress : androidx.navigationevent/NavigationEventState<#A1> { // androidx.navigationevent/NavigationEventState.InProgress|null[0]
-        final val backInfo // androidx.navigationevent/NavigationEventState.InProgress.backInfo|{}backInfo[0]
-            final fun <get-backInfo>(): kotlin.collections/List<#A1> // androidx.navigationevent/NavigationEventState.InProgress.backInfo.<get-backInfo>|<get-backInfo>(){}[0]
-        final val currentInfo // androidx.navigationevent/NavigationEventState.InProgress.currentInfo|{}currentInfo[0]
-            final fun <get-currentInfo>(): #A1 // androidx.navigationevent/NavigationEventState.InProgress.currentInfo.<get-currentInfo>|<get-currentInfo>(){}[0]
-        final val forwardInfo // androidx.navigationevent/NavigationEventState.InProgress.forwardInfo|{}forwardInfo[0]
-            final fun <get-forwardInfo>(): kotlin.collections/List<#A1> // androidx.navigationevent/NavigationEventState.InProgress.forwardInfo.<get-forwardInfo>|<get-forwardInfo>(){}[0]
-        final val latestEvent // androidx.navigationevent/NavigationEventState.InProgress.latestEvent|{}latestEvent[0]
-            final fun <get-latestEvent>(): androidx.navigationevent/NavigationEvent // androidx.navigationevent/NavigationEventState.InProgress.latestEvent.<get-latestEvent>|<get-latestEvent>(){}[0]
-
-        final fun equals(kotlin/Any?): kotlin/Boolean // androidx.navigationevent/NavigationEventState.InProgress.equals|equals(kotlin.Any?){}[0]
-        final fun hashCode(): kotlin/Int // androidx.navigationevent/NavigationEventState.InProgress.hashCode|hashCode(){}[0]
-        final fun toString(): kotlin/String // androidx.navigationevent/NavigationEventState.InProgress.toString|toString(){}[0]
-    }
 }
 
 sealed class androidx.navigationevent/NavigationEventTransitionState { // androidx.navigationevent/NavigationEventTransitionState|null[0]

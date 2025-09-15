@@ -20,16 +20,11 @@ import androidx.annotation.MainThread
 import androidx.navigationevent.NavigationEventDispatcher.Companion.PRIORITY_DEFAULT
 import androidx.navigationevent.NavigationEventDispatcher.Companion.PRIORITY_OVERLAY
 import androidx.navigationevent.NavigationEventDispatcher.Priority
-import androidx.navigationevent.NavigationEventInfo.None
-import androidx.navigationevent.NavigationEventState.Idle
-import androidx.navigationevent.NavigationEventState.InProgress
 import androidx.navigationevent.NavigationEventTransitionState.Companion.TRANSITIONING_BACK
 import androidx.navigationevent.NavigationEventTransitionState.Companion.TRANSITIONING_FORWARD
 import androidx.navigationevent.NavigationEventTransitionState.Direction
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 
 /**
  * Manages the lifecycle and dispatching of [NavigationEventHandler] instances across all
@@ -37,16 +32,6 @@ import kotlinx.coroutines.flow.update
  * and prioritized dispatch for navigation events.
  */
 internal class NavigationEventProcessor {
-
-    /** The private, mutable source of truth for the navigation state. */
-    internal val _state = MutableStateFlow<NavigationEventState<*>>(Idle(currentInfo = None))
-
-    /**
-     * The [StateFlow] from the highest-priority, enabled navigation handler.
-     *
-     * This represents the navigation state of the currently active component.
-     */
-    val state: StateFlow<NavigationEventState<*>> = _state.asStateFlow()
 
     /**
      * The private, mutable source of truth for the global [NavigationEventTransitionState]. This
@@ -251,16 +236,6 @@ internal class NavigationEventProcessor {
 
         _history.value = newHistory
 
-        // Atomically commit the new information to the state flow.
-        // When a gesture is in progress, we must preserve its event data.
-        _state.update { state ->
-            when (state) {
-                is Idle -> Idle(newCurrentInfo, newBackInfo, newForwardInfo)
-                is InProgress ->
-                    InProgress(newCurrentInfo, newBackInfo, newForwardInfo, state.latestEvent)
-            }
-        }
-
         // Notify inputs directly for immediate, synchronous updates. This avoids
         // delays from the coroutine dispatcher, ensuring that consumers can react
         // to the state change within the same frame.
@@ -412,14 +387,6 @@ internal class NavigationEventProcessor {
                 TRANSITIONING_BACK -> handler.doOnBackStarted(event)
                 TRANSITIONING_FORWARD -> handler.doOnForwardStarted(event)
             }
-            _state.update { state ->
-                InProgress(
-                    currentInfo = state.currentInfo,
-                    backInfo = state.backInfo,
-                    forwardInfo = state.forwardInfo,
-                    latestEvent = event,
-                )
-            }
         }
 
         _transitionState.value =
@@ -450,19 +417,9 @@ internal class NavigationEventProcessor {
         val handler = inProgressHandler ?: resolveEnabledHandler(direction)
         // Progressed is not a terminal event, so `inProgress` is not cleared.
 
-        if (handler != null) {
-            when (direction) {
-                TRANSITIONING_BACK -> handler.doOnBackProgressed(event)
-                TRANSITIONING_FORWARD -> handler.doOnForwardProgressed(event)
-            }
-            _state.update { state ->
-                InProgress(
-                    currentInfo = state.currentInfo,
-                    backInfo = state.backInfo,
-                    forwardInfo = state.forwardInfo,
-                    latestEvent = event,
-                )
-            }
+        when (direction) {
+            TRANSITIONING_BACK -> handler?.doOnBackProgressed(event)
+            TRANSITIONING_FORWARD -> handler?.doOnForwardProgressed(event)
         }
 
         _transitionState.value =
@@ -480,7 +437,8 @@ internal class NavigationEventProcessor {
      * - For [TRANSITIONING_BACK], the [onBackCompletedFallback] action is invoked.
      * - For [TRANSITIONING_FORWARD], no fallback is triggered.
      *
-     * After dispatching, the dispatcher always transitions back to [Idle] state.
+     * After dispatching, the dispatcher always transitions back to
+     * [NavigationEventTransitionState.Idle] state.
      *
      * @param input The [NavigationEventInput] that sourced this event.
      * @param direction The direction of the navigation event that completed.
@@ -515,14 +473,6 @@ internal class NavigationEventProcessor {
         }
 
         // Completion is terminal regardless of handler outcome; return to Idle.
-        _state.update { state ->
-            Idle(
-                currentInfo = state.currentInfo,
-                backInfo = state.backInfo,
-                forwardInfo = state.forwardInfo,
-            )
-        }
-
         _transitionState.value = NavigationEventTransitionState.Idle()
     }
 
@@ -548,19 +498,9 @@ internal class NavigationEventProcessor {
         inProgressHandler = null
         inProgressDirection = null
 
-        if (handler != null) {
-            when (direction) {
-                TRANSITIONING_BACK -> handler.doOnBackCancelled()
-                TRANSITIONING_FORWARD -> handler.doOnForwardCancelled()
-            }
-
-            _state.update { state ->
-                Idle(
-                    currentInfo = state.currentInfo,
-                    backInfo = state.backInfo,
-                    forwardInfo = state.forwardInfo,
-                )
-            }
+        when (direction) {
+            TRANSITIONING_BACK -> handler?.doOnBackCancelled()
+            TRANSITIONING_FORWARD -> handler?.doOnForwardCancelled()
         }
 
         _transitionState.value = NavigationEventTransitionState.Idle()
