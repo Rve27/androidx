@@ -134,13 +134,15 @@ class PokedexScrollBenchmark(
     companion object {
         /**
          * Parameters for the benchmark. Uses abbreviations because of file length limit for
-         * results. compilation = Compilation Mode eSTS = enableSharedTransitionScope eSET =
+         * results. We use CompilationMode.Full() in CI to reduce the amount of benchmark
+         * permutations. compilation = Compilation Mode eSTS = enableSharedTransitionScope eSET =
          * enableSharedElementTransition
          */
         @Parameterized.Parameters(name = "compilation={0},eSTS={1},eSET={2}")
         @JvmStatic
         fun parameters(): List<Array<Any>> =
-            createCompilationParams().flatMap { compilationMode ->
+            createCompilationParams(compilationModes = listOf(CompilationMode.Full())).flatMap {
+                compilationMode ->
                 PokedexSharedElementBenchmarkConfiguration.AllConfigurations.map { configuration ->
                     arrayOf(*compilationMode, *configuration.asBenchmarkArguments())
                 }
