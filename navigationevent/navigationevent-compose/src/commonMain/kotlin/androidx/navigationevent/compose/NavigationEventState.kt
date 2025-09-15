@@ -35,7 +35,11 @@ import androidx.navigationevent.NavigationEventTransitionState.Idle
  * and gesture state.
  */
 @Stable
-public class NavigationEventState<T : NavigationEventInfo>(initialInfo: T) {
+public class NavigationEventState<T : NavigationEventInfo>(
+    currentInfo: T,
+    backInfo: List<T> = emptyList(),
+    forwardInfo: List<T> = emptyList(),
+) {
 
     /**
      * The current physical gesture state from the dispatcher. This value is collected from the
@@ -49,15 +53,15 @@ public class NavigationEventState<T : NavigationEventInfo>(initialInfo: T) {
     /** History partitions relative to the current position. */
 
     /** A list of destinations the user may navigate back to. */
-    public var backInfo: List<NavigationEventInfo> by mutableStateOf(emptyList())
+    public var backInfo: List<NavigationEventInfo> by mutableStateOf(backInfo)
         internal set
 
     /** The contextual information for the currently active destination. */
-    public var currentInfo: NavigationEventInfo by mutableStateOf(initialInfo)
+    public var currentInfo: NavigationEventInfo by mutableStateOf(currentInfo)
         internal set
 
     /** A list of destinations the user may navigate forward to. */
-    public var forwardInfo: List<NavigationEventInfo> by mutableStateOf(emptyList())
+    public var forwardInfo: List<NavigationEventInfo> by mutableStateOf(forwardInfo)
         internal set
 
     /**
@@ -68,7 +72,7 @@ public class NavigationEventState<T : NavigationEventInfo>(initialInfo: T) {
      */
     internal val handler =
         ComposeNavigationEventHandler(
-            initialInfo = initialInfo,
+            initialInfo = currentInfo,
             onTransitionStateChanged = { transitionState = it },
         )
 }
