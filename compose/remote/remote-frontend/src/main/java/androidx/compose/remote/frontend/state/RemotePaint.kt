@@ -19,10 +19,13 @@ package androidx.compose.remote.frontend.state
 
 import android.graphics.BlendMode
 import android.graphics.BlendModeColorFilter
+import android.graphics.Color
 import android.graphics.ColorFilter
 import android.graphics.Paint
+import androidx.annotation.ColorInt
 import androidx.annotation.RestrictTo
 import androidx.annotation.RestrictTo.Scope
+import androidx.compose.remote.frontend.capture.RemoteComposeCreationState
 
 /** Base type for [ColorFilter]s that are parameterized by expressions. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) public interface RemoteColorFilter
@@ -58,5 +61,31 @@ public class RemotePaint(flags: Int) : Paint(flags) {
         // We don't want both a ColorFilter and a RemoteColorFilter.
         remoteColorFilter = null
         return super.setColorFilter(filter)
+    }
+
+    /**
+     * The [RemoteColor] to paint with, if any. If non-null overrides the value passed into
+     * [setColor].
+     */
+    public var remoteColor: RemoteColor? = null
+        set(value) {
+            field = value
+            // We don't want both a Color and a RemoteColor, but color is not optional so instead
+            // set to a known value.
+            super.setColor(Color.TRANSPARENT)
+        }
+
+    override fun setColor(@ColorInt color: Int) {
+        super.setColor(color)
+        // We don't want both a Color and a RemoteColor
+        remoteColor = null
+    }
+
+    internal fun getColorLong(creationState: RemoteComposeCreationState): Long? {
+        remoteColor?.let {
+            return it.evaluateIfConstant(creationState)?.let { it.toLong() shl 32 }
+                ?: it.getValueForCreationState(creationState)
+        }
+        return null
     }
 }

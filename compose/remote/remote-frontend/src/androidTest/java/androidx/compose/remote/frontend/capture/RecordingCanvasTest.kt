@@ -24,11 +24,15 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import androidx.compose.remote.core.CoreDocument
+import androidx.compose.remote.core.Operation
 import androidx.compose.remote.core.Operations
+import androidx.compose.remote.core.RemoteContext
+import androidx.compose.remote.core.operations.PaintData
 import androidx.compose.remote.creation.platform.AndroidxPlatformServices
 import androidx.compose.remote.frontend.state.RemoteBlendModeColorFilter
 import androidx.compose.remote.frontend.state.RemoteBoolean
 import androidx.compose.remote.frontend.state.RemoteColor
+import androidx.compose.remote.frontend.state.RemoteFloat
 import androidx.compose.remote.frontend.state.RemotePaint
 import androidx.compose.remote.frontend.test.R
 import androidx.compose.remote.player.view.platform.AndroidRemoteContext
@@ -39,6 +43,8 @@ import androidx.test.filters.MediumTest
 import androidx.test.filters.SdkSuppress
 import androidx.test.screenshot.AndroidXScreenshotTestRule
 import androidx.test.screenshot.assertAgainstGolden
+import com.google.common.truth.Truth.assertThat
+import java.util.ArrayList
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -128,6 +134,86 @@ class RecordingCanvasTest {
         return constructDocument()
     }
 
+    @Test
+    fun remotePaintSetColor_constantColor() {
+        val paint = RemotePaint()
+        paint.remoteColor =
+            RemoteColor.fromARGB(
+                RemoteFloat(1f),
+                RemoteFloat(0.8f),
+                RemoteFloat(0.7f),
+                RemoteFloat(0.5f),
+            )
+
+        recordingCanvas.usePaint(paint)
+
+        val operations = inflateOperations()
+        val paintOp = operations[operations.size - 1] as PaintData
+        assertThat(paintOp.mPaintData.toString()).contains("Color(0xffccb380)")
+    }
+
+    @Test
+    fun remotePaintSetColor_colorExpression() {
+        val paint = RemotePaint()
+        paint.remoteColor =
+            RemoteColor.fromARGB(
+                RemoteFloat(1f),
+                RemoteFloat(0.8f),
+                RemoteFloat(RemoteContext.FLOAT_CONTINUOUS_SEC),
+                RemoteFloat(0.5f),
+            )
+
+        recordingCanvas.usePaint(paint)
+
+        val operations = inflateOperations()
+        val paintOp = operations[operations.size - 1] as PaintData
+        assertThat(paintOp.mPaintData.toString()).contains("ColorId([45])")
+    }
+
+    @Test
+    fun remotePaintSetRemoteColorFilter_constantColor() {
+        val paint = RemotePaint()
+        paint.remoteColorFilter =
+            RemoteBlendModeColorFilter(
+                RemoteColor.fromARGB(
+                    RemoteFloat(1f),
+                    RemoteFloat(0.8f),
+                    RemoteFloat(0.7f),
+                    RemoteFloat(0.5f),
+                ),
+                BlendMode.MULTIPLY,
+            )
+
+        recordingCanvas.usePaint(paint)
+
+        val operations = inflateOperations()
+        val paintOp = operations[operations.size - 1] as PaintData
+        assertThat(paintOp.mPaintData.toString())
+            .contains("ColorFilter(color=0xffccb380, mode=MULTIPLY)")
+    }
+
+    @Test
+    fun remotePaintSetRemoteColorFilter_colorExpression() {
+        val paint = RemotePaint()
+        paint.remoteColorFilter =
+            RemoteBlendModeColorFilter(
+                RemoteColor.fromARGB(
+                    RemoteFloat(1f),
+                    RemoteFloat(0.8f),
+                    RemoteFloat(RemoteContext.FLOAT_CONTINUOUS_SEC),
+                    RemoteFloat(0.5f),
+                ),
+                BlendMode.MULTIPLY,
+            )
+
+        recordingCanvas.usePaint(paint)
+
+        val operations = inflateOperations()
+        val paintOp = operations[operations.size - 1] as PaintData
+        assertThat(paintOp.mPaintData.toString())
+            .contains("ColorFilterID(color=[45], mode=MULTIPLY)")
+    }
+
     private fun constructDocument() =
         CoreDocument().apply {
             val buffer = creationState.document.buffer
@@ -141,5 +227,13 @@ class RecordingCanvasTest {
         remoteContext.useCanvas(canvas)
         document.paint(remoteContext, 0)
         bitmap.assertAgainstGolden(screenshotRule, "${this::class.simpleName}_$filename")
+    }
+
+    private fun inflateOperations(): ArrayList<Operation> {
+        val buffer = creationState.document.buffer
+        buffer.buffer.index = 0
+        val operations = ArrayList<Operation>()
+        buffer.inflateFromBuffer(operations)
+        return operations
     }
 }
