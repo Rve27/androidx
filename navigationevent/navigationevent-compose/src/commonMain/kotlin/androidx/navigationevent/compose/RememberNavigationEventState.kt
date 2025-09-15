@@ -17,13 +17,12 @@
 package androidx.navigationevent.compose
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.navigationevent.NavigationEventDispatcher
 import androidx.navigationevent.NavigationEventInfo
-import androidx.navigationevent.NavigationEventState
 import kotlinx.coroutines.CoroutineScope
 
 /**
@@ -42,27 +41,14 @@ import kotlinx.coroutines.CoroutineScope
  *
  * The initial value is `Idle(initialInfo)`, and filtering is type-based (only states whose
  * `currentInfo` is of type `T` are observed).
- *
- * @param T the [NavigationEventInfo] subtype to observe.
- * @param initialInfo the initial `T` used to seed the observation (provides the initial `Idle`
- *   value).
- * @return the current [NavigationEventState] for `T`.
- * @throws IllegalStateException if no [NavigationEventDispatcherOwner] is provided via
- *   [LocalNavigationEventDispatcherOwner].
- * @see NavigationEventDispatcher.getState
- * @see LocalNavigationEventDispatcherOwner
  */
 @Composable
-public inline fun <reified T : NavigationEventInfo> rememberNavigationEventState(
-    initialInfo: T
+public fun <T : NavigationEventInfo> rememberNavigationEventState(
+    currentInfo: T,
+    backInfo: List<T> = emptyList(),
+    forwardInfo: List<T> = emptyList(),
 ): NavigationEventState<T> {
-    val dispatcher =
-        checkNotNull(LocalNavigationEventDispatcherOwner.current) {
-                "No NavigationEventDispatcher was provided via LocalNavigationEventDispatcherOwner"
-            }
-            .navigationEventDispatcher
-
-    val scope = rememberCoroutineScope()
-    val state by remember { dispatcher.getState(scope, initialInfo) }.collectAsState()
+    val state = remember { NavigationEventState(currentInfo, backInfo, forwardInfo) }
+    SideEffect { state.handler.setInfo(currentInfo, backInfo, forwardInfo) }
     return state
 }

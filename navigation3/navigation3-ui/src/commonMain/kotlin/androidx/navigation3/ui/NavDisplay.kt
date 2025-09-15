@@ -53,8 +53,12 @@ import androidx.navigation3.ui.NavDisplay.DEFAULT_TRANSITION_DURATION_MILLISECON
 import androidx.navigation3.ui.NavDisplay.POP_TRANSITION_SPEC
 import androidx.navigation3.ui.NavDisplay.PREDICTIVE_POP_TRANSITION_SPEC
 import androidx.navigation3.ui.NavDisplay.TRANSITION_SPEC
+import androidx.navigation3.ui.NavDisplay.popTransitionSpec
+import androidx.navigation3.ui.NavDisplay.predictivePopTransitionSpec
+import androidx.navigation3.ui.NavDisplay.transitionSpec
 import androidx.navigationevent.NavigationEvent
-import androidx.navigationevent.NavigationEventState.InProgress
+import androidx.navigationevent.NavigationEventTransitionState.Idle
+import androidx.navigationevent.NavigationEventTransitionState.InProgress
 import androidx.navigationevent.compose.NavigationBackHandler
 import androidx.navigationevent.compose.rememberNavigationEventState
 import kotlin.reflect.KClass
@@ -215,17 +219,6 @@ public fun <T : Any> NavDisplay(
         }
 
     // Predictive Back Handling
-    val currentInfo = NavDisplayInfo(scene.entries.fastMap { it.contentKey })
-    val gestureState = rememberNavigationEventState(initialInfo = currentInfo)
-
-    val inPredictiveBack = gestureState is InProgress
-    val progress = gestureState.progress
-    val swipeEdge =
-        when (gestureState) {
-            is InProgress -> gestureState.latestEvent.swipeEdge
-            else -> NavigationEvent.EDGE_NONE
-        }
-
     // TODO(mgalhardo): Replace with SceneController API once available. It will expose "back
     //  visible entries" directly, so this manual calculation can be removed.
     val previousVisibleEntries =
@@ -238,10 +231,27 @@ public fun <T : Any> NavDisplay(
                 .entries // From previousEntries passed into the calculation.
                 .fastMap { it.contentKey }
         }
+    val gestureState =
+        rememberNavigationEventState(
+            currentInfo = NavDisplayInfo(scene.entries.fastMap { it.contentKey }),
+            backInfo = listOf(NavDisplayInfo(visibleEntries = previousVisibleEntries)),
+        )
+    val gestureTransition = gestureState.transitionState
+
+    val inPredictiveBack = gestureTransition is InProgress
+    val progress =
+        when (gestureTransition) {
+            is Idle -> 0f
+            is InProgress -> gestureTransition.latestEvent.progress
+        }
+    val swipeEdge =
+        when (gestureTransition) {
+            is Idle -> NavigationEvent.EDGE_NONE
+            is InProgress -> gestureTransition.latestEvent.swipeEdge
+        }
 
     NavigationBackHandler(
-        currentInfo = currentInfo,
-        backInfo = listOf(NavDisplayInfo(visibleEntries = previousVisibleEntries)),
+        state = gestureState,
         isBackEnabled = scene.previousEntries.isNotEmpty(),
         onBackCompleted = {
             // If `enabled` becomes stale (e.g., it was set to false but a gesture was
