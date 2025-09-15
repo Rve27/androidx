@@ -52,15 +52,12 @@ package androidx.navigationevent {
     method @MainThread public void addInput(androidx.navigationevent.NavigationEventInput input, int priority);
     method @MainThread public void dispose();
     method @InaccessibleFromKotlin public kotlinx.coroutines.flow.StateFlow<androidx.navigationevent.NavigationEventHistory> getHistory();
-    method @InaccessibleFromKotlin public kotlinx.coroutines.flow.StateFlow<androidx.navigationevent.NavigationEventState<androidx.navigationevent.NavigationEventInfo>> getState();
-    method @KotlinOnly public inline <reified T extends androidx.navigationevent.NavigationEventInfo> kotlinx.coroutines.flow.StateFlow<androidx.navigationevent.NavigationEventState<T>> getState(kotlinx.coroutines.CoroutineScope scope, T initialInfo);
     method @InaccessibleFromKotlin public kotlinx.coroutines.flow.StateFlow<androidx.navigationevent.NavigationEventTransitionState> getTransitionState();
     method @InaccessibleFromKotlin public boolean isEnabled();
     method @MainThread public void removeInput(androidx.navigationevent.NavigationEventInput input);
     method @InaccessibleFromKotlin public void setEnabled(boolean);
     property public kotlinx.coroutines.flow.StateFlow<androidx.navigationevent.NavigationEventHistory> history;
     property public boolean isEnabled;
-    property public kotlinx.coroutines.flow.StateFlow<androidx.navigationevent.NavigationEventState<androidx.navigationevent.NavigationEventInfo>> state;
     property public kotlinx.coroutines.flow.StateFlow<androidx.navigationevent.NavigationEventTransitionState> transitionState;
     field public static final androidx.navigationevent.NavigationEventDispatcher.Companion Companion;
     field public static final int PRIORITY_DEFAULT = 1; // 0x1
@@ -141,38 +138,6 @@ package androidx.navigationevent {
     method @EmptySuper @MainThread protected void onHasEnabledHandlersChanged(boolean hasEnabledHandlers);
     method @EmptySuper @MainThread protected void onHistoryChanged(androidx.navigationevent.NavigationEventHistory history);
     method @EmptySuper @MainThread protected void onRemoved();
-  }
-
-  @androidx.compose.runtime.Immutable public abstract sealed class NavigationEventState<T extends androidx.navigationevent.NavigationEventInfo> {
-    method @InaccessibleFromKotlin public abstract java.util.List<T> getBackInfo();
-    method @InaccessibleFromKotlin public abstract T getCurrentInfo();
-    method @InaccessibleFromKotlin public abstract java.util.List<T> getForwardInfo();
-    method @InaccessibleFromKotlin public final float getProgress();
-    property public abstract java.util.List<T> backInfo;
-    property public abstract T currentInfo;
-    property public abstract java.util.List<T> forwardInfo;
-    property public final float progress;
-  }
-
-  public static final class NavigationEventState.Idle<T extends androidx.navigationevent.NavigationEventInfo> extends androidx.navigationevent.NavigationEventState<T> {
-    ctor @kotlin.PublishedApi internal NavigationEventState.Idle(T currentInfo, optional java.util.List<? extends T> backInfo, optional java.util.List<? extends T> forwardInfo);
-    method @InaccessibleFromKotlin public java.util.List<T> getBackInfo();
-    method @InaccessibleFromKotlin public T getCurrentInfo();
-    method @InaccessibleFromKotlin public java.util.List<T> getForwardInfo();
-    property public java.util.List<T> backInfo;
-    property public T currentInfo;
-    property public java.util.List<T> forwardInfo;
-  }
-
-  public static final class NavigationEventState.InProgress<T extends androidx.navigationevent.NavigationEventInfo> extends androidx.navigationevent.NavigationEventState<T> {
-    method @InaccessibleFromKotlin public java.util.List<T> getBackInfo();
-    method @InaccessibleFromKotlin public T getCurrentInfo();
-    method @InaccessibleFromKotlin public java.util.List<T> getForwardInfo();
-    method @InaccessibleFromKotlin public androidx.navigationevent.NavigationEvent getLatestEvent();
-    property public java.util.List<T> backInfo;
-    property public T currentInfo;
-    property public java.util.List<T> forwardInfo;
-    property public androidx.navigationevent.NavigationEvent latestEvent;
   }
 
   @androidx.compose.runtime.Immutable public abstract sealed class NavigationEventTransitionState {
