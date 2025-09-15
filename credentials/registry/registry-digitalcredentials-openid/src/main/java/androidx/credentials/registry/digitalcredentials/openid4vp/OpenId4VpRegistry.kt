@@ -17,15 +17,19 @@
 package androidx.credentials.registry.digitalcredentials.openid4vp
 
 import android.graphics.Bitmap
+import androidx.annotation.RestrictTo
 import androidx.credentials.registry.digitalcredentials.mdoc.MdocEntry
+import androidx.credentials.registry.digitalcredentials.mdoc.MdocInlineIssuanceEntry
 import androidx.credentials.registry.digitalcredentials.openid4vp.OpenId4VpDefaults.DEFAULT_MATCHER
 import androidx.credentials.registry.digitalcredentials.sdjwt.SdJwtEntry
+import androidx.credentials.registry.digitalcredentials.sdjwt.SdJwtInlineIssuanceEntry
 import androidx.credentials.registry.provider.RegistryManager
 import androidx.credentials.registry.provider.digitalcredentials.DigitalCredentialEntry
 import androidx.credentials.registry.provider.digitalcredentials.DigitalCredentialRegistry
 import androidx.credentials.registry.provider.digitalcredentials.DisplayType
 import androidx.credentials.registry.provider.digitalcredentials.EntryDisplayProperties
 import androidx.credentials.registry.provider.digitalcredentials.FieldDisplayProperties
+import androidx.credentials.registry.provider.digitalcredentials.InlineIssuanceEntry
 import androidx.credentials.registry.provider.digitalcredentials.VerificationEntryDisplayProperties
 import androidx.credentials.registry.provider.digitalcredentials.VerificationFieldDisplayProperties
 import java.io.ByteArrayOutputStream
@@ -62,10 +66,19 @@ public class OpenId4VpRegistry(
 ) :
     DigitalCredentialRegistry(
         id = id,
-        credentials = toCredentialBytes(credentialEntries),
+        credentials = toCredentialBytes(credentialEntries, emptyList()),
         matcher = DEFAULT_MATCHER,
         intentAction = intentAction,
     ) {
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    public constructor(
+        credentialEntries: List<DigitalCredentialEntry>,
+        id: String,
+        intentAction: String = RegistryManager.ACTION_GET_CREDENTIAL,
+        inlineIssuanceEntries: List<InlineIssuanceEntry>,
+    ) : this(credentialEntries, id, intentAction)
+
     private companion object {
         private const val CREDENTIALS = "credentials"
         private const val ID = "id"
@@ -83,6 +96,8 @@ public class OpenId4VpRegistry(
         private const val VERIFICATION = "verification"
         private const val MSO_MDOC = "mso_mdoc"
         private const val DC_SD_JWT = "dc+sd-jwt"
+        private const val ISSUANCE = "issuance"
+        private const val SUPPORTED = "supported"
 
         private fun getIconBytes(icon: Bitmap): ByteArray {
             val currWidth = icon.width
@@ -188,7 +203,10 @@ public class OpenId4VpRegistry(
          * |------------- More Icons... -----------| |----------- Credential Json -----------|
          * |---------------------------------------|
          */
-        private fun toCredentialBytes(credentialEntries: List<DigitalCredentialEntry>): ByteArray {
+        private fun toCredentialBytes(
+            credentialEntries: List<DigitalCredentialEntry>,
+            inlineIssuanceEntries: List<InlineIssuanceEntry>,
+        ): ByteArray {
             val out = ByteArrayOutputStream()
 
             // TODO: optimize for duplicates
@@ -213,11 +231,23 @@ public class OpenId4VpRegistry(
                             .associate { it },
                     )
                 }
+            val inlineIssuanceIconMap: Map<String, RegistryIcon> =
+                inlineIssuanceEntries
+                    .mapNotNull { entry ->
+                        entry.display.iconHint?.let {
+                            Pair(entry.id, RegistryIcon(getIconBytes(it)))
+                        }
+                    }
+                    .associate { it }
+
             // Write the offset to the json
             val jsonOffset =
                 4 +
                     iconMap.values.sumOf {
                         it.values.sumOf { registryIcon -> registryIcon.iconValue.size }
+                    } +
+                    inlineIssuanceIconMap.values.sumOf { registryIcon ->
+                        registryIcon.iconValue.size
                     }
             val buffer = ByteBuffer.allocate(4)
             buffer.order(ByteOrder.LITTLE_ENDIAN)
@@ -232,6 +262,11 @@ public class OpenId4VpRegistry(
                     out.write(registryIcon.iconValue)
                     currIconOffset += registryIcon.iconValue.size
                 }
+            }
+            inlineIssuanceIconMap.values.forEach { registryIcon ->
+                registryIcon.iconOffset = currIconOffset
+                out.write(registryIcon.iconValue)
+                currIconOffset += registryIcon.iconValue.size
             }
 
             val mdocCredentials = JSONObject()
@@ -280,9 +315,54 @@ public class OpenId4VpRegistry(
                     else -> {} // Not supported
                 }
             }
+            val inlineIssuanceCredentials = JSONObject()
+            for (inlineIssuanceEntry in inlineIssuanceEntries) {
+                when (inlineIssuanceEntry) {
+                    is MdocInlineIssuanceEntry -> {
+                        val entryJson = JSONObject()
+                        entryJson.put(ID, inlineIssuanceEntry.id)
+                        entryJson.putOpt(SUBTITLE, inlineIssuanceEntry.display.subtitle)
+                        entryJson.putOpt(TITLE, inlineIssuanceEntry.display.titleHint)
+                        val icon = inlineIssuanceIconMap[inlineIssuanceEntry.id]
+                        icon?.let {
+                            val iconJson = JSONObject()
+                            iconJson.put(LENGTH, it.iconValue.size)
+                            iconJson.put(START, it.iconOffset)
+                            entryJson.put(ICON, iconJson)
+                        }
+                        val supportedDocTypes =
+                            JSONArray(inlineIssuanceEntry.supportedMdocs.map { it.docType })
+                        entryJson.putOpt(SUPPORTED, supportedDocTypes)
+                        addCredentialJson(inlineIssuanceCredentials, entryJson, MSO_MDOC)
+                    }
+                    is SdJwtInlineIssuanceEntry -> {
+                        val entryJson = JSONObject()
+                        entryJson.put(ID, inlineIssuanceEntry.id)
+                        entryJson.putOpt(SUBTITLE, inlineIssuanceEntry.display.subtitle)
+                        entryJson.putOpt(TITLE, inlineIssuanceEntry.display.titleHint)
+                        val icon = inlineIssuanceIconMap[inlineIssuanceEntry.id]
+                        icon?.let {
+                            val iconJson = JSONObject()
+                            iconJson.put(LENGTH, it.iconValue.size)
+                            iconJson.put(START, it.iconOffset)
+                            entryJson.put(ICON, iconJson)
+                        }
+                        val supportedDocTypes =
+                            JSONArray(
+                                inlineIssuanceEntry.supportedSdJwts.map {
+                                    it.verifiableCredentialType
+                                }
+                            )
+                        entryJson.putOpt(SUPPORTED, supportedDocTypes)
+                        addCredentialJson(inlineIssuanceCredentials, entryJson, DC_SD_JWT)
+                    }
+                    else -> {} // Not supported
+                }
+            }
             val registryCredentials = JSONObject()
             registryCredentials.put(MSO_MDOC, mdocCredentials)
             registryCredentials.put(DC_SD_JWT, sdJwtCredentials)
+            registryCredentials.put(ISSUANCE, inlineIssuanceCredentials)
             val registryJson = JSONObject()
             registryJson.put(CREDENTIALS, registryCredentials)
             out.write(registryJson.toString().toByteArray())
