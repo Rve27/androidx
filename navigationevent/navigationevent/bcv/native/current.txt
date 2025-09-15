@@ -149,7 +149,6 @@ final class androidx.navigationevent/NavigationEventDispatcher { // androidx.nav
 final class androidx.navigationevent/NavigationEventHistory { // androidx.navigationevent/NavigationEventHistory|null[0]
     constructor <init>() // androidx.navigationevent/NavigationEventHistory.<init>|<init>(){}[0]
     constructor <init>(androidx.navigationevent/NavigationEventInfo, kotlin.collections/List<androidx.navigationevent/NavigationEventInfo> = ..., kotlin.collections/List<androidx.navigationevent/NavigationEventInfo> = ...) // androidx.navigationevent/NavigationEventHistory.<init>|<init>(androidx.navigationevent.NavigationEventInfo;kotlin.collections.List<androidx.navigationevent.NavigationEventInfo>;kotlin.collections.List<androidx.navigationevent.NavigationEventInfo>){}[0]
-    constructor <init>(kotlin.collections/List<androidx.navigationevent/NavigationEventInfo>, kotlin/Int) // androidx.navigationevent/NavigationEventHistory.<init>|<init>(kotlin.collections.List<androidx.navigationevent.NavigationEventInfo>;kotlin.Int){}[0]
 
     final val currentIndex // androidx.navigationevent/NavigationEventHistory.currentIndex|{}currentIndex[0]
         final fun <get-currentIndex>(): kotlin/Int // androidx.navigationevent/NavigationEventHistory.currentIndex.<get-currentIndex>|<get-currentIndex>(){}[0]
