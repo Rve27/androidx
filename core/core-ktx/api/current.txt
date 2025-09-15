@@ -22,6 +22,8 @@ package androidx.core.content {
 
   public final class ContextKt {
     method @KotlinOnly public static inline <reified T> T? getSystemService(android.content.Context);
+    method public static suspend Object? receiveBroadcasts(android.content.Context, android.content.IntentFilter filter, int flags, optional String? broadcastPermission, optional android.os.Handler? scheduler, kotlin.jvm.functions.Function2<? super android.content.BroadcastReceiver,? super android.content.Intent?,kotlin.Unit> onReceive, kotlin.coroutines.Continuation<? extends java.lang.Object?>);
+    method public static suspend Object? receiveBroadcastsAsync(android.content.Context, android.content.IntentFilter filter, int flags, optional String? broadcastPermission, optional android.os.Handler? scheduler, kotlin.jvm.functions.Function3<? super android.content.BroadcastReceiver.PendingResult,? super android.content.Intent?,? super kotlin.coroutines.Continuation<? super kotlin.Unit>,? extends java.lang.Object?> onReceive, kotlin.coroutines.Continuation<? extends java.lang.Object?>);
     method public static inline void withStyledAttributes(android.content.Context, optional android.util.AttributeSet? set, int[] attrs, optional @AttrRes int defStyleAttr, optional @StyleRes int defStyleRes, kotlin.jvm.functions.Function1<? super android.content.res.TypedArray,kotlin.Unit> block);
     method public static inline void withStyledAttributes(android.content.Context, @StyleRes int resourceId, int[] attrs, kotlin.jvm.functions.Function1<? super android.content.res.TypedArray,kotlin.Unit> block);
   }
