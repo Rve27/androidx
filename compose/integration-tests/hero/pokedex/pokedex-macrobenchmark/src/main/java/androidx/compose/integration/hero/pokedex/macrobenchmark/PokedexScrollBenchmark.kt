@@ -34,14 +34,12 @@ import androidx.test.uiautomator.UiObject2
 import androidx.test.uiautomator.Until
 import androidx.testutils.createCompilationParams
 import androidx.testutils.defaultComposeScrollingMetrics
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.RuleChain
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 
-@Ignore("Disabling due to b/443949117")
 @LargeTest
 @RunWith(Parameterized::class)
 class PokedexScrollBenchmark(
@@ -61,6 +59,7 @@ class PokedexScrollBenchmark(
         benchmarkScroll(
             action = "$POKEDEX_TARGET_PACKAGE_NAME.POKEDEX_COMPOSE_ACTIVITY",
             setupBlock = {
+                device.waitForIdle()
                 val searchCondition = Until.hasObject(By.res("Pokemon"))
                 device.wait(searchCondition, 3_000)
                 val content = device.findObject(By.res("PokedexList"))
@@ -75,8 +74,10 @@ class PokedexScrollBenchmark(
         benchmarkScroll(
             action = "$POKEDEX_TARGET_PACKAGE_NAME.POKEDEX_VIEWS_HOME_ACTIVITY",
             setupBlock = {
+                device.waitForIdle()
+                // Wait until we have content loaded
                 device.waitOrThrow(
-                    Until.hasObject(By.res(POKEDEX_TARGET_PACKAGE_NAME, "cardView")),
+                    Until.hasObject(By.res(POKEDEX_TARGET_PACKAGE_NAME, "name")),
                     3_000,
                 )
                 val content =
