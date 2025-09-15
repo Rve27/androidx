@@ -69,6 +69,7 @@ import androidx.xr.scenecore.scene
 import com.android.extensions.xr.ShadowXrExtensions
 import com.android.extensions.xr.space.ShadowActivityPanel
 import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.test.StandardTestDispatcher
 import org.junit.Assert.assertTrue
 import org.junit.Ignore
 import org.junit.Rule
@@ -78,7 +79,9 @@ import org.junit.runner.RunWith
 /** Tests for [SpatialPanel]. */
 @RunWith(AndroidJUnit4::class)
 class SpatialPanelTest {
-    @get:Rule val composeTestRule = createAndroidComposeRule<SubspaceTestingActivity>()
+    @get:Rule
+    val composeTestRule =
+        createAndroidComposeRule<SubspaceTestingActivity>(StandardTestDispatcher())
 
     @Test
     fun spatialPanel_internalElementsAreLaidOutProperly() {
