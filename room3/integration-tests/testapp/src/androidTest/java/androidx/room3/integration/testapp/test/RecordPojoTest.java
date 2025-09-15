@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.room3.integration.test;
+package androidx.room3.integration.testapp.test;
 
 import static com.google.common.truth.Truth.assertThat;
 
