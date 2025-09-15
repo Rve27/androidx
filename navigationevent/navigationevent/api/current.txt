@@ -51,13 +51,17 @@ package androidx.navigationevent {
     method @MainThread public void addInput(androidx.navigationevent.NavigationEventInput input);
     method @MainThread public void addInput(androidx.navigationevent.NavigationEventInput input, int priority);
     method @MainThread public void dispose();
+    method @InaccessibleFromKotlin public kotlinx.coroutines.flow.StateFlow<androidx.navigationevent.NavigationEventHistory> getHistory();
     method @InaccessibleFromKotlin public kotlinx.coroutines.flow.StateFlow<androidx.navigationevent.NavigationEventState<androidx.navigationevent.NavigationEventInfo>> getState();
     method @KotlinOnly public inline <reified T extends androidx.navigationevent.NavigationEventInfo> kotlinx.coroutines.flow.StateFlow<androidx.navigationevent.NavigationEventState<T>> getState(kotlinx.coroutines.CoroutineScope scope, T initialInfo);
+    method @InaccessibleFromKotlin public kotlinx.coroutines.flow.StateFlow<androidx.navigationevent.NavigationEventTransitionState> getTransitionState();
     method @InaccessibleFromKotlin public boolean isEnabled();
     method @MainThread public void removeInput(androidx.navigationevent.NavigationEventInput input);
     method @InaccessibleFromKotlin public void setEnabled(boolean);
+    property public kotlinx.coroutines.flow.StateFlow<androidx.navigationevent.NavigationEventHistory> history;
     property public boolean isEnabled;
     property public kotlinx.coroutines.flow.StateFlow<androidx.navigationevent.NavigationEventState<androidx.navigationevent.NavigationEventInfo>> state;
+    property public kotlinx.coroutines.flow.StateFlow<androidx.navigationevent.NavigationEventTransitionState> transitionState;
     field public static final androidx.navigationevent.NavigationEventDispatcher.Companion Companion;
     field public static final int PRIORITY_DEFAULT = 1; // 0x1
     field public static final int PRIORITY_OVERLAY = 0; // 0x0
@@ -135,7 +139,7 @@ package androidx.navigationevent {
     method @MainThread protected final void dispatchOnForwardStarted(androidx.navigationevent.NavigationEvent event);
     method @EmptySuper @MainThread protected void onAdded(androidx.navigationevent.NavigationEventDispatcher dispatcher);
     method @EmptySuper @MainThread protected void onHasEnabledHandlersChanged(boolean hasEnabledHandlers);
-    method @EmptySuper @MainThread protected void onInfoChanged(androidx.navigationevent.NavigationEventInfo currentInfo, java.util.List<? extends androidx.navigationevent.NavigationEventInfo> backInfo, java.util.List<? extends androidx.navigationevent.NavigationEventInfo> forwardInfo);
+    method @EmptySuper @MainThread protected void onHistoryChanged(androidx.navigationevent.NavigationEventHistory history);
     method @EmptySuper @MainThread protected void onRemoved();
   }
 
