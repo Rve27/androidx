@@ -1436,10 +1436,10 @@ internal val SlotReader.isAfterFirstChild
  * Remember observer which is not removed during reuse/deactivate of the group.
  * It is used to preserve composition locals between group deactivation.
  */
-internal class ReusableRememberObserverHolder(wrapped: RememberObserver, after: Anchor?) :
-    RememberObserverHolder(wrapped, after)
+internal class ReusableRememberObserverHolder(wrapped: RememberObserver, afterGroupIndex: Int) :
+    RememberObserverHolder(wrapped, afterGroupIndex)
 
-internal open class RememberObserverHolder(var wrapped: RememberObserver, var after: Anchor?)
+internal open class RememberObserverHolder(var wrapped: RememberObserver, var afterGroupIndex: Int)
 
 // An arbitrary key value that marks the default parameter group
 internal const val defaultsKey = -127
