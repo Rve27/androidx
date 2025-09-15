@@ -22,6 +22,7 @@ import androidx.compose.animation.core.spring
 import androidx.compose.foundation.MutatePriority
 import androidx.compose.foundation.gestures.ScrollScope
 import androidx.compose.foundation.gestures.ScrollableState
+import androidx.compose.foundation.interaction.InteractionSource
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
@@ -70,7 +71,6 @@ public fun rememberStackState(@IntRange(from = 0) initialTopItem: Int = 0): Stac
  * @see VerticalStack
  */
 // TODO(b/413429531): add layout info to the state.
-// TODO(b/413429531): add InteractionSource.
 // TODO(b/413429531): add ScrollIndicatorState.
 @Stable
 public class StackState(@IntRange(from = 0) initialTopItem: Int = 0) : ScrollableState {
@@ -94,6 +94,13 @@ public class StackState(@IntRange(from = 0) initialTopItem: Int = 0) : Scrollabl
      */
     public val topItemOffsetFraction: Float
         get() = pagerState.currentPageOffsetFraction
+
+    /**
+     * [InteractionSource] that's used to dispatch drag events when this stack is being dragged. To
+     * know whether a fling (or animated scroll) is in progress, use [isScrollInProgress].
+     */
+    public val interactionSource: InteractionSource
+        get() = pagerState.interactionSource
 
     /**
      * Scroll (jump immediately) to a given [item] index.

@@ -366,6 +366,7 @@ package androidx.xr.glimmer.stack {
     ctor public StackState(optional @IntRange(from=0L) int initialTopItem);
     method public suspend Object? animateScrollToItem(int item, optional androidx.compose.animation.core.AnimationSpec<java.lang.Float> animationSpec, kotlin.coroutines.Continuation<? super kotlin.Unit>);
     method public float dispatchRawDelta(float delta);
+    method @InaccessibleFromKotlin public androidx.compose.foundation.interaction.InteractionSource getInteractionSource();
     method @InaccessibleFromKotlin public int getTopItem();
     method @InaccessibleFromKotlin public float getTopItemOffsetFraction();
     method @InaccessibleFromKotlin public boolean isScrollInProgress();
@@ -373,6 +374,7 @@ package androidx.xr.glimmer.stack {
     method public suspend Object? scrollToItem(int item, kotlin.coroutines.Continuation<? super kotlin.Unit>);
     property public boolean canScrollBackward;
     property public boolean canScrollForward;
+    property public androidx.compose.foundation.interaction.InteractionSource interactionSource;
     property public boolean isScrollInProgress;
     property public boolean lastScrolledBackward;
     property public boolean lastScrolledForward;
