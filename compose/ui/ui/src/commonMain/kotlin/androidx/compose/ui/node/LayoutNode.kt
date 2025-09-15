@@ -1529,10 +1529,7 @@ internal class LayoutNode(
             }
         }
         owner?.onLayoutNodeDeactivated(this)
-        @OptIn(ExperimentalComposeUiApi::class)
-        if (ComposeUiFlags.isRectTrackingEnabled) {
-            owner?.rectManager?.remove(this)
-        }
+        owner?.rectManager?.remove(this)
     }
 
     override fun onRelease() {
