@@ -21,7 +21,8 @@ export DIST_DIR="$DIST_DIR"
 if [ "$CHANGE_INFO" != "" ]; then
   cp "$CHANGE_INFO" "$DIST_DIR/"
   if [ "$MANIFEST" == "" ]; then
-    export MANIFEST="$DIST_DIR/manifest_${BUILD_NUMBER}.xml"
+    mv "$DIST_DIR/manifest_${BUILD_NUMBER}.xml" "$DIST_DIR/manifest.xml"
+    export MANIFEST="$DIST_DIR/manifest.xml"
   fi
 fi
 
