@@ -79,6 +79,7 @@ package androidx.navigationevent {
     method @InaccessibleFromKotlin public final java.util.List<T> getBackInfo();
     method @InaccessibleFromKotlin public final T getCurrentInfo();
     method @InaccessibleFromKotlin public final java.util.List<T> getForwardInfo();
+    method @InaccessibleFromKotlin public final androidx.navigationevent.NavigationEventTransitionState getTransitionState();
     method @InaccessibleFromKotlin public final boolean isBackEnabled();
     method @InaccessibleFromKotlin public final boolean isForwardEnabled();
     method @EmptySuper protected void onBackCancelled();
@@ -100,6 +101,7 @@ package androidx.navigationevent {
     property public final java.util.List<T> forwardInfo;
     property public final boolean isBackEnabled;
     property public final boolean isForwardEnabled;
+    property public final androidx.navigationevent.NavigationEventTransitionState transitionState;
   }
 
   @androidx.compose.runtime.Immutable public interface NavigationEventInfo {
