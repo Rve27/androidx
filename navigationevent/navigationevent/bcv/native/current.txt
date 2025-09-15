@@ -35,6 +35,8 @@ abstract class <#A: androidx.navigationevent/NavigationEventInfo> androidx.navig
     final var isForwardEnabled // androidx.navigationevent/NavigationEventHandler.isForwardEnabled|{}isForwardEnabled[0]
         final fun <get-isForwardEnabled>(): kotlin/Boolean // androidx.navigationevent/NavigationEventHandler.isForwardEnabled.<get-isForwardEnabled>|<get-isForwardEnabled>(){}[0]
         final fun <set-isForwardEnabled>(kotlin/Boolean) // androidx.navigationevent/NavigationEventHandler.isForwardEnabled.<set-isForwardEnabled>|<set-isForwardEnabled>(kotlin.Boolean){}[0]
+    final var transitionState // androidx.navigationevent/NavigationEventHandler.transitionState|{}transitionState[0]
+        final fun <get-transitionState>(): androidx.navigationevent/NavigationEventTransitionState // androidx.navigationevent/NavigationEventHandler.transitionState.<get-transitionState>|<get-transitionState>(){}[0]
 
     final fun remove() // androidx.navigationevent/NavigationEventHandler.remove|remove(){}[0]
     final fun setInfo(#A, kotlin.collections/List<#A> = ..., kotlin.collections/List<#A> = ...) // androidx.navigationevent/NavigationEventHandler.setInfo|setInfo(1:0;kotlin.collections.List<1:0>;kotlin.collections.List<1:0>){}[0]
