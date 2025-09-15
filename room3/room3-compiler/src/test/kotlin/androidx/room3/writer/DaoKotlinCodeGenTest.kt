@@ -1860,6 +1860,9 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
                 @Query("SELECT * FROM Artist JOIN Song ON Artist.artistId = Song.artistKey")
                 fun getArtistWithMutableSongs(): Map<Artist, MutableList<Song>>
 
+                @Query("SELECT * FROM Artist JOIN Song ON Artist.artistId = Song.artistKey")
+                fun getArtistWithSongsSet(): Map<Artist, Set<Song>>
+
                 @Suppress("DEPRECATION") // For @MapInfo
                 @MapInfo(valueColumn = "songCount")
                 @Query(
@@ -1892,6 +1895,59 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
                     .trimIndent(),
             )
         runTest(sources = listOf(src), expectedFilePath = getTestGoldenPath(testName.methodName))
+    }
+
+    @Test
+    fun queryResultAdapter_map_java() {
+        val src =
+            Source.kotlin(
+                "MyDao.kt",
+                """
+            import androidx.room3.*
+
+            @Database(entities = [Artist::class, Song::class], version = 1, exportSchema = false)
+            abstract class MyDatabase : RoomDatabase() {
+              abstract fun getDao(): MyDao
+            }
+
+            @Entity
+            data class Artist(
+                @PrimaryKey
+                val artistId: String
+            )
+
+            @Entity
+            data class Song(
+                @PrimaryKey
+                val songId: String,
+                val artistKey: String
+            )
+            """
+                    .trimIndent(),
+            )
+        val dao =
+            Source.java(
+                "MyDao",
+                """
+            import androidx.room3.*;
+            import java.util.List;
+            import java.util.Map;
+
+            @Dao
+            public interface MyDao {
+                @Query("SELECT * FROM Song JOIN Artist ON Song.artistKey = Artist.artistId")
+                Map<Song, Artist> getSongsWithArtist();
+
+                @Query("SELECT * FROM Artist JOIN Song ON Artist.artistId = Song.artistKey")
+                Map<Artist, List<Song>> getArtistWithSongs();
+            }
+            """
+                    .trimIndent(),
+            )
+        runTest(
+            sources = listOf(src, dao),
+            expectedFilePath = getTestGoldenPath(testName.methodName),
+        )
     }
 
     @Test
