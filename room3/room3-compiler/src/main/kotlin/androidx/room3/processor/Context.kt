@@ -21,7 +21,6 @@ import androidx.room3.compiler.codegen.CodeLanguage
 import androidx.room3.compiler.processing.XElement
 import androidx.room3.compiler.processing.XProcessingEnv
 import androidx.room3.log.RLog
-import androidx.room3.parser.expansion.ProjectionExpander
 import androidx.room3.parser.optimization.RemoveUnusedColumnQueryRewriter
 import androidx.room3.preconditions.Checks
 import androidx.room3.processor.cache.Cache
@@ -40,15 +39,6 @@ private constructor(
     private val canRewriteQueriesToDropUnusedColumns: Boolean,
 ) {
     val checker: Checks = Checks(logger)
-
-    /**
-     * Checks whether we should use the TypeConverter store that has a specific heuristic for
-     * nullability. Defaults to true in KSP, false in javac.
-     */
-    val useNullAwareConverter: Boolean by lazy {
-        BooleanProcessorOptions.USE_NULL_AWARE_CONVERTER.getInputValue(processingEnv)
-            ?: (processingEnv.backend == XProcessingEnv.Backend.KSP)
-    }
 
     val typeAdapterStore by lazy {
         if (inheritedAdapterStore != null) {
@@ -73,8 +63,6 @@ private constructor(
         } else {
             if (canRewriteQueriesToDropUnusedColumns) {
                 RemoveUnusedColumnQueryRewriter
-            } else if (BooleanProcessorOptions.EXPAND_PROJECTION.getValue(processingEnv)) {
-                ProjectionExpander(tables = verifier.entitiesAndViews)
             } else {
                 QueryRewriter.NoOpRewriter
             }
@@ -230,7 +218,8 @@ private constructor(
                 builtInConverterFlags = subBuiltInConverterFlags,
             )
         val subCanRemoveUnusedColumns =
-            canRewriteQueriesToDropUnusedColumns || element.hasRemoveUnusedColumnsAnnotation()
+            canRewriteQueriesToDropUnusedColumns ||
+                element.hasAnnotation(RewriteQueriesToDropUnusedColumns::class)
         val subContext =
             Context(
                 processingEnv = processingEnv,
@@ -242,18 +231,6 @@ private constructor(
             )
         subContext.databaseVerifier = databaseVerifier
         return subContext
-    }
-
-    private fun XElement.hasRemoveUnusedColumnsAnnotation(): Boolean {
-        return hasAnnotation(RewriteQueriesToDropUnusedColumns::class).also { annotated ->
-            if (annotated && BooleanProcessorOptions.EXPAND_PROJECTION.getValue(processingEnv)) {
-                logger.w(
-                    warning = Warning.EXPAND_PROJECTION_WITH_REMOVE_UNUSED_COLUMNS,
-                    element = this,
-                    msg = ProcessorErrors.EXPAND_PROJECTION_ALONG_WITH_REMOVE_UNUSED,
-                )
-            }
-        }
     }
 
     fun reportMissingType(typeName: String) {
@@ -275,8 +252,6 @@ private constructor(
 
     enum class BooleanProcessorOptions(val argName: String, private val defaultValue: Boolean) {
         INCREMENTAL("room.incremental", defaultValue = true),
-        EXPAND_PROJECTION("room.expandProjection", defaultValue = false),
-        USE_NULL_AWARE_CONVERTER("room.useNullAwareTypeAnalysis", defaultValue = false),
         GENERATE_KOTLIN("room.generateKotlin", defaultValue = true),
         EXPORT_SCHEMA_RESOURCE("room.exportSchemaResource", defaultValue = false);
 
