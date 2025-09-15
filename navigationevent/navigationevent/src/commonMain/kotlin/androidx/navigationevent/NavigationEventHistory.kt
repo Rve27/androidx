@@ -35,7 +35,8 @@ import kotlin.jvm.JvmOverloads
  *   destination.
  */
 @Immutable
-public class NavigationEventHistory(
+public class NavigationEventHistory
+private constructor(
     /** Combined stack from root to leaf. */
     public val mergedHistory: List<NavigationEventInfo>,
     /** Index of current in mergedHistory. */

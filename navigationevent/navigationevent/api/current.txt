@@ -110,7 +110,6 @@ package androidx.navigationevent {
     ctor public NavigationEventHistory(androidx.navigationevent.NavigationEventInfo currentInfo);
     ctor public NavigationEventHistory(androidx.navigationevent.NavigationEventInfo currentInfo, optional java.util.List<? extends androidx.navigationevent.NavigationEventInfo> backInfo);
     ctor public NavigationEventHistory(androidx.navigationevent.NavigationEventInfo currentInfo, optional java.util.List<? extends androidx.navigationevent.NavigationEventInfo> backInfo, optional java.util.List<? extends androidx.navigationevent.NavigationEventInfo> forwardInfo);
-    ctor public NavigationEventHistory(java.util.List<? extends androidx.navigationevent.NavigationEventInfo> mergedHistory, int currentIndex);
     method @InaccessibleFromKotlin public int getCurrentIndex();
     method @InaccessibleFromKotlin public java.util.List<androidx.navigationevent.NavigationEventInfo> getMergedHistory();
     property public int currentIndex;
