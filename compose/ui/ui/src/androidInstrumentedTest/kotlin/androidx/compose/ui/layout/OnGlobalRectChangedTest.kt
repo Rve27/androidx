@@ -1077,6 +1077,34 @@ class OnGlobalRectChangedTest {
     }
 
     @Test
+    fun offsetChangeDuringForceRemeasureTriggersCallbacks() {
+        var actualPosition: IntOffset = IntOffset.Max
+        var remeasurementObj: Remeasurement? = null
+        var offset = IntOffset(0, 0)
+        rule.setContent {
+            Box(
+                Modifier.then(
+                        object : RemeasurementModifier {
+                            override fun onRemeasurementAvailable(remeasurement: Remeasurement) {
+                                remeasurementObj = remeasurement
+                            }
+                        }
+                    )
+                    .offset { offset }
+                    .onLayoutRectChanged(0, 0) { actualPosition = it.positionInRoot }
+                    .size(100.dp)
+            )
+        }
+
+        rule.runOnIdle {
+            offset = IntOffset(10, 10)
+            assertNotNull(remeasurementObj)
+            remeasurementObj!!.forceRemeasure()
+            assertThat(actualPosition).isEqualTo(IntOffset(10, 10))
+        }
+    }
+
+    @Test
     fun testLayerBoundsPositionInRotatedView() {
         var rect: RelativeLayoutBounds? = null
         var view: View? = null
