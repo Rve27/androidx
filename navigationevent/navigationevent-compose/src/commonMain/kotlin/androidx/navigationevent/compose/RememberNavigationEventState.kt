@@ -49,6 +49,11 @@ public fun <T : NavigationEventInfo> rememberNavigationEventState(
     forwardInfo: List<T> = emptyList(),
 ): NavigationEventState<T> {
     val state = remember { NavigationEventState(currentInfo, backInfo, forwardInfo) }
-    SideEffect { state.handler.setInfo(currentInfo, backInfo, forwardInfo) }
+    SideEffect {
+        state.handler.setInfo(currentInfo, backInfo, forwardInfo)
+        state.currentInfo = currentInfo
+        state.backInfo = backInfo
+        state.forwardInfo = forwardInfo
+    }
     return state
 }
