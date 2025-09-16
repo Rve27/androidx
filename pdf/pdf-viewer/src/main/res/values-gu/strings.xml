@@ -83,4 +83,6 @@
     <string name="form_widget_type_list_box" msgid="8052623180309553495">"સૂચિ બૉક્સ"</string>
     <string name="form_widget_type_text_field" msgid="581285155951215607">"ટેક્સ્ટ ફીલ્ડ"</string>
     <string name="form_widget_type_signature" msgid="3811511096215331673">"સહી"</string>
+    <!-- no translation found for form_filling_tooltip (1715428076993648563) -->
+    <skip />
 </resources>
