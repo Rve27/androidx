@@ -143,6 +143,12 @@ package androidx.navigation3.runtime {
     property public abstract java.util.List<androidx.navigation3.runtime.NavEntry<T>> previousEntries;
   }
 
+  public final class SceneInfo<T> extends androidx.navigationevent.NavigationEventInfo {
+    ctor public SceneInfo(androidx.navigation3.runtime.Scene<T> scene);
+    method @InaccessibleFromKotlin public androidx.navigation3.runtime.Scene<T> getScene();
+    property public androidx.navigation3.runtime.Scene<T> scene;
+  }
+
   public final class SceneSetupNavEntryDecoratorKt {
     method public static <T> androidx.navigation3.runtime.NavEntryDecorator<T> SceneSetupNavEntryDecorator();
     method @InaccessibleFromKotlin public static androidx.compose.runtime.ProvidableCompositionLocal<java.util.Set<java.lang.Object>> getLocalEntriesToRenderInCurrentScene();
@@ -151,10 +157,32 @@ package androidx.navigation3.runtime {
     property public static androidx.compose.runtime.ProvidableCompositionLocal<java.util.Set<java.lang.Object>> LocalEntriesToRenderInCurrentScene;
   }
 
+  @androidx.compose.runtime.Immutable public final class SceneState<T> {
+    method @InaccessibleFromKotlin public androidx.navigation3.runtime.Scene<T> getCurrentScene();
+    method @InaccessibleFromKotlin public java.util.List<androidx.navigation3.runtime.NavEntry<T>> getEntries();
+    method @InaccessibleFromKotlin public java.util.List<androidx.navigation3.runtime.OverlayScene<T>> getOverlayScenes();
+    method @InaccessibleFromKotlin public java.util.List<androidx.navigation3.runtime.Scene<T>> getPreviousScenes();
+    property public androidx.navigation3.runtime.Scene<T> currentScene;
+    property public java.util.List<androidx.navigation3.runtime.NavEntry<T>> entries;
+    property public java.util.List<androidx.navigation3.runtime.OverlayScene<T>> overlayScenes;
+    property public java.util.List<androidx.navigation3.runtime.Scene<T>> previousScenes;
+  }
+
+  public final class SceneStateKt {
+    method @androidx.compose.runtime.Composable public static <T> androidx.navigation3.runtime.SceneState<T> rememberSceneState(java.util.List<? extends androidx.navigation3.runtime.NavEntry<T>> entries, androidx.navigation3.runtime.SceneStrategy<T> sceneStrategy, kotlin.jvm.functions.Function1<? super java.lang.Integer,kotlin.Unit> onBack);
+    method @BytecodeOnly @androidx.compose.runtime.Composable public static <T> androidx.navigation3.runtime.SceneState<T!> rememberSceneState(java.util.List<? extends androidx.navigation3.runtime.NavEntry<T!>!>, androidx.navigation3.runtime.SceneStrategy<T!>, kotlin.jvm.functions.Function1<? super java.lang.Integer!,kotlin.Unit!>, androidx.compose.runtime.Composer?, int);
+  }
+
   public fun interface SceneStrategy<T> {
     method @androidx.compose.runtime.Composable public androidx.navigation3.runtime.Scene<T>? calculateScene(java.util.List<? extends androidx.navigation3.runtime.NavEntry<T>> entries, kotlin.jvm.functions.Function1<? super java.lang.Integer,kotlin.Unit> onBack);
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.navigation3.runtime.Scene<T!>? calculateScene(java.util.List<? extends androidx.navigation3.runtime.NavEntry<T!>!>, kotlin.jvm.functions.Function1<? super java.lang.Integer!,kotlin.Unit!>, androidx.compose.runtime.Composer?, int);
     method public default infix androidx.navigation3.runtime.SceneStrategy<T> then(androidx.navigation3.runtime.SceneStrategy<T> sceneStrategy);
+  }
+
+  public final class SinglePaneSceneStrategy<T> implements androidx.navigation3.runtime.SceneStrategy<T> {
+    ctor public SinglePaneSceneStrategy();
+    method @androidx.compose.runtime.Composable public androidx.navigation3.runtime.Scene<T> calculateScene(java.util.List<? extends androidx.navigation3.runtime.NavEntry<T>> entries, kotlin.jvm.functions.Function1<? super java.lang.Integer,kotlin.Unit> onBack);
+    method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.navigation3.runtime.Scene<T!> calculateScene(java.util.List<? extends androidx.navigation3.runtime.NavEntry<T!>!>, kotlin.jvm.functions.Function1<? super java.lang.Integer!,kotlin.Unit!>, androidx.compose.runtime.Composer?, int);
   }
 
 }
