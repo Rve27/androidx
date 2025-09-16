@@ -20,7 +20,6 @@ import androidx.collection.mutableLongObjectMapOf
 import androidx.compose.foundation.ComposeFoundationFlags.isDetectTapGesturesImmediateCoroutineDispatchEnabled
 import androidx.compose.foundation.gestures.PressGestureScope
 import androidx.compose.foundation.gestures.ScrollableContainerNode
-import androidx.compose.foundation.gestures.TouchInputEventSmoother
 import androidx.compose.foundation.gestures.detectTapAndPress
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.isChangedToDown
@@ -37,9 +36,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.input.indirect.IndirectPointerInputChange
 import androidx.compose.ui.input.indirect.IndirectTouchEvent
-import androidx.compose.ui.input.indirect.IndirectTouchEventPrimaryDirectionalMotionAxis
-import androidx.compose.ui.input.indirect.IndirectTouchEventType
 import androidx.compose.ui.input.indirect.IndirectTouchInputModifierNode
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEvent
@@ -83,7 +81,6 @@ import androidx.compose.ui.unit.center
 import androidx.compose.ui.unit.toOffset
 import androidx.compose.ui.util.fastAll
 import androidx.compose.ui.util.fastAny
-import kotlin.math.absoluteValue
 import kotlin.math.max
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
@@ -1292,7 +1289,6 @@ internal abstract class AbstractClickableNode(
 
     private var indirectTouchPressInteraction: PressInteraction.Press? = null
     private var indirectTouchEventPressPosition: Offset? = null
-    private var touchInputEventSmoother: TouchInputEventSmoother? = null
 
     // Track separately from interactionSource, as we will create our own internal
     // InteractionSource if needed
@@ -1301,6 +1297,8 @@ internal abstract class AbstractClickableNode(
     private var lazilyCreateIndication = shouldLazilyCreateIndication()
 
     private fun shouldLazilyCreateIndication() = userProvidedInteractionSource == null
+
+    private var indirectTouchClickDetector: IndirectTouchClickDetector? = null
 
     /**
      * Handles subclass-specific click related pointer input logic. Hover is already handled
@@ -1374,79 +1372,17 @@ internal abstract class AbstractClickableNode(
     }
 
     override fun onIndirectTouchEvent(event: IndirectTouchEvent, pass: PointerEventPass) {
-        if (pass == PointerEventPass.Main) {
-            // Indirect touch events usually require focus, but if a focused child does not handle
-            // the IndirectTouchEvent, the event can bubble up without this clickable ever being
-            // focused, and hence without this being initialized through the focus path
-            initializeIndicationAndInteractionSourceIfNeeded()
-            if (enabled) {
-                if (touchInputEventSmoother == null) {
-                    touchInputEventSmoother = TouchInputEventSmoother()
-                }
-                processIndirectTouchEvent(
-                    event.type,
-                    event.primaryDirectionalMotionAxis,
-                    touchInputEventSmoother!!.smoothEventPosition(event, orientation = null),
-                )
+        initializeIndicationAndInteractionSourceIfNeeded()
+        if (enabled) {
+            if (indirectTouchClickDetector == null) {
+                indirectTouchClickDetector = IndirectTouchClickDetector(this)
             }
+            indirectTouchClickDetector?.processRawEvent(event, pass, onClick)
         }
     }
 
     override fun onCancelIndirectTouchInput() {
-        // TODO (levima): Add support for cancellation
-    }
-
-    // TODO (levima): Change your logic to use a consumption based approach.
-    private fun processIndirectTouchEvent(
-        type: IndirectTouchEventType,
-        primaryAxis: IndirectTouchEventPrimaryDirectionalMotionAxis,
-        position: Offset,
-    ): Boolean {
-        var consumedEvent = false
-        when (type) {
-            IndirectTouchEventType.Press -> {
-                if (indirectTouchEventPressPosition == null) {
-                    this.indirectTouchEventPressPosition = position
-                    handlePressInteractionStart(position, indirectTouch = true)
-                    consumedEvent = false
-                }
-            }
-            IndirectTouchEventType.Move -> {
-                val pressPosition = indirectTouchEventPressPosition
-                if (pressPosition != null) {
-                    /** TODO(levima) Change once b/424744511 to use a consumption based approach. */
-                    val distanceFromPress = position - pressPosition
-                    // move too far, give up event
-                    val adjustedDistance =
-                        when (primaryAxis) {
-                            IndirectTouchEventPrimaryDirectionalMotionAxis.X -> distanceFromPress.x
-                            IndirectTouchEventPrimaryDirectionalMotionAxis.Y -> distanceFromPress.y
-                            else -> distanceFromPress.getDistance()
-                        }
-                    if (
-                        adjustedDistance.absoluteValue >
-                            currentValueOf(LocalViewConfiguration).touchSlop
-                    ) {
-                        indirectTouchEventPressPosition = null
-                        handlePressInteractionCancel(indirectTouch = true)
-                    }
-                }
-            }
-            IndirectTouchEventType.Release -> {
-                indirectTouchEventPressPosition?.let {
-                    handlePressInteractionRelease(it, indirectTouch = true)
-                    onClick()
-                    indirectTouchEventPressPosition = null
-                    consumedEvent = true
-                }
-            }
-            else -> {
-                handlePressInteractionCancel(indirectTouch = true)
-                indirectTouchEventPressPosition = null
-            }
-        }
-
-        return consumedEvent
+        indirectTouchClickDetector?.resetDetector()
     }
 
     final override fun onAttach() {
@@ -1861,6 +1797,56 @@ internal abstract class AbstractClickableNode(
 
     override val traverseKey: Any = TraverseKey
 
+    class IndirectTouchClickDetector(val node: AbstractClickableNode) {
+        private var downEvent: IndirectPointerInputChange? = null
+
+        fun processRawEvent(
+            pointerEvent: IndirectTouchEvent,
+            pass: PointerEventPass,
+            onClick: () -> Unit,
+        ) {
+            if (pass == PointerEventPass.Main) {
+                val downEvent = this.downEvent
+                if (downEvent == null) {
+                    if (pointerEvent.changes.fastAny { it.changedToDownIgnoreConsumed() }) {
+                        val change = pointerEvent.changes[0]
+                        change.consume()
+                        this.downEvent = change
+                        node.handlePressInteractionStart(change.position, indirectTouch = true)
+                    }
+                } else if (pointerEvent.changes.fastAll { it.changedToUp() }) {
+                    // All pointers are up
+                    val up = pointerEvent.changes[0]
+                    up.consume()
+                    node.handlePressInteractionRelease(downEvent.position, indirectTouch = true)
+                    onClick()
+                    this.downEvent = null
+                } else {
+                    if (pointerEvent.changes.fastAny { it.isConsumed }) {
+                        // Canceled
+                        this.downEvent = null
+                        node.handlePressInteractionCancel(indirectTouch = true)
+                    }
+                }
+            } else if (pass == PointerEventPass.Final && downEvent != null) {
+                // Check for cancel by position consumption. We can look on the Final pass of the
+                // existing pointer event because it comes after the pass we checked above.
+                if (pointerEvent.changes.fastAny { it.isConsumed && it != downEvent }) {
+                    // Canceled
+                    downEvent = null
+                    node.handlePressInteractionCancel(indirectTouch = true)
+                }
+            }
+        }
+
+        fun resetDetector() {
+            if (downEvent != null) {
+                downEvent = null
+                node.handlePressInteractionCancel(indirectTouch = true)
+            }
+        }
+    }
+
     companion object TraverseKey
 }
 
@@ -1880,3 +1866,9 @@ private fun unsupportedIndicationExceptionMessage(indication: Indication): Strin
         "Indication parameter, and explicitly pass LocalIndication.current there. The Indication" +
         " instance provided here was: $indication"
 }
+
+@ExperimentalIndirectTouchTypeApi
+private fun IndirectPointerInputChange.changedToUp() = !isConsumed && previousPressed && !pressed
+
+@ExperimentalIndirectTouchTypeApi
+private fun IndirectPointerInputChange.changedToDownIgnoreConsumed() = !previousPressed && pressed

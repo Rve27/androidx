@@ -368,6 +368,7 @@ class CardTest {
                 IndirectTouchEvent(
                     motionEvent = up,
                     primaryDirectionalMotionAxis = IndirectTouchEventPrimaryDirectionalMotionAxis.X,
+                    previousMotionEvent = down,
                 )
             )
 

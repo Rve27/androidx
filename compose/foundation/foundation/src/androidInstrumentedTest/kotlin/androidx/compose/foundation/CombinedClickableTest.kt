@@ -966,14 +966,17 @@ class CombinedClickableTest {
 
         rule.runOnIdle { assertThat(interactions).isEmpty() }
 
-        rule.onNodeWithTag("myClickable").sendIndirectTouchPressEvent(currentTime = 0L)
+        val downEvent =
+            rule.onNodeWithTag("myClickable").sendIndirectTouchPressEvent(currentTime = 0L)
 
         rule.runOnIdle {
             assertThat(interactions).hasSize(1)
             assertThat(interactions.first()).isInstanceOf(PressInteraction.Press::class.java)
         }
 
-        rule.onNodeWithTag("myClickable").sendIndirectTouchReleaseEvent(currentTime = 16L)
+        rule
+            .onNodeWithTag("myClickable")
+            .sendIndirectTouchReleaseEvent(currentTime = 16L, previousEvent = downEvent)
 
         rule.runOnIdle {
             assertThat(interactions).hasSize(2)
@@ -1065,8 +1068,10 @@ class CombinedClickableTest {
 
         rule.runOnIdle { assertThat(interactions).isEmpty() }
 
-        rule.onNodeWithTag("myClickable").sendIndirectTouchPressEvent(0L)
-        rule.onNodeWithTag("myClickable").sendIndirectTouchReleaseEvent(16L)
+        val downEvent = rule.onNodeWithTag("myClickable").sendIndirectTouchPressEvent(0L)
+        rule
+            .onNodeWithTag("myClickable")
+            .sendIndirectTouchReleaseEvent(16L, previousEvent = downEvent)
 
         // Press finished so we should see both press and release
         rule.runOnIdle {
@@ -1219,67 +1224,6 @@ class CombinedClickableTest {
     }
 
     @Test
-    fun interactionSource_immediateDrag_noScrollableContainer_indirectTouch() {
-        val interactionSource = MutableInteractionSource()
-        lateinit var inputModeManager: InputModeManager
-        val focusRequester = FocusRequester()
-
-        lateinit var scope: CoroutineScope
-
-        rule.mainClock.autoAdvance = false
-
-        rule.setContent {
-            inputModeManager = LocalInputModeManager.current
-            scope = rememberCoroutineScope()
-            Box {
-                BasicText(
-                    "ClickableText",
-                    modifier =
-                        Modifier.testTag("myClickable")
-                            .focusRequester(focusRequester)
-                            .combinedClickable(
-                                interactionSource = interactionSource,
-                                indication = null,
-                            ) {},
-                )
-            }
-        }
-
-        rule.runOnIdle { inputModeManager.requestInputMode(Keyboard) }
-        rule.runOnIdle { assertThat(focusRequester.requestFocus()).isTrue() }
-
-        val interactions = mutableListOf<Interaction>()
-
-        scope.launch { interactionSource.interactions.collect { interactions.add(it) } }
-
-        rule.runOnIdle { assertThat(interactions).isEmpty() }
-
-        val pressPosition = Offset((TouchPadEnd - TouchPadStart) / 2f, 0f)
-
-        rule.onNodeWithTag("myClickable").sendIndirectTouchPressEvent(0L)
-
-        rule
-            .onNodeWithTag("myClickable")
-            .sendIndirectTouchMoveEvents(
-                3,
-                16L,
-                pressPosition,
-                16L,
-                Offset(50f, 0f),
-                IndirectTouchEventPrimaryDirectionalMotionAxis.X,
-            )
-
-        // The press should fire, and then the drag should instantly cancel it
-        rule.runOnIdle {
-            assertThat(interactions).hasSize(2)
-            assertThat(interactions.first()).isInstanceOf(PressInteraction.Press::class.java)
-            assertThat(interactions[1]).isInstanceOf(PressInteraction.Cancel::class.java)
-            assertThat((interactions[1] as PressInteraction.Cancel).press)
-                .isEqualTo(interactions[0])
-        }
-    }
-
-    @Test
     fun interactionSource_scrollableContainer() {
         val interactionSource = MutableInteractionSource()
 
@@ -1371,7 +1315,7 @@ class CombinedClickableTest {
 
         rule.runOnIdle { assertThat(interactions).isEmpty() }
 
-        rule.onNodeWithTag("myClickable").sendIndirectTouchPressEvent(0L)
+        val downEvent = rule.onNodeWithTag("myClickable").sendIndirectTouchPressEvent(0L)
 
         val halfTapIndicationDelay = TapIndicationDelay / 2
 
@@ -1390,7 +1334,7 @@ class CombinedClickableTest {
 
         rule
             .onNodeWithTag("myClickable")
-            .sendIndirectTouchReleaseEvent(halfTapIndicationDelay + 16L)
+            .sendIndirectTouchReleaseEvent(halfTapIndicationDelay + 16L, previousEvent = downEvent)
 
         rule.runOnIdle {
             assertThat(interactions).hasSize(2)
@@ -1481,8 +1425,10 @@ class CombinedClickableTest {
 
         rule.runOnIdle { assertThat(interactions).isEmpty() }
 
-        rule.onNodeWithTag("myClickable").sendIndirectTouchPressEvent(0L)
-        rule.onNodeWithTag("myClickable").sendIndirectTouchReleaseEvent(16L)
+        val downEvent = rule.onNodeWithTag("myClickable").sendIndirectTouchPressEvent(0L)
+        rule
+            .onNodeWithTag("myClickable")
+            .sendIndirectTouchReleaseEvent(16L, previousEvent = downEvent)
 
         // We haven't reached the tap delay, but we have finished a press so we should have
         // emitted both press and release

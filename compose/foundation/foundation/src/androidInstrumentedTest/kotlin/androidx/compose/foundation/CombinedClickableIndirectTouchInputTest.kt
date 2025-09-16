@@ -82,11 +82,11 @@ class CombinedClickableIndirectTouchInputTest() {
             focusRequester.requestFocus()
         }
 
-        rule.onNodeWithTag("myClickable").sendIndirectTouchPressEvent()
+        val downEvent = rule.onNodeWithTag("myClickable").sendIndirectTouchPressEvent()
 
         rule.runOnIdle { assertThat(counter).isEqualTo(0) }
 
-        rule.onNodeWithTag("myClickable").sendIndirectTouchReleaseEvent()
+        rule.onNodeWithTag("myClickable").sendIndirectTouchReleaseEvent(previousEvent = downEvent)
 
         rule.runOnIdle { assertThat(counter).isEqualTo(1) }
     }
@@ -203,14 +203,14 @@ class CombinedClickableIndirectTouchInputTest() {
         val interactions = mutableListOf<Interaction>()
         scope.launch { interactionSource.interactions.collect { interactions.add(it) } }
 
-        rule.onNodeWithTag("clickable").sendIndirectTouchPressEvent()
+        val downEvent = rule.onNodeWithTag("clickable").sendIndirectTouchPressEvent()
 
         rule.runOnIdle {
             assertThat(interactions).hasSize(1)
             assertThat(interactions.first()).isInstanceOf(PressInteraction.Press::class.java)
         }
 
-        rule.onNodeWithTag("clickable").sendIndirectTouchReleaseEvent()
+        rule.onNodeWithTag("clickable").sendIndirectTouchReleaseEvent(previousEvent = downEvent)
 
         rule.runOnIdle {
             assertThat(interactions).hasSize(2)
@@ -309,7 +309,7 @@ class CombinedClickableIndirectTouchInputTest() {
             assertThat(interactions[1]).isInstanceOf(PressInteraction.Release::class.java)
         }
 
-        clickableNode.sendIndirectTouchPressEvent()
+        val downEvent = clickableNode.sendIndirectTouchPressEvent()
 
         rule.runOnIdle {
             assertThat(interactions).hasSize(3)
@@ -318,7 +318,7 @@ class CombinedClickableIndirectTouchInputTest() {
             assertThat(interactions[2]).isInstanceOf(PressInteraction.Press::class.java)
         }
 
-        clickableNode.sendIndirectTouchReleaseEvent()
+        clickableNode.sendIndirectTouchReleaseEvent(previousEvent = downEvent)
 
         rule.runOnIdle {
             assertThat(interactions).hasSize(4)
