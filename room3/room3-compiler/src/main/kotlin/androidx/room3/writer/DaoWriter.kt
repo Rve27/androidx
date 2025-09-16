@@ -20,6 +20,7 @@ import androidx.room3.compiler.codegen.CodeLanguage
 import androidx.room3.compiler.codegen.VisibilityModifier
 import androidx.room3.compiler.codegen.XClassName
 import androidx.room3.compiler.codegen.XCodeBlock
+import androidx.room3.compiler.codegen.XCodeBlock.Builder.Companion.applyTo
 import androidx.room3.compiler.codegen.XFunSpec
 import androidx.room3.compiler.codegen.XFunSpec.Builder.Companion.applyTo
 import androidx.room3.compiler.codegen.XPropertySpec
@@ -35,6 +36,7 @@ import androidx.room3.compiler.processing.XMethodElement
 import androidx.room3.compiler.processing.XProcessingEnv
 import androidx.room3.compiler.processing.XType
 import androidx.room3.ext.CommonTypeNames
+import androidx.room3.ext.KotlinPreconditionsMemberNames
 import androidx.room3.ext.RoomMemberNames
 import androidx.room3.ext.RoomTypeNames.DELETE_OR_UPDATE_ADAPTER
 import androidx.room3.ext.RoomTypeNames.INSERT_ADAPTER
@@ -310,10 +312,7 @@ class DaoWriter(val dao: Dao, private val dbElement: XElement, writerContext: Wr
     private fun createRawQueryFunction(function: RawQueryFunction): XFunSpec {
         return overrideWithoutAnnotations(function.element, declaredDao)
             .addCode(
-                if (
-                    function.runtimeQueryParam == null ||
-                        function.queryResultBinder.usesCompatQueryWriter
-                ) {
+                if (function.queryResultBinder.usesCompatQueryWriter) {
                     compatCreateRawQueryFunctionBody(function)
                 } else {
                     createRawQueryFunctionBody(function)
@@ -325,8 +324,30 @@ class DaoWriter(val dao: Dao, private val dbElement: XElement, writerContext: Wr
     private fun createRawQueryFunctionBody(function: RawQueryFunction): XCodeBlock {
         val scope = CodeGenScope(this@DaoWriter)
         val sqlQueryVar = scope.getTmpVar("_sql")
+
+        if (
+            scope.language == CodeLanguage.KOTLIN &&
+                function.runtimeQueryParam != null &&
+                !function.runtimeQueryParam.isNonNull
+        ) {
+            scope.builder.addStatement(
+                "%M(%L)",
+                KotlinPreconditionsMemberNames.CHECK_NOT_NULL,
+                function.runtimeQueryParam.paramName,
+            )
+        }
+
         val rawQueryParamName =
-            if (function.runtimeQueryParam!!.isSupportQuery()) {
+            if (function.runtimeQueryParam == null) {
+                val missingRawQueryVar = scope.getTmpVar("_rawQuery")
+                scope.builder.addLocalVariable(
+                    name = missingRawQueryVar,
+                    typeName = RAW_QUERY,
+                    assignExpr =
+                        XCodeBlock.ofNewInstance(RAW_QUERY, "%S", "missing query parameter"),
+                )
+                missingRawQueryVar
+            } else if (function.runtimeQueryParam.isSupportQuery()) {
                 val rawQueryVar = scope.getTmpVar("_rawQuery")
                 scope.builder.addLocalVariable(
                     name = rawQueryVar,
