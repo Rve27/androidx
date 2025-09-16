@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-package androidx.navigation3.ui
+package androidx.navigation3.runtime
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.kruth.assertThat
-import androidx.navigation3.runtime.NavEntry
-import androidx.navigation3.runtime.Scene
-import androidx.navigation3.runtime.SceneStrategy
+import androidx.navigation3.ui.NavDisplay
 import androidx.navigationevent.DirectNavigationEventInput
 import androidx.navigationevent.NavigationEvent
 import androidx.navigationevent.NavigationEventTransitionState
@@ -40,7 +38,7 @@ internal class NavDisplayInfoTest {
     @get:Rule val rule = createComposeRule()
 
     @Test
-    fun testPredictiveBackSwipePopulatesNavDisplayInfoCorrectly() {
+    fun testPredictiveBackSwipePopulatesSceneInfoCorrectly() {
         val dispatcherOwner = TestNavigationEventDispatcherOwner()
         val dispatcher = dispatcherOwner.navigationEventDispatcher
         val input = DirectNavigationEventInput()
@@ -82,15 +80,18 @@ internal class NavDisplayInfoTest {
             // Get the navigation stack state
             val history = dispatcher.history.value
 
+            @Suppress("UNCHECKED_CAST")
             // Assert the "current" entry (at currentIndex) matches the full back stack
-            val currentInfo = history.mergedHistory[history.currentIndex] as NavDisplayInfo
-            assertThat(currentInfo.visibleEntries).containsExactlyElementsIn(currentBackStack)
+            val currentInfo = history.mergedHistory[history.currentIndex] as SceneInfo<String>
+            assertThat(currentInfo.scene.entries.map { it.contentKey })
+                .containsExactlyElementsIn(currentBackStack)
 
             // Assert the "back" stack (everything before currentIndex)
             // matches the state *after* the pop, as calculated by the SceneStrategy.
             val backInfoStack = history.mergedHistory.subList(0, history.currentIndex)
-            val previousInfo = backInfoStack.lastOrNull() as? NavDisplayInfo
-            assertThat(previousInfo?.visibleEntries)
+            @Suppress("UNCHECKED_CAST")
+            val previousInfo = backInfoStack.lastOrNull() as? SceneInfo<String>
+            assertThat(previousInfo?.scene?.entries?.map { it.contentKey })
                 .containsExactlyElementsIn(currentBackStack.dropLast(2))
         }
     }
