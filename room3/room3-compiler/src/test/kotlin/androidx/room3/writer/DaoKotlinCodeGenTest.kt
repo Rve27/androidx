@@ -1501,6 +1501,12 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
               fun upsertEntity(item: MyEntity)
 
               @Insert
+              fun insertEntityAndReturnVoid(item: MyEntity): java.lang.Void?
+
+              @Upsert
+              fun upsertEntityAndReturnVoid(item: MyEntity): java.lang.Void?
+
+              @Insert
               fun insertEntityAndReturnRowId(item: MyEntity): Long
 
               @Upsert
@@ -1509,8 +1515,14 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
               @Insert
               fun insertEntityListAndReturnRowIds(items: List<MyEntity>): List<Long>
 
+              @Insert
+              fun insertEntityListAndReturnMutableRowIds(items: List<MyEntity>): MutableList<Long>
+
               @Upsert
               fun upsertEntityListAndReturnRowIds(items: List<MyEntity>): List<Long>
+
+              @Upsert
+              fun upsertEntityListAndReturnMutableRowIds(items: List<MyEntity>): MutableList<Long>
 
               @Upsert
               fun upsertEntityListAndReturnRowIdsArray(items: List<MyEntity>): Array<Long>
