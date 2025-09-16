@@ -2,7 +2,7 @@
 package androidx.compose.material3.windowsizeclass {
 
   public final class AndroidWindowSizeClass_androidKt {
-    method @SuppressCompatibility @androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi @androidx.compose.runtime.Composable public static androidx.compose.material3.windowsizeclass.WindowSizeClass calculateWindowSizeClass(android.app.Activity activity);
+    method @KotlinOnly @SuppressCompatibility @androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi @androidx.compose.runtime.Composable public static androidx.compose.material3.windowsizeclass.WindowSizeClass calculateWindowSizeClass(android.app.Activity activity);
     method @BytecodeOnly @SuppressCompatibility @androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi @androidx.compose.runtime.Composable public static androidx.compose.material3.windowsizeclass.WindowSizeClass calculateWindowSizeClass(android.app.Activity, androidx.compose.runtime.Composer?, int);
   }
 

@@ -23,7 +23,7 @@ package androidx.compose.material.ripple {
   @Deprecated public interface RippleTheme {
     method @KotlinOnly @Deprecated @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.Color defaultColor();
     method @BytecodeOnly @Deprecated @androidx.compose.runtime.Composable public long defaultColor-WaAFU9c(androidx.compose.runtime.Composer?, int);
-    method @Deprecated @androidx.compose.runtime.Composable public androidx.compose.material.ripple.RippleAlpha rippleAlpha();
+    method @KotlinOnly @Deprecated @androidx.compose.runtime.Composable public androidx.compose.material.ripple.RippleAlpha rippleAlpha();
     method @BytecodeOnly @Deprecated @androidx.compose.runtime.Composable public androidx.compose.material.ripple.RippleAlpha rippleAlpha(androidx.compose.runtime.Composer?, int);
     field @Deprecated public static final androidx.compose.material.ripple.RippleTheme.Companion Companion;
   }
