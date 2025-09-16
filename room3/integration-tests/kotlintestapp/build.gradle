@@ -36,9 +36,6 @@ android {
 
     flavorDimensions "processorConfiguration"
     productFlavors {
-        withKspGenJava {
-            dimension "processorConfiguration"
-        }
         withKspGenKotlin {
             dimension "processorConfiguration"
         }
@@ -58,7 +55,6 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
     implementation(libs.kotlinStdlib)
     implementation(libs.kotlinCoroutinesAndroid)
-    kspAndroidTestWithKspGenJava(project(":room3:room3-compiler"))
     kspAndroidTestWithKspGenKotlin(project(":room3:room3-compiler"))
     androidTestImplementation("androidx.arch.core:core-runtime:2.2.0")
     androidTestImplementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
@@ -99,10 +95,6 @@ dependencies {
 }
 
 room3 {
-    schemaDirectory(
-        "withKspGenJava",
-        layout.projectDirectory.dir("schemas-ksp")
-    )
     schemaDirectory(
         "withKspGenKotlin",
         layout.projectDirectory.dir("schemas-ksp")
