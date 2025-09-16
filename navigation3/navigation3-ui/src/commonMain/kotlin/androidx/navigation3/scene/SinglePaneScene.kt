@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package androidx.navigation3.runtime
+package androidx.navigation3.scene
 
 import androidx.compose.runtime.Composable
 
 internal data class SinglePaneScene<T : Any>(
     override val key: Any,
-    val entry: NavEntry<T>,
-    override val previousEntries: List<NavEntry<T>>,
+    val entry: androidx.navigation3.runtime.NavEntry<T>,
+    override val previousEntries: List<androidx.navigation3.runtime.NavEntry<T>>,
 ) : Scene<T> {
-    override val entries: List<NavEntry<T>> = listOf(entry)
+    override val entries: List<androidx.navigation3.runtime.NavEntry<T>> = listOf(entry)
 
     override val content: @Composable () -> Unit = { entry.Content() }
 }
@@ -34,7 +34,10 @@ internal data class SinglePaneScene<T : Any>(
  */
 public class SinglePaneSceneStrategy<T : Any> : SceneStrategy<T> {
     @Composable
-    override fun calculateScene(entries: List<NavEntry<T>>, onBack: (Int) -> Unit): Scene<T> =
+    override fun calculateScene(
+        entries: List<androidx.navigation3.runtime.NavEntry<T>>,
+        onBack: (Int) -> Unit,
+    ): Scene<T> =
         SinglePaneScene(
             key = entries.last().contentKey,
             entry = entries.last(),
@@ -44,7 +47,7 @@ public class SinglePaneSceneStrategy<T : Any> : SceneStrategy<T> {
 
 @Composable
 internal fun <T : Any> SceneStrategy<T>.calculateSceneWithSinglePaneFallback(
-    entries: List<NavEntry<T>>,
+    entries: List<androidx.navigation3.runtime.NavEntry<T>>,
     onBack: (count: Int) -> Unit,
 ): Scene<T> =
     calculateScene(entries, onBack) ?: SinglePaneSceneStrategy<T>().calculateScene(entries, onBack)

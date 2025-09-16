@@ -23,7 +23,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleOut
-import androidx.navigation3.runtime.Scene
+import androidx.navigation3.scene.Scene
 import androidx.navigationevent.NavigationEvent
 
 internal const val DEFAULT_TRANSITION_DURATION_MILLISECOND = 700
