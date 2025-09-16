@@ -41,7 +41,7 @@ import androidx.pdf.selection.model.HyperLinkSelection
 import androidx.pdf.selection.model.TextSelection
 import androidx.pdf.util.CONTENT_SELECTION_REQUEST_NAME
 import androidx.pdf.view.PageManager
-import androidx.pdf.view.PageMetadataLoader
+import androidx.pdf.view.layout.PageMetadataLoader
 import kotlin.collections.firstOrNull
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
