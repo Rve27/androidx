@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package androidx.credentials.providerevents.exception
+package androidx.credentials.providerevents.transfer
 
-/** The provider cannot be registered for export for unknown reasons */
-public class RegisterExportUnknownErrorException(errorMessage: String? = null) :
-    RegisterExportException(TYPE_REGISTER_EXPORT_UNKNOWN_ERROR_EXCEPTION, errorMessage) {
-    internal companion object {
-        internal const val TYPE_REGISTER_EXPORT_UNKNOWN_ERROR_EXCEPTION: String =
-            "androidx.credentials.providerevents.exception.TYPE_REGISTER_EXPORT_UNKNOWN_ERROR_EXCEPTION"
-    }
-}
+import androidx.credentials.providerevents.ProviderEventsManager
+
+/**
+ * The result of calling [ProviderEventsManager.registerExport]. This response will be returned when
+ * the [RegisterExportRequest] was successfully processed.
+ */
+public class RegisterExportResponse

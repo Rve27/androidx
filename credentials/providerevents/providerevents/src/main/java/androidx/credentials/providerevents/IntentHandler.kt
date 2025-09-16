@@ -14,24 +14,19 @@
  * limitations under the License.
  */
 
-package androidx.credentials.providerevents.playservices
+package androidx.credentials.providerevents
 
 import android.app.Activity
-import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.SigningInfo
 import android.net.Uri
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RestrictTo
 import androidx.credentials.provider.CallingAppInfo
 import androidx.credentials.providerevents.exception.ImportCredentialsException
-import androidx.credentials.providerevents.playservices.UriUtils.Companion.readFromUri
-import androidx.credentials.providerevents.playservices.UriUtils.Companion.writeToUri
-import androidx.credentials.providerevents.playservices.controller.ProviderEventsBaseController.Companion.EXTRA_PACKAGE_NAME_KEY
-import androidx.credentials.providerevents.playservices.controller.ProviderEventsBaseController.Companion.EXTRA_REQUEST_JSON
-import androidx.credentials.providerevents.playservices.controller.ProviderEventsBaseController.Companion.EXTRA_SIGNING_INFO_KEY
+import androidx.credentials.providerevents.internal.UriUtils.Companion.readFromUri
+import androidx.credentials.providerevents.internal.UriUtils.Companion.writeToUri
 import androidx.credentials.providerevents.transfer.ExportEntry
 import androidx.credentials.providerevents.transfer.ImportCredentialsRequest
 import androidx.credentials.providerevents.transfer.ImportCredentialsResponse
@@ -41,9 +36,13 @@ import androidx.credentials.providerevents.transfer.ProviderImportCredentialsRes
 /**
  * IntentHandler to be used by credential providers to extract requests from a given intent, or to
  * set back a response or an exception to a given intent while dealing with activities invoked by
- * pending intents set on a [ExportEntry] for the import flow.
+ * intents from the import flow.
  *
- * When user selects one of the entries, the credential provider's corresponding activity is
+ * The Provider Selector UI Activity will display a list of [ExportEntry] and create a launch intent
+ * that corresponds to the provider's activity. More info on how the intent is constructed for the
+ * provider activity can be found in the documentation of [ProviderEventsManager.registerExport].
+ *
+ * When user selects one of the [ExportEntry], the credential provider's corresponding activity is
  * invoked. The intent associated with this activity must be extracted and passed into the utils in
  * this class to extract the required requests.
  *
@@ -52,19 +51,29 @@ import androidx.credentials.providerevents.transfer.ProviderImportCredentialsRes
  * This data should also be prepared by using the utils in this class to populate the required
  * response/exception.
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public class IntentHandler {
     public companion object {
-        private const val TAG = "IntentHelper"
+        private const val EXTRA_REQUEST_JSON =
+            "androidx.credentials.providerevents.extra.IMPORT_CREDENTIALS_REQUEST_JSON"
+        private const val EXTRA_PACKAGE_NAME =
+            "androidx.credentials.providerevents.extra.CALLING_PACKAGE_NAME"
+        private const val EXTRA_SIGNING_INFO =
+            "androidx.credentials.providerevents.extra.SIGNING_INFO"
+        private const val EXTRA_CRED_ID = "androidx.credentials.providerevents.extra.CREDENTIAL_ID"
         private const val EXTRA_IMPORT_CREDENTIALS_EXCEPTION =
-            "androidx.credentials.providerevents.EXTRA_IMPORT_CREDENTIALS_EXCEPTION"
+            "androidx.credentials.providerevents.extra.EXTRA_IMPORT_CREDENTIALS_EXCEPTION"
 
         /**
-         * Extracts the [ImportCredentialsRequest] from the provider's [PendingIntent] invoked by
-         * the Android system, when the user selects an entry
+         * Extracts the [ProviderImportCredentialsRequest] from the [Intent] that started the
+         * provider's exporting [Activity].
          *
-         * @param intent the intent associated with the [Activity] invoked through the
-         *   [PendingIntent]
+         * This should be called in your activity's `onCreate` method to retrieve the details of the
+         * import request, including the calling app's information and the [Uri] for writing the
+         * response back.
+         *
+         * @param intent the `Intent` received by the provider's exporting `Activity`.
+         * @return the parsed [ProviderImportCredentialsRequest], or `null` if the intent is missing
+         *   required data.
          */
         @Suppress("RestrictedApiAndroidX")
         @JvmStatic
@@ -73,37 +82,37 @@ public class IntentHandler {
         ): ProviderImportCredentialsRequest? {
             val extras = intent.extras
             if (extras == null) {
-                Log.i(TAG, "Intent extras are null")
                 return null
             }
 
             val reqJson = extras.getString(EXTRA_REQUEST_JSON)
             if (reqJson == null) {
-                Log.e(TAG, "import request json is null")
                 return null
             }
 
-            val callingPackageName = intent.getStringExtra(EXTRA_PACKAGE_NAME_KEY)
+            val callingPackageName = intent.getStringExtra(EXTRA_PACKAGE_NAME)
             if (callingPackageName.isNullOrEmpty()) {
-                Log.e(TAG, "Calling package is null or empty")
+                return null
+            }
+            val credId = intent.getStringExtra(EXTRA_CRED_ID)
+            if (credId.isNullOrEmpty()) {
                 return null
             }
             val uri = intent.data
             if (uri == null) {
-                Log.e(TAG, "Uri is null")
                 return null
             }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                 @Suppress("DEPRECATION")
-                val signingInfo: SigningInfo? = extras.getParcelable(EXTRA_SIGNING_INFO_KEY)
+                val signingInfo: SigningInfo? = extras.getParcelable(EXTRA_SIGNING_INFO)
                 if (signingInfo == null) {
-                    Log.e(TAG, "Calling package is null or empty")
                     return null
                 }
                 return ProviderImportCredentialsRequest(
                     ImportCredentialsRequest(reqJson),
                     CallingAppInfo.create(callingPackageName, signingInfo, null),
                     uri,
+                    credId,
                 )
             } else {
                 // TODO(b/436712597): handle for < P
@@ -113,19 +122,23 @@ public class IntentHandler {
 
         @Suppress("RestrictedApiAndroidX")
         @JvmStatic
+        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
         public fun retrieveProviderImportCredentialsResponse(
+            context: Context,
             intent: Intent,
             uri: Uri,
-            context: Context,
         ): ProviderImportCredentialsResponse? {
             if (Build.VERSION.SDK_INT >= 28) {
                 @Suppress("DEPRECATION")
-                val signingInfo: SigningInfo? = intent.getParcelableExtra(EXTRA_SIGNING_INFO_KEY)
-                val pckName = intent.getStringExtra(EXTRA_PACKAGE_NAME_KEY)
+                val signingInfo: SigningInfo? = intent.getParcelableExtra(EXTRA_SIGNING_INFO)
+                val pckName = intent.getStringExtra(EXTRA_PACKAGE_NAME)
+                if (signingInfo == null || pckName == null) {
+                    return null
+                }
                 val credentialsJson = readFromUri(uri, context)
                 return ProviderImportCredentialsResponse(
                     ImportCredentialsResponse(credentialsJson),
-                    CallingAppInfo.create(pckName!!, signingInfo!!, null),
+                    CallingAppInfo.create(pckName, signingInfo, null),
                 )
             } else {
                 // TODO(b/436712597): handle for < P
@@ -134,20 +147,23 @@ public class IntentHandler {
         }
 
         /**
-         * Sets the [ImportCredentialsResponse] on the uri passed in. This response is written to
-         * the uri associated with the [PendingIntent] set on a [ExportEntry].
+         * Writes the successful [ImportCredentialsResponse] to the content `Uri` provided by the
+         * importing framework. The 'responseJson' of the successful [ImportCredentialsResponse]
+         * will be written to the content 'Uri' to bypass the binder transaction limit. For any
+         * additional parameters of the [ImportCredentialsResponse] will be written to the intent
+         * that is passed in. This intent and [Activity.RESULT_OK] should be set as the result of
+         * the activity that was invoked for credential transfer.
          *
-         * A credential provider must set the result code to [Activity.RESULT_OK] if a valid
-         * response, or a valid exception is being set as the data to the result.
-         *
-         * @param context the activity context
+         * @param context the context
          * @param uri the uri that was provided by the importer
+         * @param intent the intent to be set on the result of the [Activity]
          * @param response the response to be passed to the importer
          */
         @JvmStatic
         public fun setImportCredentialsResponse(
             context: Context,
             uri: Uri,
+            intent: Intent,
             response: ImportCredentialsResponse,
         ) {
             writeToUri(uri, response.responseJson, context)
@@ -155,21 +171,17 @@ public class IntentHandler {
 
         /**
          * Sets the [androidx.credentials.providerevents.exception.ImportCredentialsException] if an
-         * error is encountered during the final phase of the import credential flow.
+         * error is encountered when the provider application is invoked to fulfill the credential
+         * import request.
          *
-         * A provider manager service returns a list of [ExportEntry] as part of the query phase of
-         * the import-credential flow. If the user selects one of these entries, the corresponding
-         * [PendingIntent] is fired and the provider's activity is invoked. If there is an error
-         * encountered during the lifetime of that activity, the provider must use this API to set
-         * an exception on the given intent before finishing the activity in question.
+         * <p><b>Note:</b> After populating the intent with an exception, the provider must still
+         * use [Activity.RESULT_OK] when calling [Activity.setResult]. The system will inspect the
+         * `Intent` data to determine if an error occurred and return the exception back to the
+         * caller. If both a valid response and an exception are found, then the exception will be
+         * returned to the caller.
          *
-         * The intent is set using the [Activity.setResult] method that takes in the intent, as well
-         * as a result code. A credential provider must set the result code to [Activity.RESULT_OK]
-         * if successful, or a valid exception is being set as the data to the result.
-         *
-         * @param intent the intent to be set on the result of the [Activity] invoked through the
-         *   [PendingIntent]
-         * @param exception the exception to be set as an extra to the [intent]
+         * @param intent the result `Intent` to which the exception will be added.
+         * @param exception the exception to be returned to the importer.
          */
         @JvmStatic
         public fun setImportCredentialsException(
@@ -183,6 +195,7 @@ public class IntentHandler {
         }
 
         @JvmStatic
+        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
         public fun retrieveImportCredentialsException(intent: Intent): ImportCredentialsException? {
             return ImportCredentialsException.fromBundle(
                 intent.getBundleExtra(EXTRA_IMPORT_CREDENTIALS_EXCEPTION) ?: return null
