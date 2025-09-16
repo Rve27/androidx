@@ -60,7 +60,7 @@ class ProviderGetCredentialRequestTest {
 
         val selectedCredentialSet = actual.selectedCredentialSet!!
 
-        assertThat(selectedCredentialSet.setId).isEqualTo("setId")
+        assertThat(selectedCredentialSet.credentialSetId).isEqualTo("setId")
         assertThat(selectedCredentialSet.credentials)
             .isEqualTo(listOf(SelectedCredential("credId0", "metadata")))
     }
@@ -81,7 +81,7 @@ class ProviderGetCredentialRequestTest {
 
         val selectedCredentialSet = actual.selectedCredentialSet!!
 
-        assertThat(selectedCredentialSet.setId).isEqualTo("setId")
+        assertThat(selectedCredentialSet.credentialSetId).isEqualTo("setId")
         assertThat(selectedCredentialSet.credentials)
             .isEqualTo(
                 listOf(
