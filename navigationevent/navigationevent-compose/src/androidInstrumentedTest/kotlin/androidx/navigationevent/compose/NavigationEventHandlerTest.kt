@@ -133,7 +133,7 @@ internal class NavigationEventHandlerTest {
         input.backCompleted()
         rule.runOnIdle {
             assertThat(handlerCalled).isFalse()
-            assertThat(owner.fallbackOnBackPressedInvocations).isEqualTo(1)
+            assertThat(owner.onBackCompletedFallbackInvocations).isEqualTo(1)
         }
     }
 
@@ -157,7 +157,7 @@ internal class NavigationEventHandlerTest {
         input.backCompleted()
         rule.runOnIdle {
             assertThat(results).containsExactly("handler")
-            assertThat(owner.fallbackOnBackPressedInvocations).isEqualTo(0)
+            assertThat(owner.onBackCompletedFallbackInvocations).isEqualTo(0)
         }
 
         // Phase 2: Disabled, should call fallback
@@ -169,7 +169,7 @@ internal class NavigationEventHandlerTest {
         }
         rule.runOnIdle {
             assertThat(results).isEmpty()
-            assertThat(owner.fallbackOnBackPressedInvocations).isEqualTo(1)
+            assertThat(owner.onBackCompletedFallbackInvocations).isEqualTo(1)
         }
 
         // Phase 3: Re-enabled, should call handler again

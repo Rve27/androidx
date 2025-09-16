@@ -78,7 +78,7 @@ class OnBackPressedDispatcher(
      */
     internal val eventDispatcher: NavigationEventDispatcher by lazy {
         val dispatcher =
-            NavigationEventDispatcher(fallbackOnBackPressed = { fallbackOnBackPressed?.run() })
+            NavigationEventDispatcher(onBackCompletedFallback = { fallbackOnBackPressed?.run() })
         // This is to implement `OnBackPressedDispatcher.onHasEnabledCallbacksChanged`, which
         // can be set through OnBackPressedDispatcher's public constructor.
         dispatcher.addInput(
