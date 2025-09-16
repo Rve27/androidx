@@ -280,8 +280,8 @@ private constructor(
      * will be automatically detached when this dispatcher [dispose] is called.
      *
      * @param input The input to add.
-     * @throws IllegalStateException if the dispatcher has already been disposed or if [input] is
-     *   already added to a dispatcher.
+     * @throws IllegalStateException if the dispatcher has already been disposed.
+     * @throws IllegalArgumentException if [input] is already added to a dispatcher.
      * @see removeInput
      * @see NavigationEventInput.onRemoved
      */
@@ -290,10 +290,6 @@ private constructor(
         checkInvariants()
 
         if (inputs.add(input)) {
-            check(input.dispatcher == null) {
-                "This input is already added to dispatcher ${input.dispatcher}."
-            }
-
             sharedProcessor.addInput(dispatcher = this, input, priority = -1)
         }
     }
@@ -328,10 +324,6 @@ private constructor(
         }
 
         if (inputs.add(input)) {
-            check(input.dispatcher == null) {
-                "This input is already added to dispatcher ${input.dispatcher}."
-            }
-
             sharedProcessor.addInput(dispatcher = this, input, priority)
         }
     }
