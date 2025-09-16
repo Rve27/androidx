@@ -36,16 +36,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.util.fastForEachReversed
-import androidx.compose.ui.util.fastMap
 import androidx.navigation3.runtime.LocalEntriesToRenderInCurrentScene
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavEntryDecorator
-import androidx.navigation3.runtime.OverlayScene
 import androidx.navigation3.runtime.Scene
+import androidx.navigation3.runtime.SceneInfo
+import androidx.navigation3.runtime.SceneState
 import androidx.navigation3.runtime.SceneStrategy
+import androidx.navigation3.runtime.SinglePaneSceneStrategy
 import androidx.navigation3.runtime.rememberDecoratedNavEntries
 import androidx.navigation3.runtime.rememberSavedStateNavEntryDecorator
-import androidx.navigation3.runtime.rememberSceneSetupNavEntryDecorator
+import androidx.navigation3.runtime.rememberSceneState
 import androidx.navigation3.ui.NavDisplay.DEFAULT_TRANSITION_DURATION_MILLISECOND
 import androidx.navigation3.ui.NavDisplay.POP_TRANSITION_SPEC
 import androidx.navigation3.ui.NavDisplay.PREDICTIVE_POP_TRANSITION_SPEC
@@ -57,6 +58,7 @@ import androidx.navigationevent.NavigationEvent
 import androidx.navigationevent.NavigationEventTransitionState.Idle
 import androidx.navigationevent.NavigationEventTransitionState.InProgress
 import androidx.navigationevent.compose.NavigationBackHandler
+import androidx.navigationevent.compose.NavigationEventState
 import androidx.navigationevent.compose.rememberNavigationEventState
 import kotlin.reflect.KClass
 import kotlinx.coroutines.launch
@@ -167,8 +169,7 @@ public fun <T : Any> NavDisplay(
             repeat(it) { backStack.removeAt(backStack.lastIndex) }
         }
     },
-    entryDecorators: List<NavEntryDecorator<T>> =
-        listOf(rememberSceneSetupNavEntryDecorator(), rememberSavedStateNavEntryDecorator()),
+    entryDecorators: List<NavEntryDecorator<T>> = listOf(rememberSavedStateNavEntryDecorator()),
     sceneStrategy: SceneStrategy<T> = SinglePaneSceneStrategy(),
     sizeTransform: SizeTransform? = null,
     transitionSpec: AnimatedContentTransitionScope<Scene<T>>.() -> ContentTransform = {
@@ -203,59 +204,18 @@ public fun <T : Any> NavDisplay(
     val entries =
         rememberDecoratedNavEntries(
             backStack = backStack,
-            entryDecorators = entryDecorators + transitionAwareLifecycleNavEntryDecorator,
+            entryDecorators = (entryDecorators + transitionAwareLifecycleNavEntryDecorator),
             entryProvider = entryProvider,
         )
-    val allScenes =
-        mutableListOf(sceneStrategy.calculateSceneWithSinglePaneFallback(entries, onBack))
-    do {
-        val overlayScene = allScenes.last() as? OverlayScene
-        val overlaidEntries = overlayScene?.overlaidEntries
-        if (overlaidEntries != null) {
-            // TODO Consider allowing a NavDisplay of only OverlayScene instances
-            require(overlaidEntries.isNotEmpty()) {
-                "Overlaid entries from $overlayScene must not be empty"
-            }
-            allScenes += sceneStrategy.calculateSceneWithSinglePaneFallback(overlaidEntries, onBack)
-        }
-    } while (overlaidEntries != null)
-    val overlayScenes = allScenes.dropLast(1)
-    val scene =
-        remember(backStack.map { it }, entryDecorators.map { it }, sceneStrategy, onBack) {
-            allScenes.last()
-        }
+
+    val sceneState = rememberSceneState(entries, sceneStrategy, onBack)
+    val scene = sceneState.currentScene
 
     // Predictive Back Handling
-    // TODO(mgalhardo): Replace with SceneController API once available. It will expose "back
-    //  visible entries" directly, so this manual calculation can be removed.
-    val previousVisibleEntries =
-        if (scene.previousEntries.isEmpty()) {
-            // Avoid calling calculateScene on an empty list (it throws).
-            emptyList()
-        } else {
-            sceneStrategy
-                .calculateSceneWithSinglePaneFallback(scene.previousEntries, onBack)
-                .entries // From previousEntries passed into the calculation.
-                .fastMap { it.contentKey }
-        }
+    val currentInfo = SceneInfo(scene)
+    val previousSceneInfos = sceneState.previousScenes.map { SceneInfo(it) }
     val gestureState =
-        rememberNavigationEventState(
-            currentInfo = NavDisplayInfo(scene.entries.fastMap { it.contentKey }),
-            backInfo = listOf(NavDisplayInfo(visibleEntries = previousVisibleEntries)),
-        )
-    val gestureTransition = gestureState.transitionState
-
-    val inPredictiveBack = gestureTransition is InProgress
-    val progress =
-        when (gestureTransition) {
-            is Idle -> 0f
-            is InProgress -> gestureTransition.latestEvent.progress
-        }
-    val swipeEdge =
-        when (gestureTransition) {
-            is Idle -> NavigationEvent.EDGE_NONE
-            is InProgress -> gestureTransition.latestEvent.swipeEdge
-        }
+        rememberNavigationEventState(currentInfo = currentInfo, backInfo = previousSceneInfos)
 
     NavigationBackHandler(
         state = gestureState,
@@ -270,6 +230,67 @@ public fun <T : Any> NavDisplay(
         },
     )
 
+    NavDisplay(
+        sceneState,
+        gestureState,
+        modifier,
+        contentAlignment,
+        sizeTransform,
+        transitionSpec,
+        popTransitionSpec,
+        predictivePopTransitionSpec,
+    )
+}
+
+/**
+ * A nav display that renders and animates between different [Scene]s, each of which can render one
+ * or more [NavEntry]s.
+ *
+ * @param sceneState the state that determines what current scene of the NavDisplay.
+ * @param modifier the modifier to be applied to the layout.
+ * @param contentAlignment The [Alignment] of the [AnimatedContent]
+ * @param navigationEventState the [NavigationEventState] responsible for handling back navigation
+ * @param sizeTransform the [SizeTransform] for the [AnimatedContent].
+ * @param transitionSpec Default [ContentTransform] when navigating to [NavEntry]s.
+ * @param popTransitionSpec Default [ContentTransform] when popping [NavEntry]s.
+ * @param predictivePopTransitionSpec Default [ContentTransform] when popping with predictive back
+ *   [NavEntry]s.
+ * @sample androidx.navigation3.ui.samples.SceneNav
+ * @sample androidx.navigation3.ui.samples.SceneNavSharedEntrySample
+ * @sample androidx.navigation3.ui.samples.SceneNavSharedElementSample
+ */
+@Composable
+public fun <T : Any> NavDisplay(
+    sceneState: SceneState<T>,
+    navigationEventState: NavigationEventState<SceneInfo<T>>,
+    modifier: Modifier = Modifier,
+    contentAlignment: Alignment = Alignment.TopStart,
+    sizeTransform: SizeTransform? = null,
+    transitionSpec: AnimatedContentTransitionScope<Scene<T>>.() -> ContentTransform = {
+        ContentTransform(
+            fadeIn(animationSpec = tween(DEFAULT_TRANSITION_DURATION_MILLISECOND)),
+            fadeOut(animationSpec = tween(DEFAULT_TRANSITION_DURATION_MILLISECOND)),
+        )
+    },
+    popTransitionSpec: AnimatedContentTransitionScope<Scene<T>>.() -> ContentTransform = {
+        ContentTransform(
+            fadeIn(animationSpec = tween(DEFAULT_TRANSITION_DURATION_MILLISECOND)),
+            fadeOut(animationSpec = tween(DEFAULT_TRANSITION_DURATION_MILLISECOND)),
+        )
+    },
+    @Suppress("UNCHECKED_CAST")
+    predictivePopTransitionSpec:
+        AnimatedContentTransitionScope<Scene<T>>.(
+            @NavigationEvent.SwipeEdge Int
+        ) -> ContentTransform =
+        NavDisplay.defaultPredictivePopTransitionSpec
+            as
+            AnimatedContentTransitionScope<Scene<T>>.(
+                @NavigationEvent.SwipeEdge Int
+            ) -> ContentTransform,
+) {
+    val scene = sceneState.currentScene
+
     val transitionState = remember {
         // The state returned here cannot be nullable cause it produces the input of the
         // transitionSpec passed into the AnimatedContent and that must match the non-nullable
@@ -281,12 +302,31 @@ public fun <T : Any> NavDisplay(
 
     // Transition Handling
     /** Keep track of the previous entries for the transition's current scene. */
-    val transitionCurrentStateEntries = remember(transition.currentState) { entries.toList() }
+    val transitionCurrentStateEntries =
+        remember(transition.currentState) { sceneState.entries.toList() }
+
+    val previousScene = sceneState.previousScenes.lastOrNull()
+    val gestureTransition = navigationEventState.transitionState
+
+    val inPredictiveBack = gestureTransition is InProgress && previousScene != null
+    val progress =
+        when (gestureTransition) {
+            is Idle -> 0f
+            is InProgress -> gestureTransition.latestEvent.progress
+        }
+    val swipeEdge =
+        when (gestureTransition) {
+            is Idle -> NavigationEvent.EDGE_NONE
+            is InProgress -> gestureTransition.latestEvent.swipeEdge
+        }
 
     // Consider this a pop if the current entries match the previous entries we have recorded
     // from the current state of the transition
     val isPop =
-        isPop(transitionCurrentStateEntries.map { it.contentKey }, entries.map { it.contentKey })
+        isPop(
+            transitionCurrentStateEntries.map { it.contentKey },
+            sceneState.entries.map { it.contentKey },
+        )
 
     val zIndices = remember { mutableObjectFloatMapOf<Pair<KClass<*>, Any>>() }
     val initialKey = transition.currentState::class to transition.currentState.key
@@ -299,6 +339,8 @@ public fun <T : Any> NavDisplay(
             else -> initialZIndex + 1f
         }
     zIndices[targetKey] = targetZIndex
+
+    val overlayScenes = sceneState.overlayScenes
 
     // Determine which entries should be rendered within each scene,
     // using the z-index of each screen to always show the entry on the topmost screen
@@ -348,18 +390,14 @@ public fun <T : Any> NavDisplay(
             transition.targetState.entries.last()
         }
 
-    // TODO(b/441933162): During predictive back, only build a peek scene when there is a
-    //  previous entry. Empty previousEntries used to crash calculateScene(...).
-    if (inPredictiveBack && scene.previousEntries.isNotEmpty()) {
-        val peekScene =
-            sceneStrategy.calculateSceneWithSinglePaneFallback(scene.previousEntries, onBack)
+    if (inPredictiveBack) {
         if (
-            transition.currentState::class != peekScene::class ||
-                transition.currentState.key != peekScene.key
+            transition.currentState::class != previousScene::class ||
+                transition.currentState.key != previousScene.key
         ) {
-            LaunchedEffect(peekScene::class, peekScene.key, progress) {
+            LaunchedEffect(previousScene::class, previousScene.key, progress) {
                 // Retarget on key change; seek on progress updates.
-                transitionState.seekTo(progress, peekScene)
+                transitionState.seekTo(progress, previousScene)
             }
         }
     } else if (transitionState.fraction != 0f) {

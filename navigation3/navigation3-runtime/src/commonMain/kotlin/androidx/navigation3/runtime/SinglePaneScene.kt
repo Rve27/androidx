@@ -14,12 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.navigation3.ui
+package androidx.navigation3.runtime
 
 import androidx.compose.runtime.Composable
-import androidx.navigation3.runtime.NavEntry
-import androidx.navigation3.runtime.Scene
-import androidx.navigation3.runtime.SceneStrategy
 
 internal data class SinglePaneScene<T : Any>(
     override val key: Any,
