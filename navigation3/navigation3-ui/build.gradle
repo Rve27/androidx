@@ -70,6 +70,10 @@ androidXMultiplatform {
             }
         }
 
+        nonAndroidMain {
+            dependsOn(commonMain)
+        }
+
         jvmMain {
             dependsOn(commonMain)
             dependencies {
@@ -108,11 +112,14 @@ androidXMultiplatform {
 
         commonStubsMain {
             dependsOn(commonMain)
+            dependsOn(nonAndroidMain)
         }
 
         jvmStubsMain {
             dependsOn(commonStubsMain)
         }
+
+        linuxx64StubsMain.dependsOn(commonStubsMain)
     }
 }
 

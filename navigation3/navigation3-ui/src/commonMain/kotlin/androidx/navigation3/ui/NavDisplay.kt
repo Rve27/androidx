@@ -24,11 +24,7 @@ import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.core.SeekableTransitionState
 import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.rememberTransition
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleOut
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -47,7 +43,6 @@ import androidx.navigation3.runtime.SinglePaneSceneStrategy
 import androidx.navigation3.runtime.rememberDecoratedNavEntries
 import androidx.navigation3.runtime.rememberSavedStateNavEntryDecorator
 import androidx.navigation3.runtime.rememberSceneState
-import androidx.navigation3.ui.NavDisplay.DEFAULT_TRANSITION_DURATION_MILLISECOND
 import androidx.navigation3.ui.NavDisplay.POP_TRANSITION_SPEC
 import androidx.navigation3.ui.NavDisplay.PREDICTIVE_POP_TRANSITION_SPEC
 import androidx.navigation3.ui.NavDisplay.TRANSITION_SPEC
@@ -103,27 +98,9 @@ public object NavDisplay {
             ) -> ContentTransform?
     ): Map<String, Any> = mapOf(PREDICTIVE_POP_TRANSITION_SPEC to predictivePopTransitionSpec)
 
-    public val defaultPredictivePopTransitionSpec:
-        AnimatedContentTransitionScope<Scene<*>>.(
-            @NavigationEvent.SwipeEdge Int
-        ) -> ContentTransform =
-        {
-            ContentTransform(
-                fadeIn(
-                    spring(
-                        dampingRatio = 1.0f, // reflects material3 motionScheme.defaultEffectsSpec()
-                        stiffness = 1600.0f, // reflects material3 motionScheme.defaultEffectsSpec()
-                    )
-                ),
-                scaleOut(targetScale = 0.7f),
-            )
-        }
-
     internal const val TRANSITION_SPEC = "transitionSpec"
     internal const val POP_TRANSITION_SPEC = "popTransitionSpec"
     internal const val PREDICTIVE_POP_TRANSITION_SPEC = "predictivePopTransitionSpec"
-
-    internal const val DEFAULT_TRANSITION_DURATION_MILLISECOND = 700
 }
 
 /**
@@ -172,28 +149,15 @@ public fun <T : Any> NavDisplay(
     entryDecorators: List<NavEntryDecorator<T>> = listOf(rememberSavedStateNavEntryDecorator()),
     sceneStrategy: SceneStrategy<T> = SinglePaneSceneStrategy(),
     sizeTransform: SizeTransform? = null,
-    transitionSpec: AnimatedContentTransitionScope<Scene<T>>.() -> ContentTransform = {
-        ContentTransform(
-            fadeIn(animationSpec = tween(DEFAULT_TRANSITION_DURATION_MILLISECOND)),
-            fadeOut(animationSpec = tween(DEFAULT_TRANSITION_DURATION_MILLISECOND)),
-        )
-    },
-    popTransitionSpec: AnimatedContentTransitionScope<Scene<T>>.() -> ContentTransform = {
-        ContentTransform(
-            fadeIn(animationSpec = tween(DEFAULT_TRANSITION_DURATION_MILLISECOND)),
-            fadeOut(animationSpec = tween(DEFAULT_TRANSITION_DURATION_MILLISECOND)),
-        )
-    },
-    @Suppress("UNCHECKED_CAST")
+    transitionSpec: AnimatedContentTransitionScope<Scene<T>>.() -> ContentTransform =
+        defaultTransitionSpec(),
+    popTransitionSpec: AnimatedContentTransitionScope<Scene<T>>.() -> ContentTransform =
+        defaultPopTransitionSpec(),
     predictivePopTransitionSpec:
         AnimatedContentTransitionScope<Scene<T>>.(
             @NavigationEvent.SwipeEdge Int
         ) -> ContentTransform =
-        NavDisplay.defaultPredictivePopTransitionSpec
-            as
-            AnimatedContentTransitionScope<Scene<T>>.(
-                @NavigationEvent.SwipeEdge Int
-            ) -> ContentTransform,
+        defaultPredictivePopTransitionSpec(),
     entryProvider: (key: T) -> NavEntry<T>,
 ) {
     require(backStack.isNotEmpty()) { "NavDisplay backstack cannot be empty" }
@@ -266,28 +230,15 @@ public fun <T : Any> NavDisplay(
     modifier: Modifier = Modifier,
     contentAlignment: Alignment = Alignment.TopStart,
     sizeTransform: SizeTransform? = null,
-    transitionSpec: AnimatedContentTransitionScope<Scene<T>>.() -> ContentTransform = {
-        ContentTransform(
-            fadeIn(animationSpec = tween(DEFAULT_TRANSITION_DURATION_MILLISECOND)),
-            fadeOut(animationSpec = tween(DEFAULT_TRANSITION_DURATION_MILLISECOND)),
-        )
-    },
-    popTransitionSpec: AnimatedContentTransitionScope<Scene<T>>.() -> ContentTransform = {
-        ContentTransform(
-            fadeIn(animationSpec = tween(DEFAULT_TRANSITION_DURATION_MILLISECOND)),
-            fadeOut(animationSpec = tween(DEFAULT_TRANSITION_DURATION_MILLISECOND)),
-        )
-    },
-    @Suppress("UNCHECKED_CAST")
+    transitionSpec: AnimatedContentTransitionScope<Scene<T>>.() -> ContentTransform =
+        defaultTransitionSpec(),
+    popTransitionSpec: AnimatedContentTransitionScope<Scene<T>>.() -> ContentTransform =
+        defaultPopTransitionSpec(),
     predictivePopTransitionSpec:
         AnimatedContentTransitionScope<Scene<T>>.(
             @NavigationEvent.SwipeEdge Int
         ) -> ContentTransform =
-        NavDisplay.defaultPredictivePopTransitionSpec
-            as
-            AnimatedContentTransitionScope<Scene<T>>.(
-                @NavigationEvent.SwipeEdge Int
-            ) -> ContentTransform,
+        defaultPredictivePopTransitionSpec(),
 ) {
     val scene = sceneState.currentScene
 
@@ -528,3 +479,15 @@ private fun <T : Any> NavEntry<T>.predictivePopSpec():
             @NavigationEvent.SwipeEdge Int
         ) -> ContentTransform
 }
+
+/** Default [transitionSpec] for forward navigation to be used by [NavDisplay]. */
+public expect fun <T : Any> defaultTransitionSpec():
+    AnimatedContentTransitionScope<Scene<T>>.() -> ContentTransform
+
+/** Default [transitionSpec] for pop navigation to be used by [NavDisplay]. */
+public expect fun <T : Any> defaultPopTransitionSpec():
+    AnimatedContentTransitionScope<Scene<T>>.() -> ContentTransform
+
+/** Default [transitionSpec] for predictive pop navigation to be used by [NavDisplay]. */
+public expect fun <T : Any> defaultPredictivePopTransitionSpec():
+    AnimatedContentTransitionScope<Scene<T>>.(@NavigationEvent.SwipeEdge Int) -> ContentTransform
