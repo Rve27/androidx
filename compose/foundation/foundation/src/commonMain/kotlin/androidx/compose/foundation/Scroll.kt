@@ -120,6 +120,12 @@ class ScrollState(initial: Int) : ScrollableState {
     val interactionSource: InteractionSource
         get() = internalInteractionSource
 
+    /**
+     * Size of the content along the scrollable axis, or 0 if still unknown. Note that this value is
+     * only populated after the first measure pass.
+     */
+    internal var contentSize by mutableIntStateOf(0)
+
     internal val internalInteractionSource: MutableInteractionSource = MutableInteractionSource()
 
     private var _maxValueState = mutableIntStateOf(Int.MAX_VALUE)
@@ -143,6 +149,18 @@ class ScrollState(initial: Int) : ScrollableState {
         if (changed) consumed else it
     }
 
+    private val _scrollIndicatorState =
+        object : ScrollIndicatorState {
+            override val scrollOffset: Int
+                get() = value
+
+            override val contentSize: Int
+                get() = this@ScrollState.contentSize
+
+            override val viewportSize: Int
+                get() = this@ScrollState.viewportSize
+        }
+
     override suspend fun scroll(
         scrollPriority: MutatePriority,
         block: suspend ScrollScope.() -> Unit,
@@ -164,6 +182,9 @@ class ScrollState(initial: Int) : ScrollableState {
     @get:Suppress("GetterSetterNames")
     override val lastScrolledBackward: Boolean
         get() = scrollableState.lastScrolledBackward
+
+    override val scrollIndicatorState: ScrollIndicatorState?
+        get() = _scrollIndicatorState
 
     /**
      * Scroll to position in pixels with animation.
@@ -438,6 +459,7 @@ internal class ScrollNode(
         // measured size.
         state.maxValue = side
         state.viewportSize = if (isVertical) height else width
+        state.contentSize = if (isVertical) placeable.height else placeable.width
         return layout(width, height) {
             val scroll = state.value.fastCoerceIn(0, side)
             val absScroll = if (reverseScrolling) scroll - side else -scroll

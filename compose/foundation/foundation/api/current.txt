@@ -324,10 +324,10 @@ package androidx.compose.foundation {
 
   @androidx.compose.runtime.Stable public interface ScrollIndicatorState {
     method @InaccessibleFromKotlin @IntRange(from=0L) public int getContentSize();
-    method @InaccessibleFromKotlin @IntRange(from=0L) public int getScrollOffset();
+    method @InaccessibleFromKotlin @IntRange(from=0L) @androidx.compose.runtime.annotation.FrequentlyChangingValue public int getScrollOffset();
     method @InaccessibleFromKotlin @IntRange(from=0L) public int getViewportSize();
     property @IntRange(from=0L) public abstract int contentSize;
-    property @IntRange(from=0L) public abstract int scrollOffset;
+    property @IntRange(from=0L) @androidx.compose.runtime.annotation.FrequentlyChangingValue public abstract int scrollOffset;
     property @IntRange(from=0L) public abstract int viewportSize;
   }
 
@@ -358,6 +358,7 @@ package androidx.compose.foundation {
     property public boolean lastScrolledBackward;
     property public boolean lastScrolledForward;
     property public int maxValue;
+    property public androidx.compose.foundation.ScrollIndicatorState? scrollIndicatorState;
     property @androidx.compose.runtime.annotation.FrequentlyChangingValue public int value;
     property public int viewportSize;
     field public static final androidx.compose.foundation.ScrollState.Companion Companion;
@@ -746,6 +747,7 @@ package androidx.compose.foundation.gestures {
     method @InaccessibleFromKotlin public default boolean getCanScrollForward();
     method @InaccessibleFromKotlin public default boolean getLastScrolledBackward();
     method @InaccessibleFromKotlin public default boolean getLastScrolledForward();
+    method @InaccessibleFromKotlin public default androidx.compose.foundation.ScrollIndicatorState? getScrollIndicatorState();
     method @InaccessibleFromKotlin public boolean isScrollInProgress();
     method public suspend Object? scroll(optional androidx.compose.foundation.MutatePriority scrollPriority, kotlin.jvm.functions.Function2<? super androidx.compose.foundation.gestures.ScrollScope,? super kotlin.coroutines.Continuation<? super kotlin.Unit>,? extends java.lang.Object?> block, kotlin.coroutines.Continuation<? super kotlin.Unit>);
     property public default boolean canScrollBackward;
@@ -753,6 +755,7 @@ package androidx.compose.foundation.gestures {
     property public abstract boolean isScrollInProgress;
     property public default boolean lastScrolledBackward;
     property public default boolean lastScrolledForward;
+    property public default androidx.compose.foundation.ScrollIndicatorState? scrollIndicatorState;
   }
 
   public final class ScrollableStateKt {
@@ -1106,6 +1109,7 @@ package androidx.compose.foundation.lazy {
     property public boolean lastScrolledBackward;
     property public boolean lastScrolledForward;
     property @androidx.compose.runtime.annotation.FrequentlyChangingValue public androidx.compose.foundation.lazy.LazyListLayoutInfo layoutInfo;
+    property public androidx.compose.foundation.ScrollIndicatorState? scrollIndicatorState;
     field public static final androidx.compose.foundation.lazy.LazyListState.Companion Companion;
   }
 
@@ -1309,6 +1313,7 @@ package androidx.compose.foundation.lazy.grid {
     property public boolean lastScrolledBackward;
     property public boolean lastScrolledForward;
     property @androidx.compose.runtime.annotation.FrequentlyChangingValue public androidx.compose.foundation.lazy.grid.LazyGridLayoutInfo layoutInfo;
+    property public androidx.compose.foundation.ScrollIndicatorState? scrollIndicatorState;
     field public static final androidx.compose.foundation.lazy.grid.LazyGridState.Companion Companion;
   }
 
@@ -1625,6 +1630,7 @@ package androidx.compose.foundation.lazy.staggeredgrid {
     property public boolean lastScrolledBackward;
     property public boolean lastScrolledForward;
     property public androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridLayoutInfo layoutInfo;
+    property public androidx.compose.foundation.ScrollIndicatorState? scrollIndicatorState;
     field public static final androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState.Companion Companion;
   }
 
@@ -1792,6 +1798,7 @@ package androidx.compose.foundation.pager {
     property public boolean lastScrolledForward;
     property public final androidx.compose.foundation.pager.PagerLayoutInfo layoutInfo;
     property public abstract int pageCount;
+    property public androidx.compose.foundation.ScrollIndicatorState? scrollIndicatorState;
     property public final int settledPage;
     property public final int targetPage;
   }
