@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package androidx.room3.integration.kotlintestapp
+package androidx.room3.integration.kotlintestapp.test
 
-import android.database.Cursor
 import androidx.kruth.assertThat
 import androidx.kruth.assertWithMessage
 import androidx.room3.Dao
@@ -31,6 +30,7 @@ import androidx.room3.RoomDatabase
 import androidx.room3.TypeConverter
 import androidx.room3.TypeConverters
 import androidx.room3.util.useCursor
+import androidx.sqlite.db.SimpleSQLiteQuery
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
@@ -185,7 +185,7 @@ class NullabilityAwareTypeConversionTest {
     }
 
     @Dao
-    abstract class UserDao {
+    abstract class UserDao(private val db: RoomDatabase) {
 
         @Insert abstract fun insert(user: User): Long
 
@@ -222,15 +222,13 @@ class NullabilityAwareTypeConversionTest {
         @TypeConverters(NullableTypeConverters::class)
         abstract fun getNonNullCountryAsNullableWithNullableTypeConverter(id: Long): Country?
 
-        @Query("SELECT * FROM User ORDER BY id") protected abstract fun getUsers(): Cursor
-
         /**
          * Return raw data in the database so that we can assert what is in the database without
          * room's converters
          */
         fun getRawData(): String {
             return buildString {
-                getUsers().useCursor {
+                db.query(SimpleSQLiteQuery("SELECT * FROM user")).useCursor {
                     if (it.moveToNext()) {
                         append(it.getInt(0))
                         append("-")

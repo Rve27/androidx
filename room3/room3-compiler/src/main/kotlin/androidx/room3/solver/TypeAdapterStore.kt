@@ -46,7 +46,6 @@ import androidx.room3.processor.ProcessorErrors.DO_NOT_USE_GENERIC_IMMUTABLE_MUL
 import androidx.room3.processor.ProcessorErrors.invalidQueryForSingleColumnArray
 import androidx.room3.processor.PropertyProcessor
 import androidx.room3.solver.binderprovider.CoroutineFlowResultBinderProvider
-import androidx.room3.solver.binderprovider.CursorQueryResultBinderProvider
 import androidx.room3.solver.binderprovider.GuavaListenableFutureQueryResultBinderProvider
 import androidx.room3.solver.binderprovider.InstantQueryResultBinderProvider
 import androidx.room3.solver.binderprovider.ListenableFuturePagingSourceQueryResultBinderProvider
@@ -205,7 +204,6 @@ private constructor(
 
     private val queryResultBinderProviders: List<QueryResultBinderProvider> =
         mutableListOf<QueryResultBinderProvider>().apply {
-            add(CursorQueryResultBinderProvider(context))
             add(LiveDataQueryResultBinderProvider(context))
             add(GuavaListenableFutureQueryResultBinderProvider(context))
             addAll(RxQueryResultBinderProvider.getAll(context))
