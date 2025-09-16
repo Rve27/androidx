@@ -91,27 +91,16 @@ package androidx.text.vertical {
   }
 
   public final class VerticalTextLayout {
+    ctor public VerticalTextLayout();
+    ctor public VerticalTextLayout(optional CharSequence text);
+    ctor public VerticalTextLayout(optional CharSequence text, optional int start);
+    ctor public VerticalTextLayout(optional CharSequence text, optional int start, optional int end);
+    ctor public VerticalTextLayout(optional CharSequence text, optional int start, optional int end, optional android.text.TextPaint paint);
+    ctor public VerticalTextLayout(optional CharSequence text, optional int start, optional int end, optional android.text.TextPaint paint, optional @Px float height);
+    ctor public VerticalTextLayout(optional CharSequence text, optional int start, optional int end, optional android.text.TextPaint paint, optional @Px float height, optional int orientation);
     method public void draw(android.graphics.Canvas canvas, @Px float x, @Px float y);
-    method @InaccessibleFromKotlin public int getEnd();
-    method @InaccessibleFromKotlin public float getHeight();
-    method @InaccessibleFromKotlin public int getOrientation();
-    method @InaccessibleFromKotlin public android.text.TextPaint getPaint();
-    method @InaccessibleFromKotlin public int getStart();
-    method @InaccessibleFromKotlin public CharSequence getText();
     method @InaccessibleFromKotlin @Px public float getWidth();
-    property public int end;
-    property public float height;
-    property public int orientation;
-    property public android.text.TextPaint paint;
-    property public int start;
-    property public CharSequence text;
     property @Px public float width;
-  }
-
-  public static final class VerticalTextLayout.Builder {
-    ctor public VerticalTextLayout.Builder(CharSequence text, int start, int end, android.text.TextPaint paint, @Px float height);
-    method @RequiresApi(android.os.Build.VERSION_CODES.TIRAMISU) public androidx.text.vertical.VerticalTextLayout build();
-    method public androidx.text.vertical.VerticalTextLayout.Builder setOrientation(int orientation);
   }
 
 }

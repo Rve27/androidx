@@ -17,7 +17,6 @@
 package androidx.text.vertical.testapp
 
 import android.graphics.Typeface
-import android.os.Build
 import android.os.Bundle
 import android.text.Spanned
 import android.text.TextPaint
@@ -141,18 +140,13 @@ fun VerticalText(text: Spanned, paint: TextPaint, modifier: Modifier = Modifier)
         content = {},
     ) { _, constraints ->
         vTextLayout =
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
-                VerticalTextLayout.Builder(
-                        text = text,
-                        start = 0,
-                        end = text.length,
-                        paint = paint,
-                        height = constraints.maxHeight.toFloat(),
-                    )
-                    .build()
-            } else {
-                null
-            }
+            VerticalTextLayout(
+                text = text,
+                start = 0,
+                end = text.length,
+                paint = paint,
+                height = constraints.maxHeight.toFloat(),
+            )
         layout(constraints.maxWidth, constraints.maxHeight) {}
     }
 }
