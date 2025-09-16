@@ -17,7 +17,6 @@
 package androidx.credentials.registry.provider.digitalcredentials
 
 import android.graphics.Bitmap
-import androidx.annotation.RestrictTo
 
 /**
  * An entry offering the user an opportunity to add a digital credential to your holder / wallet
@@ -31,11 +30,12 @@ import androidx.annotation.RestrictTo
  * succeed.
  *
  * @property id the provider unique identifier of this credential entry, which can be used to
- *   identify the exact credential that the user has chosen
+ *   identify the exact credential that the user has chosen; it is recommended that you generate
+ *   this `id` with enough entropy that it cannot be guessed by a third party, e.g. through
+ *   encrypting this `id` or randomizing it.
  * @property display the display properties associated with the given entry
  * @throws IllegalArgumentException if [id] length is greater than 64 characters
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY)
 public abstract class InlineIssuanceEntry(
     public val id: String,
     public val display: InlineIssuanceDisplayProperties,
