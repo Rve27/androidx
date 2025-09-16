@@ -29,23 +29,23 @@ import kotlin.jvm.JvmOverloads
  * A [NavigationEventHandler] defines how an active component responds to system navigation gestures
  * (such as predictive back) and exposes the directional context needed to represent the app’s
  * current navigation affordances:
- * - [backInfo]: contextual information describing what is available when navigating back.
- * - [currentInfo]: the single active destination represented by this handler.
- * - [forwardInfo]: contextual information describing what is available when navigating forward.
+ * - [backInfo]: Contextual information describing what is available when navigating back.
+ * - [currentInfo]: The single active destination represented by this handler.
+ * - [forwardInfo]: Contextual information describing what is available when navigating forward.
  *
- * Subclasses can override lifecycle methods (e.g., `onBackStarted`, `onBackProgressed`,
- * `onBackCompleted`, `onBackCancelled`, and their forward equivalents) to respond to gesture
+ * Subclasses can override lifecycle methods (e.g., [onBackStarted], [onBackProgressed],
+ * [onBackCompleted], [onBackCancelled], and their forward equivalents) to respond to gesture
  * progression and terminal outcomes.
  *
  * A handler must be registered with a [NavigationEventDispatcher] to receive events. It will only
  * be invoked while both the dispatcher and this handler are enabled.
  *
+ * @param T The type of [NavigationEventInfo] associated with this handler.
  * @param initialInfo The initial value for [currentInfo].
  * @param isBackEnabled If `true`, this handler will process back navigation gestures.
  * @param isForwardEnabled If `true`, this handler will process forward navigation gestures.
  * @see NavigationEventDispatcher
  * @see NavigationEventInput
- * @see NavigationEventState
  */
 public abstract class NavigationEventHandler<T : NavigationEventInfo>
 public constructor(initialInfo: T, isBackEnabled: Boolean, isForwardEnabled: Boolean) {
@@ -92,6 +92,12 @@ public constructor(initialInfo: T, isBackEnabled: Boolean, isForwardEnabled: Boo
     public var forwardInfo: List<T> = emptyList()
         private set
 
+    /**
+     * The current transition state of this specific handler (e.g., [Idle] or [InProgress]).
+     *
+     * This state is updated by the dispatcher *before* the corresponding `on...` lifecycle methods
+     * (e.g., [onBackStarted]) are called.
+     */
     public var transitionState: NavigationEventTransitionState = Idle()
         private set
 
@@ -127,11 +133,24 @@ public constructor(initialInfo: T, isBackEnabled: Boolean, isForwardEnabled: Boo
         }
 
     /**
-     * Controls whether this handler is active for forward events and should be considered for
-     * forward event dispatching.
+     * Controls whether this handler is active and should be considered for forward event
+     * dispatching.
+     *
+     * A handler's effective enabled state is hierarchical; it is directly influenced by the
+     * [NavigationEventDispatcher] it is registered with.
+     *
+     * **Getting the value**:
+     * - This will return `false` if the associated `dispatcher` exists and its `isEnabled` state is
+     *   `false`, regardless of the handler's own local setting.
+     * - Otherwise, it returns the handler's own locally stored state.
+     *
+     * **Setting the value**:
+     * - This updates the local enabled state of the handler itself.
+     * - It immediately notifies the `dispatcher` (if one is attached) that its list of enabled
+     *   handlers might have changed, prompting a re-evaluation.
      *
      * For a handler to be truly active for forward events, both its local `isForwardEnabled`
-     * property and its dispatcher's `isForwardEnabled` property must evaluate to `true`.
+     * property and its dispatcher's `isEnabled` property must evaluate to `true`.
      */
     public var isForwardEnabled: Boolean = isForwardEnabled
         get() = if (dispatcher?.isEnabled == false) false else field
@@ -185,64 +204,49 @@ public constructor(initialInfo: T, isBackEnabled: Boolean, isForwardEnabled: Boo
         dispatcher?.sharedProcessor?.updateEnabledHandlerInfo(handler = this)
     }
 
-    /**
-     * Internal-only method for dispatching.
-     *
-     * @see onBackStarted
-     * @see NavigationEventDispatcher.dispatchOnStarted
-     */
+    /** @see [NavigationEventDispatcher.dispatchOnStarted] */
     internal fun doOnBackStarted(event: NavigationEvent) {
         transitionState = InProgress(latestEvent = event, direction = TRANSITIONING_BACK)
         onBackStarted(event)
     }
 
     /**
-     * Override this to handle the beginning of a navigation event.
+     * Override this to handle the beginning of a back navigation event.
      *
-     * This is called when a user action, such as a swipe gesture, initiates a navigation. It's the
-     * ideal place to prepare UI elements for a transition.
+     * This is called when a user action initiates a back navigation. It's the ideal place to
+     * prepare UI elements for a transition.
      *
      * @param event The [NavigationEvent] that triggered this handler.
      */
     @EmptySuper protected open fun onBackStarted(event: NavigationEvent) {}
 
-    /**
-     * Internal-only method for dispatching.
-     *
-     * @see onBackProgressed
-     * @see NavigationEventDispatcher.dispatchOnProgressed
-     */
+    /** @see [NavigationEventDispatcher.dispatchOnProgressed] */
     internal fun doOnBackProgressed(event: NavigationEvent) {
         transitionState = InProgress(latestEvent = event, direction = TRANSITIONING_BACK)
         onBackProgressed(event)
     }
 
     /**
-     * Override this to handle the progress of an ongoing navigation event.
+     * Override this to handle the progress of an ongoing back navigation event.
      *
-     * This is called repeatedly during a gesture-driven navigation (e.g., a predictive back swipe)
-     * to update the UI in real-time based on the user's input.
+     * This is called repeatedly during a gesture-driven back navigation to update the UI in
+     * real-time based on the user's input.
      *
      * @param event The [NavigationEvent] containing progress information.
      */
     @EmptySuper protected open fun onBackProgressed(event: NavigationEvent) {}
 
-    /**
-     * Internal-only method for dispatching.
-     *
-     * @see onBackCompleted
-     * @see NavigationEventDispatcher.dispatchOnCompleted
-     */
+    /** @see [NavigationEventDispatcher.dispatchOnCompleted] */
     internal fun doOnBackCompleted() {
         transitionState = Idle()
         onBackCompleted()
     }
 
     /**
-     * Override this to handle the completion of a navigation event.
+     * Override this to handle the completion of a back navigation event.
      *
-     * This is called when the user commits to the navigation action (e.g., by lifting their finger
-     * at the end of a swipe), signaling that the navigation should be finalized.
+     * This is called when the user commits to the back navigation action, signaling that the
+     * navigation should be finalized.
      *
      * The default implementation throws an [UnsupportedOperationException]. Any handler that can be
      * completed **must** override this method to handle the navigation.
@@ -255,41 +259,53 @@ public constructor(initialInfo: T, isBackEnabled: Boolean, isForwardEnabled: Boo
         )
     }
 
-    /**
-     * Internal-only method for dispatching.
-     *
-     * @see onBackCancelled
-     * @see NavigationEventDispatcher.dispatchOnCancelled
-     */
+    /** @see [NavigationEventDispatcher.dispatchOnCancelled] */
     internal fun doOnBackCancelled() {
         transitionState = Idle()
         onBackCancelled()
     }
 
     /**
-     * Override this to handle the cancellation of a navigation event.
+     * Override this to handle the cancellation of a back navigation event.
      *
-     * This is called when the user cancels the navigation action (e.g., by returning their finger
-     * to the edge of the screen), signaling that the UI should return to its original state.
+     * This is called when the user cancels the navigation action, signaling that the UI should
+     * return to its original state.
      */
     @EmptySuper protected open fun onBackCancelled() {}
 
+    /** @see [NavigationEventDispatcher.dispatchOnStarted] */
     internal fun doOnForwardStarted(event: NavigationEvent) {
         transitionState = InProgress(latestEvent = event, direction = TRANSITIONING_FORWARD)
         onForwardStarted(event)
     }
 
-    /** Override this to handle the beginning of a forward navigation event. */
+    /**
+     * Override this to handle the beginning of a forward navigation event.
+     *
+     * This is called when a user action initiates a forward navigation. It's the ideal place to
+     * prepare UI elements for a transition.
+     *
+     * @param event The [NavigationEvent] that triggered this handler.
+     */
     @EmptySuper protected open fun onForwardStarted(event: NavigationEvent) {}
 
+    /** @see [NavigationEventDispatcher.dispatchOnProgressed] */
     internal fun doOnForwardProgressed(event: NavigationEvent) {
         transitionState = InProgress(latestEvent = event, direction = TRANSITIONING_FORWARD)
         onForwardProgressed(event)
     }
 
-    /** Override this to handle the progress of an ongoing forward navigation event. */
+    /**
+     * Override this to handle the progress of an ongoing forward navigation event.
+     *
+     * This is called repeatedly during a gesture-driven forward navigation to update the UI in
+     * real-time based on the user's input.
+     *
+     * @param event The [NavigationEvent] containing progress information.
+     */
     @EmptySuper protected open fun onForwardProgressed(event: NavigationEvent) {}
 
+    /** @see [NavigationEventDispatcher.dispatchOnCompleted] */
     internal fun doOnForwardCompleted() {
         transitionState = Idle()
         onForwardCompleted()
@@ -298,8 +314,11 @@ public constructor(initialInfo: T, isBackEnabled: Boolean, isForwardEnabled: Boo
     /**
      * Override this to handle the completion of a forward navigation event.
      *
+     * This is called when the user commits to the forward navigation action, signaling that the
+     * navigation should be finalized.
+     *
      * The default implementation throws an [UnsupportedOperationException]. Any handler that can be
-     * completed **must** override this method to handle the handler.
+     * completed **must** override this method to handle the navigation.
      */
     @EmptySuper
     protected open fun onForwardCompleted() {
@@ -309,11 +328,17 @@ public constructor(initialInfo: T, isBackEnabled: Boolean, isForwardEnabled: Boo
         )
     }
 
+    /** @see [NavigationEventDispatcher.dispatchOnCancelled] */
     internal fun doOnForwardCancelled() {
         transitionState = Idle()
         onForwardCancelled()
     }
 
-    /** Override this to handle the cancellation of a forward navigation event. */
+    /**
+     * Override this to handle the cancellation of a forward navigation event.
+     *
+     * This is called when the user cancels the navigation action, signaling that the UI should
+     * return to its original state.
+     */
     @EmptySuper protected open fun onForwardCancelled() {}
 }
