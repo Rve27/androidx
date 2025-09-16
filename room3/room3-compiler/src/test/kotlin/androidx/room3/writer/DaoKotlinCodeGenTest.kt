@@ -516,6 +516,114 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
     }
 
     @Test
+    fun dataClassRowAdapter_variableProperty_embedded() {
+        val src =
+            Source.kotlin(
+                "MyDao.kt",
+                """
+            import androidx.room3.*
+
+            @Dao
+            interface MyDao {
+              @Query("SELECT * FROM MyEntity")
+              fun getEntity(): MyEntity
+
+              @Insert
+              fun addEntity(item: MyEntity)
+            }
+
+            @Entity
+            class MyEntity {
+                @PrimaryKey
+                var pk: Int = 0
+                @Embedded(prefix = "nullable")
+                var nullableFoo: Foo? = null
+            }
+
+            data class Foo(
+                val numberData: Long,
+                val stringData: String
+            )
+            """
+                    .trimIndent(),
+            )
+        runTest(
+            sources = listOf(src, databaseSrc),
+            expectedFilePath = getTestGoldenPath(testName.methodName),
+        )
+    }
+
+    @Test
+    fun dataClassRowAdapter_embedded_java() {
+        val src =
+            Source.kotlin(
+                "MyDao.kt",
+                """
+            import androidx.room3.*
+
+            @Dao
+            interface MyDao {
+              @Query("SELECT * FROM MyEntity")
+              fun getEntity(): MyEntity
+
+              @Insert
+              fun addEntity(item: MyEntity)
+            }
+
+            data class Foo(
+                val numberData: Long,
+                val stringData: String
+            )
+            """
+                    .trimIndent(),
+            )
+        val javaEntity =
+            Source.java(
+                "MyEntity",
+                """
+                import androidx.annotation.Nullable;
+                import androidx.room3.*;
+
+                @Entity
+                public class MyEntity {
+                    @PrimaryKey
+                    public int mKey;
+
+                    @Embedded
+                    private Foo mFoo;
+
+                    @Embedded(prefix = "nullable")
+                    @Nullable private Foo mNullableFoo;
+
+                    public MyEntity(int key) {
+                        mKey = key;
+                    }
+
+                    public Foo getFoo() {
+                        return mFoo;
+                    }
+                    public void setFoo(Foo foo) {
+                        mFoo = foo;
+                    }
+
+                    @Nullable
+                    public Foo getNullableFoo() {
+                        return mNullableFoo;
+                    }
+                    public void setNullableFoo(@Nullable Foo nullableFoo) {
+                        mNullableFoo = nullableFoo;
+                    }
+                }
+            """
+                    .trimIndent(),
+            )
+        runTest(
+            sources = listOf(src, javaEntity, databaseSrc),
+            expectedFilePath = getTestGoldenPath(testName.methodName),
+        )
+    }
+
+    @Test
     fun dataClassRowAdapter_customTypeConverter() {
         val src =
             Source.kotlin(
@@ -1593,6 +1701,49 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
             )
         runTest(
             sources = listOf(src, databaseSrc),
+            expectedFilePath = getTestGoldenPath(testName.methodName),
+        )
+    }
+
+    @Test
+    fun abstractClassWithParam_java() {
+        val dao =
+            Source.java(
+                "MyDao",
+                """
+            import androidx.room3.*;
+
+            @Dao
+            public abstract class MyDao {
+
+              private RoomDatabase mDb;
+
+              public MyDao(RoomDatabase db) {
+                mDb = db;
+              }
+
+              @Query("SELECT * FROM MyEntity")
+              abstract MyEntity getEntity();
+            }
+            """
+                    .trimIndent(),
+            )
+        val entity =
+            Source.java(
+                "MyEntity",
+                """
+            import androidx.room3.*;
+
+            @Entity
+            public class MyEntity {
+                @PrimaryKey
+                public long pk;
+            }
+        """
+                    .trimIndent(),
+            )
+        runTest(
+            sources = listOf(dao, entity, databaseSrc),
             expectedFilePath = getTestGoldenPath(testName.methodName),
         )
     }
