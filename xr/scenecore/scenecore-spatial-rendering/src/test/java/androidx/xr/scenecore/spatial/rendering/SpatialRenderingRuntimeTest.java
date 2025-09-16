@@ -18,6 +18,8 @@ package androidx.xr.scenecore.spatial.rendering;
 
 import static com.google.common.truth.Truth.assertThat;
 
+import static org.mockito.Mockito.verify;
+
 import android.app.Activity;
 
 import androidx.xr.runtime.SubspaceNodeHolder;
@@ -34,6 +36,7 @@ import androidx.xr.scenecore.runtime.GltfFeature;
 import androidx.xr.scenecore.runtime.GltfModelResource;
 import androidx.xr.scenecore.runtime.MaterialResource;
 import androidx.xr.scenecore.runtime.RenderingEntityFactory;
+import androidx.xr.scenecore.runtime.RenderingRuntime;
 import androidx.xr.scenecore.runtime.SceneRuntime;
 import androidx.xr.scenecore.runtime.SubspaceNodeEntity;
 import androidx.xr.scenecore.runtime.SurfaceEntity;
@@ -67,7 +70,8 @@ import java.util.Objects;
 public class SpatialRenderingRuntimeTest {
     private static final int OPEN_XR_REFERENCE_SPACE_TYPE = 1;
     private SceneRuntime mSceneRuntime;
-    private SpatialRenderingRuntime mRenderingRuntime;
+    private RenderingRuntime mRenderingRuntime;
+    private SpatialRenderingRuntime mSpatialRenderingRuntime;
 
     /** The factory in SceneRuntime */
     private RenderingEntityFactory mRenderingEntityFactory;
@@ -93,13 +97,14 @@ public class SpatialRenderingRuntimeTest {
 
         assertThat(fakeSceneRuntime).isNotNull();
 
-        mRenderingRuntime =
+        mSpatialRenderingRuntime =
                 SpatialRenderingRuntime.create(
                         mSceneRuntime,
                         mActivity,
                         mFakeImpressApi,
                         mSplitEngineSubspaceManager,
                         mSplitEngineRenderer);
+        mRenderingRuntime = mSpatialRenderingRuntime;
         mRenderingEntityFactory = (RenderingEntityFactory) mSceneRuntime;
     }
 
@@ -411,12 +416,27 @@ public class SpatialRenderingRuntimeTest {
     }
 
     @Test
-    public void startAndStopRenderer_statusUpdated() {
-        mRenderingRuntime.startRenderer();
-        assertThat(mRenderingRuntime.isFrameLoopStarted()).isTrue();
-        mRenderingRuntime.stopRenderer();
-        assertThat(mRenderingRuntime.isFrameLoopStarted()).isFalse();
-        mRenderingRuntime.startRenderer();
-        assertThat(mRenderingRuntime.isFrameLoopStarted()).isTrue();
+    public void resumeAndPauseRuntime_renderingStatusUpdated() {
+        assertThat(mSpatialRenderingRuntime.isFrameLoopStarted()).isFalse();
+
+        mRenderingRuntime.resume();
+
+        assertThat(mSpatialRenderingRuntime.isFrameLoopStarted()).isTrue();
+
+        mRenderingRuntime.pause();
+
+        assertThat(mSpatialRenderingRuntime.isFrameLoopStarted()).isFalse();
+
+        mRenderingRuntime.resume();
+
+        assertThat(mSpatialRenderingRuntime.isFrameLoopStarted()).isTrue();
+    }
+
+    @Test
+    public void destroy_disposeInvoked() {
+        mRenderingRuntime.destroy();
+
+        assertThat(mSpatialRenderingRuntime.isFrameLoopStarted()).isFalse();
+        verify(mSplitEngineSubspaceManager).destroy();
     }
 }

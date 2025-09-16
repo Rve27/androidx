@@ -719,8 +719,6 @@ package androidx.xr.scenecore.runtime {
     method public void setTransmissionFactorOnKhronosPbrMaterial(androidx.xr.scenecore.runtime.MaterialResource material, float factor);
     method public void setTransmissionTextureOnKhronosPbrMaterial(androidx.xr.scenecore.runtime.MaterialResource material, androidx.xr.scenecore.runtime.TextureResource transmission, androidx.xr.scenecore.runtime.TextureSampler sampler);
     method public void setTransmissionUvTransformOnKhronosPbrMaterial(androidx.xr.scenecore.runtime.MaterialResource material, androidx.xr.runtime.math.Matrix3 uvTransform);
-    method public void startRenderer();
-    method public void stopRenderer();
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface ResizableComponent extends androidx.xr.scenecore.runtime.Component {
@@ -921,6 +919,7 @@ package androidx.xr.scenecore.runtime {
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface SpatialEnvironmentFeature {
+    method public void dispose();
     method @InaccessibleFromKotlin public androidx.xr.scenecore.runtime.SpatialEnvironment.SpatialEnvironmentPreference? getPreferredSpatialEnvironment();
     method @InaccessibleFromKotlin public void setPreferredSpatialEnvironment(androidx.xr.scenecore.runtime.SpatialEnvironment.SpatialEnvironmentPreference?);
     property public abstract androidx.xr.scenecore.runtime.SpatialEnvironment.SpatialEnvironmentPreference? preferredSpatialEnvironment;

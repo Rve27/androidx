@@ -40,4 +40,7 @@ public interface SpatialEnvironmentFeature {
      * geometry.
      */
     public var preferredSpatialEnvironment: SpatialEnvironment.SpatialEnvironmentPreference?
+
+    /** Clean up any resources used by this feature. */
+    public fun dispose()
 }
