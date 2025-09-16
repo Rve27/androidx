@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package androidx.credentials.providerevents.playservices
+package androidx.credentials.providerevents.internal
 
 import android.content.Context
 import android.net.Uri
 import android.util.Log
+import androidx.annotation.RestrictTo
 import java.io.BufferedReader
 import java.io.BufferedWriter
 import java.io.File
@@ -26,7 +27,8 @@ import java.io.InputStreamReader
 import java.io.OutputStreamWriter
 
 /** A util class for reading or writing credentials to URI */
-internal class UriUtils {
+@RestrictTo(RestrictTo.Scope.LIBRARY)
+public class UriUtils {
     public companion object {
         private const val CREDENTIAL_TRANSFER_FILE_PATH = "import_export_temp"
         private const val CREDENTIAL_TRANSFER_FILE_NAME = "tempImportedCredentials"
