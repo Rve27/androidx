@@ -365,6 +365,43 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
         )
     }
 
+    @Ignore("b/445473504")
+    @Test
+    fun dataClassRowAdapter_record_java() {
+        val src =
+            Source.kotlin(
+                "MyDao.kt",
+                """
+            import androidx.room3.*
+
+            @Dao
+            interface MyDao {
+              @Query("SELECT * FROM MyEntity")
+              fun getEntity(): MyEntity
+              
+              @Insert
+              fun addEntity(item: MyEntity)
+            }
+            """
+                    .trimIndent(),
+            )
+        val record =
+            Source.java(
+                "MyEntity",
+                """
+                import androidx.room3.*;
+
+                @Entity
+                record MyEntity(@PrimaryKey long id, String data) {}
+            """
+                    .trimIndent(),
+            )
+        runTest(
+            sources = listOf(src, record, databaseSrc),
+            expectedFilePath = getTestGoldenPath(testName.methodName),
+        )
+    }
+
     @Test
     fun dataClassRowAdapter_byteArray() {
         val src =
