@@ -312,8 +312,8 @@ private constructor(
      * @param input The input to add.
      * @param priority The priority to associate with this input. Must be one of the supported
      *   constants: [PRIORITY_OVERLAY], [PRIORITY_DEFAULT].
-     * @throws IllegalStateException if the dispatcher has already been disposed or if [input] is
-     *   already added to a dispatcher.
+     * @throws IllegalStateException if the dispatcher has already been disposed.
+     * @throws IllegalArgumentException if [input] is already added to a dispatcher.
      * @throws IllegalArgumentException if [priority] is not one of the supported constants.
      * @see removeInput
      * @see NavigationEventInput.onRemoved
@@ -478,8 +478,10 @@ private constructor(
     }
 
     /**
-     * Defines priorities when adding a [NavigationEventHandler] to a
-     * [androidx.navigationevent.NavigationEventDispatcher].
+     * Defines priority levels for registering components like [NavigationEventHandler] or
+     * [NavigationEventInput] with a [NavigationEventDispatcher].
+     *
+     * Priority determines the order of event processing.
      */
     @RestrictTo(RestrictTo.Scope.LIBRARY)
     @Retention(AnnotationRetention.SOURCE)
@@ -488,12 +490,19 @@ private constructor(
 
     public companion object {
         /**
-         * Priority level of [NavigationEventHandler]s for overlays such as menus and navigation
-         * drawers that should receive event dispatch before non-overlays.
+         * Highest priority level, intended for overlay UI components.
+         *
+         * Components at this level (e.g., dialogs, bottom sheets, navigation drawers) will receive
+         * navigation events before components at [PRIORITY_DEFAULT].
          */
         public const val PRIORITY_OVERLAY: Int = 0
 
-        /** Default priority level of [NavigationEventHandler]s. */
+        /**
+         * Default priority level for primary UI content.
+         *
+         * Components at this level will receive navigation events after [PRIORITY_OVERLAY]
+         * components have been given a chance to handle them.
+         */
         public const val PRIORITY_DEFAULT: Int = 1
     }
 }
