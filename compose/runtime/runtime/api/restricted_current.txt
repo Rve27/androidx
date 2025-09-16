@@ -406,12 +406,14 @@ package androidx.compose.runtime {
   public final class ControlledRetainScope extends androidx.compose.runtime.RetainScope {
     ctor public ControlledRetainScope();
     method public Object? getExitedValueOrDefault(Object key, Object? defaultIfAbsent);
+    method @InaccessibleFromKotlin public int getKeepExitedValuesRequestsFromSelf();
     method protected void onStartKeepingExitedValues();
     method protected void onStopKeepingExitedValues();
     method protected void saveExitingValue(Object key, Object? value);
     method public void setParentRetainStateProvider(androidx.compose.runtime.RetainStateProvider parent);
     method public void startKeepingExitedValues();
     method public void stopKeepingExitedValues();
+    property public int keepExitedValuesRequestsFromSelf;
   }
 
   @kotlin.annotation.MustBeDocumented @kotlin.annotation.Retention(kotlin.annotation.AnnotationRetention.BINARY) @kotlin.annotation.Target(allowedTargets=kotlin.annotation.AnnotationTarget.TYPE) public @interface DisallowComposableCalls {
@@ -749,6 +751,8 @@ package androidx.compose.runtime {
   }
 
   public final class RetainKt {
+    method @androidx.compose.runtime.Composable public static void RetainedContentHost(boolean active, kotlin.jvm.functions.Function0<kotlin.Unit> content);
+    method @BytecodeOnly @androidx.compose.runtime.Composable public static void RetainedContentHost(boolean, kotlin.jvm.functions.Function2<? super androidx.compose.runtime.Composer!,? super java.lang.Integer!,kotlin.Unit!>, androidx.compose.runtime.Composer?, int);
     method @InaccessibleFromKotlin public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.compose.runtime.RetainScope> getLocalRetainScope();
     method @androidx.compose.runtime.Composable @kotlin.PublishedApi internal static <T> T retain(int typeHash, Object?[] keys, kotlin.jvm.functions.Function0<? extends T> calculation);
     method @BytecodeOnly @androidx.compose.runtime.Composable @kotlin.PublishedApi internal static <T> T! retain(int, Object![], kotlin.jvm.functions.Function0<? extends T!>, androidx.compose.runtime.Composer?, int);
@@ -756,6 +760,8 @@ package androidx.compose.runtime {
     method @BytecodeOnly @androidx.compose.runtime.Composable @kotlin.PublishedApi internal static <T> T! retain(int, kotlin.jvm.functions.Function0<? extends T!>, androidx.compose.runtime.Composer?, int);
     method @KotlinOnly @androidx.compose.runtime.Composable public static inline <reified T> T retain(java.lang.Object?... keys, kotlin.jvm.functions.Function0<T> calculation);
     method @KotlinOnly @androidx.compose.runtime.Composable public static inline <reified T> T retain(kotlin.jvm.functions.Function0<T> calculation);
+    method @androidx.compose.runtime.Composable public static androidx.compose.runtime.ControlledRetainScope retainControlledRetainScope();
+    method @BytecodeOnly @androidx.compose.runtime.Composable public static androidx.compose.runtime.ControlledRetainScope retainControlledRetainScope(androidx.compose.runtime.Composer?, int);
     property public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.compose.runtime.RetainScope> LocalRetainScope;
   }
 
@@ -771,6 +777,7 @@ package androidx.compose.runtime {
     ctor public RetainScope();
     method public final void addRetainStateObserver(androidx.compose.runtime.RetainStateProvider.RetainStateObserver observer);
     method public abstract Object? getExitedValueOrDefault(Object key, Object? defaultIfAbsent);
+    method @InaccessibleFromKotlin protected final int getKeepExitedValuesRequests();
     method @InaccessibleFromKotlin public final boolean isKeepingExitedValues();
     method protected abstract void onStartKeepingExitedValues();
     method protected abstract void onStopKeepingExitedValues();
@@ -779,6 +786,7 @@ package androidx.compose.runtime {
     method protected abstract void saveExitingValue(Object key, Object? value);
     method protected final void unRequestKeepExitedValues();
     property public final boolean isKeepingExitedValues;
+    property protected final int keepExitedValuesRequests;
   }
 
   public interface RetainStateProvider {
