@@ -16,11 +16,15 @@
 
 package androidx.xr.glimmer.stack
 
+import androidx.compose.foundation.interaction.DragInteraction
+import androidx.compose.foundation.interaction.Interaction
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -28,6 +32,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.getBoundsInRoot
 import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -41,6 +46,8 @@ import androidx.compose.ui.unit.size
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.xr.glimmer.Text
 import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -87,6 +94,50 @@ class VerticalStackTest {
         rule.onNodeWithText("Item 1").assertIsNotDisplayed()
         rule.onNodeWithText("Item 5").assertDoesNotExist()
         assertThat(state.topItem).isEqualTo(0)
+        assertThat(state.topItemOffsetFraction).isEqualTo(0f)
+    }
+
+    @Test
+    fun multipleItems_customInitialTopItem_displaysRequestedItem() {
+        val state = StackState(initialTopItem = 1)
+        rule.setContent {
+            VerticalStack(modifier = Modifier.size(100.dp), state = state) {
+                items(5) { index -> Box(modifier = Modifier.fillMaxSize()) { Text("Item $index") } }
+            }
+        }
+
+        rule.onNodeWithText("Item 0").assertIsNotDisplayed()
+        rule.onNodeWithText("Item 1").assertIsDisplayed()
+        rule.onNodeWithText("Item 2").assertIsNotDisplayed()
+        assertThat(state.topItem).isEqualTo(1)
+        assertThat(state.topItemOffsetFraction).isEqualTo(0f)
+    }
+
+    @Test
+    fun multipleItems_lastInitialTopItem_displaysLastItem() {
+        val state = StackState(initialTopItem = 4)
+        rule.setContent {
+            VerticalStack(modifier = Modifier.size(100.dp), state = state) {
+                items(5) { index -> Box(modifier = Modifier.fillMaxSize()) { Text("Item $index") } }
+            }
+        }
+
+        rule.onNodeWithText("Item 4").assertIsDisplayed()
+        assertThat(state.topItem).isEqualTo(4)
+        assertThat(state.topItemOffsetFraction).isEqualTo(0f)
+    }
+
+    @Test
+    fun multipleItems_outOfRangeInitialTopItem_displaysLastItem() {
+        val state = StackState(initialTopItem = 10)
+        rule.setContent {
+            VerticalStack(modifier = Modifier.size(100.dp), state = state) {
+                items(5) { index -> Box(modifier = Modifier.fillMaxSize()) { Text("Item $index") } }
+            }
+        }
+
+        rule.onNodeWithText("Item 4").assertIsDisplayed()
+        assertThat(state.topItem).isEqualTo(4)
         assertThat(state.topItemOffsetFraction).isEqualTo(0f)
     }
 
@@ -253,5 +304,67 @@ class VerticalStackTest {
         rule.onNodeWithTag("stack").performTouchInput { swipeDown() }
         rule.onNodeWithText("First").assertIsDisplayed()
         assertThat(state.topItem).isEqualTo(0)
+    }
+
+    @Test
+    fun stateRestoration_restoresTopItem() {
+        val restorationTester = StateRestorationTester(rule)
+        var targetItem by mutableStateOf<Int?>(null)
+        lateinit var state: StackState
+
+        restorationTester.setContent {
+            state = rememberStackState(initialTopItem = 0)
+
+            VerticalStack(modifier = Modifier.size(100.dp), state = state) {
+                items(5) { index -> Box(modifier = Modifier.fillMaxSize()) { Text("Item $index") } }
+            }
+
+            LaunchedEffect(targetItem) { targetItem?.let { state.scrollToItem(it) } }
+        }
+
+        // Verify the initial state
+        rule.onNodeWithText("Item 0").assertIsDisplayed()
+        rule.onNodeWithText("Item 2").assertIsNotDisplayed()
+        assertThat(state.topItem).isEqualTo(0)
+
+        // Scroll to a new item
+        rule.runOnIdle { targetItem = 2 }
+        rule.waitForIdle()
+
+        rule.onNodeWithText("Item 0").assertIsNotDisplayed()
+        rule.onNodeWithText("Item 2").assertIsDisplayed()
+        assertThat(state.topItem).isEqualTo(2)
+
+        // Simulate recreation
+        restorationTester.emulateSavedInstanceStateRestore()
+        rule.waitForIdle()
+
+        // Verify the restored state
+        rule.onNodeWithText("Item 0").assertIsNotDisplayed()
+        rule.onNodeWithText("Item 2").assertIsDisplayed()
+        assertThat(state.topItem).isEqualTo(2)
+    }
+
+    @Test
+    fun interactionSource_emitsDragInteractions() {
+        val state = StackState()
+        lateinit var scope: CoroutineScope
+        rule.setContent {
+            scope = rememberCoroutineScope()
+            VerticalStack(modifier = Modifier.size(100.dp).testTag("stack"), state = state) {
+                items(5) { index -> Box(modifier = Modifier.fillMaxSize()) { Text("Item $index") } }
+            }
+        }
+        val interactions = mutableListOf<Interaction>()
+        scope.launch { state.interactionSource.interactions.collect { interactions.add(it) } }
+        rule.runOnIdle { assertThat(interactions).isEmpty() }
+
+        rule.onNodeWithTag("stack").performTouchInput { swipeUp() }
+
+        rule.runOnIdle {
+            assertThat(interactions).hasSize(2)
+            assertThat(interactions[0]).isInstanceOf(DragInteraction.Start::class.java)
+            assertThat(interactions[1]).isInstanceOf(DragInteraction.Stop::class.java)
+        }
     }
 }

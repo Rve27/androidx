@@ -16,17 +16,20 @@
 
 package androidx.xr.glimmer.stack
 
+import androidx.annotation.IntRange
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.MutatePriority
 import androidx.compose.foundation.gestures.ScrollScope
 import androidx.compose.foundation.gestures.ScrollableState
+import androidx.compose.foundation.interaction.InteractionSource
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 
 /**
@@ -42,14 +45,14 @@ import androidx.compose.runtime.setValue
  * Warning: A single [StackState] instance must not be shared across multiple [VerticalStack]
  * composables.
  *
+ * @param initialTopItem The index of the item to show at the top of the stack initially. Must be
+ *   non-negative. Defaults to 0.
  * @see StackState
  * @see VerticalStack
  */
-// TODO(b/413429531): expose a way to set the initial item.
 @Composable
-public fun rememberStackState(): StackState =
-    // TODO(b/413429531): switch to rememberSaveable with a public Saver.
-    remember { StackState() }
+public fun rememberStackState(@IntRange(from = 0) initialTopItem: Int = 0): StackState =
+    rememberSaveable(saver = StackState.Saver) { StackState(initialTopItem) }
 
 /**
  * The [VerticalStack] state that allows programmatic control and observation of the stack's state.
@@ -61,16 +64,24 @@ public fun rememberStackState(): StackState =
  *
  * Warning: A single [StackState] instance must not be shared across multiple [VerticalStack]
  * composables.
+ *
+ * @param initialTopItem The index of the item to show at the top of the stack initially. Must be
+ *   non-negative. Defaults to 0.
+ * @see rememberStackState
+ * @see VerticalStack
  */
 // TODO(b/413429531): add layout info to the state.
-// TODO(b/413429531): add InteractionSource.
 // TODO(b/413429531): add ScrollIndicatorState.
 @Stable
-public class StackState : ScrollableState {
+public class StackState(@IntRange(from = 0) initialTopItem: Int = 0) : ScrollableState {
+
+    init {
+        require(initialTopItem >= 0) { "initialTopItem must be non-negative" }
+    }
 
     internal var itemCount by mutableIntStateOf(0)
 
-    internal val pagerState = PagerState(pageCount = { itemCount })
+    internal val pagerState = PagerState(currentPage = initialTopItem, pageCount = { itemCount })
 
     /** The index of the item that's currently at the top of the stack, defaults to 0. */
     public val topItem: Int
@@ -83,6 +94,13 @@ public class StackState : ScrollableState {
      */
     public val topItemOffsetFraction: Float
         get() = pagerState.currentPageOffsetFraction
+
+    /**
+     * [InteractionSource] that's used to dispatch drag events when this stack is being dragged. To
+     * know whether a fling (or animated scroll) is in progress, use [isScrollInProgress].
+     */
+    public val interactionSource: InteractionSource
+        get() = pagerState.interactionSource
 
     /**
      * Scroll (jump immediately) to a given [item] index.
@@ -145,4 +163,10 @@ public class StackState : ScrollableState {
     @get:Suppress("GetterSetterNames")
     override val lastScrolledBackward: Boolean
         get() = pagerState.lastScrolledBackward
+
+    public companion object {
+        /** The default [Saver] implementation for [StackState]. */
+        public val Saver: Saver<StackState, Int> =
+            Saver(save = { it.topItem }, restore = { StackState(it) })
+    }
 }
