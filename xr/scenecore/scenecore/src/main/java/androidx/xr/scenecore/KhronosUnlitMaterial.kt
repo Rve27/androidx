@@ -30,18 +30,20 @@ import androidx.xr.scenecore.internal.RenderingRuntime
  * A [Material] defines the visual appearance of a surface when rendered. It encapsulates properties
  * like color, texture, and how light interacts with the surface.
  *
- * It's important to dispose of the [Material] when it's no longer needed to free up resources. This
- * can be done by calling the [dispose] method.
+ * It's important to close a [Material] when it's no longer needed to free up resources. This can be
+ * done by calling the [close] method or letting it get garbage collected.
  */
-public interface Material {
+public interface Material : AutoCloseable {
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) public val material: RtMaterial
 
     /**
-     * Disposes the [Material] and releases its underlying graphics resources.
+     * Closes the given [Material].
      *
-     * After disposal, the [Material] should not be used further.
+     * The [Material] can be explicitly closed at anytime or garbage collected. In both cases, its
+     * resources are freed and an exception will be thrown if the [Material] is used after being
+     * closed.
      */
-    @MainThread public fun dispose()
+    @MainThread override public fun close()
 }
 
 /**
@@ -56,7 +58,6 @@ public interface Material {
  * - [alphaMode (and
  *   alphaCutoff)](https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html#alpha-coverage)
  */
-@Suppress("NotCloseable")
 public class KhronosUnlitMaterial
 internal constructor(
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) override val material: RtMaterial,
@@ -64,9 +65,13 @@ internal constructor(
     internal val session: Session,
 ) : Material {
 
-    /** Disposes the [KhronosUnlitMaterial] and releases its underlying graphics resources. */
+    /**
+     * Closes the [KhronosUnlitMaterial] and releases its underlying graphics resources.
+     *
+     * After being closed, the [KhronosUnlitMaterial] should not be used further.
+     */
     @MainThread
-    override public fun dispose() {
+    override public fun close() {
         session.renderingRuntime.destroyKhronosPbrMaterial(material)
     }
 

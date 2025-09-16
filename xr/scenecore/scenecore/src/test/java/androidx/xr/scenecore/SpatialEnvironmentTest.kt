@@ -169,7 +169,7 @@ class SpatialEnvironmentTest {
                 object : Material {
                     override val material = rtMaterialMock
 
-                    override fun dispose() {
+                    override fun close() {
                         // The lifecycle of this material is managed by the SpatialEnvironment.
                     }
                 },
@@ -210,7 +210,7 @@ class SpatialEnvironmentTest {
                 object : Material {
                     override val material = rtMaterialMock2
 
-                    override fun dispose() {
+                    override fun close() {
                         // The lifecycle of this material is managed by the SpatialEnvironment.
                     }
                 },
@@ -229,7 +229,7 @@ class SpatialEnvironmentTest {
                 object : Material {
                     override val material = rtMaterialMock
 
-                    override fun dispose() {
+                    override fun close() {
                         // The lifecycle of this material is managed by the SpatialEnvironment.
                     }
                 },
