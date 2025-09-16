@@ -16,8 +16,6 @@
 
 package androidx.room3.integration.testapp.dao;
 
-import android.database.Cursor;
-
 import androidx.lifecycle.LiveData;
 import androidx.room3.Dao;
 import androidx.room3.Delete;
@@ -178,9 +176,6 @@ public abstract class UserDao {
 
     @Query("select * from user where mBirthday > :from AND mBirthday < :to")
     public abstract List<User> findByBirthdayRange(Date from, Date to);
-
-    @Query("select mId from user where mId IN (:ids)")
-    public abstract Cursor findUsersAsCursor(int... ids);
 
     @Query("select * from user where mId = :id")
     public abstract io.reactivex.Flowable<@NonNull User> rx2_flowableUserById(int id);
