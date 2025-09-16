@@ -4,6 +4,7 @@ import androidx.room3.EntityUpsertAdapter
 import androidx.room3.RoomDatabase
 import androidx.room3.util.performBlocking
 import androidx.sqlite.SQLiteStatement
+import java.lang.Void
 import javax.`annotation`.processing.Generated
 import kotlin.Array
 import kotlin.Long
@@ -11,6 +12,7 @@ import kotlin.String
 import kotlin.Suppress
 import kotlin.Unit
 import kotlin.collections.List
+import kotlin.collections.MutableList
 import kotlin.reflect.KClass
 
 @Generated(value = ["androidx.room3.RoomProcessor"])
@@ -55,6 +57,11 @@ internal class MyDao_Impl(
     __insertAdapterOfMyEntity.insert(_connection, item)
   }
 
+  public override fun insertEntityAndReturnVoid(item: MyEntity): Void? = performBlocking(__db, false, true) { _connection ->
+    __insertAdapterOfMyEntity.insert(_connection, item)
+    null
+  }
+
   public override fun insertEntityAndReturnRowId(item: MyEntity): Long = performBlocking(__db, false, true) { _connection ->
     val _result: Long = __insertAdapterOfMyEntity.insertAndReturnId(_connection, item)
     _result
@@ -65,8 +72,18 @@ internal class MyDao_Impl(
     _result
   }
 
+  public override fun insertEntityListAndReturnMutableRowIds(items: List<MyEntity>): MutableList<Long> = performBlocking(__db, false, true) { _connection ->
+    val _result: MutableList<Long> = __insertAdapterOfMyEntity.insertAndReturnIdsList(_connection, items).toMutableList()
+    _result
+  }
+
   public override fun upsertEntity(item: MyEntity): Unit = performBlocking(__db, false, true) { _connection ->
     __upsertAdapterOfMyEntity.upsert(_connection, item)
+  }
+
+  public override fun upsertEntityAndReturnVoid(item: MyEntity): Void? = performBlocking(__db, false, true) { _connection ->
+    __upsertAdapterOfMyEntity.upsert(_connection, item)
+    null
   }
 
   public override fun upsertEntityAndReturnRowId(item: MyEntity): Long = performBlocking(__db, false, true) { _connection ->
@@ -76,6 +93,11 @@ internal class MyDao_Impl(
 
   public override fun upsertEntityListAndReturnRowIds(items: List<MyEntity>): List<Long> = performBlocking(__db, false, true) { _connection ->
     val _result: List<Long> = __upsertAdapterOfMyEntity.upsertAndReturnIdsList(_connection, items)
+    _result
+  }
+
+  public override fun upsertEntityListAndReturnMutableRowIds(items: List<MyEntity>): MutableList<Long> = performBlocking(__db, false, true) { _connection ->
+    val _result: MutableList<Long> = __upsertAdapterOfMyEntity.upsertAndReturnIdsList(_connection, items).toMutableList()
     _result
   }
 
