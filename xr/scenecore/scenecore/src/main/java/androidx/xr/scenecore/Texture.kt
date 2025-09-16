@@ -29,26 +29,22 @@ import java.nio.file.Path
  * A texture is an image that can be applied to a 3D model to give it color, detail, and realism. It
  * can also be used as an alpha mask for a [StereoSurfaceEntity].
  *
- * It's important to dispose of the [Texture] when it's no longer needed to free up resources. This
- * can be done by calling the [dispose] method.
+ * It's important to close a [Texture] when it's no longer needed to free up resources. This can be
+ * done by calling the [close] method or letting it get garbage collected.
  */
-@Suppress("NotCloseable")
 public open class Texture
-internal constructor(internal val texture: RtTextureResource, internal val session: Session) {
+internal constructor(internal val texture: RtTextureResource, internal val session: Session) :
+    AutoCloseable {
 
     /**
-     * Disposes the given [Texture].
+     * Closes the given [Texture].
      *
-     * Currently, a glTF model (which this texture will be used with) can't be disposed. This means
-     * that calling dispose on the texture will lead to a crash if the call is made out of order,
-     * that is, if the texture is disposed before the glTF model that uses it.
-     *
-     * When using a texture as an alpha mask for stereoscopic content, the [StereoSurfaceEntity]
-     * should be disposed before the texture is disposed.
+     * The [Texture] can be explicitly closed at anytime or garbage collected. In both cases, its
+     * resources are freed and an exception will be thrown if the [Texture] is used after being
+     * closed.
      */
-    // TODO(b/376277201): Provide Session.GltfModel.dispose().
     @MainThread
-    public open fun dispose() {
+    override public open fun close() {
         session.runtimes.filterIsInstance<RenderingRuntime>().single().destroyTexture(texture)
     }
 
