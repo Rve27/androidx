@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.credentials.providerevents.playservices
+package androidx.credentials.providerevents
 
 import android.content.Intent
 import android.content.pm.SigningInfo
@@ -27,7 +27,6 @@ import androidx.credentials.providerevents.exception.ImportCredentialsUnknownErr
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SdkSuppress
 import androidx.test.filters.SmallTest
-import com.google.android.gms.identitycredentials.ImportCredentialsRequest
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -43,12 +42,12 @@ class IntentHandlerTest {
     fun retrieveProviderImportCredentialsRequest_success() {
         // 1. Setup
         val intent = Intent()
-        val importRequest = ImportCredentialsRequest(testRequestJson, Uri.EMPTY)
         val signingInfo = SigningInfo()
 
-        intent.putExtra(EXTRA_REQUEST_JSON, importRequest.requestJson)
-        intent.putExtra(EXTRA_PACKAGE_NAME_KEY, testPackageName)
-        intent.putExtra(EXTRA_SIGNING_INFO_KEY, signingInfo)
+        intent.putExtra(EXTRA_REQUEST_JSON, testRequestJson)
+        intent.putExtra(EXTRA_PACKAGE_NAME, testPackageName)
+        intent.putExtra(EXTRA_SIGNING_INFO, signingInfo)
+        intent.putExtra(EXTRA_CRED_ID, "testCredId")
         intent.setData(Uri.EMPTY)
 
         // 2. Execution
@@ -79,8 +78,9 @@ class IntentHandlerTest {
         // 1. Setup
         val intent = Intent()
         // We add other extras but not the required ImportCredentialsRequest
-        intent.putExtra(EXTRA_PACKAGE_NAME_KEY, testPackageName)
-        intent.putExtra(EXTRA_SIGNING_INFO_KEY, SigningInfo())
+        intent.putExtra(EXTRA_PACKAGE_NAME, testPackageName)
+        intent.putExtra(EXTRA_SIGNING_INFO, SigningInfo())
+        intent.putExtra(EXTRA_CRED_ID, "testCredId")
 
         // 2. Execution
         val result = IntentHandler.retrieveProviderImportCredentialsRequest(intent)
@@ -93,13 +93,10 @@ class IntentHandlerTest {
     fun retrieveProviderImportCredentialsRequest_missingPackageName_returnsNull() {
         // 1. Setup
         val intent = Intent()
-        val importRequest = ImportCredentialsRequest(testRequestJson, Uri.EMPTY)
 
-        intent.putExtra(
-            "androidx.identitycredentials.extra.IMPORT_CREDENTIALS_REQUEST",
-            importRequest,
-        )
-        intent.putExtra(EXTRA_SIGNING_INFO_KEY, SigningInfo())
+        intent.putExtra(EXTRA_REQUEST_JSON, testRequestJson)
+        intent.putExtra(EXTRA_SIGNING_INFO, SigningInfo())
+        intent.putExtra(EXTRA_CRED_ID, "testCredId")
 
         // 2. Execution
         val result = IntentHandler.retrieveProviderImportCredentialsRequest(intent)
@@ -112,13 +109,10 @@ class IntentHandlerTest {
     fun retrieveProviderImportCredentialsRequest_missingSigningInfo_returnsNull() {
         // 1. Setup
         val intent = Intent()
-        val importRequest = ImportCredentialsRequest(testRequestJson, Uri.EMPTY)
 
-        intent.putExtra(
-            "androidx.identitycredentials.extra.IMPORT_CREDENTIALS_REQUEST",
-            importRequest,
-        )
-        intent.putExtra(EXTRA_PACKAGE_NAME_KEY, testPackageName)
+        intent.putExtra(EXTRA_REQUEST_JSON, testRequestJson)
+        intent.putExtra(EXTRA_PACKAGE_NAME, testPackageName)
+        intent.putExtra(EXTRA_CRED_ID, "testCredId")
         // Note: We are explicitly not adding the SigningInfo extra
 
         // 2. Execution
@@ -130,6 +124,24 @@ class IntentHandlerTest {
         // A robust test checks for the expected null return due to this failure path.
         // The test passes if a null is returned as the internal check for signingInfo should handle
         // it.
+        assertThat(result).isNull()
+    }
+
+    @Test
+    fun retrieveProviderImportCredentialsRequest_missingCredId_returnsNull() {
+        // 1. Setup
+        val intent = Intent()
+        val signingInfo = SigningInfo()
+
+        intent.putExtra(EXTRA_REQUEST_JSON, testRequestJson)
+        intent.putExtra(EXTRA_PACKAGE_NAME, testPackageName)
+        intent.putExtra(EXTRA_SIGNING_INFO, signingInfo)
+        intent.setData(Uri.EMPTY)
+
+        // 2. Execution
+        val result = IntentHandler.retrieveProviderImportCredentialsRequest(intent)
+
+        // 3. Assertion
         assertThat(result).isNull()
     }
 
@@ -177,9 +189,12 @@ class IntentHandlerTest {
     }
 
     private companion object {
-        const val EXTRA_PACKAGE_NAME_KEY = "androidx.identitycredentials.extra.CALLING_PACKAGE_NAME"
-        const val EXTRA_SIGNING_INFO_KEY = "androidx.identitycredentials.extra.SIGNING_INFO"
-        const val EXTRA_REQUEST_JSON =
-            "androidx.identitycredentials.extra.IMPORT_CREDENTIALS_REQUEST_JSON"
+        private const val EXTRA_REQUEST_JSON =
+            "androidx.credentials.providerevents.extra.IMPORT_CREDENTIALS_REQUEST_JSON"
+        private const val EXTRA_PACKAGE_NAME =
+            "androidx.credentials.providerevents.extra.CALLING_PACKAGE_NAME"
+        private const val EXTRA_SIGNING_INFO =
+            "androidx.credentials.providerevents.extra.SIGNING_INFO"
+        private const val EXTRA_CRED_ID = "androidx.credentials.providerevents.extra.CREDENTIAL_ID"
     }
 }
