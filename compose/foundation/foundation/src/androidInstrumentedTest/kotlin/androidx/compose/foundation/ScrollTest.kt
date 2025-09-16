@@ -36,6 +36,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.text.contextmenu.test.assertNotNull
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
@@ -1261,6 +1262,74 @@ class ScrollTest(private val config: Config) {
                     }
                 }
             }
+        }
+    }
+
+    @Test
+    fun scrollIndicatorState_whenContentFits() {
+        val initialScroll = 0
+        val state = ScrollState(initialScroll)
+        val contentSize = defaultCellSize * colors.size
+        val scrollerSize = contentSize + 10
+
+        composeScroller(scrollState = state, mainAxisSize = scrollerSize)
+
+        rule.runOnIdle {
+            assertNotNull(state.scrollIndicatorState)
+            assertThat(state.scrollIndicatorState?.scrollOffset).isEqualTo(initialScroll)
+            // The scroll modifier's current behavior propagates min. constraints that prevents the
+            // content from shrinking, causing it to fill the viewport.
+            // For more details, check aosp/3744270.
+            assertThat(state.scrollIndicatorState?.contentSize).isEqualTo(scrollerSize)
+            assertThat(state.scrollIndicatorState?.viewportSize).isEqualTo(scrollerSize)
+        }
+    }
+
+    @Test
+    fun scrollIndicatorState_whenContentFits_doesNotChangeOnScroll() {
+        val initialScroll = 0
+        val state = ScrollState(initialScroll)
+        val contentSize = defaultCellSize * colors.size
+        val scrollerSize = contentSize + 10
+        val scrollAmount = 5
+
+        composeScroller(scrollState = state, mainAxisSize = scrollerSize)
+
+        scope.launch { state.scrollTo(scrollAmount) }
+
+        rule.runOnIdle {
+            assertNotNull(state.scrollIndicatorState)
+            assertThat(state.scrollIndicatorState?.scrollOffset).isEqualTo(initialScroll)
+            assertThat(state.scrollIndicatorState?.contentSize).isEqualTo(scrollerSize)
+            assertThat(state.scrollIndicatorState?.viewportSize).isEqualTo(scrollerSize)
+        }
+    }
+
+    @Test
+    fun scrollIndicatorState_whenContentDoesNotFit_initialAndScrolled() {
+        val initialScroll = 0
+        val state = ScrollState(initialScroll)
+        val contentSize = defaultCellSize * colors.size
+        val scrollerSize = contentSize - 10
+
+        composeScroller(scrollState = state, mainAxisSize = scrollerSize)
+
+        rule.runOnIdle {
+            assertNotNull(state.scrollIndicatorState)
+            assertThat(state.scrollIndicatorState?.scrollOffset).isEqualTo(initialScroll)
+            assertThat(state.scrollIndicatorState?.contentSize).isEqualTo(contentSize)
+            assertThat(state.scrollIndicatorState?.viewportSize).isEqualTo(scrollerSize)
+        }
+
+        val scrollAmount = 5
+        scope.launch { state.scrollTo(scrollAmount) }
+
+        rule.runOnIdle {
+            assertNotNull(state.scrollIndicatorState)
+            assertThat(state.scrollIndicatorState?.scrollOffset)
+                .isEqualTo(initialScroll + scrollAmount)
+            assertThat(state.scrollIndicatorState?.contentSize).isEqualTo(contentSize)
+            assertThat(state.scrollIndicatorState?.viewportSize).isEqualTo(scrollerSize)
         }
     }
 
