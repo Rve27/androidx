@@ -37,6 +37,8 @@ import androidx.room3.integration.testapp.vo.UserIdAndPetIds;
 import androidx.room3.integration.testapp.vo.UserIdAndPetNames;
 import androidx.room3.integration.testapp.vo.UserWithPetsAndToys;
 
+import org.jspecify.annotations.NonNull;
+
 import java.util.List;
 
 @Dao
@@ -92,19 +94,19 @@ public interface UserPetDao {
 
     @Transaction
     @Query("SELECT * FROM User u where u.mId = :userId")
-    io.reactivex.Flowable<UserAndAllPets> rx2_flowableUserWithPets(int userId);
+    io.reactivex.Flowable<@NonNull UserAndAllPets> rx2_flowableUserWithPets(int userId);
 
     @Transaction
     @Query("SELECT * FROM User u where u.mId = :userId")
-    io.reactivex.rxjava3.core.Flowable<UserAndAllPets> rx3_flowableUserWithPets(int userId);
+    io.reactivex.rxjava3.core.Flowable<@NonNull UserAndAllPets> rx3_flowableUserWithPets(int userId);
 
     @Transaction
     @Query("SELECT * FROM User u where u.mId = :userId")
-    io.reactivex.Observable<UserAndAllPets> rx2_observableUserWithPets(int userId);
+    io.reactivex.Observable<@NonNull UserAndAllPets> rx2_observableUserWithPets(int userId);
 
     @Transaction
     @Query("SELECT * FROM User u where u.mId = :userId")
-    io.reactivex.rxjava3.core.Observable<UserAndAllPets> rx3_observableUserWithPets(int userId);
+    io.reactivex.rxjava3.core.Observable<@NonNull UserAndAllPets> rx3_observableUserWithPets(int userId);
 
     @Transaction
     @Query("SELECT * FROM User u where u.mId = :uid")

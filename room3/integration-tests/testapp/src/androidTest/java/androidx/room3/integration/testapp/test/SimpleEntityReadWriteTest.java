@@ -480,25 +480,6 @@ public class SimpleEntityReadWriteTest {
     }
 
     @Test
-    public void readViaCursor() {
-        User[] users = TestUtil.createUsersArray(3, 5, 7, 9);
-        mUserDao.insertAll(users);
-        Cursor cursor = mUserDao.findUsersAsCursor(3, 5, 9);
-        try {
-            assertThat(cursor.getCount(), is(3));
-            assertThat(cursor.moveToNext(), is(true));
-            assertThat(cursor.getInt(0), is(3));
-            assertThat(cursor.moveToNext(), is(true));
-            assertThat(cursor.getInt(0), is(5));
-            assertThat(cursor.moveToNext(), is(true));
-            assertThat(cursor.getInt(0), is(9));
-            assertThat(cursor.moveToNext(), is(false));
-        } finally {
-            cursor.close();
-        }
-    }
-
-    @Test
     public void readDirectWithTypeAdapter() {
         User user = TestUtil.createUser(3);
         user.setBirthday(null);

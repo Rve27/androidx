@@ -358,7 +358,7 @@ public class QueryTransactionTest {
 
         @Override
         @Query(SELECT_ALL)
-        Flowable<List<Entity1>> flowable();
+        Flowable<@NonNull List<Entity1>> flowable();
 
         @Override
         @Query(SELECT_ALL)
@@ -366,11 +366,11 @@ public class QueryTransactionTest {
 
         @Override
         @Query(SELECT_ALL)
-        Maybe<List<Entity1>> maybe();
+        Maybe<@NonNull List<Entity1>> maybe();
 
         @Override
         @Query(SELECT_ALL)
-        Single<List<Entity1>> single();
+        Single<@NonNull List<Entity1>> single();
 
         @Override
         @Query(SELECT_ALL)
@@ -389,7 +389,7 @@ public class QueryTransactionTest {
         @Override
         @Transaction
         @Query(SELECT_ALL)
-        Flowable<List<Entity1>> flowable();
+        Flowable<@NonNull List<Entity1>> flowable();
 
         @Override
         @Transaction
@@ -399,12 +399,12 @@ public class QueryTransactionTest {
         @Override
         @Transaction
         @Query(SELECT_ALL)
-        Maybe<List<Entity1>> maybe();
+        Maybe<@NonNull List<Entity1>> maybe();
 
         @Override
         @Transaction
         @Query(SELECT_ALL)
-        Single<List<Entity1>> single();
+        Single<@NonNull List<Entity1>> single();
 
         @Override
         @Transaction
