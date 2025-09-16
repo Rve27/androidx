@@ -26,6 +26,7 @@ import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertNotNull
 import kotlin.test.assertNotSame
 import kotlin.test.assertNull
 import kotlin.test.assertSame
@@ -1042,6 +1043,148 @@ class RetainTests {
             eq("stopKeepingExitedValues")
             inAnyOrder("Retire(D)", "Retire(C)")
         }
+    }
+
+    @Test
+    fun retainedContentHostInitializationTest() = compositionTest {
+        val scope = ControlledRetainScope()
+        var retainedContentHostScope: RetainScope? = null
+        var showContent by mutableStateOf(true)
+        var retainedCounter = 0
+
+        compose {
+            CompositionLocalProvider(value = LocalRetainScope provides scope) {
+                RetainedContentHost(active = showContent) {
+                    if (retainedContentHostScope != null) {
+                        assertSame(retainedContentHostScope, LocalRetainScope.current)
+                    } else {
+                        retainedContentHostScope = LocalRetainScope.current
+                    }
+
+                    Text(retain { retainedCounter++.toString() })
+                    Text(retain { retainedCounter++.toString() })
+                    Text(retain { retainedCounter++.toString() })
+                }
+            }
+        }
+
+        validate {
+            Text("0")
+            Text("1")
+            Text("2")
+        }
+        expectNoChanges()
+        assertNotNull(retainedContentHostScope, "retainedContentHostScope not initialized")
+        assertFalse(retainedContentHostScope.isKeepingExitedValues)
+    }
+
+    @Test
+    fun retainedContentHostNestedInitializationTest() = compositionTest {
+        val scope = ControlledRetainScope().apply { startKeepingExitedValues() }
+        var retainedContentHostScope: RetainScope? = null
+        var showContent by mutableStateOf(true)
+        var retainedCounter = 0
+
+        compose {
+            CompositionLocalProvider(value = LocalRetainScope provides scope) {
+                RetainedContentHost(active = showContent) {
+                    if (retainedContentHostScope != null) {
+                        assertSame(retainedContentHostScope, LocalRetainScope.current)
+                    } else {
+                        retainedContentHostScope = LocalRetainScope.current
+                    }
+
+                    Text(retain { retainedCounter++.toString() })
+                    Text(retain { retainedCounter++.toString() })
+                    Text(retain { retainedCounter++.toString() })
+                }
+            }
+        }
+
+        validate {
+            Text("0")
+            Text("1")
+            Text("2")
+        }
+        expectNoChanges()
+        assertNotNull(retainedContentHostScope, "retainedContentHostScope not initialized")
+        assertTrue(retainedContentHostScope.isKeepingExitedValues)
+
+        scope.stopKeepingExitedValues()
+        expectNoChanges()
+        assertFalse(retainedContentHostScope.isKeepingExitedValues)
+    }
+
+    @Test
+    fun retainedContentHostTest() = compositionTest {
+        val scope = ControlledRetainScope()
+        var retainedContentHostScope: RetainScope? = null
+        var showContent by mutableStateOf(true)
+        var retainedCounter = 0
+
+        compose {
+            CompositionLocalProvider(value = LocalRetainScope provides scope) {
+                RetainedContentHost(active = showContent) {
+                    if (retainedContentHostScope != null) {
+                        assertSame(retainedContentHostScope, LocalRetainScope.current)
+                    } else {
+                        retainedContentHostScope = LocalRetainScope.current
+                    }
+
+                    Text(retain { retainedCounter++.toString() })
+                    Text(retain { retainedCounter++.toString() })
+                    Text(retain { retainedCounter++.toString() })
+                }
+            }
+        }
+
+        assertNotNull(retainedContentHostScope, "retainedContentHostScope was not initialized")
+        assertNotSame(
+            scope,
+            retainedContentHostScope,
+            "RetainedContentHost should issue a new RetainScope for its children.",
+        )
+        assertFalse(
+            retainedContentHostScope.isKeepingExitedValues,
+            "retainedContentHostScope should be initialized as not retaining",
+        )
+
+        validate {
+            Text("0")
+            Text("1")
+            Text("2")
+        }
+
+        showContent = false
+        expectChanges()
+        validate {}
+        assertTrue(
+            retainedContentHostScope.isKeepingExitedValues,
+            "retainedContentHostScope should be retaining values when inactive",
+        )
+
+        showContent = true
+        expectChanges()
+        validate {
+            Text("0")
+            Text("1")
+            Text("2")
+        }
+
+        assertFalse(
+            retainedContentHostScope.isKeepingExitedValues,
+            "retainedContentHostScope should stop retaining after being restored",
+        )
+        scope.startKeepingExitedValues()
+        assertTrue(
+            retainedContentHostScope.isKeepingExitedValues,
+            "retainedContentHostScope should match parent state",
+        )
+        scope.stopKeepingExitedValues()
+        assertFalse(
+            retainedContentHostScope.isKeepingExitedValues,
+            "retainedContentHostScope should match parent state",
+        )
     }
 
     private inline fun <reified T : Throwable> assertThrows(block: () -> Unit) {

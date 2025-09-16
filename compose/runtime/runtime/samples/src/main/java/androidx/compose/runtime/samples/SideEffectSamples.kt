@@ -102,10 +102,14 @@ fun retainedEffectSample() {
     }
 }
 
-private class MediaPlayer(val uri: String) {
+internal class MediaPlayer(val uri: String = "") {
     fun initialize() {}
 
     fun close() {}
+
+    fun play() {}
+
+    fun stop() {}
 }
 
 private interface Dispatcher {
