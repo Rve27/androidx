@@ -33,7 +33,7 @@ builder = "8.6.0-alpha05"
 byteBuddy = "1.14.9"
 asm = "9.7"
 cmake = "3.22.1"
-composeCompilerPlugin = "2.2.0-custom-branch-20"
+composeCompilerPlugin = "2.2.20"
 dagger = "2.57.1"
 dependencyAnalysisGradlePlugin = "2.11.0"
 dexmaker = "2.28.6"
@@ -51,8 +51,8 @@ kotlin19 = "1.9.24"
 # Use the most up-to-date patch
 kotlin20 = "2.0.21"
 kotlin21 = "2.1.20"
-kotlin22 = "2.2.10"
-kotlin = "2.2.10"
+kotlin22 = "2.2.20"
+kotlin = "2.2.20"
 kotlinBenchmark = "0.4.14"
 kotlinGradlePluginAnnotations = "1.9.24"
 kotlinGradlePluginApi = "1.9.24"
@@ -215,7 +215,7 @@ kotlinSerializationProtobuf = { module = "org.jetbrains.kotlinx:kotlinx-serializ
 kotlinGradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 kotlinStdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib" }
 kotlinStdlibCommon = { module = "org.jetbrains.kotlin:kotlin-stdlib-common" }
-kotlinTest = { module = "org.jetbrains.kotlin:kotlin-test" }
+kotlinTest = { module = "org.jetbrains.kotlin:kotlin-test"}
 kotlinTestAnnotationsCommon = { module = "org.jetbrains.kotlin:kotlin-test-annotations-common" }
 kotlinTestCommon = { module = "org.jetbrains.kotlin:kotlin-test-common" }
 kotlinTestJunit = { module = "org.jetbrains.kotlin:kotlin-test-junit" }

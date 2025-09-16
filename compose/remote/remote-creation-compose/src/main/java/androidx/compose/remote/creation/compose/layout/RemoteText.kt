@@ -223,7 +223,7 @@ public fun RemoteText(
             else -> -1
         }
     if (captureMode is NoRemoteCompose) {
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION", "COMPOSE_APPLIER_CALL_MISMATCH") // b/446706254
         Text(
             text = text.value,
             modifier = modifier.toComposeUi(),
@@ -237,6 +237,7 @@ public fun RemoteText(
             maxLines = maxLines,
         )
     } else {
+        @Suppress("COMPOSE_APPLIER_CALL_MISMATCH") // b/446706254
         androidx.compose.foundation.layout.Box(
             RemoteComposeTextComponentModifier(
                     modifier.toRemoteCompose(),
@@ -316,7 +317,7 @@ public fun RemoteText(
             else -> -1
         }
     if (captureMode is NoRemoteCompose) {
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION", "COMPOSE_APPLIER_CALL_MISMATCH") // b/446706254
         Text(
             text = "XX",
             modifier = modifier.toComposeUi(),
@@ -330,6 +331,7 @@ public fun RemoteText(
             maxLines = maxLines,
         )
     } else {
+        @Suppress("COMPOSE_APPLIER_CALL_MISMATCH") // b/446706254
         androidx.compose.foundation.layout.Box(
             RemoteComposeTextComponentModifier(
                     modifier.toRemoteCompose(),

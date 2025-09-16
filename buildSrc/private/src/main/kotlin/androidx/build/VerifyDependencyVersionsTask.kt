@@ -253,6 +253,9 @@ internal fun Project.shouldVerifyConfiguration(configuration: Configuration): Bo
         return false
     }
 
+    // don't verify swift export because we don't have any libraries that use it
+    if (name == "swiftExportClasspathResolvable") return false
+
     // don't verify baseline profile generating project dependencies
     if (name == "baselineProfile") return false
     if (name == "releaseBaselineProfile") return false
