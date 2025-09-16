@@ -13,10 +13,14 @@ RemovedDeprecatedMethod: androidx.compose.material3.adaptive.navigationsuite.Nav
     Binary breaking change: Removed deprecated method androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldKt.NavigationSuiteScaffoldLayout(kotlin.jvm.functions.Function0<kotlin.Unit>,String,kotlin.jvm.functions.Function0<kotlin.Unit>)
 
 
+RemovedFromBytecode: androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteDefaults#itemColors(androidx.compose.material3.NavigationBarItemColors, androidx.compose.material3.NavigationRailItemColors, androidx.compose.material3.NavigationDrawerItemColors):
+    Binary breaking change: method androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteDefaults.itemColors(androidx.compose.material3.NavigationBarItemColors,androidx.compose.material3.NavigationRailItemColors,androidx.compose.material3.NavigationDrawerItemColors) has been removed from bytecode
 RemovedFromBytecode: androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults#calculateFromAdaptiveInfo(androidx.compose.material3.adaptive.WindowAdaptiveInfo):
     Binary breaking change: method androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(androidx.compose.material3.adaptive.WindowAdaptiveInfo) has been removed from bytecode
 RemovedFromBytecode: androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults#navigationSuiteType(androidx.compose.material3.adaptive.WindowAdaptiveInfo):
     Binary breaking change: method androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults.navigationSuiteType(androidx.compose.material3.adaptive.WindowAdaptiveInfo) has been removed from bytecode
+RemovedFromBytecode: androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldKt#rememberNavigationSuiteScaffoldState(androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldValue):
+    Binary breaking change: method androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldKt.rememberNavigationSuiteScaffoldState(androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldValue) has been removed from bytecode
 
 
 RemovedFromKotlin: androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteColors#getWideNavigationRailColors():

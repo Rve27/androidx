@@ -13,6 +13,8 @@ RemovedDeprecatedMethod: androidx.compose.material.ripple.RippleTheme.Companion#
 
 RemovedFromBytecode: androidx.compose.material.ripple.RippleTheme#defaultColor():
     Binary breaking change: method androidx.compose.material.ripple.RippleTheme.defaultColor() has been removed from bytecode
+RemovedFromBytecode: androidx.compose.material.ripple.RippleTheme#rippleAlpha():
+    Binary breaking change: method androidx.compose.material.ripple.RippleTheme.rippleAlpha() has been removed from bytecode
 
 
 RemovedFromKotlin: androidx.compose.material.ripple.RippleAlpha#getDraggedAlpha():

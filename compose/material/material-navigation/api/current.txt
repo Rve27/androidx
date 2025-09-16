@@ -28,7 +28,7 @@ package androidx.compose.material.navigation {
   }
 
   public final class BottomSheetNavigatorKt {
-    method @androidx.compose.runtime.Composable public static androidx.compose.material.navigation.BottomSheetNavigator rememberBottomSheetNavigator(optional androidx.compose.animation.core.AnimationSpec<java.lang.Float> animationSpec);
+    method @KotlinOnly @androidx.compose.runtime.Composable public static androidx.compose.material.navigation.BottomSheetNavigator rememberBottomSheetNavigator(optional androidx.compose.animation.core.AnimationSpec<java.lang.Float> animationSpec);
     method @BytecodeOnly @androidx.compose.runtime.Composable public static androidx.compose.material.navigation.BottomSheetNavigator rememberBottomSheetNavigator(androidx.compose.animation.core.AnimationSpec<java.lang.Float!>?, androidx.compose.runtime.Composer?, int, int);
   }
 
