@@ -18,6 +18,7 @@ package androidx.compose.runtime
 
 import androidx.collection.MutableScatterSet
 import androidx.compose.runtime.RetainScope.*
+import androidx.compose.runtime.RetainStateProvider.AlwaysKeepExitedValues
 import androidx.compose.runtime.RetainStateProvider.NeverKeepExitedValues
 import androidx.compose.runtime.RetainStateProvider.RetainStateObserver
 import androidx.compose.runtime.collection.SafeMultiValueMap
@@ -301,7 +302,8 @@ public val LocalRetainScope: ProvidableCompositionLocal<RetainScope> = staticCom
  */
 public abstract class RetainScope : RetainStateProvider {
 
-    private var keepExitedValuesRequests = 0
+    protected var keepExitedValuesRequests: Int = 0
+        private set
 
     final override val isKeepingExitedValues: Boolean
         get() = keepExitedValuesRequests > 0
@@ -564,6 +566,10 @@ public interface RetainStateProvider {
  * [Composer.scheduleFrameEndCallback] to ensure that all content has settled in subcompositions and
  * movable content that may not be realized or applied in as part of a composition that is currently
  * ongoing.
+ *
+ * To create a [ControlledRetainScope] that is managed entirely within the composition hierarchy,
+ * you can use [retainControlledRetainScope] to create a [ControlledRetainScope] that is
+ * automatically parented to the current [LocalRetainScope].
  */
 public class ControlledRetainScope : RetainScope() {
     private val keptExitedValues = SafeMultiValueMap<Any, Any?>()
@@ -579,6 +585,18 @@ public class ControlledRetainScope : RetainScope() {
                 unRequestKeepExitedValues()
             }
         }
+
+    /**
+     * Returns the number of calls to [startKeepingExitedValues] - [stopKeepingExitedValues].
+     * Effectively, the total number of active requests to this [ControlledRetainScope].
+     *
+     * Note that this value **ignores any parent state.** It only counts explicit requests from the
+     * user to [startKeepingExitedValues]. This scope could still be retaining if this value is `0`
+     * if the parent scope is retaining. This is useful if you want to track your contributions to
+     * this scope's state, ignoring the parent.
+     */
+    public val keepExitedValuesRequestsFromSelf: Int
+        get() = keepExitedValuesRequests - if (parentScope.isKeepingExitedValues) 1 else 0
 
     /**
      * Calling this function will automatically mirror the state of [isKeepingExitedValues] to match
@@ -665,6 +683,132 @@ public object ForgetfulRetainScope : RetainScope() {
 
     override fun saveExitingValue(key: Any, value: Any?) {
         throw UnsupportedOperationException("ForgetfulRetainScope can never keep exited values.")
+    }
+}
+
+/**
+ * `RetainedContentHost` is used to install a [RetainScope] around a block of [content]. The
+ * installed `RetainScope` is managed such that the scope will start to keep exited values when
+ * [active] is false, and stop keeping exited values when [active] becomes true. See
+ * [RetainScope.isKeepingExitedValues] for more information on this terminology.
+ *
+ * `RetainedContentHost` is designed as an out-of-the-box solution for managing content that's
+ * controlled effectively by an if/else statement. The [content] provided to this lambda will render
+ * when [active] is true, and be removed when [active] is false. If the content is hidden and then
+ * shown again in this way, the installed RetainScope will restore all retained values from the last
+ * time the content was shown.
+ *
+ * The managed RetainScope is _also_ retained. If this composable is removed while the parent scope
+ * is keeping its exited values, this scope will be persisted so that it can be restored in the
+ * future. If this composable is removed while its parent scope is not keeping its exited values,
+ * the scope will be discarded and all its held values will be immediately retired.
+ *
+ * For this reason, when using this as a mechanism to retain values for content that is being shown
+ * and hidden, this composable must be hoisted high enough so that it is not removed when the
+ * content being retained is hidden.
+ *
+ * @param active Whether this host should compose its [content]. When this value is true, [content]
+ *   will be rendered and the installed [RetainScope] will not keep exited values. When this value
+ *   is false, [content] will stop being rendered and the installed [RetainScope] will collect and
+ *   keep its exited values for future restoration.
+ * @param content The content to render. Inside of this lambda, [LocalRetainScope] is set to the
+ *   [RetainScope] managed by this composable.
+ * @sample androidx.compose.runtime.samples.retainedContentHostSample
+ * @see retainControlledRetainScope
+ */
+@Composable
+public fun RetainedContentHost(active: Boolean, content: @Composable () -> Unit) {
+    val retainScope = retainControlledRetainScope()
+    if (active) {
+        CompositionLocalProvider(LocalRetainScope provides retainScope, content)
+
+        // Match the isKeepingExitedValues state to the active parameter. This effect must come
+        // AFTER the content to correctly capture values.
+        val composer = currentComposer
+        DisposableEffect(retainScope) {
+            // Stop keeping exited values when we become active. Use the request count to only
+            // look at our state and to ignore any parent-influenced requests.
+            val cancellationHandle =
+                if (retainScope.keepExitedValuesRequestsFromSelf > 0) {
+                    composer.scheduleFrameEndCallback { retainScope.stopKeepingExitedValues() }
+                } else {
+                    null
+                }
+
+            onDispose {
+                // Start keeping exited values when we deactivate
+                cancellationHandle?.cancel()
+                retainScope.startKeepingExitedValues()
+            }
+        }
+    }
+}
+
+/**
+ * Retains a [ControlledRetainScope] that is nested under the current [LocalRetainScope] and has no
+ * other defined retention scenarios.
+ *
+ * A [ControlledRetainScope] created in this way will mirror the retention behavior of
+ * [LocalRetainScope]. When the parent scope begins retaining its values, the returned scope will
+ * receive a request to start retaining values as well. When the parent scope stops retaining
+ * values, that request is cleared.
+ *
+ * This API is available as a building block for other retain scopes defined in composition. To
+ * define your own retention scenario, call [ControlledRetainScope.startKeepingExitedValues] and
+ * [ControlledRetainScope.stopKeepingExitedValues] on the returned scope as appropriate. You must
+ * also install this scope in the composition hierarchy by providing it as the value of
+ * [LocalRetainScope].
+ *
+ * When this value stops being retained, it will automatically stop keeping exited values,
+ * regardless of how many times [ControlledRetainScope.startKeepingExitedValues] was called.
+ *
+ * @return A [ControlledRetainScope] nested under the [LocalRetainScope], ready to be installed in
+ *   the composition hierarchy and be used to define a retention scenario.
+ * @sample androidx.compose.runtime.samples.retainControlledRetainScopeSample
+ * @see RetainedContentHost
+ */
+@Composable
+public fun retainControlledRetainScope(): ControlledRetainScope {
+    val retainScope = retain { RetainControlledRetainScopeWrapper() }.retainScope
+
+    val parentScope = LocalRetainScope.current
+    DisposableEffect(parentScope) {
+        retainScope.setParentRetainStateProvider(parentScope)
+        onDispose {
+            // Keep the parent's state until we get a new scope. This lets us continue
+            // retaining when the composition hierarchy is destroyed and this parent is removed.
+            retainScope.setParentRetainStateProvider(
+                if (parentScope.isKeepingExitedValues) {
+                    AlwaysKeepExitedValues
+                } else {
+                    NeverKeepExitedValues
+                }
+            )
+        }
+    }
+
+    return retainScope
+}
+
+private class RetainControlledRetainScopeWrapper : RetainObserver {
+    val retainScope = ControlledRetainScope()
+
+    override fun onRetained() {}
+
+    override fun onEnteredComposition() {}
+
+    override fun onExitedComposition() {}
+
+    override fun onRetired() {
+        // The retainScope has stopped being retained. Dispose it.
+        retainScope.setParentRetainStateProvider(NeverKeepExitedValues)
+        while (retainScope.isKeepingExitedValues) retainScope.stopKeepingExitedValues()
+    }
+
+    override fun onUnused() {
+        // Need to clean up if the scope is abandoned, in case our parent caused us
+        // to initialize with kept values.
+        onRetired()
     }
 }
 
