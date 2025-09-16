@@ -16,7 +16,6 @@
 
 package androidx.credentials.registry.digitalcredentials.sdjwt
 
-import androidx.annotation.RestrictTo
 import androidx.credentials.registry.provider.digitalcredentials.InlineIssuanceEntry
 
 /**
@@ -31,14 +30,15 @@ import androidx.credentials.registry.provider.digitalcredentials.InlineIssuanceE
  * still succeed.
  *
  * @property id the provider unique identifier of this credential entry, which can be used to
- *   identify the exact credential that the user has chosen
+ *   identify the exact credential that the user has chosen; it is recommended that you generate
+ *   this `id` with enough entropy that it cannot be guessed by a third party, e.g. through
+ *   encrypting this `id` or randomizing it.
  * @property display the display properties associated with the given entry
- * @property supportedSdJwts supported SD-JWTs to offer the inline issuance flow
+ * @property supportedSdJwts supported SD-JWTs to offer the inline issuance flow; cannot be empty
  * @constructor
  * @throws IllegalArgumentException if [id] length is greater than 64 characters
  * @throws IllegalArgumentException if [supportedSdJwts] is empty
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY)
 public class SdJwtInlineIssuanceEntry(
     id: String,
     display: InlineIssuanceDisplayProperties,
@@ -52,7 +52,8 @@ public class SdJwtInlineIssuanceEntry(
      * Configuration determining whether the [SdJwtInlineIssuanceEntry] should be offered for a
      * presentation request
      *
-     * @property verifiableCredentialType the verifiable credential type (vct)
+     * @property verifiableCredentialType the verifiable credential type (vct) as defined in
+     *   [the SD-JWT VC spec](https://www.ietf.org/archive/id/draft-ietf-oauth-sd-jwt-vc-10.html#section-3.2.2.1)
      * @constructor
      * @throws IllegalArgumentException if `verifiableCredentialType` is empty
      */
