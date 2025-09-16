@@ -45,7 +45,6 @@ import androidx.xr.scenecore.internal.RenderingEntityFactory;
 import androidx.xr.scenecore.internal.RenderingRuntime;
 import androidx.xr.scenecore.internal.SceneRuntime;
 import androidx.xr.scenecore.internal.SpatialEnvironmentExt;
-import androidx.xr.scenecore.internal.SpatialEnvironmentFeature;
 import androidx.xr.scenecore.internal.SubspaceNodeEntity;
 import androidx.xr.scenecore.internal.SubspaceNodeFeature;
 import androidx.xr.scenecore.internal.SurfaceEntity;
@@ -77,7 +76,7 @@ class SpatialRenderingRuntime implements RenderingRuntime {
     private final @NonNull RenderingEntityFactory mRenderingEntityFactory;
 
     private @Nullable Activity mActivity;
-    private @Nullable SpatialEnvironmentFeature mSpatialEnvironmentFeature;
+    private @Nullable SpatialEnvironmentFeatureImpl mSpatialEnvironmentFeature;
 
     @SuppressWarnings("UnusedVariable")
     private final XrExtensions mExtensions;
@@ -105,11 +104,9 @@ class SpatialRenderingRuntime implements RenderingRuntime {
         mImpressApi = impressApi;
         mSplitEngineRenderer = renderer;
         mSplitEngineSubspaceManager = subspaceManager;
-        mSpatialEnvironmentFeature = new SpatialEnvironmentFeatureImpl(
-                mActivity,
-                mImpressApi,
-                mSplitEngineSubspaceManager,
-                mExtensions);
+        mSpatialEnvironmentFeature =
+                new SpatialEnvironmentFeatureImpl(
+                        mActivity, mImpressApi, mSplitEngineSubspaceManager, mExtensions);
 
         startRenderer();
 
@@ -196,10 +193,8 @@ class SpatialRenderingRuntime implements RenderingRuntime {
                             Thread.currentThread().interrupt();
                         }
                         if (e instanceof CancellationException) {
-                            //Log.w(TAG, "Cancelled loading glTF model: " + e.getMessage());
                             gltfModelResourceFuture.cancel(false);
                         } else {
-                            //Log.e(TAG, "Failed to load glTF model: " + e.getMessage());
                             gltfModelResourceFuture.setException(e);
                         }
                     }
@@ -235,10 +230,8 @@ class SpatialRenderingRuntime implements RenderingRuntime {
                             Thread.currentThread().interrupt();
                         }
                         if (e instanceof CancellationException) {
-                            //Log.w(TAG, "Cancelled loading EXR image: " + e.getMessage());
                             exrImageResourceFuture.cancel(false);
                         } else {
-                            //Log.e(TAG, "Failed to load EXR image: " + e.getMessage());
                             exrImageResourceFuture.setException(e);
                         }
                     }
@@ -300,7 +293,6 @@ class SpatialRenderingRuntime implements RenderingRuntime {
         try {
             textureFuture = mImpressApi.loadTexture(path);
         } catch (RuntimeException e) {
-            //Log.e(TAG, "Failed to load texture with error: " + e.getMessage());
             textureResourceFuture.setException(e);
             return textureResourceFuture;
         }
@@ -315,10 +307,8 @@ class SpatialRenderingRuntime implements RenderingRuntime {
                             Thread.currentThread().interrupt();
                         }
                         if (e instanceof CancellationException) {
-                            //Log.w(TAG, "Cancelled loading texture with error: " + e.getMessage());
                             textureResourceFuture.cancel(false);
                         } else {
-                            //Log.e(TAG, "Failed to load texture with error: " + e.getMessage());
                             textureResourceFuture.setException(e);
                         }
                     }
@@ -380,7 +370,6 @@ class SpatialRenderingRuntime implements RenderingRuntime {
         try {
             materialFuture = mImpressApi.createWaterMaterial(isAlphaMapVersion);
         } catch (RuntimeException e) {
-            //Log.e(TAG, "Failed to load water material with error: " + e.getMessage());
             materialResourceFuture.setException(e);
             return materialResourceFuture;
         }
@@ -395,15 +384,8 @@ class SpatialRenderingRuntime implements RenderingRuntime {
                             Thread.currentThread().interrupt();
                         }
                         if (e instanceof CancellationException) {
-                            //Log.w(
-                            //        TAG,
-                            //        "Cancelled loading water material with error: "
-                            //                + e.getMessage());
                             materialResourceFuture.cancel(false);
                         } else {
-                            //Log.e(
-                            //        TAG,
-                            //        "Failed to load water material with error: " + e.getMessage());
                             materialResourceFuture.setException(e);
                         }
                     }
@@ -542,7 +524,6 @@ class SpatialRenderingRuntime implements RenderingRuntime {
         try {
             materialFuture = mImpressApi.createKhronosPbrMaterial(spec);
         } catch (RuntimeException e) {
-            // Log.e(TAG, "Failed to load Khronos PBR material with error: " + e.getMessage());
             materialResourceFuture.setException(e);
             return materialResourceFuture;
         }
@@ -557,16 +538,8 @@ class SpatialRenderingRuntime implements RenderingRuntime {
                             Thread.currentThread().interrupt();
                         }
                         if (e instanceof CancellationException) {
-                            //Log.w(
-                            //        TAG,
-                            //        "Cancelled loading Khronos PBR material with error: "
-                            //                + e.getMessage());
                             materialResourceFuture.cancel(false);
                         } else {
-                            //Log.e(
-                            //        TAG,
-                            //        "Failed to load Khronos PBR material with error: "
-                            //                + e.getMessage());
                             materialResourceFuture.setException(e);
                         }
                     }
@@ -1032,11 +1005,12 @@ class SpatialRenderingRuntime implements RenderingRuntime {
             @NonNull Pose pose,
             @NonNull GltfModelResource loadedGltf,
             @NonNull Entity parentEntity) {
-        GltfFeature feature = new GltfFeatureImpl(
-                (GltfModelResourceImpl) loadedGltf,
-                mImpressApi,
-                mSplitEngineSubspaceManager,
-                mExtensions);
+        GltfFeature feature =
+                new GltfFeatureImpl(
+                        (GltfModelResourceImpl) loadedGltf,
+                        mImpressApi,
+                        mSplitEngineSubspaceManager,
+                        mExtensions);
         return mRenderingEntityFactory.createGltfEntity(feature, pose, parentEntity);
     }
 
@@ -1053,14 +1027,15 @@ class SpatialRenderingRuntime implements RenderingRuntime {
             throw new IllegalStateException("This method must be called on the main thread.");
         }
 
-        SurfaceFeatureImpl feature = new SurfaceFeatureImpl(
-                mImpressApi,
-                mSplitEngineSubspaceManager,
-                mExtensions,
-                stereoMode,
-                canvasShape,
-                contentSecurityLevel,
-                superSampling);
+        SurfaceFeatureImpl feature =
+                new SurfaceFeatureImpl(
+                        mImpressApi,
+                        mSplitEngineSubspaceManager,
+                        mExtensions,
+                        stereoMode,
+                        canvasShape,
+                        contentSecurityLevel,
+                        superSampling);
         return mRenderingEntityFactory.createSurfaceEntity(feature, pose, parentEntity);
     }
 
@@ -1068,18 +1043,18 @@ class SpatialRenderingRuntime implements RenderingRuntime {
     @NonNull
     public SubspaceNodeEntity createSubspaceNodeEntity(
             @NonNull SubspaceNodeHolder<?> subspaceNodeHolder, @NonNull Dimensions size) {
-        SubspaceNodeFeature feature = new SubspaceNodeFeatureImpl(
-                mImpressApi,
-                mSplitEngineSubspaceManager,
-                mExtensions,
-                SubspaceNodeHolder.assertGetValue(
-                        subspaceNodeHolder, SubspaceNode.class).getSubspaceNode(),
-                size);
+        SubspaceNodeFeature feature =
+                new SubspaceNodeFeatureImpl(
+                        mImpressApi,
+                        mSplitEngineSubspaceManager,
+                        mExtensions,
+                        SubspaceNodeHolder.assertGetValue(subspaceNodeHolder, SubspaceNode.class)
+                                .getSubspaceNode(),
+                        size);
         SubspaceNodeEntity entity = mRenderingEntityFactory.createSubspaceNodeEntity(feature);
         entity.setSize(size);
         return entity;
     }
-
 
     @Override
     public void startRenderer() {
@@ -1104,12 +1079,12 @@ class SpatialRenderingRuntime implements RenderingRuntime {
         if (mIsDisposed) {
             return;
         }
-        stopRenderer();
-        mImpressApi.clearPreferredEnvironmentIblAsset();
-        mImpressApi.disposeAllResources();
 
         mActivity = null;
         if (mSplitEngineRenderer != null && mSplitEngineSubspaceManager != null) {
+            stopRenderer();
+            mSpatialEnvironmentFeature.dispose();
+            mImpressApi.disposeAllResources();
             mSplitEngineSubspaceManager.destroy();
             mSplitEngineRenderer.destroy();
             mSplitEngineSubspaceManager = null;

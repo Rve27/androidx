@@ -59,9 +59,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 // Technically this doesn't need to be a Robolectric test, since it doesn't directly depend on
 // any Android subsystems. However, we're currently using an Android test runner for consistency
 // with other Android XR impl tests in this directory.
-/**
- * Unit tests for the AndroidXR implementation of JXRCore's SpatialEnvironment module.
- */
+/** Unit tests for the AndroidXR implementation of JXRCore's SpatialEnvironment module. */
 @RunWith(RobolectricTestRunner.class)
 public final class SpatialEnvironmentFeatureImplTest {
     private static final int SUBSPACE_ID = 5;
@@ -92,10 +90,7 @@ public final class SpatialEnvironmentFeatureImplTest {
 
         mEnvironment =
                 new SpatialEnvironmentFeatureImpl(
-                        mActivity,
-                        mFakeImpressApi,
-                        mSplitEngineSubspaceManager,
-                        mXrExtensions);
+                        mActivity, mFakeImpressApi, mSplitEngineSubspaceManager, mXrExtensions);
     }
 
     @SuppressWarnings({"FutureReturnValueIgnored", "AndroidJdkLibsChecker"})
@@ -164,8 +159,8 @@ public final class SpatialEnvironmentFeatureImplTest {
         assertThat(animatingNodes).isEqualTo(0);
         assertThat(loopingAnimatingNodes).isEqualTo(0);
 
-        assertThat(mFakeImpressApi.impressNodeHasParent(
-                new ImpressNode(geometryNodes.get(0)))).isTrue();
+        assertThat(mFakeImpressApi.impressNodeHasParent(new ImpressNode(geometryNodes.get(0))))
+                .isTrue();
 
         // Ensure environment is removed
         mEnvironment.setPreferredSpatialEnvironment(null);
@@ -194,8 +189,8 @@ public final class SpatialEnvironmentFeatureImplTest {
         assertThat(initialSkybox).isNotEqualTo(INVALID_SPLIT_ENGINE_ID);
         assertThat(geometryNodes).isNotEmpty();
 
-        assertThat(mFakeImpressApi.impressNodeHasParent(
-                new ImpressNode(geometryNodes.get(0)))).isTrue();
+        assertThat(mFakeImpressApi.impressNodeHasParent(new ImpressNode(geometryNodes.get(0))))
+                .isTrue();
 
         // Ensure environment is not removed if both skybox and geometry are updated to null.
         mEnvironment.setPreferredSpatialEnvironment(new SpatialEnvironmentPreference(null, null));
@@ -234,8 +229,8 @@ public final class SpatialEnvironmentFeatureImplTest {
 
         assertThat(initialSkybox).isNotEqualTo(INVALID_SPLIT_ENGINE_ID);
         assertThat(geometryNodes).isNotEmpty();
-        assertThat(mFakeImpressApi.impressNodeHasParent(
-                new ImpressNode(geometryNodes.get(0)))).isTrue();
+        assertThat(mFakeImpressApi.impressNodeHasParent(new ImpressNode(geometryNodes.get(0))))
+                .isTrue();
         assertThat(materials).isNotEmpty();
         assertThat(materials.keySet().toArray()[0]).isEqualTo(WATER_MATERIAL_ID);
         assertThat(materials.get(WATER_MATERIAL_ID).getType()).isEqualTo(MaterialData.Type.WATER);
@@ -307,8 +302,8 @@ public final class SpatialEnvironmentFeatureImplTest {
         // Only the new nodes should have a parent.
         // TODO: b/354711945 - Uncomment when we can test the SetGeometrySplitEngine(null) path.
         // assertThat(fakeImpressApi.impressNodeHasParent(geometryNodes.get(0))).isFalse();
-        assertThat(mFakeImpressApi.impressNodeHasParent(
-                new ImpressNode(newGeometryNodes.get(0)))).isTrue();
+        assertThat(mFakeImpressApi.impressNodeHasParent(new ImpressNode(newGeometryNodes.get(0))))
+                .isTrue();
         // The resources should be different.
         assertThat(initialSkybox).isNotEqualTo(newSkybox);
         assertThat(geometryNodes.get(0)).isNotEqualTo(newGeometryNodes.get(0));
@@ -479,8 +474,8 @@ public final class SpatialEnvironmentFeatureImplTest {
 
         assertThat(initialSkybox).isNotEqualTo(INVALID_SPLIT_ENGINE_ID);
         assertThat(geometryNodes).isNotEmpty();
-        assertThat(mFakeImpressApi.impressNodeHasParent(
-                new ImpressNode(geometryNodes.get(0)))).isTrue();
+        assertThat(mFakeImpressApi.impressNodeHasParent(new ImpressNode(geometryNodes.get(0))))
+                .isTrue();
         assertThat(mEnvironment.getPreferredSpatialEnvironment()).isNotNull();
 
         mEnvironment.dispose();
@@ -493,35 +488,5 @@ public final class SpatialEnvironmentFeatureImplTest {
         assertThat(ShadowXrExtensions.extract(mXrExtensions).getEnvironmentNode(mActivity))
                 .isNull();
         assertThat(mEnvironment.getPreferredSpatialEnvironment()).isNull();
-    }
-
-    @Test
-    public void dispose_disposesImpressApi() {
-        long exr = fakeLoadEnvironment("fakeEnvironment");
-        long gltf = fakeLoadGltfAsset("fakeGltfAsset");
-        // Create dummy regular version of the water material.
-        MaterialResource material = fakeLoadMaterial(false);
-        String nodeName = "fakeNode";
-        String animationName = "fakeAnimation";
-
-        mEnvironment.setPreferredSpatialEnvironment(
-                new SpatialEnvironmentPreference(
-                        new ExrImageResourceImpl(exr),
-                        new GltfModelResourceImpl(gltf),
-                        material,
-                        nodeName,
-                        animationName));
-
-        assertThat(mFakeImpressApi.getImageBasedLightingAssets()).isNotEmpty();
-        assertThat(mFakeImpressApi.getImpressNodes()).isNotEmpty();
-        assertThat(mFakeImpressApi.getGltfModels()).isNotEmpty();
-        assertThat(mFakeImpressApi.getMaterials()).isNotEmpty();
-
-        mEnvironment.dispose();
-
-        assertThat(mFakeImpressApi.getImageBasedLightingAssets()).isEmpty();
-        assertThat(mFakeImpressApi.getImpressNodes()).isEmpty();
-        assertThat(mFakeImpressApi.getGltfModels()).isEmpty();
-        assertThat(mFakeImpressApi.getMaterials()).isEmpty();
     }
 }

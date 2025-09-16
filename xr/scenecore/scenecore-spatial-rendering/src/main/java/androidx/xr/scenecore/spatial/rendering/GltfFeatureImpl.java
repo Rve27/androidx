@@ -33,6 +33,8 @@ import com.google.common.util.concurrent.ListenableFuture;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Executor;
 
 /**
@@ -44,6 +46,7 @@ import java.util.concurrent.Executor;
 class GltfFeatureImpl extends BaseRenderingFeature implements GltfFeature {
     private final ImpressNode mModelImpressNode;
     @GltfEntity.AnimationStateValue private int mAnimationState = GltfEntity.AnimationState.STOPPED;
+    private final Map<String, Integer> meshOverrides = new HashMap<>();
 
     GltfFeatureImpl(
             GltfModelResourceImpl gltfModelResource,
@@ -117,11 +120,13 @@ class GltfFeatureImpl extends BaseRenderingFeature implements GltfFeature {
                 ((Material) material).getNativeHandle(),
                 nodeName,
                 primitiveIndex);
+        meshOverrides.put(nodeName, primitiveIndex);
     }
 
     @Override
     public void clearMaterialOverride(@NonNull String nodeName, int primitiveIndex) {
         mImpressApi.clearMaterialOverride(mModelImpressNode, nodeName, primitiveIndex);
+        meshOverrides.remove(nodeName, primitiveIndex);
     }
 
     @Override
@@ -132,13 +137,10 @@ class GltfFeatureImpl extends BaseRenderingFeature implements GltfFeature {
     @SuppressWarnings("ObjectToString")
     @Override
     public void dispose() {
-        // TODO: b/414790933 - temporarily commenting out the call to `deleteSubspace` because there
-        //  is a bug when releasing the underlying glTF model resource. This line should be restored
-        //  as soon as the bug is resolved.
-        // if (mSubspace != null) {
-        //  Destroying the subspace will also destroy the underlying Impress nodes.
-        //  mSplitEngineSubspaceManager.deleteSubspace(mSubspace.subspaceId);
-        // }
+        for (Map.Entry<String, Integer> entry : new HashMap<>(meshOverrides).entrySet()) {
+            mImpressApi.clearMaterialOverride(mModelImpressNode, entry.getKey(), entry.getValue());
+        }
+        meshOverrides.clear();
         super.dispose();
     }
 }
