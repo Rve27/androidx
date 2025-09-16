@@ -789,7 +789,7 @@ object ProcessorErrors {
         "Invalid table name. Room does not allow using ` or \" in table names"
 
     const val RAW_QUERY_BAD_PARAMS =
-        "RawQuery functions should have 1 and only 1 parameter with type" + " SupportSQLiteQuery"
+        "@RawQuery functions should have 1 and only 1 parameter with type RoomRawQuery"
 
     fun parameterCannotBeNullable(parameterName: String) =
         """

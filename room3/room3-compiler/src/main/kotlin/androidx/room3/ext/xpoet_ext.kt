@@ -138,6 +138,10 @@ object KotlinCollectionMemberNames {
     val MUTABLE_MAP_OF = KotlinTypeNames.MAPS_KT.packageMember("mutableMapOf")
 }
 
+object KotlinPreconditionsMemberNames {
+    val CHECK_NOT_NULL = XClassName.get("kotlin", "PreconditionsKt").packageMember("checkNotNull")
+}
+
 object CommonTypeNames {
     val VOID = Void::class.asClassName()
     val COLLECTION = Collection::class.asClassName()

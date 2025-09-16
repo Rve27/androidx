@@ -1098,6 +1098,46 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
     }
 
     @Test
+    fun rawQuery_java() {
+        val dao =
+            Source.java(
+                "MyDao",
+                """
+            import androidx.room3.*;
+            import androidx.sqlite.db.SupportSQLiteQuery;
+
+            @Dao
+            public interface MyDao {
+                @RawQuery
+                MyEntity getEntitySupport(SupportSQLiteQuery sql);
+
+                @RawQuery
+                MyEntity getEntity(RoomRawQuery query);
+            }
+            """
+                    .trimIndent(),
+            )
+        val entity =
+            Source.java(
+                "MyEntity",
+                """
+            import androidx.room3.*;
+
+            @Entity
+            public class MyEntity {
+                @PrimaryKey
+                public long pk;
+            }
+        """
+                    .trimIndent(),
+            )
+        runTest(
+            sources = listOf(dao, entity, databaseSrc),
+            expectedFilePath = getTestGoldenPath(testName.methodName),
+        )
+    }
+
+    @Test
     fun delegatingFunctions_defaultImplBridge(
         @TestParameter("disable", "all-compatibility", "all") jvmDefaultMode: String
     ) {
