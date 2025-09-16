@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.SaverScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.assertIsDisplayed
@@ -40,6 +41,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertThrows
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -60,6 +62,11 @@ class StackStateTest {
         assertThat(state.canScrollBackward).isFalse()
         assertThat(state.lastScrolledForward).isFalse()
         assertThat(state.lastScrolledBackward).isFalse()
+    }
+
+    @Test
+    fun negativeInitialTopItem_throws() {
+        assertThrows(IllegalArgumentException::class.java) { StackState(initialTopItem = -1) }
     }
 
     @Test
@@ -288,5 +295,16 @@ class StackStateTest {
 
         assertThat(state.lastScrolledBackward).isTrue()
         assertThat(state.lastScrolledForward).isFalse()
+    }
+
+    @Test
+    fun saveAndRestoreState_restoresTopItem() {
+        val allowingScope = SaverScope { true }
+        val original = StackState(initialTopItem = 5)
+
+        val saved = with(StackState.Saver) { allowingScope.save(original) }!!
+        val restored = StackState.Saver.restore(saved)!!
+
+        assertThat(restored.topItem).isEqualTo(5)
     }
 }

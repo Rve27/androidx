@@ -363,8 +363,10 @@ package androidx.xr.glimmer.stack {
 
   @androidx.compose.runtime.Stable public final class StackState implements androidx.compose.foundation.gestures.ScrollableState {
     ctor public StackState();
+    ctor public StackState(optional @IntRange(from=0L) int initialTopItem);
     method public suspend Object? animateScrollToItem(int item, optional androidx.compose.animation.core.AnimationSpec<java.lang.Float> animationSpec, kotlin.coroutines.Continuation<? super kotlin.Unit>);
     method public float dispatchRawDelta(float delta);
+    method @InaccessibleFromKotlin public androidx.compose.foundation.interaction.InteractionSource getInteractionSource();
     method @InaccessibleFromKotlin public int getTopItem();
     method @InaccessibleFromKotlin public float getTopItemOffsetFraction();
     method @InaccessibleFromKotlin public boolean isScrollInProgress();
@@ -372,16 +374,23 @@ package androidx.xr.glimmer.stack {
     method public suspend Object? scrollToItem(int item, kotlin.coroutines.Continuation<? super kotlin.Unit>);
     property public boolean canScrollBackward;
     property public boolean canScrollForward;
+    property public androidx.compose.foundation.interaction.InteractionSource interactionSource;
     property public boolean isScrollInProgress;
     property public boolean lastScrolledBackward;
     property public boolean lastScrolledForward;
     property public int topItem;
     property public float topItemOffsetFraction;
+    field public static final androidx.xr.glimmer.stack.StackState.Companion Companion;
+  }
+
+  public static final class StackState.Companion {
+    method @InaccessibleFromKotlin public androidx.compose.runtime.saveable.Saver<androidx.xr.glimmer.stack.StackState,java.lang.Integer> getSaver();
+    property public androidx.compose.runtime.saveable.Saver<androidx.xr.glimmer.stack.StackState,java.lang.Integer> Saver;
   }
 
   public final class StackStateKt {
-    method @androidx.compose.runtime.Composable public static androidx.xr.glimmer.stack.StackState rememberStackState();
-    method @BytecodeOnly @androidx.compose.runtime.Composable public static androidx.xr.glimmer.stack.StackState rememberStackState(androidx.compose.runtime.Composer?, int);
+    method @androidx.compose.runtime.Composable public static androidx.xr.glimmer.stack.StackState rememberStackState(optional @IntRange(from=0L) int initialTopItem);
+    method @BytecodeOnly @androidx.compose.runtime.Composable public static androidx.xr.glimmer.stack.StackState rememberStackState(@IntRange(from=0L) int, androidx.compose.runtime.Composer?, int, int);
   }
 
 }
