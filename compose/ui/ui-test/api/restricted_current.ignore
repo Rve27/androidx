@@ -71,6 +71,10 @@ RemovedDeprecatedMethod: androidx.compose.ui.test.TextActionsKt#performTextInput
     Binary breaking change: Removed deprecated method androidx.compose.ui.test.TextActionsKt.performTextInputSelection(androidx.compose.ui.test.SemanticsNodeInteraction,long)
 
 
+RemovedFromBytecode: androidx.compose.ui.test.DeviceConfigurationOverride#Override(kotlin.jvm.functions.Function0<kotlin.Unit>):
+    Binary breaking change: method androidx.compose.ui.test.DeviceConfigurationOverride.Override(kotlin.jvm.functions.Function0<kotlin.Unit>) has been removed from bytecode
+RemovedFromBytecode: androidx.compose.ui.test.DeviceConfigurationOverrideKt#DeviceConfigurationOverride(androidx.compose.ui.test.DeviceConfigurationOverride, kotlin.jvm.functions.Function0<kotlin.Unit>):
+    Binary breaking change: method androidx.compose.ui.test.DeviceConfigurationOverrideKt.DeviceConfigurationOverride(androidx.compose.ui.test.DeviceConfigurationOverride,kotlin.jvm.functions.Function0<kotlin.Unit>) has been removed from bytecode
 RemovedFromBytecode: androidx.compose.ui.test.InjectionScope#percentOffset(float, float):
     Binary breaking change: method androidx.compose.ui.test.InjectionScope.percentOffset(float,float) has been removed from bytecode
 RemovedFromBytecode: androidx.compose.ui.test.TouchInjectionScope#currentPosition(int):
