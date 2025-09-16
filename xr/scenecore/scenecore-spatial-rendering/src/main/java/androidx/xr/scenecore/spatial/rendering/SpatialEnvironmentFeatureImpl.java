@@ -43,15 +43,17 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
-class SpatialEnvironmentFeatureImpl extends BaseRenderingFeature implements
-        SpatialEnvironmentFeature, Consumer<Consumer<Node>> {
+class SpatialEnvironmentFeatureImpl extends BaseRenderingFeature
+        implements SpatialEnvironmentFeature, Consumer<Consumer<Node>> {
     public static final String GEOMETRY_NODE_NAME = "EnvironmentGeometryNode";
-    private final AtomicReference<SpatialEnvironmentPreference>
-            mSpatialEnvironmentPreference =
+    private final AtomicReference<SpatialEnvironmentPreference> mSpatialEnvironmentPreference =
             new AtomicReference<>(null);
     private SubspaceNode mGeometrySubspaceSplitEngine;
     private ImpressNode mGeometrySubspaceImpressNode;
     private @NonNull Node mRootEnvironmentNode;
+    private ImpressNode mGeometryImpressNode;
+    private Material mMaterialOverride;
+    private String mOverriddenNodeName;
     private @Nullable Consumer<Node> mOnBeforeNodeAttachedListener = null;
     private final @NonNull Activity mActivity;
 
@@ -116,22 +118,23 @@ class SpatialEnvironmentFeatureImpl extends BaseRenderingFeature implements
         }
 
         if (geometry != null) {
-            ImpressNode modelImpressNode =
+            mGeometryImpressNode =
                     mImpressApi.instanceGltfModel(
                             geometry.getExtensionModelToken(), /* enableCollider= */ false);
             if (material != null && nodeName != null) {
-                Material materialImpl = (Material) material;
+                mMaterialOverride = (Material) material;
+                mOverriddenNodeName = nodeName;
                 mImpressApi.setMaterialOverride(
-                        modelImpressNode,
-                        materialImpl.getNativeHandle(),
-                        nodeName,
+                        mGeometryImpressNode,
+                        mMaterialOverride.getNativeHandle(),
+                        mOverriddenNodeName,
                         /* primitiveIndex= */ 0);
             }
             if (animationName != null) {
                 ListenableFuture<Void> unused =
-                        mImpressApi.animateGltfModel(modelImpressNode, animationName, true);
+                        mImpressApi.animateGltfModel(mGeometryImpressNode, animationName, true);
             }
-            mImpressApi.setImpressNodeParent(modelImpressNode, mGeometrySubspaceImpressNode);
+            mImpressApi.setImpressNodeParent(mGeometryImpressNode, mGeometrySubspaceImpressNode);
         }
     }
 
@@ -212,9 +215,7 @@ class SpatialEnvironmentFeatureImpl extends BaseRenderingFeature implements
                     if (newPreference == null) {
                         // Detaching the app environment to go back to the system environment.
                         mExtensions.detachSpatialEnvironment(
-                                mActivity,
-                                Runnable::run,
-                                (result) -> {});
+                                mActivity, Runnable::run, (result) -> {});
                     } else {
                         // TODO(b/408276187): Add unit test that verifies that the skybox mode is
                         // correctly set.
@@ -230,7 +231,7 @@ class SpatialEnvironmentFeatureImpl extends BaseRenderingFeature implements
                             currentRootEnvironmentNode = mExtensions.createNode();
                             if (mGeometrySubspaceSplitEngine != null) {
                                 try (NodeTransaction transaction =
-                                             mExtensions.createNodeTransaction()) {
+                                        mExtensions.createNodeTransaction()) {
                                     NodeTransaction unused =
                                             transaction.setParent(
                                                     mGeometrySubspaceSplitEngine.getSubspaceNode(),
@@ -265,17 +266,16 @@ class SpatialEnvironmentFeatureImpl extends BaseRenderingFeature implements
     public void dispose() {
         super.dispose();
         if (mGeometrySubspaceSplitEngine != null) {
+            if (mMaterialOverride != null) {
+                mImpressApi.clearMaterialOverride(
+                        mGeometryImpressNode, mOverriddenNodeName, /* primitiveIndex= */ 0);
+            }
             try (NodeTransaction transaction = mExtensions.createNodeTransaction()) {
-                transaction
-                        .setParent(mGeometrySubspaceSplitEngine.getSubspaceNode(), null)
-                        .apply();
+                transaction.setParent(mGeometrySubspaceSplitEngine.getSubspaceNode(), null).apply();
             }
             mSplitEngineSubspaceManager.deleteSubspace(mGeometrySubspaceSplitEngine.subspaceId);
             mGeometrySubspaceSplitEngine = null;
             mImpressApi.clearPreferredEnvironmentIblAsset();
-            // We don't need to destroy mGeometrySubspaceImpressNode because we indirectly already
-            // destroy it by deleting the subspace at the end of the apply geometry block.
-            mImpressApi.disposeAllResources();
         }
         mRootEnvironmentNode = null;
         mGeometrySubspaceSplitEngine = null;
