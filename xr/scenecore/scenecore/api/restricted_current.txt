@@ -362,8 +362,8 @@ package androidx.xr.scenecore {
   }
 
   public final class KhronosPbrMaterial implements androidx.xr.scenecore.Material {
+    method @MainThread public void close();
     method @MainThread public static suspend Object? create(androidx.xr.runtime.Session session, int alphaMode, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.KhronosPbrMaterial>);
-    method @MainThread public void dispose();
     method @MainThread public void setAlphaCutoff(@FloatRange(from=0.0, to=1.0) float alphaCutoff);
     method @MainThread public void setBaseColorFactor(androidx.xr.runtime.math.Vector4 factor);
     method @MainThread public void setBaseColorTexture(androidx.xr.scenecore.Texture texture);
@@ -404,8 +404,8 @@ package androidx.xr.scenecore {
   }
 
   public final class KhronosUnlitMaterial implements androidx.xr.scenecore.Material {
+    method @MainThread public void close();
     method @MainThread public static suspend Object? create(androidx.xr.runtime.Session session, int alphaMode, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.KhronosUnlitMaterial>);
-    method @MainThread public void dispose();
     method @MainThread public void setAlphaCutoff(@FloatRange(from=0.0, to=1.0) float alphaCutoff);
     method @MainThread public void setBaseColorFactor(androidx.xr.runtime.math.Vector4 factor);
     method @MainThread public void setBaseColorTexture(androidx.xr.scenecore.Texture texture);
@@ -432,8 +432,8 @@ package androidx.xr.scenecore {
   public static final class MainPanelEntity.Companion {
   }
 
-  public interface Material {
-    method @MainThread public void dispose();
+  public interface Material extends java.lang.AutoCloseable {
+    method @MainThread public void close();
   }
 
   public final class MovableComponent implements androidx.xr.scenecore.Component {
@@ -1069,9 +1069,9 @@ package androidx.xr.scenecore {
     field public static final int SURFACE_PROTECTION_PROTECTED = 1; // 0x1
   }
 
-  public class Texture {
+  public class Texture implements java.lang.AutoCloseable {
+    method @MainThread public void close();
     method @MainThread public static final suspend Object? create(androidx.xr.runtime.Session session, java.nio.file.Path path, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.Texture>);
-    method @MainThread public void dispose();
     field public static final androidx.xr.scenecore.Texture.Companion Companion;
   }
 
@@ -1153,8 +1153,8 @@ package androidx.xr.scenecore {
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class WaterMaterial implements androidx.xr.scenecore.Material {
+    method @MainThread public void close();
     method @MainThread public static suspend Object? create(androidx.xr.runtime.Session session, boolean isAlphaMapVersion, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.WaterMaterial>);
-    method @MainThread public void dispose();
     method @InaccessibleFromKotlin public androidx.xr.scenecore.internal.MaterialResource getMaterial();
     method @MainThread public void setAlphaMap(androidx.xr.scenecore.Texture alphaMap, androidx.xr.scenecore.TextureSampler sampler);
     method @MainThread public void setAlphaStepMultiplier(float alphaStepMultiplier);

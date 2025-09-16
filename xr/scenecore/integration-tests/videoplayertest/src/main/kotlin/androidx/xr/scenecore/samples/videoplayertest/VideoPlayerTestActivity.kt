@@ -199,7 +199,7 @@ class VideoPlayerTestActivity : ComponentActivity() {
         exoPlayer?.release()
         exoPlayer = null
         if (alphaMaskTexture != null) {
-            alphaMaskTexture!!.dispose()
+            alphaMaskTexture!!.close()
             alphaMaskTexture = null
         }
     }

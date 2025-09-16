@@ -104,7 +104,7 @@ class GltfModelActivity : AppCompatActivity() {
             }
         }
         findViewById<Button>(R.id.gltf_model_button1_2).setOnClickListener {
-            patternTexture?.dispose()
+            patternTexture?.close()
             patternTexture = null
         }
 
@@ -115,7 +115,7 @@ class GltfModelActivity : AppCompatActivity() {
             }
         }
         findViewById<Button>(R.id.gltf_model_button2_2).setOnClickListener {
-            khronosPbrMaterial?.dispose()
+            khronosPbrMaterial?.close()
             khronosPbrMaterial = null
         }
 
