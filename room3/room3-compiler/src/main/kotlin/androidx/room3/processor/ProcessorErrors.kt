@@ -1287,4 +1287,7 @@ object ProcessorErrors {
 
     fun invalidConstructedBySuperInterface(expected: String) =
         "The @ConstructedBy definition must implement a single interface of type '$expected'."
+
+    const val INVALID_NULLABLE_DAO_CONSTRUCTOR_PARAM =
+        "The database parameter of a DAO constructor must not be nullable."
 }

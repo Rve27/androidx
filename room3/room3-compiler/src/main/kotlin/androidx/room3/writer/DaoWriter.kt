@@ -266,7 +266,10 @@ class DaoWriter(val dao: Dao, private val dbElement: XElement, writerContext: Wr
         }
         return XFunSpec.constructorBuilder(VisibilityModifier.PUBLIC)
             .apply {
-                addParameter(typeName = dao.constructorParamType ?: ROOM_DB, name = dbProperty.name)
+                addParameter(
+                    typeName = dao.constructorParamType?.copy(nullable = false) ?: ROOM_DB,
+                    name = dbProperty.name,
+                )
                 if (callSuper) {
                     callSuperConstructor(XCodeBlock.of("%L", dbProperty.name))
                 }
