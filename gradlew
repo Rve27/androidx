@@ -118,7 +118,7 @@ export JAVA_HOME=$ANDROIDX_JDK21
 export STUDIO_GRADLE_JDK=$JAVA_HOME
 
 # Creates/overwrites local.properties with sdk.dir and cmake.dir to avoid invalidating configuration cache
-./development/write_sdk_path.sh
+$APP_HOME/development/write_sdk_path.sh
 
 # Warn developers if they try to build top level project without the full checkout
 [ ! -d "$JAVA_HOME" ] && echo "Failed to find: $JAVA_HOME
