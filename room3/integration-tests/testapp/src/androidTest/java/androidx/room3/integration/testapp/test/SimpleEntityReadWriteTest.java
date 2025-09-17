@@ -119,7 +119,7 @@ public class SimpleEntityReadWriteTest {
             throwable = t;
         }
         assertNotNull("Was expecting an exception", throwable);
-        assertThat(throwable, instanceOf(SQLiteConstraintException.class));
+        assertThat(throwable, instanceOf(NullPointerException.class));
     }
 
     @Test
