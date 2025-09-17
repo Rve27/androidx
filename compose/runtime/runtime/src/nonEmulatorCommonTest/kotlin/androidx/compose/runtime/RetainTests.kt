@@ -21,6 +21,7 @@ import androidx.compose.runtime.mock.Text
 import androidx.compose.runtime.mock.compositionTest
 import androidx.compose.runtime.mock.expectChanges
 import androidx.compose.runtime.mock.expectNoChanges
+import androidx.compose.runtime.mock.revalidate
 import androidx.compose.runtime.mock.validate
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
@@ -1187,6 +1188,452 @@ class RetainTests {
         )
     }
 
+    @Test
+    fun retainScopeHolder_createsUniqueScopesPerKey() {
+        val provider = RetainScopeHolder()
+        val keys = listOf("A", "B", "C", "D", "E", "F")
+        val scopes = keys.associateWith { provider.getOrCreateRetainScopeForChild(it) }
+
+        assertEquals(
+            keys.size,
+            scopes.values.distinct().size,
+            "Found incorrect number of unique RetainScopes for the given keys",
+        )
+
+        scopes.forEach { (key, scope) ->
+            assertFalse(
+                scope.isKeepingExitedValues,
+                "RetainScope for key \"$key\" should not be initialized as retaining",
+            )
+
+            assertSame(
+                scope,
+                provider.getOrCreateRetainScopeForChild(key),
+                "Provider returned a different scope for key \"$key\"",
+            )
+        }
+    }
+
+    @Test
+    fun retainScopeHolder_countsRequests() {
+        val parentScope = ControlledRetainScope()
+        val provider = RetainScopeHolder()
+        provider.setParentRetainStateProvider(parentScope)
+        provider.getOrCreateRetainScopeForChild("A")
+        provider.getOrCreateRetainScopeForChild("B")
+
+        assertEquals(0, provider.keepExitedValuesRequestsFor("A"))
+        assertEquals(0, provider.keepExitedValuesRequestsFor("B"))
+
+        provider.startKeepingExitedValues("A")
+        provider.startKeepingExitedValues("A")
+        provider.startKeepingExitedValues("B")
+
+        assertEquals(2, provider.keepExitedValuesRequestsFor("A"))
+        assertEquals(1, provider.keepExitedValuesRequestsFor("B"))
+
+        parentScope.startKeepingExitedValues()
+        assertEquals(2, provider.keepExitedValuesRequestsFor("A"))
+        assertEquals(1, provider.keepExitedValuesRequestsFor("B"))
+
+        provider.stopKeepingExitedValues("A")
+        provider.stopKeepingExitedValues("A")
+
+        assertEquals(0, provider.keepExitedValuesRequestsFor("A"))
+        assertTrue(provider.getOrCreateRetainScopeForChild("A").isKeepingExitedValues)
+        assertEquals(1, provider.keepExitedValuesRequestsFor("B"))
+
+        try {
+            provider.stopKeepingExitedValues("A")
+            fail("Expected an IllegalStateException to be thrown")
+        } catch (_: IllegalStateException) {}
+        assertEquals(0, provider.keepExitedValuesRequestsFor("A"))
+
+        parentScope.stopKeepingExitedValues()
+        assertFalse(provider.getOrCreateRetainScopeForChild("A").isKeepingExitedValues)
+        assertTrue(provider.getOrCreateRetainScopeForChild("B").isKeepingExitedValues)
+        assertEquals(0, provider.keepExitedValuesRequestsFor("A"))
+        assertEquals(1, provider.keepExitedValuesRequestsFor("B"))
+    }
+
+    @Test
+    fun retainScopeHolder_retainsScopes_manually() = compositionTest {
+        val knownKeys = listOf("A", "B", "C", "D", "E", "F")
+        var visibleKeys by mutableStateOf(knownKeys.take(3))
+        val retainedValues = knownKeys.associateWith { mutableListOf<CountingRetainObject>() }
+        lateinit var retainScopeHolder: RetainScopeHolder
+
+        compose {
+            retainScopeHolder = retainRetainScopeHolder()
+            visibleKeys.forEach { visibleKey ->
+                key(visibleKey) {
+                    val retainScope = retainScopeHolder.getOrCreateRetainScopeForChild(visibleKey)
+                    CompositionLocalProvider(LocalRetainScope provides retainScope) {
+                        repeat(5) { item ->
+                            use(
+                                retain {
+                                    CountingRetainObject().also {
+                                        retainedValues[visibleKey]!!.add(it)
+                                    }
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
+        knownKeys.forEach { key ->
+            val retainedValuesForKey = retainedValues[key]!!
+            when (key) {
+                "A",
+                "B",
+                "C" -> {
+                    assertEquals(
+                        5,
+                        retainedValuesForKey.size,
+                        "Retained an unexpected number of values for \"$key\"",
+                    )
+                    retainedValuesForKey.forEach {
+                        it.assertCounts(retained = 1, entered = 1, exited = 0, retired = 0)
+                    }
+                }
+                "D",
+                "E",
+                "F" ->
+                    assertEquals(
+                        0,
+                        retainedValuesForKey.size,
+                        "No values should be retained for key \"$key\"",
+                    )
+            }
+        }
+
+        visibleKeys = knownKeys
+        advance()
+        knownKeys.forEach { key ->
+            val retainedValuesForKey = retainedValues[key]!!
+            assertEquals(
+                5,
+                retainedValuesForKey.size,
+                "Retained an unexpected number of values for \"$key\"",
+            )
+            retainedValuesForKey.forEach {
+                it.assertCounts(retained = 1, entered = 1, exited = 0, retired = 0)
+            }
+        }
+
+        visibleKeys = knownKeys.takeLast(3)
+        retainScopeHolder.startKeepingExitedValues("A")
+        retainScopeHolder.startKeepingExitedValues("B")
+        retainScopeHolder.startKeepingExitedValues("C")
+        advance()
+        knownKeys.forEach { key ->
+            val retainedValuesForKey = retainedValues[key]!!
+            assertEquals(
+                5,
+                retainedValuesForKey.size,
+                "Retained an unexpected number of values for \"$key\"",
+            )
+            when (key) {
+                "A",
+                "B",
+                "C" -> {
+                    retainedValuesForKey.forEach {
+                        it.assertCounts(retained = 1, entered = 1, exited = 1, retired = 0)
+                    }
+                }
+                "D",
+                "E",
+                "F" -> {
+                    retainedValuesForKey.forEach {
+                        it.assertCounts(retained = 1, entered = 1, exited = 0, retired = 0)
+                    }
+                }
+            }
+        }
+
+        visibleKeys = knownKeys
+        advance()
+        retainScopeHolder.stopKeepingExitedValues("A")
+        retainScopeHolder.stopKeepingExitedValues("B")
+        retainScopeHolder.stopKeepingExitedValues("C")
+        knownKeys.forEach { key ->
+            val retainedValuesForKey = retainedValues[key]!!
+            assertEquals(
+                5,
+                retainedValuesForKey.size,
+                "Retained an unexpected number of values for \"$key\"",
+            )
+            when (key) {
+                "A",
+                "B",
+                "C" -> {
+                    retainedValuesForKey.forEach {
+                        it.assertCounts(retained = 1, entered = 2, exited = 1, retired = 0)
+                    }
+                }
+                "D",
+                "E",
+                "F" -> {
+                    retainedValuesForKey.forEach {
+                        it.assertCounts(retained = 1, entered = 1, exited = 0, retired = 0)
+                    }
+                }
+            }
+        }
+    }
+
+    @Test
+    fun retainScopeHolder_retainsScopes_withPresenceIndicator() = compositionTest {
+        val knownKeys = listOf("A", "B", "C", "D", "E", "F")
+        var visibleKeys by mutableStateOf(knownKeys.take(3))
+        val retainedValues = knownKeys.associateWith { mutableListOf<CountingRetainObject>() }
+
+        compose {
+            with(retainRetainScopeHolder()) {
+                visibleKeys.forEach { visibleKey ->
+                    key(visibleKey) {
+                        RetainScopeProvider(visibleKey) {
+                            repeat(5) { item ->
+                                use(
+                                    retain {
+                                        CountingRetainObject().also {
+                                            retainedValues[visibleKey]!!.add(it)
+                                        }
+                                    }
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        knownKeys.forEach { key ->
+            val retainedValuesForKey = retainedValues[key]!!
+            when (key) {
+                "A",
+                "B",
+                "C" -> {
+                    assertEquals(
+                        5,
+                        retainedValuesForKey.size,
+                        "Retained an unexpected number of values for \"$key\"",
+                    )
+                    retainedValuesForKey.forEach {
+                        it.assertCounts(retained = 1, entered = 1, exited = 0, retired = 0)
+                    }
+                }
+                "D",
+                "E",
+                "F" ->
+                    assertEquals(
+                        0,
+                        retainedValuesForKey.size,
+                        "No values should be retained for key \"$key\"",
+                    )
+            }
+        }
+
+        visibleKeys = knownKeys
+        advance()
+        knownKeys.forEach { key ->
+            val retainedValuesForKey = retainedValues[key]!!
+            assertEquals(
+                5,
+                retainedValuesForKey.size,
+                "Retained an unexpected number of values for \"$key\"",
+            )
+            retainedValuesForKey.forEach {
+                it.assertCounts(retained = 1, entered = 1, exited = 0, retired = 0)
+            }
+        }
+
+        visibleKeys = knownKeys.takeLast(3)
+        advance()
+        knownKeys.forEach { key ->
+            val retainedValuesForKey = retainedValues[key]!!
+            assertEquals(
+                5,
+                retainedValuesForKey.size,
+                "Retained an unexpected number of values for \"$key\"",
+            )
+            when (key) {
+                "A",
+                "B",
+                "C" -> {
+                    retainedValuesForKey.forEach {
+                        it.assertCounts(retained = 1, entered = 1, exited = 1, retired = 0)
+                    }
+                }
+                "D",
+                "E",
+                "F" -> {
+                    retainedValuesForKey.forEach {
+                        it.assertCounts(retained = 1, entered = 1, exited = 0, retired = 0)
+                    }
+                }
+            }
+        }
+
+        visibleKeys = knownKeys
+        advance()
+        knownKeys.forEach { key ->
+            val retainedValuesForKey = retainedValues[key]!!
+            assertEquals(
+                5,
+                retainedValuesForKey.size,
+                "Retained an unexpected number of values for \"$key\"",
+            )
+            when (key) {
+                "A",
+                "B",
+                "C" -> {
+                    retainedValuesForKey.forEach {
+                        it.assertCounts(retained = 1, entered = 2, exited = 1, retired = 0)
+                    }
+                }
+                "D",
+                "E",
+                "F" -> {
+                    retainedValuesForKey.forEach {
+                        it.assertCounts(retained = 1, entered = 1, exited = 0, retired = 0)
+                    }
+                }
+            }
+        }
+    }
+
+    @Test
+    fun retainScopeHolder_clearChild_removesScope() = compositionTest {
+        val provider = RetainScopeHolder()
+        var globalCounter = 0
+        var includeA by mutableStateOf(true)
+        var includeB by mutableStateOf(true)
+        lateinit var scopeA: RetainScope
+        lateinit var scopeB: RetainScope
+        compose {
+            if (includeA) {
+                provider.RetainScopeProvider("A") {
+                    scopeA = LocalRetainScope.current
+                    Text("A:" + retain { globalCounter++ })
+                }
+            }
+            if (includeB) {
+                provider.RetainScopeProvider("B") {
+                    scopeB = LocalRetainScope.current
+                    Text("B:" + retain { globalCounter++ })
+                }
+            }
+        }
+
+        var expectedAText = "A:0"
+        var expectedBText = "B:1"
+        validate {
+            if (includeA) Text(expectedAText)
+            if (includeB) Text(expectedBText)
+        }
+
+        includeA = false
+        expectChanges()
+        revalidate()
+        val originalScopeA = scopeA
+        assertTrue(scopeA.isKeepingExitedValues, "Removed scope should be retaining")
+        assertFalse(scopeB.isKeepingExitedValues, "Unremoved scope should be retaining")
+        provider.clearChild("A")
+        assertFalse(scopeA.isKeepingExitedValues, "Cleared scope should stop retaining")
+
+        expectedAText = "A:2"
+        includeA = true
+        expectChanges()
+        revalidate()
+
+        assertNotSame(originalScopeA, scopeA, "Cleared scope should be recreated when requested")
+    }
+
+    @Test
+    fun retainRetainScopeHolder_retireDispose() = compositionTest {
+        val parentScope = ControlledRetainScope()
+        lateinit var retainScopeHolder: RetainScopeHolder
+        val events = mutableListOf<String>()
+        var includeRetainScopeHolder by mutableStateOf(true)
+
+        compose {
+            CompositionLocalProvider(LocalRetainScope provides parentScope) {
+                retain<LoggingRetainObject> { LoggingRetainObject("A", events) }
+                if (includeRetainScopeHolder) {
+                    retainScopeHolder = retainRetainScopeHolder()
+                    retainScopeHolder.RetainScopeProvider("B") {
+                        retain<LoggingRetainObject> { LoggingRetainObject("B", events) }
+                    }
+                }
+            }
+        }
+
+        assertEquals(
+            listOf("Retain(A)", "EnterComposition(A)", "Retain(B)", "EnterComposition(B)"),
+            events,
+        )
+
+        val childScope = retainScopeHolder.getOrCreateRetainScopeForChild("B")
+        assertFalse(childScope.isKeepingExitedValues)
+
+        parentScope.startKeepingExitedValues()
+        assertTrue(childScope.isKeepingExitedValues)
+        includeRetainScopeHolder = false
+        advance()
+
+        assertEquals(
+            listOf(
+                "Retain(A)",
+                "EnterComposition(A)",
+                "Retain(B)",
+                "EnterComposition(B)",
+                "ExitComposition(B)",
+            ),
+            events,
+        )
+
+        assertTrue(childScope.isKeepingExitedValues)
+        parentScope.stopKeepingExitedValues()
+        assertFalse(childScope.isKeepingExitedValues)
+        assertEquals(
+            listOf(
+                "Retain(A)",
+                "EnterComposition(A)",
+                "Retain(B)",
+                "EnterComposition(B)",
+                "ExitComposition(B)",
+                "Retire(B)",
+            ),
+            events,
+        )
+
+        assertThrows<IllegalStateException> {
+            retainScopeHolder.getOrCreateRetainScopeForChild("B")
+        }
+    }
+
+    @Test
+    fun retainScopeHolder_manualDispose() {
+        val retainScopeHolder = RetainScopeHolder()
+        val childScope = retainScopeHolder.getOrCreateRetainScopeForChild("B")
+        repeat(4) { retainScopeHolder.startKeepingExitedValues("B") }
+
+        assertTrue(childScope.isKeepingExitedValues)
+
+        retainScopeHolder.dispose()
+        assertFalse(childScope.isKeepingExitedValues)
+
+        // Should no-op.
+        retainScopeHolder.dispose()
+
+        assertThrows<IllegalStateException> {
+            retainScopeHolder.getOrCreateRetainScopeForChild("B")
+        }
+    }
+
     private inline fun <reified T : Throwable> assertThrows(block: () -> Unit) {
         var didSucceed = false
         try {
@@ -1386,4 +1833,6 @@ class RetainTests {
             )
         }
     }
+
+    private class AbandonException() : Throwable()
 }
