@@ -17,17 +17,21 @@
 package androidx.compose.foundation.text.input.internal.selection
 
 import android.os.Build
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.text.TextContextMenuItems
 import androidx.compose.foundation.text.TextContextMenuItems.Autofill
 import androidx.compose.foundation.text.TextContextMenuItems.Copy
 import androidx.compose.foundation.text.TextContextMenuItems.Cut
 import androidx.compose.foundation.text.TextContextMenuItems.Paste
 import androidx.compose.foundation.text.TextContextMenuItems.SelectAll
+import androidx.compose.foundation.text.TextDragObserver
 import androidx.compose.foundation.text.contextmenu.builder.TextContextMenuBuilderScope
 import androidx.compose.foundation.text.contextmenu.modifier.addTextContextMenuComponentsWithContext
+import androidx.compose.foundation.text.selection.MouseSelectionObserver
 import androidx.compose.foundation.text.selection.addPlatformTextContextMenuItems
 import androidx.compose.foundation.text.textItem
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.platform.Clipboard
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
@@ -91,6 +95,27 @@ internal actual fun Modifier.addBasicTextFieldTextContextMenuComponents(
         }
     }
 }
+
+/** Runs platform-specific text tap gestures logic. */
+internal actual suspend fun TextFieldSelectionState.detectTextFieldTapGestures(
+    pointerInputScope: PointerInputScope,
+    interactionSource: MutableInteractionSource?,
+    requestFocus: () -> Unit,
+    showKeyboard: () -> Unit,
+) =
+    defaultDetectTextFieldTapGestures(
+        pointerInputScope,
+        interactionSource,
+        requestFocus,
+        showKeyboard,
+    )
+
+/** Runs platform-specific text selection gestures logic. */
+internal actual suspend fun TextFieldSelectionState.textFieldSelectionGestures(
+    pointerInputScope: PointerInputScope,
+    mouseSelectionObserver: MouseSelectionObserver,
+    textDragObserver: TextDragObserver,
+) = pointerInputScope.defaultTextFieldSelectionGestures(mouseSelectionObserver, textDragObserver)
 
 internal actual class ClipboardPasteState actual constructor(private val clipboard: Clipboard) {
     private var _hasClip: Boolean = false
