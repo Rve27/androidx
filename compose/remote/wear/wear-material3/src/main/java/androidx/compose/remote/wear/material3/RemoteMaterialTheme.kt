@@ -18,9 +18,9 @@
 package androidx.compose.remote.wear.material3
 
 import androidx.annotation.RestrictTo
-import androidx.compose.remote.frontend.layout.RemoteComposable
-import androidx.compose.remote.frontend.state.RemoteColor
-import androidx.compose.remote.frontend.state.rememberRemoteColor
+import androidx.compose.remote.creation.compose.layout.RemoteComposable
+import androidx.compose.remote.creation.compose.state.RemoteColor
+import androidx.compose.remote.creation.compose.state.rememberRemoteColor
 import androidx.compose.runtime.Composable
 import androidx.wear.compose.material3.ColorScheme
 
