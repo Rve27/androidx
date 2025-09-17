@@ -55,7 +55,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.xr.glimmer.Text
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import org.junit.Rule
 
@@ -72,6 +71,7 @@ abstract class BaseListTestWithOrientation(protected val orientation: Orientatio
     internal fun TestList(
         modifier: Modifier = Modifier,
         listOrientation: Orientation = orientation,
+        userScrollEnabled: Boolean = true,
         horizontalAlignment: Alignment.Horizontal = Alignment.CenterHorizontally,
         horizontalArrangement: Arrangement.Horizontal = Arrangement.Center,
         verticalAlignment: Alignment.Vertical = Alignment.CenterVertically,
@@ -85,6 +85,7 @@ abstract class BaseListTestWithOrientation(protected val orientation: Orientatio
         List(
             state = state,
             orientation = listOrientation,
+            userScrollEnabled = userScrollEnabled,
             horizontalAlignment = horizontalAlignment,
             horizontalArrangement = horizontalArrangement,
             verticalAlignment = verticalAlignment,
