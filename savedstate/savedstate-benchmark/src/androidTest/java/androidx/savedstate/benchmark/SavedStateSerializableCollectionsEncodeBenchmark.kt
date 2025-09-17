@@ -34,7 +34,7 @@ import org.junit.Rule
 import org.junit.Test
 
 @LargeTest
-class SavedStateSerializableEncodeBenchmark {
+class SavedStateSerializableCollectionsEncodeBenchmark {
     @get:Rule val benchmarkRule = BenchmarkRule()
     private val sampleSize = 100
     private val savedStateConfiguration: SavedStateConfiguration = SavedStateConfiguration.DEFAULT
