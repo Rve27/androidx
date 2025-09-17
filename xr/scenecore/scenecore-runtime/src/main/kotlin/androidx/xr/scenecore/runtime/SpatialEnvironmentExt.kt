@@ -18,10 +18,15 @@ package androidx.xr.scenecore.runtime
 
 import androidx.annotation.RestrictTo
 
-/* Defined the injected rendering implementation into SceneRuntime. */
+/** SpatialEnvironment implement this interface to provide additional functionality. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public interface SpatialEnvironmentExt {
-    // If SceneRuntime is available, but RenderingRuntime is not, use SceneRuntime
-    // SpatialEnvironmentImpl
+    /**
+     * When RenderingRuntime is available, inject a [SpatialEnvironmentFeature] instance into the
+     * SpatialEnvironment instance which is created by SceneRuntime to support its rendering
+     * feature.
+     *
+     * @param feature The rendering feature to inject.
+     */
     public fun onRenderingFeatureReady(feature: SpatialEnvironmentFeature)
 }
