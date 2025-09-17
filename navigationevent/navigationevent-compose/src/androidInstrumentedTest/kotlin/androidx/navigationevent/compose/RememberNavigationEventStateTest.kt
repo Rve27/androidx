@@ -128,9 +128,10 @@ internal class RememberNavigationEventStateTest {
                 val state = rememberNavigationEventState(TestInfo(id = 1))
                 NavigationEventDispatcherOwner(parent = owner) {
                     NavigationEventHandler(state = state) { error("no-op") }
-
-                    // Attempt to add the same handler again in the same composition tree
-                    NavigationEventHandler(state = state) { error("no-op") }
+                    NavigationEventDispatcherOwner {
+                        // Attempt to add the same handler again in the same composition tree
+                        NavigationEventHandler(state = state) { error("no-op") }
+                    }
                 }
             }
         }
