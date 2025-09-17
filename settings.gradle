@@ -1051,7 +1051,6 @@ includeProject(":room3:integration-tests:room-testapp", "room3/integration-tests
 includeProject(":room3:integration-tests:room-testapp-autovalue", "room3/integration-tests/autovaluetestapp", [BuildType.MAIN])
 includeProject(":room3:integration-tests:room-testapp-kotlin", "room3/integration-tests/kotlintestapp", [BuildType.MAIN, BuildType.KMP])
 includeProject(":room3:integration-tests:room-testapp-multiplatform", "room3/integration-tests/multiplatformtestapp", [BuildType.MAIN, BuildType.KMP, BuildType.INFRAROGUE])
-includeProject(":room3:integration-tests:room-testapp-noappcompat", "room3/integration-tests/noappcompattestapp", [BuildType.MAIN])
 includeProject(":room3:room3-benchmark", "room3/benchmark", [BuildType.MAIN])
 includeProject(":room3:room3-common", [BuildType.MAIN, BuildType.COMPOSE, BuildType.KMP, BuildType.INFRAROGUE])
 includeProject(":room3:room3-compiler", [BuildType.MAIN, BuildType.COMPOSE, BuildType.KMP])
