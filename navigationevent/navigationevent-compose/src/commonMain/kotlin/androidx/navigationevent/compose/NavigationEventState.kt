@@ -48,7 +48,7 @@ internal constructor(
      * [NavigationEventTransitionState.InProgress]. This property will update frequently during a
      * gesture.
      */
-    public var transitionState: NavigationEventTransitionState by mutableStateOf(Idle())
+    public var transitionState: NavigationEventTransitionState by mutableStateOf(Idle)
         internal set // Public getter, internal setter
 
     /** History partitions relative to the current position. */

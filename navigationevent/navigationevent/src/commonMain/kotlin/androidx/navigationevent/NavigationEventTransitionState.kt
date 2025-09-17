@@ -40,7 +40,7 @@ public sealed class NavigationEventTransitionState {
      * Represents the state where no navigation gesture is currently in progress. This is the
      * default state.
      */
-    public class Idle : NavigationEventTransitionState() {
+    public object Idle : NavigationEventTransitionState() {
 
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
