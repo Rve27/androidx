@@ -143,6 +143,7 @@ import androidx.camera.core.resolutionselector.AspectRatioStrategy;
 import androidx.camera.core.resolutionselector.ResolutionSelector;
 import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.camera.testing.impl.StreamSharingForceEnabledEffect;
+import androidx.camera.testing.impl.util.EdgeToEdgeUtil;
 import androidx.camera.video.ExperimentalPersistentRecording;
 import androidx.camera.video.FileOutputOptions;
 import androidx.camera.video.MediaStoreOutputOptions;
@@ -1547,6 +1548,10 @@ public class CameraXActivity extends AppCompatActivity {
         closeAppIfCameraProviderMismatch(this.getIntent());
 
         setContentView(R.layout.activity_camera_xmain);
+
+        EdgeToEdgeUtil.enableEdgeToEdge(this, R.id.constraintLayout,
+                Collections.singletonList(R.id.top_buttons_layout));
+
         mFileWriterExecutorService = Executors.newSingleThreadExecutor();
         mImageCaptureExecutorService = Executors.newSingleThreadExecutor();
         mDisplaySupportedHighDynamicRanges = Collections.emptySet();
