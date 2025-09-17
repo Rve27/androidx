@@ -77,13 +77,13 @@ private constructor(
      * Establishes the top-level dispatcher for a new navigation hierarchy, typically within an
      * `Activity` or a top-level composable. It creates its own internal [NavigationEventProcessor].
      *
-     * @param fallbackOnBackPressed A lambda to be invoked if a navigation event **completes** and
+     * @param onBackCompletedFallback A lambda to be invoked if a navigation event **completes** and
      *   no registered [NavigationEventHandler] handles it. This provides a default "back" action
      *   for the entire hierarchy. **It will not be invoked if the event is cancelled.**
      */
     public constructor(
-        fallbackOnBackPressed: () -> Unit
-    ) : this(parent = null, onBackCompletedFallback = fallbackOnBackPressed)
+        onBackCompletedFallback: OnBackCompletedFallback
+    ) : this(parent = null, onBackCompletedFallback = onBackCompletedFallback)
 
     /**
      * Creates a **child** `NavigationEventDispatcher` linked to a parent.
