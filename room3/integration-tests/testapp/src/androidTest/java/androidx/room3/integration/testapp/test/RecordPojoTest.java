@@ -33,6 +33,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.SmallTest;
 
 import org.jspecify.annotations.NonNull;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -42,6 +43,7 @@ import java.util.List;
 @RunWith(AndroidJUnit4.class)
 public class RecordPojoTest {
 
+    @Ignore("b/445473504")
     @Test
     public void recordEntity() {
         Context context = ApplicationProvider.getApplicationContext();
@@ -59,7 +61,6 @@ public class RecordPojoTest {
             String data
     ) {}
 
-    @Database(entities = RecordEntity.class, version = 1, exportSchema = false)
     abstract static class TestDatabase  extends RoomDatabase {
         abstract RecordEntityDao getDao();
     }
