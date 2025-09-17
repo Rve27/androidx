@@ -506,15 +506,11 @@ class NavigationEventDispatcherTest {
     }
 
     @Test
-    fun addHandler_withAlreadyRegisteredHandler_throwsException() {
+    fun addHandler_withAlreadyRegisteredDispatcher_ignoresCall() {
         val handler = TestNavigationEventHandler()
         val dispatcher = NavigationEventDispatcher()
         dispatcher.addHandler(handler)
-
-        // Adding the same handler instance twice is a developer error and should fail fast.
-        assertThrows<IllegalArgumentException> { dispatcher.addHandler(handler) }
-            .hasMessageThat()
-            .contains("is already registered with a dispatcher")
+        dispatcher.addHandler(handler) // No-op: no exceptions.
     }
 
     @Test
