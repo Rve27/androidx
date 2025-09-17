@@ -20,10 +20,10 @@ import android.content.ComponentName
 import android.content.Intent
 import android.os.IBinder
 import androidx.annotation.RestrictTo
-import androidx.glance.wear.data.IWearWidgetProvider
-import androidx.glance.wear.data.LegacyTileProviderImpl
-import androidx.glance.wear.data.WearWidgetProviderImpl
-import androidx.glance.wear.data.legacy.TileProvider
+import androidx.glance.wear.parcel.IWearWidgetProvider
+import androidx.glance.wear.parcel.LegacyTileProviderImpl
+import androidx.glance.wear.parcel.WearWidgetProviderImpl
+import androidx.glance.wear.parcel.legacy.TileProvider
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
 

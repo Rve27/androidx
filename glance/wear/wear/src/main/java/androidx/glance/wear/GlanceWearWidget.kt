@@ -19,8 +19,8 @@ package androidx.glance.wear
 import android.content.ComponentName
 import android.content.Context
 import androidx.annotation.MainThread
-import androidx.glance.wear.data.WidgetUpdateClient
-import androidx.glance.wear.data.WidgetUpdateClientImpl
+import androidx.glance.wear.parcel.WidgetUpdateClient
+import androidx.glance.wear.parcel.WidgetUpdateClientImpl
 
 /**
  * Object that handles providing the contents of a Wear Widget.
