@@ -14,23 +14,15 @@
  * limitations under the License.
  */
 
-package androidx.xr.arcore.internal
+package androidx.xr.arcore.runtime
 
 import androidx.annotation.RestrictTo
-import androidx.xr.runtime.TrackingState
+import androidx.xr.runtime.math.Pose
 
-/** Describes a face. */
+/** Describes the AR device tracking data */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public interface Face {
-    /** The current [androidx.xr.runtime.TrackingState] of the face. */
-    public val trackingState: TrackingState
+public interface ArDevice {
 
-    /** Flag indicating if the [blendShapeValues] array is valid */
-    public val isValid: Boolean
-
-    /** The values measuring the blend shapes of the face. */
-    public val blendShapeValues: FloatArray
-
-    /** The confidence values of the face tracker at different regions. */
-    public val confidenceValues: FloatArray
+    /** The current pose of the device. */
+    public val devicePose: Pose
 }

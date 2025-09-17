@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.xr.arcore.internal
+package androidx.xr.arcore.runtime
 
 import androidx.annotation.RestrictTo
 import androidx.xr.runtime.TrackingState
@@ -48,7 +48,7 @@ public interface Anchor {
     /** The [PersistenceState] for this anchor. */
     public val persistenceState: PersistenceState
 
-    /** The [java.util.UUID] that identifies this Anchor if it is persisted. */
+    /** The [UUID] that identifies this Anchor if it is persisted. */
     public val uuid: UUID?
 
     /**

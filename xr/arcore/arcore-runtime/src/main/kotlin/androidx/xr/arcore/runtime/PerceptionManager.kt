@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.xr.arcore.internal
+package androidx.xr.arcore.runtime
 
 import androidx.annotation.RestrictTo
 import androidx.xr.runtime.VpsAvailabilityResult
@@ -35,20 +35,17 @@ public interface PerceptionManager {
     /** Performs a ray cast in the direction of the given [ray] in the latest camera view. */
     public fun hitTest(ray: Ray): List<HitResult>
 
-    /**
-     * Retrieves all the [java.util.UUID] instances from [androidx.xr.arcore.internal.Anchor]
-     * objects that have been persisted.
-     */
+    /** Retrieves all the [UUID] instances from [Anchor] objects that have been persisted. */
     public fun getPersistedAnchorUuids(): List<UUID>
 
-    /** Loads an [androidx.xr.arcore.internal.Anchor] from local storage. */
+    /** Loads an [Anchor] from local storage. */
     public fun loadAnchor(uuid: UUID): Anchor
 
-    /** Loads an [androidx.xr.arcore.internal.Anchor] from a native pointer. */
+    /** Loads an [Anchor] from a native pointer. */
     // TODO(b/373711152) : Remove this method once the Jetpack XR Runtime API migration is done.
     public fun loadAnchorFromNativePointer(nativePointer: Long): Anchor
 
-    /** Deletes a persisted [androidx.xr.arcore.internal.Anchor] from local storage. */
+    /** Deletes a persisted [Anchor] from local storage. */
     public fun unpersistAnchor(uuid: UUID)
 
     /** Checks the VPS availability at the given location. */
@@ -61,28 +58,16 @@ public interface PerceptionManager {
     /** Returns the list of all known trackables. */
     public val trackables: Collection<Trackable>
 
-    /**
-     * Eye tracking information for the left [androidx.xr.arcore.internal.Eye]. Only available on
-     * supported platforms.
-     */
+    /** Eye tracking information for the left [Eye]. Only available on supported platforms. */
     public val leftEye: Eye?
 
-    /**
-     * Eye tracking information for the right [androidx.xr.arcore.internal.Eye]. Only available on
-     * supported platforms.
-     */
+    /** Eye tracking information for the right [Eye]. Only available on supported platforms. */
     public val rightEye: Eye?
 
-    /**
-     * Hand tracking information for the left [androidx.xr.arcore.internal.Hand]. Only available on
-     * supported platforms.
-     */
+    /** Hand tracking information for the left [Hand]. Only available on supported platforms. */
     public val leftHand: Hand?
 
-    /**
-     * Hand tracking information for the right [androidx.xr.arcore.internal.Hand]. Only available on
-     * supported platforms.
-     */
+    /** Hand tracking information for the right [Hand]. Only available on supported platforms. */
     public val rightHand: Hand?
 
     /** AR device tracking information. */
@@ -100,16 +85,16 @@ public interface PerceptionManager {
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
     public val monoRenderViewpoint: RenderViewpoint?
 
-    /** [androidx.xr.arcore.internal.Earth] tracking information. */
+    /** [Earth] tracking information. */
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val earth: Earth
 
-    /** Left [androidx.xr.arcore.internal.DepthMap]'s current frame information */
+    /** Left [DepthMap]'s current frame information */
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val leftDepthMap: DepthMap?
 
-    /** Right [androidx.xr.arcore.internal.DepthMap]'s current frame information */
+    /** Right [DepthMap]'s current frame information */
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val rightDepthMap: DepthMap?
 
-    /** Mono [androidx.xr.arcore.internal.DepthMap]'s current frame information */
+    /** Mono [DepthMap]'s current frame information */
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val monoDepthMap: DepthMap?
 
     /** Face tracking information for the face. Only available on supported platforms. */
