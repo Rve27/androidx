@@ -42,6 +42,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 
 import org.jspecify.annotations.NonNull;
 
+import java.lang.ref.WeakReference;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
@@ -367,6 +368,7 @@ abstract class AndroidXrEntity extends BaseEntity implements Entity {
         mReformEventConsumerMap.clear();
         try (NodeTransaction transaction = mExtensions.createNodeTransaction()) {
             NodeTransaction unused = transaction.disableReform(mNode);
+            transaction.apply();
         }
 
         // SystemSpaceEntityImpls (Anchors, ActivitySpace, etc) should have null parents.
@@ -378,42 +380,51 @@ abstract class AndroidXrEntity extends BaseEntity implements Entity {
     }
 
     /**
+     * Handles the logic for a reform event. This is in a separate method to be called from a weak
+     * reference to avoid memory leaks.
+     */
+    private void handleReformEvent(ReformEvent reformEvent) {
+        if ((mReformOptions.getEnabledReform() & ReformOptions.ALLOW_MOVE) != 0
+                && (mReformOptions.getFlags() & ReformOptions.FLAG_ALLOW_SYSTEM_MOVEMENT) != 0) {
+            // Update the cached pose of the entity.
+            super.setPose(
+                    new Pose(
+                            new Vector3(
+                                    reformEvent.getProposedPosition().x,
+                                    reformEvent.getProposedPosition().y,
+                                    reformEvent.getProposedPosition().z),
+                            new Quaternion(
+                                    reformEvent.getProposedOrientation().x,
+                                    reformEvent.getProposedOrientation().y,
+                                    reformEvent.getProposedOrientation().z,
+                                    reformEvent.getProposedOrientation().w)),
+                    Space.PARENT);
+            // Update the cached scale of the entity.
+            super.setScaleInternal(
+                    new Vector3(
+                            reformEvent.getProposedScale().x,
+                            reformEvent.getProposedScale().y,
+                            reformEvent.getProposedScale().z));
+        }
+        mReformEventConsumerMap.forEach(
+                (eventConsumer, consumerExecutor) ->
+                        consumerExecutor.execute(() -> eventConsumer.accept(reformEvent)));
+    }
+
+    /**
      * Gets the reform options for this entity.
      *
      * @return The reform options for this entity.
      */
     public ReformOptions getReformOptions() {
         if (mReformOptions == null) {
+            final WeakReference<AndroidXrEntity> weakThis = new WeakReference<>(this);
             Consumer<ReformEvent> reformEventConsumer =
                     reformEvent -> {
-                        if ((mReformOptions.getEnabledReform() & ReformOptions.ALLOW_MOVE) != 0
-                                && (mReformOptions.getFlags()
-                                                & ReformOptions.FLAG_ALLOW_SYSTEM_MOVEMENT)
-                                        != 0) {
-                            // Update the cached pose of the entity.
-                            super.setPose(
-                                    new Pose(
-                                            new Vector3(
-                                                    reformEvent.getProposedPosition().x,
-                                                    reformEvent.getProposedPosition().y,
-                                                    reformEvent.getProposedPosition().z),
-                                            new Quaternion(
-                                                    reformEvent.getProposedOrientation().x,
-                                                    reformEvent.getProposedOrientation().y,
-                                                    reformEvent.getProposedOrientation().z,
-                                                    reformEvent.getProposedOrientation().w)),
-                                    Space.PARENT);
-                            // Update the cached scale of the entity.
-                            super.setScaleInternal(
-                                    new Vector3(
-                                            reformEvent.getProposedScale().x,
-                                            reformEvent.getProposedScale().y,
-                                            reformEvent.getProposedScale().z));
+                        AndroidXrEntity entity = weakThis.get();
+                        if (entity != null) {
+                            entity.handleReformEvent(reformEvent);
                         }
-                        mReformEventConsumerMap.forEach(
-                                (eventConsumer, consumerExecutor) ->
-                                        consumerExecutor.execute(
-                                                () -> eventConsumer.accept(reformEvent)));
                     };
             mReformOptions = mExtensions.createReformOptions(mExecutor, reformEventConsumer);
         }
