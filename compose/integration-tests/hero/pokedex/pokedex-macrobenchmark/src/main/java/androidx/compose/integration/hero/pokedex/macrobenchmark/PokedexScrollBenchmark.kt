@@ -104,10 +104,6 @@ class PokedexScrollBenchmark(
             compilationMode = compilationMode,
             iterations = HeroMacrobenchmarkDefaults.ITERATIONS,
             setupBlock = {
-                device.pressHome()
-                device.waitForIdle()
-                databaseCleanupRule.deleteDatabaseFiles()
-
                 val intent = Intent()
                 intent.action = action
                 intent.putExtra(POKEDEX_ENABLE_SHARED_TRANSITION_SCOPE, enableSharedTransitionScope)
