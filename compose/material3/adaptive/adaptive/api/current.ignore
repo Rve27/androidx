@@ -1,31 +1,5 @@
 // Baseline format: 1.0
-RemovedFromKotlin: androidx.compose.material3.adaptive.HingeInfo#getBounds():
-    Source breaking change: method androidx.compose.material3.adaptive.HingeInfo.getBounds() can no longer be resolved from Kotlin source
-RemovedFromKotlin: androidx.compose.material3.adaptive.HingeInfo#isFlat():
-    Source breaking change: method androidx.compose.material3.adaptive.HingeInfo.isFlat() can no longer be resolved from Kotlin source
-RemovedFromKotlin: androidx.compose.material3.adaptive.HingeInfo#isOccluding():
-    Source breaking change: method androidx.compose.material3.adaptive.HingeInfo.isOccluding() can no longer be resolved from Kotlin source
-RemovedFromKotlin: androidx.compose.material3.adaptive.HingeInfo#isSeparating():
-    Source breaking change: method androidx.compose.material3.adaptive.HingeInfo.isSeparating() can no longer be resolved from Kotlin source
-RemovedFromKotlin: androidx.compose.material3.adaptive.HingeInfo#isVertical():
-    Source breaking change: method androidx.compose.material3.adaptive.HingeInfo.isVertical() can no longer be resolved from Kotlin source
-RemovedFromKotlin: androidx.compose.material3.adaptive.Posture#getHingeList():
-    Source breaking change: method androidx.compose.material3.adaptive.Posture.getHingeList() can no longer be resolved from Kotlin source
-RemovedFromKotlin: androidx.compose.material3.adaptive.Posture#isTabletop():
-    Source breaking change: method androidx.compose.material3.adaptive.Posture.isTabletop() can no longer be resolved from Kotlin source
-RemovedFromKotlin: androidx.compose.material3.adaptive.PostureKt#getAllHorizontalHingeBounds(androidx.compose.material3.adaptive.Posture):
-    Source breaking change: method androidx.compose.material3.adaptive.PostureKt.getAllHorizontalHingeBounds(androidx.compose.material3.adaptive.Posture) can no longer be resolved from Kotlin source
-RemovedFromKotlin: androidx.compose.material3.adaptive.PostureKt#getAllVerticalHingeBounds(androidx.compose.material3.adaptive.Posture):
-    Source breaking change: method androidx.compose.material3.adaptive.PostureKt.getAllVerticalHingeBounds(androidx.compose.material3.adaptive.Posture) can no longer be resolved from Kotlin source
-RemovedFromKotlin: androidx.compose.material3.adaptive.PostureKt#getOccludingHorizontalHingeBounds(androidx.compose.material3.adaptive.Posture):
-    Source breaking change: method androidx.compose.material3.adaptive.PostureKt.getOccludingHorizontalHingeBounds(androidx.compose.material3.adaptive.Posture) can no longer be resolved from Kotlin source
-RemovedFromKotlin: androidx.compose.material3.adaptive.PostureKt#getOccludingVerticalHingeBounds(androidx.compose.material3.adaptive.Posture):
-    Source breaking change: method androidx.compose.material3.adaptive.PostureKt.getOccludingVerticalHingeBounds(androidx.compose.material3.adaptive.Posture) can no longer be resolved from Kotlin source
-RemovedFromKotlin: androidx.compose.material3.adaptive.PostureKt#getSeparatingHorizontalHingeBounds(androidx.compose.material3.adaptive.Posture):
-    Source breaking change: method androidx.compose.material3.adaptive.PostureKt.getSeparatingHorizontalHingeBounds(androidx.compose.material3.adaptive.Posture) can no longer be resolved from Kotlin source
-RemovedFromKotlin: androidx.compose.material3.adaptive.PostureKt#getSeparatingVerticalHingeBounds(androidx.compose.material3.adaptive.Posture):
-    Source breaking change: method androidx.compose.material3.adaptive.PostureKt.getSeparatingVerticalHingeBounds(androidx.compose.material3.adaptive.Posture) can no longer be resolved from Kotlin source
-RemovedFromKotlin: androidx.compose.material3.adaptive.WindowAdaptiveInfo#getWindowPosture():
-    Source breaking change: method androidx.compose.material3.adaptive.WindowAdaptiveInfo.getWindowPosture() can no longer be resolved from Kotlin source
-RemovedFromKotlin: androidx.compose.material3.adaptive.WindowAdaptiveInfo#getWindowSizeClass():
-    Source breaking change: method androidx.compose.material3.adaptive.WindowAdaptiveInfo.getWindowSizeClass() can no longer be resolved from Kotlin source
+RemovedFromBytecode: androidx.compose.material3.adaptive.AndroidWindowAdaptiveInfo_androidKt#collectFoldingFeaturesAsState():
+    Binary breaking change: method androidx.compose.material3.adaptive.AndroidWindowAdaptiveInfo_androidKt.collectFoldingFeaturesAsState() has been removed from bytecode
+RemovedFromBytecode: androidx.compose.material3.adaptive.WindowAdaptiveInfoKt#currentWindowAdaptiveInfo(boolean):
+    Binary breaking change: method androidx.compose.material3.adaptive.WindowAdaptiveInfoKt.currentWindowAdaptiveInfo(boolean) has been removed from bytecode
