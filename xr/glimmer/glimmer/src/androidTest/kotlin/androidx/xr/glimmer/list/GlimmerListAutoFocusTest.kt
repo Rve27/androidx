@@ -23,20 +23,16 @@ import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusManager
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
@@ -103,24 +99,22 @@ class GlimmerListAutoFocusTest : BaseListTestWithOrientation(Orientation.Vertica
     fun performSemanticsAction_scrollBy_movesAutoFocus() {
         rule.setAutoFocusContent { FocusableTestList(size = 100) }
 
-        val scroll = with(rule.density) { (ItemHeight * 5).toPx() }
+        val scroll = with(rule.density) { ItemHeight.toPx() * 5.5f }
         rule.onNodeWithTag(LIST_TEST_TAG).performSemanticsAction(ScrollBy) { it.invoke(0f, scroll) }
         rule.waitForIdle()
 
-        // We brought item-5 to the top, but centered item-7 is focused (screen fits up to 5 items).
-        rule.onListItem(7).assertIsFocused()
+        rule.onListItem(5).assertIsFocused()
     }
 
     @Test
     fun indirectTouch_movesAutoFocus() {
         rule.setAutoFocusContent { FocusableTestList(size = 100) }
 
-        val swipe = with(rule.density) { (ItemHeight * 5).toPx() }
+        val swipe = with(rule.density) { ItemHeight.toPx() * 5.5f }
         rule.onNodeWithTag(LIST_TEST_TAG).performIndirectSwipe(swipe)
         rule.waitForIdle()
 
-        // We brought item-5 to the top, but centered item-7 is focused (screen fits up to 5 items).
-        rule.onListItem(7).assertIsFocused()
+        rule.onListItem(5).assertIsFocused()
     }
 
     /**
@@ -136,7 +130,7 @@ class GlimmerListAutoFocusTest : BaseListTestWithOrientation(Orientation.Vertica
      */
     @Test
     fun lastItem_is_focused_after_fastScrollToBottom() {
-        rule.setAutoFocusContent { FocusableTestList(size = 3) }
+        rule.setAutoFocusContent { FocusableTestList(size = 6) }
         val largeScroll = with(rule.density) { 10000.dp.toPx() }
 
         rule.onNodeWithTag(LIST_TEST_TAG).performSemanticsAction(ScrollBy) {
@@ -144,37 +138,13 @@ class GlimmerListAutoFocusTest : BaseListTestWithOrientation(Orientation.Vertica
         }
         rule.waitForIdle()
 
-        rule.onListItem(2).assertIsFocused()
-    }
-
-    @Test
-    fun focusPosition_isReset_afterChangingOrientation() {
-        val listOrientation = mutableStateOf(Orientation.Vertical)
-        rule.setAutoFocusContent {
-            FocusableTestList(size = 5, listOrientation = listOrientation.value)
-        }
-
-        // Vertical list, initially "item-0" is focused.
-        rule.onListItem(0).assertIsFocused()
-
-        // Vertical scroll to "item-4".
-        val scroll = with(rule.density) { 350.dp.toPx() }
-        rule.onNodeWithTag(LIST_TEST_TAG).performSemanticsAction(ScrollBy) { it.invoke(0f, scroll) }
-        rule.onListItem(3).assertIsFocused()
-        rule.waitForIdle()
-
-        // Switch the list to a horizontal orientation.
-        listOrientation.value = Orientation.Horizontal
-        rule.waitForIdle()
-
-        // Horizontal list, focus is reset, "item-0" is focused.
-        rule.onListItem(0).assertIsFocused()
+        rule.onListItem(5).assertIsFocused()
     }
 
     @Test
     fun mixture_of_focusable_and_nonFocusable_items() {
         rule.setAutoFocusContent {
-            FocusableTestList(size = 4) { index ->
+            FocusableTestList { index ->
                 val focusable = (index == 0) || (index == 3)
                 FocusableListItem(index = index, focusable = focusable)
             }
@@ -288,18 +258,12 @@ class GlimmerListAutoFocusTest : BaseListTestWithOrientation(Orientation.Vertica
     }
 
     private fun ComposeContentTestRule.setAutoFocusContent(
-        modifier: Modifier = Modifier,
-        content: @Composable ColumnScope.() -> Unit,
+        content: @Composable ColumnScope.() -> Unit
     ) {
-        val focusRequester = FocusRequester()
-        setContent {
-            scope = rememberCoroutineScope()
+        setContentWithInitialFocus {
             focusManager = LocalFocusManager.current
-            Column(modifier.focusRequester(focusRequester)) { content() }
+            content()
         }
-        // Request initial focus.
-        rule.runOnIdle { focusRequester.requestFocus() }
-        rule.waitForIdle()
     }
 
     /**
