@@ -275,11 +275,7 @@ final class SurfaceViewImplementation extends PreviewViewImplementation {
         private void cancelPreviousRequest() {
             if (mSurfaceRequest != null) {
                 Logger.d(TAG, "Request canceled: " + mSurfaceRequest);
-                if (mSurfaceRequest.willNotProvideSurface() && mOnSurfaceNotInUseListener != null) {
-                    // Invokes the onSurfaceNotInUse method to ensure the PreviewView can do the
-                    // clean flow properly.
-                    mOnSurfaceNotInUseListener.onSurfaceNotInUse();
-                }
+                mSurfaceRequest.willNotProvideSurface();
             }
         }
 
