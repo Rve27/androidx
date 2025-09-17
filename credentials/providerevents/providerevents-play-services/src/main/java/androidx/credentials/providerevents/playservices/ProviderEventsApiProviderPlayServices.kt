@@ -99,7 +99,7 @@ public class ProviderEventsApiProviderPlayServices(private val context: Context)
     private companion object {
         const val TAG = "ProviderEventsApi"
         // TODO(b/436712597): Bump this version when the UX is ready
-        const val MIN_GMS_APK_VERSION = 250900000
+        const val MIN_GMS_APK_VERSION = 253800000
         const val REGISTRY_ID = "credential_transfer"
     }
 }
