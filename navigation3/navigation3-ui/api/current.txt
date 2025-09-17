@@ -1,6 +1,17 @@
 // Signature format: 4.0
 package androidx.navigation3.scene {
 
+  public final class DialogSceneStrategy<T> implements androidx.navigation3.scene.SceneStrategy<T> {
+    ctor public DialogSceneStrategy();
+    method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.navigation3.scene.Scene<T!>? calculateScene(java.util.List<? extends androidx.navigation3.runtime.NavEntry<T!>!>, kotlin.jvm.functions.Function1<? super java.lang.Integer!,kotlin.Unit!>, androidx.compose.runtime.Composer?, int);
+    method @KotlinOnly @androidx.compose.runtime.Composable public androidx.navigation3.scene.Scene<T>? calculateScene(java.util.List<androidx.navigation3.runtime.NavEntry<T>> entries, kotlin.jvm.functions.Function1<java.lang.Integer,kotlin.Unit> onBack);
+    field public static final androidx.navigation3.scene.DialogSceneStrategy.Companion Companion;
+  }
+
+  public static final class DialogSceneStrategy.Companion {
+    method public java.util.Map<java.lang.String,java.lang.Object> dialog(optional androidx.compose.ui.window.DialogProperties dialogProperties);
+  }
+
   public interface OverlayScene<T> extends androidx.navigation3.scene.Scene<T> {
     method @InaccessibleFromKotlin public java.util.List<androidx.navigation3.runtime.NavEntry<T>> getOverlaidEntries();
     property public abstract java.util.List<androidx.navigation3.runtime.NavEntry<T>> overlaidEntries;
@@ -62,17 +73,6 @@ package androidx.navigation3.scene {
 }
 
 package androidx.navigation3.ui {
-
-  public final class DialogSceneStrategy<T> implements androidx.navigation3.scene.SceneStrategy<T> {
-    ctor public DialogSceneStrategy();
-    method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.navigation3.scene.Scene<T!>? calculateScene(java.util.List<? extends androidx.navigation3.runtime.NavEntry<T!>!>, kotlin.jvm.functions.Function1<? super java.lang.Integer!,kotlin.Unit!>, androidx.compose.runtime.Composer?, int);
-    method @KotlinOnly @androidx.compose.runtime.Composable public androidx.navigation3.scene.Scene<T>? calculateScene(java.util.List<androidx.navigation3.runtime.NavEntry<T>> entries, kotlin.jvm.functions.Function1<java.lang.Integer,kotlin.Unit> onBack);
-    field public static final androidx.navigation3.ui.DialogSceneStrategy.Companion Companion;
-  }
-
-  public static final class DialogSceneStrategy.Companion {
-    method public java.util.Map<java.lang.String,java.lang.Object> dialog(optional androidx.compose.ui.window.DialogProperties dialogProperties);
-  }
 
   public final class LocalNavAnimatedContentScopeKt {
     method @InaccessibleFromKotlin public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.compose.animation.AnimatedContentScope> getLocalNavAnimatedContentScope();
