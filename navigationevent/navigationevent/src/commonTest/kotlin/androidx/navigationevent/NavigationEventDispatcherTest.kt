@@ -417,7 +417,7 @@ class NavigationEventDispatcherTest {
     fun dispatch_withNoEnabledHandlers_invokesBackFallback() {
         var fallbackCalled = false
         val dispatcher =
-            NavigationEventDispatcher(fallbackOnBackPressed = { fallbackCalled = true })
+            NavigationEventDispatcher(onBackCompletedFallback = { fallbackCalled = true })
         val handler = TestNavigationEventHandler()
         dispatcher.addHandler(handler)
 
@@ -438,7 +438,7 @@ class NavigationEventDispatcherTest {
     fun dispatch_withNoEnabledHandlers_doesNotInvokeBackFallbackForForward() {
         var fallbackCalled = false
         val dispatcher =
-            NavigationEventDispatcher(fallbackOnBackPressed = { fallbackCalled = true })
+            NavigationEventDispatcher(onBackCompletedFallback = { fallbackCalled = true })
         val handler = TestNavigationEventHandler()
         handler.isForwardEnabled = false
         dispatcher.addHandler(handler)
@@ -562,7 +562,7 @@ class NavigationEventDispatcherTest {
     fun dispatch_withNoHandlers_invokesBackFallback() {
         var fallbackCalled = false
         val dispatcher =
-            NavigationEventDispatcher(fallbackOnBackPressed = { fallbackCalled = true })
+            NavigationEventDispatcher(onBackCompletedFallback = { fallbackCalled = true })
 
         // With no handlers registered at all, the fallback should still work.
         val input = TestNavigationEventInput()
