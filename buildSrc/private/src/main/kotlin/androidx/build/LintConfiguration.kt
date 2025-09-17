@@ -274,6 +274,7 @@ private fun Project.configureLint(lint: Lint, isLibrary: Boolean) {
         }
 
         fatal.add("CheckResult")
+        fatal.add("PrivateResource")
 
         val lintXmlPath =
             if (extension.type == SoftwareType.SAMPLES) {
