@@ -27,7 +27,6 @@ import java.util.concurrent.CancellationException
 
 /** A Material which implements a water effect. */
 // TODO(b/396201066): Add unit tests for this class if we end up making it public.
-@Suppress("NotCloseable")
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public class WaterMaterial
 internal constructor(
@@ -37,18 +36,12 @@ internal constructor(
 ) : Material {
 
     /**
-     * Disposes the given water material resource.
+     * Closes the [WaterMaterial] and releases its underlying graphics resources.
      *
-     * This method must be called from the main thread.
-     * https://developer.android.com/guide/components/processes-and-threads
-     *
-     * Currently, a glTF model (which this material will be used with) can't be disposed. This means
-     * that calling dispose on the material will lead to a crash if the call is made out of order,
-     * that is, if the material is disposed before the glTF model that uses it.
+     * After being closed, the [WaterMaterial] should not be used further.
      */
-    // TODO(b/376277201): Provide Session.GltfModel.dispose().
     @MainThread
-    override public fun dispose() {
+    override public fun close() {
         session.renderingRuntime.destroyWaterMaterial(material)
     }
 

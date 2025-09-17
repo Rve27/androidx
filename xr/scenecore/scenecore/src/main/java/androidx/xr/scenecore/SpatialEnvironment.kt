@@ -336,7 +336,7 @@ internal fun RtSpatialEnvironmentPreference.toSpatialEnvironmentPreference():
             object : Material {
                 override val material: RtMaterial = rtMaterial
 
-                override fun dispose() {
+                override fun close() {
                     // The lifecycle of this material is managed by the SpatialEnvironment.
                 }
             }

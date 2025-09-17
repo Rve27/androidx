@@ -39,7 +39,6 @@ import androidx.xr.scenecore.internal.RenderingRuntime
  * - [KHR_materials_sheen
  *   extension](https://github.com/KhronosGroup/glTF/tree/main/extensions/2.0/Khronos/KHR_materials_sheen)
  */
-@Suppress("NotCloseable")
 public class KhronosPbrMaterial
 internal constructor(
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) override val material: RtMaterial,
@@ -48,12 +47,12 @@ internal constructor(
 ) : Material {
 
     /**
-     * Disposes the [Material] and releases its underlying graphics resources.
+     * Closes the [KhronosPbrMaterial] and releases its underlying graphics resources.
      *
-     * After disposal, the [Material] should not be used further.
+     * After being closed, the [KhronosPbrMaterial] should not be used further.
      */
     @MainThread
-    override public fun dispose() {
+    override public fun close() {
         session.renderingRuntime.destroyKhronosPbrMaterial(material)
     }
 
