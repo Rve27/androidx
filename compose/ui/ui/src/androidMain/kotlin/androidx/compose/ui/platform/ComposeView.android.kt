@@ -26,8 +26,6 @@ import androidx.compose.runtime.Composition
 import androidx.compose.runtime.CompositionContext
 import androidx.compose.runtime.Recomposer
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.ComposeUiFlags
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.InternalComposeUiApi
 import androidx.compose.ui.UiComposable
 import androidx.compose.ui.node.InternalCoreApi
@@ -176,13 +174,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
      *
      * This property should be set prior to first composition.
      */
-    @OptIn(ExperimentalComposeUiApi::class)
-    var autoClearFocusBehavior: AutoClearFocusBehavior =
-        if (ComposeUiFlags.isClearFocusOnPointerDownEnabled) {
-            AutoClearFocusBehavior.Default
-        } else {
-            AutoClearFocusBehavior.None
-        }
+    var autoClearFocusBehavior: AutoClearFocusBehavior = AutoClearFocusBehavior.Default
 
     /**
      * The Jetpack Compose UI content for this view. Subclasses must implement this method to
