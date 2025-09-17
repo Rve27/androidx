@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package androidx.navigation3.runtime
+package androidx.navigation3.scene
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.ui.util.fastMap
 import kotlin.collections.plusAssign
 
 /**
@@ -32,7 +33,7 @@ import kotlin.collections.plusAssign
  */
 @Composable
 public fun <T : Any> rememberSceneState(
-    entries: List<NavEntry<T>>,
+    entries: List<androidx.navigation3.runtime.NavEntry<T>>,
     sceneStrategy: SceneStrategy<T>,
     onBack: (Int) -> Unit,
 ): SceneState<T> {
@@ -42,7 +43,10 @@ public fun <T : Any> rememberSceneState(
     val allScenes =
         mutableListOf(
             sceneStrategy.calculateSceneWithSinglePaneFallback(
-                rememberDecoratedNavEntries(entries, listOf(rememberSceneSetupNavEntryDecorator())),
+                _root_ide_package_.androidx.navigation3.runtime.rememberDecoratedNavEntries(
+                    entries,
+                    listOf(rememberSceneSetupNavEntryDecorator()),
+                ),
                 onBack,
             )
         )
@@ -62,7 +66,7 @@ public fun <T : Any> rememberSceneState(
     } while (overlaidEntries != null)
 
     // Find all the overlay scenes
-    val overlayScenes = allScenes.dropLast(1).fastMapOrMap { it as OverlayScene<T> }
+    val overlayScenes = allScenes.dropLast(1).fastMap { it as OverlayScene<T> }
     // The currentScene is just just whatever is last on the list.
     val currentScene = allScenes.last()
     // Get the previous scenes, starting from the current scene.
@@ -107,7 +111,7 @@ public fun <T : Any> rememberSceneState(
 @Immutable
 public class SceneState<T : Any>
 internal constructor(
-    public val entries: List<NavEntry<T>>,
+    public val entries: List<androidx.navigation3.runtime.NavEntry<T>>,
     public val overlayScenes: List<OverlayScene<T>>,
     public val currentScene: Scene<T>,
     public val previousScenes: List<Scene<T>>,

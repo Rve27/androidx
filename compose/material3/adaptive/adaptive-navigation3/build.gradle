@@ -45,7 +45,7 @@ androidXMultiplatform {
             dependencies {
                 implementation(libs.kotlinStdlib)
                 api(project(":compose:material3:adaptive:adaptive-navigation"))
-                api(project(":navigation3:navigation3-runtime"))
+                api(project(":navigation3:navigation3-ui"))
                 implementation(project(":navigationevent:navigationevent-compose"))
             }
         }
@@ -68,7 +68,6 @@ androidXMultiplatform {
             dependencies {
                 implementation(project(":compose:material3:material3"))
                 implementation(project(":compose:test-utils"))
-                implementation(project(":navigation3:navigation3-ui"))
                 implementation(libs.testRules)
                 implementation(libs.testRunner)
                 implementation(libs.junit)
