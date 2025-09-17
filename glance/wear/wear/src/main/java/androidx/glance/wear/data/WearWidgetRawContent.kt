@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package androidx.glance.wear
+package androidx.glance.wear.data
 
+import android.os.Bundle
 import android.util.Log
 import androidx.annotation.RestrictTo
-import androidx.glance.wear.data.WearWidgetRawContentData
 import androidx.glance.wear.proto.WearWidgetRawContentProto
 import java.io.IOException
 import okio.ByteString.Companion.toByteString
@@ -28,13 +28,16 @@ import okio.ByteString.Companion.toByteString
  * serialized.
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY)
-public class WearWidgetRawContent(public val rcDocument: ByteArray) {
+public class WearWidgetRawContent(public val rcDocument: ByteArray, public val extras: Bundle) {
 
     /** Convert to the parcelable [WearWidgetRawContentData]. */
     @RestrictTo(RestrictTo.Scope.LIBRARY)
     public fun toData(): WearWidgetRawContentData {
         val contentProto = WearWidgetRawContentProto(rc_document = rcDocument.toByteString())
-        return WearWidgetRawContentData().apply { payload = contentProto.encode() }
+        return WearWidgetRawContentData().apply {
+            payload = contentProto.encode()
+            extras = extras
+        }
     }
 
     @RestrictTo(RestrictTo.Scope.LIBRARY)
@@ -42,7 +45,10 @@ public class WearWidgetRawContent(public val rcDocument: ByteArray) {
         public fun fromData(contentData: WearWidgetRawContentData): WearWidgetRawContent? {
             try {
                 val contentProto = WearWidgetRawContentProto.ADAPTER.decode(contentData.payload)
-                return WearWidgetRawContent(rcDocument = contentProto.rc_document.toByteArray())
+                return WearWidgetRawContent(
+                    rcDocument = contentProto.rc_document.toByteArray(),
+                    extras = contentData.extras,
+                )
             } catch (ex: IOException) {
                 Log.e(TAG, "Error deserializing WearWidgetRawContentData payload.", ex)
             }
