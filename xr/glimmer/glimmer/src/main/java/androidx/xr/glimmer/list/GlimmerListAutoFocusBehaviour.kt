@@ -306,17 +306,5 @@ private fun getFocusHeight(layoutProperties: ListLayoutProperties): Int {
     }
 }
 
-/**
- * The scroll distance required to put the focus indicator in the center is calculated as a
- * proportion of the list's visible size, using [ProportionalThresholdFactor].
- *
- * For example, if the visible list height is 500dp and [ProportionalThresholdFactor] is 2.0f, the
- * focus will reach the center after scrolling 1000dp — that is, two full viewport heights.
- *
- * Note that this behaviour only applies to lists with enough content to scroll. If the list is too
- * short to scroll, the focus line moves at the same speed as the user’s finger.
- */
-private const val ProportionalThresholdFactor = 0.6f
-
 /** Placeholder for `null`. */
 private const val NoFocusLine: Float = Float.MIN_VALUE
