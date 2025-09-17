@@ -755,7 +755,7 @@ package androidx.compose.runtime {
     method @KotlinOnly @androidx.compose.runtime.Composable public static inline <reified T> T retain(kotlin.jvm.functions.Function0<T> calculation);
     method @KotlinOnly @androidx.compose.runtime.Composable public static androidx.compose.runtime.ControlledRetainScope retainControlledRetainScope();
     method @BytecodeOnly @androidx.compose.runtime.Composable public static androidx.compose.runtime.ControlledRetainScope retainControlledRetainScope(androidx.compose.runtime.Composer?, int);
-    method @androidx.compose.runtime.Composable public static androidx.compose.runtime.RetainScopeHolder retainRetainScopeHolder();
+    method @KotlinOnly @androidx.compose.runtime.Composable public static androidx.compose.runtime.RetainScopeHolder retainRetainScopeHolder();
     method @BytecodeOnly @androidx.compose.runtime.Composable public static androidx.compose.runtime.RetainScopeHolder retainRetainScopeHolder(androidx.compose.runtime.Composer?, int);
     property public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.compose.runtime.RetainScope> LocalRetainScope;
   }
@@ -786,7 +786,7 @@ package androidx.compose.runtime {
 
   public final class RetainScopeHolder {
     ctor public RetainScopeHolder();
-    method @androidx.compose.runtime.Composable public void RetainScopeProvider(Object? key, kotlin.jvm.functions.Function0<kotlin.Unit> content);
+    method @KotlinOnly @androidx.compose.runtime.Composable public void RetainScopeProvider(Object? key, kotlin.jvm.functions.Function0<kotlin.Unit> content);
     method @BytecodeOnly @androidx.compose.runtime.Composable public void RetainScopeProvider(Object?, kotlin.jvm.functions.Function2<? super androidx.compose.runtime.Composer!,? super java.lang.Integer!,kotlin.Unit!>, androidx.compose.runtime.Composer?, int);
     method public void clearChild(Object? key);
     method public void clearChildren(kotlin.jvm.functions.Function1<java.lang.Object?,java.lang.Boolean> predicate);
