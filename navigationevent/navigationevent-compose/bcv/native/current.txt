@@ -7,8 +7,6 @@
 
 // Library unique name: <androidx.navigationevent:navigationevent-compose>
 final class <#A: androidx.navigationevent/NavigationEventInfo> androidx.navigationevent.compose/NavigationEventState { // androidx.navigationevent.compose/NavigationEventState|null[0]
-    constructor <init>(#A, kotlin.collections/List<#A> = ..., kotlin.collections/List<#A> = ...) // androidx.navigationevent.compose/NavigationEventState.<init>|<init>(1:0;kotlin.collections.List<1:0>;kotlin.collections.List<1:0>){}[0]
-
     final var backInfo // androidx.navigationevent.compose/NavigationEventState.backInfo|{}backInfo[0]
         final fun <get-backInfo>(): kotlin.collections/List<androidx.navigationevent/NavigationEventInfo> // androidx.navigationevent.compose/NavigationEventState.backInfo.<get-backInfo>|<get-backInfo>(){}[0]
     final var currentInfo // androidx.navigationevent.compose/NavigationEventState.currentInfo|{}currentInfo[0]
