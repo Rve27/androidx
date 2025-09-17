@@ -14,10 +14,13 @@
  * limitations under the License.
  */
 
-package androidx.navigation3.runtime
+package androidx.navigation3.scene
+
+import androidx.navigation3.runtime.NavEntry
 
 /**
- * A specific scene to render 1 or more [NavEntry] instances as an overlay.
+ * A specific scene to render 1 or more [androidx.navigation3.runtime.NavEntry] instances as an
+ * overlay.
  *
  * It is expected that the [content] is rendered in one or more separate windows (e.g., a dialog,
  * popup window, etc.) that are visible above any additional [Scene] instances calculated from the
@@ -30,7 +33,8 @@ package androidx.navigation3.runtime
 public interface OverlayScene<T : Any> : Scene<T> {
 
     /**
-     * The [NavEntry]s that should be handled by another [Scene] that sits below this Scene.
+     * The [androidx.navigation3.runtime.NavEntry]s that should be handled by another [Scene] that
+     * sits below this Scene.
      *
      * This *must* always be a non-empty list to correctly display entries below the overlay.
      */

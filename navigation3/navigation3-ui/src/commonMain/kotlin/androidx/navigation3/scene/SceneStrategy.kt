@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-package androidx.navigation3.runtime
+package androidx.navigation3.scene
 
 import androidx.compose.runtime.Composable
 
 /**
- * A strategy that tries to calculate a [Scene] given a list of [NavEntry].
+ * A strategy that tries to calculate a [Scene] given a list of
+ * [androidx.navigation3.runtime.NavEntry].
  *
- * If the list of [NavEntry] does not result in a [Scene] for this strategy, `null` will be returned
- * instead to delegate to another strategy.
+ * If the list of [androidx.navigation3.runtime.NavEntry] does not result in a [Scene] for this
+ * strategy, `null` will be returned instead to delegate to another strategy.
  */
 public fun interface SceneStrategy<T : Any> {
     /**
@@ -39,7 +40,10 @@ public fun interface SceneStrategy<T : Any> {
      *   done by the returned [Scene]. The passed [Int] should be the number of entries were popped.
      */
     @Composable
-    public fun calculateScene(entries: List<NavEntry<T>>, onBack: (count: Int) -> Unit): Scene<T>?
+    public fun calculateScene(
+        entries: List<androidx.navigation3.runtime.NavEntry<T>>,
+        onBack: (count: Int) -> Unit,
+    ): Scene<T>?
 
     /**
      * Chains this [SceneStrategy] with another [sceneStrategy] to return a combined

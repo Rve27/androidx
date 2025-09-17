@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.navigation3.runtime
+package androidx.navigation3.scene
 
 import androidx.navigationevent.NavigationEventHistory
 import androidx.navigationevent.NavigationEventInfo
