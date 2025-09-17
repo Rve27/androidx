@@ -31,9 +31,6 @@ import kotlin.reflect.KClass
  * [android.hardware.camera2.params.MultiResolutionStreamConfigurationMap].
  *
  * @see CameraMultiResolutionStreamConfigurationMap
- *
- * TODO(b/282051116): Introduce a Fake version in the `androidx.camera.camera2.pipe.testing`
- *   package.
  */
 @RequiresApi(Build.VERSION_CODES.S)
 internal class Camera2MultiResolutionStreamConfigurationMap(
