@@ -544,7 +544,6 @@ class IntegrationTest {
                                 .build(),
                     )
             )
-
         assertIs<ExecuteAppFunctionResponse.Success>(response)
     }
 
@@ -776,6 +775,10 @@ class IntegrationTest {
                                     createNoteMetadata.components,
                                 )
                                 .setString("title", "Test Title")
+                                .setString("content", "Some valid content")
+                                .setAppFunctionDataList("attachments", emptyList())
+                                .setString("groupId", "testGroupId")
+                                .setString("externalUuid", "testExternalUuid")
                                 .build(),
                         )
                         .build(),
@@ -827,6 +830,10 @@ class IntegrationTest {
                                     createNoteMetadata.components,
                                 )
                                 .setString("title", "Test Title")
+                                .setString("content", "Some valid content")
+                                .setAppFunctionDataList("attachments", emptyList())
+                                .setString("groupId", "testGroupId")
+                                .setString("externalUuid", "testExternalUuid")
                                 .build(),
                         )
                         .build(),
@@ -868,10 +875,15 @@ class IntegrationTest {
                     createNoteMetadata.components,
                 )
                 .setString("title", "Test Title")
+                .setString("content", "Some valid content")
+                .setAppFunctionDataList("attachments", emptyList())
+                .setString("groupId", "testGroupId")
+                .setString("externalUuid", "testExternalUuid")
                 .build()
         assertThrows(IllegalArgumentException::class.java) {
             AppFunctionData.Builder(createNoteMetadata.parameters, createNoteMetadata.components)
                 .setAppFunctionData("wrongParameters", innerData)
+                .build()
         }
     }
 
