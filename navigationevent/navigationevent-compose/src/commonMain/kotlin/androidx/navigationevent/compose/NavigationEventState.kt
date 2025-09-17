@@ -35,7 +35,8 @@ import androidx.navigationevent.NavigationEventTransitionState.Idle
  * and gesture state.
  */
 @Stable
-public class NavigationEventState<T : NavigationEventInfo>(
+public class NavigationEventState<T : NavigationEventInfo>
+internal constructor(
     currentInfo: T,
     backInfo: List<T> = emptyList(),
     forwardInfo: List<T> = emptyList(),
