@@ -29,6 +29,7 @@ import androidx.xr.scenecore.MovableComponent
 import androidx.xr.scenecore.PanelEntity
 import androidx.xr.scenecore.ResizableComponent
 import androidx.xr.scenecore.ResizeEvent
+import androidx.xr.scenecore.Space
 import androidx.xr.scenecore.testapp.R
 import java.util.function.Consumer
 
@@ -103,8 +104,12 @@ class PanelEntityManager(
                 Consumer<ResizeEvent> { resizeEvent: ResizeEvent ->
                     if (resizeEvent.resizeState == ResizeEvent.ResizeState.RESIZE_STATE_END) {
                         newPanel.size = resizeEvent.newSize.to2d()
+                        val panelWidthInActivitySpace: Float =
+                            newPanel.size.width * resizeEvent.entity.getScale(Space.ACTIVITY)
+                        val panelHeightInActivitySpace: Float =
+                            newPanel.size.height * resizeEvent.entity.getScale(Space.ACTIVITY)
                         mTextView.text =
-                            "Panel $panelNumber dimensions are ${resizeEvent.newSize.to2d()}"
+                            "Panel#$panelNumber's size is W:$panelWidthInActivitySpace x H:$panelHeightInActivitySpace in ActivitySpace units"
                     }
                 }
             val resizableComponent =
