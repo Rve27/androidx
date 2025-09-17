@@ -20,7 +20,7 @@ import androidx.kruth.assertThat
 import androidx.navigationevent.testing.TestNavigationEventHandler
 import kotlin.test.Test
 
-class DirectionNavigationEventInputTest {
+class DirectNavigationEventInputTest {
     @Test
     fun backStarted_afterConnected_shouldWork() {
         val dispatcher = NavigationEventDispatcher()
