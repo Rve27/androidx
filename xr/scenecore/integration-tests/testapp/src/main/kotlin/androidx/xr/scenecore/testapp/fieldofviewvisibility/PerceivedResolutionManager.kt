@@ -107,7 +107,7 @@ class PerceivedResolutionManager(
                         panelEntityManager.panelEntity!!.size.height *
                             panelEntityManager.panelEntity!!.getScale(Space.ACTIVITY)
                     mTextView?.setLine(
-                        "Panel Entity dimensions",
+                        "Panel Entity dimensions (in Activity Space units)",
                         "Width: $panelWidthInActivitySpace x Height: $panelHeightInActivitySpace",
                     )
                     mTextView?.setLine(
@@ -115,7 +115,10 @@ class PerceivedResolutionManager(
                         panelEntityManager.panelEntity!!.getPerceivedResolution().toString(),
                     )
                 } else {
-                    mTextView?.setLine("Panel Entity dimensions", "Can't Retrieve it")
+                    mTextView?.setLine(
+                        "Panel Entity dimensions (in Activity Space units)",
+                        "Can't Retrieve it",
+                    )
                     mTextView?.setLine(
                         "Panel Entity Perceived Resolution",
                         "Create Panel Entity for resolution",
