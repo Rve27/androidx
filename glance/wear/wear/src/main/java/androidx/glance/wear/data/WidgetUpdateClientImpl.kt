@@ -77,8 +77,8 @@ internal class WidgetUpdateClientImpl() : WidgetUpdateClient {
                     val updateRequesterService: TileUpdateRequesterService? =
                         TileUpdateRequesterService.Stub.asInterface(service)
 
-                    for (id in pendingIdsCopy) {
-                        updateRequesterService?.sendUpdateRequest(id)
+                    for (index in 0 until pendingIdsCopy.size) {
+                        updateRequesterService?.sendUpdateRequest(pendingIdsCopy[index])
                     }
 
                     context.unbindService(this)
