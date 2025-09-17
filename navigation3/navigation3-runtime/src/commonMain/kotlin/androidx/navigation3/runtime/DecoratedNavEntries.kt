@@ -199,6 +199,7 @@ private fun <T : Any> decorateEntry(
             @Composable
             override fun Content() {
                 val keysInComposition = keysInComposition
+                // track if entry is in backstack and/or still in composition
                 DisposableEffect(key1 = contentKey) {
                     keysInComposition.add(contentKey)
                     onDispose {
@@ -216,7 +217,18 @@ private fun <T : Any> decorateEntry(
                         }
                     }
                 }
-                DecorateNavEntry(entry, decorators)
+                // wrap entry with decorators then invoke Content
+                decorators
+                    .fastDistinctOrDistinct()
+                    .foldRight(initial = entry) { decorator, wrappedEntry ->
+                        object : NavEntryWrapper<T>(wrappedEntry) {
+                            @Composable
+                            override fun Content() {
+                                decorator.navEntryDecorator(wrappedEntry)
+                            }
+                        }
+                    }
+                    .Content()
             }
         }
     return initial
@@ -227,7 +239,7 @@ private fun <T : Any> decorateEntry(
  *
  * Invokes pop callback for popped entries that:
  * 1. are not animating (i.e. no pop animations) AND / OR
- * 2. have never been composed (i.e. never invoked with [DecorateNavEntry])
+ * 2. have never been composed
  */
 @Composable
 private fun <T : Any> PrepareBackStack(
