@@ -706,6 +706,28 @@ class NavigationEventDispatcherTest {
     }
 
     @Test
+    fun addInput_toSecondDispatcher_throwsException() {
+        val input = TestNavigationEventInput()
+        val dispatcher1 = NavigationEventDispatcher()
+        dispatcher1.addInput(input)
+
+        // An input cannot be registered to more than one dispatcher at a time
+        // to prevent ambiguous state and ownership issues.
+        val dispatcher2 = NavigationEventDispatcher()
+        assertThrows<IllegalArgumentException> { dispatcher2.addInput(input) }
+            .hasMessageThat()
+            .contains("is already added to dispatcher")
+    }
+
+    @Test
+    fun addInput_withAlreadyRegisteredDispatcher_ignoresCall() {
+        val input = TestNavigationEventInput()
+        val dispatcher = NavigationEventDispatcher()
+        dispatcher.addInput(input)
+        dispatcher.addInput(input) // No-op: no exceptions.
+    }
+
+    @Test
     fun removeInput_onRemove_callsOnDetach() {
         val dispatcher = NavigationEventDispatcher()
         val input = TestNavigationEventInput()
