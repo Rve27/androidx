@@ -153,6 +153,7 @@ package androidx.compose.ui {
     property @Deprecated public boolean areWindowInsetsRulersEnabled;
     property public boolean isAccessibilityShowOnScreenNestedScrollingEnabled;
     property public boolean isBypassUnfocusableComposeViewEnabled;
+    property public boolean isFocusRestorationEnabled;
     property public boolean isGraphicsLayerShapeSemanticsEnabled;
     property public boolean isIgnoreInvalidPrevFocusRectEnabled;
     property public boolean isIndirectPointerNavigationGestureDetectorEnabled;
@@ -167,6 +168,7 @@ package androidx.compose.ui {
     field @Deprecated public static boolean areWindowInsetsRulersEnabled;
     field public static boolean isAccessibilityShowOnScreenNestedScrollingEnabled;
     field public static boolean isBypassUnfocusableComposeViewEnabled;
+    field public static boolean isFocusRestorationEnabled;
     field public static boolean isGraphicsLayerShapeSemanticsEnabled;
     field public static boolean isIgnoreInvalidPrevFocusRectEnabled;
     field public static boolean isIndirectPointerNavigationGestureDetectorEnabled;

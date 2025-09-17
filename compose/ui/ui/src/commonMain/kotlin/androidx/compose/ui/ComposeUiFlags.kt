@@ -105,6 +105,12 @@ object ComposeUiFlags {
     @JvmField
     var isInitialFocusOnFocusableAvailable: Boolean = false
 
+    /**
+     * Enable focus restoration, by always saving focus. This flag depends on
+     * [isInitialFocusOnFocusableAvailable] also being true.
+     */
+    @field:Suppress("MutableBareField") @JvmField var isFocusRestorationEnabled: Boolean = false
+
     /** Flag for enabling indirect pointer event navigation gestures in Compose. */
     @field:Suppress("MutableBareField")
     @JvmField
