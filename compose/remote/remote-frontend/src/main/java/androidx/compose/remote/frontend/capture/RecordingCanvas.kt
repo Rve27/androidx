@@ -149,7 +149,13 @@ public class RecordingCanvas(bitmap: Bitmap) : Canvas(bitmap) {
             forceSendingPaint = true
         }
         val paintBundle = PaintBundle()
-        val tmpLastColorLong = paint.colorLong
+        val tmpLastColorLong =
+            if (Build.VERSION.SDK_INT >= 29) {
+                Api29ColorLongHelper.getColorLong(paint, creationState)
+            } else {
+                // Can't use ColorLong prior to API 29.
+                0L
+            }
         val tmpLastStrokeWidth = paint.strokeWidth
         val tmpLastTextSize = paint.textSize
         val tmpLastStrokeCapOrdinal = paint.strokeCap.ordinal
@@ -211,7 +217,7 @@ public class RecordingCanvas(bitmap: Bitmap) : Canvas(bitmap) {
             } else {
                 // We don't handle long colors in PaintBundle.
                 // TODO: add color long support / color space
-                paintBundle.setColor(paint.color)
+                paintBundle.setColor((tmpLastColorLong shr 32).toInt())
             }
             lastColor = tmpLastColorLong
             send = true
@@ -268,11 +274,23 @@ public class RecordingCanvas(bitmap: Bitmap) : Canvas(bitmap) {
                 lastColorFilterMode = tmpLastColorFilterMode
                 lastRemoteColorFilter = tmpLastRemoteColorFilter
                 when (tmpLastRemoteColorFilter) {
-                    is RemoteBlendModeColorFilter ->
-                        paintBundle.setColorFilterId(
-                            tmpLastRemoteColorFilter.color.getIdForCreationState(creationState),
-                            colorFilterModeToInt(tmpLastRemoteColorFilter.blendMode),
-                        )
+                    is RemoteBlendModeColorFilter -> {
+                        val constantColor =
+                            tmpLastRemoteColorFilter.color.evaluateIfConstant(creationState)
+
+                        if (constantColor != null) {
+                            // Where possible use a constant instead of an expression.
+                            paintBundle.setColorFilter(
+                                constantColor,
+                                colorFilterModeToInt(tmpLastRemoteColorFilter.blendMode),
+                            )
+                        } else {
+                            paintBundle.setColorFilterId(
+                                tmpLastRemoteColorFilter.color.getIdForCreationState(creationState),
+                                colorFilterModeToInt(tmpLastRemoteColorFilter.blendMode),
+                            )
+                        }
+                    }
                 }
                 send = true
             } else if (tmpLastColorFilter is BlendModeColorFilter) {
@@ -1400,4 +1418,14 @@ public class RecordingCanvas(bitmap: Bitmap) : Canvas(bitmap) {
         // TODO replace this with a dedicated color space for RemoteCompose.
         internal const val REMOTE_COMPOSE_EXPRESSION_COLOR_SPACE_ID = 5L
     }
+}
+
+@RequiresApi(29)
+private object Api29ColorLongHelper {
+    fun getColorLong(paint: Paint, creationState: RemoteComposeCreationState) =
+        if (paint is RemotePaint) {
+            paint.getColorLong(creationState) ?: paint.colorLong
+        } else {
+            paint.colorLong
+        }
 }
