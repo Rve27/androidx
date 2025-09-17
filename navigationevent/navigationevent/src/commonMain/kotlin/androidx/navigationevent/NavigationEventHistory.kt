@@ -58,7 +58,7 @@ private constructor(
      * A convenience constructor that creates an empty [NavigationEventHistory] instance,
      * representing a state with no navigation history.
      */
-    public constructor() : this(mergedHistory = emptyList(), currentIndex = -1)
+    internal constructor() : this(mergedHistory = emptyList(), currentIndex = -1)
 
     /**
      * A convenience constructor that creates a [NavigationEventHistory] instance from the history
@@ -69,7 +69,7 @@ private constructor(
      * [currentInfo] (which is the index equal to `backInfo.size`).
      */
     @JvmOverloads
-    public constructor(
+    internal constructor(
         currentInfo: NavigationEventInfo,
         backInfo: List<NavigationEventInfo> = emptyList(),
         forwardInfo: List<NavigationEventInfo> = emptyList(),

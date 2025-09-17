@@ -28,7 +28,6 @@ import androidx.compose.ui.test.performClick
 import androidx.kruth.assertThat
 import androidx.navigationevent.DirectNavigationEventInput
 import androidx.navigationevent.NavigationEvent
-import androidx.navigationevent.NavigationEventHistory
 import androidx.navigationevent.NavigationEventInfo
 import androidx.navigationevent.testing.TestNavigationEventDispatcherOwner
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -67,7 +66,7 @@ internal class NavigationEventHandlerTest {
         // Check the initial state after the handler registers.
         rule.runOnIdle {
             val history = owner.navigationEventDispatcher.history.value
-            assertThat(history).isEqualTo(NavigationEventHistory(currentInfo = TestInfo(id = 1)))
+            assertThat(history.mergedHistory).isEqualTo(listOf(TestInfo(id = 1)))
         }
 
         // Update the state, which triggers a recomposition and SideEffect update.
@@ -79,13 +78,7 @@ internal class NavigationEventHandlerTest {
         // The merged stack should be [backInfo, currentInfo]
         rule.runOnIdle {
             val history = owner.navigationEventDispatcher.history.value
-            assertThat(history)
-                .isEqualTo(
-                    NavigationEventHistory(
-                        currentInfo = TestInfo(id = 2),
-                        backInfo = listOf(TestInfo(id = 1)),
-                    )
-                )
+            assertThat(history.mergedHistory).isEqualTo(listOf(TestInfo(id = 1), TestInfo(id = 2)))
         }
     }
 
