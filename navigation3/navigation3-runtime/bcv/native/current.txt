@@ -66,7 +66,6 @@ open class <#A: kotlin/Any> androidx.navigation3.runtime/NavEntry { // androidx.
     open val metadata // androidx.navigation3.runtime/NavEntry.metadata|{}metadata[0]
         open fun <get-metadata>(): kotlin.collections/Map<kotlin/String, kotlin/Any> // androidx.navigation3.runtime/NavEntry.metadata.<get-metadata>|<get-metadata>(){}[0]
 
-    final fun isInBackStack(kotlin.collections/List<kotlin/Any>): kotlin/Boolean // androidx.navigation3.runtime/NavEntry.isInBackStack|isInBackStack(kotlin.collections.List<kotlin.Any>){}[0]
     open fun Content(androidx.compose.runtime/Composer?, kotlin/Int) // androidx.navigation3.runtime/NavEntry.Content|Content(androidx.compose.runtime.Composer?;kotlin.Int){}[0]
 }
 
