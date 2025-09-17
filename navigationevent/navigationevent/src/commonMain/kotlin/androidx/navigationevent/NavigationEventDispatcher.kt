@@ -258,14 +258,16 @@ private constructor(
     ) {
         checkInvariants()
 
-        sharedProcessor.addHandler(dispatcher = this, handler, priority)
-        handlers += handler
+        if (handlers.add(handler)) {
+            sharedProcessor.addHandler(dispatcher = this, handler, priority)
+        }
     }
 
     /** [NavigationEventHandler.remove] */
     internal fun removeHandler(handler: NavigationEventHandler<*>) {
-        sharedProcessor.removeHandler(handler)
-        handlers -= handler
+        if (handlers.remove(handler)) {
+            sharedProcessor.removeHandler(handler)
+        }
     }
 
     /**
