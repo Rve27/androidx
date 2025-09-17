@@ -3,11 +3,11 @@ package androidx.navigationevent.testing {
 
   public final class TestNavigationEventDispatcherOwner implements androidx.navigationevent.NavigationEventDispatcherOwner {
     ctor public TestNavigationEventDispatcherOwner();
-    ctor public TestNavigationEventDispatcherOwner(optional kotlin.jvm.functions.Function1<? super androidx.navigationevent.testing.TestNavigationEventDispatcherOwner,kotlin.Unit> fallbackOnBackPressed);
-    method @InaccessibleFromKotlin public int getFallbackOnBackPressedInvocations();
+    ctor public TestNavigationEventDispatcherOwner(optional kotlin.jvm.functions.Function1<? super androidx.navigationevent.testing.TestNavigationEventDispatcherOwner,kotlin.Unit> onBackCompletedFallback);
     method @InaccessibleFromKotlin public androidx.navigationevent.NavigationEventDispatcher getNavigationEventDispatcher();
-    property public int fallbackOnBackPressedInvocations;
+    method @InaccessibleFromKotlin public int getOnBackCompletedFallbackInvocations();
     property public androidx.navigationevent.NavigationEventDispatcher navigationEventDispatcher;
+    property public int onBackCompletedFallbackInvocations;
   }
 
   public final class TestNavigationEventHandler<T extends androidx.navigationevent.NavigationEventInfo> extends androidx.navigationevent.NavigationEventHandler<T> {
