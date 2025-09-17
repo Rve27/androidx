@@ -90,8 +90,8 @@ public class PanelEntityImplTest {
 
     @After
     public void tearDown() {
-        // Dispose the runtime between test cases to clean up lingering references.
-        mRuntime.dispose();
+        // Destroy the runtime between test cases to clean up lingering references.
+        mRuntime.destroy();
         mEntityManager.clear();
     }
 
