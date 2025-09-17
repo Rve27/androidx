@@ -214,6 +214,33 @@ class RecordingCanvasTest {
             .contains("ColorFilterID(color=[45], mode=MULTIPLY)")
     }
 
+    @Test
+    fun remotePaintCopyConstructor() {
+        val paint = RemotePaint()
+        paint.remoteColor =
+            RemoteColor.fromARGB(
+                RemoteFloat(1f),
+                RemoteFloat(0.8f),
+                RemoteFloat(RemoteContext.FLOAT_CONTINUOUS_SEC),
+                RemoteFloat(0.5f),
+            )
+        paint.remoteColorFilter =
+            RemoteBlendModeColorFilter(
+                RemoteColor.fromARGB(
+                    RemoteFloat(1f),
+                    RemoteFloat(0.8f),
+                    RemoteFloat(RemoteContext.FLOAT_CONTINUOUS_SEC),
+                    RemoteFloat(0.5f),
+                ),
+                BlendMode.MULTIPLY,
+            )
+
+        val paintCopy = RemotePaint(paint)
+
+        assertThat(paintCopy.remoteColor).isEqualTo(paint.remoteColor)
+        assertThat(paintCopy.remoteColorFilter).isEqualTo(paint.remoteColorFilter)
+    }
+
     private fun constructDocument() =
         CoreDocument().apply {
             val buffer = creationState.document.buffer

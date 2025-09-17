@@ -45,9 +45,32 @@ public class RemoteBlendModeColorFilter(
  * APIs.
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public class RemotePaint(flags: Int) : Paint(flags) {
-    /** Constructs a [RemotePaint] with [Paint.ANTI_ALIAS_FLAG]. */
-    public constructor() : this(Paint.ANTI_ALIAS_FLAG)
+public open class RemotePaint : Paint {
+    /**
+     * Constructs a [RemotePaint] with the default arguments.
+     *
+     * @see [Paint]'s default constructor.
+     */
+    public constructor() : super()
+
+    /**
+     * Constructs a [RemotePaint] with the with the provided flags.
+     *
+     * @see [Paint]'s constructor with a flag.
+     */
+    public constructor(flags: Int) : super(flags)
+
+    /**
+     * Constructs a [RemotePaint] with the all the settings from the provided paint.
+     *
+     * @see [Paint]'s copy constructor.
+     */
+    public constructor(paint: Paint) : super(paint) {
+        if (paint is RemotePaint) {
+            remoteColorFilter = paint.remoteColorFilter
+            remoteColor = paint.remoteColor
+        }
+    }
 
     /** The current [RemoteColorFilter] if any. */
     public var remoteColorFilter: RemoteColorFilter? = null
