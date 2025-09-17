@@ -1,25 +1,5 @@
 // Baseline format: 1.0
-RemovedFromKotlin: androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole#getDetail():
-    Source breaking change: method androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole.getDetail() can no longer be resolved from Kotlin source
-RemovedFromKotlin: androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole#getExtra():
-    Source breaking change: method androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole.getExtra() can no longer be resolved from Kotlin source
-RemovedFromKotlin: androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole#getList():
-    Source breaking change: method androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole.getList() can no longer be resolved from Kotlin source
-RemovedFromKotlin: androidx.compose.material3.adaptive.layout.PaneExpansionAnchor#getDescription():
-    Source breaking change: method androidx.compose.material3.adaptive.layout.PaneExpansionAnchor.getDescription() can no longer be resolved from Kotlin source
-RemovedFromKotlin: androidx.compose.material3.adaptive.layout.PaneExpansionAnchor.Proportion#getDescription():
-    Source breaking change: method androidx.compose.material3.adaptive.layout.PaneExpansionAnchor.Proportion.getDescription() can no longer be resolved from Kotlin source
-RemovedFromKotlin: androidx.compose.material3.adaptive.layout.PaneExpansionAnchor.Proportion#getProportion():
-    Source breaking change: method androidx.compose.material3.adaptive.layout.PaneExpansionAnchor.Proportion.getProportion() can no longer be resolved from Kotlin source
-RemovedFromKotlin: androidx.compose.material3.adaptive.layout.PaneExpansionState#getCurrentAnchor():
-    Source breaking change: method androidx.compose.material3.adaptive.layout.PaneExpansionState.getCurrentAnchor() can no longer be resolved from Kotlin source
-RemovedFromKotlin: androidx.compose.material3.adaptive.layout.PaneScaffoldDirective#getExcludedBounds():
-    Source breaking change: method androidx.compose.material3.adaptive.layout.PaneScaffoldDirective.getExcludedBounds() can no longer be resolved from Kotlin source
-RemovedFromKotlin: androidx.compose.material3.adaptive.layout.PaneScaffoldDirective#getMaxHorizontalPartitions():
-    Source breaking change: method androidx.compose.material3.adaptive.layout.PaneScaffoldDirective.getMaxHorizontalPartitions() can no longer be resolved from Kotlin source
-RemovedFromKotlin: androidx.compose.material3.adaptive.layout.PaneScaffoldDirective#getMaxVerticalPartitions():
-    Source breaking change: method androidx.compose.material3.adaptive.layout.PaneScaffoldDirective.getMaxVerticalPartitions() can no longer be resolved from Kotlin source
-RemovedFromKotlin: androidx.compose.material3.adaptive.layout.PaneScaffoldDirective.Companion#getDefault():
-    Source breaking change: method androidx.compose.material3.adaptive.layout.PaneScaffoldDirective.Companion.getDefault() can no longer be resolved from Kotlin source
-RemovedFromKotlin: androidx.compose.material3.adaptive.layout.PaneScaffoldScope#getSaveableStateHolder():
-    Source breaking change: method androidx.compose.material3.adaptive.layout.PaneScaffoldScope.getSaveableStateHolder() can no longer be resolved from Kotlin source
+RemovedMethod: androidx.compose.material3.adaptive.layout.PaneExpansionAnchor#getDescription():
+    Binary breaking change: Removed method androidx.compose.material3.adaptive.layout.PaneExpansionAnchor.getDescription()
+RemovedMethod: androidx.compose.material3.adaptive.layout.PaneExpansionAnchor.Proportion#getDescription():
+    Binary breaking change: Removed method androidx.compose.material3.adaptive.layout.PaneExpansionAnchor.Proportion.getDescription()
