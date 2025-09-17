@@ -86,6 +86,7 @@ import androidx.camera.core.resolutionselector.ResolutionSelector;
 import androidx.camera.lifecycle.ExperimentalCameraProviderConfiguration;
 import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.camera.media3.effect.Media3Effect;
+import androidx.camera.testing.impl.util.EdgeToEdgeUtil;
 import androidx.camera.video.ExperimentalPersistentRecording;
 import androidx.camera.video.FileOutputOptions;
 import androidx.camera.video.MediaStoreOutputOptions;
@@ -180,6 +181,12 @@ public class ConcurrentCameraActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_concurrent_camera);
+        EdgeToEdgeUtil.enableEdgeToEdge(
+                this,
+                R.id.layout_root,
+                Collections.singletonList(R.id.top_controls)
+        );
+
         mFrontPreviewViewForPip = findViewById(R.id.camera_front_pip);
         mBackPreviewViewForPip = findViewById(R.id.camera_back_pip);
         mBackPreviewViewForSideBySide = findViewById(R.id.camera_back_side_by_side);

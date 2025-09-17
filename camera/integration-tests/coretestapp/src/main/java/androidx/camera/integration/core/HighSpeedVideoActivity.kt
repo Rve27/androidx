@@ -65,6 +65,7 @@ import androidx.camera.testing.impl.FileUtil.canDeviceWriteToMediaStore
 import androidx.camera.testing.impl.FileUtil.generateVideoFileOutputOptions
 import androidx.camera.testing.impl.FileUtil.generateVideoMediaStoreOptions
 import androidx.camera.testing.impl.FileUtil.getAbsolutePathFromUri
+import androidx.camera.testing.impl.util.EdgeToEdgeUtil
 import androidx.camera.video.ExperimentalHighSpeedVideo
 import androidx.camera.video.FileOutputOptions
 import androidx.camera.video.HighSpeedVideoSessionConfig
@@ -111,6 +112,12 @@ class HighSpeedVideoActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_high_speed_video)
+
+        EdgeToEdgeUtil.enableEdgeToEdge(
+            this,
+            R.id.root_layout,
+            listOf(R.id.switch_camera, R.id.quality_button),
+        )
 
         setupCameraConfig()
         setupViewsAndButtons()
