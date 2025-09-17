@@ -16,4 +16,12 @@
 
 package androidx.compose.ui.tooling.preview
 
-internal actual fun validateUiModes() {}
+@Suppress("NOTHING_TO_INLINE")
+internal inline fun implementedInJetBrainsFork(): Nothing =
+    throw NotImplementedError(
+        """
+        Implemented only in JetBrains fork.
+        Please use `org.jetbrains.compose.ui:ui-tooling-preview` package instead.
+        """
+            .trimIndent()
+    )
