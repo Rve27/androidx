@@ -23,7 +23,6 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.kruth.assertThat
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberDecoratedNavEntries
-import androidx.navigation3.ui.DialogSceneStrategy
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import kotlin.test.Test
