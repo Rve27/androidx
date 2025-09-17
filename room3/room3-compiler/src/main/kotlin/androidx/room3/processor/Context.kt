@@ -87,13 +87,6 @@ private constructor(
     // Whether Java 8's lambda syntax is available to be emitted or not.
     val javaLambdaSyntaxAvailable by lazy { processingEnv.jvmVersion >= 8 }
 
-    companion object {
-        val ARG_OPTIONS by lazy {
-            ProcessorOptions.values().map { it.argName } +
-                BooleanProcessorOptions.values().map { it.argName }
-        }
-    }
-
     fun attachDatabaseVerifier(databaseVerifier: DatabaseVerifier) {
         check(this.databaseVerifier == null) { "database verifier is already set" }
         this.databaseVerifier = databaseVerifier
@@ -251,7 +244,6 @@ private constructor(
     }
 
     enum class BooleanProcessorOptions(val argName: String, private val defaultValue: Boolean) {
-        INCREMENTAL("room.incremental", defaultValue = true),
         GENERATE_KOTLIN("room.generateKotlin", defaultValue = true),
         EXPORT_SCHEMA_RESOURCE("room.exportSchemaResource", defaultValue = false);
 
