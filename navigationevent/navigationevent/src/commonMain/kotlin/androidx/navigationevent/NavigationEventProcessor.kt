@@ -38,7 +38,7 @@ internal class NavigationEventProcessor {
      * The private, mutable source of truth for the global [NavigationEventTransitionState]. This
      * flow is updated by the processor based on the active handler's gesture state.
      */
-    private val _transitionState = MutableStateFlow<NavigationEventTransitionState>(Idle())
+    private val _transitionState = MutableStateFlow<NavigationEventTransitionState>(Idle)
 
     /** @see [NavigationEventDispatcher.transitionState] */
     val transitionState = _transitionState.asStateFlow()
@@ -462,7 +462,7 @@ internal class NavigationEventProcessor {
         }
 
         // Completion is terminal regardless of handler outcome; return to Idle.
-        _transitionState.value = Idle()
+        _transitionState.value = Idle
     }
 
     /**
@@ -491,7 +491,7 @@ internal class NavigationEventProcessor {
             TRANSITIONING_FORWARD -> handler?.doOnForwardCancelled()
         }
 
-        _transitionState.value = Idle()
+        _transitionState.value = Idle
     }
 
     /**
