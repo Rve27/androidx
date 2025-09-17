@@ -303,6 +303,10 @@ internal class NavigationEventProcessor {
         input: NavigationEventInput,
         priority: Int,
     ) {
+        require(input.dispatcher == null) {
+            "Input '$input' is already added to dispatcher ${input.dispatcher}."
+        }
+
         val inputs =
             when (priority) {
                 PRIORITY_OVERLAY -> overlayInputs
