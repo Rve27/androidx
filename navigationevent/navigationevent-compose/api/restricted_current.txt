@@ -30,7 +30,6 @@ package androidx.navigationevent.compose {
   }
 
   @androidx.compose.runtime.Stable public final class NavigationEventState<T extends androidx.navigationevent.NavigationEventInfo> {
-    ctor public NavigationEventState(T currentInfo, optional java.util.List<? extends T> backInfo, optional java.util.List<? extends T> forwardInfo);
     method @InaccessibleFromKotlin public java.util.List<androidx.navigationevent.NavigationEventInfo> getBackInfo();
     method @InaccessibleFromKotlin public androidx.navigationevent.NavigationEventInfo getCurrentInfo();
     method @InaccessibleFromKotlin public java.util.List<androidx.navigationevent.NavigationEventInfo> getForwardInfo();
