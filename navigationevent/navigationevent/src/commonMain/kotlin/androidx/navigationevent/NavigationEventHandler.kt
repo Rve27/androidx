@@ -98,7 +98,7 @@ public constructor(initialInfo: T, isBackEnabled: Boolean, isForwardEnabled: Boo
      * This state is updated by the dispatcher *before* the corresponding `on...` lifecycle methods
      * (e.g., [onBackStarted]) are called.
      */
-    public var transitionState: NavigationEventTransitionState = Idle()
+    public var transitionState: NavigationEventTransitionState = Idle
         private set
 
     /**
@@ -238,7 +238,7 @@ public constructor(initialInfo: T, isBackEnabled: Boolean, isForwardEnabled: Boo
 
     /** @see [NavigationEventDispatcher.dispatchOnCompleted] */
     internal fun doOnBackCompleted() {
-        transitionState = Idle()
+        transitionState = Idle
         onBackCompleted()
     }
 
@@ -261,7 +261,7 @@ public constructor(initialInfo: T, isBackEnabled: Boolean, isForwardEnabled: Boo
 
     /** @see [NavigationEventDispatcher.dispatchOnCancelled] */
     internal fun doOnBackCancelled() {
-        transitionState = Idle()
+        transitionState = Idle
         onBackCancelled()
     }
 
@@ -307,7 +307,7 @@ public constructor(initialInfo: T, isBackEnabled: Boolean, isForwardEnabled: Boo
 
     /** @see [NavigationEventDispatcher.dispatchOnCompleted] */
     internal fun doOnForwardCompleted() {
-        transitionState = Idle()
+        transitionState = Idle
         onForwardCompleted()
     }
 
@@ -330,7 +330,7 @@ public constructor(initialInfo: T, isBackEnabled: Boolean, isForwardEnabled: Boo
 
     /** @see [NavigationEventDispatcher.dispatchOnCancelled] */
     internal fun doOnForwardCancelled() {
-        transitionState = Idle()
+        transitionState = Idle
         onForwardCancelled()
     }
 

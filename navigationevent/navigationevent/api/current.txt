@@ -148,7 +148,7 @@ package androidx.navigationevent {
   }
 
   public static final class NavigationEventTransitionState.Idle extends androidx.navigationevent.NavigationEventTransitionState {
-    ctor public NavigationEventTransitionState.Idle();
+    field public static final androidx.navigationevent.NavigationEventTransitionState.Idle INSTANCE;
   }
 
   public static final class NavigationEventTransitionState.InProgress extends androidx.navigationevent.NavigationEventTransitionState {

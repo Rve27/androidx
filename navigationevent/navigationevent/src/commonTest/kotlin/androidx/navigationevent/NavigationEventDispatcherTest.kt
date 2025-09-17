@@ -23,6 +23,7 @@ import androidx.kruth.assertThrows
 import androidx.navigationevent.NavigationEventDispatcher.Companion.PRIORITY_DEFAULT
 import androidx.navigationevent.NavigationEventDispatcher.Companion.PRIORITY_OVERLAY
 import androidx.navigationevent.NavigationEventInfo.None
+import androidx.navigationevent.NavigationEventTransitionState.Idle
 import androidx.navigationevent.testing.TestNavigationEventHandler
 import kotlin.test.Test
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -1687,8 +1688,7 @@ class NavigationEventDispatcherTest {
     @Test
     fun transitionState_initialState_isIdle() {
         val dispatcher = NavigationEventDispatcher()
-        assertThat(dispatcher.transitionState.value)
-            .isEqualTo(NavigationEventTransitionState.Idle())
+        assertThat(dispatcher.transitionState.value).isEqualTo(Idle)
     }
 
     @Test
@@ -1706,7 +1706,7 @@ class NavigationEventDispatcherTest {
 
             // Initial state is Idle
             assertThat(collectedStates).hasSize(1)
-            assertThat(collectedStates.last()).isEqualTo(NavigationEventTransitionState.Idle())
+            assertThat(collectedStates.last()).isEqualTo(Idle)
 
             // Start gesture
             val startEvent = NavigationEvent(progress = 0.1f)
@@ -1737,7 +1737,7 @@ class NavigationEventDispatcherTest {
             advanceUntilIdle()
 
             assertThat(collectedStates).hasSize(4)
-            assertThat(collectedStates.last()).isEqualTo(NavigationEventTransitionState.Idle())
+            assertThat(collectedStates.last()).isEqualTo(Idle)
         }
 
     @Test
@@ -1767,7 +1767,7 @@ class NavigationEventDispatcherTest {
 
             // State returns to Idle
             assertThat(collectedStates).hasSize(3)
-            assertThat(collectedStates.last()).isEqualTo(NavigationEventTransitionState.Idle())
+            assertThat(collectedStates.last()).isEqualTo(Idle)
         }
 
     @Test
@@ -1784,7 +1784,7 @@ class NavigationEventDispatcherTest {
             advanceUntilIdle()
 
             // Initial state
-            assertThat(collectedStates.last()).isEqualTo(NavigationEventTransitionState.Idle())
+            assertThat(collectedStates.last()).isEqualTo(Idle)
 
             // Start forward gesture
             val startEvent = NavigationEvent(progress = 0.1f)
@@ -1813,7 +1813,7 @@ class NavigationEventDispatcherTest {
             advanceUntilIdle()
 
             assertThat(collectedStates).hasSize(4)
-            assertThat(collectedStates.last()).isEqualTo(NavigationEventTransitionState.Idle())
+            assertThat(collectedStates.last()).isEqualTo(Idle)
         }
 
     @Test
@@ -1836,7 +1836,7 @@ class NavigationEventDispatcherTest {
 
             input.forwardCancelled()
             advanceUntilIdle()
-            assertThat(collectedStates.last()).isEqualTo(NavigationEventTransitionState.Idle())
+            assertThat(collectedStates.last()).isEqualTo(Idle)
         }
 
     // endregion
