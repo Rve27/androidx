@@ -89,7 +89,6 @@ package androidx.navigation3.runtime {
     method @BytecodeOnly @androidx.compose.runtime.Composable public void Content(androidx.compose.runtime.Composer?, int);
     method @InaccessibleFromKotlin public final Object getContentKey();
     method @InaccessibleFromKotlin public java.util.Map<java.lang.String,java.lang.Object> getMetadata();
-    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final boolean isInBackStack(java.util.List<?> backStack);
     property public final Object contentKey;
     property public java.util.Map<java.lang.String,java.lang.Object> metadata;
   }
