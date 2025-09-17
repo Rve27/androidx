@@ -43,6 +43,7 @@ class ScreenshotCheckTest {
         RemoteComposeScreenshotTestRule(
             moduleDirectory = SCREENSHOT_GOLDEN_DIRECTORY,
             targetPlayer = TargetPlayer.Compose,
+            includeClassName = false,
         )
 
     @Test
