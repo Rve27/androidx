@@ -127,15 +127,18 @@ private fun FallbackBackground(
     overlayColor: RemoteColor? = ImageDefaults.backgroundOverlayColor(),
 ) {
     // TODO clipping effect.
-    RemoteImage(
-        remoteBitmap = background,
-        contentDescription = contentDescription,
-        modifier = modifier.fillMaxSize(),
-        contentScale = contentScale,
-    )
+    RemoteBox(modifier = modifier) {
+        val imageModifier = RemoteModifier.fillMaxSize()
+        RemoteImage(
+            remoteBitmap = background,
+            contentDescription = contentDescription,
+            modifier = imageModifier,
+            contentScale = contentScale,
+        )
 
-    if (overlayColor != null) {
-        BackgroundOverlay(modifier = RemoteModifier.fillMaxSize(), overlayColor = overlayColor)
+        if (overlayColor != null) {
+            BackgroundOverlay(modifier = imageModifier, overlayColor = overlayColor)
+        }
     }
 }
 
