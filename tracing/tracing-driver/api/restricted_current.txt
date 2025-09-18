@@ -93,7 +93,7 @@ package androidx.tracing.driver {
 
   @kotlin.PublishedApi internal final class ProtoPool {
     ctor public ProtoPool(boolean isDebug);
-    method public androidx.tracing.driver.PooledTracePacketArray obtainTracePacketArray();
+    method public androidx.tracing.driver.PooledTracePacketArray? obtainTracePacketArray();
     method public long poolableCount();
   }
 
@@ -209,6 +209,7 @@ package androidx.tracing.driver {
     method public abstract void close();
     method public abstract void enqueue(androidx.tracing.driver.PooledTracePacketArray pooledPacketArray);
     method public abstract void flush();
+    method public abstract void onDroppedTraceEvent();
   }
 
   public final class Tracing_androidKt {
@@ -221,12 +222,10 @@ package androidx.tracing.driver {
     method @kotlin.PublishedApi internal final void flush();
     method @BytecodeOnly @kotlin.PublishedApi internal final androidx.tracing.driver.ProtoPool getPool();
     property @kotlin.PublishedApi internal final androidx.tracing.driver.TraceContext context;
-    property @kotlin.PublishedApi internal final androidx.tracing.driver.PooledTracePacketArray currentPacketArray;
-    property @kotlin.PublishedApi internal final int currentPacketArraySize;
+    property @kotlin.PublishedApi internal final androidx.tracing.driver.PooledTracePacketArray? currentPacketArray;
     property @kotlin.PublishedApi internal final androidx.tracing.driver.ProtoPool pool;
     property @kotlin.PublishedApi internal final long uuid;
-    field @kotlin.PublishedApi internal androidx.tracing.driver.PooledTracePacketArray currentPacketArray;
-    field @kotlin.PublishedApi internal int currentPacketArraySize;
+    field @kotlin.PublishedApi internal androidx.tracing.driver.PooledTracePacketArray? currentPacketArray;
     field @kotlin.PublishedApi internal final androidx.tracing.driver.ProtoPool pool;
   }
 

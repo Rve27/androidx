@@ -142,6 +142,7 @@ package androidx.tracing.driver {
     method public abstract void close();
     method public abstract void enqueue(androidx.tracing.driver.PooledTracePacketArray pooledPacketArray);
     method public abstract void flush();
+    method public abstract void onDroppedTraceEvent();
   }
 
   public final class Tracing_androidKt {
