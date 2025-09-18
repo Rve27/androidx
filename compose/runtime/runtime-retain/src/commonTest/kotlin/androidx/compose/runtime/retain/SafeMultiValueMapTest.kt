@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.compose.runtime.collection
+package androidx.compose.runtime.retain
 
 import kotlin.test.Test
 import kotlin.test.assertEquals

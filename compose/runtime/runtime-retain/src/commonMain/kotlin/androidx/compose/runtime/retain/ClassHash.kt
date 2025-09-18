@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-package androidx.compose.runtime.internal
+package androidx.compose.runtime.retain
 
-@PublishedApi
-internal actual inline fun <reified T> classHash(): Int {
-    return T::class.java.name.hashCode()
-}
+@PublishedApi internal expect inline fun <reified T> classHash(): Int

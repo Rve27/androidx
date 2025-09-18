@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
-package androidx.compose.runtime.internal
+@file:OptIn(ExperimentalMultiplatform::class)
 
-@PublishedApi internal expect inline fun <reified T> classHash(): Int
+package kotlinx.test
+
+@OptionalExpectation expect annotation class IgnoreWebTarget()

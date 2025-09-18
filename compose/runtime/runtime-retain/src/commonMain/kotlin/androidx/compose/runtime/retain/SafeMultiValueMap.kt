@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.compose.runtime.collection
+package androidx.compose.runtime.retain
 
 import androidx.collection.MutableObjectList
 import androidx.collection.MutableScatterMap
@@ -24,10 +24,11 @@ import androidx.collection.mutableObjectListOf
 import kotlin.jvm.JvmInline
 
 /**
- * A mutable multi-map of values. This is a secondary implementation to [MultiValueMap] that removes
- * the restrictions on V. V can be nullable and instances of V are allowed to also be instances of
- * `MutableList<*>`. Note that this implementation is slightly more expensive as it will wrap values
- * that satisfy either of those constraints.
+ * A mutable multi-map of values. This is a secondary implementation to
+ * [androidx.compose.runtime.collection.MultiValueMap] that removes the restrictions on V. V can be
+ * nullable and instances of V are allowed to also be instances of `MutableList<*>`. Note that this
+ * implementation is slightly more expensive as it will wrap values that satisfy either of those
+ * constraints.
  */
 @JvmInline
 @Suppress("UNCHECKED_CAST")
@@ -65,7 +66,7 @@ internal value class SafeMultiValueMap<K : Any?, V : Any?>(
             null -> null
             is MutableObjectList<*> -> {
                 val list = entry as MutableObjectList<V>
-                val result = list.removeLast()
+                val result = list.removeAt(list.size - 1)
                 if (list.size == 1) map[safeKey] = list.first().safeWrapIfNecessary()
                 result
             }
@@ -82,7 +83,7 @@ internal value class SafeMultiValueMap<K : Any?, V : Any?>(
             null -> defaultIfAbsent
             is MutableObjectList<*> -> {
                 val list = entry as MutableObjectList<V>
-                val result = list.removeLast()
+                val result = list.removeAt(list.size - 1)
                 if (list.isEmpty()) map.remove(safeKey)
                 if (list.size == 1) map[safeKey] = list.first().safeWrapIfNecessary()
                 result
