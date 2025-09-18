@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-@file:Suppress("UnstableApiUsage")
-
-package androidx.compose.runtime.lint
+package androidx.compose.runtime.retain.lint
 
 import androidx.compose.lint.Names
 import androidx.compose.lint.inheritsFrom
 import androidx.compose.lint.isInPackageName
+import androidx.compose.lint.isReallyRememberingUnit
 import androidx.compose.lint.isVoidOrUnit
 import com.android.tools.lint.detector.api.Category
 import com.android.tools.lint.detector.api.Detector
@@ -42,13 +41,13 @@ import org.jetbrains.uast.UCallExpression
 
 class RetainDetector : Detector(), SourceCodeScanner {
 
-    override fun getApplicableMethodNames() = listOf(Names.Runtime.Retain.shortName)
+    override fun getApplicableMethodNames() = listOf(Names.Runtime.Retain.Retain.shortName)
 
     override fun visitMethodCall(context: JavaContext, node: UCallExpression, method: PsiMethod) {
-        if (!method.isInPackageName(Names.Runtime.PackageName)) return
+        if (!method.isInPackageName(Names.Runtime.Retain.PackageName)) return
         val callExpressionType = node.getExpressionType()
 
-        if (callExpressionType.isVoidOrUnit && RememberDetector.isReallyUnit(node, method)) {
+        if (callExpressionType.isVoidOrUnit && isReallyRememberingUnit(node, method)) {
             context.report(
                 issue = RetainUnitType,
                 scope = node,
@@ -142,7 +141,7 @@ class RetainDetector : Detector(), SourceCodeScanner {
         return LintFix.create()
             .replace()
             .name("Replace with `remember`")
-            .text(Names.Runtime.Retain.shortName)
+            .text(Names.Runtime.Retain.Retain.shortName)
             .with(Names.Runtime.Remember.shortName)
             .imports(Names.Runtime.Remember.javaFqn)
             .autoFix()
@@ -151,7 +150,7 @@ class RetainDetector : Detector(), SourceCodeScanner {
 
     private fun PsiType.isNotRetainable(): Boolean {
         val isRememberObserver = inheritsFrom(Names.Runtime.RememberObserver)
-        val isRetainObserver = inheritsFrom(Names.Runtime.RetainObserver)
+        val isRetainObserver = inheritsFrom(Names.Runtime.Retain.RetainObserver)
 
         return isRememberObserver && !isRetainObserver
     }

@@ -22,12 +22,10 @@ import androidx.annotation.Sampled
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.RetainedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.retain
 import androidx.compose.runtime.setValue
 import kotlinx.coroutines.delay
 
@@ -81,35 +79,6 @@ fun disposableEffectSample() {
 
         // ...
     }
-}
-
-@Sampled
-fun retainedEffectSample() {
-    @Composable
-    fun VideoPlayer(mediaUri: String) {
-        val player = retain(mediaUri) { MediaPlayer(mediaUri) }
-
-        // Initialize each player only once after we retain it.
-        // If the uri (and therefore the player) change, we need to dispose the old player
-        // and initialize the new one. Likewise, the player needs to be disposed of when
-        // it stops being retained.
-        RetainedEffect(player) {
-            player.initialize()
-            onRetire { player.close() }
-        }
-
-        // ...
-    }
-}
-
-internal class MediaPlayer(val uri: String = "") {
-    fun initialize() {}
-
-    fun close() {}
-
-    fun play() {}
-
-    fun stop() {}
 }
 
 private interface Dispatcher {

@@ -14,8 +14,17 @@
  * limitations under the License.
  */
 
-package androidx.compose.runtime
+package androidx.compose.runtime.retain
 
+import androidx.compose.runtime.CompositeKeyHashCode
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.RecomposeScope
+import androidx.compose.runtime.RememberObserver
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.currentCompositeKeyHashCode
+import androidx.compose.runtime.currentRecomposeScope
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mock.Linear
 import androidx.compose.runtime.mock.Text
 import androidx.compose.runtime.mock.compositionTest
@@ -23,6 +32,10 @@ import androidx.compose.runtime.mock.expectChanges
 import androidx.compose.runtime.mock.expectNoChanges
 import androidx.compose.runtime.mock.revalidate
 import androidx.compose.runtime.mock.validate
+import androidx.compose.runtime.movableContentOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
@@ -33,8 +46,7 @@ import kotlin.test.assertNull
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
 import kotlin.test.fail
-import kotlinx.test.IgnoreJsTarget
-import kotlinx.test.IgnoreWasmTarget
+import kotlinx.test.IgnoreWebTarget
 
 class RetainTests {
 
@@ -971,8 +983,7 @@ class RetainTests {
     }
 
     // Ignore JS targets: b/444012850
-    @IgnoreWasmTarget
-    @IgnoreJsTarget
+    @IgnoreWebTarget
     @Test
     fun abandonCompositionTest() {
         var failComposition by mutableStateOf(false)
@@ -1834,5 +1845,5 @@ class RetainTests {
         }
     }
 
-    private class AbandonException() : Throwable()
+    private fun use(@Suppress("unused") value: Any) {}
 }
