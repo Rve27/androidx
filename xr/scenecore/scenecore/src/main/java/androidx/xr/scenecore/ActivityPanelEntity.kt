@@ -53,12 +53,12 @@ private constructor(
     }
 
     /**
-     * Moves the given [Activity] into this panel. This will fail if the application does not have
-     * the [SpatialCapabilities.SPATIAL_CAPABILITY_EMBED_ACTIVITY] capability.
+     * Transfers the given [Activity] into this panel. This will fail if the application does not
+     * have the [SpatialCapabilities.SPATIAL_CAPABILITY_EMBED_ACTIVITY] capability.
      *
      * @param activity Activity to move into this panel.
      */
-    public fun moveActivity(activity: Activity) {
+    public fun transferActivity(activity: Activity) {
         rtActivityPanelEntity.moveActivity(activity)
     }
 
