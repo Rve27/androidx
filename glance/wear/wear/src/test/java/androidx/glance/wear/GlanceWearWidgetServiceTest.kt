@@ -20,10 +20,10 @@ import android.content.Context
 import android.content.Intent
 import android.os.IBinder
 import android.os.Looper
-import androidx.glance.wear.data.IWearWidgetCallback
-import androidx.glance.wear.data.IWearWidgetProvider
-import androidx.glance.wear.data.WearWidgetRequestData
-import androidx.glance.wear.data.legacy.TileProvider
+import androidx.glance.wear.parcel.IWearWidgetCallback
+import androidx.glance.wear.parcel.IWearWidgetProvider
+import androidx.glance.wear.parcel.WearWidgetRequestParcel
+import androidx.glance.wear.parcel.legacy.TileProvider
 import androidx.glance.wear.proto.WearWidgetRequestProto
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
@@ -102,10 +102,10 @@ class GlanceWearWidgetServiceTest {
             service.onBind(Intent(GlanceWearWidgetService.ACTION_BIND_WIDGET_PROVIDER))
         val stub = IWearWidgetProvider.Stub.asInterface(binder)
         val requestProto = WearWidgetRequestProto(instance_id = 17)
-        val requestData = WearWidgetRequestData()
-        requestData.payload = WearWidgetRequestProto.ADAPTER.encode(requestProto)
+        val requestParcel = WearWidgetRequestParcel()
+        requestParcel.payload = WearWidgetRequestProto.ADAPTER.encode(requestProto)
 
-        stub.onWidgetRequest(requestData, mockWidgetCallback)
+        stub.onWidgetRequest(requestParcel, mockWidgetCallback)
         shadowOf(Looper.getMainLooper()).idle()
 
         assertThat(service.widget.instanceId).isEqualTo(requestProto.instance_id)
@@ -118,10 +118,10 @@ class GlanceWearWidgetServiceTest {
             service.onBind(Intent(GlanceWearWidgetService.ACTION_BIND_WIDGET_PROVIDER))
         val stub = IWearWidgetProvider.Stub.asInterface(binder)
         val requestProto = WearWidgetRequestProto(instance_id = 17)
-        val requestData = WearWidgetRequestData()
-        requestData.payload = WearWidgetRequestProto.ADAPTER.encode(requestProto)
+        val requestParcel = WearWidgetRequestParcel()
+        requestParcel.payload = WearWidgetRequestProto.ADAPTER.encode(requestProto)
 
-        stub.onWidgetRequest(requestData, mockWidgetCallback)
+        stub.onWidgetRequest(requestParcel, mockWidgetCallback)
         shadowOf(Looper.getMainLooper()).idle()
 
         verify(mockWidgetCallback).updateWidgetContent(any())
