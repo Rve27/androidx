@@ -809,8 +809,8 @@ class EntityTest {
     }
 
     @Test
-    fun activityPanelEntityMoveActivity_callsImplMoveActivity() {
-        activityPanelEntity.moveActivity(activity)
+    fun activityPanelEntityTransferActivity_callsImplMoveActivity() {
+        activityPanelEntity.transferActivity(activity)
 
         verify(mockActivityPanelEntity).moveActivity(any())
     }
