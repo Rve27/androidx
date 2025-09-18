@@ -19,7 +19,6 @@ package androidx.xr.projected
 import android.app.ActivityOptions
 import android.companion.virtual.VirtualDeviceManager
 import android.content.Context
-import android.content.Intent
 import android.hardware.display.DisplayManager
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -51,12 +50,6 @@ public object ProjectedContext {
 
     @VisibleForTesting internal const val PROJECTED_DEVICE_NAME = "ProjectionDevice"
     @VisibleForTesting internal const val PROJECTED_DISPLAY_NAME = "ProjectionDisplay"
-
-    @VisibleForTesting
-    internal const val REQUIRED_LAUNCH_FLAGS =
-        (Intent.FLAG_ACTIVITY_NEW_TASK or
-            Intent.FLAG_ACTIVITY_REORDER_TO_FRONT or
-            Intent.FLAG_ACTIVITY_SINGLE_TOP)
 
     /**
      * Explicitly create the Projected device context from any context object.
@@ -107,15 +100,6 @@ public object ProjectedContext {
     @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     public fun isProjectedDeviceContext(context: Context): Boolean =
         getVirtualDevice(context)?.name?.startsWith(PROJECTED_DEVICE_NAME) == true
-
-    /**
-     * Takes an [Intent] with the description of the activity to start and returns it with added
-     * flags to start the activity on the Projected device.
-     *
-     * @param intent The description of the activity to start.
-     */
-    @JvmStatic
-    public fun addProjectedFlags(intent: Intent): Intent = intent.addFlags(REQUIRED_LAUNCH_FLAGS)
 
     /**
      * Creates [ActivityOptions] that should be used to start an activity on the Projected device.
