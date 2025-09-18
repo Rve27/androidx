@@ -47,8 +47,7 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public class ProjectedPerceptionManager
 internal constructor(private val timeSource: ProjectedTimeSource) : PerceptionManager {
-    private val xrResources = XrResources()
-    internal var service: IProjectedPerceptionService? = null
+    internal val xrResources = XrResources()
 
     /**
      * Creates an anchor in the scene.
@@ -128,7 +127,7 @@ internal constructor(private val timeSource: ProjectedTimeSource) : PerceptionMa
                 }
             }
         try {
-            this.service?.checkVpsAvailability(latitude, longitude, callback)
+            xrResources.service.checkVpsAvailability(latitude, longitude, callback)
         } catch (e: Exception) {
             continuation.resumeWithException(e)
         }
@@ -166,7 +165,8 @@ internal constructor(private val timeSource: ProjectedTimeSource) : PerceptionMa
 
     /** Returns the [Earth] instance. */
     // @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-    override val earth: Earth = ProjectedEarth(xrResources)
+    override val earth: Earth
+        get() = xrResources.earth
 
     /** Returns the [ArDevice] instance. */
     override val arDevice: ArDevice
