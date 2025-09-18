@@ -52,6 +52,7 @@ import androidx.camera.camera2.pipe.integration.adapter.GuaranteedConfigurations
 import androidx.camera.camera2.pipe.integration.adapter.GuaranteedConfigurationsUtil.getLimitedSupportedCombinationList
 import androidx.camera.camera2.pipe.integration.adapter.GuaranteedConfigurationsUtil.getRAWSupportedCombinationList
 import androidx.camera.camera2.pipe.integration.config.CameraAppComponent
+import androidx.camera.camera2.pipe.integration.impl.DisplayInfoManager
 import androidx.camera.camera2.pipe.integration.internal.DOLBY_VISION_10B_UNCONSTRAINED
 import androidx.camera.camera2.pipe.integration.internal.DOLBY_VISION_8B_SDR_UNCONSTRAINED
 import androidx.camera.camera2.pipe.integration.internal.DOLBY_VISION_8B_UNCONSTRAINED
@@ -158,6 +159,7 @@ import org.robolectric.annotation.internal.DoNotInstrument
 import org.robolectric.shadow.api.Shadow
 import org.robolectric.shadows.ShadowCameraCharacteristics
 import org.robolectric.shadows.ShadowCameraManager
+import org.robolectric.shadows.ShadowLooper
 import org.robolectric.util.ReflectionHelpers
 
 @Suppress("DEPRECATION")
@@ -256,6 +258,8 @@ class SupportedSurfaceCombinationTest {
 
     @Before
     fun setUp() {
+        // Release display info caches to prevent the static instance include infos for other tests.
+        DisplayInfoManager.releaseInstance()
         val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
         Shadows.shadowOf(windowManager.defaultDisplay).setRealWidth(displaySize.width)
         Shadows.shadowOf(windowManager.defaultDisplay).setRealHeight(displaySize.height)
@@ -273,6 +277,10 @@ class SupportedSurfaceCombinationTest {
     @After
     fun tearDown() {
         CameraXUtil.shutdown()[10000, TimeUnit.MILLISECONDS]
+        // Release display info caches.
+        DisplayInfoManager.releaseInstance()
+        // Drain the main looper to clear LiveData observers triggered by shutdown
+        ShadowLooper.idleMainLooper()
     }
 
     // //////////////////////////////////////////////////////////////////////////////////////////
