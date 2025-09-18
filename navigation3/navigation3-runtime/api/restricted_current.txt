@@ -27,7 +27,7 @@ package androidx.navigation3.runtime {
     method public static inline <T> kotlin.jvm.functions.Function1<T,androidx.navigation3.runtime.NavEntry<T>> entryProvider(optional kotlin.jvm.functions.Function1<? super T,? extends androidx.navigation3.runtime.NavEntry<T>> fallback, kotlin.jvm.functions.Function1<? super androidx.navigation3.runtime.EntryProviderBuilder<T>,kotlin.Unit> builder);
   }
 
-  @kotlinx.serialization.Serializable(with=NavBackStack.Serializer::class) public final class NavBackStack<T extends androidx.navigation3.runtime.NavKey> implements kotlin.jvm.internal.markers.KMutableList java.util.List<T> androidx.compose.runtime.snapshots.StateObject {
+  @kotlinx.serialization.Serializable(with=NavBackStack.Serializer::class) public final class NavBackStack<T extends androidx.navigation3.runtime.NavKey> implements kotlin.jvm.internal.markers.KMutableList java.util.List<T> java.util.RandomAccess androidx.compose.runtime.snapshots.StateObject {
     ctor public NavBackStack();
     ctor public NavBackStack(androidx.compose.runtime.snapshots.SnapshotStateList<T> base);
     ctor public NavBackStack(T... elements);
