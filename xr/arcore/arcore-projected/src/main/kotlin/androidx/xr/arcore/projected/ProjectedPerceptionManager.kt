@@ -28,8 +28,13 @@ import androidx.xr.arcore.internal.HitResult
 import androidx.xr.arcore.internal.PerceptionManager
 import androidx.xr.arcore.internal.RenderViewpoint
 import androidx.xr.arcore.internal.Trackable
+import androidx.xr.runtime.VpsAvailabilityAvailable
 import androidx.xr.runtime.VpsAvailabilityErrorInternal
+import androidx.xr.runtime.VpsAvailabilityNetworkError
+import androidx.xr.runtime.VpsAvailabilityNotAuthorized
+import androidx.xr.runtime.VpsAvailabilityResourceExhausted
 import androidx.xr.runtime.VpsAvailabilityResult
+import androidx.xr.runtime.VpsAvailabilityUnavailable
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Quaternion
 import androidx.xr.runtime.math.Ray
@@ -121,8 +126,25 @@ internal constructor(private val timeSource: ProjectedTimeSource) : PerceptionMa
         val callback =
             object : IVpsAvailabilityCallback.Stub() {
                 override fun onVpsAvailabilityChanged(vpsState: Int) {
-                    // TODO b/438071712 - map the vpsState to VpsResult
-                    val vpsResult = VpsAvailabilityErrorInternal()
+                    val vpsResult =
+                        // vpsState is the enum VpsAvailability, see the code in
+                        // third_party/arcore/java/com/google/ar/core/VpsAvailability.java
+                        // and the onVpsAvailabilityChanged callback call in
+                        // java/com/google/android/projection/core/modules/perception/PerceptionManagerService.java.
+                        when (vpsState) {
+                            // VpsAvailability.AVAILABLE
+                            1 -> VpsAvailabilityAvailable()
+                            // VpsAvailability.UNAVAILABLE
+                            2 -> VpsAvailabilityUnavailable()
+                            // VpsAvailability.ERROR_NETWORK_CONNECTION
+                            -2 -> VpsAvailabilityNetworkError()
+                            // VpsAvailability.ERROR_NOT_AUTHORIZED
+                            -3 -> VpsAvailabilityNotAuthorized()
+                            // VpsAvailability.ERROR_RESOURCE_EXHAUSTED
+                            -4 -> VpsAvailabilityResourceExhausted()
+                            // VpsAvailability.UNKNOWN or VpsAvailability.ERROR_INTERNAL
+                            else -> VpsAvailabilityErrorInternal()
+                        }
                     continuation.resume(vpsResult)
                 }
             }
