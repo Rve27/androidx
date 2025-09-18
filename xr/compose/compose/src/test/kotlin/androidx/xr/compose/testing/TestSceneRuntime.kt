@@ -24,10 +24,12 @@ import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Vector3
 import androidx.xr.scenecore.runtime.ActivityPose
 import androidx.xr.scenecore.runtime.ActivitySpace
+import androidx.xr.scenecore.runtime.AnchorPlacement
 import androidx.xr.scenecore.runtime.CameraViewActivityPose
 import androidx.xr.scenecore.runtime.CameraViewActivityPose.Fov
 import androidx.xr.scenecore.runtime.HeadActivityPose
 import androidx.xr.scenecore.runtime.HitTestResult
+import androidx.xr.scenecore.runtime.MovableComponent
 import androidx.xr.scenecore.runtime.PanelEntity
 import androidx.xr.scenecore.runtime.PixelDimensions
 import androidx.xr.scenecore.runtime.RenderingEntityFactory
@@ -139,6 +141,25 @@ private constructor(
             CameraViewActivityPose.CameraType.CAMERA_TYPE_RIGHT_EYE -> rightCameraViewPose
             else -> unknownCameraViewPose
         }
+    }
+
+    val scalesInZ = mutableListOf<Boolean>()
+
+    override fun createMovableComponent(
+        systemMovable: Boolean,
+        scaleInZ: Boolean,
+        anchorPlacement: Set<@JvmSuppressWildcards AnchorPlacement>,
+        shouldDisposeParentAnchor: Boolean,
+    ): MovableComponent {
+        val component =
+            fakeSceneRuntimeBase.createMovableComponent(
+                systemMovable,
+                scaleInZ,
+                anchorPlacement,
+                shouldDisposeParentAnchor,
+            )
+        scalesInZ.add(scaleInZ)
+        return component
     }
 
     /**
