@@ -141,5 +141,13 @@ package androidx.navigation3.runtime.serialization {
     method @KotlinOnly public static inline <reified T extends androidx.navigation3.runtime.NavKey> androidx.navigation3.runtime.serialization.NavBackStackSerializer<T> NavBackStackSerializer(optional androidx.savedstate.serialization.SavedStateConfiguration configuration);
   }
 
+  public class NavKeySerializer<T extends androidx.navigation3.runtime.NavKey> implements kotlinx.serialization.KSerializer<T> {
+    ctor public NavKeySerializer();
+    method public T deserialize(kotlinx.serialization.encoding.Decoder decoder);
+    method @InaccessibleFromKotlin public kotlinx.serialization.descriptors.SerialDescriptor getDescriptor();
+    method public void serialize(kotlinx.serialization.encoding.Encoder encoder, T value);
+    property public kotlinx.serialization.descriptors.SerialDescriptor descriptor;
+  }
+
 }
 
