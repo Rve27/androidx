@@ -30,7 +30,7 @@ package androidx.tracing.driver {
   @SuppressCompatibility @kotlin.RequiresOptIn(message="Marks declarations in the Tracing API that are delicate.") @kotlin.annotation.Target(allowedTargets={kotlin.annotation.AnnotationTarget.CLASS, kotlin.annotation.AnnotationTarget.FUNCTION}) public @interface DelicateTracingApi {
   }
 
-  public final class MetadataEntry {
+  @SuppressCompatibility @androidx.tracing.driver.DelicateTracingApi public final class MetadataEntry {
     method public void reset();
     property public boolean booleanValue;
     property public double doubleValue;
