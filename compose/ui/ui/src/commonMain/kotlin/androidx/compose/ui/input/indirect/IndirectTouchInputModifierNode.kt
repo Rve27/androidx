@@ -15,7 +15,6 @@
  */
 package androidx.compose.ui.input.indirect
 
-import androidx.compose.ui.ExperimentalIndirectTouchTypeApi
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.node.DelegatableNode
 
@@ -25,7 +24,6 @@ import androidx.compose.ui.node.DelegatableNode
  * node, make sure to use this node with a focus modifier (such as focusTarget or focusable), or
  * make this node also delegate to a [androidx.compose.ui.focus.FocusTargetModifierNode].
  */
-@ExperimentalIndirectTouchTypeApi
 interface IndirectTouchInputModifierNode : DelegatableNode {
 
     /**
@@ -35,7 +33,6 @@ interface IndirectTouchInputModifierNode : DelegatableNode {
      * @param event The [IndirectTouchEvent] that has been dispatched.
      * @param pass The [PointerEventPass] in which this function is being called.
      */
-    @OptIn(ExperimentalIndirectTouchTypeApi::class)
     fun onIndirectTouchEvent(event: IndirectTouchEvent, pass: PointerEventPass)
 
     /**

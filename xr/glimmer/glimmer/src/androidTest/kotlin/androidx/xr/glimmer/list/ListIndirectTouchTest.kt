@@ -19,7 +19,6 @@ package androidx.xr.glimmer.list
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.height
-import androidx.compose.ui.ExperimentalIndirectTouchTypeApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.isNotDisplayed
@@ -37,7 +36,6 @@ import org.junit.runner.RunWith
 
 @MediumTest
 @RunWith(AndroidJUnit4::class)
-@OptIn(ExperimentalIndirectTouchTypeApi::class)
 class ListIndirectTouchTest : BaseListTestWithOrientation(Orientation.Vertical) {
 
     @Test

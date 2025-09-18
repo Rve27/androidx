@@ -23,7 +23,6 @@ import android.view.MotionEvent.ACTION_MOVE
 import android.view.MotionEvent.ACTION_UP
 import androidx.compose.foundation.focusable
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.ExperimentalIndirectTouchTypeApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.focus.FocusManager
@@ -79,7 +78,6 @@ import org.junit.runner.RunWith
  * does a native copy and crashes if it isn't a real [MotionEvent]). ([AndroidComposeView] uses
  * [android.view.GestureDetector] to detect indirect touch event gestures.)
  */
-@OptIn(ExperimentalIndirectTouchTypeApi::class)
 @RunWith(AndroidJUnit4::class)
 class IndirectTouchEventNavigationSystemTests {
     @get:Rule val rule = createComposeRule()

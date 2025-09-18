@@ -28,7 +28,6 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.internal.requirePrecondition
 import androidx.compose.runtime.remember
-import androidx.compose.ui.ExperimentalIndirectTouchTypeApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.focus.Focusability
@@ -851,8 +850,6 @@ private class CombinedClickableElement(
     }
 }
 
-// TODO(levima) Remove once ExperimentalIndirectTouchTypeApi stable b/426155641
-@OptIn(ExperimentalIndirectTouchTypeApi::class)
 internal open class ClickableNode(
     interactionSource: MutableInteractionSource?,
     indicationNodeFactory: IndicationNodeFactory?,
@@ -1243,8 +1240,6 @@ private class CombinedClickableNode(
     }
 }
 
-// TODO(levima) Remove once ExperimentalIndirectTouchTypeApi stable b/426155641
-@OptIn(ExperimentalIndirectTouchTypeApi::class)
 internal abstract class AbstractClickableNode(
     private var interactionSource: MutableInteractionSource?,
     private var indicationNodeFactory: IndicationNodeFactory?,
@@ -1867,8 +1862,6 @@ private fun unsupportedIndicationExceptionMessage(indication: Indication): Strin
         " instance provided here was: $indication"
 }
 
-@ExperimentalIndirectTouchTypeApi
 private fun IndirectPointerInputChange.changedToUp() = !isConsumed && previousPressed && !pressed
 
-@ExperimentalIndirectTouchTypeApi
 private fun IndirectPointerInputChange.changedToDownIgnoreConsumed() = !previousPressed && pressed

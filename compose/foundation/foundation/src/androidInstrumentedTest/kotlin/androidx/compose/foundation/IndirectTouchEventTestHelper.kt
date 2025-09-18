@@ -27,7 +27,7 @@ import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.core.view.InputDeviceCompat.SOURCE_TOUCH_NAVIGATION
 
 /** Synthetically range the x movements from 1000 to 0 */
-@ExperimentalIndirectTouchTypeApi
+@OptIn(ExperimentalIndirectTouchTypeApi::class)
 internal fun SemanticsNodeInteraction.sendIndirectSwipeEvent(
     rule: ComposeTestRule,
     from: Offset = Offset(TouchPadStart, 0f),
@@ -69,7 +69,7 @@ internal fun SemanticsNodeInteraction.sendIndirectSwipeEvent(
     )
 }
 
-@ExperimentalIndirectTouchTypeApi
+@OptIn(ExperimentalIndirectTouchTypeApi::class)
 internal fun SemanticsNodeInteraction.sendIndirectTouchMoveEvents(
     rule: ComposeTestRule,
     stepCount: Int,
@@ -107,7 +107,7 @@ internal fun SemanticsNodeInteraction.sendIndirectTouchMoveEvents(
     return Triple(currentTime1, currentValue1, prevEvent)
 }
 
-@ExperimentalIndirectTouchTypeApi
+@OptIn(ExperimentalIndirectTouchTypeApi::class)
 internal fun SemanticsNodeInteraction.sendIndirectTouchReleaseEvent(
     rule: ComposeTestRule,
     currentTime: Long = SystemClock.uptimeMillis(),
@@ -129,7 +129,7 @@ internal fun SemanticsNodeInteraction.sendIndirectTouchReleaseEvent(
     performIndirectTouchEvent(rule, IndirectTouchEvent(up, primaryAxis, previousEvent))
 }
 
-@ExperimentalIndirectTouchTypeApi
+@OptIn(ExperimentalIndirectTouchTypeApi::class)
 internal fun SemanticsNodeInteraction.sendIndirectTouchPressEvent(
     rule: ComposeTestRule,
     currentTime: Long = SystemClock.uptimeMillis(),

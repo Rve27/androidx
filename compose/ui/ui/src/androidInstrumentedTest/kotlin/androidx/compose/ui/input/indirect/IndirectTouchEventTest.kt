@@ -50,7 +50,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
-@ExperimentalIndirectTouchTypeApi
+@OptIn(ExperimentalIndirectTouchTypeApi::class)
 @MediumTest
 @RunWith(AndroidJUnit4::class)
 class IndirectTouchEventTest {

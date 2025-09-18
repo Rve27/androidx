@@ -31,7 +31,6 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalIndirectTouchTypeApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusManager
@@ -140,7 +139,6 @@ class GlimmerListAutoFocusTest : BaseListTestWithOrientation(Orientation.Vertica
     }
 
     @Test
-    @ExperimentalIndirectTouchTypeApi
     fun nonScrollableList_doesNotConsumed_indirectTouchEvents() {
         var downEventReceivedByParentWasConsumed = false
         var moveEventReceivedByParentWasConsumed = false
@@ -183,7 +181,6 @@ class GlimmerListAutoFocusTest : BaseListTestWithOrientation(Orientation.Vertica
     }
 
     @Test
-    @ExperimentalIndirectTouchTypeApi
     fun scrollableList_afterTurningIntoNonScrollable_stopsConsumingEvents() {
         var downEventReceivedByParentWasConsumed = false
         var moveEventReceivedByParentWasConsumed = false

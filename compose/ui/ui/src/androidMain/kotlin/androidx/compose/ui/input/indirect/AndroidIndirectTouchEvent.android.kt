@@ -28,7 +28,6 @@ import androidx.compose.ui.ExperimentalIndirectTouchTypeApi
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.PointerId
 
-@OptIn(ExperimentalIndirectTouchTypeApi::class)
 internal class AndroidIndirectTouchEvent(
     override val changes: List<IndirectPointerInputChange>,
     override val type: IndirectTouchEventType,
@@ -40,7 +39,7 @@ internal class AndroidIndirectTouchEvent(
     }
 }
 
-@ExperimentalIndirectTouchTypeApi
+/** Returns the underlying [MotionEvent] for additional information and cross module testing. */
 val IndirectTouchEvent.nativeEvent: MotionEvent
     get() = (this as AndroidIndirectTouchEvent).nativeEvent
 
@@ -49,11 +48,11 @@ val IndirectTouchEvent.nativeEvent: MotionEvent
  * IMPORTANT NOTE 1: Primary axis is determined by properties of the [InputDevice] contained within
  * the [MotionEvent]. However, when manually creating a [MotionEvent], there is no way to set the
  * [InputDevice]. Therefore, this function allows you to manually set the primary axis for testing.
- * If you have a system created [MotionEvent], you can call indirectScrollAxis() on your
- * [MotionEvent] to get the primary axis. IMPORTANT NOTE 2: Since this is just a test function that
- * doesn't maintain state for previous [MotionEvent]s (like the Android Compose system does), you
- * will need to pass a separate [MotionEvent] to populate IndirectPointerInputChange's "previous"
- * parameters (time, position, and pressed).
+ * If you have a system created [MotionEvent], you can call indirectPrimaryDirectionalScrollAxis()
+ * on your [MotionEvent] to get the primary axis. IMPORTANT NOTE 2: Since this is just a test
+ * function that doesn't maintain state for previous [MotionEvent]s (like the Android Compose system
+ * does), you will need to pass a separate [MotionEvent] to populate IndirectPointerInputChange's
+ * "previous" parameters (time, position, and pressed).
  *
  * @param motionEvent The [MotionEvent] to convert to an [IndirectTouchEvent].
  * @param primaryDirectionalMotionAxis Primary directional motion axis for testing.
@@ -138,7 +137,6 @@ fun IndirectTouchEvent(
     )
 }
 
-@OptIn(ExperimentalIndirectTouchTypeApi::class)
 internal fun convertActionToIndirectTouchEventType(actionMasked: Int): IndirectTouchEventType {
     return when (actionMasked) {
         ACTION_UP,
@@ -150,7 +148,6 @@ internal fun convertActionToIndirectTouchEventType(actionMasked: Int): IndirectT
     }
 }
 
-@OptIn(ExperimentalIndirectTouchTypeApi::class)
 internal fun indirectPrimaryDirectionalScrollAxis(
     motionEvent: MotionEvent
 ): IndirectTouchEventPrimaryDirectionalMotionAxis {

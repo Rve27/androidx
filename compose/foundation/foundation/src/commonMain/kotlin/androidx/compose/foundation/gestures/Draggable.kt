@@ -31,7 +31,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.ui.ExperimentalIndirectTouchTypeApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.isSpecified
@@ -377,9 +376,8 @@ internal class DraggableNode(
     private fun Offset.reverseIfNeeded() = if (reverseDirection) this * -1f else this * 1f
 }
 
-// TODO(levima) Remove once ExperimentalIndirectTouchTypeApi stable b/426155641
 /** A node that performs drag gesture recognition and event propagation. */
-@OptIn(ExperimentalIndirectTouchTypeApi::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 internal abstract class DragGestureNode(
     canDrag: (PointerType) -> Boolean,
     enabled: Boolean,

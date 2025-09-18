@@ -15,7 +15,6 @@
  */
 package androidx.compose.ui.input.pointer
 
-import androidx.compose.ui.ExperimentalIndirectTouchTypeApi
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.indirect.IndirectPointerInputChange
 import com.google.common.truth.Truth.assertThat
@@ -23,7 +22,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 
-@OptIn(ExperimentalIndirectTouchTypeApi::class)
 @RunWith(JUnit4::class)
 class IndirectPointerInputChangeTest {
 

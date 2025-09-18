@@ -15,7 +15,6 @@
  */
 package androidx.compose.ui.input.indirect
 
-import androidx.compose.ui.ExperimentalIndirectTouchTypeApi
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.PointerEvent
 import androidx.compose.ui.input.pointer.PointerId
@@ -26,7 +25,6 @@ import androidx.compose.ui.input.pointer.PointerId
  * This event differs from a [PointerEvent] as it does not necessitate an existence of a pointer. If
  * an event were to have an associated pointer, they will be routed to through [PointerEvent].
  */
-@ExperimentalIndirectTouchTypeApi
 sealed interface IndirectTouchEvent {
     /** The list of individual pointer changes in this event. */
     val changes: List<IndirectPointerInputChange>
@@ -39,14 +37,11 @@ sealed interface IndirectTouchEvent {
 }
 
 // Work around for Kotlin cross module sealed interfaces.
-@OptIn(ExperimentalIndirectTouchTypeApi::class)
 internal interface PlatformIndirectTouchEvent : IndirectTouchEvent
 
 /** Indicates the reason that the [IndirectTouchEvent] was sent. */
 @kotlin.jvm.JvmInline
-@ExperimentalIndirectTouchTypeApi
 value class IndirectTouchEventType private constructor(internal val value: Int) {
-    @ExperimentalIndirectTouchTypeApi
     companion object {
 
         /** An unknown reason for the event. */
@@ -81,10 +76,8 @@ value class IndirectTouchEventType private constructor(internal val value: Int) 
  * impractical.
  */
 @kotlin.jvm.JvmInline
-@ExperimentalIndirectTouchTypeApi
 value class IndirectTouchEventPrimaryDirectionalMotionAxis
 private constructor(internal val value: Int) {
-    @ExperimentalIndirectTouchTypeApi
     companion object {
 
         /** No coordinate axes specified for movement. */
@@ -111,7 +104,6 @@ private constructor(internal val value: Int) {
  *   previous event.
  * @param previousPressed Whether the pointer was down or up at the previous event.
  */
-@ExperimentalIndirectTouchTypeApi
 class IndirectPointerInputChange(
     val id: PointerId,
     val uptimeMillis: Long,

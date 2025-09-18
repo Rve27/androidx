@@ -80,6 +80,7 @@ import org.junit.runner.RunWith
 // The expected min sdk is 35, but we test on 33 for wider device coverage (some APIs are not
 // available below 33)
 @SdkSuppress(minSdkVersion = Build.VERSION_CODES.TIRAMISU)
+@OptIn(ExperimentalIndirectTouchTypeApi::class)
 class ListItemTest {
     @get:Rule val rule = createComposeRule()
 
@@ -289,7 +290,6 @@ class ListItemTest {
         }
     }
 
-    @OptIn(ExperimentalIndirectTouchTypeApi::class)
     @Test
     fun emitsPressInteractions_clickable() {
         val interactionSource = MutableInteractionSource()

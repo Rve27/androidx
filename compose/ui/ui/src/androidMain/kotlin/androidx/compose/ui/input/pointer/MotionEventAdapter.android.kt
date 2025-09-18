@@ -40,7 +40,6 @@ import androidx.annotation.RequiresApi
 import androidx.annotation.VisibleForTesting
 import androidx.collection.LongSparseArray
 import androidx.collection.set
-import androidx.compose.ui.ExperimentalIndirectTouchTypeApi
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.indirect.AndroidIndirectTouchEvent
 import androidx.compose.ui.input.indirect.IndirectPointerInputChange
@@ -201,7 +200,6 @@ internal class MotionEventAdapter {
      * custom value (null means use the actual MotionEvent device's value).
      * @return The AndroidIndirectTouchEvent or null if the event action was ACTION_CANCEL.
      */
-    @OptIn(ExperimentalIndirectTouchTypeApi::class)
     internal fun convertToIndirectTouchEvent(
         motionEvent: MotionEvent,
         primaryDirectionalMotionAxisOverride: IndirectTouchEventPrimaryDirectionalMotionAxis? = null,

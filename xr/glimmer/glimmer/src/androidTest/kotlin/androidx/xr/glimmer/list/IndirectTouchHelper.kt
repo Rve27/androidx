@@ -93,7 +93,7 @@ internal fun SemanticsNodeInteraction.performIndirectSwipe(rule: ComposeTestRule
  *
  * @return true if the event was consumed. False otherwise.
  */
-@ExperimentalIndirectTouchTypeApi
+@OptIn(ExperimentalIndirectTouchTypeApi::class)
 internal fun SemanticsNodeInteraction.performIndirectTouchEvent(
     rule: ComposeTestRule,
     indirectTouchEvent: IndirectTouchEvent,

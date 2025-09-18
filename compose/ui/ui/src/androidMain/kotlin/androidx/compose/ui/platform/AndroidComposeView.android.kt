@@ -287,7 +287,6 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
 
     // Allows tests to override the calculated primaryDirectionalMotionAxis from a MotionEvent (see
     // [IndirectTouchEventNavigationSystemTests] for more details).
-    @OptIn(ExperimentalIndirectTouchTypeApi::class)
     @VisibleForTesting
     internal var primaryDirectionalMotionAxisOverride:
         IndirectTouchEventPrimaryDirectionalMotionAxis? =
@@ -1330,7 +1329,7 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
             focusOwner.dispatchKeyEvent(keyEvent)
 
     /** This function is used by the testing framework to send indirect touch events. */
-    @OptIn(ExperimentalIndirectTouchTypeApi::class)
+    @ExperimentalIndirectTouchTypeApi
     override fun sendIndirectTouchEvent(indirectTouchEvent: IndirectTouchEvent): Boolean {
         if (indirectTouchEvent.nativeEvent.actionMasked == ACTION_CANCEL) {
             focusOwner.dispatchIndirectTouchCancel()
@@ -2378,7 +2377,6 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
                     handleMotionEvent(motionEvent).dispatchedToAPointerInputModifier
                 }
             else -> {
-                @OptIn(ExperimentalIndirectTouchTypeApi::class)
                 if (motionEvent.isFromSource(SOURCE_TOUCH_NAVIGATION)) {
                     val indirectTouchEvent =
                         motionEventAdapter.convertToIndirectTouchEvent(
@@ -2401,7 +2399,6 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
         }
     }
 
-    @OptIn(ExperimentalIndirectTouchTypeApi::class)
     private fun handleIndirectTouchEvent(indirectTouchEvent: IndirectTouchEvent): Boolean {
         val motionEvent = indirectTouchEvent.nativeEvent
 
@@ -3776,7 +3773,6 @@ internal class IndirectTouchNavigationGestureDetector(
     context: Context,
     private val onMoveFocus: (FocusDirection) -> Unit,
 ) {
-    @OptIn(ExperimentalIndirectTouchTypeApi::class)
     var primaryDirectionalMotionAxis = IndirectTouchEventPrimaryDirectionalMotionAxis.None
 
     private val gestureDetector: GestureDetector =
@@ -3798,7 +3794,6 @@ internal class IndirectTouchNavigationGestureDetector(
 
                 override fun onLongPress(e: MotionEvent) {}
 
-                @OptIn(ExperimentalIndirectTouchTypeApi::class)
                 override fun onFling(
                     e1: MotionEvent?,
                     e2: MotionEvent,

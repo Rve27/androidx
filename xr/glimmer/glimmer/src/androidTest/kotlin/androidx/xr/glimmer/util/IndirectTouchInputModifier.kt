@@ -16,7 +16,6 @@
 
 package androidx.xr.glimmer.util
 
-import androidx.compose.ui.ExperimentalIndirectTouchTypeApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.indirect.IndirectTouchEvent
 import androidx.compose.ui.input.indirect.IndirectTouchInputModifierNode
@@ -33,13 +32,11 @@ import androidx.compose.ui.platform.InspectorInfo
  * @param onEvent A callback that is invoked when an indirect touch event is received.
  * @param onCancel A callback that is invoked when the pointer input is cancelled.
  */
-@OptIn(ExperimentalIndirectTouchTypeApi::class)
 internal fun Modifier.onIndirectTouchInput(
     onEvent: (event: IndirectTouchEvent, pass: PointerEventPass) -> Unit,
     onCancel: () -> Unit = {},
 ): Modifier = this.then(IndirectTouchInputElement(onEvent, onCancel))
 
-@OptIn(ExperimentalIndirectTouchTypeApi::class)
 internal class IndirectTouchInputElement(
     val onEvent: (IndirectTouchEvent, PointerEventPass) -> Unit,
     val onCancel: () -> Unit,
@@ -79,7 +76,6 @@ internal class IndirectTouchInputElement(
  * A [Modifier.Node] that can be used to test indirect touch events. This is a very simple version
  * that doesn't track state (which you would need for production).
  */
-@OptIn(ExperimentalIndirectTouchTypeApi::class)
 internal class IndirectTouchInputNode(
     var onEvent: (IndirectTouchEvent, PointerEventPass) -> Unit,
     var onCancel: () -> Unit,

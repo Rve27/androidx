@@ -40,7 +40,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.testutils.assertModifierIsPure
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalIndirectTouchTypeApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.focus.FocusRequester
@@ -85,7 +84,6 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
-@OptIn(ExperimentalIndirectTouchTypeApi::class)
 @MediumTest
 @RunWith(AndroidJUnit4::class)
 class DraggableTest {
