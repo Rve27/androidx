@@ -103,7 +103,7 @@ package androidx.navigation3.runtime {
   }
 
   public final class RememberNavBackStackKt {
-    method @KotlinOnly @androidx.compose.runtime.Composable public static inline <reified T extends androidx.navigation3.runtime.NavKey> androidx.navigation3.runtime.NavBackStack<androidx.navigation3.runtime.NavKey> rememberNavBackStack(T... elements, androidx.savedstate.serialization.SavedStateConfiguration configuration);
+    method @KotlinOnly @androidx.compose.runtime.Composable public static inline <reified T extends androidx.navigation3.runtime.NavKey> androidx.navigation3.runtime.NavBackStack<androidx.navigation3.runtime.NavKey> rememberNavBackStack(androidx.savedstate.serialization.SavedStateConfiguration configuration, T... elements);
   }
 
   public final class RememberNavBackStack_androidKt {
