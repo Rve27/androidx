@@ -42,7 +42,7 @@ import androidx.compose.runtime.snapshots.StateRecord
  * @constructor Creates a new back stack backed by the provided [SnapshotStateList].
  * @see rememberNavBackStack for lifecycle-aware persistence.
  */
-public expect class NavBackStack<T : NavKey> : MutableList<T>, StateObject {
+public expect class NavBackStack<T : NavKey> : MutableList<T>, StateObject, RandomAccess {
 
     public constructor(base: SnapshotStateList<T>)
 
