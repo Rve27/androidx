@@ -49,7 +49,7 @@ class ProjectedPerceptionManagerTest {
 
     @Test
     fun checkVpsAvailability_callsServiceWithCorrectParameters() = runTest {
-        perceptionManager.service = mockPerceptionService
+        perceptionManager.xrResources.service = mockPerceptionService
         doAnswer { invocation ->
                 val callback = invocation.getArgument<IVpsAvailabilityCallback>(2)
                 callback.onVpsAvailabilityChanged(0)
