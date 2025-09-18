@@ -20,7 +20,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.SideEffect
 import androidx.navigationevent.NavigationEventHandler
-import androidx.navigationevent.NavigationEventInfo
 import androidx.navigationevent.NavigationEventTransitionState
 
 /**
@@ -52,7 +51,6 @@ import androidx.navigationevent.NavigationEventTransitionState
  * to `false`, a back gesture initiated in the same frame may still trigger this handler because the
  * system sees the stale `true` value.
  *
- * @param T The type of the navigation information held in the state.
  * @param state The hoisted [NavigationEventState] (returned from [rememberNavigationEventState]) to
  *   be registered. This object links this handler's callbacks to the unique handler instance that
  *   is producing the state.
@@ -64,8 +62,8 @@ import androidx.navigationevent.NavigationEventTransitionState
  * @param onBackCompleted Called when a back navigation gesture completes.
  */
 @Composable
-public fun <T : NavigationEventInfo> NavigationEventHandler(
-    state: NavigationEventState<T>,
+public fun NavigationEventHandler(
+    state: NavigationEventState<*>,
     // ---- Forward Events ----
     isForwardEnabled: Boolean = true,
     onForwardCancelled: () -> Unit = {},
@@ -108,7 +106,6 @@ public fun <T : NavigationEventInfo> NavigationEventHandler(
  * Refer to the primary [NavigationEventHandler] KDoc for details on precedence, unconditional
  * usage, and timing considerations.
  *
- * @param T The type of the navigation information.
  * @param state The hoisted [NavigationEventState] (returned from [rememberNavigationEventState]) to
  *   be registered.
  * @param isBackEnabled Controls whether back navigation gestures are handled.
@@ -116,8 +113,8 @@ public fun <T : NavigationEventInfo> NavigationEventHandler(
  * @param onBackCompleted Called when a back navigation gesture completes and navigation occurs.
  */
 @Composable
-public fun <T : NavigationEventInfo> NavigationBackHandler(
-    state: NavigationEventState<T>,
+public fun NavigationBackHandler(
+    state: NavigationEventState<*>,
     isBackEnabled: Boolean = true,
     onBackCancelled: () -> Unit = {},
     onBackCompleted: () -> Unit,
@@ -143,7 +140,6 @@ public fun <T : NavigationEventInfo> NavigationBackHandler(
  * Refer to the primary [NavigationEventHandler] KDoc for details on precedence, unconditional
  * usage, and timing considerations.
  *
- * @param T The type of the navigation information.
  * @param state The hoisted [NavigationEventState] (returned from [rememberNavigationEventState]) to
  *   be registered.
  * @param isForwardEnabled Controls whether forward navigation gestures are handled.
@@ -152,8 +148,8 @@ public fun <T : NavigationEventInfo> NavigationBackHandler(
  *   occurs.
  */
 @Composable
-public fun <T : NavigationEventInfo> NavigationForwardHandler(
-    state: NavigationEventState<T>,
+public fun NavigationForwardHandler(
+    state: NavigationEventState<*>,
     isForwardEnabled: Boolean = true,
     onForwardCancelled: () -> Unit = {},
     onForwardCompleted: () -> Unit,
