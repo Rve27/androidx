@@ -8,6 +8,14 @@
         errorLine2="                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/layout/pdf_viewer_fragment.xml"/>
+
+    <issue
+        id="WrongConstant"
+        message="Must be one or more of: "
+        errorLine1="                insets.getInsets(WindowInsetsCompat.Type.ime()).run {"
+        errorLine2="                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/pdf/viewer/fragment/insets/TranslateInsetsAnimationCallback.kt"/>
     </issue>
 
 </issues>
