@@ -37,6 +37,10 @@ ChangedType: androidx.compose.ui.test.InjectionScope#percentOffset(float, float)
     Source breaking change: Method androidx.compose.ui.test.InjectionScope.percentOffset has changed return type from long to androidx.compose.ui.geometry.Offset
 
 
+RemovedClass: androidx.compose.ui.test.IndirectTouchInputHelpersKt:
+    Binary breaking change: Removed class androidx.compose.ui.test.IndirectTouchInputHelpersKt
+
+
 RemovedDeprecatedMethod: androidx.compose.ui.test.GestureScope#getVisibleSize():
     Binary breaking change: Removed deprecated method androidx.compose.ui.test.GestureScope.getVisibleSize()
 RemovedDeprecatedMethod: androidx.compose.ui.test.GestureScopeKt#click(androidx.compose.ui.test.GestureScope, long):

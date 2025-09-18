@@ -68,7 +68,6 @@ import androidx.compose.ui.test.isNotFocusable
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onRoot
-import androidx.compose.ui.test.performIndirectTouchEvent
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -78,6 +77,7 @@ import androidx.core.view.InputDeviceCompat.SOURCE_TOUCH_NAVIGATION
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
 import androidx.test.filters.SdkSuppress
+import androidx.xr.glimmer.list.performIndirectTouchEvent
 import androidx.xr.glimmer.samples.placeholderImagePainter
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.CoroutineScope
@@ -341,10 +341,11 @@ class CardTest {
         rule
             .onNodeWithTag("card")
             .performIndirectTouchEvent(
+                rule,
                 IndirectTouchEvent(
                     motionEvent = down,
                     primaryDirectionalMotionAxis = IndirectTouchEventPrimaryDirectionalMotionAxis.X,
-                )
+                ),
             )
 
         rule.runOnIdle {
@@ -365,11 +366,12 @@ class CardTest {
         rule
             .onNodeWithTag("card")
             .performIndirectTouchEvent(
+                rule,
                 IndirectTouchEvent(
                     motionEvent = up,
                     primaryDirectionalMotionAxis = IndirectTouchEventPrimaryDirectionalMotionAxis.X,
                     previousMotionEvent = down,
-                )
+                ),
             )
 
         rule.runOnIdle {

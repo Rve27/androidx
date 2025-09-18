@@ -307,11 +307,11 @@ class CombinedClickableTest {
         rule.runOnIdle { inputModeManager.requestInputMode(InputMode.Keyboard) }
         rule.runOnIdle { assertThat(focusRequester.requestFocus()).isTrue() }
 
-        rule.onNodeWithTag("myClickable").sendIndirectPressReleaseEvent()
+        rule.onNodeWithTag("myClickable").sendIndirectPressReleaseEvent(rule)
 
         rule.runOnIdle { assertThat(counter).isEqualTo(1) }
 
-        rule.onNodeWithTag("myClickable").sendIndirectPressReleaseEvent()
+        rule.onNodeWithTag("myClickable").sendIndirectPressReleaseEvent(rule)
 
         rule.runOnIdle { assertThat(counter).isEqualTo(2) }
     }
@@ -967,7 +967,7 @@ class CombinedClickableTest {
         rule.runOnIdle { assertThat(interactions).isEmpty() }
 
         val downEvent =
-            rule.onNodeWithTag("myClickable").sendIndirectTouchPressEvent(currentTime = 0L)
+            rule.onNodeWithTag("myClickable").sendIndirectTouchPressEvent(rule, currentTime = 0L)
 
         rule.runOnIdle {
             assertThat(interactions).hasSize(1)
@@ -976,7 +976,7 @@ class CombinedClickableTest {
 
         rule
             .onNodeWithTag("myClickable")
-            .sendIndirectTouchReleaseEvent(currentTime = 16L, previousEvent = downEvent)
+            .sendIndirectTouchReleaseEvent(rule, currentTime = 16L, previousEvent = downEvent)
 
         rule.runOnIdle {
             assertThat(interactions).hasSize(2)
@@ -1068,10 +1068,10 @@ class CombinedClickableTest {
 
         rule.runOnIdle { assertThat(interactions).isEmpty() }
 
-        val downEvent = rule.onNodeWithTag("myClickable").sendIndirectTouchPressEvent(0L)
+        val downEvent = rule.onNodeWithTag("myClickable").sendIndirectTouchPressEvent(rule, 0L)
         rule
             .onNodeWithTag("myClickable")
-            .sendIndirectTouchReleaseEvent(16L, previousEvent = downEvent)
+            .sendIndirectTouchReleaseEvent(rule, 16L, previousEvent = downEvent)
 
         // Press finished so we should see both press and release
         rule.runOnIdle {
@@ -1163,7 +1163,7 @@ class CombinedClickableTest {
 
         rule.runOnIdle { assertThat(interactions).isEmpty() }
 
-        rule.onNodeWithTag("myClickable").sendIndirectTouchCancelEvent(sendMoveEvents = false)
+        rule.onNodeWithTag("myClickable").sendIndirectTouchCancelEvent(rule, sendMoveEvents = false)
 
         // We are not in a scrollable container, so we should see a press and immediate cancel
         rule.runOnIdle {
@@ -1315,7 +1315,7 @@ class CombinedClickableTest {
 
         rule.runOnIdle { assertThat(interactions).isEmpty() }
 
-        val downEvent = rule.onNodeWithTag("myClickable").sendIndirectTouchPressEvent(0L)
+        val downEvent = rule.onNodeWithTag("myClickable").sendIndirectTouchPressEvent(rule, 0L)
 
         val halfTapIndicationDelay = TapIndicationDelay / 2
 
@@ -1334,7 +1334,11 @@ class CombinedClickableTest {
 
         rule
             .onNodeWithTag("myClickable")
-            .sendIndirectTouchReleaseEvent(halfTapIndicationDelay + 16L, previousEvent = downEvent)
+            .sendIndirectTouchReleaseEvent(
+                rule,
+                halfTapIndicationDelay + 16L,
+                previousEvent = downEvent,
+            )
 
         rule.runOnIdle {
             assertThat(interactions).hasSize(2)
@@ -1425,10 +1429,10 @@ class CombinedClickableTest {
 
         rule.runOnIdle { assertThat(interactions).isEmpty() }
 
-        val downEvent = rule.onNodeWithTag("myClickable").sendIndirectTouchPressEvent(0L)
+        val downEvent = rule.onNodeWithTag("myClickable").sendIndirectTouchPressEvent(rule, 0L)
         rule
             .onNodeWithTag("myClickable")
-            .sendIndirectTouchReleaseEvent(16L, previousEvent = downEvent)
+            .sendIndirectTouchReleaseEvent(rule, 16L, previousEvent = downEvent)
 
         // We haven't reached the tap delay, but we have finished a press so we should have
         // emitted both press and release
@@ -1515,7 +1519,7 @@ class CombinedClickableTest {
 
         rule.runOnIdle { assertThat(interactions).isEmpty() }
 
-        rule.onNodeWithTag("myClickable").sendIndirectTouchCancelEvent(sendMoveEvents = false)
+        rule.onNodeWithTag("myClickable").sendIndirectTouchCancelEvent(rule, sendMoveEvents = false)
 
         // We haven't reached the tap delay, and a cancel was emitted, so no press should ever be
         // shown
@@ -1603,10 +1607,11 @@ class CombinedClickableTest {
         rule.runOnIdle { assertThat(interactions).isEmpty() }
 
         val pressPosition = Offset((TouchPadEnd - TouchPadStart) / 2f, 0f)
-        rule.onNodeWithTag("myClickable").sendIndirectTouchPressEvent(0L, pressPosition)
+        rule.onNodeWithTag("myClickable").sendIndirectTouchPressEvent(rule, 0L, pressPosition)
         rule
             .onNodeWithTag("myClickable")
             .sendIndirectTouchMoveEvents(
+                rule,
                 3,
                 16L,
                 pressPosition,
@@ -1712,7 +1717,7 @@ class CombinedClickableTest {
         rule.runOnIdle { assertThat(interactions).isEmpty() }
 
         val pressPosition = Offset((TouchPadEnd - TouchPadStart) / 2f, 0f)
-        rule.onNodeWithTag("myClickable").sendIndirectTouchPressEvent(0L, pressPosition)
+        rule.onNodeWithTag("myClickable").sendIndirectTouchPressEvent(rule, 0L, pressPosition)
 
         rule.mainClock.advanceTimeBy(TapIndicationDelay)
 
@@ -1724,6 +1729,7 @@ class CombinedClickableTest {
         rule
             .onNodeWithTag("myClickable")
             .sendIndirectTouchMoveEvents(
+                rule,
                 3,
                 16L,
                 pressPosition,
@@ -1828,7 +1834,7 @@ class CombinedClickableTest {
         rule.runOnIdle { assertThat(interactions).isEmpty() }
 
         val pressPosition = Offset((TouchPadEnd - TouchPadStart) / 2f, 0f)
-        rule.onNodeWithTag("myClickable").sendIndirectTouchPressEvent(0L, pressPosition)
+        rule.onNodeWithTag("myClickable").sendIndirectTouchPressEvent(rule, 0L, pressPosition)
 
         rule.mainClock.advanceTimeBy(TapIndicationDelay)
 
@@ -1837,7 +1843,7 @@ class CombinedClickableTest {
             assertThat(interactions.first()).isInstanceOf(PressInteraction.Press::class.java)
         }
 
-        rule.onNodeWithTag("myClickable").sendIndirectTouchCancelEvent(sendMoveEvents = false)
+        rule.onNodeWithTag("myClickable").sendIndirectTouchCancelEvent(rule, sendMoveEvents = false)
 
         rule.runOnIdle {
             assertThat(interactions).hasSize(2)

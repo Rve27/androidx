@@ -58,7 +58,6 @@ import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.isFocusable
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.performIndirectTouchEvent
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -68,6 +67,7 @@ import androidx.core.view.InputDeviceCompat.SOURCE_TOUCH_NAVIGATION
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
 import androidx.test.filters.SdkSuppress
+import androidx.xr.glimmer.list.performIndirectTouchEvent
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -333,10 +333,11 @@ class ListItemTest {
         rule
             .onNodeWithTag("listItem")
             .performIndirectTouchEvent(
+                rule,
                 IndirectTouchEvent(
                     down,
                     primaryDirectionalMotionAxis = IndirectTouchEventPrimaryDirectionalMotionAxis.X,
-                )
+                ),
             )
 
         rule.runOnIdle {
@@ -357,10 +358,12 @@ class ListItemTest {
         rule
             .onNodeWithTag("listItem")
             .performIndirectTouchEvent(
+                rule,
                 IndirectTouchEvent(
                     up,
                     primaryDirectionalMotionAxis = IndirectTouchEventPrimaryDirectionalMotionAxis.X,
-                )
+                    down,
+                ),
             )
 
         rule.runOnIdle {

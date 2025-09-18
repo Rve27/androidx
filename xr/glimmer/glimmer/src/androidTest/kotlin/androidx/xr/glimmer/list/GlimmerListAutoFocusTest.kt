@@ -133,7 +133,7 @@ class GlimmerListAutoFocusTest : BaseListTestWithOrientation(Orientation.Vertica
         rule.setAutoFocusContent { FocusableTestList(itemsCount = 100) }
 
         val swipe = with(rule.density) { ItemHeight.toPx() * 5.5f }
-        rule.onNodeWithTag(LIST_TEST_TAG).performIndirectSwipe(swipe)
+        rule.onNodeWithTag(LIST_TEST_TAG).performIndirectSwipe(rule, swipe)
         rule.waitForIdle()
 
         rule.onListItem(5).assertIsFocused()
@@ -175,7 +175,7 @@ class GlimmerListAutoFocusTest : BaseListTestWithOrientation(Orientation.Vertica
             }
         }
 
-        rule.onRoot().performIndirectSwipe(1500f)
+        rule.onRoot().performIndirectSwipe(rule, 1500f)
 
         Truth.assertThat(downEventReceivedByParentWasConsumed).isFalse()
         Truth.assertThat(moveEventReceivedByParentWasConsumed).isFalse()
@@ -221,7 +221,7 @@ class GlimmerListAutoFocusTest : BaseListTestWithOrientation(Orientation.Vertica
         }
 
         // List is scrollable, so it has to consume all events.
-        rule.onRoot().performIndirectSwipe(200f)
+        rule.onRoot().performIndirectSwipe(rule, 200f)
         Truth.assertThat(downEventReceivedByParentWasConsumed).isFalse()
         Truth.assertThat(moveEventReceivedByParentWasConsumed).isTrue()
         // TODO (levi): ScrollableNode isn't consuming the up event (will fully support in
@@ -236,7 +236,7 @@ class GlimmerListAutoFocusTest : BaseListTestWithOrientation(Orientation.Vertica
         upEventReceivedByParentWasConsumed = false
 
         // List is non-scrollable now, so events must be propagated further.
-        rule.onRoot().performIndirectSwipe(200f)
+        rule.onRoot().performIndirectSwipe(rule, 200f)
         Truth.assertThat(downEventReceivedByParentWasConsumed).isFalse()
         Truth.assertThat(moveEventReceivedByParentWasConsumed).isFalse()
         Truth.assertThat(upEventReceivedByParentWasConsumed).isFalse()

@@ -55,7 +55,7 @@ class ListIndirectTouchTest : BaseListTestWithOrientation(Orientation.Vertical) 
         rule.onNodeWithText("Item-2").isNotDisplayed()
 
         val swipeDistance = with(rule.density) { 105.dp.toPx() }
-        rule.onNodeWithTag(LIST_TEST_TAG).performIndirectSwipe(-swipeDistance)
+        rule.onNodeWithTag(LIST_TEST_TAG).performIndirectSwipe(rule, -swipeDistance)
 
         rule.onNodeWithText("Item-0").isNotDisplayed()
         rule.onNodeWithText("Item-1").isDisplayed()
@@ -78,7 +78,7 @@ class ListIndirectTouchTest : BaseListTestWithOrientation(Orientation.Vertical) 
         rule.onNodeWithText("Item-2").isDisplayed()
 
         val swipeDistance = with(rule.density) { 105.dp.toPx() }
-        rule.onNodeWithTag(LIST_TEST_TAG).performIndirectSwipe(swipeDistance)
+        rule.onNodeWithTag(LIST_TEST_TAG).performIndirectSwipe(rule, swipeDistance)
 
         rule.onNodeWithText("Item-0").isDisplayed()
         rule.onNodeWithText("Item-1").isDisplayed()
