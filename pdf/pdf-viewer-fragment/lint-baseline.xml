@@ -8,6 +8,7 @@
         errorLine2="                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/layout/pdf_viewer_fragment.xml"/>
+    </issue>
 
     <issue
         id="WrongConstant"
