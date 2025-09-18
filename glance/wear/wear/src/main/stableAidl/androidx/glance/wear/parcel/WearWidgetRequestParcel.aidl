@@ -13,18 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package androidx.glance.wear.parcel;
 
-package androidx.glance.wear
 
-import android.os.Bundle
-import androidx.glance.wear.parcel.WearWidgetRawContent
-
-/** Describes the contents of a Widget. */
-// TODO: change content to be of type `@RemoteComposable @Composable () -> Unit` once the dependency
-//  is available.
-public class WearWidgetContent(private val content: ByteArray) {
-
-    internal fun toRawContent(): WearWidgetRawContent {
-        return WearWidgetRawContent(rcDocument = content, extras = Bundle.EMPTY)
-    }
+/**
+  * Data for a Widget request.
+  */
+@JavaPassthrough(annotation="@androidx.annotation.RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY)")
+parcelable WearWidgetRequestParcel {
+    byte[] payload;
 }
