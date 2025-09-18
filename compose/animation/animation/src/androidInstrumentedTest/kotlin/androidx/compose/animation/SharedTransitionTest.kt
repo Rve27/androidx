@@ -128,6 +128,7 @@ import kotlin.math.roundToInt
 import kotlin.math.sqrt
 import kotlin.random.Random
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.StandardTestDispatcher
 import leakcanary.DetectLeaksAfterTestSuccess
 import org.junit.Assert.assertNotEquals
 import org.junit.Rule
@@ -138,7 +139,7 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 @LargeTest
 class SharedTransitionTest {
-    val rule = createComposeRule()
+    val rule = createComposeRule(StandardTestDispatcher())
 
     // Detect leaks BEFORE and AFTER compose rule work
     @get:Rule
