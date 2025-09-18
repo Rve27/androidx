@@ -16,4 +16,6 @@
 
 package androidx.compose.ui.tooling.preview
 
-internal actual fun validateUiModes() {}
+internal actual fun validateUiModes() {
+    implementedInJetBrainsFork()
+}
