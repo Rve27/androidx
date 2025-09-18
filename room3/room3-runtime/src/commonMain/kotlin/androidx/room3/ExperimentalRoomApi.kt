@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,9 +15,12 @@
  */
 package androidx.room3
 
-/** APIs marked with ExperimentalRoomApi are experimental and may change. */
+/**
+ * Marks declarations that are experimental in Room's APIs, which means that the design of the
+ * corresponding declarations may (or may not) lead to their changes in the future.
+ */
+@MustBeDocumented
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
-@Suppress("UnsafeOptInUsageError")
 @RequiresOptIn
 @Retention(AnnotationRetention.BINARY)
 public annotation class ExperimentalRoomApi
