@@ -24,9 +24,9 @@ import androidx.navigation3.runtime.NavEntry
 /** An [OverlayScene] that renders an [entry] within a [Dialog]. */
 internal class DialogScene<T : Any>(
     override val key: Any,
+    private val entry: NavEntry<T>,
     override val previousEntries: List<NavEntry<T>>,
     override val overlaidEntries: List<NavEntry<T>>,
-    private val entry: NavEntry<T>,
     private val dialogProperties: DialogProperties,
     private val onBack: (count: Int) -> Unit,
 ) : OverlayScene<T> {
@@ -35,6 +35,31 @@ internal class DialogScene<T : Any>(
 
     override val content: @Composable (() -> Unit) = {
         Dialog(onDismissRequest = { onBack(1) }, properties = dialogProperties) { entry.Content() }
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
+
+        other as DialogScene<*>
+
+        return key == other.key &&
+            previousEntries == other.previousEntries &&
+            overlaidEntries == other.overlaidEntries &&
+            entry == other.entry &&
+            dialogProperties == other.dialogProperties
+    }
+
+    override fun hashCode(): Int {
+        return key.hashCode() * 31 +
+            previousEntries.hashCode() * 31 +
+            overlaidEntries.hashCode() * 31 +
+            entry.hashCode() * 31 +
+            dialogProperties.hashCode() * 31
+    }
+
+    override fun toString(): String {
+        return "DialogScene(key=$key, entry=$entry, previousEntries=$previousEntries, overlaidEntries=$overlaidEntries, dialogProperties=$dialogProperties)"
     }
 }
 
@@ -55,9 +80,9 @@ public class DialogSceneStrategy<T : Any>() : SceneStrategy<T> {
         return dialogProperties?.let { properties ->
             DialogScene(
                 key = lastEntry.contentKey,
+                entry = lastEntry,
                 previousEntries = entries.dropLast(1),
                 overlaidEntries = entries.dropLast(1),
-                entry = lastEntry,
                 dialogProperties = properties,
                 onBack = onBack,
             )
