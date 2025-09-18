@@ -16,8 +16,6 @@
 
 package androidx.room3.integration.kotlintestapp.migration
 
-import android.content.ContentValues
-import android.database.sqlite.SQLiteDatabase
 import androidx.room3.AutoMigration
 import androidx.room3.Dao
 import androidx.room3.Database
@@ -30,35 +28,29 @@ import androidx.room3.PrimaryKey
 import androidx.room3.Query
 import androidx.room3.RoomDatabase
 import androidx.room3.RoomWarnings
-import androidx.sqlite.db.SupportSQLiteDatabase
+import androidx.sqlite.SQLiteConnection
 
 @Database(
-    version = MigrationDbKotlin.LATEST_VERSION,
-    entities =
-        [
-            MigrationDbKotlin.Entity1::class,
-            MigrationDbKotlin.Entity2::class,
-            MigrationDbKotlin.Entity4::class,
-        ],
+    version = MigrationDb.LATEST_VERSION,
+    entities = [MigrationDb.Entity1::class, MigrationDb.Entity2::class, MigrationDb.Entity4::class],
     autoMigrations = [AutoMigration(7, 8)],
 )
-abstract class MigrationDbKotlin : RoomDatabase() {
+abstract class MigrationDb : RoomDatabase() {
 
     internal abstract fun dao(): MigrationDao
 
-    @Suppress("CHANGING_ARGUMENTS_EXECUTION_ORDER_FOR_NAMED_VARARGS")
-    @Entity(indices = arrayOf(Index(value = ["name"], unique = true)))
+    @Entity(indices = [Index(value = ["name"], unique = true)])
     data class Entity1(@PrimaryKey var id: Int = 0, var name: String?) {
 
         companion object {
-            val TABLE_NAME = "Entity1"
+            const val TABLE_NAME = "Entity1"
         }
     }
 
     @Entity
     open class Entity2(@PrimaryKey var id: Int = 0, var addedInV3: String?, var name: String?) {
         companion object {
-            val TABLE_NAME = "Entity2"
+            const val TABLE_NAME = "Entity2"
         }
     }
 
@@ -70,25 +62,25 @@ abstract class MigrationDbKotlin : RoomDatabase() {
         var addedInV8: Int = 1,
     ) { // added in version 4, removed at 6
         companion object {
-            val TABLE_NAME = "Entity3"
+            const val TABLE_NAME = "Entity3"
         }
     }
 
     @SuppressWarnings(RoomWarnings.MISSING_INDEX_ON_FOREIGN_KEY_CHILD)
     @Entity(
         foreignKeys =
-            arrayOf(
+            [
                 ForeignKey(
                     entity = Entity1::class,
                     parentColumns = arrayOf("name"),
                     childColumns = arrayOf("name"),
                     deferred = true,
                 )
-            )
+            ]
     )
     data class Entity4(@PrimaryKey var id: Int = 0, var name: String?) {
         companion object {
-            val TABLE_NAME = "Entity4"
+            const val TABLE_NAME = "Entity4"
         }
     }
 
@@ -108,31 +100,25 @@ abstract class MigrationDbKotlin : RoomDatabase() {
         Entity2(id, addedInV3, name)
 
     /** not a real dao because database will change. */
-    internal class Dao_V1(val mDb: SupportSQLiteDatabase) {
+    internal class DaoV1(val connection: SQLiteConnection) {
 
         fun insertIntoEntity1(id: Int, name: String) {
-            val values = ContentValues()
-            values.put("id", id)
-            values.put("name", name)
-            val insertionId =
-                mDb.insert(Entity1.TABLE_NAME, SQLiteDatabase.CONFLICT_REPLACE, values)
-            if (insertionId == -1L) {
-                throw RuntimeException("test failure")
+            connection.prepare("INSERT OR REPLACE INTO ${Entity1.TABLE_NAME} VALUES (?,?)").use {
+                it.bindInt(1, id)
+                it.bindText(2, name)
+                it.step()
             }
         }
     }
 
     /** not a real dao because database will change. */
-    internal class Dao_V2(val mDb: SupportSQLiteDatabase) {
+    internal class DaoV2(val connection: SQLiteConnection) {
 
         fun insertIntoEntity2(id: Int, name: String) {
-            val values = ContentValues()
-            values.put("id", id)
-            values.put("name", name)
-            val insertionId =
-                mDb.insert(Entity2.TABLE_NAME, SQLiteDatabase.CONFLICT_REPLACE, values)
-            if (insertionId == -1L) {
-                throw RuntimeException("test failure")
+            connection.prepare("INSERT OR REPLACE INTO ${Entity2.TABLE_NAME} VALUES (?,?)").use {
+                it.bindInt(1, id)
+                it.bindText(2, name)
+                it.step()
             }
         }
     }
