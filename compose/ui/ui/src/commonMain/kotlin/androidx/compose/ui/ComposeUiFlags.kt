@@ -178,9 +178,6 @@ object ComposeUiFlags {
     @JvmField
     var isNestedScrollInteropIntegerPropagationEnabled: Boolean = true
 
-    /** This flag enables clearing focus on pointer down by default. */
-    @Suppress("MutableBareField") @JvmField var isClearFocusOnPointerDownEnabled: Boolean = true
-
     /**
      * Enable fix for `[ComposeView.canScrollHorizontally]` and `[ComposeView.canScrollVertically]`
      * methods. Previously, these methods would sometimes use the last MOVE event's position to
