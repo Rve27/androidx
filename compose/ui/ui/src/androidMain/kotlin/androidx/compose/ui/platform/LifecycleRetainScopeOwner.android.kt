@@ -19,8 +19,8 @@ package androidx.compose.ui.platform
 import androidx.collection.MutableObjectList
 import androidx.collection.mutableIntObjectMapOf
 import androidx.compose.runtime.CancellationHandle
-import androidx.compose.runtime.ControlledRetainScope
-import androidx.compose.runtime.RetainScope
+import androidx.compose.runtime.retain.ControlledRetainScope
+import androidx.compose.runtime.retain.RetainScope
 import androidx.lifecycle.ViewModel
 import kotlin.coroutines.cancellation.CancellationException
 

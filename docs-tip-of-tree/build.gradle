@@ -91,6 +91,7 @@ dependencies {
     kmpDocs(project(":compose:runtime:runtime"))
     kmpDocs(project(":compose:runtime:runtime-annotation"))
     docs(project(":compose:runtime:runtime-livedata"))
+    kmpDocs(project(":compose:runtime:runtime-retain"))
     kmpDocs(project(":compose:runtime:runtime-rxjava2"))
     kmpDocs(project(":compose:runtime:runtime-rxjava3"))
     kmpDocs(project(":compose:runtime:runtime-saveable"))

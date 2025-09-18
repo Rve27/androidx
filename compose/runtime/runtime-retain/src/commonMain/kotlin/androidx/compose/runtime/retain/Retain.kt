@@ -14,16 +14,27 @@
  * limitations under the License.
  */
 
-package androidx.compose.runtime
+package androidx.compose.runtime.retain
 
 import androidx.collection.MutableScatterMap
 import androidx.collection.MutableScatterSet
-import androidx.compose.runtime.RetainScope.*
-import androidx.compose.runtime.RetainStateProvider.AlwaysKeepExitedValues
-import androidx.compose.runtime.RetainStateProvider.NeverKeepExitedValues
-import androidx.compose.runtime.RetainStateProvider.RetainStateObserver
-import androidx.compose.runtime.collection.SafeMultiValueMap
-import androidx.compose.runtime.internal.classHash
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositeKeyHashCode
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.ProvidableCompositionLocal
+import androidx.compose.runtime.RememberObserver
+import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.currentComposer
+import androidx.compose.runtime.currentCompositeKeyHashCode
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.retain.RetainScope.*
+import androidx.compose.runtime.retain.RetainStateProvider.AlwaysKeepExitedValues
+import androidx.compose.runtime.retain.RetainStateProvider.NeverKeepExitedValues
+import androidx.compose.runtime.retain.RetainStateProvider.NeverKeepExitedValues.isKeepingExitedValues
+import androidx.compose.runtime.retain.RetainStateProvider.RetainStateObserver
+import androidx.compose.runtime.staticCompositionLocalOf
 
 /**
  * Remember the value produced by [calculation] and retain it in the current [RetainScope]. A
@@ -291,10 +302,11 @@ public val LocalRetainScope: ProvidableCompositionLocal<RetainScope> = staticCom
  *    it immediately ends. Any values that are retained and not currently used in a composition (and
  *    therefore not restored by [getExitedValueOrDefault]) are then immediately discarded.
  *
- * A given `RetainScope` should only be used by a single [Recomposer] at a time. It can move between
- * recomposers (for example, when the Window is recreated), but should never be used by two
- * Recomposers simultaneously. It is valid for a RetainScope to be used in multiple compositions at
- * the same time, or in the same composition multiple times.
+ * A given `RetainScope` should only be used by a single
+ * [Recomposer][androidx.compose.runtime.Recomposer] at a time. It can move between recomposers (for
+ * example, when the Window is recreated), but should never be used by two Recomposers
+ * simultaneously. It is valid for a RetainScope to be used in multiple compositions at the same
+ * time, or in the same composition multiple times.
  *
  * @see retain
  * @see LocalRetainScope
@@ -313,13 +325,13 @@ public abstract class RetainScope : RetainStateProvider {
 
     /**
      * If this scope is currently keeping exited values and has a value previously created with the
-     * given [keys], its original record is returned and removed from the list of exited kept
-     * objects that this scope is tracking.
+     * given [key], its original record is returned and removed from the list of exited kept objects
+     * that this scope is tracking.
      *
      * @param key The keys to resolve a retained value that has left composition
      * @param defaultIfAbsent A value to be returned if there are no retained values that have
-     *   exited composition and are being held by this RetainScope for the given [keys].
-     * @return A retained value for [keys] if there is one and it hasn't already re-entered
+     *   exited composition and are being held by this RetainScope for the given [key].
+     * @return A retained value for [key] if there is one and it hasn't already re-entered
      *   composition, otherwise [defaultIfAbsent].
      */
     public abstract fun getExitedValueOrDefault(key: Any, defaultIfAbsent: Any?): Any?
@@ -329,7 +341,7 @@ public abstract class RetainScope : RetainStateProvider {
      * values. It is up to the implementation of this method to decide whether and how to store
      * these values so that they can later be retrieved by [getExitedValueOrDefault].
      *
-     * The given [keys] are not guaranteed to be unique. To handle duplicate keys, implementors
+     * The given [key] are not guaranteed to be unique. To handle duplicate keys, implementors
      * should return retained values with the same keys from [getExitedValueOrDefault] in the
      * opposite order they are received by [saveExitingValue].
      *
@@ -362,7 +374,7 @@ public abstract class RetainScope : RetainStateProvider {
      *   [requestKeepExitedValues] has been called.
      */
     protected fun unRequestKeepExitedValues() {
-        requirePrecondition(isKeepingExitedValues) {
+        checkPrecondition(isKeepingExitedValues) {
             "Unexpected call to unRequestKeepExitedValues() without a " +
                 "corresponding requestKeepExitedValues()"
         }
@@ -563,10 +575,10 @@ public interface RetainStateProvider {
  * When using this class to create your own retention scenario, call [startKeepingExitedValues] to
  * make this scope start keeping exited values state before any content is transiently removed. When
  * the transiently removed content is restored, call [stopKeepingExitedValues] **after all content
- * has been restored**. You can use [Recomposer.scheduleFrameEndCallback] or
- * [Composer.scheduleFrameEndCallback] to ensure that all content has settled in subcompositions and
- * movable content that may not be realized or applied in as part of a composition that is currently
- * ongoing.
+ * has been restored**. You can use [androidx.compose.runtime.Recomposer.scheduleFrameEndCallback]
+ * or [androidx.compose.runtime.Composer.scheduleFrameEndCallback] to ensure that all content has
+ * settled in subcompositions and movable content that may not be realized or applied in as part of
+ * a composition that is currently ongoing.
  *
  * To create a [ControlledRetainScope] that is managed entirely within the composition hierarchy,
  * you can use [retainControlledRetainScope] to create a [ControlledRetainScope] that is
@@ -642,7 +654,7 @@ public class ControlledRetainScope : RetainScope() {
     public fun stopKeepingExitedValues(): Unit = unRequestKeepExitedValues()
 
     override fun onStartKeepingExitedValues() {
-        runtimeCheck(keptExitedValues.isEmpty()) {
+        checkPrecondition(keptExitedValues.isEmpty()) {
             "Attempted to start keeping exited values with pending exited values"
         }
     }
@@ -714,7 +726,7 @@ public object ForgetfulRetainScope : RetainScope() {
  *   keep its exited values for future restoration.
  * @param content The content to render. Inside of this lambda, [LocalRetainScope] is set to the
  *   [RetainScope] managed by this composable.
- * @sample androidx.compose.runtime.samples.retainedContentHostSample
+ * @sample androidx.compose.runtime.retain.samples.retainedContentHostSample
  * @see retainControlledRetainScope
  */
 @Composable
@@ -765,7 +777,7 @@ public fun RetainedContentHost(active: Boolean, content: @Composable () -> Unit)
  *
  * @return A [ControlledRetainScope] nested under the [LocalRetainScope], ready to be installed in
  *   the composition hierarchy and be used to define a retention scenario.
- * @sample androidx.compose.runtime.samples.retainControlledRetainScopeSample
+ * @sample androidx.compose.runtime.retain.samples.retainControlledRetainScopeSample
  * @see RetainedContentHost
  */
 @Composable
@@ -887,7 +899,7 @@ private class RetainScopeHolderWrapper : RetainObserver {
  * created by [retainRetainScopeHolder] are automatically disposed when the provider stops being
  * retained.
  *
- * @sample androidx.compose.runtime.samples.retainScopeHolderSample
+ * @sample androidx.compose.runtime.retain.samples.retainScopeHolderSample
  */
 public class RetainScopeHolder() {
     private var isDisposed = false
@@ -939,8 +951,8 @@ public class RetainScopeHolder() {
      *
      * This function must be called **after** the completion of the frame in which the child content
      * is being restored to allow the restored child to re-consume all of its retained values. You
-     * can use [Recomposer.scheduleFrameEndCallback] or [Composer.scheduleFrameEndCallback] to
-     * insert a sufficient delay.
+     * can use [androidx.compose.runtime.Recomposer.scheduleFrameEndCallback] or
+     * [androidx.compose.runtime.Composer.scheduleFrameEndCallback] to insert a sufficient delay.
      *
      * @param key The key of the child to end retention for
      * @throws IllegalStateException if [startKeepingExitedValues] is called more times than
@@ -948,7 +960,7 @@ public class RetainScopeHolder() {
      */
     public fun stopKeepingExitedValues(key: Any?) {
         val scope = childScopes[key] ?: return
-        check(scope.keepExitedValuesRequestsFromRetainScopeHolder >= 1) {
+        checkPrecondition(scope.keepExitedValuesRequestsFromRetainScopeHolder >= 1) {
             "Unexpected call to unRequestKeepExitedValues() without a " +
                 "corresponding requestKeepExitedValues() for key $key"
         }
@@ -1081,7 +1093,7 @@ public class RetainScopeHolder() {
      * @throws IllegalStateException if [dispose] has been called
      */
     public fun getOrCreateRetainScopeForChild(key: Any?): RetainScope {
-        check(!isDisposed) {
+        checkPrecondition(!isDisposed) {
             "Cannot get a RetainScope after a FanOutRetainScopeProvider has been disposed."
         }
 
