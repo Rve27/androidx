@@ -12,7 +12,7 @@ open annotation class androidx.navigation3.runtime/EntryDsl : kotlin/Annotation 
 
 abstract interface androidx.navigation3.runtime/NavKey // androidx.navigation3.runtime/NavKey|null[0]
 
-final class <#A: androidx.navigation3.runtime/NavKey> androidx.navigation3.runtime/NavBackStack : androidx.compose.runtime.snapshots/StateObject, kotlin.collections/MutableList<#A> { // androidx.navigation3.runtime/NavBackStack|null[0]
+final class <#A: androidx.navigation3.runtime/NavKey> androidx.navigation3.runtime/NavBackStack : androidx.compose.runtime.snapshots/StateObject, kotlin.collections/MutableList<#A>, kotlin.collections/RandomAccess { // androidx.navigation3.runtime/NavBackStack|null[0]
     constructor <init>() // androidx.navigation3.runtime/NavBackStack.<init>|<init>(){}[0]
     constructor <init>(androidx.compose.runtime.snapshots/SnapshotStateList<#A>) // androidx.navigation3.runtime/NavBackStack.<init>|<init>(androidx.compose.runtime.snapshots.SnapshotStateList<1:0>){}[0]
     constructor <init>(kotlin/Array<out #A>...) // androidx.navigation3.runtime/NavBackStack.<init>|<init>(kotlin.Array<out|1:0>...){}[0]

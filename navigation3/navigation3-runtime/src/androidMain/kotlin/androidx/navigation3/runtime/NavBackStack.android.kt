@@ -29,7 +29,7 @@ import kotlinx.serialization.encoding.Encoder
 @Serializable(with = NavBackStack.Serializer::class)
 public actual class NavBackStack<T : NavKey>
 public actual constructor(private val base: SnapshotStateList<T>) :
-    MutableList<T> by base, StateObject by base {
+    MutableList<T> by base, StateObject by base, RandomAccess by base {
 
     public actual constructor() : this(base = mutableStateListOf())
 
