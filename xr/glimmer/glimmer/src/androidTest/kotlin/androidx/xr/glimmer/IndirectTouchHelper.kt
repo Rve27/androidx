@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.xr.glimmer.list
+package androidx.xr.glimmer
 
 import android.os.SystemClock
 import android.view.MotionEvent
