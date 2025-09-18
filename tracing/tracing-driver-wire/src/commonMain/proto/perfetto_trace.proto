@@ -290,6 +290,7 @@ message TracePacket {
   uint32 sequence_flags = 13;
   bool incremental_state_cleared = 41;
   TracePacketDefaults trace_packet_defaults = 59;
+  optional bool previous_packet_dropped = 42;
 }
 
 message Trace {
