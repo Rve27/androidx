@@ -14,17 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.glance.wear
+@RestrictTo(RestrictTo.Scope.LIBRARY)
+package androidx.glance.wear.parcel.legacy;
 
-import android.os.Bundle
-import androidx.glance.wear.parcel.WearWidgetRawContent
-
-/** Describes the contents of a Widget. */
-// TODO: change content to be of type `@RemoteComposable @Composable () -> Unit` once the dependency
-//  is available.
-public class WearWidgetContent(private val content: ByteArray) {
-
-    internal fun toRawContent(): WearWidgetRawContent {
-        return WearWidgetRawContent(rcDocument = content, extras = Bundle.EMPTY)
-    }
-}
+import androidx.annotation.RestrictTo;
