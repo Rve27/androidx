@@ -318,27 +318,18 @@
 
     <issue
         id="RestrictedApiAndroidX"
-        message="RemoteImageKt.RemoteImage can only be called from within the same library group (referenced groupId=`androidx.compose.remote` from groupId=`androidx.compose.remote.wear`)"
-        errorLine1="        remoteBitmap = background,"
-        errorLine2="                       ~~~~~~~~~~">
+        message="RemoteBoxKt.RemoteBox can only be called from within the same library group (referenced groupId=`androidx.compose.remote` from groupId=`androidx.compose.remote.wear`)"
+        errorLine1="    RemoteBox(modifier = modifier) {"
+        errorLine2="                         ~~~~~~~~">
         <location
             file="src/main/java/androidx/compose/remote/wear/material3/Image.kt"/>
     </issue>
 
     <issue
         id="RestrictedApiAndroidX"
-        message="RemoteImageKt.RemoteImage can only be called from within the same library group (referenced groupId=`androidx.compose.remote` from groupId=`androidx.compose.remote.wear`)"
-        errorLine1="        contentDescription = contentDescription,"
-        errorLine2="                             ~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/androidx/compose/remote/wear/material3/Image.kt"/>
-    </issue>
-
-    <issue
-        id="RestrictedApiAndroidX"
-        message="RemoteImageKt.RemoteImage can only be called from within the same library group (referenced groupId=`androidx.compose.remote` from groupId=`androidx.compose.remote.wear`)"
-        errorLine1="        modifier = modifier.fillMaxSize(),"
-        errorLine2="                   ~~~~~~~~~~~~~~~~~~~~~~">
+        message="RemoteBoxKt.RemoteBox can only be called from within the same library group (referenced groupId=`androidx.compose.remote` from groupId=`androidx.compose.remote.wear`)"
+        errorLine1="    RemoteBox(modifier = modifier) {"
+        errorLine2="                                   ^">
         <location
             file="src/main/java/androidx/compose/remote/wear/material3/Image.kt"/>
     </issue>
@@ -346,8 +337,8 @@
     <issue
         id="RestrictedApiAndroidX"
         message="WidthModifierKt.fillMaxSize can only be called from within the same library group (referenced groupId=`androidx.compose.remote` from groupId=`androidx.compose.remote.wear`)"
-        errorLine1="        modifier = modifier.fillMaxSize(),"
-        errorLine2="                   ~~~~~~~~">
+        errorLine1="        val imageModifier = RemoteModifier.fillMaxSize()"
+        errorLine2="                            ~~~~~~~~~~~~~~">
         <location
             file="src/main/java/androidx/compose/remote/wear/material3/Image.kt"/>
     </issue>
@@ -355,8 +346,8 @@
     <issue
         id="RestrictedApiAndroidX"
         message="WidthModifierKt.fillMaxSize can only be called from within the same library group (referenced groupId=`androidx.compose.remote` from groupId=`androidx.compose.remote.wear`)"
-        errorLine1="        modifier = modifier.fillMaxSize(),"
-        errorLine2="                            ~~~~~~~~~~~">
+        errorLine1="        val imageModifier = RemoteModifier.fillMaxSize()"
+        errorLine2="                                           ~~~~~~~~~~~">
         <location
             file="src/main/java/androidx/compose/remote/wear/material3/Image.kt"/>
     </issue>
@@ -364,26 +355,35 @@
     <issue
         id="RestrictedApiAndroidX"
         message="RemoteImageKt.RemoteImage can only be called from within the same library group (referenced groupId=`androidx.compose.remote` from groupId=`androidx.compose.remote.wear`)"
-        errorLine1="        contentScale = contentScale,"
-        errorLine2="                       ~~~~~~~~~~~~">
+        errorLine1="            remoteBitmap = background,"
+        errorLine2="                           ~~~~~~~~~~">
         <location
             file="src/main/java/androidx/compose/remote/wear/material3/Image.kt"/>
     </issue>
 
     <issue
         id="RestrictedApiAndroidX"
-        message="WidthModifierKt.fillMaxSize can only be called from within the same library group (referenced groupId=`androidx.compose.remote` from groupId=`androidx.compose.remote.wear`)"
-        errorLine1="        BackgroundOverlay(modifier = RemoteModifier.fillMaxSize(), overlayColor = overlayColor)"
-        errorLine2="                                     ~~~~~~~~~~~~~~">
+        message="RemoteImageKt.RemoteImage can only be called from within the same library group (referenced groupId=`androidx.compose.remote` from groupId=`androidx.compose.remote.wear`)"
+        errorLine1="            contentDescription = contentDescription,"
+        errorLine2="                                 ~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/java/androidx/compose/remote/wear/material3/Image.kt"/>
     </issue>
 
     <issue
         id="RestrictedApiAndroidX"
-        message="WidthModifierKt.fillMaxSize can only be called from within the same library group (referenced groupId=`androidx.compose.remote` from groupId=`androidx.compose.remote.wear`)"
-        errorLine1="        BackgroundOverlay(modifier = RemoteModifier.fillMaxSize(), overlayColor = overlayColor)"
-        errorLine2="                                                    ~~~~~~~~~~~">
+        message="RemoteImageKt.RemoteImage can only be called from within the same library group (referenced groupId=`androidx.compose.remote` from groupId=`androidx.compose.remote.wear`)"
+        errorLine1="            modifier = imageModifier,"
+        errorLine2="                       ~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/compose/remote/wear/material3/Image.kt"/>
+    </issue>
+
+    <issue
+        id="RestrictedApiAndroidX"
+        message="RemoteImageKt.RemoteImage can only be called from within the same library group (referenced groupId=`androidx.compose.remote` from groupId=`androidx.compose.remote.wear`)"
+        errorLine1="            contentScale = contentScale,"
+        errorLine2="                           ~~~~~~~~~~~~">
         <location
             file="src/main/java/androidx/compose/remote/wear/material3/Image.kt"/>
     </issue>
