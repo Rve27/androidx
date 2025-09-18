@@ -19,8 +19,7 @@ package androidx.navigation3.scene
 import androidx.navigation3.runtime.NavEntry
 
 /**
- * A specific scene to render 1 or more [androidx.navigation3.runtime.NavEntry] instances as an
- * overlay.
+ * A specific scene to render 1 or more [NavEntry] instances as an overlay.
  *
  * It is expected that the [content] is rendered in one or more separate windows (e.g., a dialog,
  * popup window, etc.) that are visible above any additional [Scene] instances calculated from the
