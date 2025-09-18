@@ -19,6 +19,8 @@ package androidx.navigation3.scene
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.util.fastMap
+import androidx.navigation3.runtime.NavEntry
+import androidx.navigation3.runtime.rememberDecoratedNavEntries
 import kotlin.collections.plusAssign
 
 /**
@@ -33,7 +35,7 @@ import kotlin.collections.plusAssign
  */
 @Composable
 public fun <T : Any> rememberSceneState(
-    entries: List<androidx.navigation3.runtime.NavEntry<T>>,
+    entries: List<NavEntry<T>>,
     sceneStrategy: SceneStrategy<T>,
     onBack: (Int) -> Unit,
 ): SceneState<T> {
@@ -43,10 +45,7 @@ public fun <T : Any> rememberSceneState(
     val allScenes =
         mutableListOf(
             sceneStrategy.calculateSceneWithSinglePaneFallback(
-                _root_ide_package_.androidx.navigation3.runtime.rememberDecoratedNavEntries(
-                    entries,
-                    listOf(rememberSceneSetupNavEntryDecorator()),
-                ),
+                rememberDecoratedNavEntries(entries, listOf(rememberSceneSetupNavEntryDecorator())),
                 onBack,
             )
         )
@@ -111,7 +110,7 @@ public fun <T : Any> rememberSceneState(
 @Immutable
 public class SceneState<T : Any>
 internal constructor(
-    public val entries: List<androidx.navigation3.runtime.NavEntry<T>>,
+    public val entries: List<NavEntry<T>>,
     public val overlayScenes: List<OverlayScene<T>>,
     public val currentScene: Scene<T>,
     public val previousScenes: List<Scene<T>>,

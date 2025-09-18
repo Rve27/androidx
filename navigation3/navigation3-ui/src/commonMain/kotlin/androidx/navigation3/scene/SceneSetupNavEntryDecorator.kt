@@ -23,29 +23,29 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.movableContentOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
+import androidx.navigation3.runtime.NavEntryDecorator
+import androidx.navigation3.runtime.navEntryDecorator
 
 /** Returns a [SceneSetupNavEntryDecorator] that is remembered across recompositions. */
 @Composable
-public fun <T : Any> rememberSceneSetupNavEntryDecorator():
-    androidx.navigation3.runtime.NavEntryDecorator<T> = remember { SceneSetupNavEntryDecorator() }
+public fun <T : Any> rememberSceneSetupNavEntryDecorator(): NavEntryDecorator<T> = remember {
+    SceneSetupNavEntryDecorator()
+}
 
 /**
- * A [androidx.navigation3.runtime.NavEntryDecorator] that wraps each entry in a [movableContentOf]
- * to allow nav displays to arbitrarily place entries in different places in the composable call
- * hierarchy and ensures that the same entry content is not composed multiple times in different
- * places of the hierarchy by different scenes.
+ * A [NavEntryDecorator] that wraps each entry in a [movableContentOf] to allow nav displays to
+ * arbitrarily place entries in different places in the composable call hierarchy and ensures that
+ * the same entry content is not composed multiple times in different places of the hierarchy by
+ * different scenes.
  *
- * This should likely be the first [androidx.navigation3.runtime.NavEntryDecorator] to ensure that
- * other [androidx.navigation3.runtime.NavEntryDecorator] calls that are stateful are moved properly
- * inside the [movableContentOf].
+ * This should likely be the first [NavEntryDecorator] to ensure that other [NavEntryDecorator]
+ * calls that are stateful are moved properly inside the [movableContentOf].
  */
-public fun <T : Any> SceneSetupNavEntryDecorator():
-    androidx.navigation3.runtime.NavEntryDecorator<T> {
+public fun <T : Any> SceneSetupNavEntryDecorator(): NavEntryDecorator<T> {
     val movableContentMap: MutableMap<Any, @Composable (@Composable () -> Unit) -> Unit> =
         mutableStateMapOf()
-    return _root_ide_package_.androidx.navigation3.runtime.navEntryDecorator(
-        onPop = { contentKey -> movableContentMap.remove(contentKey) }
-    ) { entry ->
+    return navEntryDecorator(onPop = { contentKey -> movableContentMap.remove(contentKey) }) { entry
+        ->
         val contentKey = entry.contentKey
         // If we should not be rendering this entry here in the current scene, we skip calling
         // entry.Content and all nested content wrappers. If this is the case here, then it means
