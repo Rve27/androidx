@@ -56,8 +56,11 @@ internal class NavigationEventHandlerTest {
         rule.setContent {
             NavigationEventDispatcherOwner(parent = owner) {
                 NavigationEventHandler(
-                    currentInfo = currentInfo,
-                    backInfo = backInfo,
+                    state =
+                        rememberNavigationEventState(
+                            currentInfo = currentInfo,
+                            backInfo = backInfo,
+                        ),
                     onBackCompleted = {},
                 )
             }
@@ -89,7 +92,7 @@ internal class NavigationEventHandlerTest {
         rule.setContent {
             NavigationEventDispatcherOwner(parent = owner) {
                 NavigationEventHandler(
-                    currentInfo = TestInfo(),
+                    state = rememberNavigationEventState(currentInfo = TestInfo()),
                     onBackCancelled = { events += "cancelled" },
                     onBackCompleted = { events += "completed" },
                 )
@@ -115,7 +118,7 @@ internal class NavigationEventHandlerTest {
         rule.setContent {
             NavigationEventDispatcherOwner(parent = owner) {
                 NavigationEventHandler(
-                    currentInfo = TestInfo(),
+                    state = rememberNavigationEventState(currentInfo = TestInfo()),
                     isBackEnabled = false,
                     onBackCompleted = { handlerCalled = true },
                 )
@@ -138,7 +141,7 @@ internal class NavigationEventHandlerTest {
         rule.setContent {
             NavigationEventDispatcherOwner(parent = owner) {
                 NavigationEventHandler(
-                    currentInfo = TestInfo(),
+                    state = rememberNavigationEventState(currentInfo = TestInfo()),
                     isBackEnabled = isBackEnabled,
                     onBackCompleted = { results += "handler" },
                 )
@@ -182,7 +185,7 @@ internal class NavigationEventHandlerTest {
         rule.setContent {
             NavigationEventDispatcherOwner(parent = owner) {
                 NavigationEventHandler(
-                    currentInfo = TestInfo(),
+                    state = rememberNavigationEventState(currentInfo = TestInfo()),
                     isBackEnabled = true,
                     onBackCompleted = onBackCompleted,
                 )
@@ -208,13 +211,13 @@ internal class NavigationEventHandlerTest {
         rule.setContent {
             NavigationEventDispatcherOwner(parent = owner) {
                 NavigationEventHandler(
-                    currentInfo = TestInfo(),
+                    state = rememberNavigationEventState(currentInfo = TestInfo()),
                     isBackEnabled = true,
                     onBackCompleted = { result += "parent" },
                 )
                 Button(onClick = { input.backStarted(NavigationEvent()) }) {
                     NavigationEventHandler(
-                        currentInfo = TestInfo(),
+                        state = rememberNavigationEventState(currentInfo = TestInfo()),
                         isBackEnabled = true,
                         onBackCompleted = { result += "child" },
                     )
@@ -234,13 +237,13 @@ internal class NavigationEventHandlerTest {
         rule.setContent {
             NavigationEventDispatcherOwner(parent = owner) {
                 NavigationEventHandler(
-                    currentInfo = TestInfo(),
+                    state = rememberNavigationEventState(currentInfo = TestInfo()),
                     isBackEnabled = true,
                     onBackCompleted = { result += "parent" },
                 )
                 Button(onClick = { input.backStarted(NavigationEvent()) }) {
                     NavigationEventHandler(
-                        currentInfo = TestInfo(),
+                        state = rememberNavigationEventState(currentInfo = TestInfo()),
                         isBackEnabled = false,
                         onBackCompleted = { result += "child" },
                     )
@@ -260,12 +263,12 @@ internal class NavigationEventHandlerTest {
         rule.setContent {
             NavigationEventDispatcherOwner(parent = owner) {
                 NavigationEventHandler(
-                    currentInfo = TestInfo(),
+                    state = rememberNavigationEventState(currentInfo = TestInfo()),
                     isBackEnabled = true,
                     onBackCompleted = { result += "first" },
                 )
                 NavigationEventHandler(
-                    currentInfo = TestInfo(),
+                    state = rememberNavigationEventState(currentInfo = TestInfo()),
                     isBackEnabled = true,
                     onBackCompleted = { result += "second" },
                 )
@@ -283,12 +286,12 @@ internal class NavigationEventHandlerTest {
         rule.setContent {
             NavigationEventDispatcherOwner(parent = owner) {
                 NavigationEventHandler(
-                    currentInfo = TestInfo(),
+                    state = rememberNavigationEventState(currentInfo = TestInfo()),
                     isBackEnabled = true,
                     onBackCompleted = { result += "first" },
                 )
                 NavigationEventHandler(
-                    currentInfo = TestInfo(),
+                    state = rememberNavigationEventState(currentInfo = TestInfo()),
                     isBackEnabled = false,
                     onBackCompleted = { result += "second" },
                 )
