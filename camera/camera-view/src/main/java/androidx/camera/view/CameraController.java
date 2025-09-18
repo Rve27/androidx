@@ -324,6 +324,8 @@ public abstract class CameraController {
     @VisibleForTesting
     final RotationProvider.@NonNull Listener mDeviceRotationListener;
 
+    private int mLastKnownRotation = ImageOutputConfig.INVALID_ROTATION;
+
     private boolean mPinchToZoomEnabled = true;
     private boolean mTapToFocusEnabled = true;
     private FocusMeteringResultCallback mFocusMeteringResultCallback;
@@ -381,6 +383,7 @@ public abstract class CameraController {
         // mode.
         mRotationProvider = new RotationProvider(mAppContext);
         mDeviceRotationListener = rotation -> {
+            mLastKnownRotation = rotation;
             mImageAnalysis.setTargetRotation(rotation);
             mImageCapture.setTargetRotation(rotation);
             mVideoCapture.setTargetRotation(rotation);
@@ -1121,6 +1124,7 @@ public abstract class CameraController {
         setImageCaptureFlashMode(flashMode);
     }
 
+    @SuppressLint("WrongConstant")
     private ImageCapture createImageCapture(Integer imageCaptureMode) {
         ImageCapture.Builder builder = new ImageCapture.Builder();
         if (imageCaptureMode != null) {
@@ -1129,6 +1133,9 @@ public abstract class CameraController {
         configureResolution(builder, mImageCaptureResolutionSelector, mImageCaptureTargetSize);
         if (mImageCaptureIoExecutor != null) {
             builder.setIoExecutor(mImageCaptureIoExecutor);
+        }
+        if (mLastKnownRotation != ImageOutputConfig.INVALID_ROTATION) {
+            builder.setTargetRotation(mLastKnownRotation);
         }
 
         return builder.build();
@@ -1494,6 +1501,7 @@ public abstract class CameraController {
         }
     }
 
+    @SuppressLint("WrongConstant")
     private ImageAnalysis createImageAnalysis(Integer strategy, Integer imageQueueDepth,
             Integer outputFormat) {
         ImageAnalysis.Builder builder = new ImageAnalysis.Builder();
@@ -1509,6 +1517,9 @@ public abstract class CameraController {
         configureResolution(builder, mImageAnalysisResolutionSelector, mImageAnalysisTargetSize);
         if (mAnalysisBackgroundExecutor != null) {
             builder.setBackgroundExecutor(mAnalysisBackgroundExecutor);
+        }
+        if (mLastKnownRotation != ImageOutputConfig.INVALID_ROTATION) {
+            builder.setTargetRotation(mLastKnownRotation);
         }
 
         return builder.build();
@@ -1933,6 +1944,7 @@ public abstract class CameraController {
         mVideoCapture = createVideoCapture();
     }
 
+    @SuppressLint("WrongConstant")
     private VideoCapture<Recorder> createVideoCapture() {
         Recorder.Builder videoRecorderBuilder = new Recorder.Builder().setQualitySelector(
                 mVideoCaptureQualitySelector);
@@ -1944,11 +1956,15 @@ public abstract class CameraController {
             }
         }
 
-        return new VideoCapture.Builder<>(videoRecorderBuilder.build())
+        VideoCapture.Builder<Recorder> builder = new VideoCapture.Builder<>(
+                videoRecorderBuilder.build())
                 .setTargetFrameRate(mVideoCaptureTargetFrameRate)
                 .setMirrorMode(mVideoCaptureMirrorMode)
-                .setDynamicRange(mVideoCaptureDynamicRange)
-                .build();
+                .setDynamicRange(mVideoCaptureDynamicRange);
+        if (mLastKnownRotation != ImageOutputConfig.INVALID_ROTATION) {
+            builder.setTargetRotation(mLastKnownRotation);
+        }
+        return builder.build();
     }
 
     private @Nullable AspectRatioStrategy getViewportAspectRatioStrategy(
