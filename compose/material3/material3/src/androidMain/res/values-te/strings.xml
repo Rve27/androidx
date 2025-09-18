@@ -64,8 +64,7 @@
     <string name="m3c_bottom_sheet_expand_description" msgid="6670819569745899763">"దిగువున ఉన్న షీట్‌ను విస్తరిస్తుంది"</string>
     <string name="m3c_floating_toolbar_collapse" msgid="6072492480528318635">"టూల్‌బార్‌ను కుదించండి"</string>
     <string name="m3c_floating_toolbar_expand" msgid="6880757017246780255">"టూల్‌బార్‌ను విస్తరించండి"</string>
-    <!-- no translation found for m3c_floating_toolbar_more_options (5546418917311349543) -->
-    <skip />
+    <string name="m3c_floating_toolbar_more_options" msgid="5546418917311349543">"మరిన్ని ఆప్షన్‌లు"</string>
     <string name="m3c_tooltip_pane_description" msgid="5460405025248574620">"టూల్‌టిప్"</string>
     <string name="m3c_tooltip_long_press_label" msgid="1805687647081129904">"టూల్‌టిప్‌ను చూడండి"</string>
     <string name="m3c_time_picker_pm" msgid="6616362054113087709">"PM"</string>

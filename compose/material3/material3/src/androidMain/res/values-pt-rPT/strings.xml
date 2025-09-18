@@ -17,8 +17,7 @@
 
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <!-- no translation found for m3c_button_group_more_options (3990875819916144919) -->
-    <skip />
+    <string name="m3c_button_group_more_options" msgid="3990875819916144919">"Mais opções"</string>
     <string name="m3c_dialog" msgid="7617233117134790350">"Caixa de diálogo"</string>
     <string name="m3c_dropdown_menu_expanded" msgid="2360841780724299882">"Expandido"</string>
     <string name="m3c_dropdown_menu_collapsed" msgid="3177828188723359358">"Reduzido"</string>

@@ -64,8 +64,7 @@
     <string name="m3c_bottom_sheet_expand_description" msgid="6670819569745899763">"তলৰ শ্বীটখন বিস্তাৰ কৰক"</string>
     <string name="m3c_floating_toolbar_collapse" msgid="6072492480528318635">"টুলবাৰ সংকোচন কৰক"</string>
     <string name="m3c_floating_toolbar_expand" msgid="6880757017246780255">"টুলবাৰ বিস্তাৰ কৰক"</string>
-    <!-- no translation found for m3c_floating_toolbar_more_options (5546418917311349543) -->
-    <skip />
+    <string name="m3c_floating_toolbar_more_options" msgid="5546418917311349543">"অধিক বিকল্প"</string>
     <string name="m3c_tooltip_pane_description" msgid="5460405025248574620">"টুলটিপ"</string>
     <string name="m3c_tooltip_long_press_label" msgid="1805687647081129904">"টুলটিপ দেখুৱাওক"</string>
     <string name="m3c_time_picker_pm" msgid="6616362054113087709">"PM"</string>
