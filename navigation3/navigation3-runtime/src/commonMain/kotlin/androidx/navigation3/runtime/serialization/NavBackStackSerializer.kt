@@ -16,14 +16,15 @@
 
 package androidx.navigation3.runtime.serialization
 
+import androidx.compose.runtime.saveable.rememberSerializable
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 import androidx.savedstate.compose.serialization.serializers.SnapshotStateListSerializer
-import androidx.savedstate.serialization.SavedStateConfiguration
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.serializer
 
 /**
@@ -58,32 +59,25 @@ public class NavBackStackSerializer<T : NavKey>(private val elementSerializer: K
 }
 
 /**
- * Creates a [NavBackStackSerializer] that can handle polymorphic [NavKey] types.
+ * Creates a [NavBackStackSerializer] for a polymorphic [NavKey] base type.
  *
  * This factory function is a convenience for creating a serializer for a [NavBackStack] whose
  * elements are polymorphic (e.g., different implementations of a `NavKey` interface).
  *
- * It automatically resolves the correct [KSerializer] for the element type [T] (which is typically
- * the base [NavKey] interface) using the `serializersModule` from the provided [configuration].
+ * It retrieves a base serializer for the element type [T] (which is typically the base [NavKey]
+ * interface).
  *
- * **Important:** The [SavedStateConfiguration] (and its `serializersModule`) passed here **must**
- * be the same one provided to the `Encoder`/`Decoder` (e.g., via `Json.encodeToDynamic` or
- * `Json.decodeFromDynamic`). `kotlinx.serialization`'s polymorphic dispatch relies on the module
- * available during the encoding/decoding process, not the one used to create this serializer.
+ * **Important:** For polymorphic serialization to work, you **must** provide a [SerializersModule]
+ * (containing all concrete [NavKey] subtypes) to your `Encoder`/`Decoder` (e.g., via
+ * [rememberSerializable]).
+ *
+ * `kotlinx.serialization`'s polymorphic dispatch relies on the module available during the
+ * encoding/decoding process, not on the specific serializer retrieved by this function.
  *
  * @sample androidx.navigation3.runtime.samples.NavBackStackSerializer_withSerializersModule
  * @param T The reified element type, typically the base [NavKey] interface.
- * @param configuration The [SavedStateConfiguration] containing the `serializersModule` which
- *   registers all concrete [NavKey] implementations.
- * @return A new [NavBackStackSerializer] configured for polymorphic serialization.
+ * @return A new [NavBackStackSerializer] configured for the base polymorphic type.
  */
-public inline fun <reified T : NavKey> NavBackStackSerializer(
-    configuration: SavedStateConfiguration = SavedStateConfiguration.DEFAULT
-): NavBackStackSerializer<T> {
-    return NavBackStackSerializer(
-        // Resolve the element serializer from the provided configuration’s serializersModule.
-        // Important: you MUST pass the same module to your encode/decode calls. Polymorphic
-        // dispatch depends on the Encoder/Decoder’s module, not on this KSerializer.
-        elementSerializer = configuration.serializersModule.serializer<T>()
-    )
+public inline fun <reified T : NavKey> NavBackStackSerializer(): NavBackStackSerializer<T> {
+    return NavBackStackSerializer(elementSerializer = serializer<T>())
 }

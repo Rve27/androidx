@@ -55,7 +55,7 @@ public inline fun <reified T : NavKey> rememberNavBackStack(
 ): NavBackStack<NavKey> {
     return rememberSerializable(
         configuration = configuration,
-        serializer = NavBackStackSerializer<NavKey>(configuration = configuration),
+        serializer = NavBackStackSerializer<NavKey>(),
     ) {
         NavBackStack(*elements)
     }
