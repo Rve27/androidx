@@ -122,7 +122,7 @@ package androidx.navigation3.runtime.serialization {
   }
 
   public final class NavBackStackSerializerKt {
-    method @KotlinOnly public static inline <reified T extends androidx.navigation3.runtime.NavKey> androidx.navigation3.runtime.serialization.NavBackStackSerializer<T> NavBackStackSerializer(optional androidx.savedstate.serialization.SavedStateConfiguration configuration);
+    method @KotlinOnly public static inline <reified T extends androidx.navigation3.runtime.NavKey> androidx.navigation3.runtime.serialization.NavBackStackSerializer<T> NavBackStackSerializer();
   }
 
   public class NavKeySerializer<T extends androidx.navigation3.runtime.NavKey> implements kotlinx.serialization.KSerializer<T> {

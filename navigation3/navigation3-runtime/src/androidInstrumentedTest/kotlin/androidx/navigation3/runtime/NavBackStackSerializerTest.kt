@@ -61,8 +61,7 @@ internal class NavBackStackSerializerTest {
 
         val backStack = NavBackStack<NotSerializableScreen>(Home("root"), Details(7L))
 
-        val serializer =
-            NavBackStackSerializer<NotSerializableScreen>(configuration = configuration)
+        val serializer = NavBackStackSerializer<NotSerializableScreen>()
         val encoded = encodeToSavedState(serializer, backStack, configuration)
         val decoded = decodeFromSavedState(serializer, encoded, configuration)
 
@@ -83,10 +82,11 @@ internal class NavBackStackSerializerTest {
                 Details(7L), // not registered
             )
 
-        val serializer =
-            NavBackStackSerializer<NotSerializableScreen>(configuration = configuration)
+        val serializer = NavBackStackSerializer<NotSerializableScreen>()
 
-        assertThrows<SerializationException> { encodeToSavedState(serializer, backStack) }
+        assertThrows<SerializationException> {
+            encodeToSavedState(serializer, backStack, configuration)
+        }
     }
 
     @Test
