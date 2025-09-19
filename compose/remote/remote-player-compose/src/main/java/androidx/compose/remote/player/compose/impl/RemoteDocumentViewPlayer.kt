@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@file:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 
-package androidx.compose.remote.creation.compose.player
+package androidx.compose.remote.player.compose.impl
 
 import androidx.annotation.RestrictTo
 import androidx.appcompat.app.AppCompatDelegate
@@ -31,6 +30,7 @@ import androidx.compose.remote.player.core.state.StateUpdater
 import androidx.compose.remote.player.view.RemoteComposePlayer
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -40,7 +40,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 @Composable
-public fun RemoteDocumentPlayer(
+internal fun RemoteDocumentViewPlayer(
     document: CoreDocument,
     documentWidth: Int,
     documentHeight: Int,
@@ -53,7 +53,7 @@ public fun RemoteDocumentPlayer(
     bitmapLoader: BitmapLoader? = null,
 ) {
     var inDarkTheme by remember { mutableStateOf(false) }
-    var playbackTheme by remember { mutableStateOf(Theme.UNSPECIFIED) }
+    var playbackTheme by remember { mutableIntStateOf(Theme.UNSPECIFIED) }
 
     val remoteDoc = remember(document) { RemoteComposeDocument(document) }
 
