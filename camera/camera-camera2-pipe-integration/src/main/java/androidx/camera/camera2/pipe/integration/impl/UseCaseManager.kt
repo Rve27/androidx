@@ -48,7 +48,6 @@ import androidx.camera.camera2.pipe.RequestTemplate
 import androidx.camera.camera2.pipe.StreamFormat
 import androidx.camera.camera2.pipe.StreamId
 import androidx.camera.camera2.pipe.compat.CameraPipeKeys
-import androidx.camera.camera2.pipe.core.Log
 import androidx.camera.camera2.pipe.integration.adapter.CameraStateAdapter
 import androidx.camera.camera2.pipe.integration.adapter.GraphStateToCameraStateAdapter
 import androidx.camera.camera2.pipe.integration.adapter.SessionConfigAdapter
@@ -237,10 +236,10 @@ constructor(
     public fun attach(useCases: List<UseCase>): Unit =
         synchronized(lock) {
             if (useCases.isEmpty()) {
-                Log.warn { "Attach [] from $this (Ignored)" }
+                Camera2Logger.warn { "Attach [] from $this (Ignored)" }
                 return
             }
-            Log.debug { "Attaching $useCases from $this" }
+            Camera2Logger.debug { "Attaching $useCases from $this" }
 
             val unattachedUseCases =
                 useCases.filter { useCase -> !attachedUseCases.contains(useCase) }
@@ -276,10 +275,10 @@ constructor(
     public fun detach(useCases: List<UseCase>): Unit =
         synchronized(lock) {
             if (useCases.isEmpty()) {
-                Log.warn { "Detaching [] from $this (Ignored)" }
+                Camera2Logger.warn { "Detaching [] from $this (Ignored)" }
                 return
             }
-            Log.debug { "Detaching $useCases from $this" }
+            Camera2Logger.debug { "Detaching $useCases from $this" }
 
             // When use cases are detached, they should be considered inactive as well. Also note
             // that
@@ -405,7 +404,7 @@ constructor(
             .getValidSessionConfigOrNull()
             ?.let { requestControl.setSessionConfigAsync(it) }
             ?: run {
-                Log.debug { "Unable to reset the session due to invalid config" }
+                Camera2Logger.debug { "Unable to reset the session due to invalid config" }
                 requestControl.setSessionConfigAsync(
                     SessionConfig.Builder().apply { setTemplateType(defaultTemplate) }.build()
                 )
@@ -465,7 +464,7 @@ constructor(
 
         // Enables extensions with the Camera2 Extensions approach if extension mode is requested.
         if (useCamera2Extension) {
-            Log.debug { "Setting up UseCaseManager with OperatingMode.EXTENSION" }
+            Camera2Logger.debug { "Setting up UseCaseManager with OperatingMode.EXTENSION" }
             val sessionConfigAdapter = SessionConfigAdapter(useCases, isPrimary = isPrimary)
             val streamConfigMap = mutableMapOf<CameraStream.Config, DeferrableSurface>()
             val graphConfig =
@@ -590,7 +589,9 @@ constructor(
             refreshRunningUseCases()
         }
 
-        Log.debug { "Notifying $pendingUseCasesToNotifyCameraControlReady camera control ready" }
+        Camera2Logger.debug {
+            "Notifying $pendingUseCasesToNotifyCameraControlReady camera control ready"
+        }
         for (useCase in pendingUseCasesToNotifyCameraControlReady) {
             useCase.onCameraControlReady()
         }
@@ -783,7 +784,7 @@ constructor(
                 },
             )
             .also {
-                Log.debug {
+                Camera2Logger.debug {
                     "Combination of $sessionSurfacesConfigs + $meteringRepeating is supported: $it"
                 }
             }
@@ -829,7 +830,7 @@ constructor(
                 // When collecting the info, the UseCases might be unbound to make these info
                 // become null.
                 if (surfaceResolution == null || streamSpec == null) {
-                    Log.warn { "Invalid surface resolution or stream spec is found." }
+                    Camera2Logger.warn { "Invalid surface resolution or stream spec is found." }
                     clear()
                     return@apply
                 }
@@ -1268,7 +1269,7 @@ constructor(
             ) {
                 expectedStreamUseCase
             } else {
-                Log.warn {
+                Camera2Logger.warn {
                     "Expected stream use case for $deferrableSurface, " +
                         "$expectedStreamUseCase cannot be set!"
                 }
@@ -1289,7 +1290,9 @@ constructor(
             isExtensions: Boolean,
         ): CameraGraph.Flags {
             if (cameraQuirks.quirks.contains(CaptureSessionStuckQuirk::class.java)) {
-                Log.debug { "CameraPipe should be enabling CaptureSessionStuckQuirk by default" }
+                Camera2Logger.debug {
+                    "CameraPipe should be enabling CaptureSessionStuckQuirk by default"
+                }
             }
             // TODO(b/276354253): Set quirkWaitForRepeatingRequestOnDisconnect flag for overrides.
 
@@ -1375,7 +1378,7 @@ constructor(
                     if (firstSupportedProfile != null) {
                         dynamicRangeProfile = DynamicRangeProfile(firstSupportedProfile)
                     } else {
-                        Log.error {
+                        Camera2Logger.error {
                             "Requested dynamic range is not supported. Defaulting to STANDARD" +
                                 " dynamic range profile.\nRequested dynamic range:\n $this"
                         }

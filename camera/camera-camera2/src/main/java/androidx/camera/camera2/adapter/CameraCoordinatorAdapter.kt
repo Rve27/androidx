@@ -19,12 +19,12 @@ package androidx.camera.camera2.adapter
 import androidx.annotation.GuardedBy
 import androidx.annotation.VisibleForTesting
 import androidx.camera.camera2.adapter.CameraInfoAdapter.Companion.cameraId
+import androidx.camera.camera2.impl.Camera2Logger
 import androidx.camera.camera2.internal.CameraCompatibilityFilter.isBackwardCompatible
 import androidx.camera.camera2.pipe.CameraDevices
 import androidx.camera.camera2.pipe.CameraGraph
 import androidx.camera.camera2.pipe.CameraId
 import androidx.camera.camera2.pipe.CameraPipe
-import androidx.camera.camera2.pipe.core.Log
 import androidx.camera.core.CameraIdentifier
 import androidx.camera.core.CameraInfo
 import androidx.camera.core.CameraSelector
@@ -81,7 +81,7 @@ public class CameraCoordinatorAdapter(
             for (concurrentCameraIdSet in allConcurrentSets) {
                 val stringIdSet = concurrentCameraIdSet.map { it.value }.toSet()
                 if (!cameraIds.containsAll(stringIdSet)) {
-                    Log.warn {
+                    Camera2Logger.warn {
                         "Failed to retrieve concurrent camera: $stringIdSet from $cameraIds"
                     }
                     continue
@@ -107,7 +107,7 @@ public class CameraCoordinatorAdapter(
                             tempConcurrentCameraIdMap[cameraId2.value]!!.add(cameraId1.value)
                         }
                     } catch (e: InitializationException) {
-                        Log.warn {
+                        Camera2Logger.warn {
                             "Skipping incompatible concurrent" +
                                 " pair: $concurrentCameraIdSet due to ${e.message}"
                         }
@@ -151,7 +151,9 @@ public class CameraCoordinatorAdapter(
             synchronized(lock) {
                 val repo = cameraRepository
                 if (repo == null) {
-                    Log.error { "Coordinator has not been initialized with a CameraRepository." }
+                    Camera2Logger.error {
+                        "Coordinator has not been initialized with a CameraRepository."
+                    }
                     return
                 }
                 activeConcurrentCameraInfosList = cameraInfos
