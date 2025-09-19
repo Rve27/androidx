@@ -66,14 +66,6 @@ package androidx.navigation3.runtime {
     property public int size;
   }
 
-  public final class NavBackStackSerializerKt {
-    method @KotlinOnly public static inline <reified T> kotlinx.serialization.KSerializer<androidx.compose.runtime.snapshots.SnapshotStateList<T>> NavBackStackSerializer(androidx.savedstate.serialization.SavedStateConfiguration configuration);
-  }
-
-  public final class NavBackStackSerializer_androidKt {
-    method public static <T> kotlinx.serialization.KSerializer<androidx.compose.runtime.snapshots.SnapshotStateList<T>> NavBackStackSerializer();
-  }
-
   public class NavEntry<T> {
     ctor public NavEntry(T key, optional Object contentKey, optional java.util.Map<java.lang.String,?> metadata, kotlin.jvm.functions.Function1<? super T,kotlin.Unit> content);
     ctor @BytecodeOnly public NavEntry(T, Object, java.util.Map<java.lang.String!,? extends java.lang.Object!>, kotlin.jvm.functions.Function3<? super T!,? super androidx.compose.runtime.Composer!,? super java.lang.Integer!,kotlin.Unit!>);
