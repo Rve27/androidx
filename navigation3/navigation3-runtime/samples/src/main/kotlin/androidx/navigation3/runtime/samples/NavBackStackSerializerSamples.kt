@@ -64,10 +64,10 @@ fun NavBackStackSerializer_withSerializersModule() {
     }
     val configuration = SavedStateConfiguration { serializersModule = module }
 
-    val config = NavBackStackSerializer<Screen>(configuration)
+    val serializer = NavBackStackSerializer<Screen>()
 
     // Pass the same configuration (or at least its serializersModule) to encode/decode:
     val backStack = NavBackStack(Home("abc"), Details(42))
-    val encoded = encodeToSavedState(config, backStack, configuration)
-    val decoded = decodeFromSavedState(config, encoded, configuration)
+    val encoded = encodeToSavedState(serializer, backStack, configuration)
+    val decoded = decodeFromSavedState(serializer, encoded, configuration)
 }
