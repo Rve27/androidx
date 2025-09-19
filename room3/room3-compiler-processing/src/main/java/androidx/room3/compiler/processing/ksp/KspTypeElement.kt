@@ -375,6 +375,11 @@ internal sealed class KspTypeElement(
 
     override fun getSuperInterfaceElements() = superInterfaces.mapNotNull { it.typeElement }
 
+    override val companionObject: KspTypeElement? =
+        getEnclosedTypeElements().filterIsInstance<KspTypeElement>().firstOrNull {
+            it.isCompanionObject()
+        }
+
     override fun getEnclosedTypeElements(): List<XTypeElement> {
         return declaration.declarations
             .filterIsInstance<KSClassDeclaration>()
