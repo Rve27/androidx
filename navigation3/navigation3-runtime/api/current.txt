@@ -27,7 +27,7 @@ package androidx.navigation3.runtime {
     method public static inline <T> kotlin.jvm.functions.Function1<T,androidx.navigation3.runtime.NavEntry<T>> entryProvider(optional kotlin.jvm.functions.Function1<? super T,? extends androidx.navigation3.runtime.NavEntry<T>> fallback, kotlin.jvm.functions.Function1<? super androidx.navigation3.runtime.EntryProviderBuilder<T>,kotlin.Unit> builder);
   }
 
-  @kotlinx.serialization.Serializable(with=NavBackStack.Serializer::class) public final class NavBackStack<T extends androidx.navigation3.runtime.NavKey> implements kotlin.jvm.internal.markers.KMutableList java.util.List<T> java.util.RandomAccess androidx.compose.runtime.snapshots.StateObject {
+  @kotlinx.serialization.Serializable(with=NavBackStackSerializer::class) public final class NavBackStack<T extends androidx.navigation3.runtime.NavKey> implements kotlin.jvm.internal.markers.KMutableList java.util.List<T> java.util.RandomAccess androidx.compose.runtime.snapshots.StateObject {
     ctor public NavBackStack();
     ctor public NavBackStack(androidx.compose.runtime.snapshots.SnapshotStateList<T> base);
     ctor public NavBackStack(T... elements);
@@ -64,14 +64,6 @@ package androidx.navigation3.runtime {
     method @BytecodeOnly public <T> T![]! toArray(T![]!);
     property public androidx.compose.runtime.snapshots.StateRecord firstStateRecord;
     property public int size;
-  }
-
-  public static final class NavBackStack.Serializer<T extends androidx.navigation3.runtime.NavKey> implements kotlinx.serialization.KSerializer<androidx.navigation3.runtime.NavBackStack<T>> {
-    ctor public NavBackStack.Serializer();
-    method public androidx.navigation3.runtime.NavBackStack<T> deserialize(kotlinx.serialization.encoding.Decoder decoder);
-    method @InaccessibleFromKotlin public kotlinx.serialization.descriptors.SerialDescriptor getDescriptor();
-    method public void serialize(kotlinx.serialization.encoding.Encoder encoder, androidx.navigation3.runtime.NavBackStack<T> value);
-    property public kotlinx.serialization.descriptors.SerialDescriptor descriptor;
   }
 
   public final class NavBackStackSerializerKt {
@@ -111,7 +103,7 @@ package androidx.navigation3.runtime {
   }
 
   public final class RememberNavBackStackKt {
-    method @KotlinOnly @androidx.compose.runtime.Composable public static inline <reified T extends androidx.navigation3.runtime.NavKey> androidx.navigation3.runtime.NavBackStack<androidx.navigation3.runtime.NavKey> rememberNavBackStack(T... elements, androidx.savedstate.serialization.SavedStateConfiguration configuration);
+    method @KotlinOnly @androidx.compose.runtime.Composable public static inline <reified T extends androidx.navigation3.runtime.NavKey> androidx.navigation3.runtime.NavBackStack<androidx.navigation3.runtime.NavKey> rememberNavBackStack(androidx.savedstate.serialization.SavedStateConfiguration configuration, T... elements);
   }
 
   public final class RememberNavBackStack_androidKt {
