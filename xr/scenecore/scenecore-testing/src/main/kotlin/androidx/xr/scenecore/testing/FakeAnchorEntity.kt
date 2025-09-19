@@ -23,15 +23,15 @@ import androidx.xr.arcore.runtime.Anchor
 import androidx.xr.arcore.testing.FakeRuntimeAnchor
 import androidx.xr.arcore.testing.FakeRuntimePlane
 import androidx.xr.runtime.math.Pose
-import androidx.xr.scenecore.internal.AnchorEntity
-import androidx.xr.scenecore.internal.AnchorEntity.OnStateChangedListener
-import androidx.xr.scenecore.internal.Dimensions
-import androidx.xr.scenecore.internal.PlaneSemantic
-import androidx.xr.scenecore.internal.PlaneType
+import androidx.xr.scenecore.runtime.AnchorEntity
+import androidx.xr.scenecore.runtime.AnchorEntity.OnStateChangedListener
+import androidx.xr.scenecore.runtime.Dimensions
+import androidx.xr.scenecore.runtime.PlaneSemantic
+import androidx.xr.scenecore.runtime.PlaneType
 import java.time.Duration
 import java.util.UUID
 
-/** Test-only implementation of [androidx.xr.scenecore.internal.AnchorEntity] */
+/** Test-only implementation of [androidx.xr.scenecore.runtime.AnchorEntity] */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 @RequiresApi(Build.VERSION_CODES.O)
 public class FakeAnchorEntity(
@@ -104,7 +104,7 @@ public class FakeAnchorEntity(
      * Test function to invoke the onStateChanged listener callback.
      *
      * This function is used to simulate the update of the underlying
-     * [androidx.xr.scenecore.internal.AnchorEntity.State], triggering the registered listener. In
+     * [androidx.xr.scenecore.runtime.AnchorEntity.State], triggering the registered listener. In
      * tests, you can call this function to manually trigger the listener and verify that your code
      * responds correctly to state updates.
      */
