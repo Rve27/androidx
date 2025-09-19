@@ -16,7 +16,6 @@
 
 package androidx.navigation3.runtime.serialization
 
-import androidx.compose.runtime.toMutableStateList
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 import androidx.savedstate.compose.serialization.serializers.SnapshotStateListSerializer
@@ -37,6 +36,7 @@ import kotlinx.serialization.serializer
  * If your stack elements [T] are open polymorphic (e.g., a interface for different screens), the
  * provided [elementSerializer] must be correctly configured to handle this.
  *
+ * @sample androidx.navigation3.runtime.samples.NavBackStackSerializer_withReflection
  * @param T The type of elements stored in the [NavBackStack].
  * @param elementSerializer The [KSerializer] used to serialize and deserialize individual elements.
  */
@@ -49,8 +49,7 @@ public class NavBackStackSerializer<T : NavKey>(private val elementSerializer: K
         get() = surrogate.descriptor
 
     override fun serialize(encoder: Encoder, value: NavBackStack<T>) {
-        // TODO(mgalhardo): make `NavBackStack.base` internal
-        encoder.encodeSerializableValue(serializer = surrogate, value = value.toMutableStateList())
+        encoder.encodeSerializableValue(serializer = surrogate, value = value.base)
     }
 
     override fun deserialize(decoder: Decoder): NavBackStack<T> {
@@ -72,6 +71,7 @@ public class NavBackStackSerializer<T : NavKey>(private val elementSerializer: K
  * `Json.decodeFromDynamic`). `kotlinx.serialization`'s polymorphic dispatch relies on the module
  * available during the encoding/decoding process, not the one used to create this serializer.
  *
+ * @sample androidx.navigation3.runtime.samples.NavBackStackSerializer_withSerializersModule
  * @param T The reified element type, typically the base [NavKey] interface.
  * @param configuration The [SavedStateConfiguration] containing the `serializersModule` which
  *   registers all concrete [NavKey] implementations.
