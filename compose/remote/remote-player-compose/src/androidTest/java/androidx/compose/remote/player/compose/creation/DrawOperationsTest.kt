@@ -55,6 +55,7 @@ class DrawOperationsTest {
             moduleDirectory = SCREENSHOT_GOLDEN_DIRECTORY,
             matcher = MSSIMMatcher(threshold = 0.999),
             targetPlayer = TargetPlayer.Compose,
+            includeClassName = false,
         )
 
     @Test
