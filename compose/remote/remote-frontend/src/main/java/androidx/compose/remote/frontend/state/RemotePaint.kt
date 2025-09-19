@@ -99,9 +99,9 @@ public open class RemotePaint : Paint {
         }
 
     override fun setColor(@ColorInt color: Int) {
+        // We don't want both a Color and a RemoteColor.
+        remoteColor = null // Note this clears the color to transparent as a sideeffect.
         super.setColor(color)
-        // We don't want both a Color and a RemoteColor
-        remoteColor = null
     }
 
     internal fun getColorLong(creationState: RemoteComposeCreationState): Long? {
