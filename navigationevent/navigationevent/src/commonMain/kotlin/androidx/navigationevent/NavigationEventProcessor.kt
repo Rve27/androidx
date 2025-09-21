@@ -21,6 +21,7 @@ import androidx.navigationevent.NavigationEventDispatcher.Companion.PRIORITY_OVE
 import androidx.navigationevent.NavigationEventDispatcher.Priority
 import androidx.navigationevent.NavigationEventTransitionState.Companion.TRANSITIONING_BACK
 import androidx.navigationevent.NavigationEventTransitionState.Companion.TRANSITIONING_FORWARD
+import androidx.navigationevent.NavigationEventTransitionState.Companion.TRANSITIONING_UNKNOWN
 import androidx.navigationevent.NavigationEventTransitionState.Direction
 import androidx.navigationevent.NavigationEventTransitionState.Idle
 import androidx.navigationevent.NavigationEventTransitionState.InProgress
@@ -109,7 +110,7 @@ internal class NavigationEventProcessor {
      * This is non-null only when [inProgressHandler] is also non-null. Its lifecycle is tied
      * directly to the active navigation event.
      */
-    private var inProgressDirection: @Direction Int? = null
+    @Direction private var inProgressDirection = TRANSITIONING_UNKNOWN
 
     /**
      * The [NavigationEventInput] that initiated the currently active gesture.
@@ -313,7 +314,7 @@ internal class NavigationEventProcessor {
                 TRANSITIONING_FORWARD -> handler.doOnForwardCancelled()
             }
             inProgressHandler = null
-            inProgressDirection = null
+            inProgressDirection = TRANSITIONING_UNKNOWN
             inProgressInput = null
             isPredictiveInProgress = false
         }
@@ -391,7 +392,7 @@ internal class NavigationEventProcessor {
      */
     fun dispatchOnStarted(
         input: NavigationEventInput,
-        direction: @Direction Int,
+        @Direction direction: Int,
         event: NavigationEvent? = null,
     ) {
         if (isPredictiveInProgress) {
@@ -414,6 +415,7 @@ internal class NavigationEventProcessor {
             when (direction) {
                 TRANSITIONING_BACK -> handler?.doOnBackStarted(event)
                 TRANSITIONING_FORWARD -> handler?.doOnForwardStarted(event)
+                TRANSITIONING_UNKNOWN -> {}
             }
 
             _transitionState.value = InProgress(latestEvent = event, direction = direction)
@@ -438,7 +440,7 @@ internal class NavigationEventProcessor {
      */
     fun dispatchOnProgressed(
         input: NavigationEventInput,
-        direction: @Direction Int,
+        @Direction direction: Int,
         event: NavigationEvent,
     ) {
         // Ignore progress events that don't match the currently active predictive gesture.
@@ -456,6 +458,7 @@ internal class NavigationEventProcessor {
         when (direction) {
             TRANSITIONING_BACK -> handler?.doOnBackProgressed(event)
             TRANSITIONING_FORWARD -> handler?.doOnForwardProgressed(event)
+            TRANSITIONING_UNKNOWN -> {}
         }
 
         _transitionState.value = InProgress(latestEvent = event, direction = direction)
@@ -479,7 +482,7 @@ internal class NavigationEventProcessor {
      */
     fun dispatchOnCompleted(
         input: NavigationEventInput,
-        direction: @Direction Int,
+        @Direction direction: Int,
         onBackCompletedFallback: OnBackCompletedFallback?,
     ) {
         if (input != inProgressInput || direction != inProgressDirection) {
@@ -492,7 +495,7 @@ internal class NavigationEventProcessor {
 
         // Clear in-progress, as 'completed' is a terminal event.
         inProgressHandler = null
-        inProgressDirection = null
+        inProgressDirection = TRANSITIONING_UNKNOWN
         inProgressInput = null
         isPredictiveInProgress = false
 
@@ -506,6 +509,7 @@ internal class NavigationEventProcessor {
                 }
             }
             TRANSITIONING_FORWARD -> handler?.doOnForwardCompleted()
+            TRANSITIONING_UNKNOWN -> {}
         }
 
         // Completion is terminal regardless of handler outcome; return to Idle.
@@ -522,7 +526,7 @@ internal class NavigationEventProcessor {
      * @param input The [NavigationEventInput] that sourced this event.
      * @param direction The direction of the navigation event being cancelled.
      */
-    fun dispatchOnCancelled(input: NavigationEventInput, direction: @Direction Int) {
+    fun dispatchOnCancelled(input: NavigationEventInput, @Direction direction: Int) {
         if (input != inProgressInput || direction != inProgressDirection) {
             return
         }
@@ -533,13 +537,14 @@ internal class NavigationEventProcessor {
 
         // Clear in-progress, as 'cancelled' is a terminal event.
         inProgressHandler = null
-        inProgressDirection = null
+        inProgressDirection = TRANSITIONING_UNKNOWN
         inProgressInput = null
         isPredictiveInProgress = false
 
         when (direction) {
             TRANSITIONING_BACK -> handler?.doOnBackCancelled()
             TRANSITIONING_FORWARD -> handler?.doOnForwardCancelled()
+            TRANSITIONING_UNKNOWN -> {}
         }
 
         _transitionState.value = Idle
@@ -564,10 +569,12 @@ internal class NavigationEventProcessor {
      *   `direction`, or `null` if none is found. If `direction` is `null`, it returns the first
      *   handler enabled for any direction.
      */
-    private fun resolveEnabledHandler(direction: @Direction Int = 0): NavigationEventHandler<*>? {
+    private fun resolveEnabledHandler(
+        @Direction direction: Int = TRANSITIONING_UNKNOWN
+    ): NavigationEventHandler<*>? {
         return when (direction) {
-            // For a 'null' direction, find the first available handler for any direction.
-            0 -> findHandler { it.isBackEnabled || it.isForwardEnabled }
+            // For a 'TRANSITIONING_UNKNOWN', find the first available handler for any direction.
+            TRANSITIONING_UNKNOWN -> findHandler { it.isBackEnabled || it.isForwardEnabled }
             TRANSITIONING_BACK -> findHandler { it.isBackEnabled }
             TRANSITIONING_FORWARD -> findHandler { it.isForwardEnabled }
             else -> error("Unsupported direction: '$direction'.")
