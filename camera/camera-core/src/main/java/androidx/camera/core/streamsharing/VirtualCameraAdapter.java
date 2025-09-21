@@ -230,9 +230,16 @@ class VirtualCameraAdapter implements UseCase.StateChangeCallback {
         for (UseCase useCase : mChildren) {
             OutConfig outConfig = calculateOutConfig(useCase, mResolutionsMerger,
                     mParentCamera, sharingInputEdge, parentTargetRotation, isViewportSet);
+            updateVirtualCameraRotationDegrees(useCase);
             outConfigs.put(useCase, outConfig);
         }
         return outConfigs;
+    }
+
+    private void updateVirtualCameraRotationDegrees(UseCase useCase) {
+        int childRotationDegrees = getChildRotationDegrees(useCase, mParentCamera);
+        requireNonNull(mChildrenVirtualCameras.get(useCase))
+                .setRotationDegrees(childRotationDegrees);
     }
 
     /**
@@ -274,6 +281,8 @@ class VirtualCameraAdapter implements UseCase.StateChangeCallback {
                     requireNonNull(mSecondaryParentCamera),
                     secondaryInputEdge,
                     parentTargetRotation, isViewportSet);
+
+            updateVirtualCameraRotationDegrees(useCase);
             outConfigs.put(useCase, DualOutConfig.of(
                     primaryOutConfig, secondaryOutConfig));
         }
@@ -302,10 +311,7 @@ class VirtualCameraAdapter implements UseCase.StateChangeCallback {
         Rect cropRectBeforeScaling = preferredChildSize.getCropRectBeforeScaling();
         Size childSizeToScale = preferredChildSize.getChildSizeToScale();
 
-        // Only use primary camera info for output surface
-        int childRotationDegrees = getChildRotationDegrees(useCase, mParentCamera);
-        requireNonNull(mChildrenVirtualCameras.get(useCase))
-                .setRotationDegrees(childRotationDegrees);
+        int childRotationDegrees = getChildRotationDegrees(useCase, cameraInternal);
         int childParentDelta = within360(cameraInputEdge.getRotationDegrees()
                 + childRotationDegrees - parentRotationDegrees);
         return OutConfig.of(
