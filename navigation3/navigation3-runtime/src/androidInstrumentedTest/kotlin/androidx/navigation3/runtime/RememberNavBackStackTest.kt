@@ -43,7 +43,7 @@ class RememberNavBackStackTest {
     @Test
     fun simpleObjectRestore() {
         var backStack: NavBackStack<NavKey>? = null
-        restorationTester.setContent { backStack = rememberNavBackStack<NavKey>() }
+        restorationTester.setContent { backStack = rememberNavBackStack() }
 
         assertThat(backStack).isEqualTo(NavBackStack<NavKey>())
 
@@ -61,7 +61,7 @@ class RememberNavBackStackTest {
     @Test
     fun simpleClassRestore() {
         var backStack: NavBackStack<NavKey>? = null
-        restorationTester.setContent { backStack = rememberNavBackStack<NavKey>() }
+        restorationTester.setContent { backStack = rememberNavBackStack() }
 
         assertThat(backStack).isEqualTo(NavBackStack<NavKey>())
 
@@ -81,7 +81,7 @@ class RememberNavBackStackTest {
     @Test
     fun simpleDataClassRestore() {
         var backStack: NavBackStack<NavKey>? = null
-        restorationTester.setContent { backStack = rememberNavBackStack<NavKey>() }
+        restorationTester.setContent { backStack = rememberNavBackStack() }
 
         assertThat(backStack).isEqualTo(NavBackStack<NavKey>())
 
@@ -105,7 +105,7 @@ class RememberNavBackStackTest {
     @Test
     fun noSerializerFail() {
         var backStack: NavBackStack<NavKey>? = null
-        restorationTester.setContent { backStack = rememberNavBackStack<NavKey>() }
+        restorationTester.setContent { backStack = rememberNavBackStack() }
 
         assertThat(backStack).isEqualTo(NavBackStack<NavKey>())
 
@@ -125,7 +125,7 @@ class RememberNavBackStackTest {
     @Test
     fun sealedClassRestore() {
         var backStack: NavBackStack<NavKey>? = null
-        restorationTester.setContent { backStack = rememberNavBackStack<NavKey>() }
+        restorationTester.setContent { backStack = rememberNavBackStack() }
 
         assertThat(backStack).isEqualTo(NavBackStack<NavKey>())
 
@@ -145,7 +145,7 @@ class RememberNavBackStackTest {
         var backStack: NavBackStack<NavKey>? = null
         // Explicitly pass the custom Configuration object
         restorationTester.setContent {
-            backStack = rememberNavBackStack<NavKey>(configuration = Configuration)
+            backStack = rememberNavBackStack(configuration = Configuration)
         }
 
         assertThat(backStack).isEqualTo(NavBackStack<NavKey>())
@@ -166,7 +166,7 @@ class RememberNavBackStackTest {
     fun defaultConfigurationFails() {
         assertThrows<IllegalArgumentException> {
                 rule.setContent {
-                    rememberNavBackStack<NavKey>(configuration = SavedStateConfiguration.DEFAULT)
+                    rememberNavBackStack(configuration = SavedStateConfiguration.DEFAULT)
                 }
             }
             .hasMessageThat()
