@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.compose.remote.player.view.action;
+package androidx.compose.remote.player.core.action;
 
 import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 
 import androidx.annotation.RestrictTo;
 import androidx.compose.remote.core.CoreDocument;
-import androidx.compose.remote.player.view.state.StateUpdater;
+import androidx.compose.remote.player.core.state.StateUpdater;
 
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
