@@ -57,9 +57,9 @@ import kotlinx.serialization.modules.SerializersModule
  * @see NavKey
  */
 @Composable
-public inline fun <reified T : NavKey> rememberNavBackStack(
+public fun rememberNavBackStack(
     configuration: SavedStateConfiguration,
-    vararg elements: T,
+    vararg elements: NavKey,
 ): NavBackStack<NavKey> {
     require(configuration.serializersModule != SavedStateConfiguration.DEFAULT.serializersModule) {
         "You must pass a `SavedStateConfiguration.serializersModule` configured to handle " +
