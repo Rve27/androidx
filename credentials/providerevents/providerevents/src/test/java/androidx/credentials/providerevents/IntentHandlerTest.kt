@@ -17,29 +17,31 @@
 package androidx.credentials.providerevents
 
 import android.content.Intent
+import android.content.pm.Signature
 import android.content.pm.SigningInfo
 import android.net.Uri
+import android.os.Build
 import androidx.credentials.providerevents.exception.ImportCredentialsInvalidJsonException
 import androidx.credentials.providerevents.exception.ImportCredentialsProviderConfigurationException
 import androidx.credentials.providerevents.exception.ImportCredentialsSystemErrorException
 import androidx.credentials.providerevents.exception.ImportCredentialsUnknownCallerException
 import androidx.credentials.providerevents.exception.ImportCredentialsUnknownErrorException
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SdkSuppress
-import androidx.test.filters.SmallTest
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
-@SdkSuppress(minSdkVersion = 28)
-@RunWith(AndroidJUnit4::class)
-@SmallTest
+@SdkSuppress(minSdkVersion = Build.VERSION_CODES.P)
+@RunWith(RobolectricTestRunner::class)
 class IntentHandlerTest {
     private val testRequestJson = "{\"credentials\":[\"data\"]}"
     private val testPackageName = "com.example.test.app"
 
     @Test
-    fun retrieveProviderImportCredentialsRequest_success() {
+    @Config(sdk = [Build.VERSION_CODES.S])
+    fun retrieveProviderImportCredentialsRequest_onS_success() {
         // 1. Setup
         val intent = Intent()
         val signingInfo = SigningInfo()
@@ -61,6 +63,38 @@ class IntentHandlerTest {
     }
 
     @Test
+    @Config(sdk = [Build.VERSION_CODES.O])
+    fun retrieveProviderImportCredentialsRequest_onO_success() {
+        // 1. Setup
+        val intent = Intent()
+        val callerSignatures = listOf(byteArrayOf(1), byteArrayOf(2))
+        val listSignatures: MutableList<Signature> = mutableListOf()
+        for (bytes in callerSignatures) {
+            listSignatures.add(Signature(bytes))
+        }
+        intent.putExtra(EXTRA_SIGNATURE_COUNT, callerSignatures.size)
+        callerSignatures.forEachIndexed { index, bytes ->
+            intent.putExtra("${EXTRA_SIGNATURE_PREFIX}$index", bytes)
+        }
+
+        intent.putExtra(EXTRA_REQUEST_JSON, testRequestJson)
+        intent.putExtra(EXTRA_PACKAGE_NAME, testPackageName)
+        intent.putExtra(EXTRA_CRED_ID, "testCredId")
+        intent.setData(Uri.EMPTY)
+
+        // 2. Execution
+        val result = IntentHandler.retrieveProviderImportCredentialsRequest(intent)
+
+        // 3. Assertion
+        assertThat(result).isNotNull()
+        assertThat(result!!.request.requestJson).isEqualTo(testRequestJson)
+        assertThat(result.callingAppInfo.packageName).isEqualTo(testPackageName)
+        assertThat(result.callingAppInfo.signingInfoCompat.signingCertificateHistory)
+            .isEqualTo(listSignatures)
+    }
+
+    @Test
+    @Config(sdk = [Build.VERSION_CODES.S])
     fun retrieveProviderImportCredentialsRequest_nullExtras_returnsNull() {
         // 1. Setup
         val intent = Intent()
@@ -74,6 +108,7 @@ class IntentHandlerTest {
     }
 
     @Test
+    @Config(sdk = [Build.VERSION_CODES.S])
     fun retrieveProviderImportCredentialsRequest_missingRequest_returnsNull() {
         // 1. Setup
         val intent = Intent()
@@ -90,6 +125,7 @@ class IntentHandlerTest {
     }
 
     @Test
+    @Config(sdk = [Build.VERSION_CODES.S])
     fun retrieveProviderImportCredentialsRequest_missingPackageName_returnsNull() {
         // 1. Setup
         val intent = Intent()
@@ -106,6 +142,7 @@ class IntentHandlerTest {
     }
 
     @Test
+    @Config(sdk = [Build.VERSION_CODES.S])
     fun retrieveProviderImportCredentialsRequest_missingSigningInfo_returnsNull() {
         // 1. Setup
         val intent = Intent()
@@ -128,6 +165,7 @@ class IntentHandlerTest {
     }
 
     @Test
+    @Config(sdk = [Build.VERSION_CODES.S])
     fun retrieveProviderImportCredentialsRequest_missingCredId_returnsNull() {
         // 1. Setup
         val intent = Intent()
@@ -146,6 +184,7 @@ class IntentHandlerTest {
     }
 
     @Test
+    @Config(sdk = [Build.VERSION_CODES.S])
     fun setAndRetrieveImportCredentialsException_handlesAllExceptionTypes() {
         // A list of all specific exception types to be tested.
         val exceptionTypes =
@@ -180,6 +219,7 @@ class IntentHandlerTest {
     }
 
     @Test
+    @Config(sdk = [Build.VERSION_CODES.S])
     fun retrieveImportCredentialsException_nullWhenNoExceptionInIntent() {
         val intent = Intent()
 
@@ -196,5 +236,9 @@ class IntentHandlerTest {
         private const val EXTRA_SIGNING_INFO =
             "androidx.credentials.providerevents.extra.SIGNING_INFO"
         private const val EXTRA_CRED_ID = "androidx.credentials.providerevents.extra.CREDENTIAL_ID"
+        private const val EXTRA_SIGNATURE_COUNT =
+            "androidx.credentials.providerevents.extra.SIGNATURE_COUNT"
+        private const val EXTRA_SIGNATURE_PREFIX =
+            "androidx.credentials.providerevents.extra.SIGNATURE_"
     }
 }
