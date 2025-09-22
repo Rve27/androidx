@@ -20,6 +20,7 @@ import androidx.compose.runtime.saveable.rememberSerializable
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 import androidx.savedstate.compose.serialization.serializers.SnapshotStateListSerializer
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
@@ -46,8 +47,9 @@ public class NavBackStackSerializer<T : NavKey>(private val elementSerializer: K
 
     private val delegate = SnapshotStateListSerializer(elementSerializer)
 
-    override val descriptor: SerialDescriptor
-        get() = delegate.descriptor
+    @OptIn(ExperimentalSerializationApi::class)
+    override val descriptor: SerialDescriptor =
+        SerialDescriptor("androidx.navigation3.runtime.NavBackStack", delegate.descriptor)
 
     override fun serialize(encoder: Encoder, value: NavBackStack<T>) {
         encoder.encodeSerializableValue(serializer = delegate, value = value.base)
