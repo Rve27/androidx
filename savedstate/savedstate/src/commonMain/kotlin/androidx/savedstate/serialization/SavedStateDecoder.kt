@@ -29,7 +29,6 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.StructureKind
 import kotlinx.serialization.encoding.AbstractDecoder
 import kotlinx.serialization.encoding.CompositeDecoder
-import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.serializer
 
 /**
@@ -156,7 +155,8 @@ internal class SavedStateDecoder(
 
     private var index = 0
 
-    override val serializersModule: SerializersModule = configuration.serializersModule
+    override val serializersModule
+        get() = configuration.serializersModule
 
     override fun decodeElementIndex(descriptor: SerialDescriptor): Int {
         val size =
