@@ -291,6 +291,25 @@ class RemoteColorTest {
         assertThat(result.evaluateIfConstant(creationState)).isNull()
     }
 
+    @Test
+    fun remoteColorIsCached() {
+        val red =
+            creationState.getOrCreateNamedState(RemoteColor::class.java, "red", "USER") {
+                RemoteColor.invoke(Color.valueOf(Color.RED))
+            }
+        val red2 =
+            creationState.getOrCreateNamedState(RemoteColor::class.java, "red", "USER") {
+                RemoteColor.invoke(Color.valueOf(Color.RED))
+            }
+        val green =
+            creationState.getOrCreateNamedState(RemoteColor::class.java, "green", "USER") {
+                RemoteColor.invoke(Color.valueOf(Color.GREEN))
+            }
+
+        assertThat(red).isSameInstanceAs(red2)
+        assertThat(red).isNotSameInstanceAs(green)
+    }
+
     private fun makeAndPaintCoreDocument() =
         CoreDocument().apply {
             val buffer = creationState.document.buffer
