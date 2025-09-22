@@ -180,6 +180,39 @@ class RemoteColorTest {
     }
 
     @Test
+    fun tweenTwice() {
+        var redCreated = 0
+
+        val red =
+            RemoteColor(hasConstantValue = false) { creationState ->
+                val color = Color.RED
+                RemoteColor.InternalState(
+                    RemoteFloat(Color.alpha(color).toFloat() / 255f),
+                    RemoteFloat(Color.red(color).toFloat() / 255f),
+                    RemoteFloat(Color.green(color).toFloat() / 255f),
+                    RemoteFloat(Color.blue(color).toFloat() / 255f),
+                    {
+                        // This should only be created once
+                        redCreated++
+                        creationState.document.addNamedColor("USER:OnPrimaryColor", color)
+                    },
+                )
+            }
+        val green = RemoteColor(Color.GREEN)
+
+        val result0 = tween(green, red, RemoteFloat(0.26f))
+        val result0Id = result0.getIdForCreationState(creationState)
+
+        val result = tween(red, green, RemoteFloat(0.25f))
+        val resultId = result.getIdForCreationState(creationState)
+
+        makeAndPaintCoreDocument()
+
+        assertThat(context.getColor(resultId)).isEqualTo(Color.argb(255, 223, 135, 0))
+        assertThat(redCreated).isEqualTo(1)
+    }
+
+    @Test
     fun tweenColorInt() {
         val result = tween(Color.RED, Color.GREEN, RemoteFloat(0.25f))
         val resultId = result.getIdForCreationState(creationState)
