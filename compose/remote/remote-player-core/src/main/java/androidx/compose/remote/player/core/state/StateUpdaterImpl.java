@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.compose.remote.player.view.state;
+package androidx.compose.remote.player.core.state;
 
 import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 
@@ -30,7 +30,7 @@ public class StateUpdaterImpl implements StateUpdater {
 
     private final RemoteContext mRemoteContext;
 
-    public StateUpdaterImpl(RemoteContext remoteContext) {
+    public StateUpdaterImpl(@NonNull RemoteContext remoteContext) {
         this.mRemoteContext = remoteContext;
     }
 
@@ -40,23 +40,23 @@ public class StateUpdaterImpl implements StateUpdater {
     }
 
     @Override
-    public void setUserLocalInt(String integerName, int value) {
+    public void setUserLocalInt(@NonNull String integerName, int value) {
         mRemoteContext.setNamedIntegerOverride(
                 StateUpdater.getUserDomainString(integerName), value);
     }
 
     @Override
-    public void setUserLocalColor(String name, int value) {
+    public void setUserLocalColor(@NonNull String name, int value) {
         mRemoteContext.setNamedColorOverride(StateUpdater.getUserDomainString(name), value);
     }
 
     @Override
-    public void setUserLocalBitmap(String name, Bitmap content) {
+    public void setUserLocalBitmap(@NonNull String name, @NonNull Bitmap content) {
         mRemoteContext.setNamedDataOverride(StateUpdater.getUserDomainString(name), content);
     }
 
     @Override
-    public void setUserLocalString(String stringName, String value) {
+    public void setUserLocalString(@NonNull String stringName, @NonNull String value) {
         mRemoteContext.setNamedStringOverride(StateUpdater.getUserDomainString(stringName), value);
     }
 }
