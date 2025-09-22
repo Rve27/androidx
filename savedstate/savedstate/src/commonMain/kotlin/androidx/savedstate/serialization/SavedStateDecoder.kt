@@ -159,31 +159,37 @@ internal class SavedStateDecoder(
         get() = configuration.serializersModule
 
     override fun decodeElementIndex(descriptor: SerialDescriptor): Int {
-        val size =
+        // Get iteration boundary. For collections, it's the saved size.
+        // For classes, it's all schema fields, as optional ones might be missing.
+        val elementCount =
             if (descriptor.kind == StructureKind.LIST || descriptor.kind == StructureKind.MAP) {
-                // Use the number of elements encoded for collections.
                 savedState.read { size() }
             } else {
-                // We may skip elements when encoding so if we used `size()`
-                // here we may miss some fields.
                 descriptor.elementsCount
             }
-        fun hasDefaultValueDefined(index: Int) = descriptor.isElementOptional(index)
-        fun presentInEncoding(index: Int) =
-            savedState.read {
-                val key = descriptor.getElementName(index)
-                contains(key)
+
+        // Find the next element present in the saved state, skipping
+        // omitted optional fields. 'index' is a class property.
+        while (index < elementCount) {
+            val elementName = descriptor.getElementName(index)
+
+            // Skip optional fields that aren't in the saved state
+            // (they will use their default value).
+            if (descriptor.isElementOptional(index) && savedState.read { elementName !in this }) {
+                index++
+                continue
             }
-        // Skip elements omitted from encoding (those assigned with its default values).
-        while (index < size && hasDefaultValueDefined(index) && !presentInEncoding(index)) {
-            index++
-        }
-        if (index < size) {
-            key = descriptor.getElementName(index)
+
+            // This element is present or non-optional.
+            // Set 'key' so subsequent decode* calls know what to read from the state.
+            key = elementName
+
+            // Return current index; increment 'index' for the next call.
             return index++
-        } else {
-            return CompositeDecoder.DECODE_DONE
         }
+
+        // All elements processed.
+        return CompositeDecoder.DECODE_DONE
     }
 
     override fun decodeBoolean(): Boolean = savedState.read { getBoolean(key) }
