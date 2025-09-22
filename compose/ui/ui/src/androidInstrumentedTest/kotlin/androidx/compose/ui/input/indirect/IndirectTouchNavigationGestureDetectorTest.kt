@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package androidx.compose.ui.input.pointer
+package androidx.compose.ui.input.indirect
 
 import android.content.Context
 import android.view.MotionEvent
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.focus.FocusDirection
-import androidx.compose.ui.input.indirect.IndirectTouchEventPrimaryDirectionalMotionAxis
 import androidx.compose.ui.platform.IndirectTouchNavigationGestureDetector
+import androidx.test.ext.junit.rules.ActivityScenarioRule
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -47,16 +47,12 @@ class IndirectTouchNavigationGestureDetectorTest {
     private val nonFlingTriggeringDistanceBetweenEvents = 10
     private var currentFocusDirection: FocusDirection? = null
 
-    @Suppress("DEPRECATION")
-    @get:Rule
-    val rule = androidx.test.rule.ActivityTestRule(ComponentActivity::class.java)
+    @get:Rule val rule = ActivityScenarioRule(ComponentActivity::class.java)
 
     @Before
     fun setup() {
         currentFocusDirection = null
-        val activity = rule.activity
-
-        rule.runOnUiThread {
+        rule.scenario.onActivity { activity ->
             context = activity
             indirectTouchNavigationGestureDetector =
                 IndirectTouchNavigationGestureDetector(
@@ -105,7 +101,7 @@ class IndirectTouchNavigationGestureDetectorTest {
         val upEvent = MotionEvent.obtain(downTime, upTime, MotionEvent.ACTION_UP, upX, startY, 0)
         val upEventResult = indirectTouchNavigationGestureDetector.onTouchEvent(upEvent)
         assertTrue(upEventResult)
-        assertEquals(FocusDirection.Next, currentFocusDirection!!)
+        assertEquals(FocusDirection.Companion.Next, currentFocusDirection!!)
     }
 
     @Test
@@ -193,7 +189,7 @@ class IndirectTouchNavigationGestureDetectorTest {
         val upEvent = MotionEvent.obtain(downTime, upTime, MotionEvent.ACTION_UP, upX, startY, 0)
         val upEventResult = indirectTouchNavigationGestureDetector.onTouchEvent(upEvent)
         assertTrue(upEventResult)
-        assertEquals(FocusDirection.Previous, currentFocusDirection!!)
+        assertEquals(FocusDirection.Companion.Previous, currentFocusDirection!!)
     }
 
     @Test
@@ -397,7 +393,7 @@ class IndirectTouchNavigationGestureDetectorTest {
         val upEvent = MotionEvent.obtain(downTime, upTime, MotionEvent.ACTION_UP, upX, upY, 0)
         val upEventResult = indirectTouchNavigationGestureDetector.onTouchEvent(upEvent)
         assertTrue(upEventResult)
-        assertEquals(FocusDirection.Next, currentFocusDirection!!)
+        assertEquals(FocusDirection.Companion.Next, currentFocusDirection!!)
     }
 
     @Test
@@ -439,7 +435,7 @@ class IndirectTouchNavigationGestureDetectorTest {
         val upEvent = MotionEvent.obtain(downTime, upTime, MotionEvent.ACTION_UP, upX, upY, 0)
         val upEventResult = indirectTouchNavigationGestureDetector.onTouchEvent(upEvent)
         assertTrue(upEventResult)
-        assertEquals(FocusDirection.Previous, currentFocusDirection!!)
+        assertEquals(FocusDirection.Companion.Previous, currentFocusDirection!!)
     }
 
     @Test
