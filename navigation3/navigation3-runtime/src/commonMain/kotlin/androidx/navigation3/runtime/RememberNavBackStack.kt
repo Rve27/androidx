@@ -58,6 +58,10 @@ public inline fun <reified T : NavKey> rememberNavBackStack(
     configuration: SavedStateConfiguration,
     vararg elements: T,
 ): NavBackStack<NavKey> {
+    require(configuration.serializersModule != SavedStateConfiguration.DEFAULT.serializersModule) {
+        "You must pass a `SavedStateConfiguration.serializersModule` configured to handle " +
+            "`NavKey` open polymorphism. Define it with: `polymorphic(NavKey::class) { ... }`"
+    }
     return rememberSerializable(
         configuration = configuration,
         serializer = NavBackStackSerializer<NavKey>(),
