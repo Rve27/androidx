@@ -33,6 +33,7 @@ import androidx.appfunctions.metadata.AppFunctionPendingIntentTypeMetadata
 import androidx.appfunctions.metadata.AppFunctionReferenceTypeMetadata
 import androidx.appfunctions.metadata.AppFunctionResponseMetadata
 import androidx.appfunctions.metadata.AppFunctionStringTypeMetadata
+import java.util.Objects
 
 /** Specification class defining the properties metadata for [AppFunctionData]. */
 internal abstract class AppFunctionDataSpec {
@@ -221,6 +222,18 @@ internal abstract class AppFunctionDataSpec {
         private val objectTypeMetadata: AppFunctionObjectTypeMetadata,
         override val componentMetadata: AppFunctionComponentsMetadata,
     ) : AppFunctionDataSpec() {
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other !is ObjectSpec) return false
+
+            // TODO(b/446606781): Comparing component metadata
+            return this.objectTypeMetadata == other.objectTypeMetadata
+        }
+
+        override fun hashCode(): Int {
+            return Objects.hash(objectTypeMetadata)
+        }
+
         override val objectQualifiedName: String
             get() = objectTypeMetadata.qualifiedName ?: ""
 
@@ -239,6 +252,18 @@ internal abstract class AppFunctionDataSpec {
         private val parameterMetadataList: List<AppFunctionParameterMetadata>,
         override val componentMetadata: AppFunctionComponentsMetadata,
     ) : AppFunctionDataSpec() {
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other !is ParametersSpec) return false
+
+            // TODO(b/446606781): Comparing component metadata
+            return this.parameterMetadataList == other.parameterMetadataList
+        }
+
+        override fun hashCode(): Int {
+            return Objects.hash(parameterMetadataList)
+        }
+
         override val objectQualifiedName: String
             get() = ""
 
