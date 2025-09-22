@@ -43,6 +43,8 @@ internal abstract class AppFunctionDataSpec {
 
     internal abstract fun isRequired(key: String): Boolean
 
+    internal abstract fun getAllPropertyKeys(): Set<String>
+
     /** Checks if there is a metadata for [key]. */
     fun containsMetadata(key: String): Boolean {
         return getDataType(key) != null
@@ -229,6 +231,8 @@ internal abstract class AppFunctionDataSpec {
         override fun isRequired(key: String): Boolean {
             return objectTypeMetadata.required.contains(key)
         }
+
+        override fun getAllPropertyKeys(): Set<String> = objectTypeMetadata.properties.keys
     }
 
     private data class ParametersSpec(
@@ -245,6 +249,9 @@ internal abstract class AppFunctionDataSpec {
         override fun isRequired(key: String): Boolean {
             return parameterMetadataList.firstOrNull { it.name == key }?.isRequired ?: false
         }
+
+        override fun getAllPropertyKeys(): Set<String> =
+            parameterMetadataList.map { it.name }.toSet()
     }
 
     fun AppFunctionDataTypeMetadata.conform(typeClazz: Class<*>, isCollection: Boolean): Boolean {
