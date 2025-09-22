@@ -110,6 +110,7 @@ import com.google.common.truth.Truth.assertThat
 import kotlin.test.Ignore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.StandardTestDispatcher
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -120,7 +121,7 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class CombinedClickableTest {
 
-    @get:Rule val rule = createComposeRule()
+    @get:Rule val rule = createComposeRule(StandardTestDispatcher())
 
     @Before
     fun before() {
@@ -1977,10 +1978,11 @@ class CombinedClickableTest {
 
         rule.onNodeWithTag("myClickable").performMouseInput {
             enter(center)
+            advanceEventTime()
             click()
+            advanceEventTime()
             exit(Offset(-1f, -1f))
         }
-
         rule.runOnIdle {
             assertThat(interactions).hasSize(4)
             assertThat(interactions[0]).isInstanceOf(HoverInteraction.Enter::class.java)
