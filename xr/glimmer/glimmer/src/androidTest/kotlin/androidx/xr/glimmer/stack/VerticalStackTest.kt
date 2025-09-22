@@ -202,6 +202,45 @@ class VerticalStackTest {
     }
 
     @Test
+    fun swipeForward_almostItemHeight_snapsToNextItem() {
+        var itemHeight = 0
+        val state = StackState()
+        rule.setContentWithInitialFocus {
+            VerticalStack(state = state) {
+                items(5) { index -> StackItem("Item $index") { itemHeight = it } }
+            }
+        }
+        rule.onNodeWithText("Item 0").assertIsDisplayed()
+        rule.onNodeWithText("Item 1").assertIsNotDisplayed()
+
+        requestFocusAndPerformIndirectSwipe((itemHeight * 0.9f).toInt())
+
+        rule.onNodeWithText("Item 0").assertIsNotDisplayed()
+        rule.onNodeWithText("Item 1").assertIsDisplayed()
+        assertThat(state.topItem).isEqualTo(1)
+    }
+
+    @Test
+    fun swipeBackward_almostItemHeight_snapsToPreviousItem() {
+        var itemHeight = 0
+        val state = StackState()
+        rule.setContentWithInitialFocus {
+            VerticalStack(state = state) {
+                items(5) { index -> StackItem("Item $index") { itemHeight = it } }
+            }
+        }
+        requestFocusAndPerformIndirectSwipe(itemHeight)
+        rule.onNodeWithText("Item 0").assertIsNotDisplayed()
+        rule.onNodeWithText("Item 1").assertIsDisplayed()
+
+        requestFocusAndPerformIndirectSwipe(-(itemHeight * 0.9f).toInt())
+
+        rule.onNodeWithText("Item 0").assertIsDisplayed()
+        rule.onNodeWithText("Item 1").assertIsNotDisplayed()
+        assertThat(state.topItem).isEqualTo(0)
+    }
+
+    @Test
     fun scrollToEndAndBack_displaysItemsInCorrectOrder() {
         var itemHeight = 0
         val state = StackState()
