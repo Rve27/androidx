@@ -44,17 +44,17 @@ import kotlinx.serialization.serializer
 public class NavBackStackSerializer<T : NavKey>(private val elementSerializer: KSerializer<T>) :
     KSerializer<NavBackStack<T>> {
 
-    private val surrogate = SnapshotStateListSerializer(elementSerializer)
+    private val delegate = SnapshotStateListSerializer(elementSerializer)
 
     override val descriptor: SerialDescriptor
-        get() = surrogate.descriptor
+        get() = delegate.descriptor
 
     override fun serialize(encoder: Encoder, value: NavBackStack<T>) {
-        encoder.encodeSerializableValue(serializer = surrogate, value = value.base)
+        encoder.encodeSerializableValue(serializer = delegate, value = value.base)
     }
 
     override fun deserialize(decoder: Decoder): NavBackStack<T> {
-        return NavBackStack(base = decoder.decodeSerializableValue(deserializer = surrogate))
+        return NavBackStack(base = decoder.decodeSerializableValue(deserializer = delegate))
     }
 }
 
