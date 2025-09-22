@@ -107,7 +107,6 @@ import androidx.test.filters.MediumTest
 import androidx.test.filters.SdkSuppress
 import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth.assertThat
-import kotlin.test.Ignore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -1126,7 +1125,6 @@ class CombinedClickableTest {
     }
 
     @Test
-    @Ignore("Fixed in follow up CL (aosp/3768764)")
     fun interactionSource_immediateCancel_noScrollableContainer_indirectTouch() {
         val interactionSource = MutableInteractionSource()
 
@@ -1796,7 +1794,6 @@ class CombinedClickableTest {
     }
 
     @Test
-    @Ignore("Fixed in follow up CL (aosp/3768764)")
     fun interactionSource_cancelledGesture_scrollableContainer_indirectTouch() {
         val interactionSource = MutableInteractionSource()
         lateinit var inputModeManager: InputModeManager
