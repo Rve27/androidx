@@ -206,42 +206,6 @@ internal class SavedStateDecoder(
 
     override fun decodeEnum(enumDescriptor: SerialDescriptor): Int = savedState.read { getInt(key) }
 
-    private fun decodeIntList(): List<Int> {
-        return savedState.read { getIntList(key) }
-    }
-
-    private fun decodeStringList(): List<String> {
-        return savedState.read { getStringList(key) }
-    }
-
-    private fun decodeBooleanArray(): BooleanArray {
-        return savedState.read { getBooleanArray(key) }
-    }
-
-    private fun decodeCharArray(): CharArray {
-        return savedState.read { getCharArray(key) }
-    }
-
-    private fun decodeDoubleArray(): DoubleArray {
-        return savedState.read { getDoubleArray(key) }
-    }
-
-    private fun decodeFloatArray(): FloatArray {
-        return savedState.read { getFloatArray(key) }
-    }
-
-    private fun decodeIntArray(): IntArray {
-        return savedState.read { getIntArray(key) }
-    }
-
-    private fun decodeLongArray(): LongArray {
-        return savedState.read { getLongArray(key) }
-    }
-
-    private fun decodeStringArray(): Array<String> {
-        return savedState.read { getStringArray(key) }
-    }
-
     override fun beginStructure(descriptor: SerialDescriptor): CompositeDecoder =
         if (key == "") {
             this
@@ -256,28 +220,33 @@ internal class SavedStateDecoder(
     // `encodeNull()` or a value from other encode functions.
     override fun decodeNotNullMark(): Boolean = savedState.read { !isNull(key) }
 
-    override fun <T> decodeSerializableValue(deserializer: DeserializationStrategy<T>): T {
-        return decodeFormatSpecificTypes(deserializer)
-            ?: super.decodeSerializableValue(deserializer)
-    }
-
-    /** @return `T` if `T` has a special representation in `SavedState`, `null` otherwise. */
     @Suppress("IMPLICIT_CAST_TO_ANY", "UNCHECKED_CAST")
-    private fun <T> decodeFormatSpecificTypes(deserializer: DeserializationStrategy<T>): T? {
-        return decodeFormatSpecificTypesOnPlatform(deserializer)
-            ?: when (deserializer.descriptor) {
-                intListDescriptor -> decodeIntList()
-                stringListDescriptor -> decodeStringList()
-                booleanArrayDescriptor -> decodeBooleanArray()
-                charArrayDescriptor -> decodeCharArray()
-                doubleArrayDescriptor -> decodeDoubleArray()
-                floatArrayDescriptor -> decodeFloatArray()
-                intArrayDescriptor -> decodeIntArray()
-                longArrayDescriptor -> decodeLongArray()
-                stringArrayDescriptor -> decodeStringArray()
-                else -> null
+    override fun <T> decodeSerializableValue(deserializer: DeserializationStrategy<T>): T {
+        // First, try any platform-specific types
+        val platformDecoded = decodeFormatSpecificTypesOnPlatform(deserializer)
+        if (platformDecoded != null) {
+            // Platform decoder handled it, we're done.
+            return platformDecoded as T
+        }
+
+        // If platform decoding didn't handle it, try our known fast-path types.
+        return when (deserializer.descriptor) {
+            intListDescriptor -> savedState.read { getIntList(key) }
+            stringListDescriptor -> savedState.read { getStringList(key) }
+            booleanArrayDescriptor -> savedState.read { getBooleanArray(key) }
+            charArrayDescriptor -> savedState.read { getCharArray(key) }
+            doubleArrayDescriptor -> savedState.read { getDoubleArray(key) }
+            floatArrayDescriptor -> savedState.read { getFloatArray(key) }
+            intArrayDescriptor -> savedState.read { getIntArray(key) }
+            longArrayDescriptor -> savedState.read { getLongArray(key) }
+            stringArrayDescriptor -> savedState.read { getStringArray(key) }
+            else -> {
+                // This isn't a type we can specially handle.
+                // Fall back to the default deserialization behavior.
+                super.decodeSerializableValue(deserializer)
             }
-                as T?
+        }
+            as T
     }
 }
 
