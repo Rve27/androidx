@@ -60,6 +60,7 @@ import androidx.compose.ui.util.fastAny
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
 import androidx.xr.glimmer.Text
+import androidx.xr.glimmer.performIndirectSwipe
 import com.google.common.truth.Truth
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
