@@ -159,7 +159,8 @@ internal class SavedStateEncoder(
     internal var key: String = ""
         private set
 
-    override val serializersModule = configuration.serializersModule
+    override val serializersModule
+        get() = configuration.serializersModule
 
     override fun shouldEncodeElementDefault(descriptor: SerialDescriptor, index: Int): Boolean {
         return configuration.encodeDefaults
