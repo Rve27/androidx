@@ -161,6 +161,20 @@ class RememberNavBackStackTest {
         // We assert that an object defined in that configuration is restored
         assertThat(backStack).contains(TestObject)
     }
+
+    @Test
+    fun defaultConfigurationFails() {
+        assertThrows<IllegalArgumentException> {
+                rule.setContent {
+                    rememberNavBackStack<NavKey>(configuration = SavedStateConfiguration.DEFAULT)
+                }
+            }
+            .hasMessageThat()
+            .contains(
+                "You must pass a `SavedStateConfiguration.serializersModule` configured to " +
+                    "handle `NavKey` open polymorphism."
+            )
+    }
 }
 
 private object TestNoSerializer : NavKey
