@@ -120,6 +120,8 @@ internal abstract class CacheWindowLogic(
             if (lastLineIndex != InvalidIndex) {
                 prefetchWindowEndLine = prefetchWindowEndLine.coerceAtMost(lastLineIndex)
             }
+            /** Free up the space so the fill will happen and not re-use old data. */
+            removeOutOfBoundsItems(prefetchWindowEndLine, itemsCount - 1)
         }
 
         itemsCount = totalItemsCount
