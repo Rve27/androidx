@@ -15,12 +15,15 @@
  */
 package androidx.compose.remote.frontend.state
 
+import android.graphics.BlendMode
 import android.graphics.Color
+import androidx.test.filters.SdkSuppress
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 
+@SdkSuppress(minSdkVersion = 29)
 @RunWith(RobolectricTestRunner::class)
 class RemotePaintTest {
     @Test
@@ -29,5 +32,62 @@ class RemotePaintTest {
         val color = Color.valueOf(Color.RED)
         remotePaint.setColor(color.toArgb())
         assertThat(remotePaint.color).isEqualTo(color.toArgb())
+    }
+
+    @Test
+    fun copyConstructorTest() {
+        val remotePaint = RemotePaint()
+        val remoteColor = RemoteColor(Color.valueOf(Color.RED))
+        val remoteColorFilter = RemoteBlendModeColorFilter(remoteColor, BlendMode.MULTIPLY)
+        remotePaint.remoteColor = remoteColor
+        remotePaint.remoteColorFilter = remoteColorFilter
+
+        val copiedPaint = RemotePaint(remotePaint)
+        assertThat(copiedPaint.remoteColor).isEqualTo(remoteColor)
+        assertThat(copiedPaint.remoteColorFilter).isEqualTo(remoteColorFilter)
+    }
+
+    @Test
+    fun copyConstructorWithNullsTest() {
+        val remotePaint = RemotePaint()
+        remotePaint.color = Color.RED
+        remotePaint.remoteColor = null
+        remotePaint.remoteColorFilter = null
+
+        val copiedPaint = RemotePaint(remotePaint)
+        assertThat(copiedPaint.color).isEqualTo(Color.RED)
+        assertThat(copiedPaint.remoteColor).isNull()
+        assertThat(copiedPaint.remoteColorFilter).isNull()
+    }
+
+    @Test
+    fun remoteColorTest() {
+        val remotePaint = RemotePaint()
+        val remoteColor = RemoteColor(Color.valueOf(Color.RED))
+        remotePaint.remoteColor = remoteColor
+        assertThat(remotePaint.color).isEqualTo(Color.TRANSPARENT)
+
+        remotePaint.setColor(Color.BLUE)
+        assertThat(remotePaint.remoteColor).isNull()
+    }
+
+    @Test
+    fun remoteColorNullTest() {
+        val remotePaint = RemotePaint()
+        remotePaint.setColor(Color.BLUE)
+        remotePaint.remoteColor = null
+        assertThat(remotePaint.color).isEqualTo(Color.BLUE)
+    }
+
+    @Test
+    fun remoteColorFilterTest() {
+        val remotePaint = RemotePaint()
+        val remoteColor = RemoteColor(Color.valueOf(Color.RED))
+        val remoteColorFilter = RemoteBlendModeColorFilter(remoteColor, BlendMode.MULTIPLY)
+        remotePaint.remoteColorFilter = remoteColorFilter
+        assertThat(remotePaint.colorFilter).isNull()
+
+        remotePaint.colorFilter = remotePaint.colorFilter
+        assertThat(remotePaint.remoteColorFilter).isNull()
     }
 }
