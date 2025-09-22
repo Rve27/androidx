@@ -132,8 +132,7 @@ import org.junit.runner.RunWith
 class ClickableTest {
 
     private val dispatcher = StandardTestDispatcher()
-
-    @OptIn(ExperimentalTestApi::class) @get:Rule val rule = createComposeRule(dispatcher)
+    @get:Rule val rule = createComposeRule(dispatcher)
 
     private val InstanceOf =
         Correspondence.from<Any, KClass<*>>(
