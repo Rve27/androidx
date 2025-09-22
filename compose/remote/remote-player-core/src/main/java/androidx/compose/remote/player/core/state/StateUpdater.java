@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.compose.remote.player.view.state;
+package androidx.compose.remote.player.core.state;
 
 import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 
@@ -24,6 +24,7 @@ import androidx.annotation.RestrictTo;
 import org.jspecify.annotations.NonNull;
 
 /** Methods to update the state of a {@link androidx.compose.remote.core.RemoteContext}. */
+@RestrictTo(LIBRARY_GROUP)
 public interface StateUpdater {
 
     /**
@@ -57,7 +58,7 @@ public interface StateUpdater {
      * adding {@link RemoteDomains#USER} as a prefix to the name.
      *
      * @param name the original name of the data parameter.
-     * @param content the {@link android.graphics.Bitmap} content to set.
+     * @param content the {@link Bitmap} content to set.
      */
     void setUserLocalBitmap(@NonNull String name, @NonNull Bitmap content);
 
@@ -77,7 +78,7 @@ public interface StateUpdater {
      * @return the user domain string for the given parameter name.
      */
     @RestrictTo(LIBRARY_GROUP)
-    static String getUserDomainString(@NonNull String name) {
+    static @NonNull String getUserDomainString(@NonNull String name) {
         return RemoteDomains.USER + ":" + name;
     }
 }

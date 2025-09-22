@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.compose.remote.player.view.platform;
+package androidx.compose.remote.player.core.platform;
 
 import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 import static androidx.compose.remote.core.operations.Utils.idFromNan;
@@ -25,23 +25,28 @@ import android.os.Build;
 import androidx.annotation.RestrictTo;
 import androidx.compose.remote.core.operations.PathData;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 /**
  * Utility class to convert a float array representation of a path into an Android {@link Path}
  * object.
  */
 @RestrictTo(LIBRARY_GROUP)
 public class FloatsToPath {
-    private FloatsToPath() {}
+    private FloatsToPath() {
+    }
 
     /**
      * Converts a float array representing a path into a Path object.
      *
-     * @param retPath The Path object to populate with the converted path data.
+     * @param retPath   The Path object to populate with the converted path data.
      * @param floatPath The float array representing the path.
-     * @param start The starting percentage (0.0 to 1.0) of the path to include.
-     * @param stop The ending percentage (0.0 to 1.0) of the path to include.
+     * @param start     The starting percentage (0.0 to 1.0) of the path to include.
+     * @param stop      The ending percentage (0.0 to 1.0) of the path to include.
      */
-    public static void genPath(Path retPath, float[] floatPath, float start, float stop) {
+    public static void genPath(@NonNull Path retPath, float @Nullable [] floatPath, float start,
+            float stop) {
         int i = 0;
         Path path = new Path(); // todo this should be cached for performance
         while (i < floatPath.length) {

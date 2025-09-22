@@ -13,21 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.compose.remote.player.view.action;
+package androidx.compose.remote.player.core.action;
 
-import androidx.compose.remote.player.view.state.StateUpdater;
+import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
+
+import androidx.annotation.RestrictTo;
+import androidx.compose.remote.player.core.state.StateUpdater;
 
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 /** An interface for handling named actions. */
+@RestrictTo(LIBRARY_GROUP)
 public interface NamedActionHandler {
     /**
      * Execute a named action
-     *
-     * @param name
-     * @param value
-     * @param stateUpdater
      */
     void execute(@NonNull String name, @Nullable Object value, @NonNull StateUpdater stateUpdater);
 }
