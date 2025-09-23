@@ -197,7 +197,4 @@
         <schemaVersion>1</schemaVersion>
         <functionId>com.testdata.FakeAllNullablePrimitiveParamsWithDefaultValuesImpl#allNullablePrimitiveParamsWithDefault</functionId>
     </appfunction>
-    <AppFunctionComponentMetadataDocument>
-        <id>unused</id>
-    </AppFunctionComponentMetadataDocument>
 </appfunctions>
