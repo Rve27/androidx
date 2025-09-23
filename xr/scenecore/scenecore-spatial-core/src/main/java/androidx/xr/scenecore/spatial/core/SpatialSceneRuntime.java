@@ -110,7 +110,7 @@ class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory {
     private final Node mSceneRootNode;
     private final Node mTaskWindowLeashNode;
     private final int mOpenXrReferenceSpaceType;
-    private boolean mIsDisposed;
+    private boolean mIsDestroyed;
     private final EntityManager mEntityManager;
     private final PerceptionLibrary mPerceptionLibrary;
     private final SpatialEnvironmentImpl mEnvironment;
@@ -296,8 +296,8 @@ class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory {
     }
 
     @Override
-    public void dispose() {
-        if (mIsDisposed) {
+    public void destroy() {
+        if (mIsDestroyed) {
             return;
         }
         mEnvironment.dispose();
@@ -314,7 +314,7 @@ class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory {
         mActivity = null;
         mEntityManager.getAllEntities().forEach(Entity::dispose);
         mEntityManager.clear();
-        mIsDisposed = true;
+        mIsDestroyed = true;
     }
 
     @VisibleForTesting

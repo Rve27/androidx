@@ -596,10 +596,6 @@ public class FakeRenderingRuntime(
         _state = State.PAUSED
     }
 
-    override fun dispose() {
-        _state = State.DESTROYED
-    }
-
     override fun resume() {
         startRenderer()
     }
@@ -609,6 +605,6 @@ public class FakeRenderingRuntime(
     }
 
     override fun destroy() {
-        dispose()
+        _state = State.DESTROYED
     }
 }

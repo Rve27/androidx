@@ -477,7 +477,4 @@ public interface SceneRuntime : JxrRuntime {
     ): PointerCaptureComponent
 
     public fun createSpatialPointerComponent(): SpatialPointerComponent
-
-    /** Disposes of the resources used by this runtime */
-    public fun dispose()
 }

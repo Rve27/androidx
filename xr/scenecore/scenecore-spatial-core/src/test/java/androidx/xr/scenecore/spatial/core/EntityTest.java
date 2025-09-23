@@ -115,7 +115,7 @@ public final class EntityTest {
 
     @After
     public void tearDown() {
-        mSpatialSceneRuntime.dispose();
+        mSpatialSceneRuntime.destroy();
         mSpatialSceneRuntime = null;
         mXrExtensions = null;
     }

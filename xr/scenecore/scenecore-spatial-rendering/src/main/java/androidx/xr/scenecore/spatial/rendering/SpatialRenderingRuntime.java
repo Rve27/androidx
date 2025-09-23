@@ -84,7 +84,7 @@ class SpatialRenderingRuntime implements RenderingRuntime {
     private final ImpressApi mImpressApi;
     private SplitEngineSubspaceManager mSplitEngineSubspaceManager;
     private ImpSplitEngineRenderer mSplitEngineRenderer;
-    private boolean mIsDisposed = false;
+    private boolean mIsDestroyed = false;
     private boolean mFrameLoopStarted;
 
     private SpatialRenderingRuntime(
@@ -1075,8 +1075,8 @@ class SpatialRenderingRuntime implements RenderingRuntime {
     }
 
     @Override
-    public void dispose() {
-        if (mIsDisposed) {
+    public void destroy() {
+        if (mIsDestroyed) {
             return;
         }
 
@@ -1090,7 +1090,7 @@ class SpatialRenderingRuntime implements RenderingRuntime {
             mSplitEngineSubspaceManager = null;
             mSplitEngineRenderer = null;
         }
-        mIsDisposed = true;
+        mIsDestroyed = true;
     }
 
     @VisibleForTesting

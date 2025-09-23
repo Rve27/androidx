@@ -1991,7 +1991,6 @@ package androidx.xr.scenecore.internal {
     method public void destroyKhronosPbrMaterial(androidx.xr.scenecore.internal.MaterialResource material);
     method public void destroyTexture(androidx.xr.scenecore.internal.TextureResource texture);
     method public void destroyWaterMaterial(androidx.xr.scenecore.internal.MaterialResource material);
-    method public void dispose();
     method public androidx.xr.scenecore.internal.TextureResource? getReflectionTextureFromIbl(androidx.xr.scenecore.internal.ExrImageResource iblToken);
     method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.internal.ExrImageResource> loadExrImageByAssetName(String assetName);
     method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.internal.ExrImageResource> loadExrImageByByteArray(byte[] assetData, String assetKey);
@@ -2110,7 +2109,6 @@ package androidx.xr.scenecore.internal {
     method public androidx.xr.scenecore.internal.PointerCaptureComponent createPointerCaptureComponent(java.util.concurrent.Executor executor, androidx.xr.scenecore.internal.PointerCaptureComponent.StateListener stateListener, androidx.xr.scenecore.internal.InputEventListener inputListener);
     method public androidx.xr.scenecore.internal.ResizableComponent createResizableComponent(androidx.xr.scenecore.internal.Dimensions minimumSize, androidx.xr.scenecore.internal.Dimensions maximumSize);
     method public androidx.xr.scenecore.internal.SpatialPointerComponent createSpatialPointerComponent();
-    method public void dispose();
     method public void enablePanelDepthTest(boolean enabled);
     method @InaccessibleFromKotlin public androidx.xr.scenecore.internal.ActivitySpace getActivitySpace();
     method @InaccessibleFromKotlin public androidx.xr.scenecore.internal.AudioTrackExtensionsWrapper getAudioTrackExtensionsWrapper();

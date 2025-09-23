@@ -80,8 +80,8 @@ public class InteractableComponentImplTest {
 
     @After
     public void tearDown() {
-        // Dispose the runtime between test cases to clean up lingering references.
-        mFakeRuntime.dispose();
+        // Destroy the runtime between test cases to clean up lingering references.
+        mFakeRuntime.destroy();
     }
 
     private Entity createTestEntity() {

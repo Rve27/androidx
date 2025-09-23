@@ -591,7 +591,6 @@ package androidx.xr.scenecore.testing {
     method public void destroyKhronosPbrMaterial(androidx.xr.scenecore.internal.MaterialResource material);
     method public void destroyTexture(androidx.xr.scenecore.internal.TextureResource texture);
     method public void destroyWaterMaterial(androidx.xr.scenecore.internal.MaterialResource material);
-    method public void dispose();
     method @InaccessibleFromKotlin public java.util.List<androidx.xr.scenecore.testing.FakeRenderingRuntime.FakeKhronosPbrMaterial> getCreatedKhronosPbrMaterials();
     method @InaccessibleFromKotlin public java.util.List<androidx.xr.scenecore.testing.FakeRenderingRuntime.FakeWaterMaterial> getCreatedWaterMaterials();
     method public androidx.xr.scenecore.internal.TextureResource? getReflectionTextureFromIbl(androidx.xr.scenecore.internal.ExrImageResource iblToken);
@@ -888,7 +887,6 @@ package androidx.xr.scenecore.testing {
     method public androidx.xr.scenecore.internal.SpatialPointerComponent createSpatialPointerComponent();
     method public androidx.xr.scenecore.internal.SubspaceNodeEntity createSubspaceNodeEntity(androidx.xr.scenecore.internal.SubspaceNodeFeature feature);
     method public androidx.xr.scenecore.internal.SurfaceEntity createSurfaceEntity(androidx.xr.scenecore.internal.SurfaceFeature feature, androidx.xr.runtime.math.Pose pose, androidx.xr.scenecore.internal.Entity parentEntity);
-    method public void dispose();
     method public void enablePanelDepthTest(boolean enabled);
     method @InaccessibleFromKotlin public androidx.xr.scenecore.internal.ActivitySpace getActivitySpace();
     method @InaccessibleFromKotlin public androidx.xr.scenecore.internal.AudioTrackExtensionsWrapper getAudioTrackExtensionsWrapper();

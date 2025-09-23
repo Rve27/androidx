@@ -639,7 +639,4 @@ public interface RenderingRuntime : JxrRuntime {
 
     /** Stops the renderer. */
     public fun stopRenderer()
-
-    /** Disposes of the resources used by this runtime. */
-    public fun dispose()
 }
