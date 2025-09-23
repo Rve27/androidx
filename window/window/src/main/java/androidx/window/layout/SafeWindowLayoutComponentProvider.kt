@@ -35,7 +35,6 @@ import androidx.window.reflection.WindowExtensionsConstants.FOLDING_FEATURE_CLAS
 import androidx.window.reflection.WindowExtensionsConstants.JAVA_CONSUMER
 import androidx.window.reflection.WindowExtensionsConstants.SUPPORTED_WINDOW_FEATURES_CLASS
 import androidx.window.reflection.WindowExtensionsConstants.WINDOW_CONSUMER
-import androidx.window.reflection.WindowExtensionsConstants.WINDOW_LAYOUT_BUILDER_CLASS
 import androidx.window.reflection.WindowExtensionsConstants.WINDOW_LAYOUT_CLASS
 import androidx.window.reflection.WindowExtensionsConstants.WINDOW_LAYOUT_COMPONENT_CLASS
 import java.lang.reflect.ParameterizedType
@@ -284,6 +283,7 @@ internal class SafeWindowLayoutComponentProvider(
 
     private val windowLayoutInfoBuilderClass: Class<*>
         get() {
-            return loader.loadClass(WINDOW_LAYOUT_BUILDER_CLASS)
+            val runtimeClassName = WINDOW_LAYOUT_CLASS + "\$Builder"
+            return loader.loadClass(runtimeClassName)
         }
 }
