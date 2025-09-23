@@ -32,6 +32,7 @@ import io.reactivex.Single
 import io.reactivex.SingleEmitter
 import io.reactivex.SingleOnSubscribe
 import io.reactivex.subjects.BehaviorSubject
+import kotlinx.coroutines.test.StandardTestDispatcher
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -48,7 +49,7 @@ class RxJava2AdapterTest(private val factory: () -> Stream) {
             arrayOf(ObservableStream(), FlowableStream(), SingleStream(), MaybeStream())
     }
 
-    @get:Rule val rule = createComposeRule()
+    @get:Rule val rule = createComposeRule(StandardTestDispatcher())
 
     @Test
     fun whenValueIsNotSetWeGotNull() {

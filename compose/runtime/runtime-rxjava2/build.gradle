@@ -34,7 +34,6 @@ androidXMultiplatform {
     androidLibrary {
         compileSdk = 35
         namespace = "androidx.compose.runtime.rxjava2"
-        lint.disable += "ComposeTestRuleDispatcher"
     }
     desktop()
 
