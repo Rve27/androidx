@@ -16,6 +16,7 @@
 
 package androidx.compose.material3
 
+import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
@@ -52,7 +53,6 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.screenshot.AndroidXScreenshotTestRule
 import kotlinx.coroutines.test.StandardTestDispatcher
 import org.junit.After
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -135,7 +135,6 @@ class SwitchScreenshotTest {
     }
 
     @Test
-    @Ignore("b/355413615")
     fun switchTest_pressed() {
         rule.setMaterialContent(lightColorScheme()) {
             Box(wrapperModifier) { Switch(checked = false, enabled = true, onCheckedChange = {}) }
@@ -147,7 +146,11 @@ class SwitchScreenshotTest {
         // synchronization. Instead just wait until after the ripples are finished animating.
         Thread.sleep(300)
 
-        assertToggeableAgainstGolden("switch_pressed")
+        if (SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            assertToggeableAgainstGolden("switch_pressed_post_api_34")
+        } else {
+            assertToggeableAgainstGolden("switch_pressed")
+        }
     }
 
     @Test
