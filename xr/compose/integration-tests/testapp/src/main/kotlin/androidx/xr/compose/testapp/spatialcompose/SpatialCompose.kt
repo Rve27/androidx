@@ -86,6 +86,7 @@ import androidx.xr.compose.subspace.layout.SpatialAlignment
 import androidx.xr.compose.subspace.layout.SpatialArrangement
 import androidx.xr.compose.subspace.layout.SpatialRoundedCornerShape
 import androidx.xr.compose.subspace.layout.SubspaceModifier
+import androidx.xr.compose.subspace.layout.alpha
 import androidx.xr.compose.subspace.layout.aspectRatio
 import androidx.xr.compose.subspace.layout.depth
 import androidx.xr.compose.subspace.layout.fillMaxHeight
@@ -289,10 +290,16 @@ class SpatialCompose : ComponentActivity() {
     @Composable
     fun AppPanel(modifier: SubspaceModifier = SubspaceModifier, text: String = "") {
         var moveResizeLocked by remember { mutableStateOf(true) }
+        var alpha by remember { mutableFloatStateOf(1f) }
         SpatialPanel(
-            modifier = modifier.testTag(text),
+            modifier = modifier.testTag(text).alpha(alpha),
             dragPolicy = MovePolicy(isEnabled = !moveResizeLocked),
-            resizePolicy = ResizePolicy(isEnabled = !moveResizeLocked),
+            resizePolicy =
+                ResizePolicy(
+                    isEnabled = !moveResizeLocked,
+                    onResizeStart = { alpha = 0f },
+                    onResizeEnd = { alpha = 1f }, // setting the alpha here.. no pop!
+                ),
         ) {
             PanelContent { Text(text) }
 
