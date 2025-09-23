@@ -309,6 +309,8 @@ package android.support.v4.media.session {
     method @Deprecated public final androidx.media.MediaSessionManager.RemoteUserInfo getCurrentControllerInfo();
     method @Deprecated public Object! getMediaSession();
     method @Deprecated public Object! getRemoteControlClient();
+    method @Deprecated public static android.graphics.Bitmap! getScaledBitmap(android.graphics.Bitmap!);
+    method @Deprecated public static android.graphics.Bitmap! getScaledBitmap(android.graphics.Bitmap!, int);
     method @Deprecated public android.support.v4.media.session.MediaSessionCompat.Token! getSessionToken();
     method @Deprecated public boolean isActive();
     method @Deprecated public void release();

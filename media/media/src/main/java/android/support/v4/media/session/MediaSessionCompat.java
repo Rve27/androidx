@@ -30,6 +30,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.MediaDescription;
@@ -462,6 +463,46 @@ public class MediaSessionCompat {
      */
     public static int getBitmapDimensionLimit() {
         return MediaMetadataBitmapMaxSizeHolder.value;
+    }
+
+    /**
+     * Scales down the given bitmap if its width or height exceeds the limit returned by
+     * {@link #getBitmapDimensionLimit()}. The bitmap will be scaled to fit within the limit
+     * while maintaining its aspect ratio. On API 31+, the returned bitmap will be a shared
+     * bitmap.
+     *
+     * @param bitmap The bitmap to potentially scale.
+     * @return The original bitmap if it's within the dimension limit, or a scaled-down version.
+     * @see #getBitmapDimensionLimit()
+     */
+    public static Bitmap getScaledBitmap(Bitmap bitmap) {
+        return getScaledBitmap(bitmap, getBitmapDimensionLimit());
+    }
+
+    /**
+     * Scales down the given bitmap if its width or height exceeds either the provided
+     * {@code dimensionLimit} or the limit returned by {@link #getBitmapDimensionLimit()}.
+     * The bitmap will be scaled to fit within that limit while maintaining its aspect ratio.
+     * On API 31+, the returned bitmap will be a shared bitmap.
+     *
+     * @param bitmap The bitmap to potentially scale.
+     * @param dimensionLimit The maximum allowed width or height for the bitmap.
+     * @return The original bitmap if it's within the dimension limit, or a scaled-down version.
+     */
+    public static Bitmap getScaledBitmap(Bitmap bitmap, int dimensionLimit) {
+        int limit = Math.min(getBitmapDimensionLimit(), dimensionLimit);
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+        if (width > limit || height > limit) {
+            float scale = Math.min((float) limit / width, (float) limit / height);
+            width = (int)(width * scale);
+            height = (int)(height * scale);
+            bitmap = Bitmap.createScaledBitmap(bitmap, width, height, /* filter= */ true);
+        }
+        if (Build.VERSION.SDK_INT >= 31) {
+            return bitmap.asShared();
+        }
+        return bitmap;
     }
 
     /**
