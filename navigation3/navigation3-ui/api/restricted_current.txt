@@ -35,10 +35,7 @@ package androidx.navigation3.scene {
   }
 
   public final class SceneSetupNavEntryDecoratorKt {
-    method public static <T> androidx.navigation3.runtime.NavEntryDecorator<T> SceneSetupNavEntryDecorator();
     method @InaccessibleFromKotlin public static androidx.compose.runtime.ProvidableCompositionLocal<java.util.Set<java.lang.Object>> getLocalEntriesToRenderInCurrentScene();
-    method @KotlinOnly @androidx.compose.runtime.Composable public static <T> androidx.navigation3.runtime.NavEntryDecorator<T> rememberSceneSetupNavEntryDecorator();
-    method @BytecodeOnly @androidx.compose.runtime.Composable public static <T> androidx.navigation3.runtime.NavEntryDecorator<T!> rememberSceneSetupNavEntryDecorator(androidx.compose.runtime.Composer?, int);
     property public static androidx.compose.runtime.ProvidableCompositionLocal<java.util.Set<java.lang.Object>> LocalEntriesToRenderInCurrentScene;
   }
 

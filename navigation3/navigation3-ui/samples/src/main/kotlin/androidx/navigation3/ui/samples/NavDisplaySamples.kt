@@ -73,7 +73,6 @@ import androidx.navigation3.runtime.samples.Profile
 import androidx.navigation3.runtime.samples.ProfileViewModel
 import androidx.navigation3.runtime.samples.Scrollable
 import androidx.navigation3.scene.Scene
-import androidx.navigation3.scene.rememberSceneSetupNavEntryDecorator
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import androidx.navigation3.ui.NavDisplay
 import androidx.navigationevent.NavigationEvent
@@ -88,7 +87,6 @@ fun SceneNav() {
         backStack = backStack,
         entryDecorators =
             listOf(
-                rememberSceneSetupNavEntryDecorator(),
                 rememberSavedStateNavEntryDecorator(),
                 rememberViewModelStoreNavEntryDecorator(),
             ),
@@ -173,7 +171,6 @@ fun SceneNavSharedEntrySample() {
                 entryDecorators =
                     listOf(
                         sharedEntryInSceneNavEntryDecorator,
-                        rememberSceneSetupNavEntryDecorator(),
                         rememberSavedStateNavEntryDecorator(),
                     ),
                 entryProvider =

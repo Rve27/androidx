@@ -47,7 +47,6 @@ import androidx.navigation3.runtime.navEntryDecorator
 import androidx.navigation3.runtime.rememberSavedStateNavEntryDecorator
 import androidx.navigation3.scene.Scene
 import androidx.navigation3.scene.SceneStrategy
-import androidx.navigation3.scene.rememberSceneSetupNavEntryDecorator
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.compose.serialization.serializers.SnapshotStateListSerializer
@@ -120,7 +119,6 @@ fun HierarchicalSceneSample() {
                     entryDecorators =
                         listOf(
                             sharedEntryInSceneNavEntryDecorator,
-                            rememberSceneSetupNavEntryDecorator(),
                             rememberSavedStateNavEntryDecorator(),
                         ),
                     sceneStrategy = sceneStrategy,
