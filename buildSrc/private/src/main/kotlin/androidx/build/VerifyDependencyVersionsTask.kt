@@ -206,6 +206,7 @@ internal fun Project.shouldVerifyConfiguration(configuration: Configuration): Bo
     if (name == "metalava") return false
     if (name.startsWith("kotlinBuild")) return false
     if (name.startsWith("kotlinCompiler")) return false
+    if (name.startsWith("kotlinKaptWorkerDependencies")) return false
     if (name.startsWith("kotlinKlib")) return false
     if (name.startsWith("kapt")) return false
     if (name.startsWith("ksp")) return false
