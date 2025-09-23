@@ -249,6 +249,25 @@ class RemoteColorTest {
     }
 
     @Test
+    fun copy() {
+        val a = RemoteColor.fromARGB(1f.rf, 1f.rf, 1f.rf, 1f.rf)
+        val aAlpha = a.copy(alpha = 0f.rf)
+        val aRed = a.copy(red = 0f.rf)
+        val aGreen = a.copy(green = 0f.rf)
+        val aBlue = a.copy(blue = 0f.rf)
+        val resultIdAlpha = aAlpha.getIdForCreationState(creationState)
+        val resultIdRed = aRed.getIdForCreationState(creationState)
+        val resultIdGreen = aGreen.getIdForCreationState(creationState)
+        val resultIdBlue = aBlue.getIdForCreationState(creationState)
+        makeAndPaintCoreDocument()
+
+        assertThat(context.getColor(resultIdAlpha)).isEqualTo(Color.argb(0, 255, 255, 255))
+        assertThat(context.getColor(resultIdRed)).isEqualTo(Color.argb(255, 0, 255, 255))
+        assertThat(context.getColor(resultIdGreen)).isEqualTo(Color.argb(255, 255, 0, 255))
+        assertThat(context.getColor(resultIdBlue)).isEqualTo(Color.argb(255, 255, 255, 0))
+    }
+
+    @Test
     fun evaluateIfConstant_constant() {
         val a =
             RemoteColor.fromARGB(
