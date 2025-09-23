@@ -490,9 +490,11 @@ class NotesFunctions : CreateNoteAppFunction {
     override suspend fun createNote(
         appFunctionContext: AppFunctionContext,
         parameters: CreateNoteAppFunction.Parameters,
+        tag: String?,
     ): CreateNoteAppFunction.Response {
         return CreateNoteAppFunction.Response(
-            AppFunctionNote(id = "testId", title = parameters.title)
+            AppFunctionNote(id = "testId", title = parameters.title),
+            tag = tag,
         )
     }
 }
