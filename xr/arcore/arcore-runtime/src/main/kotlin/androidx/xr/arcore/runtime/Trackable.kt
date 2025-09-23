@@ -14,24 +14,21 @@
  * limitations under the License.
  */
 
-package androidx.xr.arcore.internal
+package androidx.xr.arcore.runtime
 
 import androidx.annotation.RestrictTo
-import androidx.xr.arcore.EyeStatus
+import androidx.xr.runtime.TrackingState
 import androidx.xr.runtime.math.Pose
 
-/** Describes a user's eye information with coarse and fine precision. */
+/** A trackable is something can be tracked in space and that an [Anchor] can be attached to. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public interface Eye {
-    /** The status of the eye with coarse accuracy */
-    public val coarseStatus: EyeStatus?
+public interface Trackable {
+    /**
+     * Creates an [Anchor] that is attached to this trackable, using the given initial [pose] in the
+     * world coordinate space.
+     */
+    public fun createAnchor(pose: Pose): Anchor
 
-    /** The eye's pose with coarse accuracy */
-    public val coarsePose: Pose?
-
-    /** The status of the eye with fine accuracy */
-    public val fineStatus: EyeStatus?
-
-    /** the eye's pose with fine accuracy */
-    public val finePose: Pose?
+    /** The [androidx.xr.runtime.TrackingState] of this trackable. */
+    public val trackingState: TrackingState
 }

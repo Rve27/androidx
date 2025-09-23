@@ -14,15 +14,19 @@
  * limitations under the License.
  */
 
-package androidx.xr.arcore.internal
+package androidx.xr.arcore.runtime
 
 import androidx.annotation.RestrictTo
-import androidx.xr.runtime.math.Pose
 
-/** Describes the AR device tracking data */
+/** Enum indicating whether an eye is open (gazing) or shut. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public interface ArDevice {
-
-    /** The current pose of the device. */
-    public val devicePose: Pose
+public class EyeStatus(private val value: Int) {
+    public companion object {
+        /** Value indicating information about the eye is unavailable, or invalid. */
+        @JvmField public val INVALID: EyeStatus = EyeStatus(0)
+        /** Value indicating the eye is open and looking at something. */
+        @JvmField public val GAZING: EyeStatus = EyeStatus(1)
+        /** Value indicating the eye is closed and not looking at something. */
+        @JvmField public val SHUT: EyeStatus = EyeStatus(2)
+    }
 }

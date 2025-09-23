@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.xr.arcore.internal
+package androidx.xr.arcore.runtime
 
 import androidx.annotation.RestrictTo
-import androidx.xr.arcore.HandJointType
 import androidx.xr.runtime.TrackingState
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Quaternion
@@ -62,7 +61,7 @@ public interface Hand {
         }
     }
 
-    /** The current [TrackingState] of the hand's data. */
+    /** The current [androidx.xr.runtime.TrackingState] of the hand's data. */
     public val trackingState: TrackingState
 
     /** The value describing the data of the hand, including trackingState and handJoints' poses. */

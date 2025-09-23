@@ -14,18 +14,23 @@
  * limitations under the License.
  */
 
-package androidx.xr.arcore.internal
+package androidx.xr.arcore.runtime
 
-import android.os.IBinder
 import androidx.annotation.RestrictTo
+import androidx.xr.runtime.math.Pose
 
-/** Wraps the minimum necessary information to export an anchor to another Jetpack XR module. */
+/** Describes a user's eye information with coarse and fine precision. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public interface ExportableAnchor : Anchor {
-    /* nativePointer to the [XrSpace] instance that backs this anchor */
-    public val nativePointer: Long
+public interface Eye {
+    /** The status of the eye with coarse accuracy */
+    public val coarseStatus: EyeStatus?
 
-    /* anchorToken is a Binder reference of the anchor, it can be used to import the anchor by an
-     * OpenXR session. */
-    public val anchorToken: IBinder
+    /** The eye's pose with coarse accuracy */
+    public val coarsePose: Pose?
+
+    /** The status of the eye with fine accuracy */
+    public val fineStatus: EyeStatus?
+
+    /** the eye's pose with fine accuracy */
+    public val finePose: Pose?
 }

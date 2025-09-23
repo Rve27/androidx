@@ -1636,7 +1636,7 @@ package androidx.xr.scenecore.internal {
     method public androidx.xr.scenecore.internal.TextureResource? borrowReflectionTexture();
     method public void clearSpatialVisibilityChangedListener();
     method public androidx.xr.scenecore.internal.ActivityPanelEntity createActivityPanelEntity(androidx.xr.runtime.math.Pose pose, androidx.xr.scenecore.internal.PixelDimensions windowBoundsPx, String name, android.app.Activity hostActivity, androidx.xr.scenecore.internal.Entity parent);
-    method public androidx.xr.scenecore.internal.AnchorEntity createAnchorEntity(androidx.xr.arcore.internal.Anchor anchor);
+    method public androidx.xr.scenecore.internal.AnchorEntity createAnchorEntity(androidx.xr.arcore.runtime.Anchor anchor);
     method public androidx.xr.scenecore.internal.AnchorEntity createAnchorEntity(androidx.xr.scenecore.internal.Dimensions bounds, androidx.xr.scenecore.internal.PlaneType planeType, androidx.xr.scenecore.internal.PlaneSemantic planeSemantic, java.time.Duration searchTimeout);
     method public androidx.xr.scenecore.internal.AnchorPlacement createAnchorPlacementForPlanes(java.util.Set<androidx.xr.scenecore.internal.PlaneType> planeTypeFilter, java.util.Set<androidx.xr.scenecore.internal.PlaneSemantic> planeSemanticFilter);
     method public androidx.xr.scenecore.internal.GltfEntity createGltfEntity(androidx.xr.runtime.math.Pose pose, androidx.xr.scenecore.internal.GltfModelResource loadedGltf, androidx.xr.scenecore.internal.Entity parentEntity);
@@ -2096,7 +2096,7 @@ package androidx.xr.scenecore.internal {
     method public void addSpatialCapabilitiesChangedListener(java.util.concurrent.Executor callbackExecutor, java.util.function.Consumer<androidx.xr.scenecore.internal.SpatialCapabilities> listener);
     method public void clearSpatialVisibilityChangedListener();
     method public androidx.xr.scenecore.internal.ActivityPanelEntity createActivityPanelEntity(androidx.xr.runtime.math.Pose pose, androidx.xr.scenecore.internal.PixelDimensions windowBoundsPx, String name, android.app.Activity hostActivity, androidx.xr.scenecore.internal.Entity parent);
-    method public androidx.xr.scenecore.internal.AnchorEntity createAnchorEntity(androidx.xr.arcore.internal.Anchor anchor);
+    method public androidx.xr.scenecore.internal.AnchorEntity createAnchorEntity(androidx.xr.arcore.runtime.Anchor anchor);
     method public androidx.xr.scenecore.internal.AnchorEntity createAnchorEntity(androidx.xr.scenecore.internal.Dimensions bounds, androidx.xr.scenecore.internal.PlaneType planeType, androidx.xr.scenecore.internal.PlaneSemantic planeSemantic, java.time.Duration searchTimeout);
     method public androidx.xr.scenecore.internal.AnchorPlacement createAnchorPlacementForPlanes(java.util.Set<androidx.xr.scenecore.internal.PlaneType> planeTypeFilter, java.util.Set<androidx.xr.scenecore.internal.PlaneSemantic> planeSemanticFilter);
     method public androidx.xr.scenecore.internal.Entity createGroupEntity(androidx.xr.runtime.math.Pose pose, String name, androidx.xr.scenecore.internal.Entity parent);
