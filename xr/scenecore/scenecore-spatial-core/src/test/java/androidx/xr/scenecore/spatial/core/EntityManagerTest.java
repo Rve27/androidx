@@ -121,8 +121,8 @@ public class EntityManagerTest {
 
     @After
     public void tearDown() {
-        // Dispose the runtime between test cases to clean up lingering references.
-        mSpatialSceneRuntime.dispose();
+        // Destroy the runtime between test cases to clean up lingering references.
+        mSpatialSceneRuntime.destroy();
     }
 
     @Test

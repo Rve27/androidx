@@ -181,13 +181,8 @@ public class SpatialSceneRuntimeTest {
 
     @After
     public void tearDown() {
-        // Dispose the runtime between test cases to clean up lingering references.
-        try {
-            mRuntime.dispose();
-        } catch (NullPointerException e) {
-            // Tests which already call dispose will cause a NPE here due to Activity being null
-            // when detaching from the scene.
-        }
+        // Destroy the runtime between test cases to clean up lingering references.
+        mRuntime.destroy();
         mRuntime = null;
     }
 
@@ -911,7 +906,7 @@ public class SpatialSceneRuntimeTest {
     }
 
     @Test
-    public void dispose_closesSpatialVisibilityAndPerceivedResolutionSubscription() {
+    public void destroy_closesSpatialVisibilityAndPerceivedResolutionSubscription() {
         @SuppressWarnings(value = "unchecked")
         Consumer<SpatialVisibility> mockSpatialVisListener =
                 (Consumer<SpatialVisibility>) mock(Consumer.class);
@@ -931,8 +926,8 @@ public class SpatialSceneRuntimeTest {
         verify(mockSpatialVisListener).accept(any());
         verify(mockPerceivedResListener).accept(any());
 
-        // Ensure dispose() clears the listener that the callbacks are not called a second time.
-        mRuntime.dispose();
+        // Ensure destroy() clears the listener that the callbacks are not called a second time.
+        mRuntime.destroy();
 
         assertThat(mRuntime.mIsExtensionVisibilityStateCallbackRegistered).isFalse();
 
@@ -2496,12 +2491,12 @@ public class SpatialSceneRuntimeTest {
     }
 
     @Test
-    public void dispose_clearsResources() {
+    public void destroy_clearsResources() {
         AndroidXrEntity entity = (AndroidXrEntity) createGroupEntity();
         assertThat(entity.getNode()).isNotNull();
         assertThat(mNodeRepository.getParent(entity.getNode())).isNotNull();
 
-        mRuntime.dispose();
+        mRuntime.destroy();
 
         assertThat(mNodeRepository.getParent(entity.getNode())).isNull();
         assertThat(ShadowXrExtensions.extract(mXrExtensions).getSpatialStateCallback(mActivity))
