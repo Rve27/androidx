@@ -162,8 +162,44 @@ internal class SavedStateEncoder(
     override val serializersModule
         get() = configuration.serializersModule
 
-    override fun shouldEncodeElementDefault(descriptor: SerialDescriptor, index: Int): Boolean {
-        return configuration.encodeDefaults
+    override fun shouldEncodeElementDefault(descriptor: SerialDescriptor, index: Int): Boolean =
+        configuration.encodeDefaults
+
+    override fun beginStructure(descriptor: SerialDescriptor): CompositeEncoder {
+        // We flatten single structured object at root to prevent encoding to a
+        // SavedState containing only one SavedState inside. For example, a
+        // `Pair(3, 5)` would become `{"first" = 3, "second" = 5}` instead of
+        // `{{"first" = 3, "second" = 5}}`, which is more consistent but less
+        // efficient.
+        return if (key == "") {
+            putClassDiscriminatorIfRequired(configuration, descriptor, savedState)
+            this
+        } else {
+            val childState = savedState()
+            savedState.write { putSavedState(key, childState) } // Link child to parent.
+            putClassDiscriminatorIfRequired(configuration, descriptor, childState)
+            SavedStateEncoder(childState, configuration)
+        }
+    }
+
+    @OptIn(ExperimentalSerializationApi::class)
+    private fun putClassDiscriminatorIfRequired(
+        configuration: SavedStateConfiguration,
+        descriptor: SerialDescriptor,
+        savedState: SavedState,
+    ) {
+        // POLYMORPHIC is handled by kotlinx.serialization.PolymorphicSerializer.
+        if (configuration.classDiscriminatorMode != ClassDiscriminatorMode.ALL_OBJECTS) {
+            return
+        }
+
+        if (savedState.read { contains(CLASS_DISCRIMINATOR_KEY) }) {
+            return
+        }
+
+        if (descriptor.kind == StructureKind.CLASS || descriptor.kind == StructureKind.OBJECT) {
+            savedState.write { putString(CLASS_DISCRIMINATOR_KEY, descriptor.serialName) }
+        }
     }
 
     override fun encodeElement(descriptor: SerialDescriptor, index: Int): Boolean {
@@ -235,43 +271,6 @@ internal class SavedStateEncoder(
 
     override fun encodeNull() {
         savedState.write { putNull(key) }
-    }
-
-    override fun beginStructure(descriptor: SerialDescriptor): CompositeEncoder {
-        // We flatten single structured object at root to prevent encoding to a
-        // SavedState containing only one SavedState inside. For example, a
-        // `Pair(3, 5)` would become `{"first" = 3, "second" = 5}` instead of
-        // `{{"first" = 3, "second" = 5}}`, which is more consistent but less
-        // efficient.
-        return if (key == "") {
-            putClassDiscriminatorIfRequired(configuration, descriptor, savedState)
-            this
-        } else {
-            val childState = savedState()
-            savedState.write { putSavedState(key, childState) } // Link child to parent.
-            putClassDiscriminatorIfRequired(configuration, descriptor, childState)
-            SavedStateEncoder(childState, configuration)
-        }
-    }
-
-    @OptIn(ExperimentalSerializationApi::class)
-    private fun putClassDiscriminatorIfRequired(
-        configuration: SavedStateConfiguration,
-        descriptor: SerialDescriptor,
-        savedState: SavedState,
-    ) {
-        // POLYMORPHIC is handled by kotlinx.serialization.PolymorphicSerializer.
-        if (configuration.classDiscriminatorMode != ClassDiscriminatorMode.ALL_OBJECTS) {
-            return
-        }
-
-        if (savedState.read { contains(CLASS_DISCRIMINATOR_KEY) }) {
-            return
-        }
-
-        if (descriptor.kind == StructureKind.CLASS || descriptor.kind == StructureKind.OBJECT) {
-            savedState.write { putString(CLASS_DISCRIMINATOR_KEY, descriptor.serialName) }
-        }
     }
 
     @Suppress("UNCHECKED_CAST")
