@@ -38,8 +38,8 @@ import android.os.IBinder;
 import android.os.SystemClock;
 
 import androidx.test.rule.GrantPermissionRule;
-import androidx.xr.arcore.internal.Anchor.PersistenceState;
-import androidx.xr.arcore.internal.ExportableAnchor;
+import androidx.xr.arcore.runtime.Anchor.PersistenceState;
+import androidx.xr.arcore.runtime.ExportableAnchor;
 import androidx.xr.runtime.NodeHolder;
 import androidx.xr.runtime.TrackingState;
 import androidx.xr.runtime.math.Matrix4;

@@ -27,7 +27,7 @@ import android.util.Pair;
 import android.view.View;
 
 import androidx.annotation.VisibleForTesting;
-import androidx.xr.arcore.internal.Anchor;
+import androidx.xr.arcore.runtime.Anchor;
 import androidx.xr.runtime.math.Pose;
 import androidx.xr.scenecore.impl.extensions.XrExtensionsProvider;
 import androidx.xr.scenecore.impl.perception.PerceptionLibrary;

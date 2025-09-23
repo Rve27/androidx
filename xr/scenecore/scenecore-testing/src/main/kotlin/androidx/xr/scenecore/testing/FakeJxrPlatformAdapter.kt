@@ -23,7 +23,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.annotation.RequiresApi
 import androidx.annotation.RestrictTo
-import androidx.xr.arcore.internal.Anchor
+import androidx.xr.arcore.runtime.Anchor
 import androidx.xr.runtime.NodeHolder
 import androidx.xr.runtime.SubspaceNodeHolder
 import androidx.xr.runtime.TypeHolder

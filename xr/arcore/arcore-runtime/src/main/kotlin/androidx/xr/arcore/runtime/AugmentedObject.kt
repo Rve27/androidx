@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.xr.arcore.internal
+package androidx.xr.arcore.runtime
 
 import androidx.annotation.RestrictTo
 import androidx.xr.runtime.AugmentedObjectCategory
@@ -24,7 +24,7 @@ import androidx.xr.runtime.math.Pose
 /** Describes an object that's being tracked in the real world. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public interface AugmentedObject : Trackable {
-    /** The [AugmentedObjectCategory] of this tracked object. */
+    /** The [androidx.xr.runtime.AugmentedObjectCategory] of this tracked object. */
     public val category: AugmentedObjectCategory
     /**
      * The [androidx.xr.runtime.math.Pose] determined to represent the center of this object.

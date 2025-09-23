@@ -21,7 +21,7 @@ import android.content.Context
 import android.os.Bundle
 import android.view.View
 import androidx.annotation.RestrictTo
-import androidx.xr.arcore.internal.Anchor
+import androidx.xr.arcore.runtime.Anchor
 import androidx.xr.runtime.SubspaceNodeHolder
 import androidx.xr.runtime.internal.JxrRuntime
 import androidx.xr.runtime.math.Matrix3
@@ -680,10 +680,9 @@ public interface JxrPlatformAdapter : JxrRuntime {
 
     /**
      * A factory function to create an Anchor entity from a {@link
-     * androidx.xr.arcore.internal.Anchor}.
+     * androidx.xr.arcore.runtime.Anchor}.
      *
-     * @param anchor The {@link androidx.xr.arcore.internal.Anchor} to create the Anchor entity
-     *   from.
+     * @param anchor The {@link androidx.xr.arcore.runtime.Anchor} to create the Anchor entity from.
      */
     public fun createAnchorEntity(anchor: Anchor): AnchorEntity
 
