@@ -101,6 +101,10 @@ final class SurfaceEntityImpl extends BaseRenderingEntity implements SurfaceEnti
         return mSurfaceFeature.getStereoMode();
     }
 
+    public void setColliderEnabled(boolean enableCollider) {
+        mSurfaceFeature.setColliderEnabled(enableCollider);
+    }
+
     @Override
     public void setPrimaryAlphaMaskTexture(@Nullable TextureResource alphaMask) {
         mSurfaceFeature.setPrimaryAlphaMaskTexture(alphaMask);

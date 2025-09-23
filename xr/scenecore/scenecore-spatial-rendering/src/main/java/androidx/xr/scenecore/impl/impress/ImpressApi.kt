@@ -333,6 +333,26 @@ public interface ImpressApi {
     public fun setStereoSurfaceEntityCanvasShapeHemisphere(impressNode: ImpressNode, radius: Float)
 
     /**
+     * Dynamically enables or disables the collider for the StereoSurfaceEntity.
+     *
+     * The shape of the collider is determined by the canvas shape:
+     * - Quad -> BoxCollider
+     * - Sphere -> SphereCollider
+     * - Hemisphere -> MeshCollider
+     *
+     * Enabling the collider will cause the cursor to be visible when the User hovers over the
+     * Entity and will allow for the Entity to receive input events. It will also block input for
+     * objects behind it.
+     *
+     * @param impressNode The Impress node which hosts the StereoSurfaceEntity to be updated.
+     * @param enableCollider True to enable the collider, false to disable it.
+     */
+    public fun setStereoSurfaceEntityColliderEnabled(
+        impressNode: ImpressNode,
+        enableCollider: Boolean,
+    )
+
+    /**
      * Updates the StereoMode for an impress node hosting a StereoSurface.
      *
      * @param panelImpressNode The Impress node which hosts the panel to be updated.
