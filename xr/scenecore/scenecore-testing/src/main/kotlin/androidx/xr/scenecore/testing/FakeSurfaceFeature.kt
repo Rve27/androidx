@@ -100,6 +100,23 @@ public class FakeSurfaceFeature(nodeHolder: NodeHolder<*>) :
     public var primaryAlphaMask: TextureResource? = null
         private set
 
+    private var _colliderEnabled: Boolean = false
+
+    /**
+     * Sets whether the collider is enabled.
+     *
+     * @param enableCollider Whether the collider is enabled.
+     */
+    override fun setColliderEnabled(enableCollider: Boolean) {
+        mockSurfaceFeature!!.setColliderEnabled(enableCollider)
+        _colliderEnabled = enableCollider
+    }
+
+    /** For test purposes only. Represents the result of [setColliderEnabled]. */
+    public fun getColliderEnabled(): Boolean {
+        return _colliderEnabled
+    }
+
     /**
      * The texture to be composited into the alpha channel of the surface. If null, the alpha mask
      * will be disabled.
