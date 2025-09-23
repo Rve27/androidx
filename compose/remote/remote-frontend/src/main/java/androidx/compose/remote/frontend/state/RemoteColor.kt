@@ -151,6 +151,55 @@ internal constructor(
     }
 
     /**
+     * Creates a copy of this [RemoteColor] with the ability to override individual ARGB components.
+     * If a component is not specified, it defaults to the corresponding component of the original
+     * [RemoteColor].
+     *
+     * @param alpha Optional [RemoteFloat] to override the alpha component.
+     * @param red Optional [RemoteFloat] to override the red component.
+     * @param green Optional [RemoteFloat] to override the green component.
+     * @param blue Optional [RemoteFloat] to override the blue component.
+     * @return A new [RemoteColor] with the specified components overridden.
+     */
+    public fun copy(
+        alpha: RemoteFloat? = null,
+        red: RemoteFloat? = null,
+        green: RemoteFloat? = null,
+        blue: RemoteFloat? = null,
+    ): RemoteColor {
+        return RemoteColor(
+            hasConstantValue &&
+                (alpha?.hasConstantValue ?: true) &&
+                (red?.hasConstantValue ?: true) &&
+                (green?.hasConstantValue ?: true) &&
+                (blue?.hasConstantValue ?: true),
+            { creationState ->
+                val internalState = internalStateProvider(creationState)
+                val a = alpha ?: internalState.a
+                val r = red ?: internalState.r
+                val g = green ?: internalState.g
+                val b = blue ?: internalState.b
+                InternalState(
+                    a,
+                    r,
+                    g,
+                    b,
+                    {
+                        creationState.document
+                            .addColorExpression(
+                                a.getFloatIdForCreationState(creationState),
+                                r.getFloatIdForCreationState(creationState),
+                                g.getFloatIdForCreationState(creationState),
+                                b.getFloatIdForCreationState(creationState),
+                            )
+                            .toInt()
+                    },
+                )
+            },
+        )
+    }
+
+    /**
      * If this [RemoteColor] represents a constant value, then this method evaluates it and returns
      * it, otherwise it returns null.
      */
