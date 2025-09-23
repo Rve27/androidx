@@ -45,6 +45,8 @@ class InteractableComponentImpl implements InteractableComponent {
         mEntity = entity;
         if (entity instanceof GltfEntityImpl) {
             ((GltfEntityImpl) entity).setColliderEnabled(true);
+        } else if (entity instanceof SurfaceEntityImpl) {
+            ((SurfaceEntityImpl) entity).setColliderEnabled(true);
         }
         // InputEvent type translation happens here.
         entity.addInputEventListener(mExecutor, mConsumer);
@@ -55,6 +57,8 @@ class InteractableComponentImpl implements InteractableComponent {
     public void onDetach(@NonNull Entity entity) {
         if (entity instanceof GltfEntityImpl) {
             ((GltfEntityImpl) entity).setColliderEnabled(false);
+        } else if (entity instanceof SurfaceEntityImpl) {
+            ((SurfaceEntityImpl) entity).setColliderEnabled(false);
         }
         entity.removeInputEventListener(mConsumer);
         mEntity = null;

@@ -63,6 +63,13 @@ public interface SurfaceFeature : RenderingFeature {
     public val surface: Surface
 
     /**
+     * Sets whether the collider is enabled.
+     *
+     * @param enableCollider Whether the collider is enabled.
+     */
+    public fun setColliderEnabled(enableCollider: Boolean)
+
+    /**
      * The texture to be composited into the alpha channel of the surface. If null, the alpha mask
      * will be disabled.
      *
