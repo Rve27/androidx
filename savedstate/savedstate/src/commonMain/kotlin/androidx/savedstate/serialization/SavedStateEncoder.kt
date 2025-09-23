@@ -171,24 +171,26 @@ internal class SavedStateEncoder(
         // `@SerialName`. The key for collections will be decimal integer Strings ("0",
         // "1", "2", ...).
         key = descriptor.getElementName(index)
-        checkDiscriminatorCollisions(savedState, key)
 
-        return true
-    }
-
-    private fun checkDiscriminatorCollisions(savedState: SavedState, elementName: String) {
+        // Before proceeding, check if this element's name conflicts with the
+        // key we use for the class discriminator.
         if (configuration.classDiscriminatorMode == ClassDiscriminatorMode.ALL_OBJECTS) {
             val hasClassDiscriminator = savedState.read { contains(CLASS_DISCRIMINATOR_KEY) }
-            val hasConflictingElementName = elementName == CLASS_DISCRIMINATOR_KEY
+            val hasConflictingElementName = key == CLASS_DISCRIMINATOR_KEY
+
             if (hasClassDiscriminator && hasConflictingElementName) {
+                // This is a problem. The object is polymorphic, and one of its
+                // property names is the same as our internal discriminator key.
                 val classDiscriminator = savedState.read { getString(CLASS_DISCRIMINATOR_KEY) }
                 throw IllegalArgumentException(
-                    "SavedStateEncoder for $classDiscriminator has property '$elementName' that " +
+                    "SavedStateEncoder for $classDiscriminator has property '$key' that " +
                         "conflicts with the class discriminator. You can rename a property with " +
                         "@SerialName annotation."
                 )
             }
         }
+
+        return true
     }
 
     override fun encodeBoolean(value: Boolean) {
