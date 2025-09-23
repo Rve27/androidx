@@ -21,7 +21,7 @@ import android.content.Context
 import android.os.Bundle
 import android.view.View
 import androidx.annotation.RestrictTo
-import androidx.xr.arcore.internal.Anchor
+import androidx.xr.arcore.runtime.Anchor
 import androidx.xr.runtime.internal.JxrRuntime
 import androidx.xr.runtime.math.Pose
 import java.time.Duration

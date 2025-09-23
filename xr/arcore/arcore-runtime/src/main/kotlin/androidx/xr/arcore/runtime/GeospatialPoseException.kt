@@ -14,19 +14,16 @@
  * limitations under the License.
  */
 
-package androidx.xr.arcore.internal
+package androidx.xr.arcore.runtime
 
 import androidx.annotation.RestrictTo
-import androidx.xr.runtime.FieldOfView
-import androidx.xr.runtime.math.Pose
 
-/** Describes the View Camera data. */
+/** Custom class for exceptions related to Geospatial Pose APIs. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public interface RenderViewpoint {
+open public class GeospatialPoseException(message: String, cause: Throwable? = null) :
+    Exception(message, cause)
 
-    /** The pose of the view camera. */
-    public val pose: Pose
-
-    /** The field of view of the view camera. */
-    public val fieldOfView: FieldOfView
-}
+/** Earth is not tracking when attempting to create a geospatial pose. */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
+public class GeospatialPoseNotTrackingException(cause: Throwable? = null) :
+    GeospatialPoseException("Unable to create geospatial pose. Earth is not tracking.", cause)

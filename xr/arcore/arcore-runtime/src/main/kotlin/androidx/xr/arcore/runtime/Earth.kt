@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.xr.arcore.internal
+package androidx.xr.arcore.runtime
 
 import androidx.annotation.RestrictTo
-import androidx.xr.arcore.internal.Earth.State.Companion.ERROR_APP_PREEMPTED
 import androidx.xr.runtime.math.GeospatialPose
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Quaternion
@@ -123,15 +122,18 @@ public interface Earth {
     public val state: State
 
     /**
-     * Converts the input [GeospatialPose] to a [androidx.xr.runtime.math.Pose] in the same
-     * position.
+     * Converts the input [androidx.xr.runtime.math.GeospatialPose] to a
+     * [androidx.xr.runtime.math.Pose] in the same position.
      */
     public fun createPoseFromGeospatialPose(geospatialPose: GeospatialPose): Pose
 
-    /** Converts the input [Pose] to a [GeospatialPose] in the same position. */
+    /**
+     * Converts the input [androidx.xr.runtime.math.Pose] to a
+     * [androidx.xr.runtime.math.GeospatialPose] in the same position.
+     */
     public fun createGeospatialPoseFromPose(pose: Pose): GeospatialPoseResult
 
-    /** Returns the [GeospatialPose] for the latest device pose. */
+    /** Returns the [androidx.xr.runtime.math.GeospatialPose] for the latest device pose. */
     public fun createGeospatialPoseFromDevicePose(): GeospatialPoseResult
 
     /**

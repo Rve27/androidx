@@ -20,7 +20,7 @@ package androidx.xr.scenecore
 
 import android.app.Activity
 import androidx.annotation.RestrictTo
-import androidx.xr.arcore.internal.PerceptionRuntime
+import androidx.xr.arcore.runtime.PerceptionRuntime
 import androidx.xr.runtime.SessionConnector
 import androidx.xr.runtime.internal.JxrRuntime
 import androidx.xr.runtime.math.Pose
