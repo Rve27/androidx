@@ -53,6 +53,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.node.ModifierNodeElement
 import androidx.compose.ui.platform.AbstractComposeView
 import androidx.compose.ui.platform.AndroidComposeView
 import androidx.compose.ui.platform.ComposeView
@@ -90,6 +91,7 @@ import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import kotlin.math.roundToInt
 import kotlin.test.assertNotEquals
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.StandardTestDispatcher
 import org.hamcrest.CoreMatchers.instanceOf
@@ -829,6 +831,66 @@ class ComposeViewTest {
         val androidComposeViewContext = composeView.getChildAt(0) as AndroidComposeView
         assertNotEquals(originalComposeViewContext, androidComposeViewContext.composeViewContext)
         assertNotEquals(originalCompositionContext, androidComposeViewContext.compositionContext)
+    }
+
+    @Test
+    fun composeView_coroutineContextChanged() {
+        var onCoroutineContextChangedCalled = false
+        var coroutineScope: CoroutineScope? = null
+
+        class TestNode : Modifier.Node() {
+            override fun onAttach() {
+                coroutineScope = this.coroutineScope
+            }
+
+            override fun onCoroutineContextChanged() {
+                coroutineScope = this.coroutineScope
+                onCoroutineContextChangedCalled = true
+            }
+        }
+        class TestElement : ModifierNodeElement<TestNode>() {
+            override fun create() = TestNode()
+
+            override fun update(node: TestNode) {}
+
+            override fun hashCode(): Int = 0
+
+            override fun equals(other: Any?): Boolean = other is TestElement
+        }
+
+        val composeView =
+            rule.runOnUiThread {
+                ComposeView(rule.activity).also {
+                    it.setContent { Box(Modifier.fillMaxSize() then TestElement()) }
+                }
+            }
+
+        rule.setContent {
+            AndroidView(modifier = Modifier.fillMaxSize(), factory = { composeView })
+        }
+
+        rule.waitUntil { coroutineScope != null }
+
+        val initialCoroutineScope = coroutineScope
+        assertFalse(onCoroutineContextChangedCalled)
+
+        rule.runOnUiThread {
+            val coroutineContext = CoroutineScope(Dispatchers.Main).coroutineContext
+            val recomposer = Recomposer(coroutineContext)
+            val oldComposeViewContext = composeView.findViewTreeComposeViewContext()!!
+            composeView.composeViewContext =
+                ComposeViewContext(
+                    view = composeView,
+                    compositionContext = recomposer,
+                    lifecycleOwner = oldComposeViewContext.lifecycleOwner,
+                    savedStateRegistryOwner = oldComposeViewContext.savedStateRegistryOwner,
+                    viewModelStoreOwner = oldComposeViewContext.viewModelStoreOwner,
+                )
+        }
+
+        rule.waitUntil { onCoroutineContextChangedCalled }
+
+        assertNotEquals(initialCoroutineScope, coroutineScope)
     }
 }
 

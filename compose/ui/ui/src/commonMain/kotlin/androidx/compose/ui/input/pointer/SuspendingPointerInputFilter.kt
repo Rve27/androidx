@@ -600,6 +600,10 @@ internal class SuspendingPointerInputModifierNodeImpl(
         resetPointerInputHandler()
     }
 
+    override fun onCoroutineContextChanged() {
+        resetPointerInputHandler()
+    }
+
     /**
      * This cancels the existing coroutine and essentially resets pointerInputEventHandler's
      * execution. Note, the pointerInputEventHandler still executes lazily, meaning nothing will be
