@@ -107,8 +107,8 @@ public class SpatialRenderingRuntimeTest {
     public void tearDown() {
         // Dispose the runtime between test cases to clean up lingering references.
         try {
-            mRenderingRuntime.dispose();
-            mSceneRuntime.dispose();
+            mRenderingRuntime.destroy();
+            mSceneRuntime.destroy();
         } catch (NullPointerException e) {
             // Tests which already call dispose will cause a NPE here due to Activity being null
             // when detaching from the scene.
@@ -402,7 +402,7 @@ public class SpatialRenderingRuntimeTest {
         assertThat(mFakeImpressApi.getMaterials()).isNotEmpty();
         assertThat(mFakeImpressApi.getImpressNodes()).isNotEmpty();
 
-        mRenderingRuntime.dispose();
+        mRenderingRuntime.destroy();
 
         assertThat(mFakeImpressApi.getImageBasedLightingAssets()).isEmpty();
         assertThat(mFakeImpressApi.getGltfModels()).isEmpty();

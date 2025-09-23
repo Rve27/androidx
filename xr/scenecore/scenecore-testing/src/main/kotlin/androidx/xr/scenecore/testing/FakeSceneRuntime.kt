@@ -405,6 +405,4 @@ public class FakeSceneRuntime(public val executor: Executor? = null) :
 
     override fun createSpatialPointerComponent(): SpatialPointerComponent =
         FakeSpatialPointerComponent()
-
-    override fun dispose() {}
 }

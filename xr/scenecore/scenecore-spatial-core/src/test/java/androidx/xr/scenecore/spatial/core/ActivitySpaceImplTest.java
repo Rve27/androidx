@@ -117,8 +117,8 @@ public final class ActivitySpaceImplTest extends SystemSpaceEntityImplTest {
 
     @After
     public void tearDown() {
-        // Dispose the runtime between test cases to clean up lingering references.
-        mTestRuntime.dispose();
+        // Destroy the runtime between test cases to clean up lingering references.
+        mTestRuntime.destroy();
     }
 
     @Override

@@ -53,8 +53,9 @@ class FakeRenderingRuntimeTest {
 
     @After
     fun tearDown() {
-        renderingRuntime.dispose()
-        sceneRuntime.dispose()
+        // RenderingRuntime must be destroyed first
+        renderingRuntime.destroy()
+        sceneRuntime.destroy()
     }
 
     @Test
