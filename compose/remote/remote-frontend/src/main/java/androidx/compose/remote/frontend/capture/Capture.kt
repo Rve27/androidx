@@ -23,10 +23,12 @@ import androidx.compose.remote.core.Platform
 import androidx.compose.remote.creation.RemoteComposeWriter
 import androidx.compose.remote.creation.RemoteComposeWriterAndroid
 import androidx.compose.remote.creation.profile.Profile
+import androidx.compose.remote.frontend.layout.RemoteComposable
 import androidx.compose.remote.frontend.state.AnimatedRemoteFloat
 import androidx.compose.remote.frontend.state.BaseRemoteState
 import androidx.compose.remote.frontend.state.RemoteFloat
 import androidx.compose.remote.frontend.state.RemoteInt
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.compositionLocalOf
@@ -52,6 +54,8 @@ public open class RemoteComposeCreationState {
         HashMap<BaseRemoteState, FloatArray>()
     public val longArrayCache: HashMap<BaseRemoteState, LongArray> =
         HashMap<BaseRemoteState, LongArray>()
+
+    public val namedState: HashMap<String, BaseRemoteState> = HashMap()
 
     public val time: MutableState<Long> = mutableStateOf(0L)
 
@@ -100,12 +104,46 @@ public open class RemoteComposeCreationState {
         this.profiles = profile.operationsProfiles
         this.document = profile.create(size.width.toInt(), size.height.toInt(), "")
     }
+
+    public open fun <T : BaseRemoteState> getOrCreateNamedState(
+        type: Class<T>,
+        name: String,
+        domain: String,
+        function: () -> T,
+    ): T {
+        return type.cast(namedState.getOrPut("$domain:$name", function))!!
+    }
 }
 
 // Density and Size should be taken from Compose in this mode
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public class NoRemoteCompose :
-    RemoteComposeCreationState(platform = Platform.None, density = 1f, Size(1000f, 1000f))
+    RemoteComposeCreationState(platform = Platform.None, density = 1f, Size(1000f, 1000f)) {
+    override fun <T : BaseRemoteState> getOrCreateNamedState(
+        type: Class<T>,
+        name: String,
+        domain: String,
+        function: () -> T,
+    ): T {
+        // no need to cache here
+        return function()
+    }
+}
 
 public val LocalRemoteComposeCreationState: ProvidableCompositionLocal<RemoteComposeCreationState> =
     compositionLocalOf<RemoteComposeCreationState> { NoRemoteCompose() }
+
+@RemoteComposable
+@Composable
+public inline fun <reified T : BaseRemoteState> rememberNamedState(
+    name: String,
+    domain: String,
+    noinline function: () -> T,
+): T {
+    return LocalRemoteComposeCreationState.current.getOrCreateNamedState(
+        T::class.java,
+        name,
+        domain,
+        function,
+    )
+}
