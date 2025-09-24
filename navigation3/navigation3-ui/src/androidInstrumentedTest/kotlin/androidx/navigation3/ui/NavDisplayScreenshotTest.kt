@@ -23,14 +23,19 @@ import androidx.activity.OnBackPressedDispatcher
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.Text
@@ -42,6 +47,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -50,6 +56,8 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.unit.dp
 import androidx.kruth.assertThat
 import androidx.navigation3.runtime.NavEntry
+import androidx.navigation3.scene.Scene
+import androidx.navigation3.scene.SceneStrategy
 import androidx.navigation3.ui.NavDisplay.popTransitionSpec
 import androidx.navigationevent.NavigationEvent
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -772,6 +780,165 @@ class NavDisplayScreenshotTest {
             .captureToImage()
             .assertAgainstGolden(screenshotRule, "testPopDuplicateZIndex")
     }
+
+    @Test
+    fun testSceneAnimations() {
+        lateinit var backStack: MutableList<Any>
+        // use custom duration that is much shorter than default duration
+        val duration = 200
+        composeTestRule.mainClock.autoAdvance = false
+
+        composeTestRule.setContent {
+            backStack = remember { mutableStateListOf(first, second) }
+            NavDisplay(
+                backStack,
+                sceneStrategy = TestAnimatedTwoPaneSceneStrategy(duration),
+                modifier = Modifier.testTag(navHostTag),
+            ) {
+                when (it) {
+                    first -> NavEntry(first) { BlueBox(first) }
+                    second -> NavEntry(second) { RedBox(second) }
+                    third -> NavEntry(third) { GreenBox(third) }
+                    else -> error("Invalid key passed")
+                }
+            }
+        }
+
+        composeTestRule.mainClock.autoAdvance = true
+
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithText(first).assertIsDisplayed()
+        composeTestRule.onNodeWithText(second).assertIsDisplayed()
+
+        composeTestRule.mainClock.autoAdvance = false
+
+        composeTestRule.runOnIdle { backStack.add(third) }
+
+        // advance half way between animations
+        composeTestRule.mainClock.advanceTimeBy(duration.toLong() / 2)
+
+        composeTestRule.waitForIdle()
+        composeTestRule
+            .onNodeWithTag(navHostTag)
+            .captureToImage()
+            .assertAgainstGolden(screenshotRule, "testNavigateSceneAnimations1")
+
+        composeTestRule.mainClock.autoAdvance = true
+        composeTestRule.waitForIdle()
+
+        composeTestRule
+            .onNodeWithTag(navHostTag)
+            .captureToImage()
+            .assertAgainstGolden(screenshotRule, "testNavigateSceneAnimations2")
+    }
+
+    @Test
+    fun testSceneOverridesEntryAnimations() {
+        lateinit var backStack: MutableList<Any>
+        // use custom duration that is much shorter than default duration
+        val duration = 200
+        composeTestRule.mainClock.autoAdvance = false
+
+        composeTestRule.setContent {
+            backStack = remember { mutableStateListOf(first, second) }
+            NavDisplay(
+                backStack,
+                sceneStrategy =
+                    TestAnimatedTwoPaneSceneStrategy(duration, overrideEntryAnimations = true),
+                modifier = Modifier.testTag(navHostTag),
+            ) {
+                when (it) {
+                    first -> NavEntry(first) { BlueBox(first) }
+                    second -> NavEntry(second) { RedBox(second) }
+                    third ->
+                        NavEntry(
+                            third,
+                            metadata =
+                                NavDisplay.transitionSpec {
+                                    slideInVertically(animationSpec = tween(duration)) togetherWith
+                                        ExitTransition.KeepUntilTransitionsFinished
+                                },
+                        ) {
+                            GreenBox(third)
+                        }
+                    else -> error("Invalid key passed")
+                }
+            }
+        }
+
+        composeTestRule.mainClock.autoAdvance = true
+
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithText(first).assertIsDisplayed()
+        composeTestRule.onNodeWithText(second).assertIsDisplayed()
+
+        composeTestRule.mainClock.autoAdvance = false
+
+        composeTestRule.runOnIdle { backStack.add(third) }
+
+        // advance half way between animations
+        composeTestRule.mainClock.advanceTimeBy(duration.toLong() / 2)
+
+        composeTestRule.waitForIdle()
+        composeTestRule
+            .onNodeWithTag(navHostTag)
+            .captureToImage()
+            .assertAgainstGolden(screenshotRule, "testSceneOverridesEntryAnimations")
+    }
+
+    @Test
+    fun testSceneDoesNotOverridesEntryAnimations() {
+        lateinit var backStack: MutableList<Any>
+        // use custom duration that is much shorter than default duration
+        val duration = 200
+        composeTestRule.mainClock.autoAdvance = false
+
+        composeTestRule.setContent {
+            backStack = remember { mutableStateListOf(first, second) }
+            NavDisplay(
+                backStack,
+                sceneStrategy =
+                    TestAnimatedTwoPaneSceneStrategy(duration, overrideEntryAnimations = false),
+                modifier = Modifier.testTag(navHostTag),
+            ) {
+                when (it) {
+                    first -> NavEntry(first) { BlueBox(first) }
+                    second -> NavEntry(second) { RedBox(second) }
+                    third ->
+                        NavEntry(
+                            third,
+                            metadata =
+                                NavDisplay.transitionSpec {
+                                    slideInVertically(animationSpec = tween(duration)) togetherWith
+                                        ExitTransition.KeepUntilTransitionsFinished
+                                },
+                        ) {
+                            GreenBox(third)
+                        }
+                    else -> error("Invalid key passed")
+                }
+            }
+        }
+
+        composeTestRule.mainClock.autoAdvance = true
+
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithText(first).assertIsDisplayed()
+        composeTestRule.onNodeWithText(second).assertIsDisplayed()
+
+        composeTestRule.mainClock.autoAdvance = false
+
+        composeTestRule.runOnIdle { backStack.add(third) }
+
+        // advance half way between animations
+        composeTestRule.mainClock.advanceTimeBy(duration.toLong() / 2)
+
+        composeTestRule.waitForIdle()
+        composeTestRule
+            .onNodeWithTag(navHostTag)
+            .captureToImage()
+            .assertAgainstGolden(screenshotRule, "testSceneDoesNotOverridesEntryAnimations")
+    }
 }
 
 @Composable
@@ -808,3 +975,54 @@ private const val first = "first"
 private const val second = "second"
 private const val third = "third"
 private const val forth = "forth"
+
+private class TestAnimatedTwoPaneSceneStrategy<T : Any>(
+    val durationMillis: Int,
+    val overrideEntryAnimations: Boolean = false,
+) : SceneStrategy<T> {
+    @Composable
+    override fun calculateScene(entries: List<NavEntry<T>>, onBack: (Int) -> Unit): Scene<T>? {
+        if (entries.size < 2) return null
+        val lastTwoEntries = entries.takeLast(2)
+        return TestAnimatedTwoPaneScene(
+            durationMillis = durationMillis,
+            overrideEntryAnimations = overrideEntryAnimations,
+            key = lastTwoEntries.first().contentKey,
+            entries = entries.takeLast(2),
+            previousEntries = listOf(),
+        )
+    }
+}
+
+private class TestAnimatedTwoPaneScene<T : Any>(
+    val durationMillis: Int,
+    val overrideEntryAnimations: Boolean,
+    override val key: Any,
+    override val entries: List<NavEntry<T>>,
+    override val previousEntries: List<NavEntry<T>>,
+) : Scene<T> {
+    override val content: @Composable (() -> Unit) = {
+        val left = entries.first()
+        val right = entries.last()
+        Row(modifier = Modifier.fillMaxWidth()) {
+            Column(Modifier.weight(1f)) { left.Content() }
+            Column(Modifier.weight(1f)) { right.Content() }
+        }
+    }
+
+    override val metadata: Map<String, Any>
+        get() {
+            // define scene metadata transitions
+            val sceneTransition =
+                slideInHorizontally(tween(durationMillis)) { it / 2 } togetherWith
+                    slideOutHorizontally { -it / 2 }
+            // build scene metadata map
+            val newMetadata =
+                NavDisplay.transitionSpec({ sceneTransition }) +
+                    popTransitionSpec({ sceneTransition })
+            // override NavEntry transitions if necessary
+            return if (overrideEntryAnimations) {
+                entries.last().metadata + newMetadata
+            } else newMetadata + entries.last().metadata
+        }
+}

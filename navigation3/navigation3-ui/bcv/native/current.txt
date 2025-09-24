@@ -25,6 +25,8 @@ abstract interface <#A: kotlin/Any> androidx.navigation3.scene/Scene { // androi
         abstract fun <get-key>(): kotlin/Any // androidx.navigation3.scene/Scene.key.<get-key>|<get-key>(){}[0]
     abstract val previousEntries // androidx.navigation3.scene/Scene.previousEntries|{}previousEntries[0]
         abstract fun <get-previousEntries>(): kotlin.collections/List<androidx.navigation3.runtime/NavEntry<#A>> // androidx.navigation3.scene/Scene.previousEntries.<get-previousEntries>|<get-previousEntries>(){}[0]
+    open val metadata // androidx.navigation3.scene/Scene.metadata|{}metadata[0]
+        open fun <get-metadata>(): kotlin.collections/Map<kotlin/String, kotlin/Any> // androidx.navigation3.scene/Scene.metadata.<get-metadata>|<get-metadata>(){}[0]
 }
 
 final class <#A: kotlin/Any> androidx.navigation3.scene/DialogSceneStrategy : androidx.navigation3.scene/SceneStrategy<#A> { // androidx.navigation3.scene/DialogSceneStrategy|null[0]
