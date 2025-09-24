@@ -47,7 +47,7 @@ class ComposeScreenshotTestRule(
 
     private lateinit var testDescription: Description
 
-    val testName =
+    private val testName =
         object : TestWatcher() {
 
             override fun starting(description: Description) {
@@ -55,7 +55,7 @@ class ComposeScreenshotTestRule(
             }
         }
 
-    val delegateChain: RuleChain =
+    private val delegateChain: RuleChain =
         RuleChain.outerRule(testName).around(composeTestRule).around(screenshotRule)
 
     override fun apply(base: Statement, description: Description): Statement {
