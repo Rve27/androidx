@@ -37,14 +37,12 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.getBoundsInRoot
-import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
-import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipe
 import androidx.compose.ui.unit.DpSize
@@ -57,6 +55,7 @@ import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -268,11 +267,11 @@ class VerticalStackTest {
         val state = StackState()
         var itemCount by mutableStateOf(3)
         rule.setContentWithInitialFocus {
-            VerticalStack(modifier = Modifier.testTag("stack"), state = state) {
+            VerticalStack(state = state) {
                 items(itemCount) { index -> StackItem("Item $index") { itemHeight = it } }
             }
         }
-        rule.onNodeWithTag("stack").performScrollToNode(hasText("Item 2"))
+        requestFocusAndPerformIndirectSwipe(itemHeight * 2)
         rule.onNodeWithText("Item 2").assertIsDisplayed()
         assertThat(state.topItem).isEqualTo(2)
         requestFocusAndPerformIndirectSwipe(itemHeight)
@@ -297,13 +296,13 @@ class VerticalStackTest {
         val state = StackState()
         var items by mutableStateOf(listOf("A", "B", "C", "D"))
         rule.setContentWithInitialFocus {
-            VerticalStack(modifier = Modifier.size(100.dp).testTag("stack"), state = state) {
+            VerticalStack(modifier = Modifier.size(100.dp), state = state) {
                 item(key = "First", content = { StackItem("First") { itemHeight = it } })
                 items(items, key = { it }) { StackItem(it) }
                 items(1, key = { "Last" }) { StackItem("Last") }
             }
         }
-        rule.onNodeWithTag("stack").performScrollToNode(hasText("B"))
+        requestFocusAndPerformIndirectSwipe(itemHeight * 2)
         rule.onNodeWithText("B").assertIsDisplayed()
         assertThat(state.topItem).isEqualTo(2)
 
@@ -396,6 +395,24 @@ class VerticalStackTest {
             assertThat(interactions[0]).isInstanceOf(DragInteraction.Start::class.java)
             assertThat(interactions[1]).isInstanceOf(DragInteraction.Stop::class.java)
         }
+    }
+
+    @Test
+    fun alwaysComposesNextTwoItems() = runTest {
+        val state = StackState()
+        rule.setContent {
+            VerticalStack(state = state) { items(5) { index -> StackItem("Item $index") } }
+        }
+        rule.onNodeWithText("Item 0").assertExists() // Top item
+        rule.onNodeWithText("Item 1").assertExists() // Next item
+        rule.onNodeWithText("Item 2").assertExists() // Next next item
+
+        state.scrollToItem(2)
+
+        rule.onNodeWithText("Item 1").assertExists() // Previous item
+        rule.onNodeWithText("Item 2").assertExists() // Top item
+        rule.onNodeWithText("Item 3").assertExists() // Next item
+        rule.onNodeWithText("Item 4").assertExists() // Next next item
     }
 
     @Composable
