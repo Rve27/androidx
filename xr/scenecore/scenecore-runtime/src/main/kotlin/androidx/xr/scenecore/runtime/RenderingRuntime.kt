@@ -634,10 +634,4 @@ public interface RenderingRuntime : JxrRuntime {
         subspaceNodeHolder: SubspaceNodeHolder<*>,
         size: Dimensions,
     ): SubspaceNodeEntity
-
-    /** Starts the renderer. */
-    public fun startRenderer()
-
-    /** Stops the renderer. */
-    public fun stopRenderer()
 }

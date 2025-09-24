@@ -108,8 +108,6 @@ class SpatialRenderingRuntime implements RenderingRuntime {
                 new SpatialEnvironmentFeatureImpl(
                         mActivity, mImpressApi, mSplitEngineSubspaceManager, mExtensions);
 
-        startRenderer();
-
         ((SpatialEnvironmentExt) sceneRuntime.getSpatialEnvironment())
                 .onRenderingFeatureReady(mSpatialEnvironmentFeature);
     }
@@ -1056,8 +1054,10 @@ class SpatialRenderingRuntime implements RenderingRuntime {
         return entity;
     }
 
+    // JxrRuntime lifecycle
     @Override
-    public void startRenderer() {
+    public void resume() {
+        // Start renderer
         if (mSplitEngineRenderer == null || mFrameLoopStarted) {
             return;
         }
@@ -1066,7 +1066,8 @@ class SpatialRenderingRuntime implements RenderingRuntime {
     }
 
     @Override
-    public void stopRenderer() {
+    public void pause() {
+        // Stop renderer
         if (mSplitEngineRenderer == null || !mFrameLoopStarted) {
             return;
         }
@@ -1082,8 +1083,18 @@ class SpatialRenderingRuntime implements RenderingRuntime {
 
         mActivity = null;
         if (mSplitEngineRenderer != null && mSplitEngineSubspaceManager != null) {
-            stopRenderer();
-            mSpatialEnvironmentFeature.dispose();
+            if (mFrameLoopStarted) {
+                mFrameLoopStarted = false;
+                mSplitEngineRenderer.stopFrameLoop();
+            }
+
+            // mSpatialEnvironmentFeature.dispose() will be invoked once in SceneRuntime.dispose()
+            // to make the XrExtensions operations happen before the SceneRuntime detaching the
+            // scene. Do the destroy here again to clean our own resource formally.
+            if (mSpatialEnvironmentFeature != null) {
+                mSpatialEnvironmentFeature.dispose();
+                mSpatialEnvironmentFeature = null;
+            }
             mImpressApi.disposeAllResources();
             mSplitEngineSubspaceManager.destroy();
             mSplitEngineRenderer.destroy();
