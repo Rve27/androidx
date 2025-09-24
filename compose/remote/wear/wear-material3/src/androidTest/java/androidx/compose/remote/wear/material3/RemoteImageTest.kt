@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.compose.remote.foundation
+package androidx.compose.remote.wear.material3
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -26,10 +26,10 @@ import androidx.compose.remote.creation.compose.state.rememberRemoteBitmap
 import androidx.compose.remote.creation.compose.state.rememberRemoteBitmapValue
 import androidx.compose.remote.creation.compose.state.rememberRemoteFloatValue
 import androidx.compose.remote.creation.compose.state.rememberRemoteString
-import androidx.compose.remote.foundation.test.R
 import androidx.compose.remote.player.core.platform.BitmapLoader
 import androidx.compose.remote.test.screenshot.TargetPlayer
 import androidx.compose.remote.test.screenshot.rule.RemoteComposeScreenshotTestRule
+import androidx.compose.remote.wear.material3.test.R
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.unit.dp
 import androidx.test.core.app.ApplicationProvider

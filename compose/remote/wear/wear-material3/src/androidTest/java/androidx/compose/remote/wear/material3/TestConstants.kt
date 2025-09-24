@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 
-package androidx.compose.remote.foundation
+package androidx.compose.remote.wear.material3
 
-internal const val SCREENSHOT_GOLDEN_DIRECTORY = "compose/remote/remote-foundation"
+internal const val SCREENSHOT_GOLDEN_DIRECTORY = "compose/remote/wear/wear-material3"
