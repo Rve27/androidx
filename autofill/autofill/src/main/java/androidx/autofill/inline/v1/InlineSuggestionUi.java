@@ -311,7 +311,7 @@ public final class InlineSuggestionUi {
         imageView.setImageIcon(icon);
         final Drawable drawable = imageView.getDrawable();
         if (drawable instanceof Animatable) {
-            ((Animatable) drawable).start();
+            imageView.post(() -> ((Animatable) drawable).start());
         }
         imageView.setVisibility(View.VISIBLE);
     }
