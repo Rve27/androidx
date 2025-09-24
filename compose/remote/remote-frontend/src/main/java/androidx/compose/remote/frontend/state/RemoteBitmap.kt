@@ -26,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.core.graphics.createBitmap
 
 /**
  * Abstract base class for all remote bitmap representations in Compose Remote, this class extends
@@ -149,6 +150,26 @@ public fun rememberRemoteBitmapValue(
         val initial = value()
         MutableRemoteBitmap(state, mutableStateOf(initial), false) { creationState ->
             creationState.document.addNamedBitmap("$domain:$name", initial)
+        }
+    }
+}
+
+@Composable
+public fun rememberRemoteBitmap(
+    name: String,
+    domain: RemoteDomains = RemoteDomains.USER,
+    url: String,
+    width: Int = 1,
+    height: Int = 1,
+): RemoteBitmap {
+    val state = LocalRemoteComposeCreationState.current
+    return remember(name) {
+        // We create a bitmap of the specified dimensions as a placeholder. The actual bitmap will
+        // be loaded from the URL on the remote side. Providing accurate dimensions can prevent
+        // unnecessary relayouts.
+        MutableRemoteBitmap(state, mutableStateOf(createBitmap(width, height)), false) {
+            creationState ->
+            creationState.document.addNamedBitmapUrl("$domain:$name", url)
         }
     }
 }
