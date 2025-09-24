@@ -841,6 +841,7 @@ public class WebViewFeatureInternal {
      * {@link Profile#clearAllOriginMatchedHeaders()}.
      */
     @Profile.ExperimentalOriginMatchedHeader
+    @SuppressWarnings("deprecation")
     public static final ApiFeature.NoFramework ORIGIN_MATCHED_HEADERS =
             new ApiFeature.NoFramework(WebViewFeature.ORIGIN_MATCHED_HEADERS,
                     Features.EXTRA_HEADER_FOR_ORIGINS);
