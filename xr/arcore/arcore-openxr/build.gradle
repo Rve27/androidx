@@ -58,6 +58,7 @@ dependencies {
 }
 
 android {
+    compileSdk = 35
     namespace = "androidx.xr.arcore.openxr"
     sourceSets.main {
         jniLibs.srcDirs += new File(AndroidXConfig.getPrebuiltsRoot(project), "androidx/xr/native/android")

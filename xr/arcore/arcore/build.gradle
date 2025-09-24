@@ -38,6 +38,7 @@ dependencies {
 
     implementation("androidx.annotation:annotation:1.8.1")
     implementation(project(":xr:arcore:arcore-openxr"))
+    implementation(project(":xr:arcore:arcore-projected"))
 
     testImplementation(libs.kotlinCoroutinesTest)
     testImplementation(libs.junit)
@@ -53,6 +54,7 @@ dependencies {
 }
 
 android {
+    compileSdk = 35
     namespace = "androidx.xr.arcore"
     defaultConfig {
         consumerProguardFiles 'proguard-rules.pro'
