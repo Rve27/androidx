@@ -101,6 +101,7 @@ import androidx.xr.compose.testapp.common.AnotherActivity
 import androidx.xr.compose.testapp.ui.components.CommonTestScaffold
 import androidx.xr.compose.testapp.ui.components.TestDialog
 import androidx.xr.compose.unit.Meter.Companion.meters
+import androidx.xr.runtime.Config
 import androidx.xr.runtime.math.Quaternion
 import androidx.xr.runtime.math.Vector3
 import androidx.xr.scenecore.GltfModel
@@ -326,6 +327,10 @@ class SpatialCompose : ComponentActivity() {
     @SubspaceComposable
     @Composable
     fun AnchorPanel(modifier: SubspaceModifier = SubspaceModifier, text: String = "") {
+        val session = LocalSession.current ?: return
+        // This is required to use the AnchorPolicy.
+        session.configure(Config(planeTracking = Config.PlaneTrackingMode.HORIZONTAL_AND_VERTICAL))
+
         // TODO(b/424834805): It's possible to have multiple movable overloads in place which are
         // not compatible with each other.
         SpatialPanel(
