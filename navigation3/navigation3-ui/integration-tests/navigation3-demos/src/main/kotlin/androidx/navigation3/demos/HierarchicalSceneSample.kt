@@ -115,7 +115,7 @@ fun HierarchicalSceneSample() {
             CompositionLocalProvider(LocalNavSharedTransitionScope provides this) {
                 NavDisplay(
                     backStack = backStack,
-                    onBack = { repeat(it) { backStack.removeAt(backStack.lastIndex) } },
+                    onBack = { backStack.removeAt(backStack.lastIndex) },
                     entryDecorators =
                         listOf(
                             sharedEntryInSceneNavEntryDecorator,
@@ -196,10 +196,7 @@ private class HierarchicalScene<T : Any>(
 
 private class HierarchicalSceneStrategy<T : Any>(private val columns: Int) : SceneStrategy<T> {
     @Composable
-    override fun calculateScene(
-        entries: List<NavEntry<T>>,
-        onBack: (count: Int) -> Unit,
-    ): Scene<T> {
+    override fun calculateScene(entries: List<NavEntry<T>>, onBack: () -> Unit): Scene<T> {
         val includedEntries = entries.takeLast(columns)
         return remember(columns, includedEntries) {
             HierarchicalScene(

@@ -30,14 +30,13 @@ import kotlin.collections.plusAssign
  *
  * @param entries all of the entries that are associated with this state
  * @param sceneStrategy the [SceneStrategy] to determine which scene to render a list of entries.
- * @param onBack a callback for handling system back press. The passed [Int] refers to the number of
- *   entries to pop from the end of the backstack, as calculated by the [sceneStrategy].
+ * @param onBack a callback for handling system back press.
  */
 @Composable
 public fun <T : Any> rememberSceneState(
     entries: List<NavEntry<T>>,
     sceneStrategy: SceneStrategy<T>,
-    onBack: (Int) -> Unit,
+    onBack: () -> Unit,
 ): SceneState<T> {
     // re-wrap the entries with the SceneSetupNavEntryDecorator to ensure all the ensures are
     // inside of a moveable content.
