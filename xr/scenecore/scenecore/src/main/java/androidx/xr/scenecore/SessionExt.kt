@@ -23,8 +23,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.xr.arcore.runtime.PerceptionRuntime
 import androidx.xr.runtime.Session
-import androidx.xr.scenecore.internal.RenderingRuntime
-import androidx.xr.scenecore.internal.SceneRuntime
+import androidx.xr.scenecore.runtime.RenderingRuntime
+import androidx.xr.scenecore.runtime.SceneRuntime
 import java.util.Collections
 import java.util.WeakHashMap
 
