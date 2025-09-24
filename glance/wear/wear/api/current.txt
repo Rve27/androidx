@@ -97,9 +97,12 @@ package androidx.glance.wear {
   }
 
   public final class WearWidgetRequest {
-    ctor public WearWidgetRequest(int instanceId);
+    method @InaccessibleFromKotlin public float getHeightDp();
     method @InaccessibleFromKotlin public int getInstanceId();
+    method @InaccessibleFromKotlin public float getWidthDp();
+    property public float heightDp;
     property public int instanceId;
+    property public float widthDp;
   }
 
 }
