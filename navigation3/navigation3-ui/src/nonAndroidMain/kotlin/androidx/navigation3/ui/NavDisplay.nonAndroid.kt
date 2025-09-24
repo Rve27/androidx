@@ -14,12 +14,17 @@
  * limitations under the License.
  */
 
+@file:JvmName("NavDisplayKt")
+@file:JvmMultifileClass
+
 package androidx.navigation3.ui
 
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.ContentTransform
 import androidx.navigation3.scene.Scene
 import androidx.navigationevent.NavigationEvent
+import kotlin.jvm.JvmMultifileClass
+import kotlin.jvm.JvmName
 
 public actual fun <T : Any> defaultTransitionSpec():
     AnimatedContentTransitionScope<Scene<T>>.() -> ContentTransform = implementedInJetBrainsFork()
