@@ -38,8 +38,9 @@ public actual suspend fun <R> performSuspending(
 ): R =
     withContext(db.getCoroutineContext(inTransaction)) {
         db.internalPerform(isReadOnly, inTransaction) { connection ->
-            val rawConnection = (connection as RawConnectionAccessor).rawConnection
-            block.invoke(rawConnection)
+            (connection as RawConnectionAccessor).useRawConnection { rawConnection ->
+                block.invoke(rawConnection)
+            }
         }
     }
 

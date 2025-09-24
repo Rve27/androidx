@@ -356,8 +356,9 @@ private class PooledConnectionImpl(
     private val isRecycled: Boolean
         get() = _isRecycled.get()
 
-    override val rawConnection: SQLiteConnection
-        get() = delegate
+    override suspend fun <R> useRawConnection(block: (SQLiteConnection) -> R): R {
+        return delegate.withLock { block.invoke(delegate) }
+    }
 
     override suspend fun <R> usePrepared(sql: String, block: (SQLiteStatement) -> R): R =
         withStateCheck {
@@ -456,8 +457,8 @@ private class PooledConnectionImpl(
 
     private inner class TransactionImpl<T> : TransactionScope<T>, RawConnectionAccessor {
 
-        override val rawConnection: SQLiteConnection
-            get() = this@PooledConnectionImpl.rawConnection
+        override suspend fun <R> useRawConnection(block: (SQLiteConnection) -> R): R =
+            this@PooledConnectionImpl.useRawConnection(block)
 
         override suspend fun <R> usePrepared(sql: String, block: (SQLiteStatement) -> R): R =
             this@PooledConnectionImpl.usePrepared(sql, block)
