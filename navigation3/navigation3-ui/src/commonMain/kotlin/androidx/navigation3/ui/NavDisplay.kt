@@ -149,7 +149,8 @@ public object NavDisplay {
  * @param backStack the collection of keys that represents the state that needs to be handled
  * @param modifier the modifier to be applied to the layout.
  * @param contentAlignment The [Alignment] of the [AnimatedContent]
- * @param onBack a callback for handling system back press.
+ * @param onBack a callback for handling system back press. By default, this pops a single item off
+ *   of the given back stack if it is a [MutableList], otherwise you should provide this parameter.
  * @param entryDecorators list of [NavEntryDecorator] to add information to the entry content
  * @param sceneStrategy the [SceneStrategy] to determine which scene to render a list of entries.
  * @param sizeTransform the [SizeTransform] for the [AnimatedContent].
