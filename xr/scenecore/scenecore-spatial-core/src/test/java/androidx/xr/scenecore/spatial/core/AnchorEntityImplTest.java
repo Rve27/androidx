@@ -50,12 +50,12 @@ import androidx.xr.scenecore.impl.extensions.XrExtensionsProvider;
 import androidx.xr.scenecore.impl.perception.PerceptionLibrary;
 import androidx.xr.scenecore.impl.perception.Plane;
 import androidx.xr.scenecore.impl.perception.Session;
-import androidx.xr.scenecore.internal.AnchorEntity.OnStateChangedListener;
-import androidx.xr.scenecore.internal.AnchorEntity.State;
-import androidx.xr.scenecore.internal.Dimensions;
-import androidx.xr.scenecore.internal.PlaneSemantic;
-import androidx.xr.scenecore.internal.PlaneType;
-import androidx.xr.scenecore.internal.Space;
+import androidx.xr.scenecore.runtime.AnchorEntity.OnStateChangedListener;
+import androidx.xr.scenecore.runtime.AnchorEntity.State;
+import androidx.xr.scenecore.runtime.Dimensions;
+import androidx.xr.scenecore.runtime.PlaneSemantic;
+import androidx.xr.scenecore.runtime.PlaneType;
+import androidx.xr.scenecore.runtime.Space;
 import androidx.xr.scenecore.testing.FakeGltfFeature;
 import androidx.xr.scenecore.testing.FakeScheduledExecutorService;
 
