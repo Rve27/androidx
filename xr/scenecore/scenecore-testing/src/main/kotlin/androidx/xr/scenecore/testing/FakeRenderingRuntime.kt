@@ -589,20 +589,12 @@ public class FakeRenderingRuntime(
         return _state
     }
 
-    override fun startRenderer() {
+    override fun resume() {
         _state = State.STARTED
     }
 
-    override fun stopRenderer() {
-        _state = State.PAUSED
-    }
-
-    override fun resume() {
-        startRenderer()
-    }
-
     override fun pause() {
-        stopRenderer()
+        _state = State.PAUSED
     }
 
     override fun destroy() {
