@@ -20,10 +20,10 @@ package androidx.xr.scenecore
 
 import androidx.annotation.RestrictTo
 import androidx.xr.scenecore.SpatialEnvironment.Companion.NO_PASSTHROUGH_OPACITY_PREFERENCE
-import androidx.xr.scenecore.internal.MaterialResource as RtMaterial
-import androidx.xr.scenecore.internal.SceneRuntime
-import androidx.xr.scenecore.internal.SpatialEnvironment as RtSpatialEnvironment
-import androidx.xr.scenecore.internal.SpatialEnvironment.SpatialEnvironmentPreference as RtSpatialEnvironmentPreference
+import androidx.xr.scenecore.runtime.MaterialResource as RtMaterial
+import androidx.xr.scenecore.runtime.SceneRuntime
+import androidx.xr.scenecore.runtime.SpatialEnvironment as RtSpatialEnvironment
+import androidx.xr.scenecore.runtime.SpatialEnvironment.SpatialEnvironmentPreference as RtSpatialEnvironmentPreference
 import java.util.concurrent.Executor
 import java.util.function.Consumer
 
