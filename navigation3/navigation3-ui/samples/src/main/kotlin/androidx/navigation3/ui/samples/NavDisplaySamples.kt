@@ -261,9 +261,9 @@ fun MultipleBackStackSample() {
         /** Swap backStacks based on the current selected tab */
         NavDisplay(
             entries = if (currentTab == Home) homeTabEntries else userTabEntries,
-            onBack = { backCount ->
+            onBack = {
                 val currBackStack = if (currentTab == Home) homeBackStack else userBackStack
-                repeat(backCount) { currBackStack.removeLastOrNull() }
+                currBackStack.removeLastOrNull()
             },
         )
     }
@@ -316,13 +316,11 @@ fun ConcatenatedBackStackSample() {
         /** Swap backStacks based on the current selected tab */
         NavDisplay(
             entries = if (currentTab == Home) homeTabEntries else homeTabEntries + userTabEntries,
-            onBack = { backCount ->
-                for (i in 1..backCount) {
-                    val currBackStack = if (currentTab == Home) homeBackStack else userBackStack
-                    currBackStack.removeLastOrNull()
-                    if (currentTab == User && userBackStack.isEmpty()) {
-                        currentTab = Home
-                    }
+            onBack = {
+                val currBackStack = if (currentTab == Home) homeBackStack else userBackStack
+                currBackStack.removeLastOrNull()
+                if (currentTab == User && userBackStack.isEmpty()) {
+                    currentTab = Home
                 }
             },
         )

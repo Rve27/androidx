@@ -981,7 +981,7 @@ private class TestAnimatedTwoPaneSceneStrategy<T : Any>(
     val overrideEntryAnimations: Boolean = false,
 ) : SceneStrategy<T> {
     @Composable
-    override fun calculateScene(entries: List<NavEntry<T>>, onBack: (Int) -> Unit): Scene<T>? {
+    override fun calculateScene(entries: List<NavEntry<T>>, onBack: () -> Unit): Scene<T>? {
         if (entries.size < 2) return null
         val lastTwoEntries = entries.takeLast(2)
         return TestAnimatedTwoPaneScene(
