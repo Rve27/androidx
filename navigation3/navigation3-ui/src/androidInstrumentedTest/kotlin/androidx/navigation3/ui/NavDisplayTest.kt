@@ -47,7 +47,6 @@ import androidx.navigation3.runtime.rememberSavedStateNavEntryDecorator
 import androidx.navigation3.scene.DialogSceneStrategy
 import androidx.navigation3.scene.Scene
 import androidx.navigation3.scene.SceneStrategy
-import androidx.navigation3.scene.rememberSceneSetupNavEntryDecorator
 import androidx.navigationevent.DirectNavigationEventInput
 import androidx.navigationevent.NavigationEvent
 import androidx.navigationevent.compose.LocalNavigationEventDispatcherOwner
@@ -388,16 +387,8 @@ class NavDisplayTest {
         composeTestRule.setContent {
             val backStack1 = rememberNavBackStack(First)
             val backStack2 = rememberNavBackStack(Second)
-            val decorator1 =
-                listOf(
-                    rememberSceneSetupNavEntryDecorator<NavKey>(),
-                    rememberSavedStateNavEntryDecorator(),
-                )
-            val decorator2 =
-                listOf(
-                    rememberSceneSetupNavEntryDecorator<NavKey>(),
-                    rememberSavedStateNavEntryDecorator(),
-                )
+            val decorator1 = listOf(rememberSavedStateNavEntryDecorator<NavKey>())
+            val decorator2 = listOf(rememberSavedStateNavEntryDecorator<NavKey>())
             backStackState = remember { mutableStateOf(1) }
             decoratorState = remember { mutableStateOf(1) }
 
