@@ -29,6 +29,7 @@ import androidx.appfunctions.AppFunctionStringValueConstraint
 import androidx.appfunctions.AppFunctionUriGrant
 import androidx.appfunctions.service.AppFunction
 import java.time.LocalDateTime
+import kotlinx.coroutines.delay
 
 @AppFunctionSchemaCapability
 interface AppFunctionOpenable {
@@ -467,6 +468,12 @@ class TestFunctions {
                             Intent.FLAG_GRANT_WRITE_URI_PERMISSION,
                 ),
         )
+    }
+
+    @AppFunction
+    suspend fun longRunningFunction(appFunctionContext: AppFunctionContext): String {
+        delay(500)
+        return "Completed"
     }
 }
 
