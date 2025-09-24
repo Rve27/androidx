@@ -35,10 +35,12 @@ import androidx.camera.integration.featurecombo.DynamicRange
 import androidx.camera.integration.featurecombo.Fps
 import androidx.camera.integration.featurecombo.ImageFormat
 import androidx.camera.integration.featurecombo.MainActivity
+import androidx.camera.integration.featurecombo.RecordingQuality
 import androidx.camera.integration.featurecombo.StabilizationMode
 import androidx.camera.lifecycle.ExperimentalCameraProviderConfiguration
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.lifecycle.awaitInstance
+import androidx.camera.video.GroupableFeatures
 import androidx.camera.video.MediaStoreOutputOptions
 import androidx.camera.video.Recorder
 import androidx.camera.video.Recording
@@ -107,6 +109,7 @@ class CameraViewModel(private val savedStateHandle: SavedStateHandle) : ViewMode
             fps = Fps.FPS_30,
             stabilizationMode = StabilizationMode.OFF,
             imageFormat = ImageFormat.JPEG,
+            recordingQuality = RecordingQuality.SD,
         )
 
     data class FeatureCombo(
@@ -290,6 +293,9 @@ class CameraViewModel(private val savedStateHandle: SavedStateHandle) : ViewMode
                 AppFeatureTitle.IMAGE_FORMAT -> {
                     appFeatures.copy(imageFormat = ImageFormat.entries[newValueIndex])
                 }
+                AppFeatureTitle.RECORDING_QUALITY -> {
+                    appFeatures.copy(recordingQuality = RecordingQuality.entries[newValueIndex])
+                }
             }
 
         viewModelScope.launch {
@@ -399,6 +405,10 @@ class CameraViewModel(private val savedStateHandle: SavedStateHandle) : ViewMode
                     preferredFeatures =
                         listOf(
                             GroupableFeature.HDR_HLG10,
+                            GroupableFeatures.UHD_RECORDING,
+                            GroupableFeatures.FHD_RECORDING,
+                            GroupableFeatures.HD_RECORDING,
+                            GroupableFeatures.SD_RECORDING,
                             GroupableFeature.FPS_60,
                             GroupableFeature.PREVIEW_STABILIZATION,
                         )
@@ -443,6 +453,12 @@ class CameraViewModel(private val savedStateHandle: SavedStateHandle) : ViewMode
 
     private suspend fun getVideoModeUnsupportedFeatures(): AppFeatures {
         return appFeatures.copy(
+            unsupportedRecordingQualities =
+                RecordingQuality.entries.toTypedArray().getUnsupportedValues(
+                    appFeatures.recordingQuality
+                ) {
+                    appFeatures.copy(recordingQuality = it)
+                },
             unsupportedDynamicRanges =
                 DynamicRange.entries.toTypedArray().getUnsupportedValues(appFeatures.dynamicRange) {
                     appFeatures.copy(dynamicRange = it)
@@ -525,7 +541,14 @@ class CameraViewModel(private val savedStateHandle: SavedStateHandle) : ViewMode
     private fun AppFeatures.toCameraXFeatures(): Set<GroupableFeature> {
         val features = mutableSetOf<GroupableFeature>()
 
-        if (!isVideoOnlyMode.value) {
+        if (isVideoOnlyMode.value) {
+            when (recordingQuality) {
+                RecordingQuality.UHD -> features.add(GroupableFeatures.UHD_RECORDING)
+                RecordingQuality.FHD -> features.add(GroupableFeatures.FHD_RECORDING)
+                RecordingQuality.HD -> features.add(GroupableFeatures.HD_RECORDING)
+                RecordingQuality.SD -> features.add(GroupableFeatures.SD_RECORDING)
+            }
+        } else {
             if (imageFormat == ImageFormat.JPEG_R) {
                 features.add(GroupableFeature.IMAGE_ULTRA_HDR)
             }
@@ -549,6 +572,18 @@ class CameraViewModel(private val savedStateHandle: SavedStateHandle) : ViewMode
 
         forEach { feature ->
             when (feature) {
+                GroupableFeatures.UHD_RECORDING -> {
+                    newAppFeatures = newAppFeatures.copy(recordingQuality = RecordingQuality.UHD)
+                }
+                GroupableFeatures.FHD_RECORDING -> {
+                    newAppFeatures = newAppFeatures.copy(recordingQuality = RecordingQuality.FHD)
+                }
+                GroupableFeatures.HD_RECORDING -> {
+                    newAppFeatures = newAppFeatures.copy(recordingQuality = RecordingQuality.HD)
+                }
+                GroupableFeatures.SD_RECORDING -> {
+                    newAppFeatures = newAppFeatures.copy(recordingQuality = RecordingQuality.SD)
+                }
                 GroupableFeature.HDR_HLG10 -> {
                     newAppFeatures = newAppFeatures.copy(dynamicRange = DynamicRange.HLG_10)
                 }
