@@ -94,6 +94,7 @@ public fun VerticalStack(
                 layout(layoutWidth, layoutHeight) { pagerPlaceable.place(x = 0, y = 0) }
             },
         key = { page -> stackItemHolderState.value.getKey(page) },
+        beyondViewportPageCount = MaxNextVisibleItemCount,
     ) { page ->
         stackItemHolderState.value.withInterval(page) { localIndex, itemInterval ->
             itemInterval.item(StackItemScopeImpl(), localIndex)
@@ -103,3 +104,6 @@ public fun VerticalStack(
 
 /** The size of the area where the items beneath the top of the stack item are revealed. */
 internal val RevealAreaSize = 18.dp
+
+/** The maximum number of items that can be visible at the same time in addition to the top item. */
+internal const val MaxNextVisibleItemCount = 2
