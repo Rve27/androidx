@@ -45,6 +45,7 @@ import androidx.compose.ui.tooling.animation.states.TargetState
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.test.StandardTestDispatcher
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
@@ -55,7 +56,7 @@ import org.junit.Test
 @OptIn(ExperimentalAnimationApi::class)
 class TransitionClockTest {
 
-    @get:Rule val rule = createComposeRule()
+    @get:Rule val rule = createComposeRule(StandardTestDispatcher())
 
     enum class EnumState {
         One,
