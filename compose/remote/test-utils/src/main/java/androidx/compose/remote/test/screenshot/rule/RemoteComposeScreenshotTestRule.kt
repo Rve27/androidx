@@ -22,9 +22,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.remote.core.CoreDocument
-import androidx.compose.remote.frontend.capture.rememberRemoteDocument
-import androidx.compose.remote.frontend.layout.RemoteComposable
-import androidx.compose.remote.frontend.player.RemoteDocumentPlayer as ViewRemoteDocumentPlayer
+import androidx.compose.remote.creation.compose.capture.rememberRemoteDocument
+import androidx.compose.remote.creation.compose.layout.RemoteComposable
+import androidx.compose.remote.creation.compose.player.RemoteDocumentPlayer as ViewRemoteDocumentPlayer
 import androidx.compose.remote.player.compose.RemoteDocumentPlayer as ComposeRemoteDocumentPlayer
 import androidx.compose.remote.player.core.platform.BitmapLoader
 import androidx.compose.remote.test.screenshot.TargetPlayer
