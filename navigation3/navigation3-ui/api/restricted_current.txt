@@ -21,10 +21,12 @@ package androidx.navigation3.scene {
     method @InaccessibleFromKotlin public kotlin.jvm.functions.Function0<kotlin.Unit> getContent();
     method @InaccessibleFromKotlin public java.util.List<androidx.navigation3.runtime.NavEntry<T>> getEntries();
     method @InaccessibleFromKotlin public Object getKey();
+    method @InaccessibleFromKotlin public default java.util.Map<java.lang.String,java.lang.Object> getMetadata();
     method @InaccessibleFromKotlin public java.util.List<androidx.navigation3.runtime.NavEntry<T>> getPreviousEntries();
     property public abstract kotlin.jvm.functions.Function0<kotlin.Unit> content;
     property public abstract java.util.List<androidx.navigation3.runtime.NavEntry<T>> entries;
     property public abstract Object key;
+    property public default java.util.Map<java.lang.String,java.lang.Object> metadata;
     property public abstract java.util.List<androidx.navigation3.runtime.NavEntry<T>> previousEntries;
   }
 
