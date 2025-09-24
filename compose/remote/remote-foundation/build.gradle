@@ -41,7 +41,7 @@ android {
 
 dependencies {
     api(libs.jspecify)
-    implementation(project(":compose:remote:remote-frontend"))
+    implementation(project(":compose:remote:remote-creation-compose"))
     implementation(project(":compose:remote:remote-player-view"))
     implementation(project(":compose:remote:remote-player-core"))
     implementation(project(":compose:remote:remote-creation"))
