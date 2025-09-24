@@ -26,6 +26,7 @@ import androidx.compose.remote.core.operations.Theme
 import androidx.compose.remote.player.core.RemoteComposeDocument
 import androidx.compose.remote.player.core.action.NamedActionHandler
 import androidx.compose.remote.player.core.action.StateUpdaterActionCallback
+import androidx.compose.remote.player.core.platform.BitmapLoader
 import androidx.compose.remote.player.core.state.StateUpdater
 import androidx.compose.remote.player.view.RemoteComposePlayer
 import androidx.compose.runtime.Composable
@@ -49,6 +50,7 @@ public fun RemoteDocumentPlayer(
     update: (RemoteComposePlayer) -> Unit = {},
     onAction: (actionId: Int, value: String?) -> Unit = { _, _ -> },
     onNamedAction: (name: String, value: Any?, stateUpdater: StateUpdater) -> Unit = { _, _, _ -> },
+    bitmapLoader: BitmapLoader? = null,
 ) {
     var inDarkTheme by remember { mutableStateOf(false) }
     var playbackTheme by remember { mutableStateOf(Theme.UNSPECIFIED) }
@@ -75,7 +77,14 @@ public fun RemoteDocumentPlayer(
 
     AndroidView(
         modifier = modifier.size(documentWidth.dp, documentHeight.dp),
-        factory = { RemoteComposePlayer(it).apply { init(this) } },
+        factory = {
+            RemoteComposePlayer(it).apply {
+                init(this)
+                if (bitmapLoader != null) {
+                    setBitmapLoader(bitmapLoader)
+                }
+            }
+        },
         update = { remoteComposePlayer ->
             remoteComposePlayer.setTheme(playbackTheme)
             remoteComposePlayer.setDocument(remoteDoc)
