@@ -61,7 +61,7 @@ class RemoteStringTest {
     }
 
     @Test
-    fun floatIfLessThanTrue() {
+    fun floatIfLessThan_less() {
         val v = RemoteFloat(1234f)
         val conditionalString =
             selectIfLT(
@@ -77,7 +77,23 @@ class RemoteStringTest {
     }
 
     @Test
-    fun floatIfLessThanFalse() {
+    fun floatIfLessThan_equal() {
+        val v = RemoteFloat(12345f)
+        val conditionalString =
+            selectIfLT(
+                v,
+                RemoteFloat(12345f),
+                v.toRemoteString(4, 0),
+                (v / 1000f).toRemoteString(2, 0) + RemoteString("K"),
+            )
+        val conditionalStringId = conditionalString.getIdForCreationState(creationState)
+        makeAndPaintCoreDocument()
+
+        assertThat(context.getText(conditionalStringId)).isEqualTo("12K")
+    }
+
+    @Test
+    fun floatIfLessThan_greater() {
         val v = RemoteFloat(12345f)
         val conditionalString =
             selectIfLT(
@@ -93,7 +109,7 @@ class RemoteStringTest {
     }
 
     @Test
-    fun intIfLessThanTrue() {
+    fun intIfLessThan_less() {
         val v = RemoteInt(1234)
         val conditionalString =
             selectIfLT(
@@ -109,7 +125,23 @@ class RemoteStringTest {
     }
 
     @Test
-    fun intIfLessThanFalse() {
+    fun intIfLessThan_equal() {
+        val v = RemoteInt(12345)
+        val conditionalString =
+            selectIfLT(
+                v,
+                RemoteInt(12345),
+                v.toRemoteString(4),
+                (v / 1000).toRemoteString(2) + RemoteString("K"),
+            )
+        val conditionalStringId = conditionalString.getIdForCreationState(creationState)
+        makeAndPaintCoreDocument()
+
+        assertThat(context.getText(conditionalStringId)).isEqualTo("12K")
+    }
+
+    @Test
+    fun intIfLessThan_greater() {
         val v = RemoteInt(12345)
         val conditionalString =
             selectIfLT(
@@ -125,7 +157,7 @@ class RemoteStringTest {
     }
 
     @Test
-    fun floatIfLessEqualTrue() {
+    fun floatIfLessEqual_less() {
         val v = RemoteFloat(1234f)
         val conditionalString =
             selectIfLE(
@@ -141,12 +173,28 @@ class RemoteStringTest {
     }
 
     @Test
-    fun floatIfLessEqualFalse() {
+    fun floatIfLessEqual_equal() {
+        val v = RemoteFloat(1234f)
+        val conditionalString =
+            selectIfLE(
+                v,
+                RemoteFloat(1234f),
+                v.toRemoteString(4, 0),
+                (v / 1000f).toRemoteString(2, 0) + RemoteString("K"),
+            )
+        val conditionalStringId = conditionalString.getIdForCreationState(creationState)
+        makeAndPaintCoreDocument()
+
+        assertThat(context.getText(conditionalStringId)).isEqualTo("1234")
+    }
+
+    @Test
+    fun floatIfLessEqual_greater() {
         val v = RemoteFloat(10000f)
         val conditionalString =
             selectIfLE(
                 v,
-                RemoteFloat(10000f),
+                RemoteFloat(9999f),
                 v.toRemoteString(4, 0),
                 (v / 1000f).toRemoteString(2, 0) + RemoteString("K"),
             )
@@ -157,7 +205,7 @@ class RemoteStringTest {
     }
 
     @Test
-    fun intIfLessEqualTrue() {
+    fun intIfLessEqual_less() {
         val v = RemoteInt(1234)
         val conditionalString =
             selectIfLE(
@@ -173,12 +221,28 @@ class RemoteStringTest {
     }
 
     @Test
-    fun intIfLessEqualFalse() {
+    fun intIfLessEqual_equal() {
+        val v = RemoteInt(1234)
+        val conditionalString =
+            selectIfLE(
+                v,
+                RemoteInt(1234),
+                v.toRemoteString(4),
+                (v / 1000).toRemoteString(2) + RemoteString("K"),
+            )
+        val conditionalStringId = conditionalString.getIdForCreationState(creationState)
+        makeAndPaintCoreDocument()
+
+        assertThat(context.getText(conditionalStringId)).isEqualTo("1234")
+    }
+
+    @Test
+    fun intIfLessEqual_greater() {
         val v = RemoteInt(10000)
         val conditionalString =
             selectIfLE(
                 v,
-                RemoteInt(10000),
+                RemoteInt(9999),
                 v.toRemoteString(4),
                 (v / 1000).toRemoteString(2) + RemoteString("K"),
             )
@@ -189,7 +253,7 @@ class RemoteStringTest {
     }
 
     @Test
-    fun floatIfGreaterThanFalse() {
+    fun floatIfGreaterThan_less() {
         val v = RemoteFloat(1234f)
         val conditionalString =
             selectIfGT(
@@ -205,7 +269,23 @@ class RemoteStringTest {
     }
 
     @Test
-    fun floatIfGreaterThanTrue() {
+    fun floatIfGreaterThan_equal() {
+        val v = RemoteFloat(1234f)
+        val conditionalString =
+            selectIfGT(
+                v,
+                RemoteFloat(1234f),
+                (v / 1000f).toRemoteString(2, 0) + RemoteString("K"),
+                v.toRemoteString(4, 0),
+            )
+        val conditionalStringId = conditionalString.getIdForCreationState(creationState)
+        makeAndPaintCoreDocument()
+
+        assertThat(context.getText(conditionalStringId)).isEqualTo("1234")
+    }
+
+    @Test
+    fun floatIfGreaterThan_greater() {
         val v = RemoteFloat(12345f)
         val conditionalString =
             selectIfGT(
@@ -221,7 +301,7 @@ class RemoteStringTest {
     }
 
     @Test
-    fun intIfGreaterThanFalse() {
+    fun intIfGreaterThan_less() {
         val v = RemoteInt(1234)
         val conditionalString =
             selectIfGT(
@@ -237,7 +317,23 @@ class RemoteStringTest {
     }
 
     @Test
-    fun intIfGreaterThanTrue() {
+    fun intIfGreaterThan_equal() {
+        val v = RemoteInt(1234)
+        val conditionalString =
+            selectIfGT(
+                v,
+                RemoteInt(1234),
+                (v / 1000).toRemoteString(2) + RemoteString("K"),
+                v.toRemoteString(4),
+            )
+        val conditionalStringId = conditionalString.getIdForCreationState(creationState)
+        makeAndPaintCoreDocument()
+
+        assertThat(context.getText(conditionalStringId)).isEqualTo("1234")
+    }
+
+    @Test
+    fun intIfGreaterThan_greater() {
         val v = RemoteInt(12345)
         val conditionalString =
             selectIfGT(
@@ -253,7 +349,7 @@ class RemoteStringTest {
     }
 
     @Test
-    fun floatIfGreaterEqualFalse() {
+    fun floatIfGreaterEqual_less() {
         val v = RemoteFloat(1234f)
         val conditionalString =
             selectIfGE(
@@ -269,7 +365,23 @@ class RemoteStringTest {
     }
 
     @Test
-    fun floatIfGreaterEqualTrue() {
+    fun floatIfGreaterEqual_equal() {
+        val v = RemoteFloat(1234f)
+        val conditionalString =
+            selectIfGE(
+                v,
+                RemoteFloat(10000f),
+                (v / 1000f).toRemoteString(2, 0) + RemoteString("K"),
+                v.toRemoteString(4, 0),
+            )
+        val conditionalStringId = conditionalString.getIdForCreationState(creationState)
+        makeAndPaintCoreDocument()
+
+        assertThat(context.getText(conditionalStringId)).isEqualTo("1234")
+    }
+
+    @Test
+    fun floatIfGreaterEqual_greater() {
         val v = RemoteFloat(10000f)
         val conditionalString =
             selectIfGE(
@@ -285,7 +397,7 @@ class RemoteStringTest {
     }
 
     @Test
-    fun intIfGreaterEqualFalse() {
+    fun intIfGreaterEqual_less() {
         val v = RemoteInt(1234)
         val conditionalString =
             selectIfGE(
@@ -301,7 +413,23 @@ class RemoteStringTest {
     }
 
     @Test
-    fun intIfGreaterEqualTrue() {
+    fun intIfGreaterEqual_equal() {
+        val v = RemoteInt(10000)
+        val conditionalString =
+            selectIfGE(
+                v,
+                RemoteInt(10000),
+                (v / 1000).toRemoteString(2) + RemoteString("K"),
+                v.toRemoteString(4),
+            )
+        val conditionalStringId = conditionalString.getIdForCreationState(creationState)
+        makeAndPaintCoreDocument()
+
+        assertThat(context.getText(conditionalStringId)).isEqualTo("10K")
+    }
+
+    @Test
+    fun intIfGreaterEqual_greater() {
         val v = RemoteInt(10000)
         val conditionalString =
             selectIfGE(
@@ -349,8 +477,8 @@ class RemoteStringTest {
 
         makeAndPaintCoreDocument()
 
-        assertThat(context.getText(isAEmptyStrId)).isEqualTo("true")
-        assertThat(context.getText(isBEmptyStrId)).isEqualTo("false")
+        assertThat(context.getText(isAEmptyStrId)).isEqualTo("false")
+        assertThat(context.getText(isBEmptyStrId)).isEqualTo("true")
     }
 
     @Test
@@ -366,8 +494,8 @@ class RemoteStringTest {
 
         makeAndPaintCoreDocument()
 
-        assertThat(context.getText(isANotEmptyStrId)).isEqualTo("false")
-        assertThat(context.getText(isBNotEmptyStrId)).isEqualTo("true")
+        assertThat(context.getText(isANotEmptyStrId)).isEqualTo("true")
+        assertThat(context.getText(isBNotEmptyStrId)).isEqualTo("false")
     }
 
     @Test

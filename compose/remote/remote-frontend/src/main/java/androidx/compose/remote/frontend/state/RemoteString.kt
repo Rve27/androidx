@@ -62,8 +62,8 @@ internal constructor(public override val hasConstantValue: Boolean) : RemoteStat
             return RemoteBoolean(
                 RemoteIntExpression(hasConstantValue) { creationState ->
                     longArrayOf(
-                        0,
                         1,
+                        0,
                         0x100000000L +
                             Utils.idFromNan(
                                     creationState.document.textLength(
@@ -82,8 +82,8 @@ internal constructor(public override val hasConstantValue: Boolean) : RemoteStat
             return RemoteBoolean(
                 RemoteIntExpression(hasConstantValue) { creationState ->
                     longArrayOf(
-                        1,
                         0,
+                        1,
                         0x100000000L +
                             Utils.idFromNan(
                                     creationState.document.textLength(
@@ -424,7 +424,7 @@ public fun selectIfLT(
             ifFalse.hasConstantValue &&
             a.hasConstantValue &&
             b.hasConstantValue,
-        SelectFloatImpl(a, b, ifTrue, ifFalse),
+        SelectFloatImpl(b, a, ifFalse, ifTrue),
     )
 }
 
@@ -450,7 +450,7 @@ public fun selectIfLT(
             ifFalse.hasConstantValue &&
             a.hasConstantValue &&
             b.hasConstantValue,
-        SelectIntImpl(a, b, ifTrue, ifFalse),
+        SelectIntImpl(b, a, ifFalse, ifTrue),
     )
 }
 
@@ -476,7 +476,7 @@ public fun selectIfLE(
             ifFalse.hasConstantValue &&
             a.hasConstantValue &&
             b.hasConstantValue,
-        SelectFloatImpl(b, a, ifFalse, ifTrue),
+        SelectFloatImpl(a, b, ifTrue, ifFalse),
     )
 }
 
@@ -502,7 +502,7 @@ public fun selectIfLE(
             ifFalse.hasConstantValue &&
             a.hasConstantValue &&
             b.hasConstantValue,
-        SelectIntImpl(b, a, ifFalse, ifTrue),
+        SelectIntImpl(a, b, ifTrue, ifFalse),
     )
 }
 
