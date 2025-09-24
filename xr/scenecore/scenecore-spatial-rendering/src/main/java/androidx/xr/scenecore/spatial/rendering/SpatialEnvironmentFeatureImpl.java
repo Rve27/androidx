@@ -56,6 +56,7 @@ class SpatialEnvironmentFeatureImpl extends BaseRenderingFeature
     private String mOverriddenNodeName;
     private @Nullable Consumer<Node> mOnBeforeNodeAttachedListener = null;
     private final @NonNull Activity mActivity;
+    private boolean mIsDisposed = false;
 
     SpatialEnvironmentFeatureImpl(
             @NonNull Activity activity,
@@ -264,6 +265,9 @@ class SpatialEnvironmentFeatureImpl extends BaseRenderingFeature
 
     @Override
     public void dispose() {
+        if (mIsDisposed) return;
+        mIsDisposed = true;
+
         super.dispose();
         if (mGeometrySubspaceSplitEngine != null) {
             if (mMaterialOverride != null) {
@@ -277,7 +281,7 @@ class SpatialEnvironmentFeatureImpl extends BaseRenderingFeature
             mGeometrySubspaceSplitEngine = null;
             mImpressApi.clearPreferredEnvironmentIblAsset();
         }
-        mRootEnvironmentNode = null;
+
         mGeometrySubspaceSplitEngine = null;
         mGeometrySubspaceImpressNode = null;
         mRootEnvironmentNode = null;

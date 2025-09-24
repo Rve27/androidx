@@ -2504,4 +2504,19 @@ public class SpatialSceneRuntimeTest {
         assertThat(ShadowXrExtensions.extract(mXrExtensions).getMainWindowNode(mActivity)).isNull();
         assertThat(ShadowXrExtensions.extract(mXrExtensions).getTaskNode(mActivity)).isNull();
     }
+
+    @Test
+    public void destroy_disposeInvoked() {
+        AndroidXrEntity entity = (AndroidXrEntity) createGroupEntity();
+        assertThat(entity.getNode()).isNotNull();
+        assertThat(mNodeRepository.getParent(entity.getNode())).isNotNull();
+
+        mRuntime.destroy();
+
+        assertThat(mNodeRepository.getParent(entity.getNode())).isNull();
+        assertThat(ShadowXrExtensions.extract(mXrExtensions).getSpatialStateCallback(mActivity))
+                .isNull();
+        assertThat(ShadowXrExtensions.extract(mXrExtensions).getMainWindowNode(mActivity)).isNull();
+        assertThat(ShadowXrExtensions.extract(mXrExtensions).getTaskNode(mActivity)).isNull();
+    }
 }
