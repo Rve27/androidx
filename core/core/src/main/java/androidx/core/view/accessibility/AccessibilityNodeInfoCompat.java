@@ -2149,6 +2149,40 @@ public class AccessibilityNodeInfoCompat {
     public static final String ACTION_ARGUMENT_SCROLL_AMOUNT_FLOAT =
             "androidx.core.view.accessibility.action.ARGUMENT_SCROLL_AMOUNT_FLOAT";
 
+    // Expanded states.
+
+    /**
+     * Expanded state for a non-expandable element
+     *
+     * @see #getExpandedState()
+     * @see #setExpandedState(int)
+     */
+    public static final int EXPANDED_STATE_UNDEFINED = 0;
+
+    /**
+     * Expanded state for a collapsed expandable element.
+     *
+     * @see #getExpandedState()
+     * @see #setExpandedState(int)
+     */
+    public static final int EXPANDED_STATE_COLLAPSED = 1;
+
+    /**
+     * Expanded state for an expanded expandable element that can still be expanded further.
+     *
+     * @see #getExpandedState()
+     * @see #setExpandedState(int)
+     */
+    public static final int EXPANDED_STATE_PARTIAL = 2;
+
+    /**
+     * Expanded state for an expanded expandable element that cannot be expanded further.
+     *
+     * @see #getExpandedState()
+     * @see #setExpandedState(int)
+     */
+    public static final int EXPANDED_STATE_FULL = 3;
+
     // Focus types
 
     /**
@@ -2335,10 +2369,10 @@ public class AccessibilityNodeInfoCompat {
     @IntDef(
             flag = false,
             value = {
-                AccessibilityNodeInfo.EXPANDED_STATE_UNDEFINED,
-                AccessibilityNodeInfo.EXPANDED_STATE_COLLAPSED,
-                AccessibilityNodeInfo.EXPANDED_STATE_PARTIAL,
-                AccessibilityNodeInfo.EXPANDED_STATE_FULL,
+                EXPANDED_STATE_UNDEFINED,
+                EXPANDED_STATE_COLLAPSED,
+                EXPANDED_STATE_PARTIAL,
+                EXPANDED_STATE_FULL,
             })
     @Retention(RetentionPolicy.SOURCE)
     private @interface ExpandedState {}
@@ -2781,10 +2815,10 @@ public class AccessibilityNodeInfoCompat {
      *
      * @return The expanded state, one of:
      *     <ul>
-     *       <li>{@link AccessibilityNodeInfo#EXPANDED_STATE_UNDEFINED}
-     *       <li>{@link AccessibilityNodeInfo#EXPANDED_STATE_COLLAPSED}
-     *       <li>{@link AccessibilityNodeInfo#EXPANDED_STATE_FULL}
-     *       <li>{@link AccessibilityNodeInfo#EXPANDED_STATE_PARTIAL}
+     *       <li>{@link AccessibilityNodeInfoCompat#EXPANDED_STATE_UNDEFINED}
+     *       <li>{@link AccessibilityNodeInfoCompat#EXPANDED_STATE_COLLAPSED}
+     *       <li>{@link AccessibilityNodeInfoCompat#EXPANDED_STATE_FULL}
+     *       <li>{@link AccessibilityNodeInfoCompat#EXPANDED_STATE_PARTIAL}
      *     </ul>
      */
     @ExpandedState
@@ -2793,7 +2827,7 @@ public class AccessibilityNodeInfoCompat {
             return Api36Impl.getExpandedState(mInfo);
         } else {
             return mInfo.getExtras().getInt(EXPANDED_STATE_KEY,
-                AccessibilityNodeInfo.EXPANDED_STATE_UNDEFINED);
+                EXPANDED_STATE_UNDEFINED);
         }
     }
 
@@ -2807,10 +2841,10 @@ public class AccessibilityNodeInfoCompat {
      * @param state new expanded state of this node.
      * @throws IllegalArgumentException If state is not one of:
      *     <ul>
-     *       <li>{@link AccessibilityNodeInfo#EXPANDED_STATE_UNDEFINED}
-     *       <li>{@link AccessibilityNodeInfo#EXPANDED_STATE_COLLAPSED}
-     *       <li>{@link AccessibilityNodeInfo#EXPANDED_STATE_PARTIAL}
-     *       <li>{@link AccessibilityNodeInfo#EXPANDED_STATE_FULL}
+     *       <li>{@link AccessibilityNodeInfoCompat#EXPANDED_STATE_UNDEFINED}
+     *       <li>{@link AccessibilityNodeInfoCompat#EXPANDED_STATE_COLLAPSED}
+     *       <li>{@link AccessibilityNodeInfoCompat#EXPANDED_STATE_PARTIAL}
+     *       <li>{@link AccessibilityNodeInfoCompat#EXPANDED_STATE_FULL}
      *     </ul>
      *
      * @throws IllegalStateException If called from an AccessibilityService
@@ -5557,13 +5591,13 @@ public class AccessibilityNodeInfoCompat {
 
     static String getExpandedStateSymbolicName(@ExpandedState int state) {
         switch(state) {
-            case AccessibilityNodeInfo.EXPANDED_STATE_UNDEFINED:
+            case EXPANDED_STATE_UNDEFINED:
                 return "UNDEFINED";
-            case AccessibilityNodeInfo.EXPANDED_STATE_COLLAPSED:
+            case EXPANDED_STATE_COLLAPSED:
                 return "COLLAPSED";
-            case AccessibilityNodeInfo.EXPANDED_STATE_PARTIAL:
+            case EXPANDED_STATE_PARTIAL:
                 return "PARTIAL";
-            case AccessibilityNodeInfo.EXPANDED_STATE_FULL:
+            case EXPANDED_STATE_FULL:
                 return "FULL";
             default:
                 return "UNKNOWN";
