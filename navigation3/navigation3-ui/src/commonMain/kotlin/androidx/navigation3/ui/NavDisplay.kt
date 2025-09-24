@@ -149,8 +149,7 @@ public object NavDisplay {
  * @param backStack the collection of keys that represents the state that needs to be handled
  * @param modifier the modifier to be applied to the layout.
  * @param contentAlignment The [Alignment] of the [AnimatedContent]
- * @param onBack a callback for handling system back press. The passed [Int] refers to the number of
- *   entries to pop from the end of the backstack, as calculated by the [sceneStrategy].
+ * @param onBack a callback for handling system back press.
  * @param entryDecorators list of [NavEntryDecorator] to add information to the entry content
  * @param sceneStrategy the [SceneStrategy] to determine which scene to render a list of entries.
  * @param sizeTransform the [SizeTransform] for the [AnimatedContent].
@@ -168,9 +167,9 @@ public fun <T : Any> NavDisplay(
     backStack: List<T>,
     modifier: Modifier = Modifier,
     contentAlignment: Alignment = Alignment.TopStart,
-    onBack: (Int) -> Unit = {
+    onBack: () -> Unit = {
         if (backStack is MutableList<T>) {
-            repeat(it) { backStack.removeAt(backStack.lastIndex) }
+            backStack.removeLastOrNull()
         }
     },
     entryDecorators: List<NavEntryDecorator<T>> = listOf(rememberSavedStateNavEntryDecorator()),
@@ -250,8 +249,7 @@ public fun <T : Any> NavDisplay(
  * @param popTransitionSpec Default [ContentTransform] when popping [NavEntry]s.
  * @param predictivePopTransitionSpec Default [ContentTransform] when popping with predictive back
  *   [NavEntry]s.
- * @param onBack a callback for handling system back press. The passed [Int] refers to the number of
- *   entries to pop from the end of the backstack, as calculated by the [sceneStrategy].
+ * @param onBack a callback for handling system back press.
  * @sample androidx.navigation3.ui.samples.MultipleBackStackSample
  * @sample androidx.navigation3.ui.samples.ConcatenatedBackStackSample
  * @see [rememberDecoratedNavEntries]
@@ -272,7 +270,7 @@ public fun <T : Any> NavDisplay(
             @NavigationEvent.SwipeEdge Int
         ) -> ContentTransform =
         defaultPredictivePopTransitionSpec(),
-    onBack: (Int) -> Unit,
+    onBack: () -> Unit,
 ) {
     require(entries.isNotEmpty()) { "NavDisplay entries cannot be empty" }
 
@@ -299,11 +297,10 @@ public fun <T : Any> NavDisplay(
         isBackEnabled = scene.previousEntries.isNotEmpty(),
         onBackCompleted = {
             // If `enabled` becomes stale (e.g., it was set to false but a gesture was
-            // dispatched in the same frame), this ensures that the calculated index is valid
-            // before calling onBack, avoiding IndexOutOfBoundsException in edge cases.
-            if (finalEntries.size > scene.previousEntries.size) {
-                onBack(finalEntries.size - scene.previousEntries.size)
-            }
+            // dispatched in the same frame), this may result in no entries being popped
+            // due to finalEntries.size being smaller than scene.previousEntries.size
+            // but that's preferable to crashing with an IndexOutOfBoundsException
+            repeat(finalEntries.size - scene.previousEntries.size) { onBack() }
         },
     )
 
