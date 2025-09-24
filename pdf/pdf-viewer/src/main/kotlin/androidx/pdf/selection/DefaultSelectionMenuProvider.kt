@@ -17,11 +17,12 @@ package androidx.pdf.selection
 
 import android.content.Context
 import androidx.pdf.R
+import androidx.pdf.selection.model.TextSelection
 import androidx.pdf.util.ClipboardUtils
 
-/** Provides default menu items for link selections. */
-internal object LinkSelectionMenuProvider {
-    internal fun getDefaultMenuItems(context: Context): List<ContextMenuComponent> {
+/** Provides default menu items for selections. */
+internal object DefaultSelectionMenuProvider {
+    internal fun getMenuItems(context: Context): List<ContextMenuComponent> {
         val defaultMenuItems =
             listOf<ContextMenuComponent>(
                 DefaultSelectionMenuComponent(
@@ -29,12 +30,14 @@ internal object LinkSelectionMenuProvider {
                     label = context.getString(android.R.string.copy),
                     contentDescription = context.getString(R.string.desc_copy),
                 ) { pdfView ->
-                    val localCurrentSelection = pdfView.currentSelection
-                    if (localCurrentSelection is LinkSelection) {
-                        ClipboardUtils.copyToClipboard(
-                            context,
-                            localCurrentSelection.linkText.toString(),
-                        )
+                    val textToCopy =
+                        when (val currentSelection = pdfView.currentSelection) {
+                            is LinkSelection -> currentSelection.linkText.toString()
+                            is TextSelection -> currentSelection.text.toString()
+                            else -> null
+                        }
+                    if (textToCopy != null) {
+                        ClipboardUtils.copyToClipboard(context, textToCopy)
                     }
                     // close the context menu upon copy action
                     close()

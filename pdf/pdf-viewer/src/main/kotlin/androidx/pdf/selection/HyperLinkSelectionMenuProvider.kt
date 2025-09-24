@@ -27,13 +27,13 @@ internal class HyperLinkSelectionMenuProvider(private val context: Context) :
         val menuItems: MutableList<ContextMenuComponent> = mutableListOf()
         // Avoid copy link context menu option for mail link as it is not intuitive.
         if (!selection.link.toString().contains(MAIL_TO)) {
-            menuItems += getHyperLinkMenuItem(selection)
+            menuItems += getCopyLinkMenuItem()
         }
-        menuItems += LinkSelectionMenuProvider.getDefaultMenuItems(context)
+        menuItems += DefaultSelectionMenuProvider.getMenuItems(context)
         return menuItems
     }
 
-    private fun getHyperLinkMenuItem(selection: HyperLinkSelection): ContextMenuComponent {
+    private fun getCopyLinkMenuItem(): ContextMenuComponent {
         return DefaultSelectionMenuComponent(
             key = PdfSelectionMenuKeys.SmartActionKey,
             label = context.getString(R.string.label_copy_link),
