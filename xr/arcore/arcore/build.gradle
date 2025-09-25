@@ -37,6 +37,7 @@ dependencies {
     api(project(":xr:arcore:arcore-runtime"))
 
     implementation("androidx.annotation:annotation:1.8.1")
+    implementation(project(":xr:arcore:arcore-openxr"))
 
     testImplementation(libs.kotlinCoroutinesTest)
     testImplementation(libs.junit)
