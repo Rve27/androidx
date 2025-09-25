@@ -16,13 +16,13 @@
 @file:JvmName("ImageScalingUtil")
 @file:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 
-package androidx.compose.remote.foundation.image
+package androidx.compose.remote.wear.material3.image
 
 import androidx.annotation.RestrictTo
 import androidx.compose.remote.core.operations.utilities.ImageScaling
 import androidx.compose.ui.layout.ContentScale
 
-/** Converts [androidx.compose.ui.layout.ContentScale] to [ImageScaling]. */
+/** Converts [ContentScale] to [ImageScaling]. */
 internal fun ContentScale.toRemoteCompose(): Int {
     return when (this) {
         ContentScale.Fit -> ImageScaling.SCALE_FIT
