@@ -50,7 +50,7 @@ class WearWidgetProviderImplTest {
 
     @Test
     fun onWidgetRequest_callsProvideWidgetContent() {
-        val widgetRequest = WearWidgetRequest(instanceId = 17)
+        val widgetRequest = WearWidgetRequest(instanceId = 17, widthDp = 200f, heightDp = 200f)
 
         provider.onWidgetRequest(widgetRequest.toParcel(), mockWidgetCallback)
         testScope.advanceUntilIdle()
@@ -60,7 +60,7 @@ class WearWidgetProviderImplTest {
 
     @Test
     fun onWidgetRequest_callbackIsCalled() {
-        val widgetRequest = WearWidgetRequest(instanceId = 17)
+        val widgetRequest = WearWidgetRequest(instanceId = 17, widthDp = 200f, heightDp = 200f)
 
         provider.onWidgetRequest(widgetRequest.toParcel(), mockWidgetCallback)
         testScope.advanceUntilIdle()
