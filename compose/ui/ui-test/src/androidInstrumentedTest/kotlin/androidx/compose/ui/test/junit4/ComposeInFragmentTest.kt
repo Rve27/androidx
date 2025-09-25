@@ -62,6 +62,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth.assertThat
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.test.StandardTestDispatcher
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -131,7 +132,7 @@ class ComposeInFragmentTest {
 
         val latch = CountDownLatch(1)
 
-        runComposeUiTest {
+        runComposeUiTest(StandardTestDispatcher()) {
             val mainFragment = MainFragment()
 
             // Launch fragment containing fragment with dialog

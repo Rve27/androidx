@@ -64,6 +64,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.yield
@@ -102,31 +103,33 @@ class ComposeUiTestTest {
 
     /** Check that basic scenarios work: a composition that is recomposed due to a state change. */
     @Test
-    fun testStateChange() = runComposeUiTest {
-        val clicks = mutableStateOf(0)
-        setContent { ClickCounter(clicks) }
+    fun testStateChange() =
+        runComposeUiTest(StandardTestDispatcher()) {
+            val clicks = mutableStateOf(0)
+            setContent { ClickCounter(clicks) }
 
-        clicks.value++
-        onNodeWithText("Click count", substring = true).assertTextEquals("Click count: 1")
+            clicks.value++
+            onNodeWithText("Click count", substring = true).assertTextEquals("Click count: 1")
 
-        clicks.value++
-        onNodeWithText("Click count", substring = true).assertTextEquals("Click count: 2")
-    }
+            clicks.value++
+            onNodeWithText("Click count", substring = true).assertTextEquals("Click count: 2")
+        }
 
     /**
      * Check that basic scenarios with input work: a composition that receives touch input and
      * changes state as a result of that, triggering recomposition.
      */
     @Test
-    fun testInputInjection() = runComposeUiTest {
-        setContent { ClickCounter() }
+    fun testInputInjection() =
+        runComposeUiTest(StandardTestDispatcher()) {
+            setContent { ClickCounter() }
 
-        onNodeWithText("Click me").performClick()
-        onNodeWithText("Click count", substring = true).assertTextEquals("Click count: 1")
+            onNodeWithText("Click me").performClick()
+            onNodeWithText("Click count", substring = true).assertTextEquals("Click count: 1")
 
-        onNodeWithText("Click me").performClick()
-        onNodeWithText("Click count", substring = true).assertTextEquals("Click count: 2")
-    }
+            onNodeWithText("Click me").performClick()
+            onNodeWithText("Click count", substring = true).assertTextEquals("Click count: 2")
+        }
 
     /**
      * Check that animation scenarios work: a composition with an animation in its initial state is
@@ -134,71 +137,73 @@ class ComposeUiTestTest {
      * that.
      */
     @Test
-    fun testAnimation() = runComposeUiTest {
-        var target by mutableStateOf(0f)
-        setContent {
-            val offset = animateFloatAsState(target)
-            Box(Modifier.fillMaxSize()) {
-                Box(Modifier.size(10.dp).offset(x = offset.value.dp).testTag("box"))
+    fun testAnimation() =
+        runComposeUiTest(StandardTestDispatcher()) {
+            var target by mutableStateOf(0f)
+            setContent {
+                val offset = animateFloatAsState(target)
+                Box(Modifier.fillMaxSize()) {
+                    Box(Modifier.size(10.dp).offset(x = offset.value.dp).testTag("box"))
+                }
             }
+            onNodeWithTag("box").assertLeftPositionInRootIsEqualTo(0.dp)
+            target = 100f
+            onNodeWithTag("box").assertLeftPositionInRootIsEqualTo(100.dp)
         }
-        onNodeWithTag("box").assertLeftPositionInRootIsEqualTo(0.dp)
-        target = 100f
-        onNodeWithTag("box").assertLeftPositionInRootIsEqualTo(100.dp)
-    }
 
     /**
      * Check that scrolling and controlling the clock works: a scrollable receives a swipe while the
      * clock is paused, when the clock is resumed it performs the fling.
      */
     @Test
-    fun testControlledScrolling() = runComposeUiTest {
-        // Define constants used in the test
-        val n = 100
-        val touchSlop = 16f
-        val scrollState = ScrollState(0)
-        val flingBehavior = SimpleFlingBehavior(deltas = 20 downTo 1)
+    fun testControlledScrolling() =
+        runComposeUiTest(StandardTestDispatcher()) {
+            // Define constants used in the test
+            val n = 100
+            val touchSlop = 16f
+            val scrollState = ScrollState(0)
+            val flingBehavior = SimpleFlingBehavior(deltas = 20 downTo 1)
 
-        // Set content: a list where the fling is always the same, regardless of the swipe
-        setContent {
-            WithTouchSlop(touchSlop = touchSlop) {
-                // turn off visual overscroll for calculation correctness
-                CompositionLocalProvider(LocalOverscrollFactory provides null) {
-                    Box(Modifier.fillMaxSize()) {
-                        Column(
-                            Modifier.requiredSize(200.dp)
-                                .verticalScroll(scrollState, flingBehavior = flingBehavior)
-                                .testTag("list")
-                        ) {
-                            repeat(n) { Spacer(Modifier.fillMaxWidth().height(30.dp)) }
+            // Set content: a list where the fling is always the same, regardless of the swipe
+            setContent {
+                WithTouchSlop(touchSlop = touchSlop) {
+                    // turn off visual overscroll for calculation correctness
+                    CompositionLocalProvider(LocalOverscrollFactory provides null) {
+                        Box(Modifier.fillMaxSize()) {
+                            Column(
+                                Modifier.requiredSize(200.dp)
+                                    .verticalScroll(scrollState, flingBehavior = flingBehavior)
+                                    .testTag("list")
+                            ) {
+                                repeat(n) { Spacer(Modifier.fillMaxWidth().height(30.dp)) }
+                            }
                         }
                     }
                 }
             }
+
+            // Stop auto advancing and perform a swipe. The list will "freeze" in the position where
+            // it was at the end of the swipe
+            mainClock.autoAdvance = false
+            onNodeWithTag("list").performTouchInput {
+                down(bottomCenter)
+                repeat(10) { moveTo(bottomCenter - percentOffset(y = (it + 1) / 10f)) }
+                up()
+            }
+            waitForIdle()
+
+            // Check that we're in that frozen position
+            val expectedViewPortSize = with(density) { 200.dp.toPx() }
+            val expectedSwipeDistance = (expectedViewPortSize - touchSlop).roundToInt()
+            assertThat(scrollState.value).isEqualTo(expectedSwipeDistance)
+
+            // "Unfreeze" the list and let the fling run. The list will stop at
+            // `flingBehavior.totalDistance` pixels further than where it was frozen.
+            mainClock.autoAdvance = true
+            waitForIdle()
+            val expectedFlingDistance = flingBehavior.totalDistance
+            assertThat(scrollState.value).isEqualTo(expectedSwipeDistance + expectedFlingDistance)
         }
-
-        // Stop auto advancing and perform a swipe. The list will "freeze" in the position where
-        // it was at the end of the swipe
-        mainClock.autoAdvance = false
-        onNodeWithTag("list").performTouchInput {
-            down(bottomCenter)
-            repeat(10) { moveTo(bottomCenter - percentOffset(y = (it + 1) / 10f)) }
-            up()
-        }
-        waitForIdle()
-
-        // Check that we're in that frozen position
-        val expectedViewPortSize = with(density) { 200.dp.toPx() }
-        val expectedSwipeDistance = (expectedViewPortSize - touchSlop).roundToInt()
-        assertThat(scrollState.value).isEqualTo(expectedSwipeDistance)
-
-        // "Unfreeze" the list and let the fling run. The list will stop at
-        // `flingBehavior.totalDistance` pixels further than where it was frozen.
-        mainClock.autoAdvance = true
-        waitForIdle()
-        val expectedFlingDistance = flingBehavior.totalDistance
-        assertThat(scrollState.value).isEqualTo(expectedSwipeDistance + expectedFlingDistance)
-    }
 
     /**
      * A simple [FlingBehavior] that scrolls one [delta][deltas] every frame regardless of velocity.
@@ -216,54 +221,61 @@ class ComposeUiTestTest {
 
     @Test
     fun getActivityTest() =
-        runAndroidComposeUiTest<ComponentActivity> { assertThat(activity).isNotNull() }
+        runAndroidComposeUiTest<ComponentActivity>(StandardTestDispatcher()) {
+            assertThat(activity).isNotNull()
+        }
 
     @Test
-    fun runTestContextMustHaveMonotonicFrameClock() = runComposeUiTest {
-        val frameClock = coroutineContext[MonotonicFrameClock.Key]
-        assertThat(frameClock).isNotNull()
-    }
+    fun runTestContextMustHaveMonotonicFrameClock() =
+        runComposeUiTest(StandardTestDispatcher()) {
+            val frameClock = coroutineContext[MonotonicFrameClock.Key]
+            assertThat(frameClock).isNotNull()
+        }
 
     @Test
-    fun runTestAndCompositionUseDifferentSchedulers() = runComposeUiTest {
-        var number by mutableStateOf(10)
-        setContent { Text("$number", modifier = Modifier.testTag("test")) }
-        number++
+    fun runTestAndCompositionUseDifferentSchedulers() =
+        runComposeUiTest(StandardTestDispatcher()) {
+            var number by mutableStateOf(10)
+            setContent { Text("$number", modifier = Modifier.testTag("test")) }
+            number++
 
-        mainClock.autoAdvance = false
-        val currentCompositionTime = mainClock.currentTime
+            mainClock.autoAdvance = false
+            val currentCompositionTime = mainClock.currentTime
 
-        // Using at least 2 frames delay to "wait" for UI coroutines:
-        delay(32)
-        // delay skipping in test body should not affect Composition - no exception expected:
-        // Only the original thread that created a view hierarchy can touch its views.
+            // Using at least 2 frames delay to "wait" for UI coroutines:
+            delay(32)
+            // delay skipping in test body should not affect Composition - no exception expected:
+            // Only the original thread that created a view hierarchy can touch its views.
 
-        onNodeWithTag("test").assertTextEquals("10")
-        // mainClock.currentTime is not expected to change after delay
-        // when the schedulers are different
-        assertThat(mainClock.currentTime).isEqualTo(currentCompositionTime)
+            onNodeWithTag("test").assertTextEquals("10")
+            // mainClock.currentTime is not expected to change after delay
+            // when the schedulers are different
+            assertThat(mainClock.currentTime).isEqualTo(currentCompositionTime)
 
-        mainClock.advanceTimeBy(21, ignoreFrameDuration = true)
-        onNodeWithTag("test").assertTextEquals("11")
-        assertThat(mainClock.currentTime).isEqualTo(currentCompositionTime + 21)
-    }
+            mainClock.advanceTimeBy(21, ignoreFrameDuration = true)
+            onNodeWithTag("test").assertTextEquals("11")
+            assertThat(mainClock.currentTime).isEqualTo(currentCompositionTime + 21)
+        }
 
     @Test
     fun shouldKeepCustomCoroutineContextElements() =
-        runComposeUiTest(runTestContext = MyCustomElement("testElement")) {
+        runComposeUiTest(
+            runTestContext = MyCustomElement("testElement") + StandardTestDispatcher()
+        ) {
             val frameClock = coroutineContext[MonotonicFrameClock.Key]
             assertThat(frameClock).isNotNull()
             assertThat(coroutineContext[MyCustomElement.Key]!!.value).isEqualTo("testElement")
         }
 
     @Test
-    fun defaultRunTestDispatcherIsStandardDispatcher() = runComposeUiTest {
-        var i = 0
-        CoroutineScope(coroutineContext).launch { i = 10 }
-        assertThat(i).isEqualTo(0)
-        yield()
-        assertThat(i).isEqualTo(10)
-    }
+    fun defaultRunTestDispatcherIsStandardDispatcher() =
+        runComposeUiTest(StandardTestDispatcher()) {
+            var i = 0
+            CoroutineScope(coroutineContext).launch { i = 10 }
+            assertThat(i).isEqualTo(0)
+            yield()
+            assertThat(i).isEqualTo(10)
+        }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test

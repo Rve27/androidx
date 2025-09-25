@@ -22,6 +22,7 @@ import androidx.core.os.bundleOf
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
 import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.test.StandardTestDispatcher
 import org.junit.Assert.assertThrows
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -32,48 +33,51 @@ import org.junit.runner.RunWith
 class StateRestorationTesterTest {
 
     @Test
-    fun emulateSavedInstanceStateRestore_maxBytes() = runComposeUiTest {
-        with(StateRestorationTester(composeTest = this)) {
-            val expectedState = ByteArray(size = ARRAY_BYTES_MAX_SIZE - 100)
-            var actualState: ByteArray? = null
-            setContent { actualState = rememberSaveable { expectedState } }
+    fun emulateSavedInstanceStateRestore_maxBytes() =
+        runComposeUiTest(StandardTestDispatcher()) {
+            with(StateRestorationTester(composeTest = this)) {
+                val expectedState = ByteArray(size = ARRAY_BYTES_MAX_SIZE - 100)
+                var actualState: ByteArray? = null
+                setContent { actualState = rememberSaveable { expectedState } }
 
-            emulateSaveAndRestore()
+                emulateSaveAndRestore()
 
-            assertThat(actualState).isNotSameInstanceAs(expectedState)
-            assertThat(actualState?.size).isEqualTo(expectedState.size)
-        }
-    }
-
-    @Test
-    fun emulateSavedInstanceStateRestore_tooLargeException() = runComposeUiTest {
-        with(StateRestorationTester(composeTest = this)) {
-            setContent {
-                // Explicitly define type argument to avoid 'kotlin.Unit cannot be saved' error.
-                @Suppress("RemoveExplicitTypeArguments")
-                rememberSaveable<ByteArray> { ByteArray(size = ARRAY_BYTES_MAX_SIZE + 100) }
+                assertThat(actualState).isNotSameInstanceAs(expectedState)
+                assertThat(actualState?.size).isEqualTo(expectedState.size)
             }
-
-            assertThrows(IllegalStateException::class.java) { emulateSaveAndRestore() }
         }
-    }
 
     @Test
-    fun emulateSavedInstanceStateRestore_encodesParcelable() = runComposeUiTest {
-        with(StateRestorationTester(composeTest = this)) {
-            // Bundle is a Parcelable.
-            val expectedState =
-                @Suppress("DEPRECATION") // bundleOf is deprecated
-                bundleOf("KEY" to Int.MIN_VALUE)
-            var actualState: Bundle? = null
-            setContent { actualState = rememberSaveable { expectedState } }
+    fun emulateSavedInstanceStateRestore_tooLargeException() =
+        runComposeUiTest(StandardTestDispatcher()) {
+            with(StateRestorationTester(composeTest = this)) {
+                setContent {
+                    // Explicitly define type argument to avoid 'kotlin.Unit cannot be saved' error.
+                    @Suppress("RemoveExplicitTypeArguments")
+                    rememberSaveable<ByteArray> { ByteArray(size = ARRAY_BYTES_MAX_SIZE + 100) }
+                }
 
-            emulateSaveAndRestore()
-
-            assertThat(actualState).isNotSameInstanceAs(expectedState)
-            assertThat(actualState?.getInt("KEY")).isEqualTo(Int.MIN_VALUE)
+                assertThrows(IllegalStateException::class.java) { emulateSaveAndRestore() }
+            }
         }
-    }
+
+    @Test
+    fun emulateSavedInstanceStateRestore_encodesParcelable() =
+        runComposeUiTest(StandardTestDispatcher()) {
+            with(StateRestorationTester(composeTest = this)) {
+                // Bundle is a Parcelable.
+                val expectedState =
+                    @Suppress("DEPRECATION") // bundleOf is deprecated
+                    bundleOf("KEY" to Int.MIN_VALUE)
+                var actualState: Bundle? = null
+                setContent { actualState = rememberSaveable { expectedState } }
+
+                emulateSaveAndRestore()
+
+                assertThat(actualState).isNotSameInstanceAs(expectedState)
+                assertThat(actualState?.getInt("KEY")).isEqualTo(Int.MIN_VALUE)
+            }
+        }
 
     private companion object {
 

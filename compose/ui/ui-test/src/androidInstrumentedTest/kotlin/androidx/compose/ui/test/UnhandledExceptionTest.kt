@@ -36,6 +36,7 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.core.view.forEach
 import kotlin.test.Ignore
 import kotlin.test.fail
+import kotlinx.coroutines.test.StandardTestDispatcher
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestRule
@@ -64,7 +65,7 @@ class UnhandledExceptionTest(private val activityClass: Class<out ComponentActiv
 
     @Test
     fun throwDuringCompose() =
-        runAndroidComposeUiTest(activityClass) {
+        runAndroidComposeUiTest(activityClass, StandardTestDispatcher()) {
             installContent { throwExpectedException() }
 
             waitForIdle()
@@ -72,7 +73,7 @@ class UnhandledExceptionTest(private val activityClass: Class<out ComponentActiv
 
     @Test
     fun throwDuringRecompose() =
-        runAndroidComposeUiTest(activityClass) {
+        runAndroidComposeUiTest(activityClass, StandardTestDispatcher()) {
             var state by mutableIntStateOf(0)
             installContent {
                 if (state == 1) throwExpectedException()
@@ -86,7 +87,7 @@ class UnhandledExceptionTest(private val activityClass: Class<out ComponentActiv
 
     @Test
     fun throwDuringInteraction() =
-        runAndroidComposeUiTest(activityClass) {
+        runAndroidComposeUiTest(activityClass, StandardTestDispatcher()) {
             installContent { Button(onClick = { throwExpectedException() }) { Text("throw") } }
 
             onNodeWithText("throw").performClick()
@@ -94,7 +95,7 @@ class UnhandledExceptionTest(private val activityClass: Class<out ComponentActiv
 
     @Test
     fun throwDuringMeasure() =
-        runAndroidComposeUiTest(activityClass) {
+        runAndroidComposeUiTest(activityClass, StandardTestDispatcher()) {
             installContent { Box(modifier = Modifier.layout { _, _ -> throwExpectedException() }) }
 
             waitForIdle()
@@ -102,7 +103,7 @@ class UnhandledExceptionTest(private val activityClass: Class<out ComponentActiv
 
     @Test
     fun throwDuringDraw() =
-        runAndroidComposeUiTest(activityClass) {
+        runAndroidComposeUiTest(activityClass, StandardTestDispatcher()) {
             installContent {
                 Box(modifier = Modifier.fillMaxSize().drawWithContent { throwExpectedException() })
             }
@@ -113,7 +114,7 @@ class UnhandledExceptionTest(private val activityClass: Class<out ComponentActiv
     @Ignore("b/397662811")
     @Test
     fun throwDuringTeardown() =
-        runAndroidComposeUiTest(activityClass) {
+        runAndroidComposeUiTest(activityClass, StandardTestDispatcher()) {
             installContent { DisposableEffect(Unit) { onDispose { throwExpectedException() } } }
 
             waitForIdle()

@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.test.filters.SdkSuppress
+import kotlinx.coroutines.test.StandardTestDispatcher
 import org.junit.Test
 
 @SdkSuppress(minSdkVersion = Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
@@ -30,12 +31,13 @@ import org.junit.Test
 class AccessibilityChecksTest {
 
     @Test
-    fun performAccessibilityChecks_findsNoErrors() = runComposeUiTest {
-        setContent { Box(Modifier.size(20.dp)) }
+    fun performAccessibilityChecks_findsNoErrors() =
+        runComposeUiTest(StandardTestDispatcher()) {
+            setContent { Box(Modifier.size(20.dp)) }
 
-        // There are no accessibility checks setup, this should not throw
-        onRoot().tryPerformAccessibilityChecks()
-    }
+            // There are no accessibility checks setup, this should not throw
+            onRoot().tryPerformAccessibilityChecks()
+        }
 
     @Composable
     private fun BoxWithoutProblems() {

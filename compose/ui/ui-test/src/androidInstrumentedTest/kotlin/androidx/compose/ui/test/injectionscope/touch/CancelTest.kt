@@ -28,6 +28,7 @@ import androidx.compose.ui.test.util.assertNoTouchGestureInProgress
 import androidx.compose.ui.test.util.assertTimestampsAreIncreasing
 import androidx.test.filters.MediumTest
 import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.test.StandardTestDispatcher
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -40,7 +41,7 @@ class CancelTest {
         private val downPosition2 = Offset(20f, 20f)
     }
 
-    @get:Rule val rule = createComposeRule()
+    @get:Rule val rule = createComposeRule(StandardTestDispatcher())
 
     private val recorder = MultiPointerInputRecorder()
 

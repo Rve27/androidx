@@ -26,6 +26,7 @@ import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.runAndroidComposeUiTest
 import androidx.test.espresso.Espresso
 import androidx.test.filters.MediumTest
+import kotlinx.coroutines.test.StandardTestDispatcher
 import org.junit.Test
 
 @MediumTest
@@ -34,7 +35,7 @@ class MultipleActivitiesFirstDrawTest {
 
     @Test
     fun test() =
-        runAndroidComposeUiTest<Activity1> {
+        runAndroidComposeUiTest<Activity1>(StandardTestDispatcher()) {
             Espresso.onIdle()
             // doesn't timeout
         }
