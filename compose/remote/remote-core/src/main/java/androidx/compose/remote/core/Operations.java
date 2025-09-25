@@ -71,6 +71,7 @@ import androidx.compose.remote.core.operations.MatrixSkew;
 import androidx.compose.remote.core.operations.MatrixTranslate;
 import androidx.compose.remote.core.operations.NamedVariable;
 import androidx.compose.remote.core.operations.PaintData;
+import androidx.compose.remote.core.operations.ParticlesCompare;
 import androidx.compose.remote.core.operations.ParticlesCreate;
 import androidx.compose.remote.core.operations.ParticlesLoop;
 import androidx.compose.remote.core.operations.PathAppend;
@@ -278,6 +279,7 @@ public class Operations {
     public static final int WAKE_IN = 191;
     public static final int ID_LOOKUP = 192;
     public static final int PATH_EXPRESSION = 193;
+    public static final int PARTICLE_COMPARE = 194;
 
     ///////////////////////////////////////// ======================
 
@@ -452,6 +454,8 @@ public class Operations {
             sMapV7AndroidX.put(WAKE_IN, WakeIn::read);
             sMapV7AndroidX.put(ID_LOOKUP, IdLookup::read);
             sMapV7AndroidX.put(PATH_EXPRESSION, PathExpression::read);
+            sMapV7AndroidX.put(PARTICLE_COMPARE, ParticlesCompare::read);
+
         }
         return sMapV7AndroidX;
     }
@@ -484,6 +488,8 @@ public class Operations {
             sMapV7Widgets.put(WAKE_IN, WakeIn::read);
             sMapV7Widgets.put(ID_LOOKUP, IdLookup::read);
             sMapV7Widgets.put(PATH_EXPRESSION, PathExpression::read);
+            sMapV7Widgets.put(PARTICLE_COMPARE, ParticlesCompare::read);
+
         }
         return sMapV7Widgets;
     }
