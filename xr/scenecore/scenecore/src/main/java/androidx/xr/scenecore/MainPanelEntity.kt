@@ -18,6 +18,8 @@
 
 package androidx.xr.scenecore
 
+import androidx.xr.runtime.Config
+import androidx.xr.runtime.Session
 import androidx.xr.runtime.internal.LifecycleManager
 import androidx.xr.runtime.math.IntSize2d
 import androidx.xr.scenecore.runtime.PixelDimensions as RtPixelDimensions
@@ -72,11 +74,16 @@ internal constructor(
      *   whenever the maximum perceived resolution of the main panel changes. The parameter passed
      *   to the Consumer’s accept method is the new value for [IntSize2d] value for perceived
      *   resolution.
+     * @throws [IllegalStateException] if [Session.config.deviceTracking] is not set to
+     *   [Config.DeviceTrackingMode.LAST_KNOWN].
      */
     public fun addPerceivedResolutionChangedListener(
         callbackExecutor: Executor,
         listener: Consumer<IntSize2d>,
     ): Unit {
+        check(lifecycleManager.config.deviceTracking == Config.DeviceTrackingMode.LAST_KNOWN) {
+            "Config.DeviceTrackingMode is not set to LastKnown."
+        }
         val rtListener =
             Consumer<RtPixelDimensions> { rtDimensions: RtPixelDimensions ->
                 listener.accept(rtDimensions.toIntSize2d())
@@ -111,6 +118,8 @@ internal constructor(
      *   whenever the maximum perceived resolution of the main panel changes. The parameter passed
      *   to the Consumer’s accept method is the new value for [IntSize2d] value for perceived
      *   resolution.
+     * @throws [IllegalStateException] if [Session.config.deviceTracking] is not set to
+     *   [Config.DeviceTrackingMode.LAST_KNOWN].
      */
     public fun addPerceivedResolutionChangedListener(listener: Consumer<IntSize2d>): Unit =
         addPerceivedResolutionChangedListener(HandlerExecutor.mainThreadExecutor, listener)
