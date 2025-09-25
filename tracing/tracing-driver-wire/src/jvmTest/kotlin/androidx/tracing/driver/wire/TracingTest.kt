@@ -100,7 +100,9 @@ class TracingTest {
         assertTrue(sink.packets.size == 4)
         assertNotNull(sink.packets.find { it.track_descriptor?.process?.process_name == "process" })
         assertNotNull(sink.packets.find { it.track_descriptor?.thread?.thread_name == "thread" })
-        sink.packets.assertTraceSection("section")
+        sink.firstStartStopWithName("section") { start, end ->
+            assertTrue { start.track_event!!.categories.isEmpty() }
+        }
     }
 
     @Test
@@ -122,8 +124,11 @@ class TracingTest {
         }
         assertTrue(sink.packets.size == 5)
         assertNotNull(sink.packets.find { it.track_descriptor?.process?.process_name == "process" })
-        sink.packets.assertTraceSection("section")
-        sink.packets.assertTraceSection("section2")
+        listOf("section", "section2").forEach { name ->
+            sink.firstStartStopWithName(name) { start, end ->
+                assertTrue { start.track_event!!.categories.isEmpty() }
+            }
+        }
     }
 
     @Test
@@ -142,16 +147,13 @@ class TracingTest {
             }
         }
         assertTrue { sink.packets.isNotEmpty() }
-        val serviceBegin = sink.packets.trackEventPacket(name = "service")
-        val method1Begin = sink.packets.trackEventPacket(name = "method1")
-        val method2Begin = sink.packets.trackEventPacket(name = "method2")
-        assertNotNull(serviceBegin) { "Cannot find packet with name service" }
-        val flowId = serviceBegin.track_event?.flow_ids?.first()
-        assertNotNull(flowId) { "Packet $serviceBegin does not include a flow_id" }
-        assertNotNull(method1Begin) { "Cannot find packet with name method1" }
-        assertNotNull(method2Begin) { "Cannot find packet with name method2" }
-        assertContains(method1Begin.track_event?.flow_ids ?: emptyList(), flowId)
-        assertContains(method2Begin.track_event?.flow_ids ?: emptyList(), flowId)
+        val (start, _) = sink.firstStartStopWithName("service")
+        val flowId = start.track_event?.flow_ids?.first()
+        assertNotNull(flowId) { "Packet $start does not include a flow_id" }
+        val (method1, _) = sink.firstStartStopWithName("method1")
+        val (method2, _) = sink.firstStartStopWithName("method2")
+        assertContains(method1.track_event?.flow_ids ?: emptyList(), flowId)
+        assertContains(method2.track_event?.flow_ids ?: emptyList(), flowId)
     }
 
     @Test
