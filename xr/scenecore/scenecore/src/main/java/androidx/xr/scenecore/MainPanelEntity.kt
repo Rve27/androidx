@@ -118,6 +118,9 @@ internal constructor(
     /**
      * Releases the listener previously added by [addPerceivedResolutionChangedListener].
      *
+     * All listeners are automatically removed when the MainPanelEntity is disposed even if this
+     * method is not explicitly called.
+     *
      * @param listener The [Consumer] to be removed. It will no longer receive change events.
      */
     public fun removePerceivedResolutionChangedListener(listener: Consumer<IntSize2d>): Unit {
@@ -137,5 +140,10 @@ internal constructor(
             sceneRuntime: SceneRuntime,
             entityManager: EntityManager,
         ): MainPanelEntity = MainPanelEntity(lifecycleManager, sceneRuntime, entityManager)
+    }
+
+    override fun dispose() {
+        perceivedResolutionListeners.keys.forEach { removePerceivedResolutionChangedListener(it) }
+        super.dispose()
     }
 }
