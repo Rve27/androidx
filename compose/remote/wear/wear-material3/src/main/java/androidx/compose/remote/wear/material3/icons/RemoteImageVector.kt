@@ -15,7 +15,7 @@
  */
 @file:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 
-package androidx.compose.remote.foundation.icons
+package androidx.compose.remote.wear.material3.icons
 
 import android.graphics.Path
 import androidx.annotation.RestrictTo
