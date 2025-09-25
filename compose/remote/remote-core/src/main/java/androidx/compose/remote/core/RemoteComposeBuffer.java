@@ -71,6 +71,7 @@ import androidx.compose.remote.core.operations.MatrixSkew;
 import androidx.compose.remote.core.operations.MatrixTranslate;
 import androidx.compose.remote.core.operations.NamedVariable;
 import androidx.compose.remote.core.operations.PaintData;
+import androidx.compose.remote.core.operations.ParticlesCompare;
 import androidx.compose.remote.core.operations.ParticlesCreate;
 import androidx.compose.remote.core.operations.ParticlesLoop;
 import androidx.compose.remote.core.operations.PathAppend;
@@ -1923,6 +1924,28 @@ public class RemoteComposeBuffer {
     public void addParticlesLoop(
             int id, float @Nullable [] restart, float @NonNull [][] expressions) {
         ParticlesLoop.apply(mBuffer, id, restart, expressions);
+    }
+
+    /**
+     * Add a comparison of 1 or 2 particles
+     *
+     * @param id the particle engine id
+     * @param flags configuration flags
+     * @param min the min index to process
+     * @param max the max index to process
+     * @param condition apply if exp > 0
+     * @param apply1 the first result
+     * @param apply2 the second result
+     */
+    public void addParticlesComparison(
+            int id,
+            short flags,
+            float min,
+            float max,
+            float @Nullable [] condition,
+            float @Nullable [][] apply1,
+            float @Nullable [][] apply2) {
+        ParticlesCompare.apply(mBuffer, id, flags, min, max, condition, apply1, apply2);
     }
 
     /** Closes the particle engine container */
