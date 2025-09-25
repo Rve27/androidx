@@ -59,8 +59,7 @@ import androidx.compose.ui.graphics.vector.DefaultStrokeLineWidth
  *   [strokeLineJoin] is [StrokeJoin.Miter].
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public abstract class RemoteImageVector
-internal constructor(
+public abstract class RemoteImageVector(
     internal val intrinsicWidth: Float = DefaultIconSize,
     internal val intrinsicHeight: Float = DefaultIconSize,
     internal val tintBlendMode: BlendMode = BlendMode.SrcIn,
