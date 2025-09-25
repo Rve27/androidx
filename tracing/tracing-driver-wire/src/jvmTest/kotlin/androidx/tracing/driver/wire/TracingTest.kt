@@ -157,6 +157,33 @@ class TracingTest {
     }
 
     @Test
+    internal fun testSuspendAndResume() = runTest {
+        context.use {
+            with(context) {
+                val process = getOrCreateProcessTrack(id = 1, name = "process")
+                with(process) {
+                    traceCoroutine("service") {
+                        coroutineScope {
+                            async { traceCoroutine(name = "method1") { delay(10) } }.await()
+                        }
+                    }
+                }
+            }
+        }
+        assertTrue { sink.packets.isNotEmpty() }
+        // We should have a balanced number of begin and end events.
+        val starts =
+            sink.packets.filter { packet ->
+                packet.track_event?.type == MutableTrackEvent.Type.TYPE_SLICE_BEGIN
+            }
+        val ends =
+            sink.packets.filter { packet ->
+                packet.track_event?.type == MutableTrackEvent.Type.TYPE_SLICE_END
+            }
+        assertTrue { starts.size == ends.size }
+    }
+
+    @Test
     internal fun testDroppedPackets() {
         val dispatcher = StandardTestDispatcher()
         // Use a real sink to test for dropped packets.
