@@ -36,11 +36,6 @@ package androidx.navigation3.scene {
     property public androidx.navigation3.scene.Scene<T> scene;
   }
 
-  public final class SceneSetupNavEntryDecoratorKt {
-    method @InaccessibleFromKotlin public static androidx.compose.runtime.ProvidableCompositionLocal<java.util.Set<java.lang.Object>> getLocalEntriesToRenderInCurrentScene();
-    property public static androidx.compose.runtime.ProvidableCompositionLocal<java.util.Set<java.lang.Object>> LocalEntriesToRenderInCurrentScene;
-  }
-
   @androidx.compose.runtime.Immutable public final class SceneState<T> {
     method @InaccessibleFromKotlin public androidx.navigation3.scene.Scene<T> getCurrentScene();
     method @InaccessibleFromKotlin public java.util.List<androidx.navigation3.runtime.NavEntry<T>> getEntries();
