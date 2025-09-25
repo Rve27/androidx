@@ -78,9 +78,23 @@ class ProjectedTestAppActivity : ComponentActivity() {
                 when (val geospatialPoseResult = earth.createGeospatialPoseFromDevicePose()) {
                     is CreateGeospatialPoseFromPoseSuccess -> {
                         val currentGeospatialPose = geospatialPoseResult.pose
+                        val isCurrentPoseValid =
+                            currentGeospatialPose.latitude != 0.0 &&
+                                currentGeospatialPose.longitude != 0.0
+
+                        if (!isCurrentPoseValid) {
+                            Log.w(TAG, "Skipping frame due to invalid currentGeospatialPose.")
+                            runOnUiThread {
+                                textView.text = "\n\n\n\nWaiting for a valid Geospatial Pose..."
+                            }
+                            delay(1000)
+                            continue
+                        }
+
                         if (initialGeospatialPose == null) {
                             initialGeospatialPose = currentGeospatialPose
                         }
+
                         Log.i(TAG, "GeospatialPose from device pose: ${currentGeospatialPose}")
 
                         checkVpsAvailability(
