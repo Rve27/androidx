@@ -15,8 +15,9 @@
  */
 @file:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 
-package androidx.compose.remote.foundation
+package androidx.compose.remote.wear.material3
 
+import android.os.Build
 import androidx.annotation.RestrictTo
 import androidx.compose.remote.creation.compose.capture.RecordingCanvas
 import androidx.compose.remote.creation.compose.capture.scale
@@ -31,7 +32,7 @@ import androidx.compose.remote.creation.compose.modifier.semantics
 import androidx.compose.remote.creation.compose.modifier.size
 import androidx.compose.remote.creation.compose.state.RemoteColor
 import androidx.compose.remote.creation.compose.state.RemoteString
-import androidx.compose.remote.foundation.icons.RemoteImageVector
+import androidx.compose.remote.wear.material3.icons.RemoteImageVector
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.nativeCanvas
@@ -84,7 +85,7 @@ private fun RemoteCanvasDrawScope.drawImageVector(
 
     val paint =
         remoteImageVector.paint().apply {
-            if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.Q) return
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) return
             setColor(tint.getValueForCreationState(remote.remoteComposeCreationState))
         }
 

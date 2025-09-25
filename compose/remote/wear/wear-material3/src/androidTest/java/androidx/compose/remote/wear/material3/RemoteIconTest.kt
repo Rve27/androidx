@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.compose.remote.foundation
+package androidx.compose.remote.wear.material3
 
 import androidx.compose.remote.creation.RemotePath
 import androidx.compose.remote.creation.compose.modifier.RemoteModifier
 import androidx.compose.remote.creation.compose.modifier.size
 import androidx.compose.remote.creation.compose.state.rememberRemoteColor
-import androidx.compose.remote.foundation.icons.RemoteImageVector
 import androidx.compose.remote.test.screenshot.TargetPlayer
 import androidx.compose.remote.test.screenshot.rule.RemoteComposeScreenshotTestRule
+import androidx.compose.remote.wear.material3.icons.RemoteImageVector
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color

@@ -15,9 +15,10 @@
  */
 @file:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 
-package androidx.compose.remote.foundation
+package androidx.compose.remote.wear.material3
 
 import androidx.annotation.RestrictTo
+import androidx.compose.foundation.layout.Box
 import androidx.compose.remote.creation.compose.capture.LocalRemoteComposeCreationState
 import androidx.compose.remote.creation.compose.capture.RecordingCanvas
 import androidx.compose.remote.creation.compose.layout.RemoteComposable
@@ -28,7 +29,7 @@ import androidx.compose.remote.creation.compose.state.RemoteBitmap
 import androidx.compose.remote.creation.compose.state.RemoteFloat
 import androidx.compose.remote.creation.compose.state.RemoteString
 import androidx.compose.remote.creation.compose.state.rememberRemoteFloatValue
-import androidx.compose.remote.foundation.image.toRemoteCompose
+import androidx.compose.remote.wear.material3.image.toRemoteCompose
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.draw.DrawModifier
 import androidx.compose.ui.graphics.DefaultAlpha
@@ -82,7 +83,7 @@ public fun RemoteImage(
     alpha: RemoteFloat = rememberRemoteFloatValue { DefaultAlpha },
 ) {
     val bitmapId = LocalRemoteComposeCreationState.current.document.addBitmap(bitmap)
-    androidx.compose.foundation.layout.Box(
+    Box(
         modifier =
             RemoteComposeImageModifier(modifier, bitmapId, contentScale, alpha)
                 .then(
@@ -112,7 +113,7 @@ public fun RemoteImage(
     contentScale: ContentScale = ContentScale.Fit,
     alpha: RemoteFloat = rememberRemoteFloatValue { DefaultAlpha },
 ) {
-    androidx.compose.foundation.layout.Box(
+    Box(
         modifier =
             RemoteComposeImageModifier(modifier, remoteBitmap.id, contentScale, alpha)
                 .then(
