@@ -52,7 +52,8 @@ internal class WearWidgetProviderImpl(
             // TODO: Report errors in the callback if any of the following steps fail.
             val request = WearWidgetRequest.fromParcel(requestParcel)
             val widgetContent = widget.provideWidgetContent(context, request)
-            val rawContent = widgetContent.toRawContent()
+            val rawContent =
+                widgetContent.captureRawContent(context, request.widthDp, request.heightDp)
             callback.updateWidgetContent(rawContent.toParcel())
         }
     }
