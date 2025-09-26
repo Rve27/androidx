@@ -24,7 +24,6 @@ import androidx.compose.runtime.movableContentOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
 import androidx.navigation3.runtime.NavEntryDecorator
-import androidx.navigation3.runtime.navEntryDecorator
 
 /** Returns a [SceneSetupNavEntryDecorator] that is remembered across recompositions. */
 @Composable
@@ -45,7 +44,7 @@ internal fun <T : Any> rememberSceneSetupNavEntryDecorator(): NavEntryDecorator<
 internal fun <T : Any> SceneSetupNavEntryDecorator(): NavEntryDecorator<T> {
     val movableContentMap: MutableMap<Any, @Composable (@Composable () -> Unit) -> Unit> =
         mutableStateMapOf()
-    return navEntryDecorator(onPop = { contentKey -> movableContentMap.remove(contentKey) }) { entry
+    return NavEntryDecorator(onPop = { contentKey -> movableContentMap.remove(contentKey) }) { entry
         ->
         val contentKey = entry.contentKey
         // If we should not be rendering this entry here in the current scene, we skip calling
