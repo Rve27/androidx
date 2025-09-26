@@ -20,7 +20,6 @@ package androidx.compose.ui.layout
 
 import androidx.activity.ComponentActivity
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateContentSize
@@ -3701,7 +3700,6 @@ class LookaheadScopeTest {
      * Test based on SharedElementClipReveal demo that verifies skipToLookaheadPosition maintains
      * position during shared element transitions.
      */
-    @OptIn(ExperimentalSharedTransitionApi::class)
     @Test
     fun testSharedElementClipRevealWithskipToLookaheadPosition() {
         var target by mutableStateOf(true)
@@ -3797,7 +3795,6 @@ class LookaheadScopeTest {
      * Test that verifies skipToLookaheadPosition works with multiple shared elements in a complex
      * layout scenario.
      */
-    @OptIn(ExperimentalSharedTransitionApi::class)
     @Test
     fun testMultipleSharedElementsWithskipToLookaheadPosition() {
         var target by mutableStateOf(true)
@@ -3955,7 +3952,6 @@ class LookaheadScopeTest {
     }
 
     /** Test that verifies skipToLookaheadPosition works correctly with conditional activation. */
-    @OptIn(ExperimentalSharedTransitionApi::class)
     @Test
     fun testConditionalskipToLookaheadPosition() {
         var isEnabled by mutableStateOf(false)
