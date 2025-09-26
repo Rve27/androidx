@@ -140,7 +140,7 @@ internal class ConnectionPoolImpl : ConnectionPool {
                     connectionElementKey = connectionElementKey,
                     delegate =
                         pool
-                            .acquireWithTimeout(timeout) { onTimeout(isReadOnly) }
+                            .acquireWithTimeout(timeout) { onTimeout(isReadOnly, currentContext) }
                             .markAcquired(currentContext),
                     isReadOnly = readers !== writers && isReadOnly,
                 )
@@ -167,10 +167,12 @@ internal class ConnectionPoolImpl : ConnectionPool {
         ConnectionElement(connectionElementKey, connection) +
             connectionThreadLocal.asContextElement(connection)
 
-    private fun onTimeout(isReadOnly: Boolean) {
+    private fun onTimeout(isReadOnly: Boolean, requestContext: CoroutineContext) {
         val readOrWrite = if (isReadOnly) "reader" else "writer"
         val message = buildString {
             appendLine("Timed out attempting to acquire a $readOrWrite connection.")
+            appendLine()
+            appendLine("Request coroutine: $requestContext")
             appendLine()
             appendLine("Writer pool:")
             writers.dump(this)

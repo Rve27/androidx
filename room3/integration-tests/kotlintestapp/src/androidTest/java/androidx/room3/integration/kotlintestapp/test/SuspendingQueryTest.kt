@@ -61,7 +61,6 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withContext
 import org.junit.After
 import org.junit.Assert.fail
-import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -423,7 +422,6 @@ class SuspendingQueryTest(driver: UseDriver) : TestDatabaseTest(driver) {
     }
 
     @Test
-    @Ignore("Missing cancellation support") // b/402689293 b/355419691
     @OptIn(ExperimentalRoomApi::class)
     fun withWriteTransaction_cancelCoroutine() = runTest {
         booksDao.insertPublisherSuspend(TestUtil.PUBLISHER.publisherId, TestUtil.PUBLISHER.name)

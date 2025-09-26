@@ -26,6 +26,7 @@ import androidx.sqlite.SQLiteConnection
 import kotlin.coroutines.CoroutineContext
 import kotlin.jvm.JvmMultifileClass
 import kotlin.jvm.JvmName
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext
 
 /** Performs a database operation. */
@@ -51,7 +52,7 @@ public actual suspend fun <R> performSuspending(
  */
 internal actual suspend fun RoomDatabase.getCoroutineContext(
     inTransaction: Boolean
-): CoroutineContext = getCoroutineScope().coroutineContext
+): CoroutineContext = getCoroutineScope().coroutineContext.minusKey(Job)
 
 /**
  * Utility function to wrap a suspend block in Room's transaction coroutine.
