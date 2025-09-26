@@ -130,6 +130,7 @@ public class WebViewFeature {
             WARM_UP_RENDERER_PROCESS,
             PRECONNECT,
             HYPERLINK_CONTEXT_MENU_ITEMS,
+            CUSTOM_REQUEST_HEADERS,
     })
     @Retention(RetentionPolicy.SOURCE)
     @Target({ElementType.PARAMETER, ElementType.METHOD})
