@@ -14,16 +14,27 @@
  * limitations under the License.
  */
 
-package androidx.compose.remote.player.core.platform
+package androidx.compose.remote.player.core.platform;
 
-import androidx.annotation.RestrictTo
-import java.io.InputStream
-import java.net.URL
+import androidx.annotation.RestrictTo;
+
+import org.jspecify.annotations.NonNull;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 
 /** Implementation of BitmapLoader for Android, only supporting URL fetching. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public class AndroidBitmapLoader : BitmapLoader {
-    override fun loadBitmap(url: String): InputStream {
-        return URL(url).openStream()
+public class AndroidBitmapLoader implements BitmapLoader{
+    /**
+     * Load a bitmap from a URL
+     *
+     * @param url the url to fetch
+     * @return an InputStream with data.
+     */
+    @Override
+    public @NonNull InputStream loadBitmap(@NonNull String url) throws IOException {
+        return new URL(url).openStream();
     }
 }
