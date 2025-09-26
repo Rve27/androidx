@@ -3386,6 +3386,59 @@ public class RemoteComposeWriter {
     }
 
     /**
+     * Add a particle - particle comparison.
+     * such as 2 particles collision detection
+     * @param id the id of the particle system
+     * @param flags configuration flags
+     * @param min minimum index to process
+     * @param max maximum index to process
+     * @param condition run if > 0
+     * @param then1 apply to the first particle
+     * @param then2 apply to the second particle
+     * @param r the code to run
+     */
+    public void particlesComparison(
+            float id,
+            short flags,
+            float min,
+            float max,
+            float @Nullable [] condition,
+            float @Nullable [][] then1,
+            float @Nullable [][] then2,
+            @Nullable Runnable r) {
+        mBuffer.addParticlesComparison(Utils.idFromNan(id),
+                flags, min, max, condition, then1, then2);
+        if (r != null) r.run();
+        mBuffer.addParticleLoopEnd();
+    }
+
+    /**
+     * Add a particle test.
+     * such as collision with walls etc.
+     * @param id the id of the particle system
+     * @param flags configuration flags
+     * @param min minimum index to process
+     * @param max maximum index to process
+     * @param condition run if > 0
+     * @param then modify the particle values
+     * @param r the code to run
+     */
+    public void particlesComparison(
+            float id,
+            short flags,
+            float min,
+            float max,
+            float @Nullable [] condition,
+            float @Nullable [][] then,
+            @Nullable Runnable r) {
+        mBuffer.addParticlesComparison(Utils.idFromNan(id),
+                flags, min, max, condition, then, null);
+        if (r != null) r.run();
+        mBuffer.addParticleLoopEnd();
+    }
+
+
+    /**
      * Define a function to be called later
      *
      * @param args the arguments of the function to be filled in
