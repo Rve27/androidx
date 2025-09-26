@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,41 +20,38 @@ import androidx.annotation.RestrictTo;
 
 import org.jspecify.annotations.NonNull;
 
-/**
- * Contains the view projection state. <a
- * href="https://registry.khronos.org/OpenXR/specs/1.0/man/html/XrView.html">...</a>
- */
+/** Contains the view projections for both eyes */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public class ViewProjection {
-    private final Pose mPose;
-    private final Fov mFov;
+public final class ViewProjections {
+    private final ViewProjection mLeftEye;
+    private final ViewProjection mRightEye;
 
-    public ViewProjection(@NonNull Pose pose, @NonNull Fov fov) {
-        mPose = pose;
-        mFov = fov;
+    public ViewProjections(@NonNull ViewProjection leftEye, @NonNull ViewProjection rightEye) {
+        mLeftEye = leftEye;
+        mRightEye = rightEye;
     }
 
-    /** Returns the location and orientation of the camera/eye pose. */
-    public @NonNull Pose getPose() {
-        return mPose;
+    // Returns the left eye view projection.
+    public @NonNull ViewProjection getLeftEye() {
+        return mLeftEye;
     }
 
-    /** Returns the four sides of the projection / view frustum. */
-    public @NonNull Fov getFov() {
-        return mFov;
+    // Returns the right eye view projection.
+    public @NonNull ViewProjection getRightEye() {
+        return mRightEye;
     }
 
     @Override
     public boolean equals(Object object) {
-        if (object instanceof ViewProjection) {
-            ViewProjection that = (ViewProjection) object;
-            return mPose.equals(that.mPose) && mFov.equals(that.mFov);
+        if (object instanceof ViewProjections) {
+            ViewProjections that = (ViewProjections) object;
+            return mLeftEye.equals(that.mLeftEye) && mRightEye.equals(that.mRightEye);
         }
         return false;
     }
 
     @Override
     public int hashCode() {
-        return mPose.hashCode() + mFov.hashCode();
+        return mLeftEye.hashCode() + mRightEye.hashCode();
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,11 +20,11 @@ import androidx.annotation.RestrictTo;
 
 import org.jspecify.annotations.NonNull;
 
-/** Thrown if there is a failure in loading a native library. */
+/** Thrown if there is a failure in initializing a PerceptionLibrary Session. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public class LibraryLoadingException extends RuntimeException {
+public class FailedToInitializeException extends RuntimeException {
 
-    public LibraryLoadingException(@NonNull String message) {
+    public FailedToInitializeException(@NonNull String message) {
         super(message);
     }
 }
