@@ -35,7 +35,7 @@ public class `$ZoneIdFactory` : AppFunctionSerializableFactory<ZoneId> {
                 qualifiedName =
                     "androidx.appfunctions.internal.serializableproxies.AppFunctionZoneId",
             )
-        val zoneID = checkNotNull(appFunctionData.getStringOrNull("zoneID"))
+        val zoneID = checkNotNull(appFunctionDataWithSpec.getStringOrNull("zoneID"))
 
         val resultAppFunctionZoneId = AppFunctionZoneId(zoneID)
         return resultAppFunctionZoneId.toZoneId()
