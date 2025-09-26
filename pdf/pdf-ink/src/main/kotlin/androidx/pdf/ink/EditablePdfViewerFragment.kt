@@ -57,7 +57,7 @@ import kotlinx.coroutines.launch
 
 /** A [PdfViewerFragment] that provide annotations capabilities using ink library. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-@RequiresExtension(extension = Build.VERSION_CODES.S, version = 13)
+@RequiresExtension(extension = Build.VERSION_CODES.S, version = 18)
 public open class EditablePdfViewerFragment : PdfViewerFragment {
 
     public constructor() : super()
@@ -355,9 +355,5 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
         override fun dispatchTouchEvent(event: MotionEvent): Boolean {
             return pdfView.onTouchEvent(event)
         }
-    }
-
-    private companion object {
-        private const val DISCARD_CHANGES_DIALOG_TAG = "DiscardChangesDialog"
     }
 }
