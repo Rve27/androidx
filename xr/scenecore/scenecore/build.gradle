@@ -36,9 +36,11 @@ dependencies {
     api(libs.jspecify)
     api(libs.kotlinStdlib)
     api(project(":xr:arcore:arcore"))
-    api(project(":xr:arcore:arcore-openxr"))
     api(project(":xr:runtime:runtime"))
     api(project(":xr:scenecore:scenecore-runtime"))
+
+    implementation(project(":xr:scenecore:scenecore-spatial-core"))
+    implementation(project(":xr:scenecore:scenecore-spatial-rendering"))
 
     implementation("androidx.annotation:annotation:1.8.1")
     implementation(libs.androidx.core)
