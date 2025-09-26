@@ -54,6 +54,7 @@ dependencies {
 }
 
 android {
+    compileSdk = 35
     namespace = "androidx.xr.arcore.playservices"
     defaultConfig {
         minSdk = 24
