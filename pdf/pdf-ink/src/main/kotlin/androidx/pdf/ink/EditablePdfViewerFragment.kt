@@ -208,6 +208,7 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
 
         val annotationsViewOnTouchListener =
             AnnotationsViewOnTouchListener(
+                requireContext(),
                 WetStrokesViewTouchEventDispatcher(),
                 PdfViewTouchEventDispatcher(),
             )
