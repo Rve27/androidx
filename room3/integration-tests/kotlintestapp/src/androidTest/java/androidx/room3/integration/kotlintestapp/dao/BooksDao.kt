@@ -53,7 +53,6 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import java.util.Date
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.runBlocking
 
 @Dao
 @TypeConverters(DateConverter::class, AnswerConverter::class)
@@ -418,12 +417,6 @@ interface BooksDao {
     suspend fun concreteVoidSuspendFunction() {}
 
     suspend fun concreteSuspendFunctionWithParams(num: Int, text: String) = "$num - $text"
-
-    @Transaction
-    fun functionWithSuspendFunctionalParam(
-        input: Book,
-        action: suspend (input: Book) -> Book,
-    ): Book = runBlocking { action(input) }
 
     @Transaction
     suspend fun suspendFunctionWithSuspendFunctionalParam(
