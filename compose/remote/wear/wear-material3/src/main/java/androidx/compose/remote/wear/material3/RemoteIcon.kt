@@ -17,6 +17,7 @@
 
 package androidx.compose.remote.wear.material3
 
+import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RestrictTo
 import androidx.compose.remote.creation.compose.capture.RecordingCanvas
@@ -31,6 +32,7 @@ import androidx.compose.remote.creation.compose.modifier.fillMaxSize
 import androidx.compose.remote.creation.compose.modifier.semantics
 import androidx.compose.remote.creation.compose.modifier.size
 import androidx.compose.remote.creation.compose.state.RemoteColor
+import androidx.compose.remote.creation.compose.state.RemotePaint
 import androidx.compose.remote.creation.compose.state.RemoteString
 import androidx.compose.remote.wear.material3.icons.RemoteImageVector
 import androidx.compose.runtime.Composable
@@ -64,6 +66,7 @@ public fun RemoteIcon(
     }
 }
 
+@SuppressLint("RestrictedApiAndroidX") // RemoteColor
 private fun RemoteCanvasDrawScope.drawImageVector(
     remoteImageVector: RemoteImageVector,
     tint: RemoteColor,
@@ -84,9 +87,9 @@ private fun RemoteCanvasDrawScope.drawImageVector(
     val pivot = ROffset(pivotX, 0f)
 
     val paint =
-        remoteImageVector.paint().apply {
+        RemotePaint(remoteImageVector.paint()).apply {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) return
-            setColor(tint.getValueForCreationState(remote.remoteComposeCreationState))
+            remoteColor = tint
         }
 
     if (canvas is RecordingCanvas) {
