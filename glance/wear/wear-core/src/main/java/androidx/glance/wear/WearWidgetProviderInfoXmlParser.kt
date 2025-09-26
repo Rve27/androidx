@@ -43,7 +43,7 @@ internal object WearWidgetProviderInfoXmlParser {
     internal fun XmlResourceParser.parseWearWidgetProviderInfo(
         resources: Resources,
         providerService: ComponentName,
-        defaultPreferredContainerType: ContainerType,
+        @ContainerInfo.ContainerType defaultPreferredContainerType: Int,
         defaultGroup: String,
     ): WearWidgetProviderInfo {
         while (this.next() != XmlPullParser.END_DOCUMENT) {
@@ -63,7 +63,7 @@ internal object WearWidgetProviderInfoXmlParser {
     internal fun XmlResourceParser.parseWearWidgetProviderTag(
         resources: Resources,
         providerService: ComponentName,
-        defaultPreferredContainerType: ContainerType,
+        @ContainerInfo.ContainerType defaultPreferredContainerType: Int,
         defaultGroup: String,
     ): WearWidgetProviderInfo {
         // TODO(b/429979908): handle string resources for label and description. This should be done
@@ -72,7 +72,7 @@ internal object WearWidgetProviderInfoXmlParser {
         val label = getAttributeValue(NAMESPACE_DISABLED, ATTR_LABEL) ?: ""
         val description = getAttributeValue(NAMESPACE_DISABLED, ATTR_DESCRIPTION) ?: ""
         val icon = getAttributeResourceValue(NAMESPACE_DISABLED, ATTR_ICON, Resources.ID_NULL)
-        val preferredType =
+        val preferredContainerType =
             parseContainerTypeAttr(resources, ATTR_PREFERRED_TYPE, defaultPreferredContainerType)
         val group = getAttributeValue(NAMESPACE_DISABLED, ATTR_GROUP) ?: defaultGroup
         val isMultiInstanceSupported =
@@ -104,7 +104,7 @@ internal object WearWidgetProviderInfoXmlParser {
             description = description,
             icon = icon,
             containers = containers,
-            preferredType = preferredType,
+            preferredContainerType = preferredContainerType,
             group = group,
             isMultiInstanceSupported = isMultiInstanceSupported,
             configIntentAction = configIntentAction,
@@ -146,20 +146,18 @@ internal object WearWidgetProviderInfoXmlParser {
     private fun XmlResourceParser.parseContainerTypeAttr(
         resources: Resources,
         attrName: String,
-        defaultValue: ContainerType? = null,
-    ): ContainerType {
+        @ContainerInfo.ContainerType defaultValue: Int? = null,
+    ): Int {
         val attrResId = getAttributeResourceValue(NAMESPACE_DISABLED, attrName, Resources.ID_NULL)
         if (attrResId != Resources.ID_NULL) {
             try {
-                return ContainerType(resources.getInteger(attrResId))
+                return resources.getInteger(attrResId)
             } catch (e: Resources.NotFoundException) {
                 throw XmlPullParserException("Invalid container type resource", this, e)
             }
         }
-        return getAttributeValue(NAMESPACE_DISABLED, attrName)?.toIntOrNull()?.let {
-            ContainerType(it)
-        }
+        return getAttributeValue(NAMESPACE_DISABLED, attrName)?.toIntOrNull()
             ?: defaultValue
-            ?: throw XmlPullParserException("Failed to parse ContainerType for $attrName")
+            ?: throw XmlPullParserException("Failed to parse Container Type for $attrName")
     }
 }

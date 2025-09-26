@@ -41,14 +41,14 @@ class WearWidgetProviderInfoTest {
                 .parseWearWidgetProviderInfo(
                     context.resources,
                     service,
-                    defaultPreferredContainerType = ContainerType.Large,
+                    defaultPreferredContainerType = ContainerInfo.CONTAINER_TYPE_FULLSCREEN,
                     defaultGroup = "default.group",
                 )
         assertThat(info.providerService).isEqualTo(service)
         assertThat(info.label).isEqualTo("test label")
         assertThat(info.description).isEqualTo("test description")
         assertThat(info.icon).isEqualTo(android.R.drawable.ic_delete)
-        assertThat(info.preferredType).isEqualTo(ContainerType.Small)
+        assertThat(info.preferredContainerType).isEqualTo(ContainerInfo.CONTAINER_TYPE_SMALL)
         assertThat(info.group).isEqualTo("test.group")
         assertThat(info.isMultiInstanceSupported).isTrue()
         assertThat(info.configIntentAction).isEqualTo("test.action")
@@ -60,9 +60,12 @@ class WearWidgetProviderInfoTest {
         assertThat(info.containers)
             .containsExactlyElementsIn(
                 listOf(
-                    ContainerInfo(ContainerType.Small, android.R.drawable.ic_dialog_alert),
                     ContainerInfo(
-                        ContainerType.Large,
+                        ContainerInfo.CONTAINER_TYPE_SMALL,
+                        android.R.drawable.ic_dialog_alert,
+                    ),
+                    ContainerInfo(
+                        ContainerInfo.CONTAINER_TYPE_LARGE,
                         android.R.drawable.ic_dialog_dialer,
                         label = "test label override for large",
                     ),
@@ -80,7 +83,7 @@ class WearWidgetProviderInfoTest {
         assertThat(info.label).isEqualTo("test label")
         assertThat(info.description).isEqualTo("test description")
         assertThat(info.icon).isEqualTo(android.R.drawable.ic_delete)
-        assertThat(info.preferredType).isEqualTo(ContainerType.Small)
+        assertThat(info.preferredContainerType).isEqualTo(ContainerInfo.CONTAINER_TYPE_SMALL)
         assertThat(info.group).isEqualTo("test.group")
         assertThat(info.isMultiInstanceSupported).isTrue()
         assertThat(info.configIntentAction).isEqualTo("test.action")
@@ -92,9 +95,12 @@ class WearWidgetProviderInfoTest {
         assertThat(info.containers)
             .containsExactlyElementsIn(
                 listOf(
-                    ContainerInfo(ContainerType.Small, android.R.drawable.ic_dialog_alert),
                     ContainerInfo(
-                        ContainerType.Large,
+                        ContainerInfo.CONTAINER_TYPE_SMALL,
+                        android.R.drawable.ic_dialog_alert,
+                    ),
+                    ContainerInfo(
+                        ContainerInfo.CONTAINER_TYPE_LARGE,
                         android.R.drawable.ic_dialog_dialer,
                         label = "test label override for large",
                     ),
@@ -134,7 +140,7 @@ class WearWidgetProviderInfoTest {
 
     @Test
     fun parseFromResource_minimalProviderInfo() {
-        val defaultPreferredContainerType = ContainerType.Small
+        val defaultPreferredContainerType = ContainerInfo.CONTAINER_TYPE_SMALL
         val defaultGroup = "some_group"
         val info =
             getXml(R.xml.wear_widget_provider_info_minimal)
@@ -149,7 +155,7 @@ class WearWidgetProviderInfoTest {
         assertThat(info.label).isEqualTo("")
         assertThat(info.description).isEqualTo("")
         assertThat(info.icon).isEqualTo(0)
-        assertThat(info.preferredType).isEqualTo(defaultPreferredContainerType)
+        assertThat(info.preferredContainerType).isEqualTo(defaultPreferredContainerType)
         assertThat(info.group).isEqualTo(defaultGroup)
         assertThat(info.isMultiInstanceSupported).isFalse()
         assertThat(info.configIntentAction).isNull()
@@ -164,7 +170,7 @@ class WearWidgetProviderInfoTest {
             .parseWearWidgetProviderInfo(
                 context.resources,
                 service,
-                defaultPreferredContainerType = ContainerType.Small,
+                defaultPreferredContainerType = ContainerInfo.CONTAINER_TYPE_SMALL,
                 defaultGroup = "default.group",
             )
     }
