@@ -146,6 +146,7 @@ import kotlin.test.assertNotNull
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.StandardTestDispatcher
 import org.junit.Assert
 import org.junit.Rule
 import org.junit.Test
@@ -156,7 +157,7 @@ private const val Debug = false
 @MediumTest
 @RunWith(AndroidJUnit4::class)
 class LookaheadScopeTest {
-    @get:Rule val rule = createAndroidComposeRule<ComponentActivity>()
+    @get:Rule val rule = createAndroidComposeRule<ComponentActivity>(StandardTestDispatcher())
 
     @get:Rule val excessiveAssertions = AndroidOwnerExtraAssertionsRule()
 
