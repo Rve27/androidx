@@ -27,6 +27,7 @@ import androidx.compose.remote.core.operations.ColorConstant;
 import androidx.compose.remote.core.operations.ColorExpression;
 import androidx.compose.remote.core.operations.ComponentValue;
 import androidx.compose.remote.core.operations.ConditionalOperations;
+import androidx.compose.remote.core.operations.DataDynamicListFloat;
 import androidx.compose.remote.core.operations.DataListFloat;
 import androidx.compose.remote.core.operations.DataListIds;
 import androidx.compose.remote.core.operations.DataMapIds;
@@ -95,6 +96,7 @@ import androidx.compose.remote.core.operations.TextSubtext;
 import androidx.compose.remote.core.operations.Theme;
 import androidx.compose.remote.core.operations.TimeAttribute;
 import androidx.compose.remote.core.operations.TouchExpression;
+import androidx.compose.remote.core.operations.UpdateDynamicFloatList;
 import androidx.compose.remote.core.operations.Utils;
 import androidx.compose.remote.core.operations.WakeIn;
 import androidx.compose.remote.core.operations.layout.CanvasContent;
@@ -1251,6 +1253,26 @@ public class RemoteComposeBuffer {
      */
     public void addFloatArray(int id, float @NonNull [] values) {
         DataListFloat.apply(mBuffer, id, values);
+    }
+
+    /**
+     * add a dynamic float array
+     *
+     * @param id id of the array
+     * @param size size of the array
+     */
+    public void addDynamicFloatArray(int id, float size) {
+        DataDynamicListFloat.apply(mBuffer, id, size);
+    }
+
+    /**
+     * Set a value in the given DataDynamicListFloat
+     * @param id the id of the DataDynamicListFloat
+     * @param index the index of the value to modify
+     * @param value the new value
+     */
+    public void setArrayValue(int id, float index, float value) {
+        UpdateDynamicFloatList.apply(mBuffer, id, index, value);
     }
 
     /**
