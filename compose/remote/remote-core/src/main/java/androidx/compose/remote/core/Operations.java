@@ -27,6 +27,7 @@ import androidx.compose.remote.core.operations.ColorConstant;
 import androidx.compose.remote.core.operations.ColorExpression;
 import androidx.compose.remote.core.operations.ComponentValue;
 import androidx.compose.remote.core.operations.ConditionalOperations;
+import androidx.compose.remote.core.operations.DataDynamicListFloat;
 import androidx.compose.remote.core.operations.DataListFloat;
 import androidx.compose.remote.core.operations.DataListIds;
 import androidx.compose.remote.core.operations.DataMapIds;
@@ -96,6 +97,7 @@ import androidx.compose.remote.core.operations.TextSubtext;
 import androidx.compose.remote.core.operations.Theme;
 import androidx.compose.remote.core.operations.TimeAttribute;
 import androidx.compose.remote.core.operations.TouchExpression;
+import androidx.compose.remote.core.operations.UpdateDynamicFloatList;
 import androidx.compose.remote.core.operations.WakeIn;
 import androidx.compose.remote.core.operations.layout.CanvasContent;
 import androidx.compose.remote.core.operations.layout.CanvasOperations;
@@ -238,6 +240,8 @@ public class Operations {
     public static final int ID_LIST = 146;
     public static final int FLOAT_LIST = 147;
     public static final int DATA_LONG = 148;
+    public static final int DYNAMIC_FLOAT_LIST = 197;
+    public static final int UPDATE_DYNAMIC_FLOAT_LIST = 198;
     public static final int DRAW_BITMAP_SCALED = 149;
     public static final int TEXT_LOOKUP = 151;
     public static final int DRAW_ARC = 152;
@@ -455,7 +459,8 @@ public class Operations {
             sMapV7AndroidX.put(ID_LOOKUP, IdLookup::read);
             sMapV7AndroidX.put(PATH_EXPRESSION, PathExpression::read);
             sMapV7AndroidX.put(PARTICLE_COMPARE, ParticlesCompare::read);
-
+            sMapV7AndroidX.put(DYNAMIC_FLOAT_LIST, DataDynamicListFloat::read);
+            sMapV7AndroidX.put(UPDATE_DYNAMIC_FLOAT_LIST, UpdateDynamicFloatList::read);
         }
         return sMapV7AndroidX;
     }
@@ -489,6 +494,8 @@ public class Operations {
             sMapV7Widgets.put(ID_LOOKUP, IdLookup::read);
             sMapV7Widgets.put(PATH_EXPRESSION, PathExpression::read);
             sMapV7Widgets.put(PARTICLE_COMPARE, ParticlesCompare::read);
+            sMapV7Widgets.put(DYNAMIC_FLOAT_LIST, DataDynamicListFloat::read);
+            sMapV7Widgets.put(UPDATE_DYNAMIC_FLOAT_LIST, UpdateDynamicFloatList::read);
 
         }
         return sMapV7Widgets;
@@ -757,6 +764,5 @@ public class Operations {
         map.put(DEBUG_MESSAGE, DebugMessage::read);
         map.put(ATTRIBUTE_COLOR, ColorAttribute::read);
         // TODO ?? map.put(ACCESSIBILITY_CUSTOM_ACTION, CoreSemantics::read);
-
     }
 }

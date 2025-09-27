@@ -3160,6 +3160,54 @@ public class RemoteComposeWriter {
     }
 
     /**
+     * add an array of float
+     * @param size
+     * @return
+     */
+    public float addFloatArray(float size) {
+        // TODO: add resolution if size is NaN
+        float[] values = new float[(int) size];
+        int id = mState.cacheData(values, NanMap.TYPE_ARRAY);
+        mBuffer.addDynamicFloatArray(id, size);
+        return Utils.asNan(id);
+    }
+
+    /**
+     * Add an array of float with the given size
+     * @param id
+     * @param size
+     * @return
+     */
+    public float addFloatArray(int id, float size) {
+        float[] values = new float[(int) size];
+        mState.cacheData(id, values);
+        mBuffer.addFloatArray(id, values);
+        return Utils.asNan(id);
+    }
+
+    /**
+     * Set a new value at the given index in the array
+     * @param id the array id
+     * @param index the index
+     * @param value the new value
+     */
+    public void setArrayValue(int id, float index, float value) {
+        mBuffer.setArrayValue(id, index, value);
+    }
+
+    /**
+     * Add a dynamic array
+     *
+     * @param id
+     * @param size
+     * @return
+     */
+    public float addDynamicFloatArray(int id, float size) {
+        mBuffer.addDynamicFloatArray(id, size);
+        return Utils.asNan(id);
+    }
+
+    /**
      * Add a list of float
      *
      * @param values
