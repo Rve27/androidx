@@ -24,13 +24,18 @@ import androidx.biometric.AuthenticationResult
 import androidx.biometric.AuthenticationResultCallback
 import androidx.biometric.compose.rememberAuthenticationLauncher
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.statusBars // Import this
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.fragment.app.FragmentActivity
 
 class MainActivity : FragmentActivity() {
@@ -43,21 +48,20 @@ class MainActivity : FragmentActivity() {
 @Composable
 private fun RememberLauncherForAuthResult() {
     var authResult by rememberSaveable { mutableStateOf("") }
-    val launcher =
-        rememberAuthenticationLauncher(
-            resultCallback =
-                object : AuthenticationResultCallback {
-                    override fun onAuthResult(result: AuthenticationResult) {
-                        authResult = result.toText()
-                    }
+    val resultCallback = remember {
+        object : AuthenticationResultCallback {
+            override fun onAuthResult(result: AuthenticationResult) {
+                authResult = result.toText()
+            }
 
-                    override fun onAuthFailure() {
-                        authResult = "fail, try again"
-                    }
-                }
-        )
+            override fun onAuthFailure() {
+                authResult = "fail, try again"
+            }
+        }
+    }
+    val launcher = rememberAuthenticationLauncher(resultCallback = resultCallback)
 
-    Column {
+    Column(modifier = Modifier.windowInsetsPadding(WindowInsets.statusBars)) {
         Button(
             onClick = {
                 launcher.launch(
