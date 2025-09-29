@@ -36,7 +36,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.ComposeUiFlags
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.ExperimentalIndirectPointerApi
 import androidx.compose.ui.Modifier
@@ -59,7 +58,6 @@ import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.assertIsNotFocused
 import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.getBoundsInRoot
-import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
@@ -75,7 +73,7 @@ import androidx.core.view.InputDeviceCompat.SOURCE_TOUCH_NAVIGATION
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SdkSuppress
 import androidx.xr.glimmer.Text
-import androidx.xr.glimmer.nonTouchInputModeRule
+import androidx.xr.glimmer.createGlimmerRule
 import androidx.xr.glimmer.performIndirectPointerEvent
 import androidx.xr.glimmer.performIndirectSwipe
 import com.google.common.truth.Truth.assertThat
@@ -87,7 +85,6 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withContext
 import org.junit.After
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -101,20 +98,10 @@ class VerticalStackTest {
 
     @get:Rule(0) val rule = createComposeRule(StandardTestDispatcher())
 
-    @get:Rule(1) val inputModeRule = nonTouchInputModeRule()
-
-    private val focusRequester = FocusRequester()
-    private val savedInitialFocusAvailabilityFlag =
-        ComposeUiFlags.isInitialFocusOnFocusableAvailable
-
-    @Before
-    fun setup() {
-        ComposeUiFlags.isInitialFocusOnFocusableAvailable = true
-    }
+    @get:Rule(1) val glimmerRule = createGlimmerRule()
 
     @After
     fun tearDown() {
-        ComposeUiFlags.isInitialFocusOnFocusableAvailable = savedInitialFocusAvailabilityFlag
         rule.mainClock.autoAdvance = true
     }
 
@@ -242,7 +229,7 @@ class VerticalStackTest {
     fun swipeForward_displaysOnlyNextTwoItems() {
         var itemHeight = 0
         val state = StackState()
-        rule.setContentWithInitialFocus {
+        rule.setContent {
             VerticalStack(state = state) {
                 items(5) { index -> StackItem("Item $index") { itemHeight = it } }
             }
@@ -264,7 +251,7 @@ class VerticalStackTest {
     fun swipeForward_almostItemHeight_snapsToNextItem() {
         var itemHeight = 0
         val state = StackState()
-        rule.setContentWithInitialFocus {
+        rule.setContent {
             VerticalStack(state = state) {
                 items(5) { index -> StackItem("Item $index") { itemHeight = it } }
             }
@@ -286,7 +273,7 @@ class VerticalStackTest {
     fun swipeBackward_almostItemHeight_snapsToPreviousItem() {
         var itemHeight = 0
         val state = StackState()
-        rule.setContentWithInitialFocus {
+        rule.setContent {
             VerticalStack(state = state) {
                 items(5) { index -> StackItem("Item $index") { itemHeight = it } }
             }
@@ -309,7 +296,7 @@ class VerticalStackTest {
     fun scrollToEndAndBack_displaysItemsInCorrectOrder() {
         var itemHeight = 0
         val state = StackState()
-        rule.setContentWithInitialFocus {
+        rule.setContent {
             VerticalStack(state = state) {
                 items(3) { index -> StackItem("Item $index") { itemHeight = it } }
             }
@@ -340,7 +327,7 @@ class VerticalStackTest {
     fun mixedDsl_displaysItemsInCorrectOrder() {
         var itemHeight = 0
         val state = StackState()
-        rule.setContentWithInitialFocus {
+        rule.setContent {
             VerticalStack(state = state) {
                 item { StackItem("First") { itemHeight = it } }
                 items(3) { StackItem("Middle $it") }
@@ -372,7 +359,7 @@ class VerticalStackTest {
         var itemHeight = 0
         val state = StackState()
         var itemCount by mutableStateOf(3)
-        rule.setContentWithInitialFocus {
+        rule.setContent {
             VerticalStack(state = state) {
                 items(itemCount) { index -> StackItem("Item $index") { itemHeight = it } }
             }
@@ -401,7 +388,7 @@ class VerticalStackTest {
         var itemHeight = 0
         val state = StackState()
         var itemCount by mutableStateOf(3)
-        rule.setContentWithInitialFocus {
+        rule.setContent {
             VerticalStack(state = state) {
                 items(itemCount) { index -> StackItem("Item $index") { itemHeight = it } }
             }
@@ -427,7 +414,7 @@ class VerticalStackTest {
         var itemHeight = 0
         val state = StackState()
         var items by mutableStateOf(listOf("A", "B", "C", "D"))
-        rule.setContentWithInitialFocus {
+        rule.setContent {
             VerticalStack(modifier = Modifier.size(100.dp), state = state) {
                 item(key = "First", content = { StackItem("First") { itemHeight = it } })
                 items(items, key = { it }) { StackItem(it) }
@@ -510,7 +497,7 @@ class VerticalStackTest {
         var itemHeight = 0
         val state = StackState()
         lateinit var scope: CoroutineScope
-        rule.setContentWithInitialFocus {
+        rule.setContent {
             scope = rememberCoroutineScope()
             VerticalStack(modifier = Modifier.size(100.dp), state = state) {
                 items(5) { index -> StackItem("Item $index") { itemHeight = it } }
@@ -703,7 +690,7 @@ class VerticalStackTest {
         var itemScope0: StackItemScopeImpl? = null
         var itemScope1: StackItemScopeImpl? = null
         var itemScope2: StackItemScopeImpl? = null
-        rule.setContentWithInitialFocus {
+        rule.setContent {
             VerticalStack(state = state) {
                 repeat(10) { index ->
                     item {
@@ -1033,7 +1020,7 @@ class VerticalStackTest {
         val item2FocusEvents = mutableListOf<FocusState>()
         var itemHeight = 0
         val state = StackState()
-        rule.setContentWithInitialFocus {
+        rule.setContent {
             VerticalStack(state = state) {
                 item {
                     StackItem(
@@ -1110,7 +1097,7 @@ class VerticalStackTest {
         val item2FocusEvents = mutableListOf<FocusState>()
         var itemHeight = 0
         val state = StackState()
-        rule.setContentWithInitialFocus {
+        rule.setContent {
             VerticalStack(state = state) {
                 item {
                     StackItem(
@@ -1189,7 +1176,7 @@ class VerticalStackTest {
         val item1FocusEvents = mutableListOf<FocusState>()
         var itemHeight = 0
         val state = StackState()
-        rule.setContentWithInitialFocus {
+        rule.setContent {
             VerticalStack(state = state) {
                 item {
                     StackItem(
@@ -1234,7 +1221,7 @@ class VerticalStackTest {
         val item1FocusEvents = mutableListOf<FocusState>()
         var itemHeight = 0
         val state = StackState()
-        rule.setContentWithInitialFocus {
+        rule.setContent {
             VerticalStack(state = state) {
                 item {
                     StackItem(
@@ -1282,7 +1269,7 @@ class VerticalStackTest {
         val item1FocusEvents = mutableListOf<FocusState>()
         var itemHeight = 0
         val state = StackState()
-        rule.setContentWithInitialFocus {
+        rule.setContent {
             VerticalStack(state = state) {
                 item {
                     StackItem(
@@ -1330,7 +1317,7 @@ class VerticalStackTest {
         val item1FocusEvents = mutableListOf<FocusState>()
         var itemHeight = 0
         val state = StackState()
-        rule.setContentWithInitialFocus {
+        rule.setContent {
             VerticalStack(state = state) {
                 item {
                     StackItem(
@@ -1383,7 +1370,7 @@ class VerticalStackTest {
         val item2FocusEvents = mutableListOf<FocusState>()
         var itemHeight = 0
         val state = StackState()
-        rule.setContentWithInitialFocus {
+        rule.setContent {
             VerticalStack(state = state) {
                 item {
                     StackItem(
@@ -1431,7 +1418,7 @@ class VerticalStackTest {
         val item1FocusEvents = mutableListOf<FocusState>()
         val item2FocusEvents = mutableListOf<FocusState>()
         val state = StackState()
-        rule.setContentWithInitialFocus {
+        rule.setContent {
             VerticalStack(state = state) {
                 item {
                     StackItem(
@@ -1487,7 +1474,7 @@ class VerticalStackTest {
     @Test
     fun edgeScrim_onIndirectPressAndRelease_drawsScrim() {
         val state = StackState()
-        rule.setContentWithInitialFocus {
+        rule.setContent {
             VerticalStack(state = state, modifier = Modifier.background(Color.Red)) {
                 item { Box(Modifier.focusable().fillMaxSize().background(Color.Green)) }
                 item { Box(Modifier.focusable().fillMaxSize().background(Color.Blue)) }
@@ -1532,7 +1519,7 @@ class VerticalStackTest {
     @Test
     fun edgeScrim_onPointerPressAndRelease_drawsScrim() {
         val state = StackState()
-        rule.setContentWithInitialFocus {
+        rule.setContent {
             VerticalStack(state = state, modifier = Modifier.background(Color.Red)) {
                 item { Box(Modifier.focusable().fillMaxSize().background(Color.Green)) }
                 item { Box(Modifier.focusable().fillMaxSize().background(Color.Blue)) }
@@ -1589,10 +1576,6 @@ class VerticalStackTest {
         ) {
             Text(text)
         }
-    }
-
-    private fun ComposeContentTestRule.setContentWithInitialFocus(content: @Composable () -> Unit) {
-        setContent { Box(Modifier.focusRequester(focusRequester)) { content() } }
     }
 
     @OptIn(ExperimentalIndirectPointerApi::class)

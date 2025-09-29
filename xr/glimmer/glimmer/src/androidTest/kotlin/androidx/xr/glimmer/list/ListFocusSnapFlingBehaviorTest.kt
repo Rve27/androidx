@@ -20,7 +20,6 @@ import androidx.compose.foundation.gestures.FlingBehavior
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.ScrollScope
 import androidx.compose.foundation.layout.size
-import androidx.compose.ui.ComposeUiFlags
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.MainTestClock
@@ -30,14 +29,10 @@ import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.unit.dp
 import androidx.test.filters.MediumTest
-import androidx.xr.glimmer.nonTouchInputModeRule
 import androidx.xr.glimmer.performIndirectSwipe
 import com.google.common.truth.Truth.assertThat
 import kotlin.test.Test
-import org.junit.After
-import org.junit.Before
 import org.junit.Ignore
-import org.junit.Rule
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 
@@ -46,21 +41,6 @@ import org.junit.runners.Parameterized
 @RunWith(Parameterized::class)
 class ListFocusSnapFlingBehaviorTest(orientation: Orientation) :
     BaseListTestWithOrientation(orientation) {
-
-    @get:Rule(1) val inputModeRule = nonTouchInputModeRule()
-
-    private val savedInitialFocusAvailabilityFlag =
-        ComposeUiFlags.isInitialFocusOnFocusableAvailable
-
-    @Before
-    fun setup() {
-        ComposeUiFlags.isInitialFocusOnFocusableAvailable = true
-    }
-
-    @After
-    fun tearDown() {
-        ComposeUiFlags.isInitialFocusOnFocusableAvailable = savedInitialFocusAvailabilityFlag
-    }
 
     @Test
     fun focusLineSnapsToTheCenter_ifItIsAfterCenter() {
