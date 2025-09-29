@@ -78,6 +78,8 @@ class SurfaceEntityInteractionActivity : AppCompatActivity() {
     private lateinit var view: View
     private lateinit var session: Session
 
+    private lateinit var scene: Scene
+
     private lateinit var videoInputManager: VideoInputManager
     private lateinit var pointerLogManager: PointerLogManager
 
@@ -102,7 +104,8 @@ class SurfaceEntityInteractionActivity : AppCompatActivity() {
         }
 
         session = (Session.create(this) as SessionCreateSuccess).session
-        session.scene.spatialEnvironment.preferredPassthroughOpacity = 0.0f
+        scene = session.scene
+        scene.spatialEnvironment.preferredPassthroughOpacity = 0.0f
         session.configure(
             Config(
                 headTracking = Config.HeadTrackingMode.LAST_KNOWN,
@@ -116,14 +119,10 @@ class SurfaceEntityInteractionActivity : AppCompatActivity() {
 
         // Set up the MoveableComponent so the user can move the Main Panel out of the way of
         // video canvases which appear behind it.
-        if (
-            session.scene.mainPanelEntity
-                .getComponentsOfType(MovableComponent::class.java)
-                .isEmpty()
-        ) {
+        if (scene.mainPanelEntity.getComponentsOfType(MovableComponent::class.java).isEmpty()) {
             val comp = MovableComponent.createSystemMovable(session)
-            session.scene.mainPanelEntity.addComponent(comp)
-            comp.size = session.scene.mainPanelEntity.size.to3d()
+            scene.mainPanelEntity.addComponent(comp)
+            comp.size = scene.mainPanelEntity.size.to3d()
         }
 
         checkExternalStoragePermission()
@@ -187,24 +186,23 @@ class SurfaceEntityInteractionActivity : AppCompatActivity() {
     private fun onAnimation() {
         if (surfaceParent == null) return
 
-        val scene = session.scene
         val headPose = scene.spatialUser.head?.transformPoseTo(Pose.Identity, scene.activitySpace)
 
         val rightState = Hand.right(session)?.state?.value
         val rightPose =
             if (rightState?.trackingState == TrackingState.TRACKING)
-                session.scene.perceptionSpace.transformPoseTo(
+                scene.perceptionSpace.transformPoseTo(
                     rightState.handJoints[HandJointType.HAND_JOINT_TYPE_PALM]!!,
-                    session.scene.activitySpace,
+                    scene.activitySpace,
                 )
             else null
 
         val leftState = Hand.left(session)?.state?.value
         val leftPose =
             if (leftState?.trackingState == TrackingState.TRACKING)
-                session.scene.perceptionSpace.transformPoseTo(
+                scene.perceptionSpace.transformPoseTo(
                     leftState.handJoints[HandJointType.HAND_JOINT_TYPE_PALM]!!,
-                    session.scene.activitySpace,
+                    scene.activitySpace,
                 )
             else null
 
@@ -332,7 +330,7 @@ class SurfaceEntityInteractionActivity : AppCompatActivity() {
                 movable = videoAttr.movable,
             )
 
-        alignPoseToPlayerHead(session.scene, surfaceParent!!)
+        alignPoseToPlayerHead(scene, surfaceParent!!)
 
         exoPlayer =
             createExoPlayer(
