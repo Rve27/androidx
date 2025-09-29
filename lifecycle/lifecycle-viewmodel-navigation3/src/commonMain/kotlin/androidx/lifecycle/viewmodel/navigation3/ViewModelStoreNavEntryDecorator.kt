@@ -64,8 +64,8 @@ public fun <T : Any> rememberViewModelStoreNavEntryDecorator(
  * Provides the content of a [NavEntry] with a [ViewModelStoreOwner] and provides that
  * [ViewModelStoreOwner] as a [LocalViewModelStoreOwner] so that it is available within the content.
  *
- * This requires the usage of [androidx.navigation3.runtime.SavedStateNavEntryDecorator] to ensure
- * that the [NavEntry] scoped [ViewModel]s can properly provide access to
+ * This requires the usage of [androidx.navigation3.runtime.SaveableStateHolderNavEntryDecorator] to
+ * ensure that the [NavEntry] scoped [ViewModel]s can properly provide access to
  * [androidx.lifecycle.SavedStateHandle]s
  *
  * @param [viewModelStore] The [ViewModelStore] that provides to NavEntries
