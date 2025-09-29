@@ -28,7 +28,7 @@ import androidx.xr.compose.platform.LocalSpatialCapabilities
 import androidx.xr.compose.platform.LocalSpatialConfiguration
 
 /**
- * A composable button that toggles between "Full Space Mode" and "Home Space Mode" in an Android XR
+ * A composable button that toggles between "Full Space" and "Home Space" in an Android XR
  * application.
  *
  * It adapts to the current spatial mode, visually representing it with either a default icon or
@@ -39,14 +39,14 @@ import androidx.xr.compose.platform.LocalSpatialConfiguration
  * @param content The content to be displayed inside the button.
  */
 @Composable
-public fun SpaceModeToggleButton(
+public fun SpaceToggleButton(
     modifier: Modifier = Modifier,
     colors: IconToggleButtonColors = IconButtonDefaults.iconToggleButtonColors(),
     content: @Composable (isFullSpace: Boolean) -> Unit = { isFullSpace ->
         if (isFullSpace) {
-            SpaceModeToggleButtonDefaults.CollapsedIcon()
+            SpaceToggleButtonDefaults.CollapseIcon()
         } else {
-            SpaceModeToggleButtonDefaults.ExpandedIcon()
+            SpaceToggleButtonDefaults.ExpandIcon()
         }
     },
 ) {
@@ -70,16 +70,15 @@ public fun SpaceModeToggleButton(
     }
 }
 
-/** Contains the default values used by [SpaceModeToggleButton]. */
-public object SpaceModeToggleButtonDefaults {
+/** Contains the default values used by [SpaceToggleButton]. */
+public object SpaceToggleButtonDefaults {
+
     /**
-     * The default icon displayed when the button is in FullSpaceMode.
-     *
-     * This icon visually represents the action of switching *out* of FullSpaceMode and collapsing
-     * *into* HomeSpaceMode.
+     * This icon visually represents the action of switching *out* of Full Space and collapsing
+     * *into* Home Space.
      */
     @Composable
-    public fun CollapsedIcon() {
+    public fun CollapseIcon() {
         val painter = painterResource(R.drawable.collapse_content_24dp)
         Icon(
             painter = painter,
@@ -89,13 +88,11 @@ public object SpaceModeToggleButtonDefaults {
     }
 
     /**
-     * The default icon displayed when the button is in HomeSpaceMode.
-     *
-     * This icon visually represents the action of switching *out* of HomeSpaceMode and expanding
-     * *into* FullSpaceMode.
+     * This icon visually represents the action of switching *out* of Home Space and expanding
+     * *into* Full Space.
      */
     @Composable
-    public fun ExpandedIcon() {
+    public fun ExpandIcon() {
         val painter = painterResource(R.drawable.expand_content_24dp)
         Icon(
             painter = painter,
