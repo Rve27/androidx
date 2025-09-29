@@ -172,4 +172,21 @@ class MainPanelEntityTest {
         verify(listener1).accept(IntSize2d(10, 20)) // Still called once
         verify(listener2).accept(IntSize2d(30, 40))
     }
+
+    @Test
+    fun dispose_removesPerceivedResolutionChangedListener() {
+        val listener = Consumer<IntSize2d> {}
+        val executor = directExecutor()
+        val mainPanelEntity = session.scene.mainPanelEntity
+
+        mainPanelEntity.addPerceivedResolutionChangedListener(executor, listener)
+        val rtListenerCaptor = argumentCaptor<Consumer<RtPixelDimensions>>()
+        verify(mockSceneRuntime)
+            .addPerceivedResolutionChangedListener(eq(executor), rtListenerCaptor.capture())
+
+        mainPanelEntity.dispose()
+
+        verify(mockSceneRuntime)
+            .removePerceivedResolutionChangedListener(rtListenerCaptor.firstValue)
+    }
 }
