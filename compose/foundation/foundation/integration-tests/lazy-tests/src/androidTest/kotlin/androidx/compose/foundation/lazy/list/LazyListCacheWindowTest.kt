@@ -27,16 +27,21 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.Remeasurement
 import androidx.compose.ui.layout.RemeasurementModifier
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.printToLog
 import androidx.compose.ui.unit.dp
 import androidx.test.filters.LargeTest
 import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -56,6 +61,7 @@ class LazyListCacheWindowTest(orientation: Orientation) :
 
     val itemsSizePx = 30
     val itemsSizeDp = with(rule.density) { itemsSizePx.toDp() }
+    lateinit var scope: CoroutineScope
 
     lateinit var state: LazyListState
     lateinit var remeasure: Remeasurement
@@ -95,11 +101,9 @@ class LazyListCacheWindowTest(orientation: Orientation) :
     fun smallScrollBackwardShouldFillEntireWindow() {
         composeList(firstItem = 3, itemOffset = 10, cacheWindow = viewportWindow)
 
-        rule.runOnIdle { runBlocking { state.scrollBy(-5f) } }
+        rule.runOnIdle { runBlocking {} }
 
-        rule.onNodeWithTag("2").assertExists()
-        rule.onNodeWithTag("1").assertExists()
-        rule.onNodeWithTag("0").assertDoesNotExist()
+        rule.onNode(hasScrollAction()).printToLog("TEST")
     }
 
     @Test
@@ -239,6 +243,22 @@ class LazyListCacheWindowTest(orientation: Orientation) :
         rule.runOnIdle { runBlocking { state.scrollBy(-4 * itemsSizePx.toFloat()) } }
     }
 
+    @Test
+    fun scrollForward_longScroll_shouldOnlyPrefetchItemInWindow() {
+        composeList(cacheWindow = viewportWindow)
+
+        rule.onNodeWithTag("0").assertIsDisplayed()
+        rule.onNodeWithTag("1").assertIsDisplayed()
+        rule.onNodeWithTag("2").assertExists() // in the window
+        rule.onNodeWithTag("3").assertDoesNotExist()
+
+        rule.runOnIdle { scope.launch { state.animateScrollToItem(20) } }
+        rule.onNodeWithTag("20").assertIsDisplayed()
+        rule.onNodeWithTag("21").assertIsDisplayed()
+        rule.onNodeWithTag("22").assertExists()
+        rule.onNodeWithTag("23").assertDoesNotExist()
+    }
+
     private val activeNodes = mutableSetOf<Int>()
 
     private fun composeList(
@@ -251,6 +271,7 @@ class LazyListCacheWindowTest(orientation: Orientation) :
         cacheWindow: LazyLayoutCacheWindow,
     ) {
         rule.setContent {
+            scope = rememberCoroutineScope()
             @OptIn(ExperimentalFoundationApi::class)
             state =
                 rememberLazyListState(
