@@ -38,12 +38,28 @@ internal class MyDao_Impl(
     super@MyDao_Impl.suspendConcrete()
   }
 
+  internal override fun concreteInternalWithReturn(): Long = performBlocking(__db, false, true) { _ ->
+    super@MyDao_Impl.concreteInternalWithReturn()
+  }
+
+  public override suspend fun suspendConcreteWithReturn(): Long = performInTransactionSuspending(__db) {
+    super@MyDao_Impl.suspendConcreteWithReturn()
+  }
+
   public override fun concreteWithVararg(vararg arr: Long): Unit = performBlocking(__db, false, true) { _ ->
     super@MyDao_Impl.concreteWithVararg(*arr)
   }
 
   public override suspend fun suspendConcreteWithVararg(vararg arr: Long): Unit = performInTransactionSuspending(__db) {
     super@MyDao_Impl.suspendConcreteWithVararg(*arr)
+  }
+
+  public override fun <R> concreteWithTypeParam(): Unit = performBlocking(__db, false, true) { _ ->
+    super@MyDao_Impl.concreteWithTypeParam<R>()
+  }
+
+  public override suspend fun <R> suspendConcreteWithTypeParam(): Unit = performInTransactionSuspending(__db) {
+    super@MyDao_Impl.suspendConcreteWithTypeParam<R>()
   }
 
   public companion object {
