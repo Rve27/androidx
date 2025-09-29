@@ -46,7 +46,7 @@ androidXMultiplatform {
         commonMain {
             dependencies {
                 api(project(":navigationevent:navigationevent"))
-                api("androidx.compose.runtime:runtime:1.9.0")
+                api("androidx.compose.runtime:runtime:1.9.2")
                 implementation(libs.kotlinStdlib)
                 implementation(libs.kotlinCoroutinesCore)
             }
@@ -63,7 +63,7 @@ androidXMultiplatform {
         androidMain {
             dependsOn(commonMain)
             dependencies {
-                implementation("androidx.compose.ui:ui:1.9.0-rc01") {
+                implementation("androidx.compose.ui:ui:1.9.2") {
                     because("LocalView")
                 }
             }
@@ -76,10 +76,10 @@ androidXMultiplatform {
         androidInstrumentedTest {
             dependsOn(commonTest)
             dependencies {
-                implementation("androidx.compose.material:material:1.9.0-rc01")
-                implementation("androidx.compose.ui:ui-test:1.9.0-rc01")
-                implementation("androidx.compose.ui:ui-test-junit4:1.9.0-rc01")
-                implementation("androidx.compose.ui:ui-test-manifest:1.9.0-rc01")
+                implementation("androidx.compose.material:material:1.9.2")
+                implementation("androidx.compose.ui:ui-test:1.9.2")
+                implementation("androidx.compose.ui:ui-test-junit4:1.9.2")
+                implementation("androidx.compose.ui:ui-test-manifest:1.9.2")
                 implementation(libs.testExtJunit)
                 implementation(libs.testCore)
                 implementation(libs.testRunner)
