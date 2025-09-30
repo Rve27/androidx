@@ -563,7 +563,7 @@ class SurfaceEntityInteractionActivity : AppCompatActivity() {
             mapOf<Int, VideoAttributes>(
                 VideoEnums.BIG_BUCK_BUNNY_BUTTON.ordinal to
                     VideoAttributes(
-                        buttonText = "Play Big Buck Bunny",
+                        buttonText = "Play Quad Surface Video",
                         videoPath = "/Download/vid_bigbuckbunny.mp4",
                         stereoMode = SurfaceEntity.StereoMode.STEREO_MODE_TOP_BOTTOM,
                         protection = SurfaceEntity.SurfaceProtection.SURFACE_PROTECTION_NONE,
@@ -575,7 +575,7 @@ class SurfaceEntityInteractionActivity : AppCompatActivity() {
                     ),
                 VideoEnums.GALAXY_360_MVHEVC_BUTTON.ordinal to
                     VideoAttributes(
-                        buttonText = "Play Galaxy 360 (Top-Bottom)",
+                        buttonText = "Play 360 Surface Video",
                         videoPath = "/Download/Galaxy11_VR_3D360.mp4",
                         stereoMode = SurfaceEntity.StereoMode.STEREO_MODE_TOP_BOTTOM,
                         protection = SurfaceEntity.SurfaceProtection.SURFACE_PROTECTION_NONE,
@@ -589,9 +589,9 @@ class SurfaceEntityInteractionActivity : AppCompatActivity() {
                     ),
                 VideoEnums.NAVER_180_MVHEVC_BUTTON.ordinal to
                     VideoAttributes(
-                        buttonText = "Play Naver 180 (Side-by-Side)",
-                        videoPath = "/Download/Naver180.mp4",
-                        stereoMode = SurfaceEntity.StereoMode.STEREO_MODE_SIDE_BY_SIDE,
+                        buttonText = "Play 180 Surface Video",
+                        videoPath = "/Download/Galaxy11_VR_3D360.mp4",
+                        stereoMode = SurfaceEntity.StereoMode.STEREO_MODE_TOP_BOTTOM,
                         protection = SurfaceEntity.SurfaceProtection.SURFACE_PROTECTION_NONE,
                         movable = false,
                         stickToHead = true,
