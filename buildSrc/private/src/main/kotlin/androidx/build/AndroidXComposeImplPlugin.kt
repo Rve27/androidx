@@ -108,7 +108,6 @@ class AndroidXComposeImplPlugin : Plugin<Project> {
                         "compose:ui:ui-benchmark",
                         "compose:ui:ui-inspection",
                         "compose:ui:ui-test",
-                        "compose:ui:ui-test-junit4",
                         "compose:ui:ui-tooling",
                         "constraintlayout:constraintlayout-compose",
                         "core:core-backported-fixes",
