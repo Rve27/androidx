@@ -25,7 +25,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import androidx.compose.remote.core.CoreDocument
 import androidx.compose.remote.core.Operation
-import androidx.compose.remote.core.Operations
+import androidx.compose.remote.core.Profiles
 import androidx.compose.remote.core.RemoteContext
 import androidx.compose.remote.core.operations.PaintData
 import androidx.compose.remote.creation.compose.SCREENSHOT_GOLDEN_DIRECTORY
@@ -68,7 +68,7 @@ class RecordingCanvasTest {
             1f,
             Size(WIDTH.toFloat(), HEIGHT.toFloat()),
             CoreDocument.DOCUMENT_API_LEVEL,
-            Operations.PROFILE_ANDROIDX,
+            Profiles.PROFILE_ANDROIDX,
         )
 
     private val recordingCanvas =
