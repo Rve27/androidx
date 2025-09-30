@@ -719,19 +719,24 @@ class NavDisplayTest {
                     onBack = {
                         // Back handlers are no-ops here: we only care about crash behavior.
                     },
-                ) {
-                    NavEntry(first) { // Home
-                        Text("parent='$first',child='null'")
-                    }
-                    NavEntry(second) { // Detail
-                        NavDisplay(
-                            backStack = innerBackStack,
-                            onBack = {
-                                // Same rationale as above.
-                            },
-                        ) {
-                            NavEntry(third) { Text("parent='$second',child='$third'") }
-                        }
+                ) { key ->
+                    when (key) {
+                        first ->
+                            NavEntry(first) { // Home
+                                Text("parent='$first',child='null'")
+                            }
+                        second ->
+                            NavEntry(second) { // Detail
+                                NavDisplay(
+                                    backStack = innerBackStack,
+                                    onBack = {
+                                        // Same rationale as above.
+                                    },
+                                ) {
+                                    NavEntry(third) { Text("parent='$second',child='$third'") }
+                                }
+                            }
+                        else -> error("Cannot find NavEntry for $key")
                     }
                 }
             }
