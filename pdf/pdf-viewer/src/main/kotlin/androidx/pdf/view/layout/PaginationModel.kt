@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.pdf.view
+package androidx.pdf.view.layout
 
 import android.graphics.Point
 import android.graphics.RectF
