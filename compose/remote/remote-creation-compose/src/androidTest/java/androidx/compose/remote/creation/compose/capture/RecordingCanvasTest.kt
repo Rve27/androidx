@@ -238,6 +238,28 @@ class RecordingCanvasTest {
     }
 
     @Test
+    fun remotePaintSetRemoteColorFilter_clearColorExpression() {
+        val paint = RemotePaint()
+        paint.remoteColorFilter =
+            RemoteBlendModeColorFilter(
+                RemoteColor.fromARGB(
+                    RemoteFloat(1f),
+                    RemoteFloat(0.8f),
+                    RemoteFloat(RemoteContext.FLOAT_CONTINUOUS_SEC),
+                    RemoteFloat(0.5f),
+                ),
+                BlendMode.MULTIPLY,
+            )
+        recordingCanvas.usePaint(paint)
+
+        recordingCanvas.usePaint(Paint())
+
+        val operations = inflateOperations()
+        val paintOp = operations[operations.size - 1] as PaintData
+        assertThat(paintOp.mPaintData.toString()).contains("clearColorFilter")
+    }
+
+    @Test
     fun remotePaintCopyConstructor() {
         val paint = RemotePaint()
         paint.remoteColor =
