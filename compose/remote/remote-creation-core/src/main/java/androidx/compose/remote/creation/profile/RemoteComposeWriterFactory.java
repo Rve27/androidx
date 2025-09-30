@@ -22,7 +22,7 @@ import org.jspecify.annotations.NonNull;
 
 /** Interface representing the constructor for a RemoteComposeWriter (used in {@link Profile}) */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public interface ProfileFactory {
+public interface RemoteComposeWriterFactory {
     /**
      * Returns a valid RemoteComposeWriter
      *
