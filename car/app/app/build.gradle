@@ -408,6 +408,7 @@ androidComponents {
         ProtocolLocation projectProtocolLocation = new ProtocolLocation(project)
         tasks.register("generateProtocolApi", GenerateProtocolApiTask) { task ->
             task.description = "Generate an API signature file for the classes annotated with @CarProtocol"
+            task.dependsOn(assemble)
             task.generatedApi = projectProtocolLocation.generatedApi
             task.sourceDirs = sourceCollection
             task.dependencyClasspath = dependencyClasspath
