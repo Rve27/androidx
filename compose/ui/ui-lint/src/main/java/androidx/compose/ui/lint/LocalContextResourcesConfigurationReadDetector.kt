@@ -34,6 +34,7 @@ import com.android.tools.lint.detector.api.Scope
 import com.android.tools.lint.detector.api.Severity
 import com.android.tools.lint.detector.api.SourceCodeScanner
 import com.android.tools.lint.detector.api.UastLintUtils.Companion.tryResolveUDeclaration
+import com.intellij.psi.PsiMember
 import com.intellij.psi.PsiMethod
 import java.util.EnumSet
 import org.jetbrains.uast.UElement
@@ -41,6 +42,7 @@ import org.jetbrains.uast.UExpression
 import org.jetbrains.uast.UQualifiedReferenceExpression
 import org.jetbrains.uast.USimpleNameReferenceExpression
 import org.jetbrains.uast.UVariable
+import org.jetbrains.uast.getQualifiedChain
 import org.jetbrains.uast.isUastChildOf
 import org.jetbrains.uast.matchesQualified
 import org.jetbrains.uast.skipParenthesizedExprDown
@@ -143,7 +145,7 @@ class LocalContextResourcesConfigurationReadDetector : Detector(), SourceCodeSca
                 // this (and variants that use method calls such as getResources() instead), but
                 // we want a fast path so we can suggest a replacement.
                 if (
-                    node.matchesQualifiedWithOrWithoutFqn(
+                    node.matchesQualifiedCallInPackageName(
                         LocalContextCurrentResourcesConfiguration,
                         Names.Ui.Platform.PackageName,
                     )
@@ -172,7 +174,7 @@ class LocalContextResourcesConfigurationReadDetector : Detector(), SourceCodeSca
                 // So after we check the file, we only report the resource string if it was not
                 // inside a configuration string.
                 if (
-                    node.matchesQualifiedWithOrWithoutFqn(
+                    node.matchesQualifiedCallInPackageName(
                         LocalContextCurrentResources,
                         Names.Ui.Platform.PackageName,
                     )
@@ -227,7 +229,7 @@ class LocalContextResourcesConfigurationReadDetector : Detector(), SourceCodeSca
                     }
 
                 if (
-                    contextSource.matchesQualifiedWithOrWithoutFqn(
+                    contextSource.matchesQualifiedCallInPackageName(
                         LocalContextCurrent,
                         Names.Ui.Platform.PackageName,
                     )
@@ -303,15 +305,26 @@ class LocalContextResourcesConfigurationReadDetector : Detector(), SourceCodeSca
     }
 
     /**
-     * [matchesQualified] but also checks for if this [fqName] is fully qualified with [packageName]
-     * prepended.
+     * Similar to [matchesQualified] but makes sure that [fqName] is a qualified call starting on a
+     * declaration in [packageName]. This can be implicit (with an import), or explicit (fully
+     * qualified call)
      */
-    private fun UExpression.matchesQualifiedWithOrWithoutFqn(
+    private fun UExpression.matchesQualifiedCallInPackageName(
         fqName: String,
         packageName: PackageName,
     ): Boolean {
-        return matchesQualified(fqName) ||
-            matchesQualified(packageName.javaPackageName + "." + fqName)
+        // Fully qualified call
+        if (matchesQualified(packageName.javaPackageName + "." + fqName)) {
+            return true
+        }
+
+        // Implicit call, check if the outermost receiver matches the expected packageName
+        if (matchesQualified(fqName)) {
+            val resolved = getQualifiedChain().firstOrNull()?.tryResolve()
+            return (resolved as? PsiMember)?.isInPackageName(packageName) == true
+        }
+
+        return false
     }
 
     companion object {

@@ -76,6 +76,43 @@ class LocalContextResourcesConfigurationReadDetectorTest : LintDetectorTest() {
             """,
         )
 
+    val GlanceLocalContextStub =
+        bytecodeStub(
+            "CompositionLocals.kt",
+            "androidx/glance",
+            0x631c973f,
+            """
+            package androidx.glance
+
+            import android.content.Context
+            import androidx.compose.runtime.staticCompositionLocalOf
+
+            val LocalContext = staticCompositionLocalOf<Context>()
+           """,
+            """
+            META-INF/main.kotlin_module:
+            H4sIAAAAAAAA/2NgYGBmYGBgAmJGBijg0uOSSMxLKcrPTKnQS87PLcgvTtUr
+            Ks0rycxNFRJyBgtklmTm5/nkJyfmeJdwqXHxw9Wn5yTmJacKCaMrKwaq4+Ni
+            KUktLhFiCwGS3iVKDFoMAKjR7e+AAAAA
+            """,
+            """
+            androidx/glance/CompositionLocalsKt.class:
+            H4sIAAAAAAAA/61TXU8TQRQ9s11gu1ZaEIUCKlLUEhO2GI2JJSSGhKSxAgHD
+            C0/T3aGZ0s6Y3dmGR36Lv8CPF+ODIT76o4x3tkVDCS/ETXbm3rv3nPu5v35/
+            /wHgBVYZKlxFsZbRadDuchWKYEv3PuhEGqlVU4e8m7w1E2AMpQ7v84B82sFu
+            qyNCsuYYim1hMrctrYw4NQyvqqvNv5xhRiaCOFVG9kSwF+u+jHirK0bD1Bn2
+            b4bcuAARhnJQJhjmUt8k0kpTx+2gI0wr5lIlAVdKG27BSbCjzU7ataELl2t4
+            eaMKCsjDz8PBLQZvI+xKJc0mQ666esjw7FrGUR7b7yLDUmLTDEe/7h6vROKY
+            p11Ks1NtnmhDcYJOvxccpyoc1LU9lGr1RnN0avWbTaeAKUz7KOEOw97/n9LU
+            RSHvhOERN5xsTq+foy117MHsAQZ2QvZTabUaSdE6w9r52aR/fuY7c87g9Zzl
+            2dL52bw37U47NafGfn4c98hj3vVyJdeinjOUr02HYebKL7B2Qt3OH8i24iaN
+            BcPC/qDghurLRFK5b/6tFYO7pSNyKjalEjtpryXi97YlDP6BTuNQbEurlIcc
+            h1cYsE5L5GYFz9udIq1iO4G7WKF7nOxeppcxRloOj0lbJKt93C8ofMqwT4a+
+            wMQQP3EJ7+E2Jkm26GVkHYbPXPYNM19R+HyFw8HTjGUZVbpfk/UexZ89Qq6B
+            uQbKDcp2gUQsNnAfD47AEjzE0hHGEuQT+AkeJVYe/wPYvCA4gAQAAA==
+            """,
+        )
+
     @Test
     fun error() {
         lint()
@@ -172,7 +209,7 @@ Autofix for src/test/test.kt line 9: Replace with LocalResources.current:
                 }
 
                 @Composable
-                fun Test3() {
+                fun Test4() {
                     val context = LocalContext.current
                     val res = context.resources
                 }
@@ -203,5 +240,78 @@ src/test/test.kt:29: Warning: Reading Resources using LocalContext.current.resou
 3 errors, 1 warnings
             """
             )
+    }
+
+    @Test
+    fun ignoresOtherLocalContextDefinitions() {
+        lint()
+            .files(
+                kotlin(
+                    """
+                package test
+
+                import android.content.Context
+                import androidx.compose.runtime.Composable
+                import androidx.compose.runtime.staticCompositionLocalOf
+                import androidx.glance.LocalContext
+
+                val MyLocalContext = staticCompositionLocalOf<Context>()
+
+                @Composable
+                fun Test1() {
+                    LocalContext.current.resources
+                    LocalContext.current.getResources()
+                    LocalContext.current.resources.configuration
+                    LocalContext.current.getResources().getConfiguration()
+                    MyLocalContext.current.resources
+                    MyLocalContext.current.getResources()
+                    MyLocalContext.current.resources.configuration
+                    MyLocalContext.current.getResources().getConfiguration()
+                }
+
+                @Composable
+                fun Test2() {
+                    val resources = LocalContext.current.resources
+                    resources.configuration
+                    val resources2 = MyLocalContext.current.resources
+                    resources2.configuration
+                }
+
+                @Composable
+                fun Test3() {
+                    val context = LocalContext.current
+                    context.resources.configuration
+                    val context2 = MyLocalContext.current
+                    context2.resources.configuration
+                }
+
+                @Composable
+                fun Test4() {
+                    val context = LocalContext.current
+                    val res = context.resources
+                    res.configuration
+                    val context2 = MyLocalContext.current
+                    val res2 = context2.resources
+                    res2.configuration
+                }
+
+                @Composable
+                fun Test5() {
+                    val context = LocalContext.current
+                    val res = context.resources
+                    val context2 = MyLocalContext.current
+                    val res2 = context2.resources
+                }
+            """
+                ),
+                GlanceLocalContextStub,
+                Stubs.Composable,
+                Stubs.CompositionLocal,
+                AndroidStubs.Context,
+                AndroidStubs.Resources,
+                AndroidStubs.Configuration,
+            )
+            .run()
+            .expectClean()
     }
 }
