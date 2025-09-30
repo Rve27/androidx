@@ -98,6 +98,7 @@ import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.focusTarget
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.takeOrElse
@@ -1571,7 +1572,13 @@ private fun DatePickerContent(
 
     val coroutineScope = rememberCoroutineScope()
     var yearPickerVisible by rememberSaveable { mutableStateOf(false) }
-    val nextButtonFocusRequester = remember { FocusRequester() }
+    val focusManager = LocalFocusManager.current
+    val (
+        nextButtonFocusRequester,
+        yearSelectionButtonFocusRequester,
+        currentYearFocusRequester,
+        dividerFocusRequester) =
+        remember { FocusRequester.createRefs() }
     Column {
         MonthsNavigation(
             modifier = Modifier.padding(horizontal = DatePickerHorizontalPadding),
@@ -1609,6 +1616,16 @@ private fun DatePickerContent(
                 }
             },
             onYearPickerButtonClicked = { yearPickerVisible = !yearPickerVisible },
+            onYearPickerButtonTabPressed = {
+                // Keyboard focus on the selected year when tabbed from the open year picker button.
+                val moved = currentYearFocusRequester.requestFocus()
+                if (!moved) {
+                    // If grid is scrolled and selected year is not in view just move focus to
+                    // closest year option from button.
+                    focusManager.moveFocus(FocusDirection.Down)
+                }
+            },
+            yearSelectionButtonFocusRequester = yearSelectionButtonFocusRequester,
             colors = colors,
         )
 
@@ -1626,6 +1643,7 @@ private fun DatePickerContent(
                     selectableDates = selectableDates,
                     colors = colors,
                     onReturnFocus = { nextButtonFocusRequester.requestFocus() },
+                    focusManager = focusManager,
                 )
             }
             // TODO Load the motionScheme tokens from the component tokens file
@@ -1678,8 +1696,42 @@ private fun DatePickerContent(
                         calendarModel = calendarModel,
                         yearRange = yearRange,
                         colors = colors,
+                        currentYearFocusRequester = currentYearFocusRequester,
+                        onYearShiftTabPressed = {
+                            // Shift + Tab should exit year selection grid and move focus backwards.
+                            yearSelectionButtonFocusRequester.requestFocus()
+                        },
+                        onYearTabPressed = {
+                            // Tab should exit year selection grid and move focus forward.
+                            dividerFocusRequester.requestFocus()
+                            focusManager.moveFocus(FocusDirection.Next)
+                        },
                     )
-                    HorizontalDivider(color = colors.dividerColor)
+                    // Make the divider a focus target so that we can properly move keyboard focus
+                    // to dismiss/confirm buttons, which we don't have access to from DatePicker.
+                    // However, the divider won't ever actually have the focus stay on it, so it'll
+                    // be as if it's not focusable when interacting with the picker.
+                    HorizontalDivider(
+                        color = colors.dividerColor,
+                        modifier =
+                            Modifier.focusRequester(dividerFocusRequester)
+                                .onKeyEvent {
+                                    if (
+                                        it.key == Key.DirectionUp ||
+                                            (it.isShiftPressed && it.key == Key.Tab)
+                                    ) {
+                                        // If focus is coming from below, move back up.
+                                        focusManager.moveFocus(FocusDirection.Previous)
+                                        return@onKeyEvent true
+                                    } else if (it.key == Key.DirectionDown || it.key == Key.Tab) {
+                                        // If focus is coming from above, move forward down.
+                                        focusManager.moveFocus(FocusDirection.Next)
+                                        return@onKeyEvent true
+                                    }
+                                    false
+                                }
+                                .focusTarget(),
+                    )
                 }
             }
         }
@@ -1729,6 +1781,7 @@ private fun HorizontalMonthsList(
     selectableDates: SelectableDates,
     colors: DatePickerColors,
     onReturnFocus: () -> Unit,
+    focusManager: FocusManager,
 ) {
     val today = calendarModel.today
     val firstMonth =
@@ -1738,7 +1791,6 @@ private fun HorizontalMonthsList(
                 month = 1, // January
             )
         }
-    val focusManager = LocalFocusManager.current
     ProvideTextStyle(DatePickerModalTokens.DateLabelTextFont.value) {
         LazyRow(
             // Apply this to prevent the screen reader from scrolling to the next or previous month,
@@ -2049,9 +2101,13 @@ private fun Modifier.dayOnKeyEvent(
         return this.onKeyEvent {
             // Tab should exit days selection and move focus down.
             if (it.isTab) {
+                // Move to dismiss button.
                 val moved = focusManager.moveFocus(FocusDirection.Down)
-                if (!moved && !state.isScrollInProgress) {
-                    // If focus didn't move, it's because there's no focus target down like an ok
+                if (moved) {
+                    // Then move to ok button as its focus comes before the dismiss button's.
+                    focusManager.moveFocus(FocusDirection.Right)
+                } else if (!state.isScrollInProgress) {
+                    // If focus didn't move, it's because there's no focus target down like to an ok
                     // or cancel button. So scroll and move focus forward instead to next month.
                     goToMonth(+1, state, focusManager, FocusDirection.Next, coroutineScope)
                 }
@@ -2228,6 +2284,9 @@ private fun YearPicker(
     calendarModel: CalendarModel,
     yearRange: IntRange,
     colors: DatePickerColors,
+    currentYearFocusRequester: FocusRequester,
+    onYearShiftTabPressed: () -> Unit,
+    onYearTabPressed: () -> Unit,
 ) {
     ProvideTextStyle(value = DatePickerModalTokens.SelectionYearLabelTextFont.value) {
         val currentYear = calendarModel.getMonth(calendarModel.today).year
@@ -2254,9 +2313,27 @@ private fun YearPicker(
                     text = localizedYear,
                     modifier =
                         Modifier.requiredSize(
-                            width = DatePickerModalTokens.SelectionYearContainerWidth,
-                            height = DatePickerModalTokens.SelectionYearContainerHeight,
-                        ),
+                                width = DatePickerModalTokens.SelectionYearContainerWidth,
+                                height = DatePickerModalTokens.SelectionYearContainerHeight,
+                            )
+                            .onKeyEvent {
+                                if (it.isShiftTab) {
+                                    onYearShiftTabPressed()
+                                    return@onKeyEvent true
+                                }
+                                if (it.isTab) {
+                                    onYearTabPressed()
+                                    return@onKeyEvent true
+                                }
+                                false
+                            }
+                            .then(
+                                if (selectedYear == displayedYear) {
+                                    Modifier.focusRequester(currentYearFocusRequester)
+                                } else {
+                                    Modifier
+                                }
+                            ),
                     selected = selectedYear == displayedYear,
                     currentYear = selectedYear == currentYear,
                     onClick = { onYearSelected(selectedYear) },
@@ -2271,6 +2348,8 @@ private fun YearPicker(
             }
         }
     }
+    // Keyboard focus on the selected year when the year picker opens.
+    LaunchedEffect(currentYearFocusRequester) { currentYearFocusRequester.requestFocus() }
 }
 
 internal expect inline fun formatDatePickerNavigateToYearString(
@@ -2351,6 +2430,8 @@ private fun MonthsNavigation(
     onNextClicked: () -> Unit,
     onPreviousClicked: () -> Unit,
     onYearPickerButtonClicked: () -> Unit,
+    onYearPickerButtonTabPressed: () -> Unit,
+    yearSelectionButtonFocusRequester: FocusRequester,
     colors: DatePickerColors,
 ) {
     Row(
@@ -2364,7 +2445,18 @@ private fun MonthsNavigation(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         // A menu button for selecting a year.
-        YearPickerMenuButton(onClick = onYearPickerButtonClicked, expanded = yearPickerVisible) {
+        YearPickerMenuButton(
+            onClick = onYearPickerButtonClicked,
+            expanded = yearPickerVisible,
+            modifier =
+                Modifier.focusRequester(yearSelectionButtonFocusRequester).onKeyEvent {
+                    if (yearPickerVisible && it.isTab) {
+                        onYearPickerButtonTabPressed()
+                        return@onKeyEvent true
+                    }
+                    false
+                },
+        ) {
             Text(
                 text = yearPickerText,
                 modifier =
