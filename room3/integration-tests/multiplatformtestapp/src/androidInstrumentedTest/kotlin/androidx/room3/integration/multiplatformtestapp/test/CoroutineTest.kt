@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,23 +16,30 @@
 
 package androidx.room3.integration.multiplatformtestapp.test
 
+import androidx.kruth.assertThat
 import androidx.room3.Room
 import androidx.room3.integration.multiplatformtestapp.test.util.UseDriver
 import androidx.sqlite.driver.AndroidSQLiteDriver
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import androidx.test.platform.app.InstrumentationRegistry
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
 import kotlinx.coroutines.Dispatchers
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import org.junit.runners.Parameterized.Parameters
 
 @RunWith(Parameterized::class)
-class QueryTest(private val driver: UseDriver) : BaseQueryTest() {
+class CoroutineTest(private val driver: UseDriver) : BaseCoroutineTest() {
 
     private val instrumentation = InstrumentationRegistry.getInstrumentation()
+    private val file = instrumentation.targetContext.getDatabasePath("test.db")
 
     override fun getRoomDatabase(): SampleDatabase {
-        return Room.inMemoryDatabaseBuilder<SampleDatabase>(context = instrumentation.targetContext)
+        return Room.databaseBuilder<SampleDatabase>(
+                context = instrumentation.targetContext,
+                name = file.path,
+            )
             .setDriver(
                 when (driver) {
                     UseDriver.BUNDLED -> BundledSQLiteDriver()
@@ -41,6 +48,24 @@ class QueryTest(private val driver: UseDriver) : BaseQueryTest() {
             )
             .setQueryCoroutineContext(Dispatchers.IO)
             .build()
+    }
+
+    @BeforeTest
+    override fun before() {
+        assertThat(file).isNotNull()
+        file.parentFile?.mkdirs()
+        deleteDatabaseFile()
+        super.before()
+    }
+
+    @AfterTest
+    override fun after() {
+        super.after()
+        deleteDatabaseFile()
+    }
+
+    private fun deleteDatabaseFile() {
+        instrumentation.targetContext.deleteDatabase(file.name)
     }
 
     companion object {
