@@ -1,8 +1,8 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 9,
-    "identityHash": "a6be2522a02b9ae6528719c637ac5daa",
+    "version": 10,
+    "identityHash": "c93ad306d43f4688634c3822bb14f93f",
     "entities": [
       {
         "tableName": "Entity1",
@@ -17,15 +17,14 @@
           {
             "fieldPath": "name",
             "columnName": "name",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           }
         ],
         "primaryKey": {
+          "autoGenerate": false,
           "columnNames": [
             "id"
-          ],
-          "autoGenerate": false
+          ]
         },
         "indices": [
           {
@@ -34,14 +33,14 @@
             "columnNames": [
               "name"
             ],
+            "orders": [],
             "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_Entity1_name` ON `${TABLE_NAME}` (`name`)"
           }
-        ],
-        "foreignKeys": []
+        ]
       },
       {
         "tableName": "Entity2",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `addedInV3` TEXT, `name` TEXT, `addedInV9` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `addedInV3` TEXT, `name` TEXT, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -52,34 +51,24 @@
           {
             "fieldPath": "addedInV3",
             "columnName": "addedInV3",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "name",
             "columnName": "name",
-            "affinity": "TEXT",
-            "notNull": false
-          },
-          {
-            "fieldPath": "addedInV9",
-            "columnName": "addedInV9",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           }
         ],
         "primaryKey": {
+          "autoGenerate": false,
           "columnNames": [
             "id"
-          ],
-          "autoGenerate": true
-        },
-        "indices": [],
-        "foreignKeys": []
+          ]
+        }
       },
       {
         "tableName": "Entity4",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `name` TEXT COLLATE NOCASE, PRIMARY KEY(`id`), FOREIGN KEY(`name`) REFERENCES `Entity1`(`name`) ON UPDATE NO ACTION ON DELETE NO ACTION DEFERRABLE INITIALLY DEFERRED)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `name` TEXT, PRIMARY KEY(`id`), FOREIGN KEY(`name`) REFERENCES `Entity1`(`name`) ON UPDATE NO ACTION ON DELETE NO ACTION DEFERRABLE INITIALLY DEFERRED)",
         "fields": [
           {
             "fieldPath": "id",
@@ -90,17 +79,15 @@
           {
             "fieldPath": "name",
             "columnName": "name",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           }
         ],
         "primaryKey": {
+          "autoGenerate": false,
           "columnNames": [
             "id"
-          ],
-          "autoGenerate": false
+          ]
         },
-        "indices": [],
         "foreignKeys": [
           {
             "table": "Entity1",
@@ -114,17 +101,42 @@
             ]
           }
         ]
-      }
-    ],
-    "views": [
+      },
       {
-        "viewName": "View1",
-        "createSql": "CREATE VIEW `${VIEW_NAME}` AS SELECT Entity4.id, Entity4.name, Entity1.id AS entity1Id FROM Entity4 INNER JOIN Entity1 ON Entity4.name = Entity1.name"
+        "tableName": "Entity5",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `addedInV9` TEXT DEFAULT 'Unknown', `addedInV10` INTEGER NOT NULL DEFAULT (0), PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "addedInV9",
+            "columnName": "addedInV9",
+            "affinity": "TEXT",
+            "defaultValue": "'Unknown'"
+          },
+          {
+            "fieldPath": "addedInV10",
+            "columnName": "addedInV10",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "(0)"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        }
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'a6be2522a02b9ae6528719c637ac5daa')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'c93ad306d43f4688634c3822bb14f93f')"
     ]
   }
 }
