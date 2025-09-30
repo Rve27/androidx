@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.pdf.view
+package androidx.pdf.view.layout
 
 import android.graphics.Point
 import android.graphics.PointF
@@ -29,6 +29,7 @@ import androidx.pdf.PdfRect
 import androidx.pdf.exceptions.RequestFailedException
 import androidx.pdf.exceptions.RequestMetadata
 import androidx.pdf.util.PAGE_INFO_REQUEST_NAME
+import androidx.pdf.view.PdfFormFillingState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -144,8 +145,8 @@ internal class PageMetadataLoader(
     }
 
     /**
-     * Returns the [androidx.pdf.PdfPoint] that exists at ([contentX], [contentY]), or null if no
-     * page content is laid out at that point.
+     * Returns the [PdfPoint] that exists at ([contentX], [contentY]), or null if no page content is
+     * laid out at that point.
      *
      * @param contentX the X content coordinate to check
      * @param contentY the Y content coordinate to check
@@ -217,8 +218,8 @@ internal class PageMetadataLoader(
     }
 
     /**
-     * Returns a View-relative [RectF] corresponding to a page-relative [androidx.pdf.PdfRect], or
-     * null if the page hasn't been laid out
+     * Returns a View-relative [RectF] corresponding to a page-relative [PdfRect], or null if the
+     * page hasn't been laid out
      */
     fun getViewRect(pdfRect: PdfRect, viewport: RectF): RectF? {
         if (pdfRect.pageNum > paginationModel.reach) return null
@@ -232,7 +233,8 @@ internal class PageMetadataLoader(
      * Updates properties on viewport changes, namely [visiblePages], [fullyVisiblePages],
      * [pageLocations], and [visiblePageAreas]
      *
-     * @param viewport the visible region of [PdfView] in unscaled / content coordinates
+     * @param viewport the visible region of [androidx.pdf.view.PdfView] in unscaled / content
+     *   coordinates
      */
     fun onViewportChanged(viewport: RectF): Boolean {
         // Order of operations is important, each of these computations depends on the previous one
