@@ -478,21 +478,15 @@ public fun <T : Any> NavDisplay(
 
     // check if in gesture back
     if (inPredictiveBack) {
-        if (
-            transition.currentState::class != previousScene::class ||
-                transition.currentState.key != previousScene.key
-        ) {
-            LaunchedEffect(previousScene::class, previousScene.key, progress) {
+        if (transition.currentState != previousScene) {
+            LaunchedEffect(previousScene, progress) {
                 // Retarget on key change; seek on progress updates.
                 transitionState.seekTo(progress, previousScene)
             }
         }
     } else {
-        LaunchedEffect(scene::class, scene.key) {
-            if (
-                transitionState.currentState::class != scene::class ||
-                    transitionState.currentState.key != scene.key
-            ) {
+        LaunchedEffect(scene) {
+            if (transitionState.currentState != scene) {
                 // We are animating to the final state for regular navigate forward and regular pop
                 transitionState.animateTo(scene)
             } else {
