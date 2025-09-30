@@ -1142,7 +1142,7 @@ ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
       MODIFIERS
         BACKGROUND = [0.0, 0.0, 88.0, 88.0] color [0.0, 0.0, 1.0, 1.0] shape [0]
       CANVAS_CONTENT [-10:-1] = [0.0, 0.0, 88.0, 88.0] VISIBLE
-        BitmapData id 47 (88x88)
+        BitmapData id 45 (88x88)
 """
         testLayout(result) {
             val colors =
