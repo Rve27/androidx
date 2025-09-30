@@ -54,7 +54,7 @@ public val Int.rf: RemoteFloat
 /** Extension property to convert a [Float] to a [RemoteFloat]. */
 public val Float.rf: RemoteFloat
     get() {
-        return RemoteFloatExpression(this) { _ -> floatArrayOf(this) }
+        return RemoteFloat(this)
     }
 
 /** Extension function to get either a Float ID or a Float literal from a [Number]. */
