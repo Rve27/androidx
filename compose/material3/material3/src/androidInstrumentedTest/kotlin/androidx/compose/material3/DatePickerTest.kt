@@ -17,6 +17,7 @@
 package androidx.compose.material3
 
 import android.os.Build
+import android.os.Build.VERSION.SDK_INT
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.DatePickerDefaults.defaultDatePickerColors
 import androidx.compose.material3.internal.Strings
@@ -31,15 +32,20 @@ import androidx.compose.testutils.assertContainsColor
 import androidx.compose.testutils.assertDoesNotContainColor
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.InputMode
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.platform.LocalInputModeManager
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.SemanticsMatcher.Companion.expectValue
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertContentDescriptionEquals
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
+import androidx.compose.ui.test.assertIsFocused
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.assertIsNotSelected
 import androidx.compose.ui.test.assertIsSelected
@@ -53,13 +59,18 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performKeyInput
 import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.test.pressKey
+import androidx.compose.ui.test.requestFocus
 import androidx.compose.ui.test.swipeLeft
+import androidx.compose.ui.test.withKeyDown
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.sp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
 import androidx.test.filters.SdkSuppress
+import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth.assertThat
 import java.time.LocalDate
 import java.time.YearMonth
@@ -961,6 +972,58 @@ class DatePickerTest {
         // The headline color should the yellow, as we override the typography green color for
         // "headlineLarge".
         rule.onNodeWithText("May 11, 2010").captureToImage().assertContainsColor(Color.Yellow)
+    }
+
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun yearGrid_keyboardNavigation() {
+        rule.setMaterialContent(lightColorScheme()) {
+            if (SDK_INT <= Build.VERSION_CODES.R) {
+                LocalInputModeManager.current.requestInputMode(InputMode.Keyboard)
+            }
+            val initialDateMillis = dayInUtcMilliseconds(year = 2010, month = 1, dayOfMonth = 11)
+            val monthInUtcMillis = dayInUtcMilliseconds(year = 2010, month = 1, dayOfMonth = 1)
+            val datePickerState =
+                rememberDatePickerState(
+                    initialSelectedDateMillis = initialDateMillis,
+                    initialDisplayedMonthMillis = monthInUtcMillis,
+                )
+            DatePickerDialog(
+                onDismissRequest = {},
+                confirmButton = { TextButton(onClick = {}) { Text("OK") } },
+                dismissButton = { TextButton(onClick = {}) { Text("Cancel") } },
+            ) {
+                DatePicker(state = datePickerState)
+            }
+        }
+
+        rule.waitForIdle()
+        if (SDK_INT > Build.VERSION_CODES.R) {
+            InstrumentationRegistry.getInstrumentation().setInTouchMode(false)
+        }
+        // Focus on year picker button and open year picker.
+        rule.onNodeWithText("January 2010").requestFocus()
+        rule.onNodeWithText("January 2010").performKeyInput { pressKey(Key.Enter) }
+        rule.waitForIdle()
+
+        // Assert focus jumps to selected year
+        rule.onNodeWithText("Navigate to year 2010").assertIsFocused()
+
+        // Assert tabbing goes to ok button.
+        rule.onNodeWithText("January 2010").performKeyInput { pressKey(Key.Tab) }
+        rule.onNodeWithText("OK").assertIsFocused()
+
+        // Assert shift + tabbing goes back to year above ok button.
+        rule.onNodeWithText("OK").performKeyInput {
+            withKeyDown(Key.ShiftLeft) { pressKey(Key.Tab) }
+        }
+        rule.onNodeWithText("Navigate to year 2025").assertIsFocused()
+
+        // Assert shift + tabbing goes back to year picker button.
+        rule.onNodeWithText("Navigate to year 2025").performKeyInput {
+            withKeyDown(Key.ShiftLeft) { pressKey(Key.Tab) }
+        }
+        rule.onNodeWithText("January 2010").assertIsFocused()
     }
 
     // Returns the given date's day as milliseconds from epoch. The returned value is for the day's
