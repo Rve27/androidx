@@ -77,7 +77,6 @@ public class ListDetailSceneStrategy<T : Any>(
     public val directive: PaneScaffoldDirective,
 ) : SceneStrategy<T> {
 
-    @Composable
     override fun SceneStrategyScope<T>.calculateScene(entries: List<NavEntry<T>>): Scene<T>? {
         val lastPaneMetadata = getPaneMetadata(entries.last()) ?: return null
         val sceneKey = lastPaneMetadata.sceneKey
