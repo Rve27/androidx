@@ -27,6 +27,7 @@ import androidx.room3.integration.kotlintestapp.vo.BookAuthor
 import androidx.room3.integration.kotlintestapp.vo.Coordinates
 import androidx.room3.integration.kotlintestapp.vo.Email
 import androidx.room3.integration.kotlintestapp.vo.Lang
+import androidx.room3.integration.kotlintestapp.vo.Mail
 import androidx.room3.integration.kotlintestapp.vo.Pet
 import androidx.room3.integration.kotlintestapp.vo.Publisher
 import androidx.room3.integration.kotlintestapp.vo.School
@@ -101,6 +102,15 @@ class TestUtil {
 
         private fun createCoordinates(): Coordinates {
             return Coordinates(Random.Default.nextDouble(), Random.Default.nextDouble())
+        }
+
+        fun createMail(id: Long, subject: String, body: String): Mail {
+            return Mail(
+                rowId = id,
+                subject = subject,
+                body = body,
+                datetime = System.currentTimeMillis(),
+            )
         }
     }
 }
