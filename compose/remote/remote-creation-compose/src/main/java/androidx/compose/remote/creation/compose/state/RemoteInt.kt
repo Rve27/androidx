@@ -941,7 +941,7 @@ public fun rememberRemoteInt(
     state.document.setStringName(remoteInt.getIdForCreationState(state), "$domain:$name")
     return remember {
         // Since this is named, its value can be change, so it's not const.
-        RemoteIntExpression(remoteInt.constantValue) { creationState ->
+        RemoteIntExpression(constantValue = null) { creationState ->
             longArrayOf(remoteInt.getLongIdForCreationState(creationState))
         }
     }
