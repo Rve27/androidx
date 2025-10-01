@@ -24,7 +24,6 @@ import com.google.common.truth.Truth.assertWithMessage
 import layoutinspector.compose.inspection.LayoutInspectorComposeProtocol.GetRecompositionStateReadResponse
 import layoutinspector.compose.inspection.LayoutInspectorComposeProtocol.Parameter.Type
 import layoutinspector.compose.inspection.LayoutInspectorComposeProtocol.RecompositionStateRead
-import layoutinspector.compose.inspection.LayoutInspectorComposeProtocol.RecompositionStateReadEvent
 import layoutinspector.compose.inspection.LayoutInspectorComposeProtocol.StateRead
 
 // Add a fudge value for line comparisons to avoid frequent test failures from
@@ -46,16 +45,6 @@ internal fun validate(
 ) {
     assertThat(reads.anchorHash).isEqualTo(anchorHash)
     validate(reads.stringsList.toMap(), listOf(reads.read), block)
-}
-
-/** Validate a DSL for a [RecompositionStateReadEvent]. */
-internal fun validate(
-    event: RecompositionStateReadEvent,
-    anchorHash: Int,
-    block: MultiRecompositionStateReadValidator.() -> Unit = {},
-) {
-    assertThat(event.anchorHash).isEqualTo(anchorHash)
-    validate(event.stringsList.toMap(), event.readList, block)
 }
 
 private fun validate(
@@ -80,7 +69,7 @@ private fun validate(
     }
 }
 
-/** Validator of a DSL for [GetRecompositionStateReadResponse] and [RecompositionStateReadEvent]. */
+/** Validator of a DSL for [GetRecompositionStateReadResponse]. */
 internal class MultiRecompositionStateReadValidator(
     private val strings: Map<Int, String>,
     private val reads: Map<Int, List<StateRead>>,
@@ -131,10 +120,7 @@ internal class MultiRecompositionStateReadValidator(
     }
 }
 
-/**
- * Validator of a DSL of state reads from either a [GetRecompositionStateReadResponse] or a
- * [RecompositionStateReadEvent].
- */
+/** Validator of a DSL of state reads from a [GetRecompositionStateReadResponse]. */
 internal class RecompositionStateReadValidator(
     private val strings: Map<Int, String>,
     private val reads: List<StateRead>,
@@ -173,10 +159,7 @@ internal class RecompositionStateReadValidator(
     }
 }
 
-/**
- * Validator of a DSL of a single state read from either a [GetRecompositionStateReadResponse] or a
- * [RecompositionStateReadEvent].
- */
+/** Validator of a DSL of state reads from a [GetRecompositionStateReadResponse]. */
 internal class StateReadValidator(
     private val strings: Map<Int, String>,
     private val read: StateRead,

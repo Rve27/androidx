@@ -17,8 +17,6 @@
 package androidx.compose.ui.inspection.recompositions
 
 import androidx.annotation.GuardedBy
-import androidx.collection.IntObjectMap
-import androidx.collection.emptyIntObjectMap
 import androidx.compose.runtime.ExperimentalComposeRuntimeApi
 import androidx.compose.runtime.RecomposeScope
 import androidx.compose.runtime.Recomposer
@@ -31,26 +29,16 @@ import androidx.compose.runtime.tooling.IdentifiableRecomposeScope
 import androidx.compose.runtime.tooling.ObservableComposition
 import androidx.compose.ui.inspection.util.AnchorMap
 import androidx.inspection.ArtTooling
-import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import layoutinspector.compose.inspection.LayoutInspectorComposeProtocol.StateReadSettings
 import layoutinspector.compose.inspection.LayoutInspectorComposeProtocol.StateReadSettings.MethodCase
 
 /** The default number of recompositions with state reads per composable */
 private const val DEFAULT_MAX_RECOMPOSITIONS_WITH_STATE_READS = 20
-
-/** The time to wait for all state reads for a composable that was recomposed for the 1st time */
-val DELAY_FOR_STATE_READS = 100.milliseconds
-
-/** Sender for state read events from ComposeLayoutInspector */
-fun interface StateReadEventSender {
-    fun sendEvent(anchorHash: Int, stateReadsPerRecomposition: IntObjectMap<ObservedStateReads>)
-}
 
 /** The result for a [StateReadHandler.getReads] call. */
 class ObservedReadResult(
@@ -67,9 +55,7 @@ class ObservedReadResult(
 class StateReadHandler(
     artTooling: ArtTooling,
     anchorMap: AnchorMap,
-    private val readEventSender: StateReadEventSender,
-) :
-    RecompositionHandler<RecompositionDataWithStateReads>(
+) : RecompositionHandler<RecompositionDataWithStateReads>(
         artTooling,
         anchorMap,
         { RecompositionDataWithStateReads() },
@@ -82,15 +68,8 @@ class StateReadHandler(
     // The anchors of all the composable where state reads are being collected for.
     @GuardedBy("lock") private val anchorsObserved = mutableSetOf<Any>()
 
-    // The first state read was sent as an event for these anchors.
-    @GuardedBy("lock") private val firstStateReadSendForAnchor = mutableSetOf<Any>()
-
     // The max number of recompositions with state reads kept per composable.
     @GuardedBy("lock") private var maxRecompositions = DEFAULT_MAX_RECOMPOSITIONS_WITH_STATE_READS
-
-    // If true, send state read events for first recomposition with state reads,
-    // and whenever state reads are discarded because of maxRecompositions.
-    @GuardedBy("lock") private var sendDiscardedEvent = false
 
     // The recomposers being observed (for state reads)
     @OptIn(ExperimentalComposeRuntimeApi::class)
@@ -175,16 +154,9 @@ class StateReadHandler(
                     stopObservingStateReads()
                 }
             }
-            if (!keepRecomposeCounts) {
-                firstStateReadSendForAnchor.clear()
-            }
-            if (!observingStateReads) {
+            if (!observingStateReads || settings.methodCase == MethodCase.ALL) {
                 anchorsObserved.clear()
-                firstStateReadSendForAnchor.clear()
-            } else if (
-                settings.methodCase == MethodCase.BY_ID &&
-                    settings.byId.composableToObserveList != anchorsObserved
-            ) {
+            } else if (settings.byId.composableToObserveList != anchorsObserved) {
                 val stopObserving = mutableSetOf<Any>()
                 stopObserving.addAll(anchorsObserved)
                 anchorsObserved.clear()
@@ -193,15 +165,7 @@ class StateReadHandler(
                 )
                 stopObserving.removeAll(anchorsObserved)
                 stopObserving.forEach { counts[it]?.clearStateReads() }
-                firstStateReadSendForAnchor.removeAll(stopObserving)
             }
-            this.sendDiscardedEvent =
-                when (settings.methodCase) {
-                    MethodCase.BY_ID ->
-                        settings.byId.sendDiscardedEvents && anchorsObserved.isNotEmpty()
-                    else -> false
-                }
-            settings.methodCase == MethodCase.BY_ID && anchorsObserved.isNotEmpty()
             this.maxRecompositions =
                 when (settings.methodCase) {
                     MethodCase.ALL -> settings.all.maxRecompositions
@@ -224,7 +188,7 @@ class StateReadHandler(
             val data = counts[anchor] ?: return ObservedReadResult.EMPTY_RESULT
             val actualRecomposition = maxOf(data.firstObserved, recomposition)
             val observedStateReads =
-                data.getReads(actualRecomposition, sendDiscardedEvent)
+                data.getReads(actualRecomposition, remove = true)
                     ?: return ObservedReadResult.EMPTY_RESULT
             val reads =
                 when {
@@ -243,60 +207,11 @@ class StateReadHandler(
         synchronized(lock) {
             data = super.incrementRecompositionCount(anchor) ?: return null
             if (observerJob != null) {
-                val newRecomposition = data.count
-                if (!sendDiscardedEvent) {
-                    // Quietly discard the state reads for older recompositions:
-                    data.discardExcessStateReads(maxRecompositions)
-                } else if (data.recompositionsWithObservations > maxRecompositions) {
-                    sendStateReads(anchor, data.count - 1)
-                } else if (
-                    !firstStateReadSendForAnchor.contains(anchor) &&
-                        anchorsObserved.contains(anchor)
-                ) {
-                    sendStateReads(
-                        anchor,
-                        newRecomposition,
-                        doWaitForStateReadsOfFirstRecomposition = true,
-                    )
-                }
+                // Quietly discard the state reads for older recompositions:
+                data.discardExcessStateReads(maxRecompositions)
             }
         }
         return data
-    }
-
-    /**
-     * Send state reads up to [lastRecomposition] of the specified anchor and discard those state
-     * reads. Delay the send slightly if [doWaitForStateReadsOfFirstRecomposition] is true.
-     */
-    private fun sendStateReads(
-        anchor: Any,
-        lastRecomposition: Int,
-        doWaitForStateReadsOfFirstRecomposition: Boolean = false,
-    ) {
-        scope.launch {
-            if (doWaitForStateReadsOfFirstRecomposition) {
-                // Delay a little to receive any upcoming state reads for the current recomposition
-                delay(DELAY_FOR_STATE_READS)
-            }
-            var reads = emptyIntObjectMap<ObservedStateReads>()
-            synchronized(lock) {
-                if (
-                    doWaitForStateReadsOfFirstRecomposition &&
-                        firstStateReadSendForAnchor.contains(anchor)
-                ) {
-                    // We already sent the first event
-                    return@launch
-                }
-                val data = counts[anchor] ?: return@launch
-                reads = data.getAndRemoveReads(lastRecomposition)
-                if (reads.isNotEmpty()) {
-                    firstStateReadSendForAnchor.add(anchor)
-                }
-            }
-            if (reads.isNotEmpty()) {
-                readEventSender.sendEvent(anchorMap[anchor], reads)
-            }
-        }
     }
 
     @OptIn(ExperimentalComposeRuntimeApi::class)

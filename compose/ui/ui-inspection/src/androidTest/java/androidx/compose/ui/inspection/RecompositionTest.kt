@@ -17,7 +17,6 @@
 package androidx.compose.ui.inspection
 
 import android.view.inspector.WindowInspector
-import androidx.compose.ui.inspection.recompositions.DELAY_FOR_STATE_READS
 import androidx.compose.ui.inspection.rules.JvmtiRule
 import androidx.compose.ui.inspection.rules.sendCommand
 import androidx.compose.ui.inspection.testdata.RecompositionTestActivity
@@ -35,12 +34,9 @@ import androidx.compose.ui.test.performClick
 import androidx.inspection.testing.InspectorTester
 import androidx.test.filters.LargeTest
 import com.google.common.truth.Truth.assertThat
-import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import layoutinspector.compose.inspection.LayoutInspectorComposeProtocol.ComposableNode
-import layoutinspector.compose.inspection.LayoutInspectorComposeProtocol.Event
 import layoutinspector.compose.inspection.LayoutInspectorComposeProtocol.GetAllParametersResponse
 import layoutinspector.compose.inspection.LayoutInspectorComposeProtocol.GetComposablesResponse
 import layoutinspector.compose.inspection.LayoutInspectorComposeProtocol.GetRecompositionStateReadResponse
@@ -433,12 +429,17 @@ class RecompositionTest {
 
         reads = inspectorTester.getStateReads(nodes.item1.anchorHash, 1)
         assertThat(reads.anchorHash).isEqualTo(nodes.item1.anchorHash)
+        assertThat(reads.hasRead()).isTrue()
         assertThat(reads.read.recompositionNumber).isEqualTo(1)
+
+        // The state read record is removed after it is read:
+        reads = inspectorTester.getStateReads(nodes.item1.anchorHash, 1)
+        assertThat(reads.hasRead()).isFalse()
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun stateReadsOnDemand(): Unit = runBlocking {
+    fun stateReadsById(): Unit = runBlocking {
         inspectorTester.sendCommand(
             GetUpdateSettingsCommand(includeRecomposeCounts = true, keepRecomposeCounts = false)
         )
@@ -468,53 +469,26 @@ class RecompositionTest {
                 stateReadKind = StateReadSettings.Kind.BY_ID,
                 composableToObserve = listOf(nodes.item1.anchorHash),
                 maxRecompositions = 3,
-                sendDiscardedEvents = true,
             )
         )
 
-        // Perform another click to receive data via an event:
+        // Perform another click 2 times to observe state reads:
+        rule.onNodeWithText("Click row 1").performClick()
+        rule.waitForIdle()
         rule.onNodeWithText("Click row 1").performClick()
         rule.waitForIdle()
 
-        // An event should be processed and have the data for the recomposition associated with
-        // the last button click.
-        var event = receive(nodes.item1.anchorHash)
-        validate(event.stateReadEvent, nodes.item1.anchorHash) {
-            recomposition(2) {
-                read {
-                    value(Type.INT32, 2)
-                    invalidated(true)
-                    trace(TRACE_ITEM_UPDATE_COUNT_STATE)
-                }
-                read {
-                    value(Type.ITERABLE, "List[6]") {
-                        parameter("[0]", Type.STRING, "a")
-                        parameter("[1]", Type.STRING, "b")
-                        parameter("[2]", Type.STRING, "c")
-                        parameter("[3]", Type.STRING, "d")
-                        parameter("[4]", Type.STRING, "e")
-                    }
-                    trace(TRACE_ITEM_UPDATE_LIST_STATE)
-                }
-            }
-        }
+        composable =
+            inspectorTester
+                .sendCommand(GetComposablesCommand(rootId, skipSystemComposables = false))
+                .getComposablesResponse
+        nodes = Nodes(composable, parameters)
+        assertThat(nodes.button1.recomposeCount).isAtLeast(3)
+        assertThat(nodes.text1.recomposeCount).isEqualTo(3)
+        assertThat(nodes.item1.recomposeCount).isEqualTo(3)
 
-        // If we click 4 more times, we should receive another event:
-        rule.onNodeWithText("Click row 1").performClick()
-        rule.waitForIdle()
-        assertThat(inspectorTester.channel.isEmpty).isTrue()
-        rule.onNodeWithText("Click row 1").performClick()
-        rule.waitForIdle()
-        assertThat(inspectorTester.channel.isEmpty).isTrue()
-        rule.onNodeWithText("Click row 1").performClick()
-        rule.waitForIdle()
-        assertThat(inspectorTester.channel.isEmpty).isTrue()
-        rule.onNodeWithText("Click row 1").performClick()
-        rule.waitForIdle()
-
-        // Get and check the content of the event with data for 3 clicks.
-        event = receive(nodes.item1.anchorHash)
-        validate(event.stateReadEvent, nodes.item1.anchorHash) {
+        var reads = inspectorTester.getStateReads(nodes.item1.anchorHash, 3)
+        validate(reads, nodes.item1.anchorHash) {
             recomposition(3) {
                 read {
                     value(Type.INT32, 3)
@@ -532,123 +506,13 @@ class RecompositionTest {
                     trace(TRACE_ITEM_UPDATE_LIST_STATE)
                 }
             }
-            recomposition(4) {
-                read {
-                    value(Type.INT32, 4)
-                    invalidated(true)
-                    trace(TRACE_ITEM_UPDATE_COUNT_STATE)
-                }
-                read {
-                    value(Type.ITERABLE, "List[6]") {
-                        parameter("[0]", Type.STRING, "a")
-                        parameter("[1]", Type.STRING, "b")
-                        parameter("[2]", Type.STRING, "c")
-                        parameter("[3]", Type.STRING, "d")
-                        parameter("[4]", Type.STRING, "e")
-                    }
-                    trace(TRACE_ITEM_UPDATE_LIST_STATE)
-                }
-            }
-            recomposition(5) {
-                read {
-                    value(Type.INT32, 5)
-                    invalidated(true)
-                    trace(TRACE_ITEM_UPDATE_COUNT_STATE)
-                }
-                read {
-                    value(Type.ITERABLE, "List[6]") {
-                        parameter("[0]", Type.STRING, "a")
-                        parameter("[1]", Type.STRING, "b")
-                        parameter("[2]", Type.STRING, "c")
-                        parameter("[3]", Type.STRING, "d")
-                        parameter("[4]", Type.STRING, "e")
-                    }
-                    trace(TRACE_ITEM_UPDATE_LIST_STATE)
-                }
-            }
         }
 
-        // Click 2 more times.
-        // This is not enough for an event to be sent, but we should be able to get the data.
-        rule.onNodeWithText("Click row 1").performClick()
-        rule.waitForIdle()
-        assertThat(inspectorTester.channel.isEmpty).isTrue()
-        rule.onNodeWithText("Click row 1").performClick()
-        rule.waitForIdle()
-
-        // Delay enough time for an event to be sent:
-        delay(DELAY_FOR_STATE_READS * 2)
-        assertThat(inspectorTester.channel.isEmpty).isTrue()
-
-        // Get state reads for recomposition 6:
-        var reads = inspectorTester.getStateReads(nodes.item1.anchorHash, 6)
-        validate(reads, nodes.item1.anchorHash) {
-            recomposition(6) {
-                read {
-                    value(Type.INT32, 6)
-                    invalidated(true)
-                    trace(TRACE_ITEM_UPDATE_COUNT_STATE)
-                }
-                read {
-                    value(Type.ITERABLE, "List[6]") {
-                        parameter("[0]", Type.STRING, "a")
-                        parameter("[1]", Type.STRING, "b")
-                        parameter("[2]", Type.STRING, "c")
-                        parameter("[3]", Type.STRING, "d")
-                        parameter("[4]", Type.STRING, "e")
-                    }
-                    trace(TRACE_ITEM_UPDATE_LIST_STATE)
-                }
-            }
-        }
-
-        // Get state reads for recomposition 7:
-        reads = inspectorTester.getStateReads(nodes.item1.anchorHash, 7)
-        validate(reads, nodes.item1.anchorHash) {
-            recomposition(7) {
-                read {
-                    value(Type.INT32, 7)
-                    invalidated(true)
-                    trace(TRACE_ITEM_UPDATE_COUNT_STATE)
-                }
-                read {
-                    value(Type.ITERABLE, "List[6]") {
-                        parameter("[0]", Type.STRING, "a")
-                        parameter("[1]", Type.STRING, "b")
-                        parameter("[2]", Type.STRING, "c")
-                        parameter("[3]", Type.STRING, "d")
-                        parameter("[4]", Type.STRING, "e")
-                    }
-                    trace(TRACE_ITEM_UPDATE_LIST_STATE)
-                }
-            }
-        }
-
-        // Click 2 more times.
-        // Again: This is not enough for an event to be sent.
-        rule.onNodeWithText("Click row 1").performClick()
-        rule.waitForIdle()
-        assertThat(inspectorTester.channel.isEmpty).isTrue()
-        rule.onNodeWithText("Click row 1").performClick()
-        rule.waitForIdle()
-
-        // Delay enough time for an event to be sent:
-        delay(DELAY_FOR_STATE_READS * 2)
-        assertThat(inspectorTester.channel.isEmpty).isTrue()
-
-        // A 3rd click should cause another event to be sent:
-        rule.onNodeWithText("Click row 1").performClick()
-        rule.waitForIdle()
-
-        event = receive(nodes.item1.anchorHash)
-        val recompositions = event.stateReadEvent.readList.map { it.recompositionNumber }
-        assertThat(recompositions).containsExactly(8, 9, 10)
-
-        composable =
-            inspectorTester
-                .sendCommand(GetComposablesCommand(rootId, skipSystemComposables = false))
-                .getComposablesResponse
-        nodes = Nodes(composable, parameters)
+        // No state reads should be available for button1 and text1 (not being observed)
+        reads = inspectorTester.getStateReads(nodes.text1.anchorHash, 3)
+        assertThat(reads.hasRead()).isFalse()
+        reads = inspectorTester.getStateReads(nodes.button1.anchorHash, nodes.button1.recomposeCount)
+        assertThat(reads.hasRead()).isFalse()
 
         // Now request state reads for a different composable:
         inspectorTester.sendCommand(
@@ -658,7 +522,6 @@ class RecompositionTest {
                 stateReadKind = StateReadSettings.Kind.BY_ID,
                 composableToObserve = listOf(nodes.button1.anchorHash),
                 maxRecompositions = 3,
-                sendDiscardedEvents = true,
             )
         )
 
@@ -666,10 +529,8 @@ class RecompositionTest {
         rule.onNodeWithText("Click row 1").performClick()
         rule.waitForIdle()
 
-        // An event should be processed and have the data for the recomposition associated with
-        // the last button click.
-        event = receive(nodes.button1.anchorHash)
-        validate(event.stateReadEvent, nodes.button1.anchorHash) {
+        reads = inspectorTester.getStateReads(nodes.button1.anchorHash, nodes.button1.recomposeCount + 1)
+        validate(reads, nodes.button1.anchorHash) {
             recomposition(nodes.button1.recomposeCount + 1) {
                 read {
                     value(Type.ITERABLE, "List[1]") {
@@ -695,9 +556,8 @@ class RecompositionTest {
             GetUpdateSettingsCommand(
                 includeRecomposeCounts = true,
                 keepRecomposeCounts = true,
-                stateReadKind = StateReadSettings.Kind.BY_ID,
+                stateReadKind = StateReadSettings.Kind.NONE,
                 maxRecompositions = 3,
-                sendDiscardedEvents = true,
             )
         )
 
@@ -709,32 +569,20 @@ class RecompositionTest {
                 stateReadKind = StateReadSettings.Kind.BY_ID,
                 composableToObserve = listOf(nodes.item1.anchorHash),
                 maxRecompositions = 3,
-                sendDiscardedEvents = true,
             )
         )
 
-        // Perform another click to receive data via an event:
+        // Perform another click:
         rule.onNodeWithText("Click row 1").performClick()
         rule.waitForIdle()
 
-        event = receive(nodes.item1.anchorHash)
-        assertThat(event.stateReadEvent.readCount).isEqualTo(1)
-        assertThat(event.stateReadEvent.readList.single().recompositionNumber).isEqualTo(13)
-    }
+        // A state read record is available for recomposition 5
+        reads = inspectorTester.getStateReads(nodes.item1.anchorHash, 5)
+        assertThat(reads.hasRead()).isTrue()
 
-    // TODO(b/441069857): Investigate if we can use a TestScope instead of waiting in the test
-    private suspend fun receive(anchorHash: Int): Event {
-        repeat(100) {
-            val result = inspectorTester.channel.tryReceive()
-            if (result.isSuccess) {
-                val event = Event.parseFrom(result.getOrThrow())
-                if (event.stateReadEvent.anchorHash == anchorHash) {
-                    return event
-                }
-            }
-            delay(100.milliseconds)
-        }
-        error("Timeout waiting for event")
+        // The state read record is removed after it is read
+        reads = inspectorTester.getStateReads(nodes.item1.anchorHash, 5)
+        assertThat(reads.hasRead()).isFalse()
     }
 
     private suspend fun InspectorTester.getStateReads(
