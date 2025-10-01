@@ -94,7 +94,7 @@ androidXMultiplatform {
                 implementation("androidx.activity:activity:1.8.0")
             }
         }
-        androidUnitTest {
+        androidHostTest {
             dependsOn(jvmCommonTest)
         }
         androidInstrumentedTest {
