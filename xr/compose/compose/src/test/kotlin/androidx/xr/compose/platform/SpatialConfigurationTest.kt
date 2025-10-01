@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.xr.compose.testing.SubspaceTestingActivity
 import androidx.xr.compose.testing.createFakeSession
+import androidx.xr.compose.testing.disableXr
 import androidx.xr.compose.testing.session
 import androidx.xr.compose.testing.setContentWithCompatibilityForXr
 import androidx.xr.compose.unit.DpVolumeSize
@@ -43,6 +44,8 @@ class SpatialConfigurationTest {
 
     @Test
     fun hasXrSpatialFeature_nonXr_isFalse() {
+        composeTestRule.disableXr()
+
         composeTestRule.setContent {
             if (LocalSpatialConfiguration.current.hasXrSpatialFeature) {
                 Text(hasXrSpatialFeatureText)
@@ -54,6 +57,8 @@ class SpatialConfigurationTest {
 
     @Test
     fun requestFullSpaceMode_nonXr_throwsException() {
+        composeTestRule.disableXr()
+
         composeTestRule.setContent {
             assertFailsWith<UnsupportedOperationException> {
                 LocalSpatialConfiguration.current.requestFullSpaceMode()
@@ -63,6 +68,8 @@ class SpatialConfigurationTest {
 
     @Test
     fun requestHomeSpaceMode_nonXr_throwsException() {
+        composeTestRule.disableXr()
+
         composeTestRule.setContent {
             assertFailsWith<UnsupportedOperationException> {
                 LocalSpatialConfiguration.current.requestHomeSpaceMode()
@@ -143,6 +150,8 @@ class SpatialConfigurationTest {
 
     @Test
     fun bounds_nonXr_equalsViewSize() {
+        composeTestRule.disableXr()
+
         composeTestRule.setContent {
             // 320x470 is the default screen size returned by the testing architecture.
             val bounds = LocalSpatialConfiguration.current.bounds

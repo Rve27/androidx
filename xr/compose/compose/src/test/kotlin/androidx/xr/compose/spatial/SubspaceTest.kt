@@ -70,6 +70,7 @@ import androidx.xr.compose.testing.assertWidthIsEqualTo
 import androidx.xr.compose.testing.assertWidthIsNotEqualTo
 import androidx.xr.compose.testing.createFakeRuntime
 import androidx.xr.compose.testing.createFakeSession
+import androidx.xr.compose.testing.disableXr
 import androidx.xr.compose.testing.onSubspaceNodeWithTag
 import androidx.xr.compose.testing.session
 import androidx.xr.compose.testing.setContentWithCompatibilityForXr
@@ -243,6 +244,8 @@ class SubspaceTest {
 
     @Test
     fun subspace_nonXr_contentIsNotCreated() {
+        composeTestRule.disableXr()
+
         composeTestRule.setContent {
             Subspace { SpatialPanel(SubspaceModifier.testTag("panel")) {} }
         }
@@ -252,6 +255,8 @@ class SubspaceTest {
 
     @Test
     fun applicationSubspace_recommendedBoxed_nonXr_contentIsNotCreated() {
+        composeTestRule.disableXr()
+
         composeTestRule.setContent {
             ApplicationSubspace { SpatialPanel(SubspaceModifier.testTag("panel")) {} }
         }
@@ -260,7 +265,7 @@ class SubspaceTest {
     }
 
     @Test
-    fun subspace_contentIsParentedToActivitySpace() {
+    fun subspace_contentIsParentedToTheKeyEntity() {
         composeTestRule.setContentWithCompatibilityForXr {
             Subspace { SpatialPanel(SubspaceModifier.testTag("panel")) {} }
         }
@@ -271,11 +276,11 @@ class SubspaceTest {
         val session = assertNotNull(composeTestRule.session)
         val subspaceRootEntity = assertNotNull(subspaceBox?.parent)
         val subspaceRootContainerEntity = assertNotNull(subspaceRootEntity.parent)
-        assertThat(subspaceRootContainerEntity).isEqualTo(session.scene.activitySpace)
+        assertThat(subspaceRootContainerEntity).isEqualTo(session.scene.keyEntity)
     }
 
     @Test
-    fun applicationSubspace_recommendedBoxed_contentIsParentedToActivitySpace() {
+    fun applicationSubspace_recommendedBoxed_contentIsParentedToTheKeyEntity() {
         composeTestRule.setContentWithCompatibilityForXr {
             ApplicationSubspace { SpatialPanel(SubspaceModifier.testTag("panel")) {} }
         }
@@ -286,7 +291,7 @@ class SubspaceTest {
         val session = assertNotNull(composeTestRule.session)
         val subspaceRootEntity = assertNotNull(subspaceBox?.parent)
         val subspaceRootContainerEntity = assertNotNull(subspaceRootEntity.parent)
-        assertThat(subspaceRootContainerEntity).isEqualTo(session.scene.activitySpace)
+        assertThat(subspaceRootContainerEntity).isEqualTo(session.scene.keyEntity)
     }
 
     @Test
@@ -416,12 +421,12 @@ class SubspaceTest {
         }
 
         composeTestRule.onSubspaceNodeWithTag("panel").assertExists()
-        assertThat(SceneManager.getSceneCount()).isEqualTo(1)
+        assertThat(SceneManager.getSceneCount(composeTestRule.activity)).isEqualTo(1)
 
         showSubspace = false
 
         composeTestRule.onSubspaceNodeWithTag("panel").assertDoesNotExist()
-        assertThat(SceneManager.getSceneCount()).isEqualTo(0)
+        assertThat(SceneManager.getSceneCount(composeTestRule.activity)).isEqualTo(0)
     }
 
     @Test
@@ -435,12 +440,12 @@ class SubspaceTest {
         }
 
         composeTestRule.onSubspaceNodeWithTag("panel").assertExists()
-        assertThat(SceneManager.getSceneCount()).isEqualTo(1)
+        assertThat(SceneManager.getSceneCount(composeTestRule.activity)).isEqualTo(1)
 
         showSubspace = false
 
         composeTestRule.onSubspaceNodeWithTag("panel").assertDoesNotExist()
-        assertThat(SceneManager.getSceneCount()).isEqualTo(0)
+        assertThat(SceneManager.getSceneCount(composeTestRule.activity)).isEqualTo(0)
     }
 
     @Test
@@ -454,17 +459,17 @@ class SubspaceTest {
         }
 
         composeTestRule.onSubspaceNodeWithTag("panel").assertExists()
-        assertThat(SceneManager.getSceneCount()).isEqualTo(1)
+        assertThat(SceneManager.getSceneCount(composeTestRule.activity)).isEqualTo(1)
 
         testSceneRuntime.requestHomeSpaceMode()
 
         composeTestRule.onSubspaceNodeWithTag("panel").assertExists()
-        assertThat(SceneManager.getSceneCount()).isEqualTo(1)
+        assertThat(SceneManager.getSceneCount(composeTestRule.activity)).isEqualTo(1)
 
         testSceneRuntime.requestFullSpaceMode()
 
         composeTestRule.onSubspaceNodeWithTag("panel").assertExists()
-        assertThat(SceneManager.getSceneCount()).isEqualTo(1)
+        assertThat(SceneManager.getSceneCount(composeTestRule.activity)).isEqualTo(1)
     }
 
     @Test
@@ -477,17 +482,17 @@ class SubspaceTest {
         }
 
         composeTestRule.onSubspaceNodeWithTag("panel").assertExists()
-        assertThat(SceneManager.getSceneCount()).isEqualTo(1)
+        assertThat(SceneManager.getSceneCount(composeTestRule.activity)).isEqualTo(1)
 
         fakeRuntime.requestHomeSpaceMode()
 
         composeTestRule.onSubspaceNodeWithTag("panel").assertExists()
-        assertThat(SceneManager.getSceneCount()).isEqualTo(1)
+        assertThat(SceneManager.getSceneCount(composeTestRule.activity)).isEqualTo(1)
 
         fakeRuntime.requestFullSpaceMode()
 
         composeTestRule.onSubspaceNodeWithTag("panel").assertExists()
-        assertThat(SceneManager.getSceneCount()).isEqualTo(1)
+        assertThat(SceneManager.getSceneCount(composeTestRule.activity)).isEqualTo(1)
     }
 
     @Test
@@ -846,7 +851,6 @@ class SubspaceTest {
         composeTestRule.setContentWithCompatibilityForXr {
             testNode = GroupEntity.create(LocalSession.current!!, "TestRoot")
             CompositionLocalProvider(LocalSubspaceRootNode provides testNode) {
-                assertThat(LocalSession.current!!.scene.keyEntity).isNull()
                 ApplicationSubspace { SpatialBox(modifier = SubspaceModifier.testTag("Box")) {} }
             }
         }
@@ -863,7 +867,6 @@ class SubspaceTest {
     @Test
     fun applicationSubspace_multipleApplicationSubspaces_haveTheSameRootContainer() {
         composeTestRule.setContentWithCompatibilityForXr {
-            assertThat(LocalSession.current!!.scene.keyEntity).isNull()
             ApplicationSubspace { SpatialBox(modifier = SubspaceModifier.testTag("Box")) {} }
             ApplicationSubspace { SpatialBox(modifier = SubspaceModifier.testTag("Box2")) {} }
         }
@@ -912,6 +915,8 @@ class SubspaceTest {
 
     @Test
     fun gravityAlignedSubspace_recommendedBoxed_nonXr_contentIsNotCreated() {
+        composeTestRule.disableXr()
+
         composeTestRule.setContent {
             GravityAlignedSubspace { SpatialPanel(SubspaceModifier.testTag("panel")) {} }
         }
@@ -969,12 +974,12 @@ class SubspaceTest {
         }
 
         composeTestRule.onSubspaceNodeWithTag("panel").assertExists()
-        assertThat(SceneManager.getSceneCount()).isEqualTo(1)
+        assertThat(SceneManager.getSceneCount(composeTestRule.activity)).isEqualTo(1)
 
         showSubspace = false
 
         composeTestRule.onSubspaceNodeWithTag("panel").assertDoesNotExist()
-        assertThat(SceneManager.getSceneCount()).isEqualTo(0)
+        assertThat(SceneManager.getSceneCount(composeTestRule.activity)).isEqualTo(0)
     }
 
     @Test
@@ -987,17 +992,17 @@ class SubspaceTest {
         }
 
         composeTestRule.onSubspaceNodeWithTag("panel").assertExists()
-        assertThat(SceneManager.getSceneCount()).isEqualTo(1)
+        assertThat(SceneManager.getSceneCount(composeTestRule.activity)).isEqualTo(1)
 
         fakeRuntime.requestHomeSpaceMode()
 
         composeTestRule.onSubspaceNodeWithTag("panel").assertExists()
-        assertThat(SceneManager.getSceneCount()).isEqualTo(1)
+        assertThat(SceneManager.getSceneCount(composeTestRule.activity)).isEqualTo(1)
 
         fakeRuntime.requestFullSpaceMode()
 
         composeTestRule.onSubspaceNodeWithTag("panel").assertExists()
-        assertThat(SceneManager.getSceneCount()).isEqualTo(1)
+        assertThat(SceneManager.getSceneCount(composeTestRule.activity)).isEqualTo(1)
     }
 
     @Test
@@ -1324,7 +1329,6 @@ class SubspaceTest {
     @Test
     fun gravityAlignedSubspace_multipleApplicationSubspaces_haveTheSameRootContainer() {
         composeTestRule.setContentWithCompatibilityForXr {
-            assertThat(LocalSession.current!!.scene.keyEntity).isNull()
             GravityAlignedSubspace { SpatialBox(modifier = SubspaceModifier.testTag("Box")) {} }
             GravityAlignedSubspace { SpatialBox(modifier = SubspaceModifier.testTag("Box2")) {} }
         }

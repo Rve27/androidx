@@ -38,6 +38,7 @@ import androidx.compose.ui.window.Popup
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.xr.compose.testing.SubspaceTestingActivity
 import androidx.xr.compose.testing.createFakeSession
+import androidx.xr.compose.testing.disableXr
 import androidx.xr.compose.testing.session
 import androidx.xr.compose.testing.setContentWithCompatibilityForXr
 import androidx.xr.scenecore.PanelEntity
@@ -78,6 +79,8 @@ class SpatialElevationTest {
 
     @Test
     fun spatialElevation_xrNotSupported_doesNotThrowError() {
+        composeTestRule.disableXr()
+
         composeTestRule.setContent { SpatialElevation { Popup { Text("Popup") } } }
 
         composeTestRule.onNodeWithText("Popup").assertExists()

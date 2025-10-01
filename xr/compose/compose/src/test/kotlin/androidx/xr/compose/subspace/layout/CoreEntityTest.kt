@@ -31,6 +31,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.xr.compose.platform.LocalSession
 import androidx.xr.compose.spatial.ApplicationSubspace
 import androidx.xr.compose.subspace.SpatialActivityPanel
 import androidx.xr.compose.subspace.SpatialAndroidViewPanel
@@ -63,11 +64,12 @@ class CoreEntityTest {
 
     @Test
     fun coreEntity_coreGroupEntity_shouldThrowIfNotGroupEntity() {
-        composeTestRule.setContentWithCompatibilityForXr {}
-
-        val session = composeTestRule.session
-        assertNotNull(session)
-        assertFailsWith<IllegalArgumentException> { CoreGroupEntity(session.scene.activitySpace) }
+        composeTestRule.setContent {
+            val session = assertNotNull(LocalSession.current)
+            assertFailsWith<IllegalArgumentException> {
+                CoreGroupEntity(session.scene.activitySpace)
+            }
+        }
     }
 
     @Test
