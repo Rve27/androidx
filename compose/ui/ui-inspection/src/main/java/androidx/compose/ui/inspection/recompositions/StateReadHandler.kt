@@ -74,12 +74,12 @@ class StateReadHandler(
     // The recomposers being observed (for state reads)
     @OptIn(ExperimentalComposeRuntimeApi::class)
     @GuardedBy("lock")
-    private val recomposers = mutableMapOf<RecomposerInfo, CompositionObserverHandle>()
+    private val recomposers = hashMapOf<RecomposerInfo, CompositionObserverHandle>()
 
     // The compositions being observed (for state reads)
     @OptIn(ExperimentalComposeRuntimeApi::class)
     @GuardedBy("lock")
-    private val compositions = mutableMapOf<ObservableComposition, CompositionObserverHandle>()
+    private val compositions = hashMapOf<ObservableComposition, CompositionObserverHandle>()
 
     // An observer to keep track of compositions
     @OptIn(ExperimentalComposeRuntimeApi::class, ComposeToolingApi::class)

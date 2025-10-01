@@ -38,7 +38,7 @@ open class RecompositionHandler<T : RecompositionData>(
     @GuardedBy("lock") private var collectingRecompositionCounts = false
 
     // The data collected for recomposition counts and state reads.
-    @GuardedBy("lock") protected val counts = mutableMapOf<Any, T>()
+    @GuardedBy("lock") protected val counts = hashMapOf<Any, T>()
 
     init {
         currentHandler = this
