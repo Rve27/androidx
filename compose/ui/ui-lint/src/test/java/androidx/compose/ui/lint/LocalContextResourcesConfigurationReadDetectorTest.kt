@@ -35,6 +35,7 @@ class LocalContextResourcesConfigurationReadDetectorTest : LintDetectorTest() {
     override fun getIssues(): MutableList<Issue> =
         mutableListOf(
             LocalContextResourcesConfigurationReadDetector.LocalContextConfigurationRead,
+            LocalContextResourcesConfigurationReadDetector.LocalContextGetResourceValueCall,
             LocalContextResourcesConfigurationReadDetector.LocalContextResourcesRead,
         )
 
@@ -130,6 +131,12 @@ class LocalContextResourcesConfigurationReadDetectorTest : LintDetectorTest() {
                     LocalContext.current.getResources()
                     LocalContext.current.resources.configuration
                     LocalContext.current.getResources().getConfiguration()
+                    LocalContext.current.getText(-1)
+                    LocalContext.current.getString(-1)
+                    LocalContext.current.getString(-1, Any())
+                    LocalContext.current.getColor(-1)
+                    LocalContext.current.getDrawable(-1)
+                    LocalContext.current.getColorStateList(-1)
                 }
             """
                 ),
@@ -139,6 +146,8 @@ class LocalContextResourcesConfigurationReadDetectorTest : LintDetectorTest() {
                 AndroidStubs.Context,
                 AndroidStubs.Resources,
                 AndroidStubs.Configuration,
+                AndroidStubs.Drawable,
+                AndroidStubs.ColorStateList,
             )
             .run()
             .expect(
@@ -149,13 +158,31 @@ src/test/test.kt:11: Error: Reading Configuration using LocalContext.current.res
 src/test/test.kt:12: Error: Reading Configuration using LocalContext.current.resources.configuration [LocalContextConfigurationRead]
                     LocalContext.current.getResources().getConfiguration()
                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+src/test/test.kt:13: Error: Querying resource values using LocalContext.current [LocalContextGetResourceValueCall]
+                    LocalContext.current.getText(-1)
+                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+src/test/test.kt:14: Error: Querying resource values using LocalContext.current [LocalContextGetResourceValueCall]
+                    LocalContext.current.getString(-1)
+                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+src/test/test.kt:15: Error: Querying resource values using LocalContext.current [LocalContextGetResourceValueCall]
+                    LocalContext.current.getString(-1, Any())
+                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+src/test/test.kt:16: Error: Querying resource values using LocalContext.current [LocalContextGetResourceValueCall]
+                    LocalContext.current.getColor(-1)
+                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+src/test/test.kt:17: Error: Querying resource values using LocalContext.current [LocalContextGetResourceValueCall]
+                    LocalContext.current.getDrawable(-1)
+                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+src/test/test.kt:18: Error: Querying resource values using LocalContext.current [LocalContextGetResourceValueCall]
+                    LocalContext.current.getColorStateList(-1)
+                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 src/test/test.kt:9: Warning: Reading Resources using LocalContext.current.resources [LocalContextResourcesRead]
                     LocalContext.current.resources
                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 src/test/test.kt:10: Warning: Reading Resources using LocalContext.current.resources [LocalContextResourcesRead]
                     LocalContext.current.getResources()
                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-2 errors, 2 warnings
+8 errors, 2 warnings
             """
             )
             .expectFixDiffs(
@@ -213,6 +240,17 @@ Autofix for src/test/test.kt line 9: Replace with LocalResources.current:
                     val context = LocalContext.current
                     val res = context.resources
                 }
+
+                @Composable
+                fun Test5() {
+                    val context = LocalContext.current
+                    context.getText(-1)
+                    context.getString(-1)
+                    context.getString(-1, Any())
+                    context.getColor(-1)
+                    context.getDrawable(-1)
+                    context.getColorStateList(-1)
+                }
             """
                 ),
                 LocalContextStub,
@@ -221,6 +259,8 @@ Autofix for src/test/test.kt line 9: Replace with LocalResources.current:
                 AndroidStubs.Context,
                 AndroidStubs.Resources,
                 AndroidStubs.Configuration,
+                AndroidStubs.Drawable,
+                AndroidStubs.ColorStateList,
             )
             .run()
             .expect(
@@ -234,10 +274,28 @@ src/test/test.kt:16: Error: Reading Configuration using LocalContext.current.res
 src/test/test.kt:23: Error: Reading Configuration using LocalContext.current.resources.configuration [LocalContextConfigurationRead]
                     res.configuration
                     ~~~~~~~~~~~~~~~~~
+src/test/test.kt:35: Error: Querying resource values using LocalContext.current [LocalContextGetResourceValueCall]
+                    context.getText(-1)
+                    ~~~~~~~~~~~~~~~~~~~
+src/test/test.kt:36: Error: Querying resource values using LocalContext.current [LocalContextGetResourceValueCall]
+                    context.getString(-1)
+                    ~~~~~~~~~~~~~~~~~~~~~
+src/test/test.kt:37: Error: Querying resource values using LocalContext.current [LocalContextGetResourceValueCall]
+                    context.getString(-1, Any())
+                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+src/test/test.kt:38: Error: Querying resource values using LocalContext.current [LocalContextGetResourceValueCall]
+                    context.getColor(-1)
+                    ~~~~~~~~~~~~~~~~~~~~
+src/test/test.kt:39: Error: Querying resource values using LocalContext.current [LocalContextGetResourceValueCall]
+                    context.getDrawable(-1)
+                    ~~~~~~~~~~~~~~~~~~~~~~~
+src/test/test.kt:40: Error: Querying resource values using LocalContext.current [LocalContextGetResourceValueCall]
+                    context.getColorStateList(-1)
+                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 src/test/test.kt:29: Warning: Reading Resources using LocalContext.current.resources [LocalContextResourcesRead]
                     val res = context.resources
                               ~~~~~~~~~~~~~~~~~
-3 errors, 1 warnings
+9 errors, 1 warning
             """
             )
     }
@@ -263,10 +321,22 @@ src/test/test.kt:29: Warning: Reading Resources using LocalContext.current.resou
                     LocalContext.current.getResources()
                     LocalContext.current.resources.configuration
                     LocalContext.current.getResources().getConfiguration()
+                    LocalContext.current.getText(-1)
+                    LocalContext.current.getString(-1)
+                    LocalContext.current.getString(-1, Any())
+                    LocalContext.current.getColor(-1)
+                    LocalContext.current.getDrawable(-1)
+                    LocalContext.current.getColorStateList(-1)
                     MyLocalContext.current.resources
                     MyLocalContext.current.getResources()
                     MyLocalContext.current.resources.configuration
                     MyLocalContext.current.getResources().getConfiguration()
+                    MyLocalContext.current.getText(-1)
+                    MyLocalContext.current.getString(-1)
+                    MyLocalContext.current.getString(-1, Any())
+                    MyLocalContext.current.getColor(-1)
+                    MyLocalContext.current.getDrawable(-1)
+                    MyLocalContext.current.getColorStateList(-1)
                 }
 
                 @Composable
@@ -310,6 +380,8 @@ src/test/test.kt:29: Warning: Reading Resources using LocalContext.current.resou
                 AndroidStubs.Context,
                 AndroidStubs.Resources,
                 AndroidStubs.Configuration,
+                AndroidStubs.Drawable,
+                AndroidStubs.ColorStateList,
             )
             .run()
             .expectClean()
