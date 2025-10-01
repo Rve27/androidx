@@ -25,6 +25,7 @@ import androidx.room3.integration.kotlintestapp.dao.BooksDao
 import androidx.room3.integration.kotlintestapp.dao.CounterDao
 import androidx.room3.integration.kotlintestapp.dao.DependencyDao
 import androidx.room3.integration.kotlintestapp.dao.DerivedDao
+import androidx.room3.integration.kotlintestapp.dao.FunnyNamedDao
 import androidx.room3.integration.kotlintestapp.dao.MusicDao
 import androidx.room3.integration.kotlintestapp.dao.PetCoupleDao
 import androidx.room3.integration.kotlintestapp.dao.PetDao
@@ -40,6 +41,7 @@ import androidx.room3.integration.kotlintestapp.vo.BookAuthor
 import androidx.room3.integration.kotlintestapp.vo.Counter
 import androidx.room3.integration.kotlintestapp.vo.DataClassFromDependency
 import androidx.room3.integration.kotlintestapp.vo.EntityWithJavaPojoList
+import androidx.room3.integration.kotlintestapp.vo.FunnyNamedEntity
 import androidx.room3.integration.kotlintestapp.vo.Image
 import androidx.room3.integration.kotlintestapp.vo.JavaEntity
 import androidx.room3.integration.kotlintestapp.vo.NoArgClass
@@ -82,6 +84,7 @@ import java.util.UUID
             Image::class,
             School::class,
             PetCouple::class,
+            FunnyNamedEntity::class,
         ],
     views = [PetWithUser::class],
     version = 1,
@@ -113,6 +116,8 @@ abstract class TestDatabase : RoomDatabase() {
     abstract fun schoolDao(): SchoolDao
 
     abstract fun petCoupleDao(): PetCoupleDao
+
+    abstract fun funnyNamedDao(): FunnyNamedDao
 
     class Converters {
         @TypeConverter
