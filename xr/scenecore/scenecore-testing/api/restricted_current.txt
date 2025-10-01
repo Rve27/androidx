@@ -100,6 +100,7 @@ package androidx.xr.scenecore.testing {
     ctor public FakeBaseRenderingFeature(androidx.xr.runtime.NodeHolder<? extends java.lang.Object?> _nodeHolder);
     method public void dispose();
     method public androidx.xr.runtime.NodeHolder<? extends java.lang.Object?> getNodeHolder();
+    method public androidx.xr.runtime.NodeHolder<? extends java.lang.Object?>? getSubspaceNodeHolder();
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public class FakeCameraViewActivityPose extends androidx.xr.scenecore.testing.FakeActivityPose implements androidx.xr.scenecore.runtime.CameraViewActivityPose {
