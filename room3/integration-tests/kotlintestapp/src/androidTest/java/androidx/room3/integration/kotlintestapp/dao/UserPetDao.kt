@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,26 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package androidx.room3.integration.kotlintestapp.dao
 
 import androidx.room3.Dao
-import androidx.room3.Insert
-import androidx.room3.OnConflictStrategy
 import androidx.room3.Query
-import androidx.room3.Update
-import androidx.room3.integration.kotlintestapp.vo.Toy
+import androidx.room3.integration.kotlintestapp.vo.UserAndGenericPet
+import androidx.room3.integration.kotlintestapp.vo.UserAndPet
 
 @Dao
-interface ToyDao {
-    @Insert fun insert(vararg toys: Toy)
+interface UserPetDao {
+    @Query("SELECT * FROM User u, Pet p WHERE u.uId = p.userId") fun loadAll(): List<UserAndPet>
 
-    @Query("SELECT * FROM Toy WHERE id = :id") fun getToy(id: Int): Toy?
+    @Query("SELECT * FROM User u, Pet p WHERE u.uId = p.userId")
+    fun loadAllGeneric(): List<UserAndGenericPet>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE) fun insertOrReplace(toy: Toy)
+    @Query("SELECT * FROM User u LEFT OUTER JOIN Pet p ON u.uId = p.userId")
+    fun loadUsers(): List<UserAndPet>
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE) fun insertOrIgnore(toy: Toy)
-
-    @Update(onConflict = OnConflictStrategy.REPLACE) fun updateOrReplace(toy: Toy): Int
-
-    @Update(onConflict = OnConflictStrategy.IGNORE) fun updateOrIgnore(toy: Toy): Int
+    @Query("SELECT * FROM Pet p LEFT OUTER JOIN User u ON u.uId = p.userId")
+    fun loadPets(): List<UserAndPet>
 }
