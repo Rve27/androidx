@@ -35,6 +35,7 @@ androidXMultiplatform {
         compileSdk = 36
         namespace = "androidx.navigation3.ui"
         androidResources.enable = true
+        lint.disable += "ComposeTestRuleDispatcher"
     }
     jvmStubs()
     linuxX64Stubs()
