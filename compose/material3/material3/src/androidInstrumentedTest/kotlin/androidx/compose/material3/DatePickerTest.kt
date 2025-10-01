@@ -24,6 +24,7 @@ import androidx.compose.material3.internal.Strings
 import androidx.compose.material3.internal.createCalendarModel
 import androidx.compose.material3.internal.formatWithSkeleton
 import androidx.compose.material3.internal.getString
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,6 +36,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.InputMode
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.platform.LocalInputModeManager
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.SemanticsProperties
@@ -66,6 +68,7 @@ import androidx.compose.ui.test.requestFocus
 import androidx.compose.ui.test.swipeLeft
 import androidx.compose.ui.test.withKeyDown
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.sp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
@@ -1024,6 +1027,296 @@ class DatePickerTest {
             withKeyDown(Key.ShiftLeft) { pressKey(Key.Tab) }
         }
         rule.onNodeWithText("January 2010").assertIsFocused()
+    }
+
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun firstDayOfMonth_keyboardBehavior() {
+        rule.setMaterialContent(lightColorScheme()) {
+            if (SDK_INT <= Build.VERSION_CODES.R) {
+                LocalInputModeManager.current.requestInputMode(InputMode.Keyboard)
+            }
+            val initialDateMillis = dayInUtcMilliseconds(year = 2010, month = 1, dayOfMonth = 11)
+            val monthInUtcMillis = dayInUtcMilliseconds(year = 2010, month = 1, dayOfMonth = 1)
+            val datePickerState =
+                rememberDatePickerState(
+                    initialSelectedDateMillis = initialDateMillis,
+                    initialDisplayedMonthMillis = monthInUtcMillis,
+                )
+            DatePickerDialog(
+                onDismissRequest = {},
+                confirmButton = { TextButton(onClick = {}) { Text("OK") } },
+                dismissButton = { TextButton(onClick = {}) { Text("Cancel") } },
+            ) {
+                DatePicker(state = datePickerState)
+            }
+        }
+
+        rule.waitForIdle()
+        if (SDK_INT > Build.VERSION_CODES.R) {
+            InstrumentationRegistry.getInstrumentation().setInTouchMode(false)
+        }
+
+        // Focus on first day of the month.
+        rule.onNodeWithText("January 1, 2010", substring = true).requestFocus()
+
+        // Assert right arrow key goes to day 2.
+        rule.onNodeWithText("January 1, 2010", substring = true).performKeyInput {
+            pressKey(Key.DirectionRight)
+        }
+        rule.onNodeWithText("January 2, 2010", substring = true).assertIsFocused()
+
+        // Goes back to day 1 with arrow key.
+        rule.onNodeWithText("January 2, 2010", substring = true).performKeyInput {
+            pressKey(Key.DirectionLeft)
+        }
+        rule.onNodeWithText("January 1, 2010", substring = true).assertIsFocused()
+
+        // Assert left arrow key goes to previous month.
+        rule.onNodeWithText("January 1, 2010", substring = true).performKeyInput {
+            pressKey(Key.DirectionLeft)
+        }
+        rule.waitForIdle()
+        rule.onNodeWithText("January 2010").assertDoesNotExist()
+        rule.onNodeWithText("December 2009").assertExists()
+        rule.onNodeWithText("December 31, 2009", substring = true).assertIsFocused()
+    }
+
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun firstDayOfMonth_keyboardBehavior_rtl() {
+        rule.setMaterialContent(lightColorScheme()) {
+            if (SDK_INT <= Build.VERSION_CODES.R) {
+                LocalInputModeManager.current.requestInputMode(InputMode.Keyboard)
+            }
+            CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+                val initialDateMillis =
+                    dayInUtcMilliseconds(year = 2010, month = 1, dayOfMonth = 11)
+                val monthInUtcMillis = dayInUtcMilliseconds(year = 2010, month = 1, dayOfMonth = 1)
+                val datePickerState =
+                    rememberDatePickerState(
+                        initialSelectedDateMillis = initialDateMillis,
+                        initialDisplayedMonthMillis = monthInUtcMillis,
+                    )
+                DatePickerDialog(
+                    onDismissRequest = {},
+                    confirmButton = { TextButton(onClick = {}) { Text("OK") } },
+                    dismissButton = { TextButton(onClick = {}) { Text("Cancel") } },
+                ) {
+                    DatePicker(state = datePickerState)
+                }
+            }
+        }
+        rule.waitForIdle()
+        if (SDK_INT > Build.VERSION_CODES.R) {
+            InstrumentationRegistry.getInstrumentation().setInTouchMode(false)
+        }
+
+        // Focus on first day of the month.
+        rule.onNodeWithText("January 1, 2010", substring = true).requestFocus()
+
+        // Assert left arrow key goes to day 2.
+        rule.onNodeWithText("January 1, 2010", substring = true).performKeyInput {
+            pressKey(Key.DirectionLeft)
+        }
+        rule.onNodeWithText("January 2, 2010", substring = true).assertIsFocused()
+
+        // Goes back to day 1 with arrow key.
+        rule.onNodeWithText("January 2, 2010", substring = true).performKeyInput {
+            pressKey(Key.DirectionRight)
+        }
+        rule.onNodeWithText("January 1, 2010", substring = true).assertIsFocused()
+
+        // Assert right arrow key goes to previous month.
+        rule.onNodeWithText("January 1, 2010", substring = true).performKeyInput {
+            pressKey(Key.DirectionRight)
+        }
+        rule.waitForIdle()
+        rule.onNodeWithText("January 2010").assertDoesNotExist()
+        rule.onNodeWithText("December 2009").assertExists()
+        rule.onNodeWithText("December 31, 2009", substring = true).assertIsFocused()
+    }
+
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun lastDayOfMonth_keyboardBehavior() {
+        rule.setMaterialContent(lightColorScheme()) {
+            if (SDK_INT <= Build.VERSION_CODES.R) {
+                LocalInputModeManager.current.requestInputMode(InputMode.Keyboard)
+            }
+            val initialDateMillis = dayInUtcMilliseconds(year = 2010, month = 1, dayOfMonth = 11)
+            val monthInUtcMillis = dayInUtcMilliseconds(year = 2010, month = 1, dayOfMonth = 1)
+            val datePickerState =
+                rememberDatePickerState(
+                    initialSelectedDateMillis = initialDateMillis,
+                    initialDisplayedMonthMillis = monthInUtcMillis,
+                )
+            DatePickerDialog(
+                onDismissRequest = {},
+                confirmButton = { TextButton(onClick = {}) { Text("OK") } },
+                dismissButton = { TextButton(onClick = {}) { Text("Cancel") } },
+            ) {
+                DatePicker(state = datePickerState)
+            }
+        }
+        rule.waitForIdle()
+        if (SDK_INT > Build.VERSION_CODES.R) {
+            InstrumentationRegistry.getInstrumentation().setInTouchMode(false)
+        }
+
+        // Focus on last day of the month.
+        rule.onNodeWithText("January 31, 2010", substring = true).requestFocus()
+
+        // Assert tabbing goes back to OK button.
+        rule.onNodeWithText("January 31, 2010", substring = true).performKeyInput {
+            pressKey(Key.Tab)
+        }
+        rule.onNodeWithText("OK").assertIsFocused()
+
+        // Shift tab to last day of month
+        rule.onNodeWithText("OK").performKeyInput {
+            withKeyDown(Key.ShiftLeft) { pressKey(Key.Tab) }
+        }
+        rule.onNodeWithText("January 31, 2010", substring = true).assertIsFocused()
+
+        // Assert right arrow key goes to next month.
+        rule.onNodeWithText("January 31, 2010", substring = true).performKeyInput {
+            pressKey(Key.DirectionRight)
+        }
+        rule.waitForIdle()
+        rule.onNodeWithText("January 2010").assertDoesNotExist()
+        rule.onNodeWithText("February 2010").assertExists()
+        rule.onNodeWithText("February 1, 2010", substring = true).assertIsFocused()
+    }
+
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun lastDayOfMonth_keyboardBehavior_rtl() {
+        rule.setMaterialContent(lightColorScheme()) {
+            if (SDK_INT <= Build.VERSION_CODES.R) {
+                LocalInputModeManager.current.requestInputMode(InputMode.Keyboard)
+            }
+            CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+                val initialDateMillis =
+                    dayInUtcMilliseconds(year = 2010, month = 1, dayOfMonth = 11)
+                val monthInUtcMillis = dayInUtcMilliseconds(year = 2010, month = 1, dayOfMonth = 1)
+                val datePickerState =
+                    rememberDatePickerState(
+                        initialSelectedDateMillis = initialDateMillis,
+                        initialDisplayedMonthMillis = monthInUtcMillis,
+                    )
+                DatePickerDialog(
+                    onDismissRequest = {},
+                    confirmButton = { TextButton(onClick = {}) { Text("OK") } },
+                    dismissButton = { TextButton(onClick = {}) { Text("Cancel") } },
+                ) {
+                    DatePicker(state = datePickerState)
+                }
+            }
+        }
+        rule.waitForIdle()
+        if (SDK_INT > Build.VERSION_CODES.R) {
+            InstrumentationRegistry.getInstrumentation().setInTouchMode(false)
+        }
+
+        // Focus on last day of the month.
+        rule.onNodeWithText("January 31, 2010", substring = true).requestFocus()
+
+        // Assert right arrow key goes to day 30.
+        rule.onNodeWithText("January 31, 2010", substring = true).performKeyInput {
+            pressKey(Key.DirectionRight)
+        }
+        rule.onNodeWithText("January 30, 2010", substring = true).assertIsFocused()
+
+        // Goes back to day 31 with arrow key.
+        rule.onNodeWithText("January 30, 2010", substring = true).performKeyInput {
+            pressKey(Key.DirectionLeft)
+        }
+        rule.onNodeWithText("January 31, 2010", substring = true).assertIsFocused()
+
+        // Assert left arrow key goes to next month.
+        rule.onNodeWithText("January 31, 2010", substring = true).performKeyInput {
+            pressKey(Key.DirectionLeft)
+        }
+        rule.waitForIdle()
+        rule.onNodeWithText("January 2010").assertDoesNotExist()
+        rule.onNodeWithText("February 2010").assertExists()
+        rule.onNodeWithText("February 1, 2010", substring = true).assertIsFocused()
+    }
+
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun calendar_keyboardBehavior() {
+        rule.setMaterialContent(lightColorScheme()) {
+            if (SDK_INT <= Build.VERSION_CODES.R) {
+                LocalInputModeManager.current.requestInputMode(InputMode.Keyboard)
+            }
+            val initialDateMillis = dayInUtcMilliseconds(year = 2010, month = 1, dayOfMonth = 11)
+            val monthInUtcMillis = dayInUtcMilliseconds(year = 2010, month = 1, dayOfMonth = 1)
+            DatePicker(
+                state =
+                    rememberDatePickerState(
+                        initialSelectedDateMillis = initialDateMillis,
+                        initialDisplayedMonthMillis = monthInUtcMillis,
+                    )
+            )
+        }
+        rule.waitForIdle()
+        if (SDK_INT > Build.VERSION_CODES.R) {
+            InstrumentationRegistry.getInstrumentation().setInTouchMode(false)
+        }
+
+        // Focus on first day of the month.
+        rule.onNodeWithText("January 1, 2010", substring = true).requestFocus()
+
+        var day = 1
+        // Assert right arrow key goes through all dates.
+        repeat(30) {
+            rule.onNodeWithText("January $day, 2010", substring = true).performKeyInput {
+                pressKey(Key.DirectionRight)
+            }
+            day++
+            rule.onNodeWithText("January $day, 2010", substring = true).assertIsFocused()
+        }
+    }
+
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun calendar_keyboardBehavior_rtl() {
+        rule.setMaterialContent(lightColorScheme()) {
+            if (SDK_INT <= Build.VERSION_CODES.R) {
+                LocalInputModeManager.current.requestInputMode(InputMode.Keyboard)
+            }
+            CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+                val initialDateMillis =
+                    dayInUtcMilliseconds(year = 2010, month = 1, dayOfMonth = 11)
+                val monthInUtcMillis = dayInUtcMilliseconds(year = 2010, month = 1, dayOfMonth = 1)
+                DatePicker(
+                    state =
+                        rememberDatePickerState(
+                            initialSelectedDateMillis = initialDateMillis,
+                            initialDisplayedMonthMillis = monthInUtcMillis,
+                        )
+                )
+            }
+        }
+        rule.waitForIdle()
+        if (SDK_INT > Build.VERSION_CODES.R) {
+            InstrumentationRegistry.getInstrumentation().setInTouchMode(false)
+        }
+
+        // Focus on first day of the month.
+        rule.onNodeWithText("January 1, 2010", substring = true).requestFocus()
+
+        var day = 1
+        // Assert left arrow key goes through all dates.
+        repeat(30) {
+            rule.onNodeWithText("January $day, 2010", substring = true).performKeyInput {
+                pressKey(Key.DirectionLeft)
+            }
+            day++
+            rule.onNodeWithText("January $day, 2010", substring = true).assertIsFocused()
+        }
     }
 
     // Returns the given date's day as milliseconds from epoch. The returned value is for the day's

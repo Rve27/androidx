@@ -31,11 +31,9 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.FlingBehavior
 import androidx.compose.foundation.gestures.snapping.SnapLayoutInfoProvider
 import androidx.compose.foundation.gestures.snapping.snapFlingBehavior
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -103,7 +101,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.takeOrElse
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.input.InputMode
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.key.KeyEventType
@@ -113,7 +110,7 @@ import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalInputModeManager
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.ScrollAxisRange
@@ -132,6 +129,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import kotlin.jvm.JvmInline
@@ -1932,6 +1930,9 @@ internal fun Month(
             Modifier
         }
     val coroutineScope = rememberCoroutineScope()
+    val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
+    val firstEnabledDateCell = getFirstEnabledDay(month, selectableDates)
+    val lastEnabledDateCell = getLastEnabledDay(month, selectableDates)
 
     var cellIndex = 0
     Column(
@@ -2014,14 +2015,9 @@ internal fun Month(
                             text = (dayNumber + 1).toLocalString(locale = locale),
                             modifier =
                                 Modifier.dayOnKeyEvent(
-                                    isFirstDay =
-                                        cellIndex == month.daysFromStartOfWeekToFirstOfMonth,
-                                    isLastDay =
-                                        cellIndex ==
-                                            (month.daysFromStartOfWeekToFirstOfMonth +
-                                                month.numberOfDays) - 1,
-                                    isFirstColumn = ((cellIndex) % 7) == 0,
-                                    isLastColumn = ((cellIndex + 1) % 7) == 0,
+                                    isRtl = isRtl,
+                                    isFirstDay = cellIndex == firstEnabledDateCell,
+                                    isLastDay = cellIndex == lastEnabledDateCell,
                                     state = lazyListState,
                                     coroutineScope = coroutineScope,
                                     focusManager = focusManager,
@@ -2057,10 +2053,9 @@ internal fun numberOfMonthsInRange(yearRange: IntRange) =
     (yearRange.last - yearRange.first + 1) * 12
 
 private fun Modifier.dayOnKeyEvent(
+    isRtl: Boolean,
     isFirstDay: Boolean,
     isLastDay: Boolean,
-    isFirstColumn: Boolean,
-    isLastColumn: Boolean,
     state: LazyListState,
     coroutineScope: CoroutineScope,
     focusManager: FocusManager?,
@@ -2082,18 +2077,13 @@ private fun Modifier.dayOnKeyEvent(
                 // pressed after right/left key, which could cause weird focus navigation behavior.
                 return@onKeyEvent true
             }
-            // Make sure it scrolls if left key is pressed to go to previous month.
-            if (it.isDirectionLeft) {
+            if (it.isDirectionBackwards(isRtl)) {
+                // Make sure it scrolls only if going to previous month.
                 goToMonth(-1, state, focusManager, FocusDirection.Previous, coroutineScope)
                 return@onKeyEvent true
-            }
-            if (isLastColumn) {
-                // If first day is the only number on its row then we should also check for right
-                // key press. Make sure it scrolls if right key is pressed to go to next month.
-                if (it.isDirectionRight) {
-                    goToMonth(+1, state, focusManager, FocusDirection.Right, coroutineScope)
-                    return@onKeyEvent true
-                }
+            } else if (it.isDirectionForward(isRtl)) {
+                focusManager.moveFocus(FocusDirection.Next)
+                return@onKeyEvent true
             }
             false
         }
@@ -2104,8 +2094,9 @@ private fun Modifier.dayOnKeyEvent(
                 // Move to dismiss button.
                 val moved = focusManager.moveFocus(FocusDirection.Down)
                 if (moved) {
+                    val direction = if (isRtl) FocusDirection.Left else FocusDirection.Right
                     // Then move to ok button as its focus comes before the dismiss button's.
-                    focusManager.moveFocus(FocusDirection.Right)
+                    focusManager.moveFocus(direction)
                 } else if (!state.isScrollInProgress) {
                     // If focus didn't move, it's because there's no focus target down like to an ok
                     // or cancel button. So scroll and move focus forward instead to next month.
@@ -2118,41 +2109,28 @@ private fun Modifier.dayOnKeyEvent(
                 // pressed after right/left key, which could cause weird focus navigation behavior.
                 return@onKeyEvent true
             }
-            // Make sure it scrolls if right key is pressed to go to next month.
-            if (it.isDirectionRight) {
+            if (it.isDirectionForward(isRtl)) {
+                // Make sure it scrolls only if going to next month.
                 goToMonth(+1, state, focusManager, FocusDirection.Next, coroutineScope)
                 return@onKeyEvent true
-            }
-            if (isFirstColumn) {
-                // If last day is the only number on its row then we should also check for left key
-                // press. Make sure it scrolls if left key is pressed to go to previous month.
-                if (it.isDirectionLeft) {
-                    goToMonth(-1, state, focusManager, FocusDirection.Left, coroutineScope)
-                    return@onKeyEvent true
-                }
-            }
-            false
-        }
-    } else if (isFirstColumn || isLastColumn) {
-        return this.onKeyEvent {
-            if (state.isScrollInProgress) {
-                // Do nothing if scroll is currently happening. Like if left/right key was quickly
-                // pressed after right/left key, which could cause weird focus navigation behavior.
-                return@onKeyEvent true
-            }
-            // Make sure it scrolls if left key is pressed on first column to go to previous month.
-            if (isFirstColumn && it.isDirectionLeft) {
-                goToMonth(-1, state, focusManager, FocusDirection.Left, coroutineScope)
-                return@onKeyEvent true
-            } else if (isLastColumn && it.isDirectionRight) {
-                // Make sure it scrolls if right key is pressed on last column to go to next month.
-                goToMonth(+1, state, focusManager, FocusDirection.Right, coroutineScope)
+            } else if (it.isDirectionBackwards(isRtl)) {
+                focusManager.moveFocus(FocusDirection.Previous)
                 return@onKeyEvent true
             }
             false
         }
     } else {
-        return this
+        return this.onKeyEvent {
+            // Right and left keys should only go to next and previous dates in the month.
+            if (it.isDirectionForward(isRtl)) {
+                focusManager.moveFocus(FocusDirection.Next)
+                return@onKeyEvent true
+            } else if (it.isDirectionBackwards(isRtl)) {
+                focusManager.moveFocus(FocusDirection.Previous)
+                return@onKeyEvent true
+            }
+            false
+        }
     }
 }
 
@@ -2168,6 +2146,40 @@ private fun goToMonth(
         state.animateScrollToItem(state.firstVisibleItemIndex + month)
         focusManager.moveFocus(focusDirection)
     }
+}
+
+private fun getFirstEnabledDay(month: CalendarMonth, selectableDates: SelectableDates): Int {
+    var firstCell = month.daysFromStartOfWeekToFirstOfMonth
+    val lastCell = (month.daysFromStartOfWeekToFirstOfMonth + month.numberOfDays) - 1
+    if (selectableDates.isSelectableYear(month.year)) {
+        var day = 0
+        while (
+            !selectableDates.isSelectableDate(
+                month.startUtcTimeMillis + (day * MillisecondsIn24Hours)
+            ) && firstCell <= lastCell
+        ) {
+            day++
+            firstCell++
+        }
+    }
+    return firstCell
+}
+
+private fun getLastEnabledDay(month: CalendarMonth, selectableDates: SelectableDates): Int {
+    val firstCell = month.daysFromStartOfWeekToFirstOfMonth
+    var lastCell = (month.daysFromStartOfWeekToFirstOfMonth + month.numberOfDays) - 1
+    if (selectableDates.isSelectableYear(month.year)) {
+        var day = 0
+        while (
+            !selectableDates.isSelectableDate(
+                month.endUtcTimeMillis - (day * MillisecondsIn24Hours)
+            ) && lastCell >= firstCell
+        ) {
+            day++
+            lastCell--
+        }
+    }
+    return lastCell
 }
 
 @Composable
@@ -2209,8 +2221,6 @@ private fun Day(
     description: String,
     colors: DatePickerColors,
 ) {
-    val focusable = LocalInputModeManager.current.inputMode != InputMode.Touch
-    val interactionSource = remember { MutableInteractionSource() }
     Surface(
         selected = selected,
         onClick = onClick,
@@ -2222,15 +2232,7 @@ private fun Day(
                 .semantics(mergeDescendants = true) {
                     this.text = AnnotatedString(description)
                     this.role = Role.Button
-                }
-                .then(
-                    // A disabled day is focusable for correct keyboard // navigation.
-                    if (!enabled && focusable) {
-                        Modifier.focusable(interactionSource = interactionSource)
-                    } else {
-                        Modifier
-                    }
-                ),
+                },
         enabled = enabled,
         shape = DatePickerModalTokens.DateContainerShape.value,
         color =
@@ -2246,7 +2248,6 @@ private fun Day(
             } else {
                 null
             },
-        interactionSource = interactionSource,
     ) {
         Box(
             modifier =
@@ -2545,6 +2546,12 @@ private fun IconButtonWithTooltip(
         }
     }
 }
+
+private fun KeyEvent.isDirectionBackwards(isRtl: Boolean): Boolean =
+    if (isRtl) isDirectionRight else isDirectionLeft
+
+private fun KeyEvent.isDirectionForward(isRtl: Boolean): Boolean =
+    if (isRtl) isDirectionLeft else isDirectionRight
 
 internal val RecommendedSizeForAccessibility = 48.dp
 internal val MonthYearHeight = 56.dp
