@@ -41,27 +41,22 @@ class RecompositionDataWithStateReads : RecompositionData() {
     }
 
     // Add an observed state read for the current recomposition:
-    fun addStateRead(value: Any?, trace: Exception) {
-        if (!lastCountWasSkipped && count > 0) {
-            val reads = addObservedStateReads(count)
-            reads.addStateRead(value, trace)
-            if (firstObserved < 0) {
-                firstObserved = count
-            }
+    fun addStateRead(value: Any?, trace: Exception): ObservedStateReads? {
+        if (lastCountWasSkipped || count <= 0) {
+            return null
         }
+        val reads = addObservedStateReads(count)
+        reads.addStateRead(value, trace)
+        if (firstObserved < 0) {
+            firstObserved = count
+        }
+        return reads
     }
 
     // Add an observed state variable invalidation for the next upcoming recomposition:
     fun addInvalidation(value: Any?) {
         val reads = addObservedStateReads(count + 1)
         reads.addInvalidation(value)
-    }
-
-    fun discardExcessStateReads(max: Int) {
-        val observed = this.observed ?: return
-        while (max > 0 && recompositionsWithObservations > max) {
-            observed.remove(firstObserved++)
-        }
     }
 
     // Return the state reads for the specified recomposition:
@@ -88,9 +83,11 @@ class RecompositionDataWithStateReads : RecompositionData() {
         return result
     }
 
-    fun clearStateReads() {
+    fun clearStateReads(): IntObjectMap<ObservedStateReads>? {
+        val result = observed
         observed = null
         firstObserved = -1
+        return result
     }
 
     private fun addObservedStateReads(recomposition: Int): ObservedStateReads {

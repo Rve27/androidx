@@ -318,7 +318,6 @@ class RecompositionTest {
                 includeRecomposeCounts = true,
                 keepRecomposeCounts = false,
                 stateReadKind = StateReadSettings.Kind.ALL,
-                maxRecompositions = 3,
             )
         )
 
@@ -383,29 +382,6 @@ class RecompositionTest {
             }
         }
 
-        // Request the state reads for item1 for recomposition 4.
-        // The state reads for recomposition 1..5 should have been discarded.
-        // The first available recomposition with state reads is recomposition 6.
-        reads = inspectorTester.getStateReads(nodes.item1.anchorHash, 4)
-        validate(reads, nodes.item1.anchorHash) {
-            recomposition(6) {
-                read {
-                    value(Type.INT32, 6)
-                    trace(TRACE_ITEM_UPDATE_COUNT_STATE)
-                }
-                read {
-                    value(Type.ITERABLE, "List[6]") {
-                        parameter("[0]", Type.STRING, "a")
-                        parameter("[1]", Type.STRING, "b")
-                        parameter("[2]", Type.STRING, "c")
-                        parameter("[3]", Type.STRING, "d")
-                        parameter("[4]", Type.STRING, "e")
-                    }
-                    trace(TRACE_ITEM_UPDATE_LIST_STATE)
-                }
-            }
-        }
-
         // Stop observing:
         inspectorTester.sendCommand(
             GetUpdateSettingsCommand(
@@ -419,7 +395,6 @@ class RecompositionTest {
             GetUpdateSettingsCommand(
                 includeRecomposeCounts = true,
                 stateReadKind = StateReadSettings.Kind.ALL,
-                maxRecompositions = 3,
                 keepRecomposeCounts = false,
             )
         )
@@ -468,7 +443,6 @@ class RecompositionTest {
                 keepRecomposeCounts = true,
                 stateReadKind = StateReadSettings.Kind.BY_ID,
                 composableToObserve = listOf(nodes.item1.anchorHash),
-                maxRecompositions = 3,
             )
         )
 
@@ -511,7 +485,8 @@ class RecompositionTest {
         // No state reads should be available for button1 and text1 (not being observed)
         reads = inspectorTester.getStateReads(nodes.text1.anchorHash, 3)
         assertThat(reads.hasRead()).isFalse()
-        reads = inspectorTester.getStateReads(nodes.button1.anchorHash, nodes.button1.recomposeCount)
+        reads =
+            inspectorTester.getStateReads(nodes.button1.anchorHash, nodes.button1.recomposeCount)
         assertThat(reads.hasRead()).isFalse()
 
         // Now request state reads for a different composable:
@@ -521,7 +496,6 @@ class RecompositionTest {
                 keepRecomposeCounts = true,
                 stateReadKind = StateReadSettings.Kind.BY_ID,
                 composableToObserve = listOf(nodes.button1.anchorHash),
-                maxRecompositions = 3,
             )
         )
 
@@ -529,7 +503,11 @@ class RecompositionTest {
         rule.onNodeWithText("Click row 1").performClick()
         rule.waitForIdle()
 
-        reads = inspectorTester.getStateReads(nodes.button1.anchorHash, nodes.button1.recomposeCount + 1)
+        reads =
+            inspectorTester.getStateReads(
+                nodes.button1.anchorHash,
+                nodes.button1.recomposeCount + 1,
+            )
         validate(reads, nodes.button1.anchorHash) {
             recomposition(nodes.button1.recomposeCount + 1) {
                 read {
@@ -557,7 +535,6 @@ class RecompositionTest {
                 includeRecomposeCounts = true,
                 keepRecomposeCounts = true,
                 stateReadKind = StateReadSettings.Kind.NONE,
-                maxRecompositions = 3,
             )
         )
 
@@ -568,21 +545,33 @@ class RecompositionTest {
                 keepRecomposeCounts = true,
                 stateReadKind = StateReadSettings.Kind.BY_ID,
                 composableToObserve = listOf(nodes.item1.anchorHash),
-                maxRecompositions = 3,
             )
         )
 
-        // Perform another click:
+        // Perform another 3 clicks:
+        rule.onNodeWithText("Click row 1").performClick()
+        rule.waitForIdle()
+        rule.onNodeWithText("Click row 1").performClick()
+        rule.waitForIdle()
         rule.onNodeWithText("Click row 1").performClick()
         rule.waitForIdle()
 
+        composable =
+            inspectorTester
+                .sendCommand(GetComposablesCommand(rootId, skipSystemComposables = false))
+                .getComposablesResponse
+        nodes = Nodes(composable, parameters)
+        assertThat(nodes.button1.recomposeCount).isAtLeast(7)
+        assertThat(nodes.text1.recomposeCount).isEqualTo(7)
+        assertThat(nodes.item1.recomposeCount).isEqualTo(7)
+
         // A state read record is available for recomposition 5
         reads = inspectorTester.getStateReads(nodes.item1.anchorHash, 5)
-        assertThat(reads.hasRead()).isTrue()
+        assertThat(reads.read.recompositionNumber).isEqualTo(5)
 
-        // The state read record is removed after it is read
+        // The state read record is removed after it is read, and we receive the next recomposition
         reads = inspectorTester.getStateReads(nodes.item1.anchorHash, 5)
-        assertThat(reads.hasRead()).isFalse()
+        assertThat(reads.read.recompositionNumber).isEqualTo(6)
     }
 
     private suspend fun InspectorTester.getStateReads(

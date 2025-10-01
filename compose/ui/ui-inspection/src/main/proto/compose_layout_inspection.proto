@@ -275,19 +275,17 @@ message StateReadSettings {
 
   // The agent should start recording State Reads for all composable.
   message All {
-      // Limit the number of recompositions that state reads are kept for each
-      // composable. Older data is silently discarded. The default is 20.
-      int32 max_recompositions = 3;
+      // Limit the number of state reads kept on the device. The default is 5000.
+      int32 max_state_reads = 1;
   }
 
   // The agent should start recording State Reads for the specified composable.
   message ById {
-      // The anchor hash of the composable to observe recompose state reads for.
-      repeated sint32 composable_to_observe = 1;
+      // Limit the number of state reads kept on the device. The default is 5000.
+      int32 max_state_reads = 1;
 
-      // Limit the number of recompositions that state reads are kept for each
-      // composable. Older data is sent to Studio via an event. The default is 20.
-      int32 max_recompositions = 2;
+      // The anchor hash of the composable to observe recompose state reads for.
+      repeated sint32 composable_to_observe = 2;
   }
 }
 

@@ -248,7 +248,7 @@ internal fun GetUpdateSettingsCommand(
     reduceChildNesting: Boolean = false,
     stateReadKind: StateReadSettings.Kind = StateReadSettings.Kind.NONE,
     composableToObserve: List<Int> = emptyList(),
-    maxRecompositions: Int = 0,
+    maxStateReads: Int = 0,
 ): Command =
     Command.newBuilder()
         .apply {
@@ -266,9 +266,7 @@ internal fun GetUpdateSettingsCommand(
                                         StateReadSettings.Kind.ALL ->
                                             all =
                                                 StateReadSettings.All.newBuilder()
-                                                    .apply {
-                                                        this.maxRecompositions = maxRecompositions
-                                                    }
+                                                    .apply { this.maxStateReads = maxStateReads }
                                                     .build()
                                         StateReadSettings.Kind.BY_ID ->
                                             byId =
@@ -277,7 +275,7 @@ internal fun GetUpdateSettingsCommand(
                                                         addAllComposableToObserve(
                                                             composableToObserve
                                                         )
-                                                        this.maxRecompositions = maxRecompositions
+                                                        this.maxStateReads = maxStateReads
                                                     }
                                                     .build()
                                         else -> none = StateReadSettings.None.getDefaultInstance()

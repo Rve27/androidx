@@ -37,9 +37,6 @@ import kotlinx.coroutines.launch
 import layoutinspector.compose.inspection.LayoutInspectorComposeProtocol.StateReadSettings
 import layoutinspector.compose.inspection.LayoutInspectorComposeProtocol.StateReadSettings.MethodCase
 
-/** The default number of recompositions with state reads per composable */
-private const val DEFAULT_MAX_RECOMPOSITIONS_WITH_STATE_READS = 20
-
 /** The result for a [StateReadHandler.getReads] call. */
 class ObservedReadResult(
     val firstObservedRecomposition: Int,
@@ -52,10 +49,8 @@ class ObservedReadResult(
 }
 
 /** An extension of [RecompositionHandler] that keeps track of state reads. */
-class StateReadHandler(
-    artTooling: ArtTooling,
-    anchorMap: AnchorMap,
-) : RecompositionHandler<RecompositionDataWithStateReads>(
+class StateReadHandler(artTooling: ArtTooling, anchorMap: AnchorMap) :
+    RecompositionHandler<RecompositionDataWithStateReads>(
         artTooling,
         anchorMap,
         { RecompositionDataWithStateReads() },
@@ -68,8 +63,7 @@ class StateReadHandler(
     // The anchors of all the composable where state reads are being collected for.
     @GuardedBy("lock") private val anchorsObserved = mutableSetOf<Any>()
 
-    // The max number of recompositions with state reads kept per composable.
-    @GuardedBy("lock") private var maxRecompositions = DEFAULT_MAX_RECOMPOSITIONS_WITH_STATE_READS
+    @GuardedBy("lock") private val cache = StateReadCache(counts)
 
     // The recomposers being observed (for state reads)
     @OptIn(ExperimentalComposeRuntimeApi::class)
@@ -106,9 +100,7 @@ class StateReadHandler(
                     if (anchorsObserved.isNotEmpty() && !anchorsObserved.contains(anchor)) {
                         return
                     }
-                    counts
-                        .getOrPut(anchor) { RecompositionDataWithStateReads() }
-                        .addStateRead(value, Exception())
+                    cache.addStateRead(anchor, value, Exception())
                 }
             }
 
@@ -123,9 +115,7 @@ class StateReadHandler(
                     if (anchorsObserved.isNotEmpty() && !anchorsObserved.contains(anchor)) {
                         return
                     }
-                    counts
-                        .getOrPut(anchor) { RecompositionDataWithStateReads() }
-                        .addInvalidation(value)
+                    cache.addInvalidation(anchor, value)
                 }
             }
 
@@ -157,21 +147,18 @@ class StateReadHandler(
             if (!observingStateReads || settings.methodCase == MethodCase.ALL) {
                 anchorsObserved.clear()
             } else if (settings.byId.composableToObserveList != anchorsObserved) {
-                val stopObserving = mutableSetOf<Any>()
-                stopObserving.addAll(anchorsObserved)
                 anchorsObserved.clear()
                 anchorsObserved.addAll(
                     settings.byId.composableToObserveList.mapNotNull { anchorMap[it] }
                 )
-                stopObserving.removeAll(anchorsObserved)
-                stopObserving.forEach { counts[it]?.clearStateReads() }
+                cache.removeAllExcept(anchorsObserved)
             }
-            this.maxRecompositions =
+            cache.maxStateReads =
                 when (settings.methodCase) {
-                    MethodCase.ALL -> settings.all.maxRecompositions
-                    MethodCase.BY_ID -> settings.byId.maxRecompositions
+                    MethodCase.ALL -> settings.all.maxStateReads
+                    MethodCase.BY_ID -> settings.byId.maxStateReads
                     else -> 0
-                }.takeIf { it != 0 } ?: DEFAULT_MAX_RECOMPOSITIONS_WITH_STATE_READS
+                }.takeIf { it != 0 } ?: DEFAULT_MAX_STATE_READS
         }
     }
 
@@ -185,33 +172,8 @@ class StateReadHandler(
     fun getReads(anchorHash: Int, recomposition: Int): ObservedReadResult {
         synchronized(lock) {
             val anchor = anchorMap[anchorHash] ?: return ObservedReadResult.EMPTY_RESULT
-            val data = counts[anchor] ?: return ObservedReadResult.EMPTY_RESULT
-            val actualRecomposition = maxOf(data.firstObserved, recomposition)
-            val observedStateReads =
-                data.getReads(actualRecomposition, remove = true)
-                    ?: return ObservedReadResult.EMPTY_RESULT
-            val reads =
-                when {
-                    // If this the most recent recomposition, there may still be state reads
-                    // being recorded, make a copy:
-                    actualRecomposition == data.count -> observedStateReads.copy()
-                    // Otherwise it is safe to return the ObservedStateReads
-                    else -> observedStateReads
-                }
-            return ObservedReadResult(data.firstObserved, actualRecomposition, reads)
+            return cache.getStateRead(anchor, recomposition) ?: ObservedReadResult.EMPTY_RESULT
         }
-    }
-
-    override fun incrementRecompositionCount(anchor: Any): RecompositionDataWithStateReads? {
-        val data: RecompositionDataWithStateReads
-        synchronized(lock) {
-            data = super.incrementRecompositionCount(anchor) ?: return null
-            if (observerJob != null) {
-                // Quietly discard the state reads for older recompositions:
-                data.discardExcessStateReads(maxRecompositions)
-            }
-        }
-        return data
     }
 
     @OptIn(ExperimentalComposeRuntimeApi::class)
@@ -255,9 +217,7 @@ class StateReadHandler(
             compositions.clear()
             recomposers.values.forEach { it.dispose() }
             recomposers.clear()
-            for (data in counts.values) {
-                data.clearStateReads()
-            }
+            cache.clear()
         }
     }
 }
