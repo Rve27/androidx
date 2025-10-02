@@ -102,7 +102,7 @@ androidXMultiplatform {
             }
         }
 
-        androidUnitTest {
+        androidHostTest {
             dependencies {
                 implementation(libs.testRules)
                 implementation(libs.testRunner)
