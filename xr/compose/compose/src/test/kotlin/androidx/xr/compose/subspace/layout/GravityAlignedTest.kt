@@ -40,6 +40,7 @@ import androidx.xr.runtime.math.Quaternion
 import androidx.xr.scenecore.GroupEntity
 import androidx.xr.scenecore.Space
 import com.google.common.truth.Truth.assertThat
+import kotlin.test.Ignore
 import kotlin.test.assertNotNull
 import org.junit.Rule
 import org.junit.Test
@@ -340,6 +341,7 @@ class GravityAlignedTest {
     }
 
     @Test
+    @Ignore("b/448989958 - The SceneCore Fakes need to be updated to support this test.")
     fun gravityAligned_onApplicationSubspace_alignsTiltedRootToWorld() {
         composeTestRule.session = createFakeSession(composeTestRule.activity)
         val tiltedRootNode =

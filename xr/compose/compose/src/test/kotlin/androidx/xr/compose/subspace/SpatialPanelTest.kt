@@ -70,6 +70,7 @@ import com.android.extensions.xr.ShadowXrExtensions
 import com.android.extensions.xr.space.ShadowActivityPanel
 import com.google.common.truth.Truth.assertThat
 import org.junit.Assert.assertTrue
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -385,6 +386,7 @@ class SpatialPanelTest {
     }
 
     @Test
+    @Ignore("This test depends on the implementation of ShadowActivityPanel.")
     fun activityPanel_launchesIntent() {
         composeTestRule.setContentWithCompatibilityForXr {
             Subspace {
@@ -396,8 +398,7 @@ class SpatialPanelTest {
             }
         }
         // Since SubspaceTestingActivity uses FakeXrExtensions, the intent is stored in a map
-        // instead of
-        // being launched.
+        // instead of being launched.
         val launchIntent =
             ShadowActivityPanel.extract(
                     ShadowXrExtensions.extract(checkNotNull(XrExtensionsProvider.getXrExtensions()))
