@@ -32,7 +32,12 @@ plugins {
 dependencies {
     api(libs.kotlinStdlib)
     api("androidx.annotation:annotation:1.9.1")
-    // Add dependencies here
+
+    testImplementation(libs.junit)
+    testImplementation(libs.mockitoKotlin4)
+    testImplementation(libs.testExtJunit)
+    testImplementation(libs.testRunner)
+    testImplementation(libs.truth)
 }
 
 android {
@@ -44,4 +49,5 @@ androidx {
     type = SoftwareType.PUBLISHED_LIBRARY_ONLY_USED_BY_KOTLIN_CONSUMERS
     inceptionYear = "2025"
     description = "Core functionality for Glance Wear."
+    enableRobolectric()
 }
