@@ -23,7 +23,6 @@ import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.layout.PaneScaffoldDirective
 import androidx.compose.material3.adaptive.navigation.BackNavigationBehavior
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
@@ -364,6 +363,5 @@ private val nonListDetailEntry: NavEntry<TestKey> = NavEntry(HomeKey) {}
 
 private val EmptySceneStrategyScope = SceneStrategyScope<TestKey> {}
 
-@Composable
 private fun ListDetailSceneStrategy<TestKey>.calculateScene(entries: List<NavEntry<TestKey>>) =
     with(this) { EmptySceneStrategyScope.calculateScene(entries) }

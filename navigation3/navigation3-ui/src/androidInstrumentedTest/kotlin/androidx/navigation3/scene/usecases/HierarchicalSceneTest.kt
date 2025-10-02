@@ -89,20 +89,17 @@ private class HierarchicalScene<T : Any>(
 }
 
 private class HierarchicalSceneStrategy<T : Any>(private val columns: Int) : SceneStrategy<T> {
-    @Composable
     override fun SceneStrategyScope<T>.calculateScene(entries: List<NavEntry<T>>): Scene<T> {
         val includedEntries = entries.takeLast(columns)
-        return remember(columns, includedEntries) {
-            HierarchicalScene(
-                List(columns, includedEntries::getOrNull),
-                previousEntries =
-                    if (entries.size > columns) {
-                        entries.dropLast(1)
-                    } else {
-                        emptyList()
-                    },
-            )
-        }
+        return HierarchicalScene(
+            List(columns, includedEntries::getOrNull),
+            previousEntries =
+                if (entries.size > columns) {
+                    entries.dropLast(1)
+                } else {
+                    emptyList()
+                },
+        )
     }
 }
 

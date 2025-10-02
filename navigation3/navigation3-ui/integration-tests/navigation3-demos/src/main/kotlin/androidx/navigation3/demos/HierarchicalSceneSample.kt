@@ -192,22 +192,38 @@ private class HierarchicalScene<T : Any>(
             }
         }
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
+
+        other as HierarchicalScene<*>
+
+        return key == other.key &&
+            navEntries == other.navEntries &&
+            previousEntries == other.previousEntries
+    }
+
+    override fun hashCode(): Int {
+        return key.hashCode() * 31 + navEntries.hashCode() * 31 + previousEntries.hashCode() * 31
+    }
+
+    override fun toString(): String {
+        return "HierarchicalScene(key=$key, entries=$entries, previousEntries=$previousEntries)"
+    }
 }
 
 private class HierarchicalSceneStrategy<T : Any>(private val columns: Int) : SceneStrategy<T> {
-    @Composable
     override fun SceneStrategyScope<T>.calculateScene(entries: List<NavEntry<T>>): Scene<T> {
         val includedEntries = entries.takeLast(columns)
-        return remember(columns, includedEntries) {
-            HierarchicalScene(
-                List(columns, includedEntries::getOrNull),
-                previousEntries =
-                    if (entries.size > columns) {
-                        entries.dropLast(1)
-                    } else {
-                        emptyList()
-                    },
-            )
-        }
+        return HierarchicalScene(
+            List(columns, includedEntries::getOrNull),
+            previousEntries =
+                if (entries.size > columns) {
+                    entries.dropLast(1)
+                } else {
+                    emptyList()
+                },
+        )
     }
 }

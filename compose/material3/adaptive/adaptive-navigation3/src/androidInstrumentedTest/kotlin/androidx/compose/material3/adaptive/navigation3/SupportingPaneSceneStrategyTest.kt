@@ -272,6 +272,5 @@ private val MockDualVerticalPaneScaffoldDirective =
 
 private val EmptySceneStrategyScope = SceneStrategyScope<TestKey> {}
 
-@Composable
 private fun SupportingPaneSceneStrategy<TestKey>.calculateScene(entries: List<NavEntry<TestKey>>) =
     with(this) { EmptySceneStrategyScope.calculateScene(entries) }

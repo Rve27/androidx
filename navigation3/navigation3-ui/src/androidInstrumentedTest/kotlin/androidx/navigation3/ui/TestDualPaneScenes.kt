@@ -49,7 +49,6 @@ class TestTwoPaneScene<T : Any>(
 }
 
 class TestTwoPaneSceneStrategy<T : Any> : SceneStrategy<T> {
-    @Composable
     override fun SceneStrategyScope<T>.calculateScene(entries: List<NavEntry<T>>): Scene<T>? {
         if (entries.size < 2) return null
         val lastTwoEntries = entries.takeLast(2)
@@ -66,7 +65,6 @@ class TestAnimatedTwoPaneSceneStrategy<T : Any>(
     val durationMillis: Int,
     val overrideEntryAnimations: Boolean = false,
 ) : SceneStrategy<T> {
-    @Composable
     override fun SceneStrategyScope<T>.calculateScene(entries: List<NavEntry<T>>): Scene<T>? {
         if (entries.size < 2) return null
         val lastTwoEntries = entries.takeLast(2)
