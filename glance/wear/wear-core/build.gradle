@@ -46,7 +46,7 @@ android {
 
 androidx {
     name = "androidx.glance.wear:wear-core"
-    type = SoftwareType.PUBLISHED_LIBRARY_ONLY_USED_BY_KOTLIN_CONSUMERS
+    type = SoftwareType.PUBLISHED_LIBRARY
     inceptionYear = "2025"
     description = "Core functionality for Glance Wear."
     enableRobolectric()
