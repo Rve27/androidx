@@ -71,7 +71,6 @@ internal class DialogScene<T : Any>(
  */
 public class DialogSceneStrategy<T : Any>() : SceneStrategy<T> {
 
-    @Composable
     public override fun SceneStrategyScope<T>.calculateScene(
         entries: List<NavEntry<T>>
     ): Scene<T>? {

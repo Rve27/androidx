@@ -121,7 +121,6 @@ private class TestSceneStrategy<T : Any>(
     private val calculateScene: (NavEntry<T>?, entries: List<NavEntry<T>>) -> Scene<T>
 ) : SceneStrategy<T> {
 
-    @Composable
     override fun SceneStrategyScope<T>.calculateScene(entries: List<NavEntry<T>>): Scene<T>? {
         return calculateScene(entries.lastOrNull(), entries)
     }

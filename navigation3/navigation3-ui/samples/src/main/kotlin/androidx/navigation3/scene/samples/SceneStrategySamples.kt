@@ -52,7 +52,6 @@ fun SceneStrategyOnBackSample() {
      * @see androidx.navigation3.scene.DialogSceneStrategy
      */
     class SimpleDialogSceneStrategy<T : Any> : SceneStrategy<T> {
-        @Composable
         override fun SceneStrategyScope<T>.calculateScene(entries: List<NavEntry<T>>): Scene<T>? {
             val entry = entries.lastOrNull() ?: return null
             val previousEntries = entries.dropLast(1)
