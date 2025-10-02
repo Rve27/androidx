@@ -58,6 +58,11 @@ package androidx.glance.wear {
     property public androidx.glance.wear.SchemaVersion? minSchemaVersion;
     property public androidx.glance.wear.ContainerType preferredType;
     property public android.content.ComponentName providerService;
+    field public static final androidx.glance.wear.WearWidgetProviderInfo.Companion Companion;
+  }
+
+  public static final class WearWidgetProviderInfo.Companion {
+    method @kotlin.jvm.Throws(exceptionClasses=XmlPullParserException::class) public androidx.glance.wear.WearWidgetProviderInfo parseFromService(android.content.Context context, android.content.ComponentName providerService) throws org.xmlpull.v1.XmlPullParserException;
   }
 
 }
