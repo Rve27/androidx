@@ -18,6 +18,10 @@ package androidx.room3.integration.kotlintestapp.test
 
 import androidx.kruth.assertThat
 import androidx.room3.immediateTransaction
+import androidx.room3.integration.kotlintestapp.vo.Album
+import androidx.room3.integration.kotlintestapp.vo.Playlist
+import androidx.room3.integration.kotlintestapp.vo.PlaylistSongXRef
+import androidx.room3.integration.kotlintestapp.vo.Song
 import androidx.room3.useWriterConnection
 import androidx.test.filters.SmallTest
 import kotlinx.coroutines.flow.produceIn
@@ -123,5 +127,133 @@ class InvalidationTest(driver: UseDriver) :
             .containsExactly(TestUtil.PUBLISHER, TestUtil.PUBLISHER2, TestUtil.PUBLISHER3)
 
         publishers.cancel()
+    }
+
+    @Test
+    fun invalidationOfRelationOneToMany() = runTest {
+        database
+            .musicDao()
+            .addAlbums(
+                Album(
+                    mAlbumId = 1,
+                    mAlbumName = "DATA",
+                    mAlbumArtist = "Tainy",
+                    mAlbumReleaseYear = 2023,
+                    mFeaturedArtist = null,
+                )
+            )
+        database
+            .musicDao()
+            .addSongs(
+                Song(
+                    mSongId = 5,
+                    mTitle = "Mojabi Ghost",
+                    mArtist = "Tainy & Bad Bunny",
+                    mAlbum = "DATA",
+                    mLength = 233,
+                    mReleasedYear = 2023,
+                )
+            )
+
+        val album = database.musicDao().getAlbumWithSongsFlow(1).produceIn(this)
+        assertThat(album.receive().songs.map { it.mTitle }).containsExactly("Mojabi Ghost")
+
+        database
+            .musicDao()
+            .addSongs(
+                Song(
+                    mSongId = 6,
+                    mTitle = "11 y Once",
+                    mArtist = "Tainy, Sech & E.VAX",
+                    mAlbum = "DATA",
+                    mLength = 197,
+                    mReleasedYear = 2023,
+                )
+            )
+        assertThat(album.receive().songs.map { it.mTitle })
+            .containsExactly("Mojabi Ghost", "11 y Once")
+
+        album.cancel()
+    }
+
+    @Test
+    fun invalidationOfRelationManyToMany() = runTest {
+        database.musicDao().addPlaylists(Playlist(1))
+        database
+            .musicDao()
+            .addSongs(
+                Song(
+                    mSongId = 787,
+                    mTitle = "Tú Con Él",
+                    mArtist = "Frankie Ruiz",
+                    mAlbum = "Solista pero no solo",
+                    mLength = 301,
+                    mReleasedYear = 1985,
+                )
+            )
+        database.musicDao().addPlaylistSongRelations(PlaylistSongXRef(1, 787))
+
+        val playlist = database.musicDao().getPlaylistsWithSongsFlow(1).produceIn(this)
+        assertThat(playlist.receive().songs.map { it.mArtist }).containsExactly("Frankie Ruiz")
+
+        database
+            .musicDao()
+            .updateSong(
+                Song(
+                    mSongId = 787,
+                    mTitle = "Tú Con Él",
+                    mArtist = "Rauw Alejandro",
+                    mAlbum = "Cosa Nuestra",
+                    mLength = 290,
+                    mReleasedYear = 2024,
+                )
+            )
+        assertThat(playlist.receive().songs.map { it.mArtist }).containsExactly("Rauw Alejandro")
+
+        playlist.cancel()
+    }
+
+    @Test
+    fun invalidationOfRelationManyToManyJunction() = runTest {
+        database.musicDao().addPlaylists(Playlist(1))
+        database
+            .musicDao()
+            .addSongs(
+                Song(
+                    mSongId = 14,
+                    mTitle = "Safaera",
+                    mArtist = "Bad Bunny, Jowell & Randy & Ñengo Flow",
+                    mAlbum = "YHLQMDLG",
+                    mLength = 296,
+                    mReleasedYear = 2020,
+                ),
+                Song(
+                    mSongId = 15,
+                    mTitle = "EoO",
+                    mArtist = "Bad Bunny",
+                    mAlbum = "DeBÍ TiRAR MáS FOToS",
+                    mLength = 205,
+                    mReleasedYear = 2025,
+                ),
+                Song(
+                    mSongId = 10,
+                    mTitle = "COLMILLO",
+                    mArtist = "Tainy, J Balvin & Young Miko (feat. Jowell & Randy)",
+                    mAlbum = "DATA",
+                    mLength = 266,
+                    mReleasedYear = 2023,
+                ),
+            )
+        database.musicDao().addPlaylistSongRelations(PlaylistSongXRef(1, 14))
+        database.musicDao().addPlaylistSongRelations(PlaylistSongXRef(1, 15))
+
+        val playlist = database.musicDao().getPlaylistsWithSongsFlow(1).produceIn(this)
+        assertThat(playlist.receive().songs.map { it.mTitle }).containsExactly("Safaera", "EoO")
+
+        database.musicDao().addPlaylistSongRelations(PlaylistSongXRef(1, 10))
+        assertThat(playlist.receive().songs.map { it.mTitle })
+            .containsExactly("Safaera", "EoO", "COLMILLO")
+
+        playlist.cancel()
     }
 }
