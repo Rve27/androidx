@@ -206,7 +206,7 @@ class TextContextMenuToolbarHandlerTest {
     }
 
     @Test
-    fun whenDetached_showThrows() {
+    fun whenDetached_showDoesNotThrow() {
         val toolbarRequester = ToolbarRequesterImpl()
         var show by mutableStateOf(true)
         rule.setContent {
@@ -222,7 +222,7 @@ class TextContextMenuToolbarHandlerTest {
         show = false
         rule.waitForIdle()
 
-        assertFailsWith(IllegalStateException::class) { toolbarRequester.show() }
+        toolbarRequester.show()
     }
 
     @Test
@@ -271,7 +271,7 @@ class TextContextMenuToolbarHandlerTest {
         show = false
         rule.waitForIdle()
 
-        assertFailsWith(IllegalStateException::class) { toolbarRequester.show() }
+        toolbarRequester.show()
 
         show = true
         rule.waitForIdle()
