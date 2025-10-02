@@ -20,8 +20,10 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.pm.PackageManager
 import androidx.annotation.DrawableRes
+import androidx.annotation.IntDef
 import androidx.annotation.RestrictTo
 import androidx.annotation.RestrictTo.Scope.LIBRARY
+import androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP
 import androidx.glance.wear.WearWidgetProviderInfoXmlParser.parseWearWidgetProviderInfo
 import java.util.Objects
 import org.xmlpull.v1.XmlPullParserException
@@ -68,9 +70,10 @@ import org.xmlpull.v1.XmlPullParserException
  * @property icon The resource id of the icon for this widget.
  * @property containers The list of [ContainerInfo] supported for this widget provider. Each element
  *   represents a supported type.
- * @property preferredType The preferred [ContainerType] to use for a widget instance when type is
- *   not specified when adding a widget. This can be used when this provider is replacing a legacy
- *   Wear Tile.
+ * @property preferredContainerType The preferred Container Type to use for a widget instance when
+ *   type is not specified when adding a widget. This can be used when this provider is replacing a
+ *   legacy Wear Tile. This can be one of [ContainerInfo.CONTAINER_TYPE_LARGE] or
+ *   [ContainerInfo.CONTAINER_TYPE_SMALL].
  * @property group The name of the group this widget provider is associated with. Defaults to the
  *   fully qualified name of the provider service.
  * @property isMultiInstanceSupported Whether this widget provider supports multiple instances.
@@ -88,7 +91,7 @@ public constructor(
     public val description: String,
     @DrawableRes public val icon: Int,
     public val containers: List<ContainerInfo>,
-    public val preferredType: ContainerType,
+    @ContainerInfo.ContainerType public val preferredContainerType: Int,
     public val group: String = providerService.className,
     public val isMultiInstanceSupported: Boolean = false,
     public val configIntentAction: String? = null,
@@ -112,6 +115,7 @@ public constructor(
          * @throws [XmlPullParserException] if there is an error parsing the XML resource.
          */
         @Throws(XmlPullParserException::class)
+        @JvmStatic
         public fun parseFromService(
             context: Context,
             providerService: ComponentName,
@@ -126,7 +130,7 @@ public constructor(
             return xmlParser.parseWearWidgetProviderInfo(
                 context.resources,
                 providerService,
-                defaultPreferredContainerType = ContainerType.Small,
+                defaultPreferredContainerType = ContainerInfo.CONTAINER_TYPE_SMALL,
                 defaultGroup = providerService.className,
             )
         }
@@ -156,7 +160,7 @@ public constructor(
 public class ContainerInfo
 @RestrictTo(LIBRARY)
 public constructor(
-    public val type: ContainerType,
+    @ContainerType public val type: Int,
     @DrawableRes public val previewImage: Int,
     public val label: String? = null,
     public val description: String? = null,
@@ -173,25 +177,25 @@ public constructor(
     override fun hashCode(): Int {
         return Objects.hash(type, previewImage, label, description)
     }
-}
 
-/** The container type of a widget. It defines the size and shape of the container. */
-@JvmInline
-public value class ContainerType internal constructor(private val value: Int) {
+    /** The container type of a widget. It defines the size and shape of the container. */
+    @IntDef(CONTAINER_TYPE_FULLSCREEN, CONTAINER_TYPE_LARGE, CONTAINER_TYPE_SMALL)
+    @RestrictTo(LIBRARY_GROUP)
+    @Retention(AnnotationRetention.SOURCE)
+    public annotation class ContainerType
 
     public companion object {
         /** Represents a fullscreen widget container, equivalent to a Wear Tile. */
-        public val Fullscreen: ContainerType = ContainerType(0)
+        public const val CONTAINER_TYPE_FULLSCREEN: Int = 0
 
         /**
          * Represents a large widget container. Support for this container type is device dependent.
          */
-        public val Large: ContainerType = ContainerType(1)
-
+        public const val CONTAINER_TYPE_LARGE: Int = 1
         /**
          * Represents a small widget container. Support for this container type is device dependent.
          */
-        public val Small: ContainerType = ContainerType(2)
+        public const val CONTAINER_TYPE_SMALL: Int = 2
     }
 }
 
