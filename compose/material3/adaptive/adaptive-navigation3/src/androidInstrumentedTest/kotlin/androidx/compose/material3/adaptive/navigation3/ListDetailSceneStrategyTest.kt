@@ -23,6 +23,7 @@ import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.layout.PaneScaffoldDirective
 import androidx.compose.material3.adaptive.navigation.BackNavigationBehavior
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
@@ -31,6 +32,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.scene.Scene
+import androidx.navigation3.scene.SceneStrategyScope
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
 import com.google.common.truth.Truth.assertThat
@@ -51,7 +53,7 @@ class ListDetailSceneStrategyTest {
         composeRule.setContent {
             val strategy =
                 rememberListDetailSceneStrategy<TestKey>(directive = PaneScaffoldDirective.Default)
-            scene = strategy.calculateScene(listOf(nonListDetailEntry, listEntry, detailEntry)) {}
+            scene = strategy.calculateScene(listOf(nonListDetailEntry, listEntry, detailEntry))
         }
 
         composeRule.waitForIdle()
@@ -65,7 +67,7 @@ class ListDetailSceneStrategyTest {
         composeRule.setContent {
             val strategy =
                 rememberListDetailSceneStrategy<TestKey>(directive = MockDualPaneScaffoldDirective)
-            scene = strategy.calculateScene(entries) {}
+            scene = strategy.calculateScene(entries)
         }
 
         composeRule.waitForIdle()
@@ -78,7 +80,7 @@ class ListDetailSceneStrategyTest {
         composeRule.setContent {
             val strategy =
                 rememberListDetailSceneStrategy<TestKey>(directive = MockDualPaneScaffoldDirective)
-            scene = strategy.calculateScene(listOf(nonListDetailEntry, listEntry, detailEntry)) {}
+            scene = strategy.calculateScene(listOf(nonListDetailEntry, listEntry, detailEntry))
         }
 
         composeRule.waitForIdle()
@@ -91,7 +93,7 @@ class ListDetailSceneStrategyTest {
         composeRule.setContent {
             val strategy =
                 rememberListDetailSceneStrategy<TestKey>(directive = MockDualPaneScaffoldDirective)
-            scene = strategy.calculateScene(listOf(listEntry, detailEntry, nonListDetailEntry)) {}
+            scene = strategy.calculateScene(listOf(listEntry, detailEntry, nonListDetailEntry))
         }
 
         composeRule.waitForIdle()
@@ -104,7 +106,7 @@ class ListDetailSceneStrategyTest {
         composeRule.setContent {
             val strategy =
                 rememberListDetailSceneStrategy<TestKey>(directive = MockDualPaneScaffoldDirective)
-            scene = strategy.calculateScene(listOf(nonListDetailEntry, listEntry)) {}
+            scene = strategy.calculateScene(listOf(nonListDetailEntry, listEntry))
         }
 
         composeRule.waitForIdle()
@@ -117,7 +119,7 @@ class ListDetailSceneStrategyTest {
         composeRule.setContent {
             val strategy =
                 rememberListDetailSceneStrategy<TestKey>(directive = MockDualPaneScaffoldDirective)
-            scene = strategy.calculateScene(listOf(nonListDetailEntry, detailEntry)) {}
+            scene = strategy.calculateScene(listOf(nonListDetailEntry, detailEntry))
         }
 
         composeRule.waitForIdle()
@@ -130,8 +132,7 @@ class ListDetailSceneStrategyTest {
         composeRule.setContent {
             val strategy =
                 rememberListDetailSceneStrategy<TestKey>(directive = MockDualPaneScaffoldDirective)
-            scene =
-                strategy.calculateScene(listOf(listEntry, detailEntry, listEntry, detailEntry)) {}
+            scene = strategy.calculateScene(listOf(listEntry, detailEntry, listEntry, detailEntry))
         }
 
         composeRule.waitForIdle()
@@ -144,7 +145,7 @@ class ListDetailSceneStrategyTest {
         composeRule.setContent {
             val strategy =
                 rememberListDetailSceneStrategy<TestKey>(directive = MockDualPaneScaffoldDirective)
-            scene = strategy.calculateScene(listOf(listEntry, nonListDetailEntry, detailEntry)) {}
+            scene = strategy.calculateScene(listOf(listEntry, nonListDetailEntry, detailEntry))
         }
 
         composeRule.waitForIdle()
@@ -160,7 +161,7 @@ class ListDetailSceneStrategyTest {
             scene =
                 strategy.calculateScene(
                     listOf(listEntry, detailEntry, nonListDetailEntry, listEntry, detailEntry)
-                ) {}
+                )
         }
 
         composeRule.waitForIdle()
@@ -176,7 +177,7 @@ class ListDetailSceneStrategyTest {
             scene =
                 strategy.calculateScene(
                     listOf(nonListDetailEntry, listEntry, detailEntry, detailEntry)
-                ) {}
+                )
         }
 
         composeRule.waitForIdle()
@@ -192,7 +193,7 @@ class ListDetailSceneStrategyTest {
             scene =
                 strategy.calculateScene(
                     listOf(nonListDetailEntry, listEntry, listEntry, detailEntry)
-                ) {}
+                )
         }
 
         composeRule.waitForIdle()
@@ -211,7 +212,7 @@ class ListDetailSceneStrategyTest {
         composeRule.setContent {
             val strategy =
                 rememberListDetailSceneStrategy<TestKey>(directive = MockDualPaneScaffoldDirective)
-            scene = strategy.calculateScene(listOf(listEntry1, listEntry2)) {}
+            scene = strategy.calculateScene(listOf(listEntry1, listEntry2))
         }
 
         composeRule.waitForIdle()
@@ -360,3 +361,9 @@ private val detailEntry: NavEntry<TestKey> =
     NavEntry(DetailKey("1"), metadata = ListDetailSceneStrategy.detailPane()) {}
 
 private val nonListDetailEntry: NavEntry<TestKey> = NavEntry(HomeKey) {}
+
+private val EmptySceneStrategyScope = SceneStrategyScope<TestKey> {}
+
+@Composable
+private fun ListDetailSceneStrategy<TestKey>.calculateScene(entries: List<NavEntry<TestKey>>) =
+    with(this) { EmptySceneStrategyScope.calculateScene(entries) }
