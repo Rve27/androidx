@@ -79,16 +79,9 @@ private class PendingIntentAwareProfile(val pendingIntents: MutableList<PendingI
         CoreDocument.DOCUMENT_API_LEVEL,
         PROFILE_ANDROIDX,
         AndroidxRcPlatformServices(),
-        { width, height, contentDescription, profile ->
+        { creationDisplayInfo, profile, contentDescription ->
             object :
-                RemoteComposeWriter(
-                    width,
-                    height,
-                    contentDescription,
-                    CoreDocument.DOCUMENT_API_LEVEL,
-                    PROFILE_ANDROIDX,
-                    profile.platform,
-                ),
+                RemoteComposeWriter(creationDisplayInfo, contentDescription, profile),
                 PendingIntentAwareWriter {
 
                 override fun storePendingIntent(pendingIntent: PendingIntent): Int {

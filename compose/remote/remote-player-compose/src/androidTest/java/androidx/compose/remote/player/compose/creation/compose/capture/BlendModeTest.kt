@@ -22,6 +22,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.util.Log
 import androidx.compose.remote.core.WireBuffer
+import androidx.compose.remote.creation.CreationDisplayInfo
 import androidx.compose.remote.creation.compose.layout.RemoteAlignment
 import androidx.compose.remote.creation.compose.layout.RemoteArrangement
 import androidx.compose.remote.creation.compose.layout.RemoteBox
@@ -42,7 +43,6 @@ import androidx.compose.remote.player.compose.SCREENSHOT_GOLDEN_DIRECTORY
 import androidx.compose.remote.player.compose.test.utils.screenshot.TargetPlayer
 import androidx.compose.remote.player.compose.test.utils.screenshot.rule.RemoteComposeScreenshotTestRule
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.test.core.app.ApplicationProvider
@@ -77,7 +77,12 @@ class BlendModeTest {
     @Test
     fun all_blend_modes() {
         runBlocking {
-            remoteComposeTestRule.runScreenshotTest(size = Size(2000f, 2500f)) { AllBlendModes() }
+            remoteComposeTestRule.runScreenshotTest(
+                creationDisplayInfo =
+                    CreationDisplayInfo(2000, 2500, context.resources.displayMetrics.density)
+            ) {
+                AllBlendModes()
+            }
 
             if (!saveDocument) return@runBlocking
             val document = remoteComposeTestRule.captureDocument(context) { AllBlendModes() }

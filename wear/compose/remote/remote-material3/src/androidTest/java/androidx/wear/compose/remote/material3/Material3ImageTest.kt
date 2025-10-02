@@ -15,10 +15,12 @@
  */
 package androidx.wear.compose.remote.material3
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import androidx.compose.remote.creation.CreationDisplayInfo
 import androidx.compose.remote.creation.compose.modifier.RemoteModifier
 import androidx.compose.remote.creation.compose.modifier.size
 import androidx.compose.remote.creation.compose.state.rdp
@@ -27,7 +29,7 @@ import androidx.compose.remote.creation.compose.state.rememberRemoteColor
 import androidx.compose.remote.creation.compose.state.rememberRemoteString
 import androidx.compose.remote.player.compose.test.utils.screenshot.TargetPlayer
 import androidx.compose.remote.player.compose.test.utils.screenshot.rule.RemoteComposeScreenshotTestRule
-import androidx.compose.ui.geometry.Size
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.filters.MediumTest
 import androidx.test.filters.SdkSuppress
 import org.junit.Rule
@@ -45,35 +47,40 @@ class Material3ImageTest {
             moduleDirectory = SCREENSHOT_GOLDEN_DIRECTORY,
             targetPlayer = TargetPlayer.View,
         )
+    private val context: Context = ApplicationProvider.getApplicationContext()
 
     @Test
     fun avatarImage_circleShape() {
-        val size = 48.rdp
+        val size = 48
+        val sizeDp = size.rdp
         remoteComposeTestRule.runScreenshotTest(
-            size = Size(size.value.toFloat(), size.value.toFloat())
+            creationDisplayInfo =
+                CreationDisplayInfo(size, size, context.resources.displayMetrics.density)
         ) {
             val avatarImage =
-                rememberRemoteBitmapValue(name = "avatarImage") { createImage(48, 48) }
+                rememberRemoteBitmapValue(name = "avatarImage") { createImage(size, size) }
             AvatarImage(
                 avatarImage,
                 contentDescription = rememberRemoteString { "background" },
-                RemoteModifier.size(size),
+                RemoteModifier.size(sizeDp),
             )
         }
     }
 
     @Test
     fun backgroundImage_roundedShapeAndHasOverlay() {
-        val size = 227.rdp
+        val size = 227
+        val sizeDp = size.rdp
         remoteComposeTestRule.runScreenshotTest(
-            size = Size(size.value.toFloat(), size.value.toFloat())
+            creationDisplayInfo =
+                CreationDisplayInfo(size, size, context.resources.displayMetrics.density)
         ) {
             val backgroundImage =
-                rememberRemoteBitmapValue(name = "backgroundImage") { createImage(227, 227) }
+                rememberRemoteBitmapValue(name = "backgroundImage") { createImage(size, size) }
             BackgroundImage(
                 background = backgroundImage,
                 contentDescription = rememberRemoteString { "background" },
-                modifier = RemoteModifier.size(size),
+                modifier = RemoteModifier.size(sizeDp),
                 overlayColor =
                     rememberRemoteColor("overlay") {
                         androidx.compose.ui.graphics.Color.Yellow.copy(alpha = 0.6f)
