@@ -33,6 +33,8 @@ public class SceneStrategyScope<T : Any>(
      * UI present in your [Scene] allows users to go back via a custom gesture or affordance, this
      * callback allows you to bubble up that event to the [SceneState] /
      * [androidx.navigation3.ui.NavDisplay] that interfaces with the developer owned back stack.
+     *
+     * @sample androidx.navigation3.scene.samples.SceneStrategyOnBackSample
      */
     public val onBack: () -> Unit = {}
 )
