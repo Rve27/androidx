@@ -1876,7 +1876,7 @@ val SearchBarExamples =
             name = "DockedSearchBarScaffoldSample",
             description = SearchBarExampleDescription,
             sourceUrl = SearchBarExampleSourceUrl,
-            isExpressive = false,
+            isExpressive = true,
         ) {
             DockedSearchBarScaffoldSample()
         },
