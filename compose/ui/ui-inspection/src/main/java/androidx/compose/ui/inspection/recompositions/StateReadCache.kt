@@ -72,20 +72,20 @@ class StateReadCache(
         }
     }
 
-    fun getStateRead(anchor: Any, recomposition: Int): ObservedReadResult? {
-        val data = stateReadsByComposable[anchor] ?: return null
-        val firstObserved = data.firstObserved
-        val actualRecomposition = maxOf(firstObserved, recomposition)
-        val observedStateReads = data.getReads(actualRecomposition, remove = true) ?: return null
-        val reads =
-            when {
-                // If this the most recent recomposition, there may still be state reads
-                // being recorded, make a copy:
-                actualRecomposition == data.count -> observedStateReads.copy()
-                // Otherwise it is safe to return the ObservedStateReads
-                else -> observedStateReads
-            }
-        return ObservedReadResult(firstObserved, actualRecomposition, reads)
+    fun getReadsAndRemove(
+        anchor: Any,
+        recompositionNumberStart: Int,
+        recompositionNumberEnd: Int,
+        includeExtra: Boolean,
+    ): List<ObservedReadResult> {
+        val data = stateReadsByComposable[anchor] ?: return emptyList()
+        val result =
+            data.getReadsAndRemove(recompositionNumberStart, recompositionNumberEnd, includeExtra)
+        result.forEach { entry ->
+            currentStateReads -= entry.reads.size
+            cache.remove(Key(anchor, entry.recomposition))
+        }
+        return result
     }
 
     private fun produceStateReadsForAnchor(anchor: Any) =
@@ -94,8 +94,8 @@ class StateReadCache(
     private fun discardEldest() {
         val entry = removeEldest() ?: return
         val data = stateReadsByComposable[entry.key.anchor] ?: return
-        val reads = data.getReads(entry.key.recomposition, remove = true)
-        currentStateReads -= reads?.reads?.size ?: 0
+        data.remove(entry.key.recomposition)
+        currentStateReads -= entry.value.reads.size
     }
 
     private fun removeEldest(): Map.Entry<Key, ObservedStateReads>? {

@@ -52,5 +52,18 @@ class StateReadCacheTest {
         // will be discarded i.e. 2 state reads are discarded.
         cache.addStateRead(ANCHOR2, VALUE1, Exception())
         assertThat(cache.currentStateReads).isEqualTo(4)
+
+        // Attempt to read state reads for the 2 first recompositions but only 1 is left:
+        val reads =
+            cache.getReadsAndRemove(
+                ANCHOR1,
+                recompositionNumberStart = 1,
+                recompositionNumberEnd = 2,
+                includeExtra = false,
+            )
+        assertThat(reads.size).isEqualTo(1)
+        assertThat(reads.single().recomposition).isEqualTo(2)
+        // This should remove 2 state reads from the cache:
+        assertThat(cache.currentStateReads).isEqualTo(2)
     }
 }

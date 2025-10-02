@@ -347,21 +347,13 @@ class RecompositionTest {
         assertThat(nodes.item1.recomposeCount).isEqualTo(8)
         val highRecomposition = nodes.button1.recomposeCount
 
-        var reads = inspectorTester.getStateReads(nodes.button1.anchorHash, highRecomposition)
-        validate(reads, nodes.button1.anchorHash) {
-            recomposition(highRecomposition) {
-                read {
-                    value(Type.ITERABLE, "List[0]")
-                    trace(TRACE_BUTTON_EMPTY_INTERACTIONS)
-                }
-                read {
-                    value(Type.DIMENSION_DP, 0.0f)
-                    trace(TRACE_BUTTON_EMPTY_SHADOW_ELEVATION)
-                }
-            }
-        }
-
-        reads = inspectorTester.getStateReads(nodes.button1.anchorHash, highRecomposition - 1)
+        var reads =
+            inspectorTester.getStateReads(
+                anchorHash = nodes.button1.anchorHash,
+                recompositionNumberStart = highRecomposition - 1,
+                recompositionNumberEnd = highRecomposition,
+                includeExtra = false,
+            )
         validate(reads, nodes.button1.anchorHash) {
             recomposition(highRecomposition - 1) {
                 read {
@@ -378,6 +370,53 @@ class RecompositionTest {
                 read {
                     value(Type.DIMENSION_DP, 0.0f)
                     trace(TRACE_BUTTON_SHADOW_ELEVATION_DURING_PRESS)
+                }
+            }
+            recomposition(highRecomposition) {
+                read {
+                    value(Type.ITERABLE, "List[0]")
+                    trace(TRACE_BUTTON_EMPTY_INTERACTIONS)
+                }
+                read {
+                    value(Type.DIMENSION_DP, 0.0f)
+                    trace(TRACE_BUTTON_EMPTY_SHADOW_ELEVATION)
+                }
+            }
+        }
+
+        reads =
+            inspectorTester.getStateReads(
+                anchorHash = nodes.button1.anchorHash,
+                recompositionNumberStart = highRecomposition - 3,
+                recompositionNumberEnd = highRecomposition - 2,
+                includeExtra = true,
+            )
+        validate(reads, nodes.button1.anchorHash) {
+            recomposition(highRecomposition - 3) {
+                read {
+                    value(Type.ITERABLE, "List[1]") {
+                        parameter("[0]", Type.STRING, "Press") {
+                            parameter("pressPosition", Type.STRING, "Offset") {
+                                parameter("x", Type.DIMENSION_DP, 58.66f, 0.01f)
+                                parameter("y", Type.DIMENSION_DP, 20f, 0.01f)
+                            }
+                        }
+                    }
+                    trace(TRACE_BUTTON_INTERACTIONS_WITH_PRESS)
+                }
+                read {
+                    value(Type.DIMENSION_DP, 0.0f)
+                    trace(TRACE_BUTTON_SHADOW_ELEVATION_DURING_PRESS)
+                }
+            }
+            recomposition(highRecomposition - 2) {
+                read {
+                    value(Type.ITERABLE, "List[0]")
+                    trace(TRACE_BUTTON_EMPTY_INTERACTIONS)
+                }
+                read {
+                    value(Type.DIMENSION_DP, 0.0f)
+                    trace(TRACE_BUTTON_EMPTY_SHADOW_ELEVATION)
                 }
             }
         }
@@ -402,14 +441,26 @@ class RecompositionTest {
         rule.onNodeWithText("Click row 1").performClick()
         rule.waitForIdle()
 
-        reads = inspectorTester.getStateReads(nodes.item1.anchorHash, 1)
+        reads =
+            inspectorTester.getStateReads(
+                anchorHash = nodes.item1.anchorHash,
+                recompositionNumberStart = 1,
+                recompositionNumberEnd = 1,
+                includeExtra = true,
+            )
         assertThat(reads.anchorHash).isEqualTo(nodes.item1.anchorHash)
-        assertThat(reads.hasRead()).isTrue()
-        assertThat(reads.read.recompositionNumber).isEqualTo(1)
+        assertThat(reads.readCount).isEqualTo(1)
+        assertThat(reads.readList.single().recompositionNumber).isEqualTo(1)
 
         // The state read record is removed after it is read:
-        reads = inspectorTester.getStateReads(nodes.item1.anchorHash, 1)
-        assertThat(reads.hasRead()).isFalse()
+        reads =
+            inspectorTester.getStateReads(
+                anchorHash = nodes.item1.anchorHash,
+                recompositionNumberStart = 1,
+                recompositionNumberEnd = 1,
+                includeExtra = true,
+            )
+        assertThat(reads.readCount).isEqualTo(0)
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -461,8 +512,31 @@ class RecompositionTest {
         assertThat(nodes.text1.recomposeCount).isEqualTo(3)
         assertThat(nodes.item1.recomposeCount).isEqualTo(3)
 
-        var reads = inspectorTester.getStateReads(nodes.item1.anchorHash, 3)
+        var reads =
+            inspectorTester.getStateReads(
+                anchorHash = nodes.item1.anchorHash,
+                recompositionNumberStart = 1,
+                recompositionNumberEnd = 3,
+                includeExtra = true,
+            )
         validate(reads, nodes.item1.anchorHash) {
+            recomposition(2) {
+                read {
+                    value(Type.INT32, 2)
+                    invalidated(true)
+                    trace(TRACE_ITEM_UPDATE_COUNT_STATE)
+                }
+                read {
+                    value(Type.ITERABLE, "List[6]") {
+                        parameter("[0]", Type.STRING, "a")
+                        parameter("[1]", Type.STRING, "b")
+                        parameter("[2]", Type.STRING, "c")
+                        parameter("[3]", Type.STRING, "d")
+                        parameter("[4]", Type.STRING, "e")
+                    }
+                    trace(TRACE_ITEM_UPDATE_LIST_STATE)
+                }
+            }
             recomposition(3) {
                 read {
                     value(Type.INT32, 3)
@@ -482,12 +556,33 @@ class RecompositionTest {
             }
         }
 
-        // No state reads should be available for button1 and text1 (not being observed)
-        reads = inspectorTester.getStateReads(nodes.text1.anchorHash, 3)
-        assertThat(reads.hasRead()).isFalse()
+        // There are no more data left in the cache for item1:
         reads =
-            inspectorTester.getStateReads(nodes.button1.anchorHash, nodes.button1.recomposeCount)
-        assertThat(reads.hasRead()).isFalse()
+            inspectorTester.getStateReads(
+                anchorHash = nodes.item1.anchorHash,
+                recompositionNumberStart = 1,
+                recompositionNumberEnd = 3,
+                includeExtra = true,
+            )
+        assertThat(reads.readCount).isEqualTo(0)
+
+        // No state reads should be available for button1 and text1 (not being observed)
+        reads =
+            inspectorTester.getStateReads(
+                anchorHash = nodes.item1.anchorHash,
+                recompositionNumberStart = 1,
+                recompositionNumberEnd = 3,
+                includeExtra = true,
+            )
+        assertThat(reads.readCount).isEqualTo(0)
+        reads =
+            inspectorTester.getStateReads(
+                anchorHash = nodes.button1.anchorHash,
+                recompositionNumberStart = 1,
+                recompositionNumberEnd = 3,
+                includeExtra = true,
+            )
+        assertThat(reads.readCount).isEqualTo(0)
 
         // Now request state reads for a different composable:
         inspectorTester.sendCommand(
@@ -505,8 +600,10 @@ class RecompositionTest {
 
         reads =
             inspectorTester.getStateReads(
-                nodes.button1.anchorHash,
-                nodes.button1.recomposeCount + 1,
+                anchorHash = nodes.button1.anchorHash,
+                recompositionNumberStart = 3,
+                recompositionNumberEnd = 3,
+                includeExtra = true,
             )
         validate(reads, nodes.button1.anchorHash) {
             recomposition(nodes.button1.recomposeCount + 1) {
@@ -566,19 +663,42 @@ class RecompositionTest {
         assertThat(nodes.item1.recomposeCount).isEqualTo(7)
 
         // A state read record is available for recomposition 5
-        reads = inspectorTester.getStateReads(nodes.item1.anchorHash, 5)
-        assertThat(reads.read.recompositionNumber).isEqualTo(5)
+        reads =
+            inspectorTester.getStateReads(
+                anchorHash = nodes.item1.anchorHash,
+                recompositionNumberStart = 5,
+                recompositionNumberEnd = 5,
+                includeExtra = true,
+            )
+        assertThat(reads.readCount).isEqualTo(1)
+        assertThat(reads.readList.single().recompositionNumber).isEqualTo(5)
 
         // The state read record is removed after it is read, and we receive the next recomposition
-        reads = inspectorTester.getStateReads(nodes.item1.anchorHash, 5)
-        assertThat(reads.read.recompositionNumber).isEqualTo(6)
+        reads =
+            inspectorTester.getStateReads(
+                anchorHash = nodes.item1.anchorHash,
+                recompositionNumberStart = 5,
+                recompositionNumberEnd = 5,
+                includeExtra = true,
+            )
+        assertThat(reads.readCount).isEqualTo(1)
+        assertThat(reads.readList.single().recompositionNumber).isEqualTo(6)
     }
 
     private suspend fun InspectorTester.getStateReads(
         anchorHash: Int,
-        recomposition: Int,
+        recompositionNumberStart: Int,
+        recompositionNumberEnd: Int,
+        includeExtra: Boolean,
     ): GetRecompositionStateReadResponse =
-        sendCommand(GetRecompositionStateReadCommand(anchorHash, recomposition))
+        sendCommand(
+                GetRecompositionStateReadCommand(
+                    anchorHash,
+                    recompositionNumberStart,
+                    recompositionNumberEnd,
+                    includeExtra,
+                )
+            )
             .getRecompositionStateReadResponse
 
     private class Nodes(composables: GetComposablesResponse, parameters: GetAllParametersResponse) {

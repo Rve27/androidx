@@ -38,7 +38,6 @@ import androidx.compose.ui.inspection.proto.ConversionContext
 import androidx.compose.ui.inspection.proto.StringTable
 import androidx.compose.ui.inspection.proto.convert
 import androidx.compose.ui.inspection.proto.toComposableRoot
-import androidx.compose.ui.inspection.recompositions.ObservedReadResult
 import androidx.compose.ui.inspection.recompositions.StateReadHandler
 import androidx.compose.ui.inspection.util.AnchorMap
 import androidx.compose.ui.inspection.util.NO_ANCHOR_ID
@@ -425,9 +424,11 @@ class ComposeLayoutInspector(
         callback: CommandCallback,
     ) {
         val result =
-            recompositionHandler.getReads(
+            recompositionHandler.getReadsAndRemove(
                 getRecompositionStateReadCommand.anchorHash,
-                getRecompositionStateReadCommand.recompositionNumber,
+                getRecompositionStateReadCommand.recompositionNumberStart,
+                getRecompositionStateReadCommand.recompositionNumberEnd,
+                includeExtra = getRecompositionStateReadCommand.includeExtra,
             )
 
         val stringTable = StringTable()
@@ -436,14 +437,8 @@ class ComposeLayoutInspector(
                 GetRecompositionStateReadResponse.newBuilder()
                     .apply {
                         anchorHash = getRecompositionStateReadCommand.anchorHash
-                        if (result != ObservedReadResult.EMPTY_RESULT) {
-                            firstRecomposition = result.firstObservedRecomposition
-                            read =
-                                result.reads.convert(
-                                    result.recomposition,
-                                    stringTable,
-                                    layoutInspectorTree,
-                                )
+                        result.forEach { read ->
+                            addRead(read.convert(stringTable, layoutInspectorTree))
                         }
                         addAllStrings(stringTable.toStringEntries())
                     }

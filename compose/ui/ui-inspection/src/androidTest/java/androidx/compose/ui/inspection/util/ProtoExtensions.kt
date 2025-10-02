@@ -287,14 +287,21 @@ internal fun GetUpdateSettingsCommand(
         }
         .build()
 
-internal fun GetRecompositionStateReadCommand(anchorHash: Int, recomposition: Int = 0): Command =
+internal fun GetRecompositionStateReadCommand(
+    anchorHash: Int,
+    recompositionNumberStart: Int,
+    recompositionNumberEnd: Int,
+    includeExtra: Boolean,
+): Command =
     Command.newBuilder()
         .apply {
             getRecompositionStateReadCommand =
                 GetRecompositionStateReadCommand.newBuilder()
                     .apply {
                         this.anchorHash = anchorHash
-                        this.recompositionNumber = recomposition
+                        this.recompositionNumberStart = recompositionNumberStart
+                        this.recompositionNumberEnd = recompositionNumberEnd
+                        this.includeExtra = includeExtra
                     }
                     .build()
         }

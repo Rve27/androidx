@@ -37,16 +37,8 @@ import kotlinx.coroutines.launch
 import layoutinspector.compose.inspection.LayoutInspectorComposeProtocol.StateReadSettings
 import layoutinspector.compose.inspection.LayoutInspectorComposeProtocol.StateReadSettings.MethodCase
 
-/** The result for a [StateReadHandler.getReads] call. */
-class ObservedReadResult(
-    val firstObservedRecomposition: Int,
-    val recomposition: Int,
-    val reads: ObservedStateReads,
-) {
-    companion object {
-        val EMPTY_RESULT = ObservedReadResult(0, 0, ObservedStateReads())
-    }
-}
+/** The elements of the result for a [StateReadHandler.getReadsAndRemove] call. */
+class ObservedReadResult(val recomposition: Int, val reads: List<StateReadRecord>)
 
 /** An extension of [RecompositionHandler] that keeps track of state reads. */
 class StateReadHandler(artTooling: ArtTooling, anchorMap: AnchorMap) :
@@ -167,12 +159,30 @@ class StateReadHandler(artTooling: ArtTooling, anchorMap: AnchorMap) :
         scope.cancel()
     }
 
-    // Return the stats reads for a recomposition of a composable or the first recomposition
-    // with state reads for this composable. If no state reads exist return EMPTY_RESULT.
-    fun getReads(anchorHash: Int, recomposition: Int): ObservedReadResult {
+    /**
+     * Return the stats reads for a range of recompositions for a composable. There may be holes in
+     * the data i.e. recompositions with no state reads.
+     *
+     * @param anchorHash the anchorHash of the composable
+     * @param recompositionNumberStart the lower recomposition to look for
+     * @param recompositionNumberEnd the upper recomposition to look for
+     * @param includeExtra include extra state reads after recompositionNumberEnd if state reads are
+     *   missing from the requested range
+     */
+    fun getReadsAndRemove(
+        anchorHash: Int,
+        recompositionNumberStart: Int,
+        recompositionNumberEnd: Int,
+        includeExtra: Boolean,
+    ): List<ObservedReadResult> {
         synchronized(lock) {
-            val anchor = anchorMap[anchorHash] ?: return ObservedReadResult.EMPTY_RESULT
-            return cache.getStateRead(anchor, recomposition) ?: ObservedReadResult.EMPTY_RESULT
+            val anchor = anchorMap[anchorHash] ?: return emptyList()
+            return cache.getReadsAndRemove(
+                anchor,
+                recompositionNumberStart,
+                recompositionNumberEnd,
+                includeExtra,
+            )
         }
     }
 

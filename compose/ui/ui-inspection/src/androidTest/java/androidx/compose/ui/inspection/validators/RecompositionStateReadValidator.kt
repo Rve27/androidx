@@ -23,8 +23,8 @@ import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
 import layoutinspector.compose.inspection.LayoutInspectorComposeProtocol.GetRecompositionStateReadResponse
 import layoutinspector.compose.inspection.LayoutInspectorComposeProtocol.Parameter.Type
-import layoutinspector.compose.inspection.LayoutInspectorComposeProtocol.RecompositionStateRead
 import layoutinspector.compose.inspection.LayoutInspectorComposeProtocol.StateRead
+import layoutinspector.compose.inspection.LayoutInspectorComposeProtocol.StateReadGroup
 
 // Add a fudge value for line comparisons to avoid frequent test failures from
 // changed code.
@@ -44,12 +44,12 @@ internal fun validate(
     block: MultiRecompositionStateReadValidator.() -> Unit = {},
 ) {
     assertThat(reads.anchorHash).isEqualTo(anchorHash)
-    validate(reads.stringsList.toMap(), listOf(reads.read), block)
+    validate(reads.stringsList.toMap(), reads.readList, block)
 }
 
 private fun validate(
     strings: Map<Int, String>,
-    reads: List<RecompositionStateRead>,
+    reads: List<StateReadGroup>,
     block: MultiRecompositionStateReadValidator.() -> Unit = {},
 ) {
     val map = reads.associate { it.recompositionNumber to it.readList }
