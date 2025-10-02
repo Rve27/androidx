@@ -75,7 +75,8 @@ package androidx.appfunctions {
     method @com.google.errorprone.annotations.CanIgnoreReturnValue public androidx.appfunctions.AppFunctionData.Builder setLong(String key, long value);
     method @com.google.errorprone.annotations.CanIgnoreReturnValue public androidx.appfunctions.AppFunctionData.Builder setLongArray(String key, long[] value);
     method @com.google.errorprone.annotations.CanIgnoreReturnValue public <T extends android.os.Parcelable> androidx.appfunctions.AppFunctionData.Builder setParcelable(String key, T value);
-    method @com.google.errorprone.annotations.CanIgnoreReturnValue public <T extends android.os.Parcelable> androidx.appfunctions.AppFunctionData.Builder setParcelableList(String key, java.util.List<? extends T> value);
+    method @com.google.errorprone.annotations.CanIgnoreReturnValue public <T extends android.os.Parcelable> androidx.appfunctions.AppFunctionData.Builder setParcelableList(String key, java.util.List<? extends T> value, Class<T> clazz);
+    method @KotlinOnly @com.google.errorprone.annotations.CanIgnoreReturnValue public inline <reified T extends android.os.Parcelable> androidx.appfunctions.AppFunctionData.Builder setParcelableList(String key, java.util.List<T> value);
     method @com.google.errorprone.annotations.CanIgnoreReturnValue public androidx.appfunctions.AppFunctionData.Builder setPendingIntent(String key, android.app.PendingIntent value);
     method @com.google.errorprone.annotations.CanIgnoreReturnValue public androidx.appfunctions.AppFunctionData.Builder setPendingIntentList(String key, java.util.List<android.app.PendingIntent> value);
     method @com.google.errorprone.annotations.CanIgnoreReturnValue public androidx.appfunctions.AppFunctionData.Builder setString(String key, String value);
@@ -469,10 +470,12 @@ package androidx.appfunctions.metadata {
     property public String name;
   }
 
-  public final class AppFunctionPendingIntentTypeMetadata extends androidx.appfunctions.metadata.AppFunctionDataTypeMetadata {
-    ctor public AppFunctionPendingIntentTypeMetadata(boolean isNullable);
-    ctor public AppFunctionPendingIntentTypeMetadata(boolean isNullable, optional String description);
-    ctor @BytecodeOnly public AppFunctionPendingIntentTypeMetadata(boolean, String!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
+  public final class AppFunctionParcelableTypeMetadata extends androidx.appfunctions.metadata.AppFunctionDataTypeMetadata {
+    ctor public AppFunctionParcelableTypeMetadata(String qualifiedName, boolean isNullable);
+    ctor public AppFunctionParcelableTypeMetadata(String qualifiedName, boolean isNullable, optional String description);
+    ctor @BytecodeOnly public AppFunctionParcelableTypeMetadata(String!, boolean, String!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
+    method @InaccessibleFromKotlin public String getQualifiedName();
+    property public String qualifiedName;
   }
 
   public final class AppFunctionReferenceTypeMetadata extends androidx.appfunctions.metadata.AppFunctionDataTypeMetadata {

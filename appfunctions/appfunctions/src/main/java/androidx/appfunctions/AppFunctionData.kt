@@ -562,7 +562,7 @@ internal constructor(
     @RestrictTo(LIBRARY_GROUP)
     public fun <T : Parcelable> getParcelableOrNull(key: String, clazz: Class<T>): T? {
         val parcelable = extras.getParcelable(extrasKey(key), clazz)
-        // TODO: b/447530985 - Implement spec validation
+        spec?.validateReadRequest(key, clazz, isCollection = false, targetValue = parcelable)
         return parcelable
     }
 
@@ -807,7 +807,7 @@ internal constructor(
     public fun <T : Parcelable> getParcelableList(key: String, clazz: Class<T>): List<T>? {
         extras.classLoader = clazz.classLoader
         val parcelableList = extras.getParcelableArrayList(extrasKey(key), clazz)
-        // TODO: b/447530985 - Implement spec validation
+        spec?.validateReadRequest(key, clazz, isCollection = true, targetValue = parcelableList)
         if (parcelableList?.all { clazz.isInstance(it) } != true) {
             // For some reason Bundle.getParcelableArrayList doesn't return null even when type is
             // wrong.
@@ -1324,7 +1324,12 @@ internal constructor(
          */
         @CanIgnoreReturnValue
         public fun <T : Parcelable> setParcelable(key: String, value: T): Builder {
-            // TODO: b/447530985 - Implement spec validation
+            spec?.validateWriteRequest(
+                key,
+                value.javaClass,
+                isCollection = false,
+                targetValue = value,
+            )
             extrasBuilder.putParcelable(extrasKey(key), value)
             return this
         }
@@ -1539,8 +1544,32 @@ internal constructor(
          * @param value The [List] of [Parcelable] values of type [T] to set.
          */
         @CanIgnoreReturnValue
-        public fun <T : Parcelable> setParcelableList(key: String, value: List<T>): Builder {
-            // TODO: b/447530985 - Implement spec validation
+        public inline fun <reified T : Parcelable> setParcelableList(
+            key: String,
+            value: List<T>,
+        ): Builder {
+            return setParcelableList(key, value, T::class.java)
+        }
+
+        /**
+         * Sets a [List] of [Parcelable] values of type [T] for the given [key].
+         *
+         * For `Parcelable` types not defined by the Android platform (e.g., custom classes shared
+         * between agents and apps), forward and backward compatibility is **not guaranteed** by
+         * this framework. The sender and receiver of the `Parcelable` are responsible for managing
+         * any compatibility and versioning concerns.
+         *
+         * @param key The key to set the list for.
+         * @param value The [List] of [Parcelable] values of type [T] to set.
+         * @param clazz The [Class] of the [Parcelable] list to set, of type [T].
+         */
+        @CanIgnoreReturnValue
+        public fun <T : Parcelable> setParcelableList(
+            key: String,
+            value: List<T>,
+            clazz: Class<T>,
+        ): Builder {
+            spec?.validateWriteRequest(key, clazz, isCollection = true, targetValue = value)
             extrasBuilder.putParcelableArrayList(extrasKey(key), ArrayList(value))
             return this
         }

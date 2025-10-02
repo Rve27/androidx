@@ -24,7 +24,7 @@ import androidx.appfunctions.internal.AppFunctionSerializableFactory
 import androidx.appfunctions.metadata.AppFunctionAllOfTypeMetadata
 import androidx.appfunctions.metadata.AppFunctionComponentsMetadata
 import androidx.appfunctions.metadata.AppFunctionObjectTypeMetadata
-import androidx.appfunctions.metadata.AppFunctionPendingIntentTypeMetadata
+import androidx.appfunctions.metadata.AppFunctionParcelableTypeMetadata
 import androidx.appfunctions.metadata.AppFunctionReferenceTypeMetadata
 import androidx.appfunctions.metadata.AppFunctionStringTypeMetadata
 
@@ -87,7 +87,10 @@ data class OpenableNote(
                             properties =
                                 mapOf(
                                     "intentToOpen" to
-                                        AppFunctionPendingIntentTypeMetadata(isNullable = false)
+                                        AppFunctionParcelableTypeMetadata(
+                                            qualifiedName = "android.app.PendingIntent",
+                                            isNullable = false,
+                                        )
                                 ),
                             required = listOf("intentToOpen"),
                             qualifiedName = "com.example.AppFunctionOpenable",
