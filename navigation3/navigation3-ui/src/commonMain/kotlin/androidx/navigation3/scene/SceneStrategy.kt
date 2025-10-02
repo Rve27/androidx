@@ -16,7 +16,6 @@
 
 package androidx.navigation3.scene
 
-import androidx.compose.runtime.Composable
 import androidx.navigation3.runtime.NavEntry
 
 /**
@@ -57,7 +56,6 @@ public fun interface SceneStrategy<T : Any> {
      * @param entries The entries on the back stack that should be considered valid to render via a
      *   returned Scene.
      */
-    @Composable
     public fun SceneStrategyScope<T>.calculateScene(entries: List<NavEntry<T>>): Scene<T>?
 
     /**
@@ -66,7 +64,6 @@ public fun interface SceneStrategy<T : Any> {
      */
     public infix fun then(sceneStrategy: SceneStrategy<T>): SceneStrategy<T> =
         object : SceneStrategy<T> {
-            @Composable
             override fun SceneStrategyScope<T>.calculateScene(
                 entries: List<NavEntry<T>>
             ): Scene<T>? =
