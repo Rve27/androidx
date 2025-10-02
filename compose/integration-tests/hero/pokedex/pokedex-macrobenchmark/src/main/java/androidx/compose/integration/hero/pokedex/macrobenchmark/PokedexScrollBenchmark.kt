@@ -105,16 +105,10 @@ class PokedexScrollBenchmark(
             compilationMode = compilationMode,
             iterations = HeroMacrobenchmarkDefaults.ITERATIONS,
             setupBlock = {
-                // Start by setting up the images on disk
-                trace("Set up images") {
-                    val setupIntent = Intent()
-                    setupIntent.action = "$POKEDEX_TARGET_PACKAGE_NAME.POKEDEX_SETUP_ACTIVITY"
-                    startActivityAndWait(setupIntent)
-                    device.waitForIdle()
-                    killProcess()
-                }
-
+                killProcess()
+                setupPokedexBenchmarkTarget()
                 databaseCleanupRule.deleteDatabaseFiles()
+                killProcess()
 
                 val intent = Intent()
                 intent.action = action
@@ -159,7 +153,7 @@ class PokedexScrollBenchmark(
     }
 }
 
-private fun <R> trace(sectionName: String, block: () -> R): R =
+internal fun <R> trace(sectionName: String, block: () -> R): R =
     try {
         Trace.beginSection(sectionName)
         block()
