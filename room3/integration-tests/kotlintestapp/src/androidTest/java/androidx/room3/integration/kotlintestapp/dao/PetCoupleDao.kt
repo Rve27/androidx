@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 The Android Open Source Project
+ * Copyright (C) 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,12 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.room3.integration.kotlintestapp.vo
 
-import androidx.room3.Embedded
-import androidx.room3.Relation
+package androidx.room3.integration.kotlintestapp.dao
 
-class PetAndOwner(
-    @field:Embedded val pet: Pet,
-    @field:Relation(parentColumn = "userId", entityColumn = "id") val user: PetUser,
-)
+import androidx.room3.Dao
+import androidx.room3.Insert
+import androidx.room3.Query
+import androidx.room3.integration.kotlintestapp.vo.PetCouple
+
+@Dao
+interface PetCoupleDao {
+    @Insert fun insert(couple: PetCouple)
+
+    @Query("SELECT * FROM PetCouple") fun loadAll(): List<PetCouple>
+}

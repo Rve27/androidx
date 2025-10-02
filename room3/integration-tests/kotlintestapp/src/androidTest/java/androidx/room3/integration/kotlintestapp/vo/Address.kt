@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 The Android Open Source Project
+ * Copyright (C) 2017 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,12 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package androidx.room3.integration.kotlintestapp.vo
 
+import androidx.room3.ColumnInfo
 import androidx.room3.Embedded
-import androidx.room3.Relation
 
-class PetAndOwner(
-    @field:Embedded val pet: Pet,
-    @field:Relation(parentColumn = "userId", entityColumn = "id") val user: PetUser,
+data class Address(
+    var street: String?,
+    var state: String?,
+    @ColumnInfo(name = "post_code") var postCode: Int?,
+    @Embedded var coordinates: Coordinates?,
 )

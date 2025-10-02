@@ -15,22 +15,21 @@
  */
 package androidx.room3.integration.kotlintestapp.vo
 
+import androidx.room3.ColumnInfo
 import androidx.room3.Entity
-import androidx.room3.ForeignKey
-import androidx.room3.Index
 import androidx.room3.PrimaryKey
+import androidx.room3.integration.kotlintestapp.vo.FunnyNamedEntity.Companion.COLUMN_ID
+import androidx.room3.integration.kotlintestapp.vo.FunnyNamedEntity.Companion.TABLE_NAME
 
-/** The toys of a pet. */
-@Entity(
-    indices = [Index(value = ["name"], unique = true), Index(value = ["petId"])],
-    foreignKeys =
-        [
-            ForeignKey(
-                entity = Pet::class,
-                parentColumns = ["petId"],
-                childColumns = ["petId"],
-                deferred = true,
-            )
-        ],
-)
-data class Toy(@PrimaryKey(autoGenerate = true) val id: Int, var name: String?, var petId: Int)
+/** An entity that was weird names */
+@Entity(tableName = TABLE_NAME)
+data class FunnyNamedEntity(
+    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = COLUMN_ID) var id: Int,
+    @ColumnInfo(name = COLUMN_VALUE) var value: String?,
+) {
+    companion object {
+        const val TABLE_NAME = "funny but not so funny"
+        const val COLUMN_ID = "_this \$is id$"
+        const val COLUMN_VALUE = "unlikely-Ωşå¨ıünames"
+    }
+}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 The Android Open Source Project
+ * Copyright (C) 2017 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,12 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package androidx.room3.integration.kotlintestapp.vo
 
 import androidx.room3.Embedded
-import androidx.room3.Relation
+import androidx.room3.Entity
+import androidx.room3.PrimaryKey
+import androidx.room3.RoomWarnings
 
-class PetAndOwner(
-    @field:Embedded val pet: Pet,
-    @field:Relation(parentColumn = "userId", entityColumn = "id") val user: PetUser,
+@Entity
+@Suppress(RoomWarnings.PRIMARY_KEY_FROM_EMBEDDED_IS_DROPPED)
+data class PetCouple(
+    @PrimaryKey val id: String,
+    @Embedded(prefix = "male_") val male: Pet,
+    @Embedded(prefix = "female_") val female: Pet?,
 )
