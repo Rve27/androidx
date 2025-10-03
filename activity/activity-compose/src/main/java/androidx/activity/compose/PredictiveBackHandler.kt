@@ -18,15 +18,16 @@ package androidx.activity.compose
 
 import android.annotation.SuppressLint
 import androidx.activity.BackEventCompat
-import androidx.activity.OnBackPressedCallback
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.lifecycle.compose.LifecycleStartEffect
+import androidx.navigationevent.NavigationEvent
+import androidx.navigationevent.NavigationEventDispatcherOwner
+import androidx.navigationevent.NavigationEventHandler
+import androidx.navigationevent.NavigationEventInfo
+import androidx.navigationevent.compose.LocalNavigationEventDispatcherOwner
 import java.util.concurrent.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.BufferOverflow.SUSPEND
@@ -96,35 +97,29 @@ public fun PredictiveBackHandler(
         suspend (progress: @JvmSuppressWildcards Flow<BackEventCompat>) -> @JvmSuppressWildcards
             Unit,
 ) {
-    // ensure we don't re-register callbacks when onBack changes
-    val currentOnBack by rememberUpdatedState(onBack)
-    val onBackScope = rememberCoroutineScope()
-
-    val backCallBack = remember {
-        PredictiveBackHandlerCallback(enabled, onBackScope, currentOnBack)
+    // Use NavigationEventDispatcher local composition if available,
+    // otherwise use the legacy dispatcher to maintain compatibility.
+    val mainOwner = LocalNavigationEventDispatcherOwner.current
+    val fallbackOwner = LocalOnBackPressedDispatcherOwner.current
+    val owner = mainOwner ?: fallbackOwner as? NavigationEventDispatcherOwner
+    checkNotNull(owner) {
+        "No NavigationEventDispatcher was provided via LocalNavigationEventDispatcherOwner"
     }
+
+    val scope = rememberCoroutineScope()
+    val handler = remember { ComposePredictiveBackHandler(scope) }
 
     // we want to use the same callback, but ensure we adjust the variable on recomposition
-    remember(currentOnBack, onBackScope) {
-        backCallBack.currentOnBack = currentOnBack
-        backCallBack.onBackScope = onBackScope
+    SideEffect {
+        handler.setIsEnabled(enabled)
+        handler.currentOnBack = onBack
     }
 
-    LaunchedEffect(enabled) { backCallBack.setIsEnabled(enabled) }
-
-    val backDispatcher =
-        checkNotNull(LocalOnBackPressedDispatcherOwner.current) {
-                "No OnBackPressedDispatcherOwner was provided via LocalOnBackPressedDispatcherOwner"
-            }
-            .onBackPressedDispatcher
-
-    @Suppress("deprecation", "KotlinRedundantDiagnosticSuppress") // TODO b/330570365
-    val lifecycleOwner = LocalLifecycleOwner.current
-
-    DisposableEffect(lifecycleOwner, backDispatcher) {
-        backDispatcher.addCallback(lifecycleOwner, backCallBack)
-
-        onDispose { backCallBack.remove() }
+    // Use LifecycleStartEffect to add the handler in sync with the lifecycle,
+    // avoiding the frame delay that happens with state-based APIs like collectAsState().
+    LifecycleStartEffect(owner) {
+        owner.navigationEventDispatcher.addHandler(handler)
+        onStopOrDispose { handler.remove() }
     }
 }
 
@@ -132,12 +127,12 @@ private class OnBackInstance(
     scope: CoroutineScope,
     var isPredictiveBack: Boolean,
     onBack: suspend (progress: Flow<BackEventCompat>) -> Unit,
-    callback: OnBackPressedCallback,
+    callback: NavigationEventHandler<NavigationEventInfo>,
 ) {
     val channel = Channel<BackEventCompat>(capacity = BUFFERED, onBufferOverflow = SUSPEND)
     val job =
         scope.launch {
-            if (callback.isEnabled) {
+            if (callback.isBackEnabled) {
                 var completed = false
                 onBack(channel.consumeAsFlow().onCompletion { completed = true })
                 check(completed) { "You must collect the progress flow" }
@@ -155,40 +150,41 @@ private class OnBackInstance(
     }
 }
 
-private class PredictiveBackHandlerCallback(
-    enabled: Boolean,
-    var onBackScope: CoroutineScope,
-    var currentOnBack: suspend (progress: Flow<BackEventCompat>) -> Unit,
-) : OnBackPressedCallback(enabled) {
+private class ComposePredictiveBackHandler(var onBackScope: CoroutineScope) :
+    NavigationEventHandler<NavigationEventInfo>(
+        initialInfo = NavigationEventInfo.None,
+        isBackEnabled = true,
+    ) {
+
+    var currentOnBack: suspend (progress: Flow<BackEventCompat>) -> Unit = {}
+
     private var onBackInstance: OnBackInstance? = null
     private var isActive = false
 
     fun setIsEnabled(enabled: Boolean) {
         // We are disabling a callback that was enabled.
-        if (!enabled && !isActive && isEnabled) {
+        if (!enabled && !isActive && isBackEnabled) {
             onBackInstance?.cancel()
         }
-        isEnabled = enabled
+        isBackEnabled = enabled
     }
 
-    override fun handleOnBackStarted(backEvent: BackEventCompat) {
-        super.handleOnBackStarted(backEvent)
+    override fun onBackStarted(event: NavigationEvent) {
         // in case the previous onBackInstance was started by a normal back gesture
         // we want to make sure it's still cancelled before we start a predictive
         // back gesture
         onBackInstance?.cancel()
-        if (isEnabled) {
+        if (isBackEnabled) {
             onBackInstance = OnBackInstance(onBackScope, true, currentOnBack, this)
         }
         isActive = true
     }
 
-    override fun handleOnBackProgressed(backEvent: BackEventCompat) {
-        super.handleOnBackProgressed(backEvent)
-        onBackInstance?.send(backEvent)
+    override fun onBackProgressed(event: NavigationEvent) {
+        onBackInstance?.send(BackEventCompat(event))
     }
 
-    override fun handleOnBackPressed() {
+    override fun onBackCompleted() {
         // handleOnBackPressed could be called by regular back to restart
         // a new back instance. If this is the case (where current back instance
         // was NOT started by handleOnBackStarted) then we need to reset the previous
@@ -210,8 +206,7 @@ private class PredictiveBackHandlerCallback(
         isActive = false
     }
 
-    override fun handleOnBackCancelled() {
-        super.handleOnBackCancelled()
+    override fun onBackCancelled() {
         // cancel will purge the channel of any sent events that are yet to be received
         onBackInstance?.cancel()
         onBackInstance?.isPredictiveBack = false
