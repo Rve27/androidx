@@ -25,6 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import java.lang.reflect.InvocationTargetException
+import kotlinx.coroutines.test.StandardTestDispatcher
 import org.junit.Assert.fail
 import org.junit.Rule
 import org.junit.Test
@@ -33,7 +34,7 @@ import org.junit.Test
 @OptIn(ExperimentalComposeUiApi::class)
 class ComposeInvokerTest {
 
-    @get:Rule val rule = createComposeRule()
+    @get:Rule val rule = createComposeRule(StandardTestDispatcher())
 
     @Test
     fun workingComposable() {
