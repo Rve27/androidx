@@ -16,7 +16,6 @@
 
 package androidx.xr.compose.platform
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.view.View
 import androidx.annotation.RestrictTo
@@ -28,9 +27,8 @@ import androidx.xr.compose.subspace.node.SubspaceSemanticsInfo
  *
  * Enables finding all semantic roots in a spatial scene graph. This is useful for testing libraries
  * as well as developer tooling to help semantically identify parts of the compose tree. It is not
- * intended to be used in individual apps.
+ * intended to be used in individual apps. Scenes are scoped to the current View hierarchy.
  */
-@SuppressLint("NewApi") // TODO: b/413661481 - Remove this suppression prior to JXR stable release.
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public object SceneManager {
     internal fun onSceneCreated(scene: SpatialComposeScene) {

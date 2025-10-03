@@ -40,7 +40,6 @@ import androidx.xr.compose.subspace.SpatialPanel
 import androidx.xr.compose.testing.SubspaceTestingActivity
 import androidx.xr.compose.testing.onSubspaceNodeWithTag
 import androidx.xr.compose.testing.session
-import androidx.xr.compose.testing.setContentWithCompatibilityForXr
 import androidx.xr.compose.unit.IntVolumeSize
 import androidx.xr.scenecore.GroupEntity
 import androidx.xr.scenecore.PanelEntity
@@ -79,7 +78,7 @@ class CoreEntityTest {
         var sizeCount = 0
         var mutableSizeCount = 0
 
-        composeTestRule.setContentWithCompatibilityForXr {
+        composeTestRule.setContent {
             val coreEntity = remember {
                 CoreGroupEntity(
                         GroupEntity.create(
@@ -128,7 +127,7 @@ class CoreEntityTest {
     @Test
     fun coreBasePanelEntity_androidViewPanel_enabledStateFollowsSizeChanges() {
         var size by mutableStateOf(100.dp)
-        composeTestRule.setContentWithCompatibilityForXr {
+        composeTestRule.setContent {
             ApplicationSubspace {
                 SpatialAndroidViewPanel(
                     factory = { View(it) },
@@ -156,7 +155,7 @@ class CoreEntityTest {
     @Test
     fun coreBasePanelEntity_spatialPanel_enabledStateFollowsSizeChanges() {
         var size by mutableStateOf(100.dp)
-        composeTestRule.setContentWithCompatibilityForXr {
+        composeTestRule.setContent {
             ApplicationSubspace {
                 SpatialPanel(SubspaceModifier.width(size).height(size).testTag("panel")) {}
             }
@@ -178,7 +177,7 @@ class CoreEntityTest {
     @Test
     fun coreBasePanelEntity_mainPanel_enabledStateFollowsSizeChanges() {
         var size by mutableStateOf(100.dp)
-        composeTestRule.setContentWithCompatibilityForXr {
+        composeTestRule.setContent {
             ApplicationSubspace {
                 SpatialMainPanel(SubspaceModifier.width(size).height(size).testTag("panel"))
             }
@@ -200,7 +199,7 @@ class CoreEntityTest {
     @Test
     fun coreBasePanelEntity_activityPanel_enabledStateFollowsSizeChanges() {
         var size by mutableStateOf(100.dp)
-        composeTestRule.setContentWithCompatibilityForXr {
+        composeTestRule.setContent {
             ApplicationSubspace {
                 SpatialActivityPanel(
                     intent = Intent(composeTestRule.activity, SpatialPanelActivity::class.java),

@@ -16,27 +16,9 @@
 
 package androidx.xr.compose.testing
 
-import android.app.Activity
 import androidx.annotation.RestrictTo
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
 import androidx.xr.runtime.Session
-
-/**
- * Analog to [AndroidComposeTestRule.setContent] for testing content in XR. This creates the minimum
- * environment necessary for testing content in XR.
- *
- * If an XR [Session] is not already created and assigned using [AndroidComposeTestRule.session],
- * then a test XR [Session] will be created.
- *
- * @param content The content to render to the test [Activity].
- */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public fun AndroidComposeTestRule<*, *>.setContentWithCompatibilityForXr(
-    content: @Composable () -> Unit
-) {
-    setContent { content() }
-}
 
 /**
  * The XR [Session] for the current [androidx.compose.ui.test.junit4.AndroidComposeTestRule].

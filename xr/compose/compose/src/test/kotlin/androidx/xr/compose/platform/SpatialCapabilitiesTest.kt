@@ -25,7 +25,6 @@ import androidx.xr.compose.testing.createFakeRuntime
 import androidx.xr.compose.testing.createFakeSession
 import androidx.xr.compose.testing.disableXr
 import androidx.xr.compose.testing.session
-import androidx.xr.compose.testing.setContentWithCompatibilityForXr
 import androidx.xr.scenecore.scene
 import org.junit.Rule
 import org.junit.Test
@@ -109,7 +108,7 @@ class SpatialCapabilitiesTest {
 
     @Test
     fun isSpatialUiEnabled_fullSpaceMode_returnsTrue() {
-        composeTestRule.setContentWithCompatibilityForXr {
+        composeTestRule.setContent {
             if (LocalSpatialCapabilities.current.isSpatialUiEnabled) {
                 Text(spatialUiEnabledText)
             }
@@ -120,7 +119,7 @@ class SpatialCapabilitiesTest {
 
     @Test
     fun isContent3dEnabled_fullSpaceMode_returnsTrue() {
-        composeTestRule.setContentWithCompatibilityForXr {
+        composeTestRule.setContent {
             if (LocalSpatialCapabilities.current.isContent3dEnabled) {
                 Text(content3dEnabledText)
             }
@@ -131,7 +130,7 @@ class SpatialCapabilitiesTest {
 
     @Test
     fun isAppEnvironmentEnabled_fullSpaceMode_returnsTrue() {
-        composeTestRule.setContentWithCompatibilityForXr {
+        composeTestRule.setContent {
             if (LocalSpatialCapabilities.current.isAppEnvironmentEnabled) {
                 Text(appEnvironmentEnabledText)
             }
@@ -142,7 +141,7 @@ class SpatialCapabilitiesTest {
 
     @Test
     fun isPassthroughControlEnabled_fullSpaceMode_returnsTrue() {
-        composeTestRule.setContentWithCompatibilityForXr {
+        composeTestRule.setContent {
             if (LocalSpatialCapabilities.current.isPassthroughControlEnabled) {
                 Text(passthroughControlEnabledText)
             }
@@ -153,7 +152,7 @@ class SpatialCapabilitiesTest {
 
     @Test
     fun isSpatialAudioEnabled_fullSpaceMode_returnsTrue() {
-        composeTestRule.setContentWithCompatibilityForXr {
+        composeTestRule.setContent {
             if (LocalSpatialCapabilities.current.isSpatialAudioEnabled) {
                 Text(spatialAudioEnabledText)
             }
@@ -167,11 +166,10 @@ class SpatialCapabilitiesTest {
         composeTestRule.session =
             createFakeSession(composeTestRule.activity).apply { scene.requestHomeSpaceMode() }
 
-        composeTestRule.setContentWithCompatibilityForXr {
+        composeTestRule.setContent {
             if (LocalSpatialCapabilities.current.isSpatialUiEnabled) {
                 Text(spatialUiEnabledText)
             }
-            LocalSession.current?.scene?.requestHomeSpaceMode()
         }
 
         composeTestRule.onNodeWithText(spatialUiEnabledText).assertDoesNotExist()
@@ -183,7 +181,7 @@ class SpatialCapabilitiesTest {
         runtime.requestHomeSpaceMode()
         composeTestRule.session = createFakeSession(composeTestRule.activity, runtime)
 
-        composeTestRule.setContentWithCompatibilityForXr {
+        composeTestRule.setContent {
             if (LocalSpatialCapabilities.current.isSpatialUiEnabled) {
                 Text(spatialUiEnabledText)
             }
@@ -195,7 +193,7 @@ class SpatialCapabilitiesTest {
 
     @Test
     fun isSpatialUiEnabled_fullSpaceMode_requestHomeSpaceMode_returnsFalse() {
-        composeTestRule.setContentWithCompatibilityForXr {
+        composeTestRule.setContent {
             if (LocalSpatialCapabilities.current.isSpatialUiEnabled) {
                 Text(spatialUiEnabledText)
             }
@@ -207,7 +205,7 @@ class SpatialCapabilitiesTest {
 
     @Test
     fun isContent3dEnabled_homeSpaceMode_returnsFalse() {
-        composeTestRule.setContentWithCompatibilityForXr {
+        composeTestRule.setContent {
             if (LocalSpatialCapabilities.current.isContent3dEnabled) {
                 Text(content3dEnabledText)
             }
@@ -222,7 +220,7 @@ class SpatialCapabilitiesTest {
         composeTestRule.session =
             createFakeSession(composeTestRule.activity).apply { scene.requestHomeSpaceMode() }
 
-        composeTestRule.setContentWithCompatibilityForXr {
+        composeTestRule.setContent {
             if (LocalSpatialCapabilities.current.isContent3dEnabled) {
                 Text(content3dEnabledText)
             }
@@ -234,7 +232,7 @@ class SpatialCapabilitiesTest {
 
     @Test
     fun isContent3dEnabled_fullSpaceMode_requestHomeSpaceMode_returnsFalse() {
-        composeTestRule.setContentWithCompatibilityForXr {
+        composeTestRule.setContent {
             if (LocalSpatialCapabilities.current.isContent3dEnabled) {
                 Text(content3dEnabledText)
             }
@@ -246,7 +244,7 @@ class SpatialCapabilitiesTest {
 
     @Test
     fun isAppEnvironmentEnabled_homeSpaceMode_returnsFalse() {
-        composeTestRule.setContentWithCompatibilityForXr {
+        composeTestRule.setContent {
             if (LocalSpatialCapabilities.current.isAppEnvironmentEnabled) {
                 Text(appEnvironmentEnabledText)
             }
@@ -261,7 +259,7 @@ class SpatialCapabilitiesTest {
         composeTestRule.session =
             createFakeSession(composeTestRule.activity).apply { scene.requestHomeSpaceMode() }
 
-        composeTestRule.setContentWithCompatibilityForXr {
+        composeTestRule.setContent {
             if (LocalSpatialCapabilities.current.isAppEnvironmentEnabled) {
                 Text(appEnvironmentEnabledText)
             }
@@ -273,7 +271,7 @@ class SpatialCapabilitiesTest {
 
     @Test
     fun isAppEnvironmentEnabled_fullSpaceMode_requestHomeSpaceMode_returnsFalse() {
-        composeTestRule.setContentWithCompatibilityForXr {
+        composeTestRule.setContent {
             if (LocalSpatialCapabilities.current.isAppEnvironmentEnabled) {
                 Text(appEnvironmentEnabledText)
             }
@@ -285,7 +283,7 @@ class SpatialCapabilitiesTest {
 
     @Test
     fun isPassthroughControlEnabled_homeSpaceMode_returnsFalse() {
-        composeTestRule.setContentWithCompatibilityForXr {
+        composeTestRule.setContent {
             if (LocalSpatialCapabilities.current.isPassthroughControlEnabled) {
                 Text(passthroughControlEnabledText)
             }
@@ -300,7 +298,7 @@ class SpatialCapabilitiesTest {
         composeTestRule.session =
             createFakeSession(composeTestRule.activity).apply { scene.requestHomeSpaceMode() }
 
-        composeTestRule.setContentWithCompatibilityForXr {
+        composeTestRule.setContent {
             if (LocalSpatialCapabilities.current.isPassthroughControlEnabled) {
                 Text(passthroughControlEnabledText)
             }
@@ -312,7 +310,7 @@ class SpatialCapabilitiesTest {
 
     @Test
     fun isPassthroughControlEnabled_fullSpaceMode_requestHomeSpaceMode_returnsFalse() {
-        composeTestRule.setContentWithCompatibilityForXr {
+        composeTestRule.setContent {
             if (LocalSpatialCapabilities.current.isPassthroughControlEnabled) {
                 Text(passthroughControlEnabledText)
             }
@@ -324,7 +322,7 @@ class SpatialCapabilitiesTest {
 
     @Test
     fun isSpatialAudioEnabled_homeSpaceMode_returnsFalse() {
-        composeTestRule.setContentWithCompatibilityForXr {
+        composeTestRule.setContent {
             if (LocalSpatialCapabilities.current.isSpatialAudioEnabled) {
                 Text(spatialAudioEnabledText)
             }
@@ -339,7 +337,7 @@ class SpatialCapabilitiesTest {
         composeTestRule.session =
             createFakeSession(composeTestRule.activity).apply { scene.requestHomeSpaceMode() }
 
-        composeTestRule.setContentWithCompatibilityForXr {
+        composeTestRule.setContent {
             if (LocalSpatialCapabilities.current.isSpatialAudioEnabled) {
                 Text(spatialAudioEnabledText)
             }
@@ -351,7 +349,7 @@ class SpatialCapabilitiesTest {
 
     @Test
     fun isSpatialAudioEnabled_fullSpaceMode_requestHomeSpaceMode_returnsFalse() {
-        composeTestRule.setContentWithCompatibilityForXr {
+        composeTestRule.setContent {
             if (LocalSpatialCapabilities.current.isSpatialAudioEnabled) {
                 Text(spatialAudioEnabledText)
             }

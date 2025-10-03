@@ -26,7 +26,6 @@ import androidx.xr.compose.testing.SubspaceTestingActivity
 import androidx.xr.compose.testing.createFakeSession
 import androidx.xr.compose.testing.disableXr
 import androidx.xr.compose.testing.session
-import androidx.xr.compose.testing.setContentWithCompatibilityForXr
 import androidx.xr.compose.unit.DpVolumeSize
 import androidx.xr.scenecore.scene
 import com.google.common.truth.Truth.assertThat
@@ -81,7 +80,7 @@ class SpatialConfigurationTest {
     fun requestModeChange_changesBounds() {
         var configuration: SpatialConfiguration? = null
 
-        composeTestRule.setContentWithCompatibilityForXr {
+        composeTestRule.setContent {
             configuration = LocalSpatialConfiguration.current
             if (configuration.bounds == DpVolumeSize(Dp.Infinity, Dp.Infinity, Dp.Infinity)) {
                 Text("Full")
@@ -99,7 +98,7 @@ class SpatialConfigurationTest {
 
     @Test
     fun hasXrSpatialFeature_fullSpaceMode_returnsTrue() {
-        composeTestRule.setContentWithCompatibilityForXr {
+        composeTestRule.setContent {
             if (LocalSpatialConfiguration.current.hasXrSpatialFeature) {
                 Text(hasXrSpatialFeatureText)
             }
@@ -113,7 +112,7 @@ class SpatialConfigurationTest {
         composeTestRule.session = createFakeSession(composeTestRule.activity)
         composeTestRule.session?.scene?.requestHomeSpaceMode()
 
-        composeTestRule.setContentWithCompatibilityForXr {
+        composeTestRule.setContent {
             if (LocalSpatialConfiguration.current.hasXrSpatialFeature) {
                 Text(hasXrSpatialFeatureText)
             }
@@ -127,37 +126,43 @@ class SpatialConfigurationTest {
         composeTestRule.session = createFakeSession(composeTestRule.activity)
         composeTestRule.session?.scene?.requestHomeSpaceMode()
 
-        composeTestRule.setContentWithCompatibilityForXr {
-            val bounds = LocalSpatialConfiguration.current.bounds
-            assertThat(bounds.width).isNotEqualTo(Dp.Infinity)
-            assertThat(bounds.width).isGreaterThan(0.dp)
-            assertThat(bounds.height).isNotEqualTo(Dp.Infinity)
-            assertThat(bounds.height).isGreaterThan(0.dp)
-            assertThat(bounds.depth).isNotEqualTo(Dp.Infinity)
-            assertThat(bounds.depth).isGreaterThan(0.dp)
-        }
+        var bounds: DpVolumeSize? = null
+        composeTestRule.setContent { bounds = LocalSpatialConfiguration.current.bounds }
+        composeTestRule.waitForIdle()
+
+        val bounds1 = checkNotNull(bounds)
+        assertThat(bounds1.width).isNotEqualTo(Dp.Infinity)
+        assertThat(bounds1.width).isGreaterThan(0.dp)
+        assertThat(bounds1.height).isNotEqualTo(Dp.Infinity)
+        assertThat(bounds1.height).isGreaterThan(0.dp)
+        assertThat(bounds1.depth).isNotEqualTo(Dp.Infinity)
+        assertThat(bounds1.depth).isGreaterThan(0.dp)
     }
 
     @Test
     fun bounds_fullSpaceMode_isMax() {
-        composeTestRule.setContentWithCompatibilityForXr {
-            val bounds = LocalSpatialConfiguration.current.bounds
-            assertThat(bounds.width).isEqualTo(Dp.Infinity)
-            assertThat(bounds.height).isEqualTo(Dp.Infinity)
-            assertThat(bounds.depth).isEqualTo(Dp.Infinity)
-        }
+        var bounds: DpVolumeSize? = null
+        composeTestRule.setContent { bounds = LocalSpatialConfiguration.current.bounds }
+        composeTestRule.waitForIdle()
+
+        val bounds1 = checkNotNull(bounds)
+        assertThat(bounds1.width).isEqualTo(Dp.Infinity)
+        assertThat(bounds1.height).isEqualTo(Dp.Infinity)
+        assertThat(bounds1.depth).isEqualTo(Dp.Infinity)
     }
 
     @Test
     fun bounds_nonXr_equalsViewSize() {
         composeTestRule.disableXr()
 
-        composeTestRule.setContent {
-            // 320x470 is the default screen size returned by the testing architecture.
-            val bounds = LocalSpatialConfiguration.current.bounds
-            assertThat(bounds.width).isEqualTo(320.dp)
-            assertThat(bounds.height).isEqualTo(470.dp)
-            assertThat(bounds.depth).isEqualTo(0.dp)
-        }
+        var bounds: DpVolumeSize? = null
+        composeTestRule.setContent { bounds = LocalSpatialConfiguration.current.bounds }
+        composeTestRule.waitForIdle()
+
+        // 320x470 is the default screen size returned by the testing architecture.
+        val bounds1 = checkNotNull(bounds)
+        assertThat(bounds1.width).isEqualTo(320.dp)
+        assertThat(bounds1.height).isEqualTo(470.dp)
+        assertThat(bounds1.depth).isEqualTo(0.dp)
     }
 }
