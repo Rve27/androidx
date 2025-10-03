@@ -33,6 +33,7 @@ import androidx.compose.ui.test.waitUntilNodeCount
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
+import kotlinx.coroutines.test.StandardTestDispatcher
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -48,102 +49,111 @@ class WaitUntilNodeCountTest {
     @Composable private fun TaggedBox() = Box(Modifier.size(10.dp, 10.dp).testTag(TestTag))
 
     @Test
-    fun waitUntilNodeCount_succeedsWhen_nodeCountCorrect() = runComposeUiTest {
-        setContent {
-            TaggedBox()
-            TaggedBox()
-            TaggedBox()
+    fun waitUntilNodeCount_succeedsWhen_nodeCountCorrect() =
+        runComposeUiTest(StandardTestDispatcher()) {
+            setContent {
+                TaggedBox()
+                TaggedBox()
+                TaggedBox()
+            }
+
+            waitUntilNodeCount(hasTestTag(TestTag), 3, Timeout)
         }
 
-        waitUntilNodeCount(hasTestTag(TestTag), 3, Timeout)
-    }
-
     @Test
-    fun waitUntilNodeCount_throwsWhen_nodeCountIncorrect() = runComposeUiTest {
-        setContent {
-            TaggedBox()
-            TaggedBox()
-            TaggedBox()
+    fun waitUntilNodeCount_throwsWhen_nodeCountIncorrect() =
+        runComposeUiTest(StandardTestDispatcher()) {
+            setContent {
+                TaggedBox()
+                TaggedBox()
+                TaggedBox()
+            }
+
+            expectError<ComposeTimeoutException>(
+                expectedMessage =
+                    "Condition \\(exactly 2 nodes match \\(TestTag = 'TestTag'\\)\\) " +
+                        "still not satisfied after $Timeout ms"
+            ) {
+                waitUntilNodeCount(hasTestTag(TestTag), 2, Timeout)
+            }
         }
 
-        expectError<ComposeTimeoutException>(
-            expectedMessage =
-                "Condition \\(exactly 2 nodes match \\(TestTag = 'TestTag'\\)\\) " +
-                    "still not satisfied after $Timeout ms"
-        ) {
-            waitUntilNodeCount(hasTestTag(TestTag), 2, Timeout)
-        }
-    }
-
     @Test
-    fun waitUntilAtLeastOneExists_succeedsWhen_nodesExist() = runComposeUiTest {
-        setContent {
-            TaggedBox()
-            TaggedBox()
+    fun waitUntilAtLeastOneExists_succeedsWhen_nodesExist() =
+        runComposeUiTest(StandardTestDispatcher()) {
+            setContent {
+                TaggedBox()
+                TaggedBox()
+            }
+
+            waitUntilAtLeastOneExists(hasTestTag(TestTag))
         }
 
-        waitUntilAtLeastOneExists(hasTestTag(TestTag))
-    }
-
     @Test
-    fun waitUntilAtLeastOneExists_throwsWhen_nodesDoNotExist() = runComposeUiTest {
-        setContent { Box(Modifier.size(10.dp)) }
+    fun waitUntilAtLeastOneExists_throwsWhen_nodesDoNotExist() =
+        runComposeUiTest(StandardTestDispatcher()) {
+            setContent { Box(Modifier.size(10.dp)) }
 
-        expectError<ComposeTimeoutException>(
-            expectedMessage =
-                "Condition \\(at least one node matches " +
-                    "\\(TestTag = 'TestTag'\\)\\) still not satisfied after $Timeout ms"
-        ) {
-            waitUntilAtLeastOneExists(hasTestTag(TestTag), Timeout)
-        }
-    }
-
-    @Test
-    fun waitUntilExactlyOneExists_succeedsWhen_oneNodeExists() = runComposeUiTest {
-        setContent { TaggedBox() }
-
-        waitUntilExactlyOneExists(hasTestTag(TestTag))
-    }
-
-    @Test
-    fun waitUntilExactlyOneExists_throwsWhen_twoNodesExist() = runComposeUiTest {
-        setContent {
-            TaggedBox()
-            TaggedBox()
+            expectError<ComposeTimeoutException>(
+                expectedMessage =
+                    "Condition \\(at least one node matches " +
+                        "\\(TestTag = 'TestTag'\\)\\) still not satisfied after $Timeout ms"
+            ) {
+                waitUntilAtLeastOneExists(hasTestTag(TestTag), Timeout)
+            }
         }
 
-        expectError<ComposeTimeoutException>(
-            expectedMessage =
-                "Condition \\(exactly 1 nodes match \\(TestTag = 'TestTag'\\)\\) " +
-                    "still not satisfied after $Timeout ms"
-        ) {
-            waitUntilExactlyOneExists(hasTestTag(TestTag), Timeout)
+    @Test
+    fun waitUntilExactlyOneExists_succeedsWhen_oneNodeExists() =
+        runComposeUiTest(StandardTestDispatcher()) {
+            setContent { TaggedBox() }
+
+            waitUntilExactlyOneExists(hasTestTag(TestTag))
         }
-    }
 
     @Test
-    fun waitUntilDoesNotExists_succeedsWhen_nodeDoesNotExist() = runComposeUiTest {
-        setContent { Box(Modifier.size(10.dp)) }
+    fun waitUntilExactlyOneExists_throwsWhen_twoNodesExist() =
+        runComposeUiTest(StandardTestDispatcher()) {
+            setContent {
+                TaggedBox()
+                TaggedBox()
+            }
 
-        waitUntilDoesNotExist(hasTestTag(TestTag), timeoutMillis = Timeout)
-    }
+            expectError<ComposeTimeoutException>(
+                expectedMessage =
+                    "Condition \\(exactly 1 nodes match \\(TestTag = 'TestTag'\\)\\) " +
+                        "still not satisfied after $Timeout ms"
+            ) {
+                waitUntilExactlyOneExists(hasTestTag(TestTag), Timeout)
+            }
+        }
 
     @Test
-    fun waitUntilDoesNotExists_throwsWhen_nodeExistsUntilTimeout() = runComposeUiTest {
-        setContent { TaggedBox() }
+    fun waitUntilDoesNotExists_succeedsWhen_nodeDoesNotExist() =
+        runComposeUiTest(StandardTestDispatcher()) {
+            setContent { Box(Modifier.size(10.dp)) }
 
-        expectError<ComposeTimeoutException>(
-            expectedMessage =
-                "Condition \\(exactly 0 nodes match \\(TestTag = 'TestTag'\\)\\) " +
-                    "still not satisfied after $Timeout ms"
-        ) {
             waitUntilDoesNotExist(hasTestTag(TestTag), timeoutMillis = Timeout)
         }
-    }
+
+    @Test
+    fun waitUntilDoesNotExists_throwsWhen_nodeExistsUntilTimeout() =
+        runComposeUiTest(StandardTestDispatcher()) {
+            setContent { TaggedBox() }
+
+            expectError<ComposeTimeoutException>(
+                expectedMessage =
+                    "Condition \\(exactly 0 nodes match \\(TestTag = 'TestTag'\\)\\) " +
+                        "still not satisfied after $Timeout ms"
+            ) {
+                waitUntilDoesNotExist(hasTestTag(TestTag), timeoutMillis = Timeout)
+            }
+        }
 
     // Regression for b/361250553
     @Test
-    fun waitUntil_succeedsWhen_noRoots() = runComposeUiTest {
-        waitUntilDoesNotExist(hasTestTag(TestTag), Timeout)
-    }
+    fun waitUntil_succeedsWhen_noRoots() =
+        runComposeUiTest(StandardTestDispatcher()) {
+            waitUntilDoesNotExist(hasTestTag(TestTag), Timeout)
+        }
 }

@@ -36,6 +36,7 @@ import androidx.compose.ui.test.runAndroidComposeUiTest
 import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry
 import androidx.test.runner.lifecycle.Stage
 import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.test.StandardTestDispatcher
 import org.junit.Test
 
 @OptIn(ExperimentalTestApi::class)
@@ -43,7 +44,7 @@ class MultipleActivitiesClickTest {
 
     @Test
     fun test() =
-        runAndroidComposeUiTest<Activity1> {
+        runAndroidComposeUiTest<Activity1>(StandardTestDispatcher()) {
             val activity1 = activity!!
 
             activity1.startNewActivity()

@@ -28,6 +28,7 @@ import androidx.compose.ui.test.SemanticsNodeInteractionCollection
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.runAndroidComposeUiTest
+import kotlinx.coroutines.test.StandardTestDispatcher
 import org.junit.Test
 
 @OptIn(ExperimentalTestApi::class)
@@ -35,7 +36,7 @@ class MultipleActivitiesFindTest {
 
     @Test
     fun test() =
-        runAndroidComposeUiTest<Activity1> {
+        runAndroidComposeUiTest<Activity1>(StandardTestDispatcher()) {
             activity!!.startNewActivity()
             waitUntil { onAllNodesWithTag("activity2").isNotEmpty() }
 

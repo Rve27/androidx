@@ -20,6 +20,7 @@ import androidx.compose.testutils.expectError
 import androidx.compose.ui.test.junit4.createEmptyComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
+import kotlinx.coroutines.test.StandardTestDispatcher
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -33,7 +34,7 @@ class RootExistenceAssertTest {
                 ".*\\bsetContent was called before the ComposeTestRule ran\\..*"
     }
 
-    @get:Rule val rule = createEmptyComposeRule()
+    @get:Rule val rule = createEmptyComposeRule(StandardTestDispatcher())
 
     @Test
     fun noContent_assertExists() {
