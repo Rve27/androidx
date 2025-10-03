@@ -266,8 +266,6 @@ package androidx.xr.scenecore.testing {
     method public androidx.xr.scenecore.runtime.TextureResource? borrowReflectionTexture();
     method public androidx.xr.scenecore.runtime.GltfEntity createGltfEntity(androidx.xr.runtime.math.Pose pose, androidx.xr.scenecore.runtime.GltfModelResource loadedGltf, androidx.xr.scenecore.runtime.Entity parentEntity);
     method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.runtime.MaterialResource> createKhronosPbrMaterial(androidx.xr.scenecore.runtime.KhronosPbrMaterialSpec spec);
-    method public androidx.xr.scenecore.runtime.SubspaceNodeEntity createSubspaceNodeEntity(androidx.xr.runtime.SubspaceNodeHolder<? extends java.lang.Object?> subspaceNodeHolder, androidx.xr.scenecore.runtime.Dimensions size);
-    method public androidx.xr.runtime.SubspaceNodeHolder<? extends java.lang.Object?> createSubspaceNodeHolder();
     method public androidx.xr.scenecore.runtime.SurfaceEntity createSurfaceEntity(int stereoMode, androidx.xr.runtime.math.Pose pose, androidx.xr.scenecore.runtime.SurfaceEntity.Shape shape, int surfaceProtection, int superSampling, androidx.xr.scenecore.runtime.Entity parentEntity);
     method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.runtime.MaterialResource> createWaterMaterial(boolean isAlphaMapVersion);
     method public void destroyKhronosPbrMaterial(androidx.xr.scenecore.runtime.MaterialResource material);
@@ -566,7 +564,7 @@ package androidx.xr.scenecore.testing {
     method public androidx.xr.scenecore.testing.FakePointerCaptureComponent createPointerCaptureComponent(java.util.concurrent.Executor executor, androidx.xr.scenecore.runtime.PointerCaptureComponent.StateListener stateListener, androidx.xr.scenecore.runtime.InputEventListener inputListener);
     method public androidx.xr.scenecore.testing.FakeResizableComponent createResizableComponent(androidx.xr.scenecore.runtime.Dimensions minimumSize, androidx.xr.scenecore.runtime.Dimensions maximumSize);
     method public androidx.xr.scenecore.runtime.SpatialPointerComponent createSpatialPointerComponent();
-    method public androidx.xr.scenecore.runtime.SubspaceNodeEntity createSubspaceNodeEntity(androidx.xr.scenecore.runtime.SubspaceNodeFeature feature);
+    method public androidx.xr.scenecore.runtime.SubspaceNodeEntity createSubspaceNodeEntity(androidx.xr.scenecore.testing.FakeNode node, androidx.xr.scenecore.runtime.Dimensions size);
     method public androidx.xr.scenecore.runtime.SurfaceEntity createSurfaceEntity(androidx.xr.scenecore.runtime.SurfaceFeature feature, androidx.xr.runtime.math.Pose pose, androidx.xr.scenecore.runtime.Entity parentEntity);
     method public void enablePanelDepthTest(boolean enabled);
     method @InaccessibleFromKotlin public androidx.xr.scenecore.testing.FakeActivitySpace getActivitySpace();
@@ -725,26 +723,10 @@ package androidx.xr.scenecore.testing {
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeSubspaceNodeEntity extends androidx.xr.scenecore.testing.FakeEntity implements androidx.xr.scenecore.runtime.SubspaceNodeEntity {
     ctor public FakeSubspaceNodeEntity();
-    ctor public FakeSubspaceNodeEntity(optional androidx.xr.scenecore.runtime.SubspaceNodeFeature? mockSubspaceNodeFeature, optional androidx.xr.scenecore.runtime.Dimensions size);
+    ctor public FakeSubspaceNodeEntity(optional androidx.xr.scenecore.runtime.Dimensions size);
     method @InaccessibleFromKotlin public androidx.xr.scenecore.runtime.Dimensions getSize();
     method @InaccessibleFromKotlin public void setSize(androidx.xr.scenecore.runtime.Dimensions);
     property public androidx.xr.scenecore.runtime.Dimensions size;
-  }
-
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeSubspaceNodeFeature extends androidx.xr.scenecore.testing.FakeBaseRenderingFeature implements androidx.xr.scenecore.runtime.SubspaceNodeFeature {
-    ctor public FakeSubspaceNodeFeature(androidx.xr.runtime.NodeHolder<? extends java.lang.Object?> _nodeHolder, optional androidx.xr.scenecore.runtime.Dimensions initSize);
-    method @InaccessibleFromKotlin public androidx.xr.scenecore.runtime.Dimensions getSize();
-    method public void setAlpha(float alpha);
-    method public void setHidden(boolean hidden);
-    method public void setPose(androidx.xr.runtime.math.Pose pose);
-    method public void setScale(androidx.xr.runtime.math.Vector3 scaleActivity);
-    method @InaccessibleFromKotlin public void setSize(androidx.xr.scenecore.runtime.Dimensions);
-    property public androidx.xr.scenecore.runtime.Dimensions size;
-    field public static final androidx.xr.scenecore.testing.FakeSubspaceNodeFeature.Companion Companion;
-  }
-
-  public static final class FakeSubspaceNodeFeature.Companion {
-    method public androidx.xr.scenecore.runtime.SubspaceNodeFeature createWithMockFeature(androidx.xr.scenecore.runtime.SubspaceNodeFeature mockFeature, androidx.xr.runtime.NodeHolder<? extends java.lang.Object?> nodeHolder, androidx.xr.scenecore.runtime.Dimensions size);
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeSurfaceEntity extends androidx.xr.scenecore.testing.FakeEntity implements androidx.xr.scenecore.runtime.SurfaceEntity {

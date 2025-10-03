@@ -549,7 +549,6 @@ package androidx.xr.scenecore.runtime {
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface RenderingEntityFactory {
     method public androidx.xr.scenecore.runtime.GltfEntity createGltfEntity(androidx.xr.scenecore.runtime.GltfFeature feature, androidx.xr.runtime.math.Pose pose, androidx.xr.scenecore.runtime.Entity parentEntity);
-    method public androidx.xr.scenecore.runtime.SubspaceNodeEntity createSubspaceNodeEntity(androidx.xr.scenecore.runtime.SubspaceNodeFeature feature);
     method public androidx.xr.scenecore.runtime.SurfaceEntity createSurfaceEntity(androidx.xr.scenecore.runtime.SurfaceFeature feature, androidx.xr.runtime.math.Pose pose, androidx.xr.scenecore.runtime.Entity parentEntity);
   }
 
@@ -562,7 +561,6 @@ package androidx.xr.scenecore.runtime {
     method public androidx.xr.scenecore.runtime.TextureResource? borrowReflectionTexture();
     method public androidx.xr.scenecore.runtime.GltfEntity createGltfEntity(androidx.xr.runtime.math.Pose pose, androidx.xr.scenecore.runtime.GltfModelResource loadedGltf, androidx.xr.scenecore.runtime.Entity parentEntity);
     method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.runtime.MaterialResource> createKhronosPbrMaterial(androidx.xr.scenecore.runtime.KhronosPbrMaterialSpec spec);
-    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public androidx.xr.scenecore.runtime.SubspaceNodeEntity createSubspaceNodeEntity(androidx.xr.runtime.SubspaceNodeHolder<? extends java.lang.Object?> subspaceNodeHolder, androidx.xr.scenecore.runtime.Dimensions size);
     method public androidx.xr.scenecore.runtime.SurfaceEntity createSurfaceEntity(int stereoMode, androidx.xr.runtime.math.Pose pose, androidx.xr.scenecore.runtime.SurfaceEntity.Shape shape, @androidx.xr.scenecore.runtime.SurfaceEntity.SurfaceProtection int surfaceProtection, int superSampling, androidx.xr.scenecore.runtime.Entity parentEntity);
     method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.runtime.MaterialResource> createWaterMaterial(boolean isAlphaMapVersion);
     method public void destroyKhronosPbrMaterial(androidx.xr.scenecore.runtime.MaterialResource material);
@@ -911,16 +909,6 @@ package androidx.xr.scenecore.runtime {
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface SubspaceNodeEntity extends androidx.xr.scenecore.runtime.Entity {
     method @InaccessibleFromKotlin public androidx.xr.scenecore.runtime.Dimensions getSize();
-    method @InaccessibleFromKotlin public void setSize(androidx.xr.scenecore.runtime.Dimensions);
-    property public abstract androidx.xr.scenecore.runtime.Dimensions size;
-  }
-
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface SubspaceNodeFeature extends androidx.xr.scenecore.runtime.RenderingFeature {
-    method @InaccessibleFromKotlin public androidx.xr.scenecore.runtime.Dimensions getSize();
-    method public void setAlpha(float alpha);
-    method public void setHidden(boolean hidden);
-    method public void setPose(androidx.xr.runtime.math.Pose pose);
-    method public void setScale(androidx.xr.runtime.math.Vector3 scaleActivity);
     method @InaccessibleFromKotlin public void setSize(androidx.xr.scenecore.runtime.Dimensions);
     property public abstract androidx.xr.scenecore.runtime.Dimensions size;
   }
