@@ -491,27 +491,13 @@ package androidx.room3.util {
     field public final byte[] array;
   }
 
-  @RestrictTo({androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX}) public final class CursorUtil {
-    method public static android.database.Cursor copyAndClose(android.database.Cursor c);
-    method @VisibleForTesting public static int findColumnIndexBySuffix(String[] columnNames, String name);
-    method public static int getColumnIndex(android.database.Cursor c, String name);
-    method public static int getColumnIndexOrThrow(android.database.Cursor c, String name);
-    method public static inline <R> R useCursor(android.database.Cursor, kotlin.jvm.functions.Function1<? super android.database.Cursor,? extends R> block);
-    method public static android.database.Cursor wrapMappedColumns(android.database.Cursor cursor, String[] columnNames, int[] mapping);
-  }
-
   public final class DBUtil {
-    method @Deprecated @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static android.os.CancellationSignal createCancellationSignal();
-    method @Deprecated @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static void dropFtsSyncTriggers(androidx.sqlite.db.SupportSQLiteDatabase db);
     method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static void dropFtsSyncTriggers(androidx.sqlite.SQLiteConnection connection);
-    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static void foreignKeyCheck(androidx.sqlite.db.SupportSQLiteDatabase db, String tableName);
     method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static void foreignKeyCheck(androidx.sqlite.SQLiteConnection db, String tableName);
     method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static <R> R performBlocking(androidx.room3.RoomDatabase db, boolean isReadOnly, boolean inTransaction, kotlin.jvm.functions.Function1<? super androidx.sqlite.SQLiteConnection,? extends R> block);
     method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static <R> R performInTransactionBlocking(androidx.room3.RoomDatabase db, kotlin.jvm.functions.Function0<? extends R> block);
     method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static suspend <R> Object? performInTransactionSuspending(androidx.room3.RoomDatabase db, kotlin.jvm.functions.Function1<? super kotlin.coroutines.Continuation<? super R>,? extends java.lang.Object?> block, kotlin.coroutines.Continuation<? super R>);
     method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static suspend <R> Object? performSuspending(androidx.room3.RoomDatabase db, boolean isReadOnly, boolean inTransaction, kotlin.jvm.functions.Function1<? super androidx.sqlite.SQLiteConnection,? extends R> block, kotlin.coroutines.Continuation<? super R>);
-    method @Deprecated @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static android.database.Cursor query(androidx.room3.RoomDatabase db, androidx.sqlite.db.SupportSQLiteQuery sqLiteQuery, boolean maybeCopy);
-    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static android.database.Cursor query(androidx.room3.RoomDatabase db, androidx.sqlite.db.SupportSQLiteQuery sqLiteQuery, boolean maybeCopy, android.os.CancellationSignal? signal);
     method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) @kotlin.jvm.Throws(exceptionClasses=IOException::class) public static int readVersion(java.io.File databaseFile) throws java.io.IOException;
     method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static androidx.sqlite.SQLiteConnection toSQLiteConnection(androidx.sqlite.db.SupportSQLiteDatabase db);
   }
@@ -564,10 +550,7 @@ package androidx.room3.util {
   @RestrictTo({androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX}) public final class StringUtil {
     method public static void appendPlaceholders(StringBuilder builder, int count);
     method public static String? joinIntoString(java.util.List<java.lang.Integer>? input);
-    method @Deprecated public static StringBuilder newStringBuilder();
     method public static java.util.List<java.lang.Integer>? splitToIntList(String? input);
-    property @Deprecated public static String?[] EMPTY_STRING_ARRAY;
-    field @Deprecated public static final String?[] EMPTY_STRING_ARRAY;
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class TableInfo {
