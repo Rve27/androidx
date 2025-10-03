@@ -33,6 +33,8 @@ import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.internal.FloatProducer
@@ -72,6 +74,7 @@ import androidx.compose.ui.layout.MultiContentMeasurePolicy
 import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.SemanticsPropertyReceiver
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
@@ -82,6 +85,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.constrainHeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.offset
+import androidx.compose.ui.unit.takeOrElse
 
 /**
  * [Material Design list item](https://m3.material.io/components/lists/overview)
@@ -1013,16 +1017,23 @@ internal object InteractiveListItemDefaults {
 
 @Composable
 private fun LeadingDecorator(
+    startPadding: Dp,
     color: Color,
     textStyle: TypographyKeyTokens,
     content: (@Composable () -> Unit)?,
 ) {
     if (content != null) {
         Box(Modifier.padding(end = InteractiveListInternalSpacing)) {
-            // TODO: perhaps also turn off MICS enforcement
+            val horizontalPadding = startPadding + InteractiveListInternalSpacing
+            // Padding contributes to content's touch target, so we can reduce enforcement value
+            val mics =
+                (LocalMinimumInteractiveComponentSize.current.takeOrElse { 0.dp } -
+                        horizontalPadding)
+                    .coerceAtLeast(0.dp)
             ProvideContentColorTextStyle(
                 contentColor = color,
                 textStyle = textStyle.value,
+                LocalMinimumInteractiveComponentSize provides mics,
                 content = content,
             )
         }
@@ -1031,16 +1042,23 @@ private fun LeadingDecorator(
 
 @Composable
 private fun TrailingDecorator(
+    endPadding: Dp,
     color: Color,
     textStyle: TypographyKeyTokens,
     content: (@Composable () -> Unit)?,
 ) {
     if (content != null) {
         Box(Modifier.padding(start = InteractiveListInternalSpacing)) {
-            // TODO: perhaps also turn off MICS enforcement
+            val horizontalPadding = endPadding + InteractiveListInternalSpacing
+            // Padding contributes to content's touch target, so we can reduce enforcement value
+            val mics =
+                (LocalMinimumInteractiveComponentSize.current.takeOrElse { 0.dp } -
+                        horizontalPadding)
+                    .coerceAtLeast(0.dp)
             ProvideContentColorTextStyle(
                 contentColor = color,
                 textStyle = textStyle.value,
+                LocalMinimumInteractiveComponentSize provides mics,
                 content = content,
             )
         }
@@ -1269,6 +1287,7 @@ private fun InteractiveListItem(
     val targetElevation = if (dragged.value) elevation.draggedElevation else elevation.elevation
     val shadowElevation = animateDpAsState(targetElevation, elevationAnimationSpec)
     val density = LocalDensity.current
+    val layoutDirection = LocalLayoutDirection.current
 
     CompositionLocalProvider(LocalContentColor provides contentColor) {
         InteractiveListItemLayout(
@@ -1296,6 +1315,7 @@ private fun InteractiveListItem(
             verticalAlignment = verticalAlignment,
             leading = {
                 LeadingDecorator(
+                    startPadding = contentPadding.calculateStartPadding(layoutDirection),
                     color = leadingColor,
                     textStyle = leadingTextStyle,
                     content = leadingContent,
@@ -1303,6 +1323,7 @@ private fun InteractiveListItem(
             },
             trailing = {
                 TrailingDecorator(
+                    endPadding = contentPadding.calculateEndPadding(layoutDirection),
                     color = trailingColor,
                     textStyle = trailingTextStyle,
                     content = trailingContent,
