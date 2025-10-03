@@ -26,6 +26,7 @@ import android.os.Looper;
 import android.util.Pair;
 import android.view.View;
 
+import androidx.annotation.RestrictTo;
 import androidx.annotation.VisibleForTesting;
 import androidx.xr.runtime.math.Pose;
 import androidx.xr.scenecore.impl.perception.PerceptionLibrary;
@@ -64,7 +65,6 @@ import androidx.xr.scenecore.runtime.SpatialModeChangeListener;
 import androidx.xr.scenecore.runtime.SpatialPointerComponent;
 import androidx.xr.scenecore.runtime.SpatialVisibility;
 import androidx.xr.scenecore.runtime.SubspaceNodeEntity;
-import androidx.xr.scenecore.runtime.SubspaceNodeFeature;
 import androidx.xr.scenecore.runtime.SurfaceEntity;
 import androidx.xr.scenecore.runtime.SurfaceFeature;
 import androidx.xr.scenecore.runtime.extensions.XrExtensionsProvider;
@@ -100,7 +100,8 @@ import java.util.function.Supplier;
 // Suppress BanSynchronizedMethods for onSpatialStateChanged().
 // Suppress BanConcurrentHashMap for mSpatialCapabilitiesChangedListeners since XR minSdk is 24.
 @SuppressWarnings({"BanSynchronizedMethods", "BanConcurrentHashMap"})
-class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory {
+ @RestrictTo(RestrictTo.Scope.LIBRARY)
+public class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory {
     private @Nullable Activity mActivity;
     private final ScheduledExecutorService mExecutor;
     private final XrExtensions mExtensions;
@@ -140,7 +141,8 @@ class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory {
 
     /** Returns the PerceptionSpaceActivityPose for the Session. */
     // TODO b/439932057 - Rename mPerceptionSpaceActivityPose to mPerceptionSpaceScenePose.
-    public final PerceptionSpaceActivityPoseImpl mPerceptionSpaceActivityPose;
+
+    private final PerceptionSpaceActivityPoseImpl mPerceptionSpaceActivityPose;
 
     private final PanelEntity mMainPanelEntity;
 
@@ -230,8 +232,42 @@ class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory {
             @NonNull EntityManager entityManager,
             @NonNull PerceptionLibrary perceptionLibrary,
             boolean unscaledGravityAlignedActivitySpace) {
-        Node sceneRootNode = extensions.createNode();
-        Node taskWindowLeashNode = extensions.createNode();
+                return create(
+                        activity,
+                        executor,
+                        extensions,
+                        entityManager,
+                        perceptionLibrary,
+                        unscaledGravityAlignedActivitySpace,
+                        /* sceneRootNode = */ extensions.createNode(),
+                        /* taskWindowLeashNode = */ extensions.createNode());
+            }
+
+    public static @NonNull SpatialSceneRuntime create(
+            @NonNull Activity activity,
+            @NonNull ScheduledExecutorService executor,
+            @NonNull Node sceneRootNode,
+            @NonNull Node taskWindowLeashNode) {
+        return create(
+                activity,
+                executor,
+                Objects.requireNonNull(XrExtensionsProvider.getXrExtensions()),
+                new EntityManager(),
+                new PerceptionLibrary(),
+                /* unscaledGravityAlignedActivitySpace = */ false,
+                /* sceneRootNode = */ sceneRootNode,
+                /* taskWindowLeashNode = */ taskWindowLeashNode);
+    }
+
+    static @NonNull SpatialSceneRuntime create(
+            @NonNull Activity activity,
+            @NonNull ScheduledExecutorService executor,
+            @NonNull XrExtensions extensions,
+            @NonNull EntityManager entityManager,
+            @NonNull PerceptionLibrary perceptionLibrary,
+            boolean unscaledGravityAlignedActivitySpace,
+            @NonNull Node sceneRootNode,
+            @NonNull Node taskWindowLeashNode) {
         // TODO: b/376934871 - Check async results.
         extensions.attachSpatialScene(
                 activity, sceneRootNode, taskWindowLeashNode, executor, (result) -> {});
@@ -372,13 +408,14 @@ class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory {
     }
 
     @Override
-    public void setSpatialModeChangeListener(SpatialModeChangeListener spatialModeChangeListener) {
+    public void setSpatialModeChangeListener(
+        @NonNull SpatialModeChangeListener spatialModeChangeListener) {
         mSpatialModeChangeListener = spatialModeChangeListener;
         mActivitySpace.setSpatialModeChangeListener(spatialModeChangeListener);
     }
 
     @Override
-    public SpatialModeChangeListener getSpatialModeChangeListener() {
+    public @NonNull SpatialModeChangeListener getSpatialModeChangeListener() {
         return mSpatialModeChangeListener;
     }
 
@@ -519,16 +556,13 @@ class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory {
         return entity;
     }
 
-    @Override
     @NonNull
     public SubspaceNodeEntity createSubspaceNodeEntity(
-            @NonNull SubspaceNodeFeature feature) {
-        return new SubspaceNodeEntityImpl(
-                mActivity,
-                feature,
-                mExtensions,
-                mEntityManager,
-                mExecutor);
+            @NonNull Node node, @NonNull Dimensions size) {
+        SubspaceNodeEntity entity =
+            new SubspaceNodeEntityImpl(mActivity, mExtensions, node, mEntityManager, mExecutor);
+        entity.setSize(size);
+        return entity;
     }
 
     @Override

@@ -53,7 +53,6 @@ import androidx.xr.scenecore.runtime.SpatialModeChangeListener
 import androidx.xr.scenecore.runtime.SpatialPointerComponent
 import androidx.xr.scenecore.runtime.SpatialVisibility
 import androidx.xr.scenecore.runtime.SubspaceNodeEntity
-import androidx.xr.scenecore.runtime.SubspaceNodeFeature
 import androidx.xr.scenecore.runtime.SurfaceEntity
 import androidx.xr.scenecore.runtime.SurfaceFeature
 import java.util.concurrent.Executor
@@ -218,13 +217,6 @@ public class FakeSceneRuntime(public val executor: Executor? = null) :
         surfaceEntity.parent = parentEntity
 
         return surfaceEntity
-    }
-
-    override fun createSubspaceNodeEntity(feature: SubspaceNodeFeature): SubspaceNodeEntity {
-        val subspaceNodeEntity = FakeSubspaceNodeEntity()
-        subspaceNodeEntity.parent = activitySpace
-
-        return subspaceNodeEntity
     }
 
     override fun createGroupEntity(pose: Pose, name: String, parent: Entity): Entity {
@@ -405,6 +397,10 @@ public class FakeSceneRuntime(public val executor: Executor? = null) :
 
     override fun createSpatialPointerComponent(): SpatialPointerComponent =
         FakeSpatialPointerComponent()
+
+    // Assuming the subspaceNodeHolder contains a valid FakeSubspaceNode and a valid FakeNode.
+    public fun createSubspaceNodeEntity(node: FakeNode, size: Dimensions): SubspaceNodeEntity =
+        FakeSubspaceNodeEntity()
 
     internal companion object {
         const val DEFAULT_DP_PER_METER: Float = 1151.856f
