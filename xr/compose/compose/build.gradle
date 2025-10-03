@@ -80,9 +80,6 @@ android {
         minSdk = 24
     }
     namespace = "androidx.xr.compose"
-    lint {
-        disable += "ComposeTestRuleDispatcher"
-    }
 }
 
 androidx {
