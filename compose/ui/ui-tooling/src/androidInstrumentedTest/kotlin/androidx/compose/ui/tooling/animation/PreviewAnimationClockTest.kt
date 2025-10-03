@@ -47,6 +47,7 @@ import androidx.compose.ui.tooling.animation.Utils.attachAllAnimations
 import androidx.compose.ui.tooling.animation.states.AnimatedVisibilityState
 import androidx.compose.ui.unit.dp
 import androidx.test.filters.MediumTest
+import kotlinx.coroutines.test.StandardTestDispatcher
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -60,7 +61,7 @@ import org.junit.Test
 @OptIn(InternalAnimationApi::class)
 class PreviewAnimationClockTest {
 
-    @get:Rule val composeRule = createComposeRule()
+    @get:Rule val composeRule = createComposeRule(StandardTestDispatcher())
 
     private lateinit var testClock: TestPreviewAnimationClock
 

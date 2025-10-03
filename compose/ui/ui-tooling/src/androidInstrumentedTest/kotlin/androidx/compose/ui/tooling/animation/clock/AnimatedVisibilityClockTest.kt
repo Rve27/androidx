@@ -23,6 +23,7 @@ import androidx.compose.ui.tooling.animation.parseAnimatedVisibility
 import androidx.compose.ui.tooling.animation.states.AnimatedVisibilityState
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
+import kotlinx.coroutines.test.StandardTestDispatcher
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertTrue
@@ -31,7 +32,7 @@ import org.junit.Test
 
 class AnimatedVisibilityClockTest {
 
-    @get:Rule val rule = createComposeRule()
+    @get:Rule val rule = createComposeRule(StandardTestDispatcher())
 
     @Test
     fun checkClockAfterStateChanged() {
