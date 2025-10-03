@@ -46,11 +46,12 @@ import androidx.compose.ui.unit.em
 import com.google.common.truth.Truth.assertThat
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.test.assertTrue
+import kotlinx.coroutines.test.StandardTestDispatcher
 import org.junit.Rule
 import org.junit.Test
 
 class LinkClickTest {
-    @get:Rule val rule = createComposeRule()
+    @get:Rule val rule = createComposeRule(StandardTestDispatcher())
 
     private val noTextFoundMessage = "Failed to click the link.\n Reason: No text found on node."
 

@@ -40,6 +40,7 @@ import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
+import kotlinx.coroutines.test.StandardTestDispatcher
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -73,7 +74,7 @@ class MultipleComposeRootsTest {
      */
     @Test
     fun twoHierarchiesSharingTheSameModel() =
-        runAndroidComposeUiTest<ComponentActivity> {
+        runAndroidComposeUiTest<ComponentActivity>(StandardTestDispatcher()) {
             runOnUiThread {
                 val activity = activity!!
                 val state1 = mutableStateOf(value = ToggleableState.Off)

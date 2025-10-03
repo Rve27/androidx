@@ -24,6 +24,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.window.Popup
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
+import kotlinx.coroutines.test.StandardTestDispatcher
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -34,7 +35,7 @@ private const val popupTag = "popup"
 @MediumTest
 @RunWith(AndroidJUnit4::class)
 class FindInPopupTest {
-    @get:Rule val rule = createComposeRule()
+    @get:Rule val rule = createComposeRule(StandardTestDispatcher())
 
     @Test
     fun test() {

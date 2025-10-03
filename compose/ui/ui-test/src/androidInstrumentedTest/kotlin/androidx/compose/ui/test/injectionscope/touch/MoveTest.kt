@@ -23,6 +23,7 @@ import androidx.compose.ui.test.injectionscope.touch.Common.performTouchInput
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.util.ClickableTestBox
 import androidx.test.filters.MediumTest
+import kotlinx.coroutines.test.StandardTestDispatcher
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -37,7 +38,7 @@ class MoveTest() {
         private val downPosition1 = Offset(10f, 10f)
     }
 
-    @get:Rule val rule = createComposeRule()
+    @get:Rule val rule = createComposeRule(StandardTestDispatcher())
 
     @Before
     fun setUp() {

@@ -33,11 +33,12 @@ import androidx.compose.ui.test.performGesture
 import androidx.compose.ui.test.util.ClickableTestBox
 import androidx.compose.ui.test.util.SinglePointerInputRecorder
 import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.test.StandardTestDispatcher
 import org.junit.Rule
 import org.junit.Test
 
 class LocalToRootTest {
-    @get:Rule val rule = createComposeRule()
+    @get:Rule val rule = createComposeRule(StandardTestDispatcher())
 
     private val recorder = SinglePointerInputRecorder()
 
