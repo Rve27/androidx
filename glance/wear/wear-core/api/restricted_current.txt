@@ -63,5 +63,18 @@ package androidx.glance.wear {
     method @kotlin.jvm.Throws(exceptionClasses=XmlPullParserException::class) public androidx.glance.wear.WearWidgetProviderInfo parseFromService(android.content.Context context, android.content.ComponentName providerService) throws org.xmlpull.v1.XmlPullParserException;
   }
 
+  public final class WearWidgetRequest {
+    method @InaccessibleFromKotlin public float getHeightDp();
+    method @InaccessibleFromKotlin public int getInstanceId();
+    method @InaccessibleFromKotlin public float getWidthDp();
+    property public float heightDp;
+    property public int instanceId;
+    property public float widthDp;
+    field public static final androidx.glance.wear.WearWidgetRequest.Companion Companion;
+  }
+
+  public static final class WearWidgetRequest.Companion {
+  }
+
 }
 

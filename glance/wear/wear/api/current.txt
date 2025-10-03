@@ -39,14 +39,5 @@ package androidx.glance.wear {
     property public kotlin.jvm.functions.Function0<kotlin.Unit> content;
   }
 
-  public final class WearWidgetRequest {
-    method @InaccessibleFromKotlin public float getHeightDp();
-    method @InaccessibleFromKotlin public int getInstanceId();
-    method @InaccessibleFromKotlin public float getWidthDp();
-    property public float heightDp;
-    property public int instanceId;
-    property public float widthDp;
-  }
-
 }
 
