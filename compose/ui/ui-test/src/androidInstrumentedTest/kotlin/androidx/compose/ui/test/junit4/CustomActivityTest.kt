@@ -29,6 +29,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.runAndroidComposeUiTest
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
+import kotlinx.coroutines.test.StandardTestDispatcher
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -57,11 +58,13 @@ class CustomActivityTest {
 
     @Test
     fun launchCustomActivity() =
-        runAndroidComposeUiTest<CustomActivity> { onNodeWithText("Hello").assertExists() }
+        runAndroidComposeUiTest<CustomActivity>(StandardTestDispatcher()) {
+            onNodeWithText("Hello").assertExists()
+        }
 
     @Test
     fun setContentOnActivityWithContent() =
-        runAndroidComposeUiTest<CustomActivity> {
+        runAndroidComposeUiTest<CustomActivity>(StandardTestDispatcher()) {
             expectError<IllegalStateException>(expectedMessage = ContentAlreadySetError) {
                 setContent { Text("Hello") }
             }

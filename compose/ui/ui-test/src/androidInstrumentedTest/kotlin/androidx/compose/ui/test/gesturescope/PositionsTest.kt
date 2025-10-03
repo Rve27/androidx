@@ -51,13 +51,14 @@ import androidx.compose.ui.test.util.ClickableTestBox.defaultTag
 import androidx.compose.ui.test.width
 import androidx.test.filters.MediumTest
 import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.test.StandardTestDispatcher
 import org.junit.Rule
 import org.junit.Test
 
 @MediumTest
 class PositionsTest {
 
-    @get:Rule val rule = createComposeRule()
+    @get:Rule val rule = createComposeRule(StandardTestDispatcher())
 
     @Test
     fun testCornersEdgesAndCenter() {
