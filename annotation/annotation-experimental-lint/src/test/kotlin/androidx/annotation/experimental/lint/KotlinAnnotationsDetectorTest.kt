@@ -24,7 +24,6 @@ import com.android.tools.lint.checks.infrastructure.TestFiles.kotlin
 import com.android.tools.lint.checks.infrastructure.TestLintResult
 import com.android.tools.lint.checks.infrastructure.TestLintTask.lint
 import com.android.tools.lint.checks.infrastructure.TestMode
-import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
@@ -151,7 +150,6 @@ src/sample/kotlin/UseJavaExperimentalMultipleMarkersFromJava.java:34: Error: Thi
         check(*input).expect(expected)
     }
 
-    @Ignore // b/449008759
     @Test
     fun useKtExperimentalFromJava() {
         val input =
