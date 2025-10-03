@@ -97,7 +97,7 @@ androidXMultiplatform {
         androidHostTest {
             dependsOn(jvmCommonTest)
         }
-        androidInstrumentedTest {
+        androidDeviceTest {
             dependsOn(jvmCommonTest)
             dependencies {
                 implementation("androidx.activity:activity:1.9.2")
