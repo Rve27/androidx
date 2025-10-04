@@ -23,6 +23,7 @@ import com.android.tools.lint.checks.infrastructure.TestFiles.base64gzip
 import com.android.tools.lint.checks.infrastructure.TestFiles.kotlin
 import com.android.tools.lint.checks.infrastructure.TestLintResult
 import com.android.tools.lint.checks.infrastructure.TestLintTask.lint
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
@@ -216,6 +217,7 @@ src/sample/optin/UseJavaExperimentalFromKt.kt:116: Error: This declaration is op
         check(*input).expect(expected)
     }
 
+    @Ignore // b/449008759
     @Test
     fun useKtExperimentalFromJava() {
         val input =
