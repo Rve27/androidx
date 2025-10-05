@@ -257,7 +257,7 @@ public final class SchemaToPlatformConverter {
             return ApiHelperForB.createPlatformEmbeddingPropertyConfig(embeddingProperty);
         } else if (jetpackProperty instanceof AppSearchSchema.BlobHandlePropertyConfig) {
             // TODO(b/273591938): Remove this once blob APIs are available.
-            throw new UnsupportedOperationException(Features.BLOB_STORAGE
+            throw new UnsupportedOperationException(Features.SCHEMA_BLOB_HANDLE
                     + " is not available on this AppSearch implementation.");
         } else {
             throw new IllegalArgumentException(
