@@ -1,19 +1,6 @@
 // Signature format: 4.0
 package androidx.room3 {
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class CoroutinesRoom {
-    method @Deprecated public static <R> kotlinx.coroutines.flow.Flow<R> createFlow(androidx.room3.RoomDatabase db, boolean inTransaction, String[] tableNames, java.util.concurrent.Callable<R> callable);
-    method @Deprecated public static suspend <R> Object? execute(androidx.room3.RoomDatabase db, boolean inTransaction, android.os.CancellationSignal? cancellationSignal, java.util.concurrent.Callable<R> callable, kotlin.coroutines.Continuation<? super R>);
-    method @Deprecated public static suspend <R> Object? execute(androidx.room3.RoomDatabase db, boolean inTransaction, java.util.concurrent.Callable<R> callable, kotlin.coroutines.Continuation<? super R>);
-    field public static final androidx.room3.CoroutinesRoom.Companion Companion;
-  }
-
-  public static final class CoroutinesRoom.Companion {
-    method @Deprecated public <R> kotlinx.coroutines.flow.Flow<R> createFlow(androidx.room3.RoomDatabase db, boolean inTransaction, String[] tableNames, java.util.concurrent.Callable<R> callable);
-    method @Deprecated public suspend <R> Object? execute(androidx.room3.RoomDatabase db, boolean inTransaction, android.os.CancellationSignal? cancellationSignal, java.util.concurrent.Callable<R> callable, kotlin.coroutines.Continuation<? super R>);
-    method @Deprecated public suspend <R> Object? execute(androidx.room3.RoomDatabase db, boolean inTransaction, java.util.concurrent.Callable<R> callable, kotlin.coroutines.Continuation<? super R>);
-  }
-
   public class DatabaseConfiguration {
     ctor @Deprecated @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public DatabaseConfiguration(android.content.Context context, String? name, androidx.sqlite.db.SupportSQLiteOpenHelper.Factory sqliteOpenHelperFactory, androidx.room3.RoomDatabase.MigrationContainer migrationContainer, java.util.List<? extends androidx.room3.RoomDatabase.Callback>? callbacks, boolean allowMainThreadQueries, androidx.room3.RoomDatabase.JournalMode journalMode, java.util.concurrent.Executor queryExecutor, boolean requireMigration, java.util.Set<java.lang.Integer>? migrationNotRequiredFrom);
     ctor @Deprecated @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public DatabaseConfiguration(android.content.Context context, String? name, androidx.sqlite.db.SupportSQLiteOpenHelper.Factory sqliteOpenHelperFactory, androidx.room3.RoomDatabase.MigrationContainer migrationContainer, java.util.List<? extends androidx.room3.RoomDatabase.Callback>? callbacks, boolean allowMainThreadQueries, androidx.room3.RoomDatabase.JournalMode journalMode, java.util.concurrent.Executor queryExecutor, java.util.concurrent.Executor transactionExecutor, android.content.Intent? multiInstanceInvalidationServiceIntent, boolean requireMigration, boolean allowDestructiveMigrationOnDowngrade, java.util.Set<java.lang.Integer>? migrationNotRequiredFrom, String? copyFromAssetPath, java.io.File? copyFromFile, java.util.concurrent.Callable<java.io.InputStream>? copyFromInputStream, androidx.room3.RoomDatabase.PrepackagedDatabaseCallback? prepackagedDatabaseCallback, java.util.List<?> typeConverters, java.util.List<? extends androidx.room3.migration.AutoMigrationSpec> autoMigrationSpecs);
@@ -280,7 +267,6 @@ package androidx.room3 {
   }
 
   public final class RoomDatabaseKt {
-    method @Deprecated public static kotlinx.coroutines.flow.Flow<java.util.Set<java.lang.String>> invalidationTrackerFlow(androidx.room3.RoomDatabase, String[] tables, optional boolean emitInitialState);
     method public static suspend <R> Object? useReaderConnection(androidx.room3.RoomDatabase, kotlin.jvm.functions.Function2<? super androidx.room3.Transactor,? super kotlin.coroutines.Continuation<? super R>,? extends java.lang.Object?> block, kotlin.coroutines.Continuation<? super R>);
     method public static suspend <R> Object? useWriterConnection(androidx.room3.RoomDatabase, kotlin.jvm.functions.Function2<? super androidx.room3.Transactor,? super kotlin.coroutines.Continuation<? super R>,? extends java.lang.Object?> block, kotlin.coroutines.Continuation<? super R>);
     method @SuppressCompatibility @androidx.room3.ExperimentalRoomApi public static suspend <R> Object? withReadTransaction(androidx.room3.RoomDatabase, kotlin.jvm.functions.Function2<? super androidx.room3.TransactionScope<R>,? super kotlin.coroutines.Continuation<? super R>,? extends java.lang.Object?> block, kotlin.coroutines.Continuation<? super R>);
