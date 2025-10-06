@@ -40,7 +40,8 @@ import androidx.compose.runtime.staticCompositionLocalOf
  * Remember the value produced by [calculation] and retain it in the current [RetainedValuesStore].
  * A retained value is one that is persisted in memory to survive transient destruction and
  * recreation of a portion or the entirety of the content in the composition hierarchy. Some
- * examples of when content is transient destroyed occur include:
+ * examples of when content is transiently destroyed (later referred to as a "retention scenario")
+ * include:
  * - Navigation destinations that are on the back stack, not currently visible, and not composed
  * - UI components that are collapsed, not rendering, and not composed
  * - On Android, composition hierarchies hosted by an Activity that is being destroyed and recreated
@@ -113,8 +114,9 @@ public inline fun <reified T> retain(noinline calculation: () -> T): T {
 /**
  * Remember the value produced by [calculation] and retain it in the current [RetainedValuesStore].
  * A retained value is one that is persisted in memory to survive transient destruction and
- * recreation of a portion of the entirety of the composition hierarchy. Some examples of when this
- * transient destruction occur include:
+ * recreation of a portion or the entirety of the content in the composition hierarchy. Some
+ * examples of when content is transiently destroyed (later referred to as a "retention scenario")
+ * include:
  * - Navigation destinations that are on the back stack, not currently visible, and not composed
  * - UI components that are collapsed, not rendering, and not composed
  * - On Android, composition hierarchies hosted by an Activity that is being destroyed and recreated
@@ -135,9 +137,10 @@ public inline fun <reified T> retain(noinline calculation: () -> T): T {
  * an object that is a [RememberObserver] but not a [RetainObserver].
  *
  * Keys passed to this composable will be kept in-memory while the computed value is retained for
- * comparison against the old keys until the value is retired. Keys are allowed to implement
- * [RememberObserver] arbitrarily, unlike the values returned by [calculation]. If a key implements
- * [RetainObserver], it will **not** receive retention callbacks from this usage.
+ * comparison against the old keys until the value is [retired][RetainObserver.onRetired]. Keys are
+ * allowed to implement [RememberObserver] arbitrarily, unlike the values returned by [calculation].
+ * If a key implements [RetainObserver], it will **not** receive retention callbacks from this
+ * usage.
  *
  * The lifecycle of a retained value is shown in the diagram below. This diagram tracks how a
  * retained value is held through its lifecycle and when it transitions between states.
@@ -280,8 +283,8 @@ public val LocalRetainedValuesStore: ProvidableCompositionLocal<RetainedValuesSt
 
 /**
  * A RetainedValuesStore acts as a storage area for objects being retained. An instance of a
- * RetainedValuesStore also defines a specific retention policy to describe when removed state
- * should be retained and when it should be forgotten.
+ * RetainedValuesStore also defines a specific retention policy to describe when removed retained
+ * values should be kept for future reuse and when they should be retired.
  *
  * The general pattern for retention is as follows:
  * 1. The RetainedValuesStore receives a notification that transient content removal is about to
@@ -469,7 +472,7 @@ public abstract class RetainedValuesStore : RetainStateProvider {
 }
 
 /**
- * [RetainStateProvider] is an owner of the [isRetainingExitedValues] state used by
+ * [RetentionStateOwner] is an owner of the [isRetainingExitedValues] state used by
  * [RetainedValuesStore]. This interface is extracted to allow retain state to be observed without
  * the presence of the value storage. This is particularly useful as most [RetainedValuesStore]s
  * respect a hierarchy where they begin retaining exited values when either their retain condition
@@ -477,8 +480,13 @@ public abstract class RetainedValuesStore : RetainStateProvider {
  */
 public interface RetainStateProvider {
     /**
-     * Returns whether the associated retain scenario is active, and associated stores should retain
-     * objects as they are removed from the composition hierarchy.
+     * Returns whether retained values should continue to be held when they are removed from the
+     * composition hierarchy. This indicates that content is being destroyed transiently and that
+     * the associated retention scenario of this [RetentionStateOwner] (e.g. navigation moving a
+     * screen to the back stack, activity recreation, hidden UI, etc.) is currently active.
+     *
+     * When true, associated [RetainedValuesStore]s should continue to retain objects as they are
+     * removed from the composition hierarchy for future reuse.
      */
     public val isRetainingExitedValues: Boolean
 
@@ -684,7 +692,7 @@ public class ControlledRetainedValuesStore : RetainedValuesStore() {
  * of retaining any exited values. When installed as the [LocalRetainedValuesStore], all invocations
  * of [retain] will behave like a standard [remember]. [RetainObserver] callbacks are still
  * dispatched instead of [RememberObserver] callbacks, meaning that this class will always
- * immediately retire a value as soon as it exits composition.
+ * immediately [retire][RetainObserver.onRetired] a value as soon as it exits composition.
  */
 public object ForgetfulRetainedValuesStore : RetainedValuesStore() {
     override fun onStartRetainingExitedValues() {
@@ -853,8 +861,8 @@ private class RetainControlledRetainedValuesStoreWrapper : RetainObserver {
  * [RetainedValuesStoreRegistry] is retired, its child stores will also be retired and the store
  * will be [disposed][RetainedValuesStoreRegistry.dispose].
  *
- * This method is intended to be used for managing retain state in composables that swap in and out
- * children arbitrarily.
+ * This method is intended to be used for managing retained values in composables that swap in and
+ * out children arbitrarily.
  */
 @Composable
 public fun retainRetainedValuesStoreRegistry(): RetainedValuesStoreRegistry {
@@ -897,7 +905,7 @@ private class RetainedValuesStoreRegistryWrapper : RetainObserver {
 /**
  * A [RetainedValuesStoreRegistry] creates and manages [RetainedValuesStore] instances for
  * collections of items. This is desirable for components that swap in and out children where each
- * child should be able to retain state when it becomes removed from the composition hierarchy.
+ * child should be able to retain values when it becomes removed from the composition hierarchy.
  *
  * To use this class, call [getOrCreateRetainedValuesStoreForChild] to instantiate the
  * [RetainedValuesStore] that should be installed for a given child content block. For automatic
@@ -1045,7 +1053,7 @@ public class RetainedValuesStoreRegistry() {
      * **This composable must be placed such that it appears AFTER the composable content content
      * for [key] in a preorder traversal of the composition hierarchy.** Otherwise, the underlying
      * requests that start and stop retaining exited values may be scheduled in an incorrect order,
-     * causing lost state. For example,
+     * causing lost values. For example,
      * ```kotlin
      * // Correct ordering.
      * if (showA) {

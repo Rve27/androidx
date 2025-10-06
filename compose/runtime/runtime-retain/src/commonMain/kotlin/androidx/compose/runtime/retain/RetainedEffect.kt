@@ -25,7 +25,7 @@ import androidx.compose.runtime.NonRestartableComposable
  */
 public class RetainedEffectScope {
     /**
-     * Provide [onRetiredEffect] to the [DisposableEffect] to run when it leaves the composition or
+     * Provide [onRetiredEffect] to the [RetainedEffect] to run when it leaves the composition or
      * its key changes.
      */
     public inline fun onRetire(crossinline onRetiredEffect: () -> Unit): RetainedEffectResult =
@@ -261,7 +261,7 @@ public fun RetainedEffect(
  *
  * If a [RetainedEffect] is removed from the composition hierarchy when the [RetainedValuesStore] is
  * not retaining exited values, then the scope will immediately be retired and behave like a
- * [DisposableEffect]. Retirement has the same timing guarantees as [RetainObserver.onRetired].
+ * [RetainedEffect]. Retirement has the same timing guarantees as [RetainObserver.onRetired].
  *
  * A [RetainedEffect]'s _key_ is a value that defines the identity of the [RetainedEffect]. If a
  * [RetainedEffect] is recomposed with different keys, a new effect will be created and the previous
