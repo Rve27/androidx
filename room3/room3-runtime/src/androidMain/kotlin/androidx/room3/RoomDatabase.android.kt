@@ -92,7 +92,9 @@ import kotlinx.coroutines.withContext
  *   [#Room.databaseBuilder] or [#Room.inMemoryDatabaseBuilder].
  * @see Database
  */
-public actual abstract class RoomDatabase {
+public actual abstract class RoomDatabase
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) // used in generated code
+actual constructor() {
 
     private lateinit var configuration: DatabaseConfiguration
     private lateinit var coroutineScope: CoroutineScope
@@ -157,14 +159,6 @@ public actual abstract class RoomDatabase {
 
     private var allowMainThreadQueries = false
 
-    @JvmField
-    @Deprecated(
-        message = "This property is always null and will be removed in a future version.",
-        level = DeprecationLevel.ERROR,
-    )
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) // used in generated code
-    protected var mCallbacks: List<Callback>? = null
-
     private var autoCloser: AutoCloser? = null
 
     /**
@@ -184,19 +178,6 @@ public actual abstract class RoomDatabase {
     private val typeConverters: MutableMap<KClass<*>, Any> = mutableMapOf()
 
     internal var useTempTrackingTable: Boolean = true
-
-    /**
-     * Gets the instance of the given Type Converter.
-     *
-     * @param klass The Type Converter class.
-     * @param T The type of the expected Type Converter subclass.
-     * @return An instance of T if it is provided in the builder.
-     */
-    @Deprecated("No longer called by generated implementation")
-    @Suppress("UNCHECKED_CAST")
-    public open fun <T : Any> getTypeConverter(klass: Class<T>): T? {
-        return typeConverters[klass.kotlin] as T?
-    }
 
     /**
      * Gets the instance of the given type converter class.
@@ -307,57 +288,18 @@ public actual abstract class RoomDatabase {
     internal actual fun createConnectionManager(
         configuration: DatabaseConfiguration
     ): RoomConnectionManager {
-        val openDelegate =
-            try {
-                createOpenDelegate() as RoomOpenDelegate
-            } catch (ex: NotImplementedError) {
-                null
-            }
-        // If createOpenDelegate() is not implemented then the database implementation was
-        // generated with an older compiler, we are force to create a connection manager
-        // using the SupportSQLiteOpenHelper returned from createOpenHelper() with the
-        // deprecated RoomOpenHelper installed.
-        return if (openDelegate == null) {
-            @Suppress("DEPRECATION")
-            RoomConnectionManager(
-                config = configuration,
-                supportOpenHelperFactory = { config -> createOpenHelper(config) },
-                transactionWrapper = ::compatTransactionCoroutineExecute,
-            )
-        } else {
-            RoomConnectionManager(
-                config = configuration,
-                openDelegate = openDelegate,
-                transactionWrapper = ::compatTransactionCoroutineExecute,
-            )
-        }
-    }
-
-    /**
-     * Returns a list of [Migration] of a database that have been automatically generated.
-     *
-     * @param autoMigrationSpecs
-     * @return A list of migration instances each of which is a generated autoMigration
-     */
-    @Deprecated("No longer implemented by generated")
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) // used in generated code
-    @JvmSuppressWildcards // Suppress wildcards due to generated Java code
-    public open fun getAutoMigrations(
-        autoMigrationSpecs: Map<Class<out AutoMigrationSpec>, AutoMigrationSpec>
-    ): List<Migration> {
-        return emptyList()
+        val openDelegate = createOpenDelegate() as RoomOpenDelegate
+        return RoomConnectionManager(
+            config = configuration,
+            openDelegate = openDelegate,
+            transactionWrapper = ::compatTransactionCoroutineExecute,
+        )
     }
 
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) // used in generated code
-    public actual open fun createAutoMigrations(
+    public actual abstract fun createAutoMigrations(
         autoMigrationSpecs: Map<KClass<out AutoMigrationSpec>, AutoMigrationSpec>
-    ): List<Migration> {
-        // For backwards compatibility when newer runtime is used with older generated code,
-        // call the Java version of getAutoMigrations()
-        val javaClassesMap = autoMigrationSpecs.mapKeys { it.key.java }
-        @Suppress("DEPRECATION")
-        return getAutoMigrations(javaClassesMap)
-    }
+    ): List<Migration>
 
     /**
      * Unwraps (delegating) open helpers until it finds [T], otherwise returns null.
@@ -387,19 +329,6 @@ public actual abstract class RoomDatabase {
     }
 
     /**
-     * Creates the open helper to access the database. Generated class already implements this
-     * method. Note that this method is called when the RoomDatabase is initialized.
-     *
-     * @param config The configuration of the Room database.
-     * @return A new SupportSQLiteOpenHelper to be used while connecting to the database.
-     * @throws NotImplementedError by default
-     */
-    @Deprecated("No longer implemented by generated")
-    protected open fun createOpenHelper(config: DatabaseConfiguration): SupportSQLiteOpenHelper {
-        throw NotImplementedError()
-    }
-
-    /**
      * Creates a delegate to configure and initialize the database when it is being opened. An
      * implementation of this function is generated by the Room processor. Note that this method is
      * called when the [RoomDatabase] is initialized.
@@ -408,9 +337,7 @@ public actual abstract class RoomDatabase {
      * @throws NotImplementedError by default
      */
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) // used in generated code
-    protected actual open fun createOpenDelegate(): RoomOpenDelegateMarker {
-        throw NotImplementedError()
-    }
+    protected actual abstract fun createOpenDelegate(): RoomOpenDelegateMarker
 
     /**
      * Creates the invalidation tracker
@@ -461,39 +388,15 @@ public actual abstract class RoomDatabase {
      * @return A map that will include all required type converters for this database.
      */
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) // used in generated code
-    protected actual open fun getRequiredTypeConverterClasses(): Map<KClass<*>, List<KClass<*>>> {
-        // For backwards compatibility when newer runtime is used with older generated code,
-        // call the Java version this function.
-        return getRequiredTypeConverters().entries.associate { (key, value) ->
-            key.kotlin to value.map { it.kotlin }
-        }
-    }
+    protected actual abstract fun getRequiredTypeConverterClasses(): Map<KClass<*>, List<KClass<*>>>
 
     /** Property delegate of [getRequiredTypeConverterClasses] for common ext functionality. */
     internal actual val requiredTypeConverterClassesMap: Map<KClass<*>, List<KClass<*>>>
         get() = getRequiredTypeConverterClasses()
 
-    /**
-     * Returns a Set of required AutoMigrationSpec classes.
-     *
-     * This is implemented by the generated code.
-     *
-     * @return Creates a set that will include all required auto migration specs for this database.
-     */
-    @Deprecated("No longer implemented by generated")
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) // used in generated code
-    public open fun getRequiredAutoMigrationSpecs(): Set<Class<out AutoMigrationSpec>> {
-        return emptySet()
-    }
-
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) // used in generated code
-    public actual open fun getRequiredAutoMigrationSpecClasses():
-        Set<KClass<out AutoMigrationSpec>> {
-        // For backwards compatibility when newer runtime is used with older generated code,
-        // call the Java version of this function.
-        @Suppress("DEPRECATION")
-        return getRequiredAutoMigrationSpecs().map { it.kotlin }.toSet()
-    }
+    public actual abstract fun getRequiredAutoMigrationSpecClasses():
+        Set<KClass<out AutoMigrationSpec>>
 
     /**
      * Deletes all rows from all the tables that are registered to this database as
@@ -776,17 +679,6 @@ public actual abstract class RoomDatabase {
                 body.invoke()
             }
         }
-    }
-
-    /**
-     * Initialize invalidation tracker. Note that this method is called when the [RoomDatabase] is
-     * initialized and opens a database connection.
-     *
-     * @param db The database instance.
-     */
-    @Deprecated("No longer called by generated")
-    protected open fun internalInitInvalidationTracker(db: SupportSQLiteDatabase) {
-        internalInitInvalidationTracker(SupportSQLiteConnection(db))
     }
 
     /**
