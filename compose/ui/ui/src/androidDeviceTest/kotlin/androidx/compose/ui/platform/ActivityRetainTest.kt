@@ -357,8 +357,8 @@ class ActivityRetainTest {
         waitForIdleSync()
         assertEquals("Retained Instance 0", retainedValue)
         assertFalse(
-            retainedValuesStore.isKeepingExitedValues,
-            "RetainedValuesStore should not be keeping exited values",
+            retainedValuesStore.isRetainingExitedValues,
+            "RetainedValuesStore should not be retaining exited values",
         )
     }
 

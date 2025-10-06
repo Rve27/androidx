@@ -78,11 +78,11 @@ class RetainBenchmark : ComposeBenchmarkBase() {
             }
             update {
                 includeContent = false
-                retainedValuesStore.startKeepingExitedValues()
+                retainedValuesStore.startRetainingExitedValues()
             }
             reset {
                 includeContent = true
-                retainedValuesStore.stopKeepingExitedValues()
+                retainedValuesStore.stopRetainingExitedValues()
             }
         }
     }
@@ -142,11 +142,11 @@ class RetainBenchmark : ComposeBenchmarkBase() {
             }
             update {
                 includeContent = false
-                retainedValuesStore.startKeepingExitedValues()
+                retainedValuesStore.startRetainingExitedValues()
             }
             reset {
                 includeContent = true
-                retainedValuesStore.stopKeepingExitedValues()
+                retainedValuesStore.stopRetainingExitedValues()
             }
         }
     }

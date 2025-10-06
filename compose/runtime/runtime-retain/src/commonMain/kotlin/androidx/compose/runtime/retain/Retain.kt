@@ -29,9 +29,9 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.currentComposer
 import androidx.compose.runtime.currentCompositeKeyHashCode
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.retain.RetainStateProvider.AlwaysKeepExitedValues
-import androidx.compose.runtime.retain.RetainStateProvider.NeverKeepExitedValues
-import androidx.compose.runtime.retain.RetainStateProvider.NeverKeepExitedValues.isKeepingExitedValues
+import androidx.compose.runtime.retain.RetainStateProvider.AlwaysRetainExitedValues
+import androidx.compose.runtime.retain.RetainStateProvider.NeverRetainExitedValues
+import androidx.compose.runtime.retain.RetainStateProvider.NeverRetainExitedValues.isRetainingExitedValues
 import androidx.compose.runtime.retain.RetainStateProvider.RetainStateObserver
 import androidx.compose.runtime.retain.RetainedValuesStore.*
 import androidx.compose.runtime.staticCompositionLocalOf
@@ -52,7 +52,7 @@ import androidx.compose.runtime.staticCompositionLocalOf
  * return the retained value instead of invoking [calculation] again.
  *
  * If this function leaves the composition hierarchy when the [LocalRetainedValuesStore] is not
- * keeping values that exit the composition, the value will be discarded immediately.
+ * retaining values that exit the composition, the value will be discarded immediately.
  *
  * The lifecycle of the retained value can be observed by implementing [RetainObserver]. Callbacks
  * from [RememberObserver] are never invoked on objects retained this way. It is invalid to retain
@@ -83,7 +83,7 @@ import androidx.compose.runtime.staticCompositionLocalOf
  *             │                      ┌─Yes────────────────┘   │ value not
  *             │                      │                        │ restored and
  *             │   .──────────────────┴──────────────────.     │ store stops
- *             └─▶(         isKeepingExitedValues         )    │ keeping exited
+ *             └─▶(        isRetainingExitedValues        )    │ retaining exited
  *                 `──────────────────┬──────────────────'     │ values
  *                                    │                        ▼
  *                                    │      ┌──────────────────────────┐
@@ -126,8 +126,8 @@ public inline fun <reified T> retain(noinline calculation: () -> T): T {
  * return the retained value instead of invoking [calculation] again.
  *
  * If this function leaves the composition hierarchy when the [LocalRetainedValuesStore] is not
- * keeping values that exit the composition or is invoked with list of [keys] that are not all equal
- * (`==`) to the values they had in the previous composition, the value will be discarded
+ * retaining values that exit the composition or is invoked with list of [keys] that are not all
+ * equal (`==`) to the values they had in the previous composition, the value will be discarded
  * immediately and [calculation] will execute again when a new value is needed.
  *
  * The lifecycle of the retained value can be observed by implementing [RetainObserver]. Callbacks
@@ -163,7 +163,7 @@ public inline fun <reified T> retain(noinline calculation: () -> T): T {
  *             │                      ┌─Yes────────────────┘   │ value not
  *             │                      │                        │ restored and
  *             │   .──────────────────┴──────────────────.     │ store stops
- *             └─▶(         isKeepingExitedValues         )    │ keeping exited
+ *             └─▶(        isRetainingExitedValues        )    │ retaining exited
  *                 `──────────────────┬──────────────────'     │ values
  *                                    │                        ▼
  *                                    │      ┌──────────────────────────┐
@@ -268,7 +268,7 @@ private val RetainedValuesStoreMissingValue = Any()
  *
  * RetainedValuesStores should be installed so that their tracked transiently removed content is
  * always removed from composition in the same frame (and by extension, all retained values leave
- * composition in the same frame). If the RetainedValuesStore starts keeping exited values and its
+ * composition in the same frame). If the RetainedValuesStore starts retaining exited values and its
  * tracked content is removed in an arbitrary order across several recompositions, it may cause
  * retained values to be restored incorrectly if the retained values from different regions in the
  * composition have the same [currentCompositeKeyHashCode].
@@ -288,7 +288,7 @@ public val LocalRetainedValuesStore: ProvidableCompositionLocal<RetainedValuesSt
  *    begin. The source of this notification varies depending on what retention scenario is being
  *    captured, but could, for example, be a signal that an Android Activity is being recreated, or
  *    that content is about to be navigated away from/collapsed with the potential of being returned
- *    to. At this time, the store's owner should call [requestKeepExitedValues].
+ *    to. At this time, the store's owner should call [requestRetainExitedValues].
  * 2. Transient content removal begins. The content is recomposed, removed from the hierarchy, and
  *    remembered values are forgotten. Values remembered by [retain] leave the composition but are
  *    not yet released. Every value returned by [retain] will be passed as an argument to
@@ -298,9 +298,9 @@ public val LocalRetainedValuesStore: ProvidableCompositionLocal<RetainedValuesSt
  *    calls [getExitedValueOrDefault]. If all the input keys match a retained value, the previous
  *    result is returned and the retained value is removed from the pool of restorable objects that
  *    exited the previous composition. This step may be skipped if it becomes impossible to return
- *    to the transiently removed content while this store is keeping exited values.
+ *    to the transiently removed content while this store is retaining exited values.
  * 4. The content finishes composing after being restored, and the entire frame completes. The owner
- *    of this store should call [unRequestKeepExitedValues]. When retention stops being requested,
+ *    of this store should call [unRequestRetainExitedValues]. When retention stops being requested,
  *    it immediately ends. Any values that are retained and not currently used in a composition (and
  *    therefore not restored by [getExitedValueOrDefault]) are then immediately discarded.
  *
@@ -317,18 +317,18 @@ public val LocalRetainedValuesStore: ProvidableCompositionLocal<RetainedValuesSt
  */
 public abstract class RetainedValuesStore : RetainStateProvider {
 
-    protected var keepExitedValuesRequests: Int = 0
+    protected var retainExitedValuesRequests: Int = 0
         private set
 
-    final override val isKeepingExitedValues: Boolean
-        get() = keepExitedValuesRequests > 0
+    final override val isRetainingExitedValues: Boolean
+        get() = retainExitedValuesRequests > 0
 
     private val observers = MutableScatterSet<RetainStateObserver>(0)
 
     /**
-     * If this store is currently keeping exited values and has a value previously created with the
-     * given [key], its original record is returned and removed from the list of exited kept objects
-     * that this store is tracking.
+     * If this store is currently retaining exited values and has a value previously created with
+     * the given [key], its original record is returned and removed from the list of exited kept
+     * objects that this store is tracking.
      *
      * @param key The keys to resolve a retained value that has left composition
      * @param defaultIfAbsent A value to be returned if there are no retained values that have
@@ -339,7 +339,7 @@ public abstract class RetainedValuesStore : RetainStateProvider {
     public abstract fun getExitedValueOrDefault(key: Any, defaultIfAbsent: Any?): Any?
 
     /**
-     * Invoked when a retained value is exiting composition while this store is keeping exited
+     * Invoked when a retained value is exiting composition while this store is retaining exited
      * values. It is up to the implementation of this method to decide whether and how to store
      * these values so that they can later be retrieved by [getExitedValueOrDefault].
      *
@@ -353,55 +353,55 @@ public abstract class RetainedValuesStore : RetainStateProvider {
     protected abstract fun saveExitingValue(key: Any, value: Any?)
 
     /**
-     * Called to increment the number of requests to keep exited values. When there are a positive
-     * number of requests, this store begins keeping exited values and continues until all requests
-     * are cleared.
+     * Called to increment the number of requests to retain exited values. When there are a positive
+     * number of requests, this store begins retaining exited values and continues until all
+     * requests are cleared.
      *
      * This method is not thread safe and should only be called on the applier thread.
      */
-    protected fun requestKeepExitedValues() {
-        if (keepExitedValuesRequests++ == 0) {
-            onStartKeepingExitedValues()
-            observers.forEach { it.onStartKeepingExitedValues() }
+    protected fun requestRetainExitedValues() {
+        if (retainExitedValuesRequests++ == 0) {
+            onStartRetainingExitedValues()
+            observers.forEach { it.onStartRetainingExitedValues() }
         }
     }
 
     /**
-     * Clears a previous call to [requestKeepExitedValues]. If all requests to keep exited values
-     * have been cleared, this store will stop keeping exited values.
+     * Clears a previous call to [requestRetainExitedValues]. If all requests to retain exited
+     * values have been cleared, this store will stop retaining exited values.
      *
      * This method is not thread safe and should only be called on the applier thread.
      *
-     * @throws IllegalStateException if [unRequestKeepExitedValues] is called more times than
-     *   [requestKeepExitedValues] has been called.
+     * @throws IllegalStateException if [unRequestRetainExitedValues] is called more times than
+     *   [requestRetainExitedValues] has been called.
      */
-    protected fun unRequestKeepExitedValues() {
-        checkPrecondition(isKeepingExitedValues) {
-            "Unexpected call to unRequestKeepExitedValues() without a " +
-                "corresponding requestKeepExitedValues()"
+    protected fun unRequestRetainExitedValues() {
+        checkPrecondition(isRetainingExitedValues) {
+            "Unexpected call to unRequestRetainExitedValues() without a " +
+                "corresponding requestRetainExitedValues()"
         }
-        if (--keepExitedValuesRequests == 0) {
-            onStopKeepingExitedValues()
-            observers.forEach { it.onStopKeepingExitedValues() }
+        if (--retainExitedValuesRequests == 0) {
+            onStopRetainingExitedValues()
+            observers.forEach { it.onStopRetainingExitedValues() }
         }
     }
 
     /**
-     * Called when this store first starts to keep exited values (i.e. when [isKeepingExitedValues]
-     * transitions from false to true). When this is called, implementors should prepare to begin to
-     * store values they receive from [saveExitingValue].
+     * Called when this store first starts to retain exited values (i.e. when
+     * [isRetainingExitedValues] transitions from false to true). When this is called, implementors
+     * should prepare to begin to store values they receive from [saveExitingValue].
      */
-    protected abstract fun onStartKeepingExitedValues()
+    protected abstract fun onStartRetainingExitedValues()
 
     /**
-     * Called when this store stops keeping exited values (i.e. when [isKeepingExitedValues]
+     * Called when this store stops retaining exited values (i.e. when [isRetainingExitedValues]
      * transitions from true to false). After this is called, all exited values that have been kept
      * and not restored via [getExitedValueOrDefault] should be retired.
      *
      * Implementors MUST invoke [RetainObserver.onRetired] for all exited and unrestored
      * [RememberObservers][RememberObserver] when this method is invoked.
      */
-    protected abstract fun onStopKeepingExitedValues()
+    protected abstract fun onStopRetainingExitedValues()
 
     final override fun addRetainStateObserver(observer: RetainStateObserver) {
         observers += observer
@@ -447,18 +447,18 @@ public abstract class RetainedValuesStore : RetainStateProvider {
         }
 
         override fun onForgotten() {
-            if (owner.isKeepingExitedValues) {
+            if (owner.isRetainingExitedValues) {
                 owner.saveExitingValue(key, value)
             }
 
             if (value is RetainObserver) {
                 value.onExitedComposition()
-                if (!owner.isKeepingExitedValues) value.onRetired()
+                if (!owner.isRetainingExitedValues) value.onRetired()
             }
         }
 
         override fun onAbandoned() {
-            if (owner.isKeepingExitedValues) {
+            if (owner.isRetainingExitedValues) {
                 if (value is RetainObserver) value.onRetained()
                 owner.saveExitingValue(key, value)
             } else if (value is RetainObserver) {
@@ -469,23 +469,23 @@ public abstract class RetainedValuesStore : RetainStateProvider {
 }
 
 /**
- * [RetainStateProvider] is an owner of the [isKeepingExitedValues] state used by
+ * [RetainStateProvider] is an owner of the [isRetainingExitedValues] state used by
  * [RetainedValuesStore]. This interface is extracted to allow retain state to be observed without
  * the presence of the value storage. This is particularly useful as most [RetainedValuesStore]s
- * respect a hierarchy where they begin keeping exited values when either their retain condition
- * becomes true or their parent store begins keeping exited values.
+ * respect a hierarchy where they begin retaining exited values when either their retain condition
+ * becomes true or their parent store begins retaining exited values.
  */
 public interface RetainStateProvider {
     /**
      * Returns whether the associated retain scenario is active, and associated stores should retain
      * objects as they are removed from the composition hierarchy.
      */
-    public val isKeepingExitedValues: Boolean
+    public val isRetainingExitedValues: Boolean
 
     /**
      * Registers the given [observer] with this [RetainStateProvider] to be notified when the value
-     * of [isKeepingExitedValues] changes. The added observer will receive its first notification
-     * the next time [isKeepingExitedValues] is updated.
+     * of [isRetainingExitedValues] changes. The added observer will receive its first notification
+     * the next time [isRetainingExitedValues] is updated.
      *
      * This method is not thread safe and should only be invoked on the applier thread.
      *
@@ -506,7 +506,7 @@ public interface RetainStateProvider {
 
     /**
      * Listener interface to observe changes in the value of
-     * [RetainStateProvider.isKeepingExitedValues].
+     * [RetainStateProvider.isRetainingExitedValues].
      *
      * @see RetainStateProvider.addRetainStateObserver
      * @see RetainStateProvider.removeRetainStateObserver
@@ -514,27 +514,27 @@ public interface RetainStateProvider {
     @Suppress("CallbackName")
     public interface RetainStateObserver {
         /**
-         * Called to indicate that [RetainStateProvider.isKeepingExitedValues] has become `true`.
+         * Called to indicate that [RetainStateProvider.isRetainingExitedValues] has become `true`.
          * This callback should only be invoked on the applier thread.
          */
-        public fun onStartKeepingExitedValues()
+        public fun onStartRetainingExitedValues()
 
         /**
-         * Called to indicate that [RetainStateProvider.isKeepingExitedValues] has become `false`.
+         * Called to indicate that [RetainStateProvider.isRetainingExitedValues] has become `false`.
          * This callback should only be invoked on the applier thread.
          */
-        public fun onStopKeepingExitedValues()
+        public fun onStopRetainingExitedValues()
     }
 
     /**
      * An implementation of [RetainStateProvider] that is not backed by a [RetainedValuesStore] and
-     * is always set to keep exited values. This object is stateless and can be used to orphan a
-     * nested [RetainedValuesStore] while maintaining it in a state where the store keeps all exited
-     * values.
+     * is always set to retain exited values. This object is stateless and can be used to orphan a
+     * nested [RetainedValuesStore] while maintaining it in a state where the store retains all
+     * exited values.
      */
     @Stable
-    public object AlwaysKeepExitedValues : RetainStateProvider {
-        override val isKeepingExitedValues: Boolean
+    public object AlwaysRetainExitedValues : RetainStateProvider {
+        override val isRetainingExitedValues: Boolean
             get() = true
 
         override fun addRetainStateObserver(observer: RetainStateObserver) {
@@ -548,12 +548,12 @@ public interface RetainStateProvider {
 
     /**
      * An implementation of [RetainStateProvider] that is not backed by a [RetainedValuesStore] and
-     * is never set to keep exited values. This object is stateless and can be used to orphan a
-     * nested [RetainedValuesStore] and clear any parent-driven state of [isKeepingExitedValues].
+     * is never set to retain exited values. This object is stateless and can be used to orphan a
+     * nested [RetainedValuesStore] and clear any parent-driven state of [isRetainingExitedValues].
      */
     @Stable
-    public object NeverKeepExitedValues : RetainStateProvider {
-        override val isKeepingExitedValues: Boolean
+    public object NeverRetainExitedValues : RetainStateProvider {
+        override val isRetainingExitedValues: Boolean
             get() = false
 
         override fun addRetainStateObserver(observer: RetainStateObserver) {
@@ -575,11 +575,12 @@ public interface RetainStateProvider {
  * in which content is transiently removed from the composition hierarchy and can be restored with
  * the retained values from the previous composition.
  *
- * When using this class to create your own retention scenario, call [startKeepingExitedValues] to
- * make this store start keeping exited values state before any content is transiently removed. When
- * the transiently removed content is restored, call [stopKeepingExitedValues] **after all content
- * has been restored**. You can use [androidx.compose.runtime.Recomposer.scheduleFrameEndCallback]
- * or [androidx.compose.runtime.Composer.scheduleFrameEndCallback] to ensure that all content has
+ * When using this class to create your own retention scenario, call [startRetainingExitedValues] to
+ * make this store start retaining exited values state before any content is transiently removed.
+ * When the transiently removed content is restored, call [stopRetainingExitedValues] **after all
+ * content has been restored**. You can use
+ * [androidx.compose.runtime.Recomposer.scheduleFrameEndCallback] or
+ * [androidx.compose.runtime.Composer.scheduleFrameEndCallback] to ensure that all content has
  * settled in subcompositions and movable content that may not be realized or applied in as part of
  * a composition that is currently ongoing.
  *
@@ -591,40 +592,40 @@ public interface RetainStateProvider {
 public class ControlledRetainedValuesStore : RetainedValuesStore() {
     private val keptExitedValues = SafeMultiValueMap<Any, Any?>()
 
-    private var parentStore: RetainStateProvider = NeverKeepExitedValues
+    private var parentStore: RetainStateProvider = NeverRetainExitedValues
     private val parentObserver =
         object : RetainStateObserver {
-            override fun onStartKeepingExitedValues() {
-                requestKeepExitedValues()
+            override fun onStartRetainingExitedValues() {
+                requestRetainExitedValues()
             }
 
-            override fun onStopKeepingExitedValues() {
-                unRequestKeepExitedValues()
+            override fun onStopRetainingExitedValues() {
+                unRequestRetainExitedValues()
             }
         }
 
     /**
-     * Returns the number of calls to [startKeepingExitedValues] - [stopKeepingExitedValues].
+     * Returns the number of calls to [startRetainingExitedValues] - [stopRetainingExitedValues].
      * Effectively, the total number of active requests to this [ControlledRetainedValuesStore].
      *
      * Note that this value **ignores any parent state.** It only counts explicit requests from the
-     * user to [startKeepingExitedValues]. This store could still be retaining if this value is `0`
-     * if the parent store is retaining. This is useful if you want to track your contributions to
-     * this store's state, ignoring the parent.
+     * user to [startRetainingExitedValues]. This store could still be retaining if this value is
+     * `0` if the parent store is retaining. This is useful if you want to track your contributions
+     * to this store's state, ignoring the parent.
      */
-    public val keepExitedValuesRequestsFromSelf: Int
-        get() = keepExitedValuesRequests - if (parentStore.isKeepingExitedValues) 1 else 0
+    public val retainExitedValuesRequestsFromSelf: Int
+        get() = retainExitedValuesRequests - if (parentStore.isRetainingExitedValues) 1 else 0
 
     /**
-     * Calling this function will automatically mirror the state of [isKeepingExitedValues] to match
-     * [parent]'s state. This is an addition to requests made on the
-     * [ControlledRetainedValuesStore], so keeping exited values is a function of whether the parent
-     * is keeping exited values OR this store has been requested to keep exited values.
+     * Calling this function will automatically mirror the state of [isRetainingExitedValues] to
+     * match [parent]'s state. This is an addition to requests made on the
+     * [ControlledRetainedValuesStore], so retaining exited values is a function of whether the
+     * parent is retaining exited values OR this store has been requested to retain exited values.
      *
      * A [ControlledRetainedValuesStore] can only have one parent. If a new parent is provided, it
-     * will replace the old one and will match the new parent's [isKeepingExitedValues] state. This
-     * may cause this store to start or stop keeping exited values if this store has no other active
-     * requests from [startKeepingExitedValues].
+     * will replace the old one and will match the new parent's [isRetainingExitedValues] state.
+     * This may cause this store to start or stop retaining exited values if this store has no other
+     * active requests from [startRetainingExitedValues].
      */
     public fun setParentRetainStateProvider(parent: RetainStateProvider) {
         val oldParent = parentStore
@@ -633,37 +634,37 @@ public class ControlledRetainedValuesStore : RetainedValuesStore() {
         parent.addRetainStateObserver(parentObserver)
         oldParent.removeRetainStateObserver(parentObserver)
 
-        if (parent.isKeepingExitedValues) startKeepingExitedValues()
-        if (oldParent.isKeepingExitedValues) stopKeepingExitedValues()
+        if (parent.isRetainingExitedValues) startRetainingExitedValues()
+        if (oldParent.isRetainingExitedValues) stopRetainingExitedValues()
     }
 
     /**
-     * Indicates that this store should keep retained values that exit the composition. If this
+     * Indicates that this store should continue to retain values that exit the composition. If this
      * store is already in this mode, the store will not change states. The number of times this
      * function is called is tracked and must be matched by the same number of calls to
-     * [stopKeepingExitedValues] before the kept values will be retired.
+     * [stopRetainingExitedValues] before the kept values will be retired.
      */
-    public fun startKeepingExitedValues(): Unit = requestKeepExitedValues()
+    public fun startRetainingExitedValues(): Unit = requestRetainExitedValues()
 
     /**
-     * Stops keeping values that have exited the composition. This function cancels a request that
-     * previously began by calling [startKeepingExitedValues]. If [startKeepingExitedValues] has
-     * been called more than [stopKeepingExitedValues], the store will continue to keep retained
-     * values that have exited the composition until [stopKeepingExitedValues] has been called the
-     * same number of times as [startKeepingExitedValues].
+     * Stops retaining values that exit the composition. This function cancels a request that
+     * previously began by calling [startRetainingExitedValues]. If [startRetainingExitedValues] has
+     * been called more than [stopRetainingExitedValues], the store will continue to retain values
+     * that have exited the composition until [stopRetainingExitedValues] has been called the same
+     * number of times as [startRetainingExitedValues].
      *
-     * @throws IllegalStateException if [stopKeepingExitedValues] is called more times than
-     *   [startKeepingExitedValues]
+     * @throws IllegalStateException if [stopRetainingExitedValues] is called more times than
+     *   [startRetainingExitedValues]
      */
-    public fun stopKeepingExitedValues(): Unit = unRequestKeepExitedValues()
+    public fun stopRetainingExitedValues(): Unit = unRequestRetainExitedValues()
 
-    override fun onStartKeepingExitedValues() {
+    override fun onStartRetainingExitedValues() {
         checkPrecondition(keptExitedValues.isEmpty()) {
-            "Attempted to start keeping exited values with pending exited values"
+            "Attempted to start retaining exited values with pending exited values"
         }
     }
 
-    override fun onStopKeepingExitedValues() {
+    override fun onStopRetainingExitedValues() {
         keptExitedValues.forEachValue { value -> if (value is RetainObserver) value.onRetired() }
         keptExitedValues.clear()
     }
@@ -680,20 +681,20 @@ public class ControlledRetainedValuesStore : RetainedValuesStore() {
 
 /**
  * The ForgetfulRetainedValuesStore is an implementation of [RetainedValuesStore] that is incapable
- * of keeping any exited values. When installed as the [LocalRetainedValuesStore], all invocations
+ * of retaining any exited values. When installed as the [LocalRetainedValuesStore], all invocations
  * of [retain] will behave like a standard [remember]. [RetainObserver] callbacks are still
  * dispatched instead of [RememberObserver] callbacks, meaning that this class will always
  * immediately retire a value as soon as it exits composition.
  */
 public object ForgetfulRetainedValuesStore : RetainedValuesStore() {
-    override fun onStartKeepingExitedValues() {
+    override fun onStartRetainingExitedValues() {
         throw UnsupportedOperationException(
-            "ForgetfulRetainedValuesStore can never keep exited values."
+            "ForgetfulRetainedValuesStore can never retain exited values."
         )
     }
 
-    override fun onStopKeepingExitedValues() {
-        // Do nothing. This implementation never keeps exited values.
+    override fun onStopRetainingExitedValues() {
+        // Do nothing. This implementation never retains exited values.
     }
 
     override fun getExitedValueOrDefault(key: Any, defaultIfAbsent: Any?): Any? {
@@ -702,16 +703,16 @@ public object ForgetfulRetainedValuesStore : RetainedValuesStore() {
 
     override fun saveExitingValue(key: Any, value: Any?) {
         throw UnsupportedOperationException(
-            "ForgetfulRetainedValuesStore can never keep exited values."
+            "ForgetfulRetainedValuesStore can never retain exited values."
         )
     }
 }
 
 /**
  * `RetainedContentHost` is used to install a [RetainedValuesStore] around a block of [content]. The
- * installed `RetainedValuesStore` is managed such that the store will start to keep exited values
- * when [active] is false, and stop keeping exited values when [active] becomes true. See
- * [RetainedValuesStore.isKeepingExitedValues] for more information on this terminology.
+ * installed `RetainedValuesStore` is managed such that the store will start to retain exited values
+ * when [active] is false, and stop retaining exited values when [active] becomes true. See
+ * [RetainedValuesStore.isRetainingExitedValues] for more information on this terminology.
  *
  * `RetainedContentHost` is designed as an out-of-the-box solution for managing content that's
  * controlled effectively by an if/else statement. The [content] provided to this lambda will render
@@ -720,8 +721,8 @@ public object ForgetfulRetainedValuesStore : RetainedValuesStore() {
  * the last time the content was shown.
  *
  * The managed RetainedValuesStore is _also_ retained. If this composable is removed while the
- * parent store is keeping its exited values, this store will be persisted so that it can be
- * restored in the future. If this composable is removed while its parent store is not keeping its
+ * parent store is retaining its exited values, this store will be persisted so that it can be
+ * restored in the future. If this composable is removed while its parent store is not retaining its
  * exited values, the store will be discarded and all its held values will be immediately retired.
  *
  * For this reason, when using this as a mechanism to retain values for content that is being shown
@@ -729,9 +730,9 @@ public object ForgetfulRetainedValuesStore : RetainedValuesStore() {
  * content being retained is hidden.
  *
  * @param active Whether this host should compose its [content]. When this value is true, [content]
- *   will be rendered and the installed [RetainedValuesStore] will not keep exited values. When this
- *   value is false, [content] will stop being rendered and the installed [RetainedValuesStore] will
- *   collect and keep its exited values for future restoration.
+ *   will be rendered and the installed [RetainedValuesStore] will not retain exited values. When
+ *   this value is false, [content] will stop being rendered and the installed [RetainedValuesStore]
+ *   will collect and retain its exited values for future restoration.
  * @param content The content to render. Inside of this lambda, [LocalRetainedValuesStore] is set to
  *   the [RetainedValuesStore] managed by this composable.
  * @sample androidx.compose.runtime.retain.samples.retainedContentHostSample
@@ -743,25 +744,25 @@ public fun RetainedContentHost(active: Boolean, content: @Composable () -> Unit)
     if (active) {
         CompositionLocalProvider(LocalRetainedValuesStore provides retainedValuesStore, content)
 
-        // Match the isKeepingExitedValues state to the active parameter. This effect must come
+        // Match the isRetainingExitedValues state to the active parameter. This effect must come
         // AFTER the content to correctly capture values.
         val composer = currentComposer
         DisposableEffect(retainedValuesStore) {
-            // Stop keeping exited values when we become active. Use the request count to only
+            // Stop retaining exited values when we become active. Use the request count to only
             // look at our state and to ignore any parent-influenced requests.
             val cancellationHandle =
-                if (retainedValuesStore.keepExitedValuesRequestsFromSelf > 0) {
+                if (retainedValuesStore.retainExitedValuesRequestsFromSelf > 0) {
                     composer.scheduleFrameEndCallback {
-                        retainedValuesStore.stopKeepingExitedValues()
+                        retainedValuesStore.stopRetainingExitedValues()
                     }
                 } else {
                     null
                 }
 
             onDispose {
-                // Start keeping exited values when we deactivate
+                // Start retaining exited values when we deactivate
                 cancellationHandle?.cancel()
-                retainedValuesStore.startKeepingExitedValues()
+                retainedValuesStore.startRetainingExitedValues()
             }
         }
     }
@@ -777,13 +778,15 @@ public fun RetainedContentHost(active: Boolean, content: @Composable () -> Unit)
  * values, that request is cleared.
  *
  * This API is available as a building block for other retain stores defined in composition. To
- * define your own retention scenario, call [ControlledRetainedValuesStore.startKeepingExitedValues]
- * and [ControlledRetainedValuesStore.stopKeepingExitedValues] on the returned store as appropriate.
- * You must also install this store in the composition hierarchy by providing it as the value of
+ * define your own retention scenario, call
+ * [ControlledRetainedValuesStore.startRetainingExitedValues] and
+ * [ControlledRetainedValuesStore.stopRetainingExitedValues] on the returned scope as appropriate.
+ * You must also install this scope in the composition hierarchy by providing it as the value of
  * [LocalRetainedValuesStore].
  *
- * When this value stops being retained, it will automatically stop keeping exited values,
- * regardless of how many times [ControlledRetainedValuesStore.startKeepingExitedValues] was called.
+ * When this value stops being retained, it will automatically stop retaining exited values,
+ * regardless of how many times [ControlledRetainedValuesStore.startRetainingExitedValues] was
+ * called.
  *
  * @return A [ControlledRetainedValuesStore] nested under the [LocalRetainedValuesStore], ready to
  *   be installed in the composition hierarchy and be used to define a retention scenario.
@@ -802,10 +805,10 @@ public fun retainControlledRetainedValuesStore(): ControlledRetainedValuesStore 
             // Keep the parent's state until we get a new store. This lets us continue
             // retaining when the composition hierarchy is destroyed and this parent is removed.
             retainedValuesStore.setParentRetainStateProvider(
-                if (parentStore.isKeepingExitedValues) {
-                    AlwaysKeepExitedValues
+                if (parentStore.isRetainingExitedValues) {
+                    AlwaysRetainExitedValues
                 } else {
-                    NeverKeepExitedValues
+                    NeverRetainExitedValues
                 }
             )
         }
@@ -825,9 +828,9 @@ private class RetainControlledRetainedValuesStoreWrapper : RetainObserver {
 
     override fun onRetired() {
         // The retainedValuesStore has stopped being retained. Dispose it.
-        retainedValuesStore.setParentRetainStateProvider(NeverKeepExitedValues)
-        while (retainedValuesStore.isKeepingExitedValues) retainedValuesStore
-            .stopKeepingExitedValues()
+        retainedValuesStore.setParentRetainStateProvider(NeverRetainExitedValues)
+        while (retainedValuesStore.isRetainingExitedValues) retainedValuesStore
+            .stopRetainingExitedValues()
     }
 
     override fun onUnused() {
@@ -862,10 +865,10 @@ public fun retainRetainedValuesStoreRegistry(): RetainedValuesStoreRegistry {
         onDispose {
             provider.setParentRetainStateProvider(
                 parent =
-                    if (parentStore.isKeepingExitedValues) {
-                        AlwaysKeepExitedValues
+                    if (parentStore.isRetainingExitedValues) {
+                        AlwaysRetainExitedValues
                     } else {
-                        NeverKeepExitedValues
+                        NeverRetainExitedValues
                     }
             )
         }
@@ -903,8 +906,8 @@ private class RetainedValuesStoreRegistryWrapper : RetainObserver {
  * You can also install the managed [RetainedValuesStore]s manually by obtaining a
  * [RetainedValuesStore] with [getOrCreateRetainedValuesStoreForChild] and setting it as the
  * [LocalRetainedValuesStore] for your children's content. When a child is being removed, call
- * [startKeepingExitedValues] to begin the transient destruction phase of your retention scenario.
- * After the child has been added back to the composition, invoke [stopKeepingExitedValues] to
+ * [startRetainingExitedValues] to begin the transient destruction phase of your retention scenario.
+ * After the child has been added back to the composition, invoke [stopRetainingExitedValues] to
  * finalize the restoration of retained values.
  *
  * When a [RetainedValuesStoreRegistry] is no longer used, you must call [dispose] before the
@@ -919,26 +922,26 @@ public class RetainedValuesStoreRegistry() {
     private var isDisposed = false
     private val childStores = MutableScatterMap<Any?, ControlledRetainedValuesStore>()
 
-    private var parent: RetainStateProvider = NeverKeepExitedValues
-    private var isParentKeepingExitedValues = false
+    private var parent: RetainStateProvider = NeverRetainExitedValues
+    private var isParentRetainingExitedValues = false
     private val parentObserver =
         object : RetainStateObserver {
-            override fun onStartKeepingExitedValues() {
-                setKeepExitedValues(true)
+            override fun onStartRetainingExitedValues() {
+                setRetainExitedValues(true)
             }
 
-            override fun onStopKeepingExitedValues() {
-                setKeepExitedValues(false)
+            override fun onStopRetainingExitedValues() {
+                setRetainExitedValues(false)
             }
         }
 
     /**
-     * Starts keeping exited values for a child with the given [key]. If a [RetainedValuesStore] has
-     * not been created for this key (because [getOrCreateRetainedValuesStoreForChild] was not
+     * Starts retaining exited values for a child with the given [key]. If a [RetainedValuesStore]
+     * has not been created for this key (because [getOrCreateRetainedValuesStoreForChild] was not
      * called for the key or it has been cleared with [clearChild] or [clearChildren]), then this
-     * function does nothing. If the [RetainedValuesStore] for the given key is already keeping
+     * function does nothing. If the [RetainedValuesStore] for the given key is already retaining
      * exited values, the store will not change states. The number of times this function is called
-     * is tracked and must be matched by the same number of calls to [stopKeepingExitedValues] for
+     * is tracked and must be matched by the same number of calls to [stopRetainingExitedValues] for
      * the given key before its kept values will be retired.
      *
      * This function must be called **before** any content for the associated child is removed from
@@ -946,22 +949,22 @@ public class RetainedValuesStoreRegistry() {
      *
      * @param key The key of the child to begin retention for
      */
-    public fun startKeepingExitedValues(key: Any?) {
+    public fun startRetainingExitedValues(key: Any?) {
         val store = childStores[key] ?: return
-        store.startKeepingExitedValues()
+        store.startRetainingExitedValues()
     }
 
     /**
-     * Stops keeping exited values for a child with the given [key] as previously started by
-     * [startKeepingExitedValues]. If the underlying store is not retaining because
-     * [startKeepingExitedValues] has not been called, this function will throw an exception. If no
-     * such [RetainedValuesStore] exists because it was cleared with [clearChild] or never created
-     * with [getOrCreateRetainedValuesStoreForChild], this function will do nothing.
+     * Stops retaining exited values for a child with the given [key] as previously started by
+     * [startRetainingExitedValues]. If the underlying store is not retaining because
+     * [startRetainingExitedValues] has not been called, this function will throw an exception. If
+     * no such retain store exists because it was cleared with [clearChild] or never created with
+     * [getOrCreateRetainedValuesStoreForChild], this function will do nothing.
      *
-     * If [startKeepingExitedValues] has been called more than [stopKeepingExitedValues], the store
-     * will continue to keep retained values that have exited the composition until
-     * [stopKeepingExitedValues] has been called the same number of times as
-     * [startKeepingExitedValues].
+     * If [startRetainingExitedValues] has been called more than [stopRetainingExitedValues], the
+     * store will continue to retain values that have exited the composition until
+     * [stopRetainingExitedValues] has been called the same number of times as
+     * [startRetainingExitedValues].
      *
      * This function must be called **after** the completion of the frame in which the child content
      * is being restored to allow the restored child to re-consume all of its retained values. You
@@ -969,49 +972,50 @@ public class RetainedValuesStoreRegistry() {
      * [androidx.compose.runtime.Composer.scheduleFrameEndCallback] to insert a sufficient delay.
      *
      * @param key The key of the child to end retention for
-     * @throws IllegalStateException if [startKeepingExitedValues] is called more times than
-     *   [stopKeepingExitedValues] has been called for the given key
+     * @throws IllegalStateException if [startRetainingExitedValues] is called more times than
+     *   [stopRetainingExitedValues] has been called for the given key
      */
-    public fun stopKeepingExitedValues(key: Any?) {
+    public fun stopRetainingExitedValues(key: Any?) {
         val store = childStores[key] ?: return
-        checkPrecondition(store.externalKeepExitedValuesRequests >= 1) {
-            "Unexpected call to unRequestKeepExitedValues() without a " +
-                "corresponding requestKeepExitedValues() for key $key"
+        checkPrecondition(store.externalRetainExitedValuesRequests >= 1) {
+            "Unexpected call to stopRetainingExitedValues() without a " +
+                "corresponding startRetainingExitedValues() for key $key"
         }
-        store.stopKeepingExitedValues()
+        store.stopRetainingExitedValues()
     }
 
     /**
-     * Gets the total number of active requests from [startKeepingExitedValues] for the given [key].
-     * Effectively, this is the number of calls to [startKeepingExitedValues] minus the number of
-     * calls to [stopKeepingExitedValues] for the given [key].
+     * Gets the total number of active requests from [startRetainingExitedValues] for the given
+     * [key]. Effectively, this is the number of calls to [startRetainingExitedValues] minus the
+     * number of calls to [stopRetainingExitedValues] for the given [key].
      *
      * This counter resets if [clearStore] is called for the given [key]. If the store has not been
      * created for [key] by [getOrCreateRetainedValuesStoreForChild], this function will return `0`.
      *
      * @param key the key of the child to look up
-     * @return The number of active requests against the given child to keep exited values
-     * @see ControlledRetainedValuesStore.keepExitedValuesRequestsFromSelf
+     * @return The number of active requests against the given child to retain exited values
+     * @see ControlledRetainedValuesStore.retainExitedValuesRequestsFromSelf
      */
-    public fun keepExitedValuesRequestsFor(key: Any?): Int {
+    public fun retainExitedValuesRequestsFor(key: Any?): Int {
         val store = childStores[key] ?: return 0
-        return store.externalKeepExitedValuesRequests
+        return store.externalRetainExitedValuesRequests
     }
 
     // We manage the parent ourselves without wiring it up, because it is more efficient than
     // attaching a listener. Because of this, we need to manually subtract out the parent count.
-    private val ControlledRetainedValuesStore.externalKeepExitedValuesRequests: Int
-        get() = keepExitedValuesRequestsFromSelf - if (isParentKeepingExitedValues) 1 else 0
+    private val ControlledRetainedValuesStore.externalRetainExitedValuesRequests: Int
+        get() = retainExitedValuesRequestsFromSelf - if (isParentRetainingExitedValues) 1 else 0
 
     /**
      * Installs child [content] that should be retained under the given [key].
-     * [startKeepingExitedValues] and [stopKeepingExitedValues] and automatically called based on
-     * the presence of this composable for the [key].
+     * [startRetainingExitedValues] and [stopRetainingExitedValues] and automatically called based
+     * on the presence of this composable for the [key].
      *
-     * When removed, this composable begins keeping exited values from the [content] lambda under
-     * the given [key]. When added back to the composition hierarchy, the store will stop keeping
-     * retained values once the composition completes. The keys used with this method should only be
-     * used once per [RetainedValuesStoreRegistry]in a composition.
+     * When removed, this composable begins retaining exited values from the [content] lambda under
+     * the given [key]. When added back to the composition hierarchy, the store will stop retaining
+     * exited values once the composition completes and will release any unused values. The keys
+     * used with this method should only be used once per [RetainedValuesStoreRegistry] in a
+     * composition.
      *
      * This composable only attempts to manage the retention lifecycle for the [content] and [key]
      * pair. It will retain removed content indefinitely until [clearChild] or [clearChildren] is
@@ -1035,12 +1039,12 @@ public class RetainedValuesStoreRegistry() {
 
     /**
      * Indicates the presence of [key] in the composition hierarchy. When this composable is added,
-     * [stopKeepingExitedValues] is called for the [key]. When this composable is removed,
-     * [startKeepingExitedValues] will be called at the completion of the frame.
+     * [stopRetainingExitedValues] is called for the [key]. When this composable is removed,
+     * [startRetainingExitedValues] will be called at the completion of the frame.
      *
      * **This composable must be placed such that it appears AFTER the composable content content
      * for [key] in a preorder traversal of the composition hierarchy.** Otherwise, the underlying
-     * requests that start and stop keeping exited values may be scheduled in an incorrect order,
+     * requests that start and stop retaining exited values may be scheduled in an incorrect order,
      * causing lost state. For example,
      * ```kotlin
      * // Correct ordering.
@@ -1070,18 +1074,18 @@ public class RetainedValuesStoreRegistry() {
         val composer = currentComposer
         DisposableEffect(key) {
             // This key is entering the composition. End retention when the frame completes. Use
-            // the request count to not attempt `stopKeepingExitedValues` when we initially enter
+            // the request count to not attempt `stopRetainingExitedValues` when we initially enter
             // the composition.
             val endRetainHandle =
-                if (keepExitedValuesRequestsFor(key) > 0) {
-                    composer.scheduleFrameEndCallback { stopKeepingExitedValues(key) }
+                if (retainExitedValuesRequestsFor(key) > 0) {
+                    composer.scheduleFrameEndCallback { stopRetainingExitedValues(key) }
                 } else {
                     null
                 }
             onDispose {
                 // This key is exiting the composition. Begin retaining now.
                 endRetainHandle?.cancel()
-                startKeepingExitedValues(key)
+                startRetainingExitedValues(key)
             }
         }
     }
@@ -1089,10 +1093,10 @@ public class RetainedValuesStoreRegistry() {
     /**
      * Creates or returns a previously created [RetainedValuesStore] instance for the given [key].
      * The returned [RetainedValuesStore] will be managed by this provider. It will begin retaining
-     * if the parent [RetainedValuesStore] starts retaining or if [startKeepingExitedValues] is
-     * called with the same [key], and it will stop retaining with the parent retain store ends
-     * retaining and there is no [startKeepingExitedValues] call without a corresponding
-     * [stopKeepingExitedValues] call for the specified [key].
+     * if the parent retain store starts retaining or if [startRetainingExitedValues] is called with
+     * the same [key], and it will stop retaining with the parent retain store ends retaining and
+     * there is no [startRetainingExitedValues] call without a corresponding
+     * [stopRetainingExitedValues] call for the specified [key].
      *
      * The first time this function is called for a given [key], a new [RetainedValuesStore] is
      * created for the [key]. When this function is called for the same [key], it will return the
@@ -1100,9 +1104,9 @@ public class RetainedValuesStoreRegistry() {
      * [cleared][clearChild], then a new one will be created for it the next time it is requested
      * via this function.
      *
-     * This function must be called before [startKeepingExitedValues] or [stopKeepingExitedValues]
-     * is called for those two methods to have any effect on the retention state for the given
-     * [key].
+     * This function must be called before [startRetainingExitedValues] or
+     * [stopRetainingExitedValues] is called for those two methods to have any effect on the
+     * retention state for the given [key].
      *
      * @param key The [key] to return an existing [RetainedValuesStore] instance for, if one exists,
      *   or to create a new instance for
@@ -1117,7 +1121,7 @@ public class RetainedValuesStoreRegistry() {
 
         return childStores.getOrPut(key) {
             ControlledRetainedValuesStore().apply {
-                if (isParentKeepingExitedValues) startKeepingExitedValues()
+                if (isParentRetainingExitedValues) startRetainingExitedValues()
             }
         }
     }
@@ -1125,15 +1129,16 @@ public class RetainedValuesStoreRegistry() {
     /**
      * When a [RetainStateProvider] is set as the parent of a [RetainedValuesStoreRegistry], the
      * [RetainedValuesStoreRegistry] will mirror the retention state of the parent. If the parent
-     * stops retaining, all children that have started retaining via [startKeepingExitedValues] will
-     * continue being retained after the parent stops retaining.
+     * stops retaining, all children that have started retaining via [startRetainingExitedValues]
+     * will continue being retained after the parent stops retaining.
      *
      * If this function is called twice, the new parent will replace the old parent. The new
      * parent's state is immediately applied to the child stores.
      *
      * To clear a parent, call this function and pass in either
-     * [RetainStateProvider.AlwaysKeepExitedValues] or [RetainStateProvider.NeverKeepExitedValues]
-     * depending on whether you want this store to keep exited values in the absence of a parent.
+     * [RetainStateProvider.AlwaysRetainExitedValues] or
+     * [RetainStateProvider.NeverRetainExitedValues] depending on whether you want this store to
+     * retain exited values in the absence of a parent.
      */
     public fun setParentRetainStateProvider(parent: RetainStateProvider) {
         val oldParent = this@RetainedValuesStoreRegistry.parent
@@ -1142,7 +1147,7 @@ public class RetainedValuesStoreRegistry() {
         parent.addRetainStateObserver(parentObserver)
         oldParent.removeRetainStateObserver(parentObserver)
 
-        setKeepExitedValues(parent.isKeepingExitedValues)
+        setRetainExitedValues(parent.isRetainingExitedValues)
     }
 
     /**
@@ -1151,11 +1156,11 @@ public class RetainedValuesStoreRegistry() {
      * yet (either because it hasn't been created or has already been cleared), this function does
      * nothing.
      *
-     * If the store being cleared is currently keeping exited values, it will stop as a result of
+     * If the store being cleared is currently retaining exited values, it will stop as a result of
      * this call. If a child with the given [key] is currently in the composition hierarchy, its
      * retained values will not be persisted the next time the child content is destroyed. Orphaned
-     * RetainedValuesStores will never begin keeping exited values, and the content will need to be
-     * recreated with a new RetainedValuesStore before exited values will be kept again.
+     * RetainedValuesStores will never begin retaining exited values, and the content will need to
+     * be recreated with a new RetainedValuesStore before exited values will be kept again.
      *
      * If [getOrCreateRetainedValuesStoreForChild] is called again for the given [key], a new
      * [RetainedValuesStore] will be created and returned.
@@ -1180,7 +1185,7 @@ public class RetainedValuesStoreRegistry() {
     }
 
     private fun clearStore(store: ControlledRetainedValuesStore) {
-        while (store.keepExitedValuesRequestsFromSelf > 0) store.stopKeepingExitedValues()
+        while (store.retainExitedValuesRequestsFromSelf > 0) store.stopRetainingExitedValues()
     }
 
     /**
@@ -1197,14 +1202,14 @@ public class RetainedValuesStoreRegistry() {
         clearChildren { true }
     }
 
-    private fun setKeepExitedValues(shouldRetain: Boolean) {
-        if (shouldRetain == isParentKeepingExitedValues) return
-        isParentKeepingExitedValues = shouldRetain
+    private fun setRetainExitedValues(shouldRetain: Boolean) {
+        if (shouldRetain == isParentRetainingExitedValues) return
+        isParentRetainingExitedValues = shouldRetain
 
         if (shouldRetain) {
-            childStores.forEachValue { store -> store.startKeepingExitedValues() }
+            childStores.forEachValue { store -> store.startRetainingExitedValues() }
         } else {
-            childStores.forEachValue { store -> store.stopKeepingExitedValues() }
+            childStores.forEachValue { store -> store.stopRetainingExitedValues() }
         }
     }
 }

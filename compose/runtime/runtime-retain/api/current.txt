@@ -4,20 +4,20 @@ package androidx.compose.runtime.retain {
   public final class ControlledRetainedValuesStore extends androidx.compose.runtime.retain.RetainedValuesStore {
     ctor public ControlledRetainedValuesStore();
     method public Object? getExitedValueOrDefault(Object key, Object? defaultIfAbsent);
-    method @InaccessibleFromKotlin public int getKeepExitedValuesRequestsFromSelf();
-    method protected void onStartKeepingExitedValues();
-    method protected void onStopKeepingExitedValues();
+    method @InaccessibleFromKotlin public int getRetainExitedValuesRequestsFromSelf();
+    method protected void onStartRetainingExitedValues();
+    method protected void onStopRetainingExitedValues();
     method protected void saveExitingValue(Object key, Object? value);
     method public void setParentRetainStateProvider(androidx.compose.runtime.retain.RetainStateProvider parent);
-    method public void startKeepingExitedValues();
-    method public void stopKeepingExitedValues();
-    property public int keepExitedValuesRequestsFromSelf;
+    method public void startRetainingExitedValues();
+    method public void stopRetainingExitedValues();
+    property public int retainExitedValuesRequestsFromSelf;
   }
 
   public final class ForgetfulRetainedValuesStore extends androidx.compose.runtime.retain.RetainedValuesStore {
     method public Object? getExitedValueOrDefault(Object key, Object? defaultIfAbsent);
-    method protected void onStartKeepingExitedValues();
-    method protected void onStopKeepingExitedValues();
+    method protected void onStartRetainingExitedValues();
+    method protected void onStopRetainingExitedValues();
     method protected void saveExitingValue(Object key, Object? value);
     field public static final androidx.compose.runtime.retain.ForgetfulRetainedValuesStore INSTANCE;
   }
@@ -45,30 +45,30 @@ package androidx.compose.runtime.retain {
 
   public interface RetainStateProvider {
     method public void addRetainStateObserver(androidx.compose.runtime.retain.RetainStateProvider.RetainStateObserver observer);
-    method @InaccessibleFromKotlin public boolean isKeepingExitedValues();
+    method @InaccessibleFromKotlin public boolean isRetainingExitedValues();
     method public void removeRetainStateObserver(androidx.compose.runtime.retain.RetainStateProvider.RetainStateObserver observer);
-    property public abstract boolean isKeepingExitedValues;
+    property public abstract boolean isRetainingExitedValues;
   }
 
-  @androidx.compose.runtime.Stable public static final class RetainStateProvider.AlwaysKeepExitedValues implements androidx.compose.runtime.retain.RetainStateProvider {
+  @androidx.compose.runtime.Stable public static final class RetainStateProvider.AlwaysRetainExitedValues implements androidx.compose.runtime.retain.RetainStateProvider {
     method public void addRetainStateObserver(androidx.compose.runtime.retain.RetainStateProvider.RetainStateObserver observer);
-    method @InaccessibleFromKotlin public boolean isKeepingExitedValues();
+    method @InaccessibleFromKotlin public boolean isRetainingExitedValues();
     method public void removeRetainStateObserver(androidx.compose.runtime.retain.RetainStateProvider.RetainStateObserver observer);
-    property public boolean isKeepingExitedValues;
-    field public static final androidx.compose.runtime.retain.RetainStateProvider.AlwaysKeepExitedValues INSTANCE;
+    property public boolean isRetainingExitedValues;
+    field public static final androidx.compose.runtime.retain.RetainStateProvider.AlwaysRetainExitedValues INSTANCE;
   }
 
-  @androidx.compose.runtime.Stable public static final class RetainStateProvider.NeverKeepExitedValues implements androidx.compose.runtime.retain.RetainStateProvider {
+  @androidx.compose.runtime.Stable public static final class RetainStateProvider.NeverRetainExitedValues implements androidx.compose.runtime.retain.RetainStateProvider {
     method public void addRetainStateObserver(androidx.compose.runtime.retain.RetainStateProvider.RetainStateObserver observer);
-    method @InaccessibleFromKotlin public boolean isKeepingExitedValues();
+    method @InaccessibleFromKotlin public boolean isRetainingExitedValues();
     method public void removeRetainStateObserver(androidx.compose.runtime.retain.RetainStateProvider.RetainStateObserver observer);
-    property public boolean isKeepingExitedValues;
-    field public static final androidx.compose.runtime.retain.RetainStateProvider.NeverKeepExitedValues INSTANCE;
+    property public boolean isRetainingExitedValues;
+    field public static final androidx.compose.runtime.retain.RetainStateProvider.NeverRetainExitedValues INSTANCE;
   }
 
   public static interface RetainStateProvider.RetainStateObserver {
-    method public void onStartKeepingExitedValues();
-    method public void onStopKeepingExitedValues();
+    method public void onStartRetainingExitedValues();
+    method public void onStopRetainingExitedValues();
   }
 
   public final class RetainedEffectKt {
@@ -97,16 +97,16 @@ package androidx.compose.runtime.retain {
     ctor public RetainedValuesStore();
     method public final void addRetainStateObserver(androidx.compose.runtime.retain.RetainStateProvider.RetainStateObserver observer);
     method public abstract Object? getExitedValueOrDefault(Object key, Object? defaultIfAbsent);
-    method @InaccessibleFromKotlin protected final int getKeepExitedValuesRequests();
-    method @InaccessibleFromKotlin public final boolean isKeepingExitedValues();
-    method protected abstract void onStartKeepingExitedValues();
-    method protected abstract void onStopKeepingExitedValues();
+    method @InaccessibleFromKotlin protected final int getRetainExitedValuesRequests();
+    method @InaccessibleFromKotlin public final boolean isRetainingExitedValues();
+    method protected abstract void onStartRetainingExitedValues();
+    method protected abstract void onStopRetainingExitedValues();
     method public final void removeRetainStateObserver(androidx.compose.runtime.retain.RetainStateProvider.RetainStateObserver observer);
-    method protected final void requestKeepExitedValues();
+    method protected final void requestRetainExitedValues();
     method protected abstract void saveExitingValue(Object key, Object? value);
-    method protected final void unRequestKeepExitedValues();
-    property public final boolean isKeepingExitedValues;
-    property protected final int keepExitedValuesRequests;
+    method protected final void unRequestRetainExitedValues();
+    property public final boolean isRetainingExitedValues;
+    property protected final int retainExitedValuesRequests;
   }
 
   public final class RetainedValuesStoreRegistry {
@@ -117,10 +117,10 @@ package androidx.compose.runtime.retain {
     method public void clearChildren(kotlin.jvm.functions.Function1<java.lang.Object?,java.lang.Boolean> predicate);
     method public void dispose();
     method public androidx.compose.runtime.retain.RetainedValuesStore getOrCreateRetainedValuesStoreForChild(Object? key);
-    method public int keepExitedValuesRequestsFor(Object? key);
+    method public int retainExitedValuesRequestsFor(Object? key);
     method public void setParentRetainStateProvider(androidx.compose.runtime.retain.RetainStateProvider parent);
-    method public void startKeepingExitedValues(Object? key);
-    method public void stopKeepingExitedValues(Object? key);
+    method public void startRetainingExitedValues(Object? key);
+    method public void stopRetainingExitedValues(Object? key);
   }
 
 }

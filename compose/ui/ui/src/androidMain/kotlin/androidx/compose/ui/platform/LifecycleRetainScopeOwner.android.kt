@@ -54,27 +54,27 @@ internal class LifecycleRetainedValuesStoreOwner : ViewModel() {
                 field = value
             }
 
-        fun startKeepingExitedValues() {
-            if (!controlledRetainedValuesStore.isKeepingExitedValues) {
-                controlledRetainedValuesStore.startKeepingExitedValues()
+        fun startRetainingExitedValues() {
+            if (!controlledRetainedValuesStore.isRetainingExitedValues) {
+                controlledRetainedValuesStore.startRetainingExitedValues()
             } else {
                 endRetainCancellationHandle = null
             }
         }
 
-        fun stopKeepingExitedValues(frameEndScheduler: FrameEndScheduler) {
-            if (controlledRetainedValuesStore.isKeepingExitedValues) {
+        fun stopRetainingExitedValues(frameEndScheduler: FrameEndScheduler) {
+            if (controlledRetainedValuesStore.isRetainingExitedValues) {
                 endRetainCancellationHandle =
                     try {
                         frameEndScheduler.scheduleFrameEndCallback {
-                            controlledRetainedValuesStore.stopKeepingExitedValues()
+                            controlledRetainedValuesStore.stopRetainingExitedValues()
                         }
                     } catch (_: CancellationException) {
                         // The Recomposer is shutting down, and we can't schedule work for the next
-                        // frame. Stop keeping exited values now. This should only happen during
+                        // frame. Stop retaining exited values now. This should only happen during
                         // tests where the Recomposer is explicitly cancelled by the testing
                         // framework before this callback can be dispatched.
-                        controlledRetainedValuesStore.stopKeepingExitedValues()
+                        controlledRetainedValuesStore.stopRetainingExitedValues()
                         null
                     }
             }
@@ -82,8 +82,8 @@ internal class LifecycleRetainedValuesStoreOwner : ViewModel() {
 
         fun onCleared() {
             endRetainCancellationHandle = null
-            if (controlledRetainedValuesStore.isKeepingExitedValues) {
-                controlledRetainedValuesStore.stopKeepingExitedValues()
+            if (controlledRetainedValuesStore.isRetainingExitedValues) {
+                controlledRetainedValuesStore.stopRetainingExitedValues()
             }
         }
 

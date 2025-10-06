@@ -49,13 +49,13 @@ public interface RetainObserver {
      * When the composition is successful, this call will be immediately followed by a call to
      * [onEnteredComposition].
      *
-     * If the composition is abandoned and the associated [RetainedValuesStore] is currently keeping
-     * exited values, the value will be retained and may be used in a future (successful)
+     * If the composition is abandoned and the associated [RetainedValuesStore] is currently
+     * retaining exited values, the value will be retained and may be used in a future (successful)
      * composition. This is the only scenario in which it is possible for a RetainObserver to
      * experience a lifecycle of Retained -> Retired without receiving any calls to
      * [onEnteredComposition].
      *
-     * If the composition is unsuccessful and the associated [RetainedValuesStore] is not keeping
+     * If the composition is unsuccessful and the associated [RetainedValuesStore] is not retaining
      * exited values, this callback will be skipped and [onUnused] will be called instead.
      */
     public fun onRetained()

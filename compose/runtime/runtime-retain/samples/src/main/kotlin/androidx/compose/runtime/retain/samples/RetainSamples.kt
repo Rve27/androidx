@@ -89,7 +89,7 @@ fun retainControlledRetainedValuesStoreSample() {
     @Composable
     fun AnimatedRetainedContentHost(active: Boolean, content: @Composable () -> Unit) {
         // Create a RetainedValuesStore. It will be added as a child to the current store and start
-        // keeping exited values when the parent does. On Android, this store will implicitly
+        // retaining exited values when the parent does. On Android, this store will implicitly
         // survive and forward retention events caused by configuration changes.
         val retainedValuesStore = retainControlledRetainedValuesStore()
         AnimatedContent(active) { targetState ->
@@ -101,7 +101,8 @@ fun retainControlledRetainedValuesStoreSample() {
                     content()
                 }
 
-                // Define the retention scenario that will issue commands to start and stop keeping
+                // Define the retention scenario that will issue commands to start and stop
+                // retaining
                 // exited values. If you use this effect in your code, it must come AFTER the
                 // content is composed to correctly capture values. This effect is not mandatory,
                 // but is a convenient way to match the RetainedValuesStore's state to the
@@ -109,21 +110,21 @@ fun retainControlledRetainedValuesStoreSample() {
                 // suitable for your content.
                 val composer = currentComposer
                 DisposableEffect(retainedValuesStore) {
-                    // Stop keeping exited values when we become active. Use the request count to
+                    // Stop retaining exited values when we become active. Use the request count to
                     // only look at our state and to ignore any parent-influenced requests.
                     val cancellationHandle =
-                        if (retainedValuesStore.keepExitedValuesRequestsFromSelf > 0) {
+                        if (retainedValuesStore.retainExitedValuesRequestsFromSelf > 0) {
                             composer.scheduleFrameEndCallback {
-                                retainedValuesStore.stopKeepingExitedValues()
+                                retainedValuesStore.stopRetainingExitedValues()
                             }
                         } else {
                             null
                         }
 
                     onDispose {
-                        // Start keeping exited values when we deactivate
+                        // Start retaining exited values when we deactivate
                         cancellationHandle?.cancel()
-                        retainedValuesStore.startKeepingExitedValues()
+                        retainedValuesStore.startRetainingExitedValues()
                     }
                 }
             }
@@ -153,7 +154,7 @@ fun retainedValuesStoreRegistrySample() {
                 // Install it for an item in a list
                 retainedValuesStoreRegistry.ProvideChildRetainedValuesStore(contact.id) {
                     // This contact now gets its own retain store.
-                    // If the store of ContactsList starts keeping exited values, this nested
+                    // If the store of ContactsList starts retaining exited values, this nested
                     // store will too. If this contact leaves re-enters composition, it will keep
                     // its previously retained values.
                     Contact(contact)

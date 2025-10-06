@@ -122,8 +122,8 @@ class FragmentRetainTest {
                     1 -> {
                         assertNotNull(child.view, "Fragment $index should have a view")
                         assertFalse(
-                            child.retainedValuesStore.isKeepingExitedValues,
-                            "Fragment $index should not be keeping exited values",
+                            child.retainedValuesStore.isRetainingExitedValues,
+                            "Fragment $index should not be retaining exited values",
                         )
                     }
                     else -> assertNull(child.view, "Fragment $index's view shouldn't exist")
@@ -142,8 +142,8 @@ class FragmentRetainTest {
                         assertNull(child.view, "Fragment $index's view should be destroyed")
                         assertTrue(child.isDetached, "Fragment $index should be detached")
                         assertTrue(
-                            child.retainedValuesStore.isKeepingExitedValues,
-                            "Fragment $index should be keeping exited values",
+                            child.retainedValuesStore.isRetainingExitedValues,
+                            "Fragment $index should be retaining exited values",
                         )
                     }
                     2,
@@ -151,8 +151,8 @@ class FragmentRetainTest {
                     4 -> {
                         assertNotNull(child.view, "Fragment $index should have a view")
                         assertFalse(
-                            child.retainedValuesStore.isKeepingExitedValues,
-                            "Fragment $index should not be keeping exited values",
+                            child.retainedValuesStore.isRetainingExitedValues,
+                            "Fragment $index should not be retaining exited values",
                         )
                     }
                     else -> assertNull(child.view, "Fragment $index's view shouldn't exist")
@@ -171,8 +171,8 @@ class FragmentRetainTest {
                         assertNotNull(child.view, "Fragment $index should have a view")
                         assertFalse(child.isDetached, "Fragment $index should not be detached")
                         assertFalse(
-                            child.retainedValuesStore.isKeepingExitedValues,
-                            "Fragment $index should not be keeping exited values",
+                            child.retainedValuesStore.isRetainingExitedValues,
+                            "Fragment $index should not be retaining exited values",
                         )
                     }
                     2,
@@ -181,8 +181,8 @@ class FragmentRetainTest {
                         assertNull(child.view, "Fragment $index's view should be destroyed")
                         assertTrue(child.isDetached, "Fragment $index should be detached")
                         assertTrue(
-                            child.retainedValuesStore.isKeepingExitedValues,
-                            "Fragment $index should be keeping exited values",
+                            child.retainedValuesStore.isRetainingExitedValues,
+                            "Fragment $index should be retaining exited values",
                         )
                     }
                     else -> assertNull(child.view, "Fragment $index's view shouldn't exist")

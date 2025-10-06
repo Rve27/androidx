@@ -111,7 +111,7 @@ class RetainedEffectTest {
     }
 
     @Test
-    fun testRetainedEffect_retireWhenRemovedNotKeepingExitedValues() = compositionTest {
+    fun testRetainedEffect_retireWhenRemovedNotRetainingExitedValues() = compositionTest {
         var mount by mutableStateOf(true)
 
         val logHistory = mutableListOf<String>()
@@ -148,7 +148,7 @@ class RetainedEffectTest {
     }
 
     @Test
-    fun testRetainedEffect_retireWhenKeepExitedValuesEnds() = compositionTest {
+    fun testRetainedEffect_retireWhenRetainExitedValuesEnds() = compositionTest {
         var mount by mutableStateOf(true)
 
         val logHistory = mutableListOf<String>()
@@ -177,7 +177,7 @@ class RetainedEffectTest {
             expected = listOf("Retain:1", "Retain:2"),
             actual = logHistory,
         )
-        retainedValuesStore.startKeepingExitedValues()
+        retainedValuesStore.startRetainingExitedValues()
         mount = false
         log("recompose")
         expectChanges()
@@ -187,7 +187,7 @@ class RetainedEffectTest {
             actual = logHistory,
         )
 
-        retainedValuesStore.stopKeepingExitedValues()
+        retainedValuesStore.stopRetainingExitedValues()
         assertContentEquals(
             message = "RetainedEffect sequence didn't match after ending retention",
             expected = listOf("Retain:1", "Retain:2", "recompose", "Retire:2"),
@@ -196,7 +196,7 @@ class RetainedEffectTest {
     }
 
     @Test
-    fun testRetainedEffect_changeKeyWhenKeepingExitedValues() = compositionTest {
+    fun testRetainedEffect_changeKeyWhenRetainingExitedValues() = compositionTest {
         var key by mutableStateOf("A")
 
         val logHistory = mutableListOf<String>()
@@ -222,7 +222,7 @@ class RetainedEffectTest {
             expected = listOf("Retain:A"),
             actual = logHistory,
         )
-        retainedValuesStore.startKeepingExitedValues()
+        retainedValuesStore.startRetainingExitedValues()
         key = "B"
         log("recompose")
         expectChanges()
@@ -241,7 +241,7 @@ class RetainedEffectTest {
             actual = logHistory,
         )
 
-        retainedValuesStore.stopKeepingExitedValues()
+        retainedValuesStore.stopRetainingExitedValues()
         assertContentEquals(
             message = "RetainedEffect sequence didn't match after ending retention",
             expected = listOf("Retain:A", "recompose", "Retain:B", "recompose", "Retire:B"),

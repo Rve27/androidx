@@ -215,7 +215,7 @@ class RetainTests {
 
     @Test
     fun retain_retaining_remember() = compositionTest {
-        val scope = ControlledRetainedValuesStore().apply { startKeepingExitedValues() }
+        val scope = ControlledRetainedValuesStore().apply { startRetainingExitedValues() }
         var factoryResult: CountingRetainObject? = null
         var lastSeen: CountingRetainObject? = null
 
@@ -235,7 +235,7 @@ class RetainTests {
 
     @Test
     fun retain_retaining_recompose() = compositionTest {
-        val scope = ControlledRetainedValuesStore().apply { startKeepingExitedValues() }
+        val scope = ControlledRetainedValuesStore().apply { startRetainingExitedValues() }
         lateinit var recomposeScope: RecomposeScope
         var factoryResult: CountingRetainObject? = null
         var lastSeen: CountingRetainObject? = null
@@ -261,7 +261,7 @@ class RetainTests {
 
     @Test
     fun retain_retaining_reconstruct() = compositionTest {
-        val scope = ControlledRetainedValuesStore().apply { startKeepingExitedValues() }
+        val scope = ControlledRetainedValuesStore().apply { startRetainingExitedValues() }
         lateinit var recomposeScope: RecomposeScope
         var factoryResult: CountingRetainObject? = null
         var lastSeen: CountingRetainObject? = null
@@ -388,7 +388,7 @@ class RetainTests {
         val firstResult = factoryResults.last()
         firstResult.assertCounts(retained = 1, entered = 1, exited = 0, retired = 0)
 
-        scope.startKeepingExitedValues()
+        scope.startRetainingExitedValues()
         key = "456"
         lastSeen = null
         recomposeScope.invalidate()
@@ -408,7 +408,7 @@ class RetainTests {
         firstResult.assertCounts(retained = 1, entered = 2, exited = 1, retired = 0)
         secondResult.assertCounts(retained = 1, entered = 1, exited = 1, retired = 0)
 
-        scope.stopKeepingExitedValues()
+        scope.stopRetainingExitedValues()
         firstResult.assertCounts(retained = 1, entered = 2, exited = 1, retired = 0)
         secondResult.assertCounts(retained = 1, entered = 1, exited = 1, retired = 1)
     }
@@ -433,7 +433,7 @@ class RetainTests {
         val firstResult = factoryResults.last()
         firstResult.assertCounts(retained = 1, entered = 1, exited = 0, retired = 0)
 
-        scope.startKeepingExitedValues()
+        scope.startRetainingExitedValues()
         key = "123"
         lastSeen = null
         recomposeScope.invalidate()
@@ -488,7 +488,7 @@ class RetainTests {
         )
 
         callbackLog.clear()
-        scope.startKeepingExitedValues()
+        scope.startRetainingExitedValues()
         includeContent = false
         recomposeScope.invalidate()
         advance()
@@ -507,7 +507,7 @@ class RetainTests {
         includeContent = true
         recomposeScope.invalidate()
         advance()
-        scope.stopKeepingExitedValues()
+        scope.stopRetainingExitedValues()
         assertEquals(retainSequence, retainedValues, "Retained unexpected objects")
         assertEquals(
             listOf(
@@ -558,7 +558,7 @@ class RetainTests {
         )
 
         callbackLog.clear()
-        scope.startKeepingExitedValues()
+        scope.startRetainingExitedValues()
         includeContent = false
         recomposeScope.invalidate()
         advance()
@@ -574,7 +574,7 @@ class RetainTests {
         )
 
         callbackLog.clear()
-        scope.stopKeepingExitedValues()
+        scope.stopRetainingExitedValues()
         assertEquals(
             listOf("Retire(Buzz)", "Retire(Baz)", "Retire(Bar)", "Retire(Foo)"),
             callbackLog,
@@ -628,7 +628,7 @@ class RetainTests {
         )
 
         callbackLog.clear()
-        scope.startKeepingExitedValues()
+        scope.startRetainingExitedValues()
         includeContent = false
         recomposeScope.invalidate()
         advance()
@@ -648,7 +648,7 @@ class RetainTests {
         includeContent = true
         recomposeScope.invalidate()
         advance()
-        scope.stopKeepingExitedValues()
+        scope.stopRetainingExitedValues()
         assertEquals(retainSequence, retainedValues, "Retained unexpected objects")
         assertEquals(
             listOf(
@@ -700,7 +700,7 @@ class RetainTests {
         )
 
         callbackLog.clear()
-        scope.startKeepingExitedValues()
+        scope.startRetainingExitedValues()
         includeContent = false
         recomposeScope.invalidate()
         advance()
@@ -717,7 +717,7 @@ class RetainTests {
         )
 
         callbackLog.clear()
-        scope.stopKeepingExitedValues()
+        scope.stopRetainingExitedValues()
         assertEquals(
             listOf("Retire(RetainedBaz)", "Retire(RetainedBar)", "Retire(RetainedFoo)"),
             callbackLog,
@@ -727,7 +727,7 @@ class RetainTests {
     @Test
     fun changingRetainedValuesStore_adoptsObjectsToNewScope() = compositionTest {
         var scope: RetainedValuesStore =
-            ControlledRetainedValuesStore().apply { startKeepingExitedValues() }
+            ControlledRetainedValuesStore().apply { startRetainingExitedValues() }
         lateinit var recomposeScope: RecomposeScope
         val factoryResults = mutableListOf<CountingRetainObject>()
         var includeContent = true
@@ -742,7 +742,7 @@ class RetainTests {
             }
         }
 
-        scope = ControlledRetainedValuesStore().apply { startKeepingExitedValues() }
+        scope = ControlledRetainedValuesStore().apply { startRetainingExitedValues() }
         recomposeScope.invalidate()
         advance()
         assertEquals(1, factoryResults.size, "Only one object should be retained")
@@ -761,14 +761,14 @@ class RetainTests {
         assertEquals(1, factoryResults.size, "Only one object should be retained")
         retained.assertCounts(retained = 1, entered = 1, exited = 0, retired = 0)
 
-        scope.startKeepingExitedValues()
+        scope.startRetainingExitedValues()
         includeContent = false
         recomposeScope.invalidate()
         advance()
         assertEquals(1, factoryResults.size, "Only one object should be retained")
         retained.assertCounts(retained = 1, entered = 1, exited = 1, retired = 0)
 
-        scope.stopKeepingExitedValues()
+        scope.stopRetainingExitedValues()
         retained.assertCounts(retained = 1, entered = 1, exited = 1, retired = 1)
     }
 
@@ -796,7 +796,7 @@ class RetainTests {
         val retained = factoryResults.first()
         retained.assertCounts(retained = 1, entered = 1, exited = 0, retired = 0)
 
-        scope.startKeepingExitedValues()
+        scope.startRetainingExitedValues()
         showContent = false
         recomposeScope.invalidate()
         advance()
@@ -809,21 +809,21 @@ class RetainTests {
         assertEquals(1, factoryResults.size, "Only one object should be retained")
         retained.assertCounts(retained = 1, entered = 2, exited = 1, retired = 0)
 
-        scope.stopKeepingExitedValues()
-        scope.startKeepingExitedValues()
+        scope.stopRetainingExitedValues()
+        scope.startRetainingExitedValues()
         showContent = false
         recomposeScope.invalidate()
         advance()
         assertEquals(1, factoryResults.size, "Only one object should be retained")
         retained.assertCounts(retained = 1, entered = 2, exited = 2, retired = 0)
-        scope.stopKeepingExitedValues()
+        scope.stopRetainingExitedValues()
         retained.assertCounts(retained = 1, entered = 2, exited = 2, retired = 1)
     }
 
     @Test
     fun retain_inMovableContent_adoptsToDestinationScope() = compositionTest {
         val scopeA = ControlledRetainedValuesStore()
-        val scopeB = ControlledRetainedValuesStore().apply { startKeepingExitedValues() }
+        val scopeB = ControlledRetainedValuesStore().apply { startRetainingExitedValues() }
         lateinit var recomposeScope: RecomposeScope
         val factoryResults = mutableListOf<CountingRetainObject>()
         var moveContent = false
@@ -861,13 +861,13 @@ class RetainTests {
         assertEquals(1, factoryResults.size, "Only one object should be retained")
         retained.assertCounts(retained = 1, entered = 1, exited = 1, retired = 0)
 
-        scopeB.stopKeepingExitedValues()
+        scopeB.stopRetainingExitedValues()
         retained.assertCounts(retained = 1, entered = 1, exited = 1, retired = 1)
     }
 
     @Test
     fun retain_duplicateRetainKeys() = compositionTest {
-        val scope = ControlledRetainedValuesStore().apply { startKeepingExitedValues() }
+        val scope = ControlledRetainedValuesStore().apply { startRetainingExitedValues() }
         lateinit var recomposeScope: RecomposeScope
         val factoryResults = mutableListOf<CountingRetainObject>()
         var showContent = true
@@ -912,7 +912,7 @@ class RetainTests {
 
     @Test
     fun retain_explicitKey_groupCollision() = compositionTest {
-        val scope = ControlledRetainedValuesStore().apply { startKeepingExitedValues() }
+        val scope = ControlledRetainedValuesStore().apply { startRetainingExitedValues() }
         lateinit var recomposeScope: RecomposeScope
         var showContent = true
         var banFactoryObjectCreation = false
@@ -990,16 +990,16 @@ class RetainTests {
     @Test
     fun abandonCompositionTest() {
         var failComposition by mutableStateOf(false)
-        val notKeepingRetainedValuesStore = ControlledRetainedValuesStore()
-        val keepingRetainedValuesStore =
-            ControlledRetainedValuesStore().apply { startKeepingExitedValues() }
+        val notRetainingRetainedValuesStore = ControlledRetainedValuesStore()
+        val retainingRetainedValuesStore =
+            ControlledRetainedValuesStore().apply { startRetainingExitedValues() }
         val events = mutableListOf<String>()
 
         try {
             compositionTest {
                 compose {
                     CompositionLocalProvider(
-                        LocalRetainedValuesStore provides notKeepingRetainedValuesStore
+                        LocalRetainedValuesStore provides notRetainingRetainedValuesStore
                     ) {
                         retain<LoggingRetainObject> { LoggingRetainObject("A", events) }
                         if (failComposition) {
@@ -1008,7 +1008,7 @@ class RetainTests {
                     }
 
                     CompositionLocalProvider(
-                        LocalRetainedValuesStore provides keepingRetainedValuesStore
+                        LocalRetainedValuesStore provides retainingRetainedValuesStore
                     ) {
                         retain<LoggingRetainObject> { LoggingRetainObject("C", events) }
                         if (failComposition) {
@@ -1047,8 +1047,8 @@ class RetainTests {
             eq("Retire(A)")
         }
 
-        events += "stopKeepingExitedValues"
-        keepingRetainedValuesStore.stopKeepingExitedValues()
+        events += "stopRetainingExitedValues"
+        retainingRetainedValuesStore.stopRetainingExitedValues()
         assertContent(events) {
             eq("Retain(A)")
             eq("EnterComposition(A)")
@@ -1060,7 +1060,7 @@ class RetainTests {
             eq("ExitComposition(C)")
             eq("ExitComposition(A)")
             eq("Retire(A)")
-            eq("stopKeepingExitedValues")
+            eq("stopRetainingExitedValues")
             inAnyOrder("Retire(D)", "Retire(C)")
         }
     }
@@ -1095,12 +1095,12 @@ class RetainTests {
         }
         expectNoChanges()
         assertNotNull(retainedContentHostScope, "retainedContentHostScope not initialized")
-        assertFalse(retainedContentHostScope.isKeepingExitedValues)
+        assertFalse(retainedContentHostScope.isRetainingExitedValues)
     }
 
     @Test
     fun retainedContentHostNestedInitializationTest() = compositionTest {
-        val scope = ControlledRetainedValuesStore().apply { startKeepingExitedValues() }
+        val scope = ControlledRetainedValuesStore().apply { startRetainingExitedValues() }
         var retainedContentHostScope: RetainedValuesStore? = null
         var showContent by mutableStateOf(true)
         var retainedCounter = 0
@@ -1128,11 +1128,11 @@ class RetainTests {
         }
         expectNoChanges()
         assertNotNull(retainedContentHostScope, "retainedContentHostScope not initialized")
-        assertTrue(retainedContentHostScope.isKeepingExitedValues)
+        assertTrue(retainedContentHostScope.isRetainingExitedValues)
 
-        scope.stopKeepingExitedValues()
+        scope.stopRetainingExitedValues()
         expectNoChanges()
-        assertFalse(retainedContentHostScope.isKeepingExitedValues)
+        assertFalse(retainedContentHostScope.isRetainingExitedValues)
     }
 
     @Test
@@ -1165,7 +1165,7 @@ class RetainTests {
             "RetainedContentHost should issue a new RetainedValuesStore for its children.",
         )
         assertFalse(
-            retainedContentHostScope.isKeepingExitedValues,
+            retainedContentHostScope.isRetainingExitedValues,
             "retainedContentHostScope should be initialized as not retaining",
         )
 
@@ -1179,7 +1179,7 @@ class RetainTests {
         expectChanges()
         validate {}
         assertTrue(
-            retainedContentHostScope.isKeepingExitedValues,
+            retainedContentHostScope.isRetainingExitedValues,
             "retainedContentHostScope should be retaining values when inactive",
         )
 
@@ -1192,17 +1192,17 @@ class RetainTests {
         }
 
         assertFalse(
-            retainedContentHostScope.isKeepingExitedValues,
+            retainedContentHostScope.isRetainingExitedValues,
             "retainedContentHostScope should stop retaining after being restored",
         )
-        scope.startKeepingExitedValues()
+        scope.startRetainingExitedValues()
         assertTrue(
-            retainedContentHostScope.isKeepingExitedValues,
+            retainedContentHostScope.isRetainingExitedValues,
             "retainedContentHostScope should match parent state",
         )
-        scope.stopKeepingExitedValues()
+        scope.stopRetainingExitedValues()
         assertFalse(
-            retainedContentHostScope.isKeepingExitedValues,
+            retainedContentHostScope.isRetainingExitedValues,
             "retainedContentHostScope should match parent state",
         )
     }
@@ -1221,7 +1221,7 @@ class RetainTests {
 
         scopes.forEach { (key, scope) ->
             assertFalse(
-                scope.isKeepingExitedValues,
+                scope.isRetainingExitedValues,
                 "RetainedValuesStore for key \"$key\" should not be initialized as retaining",
             )
 
@@ -1241,38 +1241,38 @@ class RetainTests {
         provider.getOrCreateRetainedValuesStoreForChild("A")
         provider.getOrCreateRetainedValuesStoreForChild("B")
 
-        assertEquals(0, provider.keepExitedValuesRequestsFor("A"))
-        assertEquals(0, provider.keepExitedValuesRequestsFor("B"))
+        assertEquals(0, provider.retainExitedValuesRequestsFor("A"))
+        assertEquals(0, provider.retainExitedValuesRequestsFor("B"))
 
-        provider.startKeepingExitedValues("A")
-        provider.startKeepingExitedValues("A")
-        provider.startKeepingExitedValues("B")
+        provider.startRetainingExitedValues("A")
+        provider.startRetainingExitedValues("A")
+        provider.startRetainingExitedValues("B")
 
-        assertEquals(2, provider.keepExitedValuesRequestsFor("A"))
-        assertEquals(1, provider.keepExitedValuesRequestsFor("B"))
+        assertEquals(2, provider.retainExitedValuesRequestsFor("A"))
+        assertEquals(1, provider.retainExitedValuesRequestsFor("B"))
 
-        parentScope.startKeepingExitedValues()
-        assertEquals(2, provider.keepExitedValuesRequestsFor("A"))
-        assertEquals(1, provider.keepExitedValuesRequestsFor("B"))
+        parentScope.startRetainingExitedValues()
+        assertEquals(2, provider.retainExitedValuesRequestsFor("A"))
+        assertEquals(1, provider.retainExitedValuesRequestsFor("B"))
 
-        provider.stopKeepingExitedValues("A")
-        provider.stopKeepingExitedValues("A")
+        provider.stopRetainingExitedValues("A")
+        provider.stopRetainingExitedValues("A")
 
-        assertEquals(0, provider.keepExitedValuesRequestsFor("A"))
-        assertTrue(provider.getOrCreateRetainedValuesStoreForChild("A").isKeepingExitedValues)
-        assertEquals(1, provider.keepExitedValuesRequestsFor("B"))
+        assertEquals(0, provider.retainExitedValuesRequestsFor("A"))
+        assertTrue(provider.getOrCreateRetainedValuesStoreForChild("A").isRetainingExitedValues)
+        assertEquals(1, provider.retainExitedValuesRequestsFor("B"))
 
         try {
-            provider.stopKeepingExitedValues("A")
+            provider.stopRetainingExitedValues("A")
             fail("Expected an IllegalStateException to be thrown")
         } catch (_: IllegalStateException) {}
-        assertEquals(0, provider.keepExitedValuesRequestsFor("A"))
+        assertEquals(0, provider.retainExitedValuesRequestsFor("A"))
 
-        parentScope.stopKeepingExitedValues()
-        assertFalse(provider.getOrCreateRetainedValuesStoreForChild("A").isKeepingExitedValues)
-        assertTrue(provider.getOrCreateRetainedValuesStoreForChild("B").isKeepingExitedValues)
-        assertEquals(0, provider.keepExitedValuesRequestsFor("A"))
-        assertEquals(1, provider.keepExitedValuesRequestsFor("B"))
+        parentScope.stopRetainingExitedValues()
+        assertFalse(provider.getOrCreateRetainedValuesStoreForChild("A").isRetainingExitedValues)
+        assertTrue(provider.getOrCreateRetainedValuesStoreForChild("B").isRetainingExitedValues)
+        assertEquals(0, provider.retainExitedValuesRequestsFor("A"))
+        assertEquals(1, provider.retainExitedValuesRequestsFor("B"))
     }
 
     @Test
@@ -1348,9 +1348,9 @@ class RetainTests {
         }
 
         visibleKeys = knownKeys.takeLast(3)
-        retainedValuesStoreRegistry.startKeepingExitedValues("A")
-        retainedValuesStoreRegistry.startKeepingExitedValues("B")
-        retainedValuesStoreRegistry.startKeepingExitedValues("C")
+        retainedValuesStoreRegistry.startRetainingExitedValues("A")
+        retainedValuesStoreRegistry.startRetainingExitedValues("B")
+        retainedValuesStoreRegistry.startRetainingExitedValues("C")
         advance()
         knownKeys.forEach { key ->
             val retainedValuesForKey = retainedValues[key]!!
@@ -1379,9 +1379,9 @@ class RetainTests {
 
         visibleKeys = knownKeys
         advance()
-        retainedValuesStoreRegistry.stopKeepingExitedValues("A")
-        retainedValuesStoreRegistry.stopKeepingExitedValues("B")
-        retainedValuesStoreRegistry.stopKeepingExitedValues("C")
+        retainedValuesStoreRegistry.stopRetainingExitedValues("A")
+        retainedValuesStoreRegistry.stopRetainingExitedValues("B")
+        retainedValuesStoreRegistry.stopRetainingExitedValues("C")
         knownKeys.forEach { key ->
             val retainedValuesForKey = retainedValues[key]!!
             assertEquals(
@@ -1563,10 +1563,10 @@ class RetainTests {
         expectChanges()
         revalidate()
         val originalScopeA = scopeA
-        assertTrue(scopeA.isKeepingExitedValues, "Removed scope should be retaining")
-        assertFalse(scopeB.isKeepingExitedValues, "Unremoved scope should be retaining")
+        assertTrue(scopeA.isRetainingExitedValues, "Removed scope should be retaining")
+        assertFalse(scopeB.isRetainingExitedValues, "Unremoved scope should be retaining")
         provider.clearChild("A")
-        assertFalse(scopeA.isKeepingExitedValues, "Cleared scope should stop retaining")
+        assertFalse(scopeA.isRetainingExitedValues, "Cleared scope should stop retaining")
 
         expectedAText = "A:2"
         includeA = true
@@ -1601,10 +1601,10 @@ class RetainTests {
         )
 
         val childScope = retainedValuesStoreRegistry.getOrCreateRetainedValuesStoreForChild("B")
-        assertFalse(childScope.isKeepingExitedValues)
+        assertFalse(childScope.isRetainingExitedValues)
 
-        parentScope.startKeepingExitedValues()
-        assertTrue(childScope.isKeepingExitedValues)
+        parentScope.startRetainingExitedValues()
+        assertTrue(childScope.isRetainingExitedValues)
         includeRetainedValuesStoreRegistry = false
         advance()
 
@@ -1619,9 +1619,9 @@ class RetainTests {
             events,
         )
 
-        assertTrue(childScope.isKeepingExitedValues)
-        parentScope.stopKeepingExitedValues()
-        assertFalse(childScope.isKeepingExitedValues)
+        assertTrue(childScope.isRetainingExitedValues)
+        parentScope.stopRetainingExitedValues()
+        assertFalse(childScope.isRetainingExitedValues)
         assertEquals(
             listOf(
                 "Retain(A)",
@@ -1643,12 +1643,12 @@ class RetainTests {
     fun retainedValuesStoreRegistry_manualDispose() {
         val retainedValuesStoreRegistry = RetainedValuesStoreRegistry()
         val childScope = retainedValuesStoreRegistry.getOrCreateRetainedValuesStoreForChild("B")
-        repeat(4) { retainedValuesStoreRegistry.startKeepingExitedValues("B") }
+        repeat(4) { retainedValuesStoreRegistry.startRetainingExitedValues("B") }
 
-        assertTrue(childScope.isKeepingExitedValues)
+        assertTrue(childScope.isRetainingExitedValues)
 
         retainedValuesStoreRegistry.dispose()
-        assertFalse(childScope.isKeepingExitedValues)
+        assertFalse(childScope.isRetainingExitedValues)
 
         // Should no-op.
         retainedValuesStoreRegistry.dispose()

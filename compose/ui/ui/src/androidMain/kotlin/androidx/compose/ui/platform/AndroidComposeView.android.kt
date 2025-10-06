@@ -1060,11 +1060,11 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
         if (SDK_INT < 30) {
             showLayoutBounds = getIsShowingLayoutBounds()
         }
-        lifecycleRetainedValuesStoreOwnerEntry?.stopKeepingExitedValues(frameEndScheduler!!)
+        lifecycleRetainedValuesStoreOwnerEntry?.stopRetainingExitedValues(frameEndScheduler!!)
     }
 
     override fun onStop(owner: LifecycleOwner) {
-        lifecycleRetainedValuesStoreOwnerEntry?.startKeepingExitedValues()
+        lifecycleRetainedValuesStoreOwnerEntry?.startRetainingExitedValues()
     }
 
     override fun focusSearch(focused: View?, direction: Int): View? {
