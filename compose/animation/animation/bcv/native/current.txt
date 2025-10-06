@@ -27,7 +27,7 @@ final enum class androidx.compose.animation/EnterExitState : kotlin/Enum<android
 }
 
 abstract fun interface androidx.compose.animation/BoundsTransform { // androidx.compose.animation/BoundsTransform|null[0]
-    abstract fun transform(androidx.compose.ui.geometry/Rect, androidx.compose.ui.geometry/Rect): androidx.compose.animation.core/FiniteAnimationSpec<androidx.compose.ui.geometry/Rect> // androidx.compose.animation/BoundsTransform.transform|transform(androidx.compose.ui.geometry.Rect;androidx.compose.ui.geometry.Rect){}[0]
+    abstract fun createAnimationSpec(androidx.compose.ui.geometry/Rect, androidx.compose.ui.geometry/Rect): androidx.compose.animation.core/FiniteAnimationSpec<androidx.compose.ui.geometry/Rect> // androidx.compose.animation/BoundsTransform.createAnimationSpec|createAnimationSpec(androidx.compose.ui.geometry.Rect;androidx.compose.ui.geometry.Rect){}[0]
 }
 
 abstract interface androidx.compose.animation/AnimatedVisibilityScope { // androidx.compose.animation/AnimatedVisibilityScope|null[0]
