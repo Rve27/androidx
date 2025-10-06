@@ -57,6 +57,7 @@ dependencies {
     androidTestImplementation(project(":compose:ui:ui-graphics"))
     androidTestImplementation(project(":compose:ui:ui-test"))
     androidTestImplementation(project(":compose:ui:ui-text"))
+    androidTestImplementation(project(":navigationevent:navigationevent-testing"))
     androidTestImplementation(project(":lifecycle:lifecycle-common"))
     androidTestImplementation(project(":lifecycle:lifecycle-runtime"))
     androidTestImplementation(project(":lifecycle:lifecycle-runtime-testing"))
