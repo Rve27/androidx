@@ -30,6 +30,7 @@ import androidx.navigationevent.NavigationEventInfo
 import androidx.navigationevent.compose.LocalNavigationEventDispatcherOwner
 import java.util.concurrent.CancellationException
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.BufferOverflow.SUSPEND
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.Channel.Factory.BUFFERED
@@ -109,9 +110,9 @@ public fun PredictiveBackHandler(
     val scope = rememberCoroutineScope()
     val handler = remember { ComposePredictiveBackHandler(scope) }
 
-    // we want to use the same callback, but ensure we adjust the variable on recomposition
+    // Keep the handler instance stable across recompositions, but update the active parameters.
     SideEffect {
-        handler.setIsEnabled(enabled)
+        handler.currentEnabled = enabled
         handler.currentOnBack = onBack
     }
 
@@ -123,93 +124,101 @@ public fun PredictiveBackHandler(
     }
 }
 
-private class OnBackInstance(
-    scope: CoroutineScope,
-    var isPredictiveBack: Boolean,
-    onBack: suspend (progress: Flow<BackEventCompat>) -> Unit,
-    callback: NavigationEventHandler<NavigationEventInfo>,
-) {
-    val channel = Channel<BackEventCompat>(capacity = BUFFERED, onBufferOverflow = SUSPEND)
-    val job =
-        scope.launch {
-            if (callback.isBackEnabled) {
-                var completed = false
-                onBack(channel.consumeAsFlow().onCompletion { completed = true })
-                check(completed) { "You must collect the progress flow" }
-            }
-        }
-
-    fun send(backEvent: BackEventCompat) = channel.trySend(backEvent)
-
-    // idempotent if invoked more than once
-    fun close() = channel.close()
-
-    fun cancel() {
-        channel.cancel(CancellationException("onBack cancelled"))
-        job.cancel()
-    }
-}
-
-private class ComposePredictiveBackHandler(var onBackScope: CoroutineScope) :
+/**
+ * State holder that bridges navigation back events to the user-supplied `onBack`.
+ *
+ * One instance services at most one active gesture. It exposes two mutable inputs that are updated
+ * by the composable:
+ * - [currentEnabled]: maps to `isBackEnabled` in the base class.
+ * - [currentOnBack]: the lambda to invoke for each gesture; it must consume the progress flow.
+ *
+ * Internally we create a new [Channel] and [Job] per gesture. Closing/cancelling them signals
+ * completion/cancellation to the collector.
+ */
+private class ComposePredictiveBackHandler(val scope: CoroutineScope) :
     NavigationEventHandler<NavigationEventInfo>(
         initialInfo = NavigationEventInfo.None,
         isBackEnabled = true,
     ) {
 
+    /** Latest `onBack` implementation to run for the next gesture. */
     var currentOnBack: suspend (progress: Flow<BackEventCompat>) -> Unit = {}
 
-    private var onBackInstance: OnBackInstance? = null
-    private var isActive = false
-
-    fun setIsEnabled(enabled: Boolean) {
-        // We are disabling a callback that was enabled.
-        if (!enabled && !isActive && isBackEnabled) {
-            onBackInstance?.cancel()
+    /**
+     * Mirrors the public `enabled` flag. When disabling and a prior gesture's job has already
+     * finished (`isActive == false`), perform best-effort cleanup of any lingering resources. (If
+     * the job is `null`, there’s nothing to clean.)
+     */
+    var currentEnabled: Boolean
+        get() = isBackEnabled
+        set(value) {
+            // If the handler is being disabled with no active gesture, ensure we clean up any
+            // leftover resources from a prior gesture.
+            if (!value && isBackEnabled && activeJob?.isActive == false) {
+                onBackCancelled()
+            }
+            isBackEnabled = value
         }
-        isBackEnabled = enabled
+
+    // Gesture-scoped resources. A new channel/job is created per gesture and torn down on end.
+    private var activeChannel: Channel<BackEventCompat>? = null
+    private var activeJob: Job? = null
+    private var isPredictiveBack: Boolean = false
+
+    /**
+     * Start a gesture session: create a fresh channel and invoke the consumer lambda with a Flow.
+     * The lambda **must** collect; we enforce this via an `onCompletion` flag.
+     */
+    private fun launchNewGesture() {
+        activeChannel = Channel(capacity = BUFFERED, onBufferOverflow = SUSPEND)
+        activeJob =
+            scope.launch {
+                if (currentEnabled) {
+                    var completed = false
+                    currentOnBack(activeChannel!!.consumeAsFlow().onCompletion { completed = true })
+                    check(completed) { "You must collect the progress flow" }
+                }
+            }
     }
 
     override fun onBackStarted(event: NavigationEvent) {
-        // in case the previous onBackInstance was started by a normal back gesture
-        // we want to make sure it's still cancelled before we start a predictive
-        // back gesture
-        onBackInstance?.cancel()
-        if (isBackEnabled) {
-            onBackInstance = OnBackInstance(onBackScope, true, currentOnBack, this)
+        // Defensive: if a previous gesture wasn't fully cleaned up, cancel it first.
+        onBackCancelled()
+        if (currentEnabled) {
+            isPredictiveBack = true
+            launchNewGesture()
         }
-        isActive = true
     }
 
     override fun onBackProgressed(event: NavigationEvent) {
-        onBackInstance?.send(BackEventCompat(event))
+        // Non-blocking send. With BUFFERED+SUSPEND, trySend will **not** suspend; on a full buffer,
+        // the send fails and the event is dropped. This is intentional to avoid blocking callbacks.
+        activeChannel?.trySend(element = BackEventCompat(navigationEvent = event))
     }
 
     override fun onBackCompleted() {
-        // handleOnBackPressed could be called by regular back to restart
-        // a new back instance. If this is the case (where current back instance
-        // was NOT started by handleOnBackStarted) then we need to reset the previous
-        // regular back.
-        onBackInstance?.apply {
-            if (!isPredictiveBack) {
-                cancel()
-                onBackInstance = null
-            }
-        }
-        if (onBackInstance == null) {
-            onBackInstance = OnBackInstance(onBackScope, false, currentOnBack, this)
+        // For a non-predictive flow, deliver completion through a fresh session.
+        if (activeChannel != null && !isPredictiveBack) {
+            onBackCancelled()
         }
 
-        // finally, we close the channel to ensure no more events can be sent
-        // but let the job complete normally
-        onBackInstance?.close()
-        onBackInstance?.isPredictiveBack = false
-        isActive = false
+        // If nothing is active, spin up a non-predictive session so the collector completes.
+        if (activeChannel == null) {
+            isPredictiveBack = false
+            launchNewGesture()
+        }
+
+        // Closing the channel signals end-of-stream (i.e., completion) to the collector.
+        activeChannel?.close()
+        isPredictiveBack = false
     }
 
     override fun onBackCancelled() {
-        // cancel will purge the channel of any sent events that are yet to be received
-        onBackInstance?.cancel()
-        onBackInstance?.isPredictiveBack = false
-        isActive = false
+        // Best-effort cancellation of both the channel and the running job.
+        activeChannel?.cancel(cause = CancellationException(/* message= */ "onBack cancelled"))
+        activeJob?.cancel()
+        activeChannel = null
+        activeJob = null
+        isPredictiveBack = false
     }
 }
