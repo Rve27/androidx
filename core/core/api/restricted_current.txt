@@ -4240,7 +4240,7 @@ package androidx.core.view.accessibility {
     method @Deprecated public void getBoundsInParent(android.graphics.Rect!);
     method public void getBoundsInScreen(android.graphics.Rect!);
     method public void getBoundsInWindow(android.graphics.Rect);
-    method public int getChecked();
+    method @androidx.core.view.accessibility.AccessibilityNodeInfoCompat.CheckedState public int getChecked();
     method public androidx.core.view.accessibility.AccessibilityNodeInfoCompat! getChild(int);
     method public androidx.core.view.accessibility.AccessibilityNodeInfoCompat? getChild(int, int);
     method public int getChildCount();
@@ -4333,7 +4333,7 @@ package androidx.core.view.accessibility {
     method public void setCanOpenPopup(boolean);
     method public void setCheckable(boolean);
     method @Deprecated public void setChecked(boolean);
-    method public void setChecked(int);
+    method public void setChecked(@androidx.core.view.accessibility.AccessibilityNodeInfoCompat.CheckedState int);
     method public void setClassName(CharSequence!);
     method public void setClickable(boolean);
     method public void setCollectionInfo(Object!);
@@ -4434,6 +4434,9 @@ package androidx.core.view.accessibility {
     field public static final int ACTION_SELECT = 4; // 0x4
     field public static final int ACTION_SET_SELECTION = 131072; // 0x20000
     field public static final int ACTION_SET_TEXT = 2097152; // 0x200000
+    field public static final int CHECKED_STATE_FALSE = 0; // 0x0
+    field public static final int CHECKED_STATE_PARTIAL = 2; // 0x2
+    field public static final int CHECKED_STATE_TRUE = 1; // 0x1
     field public static final int EXPANDED_STATE_COLLAPSED = 1; // 0x1
     field public static final int EXPANDED_STATE_FULL = 3; // 0x3
     field public static final int EXPANDED_STATE_PARTIAL = 2; // 0x2
@@ -4512,6 +4515,9 @@ package androidx.core.view.accessibility {
     field public static final androidx.core.view.accessibility.AccessibilityNodeInfoCompat.AccessibilityActionCompat ACTION_SHOW_TEXT_SUGGESTIONS;
     field public static final androidx.core.view.accessibility.AccessibilityNodeInfoCompat.AccessibilityActionCompat! ACTION_SHOW_TOOLTIP;
     field @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) protected final androidx.core.view.accessibility.AccessibilityViewCommand! mCommand;
+  }
+
+  @IntDef(flag=false, value={androidx.core.view.accessibility.AccessibilityNodeInfoCompat.CHECKED_STATE_FALSE, androidx.core.view.accessibility.AccessibilityNodeInfoCompat.CHECKED_STATE_TRUE, androidx.core.view.accessibility.AccessibilityNodeInfoCompat.CHECKED_STATE_PARTIAL}) @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) @java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.SOURCE) public static @interface AccessibilityNodeInfoCompat.CheckedState {
   }
 
   public static class AccessibilityNodeInfoCompat.CollectionInfoCompat {

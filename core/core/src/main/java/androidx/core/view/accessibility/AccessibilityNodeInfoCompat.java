@@ -2149,6 +2149,34 @@ public class AccessibilityNodeInfoCompat {
     public static final String ACTION_ARGUMENT_SCROLL_AMOUNT_FLOAT =
             "androidx.core.view.accessibility.action.ARGUMENT_SCROLL_AMOUNT_FLOAT";
 
+    // Checked states.
+
+    /**
+     * Checked state for a node that is not checked.
+     *
+     * @see #getChecked()
+     * @see #setChecked(int)
+     */
+    public static final int CHECKED_STATE_FALSE = 0;
+
+    /**
+     * Checked state for a node that is checked.
+     *
+     * @see #getChecked()
+     * @see #setChecked(int)
+     */
+    public static final int CHECKED_STATE_TRUE = 1;
+
+    /**
+     * Checked state for a node that is partially checked. For example,
+     * when a checkbox owns a number of sub-options and they have
+     * different states, then the main checkbox is in a partially-checked state.
+     *
+     * @see #getChecked()
+     * @see #setChecked(int)
+     */
+    public static final int CHECKED_STATE_PARTIAL = 2;
+
     // Expanded states.
 
     /**
@@ -2381,12 +2409,13 @@ public class AccessibilityNodeInfoCompat {
     @IntDef(
             flag = false,
             value = {
-                AccessibilityNodeInfo.CHECKED_STATE_FALSE,
-                AccessibilityNodeInfo.CHECKED_STATE_TRUE,
-                AccessibilityNodeInfo.CHECKED_STATE_PARTIAL,
+                CHECKED_STATE_FALSE,
+                CHECKED_STATE_TRUE,
+                CHECKED_STATE_PARTIAL,
             })
+    @RestrictTo(LIBRARY_GROUP_PREFIX)
     @Retention(RetentionPolicy.SOURCE)
-    private @interface CheckedState {}
+    public @interface CheckedState {}
 
     private static int sClickableSpanId = 0;
 
@@ -3142,9 +3171,9 @@ public class AccessibilityNodeInfoCompat {
      * @see #setChecked(int)
      * @return The checked state, one of:
      *          <ul>
-     *          <li>{@link AccessibilityNodeInfo#CHECKED_STATE_FALSE}
-     *          <li>{@link AccessibilityNodeInfo#CHECKED_STATE_TRUE}
-     *          <li>{@link AccessibilityNodeInfo#CHECKED_STATE_PARTIAL}
+     *          <li>{@link AccessibilityNodeInfoCompat#CHECKED_STATE_FALSE}
+     *          <li>{@link AccessibilityNodeInfoCompat#CHECKED_STATE_TRUE}
+     *          <li>{@link AccessibilityNodeInfoCompat#CHECKED_STATE_PARTIAL}
      *          </ul>
      */
     @CheckedState
@@ -3153,8 +3182,8 @@ public class AccessibilityNodeInfoCompat {
             return Api36Impl.getChecked(mInfo);
         } else {
             return mInfo.getExtras().getInt(CHECKED_KEY,
-                    mInfo.isChecked() ? AccessibilityNodeInfo.CHECKED_STATE_TRUE
-                            : AccessibilityNodeInfo.CHECKED_STATE_FALSE);
+                    mInfo.isChecked() ? CHECKED_STATE_TRUE
+                            : CHECKED_STATE_FALSE);
         }
     }
 
@@ -3170,15 +3199,15 @@ public class AccessibilityNodeInfoCompat {
      * @see #getChecked()
      * @param checked The checked state. One of
      *          <ul>
-     *          <li>{@link AccessibilityNodeInfo#CHECKED_STATE_FALSE}
-     *          <li>{@link AccessibilityNodeInfo#CHECKED_STATE_TRUE}
-     *          <li>{@link AccessibilityNodeInfo#CHECKED_STATE_PARTIAL}
+     *          <li>{@link AccessibilityNodeInfoCompat#CHECKED_STATE_FALSE}
+     *          <li>{@link AccessibilityNodeInfoCompat#CHECKED_STATE_TRUE}
+     *          <li>{@link AccessibilityNodeInfoCompat#CHECKED_STATE_PARTIAL}
      *          </ul>
      * @throws IllegalStateException If called from an AccessibilityService.
      * @throws IllegalArgumentException if {@code checked} is not one of
-     * {@link AccessibilityNodeInfo#CHECKED_STATE_FALSE},
-     *          {@link AccessibilityNodeInfo#CHECKED_STATE_TRUE}, or
-     *          {@link AccessibilityNodeInfo#CHECKED_STATE_PARTIAL}.
+     * {@link AccessibilityNodeInfoCompat#CHECKED_STATE_FALSE},
+     *          {@link AccessibilityNodeInfoCompat#CHECKED_STATE_TRUE}, or
+     *          {@link AccessibilityNodeInfoCompat#CHECKED_STATE_PARTIAL}.
      */
     public void setChecked(@CheckedState int checked) {
         if (Build.VERSION.SDK_INT >= 36) {
@@ -3186,10 +3215,10 @@ public class AccessibilityNodeInfoCompat {
             return;
         }
 
-        if (checked == AccessibilityNodeInfo.CHECKED_STATE_TRUE
-                || checked == AccessibilityNodeInfo.CHECKED_STATE_PARTIAL
-                || checked == AccessibilityNodeInfo.CHECKED_STATE_FALSE) {
-            mInfo.setChecked(checked == AccessibilityNodeInfo.CHECKED_STATE_TRUE);
+        if (checked == CHECKED_STATE_TRUE
+                || checked == CHECKED_STATE_PARTIAL
+                || checked == CHECKED_STATE_FALSE) {
+            mInfo.setChecked(checked == CHECKED_STATE_TRUE);
             mInfo.getExtras().putInt(CHECKED_KEY, checked);
         } else {
             throw new IllegalArgumentException("Unknown checked argument: " + checked);
@@ -5490,9 +5519,9 @@ public class AccessibilityNodeInfoCompat {
 
     private String getCheckedString() {
         @CheckedState int checkedState = getChecked();
-        if (checkedState == AccessibilityNodeInfo.CHECKED_STATE_TRUE) {
+        if (checkedState == CHECKED_STATE_TRUE) {
             return "TRUE";
-        } else if (checkedState == AccessibilityNodeInfo.CHECKED_STATE_PARTIAL) {
+        } else if (checkedState == CHECKED_STATE_PARTIAL) {
             return "PARTIAL";
         } else {
             return "FALSE";

@@ -535,23 +535,28 @@ public class AccessibilityNodeInfoCompatTest extends
     @Test
     public void testGetSetChecked() {
         AccessibilityNodeInfoCompat nodeCompat = obtainedWrappedNodeCompat();
-        assertThat(nodeCompat.getChecked()).isEqualTo(AccessibilityNodeInfo.CHECKED_STATE_FALSE);
+        assertThat(nodeCompat.getChecked()).isEqualTo(
+                AccessibilityNodeInfoCompat.CHECKED_STATE_FALSE);
 
-        nodeCompat.setChecked(AccessibilityNodeInfo.CHECKED_STATE_TRUE);
-        assertThat(nodeCompat.getChecked()).isEqualTo(AccessibilityNodeInfo.CHECKED_STATE_TRUE);
+        nodeCompat.setChecked(AccessibilityNodeInfoCompat.CHECKED_STATE_TRUE);
+        assertThat(nodeCompat.getChecked()).isEqualTo(
+                AccessibilityNodeInfoCompat.CHECKED_STATE_TRUE);
 
-        nodeCompat.setChecked(AccessibilityNodeInfo.CHECKED_STATE_PARTIAL);
-        assertThat(nodeCompat.getChecked()).isEqualTo(AccessibilityNodeInfo.CHECKED_STATE_PARTIAL);
+        nodeCompat.setChecked(AccessibilityNodeInfoCompat.CHECKED_STATE_PARTIAL);
+        assertThat(nodeCompat.getChecked()).isEqualTo(
+                AccessibilityNodeInfoCompat.CHECKED_STATE_PARTIAL);
 
-        nodeCompat.setChecked(AccessibilityNodeInfo.CHECKED_STATE_FALSE);
-        assertThat(nodeCompat.getChecked()).isEqualTo(AccessibilityNodeInfo.CHECKED_STATE_FALSE);
+        nodeCompat.setChecked(AccessibilityNodeInfoCompat.CHECKED_STATE_FALSE);
+        assertThat(nodeCompat.getChecked()).isEqualTo(
+                AccessibilityNodeInfoCompat.CHECKED_STATE_FALSE);
     }
 
     @SmallTest
     @Test
     public void testSetChecked_throwsWithInvalidArgument() {
         AccessibilityNodeInfoCompat nodeCompat = obtainedWrappedNodeCompat();
-        assertThat(nodeCompat.getChecked()).isEqualTo(AccessibilityNodeInfo.CHECKED_STATE_FALSE);
+        assertThat(nodeCompat.getChecked()).isEqualTo(
+                AccessibilityNodeInfoCompat.CHECKED_STATE_FALSE);
 
         assertThrows(IllegalArgumentException.class, () -> nodeCompat.setChecked(4));
     }
