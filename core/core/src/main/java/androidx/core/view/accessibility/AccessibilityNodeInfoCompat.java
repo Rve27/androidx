@@ -2374,8 +2374,9 @@ public class AccessibilityNodeInfoCompat {
                 EXPANDED_STATE_PARTIAL,
                 EXPANDED_STATE_FULL,
             })
+    @RestrictTo(LIBRARY_GROUP_PREFIX)
     @Retention(RetentionPolicy.SOURCE)
-    private @interface ExpandedState {}
+    public @interface ExpandedState {}
 
     @IntDef(
             flag = false,
