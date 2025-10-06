@@ -52,7 +52,6 @@ import androidx.xr.compose.platform.LocalSpatialConfiguration
 import androidx.xr.compose.platform.SpatialComposeScene
 import androidx.xr.compose.platform.disposableValueOf
 import androidx.xr.compose.platform.getValue
-import androidx.xr.compose.platform.requireActivity
 import androidx.xr.compose.subspace.BodyPart
 import androidx.xr.compose.subspace.LockDimensions
 import androidx.xr.compose.subspace.LockingBehavior
@@ -221,8 +220,14 @@ private fun ApplicationSubspace(
         ) {
             it.dispose()
             subspaceRoot.dispose()
-            if (!context.requireActivity().isFinishing) {
+            try {
                 session.scene.mainPanelEntity.setEnabled(true)
+            } catch (_: Exception) {
+                // When this Composable is disposed, it's possible the Activity is already
+                // being destroyed, which also destroys the underlying session. Accessing
+                // `session.scene` would then throw an IllegalStateException, as checked
+                // in `checkAndGetScene`. We can safely ignore this exception as the app
+                // is tearing down and the main panel does not need to be re-enabled.
             }
         }
     }
