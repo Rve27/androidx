@@ -353,19 +353,6 @@ public interface SharedTransitionScope : LookaheadScope {
                 contentScale: ContentScale = ContentScale.FillWidth,
                 alignment: Alignment = Center,
             ): ResizeMode = ScaleToBoundsCached(contentScale, alignment)
-
-            @Deprecated(
-                "ScaleToBounds has been renamed to scaleToBounds",
-                ReplaceWith(
-                    "scaleToBounds(contentScale, alignment)",
-                    "androidx.compose.animation.SharedTransitionScope.ResizeMode.Companion.scaleToBounds",
-                    "androidx.compose.animation.SharedTransitionScope.ResizeMode",
-                ),
-            )
-            public fun ScaleToBounds(
-                contentScale: ContentScale = ContentScale.FillWidth,
-                alignment: Alignment = Center,
-            ): ResizeMode = scaleToBounds()
         }
     }
 
