@@ -138,6 +138,10 @@ internal open class FakeEditablePdfDocument(
         return pageFormWidgetInfos[pageNum]?.filter { it.widgetType in types } ?: emptyList()
     }
 
+    override suspend fun applyEdit(record: FormEditInfo) {
+        return
+    }
+
     override suspend fun applyEdit(pageNum: Int, record: FormEditInfo): List<Rect> {
         editHistory.add(record)
         return listOf()
@@ -331,6 +335,18 @@ internal open class FakeEditablePdfDocument(
     override suspend fun <T : PdfEditEntry<out PdfEdit>> getEditsForPage(pageNum: Int): List<T> {
         @Suppress("UNCHECKED_CAST")
         return edits.values.filter { it.annotation.pageNum == pageNum } as List<T>
+    }
+
+    override fun addOnPdfContentInvalidatedListener(
+        listener: PdfDocument.OnPdfContentInvalidatedListener
+    ) {
+        TODO("Not yet implemented")
+    }
+
+    override fun removeOnPdfContentInvalidatedListener(
+        listener: PdfDocument.OnPdfContentInvalidatedListener
+    ) {
+        TODO("Not yet implemented")
     }
 
     override fun getAllEdits(): PdfEdits = PdfEdits(edits.values.groupBy { it.annotation.pageNum })

@@ -74,6 +74,18 @@ internal open class FakePdfDocument(
         return listOf()
     }
 
+    override fun addOnPdfContentInvalidatedListener(
+        listener: PdfDocument.OnPdfContentInvalidatedListener
+    ) {
+        TODO("Not yet implemented")
+    }
+
+    override fun removeOnPdfContentInvalidatedListener(
+        listener: PdfDocument.OnPdfContentInvalidatedListener
+    ) {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun applyEdit(pageNum: Int, record: FormEditInfo): List<Rect> {
         return listOf()
     }

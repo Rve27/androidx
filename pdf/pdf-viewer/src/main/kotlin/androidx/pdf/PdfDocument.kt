@@ -182,6 +182,30 @@ public interface PdfDocument : Closeable {
     ): List<FormWidgetInfo>
 
     /**
+     * Listener interface for receiving notifications when some regions of the pdf content are
+     * invalidated.
+     */
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    public interface OnPdfContentInvalidatedListener {
+        /**
+         * Invoked when some regions of the pdf content are invalidated, and need to be re-rendered.
+         * (example scenario - when a form field is edited in the PDF.)
+         *
+         * @param pageNumber The page number (0-index based) on which the content was invalidated.
+         * @param dirtyAreas A list of [Rect] indicating regions of the PDF content that were
+         *   invalidated and need to be re-rendered in order to sync UI to the latest state of the
+         *   document.
+         */
+        public fun onPdfContentInvalidated(pageNumber: Int, dirtyAreas: List<Rect>)
+    }
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    public fun addOnPdfContentInvalidatedListener(listener: OnPdfContentInvalidatedListener)
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    public fun removeOnPdfContentInvalidatedListener(listener: OnPdfContentInvalidatedListener)
+
+    /**
      * Applies the changes specified by [record] to the form, and returns a list of [Rect]
      * indicating regions of the PDF content that were affected by the mutation. It reflects the
      * regions of the PDF which need to be re-rendered to reflect the changes.

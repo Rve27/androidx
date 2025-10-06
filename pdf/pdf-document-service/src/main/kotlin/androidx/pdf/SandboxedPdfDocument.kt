@@ -54,6 +54,7 @@ import androidx.pdf.service.connect.PdfServiceConnection
 import androidx.pdf.utils.toAndroidClass
 import androidx.pdf.utils.toContentClass
 import java.util.Collections
+import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.TimeoutException
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.coroutines.CoroutineContext
@@ -116,6 +117,10 @@ public class SandboxedPdfDocument(
 
     /** The [CoroutineScope] we use to close [BitmapSource]s asynchronously */
     private val closeScope = CoroutineScope(coroutineContext + SupervisorJob())
+
+    private val onPdfContentInvalidatedListeners:
+        CopyOnWriteArrayList<PdfDocument.OnPdfContentInvalidatedListener> =
+        CopyOnWriteArrayList()
 
     /**
      * Indicates whether this [androidx.pdf.SandboxedPdfDocument] is closed explicitly by calling
@@ -243,6 +248,27 @@ public class SandboxedPdfDocument(
     override suspend fun getFormWidgetInfos(pageNum: Int, types: IntArray): List<FormWidgetInfo> {
         return withDocument { document ->
             document.getFormWidgetInfosOfType(pageNum, types).map { it.toContentClass() }
+        }
+    }
+
+    override fun addOnPdfContentInvalidatedListener(
+        listener: PdfDocument.OnPdfContentInvalidatedListener
+    ) {
+        onPdfContentInvalidatedListeners.add(listener)
+    }
+
+    override fun removeOnPdfContentInvalidatedListener(
+        listener: PdfDocument.OnPdfContentInvalidatedListener
+    ) {
+        onPdfContentInvalidatedListeners.remove(listener)
+    }
+
+    override suspend fun applyEdit(record: FormEditInfo) {
+        val dirtyAreas = withDocument { document ->
+            document.applyEdit(record.pageNumber, record.toAndroidClass())
+        }
+        onPdfContentInvalidatedListeners.forEach {
+            it.onPdfContentInvalidated(record.pageNumber, dirtyAreas)
         }
     }
 

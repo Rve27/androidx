@@ -21,6 +21,8 @@ import android.graphics.Rect
 import android.os.Build
 import androidx.pdf.PdfDocument.Companion.INCLUDE_FORM_WIDGET_INFO
 import androidx.pdf.SandboxedPdfDocumentTest.Companion.withDocument
+import androidx.pdf.SandboxedPdfDocumentTest.Companion.withEditableDocument
+import androidx.pdf.annotation.EditablePdfDocument
 import androidx.pdf.models.FormEditInfo
 import androidx.pdf.models.FormWidgetInfo
 import androidx.pdf.models.ListItem
@@ -210,11 +212,12 @@ class PdfFormFillingTest {
 
     @Test
     fun applyEdit_clickOnCheckBox() = runTest {
+        val widgetArea = Rect(135, 70, 155, 90)
         val before =
             FormWidgetInfo(
                 widgetType = FormWidgetInfo.WIDGET_TYPE_CHECKBOX,
                 widgetIndex = 1,
-                widgetRect = Rect(135, 70, 155, 90),
+                widgetRect = widgetArea,
                 textValue = "false",
                 accessibilityLabel = "checkbox",
                 readOnly = false,
@@ -227,13 +230,14 @@ class PdfFormFillingTest {
             FormWidgetInfo(
                 widgetType = FormWidgetInfo.WIDGET_TYPE_CHECKBOX,
                 widgetIndex = 1,
-                widgetRect = Rect(135, 70, 155, 90),
+                widgetRect = widgetArea,
                 textValue = "true",
                 accessibilityLabel = "checkbox",
                 readOnly = false,
             )
 
-        verifyApplyEdit(CLICK_FORM, 0, editRec, before, after)
+        val expectedDirtyArea: List<Rect> = listOf(widgetArea)
+        verifyApplyEdit(CLICK_FORM, 0, editRec, before, after, expectedDirtyArea)
     }
 
     @Test
@@ -637,7 +641,7 @@ class PdfFormFillingTest {
         val clickOnROCheckbox =
             FormEditInfo(pageNumber = 0, widgetIndex = 0, clickPoint = Point(145, 40))
 
-        verifyApplyEditThrowsException(CLICK_FORM, 0, clickOnROCheckbox)
+        verifyApplyEditThrowsException(CLICK_FORM, clickOnROCheckbox)
     }
 
     @Test
@@ -645,14 +649,14 @@ class PdfFormFillingTest {
         val clickOnRORadioButton =
             FormEditInfo(pageNumber = 0, widgetIndex = 2, clickPoint = Point(95, 190))
 
-        verifyApplyEditThrowsException(CLICK_FORM, 0, clickOnRORadioButton)
+        verifyApplyEditThrowsException(CLICK_FORM, clickOnRORadioButton)
     }
 
     @Test
     fun applyEdit_setTextOnClickTypeWidget() = runTest {
         val setTextOnCheckbox = FormEditInfo(pageNumber = 0, widgetIndex = 1, text = "New text")
 
-        verifyApplyEditThrowsException(CLICK_FORM, 0, setTextOnCheckbox)
+        verifyApplyEditThrowsException(CLICK_FORM, setTextOnCheckbox)
     }
 
     @Test
@@ -660,14 +664,14 @@ class PdfFormFillingTest {
         val setChoiceOnCB =
             FormEditInfo(pageNumber = 0, widgetIndex = 1, selectedIndices = intArrayOf(1, 2, 3))
 
-        verifyApplyEditThrowsException(CLICK_FORM, 0, setChoiceOnCB)
+        verifyApplyEditThrowsException(CLICK_FORM, setChoiceOnCB)
     }
 
     @Test
     fun applyEdit_clickOnInvalidPoint() = runTest {
         val clickOnNothing = FormEditInfo(pageNumber = 0, widgetIndex = 0, clickPoint = Point(0, 0))
 
-        verifyApplyEditThrowsException(CLICK_FORM, 0, clickOnNothing)
+        verifyApplyEditThrowsException(CLICK_FORM, clickOnNothing)
     }
 
     @Test
@@ -675,7 +679,7 @@ class PdfFormFillingTest {
         val setChoiceOnROCB =
             FormEditInfo(pageNumber = 0, widgetIndex = 2, selectedIndices = intArrayOf(1))
 
-        verifyApplyEditThrowsException(COMBO_BOX_FORM, 0, setChoiceOnROCB)
+        verifyApplyEditThrowsException(COMBO_BOX_FORM, setChoiceOnROCB)
     }
 
     @Test
@@ -687,28 +691,28 @@ class PdfFormFillingTest {
                 selectedIndices = intArrayOf(100, 365, 1436),
             )
 
-        verifyApplyEditThrowsException(COMBO_BOX_FORM, 0, setBadChoice)
+        verifyApplyEditThrowsException(COMBO_BOX_FORM, setBadChoice)
     }
 
     @Test
     fun applyEdit_setTextOnReadOnlyCombobox() = runTest {
         val setTextOnROCB = FormEditInfo(pageNumber = 0, widgetIndex = 2, text = "new text")
 
-        verifyApplyEditThrowsException(COMBO_BOX_FORM, 0, setTextOnROCB)
+        verifyApplyEditThrowsException(COMBO_BOX_FORM, setTextOnROCB)
     }
 
     @Test
     fun applyEdit_setTextOnUneditableCombobox() = runTest {
         val setTextOnUneditableCB = FormEditInfo(pageNumber = 0, widgetIndex = 1, text = "new text")
 
-        verifyApplyEditThrowsException(COMBO_BOX_FORM, 0, setTextOnUneditableCB)
+        verifyApplyEditThrowsException(COMBO_BOX_FORM, setTextOnUneditableCB)
     }
 
     @Test
     fun applyEdit_clickOnCombobox() = runTest {
         val clickOnCB = FormEditInfo(pageNumber = 0, widgetIndex = 1, clickPoint = Point(150, 185))
 
-        verifyApplyEditThrowsException(COMBO_BOX_FORM, 0, clickOnCB)
+        verifyApplyEditThrowsException(COMBO_BOX_FORM, clickOnCB)
     }
 
     // applyEdit edge cases - listbox
@@ -717,7 +721,7 @@ class PdfFormFillingTest {
         val pickMultipleOnSingleChoice =
             FormEditInfo(pageNumber = 0, widgetIndex = 0, selectedIndices = intArrayOf(1, 2))
 
-        verifyApplyEditThrowsException(LIST_BOX_FORM, 0, pickMultipleOnSingleChoice)
+        verifyApplyEditThrowsException(LIST_BOX_FORM, pickMultipleOnSingleChoice)
     }
 
     @Test
@@ -725,21 +729,21 @@ class PdfFormFillingTest {
         val setChoiceOnROLB =
             FormEditInfo(pageNumber = 0, widgetIndex = 2, selectedIndices = intArrayOf(1))
 
-        verifyApplyEditThrowsException(LIST_BOX_FORM, 0, setChoiceOnROLB)
+        verifyApplyEditThrowsException(LIST_BOX_FORM, setChoiceOnROLB)
     }
 
     @Test
     fun applyEdit_clickOnListbox() = runTest {
         val clickOnLB = FormEditInfo(pageNumber = 0, widgetIndex = 1, clickPoint = Point(150, 235))
 
-        verifyApplyEditThrowsException(LIST_BOX_FORM, 0, clickOnLB)
+        verifyApplyEditThrowsException(LIST_BOX_FORM, clickOnLB)
     }
 
     @Test
     fun applyEdit_setTextOnListbox() = runTest {
         val setTextOnLB = FormEditInfo(pageNumber = 0, widgetIndex = 1, text = "new text")
 
-        verifyApplyEditThrowsException(COMBO_BOX_FORM, 0, setTextOnLB)
+        verifyApplyEditThrowsException(COMBO_BOX_FORM, setTextOnLB)
     }
 
     @Test
@@ -754,14 +758,14 @@ class PdfFormFillingTest {
     fun applyEdit_setTextOnReadOnlyTextField() = runTest {
         val setTextOnROTF = FormEditInfo(pageNumber = 0, widgetIndex = 1, text = "new text")
 
-        verifyApplyEditThrowsException(TEXT_FORM, 0, setTextOnROTF)
+        verifyApplyEditThrowsException(TEXT_FORM, setTextOnROTF)
     }
 
     @Test
     fun applyEdit_clickOnTextField() = runTest {
         val clickOnTF = FormEditInfo(pageNumber = 0, widgetIndex = 1, clickPoint = Point(150, 185))
 
-        verifyApplyEditThrowsException(TEXT_FORM, 0, clickOnTF)
+        verifyApplyEditThrowsException(TEXT_FORM, clickOnTF)
     }
 
     @Test
@@ -769,7 +773,7 @@ class PdfFormFillingTest {
         val setChoiceOnTF =
             FormEditInfo(pageNumber = 0, widgetIndex = 1, selectedIndices = intArrayOf(1, 2, 3))
 
-        verifyApplyEditThrowsException(TEXT_FORM, 0, setChoiceOnTF)
+        verifyApplyEditThrowsException(TEXT_FORM, setChoiceOnTF)
     }
 
     companion object {
@@ -821,9 +825,19 @@ class PdfFormFillingTest {
             editRecord: FormEditInfo,
             before: FormWidgetInfo,
             after: FormWidgetInfo,
-            expectedDirtyArea: List<Rect>? = null,
+            expectedDirtyArea: List<Rect>,
         ) {
-            withDocument(fileName) { document ->
+            withEditableDocument(fileName) { document ->
+                document.addOnPdfContentInvalidatedListener(
+                    object : PdfDocument.OnPdfContentInvalidatedListener {
+                        override fun onPdfContentInvalidated(
+                            pageNumber: Int,
+                            dirtyAreas: List<Rect>,
+                        ) {
+                            assertThat(fullyContains(expectedDirtyArea, dirtyAreas)).isTrue()
+                        }
+                    }
+                )
                 val formWidgetInfos =
                     document.getFormWidgetInfos(pageNum, intArrayOf(before.widgetType))
                 for (i in 0..formWidgetInfos.size - 1) {
@@ -832,7 +846,7 @@ class PdfFormFillingTest {
                     }
                 }
 
-                document.applyEdit(pageNum, editRecord)
+                document.applyEdit(editRecord)
 
                 val actualFormWidgetInfos =
                     document.getFormWidgetInfos(pageNum, intArrayOf(before.widgetType))
@@ -844,14 +858,22 @@ class PdfFormFillingTest {
             }
         }
 
+        /**
+         * Returns true if every rect in [innerRects] is contained by at least one rect in
+         * [outerRects].
+         */
+        private fun fullyContains(innerRects: List<Rect>, outerRects: List<Rect>): Boolean {
+            return innerRects.all { inner -> outerRects.any { outer -> outer.contains(inner) } }
+        }
+
         private suspend fun verifyApplyEditThrowsException(
             fileName: String,
-            pageNum: Int,
             editRecord: FormEditInfo,
         ) {
             withDocument(fileName) { document ->
+                document as EditablePdfDocument
                 assertThrows(IllegalArgumentException::class.java) {
-                    runBlocking { document.applyEdit(pageNum, editRecord) }
+                    runBlocking { document.applyEdit(editRecord) }
                 }
             }
         }

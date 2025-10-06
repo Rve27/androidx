@@ -61,6 +61,18 @@ internal class FakeEditablePdfDocument(
         return (annotationsByPage[pageNum] ?: emptyList()).toList() as List<T>
     }
 
+    override fun addOnPdfContentInvalidatedListener(
+        listener: PdfDocument.OnPdfContentInvalidatedListener
+    ) {
+        TODO("Not yet implemented")
+    }
+
+    override fun removeOnPdfContentInvalidatedListener(
+        listener: PdfDocument.OnPdfContentInvalidatedListener
+    ) {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun applyEdits(annotations: List<PdfAnnotationData>): AnnotationResult {
         TODO("Not yet implemented")
     }
@@ -159,6 +171,10 @@ internal class FakeEditablePdfDocument(
     }
 
     override suspend fun getFormWidgetInfos(pageNum: Int, types: IntArray): List<FormWidgetInfo> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun applyEdit(record: FormEditInfo) {
         TODO("Not yet implemented")
     }
 

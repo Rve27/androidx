@@ -178,6 +178,18 @@ internal open class FakePdfDocument(
         return listOf()
     }
 
+    override fun addOnPdfContentInvalidatedListener(
+        listener: PdfDocument.OnPdfContentInvalidatedListener
+    ) {
+        return
+    }
+
+    override fun removeOnPdfContentInvalidatedListener(
+        listener: PdfDocument.OnPdfContentInvalidatedListener
+    ) {
+        return
+    }
+
     override suspend fun applyEdit(pageNum: Int, record: FormEditInfo): List<Rect> {
         return listOf()
     }

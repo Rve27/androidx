@@ -781,6 +781,20 @@ class SandboxedPdfDocumentTest {
             }
         }
 
+        internal suspend fun withEditableDocument(
+            filename: String,
+            block: suspend (EditablePdfDocument) -> Unit,
+        ) {
+            val document = openDocument(filename)
+            try {
+                block(document)
+            } catch (exception: Exception) {
+                throw exception
+            } finally {
+                runTest { document.close() }
+            }
+        }
+
         private suspend fun openDocument(
             filename: String,
             fakeServiceConnection: PdfServiceConnection? = null,
