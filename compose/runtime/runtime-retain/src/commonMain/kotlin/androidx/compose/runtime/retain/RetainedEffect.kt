@@ -97,25 +97,26 @@ private const val RetainedEffectNoParamError =
  * reversed or cleaned up if [key1] changes or if the [RetainedEffect] permanently leaves
  * composition.
  *
- * A [RetainedEffect] tracks the lifecycle of retained content. If the current [RetainScope] is
- * keeping values because its managed content is being transiently destroyed, the [RetainedEffect]
- * is kept alive. From this state, the [RetainedEffect] can either:
- * - Be retired because the [RetainScope] is destroyed without its content being restored
- * - Be retired if the [RetainScope]'s content re-enters the composition but does not include this
- *   [RetainedEffect] or invokes it with different keys
+ * A [RetainedEffect] tracks the lifecycle of retained content. If the current [RetainedValuesStore]
+ * is keeping values because its managed content is being transiently destroyed, the
+ * [RetainedEffect] is kept alive. From this state, the [RetainedEffect] can either:
+ * - Be retired because the [RetainedValuesStore] is destroyed without its content being restored
+ * - Be retired if the [RetainedValuesStore]'s content re-enters the composition but does not
+ *   include this [RetainedEffect] or invokes it with different keys
  * - Be restored to the recreated composition hierarchy. In this case, the [RetainedEffect] does not
  *   execute any callbacks.
  *
- * If a [RetainedEffect] is removed from the composition hierarchy when the [RetainScope] is not
- * keeping exited values, then the scope will immediately be retired and behave like a
+ * If a [RetainedEffect] is removed from the composition hierarchy when the [RetainedValuesStore] is
+ * not keeping exited values, then the scope will immediately be retired and behave like a
  * [androidx.compose.runtime.DisposableEffect]. Retirement has the same timing guarantees as
  * [RetainObserver.onRetired].
  *
  * A [RetainedEffect]'s _key_ is a value that defines the identity of the [RetainedEffect]. If a
  * [RetainedEffect] is recomposed with different keys, a new effect will be created and the previous
- * effect will be retired. If the current RetainScope is not keeping exited values, the retirement
- * happens before the new effect is started. Otherwise, the prior instance of the effect will
- * continue to be retained for possible restoration until the scope stops keeping exited values.
+ * effect will be retired. If the current RetainedValuesStore is not keeping exited values, the
+ * retirement happens before the new effect is started. Otherwise, the prior instance of the effect
+ * will continue to be retained for possible restoration until the scope stops keeping exited
+ * values.
  *
  * [RetainedEffect] may be used to initialize or subscribe to a key and reinitialize when a
  * different key is provided. For example:
@@ -144,25 +145,26 @@ public fun RetainedEffect(key1: Any?, effect: RetainedEffectScope.() -> Retained
  * be reversed or cleaned up if [key1] or [key2] changes or if the [RetainedEffect] permanently
  * leaves composition.
  *
- * A [RetainedEffect] tracks the lifecycle of retained content. If the current [RetainScope] is
- * keeping values because its managed content is being transiently destroyed, the [RetainedEffect]
- * is kept alive. From this state, the [RetainedEffect] can either:
- * - Be retired because the [RetainScope] is destroyed without its content being restored
- * - Be retired if the [RetainScope]'s content re-enters the composition but does not include this
- *   [RetainedEffect] or invokes it with different keys
+ * A [RetainedEffect] tracks the lifecycle of retained content. If the current [RetainedValuesStore]
+ * is keeping values because its managed content is being transiently destroyed, the
+ * [RetainedEffect] is kept alive. From this state, the [RetainedEffect] can either:
+ * - Be retired because the [RetainedValuesStore] is destroyed without its content being restored
+ * - Be retired if the [RetainedValuesStore]'s content re-enters the composition but does not
+ *   include this [RetainedEffect] or invokes it with different keys
  * - Be restored to the recreated composition hierarchy. In this case, the [RetainedEffect] does not
  *   execute any callbacks.
  *
- * If a [RetainedEffect] is removed from the composition hierarchy when the [RetainScope] is not
- * keeping exited values, then the scope will immediately be retired and behave like a
+ * If a [RetainedEffect] is removed from the composition hierarchy when the [RetainedValuesStore] is
+ * not keeping exited values, then the scope will immediately be retired and behave like a
  * [androidx.compose.runtime.DisposableEffect]. Retirement has the same timing guarantees as
  * [RetainObserver.onRetired].
  *
  * A [RetainedEffect]'s _key_ is a value that defines the identity of the [RetainedEffect]. If a
  * [RetainedEffect] is recomposed with different keys, a new effect will be created and the previous
- * effect will be retired. If the current RetainScope is not keeping exited values, the retirement
- * happens before the new effect is started. Otherwise, the prior instance of the effect will
- * continue to be retained for possible restoration until the scope stops keeping exited values.
+ * effect will be retired. If the current RetainedValuesStore is not keeping exited values, the
+ * retirement happens before the new effect is started. Otherwise, the prior instance of the effect
+ * will continue to be retained for possible restoration until the scope stops keeping exited
+ * values.
  *
  * [RetainedEffect] may be used to initialize or subscribe to a key and reinitialize when a
  * different key is provided. For example:
@@ -195,25 +197,26 @@ public fun RetainedEffect(
  * and must be reversed or cleaned up if [key1], [key2], or [key3] changes or if the
  * [RetainedEffect] permanently leaves composition.
  *
- * A [RetainedEffect] tracks the lifecycle of retained content. If the current [RetainScope] is
- * keeping values because its managed content is being transiently destroyed, the [RetainedEffect]
- * is kept alive. From this state, the [RetainedEffect] can either:
- * - Be retired because the [RetainScope] is destroyed without its content being restored
- * - Be retired if the [RetainScope]'s content re-enters the composition but does not include this
- *   [RetainedEffect] or invokes it with different keys
+ * A [RetainedEffect] tracks the lifecycle of retained content. If the current [RetainedValuesStore]
+ * is keeping values because its managed content is being transiently destroyed, the
+ * [RetainedEffect] is kept alive. From this state, the [RetainedEffect] can either:
+ * - Be retired because the [RetainedValuesStore] is destroyed without its content being restored
+ * - Be retired if the [RetainedValuesStore]'s content re-enters the composition but does not
+ *   include this [RetainedEffect] or invokes it with different keys
  * - Be restored to the recreated composition hierarchy. In this case, the [RetainedEffect] does not
  *   execute any callbacks.
  *
- * If a [RetainedEffect] is removed from the composition hierarchy when the [RetainScope] is not
- * keeping exited values, then the scope will immediately be retired and behave like a
+ * If a [RetainedEffect] is removed from the composition hierarchy when the [RetainedValuesStore] is
+ * not keeping exited values, then the scope will immediately be retired and behave like a
  * [androidx.compose.runtime.DisposableEffect]. Retirement has the same timing guarantees as
  * [RetainObserver.onRetired].
  *
  * A [RetainedEffect]'s _key_ is a value that defines the identity of the [RetainedEffect]. If a
  * [RetainedEffect] is recomposed with different keys, a new effect will be created and the previous
- * effect will be retired. If the current RetainScope is not keeping exited values, the retirement
- * happens before the new effect is started. Otherwise, the prior instance of the effect will
- * continue to be retained for possible restoration until the scope stops keeping exited values.
+ * effect will be retired. If the current RetainedValuesStore is not keeping exited values, the
+ * retirement happens before the new effect is started. Otherwise, the prior instance of the effect
+ * will continue to be retained for possible restoration until the scope stops keeping exited
+ * values.
  *
  * [RetainedEffect] may be used to initialize or subscribe to a key and reinitialize when a
  * different key is provided. For example:
@@ -247,24 +250,25 @@ public fun RetainedEffect(
  * reversed or cleaned up if [keys] changes or if the [RetainedEffect] permanently leaves
  * composition.
  *
- * A [RetainedEffect] tracks the lifecycle of retained content. If the current [RetainScope] is
- * keeping values because its managed content is being transiently destroyed, the [RetainedEffect]
- * is kept alive. From this state, the [RetainedEffect] can either:
- * - Be retired because the [RetainScope] is destroyed without its content being restored
- * - Be retired if the [RetainScope]'s content re-enters the composition but does not include this
- *   [RetainedEffect] or invokes it with different keys
+ * A [RetainedEffect] tracks the lifecycle of retained content. If the current [RetainedValuesStore]
+ * is keeping values because its managed content is being transiently destroyed, the
+ * [RetainedEffect] is kept alive. From this state, the [RetainedEffect] can either:
+ * - Be retired because the [RetainedValuesStore] is destroyed without its content being restored
+ * - Be retired if the [RetainedValuesStore]'s content re-enters the composition but does not
+ *   include this [RetainedEffect] or invokes it with different keys
  * - Be restored to the recreated composition hierarchy. In this case, the [RetainedEffect] does not
  *   execute any callbacks.
  *
- * If a [RetainedEffect] is removed from the composition hierarchy when the [RetainScope] is not
- * keeping exited values, then the scope will immediately be retired and behave like a
+ * If a [RetainedEffect] is removed from the composition hierarchy when the [RetainedValuesStore] is
+ * not keeping exited values, then the scope will immediately be retired and behave like a
  * [DisposableEffect]. Retirement has the same timing guarantees as [RetainObserver.onRetired].
  *
  * A [RetainedEffect]'s _key_ is a value that defines the identity of the [RetainedEffect]. If a
  * [RetainedEffect] is recomposed with different keys, a new effect will be created and the previous
- * effect will be retired. If the current RetainScope is not keeping exited values, the retirement
- * happens before the new effect is started. Otherwise, the prior instance of the effect will
- * continue to be retained for possible restoration until the scope stops keeping exited values.
+ * effect will be retired. If the current RetainedValuesStore is not keeping exited values, the
+ * retirement happens before the new effect is started. Otherwise, the prior instance of the effect
+ * will continue to be retained for possible restoration until the scope stops keeping exited
+ * values.
  *
  * [RetainedEffect] may be used to initialize or subscribe to a key and reinitialize when a
  * different key is provided. For example:

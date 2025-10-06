@@ -29,30 +29,30 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.currentComposer
 import androidx.compose.runtime.currentCompositeKeyHashCode
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.retain.RetainScope.*
 import androidx.compose.runtime.retain.RetainStateProvider.AlwaysKeepExitedValues
 import androidx.compose.runtime.retain.RetainStateProvider.NeverKeepExitedValues
 import androidx.compose.runtime.retain.RetainStateProvider.NeverKeepExitedValues.isKeepingExitedValues
 import androidx.compose.runtime.retain.RetainStateProvider.RetainStateObserver
+import androidx.compose.runtime.retain.RetainedValuesStore.*
 import androidx.compose.runtime.staticCompositionLocalOf
 
 /**
- * Remember the value produced by [calculation] and retain it in the current [RetainScope]. A
- * retained value is one that is persisted in memory to survive transient destruction and recreation
- * of a portion or the entirety of the content in the composition hierarchy. Some examples of when
- * content is transient destroyed occur include:
+ * Remember the value produced by [calculation] and retain it in the current [RetainedValuesStore].
+ * A retained value is one that is persisted in memory to survive transient destruction and
+ * recreation of a portion or the entirety of the content in the composition hierarchy. Some
+ * examples of when content is transient destroyed occur include:
  * - Navigation destinations that are on the back stack, not currently visible, and not composed
  * - UI components that are collapsed, not rendering, and not composed
  * - On Android, composition hierarchies hosted by an Activity that is being destroyed and recreated
  *   due to a configuration change
  *
  * When a value retained by [retain] leaves the composition hierarchy during one of these retention
- * scenarios, the [LocalRetainScope] will persist it until the content is recreated. If an instance
- * of this function then re-enters the composition hierarchy during the recreation, it will return
- * the retained value instead of invoking [calculation] again.
+ * scenarios, the [LocalRetainedValuesStore] will persist it until the content is recreated. If an
+ * instance of this function then re-enters the composition hierarchy during the recreation, it will
+ * return the retained value instead of invoking [calculation] again.
  *
- * If this function leaves the composition hierarchy when the [LocalRetainScope] is not keeping
- * values that exit the composition, the value will be discarded immediately.
+ * If this function leaves the composition hierarchy when the [LocalRetainedValuesStore] is not
+ * keeping values that exit the composition, the value will be discarded immediately.
  *
  * The lifecycle of the retained value can be observed by implementing [RetainObserver]. Callbacks
  * from [RememberObserver] are never invoked on objects retained this way. It is invalid to retain
@@ -73,17 +73,17 @@ import androidx.compose.runtime.staticCompositionLocalOf
  *         Exit│   │Enter
  *  composition│   │composition
  *    or change│   │
- *         keys│   │                         ┌──────────────────────────┐
- *             │   ├───No retained value─────┤   calculation: () -> T   │
- *             │   │   or different keys     └──────────────────────────┘
- *             │   │                         ┌──────────────────────────┐
- *             │   └───Re-enter composition──┤    Local RetainScope     │
- *             │       with the same keys    └─────────────────┬────────┘
+ *         keys│   │                         ┌───────────────────────────┐
+ *             │   ├───No retained value─────┤   calculation: () -> T    │
+ *             │   │   or different keys     └───────────────────────────┘
+ *             │   │                         ┌───────────────────────────┐
+ *             │   └───Re-enter composition──┤ Local RetainedValuesStore │
+ *             │       with the same keys    └─────────────────┬─────────┘
  *             │                                           ▲   │
  *             │                      ┌─Yes────────────────┘   │ value not
  *             │                      │                        │ restored and
- *             │   .──────────────────┴──────────────────.     │ scope stops
- *             └─▶(   RetainScope.isKeepingExitedValues   )    │ keeping exited
+ *             │   .──────────────────┴──────────────────.     │ store stops
+ *             └─▶(         isKeepingExitedValues         )    │ keeping exited
  *                 `──────────────────┬──────────────────'     │ values
  *                                    │                        ▼
  *                                    │      ┌──────────────────────────┐
@@ -111,24 +111,24 @@ public inline fun <reified T> retain(noinline calculation: () -> T): T {
 }
 
 /**
- * Remember the value produced by [calculation] and retain it in the current [RetainScope]. A
- * retained value is one that is persisted in memory to survive transient destruction and recreation
- * of a portion of the entirety of the composition hierarchy. Some examples of when this transient
- * destruction occur include:
+ * Remember the value produced by [calculation] and retain it in the current [RetainedValuesStore].
+ * A retained value is one that is persisted in memory to survive transient destruction and
+ * recreation of a portion of the entirety of the composition hierarchy. Some examples of when this
+ * transient destruction occur include:
  * - Navigation destinations that are on the back stack, not currently visible, and not composed
  * - UI components that are collapsed, not rendering, and not composed
  * - On Android, composition hierarchies hosted by an Activity that is being destroyed and recreated
  *   due to a configuration change
  *
  * When a value retained by [retain] leaves the composition hierarchy during one of these retention
- * scenarios, the [LocalRetainScope] will persist it until the content is recreated. If an instance
- * of this function then re-enters the composition hierarchy during the recreation, it will return
- * the retained value instead of invoking [calculation] again.
+ * scenarios, the [LocalRetainedValuesStore] will persist it until the content is recreated. If an
+ * instance of this function then re-enters the composition hierarchy during the recreation, it will
+ * return the retained value instead of invoking [calculation] again.
  *
- * If this function leaves the composition hierarchy when the [LocalRetainScope] is not keeping
- * values that exit the composition or is invoked with list of [keys] that are not all equal (`==`)
- * to the values they had in the previous composition, the value will be discarded immediately and
- * [calculation] will execute again when a new value is needed.
+ * If this function leaves the composition hierarchy when the [LocalRetainedValuesStore] is not
+ * keeping values that exit the composition or is invoked with list of [keys] that are not all equal
+ * (`==`) to the values they had in the previous composition, the value will be discarded
+ * immediately and [calculation] will execute again when a new value is needed.
  *
  * The lifecycle of the retained value can be observed by implementing [RetainObserver]. Callbacks
  * from [RememberObserver] are never invoked on objects retained this way. It is illegal to retain
@@ -153,17 +153,17 @@ public inline fun <reified T> retain(noinline calculation: () -> T): T {
  *         Exit│   │Enter
  *  composition│   │composition
  *    or change│   │
- *         keys│   │                         ┌──────────────────────────┐
- *             │   ├───No retained value─────┤   calculation: () -> T   │
- *             │   │   or different keys     └──────────────────────────┘
- *             │   │                         ┌──────────────────────────┐
- *             │   └───Re-enter composition──┤    Local RetainScope     │
- *             │       with the same keys    └─────────────────┬────────┘
+ *         keys│   │                         ┌───────────────────────────┐
+ *             │   ├───No retained value─────┤   calculation: () -> T    │
+ *             │   │   or different keys     └───────────────────────────┘
+ *             │   │                         ┌───────────────────────────┐
+ *             │   └───Re-enter composition──┤ Local RetainedValuesStore │
+ *             │       with the same keys    └─────────────────┬─────────┘
  *             │                                           ▲   │
  *             │                      ┌─Yes────────────────┘   │ value not
  *             │                      │                        │ restored and
- *             │   .──────────────────┴──────────────────.     │ scope stops
- *             └─▶(   RetainScope.isKeepingExitedValues   )    │ keeping exited
+ *             │   .──────────────────┴──────────────────.     │ store stops
+ *             └─▶(         isKeepingExitedValues         )    │ keeping exited
  *                 `──────────────────┬──────────────────'     │ values
  *                                    │                        ▼
  *                                    │      ┌──────────────────────────┐
@@ -180,7 +180,7 @@ public inline fun <reified T> retain(noinline calculation: () -> T): T {
  *
  * @param keys An arbitrary list of keys that, if changed, will cause an old retained value to be
  *   discarded and for [calculation] to return a new value, regardless of whether the old value was
- *   being retained in the [RetainScope] or not.
+ *   being retained in the [RetainedValuesStore] or not.
  * @param calculation A producer that will be invoked to initialize the retained value if a value
  *   from the previous composition isn't available.
  * @return The result of [calculation]
@@ -223,70 +223,72 @@ internal fun <T> retain(typeHash: Int, vararg keys: Any?, calculation: () -> T):
 
 @Composable
 private fun <T> retainImpl(key: RetainKeys, calculation: () -> T): T {
-    val retainScope = LocalRetainScope.current
+    val retainedValuesStore = LocalRetainedValuesStore.current
     val holder =
         remember(key) {
-            val retainedValue = retainScope.getExitedValueOrDefault(key, RetainScopeMissingValue)
-            if (retainedValue !== RetainScopeMissingValue) {
+            val retainedValue =
+                retainedValuesStore.getExitedValueOrDefault(key, RetainedValuesStoreMissingValue)
+            if (retainedValue !== RetainedValuesStoreMissingValue) {
                 RetainedValueHolder(
                     key = key,
                     value = @Suppress("UNCHECKED_CAST") (retainedValue as T),
-                    owner = retainScope,
+                    owner = retainedValuesStore,
                     isNewlyRetained = false,
                 )
             } else {
                 RetainedValueHolder(
                     key = key,
                     value = calculation(),
-                    owner = retainScope,
+                    owner = retainedValuesStore,
                     isNewlyRetained = true,
                 )
             }
         }
 
-    if (holder.owner !== retainScope) {
-        SideEffect { holder.readoptUnder(retainScope) }
+    if (holder.owner !== retainedValuesStore) {
+        SideEffect { holder.readoptUnder(retainedValuesStore) }
     }
     return holder.value
 }
 
-private val RetainScopeMissingValue = Any()
+private val RetainedValuesStoreMissingValue = Any()
 
 /**
- * The [RetainScope] in which [retain] values will be tracked in. Since a RetainScope controls
- * retention scenarios and signals when to start and end the retention of objects removed from
- * composition, a composition hierarchy may have several RetainScopes to introduce retention periods
- * to specific pieces of content.
+ * The [RetainedValuesStore] in which [retain] values will be tracked in. Since a
+ * RetainedValuesStore controls retention scenarios and signals when to start and end the retention
+ * of objects removed from composition, a composition hierarchy may have several
+ * RetainedValuesStores to introduce retention periods to specific pieces of content.
  *
- * The default implementation is a [ForgetfulRetainScope] that causes [retain] to behave the same as
- * [remember]. On Android, a lifecycle-aware scope is installed at the root of the composition that
- * retains values across configuration changes.
+ * The default implementation is a [ForgetfulRetainedValuesStore] that causes [retain] to behave the
+ * same as [remember]. On Android, a lifecycle-aware [RetainedValuesStore] is installed at the root
+ * of the composition that retains values across configuration changes.
  *
  * If this CompositionLocal is updated, all values previously returned by [retain] will be adopted
- * to the new scope and will follow the new scope's retention lifecycle.
+ * to the new store and will follow the new store's retention lifecycle.
  *
- * RetainScopes should be installed so that their tracked transiently removed content is always
- * removed from composition in the same frame (and by extension, all retained values leave
- * composition in the same frame). If the RetainScope starts keeping exited values and its tracked
- * content is removed in an arbitrary order across several recompositions, it may cause retained
- * values to be restored incorrectly if the retained values from different regions in the
+ * RetainedValuesStores should be installed so that their tracked transiently removed content is
+ * always removed from composition in the same frame (and by extension, all retained values leave
+ * composition in the same frame). If the RetainedValuesStore starts keeping exited values and its
+ * tracked content is removed in an arbitrary order across several recompositions, it may cause
+ * retained values to be restored incorrectly if the retained values from different regions in the
  * composition have the same [currentCompositeKeyHashCode].
  */
-public val LocalRetainScope: ProvidableCompositionLocal<RetainScope> = staticCompositionLocalOf {
-    ForgetfulRetainScope
-}
+public val LocalRetainedValuesStore: ProvidableCompositionLocal<RetainedValuesStore> =
+    staticCompositionLocalOf {
+        ForgetfulRetainedValuesStore
+    }
 
 /**
- * A RetainScope acts as a storage area for objects being retained. An instance of a RetainScope
- * also defines a specific retention policy to describe when removed state should be retained and
- * when it should be forgotten.
+ * A RetainedValuesStore acts as a storage area for objects being retained. An instance of a
+ * RetainedValuesStore also defines a specific retention policy to describe when removed state
+ * should be retained and when it should be forgotten.
  *
  * The general pattern for retention is as follows:
- * 1. The RetainScope receives a notification from that transient content removal is about to begin.
- *    The source of this notification varies depending on what retention scenario is being captured,
- *    but could, for example, be a signal that an Android Activity is being recreated, or that
- *    content is about to be navigated away from/collapsed with the potential of being returned to.
- *    At this time, the scope's owner should call [requestKeepExitedValues].
+ * 1. The RetainedValuesStore receives a notification that transient content removal is about to
+ *    begin. The source of this notification varies depending on what retention scenario is being
+ *    captured, but could, for example, be a signal that an Android Activity is being recreated, or
+ *    that content is about to be navigated away from/collapsed with the potential of being returned
+ *    to. At this time, the store's owner should call [requestKeepExitedValues].
  * 2. Transient content removal begins. The content is recomposed, removed from the hierarchy, and
  *    remembered values are forgotten. Values remembered by [retain] leave the composition but are
  *    not yet released. Every value returned by [retain] will be passed as an argument to
@@ -296,24 +298,24 @@ public val LocalRetainScope: ProvidableCompositionLocal<RetainScope> = staticCom
  *    calls [getExitedValueOrDefault]. If all the input keys match a retained value, the previous
  *    result is returned and the retained value is removed from the pool of restorable objects that
  *    exited the previous composition. This step may be skipped if it becomes impossible to return
- *    to the transiently removed content while this scope is keeping exited values.
+ *    to the transiently removed content while this store is keeping exited values.
  * 4. The content finishes composing after being restored, and the entire frame completes. The owner
- *    of this scope should call [unRequestKeepExitedValues]. When retention stops being requested,
+ *    of this store should call [unRequestKeepExitedValues]. When retention stops being requested,
  *    it immediately ends. Any values that are retained and not currently used in a composition (and
  *    therefore not restored by [getExitedValueOrDefault]) are then immediately discarded.
  *
- * A given `RetainScope` should only be used by a single
+ * A given `RetainedValuesStore` should only be used by a single
  * [Recomposer][androidx.compose.runtime.Recomposer] at a time. It can move between recomposers (for
  * example, when the Window is recreated), but should never be used by two Recomposers
- * simultaneously. It is valid for a RetainScope to be used in multiple compositions at the same
- * time, or in the same composition multiple times.
+ * simultaneously. It is valid for a RetainedValuesStore to be used in multiple compositions at the
+ * same time, or in the same composition multiple times.
  *
  * @see retain
- * @see LocalRetainScope
- * @see ControlledRetainScope
- * @see ForgetfulRetainScope
+ * @see LocalRetainedValuesStore
+ * @see ControlledRetainedValuesStore
+ * @see ForgetfulRetainedValuesStore
  */
-public abstract class RetainScope : RetainStateProvider {
+public abstract class RetainedValuesStore : RetainStateProvider {
 
     protected var keepExitedValuesRequests: Int = 0
         private set
@@ -324,20 +326,20 @@ public abstract class RetainScope : RetainStateProvider {
     private val observers = MutableScatterSet<RetainStateObserver>(0)
 
     /**
-     * If this scope is currently keeping exited values and has a value previously created with the
+     * If this store is currently keeping exited values and has a value previously created with the
      * given [key], its original record is returned and removed from the list of exited kept objects
-     * that this scope is tracking.
+     * that this store is tracking.
      *
      * @param key The keys to resolve a retained value that has left composition
      * @param defaultIfAbsent A value to be returned if there are no retained values that have
-     *   exited composition and are being held by this RetainScope for the given [key].
+     *   exited composition and are being held by this RetainedValuesStore for the given [key].
      * @return A retained value for [key] if there is one and it hasn't already re-entered
      *   composition, otherwise [defaultIfAbsent].
      */
     public abstract fun getExitedValueOrDefault(key: Any, defaultIfAbsent: Any?): Any?
 
     /**
-     * Invoked when a retained value is exiting composition while this scope is keeping exited
+     * Invoked when a retained value is exiting composition while this store is keeping exited
      * values. It is up to the implementation of this method to decide whether and how to store
      * these values so that they can later be retrieved by [getExitedValueOrDefault].
      *
@@ -345,14 +347,14 @@ public abstract class RetainScope : RetainStateProvider {
      * should return retained values with the same keys from [getExitedValueOrDefault] in the
      * opposite order they are received by [saveExitingValue].
      *
-     * If the implementation of this scope does not accept this value into its kept exited object
+     * If the implementation of this store does not accept this value into its kept exited object
      * list, it MUST call [RetainObserver.onRetired] if [value] implements [RetainObserver].
      */
     protected abstract fun saveExitingValue(key: Any, value: Any?)
 
     /**
      * Called to increment the number of requests to keep exited values. When there are a positive
-     * number of requests, this scope begins keeping exited values and continues until all requests
+     * number of requests, this store begins keeping exited values and continues until all requests
      * are cleared.
      *
      * This method is not thread safe and should only be called on the applier thread.
@@ -366,7 +368,7 @@ public abstract class RetainScope : RetainStateProvider {
 
     /**
      * Clears a previous call to [requestKeepExitedValues]. If all requests to keep exited values
-     * have been cleared, this scope will stop keeping exited values.
+     * have been cleared, this store will stop keeping exited values.
      *
      * This method is not thread safe and should only be called on the applier thread.
      *
@@ -385,14 +387,14 @@ public abstract class RetainScope : RetainStateProvider {
     }
 
     /**
-     * Called when this scope first starts to keep exited values (i.e. when [isKeepingExitedValues]
+     * Called when this store first starts to keep exited values (i.e. when [isKeepingExitedValues]
      * transitions from false to true). When this is called, implementors should prepare to begin to
      * store values they receive from [saveExitingValue].
      */
     protected abstract fun onStartKeepingExitedValues()
 
     /**
-     * Called when this scope stops keeping exited values (i.e. when [isKeepingExitedValues]
+     * Called when this store stops keeping exited values (i.e. when [isKeepingExitedValues]
      * transitions from true to false). After this is called, all exited values that have been kept
      * and not restored via [getExitedValueOrDefault] should be retired.
      *
@@ -413,11 +415,11 @@ public abstract class RetainScope : RetainStateProvider {
     internal constructor(
         val key: Any,
         val value: T,
-        owner: RetainScope,
+        owner: RetainedValuesStore,
         private var isNewlyRetained: Boolean,
     ) : RememberObserver {
 
-        var owner: RetainScope = owner
+        var owner: RetainedValuesStore = owner
             private set
 
         init {
@@ -430,8 +432,8 @@ public abstract class RetainScope : RetainStateProvider {
             }
         }
 
-        internal fun readoptUnder(newScope: RetainScope) {
-            owner = newScope
+        internal fun readoptUnder(newStore: RetainedValuesStore) {
+            owner = newStore
         }
 
         override fun onRemembered() {
@@ -467,15 +469,15 @@ public abstract class RetainScope : RetainStateProvider {
 }
 
 /**
- * [RetainStateProvider] is an owner of the [isKeepingExitedValues] state used by [RetainScope].
- * This interface is extracted to allow retain state to be observed without the presence of the
- * value storage. This is particularly useful as most [RetainScope]s respect a hierarchy where they
- * begin keeping exited values when either their retain condition becomes true or their parent scope
- * begins keeping exited values.
+ * [RetainStateProvider] is an owner of the [isKeepingExitedValues] state used by
+ * [RetainedValuesStore]. This interface is extracted to allow retain state to be observed without
+ * the presence of the value storage. This is particularly useful as most [RetainedValuesStore]s
+ * respect a hierarchy where they begin keeping exited values when either their retain condition
+ * becomes true or their parent store begins keeping exited values.
  */
 public interface RetainStateProvider {
     /**
-     * Returns whether the associated retain scenario is active, and associated scopes should retain
+     * Returns whether the associated retain scenario is active, and associated stores should retain
      * objects as they are removed from the composition hierarchy.
      */
     public val isKeepingExitedValues: Boolean
@@ -525,9 +527,10 @@ public interface RetainStateProvider {
     }
 
     /**
-     * An implementation of [RetainStateProvider] that is not backed by a [RetainScope] and is
-     * always set to keep exited values. This object is stateless and can be used to orphan a nested
-     * [RetainScope] while maintaining it in a state where the scope keeps all exited values.
+     * An implementation of [RetainStateProvider] that is not backed by a [RetainedValuesStore] and
+     * is always set to keep exited values. This object is stateless and can be used to orphan a
+     * nested [RetainedValuesStore] while maintaining it in a state where the store keeps all exited
+     * values.
      */
     @Stable
     public object AlwaysKeepExitedValues : RetainStateProvider {
@@ -544,9 +547,9 @@ public interface RetainStateProvider {
     }
 
     /**
-     * An implementation of [RetainStateProvider] that is not backed by a [RetainScope] and is never
-     * set to keep exited values. This object is stateless and can be used to orphan a nested
-     * [RetainScope] and clear any parent-driven state of [isKeepingExitedValues].
+     * An implementation of [RetainStateProvider] that is not backed by a [RetainedValuesStore] and
+     * is never set to keep exited values. This object is stateless and can be used to orphan a
+     * nested [RetainedValuesStore] and clear any parent-driven state of [isKeepingExitedValues].
      */
     @Stable
     public object NeverKeepExitedValues : RetainStateProvider {
@@ -564,30 +567,31 @@ public interface RetainStateProvider {
 }
 
 /**
- * A [ControlledRetainScope] is effectively a "Mutable" [RetainScope]. This scope can be used to
- * define a custom retain scenario and supports nesting within another [RetainScope] via
- * [setParentRetainStateProvider].
+ * A [ControlledRetainedValuesStore] is effectively a "Mutable" [RetainedValuesStore]. This store
+ * can be used to define a custom retain scenario and supports nesting within another
+ * [RetainedValuesStore] via [setParentRetainStateProvider].
  *
  * This class can be used to create your own retention scenario. A retention scenario is a situation
  * in which content is transiently removed from the composition hierarchy and can be restored with
  * the retained values from the previous composition.
  *
  * When using this class to create your own retention scenario, call [startKeepingExitedValues] to
- * make this scope start keeping exited values state before any content is transiently removed. When
+ * make this store start keeping exited values state before any content is transiently removed. When
  * the transiently removed content is restored, call [stopKeepingExitedValues] **after all content
  * has been restored**. You can use [androidx.compose.runtime.Recomposer.scheduleFrameEndCallback]
  * or [androidx.compose.runtime.Composer.scheduleFrameEndCallback] to ensure that all content has
  * settled in subcompositions and movable content that may not be realized or applied in as part of
  * a composition that is currently ongoing.
  *
- * To create a [ControlledRetainScope] that is managed entirely within the composition hierarchy,
- * you can use [retainControlledRetainScope] to create a [ControlledRetainScope] that is
- * automatically parented to the current [LocalRetainScope].
+ * To create a [ControlledRetainedValuesStore] that is managed entirely within the composition
+ * hierarchy, you can use [retainControlledRetainedValuesStore] to create a
+ * [ControlledRetainedValuesStore] that is automatically parented to the current
+ * [LocalRetainedValuesStore].
  */
-public class ControlledRetainScope : RetainScope() {
+public class ControlledRetainedValuesStore : RetainedValuesStore() {
     private val keptExitedValues = SafeMultiValueMap<Any, Any?>()
 
-    private var parentScope: RetainStateProvider = NeverKeepExitedValues
+    private var parentStore: RetainStateProvider = NeverKeepExitedValues
     private val parentObserver =
         object : RetainStateObserver {
             override fun onStartKeepingExitedValues() {
@@ -601,30 +605,30 @@ public class ControlledRetainScope : RetainScope() {
 
     /**
      * Returns the number of calls to [startKeepingExitedValues] - [stopKeepingExitedValues].
-     * Effectively, the total number of active requests to this [ControlledRetainScope].
+     * Effectively, the total number of active requests to this [ControlledRetainedValuesStore].
      *
      * Note that this value **ignores any parent state.** It only counts explicit requests from the
-     * user to [startKeepingExitedValues]. This scope could still be retaining if this value is `0`
-     * if the parent scope is retaining. This is useful if you want to track your contributions to
-     * this scope's state, ignoring the parent.
+     * user to [startKeepingExitedValues]. This store could still be retaining if this value is `0`
+     * if the parent store is retaining. This is useful if you want to track your contributions to
+     * this store's state, ignoring the parent.
      */
     public val keepExitedValuesRequestsFromSelf: Int
-        get() = keepExitedValuesRequests - if (parentScope.isKeepingExitedValues) 1 else 0
+        get() = keepExitedValuesRequests - if (parentStore.isKeepingExitedValues) 1 else 0
 
     /**
      * Calling this function will automatically mirror the state of [isKeepingExitedValues] to match
-     * [parent]'s state. This is an addition to requests made on the [ControlledRetainScope], so
-     * keeping exited values is a function of whether the parent is keeping exited values OR this
-     * scope has been requested to keep exited values.
+     * [parent]'s state. This is an addition to requests made on the
+     * [ControlledRetainedValuesStore], so keeping exited values is a function of whether the parent
+     * is keeping exited values OR this store has been requested to keep exited values.
      *
-     * A [ControlledRetainScope] can only have one parent. If a new parent is provided, it will
-     * replace the old one and will match the new parent's [isKeepingExitedValues] state. This may
-     * cause this scope to start or stop keeping exited values if this scope has no other active
+     * A [ControlledRetainedValuesStore] can only have one parent. If a new parent is provided, it
+     * will replace the old one and will match the new parent's [isKeepingExitedValues] state. This
+     * may cause this store to start or stop keeping exited values if this store has no other active
      * requests from [startKeepingExitedValues].
      */
     public fun setParentRetainStateProvider(parent: RetainStateProvider) {
-        val oldParent = parentScope
-        parentScope = parent
+        val oldParent = parentStore
+        parentStore = parent
 
         parent.addRetainStateObserver(parentObserver)
         oldParent.removeRetainStateObserver(parentObserver)
@@ -634,8 +638,8 @@ public class ControlledRetainScope : RetainScope() {
     }
 
     /**
-     * Indicates that this scope should keep retained values that exit the composition. If this
-     * scope is already in this mode, the scope will not change states. The number of times this
+     * Indicates that this store should keep retained values that exit the composition. If this
+     * store is already in this mode, the store will not change states. The number of times this
      * function is called is tracked and must be matched by the same number of calls to
      * [stopKeepingExitedValues] before the kept values will be retired.
      */
@@ -644,7 +648,7 @@ public class ControlledRetainScope : RetainScope() {
     /**
      * Stops keeping values that have exited the composition. This function cancels a request that
      * previously began by calling [startKeepingExitedValues]. If [startKeepingExitedValues] has
-     * been called more than [stopKeepingExitedValues], the scope will continue to keep retained
+     * been called more than [stopKeepingExitedValues], the store will continue to keep retained
      * values that have exited the composition until [stopKeepingExitedValues] has been called the
      * same number of times as [startKeepingExitedValues].
      *
@@ -675,15 +679,17 @@ public class ControlledRetainScope : RetainScope() {
 }
 
 /**
- * The ForgetfulRetainScope is an implementation of [RetainScope] that is incapable of keeping any
- * exited values. When installed as the [LocalRetainScope], all invocations of [retain] will behave
- * like a standard [remember]. [RetainObserver] callbacks are still dispatched instead of
- * [RememberObserver] callbacks, meaning that this class will always immediately retire a value as
- * soon as it exits composition.
+ * The ForgetfulRetainedValuesStore is an implementation of [RetainedValuesStore] that is incapable
+ * of keeping any exited values. When installed as the [LocalRetainedValuesStore], all invocations
+ * of [retain] will behave like a standard [remember]. [RetainObserver] callbacks are still
+ * dispatched instead of [RememberObserver] callbacks, meaning that this class will always
+ * immediately retire a value as soon as it exits composition.
  */
-public object ForgetfulRetainScope : RetainScope() {
+public object ForgetfulRetainedValuesStore : RetainedValuesStore() {
     override fun onStartKeepingExitedValues() {
-        throw UnsupportedOperationException("ForgetfulRetainScope can never keep exited values.")
+        throw UnsupportedOperationException(
+            "ForgetfulRetainedValuesStore can never keep exited values."
+        )
     }
 
     override fun onStopKeepingExitedValues() {
@@ -695,55 +701,59 @@ public object ForgetfulRetainScope : RetainScope() {
     }
 
     override fun saveExitingValue(key: Any, value: Any?) {
-        throw UnsupportedOperationException("ForgetfulRetainScope can never keep exited values.")
+        throw UnsupportedOperationException(
+            "ForgetfulRetainedValuesStore can never keep exited values."
+        )
     }
 }
 
 /**
- * `RetainedContentHost` is used to install a [RetainScope] around a block of [content]. The
- * installed `RetainScope` is managed such that the scope will start to keep exited values when
- * [active] is false, and stop keeping exited values when [active] becomes true. See
- * [RetainScope.isKeepingExitedValues] for more information on this terminology.
+ * `RetainedContentHost` is used to install a [RetainedValuesStore] around a block of [content]. The
+ * installed `RetainedValuesStore` is managed such that the store will start to keep exited values
+ * when [active] is false, and stop keeping exited values when [active] becomes true. See
+ * [RetainedValuesStore.isKeepingExitedValues] for more information on this terminology.
  *
  * `RetainedContentHost` is designed as an out-of-the-box solution for managing content that's
  * controlled effectively by an if/else statement. The [content] provided to this lambda will render
  * when [active] is true, and be removed when [active] is false. If the content is hidden and then
- * shown again in this way, the installed RetainScope will restore all retained values from the last
- * time the content was shown.
+ * shown again in this way, the installed RetainedValuesStore will restore all retained values from
+ * the last time the content was shown.
  *
- * The managed RetainScope is _also_ retained. If this composable is removed while the parent scope
- * is keeping its exited values, this scope will be persisted so that it can be restored in the
- * future. If this composable is removed while its parent scope is not keeping its exited values,
- * the scope will be discarded and all its held values will be immediately retired.
+ * The managed RetainedValuesStore is _also_ retained. If this composable is removed while the
+ * parent store is keeping its exited values, this store will be persisted so that it can be
+ * restored in the future. If this composable is removed while its parent store is not keeping its
+ * exited values, the store will be discarded and all its held values will be immediately retired.
  *
  * For this reason, when using this as a mechanism to retain values for content that is being shown
  * and hidden, this composable must be hoisted high enough so that it is not removed when the
  * content being retained is hidden.
  *
  * @param active Whether this host should compose its [content]. When this value is true, [content]
- *   will be rendered and the installed [RetainScope] will not keep exited values. When this value
- *   is false, [content] will stop being rendered and the installed [RetainScope] will collect and
- *   keep its exited values for future restoration.
- * @param content The content to render. Inside of this lambda, [LocalRetainScope] is set to the
- *   [RetainScope] managed by this composable.
+ *   will be rendered and the installed [RetainedValuesStore] will not keep exited values. When this
+ *   value is false, [content] will stop being rendered and the installed [RetainedValuesStore] will
+ *   collect and keep its exited values for future restoration.
+ * @param content The content to render. Inside of this lambda, [LocalRetainedValuesStore] is set to
+ *   the [RetainedValuesStore] managed by this composable.
  * @sample androidx.compose.runtime.retain.samples.retainedContentHostSample
- * @see retainControlledRetainScope
+ * @see retainControlledRetainedValuesStore
  */
 @Composable
 public fun RetainedContentHost(active: Boolean, content: @Composable () -> Unit) {
-    val retainScope = retainControlledRetainScope()
+    val retainedValuesStore = retainControlledRetainedValuesStore()
     if (active) {
-        CompositionLocalProvider(LocalRetainScope provides retainScope, content)
+        CompositionLocalProvider(LocalRetainedValuesStore provides retainedValuesStore, content)
 
         // Match the isKeepingExitedValues state to the active parameter. This effect must come
         // AFTER the content to correctly capture values.
         val composer = currentComposer
-        DisposableEffect(retainScope) {
+        DisposableEffect(retainedValuesStore) {
             // Stop keeping exited values when we become active. Use the request count to only
             // look at our state and to ignore any parent-influenced requests.
             val cancellationHandle =
-                if (retainScope.keepExitedValuesRequestsFromSelf > 0) {
-                    composer.scheduleFrameEndCallback { retainScope.stopKeepingExitedValues() }
+                if (retainedValuesStore.keepExitedValuesRequestsFromSelf > 0) {
+                    composer.scheduleFrameEndCallback {
+                        retainedValuesStore.stopKeepingExitedValues()
+                    }
                 } else {
                     null
                 }
@@ -751,47 +761,48 @@ public fun RetainedContentHost(active: Boolean, content: @Composable () -> Unit)
             onDispose {
                 // Start keeping exited values when we deactivate
                 cancellationHandle?.cancel()
-                retainScope.startKeepingExitedValues()
+                retainedValuesStore.startKeepingExitedValues()
             }
         }
     }
 }
 
 /**
- * Retains a [ControlledRetainScope] that is nested under the current [LocalRetainScope] and has no
- * other defined retention scenarios.
+ * Retains a [ControlledRetainedValuesStore] that is nested under the current
+ * [LocalRetainedValuesStore] and has no other defined retention scenarios.
  *
- * A [ControlledRetainScope] created in this way will mirror the retention behavior of
- * [LocalRetainScope]. When the parent scope begins retaining its values, the returned scope will
- * receive a request to start retaining values as well. When the parent scope stops retaining
+ * A [ControlledRetainedValuesStore] created in this way will mirror the retention behavior of
+ * [LocalRetainedValuesStore]. When the parent store begins retaining its values, the returned store
+ * will receive a request to start retaining values as well. When the parent store stops retaining
  * values, that request is cleared.
  *
- * This API is available as a building block for other retain scopes defined in composition. To
- * define your own retention scenario, call [ControlledRetainScope.startKeepingExitedValues] and
- * [ControlledRetainScope.stopKeepingExitedValues] on the returned scope as appropriate. You must
- * also install this scope in the composition hierarchy by providing it as the value of
- * [LocalRetainScope].
+ * This API is available as a building block for other retain stores defined in composition. To
+ * define your own retention scenario, call [ControlledRetainedValuesStore.startKeepingExitedValues]
+ * and [ControlledRetainedValuesStore.stopKeepingExitedValues] on the returned store as appropriate.
+ * You must also install this store in the composition hierarchy by providing it as the value of
+ * [LocalRetainedValuesStore].
  *
  * When this value stops being retained, it will automatically stop keeping exited values,
- * regardless of how many times [ControlledRetainScope.startKeepingExitedValues] was called.
+ * regardless of how many times [ControlledRetainedValuesStore.startKeepingExitedValues] was called.
  *
- * @return A [ControlledRetainScope] nested under the [LocalRetainScope], ready to be installed in
- *   the composition hierarchy and be used to define a retention scenario.
- * @sample androidx.compose.runtime.retain.samples.retainControlledRetainScopeSample
+ * @return A [ControlledRetainedValuesStore] nested under the [LocalRetainedValuesStore], ready to
+ *   be installed in the composition hierarchy and be used to define a retention scenario.
+ * @sample androidx.compose.runtime.retain.samples.retainControlledRetainedValuesStoreSample
  * @see RetainedContentHost
  */
 @Composable
-public fun retainControlledRetainScope(): ControlledRetainScope {
-    val retainScope = retain { RetainControlledRetainScopeWrapper() }.retainScope
+public fun retainControlledRetainedValuesStore(): ControlledRetainedValuesStore {
+    val retainedValuesStore =
+        retain { RetainControlledRetainedValuesStoreWrapper() }.retainedValuesStore
 
-    val parentScope = LocalRetainScope.current
-    DisposableEffect(parentScope) {
-        retainScope.setParentRetainStateProvider(parentScope)
+    val parentStore = LocalRetainedValuesStore.current
+    DisposableEffect(parentStore) {
+        retainedValuesStore.setParentRetainStateProvider(parentStore)
         onDispose {
-            // Keep the parent's state until we get a new scope. This lets us continue
+            // Keep the parent's state until we get a new store. This lets us continue
             // retaining when the composition hierarchy is destroyed and this parent is removed.
-            retainScope.setParentRetainStateProvider(
-                if (parentScope.isKeepingExitedValues) {
+            retainedValuesStore.setParentRetainStateProvider(
+                if (parentStore.isKeepingExitedValues) {
                     AlwaysKeepExitedValues
                 } else {
                     NeverKeepExitedValues
@@ -800,11 +811,11 @@ public fun retainControlledRetainScope(): ControlledRetainScope {
         }
     }
 
-    return retainScope
+    return retainedValuesStore
 }
 
-private class RetainControlledRetainScopeWrapper : RetainObserver {
-    val retainScope = ControlledRetainScope()
+private class RetainControlledRetainedValuesStoreWrapper : RetainObserver {
+    val retainedValuesStore = ControlledRetainedValuesStore()
 
     override fun onRetained() {}
 
@@ -813,43 +824,45 @@ private class RetainControlledRetainScopeWrapper : RetainObserver {
     override fun onExitedComposition() {}
 
     override fun onRetired() {
-        // The retainScope has stopped being retained. Dispose it.
-        retainScope.setParentRetainStateProvider(NeverKeepExitedValues)
-        while (retainScope.isKeepingExitedValues) retainScope.stopKeepingExitedValues()
+        // The retainedValuesStore has stopped being retained. Dispose it.
+        retainedValuesStore.setParentRetainStateProvider(NeverKeepExitedValues)
+        while (retainedValuesStore.isKeepingExitedValues) retainedValuesStore
+            .stopKeepingExitedValues()
     }
 
     override fun onUnused() {
-        // Need to clean up if the scope is abandoned, in case our parent caused us
+        // Need to clean up if the store is abandoned, in case our parent caused us
         // to initialize with kept values.
         onRetired()
     }
 }
 
 /**
- * Returns a [retain] instance of a new [RetainScopeHolder]. A RetainScopeHolder is a container of
- * [RetainScope]s that allows a parent composable to have children with different retention
- * lifecycles. See [RetainScopeHolder] for more information on how to use this class, including a
- * sample.
+ * Returns a [retain] instance of a new [RetainedValuesStoreRegistry]. A RetainedValuesStoreRegistry
+ * is a container of [RetainedValuesStore]s that allows a parent composable to have children with
+ * different retention lifecycles. See [RetainedValuesStoreRegistry] for more information on how to
+ * use this class, including a sample.
  *
- * The returned provider will be parented to the [LocalRetainScope] at this point in the composition
- * hierarchy. If the [LocalRetainScope] is changed, the returned provider will be re-parented to the
- * new [LocalRetainScope]. When this invocation leaves composition, it will continue retaining if
- * its parent scope was retaining. When this [RetainScopeHolder] is retired, its child scopes will
- * also be retired and the scope will be [disposed][RetainScopeHolder.dispose].
+ * The returned provider will be parented to the [LocalRetainedValuesStore] at this point in the
+ * composition hierarchy. If the [LocalRetainedValuesStore] is changed, the returned provider will
+ * be re-parented to the new [LocalRetainedValuesStore]. When this invocation leaves composition, it
+ * will continue retaining if its parent store was retaining. When this
+ * [RetainedValuesStoreRegistry] is retired, its child stores will also be retired and the store
+ * will be [disposed][RetainedValuesStoreRegistry.dispose].
  *
  * This method is intended to be used for managing retain state in composables that swap in and out
  * children arbitrarily.
  */
 @Composable
-public fun retainRetainScopeHolder(): RetainScopeHolder {
-    val provider = retain { RetainScopeHolderWrapper() }.retainScopeHolder
-    val parentScope = LocalRetainScope.current
-    DisposableEffect(parentScope) {
-        provider.setParentRetainStateProvider(parentScope)
+public fun retainRetainedValuesStoreRegistry(): RetainedValuesStoreRegistry {
+    val provider = retain { RetainedValuesStoreRegistryWrapper() }.retainedValuesStoreRegistry
+    val parentStore = LocalRetainedValuesStore.current
+    DisposableEffect(parentStore) {
+        provider.setParentRetainStateProvider(parentStore)
         onDispose {
             provider.setParentRetainStateProvider(
                 parent =
-                    if (parentScope.isKeepingExitedValues) {
+                    if (parentStore.isKeepingExitedValues) {
                         AlwaysKeepExitedValues
                     } else {
                         NeverKeepExitedValues
@@ -860,8 +873,8 @@ public fun retainRetainScopeHolder(): RetainScopeHolder {
     return provider
 }
 
-private class RetainScopeHolderWrapper : RetainObserver {
-    val retainScopeHolder = RetainScopeHolder()
+private class RetainedValuesStoreRegistryWrapper : RetainObserver {
+    val retainedValuesStoreRegistry = RetainedValuesStoreRegistry()
 
     override fun onRetained() {}
 
@@ -870,42 +883,43 @@ private class RetainScopeHolderWrapper : RetainObserver {
     override fun onExitedComposition() {}
 
     override fun onRetired() {
-        retainScopeHolder.dispose()
+        retainedValuesStoreRegistry.dispose()
     }
 
     override fun onUnused() {
-        retainScopeHolder.dispose()
+        retainedValuesStoreRegistry.dispose()
     }
 }
 
 /**
- * A [RetainScopeHolder] creates and manages [RetainScope] instances for collections of items. This
- * is desirable for components that swap in and out children where each child should be able to
- * retain state when it becomes removed from the composition hierarchy.
+ * A [RetainedValuesStoreRegistry] creates and manages [RetainedValuesStore] instances for
+ * collections of items. This is desirable for components that swap in and out children where each
+ * child should be able to retain state when it becomes removed from the composition hierarchy.
  *
- * To use this class, call [getOrCreateRetainScopeForChild] to instantiate the [RetainScope] that
- * should be installed for a given child content block. For automatic installation and content
- * tracking, wrap your content in [RetainScopeProvider].
+ * To use this class, call [getOrCreateRetainedValuesStoreForChild] to instantiate the
+ * [RetainedValuesStore] that should be installed for a given child content block. For automatic
+ * installation and content tracking, wrap your content in [ProvideChildRetainedValuesStore].
  *
- * You can also install the managed retain scopes manually by obtaining a RetainScope with
- * [getOrCreateRetainScopeForChild] and setting it as the [LocalRetainScope] for your children's
- * content. When a child is being removed, call [startKeepingExitedValues] to begin the transient
- * destruction phase of your retention scenario. After the child has been added back to the
- * composition, invoke [stopKeepingExitedValues] to finalize the restoration of retained values.
+ * You can also install the managed [RetainedValuesStore]s manually by obtaining a
+ * [RetainedValuesStore] with [getOrCreateRetainedValuesStoreForChild] and setting it as the
+ * [LocalRetainedValuesStore] for your children's content. When a child is being removed, call
+ * [startKeepingExitedValues] to begin the transient destruction phase of your retention scenario.
+ * After the child has been added back to the composition, invoke [stopKeepingExitedValues] to
+ * finalize the restoration of retained values.
  *
- * When a [RetainScopeHolder] is no longer used, you must call [dispose] before the provider is
- * garbage collected. This ensures that all retained values are correctly retired. Failure to do so
- * may result in leaked memory from undispatched [RetainObserver.onRetired] callbacks. Instances
- * created by [retainRetainScopeHolder] are automatically disposed when the provider stops being
- * retained.
+ * When a [RetainedValuesStoreRegistry] is no longer used, you must call [dispose] before the
+ * provider is garbage collected. This ensures that all retained values are correctly retired.
+ * Failure to do so may result in leaked memory from undispatched [RetainObserver.onRetired]
+ * callbacks. Instances created by [retainRetainedValuesStoreRegistry] are automatically disposed
+ * when the provider stops being retained.
  *
- * @sample androidx.compose.runtime.retain.samples.retainScopeHolderSample
+ * @sample androidx.compose.runtime.retain.samples.retainedValuesStoreRegistrySample
  */
-public class RetainScopeHolder() {
+public class RetainedValuesStoreRegistry() {
     private var isDisposed = false
-    private val childScopes = MutableScatterMap<Any?, ControlledRetainScope>()
+    private val childStores = MutableScatterMap<Any?, ControlledRetainedValuesStore>()
 
-    private var parentScope: RetainStateProvider = NeverKeepExitedValues
+    private var parent: RetainStateProvider = NeverKeepExitedValues
     private var isParentKeepingExitedValues = false
     private val parentObserver =
         object : RetainStateObserver {
@@ -919,13 +933,13 @@ public class RetainScopeHolder() {
         }
 
     /**
-     * Starts keeping exited values for a child with the given [key]. If a retain scope has not been
-     * created for this key (because [getOrCreateRetainScopeForChild] was not called for the key or
-     * it has been cleared with [clearChild] or [clearChildren]), then this function does nothing.
-     * If the retain scope for the given key is already keeping exited values, the scope will not
-     * change states. The number of times this function is called is tracked and must be matched by
-     * the same number of calls to [stopKeepingExitedValues] for the given key before its kept
-     * values will be retired.
+     * Starts keeping exited values for a child with the given [key]. If a [RetainedValuesStore] has
+     * not been created for this key (because [getOrCreateRetainedValuesStoreForChild] was not
+     * called for the key or it has been cleared with [clearChild] or [clearChildren]), then this
+     * function does nothing. If the [RetainedValuesStore] for the given key is already keeping
+     * exited values, the store will not change states. The number of times this function is called
+     * is tracked and must be matched by the same number of calls to [stopKeepingExitedValues] for
+     * the given key before its kept values will be retired.
      *
      * This function must be called **before** any content for the associated child is removed from
      * the composition hierarchy.
@@ -933,18 +947,18 @@ public class RetainScopeHolder() {
      * @param key The key of the child to begin retention for
      */
     public fun startKeepingExitedValues(key: Any?) {
-        val scope = childScopes[key] ?: return
-        scope.startKeepingExitedValues()
+        val store = childStores[key] ?: return
+        store.startKeepingExitedValues()
     }
 
     /**
      * Stops keeping exited values for a child with the given [key] as previously started by
-     * [startKeepingExitedValues]. If the underlying scope is not retaining because
+     * [startKeepingExitedValues]. If the underlying store is not retaining because
      * [startKeepingExitedValues] has not been called, this function will throw an exception. If no
-     * such retain scope exists because it was cleared with [clearChild] or never created with
-     * [getOrCreateRetainScopeForChild], this function will do nothing.
+     * such [RetainedValuesStore] exists because it was cleared with [clearChild] or never created
+     * with [getOrCreateRetainedValuesStoreForChild], this function will do nothing.
      *
-     * If [startKeepingExitedValues] has been called more than [stopKeepingExitedValues], the scope
+     * If [startKeepingExitedValues] has been called more than [stopKeepingExitedValues], the store
      * will continue to keep retained values that have exited the composition until
      * [stopKeepingExitedValues] has been called the same number of times as
      * [startKeepingExitedValues].
@@ -959,12 +973,12 @@ public class RetainScopeHolder() {
      *   [stopKeepingExitedValues] has been called for the given key
      */
     public fun stopKeepingExitedValues(key: Any?) {
-        val scope = childScopes[key] ?: return
-        checkPrecondition(scope.keepExitedValuesRequestsFromRetainScopeHolder >= 1) {
+        val store = childStores[key] ?: return
+        checkPrecondition(store.externalKeepExitedValuesRequests >= 1) {
             "Unexpected call to unRequestKeepExitedValues() without a " +
                 "corresponding requestKeepExitedValues() for key $key"
         }
-        scope.stopKeepingExitedValues()
+        store.stopKeepingExitedValues()
     }
 
     /**
@@ -972,21 +986,21 @@ public class RetainScopeHolder() {
      * Effectively, this is the number of calls to [startKeepingExitedValues] minus the number of
      * calls to [stopKeepingExitedValues] for the given [key].
      *
-     * This counter resets if [clearScope] is called for the given [key]. If the scope has not been
-     * created for [key] by [getOrCreateRetainScopeForChild], this function will return `0`.
+     * This counter resets if [clearStore] is called for the given [key]. If the store has not been
+     * created for [key] by [getOrCreateRetainedValuesStoreForChild], this function will return `0`.
      *
      * @param key the key of the child to look up
      * @return The number of active requests against the given child to keep exited values
-     * @see ControlledRetainScope.keepExitedValuesRequestsFromSelf
+     * @see ControlledRetainedValuesStore.keepExitedValuesRequestsFromSelf
      */
     public fun keepExitedValuesRequestsFor(key: Any?): Int {
-        val scope = childScopes[key] ?: return 0
-        return scope.keepExitedValuesRequestsFromRetainScopeHolder
+        val store = childStores[key] ?: return 0
+        return store.externalKeepExitedValuesRequests
     }
 
     // We manage the parent ourselves without wiring it up, because it is more efficient than
     // attaching a listener. Because of this, we need to manually subtract out the parent count.
-    private val ControlledRetainScope.keepExitedValuesRequestsFromRetainScopeHolder: Int
+    private val ControlledRetainedValuesStore.externalKeepExitedValuesRequests: Int
         get() = keepExitedValuesRequestsFromSelf - if (isParentKeepingExitedValues) 1 else 0
 
     /**
@@ -995,9 +1009,9 @@ public class RetainScopeHolder() {
      * the presence of this composable for the [key].
      *
      * When removed, this composable begins keeping exited values from the [content] lambda under
-     * the given [key]. When added back to the composition hierarchy, the scope will stop keeping
+     * the given [key]. When added back to the composition hierarchy, the store will stop keeping
      * retained values once the composition completes. The keys used with this method should only be
-     * used once per [RetainScopeHolder]in a composition.
+     * used once per [RetainedValuesStoreRegistry]in a composition.
      *
      * This composable only attempts to manage the retention lifecycle for the [content] and [key]
      * pair. It will retain removed content indefinitely until [clearChild] or [clearChildren] is
@@ -1005,12 +1019,15 @@ public class RetainScopeHolder() {
      *
      * @param key The child key associated with the given [content]. This key is used to identify
      *   the retention pool for objects [retained][retain] by the content composable.
-     * @param content The composable content to compose with the [RetainScope] of the given [key]
+     * @param content The composable content to compose with the [RetainedValuesStore] of the given
+     *   [key]
      * @throws IllegalStateException if [dispose] has been called
      */
     @Composable
-    public fun RetainScopeProvider(key: Any?, content: @Composable () -> Unit) {
-        CompositionLocalProvider(LocalRetainScope provides getOrCreateRetainScopeForChild(key)) {
+    public fun ProvideChildRetainedValuesStore(key: Any?, content: @Composable () -> Unit) {
+        CompositionLocalProvider(
+            LocalRetainedValuesStore provides getOrCreateRetainedValuesStoreForChild(key)
+        ) {
             content()
             PresenceIndicator(key)
         }
@@ -1029,7 +1046,7 @@ public class RetainScopeHolder() {
      * // Correct ordering.
      * if (showA) {
      *     CompositionLocalProvider(
-     *         LocalRetainScope provides getOrCreateRetainScopeForChild("A")
+     *         LocalRetainedValuesStore provides getOrCreateRetainedValuesStoreForChild("A")
      *     ) {
      *         ContentA()
      *     }
@@ -1041,7 +1058,7 @@ public class RetainScopeHolder() {
      *     PresenceIndicator("B")
      *
      *     CompositionLocalProvider(
-     *         LocalRetainScope provides getOrCreateRetainScopeForChild("B")
+     *         LocalRetainedValuesStore provides getOrCreateRetainedValuesStoreForChild("B")
      *     ) {
      *         ContentB()
      *     }
@@ -1070,56 +1087,57 @@ public class RetainScopeHolder() {
     }
 
     /**
-     * Creates or returns a previously created [RetainScope] instance for the given [key]. The
-     * returned [RetainScope] will be managed by this provider. It will begin retaining if the
-     * parent retain scope starts retaining or if [startKeepingExitedValues] is called with the same
-     * [key], and it will stop retaining with the parent retain scope ends retaining and there is no
-     * [startKeepingExitedValues] call without a corresponding [stopKeepingExitedValues] call for
-     * the specified [key].
+     * Creates or returns a previously created [RetainedValuesStore] instance for the given [key].
+     * The returned [RetainedValuesStore] will be managed by this provider. It will begin retaining
+     * if the parent [RetainedValuesStore] starts retaining or if [startKeepingExitedValues] is
+     * called with the same [key], and it will stop retaining with the parent retain store ends
+     * retaining and there is no [startKeepingExitedValues] call without a corresponding
+     * [stopKeepingExitedValues] call for the specified [key].
      *
-     * The first time this function is called for a given [key], a new [RetainScope] is created for
-     * the [key]. When this function is called for the same [key], it will return the same
-     * [RetainScope] it originally returned. If a given [key]'s scope is [cleared][clearChild], then
-     * a new one will be created for it the next time it is requested via this function.
+     * The first time this function is called for a given [key], a new [RetainedValuesStore] is
+     * created for the [key]. When this function is called for the same [key], it will return the
+     * same [RetainedValuesStore] it originally returned. If a given [key]'s store is
+     * [cleared][clearChild], then a new one will be created for it the next time it is requested
+     * via this function.
      *
      * This function must be called before [startKeepingExitedValues] or [stopKeepingExitedValues]
      * is called for those two methods to have any effect on the retention state for the given
      * [key].
      *
-     * @param key The [key] to return an existing [RetainScope] instance for, if one exists, or to
-     *   create a new instance for
-     * @return A [RetainScope] instance suitable to be installed as the [LocalRetainScope] for the
-     *   child content with the specified [key]
+     * @param key The [key] to return an existing [RetainedValuesStore] instance for, if one exists,
+     *   or to create a new instance for
+     * @return A [RetainedValuesStore] instance suitable to be installed as the
+     *   [LocalRetainedValuesStore] for the child content with the specified [key]
      * @throws IllegalStateException if [dispose] has been called
      */
-    public fun getOrCreateRetainScopeForChild(key: Any?): RetainScope {
+    public fun getOrCreateRetainedValuesStoreForChild(key: Any?): RetainedValuesStore {
         checkPrecondition(!isDisposed) {
-            "Cannot get a RetainScope after a FanOutRetainScopeProvider has been disposed."
+            "Cannot get a RetainedValuesStore after a RetainedValuesStoreRegistry has been disposed."
         }
 
-        return childScopes.getOrPut(key) {
-            ControlledRetainScope().apply {
+        return childStores.getOrPut(key) {
+            ControlledRetainedValuesStore().apply {
                 if (isParentKeepingExitedValues) startKeepingExitedValues()
             }
         }
     }
 
     /**
-     * When a [RetainStateProvider] is set as the parent of a [RetainScopeHolder], the
-     * [RetainScopeHolder] will mirror the retention state of the parent. If the parent stops
-     * retaining, all children that have started retaining via [startKeepingExitedValues] will
+     * When a [RetainStateProvider] is set as the parent of a [RetainedValuesStoreRegistry], the
+     * [RetainedValuesStoreRegistry] will mirror the retention state of the parent. If the parent
+     * stops retaining, all children that have started retaining via [startKeepingExitedValues] will
      * continue being retained after the parent stops retaining.
      *
      * If this function is called twice, the new parent will replace the old parent. The new
-     * parent's state is immediately applied to the child scopes.
+     * parent's state is immediately applied to the child stores.
      *
      * To clear a parent, call this function and pass in either
      * [RetainStateProvider.AlwaysKeepExitedValues] or [RetainStateProvider.NeverKeepExitedValues]
-     * depending on whether you want this scope to keep exited values in the absence of a parent.
+     * depending on whether you want this store to keep exited values in the absence of a parent.
      */
     public fun setParentRetainStateProvider(parent: RetainStateProvider) {
-        val oldParent = parentScope
-        parentScope = parent
+        val oldParent = this@RetainedValuesStoreRegistry.parent
+        this@RetainedValuesStoreRegistry.parent = parent
 
         parent.addRetainStateObserver(parentObserver)
         oldParent.removeRetainStateObserver(parentObserver)
@@ -1128,50 +1146,51 @@ public class RetainScopeHolder() {
     }
 
     /**
-     * Removes the [RetainScope] for the child with the given [key] from this [RetainScopeHolder].
-     * If the key doesn't have an associated [RetainScope] yet (either because it hasn't been
-     * created or has already been cleared), this function does nothing.
+     * Removes the [RetainedValuesStore] for the child with the given [key] from this
+     * [RetainedValuesStoreRegistry]. If the key doesn't have an associated [RetainedValuesStore]
+     * yet (either because it hasn't been created or has already been cleared), this function does
+     * nothing.
      *
-     * If the scope being cleared is currently keeping exited values, it will stop as a result of
+     * If the store being cleared is currently keeping exited values, it will stop as a result of
      * this call. If a child with the given [key] is currently in the composition hierarchy, its
      * retained values will not be persisted the next time the child content is destroyed. Orphaned
-     * RetainScopes will never begin keeping exited values, and the content will need to be
-     * recreated with a new RetainScope before exited values will be kept again.
+     * RetainedValuesStores will never begin keeping exited values, and the content will need to be
+     * recreated with a new RetainedValuesStore before exited values will be kept again.
      *
-     * If [getOrCreateRetainScopeForChild] is called again for the given [key], a new [RetainScope]
-     * will be created and returned.
+     * If [getOrCreateRetainedValuesStoreForChild] is called again for the given [key], a new
+     * [RetainedValuesStore] will be created and returned.
      *
-     * @param key The key of the child content whose [RetainScope] should be discarded
+     * @param key The key of the child content whose [RetainedValuesStore] should be discarded
      */
     public fun clearChild(key: Any?) {
-        childScopes.remove(key)?.let { clearScope(it) }
+        childStores.remove(key)?.let { clearStore(it) }
     }
 
     /**
-     * Bulk removes all child scopes for which the [predicate] returns true. This function follows
+     * Bulk removes all child stores for which the [predicate] returns true. This function follows
      * the same clearing rules as [clearChild].
      *
-     * @param predicate The predicate to evaluate on all child keys in the [RetainScopeHolder]. If
-     *   the predicate returns `true` for a given key, it will be cleared. If the predicate returns
-     *   `false` it will remain in the collection.
+     * @param predicate The predicate to evaluate on all child keys in the
+     *   [RetainedValuesStoreRegistry]. If the predicate returns `true` for a given key, it will be
+     *   cleared. If the predicate returns `false` it will remain in the collection.
      * @see clearChild
      */
     public fun clearChildren(predicate: (key: Any?) -> Boolean) {
-        childScopes.removeIf { key, scope -> predicate(key).also { if (it) clearScope(scope) } }
+        childStores.removeIf { key, store -> predicate(key).also { if (it) clearStore(store) } }
     }
 
-    private fun clearScope(scope: ControlledRetainScope) {
-        while (scope.keepExitedValuesRequestsFromSelf > 0) scope.stopKeepingExitedValues()
+    private fun clearStore(store: ControlledRetainedValuesStore) {
+        while (store.keepExitedValuesRequestsFromSelf > 0) store.stopKeepingExitedValues()
     }
 
     /**
-     * Removes all child [RetainScope]s from this [RetainScopeHolder] and marks it as ineligible for
-     * future use. This is required to invoke when the scope is no longer used to retire any
-     * retained values. Failing to do so may result in memory leaks from undispatched
+     * Removes all child [RetainedValuesStore]s from this [RetainedValuesStoreRegistry] and marks it
+     * as ineligible for future use. This is required to invoke when the store is no longer used to
+     * retire any retained values. Failing to do so may result in memory leaks from undispatched
      * [RetainObserver.onRetired] and [RetainedEffect] callbacks. When this function is called, all
-     * values retained in scopes managed by this provider will be immediately retired.
+     * values retained in stores managed by this provider will be immediately retired.
      *
-     * If this scope has already been disposed, this function will do nothing.
+     * If this store has already been disposed, this function will do nothing.
      */
     public fun dispose() {
         isDisposed = true
@@ -1183,16 +1202,16 @@ public class RetainScopeHolder() {
         isParentKeepingExitedValues = shouldRetain
 
         if (shouldRetain) {
-            childScopes.forEachValue { scope -> scope.startKeepingExitedValues() }
+            childStores.forEachValue { store -> store.startKeepingExitedValues() }
         } else {
-            childScopes.forEachValue { scope -> scope.stopKeepingExitedValues() }
+            childStores.forEachValue { store -> store.stopKeepingExitedValues() }
         }
     }
 }
 
 /**
- * Represents all identifying parameters passed into [retain]. Implementations of [RetainScope] are
- * given these keys to identify instances of a [retain] invocation.
+ * Represents all identifying parameters passed into [retain]. Implementations of
+ * [RetainedValuesStore] are given these keys to identify instances of a [retain] invocation.
  *
  * These keys should not be introspected.
  */
