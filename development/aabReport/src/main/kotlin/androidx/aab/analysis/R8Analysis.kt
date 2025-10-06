@@ -16,15 +16,13 @@
 
 package androidx.aab.analysis
 
-import androidx.aab.ApkInfo
-import androidx.aab.BundleInfo
-import androidx.aab.Compiler
-import androidx.aab.DexInfo
-import androidx.aab.MappingFileInfo
-import androidx.aab.R8JsonFileInfo
+import androidx.aab.*
 import androidx.aab.analysis.R8Issues.getPrimaryOptimizationIssue
+import androidx.aab.cli.outputContext
 import java.io.File
 import kotlin.math.roundToInt
+
+data class PackageStats(val packagePrefix: String, var classesSeen: Int, var obfClassesSeen: Int)
 
 /**
  * Tracks stats respecting minification/obfuscation heuristics.
@@ -60,9 +58,27 @@ data class MinificationStats(
                     File(appOutputDir, "obf.txt") to File(appOutputDir, "unobf.txt")
                 } else (null to null)
 
+            val packagePrefixInfo = mutableMapOf<String, PackageStats>()
             classInfo.forEach { clazz ->
                 val isObfuscatedAccordingToMappingFile =
                     (prunedMappingFileInfo[clazz.fullName]?.wasRemapped ?: false)
+
+                val packageName =
+                    prunedMappingFileInfo[clazz.fullName]?.originalName?.substringBeforeLast(".")
+                        ?: clazz.packageName
+                val packagePrefix =
+                    if (packageName.startsWith("com.google")) {
+                        // need more package sections to point at what's not being optimized
+                        packageName.split(".").take(4).joinToString(".")
+                    } else {
+                        packageName.split(".").take(2).joinToString(".")
+                    }
+                packagePrefixInfo
+                    .computeIfAbsent(packagePrefix) { PackageStats(packagePrefix, 0, 0) }
+                    .apply {
+                        classesSeen += 1
+                        if (isObfuscatedAccordingToMappingFile) obfClassesSeen++
+                    }
 
                 if (clazz.startsWithLowerCase == isObfuscatedAccordingToMappingFile) {
                     isObfuscatedLowerCaseHits++
@@ -85,6 +101,13 @@ data class MinificationStats(
                         )
                     }
                 }
+            }
+
+            outputContext.dumpPackagePrefixInfoToFile(appOutputDir, packagePrefixInfo)
+
+            if (isObfuscatedCount > 0.25 * classInfo.count()) {
+                // only register to global stats if app looks somewhat obfuscated
+                outputContext.registerPackagePrefixInfo(packagePrefixInfo)
             }
 
             return MinificationStats(
