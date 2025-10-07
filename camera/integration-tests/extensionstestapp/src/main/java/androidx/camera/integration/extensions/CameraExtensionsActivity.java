@@ -92,10 +92,10 @@ import androidx.camera.core.ImageCaptureCapabilities;
 import androidx.camera.core.ImageCaptureException;
 import androidx.camera.core.MeteringPoint;
 import androidx.camera.core.Preview;
-import androidx.camera.core.SessionConfig;
 import androidx.camera.core.UseCase;
 import androidx.camera.core.impl.utils.executor.CameraXExecutors;
 import androidx.camera.extensions.ExtensionMode;
+import androidx.camera.extensions.ExtensionSessionConfig;
 import androidx.camera.extensions.ExtensionsManager;
 import androidx.camera.integration.extensions.utils.CameraSelectorUtil;
 import androidx.camera.integration.extensions.utils.ExtensionModeUtil;
@@ -277,6 +277,7 @@ public class CameraExtensionsActivity extends AppCompatActivity
     }
 
     @OptIn(markerClass = {ExperimentalCamera2Interop.class})
+    @SuppressLint("RestrictedApiAndroidX")
     boolean bindUseCasesWithCurrentExtensionMode() {
         if (!mExtensionsManager.isExtensionAvailable(mCurrentCameraSelector,
                 mCurrentExtensionMode)) {
@@ -367,8 +368,11 @@ public class CameraExtensionsActivity extends AppCompatActivity
             useCaseList.add(checkNotNull(mVideoCapture));
         }
 
-        mCamera = mCameraProvider.bindToLifecycle(this, cameraSelector,
-                new SessionConfig.Builder(useCaseList).build());
+        ExtensionSessionConfig extensionSessionConfig = new ExtensionSessionConfig.Builder(
+                mCurrentExtensionMode, mExtensionsManager, useCaseList).build();
+
+        mCamera = mCameraProvider.bindToLifecycle(this, mCurrentCameraSelector,
+                extensionSessionConfig);
 
         // Update the UI and save location for ImageCapture
         Button toggleButton = findViewById(R.id.PhotoToggle);
