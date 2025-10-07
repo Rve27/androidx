@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package androidx.glance.wear.parcel
+package androidx.glance.wear
 
 import android.os.Bundle
 import androidx.annotation.RestrictTo
+import androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP
+import androidx.glance.wear.parcel.WearWidgetRawContentParcel
 import androidx.glance.wear.proto.WearWidgetRawContentProto
 import okio.ByteString.Companion.toByteString
 
@@ -25,11 +27,11 @@ import okio.ByteString.Companion.toByteString
  * Describes the raw contents from [WearWidgetContent]. This is after RC content is captured and
  * serialized.
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY)
+@RestrictTo(LIBRARY_GROUP)
 public class WearWidgetRawContent(public val rcDocument: ByteArray, public val extras: Bundle) {
 
     /** Convert to the parcelable [WearWidgetRawContentParcel]. */
-    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    @RestrictTo(LIBRARY_GROUP)
     public fun toParcel(): WearWidgetRawContentParcel {
         val contentProto = WearWidgetRawContentProto(rc_document = rcDocument.toByteString())
         return WearWidgetRawContentParcel().apply {
@@ -38,16 +40,14 @@ public class WearWidgetRawContent(public val rcDocument: ByteArray, public val e
         }
     }
 
-    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    @RestrictTo(LIBRARY_GROUP)
     public companion object {
         public fun fromParcel(contentParcel: WearWidgetRawContentParcel): WearWidgetRawContent {
             val contentProto = WearWidgetRawContentProto.ADAPTER.decode(contentParcel.payload)
             return WearWidgetRawContent(
                 rcDocument = contentProto.rc_document.toByteArray(),
-                extras = contentParcel.extras,
+                extras = contentParcel.extras ?: Bundle.EMPTY,
             )
         }
-
-        private const val TAG = "WearWidgetRequest"
     }
 }

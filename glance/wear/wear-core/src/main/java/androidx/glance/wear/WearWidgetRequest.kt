@@ -18,7 +18,7 @@ package androidx.glance.wear
 
 import androidx.annotation.Dimension
 import androidx.annotation.RestrictTo
-import androidx.annotation.RestrictTo.Scope.LIBRARY
+import androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP
 import androidx.glance.wear.parcel.WearWidgetRequestParcel
 import androidx.glance.wear.proto.WearWidgetRequestProto
 
@@ -31,7 +31,7 @@ import androidx.glance.wear.proto.WearWidgetRequestProto
  * @property heightDp The height in dp of the container for this widget.
  */
 public class WearWidgetRequest
-@RestrictTo(LIBRARY)
+@RestrictTo(LIBRARY_GROUP)
 public constructor(
     public val instanceId: Int,
     @Dimension(unit = Dimension.DP) public val widthDp: Float,
@@ -39,7 +39,7 @@ public constructor(
 ) {
 
     /** Convert this request to [WearWidgetRequestParcel]. */
-    @RestrictTo(LIBRARY)
+    @RestrictTo(LIBRARY_GROUP)
     public fun toParcel(): WearWidgetRequestParcel {
         val requestProto =
             WearWidgetRequestProto(
@@ -50,8 +50,9 @@ public constructor(
         return WearWidgetRequestParcel().apply { payload = requestProto.encode() }
     }
 
-    internal companion object {
-        fun fromParcel(requestParcel: WearWidgetRequestParcel): WearWidgetRequest {
+    public companion object {
+        @RestrictTo(LIBRARY_GROUP)
+        public fun fromParcel(requestParcel: WearWidgetRequestParcel): WearWidgetRequest {
             val requestProto = WearWidgetRequestProto.ADAPTER.decode(requestParcel.payload)
             return WearWidgetRequest(
                 instanceId = requestProto.instance_id,
@@ -59,7 +60,5 @@ public constructor(
                 heightDp = requestProto.height_dp,
             )
         }
-
-        private const val TAG = "WearWidgetRequest"
     }
 }
