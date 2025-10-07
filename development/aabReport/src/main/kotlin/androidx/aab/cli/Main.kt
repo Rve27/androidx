@@ -71,6 +71,7 @@ internal abstract class PackageProcessor<T>(val typeLabel: String) {
             println("$typeLabel parsing complete, reporting problems...")
             items.forEach { printAnalysis(it) }
         }
+        outputContext.dumpPackagePrefixInfo()
     }
 }
 
@@ -104,7 +105,7 @@ fun main(args: Array<String>) = runBlocking {
     val pathArgs = args.filter { !it.startsWith("--") }
     if (pathArgs.isEmpty()) {
         println(
-            "Expected one or more android app bundle files, or directories of bundles to be passed."
+            "Expected one or more android app bundle/apk files, or directories of bundles/apks to be passed."
         )
         usageAndDie()
     }
