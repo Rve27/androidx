@@ -394,8 +394,17 @@ internal fun Int.toHitTestSurfaceType(): Int {
  * Extension function that converts a [androidx.xr.scenecore.runtime.HitTestResult] to a
  * [HitTestResult].
  */
-internal fun RtHitTestResult.toHitTestResult(): HitTestResult {
-    return HitTestResult(hitPosition, surfaceNormal, surfaceType.toHitTestSurfaceType(), distance)
+internal fun RtHitTestResult.toHitTestResult(): HitTestResult? {
+    if (hitPosition == null) {
+        return null
+    } else {
+        return HitTestResult(
+            hitPosition!!,
+            surfaceNormal,
+            surfaceType.toHitTestSurfaceType(),
+            distance,
+        )
+    }
 }
 
 @RtSpatialPointerIconType
