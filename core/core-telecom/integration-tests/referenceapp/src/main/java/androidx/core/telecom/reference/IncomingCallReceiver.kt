@@ -105,8 +105,7 @@ class IncomingCallReceiver : BroadcastReceiver() {
         name: String?,
         isVideo: Boolean,
     ): CallAttributesCompat {
-        val scheme = loadPhoneNumberPrefix(c)
-        val address = Uri.fromParts(scheme, num, null)
+        val address = Uri.parse(loadPhoneNumberPrefix(c) + num)
         return CallAttributesCompat(
             name.toString(),
             address,
@@ -114,7 +113,6 @@ class IncomingCallReceiver : BroadcastReceiver() {
             callType =
                 if (isVideo) CallAttributesCompat.Companion.CALL_TYPE_VIDEO_CALL
                 else CallAttributesCompat.Companion.CALL_TYPE_AUDIO_CALL,
-            isLogExcluded = false,
         )
     }
 }

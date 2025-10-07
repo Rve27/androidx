@@ -71,7 +71,7 @@ public class SplitAttributesCalculatorParamsTestingJavaTest {
         assertEquals(0, params.getParentConfiguration().diff(new Configuration()));
         assertEquals(DEFAULT_SPLIT_ATTRIBUTES, params.getDefaultSplitAttributes());
         assertTrue(params.areDefaultConstraintsSatisfied());
-        assertEquals(WindowLayoutInfoTesting.createWindowLayoutInfo(Collections.emptyList()),
+        assertEquals(new WindowLayoutInfo(Collections.emptyList()),
                 params.getParentWindowLayoutInfo());
         assertNull(params.getSplitRuleTag());
 

@@ -51,8 +51,6 @@ dependencies {
 }
 
 android {
-    compileSdk = 36
-    compileSdkMinor = 1
     namespace = "androidx.core.telecom"
     buildFeatures {
         aidl = true
