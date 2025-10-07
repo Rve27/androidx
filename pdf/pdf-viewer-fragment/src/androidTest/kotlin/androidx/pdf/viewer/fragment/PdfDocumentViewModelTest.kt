@@ -16,10 +16,14 @@
 
 package androidx.pdf.viewer.fragment
 
+import android.graphics.Point
+import android.graphics.Rect
 import android.net.Uri
 import androidx.core.os.OperationCanceledException
 import androidx.lifecycle.SavedStateHandle
+import androidx.pdf.PdfDocument
 import androidx.pdf.SandboxedPdfLoader
+import androidx.pdf.models.FormEditInfo
 import androidx.pdf.viewer.coroutines.collectTill
 import androidx.pdf.viewer.coroutines.toListDuring
 import androidx.pdf.viewer.fragment.TestUtils.openFileAsUri
@@ -27,7 +31,9 @@ import androidx.pdf.viewer.fragment.model.PdfFragmentUiState
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry
+import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.toList
@@ -260,6 +266,62 @@ class PdfDocumentViewModelTest {
         assertTrue(
             pdfDocumentViewModel.fragmentUiScreenState.value is PdfFragmentUiState.DocumentError
         )
+    }
+
+    @Test
+    fun testApplyFormEdit_withEditableDocument_appliesTheEdit() = runTest {
+        // 1. Arrange: Load a real document with form fields.
+        val documentUri = openFileAsUri(appContext, "click_form.pdf")
+        pdfDocumentViewModel.loadDocument(uri = documentUri, password = null)
+
+        // Wait until the document is loaded.
+        val uiStates = mutableListOf<PdfFragmentUiState>()
+        val collectJob = launch {
+            pdfDocumentViewModel.fragmentUiScreenState.collectTill(uiStates) { state ->
+                state is PdfFragmentUiState.DocumentLoaded
+            }
+        }
+        collectJob.join()
+        val loadedState = pdfDocumentViewModel.fragmentUiScreenState.value
+        assertTrue(loadedState is PdfFragmentUiState.DocumentLoaded)
+        val document = (loadedState as PdfFragmentUiState.DocumentLoaded).pdfDocument
+
+        // Use a latch to wait for the async edit to complete.
+        val latch = CountDownLatch(1)
+        var editApplied = false
+        var editedPageNum: Int? = null
+        var dirtyAreasOnEdit: List<Rect>? = null
+        val listener =
+            object : PdfDocument.OnPdfContentInvalidatedListener {
+                override fun onPdfContentInvalidated(pageNumber: Int, dirtyAreas: List<Rect>) {
+                    editApplied = true
+                    editedPageNum = pageNumber
+                    dirtyAreasOnEdit = dirtyAreas
+                    latch.countDown()
+                }
+            }
+        document.addOnPdfContentInvalidatedListener(listener)
+
+        // Bounds of the widget on which the edit is applied
+        val widgetArea = Rect(135, 70, 155, 90)
+        val formEditInfo =
+            FormEditInfo(pageNumber = 0, widgetIndex = 1, clickPoint = Point(145, 80))
+
+        // 2. Act: Call the method on the ViewModel.
+        pdfDocumentViewModel.applyFormEdit(formEditInfo)
+
+        val wasApplied = latch.await(5, TimeUnit.SECONDS)
+        document.removeOnPdfContentInvalidatedListener(listener)
+
+        assertTrue(wasApplied)
+        assertTrue(editApplied)
+        assertTrue(editedPageNum == 0)
+        assertTrue(dirtyAreasOnEdit != null)
+        assertTrue(fullyContains(listOf(widgetArea), dirtyAreasOnEdit!!))
+    }
+
+    private fun fullyContains(innerRects: List<Rect>, outerRects: List<Rect>): Boolean {
+        return innerRects.all { inner -> outerRects.any { outer -> outer.contains(inner) } }
     }
 
     companion object {

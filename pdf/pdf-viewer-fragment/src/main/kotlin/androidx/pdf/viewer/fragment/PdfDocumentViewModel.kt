@@ -30,6 +30,8 @@ import androidx.pdf.PdfDocument
 import androidx.pdf.PdfLoader
 import androidx.pdf.PdfPasswordException
 import androidx.pdf.SandboxedPdfLoader
+import androidx.pdf.annotation.EditablePdfDocument
+import androidx.pdf.models.FormEditInfo
 import androidx.pdf.search.SearchRepository
 import androidx.pdf.search.model.NoQuery
 import androidx.pdf.search.model.QueryResults
@@ -254,6 +256,16 @@ public open class PdfDocumentViewModel(
                 remove<Int>(QUERY_RESULT_PAGE_NUM_KEY)
                 remove<Int>(QUERY_RESULT_INDEX_KEY)
             }
+        }
+    }
+
+    internal fun applyFormEdit(formEditInfo: FormEditInfo) {
+        val currentState = _fragmentUiScreenState.value
+        if (
+            currentState is PdfFragmentUiState.DocumentLoaded &&
+                currentState.pdfDocument is EditablePdfDocument
+        ) {
+            viewModelScope.launch { currentState.pdfDocument.applyEdit(formEditInfo) }
         }
     }
 
