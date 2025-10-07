@@ -85,7 +85,7 @@ package androidx.compose.animation {
   }
 
   public fun interface BoundsTransform {
-    method public androidx.compose.animation.core.FiniteAnimationSpec<androidx.compose.ui.geometry.Rect> transform(androidx.compose.ui.geometry.Rect initialBounds, androidx.compose.ui.geometry.Rect targetBounds);
+    method public androidx.compose.animation.core.FiniteAnimationSpec<androidx.compose.ui.geometry.Rect> createAnimationSpec(androidx.compose.ui.geometry.Rect initialBounds, androidx.compose.ui.geometry.Rect targetBounds);
   }
 
   public final class ColorVectorConverterKt {
