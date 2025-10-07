@@ -730,7 +730,7 @@ public class RecordingCanvas(bitmap: Bitmap) : Canvas(bitmap) {
     }
 
     override fun restoreToCount(saveCount: Int) {
-        // TOOD: fix ?
+        // TODO: fix ?
         document.restore()
         saveCounter = saveCount
         // println("NRO STACK restoreToCount $saveCount => pre temp canvas is
