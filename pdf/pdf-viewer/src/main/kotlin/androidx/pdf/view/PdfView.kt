@@ -1351,7 +1351,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         state.paginationModel = pageLayoutManager?.paginationModel
         state.layoutStrategy = pageLayoutManager?.layoutStrategy
         state.pdfFormFillingState = pageLayoutManager?.pdfFormFillingState
-        state.pdfFormEditRecords = pdfDocument?.formEditRecords
+        state.pdfFormEditInfos = pdfDocument?.formEditInfos
         state.selectionModel = selectionStateManager?.selectionModel?.value
         state.pdfFormFillingEditTextState = getFormFillingEditTextState()
 
@@ -1515,11 +1515,11 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         val localPdfDocument = pdfDocument ?: return
         val localStateToRestore = stateToRestore ?: return
 
-        if (localPdfDocument.formEditRecords == localStateToRestore.pdfFormEditRecords) {
+        if (localPdfDocument.formEditInfos == localStateToRestore.pdfFormEditInfos) {
             return
         }
 
-        pdfFormFillingStateManager?.restoreFormFillingState(localStateToRestore.pdfFormEditRecords)
+        pdfFormFillingStateManager?.restoreFormFillingState(localStateToRestore.pdfFormEditInfos)
     }
 
     private fun restoreFormFillingEditText() {

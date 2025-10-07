@@ -32,7 +32,7 @@ import androidx.pdf.annotation.models.PdfEditEntry
 import androidx.pdf.annotation.models.PdfEdits
 import androidx.pdf.content.PageMatchBounds
 import androidx.pdf.content.PageSelection
-import androidx.pdf.models.FormEditRecord
+import androidx.pdf.models.FormEditInfo
 import androidx.pdf.models.FormWidgetInfo
 import java.util.UUID
 
@@ -42,7 +42,7 @@ internal class FakeEditablePdfDocument(
     override val pageCount: Int,
     override val isLinearized: Boolean = false,
     override val formType: Int = -1,
-    override val formEditRecords: List<FormEditRecord> = listOf(),
+    override val formEditInfos: List<FormEditInfo> = listOf(),
 ) : EditablePdfDocument() {
     private val annotationsByPage = mutableMapOf<Int, MutableList<PdfEditEntry<out PdfEdit>>>()
 
@@ -162,7 +162,7 @@ internal class FakeEditablePdfDocument(
         TODO("Not yet implemented")
     }
 
-    override suspend fun applyEdit(pageNum: Int, record: FormEditRecord): List<Rect> {
+    override suspend fun applyEdit(pageNum: Int, record: FormEditInfo): List<Rect> {
         TODO("Not yet implemented")
     }
 

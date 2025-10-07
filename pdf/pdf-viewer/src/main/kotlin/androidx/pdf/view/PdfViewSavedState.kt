@@ -23,7 +23,7 @@ import android.os.Parcelable.ClassLoaderCreator
 import androidx.core.os.ParcelCompat
 import androidx.customview.view.AbsSavedState
 import androidx.pdf.formfilling.FormFillingEditTextState
-import androidx.pdf.models.FormEditRecord
+import androidx.pdf.models.FormEditInfo
 import androidx.pdf.selection.SelectionModel
 import androidx.pdf.view.layout.LayoutStrategy
 import androidx.pdf.view.layout.PaginationModel
@@ -42,7 +42,7 @@ internal class PdfViewSavedState : AbsSavedState {
     var paginationModel: PaginationModel? = null
     var layoutStrategy: LayoutStrategy? = null
     var pdfFormFillingState: PdfFormFillingState? = null
-    var pdfFormEditRecords: List<FormEditRecord>? = null
+    var pdfFormEditInfos: List<FormEditInfo>? = null
     var pdfFormFillingEditTextState: FormFillingEditTextState? = null
 
     /**
@@ -85,7 +85,7 @@ internal class PdfViewSavedState : AbsSavedState {
         pdfFormFillingState =
             ParcelCompat.readParcelable(parcel, loader, PdfFormFillingState::class.java)
         selectionModel = ParcelCompat.readParcelable(parcel, loader, SelectionModel::class.java)
-        pdfFormEditRecords = parcel.createTypedArrayList(FormEditRecord.CREATOR)
+        pdfFormEditInfos = parcel.createTypedArrayList(FormEditInfo.CREATOR)
         pdfFormFillingEditTextState =
             ParcelCompat.readParcelable(parcel, loader, FormFillingEditTextState::class.java)
     }
@@ -106,7 +106,7 @@ internal class PdfViewSavedState : AbsSavedState {
         dest.writeParcelable(layoutStrategy, flags)
         dest.writeParcelable(pdfFormFillingState, flags)
         dest.writeParcelable(selectionModel, flags)
-        dest.writeTypedList(pdfFormEditRecords)
+        dest.writeTypedList(pdfFormEditInfos)
         dest.writeParcelable(pdfFormFillingEditTextState, flags)
     }
 

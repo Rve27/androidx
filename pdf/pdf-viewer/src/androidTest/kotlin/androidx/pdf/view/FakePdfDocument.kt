@@ -35,7 +35,7 @@ import androidx.pdf.content.PdfPageGotoLinkContent
 import androidx.pdf.content.PdfPageLinkContent
 import androidx.pdf.content.PdfPageTextContent
 import androidx.pdf.content.SelectionBoundary
-import androidx.pdf.models.FormEditRecord
+import androidx.pdf.models.FormEditInfo
 import androidx.pdf.models.FormWidgetInfo
 import androidx.pdf.models.ListItem
 import kotlinx.coroutines.CancellationException
@@ -81,7 +81,7 @@ internal open class FakePdfDocument(
 
     @get:Synchronized @set:Synchronized internal var layoutReach: Int = 0
 
-    override val formEditRecords: List<FormEditRecord>
+    override val formEditInfos: List<FormEditInfo>
         get() = editHistory.toList()
 
     private val bitmapRequestsLock = Any()
@@ -101,7 +101,7 @@ internal open class FakePdfDocument(
         _formWidgetRequests.clear()
     }
 
-    internal var editHistory: MutableList<FormEditRecord> = mutableListOf()
+    internal var editHistory: MutableList<FormEditInfo> = mutableListOf()
 
     override fun getPageBitmapSource(pageNumber: Int): PdfDocument.BitmapSource {
         return FakeBitmapSource(pageNumber)
@@ -120,7 +120,7 @@ internal open class FakePdfDocument(
         return pageFormWidgetInfos[pageNum]?.filter { it.widgetType in types } ?: emptyList()
     }
 
-    override suspend fun applyEdit(pageNum: Int, record: FormEditRecord): List<Rect> {
+    override suspend fun applyEdit(pageNum: Int, record: FormEditInfo): List<Rect> {
         editHistory.add(record)
         return listOf()
     }

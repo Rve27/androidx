@@ -48,7 +48,7 @@ import androidx.pdf.annotation.processor.PdfAnnotationsProcessor
 import androidx.pdf.content.PageMatchBounds
 import androidx.pdf.content.PageSelection
 import androidx.pdf.content.SelectionBoundary
-import androidx.pdf.models.FormEditRecord
+import androidx.pdf.models.FormEditInfo
 import androidx.pdf.models.FormWidgetInfo
 import androidx.pdf.service.connect.PdfServiceConnection
 import androidx.pdf.utils.toAndroidClass
@@ -108,11 +108,11 @@ public class SandboxedPdfDocument(
     private val annotationsManager =
         InMemoryAnnotationsManager(::getAnnotationsForPage, annotationsProcessor)
 
-    public override val formEditRecords: List<FormEditRecord>
-        get() = _formEditRecords.toList()
+    public override val formEditInfos: List<FormEditInfo>
+        get() = _formEditInfos.toList()
 
-    private val _formEditRecords: MutableList<FormEditRecord> =
-        Collections.synchronizedList(mutableListOf<FormEditRecord>())
+    private val _formEditInfos: MutableList<FormEditInfo> =
+        Collections.synchronizedList(mutableListOf<FormEditInfo>())
 
     /** The [CoroutineScope] we use to close [BitmapSource]s asynchronously */
     private val closeScope = CoroutineScope(coroutineContext + SupervisorJob())
@@ -246,11 +246,11 @@ public class SandboxedPdfDocument(
         }
     }
 
-    override suspend fun applyEdit(pageNum: Int, record: FormEditRecord): List<Rect> {
+    override suspend fun applyEdit(pageNum: Int, record: FormEditInfo): List<Rect> {
         val invalidatedAreas = withDocument { document ->
             document.applyEdit(pageNum, record.toAndroidClass())
         }
-        _formEditRecords.add(record)
+        _formEditInfos.add(record)
         return invalidatedAreas
     }
 

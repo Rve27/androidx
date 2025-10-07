@@ -25,7 +25,7 @@ import android.widget.EditText
 import androidx.pdf.PdfDocument
 import androidx.pdf.PdfPoint
 import androidx.pdf.R
-import androidx.pdf.models.FormEditRecord
+import androidx.pdf.models.FormEditInfo
 import androidx.pdf.models.FormWidgetInfo
 import androidx.pdf.models.ListItem
 import androidx.test.core.app.ActivityScenario
@@ -122,7 +122,7 @@ class PdfViewFormFillingTest {
         assertThat(fakePdfDocument.editHistory).hasSize(1)
         assertThat(fakePdfDocument.editHistory[0])
             .isEqualTo(
-                FormEditRecord(pageNumber = 0, widgetIndex = 0, clickPoint = formWidgetClickPoint)
+                FormEditInfo(pageNumber = 0, widgetIndex = 0, clickPoint = formWidgetClickPoint)
             )
     }
 
@@ -159,7 +159,7 @@ class PdfViewFormFillingTest {
         assertThat(fakePdfDocument.editHistory).hasSize(1)
         assertThat(fakePdfDocument.editHistory[0])
             .isEqualTo(
-                FormEditRecord(pageNumber = 0, widgetIndex = 0, selectedIndices = IntArray(1) { 0 })
+                FormEditInfo(pageNumber = 0, widgetIndex = 0, selectedIndices = IntArray(1) { 0 })
             )
     }
 
@@ -200,7 +200,7 @@ class PdfViewFormFillingTest {
         assertThat(fakePdfDocument.editHistory).hasSize(1)
         assertThat(fakePdfDocument.editHistory[0])
             .isEqualTo(
-                FormEditRecord(pageNumber = 0, widgetIndex = 0, selectedIndices = intArrayOf(0, 2))
+                FormEditInfo(pageNumber = 0, widgetIndex = 0, selectedIndices = intArrayOf(0, 2))
             )
     }
 
@@ -259,7 +259,7 @@ class PdfViewFormFillingTest {
             close()
         }
         assertThat(fakePdfDocument.editHistory).hasSize(1)
-        assertThat(fakePdfDocument.editHistory[0]).isEqualTo(FormEditRecord(0, 0, finalText))
+        assertThat(fakePdfDocument.editHistory[0]).isEqualTo(FormEditInfo(0, 0, finalText))
     }
 
     @Test

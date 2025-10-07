@@ -44,7 +44,7 @@ import androidx.pdf.content.PdfPageGotoLinkContent
 import androidx.pdf.content.PdfPageLinkContent
 import androidx.pdf.content.PdfPageTextContent
 import androidx.pdf.content.SelectionBoundary
-import androidx.pdf.models.FormEditRecord
+import androidx.pdf.models.FormEditInfo
 import androidx.pdf.models.FormWidgetInfo
 import androidx.pdf.models.ListItem
 import java.util.UUID
@@ -93,7 +93,7 @@ internal open class FakeEditablePdfDocument(
 
     @get:Synchronized @set:Synchronized internal var layoutReach: Int = 0
 
-    override val formEditRecords: List<FormEditRecord>
+    override val formEditInfos: List<FormEditInfo>
         get() = editHistory.toList()
 
     private val bitmapRequestsLock = Any()
@@ -113,7 +113,7 @@ internal open class FakeEditablePdfDocument(
         _formWidgetRequests.clear()
     }
 
-    internal var editHistory: MutableList<FormEditRecord> = mutableListOf()
+    internal var editHistory: MutableList<FormEditInfo> = mutableListOf()
 
     private val edits = mutableMapOf<EditId, PdfAnnotationData>()
 
@@ -138,7 +138,7 @@ internal open class FakeEditablePdfDocument(
         return pageFormWidgetInfos[pageNum]?.filter { it.widgetType in types } ?: emptyList()
     }
 
-    override suspend fun applyEdit(pageNum: Int, record: FormEditRecord): List<Rect> {
+    override suspend fun applyEdit(pageNum: Int, record: FormEditInfo): List<Rect> {
         editHistory.add(record)
         return listOf()
     }

@@ -30,7 +30,7 @@ import androidx.pdf.PdfPoint
 import androidx.pdf.R
 import androidx.pdf.exceptions.RequestFailedException
 import androidx.pdf.exceptions.RequestMetadata
-import androidx.pdf.models.FormEditRecord
+import androidx.pdf.models.FormEditInfo
 import androidx.pdf.models.FormWidgetInfo
 import androidx.pdf.util.FORM_APPLY_EDIT_REQUEST_NAME
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -43,7 +43,7 @@ import kotlinx.coroutines.launch
 
 /**
  * Handles user interaction with different types of form widgets in a PDF document and assembles a
- * [FormEditRecord] based on the interaction. The class also handles responsibilities like creating
+ * [FormEditInfo] based on the interaction. The class also handles responsibilities like creating
  * drop-down menus or creating text fields for user input.
  */
 internal class FormWidgetInteractionHandler(
@@ -93,16 +93,16 @@ internal class FormWidgetInteractionHandler(
         pdfCoordinates: PointF,
         formWidgetInfo: FormWidgetInfo,
     ) {
-        val formEditRecord =
-            FormEditRecord(
+        val formEditInfo =
+            FormEditInfo(
                 pageNum,
                 formWidgetInfo.widgetIndex,
                 clickPoint = Point(pdfCoordinates.x.roundToInt(), pdfCoordinates.y.roundToInt()),
             )
-        applyEditRecord(pageNum, formEditRecord)
+        applyEditRecord(pageNum, formEditInfo)
     }
 
-    /** Implements logic to take user input in a text field. Once done assembles a FormEditRecord */
+    /** Implements logic to take user input in a text field. Once done assembles a FormEditInfo */
     fun handleInteractionWithTextWidget(
         pageNum: Int,
         formWidgetInfo: FormWidgetInfo,
@@ -143,7 +143,7 @@ internal class FormWidgetInteractionHandler(
         placeTextInputInLayout.invoke(null)
         applyEditRecord(
             formFillingEditText.pageNum,
-            FormEditRecord(
+            FormEditInfo(
                 formFillingEditText.pageNum,
                 formFillingEditText.formWidget.widgetIndex,
                 formFillingEditText.editText.text.toString(),
@@ -154,7 +154,7 @@ internal class FormWidgetInteractionHandler(
 
     /**
      * Creates a drop-down menu with a list of options. Once option is selected by the user,
-     * assembles a FormEditRecord
+     * assembles a FormEditInfo
      */
     fun handleInteractionWithChoiceSelectionWidget(pageNum: Int, formWidgetInfo: FormWidgetInfo) {
         if (formWidgetInfo.multiSelect) {
@@ -210,26 +210,25 @@ internal class FormWidgetInteractionHandler(
         formWidgetInfo: FormWidgetInfo,
         selectedItemIndices: List<Int>,
     ) {
-        val formEditRecord =
-            FormEditRecord(
+        val formEditInfo =
+            FormEditInfo(
                 pageNum,
                 formWidgetInfo.widgetIndex,
                 selectedIndices = selectedItemIndices.toIntArray(),
             )
 
-        applyEditRecord(pageNum, formEditRecord)
+        applyEditRecord(pageNum, formEditInfo)
     }
 
     /** Calls pdfDocument.applyEdit inside a CoroutineScope */
-    fun applyEditRecord(pageNum: Int, formEditRecord: FormEditRecord) {
+    fun applyEditRecord(pageNum: Int, formEditInfo: FormEditInfo) {
         val previousApplyEditJob = currentApplyEditJob
         currentApplyEditJob =
             backgroundScope.launch {
                 previousApplyEditJob?.join()
                 try {
                     _invalidatedAreas.emit(
-                        pageNum to
-                            pdfDocument.applyEdit(pageNum, formEditRecord).map { it.toRectF() }
+                        pageNum to pdfDocument.applyEdit(pageNum, formEditInfo).map { it.toRectF() }
                     )
                 } catch (error: Exception) {
                     when (error) {

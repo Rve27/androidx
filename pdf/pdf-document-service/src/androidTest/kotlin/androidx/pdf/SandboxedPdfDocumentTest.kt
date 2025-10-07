@@ -36,7 +36,7 @@ import androidx.pdf.annotation.models.StampAnnotation
 import androidx.pdf.annotation.processor.BatchPdfAnnotationsProcessor
 import androidx.pdf.annotation.processor.BatchPdfAnnotationsProcessor.Companion.parcelSizeInBytes
 import androidx.pdf.content.PdfPageTextContent
-import androidx.pdf.models.FormEditRecord
+import androidx.pdf.models.FormEditInfo
 import androidx.pdf.models.FormWidgetInfo
 import androidx.pdf.service.connect.FakePdfServiceConnection
 import androidx.pdf.service.connect.PdfServiceConnection
@@ -360,7 +360,7 @@ class SandboxedPdfDocumentTest {
         assertThat(editableFormWidget.textValue).isEqualTo("false")
 
         val editRecord =
-            FormEditRecord(
+            FormEditInfo(
                 pageNumber = pageNum,
                 widgetIndex = editableFormWidget.widgetIndex,
                 clickPoint =

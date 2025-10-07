@@ -19,7 +19,7 @@ package androidx.pdf.view
 import android.graphics.Point
 import android.net.Uri
 import android.view.ViewGroup
-import androidx.pdf.models.FormEditRecord
+import androidx.pdf.models.FormEditInfo
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.matcher.ViewMatchers.withId
@@ -97,9 +97,9 @@ class PdfViewStateChangeTest {
                 pdfView = view as PdfView
             }
             // apply edits to the pdfDocument via the pdfView instance.
-            pdfView?.pdfDocument?.applyEdit(0, FormEditRecord(0, 0, "Hello"))
-            pdfView?.pdfDocument?.applyEdit(0, FormEditRecord(1, 0, "World"))
-            pdfView?.pdfDocument?.applyEdit(0, FormEditRecord(0, 0, "Bye"))
+            pdfView?.pdfDocument?.applyEdit(0, FormEditInfo(0, 0, "Hello"))
+            pdfView?.pdfDocument?.applyEdit(0, FormEditInfo(1, 0, "World"))
+            pdfView?.pdfDocument?.applyEdit(0, FormEditInfo(0, 0, "Bye"))
 
             // recreate the pdfView and assign the emptyEditRecordPdfDocument to it to
             // emulate process death where the document would loose the edit records.
@@ -124,9 +124,9 @@ class PdfViewStateChangeTest {
         assertThat(pdfView?.pdfDocument).isEqualTo(emptyEditRecordPdfDocument)
         // FormEditRecords for text fields are compressed to apply the minimum edits to restore
         // form state. Hence the first edit is ignored, which makes expected size = 2
-        assertThat(emptyEditRecordPdfDocument.formEditRecords).hasSize(2)
-        assertThat(emptyEditRecordPdfDocument.formEditRecords)
-            .isEqualTo(listOf(FormEditRecord(1, 0, "World"), FormEditRecord(0, 0, "Bye")))
+        assertThat(emptyEditRecordPdfDocument.formEditInfos).hasSize(2)
+        assertThat(emptyEditRecordPdfDocument.formEditInfos)
+            .isEqualTo(listOf(FormEditInfo(1, 0, "World"), FormEditInfo(0, 0, "Bye")))
     }
 
     @Test
@@ -144,9 +144,9 @@ class PdfViewStateChangeTest {
                 pdfView = view as PdfView
             }
             // apply edits to the pdfDocument via the pdfView instance.
-            pdfView?.pdfDocument?.applyEdit(0, FormEditRecord(0, 0, "Hello"))
-            pdfView?.pdfDocument?.applyEdit(0, FormEditRecord(1, 0, "World"))
-            pdfView?.pdfDocument?.applyEdit(0, FormEditRecord(0, 0, "Bye"))
+            pdfView?.pdfDocument?.applyEdit(0, FormEditInfo(0, 0, "Hello"))
+            pdfView?.pdfDocument?.applyEdit(0, FormEditInfo(1, 0, "World"))
+            pdfView?.pdfDocument?.applyEdit(0, FormEditInfo(0, 0, "Bye"))
 
             // PdfDocument will be set naturally following recreation by the onCreate callback
             // configured in setupPdfView
@@ -162,14 +162,14 @@ class PdfViewStateChangeTest {
 
         assertThat(pdfView?.pdfDocument).isEqualTo(pdfDocument)
         // Assert that the state of pdfDocument in pdfView is restored
-        assertThat(pdfView?.pdfDocument?.formEditRecords).hasSize(3)
+        assertThat(pdfView?.pdfDocument?.formEditInfos).hasSize(3)
         // Assert that the state of edit records are intact (not compressed)
-        assertThat(pdfView?.pdfDocument?.formEditRecords)
+        assertThat(pdfView?.pdfDocument?.formEditInfos)
             .isEqualTo(
                 listOf(
-                    FormEditRecord(0, 0, "Hello"),
-                    FormEditRecord(1, 0, "World"),
-                    FormEditRecord(0, 0, "Bye"),
+                    FormEditInfo(0, 0, "Hello"),
+                    FormEditInfo(1, 0, "World"),
+                    FormEditInfo(0, 0, "Bye"),
                 )
             )
     }

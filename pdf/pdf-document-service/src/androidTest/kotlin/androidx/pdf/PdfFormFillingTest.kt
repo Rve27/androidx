@@ -21,7 +21,7 @@ import android.graphics.Rect
 import android.os.Build
 import androidx.pdf.PdfDocument.Companion.INCLUDE_FORM_WIDGET_INFO
 import androidx.pdf.SandboxedPdfDocumentTest.Companion.withDocument
-import androidx.pdf.models.FormEditRecord
+import androidx.pdf.models.FormEditInfo
 import androidx.pdf.models.FormWidgetInfo
 import androidx.pdf.models.ListItem
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -221,7 +221,7 @@ class PdfFormFillingTest {
             )
 
         val clickPoint = Point(145, 80)
-        val editRec = FormEditRecord(0, before.widgetIndex, clickPoint = clickPoint)
+        val editRec = FormEditInfo(0, before.widgetIndex, clickPoint = clickPoint)
 
         val after =
             FormWidgetInfo(
@@ -248,7 +248,7 @@ class PdfFormFillingTest {
                 accessibilityLabel = "",
             )
         val clickPoint = Point(95, 240)
-        val click = FormEditRecord(pageNumber = 0, widgetIndex = 5, clickPoint = clickPoint)
+        val click = FormEditInfo(pageNumber = 0, widgetIndex = 5, clickPoint = clickPoint)
         val after =
             makeRadioButton(
                 widgetIndex = 5,
@@ -282,7 +282,7 @@ class PdfFormFillingTest {
                 listItems = choicesBefore,
             )
         val selectBar =
-            FormEditRecord(pageNumber = 0, widgetIndex = 0, selectedIndices = intArrayOf(1))
+            FormEditInfo(pageNumber = 0, widgetIndex = 0, selectedIndices = intArrayOf(1))
         val choicesAfter =
             listOf(
                 ListItem(label = "Foo", selected = false),
@@ -331,7 +331,7 @@ class PdfFormFillingTest {
                 fontSize = 12.0f,
                 listItems = choicesBefore,
             )
-        val setText = FormEditRecord(pageNumber = 0, widgetIndex = 0, text = "Gecko tail")
+        val setText = FormEditInfo(pageNumber = 0, widgetIndex = 0, text = "Gecko tail")
 
         val widgetAfter =
             makeComboBox(
@@ -375,7 +375,7 @@ class PdfFormFillingTest {
                 listItems = choicesBefore,
             )
         val clearSelection =
-            FormEditRecord(pageNumber = 0, widgetIndex = 6, selectedIndices = intArrayOf(0))
+            FormEditInfo(pageNumber = 0, widgetIndex = 6, selectedIndices = intArrayOf(0))
         val choicesAfter =
             listOf(
                 ListItem(label = "Alberta", selected = true),
@@ -426,7 +426,7 @@ class PdfFormFillingTest {
                 fontSize = 12.0f,
             )
 
-        val setText = FormEditRecord(pageNumber = 0, widgetIndex = 0, text = "Gecko tail")
+        val setText = FormEditInfo(pageNumber = 0, widgetIndex = 0, text = "Gecko tail")
 
         val widgetAfter =
             makeTextField(
@@ -487,7 +487,7 @@ class PdfFormFillingTest {
                 listItems = choicesBefore,
             )
         val selectMultiple =
-            FormEditRecord(pageNumber = 0, widgetIndex = 1, selectedIndices = intArrayOf(1, 2, 3))
+            FormEditInfo(pageNumber = 0, widgetIndex = 1, selectedIndices = intArrayOf(1, 2, 3))
         val choicesAfter =
             listOf(
                 ListItem(label = "Apple", selected = false),
@@ -565,7 +565,7 @@ class PdfFormFillingTest {
                 listItems = choicesBefore,
             )
         val clearSelection =
-            FormEditRecord(pageNumber = 0, widgetIndex = 6, selectedIndices = IntArray(0))
+            FormEditInfo(pageNumber = 0, widgetIndex = 6, selectedIndices = IntArray(0))
         val choicesAfter =
             listOf(
                 ListItem(label = "Alberta", selected = false),
@@ -615,7 +615,7 @@ class PdfFormFillingTest {
                 maxLength = 10,
                 fontSize = 12.0f,
             )
-        val clearText = FormEditRecord(pageNumber = 0, widgetIndex = 2, text = "")
+        val clearText = FormEditInfo(pageNumber = 0, widgetIndex = 2, text = "")
         val widgetAfter =
             makeTextField(
                 widgetIndex = 2,
@@ -635,7 +635,7 @@ class PdfFormFillingTest {
     @Test
     fun applyEdit_clickOnReadOnlyCheckbox() = runTest {
         val clickOnROCheckbox =
-            FormEditRecord(pageNumber = 0, widgetIndex = 0, clickPoint = Point(145, 40))
+            FormEditInfo(pageNumber = 0, widgetIndex = 0, clickPoint = Point(145, 40))
 
         verifyApplyEditThrowsException(CLICK_FORM, 0, clickOnROCheckbox)
     }
@@ -643,14 +643,14 @@ class PdfFormFillingTest {
     @Test
     fun applyEdit_clickOnReadOnlyRadioButton() = runTest {
         val clickOnRORadioButton =
-            FormEditRecord(pageNumber = 0, widgetIndex = 2, clickPoint = Point(95, 190))
+            FormEditInfo(pageNumber = 0, widgetIndex = 2, clickPoint = Point(95, 190))
 
         verifyApplyEditThrowsException(CLICK_FORM, 0, clickOnRORadioButton)
     }
 
     @Test
     fun applyEdit_setTextOnClickTypeWidget() = runTest {
-        val setTextOnCheckbox = FormEditRecord(pageNumber = 0, widgetIndex = 1, text = "New text")
+        val setTextOnCheckbox = FormEditInfo(pageNumber = 0, widgetIndex = 1, text = "New text")
 
         verifyApplyEditThrowsException(CLICK_FORM, 0, setTextOnCheckbox)
     }
@@ -658,15 +658,14 @@ class PdfFormFillingTest {
     @Test
     fun applyEdit_setChoiceSelectionOnClickTypeWidget() = runTest {
         val setChoiceOnCB =
-            FormEditRecord(pageNumber = 0, widgetIndex = 1, selectedIndices = intArrayOf(1, 2, 3))
+            FormEditInfo(pageNumber = 0, widgetIndex = 1, selectedIndices = intArrayOf(1, 2, 3))
 
         verifyApplyEditThrowsException(CLICK_FORM, 0, setChoiceOnCB)
     }
 
     @Test
     fun applyEdit_clickOnInvalidPoint() = runTest {
-        val clickOnNothing =
-            FormEditRecord(pageNumber = 0, widgetIndex = 0, clickPoint = Point(0, 0))
+        val clickOnNothing = FormEditInfo(pageNumber = 0, widgetIndex = 0, clickPoint = Point(0, 0))
 
         verifyApplyEditThrowsException(CLICK_FORM, 0, clickOnNothing)
     }
@@ -674,7 +673,7 @@ class PdfFormFillingTest {
     @Test
     fun applyEdit_setChoiceSelectionOnReadOnlyCombobox() = runTest {
         val setChoiceOnROCB =
-            FormEditRecord(pageNumber = 0, widgetIndex = 2, selectedIndices = intArrayOf(1))
+            FormEditInfo(pageNumber = 0, widgetIndex = 2, selectedIndices = intArrayOf(1))
 
         verifyApplyEditThrowsException(COMBO_BOX_FORM, 0, setChoiceOnROCB)
     }
@@ -682,7 +681,7 @@ class PdfFormFillingTest {
     @Test
     fun applyEdit_setInvalidChoiceSelectionOnCombobox() = runTest {
         val setBadChoice =
-            FormEditRecord(
+            FormEditInfo(
                 pageNumber = 0,
                 widgetIndex = 1,
                 selectedIndices = intArrayOf(100, 365, 1436),
@@ -693,23 +692,21 @@ class PdfFormFillingTest {
 
     @Test
     fun applyEdit_setTextOnReadOnlyCombobox() = runTest {
-        val setTextOnROCB = FormEditRecord(pageNumber = 0, widgetIndex = 2, text = "new text")
+        val setTextOnROCB = FormEditInfo(pageNumber = 0, widgetIndex = 2, text = "new text")
 
         verifyApplyEditThrowsException(COMBO_BOX_FORM, 0, setTextOnROCB)
     }
 
     @Test
     fun applyEdit_setTextOnUneditableCombobox() = runTest {
-        val setTextOnUneditableCB =
-            FormEditRecord(pageNumber = 0, widgetIndex = 1, text = "new text")
+        val setTextOnUneditableCB = FormEditInfo(pageNumber = 0, widgetIndex = 1, text = "new text")
 
         verifyApplyEditThrowsException(COMBO_BOX_FORM, 0, setTextOnUneditableCB)
     }
 
     @Test
     fun applyEdit_clickOnCombobox() = runTest {
-        val clickOnCB =
-            FormEditRecord(pageNumber = 0, widgetIndex = 1, clickPoint = Point(150, 185))
+        val clickOnCB = FormEditInfo(pageNumber = 0, widgetIndex = 1, clickPoint = Point(150, 185))
 
         verifyApplyEditThrowsException(COMBO_BOX_FORM, 0, clickOnCB)
     }
@@ -718,7 +715,7 @@ class PdfFormFillingTest {
     @Test
     fun applyEdit_setMultipleChoiceSelectionOnSingleSelectionListbox() = runTest {
         val pickMultipleOnSingleChoice =
-            FormEditRecord(pageNumber = 0, widgetIndex = 0, selectedIndices = intArrayOf(1, 2))
+            FormEditInfo(pageNumber = 0, widgetIndex = 0, selectedIndices = intArrayOf(1, 2))
 
         verifyApplyEditThrowsException(LIST_BOX_FORM, 0, pickMultipleOnSingleChoice)
     }
@@ -726,22 +723,21 @@ class PdfFormFillingTest {
     @Test
     fun applyEdit_setChoiceSelectionOnReadOnlyListbox() = runTest {
         val setChoiceOnROLB =
-            FormEditRecord(pageNumber = 0, widgetIndex = 2, selectedIndices = intArrayOf(1))
+            FormEditInfo(pageNumber = 0, widgetIndex = 2, selectedIndices = intArrayOf(1))
 
         verifyApplyEditThrowsException(LIST_BOX_FORM, 0, setChoiceOnROLB)
     }
 
     @Test
     fun applyEdit_clickOnListbox() = runTest {
-        val clickOnLB =
-            FormEditRecord(pageNumber = 0, widgetIndex = 1, clickPoint = Point(150, 235))
+        val clickOnLB = FormEditInfo(pageNumber = 0, widgetIndex = 1, clickPoint = Point(150, 235))
 
         verifyApplyEditThrowsException(LIST_BOX_FORM, 0, clickOnLB)
     }
 
     @Test
     fun applyEdit_setTextOnListbox() = runTest {
-        val setTextOnLB = FormEditRecord(pageNumber = 0, widgetIndex = 1, text = "new text")
+        val setTextOnLB = FormEditInfo(pageNumber = 0, widgetIndex = 1, text = "new text")
 
         verifyApplyEditThrowsException(COMBO_BOX_FORM, 0, setTextOnLB)
     }
@@ -756,15 +752,14 @@ class PdfFormFillingTest {
 
     @Test
     fun applyEdit_setTextOnReadOnlyTextField() = runTest {
-        val setTextOnROTF = FormEditRecord(pageNumber = 0, widgetIndex = 1, text = "new text")
+        val setTextOnROTF = FormEditInfo(pageNumber = 0, widgetIndex = 1, text = "new text")
 
         verifyApplyEditThrowsException(TEXT_FORM, 0, setTextOnROTF)
     }
 
     @Test
     fun applyEdit_clickOnTextField() = runTest {
-        val clickOnTF =
-            FormEditRecord(pageNumber = 0, widgetIndex = 1, clickPoint = Point(150, 185))
+        val clickOnTF = FormEditInfo(pageNumber = 0, widgetIndex = 1, clickPoint = Point(150, 185))
 
         verifyApplyEditThrowsException(TEXT_FORM, 0, clickOnTF)
     }
@@ -772,7 +767,7 @@ class PdfFormFillingTest {
     @Test
     fun applyEdit_setChoiceSelectionOnTextField() = runTest {
         val setChoiceOnTF =
-            FormEditRecord(pageNumber = 0, widgetIndex = 1, selectedIndices = intArrayOf(1, 2, 3))
+            FormEditInfo(pageNumber = 0, widgetIndex = 1, selectedIndices = intArrayOf(1, 2, 3))
 
         verifyApplyEditThrowsException(TEXT_FORM, 0, setChoiceOnTF)
     }
@@ -823,7 +818,7 @@ class PdfFormFillingTest {
         private suspend fun verifyApplyEdit(
             fileName: String,
             pageNum: Int,
-            editRecord: FormEditRecord,
+            editRecord: FormEditInfo,
             before: FormWidgetInfo,
             after: FormWidgetInfo,
             expectedDirtyArea: List<Rect>? = null,
@@ -852,7 +847,7 @@ class PdfFormFillingTest {
         private suspend fun verifyApplyEditThrowsException(
             fileName: String,
             pageNum: Int,
-            editRecord: FormEditRecord,
+            editRecord: FormEditInfo,
         ) {
             withDocument(fileName) { document ->
                 assertThrows(IllegalArgumentException::class.java) {

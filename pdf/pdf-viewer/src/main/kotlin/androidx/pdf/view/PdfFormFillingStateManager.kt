@@ -21,7 +21,7 @@ import android.os.DeadObjectException
 import androidx.pdf.PdfDocument
 import androidx.pdf.exceptions.RequestFailedException
 import androidx.pdf.exceptions.RequestMetadata
-import androidx.pdf.models.FormEditRecord
+import androidx.pdf.models.FormEditInfo
 import androidx.pdf.util.FORM_APPLY_EDIT_REQUEST_NAME
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -30,7 +30,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 
 /**
- * Handles restoring the form filling state by applying [FormEditRecord]s to the [PdfDocument].
+ * Handles restoring the form filling state by applying [FormEditInfo]s to the [PdfDocument].
  * Notifies the caller via [onRestoreTaskComplete] when the restoration is complete, providing a map
  * of invalidated areas.
  */
@@ -44,9 +44,9 @@ internal class PdfFormFillingStateManager(
     private var applyEditJob: Job? = null
 
     private val formEditTypesToCompress =
-        setOf(FormEditRecord.EDIT_TYPE_SET_TEXT, FormEditRecord.EDIT_TYPE_SET_INDICES)
+        setOf(FormEditInfo.EDIT_TYPE_SET_TEXT, FormEditInfo.EDIT_TYPE_SET_INDICES)
 
-    fun restoreFormFillingState(pdfEditRecords: List<FormEditRecord>?) {
+    fun restoreFormFillingState(pdfEditRecords: List<FormEditInfo>?) {
         if (pdfEditRecords == null) return
         val compressedEditRecords = compressFormEdits(pdfEditRecords)
         val pagesInvalidatedAreas = mutableMapOf<Int, List<Rect>>()
@@ -67,10 +67,10 @@ internal class PdfFormFillingStateManager(
             }
     }
 
-    private fun compressFormEdits(formEditRecords: List<FormEditRecord>): List<FormEditRecord> {
-        val compressedEdits = mutableListOf<FormEditRecord>()
+    private fun compressFormEdits(formEditInfos: List<FormEditInfo>): List<FormEditInfo> {
+        val compressedEdits = mutableListOf<FormEditInfo>()
 
-        for (edit in formEditRecords) {
+        for (edit in formEditInfos) {
             compressedEdits.removeIf {
                 edit.type in formEditTypesToCompress &&
                     it.pageNumber == edit.pageNumber &&
@@ -81,7 +81,7 @@ internal class PdfFormFillingStateManager(
         return compressedEdits
     }
 
-    private suspend fun tryApplyEdit(editRecord: FormEditRecord): List<Rect> {
+    private suspend fun tryApplyEdit(editRecord: FormEditInfo): List<Rect> {
         try {
             return pdfDocument.applyEdit(editRecord.pageNumber, editRecord)
         } catch (error: Exception) {

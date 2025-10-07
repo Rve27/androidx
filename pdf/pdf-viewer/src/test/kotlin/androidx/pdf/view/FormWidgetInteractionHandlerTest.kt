@@ -26,7 +26,7 @@ import androidx.core.graphics.toRect
 import androidx.pdf.PdfDocument
 import androidx.pdf.PdfPoint
 import androidx.pdf.exceptions.RequestFailedException
-import androidx.pdf.models.FormEditRecord
+import androidx.pdf.models.FormEditInfo
 import androidx.pdf.models.FormWidgetInfo
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
@@ -120,7 +120,7 @@ class FormWidgetInteractionHandlerTest {
             )
         val invalidatedRects = listOf(Rect(0, 0, 100, 100))
         val expectedEditRecord =
-            FormEditRecord(
+            FormEditInfo(
                 pageNumber = pageNum,
                 widgetIndex = widgetIndex,
                 clickPoint = Point(pdfCoordinates.x.toInt(), pdfCoordinates.y.toInt()),
@@ -152,7 +152,7 @@ class FormWidgetInteractionHandlerTest {
                 readOnly = false,
             )
         val expectedEditRecord =
-            FormEditRecord(
+            FormEditInfo(
                 pageNumber = pageNum,
                 widgetIndex = widgetIndex,
                 clickPoint = Point(pdfCoordinates.x.toInt(), pdfCoordinates.y.toInt()),
@@ -186,7 +186,7 @@ class FormWidgetInteractionHandlerTest {
                 readOnly = false,
             )
         val expectedEditRecord =
-            FormEditRecord(
+            FormEditInfo(
                 pageNumber = pageNum,
                 widgetIndex = widgetIndex,
                 clickPoint = Point(pdfCoordinates.x.toInt(), pdfCoordinates.y.toInt()),
@@ -209,13 +209,13 @@ class FormWidgetInteractionHandlerTest {
         backgroundScope.launch(testDispatcher) { handler.invalidatedAreas.toList(invalidatedAreas) }
         val pageNum = 1
         val widgetIndex = 0
-        val formEditRecord =
-            FormEditRecord(pageNumber = pageNum, widgetIndex = widgetIndex, text = "New Text")
+        val formEditInfo =
+            FormEditInfo(pageNumber = pageNum, widgetIndex = widgetIndex, text = "New Text")
         val invalidatedRects = listOf(Rect(0, 0, 50, 50))
 
-        `when`(pdfDocument.applyEdit(pageNum, formEditRecord)).thenReturn(invalidatedRects)
+        `when`(pdfDocument.applyEdit(pageNum, formEditInfo)).thenReturn(invalidatedRects)
 
-        handler.applyEditRecord(pageNum, formEditRecord)
+        handler.applyEditRecord(pageNum, formEditInfo)
 
         assertThat(invalidatedAreas.size).isEqualTo(1)
         assertThat(invalidatedAreas[0].first).isEqualTo(pageNum)
@@ -226,17 +226,17 @@ class FormWidgetInteractionHandlerTest {
     fun applyEditRecord_emitsRequestFailedExceptionForDeadObjectException() = runTest {
         val pageNum = 1
         val widgetIndex = 0
-        val formEditRecord =
-            FormEditRecord(pageNumber = pageNum, widgetIndex = widgetIndex, text = "New Text")
+        val formEditInfo =
+            FormEditInfo(pageNumber = pageNum, widgetIndex = widgetIndex, text = "New Text")
 
-        `when`(pdfDocument.applyEdit(pageNum, formEditRecord)).thenAnswer {
+        `when`(pdfDocument.applyEdit(pageNum, formEditInfo)).thenAnswer {
             throw DeadObjectException()
         }
 
         val errors = mutableListOf<Throwable>()
         backgroundScope.launch(testDispatcher) { errorFlow.toList(errors) }
 
-        handler.applyEditRecord(pageNum, formEditRecord)
+        handler.applyEditRecord(pageNum, formEditInfo)
 
         assertEquals(1, errors.size)
         val error = errors[0]
@@ -250,17 +250,17 @@ class FormWidgetInteractionHandlerTest {
     fun applyEditRecord_emitsRequestFailedExceptionForIllegalArgumentException() = runTest {
         val pageNum = 1
         val widgetIndex = 0
-        val formEditRecord =
-            FormEditRecord(pageNumber = pageNum, widgetIndex = widgetIndex, text = "New Text")
+        val formEditInfo =
+            FormEditInfo(pageNumber = pageNum, widgetIndex = widgetIndex, text = "New Text")
 
-        `when`(pdfDocument.applyEdit(pageNum, formEditRecord)).thenAnswer {
+        `when`(pdfDocument.applyEdit(pageNum, formEditInfo)).thenAnswer {
             throw IllegalArgumentException()
         }
 
         val errors = mutableListOf<Throwable>()
         backgroundScope.launch(testDispatcher) { errorFlow.toList(errors) }
 
-        handler.applyEditRecord(pageNum, formEditRecord)
+        handler.applyEditRecord(pageNum, formEditInfo)
 
         assertEquals(1, errors.size)
         val error = errors[0]
