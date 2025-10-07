@@ -174,7 +174,14 @@ internal class EmbeddingCompat(
         setDefaultSplitAttributeCalculatorIfNeeded()
 
         if (windowSdkExtensions.extensionVersion >= 8) {
-            embeddingExtension.setAutoSaveEmbeddingState(embeddingConfig.isAutoSaveEmbeddingState)
+            // TODO(b/289875940): remove the try-catch block once handled by the reflection guard
+            try {
+                embeddingExtension.setAutoSaveEmbeddingState(
+                    embeddingConfig.isAutoSaveEmbeddingState
+                )
+            } catch (e: Throwable) {
+                Log.w(TAG, "#setAutoSaveEmbeddingState failed", e)
+            }
         }
         embeddingExtension.invalidateTopVisibleSplitAttributes()
     }

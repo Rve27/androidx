@@ -182,17 +182,14 @@ class DialerViewModel(
      * call.
      */
     fun initiateOutgoingCall() {
-        val scheme = loadPhoneNumberPrefix(context)
-        val phoneNumber = _uiState.value.phoneNumber
         callRepository.addOutgoingCall(
             CallAttributesCompat(
                 _uiState.value.displayName,
-                Uri.fromParts(scheme, phoneNumber, null),
+                Uri.parse(loadPhoneNumberPrefix(context) + _uiState.value.phoneNumber),
                 CallAttributesCompat.DIRECTION_OUTGOING,
                 callType = getCallType(),
                 callCapabilities = getCallCapabilities(),
                 preferredStartingCallEndpoint = _uiState.value.selectedEndpoint,
-                isLogExcluded = false,
             )
         )
     }

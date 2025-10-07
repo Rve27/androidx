@@ -28,7 +28,6 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.verifyNoMoreInteractions
 import org.mockito.kotlin.whenever
 
-@Suppress("Deprecation") // WindowInfoTrackerCallbackAdapter is deprecated
 class WindowInfoTrackerCallbackAdapterTest {
 
     @Test
