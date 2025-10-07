@@ -81,8 +81,6 @@ RemovedFromKotlin: androidx.compose.animation.ExitTransition.Companion#getNone()
     Source breaking change: method androidx.compose.animation.ExitTransition.Companion.getNone() can no longer be resolved from Kotlin source
 RemovedFromKotlin: androidx.compose.animation.SizeTransform#getClip():
     Source breaking change: method androidx.compose.animation.SizeTransform.getClip() can no longer be resolved from Kotlin source
-RemovedFromKotlin: androidx.compose.animation.SplineBasedFloatDecayAnimationSpec#getAbsVelocityThreshold():
-    Source breaking change: method androidx.compose.animation.SplineBasedFloatDecayAnimationSpec.getAbsVelocityThreshold() can no longer be resolved from Kotlin source
 RemovedFromKotlin: androidx.compose.animation.SplineBasedFloatDecayAnimationSpec_androidKt#splineBasedDecay(androidx.compose.ui.unit.Density):
     Source breaking change: method androidx.compose.animation.SplineBasedFloatDecayAnimationSpec_androidKt.splineBasedDecay(androidx.compose.ui.unit.Density) can no longer be resolved from Kotlin source
 
