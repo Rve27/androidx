@@ -62,6 +62,7 @@ import androidx.pdf.event.PdfTrackingEvent
 import androidx.pdf.event.RequestFailureEvent
 import androidx.pdf.exceptions.RequestFailedException
 import androidx.pdf.formfilling.FormFillingEditTextState
+import androidx.pdf.models.FormEditInfo
 import androidx.pdf.models.FormWidgetInfo
 import androidx.pdf.selection.ContextMenuComponent
 import androidx.pdf.selection.Selection
@@ -440,6 +441,44 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
     }
 
     private val onViewportChangedListeners = mutableListOf<OnViewportChangedListener>()
+
+    /** Listener interface for handling form edits on a PDF Document. */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public interface OnFormWidgetInfoUpdatedListener {
+        /**
+         * Called when a user interacts with a form widget which leads to the change in state of the
+         * widget i.e. [FormWidgetInfo]
+         *
+         * @param formEditInfo The edit to be applied to the [PdfDocument] Note: In order to
+         *   correctly update the state the formEditInfo at the document the [formEditInfo] must be
+         *   applied to the document via [PdfDocument.applyEdit].
+         */
+        public fun onFormWidgetInfoUpdated(formEditInfo: FormEditInfo)
+    }
+
+    private val onFormWidgetInfoUpdatedListeners = mutableListOf<OnFormWidgetInfoUpdatedListener>()
+
+    /**
+     * Adds the specified listener to the list of listeners that is notified when any form widget is
+     * updated due to an edit action on a widget e.g. click on a radio button.
+     *
+     * @param listener The listener to add
+     */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public fun addOnFormWidgetInfoUpdatedListener(listener: OnFormWidgetInfoUpdatedListener) {
+        onFormWidgetInfoUpdatedListeners.add(listener)
+    }
+
+    /**
+     * Adds the specified listener to the list of listeners that is notified when any form widget is
+     * updated due to an edit action on the widget e.g. click on a radio button.
+     *
+     * @param listener The listener to remove
+     */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public fun removeOnFormWidgetInfoUpdatedListener(listener: OnFormWidgetInfoUpdatedListener) {
+        onFormWidgetInfoUpdatedListeners.remove(listener)
+    }
 
     /** Listener interface for handling clicks on links in a PDF document. */
     public interface LinkClickListener {
