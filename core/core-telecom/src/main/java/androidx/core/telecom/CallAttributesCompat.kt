@@ -16,9 +16,7 @@
 
 package androidx.core.telecom
 
-import android.annotation.SuppressLint
 import android.net.Uri
-import android.os.Build
 import android.telecom.PhoneAccountHandle
 import androidx.annotation.IntDef
 import androidx.annotation.RequiresApi
@@ -26,7 +24,6 @@ import androidx.annotation.RestrictTo
 import androidx.core.telecom.internal.utils.CallAttributesUtils
 import androidx.core.telecom.internal.utils.Utils
 import java.util.Objects
-import kotlin.jvm.JvmOverloads
 
 /**
  * CallAttributes represents a set of properties that define a new Call. Applications should build
@@ -44,20 +41,14 @@ import kotlin.jvm.JvmOverloads
  *   new call on. The [preferredStartingCallEndpoint] should be a value returned from
  *   [CallsManager.getAvailableStartingCallEndpoints]. Once the call is started, Core-Telecom will
  *   switch to the [preferredStartingCallEndpoint] before running the [CallControlScope].
- * @param isLogExcluded Whether this call should be excluded from the call log. This is only
- *   applicable on sdks 36.1+. Pass null if the default platform behavior is desired or when running
- *   on older versions.
  */
-public class CallAttributesCompat
-@JvmOverloads
-constructor(
+public class CallAttributesCompat(
     public val displayName: CharSequence,
     public val address: Uri,
     @Direction public val direction: Int,
     @CallType public val callType: Int = CALL_TYPE_AUDIO_CALL,
     @CallCapability public val callCapabilities: Int = SUPPORTS_SET_INACTIVE,
     public val preferredStartingCallEndpoint: CallEndpointCompat? = null,
-    @get:SuppressLint("AutoBoxing") public val isLogExcluded: Boolean? = null,
 ) {
     internal var mHandle: PhoneAccountHandle? = null
 
@@ -67,9 +58,7 @@ constructor(
             "address=[$address], " +
             "direction=[${directionToString()}], " +
             "callType=[${callTypeToString()}], " +
-            "capabilities=[${capabilitiesToString()}, " +
-            "isLogExcluded=[$isLogExcluded]" +
-            ")"
+            "capabilities=[${capabilitiesToString()}])"
     }
 
     override fun equals(other: Any?): Boolean {
@@ -78,19 +67,11 @@ constructor(
             address == other.address &&
             direction == other.direction &&
             callType == other.callType &&
-            callCapabilities == other.callCapabilities &&
-            isLogExcluded == other.isLogExcluded
+            callCapabilities == other.callCapabilities
     }
 
     override fun hashCode(): Int {
-        return Objects.hash(
-            displayName,
-            address,
-            direction,
-            callType,
-            callCapabilities,
-            isLogExcluded,
-        )
+        return Objects.hash(displayName, address, direction, callType, callCapabilities)
     }
 
     public companion object {
@@ -146,33 +127,18 @@ constructor(
         public const val SUPPORTS_TRANSFER: Int = 1 shl 3
     }
 
-    @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
+    @RequiresApi(34)
     internal fun toCallAttributes(
         phoneAccountHandle: PhoneAccountHandle
     ): android.telecom.CallAttributes {
-        return if (
-            isLogExcluded != null &&
-                Build.VERSION.SDK_INT_FULL >= Build.VERSION_CODES_FULL.BAKLAVA_1
-        ) {
-            CallAttributesUtils.Api36Point1PlusImpl.toTelecomCallAttributes(
-                phoneAccountHandle,
-                direction,
-                displayName,
-                address,
-                callType,
-                callCapabilities,
-                isLogExcluded,
-            )
-        } else {
-            CallAttributesUtils.Api34PlusImpl.toTelecomCallAttributes(
-                phoneAccountHandle,
-                direction,
-                displayName,
-                address,
-                callType,
-                callCapabilities,
-            )
-        }
+        return CallAttributesUtils.Api34PlusImpl.toTelecomCallAttributes(
+            phoneAccountHandle,
+            direction,
+            displayName,
+            address,
+            callType,
+            callCapabilities,
+        )
     }
 
     private fun directionToString(): String {

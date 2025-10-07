@@ -238,11 +238,9 @@ public final class SampleDynamicGroupMediaRouteProvider extends SampleMediaRoute
                             new DynamicRouteDescriptor.Builder(descriptor)
                                     .setIsGroupable(true)
                                     .setIsTransferable(true)
-                                    .setIsUnselectable(selected && memberIds.size() > 1)
-                                    .setSelectionState(
-                                            selected
-                                                    ? DynamicRouteDescriptor.SELECTED
-                                                    : DynamicRouteDescriptor.UNSELECTED);
+                                    .setIsUnselectable(true)
+                                    .setSelectionState(selected ? DynamicRouteDescriptor.SELECTED
+                                            : DynamicRouteDescriptor.UNSELECTED);
                     mDynamicRouteDescriptors.put(routeId, builder.build());
                 }
             }
@@ -499,7 +497,10 @@ public final class SampleDynamicGroupMediaRouteProvider extends SampleMediaRoute
             for (DynamicRouteDescriptor dynamicDescriptor : mDynamicRouteDescriptors.values()) {
                 String routeId = dynamicDescriptor.getRouteDescriptor().getId();
                 MediaRouteDescriptor routeDescriptor = mRouteDescriptors.get(routeId);
-                boolean isMemberRoute = mMemberRouteIds.contains(routeId);
+                if (mMemberRouteIds.contains(routeId)) {
+                    // Skip selected routes.
+                    continue;
+                }
                 boolean isGroupable = true;
                 boolean isTransferable = true;
 
@@ -516,19 +517,20 @@ public final class SampleDynamicGroupMediaRouteProvider extends SampleMediaRoute
                         > MAX_GROUPABLE_TV_COUNT) {
                     isGroupable = false;
                 }
-                if (isMemberRoute) {
+                if (mMemberRouteIds.contains(routeId)) {
                     isGroupable = false;
                     isTransferable = false;
                 }
-                boolean isUnselectable = isMemberRoute && mMemberRouteIds.size() > 1;
 
-                DynamicRouteDescriptor.Builder builder =
-                        new DynamicRouteDescriptor.Builder(dynamicDescriptor)
-                                .setIsGroupable(isGroupable)
-                                .setIsUnselectable(isUnselectable)
-                                .setIsTransferable(isTransferable);
+                if (isGroupable != dynamicDescriptor.isGroupable()
+                        || isTransferable != dynamicDescriptor.isTransferable()) {
+                    DynamicRouteDescriptor.Builder builder =
+                            new DynamicRouteDescriptor.Builder(dynamicDescriptor)
+                                    .setIsGroupable(isGroupable)
+                                    .setIsTransferable(isTransferable);
 
-                mDynamicRouteDescriptors.put(routeId, builder.build());
+                    mDynamicRouteDescriptors.put(routeId, builder.build());
+                }
             }
             if (shouldNotify) {
                 notifyDynamicRoutesChanged(mGroupDescriptor, mDynamicRouteDescriptors.values());

@@ -270,7 +270,11 @@ internal class SafeActivityEmbeddingComponentProvider(
      * Vendor API level 8 includes the following methods:
      * - [EmbeddingConfiguration.Builder.setAutoSaveEmbeddingState]
      */
-    @VisibleForTesting internal fun hasValidVendorApiLevel8(): Boolean = hasValidVendorApiLevel7()
+    @VisibleForTesting
+    internal fun hasValidVendorApiLevel8(): Boolean =
+        // TODO(b/289875940): adding #isClassEmbeddingConfigurationBuilderApi8Valid() when API
+        //                    finalized.
+        hasValidVendorApiLevel7()
 
     /**
      * Overlay features includes the following methods:
