@@ -16,6 +16,7 @@
 
 package androidx.core.telecom.reference.view
 
+import android.os.Build
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -32,6 +33,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -75,6 +77,7 @@ import androidx.core.telecom.reference.viewModel.DialerViewModel
 fun DialerScreen(
     dialerViewModel: DialerViewModel,
     onNavigateToSettings: () -> Unit = {},
+    onNavigateToCallLog: () -> Unit = {},
     onStartCall: () -> Unit = {},
 ) {
     val uiStateState = dialerViewModel.uiState.collectAsState()
@@ -90,6 +93,11 @@ fun DialerScreen(
             modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
             horizontalArrangement = Arrangement.End,
         ) {
+            if (Build.VERSION.SDK_INT_FULL >= Build.VERSION_CODES_FULL.BAKLAVA_1) {
+                IconButton(onClick = onNavigateToCallLog) {
+                    Icon(imageVector = Icons.Filled.History, contentDescription = "Cal Log")
+                }
+            }
             IconButton(onClick = onNavigateToSettings) {
                 Icon(imageVector = Icons.Filled.Settings, contentDescription = "Settings")
             }
