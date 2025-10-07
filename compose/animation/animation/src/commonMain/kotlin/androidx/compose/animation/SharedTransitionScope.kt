@@ -222,7 +222,10 @@ public fun interface BoundsTransform {
      * Returns a [FiniteAnimationSpec] for animating the bounds from [initialBounds] to
      * [targetBounds].
      */
-    public fun transform(initialBounds: Rect, targetBounds: Rect): FiniteAnimationSpec<Rect>
+    public fun createAnimationSpec(
+        initialBounds: Rect,
+        targetBounds: Rect,
+    ): FiniteAnimationSpec<Rect>
 }
 
 /**
