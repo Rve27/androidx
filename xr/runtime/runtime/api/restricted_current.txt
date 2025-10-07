@@ -111,12 +111,7 @@ package androidx.xr.runtime {
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static final class Config.EyeTrackingMode implements androidx.xr.runtime.Config.ConfigMode {
     method @InaccessibleFromKotlin public int getMode();
-    method @InaccessibleFromKotlin public boolean isCoarseTrackingEnabled();
-    method @InaccessibleFromKotlin public boolean isFineTrackingEnabled();
-    property public boolean isCoarseTrackingEnabled;
-    property public boolean isFineTrackingEnabled;
     property public int mode;
-    field public static final androidx.xr.runtime.Config.EyeTrackingMode COARSE_AND_FINE_TRACKING;
     field public static final androidx.xr.runtime.Config.EyeTrackingMode COARSE_TRACKING;
     field public static final androidx.xr.runtime.Config.EyeTrackingMode.Companion Companion;
     field public static final androidx.xr.runtime.Config.EyeTrackingMode DISABLED;
@@ -124,7 +119,6 @@ package androidx.xr.runtime {
   }
 
   public static final class Config.EyeTrackingMode.Companion {
-    property public androidx.xr.runtime.Config.EyeTrackingMode COARSE_AND_FINE_TRACKING;
     property public androidx.xr.runtime.Config.EyeTrackingMode COARSE_TRACKING;
     property public androidx.xr.runtime.Config.EyeTrackingMode DISABLED;
     property public androidx.xr.runtime.Config.EyeTrackingMode FINE_TRACKING;

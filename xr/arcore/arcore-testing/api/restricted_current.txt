@@ -256,18 +256,15 @@ package androidx.xr.arcore.testing {
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeRuntimeEye implements androidx.xr.arcore.runtime.Eye {
     ctor public FakeRuntimeEye();
-    method @InaccessibleFromKotlin public androidx.xr.runtime.math.Pose? getCoarsePose();
-    method @InaccessibleFromKotlin public androidx.xr.arcore.runtime.EyeStatus? getCoarseStatus();
-    method @InaccessibleFromKotlin public androidx.xr.runtime.math.Pose? getFinePose();
-    method @InaccessibleFromKotlin public androidx.xr.arcore.runtime.EyeStatus? getFineStatus();
-    method @InaccessibleFromKotlin public void setCoarsePose(androidx.xr.runtime.math.Pose?);
-    method @InaccessibleFromKotlin public void setCoarseStatus(androidx.xr.arcore.runtime.EyeStatus?);
-    method @InaccessibleFromKotlin public void setFinePose(androidx.xr.runtime.math.Pose?);
-    method @InaccessibleFromKotlin public void setFineStatus(androidx.xr.arcore.runtime.EyeStatus?);
-    property public androidx.xr.runtime.math.Pose? coarsePose;
-    property public androidx.xr.arcore.runtime.EyeStatus? coarseStatus;
-    property public androidx.xr.runtime.math.Pose? finePose;
-    property public androidx.xr.arcore.runtime.EyeStatus? fineStatus;
+    method @InaccessibleFromKotlin public androidx.xr.runtime.math.Pose getPose();
+    method @InaccessibleFromKotlin public androidx.xr.runtime.TrackingState getTrackingState();
+    method @InaccessibleFromKotlin public boolean isOpen();
+    method @InaccessibleFromKotlin public void setOpen(boolean);
+    method @InaccessibleFromKotlin public void setPose(androidx.xr.runtime.math.Pose);
+    method @InaccessibleFromKotlin public void setTrackingState(androidx.xr.runtime.TrackingState);
+    property public boolean isOpen;
+    property public androidx.xr.runtime.math.Pose pose;
+    property public androidx.xr.runtime.TrackingState trackingState;
   }
 
   public final class FakeRuntimeFace implements androidx.xr.arcore.runtime.Face {
