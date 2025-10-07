@@ -27,7 +27,6 @@ plugins {
     id("AndroidXPlugin")
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
-    id("androidx.stableaidl")
     id("com.squareup.wire")
     id("AndroidXComposePlugin")
 }
@@ -75,14 +74,6 @@ android {
     defaultConfig {
         minSdk = 28
         compileSdk = 36
-    }
-    buildFeatures {
-        aidl = true
-    }
-    buildTypes.all {
-        stableAidl {
-            version 1
-        }
     }
 }
 
