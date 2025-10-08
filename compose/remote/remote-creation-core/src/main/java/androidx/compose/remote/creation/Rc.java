@@ -313,7 +313,7 @@ public class Rc {
         /** cubic Easing function that just linearly interpolates */
         public static final int CUBIC_LINEAR = Easing.CUBIC_LINEAR;
 
-        /** cubic Easing function that goes bacwards and then accelerates */
+        /** cubic Easing function that goes backwards and then accelerates */
         public static final int CUBIC_ANTICIPATE = Easing.CUBIC_ANTICIPATE;
 
         /** cubic Easing function that overshoots and then goes back */
