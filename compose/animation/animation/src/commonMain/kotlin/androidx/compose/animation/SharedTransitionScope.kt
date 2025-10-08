@@ -80,6 +80,7 @@ import androidx.compose.ui.node.DrawModifierNode
 import androidx.compose.ui.node.LayoutModifierNode
 import androidx.compose.ui.node.ModifierNodeElement
 import androidx.compose.ui.node.ObserverModifierNode
+import androidx.compose.ui.node.invalidateDraw
 import androidx.compose.ui.node.observeReads
 import androidx.compose.ui.platform.InspectorInfo
 import androidx.compose.ui.unit.Constraints
@@ -168,6 +169,11 @@ private class SharedTransitionScopeRootModifierNode(sharedScope: SharedTransitio
     override fun onAttach() {
         super.onAttach()
         observeReads(sharedScope.observeAnimatingBlock)
+        sharedScope.invalidateOverlay = { invalidateDraw() }
+    }
+
+    override fun onDetach() {
+        sharedScope.invalidateOverlay = null
     }
 
     var sharedScope: SharedTransitionScopeImpl = sharedScope
@@ -995,6 +1001,7 @@ internal class SharedTransitionScopeImpl
 internal constructor(lookaheadScope: LookaheadScope, val coroutineScope: CoroutineScope) :
     SharedTransitionScope, LookaheadScope by lookaheadScope {
 
+    var invalidateOverlay: (() -> Unit)? = null
     override var isTransitionActive: Boolean by mutableStateOf(false)
         private set
 
