@@ -58,6 +58,8 @@ import androidx.camera.camera2.internal.DynamicRangeConversions.dynamicRangeToFi
 import androidx.camera.camera2.internal.DynamicRangeResolver
 import androidx.camera.camera2.interop.Camera2CameraControl
 import androidx.camera.camera2.interop.ExperimentalCamera2Interop
+import androidx.camera.camera2.interop.configureWithUnchecked
+import androidx.camera.camera2.interop.getCamera2CaptureRequestConfigurator
 import androidx.camera.camera2.pipe.CameraDevices
 import androidx.camera.camera2.pipe.CameraGraph
 import androidx.camera.camera2.pipe.CameraGraph.OperatingMode
@@ -485,6 +487,7 @@ constructor(
                     enableStreamUseCase = false,
                     surfaceToStreamUseCaseMap = sessionConfigAdapter.surfaceToStreamUseCaseMap,
                     surfaceToStreamUseHintMap = sessionConfigAdapter.surfaceToStreamUseHintMap,
+                    cameraXConfig = cameraXConfig,
                 )
 
             sessionProcessor!!.initSession(cameraInfoInternal.get(), null)
@@ -741,6 +744,7 @@ constructor(
             isExtensions = isExtensions,
             surfaceToStreamUseCaseMap = sessionConfigAdapter.surfaceToStreamUseCaseMap,
             surfaceToStreamUseHintMap = sessionConfigAdapter.surfaceToStreamUseHintMap,
+            cameraXConfig = cameraXConfig,
         )
     }
 
@@ -1016,6 +1020,7 @@ constructor(
             setOutputType: Boolean = false,
             surfaceToStreamUseCaseMap: Map<DeferrableSurface, Long> = emptyMap(),
             surfaceToStreamUseHintMap: Map<DeferrableSurface, Long> = emptyMap(),
+            cameraXConfig: CameraXConfig? = null,
         ): CameraGraph.Config {
             var containsVideo = false
             val streamGroupMap = mutableMapOf<Int, MutableList<CameraStream.Config>>()
@@ -1192,6 +1197,10 @@ constructor(
                             ?.also { streamConfigMap[it] = postviewOutputConfig.surface }
                     }
                 }
+
+            cameraXConfig
+                ?.getCamera2CaptureRequestConfigurator()
+                ?.configureWithUnchecked(sessionParameters)
 
             // TODO: b/327517884 - Add a quirk to not abort captures on stop for certain OEMs during
             //   extension sessions.
