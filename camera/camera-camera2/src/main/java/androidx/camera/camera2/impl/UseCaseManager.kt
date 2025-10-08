@@ -422,17 +422,15 @@ constructor(
         val graphStateToCameraStateAdapter = GraphStateToCameraStateAdapter(cameraStateAdapter)
         val useCamera2Extension =
             sessionProcessor?.implementationType?.first == SessionProcessor.TYPE_CAMERA2_EXTENSION
+        val sessionConfigAdapter = SessionConfigAdapter(useCases, isPrimary = isPrimary)
 
         // Enables extensions with the Camera2 Extensions approach if extension mode is requested.
         if (useCamera2Extension) {
             Camera2Logger.debug { "Setting up UseCaseManager with OperatingMode.EXTENSION" }
-            val sessionConfigAdapter = SessionConfigAdapter(useCases, isPrimary = isPrimary)
-            val streamConfigMap = mutableMapOf<CameraStream.Config, DeferrableSurface>()
-            val graphConfig =
+            val creationResult =
                 cameraGraphConfigProvider.create(
                     operatingMode = OperatingMode.EXTENSION,
                     sessionConfig = sessionConfigAdapter.getValidSessionConfigOrNull(),
-                    streamConfigMap = streamConfigMap,
                     graphStateToCameraStateAdapter = graphStateToCameraStateAdapter,
                     camera2ExtensionMode = sessionProcessor?.implementationType?.second,
                     isExtensions = true,
@@ -448,28 +446,22 @@ constructor(
                 UseCaseManagerConfig(
                     useCases,
                     sessionConfigAdapter,
-                    graphConfig,
-                    streamConfigMap,
+                    creationResult.config,
+                    creationResult.streamConfigMap,
                     graphStateToCameraStateAdapter,
                 )
             tryResumeUseCaseManager(useCaseManagerConfig)
             return
         } else {
-            val sessionConfigAdapter = SessionConfigAdapter(useCases, isPrimary = isPrimary)
-            val streamConfigMap = mutableMapOf<CameraStream.Config, DeferrableSurface>()
-            val graphConfig =
-                createCameraGraphConfig(
-                    sessionConfigAdapter,
-                    streamConfigMap,
-                    graphStateToCameraStateAdapter,
-                )
+            val creationResult =
+                createCameraGraphConfig(sessionConfigAdapter, graphStateToCameraStateAdapter)
 
             val useCaseManagerConfig =
                 UseCaseManagerConfig(
                     useCases,
                     sessionConfigAdapter,
-                    graphConfig,
-                    streamConfigMap,
+                    creationResult.config,
+                    creationResult.streamConfigMap,
                     graphStateToCameraStateAdapter,
                 )
             tryResumeUseCaseManager(useCaseManagerConfig)
@@ -703,10 +695,9 @@ constructor(
 
     internal fun createCameraGraphConfig(
         sessionConfigAdapter: SessionConfigAdapter,
-        streamConfigMap: MutableMap<CameraStream.Config, DeferrableSurface>,
         graphStateToCameraStateAdapter: GraphStateToCameraStateAdapter,
         isExtensions: Boolean = false,
-    ): CameraGraph.Config {
+    ): CameraGraphConfigProvider.CameraGraphCreationResult {
         val sessionConfig = sessionConfigAdapter.getValidSessionConfigOrNull()
         val operatingMode =
             sessionConfig?.let {
@@ -720,7 +711,6 @@ constructor(
         return cameraGraphConfigProvider.create(
             operatingMode = operatingMode,
             sessionConfig = sessionConfig,
-            streamConfigMap = streamConfigMap,
             graphStateToCameraStateAdapter = graphStateToCameraStateAdapter,
             camera2ExtensionMode = null,
             isExtensions = isExtensions,
@@ -918,7 +908,7 @@ constructor(
             val useCases: List<UseCase>,
             val sessionConfigAdapter: SessionConfigAdapter,
             val cameraGraphConfig: CameraGraph.Config,
-            val streamConfigMap: MutableMap<CameraStream.Config, DeferrableSurface>,
+            val streamConfigMap: Map<CameraStream.Config, DeferrableSurface>,
             val graphStateToCameraStateAdapter: GraphStateToCameraStateAdapter,
         )
     }

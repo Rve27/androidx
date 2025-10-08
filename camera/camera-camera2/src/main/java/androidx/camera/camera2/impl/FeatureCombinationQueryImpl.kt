@@ -48,19 +48,18 @@ internal class FeatureCombinationQueryImpl(
                 cameraMetadata = cameraMetadata,
             )
 
-        val config =
+        val creationResult =
             configProvider.create(
                 operatingMode = CameraGraph.OperatingMode.NORMAL,
                 sessionConfig = sessionConfig,
-                streamConfigMap = mutableMapOf(),
                 setOutputType = true,
             )
 
         return runBlocking {
-            cameraPipe.isConfigSupported(config).apply {
+            cameraPipe.isConfigSupported(creationResult.config).apply {
                 Camera2Logger.debug {
                     val streamsLog =
-                        config.streams.map { cameraStream ->
+                        creationResult.config.streams.map { cameraStream ->
                             cameraStream.outputs.map {
                                 "size=${it.size}, format=${it.format}," +
                                     " dynamicRangeProfile${it.dynamicRangeProfile}"
@@ -68,7 +67,7 @@ internal class FeatureCombinationQueryImpl(
                         }
 
                     "FeatureCombinationQueryImpl#isSupported: result = $this for sessionParameters =" +
-                        " ${config.sessionParameters} and streams = $streamsLog"
+                        " ${creationResult.config.sessionParameters} and streams = $streamsLog"
                 }
             } == ConfigQueryResult.SUPPORTED
         }

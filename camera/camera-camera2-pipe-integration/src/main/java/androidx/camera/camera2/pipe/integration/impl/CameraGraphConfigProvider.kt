@@ -86,10 +86,14 @@ constructor(
 ) {
     private val closeCameraOnCameraGraphClose = CloseCameraOnCameraGraphClose()
 
+    public data class CameraGraphCreationResult(
+        val config: CameraGraph.Config,
+        val streamConfigMap: Map<CameraStream.Config, DeferrableSurface>,
+    )
+
     public fun create(
         operatingMode: OperatingMode,
         sessionConfig: SessionConfig?,
-        streamConfigMap: MutableMap<CameraStream.Config, DeferrableSurface>,
         graphStateToCameraStateAdapter: GraphStateToCameraStateAdapter? = null,
         camera2ExtensionMode: Int? = null,
         isExtensions: Boolean = false,
@@ -98,12 +102,13 @@ constructor(
         surfaceToStreamUseCaseMap: Map<DeferrableSurface, Long> = emptyMap(),
         surfaceToStreamUseHintMap: Map<DeferrableSurface, Long> = emptyMap(),
         cameraXConfig: CameraXConfig? = null,
-    ): CameraGraph.Config {
+    ): CameraGraphCreationResult {
         var containsVideo = false
         val streamGroupMap = mutableMapOf<Int, MutableList<CameraStream.Config>>()
         val inputStreams = mutableListOf<InputStream.Config>()
         var sessionTemplate = RequestTemplate(TEMPLATE_PREVIEW)
         val sessionParameters: MutableMap<Any, Any> = mutableMapOf()
+        val streamConfigMap: MutableMap<CameraStream.Config, DeferrableSurface> = mutableMapOf()
         sessionConfig?.let { sessionConfig ->
             if (sessionConfig.templateType != CaptureConfig.TEMPLATE_TYPE_NONE) {
                 sessionTemplate = RequestTemplate(sessionConfig.templateType)
@@ -280,19 +285,25 @@ constructor(
         //   extension sessions.
 
         // Build up a config (using TEMPLATE_PREVIEW by default)
-        return CameraGraph.Config(
-            camera = cameraConfig.cameraId,
-            streams = streamConfigMap.keys.toList(),
-            exclusiveStreamGroups = streamGroupMap.values.toList(),
-            input = if (inputStreams.isEmpty()) null else inputStreams,
-            postviewStream = postviewStream,
-            sessionTemplate = sessionTemplate,
-            sessionParameters = sessionParameters,
-            sessionMode = operatingMode,
-            defaultListeners = listOf(callbackMap, requestListener),
-            defaultParameters = defaultParameters,
-            flags = combinedFlags,
-            graphStateListeners = listOfNotNull(graphStateToCameraStateAdapter),
+        val graphConfig =
+            CameraGraph.Config(
+                camera = cameraConfig.cameraId,
+                streams = streamConfigMap.keys.toList(),
+                exclusiveStreamGroups = streamGroupMap.values.toList(),
+                input = if (inputStreams.isEmpty()) null else inputStreams,
+                postviewStream = postviewStream,
+                sessionTemplate = sessionTemplate,
+                sessionParameters = sessionParameters,
+                sessionMode = operatingMode,
+                defaultListeners = listOf(callbackMap, requestListener),
+                defaultParameters = defaultParameters,
+                flags = combinedFlags,
+                graphStateListeners = listOfNotNull(graphStateToCameraStateAdapter),
+            )
+
+        return CameraGraphCreationResult(
+            config = graphConfig,
+            streamConfigMap = streamConfigMap.toMap(),
         )
     }
 
