@@ -31,6 +31,7 @@ import androidx.appfunctions.compiler.core.AppFunctionTypeReference.AppFunctionS
 import androidx.appfunctions.compiler.core.AppFunctionTypeReference.AppFunctionSupportedTypeCategory.SERIALIZABLE_PROXY_SINGULAR
 import androidx.appfunctions.compiler.core.AppFunctionTypeReference.AppFunctionSupportedTypeCategory.SERIALIZABLE_SINGULAR
 import androidx.appfunctions.compiler.core.IntrospectionHelper
+import androidx.appfunctions.compiler.core.IntrospectionHelper.AppFunctionSerializableFactoryClass
 import androidx.appfunctions.compiler.core.IntrospectionHelper.AppFunctionSerializableFactoryClass.FromAppFunctionDataMethod
 import androidx.appfunctions.compiler.core.IntrospectionHelper.AppFunctionSerializableFactoryClass.FromAppFunctionDataMethod.APP_FUNCTION_DATA_PARAM_NAME
 import androidx.appfunctions.compiler.core.IntrospectionHelper.AppFunctionSerializableFactoryClass.ToAppFunctionDataMethod.APP_FUNCTION_SERIALIZABLE_PARAM_NAME
@@ -44,7 +45,14 @@ import com.google.devtools.ksp.symbol.KSTypeParameter
 import com.google.devtools.ksp.symbol.KSTypeReference
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.CodeBlock
+import com.squareup.kotlinpoet.FunSpec
+import com.squareup.kotlinpoet.KModifier
+import com.squareup.kotlinpoet.ParameterSpec
+import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.TypeName
+import com.squareup.kotlinpoet.TypeSpec
+import com.squareup.kotlinpoet.TypeVariableName
 import com.squareup.kotlinpoet.buildCodeBlock
 
 /**
@@ -52,7 +60,8 @@ import com.squareup.kotlinpoet.buildCodeBlock
  * AppFunctionSerializableFactory.
  */
 // TODO(b/392587953): extract common format maps
-class AppFunctionSerializableFactoryCodeBuilder(
+// TODO: b/410764334 - Make this a helper object
+class AppFunctionSerializableFactoryCodeBuilderHelper(
     val annotatedClass: AppFunctionSerializableType,
     val resolvedAnnotatedSerializableProxies: ResolvedAnnotatedSerializableProxies,
 ) {
@@ -82,7 +91,7 @@ class AppFunctionSerializableFactoryCodeBuilder(
      * }
      * ```
      */
-    fun appendFromAppFunctionDataMethodBody(): CodeBlock {
+    fun buildFromAppFunctionDataMethodBody(): CodeBlock {
         return buildCodeBlock {
             val getterResultName = getResultParamName(annotatedClass)
             add(appendFromAppFunctionDataMethodBodyCommon(getterResultName))
@@ -99,7 +108,7 @@ class AppFunctionSerializableFactoryCodeBuilder(
     /**
      * Generates the method body of fromAppFunctionData for a proxy serializable.
      *
-     * This method is similar to [appendFromAppFunctionDataMethodBody]. It uses
+     * This method is similar to [buildFromAppFunctionDataMethodBody]. It uses
      * [appendFromAppFunctionDataMethodBodyCommon] to generate the common code for iterating through
      * all the properties of a target serializable and extracting its corresponding value from an
      * AppFunctionData. However, It then returns a proxy serializable target class instead of the
@@ -135,7 +144,7 @@ class AppFunctionSerializableFactoryCodeBuilder(
      * }
      * ```
      */
-    fun appendFromAppFunctionDataMethodBodyForProxy(): CodeBlock {
+    fun buildFromAppFunctionDataMethodBodyForProxy(): CodeBlock {
         if (annotatedClass !is AnnotatedAppFunctionSerializableProxy) {
             throw ProcessingException(
                 "Attempting to generate proxy getter for non proxy serializable.",
@@ -253,7 +262,7 @@ class AppFunctionSerializableFactoryCodeBuilder(
      * }
      * ```
      */
-    fun appendToAppFunctionDataMethodBody(): CodeBlock {
+    fun buildToAppFunctionDataMethodBody(): CodeBlock {
         return buildCodeBlock {
             addStatement(
                 """
@@ -270,14 +279,14 @@ class AppFunctionSerializableFactoryCodeBuilder(
     /**
      * Generates the method body of toAppFunctionData for a proxy serializable.
      *
-     * This method is similar to [appendToAppFunctionDataMethodBody]. It uses
+     * This method is similar to [buildToAppFunctionDataMethodBody]. It uses
      * [appendToAppFunctionDataMethodBodyCommon] to generate the common code for iterating through
      * all the properties of a target serializable and extracting its single property values. It
      * then returns an AppFunctionData instance with the extracted values.
      *
-     * The key difference from [appendToAppFunctionDataMethodBody] is the `toAppFunctionData`
-     * factory method accepts the target class instead of an AppFunctionSerializable type directly.
-     * The serializable type is obtained using the mandatory factory from the
+     * The key difference from [buildToAppFunctionDataMethodBody] is the `toAppFunctionData` factory
+     * method accepts the target class instead of an AppFunctionSerializable type directly. The
+     * serializable type is obtained using the mandatory factory from the
      * [AnnotatedAppFunctionSerializableProxy].
      *
      * For example, given the following proxy serializable class:
@@ -314,7 +323,7 @@ class AppFunctionSerializableFactoryCodeBuilder(
      * }
      * ```
      */
-    fun appendToAppFunctionDataMethodBodyForProxy(): CodeBlock {
+    fun buildToAppFunctionDataMethodBodyForProxy(): CodeBlock {
         if (annotatedClass !is AnnotatedAppFunctionSerializableProxy) {
             throw ProcessingException(
                 "Attempting to generate proxy setter for non proxy serializable.",
@@ -1046,11 +1055,72 @@ class AppFunctionSerializableFactoryCodeBuilder(
     }
 
     companion object {
+
+        const val APP_FUNCTION_DATA_WITH_SPEC_VARIABLE_NAME = "appFunctionDataWithSpec"
+
+        fun TypeSpec.Builder.setGenericPrimaryConstructor(typeParameters: List<KSTypeParameter>) {
+            val primaryConstructorBuilder = FunSpec.constructorBuilder()
+            for (typeParameter in typeParameters) {
+                val typeParamName = typeParameter.name.asString()
+                val typeTokenType =
+                    AppFunctionSerializableFactoryClass.TypeParameterClass.CLASS_NAME
+                        .parameterizedBy(TypeVariableName(typeParameter.name.asString()))
+                val typeParameterPropertyName = getTypeParameterPropertyName(typeParameter)
+
+                primaryConstructorBuilder.addParameter(typeParameterPropertyName, typeTokenType)
+
+                addProperty(
+                    PropertySpec.builder(typeParameterPropertyName, typeTokenType)
+                        .initializer(typeParameterPropertyName)
+                        .addModifiers(KModifier.PRIVATE)
+                        .build()
+                )
+                addTypeVariable(TypeVariableName(typeParamName))
+            }
+
+            primaryConstructor(primaryConstructorBuilder.build())
+        }
+
+        fun buildFromAppFunctionDataFunction(
+            functionBody: CodeBlock,
+            returnType: TypeName,
+        ): FunSpec {
+            return FunSpec.builder(
+                    AppFunctionSerializableFactoryClass.FromAppFunctionDataMethod.METHOD_NAME
+                )
+                .addModifiers(KModifier.OVERRIDE)
+                .addParameter(
+                    ParameterSpec.builder(
+                            APP_FUNCTION_DATA_PARAM_NAME,
+                            IntrospectionHelper.AppFunctionDataClass.CLASS_NAME,
+                        )
+                        .build()
+                )
+                .addCode(functionBody)
+                .returns(returnType)
+                .build()
+        }
+
+        fun buildToAppFunctionDataFunction(
+            functionBody: CodeBlock,
+            parameterType: TypeName,
+        ): FunSpec {
+            return FunSpec.builder(
+                    AppFunctionSerializableFactoryClass.ToAppFunctionDataMethod.METHOD_NAME
+                )
+                .addModifiers(KModifier.OVERRIDE)
+                .addParameter(
+                    ParameterSpec.builder(APP_FUNCTION_SERIALIZABLE_PARAM_NAME, parameterType)
+                        .build()
+                )
+                .addCode(functionBody)
+                .returns(IntrospectionHelper.AppFunctionDataClass.CLASS_NAME)
+                .build()
+        }
+
         /** Gets the TypeParameter property name used by generic AppFunctionSerializableFactory */
         fun getTypeParameterPropertyName(typeParameter: KSTypeParameter): String {
             return "${typeParameter.name.asString().uppercase().replaceFirstChar { it.lowercase() }}TypeParameter"
         }
-
-        const val APP_FUNCTION_DATA_WITH_SPEC_VARIABLE_NAME = "appFunctionDataWithSpec"
     }
 }
