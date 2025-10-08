@@ -48,6 +48,7 @@ import androidx.camera.testing.impl.SurfaceTextureProvider.SurfaceTextureCallbac
 import androidx.camera.testing.impl.fakes.FakeLifecycleOwner
 import androidx.camera.video.FileOutputOptions
 import androidx.camera.video.Recorder
+import androidx.camera.video.Recording
 import androidx.camera.video.VideoCapture
 import androidx.camera.video.VideoRecordEvent
 import androidx.core.util.Consumer
@@ -208,8 +209,10 @@ class ConcurrentCameraTest(private val implName: String, private val cameraConfi
         assertThat(concurrentCamera.cameras.size).isEqualTo(2)
         primary.assertPreviewFramesReceived()
         secondary.assertPreviewFramesReceived()
-        primary.assertCanRecordVideos()
-        secondary.assertCanRecordVideos()
+        primary.startRecordingVideos()
+        secondary.startRecordingVideos()
+        primary.assertVideoRecorded()
+        secondary.assertVideoRecorded()
     }
 
     @Test
@@ -245,8 +248,10 @@ class ConcurrentCameraTest(private val implName: String, private val cameraConfi
             assertThat(concurrentCamera.cameras.size).isEqualTo(2)
             primary.assertPreviewFramesReceived()
             secondary.assertPreviewFramesReceived()
-            primary.assertCanRecordVideos()
-            secondary.assertCanRecordVideos()
+            primary.startRecordingVideos()
+            secondary.startRecordingVideos()
+            primary.assertVideoRecorded()
+            secondary.assertVideoRecorded()
         }
 
     @Test
@@ -282,8 +287,10 @@ class ConcurrentCameraTest(private val implName: String, private val cameraConfi
             assertThat(concurrentCamera.cameras.size).isEqualTo(2)
             primary.assertPreviewFramesReceived()
             secondary.assertPreviewFramesReceived()
-            primary.assertCanRecordVideos()
-            secondary.assertCanRecordVideos()
+            primary.startRecordingVideos()
+            secondary.startRecordingVideos()
+            primary.assertVideoRecorded()
+            secondary.assertVideoRecorded()
         }
 
     @Test
@@ -320,8 +327,10 @@ class ConcurrentCameraTest(private val implName: String, private val cameraConfi
         secondary.assertPreviewFramesReceived()
         primary.assertCanCaptureImages()
         secondary.assertCanCaptureImages()
-        primary.assertCanRecordVideos()
-        secondary.assertCanRecordVideos()
+        primary.startRecordingVideos()
+        secondary.startRecordingVideos()
+        primary.assertVideoRecorded()
+        secondary.assertVideoRecorded()
     }
 
     @Test(expected = IllegalArgumentException::class)
@@ -395,7 +404,8 @@ class ConcurrentCameraTest(private val implName: String, private val cameraConfi
         assertThat(concurrentCamera).isNotNull()
         assertThat(concurrentCamera.cameras.size).isEqualTo(1)
         primary.assertPreviewFramesReceived()
-        primary.assertCanRecordVideos()
+        primary.startRecordingVideos()
+        primary.assertVideoRecorded()
     }
 
     @Test
@@ -440,7 +450,8 @@ class ConcurrentCameraTest(private val implName: String, private val cameraConfi
             assertThat(concurrentCamera).isNotNull()
             assertThat(concurrentCamera.cameras.size).isEqualTo(1)
             primary.assertPreviewFramesReceived()
-            primary.assertCanRecordVideos()
+            primary.startRecordingVideos()
+            primary.assertVideoRecorded()
         }
 
     @Test
@@ -485,7 +496,8 @@ class ConcurrentCameraTest(private val implName: String, private val cameraConfi
             assertThat(concurrentCamera).isNotNull()
             assertThat(concurrentCamera.cameras.size).isEqualTo(1)
             primary.assertPreviewFramesReceived()
-            primary.assertCanRecordVideos()
+            primary.startRecordingVideos()
+            primary.assertVideoRecorded()
         }
 
     @Test(expected = IllegalArgumentException::class)
@@ -666,16 +678,37 @@ class ConcurrentCameraTest(private val implName: String, private val cameraConfi
             capturedImage.close()
         }
 
-        fun assertCanRecordVideos() {
-            val semaphoresForVideoSaved = Semaphore(0)
-            val semaphoresForVideoRecording = Semaphore(0)
-            val file = File.createTempFile("CameraX", ".tmp").apply { deleteOnExit() }
-            var finalize: VideoRecordEvent.Finalize? = null
+        var recordingFile: File? = null
+        var activeRecording: Recording? = null
+        var finalize: VideoRecordEvent.Finalize? = null
+        val semaphoresForVideoSaved = Semaphore(0)
 
-            val recording =
+        fun assertVideoRecorded() {
+            assertThat(recordingFile).isNotNull()
+            assertThat(activeRecording).isNotNull()
+
+            // Wait for finalize event to saved file.
+            assertThat(semaphoresForVideoSaved.tryAcquire(5, TimeUnit.SECONDS)).isTrue()
+            // Verify.
+            val uri = Uri.fromFile(recordingFile)
+            checkFileHasVideo(uri)
+            assertThat(finalize!!.outputResults.outputUri).isEqualTo(uri)
+
+            // Cleanup.
+            recordingFile!!.delete()
+        }
+
+        fun startRecordingVideos() {
+            recordingFile = File.createTempFile("CameraX", ".tmp").apply { deleteOnExit() }
+            activeRecording =
                 videoCapture!!
                     .output
-                    .prepareRecording(context, FileOutputOptions.Builder(file).build())
+                    .prepareRecording(
+                        context,
+                        FileOutputOptions.Builder(recordingFile!!)
+                            .setDurationLimitMillis(1_500)
+                            .build(),
+                    )
                     .start(
                         CameraXExecutors.directExecutor(),
                         {
@@ -685,9 +718,8 @@ class ConcurrentCameraTest(private val implName: String, private val cameraConfi
                                     finalize = it
                                     semaphoresForVideoSaved.release()
                                 }
-                                is VideoRecordEvent.Status -> {
-                                    semaphoresForVideoRecording.release()
-                                }
+
+                                is VideoRecordEvent.Status,
                                 is VideoRecordEvent.Pause,
                                 is VideoRecordEvent.Resume -> {
                                     // Do nothing.
@@ -698,26 +730,9 @@ class ConcurrentCameraTest(private val implName: String, private val cameraConfi
                             }
                         },
                     )
-
-            try {
-                // Wait for status event to proceed recording for a while.
-                assertThat(semaphoresForVideoRecording.tryAcquire(5, TimeUnit.SECONDS)).isTrue()
-            } finally {
-                recording.stop()
-            }
-
-            // Wait for finalize event to saved file.
-            assertThat(semaphoresForVideoSaved.tryAcquire(5, TimeUnit.SECONDS)).isTrue()
-            // Verify.
-            val uri = Uri.fromFile(file)
-            checkFileHasAudioAndVideo(uri)
-            assertThat(finalize!!.outputResults.outputUri).isEqualTo(uri)
-
-            // Cleanup.
-            file.delete()
         }
 
-        private fun checkFileHasAudioAndVideo(uri: Uri) {
+        private fun checkFileHasVideo(uri: Uri) {
             val mediaRetriever = MediaMetadataRetriever()
             mediaRetriever.apply {
                 setDataSource(context, uri)
