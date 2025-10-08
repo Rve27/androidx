@@ -22,7 +22,7 @@ import androidx.compose.ui.layout.registerOnLayoutRectChanged
  * A [androidx.compose.ui.Modifier.Node] which receives a callback when the layout node is not
  * placed anymore.
  */
-interface UnplacedStateAwareModifierNode : DelegatableNode {
+interface UnplacedAwareModifierNode : DelegatableNode {
     /**
      * This method is called when the layout was placed earlier, and is not placed anymore. It
      * happens when some of the parents still compose this child, but don't place a corresponding
