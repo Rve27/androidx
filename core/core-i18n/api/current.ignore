@@ -1,4 +1,8 @@
 // Baseline format: 1.0
+AddedMethod: androidx.core.i18n.MessageFormat.Companion#format$default(androidx.core.i18n.MessageFormat.Companion, android.content.Context, java.util.Locale, String, java.util.Map, int, Object):
+    Added method androidx.core.i18n.MessageFormat.Companion.format$default(androidx.core.i18n.MessageFormat.Companion,android.content.Context,java.util.Locale,String,java.util.Map,int,Object)
+
+
 RemovedFromKotlin: androidx.core.i18n.DateTimeFormatterJdkStyleOptions#getDateStyle():
     Source breaking change: method androidx.core.i18n.DateTimeFormatterJdkStyleOptions.getDateStyle() can no longer be resolved from Kotlin source
 RemovedFromKotlin: androidx.core.i18n.DateTimeFormatterJdkStyleOptions#getTimeStyle():

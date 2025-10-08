@@ -42,6 +42,7 @@ package androidx.compose.material3.windowsizeclass {
   public static final class WindowSizeClass.Companion {
     method @KotlinOnly @SuppressCompatibility @androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi public androidx.compose.material3.windowsizeclass.WindowSizeClass calculateFromSize(androidx.compose.ui.unit.DpSize size, optional java.util.Set<androidx.compose.material3.windowsizeclass.WindowWidthSizeClass> supportedWidthSizeClasses, optional java.util.Set<androidx.compose.material3.windowsizeclass.WindowHeightSizeClass> supportedHeightSizeClasses);
     method @BytecodeOnly @SuppressCompatibility @androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi public androidx.compose.material3.windowsizeclass.WindowSizeClass calculateFromSize-qzXmJYc(long, java.util.Set<androidx.compose.material3.windowsizeclass.WindowWidthSizeClass!>, java.util.Set<androidx.compose.material3.windowsizeclass.WindowHeightSizeClass!>);
+    method @BytecodeOnly @SuppressCompatibility @androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi public static androidx.compose.material3.windowsizeclass.WindowSizeClass! calculateFromSize-qzXmJYc$default(androidx.compose.material3.windowsizeclass.WindowSizeClass.Companion!, long, java.util.Set!, java.util.Set!, int, Object!);
   }
 
   @androidx.compose.runtime.Immutable @kotlin.jvm.JvmInline public final value class WindowWidthSizeClass implements java.lang.Comparable<androidx.compose.material3.windowsizeclass.WindowWidthSizeClass> {

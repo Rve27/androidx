@@ -105,6 +105,7 @@ package androidx.xr.arcore.testing {
     method public androidx.xr.arcore.testing.FakeLifecycleManager component1();
     method public androidx.xr.arcore.testing.FakePerceptionManager component2();
     method public androidx.xr.arcore.testing.FakePerceptionRuntime copy(optional androidx.xr.arcore.testing.FakeLifecycleManager lifecycleManager, optional androidx.xr.arcore.testing.FakePerceptionManager perceptionManager);
+    method @BytecodeOnly public static androidx.xr.arcore.testing.FakePerceptionRuntime! copy$default(androidx.xr.arcore.testing.FakePerceptionRuntime!, androidx.xr.arcore.testing.FakeLifecycleManager!, androidx.xr.arcore.testing.FakePerceptionManager!, int, Object!);
     method @InaccessibleFromKotlin public androidx.xr.arcore.testing.FakeLifecycleManager getLifecycleManager();
     method @InaccessibleFromKotlin public androidx.xr.arcore.testing.FakePerceptionManager getPerceptionManager();
     method public suspend Object? update(kotlin.coroutines.Continuation<? super kotlin.time.ComparableTimeMark?>);

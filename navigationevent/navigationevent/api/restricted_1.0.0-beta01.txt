@@ -48,6 +48,7 @@ package androidx.navigationevent {
     ctor public NavigationEventDispatcher(androidx.navigationevent.OnBackCompletedFallback onBackCompletedFallback);
     method @MainThread public void addHandler(androidx.navigationevent.NavigationEventHandler<? extends java.lang.Object?> handler);
     method @MainThread public void addHandler(androidx.navigationevent.NavigationEventHandler<? extends java.lang.Object?> handler, optional int priority);
+    method @BytecodeOnly @MainThread public static void addHandler$default(androidx.navigationevent.NavigationEventDispatcher!, androidx.navigationevent.NavigationEventHandler!, int, int, Object!);
     method @MainThread public void addInput(androidx.navigationevent.NavigationEventInput input);
     method @MainThread public void addInput(androidx.navigationevent.NavigationEventInput input, int priority);
     method @MainThread public void dispose();
@@ -97,6 +98,7 @@ package androidx.navigationevent {
     method public final void setInfo(T currentInfo);
     method public final void setInfo(T currentInfo, optional java.util.List<? extends T> backInfo);
     method public final void setInfo(T currentInfo, optional java.util.List<? extends T> backInfo, optional java.util.List<? extends T> forwardInfo);
+    method @BytecodeOnly public static void setInfo$default(androidx.navigationevent.NavigationEventHandler!, androidx.navigationevent.NavigationEventInfo!, java.util.List!, java.util.List!, int, Object!);
     property public final java.util.List<T> backInfo;
     property public final T currentInfo;
     property public final java.util.List<T> forwardInfo;

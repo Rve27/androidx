@@ -42,11 +42,14 @@ package androidx.health.connect.client {
   public static final class HealthConnectClient.Companion {
     method public android.content.Intent getHealthConnectManageDataIntent(android.content.Context context);
     method public android.content.Intent getHealthConnectManageDataIntent(android.content.Context context, optional String providerPackageName);
+    method @BytecodeOnly public static android.content.Intent! getHealthConnectManageDataIntent$default(androidx.health.connect.client.HealthConnectClient.Companion!, android.content.Context!, String!, int, Object!);
     method @InaccessibleFromKotlin public String getHealthConnectSettingsAction();
     method public androidx.health.connect.client.HealthConnectClient getOrCreate(android.content.Context context);
     method public androidx.health.connect.client.HealthConnectClient getOrCreate(android.content.Context context, optional String providerPackageName);
+    method @BytecodeOnly public static androidx.health.connect.client.HealthConnectClient! getOrCreate$default(androidx.health.connect.client.HealthConnectClient.Companion!, android.content.Context!, String!, int, Object!);
     method public int getSdkStatus(android.content.Context context);
     method public int getSdkStatus(android.content.Context context, optional String providerPackageName);
+    method @BytecodeOnly public static int getSdkStatus$default(androidx.health.connect.client.HealthConnectClient.Companion!, android.content.Context!, String!, int, Object!);
     property public static String ACTION_HEALTH_CONNECT_SETTINGS;
     property public static int SDK_AVAILABLE;
     property public static int SDK_UNAVAILABLE;
@@ -111,6 +114,7 @@ package androidx.health.connect.client {
   public static final class PermissionController.Companion {
     method public androidx.activity.result.contract.ActivityResultContract<java.util.Set<java.lang.String>,java.util.Set<java.lang.String>> createRequestPermissionResultContract();
     method public androidx.activity.result.contract.ActivityResultContract<java.util.Set<java.lang.String>,java.util.Set<java.lang.String>> createRequestPermissionResultContract(optional String providerPackageName);
+    method @BytecodeOnly public static androidx.activity.result.contract.ActivityResultContract! createRequestPermissionResultContract$default(androidx.health.connect.client.PermissionController.Companion!, String!, int, Object!);
   }
 
 }
@@ -2269,25 +2273,33 @@ package androidx.health.connect.client.records.metadata {
     method public androidx.health.connect.client.records.metadata.Metadata activelyRecorded(androidx.health.connect.client.records.metadata.Device device);
     method public androidx.health.connect.client.records.metadata.Metadata activelyRecorded(androidx.health.connect.client.records.metadata.Device device, String clientRecordId);
     method public androidx.health.connect.client.records.metadata.Metadata activelyRecorded(androidx.health.connect.client.records.metadata.Device device, String clientRecordId, optional long clientRecordVersion);
+    method @BytecodeOnly public static androidx.health.connect.client.records.metadata.Metadata! activelyRecorded$default(androidx.health.connect.client.records.metadata.Metadata.Companion!, androidx.health.connect.client.records.metadata.Device!, String!, long, int, Object!);
     method public androidx.health.connect.client.records.metadata.Metadata activelyRecordedWithId(String id, androidx.health.connect.client.records.metadata.Device device);
     method public androidx.health.connect.client.records.metadata.Metadata autoRecorded(androidx.health.connect.client.records.metadata.Device device);
     method public androidx.health.connect.client.records.metadata.Metadata autoRecorded(androidx.health.connect.client.records.metadata.Device device, String clientRecordId);
     method public androidx.health.connect.client.records.metadata.Metadata autoRecorded(androidx.health.connect.client.records.metadata.Device device, String clientRecordId, optional long clientRecordVersion);
+    method @BytecodeOnly public static androidx.health.connect.client.records.metadata.Metadata! autoRecorded$default(androidx.health.connect.client.records.metadata.Metadata.Companion!, androidx.health.connect.client.records.metadata.Device!, String!, long, int, Object!);
     method public androidx.health.connect.client.records.metadata.Metadata autoRecordedWithId(String id, androidx.health.connect.client.records.metadata.Device device);
     method public androidx.health.connect.client.records.metadata.Metadata manualEntry();
     method public androidx.health.connect.client.records.metadata.Metadata manualEntry(optional androidx.health.connect.client.records.metadata.Device? device);
     method public androidx.health.connect.client.records.metadata.Metadata manualEntry(String clientRecordId);
     method public androidx.health.connect.client.records.metadata.Metadata manualEntry(String clientRecordId, optional long clientRecordVersion);
     method public androidx.health.connect.client.records.metadata.Metadata manualEntry(String clientRecordId, optional long clientRecordVersion, optional androidx.health.connect.client.records.metadata.Device? device);
+    method @BytecodeOnly public static androidx.health.connect.client.records.metadata.Metadata! manualEntry$default(androidx.health.connect.client.records.metadata.Metadata.Companion!, androidx.health.connect.client.records.metadata.Device!, int, Object!);
+    method @BytecodeOnly public static androidx.health.connect.client.records.metadata.Metadata! manualEntry$default(androidx.health.connect.client.records.metadata.Metadata.Companion!, String!, long, androidx.health.connect.client.records.metadata.Device!, int, Object!);
     method public androidx.health.connect.client.records.metadata.Metadata manualEntryWithId(String id);
     method public androidx.health.connect.client.records.metadata.Metadata manualEntryWithId(String id, optional androidx.health.connect.client.records.metadata.Device? device);
+    method @BytecodeOnly public static androidx.health.connect.client.records.metadata.Metadata! manualEntryWithId$default(androidx.health.connect.client.records.metadata.Metadata.Companion!, String!, androidx.health.connect.client.records.metadata.Device!, int, Object!);
     method public androidx.health.connect.client.records.metadata.Metadata unknownRecordingMethod();
     method public androidx.health.connect.client.records.metadata.Metadata unknownRecordingMethod(optional androidx.health.connect.client.records.metadata.Device? device);
     method public androidx.health.connect.client.records.metadata.Metadata unknownRecordingMethod(String clientRecordId);
     method public androidx.health.connect.client.records.metadata.Metadata unknownRecordingMethod(String clientRecordId, optional long clientRecordVersion);
     method public androidx.health.connect.client.records.metadata.Metadata unknownRecordingMethod(String clientRecordId, optional long clientRecordVersion, optional androidx.health.connect.client.records.metadata.Device? device);
+    method @BytecodeOnly public static androidx.health.connect.client.records.metadata.Metadata! unknownRecordingMethod$default(androidx.health.connect.client.records.metadata.Metadata.Companion!, androidx.health.connect.client.records.metadata.Device!, int, Object!);
+    method @BytecodeOnly public static androidx.health.connect.client.records.metadata.Metadata! unknownRecordingMethod$default(androidx.health.connect.client.records.metadata.Metadata.Companion!, String!, long, androidx.health.connect.client.records.metadata.Device!, int, Object!);
     method public androidx.health.connect.client.records.metadata.Metadata unknownRecordingMethodWithId(String id);
     method public androidx.health.connect.client.records.metadata.Metadata unknownRecordingMethodWithId(String id, optional androidx.health.connect.client.records.metadata.Device? device);
+    method @BytecodeOnly public static androidx.health.connect.client.records.metadata.Metadata! unknownRecordingMethodWithId$default(androidx.health.connect.client.records.metadata.Metadata.Companion!, String!, androidx.health.connect.client.records.metadata.Device!, int, Object!);
     property public static int RECORDING_METHOD_ACTIVELY_RECORDED;
     property public static int RECORDING_METHOD_AUTOMATICALLY_RECORDED;
     property public static int RECORDING_METHOD_MANUAL_ENTRY;
@@ -2370,6 +2382,7 @@ package androidx.health.connect.client.request {
 
   public final class ReadRecordsRequestKt {
     method @KotlinOnly public static inline <reified T extends androidx.health.connect.client.records.Record> androidx.health.connect.client.request.ReadRecordsRequest<T> ReadRecordsRequest(androidx.health.connect.client.time.TimeRangeFilter timeRangeFilter, optional java.util.Set<androidx.health.connect.client.records.metadata.DataOrigin> dataOriginFilter, optional boolean ascendingOrder, optional int pageSize, optional String? pageToken);
+    method @BytecodeOnly public static androidx.health.connect.client.request.ReadRecordsRequest! ReadRecordsRequest$default(androidx.health.connect.client.time.TimeRangeFilter!, java.util.Set!, boolean, int, String!, int, Object!);
   }
 
   @SuppressCompatibility @androidx.health.connect.client.feature.ExperimentalPersonalHealthRecordApi public final class UpsertMedicalResourceRequest {

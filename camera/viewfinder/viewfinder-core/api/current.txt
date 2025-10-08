@@ -67,6 +67,7 @@ package androidx.camera.viewfinder.core {
     ctor public ViewfinderSurfaceRequest(int width, int height, optional androidx.camera.viewfinder.core.ImplementationMode? implementationMode);
     ctor public ViewfinderSurfaceRequest(int width, int height, optional androidx.camera.viewfinder.core.ImplementationMode? implementationMode, optional String? requestId);
     method @InaccessibleFromJava @kotlin.jvm.JvmSynthetic public androidx.camera.viewfinder.core.ViewfinderSurfaceRequest copy(optional int width, optional int height, optional androidx.camera.viewfinder.core.ImplementationMode? implementationMode, optional String? requestId);
+    method @BytecodeOnly @kotlin.jvm.JvmSynthetic public static androidx.camera.viewfinder.core.ViewfinderSurfaceRequest! copy$default(androidx.camera.viewfinder.core.ViewfinderSurfaceRequest!, int, int, androidx.camera.viewfinder.core.ImplementationMode!, String!, int, Object!);
     method @InaccessibleFromKotlin public int getHeight();
     method @InaccessibleFromKotlin public androidx.camera.viewfinder.core.ImplementationMode? getImplementationMode();
     method @InaccessibleFromKotlin public String? getRequestId();
@@ -154,6 +155,8 @@ package androidx.camera.viewfinder.core.camera2 {
     method @RequiresApi(android.os.Build.VERSION_CODES.TIRAMISU) public static androidx.camera.viewfinder.core.TransformationInfo createFromCharacteristics(android.hardware.camera2.CameraCharacteristics cameraCharacteristics, int mirrorMode, optional float cropRectLeft, optional float cropRectTop);
     method @RequiresApi(android.os.Build.VERSION_CODES.TIRAMISU) public static androidx.camera.viewfinder.core.TransformationInfo createFromCharacteristics(android.hardware.camera2.CameraCharacteristics cameraCharacteristics, int mirrorMode, optional float cropRectLeft, optional float cropRectTop, optional float cropRectRight);
     method @RequiresApi(android.os.Build.VERSION_CODES.TIRAMISU) public static androidx.camera.viewfinder.core.TransformationInfo createFromCharacteristics(android.hardware.camera2.CameraCharacteristics cameraCharacteristics, int mirrorMode, optional float cropRectLeft, optional float cropRectTop, optional float cropRectRight, optional float cropRectBottom);
+    method @BytecodeOnly public static androidx.camera.viewfinder.core.TransformationInfo! createFromCharacteristics$default(android.hardware.camera2.CameraCharacteristics!, float, float, float, float, int, Object!);
+    method @BytecodeOnly public static androidx.camera.viewfinder.core.TransformationInfo! createFromCharacteristics$default(android.hardware.camera2.CameraCharacteristics!, int, float, float, float, float, int, Object!);
     field public static final androidx.camera.viewfinder.core.camera2.Camera2TransformationInfo INSTANCE;
   }
 

@@ -6,6 +6,7 @@ package androidx.room3.testing {
     method public void closeWhenFinished(androidx.room3.RoomDatabase db);
     method public final androidx.sqlite.SQLiteConnection createDatabase(int version);
     method public final androidx.sqlite.SQLiteConnection runMigrationsAndValidate(int version, optional java.util.List<? extends androidx.room3.migration.Migration> migrations);
+    method @BytecodeOnly public static androidx.sqlite.SQLiteConnection! runMigrationsAndValidate$default(androidx.room3.testing.MigrationTestHelper!, int, java.util.List!, int, Object!);
   }
 
 }
