@@ -755,7 +755,6 @@ public abstract class AppSearchSessionBlobCtsTestBase {
         AppSearchSchema schema = new AppSearchSchema.Builder("Type")
                 .addProperty(new AppSearchSchema.BlobHandlePropertyConfig.Builder("blob")
                         .setCardinality(AppSearchSchema.PropertyConfig.CARDINALITY_OPTIONAL)
-                        .setDescription("this is a blob.")
                         .build())
                 .build();
         mDb1.setSchemaAsync(new SetSchemaRequest.Builder().addSchemas(schema).build()).get();
@@ -774,7 +773,6 @@ public abstract class AppSearchSessionBlobCtsTestBase {
         AppSearchSchema schema = new AppSearchSchema.Builder("Type")
                 .addProperty(new AppSearchSchema.BlobHandlePropertyConfig.Builder("blob")
                         .setCardinality(AppSearchSchema.PropertyConfig.CARDINALITY_OPTIONAL)
-                        .setDescription("this is a blob.")
                         .build())
                 .build();
         mDb1.setSchemaAsync(new SetSchemaRequest.Builder().addSchemas(schema).build()).get();
