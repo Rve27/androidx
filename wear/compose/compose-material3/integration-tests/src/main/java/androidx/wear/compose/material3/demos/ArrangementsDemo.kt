@@ -21,6 +21,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -46,6 +47,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.foundation.CurvedLayout
 import androidx.wear.compose.foundation.CurvedModifier
@@ -60,13 +62,14 @@ import androidx.wear.compose.material3.CompactButton
 import androidx.wear.compose.material3.Text
 import androidx.wear.compose.material3.lazy.rememberTransformationSpec
 import androidx.wear.compose.material3.lazy.transformedHeight
-import kotlin.math.max
+import kotlin.math.min
 
 @Composable
 private fun ArrangementsDemoList(
     listIx: Int,
     verticalArrangement: Arrangement.Vertical,
     itemCount: Int,
+    contentPadding: Dp = 0.dp,
 ) {
     @Composable
     fun demoItem(it: Int, modifier: Modifier = Modifier) {
@@ -81,6 +84,7 @@ private fun ArrangementsDemoList(
             Modifier.fillMaxSize(),
             verticalArrangement = verticalArrangement,
             horizontalAlignment = Alignment.CenterHorizontally,
+            contentPadding = PaddingValues(vertical = contentPadding),
         ) {
             items(itemCount) { demoItem(it) }
         }
@@ -89,12 +93,17 @@ private fun ArrangementsDemoList(
             Modifier.fillMaxSize(),
             autoCentering = null,
             verticalArrangement = verticalArrangement,
+            contentPadding = PaddingValues(vertical = contentPadding),
         ) {
             items(itemCount) { demoItem(it) }
         }
     } else {
         val spec = rememberTransformationSpec()
-        TransformingLazyColumn(Modifier.fillMaxSize(), verticalArrangement = verticalArrangement) {
+        TransformingLazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = verticalArrangement,
+            contentPadding = PaddingValues(vertical = contentPadding),
+        ) {
             items(itemCount) {
                 demoItem(
                     it,
@@ -143,11 +152,14 @@ fun ArrangementsDemo() {
         )
     var arrsIx by remember { mutableIntStateOf(0) }
     var itemCount by remember { mutableIntStateOf(4) }
+    val contentPaddingPercent = listOf("0" to 0f, "S" to 0.25f, "M" to 0.5f, "L" to 0.75f)
+    var contentPaddingPercentIx by remember { mutableIntStateOf(0) }
 
     val screenSizeDp =
         with(LocalDensity.current) {
-            with(LocalConfiguration.current) { max(screenWidthDp, screenHeightDp) }
+            with(LocalConfiguration.current) { min(screenWidthDp, screenHeightDp) }
         }
+
     @Composable
     fun MinusItemsButton(modifier: Modifier = Modifier) {
         CompactButton(onClick = { itemCount = (itemCount - 1).coerceAtLeast(1) }, modifier) {
@@ -175,13 +187,20 @@ fun ArrangementsDemo() {
     if (screenSizeDp > 400) {
         // Phone
         Column(Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            Spacer(Modifier.size(100.dp))
             Box(
                 Modifier.aspectRatio(1f)
                     .fillMaxSize()
                     .clip(shape = CircleShape)
                     .border(2.dp, Color.White, shape = CircleShape)
             ) {
-                ArrangementsDemoList(listsIx, arrs[arrsIx].arrangement, itemCount)
+                ArrangementsDemoList(
+                    listsIx,
+                    arrs[arrsIx].arrangement,
+                    itemCount,
+                    (screenSizeDp.toFloat() * contentPaddingPercent[contentPaddingPercentIx].second)
+                        .dp,
+                )
             }
 
             Row(
@@ -221,10 +240,33 @@ fun ArrangementsDemo() {
             BasicText(lists[listsIx].second, style = TextStyle(color = Color.White))
             Spacer(Modifier.size(5.dp))
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                BasicText("Item count = ", style = TextStyle(color = Color.White))
                 MinusItemsButton()
                 ItemsTextDisplay(Modifier.weight(1f))
                 PlusItemsButton()
             }
+            Spacer(Modifier.size(5.dp))
+            Row(
+                Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.Start),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                contentPaddingPercent.forEachIndexed { ix, paddingPercent ->
+                    Button(
+                        onClick = { contentPaddingPercentIx = ix },
+                        modifier =
+                            if (ix == contentPaddingPercentIx)
+                                Modifier.border(2.dp, Color.Green, shape = ButtonDefaults.shape)
+                            else Modifier,
+                    ) {
+                        BasicText(paddingPercent.first, style = TextStyle(color = Color.Black))
+                    }
+                }
+            }
+            BasicText(
+                "Content padding = ${contentPaddingPercent[contentPaddingPercentIx].second * 100f}%",
+                style = TextStyle(color = Color.White),
+            )
         }
     } else {
         // Watch
