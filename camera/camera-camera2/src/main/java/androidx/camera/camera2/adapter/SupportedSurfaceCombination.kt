@@ -439,6 +439,13 @@ public class SupportedSurfaceCombination(
                 isStrictFpsRequired to targetFpsRange
             }
 
+        debug {
+            "getSuggestedStreamSpecifications: " +
+                "isPreviewStabilizationOn = $isPreviewStabilizationOn, " +
+                "isPreviewStabilizationSupported = $isPreviewStabilizationSupported, " +
+                "isFeatureComboInvocation = $isFeatureComboInvocation"
+        }
+
         // Ensure preview stabilization is supported by the camera.
         if (isPreviewStabilizationOn && !isPreviewStabilizationSupported) {
             // TODO: b/422055796 - Handle this for non-feature-combo code flows, probably better to
