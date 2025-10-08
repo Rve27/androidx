@@ -1089,6 +1089,23 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         }
     }
 
+    private val onPdfContentInvalidatedListener =
+        object : PdfDocument.OnPdfContentInvalidatedListener {
+            override fun onPdfContentInvalidated(pageNumber: Int, dirtyAreas: List<Rect>) {
+                val localPageLayoutManager = pageLayoutManager ?: return
+                pageManager?.maybeInvalidateAreas(
+                    pageNum = pageNumber,
+                    visibleArea = localPageLayoutManager.visiblePageAreas[pageNumber],
+                    currentZoom = zoom,
+                    areasToUpdate = dirtyAreas.map { it.toRectF() },
+                )
+                formWidgetMetadataLoader?.let { loader ->
+                    pageManager?.maybeUpdateFormWidgetMetadata(pageNumber, loader)
+                }
+                formFillingEditText = null
+            }
+        }
+
     override fun onGenericMotionEvent(event: MotionEvent?): Boolean {
         return event?.let { externalInputManager.handleMouseEvent(event) } ?: false ||
             super.onGenericMotionEvent(event)
@@ -1367,6 +1384,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         awaitingFirstLayout = true
         pageManager?.cleanup()
 
+        pdfDocument?.removeOnPdfContentInvalidatedListener(onPdfContentInvalidatedListener)
         accessibilityManager.removeAccessibilityStateChangeListener(accessibilityStateChangeHandler)
     }
 
@@ -1639,18 +1657,9 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                 mainScope.launch(start = CoroutineStart.UNDISPATCHED) {
                     formEditActionToJoin?.join()
                     launch {
-                        handler.invalidatedAreas.collect {
-                            val localPageLayoutManager = pageLayoutManager ?: return@collect
-                            if (localPageLayoutManager.visiblePageAreas[it.first] == null)
-                                return@collect
-                            pageManager?.maybeInvalidateAreas(
-                                pageNum = it.first,
-                                visibleArea = localPageLayoutManager.visiblePageAreas[it.first],
-                                currentZoom = zoom,
-                                areasToUpdate = it.second,
-                            )
-                            formWidgetMetadataLoader?.let { loader ->
-                                pageManager?.maybeUpdateFormWidgetMetadata(it.first, loader)
+                        handler.formWidgetUpdates.collect {
+                            onFormWidgetInfoUpdatedListeners.forEach { listener ->
+                                listener.onFormWidgetInfoUpdated(it)
                             }
                         }
                     }
@@ -1759,8 +1768,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
             )
 
         formWidgetInteractionHandler =
-            FormWidgetInteractionHandler(context, localPdfDocument, backgroundScope, errorFlow) {
-                formFillingEditText ->
+            FormWidgetInteractionHandler(context, backgroundScope) { formFillingEditText ->
                 this.formFillingEditText = formFillingEditText
             }
 
@@ -1789,6 +1797,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                     isFormEditStateBeingRestored = false
                 },
             )
+
+        localPdfDocument.addOnPdfContentInvalidatedListener(onPdfContentInvalidatedListener)
 
         val fastScrollCalculator = FastScrollCalculator(context)
         val fastScrollDrawer =
@@ -2016,6 +2026,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         formFillingEditText = null
         startedFetchingAllDimensions = false
         backgroundScope.coroutineContext.cancelChildren()
+        pdfDocument?.removeOnPdfContentInvalidatedListener(onPdfContentInvalidatedListener)
         stopCollectingData()
 
         // Reset zoom and scroll after clearing pageMetadata loader, otherwise they can trigger

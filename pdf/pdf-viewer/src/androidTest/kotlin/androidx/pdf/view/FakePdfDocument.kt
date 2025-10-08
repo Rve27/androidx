@@ -123,13 +123,13 @@ internal open class FakePdfDocument(
     override fun addOnPdfContentInvalidatedListener(
         listener: PdfDocument.OnPdfContentInvalidatedListener
     ) {
-        TODO("Not yet implemented")
+        return
     }
 
     override fun removeOnPdfContentInvalidatedListener(
         listener: PdfDocument.OnPdfContentInvalidatedListener
     ) {
-        TODO("Not yet implemented")
+        return
     }
 
     override suspend fun applyEdit(pageNum: Int, record: FormEditInfo): List<Rect> {
