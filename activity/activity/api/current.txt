@@ -1,6 +1,12 @@
 // Signature format: 4.0
 package androidx.activity {
 
+  @SuppressCompatibility @androidx.activity.ExperimentalActivityApi public final class ActivityFlags {
+    property public boolean isOnBackPressedLifecycleHandledByEnableDisable;
+    field public static final androidx.activity.ActivityFlags INSTANCE;
+    field public static boolean isOnBackPressedLifecycleHandledByEnableDisable;
+  }
+
   public final class ActivityViewModelLazyKt {
     method @KotlinOnly @MainThread public static inline <reified VM extends androidx.lifecycle.ViewModel> kotlin.Lazy<VM> viewModels(androidx.activity.ComponentActivity, optional kotlin.jvm.functions.Function0<androidx.lifecycle.viewmodel.CreationExtras>? extrasProducer, optional kotlin.jvm.functions.Function0<androidx.lifecycle.ViewModelProvider.Factory>? factoryProducer);
   }
@@ -108,6 +114,9 @@ package androidx.activity {
     method @InaccessibleFromKotlin public static void enable(androidx.activity.ComponentActivity, optional androidx.activity.SystemBarStyle statusBarStyle);
     method @InaccessibleFromKotlin public static void enable(androidx.activity.ComponentActivity, optional androidx.activity.SystemBarStyle statusBarStyle, optional androidx.activity.SystemBarStyle navigationBarStyle);
     method @KotlinOnly public static void enableEdgeToEdge(androidx.activity.ComponentActivity, optional androidx.activity.SystemBarStyle statusBarStyle, optional androidx.activity.SystemBarStyle navigationBarStyle);
+  }
+
+  @SuppressCompatibility @kotlin.RequiresOptIn(message="This API is experimental and may change or be removed in the future.") @kotlin.annotation.Retention(kotlin.annotation.AnnotationRetention.BINARY) public @interface ExperimentalActivityApi {
   }
 
   public final class FullyDrawnReporter {
