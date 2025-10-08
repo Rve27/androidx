@@ -54,6 +54,7 @@ package androidx.navigation {
     ctor public NavAction(@IdRes int destinationId);
     ctor public NavAction(@IdRes int destinationId, optional androidx.navigation.NavOptions? navOptions);
     ctor public NavAction(@IdRes int destinationId, optional androidx.navigation.NavOptions? navOptions, optional android.os.Bundle? defaultArguments);
+    ctor @BytecodeOnly public NavAction(int, androidx.navigation.NavOptions!, android.os.Bundle!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method @InaccessibleFromKotlin public android.os.Bundle? getDefaultArguments();
     method @InaccessibleFromKotlin public int getDestinationId();
     method @InaccessibleFromKotlin public androidx.navigation.NavOptions? getNavOptions();

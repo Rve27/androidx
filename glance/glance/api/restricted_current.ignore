@@ -1,5 +1,0 @@
-// Baseline format: 1.0
-AddedMethod: androidx.glance.action.StartActivityActionKt#actionStartActivity$default(androidx.glance.action.ActionParameters, android.os.Bundle, int, Object):
-    Added method androidx.glance.action.StartActivityActionKt.actionStartActivity$default(androidx.glance.action.ActionParameters,android.os.Bundle,int,Object)
-AddedMethod: androidx.glance.action.StartActivityActionKt#actionStartActivity$default(androidx.glance.action.ActionParameters, int, Object):
-    Added method androidx.glance.action.StartActivityActionKt.actionStartActivity$default(androidx.glance.action.ActionParameters,int,Object)

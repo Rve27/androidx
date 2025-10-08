@@ -227,6 +227,7 @@ package androidx.test.uiautomator {
   public final class ElementNotFoundException extends java.lang.Exception {
     ctor public ElementNotFoundException();
     ctor public ElementNotFoundException(optional String? msg);
+    ctor @BytecodeOnly public ElementNotFoundException(String!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
   }
 
   public abstract class EventCondition<U> implements android.app.UiAutomation.AccessibilityEventFilter {

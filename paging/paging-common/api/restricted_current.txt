@@ -7,6 +7,7 @@ package androidx.paging {
 
   public final class CombinedLoadStates {
     ctor public CombinedLoadStates(androidx.paging.LoadState refresh, androidx.paging.LoadState prepend, androidx.paging.LoadState append, androidx.paging.LoadStates source, optional androidx.paging.LoadStates? mediator);
+    ctor @BytecodeOnly public CombinedLoadStates(androidx.paging.LoadState!, androidx.paging.LoadState!, androidx.paging.LoadState!, androidx.paging.LoadStates!, androidx.paging.LoadStates!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method @InaccessibleFromKotlin public androidx.paging.LoadState getAppend();
     method @InaccessibleFromKotlin public androidx.paging.LoadStates? getMediator();
     method @InaccessibleFromKotlin public androidx.paging.LoadState getPrepend();
@@ -305,6 +306,8 @@ package androidx.paging {
   }
 
   public final class Pager<Key, Value> {
+    ctor @BytecodeOnly @SuppressCompatibility @androidx.paging.ExperimentalPagingApi public Pager(androidx.paging.PagingConfig!, Object!, androidx.paging.RemoteMediator!, kotlin.jvm.functions.Function0!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
+    ctor @BytecodeOnly public Pager(androidx.paging.PagingConfig!, Object!, kotlin.jvm.functions.Function0!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor @SuppressCompatibility @androidx.paging.ExperimentalPagingApi public Pager(androidx.paging.PagingConfig config, optional Key? initialKey, androidx.paging.RemoteMediator<Key,Value>? remoteMediator, kotlin.jvm.functions.Function0<? extends androidx.paging.PagingSource<Key,Value>> pagingSourceFactory);
     ctor public Pager(androidx.paging.PagingConfig config, optional Key? initialKey, kotlin.jvm.functions.Function0<? extends androidx.paging.PagingSource<Key,Value>> pagingSourceFactory);
     ctor public Pager(androidx.paging.PagingConfig config, kotlin.jvm.functions.Function0<? extends androidx.paging.PagingSource<Key,Value>> pagingSourceFactory);
@@ -319,6 +322,7 @@ package androidx.paging {
     ctor public PagingConfig(int pageSize, optional @IntRange(from=0L) int prefetchDistance, optional boolean enablePlaceholders, optional @IntRange(from=1L) int initialLoadSize);
     ctor public PagingConfig(int pageSize, optional @IntRange(from=0L) int prefetchDistance, optional boolean enablePlaceholders, optional @IntRange(from=1L) int initialLoadSize, optional @IntRange(from=2L) int maxSize);
     ctor public PagingConfig(int pageSize, optional @IntRange(from=0L) int prefetchDistance, optional boolean enablePlaceholders, optional @IntRange(from=1L) int initialLoadSize, optional @IntRange(from=2L) int maxSize, optional int jumpThreshold);
+    ctor @BytecodeOnly public PagingConfig(int, int, boolean, int, int, int, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     property public boolean enablePlaceholders;
     property public int initialLoadSize;
     property public int jumpThreshold;
@@ -421,6 +425,7 @@ package androidx.paging {
 
   public abstract class PagingDataPresenter<T> {
     ctor public PagingDataPresenter();
+    ctor @BytecodeOnly public PagingDataPresenter(kotlin.coroutines.CoroutineContext!, androidx.paging.PagingData!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor public PagingDataPresenter(optional kotlin.coroutines.CoroutineContext mainContext, optional androidx.paging.PagingData<T>? cachedPagingData);
     method public final void addLoadStateListener(kotlin.jvm.functions.Function1<androidx.paging.CombinedLoadStates,kotlin.Unit> listener);
     method public final void addOnPagesUpdatedListener(kotlin.jvm.functions.Function0<kotlin.Unit> listener);
@@ -520,6 +525,7 @@ package androidx.paging {
   }
 
   public static final class PagingSource.LoadResult.Page<Key, Value> extends androidx.paging.PagingSource.LoadResult<Key,Value> implements java.lang.Iterable<Value> kotlin.jvm.internal.markers.KMappedMarker {
+    ctor @BytecodeOnly public PagingSource.LoadResult.Page(java.util.List!, Object!, Object!, int, int, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor public PagingSource.LoadResult.Page(java.util.List<? extends Value> data, Key? prevKey, Key? nextKey);
     ctor public PagingSource.LoadResult.Page(java.util.List<? extends Value> data, Key? prevKey, Key? nextKey, optional @IntRange(from=androidx.paging.PagingSource.LoadResult.Page.COUNT_UNDEFINED.toLong()) int itemsBefore, optional @IntRange(from=androidx.paging.PagingSource.LoadResult.Page.COUNT_UNDEFINED.toLong()) int itemsAfter);
     method public java.util.List<Value> component1();

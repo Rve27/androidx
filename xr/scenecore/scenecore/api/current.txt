@@ -278,6 +278,7 @@ package androidx.xr.scenecore {
   }
 
   public final class InputEvent {
+    ctor @BytecodeOnly public InputEvent(int, int, long, androidx.xr.runtime.math.Vector3!, androidx.xr.runtime.math.Vector3!, int, java.util.List!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor public InputEvent(int source, int pointerType, long timestamp, androidx.xr.runtime.math.Vector3 origin, androidx.xr.runtime.math.Vector3 direction, int action, optional java.util.List<androidx.xr.scenecore.InputEvent.HitInfo> hitInfoList);
     method @InaccessibleFromKotlin public int getAction();
     method @InaccessibleFromKotlin public androidx.xr.runtime.math.Vector3 getDirection();
@@ -480,6 +481,7 @@ package androidx.xr.scenecore {
   public final class PanelClippingConfig {
     ctor public PanelClippingConfig();
     ctor public PanelClippingConfig(optional boolean isDepthTestEnabled);
+    ctor @BytecodeOnly public PanelClippingConfig(boolean, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public androidx.xr.scenecore.PanelClippingConfig copy();
     method public androidx.xr.scenecore.PanelClippingConfig copy(optional boolean isDepthTestEnabled);
     method @BytecodeOnly public static androidx.xr.scenecore.PanelClippingConfig! copy$default(androidx.xr.scenecore.PanelClippingConfig!, boolean, int, Object!);
@@ -939,6 +941,7 @@ package androidx.xr.scenecore {
   public static final class SurfaceEntity.EdgeFeatheringParams.RectangleFeather extends androidx.xr.scenecore.SurfaceEntity.EdgeFeatheringParams {
     ctor public SurfaceEntity.EdgeFeatheringParams.RectangleFeather();
     ctor public SurfaceEntity.EdgeFeatheringParams.RectangleFeather(optional @FloatRange(from=0.0, to=0.5) float leftRight, optional @FloatRange(from=0.0, to=0.5) float topBottom);
+    ctor @BytecodeOnly public SurfaceEntity.EdgeFeatheringParams.RectangleFeather(float, float, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method @InaccessibleFromKotlin public float getLeftRight();
     method @InaccessibleFromKotlin public float getTopBottom();
     property public float leftRight;
@@ -1013,6 +1016,7 @@ package androidx.xr.scenecore {
     ctor public TextureSampler(optional int minificationFilter, optional int magnificationFilter, optional int wrapModeHorizontal);
     ctor public TextureSampler(optional int minificationFilter, optional int magnificationFilter, optional int wrapModeHorizontal, optional int wrapModeVertical);
     ctor public TextureSampler(optional int minificationFilter, optional int magnificationFilter, optional int wrapModeHorizontal, optional int wrapModeVertical, optional int wrapModeDepth);
+    ctor @BytecodeOnly public TextureSampler(int, int, int, int, int, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method @InaccessibleFromKotlin public int getMagnificationFilter();
     method @InaccessibleFromKotlin public int getMinificationFilter();
     method @InaccessibleFromKotlin public int getWrapModeDepth();

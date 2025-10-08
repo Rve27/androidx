@@ -71,6 +71,7 @@ package androidx.glance.appwidget {
   public abstract class GlanceAppWidget {
     ctor public GlanceAppWidget();
     ctor public GlanceAppWidget(optional @LayoutRes int errorUiLayout);
+    ctor @BytecodeOnly public GlanceAppWidget(int, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method @InaccessibleFromKotlin public androidx.glance.appwidget.PreviewSizeMode getPreviewSizeMode();
     method @InaccessibleFromKotlin public androidx.glance.appwidget.SizeMode getSizeMode();
     method @InaccessibleFromKotlin public androidx.glance.state.GlanceStateDefinition<? extends java.lang.Object?>? getStateDefinition();

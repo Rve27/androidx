@@ -246,10 +246,15 @@ package androidx.wear.compose.foundation {
     ctor public CurvedTextStyle();
     ctor @KotlinOnly public CurvedTextStyle(optional androidx.compose.ui.graphics.Color background, optional androidx.compose.ui.graphics.Color color, optional androidx.compose.ui.unit.TextUnit fontSize, optional androidx.compose.ui.text.font.FontFamily? fontFamily, optional androidx.compose.ui.text.font.FontWeight? fontWeight, optional androidx.compose.ui.text.font.FontStyle? fontStyle, optional androidx.compose.ui.text.font.FontSynthesis? fontSynthesis, optional androidx.compose.ui.unit.TextUnit letterSpacing, optional androidx.compose.ui.unit.TextUnit letterSpacingCounterClockwise, optional androidx.compose.ui.unit.TextUnit lineHeight, optional androidx.wear.compose.foundation.CurvedTextStyle.WarpOffset warpOffset);
     ctor public CurvedTextStyle(androidx.compose.ui.text.TextStyle style);
+    ctor @BytecodeOnly public CurvedTextStyle(long, long, long, androidx.compose.ui.text.font.FontFamily!, androidx.compose.ui.text.font.FontWeight!, androidx.compose.ui.text.font.FontStyle!, androidx.compose.ui.text.font.FontSynthesis!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor @BytecodeOnly @Deprecated public CurvedTextStyle(long, long, long, androidx.compose.ui.text.font.FontFamily!, androidx.compose.ui.text.font.FontWeight!, androidx.compose.ui.text.font.FontStyle!, androidx.compose.ui.text.font.FontSynthesis!, kotlin.jvm.internal.DefaultConstructorMarker!);
+    ctor @BytecodeOnly public CurvedTextStyle(long, long, long, androidx.compose.ui.text.font.FontFamily!, androidx.compose.ui.text.font.FontWeight!, androidx.compose.ui.text.font.FontStyle!, androidx.compose.ui.text.font.FontSynthesis!, long, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor @BytecodeOnly @Deprecated public CurvedTextStyle(long, long, long, androidx.compose.ui.text.font.FontFamily!, androidx.compose.ui.text.font.FontWeight!, androidx.compose.ui.text.font.FontStyle!, androidx.compose.ui.text.font.FontSynthesis!, long, kotlin.jvm.internal.DefaultConstructorMarker!);
+    ctor @BytecodeOnly public CurvedTextStyle(long, long, long, androidx.compose.ui.text.font.FontFamily!, androidx.compose.ui.text.font.FontWeight!, androidx.compose.ui.text.font.FontStyle!, androidx.compose.ui.text.font.FontSynthesis!, long, long, long, byte, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor @BytecodeOnly public CurvedTextStyle(long, long, long, androidx.compose.ui.text.font.FontFamily!, androidx.compose.ui.text.font.FontWeight!, androidx.compose.ui.text.font.FontStyle!, androidx.compose.ui.text.font.FontSynthesis!, long, long, long, byte, kotlin.jvm.internal.DefaultConstructorMarker!);
+    ctor @BytecodeOnly public CurvedTextStyle(long, long, long, androidx.compose.ui.text.font.FontFamily!, androidx.compose.ui.text.font.FontWeight!, androidx.compose.ui.text.font.FontStyle!, androidx.compose.ui.text.font.FontSynthesis!, long, long, long, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor @BytecodeOnly @Deprecated public CurvedTextStyle(long, long, long, androidx.compose.ui.text.font.FontFamily!, androidx.compose.ui.text.font.FontWeight!, androidx.compose.ui.text.font.FontStyle!, androidx.compose.ui.text.font.FontSynthesis!, long, long, long, kotlin.jvm.internal.DefaultConstructorMarker!);
+    ctor @BytecodeOnly public CurvedTextStyle(long, long, long, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor @BytecodeOnly @Deprecated public CurvedTextStyle(long, long, long, kotlin.jvm.internal.DefaultConstructorMarker!);
     method @KotlinOnly public androidx.wear.compose.foundation.CurvedTextStyle copy(optional androidx.compose.ui.graphics.Color background, optional androidx.compose.ui.graphics.Color color, optional androidx.compose.ui.unit.TextUnit fontSize, optional androidx.compose.ui.text.font.FontFamily? fontFamily, optional androidx.compose.ui.text.font.FontWeight? fontWeight, optional androidx.compose.ui.text.font.FontStyle? fontStyle, optional androidx.compose.ui.text.font.FontSynthesis? fontSynthesis, optional androidx.compose.ui.unit.TextUnit letterSpacing, optional androidx.compose.ui.unit.TextUnit letterSpacingCounterClockwise, optional androidx.compose.ui.unit.TextUnit lineHeight, optional androidx.wear.compose.foundation.CurvedTextStyle.WarpOffset warpOffset);
     method @BytecodeOnly @Deprecated public androidx.wear.compose.foundation.CurvedTextStyle! copy-MF-8BNI(long, long, long, androidx.compose.ui.text.font.FontFamily!, androidx.compose.ui.text.font.FontWeight!, androidx.compose.ui.text.font.FontStyle!, androidx.compose.ui.text.font.FontSynthesis!, long);
@@ -492,6 +497,7 @@ package androidx.wear.compose.foundation {
 
   @androidx.compose.runtime.Stable public final class SwipeToDismissBoxState {
     ctor public SwipeToDismissBoxState();
+    ctor @BytecodeOnly public SwipeToDismissBoxState(androidx.compose.animation.core.AnimationSpec!, kotlin.jvm.functions.Function1!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor public SwipeToDismissBoxState(optional androidx.compose.animation.core.AnimationSpec<java.lang.Float> animationSpec, optional kotlin.jvm.functions.Function1<? super androidx.wear.compose.foundation.SwipeToDismissValue,java.lang.Boolean> confirmStateChange);
     method @InaccessibleFromKotlin public androidx.wear.compose.foundation.SwipeToDismissValue getCurrentValue();
     method @InaccessibleFromKotlin public float getOffset();
@@ -546,6 +552,7 @@ package androidx.wear.compose.foundation.lazy {
   @androidx.compose.runtime.Immutable public final class AutoCenteringParams {
     ctor public AutoCenteringParams();
     ctor public AutoCenteringParams(optional int itemIndex, optional int itemOffset);
+    ctor @BytecodeOnly public AutoCenteringParams(int, int, int, kotlin.jvm.internal.DefaultConstructorMarker!);
   }
 
   public final class ScalingLazyColumnDefaults {
@@ -655,6 +662,7 @@ package androidx.wear.compose.foundation.lazy {
   @androidx.compose.runtime.Stable public final class ScalingLazyListState implements androidx.compose.foundation.gestures.ScrollableState {
     ctor public ScalingLazyListState();
     ctor public ScalingLazyListState(optional int initialCenterItemIndex, optional int initialCenterItemScrollOffset);
+    ctor @BytecodeOnly public ScalingLazyListState(int, int, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public suspend Object? animateScrollToItem(int index, optional int scrollOffset, kotlin.coroutines.Continuation<? super kotlin.Unit>);
     method @BytecodeOnly public static Object! animateScrollToItem$default(androidx.wear.compose.foundation.lazy.ScalingLazyListState!, int, int, kotlin.coroutines.Continuation!, int, Object!);
     method public float dispatchRawDelta(float delta);
@@ -784,6 +792,7 @@ package androidx.wear.compose.foundation.lazy {
   @androidx.compose.runtime.Stable public final class TransformingLazyColumnState implements androidx.compose.foundation.gestures.ScrollableState {
     ctor public TransformingLazyColumnState();
     ctor public TransformingLazyColumnState(optional int initialAnchorItemIndex, optional int initialAnchorItemScrollOffset);
+    ctor @BytecodeOnly public TransformingLazyColumnState(int, int, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public suspend Object? animateScrollToItem(@IntRange(from=0L) int index, optional int scrollOffset, kotlin.coroutines.Continuation<? super kotlin.Unit>);
     method @BytecodeOnly public static Object! animateScrollToItem$default(androidx.wear.compose.foundation.lazy.TransformingLazyColumnState!, int, int, kotlin.coroutines.Continuation!, int, Object!);
     method public float dispatchRawDelta(float delta);
@@ -866,6 +875,7 @@ package androidx.wear.compose.foundation.pager {
   }
 
   public final class PagerState implements androidx.compose.foundation.gestures.ScrollableState {
+    ctor @BytecodeOnly public PagerState(int, float, kotlin.jvm.functions.Function0!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor public PagerState(optional @IntRange(from=0L) int currentPage, optional @FloatRange(from=-0.5, to=0.5) float currentPageOffsetFraction, @IntRange(from=1L) kotlin.jvm.functions.Function0<java.lang.Integer> pageCount);
     method public suspend Object? animateScrollToPage(int page, optional @FloatRange(from=-0.5, to=0.5) float pageOffsetFraction, optional androidx.compose.animation.core.AnimationSpec<java.lang.Float> animationSpec, kotlin.coroutines.Continuation<? super kotlin.Unit>);
     method @BytecodeOnly public static Object! animateScrollToPage$default(androidx.wear.compose.foundation.pager.PagerState!, int, float, androidx.compose.animation.core.AnimationSpec!, kotlin.coroutines.Continuation!, int, Object!);

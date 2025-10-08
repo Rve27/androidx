@@ -24,8 +24,11 @@ package androidx.paging {
   }
 
   public final class AsyncPagingDataDiffer<T> {
+    ctor @BytecodeOnly public AsyncPagingDataDiffer(androidx.recyclerview.widget.DiffUtil.ItemCallback!, androidx.recyclerview.widget.ListUpdateCallback!, kotlin.coroutines.CoroutineContext!, kotlin.coroutines.CoroutineContext!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor @BytecodeOnly @Deprecated public AsyncPagingDataDiffer(androidx.recyclerview.widget.DiffUtil.ItemCallback!, androidx.recyclerview.widget.ListUpdateCallback!, kotlinx.coroutines.CoroutineDispatcher!);
+    ctor @BytecodeOnly @Deprecated public AsyncPagingDataDiffer(androidx.recyclerview.widget.DiffUtil.ItemCallback!, androidx.recyclerview.widget.ListUpdateCallback!, kotlinx.coroutines.CoroutineDispatcher!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor @BytecodeOnly @Deprecated public AsyncPagingDataDiffer(androidx.recyclerview.widget.DiffUtil.ItemCallback!, androidx.recyclerview.widget.ListUpdateCallback!, kotlinx.coroutines.CoroutineDispatcher!, kotlinx.coroutines.CoroutineDispatcher!);
+    ctor @BytecodeOnly @Deprecated public AsyncPagingDataDiffer(androidx.recyclerview.widget.DiffUtil.ItemCallback!, androidx.recyclerview.widget.ListUpdateCallback!, kotlinx.coroutines.CoroutineDispatcher!, kotlinx.coroutines.CoroutineDispatcher!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor public AsyncPagingDataDiffer(androidx.recyclerview.widget.DiffUtil.ItemCallback<T> diffCallback, androidx.recyclerview.widget.ListUpdateCallback updateCallback);
     ctor public AsyncPagingDataDiffer(androidx.recyclerview.widget.DiffUtil.ItemCallback<T> diffCallback, androidx.recyclerview.widget.ListUpdateCallback updateCallback, optional kotlin.coroutines.CoroutineContext mainDispatcher);
     ctor public AsyncPagingDataDiffer(androidx.recyclerview.widget.DiffUtil.ItemCallback<T> diffCallback, androidx.recyclerview.widget.ListUpdateCallback updateCallback, optional kotlin.coroutines.CoroutineContext mainDispatcher, optional kotlin.coroutines.CoroutineContext workerDispatcher);
@@ -105,8 +108,11 @@ package androidx.paging {
   }
 
   public abstract class PagingDataAdapter<T, VH extends androidx.recyclerview.widget.RecyclerView.ViewHolder> extends androidx.recyclerview.widget.RecyclerView.Adapter<VH> {
+    ctor @BytecodeOnly public PagingDataAdapter(androidx.recyclerview.widget.DiffUtil.ItemCallback!, kotlin.coroutines.CoroutineContext!, kotlin.coroutines.CoroutineContext!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor @BytecodeOnly @Deprecated public PagingDataAdapter(androidx.recyclerview.widget.DiffUtil.ItemCallback!, kotlinx.coroutines.CoroutineDispatcher!);
+    ctor @BytecodeOnly @Deprecated public PagingDataAdapter(androidx.recyclerview.widget.DiffUtil.ItemCallback!, kotlinx.coroutines.CoroutineDispatcher!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor @BytecodeOnly @Deprecated public PagingDataAdapter(androidx.recyclerview.widget.DiffUtil.ItemCallback!, kotlinx.coroutines.CoroutineDispatcher!, kotlinx.coroutines.CoroutineDispatcher!);
+    ctor @BytecodeOnly @Deprecated public PagingDataAdapter(androidx.recyclerview.widget.DiffUtil.ItemCallback!, kotlinx.coroutines.CoroutineDispatcher!, kotlinx.coroutines.CoroutineDispatcher!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor public PagingDataAdapter(androidx.recyclerview.widget.DiffUtil.ItemCallback<T> diffCallback);
     ctor public PagingDataAdapter(androidx.recyclerview.widget.DiffUtil.ItemCallback<T> diffCallback, optional kotlin.coroutines.CoroutineContext mainDispatcher);
     ctor public PagingDataAdapter(androidx.recyclerview.widget.DiffUtil.ItemCallback<T> diffCallback, optional kotlin.coroutines.CoroutineContext mainDispatcher, optional kotlin.coroutines.CoroutineContext workerDispatcher);

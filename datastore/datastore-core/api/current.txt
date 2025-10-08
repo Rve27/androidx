@@ -11,6 +11,7 @@ package androidx.datastore.core {
 
   public final class CorruptionException extends java.io.IOException {
     ctor public CorruptionException(String message, optional Throwable? cause);
+    ctor @BytecodeOnly public CorruptionException(String!, Throwable!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
   }
 
   public interface DataMigration<T> {
@@ -49,6 +50,7 @@ package androidx.datastore.core {
   }
 
   public final class FileStorage<T> implements androidx.datastore.core.Storage<T> {
+    ctor @BytecodeOnly public FileStorage(androidx.datastore.core.Serializer!, kotlin.jvm.functions.Function1!, kotlin.jvm.functions.Function0!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor public FileStorage(androidx.datastore.core.Serializer<T> serializer, optional kotlin.jvm.functions.Function1<? super java.io.File,? extends androidx.datastore.core.InterProcessCoordinator> coordinatorProducer, kotlin.jvm.functions.Function0<? extends java.io.File> produceFile);
     method public androidx.datastore.core.StorageConnection<T> createConnection();
   }

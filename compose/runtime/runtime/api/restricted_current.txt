@@ -43,6 +43,7 @@ package androidx.compose.runtime {
 
   public final class BroadcastFrameClock implements androidx.compose.runtime.MonotonicFrameClock {
     ctor public BroadcastFrameClock();
+    ctor @BytecodeOnly public BroadcastFrameClock(kotlin.jvm.functions.Function0!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor public BroadcastFrameClock(optional kotlin.jvm.functions.Function0<kotlin.Unit>? onNewAwaiters);
     method public void cancel(optional java.util.concurrent.CancellationException cancellationException);
     method @BytecodeOnly public static void cancel$default(androidx.compose.runtime.BroadcastFrameClock!, java.util.concurrent.CancellationException!, int, Object!);
@@ -1326,6 +1327,7 @@ package androidx.compose.runtime.snapshots.tooling {
 
   @SuppressCompatibility @androidx.compose.runtime.ExperimentalComposeRuntimeApi public final class SnapshotInstanceObservers {
     ctor public SnapshotInstanceObservers();
+    ctor @BytecodeOnly public SnapshotInstanceObservers(kotlin.jvm.functions.Function1!, kotlin.jvm.functions.Function1!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor public SnapshotInstanceObservers(optional kotlin.jvm.functions.Function1<java.lang.Object,kotlin.Unit>? readObserver, optional kotlin.jvm.functions.Function1<java.lang.Object,kotlin.Unit>? writeObserver);
     method @InaccessibleFromKotlin public kotlin.jvm.functions.Function1<java.lang.Object,kotlin.Unit>? getReadObserver();
     method @InaccessibleFromKotlin public kotlin.jvm.functions.Function1<java.lang.Object,kotlin.Unit>? getWriteObserver();
@@ -1466,6 +1468,7 @@ package androidx.compose.runtime.tooling {
 
   @SuppressCompatibility @androidx.compose.runtime.tooling.ComposeToolingApi public final class ParameterSourceInformation {
     ctor public ParameterSourceInformation(int sortedIndex, optional String? name, optional String? inlineClass);
+    ctor @BytecodeOnly public ParameterSourceInformation(int, String!, String!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method @InaccessibleFromKotlin public String? getInlineClass();
     method @InaccessibleFromKotlin public String? getName();
     method @InaccessibleFromKotlin public int getSortedIndex();

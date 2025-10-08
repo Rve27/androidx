@@ -102,6 +102,7 @@ package androidx.compose.animation {
 
   public final class ContentTransform {
     ctor public ContentTransform(androidx.compose.animation.EnterTransition targetContentEnter, androidx.compose.animation.ExitTransition initialContentExit, optional float targetContentZIndex, optional androidx.compose.animation.SizeTransform? sizeTransform);
+    ctor @BytecodeOnly public ContentTransform(androidx.compose.animation.EnterTransition!, androidx.compose.animation.ExitTransition!, float, androidx.compose.animation.SizeTransform!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method @InaccessibleFromKotlin public androidx.compose.animation.ExitTransition getInitialContentExit();
     method @InaccessibleFromKotlin public androidx.compose.animation.SizeTransform? getSizeTransform();
     method @InaccessibleFromKotlin public androidx.compose.animation.EnterTransition getTargetContentEnter();

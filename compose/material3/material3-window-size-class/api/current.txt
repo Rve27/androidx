@@ -32,6 +32,7 @@ package androidx.compose.material3.windowsizeclass {
   }
 
   @androidx.compose.runtime.Immutable public final class WindowSizeClass {
+    ctor @BytecodeOnly public WindowSizeClass(int, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method @BytecodeOnly public int getHeightSizeClass-Pt018CI();
     method @BytecodeOnly public int getWidthSizeClass-Y0FxcvE();
     property public androidx.compose.material3.windowsizeclass.WindowHeightSizeClass heightSizeClass;

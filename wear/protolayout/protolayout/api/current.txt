@@ -1288,6 +1288,7 @@ package androidx.wear.protolayout {
   @MainThread public final class ProtoLayoutScope {
     ctor public ProtoLayoutScope();
     ctor public ProtoLayoutScope(optional androidx.wear.protolayout.expression.VersionBuilders.VersionInfo rendererVersionInfo);
+    ctor @BytecodeOnly public ProtoLayoutScope(androidx.wear.protolayout.expression.VersionBuilders.VersionInfo!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public void clearAll();
     method public android.os.Bundle collectPendingIntents();
     method public androidx.wear.protolayout.ResourceBuilders.Resources collectResources();
@@ -1693,6 +1694,7 @@ package androidx.wear.protolayout.types {
 
   public final class LayoutColor {
     ctor public LayoutColor(@ColorInt int staticArgb, optional @androidx.wear.protolayout.expression.RequiresSchemaVersion(major=1, minor=200) androidx.wear.protolayout.expression.DynamicBuilders.DynamicColor? dynamicArgb);
+    ctor @BytecodeOnly public LayoutColor(int, androidx.wear.protolayout.expression.DynamicBuilders.DynamicColor!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method @InaccessibleFromKotlin public androidx.wear.protolayout.expression.DynamicBuilders.DynamicColor? getDynamicArgb();
     method @InaccessibleFromKotlin public int getStaticArgb();
     property public androidx.wear.protolayout.expression.DynamicBuilders.DynamicColor? dynamicArgb;
