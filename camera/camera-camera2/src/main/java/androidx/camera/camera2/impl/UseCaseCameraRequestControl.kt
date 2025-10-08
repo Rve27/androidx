@@ -22,6 +22,8 @@ import android.hardware.camera2.params.MeteringRectangle
 import androidx.annotation.AnyThread
 import androidx.camera.camera2.config.UseCaseCameraScope
 import androidx.camera.camera2.config.UseCaseGraphConfig
+import androidx.camera.camera2.interop.configureWithUnchecked
+import androidx.camera.camera2.interop.getCamera2CaptureRequestConfigurator
 import androidx.camera.camera2.pipe.AeMode
 import androidx.camera.camera2.pipe.CameraGraph
 import androidx.camera.camera2.pipe.CameraGraph.Constants3A.METERING_REGIONS_DEFAULT
@@ -31,6 +33,7 @@ import androidx.camera.camera2.pipe.RequestTemplate
 import androidx.camera.camera2.pipe.Result3A
 import androidx.camera.camera2.pipe.StreamId
 import androidx.camera.camera2.pipe.core.Log.debug
+import androidx.camera.core.CameraXConfig
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.impl.CaptureConfig
@@ -247,6 +250,7 @@ constructor(
     private val useCaseGraphConfig: UseCaseGraphConfig,
     private val useCaseSurfaceManager: UseCaseSurfaceManager,
     private val threads: UseCaseThreads,
+    private val cameraXConfig: CameraXConfig? = null,
 ) : UseCaseCameraRequestControl {
     private val graph = useCaseGraphConfig.graph
 
@@ -514,6 +518,10 @@ constructor(
         sessionConfig: SessionConfig? = null,
     ): Deferred<Unit> =
         runIfNotClosed {
+            cameraXConfig
+                ?.getCamera2CaptureRequestConfigurator()
+                ?.configureWithUnchecked(options.build().toParameters().toMap())
+
             capturePipeline.template =
                 if (template != null && template!!.value != TEMPLATE_TYPE_NONE) {
                     template!!.value
