@@ -171,8 +171,6 @@ RemovedFromKotlin: androidx.wear.compose.foundation.lazy.ScalingLazyListState#ge
     Source breaking change: method androidx.wear.compose.foundation.lazy.ScalingLazyListState.getCenterItemScrollOffset() can no longer be resolved from Kotlin source
 RemovedFromKotlin: androidx.wear.compose.foundation.lazy.ScalingLazyListState#getLayoutInfo():
     Source breaking change: method androidx.wear.compose.foundation.lazy.ScalingLazyListState.getLayoutInfo() can no longer be resolved from Kotlin source
-RemovedFromKotlin: androidx.wear.compose.foundation.lazy.ScalingLazyListState#isScrollInProgress():
-    Source breaking change: method androidx.wear.compose.foundation.lazy.ScalingLazyListState.isScrollInProgress() can no longer be resolved from Kotlin source
 RemovedFromKotlin: androidx.wear.compose.foundation.lazy.ScalingLazyListState.Companion#getSaver():
     Source breaking change: method androidx.wear.compose.foundation.lazy.ScalingLazyListState.Companion.getSaver() can no longer be resolved from Kotlin source
 RemovedFromKotlin: androidx.wear.compose.foundation.lazy.ScalingParams#getEdgeAlpha():
@@ -203,8 +201,6 @@ RemovedFromKotlin: androidx.wear.compose.foundation.lazy.TransformingLazyColumnS
     Source breaking change: method androidx.wear.compose.foundation.lazy.TransformingLazyColumnState.getAnchorItemScrollOffset() can no longer be resolved from Kotlin source
 RemovedFromKotlin: androidx.wear.compose.foundation.lazy.TransformingLazyColumnState#getLayoutInfo():
     Source breaking change: method androidx.wear.compose.foundation.lazy.TransformingLazyColumnState.getLayoutInfo() can no longer be resolved from Kotlin source
-RemovedFromKotlin: androidx.wear.compose.foundation.lazy.TransformingLazyColumnState#isScrollInProgress():
-    Source breaking change: method androidx.wear.compose.foundation.lazy.TransformingLazyColumnState.isScrollInProgress() can no longer be resolved from Kotlin source
 RemovedFromKotlin: androidx.wear.compose.foundation.lazy.TransformingLazyColumnVisibleItemInfo#getContentType():
     Source breaking change: method androidx.wear.compose.foundation.lazy.TransformingLazyColumnVisibleItemInfo.getContentType() can no longer be resolved from Kotlin source
 RemovedFromKotlin: androidx.wear.compose.foundation.lazy.TransformingLazyColumnVisibleItemInfo#getIndex():
@@ -241,8 +237,6 @@ RemovedFromKotlin: androidx.wear.compose.foundation.pager.PagerState#getSettledP
     Source breaking change: method androidx.wear.compose.foundation.pager.PagerState.getSettledPage() can no longer be resolved from Kotlin source
 RemovedFromKotlin: androidx.wear.compose.foundation.pager.PagerState#getTargetPage():
     Source breaking change: method androidx.wear.compose.foundation.pager.PagerState.getTargetPage() can no longer be resolved from Kotlin source
-RemovedFromKotlin: androidx.wear.compose.foundation.pager.PagerState#isScrollInProgress():
-    Source breaking change: method androidx.wear.compose.foundation.pager.PagerState.isScrollInProgress() can no longer be resolved from Kotlin source
 RemovedFromKotlin: androidx.wear.compose.foundation.pager.PagerState.Companion#getSaver():
     Source breaking change: method androidx.wear.compose.foundation.pager.PagerState.Companion.getSaver() can no longer be resolved from Kotlin source
 RemovedFromKotlin: androidx.wear.compose.foundation.rotary.RotarySnapLayoutInfoProvider#getAverageItemSize():
