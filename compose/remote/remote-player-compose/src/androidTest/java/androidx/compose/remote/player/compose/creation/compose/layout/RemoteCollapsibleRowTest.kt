@@ -19,12 +19,16 @@ package androidx.compose.remote.player.compose.creation.compose.layout
 import androidx.compose.remote.creation.compose.layout.Alignment
 import androidx.compose.remote.creation.compose.layout.Arrangement
 import androidx.compose.remote.creation.compose.layout.RemoteBox
+import androidx.compose.remote.creation.compose.layout.RemoteCollapsibleRow
+import androidx.compose.remote.creation.compose.layout.RemoteCollapsibleRowScope
 import androidx.compose.remote.creation.compose.layout.RemoteColumn
 import androidx.compose.remote.creation.compose.layout.RemoteComposable
 import androidx.compose.remote.creation.compose.layout.RemoteRow
+import androidx.compose.remote.creation.compose.layout.RemoteText
 import androidx.compose.remote.creation.compose.modifier.RemoteModifier
 import androidx.compose.remote.creation.compose.modifier.background
 import androidx.compose.remote.creation.compose.modifier.height
+import androidx.compose.remote.creation.compose.modifier.padding
 import androidx.compose.remote.creation.compose.modifier.size
 import androidx.compose.remote.creation.compose.modifier.width
 import androidx.compose.remote.player.compose.SCREENSHOT_GOLDEN_DIRECTORY
@@ -43,7 +47,7 @@ import org.junit.runners.JUnit4
 @MediumTest
 @SdkSuppress(minSdkVersion = 35, maxSdkVersion = 35)
 @RunWith(JUnit4::class)
-class RemoteColumnComposeTest {
+class RemoteCollapsibleRowComposeTest {
     @get:Rule
     val composeTestRule =
         RemoteComposeScreenshotTestRule(
@@ -55,12 +59,17 @@ class RemoteColumnComposeTest {
     fun simpleLayout() {
         composeTestRule.simpleLayout()
     }
+
+    @Test
+    fun collapse() {
+        composeTestRule.collapse()
+    }
 }
 
 @MediumTest
 @SdkSuppress(minSdkVersion = 35, maxSdkVersion = 35)
 @RunWith(JUnit4::class)
-class RemoteColumnViewTest {
+class RemoteCollapsibleRowViewTest {
     @get:Rule
     val composeTestRule =
         RemoteComposeScreenshotTestRule(
@@ -72,29 +81,34 @@ class RemoteColumnViewTest {
     fun simpleLayout() {
         composeTestRule.simpleLayout()
     }
+
+    @Test
+    fun collapse() {
+        composeTestRule.collapse()
+    }
 }
 
 private fun RemoteComposeScreenshotTestRule.simpleLayout() = runScreenshotTest {
     RemoteRow {
         RemoteColumn {
             Container {
-                // TODO(b/447100988): replace size by fillMaxSize in all those RemoteColumns
-                RemoteColumn(modifier = RemoteModifier.size(ContainerSize)) { Content() }
+                // TODO(b/447100988): replace size by fillMaxSize in all those RemoteCollapsibleRow
+                RemoteCollapsibleRow(modifier = RemoteModifier.size(ContainerSize)) { Content() }
             }
             RemoteBox(modifier = RemoteModifier.height(Padding))
             Container {
-                RemoteColumn(
+                RemoteCollapsibleRow(
                     modifier = RemoteModifier.size(ContainerSize),
-                    verticalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Content()
                 }
             }
             RemoteBox(modifier = RemoteModifier.height(Padding))
             Container {
-                RemoteColumn(
+                RemoteCollapsibleRow(
                     modifier = RemoteModifier.size(ContainerSize),
-                    verticalArrangement = Arrangement.Bottom,
+                    verticalAlignment = Alignment.Bottom,
                 ) {
                     Content()
                 }
@@ -103,29 +117,29 @@ private fun RemoteComposeScreenshotTestRule.simpleLayout() = runScreenshotTest {
         RemoteBox(modifier = RemoteModifier.width(Padding))
         RemoteColumn {
             Container {
-                RemoteColumn(
+                RemoteCollapsibleRow(
                     modifier = RemoteModifier.size(ContainerSize),
-                    horizontalAlignment = Alignment.CenterHorizontally,
+                    horizontalArrangement = Arrangement.CenterHorizontally,
                 ) {
                     Content()
                 }
             }
             RemoteBox(modifier = RemoteModifier.height(Padding))
             Container {
-                RemoteColumn(
+                RemoteCollapsibleRow(
                     modifier = RemoteModifier.size(ContainerSize),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center,
+                    horizontalArrangement = Arrangement.CenterHorizontally,
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Content()
                 }
             }
             RemoteBox(modifier = RemoteModifier.height(Padding))
             Container {
-                RemoteColumn(
+                RemoteCollapsibleRow(
                     modifier = RemoteModifier.size(ContainerSize),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Bottom,
+                    horizontalArrangement = Arrangement.CenterHorizontally,
+                    verticalAlignment = Alignment.Bottom,
                 ) {
                     Content()
                 }
@@ -134,29 +148,29 @@ private fun RemoteComposeScreenshotTestRule.simpleLayout() = runScreenshotTest {
         RemoteBox(modifier = RemoteModifier.width(Padding))
         RemoteColumn {
             Container {
-                RemoteColumn(
+                RemoteCollapsibleRow(
                     modifier = RemoteModifier.size(ContainerSize),
-                    horizontalAlignment = Alignment.End,
+                    horizontalArrangement = Arrangement.End,
                 ) {
                     Content()
                 }
             }
             RemoteBox(modifier = RemoteModifier.height(Padding))
             Container {
-                RemoteColumn(
+                RemoteCollapsibleRow(
                     modifier = RemoteModifier.size(ContainerSize),
-                    horizontalAlignment = Alignment.End,
-                    verticalArrangement = Arrangement.Center,
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Content()
                 }
             }
             RemoteBox(modifier = RemoteModifier.height(Padding))
             Container {
-                RemoteColumn(
+                RemoteCollapsibleRow(
                     modifier = RemoteModifier.size(ContainerSize),
-                    horizontalAlignment = Alignment.End,
-                    verticalArrangement = Arrangement.Bottom,
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.Bottom,
                 ) {
                     Content()
                 }
@@ -165,11 +179,100 @@ private fun RemoteComposeScreenshotTestRule.simpleLayout() = runScreenshotTest {
     }
 }
 
+private fun RemoteComposeScreenshotTestRule.collapse() = runScreenshotTest {
+    RemoteRow {
+        RemoteColumn {
+            Container { TestFourSquares_displaysThree() }
+            RemoteBox(modifier = RemoteModifier.height(Padding))
+            Container { TestSixSquaresWithPriorities_displaysThreeWithHighestPriorities() }
+        }
+        RemoteBox(modifier = RemoteModifier.width(Padding))
+        RemoteColumn {
+            Container {
+                TestSingleContentInContainerWithSizeAndBackground_displaysContentAndBackground()
+            }
+            RemoteBox(modifier = RemoteModifier.height(Padding))
+            Container { TestEmptyContainerWithSizeAndBackground_displaysNothing() }
+            RemoteBox(modifier = RemoteModifier.height(Padding))
+            Container { TestContentBiggerThanContainerWithSizeAndBackground_displaysNothing() }
+        }
+    }
+}
+
+@RemoteComposable
+@Composable
+private fun TestFourSquares_displaysThree() {
+    RemoteCollapsibleRow(modifier = RemoteModifier.size(ContainerSize)) {
+        CustomBox('A')
+        CustomBox('B')
+        CustomBox('C')
+        CustomBox('D')
+    }
+}
+
+@RemoteComposable
+@Composable
+private fun TestSixSquaresWithPriorities_displaysThreeWithHighestPriorities() {
+    RemoteCollapsibleRow(modifier = RemoteModifier.size(ContainerSize)) {
+        CustomBox('A', priority = 1f)
+        CustomBox('B', priority = 4f)
+        CustomBox('C', priority = 2f)
+        CustomBox('D', priority = 5f)
+        CustomBox('E', priority = 3f)
+        CustomBox('F', priority = 6f)
+    }
+}
+
+@RemoteComposable
+@Composable
+private fun TestSingleContentInContainerWithSizeAndBackground_displaysContentAndBackground() {
+    RemoteCollapsibleRow(modifier = RemoteModifier.size(ContainerSize).background(Color.Red)) {
+        CustomBox('A')
+    }
+}
+
+@RemoteComposable
+@Composable
+private fun TestEmptyContainerWithSizeAndBackground_displaysNothing() {
+    RemoteCollapsibleRow(modifier = RemoteModifier.size(ContainerSize).background(Color.Red)) {}
+}
+
+@RemoteComposable
+@Composable
+private fun TestContentBiggerThanContainerWithSizeAndBackground_displaysNothing() {
+    RemoteCollapsibleRow(modifier = RemoteModifier.size(ContainerSize).background(Color.Red)) {
+        CustomBox('A', modifier = RemoteModifier.size((ContainerSize.value + 10).dp))
+    }
+}
+
+@RemoteComposable
+@Composable
+private fun RemoteCollapsibleRowScope.CustomBox(
+    letter: Char,
+    modifier: RemoteModifier = RemoteModifier,
+    priority: Float? = null,
+) {
+    val appliedModifier =
+        modifier
+            .padding(5.dp)
+            .size(20.dp)
+            .background(Color.Blue)
+            .then(
+                if (priority != null) {
+                    RemoteModifier.priority(priority)
+                } else {
+                    RemoteModifier
+                }
+            )
+
+    RemoteBox(modifier = appliedModifier) { RemoteText(letter.toString()) }
+}
+
 @Composable
 @RemoteComposable
 private fun Container(modifier: RemoteModifier = RemoteModifier, content: @Composable () -> Unit) {
     RemoteBox(
-        modifier = modifier.size(ContainerSize).background(Color(0xFFCFD8DC)),
+        modifier = modifier.width(ContainerSize).background(Color(0xFFCFD8DC)),
         horizontalAlignment = Alignment.Start,
         content = content,
     )
@@ -183,4 +286,5 @@ private fun Content(modifier: RemoteModifier = RemoteModifier) {
 }
 
 private val Padding = 24.dp
+
 private val ContainerSize = 100.dp
