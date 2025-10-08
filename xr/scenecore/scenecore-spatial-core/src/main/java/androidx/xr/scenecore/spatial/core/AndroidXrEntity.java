@@ -16,6 +16,9 @@
 
 package androidx.xr.scenecore.spatial.core;
 
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+
 import android.content.Context;
 
 import androidx.xr.runtime.math.Pose;
@@ -225,6 +228,7 @@ abstract class AndroidXrEntity extends BaseEntity implements Entity {
 
     @Override
     public void setAlpha(float alpha, @SpaceValue int relativeTo) {
+        alpha = max(0.0f, min(1.0f, alpha));
         super.setAlpha(alpha, relativeTo);
 
         try (NodeTransaction transaction = mExtensions.createNodeTransaction()) {

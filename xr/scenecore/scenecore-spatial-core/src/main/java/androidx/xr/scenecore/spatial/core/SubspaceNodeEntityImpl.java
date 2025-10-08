@@ -16,6 +16,9 @@
 
 package androidx.xr.scenecore.spatial.core;
 
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+
 import android.content.Context;
 
 import androidx.xr.runtime.math.Pose;
@@ -25,9 +28,9 @@ import androidx.xr.scenecore.runtime.Space;
 import androidx.xr.scenecore.runtime.SpaceValue;
 import androidx.xr.scenecore.runtime.SubspaceNodeEntity;
 
+import com.android.extensions.xr.XrExtensions;
 import com.android.extensions.xr.node.Node;
 import com.android.extensions.xr.node.NodeTransaction;
-import com.android.extensions.xr.XrExtensions;
 
 import org.jspecify.annotations.NonNull;
 
@@ -92,6 +95,7 @@ final class SubspaceNodeEntityImpl extends AndroidXrEntity implements SubspaceNo
 
     @Override
     public void setAlpha(float alpha, @SpaceValue int relativeTo) {
+        alpha = max(0.0f, min(1.0f, alpha));
         super.setAlpha(alpha, relativeTo);
         try (NodeTransaction transaction = mExtensions.createNodeTransaction()) {
             transaction.setAlpha(mSubspaceNode, alpha).apply();

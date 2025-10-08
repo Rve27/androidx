@@ -16,6 +16,9 @@
 
 package androidx.xr.scenecore.spatial.core;
 
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+
 import android.app.Activity;
 import android.content.Context;
 import android.view.View;
@@ -252,6 +255,7 @@ abstract class BaseEntity extends BaseActivityPose implements Entity {
 
     @Override
     public void setAlpha(float alpha, @SpaceValue int relativeTo) {
+        alpha = max(0.0f, min(1.0f, alpha));
         switch (relativeTo) {
             case Space.PARENT:
                 mAlpha = alpha;

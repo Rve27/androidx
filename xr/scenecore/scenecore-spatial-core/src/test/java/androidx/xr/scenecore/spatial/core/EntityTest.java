@@ -408,7 +408,7 @@ public final class EntityTest {
         child.setParent(mEntity);
         child.setAlpha(0.5f, Space.PARENT);
 
-        assertThat(child.getAlpha(Space.REAL_WORLD)).isEqualTo(1f);
+        assertThat(child.getAlpha(Space.REAL_WORLD)).isEqualTo(0.25f);
     }
 
     @Test
