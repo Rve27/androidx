@@ -76,9 +76,10 @@ package androidx.window.testing.layout {
   }
 
   public final class WindowLayoutInfoTesting {
-    method @KotlinOnly public static androidx.window.layout.WindowLayoutInfo TestWindowLayoutInfo(optional java.util.List<androidx.window.layout.DisplayFeature> displayFeatures);
+    method @KotlinOnly public static androidx.window.layout.WindowLayoutInfo TestWindowLayoutInfo(optional java.util.List<androidx.window.layout.DisplayFeature> displayFeatures, optional java.util.Set<androidx.window.layout.WindowLayoutInfo.EngagementMode> engagementModes);
     method @InaccessibleFromKotlin public static androidx.window.layout.WindowLayoutInfo createWindowLayoutInfo();
     method @InaccessibleFromKotlin public static androidx.window.layout.WindowLayoutInfo createWindowLayoutInfo(optional java.util.List<? extends androidx.window.layout.DisplayFeature> displayFeatures);
+    method @InaccessibleFromKotlin public static androidx.window.layout.WindowLayoutInfo createWindowLayoutInfo(optional java.util.List<? extends androidx.window.layout.DisplayFeature> displayFeatures, optional java.util.Set<androidx.window.layout.WindowLayoutInfo.EngagementMode> engagementModes);
   }
 
   public final class WindowMetricsCalculatorRule implements org.junit.rules.TestRule {
