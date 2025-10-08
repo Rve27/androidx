@@ -38,7 +38,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.test.filters.MediumTest
 import androidx.test.filters.SdkSuppress
-import androidx.test.screenshot.matchers.MSSIMMatcher
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -52,7 +51,6 @@ class RemoteRowComposeTest {
     val composeTestRule =
         RemoteComposeScreenshotTestRule(
             moduleDirectory = SCREENSHOT_GOLDEN_DIRECTORY,
-            matcher = MSSIMMatcher(threshold = 0.999),
             targetPlayer = TargetPlayer.Compose,
         )
 
@@ -70,7 +68,6 @@ class RemoteRowViewTest {
     val composeTestRule =
         RemoteComposeScreenshotTestRule(
             moduleDirectory = SCREENSHOT_GOLDEN_DIRECTORY,
-            matcher = MSSIMMatcher(threshold = 0.999),
             targetPlayer = TargetPlayer.View,
         )
 
