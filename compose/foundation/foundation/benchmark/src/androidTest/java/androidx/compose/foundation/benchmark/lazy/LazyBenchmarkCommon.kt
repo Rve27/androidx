@@ -106,7 +106,6 @@ internal fun ComposeBenchmarkRule.toggleStateBenchmark(caseFactory: () -> LazyBe
                 }
                 assertNoPendingRecompositionMeasureOrLayout()
                 getTestCase().beforeToggleCheck()
-                Runtime.getRuntime().gc()
             }
 
             performToggle(getTestCase()) // move
@@ -115,7 +114,6 @@ internal fun ComposeBenchmarkRule.toggleStateBenchmark(caseFactory: () -> LazyBe
                 getTestCase().afterToggleCheck()
                 getTestCase().tearDown()
                 assertNoPendingRecompositionMeasureOrLayout()
-                Runtime.getRuntime().gc()
             }
         }
     }
