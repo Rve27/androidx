@@ -25,7 +25,6 @@ import androidx.camera.core.CameraXConfig
 import androidx.camera.core.ExperimentalSessionConfig
 import androidx.camera.core.SessionConfig
 import androidx.camera.core.featuregroup.GroupableFeature
-import androidx.camera.core.featuregroup.GroupableFeature.Companion.PREVIEW_STABILIZATION
 import androidx.camera.integration.featurecombo.FeatureGroupQueryBindAlignmentTest.VerificationScenario.PREFERRED_FEATURES
 import androidx.camera.integration.featurecombo.FeatureGroupQueryBindAlignmentTest.VerificationScenario.REQUIRED_FEATURES
 import androidx.camera.integration.featurecombo.FeatureGroupTestBase.Companion.SupportedUseCase
@@ -220,15 +219,6 @@ class FeatureGroupQueryBindAlignmentTest(
                         SupportedUseCase.entries.forEach { useCase ->
                             val featureGroup = setOf(feature)
                             val useCases = listOf(useCase)
-
-                            // TODO: b/449913903 - Allow this test combination once issue is fixed.
-                            if (
-                                feature == PREVIEW_STABILIZATION &&
-                                    useCases.contains(SupportedUseCase.VIDEO_CAPTURE) &&
-                                    !useCases.contains(SupportedUseCase.PREVIEW)
-                            ) {
-                                return@forEach
-                            }
 
                             add(
                                 arrayOf(
