@@ -77,7 +77,6 @@ class StackStateTest {
         assertThat(state.lastScrolledForward).isFalse()
         assertThat(state.lastScrolledBackward).isFalse()
         assertThat(state.layoutInfoInternal.viewportSize).isEqualTo(IntSize.Zero)
-        assertThat(state.layoutInfoInternal.maxItemSize).isEqualTo(IntSize.Zero)
     }
 
     @Test
@@ -134,20 +133,19 @@ class StackStateTest {
                 items(5) { index -> StackItem("Item $index") { itemHeight = it } }
             }
         }
-        rule.waitForIdle()
-        assertThat(state.topItem).isEqualTo(0)
+        rule.runOnIdle { assertThat(state.topItem).isEqualTo(0) }
 
         state.dispatchRawDelta(itemHeight * 0.1f)
-        assertThat(state.topItem).isEqualTo(0)
+        rule.runOnIdle { assertThat(state.topItem).isEqualTo(0) }
 
         state.dispatchRawDelta(itemHeight * 0.4f)
-        assertThat(state.topItem).isEqualTo(0)
+        rule.runOnIdle { assertThat(state.topItem).isEqualTo(0) }
 
         state.dispatchRawDelta(itemHeight * 0.4f)
-        assertThat(state.topItem).isEqualTo(0)
+        rule.runOnIdle { assertThat(state.topItem).isEqualTo(0) }
 
         state.dispatchRawDelta(itemHeight * 0.1f)
-        assertThat(state.topItem).isEqualTo(1)
+        rule.runOnIdle { assertThat(state.topItem).isEqualTo(1) }
     }
 
     @Test
@@ -160,20 +158,19 @@ class StackStateTest {
             }
         }
         runOnUiThread { state.scrollToItem(1) }
-        rule.waitForIdle()
-        assertThat(state.topItem).isEqualTo(1)
+        rule.runOnIdle { assertThat(state.topItem).isEqualTo(1) }
 
         state.dispatchRawDelta(-itemHeight * 0.1f)
-        assertThat(state.topItem).isEqualTo(0)
+        rule.runOnIdle { assertThat(state.topItem).isEqualTo(0) }
 
         state.dispatchRawDelta(-itemHeight * 0.4f)
-        assertThat(state.topItem).isEqualTo(0)
+        rule.runOnIdle { assertThat(state.topItem).isEqualTo(0) }
 
         state.dispatchRawDelta(-itemHeight * 0.4f)
-        assertThat(state.topItem).isEqualTo(0)
+        rule.runOnIdle { assertThat(state.topItem).isEqualTo(0) }
 
         state.dispatchRawDelta(-itemHeight * 0.1f)
-        assertThat(state.topItem).isEqualTo(0)
+        rule.runOnIdle { assertThat(state.topItem).isEqualTo(0) }
     }
 
     @Test
@@ -355,7 +352,7 @@ class StackStateTest {
     }
 
     @Test
-    fun layoutInfo_sizesAreCorrect() {
+    fun layoutInfo_viewportSizeIsCorrect() {
         val state = StackState()
         rule.setContentWithInitialFocus {
             VerticalStack(modifier = Modifier.size(100.dp), state = state) {
@@ -367,13 +364,6 @@ class StackStateTest {
         with(rule.density) {
             assertThat(state.layoutInfoInternal.viewportSize)
                 .isEqualTo(IntSize(width = 100.dp.roundToPx(), height = 100.dp.roundToPx()))
-            assertThat(state.layoutInfoInternal.maxItemSize)
-                .isEqualTo(
-                    IntSize(
-                        width = 100.dp.roundToPx(),
-                        height = 100.dp.roundToPx() - RevealAreaSize.roundToPx(),
-                    )
-                )
         }
     }
 

@@ -32,7 +32,6 @@ import androidx.compose.runtime.annotation.FrequentlyChangingValue
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -228,17 +227,8 @@ internal class StackLayoutInfoImpl
 internal constructor(private val pagerState: PagerState, private val topItemState: State<Int>) :
     StackLayoutInfo {
 
+    /** The overall size of this stack's viewport. */
     internal val viewportSize: IntSize
-        get() = viewportSizeState.value
-
-    /** The backing state for [viewportSize]. */
-    internal val viewportSizeState = mutableStateOf(IntSize.Zero)
-
-    /**
-     * The maximum size of a stack item in pixels, which is based on the viewport size of the
-     * underlying pager.
-     */
-    internal val maxItemSize: IntSize
         get() = pagerState.layoutInfo.viewportSize
 
     /** The measured height of the top of the stack item. */

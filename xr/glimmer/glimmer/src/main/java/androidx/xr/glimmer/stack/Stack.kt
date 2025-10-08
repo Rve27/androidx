@@ -16,6 +16,7 @@
 
 package androidx.xr.glimmer.stack
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -24,9 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.Layout
-import androidx.compose.ui.layout.layout
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.util.fastMap
@@ -69,45 +68,15 @@ public fun VerticalStack(
     VerticalPager(
         state = state.pagerState,
         modifier =
-            modifier
-                .onGloballyPositioned {
-                    val currentPage = state.pagerState.currentPage
-                    val pageRange =
-                        currentPage - 1..(currentPage + 2).coerceAtMost(state.itemCount - 1)
-                    // Clean up heights for pages that are not in the close range to the current
-                    // page.
-                    state.layoutInfoInternal.measuredHeights.removeIf { index, _ ->
-                        index !in pageRange
-                    }
+            modifier.onGloballyPositioned {
+                val currentPage = state.pagerState.currentPage
+                val pageRange = currentPage - 1..(currentPage + 2).coerceAtMost(state.itemCount - 1)
+                // Clean up heights for pages that are not in the close range to the current page.
+                state.layoutInfoInternal.measuredHeights.removeIf { index, _ ->
+                    index !in pageRange
                 }
-                .layout { measurable, constraints ->
-                    val heightTakenByRevealArea = RevealAreaSize.roundToPx()
-
-                    // Shrink the height constraints, to account for the reveal area
-                    val pagerMinHeightConstraints =
-                        (constraints.minHeight - heightTakenByRevealArea).coerceAtLeast(0)
-                    val pagerMaxHeightConstraints =
-                        if (constraints.hasBoundedHeight) {
-                            (constraints.maxHeight - heightTakenByRevealArea).coerceAtLeast(0)
-                        } else {
-                            constraints.maxHeight
-                        }
-                    val pagerConstraints =
-                        constraints.copy(
-                            minHeight = pagerMinHeightConstraints,
-                            maxHeight = pagerMaxHeightConstraints,
-                        )
-
-                    val pagerPlaceable = measurable.measure(pagerConstraints)
-
-                    val layoutWidth = pagerPlaceable.width
-                    val layoutHeight = pagerPlaceable.height + heightTakenByRevealArea
-
-                    val layoutInfo = state.layoutInfoInternal
-                    layoutInfo.viewportSizeState.value =
-                        IntSize(width = layoutWidth, height = layoutHeight)
-                    layout(layoutWidth, layoutHeight) { pagerPlaceable.place(x = 0, y = 0) }
-                },
+            },
+        contentPadding = PaddingValues(bottom = RevealAreaSize),
         key = { page -> stackItemHolderState.value.getKey(page) },
         beyondViewportPageCount = MaxNextVisibleItemCount,
     ) { page ->
