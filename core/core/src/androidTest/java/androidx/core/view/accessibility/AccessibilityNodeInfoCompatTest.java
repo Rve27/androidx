@@ -327,10 +327,10 @@ public class AccessibilityNodeInfoCompatTest extends
     public void testGetSetExpandedState() {
         AccessibilityNodeInfoCompat nodeCompat = obtainedWrappedNodeCompat();
         assertThat(nodeCompat.getExpandedState())
-                .isEqualTo(AccessibilityNodeInfo.EXPANDED_STATE_UNDEFINED);
-        nodeCompat.setExpandedState(AccessibilityNodeInfo.EXPANDED_STATE_PARTIAL);
+                .isEqualTo(AccessibilityNodeInfoCompat.EXPANDED_STATE_UNDEFINED);
+        nodeCompat.setExpandedState(AccessibilityNodeInfoCompat.EXPANDED_STATE_PARTIAL);
         assertThat(nodeCompat.getExpandedState())
-                .isEqualTo(AccessibilityNodeInfo.EXPANDED_STATE_PARTIAL);
+                .isEqualTo(AccessibilityNodeInfoCompat.EXPANDED_STATE_PARTIAL);
     }
 
     @Test
