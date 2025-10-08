@@ -40,6 +40,7 @@ import androidx.camera.camera2.pipe.integration.config.CameraConfig
 import androidx.camera.camera2.pipe.integration.config.UseCaseCameraConfig
 import androidx.camera.camera2.pipe.integration.config.UseCaseGraphConfig
 import androidx.camera.camera2.pipe.integration.impl.CameraCallbackMap
+import androidx.camera.camera2.pipe.integration.impl.CameraGraphConfigProvider
 import androidx.camera.camera2.pipe.integration.impl.CameraInteropStateCallbackRepository
 import androidx.camera.camera2.pipe.integration.impl.CapturePipeline
 import androidx.camera.camera2.pipe.integration.impl.ComboRequestListener
@@ -47,7 +48,6 @@ import androidx.camera.camera2.pipe.integration.impl.UseCaseCamera
 import androidx.camera.camera2.pipe.integration.impl.UseCaseCameraRequestControl
 import androidx.camera.camera2.pipe.integration.impl.UseCaseCameraRequestControlImpl
 import androidx.camera.camera2.pipe.integration.impl.UseCaseCameraState
-import androidx.camera.camera2.pipe.integration.impl.UseCaseManager.Companion.createCameraGraphConfig
 import androidx.camera.camera2.pipe.integration.impl.UseCaseSurfaceManager
 import androidx.camera.camera2.pipe.integration.impl.UseCaseThreads
 import androidx.camera.camera2.pipe.integration.impl.toMap
@@ -98,24 +98,29 @@ class TestUseCaseCamera(
         val streamConfigMap = mutableMapOf<CameraStream.Config, DeferrableSurface>()
         val callbackMap = CameraCallbackMap()
         val requestListener = ComboRequestListener()
+        val configProvider =
+            CameraGraphConfigProvider(
+                callbackMap = callbackMap,
+                requestListener = requestListener,
+                cameraConfig = cameraConfig,
+                cameraQuirks = cameraQuirks,
+                zslControl = ZslControlNoOpImpl(),
+                templateParamsOverride = NoOpTemplateParamsOverride,
+                cameraMetadata = cameraMetadata,
+            )
+
         val cameraGraphConfig =
-            createCameraGraphConfig(
-                sessionConfigAdapter.getValidSessionConfigOrNull()?.let { sessionConfig ->
-                    when (sessionConfig.sessionType) {
-                        SESSION_REGULAR -> OperatingMode.NORMAL
-                        SESSION_HIGH_SPEED -> OperatingMode.HIGH_SPEED
-                        else -> OperatingMode.custom(sessionConfig.sessionType)
-                    }
-                } ?: OperatingMode.NORMAL,
-                sessionConfigAdapter.getValidSessionConfigOrNull(),
-                streamConfigMap,
-                callbackMap,
-                requestListener,
-                cameraConfig.cameraId,
-                cameraQuirks,
-                ZslControlNoOpImpl(),
-                NoOpTemplateParamsOverride,
-                cameraMetadata,
+            configProvider.create(
+                operatingMode =
+                    sessionConfigAdapter.getValidSessionConfigOrNull()?.let { sessionConfig ->
+                        when (sessionConfig.sessionType) {
+                            SESSION_REGULAR -> OperatingMode.NORMAL
+                            SESSION_HIGH_SPEED -> OperatingMode.HIGH_SPEED
+                            else -> OperatingMode.custom(sessionConfig.sessionType)
+                        }
+                    } ?: OperatingMode.NORMAL,
+                sessionConfig = sessionConfigAdapter.getValidSessionConfigOrNull(),
+                streamConfigMap = streamConfigMap,
                 surfaceToStreamUseCaseMap = sessionConfigAdapter.surfaceToStreamUseCaseMap,
                 surfaceToStreamUseHintMap = sessionConfigAdapter.surfaceToStreamUseHintMap,
             )

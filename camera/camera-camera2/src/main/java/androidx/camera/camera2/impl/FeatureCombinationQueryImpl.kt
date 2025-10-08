@@ -20,6 +20,7 @@ import androidx.annotation.RequiresApi
 import androidx.camera.camera2.adapter.ZslControlNoOpImpl
 import androidx.camera.camera2.compat.quirk.CameraQuirks
 import androidx.camera.camera2.compat.workaround.TemplateParamsQuirkOverride
+import androidx.camera.camera2.config.CameraConfig
 import androidx.camera.camera2.pipe.CameraGraph
 import androidx.camera.camera2.pipe.CameraMetadata
 import androidx.camera.camera2.pipe.CameraPipe
@@ -36,19 +37,23 @@ internal class FeatureCombinationQueryImpl(
     private val cameraQuirks: CameraQuirks,
 ) : FeatureCombinationQuery {
     override fun isSupported(sessionConfig: SessionConfig): Boolean {
-        val config =
-            UseCaseManager.createCameraGraphConfig(
-                cameraId = cameraMetadata.camera,
-                cameraMetadata = cameraMetadata,
-                cameraQuirks = cameraQuirks,
-                operatingMode = CameraGraph.OperatingMode.NORMAL,
-                sessionConfig = sessionConfig,
-                setOutputType = true,
-                templateParamsOverride = TemplateParamsQuirkOverride(cameraQuirks.quirks),
-                zslControl = ZslControlNoOpImpl(), // TODO: b/400835309 - Handle ZSL properly,
+        val configProvider =
+            CameraGraphConfigProvider(
                 callbackMap = CameraCallbackMap(),
                 requestListener = ComboRequestListener(),
+                cameraConfig = CameraConfig(cameraMetadata.camera),
+                cameraQuirks = cameraQuirks,
+                zslControl = ZslControlNoOpImpl(), // TODO: b/400835309 - Handle ZSL properly
+                templateParamsOverride = TemplateParamsQuirkOverride(cameraQuirks.quirks),
+                cameraMetadata = cameraMetadata,
+            )
+
+        val config =
+            configProvider.create(
+                operatingMode = CameraGraph.OperatingMode.NORMAL,
+                sessionConfig = sessionConfig,
                 streamConfigMap = mutableMapOf(),
+                setOutputType = true,
             )
 
         return runBlocking {

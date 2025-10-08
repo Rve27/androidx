@@ -766,6 +766,21 @@ class UseCaseManagerTest {
                 useCaseThreads,
                 ComboRequestListener(),
             )
+        val cameraQuirks =
+            CameraQuirks(
+                fakeCameraMetadata,
+                StreamConfigurationMapCompat(null, OutputSizesCorrector(fakeCameraMetadata, null)),
+            )
+        val configProvider =
+            CameraGraphConfigProvider(
+                callbackMap = CameraCallbackMap(),
+                requestListener = ComboRequestListener(),
+                cameraConfig = CameraConfig(cameraId),
+                cameraQuirks = cameraQuirks,
+                zslControl = ZslControlNoOpImpl(),
+                templateParamsOverride = templateParamsOverride,
+                cameraMetadata = fakeCameraMetadata,
+            )
         return UseCaseManager(
                 cameraPipe = cameraPipe,
                 cameraDevices =
@@ -774,11 +789,7 @@ class UseCaseManagerTest {
                         emptySet(),
                         mapOf(fakeCameraBackend.id to listOf(fakeCameraMetadata)),
                     ),
-                cameraMetadata = fakeCameraMetadata,
                 cameraCoordinator = CameraCoordinatorAdapter(cameraPipe, cameraPipe.cameras()),
-                callbackMap = CameraCallbackMap(),
-                requestListener = ComboRequestListener(),
-                cameraConfig = CameraConfig(cameraId),
                 builder = useCaseCameraComponentBuilder,
                 zslControl = ZslControlNoOpImpl(),
                 lowLightBoostControl = lowLightBoostControl,
@@ -790,24 +801,16 @@ class UseCaseManagerTest {
                         ComboRequestListener(),
                     ),
                 cameraStateAdapter = CameraStateAdapter(),
-                cameraQuirks =
-                    CameraQuirks(
-                        fakeCameraMetadata,
-                        StreamConfigurationMapCompat(
-                            null,
-                            OutputSizesCorrector(fakeCameraMetadata, null),
-                        ),
-                    ),
                 cameraInternal = { fakeCamera },
                 useCaseThreads = { useCaseThreads },
                 cameraInfoInternal = { fakeCamera.cameraInfoInternal },
-                templateParamsOverride = templateParamsOverride,
                 encoderProfilesProvider = FakeEncoderProfilesProvider.Builder().build(),
                 context = ApplicationProvider.getApplicationContext(),
                 cameraProperties = cameraProperties,
                 displayInfoManager =
                     DisplayInfoManager.getInstance(ApplicationProvider.getApplicationContext()),
                 cameraXConfig = cameraXConfig ?: CameraXConfig.Builder().build(),
+                cameraGraphConfigProvider = configProvider,
             )
             .also { useCaseManagerList.add(it) }
     }
