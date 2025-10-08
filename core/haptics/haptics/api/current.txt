@@ -6,6 +6,7 @@ package androidx.core.haptics {
     ctor @RequiresApi(android.os.Build.VERSION_CODES.R) public HapticAttributes(android.os.VibrationAttributes attrs);
     ctor public HapticAttributes(int usage);
     ctor public HapticAttributes(int usage, optional int flags);
+    ctor @BytecodeOnly public HapticAttributes(int, int, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method @InaccessibleFromKotlin public int getFlags();
     method @InaccessibleFromKotlin public int getUsage();
     property public int flags;
@@ -68,6 +69,7 @@ package androidx.core.haptics.device {
 
   public final class HapticCompositionProfile {
     ctor public HapticCompositionProfile();
+    ctor @BytecodeOnly public HapticCompositionProfile(java.util.Set!, java.util.Map!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor public HapticCompositionProfile(optional java.util.Set<java.lang.Integer> supportedPrimitiveTypesHint);
     ctor public HapticCompositionProfile(optional java.util.Set<java.lang.Integer> supportedPrimitiveTypesHint, optional java.util.Map<java.lang.Integer,java.lang.Long>? primitiveDurationMillisMapHint);
     method public long getPrimitiveDurationMillis(int primitiveType);
@@ -80,6 +82,7 @@ package androidx.core.haptics.device {
   public final class HapticDeviceProfile {
     ctor public HapticDeviceProfile();
     ctor public HapticDeviceProfile(optional boolean amplitudeControlSupportHint);
+    ctor @BytecodeOnly public HapticDeviceProfile(boolean, java.util.Set!, androidx.core.haptics.device.HapticCompositionProfile!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor public HapticDeviceProfile(optional boolean amplitudeControlSupportHint, optional java.util.Set<androidx.core.haptics.signal.PredefinedEffectSignal> hardwareOptimizedPredefinedEffectsHint);
     ctor public HapticDeviceProfile(optional boolean amplitudeControlSupportHint, optional java.util.Set<androidx.core.haptics.signal.PredefinedEffectSignal> hardwareOptimizedPredefinedEffectsHint, optional androidx.core.haptics.device.HapticCompositionProfile compositionProfile);
     method @InaccessibleFromKotlin public androidx.core.haptics.device.HapticCompositionProfile getCompositionProfile();

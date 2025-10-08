@@ -3,6 +3,7 @@ package androidx.core.telecom {
 
   public final class CallAttributesCompat {
     ctor public CallAttributesCompat(CharSequence displayName, android.net.Uri address, int direction, optional int callType, optional int callCapabilities, optional androidx.core.telecom.CallEndpointCompat? preferredStartingCallEndpoint);
+    ctor @BytecodeOnly public CallAttributesCompat(CharSequence!, android.net.Uri!, int, int, int, androidx.core.telecom.CallEndpointCompat!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method @InaccessibleFromKotlin public android.net.Uri getAddress();
     method @InaccessibleFromKotlin public int getCallCapabilities();
     method @InaccessibleFromKotlin public int getCallType();
@@ -93,6 +94,7 @@ package androidx.core.telecom {
   public final class CallException extends java.lang.RuntimeException {
     ctor public CallException();
     ctor public CallException(optional int code);
+    ctor @BytecodeOnly public CallException(int, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method @InaccessibleFromKotlin public int getCode();
     property public int code;
     field public static final androidx.core.telecom.CallException.Companion Companion;

@@ -23,6 +23,7 @@ package androidx.tv.material3 {
 
   @androidx.compose.runtime.Immutable public final class Border {
     ctor @KotlinOnly public Border(androidx.compose.foundation.BorderStroke border, optional androidx.compose.ui.unit.Dp inset, optional androidx.compose.ui.graphics.Shape shape);
+    ctor @BytecodeOnly public Border(androidx.compose.foundation.BorderStroke!, float, androidx.compose.ui.graphics.Shape!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor @BytecodeOnly public Border(androidx.compose.foundation.BorderStroke!, float, androidx.compose.ui.graphics.Shape!, kotlin.jvm.internal.DefaultConstructorMarker!);
     method @KotlinOnly public androidx.tv.material3.Border copy(optional androidx.compose.foundation.BorderStroke? border, optional androidx.compose.ui.unit.Dp? inset, optional androidx.compose.ui.graphics.Shape? shape);
     method @BytecodeOnly public androidx.tv.material3.Border copy-ZCAqi1o(androidx.compose.foundation.BorderStroke?, androidx.compose.ui.unit.Dp?, androidx.compose.ui.graphics.Shape?);
@@ -183,6 +184,7 @@ package androidx.tv.material3 {
   @SuppressCompatibility @androidx.compose.runtime.Stable @androidx.tv.material3.ExperimentalTvMaterial3Api public final class CarouselState {
     ctor public CarouselState();
     ctor public CarouselState(optional int initialActiveItemIndex);
+    ctor @BytecodeOnly public CarouselState(int, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method @InaccessibleFromKotlin public int getActiveItemIndex();
     method public androidx.tv.material3.ScrollPauseHandle pauseAutoScroll(int itemIndex);
     property public int activeItemIndex;
@@ -397,6 +399,7 @@ package androidx.tv.material3 {
   public final class DrawerState {
     ctor public DrawerState();
     ctor public DrawerState(optional androidx.tv.material3.DrawerValue initialValue);
+    ctor @BytecodeOnly public DrawerState(androidx.tv.material3.DrawerValue!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method @InaccessibleFromKotlin public androidx.tv.material3.DrawerValue getCurrentValue();
     method public void setValue(androidx.tv.material3.DrawerValue drawerValue);
     property public androidx.tv.material3.DrawerValue currentValue;
@@ -1009,6 +1012,7 @@ package androidx.tv.material3 {
   @androidx.compose.runtime.Immutable public final class Shapes {
     ctor public Shapes();
     ctor public Shapes(optional androidx.compose.foundation.shape.CornerBasedShape extraSmall, optional androidx.compose.foundation.shape.CornerBasedShape small, optional androidx.compose.foundation.shape.CornerBasedShape medium, optional androidx.compose.foundation.shape.CornerBasedShape large, optional androidx.compose.foundation.shape.CornerBasedShape extraLarge);
+    ctor @BytecodeOnly public Shapes(androidx.compose.foundation.shape.CornerBasedShape!, androidx.compose.foundation.shape.CornerBasedShape!, androidx.compose.foundation.shape.CornerBasedShape!, androidx.compose.foundation.shape.CornerBasedShape!, androidx.compose.foundation.shape.CornerBasedShape!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public androidx.tv.material3.Shapes copy(optional androidx.compose.foundation.shape.CornerBasedShape extraSmall, optional androidx.compose.foundation.shape.CornerBasedShape small, optional androidx.compose.foundation.shape.CornerBasedShape medium, optional androidx.compose.foundation.shape.CornerBasedShape large, optional androidx.compose.foundation.shape.CornerBasedShape extraLarge);
     method @BytecodeOnly public static androidx.tv.material3.Shapes! copy$default(androidx.tv.material3.Shapes!, androidx.compose.foundation.shape.CornerBasedShape!, androidx.compose.foundation.shape.CornerBasedShape!, androidx.compose.foundation.shape.CornerBasedShape!, androidx.compose.foundation.shape.CornerBasedShape!, androidx.compose.foundation.shape.CornerBasedShape!, int, Object!);
     method @InaccessibleFromKotlin public androidx.compose.foundation.shape.CornerBasedShape getExtraLarge();
@@ -1117,6 +1121,7 @@ package androidx.tv.material3 {
   }
 
   public final class TabColors {
+    ctor @BytecodeOnly public TabColors(long, long, long, long, long, long, long, long, int, kotlin.jvm.internal.DefaultConstructorMarker!);
   }
 
   public final class TabDefaults {
@@ -1170,6 +1175,7 @@ package androidx.tv.material3 {
   @androidx.compose.runtime.Immutable public final class Typography {
     ctor public Typography();
     ctor public Typography(optional androidx.compose.ui.text.TextStyle displayLarge, optional androidx.compose.ui.text.TextStyle displayMedium, optional androidx.compose.ui.text.TextStyle displaySmall, optional androidx.compose.ui.text.TextStyle headlineLarge, optional androidx.compose.ui.text.TextStyle headlineMedium, optional androidx.compose.ui.text.TextStyle headlineSmall, optional androidx.compose.ui.text.TextStyle titleLarge, optional androidx.compose.ui.text.TextStyle titleMedium, optional androidx.compose.ui.text.TextStyle titleSmall, optional androidx.compose.ui.text.TextStyle bodyLarge, optional androidx.compose.ui.text.TextStyle bodyMedium, optional androidx.compose.ui.text.TextStyle bodySmall, optional androidx.compose.ui.text.TextStyle labelLarge, optional androidx.compose.ui.text.TextStyle labelMedium, optional androidx.compose.ui.text.TextStyle labelSmall);
+    ctor @BytecodeOnly public Typography(androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public androidx.tv.material3.Typography copy(optional androidx.compose.ui.text.TextStyle displayLarge, optional androidx.compose.ui.text.TextStyle displayMedium, optional androidx.compose.ui.text.TextStyle displaySmall, optional androidx.compose.ui.text.TextStyle headlineLarge, optional androidx.compose.ui.text.TextStyle headlineMedium, optional androidx.compose.ui.text.TextStyle headlineSmall, optional androidx.compose.ui.text.TextStyle titleLarge, optional androidx.compose.ui.text.TextStyle titleMedium, optional androidx.compose.ui.text.TextStyle titleSmall, optional androidx.compose.ui.text.TextStyle bodyLarge, optional androidx.compose.ui.text.TextStyle bodyMedium, optional androidx.compose.ui.text.TextStyle bodySmall, optional androidx.compose.ui.text.TextStyle labelLarge, optional androidx.compose.ui.text.TextStyle labelMedium, optional androidx.compose.ui.text.TextStyle labelSmall);
     method @BytecodeOnly public static androidx.tv.material3.Typography! copy$default(androidx.tv.material3.Typography!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, int, Object!);
     method @InaccessibleFromKotlin public androidx.compose.ui.text.TextStyle getBodyLarge();

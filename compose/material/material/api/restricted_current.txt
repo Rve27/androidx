@@ -71,6 +71,7 @@ package androidx.compose.material {
   }
 
   @androidx.compose.runtime.Stable public final class BackdropScaffoldState {
+    ctor @BytecodeOnly @Deprecated public BackdropScaffoldState(androidx.compose.material.BackdropValue!, androidx.compose.animation.core.AnimationSpec!, kotlin.jvm.functions.Function1!, androidx.compose.material.SnackbarHostState!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor @Deprecated public BackdropScaffoldState(androidx.compose.material.BackdropValue initialValue, optional androidx.compose.animation.core.AnimationSpec<java.lang.Float> animationSpec, optional kotlin.jvm.functions.Function1<? super androidx.compose.material.BackdropValue,java.lang.Boolean> confirmValueChange, optional androidx.compose.material.SnackbarHostState snackbarHostState);
     method public suspend Object? conceal(kotlin.coroutines.Continuation<? super kotlin.Unit>);
     method @InaccessibleFromKotlin public kotlin.jvm.functions.Function1<androidx.compose.material.BackdropValue,java.lang.Boolean> getConfirmValueChange();
@@ -108,6 +109,7 @@ package androidx.compose.material {
   }
 
   public final class BottomDrawerState {
+    ctor @BytecodeOnly public BottomDrawerState(androidx.compose.material.BottomDrawerValue!, androidx.compose.ui.unit.Density!, kotlin.jvm.functions.Function1!, androidx.compose.animation.core.AnimationSpec!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor public BottomDrawerState(androidx.compose.material.BottomDrawerValue initialValue, androidx.compose.ui.unit.Density density, optional kotlin.jvm.functions.Function1<? super androidx.compose.material.BottomDrawerValue,java.lang.Boolean> confirmStateChange, optional androidx.compose.animation.core.AnimationSpec<java.lang.Float> animationSpec);
     method public suspend Object? close(kotlin.coroutines.Continuation<? super kotlin.Unit>);
     method public suspend Object? expand(kotlin.coroutines.Continuation<? super kotlin.Unit>);
@@ -185,6 +187,7 @@ package androidx.compose.material {
   }
 
   @androidx.compose.runtime.Stable public final class BottomSheetState {
+    ctor @BytecodeOnly public BottomSheetState(androidx.compose.material.BottomSheetValue!, androidx.compose.ui.unit.Density!, androidx.compose.animation.core.AnimationSpec!, kotlin.jvm.functions.Function1!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor public BottomSheetState(androidx.compose.material.BottomSheetValue initialValue, androidx.compose.ui.unit.Density density, optional androidx.compose.animation.core.AnimationSpec<java.lang.Float> animationSpec, optional kotlin.jvm.functions.Function1<? super androidx.compose.material.BottomSheetValue,java.lang.Boolean> confirmValueChange);
     method public suspend Object? collapse(kotlin.coroutines.Continuation<? super kotlin.Unit>);
     method public suspend Object? expand(kotlin.coroutines.Continuation<? super kotlin.Unit>);
@@ -412,6 +415,7 @@ package androidx.compose.material {
   }
 
   @SuppressCompatibility @androidx.compose.material.ExperimentalMaterialApi public final class DismissState extends androidx.compose.material.SwipeableState<androidx.compose.material.DismissValue> {
+    ctor @BytecodeOnly public DismissState(androidx.compose.material.DismissValue!, kotlin.jvm.functions.Function1!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor public DismissState(androidx.compose.material.DismissValue initialValue, optional kotlin.jvm.functions.Function1<? super androidx.compose.material.DismissValue,java.lang.Boolean> confirmStateChange);
     method public suspend Object? dismiss(androidx.compose.material.DismissDirection direction, kotlin.coroutines.Continuation<? super kotlin.Unit>);
     method @InaccessibleFromKotlin public androidx.compose.material.DismissDirection? getDismissDirection();
@@ -464,6 +468,7 @@ package androidx.compose.material {
   }
 
   @androidx.compose.runtime.Stable public final class DrawerState {
+    ctor @BytecodeOnly public DrawerState(androidx.compose.material.DrawerValue!, kotlin.jvm.functions.Function1!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor public DrawerState(androidx.compose.material.DrawerValue initialValue, optional kotlin.jvm.functions.Function1<? super androidx.compose.material.DrawerValue,java.lang.Boolean> confirmStateChange);
     method @Deprecated @SuppressCompatibility @androidx.compose.material.ExperimentalMaterialApi public suspend Object? animateTo(androidx.compose.material.DrawerValue targetValue, androidx.compose.animation.core.AnimationSpec<java.lang.Float> anim, kotlin.coroutines.Continuation<? super kotlin.Unit>);
     method public suspend Object? close(kotlin.coroutines.Continuation<? super kotlin.Unit>);
@@ -649,6 +654,7 @@ package androidx.compose.material {
   }
 
   public final class ModalBottomSheetState {
+    ctor @BytecodeOnly public ModalBottomSheetState(androidx.compose.material.ModalBottomSheetValue!, androidx.compose.ui.unit.Density!, kotlin.jvm.functions.Function1!, androidx.compose.animation.core.AnimationSpec!, boolean, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor public ModalBottomSheetState(androidx.compose.material.ModalBottomSheetValue initialValue, androidx.compose.ui.unit.Density density, optional kotlin.jvm.functions.Function1<? super androidx.compose.material.ModalBottomSheetValue,java.lang.Boolean> confirmValueChange, optional androidx.compose.animation.core.AnimationSpec<java.lang.Float> animationSpec, optional boolean isSkipHalfExpanded);
     method @InaccessibleFromKotlin public androidx.compose.material.ModalBottomSheetValue getCurrentValue();
     method @InaccessibleFromKotlin @Deprecated @SuppressCompatibility @FloatRange(from=0.0, to=1.0) @androidx.compose.material.ExperimentalMaterialApi public float getProgress();
@@ -745,6 +751,7 @@ package androidx.compose.material {
 
   @Deprecated @androidx.compose.runtime.Immutable public final class ResistanceConfig {
     ctor @Deprecated public ResistanceConfig(float basis, optional float factorAtMin, optional float factorAtMax);
+    ctor @BytecodeOnly @Deprecated public ResistanceConfig(float, float, float, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method @Deprecated public float computeResistance(float overflow);
     method @InaccessibleFromKotlin @Deprecated public float getBasis();
     method @InaccessibleFromKotlin @Deprecated public float getFactorAtMax();
@@ -757,6 +764,7 @@ package androidx.compose.material {
   @androidx.compose.runtime.Immutable public final class RippleConfiguration {
     ctor public RippleConfiguration();
     ctor @KotlinOnly public RippleConfiguration(optional androidx.compose.ui.graphics.Color color, optional androidx.compose.material.ripple.RippleAlpha? rippleAlpha);
+    ctor @BytecodeOnly public RippleConfiguration(long, androidx.compose.material.ripple.RippleAlpha!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor @BytecodeOnly public RippleConfiguration(long, androidx.compose.material.ripple.RippleAlpha!, kotlin.jvm.internal.DefaultConstructorMarker!);
     method @BytecodeOnly public long getColor-0d7_KjU();
     method @InaccessibleFromKotlin public androidx.compose.material.ripple.RippleAlpha? getRippleAlpha();
@@ -825,6 +833,7 @@ package androidx.compose.material {
   @androidx.compose.runtime.Immutable public final class Shapes {
     ctor public Shapes();
     ctor public Shapes(optional androidx.compose.foundation.shape.CornerBasedShape small, optional androidx.compose.foundation.shape.CornerBasedShape medium, optional androidx.compose.foundation.shape.CornerBasedShape large);
+    ctor @BytecodeOnly public Shapes(androidx.compose.foundation.shape.CornerBasedShape!, androidx.compose.foundation.shape.CornerBasedShape!, androidx.compose.foundation.shape.CornerBasedShape!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public androidx.compose.material.Shapes copy(optional androidx.compose.foundation.shape.CornerBasedShape small, optional androidx.compose.foundation.shape.CornerBasedShape medium, optional androidx.compose.foundation.shape.CornerBasedShape large);
     method @BytecodeOnly public static androidx.compose.material.Shapes! copy$default(androidx.compose.material.Shapes!, androidx.compose.foundation.shape.CornerBasedShape!, androidx.compose.foundation.shape.CornerBasedShape!, androidx.compose.foundation.shape.CornerBasedShape!, int, Object!);
     method @InaccessibleFromKotlin public androidx.compose.foundation.shape.CornerBasedShape getLarge();
@@ -968,6 +977,7 @@ package androidx.compose.material {
   }
 
   @Deprecated @SuppressCompatibility @androidx.compose.material.ExperimentalMaterialApi @androidx.compose.runtime.Stable public class SwipeableState<T> {
+    ctor @BytecodeOnly @Deprecated public SwipeableState(Object!, androidx.compose.animation.core.AnimationSpec!, kotlin.jvm.functions.Function1!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor @Deprecated public SwipeableState(T initialValue, optional androidx.compose.animation.core.AnimationSpec<java.lang.Float> animationSpec, optional kotlin.jvm.functions.Function1<? super T,java.lang.Boolean> confirmStateChange);
     method @Deprecated @SuppressCompatibility @androidx.compose.material.ExperimentalMaterialApi public final suspend Object? animateTo(T targetValue, optional androidx.compose.animation.core.AnimationSpec<java.lang.Float> anim, kotlin.coroutines.Continuation<? super kotlin.Unit>);
     method @BytecodeOnly @Deprecated @SuppressCompatibility @androidx.compose.material.ExperimentalMaterialApi public static Object! animateTo$default(androidx.compose.material.SwipeableState!, Object!, androidx.compose.animation.core.AnimationSpec!, kotlin.coroutines.Continuation!, int, Object!);
@@ -1157,6 +1167,7 @@ package androidx.compose.material {
 
   @androidx.compose.runtime.Immutable public final class Typography {
     ctor public Typography(optional androidx.compose.ui.text.font.FontFamily defaultFontFamily, optional androidx.compose.ui.text.TextStyle h1, optional androidx.compose.ui.text.TextStyle h2, optional androidx.compose.ui.text.TextStyle h3, optional androidx.compose.ui.text.TextStyle h4, optional androidx.compose.ui.text.TextStyle h5, optional androidx.compose.ui.text.TextStyle h6, optional androidx.compose.ui.text.TextStyle subtitle1, optional androidx.compose.ui.text.TextStyle subtitle2, optional androidx.compose.ui.text.TextStyle body1, optional androidx.compose.ui.text.TextStyle body2, optional androidx.compose.ui.text.TextStyle button, optional androidx.compose.ui.text.TextStyle caption, optional androidx.compose.ui.text.TextStyle overline);
+    ctor @BytecodeOnly public Typography(androidx.compose.ui.text.font.FontFamily!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public androidx.compose.material.Typography copy(optional androidx.compose.ui.text.TextStyle h1, optional androidx.compose.ui.text.TextStyle h2, optional androidx.compose.ui.text.TextStyle h3, optional androidx.compose.ui.text.TextStyle h4, optional androidx.compose.ui.text.TextStyle h5, optional androidx.compose.ui.text.TextStyle h6, optional androidx.compose.ui.text.TextStyle subtitle1, optional androidx.compose.ui.text.TextStyle subtitle2, optional androidx.compose.ui.text.TextStyle body1, optional androidx.compose.ui.text.TextStyle body2, optional androidx.compose.ui.text.TextStyle button, optional androidx.compose.ui.text.TextStyle caption, optional androidx.compose.ui.text.TextStyle overline);
     method @BytecodeOnly public static androidx.compose.material.Typography! copy$default(androidx.compose.material.Typography!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, int, Object!);
     method @InaccessibleFromKotlin public androidx.compose.ui.text.TextStyle getBody1();

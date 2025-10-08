@@ -36,7 +36,9 @@ package androidx.compose.ui.test {
   @SuppressCompatibility @androidx.compose.ui.test.ExperimentalTestApi public abstract class AndroidComposeUiTestEnvironment<A extends androidx.activity.ComponentActivity> {
     ctor public AndroidComposeUiTestEnvironment();
     ctor public AndroidComposeUiTestEnvironment(optional kotlin.coroutines.CoroutineContext effectContext);
+    ctor @BytecodeOnly public AndroidComposeUiTestEnvironment(kotlin.coroutines.CoroutineContext!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor @KotlinOnly public <A extends androidx.activity.ComponentActivity> AndroidComposeUiTestEnvironment(optional kotlin.coroutines.CoroutineContext effectContext, optional kotlin.coroutines.CoroutineContext runTestContext, optional kotlin.time.Duration testTimeout);
+    ctor @BytecodeOnly public AndroidComposeUiTestEnvironment(kotlin.coroutines.CoroutineContext!, kotlin.coroutines.CoroutineContext!, long, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor @BytecodeOnly public AndroidComposeUiTestEnvironment(kotlin.coroutines.CoroutineContext!, kotlin.coroutines.CoroutineContext!, long, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public final void cancelAndRecreateRecomposer();
     method @InaccessibleFromKotlin protected abstract A? getActivity();
@@ -621,6 +623,7 @@ package androidx.compose.ui.test {
   }
 
   public final class SelectionResult {
+    ctor @BytecodeOnly public SelectionResult(java.util.List!, String!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor public SelectionResult(java.util.List<androidx.compose.ui.semantics.SemanticsNode> selectedNodes, optional String? customErrorOnNoMatch);
     method @InaccessibleFromKotlin public String? getCustomErrorOnNoMatch();
     method @InaccessibleFromKotlin public java.util.List<androidx.compose.ui.semantics.SemanticsNode> getSelectedNodes();
@@ -688,6 +691,7 @@ package androidx.compose.ui.test {
   }
 
   public final class SemanticsSelector {
+    ctor @BytecodeOnly public SemanticsSelector(String!, boolean, androidx.compose.ui.test.SemanticsSelector!, kotlin.jvm.functions.Function1!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor public SemanticsSelector(String description, boolean requiresExactlyOneNode, optional androidx.compose.ui.test.SemanticsSelector? chainedInputSelector, kotlin.jvm.functions.Function1<? super java.lang.Iterable<androidx.compose.ui.semantics.SemanticsNode>,androidx.compose.ui.test.SelectionResult> selector);
     method @InaccessibleFromKotlin public String getDescription();
     method public androidx.compose.ui.test.SelectionResult map(Iterable<androidx.compose.ui.semantics.SemanticsNode> nodes, String errorOnFail);
@@ -705,6 +709,7 @@ package androidx.compose.ui.test {
   }
 
   @SuppressCompatibility @androidx.compose.ui.test.ExperimentalTestApi @kotlinx.coroutines.ExperimentalCoroutinesApi public final class TestMonotonicFrameClock implements androidx.compose.runtime.MonotonicFrameClock {
+    ctor @BytecodeOnly public TestMonotonicFrameClock(kotlinx.coroutines.CoroutineScope!, long, kotlin.jvm.functions.Function1!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor public TestMonotonicFrameClock(kotlinx.coroutines.CoroutineScope coroutineScope, optional long frameDelayNanos, optional kotlin.jvm.functions.Function1<? super java.lang.Long,kotlin.Unit> onPerformTraversals);
     method @BytecodeOnly public <R> R! fold(R!, kotlin.jvm.functions.Function2<? super R!,? super kotlin.coroutines.CoroutineContext.Element!,? extends R!>);
     method @BytecodeOnly public <E extends kotlin.coroutines.CoroutineContext.Element> E? get(kotlin.coroutines.CoroutineContext.Key<E!>);

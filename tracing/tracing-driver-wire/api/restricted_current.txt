@@ -3,6 +3,7 @@ package androidx.tracing.driver.wire {
 
   public final class TraceSink extends androidx.tracing.driver.TraceSink {
     ctor public TraceSink(int sequenceId, okio.BufferedSink bufferedSink, optional kotlin.coroutines.CoroutineContext coroutineContext);
+    ctor @BytecodeOnly public TraceSink(int, okio.BufferedSink!, kotlin.coroutines.CoroutineContext!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public void close();
     method public void enqueue(androidx.tracing.driver.PooledTracePacketArray pooledPacketArray);
     method public void flush();

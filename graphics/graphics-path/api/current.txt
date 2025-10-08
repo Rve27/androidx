@@ -3,6 +3,7 @@ package androidx.graphics.path {
 
   public final class PathIterator implements java.util.Iterator<androidx.graphics.path.PathSegment> kotlin.jvm.internal.markers.KMappedMarker {
     ctor public PathIterator(android.graphics.Path path, optional androidx.graphics.path.PathIterator.ConicEvaluation conicEvaluation, optional float tolerance);
+    ctor @BytecodeOnly public PathIterator(android.graphics.Path!, androidx.graphics.path.PathIterator.ConicEvaluation!, float, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public int calculateSize(optional boolean includeConvertedConics);
     method @BytecodeOnly public static int calculateSize$default(androidx.graphics.path.PathIterator!, boolean, int, Object!);
     method @InaccessibleFromKotlin public androidx.graphics.path.PathIterator.ConicEvaluation getConicEvaluation();

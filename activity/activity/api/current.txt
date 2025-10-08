@@ -18,6 +18,7 @@ package androidx.activity {
     ctor public BackEventCompat(androidx.navigationevent.NavigationEvent navigationEvent);
     ctor @VisibleForTesting public BackEventCompat(float touchX, float touchY, @FloatRange(from=0.0, to=1.0) float progress, int swipeEdge);
     ctor @VisibleForTesting public BackEventCompat(float touchX, float touchY, @FloatRange(from=0.0, to=1.0) float progress, int swipeEdge, optional long frameTimeMillis);
+    ctor @BytecodeOnly @VisibleForTesting public BackEventCompat(float, float, float, int, long, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method @InaccessibleFromKotlin public long getFrameTimeMillis();
     method @InaccessibleFromKotlin public float getProgress();
     method @InaccessibleFromKotlin public int getSwipeEdge();
@@ -100,6 +101,7 @@ package androidx.activity {
   public class ComponentDialog extends android.app.Dialog implements androidx.lifecycle.LifecycleOwner androidx.navigationevent.NavigationEventDispatcherOwner androidx.activity.OnBackPressedDispatcherOwner androidx.savedstate.SavedStateRegistryOwner {
     ctor public ComponentDialog(android.content.Context context);
     ctor public ComponentDialog(android.content.Context context, optional @StyleRes int themeResId);
+    ctor @BytecodeOnly public ComponentDialog(android.content.Context!, int, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method @InaccessibleFromKotlin public androidx.lifecycle.Lifecycle getLifecycle();
     method @InaccessibleFromKotlin public androidx.navigationevent.NavigationEventDispatcher getNavigationEventDispatcher();
     method @InaccessibleFromKotlin public final androidx.activity.OnBackPressedDispatcher getOnBackPressedDispatcher();
@@ -157,6 +159,7 @@ package androidx.activity {
     ctor public OnBackPressedDispatcher();
     ctor public OnBackPressedDispatcher(optional Runnable? fallbackOnBackPressed);
     ctor public OnBackPressedDispatcher(Runnable? fallbackOnBackPressed, androidx.core.util.Consumer<java.lang.Boolean>? onHasEnabledCallbacksChanged);
+    ctor @BytecodeOnly public OnBackPressedDispatcher(Runnable!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method @MainThread public void addCallback(androidx.activity.OnBackPressedCallback onBackPressedCallback);
     method @MainThread public void addCallback(androidx.lifecycle.LifecycleOwner owner, androidx.activity.OnBackPressedCallback onBackPressedCallback);
     method @MainThread @VisibleForTesting public void dispatchOnBackCancelled();
@@ -461,6 +464,7 @@ package androidx.activity.result.contract {
   public static class ActivityResultContracts.PickMultipleVisualMedia extends androidx.activity.result.contract.ActivityResultContract<androidx.activity.result.PickVisualMediaRequest,java.util.List<android.net.Uri>> {
     ctor public ActivityResultContracts.PickMultipleVisualMedia();
     ctor public ActivityResultContracts.PickMultipleVisualMedia(optional int maxItems);
+    ctor @BytecodeOnly public ActivityResultContracts.PickMultipleVisualMedia(int, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method @CallSuper public android.content.Intent createIntent(android.content.Context context, androidx.activity.result.PickVisualMediaRequest input);
     method public final androidx.activity.result.contract.ActivityResultContract.SynchronousResult<java.util.List<android.net.Uri>>? getSynchronousResult(android.content.Context context, androidx.activity.result.PickVisualMediaRequest input);
     method public final java.util.List<android.net.Uri> parseResult(int resultCode, android.content.Intent? intent);

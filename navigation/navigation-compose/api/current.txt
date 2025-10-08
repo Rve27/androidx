@@ -52,6 +52,7 @@ package androidx.navigation.compose {
 
   @androidx.navigation.NavDestination.ClassType(Composable::class) public static final class DialogNavigator.Destination extends androidx.navigation.NavDestination implements androidx.navigation.FloatingWindow {
     ctor public DialogNavigator.Destination(androidx.navigation.compose.DialogNavigator navigator, optional androidx.compose.ui.window.DialogProperties dialogProperties, kotlin.jvm.functions.Function1<? super androidx.navigation.NavBackStackEntry,kotlin.Unit> content);
+    ctor @BytecodeOnly public DialogNavigator.Destination(androidx.navigation.compose.DialogNavigator!, androidx.compose.ui.window.DialogProperties!, kotlin.jvm.functions.Function3!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor @BytecodeOnly public DialogNavigator.Destination(androidx.navigation.compose.DialogNavigator, androidx.compose.ui.window.DialogProperties, kotlin.jvm.functions.Function3<? super androidx.navigation.NavBackStackEntry!,? super androidx.compose.runtime.Composer!,? super java.lang.Integer!,kotlin.Unit!>);
   }
 

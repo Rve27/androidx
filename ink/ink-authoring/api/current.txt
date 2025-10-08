@@ -13,6 +13,7 @@ package androidx.ink.authoring {
     ctor public InProgressStrokesView(android.content.Context context);
     ctor public InProgressStrokesView(android.content.Context context, optional android.util.AttributeSet? attrs);
     ctor public InProgressStrokesView(android.content.Context context, optional android.util.AttributeSet? attrs, optional @AttrRes int defStyleAttr);
+    ctor @BytecodeOnly public InProgressStrokesView(android.content.Context!, android.util.AttributeSet!, int, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public void addFinishedStrokesListener(androidx.ink.authoring.InProgressStrokesFinishedListener listener);
     method public boolean addToStroke(android.view.MotionEvent event, int pointerId);
     method public boolean addToStroke(android.view.MotionEvent event, int pointerId, optional android.view.MotionEvent? prediction);

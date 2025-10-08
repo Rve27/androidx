@@ -620,6 +620,7 @@ package androidx.constraintlayout.compose {
   }
 
   public final class InvalidationStrategy {
+    ctor @BytecodeOnly public InvalidationStrategy(kotlin.jvm.functions.Function3!, kotlin.jvm.functions.Function0!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor public InvalidationStrategy(optional kotlin.jvm.functions.Function3<? super androidx.constraintlayout.compose.InvalidationStrategySpecification,? super androidx.compose.ui.unit.Constraints,? super androidx.compose.ui.unit.Constraints,java.lang.Boolean>? onIncomingConstraints, kotlin.jvm.functions.Function0<kotlin.Unit>? onObservedStateChange);
     method @InaccessibleFromKotlin public kotlin.jvm.functions.Function3<androidx.constraintlayout.compose.InvalidationStrategySpecification,androidx.compose.ui.unit.Constraints,androidx.compose.ui.unit.Constraints,java.lang.Boolean>? getOnIncomingConstraints();
     method @InaccessibleFromKotlin public kotlin.jvm.functions.Function0<kotlin.Unit>? getOnObservedStateChange();
@@ -1006,6 +1007,7 @@ package androidx.constraintlayout.compose {
 
   @SuppressCompatibility @androidx.constraintlayout.compose.ExperimentalMotionApi public final class OnSwipe {
     ctor public OnSwipe(androidx.constraintlayout.compose.ConstrainedLayoutReference anchor, androidx.constraintlayout.compose.SwipeSide side, androidx.constraintlayout.compose.SwipeDirection direction, optional float dragScale, optional float dragThreshold, optional androidx.constraintlayout.compose.ConstrainedLayoutReference? dragAround, optional androidx.constraintlayout.compose.ConstrainedLayoutReference? limitBoundsTo, optional androidx.constraintlayout.compose.SwipeTouchUp onTouchUp, optional androidx.constraintlayout.compose.SwipeMode mode);
+    ctor @BytecodeOnly public OnSwipe(androidx.constraintlayout.compose.ConstrainedLayoutReference!, androidx.constraintlayout.compose.SwipeSide!, androidx.constraintlayout.compose.SwipeDirection!, float, float, androidx.constraintlayout.compose.ConstrainedLayoutReference!, androidx.constraintlayout.compose.ConstrainedLayoutReference!, androidx.constraintlayout.compose.SwipeTouchUp!, androidx.constraintlayout.compose.SwipeMode!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method @InaccessibleFromKotlin public androidx.constraintlayout.compose.ConstrainedLayoutReference getAnchor();
     method @InaccessibleFromKotlin public androidx.constraintlayout.compose.SwipeDirection getDirection();
     method @InaccessibleFromKotlin public androidx.constraintlayout.compose.ConstrainedLayoutReference? getDragAround();

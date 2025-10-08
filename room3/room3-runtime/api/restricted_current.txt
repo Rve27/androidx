@@ -292,6 +292,7 @@ package androidx.room3 {
 
   public final class RoomRawQuery {
     ctor public RoomRawQuery(String sql);
+    ctor @BytecodeOnly public RoomRawQuery(String!, kotlin.jvm.functions.Function1!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor public RoomRawQuery(String sql, optional kotlin.jvm.functions.Function1<? super androidx.sqlite.SQLiteStatement,kotlin.Unit> onBindStatement);
     method public kotlin.jvm.functions.Function1<androidx.sqlite.SQLiteStatement,kotlin.Unit> getBindingFunction();
     method @InaccessibleFromKotlin public String getSql();
@@ -481,6 +482,7 @@ package androidx.room3.util {
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class TableInfo {
+    ctor @BytecodeOnly public TableInfo(String!, java.util.Map!, java.util.Set!, java.util.Set!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor public TableInfo(String name, java.util.Map<java.lang.String,androidx.room3.util.TableInfo.Column> columns, java.util.Set<androidx.room3.util.TableInfo.ForeignKey> foreignKeys, optional java.util.Set<androidx.room3.util.TableInfo.Index>? indices);
     method public static androidx.room3.util.TableInfo read(androidx.sqlite.SQLiteConnection connection, String tableName);
     property public java.util.Map<java.lang.String,androidx.room3.util.TableInfo.Column> columns;
