@@ -22,7 +22,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.SubcompositionReusableContentHost
 import androidx.compose.ui.node.ModifierNodeElement
-import androidx.compose.ui.node.UnplacedStateAwareModifierNode
+import androidx.compose.ui.node.UnplacedAwareModifierNode
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -35,7 +35,7 @@ import org.junit.runner.RunWith
 
 @MediumTest
 @RunWith(AndroidJUnit4::class)
-class UnplacedStateAwareModifierNodeTest {
+class UnplacedAwareModifierNodeTest {
 
     @get:Rule val rule = createComposeRule(StandardTestDispatcher())
 
@@ -114,7 +114,7 @@ private data class OnUnplacedModifierElement(val onUnplacedLambda: () -> Unit) :
 }
 
 private class OnUnplacedModifierNode(var onUnplacedLambda: () -> Unit) :
-    Modifier.Node(), UnplacedStateAwareModifierNode {
+    Modifier.Node(), UnplacedAwareModifierNode {
 
     override fun onUnplaced() {
         assertThat(isAttached).isTrue()
