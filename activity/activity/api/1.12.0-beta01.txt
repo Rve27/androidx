@@ -9,6 +9,8 @@ package androidx.activity {
 
   public final class ActivityViewModelLazyKt {
     method @KotlinOnly @MainThread public static inline <reified VM extends androidx.lifecycle.ViewModel> kotlin.Lazy<VM> viewModels(androidx.activity.ComponentActivity, optional kotlin.jvm.functions.Function0<androidx.lifecycle.viewmodel.CreationExtras>? extrasProducer, optional kotlin.jvm.functions.Function0<androidx.lifecycle.ViewModelProvider.Factory>? factoryProducer);
+    method @BytecodeOnly public static kotlin.Lazy! viewModels$default(androidx.activity.ComponentActivity!, kotlin.jvm.functions.Function0!, int, Object!);
+    method @BytecodeOnly public static kotlin.Lazy! viewModels$default(androidx.activity.ComponentActivity!, kotlin.jvm.functions.Function0!, kotlin.jvm.functions.Function0!, int, Object!);
   }
 
   public final class BackEventCompat {
@@ -113,6 +115,7 @@ package androidx.activity {
     method @InaccessibleFromKotlin public static void enable(androidx.activity.ComponentActivity);
     method @InaccessibleFromKotlin public static void enable(androidx.activity.ComponentActivity, optional androidx.activity.SystemBarStyle statusBarStyle);
     method @InaccessibleFromKotlin public static void enable(androidx.activity.ComponentActivity, optional androidx.activity.SystemBarStyle statusBarStyle, optional androidx.activity.SystemBarStyle navigationBarStyle);
+    method @BytecodeOnly public static void enable$default(androidx.activity.ComponentActivity!, androidx.activity.SystemBarStyle!, androidx.activity.SystemBarStyle!, int, Object!);
     method @KotlinOnly public static void enableEdgeToEdge(androidx.activity.ComponentActivity, optional androidx.activity.SystemBarStyle statusBarStyle, optional androidx.activity.SystemBarStyle navigationBarStyle);
   }
 
@@ -166,6 +169,7 @@ package androidx.activity {
 
   public final class OnBackPressedDispatcherKt {
     method public static androidx.activity.OnBackPressedCallback addCallback(androidx.activity.OnBackPressedDispatcher, optional androidx.lifecycle.LifecycleOwner? owner, optional boolean enabled, kotlin.jvm.functions.Function1<? super androidx.activity.OnBackPressedCallback,kotlin.Unit> onBackPressed);
+    method @BytecodeOnly public static androidx.activity.OnBackPressedCallback! addCallback$default(androidx.activity.OnBackPressedDispatcher!, androidx.lifecycle.LifecycleOwner!, boolean, kotlin.jvm.functions.Function1!, int, Object!);
   }
 
   public interface OnBackPressedDispatcherOwner extends androidx.lifecycle.LifecycleOwner {
@@ -188,6 +192,7 @@ package androidx.activity {
   public static final class SystemBarStyle.Companion {
     method public androidx.activity.SystemBarStyle auto(@ColorInt int lightScrim, @ColorInt int darkScrim);
     method public androidx.activity.SystemBarStyle auto(@ColorInt int lightScrim, @ColorInt int darkScrim, optional kotlin.jvm.functions.Function1<? super android.content.res.Resources,java.lang.Boolean> detectDarkMode);
+    method @BytecodeOnly public static androidx.activity.SystemBarStyle! auto$default(androidx.activity.SystemBarStyle.Companion!, int, int, kotlin.jvm.functions.Function1!, int, Object!);
     method public androidx.activity.SystemBarStyle dark(@ColorInt int scrim);
     method public androidx.activity.SystemBarStyle light(@ColorInt int scrim, @ColorInt int darkScrim);
   }
@@ -286,7 +291,9 @@ package androidx.activity.result {
   public final class ActivityResultLauncherKt {
     method public static void launch(androidx.activity.result.ActivityResultLauncher<java.lang.Void?>, optional androidx.core.app.ActivityOptionsCompat? options);
     method @KotlinOnly public static void launch(androidx.activity.result.ActivityResultLauncher<kotlin.Unit>, optional androidx.core.app.ActivityOptionsCompat? options);
+    method @BytecodeOnly public static void launch$default(androidx.activity.result.ActivityResultLauncher!, androidx.core.app.ActivityOptionsCompat!, int, Object!);
     method @InaccessibleFromKotlin public static void launchUnit(androidx.activity.result.ActivityResultLauncher<kotlin.Unit>, optional androidx.core.app.ActivityOptionsCompat? options);
+    method @BytecodeOnly public static void launchUnit$default(androidx.activity.result.ActivityResultLauncher!, androidx.core.app.ActivityOptionsCompat!, int, Object!);
   }
 
   public abstract class ActivityResultRegistry {
@@ -367,6 +374,12 @@ package androidx.activity.result {
     method @BytecodeOnly @Deprecated public static androidx.activity.result.PickVisualMediaRequest! PickVisualMediaRequest(androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia.VisualMediaType!, @IntRange(from=2L) int);
     method public static androidx.activity.result.PickVisualMediaRequest PickVisualMediaRequest(optional androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia.VisualMediaType mediaType, optional @IntRange(from=2L) int maxItems, optional boolean isOrderedSelection, optional androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia.DefaultTab defaultTab);
     method public static androidx.activity.result.PickVisualMediaRequest PickVisualMediaRequest(long accentColor, optional androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia.VisualMediaType mediaType, optional @IntRange(from=2L) int maxItems, optional boolean isOrderedSelection, optional androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia.DefaultTab defaultTab);
+    method @BytecodeOnly @RequiresApi(android.os.Build.VERSION_CODES.TIRAMISU) public static androidx.activity.result.PickVisualMediaRequest! PickVisualMediaRequest$default(androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia.MediaCapabilities!, androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia.VisualMediaType!, int, boolean, androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia.DefaultTab!, int, Object!);
+    method @BytecodeOnly @RequiresApi(android.os.Build.VERSION_CODES.TIRAMISU) public static androidx.activity.result.PickVisualMediaRequest! PickVisualMediaRequest$default(androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia.MediaCapabilities!, long, androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia.VisualMediaType!, int, boolean, androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia.DefaultTab!, int, Object!);
+    method @BytecodeOnly public static androidx.activity.result.PickVisualMediaRequest! PickVisualMediaRequest$default(androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia.VisualMediaType!, int, boolean, androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia.DefaultTab!, int, Object!);
+    method @BytecodeOnly @Deprecated public static androidx.activity.result.PickVisualMediaRequest! PickVisualMediaRequest$default(androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia.VisualMediaType!, int, int, Object!);
+    method @BytecodeOnly @Deprecated public static androidx.activity.result.PickVisualMediaRequest! PickVisualMediaRequest$default(androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia.VisualMediaType!, int, Object!);
+    method @BytecodeOnly public static androidx.activity.result.PickVisualMediaRequest! PickVisualMediaRequest$default(long, androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia.VisualMediaType!, int, boolean, androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia.DefaultTab!, int, Object!);
   }
 
 }

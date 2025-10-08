@@ -39,6 +39,7 @@ package androidx.glance.wear.tiles {
   public final class GlanceWearTilesKt {
     method @KotlinOnly @Deprecated @SuppressCompatibility @androidx.glance.wear.tiles.ExperimentalGlanceWearTilesApi public static suspend Object? compose(android.content.Context context, androidx.compose.ui.unit.DpSize size, optional Object? state, kotlin.jvm.functions.Function0<kotlin.Unit> content, kotlin.coroutines.Continuation<? super androidx.glance.wear.tiles.WearTilesCompositionResult>);
     method @BytecodeOnly @Deprecated @SuppressCompatibility @androidx.glance.wear.tiles.ExperimentalGlanceWearTilesApi public static Object? compose-eVKgIn8(android.content.Context, long, Object?, kotlin.jvm.functions.Function2<? super androidx.compose.runtime.Composer!,? super java.lang.Integer!,kotlin.Unit!>, kotlin.coroutines.Continuation<? super androidx.glance.wear.tiles.WearTilesCompositionResult!>);
+    method @BytecodeOnly @Deprecated @SuppressCompatibility @androidx.glance.wear.tiles.ExperimentalGlanceWearTilesApi public static Object! compose-eVKgIn8$default(android.content.Context!, long, Object!, kotlin.jvm.functions.Function2!, kotlin.coroutines.Continuation!, int, Object!);
   }
 
   @Deprecated public final class TimeInterval {
@@ -47,6 +48,7 @@ package androidx.glance.wear.tiles {
     method @Deprecated public java.time.Instant component1();
     method @Deprecated public java.time.Instant component2();
     method @Deprecated public androidx.glance.wear.tiles.TimeInterval copy(optional java.time.Instant start, optional java.time.Instant end);
+    method @BytecodeOnly @Deprecated public static androidx.glance.wear.tiles.TimeInterval! copy$default(androidx.glance.wear.tiles.TimeInterval!, java.time.Instant!, java.time.Instant!, int, Object!);
     method @InaccessibleFromKotlin @Deprecated public java.time.Instant getEnd();
     method @InaccessibleFromKotlin @Deprecated public java.time.Instant getStart();
     property @Deprecated public java.time.Instant end;
@@ -125,9 +127,13 @@ package androidx.glance.wear.tiles.curved {
   @Deprecated @androidx.glance.wear.tiles.curved.CurvedScopeMarker @kotlin.jvm.JvmDefaultWithCompatibility public interface CurvedScope {
     method @Deprecated public void curvedComposable(optional boolean rotateContent, kotlin.jvm.functions.Function0<kotlin.Unit> content);
     method @BytecodeOnly @Deprecated public void curvedComposable(boolean, kotlin.jvm.functions.Function2<? super androidx.compose.runtime.Composer!,? super java.lang.Integer!,kotlin.Unit!>);
+    method @BytecodeOnly @Deprecated public static void curvedComposable$default(androidx.glance.wear.tiles.curved.CurvedScope!, boolean, kotlin.jvm.functions.Function2!, int, Object!);
     method @Deprecated public void curvedLine(androidx.glance.unit.ColorProvider color, optional androidx.glance.wear.tiles.curved.GlanceCurvedModifier curvedModifier);
+    method @BytecodeOnly @Deprecated public static void curvedLine$default(androidx.glance.wear.tiles.curved.CurvedScope!, androidx.glance.unit.ColorProvider!, androidx.glance.wear.tiles.curved.GlanceCurvedModifier!, int, Object!);
     method @Deprecated public void curvedSpacer(optional androidx.glance.wear.tiles.curved.GlanceCurvedModifier curvedModifier);
+    method @BytecodeOnly @Deprecated public static void curvedSpacer$default(androidx.glance.wear.tiles.curved.CurvedScope!, androidx.glance.wear.tiles.curved.GlanceCurvedModifier!, int, Object!);
     method @Deprecated public void curvedText(String text, optional androidx.glance.wear.tiles.curved.GlanceCurvedModifier curvedModifier, optional androidx.glance.wear.tiles.curved.CurvedTextStyle? style);
+    method @BytecodeOnly @Deprecated public static void curvedText$default(androidx.glance.wear.tiles.curved.CurvedScope!, String!, androidx.glance.wear.tiles.curved.GlanceCurvedModifier!, androidx.glance.wear.tiles.curved.CurvedTextStyle!, int, Object!);
   }
 
   @Deprecated @kotlin.DslMarker public @interface CurvedScopeMarker {

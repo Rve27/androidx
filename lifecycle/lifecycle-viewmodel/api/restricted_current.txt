@@ -75,6 +75,8 @@ package androidx.lifecycle {
   public static final class ViewModelProvider.Companion {
     method public androidx.lifecycle.ViewModelProvider create(androidx.lifecycle.ViewModelStore store, optional androidx.lifecycle.ViewModelProvider.Factory factory, optional androidx.lifecycle.viewmodel.CreationExtras extras);
     method public androidx.lifecycle.ViewModelProvider create(androidx.lifecycle.ViewModelStoreOwner owner, optional androidx.lifecycle.ViewModelProvider.Factory factory, optional androidx.lifecycle.viewmodel.CreationExtras extras);
+    method @BytecodeOnly public static androidx.lifecycle.ViewModelProvider! create$default(androidx.lifecycle.ViewModelProvider.Companion!, androidx.lifecycle.ViewModelStore!, androidx.lifecycle.ViewModelProvider.Factory!, androidx.lifecycle.viewmodel.CreationExtras!, int, Object!);
+    method @BytecodeOnly public static androidx.lifecycle.ViewModelProvider! create$default(androidx.lifecycle.ViewModelProvider.Companion!, androidx.lifecycle.ViewModelStoreOwner!, androidx.lifecycle.ViewModelProvider.Factory!, androidx.lifecycle.viewmodel.CreationExtras!, int, Object!);
     property public androidx.lifecycle.viewmodel.CreationExtras.Key<java.lang.String> VIEW_MODEL_KEY;
   }
 
@@ -150,6 +152,7 @@ package androidx.lifecycle.viewmodel {
     method public static androidx.lifecycle.viewmodel.CreationExtras CreationExtras();
     method public static androidx.lifecycle.viewmodel.CreationExtras CreationExtras(optional androidx.lifecycle.viewmodel.CreationExtras initialExtras);
     method public static androidx.lifecycle.viewmodel.CreationExtras CreationExtras(optional androidx.lifecycle.viewmodel.CreationExtras initialExtras, optional kotlin.jvm.functions.Function1<? super androidx.lifecycle.viewmodel.MutableCreationExtras,kotlin.Unit> builderAction);
+    method @BytecodeOnly public static androidx.lifecycle.viewmodel.CreationExtras! CreationExtras$default(androidx.lifecycle.viewmodel.CreationExtras!, kotlin.jvm.functions.Function1!, int, Object!);
     method public static operator boolean contains(androidx.lifecycle.viewmodel.CreationExtras, androidx.lifecycle.viewmodel.CreationExtras.Key<? extends java.lang.Object?> key);
     method public static operator androidx.lifecycle.viewmodel.MutableCreationExtras plus(androidx.lifecycle.viewmodel.CreationExtras, androidx.lifecycle.viewmodel.CreationExtras creationExtras);
     method public static operator void plusAssign(androidx.lifecycle.viewmodel.MutableCreationExtras, androidx.lifecycle.viewmodel.CreationExtras creationExtras);
