@@ -26,6 +26,7 @@ import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSFile
 import com.google.devtools.ksp.symbol.KSPropertyDeclaration
 import com.google.devtools.ksp.symbol.KSTypeReference
+import com.google.devtools.ksp.symbol.Modifier
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.FileSpec
 
@@ -160,7 +161,8 @@ interface AppFunctionSerializableType {
         classDeclaration.superTypes
             .map { it.resolve().declaration as KSClassDeclaration }
             .filter {
-                it.annotations.findAnnotation(AppFunctionSerializableAnnotation.CLASS_NAME) != null
+                it.annotations.findAnnotation(AppFunctionSerializableAnnotation.CLASS_NAME) !=
+                    null && !it.modifiers.contains(Modifier.SEALED)
             }
             .toSet()
 
