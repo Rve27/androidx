@@ -675,5 +675,7 @@ public class TextLayout extends LayoutManager implements VariableSupport, Access
         serializer.add("fontWeight", mFontWeight);
         serializer.add("fontFamilyId", mFontFamilyId);
         serializer.add("textAlign", mTextAlign);
+        serializer.add("overflow", mOverflow);
+        serializer.add("maxLines", mMaxLines);
     }
 }
