@@ -165,32 +165,27 @@ package androidx.room3 {
   }
 
   public abstract class RoomDatabase {
-    ctor public RoomDatabase();
+    ctor @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public RoomDatabase();
     method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public void assertNotMainThread();
     method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public void assertNotSuspendingTransaction();
     method @Deprecated public void beginTransaction();
     method @WorkerThread public abstract void clearAllTables();
     method public void close();
     method public androidx.sqlite.db.SupportSQLiteStatement compileStatement(String sql);
-    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public java.util.List<androidx.room3.migration.Migration> createAutoMigrations(java.util.Map<kotlin.reflect.KClass<? extends androidx.room3.migration.AutoMigrationSpec>,? extends androidx.room3.migration.AutoMigrationSpec> autoMigrationSpecs);
+    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public abstract java.util.List<androidx.room3.migration.Migration> createAutoMigrations(java.util.Map<kotlin.reflect.KClass<? extends androidx.room3.migration.AutoMigrationSpec>,? extends androidx.room3.migration.AutoMigrationSpec> autoMigrationSpecs);
     method protected abstract androidx.room3.InvalidationTracker createInvalidationTracker();
-    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) protected androidx.room3.RoomOpenDelegateMarker createOpenDelegate();
-    method @Deprecated protected androidx.sqlite.db.SupportSQLiteOpenHelper createOpenHelper(androidx.room3.DatabaseConfiguration config);
+    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) protected abstract androidx.room3.RoomOpenDelegateMarker createOpenDelegate();
     method @Deprecated public void endTransaction();
-    method @Deprecated @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) @kotlin.jvm.JvmSuppressWildcards public java.util.List<androidx.room3.migration.Migration> getAutoMigrations(java.util.Map<java.lang.Class<? extends androidx.room3.migration.AutoMigrationSpec>,androidx.room3.migration.AutoMigrationSpec> autoMigrationSpecs);
     method @InaccessibleFromKotlin public androidx.room3.InvalidationTracker getInvalidationTracker();
     method @InaccessibleFromKotlin public androidx.sqlite.db.SupportSQLiteOpenHelper getOpenHelper();
     method @InaccessibleFromKotlin public java.util.concurrent.Executor getQueryExecutor();
-    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public java.util.Set<kotlin.reflect.KClass<? extends androidx.room3.migration.AutoMigrationSpec>> getRequiredAutoMigrationSpecClasses();
-    method @Deprecated @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public java.util.Set<java.lang.Class<? extends androidx.room3.migration.AutoMigrationSpec>> getRequiredAutoMigrationSpecs();
-    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) protected java.util.Map<kotlin.reflect.KClass<? extends java.lang.Object?>,java.util.List<kotlin.reflect.KClass<? extends java.lang.Object?>>> getRequiredTypeConverterClasses();
+    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public abstract java.util.Set<kotlin.reflect.KClass<? extends androidx.room3.migration.AutoMigrationSpec>> getRequiredAutoMigrationSpecClasses();
+    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) protected abstract java.util.Map<kotlin.reflect.KClass<? extends java.lang.Object?>,java.util.List<kotlin.reflect.KClass<? extends java.lang.Object?>>> getRequiredTypeConverterClasses();
     method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) protected java.util.Map<java.lang.Class<? extends java.lang.Object?>,java.util.List<java.lang.Class<? extends java.lang.Object?>>> getRequiredTypeConverters();
     method @InaccessibleFromKotlin public java.util.concurrent.Executor getTransactionExecutor();
-    method @Deprecated public <T> T? getTypeConverter(Class<T> klass);
     method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final <T> T getTypeConverter(kotlin.reflect.KClass<T> klass);
     method public boolean inTransaction();
     method @CallSuper public void init(androidx.room3.DatabaseConfiguration configuration);
-    method @Deprecated protected void internalInitInvalidationTracker(androidx.sqlite.db.SupportSQLiteDatabase db);
     method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) protected final void internalInitInvalidationTracker(androidx.sqlite.SQLiteConnection connection);
     method @InaccessibleFromKotlin public boolean isOpen();
     method public android.database.Cursor query(androidx.sqlite.db.SupportSQLiteQuery query);
@@ -201,13 +196,11 @@ package androidx.room3 {
     method @Deprecated public void setTransactionSuccessful();
     property public androidx.room3.InvalidationTracker invalidationTracker;
     property public boolean isOpen;
-    property @Deprecated protected final java.util.List<androidx.room3.RoomDatabase.Callback>? mCallbacks;
     property public androidx.sqlite.db.SupportSQLiteOpenHelper openHelper;
     property public java.util.concurrent.Executor queryExecutor;
     property public java.util.concurrent.Executor transactionExecutor;
     field public static final androidx.room3.RoomDatabase.Companion Companion;
     field @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static final int MAX_BIND_PARAMETER_CNT = 999; // 0x3e7
-    field @Deprecated @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) protected java.util.List<? extends androidx.room3.RoomDatabase.Callback>? mCallbacks;
   }
 
   public static class RoomDatabase.Builder<T extends androidx.room3.RoomDatabase> {
@@ -321,39 +314,6 @@ package androidx.room3 {
   }
 
   public interface RoomOpenDelegateMarker {
-  }
-
-  @Deprecated @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public class RoomOpenHelper extends androidx.sqlite.db.SupportSQLiteOpenHelper.Callback {
-    ctor @Deprecated public RoomOpenHelper(androidx.room3.DatabaseConfiguration configuration, androidx.room3.RoomOpenHelper.Delegate delegate, String legacyHash);
-    ctor @Deprecated public RoomOpenHelper(androidx.room3.DatabaseConfiguration configuration, androidx.room3.RoomOpenHelper.Delegate delegate, String identityHash, String legacyHash);
-    method @Deprecated public void onCreate(androidx.sqlite.db.SupportSQLiteDatabase db);
-    method @Deprecated public void onUpgrade(androidx.sqlite.db.SupportSQLiteDatabase db, int oldVersion, int newVersion);
-    field @Deprecated public static final androidx.room3.RoomOpenHelper.Companion Companion;
-  }
-
-  @Deprecated public static final class RoomOpenHelper.Companion {
-  }
-
-  @Deprecated @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public abstract static class RoomOpenHelper.Delegate {
-    ctor @Deprecated public RoomOpenHelper.Delegate(int version);
-    method @Deprecated public abstract void createAllTables(androidx.sqlite.db.SupportSQLiteDatabase db);
-    method @Deprecated public abstract void dropAllTables(androidx.sqlite.db.SupportSQLiteDatabase db);
-    method @Deprecated public abstract void onCreate(androidx.sqlite.db.SupportSQLiteDatabase db);
-    method @Deprecated public abstract void onOpen(androidx.sqlite.db.SupportSQLiteDatabase db);
-    method @Deprecated public void onPostMigrate(androidx.sqlite.db.SupportSQLiteDatabase db);
-    method @Deprecated public void onPreMigrate(androidx.sqlite.db.SupportSQLiteDatabase db);
-    method @Deprecated public androidx.room3.RoomOpenHelper.ValidationResult onValidateSchema(androidx.sqlite.db.SupportSQLiteDatabase db);
-    method @Deprecated protected void validateMigration(androidx.sqlite.db.SupportSQLiteDatabase db);
-    property @Deprecated public final int version;
-    field @Deprecated public final int version;
-  }
-
-  @Deprecated @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static class RoomOpenHelper.ValidationResult {
-    ctor @Deprecated public RoomOpenHelper.ValidationResult(boolean isValid, String? expectedFoundMsg);
-    property @Deprecated public final String? expectedFoundMsg;
-    property @Deprecated public final boolean isValid;
-    field @Deprecated public final String? expectedFoundMsg;
-    field @Deprecated public final boolean isValid;
   }
 
   public final class RoomRawQuery {
