@@ -19,6 +19,8 @@ package androidx.room3
 import android.database.sqlite.SQLiteException
 import android.os.CancellationSignal
 import androidx.kruth.assertThat
+import androidx.room3.migration.AutoMigrationSpec
+import androidx.room3.migration.Migration
 import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
 import androidx.test.filters.SmallTest
@@ -26,6 +28,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import java.util.concurrent.Callable
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Executors
+import kotlin.reflect.KClass
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
@@ -221,6 +224,20 @@ class CoroutineRoomCancellationTest {
 
         override fun createInvalidationTracker(): InvalidationTracker {
             return TestInvalidationTracker(this)
+        }
+
+        override fun createAutoMigrations(
+            autoMigrationSpecs: Map<KClass<out AutoMigrationSpec>, AutoMigrationSpec>
+        ): List<Migration> {
+            return emptyList()
+        }
+
+        override fun getRequiredAutoMigrationSpecClasses(): Set<KClass<out AutoMigrationSpec>> {
+            return emptySet()
+        }
+
+        override fun getRequiredTypeConverterClasses(): Map<KClass<*>, List<KClass<*>>> {
+            return emptyMap()
         }
 
         override fun clearAllTables() {
