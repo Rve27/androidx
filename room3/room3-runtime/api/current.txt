@@ -3,7 +3,6 @@ package androidx.room3 {
 
   public class DatabaseConfiguration {
     method public boolean isMigrationRequired(int fromVersion, int toVersion);
-    method @Deprecated public boolean isMigrationRequiredFrom(int version);
     property public final boolean allowDestructiveMigrationForAllTables;
     property public final boolean allowDestructiveMigrationOnDowngrade;
     property public final boolean allowMainThreadQueries;
