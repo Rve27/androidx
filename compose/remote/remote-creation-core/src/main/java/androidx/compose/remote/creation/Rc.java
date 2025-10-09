@@ -797,4 +797,10 @@ public class Rc {
         public static final float FIRST_BASELINE = RemoteContext.FIRST_BASELINE;
         public static final float LAST_BASELINE = RemoteContext.LAST_BASELINE;
     }
+
+    public static class PathEffect {
+        public static final int PATH_DASH_TRANSLATE = 0;
+        public static final int PATH_DASH_ROTATE = 1;
+        public static final int PATH_DASH_MORPH = 2;
+    }
 }
