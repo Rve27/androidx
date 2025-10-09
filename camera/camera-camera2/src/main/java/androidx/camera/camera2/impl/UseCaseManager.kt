@@ -528,6 +528,7 @@ constructor(
         // Close prior camera graph
         camera.let { useCaseCamera ->
             _activeComponent = null
+            cameraCoordinator.removePendingCameraInfo(cameraInfoInternal.get())
             useCaseCamera?.close()?.let { closingJob ->
                 closingCameraJobs.add(closingJob)
                 closingJob.invokeOnCompletion {
@@ -546,6 +547,7 @@ constructor(
     internal fun tryResumeUseCaseManager(useCaseManagerConfig: UseCaseManagerConfig) {
         if (!shouldCreateCameraGraphImmediately) {
             deferredUseCaseManagerConfig = useCaseManagerConfig
+            cameraCoordinator.addPendingCameraInfo(cameraInfoInternal.get())
             return
         }
         val cameraGraph = cameraPipe.createCameraGraph(useCaseManagerConfig.cameraGraphConfig)
