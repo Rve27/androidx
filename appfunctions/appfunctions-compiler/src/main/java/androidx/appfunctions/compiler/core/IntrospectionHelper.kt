@@ -256,6 +256,8 @@ object IntrospectionHelper {
     object AppFunctionDataClass {
         val CLASS_NAME = ClassName(APP_FUNCTIONS_PACKAGE_NAME, "AppFunctionData")
 
+        val APP_FUNCTION_DATA_QUALIFIED_NAME_PROPERTY = "qualifiedName"
+
         object BuilderClass {
             val CLASS_NAME = ClassName(APP_FUNCTIONS_PACKAGE_NAME, "AppFunctionData", "Builder")
         }
