@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,13 @@
  * limitations under the License.
  */
 
-package foo.bar;
-import androidx.room3.*;
-import java.util.List;
+package androidx.room3.util
 
-@Dao
-abstract interface WriterDao {
-    @Insert
-    void insertUser(User user);
-    @Insert
-    void insertUsers(User user1, List<User> others);
-    @Insert(onConflict=OnConflictStrategy.REPLACE)
-    void insertUsers(User[] users);
-    @Insert(onConflict=OnConflictStrategy.NONE)
-    void insertTwoUsers(User userOne, User userTwo);
-    @Insert
-    void insertUserAndBook(User user, Book book);
+import java.security.MessageDigest
+
+/** Gets the MD5 hex string of the receiver text. */
+fun String.md5Hex(): String {
+    val md = MessageDigest.getInstance("MD5")
+    val digest = md.digest(this.toByteArray())
+    return digest.toHexString()
 }
