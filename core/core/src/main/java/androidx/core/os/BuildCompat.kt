@@ -312,9 +312,9 @@ public object BuildCompat {
      * @return `true` if Baklava minor release 1 APIs are available for use, `false` otherwise
      */
     @JvmStatic
-    @RequiresApi(Build.VERSION_CODES_FULL.BAKLAVA_1)
     public fun isAtLeastB_1(): Boolean =
-        Build.VERSION.SDK_INT_FULL >= Build.VERSION_CODES_FULL.BAKLAVA_1
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA &&
+            Build.VERSION.SDK_INT_FULL >= Build.VERSION_CODES_FULL.BAKLAVA_1
 
     /**
      * Experimental feature set for pre-release SDK checks.

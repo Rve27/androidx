@@ -777,15 +777,6 @@
 
     <issue
         id="ObsoleteSdkInt"
-        message="Unnecessary; `SDK_INT_FULL` is always >= 36.1"
-        errorLine1="        Build.VERSION.SDK_INT_FULL >= Build.VERSION_CODES_FULL.BAKLAVA_1"
-        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/androidx/core/os/BuildCompat.kt"/>
-    </issue>
-
-    <issue
-        id="ObsoleteSdkInt"
         message="Unnecessary; `SDK_INT` is always >= 30"
         errorLine1="            if (VERSION.SDK_INT >= 30) { // Satisfy reflection lint check"
         errorLine2="                ~~~~~~~~~~~~~~~~~~~~~">
