@@ -123,8 +123,8 @@ constructor(
     }
 
     override fun toString(): String {
-        return "BackEventCompat{touchX=$touchX, touchY=$touchY, progress=$progress, " +
-            "swipeEdge=$swipeEdge, frameTimeMillis=$frameTimeMillis}"
+        return "BackEventCompat(touchX=$touchX, touchY=$touchY, progress=$progress, " +
+            "swipeEdge=$swipeEdge, frameTimeMillis=$frameTimeMillis)"
     }
 
     companion object {
