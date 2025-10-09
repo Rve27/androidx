@@ -792,4 +792,9 @@ public class Rc {
         public static final int LINEAR_PATH = LINEAR;
         public static final int POLAR_PATH = POLAR;
     }
+
+    public static class Layout {
+        public static final float FIRST_BASELINE = RemoteContext.FIRST_BASELINE;
+        public static final float LAST_BASELINE = RemoteContext.LAST_BASELINE;
+    }
 }
