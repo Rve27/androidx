@@ -4252,7 +4252,7 @@ package androidx.core.view.accessibility {
     method public CharSequence! getContentDescription();
     method public int getDrawingOrder();
     method public CharSequence! getError();
-    method public int getExpandedState();
+    method @androidx.core.view.accessibility.AccessibilityNodeInfoCompat.ExpandedState public int getExpandedState();
     method public android.view.accessibility.AccessibilityNodeInfo.ExtraRenderingInfo? getExtraRenderingInfo();
     method public android.os.Bundle! getExtras();
     method public CharSequence? getHintText();
@@ -4347,7 +4347,7 @@ package androidx.core.view.accessibility {
     method public void setEditable(boolean);
     method public void setEnabled(boolean);
     method public void setError(CharSequence!);
-    method public void setExpandedState(int);
+    method public void setExpandedState(@androidx.core.view.accessibility.AccessibilityNodeInfoCompat.ExpandedState int);
     method public void setFieldRequired(boolean);
     method public void setFocusable(boolean);
     method public void setFocused(boolean);
@@ -4564,6 +4564,9 @@ package androidx.core.view.accessibility {
     method public androidx.core.view.accessibility.AccessibilityNodeInfoCompat.CollectionItemInfoCompat.Builder setRowSpan(int);
     method public androidx.core.view.accessibility.AccessibilityNodeInfoCompat.CollectionItemInfoCompat.Builder setRowTitle(String?);
     method public androidx.core.view.accessibility.AccessibilityNodeInfoCompat.CollectionItemInfoCompat.Builder setSelected(boolean);
+  }
+
+  @IntDef(flag=false, value={androidx.core.view.accessibility.AccessibilityNodeInfoCompat.EXPANDED_STATE_UNDEFINED, androidx.core.view.accessibility.AccessibilityNodeInfoCompat.EXPANDED_STATE_COLLAPSED, androidx.core.view.accessibility.AccessibilityNodeInfoCompat.EXPANDED_STATE_PARTIAL, androidx.core.view.accessibility.AccessibilityNodeInfoCompat.EXPANDED_STATE_FULL}) @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) @java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.SOURCE) public static @interface AccessibilityNodeInfoCompat.ExpandedState {
   }
 
   public static class AccessibilityNodeInfoCompat.RangeInfoCompat {
