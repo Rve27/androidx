@@ -76,7 +76,6 @@ import kotlinx.coroutines.asContextElement
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.asExecutor
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
@@ -2024,40 +2023,6 @@ internal class TransactionElement(internal val transactionDispatcher: Continuati
     override val key: CoroutineContext.Key<TransactionElement>
         get() = TransactionElement
 }
-
-/**
- * Creates a [Flow] that listens for changes in the database via the [InvalidationTracker] and emits
- * sets of the tables that were invalidated.
- *
- * The Flow will emit at least one value, a set of all the tables registered for observation to
- * kick-start the stream unless [emitInitialState] is set to `false`.
- *
- * If one of the tables to observe does not exist in the database, this functions throws an
- * [IllegalArgumentException].
- *
- * The returned Flow can be used to create a stream that reacts to changes in the database:
- * ```
- * fun getArtistTours(from: Date, to: Date): Flow<Map<Artist, TourState>> {
- *   return db.invalidationTrackerFlow("Artist").map { _ ->
- *     val artists = artistsDao.getAllArtists()
- *     val tours = tourService.fetchStates(artists.map { it.id })
- *     associateTours(artists, tours, from, to)
- *   }
- * }
- * ```
- *
- * @param tables The name of the tables or views to observe.
- * @param emitInitialState Set to `false` if no initial emission is desired. Default value is
- *   `true`.
- */
-@Deprecated(
-    message = "Replaced by equivalent API in InvalidationTracker.",
-    replaceWith = ReplaceWith("this.invalidationTracker.createFlow(*tables)"),
-)
-public fun RoomDatabase.invalidationTrackerFlow(
-    vararg tables: String,
-    emitInitialState: Boolean = true,
-): Flow<Set<String>> = invalidationTracker.createFlow(*tables, emitInitialState = emitInitialState)
 
 /**
  * Compatibility suspend transaction execution with driver usage. This will maintain the dispatcher
