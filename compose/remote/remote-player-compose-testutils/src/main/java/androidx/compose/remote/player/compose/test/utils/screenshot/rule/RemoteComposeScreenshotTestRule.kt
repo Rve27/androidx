@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.compose.remote.test.screenshot.rule
+package androidx.compose.remote.player.compose.test.utils.screenshot.rule
 
 import android.content.res.Resources
 import androidx.compose.foundation.background
@@ -27,8 +27,8 @@ import androidx.compose.remote.creation.compose.layout.RemoteComposable
 import androidx.compose.remote.player.compose.ExperimentalRemoteComposePlayerApi
 import androidx.compose.remote.player.compose.RemoteComposePlayerFlags
 import androidx.compose.remote.player.compose.RemoteDocumentPlayer
+import androidx.compose.remote.player.compose.test.utils.screenshot.TargetPlayer
 import androidx.compose.remote.player.core.platform.BitmapLoader
-import androidx.compose.remote.test.screenshot.TargetPlayer
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.testutils.assertAgainstGolden
@@ -49,17 +49,16 @@ import androidx.test.screenshot.matchers.BitmapMatcher
 import kotlinx.coroutines.test.StandardTestDispatcher
 import org.junit.rules.ExternalResource
 import org.junit.rules.RuleChain
-import org.junit.rules.TestRule
 import org.junit.rules.TestWatcher
 import org.junit.runner.Description
 import org.junit.runners.model.Statement
 
 /**
- * A [TestRule] that takes screenshots of remote composable functions using devices and the Remote
- * Compose player.
+ * A [org.junit.rules.TestRule] that takes screenshots of remote composable functions using devices
+ * and the Remote Compose player.
  *
  * @param matcher The algorithm to be used to perform the matching. If null, it will let
- *   [assertAgainstGolden] use its default.
+ *   [androidx.compose.testutils.assertAgainstGolden] use its default.
  */
 @OptIn(ExperimentalRemoteComposePlayerApi::class)
 @SdkSuppress(minSdkVersion = 35, maxSdkVersion = 35)
