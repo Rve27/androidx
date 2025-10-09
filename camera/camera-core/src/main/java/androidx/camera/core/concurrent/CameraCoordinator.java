@@ -24,7 +24,6 @@ import androidx.annotation.RestrictTo;
 import androidx.camera.core.CameraInfo;
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.impl.CameraRepository;
-import androidx.camera.core.impl.CameraStateRegistry;
 import androidx.camera.core.impl.InternalCameraPresenceListener;
 
 import org.jspecify.annotations.NonNull;
@@ -100,8 +99,7 @@ public interface CameraCoordinator extends InternalCameraPresenceListener {
      *
      * <p>The paired camera id dictionary is constructed when constructor is called. This
      * internal API is used to look up paired camera id when coordinating device open and session
-     * config in {@link CameraStateRegistry}. Currently only dual cameras will be supported in
-     * concurrent mode.
+     * is configured. Currently only dual cameras will be supported in concurrent mode.
      *
      * @param cameraId camera id.
      * @return The paired camera id if exists or null if paired camera not exists.
@@ -147,8 +145,7 @@ public interface CameraCoordinator extends InternalCameraPresenceListener {
      * Interface for concurrent camera mode update.
      *
      * <p>Everytime user changes {@link CameraOperatingMode}, the observer will be notified and
-     * update related states or parameters accordingly. E.g. in {@link CameraStateRegistry}, we
-     * will update the number of max allowed cameras.
+     * update related states or parameters accordingly.
      */
     interface ConcurrentCameraModeListener {
         void onCameraOperatingModeUpdated(
