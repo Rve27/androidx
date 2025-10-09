@@ -674,18 +674,40 @@ constructor(
     }
 
     @GuardedBy("lock")
-    private fun shouldAddRepeatingUseCase(runningUseCases: Set<UseCase>): Boolean {
-        val isRepeatingStreamForced = cameraXConfig.isRepeatingStreamForced
-        val meteringRepeatingEnabled = attachedUseCases.contains(meteringRepeating)
-        if (!meteringRepeatingEnabled && isRepeatingStreamForced) {
-            val activeSurfaces = runningUseCases.withoutMetering().surfaceCount()
-            return activeSurfaces > 0 &&
-                with(attachedUseCases.withoutMetering()) {
-                    (onlyVideoCapture() || requireMeteringRepeating()) &&
-                        isMeteringCombinationSupported()
-                }
+    private fun isMeteringRepeatingRequired(runningUseCases: Set<UseCase>): Boolean {
+        if (!cameraXConfig.isRepeatingStreamForced) {
+            return false
         }
-        return false
+
+        val hasActiveSurfaces =
+            runningUseCases.any {
+                it != meteringRepeating && it.sessionConfig.surfaces.isNotEmpty()
+            }
+        if (!hasActiveSurfaces) {
+            return false
+        }
+
+        val attachedWithoutMetering = attachedUseCases.filter { it != meteringRepeating }
+
+        if (attachedWithoutMetering.isEmpty()) {
+            return false
+        }
+
+        return with(attachedWithoutMetering) {
+            (onlyVideoCapture() || requireMeteringRepeating()) && isMeteringCombinationSupported()
+        }
+    }
+
+    @GuardedBy("lock")
+    private fun shouldAddRepeatingUseCase(runningUseCases: Set<UseCase>): Boolean {
+        val isMeteringEnabled = attachedUseCases.contains(meteringRepeating)
+        return !isMeteringEnabled && isMeteringRepeatingRequired(runningUseCases)
+    }
+
+    @GuardedBy("lock")
+    private fun shouldRemoveRepeatingUseCase(runningUseCases: Set<UseCase>): Boolean {
+        val isMeteringEnabled = runningUseCases.contains(meteringRepeating)
+        return isMeteringEnabled && !isMeteringRepeatingRequired(runningUseCases)
     }
 
     @GuardedBy("lock")
@@ -694,20 +716,6 @@ constructor(
         meteringRepeating.setupSession()
         attach(listOf(meteringRepeating))
         activate(meteringRepeating)
-    }
-
-    @GuardedBy("lock")
-    private fun shouldRemoveRepeatingUseCase(runningUseCases: Set<UseCase>): Boolean {
-        val meteringRepeatingEnabled = runningUseCases.contains(meteringRepeating)
-        if (meteringRepeatingEnabled) {
-            val activeSurfaces = runningUseCases.withoutMetering().surfaceCount()
-            return activeSurfaces == 0 ||
-                with(attachedUseCases.withoutMetering()) {
-                    !(onlyVideoCapture() || requireMeteringRepeating()) ||
-                        !isMeteringCombinationSupported()
-                }
-        }
-        return false
     }
 
     @GuardedBy("lock")
@@ -898,16 +906,6 @@ constructor(
             meteringRepeating.attachedSurfaceResolution!!,
             meteringRepeating.currentConfig.streamUseCase,
         )
-
-    private fun Collection<UseCase>.surfaceCount(): Int =
-        ValidatingBuilder().let { validatingBuilder ->
-            forEach { useCase -> validatingBuilder.add(useCase.sessionConfig) }
-            return validatingBuilder.build().surfaces.size
-        }
-
-    private fun Collection<UseCase>.withoutMetering(): Collection<UseCase> = filterNot {
-        it is MeteringRepeating
-    }
 
     private fun Collection<UseCase>.requireMeteringRepeating(): Boolean {
         return isNotEmpty() &&
