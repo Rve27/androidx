@@ -16,15 +16,19 @@
 
 package androidx.camera.camera2.pipe.media
 
+import android.graphics.Rect
 import android.hardware.HardwareBuffer
 import android.media.Image
 import android.os.Build
 import androidx.test.filters.SdkSuppress
+import com.google.common.truth.Truth.assertThat
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.kotlin.any
+import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import org.robolectric.RobolectricTestRunner
@@ -41,6 +45,13 @@ class AndroidImageTest {
             if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O_MR1) {
                 whenever(it.hardwareBuffer).thenReturn(mock<HardwareBuffer>())
             }
+
+            var currentCropRect: Rect = IMAGE_CROP_RECT
+            doAnswer { invocation -> currentCropRect = invocation.getArgument<Rect>(0) }
+                .whenever(it)
+                .cropRect = any()
+
+            whenever(it.cropRect).thenAnswer { currentCropRect }
         }
 
     internal lateinit var androidImage: AndroidImage
@@ -74,7 +85,25 @@ class AndroidImageTest {
     @SdkSuppress(minSdkVersion = 28)
     fun getHardwareBuffer_returnsImageHardwareBuffer() {
         val hardwareBuffer = androidImage.unwrapAs(HardwareBuffer::class)
+
         assertNotNull(hardwareBuffer)
+    }
+
+    @Test
+    fun getCropRect_returnsImageCropRect() {
+        val cropRect = androidImage.cropRect
+
+        assertThat(cropRect.left).isEqualTo(mockImage.cropRect.left)
+        assertThat(cropRect.top).isEqualTo(mockImage.cropRect.top)
+        assertThat(cropRect.right).isEqualTo(mockImage.cropRect.right)
+        assertThat(cropRect.bottom).isEqualTo(mockImage.cropRect.bottom)
+    }
+
+    @Test
+    fun setCropRect_setsNewRectValue() {
+        androidImage.cropRect = NEW_CROP_RECT
+
+        assertThat(androidImage.cropRect).isEqualTo(NEW_CROP_RECT)
     }
 
     companion object {
@@ -82,5 +111,8 @@ class AndroidImageTest {
         private val IMAGE_WIDTH: Int = 200
         private val IMAGE_FORMAT: Int = 3
         private val IMAGE_TIMESTAMP: Long = 1234
+        private val IMAGE_CROP_RECT: Rect = Rect(0, 0, IMAGE_WIDTH, IMAGE_HEIGHT)
+        private val NEW_CROP_RECT: Rect =
+            Rect(IMAGE_WIDTH / 2, IMAGE_HEIGHT / 2, IMAGE_WIDTH, IMAGE_HEIGHT)
     }
 }
