@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.compose.remote.test.screenshot
+package androidx.compose.remote.player.compose.test.utils.screenshot
 
 enum class TargetPlayer(val packageName: String) {
     View(packageName = "androidx.compose.remote.player.view"),

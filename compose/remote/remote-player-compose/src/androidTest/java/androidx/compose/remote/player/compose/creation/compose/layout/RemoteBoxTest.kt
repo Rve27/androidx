@@ -29,8 +29,8 @@ import androidx.compose.remote.creation.compose.modifier.height
 import androidx.compose.remote.creation.compose.modifier.size
 import androidx.compose.remote.creation.compose.modifier.width
 import androidx.compose.remote.player.compose.SCREENSHOT_GOLDEN_DIRECTORY
-import androidx.compose.remote.test.screenshot.TargetPlayer
-import androidx.compose.remote.test.screenshot.rule.RemoteComposeScreenshotTestRule
+import androidx.compose.remote.player.compose.test.utils.screenshot.TargetPlayer
+import androidx.compose.remote.player.compose.test.utils.screenshot.rule.RemoteComposeScreenshotTestRule
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
