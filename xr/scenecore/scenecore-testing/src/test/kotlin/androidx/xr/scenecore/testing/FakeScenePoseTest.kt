@@ -19,25 +19,25 @@ package androidx.xr.scenecore.testing
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Quaternion.Companion.fromEulerAngles
 import androidx.xr.runtime.math.Vector3
-import androidx.xr.scenecore.runtime.ActivityPose
 import androidx.xr.scenecore.runtime.HitTestResult
 import androidx.xr.scenecore.runtime.HitTestResult.HitTestSurfaceType
+import androidx.xr.scenecore.runtime.ScenePose
 import com.google.common.truth.Truth.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 
-/** This test should cover all the methods in [androidx.xr.scenecore.runtime.ActivityPose]. */
+/** This test should cover all the methods in [androidx.xr.scenecore.runtime.ScenePose]. */
 @RunWith(JUnit4::class)
-class FakeActivityPoseTest {
-    private lateinit var underTest: FakeActivityPose
-    private lateinit var otherActivitySpace: FakeActivityPose
+class FakeScenePoseTest {
+    private lateinit var underTest: FakeScenePose
+    private lateinit var otherActivitySpace: FakeScenePose
 
     @Before
     fun setUp() {
-        underTest = FakeActivityPose()
-        otherActivitySpace = FakeActivityPose()
+        underTest = FakeScenePose()
+        otherActivitySpace = FakeScenePose()
     }
 
     @Test
@@ -76,7 +76,7 @@ class FakeActivityPoseTest {
 
         val origin = Vector3(1f, 2f, 3f)
         val direction = Vector3(4f, 5f, 6f)
-        val filter = ActivityPose.HitTestFilter.SELF_SCENE
+        val filter = ScenePose.HitTestFilter.SELF_SCENE
 
         assertThat(underTest.hitTest(origin, direction, filter).get()).isEqualTo(expectedValue)
     }
@@ -95,7 +95,7 @@ class FakeActivityPoseTest {
 
         val origin = Vector3(1f, 2f, 3f)
         val direction = Vector3(4f, 5f, 6f)
-        val filter = ActivityPose.HitTestFilter.SELF_SCENE
+        val filter = ScenePose.HitTestFilter.SELF_SCENE
 
         assertThat(underTest.hitTest(origin, direction, filter).get()).isEqualTo(expectedValue)
     }

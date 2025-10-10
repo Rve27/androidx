@@ -18,6 +18,5 @@ package androidx.xr.scenecore.runtime
 
 import androidx.annotation.RestrictTo
 
-/** Interface for a XR Runtime head ActivityPose. This is the position of the user's head. */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public interface HeadActivityPose : ActivityPose {}
+/** Interface for a XR Runtime head ScenePose. This is the position of the user's head. */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface HeadScenePose : ScenePose {}

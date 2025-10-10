@@ -22,18 +22,18 @@ import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Vector3
 import com.google.common.util.concurrent.ListenableFuture
 
-/** Interface for an XR Runtime ActivityPose. */
+/** Interface for an XR Runtime ScenePose. */
 // TODO: b/420684433 This interface name no longer matches the public SceneCore interface name.
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public interface ActivityPose {
+public interface ScenePose {
     /** Returns the pose for this entity, relative to the activity space root. */
     public val activitySpacePose: Pose
 
     // TODO: b/364303733 - Consider deprecating this method.
     /**
-     * Returns the scale of this ActivityPose. For base ActivityPoses, the scale is (1,1,1). For
-     * entities this returns the accumulated scale. This value includes the parent's scale, and is
-     * similar to a ActivitySpace scale.
+     * Returns the scale of this ScenePose. For base ScenePoses, the scale is (1,1,1). For entities
+     * this returns the accumulated scale. This value includes the parent's scale, and is similar to
+     * a ActivitySpace scale.
      *
      * @return Total [androidx.xr.runtime.math.Vector3] scale applied to self and children.
      */
@@ -56,11 +56,11 @@ public interface ActivityPose {
      * @param destination The entity which the returned pose will be relative to.
      * @return The pose relative to the destination entity.
      */
-    public fun transformPoseTo(pose: Pose, destination: ActivityPose): Pose
+    public fun transformPoseTo(pose: Pose, destination: ScenePose): Pose
 
-    /** A filter for which Scenes to hit test with ActivityPose.hitTest */
+    /** A filter for which Scenes to hit test with ScenePose.hitTest */
     public object HitTestFilter {
-        /** Register hit tests for the scene which this Activity pose belongs to. */
+        /** Register hit tests for the scene which this Scene pose belongs to. */
         public const val SELF_SCENE: Int = 1 shl 0
         /**
          * Register hit tests only for other scenes. An Application will only have access to other
@@ -78,11 +78,11 @@ public interface ActivityPose {
      * Creates a hit test at the from the specified origin in the specified direction into the
      * scene.
      *
-     * @param origin The translation of the origin of the hit test relative to this ActivityPose.
-     * @param direction The direction for the hit test ray from the ActivityPose.
+     * @param origin The translation of the origin of the hit test relative to this ScenePose.
+     * @param direction The direction for the hit test ray from the ScenePose.
      * @param hitTestFilter The scenes that will be in range for the hit test.
      * @return a {@code ListenableFuture<HitResult>}. The HitResult describes if it hit something
-     *   and where relative to this [ActivityPose]. Listeners will be called on the main thread if
+     *   and where relative to this [ScenePose]. Listeners will be called on the main thread if
      *   Runnable::run is supplied.
      */
     @Suppress("AsyncSuffixFuture")

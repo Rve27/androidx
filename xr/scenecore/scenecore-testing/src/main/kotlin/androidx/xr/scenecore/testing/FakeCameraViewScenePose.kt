@@ -17,9 +17,9 @@
 package androidx.xr.scenecore.testing
 
 import androidx.annotation.RestrictTo
-import androidx.xr.scenecore.runtime.CameraViewActivityPose
-import androidx.xr.scenecore.runtime.CameraViewActivityPose.CameraType
-import androidx.xr.scenecore.runtime.CameraViewActivityPose.Fov
+import androidx.xr.scenecore.runtime.CameraViewScenePose
+import androidx.xr.scenecore.runtime.CameraViewScenePose.CameraType
+import androidx.xr.scenecore.runtime.CameraViewScenePose.Fov
 import androidx.xr.scenecore.runtime.PixelDimensions
 
 /**
@@ -27,8 +27,8 @@ import androidx.xr.scenecore.runtime.PixelDimensions
  * field of view of the camera.
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public open class FakeCameraViewActivityPose(@CameraType override val cameraType: Int = 0) :
-    CameraViewActivityPose, FakeActivityPose() {
+public open class FakeCameraViewScenePose(@CameraType override val cameraType: Int = 0) :
+    CameraViewScenePose, FakeScenePose() {
 
     /** Returns the field of view for this camera. */
     override var fov: Fov = Fov(0.0f, 0.0f, 0.0f, 0.0f)

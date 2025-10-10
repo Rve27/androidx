@@ -19,8 +19,8 @@ package androidx.xr.scenecore.runtime
 import androidx.annotation.RestrictTo
 
 /**
- * Interface for the perception space ActivityPose. This is the origin of the space used by ARCore
- * for XR.
+ * Interface for the perception space ScenePose. This is the origin of the space used by ARCore for
+ * XR.
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public interface PerceptionSpaceActivityPose : ActivityPose {}
+public interface PerceptionSpaceScenePose : ScenePose {}

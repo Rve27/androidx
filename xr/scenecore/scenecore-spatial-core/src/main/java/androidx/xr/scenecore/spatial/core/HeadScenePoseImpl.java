@@ -20,7 +20,7 @@ import androidx.xr.runtime.math.Pose;
 import androidx.xr.runtime.math.Vector3;
 import androidx.xr.scenecore.impl.perception.PerceptionLibrary;
 import androidx.xr.scenecore.impl.perception.Session;
-import androidx.xr.scenecore.runtime.HeadActivityPose;
+import androidx.xr.scenecore.runtime.HeadScenePose;
 import androidx.xr.scenecore.runtime.HitTestResult;
 
 import com.google.common.util.concurrent.ListenableFuture;
@@ -29,39 +29,39 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 /**
- * An ActivityPose representing the head of the user. This can be used to determine the location of
+ * An ScenePose representing the head of the user. This can be used to determine the location of
  * the user's head.
  */
-class HeadScenePoseImpl extends BaseActivityPose implements HeadActivityPose {
+class HeadScenePoseImpl extends BaseScenePose implements HeadScenePose {
     private final PerceptionLibrary mPerceptionLibrary;
     private final ActivitySpaceImpl mActivitySpace;
-    private final OpenXrActivityPoseHelper mOpenXrActivityPoseHelper;
+    private final OpenXrScenePoseHelper mOpenXrScenePoseHelper;
     // Default the pose to null. A null pose indicates that the head is not ready yet.
     private Pose mLastOpenXrPose = null;
 
-    HeadActivityPoseImpl(
+    HeadScenePoseImpl(
             ActivitySpaceImpl activitySpace,
             AndroidXrEntity activitySpaceRoot,
             PerceptionLibrary perceptionLibrary) {
         this.mActivitySpace = activitySpace;
         mPerceptionLibrary = perceptionLibrary;
-        mOpenXrActivityPoseHelper = new OpenXrActivityPoseHelper(activitySpace, activitySpaceRoot);
+        mOpenXrScenePoseHelper = new OpenXrScenePoseHelper(activitySpace, activitySpaceRoot);
     }
 
     @Override
     public @NonNull Pose getPoseInActivitySpace() {
-        return mOpenXrActivityPoseHelper.getPoseInActivitySpace(getPoseInOpenXrReferenceSpace());
+        return mOpenXrScenePoseHelper.getPoseInActivitySpace(getPoseInOpenXrReferenceSpace());
     }
 
     @Override
     public @NonNull Pose getActivitySpacePose() {
-        return mOpenXrActivityPoseHelper.getActivitySpacePose(getPoseInOpenXrReferenceSpace());
+        return mOpenXrScenePoseHelper.getActivitySpacePose(getPoseInOpenXrReferenceSpace());
     }
 
     @Override
     public @NonNull Vector3 getActivitySpaceScale() {
         // This WorldPose is assumed to always have a scale of 1.0f in the OpenXR reference space.
-        return mOpenXrActivityPoseHelper.getActivitySpaceScale(new Vector3(1f, 1f, 1f));
+        return mOpenXrScenePoseHelper.getActivitySpaceScale(new Vector3(1f, 1f, 1f));
     }
 
     @Override

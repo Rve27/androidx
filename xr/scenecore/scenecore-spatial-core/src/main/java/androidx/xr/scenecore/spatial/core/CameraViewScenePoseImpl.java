@@ -27,7 +27,7 @@ import androidx.xr.scenecore.impl.perception.PerceptionLibrary;
 import androidx.xr.scenecore.impl.perception.Session;
 import androidx.xr.scenecore.impl.perception.ViewProjection;
 import androidx.xr.scenecore.impl.perception.ViewProjections;
-import androidx.xr.scenecore.runtime.CameraViewActivityPose;
+import androidx.xr.scenecore.runtime.CameraViewScenePose;
 import androidx.xr.scenecore.runtime.HitTestResult;
 import androidx.xr.scenecore.runtime.PixelDimensions;
 
@@ -37,18 +37,18 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 /**
- * A ActivityPose representing a user's camera. This can be used to determine the location and field
+ * A ScenePose representing a user's camera. This can be used to determine the location and field
  * of view of the camera.
  */
-final class CameraViewScenePoseImpl extends BaseActivityPose implements CameraViewActivityPose {
+final class CameraViewScenePoseImpl extends BaseScenePose implements CameraViewScenePose {
     private final PerceptionLibrary mPerceptionLibrary;
     @CameraType private final int mCameraType;
     private final ActivitySpaceImpl mActivitySpace;
-    private final OpenXrActivityPoseHelper mOpenXrActivityPoseHelper;
+    private final OpenXrScenePoseHelper mOpenXrScenePoseHelper;
     // Default the pose to null. A null pose indicates that the camera is not ready yet.
     private Pose mLastOpenXrPose = null;
 
-    CameraViewActivityPoseImpl(
+    CameraViewScenePoseImpl(
             @CameraType int cameraType,
             ActivitySpaceImpl activitySpace,
             AndroidXrEntity activitySpaceRoot,
@@ -56,23 +56,23 @@ final class CameraViewScenePoseImpl extends BaseActivityPose implements CameraVi
         mCameraType = cameraType;
         mPerceptionLibrary = perceptionLibrary;
         mActivitySpace = activitySpace;
-        mOpenXrActivityPoseHelper = new OpenXrActivityPoseHelper(activitySpace, activitySpaceRoot);
+        mOpenXrScenePoseHelper = new OpenXrScenePoseHelper(activitySpace, activitySpaceRoot);
     }
 
     @Override
     public @NonNull Pose getPoseInActivitySpace() {
-        return mOpenXrActivityPoseHelper.getPoseInActivitySpace(getPoseInOpenXrReferenceSpace());
+        return mOpenXrScenePoseHelper.getPoseInActivitySpace(getPoseInOpenXrReferenceSpace());
     }
 
     @Override
     public @NonNull Pose getActivitySpacePose() {
-        return mOpenXrActivityPoseHelper.getActivitySpacePose(getPoseInOpenXrReferenceSpace());
+        return mOpenXrScenePoseHelper.getActivitySpacePose(getPoseInOpenXrReferenceSpace());
     }
 
     @Override
     public @NonNull Vector3 getActivitySpaceScale() {
         // This WorldPose is assumed to always have a scale of 1.0f in the OpenXR reference space.
-        return mOpenXrActivityPoseHelper.getActivitySpaceScale(new Vector3(1f, 1f, 1f));
+        return mOpenXrScenePoseHelper.getActivitySpaceScale(new Vector3(1f, 1f, 1f));
     }
 
     @Override
@@ -94,9 +94,9 @@ final class CameraViewScenePoseImpl extends BaseActivityPose implements CameraVi
             // Error retrieving the camera.
             return null;
         }
-        if (mCameraType == CameraViewActivityPose.CameraType.CAMERA_TYPE_LEFT_EYE) {
+        if (mCameraType == CameraViewScenePose.CameraType.CAMERA_TYPE_LEFT_EYE) {
             return perceptionViews.getLeftEye();
-        } else if (mCameraType == CameraViewActivityPose.CameraType.CAMERA_TYPE_RIGHT_EYE) {
+        } else if (mCameraType == CameraViewScenePose.CameraType.CAMERA_TYPE_RIGHT_EYE) {
             return perceptionViews.getRightEye();
         } else {
             // Unsupported camera type: mCameraType

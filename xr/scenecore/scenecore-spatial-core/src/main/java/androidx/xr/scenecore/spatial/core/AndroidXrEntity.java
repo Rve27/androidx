@@ -25,7 +25,7 @@ import androidx.xr.scenecore.runtime.ActivitySpace;
 import androidx.xr.scenecore.runtime.Entity;
 import androidx.xr.scenecore.runtime.HitTestResult;
 import androidx.xr.scenecore.runtime.InputEventListener;
-import androidx.xr.scenecore.runtime.PerceptionSpaceActivityPose;
+import androidx.xr.scenecore.runtime.PerceptionSpaceScenePose;
 import androidx.xr.scenecore.runtime.PointerCaptureComponent;
 import androidx.xr.scenecore.runtime.Space;
 import androidx.xr.scenecore.runtime.SpaceValue;
@@ -167,11 +167,11 @@ abstract class AndroidXrEntity extends BaseEntity implements Entity {
     }
 
     private Pose getPoseInPerceptionSpace() {
-        PerceptionSpaceActivityPose perceptionSpaceActivityPose =
+        PerceptionSpaceScenePose perceptionSpaceScenePose =
                 mEntityManager
-                        .getSystemSpaceActivityPoseOfType(PerceptionSpaceActivityPose.class)
+                        .getSystemSpaceActivityPoseOfType(PerceptionSpaceScenePose.class)
                         .get(0);
-        return transformPoseTo(new Pose(), perceptionSpaceActivityPose);
+        return transformPoseTo(new Pose(), perceptionSpaceScenePose);
     }
 
     private Pose getLocalPoseForActivitySpacePose(Pose pose) {
@@ -191,11 +191,11 @@ abstract class AndroidXrEntity extends BaseEntity implements Entity {
                     "Cannot get pose in Activity Space with a non-AndroidXrEntity parent");
         }
         AndroidXrEntity xrParent = (AndroidXrEntity) getParent();
-        PerceptionSpaceActivityPose perceptionSpaceActivityPose =
+        PerceptionSpaceScenePose perceptionSpaceScenePose =
                 mEntityManager
-                        .getSystemSpaceActivityPoseOfType(PerceptionSpaceActivityPose.class)
+                        .getSystemSpaceActivityPoseOfType(PerceptionSpaceScenePose.class)
                         .get(0);
-        return perceptionSpaceActivityPose.transformPoseTo(pose, xrParent);
+        return perceptionSpaceScenePose.transformPoseTo(pose, xrParent);
     }
 
     // Returns the underlying extension Node for the Entity.

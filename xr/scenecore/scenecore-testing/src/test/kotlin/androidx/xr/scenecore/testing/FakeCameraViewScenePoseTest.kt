@@ -16,17 +16,17 @@
 
 package androidx.xr.scenecore.testing
 
-import androidx.xr.scenecore.runtime.CameraViewActivityPose.CameraType
+import androidx.xr.scenecore.runtime.CameraViewScenePose.CameraType
 import androidx.xr.scenecore.runtime.PixelDimensions
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 
 class FakeCameraViewActivityPoseTest {
-    private lateinit var underTest: FakeCameraViewActivityPose
+    private lateinit var underTest: FakeCameraViewScenePose
 
     @Test
     fun getInitialValues_returnsDefaultValues() {
-        underTest = FakeCameraViewActivityPose()
+        underTest = FakeCameraViewScenePose()
 
         // Default fov is (0, 0, 0, 0)
         check(underTest.fov.angleLeft == 0f)
@@ -41,7 +41,7 @@ class FakeCameraViewActivityPoseTest {
     fun getCameraType_createWithCameraType_returnsCorrectType() {
         // Arrange
         val cameraType = CameraType.CAMERA_TYPE_LEFT_EYE
-        underTest = FakeCameraViewActivityPose(cameraType)
+        underTest = FakeCameraViewScenePose(cameraType)
 
         // Assert
         assertThat(underTest.cameraType).isEqualTo(cameraType)
