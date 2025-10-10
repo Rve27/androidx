@@ -44,7 +44,7 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 
 @RunWith(RobolectricTestRunner.class)
-public final class PerceptionSpaceActivityPoseImplTest {
+public final class PerceptionSpaceScenePoseImplTest {
     private final XrExtensions mXrExtensions = XrExtensionsProvider.getXrExtensions();
     private final FakeScheduledExecutorService mExecutor = new FakeScheduledExecutorService();
     private final EntityManager mEntityManager = new EntityManager();
@@ -60,7 +60,7 @@ public final class PerceptionSpaceActivityPoseImplTest {
                     /* unscaledGravityAlignedActivitySpace= */ false,
                     mExecutor);
 
-    private PerceptionSpaceActivityPoseImpl mPerceptionSpaceActivityPose;
+    private PerceptionSpaceScenePoseImpl mPerceptionSpaceScenePose;
 
     private void sendTransformEvent(NodeTransform nodeTransform) {
         ShadowNode shadowNode = ShadowNode.extract(mActivitySpace.getNode());
@@ -83,8 +83,8 @@ public final class PerceptionSpaceActivityPoseImplTest {
 
     @Before
     public void setUp() {
-        mPerceptionSpaceActivityPose =
-                new PerceptionSpaceActivityPoseImpl(mActivitySpace, mActivitySpace);
+        mPerceptionSpaceScenePose =
+                new PerceptionSpaceScenePoseImpl(mActivitySpace, mActivitySpace);
     }
 
     @Test
@@ -97,7 +97,7 @@ public final class PerceptionSpaceActivityPoseImplTest {
         sendTransformEvent(ShadowNodeTransform.create(new Mat4f(activitySpaceMatrix.getData())));
         mExecutor.runAll();
 
-        Pose poseInActivitySpace = mPerceptionSpaceActivityPose.getPoseInActivitySpace();
+        Pose poseInActivitySpace = mPerceptionSpaceScenePose.getPoseInActivitySpace();
 
         Pose expectedPose = activitySpaceMatrix.getInverse().getPose();
 
@@ -115,7 +115,7 @@ public final class PerceptionSpaceActivityPoseImplTest {
         mExecutor.runAll();
 
         Pose transformedPose =
-                mPerceptionSpaceActivityPose.transformPoseTo(new Pose(), mActivitySpace);
+                mPerceptionSpaceScenePose.transformPoseTo(new Pose(), mActivitySpace);
 
         Pose expectedPose = activitySpaceMatrix.getInverse().getPose();
 
@@ -134,7 +134,7 @@ public final class PerceptionSpaceActivityPoseImplTest {
         GltfEntityImpl gltfEntity = createGltfEntity();
         gltfEntity.setScale(new Vector3(2.0f, 2.0f, 2.0f));
 
-        Pose transformedPose = mPerceptionSpaceActivityPose.transformPoseTo(new Pose(), gltfEntity);
+        Pose transformedPose = mPerceptionSpaceScenePose.transformPoseTo(new Pose(), gltfEntity);
 
         Pose unscaledPose = activitySpaceMatrix.getInverse().getPose();
         Pose expectedPose =
@@ -151,7 +151,7 @@ public final class PerceptionSpaceActivityPoseImplTest {
         mActivitySpace.setOpenXrReferenceSpacePose(Matrix4.fromScale(activitySpaceScale));
 
         assertVector3(
-                mPerceptionSpaceActivityPose.getActivitySpaceScale(),
+                mPerceptionSpaceScenePose.getActivitySpaceScale(),
                 new Vector3(1f, 1f, 1f).div(activitySpaceScale));
     }
 }

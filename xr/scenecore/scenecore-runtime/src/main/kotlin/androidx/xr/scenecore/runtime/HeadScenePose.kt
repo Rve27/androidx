@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 The Android Open Source Project
+ * Copyright 2024 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.testing
+package androidx.xr.scenecore.runtime
 
 import androidx.annotation.RestrictTo
-import androidx.xr.scenecore.runtime.HeadActivityPose
 
-/**
- * A test double for [androidx.xr.scenecore.runtime.HeadActivityPose], designed for use in unit or
- * integration tests.
- */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public class FakeHeadActivityPose() : FakeActivityPose(), HeadActivityPose
+/** Interface for a XR Runtime head ScenePose. This is the position of the user's head. */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface HeadScenePose : ScenePose {}

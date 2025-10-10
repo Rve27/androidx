@@ -17,8 +17,8 @@
 package androidx.xr.scenecore.testing
 
 import androidx.annotation.RestrictTo
-import androidx.xr.scenecore.runtime.PerceptionSpaceActivityPose
+import androidx.xr.scenecore.runtime.PerceptionSpaceScenePose
 
-/** A fake ActivityPose representing a perception space. */
+/** A fake ScenePose representing a perception space. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public class FakePerceptionSpaceActivityPose() : FakeActivityPose(), PerceptionSpaceActivityPose
+public class FakePerceptionSpaceScenePose() : FakeScenePose(), PerceptionSpaceScenePose

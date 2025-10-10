@@ -18,29 +18,29 @@ package androidx.xr.scenecore.spatial.core;
 
 import androidx.xr.runtime.math.Pose;
 import androidx.xr.runtime.math.Vector3;
-import androidx.xr.scenecore.runtime.ActivityPose;
 import androidx.xr.scenecore.runtime.HitTestResult;
+import androidx.xr.scenecore.runtime.ScenePose;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
 import org.jspecify.annotations.NonNull;
 
 /**
- * Base implementation of SceneCore ActivityPose.
+ * Base implementation of SceneCore ScenePose.
  *
- * <p>A ActivityPose is an object that has a pose in the world space.
+ * <p>A ScenePose is an object that has a pose in the world space.
  */
-abstract class BaseActivityPose implements ActivityPose {
+abstract class BaseScenePose implements ScenePose {
     @Override
     public @NonNull Pose getActivitySpacePose() {
         throw new UnsupportedOperationException(
-                "getActivitySpacePose is not implemented for this ActivityPose.");
+                "getActivitySpacePose is not implemented for this ScenePose.");
     }
 
     /** Returns the pose for this entity, relative to the activity space root. */
     public @NonNull Pose getPoseInActivitySpace() {
         throw new UnsupportedOperationException(
-                "getPoseInActivitySpace is not implemented for this ActivityPose.");
+                "getPoseInActivitySpace is not implemented for this ScenePose.");
     }
 
     @Override
@@ -51,7 +51,7 @@ abstract class BaseActivityPose implements ActivityPose {
     @Override
     public @NonNull Vector3 getActivitySpaceScale() {
         throw new UnsupportedOperationException(
-                "getActivitySpaceScale is not implemented for this ActivityPose.");
+                "getActivitySpaceScale is not implemented for this ScenePose.");
     }
 
     @Override
@@ -60,17 +60,17 @@ abstract class BaseActivityPose implements ActivityPose {
             @NonNull Vector3 direction,
             @HitTestFilterValue int hitTestFilter) {
         throw new UnsupportedOperationException(
-                "hitTest is not implemented for this ActivityPose.");
+                "hitTest is not implemented for this ScenePose.");
     }
 
     @Override
-    public @NonNull Pose transformPoseTo(@NonNull Pose pose, @NonNull ActivityPose destination) {
+    public @NonNull Pose transformPoseTo(@NonNull Pose pose, @NonNull ScenePose destination) {
 
         // This code might produce unexpected results when non-uniform scale
         // is involved in the parent-child entity hierarchy.
 
         // Compute the inverse scale of the destination entity in the activity space.
-        BaseActivityPose baseDestination = (BaseActivityPose) destination;
+        BaseScenePose baseDestination = (BaseScenePose) destination;
         Vector3 destinationScale = baseDestination.getActivitySpaceScale();
         Vector3 inverseDestinationScale =
                 new Vector3(

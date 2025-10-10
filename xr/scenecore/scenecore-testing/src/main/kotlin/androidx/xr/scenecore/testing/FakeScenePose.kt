@@ -19,31 +19,31 @@ package androidx.xr.scenecore.testing
 import androidx.annotation.RestrictTo
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Vector3
-import androidx.xr.scenecore.runtime.ActivityPose
 import androidx.xr.scenecore.runtime.HitTestResult
+import androidx.xr.scenecore.runtime.ScenePose
 import com.google.common.util.concurrent.Futures.immediateFuture
 import com.google.common.util.concurrent.ListenableFuture
 
 /**
- * A test double for [androidx.xr.scenecore.runtime.ActivityPose], designed for use in unit or
+ * A test double for [androidx.xr.scenecore.runtime.ScenePose], designed for use in unit or
  * integration tests.
  *
  * This test double offers greater control compared to the real
- * [androidx.xr.scenecore.runtime.ActivityPose] by allowing:
+ * [androidx.xr.scenecore.runtime.ScenePose] by allowing:
  * * Direct modification of most properties to simulate specific scenarios or states.
  * * Mocking of hit test results for predictable and verifiable interaction testing.
  *
- * @see androidx.xr.scenecore.runtime.ActivityPose
+ * @see androidx.xr.scenecore.runtime.ScenePose
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public open class FakeActivityPose : ActivityPose {
+public open class FakeScenePose : ScenePose {
     /** Returns the pose for this entity, relative to the activity space root. */
     override val activitySpacePose: Pose = Pose.Identity
 
     /**
-     * Returns the scale of this ActivityPose. For base ActivityPoses, the scale is (1,1,1). For
-     * entities this returns the accumulated scale. This value includes the parent's scale, and is
-     * similar to a ActivitySpace scale.
+     * Returns the scale of this ScenePose. For base ScenePoses, the scale is (1,1,1). For entities
+     * this returns the accumulated scale. This value includes the parent's scale, and is similar to
+     * a ActivitySpace scale.
      *
      * @return Total [androidx.xr.runtime.math.Vector3] scale applied to self and children.
      */
@@ -62,7 +62,7 @@ public open class FakeActivityPose : ActivityPose {
      * @param destination The entity which the returned pose will be relative to.
      * @return The pose relative to the destination entity.
      */
-    override fun transformPoseTo(pose: Pose, destination: ActivityPose): Pose {
+    override fun transformPoseTo(pose: Pose, destination: ScenePose): Pose {
         return pose
     }
 
@@ -84,6 +84,6 @@ public open class FakeActivityPose : ActivityPose {
     override fun hitTest(
         origin: Vector3,
         direction: Vector3,
-        @ActivityPose.HitTestFilterValue hitTestFilter: Int,
+        @ScenePose.HitTestFilterValue hitTestFilter: Int,
     ): ListenableFuture<HitTestResult> = immediateFuture(hitTestResult)
 }

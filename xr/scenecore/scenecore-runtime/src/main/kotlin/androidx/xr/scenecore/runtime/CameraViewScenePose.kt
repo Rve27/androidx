@@ -19,12 +19,12 @@ package androidx.xr.scenecore.runtime
 import androidx.annotation.RestrictTo
 
 /**
- * Interface for a SceneCore camera view ActivityPose. This is the position of a user's camera.
+ * Interface for a SceneCore camera view ScenePose. This is the position of a user's camera.
  *
- * <p>The camera's field of view can be retrieved from this CameraViewActivityPose.
+ * <p>The camera's field of view can be retrieved from this CameraViewScenePose.
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public interface CameraViewActivityPose : ActivityPose {
+public interface CameraViewScenePose : ScenePose {
     /** Returns the type of camera that this space represents. */
     @CameraType public val cameraType: Int
 

@@ -36,7 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /** Implementation of a subset of core Entity functionality. */
-abstract class BaseEntity extends BaseActivityPose implements Entity {
+abstract class BaseEntity extends BaseScenePose implements Entity {
     private final List<Entity> mChildren = new ArrayList<>();
     private final List<Component> mComponentList = new ArrayList<>();
     private BaseEntity mParent;
