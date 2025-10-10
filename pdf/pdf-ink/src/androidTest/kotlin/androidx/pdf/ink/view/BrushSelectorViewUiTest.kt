@@ -16,14 +16,13 @@
 
 package androidx.pdf.ink.view
 
-import ANNOTATION_TOOLBAR
-import ANNOTATION_TOOLBAR_WITH_PEN_SELECTED
+import BRUSH_SIZE_SELECTED_ON_STEP_0
+import BRUSH_SIZE_SELECTED_ON_STEP_4
 import SCREENSHOT_GOLDEN_DIRECTORY
 import android.view.View
 import android.view.ViewGroup.LayoutParams
 import androidx.pdf.PdfTestActivity
-import androidx.pdf.ink.R
-import androidx.pdf.ink.view.tool.AnnotationToolView
+import androidx.pdf.ink.view.brush.BrushSizeSelectorView
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
@@ -37,54 +36,43 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 @LargeTest
 @SdkSuppress(minSdkVersion = 35, maxSdkVersion = 35)
-class AnnotationToolbarUiTest {
+class BrushSelectorViewUiTest {
 
     @get:Rule val screenshotRule = AndroidXScreenshotTestRule(SCREENSHOT_GOLDEN_DIRECTORY)
 
     @get:Rule val activityRule = ActivityScenarioRule(PdfTestActivity::class.java)
 
     @Test
-    fun test_annotation_toolbar() {
-        setupAnnotationToolbar { _ -> }
+    fun test_brushSizeSelector_onStep0() {
+        setupBrushSizeSelectorView { _ -> }
 
-        assertScreenshot(ANNOTATION_TOOLBAR_VIEW_ID, screenshotRule, ANNOTATION_TOOLBAR)
+        assertScreenshot(BRUSH_SELECTOR_VIEW_ID, screenshotRule, BRUSH_SIZE_SELECTED_ON_STEP_0)
     }
 
     @Test
-    fun test_annotation_toolbar_with_pen_selected() {
-        setupAnnotationToolbar { annotationToolbar ->
-            val penTool = annotationToolbar.findViewById<AnnotationToolView>(R.id.pen_button)
-            // Asset state drawable of pen tool when selected.
-            penTool.isSelected = true
+    fun test_brushSizeSelector_onStep4() {
+        setupBrushSizeSelectorView { view ->
+            view.brushSizeSlider.value = 4f
+            view.brushPreviewView.brushSize = 100f
         }
 
-        assertScreenshot(
-            ANNOTATION_TOOLBAR_VIEW_ID,
-            screenshotRule,
-            ANNOTATION_TOOLBAR_WITH_PEN_SELECTED,
-        )
+        assertScreenshot(BRUSH_SELECTOR_VIEW_ID, screenshotRule, BRUSH_SIZE_SELECTED_ON_STEP_4)
     }
 
-    private fun setupAnnotationToolbar(callback: (AnnotationToolbar) -> Unit) {
+    private fun setupBrushSizeSelectorView(callback: (BrushSizeSelectorView) -> Unit) {
         activityRule.scenario.onActivity { activity ->
-            val annotationToolbar =
-                AnnotationToolbar(activity).apply {
-                    id = ANNOTATION_TOOLBAR_VIEW_ID
-                    elevation = context.resources.getDimension(R.dimen.annotation_toolbar_elevation)
-                    val defaultPadding =
-                        context.resources.getDimensionPixelSize(R.dimen.padding_8dp)
-                    setPadding(defaultPadding, defaultPadding, defaultPadding, defaultPadding)
-                }
+            val brushSizeSelectorView =
+                BrushSizeSelectorView(activity).apply { id = BRUSH_SELECTOR_VIEW_ID }
             activity.container.addView(
-                annotationToolbar,
-                LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT),
+                brushSizeSelectorView,
+                LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT),
             )
             // allow caller to do additional setup
-            callback(annotationToolbar)
+            callback(brushSizeSelectorView)
         }
     }
 
     companion object {
-        private val ANNOTATION_TOOLBAR_VIEW_ID = View.generateViewId()
+        private val BRUSH_SELECTOR_VIEW_ID = View.generateViewId()
     }
 }
