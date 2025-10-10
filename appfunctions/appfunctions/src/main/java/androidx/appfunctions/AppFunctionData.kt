@@ -35,6 +35,7 @@ import androidx.appfunctions.metadata.AppFunctionComponentsMetadata
 import androidx.appfunctions.metadata.AppFunctionObjectTypeMetadata
 import androidx.appfunctions.metadata.AppFunctionParameterMetadata
 import androidx.appfunctions.metadata.AppFunctionResponseMetadata
+import com.google.errorprone.annotations.CanIgnoreReturnValue
 import java.time.LocalDateTime
 
 /**
@@ -1153,6 +1154,7 @@ internal constructor(
          * @throws IllegalArgumentException if the [key] is not allowed or the [value] does not
          *   match the metadata specification associated with the [key].
          */
+        @CanIgnoreReturnValue
         public fun setBoolean(key: String, value: Boolean): Builder {
             spec?.validateWriteRequest(
                 key,
@@ -1172,6 +1174,7 @@ internal constructor(
          * @throws IllegalArgumentException if the [key] is not allowed or the [value] does not
          *   match the metadata specification associated with the [key].
          */
+        @CanIgnoreReturnValue
         public fun setFloat(key: String, value: Float): Builder {
             spec?.validateWriteRequest(
                 key,
@@ -1191,6 +1194,7 @@ internal constructor(
          * @throws IllegalArgumentException if the [key] is not allowed or the [value] does not
          *   match the metadata specification associated with the [key].
          */
+        @CanIgnoreReturnValue
         public fun setDouble(key: String, value: Double): Builder {
             spec?.validateWriteRequest(
                 key,
@@ -1210,6 +1214,7 @@ internal constructor(
          * @throws IllegalArgumentException if the [key] is not allowed or the [value] does not
          *   match the metadata specification associated with the [key].
          */
+        @CanIgnoreReturnValue
         public fun setInt(key: String, value: Int): Builder {
             spec?.validateWriteRequest(
                 key,
@@ -1229,6 +1234,7 @@ internal constructor(
          * @throws IllegalArgumentException if the [key] is not allowed or the [value] does not
          *   match the metadata specification associated with the [key].
          */
+        @CanIgnoreReturnValue
         public fun setLong(key: String, value: Long): Builder {
             spec?.validateWriteRequest(
                 key,
@@ -1248,6 +1254,7 @@ internal constructor(
          * @throws IllegalArgumentException if the [key] is not allowed or the [value] does not
          *   match the metadata specification associated with the [key].
          */
+        @CanIgnoreReturnValue
         public fun setString(key: String, value: String): Builder {
             spec?.validateWriteRequest(
                 key,
@@ -1270,6 +1277,7 @@ internal constructor(
          * @throws IllegalArgumentException if the [key] is not allowed or the [value] does not
          *   match the metadata specification associated with the [key].
          */
+        @CanIgnoreReturnValue
         public fun setAppFunctionData(key: String, value: AppFunctionData): Builder {
             spec?.validateWriteRequest(
                 key,
@@ -1294,6 +1302,7 @@ internal constructor(
          * @throws IllegalArgumentException if the [key] is not allowed or the [value] does not
          *   match the metadata specification associated with the [key].
          */
+        @CanIgnoreReturnValue
         public fun setPendingIntent(key: String, value: PendingIntent): Builder {
             spec?.validateWriteRequest(
                 key,
@@ -1316,6 +1325,7 @@ internal constructor(
          * @param key The key to set the value for.
          * @param value The [Parcelable] value of type [T] to set.
          */
+        @CanIgnoreReturnValue
         public fun <T : Parcelable> setParcelable(key: String, value: T): Builder {
             // TODO: b/447530985 - Implement spec validation
             extrasBuilder.putParcelable(extrasKey(key), value)
@@ -1330,6 +1340,7 @@ internal constructor(
          * @throws IllegalArgumentException if the [key] is not allowed or the [value] does not
          *   match the metadata specification associated with the [key].
          */
+        @CanIgnoreReturnValue
         public fun setBooleanArray(key: String, value: BooleanArray): Builder {
             spec?.validateWriteRequest(
                 key,
@@ -1349,6 +1360,7 @@ internal constructor(
          * @throws IllegalArgumentException if the [key] is not allowed or the [value] does not
          *   match the metadata specification associated with the [key].
          */
+        @CanIgnoreReturnValue
         public fun setFloatArray(key: String, value: FloatArray): Builder {
             spec?.validateWriteRequest(
                 key,
@@ -1371,6 +1383,7 @@ internal constructor(
          * @throws IllegalArgumentException if the [key] is not allowed or the [value] does not
          *   match the metadata specification associated with the [key].
          */
+        @CanIgnoreReturnValue
         public fun setDoubleArray(key: String, value: DoubleArray): Builder {
             spec?.validateWriteRequest(
                 key,
@@ -1390,6 +1403,7 @@ internal constructor(
          * @throws IllegalArgumentException if the [key] is not allowed or the [value] does not
          *   match the metadata specification associated with the [key].
          */
+        @CanIgnoreReturnValue
         public fun setIntArray(key: String, value: IntArray): Builder {
             spec?.validateWriteRequest(
                 key,
@@ -1412,6 +1426,7 @@ internal constructor(
          * @throws IllegalArgumentException if the [key] is not allowed or the [value] does not
          *   match the metadata specification associated with the [key].
          */
+        @CanIgnoreReturnValue
         public fun setLongArray(key: String, value: LongArray): Builder {
             spec?.validateWriteRequest(
                 key,
@@ -1431,6 +1446,7 @@ internal constructor(
          * @throws IllegalArgumentException if the [key] is not allowed or the [value] does not
          *   match the metadata specification associated with the [key].
          */
+        @CanIgnoreReturnValue
         public fun setByteArray(key: String, value: ByteArray): Builder {
             spec?.validateWriteRequest(
                 key,
@@ -1450,6 +1466,7 @@ internal constructor(
          * @throws IllegalArgumentException if the [key] is not allowed or the [value] does not
          *   match the metadata specification associated with the [key].
          */
+        @CanIgnoreReturnValue
         public fun setStringList(key: String, value: List<String>): Builder {
             spec?.validateWriteRequest(
                 key,
@@ -1470,6 +1487,7 @@ internal constructor(
          * @throws IllegalArgumentException if the [key] is not allowed or the [value] does not
          *   match the metadata specification associated with the [key].
          */
+        @CanIgnoreReturnValue
         public fun setAppFunctionDataList(key: String, value: List<AppFunctionData>): Builder {
             spec?.validateWriteRequest(
                 key,
@@ -1500,6 +1518,7 @@ internal constructor(
          * @throws IllegalArgumentException if the [key] is not allowed or the [value] does not
          *   match the metadata specification associated with the [key].
          */
+        @CanIgnoreReturnValue
         public fun setPendingIntentList(key: String, value: List<PendingIntent>): Builder {
             spec?.validateWriteRequest(
                 key,
@@ -1522,6 +1541,7 @@ internal constructor(
          * @param key The key to set the list for.
          * @param value The [List] of [Parcelable] values of type [T] to set.
          */
+        @CanIgnoreReturnValue
         public fun <T : Parcelable> setParcelableList(key: String, value: List<T>): Builder {
             // TODO: b/447530985 - Implement spec validation
             extrasBuilder.putParcelableArrayList(extrasKey(key), ArrayList(value))
