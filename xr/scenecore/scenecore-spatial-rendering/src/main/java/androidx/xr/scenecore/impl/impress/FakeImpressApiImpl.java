@@ -264,24 +264,28 @@ public class FakeImpressApiImpl implements ImpressApi {
     @Override
     @NonNull
     @SuppressWarnings({"RestrictTo", "AsyncSuffixFuture"})
-    public ListenableFuture<Long> loadGltfAsset(@NonNull String path) {
+    public ListenableFuture<GltfModel> loadGltfAsset(@NonNull String path) {
         long gltfToken = mNextModelId++;
         mGltfModels.put(gltfToken, new ArrayList<>());
+        GltfModel gltfModel =
+                new GltfModel.Builder().setImpressApi(this).setNativeGltfModel(gltfToken).build();
         // TODO(b/352827267): Enforce minSDK API strategy - go/androidx-api-guidelines#compat-newapi
-        ResolvableFuture<Long> ret = ResolvableFuture.create();
-        ret.set(gltfToken);
+        ResolvableFuture<GltfModel> ret = ResolvableFuture.create();
+        ret.set(gltfModel);
         return ret;
     }
 
     @Override
     @NonNull
     @SuppressWarnings({"RestrictTo", "AsyncSuffixFuture"})
-    public ListenableFuture<Long> loadGltfAsset(byte @NonNull [] data, @NonNull String key) {
+    public ListenableFuture<GltfModel> loadGltfAsset(byte @NonNull [] data, @NonNull String key) {
         long gltfToken = mNextModelId++;
         mGltfModels.put(gltfToken, new ArrayList<>());
+        GltfModel gltfModel =
+                new GltfModel.Builder().setImpressApi(this).setNativeGltfModel(gltfToken).build();
         // TODO(b/352827267): Enforce minSDK API strategy - go/androidx-api-guidelines#compat-newapi
-        ResolvableFuture<Long> ret = ResolvableFuture.create();
-        ret.set(gltfToken);
+        ResolvableFuture<GltfModel> ret = ResolvableFuture.create();
+        ret.set(gltfModel);
         return ret;
     }
 

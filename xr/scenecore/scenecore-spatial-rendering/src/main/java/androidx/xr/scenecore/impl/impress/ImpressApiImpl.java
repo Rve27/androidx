@@ -267,7 +267,7 @@ public final class ImpressApiImpl implements ImpressApi {
 
     @Override
     @NonNull
-    public ListenableFuture<Long> loadGltfAsset(@NonNull String path) {
+    public ListenableFuture<GltfModel> loadGltfAsset(@NonNull String path) {
         return CallbackToFutureAdapter.getFuture(
                 completer -> {
                     // TODO: b/374216912 - Add a cancellationListener to the completer here when the
@@ -276,13 +276,16 @@ public final class ImpressApiImpl implements ImpressApi {
                             getViewNativeHandle(mView),
                             // The underlying C++ code will hold a reference to this (anoynomous)
                             // AssetLoader until the load is complete.
-                            // TODO(b/394349866): Revisit the way C++ --> Java code is called back
-                            // for the AssetLoader (proguard)
                             new AssetLoader() {
 
                                 @Override
                                 public void onSuccess(long value) {
-                                    completer.set(value);
+                                    GltfModel model =
+                                            new GltfModel.Builder()
+                                                    .setImpressApi(ImpressApiImpl.this)
+                                                    .setNativeGltfModel(value)
+                                                    .build();
+                                    completer.set(model);
                                 }
 
                                 @Override
@@ -313,7 +316,7 @@ public final class ImpressApiImpl implements ImpressApi {
 
     @Override
     @NonNull
-    public ListenableFuture<Long> loadGltfAsset(byte @NonNull [] data, @NonNull String key) {
+    public ListenableFuture<GltfModel> loadGltfAsset(byte @NonNull [] data, @NonNull String key) {
         return CallbackToFutureAdapter.getFuture(
                 completer -> {
                     // TODO: b/374216912 - Add a cancellationListener to the completer here when the
@@ -326,7 +329,12 @@ public final class ImpressApiImpl implements ImpressApi {
 
                                 @Override
                                 public void onSuccess(long value) {
-                                    completer.set(value);
+                                    GltfModel model =
+                                            new GltfModel.Builder()
+                                                    .setImpressApi(ImpressApiImpl.this)
+                                                    .setNativeGltfModel(value)
+                                                    .build();
+                                    completer.set(model);
                                 }
 
                                 @Override

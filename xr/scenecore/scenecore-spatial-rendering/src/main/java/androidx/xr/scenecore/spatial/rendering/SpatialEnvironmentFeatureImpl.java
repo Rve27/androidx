@@ -19,6 +19,7 @@ package androidx.xr.scenecore.spatial.rendering;
 import android.app.Activity;
 import android.os.Looper;
 
+import androidx.xr.scenecore.impl.impress.GltfModel;
 import androidx.xr.scenecore.impl.impress.ImpressApi;
 import androidx.xr.scenecore.impl.impress.ImpressNode;
 import androidx.xr.scenecore.impl.impress.Material;
@@ -93,7 +94,7 @@ class SpatialEnvironmentFeatureImpl extends BaseRenderingFeature
      * @throws IllegalStateException if called on a thread other than the main thread.
      */
     private void applyGeometry(
-            @Nullable GltfModelResourceImpl geometry,
+            @Nullable GltfModelResource geometry,
             @Nullable MaterialResource material,
             @Nullable String nodeName,
             @Nullable String animationName) {
@@ -121,7 +122,7 @@ class SpatialEnvironmentFeatureImpl extends BaseRenderingFeature
         if (geometry != null) {
             mGeometryImpressNode =
                     mImpressApi.instanceGltfModel(
-                            geometry.getExtensionModelToken(), /* enableCollider= */ false);
+                            ((GltfModel) geometry).getNativeHandle(), /* enableCollider= */ false);
             if (material != null && nodeName != null) {
                 mMaterialOverride = (Material) material;
                 mOverriddenNodeName = nodeName;
@@ -176,16 +177,6 @@ class SpatialEnvironmentFeatureImpl extends BaseRenderingFeature
                     String newAnimationName =
                             newPreference == null ? null : newPreference.getGeometryAnimationName();
 
-                    // TODO(b/329907079): Map GltfModelResourceImpl to GltfModelResource in Impl
-                    // Layer
-                    if (newGeometry != null) {
-                        if (!(newGeometry instanceof GltfModelResourceImpl)) {
-                            throw new IllegalArgumentException(
-                                    "SplitEngine is enabled but the preferred geometry is not of"
-                                            + " type GltfModelResourceImpl.");
-                        }
-                    }
-
                     // TODO b/329907079: Map ExrImageResourceImpl to ExrImageResource in Impl Layer
                     if (newSkybox != null) {
                         if (!(newSkybox instanceof ExrImageResourceImpl)) {
@@ -195,11 +186,7 @@ class SpatialEnvironmentFeatureImpl extends BaseRenderingFeature
                     }
 
                     if (!Objects.equals(newGeometry, prevGeometry)) {
-                        applyGeometry(
-                                (GltfModelResourceImpl) newGeometry,
-                                newMaterial,
-                                newNodeName,
-                                newAnimationName);
+                        applyGeometry(newGeometry, newMaterial, newNodeName, newAnimationName);
                     }
 
                     // TODO: b/392948759 - Fix StrictMode violations triggered whenever skybox is

@@ -26,7 +26,9 @@ import android.app.Activity;
 
 import androidx.xr.scenecore.impl.impress.FakeImpressApiImpl;
 import androidx.xr.scenecore.impl.impress.FakeImpressApiImpl.MaterialData;
+import androidx.xr.scenecore.impl.impress.GltfModel;
 import androidx.xr.scenecore.impl.impress.ImpressNode;
+import androidx.xr.scenecore.runtime.GltfModelResource;
 import androidx.xr.scenecore.runtime.MaterialResource;
 import androidx.xr.scenecore.runtime.SpatialEnvironment.SpatialEnvironmentPreference;
 import androidx.xr.scenecore.runtime.extensions.XrExtensionsProvider;
@@ -106,14 +108,14 @@ public final class SpatialEnvironmentFeatureImplTest {
     }
 
     @SuppressWarnings({"FutureReturnValueIgnored", "AndroidJdkLibsChecker"})
-    private long fakeLoadGltfAsset(String name) {
+    private GltfModelResource fakeLoadGltfAsset(String name) {
         try {
             return mFakeImpressApi.loadGltfAsset(name).get();
         } catch (Exception e) {
             if (e instanceof InterruptedException) {
                 Thread.currentThread().interrupt();
             }
-            return INVALID_SPLIT_ENGINE_ID;
+            return null;
         }
     }
 
@@ -140,15 +142,15 @@ public final class SpatialEnvironmentFeatureImplTest {
     @Test
     public void setPreferredSpatialEnvironmentNull_removesEnvironment() {
         long exr = fakeLoadEnvironment("fakeEnvironment");
-        long gltf = fakeLoadGltfAsset("fakeGltfAsset");
+        GltfModelResource gltf = fakeLoadGltfAsset("fakeGltfAsset");
 
         // Ensure that an environment is set.
         mEnvironment.setPreferredSpatialEnvironment(
-                new SpatialEnvironmentPreference(
-                        new ExrImageResourceImpl(exr), new GltfModelResourceImpl(gltf)));
+                new SpatialEnvironmentPreference(new ExrImageResourceImpl(exr), gltf));
 
         long initialSkybox = mFakeImpressApi.getCurrentEnvironmentLight();
-        List<Integer> geometryNodes = mFakeImpressApi.getImpressNodesForToken(gltf);
+        List<Integer> geometryNodes =
+                mFakeImpressApi.getImpressNodesForToken(((GltfModel) gltf).getNativeHandle());
         Map<Long, MaterialData> materials = mFakeImpressApi.getMaterials();
         int animatingNodes = mFakeImpressApi.impressNodeAnimatingSize();
         int loopingAnimatingNodes = mFakeImpressApi.impressNodeLoopAnimatingSize();
@@ -176,15 +178,15 @@ public final class SpatialEnvironmentFeatureImplTest {
     public void
             setPreferredSpatialEnvironmentWithNullSkyboxAndNullGeometry_doesNotDetachEnvironment() {
         long exr = fakeLoadEnvironment("fakeEnvironment");
-        long gltf = fakeLoadGltfAsset("fakeGltfAsset");
+        GltfModelResource gltf = fakeLoadGltfAsset("fakeGltfAsset");
 
         // Ensure that an environment is set.
         mEnvironment.setPreferredSpatialEnvironment(
-                new SpatialEnvironmentPreference(
-                        new ExrImageResourceImpl(exr), new GltfModelResourceImpl(gltf)));
+                new SpatialEnvironmentPreference(new ExrImageResourceImpl(exr), gltf));
 
         long initialSkybox = mFakeImpressApi.getCurrentEnvironmentLight();
-        List<Integer> geometryNodes = mFakeImpressApi.getImpressNodesForToken(gltf);
+        List<Integer> geometryNodes =
+                mFakeImpressApi.getImpressNodesForToken(((GltfModel) gltf).getNativeHandle());
 
         assertThat(initialSkybox).isNotEqualTo(INVALID_SPLIT_ENGINE_ID);
         assertThat(geometryNodes).isNotEmpty();
@@ -206,7 +208,7 @@ public final class SpatialEnvironmentFeatureImplTest {
     public void
             setPreferredSpatialEnvWithSkyboxAndGeoWithNodeAndAnimation_doesNotDetachEnvironment() {
         long exr = fakeLoadEnvironment("fakeEnvironment");
-        long gltf = fakeLoadGltfAsset("fakeGltfAsset");
+        GltfModelResource gltf = fakeLoadGltfAsset("fakeGltfAsset");
         // Create dummy regular version of the water material.
         MaterialResource material = fakeLoadMaterial(false);
         String nodeName = "fakeNode";
@@ -215,14 +217,11 @@ public final class SpatialEnvironmentFeatureImplTest {
         // Ensure that an environment is set.
         mEnvironment.setPreferredSpatialEnvironment(
                 new SpatialEnvironmentPreference(
-                        new ExrImageResourceImpl(exr),
-                        new GltfModelResourceImpl(gltf),
-                        material,
-                        nodeName,
-                        animationName));
+                        new ExrImageResourceImpl(exr), gltf, material, nodeName, animationName));
 
         long initialSkybox = mFakeImpressApi.getCurrentEnvironmentLight();
-        List<Integer> geometryNodes = mFakeImpressApi.getImpressNodesForToken(gltf);
+        List<Integer> geometryNodes =
+                mFakeImpressApi.getImpressNodesForToken(((GltfModel) gltf).getNativeHandle());
         Map<Long, MaterialData> materials = mFakeImpressApi.getMaterials();
         int animatingNodes = mFakeImpressApi.impressNodeAnimatingSize();
         int loopingAnimatingNodes = mFakeImpressApi.impressNodeLoopAnimatingSize();
@@ -250,13 +249,14 @@ public final class SpatialEnvironmentFeatureImplTest {
     @Test
     public void
             setPreferredSpatialEnvFromNullPrefToNullSkyboxAndGeometry_doesNotDetachEnvironment() {
-        long gltf = fakeLoadGltfAsset("fakeGltfAsset");
+        GltfModelResource gltf = fakeLoadGltfAsset("fakeGltfAsset");
 
         // Ensure that an environment is set.
         mEnvironment.setPreferredSpatialEnvironment(null);
 
         long initialSkybox = mFakeImpressApi.getCurrentEnvironmentLight();
-        List<Integer> geometryNodes = mFakeImpressApi.getImpressNodesForToken(gltf);
+        List<Integer> geometryNodes =
+                mFakeImpressApi.getImpressNodesForToken(((GltfModel) gltf).getNativeHandle());
 
         assertThat(initialSkybox).isEqualTo(INVALID_SPLIT_ENGINE_ID);
         assertThat(geometryNodes).isEmpty();
@@ -275,24 +275,24 @@ public final class SpatialEnvironmentFeatureImplTest {
     public void setNewSpatialEnvironmentPreference_replacesOldSpatialEnvironmentPreference() {
         long exr = fakeLoadEnvironment("fakeEnvironment");
         long newExr = fakeLoadEnvironment("newFakeEnvironment");
-        long gltf = fakeLoadGltfAsset("fakeGltfAsset");
-        long newGltf = fakeLoadGltfAsset("newFakeGltfAsset");
+        GltfModelResource gltf = fakeLoadGltfAsset("fakeGltfAsset");
+        GltfModelResource newGltf = fakeLoadGltfAsset("newFakeGltfAsset");
 
         // Ensure that an environment is set a first time.
         mEnvironment.setPreferredSpatialEnvironment(
-                new SpatialEnvironmentPreference(
-                        new ExrImageResourceImpl(exr), new GltfModelResourceImpl(gltf)));
+                new SpatialEnvironmentPreference(new ExrImageResourceImpl(exr), gltf));
 
         long initialSkybox = mFakeImpressApi.getCurrentEnvironmentLight();
-        List<Integer> geometryNodes = mFakeImpressApi.getImpressNodesForToken(gltf);
+        List<Integer> geometryNodes =
+                mFakeImpressApi.getImpressNodesForToken(((GltfModel) gltf).getNativeHandle());
 
         // Ensure that an environment is set a second time.
         mEnvironment.setPreferredSpatialEnvironment(
-                new SpatialEnvironmentPreference(
-                        new ExrImageResourceImpl(newExr), new GltfModelResourceImpl(newGltf)));
+                new SpatialEnvironmentPreference(new ExrImageResourceImpl(newExr), newGltf));
 
         long newSkybox = mFakeImpressApi.getCurrentEnvironmentLight();
-        List<Integer> newGeometryNodes = mFakeImpressApi.getImpressNodesForToken(newGltf);
+        List<Integer> newGeometryNodes =
+                mFakeImpressApi.getImpressNodesForToken(((GltfModel) newGltf).getNativeHandle());
 
         // None of the nodes should be null.
         assertThat(initialSkybox).isNotEqualTo(INVALID_SPLIT_ENGINE_ID);
@@ -314,14 +314,13 @@ public final class SpatialEnvironmentFeatureImplTest {
 
     @Test
     public void setNewSpatialEnvironmentPreference_callsOnBeforeNodeAttachedListener() {
-        long gltf = fakeLoadGltfAsset("fakeGltfAsset");
+        GltfModelResource gltf = fakeLoadGltfAsset("fakeGltfAsset");
         AtomicInteger timesCalled = new AtomicInteger();
 
         mEnvironment.accept(node -> timesCalled.getAndIncrement());
 
         // Ensure that an environment is set a first time.
-        mEnvironment.setPreferredSpatialEnvironment(
-                new SpatialEnvironmentPreference(null, new GltfModelResourceImpl(gltf)));
+        mEnvironment.setPreferredSpatialEnvironment(new SpatialEnvironmentPreference(null, gltf));
 
         assertThat(timesCalled.get()).isEqualTo(1);
     }
@@ -330,7 +329,7 @@ public final class SpatialEnvironmentFeatureImplTest {
     public void
             setPreferredSpatialEnvironmentGeometryWithMaterialAndNodeName_materialIsOverriden() {
         long exr = fakeLoadEnvironment("fakeEnvironment");
-        long gltf = fakeLoadGltfAsset("fakeGltfAsset");
+        GltfModelResource gltf = fakeLoadGltfAsset("fakeGltfAsset");
         // Create dummy regular version of the water material.
         MaterialResource material = fakeLoadMaterial(false);
         String nodeName = "fakeNode";
@@ -339,11 +338,7 @@ public final class SpatialEnvironmentFeatureImplTest {
         // Ensure that an environment is set.
         mEnvironment.setPreferredSpatialEnvironment(
                 new SpatialEnvironmentPreference(
-                        new ExrImageResourceImpl(exr),
-                        new GltfModelResourceImpl(gltf),
-                        material,
-                        nodeName,
-                        animationName));
+                        new ExrImageResourceImpl(exr), gltf, material, nodeName, animationName));
 
         Map<Long, MaterialData> materials = mFakeImpressApi.getMaterials();
         int loopingAnimatingNodes = mFakeImpressApi.impressNodeLoopAnimatingSize();
@@ -366,7 +361,7 @@ public final class SpatialEnvironmentFeatureImplTest {
     @Test
     public void setPreferredSpatialEnvGeometryWithMaterialAndNoNodeName_materialIsNotOverriden() {
         long exr = fakeLoadEnvironment("fakeEnvironment");
-        long gltf = fakeLoadGltfAsset("fakeGltfAsset");
+        GltfModelResource gltf = fakeLoadGltfAsset("fakeGltfAsset");
         // Create dummy regular version of the water material.
         MaterialResource material = fakeLoadMaterial(false);
         String animationName = "fakeAnimation";
@@ -374,11 +369,7 @@ public final class SpatialEnvironmentFeatureImplTest {
         // Ensure that an environment is set.
         mEnvironment.setPreferredSpatialEnvironment(
                 new SpatialEnvironmentPreference(
-                        new ExrImageResourceImpl(exr),
-                        new GltfModelResourceImpl(gltf),
-                        material,
-                        null,
-                        animationName));
+                        new ExrImageResourceImpl(exr), gltf, material, null, animationName));
 
         Map<Long, MaterialData> materials = mFakeImpressApi.getMaterials();
 
@@ -397,18 +388,14 @@ public final class SpatialEnvironmentFeatureImplTest {
     @Test
     public void setPreferredSpatialEnvGeometryWithNoMaterialAndNodeName_materialIsNotOverriden() {
         long exr = fakeLoadEnvironment("fakeEnvironment");
-        long gltf = fakeLoadGltfAsset("fakeGltfAsset");
+        GltfModelResource gltf = fakeLoadGltfAsset("fakeGltfAsset");
         String nodeName = "fakeNode";
         String animationName = "fakeAnimation";
 
         // Ensure that an environment is set.
         mEnvironment.setPreferredSpatialEnvironment(
                 new SpatialEnvironmentPreference(
-                        new ExrImageResourceImpl(exr),
-                        new GltfModelResourceImpl(gltf),
-                        null,
-                        nodeName,
-                        animationName));
+                        new ExrImageResourceImpl(exr), gltf, null, nodeName, animationName));
 
         Map<Long, MaterialData> materials = mFakeImpressApi.getMaterials();
 
@@ -425,17 +412,13 @@ public final class SpatialEnvironmentFeatureImplTest {
     @Test
     public void setPreferredSpatialEnvironmentGeometryWithNoAnimationName_geometryIsNotAnimating() {
         long exr = fakeLoadEnvironment("fakeEnvironment");
-        long gltf = fakeLoadGltfAsset("fakeGltfAsset");
+        GltfModelResource gltf = fakeLoadGltfAsset("fakeGltfAsset");
         String animationName = "fakeAnimation";
 
         // Ensure that an environment is set.
         mEnvironment.setPreferredSpatialEnvironment(
                 new SpatialEnvironmentPreference(
-                        new ExrImageResourceImpl(exr),
-                        new GltfModelResourceImpl(gltf),
-                        null,
-                        null,
-                        animationName));
+                        new ExrImageResourceImpl(exr), gltf, null, null, animationName));
 
         int loopingAnimatingNodes = mFakeImpressApi.impressNodeLoopAnimatingSize();
         Map<Long, MaterialData> materials = mFakeImpressApi.getMaterials();
@@ -454,7 +437,7 @@ public final class SpatialEnvironmentFeatureImplTest {
     @Test
     public void dispose_clearsResources() {
         long exr = fakeLoadEnvironment("fakeEnvironment");
-        long gltf = fakeLoadGltfAsset("fakeGltfAsset");
+        GltfModelResource gltf = fakeLoadGltfAsset("fakeGltfAsset");
         SpatialState spatialState = ShadowSpatialState.create();
         ShadowSpatialState.extract(spatialState)
                 .setEnvironmentVisibilityState(
@@ -466,11 +449,11 @@ public final class SpatialEnvironmentFeatureImplTest {
                                 PassthroughVisibilityState.APP, 0.5f));
 
         mEnvironment.setPreferredSpatialEnvironment(
-                new SpatialEnvironmentPreference(
-                        new ExrImageResourceImpl(exr), new GltfModelResourceImpl(gltf)));
+                new SpatialEnvironmentPreference(new ExrImageResourceImpl(exr), gltf));
 
         long initialSkybox = mFakeImpressApi.getCurrentEnvironmentLight();
-        List<Integer> geometryNodes = mFakeImpressApi.getImpressNodesForToken(gltf);
+        List<Integer> geometryNodes =
+                mFakeImpressApi.getImpressNodesForToken(((GltfModel) gltf).getNativeHandle());
 
         assertThat(initialSkybox).isNotEqualTo(INVALID_SPLIT_ENGINE_ID);
         assertThat(geometryNodes).isNotEmpty();

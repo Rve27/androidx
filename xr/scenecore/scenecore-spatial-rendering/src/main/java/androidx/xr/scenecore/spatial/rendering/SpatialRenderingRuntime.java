@@ -25,6 +25,7 @@ import androidx.xr.runtime.math.Matrix3;
 import androidx.xr.runtime.math.Pose;
 import androidx.xr.runtime.math.Vector3;
 import androidx.xr.runtime.math.Vector4;
+import androidx.xr.scenecore.impl.impress.GltfModel;
 import androidx.xr.scenecore.impl.impress.ImpressApi;
 import androidx.xr.scenecore.impl.impress.ImpressApiImpl;
 import androidx.xr.scenecore.impl.impress.KhronosPbrMaterial;
@@ -152,24 +153,20 @@ class SpatialRenderingRuntime implements RenderingRuntime {
         return SpatialRenderingRuntime.create(sceneRuntime, activity, null, null, null);
     }
 
-    private static GltfModelResourceImpl getModelResourceFromToken(long token) {
-        return new GltfModelResourceImpl(token);
-    }
-
     private static ExrImageResourceImpl getExrImageResourceFromToken(long token) {
         return new ExrImageResourceImpl(token);
     }
 
     @SuppressWarnings("FutureReturnValueIgnored")
     private @Nullable ListenableFuture<GltfModelResource> loadGltfAsset(
-            Supplier<ListenableFuture<Long>> modelLoader) {
+            Supplier<ListenableFuture<GltfModel>> modelLoader) {
         if (!Looper.getMainLooper().isCurrentThread()) {
             throw new IllegalStateException("This method must be called on the main thread.");
         }
 
         ResolvableFuture<GltfModelResource> gltfModelResourceFuture = ResolvableFuture.create();
 
-        ListenableFuture<Long> gltfTokenFuture;
+        ListenableFuture<GltfModel> gltfTokenFuture;
         try {
             gltfTokenFuture = modelLoader.get();
         } catch (RuntimeException e) {
@@ -179,8 +176,8 @@ class SpatialRenderingRuntime implements RenderingRuntime {
         gltfTokenFuture.addListener(
                 () -> {
                     try {
-                        long gltfToken = gltfTokenFuture.get();
-                        gltfModelResourceFuture.set(getModelResourceFromToken(gltfToken));
+                        GltfModel gltfToken = gltfTokenFuture.get();
+                        gltfModelResourceFuture.set(gltfToken);
                     } catch (Exception e) {
                         if (e instanceof InterruptedException) {
                             Thread.currentThread().interrupt();
@@ -248,6 +245,12 @@ class SpatialRenderingRuntime implements RenderingRuntime {
     public @NonNull ListenableFuture<GltfModelResource> loadGltfByByteArray(
             byte @NonNull [] assetData, @NonNull String assetKey) {
         return loadGltfAsset(() -> mImpressApi.loadGltfAsset(assetData, assetKey));
+    }
+
+    @Override
+    public void destroyGltfModel(@NonNull GltfModelResource gltfModel) {
+        GltfModel gltfModelResource = (GltfModel) gltfModel;
+        mImpressApi.releaseGltfAsset(gltfModelResource.getNativeHandle());
     }
 
     // ResolvableFuture is marked as RestrictTo(LIBRARY_GROUP_PREFIX), which is intended for classes
@@ -1000,7 +1003,7 @@ class SpatialRenderingRuntime implements RenderingRuntime {
             @NonNull Entity parentEntity) {
         GltfFeature feature =
                 new GltfFeatureImpl(
-                        (GltfModelResourceImpl) loadedGltf,
+                        (GltfModel) loadedGltf,
                         mImpressApi,
                         mSplitEngineSubspaceManager,
                         mExtensions);
