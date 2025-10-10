@@ -18,37 +18,35 @@ package androidx.xr.scenecore.spatial.core;
 
 import androidx.xr.runtime.math.Pose;
 import androidx.xr.runtime.math.Vector3;
-import androidx.xr.scenecore.runtime.PerceptionSpaceActivityPose;
+import androidx.xr.scenecore.runtime.PerceptionSpaceScenePose;
 
 import org.jspecify.annotations.NonNull;
 
-/** A ActivityPose representing the origin of the OpenXR reference space. */
-// TODO: b/439932057 - Rename ActivityPose to ScenePose.
-final class PerceptionSpaceActivityPoseImpl extends BaseActivityPose
-        implements PerceptionSpaceActivityPose {
+/** A ScenePose representing the origin of the OpenXR reference space. */
+final class PerceptionSpaceScenePoseImpl extends BaseScenePose
+        implements PerceptionSpaceScenePose {
+    private final OpenXrScenePoseHelper mOpenXrScenePoseHelper;
 
-    private final OpenXrActivityPoseHelper mOpenXrActivityPoseHelper;
-
-    PerceptionSpaceActivityPoseImpl(
+    PerceptionSpaceScenePoseImpl(
             ActivitySpaceImpl activitySpace, AndroidXrEntity activitySpaceRoot) {
-        mOpenXrActivityPoseHelper = new OpenXrActivityPoseHelper(activitySpace, activitySpaceRoot);
+        mOpenXrScenePoseHelper = new OpenXrScenePoseHelper(activitySpace, activitySpaceRoot);
     }
 
     @Override
     public @NonNull Pose getPoseInActivitySpace() {
-        return mOpenXrActivityPoseHelper.getPoseInActivitySpace(new Pose());
+        return mOpenXrScenePoseHelper.getPoseInActivitySpace(new Pose());
     }
 
     @Override
     public @NonNull Pose getActivitySpacePose() {
-        return mOpenXrActivityPoseHelper.getActivitySpacePose(new Pose());
+        return mOpenXrScenePoseHelper.getActivitySpacePose(new Pose());
     }
 
     @Override
     // TODO: b/378680989 - Remove getPoseInActivitySpace from Impl.
     public @NonNull Vector3 getActivitySpaceScale() {
-        // This ActivityPose is assumed to always have a scale of 1.0f in the OpenXR reference
+        // This ScenePose is assumed to always have a scale of 1.0f in the OpenXR reference
         // space.
-        return mOpenXrActivityPoseHelper.getActivitySpaceScale(new Vector3(1f, 1f, 1f));
+        return mOpenXrScenePoseHelper.getActivitySpaceScale(new Vector3(1f, 1f, 1f));
     }
 }

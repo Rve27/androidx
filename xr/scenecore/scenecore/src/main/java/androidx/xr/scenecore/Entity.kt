@@ -22,8 +22,8 @@ import androidx.annotation.FloatRange
 import androidx.annotation.RestrictTo
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Vector3
-import androidx.xr.scenecore.runtime.ActivityPose as RtActivityPose
 import androidx.xr.scenecore.runtime.Entity as RtEntity
+import androidx.xr.scenecore.runtime.ScenePose as RtScenePose
 
 /**
  * Interface for a spatial Entity. An Entity's [Pose]s are represented as being relative to their
@@ -237,7 +237,7 @@ public interface Entity : ScenePose {
 /** The BaseEntity is an implementation of Entity interface that wraps a platform entity. */
 public abstract class BaseEntity<RtEntityType : RtEntity>
 internal constructor(rtEntity: RtEntityType, private val entityManager: EntityManager) :
-    Entity, BaseScenePose<RtActivityPose>(rtEntity) {
+    Entity, BaseScenePose<RtScenePose>(rtEntity) {
 
     internal var rtEntity: RtEntityType?
 
