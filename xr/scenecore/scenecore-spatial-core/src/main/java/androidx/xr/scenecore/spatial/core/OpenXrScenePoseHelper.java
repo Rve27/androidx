@@ -25,7 +25,7 @@ import org.jspecify.annotations.NonNull;
  * A helper class for converting poses from an OpenXR pose to a pose in the activity space or world
  * space.
  */
-final class OpenXrActivityPoseHelper {
+final class OpenXrScenePoseHelper {
     private final @NonNull ActivitySpaceImpl mActivitySpace;
 
     OpenXrActivityPoseHelper(

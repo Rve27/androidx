@@ -24,7 +24,7 @@ import org.jspecify.annotations.NonNull;
 
 /** A ActivityPose representing the origin of the OpenXR reference space. */
 // TODO: b/439932057 - Rename ActivityPose to ScenePose.
-final class PerceptionSpaceActivityPoseImpl extends BaseActivityPose
+final class PerceptionSpaceScenePoseImpl extends BaseActivityPose
         implements PerceptionSpaceActivityPose {
 
     private final OpenXrActivityPoseHelper mOpenXrActivityPoseHelper;

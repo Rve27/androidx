@@ -30,7 +30,7 @@ import org.jspecify.annotations.NonNull;
  *
  * <p>A ActivityPose is an object that has a pose in the world space.
  */
-abstract class BaseActivityPose implements ActivityPose {
+abstract class BaseScenePose implements ActivityPose {
     @Override
     public @NonNull Pose getActivitySpacePose() {
         throw new UnsupportedOperationException(

@@ -40,7 +40,7 @@ import org.jspecify.annotations.Nullable;
  * A ActivityPose representing a user's camera. This can be used to determine the location and field
  * of view of the camera.
  */
-final class CameraViewActivityPoseImpl extends BaseActivityPose implements CameraViewActivityPose {
+final class CameraViewScenePoseImpl extends BaseActivityPose implements CameraViewActivityPose {
     private final PerceptionLibrary mPerceptionLibrary;
     @CameraType private final int mCameraType;
     private final ActivitySpaceImpl mActivitySpace;

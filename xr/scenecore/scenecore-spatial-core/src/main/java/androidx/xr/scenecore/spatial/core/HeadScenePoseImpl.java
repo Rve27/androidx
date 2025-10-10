@@ -32,7 +32,7 @@ import org.jspecify.annotations.Nullable;
  * An ActivityPose representing the head of the user. This can be used to determine the location of
  * the user's head.
  */
-class HeadActivityPoseImpl extends BaseActivityPose implements HeadActivityPose {
+class HeadScenePoseImpl extends BaseActivityPose implements HeadActivityPose {
     private final PerceptionLibrary mPerceptionLibrary;
     private final ActivitySpaceImpl mActivitySpace;
     private final OpenXrActivityPoseHelper mOpenXrActivityPoseHelper;

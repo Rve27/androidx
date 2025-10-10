@@ -65,7 +65,7 @@ import java.util.List;
 
 /** Test for common behaviour for ActivityPoses whose world position is retrieved from OpenXr. */
 @RunWith(ParameterizedRobolectricTestRunner.class)
-public final class OpenXrActivityPoseTest {
+public final class OpenXrScenePoseTest {
     private final XrExtensions mXrExtensions = XrExtensionsProvider.getXrExtensions();
     private final PerceptionLibrary mPerceptionLibrary = mock(PerceptionLibrary.class);
     private final Session mSession = mock(Session.class);

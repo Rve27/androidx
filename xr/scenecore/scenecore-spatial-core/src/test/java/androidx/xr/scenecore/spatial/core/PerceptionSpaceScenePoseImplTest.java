@@ -44,7 +44,7 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 
 @RunWith(RobolectricTestRunner.class)
-public final class PerceptionSpaceActivityPoseImplTest {
+public final class PerceptionSpaceScenePoseImplTest {
     private final XrExtensions mXrExtensions = XrExtensionsProvider.getXrExtensions();
     private final FakeScheduledExecutorService mExecutor = new FakeScheduledExecutorService();
     private final EntityManager mEntityManager = new EntityManager();
