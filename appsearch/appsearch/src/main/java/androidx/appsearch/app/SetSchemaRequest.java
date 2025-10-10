@@ -22,6 +22,7 @@ import androidx.annotation.IntDef;
 import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.OptIn;
 import androidx.annotation.RequiresFeature;
 import androidx.annotation.RestrictTo;
 import androidx.appsearch.annotation.CanIgnoreReturnValue;
@@ -93,8 +94,6 @@ import java.util.Set;
 //  Do not switch unless you've checked that no APIs are affected.
 @SuppressWarnings("JSpecifyNullness")
 public final class SetSchemaRequest {
-    // TODO(b/413089233) remove this when AppSearchAccount is added.
-    private static final String ACCOUNT_SCHEMA_TYPE = "builtin:Account";
     /**
      * List of Android Permission are supported in
      * {@link SetSchemaRequest.Builder#addRequiredPermissionsForSchemaTypeVisibility}
@@ -1361,6 +1360,7 @@ public final class SetSchemaRequest {
          *                                  corresponding {@link AppSearchSchema} type was never
          *                                  added.
          */
+        @OptIn(markerClass = ExperimentalAppSearchApi.class)
         public @NonNull SetSchemaRequest build() {
             // Verify that any schema types with display or visibility settings refer to a real
             // schema.
@@ -1387,7 +1387,7 @@ public final class SetSchemaRequest {
             }
 
             SchemaUtil.verifyPropertyPathSchemaTypes(mSchemas, mSchemasWipeoutAccountPropertyPaths,
-                    ACCOUNT_SCHEMA_TYPE);
+                    AppSearchAccount.SCHEMA_TYPE);
             mBuilt = true;
             return new SetSchemaRequest(
                     new ArraySet<>(mSchemas.values()),
