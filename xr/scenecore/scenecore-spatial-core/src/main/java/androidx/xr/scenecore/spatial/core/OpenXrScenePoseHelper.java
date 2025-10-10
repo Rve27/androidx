@@ -25,10 +25,10 @@ import org.jspecify.annotations.NonNull;
  * A helper class for converting poses from an OpenXR pose to a pose in the activity space or world
  * space.
  */
-final class OpenXrActivityPoseHelper {
+final class OpenXrScenePoseHelper {
     private final @NonNull ActivitySpaceImpl mActivitySpace;
 
-    OpenXrActivityPoseHelper(
+    OpenXrScenePoseHelper(
             @NonNull ActivitySpaceImpl activitySpace, @NonNull AndroidXrEntity activitySpaceRoot) {
         mActivitySpace = activitySpace;
     }
@@ -39,7 +39,7 @@ final class OpenXrActivityPoseHelper {
      * identity pose.
      */
     public Pose getPoseInActivitySpace(Pose openXrToPose) {
-        // The ActivityPose should have unit scale (1.0f, 1.0f, 1.0f) and it should have no
+        // The ScenePose should have unit scale (1.0f, 1.0f, 1.0f) and it should have no
         // direct parent, but the activity space can have a non-unit scale.
         // However, openXrToActivitySpace does not have the scale applied to it so we need to apply
         // the scale from ActivitySpace to the OpenXR pose to properly compute values in scaled
@@ -67,7 +67,7 @@ final class OpenXrActivityPoseHelper {
         return scaledActivitySpaceToOpenXr.compose(scaledOpenXrToPose);
     }
 
-    /** Returns the ActivityPose's pose in the activity space. */
+    /** Returns the ScenePose's pose in the activity space. */
     public Pose getActivitySpacePose(Pose openXrToPose) {
         // ActivitySpace and the nodeless entity have unit scale and the nodeless entity has no
         // direct parent so we can just compose the two poses without scaling.
