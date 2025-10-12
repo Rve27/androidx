@@ -477,7 +477,7 @@ public fun UserSubspace(
         }
     }
 
-    LaunchedEffect(behavior) {
+    LaunchedEffect(behavior, lockTo, lockDimensions) {
         behavior.configure(
             session = session,
             trailingEntity = userSubspaceRootNode,
