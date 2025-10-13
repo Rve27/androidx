@@ -195,7 +195,7 @@ private fun TooltipPopup(
                 onDismissRequest()
             }
         },
-        properties = PopupProperties(focusable = focusable),
+        properties = PopupProperties(focusable = focusable, clippingEnabled = false),
     ) {
         Box(
             modifier =
