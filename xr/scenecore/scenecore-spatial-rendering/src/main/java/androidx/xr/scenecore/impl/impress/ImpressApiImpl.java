@@ -177,7 +177,7 @@ public final class ImpressApiImpl implements ImpressApi {
 
     @Override
     @NonNull
-    public ListenableFuture<Long> loadImageBasedLightingAsset(@NonNull String path) {
+    public ListenableFuture<ExrImage> loadImageBasedLightingAsset(@NonNull String path) {
         return CallbackToFutureAdapter.getFuture(
                 completer -> {
                     // TODO: b/374216912 - Add a cancellationListener to the completer here when the
@@ -190,7 +190,12 @@ public final class ImpressApiImpl implements ImpressApi {
 
                                 @Override
                                 public void onSuccess(long value) {
-                                    completer.set(value);
+                                    ExrImage exrImage =
+                                            new ExrImage.Builder()
+                                                    .setImpressApi(ImpressApiImpl.this)
+                                                    .setNativeExrImage(value)
+                                                    .build();
+                                    completer.set(exrImage);
                                 }
 
                                 @Override
@@ -221,7 +226,7 @@ public final class ImpressApiImpl implements ImpressApi {
 
     @Override
     @NonNull
-    public ListenableFuture<Long> loadImageBasedLightingAsset(
+    public ListenableFuture<ExrImage> loadImageBasedLightingAsset(
             byte @NonNull [] data, @NonNull String key) {
         return CallbackToFutureAdapter.getFuture(
                 completer -> {
@@ -235,7 +240,12 @@ public final class ImpressApiImpl implements ImpressApi {
 
                                 @Override
                                 public void onSuccess(long value) {
-                                    completer.set(value);
+                                    ExrImage exrImage =
+                                            new ExrImage.Builder()
+                                                    .setImpressApi(ImpressApiImpl.this)
+                                                    .setNativeExrImage(value)
+                                                    .build();
+                                    completer.set(exrImage);
                                 }
 
                                 @Override

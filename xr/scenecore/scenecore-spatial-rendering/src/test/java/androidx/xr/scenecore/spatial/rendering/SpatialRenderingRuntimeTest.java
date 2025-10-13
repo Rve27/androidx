@@ -24,6 +24,7 @@ import android.app.Activity;
 
 import androidx.xr.runtime.math.FloatSize2d;
 import androidx.xr.runtime.math.Pose;
+import androidx.xr.scenecore.impl.impress.ExrImage;
 import androidx.xr.scenecore.impl.impress.FakeImpressApiImpl;
 import androidx.xr.scenecore.impl.impress.GltfModel;
 import androidx.xr.scenecore.impl.impress.Material;
@@ -170,9 +171,9 @@ public class SpatialRenderingRuntimeTest {
 
         ExrImageResource image = imageFuture.get();
         assertThat(image).isNotNull();
-        ExrImageResourceImpl imageImpl = (ExrImageResourceImpl) image;
-        assertThat(imageImpl).isNotNull();
-        long token = imageImpl.getExtensionImageToken();
+        ExrImage exrImage = (ExrImage) image;
+        assertThat(exrImage).isNotNull();
+        long token = exrImage.getNativeHandle();
         assertThat(token).isEqualTo(1);
     }
 
@@ -185,9 +186,9 @@ public class SpatialRenderingRuntimeTest {
 
         ExrImageResource image = imageFuture.get();
         assertThat(image).isNotNull();
-        ExrImageResourceImpl imageImpl = (ExrImageResourceImpl) image;
-        assertThat(imageImpl).isNotNull();
-        long token = imageImpl.getExtensionImageToken();
+        ExrImage exrImage = (ExrImage) image;
+        assertThat(exrImage).isNotNull();
+        long token = exrImage.getNativeHandle();
         assertThat(token).isEqualTo(1);
     }
 

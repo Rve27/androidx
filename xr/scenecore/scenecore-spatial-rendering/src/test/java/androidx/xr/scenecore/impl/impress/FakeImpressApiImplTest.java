@@ -55,7 +55,7 @@ public final class FakeImpressApiImplTest {
 
     @Test
     public void loadImageBasedLightingAsset_returnsImageFuture() {
-        ListenableFuture<Long> modelFuture =
+        ListenableFuture<ExrImage> modelFuture =
                 mFakeImpressApi.loadImageBasedLightingAsset("fakeEnvironment");
         assertThat(modelFuture).isNotNull();
     }
@@ -63,21 +63,21 @@ public final class FakeImpressApiImplTest {
     @Test
     public void loadImageBasedLightingAsset_withByteArrayAndKey_returnsFuture() {
         byte[] byteArray = new byte[] {};
-        ListenableFuture<Long> modelFuture =
+        ListenableFuture<ExrImage> imageFuture =
                 mFakeImpressApi.loadImageBasedLightingAsset(byteArray, "fakeEnvironment");
-        assertThat(modelFuture).isNotNull();
+        assertThat(imageFuture).isNotNull();
     }
 
     @Test
     public void releaseImageBasedLightingAsset_releasesImage()
             throws ExecutionException, InterruptedException {
-        ListenableFuture<Long> imageFuture =
+        ListenableFuture<ExrImage> imageFuture =
                 mFakeImpressApi.loadImageBasedLightingAsset("fakeEnvironment");
         List<Long> images = mFakeImpressApi.getImageBasedLightingAssets();
         assertThat(images).isNotNull();
         assertThat(images).hasSize(1);
 
-        Long imageToken = imageFuture.get();
+        Long imageToken = imageFuture.get().getNativeHandle();
         mFakeImpressApi.releaseImageBasedLightingAsset(imageToken);
 
         images = mFakeImpressApi.getImageBasedLightingAssets();
@@ -950,7 +950,7 @@ public final class FakeImpressApiImplTest {
 
     @Test
     public void disposeAllResources_disposesAllResources() {
-        ListenableFuture<Long> unused =
+        ListenableFuture<ExrImage> unused =
                 mFakeImpressApi.loadImageBasedLightingAsset("fakeEnvironment");
         ImpressNode unused2 = mFakeImpressApi.createImpressNode();
         ListenableFuture<GltfModel> unused3 = mFakeImpressApi.loadGltfAsset("fakeAsset");

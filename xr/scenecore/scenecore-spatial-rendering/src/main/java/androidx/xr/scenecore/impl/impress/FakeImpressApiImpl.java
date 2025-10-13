@@ -239,25 +239,35 @@ public class FakeImpressApiImpl implements ImpressApi {
     @Override
     @NonNull
     @SuppressWarnings({"RestrictTo", "AsyncSuffixFuture"})
-    public ListenableFuture<Long> loadImageBasedLightingAsset(@NonNull String path) {
+    public ListenableFuture<ExrImage> loadImageBasedLightingAsset(@NonNull String path) {
         long imageBasedLightingAssetToken = mNextImageBasedLightingAssetId++;
         mImageBasedLightingAssets.add(imageBasedLightingAssetToken);
+        ExrImage exrImage =
+                new ExrImage.Builder()
+                        .setImpressApi(this)
+                        .setNativeExrImage(imageBasedLightingAssetToken)
+                        .build();
         // TODO(b/352827267): Enforce minSDK API strategy - go/androidx-api-guidelines#compat-newapi
-        ResolvableFuture<Long> ret = ResolvableFuture.create();
-        ret.set(imageBasedLightingAssetToken);
+        ResolvableFuture<ExrImage> ret = ResolvableFuture.create();
+        ret.set(exrImage);
         return ret;
     }
 
     @Override
     @NonNull
     @SuppressWarnings({"RestrictTo", "AsyncSuffixFuture"})
-    public ListenableFuture<Long> loadImageBasedLightingAsset(
+    public ListenableFuture<ExrImage> loadImageBasedLightingAsset(
             byte @NonNull [] data, @NonNull String key) {
         long imageBasedLightingAssetToken = mNextImageBasedLightingAssetId++;
         mImageBasedLightingAssets.add(imageBasedLightingAssetToken);
+        ExrImage exrImage =
+                new ExrImage.Builder()
+                        .setImpressApi(this)
+                        .setNativeExrImage(imageBasedLightingAssetToken)
+                        .build();
         // TODO(b/352827267): Enforce minSDK API strategy - go/androidx-api-guidelines#compat-newapi
-        ResolvableFuture<Long> ret = ResolvableFuture.create();
-        ret.set(imageBasedLightingAssetToken);
+        ResolvableFuture<ExrImage> ret = ResolvableFuture.create();
+        ret.set(exrImage);
         return ret;
     }
 

@@ -98,6 +98,13 @@ public interface RenderingRuntime : JxrRuntime {
     ): ListenableFuture<ExrImageResource>
 
     /**
+     * Destroys the given EXR image resource.
+     *
+     * @param exrImage The EXR image resource to destroy.
+     */
+    public fun destroyExrImage(exrImage: ExrImageResource)
+
+    /**
      * Loads a texture resource for the given asset name or URL. The future returned by this method
      * will fire listeners on the UI thread if Runnable::run is supplied.
      *

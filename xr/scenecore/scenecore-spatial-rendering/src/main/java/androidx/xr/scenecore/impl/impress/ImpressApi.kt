@@ -178,15 +178,15 @@ public interface ImpressApi {
 
     /**
      * This method loads an image based lighting asset from the assets folder and returns a future
-     * with a token that can be used to reference the asset in other JNI calls.
+     * with an ExrImage that can be used to reference the asset in other JNI calls.
      */
-    public fun loadImageBasedLightingAsset(path: String): ListenableFuture<Long>
+    public fun loadImageBasedLightingAsset(path: String): ListenableFuture<ExrImage>
 
     /**
-     * This method loads an image based lighting asset from a byte array and returns a future with a
-     * token that can be used to reference the asset in other JNI calls.
+     * This method loads an image based lighting asset from a byte array and returns a future with
+     * an ExrImage that can be used to reference the asset in other JNI calls.
      */
-    public fun loadImageBasedLightingAsset(data: ByteArray, key: String): ListenableFuture<Long>
+    public fun loadImageBasedLightingAsset(data: ByteArray, key: String): ListenableFuture<ExrImage>
 
     /**
      * This method loads a glTF model from the local assets folder or a remote URL, and returns a

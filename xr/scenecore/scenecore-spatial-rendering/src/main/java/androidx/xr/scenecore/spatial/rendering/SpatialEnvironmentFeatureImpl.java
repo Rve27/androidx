@@ -19,6 +19,7 @@ package androidx.xr.scenecore.spatial.rendering;
 import android.app.Activity;
 import android.os.Looper;
 
+import androidx.xr.scenecore.impl.impress.ExrImage;
 import androidx.xr.scenecore.impl.impress.GltfModel;
 import androidx.xr.scenecore.impl.impress.ImpressApi;
 import androidx.xr.scenecore.impl.impress.ImpressNode;
@@ -75,14 +76,14 @@ class SpatialEnvironmentFeatureImpl extends BaseRenderingFeature
      * a preprocessed EXR image through SplitEngine. If skybox is null, this method clears the
      * preferred IBL selection, resulting in the system skybox being used.
      */
-    private void applySkybox(@Nullable ExrImageResourceImpl skybox) {
+    private void applySkybox(@Nullable ExrImageResource skybox) {
         if (!Looper.getMainLooper().isCurrentThread()) {
             throw new IllegalStateException("This method must be called on the main thread.");
         }
 
         mImpressApi.clearPreferredEnvironmentIblAsset();
         if (skybox != null) {
-            mImpressApi.setPreferredEnvironmentLight(skybox.getExtensionImageToken());
+            mImpressApi.setPreferredEnvironmentLight(((ExrImage) skybox).getNativeHandle());
         }
     }
 
@@ -177,14 +178,6 @@ class SpatialEnvironmentFeatureImpl extends BaseRenderingFeature
                     String newAnimationName =
                             newPreference == null ? null : newPreference.getGeometryAnimationName();
 
-                    // TODO b/329907079: Map ExrImageResourceImpl to ExrImageResource in Impl Layer
-                    if (newSkybox != null) {
-                        if (!(newSkybox instanceof ExrImageResourceImpl)) {
-                            throw new IllegalArgumentException(
-                                    "Preferred skybox is not of type ExrImageResourceImpl.");
-                        }
-                    }
-
                     if (!Objects.equals(newGeometry, prevGeometry)) {
                         applyGeometry(newGeometry, newMaterial, newNodeName, newAnimationName);
                     }
@@ -196,7 +189,7 @@ class SpatialEnvironmentFeatureImpl extends BaseRenderingFeature
                         if (newSkybox == null) {
                             applySkybox(null);
                         } else {
-                            applySkybox((ExrImageResourceImpl) newSkybox);
+                            applySkybox(newSkybox);
                         }
                     }
 
