@@ -85,6 +85,7 @@ androidXMultiplatform {
         androidDeviceTest {
             dependsOn(commonTest)
             dependencies {
+                implementation(libs.testRunner)
             }
         }
 
