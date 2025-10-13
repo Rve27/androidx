@@ -251,6 +251,47 @@ public class ImpressApiImpl : ImpressApi {
             "LoadImageBasedLightingAsset Operation"
         }
 
+    override suspend fun loadImageBasedLightingAssetTemp(data: ByteArray, key: String): ExrImage =
+        suspendCancellableCoroutine { continuation ->
+            nLoadImageBasedLightingAssetFromByteArray(
+                getViewNativeHandle(view),
+                // The underlying C++ code will hold a reference to this (anoynomous)
+                // AssetLoader until the load is complete.
+                object : AssetLoader {
+                    override fun onSuccess(value: Long) {
+                        val exrImage: ExrImage =
+                            ExrImage.Builder()
+                                .setImpressApi(this@ImpressApiImpl)
+                                .setNativeExrImage(value)
+                                .build()
+                        continuation.resume(exrImage)
+                    }
+
+                    override fun onFailure(message: String) {
+                        // We can safely check for the CANCELLED string here since we
+                        // know that the underlying absl Status code is being
+                        // translated to a java Exception and the message is being
+                        // propagated. Ideally the native code would generate a separate
+                        // signal call for this.
+                        // TODO: b/374217508 - Publish a more precisely typed Exception
+                        // interface for this.
+                        if (message.contains("CANCELLED")) {
+                            onCancelled(message)
+                        } else {
+                            continuation.resumeWithException(Exception(message))
+                        }
+                    }
+
+                    override fun onCancelled(message: String) {
+                        continuation.cancel(Exception(message))
+                    }
+                },
+                data,
+                key,
+            )
+            "LoadImageBasedLightingAsset Operation"
+        }
+
     override fun loadImageBasedLightingAsset(
         data: ByteArray,
         key: String,
@@ -295,6 +336,48 @@ public class ImpressApiImpl : ImpressApi {
             "LoadImageBasedLightingAsset Operation"
         }
 
+    override suspend fun loadGltfAssetTemp(path: String): GltfModel =
+        suspendCancellableCoroutine { continuation ->
+            // TODO: b/374216912 - Add a cancellationListener to the completer here when the
+            // loading APIs support cancellation.
+            nLoadGltfAssetFromPath(
+                getViewNativeHandle(view),
+                // The underlying C++ code will hold a reference to this (anoynomous)
+                // AssetLoader until the load is complete.
+                object : AssetLoader {
+                    override fun onSuccess(value: Long) {
+                        val model: GltfModel =
+                            GltfModel.Builder()
+                                .setImpressApi(this@ImpressApiImpl)
+                                .setNativeGltfModel(value)
+                                .build()
+                        continuation.resume(model)
+                    }
+
+                    override fun onFailure(message: String) {
+                        // We can safely check for the CANCELLED string here since we
+                        // know that the underlying absl Status code is being
+                        // translated to a java Exception and the message is being
+                        // propagated. Ideally the native code would generate a separate
+                        // signal call for this.
+                        // TODO: b/374217508 - Publish a more precisely typed Exception
+                        // interface for this.
+                        if (message.contains("CANCELLED")) {
+                            onCancelled(message)
+                        } else {
+                            continuation.resumeWithException(Exception(message))
+                        }
+                    }
+
+                    override fun onCancelled(message: String) {
+                        continuation.cancel(Exception(message))
+                    }
+                },
+                path,
+            )
+            "LoadGltfAsset Operation"
+        }
+
     override fun loadGltfAsset(path: String): ListenableFuture<GltfModel> =
         CallbackToFutureAdapter.getFuture { completer ->
             // TODO: b/374216912 - Add a cancellationListener to the completer here when the
@@ -331,6 +414,49 @@ public class ImpressApiImpl : ImpressApi {
                     }
                 },
                 path,
+            )
+            "LoadGltfAsset Operation"
+        }
+
+    override suspend fun loadGltfAssetTemp(data: ByteArray, key: String): GltfModel =
+        suspendCancellableCoroutine { continuation ->
+            // TODO: b/374216912 - Add a cancellationListener to the completer here when the
+            // loading APIs support cancellation.
+            nLoadGltfAssetFromByteArray(
+                getViewNativeHandle(view),
+                // The underlying C++ code will hold a reference to this (anoynomous)
+                // AssetLoader until the load is complete.
+                object : AssetLoader {
+                    override fun onSuccess(value: Long) {
+                        val model: GltfModel =
+                            GltfModel.Builder()
+                                .setImpressApi(this@ImpressApiImpl)
+                                .setNativeGltfModel(value)
+                                .build()
+                        continuation.resume(model)
+                    }
+
+                    override fun onFailure(message: String) {
+                        // We can safely check for the CANCELLED string here since we
+                        // know that the underlying absl Status code is being
+                        // translated to a java Exception and the message is being
+                        // propagated. Ideally the native code would generate a separate
+                        // signal call for this.
+                        // TODO: b/374217508 - Publish a more precisely typed Exception
+                        // interface for this.
+                        if (message.contains("CANCELLED")) {
+                            onCancelled(message)
+                        } else {
+                            continuation.resumeWithException(Exception(message))
+                        }
+                    }
+
+                    override fun onCancelled(message: String) {
+                        continuation.cancel(Exception(message))
+                    }
+                },
+                data,
+                key,
             )
             "LoadGltfAsset Operation"
         }
@@ -397,6 +523,67 @@ public class ImpressApiImpl : ImpressApi {
             impressNode.handle.toLong(),
             enableCollider,
         )
+
+    /**
+     * Starts an animation on an instanced GLTFModel.
+     *
+     * @param impressNode The integer ID of the Impress node for the instance of the GLTF
+     * @param animationName A nullable String which contains a requested animation to play. If null
+     *   is provided, this will attempt to play the first animation it finds
+     * @param looping True if the animation should loop. Note that if the animation is looped, the
+     *   returned Future will never fire successfully.
+     * @return a ListenableFuture which fires when the animation stops. It will return an exception
+     *   if the animation can't play.
+     */
+    override suspend fun animateGltfModelTemp(
+        impressNode: ImpressNode,
+        animationName: String?,
+        looping: Boolean,
+    ): Void? = suspendCancellableCoroutine { continuation ->
+        nAnimateGltfModel(
+            getViewNativeHandle(view),
+            impressNode.handle,
+            animationName!!,
+            looping,
+            object : AssetAnimator {
+                // Hold a reference to the completer to ensure it isn't garbage
+                // collected until the C++ side releases the reference to the
+                // AssetAnimator. The future returned by
+                // CallbackToFutureAdapter.getFuture() aggressively tries to let the
+                // garbage collector clean up the completer as an optimization, we
+                // are concerned that this could cause the future to never fire, or
+                // cancel incorrectly and return an error, especially since the code
+                // that calls this simply allows the future to go out of scope
+                // without storing it. This might not actually be a problem, but
+                // this code shouldn't be harmful and should reduce the uncertainty.
+                // We should eventually have a different way of communicating
+                // animation completion back to the application. See b/362368652. {
+                override fun onComplete() {
+                    continuation.resume(null)
+                }
+
+                override fun onFailure(message: String) {
+                    // We can safely check for the CANCELLED string here since we
+                    // know that the underlying absl Status code is being
+                    // translated to a java Exception and the message is being
+                    // propagated. Ideally the native code would generate a separate
+                    // signal call for this.
+                    // TODO: b/374217508 - Publish a more precisely typed Exception
+                    // interface for this.
+                    if (message.contains("CANCELLED")) {
+                        onCancelled(message)
+                    } else {
+                        continuation.resumeWithException(Exception(message))
+                    }
+                }
+
+                override fun onCancelled(message: String) {
+                    continuation.cancel(Exception(message))
+                }
+            },
+        )
+        "AnimateGltfModel Operation"
+    }
 
     /**
      * Starts an animation on an instanced GLTFModel.
@@ -659,6 +846,50 @@ public class ImpressApiImpl : ImpressApi {
             alphaMask,
         )
 
+    override suspend fun loadTextureTemp(path: String): Texture =
+        suspendCancellableCoroutine { continuation ->
+            // TODO: b/374216912 - Add a cancellationListener to the completer here when the
+            // loading APIs support cancellation.
+            nLoadTexture(
+                getViewNativeHandle(view),
+                // The underlying C++ code will hold a reference to this (anoynomous)
+                // AssetLoader until the load is complete.
+                // TODO(b/394349866): Revisit the way C++ --> Java code is called back
+                // for the AssetLoader (proguard)
+                object : AssetLoader {
+                    override fun onSuccess(value: Long) {
+                        val texture =
+                            Texture.Builder()
+                                .setImpressApi(this@ImpressApiImpl)
+                                .setNativeTexture(value)
+                                .build()
+                        continuation.resume(texture)
+                    }
+
+                    override fun onFailure(message: String) {
+                        // We can safely check for the CANCELLED string here since we
+                        // know that the underlying absl Status code is being
+                        // translated to a java Exception and the message is being
+                        // propagated. Ideally the native code would generate a separate
+                        // signal call for this.
+                        // TODO: b/374217508 - Publish a more precisely typed Exception
+                        // interface for this.
+                        if (message.contains("CANCELLED")) {
+                            onCancelled(message)
+                        } else {
+                            continuation.resumeWithException(Exception(message))
+                        }
+                    }
+
+                    override fun onCancelled(message: String) {
+                        continuation.cancel(Exception(message))
+                    }
+                },
+                path,
+            )
+            "LoadTexture Operation"
+        }
+
     override fun loadTexture(path: String): ListenableFuture<Texture> =
         CallbackToFutureAdapter.getFuture { completer ->
             // TODO: b/374216912 - Add a cancellationListener to the completer here when the
@@ -714,6 +945,51 @@ public class ImpressApiImpl : ImpressApi {
             .setNativeTexture(textureHandle)
             .build()
     }
+
+    override suspend fun createWaterMaterialTemp(isAlphaMapVersion: Boolean): WaterMaterial =
+        suspendCancellableCoroutine { continuation ->
+            // TODO: b/374216912 - Add a cancellationListener to the completer here when the
+            // loading APIs support cancellation.
+            nCreateWaterMaterial(
+                getViewNativeHandle(view),
+                // The underlying C++ code will hold a reference to this (anoynomous)
+                // AssetLoader until the load is complete.
+                // TODO(b/394349866): Revisit the way C++ --> Java code is called back
+                // for the AssetLoader (proguard)
+                object : AssetLoader {
+                    override fun onSuccess(value: Long) {
+                        val waterMaterial =
+                            WaterMaterial.Builder()
+                                .setImpressApi(this@ImpressApiImpl)
+                                .setNativeMaterial(value)
+                                .build()
+                        continuation.resume(waterMaterial)
+                    }
+
+                    override fun onFailure(message: String) {
+                        // We can safely check for the CANCELLED string here since we
+                        // know that the underlying absl Status code is being
+                        // translated to a java Exception and the message is being
+                        // propagated. Ideally the native code would generate a separate
+                        // signal call for this.
+                        // TODO: b/374217508 - Publish a more precisely typed Exception
+                        // interface for this.
+                        if (message.contains("CANCELLED")) {
+                            onCancelled(message)
+                        } else {
+                            continuation.resumeWithException(Exception(message))
+                        }
+                    }
+
+                    override fun onCancelled(message: String) {
+                        continuation.cancel(Exception(message))
+                    }
+                },
+                isAlphaMapVersion,
+            )
+            // This string is used for debugging purposes by the Coroutine.
+            "CreateWaterMaterial Operation"
+        }
 
     override fun createWaterMaterial(isAlphaMapVersion: Boolean): ListenableFuture<WaterMaterial> =
         CallbackToFutureAdapter.getFuture { completer ->
@@ -864,6 +1140,54 @@ public class ImpressApiImpl : ImpressApi {
         z: Float,
         w: Float,
     ): Unit = throw UnsupportedOperationException("Stub API to be removed.")
+
+    override suspend fun createKhronosPbrMaterialTemp(
+        spec: KhronosPbrMaterialSpec
+    ): KhronosPbrMaterial = suspendCancellableCoroutine { continuation ->
+        // TODO: b/374216912 - Add a cancellationListener to the completer here when the
+        // loading APIs support cancellation.
+        nCreateGenericMaterial(
+            getViewNativeHandle(view),
+            // The underlying C++ code will hold a reference to this (anoynomous)
+            // AssetLoader until the load is complete.
+            // TODO(b/394349866): Revisit the way C++ --> Java code is called back
+            // for the AssetLoader (proguard)
+            object : AssetLoader {
+                override fun onSuccess(value: Long) {
+                    val khronosPbrMaterial =
+                        KhronosPbrMaterial.Builder()
+                            .setImpressApi(this@ImpressApiImpl)
+                            .setNativeMaterial(value)
+                            .build()
+                    continuation.resume(khronosPbrMaterial)
+                }
+
+                override fun onFailure(message: String) {
+                    // We can safely check for the CANCELLED string here since we
+                    // know that the underlying absl Status code is being
+                    // translated to a java Exception and the message is being
+                    // propagated. Ideally the native code would generate a separate
+                    // signal call for this.
+                    // TODO: b/374217508 - Publish a more precisely typed Exception
+                    // interface for this.
+                    if (message.contains("CANCELLED")) {
+                        onCancelled(message)
+                    } else {
+                        continuation.resumeWithException(Exception(message))
+                    }
+                }
+
+                override fun onCancelled(message: String) {
+                    continuation.cancel(Exception(message))
+                }
+            },
+            spec.lightingModel,
+            spec.blendMode,
+            spec.doubleSidedMode,
+        )
+        // This string is used for debugging purposes by the Coroutine.
+        "CreateKhronosPbrMaterial Operation"
+    }
 
     override fun createKhronosPbrMaterial(
         spec: KhronosPbrMaterialSpec
