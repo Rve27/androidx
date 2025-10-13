@@ -18,7 +18,7 @@ package androidx.compose.ui.input
 
 import android.view.InputDevice
 import android.view.MotionEvent
-import androidx.compose.ui.input.indirect.IndirectTouchEventPrimaryDirectionalMotionAxis
+import androidx.compose.ui.input.indirect.IndirectPointerEventPrimaryDirectionalMotionAxis
 import androidx.compose.ui.input.indirect.indirectPrimaryDirectionalScrollAxis
 import androidx.test.filters.SdkSuppress
 import kotlin.test.assertEquals
@@ -30,7 +30,7 @@ import org.mockito.junit.MockitoJUnitRunner
 
 @RunWith(MockitoJUnitRunner::class)
 @SdkSuppress(minSdkVersion = 28) // Mocks for final classes can only be done on 28 and higher
-class IndirectTouchEventWithInputDeviceMockTest {
+class IndirectPointerEventWithInputDeviceMockTest {
     @Mock lateinit var mockInputDevice: InputDevice // Mock InputDevice
 
     @Mock lateinit var mockMotionRangeX: InputDevice.MotionRange // Mock MotionRange for X-axis
@@ -94,7 +94,7 @@ class IndirectTouchEventWithInputDeviceMockTest {
                     yRange = null,
                 )
             )
-        assertEquals(IndirectTouchEventPrimaryDirectionalMotionAxis.None, indirectScrollAxis)
+        assertEquals(IndirectPointerEventPrimaryDirectionalMotionAxis.None, indirectScrollAxis)
         mockMotionEvent.recycle()
     }
 
@@ -107,7 +107,7 @@ class IndirectTouchEventWithInputDeviceMockTest {
                     yRange = null,
                 )
             )
-        assertEquals(IndirectTouchEventPrimaryDirectionalMotionAxis.X, indirectScrollAxis)
+        assertEquals(IndirectPointerEventPrimaryDirectionalMotionAxis.X, indirectScrollAxis)
         mockMotionEvent.recycle()
     }
 
@@ -120,7 +120,7 @@ class IndirectTouchEventWithInputDeviceMockTest {
                     yRange = 100f,
                 )
             )
-        assertEquals(IndirectTouchEventPrimaryDirectionalMotionAxis.Y, indirectScrollAxis)
+        assertEquals(IndirectPointerEventPrimaryDirectionalMotionAxis.Y, indirectScrollAxis)
         mockMotionEvent.recycle()
     }
 
@@ -133,7 +133,7 @@ class IndirectTouchEventWithInputDeviceMockTest {
                     yRange = 0f,
                 )
             )
-        assertEquals(IndirectTouchEventPrimaryDirectionalMotionAxis.X, indirectScrollAxis)
+        assertEquals(IndirectPointerEventPrimaryDirectionalMotionAxis.X, indirectScrollAxis)
         mockMotionEvent.recycle()
     }
 
@@ -146,7 +146,7 @@ class IndirectTouchEventWithInputDeviceMockTest {
                     yRange = 100f,
                 )
             )
-        assertEquals(IndirectTouchEventPrimaryDirectionalMotionAxis.Y, indirectScrollAxis)
+        assertEquals(IndirectPointerEventPrimaryDirectionalMotionAxis.Y, indirectScrollAxis)
         mockMotionEvent.recycle()
     }
 
@@ -159,7 +159,7 @@ class IndirectTouchEventWithInputDeviceMockTest {
                     yRange = 1000f,
                 )
             )
-        assertEquals(IndirectTouchEventPrimaryDirectionalMotionAxis.None, indirectScrollAxis)
+        assertEquals(IndirectPointerEventPrimaryDirectionalMotionAxis.None, indirectScrollAxis)
         mockMotionEvent.recycle()
     }
 
@@ -172,7 +172,7 @@ class IndirectTouchEventWithInputDeviceMockTest {
                     yRange = 1000f,
                 )
             )
-        assertEquals(IndirectTouchEventPrimaryDirectionalMotionAxis.None, indirectScrollAxis)
+        assertEquals(IndirectPointerEventPrimaryDirectionalMotionAxis.None, indirectScrollAxis)
         mockMotionEvent.recycle()
     }
 
@@ -185,7 +185,7 @@ class IndirectTouchEventWithInputDeviceMockTest {
                     yRange = 1000f,
                 )
             )
-        assertEquals(IndirectTouchEventPrimaryDirectionalMotionAxis.None, indirectScrollAxis)
+        assertEquals(IndirectPointerEventPrimaryDirectionalMotionAxis.None, indirectScrollAxis)
         mockMotionEvent.recycle()
     }
 
@@ -198,7 +198,7 @@ class IndirectTouchEventWithInputDeviceMockTest {
                     yRange = 1000f,
                 )
             )
-        assertEquals(IndirectTouchEventPrimaryDirectionalMotionAxis.None, indirectScrollAxis)
+        assertEquals(IndirectPointerEventPrimaryDirectionalMotionAxis.None, indirectScrollAxis)
         mockMotionEvent.recycle()
     }
 
@@ -211,7 +211,7 @@ class IndirectTouchEventWithInputDeviceMockTest {
                     yRange = 4000f,
                 )
             )
-        assertEquals(IndirectTouchEventPrimaryDirectionalMotionAxis.None, indirectScrollAxis)
+        assertEquals(IndirectPointerEventPrimaryDirectionalMotionAxis.None, indirectScrollAxis)
         mockMotionEvent.recycle()
     }
 
@@ -224,7 +224,7 @@ class IndirectTouchEventWithInputDeviceMockTest {
                     yRange = 1000f,
                 )
             )
-        assertEquals(IndirectTouchEventPrimaryDirectionalMotionAxis.X, indirectScrollAxis)
+        assertEquals(IndirectPointerEventPrimaryDirectionalMotionAxis.X, indirectScrollAxis)
         mockMotionEvent.recycle()
     }
 
@@ -237,7 +237,7 @@ class IndirectTouchEventWithInputDeviceMockTest {
                     yRange = 5000f,
                 )
             )
-        assertEquals(IndirectTouchEventPrimaryDirectionalMotionAxis.Y, indirectScrollAxis)
+        assertEquals(IndirectPointerEventPrimaryDirectionalMotionAxis.Y, indirectScrollAxis)
         mockMotionEvent.recycle()
     }
 
@@ -250,7 +250,7 @@ class IndirectTouchEventWithInputDeviceMockTest {
                     yRange = 1000f,
                 )
             )
-        assertEquals(IndirectTouchEventPrimaryDirectionalMotionAxis.X, indirectScrollAxis)
+        assertEquals(IndirectPointerEventPrimaryDirectionalMotionAxis.X, indirectScrollAxis)
         mockMotionEvent.recycle()
     }
 
@@ -263,7 +263,7 @@ class IndirectTouchEventWithInputDeviceMockTest {
                     yRange = 6000f,
                 )
             )
-        assertEquals(IndirectTouchEventPrimaryDirectionalMotionAxis.Y, indirectScrollAxis)
+        assertEquals(IndirectPointerEventPrimaryDirectionalMotionAxis.Y, indirectScrollAxis)
         mockMotionEvent.recycle()
     }
 }

@@ -87,9 +87,9 @@ import androidx.compose.runtime.snapshots.Snapshot
 import androidx.compose.ui.ComposeUiFlags
 import androidx.compose.ui.ComposeUiFlags.isAdaptiveRefreshRateEnabled
 import androidx.compose.ui.ComposeUiFlags.isCanScrollUsingLastDownEventFixEnabled
-import androidx.compose.ui.ComposeUiFlags.isIndirectTouchNavigationGestureDetectorEnabled
+import androidx.compose.ui.ComposeUiFlags.isIndirectPointerNavigationGestureDetectorEnabled
 import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.ExperimentalIndirectTouchTypeApi
+import androidx.compose.ui.ExperimentalIndirectPointerApi
 import androidx.compose.ui.InternalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.R
@@ -141,8 +141,8 @@ import androidx.compose.ui.input.InputMode.Companion.Keyboard
 import androidx.compose.ui.input.InputMode.Companion.Touch
 import androidx.compose.ui.input.InputModeManager
 import androidx.compose.ui.input.InputModeManagerImpl
-import androidx.compose.ui.input.indirect.IndirectTouchEvent
-import androidx.compose.ui.input.indirect.IndirectTouchEventPrimaryDirectionalMotionAxis
+import androidx.compose.ui.input.indirect.IndirectPointerEvent
+import androidx.compose.ui.input.indirect.IndirectPointerEventPrimaryDirectionalMotionAxis
 import androidx.compose.ui.input.indirect.nativeEvent
 import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.key.KeyEventType.Companion.KeyDown
@@ -287,10 +287,10 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
     private var superclassInitComplete = true
 
     // Allows tests to override the calculated primaryDirectionalMotionAxis from a MotionEvent (see
-    // [IndirectTouchEventNavigationSystemTests] for more details).
+    // [IndirectPointerEventNavigationSystemTests] for more details).
     @VisibleForTesting
     internal var primaryDirectionalMotionAxisOverride:
-        IndirectTouchEventPrimaryDirectionalMotionAxis? =
+        IndirectPointerEventPrimaryDirectionalMotionAxis? =
         null
 
     override val sharedDrawScope = LayoutNodeDrawScope()
@@ -898,11 +898,11 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
     /** Set to `true` when [sendHoverExitEvent] has been posted. */
     private var hoverExitReceived = false
 
-    // Enables event stream tracking for indirect touch navigation gestures.
-    private var indirectTouchNavigationGestureDetectorActiveForEventStream = false
-    // Determines scroll/swipe to next or previous focusable element for indirect touch events.
-    private val indirectTouchNavigationGestureDetector =
-        IndirectTouchNavigationGestureDetector(context) {
+    // Enables event stream tracking for indirect pointer navigation gestures.
+    private var indirectPointerNavigationGestureDetectorActiveForEventStream = false
+    // Determines scroll/swipe to next or previous focusable element for indirect pointer events.
+    private val indirectPointerNavigationGestureDetector =
+        IndirectPointerNavigationGestureDetector(context) {
             focusOwner.moveFocus(focusDirection = it, wrapAroundForOneDimensionalFocus = false)
         }
 
@@ -1324,14 +1324,14 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
             // Finally, dispatch the key event to onPreKeyEvent/onKeyEvent listeners.
             focusOwner.dispatchKeyEvent(keyEvent)
 
-    /** This function is used by the testing framework to send indirect touch events. */
-    @ExperimentalIndirectTouchTypeApi
-    override fun sendIndirectTouchEvent(indirectTouchEvent: IndirectTouchEvent): Boolean {
-        if (indirectTouchEvent.nativeEvent.actionMasked == ACTION_CANCEL) {
-            focusOwner.dispatchIndirectTouchCancel()
+    /** This function is used by the testing framework to send indirect pointer events. */
+    @ExperimentalIndirectPointerApi
+    override fun sendIndirectPointerEvent(indirectPointerEvent: IndirectPointerEvent): Boolean {
+        if (indirectPointerEvent.nativeEvent.actionMasked == ACTION_CANCEL) {
+            focusOwner.dispatchIndirectPointerCancel()
             return true
         }
-        return handleIndirectTouchEvent(indirectTouchEvent)
+        return handleIndirectPointerEvent(indirectPointerEvent)
     }
 
     override fun dispatchKeyEvent(event: AndroidKeyEvent): Boolean =
@@ -2350,17 +2350,17 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
                 }
             else -> {
                 if (motionEvent.isFromSource(SOURCE_TOUCH_NAVIGATION)) {
-                    val indirectTouchEvent =
-                        motionEventAdapter.convertToIndirectTouchEvent(
+                    val indirectPointerEvent =
+                        motionEventAdapter.convertToIndirectPointerEvent(
                             motionEvent,
                             primaryDirectionalMotionAxisOverride,
                         )
-                    if (indirectTouchEvent != null) {
-                        if (handleIndirectTouchEvent(indirectTouchEvent)) {
+                    if (indirectPointerEvent != null) {
+                        if (handleIndirectPointerEvent(indirectPointerEvent)) {
                             return true
                         }
                     } else {
-                        focusOwner.dispatchIndirectTouchCancel()
+                        focusOwner.dispatchIndirectPointerCancel()
                         return true
                     }
                 }
@@ -2371,32 +2371,32 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
         }
     }
 
-    private fun handleIndirectTouchEvent(indirectTouchEvent: IndirectTouchEvent): Boolean {
-        val motionEvent = indirectTouchEvent.nativeEvent
+    private fun handleIndirectPointerEvent(indirectPointerEvent: IndirectPointerEvent): Boolean {
+        val motionEvent = indirectPointerEvent.nativeEvent
 
-        val handled = focusOwner.dispatchIndirectTouchEvent(indirectTouchEvent)
+        val handled = focusOwner.dispatchIndirectPointerEvent(indirectPointerEvent)
 
         if (handled) {
             // Turns off all navigation gestures for this event stream since an app is
             // handling the event stream and also resets the preferred Axis.
-            indirectTouchNavigationGestureDetectorActiveForEventStream = false
-            indirectTouchNavigationGestureDetector.primaryDirectionalMotionAxis =
-                IndirectTouchEventPrimaryDirectionalMotionAxis.None
+            indirectPointerNavigationGestureDetectorActiveForEventStream = false
+            indirectPointerNavigationGestureDetector.primaryDirectionalMotionAxis =
+                IndirectPointerEventPrimaryDirectionalMotionAxis.None
             return true
         } else {
             @OptIn(ExperimentalComposeUiApi::class)
-            if (isIndirectTouchNavigationGestureDetectorEnabled) { // Flag for feature
+            if (isIndirectPointerNavigationGestureDetectorEnabled) { // Flag for feature
                 if (motionEvent.action == ACTION_DOWN) {
                     // Starts tracking only with ACTION_DOWN (start of event stream).
-                    indirectTouchNavigationGestureDetectorActiveForEventStream = true
-                    indirectTouchNavigationGestureDetector.primaryDirectionalMotionAxis =
-                        indirectTouchEvent.primaryDirectionalMotionAxis
+                    indirectPointerNavigationGestureDetectorActiveForEventStream = true
+                    indirectPointerNavigationGestureDetector.primaryDirectionalMotionAxis =
+                        indirectPointerEvent.primaryDirectionalMotionAxis
                 }
 
-                if (indirectTouchNavigationGestureDetectorActiveForEventStream) {
-                    indirectTouchNavigationGestureDetector.onTouchEvent(motionEvent)
+                if (indirectPointerNavigationGestureDetectorActiveForEventStream) {
+                    indirectPointerNavigationGestureDetector.onTouchEvent(motionEvent)
                 }
-                // If the isIndirectTouchNavigationGestureDetectorEnabled flag is
+                // If the isIndirectPointerNavigationGestureDetectorEnabled flag is
                 // enabled, it means that we don't want to pass the event up to the
                 // platform's handler for SOURCE_TOUCH_NAVIGATION, so we return true.
                 return true
@@ -3785,11 +3785,11 @@ private object Api35Impl {
     }
 }
 
-internal class IndirectTouchNavigationGestureDetector(
+internal class IndirectPointerNavigationGestureDetector(
     context: Context,
     private val onMoveFocus: (FocusDirection) -> Unit,
 ) {
-    var primaryDirectionalMotionAxis = IndirectTouchEventPrimaryDirectionalMotionAxis.None
+    var primaryDirectionalMotionAxis = IndirectPointerEventPrimaryDirectionalMotionAxis.None
 
     private val gestureDetector: GestureDetector =
         GestureDetector(
@@ -3818,7 +3818,7 @@ internal class IndirectTouchNavigationGestureDetector(
                 ): Boolean {
                     if (
                         primaryDirectionalMotionAxis ==
-                            IndirectTouchEventPrimaryDirectionalMotionAxis.X
+                            IndirectPointerEventPrimaryDirectionalMotionAxis.X
                     ) {
                         if (abs(velocityX) > abs(velocityY)) {
                             val direction =
@@ -3827,7 +3827,7 @@ internal class IndirectTouchNavigationGestureDetector(
                         }
                     } else if (
                         primaryDirectionalMotionAxis ==
-                            IndirectTouchEventPrimaryDirectionalMotionAxis.Y
+                            IndirectPointerEventPrimaryDirectionalMotionAxis.Y
                     ) {
                         if (abs(velocityY) > abs(velocityX)) {
                             val direction =
