@@ -54,4 +54,13 @@ public object WearComposeFoundationFlags {
     @field:Suppress("MutableBareField")
     @JvmField
     public var isTransformingLazyColumnClickableThresholdEnabled: Boolean = true
+
+    /**
+     * Whether to use warped curved text, true by default. Warping provides higher quality rendering
+     * for curved text, specially for cursive fonts, but can have a slight performance impact for
+     * big curved text.
+     */
+    @field:Suppress("MutableBareField")
+    @JvmField
+    public var isWarpingCurvedTextEnabled: Boolean = true
 }
