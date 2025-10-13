@@ -136,6 +136,10 @@ public interface Entity : ScenePose {
      * This value will affect the rendering of this Entity's children. Children of this node will
      * have their alpha levels multiplied by this value and any alpha of this entity's ancestors.
      *
+     * Usage restrictions:
+     * - If the provided `alpha` is outside the [0, 1] range, it will be clamped automatically to
+     *   [0, 1].
+     *
      * @param alpha Alpha transparency level for the Entity.
      * @param relativeTo Sets alpha relative to given Space. Default value is the parent Space.
      */
