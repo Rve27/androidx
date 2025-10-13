@@ -191,7 +191,7 @@ constructor(
         MeteringRepeating.Builder(cameraProperties, displayInfoManager).build()
     }
 
-    private val supportedSurfaceCombination by lazy {
+    private val supportedSurfaceCombination =
         SupportedSurfaceCombination(
             context,
             cameraProperties.metadata,
@@ -200,7 +200,6 @@ constructor(
             //   order to handle MeteringRepeating scenarios
             FeatureCombinationQuery.NO_OP_FEATURE_COMBINATION_QUERY,
         )
-    }
 
     private val dynamicRangeResolver = DynamicRangeResolver(cameraProperties.metadata)
 
