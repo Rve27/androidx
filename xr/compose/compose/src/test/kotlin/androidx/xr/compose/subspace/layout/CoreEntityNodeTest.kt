@@ -135,6 +135,25 @@ class CoreEntityNodeTest {
     }
 
     @Test
+    fun coreEntityNode_alpha_shouldClampAppendedResult() {
+        composeTestRule.setContentWithCompatibilityForXr {
+            ApplicationSubspace {
+                SpatialAndroidViewPanel(
+                    factory = { View(it) },
+                    SubspaceModifier.modifyCoreEntity { setOrAppendAlpha(0.5f) }
+                        .modifyCoreEntity { setOrAppendAlpha(4f) }
+                        .testTag("panel"),
+                )
+            }
+        }
+
+        val panelNode = composeTestRule.onSubspaceNodeWithTag("panel").fetchSemanticsNode()
+        val panelSceneCoreEntity = panelNode.semanticsEntity as PanelEntity?
+        assertNotNull(panelSceneCoreEntity)
+        assertThat(panelSceneCoreEntity.getAlpha()).isEqualTo(1f)
+    }
+
+    @Test
     fun coreEntityNode_scale_shouldBeApplied() {
         composeTestRule.setContentWithCompatibilityForXr {
             ApplicationSubspace {
