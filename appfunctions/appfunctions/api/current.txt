@@ -393,6 +393,19 @@ package androidx.appfunctions.metadata {
   public static final class AppFunctionObjectTypeMetadata.Companion {
   }
 
+  public final class AppFunctionOneOfTypeMetadata extends androidx.appfunctions.metadata.AppFunctionDataTypeMetadata {
+    ctor public AppFunctionOneOfTypeMetadata(java.util.List<? extends androidx.appfunctions.metadata.AppFunctionDataTypeMetadata> matchOneOf, String qualifiedName, boolean isNullable);
+    ctor public AppFunctionOneOfTypeMetadata(java.util.List<? extends androidx.appfunctions.metadata.AppFunctionDataTypeMetadata> matchOneOf, String qualifiedName, boolean isNullable, optional String description);
+    method @InaccessibleFromKotlin public java.util.List<androidx.appfunctions.metadata.AppFunctionDataTypeMetadata> getMatchOneOf();
+    method @InaccessibleFromKotlin public String getQualifiedName();
+    property public java.util.List<androidx.appfunctions.metadata.AppFunctionDataTypeMetadata> matchOneOf;
+    property public String qualifiedName;
+    field public static final androidx.appfunctions.metadata.AppFunctionOneOfTypeMetadata.Companion Companion;
+  }
+
+  public static final class AppFunctionOneOfTypeMetadata.Companion {
+  }
+
   public final class AppFunctionPackageMetadata {
     ctor public AppFunctionPackageMetadata(String packageName, java.util.List<androidx.appfunctions.metadata.AppFunctionMetadata> appFunctions);
     method @InaccessibleFromKotlin public java.util.List<androidx.appfunctions.metadata.AppFunctionMetadata> getAppFunctions();
