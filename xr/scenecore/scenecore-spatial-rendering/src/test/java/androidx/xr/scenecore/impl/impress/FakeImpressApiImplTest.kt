@@ -22,6 +22,7 @@ import androidx.xr.scenecore.impl.impress.ImpressApi.StereoMode
 import androidx.xr.scenecore.runtime.KhronosPbrMaterialSpec
 import androidx.xr.scenecore.runtime.TextureSampler
 import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertThrows
 import org.junit.Before
@@ -40,6 +41,15 @@ class FakeImpressApiImplTest {
     fun setUp() {
         fakeImpressApi = FakeImpressApiImpl()
         resourceManager = Mockito.mock(BindingsResourceManager::class.java)
+    }
+
+    @Test
+    fun loadImageBasedLightingAssetTemp_returnsImageFuture() {
+        runBlocking {
+            val model = fakeImpressApi.loadImageBasedLightingAssetTemp("fakeEnvironment")
+
+            assertThat(model).isNotNull()
+        }
     }
 
     @Test

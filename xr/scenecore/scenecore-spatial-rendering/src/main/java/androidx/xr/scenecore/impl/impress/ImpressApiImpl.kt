@@ -34,6 +34,9 @@ import androidx.xr.scenecore.runtime.KhronosPbrMaterialSpec
 import androidx.xr.scenecore.runtime.TextureSampler
 import com.google.ar.imp.view.View
 import com.google.common.util.concurrent.ListenableFuture
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlinx.coroutines.suspendCancellableCoroutine
 
 /** Implementation of the JNI API for communicating with the Impress Split Engine instance. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
@@ -163,6 +166,48 @@ public class ImpressApiImpl : ImpressApi {
 
     override fun releaseImageBasedLightingAsset(iblToken: Long): Unit =
         nReleaseImageBasedLightingAsset(getViewNativeHandle(view), iblToken)
+
+    override suspend fun loadImageBasedLightingAssetTemp(path: String): ExrImage =
+        suspendCancellableCoroutine { continuation ->
+            // TODO: b/374216912 - Add a cancellationListener to the completer here when the
+            // loading APIs support cancellation.
+            nLoadImageBasedLightingAssetFromPath(
+                getViewNativeHandle(view),
+                // The underlying C++ code will hold a reference to this (anoynomous)
+                // AssetLoader until the load is complete.
+                object : AssetLoader {
+                    override fun onSuccess(value: Long) {
+                        val exrImage: ExrImage =
+                            ExrImage.Builder()
+                                .setImpressApi(this@ImpressApiImpl)
+                                .setNativeExrImage(value)
+                                .build()
+                        continuation.resume(exrImage)
+                    }
+
+                    override fun onFailure(message: String) {
+                        // We can safely check for the CANCELLED string here since we
+                        // know that the underlying absl Status code is being
+                        // translated to a java Exception and the message is being
+                        // propagated. Ideally the native code would generate a separate
+                        // signal call for this.
+                        // TODO: b/374217508 - Publish a more precisely typed Exception
+                        // interface for this.
+                        if (message.contains("CANCELLED")) {
+                            onCancelled(message)
+                        } else {
+                            continuation.resumeWithException(Exception(message))
+                        }
+                    }
+
+                    override fun onCancelled(message: String) {
+                        continuation.cancel(Exception(message))
+                    }
+                },
+                path,
+            )
+            "LoadImageBasedLightingAsset Operation"
+        }
 
     override fun loadImageBasedLightingAsset(path: String): ListenableFuture<ExrImage> =
         CallbackToFutureAdapter.getFuture { completer ->

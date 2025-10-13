@@ -181,6 +181,12 @@ public interface ImpressApi {
     public fun releaseImageBasedLightingAsset(iblToken: Long)
 
     /**
+     * This method loads an image based lighting asset from the assets folder and returns a token
+     * that can be used to reference the asset in other JNI calls.
+     */
+    public suspend fun loadImageBasedLightingAssetTemp(path: String): ExrImage
+
+    /**
      * This method loads an image based lighting asset from the assets folder and returns a future
      * with an ExrImage that can be used to reference the asset in other JNI calls.
      */

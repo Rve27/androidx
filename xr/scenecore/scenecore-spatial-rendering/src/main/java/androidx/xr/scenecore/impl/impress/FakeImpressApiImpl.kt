@@ -146,6 +146,16 @@ public class FakeImpressApiImpl : ImpressApi {
         imageBasedLightingAssets.remove(iblToken)
     }
 
+    @Suppress("RestrictTo")
+    override suspend fun loadImageBasedLightingAssetTemp(path: String): ExrImage {
+        val token = (nextImageBasedLightingAssetId++).toLong()
+        imageBasedLightingAssets.add(token)
+        val exrImage: ExrImage =
+            ExrImage.Builder().setImpressApi(this).setNativeExrImage(token).build()
+        // TODO(b/352827267): Enforce minSDK API strategy - go/androidx-api-guidelines#compat-newapi
+        return exrImage
+    }
+
     @Suppress("RestrictTo", "AsyncSuffixFuture")
     override fun loadImageBasedLightingAsset(path: String): ListenableFuture<ExrImage> {
         val token = (nextImageBasedLightingAssetId++).toLong()
