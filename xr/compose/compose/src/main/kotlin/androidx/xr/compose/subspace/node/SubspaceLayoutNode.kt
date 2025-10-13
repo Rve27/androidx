@@ -59,6 +59,15 @@ private val DefaultDensity = Density(1f)
  */
 internal class SubspaceLayoutNode : ComposeSubspaceNode {
     /**
+     * The layout state the node is currently in.
+     *
+     * [layoutState] may be read in other contexts to help determine if/when the node should be
+     * measured/placed, but can only be set by the node itself.
+     */
+    internal var layoutState: LayoutState = LayoutState.Idle
+        private set
+
+    /**
      * The children of this [SubspaceLayoutNode], controlled by [insertAt], [move], and [removeAt].
      */
     internal val children: MutableList<SubspaceLayoutNode> = mutableListOf()
@@ -111,7 +120,7 @@ internal class SubspaceLayoutNode : ComposeSubspaceNode {
     internal var layoutDirection: LayoutDirection = LayoutDirection.Ltr
         private set
 
-    private var ignoreRelayoutRequests = false
+    private var ignoreMeasureRequests = false
 
     /**
      * This function sets up CoreEntity parent/child relationships that reflect the parent/child
@@ -236,7 +245,7 @@ internal class SubspaceLayoutNode : ComposeSubspaceNode {
         }
 
         nodes.runOnDetach()
-        ignoreRelayoutRequests { children.forEach { child -> child.detach() } }
+        ignoreMeasureRequests { children.forEach { child -> child.detach() } }
         nodes.markAsDetached()
         coreEntity?.dispose()
 
@@ -244,17 +253,21 @@ internal class SubspaceLayoutNode : ComposeSubspaceNode {
         this.owner = null
     }
 
-    private inline fun <T> ignoreRelayoutRequests(block: () -> T): T {
-        ignoreRelayoutRequests = true
+    private inline fun <T> ignoreMeasureRequests(block: () -> T): T {
+        ignoreMeasureRequests = true
         val result = block()
-        ignoreRelayoutRequests = false
+        ignoreMeasureRequests = false
         return result
     }
 
-    internal fun requestRelayout() {
-        if (!ignoreRelayoutRequests) {
-            owner?.requestRelayout()
+    internal fun requestMeasure() {
+        if (!ignoreMeasureRequests) {
+            owner?.requestMeasure(this)
         }
+    }
+
+    internal fun requestLayout() {
+        owner?.requestLayout(this)
     }
 
     override fun toString(): String {
@@ -328,8 +341,12 @@ internal class SubspaceLayoutNode : ComposeSubspaceNode {
          */
         val tail: SubspaceModifier.Node = TailModifierNode()
 
-        override fun measure(constraints: VolumeConstraints): SubspacePlaceable =
-            nodes.measureChain(constraints, ::measureJustThis)
+        override fun measure(constraints: VolumeConstraints): SubspacePlaceable {
+            layoutState = LayoutState.Measuring
+            val placeable = nodes.measureChain(constraints, ::measureJustThis)
+            layoutState = LayoutState.Idle
+            return placeable
+        }
 
         override fun adjustParams(params: ParentLayoutParamsAdjustable) {
             nodes.getAll<ParentLayoutParamsModifier>().forEach { it.adjustParams(params) }
@@ -358,6 +375,8 @@ internal class SubspaceLayoutNode : ComposeSubspaceNode {
          * @param pose The pose to place the children at, with translation in pixels.
          */
         public override fun placeAt(pose: Pose) {
+            layoutState = LayoutState.LayingOut
+
             layoutPose = pose
 
             coreEntity?.applyCoreEntityNodes(nodes.getAll<CoreEntityNode>())
@@ -374,6 +393,8 @@ internal class SubspaceLayoutNode : ComposeSubspaceNode {
             nodes.getAll<LayoutCoordinatesAwareModifierNode>().forEach {
                 it.onLayoutCoordinates(this)
             }
+
+            layoutState = LayoutState.Idle
         }
 
         override val pose: Pose
@@ -514,6 +535,20 @@ internal class SubspaceLayoutNode : ComposeSubspaceNode {
         /** Walk up the parent hierarchy to find the closest ancestor attached to a [CoreEntity]. */
         private fun findCoreEntityParent(node: SubspaceLayoutNode) =
             generateSequence(node.parent) { it.parent }.firstNotNullOfOrNull { it.coreEntity }
+    }
+
+    internal enum class LayoutState {
+        /** Node is currently being measured. */
+        Measuring,
+
+        /** Node is currently being laid out. */
+        LayingOut,
+
+        /**
+         * Node is not currently measuring or laying out. It could be pending measure or pending
+         * layout.
+         */
+        Idle,
     }
 }
 

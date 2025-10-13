@@ -22,6 +22,7 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.xr.compose.subspace.layout.CoreMainPanelEntity
 import androidx.xr.compose.subspace.node.SubspaceLayoutNode
+import androidx.xr.compose.subspace.node.SubspaceMeasureAndLayoutDelegate
 import androidx.xr.compose.subspace.node.SubspaceOwner
 import androidx.xr.compose.unit.VolumeConstraints
 import androidx.xr.runtime.math.Pose
@@ -59,6 +60,8 @@ internal class AndroidComposeSpatialElement :
 
     private var windowLeashLayoutNode: SubspaceLayoutNode? = null
 
+    private val measureAndLayoutDelegate = SubspaceMeasureAndLayoutDelegate(root)
+
     /**
      * Whether a layout request has been made. If a layout request is made while a layout is in
      * progress, the new request will be handled after the current layout is complete.
@@ -75,7 +78,7 @@ internal class AndroidComposeSpatialElement :
             if (field != value) {
                 field = value
                 if (isAttachedToSpatialComposeScene) {
-                    requestRelayout()
+                    requestMeasure(root)
                 }
             }
         }
@@ -142,9 +145,21 @@ internal class AndroidComposeSpatialElement :
         root.detach()
     }
 
+    override fun requestMeasure(node: SubspaceLayoutNode, forceRequest: Boolean) {
+        if (measureAndLayoutDelegate.requestMeasure(node, forceRequest)) {
+            scheduleMeasureAndLayout(node)
+        }
+    }
+
+    override fun requestLayout(node: SubspaceLayoutNode, forceRequest: Boolean) {
+        if (measureAndLayoutDelegate.requestLayout(node, forceRequest)) {
+            scheduleMeasureAndLayout(node)
+        }
+    }
+
     // TODO: Consider adding stricter control over how this is called here, or at call sites, if it
     // becomes too easy to generate superfluous layouts.
-    override fun requestRelayout() {
+    private fun scheduleMeasureAndLayout(node: SubspaceLayoutNode) {
         uiCoroutineScope.launch { refreshLayout() }
     }
 
@@ -177,7 +192,7 @@ internal class AndroidComposeSpatialElement :
         private val uiCoroutineScope = CoroutineScope(AndroidUiDispatcher.Main)
 
         private val onLayoutStateValueChanged: (AndroidComposeSpatialElement) -> Unit = {
-            it.requestRelayout()
+            it.requestMeasure(it.root)
         }
     }
 }
