@@ -1505,7 +1505,7 @@ public final class VideoCapture<T extends VideoOutput> extends UseCase {
         QualitySelector qualitySelector = mediaSpec.getVideoSpec().getQualitySelector();
         VideoCaptureConfig<T> config = (VideoCaptureConfig<T>) builder.getUseCaseConfig();
         if (config.containsOption(OPTION_CUSTOM_ORDERED_RESOLUTIONS)) {
-            checkArgument(qualitySelector == VideoSpec.QUALITY_SELECTOR_AUTO,
+            checkArgument(getOutput().isQualitySelectorDefault(),
                     "Custom ordered resolutions and QualitySelector can't both be set");
             // If custom ordered resolutions is set and QualitySelector is not set, the default
             // QualitySelector is skipped to avoid overwriting the custom ordered resolutions.
