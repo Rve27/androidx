@@ -437,6 +437,16 @@ public class AppFunctionOneOfTypeMetadata(
         return "AppFunctionOneOfTypeMetadata(matchOneOf=$matchOneOf, isNullable=$isNullable, description=$description)"
     }
 
+    internal fun getObjectMetadataForOneOfType(qualifiedName: String): AppFunctionDataTypeMetadata {
+        return matchOneOf.singleOrNull {
+            when (it) {
+                is AppFunctionObjectTypeMetadata -> it.qualifiedName == qualifiedName
+                is AppFunctionReferenceTypeMetadata -> it.referenceDataType == qualifiedName
+                else -> throw IllegalArgumentException("Unexpected data type $it for one of type")
+            }
+        } ?: throw IllegalArgumentException("No object metadata found for $qualifiedName")
+    }
+
     public companion object {
         internal const val TYPE: Int = TYPE_ONE_OF
     }
