@@ -16,6 +16,7 @@
 
 package androidx.camera.camera2.pipe.testing
 
+import android.graphics.Rect
 import android.hardware.HardwareBuffer
 import android.os.Build
 import androidx.camera.camera2.pipe.media.ImagePlane
@@ -30,6 +31,7 @@ public class FakeImage(
     override val format: Int,
     override val timestamp: Long,
     private val hardwareBuffer: HardwareBuffer? = null,
+    override var cropRect: Rect = Rect(0, 0, width, height),
 ) : ImageWrapper {
     private val debugId = debugIds.incrementAndGet()
     private val closed = atomic(false)
