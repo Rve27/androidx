@@ -30,6 +30,7 @@ import androidx.pdf.annotation.models.PdfAnnotationData
 import androidx.pdf.annotation.models.PdfEdit
 import androidx.pdf.annotation.models.PdfEditEntry
 import androidx.pdf.annotation.models.PdfEdits
+import androidx.pdf.annotation.models.PdfObject
 import androidx.pdf.content.PageMatchBounds
 import androidx.pdf.content.PageSelection
 import androidx.pdf.models.FormEditRecord
@@ -156,6 +157,14 @@ internal class FakeEditablePdfDocument(
 
     override suspend fun getFormWidgetInfos(pageNum: Int, types: IntArray): List<FormWidgetInfo> {
         TODO("Not yet implemented")
+    }
+
+    override suspend fun getTopPageObjectAtPosition(
+        pageNum: Int,
+        point: PointF,
+        types: IntArray,
+    ): PdfObject? {
+        return null
     }
 
     override suspend fun applyEdit(pageNum: Int, record: FormEditRecord): List<Rect> {
