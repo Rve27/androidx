@@ -39,7 +39,6 @@ android {
 dependencies {
     api(libs.jspecify)
     api(project(":work:work-runtime"))
-    api(libs.kotlinStdlib)
     api(libs.kotlinCoroutinesAndroid)
     api(libs.guavaListenableFuture)
     implementation("androidx.concurrent:concurrent-futures-ktx:1.2.0")

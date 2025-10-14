@@ -34,7 +34,6 @@ android {
 }
 
 dependencies {
-    api(libs.kotlinStdlib)
     api(libs.kotlinCoroutinesCore)
     api("androidx.annotation:annotation:1.1.0")
     api(libs.androidx.core)

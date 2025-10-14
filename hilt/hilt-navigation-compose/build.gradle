@@ -44,7 +44,6 @@ android {
 
 dependencies {
 
-    implementation(libs.kotlinStdlib)
     api(project(":hilt:hilt-lifecycle-viewmodel-compose"))
     api("androidx.compose.runtime:runtime:1.8.2")
     api("androidx.compose.ui:ui:1.8.2")

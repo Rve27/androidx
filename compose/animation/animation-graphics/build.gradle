@@ -44,7 +44,6 @@ androidXMultiplatform {
     sourceSets {
         commonMain {
             dependencies {
-                implementation(libs.kotlinStdlib)
 
                 api(project(":compose:animation:animation"))
                 api(project(":compose:foundation:foundation-layout"))
