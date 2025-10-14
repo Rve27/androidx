@@ -82,6 +82,9 @@ internal class SubspaceLayoutNode : ComposeSubspaceNode {
     internal var owner: SubspaceOwner? = null
         private set
 
+    internal val isAttached: Boolean
+        get() = owner != null
+
     internal val nodes: SubspaceModifierNodeChain = SubspaceModifierNodeChain(this)
 
     override var measurePolicy: SubspaceMeasurePolicy = ErrorMeasurePolicy
