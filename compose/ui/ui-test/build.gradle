@@ -35,6 +35,7 @@ androidXMultiplatform {
         compileSdk = 35
         namespace = "androidx.compose.ui.test"
         androidResources.enable = true
+        lint.disable += "ComposeTestRuleDispatcher"
     }
     jvmStubs()
     linuxX64Stubs()
