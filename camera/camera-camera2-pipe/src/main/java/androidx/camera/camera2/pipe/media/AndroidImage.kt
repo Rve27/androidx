@@ -16,6 +16,7 @@
 
 package androidx.camera.camera2.pipe.media
 
+import android.graphics.Rect
 import android.media.Image
 import android.os.Build
 import androidx.camera.camera2.pipe.StreamFormat
@@ -60,6 +61,11 @@ public class AndroidImage(private val image: Image) : ImageWrapper {
     override val width: Int = image.width
     override val height: Int = image.height
     override val timestamp: Long = image.timestamp
+    override var cropRect: Rect
+        get() = image.cropRect
+        set(newRectValue: Rect) {
+            image.cropRect = newRectValue
+        }
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : Any> unwrapAs(type: KClass<T>): T? =
