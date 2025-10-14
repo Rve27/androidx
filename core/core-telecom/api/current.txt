@@ -56,11 +56,13 @@ package androidx.core.telecom {
 
   public interface CallControlScope extends kotlinx.coroutines.CoroutineScope {
     method public suspend Object? answer(int callType, kotlin.coroutines.Continuation<? super androidx.core.telecom.CallControlResult>);
+    method public default kotlinx.coroutines.flow.Flow<java.lang.Integer> callTypeFlow();
     method public suspend Object? disconnect(android.telecom.DisconnectCause disconnectCause, kotlin.coroutines.Continuation<? super androidx.core.telecom.CallControlResult>);
     method @InaccessibleFromKotlin public kotlinx.coroutines.flow.Flow<java.util.List<androidx.core.telecom.CallEndpointCompat>> getAvailableEndpoints();
     method public android.os.ParcelUuid getCallId();
     method @InaccessibleFromKotlin public kotlinx.coroutines.flow.Flow<androidx.core.telecom.CallEndpointCompat> getCurrentCallEndpoint();
     method @InaccessibleFromKotlin public kotlinx.coroutines.flow.Flow<java.lang.Boolean> isMuted();
+    method public default suspend Object? requestCallType(int callType, kotlin.coroutines.Continuation<? super androidx.core.telecom.CallControlResult>);
     method public suspend Object? requestEndpointChange(androidx.core.telecom.CallEndpointCompat endpoint, kotlin.coroutines.Continuation<? super androidx.core.telecom.CallControlResult>);
     method public suspend Object? setActive(kotlin.coroutines.Continuation<? super androidx.core.telecom.CallControlResult>);
     method public suspend Object? setInactive(kotlin.coroutines.Continuation<? super androidx.core.telecom.CallControlResult>);
