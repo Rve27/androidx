@@ -24,12 +24,14 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.pdf.PdfDocument
 import androidx.pdf.SandboxedPdfLoader
 import androidx.pdf.models.FormEditInfo
+import androidx.pdf.models.FormWidgetInfo
 import androidx.pdf.viewer.coroutines.collectTill
 import androidx.pdf.viewer.coroutines.toListDuring
 import androidx.pdf.viewer.fragment.TestUtils.openFileAsUri
 import androidx.pdf.viewer.fragment.model.PdfFragmentUiState
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
+import androidx.test.filters.SdkSuppress
 import androidx.test.platform.app.InstrumentationRegistry
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Executors
@@ -47,6 +49,7 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 @LargeTest
+@SdkSuppress(minSdkVersion = 35)
 class PdfDocumentViewModelTest {
 
     private val appContext =
@@ -302,7 +305,7 @@ class PdfDocumentViewModelTest {
             }
         document.addOnPdfContentInvalidatedListener(listener)
 
-        // Bounds of the widget on which the edit is applied
+        // Bounds in content coordinates of the widget on which the edit is applied
         val widgetArea = Rect(135, 70, 155, 90)
         val formEditInfo =
             FormEditInfo(pageNumber = 0, widgetIndex = 1, clickPoint = Point(145, 80))
@@ -318,6 +321,83 @@ class PdfDocumentViewModelTest {
         assertTrue(editedPageNum == 0)
         assertTrue(dirtyAreasOnEdit != null)
         assertTrue(fullyContains(listOf(widgetArea), dirtyAreasOnEdit!!))
+    }
+
+    @Test
+    fun test_formFilling_stateRestoration() = runTest {
+        // Assemble a list of edits which were applied to the document.
+        // This replicates a scenario where process death occurs after edits were applied.
+        val formEditInfos = ArrayList<FormEditInfo>()
+        // CheckBox at index 1 is un-checked, becomes checked post this edit, i.e. textValue = true
+        val clickOnCheckBox =
+            FormEditInfo(pageNumber = 0, widgetIndex = 1, clickPoint = Point(145, 80))
+        // Radio button at widgetIndex 5 is selected, widgetIndex 7 (derived from metadata) which
+        // was initially selected will become unselected.
+        val clickOnRadioButton =
+            FormEditInfo(pageNumber = 0, widgetIndex = 5, clickPoint = Point(95, 240))
+        formEditInfos.add(clickOnCheckBox)
+        formEditInfos.add(clickOnRadioButton)
+
+        val documentUri = openFileAsUri(appContext, "click_form.pdf")
+        val localSavedStateHandle =
+            SavedStateHandle().also {
+                it["documentUri"] = documentUri
+                it["formEditInfos"] = formEditInfos
+            }
+
+        val pdfDocumentViewModel =
+            PdfDocumentViewModel(localSavedStateHandle, SandboxedPdfLoader(appContext, dispatcher))
+
+        val collectJob = launch {
+            pdfDocumentViewModel.fragmentUiScreenState.collectTill(mutableListOf()) { state ->
+                state is PdfFragmentUiState.DocumentLoaded
+            }
+        }
+        pdfDocumentViewModel.loadDocument(uri = documentUri, password = null)
+        collectJob.join()
+
+        assertTrue(
+            pdfDocumentViewModel.fragmentUiScreenState.value is PdfFragmentUiState.DocumentLoaded
+        )
+        val loadedState = pdfDocumentViewModel.fragmentUiScreenState.value
+        assertTrue(loadedState is PdfFragmentUiState.DocumentLoaded)
+        val document = (loadedState as PdfFragmentUiState.DocumentLoaded).pdfDocument
+        val formWidgetInfos = document.getFormWidgetInfos(0)
+        val expectedFormWidgetInfoIndex1 =
+            FormWidgetInfo(
+                widgetType = FormWidgetInfo.WIDGET_TYPE_CHECKBOX,
+                widgetIndex = 1,
+                widgetRect = Rect(135, 70, 155, 90),
+                textValue = "true",
+                accessibilityLabel = "checkbox",
+                readOnly = false,
+            )
+        val expectedFormWidgetInfoIndex5 =
+            FormWidgetInfo(
+                widgetType = FormWidgetInfo.WIDGET_TYPE_RADIOBUTTON,
+                widgetIndex = 5,
+                widgetRect = Rect(85, 230, 105, 250),
+                textValue = "true",
+                accessibilityLabel = "",
+                readOnly = false,
+            )
+        val expectedFormWidgetInfoIndex7 =
+            FormWidgetInfo(
+                widgetType = FormWidgetInfo.WIDGET_TYPE_RADIOBUTTON,
+                widgetIndex = 7,
+                widgetRect = Rect(185, 230, 205, 250),
+                textValue = "false",
+                accessibilityLabel = "",
+                readOnly = false,
+            )
+
+        for (widget: FormWidgetInfo in formWidgetInfos) {
+            when (widget.widgetIndex) {
+                1 -> assertTrue(widget == expectedFormWidgetInfoIndex1)
+                5 -> assertTrue(widget == expectedFormWidgetInfoIndex5)
+                7 -> assertTrue(widget == expectedFormWidgetInfoIndex7)
+            }
+        }
     }
 
     private fun fullyContains(innerRects: List<Rect>, outerRects: List<Rect>): Boolean {

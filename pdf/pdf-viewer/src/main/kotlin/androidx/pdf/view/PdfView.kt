@@ -577,7 +577,6 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
     private val selectionMenuManager: SelectionMenuManager = SelectionMenuManager(context)
     private var formWidgetInteractionHandler: FormWidgetInteractionHandler? = null
     private var formWidgetMetadataLoader: FormWidgetMetadataLoader? = null
-    private var pdfFormFillingStateManager: PdfFormFillingStateManager? = null
     private var layoutInfoCollector: Job? = null
     private var pageSignalCollector: Job? = null
     private var selectionStateCollector: Job? = null
@@ -1561,22 +1560,10 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         isFormFillingTooltipEnabled = localStateToRestore.isFormFillingTooltipEnabled
         setAccessibility()
 
-        restoreFormFillingState()
         restoreFormFillingEditText()
 
         stateToRestore = null
         return true
-    }
-
-    private fun restoreFormFillingState() {
-        val localPdfDocument = pdfDocument ?: return
-        val localStateToRestore = stateToRestore ?: return
-
-        if (localPdfDocument.formEditInfos == localStateToRestore.pdfFormEditInfos) {
-            return
-        }
-
-        pdfFormFillingStateManager?.restoreFormFillingState(localStateToRestore.pdfFormEditInfos)
     }
 
     private fun restoreFormFillingEditText() {
@@ -1771,32 +1758,6 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
             FormWidgetInteractionHandler(context, backgroundScope) { formFillingEditText ->
                 this.formFillingEditText = formFillingEditText
             }
-
-        pdfFormFillingStateManager =
-            PdfFormFillingStateManager(
-                localPdfDocument,
-                backgroundScope,
-                errorFlow,
-                onRestoreTaskStarted = { isFormEditStateBeingRestored = true },
-                onRestoreTaskComplete = { pagesInvalidatedAreas ->
-                    if (!isAttachedToVisibleWindow) return@PdfFormFillingStateManager
-
-                    val visiblePageAreas = pageLayoutManager?.visiblePageAreas
-                    visiblePageAreas?.keyIterator()?.forEach { pageNum ->
-                        pagesInvalidatedAreas[pageNum]
-                            ?.map { it.toRectF() }
-                            ?.let { areasToUpdateInPage ->
-                                pageManager?.maybeInvalidateAreas(
-                                    pageNum,
-                                    visiblePageAreas.get(pageNum),
-                                    zoom,
-                                    areasToUpdateInPage,
-                                )
-                            }
-                    }
-                    isFormEditStateBeingRestored = false
-                },
-            )
 
         localPdfDocument.addOnPdfContentInvalidatedListener(onPdfContentInvalidatedListener)
 
