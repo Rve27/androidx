@@ -49,7 +49,6 @@ androidXMultiplatform {
     sourceSets {
         commonMain {
             dependencies {
-                implementation(libs.kotlinStdlib)
                 implementation(libs.kotlinCoroutinesCore)
 
                 api(project(":compose:ui:ui-graphics"))

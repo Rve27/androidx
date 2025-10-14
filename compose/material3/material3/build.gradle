@@ -44,7 +44,6 @@ androidXMultiplatform {
     sourceSets {
         commonMain {
             dependencies {
-                implementation(libs.kotlinStdlib)
                 // Keep pinned unless there is a need for tip of tree behavior
                 implementation("androidx.collection:collection:1.4.5")
                 implementation("androidx.compose.animation:animation-core:1.8.1")

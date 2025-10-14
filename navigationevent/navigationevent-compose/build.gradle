@@ -48,7 +48,6 @@ androidXMultiplatform {
             dependencies {
                 api(project(":navigationevent:navigationevent"))
                 api("androidx.compose.runtime:runtime:1.9.2")
-                implementation(libs.kotlinStdlib)
                 implementation(libs.kotlinCoroutinesCore)
             }
         }

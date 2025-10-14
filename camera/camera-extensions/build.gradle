@@ -59,7 +59,6 @@ dependencies {
     androidTestImplementation(libs.testRules)
     androidTestImplementation(libs.dexmakerMockito)
     androidTestImplementation(libs.kotlinCoroutinesAndroid)
-    androidTestImplementation(libs.kotlinStdlib)
     androidTestImplementation(libs.mockitoCore)
     androidTestImplementation(libs.testUiautomator)
     androidTestImplementation(libs.truth)

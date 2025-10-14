@@ -43,7 +43,6 @@ androidXMultiplatform {
     sourceSets {
         commonMain {
             dependencies {
-                implementation(libs.kotlinStdlib)
                 api("androidx.compose.foundation:foundation:1.7.1")
                 api(project(":compose:runtime:runtime"))
 

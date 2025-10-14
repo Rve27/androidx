@@ -54,7 +54,6 @@ androidXMultiplatform {
     sourceSets {
         commonMain {
             dependencies {
-                api(libs.kotlinStdlib)
                 api(libs.kotlinCoroutinesCore)
                 api(project(":navigation:navigation-common"))
                 api("androidx.lifecycle:lifecycle-common:2.8.7")
