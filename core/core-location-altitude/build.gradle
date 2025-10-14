@@ -46,7 +46,6 @@ dependencies {
     implementation("androidx.room:room-common:2.7.1")
     implementation("androidx.sqlite:sqlite:2.5.1")
     implementation(libs.autoValueAnnotations)
-    implementation(libs.kotlinStdlib)
 
     annotationProcessor(libs.autoValue)
     annotationProcessor("androidx.room:room-compiler:2.7.1")
