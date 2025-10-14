@@ -19,6 +19,8 @@ package androidx.camera.extensions
 import androidx.annotation.RestrictTo
 import androidx.camera.core.CameraEffect
 import androidx.camera.core.CameraFilter
+import androidx.camera.core.CameraInfo
+import androidx.camera.core.CameraProvider
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.SessionConfig
 import androidx.camera.core.UseCase
@@ -35,6 +37,9 @@ import androidx.camera.core.ViewPort
  * It consists of a collection of [UseCase], session parameters to be applied on the camera session,
  * and common properties like the field-of-view defined by [ViewPort]. Note that [ImageAnalysis] is
  * not supported in extension sessions.
+ *
+ * Apps can use [CameraProvider.getCameraInfo] with an [ExtensionSessionConfig] to obtain the
+ * [CameraInfo] of the camera which can support the given [ExtensionSessionConfig].
  *
  * **Usage Example:**
  *

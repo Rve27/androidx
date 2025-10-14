@@ -750,6 +750,19 @@ internal class LifecycleCameraProviderImpl : LifecycleCameraProvider, CameraPres
             return@trace adapterCameraInfo!!
         }
 
+    override fun getCameraInfo(
+        cameraSelector: CameraSelector,
+        sessionConfig: SessionConfig,
+    ): CameraInfo {
+        return sessionConfig.cameraFilter?.let { sessionFilter ->
+            val finalCameraSelector =
+                CameraSelector.Builder.fromSelector(cameraSelector)
+                    .addCameraFilter(sessionFilter)
+                    .build()
+            getCameraInfo(finalCameraSelector)
+        } ?: getCameraInfo(cameraSelector)
+    }
+
     override fun addCameraPresenceListener(executor: Executor, listener: CameraPresenceListener) =
         cameraX!!.cameraAvailabilityProvider.addCameraPresenceListener(listener, executor)
 
