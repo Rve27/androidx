@@ -303,6 +303,20 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
     override var retainScope: RetainScope = ForgetfulRetainScope
         private set
 
+    // Out of frame scheduler currently has different semantics compared to the frame end scheduler
+    // The frame end scheduler executes its tasks at the end of the next recomposition frame,
+    // whereas out of frame scheduler is guaranteed to be executed before next recomposition frame.
+    // In some cases, those value overlap (if we already are recomposing, for example), but that
+    // is not always the case. We should eventually consolidate these (b/452101047)
+    private val outOfFrameQueue = ArrayDeque<() -> Unit>()
+    private val outOfFrameRunnable = Runnable {
+        trace("AndroidOwner:outOfFrameExecutor") {
+            while (outOfFrameQueue.isNotEmpty()) {
+                outOfFrameQueue.removeLast().invoke()
+            }
+        }
+    }
+
     override var density by mutableStateOf(Density(context), referentialEqualityPolicy())
         private set
 
@@ -693,7 +707,7 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
         get() = measureAndLayoutDelegate.measureIteration
 
     override val hasPendingMeasureOrLayout
-        get() = measureAndLayoutDelegate.hasPendingMeasureOrLayout
+        get() = measureAndLayoutDelegate.hasPendingMeasureOrLayout || outOfFrameQueue.isNotEmpty()
 
     private var globalPosition: IntOffset = IntOffset(Int.MAX_VALUE, Int.MAX_VALUE)
 
@@ -1769,6 +1783,7 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
 
     override fun measureAndLayoutForTest() {
         measureAndLayout()
+        outOfFrameRunnable.run()
     }
 
     override fun setUncaughtExceptionHandler(handler: RootForTest.UncaughtExceptionHandler?) {
@@ -3147,11 +3162,16 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
         get() = if (isAttachedToWindow) this else null
 
     override fun schedule(block: () -> Unit) {
-        val handler =
-            requireNotNull(handler) {
-                "schedule is called when outOfFrameExecutor is not available (view is detached)"
-            }
-        handler.postAtFrontOfQueue { trace("AndroidOwner:outOfFrameExecutor", block) }
+        val shouldSchedule = outOfFrameQueue.isEmpty()
+        outOfFrameQueue.addLast(block)
+
+        if (shouldSchedule) {
+            val handler =
+                requireNotNull(handler) {
+                    "schedule is called when outOfFrameExecutor is not available (view is detached)"
+                }
+            handler.postAtFrontOfQueue(outOfFrameRunnable)
+        }
     }
 
     @RequiresApi(VANILLA_ICE_CREAM)
