@@ -1817,33 +1817,6 @@ actual constructor() {
     }
 }
 
-/**
- * Calls the specified suspending [block] in a database transaction. The transaction will be marked
- * as successful unless an exception is thrown in the suspending [block] or the coroutine is
- * cancelled.
- *
- * Room will only perform at most one transaction at a time, additional transactions are queued and
- * executed on a first come, first serve order.
- *
- * Performing blocking database operations is not permitted in a coroutine scope other than the one
- * received by the suspending block. It is recommended that all [Dao] function invoked within the
- * [block] be suspending functions.
- *
- * The internal dispatcher used to execute the given [block] will block an utilize a thread from
- * Room's transaction executor until the [block] is complete.
- */
-public suspend fun <R> RoomDatabase.withTransaction(block: suspend () -> R): R =
-    withTransactionContext {
-        @Suppress("DEPRECATION") beginTransaction()
-        try {
-            val result = block.invoke()
-            @Suppress("DEPRECATION") setTransactionSuccessful()
-            result
-        } finally {
-            @Suppress("DEPRECATION") endTransaction()
-        }
-    }
-
 /** Calls the specified suspending [block] with Room's transaction context. */
 internal suspend fun <R> RoomDatabase.withTransactionContext(block: suspend () -> R): R {
     val transactionBlock: suspend CoroutineScope.() -> R = transaction@{
@@ -1937,8 +1910,10 @@ internal class TransactionElement(internal val transactionDispatcher: Continuati
 
 /**
  * Compatibility suspend transaction execution with driver usage. This will maintain the dispatcher
- * behaviour in [withTransaction] when Room is in compatibility mode executing driver transactions
- * and maintains compatibility with suspend DAO usages.
+ * behaviour in `withTransaction` (now deleted API) when Room is in compatibility mode executing
+ * driver transactions and maintains compatibility with suspend DAO usages.
+ *
+ * TODO: Check if this still needed even if SupportSQLite is removed with AndroidSQLiteDriver
  */
 internal suspend fun <R> RoomDatabase.compatTransactionCoroutineExecute(block: suspend () -> R): R {
     if (inCompatibilityMode() && isOpenInternal && inTransaction()) {
