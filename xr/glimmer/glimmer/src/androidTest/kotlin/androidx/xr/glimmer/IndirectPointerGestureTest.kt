@@ -27,16 +27,14 @@ import android.view.MotionEvent.ACTION_POINTER_UP
 import android.view.MotionEvent.ACTION_UP
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.ComposeUiFlags
 import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.ExperimentalIndirectTouchTypeApi
+import androidx.compose.ui.ExperimentalIndirectPointerApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.focusTarget
-import androidx.compose.ui.input.indirect.IndirectTouchEvent
-import androidx.compose.ui.input.indirect.IndirectTouchEventPrimaryDirectionalMotionAxis
+import androidx.compose.ui.input.indirect.IndirectPointerEvent
+import androidx.compose.ui.input.indirect.IndirectPointerEventPrimaryDirectionalMotionAxis
 import androidx.compose.ui.platform.LocalViewConfiguration
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -60,8 +58,8 @@ import org.junit.runner.RunWith
 // The expected min sdk is 35, but we test on 33 for wider device coverage (some APIs are not
 // available below 33)
 @SdkSuppress(minSdkVersion = Build.VERSION_CODES.TIRAMISU)
-@OptIn(ExperimentalIndirectTouchTypeApi::class, ExperimentalComposeUiApi::class)
-class IndirectTouchGestureTest {
+@OptIn(ExperimentalIndirectPointerApi::class, ExperimentalComposeUiApi::class)
+class IndirectPointerGestureTest {
 
     @get:Rule val rule = createComposeRule(StandardTestDispatcher())
 
@@ -90,7 +88,7 @@ class IndirectTouchGestureTest {
                 modifier =
                     Modifier.testTag(ROOT_TEST_TAG)
                         .size(10.dp)
-                        .onIndirectTouchGesture(
+                        .onIndirectPointerGesture(
                             enabled = false,
                             onClick = { gestureCount++ },
                             onSwipeForward = { gestureCount++ },
@@ -121,7 +119,7 @@ class IndirectTouchGestureTest {
                 modifier =
                     Modifier.testTag(ROOT_TEST_TAG)
                         .size(10.dp)
-                        .onIndirectTouchGesture(enabled = true, onClick = { onClickCount++ })
+                        .onIndirectPointerGesture(enabled = true, onClick = { onClickCount++ })
                         .focusTarget()
             )
         }
@@ -145,7 +143,7 @@ class IndirectTouchGestureTest {
                 modifier =
                     Modifier.testTag(ROOT_TEST_TAG)
                         .size(10.dp)
-                        .onIndirectTouchGesture(
+                        .onIndirectPointerGesture(
                             enabled = true,
                             onClick = { onClickCount++ },
                             onSwipeForward = { onSwipeForwardCount++ },
@@ -180,7 +178,7 @@ class IndirectTouchGestureTest {
                 modifier =
                     Modifier.testTag(ROOT_TEST_TAG)
                         .size(10.dp)
-                        .onIndirectTouchGesture(
+                        .onIndirectPointerGesture(
                             enabled = true,
                             onClick = { onClickCount++ },
                             onSwipeForward = { onSwipeForwardCount++ },
@@ -215,7 +213,7 @@ class IndirectTouchGestureTest {
                 modifier =
                     Modifier.testTag(ROOT_TEST_TAG)
                         .size(10.dp)
-                        .onIndirectTouchGesture(
+                        .onIndirectPointerGesture(
                             enabled = true,
                             onClick = { onClickCount++ },
                             onSwipeForward = { onSwipeForwardCount++ },
@@ -250,7 +248,7 @@ class IndirectTouchGestureTest {
                 modifier =
                     Modifier.testTag(ROOT_TEST_TAG)
                         .size(10.dp)
-                        .onIndirectTouchGesture(
+                        .onIndirectPointerGesture(
                             enabled = true,
                             onClick = { onClickCount++ },
                             onSwipeForward = { onSwipeForwardCount++ },
@@ -276,7 +274,7 @@ class IndirectTouchGestureTest {
                 downTime = downTime,
                 eventTime = eventTime,
             )
-        dispatchIndirectTouchEvent(p0Down)
+        dispatchIndirectPointerEvent(p0Down)
 
         eventTime += 10
         val p1Down =
@@ -287,7 +285,7 @@ class IndirectTouchGestureTest {
                 downTime = downTime,
                 eventTime = eventTime,
             )
-        dispatchIndirectTouchEvent(p1Down, p0Down)
+        dispatchIndirectPointerEvent(p1Down, p0Down)
 
         eventTime += 10
         p0Coords.x = -(touchSlop * 4)
@@ -299,7 +297,7 @@ class IndirectTouchGestureTest {
                 downTime = downTime,
                 eventTime = eventTime,
             )
-        dispatchIndirectTouchEvent(p0Move, p1Down)
+        dispatchIndirectPointerEvent(p0Move, p1Down)
 
         eventTime += 10
         val p1Up =
@@ -310,7 +308,7 @@ class IndirectTouchGestureTest {
                 downTime = downTime,
                 eventTime = eventTime,
             )
-        dispatchIndirectTouchEvent(p1Up, p0Move)
+        dispatchIndirectPointerEvent(p1Up, p0Move)
 
         eventTime += 10
         val p0Up =
@@ -321,7 +319,7 @@ class IndirectTouchGestureTest {
                 downTime = downTime,
                 eventTime = eventTime,
             )
-        dispatchIndirectTouchEvent(p0Up, p0Move)
+        dispatchIndirectPointerEvent(p0Up, p0Move)
 
         rule.runOnIdle {
             assertThat(onClickCount).isEqualTo(0)
@@ -344,7 +342,7 @@ class IndirectTouchGestureTest {
                 modifier =
                     Modifier.testTag(ROOT_TEST_TAG)
                         .size(10.dp)
-                        .onIndirectTouchGesture(
+                        .onIndirectPointerGesture(
                             enabled = true,
                             onClick = { onClickCount++ },
                             onSwipeForward = { onSwipeForwardCount++ },
@@ -370,7 +368,7 @@ class IndirectTouchGestureTest {
                 downTime = downTime,
                 eventTime = eventTime,
             )
-        dispatchIndirectTouchEvent(p0Down)
+        dispatchIndirectPointerEvent(p0Down)
 
         eventTime += 10
         val p1Down =
@@ -381,7 +379,7 @@ class IndirectTouchGestureTest {
                 downTime = downTime,
                 eventTime = eventTime,
             )
-        dispatchIndirectTouchEvent(p1Down, p0Down)
+        dispatchIndirectPointerEvent(p1Down, p0Down)
 
         eventTime += 10
         p0Coords.x = -touchSlop * 4f // p0 (primary) moves backward
@@ -394,7 +392,7 @@ class IndirectTouchGestureTest {
                 downTime = downTime,
                 eventTime = eventTime,
             )
-        dispatchIndirectTouchEvent(pointersMove, p1Down)
+        dispatchIndirectPointerEvent(pointersMove, p1Down)
 
         eventTime += 10
         val p1Up =
@@ -405,7 +403,7 @@ class IndirectTouchGestureTest {
                 downTime = downTime,
                 eventTime = eventTime,
             )
-        dispatchIndirectTouchEvent(p1Up, pointersMove)
+        dispatchIndirectPointerEvent(p1Up, pointersMove)
 
         eventTime += 10
         val p0Up =
@@ -416,7 +414,7 @@ class IndirectTouchGestureTest {
                 downTime = downTime,
                 eventTime = eventTime,
             )
-        dispatchIndirectTouchEvent(p0Up, pointersMove)
+        dispatchIndirectPointerEvent(p0Up, pointersMove)
 
         // Gesture is based on the primary pointer (p0)
         rule.runOnIdle {
@@ -440,7 +438,7 @@ class IndirectTouchGestureTest {
                 modifier =
                     Modifier.testTag(ROOT_TEST_TAG)
                         .size(10.dp)
-                        .onIndirectTouchGesture(
+                        .onIndirectPointerGesture(
                             enabled = true,
                             onClick = { onClickCount++ },
                             onSwipeForward = { onSwipeForwardCount++ },
@@ -465,7 +463,7 @@ class IndirectTouchGestureTest {
                 eventTime = eventTime,
             )
 
-        dispatchIndirectTouchEvent(p0Down)
+        dispatchIndirectPointerEvent(p0Down)
 
         eventTime += 10
         p0Coords.x = touchSlop + 1f
@@ -478,7 +476,7 @@ class IndirectTouchGestureTest {
                 downTime = downTime,
                 eventTime = eventTime,
             )
-        dispatchIndirectTouchEvent(p0MoveInitial, p0Down)
+        dispatchIndirectPointerEvent(p0MoveInitial, p0Down)
 
         eventTime += 10
         p0Coords.x = 0f
@@ -491,7 +489,7 @@ class IndirectTouchGestureTest {
                 downTime = downTime,
                 eventTime = eventTime,
             )
-        dispatchIndirectTouchEvent(p0MoveSecond, p0MoveInitial)
+        dispatchIndirectPointerEvent(p0MoveSecond, p0MoveInitial)
 
         eventTime += 10
         val p0Up =
@@ -502,7 +500,7 @@ class IndirectTouchGestureTest {
                 downTime = downTime,
                 eventTime = eventTime,
             )
-        dispatchIndirectTouchEvent(p0Up, p0MoveSecond)
+        dispatchIndirectPointerEvent(p0Up, p0MoveSecond)
 
         rule.runOnIdle {
             assertThat(onClickCount).isEqualTo(0)
@@ -525,7 +523,7 @@ class IndirectTouchGestureTest {
                 modifier =
                     Modifier.testTag(ROOT_TEST_TAG)
                         .size(10.dp)
-                        .onIndirectTouchGesture(
+                        .onIndirectPointerGesture(
                             enabled = true,
                             onClick = { onClickCount++ },
                             onSwipeForward = { onSwipeForwardCount++ },
@@ -553,7 +551,7 @@ class IndirectTouchGestureTest {
                 eventTime = eventTime,
             )
 
-        dispatchIndirectTouchEvent(p0Down)
+        dispatchIndirectPointerEvent(p0Down)
 
         eventTime += 10
 
@@ -566,7 +564,7 @@ class IndirectTouchGestureTest {
                 eventTime = eventTime,
             )
 
-        dispatchIndirectTouchEvent(p1Down)
+        dispatchIndirectPointerEvent(p1Down)
 
         eventTime += 10
 
@@ -581,7 +579,7 @@ class IndirectTouchGestureTest {
                 eventTime = eventTime,
             )
 
-        dispatchIndirectTouchEvent(p1Move, p1Down)
+        dispatchIndirectPointerEvent(p1Move, p1Down)
 
         eventTime += 10
 
@@ -594,7 +592,7 @@ class IndirectTouchGestureTest {
                 eventTime = eventTime,
             )
 
-        dispatchIndirectTouchEvent(p1Up, p1Move)
+        dispatchIndirectPointerEvent(p1Up, p1Move)
 
         val p0Up =
             buildMotionEvent(
@@ -605,7 +603,7 @@ class IndirectTouchGestureTest {
                 eventTime = eventTime,
             )
 
-        dispatchIndirectTouchEvent(p0Up, p1Move)
+        dispatchIndirectPointerEvent(p0Up, p1Move)
 
         // The gesture is processed based on p0, which was a click.
         rule.runOnIdle {
@@ -629,7 +627,7 @@ class IndirectTouchGestureTest {
                 modifier =
                     Modifier.testTag(ROOT_TEST_TAG)
                         .size(10.dp)
-                        .onIndirectTouchGesture(
+                        .onIndirectPointerGesture(
                             enabled = true,
                             onClick = { onClickCount++ },
                             onSwipeForward = { onSwipeForwardCount++ },
@@ -668,7 +666,7 @@ class IndirectTouchGestureTest {
                 modifier =
                     Modifier.testTag(ROOT_TEST_TAG)
                         .size(10.dp)
-                        .onIndirectTouchGesture(
+                        .onIndirectPointerGesture(
                             enabled = true,
                             onClick = { onClickCount++ },
                             onSwipeForward = { onSwipeForwardCount++ },
@@ -694,7 +692,7 @@ class IndirectTouchGestureTest {
                 eventTime = eventTime,
             )
 
-        dispatchIndirectTouchEvent(p0Down)
+        dispatchIndirectPointerEvent(p0Down)
 
         eventTime += 10L
 
@@ -713,7 +711,7 @@ class IndirectTouchGestureTest {
                     downTime = downTime,
                     eventTime = eventTime,
                 )
-            dispatchIndirectTouchEvent(p0MoveSlow, lastEvent)
+            dispatchIndirectPointerEvent(p0MoveSlow, lastEvent)
             lastEvent = p0MoveSlow
         }
 
@@ -727,7 +725,7 @@ class IndirectTouchGestureTest {
                 eventTime = eventTime,
             )
 
-        dispatchIndirectTouchEvent(p0Up, lastEvent)
+        dispatchIndirectPointerEvent(p0Up, lastEvent)
 
         rule.runOnIdle {
             assertThat(onClickCount).isEqualTo(0)
@@ -750,7 +748,7 @@ class IndirectTouchGestureTest {
                 modifier =
                     Modifier.testTag(ROOT_TEST_TAG)
                         .size(10.dp)
-                        .onIndirectTouchGesture(
+                        .onIndirectPointerGesture(
                             enabled = true,
                             onClick = { onClickCount++ },
                             onSwipeForward = { onSwipeForwardCount++ },
@@ -773,7 +771,7 @@ class IndirectTouchGestureTest {
                 downTime = downTime,
                 eventTime = eventTime,
             )
-        dispatchIndirectTouchEvent(p0Down)
+        dispatchIndirectPointerEvent(p0Down)
 
         eventTime += 10
         p0Coords.x = touchSlop * 4 // Move forward
@@ -785,7 +783,7 @@ class IndirectTouchGestureTest {
                 downTime = downTime,
                 eventTime = eventTime,
             )
-        dispatchIndirectTouchEvent(p0MoveForward, p0Down)
+        dispatchIndirectPointerEvent(p0MoveForward, p0Down)
 
         eventTime += 10
         p0Coords.x = touchSlop * 2 // Move backward
@@ -797,7 +795,7 @@ class IndirectTouchGestureTest {
                 downTime = downTime,
                 eventTime = eventTime,
             )
-        dispatchIndirectTouchEvent(p0MoveBackward, p0MoveForward)
+        dispatchIndirectPointerEvent(p0MoveBackward, p0MoveForward)
 
         eventTime += 20L
         val p0Up =
@@ -808,7 +806,7 @@ class IndirectTouchGestureTest {
                 downTime = downTime,
                 eventTime = eventTime,
             )
-        dispatchIndirectTouchEvent(p0Up, p0MoveBackward)
+        dispatchIndirectPointerEvent(p0Up, p0MoveBackward)
 
         rule.runOnIdle {
             assertThat(onClickCount).isEqualTo(0)
@@ -831,7 +829,7 @@ class IndirectTouchGestureTest {
                 modifier =
                     Modifier.testTag(ROOT_TEST_TAG)
                         .size(10.dp)
-                        .onIndirectTouchGesture(
+                        .onIndirectPointerGesture(
                             enabled = true,
                             onClick = { onClickCount++ },
                             onSwipeForward = { onSwipeForwardCount++ },
@@ -854,7 +852,7 @@ class IndirectTouchGestureTest {
                 downTime = downTime,
                 eventTime = eventTime,
             )
-        dispatchIndirectTouchEvent(p0Down)
+        dispatchIndirectPointerEvent(p0Down)
 
         eventTime += 10
         p0Coords.x = touchSlop * 4
@@ -866,7 +864,7 @@ class IndirectTouchGestureTest {
                 downTime = downTime,
                 eventTime = eventTime,
             )
-        dispatchIndirectTouchEvent(p0Move, p0Down, consumeEvents = true)
+        dispatchIndirectPointerEvent(p0Move, p0Down, consumeEvents = true)
 
         eventTime += 20L
         val p0Up =
@@ -877,7 +875,7 @@ class IndirectTouchGestureTest {
                 downTime = downTime,
                 eventTime = eventTime,
             )
-        dispatchIndirectTouchEvent(p0Up, p0Move)
+        dispatchIndirectPointerEvent(p0Up, p0Move)
 
         // The consumed 'move' in gesture should reset so no callback is called.
         rule.runOnIdle {
@@ -909,7 +907,7 @@ class IndirectTouchGestureTest {
                 modifier =
                     Modifier.testTag(ROOT_TEST_TAG)
                         .size(10.dp)
-                        .onIndirectTouchGesture(
+                        .onIndirectPointerGesture(
                             enabled = enabled.value,
                             onClick = { onClickCount++ },
                             onSwipeForward = { onSwipeForwardCount++ },
@@ -933,7 +931,7 @@ class IndirectTouchGestureTest {
                 downTime = downTime,
                 eventTime = eventTime,
             )
-        dispatchIndirectTouchEvent(p0Down)
+        dispatchIndirectPointerEvent(p0Down)
 
         // Disable mid-gesture
         enabled.value = false
@@ -948,7 +946,7 @@ class IndirectTouchGestureTest {
                 downTime = downTime,
                 eventTime = eventTime,
             )
-        dispatchIndirectTouchEvent(p0Up, p0Down)
+        dispatchIndirectPointerEvent(p0Up, p0Down)
 
         rule.runOnIdle {
             assertThat(onClickCount).isEqualTo(0)
@@ -970,7 +968,7 @@ class IndirectTouchGestureTest {
                 modifier =
                     Modifier.testTag(ROOT_TEST_TAG)
                         .size(10.dp)
-                        .onIndirectTouchGesture(
+                        .onIndirectPointerGesture(
                             enabled = enabled.value,
                             onClick = { onClickCount++ },
                             onSwipeForward = { onSwipeForwardCount++ },
@@ -1018,19 +1016,19 @@ class IndirectTouchGestureTest {
         return builder.build()
     }
 
-    private fun dispatchIndirectTouchEvent(
+    private fun dispatchIndirectPointerEvent(
         motionEvent: MotionEvent,
         previousMotionEvent: MotionEvent? = null,
         consumeEvents: Boolean = false,
     ) {
         rule
             .onNodeWithTag(ROOT_TEST_TAG)
-            .performIndirectTouchEvent(
+            .performIndirectPointerEvent(
                 rule,
-                IndirectTouchEvent(
+                IndirectPointerEvent(
                         motionEvent = motionEvent,
                         primaryDirectionalMotionAxis =
-                            IndirectTouchEventPrimaryDirectionalMotionAxis.X,
+                            IndirectPointerEventPrimaryDirectionalMotionAxis.X,
                         previousMotionEvent = previousMotionEvent,
                     )
                     .apply { if (consumeEvents) changes.forEach { it.consume() } },
@@ -1050,6 +1048,6 @@ class IndirectTouchGestureTest {
         }
 
     companion object {
-        private const val ROOT_TEST_TAG = "boxWithIndirectTouchGesture"
+        private const val ROOT_TEST_TAG = "boxWithIndirectPointerGesture"
     }
 }

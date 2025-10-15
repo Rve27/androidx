@@ -20,41 +20,47 @@ import androidx.compose.ui.input.pointer.PointerEvent
 import androidx.compose.ui.input.pointer.PointerId
 
 /**
- * Represents a touch event that did not result from contact with a touchscreen.
+ * An IndirectPointerEvent represents a pointer input event, where the pointer positions do not
+ * correspond to a position on the screen. Instead, the position of the pointer corresponds to the
+ * position on the input device, such as a touchpad.
+ *
+ * Since IndirectPointerEvents do not have a position on the screen, they cannot be dispatched
+ * through hit-testing and instead they are dispatched through the focus tree, similar to key input.
+ * Only the focused component and any of its parents will receive an IndirectPointerEvent.
  *
  * This event differs from a [PointerEvent] as it does not necessitate an existence of a pointer. If
  * an event were to have an associated pointer, they will be routed to through [PointerEvent].
  */
-sealed interface IndirectTouchEvent {
+sealed interface IndirectPointerEvent {
     /** The list of individual pointer changes in this event. */
     val changes: List<IndirectPointerInputChange>
 
-    /** The reason the [IndirectTouchEvent] was sent. */
-    val type: IndirectTouchEventType
+    /** The reason the [IndirectPointerEvent] was sent. */
+    val type: IndirectPointerEventType
 
     /** Main coordinate axis to use for movement. */
-    val primaryDirectionalMotionAxis: IndirectTouchEventPrimaryDirectionalMotionAxis
+    val primaryDirectionalMotionAxis: IndirectPointerEventPrimaryDirectionalMotionAxis
 }
 
 // Work around for Kotlin cross module sealed interfaces.
-internal interface PlatformIndirectTouchEvent : IndirectTouchEvent
+internal interface PlatformIndirectPointerEvent : IndirectPointerEvent
 
-/** Indicates the reason that the [IndirectTouchEvent] was sent. */
+/** Indicates the reason that the [IndirectPointerEvent] was sent. */
 @kotlin.jvm.JvmInline
-value class IndirectTouchEventType private constructor(internal val value: Int) {
+value class IndirectPointerEventType private constructor(internal val value: Int) {
     companion object {
 
         /** An unknown reason for the event. */
-        val Unknown = IndirectTouchEventType(0)
+        val Unknown = IndirectPointerEventType(0)
 
         /** A pressed gesture as started. */
-        val Press = IndirectTouchEventType(1)
+        val Press = IndirectPointerEventType(1)
 
         /** A pressed gesture has finished. */
-        val Release = IndirectTouchEventType(2)
+        val Release = IndirectPointerEventType(2)
 
         /** A change has happened during a press gesture. */
-        val Move = IndirectTouchEventType(3)
+        val Move = IndirectPointerEventType(3)
     }
 
     override fun toString(): String =
@@ -67,32 +73,34 @@ value class IndirectTouchEventType private constructor(internal val value: Int) 
 }
 
 /**
- * The primary axis for motion from an [IndirectTouchEvent]. Input devices such as trackpads that do
- * not map to the screen can define a primary axis for scrolling or movement. This facilitates the
- * translation of a 2D input gesture into a 1D scroll on the screen. For example, an input device
- * might be wide horizontally but narrow vertically. In such a case, it would designate X as its
- * primary axis of motion. This means horizontal scrolling on the input device would cause the
- * on-screen content to scroll along its main axis, as vertical (Y) axis scrolling would be
- * impractical.
+ * The primary axis for motion from an [IndirectPointerEvent]. Indirect input devices such as
+ * touchpads that do not move a cursor on screen may define a primary axis for motion (such as
+ * scrolling). This facilitates the translation of a 2D input gesture into a 1D scroll on the
+ * screen. For example, an input device might be wide horizontally but narrow vertically. In such a
+ * case, it would designate X as its primary axis of motion. This means horizontal scrolling on the
+ * input device would cause a horizontal list to scroll horizontally, and a vertical list to scroll
+ * vertically - even though the direction of motion on the input device is horizontal in both cases.
  */
 @kotlin.jvm.JvmInline
-value class IndirectTouchEventPrimaryDirectionalMotionAxis
+value class IndirectPointerEventPrimaryDirectionalMotionAxis
 private constructor(internal val value: Int) {
     companion object {
 
         /** No coordinate axes specified for movement. */
-        val None = IndirectTouchEventPrimaryDirectionalMotionAxis(0)
+        val None = IndirectPointerEventPrimaryDirectionalMotionAxis(0)
 
         /** X coordinate axis specified as the primary movement axis. */
-        val X = IndirectTouchEventPrimaryDirectionalMotionAxis(1)
+        val X = IndirectPointerEventPrimaryDirectionalMotionAxis(1)
 
         /** Y coordinate axis specified as the primary movement axis. */
-        val Y = IndirectTouchEventPrimaryDirectionalMotionAxis(2)
+        val Y = IndirectPointerEventPrimaryDirectionalMotionAxis(2)
     }
 }
 
 /**
- * Represents a single pointer input change for an indirect touch event.
+ * Represents a single pointer input change for an indirect pointer event. The coordinate space does
+ * NOT map to the screen space but to the coordinate space of the device sending the data (thus the
+ * name indirect pointer change).
  *
  * @param id The unique identifier for the pointer.
  * @param uptimeMillis The time at which the event occurred.
