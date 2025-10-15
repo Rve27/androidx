@@ -17,12 +17,9 @@ package androidx.xr.compose.platform {
     field public static final androidx.xr.compose.platform.Logger INSTANCE;
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class SceneManager implements java.lang.AutoCloseable {
-    method public void close();
-    method public java.util.List<androidx.xr.compose.subspace.node.SubspaceSemanticsInfo> getAllRootSubspaceSemanticsNodes();
-    method public int getSceneCount();
-    method public void start();
-    method public void stop();
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class SceneManager {
+    method public java.util.List<androidx.xr.compose.subspace.node.SubspaceSemanticsInfo> getAllRootSubspaceSemanticsNodes(android.content.Context context);
+    method public int getSceneCount(android.content.Context context);
     field public static final androidx.xr.compose.platform.SceneManager INSTANCE;
   }
 
