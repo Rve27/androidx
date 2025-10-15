@@ -134,6 +134,7 @@ import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+import org.jetbrains.kotlin.gradle.utils.API
 
 /**
  * A plugin which enables all of the Gradle customizations for AndroidX. This plugin reacts to other
@@ -566,8 +567,9 @@ abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
                 } else {
                     ExplicitApiMode.Disabled
                 }
-            // TODO(b/443080559): Remove when built-in Kotlin adds kotlin-test-junit automatically
             if (plugin is KotlinBaseApiPlugin) {
+                // TODO(b/443080559): Remove when built-in Kotlin adds kotlin-test-junit
+                // automatically
                 (kotlinExtension as KotlinAndroidProjectExtension)
                     .target
                     .compilations
@@ -576,6 +578,12 @@ abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
                             return@configureEach
                         compilation.dependencies { implementation(kotlin("test-junit")) }
                     }
+                // TODO(b/452246814): Remove when built-in Kotlin adds kotlin-stdlib as an api
+                // dependency automatically
+                project.dependencies.add(
+                    API,
+                    "org.jetbrains.kotlin:kotlin-stdlib:${kotlinExtension.coreLibrariesVersion}",
+                )
             }
         }
     }
