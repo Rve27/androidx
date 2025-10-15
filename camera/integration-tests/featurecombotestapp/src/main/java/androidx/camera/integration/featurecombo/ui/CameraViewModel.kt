@@ -23,7 +23,6 @@ import androidx.camera.camera2.Camera2Config
 import androidx.camera.camera2.pipe.integration.CameraPipeConfig
 import androidx.camera.core.CameraInfo
 import androidx.camera.core.CameraSelector
-import androidx.camera.core.ExperimentalSessionConfig
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.Logger
 import androidx.camera.core.Preview
@@ -60,7 +59,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalSessionConfig::class)
 @androidx.annotation.OptIn(ExperimentalCameraProviderConfiguration::class)
 class CameraViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel() {
     private lateinit var appContext: Context
@@ -170,7 +168,6 @@ class CameraViewModel(private val savedStateHandle: SavedStateHandle) : ViewMode
         }
     }
 
-    @OptIn(ExperimentalSessionConfig::class)
     private suspend fun bindCamera(lifecycleOwner: LifecycleOwner) {
         Log.d(
             TAG,
@@ -504,7 +501,6 @@ class CameraViewModel(private val savedStateHandle: SavedStateHandle) : ViewMode
         return this.toFeatureCombo().isSupported()
     }
 
-    @OptIn(ExperimentalSessionConfig::class)
     private suspend fun FeatureCombo.isSupported(): Boolean {
         Log.d(TAG, "isSupported: cameraSelector lensFacing = ${cameraSelector.lensFacing}")
         Log.d(TAG, "isSupported: useCases = $useCases")

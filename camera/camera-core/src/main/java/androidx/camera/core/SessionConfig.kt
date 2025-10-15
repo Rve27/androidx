@@ -89,7 +89,6 @@ import java.util.concurrent.Executor
  *
  * @see androidx.camera.lifecycle.ProcessCameraProvider.bindToLifecycle
  */
-@ExperimentalSessionConfig
 public open class SessionConfig
 @JvmOverloads
 constructor(
@@ -292,7 +291,6 @@ constructor(
     }
 
     /** Builder for [SessionConfig] */
-    @ExperimentalSessionConfig
     public class Builder(private val useCases: List<UseCase>) {
         private var viewPort: ViewPort? = null
         private var effects: MutableList<CameraEffect> = mutableListOf()
@@ -410,7 +408,6 @@ constructor(
 
 /** The legacy SessionConfig which allows sequential binding. This is used internally. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-@OptIn(ExperimentalSessionConfig::class)
 public class LegacySessionConfig(
     useCases: List<UseCase>,
     viewPort: ViewPort? = null,
