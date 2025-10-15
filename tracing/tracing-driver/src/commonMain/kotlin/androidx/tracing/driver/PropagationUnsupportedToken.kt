@@ -14,12 +14,15 @@
  * limitations under the License.
  */
 
-package androidx.tracing.benchmark
+package androidx.tracing.driver
 
-import java.util.UUID
-
-const val CATEGORY = "category"
-const val BASIC_STRING = "work"
-
-const val PROCESS_NAME = "process"
-val LARGE_STRING_POOL = Array(50_000) { UUID.randomUUID().toString() }
+/**
+ * The [PropagationToken] instance that should be returned when context propagation is unsupported
+ * by the underlying [Tracer].
+ */
+@DelicateTracingApi
+public object PropagationUnsupportedToken : PropagationToken, AutoCloseable {
+    override fun close() {
+        // Does nothing
+    }
+}
