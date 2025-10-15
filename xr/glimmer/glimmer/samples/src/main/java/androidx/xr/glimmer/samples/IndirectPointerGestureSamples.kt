@@ -33,16 +33,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.xr.glimmer.GlimmerTheme
 import androidx.xr.glimmer.Text
-import androidx.xr.glimmer.onIndirectTouchGesture
+import androidx.xr.glimmer.onIndirectPointerGesture
 import java.time.Instant
 
 @Composable
-fun OnIndirectTouchGestureSampleUsage() {
+fun OnIndirectPointerGestureSampleUsage() {
     var log by remember { mutableStateOf("") }
 
     Column(
         modifier =
-            Modifier.onIndirectTouchGesture(
+            Modifier.onIndirectPointerGesture(
                     enabled = true,
                     onClick = { log = "${Instant.now()} - onClick\n" + log },
                     onSwipeForward = { log = "${Instant.now()} - onSwipeForward\n" + log },
@@ -59,10 +59,10 @@ fun OnIndirectTouchGestureSampleUsage() {
 
 @Composable
 @Sampled
-fun OnIndirectTouchGestureSample() {
+fun OnIndirectPointerGestureSample() {
     Box(
         modifier =
-            Modifier.onIndirectTouchGesture(
+            Modifier.onIndirectPointerGesture(
                     enabled = true,
                     onClick = { /* onClick */ },
                     onSwipeForward = { /* onSwipeForward */ },
@@ -76,6 +76,6 @@ fun OnIndirectTouchGestureSample() {
 
 @Preview
 @Composable
-private fun OnIndirectTouchGestureSampleUsagePreview() {
-    GlimmerTheme { OnIndirectTouchGestureSampleUsage() }
+private fun OnIndirectPointerGestureSampleUsagePreview() {
+    GlimmerTheme { OnIndirectPointerGestureSampleUsage() }
 }

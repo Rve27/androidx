@@ -37,7 +37,7 @@ import org.junit.runner.RunWith
 
 @MediumTest
 @RunWith(AndroidJUnit4::class)
-class ListIndirectTouchTest : BaseListTestWithOrientation(Orientation.Vertical) {
+class ListIndirectPointerTest : BaseListTestWithOrientation(Orientation.Vertical) {
 
     @Test
     fun performIndirectScrollBackward() {
