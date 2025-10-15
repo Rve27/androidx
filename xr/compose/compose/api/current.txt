@@ -219,9 +219,6 @@ package androidx.xr.compose.subspace {
   public abstract class DragPolicy {
   }
 
-  @SuppressCompatibility @kotlin.RequiresOptIn(level=kotlin.RequiresOptIn.Level.ERROR, message="This is an experimental API. It may be changed or removed in the future.") @kotlin.annotation.Retention(kotlin.annotation.AnnotationRetention.BINARY) public @interface ExperimentalSubspaceVolumeApi {
-  }
-
   @SuppressCompatibility @androidx.xr.compose.spatial.ExperimentalUserSubspaceApi public final class LockDimensions {
     ctor public LockDimensions();
     ctor public LockDimensions(optional boolean isTranslationXTracked, optional boolean isTranslationYTracked, optional boolean isTranslationZTracked, optional boolean isRotationXTracked, optional boolean isRotationYTracked, optional boolean isRotationZTracked);
@@ -427,11 +424,6 @@ package androidx.xr.compose.subspace {
     method @BytecodeOnly public int getProtected-ZtmP4lc();
     property public androidx.xr.compose.subspace.SurfaceProtection None;
     property public androidx.xr.compose.subspace.SurfaceProtection Protected;
-  }
-
-  public final class VolumeKt {
-    method @BytecodeOnly @SuppressCompatibility @androidx.compose.runtime.Composable @androidx.xr.compose.subspace.ExperimentalSubspaceVolumeApi @androidx.xr.compose.subspace.SubspaceComposable public static void Volume(androidx.xr.compose.subspace.layout.SubspaceModifier?, kotlin.jvm.functions.Function1<? super androidx.xr.scenecore.Entity!,kotlin.Unit!>, androidx.compose.runtime.Composer?, int, int);
-    method @KotlinOnly @SuppressCompatibility @androidx.compose.runtime.Composable @androidx.xr.compose.subspace.ExperimentalSubspaceVolumeApi @androidx.xr.compose.subspace.SubspaceComposable public static void Volume(optional androidx.xr.compose.subspace.layout.SubspaceModifier modifier, kotlin.jvm.functions.Function1<androidx.xr.scenecore.Entity,kotlin.Unit> onVolumeEntity);
   }
 
 }
