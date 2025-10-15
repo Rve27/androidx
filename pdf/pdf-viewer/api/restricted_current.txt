@@ -168,6 +168,7 @@ package androidx.pdf.content {
   public final class SelectionBoundary {
     ctor public SelectionBoundary();
     ctor public SelectionBoundary(optional int index, optional android.graphics.Point? point, optional boolean isRtl);
+    ctor @BytecodeOnly public SelectionBoundary(int, android.graphics.Point!, boolean, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method @InaccessibleFromKotlin public int getIndex();
     method @InaccessibleFromKotlin public android.graphics.Point? getPoint();
     method @InaccessibleFromKotlin public boolean isRtl();
@@ -284,6 +285,7 @@ package androidx.pdf.view {
     ctor public PdfView(android.content.Context context);
     ctor public PdfView(android.content.Context context, optional android.util.AttributeSet? attrs);
     ctor public PdfView(android.content.Context context, optional android.util.AttributeSet? attrs, optional int defStyle);
+    ctor @BytecodeOnly public PdfView(android.content.Context!, android.util.AttributeSet!, int, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public final void addOnGestureStateChangedListener(androidx.pdf.view.PdfView.OnGestureStateChangedListener listener);
     method public final void addOnSelectionChangedListener(androidx.pdf.view.PdfView.OnSelectionChangedListener listener);
     method public final void addOnViewportChangedListener(androidx.pdf.view.PdfView.OnViewportChangedListener listener);

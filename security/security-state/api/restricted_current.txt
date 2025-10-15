@@ -3,6 +3,7 @@ package androidx.security.state {
 
   public class SecurityPatchState {
     ctor public SecurityPatchState(android.content.Context context);
+    ctor @BytecodeOnly public SecurityPatchState(android.content.Context!, java.util.List!, androidx.security.state.SecurityStateManagerCompat!, String!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor public SecurityPatchState(android.content.Context context, optional java.util.List<java.lang.String> systemModulePackageNames);
     ctor public SecurityPatchState(android.content.Context context, optional java.util.List<java.lang.String> systemModulePackageNames, optional androidx.security.state.SecurityStateManagerCompat? customSecurityStateManagerCompat);
     ctor public SecurityPatchState(android.content.Context context, optional java.util.List<java.lang.String> systemModulePackageNames, optional androidx.security.state.SecurityStateManagerCompat? customSecurityStateManagerCompat, optional String? vulnerabilityReportJsonString);
@@ -66,6 +67,7 @@ package androidx.security.state {
 
   public static final class SecurityPatchState.VersionedSecurityPatchLevel extends androidx.security.state.SecurityPatchState.SecurityPatchLevel {
     ctor public SecurityPatchState.VersionedSecurityPatchLevel(int majorVersion, int minorVersion, optional int buildVersion, optional int patchVersion);
+    ctor @BytecodeOnly public SecurityPatchState.VersionedSecurityPatchLevel(int, int, int, int, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public int compareTo(androidx.security.state.SecurityPatchState.SecurityPatchLevel other);
     method public static androidx.security.state.SecurityPatchState.VersionedSecurityPatchLevel fromString(String value);
     method public int getBuildVersion();

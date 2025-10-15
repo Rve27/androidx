@@ -203,6 +203,7 @@ package androidx.room3 {
 
   public final class RoomRawQuery {
     ctor public RoomRawQuery(String sql);
+    ctor @BytecodeOnly public RoomRawQuery(String!, kotlin.jvm.functions.Function1!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor public RoomRawQuery(String sql, optional kotlin.jvm.functions.Function1<? super androidx.sqlite.SQLiteStatement,kotlin.Unit> onBindStatement);
     method public kotlin.jvm.functions.Function1<androidx.sqlite.SQLiteStatement,kotlin.Unit> getBindingFunction();
     method @InaccessibleFromKotlin public String getSql();

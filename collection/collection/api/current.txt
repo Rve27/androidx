@@ -28,6 +28,7 @@ package androidx.collection {
     ctor public ArraySet(androidx.collection.ArraySet<? extends E>? set);
     ctor public ArraySet(E[]? array);
     ctor public ArraySet(optional int capacity);
+    ctor @BytecodeOnly public ArraySet(int, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor public ArraySet(java.util.Collection<? extends E>? set);
     method public boolean add(E element);
     method public void addAll(androidx.collection.ArraySet<? extends E> array);
@@ -60,6 +61,7 @@ package androidx.collection {
   public final class CircularArray<E> {
     ctor public CircularArray();
     ctor public CircularArray(optional int minCapacity);
+    ctor @BytecodeOnly public CircularArray(int, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public void addFirst(E element);
     method public void addLast(E element);
     method public void clear();
@@ -79,6 +81,7 @@ package androidx.collection {
   public final class CircularIntArray {
     ctor public CircularIntArray();
     ctor public CircularIntArray(optional int minCapacity);
+    ctor @BytecodeOnly public CircularIntArray(int, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public void addFirst(int element);
     method public void addLast(int element);
     method public void clear();
@@ -1249,6 +1252,7 @@ package androidx.collection {
   public class LongSparseArray<E> implements java.lang.Cloneable {
     ctor public LongSparseArray();
     ctor public LongSparseArray(optional int initialCapacity);
+    ctor @BytecodeOnly public LongSparseArray(int, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public void append(long key, E value);
     method public void clear();
     method public androidx.collection.LongSparseArray<E> clone();
@@ -1318,6 +1322,7 @@ package androidx.collection {
   public final class MutableDoubleList extends androidx.collection.DoubleList {
     ctor public MutableDoubleList();
     ctor public MutableDoubleList(optional int initialCapacity);
+    ctor @BytecodeOnly public MutableDoubleList(int, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public boolean add(double element);
     method public void add(@IntRange(from=0L) int index, double element);
     method public inline boolean addAll(androidx.collection.DoubleList elements);
@@ -1351,6 +1356,7 @@ package androidx.collection {
   public final class MutableFloatFloatMap extends androidx.collection.FloatFloatMap {
     ctor public MutableFloatFloatMap();
     ctor public MutableFloatFloatMap(optional int initialCapacity);
+    ctor @BytecodeOnly public MutableFloatFloatMap(int, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public void clear();
     method public inline float getOrPut(float key, kotlin.jvm.functions.Function0<java.lang.Float> defaultValue);
     method public inline operator void minusAssign(androidx.collection.FloatList keys);
@@ -1371,6 +1377,7 @@ package androidx.collection {
   public final class MutableFloatIntMap extends androidx.collection.FloatIntMap {
     ctor public MutableFloatIntMap();
     ctor public MutableFloatIntMap(optional int initialCapacity);
+    ctor @BytecodeOnly public MutableFloatIntMap(int, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public void clear();
     method public inline int getOrPut(float key, kotlin.jvm.functions.Function0<java.lang.Integer> defaultValue);
     method public inline operator void minusAssign(androidx.collection.FloatList keys);
@@ -1391,6 +1398,7 @@ package androidx.collection {
   public final class MutableFloatList extends androidx.collection.FloatList {
     ctor public MutableFloatList();
     ctor public MutableFloatList(optional int initialCapacity);
+    ctor @BytecodeOnly public MutableFloatList(int, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public boolean add(float element);
     method public void add(@IntRange(from=0L) int index, float element);
     method public inline boolean addAll(androidx.collection.FloatList elements);
@@ -1424,6 +1432,7 @@ package androidx.collection {
   public final class MutableFloatLongMap extends androidx.collection.FloatLongMap {
     ctor public MutableFloatLongMap();
     ctor public MutableFloatLongMap(optional int initialCapacity);
+    ctor @BytecodeOnly public MutableFloatLongMap(int, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public void clear();
     method public inline long getOrPut(float key, kotlin.jvm.functions.Function0<java.lang.Long> defaultValue);
     method public inline operator void minusAssign(androidx.collection.FloatList keys);
@@ -1444,6 +1453,7 @@ package androidx.collection {
   public final class MutableFloatObjectMap<V> extends androidx.collection.FloatObjectMap<V> {
     ctor public MutableFloatObjectMap();
     ctor public MutableFloatObjectMap(optional int initialCapacity);
+    ctor @BytecodeOnly public MutableFloatObjectMap(int, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public void clear();
     method public inline V getOrPut(float key, kotlin.jvm.functions.Function0<? extends V> defaultValue);
     method public inline operator void minusAssign(androidx.collection.FloatList keys);
@@ -1463,6 +1473,7 @@ package androidx.collection {
   public final class MutableFloatSet extends androidx.collection.FloatSet {
     ctor public MutableFloatSet();
     ctor public MutableFloatSet(optional int initialCapacity);
+    ctor @BytecodeOnly public MutableFloatSet(int, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public boolean add(float element);
     method public boolean addAll(androidx.collection.FloatSet elements);
     method public boolean addAll(float[] elements);
@@ -1482,6 +1493,7 @@ package androidx.collection {
   public final class MutableIntFloatMap extends androidx.collection.IntFloatMap {
     ctor public MutableIntFloatMap();
     ctor public MutableIntFloatMap(optional int initialCapacity);
+    ctor @BytecodeOnly public MutableIntFloatMap(int, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public void clear();
     method public inline float getOrPut(int key, kotlin.jvm.functions.Function0<java.lang.Float> defaultValue);
     method public inline operator void minusAssign(androidx.collection.IntList keys);
@@ -1502,6 +1514,7 @@ package androidx.collection {
   public final class MutableIntIntMap extends androidx.collection.IntIntMap {
     ctor public MutableIntIntMap();
     ctor public MutableIntIntMap(optional int initialCapacity);
+    ctor @BytecodeOnly public MutableIntIntMap(int, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public void clear();
     method public inline int getOrPut(int key, kotlin.jvm.functions.Function0<java.lang.Integer> defaultValue);
     method public inline operator void minusAssign(androidx.collection.IntList keys);
@@ -1522,6 +1535,7 @@ package androidx.collection {
   public final class MutableIntList extends androidx.collection.IntList {
     ctor public MutableIntList();
     ctor public MutableIntList(optional int initialCapacity);
+    ctor @BytecodeOnly public MutableIntList(int, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public boolean add(int element);
     method public void add(@IntRange(from=0L) int index, int element);
     method public inline boolean addAll(androidx.collection.IntList elements);
@@ -1555,6 +1569,7 @@ package androidx.collection {
   public final class MutableIntLongMap extends androidx.collection.IntLongMap {
     ctor public MutableIntLongMap();
     ctor public MutableIntLongMap(optional int initialCapacity);
+    ctor @BytecodeOnly public MutableIntLongMap(int, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public void clear();
     method public inline long getOrPut(int key, kotlin.jvm.functions.Function0<java.lang.Long> defaultValue);
     method public inline operator void minusAssign(androidx.collection.IntList keys);
@@ -1575,6 +1590,7 @@ package androidx.collection {
   public final class MutableIntObjectMap<V> extends androidx.collection.IntObjectMap<V> {
     ctor public MutableIntObjectMap();
     ctor public MutableIntObjectMap(optional int initialCapacity);
+    ctor @BytecodeOnly public MutableIntObjectMap(int, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public void clear();
     method public inline V getOrPut(int key, kotlin.jvm.functions.Function0<? extends V> defaultValue);
     method public inline operator void minusAssign(androidx.collection.IntList keys);
@@ -1594,6 +1610,7 @@ package androidx.collection {
   public final class MutableIntSet extends androidx.collection.IntSet {
     ctor public MutableIntSet();
     ctor public MutableIntSet(optional int initialCapacity);
+    ctor @BytecodeOnly public MutableIntSet(int, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public boolean add(int element);
     method public boolean addAll(androidx.collection.IntSet elements);
     method public boolean addAll(int[] elements);
@@ -1613,6 +1630,7 @@ package androidx.collection {
   public final class MutableLongFloatMap extends androidx.collection.LongFloatMap {
     ctor public MutableLongFloatMap();
     ctor public MutableLongFloatMap(optional int initialCapacity);
+    ctor @BytecodeOnly public MutableLongFloatMap(int, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public void clear();
     method public inline float getOrPut(long key, kotlin.jvm.functions.Function0<java.lang.Float> defaultValue);
     method public inline operator void minusAssign(androidx.collection.LongList keys);
@@ -1633,6 +1651,7 @@ package androidx.collection {
   public final class MutableLongIntMap extends androidx.collection.LongIntMap {
     ctor public MutableLongIntMap();
     ctor public MutableLongIntMap(optional int initialCapacity);
+    ctor @BytecodeOnly public MutableLongIntMap(int, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public void clear();
     method public inline int getOrPut(long key, kotlin.jvm.functions.Function0<java.lang.Integer> defaultValue);
     method public inline operator void minusAssign(androidx.collection.LongList keys);
@@ -1653,6 +1672,7 @@ package androidx.collection {
   public final class MutableLongList extends androidx.collection.LongList {
     ctor public MutableLongList();
     ctor public MutableLongList(optional int initialCapacity);
+    ctor @BytecodeOnly public MutableLongList(int, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public void add(@IntRange(from=0L) int index, long element);
     method public boolean add(long element);
     method public inline boolean addAll(androidx.collection.LongList elements);
@@ -1686,6 +1706,7 @@ package androidx.collection {
   public final class MutableLongLongMap extends androidx.collection.LongLongMap {
     ctor public MutableLongLongMap();
     ctor public MutableLongLongMap(optional int initialCapacity);
+    ctor @BytecodeOnly public MutableLongLongMap(int, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public void clear();
     method public inline long getOrPut(long key, kotlin.jvm.functions.Function0<java.lang.Long> defaultValue);
     method public inline operator void minusAssign(androidx.collection.LongList keys);
@@ -1706,6 +1727,7 @@ package androidx.collection {
   public final class MutableLongObjectMap<V> extends androidx.collection.LongObjectMap<V> {
     ctor public MutableLongObjectMap();
     ctor public MutableLongObjectMap(optional int initialCapacity);
+    ctor @BytecodeOnly public MutableLongObjectMap(int, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public void clear();
     method public inline V getOrPut(long key, kotlin.jvm.functions.Function0<? extends V> defaultValue);
     method public inline operator void minusAssign(androidx.collection.LongList keys);
@@ -1725,6 +1747,7 @@ package androidx.collection {
   public final class MutableLongSet extends androidx.collection.LongSet {
     ctor public MutableLongSet();
     ctor public MutableLongSet(optional int initialCapacity);
+    ctor @BytecodeOnly public MutableLongSet(int, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public boolean add(long element);
     method public boolean addAll(androidx.collection.LongSet elements);
     method public boolean addAll(long[] elements);
@@ -1744,6 +1767,7 @@ package androidx.collection {
   public final class MutableObjectFloatMap<K> extends androidx.collection.ObjectFloatMap<K> {
     ctor public MutableObjectFloatMap();
     ctor public MutableObjectFloatMap(optional int initialCapacity);
+    ctor @BytecodeOnly public MutableObjectFloatMap(int, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public void clear();
     method public inline float getOrPut(K key, kotlin.jvm.functions.Function0<java.lang.Float> defaultValue);
     method public inline operator void minusAssign(androidx.collection.ScatterSet<K> keys);
@@ -1765,6 +1789,7 @@ package androidx.collection {
   public final class MutableObjectIntMap<K> extends androidx.collection.ObjectIntMap<K> {
     ctor public MutableObjectIntMap();
     ctor public MutableObjectIntMap(optional int initialCapacity);
+    ctor @BytecodeOnly public MutableObjectIntMap(int, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public void clear();
     method public inline int getOrPut(K key, kotlin.jvm.functions.Function0<java.lang.Integer> defaultValue);
     method public inline operator void minusAssign(androidx.collection.ScatterSet<K> keys);
@@ -1786,6 +1811,7 @@ package androidx.collection {
   public final class MutableObjectList<E> extends androidx.collection.ObjectList<E> {
     ctor public MutableObjectList();
     ctor public MutableObjectList(optional int initialCapacity);
+    ctor @BytecodeOnly public MutableObjectList(int, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public boolean add(E element);
     method public void add(@IntRange(from=0L) int index, E element);
     method public boolean addAll(androidx.collection.ObjectList<E> elements);
@@ -1840,6 +1866,7 @@ package androidx.collection {
   public final class MutableObjectLongMap<K> extends androidx.collection.ObjectLongMap<K> {
     ctor public MutableObjectLongMap();
     ctor public MutableObjectLongMap(optional int initialCapacity);
+    ctor @BytecodeOnly public MutableObjectLongMap(int, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public void clear();
     method public inline long getOrPut(K key, kotlin.jvm.functions.Function0<java.lang.Long> defaultValue);
     method public inline operator void minusAssign(androidx.collection.ScatterSet<K> keys);
@@ -1861,6 +1888,7 @@ package androidx.collection {
   public final class MutableOrderedScatterSet<E> extends androidx.collection.OrderedScatterSet<E> {
     ctor public MutableOrderedScatterSet();
     ctor public MutableOrderedScatterSet(optional int initialCapacity);
+    ctor @BytecodeOnly public MutableOrderedScatterSet(int, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public boolean add(E element);
     method public boolean addAll(androidx.collection.ObjectList<E> elements);
     method public boolean addAll(androidx.collection.OrderedScatterSet<E> elements);
@@ -1903,6 +1931,7 @@ package androidx.collection {
   public final class MutableScatterMap<K, V> extends androidx.collection.ScatterMap<K,V> {
     ctor public MutableScatterMap();
     ctor public MutableScatterMap(optional int initialCapacity);
+    ctor @BytecodeOnly public MutableScatterMap(int, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public java.util.Map<K,V> asMutableMap();
     method public void clear();
     method public inline V compute(K key, kotlin.jvm.functions.Function2<? super K,? super V?,? extends V> computeBlock);
@@ -1935,6 +1964,7 @@ package androidx.collection {
   public final class MutableScatterSet<E> extends androidx.collection.ScatterSet<E> {
     ctor public MutableScatterSet();
     ctor public MutableScatterSet(optional int initialCapacity);
+    ctor @BytecodeOnly public MutableScatterSet(int, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public boolean add(E element);
     method public boolean addAll(androidx.collection.ObjectList<E> elements);
     method public boolean addAll(androidx.collection.OrderedScatterSet<E> elements);
@@ -2340,6 +2370,7 @@ package androidx.collection {
   }
 
   public final class SieveCache<K, V> {
+    ctor @BytecodeOnly public SieveCache(int, int, kotlin.jvm.functions.Function2!, kotlin.jvm.functions.Function1!, kotlin.jvm.functions.Function4!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor public SieveCache(@IntRange(from=1L, to=androidx.collection.SieveCacheKt.MaxSize) int maxSize, optional @IntRange(from=0L, to=androidx.collection.SieveCacheKt.MaxSize) int initialCapacity, optional kotlin.jvm.functions.Function2<? super K,? super V,java.lang.Integer> sizeOf, optional kotlin.jvm.functions.Function1<? super K,? extends V?> createValueFromKey, optional kotlin.jvm.functions.Function4<? super K,? super V,? super V?,? super java.lang.Boolean,kotlin.Unit> onEntryRemoved);
     method public inline boolean all(kotlin.jvm.functions.Function2<? super K,? super V,java.lang.Boolean> predicate);
     method public boolean any();
@@ -2397,6 +2428,7 @@ package androidx.collection {
     ctor public SimpleArrayMap();
     ctor public SimpleArrayMap(androidx.collection.SimpleArrayMap<? extends K,? extends V>? map);
     ctor public SimpleArrayMap(optional int capacity);
+    ctor @BytecodeOnly public SimpleArrayMap(int, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public void clear();
     method public boolean containsKey(K key);
     method public boolean containsValue(V value);
@@ -2422,6 +2454,7 @@ package androidx.collection {
   public class SparseArrayCompat<E> implements java.lang.Cloneable {
     ctor public SparseArrayCompat();
     ctor public SparseArrayCompat(optional int initialCapacity);
+    ctor @BytecodeOnly public SparseArrayCompat(int, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public void append(int key, E value);
     method public void clear();
     method public androidx.collection.SparseArrayCompat<E> clone();

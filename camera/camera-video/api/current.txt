@@ -54,6 +54,7 @@ package androidx.camera.video {
   }
 
   @SuppressCompatibility public final class HighSpeedVideoSessionConfig extends androidx.camera.core.SessionConfig {
+    ctor @BytecodeOnly public HighSpeedVideoSessionConfig(androidx.camera.video.VideoCapture!, androidx.camera.core.Preview!, android.util.Range!, boolean, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor public HighSpeedVideoSessionConfig(androidx.camera.video.VideoCapture<? extends java.lang.Object?> videoCapture);
     ctor public HighSpeedVideoSessionConfig(androidx.camera.video.VideoCapture<? extends java.lang.Object?> videoCapture, optional androidx.camera.core.Preview? preview);
     ctor public HighSpeedVideoSessionConfig(androidx.camera.video.VideoCapture<? extends java.lang.Object?> videoCapture, optional androidx.camera.core.Preview? preview, optional android.util.Range<java.lang.Integer> frameRateRange);

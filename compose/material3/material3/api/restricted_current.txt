@@ -479,6 +479,7 @@ package androidx.compose.material3 {
   public final class ButtonGroupMenuState {
     ctor public ButtonGroupMenuState();
     ctor public ButtonGroupMenuState(optional boolean initialIsShowing);
+    ctor @BytecodeOnly public ButtonGroupMenuState(boolean, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public void dismiss();
     method @BytecodeOnly @Deprecated public boolean isExpanded();
     method @InaccessibleFromKotlin public boolean isShowing();
@@ -1106,6 +1107,7 @@ package androidx.compose.material3 {
   @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3Api public final class DefaultTooltipCaretShape implements androidx.compose.ui.graphics.Shape {
     ctor public DefaultTooltipCaretShape();
     ctor @KotlinOnly public DefaultTooltipCaretShape(optional androidx.compose.ui.unit.DpSize caretSize);
+    ctor @BytecodeOnly public DefaultTooltipCaretShape(long, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor @BytecodeOnly public DefaultTooltipCaretShape(long, kotlin.jvm.internal.DefaultConstructorMarker!);
     method @KotlinOnly public androidx.compose.ui.graphics.Outline createOutline(androidx.compose.ui.geometry.Size size, androidx.compose.ui.unit.LayoutDirection layoutDirection, androidx.compose.ui.unit.Density density);
     method @BytecodeOnly public androidx.compose.ui.graphics.Outline createOutline-Pq9zytI(long, androidx.compose.ui.unit.LayoutDirection, androidx.compose.ui.unit.Density);
@@ -1229,6 +1231,7 @@ package androidx.compose.material3 {
   }
 
   @androidx.compose.runtime.Stable public final class DrawerState {
+    ctor @BytecodeOnly public DrawerState(androidx.compose.material3.DrawerValue!, kotlin.jvm.functions.Function1!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor public DrawerState(androidx.compose.material3.DrawerValue initialValue, optional kotlin.jvm.functions.Function1<? super androidx.compose.material3.DrawerValue,java.lang.Boolean> confirmStateChange);
     method @Deprecated public suspend Object? animateTo(androidx.compose.material3.DrawerValue targetValue, androidx.compose.animation.core.AnimationSpec<java.lang.Float> anim, kotlin.coroutines.Continuation<? super kotlin.Unit>);
     method public suspend Object? close(kotlin.coroutines.Continuation<? super kotlin.Unit>);
@@ -1900,6 +1903,7 @@ package androidx.compose.material3 {
 
   @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ExpressiveApi public final class IconButtonShapes {
     ctor public IconButtonShapes(androidx.compose.ui.graphics.Shape shape, optional androidx.compose.ui.graphics.Shape pressedShape);
+    ctor @BytecodeOnly public IconButtonShapes(androidx.compose.ui.graphics.Shape!, androidx.compose.ui.graphics.Shape!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public androidx.compose.material3.IconButtonShapes copy(optional androidx.compose.ui.graphics.Shape? shape, optional androidx.compose.ui.graphics.Shape? pressedShape);
     method @BytecodeOnly public static androidx.compose.material3.IconButtonShapes! copy$default(androidx.compose.material3.IconButtonShapes!, androidx.compose.ui.graphics.Shape!, androidx.compose.ui.graphics.Shape!, int, Object!);
     method @InaccessibleFromKotlin public androidx.compose.ui.graphics.Shape getPressedShape();
@@ -1941,6 +1945,7 @@ package androidx.compose.material3 {
 
   @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ExpressiveApi public final class IconToggleButtonShapes {
     ctor public IconToggleButtonShapes(androidx.compose.ui.graphics.Shape shape, optional androidx.compose.ui.graphics.Shape pressedShape, optional androidx.compose.ui.graphics.Shape checkedShape);
+    ctor @BytecodeOnly public IconToggleButtonShapes(androidx.compose.ui.graphics.Shape!, androidx.compose.ui.graphics.Shape!, androidx.compose.ui.graphics.Shape!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public androidx.compose.material3.IconToggleButtonShapes copy(optional androidx.compose.ui.graphics.Shape? shape, optional androidx.compose.ui.graphics.Shape? pressedShape, optional androidx.compose.ui.graphics.Shape? checkedShape);
     method @BytecodeOnly public static androidx.compose.material3.IconToggleButtonShapes! copy$default(androidx.compose.material3.IconToggleButtonShapes!, androidx.compose.ui.graphics.Shape!, androidx.compose.ui.graphics.Shape!, androidx.compose.ui.graphics.Shape!, int, Object!);
     method @InaccessibleFromKotlin public androidx.compose.ui.graphics.Shape getCheckedShape();
@@ -2231,10 +2236,15 @@ package androidx.compose.material3 {
     ctor public ModalBottomSheetProperties();
     ctor @BytecodeOnly @Deprecated public ModalBottomSheetProperties(androidx.compose.ui.window.SecureFlagPolicy!, boolean);
     ctor public ModalBottomSheetProperties(optional androidx.compose.ui.window.SecureFlagPolicy securePolicy, optional boolean shouldDismissOnBackPress, optional boolean shouldDismissOnClickOutside);
+    ctor @BytecodeOnly public ModalBottomSheetProperties(androidx.compose.ui.window.SecureFlagPolicy!, boolean, boolean, int, kotlin.jvm.internal.DefaultConstructorMarker!);
+    ctor @BytecodeOnly @Deprecated public ModalBottomSheetProperties(androidx.compose.ui.window.SecureFlagPolicy!, boolean, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor @BytecodeOnly @Deprecated public ModalBottomSheetProperties(boolean);
     ctor public ModalBottomSheetProperties(optional boolean shouldDismissOnBackPress, optional boolean shouldDismissOnClickOutside);
     ctor @BytecodeOnly @Deprecated public ModalBottomSheetProperties(boolean, boolean, androidx.compose.ui.window.SecureFlagPolicy!, boolean);
     ctor public ModalBottomSheetProperties(boolean isAppearanceLightStatusBars, boolean isAppearanceLightNavigationBars, optional androidx.compose.ui.window.SecureFlagPolicy securePolicy, optional boolean shouldDismissOnBackPress, optional boolean shouldDismissOnClickOutside);
+    ctor @BytecodeOnly public ModalBottomSheetProperties(boolean, boolean, androidx.compose.ui.window.SecureFlagPolicy!, boolean, boolean, int, kotlin.jvm.internal.DefaultConstructorMarker!);
+    ctor @BytecodeOnly @Deprecated public ModalBottomSheetProperties(boolean, boolean, androidx.compose.ui.window.SecureFlagPolicy!, boolean, int, kotlin.jvm.internal.DefaultConstructorMarker!);
+    ctor @BytecodeOnly public ModalBottomSheetProperties(boolean, boolean, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method @InaccessibleFromKotlin public androidx.compose.ui.window.SecureFlagPolicy getSecurePolicy();
     method @InaccessibleFromKotlin public boolean getShouldDismissOnBackPress();
     method @InaccessibleFromKotlin public boolean shouldDismissOnClickOutside();
@@ -2288,7 +2298,9 @@ package androidx.compose.material3 {
   @androidx.compose.runtime.Immutable public final class ModalWideNavigationRailProperties {
     ctor public ModalWideNavigationRailProperties();
     ctor public ModalWideNavigationRailProperties(optional androidx.compose.ui.window.SecureFlagPolicy securePolicy, optional boolean shouldDismissOnBackPress);
+    ctor @BytecodeOnly public ModalWideNavigationRailProperties(androidx.compose.ui.window.SecureFlagPolicy!, boolean, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor public ModalWideNavigationRailProperties(optional boolean shouldDismissOnBackPress);
+    ctor @BytecodeOnly public ModalWideNavigationRailProperties(boolean, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method @InaccessibleFromKotlin public androidx.compose.ui.window.SecureFlagPolicy getSecurePolicy();
     method @InaccessibleFromKotlin public boolean getShouldDismissOnBackPress();
     property public androidx.compose.ui.window.SecureFlagPolicy securePolicy;
@@ -2369,6 +2381,7 @@ package androidx.compose.material3 {
   }
 
   @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ComponentOverrideApi public final class NavigationBarOverrideScope {
+    ctor @BytecodeOnly public NavigationBarOverrideScope(androidx.compose.ui.Modifier!, long, long, float, androidx.compose.foundation.layout.WindowInsets!, kotlin.jvm.functions.Function3!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method @BytecodeOnly public long getContainerColor-0d7_KjU();
     method @InaccessibleFromKotlin public kotlin.jvm.functions.Function1<androidx.compose.foundation.layout.RowScope,kotlin.Unit> getContent();
     method @BytecodeOnly public long getContentColor-0d7_KjU();
@@ -2518,6 +2531,7 @@ package androidx.compose.material3 {
   }
 
   @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ComponentOverrideApi public final class NavigationRailOverrideScope {
+    ctor @BytecodeOnly public NavigationRailOverrideScope(androidx.compose.ui.Modifier!, long, long, kotlin.jvm.functions.Function3!, androidx.compose.foundation.layout.WindowInsets!, kotlin.jvm.functions.Function3!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method @BytecodeOnly public long getContainerColor-0d7_KjU();
     method @InaccessibleFromKotlin public kotlin.jvm.functions.Function1<androidx.compose.foundation.layout.ColumnScope,kotlin.Unit> getContent();
     method @BytecodeOnly public long getContentColor-0d7_KjU();
@@ -2658,6 +2672,7 @@ package androidx.compose.material3 {
 
   @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3Api public final class RangeSliderState {
     ctor public RangeSliderState();
+    ctor @BytecodeOnly public RangeSliderState(float, float, int, kotlin.jvm.functions.Function0!, kotlin.ranges.ClosedFloatingPointRange!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor public RangeSliderState(optional float activeRangeStart, optional float activeRangeEnd, optional @IntRange(from=0L) int steps, optional kotlin.jvm.functions.Function0<kotlin.Unit>? onValueChangeFinished, optional kotlin.ranges.ClosedFloatingPointRange<java.lang.Float> valueRange);
     method @InaccessibleFromKotlin public float getActiveRangeEnd();
     method @InaccessibleFromKotlin public float getActiveRangeStart();
@@ -2698,6 +2713,7 @@ package androidx.compose.material3 {
   @androidx.compose.runtime.Immutable public final class RippleConfiguration {
     ctor public RippleConfiguration();
     ctor @KotlinOnly public RippleConfiguration(optional androidx.compose.ui.graphics.Color color, optional androidx.compose.material.ripple.RippleAlpha? rippleAlpha);
+    ctor @BytecodeOnly public RippleConfiguration(long, androidx.compose.material.ripple.RippleAlpha!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor @BytecodeOnly public RippleConfiguration(long, androidx.compose.material.ripple.RippleAlpha!, kotlin.jvm.internal.DefaultConstructorMarker!);
     method @BytecodeOnly public long getColor-0d7_KjU();
     method @InaccessibleFromKotlin public androidx.compose.material.ripple.RippleAlpha? getRippleAlpha();
@@ -2989,6 +3005,8 @@ package androidx.compose.material3 {
     ctor @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ExpressiveApi public Shapes();
     ctor public Shapes(optional androidx.compose.foundation.shape.CornerBasedShape extraSmall, optional androidx.compose.foundation.shape.CornerBasedShape small, optional androidx.compose.foundation.shape.CornerBasedShape medium, optional androidx.compose.foundation.shape.CornerBasedShape large, optional androidx.compose.foundation.shape.CornerBasedShape extraLarge);
     ctor @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ExpressiveApi public Shapes(optional androidx.compose.foundation.shape.CornerBasedShape extraSmall, optional androidx.compose.foundation.shape.CornerBasedShape small, optional androidx.compose.foundation.shape.CornerBasedShape medium, optional androidx.compose.foundation.shape.CornerBasedShape large, optional androidx.compose.foundation.shape.CornerBasedShape extraLarge, optional androidx.compose.foundation.shape.CornerBasedShape largeIncreased, optional androidx.compose.foundation.shape.CornerBasedShape extraLargeIncreased, optional androidx.compose.foundation.shape.CornerBasedShape extraExtraLarge);
+    ctor @BytecodeOnly @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ExpressiveApi public Shapes(androidx.compose.foundation.shape.CornerBasedShape!, androidx.compose.foundation.shape.CornerBasedShape!, androidx.compose.foundation.shape.CornerBasedShape!, androidx.compose.foundation.shape.CornerBasedShape!, androidx.compose.foundation.shape.CornerBasedShape!, androidx.compose.foundation.shape.CornerBasedShape!, androidx.compose.foundation.shape.CornerBasedShape!, androidx.compose.foundation.shape.CornerBasedShape!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
+    ctor @BytecodeOnly public Shapes(androidx.compose.foundation.shape.CornerBasedShape!, androidx.compose.foundation.shape.CornerBasedShape!, androidx.compose.foundation.shape.CornerBasedShape!, androidx.compose.foundation.shape.CornerBasedShape!, androidx.compose.foundation.shape.CornerBasedShape!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public androidx.compose.material3.Shapes copy(optional androidx.compose.foundation.shape.CornerBasedShape extraSmall, optional androidx.compose.foundation.shape.CornerBasedShape small, optional androidx.compose.foundation.shape.CornerBasedShape medium, optional androidx.compose.foundation.shape.CornerBasedShape large, optional androidx.compose.foundation.shape.CornerBasedShape extraLarge);
     method @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ExpressiveApi public androidx.compose.material3.Shapes copy(optional androidx.compose.foundation.shape.CornerBasedShape extraSmall, optional androidx.compose.foundation.shape.CornerBasedShape small, optional androidx.compose.foundation.shape.CornerBasedShape medium, optional androidx.compose.foundation.shape.CornerBasedShape large, optional androidx.compose.foundation.shape.CornerBasedShape extraLarge, optional androidx.compose.foundation.shape.CornerBasedShape largeIncreased, optional androidx.compose.foundation.shape.CornerBasedShape extraLargeIncreased, optional androidx.compose.foundation.shape.CornerBasedShape extraExtraLarge);
     method @BytecodeOnly @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ExpressiveApi public static androidx.compose.material3.Shapes! copy$default(androidx.compose.material3.Shapes!, androidx.compose.foundation.shape.CornerBasedShape!, androidx.compose.foundation.shape.CornerBasedShape!, androidx.compose.foundation.shape.CornerBasedShape!, androidx.compose.foundation.shape.CornerBasedShape!, androidx.compose.foundation.shape.CornerBasedShape!, androidx.compose.foundation.shape.CornerBasedShape!, androidx.compose.foundation.shape.CornerBasedShape!, androidx.compose.foundation.shape.CornerBasedShape!, int, Object!);
@@ -3013,6 +3031,8 @@ package androidx.compose.material3 {
 
   @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3Api @androidx.compose.runtime.Stable public final class SheetState {
     ctor @BytecodeOnly @Deprecated public SheetState(boolean, androidx.compose.ui.unit.Density!, androidx.compose.material3.SheetValue!, kotlin.jvm.functions.Function1!, boolean);
+    ctor @BytecodeOnly @Deprecated public SheetState(boolean, androidx.compose.ui.unit.Density!, androidx.compose.material3.SheetValue!, kotlin.jvm.functions.Function1!, boolean, int, kotlin.jvm.internal.DefaultConstructorMarker!);
+    ctor @BytecodeOnly public SheetState(boolean, kotlin.jvm.functions.Function0!, kotlin.jvm.functions.Function0!, androidx.compose.material3.SheetValue!, kotlin.jvm.functions.Function1!, boolean, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor public SheetState(boolean skipPartiallyExpanded, kotlin.jvm.functions.Function0<java.lang.Float> positionalThreshold, kotlin.jvm.functions.Function0<java.lang.Float> velocityThreshold, optional androidx.compose.material3.SheetValue initialValue, optional kotlin.jvm.functions.Function1<? super androidx.compose.material3.SheetValue,java.lang.Boolean> confirmValueChange, optional boolean skipHiddenState);
     method public suspend Object? expand(kotlin.coroutines.Continuation<? super kotlin.Unit>);
     method @InaccessibleFromKotlin public androidx.compose.material3.SheetValue getCurrentValue();
@@ -3227,6 +3247,7 @@ package androidx.compose.material3 {
 
   @Deprecated @androidx.compose.runtime.Stable public final class SliderPositions {
     ctor @Deprecated public SliderPositions();
+    ctor @BytecodeOnly @Deprecated public SliderPositions(kotlin.ranges.ClosedFloatingPointRange!, float[]!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor @Deprecated public SliderPositions(optional kotlin.ranges.ClosedFloatingPointRange<java.lang.Float> initialActiveRange, optional float[] initialTickFractions);
     method @InaccessibleFromKotlin @Deprecated public kotlin.ranges.ClosedFloatingPointRange<java.lang.Float> getActiveRange();
     method @InaccessibleFromKotlin @Deprecated public float[] getTickFractions();
@@ -3236,6 +3257,7 @@ package androidx.compose.material3 {
 
   @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3Api public final class SliderState implements androidx.compose.foundation.gestures.DraggableState {
     ctor public SliderState();
+    ctor @BytecodeOnly public SliderState(float, int, kotlin.jvm.functions.Function0!, kotlin.ranges.ClosedFloatingPointRange!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor public SliderState(optional float value, optional @IntRange(from=0L) int steps, optional kotlin.jvm.functions.Function0<kotlin.Unit>? onValueChangeFinished, optional kotlin.ranges.ClosedFloatingPointRange<java.lang.Float> valueRange);
     method public void dispatchRawDelta(float delta);
     method public suspend Object? drag(androidx.compose.foundation.MutatePriority dragPriority, kotlin.jvm.functions.Function2<? super androidx.compose.foundation.gestures.DragScope,? super kotlin.coroutines.Continuation<? super kotlin.Unit>,? extends java.lang.Object?> block, kotlin.coroutines.Continuation<? super kotlin.Unit>);
@@ -3512,6 +3534,7 @@ package androidx.compose.material3 {
   }
 
   public final class SwipeToDismissBoxState {
+    ctor @BytecodeOnly @Deprecated public SwipeToDismissBoxState(androidx.compose.material3.SwipeToDismissBoxValue!, androidx.compose.ui.unit.Density!, kotlin.jvm.functions.Function1!, kotlin.jvm.functions.Function1!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor @Deprecated public SwipeToDismissBoxState(androidx.compose.material3.SwipeToDismissBoxValue initialValue, androidx.compose.ui.unit.Density density, optional kotlin.jvm.functions.Function1<? super androidx.compose.material3.SwipeToDismissBoxValue,java.lang.Boolean> confirmValueChange, kotlin.jvm.functions.Function1<? super java.lang.Float,java.lang.Float> positionalThreshold);
     ctor public SwipeToDismissBoxState(androidx.compose.material3.SwipeToDismissBoxValue initialValue, kotlin.jvm.functions.Function1<? super java.lang.Float,java.lang.Float> positionalThreshold);
     method public suspend Object? dismiss(androidx.compose.material3.SwipeToDismissBoxValue direction, kotlin.coroutines.Continuation<? super kotlin.Unit>);
@@ -3852,6 +3875,7 @@ package androidx.compose.material3 {
   public static final class TextFieldLabelPosition.Above extends androidx.compose.material3.TextFieldLabelPosition {
     ctor public TextFieldLabelPosition.Above();
     ctor public TextFieldLabelPosition.Above(optional androidx.compose.ui.Alignment.Horizontal alignment);
+    ctor @BytecodeOnly public TextFieldLabelPosition.Above(androidx.compose.ui.Alignment.Horizontal!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method @InaccessibleFromKotlin public androidx.compose.ui.Alignment.Horizontal getAlignment();
     property public androidx.compose.ui.Alignment.Horizontal alignment;
   }
@@ -3859,6 +3883,7 @@ package androidx.compose.material3 {
   public static final class TextFieldLabelPosition.Attached extends androidx.compose.material3.TextFieldLabelPosition {
     ctor public TextFieldLabelPosition.Attached();
     ctor public TextFieldLabelPosition.Attached(optional boolean alwaysMinimize, optional androidx.compose.ui.Alignment.Horizontal minimizedAlignment, optional androidx.compose.ui.Alignment.Horizontal expandedAlignment);
+    ctor @BytecodeOnly public TextFieldLabelPosition.Attached(boolean, androidx.compose.ui.Alignment.Horizontal!, androidx.compose.ui.Alignment.Horizontal!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method @InaccessibleFromKotlin public boolean getAlwaysMinimize();
     method @InaccessibleFromKotlin public androidx.compose.ui.Alignment.Horizontal getExpandedAlignment();
     method @InaccessibleFromKotlin public androidx.compose.ui.Alignment.Horizontal getMinimizedAlignment();
@@ -4422,6 +4447,8 @@ package androidx.compose.material3 {
     ctor @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ExpressiveApi public Typography();
     ctor public Typography(optional androidx.compose.ui.text.TextStyle displayLarge, optional androidx.compose.ui.text.TextStyle displayMedium, optional androidx.compose.ui.text.TextStyle displaySmall, optional androidx.compose.ui.text.TextStyle headlineLarge, optional androidx.compose.ui.text.TextStyle headlineMedium, optional androidx.compose.ui.text.TextStyle headlineSmall, optional androidx.compose.ui.text.TextStyle titleLarge, optional androidx.compose.ui.text.TextStyle titleMedium, optional androidx.compose.ui.text.TextStyle titleSmall, optional androidx.compose.ui.text.TextStyle bodyLarge, optional androidx.compose.ui.text.TextStyle bodyMedium, optional androidx.compose.ui.text.TextStyle bodySmall, optional androidx.compose.ui.text.TextStyle labelLarge, optional androidx.compose.ui.text.TextStyle labelMedium, optional androidx.compose.ui.text.TextStyle labelSmall);
     ctor @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ExpressiveApi public Typography(optional androidx.compose.ui.text.TextStyle displayLarge, optional androidx.compose.ui.text.TextStyle displayMedium, optional androidx.compose.ui.text.TextStyle displaySmall, optional androidx.compose.ui.text.TextStyle headlineLarge, optional androidx.compose.ui.text.TextStyle headlineMedium, optional androidx.compose.ui.text.TextStyle headlineSmall, optional androidx.compose.ui.text.TextStyle titleLarge, optional androidx.compose.ui.text.TextStyle titleMedium, optional androidx.compose.ui.text.TextStyle titleSmall, optional androidx.compose.ui.text.TextStyle bodyLarge, optional androidx.compose.ui.text.TextStyle bodyMedium, optional androidx.compose.ui.text.TextStyle bodySmall, optional androidx.compose.ui.text.TextStyle labelLarge, optional androidx.compose.ui.text.TextStyle labelMedium, optional androidx.compose.ui.text.TextStyle labelSmall, optional androidx.compose.ui.text.TextStyle displayLargeEmphasized, optional androidx.compose.ui.text.TextStyle displayMediumEmphasized, optional androidx.compose.ui.text.TextStyle displaySmallEmphasized, optional androidx.compose.ui.text.TextStyle headlineLargeEmphasized, optional androidx.compose.ui.text.TextStyle headlineMediumEmphasized, optional androidx.compose.ui.text.TextStyle headlineSmallEmphasized, optional androidx.compose.ui.text.TextStyle titleLargeEmphasized, optional androidx.compose.ui.text.TextStyle titleMediumEmphasized, optional androidx.compose.ui.text.TextStyle titleSmallEmphasized, optional androidx.compose.ui.text.TextStyle bodyLargeEmphasized, optional androidx.compose.ui.text.TextStyle bodyMediumEmphasized, optional androidx.compose.ui.text.TextStyle bodySmallEmphasized, optional androidx.compose.ui.text.TextStyle labelLargeEmphasized, optional androidx.compose.ui.text.TextStyle labelMediumEmphasized, optional androidx.compose.ui.text.TextStyle labelSmallEmphasized);
+    ctor @BytecodeOnly @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ExpressiveApi public Typography(androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
+    ctor @BytecodeOnly public Typography(androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public androidx.compose.material3.Typography copy(optional androidx.compose.ui.text.TextStyle displayLarge, optional androidx.compose.ui.text.TextStyle displayMedium, optional androidx.compose.ui.text.TextStyle displaySmall, optional androidx.compose.ui.text.TextStyle headlineLarge, optional androidx.compose.ui.text.TextStyle headlineMedium, optional androidx.compose.ui.text.TextStyle headlineSmall, optional androidx.compose.ui.text.TextStyle titleLarge, optional androidx.compose.ui.text.TextStyle titleMedium, optional androidx.compose.ui.text.TextStyle titleSmall, optional androidx.compose.ui.text.TextStyle bodyLarge, optional androidx.compose.ui.text.TextStyle bodyMedium, optional androidx.compose.ui.text.TextStyle bodySmall, optional androidx.compose.ui.text.TextStyle labelLarge, optional androidx.compose.ui.text.TextStyle labelMedium, optional androidx.compose.ui.text.TextStyle labelSmall);
     method @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ExpressiveApi public androidx.compose.material3.Typography copy(optional androidx.compose.ui.text.TextStyle displayLarge, optional androidx.compose.ui.text.TextStyle displayMedium, optional androidx.compose.ui.text.TextStyle displaySmall, optional androidx.compose.ui.text.TextStyle headlineLarge, optional androidx.compose.ui.text.TextStyle headlineMedium, optional androidx.compose.ui.text.TextStyle headlineSmall, optional androidx.compose.ui.text.TextStyle titleLarge, optional androidx.compose.ui.text.TextStyle titleMedium, optional androidx.compose.ui.text.TextStyle titleSmall, optional androidx.compose.ui.text.TextStyle bodyLarge, optional androidx.compose.ui.text.TextStyle bodyMedium, optional androidx.compose.ui.text.TextStyle bodySmall, optional androidx.compose.ui.text.TextStyle labelLarge, optional androidx.compose.ui.text.TextStyle labelMedium, optional androidx.compose.ui.text.TextStyle labelSmall, optional androidx.compose.ui.text.TextStyle displayLargeEmphasized, optional androidx.compose.ui.text.TextStyle displayMediumEmphasized, optional androidx.compose.ui.text.TextStyle displaySmallEmphasized, optional androidx.compose.ui.text.TextStyle headlineLargeEmphasized, optional androidx.compose.ui.text.TextStyle headlineMediumEmphasized, optional androidx.compose.ui.text.TextStyle headlineSmallEmphasized, optional androidx.compose.ui.text.TextStyle titleLargeEmphasized, optional androidx.compose.ui.text.TextStyle titleMediumEmphasized, optional androidx.compose.ui.text.TextStyle titleSmallEmphasized, optional androidx.compose.ui.text.TextStyle bodyLargeEmphasized, optional androidx.compose.ui.text.TextStyle bodyMediumEmphasized, optional androidx.compose.ui.text.TextStyle bodySmallEmphasized, optional androidx.compose.ui.text.TextStyle labelLargeEmphasized, optional androidx.compose.ui.text.TextStyle labelMediumEmphasized, optional androidx.compose.ui.text.TextStyle labelSmallEmphasized);
     method @BytecodeOnly @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ExpressiveApi public static androidx.compose.material3.Typography! copy$default(androidx.compose.material3.Typography!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, androidx.compose.ui.text.TextStyle!, int, Object!);
@@ -4510,6 +4537,7 @@ package androidx.compose.material3 {
   }
 
   @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ComponentOverrideApi public final class VerticalFloatingToolbarOverrideScope {
+    ctor @BytecodeOnly public VerticalFloatingToolbarOverrideScope(boolean, androidx.compose.ui.Modifier!, androidx.compose.material3.FloatingToolbarColors!, androidx.compose.foundation.layout.PaddingValues!, androidx.compose.material3.FloatingToolbarScrollBehavior!, androidx.compose.ui.graphics.Shape!, kotlin.jvm.functions.Function3!, kotlin.jvm.functions.Function3!, float, float, kotlin.jvm.functions.Function3!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method @BytecodeOnly public float getCollapsedShadowElevation-D9Ej5fM();
     method @InaccessibleFromKotlin public androidx.compose.material3.FloatingToolbarColors getColors();
     method @InaccessibleFromKotlin public kotlin.jvm.functions.Function1<androidx.compose.foundation.layout.ColumnScope,kotlin.Unit> getContent();
@@ -4789,6 +4817,7 @@ package androidx.compose.material3.carousel {
   }
 
   @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3Api public final class CarouselState implements androidx.compose.foundation.gestures.ScrollableState {
+    ctor @BytecodeOnly public CarouselState(int, float, kotlin.jvm.functions.Function0!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor public CarouselState(optional int currentItem, optional @FloatRange(from=-0.5, to=0.5) float currentItemOffsetFraction, kotlin.jvm.functions.Function0<java.lang.Integer> itemCount);
     method public suspend Object? animateScrollToItem(int item, optional androidx.compose.animation.core.AnimationSpec<java.lang.Float> animationSpec, kotlin.coroutines.Continuation<? super kotlin.Unit>);
     method @BytecodeOnly public static Object! animateScrollToItem$default(androidx.compose.material3.carousel.CarouselState!, int, androidx.compose.animation.core.AnimationSpec!, kotlin.coroutines.Continuation!, int, Object!);

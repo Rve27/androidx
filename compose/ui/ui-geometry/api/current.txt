@@ -263,6 +263,7 @@ package androidx.compose.ui.geometry {
 
   @androidx.compose.runtime.Immutable public final class RoundRect {
     ctor @KotlinOnly public RoundRect(float left, float top, float right, float bottom, optional androidx.compose.ui.geometry.CornerRadius topLeftCornerRadius, optional androidx.compose.ui.geometry.CornerRadius topRightCornerRadius, optional androidx.compose.ui.geometry.CornerRadius bottomRightCornerRadius, optional androidx.compose.ui.geometry.CornerRadius bottomLeftCornerRadius);
+    ctor @BytecodeOnly public RoundRect(float, float, float, float, long, long, long, long, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor @BytecodeOnly public RoundRect(float, float, float, float, long, long, long, long, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public float component1();
     method public float component2();

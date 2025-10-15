@@ -3,6 +3,7 @@ package androidx.compose.ui.text.googlefonts {
 
   public final class GoogleFont {
     ctor public GoogleFont(String name, optional boolean bestEffort);
+    ctor @BytecodeOnly public GoogleFont(String!, boolean, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method @InaccessibleFromKotlin public boolean getBestEffort();
     method @InaccessibleFromKotlin public String getName();
     property public boolean bestEffort;
