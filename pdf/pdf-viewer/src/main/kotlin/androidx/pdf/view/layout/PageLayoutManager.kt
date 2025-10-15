@@ -45,7 +45,7 @@ import kotlinx.coroutines.withContext
  *
  * Not thread safe
  */
-internal class PageMetadataLoader(
+internal class PageLayoutManager(
     private val pdfDocument: PdfDocument,
     private val backgroundScope: CoroutineScope,
     topPageMarginPx: Float = 0f,
@@ -302,7 +302,7 @@ internal class PageMetadataLoader(
             pageLocations.put(i, paginationModel.getPageLocation(i, viewport))
         }
         this.pageLocations = pageLocations
-        return !prevLocations.contentEquals(this@PageMetadataLoader.pageLocations)
+        return !prevLocations.contentEquals(this@PageLayoutManager.pageLocations)
     }
 
     /**
