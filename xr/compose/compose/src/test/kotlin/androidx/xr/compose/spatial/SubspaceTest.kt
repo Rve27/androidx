@@ -129,7 +129,7 @@ class SubspaceTest {
                 TestActivitySpace(
                     fakeRuntime.activitySpace,
                     recommendedContentBoxInFullSpace =
-                        BoundingBox(
+                        BoundingBox.fromMinMax(
                             min = Vector3(-widthMeters / 2, -heightMeters / 2, -depthMeters / 2),
                             max = Vector3(widthMeters / 2, heightMeters / 2, depthMeters / 2),
                         ),
