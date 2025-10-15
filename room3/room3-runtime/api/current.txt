@@ -180,6 +180,7 @@ package androidx.room3 {
   public abstract static class RoomDatabase.PrepackagedDatabaseCallback {
     ctor public RoomDatabase.PrepackagedDatabaseCallback();
     method public void onOpenPrepackagedDatabase(androidx.sqlite.db.SupportSQLiteDatabase db);
+    method public void onOpenPrepackagedDatabase(androidx.sqlite.SQLiteConnection connection);
   }
 
   public static fun interface RoomDatabase.QueryCallback {
