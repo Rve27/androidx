@@ -74,7 +74,8 @@ package androidx.xr.runtime {
     property public androidx.xr.runtime.Config.AnchorPersistenceMode LOCAL;
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static interface Config.ConfigMode {
+  public static interface Config.ConfigMode {
+    method public default boolean isSupported(androidx.xr.runtime.Session session);
   }
 
   public static final class Config.DepthEstimationMode implements androidx.xr.runtime.Config.ConfigMode {
