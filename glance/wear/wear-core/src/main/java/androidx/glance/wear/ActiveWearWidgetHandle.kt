@@ -18,7 +18,7 @@ package androidx.glance.wear
 
 import android.content.ComponentName
 import androidx.annotation.RestrictTo
-import androidx.annotation.RestrictTo.Scope.LIBRARY
+import androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP
 import androidx.glance.wear.ContainerInfo.ContainerType
 import androidx.glance.wear.parcel.ActiveWearWidgetHandleParcel
 import androidx.glance.wear.proto.ActiveWearWidgetHandleProto
@@ -34,7 +34,7 @@ import java.util.Objects
  * @property containerType The container type of the widget instance.
  */
 public class ActiveWearWidgetHandle
-@RestrictTo(LIBRARY)
+@RestrictTo(LIBRARY_GROUP)
 public constructor(
     public val provider: ComponentName,
     public val instanceId: Int,
@@ -52,14 +52,16 @@ public constructor(
 
     override fun hashCode(): Int = Objects.hash(provider, instanceId, containerType)
 
-    internal fun toParcel(): ActiveWearWidgetHandleParcel {
+    @RestrictTo(LIBRARY_GROUP)
+    public fun toParcel(): ActiveWearWidgetHandleParcel {
         val handleProto =
             ActiveWearWidgetHandleProto(instance_id = instanceId, container_type = containerType)
         return ActiveWearWidgetHandleParcel().apply { payload = handleProto.encode() }
     }
 
-    internal companion object {
-        internal fun fromParcel(
+    public companion object {
+        @RestrictTo(LIBRARY_GROUP)
+        public fun fromParcel(
             handleParcel: ActiveWearWidgetHandleParcel,
             provider: ComponentName,
         ): ActiveWearWidgetHandle {
