@@ -3,7 +3,9 @@ package androidx.datastore {
 
   public final class DataStoreDelegateKt {
     method public static <T> kotlin.properties.ReadOnlyProperty<android.content.Context,androidx.datastore.core.DataStore<T>> dataStore(String fileName, androidx.datastore.core.Serializer<T> serializer, optional androidx.datastore.core.handlers.ReplaceFileCorruptionHandler<T>? corruptionHandler, optional kotlin.jvm.functions.Function1<? super android.content.Context,? extends java.util.List<? extends androidx.datastore.core.DataMigration<T>>> produceMigrations, optional kotlinx.coroutines.CoroutineScope scope);
+    method @BytecodeOnly public static kotlin.properties.ReadOnlyProperty! dataStore$default(String!, androidx.datastore.core.Serializer!, androidx.datastore.core.handlers.ReplaceFileCorruptionHandler!, kotlin.jvm.functions.Function1!, kotlinx.coroutines.CoroutineScope!, int, Object!);
     method @RequiresApi(android.os.Build.VERSION_CODES.N) public static <T> kotlin.properties.ReadOnlyProperty<android.content.Context,androidx.datastore.core.DataStore<T>> deviceProtectedDataStore(String fileName, androidx.datastore.core.Serializer<T> serializer, optional androidx.datastore.core.handlers.ReplaceFileCorruptionHandler<T>? corruptionHandler, optional kotlin.jvm.functions.Function1<? super android.content.Context,? extends java.util.List<? extends androidx.datastore.core.DataMigration<T>>> produceMigrations, optional kotlinx.coroutines.CoroutineScope scope);
+    method @BytecodeOnly @RequiresApi(android.os.Build.VERSION_CODES.N) public static kotlin.properties.ReadOnlyProperty! deviceProtectedDataStore$default(String!, androidx.datastore.core.Serializer!, androidx.datastore.core.handlers.ReplaceFileCorruptionHandler!, kotlin.jvm.functions.Function1!, kotlinx.coroutines.CoroutineScope!, int, Object!);
   }
 
   public final class DataStoreFile {
@@ -34,7 +36,9 @@ package androidx.datastore.migrations {
     method public int getInt(String key, int defValue);
     method public long getLong(String key, long defValue);
     method public String? getString(String key, optional String? defValue);
+    method @BytecodeOnly public static String! getString$default(androidx.datastore.migrations.SharedPreferencesView!, String!, String!, int, Object!);
     method public java.util.Set<java.lang.String>? getStringSet(String key, optional java.util.Set<java.lang.String>? defValues);
+    method @BytecodeOnly public static java.util.Set! getStringSet$default(androidx.datastore.migrations.SharedPreferencesView!, String!, java.util.Set!, int, Object!);
   }
 
 }

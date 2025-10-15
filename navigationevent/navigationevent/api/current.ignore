@@ -1,0 +1,5 @@
+// Baseline format: 1.0
+AddedMethod: androidx.navigationevent.NavigationEventDispatcher#addHandler$default(androidx.navigationevent.NavigationEventDispatcher, androidx.navigationevent.NavigationEventHandler, int, int, Object):
+    Added method androidx.navigationevent.NavigationEventDispatcher.addHandler$default(androidx.navigationevent.NavigationEventDispatcher,androidx.navigationevent.NavigationEventHandler,int,int,Object)
+AddedMethod: androidx.navigationevent.NavigationEventHandler#setInfo$default(androidx.navigationevent.NavigationEventHandler, androidx.navigationevent.NavigationEventInfo, java.util.List, java.util.List, int, Object):
+    Added method androidx.navigationevent.NavigationEventHandler.setInfo$default(androidx.navigationevent.NavigationEventHandler,androidx.navigationevent.NavigationEventInfo,java.util.List,java.util.List,int,Object)

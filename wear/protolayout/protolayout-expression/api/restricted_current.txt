@@ -527,6 +527,7 @@ package androidx.wear.protolayout.expression.util {
     ctor public DynamicDateFormat(String pattern, optional java.time.ZoneId timeZone);
     method @androidx.wear.protolayout.expression.RequiresSchemaVersion(major=1, minor=300) public androidx.wear.protolayout.expression.DynamicBuilders.DynamicString format();
     method @androidx.wear.protolayout.expression.RequiresSchemaVersion(major=1, minor=300) public androidx.wear.protolayout.expression.DynamicBuilders.DynamicString format(optional androidx.wear.protolayout.expression.DynamicBuilders.DynamicInstant instant);
+    method @BytecodeOnly @androidx.wear.protolayout.expression.RequiresSchemaVersion(major=1, minor=300) public static androidx.wear.protolayout.expression.DynamicBuilders.DynamicString! format$default(androidx.wear.protolayout.expression.util.DynamicDateFormat!, androidx.wear.protolayout.expression.DynamicBuilders.DynamicInstant!, int, Object!);
     method @InaccessibleFromKotlin public java.time.ZoneId getTimeZone();
     method @InaccessibleFromKotlin public void setTimeZone(java.time.ZoneId);
     property public java.time.ZoneId timeZone;

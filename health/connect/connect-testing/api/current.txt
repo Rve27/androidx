@@ -5,6 +5,7 @@ package androidx.health.connect.client.testing {
     method public static androidx.health.connect.client.aggregate.AggregationResult AggregationResult();
     method public static androidx.health.connect.client.aggregate.AggregationResult AggregationResult(optional java.util.Set<androidx.health.connect.client.records.metadata.DataOrigin> dataOrigins);
     method public static androidx.health.connect.client.aggregate.AggregationResult AggregationResult(optional java.util.Set<androidx.health.connect.client.records.metadata.DataOrigin> dataOrigins, optional java.util.Map<androidx.health.connect.client.aggregate.AggregateMetric<java.lang.Object>,?> metrics);
+    method @BytecodeOnly public static androidx.health.connect.client.aggregate.AggregationResult! AggregationResult$default(java.util.Set!, java.util.Map!, int, Object!);
   }
 
   public final class FakeHealthConnectClient implements androidx.health.connect.client.HealthConnectClient {
@@ -90,6 +91,7 @@ package androidx.health.connect.client.testing {
     method public static androidx.health.connect.client.records.metadata.Metadata populatedWithTestValues(androidx.health.connect.client.records.metadata.Metadata, optional String id);
     method public static androidx.health.connect.client.records.metadata.Metadata populatedWithTestValues(androidx.health.connect.client.records.metadata.Metadata, optional String id, optional androidx.health.connect.client.records.metadata.DataOrigin dataOrigin);
     method public static androidx.health.connect.client.records.metadata.Metadata populatedWithTestValues(androidx.health.connect.client.records.metadata.Metadata, optional String id, optional androidx.health.connect.client.records.metadata.DataOrigin dataOrigin, optional java.time.Instant lastModifiedTime);
+    method @BytecodeOnly public static androidx.health.connect.client.records.metadata.Metadata! populatedWithTestValues$default(androidx.health.connect.client.records.metadata.Metadata!, String!, androidx.health.connect.client.records.metadata.DataOrigin!, java.time.Instant!, int, Object!);
   }
 
 }
@@ -123,6 +125,7 @@ package androidx.health.connect.client.testing.stubs {
     method public static inline <R> androidx.health.connect.client.testing.stubs.Stub<java.lang.Object?,R> stub(optional Iterable<? extends R> queue);
     method public static inline <R> androidx.health.connect.client.testing.stubs.Stub<java.lang.Object?,R> stub(optional Iterable<? extends R> queue, optional kotlin.jvm.functions.Function0<? extends R?> defaultHandler);
     method public static <R> androidx.health.connect.client.testing.stubs.Stub<java.lang.Object?,R> stub(R? default);
+    method @BytecodeOnly public static androidx.health.connect.client.testing.stubs.Stub! stub$default(Iterable!, kotlin.jvm.functions.Function0!, int, Object!);
   }
 
 }

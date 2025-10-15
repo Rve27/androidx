@@ -1,0 +1,7 @@
+// Baseline format: 1.0
+AddedMethod: androidx.glance.appwidget.GlanceAppWidgetManagerKt#setWidgetPreviews$default(androidx.glance.appwidget.GlanceAppWidgetManager, androidx.collection.IntSet, kotlin.coroutines.Continuation, int, Object):
+    Added method androidx.glance.appwidget.GlanceAppWidgetManagerKt.setWidgetPreviews$default(androidx.glance.appwidget.GlanceAppWidgetManager,androidx.collection.IntSet,kotlin.coroutines.Continuation,int,Object)
+AddedMethod: androidx.glance.appwidget.action.RunCallbackActionKt#actionRunCallback$default(androidx.glance.action.ActionParameters, int, Object):
+    Added method androidx.glance.appwidget.action.RunCallbackActionKt.actionRunCallback$default(androidx.glance.action.ActionParameters,int,Object)
+AddedMethod: androidx.glance.appwidget.action.StartServiceActionKt#actionStartService$default(boolean, int, Object):
+    Added method androidx.glance.appwidget.action.StartServiceActionKt.actionStartService$default(boolean,int,Object)

@@ -504,6 +504,7 @@ package androidx.xr.scenecore.testing {
     ctor public FakeResource();
     ctor public FakeResource(optional long token);
     method public androidx.xr.scenecore.testing.FakeResource copy(optional long token);
+    method @BytecodeOnly public static androidx.xr.scenecore.testing.FakeResource! copy$default(androidx.xr.scenecore.testing.FakeResource!, long, int, Object!);
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public class FakeScenePose implements androidx.xr.scenecore.runtime.ScenePose {
