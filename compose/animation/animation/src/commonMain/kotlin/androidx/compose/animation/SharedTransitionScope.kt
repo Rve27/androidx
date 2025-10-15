@@ -954,32 +954,6 @@ public interface SharedTransitionScope : LookaheadScope {
     }
 
     /**
-     * [SharedContentConfig] is a factory method that takes a lambda that can dynamically toggle a
-     * shared element between enabled and disabled state, and returns a [SharedContentConfig]
-     * object.
-     *
-     * **Important**: If the shared element is already in-flight for the layout that this
-     * [SharedContentConfig] applies to, the on-going animation will be honored even if [isEnabled]
-     * returns false. This is to ensure a continuous experience out-of-the-box by avoiding
-     * accidentally removing in-flight animations. If, however, it is desired to disable the shared
-     * element while the animation is running, consider implementing interface [SharedContentConfig]
-     * and overriding [SharedContentConfig#shouldKeepEnabledForOngoingAnimation].
-     *
-     * @param isEnabled A lambda that returns a boolean indicating whether the shared element is
-     *   enabled.
-     * @sample androidx.compose.animation.samples.DynamicallyEnabledSharedElementInPagerSample
-     * @sample androidx.compose.animation.samples.DynamicallyEnableSharedElementsSample
-     */
-    public fun SharedContentConfig(
-        isEnabled: SharedContentState.() -> Boolean
-    ): SharedContentConfig {
-        return object : SharedContentConfig {
-            override val SharedContentState.isEnabled: Boolean
-                get() = isEnabled()
-        }
-    }
-
-    /**
      * [SharedContentConfig] is a factory method that returns an [SharedContentConfig] object with
      * default implementations for all the functions and properties defined in the
      * [SharedContentConfig] interface. More specifically, the returned
