@@ -51,7 +51,11 @@ public class YAMLSerializer extends AbstractSerializer {
         return new YAMLSerializer();
     }
 
-    @Nullable Object toObject() {
+    /**
+     * Returns a concrete object
+     * @return
+     */
+    @Nullable public Object toObject() {
         switch (getValueType()) {
             case ARRAY:
                 YAMLArraySerializer arraySerializer = (YAMLArraySerializer) mValue;
