@@ -592,6 +592,28 @@ public class AccessibilityNodeInfoCompatTest extends
                 LabelNodeProviderTest.LABEL_TWO)).isTrue();
     }
 
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES_FULL.BAKLAVA_1)
+    @Test
+    public void testGetSortDirection() {
+        AccessibilityNodeInfoCompat.CollectionItemInfoCompat collectionItemInfoCompat =
+                new AccessibilityNodeInfoCompat.CollectionItemInfoCompat.Builder()
+                        .setColumnIndex(2)
+                        .setColumnSpan(1)
+                        .setColumnTitle("Column title")
+                        .setRowIndex(1)
+                        .setRowSpan(2)
+                        .setRowTitle("Row title")
+                        .setSelected(true)
+                        .setHeading(true)
+                        .setSortDirection(AccessibilityNodeInfoCompat
+                            .CollectionItemInfoCompat.SORT_DIRECTION_ASCENDING)
+                        .build();
+
+        assertThat(collectionItemInfoCompat.getSortDirection())
+                .isEqualTo(AccessibilityNodeInfoCompat.CollectionItemInfoCompat
+                    .SORT_DIRECTION_ASCENDING);
+    }
+
     private static class LabelNodeProviderTest extends AccessibilityNodeProvider {
         static final int LABELED_ID = 1;
         static final int LABEL_ONE_ID = 2;

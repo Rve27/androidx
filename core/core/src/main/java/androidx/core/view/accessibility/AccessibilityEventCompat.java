@@ -337,6 +337,21 @@ public final class AccessibilityEventCompat {
     public static final int CONTENT_CHANGE_TYPE_SUPPLEMENTAL_DESCRIPTION = 1 << 15;
 
     /**
+     * Change type for {@link #TYPE_WINDOW_CONTENT_CHANGED} event: The source node's collection
+     * item info changed its sort direction state for the data corresponding to this collection
+     * item, which is returned by
+     * {@link AccessibilityNodeInfoCompat.CollectionItemInfoCompat#getSortDirection()}. The view changing its
+     * collection item info's sort direction should set a
+     * {@link AccessibilityNodeInfoCompat.CollectionItemInfoCompat} created with
+     * {@link AccessibilityNodeInfoCompat.CollectionItemInfoCompat.Builder#setSortDirection(int)} and then send
+     * this event.
+     *
+     * @see AccessibilityNodeInfoCompat.CollectionItemInfoCompat#getSortDirection()
+     * @see AccessibilityNodeInfoCompat.CollectionItemInfoCompat.Builder#setSortDirection(int)
+     */
+    public static final int CONTENT_CHANGE_TYPE_SORT_DIRECTION = 1 << 16;
+
+    /**
      * Mask for {@link AccessibilityEvent} all types.
      *
      * @see AccessibilityEvent#TYPE_VIEW_CLICKED
@@ -382,7 +397,8 @@ public final class AccessibilityEventCompat {
                     CONTENT_CHANGE_TYPE_ENABLED,
                     CONTENT_CHANGE_TYPE_CHECKED,
                     CONTENT_CHANGE_TYPE_EXPANDED,
-                    CONTENT_CHANGE_TYPE_SUPPLEMENTAL_DESCRIPTION
+                    CONTENT_CHANGE_TYPE_SUPPLEMENTAL_DESCRIPTION,
+                    CONTENT_CHANGE_TYPE_SORT_DIRECTION
             })
     @RestrictTo(LIBRARY_GROUP_PREFIX)
     @Retention(RetentionPolicy.SOURCE)
@@ -474,6 +490,9 @@ public final class AccessibilityEventCompat {
      */
     @Deprecated
     @androidx.annotation.ReplaceWith(expression = "event.setContentChangeTypes(changeTypes)")
+    // TODO(b/452382850): Remove this suppression after we update the
+    // ContentChangeType intdef in the framework.
+    @SuppressLint("WrongConstant")
     public static void setContentChangeTypes(@NonNull AccessibilityEvent event,
             @ContentChangeType int changeTypes) {
         event.setContentChangeTypes(changeTypes);
@@ -496,6 +515,8 @@ public final class AccessibilityEventCompat {
      */
     @Deprecated
     @androidx.annotation.ReplaceWith(expression = "event.getContentChangeTypes()")
+    // TODO(b/452382850): Remove this suppression after we update the
+    // ContentChangeType intdef in the framework.
     @SuppressLint("WrongConstant")
     @ContentChangeType
     public static int getContentChangeTypes(@NonNull AccessibilityEvent event) {
