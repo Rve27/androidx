@@ -18,4 +18,4 @@ package androidx.compose.ui
 
 @RequiresOptIn("This API is experimental and is likely to change in the future.")
 @Retention(AnnotationRetention.BINARY)
-annotation class ExperimentalIndirectTouchTypeApi
+annotation class ExperimentalIndirectPointerApi

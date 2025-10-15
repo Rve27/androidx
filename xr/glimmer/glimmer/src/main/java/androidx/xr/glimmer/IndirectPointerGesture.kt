@@ -18,9 +18,9 @@ package androidx.xr.glimmer
 
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.indirect.IndirectPointerEvent
 import androidx.compose.ui.input.indirect.IndirectPointerInputChange
-import androidx.compose.ui.input.indirect.IndirectTouchEvent
-import androidx.compose.ui.input.indirect.IndirectTouchInputModifierNode
+import androidx.compose.ui.input.indirect.IndirectPointerInputModifierNode
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.PointerId
 import androidx.compose.ui.input.pointer.util.VelocityTracker
@@ -33,49 +33,49 @@ import androidx.compose.ui.util.fastForEach
 import kotlin.math.abs
 
 /**
- * A [Modifier] that listens for and detects high-level gestures from an [IndirectTouchEvent]
+ * A [Modifier] that listens for and detects high-level gestures from an [IndirectPointerEvent]
  * source. The component (or one of its descendants) using this modifier **must be focused** to
- * intercept and process indirect touch events.
+ * intercept and process indirect pointer events.
  *
  * This modifier is designed to be used near the top of the composable hierarchy to handle gestures.
  *
- * @sample androidx.xr.glimmer.samples.OnIndirectTouchGestureSample
+ * @sample androidx.xr.glimmer.samples.OnIndirectPointerGestureSample
  * @param enabled Controls whether gesture detection is active. When `false`, this modifier has no
  *   effect and no callbacks will be invoked.
  * @param onClick Invoked when a successful click is detected.
  * @param onSwipeForward Invoked when a successful forward swipe is detected.
  * @param onSwipeBackward Invoked when a successful backward swipe is detected.
  */
-public fun Modifier.onIndirectTouchGesture(
+public fun Modifier.onIndirectPointerGesture(
     enabled: Boolean = true,
     onClick: () -> Unit = {},
     onSwipeForward: () -> Unit = {},
     onSwipeBackward: () -> Unit = {},
 ): Modifier =
     this then
-        IndirectTouchGestureElement(
+        IndirectPointerGestureElement(
             enabled = enabled,
             onClick = onClick,
             onSwipeForward = onSwipeForward,
             onSwipeBackward = onSwipeBackward,
         )
 
-private class IndirectTouchGestureElement(
+private class IndirectPointerGestureElement(
     private val enabled: Boolean,
     private val onClick: () -> Unit,
     private val onSwipeForward: () -> Unit,
     private val onSwipeBackward: () -> Unit,
-) : ModifierNodeElement<IndirectTouchGestureNode>() {
+) : ModifierNodeElement<IndirectPointerGestureNode>() {
 
-    override fun create(): IndirectTouchGestureNode =
-        IndirectTouchGestureNode(
+    override fun create(): IndirectPointerGestureNode =
+        IndirectPointerGestureNode(
             enabled = enabled,
             onClick = onClick,
             onSwipeForward = onSwipeForward,
             onSwipeBackward = onSwipeBackward,
         )
 
-    override fun update(node: IndirectTouchGestureNode) {
+    override fun update(node: IndirectPointerGestureNode) {
         node.update(
             enabled = enabled,
             onClick = onClick,
@@ -86,7 +86,7 @@ private class IndirectTouchGestureElement(
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is IndirectTouchGestureElement) return false
+        if (other !is IndirectPointerGestureElement) return false
 
         if (enabled != other.enabled) return false
         if (onClick !== other.onClick) return false
@@ -105,7 +105,7 @@ private class IndirectTouchGestureElement(
     }
 
     override fun InspectorInfo.inspectableProperties() {
-        name = "onIndirectTouchGesture"
+        name = "onIndirectPointerGesture"
         properties["enabled"] = enabled
         properties["onClick"] = onClick
         properties["onSwipeForward"] = onSwipeForward
@@ -113,12 +113,12 @@ private class IndirectTouchGestureElement(
     }
 }
 
-private class IndirectTouchGestureNode(
+private class IndirectPointerGestureNode(
     private var enabled: Boolean,
     private var onClick: () -> Unit,
     private var onSwipeForward: () -> Unit,
     private var onSwipeBackward: () -> Unit,
-) : IndirectTouchInputModifierNode, CompositionLocalConsumerModifierNode, Modifier.Node() {
+) : IndirectPointerInputModifierNode, CompositionLocalConsumerModifierNode, Modifier.Node() {
 
     private var pointerId: PointerId = PointerId(UnassignedPointerId)
     private var initialPosition = Offset.Unspecified
@@ -143,7 +143,7 @@ private class IndirectTouchGestureNode(
         this.onSwipeBackward = onSwipeBackward
     }
 
-    override fun onIndirectTouchEvent(event: IndirectTouchEvent, pass: PointerEventPass) {
+    override fun onIndirectPointerEvent(event: IndirectPointerEvent, pass: PointerEventPass) {
         // TODO(b/446641623): Temporary usage of Initial, use PointerEventPass.Main instead.
         if (!enabled || pass != PointerEventPass.Initial) {
             return
@@ -186,7 +186,7 @@ private class IndirectTouchGestureNode(
         }
     }
 
-    override fun onCancelIndirectTouchInput() {
+    override fun onCancelIndirectPointerInput() {
         resetGestureState()
     }
 
