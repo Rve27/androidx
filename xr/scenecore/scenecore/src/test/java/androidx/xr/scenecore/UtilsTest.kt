@@ -192,8 +192,8 @@ class UtilsTest {
                     emptyList(),
                 )
                 .toInputEvent(entityManager)
-        assertThat(inputEvent.source).isEqualTo(InputEvent.Source.SOURCE_HANDS)
-        assertThat(inputEvent.pointerType).isEqualTo(InputEvent.Pointer.POINTER_TYPE_LEFT)
+        assertThat(inputEvent.source).isEqualTo(InputEvent.Source.HANDS)
+        assertThat(inputEvent.pointerType).isEqualTo(InputEvent.Pointer.LEFT)
         assertThat(inputEvent.timestamp).isEqualTo(123456789)
         assertThat(inputEvent.origin.x).isEqualTo(1f)
         assertThat(inputEvent.origin.y).isEqualTo(2f)
@@ -201,7 +201,7 @@ class UtilsTest {
         assertThat(inputEvent.direction.x).isEqualTo(4f)
         assertThat(inputEvent.direction.y).isEqualTo(5f)
         assertThat(inputEvent.direction.z).isEqualTo(6f)
-        assertThat(inputEvent.action).isEqualTo(InputEvent.Action.ACTION_DOWN)
+        assertThat(inputEvent.action).isEqualTo(InputEvent.Action.DOWN)
         assertThat(inputEvent.hitInfoList).isEmpty()
     }
 
@@ -557,12 +557,12 @@ class UtilsTest {
                     .map { it.toInputEventSource() }
             )
             .containsExactly(
-                InputEvent.Source.SOURCE_UNKNOWN,
-                InputEvent.Source.SOURCE_HEAD,
-                InputEvent.Source.SOURCE_CONTROLLER,
-                InputEvent.Source.SOURCE_HANDS,
-                InputEvent.Source.SOURCE_MOUSE,
-                InputEvent.Source.SOURCE_GAZE_AND_GESTURE,
+                InputEvent.Source.UNKNOWN,
+                InputEvent.Source.HEAD,
+                InputEvent.Source.CONTROLLER,
+                InputEvent.Source.HANDS,
+                InputEvent.Source.MOUSE,
+                InputEvent.Source.GAZE_AND_GESTURE,
             )
             .inOrder()
     }
@@ -580,19 +580,19 @@ class UtilsTest {
                         RuntimeInputEvent.Pointer.LEFT,
                         RuntimeInputEvent.Pointer.RIGHT,
                     )
-                    .map { it.toInputEventPointerType() }
+                    .map { it.toInputEventPointer() }
             )
             .containsExactly(
-                InputEvent.Pointer.POINTER_TYPE_DEFAULT,
-                InputEvent.Pointer.POINTER_TYPE_LEFT,
-                InputEvent.Pointer.POINTER_TYPE_RIGHT,
+                InputEvent.Pointer.DEFAULT,
+                InputEvent.Pointer.LEFT,
+                InputEvent.Pointer.RIGHT,
             )
             .inOrder()
     }
 
     @Test
     fun intToInputEventPointerType_invalidValue_throwsError() {
-        assertFailsWith<IllegalStateException> { 100.toInputEventPointerType() }
+        assertFailsWith<IllegalStateException> { 100.toInputEventPointer() }
     }
 
     @Test
@@ -634,13 +634,13 @@ class UtilsTest {
                     .map { it.toInputEventAction() }
             )
             .containsExactly(
-                InputEvent.Action.ACTION_DOWN,
-                InputEvent.Action.ACTION_UP,
-                InputEvent.Action.ACTION_MOVE,
-                InputEvent.Action.ACTION_CANCEL,
-                InputEvent.Action.ACTION_HOVER_MOVE,
-                InputEvent.Action.ACTION_HOVER_ENTER,
-                InputEvent.Action.ACTION_HOVER_EXIT,
+                InputEvent.Action.DOWN,
+                InputEvent.Action.UP,
+                InputEvent.Action.MOVE,
+                InputEvent.Action.CANCEL,
+                InputEvent.Action.HOVER_MOVE,
+                InputEvent.Action.HOVER_ENTER,
+                InputEvent.Action.HOVER_EXIT,
             )
             .inOrder()
     }
