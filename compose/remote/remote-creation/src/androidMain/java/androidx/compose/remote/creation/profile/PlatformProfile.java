@@ -18,31 +18,30 @@ package androidx.compose.remote.creation.profile;
 
 import androidx.annotation.RestrictTo;
 import androidx.compose.remote.core.CoreDocument;
-import androidx.compose.remote.core.RcProfiles;
+import androidx.compose.remote.core.Profiles;
 import androidx.compose.remote.creation.RemoteComposeWriterAndroid;
-import androidx.compose.remote.creation.platform.AndroidxRcPlatformServices;
+import androidx.compose.remote.creation.platform.AndroidxPlatformServices;
 
 import org.jspecify.annotations.NonNull;
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public class RcPlatformProfiles {
+public class PlatformProfile {
     // Platform profile
     public static final @NonNull Profile WIDGETS_V6 =
-            new Profile(6, 0, new AndroidxRcPlatformServices(),
-                    WidgetsProfileWriterV6::new);
+            new Profile(6, 0, new AndroidxPlatformServices(), WidgetsProfileWriterV6::new);
 
     // Default AndroidX profile
     public static final @NonNull Profile ANDROIDX =
             new Profile(
                     CoreDocument.DOCUMENT_API_LEVEL,
-                    RcProfiles.PROFILE_ANDROIDX,
-                    new AndroidxRcPlatformServices(),
+                    Profiles.PROFILE_ANDROIDX,
+                    new AndroidxPlatformServices(),
                     (width, height, contentDescription, profile) ->
                             new RemoteComposeWriterAndroid(
                                     width,
                                     height,
                                     contentDescription,
                                     CoreDocument.DOCUMENT_API_LEVEL,
-                                    RcProfiles.PROFILE_ANDROIDX,
+                                    Profiles.PROFILE_ANDROIDX,
                                     profile.getPlatform()));
 }
