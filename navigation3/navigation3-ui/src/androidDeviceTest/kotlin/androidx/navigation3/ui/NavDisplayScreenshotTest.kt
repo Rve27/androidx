@@ -38,6 +38,7 @@ import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.testutils.assertAgainstGolden
 import androidx.compose.ui.Alignment
@@ -1139,6 +1140,51 @@ class NavDisplayScreenshotTest {
             .onNodeWithTag(navHostTag)
             .captureToImage()
             .assertAgainstGolden(screenshotRule, "testSceneDoesNotOverridesEntryAnimations")
+    }
+
+    @Test
+    fun testSwapStack() {
+        val testDuration = 300
+        val backStack1 = mutableStateListOf(first)
+        val backStack2 = mutableStateListOf(second)
+
+        val backStackState = mutableStateOf(1)
+
+        composeTestRule.setContent {
+            NavDisplay(
+                backStack = if (backStackState.value == 1) backStack1 else backStack2,
+                modifier = Modifier.testTag(navHostTag),
+            ) {
+                when (it) {
+                    first -> NavEntry(first) { RedBox(first) }
+                    second ->
+                        NavEntry(
+                            key = second,
+                            metadata =
+                                NavDisplay.transitionSpec {
+                                    slideInHorizontally(tween(testDuration)) { it / 2 } togetherWith
+                                        slideOutHorizontally(tween(testDuration)) { -it / 2 }
+                                },
+                        ) {
+                            BlueBox(second)
+                        }
+                    else -> error("Invalid key passed")
+                }
+            }
+        }
+
+        composeTestRule.waitForIdle()
+
+        composeTestRule.mainClock.autoAdvance = false
+        composeTestRule.runOnIdle { backStackState.value = 2 }
+
+        composeTestRule.mainClock.advanceTimeBy((testDuration / 2).toLong())
+        composeTestRule.waitForIdle()
+
+        composeTestRule
+            .onNodeWithTag(navHostTag)
+            .captureToImage()
+            .assertAgainstGolden(screenshotRule, "testSwapStack")
     }
 }
 
