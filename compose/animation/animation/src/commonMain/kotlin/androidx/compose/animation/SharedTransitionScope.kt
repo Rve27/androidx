@@ -787,12 +787,21 @@ public interface SharedTransitionScope : LookaheadScope {
      * Creates and remembers a [SharedContentState] with a given [key] and a given
      * [SharedContentConfig].
      *
+     * @sample androidx.compose.animation.samples.SharedBoundsSample
+     * @param key will be used to match a shared element against others in the same
+     *   [SharedTransitionScope].
+     */
+    @Composable
+    public fun rememberSharedContentState(key: Any): SharedContentState =
+        rememberSharedContentState(key, SharedTransitionDefaults.SharedContentConfig)
+
+    /**
+     * Creates and remembers a [SharedContentState] with a given [key] and a given
+     * [SharedContentConfig].
+     *
      * [config] defines whether the shared element is enabled or disabled, and the alternative
      * target bounds if the shared element is disposed amid animation (e.g., scrolled out of the
-     * viewport and subsequently disposed). By default, the shared element is enabled and the
-     * alternative target bounds are not defined. Hence the default behavior is to stop the
-     * animation when the target shared element (i.e. shared element in the incoming/target content)
-     * is removed.
+     * viewport and subsequently disposed).
      *
      * @param key will be used to match a shared element against others in the same
      *   [SharedTransitionScope].
@@ -805,7 +814,7 @@ public interface SharedTransitionScope : LookaheadScope {
     @Composable
     public fun rememberSharedContentState(
         key: Any,
-        config: SharedContentConfig = SharedTransitionDefaults.SharedContentConfig,
+        config: SharedContentConfig,
     ): SharedContentState {
         // Add default impl here to allow for a custom impl of SharedTransitionScope.
         return remember(key) { SharedContentState(key, config) }.also { it.config = config }
