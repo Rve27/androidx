@@ -451,7 +451,7 @@ public class TextLayout extends LayoutManager implements VariableSupport, Access
         mPaint.reset();
         mPaint.setTextSize(mFontSizeValue);
         mPaint.setTextStyle(mType, (int) mFontWeight, mFontStyle == 1);
-        mPaint.setColor(mColor);
+        mPaint.setColor(mColorValue);
         context.replacePaint(mPaint);
         float[] bounds = new float[4];
         if (mNewString != null && !mNewString.equals(mCachedString)) {
