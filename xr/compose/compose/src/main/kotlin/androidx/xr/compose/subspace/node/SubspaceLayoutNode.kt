@@ -323,6 +323,20 @@ internal class SubspaceLayoutNode : ComposeSubspaceNode {
         return treeString
     }
 
+    private val outerCoordinator
+        get() = nodes.getAll<SubspaceLayoutModifierNode>().firstOrNull()?.requireCoordinator()
+
+    /**
+     * Measures this layout node using the most recently provided constraints.
+     *
+     * Returns true if the measured size has changed.
+     */
+    internal fun remeasure(): Boolean =
+        outerCoordinator?.remeasure() ?: measurableLayout.remeasure()
+
+    /** Places this layout node using the most recently provided pose. */
+    internal fun replace() = outerCoordinator?.replace() ?: measurableLayout.replace()
+
     /**
      * A [SubspaceMeasurable] and [SubspacePlaceable] object that is used to measure and lay out the
      * children of this node.
@@ -331,8 +345,10 @@ internal class SubspaceLayoutNode : ComposeSubspaceNode {
      */
     inner class SubspaceMeasurableLayout :
         SubspaceMeasurable, SubspaceLayoutCoordinates, SubspaceSemanticsInfo, SubspacePlaceable() {
-        private var layoutPose: Pose? = null
+
+        private var lastConstraints: VolumeConstraints? = null
         private var subspaceMeasureResult: SubspaceMeasureResult? = null
+        private var layoutPose: Pose? = null
 
         /** Unique ID used by semantics libraries. */
         override val semanticsId: Int = generateSemanticsId()
@@ -356,6 +372,8 @@ internal class SubspaceLayoutNode : ComposeSubspaceNode {
         }
 
         private fun measureJustThis(constraints: VolumeConstraints): SubspacePlaceable {
+            lastConstraints = constraints
+
             subspaceMeasureResult =
                 with(measurePolicy) {
                     LayoutSubspaceMeasureScope(this@SubspaceLayoutNode)
@@ -370,6 +388,19 @@ internal class SubspaceLayoutNode : ComposeSubspaceNode {
             measuredDepth = subspaceMeasureResult!!.depth
 
             return this
+        }
+
+        /**
+         * Measures this layout node using the most recently provided constraints.
+         *
+         * Returns true if the measured size has changed.
+         */
+        internal fun remeasure(): Boolean {
+            return lastConstraints?.let {
+                val oldSize = size
+                measure(it)
+                oldSize != size
+            } ?: false
         }
 
         /**
@@ -398,6 +429,11 @@ internal class SubspaceLayoutNode : ComposeSubspaceNode {
             }
 
             layoutState = LayoutState.Idle
+        }
+
+        /** Places this layout node using the most recently provided pose. */
+        internal fun replace() {
+            layoutPose?.let { placeAt(it) }
         }
 
         override val pose: Pose
