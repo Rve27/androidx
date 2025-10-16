@@ -45,19 +45,23 @@ public class XrDisplay {
         }
     }
 
-    /**
-     * Returns the preferred blend mode for this session.
-     *
-     * @param session the [Session] to query the blend mode for.
-     * @return The [BlendMode] that is preferred by [session] for rendering.
-     *   [BlendMode.NOT_APPLICABLE] will be returned if there are no supported blend modes
-     *   available.
-     * @throws IllegalStateException if the [session] has been destroyed.
-     */
-    public fun getPreferredBlendMode(session: Session): BlendMode {
-        if (session.runtimes.isEmpty()) {
-            return BlendMode.NOT_APPLICABLE
+    public companion object {
+        /**
+         * Returns the preferred blend mode for this session.
+         *
+         * @param session the [Session] to query the blend mode for.
+         * @return The [BlendMode] that is preferred by [session] for rendering.
+         *   [BlendMode.NOT_APPLICABLE] will be returned if there are no supported blend modes
+         *   available.
+         * @throws IllegalStateException if the [session] has been destroyed.
+         */
+        @JvmStatic
+        public fun getPreferredBlendMode(session: Session): BlendMode {
+            return if (session.runtimes.isEmpty()) {
+                BlendMode.NOT_APPLICABLE
+            } else {
+                session.runtimes.firstNotNullOf { it.getPreferredBlendMode() }
+            }
         }
-        return session.runtimes.firstNotNullOf { it.getPreferredBlendMode() }
     }
 }
