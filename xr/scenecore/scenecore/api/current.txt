@@ -219,7 +219,7 @@ package androidx.xr.scenecore {
     method @BytecodeOnly @MainThread public static void clearMaterialOverride$default(androidx.xr.scenecore.GltfModelEntity!, String!, int, int, Object!);
     method @MainThread public static androidx.xr.scenecore.GltfModelEntity create(androidx.xr.runtime.Session session, androidx.xr.scenecore.GltfModel model);
     method @MainThread public static androidx.xr.scenecore.GltfModelEntity create(androidx.xr.runtime.Session session, androidx.xr.scenecore.GltfModel model, optional androidx.xr.runtime.math.Pose pose);
-    method @InaccessibleFromKotlin public int getAnimationState();
+    method @InaccessibleFromKotlin public androidx.xr.scenecore.GltfModelEntity.AnimationState getAnimationState();
     method @MainThread public void setMaterialOverride(androidx.xr.scenecore.Material material, String nodeName);
     method @MainThread public void setMaterialOverride(androidx.xr.scenecore.Material material, String nodeName, optional int primitiveIndex);
     method @BytecodeOnly @MainThread public static void setMaterialOverride$default(androidx.xr.scenecore.GltfModelEntity!, androidx.xr.scenecore.Material!, String!, int, int, Object!);
@@ -228,16 +228,19 @@ package androidx.xr.scenecore {
     method @MainThread public void startAnimation(boolean loop, String animationName);
     method @BytecodeOnly @MainThread public static void startAnimation$default(androidx.xr.scenecore.GltfModelEntity!, boolean, int, Object!);
     method @MainThread public void stopAnimation();
-    property public int animationState;
+    property public androidx.xr.scenecore.GltfModelEntity.AnimationState animationState;
     field public static final androidx.xr.scenecore.GltfModelEntity.Companion Companion;
   }
 
   public static final class GltfModelEntity.AnimationState {
-    property public static int PLAYING;
-    property public static int STOPPED;
-    field public static final androidx.xr.scenecore.GltfModelEntity.AnimationState INSTANCE;
-    field public static final int PLAYING = 0; // 0x0
-    field public static final int STOPPED = 1; // 0x1
+    field public static final androidx.xr.scenecore.GltfModelEntity.AnimationState.Companion Companion;
+    field public static final androidx.xr.scenecore.GltfModelEntity.AnimationState PLAYING;
+    field public static final androidx.xr.scenecore.GltfModelEntity.AnimationState STOPPED;
+  }
+
+  public static final class GltfModelEntity.AnimationState.Companion {
+    property public androidx.xr.scenecore.GltfModelEntity.AnimationState PLAYING;
+    property public androidx.xr.scenecore.GltfModelEntity.AnimationState STOPPED;
   }
 
   public static final class GltfModelEntity.Companion {
