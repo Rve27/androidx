@@ -22,7 +22,7 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
 import androidx.annotation.RestrictTo
-import androidx.compose.remote.core.RcPlatformServices
+import androidx.compose.remote.core.Platform
 import androidx.compose.remote.core.operations.PathData
 import androidx.compose.remote.creation.RemotePath
 import androidx.graphics.path.PathSegment
@@ -34,8 +34,8 @@ import java.text.DecimalFormat
  * This support services needed by the RemoteCompose core that need to be provided by the platform.
  * e.g. PNG compression
  */
-public open class AndroidxRcPlatformServices(private val logger: RCLogger = RCLogger.AndroidLog) :
-    RcPlatformServices {
+public open class AndroidxPlatformServices(private val logger: RCLogger = RCLogger.AndroidLog) :
+    Platform {
     private fun convertAlpha8ToARGB8888(alphaBitmap: Bitmap): Bitmap {
         // Check if the bitmap is ALPHA_8, if not return the original
         if (alphaBitmap.config != Bitmap.Config.ALPHA_8) {
@@ -214,7 +214,7 @@ public open class AndroidxRcPlatformServices(private val logger: RCLogger = RCLo
         return pathFloat.copyOf(count)
     }
 
-    override fun log(category: RcPlatformServices.LogCategory, message: String) {
+    override fun log(category: Platform.LogCategory, message: String) {
         logger.log(category = category, message = message)
     }
 }
