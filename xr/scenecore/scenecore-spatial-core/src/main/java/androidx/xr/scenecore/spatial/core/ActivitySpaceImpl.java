@@ -362,7 +362,7 @@ final class ActivitySpaceImpl extends SystemSpaceEntityImpl implements ActivityS
                                         ? null
                                         : transformPoseTo(
                                                         new Pose(result.getHitPosition()),
-                                                scenePose)
+                                                        scenePose)
                                                 .getTranslation();
                         Vector3 updatedSurfaceNormal =
                                 result.getSurfaceNormal() == null
@@ -371,7 +371,7 @@ final class ActivitySpaceImpl extends SystemSpaceEntityImpl implements ActivityS
                                                         new Pose(
                                                                 new Vector3(
                                                                         result.getSurfaceNormal())),
-                                                scenePose)
+                                                        scenePose)
                                                 .compose(
                                                         this.transformPoseTo(
                                                                         Pose.Identity, scenePose)
