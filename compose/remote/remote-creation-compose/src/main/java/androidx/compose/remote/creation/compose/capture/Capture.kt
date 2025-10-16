@@ -19,7 +19,7 @@ package androidx.compose.remote.creation.compose.capture
 
 import androidx.annotation.RestrictTo
 import androidx.compose.remote.core.CoreDocument
-import androidx.compose.remote.core.Platform
+import androidx.compose.remote.core.RcPlatformServices
 import androidx.compose.remote.creation.RemoteComposeWriter
 import androidx.compose.remote.creation.RemoteComposeWriterAndroid
 import androidx.compose.remote.creation.compose.layout.RemoteComposable
@@ -38,7 +38,7 @@ import androidx.compose.ui.geometry.Size
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public open class RemoteComposeCreationState {
 
-    public val platform: Platform
+    public val platform: RcPlatformServices
     public var density: Float
     public val size: Size
     public val apiLevel: Int
@@ -59,7 +59,7 @@ public open class RemoteComposeCreationState {
 
     public val time: MutableState<Long> = mutableStateOf(0L)
 
-    public constructor(platform: Platform, density: Float, size: Size) {
+    public constructor(platform: RcPlatformServices, density: Float, size: Size) {
         this.platform = platform
         this.density = density
         this.size = size
@@ -69,7 +69,7 @@ public open class RemoteComposeCreationState {
     }
 
     public constructor(
-        platform: Platform,
+        platform: RcPlatformServices,
         density: Float,
         size: Size,
         apiLevel: Int,
@@ -118,7 +118,11 @@ public open class RemoteComposeCreationState {
 // Density and Size should be taken from Compose in this mode
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public class NoRemoteCompose :
-    RemoteComposeCreationState(platform = Platform.None, density = 1f, Size(1000f, 1000f)) {
+    RemoteComposeCreationState(
+        platform = RcPlatformServices.None,
+        density = 1f,
+        Size(1000f, 1000f),
+    ) {
     override fun <T : BaseRemoteState> getOrCreateNamedState(
         type: Class<T>,
         name: String,
