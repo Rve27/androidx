@@ -43,6 +43,14 @@ public class XrDisplay {
              */
             public val ALPHA_BLEND: BlendMode = BlendMode(2)
         }
+
+        public override fun toString(): String =
+            when (this) {
+                NOT_APPLICABLE -> "NOT_APPLICABLE"
+                ADDITIVE -> "ADDITIVE"
+                ALPHA_BLEND -> "ALPHA_BLEND"
+                else -> "UNKNOWN"
+            }
     }
 
     public companion object {
