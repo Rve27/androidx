@@ -33,6 +33,18 @@ plugins {
 
 dependencies {
     api(project(":navigation3:navigation3-ui"))
+    implementation(project(":wear:compose:compose-material3"))
+
+    androidTestImplementation(project(":navigationevent:navigationevent-testing"))
+    androidTestImplementation(project(":compose:test-utils"))
+    androidTestImplementation(project(":compose:ui:ui-test-junit4"))
+    androidTestImplementation("androidx.lifecycle:lifecycle-runtime-testing:2.7.0")
+    androidTestImplementation(libs.testRunner)
+    androidTestImplementation(libs.truth)
+
+    androidTestImplementation(project(":compose:foundation:foundation"))
+    androidTestImplementation(project(":compose:ui:ui-test"))
+    androidTestImplementation(project(":test:screenshot:screenshot"))
 }
 
 android {
