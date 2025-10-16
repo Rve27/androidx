@@ -22,7 +22,7 @@ import androidx.annotation.RestrictTo;
 import androidx.compose.remote.core.Operation;
 import androidx.compose.remote.core.Operations;
 import androidx.compose.remote.core.PaintContext;
-import androidx.compose.remote.core.RcPlatformServices;
+import androidx.compose.remote.core.Platform;
 import androidx.compose.remote.core.RemoteContext;
 import androidx.compose.remote.core.VariableSupport;
 import androidx.compose.remote.core.WireBuffer;
@@ -94,7 +94,7 @@ public class TextLayout extends LayoutManager implements VariableSupport, Access
     @Nullable
     private String mNewString;
 
-    RcPlatformServices.ComputedTextLayout mComputedTextLayout;
+    Platform.ComputedTextLayout mComputedTextLayout;
 
     @Nullable
     @Override
