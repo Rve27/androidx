@@ -20,8 +20,8 @@ import androidx.annotation.RestrictTo;
 
 /** List of supported Profiles */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public class Profiles {
-    private Profiles() {}
+public class RcProfiles {
+    private RcProfiles() {}
 
     ////////////////////////////////////////
     // Available profiles

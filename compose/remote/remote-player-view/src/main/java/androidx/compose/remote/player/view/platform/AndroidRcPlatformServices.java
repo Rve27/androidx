@@ -24,7 +24,7 @@ import android.os.Build;
 import android.util.Log;
 
 import androidx.annotation.RestrictTo;
-import androidx.compose.remote.core.Platform;
+import androidx.compose.remote.core.RcPlatformServices;
 import androidx.compose.remote.core.operations.PathData;
 
 import org.jspecify.annotations.NonNull;
@@ -35,7 +35,7 @@ import java.util.Arrays;
 
 /** Services that are needed to be provided by the platform during encoding. */
 @RestrictTo(LIBRARY_GROUP)
-public class AndroidPlatformServices implements Platform {
+public class AndroidRcPlatformServices implements RcPlatformServices {
     private static final String LOG_TAG = "RemoteCompose";
 
     @Override
