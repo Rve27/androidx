@@ -204,7 +204,6 @@ package androidx.compose.animation {
   @androidx.compose.runtime.Stable public interface SharedTransitionScope extends androidx.compose.ui.layout.LookaheadScope {
     method public androidx.compose.animation.SharedTransitionScope.OverlayClip OverlayClip(androidx.compose.ui.graphics.Shape clipShape);
     method public default androidx.compose.animation.SharedTransitionScope.SharedContentConfig SharedContentConfig();
-    method public default androidx.compose.animation.SharedTransitionScope.SharedContentConfig SharedContentConfig(kotlin.jvm.functions.Function1<? super androidx.compose.animation.SharedTransitionScope.SharedContentState,java.lang.Boolean> isEnabled);
     method @InaccessibleFromKotlin public boolean isTransitionActive();
     method @KotlinOnly @androidx.compose.runtime.Composable public default androidx.compose.animation.SharedTransitionScope.SharedContentState rememberSharedContentState(Object key, optional androidx.compose.animation.SharedTransitionScope.SharedContentConfig config);
     method @BytecodeOnly @androidx.compose.runtime.Composable public default androidx.compose.animation.SharedTransitionScope.SharedContentState rememberSharedContentState(Object, androidx.compose.animation.SharedTransitionScope.SharedContentConfig, androidx.compose.runtime.Composer?, int);
