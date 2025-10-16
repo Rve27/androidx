@@ -3832,6 +3832,19 @@ public class RemoteComposeWriter {
     }
 
     /**
+     * Add a modifier background
+     *
+     * @param r the red value, possibly a remote float
+     * @param g the green value, possibly a remote float
+     * @param b the blue value, possibly a remote float
+     * @param a the alpha value, possibly a remote float
+     * @param shape the shape to set
+     */
+    public void addModifierBackground(float r, float g, float b, float a, int shape) {
+        mBuffer.addModifierBackground(r, g, b, a, shape);
+    }
+
+    /**
      * Add an align modifier
      */
     public void addAlignByModifier(float line) {
