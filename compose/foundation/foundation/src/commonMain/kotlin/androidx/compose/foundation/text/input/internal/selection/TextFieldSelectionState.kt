@@ -704,12 +704,14 @@ internal class TextFieldSelectionState(
 
     /**
      * Includes:
-     * * Touch
+     * * Taps from touchscreen, stylus;
      *     * Long press selects the pressed word and then detects drags to continue selecting words.
      *     * Double tap selects the current word and immediately detects drags to continue selecting
      *       words.
-     *     * Subsequent quick taps still act as a double tap.
-     * * Mouse
+     *     * Triple tap selects the current paragraph and immediately detects drags to continue
+     *       selecting paragraphs.
+     *     * Subsequent quick taps still act as a triple tap.
+     * * Clicks from mouse, touchpad;
      *     * Clicks immediately start a selection and begins detecting drags:
      *         * 1 -> click creates collapsed selection (places cursor) drags select individual chars.
      *         * 2 -> click selects current word, drags select words.
