@@ -17,7 +17,7 @@ package androidx.compose.remote.creation.profile;
 
 import androidx.annotation.RequiresApi;
 import androidx.annotation.RestrictTo;
-import androidx.compose.remote.core.RcPlatformServices;
+import androidx.compose.remote.core.Platform;
 import androidx.compose.remote.creation.RemoteComposeWriter;
 
 import org.jspecify.annotations.NonNull;
@@ -47,8 +47,7 @@ import java.util.function.Supplier;
 public class Profile {
     int mApiLevel;
     int mOperationsProfiles;
-    @NonNull
-    RcPlatformServices mPlatform;
+    @NonNull Platform mPlatform;
     @NonNull
     RemoteComposeWriterFactory mFactory;
 
@@ -65,7 +64,7 @@ public class Profile {
     public Profile(
             int apiLevel,
             int operationProfiles,
-            @NonNull RcPlatformServices platform,
+            @NonNull Platform platform,
             @NonNull RemoteComposeWriterFactory factory) {
         mApiLevel = apiLevel;
         mOperationsProfiles = operationProfiles;
@@ -85,7 +84,7 @@ public class Profile {
     public Profile(
             int apiLevel,
             int operationProfiles,
-            @NonNull RcPlatformServices platform,
+            @NonNull Platform platform,
             @NonNull Supplier<Set<Integer>> supportedOperations,
             @NonNull RemoteComposeWriterFactory factory) {
         mApiLevel = apiLevel;
@@ -130,7 +129,7 @@ public class Profile {
      *
      * @return the platform
      */
-    public @NonNull RcPlatformServices getPlatform() {
+    public @NonNull Platform getPlatform() {
         return mPlatform;
     }
 

@@ -20,12 +20,12 @@ import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 import android.text.StaticLayout;
 
 import androidx.annotation.RestrictTo;
-import androidx.compose.remote.core.RcPlatformServices;
+import androidx.compose.remote.core.Platform;
 
 import org.jspecify.annotations.NonNull;
 
 @RestrictTo(LIBRARY_GROUP)
-public class AndroidComputedTextLayout implements RcPlatformServices.ComputedTextLayout {
+public class AndroidComputedTextLayout implements Platform.ComputedTextLayout {
     StaticLayout mStaticLayout;
     float mWidth;
     float mHeight;

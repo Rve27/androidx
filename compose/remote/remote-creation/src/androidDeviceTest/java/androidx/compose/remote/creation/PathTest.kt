@@ -20,7 +20,7 @@ import android.graphics.Path
 import android.graphics.PathIterator
 import android.os.Build
 import androidx.compose.remote.core.RemoteContext
-import androidx.compose.remote.creation.platform.AndroidxRcPlatformServices
+import androidx.compose.remote.creation.platform.AndroidxPlatformServices
 import androidx.graphics.path.iterator
 import androidx.test.filters.SdkSuppress
 import org.junit.Assert.assertEquals
@@ -29,7 +29,7 @@ import org.junit.Test
 
 class PathTest {
 
-    val platform = AndroidxRcPlatformServices()
+    val platform = AndroidxPlatformServices()
 
     val safePath =
         Path().apply {
