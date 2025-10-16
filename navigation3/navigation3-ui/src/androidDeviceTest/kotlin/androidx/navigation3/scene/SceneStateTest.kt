@@ -29,6 +29,7 @@ import androidx.navigation3.ui.TestTwoPaneSceneStrategy
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import kotlin.test.Test
+import kotlinx.coroutines.test.StandardTestDispatcher
 import org.junit.Rule
 import org.junit.runner.RunWith
 
@@ -36,7 +37,7 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 internal class SceneStateTest {
 
-    @get:Rule val rule = createComposeRule()
+    @get:Rule val rule = createComposeRule(StandardTestDispatcher())
 
     @Test
     fun testSceneStateChanges() {

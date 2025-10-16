@@ -61,13 +61,14 @@ import androidx.test.filters.LargeTest
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
+import kotlinx.coroutines.test.StandardTestDispatcher
 import org.junit.Rule
 import org.junit.runner.RunWith
 
 @LargeTest
 @RunWith(AndroidJUnit4::class)
 class AnimatedTest {
-    @get:Rule val composeTestRule = createComposeRule()
+    @get:Rule val composeTestRule = createComposeRule(StandardTestDispatcher())
 
     @Test
     fun testNavigateAnimations() {
