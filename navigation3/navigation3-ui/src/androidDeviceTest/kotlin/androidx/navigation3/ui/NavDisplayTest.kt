@@ -41,6 +41,7 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.scene.DialogSceneStrategy
+import androidx.navigation3.scene.SinglePaneSceneStrategy
 import androidx.navigationevent.DirectNavigationEventInput
 import androidx.navigationevent.NavigationEvent
 import androidx.navigationevent.compose.LocalNavigationEventDispatcherOwner
@@ -754,6 +755,42 @@ class NavDisplayTest {
         // State remains unchanged, 'onBack' is no-op.
         composeTestRule.onNodeWithText("parent='$second',child='$third'").assertIsDisplayed()
         composeTestRule.onNodeWithText("parent='$first',child='null'").assertDoesNotExist()
+    }
+
+    @Test
+    fun testSceneStrategyThenFirstStrategy() {
+        composeTestRule.setContent {
+            NavDisplay(
+                backStack = listOf(first, second),
+                sceneStrategy = TestTwoPaneSceneStrategy<String>() then (SinglePaneSceneStrategy()),
+            ) {
+                when (it) {
+                    first -> NavEntry(first) { Text(first) }
+                    second -> NavEntry(second) { Text(second) }
+                    else -> error("Invalid key passed")
+                }
+            }
+        }
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithText("first").assertIsDisplayed()
+        composeTestRule.onNodeWithText("second").assertIsDisplayed()
+    }
+
+    @Test
+    fun testSceneStrategyThenChainedStrategy() {
+        composeTestRule.setContent {
+            NavDisplay(
+                backStack = listOf(first),
+                sceneStrategy = TestTwoPaneSceneStrategy<String>() then (SinglePaneSceneStrategy()),
+            ) {
+                when (it) {
+                    first -> NavEntry(first) { Text(first) }
+                    else -> error("Invalid key passed")
+                }
+            }
+        }
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithText("first").assertIsDisplayed()
     }
 }
 
