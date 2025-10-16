@@ -3263,6 +3263,18 @@ public class RemoteComposeWriter {
     /**
      * Add a dynamic array
      *
+     * @param size
+     * @return
+     */
+    public float addDynamicFloatArray(float size) {
+        int id = createID(NanMap.TYPE_ARRAY);
+        mBuffer.addDynamicFloatArray(id, size);
+        return Utils.asNan(id);
+    }
+
+    /**
+     * Add a dynamic array
+     *
      * @param id
      * @param size
      * @return
