@@ -21,8 +21,11 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.kruth.assertThat
+import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberDecoratedNavEntries
+import androidx.navigation3.ui.TestTwoPaneScene
+import androidx.navigation3.ui.TestTwoPaneSceneStrategy
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import kotlin.test.Test
@@ -75,6 +78,34 @@ internal class SceneStateTest {
         assertThat(sceneState.currentScene).isInstanceOf<SinglePaneScene<Any>>()
         assertThat(sceneState.previousScenes).hasSize(1)
         assertThat(sceneState.overlayScenes).hasSize(1)
+    }
+
+    @Test
+    fun testSceneStrategyThenFirstStrategy() {
+        val sceneStrategy = TestTwoPaneSceneStrategy<String>() then (SinglePaneSceneStrategy())
+        val entries = listOf(NavEntry(key = "first") {}, NavEntry(key = "second") {})
+        var currentScene: Scene<String>? = null
+        rule.setContent {
+            val sceneState = rememberSceneState(entries, sceneStrategy) {}
+            currentScene = sceneState.currentScene
+        }
+
+        rule.waitForIdle()
+        assertThat(currentScene).isInstanceOf<TestTwoPaneScene<String>>()
+    }
+
+    @Test
+    fun testSceneStrategyThenChainedStrategy() {
+        val sceneStrategy = TestTwoPaneSceneStrategy<String>() then (SinglePaneSceneStrategy())
+        val entries = listOf(NavEntry(key = "first") {})
+        var currentScene: Scene<String>? = null
+        rule.setContent {
+            val sceneState = rememberSceneState(entries, sceneStrategy) {}
+            currentScene = sceneState.currentScene
+        }
+
+        rule.waitForIdle()
+        assertThat(currentScene).isInstanceOf<SinglePaneScene<String>>()
     }
 }
 
