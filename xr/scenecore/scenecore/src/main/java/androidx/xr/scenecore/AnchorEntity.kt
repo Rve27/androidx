@@ -392,7 +392,7 @@ private constructor(rtEntity: RtAnchorEntity, entityManager: EntityManager) :
      * @throws UnsupportedOperationException if called.
      */
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    override fun setPose(pose: Pose, @SpaceValue relativeTo: Int) {
+    override fun setPose(pose: Pose, relativeTo: Space) {
         checkNotDisposed()
         throw UnsupportedOperationException("Cannot set 'pose' on an AnchorEntity.")
     }
@@ -406,7 +406,7 @@ private constructor(rtEntity: RtAnchorEntity, entityManager: EntityManager) :
      * @throws IllegalArgumentException if called with Space.PARENT since AnchorEntity has no
      *   parents.
      */
-    override fun getPose(@SpaceValue relativeTo: Int): Pose {
+    override fun getPose(relativeTo: Space): Pose {
         checkNotDisposed()
         return when (relativeTo) {
             Space.PARENT ->
@@ -430,7 +430,7 @@ private constructor(rtEntity: RtAnchorEntity, entityManager: EntityManager) :
      * @throws UnsupportedOperationException if called.
      */
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    override fun setScale(scale: Float, @SpaceValue relativeTo: Int) {
+    override fun setScale(scale: Float, relativeTo: Space) {
         checkNotDisposed()
         throw UnsupportedOperationException("Cannot set 'scale' on an AnchorEntity.")
     }
@@ -446,7 +446,7 @@ private constructor(rtEntity: RtAnchorEntity, entityManager: EntityManager) :
      * @throws UnsupportedOperationException if called.
      */
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    override fun setScale(scale: Vector3, @SpaceValue relativeTo: Int) {
+    override fun setScale(scale: Vector3, relativeTo: Space) {
         throw UnsupportedOperationException("Cannot set 'scale' on an AnchorEntity.")
     }
 
@@ -459,7 +459,7 @@ private constructor(rtEntity: RtAnchorEntity, entityManager: EntityManager) :
      * @throws IllegalArgumentException if called with Space.PARENT since AnchorEntity has no
      *   parents.
      */
-    override fun getScale(@SpaceValue relativeTo: Int): Float {
+    override fun getScale(relativeTo: Space): Float {
         checkNotDisposed()
         return when (relativeTo) {
             Space.PARENT ->

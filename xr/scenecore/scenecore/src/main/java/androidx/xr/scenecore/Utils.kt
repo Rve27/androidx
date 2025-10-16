@@ -143,7 +143,7 @@ internal fun Int.toRtPlaneSemantic(): RtPlaneSemantic {
  * Extension function that converts [Space] value to
  * [androidx.xr.scenecore.runtime.SceneRuntime.Space] value.
  */
-internal fun Int.toRtSpace(): Int {
+internal fun Space.toRtSpace(): Int {
     return when (this) {
         Space.PARENT -> RtSpace.PARENT
         Space.ACTIVITY -> RtSpace.ACTIVITY
