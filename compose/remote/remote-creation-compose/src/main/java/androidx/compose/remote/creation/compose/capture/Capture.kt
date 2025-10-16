@@ -39,7 +39,6 @@ import androidx.compose.ui.geometry.Size
 public open class RemoteComposeCreationState {
 
     public val platform: RcPlatformServices
-    public var density: Float
     public val size: Size
     public val apiLevel: Int
     public val profiles: Int
@@ -59,24 +58,16 @@ public open class RemoteComposeCreationState {
 
     public val time: MutableState<Long> = mutableStateOf(0L)
 
-    public constructor(platform: RcPlatformServices, density: Float, size: Size) {
+    public constructor(platform: RcPlatformServices, size: Size) {
         this.platform = platform
-        this.density = density
         this.size = size
         this.apiLevel = CoreDocument.DOCUMENT_API_LEVEL
         this.profiles = 0
         document = RemoteComposeWriterAndroid(size.width.toInt(), size.height.toInt(), "", platform)
     }
 
-    public constructor(
-        platform: RcPlatformServices,
-        density: Float,
-        size: Size,
-        apiLevel: Int,
-        profiles: Int,
-    ) {
+    public constructor(platform: RcPlatformServices, size: Size, apiLevel: Int, profiles: Int) {
         this.platform = platform
-        this.density = density
         this.size = size
         this.apiLevel = apiLevel
         this.profiles = profiles
@@ -96,9 +87,8 @@ public open class RemoteComposeCreationState {
         }
     }
 
-    public constructor(density: Float, size: Size, profile: Profile) {
+    public constructor(size: Size, profile: Profile) {
         this.platform = profile.platform
-        this.density = density
         this.size = size
         this.apiLevel = profile.apiLevel
         this.profiles = profile.operationsProfiles
@@ -118,11 +108,7 @@ public open class RemoteComposeCreationState {
 // Density and Size should be taken from Compose in this mode
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public class NoRemoteCompose :
-    RemoteComposeCreationState(
-        platform = RcPlatformServices.None,
-        density = 1f,
-        Size(1000f, 1000f),
-    ) {
+    RemoteComposeCreationState(platform = RcPlatformServices.None, Size(1000f, 1000f)) {
     override fun <T : BaseRemoteState> getOrCreateNamedState(
         type: Class<T>,
         name: String,

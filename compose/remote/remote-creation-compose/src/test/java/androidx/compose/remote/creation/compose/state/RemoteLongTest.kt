@@ -34,8 +34,7 @@ class RemoteLongTest {
         AndroidRemoteContext().apply {
             useCanvas(Canvas(Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)))
         }
-    val creationState =
-        RemoteComposeCreationState(AndroidxRcPlatformServices(), density = 1f, Size(1f, 1f))
+    val creationState = RemoteComposeCreationState(AndroidxRcPlatformServices(), Size(1f, 1f))
 
     @Test
     fun namedRemoteLong_initialValue() {
