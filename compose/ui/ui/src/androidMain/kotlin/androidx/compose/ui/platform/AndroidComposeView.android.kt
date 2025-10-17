@@ -80,8 +80,8 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.referentialEqualityPolicy
-import androidx.compose.runtime.retain.ForgetfulRetainScope
-import androidx.compose.runtime.retain.RetainScope
+import androidx.compose.runtime.retain.ForgetfulRetainedValuesStore
+import androidx.compose.runtime.retain.RetainedValuesStore
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.Snapshot
 import androidx.compose.ui.ComposeUiFlags
@@ -298,9 +298,11 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
     override val view: View
         get() = this
 
-    internal var frameEndScheduler: LifecycleRetainScopeOwner.FrameEndScheduler? = null
-    private var lifecycleRetainScopeOwnerEntry: LifecycleRetainScopeOwner.RetainScopeEntry? = null
-    override var retainScope: RetainScope = ForgetfulRetainScope
+    internal var frameEndScheduler: LifecycleRetainedValuesStoreOwner.FrameEndScheduler? = null
+    private var lifecycleRetainedValuesStoreOwnerEntry:
+        LifecycleRetainedValuesStoreOwner.RetainedValuesStoreEntry? =
+        null
+    override var retainedValuesStore: RetainedValuesStore = ForgetfulRetainedValuesStore
         private set
 
     // Out of frame scheduler currently has different semantics compared to the frame end scheduler
@@ -1058,11 +1060,11 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
         if (SDK_INT < 30) {
             showLayoutBounds = getIsShowingLayoutBounds()
         }
-        lifecycleRetainScopeOwnerEntry?.stopKeepingExitedValues(frameEndScheduler!!)
+        lifecycleRetainedValuesStoreOwnerEntry?.stopRetainingExitedValues(frameEndScheduler!!)
     }
 
     override fun onStop(owner: LifecycleOwner) {
-        lifecycleRetainScopeOwnerEntry?.startKeepingExitedValues()
+        lifecycleRetainedValuesStoreOwnerEntry?.startRetainingExitedValues()
     }
 
     override fun focusSearch(focused: View?, direction: Int): View? {
@@ -2179,8 +2181,9 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
         val savedStateRegistryOwner = findViewTreeSavedStateRegistryOwner()
         val viewModelStoreOwner = findViewTreeViewModelStoreOwner()
 
-        retainScope =
-            installLocalRetainScope(lifecycleOwner, viewModelStoreOwner) ?: ForgetfulRetainScope
+        retainedValuesStore =
+            installLocalRetainedValuesStore(lifecycleOwner, viewModelStoreOwner)
+                ?: ForgetfulRetainedValuesStore
 
         val oldViewTreeOwners = viewTreeOwners
         // We need to change the ViewTreeOwner if there isn't one yet (null)
@@ -2236,27 +2239,28 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
         }
     }
 
-    private fun installLocalRetainScope(
+    private fun installLocalRetainedValuesStore(
         lifecycleOwner: LifecycleOwner?,
         viewModelStoreOwner: ViewModelStoreOwner?,
-    ): RetainScope? {
+    ): RetainedValuesStore? {
         val frameEndScheduler = frameEndScheduler
         if (lifecycleOwner == null || viewModelStoreOwner == null || frameEndScheduler == null)
             return null
 
-        val retainScopeOwner =
+        val retainedValuesStoreOwner =
             ViewModelProvider.create(
                     store = viewModelStoreOwner.viewModelStore,
                     factory = ViewModelProvider.NewInstanceFactory(),
                 )
-                .get<LifecycleRetainScopeOwner>()
+                .get<LifecycleRetainedValuesStoreOwner>()
 
         // If we have a unique View Id, its on our parent ComposeView, not the AndroidComposeView
         // implementation child view.
         val viewId = (parent as View).id
-        val retainScopeEntry = retainScopeOwner.getOrCreateRetainScopeEntry(viewId)
-        lifecycleRetainScopeOwnerEntry = retainScopeEntry
-        return retainScopeEntry.retainScope
+        val retainedValuesStoreEntry =
+            retainedValuesStoreOwner.getOrCreateRetainedValuesStoreEntry(viewId)
+        lifecycleRetainedValuesStoreOwnerEntry = retainedValuesStoreEntry
+        return retainedValuesStoreEntry.retainedValuesStore
     }
 
     @OptIn(ExperimentalComposeUiApi::class)
@@ -2289,8 +2293,8 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
         viewTreeObserver.removeOnScrollChangedListener(this)
         viewTreeObserver.removeOnTouchModeChangeListener(this)
 
-        lifecycleRetainScopeOwnerEntry?.release()
-        lifecycleRetainScopeOwnerEntry = null
+        lifecycleRetainedValuesStoreOwnerEntry?.release()
+        lifecycleRetainedValuesStoreOwnerEntry = null
 
         if (SDK_INT >= S) AndroidComposeViewTranslationCallbackS.clearViewTranslationCallback(this)
         _autofillManager?.let {

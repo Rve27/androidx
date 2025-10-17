@@ -27,10 +27,10 @@ import androidx.compose.runtime.setValue
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 
-class RetainEffectTest {
+class RetainedEffectTest {
 
     @Test
-    fun testRetainEffect_retained() = compositionTest {
+    fun testRetainedEffect_retained() = compositionTest {
         var mount by mutableStateOf(false)
 
         val logHistory = mutableListOf<String>()
@@ -67,7 +67,7 @@ class RetainEffectTest {
     }
 
     @Test
-    fun testRetainEffect_keysChanged() = compositionTest {
+    fun testRetainedEffect_keysChanged() = compositionTest {
         var keyDelta by mutableIntStateOf(0)
 
         val logHistory = mutableListOf<String>()
@@ -111,7 +111,7 @@ class RetainEffectTest {
     }
 
     @Test
-    fun testRetainEffect_retireWhenRemovedNotKeepingExitedValues() = compositionTest {
+    fun testRetainedEffect_retireWhenRemovedNotRetainingExitedValues() = compositionTest {
         var mount by mutableStateOf(true)
 
         val logHistory = mutableListOf<String>()
@@ -148,7 +148,7 @@ class RetainEffectTest {
     }
 
     @Test
-    fun testRetainEffect_retireWhenKeepExitedValuesEnds() = compositionTest {
+    fun testRetainedEffect_retireWhenRetainExitedValuesEnds() = compositionTest {
         var mount by mutableStateOf(true)
 
         val logHistory = mutableListOf<String>()
@@ -162,9 +162,9 @@ class RetainEffectTest {
             }
         }
 
-        val retainScope = ControlledRetainScope()
+        val retainedValuesStore = ControlledRetainedValuesStore()
         compose {
-            CompositionLocalProvider(LocalRetainScope provides retainScope) {
+            CompositionLocalProvider(LocalRetainedValuesStore provides retainedValuesStore) {
                 RetainLogger("1")
                 if (mount) {
                     RetainLogger("2")
@@ -177,7 +177,7 @@ class RetainEffectTest {
             expected = listOf("Retain:1", "Retain:2"),
             actual = logHistory,
         )
-        retainScope.startKeepingExitedValues()
+        retainedValuesStore.startRetainingExitedValues()
         mount = false
         log("recompose")
         expectChanges()
@@ -187,7 +187,7 @@ class RetainEffectTest {
             actual = logHistory,
         )
 
-        retainScope.stopKeepingExitedValues()
+        retainedValuesStore.stopRetainingExitedValues()
         assertContentEquals(
             message = "RetainedEffect sequence didn't match after ending retention",
             expected = listOf("Retain:1", "Retain:2", "recompose", "Retire:2"),
@@ -196,7 +196,7 @@ class RetainEffectTest {
     }
 
     @Test
-    fun testRetainEffect_changeKeyWhenKeepingExitedValues() = compositionTest {
+    fun testRetainedEffect_changeKeyWhenRetainingExitedValues() = compositionTest {
         var key by mutableStateOf("A")
 
         val logHistory = mutableListOf<String>()
@@ -210,9 +210,11 @@ class RetainEffectTest {
             }
         }
 
-        val retainScope = ControlledRetainScope()
+        val retainedValuesStore = ControlledRetainedValuesStore()
         compose {
-            CompositionLocalProvider(LocalRetainScope provides retainScope) { RetainLogger(key) }
+            CompositionLocalProvider(LocalRetainedValuesStore provides retainedValuesStore) {
+                RetainLogger(key)
+            }
         }
 
         assertContentEquals(
@@ -220,7 +222,7 @@ class RetainEffectTest {
             expected = listOf("Retain:A"),
             actual = logHistory,
         )
-        retainScope.startKeepingExitedValues()
+        retainedValuesStore.startRetainingExitedValues()
         key = "B"
         log("recompose")
         expectChanges()
@@ -239,7 +241,7 @@ class RetainEffectTest {
             actual = logHistory,
         )
 
-        retainScope.stopKeepingExitedValues()
+        retainedValuesStore.stopRetainingExitedValues()
         assertContentEquals(
             message = "RetainedEffect sequence didn't match after ending retention",
             expected = listOf("Retain:A", "recompose", "Retain:B", "recompose", "Retire:B"),
