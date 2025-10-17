@@ -263,6 +263,19 @@ class SpatialRenderingRuntimeTest {
     }
 
     @Test
+    fun loadGltfByByteArrayAsync_returnsModel() {
+        val model = runBlocking {
+            renderingRuntime.loadGltfByByteArrayAsync(byteArrayOf(1, 2, 3), "FakeAsset.glb")
+        }
+        assertThat(model).isNotNull()
+
+        val modelImpl = model as GltfModel
+        assertThat(modelImpl).isNotNull()
+        val token = modelImpl.nativeHandle
+        assertThat(token).isEqualTo(1)
+    }
+
+    @Test
     fun loadGltfByByteArray_returnsModel() {
         val modelFuture =
             renderingRuntime.loadGltfByByteArray(byteArrayOf(1, 2, 3), "FakeAsset.glb")

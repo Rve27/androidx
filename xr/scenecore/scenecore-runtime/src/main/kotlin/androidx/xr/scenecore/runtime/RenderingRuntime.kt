@@ -58,6 +58,21 @@ public interface RenderingRuntime : JxrRuntime {
     public fun loadGltfByAssetName(assetName: String): ListenableFuture<GltfModelResource>
 
     /**
+     * Loads glTF Asset from a provided byte array. The Coroutine returned by this method will fire
+     * listeners on the UI thread if Runnable::run is supplied.
+     *
+     * @param assetData A gltfAsset in the form of a byte array.
+     * @param assetKey The name of the asset to load from the cache.
+     * @return A glTF model when it is loaded. Will be null if the asset was not found.
+     */
+    // TODO(b/397746548): Add InputStream support for loading glTFs.
+    // Suppressed to allow CompletableFuture.
+    public suspend fun loadGltfByByteArrayAsync(
+        assetData: ByteArray,
+        assetKey: String,
+    ): GltfModelResource
+
+    /**
      * Loads glTF Asset from a provided byte array. The future returned by this method will fire
      * listeners on the UI thread if Runnable::run is supplied.
      *
@@ -280,6 +295,13 @@ public interface RenderingRuntime : JxrRuntime {
      * @param normalBoundary The normal boundary to use for the water material.
      */
     public fun setNormalBoundaryOnWaterMaterial(material: MaterialResource, normalBoundary: Float)
+
+    /**
+     * Creates a Khronos PBR material by querying it from the system's built-in materials. The
+     * Coroutine returned by this method will fire listeners on the UI thread if Runnable::run is
+     * supplied.
+     */
+    public suspend fun createKhronosPbrMaterialAsync(spec: KhronosPbrMaterialSpec): MaterialResource
 
     /**
      * Creates a Khronos PBR material by querying it from the system's built-in materials. The

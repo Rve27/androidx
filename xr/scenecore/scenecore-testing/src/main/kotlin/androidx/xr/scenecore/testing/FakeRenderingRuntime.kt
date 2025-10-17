@@ -67,6 +67,11 @@ public class FakeRenderingRuntime(
     override fun loadGltfByAssetName(assetName: String): ListenableFuture<GltfModelResource> =
         immediateFuture(FakeGltfModelResource(0))
 
+    override suspend fun loadGltfByByteArrayAsync(
+        assetData: ByteArray,
+        assetKey: String,
+    ): GltfModelResource = FakeGltfModelResource(0)
+
     @Suppress("AsyncSuffixFuture")
     override fun loadGltfByByteArray(
         assetData: ByteArray,
@@ -297,6 +302,14 @@ public class FakeRenderingRuntime(
         normalBoundary: Float,
     ) {
         (material as? FakeWaterMaterial)?.normalBoundary = normalBoundary
+    }
+
+    override suspend fun createKhronosPbrMaterialAsync(
+        spec: KhronosPbrMaterialSpec
+    ): MaterialResource {
+        val newMaterial = FakeKhronosPbrMaterial(spec)
+        createdKhronosPbrMaterials.add(newMaterial)
+        return newMaterial
     }
 
     @Suppress("AsyncSuffixFuture")

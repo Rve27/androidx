@@ -242,6 +242,7 @@ package androidx.xr.scenecore.testing {
     method public androidx.xr.scenecore.runtime.TextureResource? borrowReflectionTexture();
     method public androidx.xr.scenecore.runtime.GltfEntity createGltfEntity(androidx.xr.runtime.math.Pose pose, androidx.xr.scenecore.runtime.GltfModelResource loadedGltf, androidx.xr.scenecore.runtime.Entity parentEntity);
     method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.runtime.MaterialResource> createKhronosPbrMaterial(androidx.xr.scenecore.runtime.KhronosPbrMaterialSpec spec);
+    method public suspend Object? createKhronosPbrMaterialAsync(androidx.xr.scenecore.runtime.KhronosPbrMaterialSpec spec, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.runtime.MaterialResource>);
     method public androidx.xr.scenecore.runtime.SurfaceEntity createSurfaceEntity(int stereoMode, androidx.xr.runtime.math.Pose pose, androidx.xr.scenecore.runtime.SurfaceEntity.Shape shape, int surfaceProtection, int superSampling, androidx.xr.scenecore.runtime.Entity parentEntity);
     method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.runtime.MaterialResource> createWaterMaterial(boolean isAlphaMapVersion);
     method public suspend Object? createWaterMaterialAsync(boolean isAlphaMapVersion, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.runtime.MaterialResource>);
@@ -261,6 +262,7 @@ package androidx.xr.scenecore.testing {
     method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.runtime.GltfModelResource> loadGltfByAssetName(String assetName);
     method public suspend Object? loadGltfByAssetNameAsync(String assetName, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.runtime.GltfModelResource>);
     method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.runtime.GltfModelResource> loadGltfByByteArray(byte[] assetData, String assetKey);
+    method public suspend Object? loadGltfByByteArrayAsync(byte[] assetData, String assetKey, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.runtime.GltfModelResource>);
     method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.runtime.TextureResource> loadTexture(String assetName);
     method public suspend Object? loadTextureAsync(String assetName, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.runtime.TextureResource>);
     method public void setAlphaCutoffOnKhronosPbrMaterial(androidx.xr.scenecore.runtime.MaterialResource material, float alphaCutoff);

@@ -197,6 +197,15 @@ private constructor(
         return loadGltfAsset { impressApi.loadGltfAsset(assetName) }!!
     }
 
+    @SuppressWarnings("RestrictTo")
+    override suspend fun loadGltfByByteArrayAsync(
+        assetData: ByteArray,
+        assetKey: String,
+    ): GltfModelResource {
+        // TODO(b/458779328): Fix incorrect use of !! on a nullable return value.
+        return loadGltfAssetAsync { impressApi.loadGltfAsset(assetData, assetKey) }
+    }
+
     @SuppressWarnings("RestrictTo", "AsyncSuffixFuture")
     override fun loadGltfByByteArray(
         assetData: ByteArray,
@@ -468,6 +477,16 @@ private constructor(
     ) {
         require(material is Material) { "MaterialResource is not a Material" }
         impressApi.setNormalBoundaryOnWaterMaterial(material.nativeHandle, normalBoundary)
+    }
+
+    override suspend fun createKhronosPbrMaterialAsync(
+        spec: KhronosPbrMaterialSpec
+    ): MaterialResource {
+        check(Looper.getMainLooper().isCurrentThread) {
+            "This method must be called on the main thread."
+        }
+        val material: KhronosPbrMaterial = impressApi.createKhronosPbrMaterialTemp(spec)
+        return material
     }
 
     @SuppressWarnings("AsyncSuffixFuture")
