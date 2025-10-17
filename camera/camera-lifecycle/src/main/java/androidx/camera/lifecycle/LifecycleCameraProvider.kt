@@ -55,7 +55,7 @@ import com.google.common.util.concurrent.ListenableFuture
 public interface LifecycleCameraProvider : CameraProvider {
     /**
      * Returns `true` if this [UseCase] is bound to a lifecycle or included in a bound
-     * [SessionConfig]. Otherwise returns `false`.
+     * [SessionConfig], `false` otherwise.
      *
      * After binding a use case, use cases remain bound until the lifecycle reaches a
      * [Lifecycle.State.DESTROYED] state or if is unbound by calls to [unbind] or [unbindAll].
@@ -63,7 +63,8 @@ public interface LifecycleCameraProvider : CameraProvider {
     public fun isBound(useCase: UseCase): Boolean
 
     /**
-     * Returns `true` if the [SessionConfig] is bound to a lifecycle. Otherwise returns `false`.
+     * Returns `true` if the exact same instance of [SessionConfig] is bound to a lifecycle, `false`
+     * otherwise.
      *
      * After binding a [SessionConfig], this [SessionConfig] remains bound until the lifecycle
      * reaches a [Lifecycle.State.DESTROYED] state or if is unbound by calls to [unbind] or
@@ -89,7 +90,10 @@ public interface LifecycleCameraProvider : CameraProvider {
     public fun unbind(vararg useCases: UseCase?): Unit
 
     /**
-     * Unbinds the [SessionConfig] from the lifecycle provider.
+     * Unbinds the specified [SessionConfig] instance from the lifecycle provider.
+     *
+     * This method will only unbind the session if the provided `sessionConfig` is the exact same
+     * instance that was previously used for binding.
      *
      * This [SessionConfig] contains the [UseCase]s to be detached from the camera. This will
      * initiate a close of every open camera which has zero [UseCase] associated with it at the end
