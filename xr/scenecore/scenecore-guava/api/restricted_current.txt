@@ -22,8 +22,8 @@ package androidx.xr.scenecore.guava {
   }
 
   public final class GuavaScenePose {
-    method public static com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.HitTestResult> hitTestAsync(androidx.xr.scenecore.ScenePose, androidx.xr.runtime.Session session, androidx.xr.runtime.math.Vector3 origin, androidx.xr.runtime.math.Vector3 direction);
-    method public static com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.HitTestResult> hitTestAsync(androidx.xr.scenecore.ScenePose, androidx.xr.runtime.Session session, androidx.xr.runtime.math.Vector3 origin, androidx.xr.runtime.math.Vector3 direction, int hitTestFilter);
+    method public static com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.HitTestResult?> hitTestAsync(androidx.xr.scenecore.ScenePose, androidx.xr.runtime.Session session, androidx.xr.runtime.math.Vector3 origin, androidx.xr.runtime.math.Vector3 direction);
+    method public static com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.HitTestResult?> hitTestAsync(androidx.xr.scenecore.ScenePose, androidx.xr.runtime.Session session, androidx.xr.runtime.math.Vector3 origin, androidx.xr.runtime.math.Vector3 direction, int hitTestFilter);
   }
 
   public final class GuavaTexture {
