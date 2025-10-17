@@ -153,6 +153,16 @@ class SpatialRenderingRuntimeTest {
         return renderingEntityFactory.createGltfEntity(feature, pose, sceneRuntime.activitySpace)
     }
 
+    private fun loadTextureAsync(): TextureResource {
+        var texture: TextureResource? = null
+        runBlocking {
+            texture = renderingRuntime.loadTextureAsync("FakeTexture.png")
+
+            assertThat(texture).isNotNull()
+        }
+        return texture!!
+    }
+
     private fun loadTexture(): TextureResource {
         val textureFuture = renderingRuntime.loadTexture("FakeTexture.png")
         assertThat(textureFuture).isNotNull()
@@ -348,6 +358,11 @@ class SpatialRenderingRuntimeTest {
 
         assertThat(surfaceEntityHemisphere).isNotNull()
         assertThat(fakeImpressApi.getStereoSurfaceEntities()).hasSize(3)
+    }
+
+    @Test
+    fun loadTextureAsync_returnsTexture() {
+        assertThat(loadTextureAsync()).isNotNull()
     }
 
     @Test

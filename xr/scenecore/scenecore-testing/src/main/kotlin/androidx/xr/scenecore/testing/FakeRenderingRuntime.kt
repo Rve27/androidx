@@ -95,6 +95,8 @@ public class FakeRenderingRuntime(
 
     override fun destroyExrImage(exrImage: ExrImageResource) {}
 
+    override suspend fun loadTextureAsync(assetName: String): TextureResource = FakeResource()
+
     @Suppress("AsyncSuffixFuture")
     override fun loadTexture(assetName: String): ListenableFuture<TextureResource> =
         immediateFailedFuture(NotImplementedError())

@@ -261,6 +261,7 @@ package androidx.xr.scenecore.testing {
     method public suspend Object? loadGltfByAssetNameAsync(String assetName, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.runtime.GltfModelResource>);
     method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.runtime.GltfModelResource> loadGltfByByteArray(byte[] assetData, String assetKey);
     method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.runtime.TextureResource> loadTexture(String assetName);
+    method public suspend Object? loadTextureAsync(String assetName, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.runtime.TextureResource>);
     method public void setAlphaCutoffOnKhronosPbrMaterial(androidx.xr.scenecore.runtime.MaterialResource material, float alphaCutoff);
     method public void setAlphaMapOnWaterMaterial(androidx.xr.scenecore.runtime.MaterialResource material, androidx.xr.scenecore.runtime.TextureResource alphaMap, androidx.xr.scenecore.runtime.TextureSampler sampler);
     method public void setAlphaStepMultiplierOnWaterMaterial(androidx.xr.scenecore.runtime.MaterialResource material, float alphaStepMultiplier);

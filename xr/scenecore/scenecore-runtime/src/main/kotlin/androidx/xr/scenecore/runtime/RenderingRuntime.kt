@@ -134,6 +134,15 @@ public interface RenderingRuntime : JxrRuntime {
     public fun destroyExrImage(exrImage: ExrImageResource)
 
     /**
+     * Loads a texture resource for the given asset name or URL. The Coroutine returned by this
+     * method will fire listeners on the UI thread if Runnable::run is supplied.
+     *
+     * @param assetName The name of the texture file to load or the URL of the remote texture.
+     * @return A texture.
+     */
+    public suspend fun loadTextureAsync(assetName: String): TextureResource
+
+    /**
      * Loads a texture resource for the given asset name or URL. The future returned by this method
      * will fire listeners on the UI thread if Runnable::run is supplied.
      *
