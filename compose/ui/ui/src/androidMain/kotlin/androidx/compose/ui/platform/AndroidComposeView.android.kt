@@ -912,9 +912,7 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
     /** Set to `true` when [sendHoverExitEvent] has been posted. */
     private var hoverExitReceived = false
 
-    // Enables event stream tracking for indirect pointer navigation gestures.
-    private var indirectPointerNavigationGestureDetectorActiveForEventStream = false
-    // Determines scroll/swipe to next or previous focusable element for indirect pointer events.
+    // Determines scroll/swipe to next or previous focusable element for indirect touch events.
     private val indirectPointerNavigationGestureDetector =
         IndirectPointerNavigationGestureDetector(context) {
             focusOwner.moveFocus(focusDirection = it, wrapAroundForOneDimensionalFocus = false)
@@ -2387,37 +2385,19 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
     }
 
     private fun handleIndirectPointerEvent(indirectPointerEvent: IndirectPointerEvent): Boolean {
-        val motionEvent = indirectPointerEvent.nativeEvent
+        val isConsumed = focusOwner.dispatchIndirectPointerEvent(indirectPointerEvent)
 
-        val handled = focusOwner.dispatchIndirectPointerEvent(indirectPointerEvent)
+        @OptIn(ExperimentalComposeUiApi::class)
+        if (isIndirectPointerNavigationGestureDetectorEnabled) {
+            indirectPointerNavigationGestureDetector.onIndirectPointerEvent(
+                indirectPointerEvent = indirectPointerEvent,
+                isConsumed = isConsumed,
+            )
 
-        if (handled) {
-            // Turns off all navigation gestures for this event stream since an app is
-            // handling the event stream and also resets the preferred Axis.
-            indirectPointerNavigationGestureDetectorActiveForEventStream = false
-            indirectPointerNavigationGestureDetector.primaryDirectionalMotionAxis =
-                IndirectPointerEventPrimaryDirectionalMotionAxis.None
             return true
-        } else {
-            @OptIn(ExperimentalComposeUiApi::class)
-            if (isIndirectPointerNavigationGestureDetectorEnabled) { // Flag for feature
-                if (motionEvent.action == ACTION_DOWN) {
-                    // Starts tracking only with ACTION_DOWN (start of event stream).
-                    indirectPointerNavigationGestureDetectorActiveForEventStream = true
-                    indirectPointerNavigationGestureDetector.primaryDirectionalMotionAxis =
-                        indirectPointerEvent.primaryDirectionalMotionAxis
-                }
-
-                if (indirectPointerNavigationGestureDetectorActiveForEventStream) {
-                    indirectPointerNavigationGestureDetector.onTouchEvent(motionEvent)
-                }
-                // If the isIndirectPointerNavigationGestureDetectorEnabled flag is
-                // enabled, it means that we don't want to pass the event up to the
-                // platform's handler for SOURCE_TOUCH_NAVIGATION, so we return true.
-                return true
-            }
         }
-        return false
+
+        return isConsumed
     }
 
     // TODO(shepshapard): Test this method.
@@ -3811,6 +3791,10 @@ internal class IndirectPointerNavigationGestureDetector(
 ) {
     var primaryDirectionalMotionAxis = IndirectPointerEventPrimaryDirectionalMotionAxis.None
 
+    // If true, subsequent events in the current gesture stream are ignored.
+    // This is set if a move event is consumed by another component.
+    private var ignoreCurrentGestureStream = false
+
     private val gestureDetector: GestureDetector =
         GestureDetector(
             context,
@@ -3836,6 +3820,8 @@ internal class IndirectPointerNavigationGestureDetector(
                     velocityX: Float,
                     velocityY: Float,
                 ): Boolean {
+                    if (ignoreCurrentGestureStream) return true
+
                     if (
                         primaryDirectionalMotionAxis ==
                             IndirectPointerEventPrimaryDirectionalMotionAxis.X
@@ -3863,8 +3849,28 @@ internal class IndirectPointerNavigationGestureDetector(
             },
         )
 
-    fun onTouchEvent(event: MotionEvent): Boolean {
-        return gestureDetector.onTouchEvent(event)
+    fun onIndirectPointerEvent(
+        indirectPointerEvent: IndirectPointerEvent,
+        isConsumed: Boolean,
+    ): Boolean {
+        val motionEvent = indirectPointerEvent.nativeEvent
+        when (motionEvent.action) {
+            MotionEvent.ACTION_DOWN -> {
+                // Reset state at the start of a new gesture stream.
+                primaryDirectionalMotionAxis = indirectPointerEvent.primaryDirectionalMotionAxis
+                ignoreCurrentGestureStream = false
+            }
+            MotionEvent.ACTION_MOVE,
+            MotionEvent.ACTION_UP -> {
+                // If another component consumes a move or up event, we should ignore the
+                // rest of the gesture to prevent conflicting actions on the final fling.
+                if (isConsumed) {
+                    ignoreCurrentGestureStream = true
+                }
+            }
+        }
+
+        return gestureDetector.onTouchEvent(motionEvent)
     }
 }
 
