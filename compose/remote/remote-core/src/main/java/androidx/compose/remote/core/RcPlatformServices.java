@@ -22,7 +22,7 @@ import org.jspecify.annotations.Nullable;
 
 /** Services that are needed to be provided by the platform during encoding. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public interface Platform {
+public interface RcPlatformServices {
 
     /**
      * Converts a platform-specific image object into a platform-independent byte buffer
@@ -109,8 +109,8 @@ public interface Platform {
         float getHeight();
     }
 
-    Platform None =
-            new Platform() {
+    RcPlatformServices None =
+            new RcPlatformServices() {
                 @Override
                 public byte[] imageToByteArray(@NonNull Object image) {
                     throw new UnsupportedOperationException();
