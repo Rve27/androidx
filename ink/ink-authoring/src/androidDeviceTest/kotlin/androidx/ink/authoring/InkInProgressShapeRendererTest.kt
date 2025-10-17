@@ -36,8 +36,7 @@ import org.mockito.kotlin.verify
 @OptIn(ExperimentalInkCustomBrushApi::class)
 @SmallTest
 @RunWith(AndroidJUnit4::class)
-// minSdkVersion = 24 due to b/452701472
-@SdkSuppress(minSdkVersion = 24, maxSdkVersion = Build.VERSION_CODES.TIRAMISU)
+@SdkSuppress(maxSdkVersion = Build.VERSION_CODES.TIRAMISU)
 class InkInProgressShapeRendererTest {
 
     private val canvas = mock<Canvas> {}
