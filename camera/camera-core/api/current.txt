@@ -805,6 +805,7 @@ package androidx.camera.core.featuregroup {
     field public static final int FEATURE_TYPE_DYNAMIC_RANGE = 0; // 0x0
     field public static final int FEATURE_TYPE_FPS_RANGE = 1; // 0x1
     field public static final int FEATURE_TYPE_IMAGE_FORMAT = 3; // 0x3
+    field public static final int FEATURE_TYPE_RECORDING_QUALITY = 4; // 0x4
     field public static final int FEATURE_TYPE_VIDEO_STABILIZATION = 2; // 0x2
     field public static final androidx.camera.core.featuregroup.GroupableFeature FPS_60;
     field public static final androidx.camera.core.featuregroup.GroupableFeature HDR_HLG10;
@@ -816,6 +817,7 @@ package androidx.camera.core.featuregroup {
     property public static int FEATURE_TYPE_DYNAMIC_RANGE;
     property public static int FEATURE_TYPE_FPS_RANGE;
     property public static int FEATURE_TYPE_IMAGE_FORMAT;
+    property public static int FEATURE_TYPE_RECORDING_QUALITY;
     property public static int FEATURE_TYPE_VIDEO_STABILIZATION;
     property public androidx.camera.core.featuregroup.GroupableFeature FPS_60;
     property public androidx.camera.core.featuregroup.GroupableFeature HDR_HLG10;
