@@ -115,7 +115,7 @@ class SpatialRenderingRuntimeTest {
         }
     }
 
-    private fun createGltfEntityTemp(pose: Pose = Pose()): GltfEntity {
+    private fun createGltfEntityAsync(pose: Pose = Pose()): GltfEntity {
         var feature: GltfFeatureImpl? = null
 
         runBlocking {
@@ -169,6 +169,21 @@ class SpatialRenderingRuntimeTest {
         // Texture. This is a hidden detail from the API surface's perspective.
         fakeExecutor.runAll()
         return materialFuture.get()
+    }
+
+    @Test
+    fun loadExrImageByAssetNameAsync_returnsModel() {
+        runBlocking {
+            val image = renderingRuntime.loadExrImageByAssetNameAsync("FakeAsset.zip")
+            val imageImpl = image as ExrImage
+
+            assertThat(image).isNotNull()
+            assertThat(imageImpl).isNotNull()
+
+            val token = imageImpl.nativeHandle
+
+            assertThat(token).isEqualTo(1)
+        }
     }
 
     @Test
@@ -226,8 +241,8 @@ class SpatialRenderingRuntimeTest {
     }
 
     @Test
-    fun createGltfEntityTemp_returnsEntity() {
-        assertThat(createGltfEntityTemp()).isNotNull()
+    fun createGltfEntityAsync_returnsEntity() {
+        assertThat(createGltfEntityAsync()).isNotNull()
     }
 
     @Test

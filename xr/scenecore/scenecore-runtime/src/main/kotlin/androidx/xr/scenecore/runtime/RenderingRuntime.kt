@@ -85,6 +85,14 @@ public interface RenderingRuntime : JxrRuntime {
      * Loads an ExrImage for the given asset name from the assets folder.
      *
      * @param assetName The name of the asset to load from the assets folder.
+     * @return An ExrImage. Will be null if the asset was not found.
+     */
+    public suspend fun loadExrImageByAssetNameAsync(assetName: String): ExrImageResource
+
+    /**
+     * Loads an ExrImage for the given asset name from the assets folder.
+     *
+     * @param assetName The name of the asset to load from the assets folder.
      * @return A future that resolves to the ExrImage when it is loaded. The future will be null if
      *   the asset was not found.
      */

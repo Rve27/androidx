@@ -75,6 +75,9 @@ public class FakeRenderingRuntime(
 
     override fun destroyGltfModel(gltfModel: GltfModelResource) {}
 
+    override suspend fun loadExrImageByAssetNameAsync(assetName: String): ExrImageResource =
+        FakeExrImageResource(0)
+
     @Suppress("AsyncSuffixFuture")
     override fun loadExrImageByAssetName(assetName: String): ListenableFuture<ExrImageResource> =
         immediateFuture(FakeExrImageResource(0))

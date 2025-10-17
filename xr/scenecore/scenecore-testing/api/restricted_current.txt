@@ -254,6 +254,7 @@ package androidx.xr.scenecore.testing {
     method public androidx.xr.scenecore.runtime.TextureResource? getReflectionTextureFromIbl(androidx.xr.scenecore.runtime.ExrImageResource iblToken);
     method @InaccessibleFromKotlin public Enum<androidx.xr.scenecore.testing.FakeRenderingRuntime.State> getState();
     method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.runtime.ExrImageResource> loadExrImageByAssetName(String assetName);
+    method public suspend Object? loadExrImageByAssetNameAsync(String assetName, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.runtime.ExrImageResource>);
     method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.runtime.ExrImageResource> loadExrImageByByteArray(byte[] assetData, String assetKey);
     method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.runtime.GltfModelResource> loadGltfByAssetName(String assetName);
     method public suspend Object? loadGltfByAssetNameAsync(String assetName, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.runtime.GltfModelResource>);

@@ -136,6 +136,16 @@ private constructor(
         return gltfModelResourceFuture
     }
 
+    private suspend fun loadExrImageAsync(
+        assetLoader: () -> ListenableFuture<ExrImage>
+    ): ExrImageResource {
+        check(Looper.getMainLooper().isCurrentThread) {
+            "This method must be called on the main thread."
+        }
+        val exrImageToken: ExrImage = assetLoader().awaitSuspending()
+        return exrImageToken
+    }
+
     @SuppressWarnings("FutureReturnValueIgnored")
     private fun loadExrImage(
         assetLoader: Supplier<ListenableFuture<ExrImage>>
@@ -200,6 +210,11 @@ private constructor(
     override fun destroyGltfModel(gltfModel: GltfModelResource) {
         val gltfModelResource: GltfModel = gltfModel as GltfModel
         impressApi.releaseGltfAsset(gltfModelResource.nativeHandle)
+    }
+
+    @SuppressWarnings("RestrictTo")
+    override suspend fun loadExrImageByAssetNameAsync(assetName: String): ExrImageResource {
+        return loadExrImageAsync { impressApi.loadImageBasedLightingAsset(assetName) }
     }
 
     // ResolvableFuture is marked as RestrictTo(LIBRARY_GROUP_PREFIX), which is intended for classes
