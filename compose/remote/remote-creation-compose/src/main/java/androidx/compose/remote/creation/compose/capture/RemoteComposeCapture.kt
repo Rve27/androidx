@@ -271,7 +271,7 @@ public fun RemoteComposeExecution(
     val platform = LocalRcPlatformServices.current
 
     val remoteComposeCreationState = remember {
-        RemoteComposeCreationState(platform, density.density, size, apiLevel, profiles)
+        RemoteComposeCreationState(platform, size, apiLevel, profiles)
     }
     CompositionLocalProvider(LocalRemoteComposeCreationState provides remoteComposeCreationState) {
         FallbackCreationState.state = remoteComposeCreationState
@@ -289,9 +289,7 @@ public fun RemoteComposeExecution(
 ) {
     val density = LocalDensity.current
 
-    val remoteComposeCreationState = remember {
-        RemoteComposeCreationState(density.density, size, profile)
-    }
+    val remoteComposeCreationState = remember { RemoteComposeCreationState(size, profile) }
     CompositionLocalProvider(LocalRemoteComposeCreationState provides remoteComposeCreationState) {
         FallbackCreationState.state = remoteComposeCreationState
         captureComposeView.setRemoteComposeState(remoteComposeCreationState)
