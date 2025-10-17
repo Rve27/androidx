@@ -67,7 +67,6 @@ class RecordingCanvasTest {
     private val creationState =
         RemoteComposeCreationState(
             AndroidxRcPlatformServices(),
-            1f,
             Size(WIDTH.toFloat(), HEIGHT.toFloat()),
             CoreDocument.DOCUMENT_API_LEVEL,
             RcProfiles.PROFILE_ANDROIDX,

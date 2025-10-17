@@ -41,7 +41,6 @@ class RemoteBitmapFontTest {
     val creationState =
         RemoteComposeCreationState(
             AndroidxRcPlatformServices(),
-            density = 1f,
             Size(1f, 1f),
             CoreDocument.DOCUMENT_API_LEVEL,
             PROFILE_ANDROIDX,
