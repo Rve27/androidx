@@ -55,10 +55,10 @@ class PointerCaptureComponentTest {
     private val mockRtComponent = mock<RtPointerCaptureComponent>()
 
     private val stateListener =
-        object : Consumer<Int> {
-            var lastState: Int = -1
+        object : Consumer<PointerCaptureComponent.PointerCaptureState> {
+            var lastState: PointerCaptureComponent.PointerCaptureState? = null
 
-            override fun accept(newState: Int) {
+            override fun accept(newState: PointerCaptureComponent.PointerCaptureState) {
                 lastState = newState
             }
         }
@@ -135,19 +135,19 @@ class PointerCaptureComponentTest {
             RtPointerCaptureComponent.PointerCaptureState.POINTER_CAPTURE_STATE_ACTIVE
         )
         assertThat(stateListener.lastState)
-            .isEqualTo(PointerCaptureComponent.PointerCaptureState.POINTER_CAPTURE_ACTIVE)
+            .isEqualTo(PointerCaptureComponent.PointerCaptureState.ACTIVE)
 
         stateListenerCaptured.onStateChanged(
             RtPointerCaptureComponent.PointerCaptureState.POINTER_CAPTURE_STATE_PAUSED
         )
         assertThat(stateListener.lastState)
-            .isEqualTo(PointerCaptureComponent.PointerCaptureState.POINTER_CAPTURE_PAUSED)
+            .isEqualTo(PointerCaptureComponent.PointerCaptureState.PAUSED)
 
         stateListenerCaptured.onStateChanged(
             RtPointerCaptureComponent.PointerCaptureState.POINTER_CAPTURE_STATE_STOPPED
         )
         assertThat(stateListener.lastState)
-            .isEqualTo(PointerCaptureComponent.PointerCaptureState.POINTER_CAPTURE_STOPPED)
+            .isEqualTo(PointerCaptureComponent.PointerCaptureState.STOPPED)
     }
 
     @Test

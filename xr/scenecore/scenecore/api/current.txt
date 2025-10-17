@@ -586,24 +586,27 @@ package androidx.xr.scenecore {
   }
 
   public final class PointerCaptureComponent implements androidx.xr.scenecore.Component {
-    method public static androidx.xr.scenecore.PointerCaptureComponent create(androidx.xr.runtime.Session session, java.util.concurrent.Executor executor, java.util.function.Consumer<java.lang.Integer> stateListener, java.util.function.Consumer<androidx.xr.scenecore.InputEvent> inputListener);
+    method public static androidx.xr.scenecore.PointerCaptureComponent create(androidx.xr.runtime.Session session, java.util.concurrent.Executor executor, java.util.function.Consumer<androidx.xr.scenecore.PointerCaptureComponent.PointerCaptureState> stateListener, java.util.function.Consumer<androidx.xr.scenecore.InputEvent> inputListener);
     method public boolean onAttach(androidx.xr.scenecore.Entity entity);
     method public void onDetach(androidx.xr.scenecore.Entity entity);
     field public static final androidx.xr.scenecore.PointerCaptureComponent.Companion Companion;
   }
 
   public static final class PointerCaptureComponent.Companion {
-    method public androidx.xr.scenecore.PointerCaptureComponent create(androidx.xr.runtime.Session session, java.util.concurrent.Executor executor, java.util.function.Consumer<java.lang.Integer> stateListener, java.util.function.Consumer<androidx.xr.scenecore.InputEvent> inputListener);
+    method public androidx.xr.scenecore.PointerCaptureComponent create(androidx.xr.runtime.Session session, java.util.concurrent.Executor executor, java.util.function.Consumer<androidx.xr.scenecore.PointerCaptureComponent.PointerCaptureState> stateListener, java.util.function.Consumer<androidx.xr.scenecore.InputEvent> inputListener);
   }
 
   public static final class PointerCaptureComponent.PointerCaptureState {
-    property public static int POINTER_CAPTURE_ACTIVE;
-    property public static int POINTER_CAPTURE_PAUSED;
-    property public static int POINTER_CAPTURE_STOPPED;
-    field public static final androidx.xr.scenecore.PointerCaptureComponent.PointerCaptureState INSTANCE;
-    field public static final int POINTER_CAPTURE_ACTIVE = 1; // 0x1
-    field public static final int POINTER_CAPTURE_PAUSED = 0; // 0x0
-    field public static final int POINTER_CAPTURE_STOPPED = 2; // 0x2
+    field public static final androidx.xr.scenecore.PointerCaptureComponent.PointerCaptureState ACTIVE;
+    field public static final androidx.xr.scenecore.PointerCaptureComponent.PointerCaptureState.Companion Companion;
+    field public static final androidx.xr.scenecore.PointerCaptureComponent.PointerCaptureState PAUSED;
+    field public static final androidx.xr.scenecore.PointerCaptureComponent.PointerCaptureState STOPPED;
+  }
+
+  public static final class PointerCaptureComponent.PointerCaptureState.Companion {
+    property public androidx.xr.scenecore.PointerCaptureComponent.PointerCaptureState ACTIVE;
+    property public androidx.xr.scenecore.PointerCaptureComponent.PointerCaptureState PAUSED;
+    property public androidx.xr.scenecore.PointerCaptureComponent.PointerCaptureState STOPPED;
   }
 
   public final class ResizableComponent implements androidx.xr.scenecore.Component {
