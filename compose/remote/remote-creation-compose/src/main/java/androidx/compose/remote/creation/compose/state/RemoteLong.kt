@@ -18,7 +18,7 @@
 package androidx.compose.remote.creation.compose.state
 
 import androidx.annotation.RestrictTo
-import androidx.compose.remote.core.Platform
+import androidx.compose.remote.core.RcPlatformServices
 import androidx.compose.remote.core.operations.Utils
 import androidx.compose.remote.creation.compose.capture.RemoteComposeCreationState
 import androidx.compose.remote.player.core.state.RemoteDomains
@@ -111,7 +111,7 @@ public class MutableRemoteLong(
     public override val id: Int
         get() {
             FallbackCreationState.state.platform.log(
-                Platform.LogCategory.TODO,
+                RcPlatformServices.LogCategory.TODO,
                 "Use RemoteLong.getIdForCreationState directly",
             )
             return getIdForCreationState(FallbackCreationState.state)
