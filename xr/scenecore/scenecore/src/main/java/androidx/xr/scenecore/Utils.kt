@@ -426,14 +426,23 @@ internal fun Int.toSpatialPointerIcon(): SpatialPointerIcon {
     }
 }
 
+@RtKhronosPbrMaterialSpec.BlendMode
+private fun alphaModeToRtBlendMode(alphaMode: AlphaMode): Int =
+    when (alphaMode) {
+        AlphaMode.BLEND -> RtKhronosPbrMaterialSpec.BlendMode.TRANSPARENT
+        AlphaMode.MASK -> RtKhronosPbrMaterialSpec.BlendMode.MASKED
+        AlphaMode.OPAQUE -> RtKhronosPbrMaterialSpec.BlendMode.OPAQUE
+        else -> RtKhronosPbrMaterialSpec.BlendMode.OPAQUE
+    }
+
 /**
  * Extension function that converts a [AlphaMode] to
  * [androidx.xr.scenecore.runtime.KhronosPbrMaterialSpec].
  */
-internal fun Int.toRtKhronosUnlitMaterialSpec(): RtKhronosPbrMaterialSpec {
+internal fun AlphaMode.toRtKhronosUnlitMaterialSpec(): RtKhronosPbrMaterialSpec {
     return RtKhronosPbrMaterialSpec(
         lightingModel = RtKhronosPbrMaterialSpec.UNLIT,
-        blendMode = this,
+        blendMode = alphaModeToRtBlendMode(this),
         doubleSidedMode = RtKhronosPbrMaterialSpec.SINGLE_SIDED,
     )
 }
@@ -442,10 +451,10 @@ internal fun Int.toRtKhronosUnlitMaterialSpec(): RtKhronosPbrMaterialSpec {
  * Extension function that converts a [AlphaMode] to
  * [androidx.xr.scenecore.runtime.KhronosPbrMaterialSpec].
  */
-internal fun Int.toRtKhronosPbrMaterialSpec(): RtKhronosPbrMaterialSpec {
+internal fun AlphaMode.toRtKhronosPbrMaterialSpec(): RtKhronosPbrMaterialSpec {
     return RtKhronosPbrMaterialSpec(
         lightingModel = RtKhronosPbrMaterialSpec.LIT,
-        blendMode = this,
+        blendMode = alphaModeToRtBlendMode(this),
         doubleSidedMode = RtKhronosPbrMaterialSpec.SINGLE_SIDED,
     )
 }
