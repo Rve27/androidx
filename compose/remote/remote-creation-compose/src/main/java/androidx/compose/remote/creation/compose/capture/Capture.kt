@@ -22,13 +22,11 @@ import androidx.compose.remote.core.CoreDocument
 import androidx.compose.remote.core.RcPlatformServices
 import androidx.compose.remote.creation.RemoteComposeWriter
 import androidx.compose.remote.creation.RemoteComposeWriterAndroid
-import androidx.compose.remote.creation.compose.layout.RemoteComposable
 import androidx.compose.remote.creation.compose.state.AnimatedRemoteFloat
 import androidx.compose.remote.creation.compose.state.BaseRemoteState
 import androidx.compose.remote.creation.compose.state.RemoteFloat
 import androidx.compose.remote.creation.compose.state.RemoteInt
 import androidx.compose.remote.creation.profile.Profile
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.compositionLocalOf
@@ -122,18 +120,3 @@ public class NoRemoteCompose :
 
 public val LocalRemoteComposeCreationState: ProvidableCompositionLocal<RemoteComposeCreationState> =
     compositionLocalOf<RemoteComposeCreationState> { NoRemoteCompose() }
-
-@RemoteComposable
-@Composable
-public inline fun <reified T : BaseRemoteState> rememberNamedState(
-    name: String,
-    domain: String,
-    noinline function: () -> T,
-): T {
-    return LocalRemoteComposeCreationState.current.getOrCreateNamedState(
-        T::class.java,
-        name,
-        domain,
-        function,
-    )
-}
