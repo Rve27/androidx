@@ -37,8 +37,8 @@ public object ForgetfulRetainedValuesStore : RetainedValuesStore() {
         // Do nothing. This implementation never retains exited values.
     }
 
-    override fun getExitedValueOrDefault(key: Any, defaultIfAbsent: Any?): Any? {
-        return defaultIfAbsent
+    override fun getExitedValueOrElse(key: Any, defaultValue: Any?): Any? {
+        return defaultValue
     }
 
     override fun saveExitingValue(key: Any, value: Any?) {

@@ -128,8 +128,8 @@ public class ControlledRetainedValuesStore : RetainedValuesStore() {
     }
 
     @Suppress("UNCHECKED_CAST")
-    override fun getExitedValueOrDefault(key: Any, defaultIfAbsent: Any?): Any? {
-        return keptExitedValues.removeLast(key, defaultIfAbsent)
+    override fun getExitedValueOrElse(key: Any, defaultValue: Any?): Any? {
+        return keptExitedValues.removeLast(key, defaultValue)
     }
 
     override fun saveExitingValue(key: Any, value: Any?) {

@@ -219,7 +219,7 @@ private fun <T> retainImpl(key: RetainKeys, calculation: () -> T): T {
     val holder =
         remember(key) {
             val retainedValue =
-                retainedValuesStore.getExitedValueOrDefault(key, RetainedValuesStoreMissingValue)
+                retainedValuesStore.getExitedValueOrElse(key, RetainedValuesStoreMissingValue)
             if (retainedValue !== RetainedValuesStoreMissingValue) {
                 RetainedValueHolder(
                     key = key,

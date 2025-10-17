@@ -74,21 +74,21 @@ public abstract class RetainedValuesStore : RetainStateProvider {
      * objects that this store is tracking.
      *
      * @param key The keys to resolve a retained value that has left composition
-     * @param defaultIfAbsent A value to be returned if there are no retained values that have
-     *   exited composition and are being held by this RetainedValuesStore for the given [key].
+     * @param defaultValue A value to be returned if there are no retained values that have exited
+     *   composition and are being held by this RetainedValuesStore for the given [key].
      * @return A retained value for [key] if there is one and it hasn't already re-entered
-     *   composition, otherwise [defaultIfAbsent].
+     *   composition, otherwise [defaultValue].
      */
-    public abstract fun getExitedValueOrDefault(key: Any, defaultIfAbsent: Any?): Any?
+    public abstract fun getExitedValueOrElse(key: Any, defaultValue: Any?): Any?
 
     /**
      * Invoked when a retained value is exiting composition while this store is retaining exited
      * values. It is up to the implementation of this method to decide whether and how to store
-     * these values so that they can later be retrieved by [getExitedValueOrDefault].
+     * these values so that they can later be retrieved by [getExitedValueOrElse].
      *
      * The given [key] are not guaranteed to be unique. To handle duplicate keys, implementors
-     * should return retained values with the same keys from [getExitedValueOrDefault] in the
-     * opposite order they are received by [saveExitingValue].
+     * should return retained values with the same keys from [getExitedValueOrElse] in the opposite
+     * order they are received by [saveExitingValue].
      *
      * If the implementation of this store does not accept this value into its kept exited object
      * list, it MUST call [RetainObserver.onRetired] if [value] implements [RetainObserver].
@@ -139,7 +139,7 @@ public abstract class RetainedValuesStore : RetainStateProvider {
     /**
      * Called when this store stops retaining exited values (i.e. when [isRetainingExitedValues]
      * transitions from true to false). After this is called, all exited values that have been kept
-     * and not restored via [getExitedValueOrDefault] should be retired.
+     * and not restored via [getExitedValueOrElse] should be retired.
      *
      * Implementors MUST invoke [RetainObserver.onRetired] for all exited and unrestored
      * [RememberObservers][RememberObserver] when this method is invoked.
