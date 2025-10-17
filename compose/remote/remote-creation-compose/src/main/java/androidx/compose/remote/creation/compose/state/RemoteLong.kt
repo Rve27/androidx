@@ -25,7 +25,6 @@ import androidx.compose.remote.player.core.state.RemoteDomains
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableLongState
 import androidx.compose.runtime.mutableLongStateOf
-import androidx.compose.runtime.remember
 
 /**
  * Abstract base class for all remote long representations. This class extends [RemoteState<Long>].
@@ -151,7 +150,7 @@ public fun rememberRemoteLongValue(
     domain: RemoteDomains = RemoteDomains.USER,
     value: () -> Long,
 ): MutableRemoteLong {
-    return remember(name) {
+    return rememberNamedState(name, domain) {
         val initial = value()
         MutableRemoteLong(mutableLongStateOf(initial), constantValue = null) { creationState ->
             val id = creationState.document.addNamedLong(name, initial)
