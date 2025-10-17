@@ -256,6 +256,7 @@ package androidx.xr.scenecore.testing {
     method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.runtime.ExrImageResource> loadExrImageByAssetName(String assetName);
     method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.runtime.ExrImageResource> loadExrImageByByteArray(byte[] assetData, String assetKey);
     method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.runtime.GltfModelResource> loadGltfByAssetName(String assetName);
+    method public suspend Object? loadGltfByAssetNameAsync(String assetName, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.runtime.GltfModelResource>);
     method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.runtime.GltfModelResource> loadGltfByByteArray(byte[] assetData, String assetKey);
     method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.runtime.TextureResource> loadTexture(String assetName);
     method public void setAlphaCutoffOnKhronosPbrMaterial(androidx.xr.scenecore.runtime.MaterialResource material, float alphaCutoff);

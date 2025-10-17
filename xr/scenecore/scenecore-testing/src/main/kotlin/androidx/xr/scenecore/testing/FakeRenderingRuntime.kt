@@ -60,6 +60,9 @@ public class FakeRenderingRuntime(
         )
     }
 
+    override suspend fun loadGltfByAssetNameAsync(assetName: String): GltfModelResource =
+        FakeGltfModelResource(0)
+
     @Suppress("AsyncSuffixFuture")
     override fun loadGltfByAssetName(assetName: String): ListenableFuture<GltfModelResource> =
         immediateFuture(FakeGltfModelResource(0))

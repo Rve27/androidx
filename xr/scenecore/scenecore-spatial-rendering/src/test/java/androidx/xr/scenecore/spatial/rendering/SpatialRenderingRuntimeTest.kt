@@ -39,6 +39,7 @@ import com.android.extensions.xr.ShadowXrExtensions
 import com.google.androidxr.splitengine.SplitEngineSubspaceManager
 import com.google.ar.imp.view.splitengine.ImpSplitEngineRenderer
 import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -54,7 +55,7 @@ import org.robolectric.annotation.Config
 
 /** Tests for [SpatialRenderingRuntime]. */
 @RunWith(RobolectricTestRunner::class)
-@Config(sdk = [33])
+@Config(sdk = [34])
 // TODO: b/441552980 - add unit tests for gltf animations
 class SpatialRenderingRuntimeTest {
 
@@ -112,6 +113,26 @@ class SpatialRenderingRuntimeTest {
             // Tests which already call dispose will cause a NPE here due to Activity being null
             // when detaching from the scene.
         }
+    }
+
+    private fun createGltfEntityTemp(pose: Pose = Pose()): GltfEntity {
+        var feature: GltfFeatureImpl? = null
+
+        runBlocking {
+            val gltfModel = renderingRuntime.loadGltfByAssetNameAsync("FakeAsset.glb")
+
+            assertThat(gltfModel).isNotNull()
+
+            feature =
+                GltfFeatureImpl(
+                    gltfModel as GltfModel,
+                    fakeImpressApi,
+                    splitEngineSubspaceManager,
+                    xrExtensions,
+                )
+        }
+
+        return renderingEntityFactory.createGltfEntity(feature!!, pose, sceneRuntime.activitySpace)
     }
 
     private fun createGltfEntity(pose: Pose = Pose()): GltfEntity {
@@ -202,6 +223,11 @@ class SpatialRenderingRuntimeTest {
         assertThat(modelImpl).isNotNull()
         val token = modelImpl.nativeHandle
         assertThat(token).isEqualTo(1)
+    }
+
+    @Test
+    fun createGltfEntityTemp_returnsEntity() {
+        assertThat(createGltfEntityTemp()).isNotNull()
     }
 
     @Test
