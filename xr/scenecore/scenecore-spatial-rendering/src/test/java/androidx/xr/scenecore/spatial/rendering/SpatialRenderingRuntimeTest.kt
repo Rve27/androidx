@@ -172,6 +172,16 @@ class SpatialRenderingRuntimeTest {
         return textureFuture.get()
     }
 
+    private fun createWaterMaterialAsync(): MaterialResource {
+        var material: MaterialResource? = null
+        runBlocking {
+            material = renderingRuntime.createWaterMaterialAsync(/* isAlphaMapVersion= */ false)
+
+            assertThat(material).isNotNull()
+        }
+        return material!!
+    }
+
     private fun createWaterMaterial(): MaterialResource {
         val materialFuture = renderingRuntime.createWaterMaterial(/* isAlphaMapVersion= */ false)
         assertThat(materialFuture).isNotNull()
@@ -379,6 +389,11 @@ class SpatialRenderingRuntimeTest {
 
         val finalTextureCount = fakeImpressApi.getTextureImages().size
         assertThat(finalTextureCount).isEqualTo(initialTextureCount - 1)
+    }
+
+    @Test
+    fun createWaterMaterialAsync_returnsWaterMaterial() {
+        assertThat(createWaterMaterialAsync()).isNotNull()
     }
 
     @Test

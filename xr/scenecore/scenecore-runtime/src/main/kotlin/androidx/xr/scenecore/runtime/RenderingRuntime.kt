@@ -172,6 +172,16 @@ public interface RenderingRuntime : JxrRuntime {
     public fun getReflectionTextureFromIbl(iblToken: ExrImageResource): TextureResource?
 
     /**
+     * Creates a water material by querying it from the system's built-in materials. The Coroutine
+     * returned by this method will fire listeners on the UI thread if Runnable::run is supplied.
+     *
+     * @param isAlphaMapVersion True if the water material should be the alpha map version.
+     * @return A WaterMaterial backed by an imp::WaterMaterial. The WaterMaterial can be destroyed
+     *   by passing it to destroyNativeObject.
+     */
+    public suspend fun createWaterMaterialAsync(isAlphaMapVersion: Boolean): MaterialResource
+
+    /**
      * Creates a water material by querying it from the system's built-in materials. The future
      * returned by this method will fire listeners on the UI thread if Runnable::run is supplied.
      *

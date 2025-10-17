@@ -329,6 +329,24 @@ private constructor(
         return texture
     }
 
+    @SuppressWarnings("RestrictTo")
+    override suspend fun createWaterMaterialAsync(isAlphaMapVersion: Boolean): MaterialResource {
+        // TODO:b/374216912 - Consider calling setFuture() here to catch if the application calls
+        // cancel() on the return value from this function, so we can propagate the cancelation
+        // message to the Impress API.
+        check(Looper.getMainLooper().isCurrentThread) {
+            "This method must be called on the main thread."
+        }
+        // It's convenient for the main application for us to dispatch their listeners on
+        // the main thread, because they are required to call back to Impress from there,
+        // and it's likely that they will want to call back into the SDK to create entities
+        // from within a listener. We defensively post to the main thread here, but in
+        // practice this should not cause a thread hop because the Impress API already
+        // dispatches its callbacks to the main thread.
+        val materialResource = impressApi.createWaterMaterialTemp(isAlphaMapVersion)
+        return materialResource
+    }
+
     // ResolvableFuture is marked as RestrictTo(LIBRARY_GROUP_PREFIX), which is intended for classes
     // within AndroidX. We're in the process of migrating to AndroidX. Without suppressing this
     // warning, however, we get a build error - go/bugpattern/RestrictTo.

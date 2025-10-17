@@ -227,6 +227,12 @@ public class FakeRenderingRuntime(
     public val createdKhronosPbrMaterials: MutableList<FakeKhronosPbrMaterial> =
         mutableListOf<FakeKhronosPbrMaterial>()
 
+    override suspend fun createWaterMaterialAsync(isAlphaMapVersion: Boolean): MaterialResource {
+        val newMaterial = FakeWaterMaterial(isAlphaMapVersion)
+        createdWaterMaterials.add(newMaterial)
+        return newMaterial
+    }
+
     @Suppress("AsyncSuffixFuture")
     override fun createWaterMaterial(
         isAlphaMapVersion: Boolean
