@@ -101,7 +101,7 @@ class CompilationResultSubject(private val result: TestCompilationResult) {
                             message.kind == Diagnostic.Kind.WARNING &&
                                 message.msg.contains(
                                     "This API is experimental. It may be changed in the future without notice."
-                                )
+                                ) || message.msg.contains("This library is no longer supported.")
                         }
                         .isEmpty()
             )
