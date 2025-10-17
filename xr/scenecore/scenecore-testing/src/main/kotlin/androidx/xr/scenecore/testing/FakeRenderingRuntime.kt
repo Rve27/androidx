@@ -82,6 +82,11 @@ public class FakeRenderingRuntime(
     override fun loadExrImageByAssetName(assetName: String): ListenableFuture<ExrImageResource> =
         immediateFuture(FakeExrImageResource(0))
 
+    override suspend fun loadExrImageByByteArrayAsync(
+        assetData: ByteArray,
+        assetKey: String,
+    ): ExrImageResource = FakeExrImageResource(1)
+
     @Suppress("AsyncSuffixFuture")
     override fun loadExrImageByByteArray(
         assetData: ByteArray,

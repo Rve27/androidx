@@ -104,6 +104,18 @@ public interface RenderingRuntime : JxrRuntime {
      *
      * @param assetData An ExrImage in the form of a byte array.
      * @param assetKey The name of the asset to load from the cache.
+     * @return An ExrImage. Will be null if the asset was not found.
+     */
+    public suspend fun loadExrImageByByteArrayAsync(
+        assetData: ByteArray,
+        assetKey: String,
+    ): ExrImageResource
+
+    /**
+     * Loads an ExrImage from a provided byte array.
+     *
+     * @param assetData An ExrImage in the form of a byte array.
+     * @param assetKey The name of the asset to load from the cache.
      * @return A future that resolves to the ExrImage when it is loaded. The future will be null if
      *   the asset was not found.
      */

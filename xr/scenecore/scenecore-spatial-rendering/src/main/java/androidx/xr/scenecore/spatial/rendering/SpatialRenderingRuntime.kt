@@ -226,6 +226,14 @@ private constructor(
         return loadExrImage { impressApi.loadImageBasedLightingAsset(assetName) }!!
     }
 
+    @SuppressWarnings("RestrictTo")
+    override suspend fun loadExrImageByByteArrayAsync(
+        assetData: ByteArray,
+        assetKey: String,
+    ): ExrImageResource {
+        return loadExrImageAsync { impressApi.loadImageBasedLightingAsset(assetData, assetKey) }
+    }
+
     @SuppressWarnings("FutureReturnValueIgnored", "RestrictTo", "AsyncSuffixFuture")
     override fun loadExrImageByByteArray(
         assetData: ByteArray,

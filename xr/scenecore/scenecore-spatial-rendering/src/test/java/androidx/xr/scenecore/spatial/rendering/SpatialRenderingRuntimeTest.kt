@@ -200,6 +200,22 @@ class SpatialRenderingRuntimeTest {
     }
 
     @Test
+    fun loadExrImageByByteArrayAsync_returnsModel() {
+        runBlocking {
+            val image =
+                renderingRuntime.loadExrImageByByteArrayAsync(byteArrayOf(1, 2, 3), "FakeAsset.zip")
+            val imageImpl = image as ExrImage
+
+            assertThat(image).isNotNull()
+            assertThat(imageImpl).isNotNull()
+
+            val token = imageImpl.nativeHandle
+
+            assertThat(token).isEqualTo(1)
+        }
+    }
+
+    @Test
     fun loadExrImageByByteArray_returnsModel() {
         val imageFuture =
             renderingRuntime.loadExrImageByByteArray(byteArrayOf(1, 2, 3), "FakeAsset.zip")
