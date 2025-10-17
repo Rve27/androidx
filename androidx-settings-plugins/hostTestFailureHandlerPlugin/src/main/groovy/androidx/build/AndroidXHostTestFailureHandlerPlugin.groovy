@@ -36,6 +36,9 @@ abstract class HostTestFailureFlowParameters implements FlowParameters {
 
     @Input
     abstract Property<File> getOnlyTestTaskFailedSignalFileProperty()
+
+    @Input
+    abstract Property<File> getHostTestReportsDirectory()
 }
 
 /**
@@ -65,25 +68,32 @@ class RecordTestFailureFlowAction implements FlowAction<HostTestFailureFlowParam
             cause instanceof TaskExecutionException && cause.task instanceof AbstractTestTask
         }
 
-        if (onlyTestTasksFailed) {
-            List<String> failureMessages = individualFailures.collect { currentFailureException ->
-                def taskExecutionException = (TaskExecutionException) currentFailureException.cause
-                "Task path: ${taskExecutionException.task.path}, " +
-                        "Exception: ${currentFailureException.message}"
-            }
+        if (!onlyTestTasksFailed) return
 
-            File signalFile = parameters.onlyTestTaskFailedSignalFileProperty.get()
-            if (signalFile.exists()) {
-                signalFile.delete()
+        File reportsDir = parameters.hostTestReportsDirectory.get()
+
+        List<String> failureMessages = individualFailures.collect { currentFailureException ->
+            TaskExecutionException taskExecutionException =  (TaskExecutionException) currentFailureException.cause
+            String taskPath = taskExecutionException.task.path
+            File zippedReport = new File(reportsDir, "${taskPath}.zip")
+            if (!zippedReport.exists()) {
+                throw new IllegalStateException("Host test report ${zippedReport} not generated. " +
+                        "This is likely due to your test hanging/crashing/failing to complete.")
             }
-            try {
-                signalFile.parentFile?.mkdirs()
-                String messageToLog = "Only test tasks failed. Build continued due to --continue.\n" +
-                        failureMessages.join("\n")
-                signalFile.write(messageToLog)
-            } catch (IOException e) {
-                e.printStackTrace(System.err)
-            }
+            return "Task path: ${taskPath}, Exception: ${currentFailureException.message}"
+        }
+
+        File signalFile = parameters.onlyTestTaskFailedSignalFileProperty.get()
+        if (signalFile.exists()) {
+            signalFile.delete()
+        }
+        try {
+            signalFile.parentFile?.mkdirs()
+            String messageToLog = "Only test tasks failed. Build continued due to --continue.\n" +
+                    failureMessages.join("\n")
+            signalFile.write(messageToLog)
+        } catch (IOException e) {
+            e.printStackTrace(System.err)
         }
     }
 }
@@ -101,17 +111,21 @@ abstract class AndroidXHostTestFailureHandlerPlugin implements Plugin<Settings> 
 
     @Override
     void apply(Settings settings) {
-        def outDirProvider = settings.providers.environmentVariable("OUT_DIR")
+        def distDirProvider = settings.providers.environmentVariable("DIST_DIR").map { new File(it) }
+                .orElse(settings.providers.environmentVariable("OUT_DIR").map { new File(it, "dist") })
 
-        def signalFileProvider = outDirProvider.map { out ->
-            new File(new File(out, "androidx-settings-plugins"), "only_test_task_failed_signal.txt")
+        def signalFileProvider = distDirProvider.map {
+            new File(new File(it, "androidx-settings-plugins"), "only_test_task_failed_signal.txt")
         }
+
+        def reportsDirProvider = distDirProvider.map { new File(it, "host-test-reports")}
 
         getFlowScope().always(RecordTestFailureFlowAction.class) { spec ->
             spec.parameters.failure.set(getFlowProviders().buildWorkResult.map {
                 it.failure.orElse(null)
             })
             spec.parameters.onlyTestTaskFailedSignalFileProperty.set(signalFileProvider)
+            spec.parameters.hostTestReportsDirectory.set(reportsDirProvider)
         }
     }
 }
