@@ -165,7 +165,7 @@ class SpatialEnvironmentTest {
         val preference =
             SpatialEnvironment.SpatialEnvironmentPreference(
                 ExrImage(rtImageMock),
-                GltfModel(rtModelMock),
+                GltfModel(null, rtModelMock),
                 object : Material {
                     override val material = rtMaterialMock
 
@@ -206,7 +206,7 @@ class SpatialEnvironmentTest {
         val preferenceDiffGeometry =
             SpatialEnvironment.SpatialEnvironmentPreference(
                 ExrImage(rtImageMock),
-                GltfModel(rtModelMock2),
+                GltfModel(null, rtModelMock2),
                 object : Material {
                     override val material = rtMaterialMock2
 
@@ -225,7 +225,7 @@ class SpatialEnvironmentTest {
         val preferenceDiffSkybox =
             SpatialEnvironment.SpatialEnvironmentPreference(
                 ExrImage(rtImageMock2),
-                GltfModel(rtModelMock),
+                GltfModel(null, rtModelMock),
                 object : Material {
                     override val material = rtMaterialMock
 
@@ -249,7 +249,7 @@ class SpatialEnvironmentTest {
         val preference =
             SpatialEnvironment.SpatialEnvironmentPreference(
                 ExrImage(rtImageMock),
-                GltfModel(rtModelMock),
+                GltfModel(null, rtModelMock),
             )
 
         environment!!.preferredSpatialEnvironment = preference
