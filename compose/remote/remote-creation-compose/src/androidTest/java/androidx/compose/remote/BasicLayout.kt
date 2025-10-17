@@ -500,6 +500,7 @@ ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
                             modifier =
                                 RemoteModifier.background(Color.Black).fillMaxWidth().height(30.dp)
                         ) {
+                            @Suppress("COMPOSE_APPLIER_CALL_MISMATCH") // b/446706254
                             Text("Hello, World", color = Color.White)
                         }
                     }
@@ -508,6 +509,7 @@ ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
                             modifier =
                                 RemoteModifier.width(32.dp).height(10.dp).background(Color.Blue)
                         )
+                        @Suppress("COMPOSE_APPLIER_CALL_MISMATCH") // b/446706254
                         CaptureAsBitmap(onCapture = { it.value = true }) {
                             Column(modifier = RemoteModifier.background(Color.Yellow)) {
                                 Text("🏄 🐶 élo! 🥳")
@@ -1043,6 +1045,7 @@ ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
       BACKGROUND = [0.0, 0.0, 825.0, 55.0] color [1.0, 1.0, 0.0, 1.0] shape [0]
 """
         testLayout(result) {
+            @Suppress("COMPOSE_APPLIER_CALL_MISMATCH") // b/446706254
             Column {
                 Row(modifier = RemoteModifier.background(Color.Cyan).height(IntrinsicSize.Min)) {
                     Box(
@@ -1112,6 +1115,7 @@ ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
     ) {
         val captureMode = LocalRemoteComposeCreationState.current
         if (true || captureMode is NoRemoteCompose) {
+            @Suppress("COMPOSE_APPLIER_CALL_MISMATCH") // b/446706254
             Icon(
                 imageVector = icon,
                 contentDescription = null,
