@@ -25,7 +25,6 @@ import androidx.camera.core.CameraXConfig
 import androidx.camera.core.CompositionSettings
 import androidx.camera.core.ConcurrentCamera
 import androidx.camera.core.ConcurrentCamera.SingleCameraConfig
-import androidx.camera.core.ExperimentalSessionConfig
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.Preview
@@ -70,7 +69,7 @@ public interface LifecycleCameraProvider : CameraProvider {
      * reaches a [Lifecycle.State.DESTROYED] state or if is unbound by calls to [unbind] or
      * [unbindAll].
      */
-    @ExperimentalSessionConfig public fun isBound(sessionConfig: SessionConfig): Boolean
+    public fun isBound(sessionConfig: SessionConfig): Boolean
 
     /**
      * Unbinds all specified use cases from the lifecycle provider.
@@ -106,7 +105,7 @@ public interface LifecycleCameraProvider : CameraProvider {
      * @throws IllegalStateException If not called on main thread.
      * @throws UnsupportedOperationException If called in concurrent mode.
      */
-    @ExperimentalSessionConfig public fun unbind(sessionConfig: SessionConfig): Unit
+    public fun unbind(sessionConfig: SessionConfig): Unit
 
     /**
      * Unbinds all use cases from the lifecycle provider and removes them from CameraX.
@@ -243,7 +242,6 @@ public interface LifecycleCameraProvider : CameraProvider {
      *
      * @sample androidx.camera.lifecycle.samples.bindSessionConfigToLifecycle
      */
-    @ExperimentalSessionConfig
     public fun bindToLifecycle(
         lifecycleOwner: LifecycleOwner,
         cameraSelector: CameraSelector,
