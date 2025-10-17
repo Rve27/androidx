@@ -48,11 +48,7 @@ class PendingIntentActionTest {
     @Test
     fun toRemoteAction_withDefaultRemoteComposeWriter_throws() {
         val creationState =
-            RemoteComposeCreationState(
-                platform = AndroidxRcPlatformServices(),
-                density = 1f,
-                size = Size(1f, 1f),
-            )
+            RemoteComposeCreationState(platform = AndroidxRcPlatformServices(), size = Size(1f, 1f))
         val testAction = PendingIntentAction(creationState, testPendingIntent)
 
         assertThrows(IllegalStateException::class.java) { testAction.toRemoteAction() }
@@ -63,7 +59,6 @@ class PendingIntentActionTest {
         val pendingIntents: MutableList<PendingIntent> = mutableListOf()
         val creationState =
             RemoteComposeCreationState(
-                density = 1f,
                 size = Size(1f, 1f),
                 profile = PendingIntentAwareProfile(pendingIntents),
             )
