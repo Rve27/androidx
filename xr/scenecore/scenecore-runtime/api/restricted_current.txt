@@ -693,6 +693,7 @@ package androidx.xr.scenecore.runtime {
     method @InaccessibleFromKotlin public androidx.xr.scenecore.runtime.PanelEntity getMainPanelEntity();
     method @InaccessibleFromKotlin public androidx.xr.scenecore.runtime.MediaPlayerExtensionsWrapper getMediaPlayerExtensionsWrapper();
     method @InaccessibleFromKotlin public androidx.xr.scenecore.runtime.PerceptionSpaceScenePose getPerceptionSpaceActivityPose();
+    method public androidx.xr.scenecore.runtime.ScenePose getScenePoseFromPerceptionPose(androidx.xr.runtime.math.Pose pose);
     method @InaccessibleFromKotlin public androidx.xr.scenecore.runtime.SoundPoolExtensionsWrapper getSoundPoolExtensionsWrapper();
     method @InaccessibleFromKotlin public androidx.xr.scenecore.runtime.SpatialCapabilities getSpatialCapabilities();
     method @InaccessibleFromKotlin public androidx.xr.scenecore.runtime.SpatialEnvironment getSpatialEnvironment();
