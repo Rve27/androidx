@@ -29,13 +29,16 @@ package androidx.xr.scenecore {
   }
 
   public final class AlphaMode {
-    property public static int ALPHA_MODE_BLEND;
-    property public static int ALPHA_MODE_MASK;
-    property public static int ALPHA_MODE_OPAQUE;
-    field public static final int ALPHA_MODE_BLEND = 2; // 0x2
-    field public static final int ALPHA_MODE_MASK = 1; // 0x1
-    field public static final int ALPHA_MODE_OPAQUE = 0; // 0x0
-    field public static final androidx.xr.scenecore.AlphaMode INSTANCE;
+    field public static final androidx.xr.scenecore.AlphaMode BLEND;
+    field public static final androidx.xr.scenecore.AlphaMode.Companion Companion;
+    field public static final androidx.xr.scenecore.AlphaMode MASK;
+    field public static final androidx.xr.scenecore.AlphaMode OPAQUE;
+  }
+
+  public static final class AlphaMode.Companion {
+    property public androidx.xr.scenecore.AlphaMode BLEND;
+    property public androidx.xr.scenecore.AlphaMode MASK;
+    property public androidx.xr.scenecore.AlphaMode OPAQUE;
   }
 
   public final class AnchorEntity extends androidx.xr.scenecore.BaseEntity<androidx.xr.scenecore.runtime.AnchorEntity> {
@@ -368,7 +371,7 @@ package androidx.xr.scenecore {
 
   public final class KhronosPbrMaterial implements androidx.xr.scenecore.Material {
     method @MainThread public void close();
-    method @MainThread public static suspend Object? create(androidx.xr.runtime.Session session, int alphaMode, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.KhronosPbrMaterial>);
+    method @MainThread public static suspend Object? create(androidx.xr.runtime.Session session, androidx.xr.scenecore.AlphaMode alphaMode, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.KhronosPbrMaterial>);
     method @MainThread public void setAlphaCutoff(@FloatRange(from=0.0, to=1.0) float alphaCutoff);
     method @MainThread public void setBaseColorFactor(androidx.xr.runtime.math.Vector4 factor);
     method @MainThread public void setBaseColorTexture(androidx.xr.scenecore.Texture texture);
@@ -415,12 +418,12 @@ package androidx.xr.scenecore {
   }
 
   public static final class KhronosPbrMaterial.Companion {
-    method @MainThread public suspend Object? create(androidx.xr.runtime.Session session, int alphaMode, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.KhronosPbrMaterial>);
+    method @MainThread public suspend Object? create(androidx.xr.runtime.Session session, androidx.xr.scenecore.AlphaMode alphaMode, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.KhronosPbrMaterial>);
   }
 
   public final class KhronosUnlitMaterial implements androidx.xr.scenecore.Material {
     method @MainThread public void close();
-    method @MainThread public static suspend Object? create(androidx.xr.runtime.Session session, int alphaMode, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.KhronosUnlitMaterial>);
+    method @MainThread public static suspend Object? create(androidx.xr.runtime.Session session, androidx.xr.scenecore.AlphaMode alphaMode, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.KhronosUnlitMaterial>);
     method @MainThread public void setAlphaCutoff(@FloatRange(from=0.0, to=1.0) float alphaCutoff);
     method @MainThread public void setBaseColorFactor(androidx.xr.runtime.math.Vector4 factor);
     method @MainThread public void setBaseColorTexture(androidx.xr.scenecore.Texture texture);
@@ -430,7 +433,7 @@ package androidx.xr.scenecore {
   }
 
   public static final class KhronosUnlitMaterial.Companion {
-    method @MainThread public suspend Object? create(androidx.xr.runtime.Session session, int alphaMode, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.KhronosUnlitMaterial>);
+    method @MainThread public suspend Object? create(androidx.xr.runtime.Session session, androidx.xr.scenecore.AlphaMode alphaMode, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.KhronosUnlitMaterial>);
   }
 
   public final class LaunchUtils {
