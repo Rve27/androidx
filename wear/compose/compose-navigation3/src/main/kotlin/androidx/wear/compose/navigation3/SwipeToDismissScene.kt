@@ -36,7 +36,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.util.lerp
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.scene.Scene
@@ -49,25 +48,20 @@ import androidx.wear.compose.material3.SwipeToDismissBox
 internal class SwipeToDismissScene<T : Any>(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
+    val currentEntry: NavEntry<T>,
+    background: NavEntry<T>?,
+    // a list of entries that users can back into
+    override val previousEntries: List<NavEntry<T>>,
     currentBackStack: List<NavEntry<T>>,
     swipeToDismissBoxState: SwipeToDismissBoxState,
-    isUserSwipeEnabled: Boolean,
+    backEnabled: Boolean,
 ) : Scene<T> {
     // A Unit scene key disables animations in NavDisplay, so that this scene
     // can internally handle animations for navigation forward and back
     override val key: Any = Unit
 
-    // the entry displayed on current screen
-    val currentEntry = currentBackStack.last()
-
     // a list of entries to be displayed in this scene
     override val entries: List<NavEntry<T>> = listOf(currentEntry)
-
-    // a list of entries that users can back into
-    override val previousEntries: List<NavEntry<T>> = currentBackStack.dropLast(1)
-
-    // the entry right underneath current entry
-    val background = previousEntries.lastOrNull()
 
     // There could be a delay from when onDismissed is called to Nav3 actually updating the
     // current entry (because onDismissed only updates the backStack - the new scene with
@@ -77,7 +71,7 @@ internal class SwipeToDismissScene<T : Any>(
     var onDismissedCalled by mutableStateOf(false)
 
     override val content: @Composable (() -> Unit) = {
-        // Stores previous backstack
+        // Stores entire previous backstack
         val previousBackStack = rememberSaveable { mutableListOf<Any>() }
 
         // Determine whether the nav event was a navigate or pop, and then update the internal
@@ -96,6 +90,7 @@ internal class SwipeToDismissScene<T : Any>(
             remember(currentEntry) { if (!isPop) Animatable(0f) else Animatable(1f) }
 
         val isRoundDevice = isRoundDevice()
+
         SwipeToDismissBox(
             onDismissed = {
                 onDismissedCalled = true
@@ -104,7 +99,7 @@ internal class SwipeToDismissScene<T : Any>(
             modifier = Modifier,
             state = swipeToDismissBoxState,
             backgroundKey = background?.contentKey ?: SwipeToDismissKeys.Background,
-            userSwipeEnabled = isUserSwipeEnabled && background != null,
+            userSwipeEnabled = backEnabled,
             contentKey = currentEntry.contentKey,
         ) { isBackground ->
             BoxedStackEntryContent(
@@ -231,9 +226,3 @@ private const val NAV_HOST_ENTER_TRANSITION_DURATION_SHORT = 100
 private const val NAV_HOST_ENTER_TRANSITION_DURATION_MEDIUM = 300
 private val NAV_HOST_ENTER_TRANSITION_EASING_STANDARD = CubicBezierEasing(0.4f, 0f, 0.2f, 1f)
 private val FLASH_COLOR = Color.White
-
-@Composable
-internal fun isRoundDevice(): Boolean {
-    val configuration = LocalConfiguration.current
-    return remember(configuration) { configuration.isScreenRound }
-}
