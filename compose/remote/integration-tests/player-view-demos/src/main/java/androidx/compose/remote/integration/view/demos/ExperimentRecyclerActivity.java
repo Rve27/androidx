@@ -572,7 +572,7 @@ public class ExperimentRecyclerActivity extends Activity {
                 size = sHeight / 2;
             }
             LayoutParams params = new LayoutParams(size, size);
-            mPlayer.setBackground(sDrawable);
+           // mPlayer.setBackground(sDrawable);
             addView(mPlayer, params);
             addView(mTitle);
             addView(mStats);
