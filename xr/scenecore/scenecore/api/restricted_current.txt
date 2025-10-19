@@ -99,25 +99,25 @@ package androidx.xr.scenecore {
     method public void addChild(androidx.xr.scenecore.Entity child);
     method public boolean addComponent(androidx.xr.scenecore.Component component);
     method public void dispose();
-    method public float getAlpha(@androidx.xr.scenecore.SpaceValue int relativeTo);
+    method public float getAlpha(androidx.xr.scenecore.Space relativeTo);
     method @InaccessibleFromKotlin public java.util.List<androidx.xr.scenecore.Entity> getChildren();
     method public java.util.List<androidx.xr.scenecore.Component> getComponents();
     method public <T extends androidx.xr.scenecore.Component> java.util.List<T> getComponentsOfType(Class<? extends T> type);
     method @InaccessibleFromKotlin public CharSequence getContentDescription();
     method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public androidx.xr.runtime.math.Pose getGravityAlignedPose(androidx.xr.runtime.math.Pose pose);
     method @InaccessibleFromKotlin public androidx.xr.scenecore.Entity? getParent();
-    method public androidx.xr.runtime.math.Pose getPose(@androidx.xr.scenecore.SpaceValue int relativeTo);
-    method public float getScale(@androidx.xr.scenecore.SpaceValue int relativeTo);
+    method public androidx.xr.runtime.math.Pose getPose(androidx.xr.scenecore.Space relativeTo);
+    method public float getScale(androidx.xr.scenecore.Space relativeTo);
     method public boolean isEnabled(boolean includeParents);
     method public void removeAllComponents();
     method public void removeComponent(androidx.xr.scenecore.Component component);
-    method public void setAlpha(float alpha, @androidx.xr.scenecore.SpaceValue int relativeTo);
+    method public void setAlpha(float alpha, androidx.xr.scenecore.Space relativeTo);
     method @InaccessibleFromKotlin public void setContentDescription(CharSequence);
     method public void setEnabled(boolean enabled);
     method @InaccessibleFromKotlin public void setParent(androidx.xr.scenecore.Entity?);
-    method public void setPose(androidx.xr.runtime.math.Pose pose, @androidx.xr.scenecore.SpaceValue int relativeTo);
-    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public void setScale(androidx.xr.runtime.math.Vector3 scale, int relativeTo);
-    method public void setScale(float scale, int relativeTo);
+    method public void setPose(androidx.xr.runtime.math.Pose pose, androidx.xr.scenecore.Space relativeTo);
+    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public void setScale(androidx.xr.runtime.math.Vector3 scale, androidx.xr.scenecore.Space relativeTo);
+    method public void setScale(float scale, androidx.xr.scenecore.Space relativeTo);
     property public java.util.List<androidx.xr.scenecore.Entity> children;
     property public CharSequence contentDescription;
     property public androidx.xr.scenecore.Entity? parent;
@@ -164,8 +164,8 @@ package androidx.xr.scenecore {
     method public boolean addComponent(androidx.xr.scenecore.Component component);
     method public void dispose();
     method @FloatRange(from=0.0, to=1.0) public default float getAlpha();
-    method @FloatRange(from=0.0, to=1.0) public float getAlpha(optional @androidx.xr.scenecore.SpaceValue int relativeTo);
-    method @BytecodeOnly @FloatRange(from=0.0, to=1.0) public static float getAlpha$default(androidx.xr.scenecore.Entity!, int, int, Object!);
+    method @FloatRange(from=0.0, to=1.0) public float getAlpha(optional androidx.xr.scenecore.Space relativeTo);
+    method @BytecodeOnly @FloatRange(from=0.0, to=1.0) public static float getAlpha$default(androidx.xr.scenecore.Entity!, androidx.xr.scenecore.Space!, int, Object!);
     method @InaccessibleFromKotlin public java.util.List<androidx.xr.scenecore.Entity> getChildren();
     method public java.util.List<androidx.xr.scenecore.Component> getComponents();
     method public <T extends androidx.xr.scenecore.Component> java.util.List<T> getComponentsOfType(Class<? extends T> type);
@@ -174,29 +174,29 @@ package androidx.xr.scenecore {
     method @BytecodeOnly @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static androidx.xr.runtime.math.Pose! getGravityAlignedPose$default(androidx.xr.scenecore.Entity!, androidx.xr.runtime.math.Pose!, int, Object!);
     method @InaccessibleFromKotlin public androidx.xr.scenecore.Entity? getParent();
     method public default androidx.xr.runtime.math.Pose getPose();
-    method public androidx.xr.runtime.math.Pose getPose(optional @androidx.xr.scenecore.SpaceValue int relativeTo);
-    method @BytecodeOnly public static androidx.xr.runtime.math.Pose! getPose$default(androidx.xr.scenecore.Entity!, int, int, Object!);
+    method public androidx.xr.runtime.math.Pose getPose(optional androidx.xr.scenecore.Space relativeTo);
+    method @BytecodeOnly public static androidx.xr.runtime.math.Pose! getPose$default(androidx.xr.scenecore.Entity!, androidx.xr.scenecore.Space!, int, Object!);
     method @FloatRange(from=0.0) public default float getScale();
-    method @FloatRange(from=0.0) public float getScale(optional @androidx.xr.scenecore.SpaceValue int relativeTo);
-    method @BytecodeOnly @FloatRange(from=0.0) public static float getScale$default(androidx.xr.scenecore.Entity!, int, int, Object!);
+    method @FloatRange(from=0.0) public float getScale(optional androidx.xr.scenecore.Space relativeTo);
+    method @BytecodeOnly @FloatRange(from=0.0) public static float getScale$default(androidx.xr.scenecore.Entity!, androidx.xr.scenecore.Space!, int, Object!);
     method public boolean isEnabled(optional boolean includeParents);
     method @BytecodeOnly public static boolean isEnabled$default(androidx.xr.scenecore.Entity!, boolean, int, Object!);
     method public void removeAllComponents();
     method public void removeComponent(androidx.xr.scenecore.Component component);
     method public default void setAlpha(@FloatRange(from=0.0, to=1.0) float alpha);
-    method public void setAlpha(@FloatRange(from=0.0, to=1.0) float alpha, optional @androidx.xr.scenecore.SpaceValue int relativeTo);
-    method @BytecodeOnly public static void setAlpha$default(androidx.xr.scenecore.Entity!, float, int, int, Object!);
+    method public void setAlpha(@FloatRange(from=0.0, to=1.0) float alpha, optional androidx.xr.scenecore.Space relativeTo);
+    method @BytecodeOnly public static void setAlpha$default(androidx.xr.scenecore.Entity!, float, androidx.xr.scenecore.Space!, int, Object!);
     method @InaccessibleFromKotlin public void setContentDescription(CharSequence);
     method public void setEnabled(boolean enabled);
     method @InaccessibleFromKotlin public void setParent(androidx.xr.scenecore.Entity?);
     method public default void setPose(androidx.xr.runtime.math.Pose pose);
-    method public void setPose(androidx.xr.runtime.math.Pose pose, optional @androidx.xr.scenecore.SpaceValue int relativeTo);
-    method @BytecodeOnly public static void setPose$default(androidx.xr.scenecore.Entity!, androidx.xr.runtime.math.Pose!, int, int, Object!);
-    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public void setScale(androidx.xr.runtime.math.Vector3 scale, optional @androidx.xr.scenecore.SpaceValue int relativeTo);
+    method public void setPose(androidx.xr.runtime.math.Pose pose, optional androidx.xr.scenecore.Space relativeTo);
+    method @BytecodeOnly public static void setPose$default(androidx.xr.scenecore.Entity!, androidx.xr.runtime.math.Pose!, androidx.xr.scenecore.Space!, int, Object!);
+    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public void setScale(androidx.xr.runtime.math.Vector3 scale, optional androidx.xr.scenecore.Space relativeTo);
     method public default void setScale(@FloatRange(from=0.0) float scale);
-    method public void setScale(@FloatRange(from=0.0) float scale, optional @androidx.xr.scenecore.SpaceValue int relativeTo);
-    method @BytecodeOnly @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static void setScale$default(androidx.xr.scenecore.Entity!, androidx.xr.runtime.math.Vector3!, int, int, Object!);
-    method @BytecodeOnly public static void setScale$default(androidx.xr.scenecore.Entity!, float, int, int, Object!);
+    method public void setScale(@FloatRange(from=0.0) float scale, optional androidx.xr.scenecore.Space relativeTo);
+    method @BytecodeOnly @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static void setScale$default(androidx.xr.scenecore.Entity!, androidx.xr.runtime.math.Vector3!, androidx.xr.scenecore.Space!, int, Object!);
+    method @BytecodeOnly public static void setScale$default(androidx.xr.scenecore.Entity!, float, androidx.xr.scenecore.Space!, int, Object!);
     property public abstract java.util.List<androidx.xr.scenecore.Entity> children;
     property public abstract CharSequence contentDescription;
     property public abstract androidx.xr.scenecore.Entity? parent;
@@ -746,16 +746,16 @@ package androidx.xr.scenecore {
   }
 
   public final class Space {
-    property public static int ACTIVITY;
-    property public static int PARENT;
-    property public static int REAL_WORLD;
-    field public static final int ACTIVITY = 1; // 0x1
-    field public static final androidx.xr.scenecore.Space INSTANCE;
-    field public static final int PARENT = 0; // 0x0
-    field @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static final int REAL_WORLD = 2; // 0x2
+    field public static final androidx.xr.scenecore.Space ACTIVITY;
+    field public static final androidx.xr.scenecore.Space.Companion Companion;
+    field public static final androidx.xr.scenecore.Space PARENT;
+    field @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static final androidx.xr.scenecore.Space REAL_WORLD;
   }
 
-  @IntDef({androidx.xr.scenecore.Space.PARENT, androidx.xr.scenecore.Space.ACTIVITY, androidx.xr.scenecore.Space.REAL_WORLD}) @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) @kotlin.annotation.Retention(kotlin.annotation.AnnotationRetention.SOURCE) public @interface SpaceValue {
+  public static final class Space.Companion {
+    property public androidx.xr.scenecore.Space ACTIVITY;
+    property public androidx.xr.scenecore.Space PARENT;
+    property public androidx.xr.scenecore.Space REAL_WORLD;
   }
 
   public final class SpatialAudioTrack {
