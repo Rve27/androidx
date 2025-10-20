@@ -714,9 +714,9 @@ package androidx.xr.scenecore {
   }
 
   public final class SoundFieldAttributes {
-    ctor public SoundFieldAttributes(int order);
-    method @InaccessibleFromKotlin public int getOrder();
-    property public int order;
+    ctor public SoundFieldAttributes(androidx.xr.scenecore.SpatializerConstants.AmbisonicsOrder order);
+    method @InaccessibleFromKotlin public androidx.xr.scenecore.SpatializerConstants.AmbisonicsOrder getOrder();
+    property public androidx.xr.scenecore.SpatializerConstants.AmbisonicsOrder order;
   }
 
   public final class Space {
@@ -733,7 +733,7 @@ package androidx.xr.scenecore {
   public final class SpatialAudioTrack {
     method public static androidx.xr.scenecore.PointSourceParams? getPointSourceParams(androidx.xr.runtime.Session session, android.media.AudioTrack track);
     method public static androidx.xr.scenecore.SoundFieldAttributes? getSoundFieldAttributes(androidx.xr.runtime.Session session, android.media.AudioTrack track);
-    method public static int getSpatialSourceType(androidx.xr.runtime.Session session, android.media.AudioTrack track);
+    method public static androidx.xr.scenecore.SpatializerConstants.SourceType getSpatialSourceType(androidx.xr.runtime.Session session, android.media.AudioTrack track);
     method public static void setPointSourceParams(androidx.xr.runtime.Session session, android.media.AudioTrack track, androidx.xr.scenecore.PointSourceParams params);
     field public static final androidx.xr.scenecore.SpatialAudioTrack INSTANCE;
   }
@@ -839,7 +839,7 @@ package androidx.xr.scenecore {
   }
 
   public final class SpatialSoundPool {
-    method public static int getSpatialSourceType(androidx.xr.runtime.Session session, android.media.SoundPool soundPool, int streamId);
+    method public androidx.xr.scenecore.SpatializerConstants.SourceType getSpatialSourceType(androidx.xr.runtime.Session session, android.media.SoundPool soundPool, int streamId);
     method public static int play(androidx.xr.runtime.Session session, android.media.SoundPool soundPool, int soundID, androidx.xr.scenecore.PointSourceParams params);
     method public static int play(androidx.xr.runtime.Session session, android.media.SoundPool soundPool, int soundID, androidx.xr.scenecore.PointSourceParams params, optional @FloatRange(from=0.0, to=1.0) float volume);
     method public static int play(androidx.xr.runtime.Session session, android.media.SoundPool soundPool, int soundID, androidx.xr.scenecore.PointSourceParams params, optional @FloatRange(from=0.0, to=1.0) float volume, optional @IntRange(from=0L) int priority);
@@ -884,28 +884,34 @@ package androidx.xr.scenecore {
   }
 
   public interface SpatializerConstants {
-    field public static final int AMBISONICS_ORDER_FIRST_ORDER = 0; // 0x0
-    field public static final int AMBISONICS_ORDER_SECOND_ORDER = 1; // 0x1
-    field public static final int AMBISONICS_ORDER_THIRD_ORDER = 2; // 0x2
-    field public static final androidx.xr.scenecore.SpatializerConstants.Companion Companion;
-    field public static final int SOURCE_TYPE_DEFAULT = 0; // 0x0
-    field public static final int SOURCE_TYPE_POINT_SOURCE = 1; // 0x1
+  }
+
+  public static final class SpatializerConstants.AmbisonicsOrder {
+    field public static final androidx.xr.scenecore.SpatializerConstants.AmbisonicsOrder.Companion Companion;
+    field public static final androidx.xr.scenecore.SpatializerConstants.AmbisonicsOrder FIRST_ORDER;
+    field public static final androidx.xr.scenecore.SpatializerConstants.AmbisonicsOrder SECOND_ORDER;
+    field public static final androidx.xr.scenecore.SpatializerConstants.AmbisonicsOrder THIRD_ORDER;
+  }
+
+  public static final class SpatializerConstants.AmbisonicsOrder.Companion {
+    property public androidx.xr.scenecore.SpatializerConstants.AmbisonicsOrder FIRST_ORDER;
+    property public androidx.xr.scenecore.SpatializerConstants.AmbisonicsOrder SECOND_ORDER;
+    property public androidx.xr.scenecore.SpatializerConstants.AmbisonicsOrder THIRD_ORDER;
+  }
+
+  public static final class SpatializerConstants.SourceType {
+    field public static final androidx.xr.scenecore.SpatializerConstants.SourceType.Companion Companion;
+    field public static final androidx.xr.scenecore.SpatializerConstants.SourceType DEFAULT;
+    field public static final androidx.xr.scenecore.SpatializerConstants.SourceType POINT_SOURCE;
+    field public static final androidx.xr.scenecore.SpatializerConstants.SourceType SOUND_FIELD;
     field public static final int SOURCE_TYPE_SOUND_FIELD = 2; // 0x2
   }
 
-  public static final class SpatializerConstants.Companion {
-    property public static int AMBISONICS_ORDER_FIRST_ORDER;
-    property public static int AMBISONICS_ORDER_SECOND_ORDER;
-    property public static int AMBISONICS_ORDER_THIRD_ORDER;
-    property public static int SOURCE_TYPE_DEFAULT;
-    property public static int SOURCE_TYPE_POINT_SOURCE;
+  public static final class SpatializerConstants.SourceType.Companion {
+    property public androidx.xr.scenecore.SpatializerConstants.SourceType DEFAULT;
+    property public androidx.xr.scenecore.SpatializerConstants.SourceType POINT_SOURCE;
+    property public androidx.xr.scenecore.SpatializerConstants.SourceType SOUND_FIELD;
     property public static int SOURCE_TYPE_SOUND_FIELD;
-    field public static final int AMBISONICS_ORDER_FIRST_ORDER = 0; // 0x0
-    field public static final int AMBISONICS_ORDER_SECOND_ORDER = 1; // 0x1
-    field public static final int AMBISONICS_ORDER_THIRD_ORDER = 2; // 0x2
-    field public static final int SOURCE_TYPE_DEFAULT = 0; // 0x0
-    field public static final int SOURCE_TYPE_POINT_SOURCE = 1; // 0x1
-    field public static final int SOURCE_TYPE_SOUND_FIELD = 2; // 0x2
   }
 
   public final class SurfaceEntity extends androidx.xr.scenecore.BaseEntity<androidx.xr.scenecore.runtime.SurfaceEntity> {
