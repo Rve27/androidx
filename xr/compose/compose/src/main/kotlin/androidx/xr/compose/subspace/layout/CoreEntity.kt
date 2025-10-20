@@ -23,6 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.Density
+import androidx.xr.compose.subspace.ActionQueue
 import androidx.xr.compose.subspace.SceneCoreEntitySizeAdapter
 import androidx.xr.compose.subspace.SpatialPanelDefaults
 import androidx.xr.compose.subspace.node.SubspaceLayoutNode
@@ -36,13 +37,10 @@ import androidx.xr.scenecore.ActivityPanelEntity
 import androidx.xr.scenecore.Component
 import androidx.xr.scenecore.Entity
 import androidx.xr.scenecore.GroupEntity
-import androidx.xr.scenecore.MainPanelEntity
 import androidx.xr.scenecore.PanelEntity
 import androidx.xr.scenecore.PointSourceParams
 import androidx.xr.scenecore.SurfaceEntity
 import androidx.xr.scenecore.scene
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
 import kotlin.math.PI
 import org.jetbrains.annotations.TestOnly
 
@@ -50,7 +48,15 @@ import org.jetbrains.annotations.TestOnly
  * Wrapper class for Entities from SceneCore to provide convenience methods for working with
  * Entities from SceneCore.
  */
-internal sealed class CoreEntity(protected val entity: Entity) : OpaqueEntity {
+internal sealed class CoreEntity(initialEntity: Entity? = null) : OpaqueEntity {
+    /**
+     * If [entity] is null, this will contain the set of mutations that are queued to be applied to
+     * the entity once it is attached.
+     */
+    private val entityActionQueue = ActionQueue(initialValue = initialEntity)
+
+    private val entity: Entity?
+        get() = entityActionQueue.value
 
     /**
      * This parameter is null for Composables without a layout, such as Orbiters and Spatial
@@ -65,11 +71,6 @@ internal sealed class CoreEntity(protected val entity: Entity) : OpaqueEntity {
     protected val density: Density?
         get() = layout?.density
 
-    internal fun updatePoseFromLayout() {
-        // Compose XR uses pixels, SceneCore uses meters.
-        poseInMeters = layoutPoseInPixels.convertPixelsToMeters(density ?: return)
-    }
-
     open val layoutPoseInPixels: Pose
         get() = layout?.measurableLayout?.poseInParentEntity ?: Pose.Identity
 
@@ -77,26 +78,24 @@ internal sealed class CoreEntity(protected val entity: Entity) : OpaqueEntity {
         // TODO: b/440426914 - Avoid eating the IllegalStateException silently.
         get() {
             return try {
-                entity.getPose()
-            } catch (e: IllegalStateException) {
+                entity?.getPose() ?: Pose.Identity
+            } catch (_: IllegalStateException) {
                 Pose.Identity
             }
         }
         set(value) {
-            try {
-                if (entity.getPose() != value) {
-                    entity.setPose(value)
-                }
-            } catch (e: IllegalStateException) {}
+            entityActionQueue.executeWhenAvailable {
+                try {
+                    if (getPose() != value) {
+                        setPose(value)
+                    }
+                } catch (_: IllegalStateException) {}
+            }
         }
 
     /** Get the [Entity] associated with this [CoreEntity] for testing purposes. */
     internal val semanticsEntity: Entity?
         @TestOnly get() = entity
-
-    open fun dispose() {
-        entity.dispose()
-    }
 
     /**
      * The volume size of the [CoreEntity] in pixels. Reading this value may trigger recomposition.
@@ -118,7 +117,11 @@ internal sealed class CoreEntity(protected val entity: Entity) : OpaqueEntity {
         }
 
     /** Get a [PointSourceParams] for this entity for spatial audio. */
-    val pointSourceParams by lazy { PointSourceParams(entity) }
+    val pointSourceParams by lazy {
+        PointSourceParams(
+            checkNotNull(entity) { "An entity was not bound when PointSourceParams were created." }
+        )
+    }
 
     /**
      * Whether this entity and all of its ancestors are enabled. An entity will not render if it is
@@ -127,10 +130,12 @@ internal sealed class CoreEntity(protected val entity: Entity) : OpaqueEntity {
      * Note that an enabled entity may still be invisible if its alpha value is 0.
      */
     open var enabled: Boolean
-        get() = entity.isEnabled(includeParents = true)
+        get() = entity?.isEnabled(includeParents = true) ?: false
         set(value) {
-            if (entity.isEnabled(includeParents = false) != value) {
-                entity.setEnabled(value)
+            entityActionQueue.executeWhenAvailable {
+                if (isEnabled(includeParents = false) != value) {
+                    setEnabled(value)
+                }
             }
         }
 
@@ -143,7 +148,7 @@ internal sealed class CoreEntity(protected val entity: Entity) : OpaqueEntity {
     internal open var scale = 1f
         set(value) {
             if (field != value) {
-                entity.setScale(value)
+                entityActionQueue.executeWhenAvailable { setScale(value) }
             }
             field = value
         }
@@ -155,7 +160,7 @@ internal sealed class CoreEntity(protected val entity: Entity) : OpaqueEntity {
     internal var alpha = 1f
         set(value) {
             if (field != value) {
-                entity.setAlpha(value)
+                entityActionQueue.executeWhenAvailable { setAlpha(value) }
             }
             field = value
         }
@@ -164,19 +169,25 @@ internal sealed class CoreEntity(protected val entity: Entity) : OpaqueEntity {
      * SceneCore parents all newly-created non-Anchor entities under a world space point of
      * reference for the activity space, which we save for future use.
      */
-    private val originalParent: Entity? = entity.parent
+    private val originalParent: Entity? = entity?.parent
 
     open var parent: CoreEntity? = null
         set(value) {
             field = value
-            if (value == null) {
-                // When the Compose-level parent is set to null, restore the original parent
-                // (saved during the initial creation)
-                entity.parent = originalParent
-            } else {
-                entity.parent = value.entity
-            }
+            // When the Compose-level parent is set to null, restore the original parent
+            // (saved during the initial creation)
+            entityActionQueue.executeWhenAvailable { parent = value?.entity ?: originalParent }
         }
+
+    fun updatePoseFromLayout() {
+        // Compose XR uses pixels, SceneCore uses meters.
+        poseInMeters = layoutPoseInPixels.convertPixelsToMeters(density ?: return)
+    }
+
+    open fun dispose() {
+        entityActionQueue.clear()
+        entityActionQueue.value?.dispose()
+    }
 
     /**
      * Add a SceneCore [Component] to this entity.
@@ -184,8 +195,8 @@ internal sealed class CoreEntity(protected val entity: Entity) : OpaqueEntity {
      * @param component The [Component] to add.
      * @return true if the component was added successfully, false otherwise.
      */
-    fun addComponent(component: Component): Boolean {
-        return entity.addComponent(component)
+    fun addComponent(component: Component): Boolean? {
+        return entityActionQueue.executeWhenAvailable { addComponent(component) }
     }
 
     /**
@@ -194,10 +205,35 @@ internal sealed class CoreEntity(protected val entity: Entity) : OpaqueEntity {
      * @param component The [Component] to remove.
      */
     fun removeComponent(component: Component) {
-        entity.removeComponent(component)
+        entityActionQueue.executeWhenAvailable { removeComponent(component) }
+    }
+
+    fun onEntityAttached(onEntityAttached: (Entity) -> Unit) {
+        entityActionQueue.executeWhenAvailable(onEntityAttached)
+    }
+
+    fun attachEntity(entity: Entity) {
+        entityActionQueue.value?.dispose()
+        entityActionQueue.value = entity
     }
 
     override fun toString(): String = "CoreEntity(entity=$entity)"
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as CoreEntity
+
+        if (entity != other.entity) return false
+        if (entity == null) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return entity?.hashCode() ?: 0
+    }
 }
 
 /** Wrapper class for group entities from SceneCore. */
@@ -218,20 +254,6 @@ internal sealed class CoreBasePanelEntity(private val panelEntity: PanelEntity) 
     // Density set from setShape.
     private var shapeDensity: Density? = null
 
-    override var scale = 1f
-        set(value) {
-            if (field != value) {
-                CoreExecutor.submit { entity.setScale(value) }
-            }
-            field = value
-        }
-
-    override var poseInMeters
-        get() = super.poseInMeters
-        set(value) {
-            CoreExecutor.submit { super.poseInMeters = value }
-        }
-
     /**
      * The size of the [CoreBasePanelEntity] in pixels.
      *
@@ -241,8 +263,8 @@ internal sealed class CoreBasePanelEntity(private val panelEntity: PanelEntity) 
      * be adjusted to 1 because the underlying implementation of the main panel entity does not
      * allow for zero or negative sizes.
      *
-     * For the MainPanel, the [CoreBasePanelEntity] size and the [MainPanelEntity] size (SceneCore)
-     * may diverge. SceneCore uses the bounds from the WindowManager. Therefore unfortunately, it is
+     * For the MainPanel, the [CoreBasePanelEntity] size and the [PanelEntity] size (SceneCore) may
+     * diverge. SceneCore uses the bounds from the WindowManager. Therefore unfortunately, it is
      * impossible to unit test the case for this diverging behavior.
      */
     override var size: IntVolumeSize
@@ -289,10 +311,6 @@ internal sealed class CoreBasePanelEntity(private val panelEntity: PanelEntity) 
             panelEntity.cornerRadius = Meter.fromPixel(radius, density).toM()
         }
     }
-
-    private companion object {
-        val CoreExecutor: ExecutorService = Executors.newSingleThreadExecutor()
-    }
 }
 
 /**
@@ -323,17 +341,6 @@ internal class CoreMainPanelEntity(session: Session) :
 
         // Set the parent to null so the main panel is not disposed when its parent is disposed.
         parent = null
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-        if (entity != (other as CoreMainPanelEntity).entity) return false
-        return true
-    }
-
-    override fun hashCode(): Int {
-        return entity.hashCode()
     }
 }
 
