@@ -169,6 +169,14 @@ class IntegrationTest {
                 enumFunctionMetadata.parameters.associateBy { it.name }["stringEnum"]?.dataType
             )
         assertThat(stringEnumParamMetadata.enumValues).containsExactly("A", "B")
+        val intEnumSerializableMetadata =
+            assertIs<AppFunctionObjectTypeMetadata>(
+                enumFunctionMetadata.components.dataTypes[
+                        "androidx.appfunctions.integration.tests.IntEnumSerializable"]
+            )
+        val enumValues =
+            assertIs<AppFunctionIntTypeMetadata>(intEnumSerializableMetadata.properties["value"])
+        assertThat(enumValues.enumValues).containsExactly(10, 20)
     }
 
     @Test
