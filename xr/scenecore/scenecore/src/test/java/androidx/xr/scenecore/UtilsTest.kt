@@ -268,7 +268,7 @@ class UtilsTest {
                 .toResizeEvent(entity)
 
         assertThat(resizeEvent.entity).isEqualTo(entity)
-        assertThat(resizeEvent.resizeState).isEqualTo(ResizeEvent.ResizeState.RESIZE_STATE_START)
+        assertThat(resizeEvent.resizeState).isEqualTo(ResizeEvent.ResizeState.START)
         assertThat(resizeEvent.newSize.width).isEqualTo(1f)
         assertThat(resizeEvent.newSize.height).isEqualTo(3f)
         assertThat(resizeEvent.newSize.depth).isEqualTo(5f)
@@ -530,10 +530,10 @@ class UtilsTest {
                     .map { it.toResizeState() }
             )
             .containsExactly(
-                ResizeEvent.ResizeState.RESIZE_STATE_UNKNOWN,
-                ResizeEvent.ResizeState.RESIZE_STATE_START,
-                ResizeEvent.ResizeState.RESIZE_STATE_ONGOING,
-                ResizeEvent.ResizeState.RESIZE_STATE_END,
+                ResizeEvent.ResizeState.UNKNOWN,
+                ResizeEvent.ResizeState.START,
+                ResizeEvent.ResizeState.ONGOING,
+                ResizeEvent.ResizeState.END,
             )
             .inOrder()
     }
