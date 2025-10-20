@@ -38,7 +38,6 @@ import androidx.xr.scenecore.Component
 import androidx.xr.scenecore.Entity
 import androidx.xr.scenecore.GroupEntity
 import androidx.xr.scenecore.PanelEntity
-import androidx.xr.scenecore.PointSourceParams
 import androidx.xr.scenecore.SurfaceEntity
 import androidx.xr.scenecore.scene
 import kotlin.math.PI
@@ -115,13 +114,6 @@ internal sealed class CoreEntity(initialEntity: Entity? = null) : OpaqueEntity {
             field = value
             mutableSize = value
         }
-
-    /** Get a [PointSourceParams] for this entity for spatial audio. */
-    val pointSourceParams by lazy {
-        PointSourceParams(
-            checkNotNull(entity) { "An entity was not bound when PointSourceParams were created." }
-        )
-    }
 
     /**
      * Whether this entity and all of its ancestors are enabled. An entity will not render if it is
