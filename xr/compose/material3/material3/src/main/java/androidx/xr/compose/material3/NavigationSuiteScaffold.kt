@@ -28,7 +28,6 @@ import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScope
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.material3.adaptive.navigationsuite.rememberNavigationSuiteScaffoldState
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.unit.dp
 import androidx.xr.compose.spatial.Subspace
 import androidx.xr.compose.subspace.MovePolicy
 import androidx.xr.compose.subspace.ResizePolicy
@@ -68,8 +67,7 @@ public fun NavigationSuiteScaffold(
     Subspace {
         // TODO(kmost): Expose DragPolicy and ResizePolicy params
         SpatialPanel(
-            // TODO(brandonjiang): Dynamically adjust padding based on NavSuiteType
-            modifier = modifier.padding(120.dp).fillMaxSize(),
+            modifier = modifier.getPaddingForLayoutType(layoutType).fillMaxSize(),
             dragPolicy = MovePolicy(),
             resizePolicy = ResizePolicy(),
         ) {
@@ -84,6 +82,29 @@ public fun NavigationSuiteScaffold(
             content()
         }
     }
+}
+
+private fun SubspaceModifier.getPaddingForLayoutType(
+    layoutType: NavigationSuiteType
+): SubspaceModifier {
+    return if (layoutType.isNavigationBar) {
+        this.padding(bottom = XrNavigationSuiteScaffoldTokens.PaddingForNavigationBarOrbiter)
+    } else { // Layout is NavigationRail
+        this.padding(left = XrNavigationSuiteScaffoldTokens.PaddingForNavigationRailOrbiter)
+    }
+}
+
+private val NavigationSuiteType.isNavigationBar
+    get() =
+        this == NavigationSuiteType.ShortNavigationBarCompact ||
+            this == NavigationSuiteType.ShortNavigationBarMedium ||
+            this == NavigationSuiteType.NavigationBar
+
+private object XrNavigationSuiteScaffoldTokens {
+    val PaddingForNavigationRailOrbiter =
+        XrNavigationRailTokens.ContainerWidth + XrNavigationRailTokens.OrbiterOffset
+    val PaddingForNavigationBarOrbiter =
+        XrNavigationBarTokens.ContainerHeight + XrNavigationBarTokens.OrbiterOffset
 }
 
 /**
