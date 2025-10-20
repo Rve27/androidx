@@ -49,7 +49,16 @@ public sealed class KnownIssues {
          */
         @JvmField
         public val KI_372917199: KnownIssue =
-            KnownIssue(372917199L, 2) { (Build.BRAND.equals("robolectric")) }
+            KnownIssue(
+                372917199L,
+                2,
+                manuallyTestedFingerprints =
+                    setOf(
+                        "foo/bar/manually_tested" // The known issue is fixed for this fingerprint.
+                    ),
+            ) {
+                (Build.BRAND.equals("robolectric"))
+            }
 
         /**
          * **TEST ONLY** known issue that is never fixed on a device.
