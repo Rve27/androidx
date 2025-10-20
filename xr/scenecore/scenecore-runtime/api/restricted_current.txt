@@ -161,6 +161,7 @@ package androidx.xr.scenecore.runtime {
     method @MainThread public void resumeAnimation();
     method @MainThread public void setColliderEnabled(boolean enableCollider);
     method @MainThread public void setMaterialOverride(androidx.xr.scenecore.runtime.MaterialResource material, String nodeName, int primitiveIndex);
+    method @MainThread public void setReformAffordanceEnabled(androidx.xr.scenecore.runtime.GltfEntity entity, boolean enabled, java.util.concurrent.Executor executor, boolean systemMovable);
     method @MainThread public void startAnimation(boolean loop, String? animationName, java.util.concurrent.Executor executor);
     method @MainThread public void stopAnimation();
     property public abstract int animationState;
