@@ -241,29 +241,13 @@ package androidx.xr.arcore {
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static final class Eye.State {
-    ctor public Eye.State(androidx.xr.arcore.runtime.EyeStatus? coarseEyeStatus, androidx.xr.runtime.math.Pose? coarseEyePose, androidx.xr.arcore.runtime.EyeStatus? fineEyeStatus, androidx.xr.runtime.math.Pose? fineEyePose);
-    method @InaccessibleFromKotlin public androidx.xr.runtime.math.Pose? getCoarseEyePose();
-    method @InaccessibleFromKotlin public androidx.xr.arcore.runtime.EyeStatus? getCoarseEyeStatus();
-    method @InaccessibleFromKotlin public androidx.xr.runtime.math.Pose? getFineEyePose();
-    method @InaccessibleFromKotlin public androidx.xr.arcore.runtime.EyeStatus? getFineEyeStatus();
-    property public androidx.xr.runtime.math.Pose? coarseEyePose;
-    property public androidx.xr.arcore.runtime.EyeStatus? coarseEyeStatus;
-    property public androidx.xr.runtime.math.Pose? fineEyePose;
-    property public androidx.xr.arcore.runtime.EyeStatus? fineEyeStatus;
-  }
-
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class EyeStatus {
-    ctor public EyeStatus(int value);
-    field public static final androidx.xr.arcore.EyeStatus.Companion Companion;
-    field public static final androidx.xr.arcore.EyeStatus GAZING;
-    field public static final androidx.xr.arcore.EyeStatus INVALID;
-    field public static final androidx.xr.arcore.EyeStatus SHUT;
-  }
-
-  public static final class EyeStatus.Companion {
-    property public androidx.xr.arcore.EyeStatus GAZING;
-    property public androidx.xr.arcore.EyeStatus INVALID;
-    property public androidx.xr.arcore.EyeStatus SHUT;
+    ctor public Eye.State(boolean isOpen, androidx.xr.runtime.math.Pose pose, androidx.xr.runtime.TrackingState trackingState);
+    method @InaccessibleFromKotlin public androidx.xr.runtime.math.Pose getPose();
+    method @InaccessibleFromKotlin public androidx.xr.runtime.TrackingState getTrackingState();
+    method @InaccessibleFromKotlin public boolean isOpen();
+    property public boolean isOpen;
+    property public androidx.xr.runtime.math.Pose pose;
+    property public androidx.xr.runtime.TrackingState trackingState;
   }
 
   public final class Face {
