@@ -163,7 +163,9 @@ public class InlineSuggestionUiTest {
 
         verifyVisibility(false, false, true, false);
         ImageView imageView = view.findViewById(R.id.autofill_inline_suggestion_start_icon);
-        assertTrue(((Animatable) imageView.getDrawable()).isRunning());
+        mInstrumentation.waitForIdle(() -> {
+            assertTrue(((Animatable) imageView.getDrawable()).isRunning());
+        });
     }
 
     @Test
