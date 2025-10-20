@@ -29,6 +29,7 @@ import androidx.xr.compose.subspace.SpatialPanelDefaults
 import androidx.xr.compose.subspace.node.SubspaceLayoutNode
 import androidx.xr.compose.unit.IntVolumeSize
 import androidx.xr.compose.unit.Meter
+import androidx.xr.compose.unit.toIntVolumeSize
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.math.FloatSize2d
 import androidx.xr.runtime.math.IntSize2d
@@ -36,6 +37,7 @@ import androidx.xr.runtime.math.Pose
 import androidx.xr.scenecore.ActivityPanelEntity
 import androidx.xr.scenecore.Component
 import androidx.xr.scenecore.Entity
+import androidx.xr.scenecore.GltfModelEntity
 import androidx.xr.scenecore.GroupEntity
 import androidx.xr.scenecore.PanelEntity
 import androidx.xr.scenecore.SurfaceEntity
@@ -54,7 +56,7 @@ internal sealed class CoreEntity(initialEntity: Entity? = null) : OpaqueEntity {
      */
     private val entityActionQueue = ActionQueue(initialValue = initialEntity)
 
-    private val entity: Entity?
+    protected val entity: Entity?
         get() = entityActionQueue.value
 
     /**
@@ -520,6 +522,67 @@ internal class CoreSphereSurfaceEntity(
 
     private val isHemisphere
         get() = surfaceEntity.shape is SurfaceEntity.Shape.Hemisphere
+}
+
+internal class CoreModelEntity() : CoreEntity() {
+    /**
+     * The size of the glTF entity will be scaled uniformly such that it fits within the most
+     * restrictive dimension according to the constraints.
+     */
+    override var size: IntVolumeSize
+        get() = super.size
+        set(value) {
+            onEntity {
+                if (super.size != value) {
+                    val heightScale =
+                        value.height / (intrinsicSize.height.toFloat().coerceAtLeast(1f))
+                    val widthScale = value.width / (intrinsicSize.width.toFloat().coerceAtLeast(1f))
+                    val depthScale = value.depth / (intrinsicSize.depth.toFloat().coerceAtLeast(1f))
+                    scale = minOf(heightScale, widthScale, depthScale)
+                }
+                super.size = value
+            }
+        }
+
+    val intrinsicSize: IntVolumeSize
+        get() =
+            density?.let { density ->
+                (entity as? GltfModelEntity)
+                    ?.getGltfModelBoundingBox()
+                    ?.halfExtents
+                    ?.times(2)
+                    ?.toIntVolumeSize(density)
+            } ?: IntVolumeSize.Zero
+
+    val isAnimating: Boolean
+        get() {
+            return (entity as? GltfModelEntity)?.animationState ==
+                GltfModelEntity.AnimationState.PLAYING
+        }
+
+    fun startAnimation(name: String? = null) {
+        if (name == null) {
+            onEntity { startAnimation(loop = false) }
+        } else {
+            onEntity { startAnimation(loop = false, animationName = name) }
+        }
+    }
+
+    fun loopAnimation(name: String? = null) {
+        if (name == null) {
+            onEntity { startAnimation(loop = true) }
+        } else {
+            onEntity { startAnimation(loop = true, animationName = name) }
+        }
+    }
+
+    fun stopAllAnimations() {
+        onEntity { stopAnimation() }
+    }
+
+    private fun onEntity(action: GltfModelEntity.() -> Unit) {
+        onEntityAttached { entity -> (entity as GltfModelEntity).action() }
+    }
 }
 
 /** [CoreEntity] types that implement this interface may have the ResizableComponent attached. */
