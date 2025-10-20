@@ -483,14 +483,6 @@ constructor(
             @JvmField public val COARSE_TRACKING: EyeTrackingMode = EyeTrackingMode(1)
             /** Enables fine eye tracking, providing more precise gaze direction. */
             @JvmField public val FINE_TRACKING: EyeTrackingMode = EyeTrackingMode(2)
-            /** Enables both coarse and fine eye tracking. */
-            @JvmField public val COARSE_AND_FINE_TRACKING: EyeTrackingMode = EyeTrackingMode(3)
         }
-
-        public val isCoarseTrackingEnabled: Boolean
-            get() = this == COARSE_TRACKING || this == COARSE_AND_FINE_TRACKING
-
-        public val isFineTrackingEnabled: Boolean
-            get() = this == FINE_TRACKING || this == COARSE_AND_FINE_TRACKING
     }
 }
