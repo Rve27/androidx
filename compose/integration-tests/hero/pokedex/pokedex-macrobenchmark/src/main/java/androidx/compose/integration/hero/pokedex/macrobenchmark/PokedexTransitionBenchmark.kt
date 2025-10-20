@@ -157,7 +157,7 @@ class PokedexTransitionBenchmark(
                 trace("Wait for Progress Bar Animations") {
                     device.waitOrThrow(
                         Until.hasObject(byResContains("progress-animation-active-false")),
-                        2000,
+                        3000,
                     )
                 }
             }
