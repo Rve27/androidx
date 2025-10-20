@@ -32,8 +32,6 @@ import kotlinx.coroutines.flow.asStateFlow
  * An [Eye] instance provides the state of the eye (shut or gazing), as well as a [Pose] indicating
  * where the user is currently looking.
  */
-// TODO(b/446971597): Add a new EyeStatus enum for the top-level namespace.
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public class Eye internal constructor(internal val runtimeEye: RuntimeEye) : Updatable {
 
     public companion object {
@@ -73,7 +71,6 @@ public class Eye internal constructor(internal val runtimeEye: RuntimeEye) : Upd
      * The [Pose]s provided are the position and rotation of the eye itself, relative to the head
      * pose.
      */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
     public class State(
         /**
          * a flag indicating whether or not the eye is open. It's set to true if it's open, false if
