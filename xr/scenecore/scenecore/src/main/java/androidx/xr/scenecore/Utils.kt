@@ -351,19 +351,75 @@ internal fun Int.toInputEventAction(): Int {
     }
 }
 
+@RtTextureSampler.WrapMode
+private fun TextureSampler.WrapMode.toRtWrapMode(): Int =
+    when (this) {
+        TextureSampler.WrapMode.CLAMP_TO_EDGE -> RtTextureSampler.CLAMP_TO_EDGE
+        TextureSampler.WrapMode.REPEAT -> RtTextureSampler.REPEAT
+        TextureSampler.WrapMode.MIRRORED_REPEAT -> RtTextureSampler.MIRRORED_REPEAT
+        else -> error("Unknown TextureSampler Wrap Mode: $this")
+    }
+
+@RtTextureSampler.MinFilter
+private fun TextureSampler.MinificationFilter.toRtMinFilter(): Int =
+    when (this) {
+        TextureSampler.MinificationFilter.LINEAR -> RtTextureSampler.MinFilter.LINEAR
+        TextureSampler.MinificationFilter.LINEAR_MIPMAP_LINEAR ->
+            RtTextureSampler.MinFilter.LINEAR_MIPMAP_LINEAR
+        TextureSampler.MinificationFilter.LINEAR_MIPMAP_NEAREST ->
+            RtTextureSampler.MinFilter.LINEAR_MIPMAP_NEAREST
+        TextureSampler.MinificationFilter.NEAREST -> RtTextureSampler.MinFilter.NEAREST
+        TextureSampler.MinificationFilter.LINEAR_MIPMAP_LINEAR ->
+            RtTextureSampler.MinFilter.LINEAR_MIPMAP_LINEAR
+        TextureSampler.MinificationFilter.LINEAR_MIPMAP_NEAREST ->
+            RtTextureSampler.MinFilter.LINEAR_MIPMAP_NEAREST
+        else -> error("Unknown TextureSampler Minification Filter: $this")
+    }
+
+@RtTextureSampler.MagFilter
+private fun TextureSampler.MagnificationFilter.toRtMagFilter(): Int =
+    when (this) {
+        TextureSampler.MagnificationFilter.LINEAR -> RtTextureSampler.MagFilter.LINEAR
+        TextureSampler.MagnificationFilter.NEAREST -> RtTextureSampler.MagFilter.NEAREST
+        else -> error("Unknown TextureSampler Magnification Filter: $this")
+    }
+
+@RtTextureSampler.CompareMode
+private fun TextureSampler.CompareMode.toRtCompareMode(): Int =
+    when (this) {
+        TextureSampler.CompareMode.COMPARE_TO_TEXTURE ->
+            RtTextureSampler.CompareMode.COMPARE_TO_TEXTURE
+        TextureSampler.CompareMode.NONE -> RtTextureSampler.CompareMode.NONE
+        else -> error("Unknown TextureSampler Compare Mode: $this")
+    }
+
+@RtTextureSampler.CompareFunc
+private fun TextureSampler.CompareFunction.toRtCompareFunc(): Int =
+    when (this) {
+        TextureSampler.CompareFunction.ALWAYS -> RtTextureSampler.CompareFunc.A
+        TextureSampler.CompareFunction.EQUAL -> RtTextureSampler.CompareFunc.E
+        TextureSampler.CompareFunction.GREATER -> RtTextureSampler.CompareFunc.G
+        TextureSampler.CompareFunction.GREATER_OR_EQUAL -> RtTextureSampler.CompareFunc.GE
+        TextureSampler.CompareFunction.LESSER -> RtTextureSampler.CompareFunc.L
+        TextureSampler.CompareFunction.LESSER_OR_EQUAL -> RtTextureSampler.CompareFunc.LE
+        TextureSampler.CompareFunction.NEVER -> RtTextureSampler.CompareFunc.N
+        TextureSampler.CompareFunction.NOT_EQUAL -> RtTextureSampler.CompareFunc.NE
+        else -> error("Unknown TextureSampler Compare Function: $this")
+    }
+
 /**
  * Extension function that converts a [TextureSampler] to
  * [androidx.xr.scenecore.runtime.TextureSampler].
  */
 internal fun TextureSampler.toRtTextureSampler(): RtTextureSampler {
     return RtTextureSampler(
-        wrapModeHorizontal,
-        wrapModeVertical,
-        wrapModeDepth,
-        minificationFilter,
-        magnificationFilter,
-        compareMode,
-        compareFunction,
+        wrapModeHorizontal.toRtWrapMode(),
+        wrapModeVertical.toRtWrapMode(),
+        wrapModeDepth.toRtWrapMode(),
+        minificationFilter.toRtMinFilter(),
+        magnificationFilter.toRtMagFilter(),
+        compareMode.toRtCompareMode(),
+        compareFunction.toRtCompareFunc(),
         anisotropyLog2,
     )
 }
