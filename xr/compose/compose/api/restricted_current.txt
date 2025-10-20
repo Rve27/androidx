@@ -563,6 +563,10 @@ package androidx.xr.compose.subspace.layout {
     method public static androidx.xr.compose.subspace.layout.SubspaceModifier onPointSourceParamsAvailable(androidx.xr.compose.subspace.layout.SubspaceModifier, kotlin.jvm.functions.Function1<? super androidx.xr.scenecore.PointSourceParams,kotlin.Unit> onPointSourceParamsAvailable);
   }
 
+  public final class OnSizeChangedKt {
+    method public static androidx.xr.compose.subspace.layout.SubspaceModifier onSizeChanged(androidx.xr.compose.subspace.layout.SubspaceModifier, kotlin.jvm.functions.Function1<? super androidx.xr.compose.unit.IntVolumeSize,kotlin.Unit> onSizeChanged);
+  }
+
   @kotlin.PublishedApi internal interface OpaqueEntity {
   }
 
