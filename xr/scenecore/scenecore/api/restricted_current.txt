@@ -1165,77 +1165,65 @@ package androidx.xr.scenecore {
 
   public final class TextureSampler {
     ctor public TextureSampler();
-    ctor @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public TextureSampler();
-    ctor public TextureSampler(optional int minificationFilter);
-    ctor public TextureSampler(optional int minificationFilter, optional int magnificationFilter);
-    ctor public TextureSampler(optional int minificationFilter, optional int magnificationFilter, optional int wrapModeHorizontal);
-    ctor public TextureSampler(optional int minificationFilter, optional int magnificationFilter, optional int wrapModeHorizontal, optional int wrapModeVertical);
-    ctor public TextureSampler(optional int minificationFilter, optional int magnificationFilter, optional int wrapModeHorizontal, optional int wrapModeVertical, optional int wrapModeDepth);
-    ctor @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public TextureSampler(optional int minificationFilter, optional int magnificationFilter, optional int wrapModeHorizontal, optional int wrapModeVertical, optional int wrapModeDepth, optional int compareMode, optional int compareFunction, optional @IntRange(from=0L) int anisotropyLog2);
-    ctor @BytecodeOnly @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public TextureSampler(int, int, int, int, int, int, int, int, int, kotlin.jvm.internal.DefaultConstructorMarker!);
-    ctor @BytecodeOnly public TextureSampler(int, int, int, int, int, int, kotlin.jvm.internal.DefaultConstructorMarker!);
-    method @InaccessibleFromKotlin @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public int getAnisotropyLog2();
-    method @InaccessibleFromKotlin @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public int getCompareFunction();
-    method @InaccessibleFromKotlin @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public int getCompareMode();
-    method @InaccessibleFromKotlin public int getMagnificationFilter();
-    method @InaccessibleFromKotlin public int getMinificationFilter();
-    method @InaccessibleFromKotlin public int getWrapModeDepth();
-    method @InaccessibleFromKotlin public int getWrapModeHorizontal();
-    method @InaccessibleFromKotlin public int getWrapModeVertical();
-    property @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public int anisotropyLog2;
-    property @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public int compareFunction;
-    property @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public int compareMode;
-    property public int magnificationFilter;
-    property public int minificationFilter;
-    property public int wrapModeDepth;
-    property public int wrapModeHorizontal;
-    property public int wrapModeVertical;
-    field @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static final int COMPARE_FUNCTION_ALWAYS = 6; // 0x6
-    field @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static final int COMPARE_FUNCTION_EQUAL = 4; // 0x4
-    field @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static final int COMPARE_FUNCTION_GREATER = 3; // 0x3
-    field @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static final int COMPARE_FUNCTION_GREATER_OR_EQUAL = 1; // 0x1
-    field @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static final int COMPARE_FUNCTION_LESSER = 2; // 0x2
-    field @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static final int COMPARE_FUNCTION_LESSER_OR_EQUAL = 0; // 0x0
-    field @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static final int COMPARE_FUNCTION_NEVER = 7; // 0x7
-    field @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static final int COMPARE_FUNCTION_NOT_EQUAL = 5; // 0x5
-    field @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static final int COMPARE_MODE_COMPARE_TO_TEXTURE = 1; // 0x1
-    field @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static final int COMPARE_MODE_NONE = 0; // 0x0
-    field public static final androidx.xr.scenecore.TextureSampler.Companion Companion;
-    field public static final int MAGNIFICATION_FILTER_LINEAR = 1; // 0x1
-    field public static final int MAGNIFICATION_FILTER_NEAREST = 0; // 0x0
-    field public static final int MINIFICATION_FILTER_LINEAR = 1; // 0x1
-    field @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static final int MINIFICATION_FILTER_LINEAR_MIPMAP_LINEAR = 5; // 0x5
-    field @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static final int MINIFICATION_FILTER_LINEAR_MIPMAP_NEAREST = 3; // 0x3
-    field public static final int MINIFICATION_FILTER_NEAREST = 0; // 0x0
-    field @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static final int MINIFICATION_FILTER_NEAREST_MIPMAP_LINEAR = 4; // 0x4
-    field @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static final int MINIFICATION_FILTER_NEAREST_MIPMAP_NEAREST = 2; // 0x2
-    field public static final int WRAP_MODE_CLAMP_TO_EDGE = 0; // 0x0
-    field public static final int WRAP_MODE_MIRRORED_REPEAT = 2; // 0x2
-    field public static final int WRAP_MODE_REPEAT = 1; // 0x1
+    ctor public TextureSampler(optional androidx.xr.scenecore.TextureSampler.MinificationFilter minificationFilter);
+    ctor public TextureSampler(optional androidx.xr.scenecore.TextureSampler.MinificationFilter minificationFilter, optional androidx.xr.scenecore.TextureSampler.MagnificationFilter magnificationFilter);
+    ctor public TextureSampler(optional androidx.xr.scenecore.TextureSampler.MinificationFilter minificationFilter, optional androidx.xr.scenecore.TextureSampler.MagnificationFilter magnificationFilter, optional androidx.xr.scenecore.TextureSampler.WrapMode wrapModeHorizontal);
+    ctor public TextureSampler(optional androidx.xr.scenecore.TextureSampler.MinificationFilter minificationFilter, optional androidx.xr.scenecore.TextureSampler.MagnificationFilter magnificationFilter, optional androidx.xr.scenecore.TextureSampler.WrapMode wrapModeHorizontal, optional androidx.xr.scenecore.TextureSampler.WrapMode wrapModeVertical);
+    ctor public TextureSampler(optional androidx.xr.scenecore.TextureSampler.MinificationFilter minificationFilter, optional androidx.xr.scenecore.TextureSampler.MagnificationFilter magnificationFilter, optional androidx.xr.scenecore.TextureSampler.WrapMode wrapModeHorizontal, optional androidx.xr.scenecore.TextureSampler.WrapMode wrapModeVertical, optional androidx.xr.scenecore.TextureSampler.WrapMode wrapModeDepth);
+    ctor @BytecodeOnly public TextureSampler(androidx.xr.scenecore.TextureSampler.MinificationFilter!, androidx.xr.scenecore.TextureSampler.MagnificationFilter!, androidx.xr.scenecore.TextureSampler.WrapMode!, androidx.xr.scenecore.TextureSampler.WrapMode!, androidx.xr.scenecore.TextureSampler.WrapMode!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
+    method @InaccessibleFromKotlin public androidx.xr.scenecore.TextureSampler.MagnificationFilter getMagnificationFilter();
+    method @InaccessibleFromKotlin public androidx.xr.scenecore.TextureSampler.MinificationFilter getMinificationFilter();
+    method @InaccessibleFromKotlin public androidx.xr.scenecore.TextureSampler.WrapMode getWrapModeDepth();
+    method @InaccessibleFromKotlin public androidx.xr.scenecore.TextureSampler.WrapMode getWrapModeHorizontal();
+    method @InaccessibleFromKotlin public androidx.xr.scenecore.TextureSampler.WrapMode getWrapModeVertical();
+    property public androidx.xr.scenecore.TextureSampler.MagnificationFilter magnificationFilter;
+    property public androidx.xr.scenecore.TextureSampler.MinificationFilter minificationFilter;
+    property public androidx.xr.scenecore.TextureSampler.WrapMode wrapModeDepth;
+    property public androidx.xr.scenecore.TextureSampler.WrapMode wrapModeHorizontal;
+    property public androidx.xr.scenecore.TextureSampler.WrapMode wrapModeVertical;
   }
 
-  public static final class TextureSampler.Companion {
-    property public static int COMPARE_FUNCTION_ALWAYS;
-    property public static int COMPARE_FUNCTION_EQUAL;
-    property public static int COMPARE_FUNCTION_GREATER;
-    property public static int COMPARE_FUNCTION_GREATER_OR_EQUAL;
-    property public static int COMPARE_FUNCTION_LESSER;
-    property public static int COMPARE_FUNCTION_LESSER_OR_EQUAL;
-    property public static int COMPARE_FUNCTION_NEVER;
-    property public static int COMPARE_FUNCTION_NOT_EQUAL;
-    property public static int COMPARE_MODE_COMPARE_TO_TEXTURE;
-    property public static int COMPARE_MODE_NONE;
-    property public static int MAGNIFICATION_FILTER_LINEAR;
-    property public static int MAGNIFICATION_FILTER_NEAREST;
-    property public static int MINIFICATION_FILTER_LINEAR;
-    property public static int MINIFICATION_FILTER_LINEAR_MIPMAP_LINEAR;
-    property public static int MINIFICATION_FILTER_LINEAR_MIPMAP_NEAREST;
-    property public static int MINIFICATION_FILTER_NEAREST;
-    property public static int MINIFICATION_FILTER_NEAREST_MIPMAP_LINEAR;
-    property public static int MINIFICATION_FILTER_NEAREST_MIPMAP_NEAREST;
-    property public static int WRAP_MODE_CLAMP_TO_EDGE;
-    property public static int WRAP_MODE_MIRRORED_REPEAT;
-    property public static int WRAP_MODE_REPEAT;
+  public static final class TextureSampler.MagnificationFilter {
+    field public static final androidx.xr.scenecore.TextureSampler.MagnificationFilter.Companion Companion;
+    field public static final androidx.xr.scenecore.TextureSampler.MagnificationFilter LINEAR;
+    field public static final androidx.xr.scenecore.TextureSampler.MagnificationFilter NEAREST;
+  }
+
+  public static final class TextureSampler.MagnificationFilter.Companion {
+    property public androidx.xr.scenecore.TextureSampler.MagnificationFilter LINEAR;
+    property public androidx.xr.scenecore.TextureSampler.MagnificationFilter NEAREST;
+  }
+
+  public static final class TextureSampler.MinificationFilter {
+    field public static final androidx.xr.scenecore.TextureSampler.MinificationFilter.Companion Companion;
+    field public static final androidx.xr.scenecore.TextureSampler.MinificationFilter LINEAR;
+    field @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static final androidx.xr.scenecore.TextureSampler.MinificationFilter LINEAR_MIPMAP_LINEAR;
+    field @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static final androidx.xr.scenecore.TextureSampler.MinificationFilter LINEAR_MIPMAP_NEAREST;
+    field public static final androidx.xr.scenecore.TextureSampler.MinificationFilter NEAREST;
+    field @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static final androidx.xr.scenecore.TextureSampler.MinificationFilter NEAREST_MIPMAP_LINEAR;
+    field @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static final androidx.xr.scenecore.TextureSampler.MinificationFilter NEAREST_MIPMAP_NEAREST;
+  }
+
+  public static final class TextureSampler.MinificationFilter.Companion {
+    property public androidx.xr.scenecore.TextureSampler.MinificationFilter LINEAR;
+    property public androidx.xr.scenecore.TextureSampler.MinificationFilter LINEAR_MIPMAP_LINEAR;
+    property public androidx.xr.scenecore.TextureSampler.MinificationFilter LINEAR_MIPMAP_NEAREST;
+    property public androidx.xr.scenecore.TextureSampler.MinificationFilter NEAREST;
+    property public androidx.xr.scenecore.TextureSampler.MinificationFilter NEAREST_MIPMAP_LINEAR;
+    property public androidx.xr.scenecore.TextureSampler.MinificationFilter NEAREST_MIPMAP_NEAREST;
+  }
+
+  public static final class TextureSampler.WrapMode {
+    field public static final androidx.xr.scenecore.TextureSampler.WrapMode CLAMP_TO_EDGE;
+    field public static final androidx.xr.scenecore.TextureSampler.WrapMode.Companion Companion;
+    field public static final androidx.xr.scenecore.TextureSampler.WrapMode MIRRORED_REPEAT;
+    field public static final androidx.xr.scenecore.TextureSampler.WrapMode REPEAT;
+  }
+
+  public static final class TextureSampler.WrapMode.Companion {
+    property public androidx.xr.scenecore.TextureSampler.WrapMode CLAMP_TO_EDGE;
+    property public androidx.xr.scenecore.TextureSampler.WrapMode MIRRORED_REPEAT;
+    property public androidx.xr.scenecore.TextureSampler.WrapMode REPEAT;
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class WaterMaterial implements androidx.xr.scenecore.Material {
