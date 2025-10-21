@@ -16,14 +16,11 @@
 
 package androidx.xr.arcore.projected;
 
-import androidx.xr.arcore.projected.ProjectedTrackingState;
-import androidx.xr.arcore.projected.ProjectedPose;
+import androidx.xr.arcore.projected.ProjectedTrackingMode;
+import androidx.xr.arcore.projected.ProjectedGeospatialMode;
 
-/** Result of an update call. */
 @JavaPassthrough(annotation="@androidx.annotation.RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY)")
-parcelable ProjectedUpdateResult {
-    ProjectedTrackingState deviceTrackingState;
-    ProjectedTrackingState earthTrackingState;
-    long currentTimeNanos;
-    ProjectedPose devicePose;
+parcelable ProjectedConfig {
+    ProjectedTrackingMode trackingMode;
+    ProjectedGeospatialMode geospatialMode;
 }
