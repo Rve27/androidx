@@ -65,6 +65,10 @@ internal constructor(
         @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
         @JvmStatic
         public fun subscribe(session: Session): StateFlow<Collection<Face>> {
+            check(session.config.faceTracking == FaceTrackingMode.MESHES) {
+                "Config.FaceTrackingMode must be set to MESHES to track face meshes."
+            }
+
             return session.state
                 .transform { state ->
                     state.perceptionState?.let { perceptionState ->
