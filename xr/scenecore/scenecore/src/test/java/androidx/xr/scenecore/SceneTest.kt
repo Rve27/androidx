@@ -193,15 +193,6 @@ class SceneTest {
     }
 
     @Test
-    fun addAndRemoveSpatialCapabilitiesChangedListener_callsRuntimeAddAndRemove() {
-        val listener = Consumer<SpatialCapabilities> { _ -> }
-        session.scene.addSpatialCapabilitiesChangedListener(listener = listener)
-        verify(mockSceneRuntime).addSpatialCapabilitiesChangedListener(any(), any())
-        session.scene.removeSpatialCapabilitiesChangedListener(listener)
-        verify(mockSceneRuntime).removeSpatialCapabilitiesChangedListener(any())
-    }
-
-    @Test
     fun setSpatialVisibilityChangedListener_receivesRuntimeSpatialVisibilityChangedEvent() {
         var listenerCalledWithValue = SpatialVisibility.UNKNOWN
         val captor = argumentCaptor<Consumer<RtSpatialVisibility>>()
@@ -364,15 +355,6 @@ class SceneTest {
     }
 
     @Test
-    fun getSpatialCapabilities_invokesAdapterGetSpatialCapabilities() {
-        val expectedCapabilities = SpatialCapabilities(1)
-        whenever(mockSceneRuntime.spatialCapabilities).thenReturn(RtSpatialCapabilities(1))
-        val actualCapabilities = session.scene.spatialCapabilities
-        verify(mockSceneRuntime).spatialCapabilities
-        assertThat(actualCapabilities).isEqualTo(expectedCapabilities)
-    }
-
-    @Test
     fun requestFullSpaceMode_callsThrough() {
         session.scene.requestFullSpaceMode()
         verify(mockSceneRuntime).requestFullSpaceMode()
@@ -500,7 +482,7 @@ class SceneTest {
 
     @Test
     fun sceneClose_removesSpatialCapabilitiesListeners() {
-        val capabilitiesListener = Consumer<SpatialCapabilities> {}
+        val capabilitiesListener = Consumer<Set<SpatialCapability>> {}
         session.scene.addSpatialCapabilitiesChangedListener(capabilitiesListener)
         val rtCapabilitiesListenerCaptor = argumentCaptor<Consumer<RtSpatialCapabilities>>()
         verify(mockSceneRuntime)

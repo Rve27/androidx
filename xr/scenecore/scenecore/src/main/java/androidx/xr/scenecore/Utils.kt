@@ -202,12 +202,35 @@ internal fun RtInputEvent.toInputEvent(entityManager: EntityManager): InputEvent
     )
 }
 
+private fun checkBitfield(value: Int, mask: Int): Boolean = ((value and mask) == mask)
+
 /**
  * Extension function that converts a [androidx.xr.scenecore.runtime.SpatialCapabilities] to a
- * [SpatialCapabilities].
+ * [SpatialCapability].
  */
-internal fun RtSpatialCapabilities.toSpatialCapabilities(): SpatialCapabilities {
-    return SpatialCapabilities(capabilities.toSpatialCapability())
+internal fun RtSpatialCapabilities.toSpatialCapabilities(): Set<SpatialCapability> {
+    val caps = HashSet<SpatialCapability>()
+    with(RtSpatialCapabilities) {
+        if (checkBitfield(capabilities, SPATIAL_CAPABILITY_3D_CONTENT)) {
+            caps.add(SpatialCapability.SPATIAL_3D_CONTENT)
+        }
+        if (checkBitfield(capabilities, SPATIAL_CAPABILITY_APP_ENVIRONMENT)) {
+            caps.add(SpatialCapability.APP_ENVIRONMENT)
+        }
+        if (checkBitfield(capabilities, SPATIAL_CAPABILITY_EMBED_ACTIVITY)) {
+            caps.add(SpatialCapability.EMBED_ACTIVITY)
+        }
+        if (checkBitfield(capabilities, SPATIAL_CAPABILITY_PASSTHROUGH_CONTROL)) {
+            caps.add(SpatialCapability.PASSTHROUGH_CONTROL)
+        }
+        if (checkBitfield(capabilities, SPATIAL_CAPABILITY_SPATIAL_AUDIO)) {
+            caps.add(SpatialCapability.SPATIAL_AUDIO)
+        }
+        if (checkBitfield(capabilities, SPATIAL_CAPABILITY_UI)) {
+            caps.add(SpatialCapability.SPATIAL_UI)
+        }
+    }
+    return caps.toSet()
 }
 
 /**
@@ -310,12 +333,6 @@ internal fun Int.toInputEventPointer(): InputEvent.Pointer {
         RtInputEvent.Pointer.RIGHT -> InputEvent.Pointer.RIGHT
         else -> error("Unknown Input Event Pointer Type: $this")
     }
-}
-
-/** Extension function that converts a [Int] to [SpatialCapability]. */
-@SpatialCapability
-internal fun Int.toSpatialCapability(): Int {
-    return this
 }
 
 /** Extension function that converts a [Int] from RtSpatialVisibility to [SpatialVisibility]. */
