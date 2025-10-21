@@ -421,7 +421,7 @@ class SpatialCompose : ComponentActivity() {
         val dragonModel = remember { mutableStateOf<GltfModel?>(null) }
         val dragonEntity = remember { mutableStateOf<GltfModelEntity?>(null) }
         val dragonAnimationState = remember {
-            androidx.compose.runtime.mutableIntStateOf(AnimationState.STOPPED)
+            androidx.compose.runtime.mutableStateOf(AnimationState.STOPPED)
         }
         var entitySize by remember { mutableStateOf(FloatSize3d(1f, 1f, 1f)) }
 
@@ -439,14 +439,14 @@ class SpatialCompose : ComponentActivity() {
 
             dragonEntity.value?.let {
                 it.startAnimation(true, "Fast_Flying")
-                dragonAnimationState.intValue = it.animationState
+                dragonAnimationState.value = it.animationState
             }
         }
 
         // Actions to run continuously.
-        LaunchedEffect(dragonEntity.value, dragonAnimationState.intValue) {
+        LaunchedEffect(dragonEntity.value, dragonAnimationState.value) {
             val entity = dragonEntity.value
-            if (entity != null && dragonAnimationState.intValue == AnimationState.PLAYING) {
+            if (entity != null && dragonAnimationState.value == AnimationState.PLAYING) {
                 while (true) {
                     entitySize = entity.getGltfModelBoundingBox().halfExtents.times(2f)
 
