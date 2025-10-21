@@ -174,11 +174,10 @@ class PointerCaptureComponentTest {
 
         // Only compare non-floating point values for stability
         inputListenerCaptor.lastValue.onInputEvent(inputEvent)
-        assertThat(inputListener.lastEvent.source).isEqualTo(InputEvent.Source.SOURCE_HANDS)
-        assertThat(inputListener.lastEvent.pointerType)
-            .isEqualTo(InputEvent.Pointer.POINTER_TYPE_LEFT)
+        assertThat(inputListener.lastEvent.source).isEqualTo(InputEvent.Source.HANDS)
+        assertThat(inputListener.lastEvent.pointerType).isEqualTo(InputEvent.Pointer.LEFT)
         assertThat(inputListener.lastEvent.timestamp).isEqualTo(inputEvent.timestamp)
-        assertThat(inputListener.lastEvent.action).isEqualTo(InputEvent.Action.ACTION_DOWN)
+        assertThat(inputListener.lastEvent.action).isEqualTo(InputEvent.Action.DOWN)
         assertThat(inputListener.lastEvent.hitInfoList).isNotEmpty()
         val hitInfoList = inputListener.lastEvent.hitInfoList
         assertThat(hitInfoList).isNotEmpty()
