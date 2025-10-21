@@ -16,14 +16,11 @@
 
 package androidx.xr.arcore.projected;
 
-import androidx.xr.arcore.projected.ProjectedTrackingState;
-import androidx.xr.arcore.projected.ProjectedPose;
-
-/** Result of an update call. */
+/** Describes the state of the tracking performed. */
 @JavaPassthrough(annotation="@androidx.annotation.RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY)")
-parcelable ProjectedUpdateResult {
-    ProjectedTrackingState deviceTrackingState;
-    ProjectedTrackingState earthTrackingState;
-    long currentTimeNanos;
-    ProjectedPose devicePose;
+enum ProjectedTrackingMode {
+  /** 6DoF tracking. */
+  PROJECTED_TRACKING_6DOF,
+  /** 3DoF tracking. */
+  PROJECTED_TRACKING_3DOF
 }
