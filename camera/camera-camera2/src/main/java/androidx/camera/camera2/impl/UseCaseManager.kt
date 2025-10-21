@@ -51,7 +51,6 @@ import androidx.camera.camera2.pipe.StreamId
 import androidx.camera.core.CameraXConfig
 import androidx.camera.core.DynamicRange
 import androidx.camera.core.ImageCapture
-import androidx.camera.core.Preview
 import androidx.camera.core.UseCase
 import androidx.camera.core.concurrent.CameraCoordinator
 import androidx.camera.core.featuregroup.impl.FeatureCombinationQuery
@@ -66,8 +65,8 @@ import androidx.camera.core.impl.SessionConfig
 import androidx.camera.core.impl.SessionConfig.ValidatingBuilder
 import androidx.camera.core.impl.SessionProcessor
 import androidx.camera.core.impl.SurfaceConfig
-import androidx.camera.core.impl.stabilization.StabilizationMode
 import androidx.camera.core.impl.utils.UseCaseUtil.containsVideoCapture
+import androidx.camera.core.impl.utils.UseCaseUtil.getVideoStabilization
 import androidx.camera.core.streamsharing.StreamSharing
 import androidx.camera.core.streamsharing.StreamSharingConfig
 import javax.inject.Inject
@@ -758,7 +757,7 @@ constructor(
                     getCameraMode(),
                     getRequiredMaxBitDepth(attachedSurfaceInfoList),
                     hasVideoCapture = containsVideoCapture(),
-                    isPreviewStabilizationOn = isPreviewStabilizationOn(),
+                    videoStabilization = getVideoStabilization(),
                     isUltraHdrOn = isUltraHdrOn(),
                 ),
                 mutableListOf<SurfaceConfig>().apply {
@@ -848,10 +847,6 @@ constructor(
         } else {
             listOf(currentConfig.captureType)
         }
-
-    private fun Collection<UseCase>.isPreviewStabilizationOn() =
-        filterIsInstance<Preview>().firstOrNull()?.currentConfig?.previewStabilizationMode ==
-            StabilizationMode.ON
 
     private fun Collection<UseCase>.isUltraHdrOn() =
         filterIsInstance<ImageCapture>().firstOrNull()?.currentConfig?.inputFormat ==
