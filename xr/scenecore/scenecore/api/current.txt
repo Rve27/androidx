@@ -675,8 +675,8 @@ package androidx.xr.scenecore {
 
   public final class Scene {
     ctor public Scene();
-    method public void addSpatialCapabilitiesChangedListener(java.util.concurrent.Executor callbackExecutor, java.util.function.Consumer<androidx.xr.scenecore.SpatialCapabilities> listener);
-    method public void addSpatialCapabilitiesChangedListener(java.util.function.Consumer<androidx.xr.scenecore.SpatialCapabilities> listener);
+    method public void addSpatialCapabilitiesChangedListener(java.util.concurrent.Executor callbackExecutor, java.util.function.Consumer<java.util.Set<androidx.xr.scenecore.SpatialCapability>> listener);
+    method public void addSpatialCapabilitiesChangedListener(java.util.function.Consumer<java.util.Set<androidx.xr.scenecore.SpatialCapability>> listener);
     method public void clearSpatialModeChangedListener();
     method public void clearSpatialVisibilityChangedListener();
     method @InaccessibleFromKotlin public androidx.xr.scenecore.ActivitySpace getActivitySpace();
@@ -685,10 +685,10 @@ package androidx.xr.scenecore {
     method @InaccessibleFromKotlin public androidx.xr.scenecore.MainPanelEntity getMainPanelEntity();
     method @InaccessibleFromKotlin public androidx.xr.scenecore.PanelClippingConfig getPanelClippingConfig();
     method @InaccessibleFromKotlin public androidx.xr.scenecore.PerceptionSpace getPerceptionSpace();
-    method @InaccessibleFromKotlin public androidx.xr.scenecore.SpatialCapabilities getSpatialCapabilities();
+    method @InaccessibleFromKotlin public java.util.Set<androidx.xr.scenecore.SpatialCapability> getSpatialCapabilities();
     method @InaccessibleFromKotlin public androidx.xr.scenecore.SpatialEnvironment getSpatialEnvironment();
     method @InaccessibleFromKotlin public androidx.xr.scenecore.SpatialUser getSpatialUser();
-    method public void removeSpatialCapabilitiesChangedListener(java.util.function.Consumer<androidx.xr.scenecore.SpatialCapabilities> listener);
+    method public void removeSpatialCapabilitiesChangedListener(java.util.function.Consumer<java.util.Set<androidx.xr.scenecore.SpatialCapability>> listener);
     method public void requestFullSpaceMode();
     method public void requestHomeSpaceMode();
     method @InaccessibleFromKotlin public void setKeyEntity(androidx.xr.scenecore.Entity?);
@@ -702,7 +702,7 @@ package androidx.xr.scenecore {
     property public androidx.xr.scenecore.MainPanelEntity mainPanelEntity;
     property public androidx.xr.scenecore.PanelClippingConfig panelClippingConfig;
     property public androidx.xr.scenecore.PerceptionSpace perceptionSpace;
-    property public androidx.xr.scenecore.SpatialCapabilities spatialCapabilities;
+    property public java.util.Set<androidx.xr.scenecore.SpatialCapability> spatialCapabilities;
     property public androidx.xr.scenecore.SpatialEnvironment spatialEnvironment;
     property public androidx.xr.scenecore.SpatialUser spatialUser;
   }
@@ -759,24 +759,23 @@ package androidx.xr.scenecore {
     field public static final androidx.xr.scenecore.SpatialAudioTrackBuilder INSTANCE;
   }
 
-  public final class SpatialCapabilities {
-    method public boolean hasCapability(int capability);
-    field public static final androidx.xr.scenecore.SpatialCapabilities.Companion Companion;
-    field public static final int SPATIAL_CAPABILITY_3D_CONTENT = 2; // 0x2
-    field public static final int SPATIAL_CAPABILITY_APP_ENVIRONMENT = 8; // 0x8
-    field public static final int SPATIAL_CAPABILITY_EMBED_ACTIVITY = 32; // 0x20
-    field public static final int SPATIAL_CAPABILITY_PASSTHROUGH_CONTROL = 4; // 0x4
-    field public static final int SPATIAL_CAPABILITY_SPATIAL_AUDIO = 16; // 0x10
-    field public static final int SPATIAL_CAPABILITY_UI = 1; // 0x1
+  public final class SpatialCapability {
+    field public static final androidx.xr.scenecore.SpatialCapability APP_ENVIRONMENT;
+    field public static final androidx.xr.scenecore.SpatialCapability.Companion Companion;
+    field public static final androidx.xr.scenecore.SpatialCapability EMBED_ACTIVITY;
+    field public static final androidx.xr.scenecore.SpatialCapability PASSTHROUGH_CONTROL;
+    field public static final androidx.xr.scenecore.SpatialCapability SPATIAL_3D_CONTENT;
+    field public static final androidx.xr.scenecore.SpatialCapability SPATIAL_AUDIO;
+    field public static final androidx.xr.scenecore.SpatialCapability SPATIAL_UI;
   }
 
-  public static final class SpatialCapabilities.Companion {
-    property public static int SPATIAL_CAPABILITY_3D_CONTENT;
-    property public static int SPATIAL_CAPABILITY_APP_ENVIRONMENT;
-    property public static int SPATIAL_CAPABILITY_EMBED_ACTIVITY;
-    property public static int SPATIAL_CAPABILITY_PASSTHROUGH_CONTROL;
-    property public static int SPATIAL_CAPABILITY_SPATIAL_AUDIO;
-    property public static int SPATIAL_CAPABILITY_UI;
+  public static final class SpatialCapability.Companion {
+    property public androidx.xr.scenecore.SpatialCapability APP_ENVIRONMENT;
+    property public androidx.xr.scenecore.SpatialCapability EMBED_ACTIVITY;
+    property public androidx.xr.scenecore.SpatialCapability PASSTHROUGH_CONTROL;
+    property public androidx.xr.scenecore.SpatialCapability SPATIAL_3D_CONTENT;
+    property public androidx.xr.scenecore.SpatialCapability SPATIAL_AUDIO;
+    property public androidx.xr.scenecore.SpatialCapability SPATIAL_UI;
   }
 
   public final class SpatialEnvironment {
