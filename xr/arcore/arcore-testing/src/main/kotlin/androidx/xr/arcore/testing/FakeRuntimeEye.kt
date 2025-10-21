@@ -16,12 +16,10 @@
 
 package androidx.xr.arcore.testing
 
-import androidx.annotation.RestrictTo
 import androidx.xr.arcore.runtime.Eye
 import androidx.xr.runtime.TrackingState
 import androidx.xr.runtime.math.Pose
 
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public class FakeRuntimeEye : Eye {
     override var isOpen: Boolean = true
 
