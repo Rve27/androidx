@@ -33,9 +33,7 @@
 
 package androidx.xr.arcore.projected;
 @JavaPassthrough(annotation="@androidx.annotation.RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY)")
-parcelable ProjectedUpdateResult {
-  androidx.xr.arcore.projected.ProjectedTrackingState deviceTrackingState;
-  androidx.xr.arcore.projected.ProjectedTrackingState earthTrackingState;
-  long currentTimeNanos;
-  androidx.xr.arcore.projected.ProjectedPose devicePose;
+parcelable ProjectedConfig {
+  androidx.xr.arcore.projected.ProjectedTrackingMode trackingMode;
+  androidx.xr.arcore.projected.ProjectedGeospatialMode geospatialMode;
 }
