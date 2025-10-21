@@ -194,8 +194,10 @@ internal class RectManager(
     }
 
     fun invalidateCallbacksFor(layoutNode: LayoutNode) {
-        isDirty = true
-        rects.markUpdated(layoutNode.semanticsId)
+        if (layoutNode.addedToRectList) {
+            isDirty = true
+            rects.markUpdated(layoutNode.semanticsId)
+        }
         scheduleDebounceCallback(ensureSomethingScheduled = true)
     }
 
