@@ -212,10 +212,9 @@ internal fun RtSpatialCapabilities.toSpatialCapabilities(): SpatialCapabilities 
 
 /**
  * Extension function that converts a [androidx.xr.scenecore.runtime.SpatialVisibility] to a
- * [SpatialVisibilityValue].
+ * [SpatialVisibility] constant.
  */
-@SpatialVisibilityValue
-internal fun RtSpatialVisibility.toSpatialVisibility(): Int {
+internal fun RtSpatialVisibility.toSpatialVisibility(): SpatialVisibility {
     return visibility.toSpatialVisibilityValue()
 }
 
@@ -322,16 +321,13 @@ internal fun Int.toSpatialCapability(): Int {
     return this
 }
 
-/** Extension function that converts a [Int] to [SpatialVisibilityValue]. */
-@SpatialVisibilityValue
-internal fun Int.toSpatialVisibilityValue(): Int {
+/** Extension function that converts a [Int] from RtSpatialVisibility to [SpatialVisibility]. */
+internal fun Int.toSpatialVisibilityValue(): SpatialVisibility {
     return when (this) {
-        RtSpatialVisibility.UNKNOWN -> SpatialVisibility.SPATIAL_VISIBILITY_UNKNOWN
-        RtSpatialVisibility.OUTSIDE_FOV ->
-            SpatialVisibility.SPATIAL_VISIBILITY_OUTSIDE_FIELD_OF_VIEW
-        RtSpatialVisibility.PARTIALLY_WITHIN_FOV ->
-            SpatialVisibility.SPATIAL_VISIBILITY_PARTIALLY_WITHIN_FIELD_OF_VIEW
-        RtSpatialVisibility.WITHIN_FOV -> SpatialVisibility.SPATIAL_VISIBILITY_WITHIN_FIELD_OF_VIEW
+        RtSpatialVisibility.UNKNOWN -> SpatialVisibility.UNKNOWN
+        RtSpatialVisibility.OUTSIDE_FOV -> SpatialVisibility.OUTSIDE_FIELD_OF_VIEW
+        RtSpatialVisibility.PARTIALLY_WITHIN_FOV -> SpatialVisibility.PARTIALLY_WITHIN_FIELD_OF_VIEW
+        RtSpatialVisibility.WITHIN_FOV -> SpatialVisibility.WITHIN_FIELD_OF_VIEW
         else -> error("Unknown Spatial Visibility Value: $this")
     }
 }
