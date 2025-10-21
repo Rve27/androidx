@@ -277,16 +277,7 @@ class UtilsTest {
     @Test
     fun runtimeSpatialCapabilitiesToSpatialCapabilities_noCapabilities() {
         val caps = RuntimeSpatialCapabilities(0).toSpatialCapabilities()
-        assertThat(caps.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_UI)).isFalse()
-        assertThat(caps.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_3D_CONTENT)).isFalse()
-        assertThat(caps.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_PASSTHROUGH_CONTROL))
-            .isFalse()
-        assertThat(caps.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_APP_ENVIRONMENT))
-            .isFalse()
-        assertThat(caps.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_SPATIAL_AUDIO))
-            .isFalse()
-        assertThat(caps.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_EMBED_ACTIVITY))
-            .isFalse()
+        assertThat(caps.isEmpty()).isTrue()
     }
 
     @Test
@@ -294,30 +285,12 @@ class UtilsTest {
         var caps =
             RuntimeSpatialCapabilities(RuntimeSpatialCapabilities.SPATIAL_CAPABILITY_UI)
                 .toSpatialCapabilities()
-        assertThat(caps.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_UI)).isTrue()
-        assertThat(caps.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_3D_CONTENT)).isFalse()
-        assertThat(caps.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_PASSTHROUGH_CONTROL))
-            .isFalse()
-        assertThat(caps.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_APP_ENVIRONMENT))
-            .isFalse()
-        assertThat(caps.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_SPATIAL_AUDIO))
-            .isFalse()
-        assertThat(caps.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_EMBED_ACTIVITY))
-            .isFalse()
+        assertThat(caps).isEqualTo(setOf(SpatialCapability.SPATIAL_UI))
 
         caps =
             RuntimeSpatialCapabilities(RuntimeSpatialCapabilities.SPATIAL_CAPABILITY_SPATIAL_AUDIO)
                 .toSpatialCapabilities()
-        assertThat(caps.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_UI)).isFalse()
-        assertThat(caps.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_3D_CONTENT)).isFalse()
-        assertThat(caps.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_PASSTHROUGH_CONTROL))
-            .isFalse()
-        assertThat(caps.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_APP_ENVIRONMENT))
-            .isFalse()
-        assertThat(caps.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_SPATIAL_AUDIO))
-            .isTrue()
-        assertThat(caps.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_EMBED_ACTIVITY))
-            .isFalse()
+        assertThat(caps).isEqualTo(setOf(SpatialCapability.SPATIAL_AUDIO))
     }
 
     @Test
@@ -333,50 +306,30 @@ class UtilsTest {
                 )
                 .toSpatialCapabilities()
 
-        // Assert that individually checking the capabilities works as expected.
-        assertThat(caps.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_UI)).isTrue()
-        assertThat(caps.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_3D_CONTENT)).isTrue()
-        assertThat(caps.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_PASSTHROUGH_CONTROL))
-            .isTrue()
-        assertThat(caps.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_APP_ENVIRONMENT))
-            .isTrue()
-        assertThat(caps.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_SPATIAL_AUDIO))
-            .isTrue()
-        assertThat(caps.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_EMBED_ACTIVITY))
-            .isTrue()
-
-        // Assert that it is also true when we check for all capabilities together.
-        assertThat(
-                caps.hasCapability(
-                    SpatialCapabilities.SPATIAL_CAPABILITY_UI or
-                        SpatialCapabilities.SPATIAL_CAPABILITY_3D_CONTENT or
-                        SpatialCapabilities.SPATIAL_CAPABILITY_PASSTHROUGH_CONTROL or
-                        SpatialCapabilities.SPATIAL_CAPABILITY_APP_ENVIRONMENT or
-                        SpatialCapabilities.SPATIAL_CAPABILITY_SPATIAL_AUDIO or
-                        SpatialCapabilities.SPATIAL_CAPABILITY_EMBED_ACTIVITY
-                )
+        val allCaps =
+            setOf(
+                SpatialCapability.APP_ENVIRONMENT,
+                SpatialCapability.EMBED_ACTIVITY,
+                SpatialCapability.PASSTHROUGH_CONTROL,
+                SpatialCapability.SPATIAL_3D_CONTENT,
+                SpatialCapability.SPATIAL_AUDIO,
+                SpatialCapability.SPATIAL_UI,
             )
-            .isTrue()
+
+        assertThat(caps).isEqualTo(allCaps)
     }
 
     @Test
-    fun runtimeSpatialCapabilitiesToSpatialCapabilities_mixedCapabilities_singleChecksWork() {
+    fun runtimeSpatialCapabilitiesToSpatialCapabilities_mixedCapabilities() {
         var caps =
             RuntimeSpatialCapabilities(
                     RuntimeSpatialCapabilities.SPATIAL_CAPABILITY_3D_CONTENT or
                         RuntimeSpatialCapabilities.SPATIAL_CAPABILITY_SPATIAL_AUDIO
                 )
                 .toSpatialCapabilities()
-        assertThat(caps.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_UI)).isFalse()
-        assertThat(caps.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_3D_CONTENT)).isTrue()
-        assertThat(caps.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_PASSTHROUGH_CONTROL))
-            .isFalse()
-        assertThat(caps.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_APP_ENVIRONMENT))
-            .isFalse()
-        assertThat(caps.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_SPATIAL_AUDIO))
-            .isTrue()
-        assertThat(caps.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_EMBED_ACTIVITY))
-            .isFalse()
+        var expectedCaps =
+            setOf(SpatialCapability.SPATIAL_3D_CONTENT, SpatialCapability.SPATIAL_AUDIO)
+        assertThat(caps).isEqualTo(expectedCaps)
 
         caps =
             RuntimeSpatialCapabilities(
@@ -386,68 +339,14 @@ class UtilsTest {
                         RuntimeSpatialCapabilities.SPATIAL_CAPABILITY_EMBED_ACTIVITY
                 )
                 .toSpatialCapabilities()
-        assertThat(caps.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_UI)).isTrue()
-        assertThat(caps.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_3D_CONTENT)).isFalse()
-        assertThat(caps.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_PASSTHROUGH_CONTROL))
-            .isTrue()
-        assertThat(caps.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_APP_ENVIRONMENT))
-            .isTrue()
-        assertThat(caps.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_SPATIAL_AUDIO))
-            .isFalse()
-        assertThat(caps.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_EMBED_ACTIVITY))
-            .isTrue()
-    }
-
-    @Test
-    fun runtimeSpatialCapabilitiesToSpatialCapabilities_exactMixedCapabilitiesCheck_returnsTrue() {
-        val caps =
-            RuntimeSpatialCapabilities(
-                    RuntimeSpatialCapabilities.SPATIAL_CAPABILITY_UI or
-                        RuntimeSpatialCapabilities.SPATIAL_CAPABILITY_3D_CONTENT
-                )
-                .toSpatialCapabilities()
-
-        // Check for the exact set of available capabilities.
-        val allAvailable =
-            SpatialCapabilities.SPATIAL_CAPABILITY_UI or
-                SpatialCapabilities.SPATIAL_CAPABILITY_3D_CONTENT
-        assertThat(caps.hasCapability(allAvailable)).isTrue()
-
-        // Check for a mix of available and unavailable capabilities.
-        val mixed =
-            SpatialCapabilities.SPATIAL_CAPABILITY_UI or
-                SpatialCapabilities.SPATIAL_CAPABILITY_PASSTHROUGH_CONTROL
-        assertThat(caps.hasCapability(mixed)).isFalse()
-
-        // Check for a superset of available capabilities.
-        val superset =
-            SpatialCapabilities.SPATIAL_CAPABILITY_UI or
-                SpatialCapabilities.SPATIAL_CAPABILITY_3D_CONTENT or
-                SpatialCapabilities.SPATIAL_CAPABILITY_PASSTHROUGH_CONTROL
-        assertThat(caps.hasCapability(superset)).isFalse()
-    }
-
-    @Test
-    fun runtimeSpatialCapabilitiesToSpatialCapabilities_mixedUnavailableCapabilities_returnsFalse() {
-        val caps =
-            RuntimeSpatialCapabilities(
-                    RuntimeSpatialCapabilities.SPATIAL_CAPABILITY_UI or
-                        RuntimeSpatialCapabilities.SPATIAL_CAPABILITY_3D_CONTENT
-                )
-                .toSpatialCapabilities()
-
-        // Check for a mix of available and unavailable capabilities.
-        val mixed =
-            SpatialCapabilities.SPATIAL_CAPABILITY_UI or
-                SpatialCapabilities.SPATIAL_CAPABILITY_PASSTHROUGH_CONTROL
-        assertThat(caps.hasCapability(mixed)).isFalse()
-
-        // Check for a superset of available capabilities.
-        val superset =
-            SpatialCapabilities.SPATIAL_CAPABILITY_UI or
-                SpatialCapabilities.SPATIAL_CAPABILITY_3D_CONTENT or
-                SpatialCapabilities.SPATIAL_CAPABILITY_PASSTHROUGH_CONTROL
-        assertThat(caps.hasCapability(superset)).isFalse()
+        expectedCaps =
+            setOf(
+                SpatialCapability.SPATIAL_UI,
+                SpatialCapability.PASSTHROUGH_CONTROL,
+                SpatialCapability.APP_ENVIRONMENT,
+                SpatialCapability.EMBED_ACTIVITY,
+            )
+        assertThat(caps).isEqualTo(expectedCaps)
     }
 
     @Test
@@ -593,30 +492,6 @@ class UtilsTest {
     @Test
     fun intToInputEventPointerType_invalidValue_throwsError() {
         assertFailsWith<IllegalStateException> { 100.toInputEventPointer() }
-    }
-
-    @Test
-    fun intToSpatialCapability_convertsCorrectly() {
-        assertThat(
-                listOf(
-                        RuntimeSpatialCapabilities.SPATIAL_CAPABILITY_UI,
-                        RuntimeSpatialCapabilities.SPATIAL_CAPABILITY_3D_CONTENT,
-                        RuntimeSpatialCapabilities.SPATIAL_CAPABILITY_PASSTHROUGH_CONTROL,
-                        RuntimeSpatialCapabilities.SPATIAL_CAPABILITY_APP_ENVIRONMENT,
-                        RuntimeSpatialCapabilities.SPATIAL_CAPABILITY_SPATIAL_AUDIO,
-                        RuntimeSpatialCapabilities.SPATIAL_CAPABILITY_EMBED_ACTIVITY,
-                    )
-                    .map { it.toSpatialCapability() }
-            )
-            .containsExactly(
-                SpatialCapabilities.SPATIAL_CAPABILITY_UI,
-                SpatialCapabilities.SPATIAL_CAPABILITY_3D_CONTENT,
-                SpatialCapabilities.SPATIAL_CAPABILITY_PASSTHROUGH_CONTROL,
-                SpatialCapabilities.SPATIAL_CAPABILITY_APP_ENVIRONMENT,
-                SpatialCapabilities.SPATIAL_CAPABILITY_SPATIAL_AUDIO,
-                SpatialCapabilities.SPATIAL_CAPABILITY_EMBED_ACTIVITY,
-            )
-            .inOrder()
     }
 
     @Test
