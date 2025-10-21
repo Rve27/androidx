@@ -101,7 +101,7 @@ class InputMoveResizeTestActivity : AppCompatActivity() {
                 TAG,
                 "ResizeEvent(entity: ${resizeEvent.entity}, resizeState: ${resizeEvent.resizeState}, newSize: ${resizeEvent.newSize}",
             )
-            if (resizeEvent.resizeState == ResizeEvent.ResizeState.RESIZE_STATE_END) {
+            if (resizeEvent.resizeState == ResizeEvent.ResizeState.END) {
                 (resizeEvent.entity as PanelEntity).size = resizeEvent.newSize.to2d()
             }
         }
