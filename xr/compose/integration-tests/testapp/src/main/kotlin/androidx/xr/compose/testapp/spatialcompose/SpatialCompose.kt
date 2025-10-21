@@ -438,17 +438,23 @@ class SpatialCompose : ComponentActivity() {
                 )
 
             dragonEntity.value?.let {
-                it.startAnimation(true, "Fast_Flying")
+                it.startAnimation(false, "Fast_Flying")
                 dragonAnimationState.value = it.animationState
             }
         }
 
         // Actions to run continuously.
-        LaunchedEffect(dragonEntity.value, dragonAnimationState.value) {
+        LaunchedEffect(dragonEntity.value) {
             val entity = dragonEntity.value
-            if (entity != null && dragonAnimationState.value == AnimationState.PLAYING) {
+            if (entity != null) {
                 while (true) {
-                    entitySize = entity.getGltfModelBoundingBox().halfExtents.times(2f)
+                    // 1. Update the animation state on every frame.
+                    dragonAnimationState.value = entity.animationState
+
+                    // 2. Only calculate the bounding box if the animation is actually playing.
+                    if (entity.animationState == AnimationState.PLAYING) {
+                        entitySize = entity.getGltfModelBoundingBox().halfExtents.times(2f)
+                    }
 
                     delay(16L)
                 }
