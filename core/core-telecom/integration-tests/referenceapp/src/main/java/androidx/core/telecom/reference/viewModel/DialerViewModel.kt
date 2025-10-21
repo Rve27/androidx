@@ -24,6 +24,7 @@ import androidx.core.telecom.CallEndpointCompat
 import androidx.core.telecom.CallsManager
 import androidx.core.telecom.reference.CallRepository
 import androidx.core.telecom.reference.model.DialerUiState
+import androidx.core.telecom.reference.view.loadExtensionEnabled
 import androidx.core.telecom.reference.view.loadPhoneNumberPrefix
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -56,6 +57,8 @@ class DialerViewModel(
 
     companion object {
         private const val TAG = "DialerViewModel"
+        private const val KEY_LOCAL_CALL_SILENCE_EXTENSION_ENABLED =
+            "local_call_silence_extension_enabled"
     }
 
     private var endpointFetchJob: Job? = null
@@ -63,6 +66,12 @@ class DialerViewModel(
     init {
         // Start fetching endpoints when the ViewModel is created
         fetchAvailableEndpoints()
+        val lcsEnabled = loadExtensionEnabled(context, KEY_LOCAL_CALL_SILENCE_EXTENSION_ENABLED)
+        _uiState.update { it.copy(isLocalCallSilenceEnabled = lcsEnabled) }
+    }
+
+    fun updateIsInitiallyMuted(isMuted: Boolean) {
+        _uiState.update { it.copy(isInitiallyMuted = isMuted) }
     }
 
     /**
@@ -193,7 +202,8 @@ class DialerViewModel(
                 callCapabilities = getCallCapabilities(),
                 preferredStartingCallEndpoint = _uiState.value.selectedEndpoint,
                 isLogExcluded = false,
-            )
+            ),
+            isInitiallyMuted = _uiState.value.isInitiallyMuted,
         )
     }
 
