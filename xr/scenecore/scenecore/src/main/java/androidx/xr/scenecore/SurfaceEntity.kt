@@ -26,6 +26,7 @@ import androidx.xr.runtime.Session
 import androidx.xr.runtime.internal.LifecycleManager
 import androidx.xr.runtime.math.FloatSize2d
 import androidx.xr.runtime.math.FloatSize3d
+import androidx.xr.runtime.math.IntSize2d
 import androidx.xr.runtime.math.Pose
 import androidx.xr.scenecore.runtime.RenderingRuntime
 import androidx.xr.scenecore.runtime.SceneRuntime
@@ -714,6 +715,21 @@ private constructor(
     public fun getSurface(): Surface {
         checkNotDisposed()
         return rtEntity!!.surface
+    }
+
+    /**
+     * Sets the dimensions of the Surface in pixels. This is needed if the application wishes to use
+     * android.graphics.Canvas apis to render still images into the Surface. It is usually not
+     * needed if the application is using a MediaPlayer or ExoPlayer to render the Surface.
+     *
+     * @throws IllegalArgumentException if the dimensions are not greater than 0.
+     * @throws IllegalStateException if the Entity has been disposed.
+     */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
+    @MainThread
+    public fun setSurfacePixelDimensions(dimensions: IntSize2d) {
+        checkNotDisposed()
+        rtEntity!!.setSurfacePixelDimensions(dimensions.width, dimensions.height)
     }
 
     /**
