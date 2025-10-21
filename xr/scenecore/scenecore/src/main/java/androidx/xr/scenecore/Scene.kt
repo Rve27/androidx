@@ -286,7 +286,7 @@ public class Scene : SessionConnector {
      * transparency (alpha=0) or being hidden is not considered. If the entities in the scene or any
      * of their ancestors are hidden using [Entity.setEnabled] (enabled=false) or if the entities
      * are turned fully transparent using [Entity.setAlpha] (alpha=0.0), then the SpatialVisibility
-     * checks will return [SpatialVisibility.SPATIAL_VISIBILITY_OUTSIDE_FIELD_OF_VIEW].
+     * checks will return [SpatialVisibility.OUTSIDE_FIELD_OF_VIEW].
      *
      * The listener is invoked on the provided [Executor].
      *
@@ -299,7 +299,7 @@ public class Scene : SessionConnector {
      */
     public fun setSpatialVisibilityChangedListener(
         callbackExecutor: Executor,
-        listener: Consumer<@SpatialVisibilityValue Int>,
+        listener: Consumer<SpatialVisibility>,
     ): Unit {
         // Wrap client's listener in a callback that converts the sceneRuntime's
         // SpatialVisibility.
@@ -321,7 +321,7 @@ public class Scene : SessionConnector {
      * transparency (alpha=0) or being hidden is not considered. If the entities in the scene or any
      * of their ancestors are hidden using [Entity.setEnabled] (enabled=false) or if the entities
      * are turned fully transparent using [Entity.setAlpha] (alpha=0.0), then the SpatialVisibility
-     * checks will return [SpatialVisibility.SPATIAL_VISIBILITY_OUTSIDE_FIELD_OF_VIEW].
+     * checks will return [SpatialVisibility.OUTSIDE_FIELD_OF_VIEW].
      *
      * There can only be one listener set at a time. If a new listener is set, the previous listener
      * will be released.
@@ -329,9 +329,8 @@ public class Scene : SessionConnector {
      * @param listener The [Consumer] to be invoked asynchronously on the main thread whenever the
      *   [SpatialVisibility] of the renderable content changes.
      */
-    public fun setSpatialVisibilityChangedListener(
-        listener: Consumer<@SpatialVisibilityValue Int>
-    ): Unit = setSpatialVisibilityChangedListener(HandlerExecutor.mainThreadExecutor, listener)
+    public fun setSpatialVisibilityChangedListener(listener: Consumer<SpatialVisibility>): Unit =
+        setSpatialVisibilityChangedListener(HandlerExecutor.mainThreadExecutor, listener)
 
     /**
      * Releases the listener previously added by [setSpatialVisibilityChangedListener].
