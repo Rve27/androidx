@@ -279,13 +279,12 @@ internal fun Int.toMoveState(): Int {
 }
 
 /** Extension function that converts a [Int] to [ResizeEvent.ResizeState]. */
-@ResizeEvent.ResizeStateValue
-internal fun Int.toResizeState(): Int {
+internal fun Int.toResizeState(): ResizeEvent.ResizeState {
     return when (this) {
-        RtResizeEvent.RESIZE_STATE_UNKNOWN -> ResizeEvent.ResizeState.RESIZE_STATE_UNKNOWN
-        RtResizeEvent.RESIZE_STATE_START -> ResizeEvent.ResizeState.RESIZE_STATE_START
-        RtResizeEvent.RESIZE_STATE_ONGOING -> ResizeEvent.ResizeState.RESIZE_STATE_ONGOING
-        RtResizeEvent.RESIZE_STATE_END -> ResizeEvent.ResizeState.RESIZE_STATE_END
+        RtResizeEvent.RESIZE_STATE_UNKNOWN -> ResizeEvent.ResizeState.UNKNOWN
+        RtResizeEvent.RESIZE_STATE_START -> ResizeEvent.ResizeState.START
+        RtResizeEvent.RESIZE_STATE_ONGOING -> ResizeEvent.ResizeState.ONGOING
+        RtResizeEvent.RESIZE_STATE_END -> ResizeEvent.ResizeState.END
         else -> error("Unknown Resize State: $this")
     }
 }

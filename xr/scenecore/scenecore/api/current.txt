@@ -646,25 +646,28 @@ package androidx.xr.scenecore {
   }
 
   public final class ResizeEvent {
-    ctor public ResizeEvent(androidx.xr.scenecore.Entity entity, int resizeState, androidx.xr.runtime.math.FloatSize3d newSize);
+    ctor public ResizeEvent(androidx.xr.scenecore.Entity entity, androidx.xr.scenecore.ResizeEvent.ResizeState resizeState, androidx.xr.runtime.math.FloatSize3d newSize);
     method @InaccessibleFromKotlin public androidx.xr.scenecore.Entity getEntity();
     method @InaccessibleFromKotlin public androidx.xr.runtime.math.FloatSize3d getNewSize();
-    method @InaccessibleFromKotlin public int getResizeState();
+    method @InaccessibleFromKotlin public androidx.xr.scenecore.ResizeEvent.ResizeState getResizeState();
     property public androidx.xr.scenecore.Entity entity;
     property public androidx.xr.runtime.math.FloatSize3d newSize;
-    property public int resizeState;
+    property public androidx.xr.scenecore.ResizeEvent.ResizeState resizeState;
   }
 
   public static final class ResizeEvent.ResizeState {
-    property public static int RESIZE_STATE_END;
-    property public static int RESIZE_STATE_ONGOING;
-    property public static int RESIZE_STATE_START;
-    property public static int RESIZE_STATE_UNKNOWN;
-    field public static final androidx.xr.scenecore.ResizeEvent.ResizeState INSTANCE;
-    field public static final int RESIZE_STATE_END = 3; // 0x3
-    field public static final int RESIZE_STATE_ONGOING = 2; // 0x2
-    field public static final int RESIZE_STATE_START = 1; // 0x1
-    field public static final int RESIZE_STATE_UNKNOWN = 0; // 0x0
+    field public static final androidx.xr.scenecore.ResizeEvent.ResizeState.Companion Companion;
+    field public static final androidx.xr.scenecore.ResizeEvent.ResizeState END;
+    field public static final androidx.xr.scenecore.ResizeEvent.ResizeState ONGOING;
+    field public static final androidx.xr.scenecore.ResizeEvent.ResizeState START;
+    field public static final androidx.xr.scenecore.ResizeEvent.ResizeState UNKNOWN;
+  }
+
+  public static final class ResizeEvent.ResizeState.Companion {
+    property public androidx.xr.scenecore.ResizeEvent.ResizeState END;
+    property public androidx.xr.scenecore.ResizeEvent.ResizeState ONGOING;
+    property public androidx.xr.scenecore.ResizeEvent.ResizeState START;
+    property public androidx.xr.scenecore.ResizeEvent.ResizeState UNKNOWN;
   }
 
   public final class Scene {
