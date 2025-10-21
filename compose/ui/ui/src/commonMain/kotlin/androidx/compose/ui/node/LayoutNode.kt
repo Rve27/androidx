@@ -102,7 +102,7 @@ internal class LayoutNode(
     internal var lastSize: IntSize = IntSize.Zero
     internal var outerToInnerOffset: IntOffset = IntOffset.Max
     internal var outerToInnerOffsetDirty: Boolean = true
-    internal var addedToRectList: Boolean = true
+    internal var addedToRectList: Boolean = false
 
     override var compositeKeyHash: Int = 0
 
