@@ -959,9 +959,9 @@ package androidx.xr.scenecore {
     method @MainThread public static androidx.xr.scenecore.SurfaceEntity create(androidx.xr.runtime.Session session);
     method @MainThread public static androidx.xr.scenecore.SurfaceEntity create(androidx.xr.runtime.Session session, optional androidx.xr.runtime.math.Pose pose);
     method @MainThread public static androidx.xr.scenecore.SurfaceEntity create(androidx.xr.runtime.Session session, optional androidx.xr.runtime.math.Pose pose, optional androidx.xr.scenecore.SurfaceEntity.Shape shape);
-    method @MainThread public static androidx.xr.scenecore.SurfaceEntity create(androidx.xr.runtime.Session session, optional androidx.xr.runtime.math.Pose pose, optional androidx.xr.scenecore.SurfaceEntity.Shape shape, optional int stereoMode);
-    method @MainThread public static androidx.xr.scenecore.SurfaceEntity create(androidx.xr.runtime.Session session, optional androidx.xr.runtime.math.Pose pose, optional androidx.xr.scenecore.SurfaceEntity.Shape shape, optional int stereoMode, optional int superSampling);
-    method @MainThread public static androidx.xr.scenecore.SurfaceEntity create(androidx.xr.runtime.Session session, optional androidx.xr.runtime.math.Pose pose, optional androidx.xr.scenecore.SurfaceEntity.Shape shape, optional int stereoMode, optional int superSampling, optional int surfaceProtection);
+    method @MainThread public static androidx.xr.scenecore.SurfaceEntity create(androidx.xr.runtime.Session session, optional androidx.xr.runtime.math.Pose pose, optional androidx.xr.scenecore.SurfaceEntity.Shape shape, optional androidx.xr.scenecore.SurfaceEntity.StereoMode stereoMode);
+    method @MainThread public static androidx.xr.scenecore.SurfaceEntity create(androidx.xr.runtime.Session session, optional androidx.xr.runtime.math.Pose pose, optional androidx.xr.scenecore.SurfaceEntity.Shape shape, optional androidx.xr.scenecore.SurfaceEntity.StereoMode stereoMode, optional androidx.xr.scenecore.SurfaceEntity.SuperSampling superSampling);
+    method @MainThread public static androidx.xr.scenecore.SurfaceEntity create(androidx.xr.runtime.Session session, optional androidx.xr.runtime.math.Pose pose, optional androidx.xr.scenecore.SurfaceEntity.Shape shape, optional androidx.xr.scenecore.SurfaceEntity.StereoMode stereoMode, optional androidx.xr.scenecore.SurfaceEntity.SuperSampling superSampling, optional androidx.xr.scenecore.SurfaceEntity.SurfaceProtection surfaceProtection);
     method @InaccessibleFromKotlin @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public androidx.xr.scenecore.Texture? getAuxiliaryAlphaMaskTexture();
     method @InaccessibleFromKotlin @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata? getContentColorMetadata();
     method @InaccessibleFromKotlin public androidx.xr.runtime.math.FloatSize3d getDimensions();
@@ -969,21 +969,21 @@ package androidx.xr.scenecore {
     method public androidx.xr.scenecore.PerceivedResolutionResult getPerceivedResolution();
     method @InaccessibleFromKotlin @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public androidx.xr.scenecore.Texture? getPrimaryAlphaMaskTexture();
     method @InaccessibleFromKotlin public androidx.xr.scenecore.SurfaceEntity.Shape getShape();
-    method @InaccessibleFromKotlin public int getStereoMode();
+    method @InaccessibleFromKotlin public androidx.xr.scenecore.SurfaceEntity.StereoMode getStereoMode();
     method @MainThread public android.view.Surface getSurface();
     method @InaccessibleFromKotlin @MainThread @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public void setAuxiliaryAlphaMaskTexture(androidx.xr.scenecore.Texture?);
     method @InaccessibleFromKotlin @MainThread @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public void setContentColorMetadata(androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata?);
     method @InaccessibleFromKotlin @MainThread public void setEdgeFeatheringParams(androidx.xr.scenecore.SurfaceEntity.EdgeFeatheringParams);
     method @InaccessibleFromKotlin @MainThread @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public void setPrimaryAlphaMaskTexture(androidx.xr.scenecore.Texture?);
     method @InaccessibleFromKotlin @MainThread public void setShape(androidx.xr.scenecore.SurfaceEntity.Shape);
-    method @InaccessibleFromKotlin @MainThread public void setStereoMode(int);
+    method @InaccessibleFromKotlin @MainThread public void setStereoMode(androidx.xr.scenecore.SurfaceEntity.StereoMode);
     property @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public androidx.xr.scenecore.Texture? auxiliaryAlphaMaskTexture;
     property @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata? contentColorMetadata;
     property public androidx.xr.runtime.math.FloatSize3d dimensions;
     property public androidx.xr.scenecore.SurfaceEntity.EdgeFeatheringParams edgeFeatheringParams;
     property @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public androidx.xr.scenecore.Texture? primaryAlphaMaskTexture;
     property public androidx.xr.scenecore.SurfaceEntity.Shape shape;
-    property public int stereoMode;
+    property public androidx.xr.scenecore.SurfaceEntity.StereoMode stereoMode;
     field public static final androidx.xr.scenecore.SurfaceEntity.Companion Companion;
   }
 
@@ -991,68 +991,77 @@ package androidx.xr.scenecore {
     method @MainThread public androidx.xr.scenecore.SurfaceEntity create(androidx.xr.runtime.Session session);
     method @MainThread public androidx.xr.scenecore.SurfaceEntity create(androidx.xr.runtime.Session session, optional androidx.xr.runtime.math.Pose pose);
     method @MainThread public androidx.xr.scenecore.SurfaceEntity create(androidx.xr.runtime.Session session, optional androidx.xr.runtime.math.Pose pose, optional androidx.xr.scenecore.SurfaceEntity.Shape shape);
-    method @MainThread public androidx.xr.scenecore.SurfaceEntity create(androidx.xr.runtime.Session session, optional androidx.xr.runtime.math.Pose pose, optional androidx.xr.scenecore.SurfaceEntity.Shape shape, optional int stereoMode);
-    method @MainThread public androidx.xr.scenecore.SurfaceEntity create(androidx.xr.runtime.Session session, optional androidx.xr.runtime.math.Pose pose, optional androidx.xr.scenecore.SurfaceEntity.Shape shape, optional int stereoMode, optional int superSampling);
-    method @MainThread public androidx.xr.scenecore.SurfaceEntity create(androidx.xr.runtime.Session session, optional androidx.xr.runtime.math.Pose pose, optional androidx.xr.scenecore.SurfaceEntity.Shape shape, optional int stereoMode, optional int superSampling, optional int surfaceProtection);
-    method @BytecodeOnly @MainThread public static androidx.xr.scenecore.SurfaceEntity! create$default(androidx.xr.scenecore.SurfaceEntity.Companion!, androidx.xr.runtime.Session!, androidx.xr.runtime.math.Pose!, androidx.xr.scenecore.SurfaceEntity.Shape!, int, int, int, int, Object!);
+    method @MainThread public androidx.xr.scenecore.SurfaceEntity create(androidx.xr.runtime.Session session, optional androidx.xr.runtime.math.Pose pose, optional androidx.xr.scenecore.SurfaceEntity.Shape shape, optional androidx.xr.scenecore.SurfaceEntity.StereoMode stereoMode);
+    method @MainThread public androidx.xr.scenecore.SurfaceEntity create(androidx.xr.runtime.Session session, optional androidx.xr.runtime.math.Pose pose, optional androidx.xr.scenecore.SurfaceEntity.Shape shape, optional androidx.xr.scenecore.SurfaceEntity.StereoMode stereoMode, optional androidx.xr.scenecore.SurfaceEntity.SuperSampling superSampling);
+    method @MainThread public androidx.xr.scenecore.SurfaceEntity create(androidx.xr.runtime.Session session, optional androidx.xr.runtime.math.Pose pose, optional androidx.xr.scenecore.SurfaceEntity.Shape shape, optional androidx.xr.scenecore.SurfaceEntity.StereoMode stereoMode, optional androidx.xr.scenecore.SurfaceEntity.SuperSampling superSampling, optional androidx.xr.scenecore.SurfaceEntity.SurfaceProtection surfaceProtection);
+    method @BytecodeOnly @MainThread public static androidx.xr.scenecore.SurfaceEntity! create$default(androidx.xr.scenecore.SurfaceEntity.Companion!, androidx.xr.runtime.Session!, androidx.xr.runtime.math.Pose!, androidx.xr.scenecore.SurfaceEntity.Shape!, androidx.xr.scenecore.SurfaceEntity.StereoMode!, androidx.xr.scenecore.SurfaceEntity.SuperSampling!, androidx.xr.scenecore.SurfaceEntity.SurfaceProtection!, int, Object!);
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static final class SurfaceEntity.ContentColorMetadata {
     ctor public SurfaceEntity.ContentColorMetadata();
-    ctor public SurfaceEntity.ContentColorMetadata(optional int colorSpace, optional int colorTransfer, optional int colorRange, optional int maxContentLightLevel);
-    ctor @BytecodeOnly public SurfaceEntity.ContentColorMetadata(int, int, int, int, int, kotlin.jvm.internal.DefaultConstructorMarker!);
-    method @InaccessibleFromKotlin public int getColorRange();
-    method @InaccessibleFromKotlin public int getColorSpace();
-    method @InaccessibleFromKotlin public int getColorTransfer();
+    ctor public SurfaceEntity.ContentColorMetadata(optional androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata.ColorSpace colorSpace, optional androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata.ColorTransfer colorTransfer, optional androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata.ColorRange colorRange, optional int maxContentLightLevel);
+    ctor @BytecodeOnly public SurfaceEntity.ContentColorMetadata(androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata.ColorSpace!, androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata.ColorTransfer!, androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata.ColorRange!, int, int, kotlin.jvm.internal.DefaultConstructorMarker!);
+    method @InaccessibleFromKotlin public androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata.ColorRange getColorRange();
+    method @InaccessibleFromKotlin public androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata.ColorSpace getColorSpace();
+    method @InaccessibleFromKotlin public androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata.ColorTransfer getColorTransfer();
     method @InaccessibleFromKotlin public int getMaxContentLightLevel();
-    property public int colorRange;
-    property public int colorSpace;
-    property public int colorTransfer;
+    property public androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata.ColorRange colorRange;
+    property public androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata.ColorSpace colorSpace;
+    property public androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata.ColorTransfer colorTransfer;
     property public int maxContentLightLevel;
     field public static final androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata.Companion Companion;
     field public static final int MAX_CONTENT_LIGHT_LEVEL_UNKNOWN = 0; // 0x0
   }
 
   public static final class SurfaceEntity.ContentColorMetadata.ColorRange {
-    property public static int COLOR_RANGE_FULL;
-    property public static int COLOR_RANGE_LIMITED;
-    field public static final int COLOR_RANGE_FULL = 1; // 0x1
-    field public static final int COLOR_RANGE_LIMITED = 2; // 0x2
-    field public static final androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata.ColorRange INSTANCE;
+    field public static final androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata.ColorRange.Companion Companion;
+    field public static final androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata.ColorRange FULL;
+    field public static final androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata.ColorRange LIMITED;
+  }
+
+  public static final class SurfaceEntity.ContentColorMetadata.ColorRange.Companion {
+    property public androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata.ColorRange FULL;
+    property public androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata.ColorRange LIMITED;
   }
 
   public static final class SurfaceEntity.ContentColorMetadata.ColorSpace {
-    property public static int COLOR_SPACE_ADOBE_RGB;
-    property public static int COLOR_SPACE_BT2020;
-    property public static int COLOR_SPACE_BT601_525;
-    property public static int COLOR_SPACE_BT601_PAL;
-    property public static int COLOR_SPACE_BT709;
-    property public static int COLOR_SPACE_DCI_P3;
-    property public static int COLOR_SPACE_DISPLAY_P3;
-    field public static final int COLOR_SPACE_ADOBE_RGB = 243; // 0xf3
-    field public static final int COLOR_SPACE_BT2020 = 6; // 0x6
-    field public static final int COLOR_SPACE_BT601_525 = 240; // 0xf0
-    field public static final int COLOR_SPACE_BT601_PAL = 2; // 0x2
-    field public static final int COLOR_SPACE_BT709 = 1; // 0x1
-    field public static final int COLOR_SPACE_DCI_P3 = 242; // 0xf2
-    field public static final int COLOR_SPACE_DISPLAY_P3 = 241; // 0xf1
-    field public static final androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata.ColorSpace INSTANCE;
+    field public static final androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata.ColorSpace ADOBE_RGB;
+    field public static final androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata.ColorSpace BT2020;
+    field public static final androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata.ColorSpace BT601_525;
+    field public static final androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata.ColorSpace BT601_PAL;
+    field public static final androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata.ColorSpace BT709;
+    field public static final androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata.ColorSpace.Companion Companion;
+    field public static final androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata.ColorSpace DCI_P3;
+    field public static final androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata.ColorSpace DISPLAY_P3;
+  }
+
+  public static final class SurfaceEntity.ContentColorMetadata.ColorSpace.Companion {
+    property public androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata.ColorSpace ADOBE_RGB;
+    property public androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata.ColorSpace BT2020;
+    property public androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata.ColorSpace BT601_525;
+    property public androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata.ColorSpace BT601_PAL;
+    property public androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata.ColorSpace BT709;
+    property public androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata.ColorSpace DCI_P3;
+    property public androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata.ColorSpace DISPLAY_P3;
   }
 
   public static final class SurfaceEntity.ContentColorMetadata.ColorTransfer {
-    property public static int COLOR_TRANSFER_GAMMA_2_2;
-    property public static int COLOR_TRANSFER_HLG;
-    property public static int COLOR_TRANSFER_LINEAR;
-    property public static int COLOR_TRANSFER_SDR;
-    property public static int COLOR_TRANSFER_SRGB;
-    property public static int COLOR_TRANSFER_ST2084;
-    field public static final int COLOR_TRANSFER_GAMMA_2_2 = 10; // 0xa
-    field public static final int COLOR_TRANSFER_HLG = 7; // 0x7
-    field public static final int COLOR_TRANSFER_LINEAR = 1; // 0x1
-    field public static final int COLOR_TRANSFER_SDR = 3; // 0x3
-    field public static final int COLOR_TRANSFER_SRGB = 2; // 0x2
-    field public static final int COLOR_TRANSFER_ST2084 = 6; // 0x6
-    field public static final androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata.ColorTransfer INSTANCE;
+    field public static final androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata.ColorTransfer.Companion Companion;
+    field public static final androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata.ColorTransfer GAMMA_2_2;
+    field public static final androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata.ColorTransfer HLG;
+    field public static final androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata.ColorTransfer LINEAR;
+    field public static final androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata.ColorTransfer SDR;
+    field public static final androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata.ColorTransfer SRGB;
+    field public static final androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata.ColorTransfer ST2084;
+  }
+
+  public static final class SurfaceEntity.ContentColorMetadata.ColorTransfer.Companion {
+    property public androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata.ColorTransfer GAMMA_2_2;
+    property public androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata.ColorTransfer HLG;
+    property public androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata.ColorTransfer LINEAR;
+    property public androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata.ColorTransfer SDR;
+    property public androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata.ColorTransfer SRGB;
+    property public androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata.ColorTransfer ST2084;
   }
 
   public static final class SurfaceEntity.ContentColorMetadata.Companion {
@@ -1100,33 +1109,42 @@ package androidx.xr.scenecore {
   }
 
   public static final class SurfaceEntity.StereoMode {
-    property public static int STEREO_MODE_MONO;
-    property public static int STEREO_MODE_MULTIVIEW_LEFT_PRIMARY;
-    property public static int STEREO_MODE_MULTIVIEW_RIGHT_PRIMARY;
-    property public static int STEREO_MODE_SIDE_BY_SIDE;
-    property public static int STEREO_MODE_TOP_BOTTOM;
-    field public static final androidx.xr.scenecore.SurfaceEntity.StereoMode INSTANCE;
-    field public static final int STEREO_MODE_MONO = 0; // 0x0
-    field public static final int STEREO_MODE_MULTIVIEW_LEFT_PRIMARY = 4; // 0x4
-    field public static final int STEREO_MODE_MULTIVIEW_RIGHT_PRIMARY = 5; // 0x5
-    field public static final int STEREO_MODE_SIDE_BY_SIDE = 2; // 0x2
-    field public static final int STEREO_MODE_TOP_BOTTOM = 1; // 0x1
+    field public static final androidx.xr.scenecore.SurfaceEntity.StereoMode.Companion Companion;
+    field public static final androidx.xr.scenecore.SurfaceEntity.StereoMode MONO;
+    field public static final androidx.xr.scenecore.SurfaceEntity.StereoMode MULTIVIEW_LEFT_PRIMARY;
+    field public static final androidx.xr.scenecore.SurfaceEntity.StereoMode MULTIVIEW_RIGHT_PRIMARY;
+    field public static final androidx.xr.scenecore.SurfaceEntity.StereoMode SIDE_BY_SIDE;
+    field public static final androidx.xr.scenecore.SurfaceEntity.StereoMode TOP_BOTTOM;
+  }
+
+  public static final class SurfaceEntity.StereoMode.Companion {
+    property public androidx.xr.scenecore.SurfaceEntity.StereoMode MONO;
+    property public androidx.xr.scenecore.SurfaceEntity.StereoMode MULTIVIEW_LEFT_PRIMARY;
+    property public androidx.xr.scenecore.SurfaceEntity.StereoMode MULTIVIEW_RIGHT_PRIMARY;
+    property public androidx.xr.scenecore.SurfaceEntity.StereoMode SIDE_BY_SIDE;
+    property public androidx.xr.scenecore.SurfaceEntity.StereoMode TOP_BOTTOM;
   }
 
   public static final class SurfaceEntity.SuperSampling {
-    property public static int SUPER_SAMPLING_NONE;
-    property public static int SUPER_SAMPLING_PENTAGON;
-    field public static final androidx.xr.scenecore.SurfaceEntity.SuperSampling INSTANCE;
-    field public static final int SUPER_SAMPLING_NONE = 0; // 0x0
-    field public static final int SUPER_SAMPLING_PENTAGON = 1; // 0x1
+    field public static final androidx.xr.scenecore.SurfaceEntity.SuperSampling.Companion Companion;
+    field public static final androidx.xr.scenecore.SurfaceEntity.SuperSampling NONE;
+    field public static final androidx.xr.scenecore.SurfaceEntity.SuperSampling PENTAGON;
+  }
+
+  public static final class SurfaceEntity.SuperSampling.Companion {
+    property public androidx.xr.scenecore.SurfaceEntity.SuperSampling NONE;
+    property public androidx.xr.scenecore.SurfaceEntity.SuperSampling PENTAGON;
   }
 
   public static final class SurfaceEntity.SurfaceProtection {
-    property public static int SURFACE_PROTECTION_NONE;
-    property public static int SURFACE_PROTECTION_PROTECTED;
-    field public static final androidx.xr.scenecore.SurfaceEntity.SurfaceProtection INSTANCE;
-    field public static final int SURFACE_PROTECTION_NONE = 0; // 0x0
-    field public static final int SURFACE_PROTECTION_PROTECTED = 1; // 0x1
+    field public static final androidx.xr.scenecore.SurfaceEntity.SurfaceProtection.Companion Companion;
+    field public static final androidx.xr.scenecore.SurfaceEntity.SurfaceProtection NONE;
+    field public static final androidx.xr.scenecore.SurfaceEntity.SurfaceProtection PROTECTED;
+  }
+
+  public static final class SurfaceEntity.SurfaceProtection.Companion {
+    property public androidx.xr.scenecore.SurfaceEntity.SurfaceProtection NONE;
+    property public androidx.xr.scenecore.SurfaceEntity.SurfaceProtection PROTECTED;
   }
 
   public class Texture implements java.lang.AutoCloseable {
