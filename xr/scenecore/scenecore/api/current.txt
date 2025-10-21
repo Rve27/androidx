@@ -915,22 +915,22 @@ package androidx.xr.scenecore {
     method @MainThread public static androidx.xr.scenecore.SurfaceEntity create(androidx.xr.runtime.Session session);
     method @MainThread public static androidx.xr.scenecore.SurfaceEntity create(androidx.xr.runtime.Session session, optional androidx.xr.runtime.math.Pose pose);
     method @MainThread public static androidx.xr.scenecore.SurfaceEntity create(androidx.xr.runtime.Session session, optional androidx.xr.runtime.math.Pose pose, optional androidx.xr.scenecore.SurfaceEntity.Shape shape);
-    method @MainThread public static androidx.xr.scenecore.SurfaceEntity create(androidx.xr.runtime.Session session, optional androidx.xr.runtime.math.Pose pose, optional androidx.xr.scenecore.SurfaceEntity.Shape shape, optional int stereoMode);
-    method @MainThread public static androidx.xr.scenecore.SurfaceEntity create(androidx.xr.runtime.Session session, optional androidx.xr.runtime.math.Pose pose, optional androidx.xr.scenecore.SurfaceEntity.Shape shape, optional int stereoMode, optional int superSampling);
-    method @MainThread public static androidx.xr.scenecore.SurfaceEntity create(androidx.xr.runtime.Session session, optional androidx.xr.runtime.math.Pose pose, optional androidx.xr.scenecore.SurfaceEntity.Shape shape, optional int stereoMode, optional int superSampling, optional int surfaceProtection);
+    method @MainThread public static androidx.xr.scenecore.SurfaceEntity create(androidx.xr.runtime.Session session, optional androidx.xr.runtime.math.Pose pose, optional androidx.xr.scenecore.SurfaceEntity.Shape shape, optional androidx.xr.scenecore.SurfaceEntity.StereoMode stereoMode);
+    method @MainThread public static androidx.xr.scenecore.SurfaceEntity create(androidx.xr.runtime.Session session, optional androidx.xr.runtime.math.Pose pose, optional androidx.xr.scenecore.SurfaceEntity.Shape shape, optional androidx.xr.scenecore.SurfaceEntity.StereoMode stereoMode, optional androidx.xr.scenecore.SurfaceEntity.SuperSampling superSampling);
+    method @MainThread public static androidx.xr.scenecore.SurfaceEntity create(androidx.xr.runtime.Session session, optional androidx.xr.runtime.math.Pose pose, optional androidx.xr.scenecore.SurfaceEntity.Shape shape, optional androidx.xr.scenecore.SurfaceEntity.StereoMode stereoMode, optional androidx.xr.scenecore.SurfaceEntity.SuperSampling superSampling, optional androidx.xr.scenecore.SurfaceEntity.SurfaceProtection surfaceProtection);
     method @InaccessibleFromKotlin public androidx.xr.runtime.math.FloatSize3d getDimensions();
     method @InaccessibleFromKotlin public androidx.xr.scenecore.SurfaceEntity.EdgeFeatheringParams getEdgeFeatheringParams();
     method public androidx.xr.scenecore.PerceivedResolutionResult getPerceivedResolution();
     method @InaccessibleFromKotlin public androidx.xr.scenecore.SurfaceEntity.Shape getShape();
-    method @InaccessibleFromKotlin public int getStereoMode();
+    method @InaccessibleFromKotlin public androidx.xr.scenecore.SurfaceEntity.StereoMode getStereoMode();
     method @MainThread public android.view.Surface getSurface();
     method @InaccessibleFromKotlin @MainThread public void setEdgeFeatheringParams(androidx.xr.scenecore.SurfaceEntity.EdgeFeatheringParams);
     method @InaccessibleFromKotlin @MainThread public void setShape(androidx.xr.scenecore.SurfaceEntity.Shape);
-    method @InaccessibleFromKotlin @MainThread public void setStereoMode(int);
+    method @InaccessibleFromKotlin @MainThread public void setStereoMode(androidx.xr.scenecore.SurfaceEntity.StereoMode);
     property public androidx.xr.runtime.math.FloatSize3d dimensions;
     property public androidx.xr.scenecore.SurfaceEntity.EdgeFeatheringParams edgeFeatheringParams;
     property public androidx.xr.scenecore.SurfaceEntity.Shape shape;
-    property public int stereoMode;
+    property public androidx.xr.scenecore.SurfaceEntity.StereoMode stereoMode;
     field public static final androidx.xr.scenecore.SurfaceEntity.Companion Companion;
   }
 
@@ -938,10 +938,10 @@ package androidx.xr.scenecore {
     method @MainThread public androidx.xr.scenecore.SurfaceEntity create(androidx.xr.runtime.Session session);
     method @MainThread public androidx.xr.scenecore.SurfaceEntity create(androidx.xr.runtime.Session session, optional androidx.xr.runtime.math.Pose pose);
     method @MainThread public androidx.xr.scenecore.SurfaceEntity create(androidx.xr.runtime.Session session, optional androidx.xr.runtime.math.Pose pose, optional androidx.xr.scenecore.SurfaceEntity.Shape shape);
-    method @MainThread public androidx.xr.scenecore.SurfaceEntity create(androidx.xr.runtime.Session session, optional androidx.xr.runtime.math.Pose pose, optional androidx.xr.scenecore.SurfaceEntity.Shape shape, optional int stereoMode);
-    method @MainThread public androidx.xr.scenecore.SurfaceEntity create(androidx.xr.runtime.Session session, optional androidx.xr.runtime.math.Pose pose, optional androidx.xr.scenecore.SurfaceEntity.Shape shape, optional int stereoMode, optional int superSampling);
-    method @MainThread public androidx.xr.scenecore.SurfaceEntity create(androidx.xr.runtime.Session session, optional androidx.xr.runtime.math.Pose pose, optional androidx.xr.scenecore.SurfaceEntity.Shape shape, optional int stereoMode, optional int superSampling, optional int surfaceProtection);
-    method @BytecodeOnly @MainThread public static androidx.xr.scenecore.SurfaceEntity! create$default(androidx.xr.scenecore.SurfaceEntity.Companion!, androidx.xr.runtime.Session!, androidx.xr.runtime.math.Pose!, androidx.xr.scenecore.SurfaceEntity.Shape!, int, int, int, int, Object!);
+    method @MainThread public androidx.xr.scenecore.SurfaceEntity create(androidx.xr.runtime.Session session, optional androidx.xr.runtime.math.Pose pose, optional androidx.xr.scenecore.SurfaceEntity.Shape shape, optional androidx.xr.scenecore.SurfaceEntity.StereoMode stereoMode);
+    method @MainThread public androidx.xr.scenecore.SurfaceEntity create(androidx.xr.runtime.Session session, optional androidx.xr.runtime.math.Pose pose, optional androidx.xr.scenecore.SurfaceEntity.Shape shape, optional androidx.xr.scenecore.SurfaceEntity.StereoMode stereoMode, optional androidx.xr.scenecore.SurfaceEntity.SuperSampling superSampling);
+    method @MainThread public androidx.xr.scenecore.SurfaceEntity create(androidx.xr.runtime.Session session, optional androidx.xr.runtime.math.Pose pose, optional androidx.xr.scenecore.SurfaceEntity.Shape shape, optional androidx.xr.scenecore.SurfaceEntity.StereoMode stereoMode, optional androidx.xr.scenecore.SurfaceEntity.SuperSampling superSampling, optional androidx.xr.scenecore.SurfaceEntity.SurfaceProtection surfaceProtection);
+    method @BytecodeOnly @MainThread public static androidx.xr.scenecore.SurfaceEntity! create$default(androidx.xr.scenecore.SurfaceEntity.Companion!, androidx.xr.runtime.Session!, androidx.xr.runtime.math.Pose!, androidx.xr.scenecore.SurfaceEntity.Shape!, androidx.xr.scenecore.SurfaceEntity.StereoMode!, androidx.xr.scenecore.SurfaceEntity.SuperSampling!, androidx.xr.scenecore.SurfaceEntity.SurfaceProtection!, int, Object!);
   }
 
   public abstract static class SurfaceEntity.EdgeFeatheringParams {
@@ -983,33 +983,42 @@ package androidx.xr.scenecore {
   }
 
   public static final class SurfaceEntity.StereoMode {
-    property public static int STEREO_MODE_MONO;
-    property public static int STEREO_MODE_MULTIVIEW_LEFT_PRIMARY;
-    property public static int STEREO_MODE_MULTIVIEW_RIGHT_PRIMARY;
-    property public static int STEREO_MODE_SIDE_BY_SIDE;
-    property public static int STEREO_MODE_TOP_BOTTOM;
-    field public static final androidx.xr.scenecore.SurfaceEntity.StereoMode INSTANCE;
-    field public static final int STEREO_MODE_MONO = 0; // 0x0
-    field public static final int STEREO_MODE_MULTIVIEW_LEFT_PRIMARY = 4; // 0x4
-    field public static final int STEREO_MODE_MULTIVIEW_RIGHT_PRIMARY = 5; // 0x5
-    field public static final int STEREO_MODE_SIDE_BY_SIDE = 2; // 0x2
-    field public static final int STEREO_MODE_TOP_BOTTOM = 1; // 0x1
+    field public static final androidx.xr.scenecore.SurfaceEntity.StereoMode.Companion Companion;
+    field public static final androidx.xr.scenecore.SurfaceEntity.StereoMode MONO;
+    field public static final androidx.xr.scenecore.SurfaceEntity.StereoMode MULTIVIEW_LEFT_PRIMARY;
+    field public static final androidx.xr.scenecore.SurfaceEntity.StereoMode MULTIVIEW_RIGHT_PRIMARY;
+    field public static final androidx.xr.scenecore.SurfaceEntity.StereoMode SIDE_BY_SIDE;
+    field public static final androidx.xr.scenecore.SurfaceEntity.StereoMode TOP_BOTTOM;
+  }
+
+  public static final class SurfaceEntity.StereoMode.Companion {
+    property public androidx.xr.scenecore.SurfaceEntity.StereoMode MONO;
+    property public androidx.xr.scenecore.SurfaceEntity.StereoMode MULTIVIEW_LEFT_PRIMARY;
+    property public androidx.xr.scenecore.SurfaceEntity.StereoMode MULTIVIEW_RIGHT_PRIMARY;
+    property public androidx.xr.scenecore.SurfaceEntity.StereoMode SIDE_BY_SIDE;
+    property public androidx.xr.scenecore.SurfaceEntity.StereoMode TOP_BOTTOM;
   }
 
   public static final class SurfaceEntity.SuperSampling {
-    property public static int SUPER_SAMPLING_NONE;
-    property public static int SUPER_SAMPLING_PENTAGON;
-    field public static final androidx.xr.scenecore.SurfaceEntity.SuperSampling INSTANCE;
-    field public static final int SUPER_SAMPLING_NONE = 0; // 0x0
-    field public static final int SUPER_SAMPLING_PENTAGON = 1; // 0x1
+    field public static final androidx.xr.scenecore.SurfaceEntity.SuperSampling.Companion Companion;
+    field public static final androidx.xr.scenecore.SurfaceEntity.SuperSampling NONE;
+    field public static final androidx.xr.scenecore.SurfaceEntity.SuperSampling PENTAGON;
+  }
+
+  public static final class SurfaceEntity.SuperSampling.Companion {
+    property public androidx.xr.scenecore.SurfaceEntity.SuperSampling NONE;
+    property public androidx.xr.scenecore.SurfaceEntity.SuperSampling PENTAGON;
   }
 
   public static final class SurfaceEntity.SurfaceProtection {
-    property public static int SURFACE_PROTECTION_NONE;
-    property public static int SURFACE_PROTECTION_PROTECTED;
-    field public static final androidx.xr.scenecore.SurfaceEntity.SurfaceProtection INSTANCE;
-    field public static final int SURFACE_PROTECTION_NONE = 0; // 0x0
-    field public static final int SURFACE_PROTECTION_PROTECTED = 1; // 0x1
+    field public static final androidx.xr.scenecore.SurfaceEntity.SurfaceProtection.Companion Companion;
+    field public static final androidx.xr.scenecore.SurfaceEntity.SurfaceProtection NONE;
+    field public static final androidx.xr.scenecore.SurfaceEntity.SurfaceProtection PROTECTED;
+  }
+
+  public static final class SurfaceEntity.SurfaceProtection.Companion {
+    property public androidx.xr.scenecore.SurfaceEntity.SurfaceProtection NONE;
+    property public androidx.xr.scenecore.SurfaceEntity.SurfaceProtection PROTECTED;
   }
 
   public class Texture implements java.lang.AutoCloseable {
