@@ -251,8 +251,10 @@ package androidx.xr.arcore {
   }
 
   public final class Face {
+    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public androidx.xr.arcore.AnchorCreateResult createAnchor(androidx.xr.runtime.math.Pose pose);
     method @InaccessibleFromKotlin public kotlinx.coroutines.flow.StateFlow<androidx.xr.arcore.Face.State> getState();
     method public static androidx.xr.arcore.Face? getUserFace(androidx.xr.runtime.Session session);
+    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static kotlinx.coroutines.flow.StateFlow<java.util.Collection<androidx.xr.arcore.Face>> subscribe(androidx.xr.runtime.Session session);
     method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public suspend Object? update(kotlin.coroutines.Continuation<? super kotlin.Unit>);
     property public kotlinx.coroutines.flow.StateFlow<androidx.xr.arcore.Face.State> state;
     field public static final androidx.xr.arcore.Face.Companion Companion;
@@ -260,6 +262,7 @@ package androidx.xr.arcore {
 
   public static final class Face.Companion {
     method public androidx.xr.arcore.Face? getUserFace(androidx.xr.runtime.Session session);
+    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public kotlinx.coroutines.flow.StateFlow<java.util.Collection<androidx.xr.arcore.Face>> subscribe(androidx.xr.runtime.Session session);
   }
 
   public static final class Face.State {
@@ -424,6 +427,19 @@ package androidx.xr.arcore {
     property public androidx.xr.arcore.FaceConfidenceRegion FACE_CONFIDENCE_REGION_LEFT_UPPER;
     property public androidx.xr.arcore.FaceConfidenceRegion FACE_CONFIDENCE_REGION_LOWER;
     property public androidx.xr.arcore.FaceConfidenceRegion FACE_CONFIDENCE_REGION_RIGHT_UPPER;
+  }
+
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FaceMeshRegion {
+    field public static final androidx.xr.arcore.FaceMeshRegion.Companion Companion;
+    field public static final androidx.xr.arcore.FaceMeshRegion FOREHEAD_LEFT;
+    field public static final androidx.xr.arcore.FaceMeshRegion FOREHEAD_RIGHT;
+    field public static final androidx.xr.arcore.FaceMeshRegion NOSE_TIP;
+  }
+
+  public static final class FaceMeshRegion.Companion {
+    property public androidx.xr.arcore.FaceMeshRegion FOREHEAD_LEFT;
+    property public androidx.xr.arcore.FaceMeshRegion FOREHEAD_RIGHT;
+    property public androidx.xr.arcore.FaceMeshRegion NOSE_TIP;
   }
 
   public final class Hand {
