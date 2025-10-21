@@ -284,40 +284,43 @@ package androidx.xr.scenecore {
   }
 
   public final class InputEvent {
-    ctor @BytecodeOnly public InputEvent(int, int, long, androidx.xr.runtime.math.Vector3!, androidx.xr.runtime.math.Vector3!, int, java.util.List!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
-    ctor public InputEvent(int source, int pointerType, long timestamp, androidx.xr.runtime.math.Vector3 origin, androidx.xr.runtime.math.Vector3 direction, int action, optional java.util.List<androidx.xr.scenecore.InputEvent.HitInfo> hitInfoList);
-    method @InaccessibleFromKotlin public int getAction();
+    ctor @BytecodeOnly public InputEvent(androidx.xr.scenecore.InputEvent.Source!, androidx.xr.scenecore.InputEvent.Pointer!, long, androidx.xr.runtime.math.Vector3!, androidx.xr.runtime.math.Vector3!, androidx.xr.scenecore.InputEvent.Action!, java.util.List!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
+    ctor public InputEvent(androidx.xr.scenecore.InputEvent.Source source, androidx.xr.scenecore.InputEvent.Pointer pointerType, long timestamp, androidx.xr.runtime.math.Vector3 origin, androidx.xr.runtime.math.Vector3 direction, androidx.xr.scenecore.InputEvent.Action action, optional java.util.List<androidx.xr.scenecore.InputEvent.HitInfo> hitInfoList);
+    method @InaccessibleFromKotlin public androidx.xr.scenecore.InputEvent.Action getAction();
     method @InaccessibleFromKotlin public androidx.xr.runtime.math.Vector3 getDirection();
     method @InaccessibleFromKotlin public java.util.List<androidx.xr.scenecore.InputEvent.HitInfo> getHitInfoList();
     method @InaccessibleFromKotlin public androidx.xr.runtime.math.Vector3 getOrigin();
-    method @InaccessibleFromKotlin public int getPointerType();
-    method @InaccessibleFromKotlin public int getSource();
+    method @InaccessibleFromKotlin public androidx.xr.scenecore.InputEvent.Pointer getPointerType();
+    method @InaccessibleFromKotlin public androidx.xr.scenecore.InputEvent.Source getSource();
     method @InaccessibleFromKotlin public long getTimestamp();
-    property public int action;
+    property public androidx.xr.scenecore.InputEvent.Action action;
     property public androidx.xr.runtime.math.Vector3 direction;
     property public java.util.List<androidx.xr.scenecore.InputEvent.HitInfo> hitInfoList;
     property public androidx.xr.runtime.math.Vector3 origin;
-    property public int pointerType;
-    property public int source;
+    property public androidx.xr.scenecore.InputEvent.Pointer pointerType;
+    property public androidx.xr.scenecore.InputEvent.Source source;
     property public long timestamp;
   }
 
   public static final class InputEvent.Action {
-    property public static int ACTION_CANCEL;
-    property public static int ACTION_DOWN;
-    property public static int ACTION_HOVER_ENTER;
-    property public static int ACTION_HOVER_EXIT;
-    property public static int ACTION_HOVER_MOVE;
-    property public static int ACTION_MOVE;
-    property public static int ACTION_UP;
-    field public static final int ACTION_CANCEL = 3; // 0x3
-    field public static final int ACTION_DOWN = 0; // 0x0
-    field public static final int ACTION_HOVER_ENTER = 5; // 0x5
-    field public static final int ACTION_HOVER_EXIT = 6; // 0x6
-    field public static final int ACTION_HOVER_MOVE = 4; // 0x4
-    field public static final int ACTION_MOVE = 2; // 0x2
-    field public static final int ACTION_UP = 1; // 0x1
-    field public static final androidx.xr.scenecore.InputEvent.Action INSTANCE;
+    field public static final androidx.xr.scenecore.InputEvent.Action CANCEL;
+    field public static final androidx.xr.scenecore.InputEvent.Action.Companion Companion;
+    field public static final androidx.xr.scenecore.InputEvent.Action DOWN;
+    field public static final androidx.xr.scenecore.InputEvent.Action HOVER_ENTER;
+    field public static final androidx.xr.scenecore.InputEvent.Action HOVER_EXIT;
+    field public static final androidx.xr.scenecore.InputEvent.Action HOVER_MOVE;
+    field public static final androidx.xr.scenecore.InputEvent.Action MOVE;
+    field public static final androidx.xr.scenecore.InputEvent.Action UP;
+  }
+
+  public static final class InputEvent.Action.Companion {
+    property public androidx.xr.scenecore.InputEvent.Action CANCEL;
+    property public androidx.xr.scenecore.InputEvent.Action DOWN;
+    property public androidx.xr.scenecore.InputEvent.Action HOVER_ENTER;
+    property public androidx.xr.scenecore.InputEvent.Action HOVER_EXIT;
+    property public androidx.xr.scenecore.InputEvent.Action HOVER_MOVE;
+    property public androidx.xr.scenecore.InputEvent.Action MOVE;
+    property public androidx.xr.scenecore.InputEvent.Action UP;
   }
 
   public static final class InputEvent.HitInfo {
@@ -331,29 +334,35 @@ package androidx.xr.scenecore {
   }
 
   public static final class InputEvent.Pointer {
-    property public static int POINTER_TYPE_DEFAULT;
-    property public static int POINTER_TYPE_LEFT;
-    property public static int POINTER_TYPE_RIGHT;
-    field public static final androidx.xr.scenecore.InputEvent.Pointer INSTANCE;
-    field public static final int POINTER_TYPE_DEFAULT = 0; // 0x0
-    field public static final int POINTER_TYPE_LEFT = 1; // 0x1
-    field public static final int POINTER_TYPE_RIGHT = 2; // 0x2
+    field public static final androidx.xr.scenecore.InputEvent.Pointer.Companion Companion;
+    field public static final androidx.xr.scenecore.InputEvent.Pointer DEFAULT;
+    field public static final androidx.xr.scenecore.InputEvent.Pointer LEFT;
+    field public static final androidx.xr.scenecore.InputEvent.Pointer RIGHT;
+  }
+
+  public static final class InputEvent.Pointer.Companion {
+    property public androidx.xr.scenecore.InputEvent.Pointer DEFAULT;
+    property public androidx.xr.scenecore.InputEvent.Pointer LEFT;
+    property public androidx.xr.scenecore.InputEvent.Pointer RIGHT;
   }
 
   public static final class InputEvent.Source {
-    property public static int SOURCE_CONTROLLER;
-    property public static int SOURCE_GAZE_AND_GESTURE;
-    property public static int SOURCE_HANDS;
-    property public static int SOURCE_HEAD;
-    property public static int SOURCE_MOUSE;
-    property public static int SOURCE_UNKNOWN;
-    field public static final androidx.xr.scenecore.InputEvent.Source INSTANCE;
-    field public static final int SOURCE_CONTROLLER = 2; // 0x2
-    field public static final int SOURCE_GAZE_AND_GESTURE = 5; // 0x5
-    field public static final int SOURCE_HANDS = 3; // 0x3
-    field public static final int SOURCE_HEAD = 1; // 0x1
-    field public static final int SOURCE_MOUSE = 4; // 0x4
-    field public static final int SOURCE_UNKNOWN = 0; // 0x0
+    field public static final androidx.xr.scenecore.InputEvent.Source CONTROLLER;
+    field public static final androidx.xr.scenecore.InputEvent.Source.Companion Companion;
+    field public static final androidx.xr.scenecore.InputEvent.Source GAZE_AND_GESTURE;
+    field public static final androidx.xr.scenecore.InputEvent.Source HANDS;
+    field public static final androidx.xr.scenecore.InputEvent.Source HEAD;
+    field public static final androidx.xr.scenecore.InputEvent.Source MOUSE;
+    field public static final androidx.xr.scenecore.InputEvent.Source UNKNOWN;
+  }
+
+  public static final class InputEvent.Source.Companion {
+    property public androidx.xr.scenecore.InputEvent.Source CONTROLLER;
+    property public androidx.xr.scenecore.InputEvent.Source GAZE_AND_GESTURE;
+    property public androidx.xr.scenecore.InputEvent.Source HANDS;
+    property public androidx.xr.scenecore.InputEvent.Source HEAD;
+    property public androidx.xr.scenecore.InputEvent.Source MOUSE;
+    property public androidx.xr.scenecore.InputEvent.Source UNKNOWN;
   }
 
   public final class InteractableComponent implements androidx.xr.scenecore.Component {

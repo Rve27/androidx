@@ -193,7 +193,7 @@ internal fun RtInputEvent.toInputEvent(entityManager: EntityManager): InputEvent
     hitInfoList.forEach { it.toHitInfo(entityManager)?.let { element -> hitInfos.add(element) } }
     return InputEvent(
         source.toInputEventSource(),
-        pointerType.toInputEventPointerType(),
+        pointerType.toInputEventPointer(),
         timestamp,
         origin,
         direction,
@@ -290,27 +290,25 @@ internal fun Int.toResizeState(): Int {
     }
 }
 
-/** Extension function that converts a [Int] to [InputEvent.SourceValue]. */
-@InputEvent.SourceValue
-internal fun Int.toInputEventSource(): Int {
+/** Extension function that converts a [Int] to [InputEvent.Source]. */
+internal fun Int.toInputEventSource(): InputEvent.Source {
     return when (this) {
-        RtInputEvent.Source.UNKNOWN -> InputEvent.Source.SOURCE_UNKNOWN
-        RtInputEvent.Source.HEAD -> InputEvent.Source.SOURCE_HEAD
-        RtInputEvent.Source.CONTROLLER -> InputEvent.Source.SOURCE_CONTROLLER
-        RtInputEvent.Source.HANDS -> InputEvent.Source.SOURCE_HANDS
-        RtInputEvent.Source.MOUSE -> InputEvent.Source.SOURCE_MOUSE
-        RtInputEvent.Source.GAZE_AND_GESTURE -> InputEvent.Source.SOURCE_GAZE_AND_GESTURE
+        RtInputEvent.Source.UNKNOWN -> InputEvent.Source.UNKNOWN
+        RtInputEvent.Source.HEAD -> InputEvent.Source.HEAD
+        RtInputEvent.Source.CONTROLLER -> InputEvent.Source.CONTROLLER
+        RtInputEvent.Source.HANDS -> InputEvent.Source.HANDS
+        RtInputEvent.Source.MOUSE -> InputEvent.Source.MOUSE
+        RtInputEvent.Source.GAZE_AND_GESTURE -> InputEvent.Source.GAZE_AND_GESTURE
         else -> error("Unknown Input Event Source: $this")
     }
 }
 
 /** Extension function that converts a [Int] to [InputEvent.Pointer]. */
-@InputEvent.PointerType
-internal fun Int.toInputEventPointerType(): Int {
+internal fun Int.toInputEventPointer(): InputEvent.Pointer {
     return when (this) {
-        RtInputEvent.Pointer.DEFAULT -> InputEvent.Pointer.POINTER_TYPE_DEFAULT
-        RtInputEvent.Pointer.LEFT -> InputEvent.Pointer.POINTER_TYPE_LEFT
-        RtInputEvent.Pointer.RIGHT -> InputEvent.Pointer.POINTER_TYPE_RIGHT
+        RtInputEvent.Pointer.DEFAULT -> InputEvent.Pointer.DEFAULT
+        RtInputEvent.Pointer.LEFT -> InputEvent.Pointer.LEFT
+        RtInputEvent.Pointer.RIGHT -> InputEvent.Pointer.RIGHT
         else -> error("Unknown Input Event Pointer Type: $this")
     }
 }
@@ -332,17 +330,16 @@ internal fun Int.toSpatialVisibilityValue(): SpatialVisibility {
     }
 }
 
-/** Extension function that converts a [Int] to [InputEvent.ActionValue]. */
-@InputEvent.ActionValue
-internal fun Int.toInputEventAction(): Int {
+/** Extension function that converts a [Int] to [InputEvent.Action]. */
+internal fun Int.toInputEventAction(): InputEvent.Action {
     return when (this) {
-        RtInputEvent.Action.DOWN -> InputEvent.Action.ACTION_DOWN
-        RtInputEvent.Action.UP -> InputEvent.Action.ACTION_UP
-        RtInputEvent.Action.MOVE -> InputEvent.Action.ACTION_MOVE
-        RtInputEvent.Action.CANCEL -> InputEvent.Action.ACTION_CANCEL
-        RtInputEvent.Action.HOVER_MOVE -> InputEvent.Action.ACTION_HOVER_MOVE
-        RtInputEvent.Action.HOVER_ENTER -> InputEvent.Action.ACTION_HOVER_ENTER
-        RtInputEvent.Action.HOVER_EXIT -> InputEvent.Action.ACTION_HOVER_EXIT
+        RtInputEvent.Action.DOWN -> InputEvent.Action.DOWN
+        RtInputEvent.Action.UP -> InputEvent.Action.UP
+        RtInputEvent.Action.MOVE -> InputEvent.Action.MOVE
+        RtInputEvent.Action.CANCEL -> InputEvent.Action.CANCEL
+        RtInputEvent.Action.HOVER_MOVE -> InputEvent.Action.HOVER_MOVE
+        RtInputEvent.Action.HOVER_ENTER -> InputEvent.Action.HOVER_ENTER
+        RtInputEvent.Action.HOVER_EXIT -> InputEvent.Action.HOVER_EXIT
         else -> error("Unknown Input Event Action: $this")
     }
 }
