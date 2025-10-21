@@ -15,7 +15,10 @@
   limitations under the License.
   -->
 
-<resources>
-    <integer name="test_integer">123</integer>
-    <integer name="long_test_integer">8418</integer>
-</resources>
+<complications>
+    <complication type="RANGED_VALUE" value="50" min="0" max="100">
+        <title>
+            <plain value="@integer/long_test_integer" valueType="integer"/>
+        </title>
+    </complication>
+</complications>
