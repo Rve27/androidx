@@ -680,8 +680,8 @@ package androidx.xr.scenecore {
     method @InaccessibleFromKotlin public void setPanelClippingConfig(androidx.xr.scenecore.PanelClippingConfig);
     method public void setSpatialModeChangedListener(java.util.concurrent.Executor callbackExecutor, java.util.function.Consumer<androidx.xr.scenecore.SpatialModeChangeEvent> listener);
     method public void setSpatialModeChangedListener(java.util.function.Consumer<androidx.xr.scenecore.SpatialModeChangeEvent> listener);
-    method public void setSpatialVisibilityChangedListener(java.util.concurrent.Executor callbackExecutor, java.util.function.Consumer<java.lang.Integer> listener);
-    method public void setSpatialVisibilityChangedListener(java.util.function.Consumer<java.lang.Integer> listener);
+    method public void setSpatialVisibilityChangedListener(java.util.concurrent.Executor callbackExecutor, java.util.function.Consumer<androidx.xr.scenecore.SpatialVisibility> listener);
+    method public void setSpatialVisibilityChangedListener(java.util.function.Consumer<androidx.xr.scenecore.SpatialVisibility> listener);
     property public androidx.xr.scenecore.ActivitySpace activitySpace;
     property public androidx.xr.scenecore.Entity? keyEntity;
     property public androidx.xr.scenecore.MainPanelEntity mainPanelEntity;
@@ -865,15 +865,18 @@ package androidx.xr.scenecore {
   }
 
   public final class SpatialVisibility {
-    property public static int SPATIAL_VISIBILITY_OUTSIDE_FIELD_OF_VIEW;
-    property public static int SPATIAL_VISIBILITY_PARTIALLY_WITHIN_FIELD_OF_VIEW;
-    property public static int SPATIAL_VISIBILITY_UNKNOWN;
-    property public static int SPATIAL_VISIBILITY_WITHIN_FIELD_OF_VIEW;
-    field public static final androidx.xr.scenecore.SpatialVisibility INSTANCE;
-    field public static final int SPATIAL_VISIBILITY_OUTSIDE_FIELD_OF_VIEW = 1; // 0x1
-    field public static final int SPATIAL_VISIBILITY_PARTIALLY_WITHIN_FIELD_OF_VIEW = 2; // 0x2
-    field public static final int SPATIAL_VISIBILITY_UNKNOWN = 0; // 0x0
-    field public static final int SPATIAL_VISIBILITY_WITHIN_FIELD_OF_VIEW = 3; // 0x3
+    field public static final androidx.xr.scenecore.SpatialVisibility.Companion Companion;
+    field public static final androidx.xr.scenecore.SpatialVisibility OUTSIDE_FIELD_OF_VIEW;
+    field public static final androidx.xr.scenecore.SpatialVisibility PARTIALLY_WITHIN_FIELD_OF_VIEW;
+    field public static final androidx.xr.scenecore.SpatialVisibility UNKNOWN;
+    field public static final androidx.xr.scenecore.SpatialVisibility WITHIN_FIELD_OF_VIEW;
+  }
+
+  public static final class SpatialVisibility.Companion {
+    property public androidx.xr.scenecore.SpatialVisibility OUTSIDE_FIELD_OF_VIEW;
+    property public androidx.xr.scenecore.SpatialVisibility PARTIALLY_WITHIN_FIELD_OF_VIEW;
+    property public androidx.xr.scenecore.SpatialVisibility UNKNOWN;
+    property public androidx.xr.scenecore.SpatialVisibility WITHIN_FIELD_OF_VIEW;
   }
 
   public final class SpatialWindow {

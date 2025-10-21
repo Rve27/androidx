@@ -462,10 +462,10 @@ class UtilsTest {
                     .map { it.toSpatialVisibility() }
             )
             .containsExactly(
-                SpatialVisibility.SPATIAL_VISIBILITY_UNKNOWN,
-                SpatialVisibility.SPATIAL_VISIBILITY_OUTSIDE_FIELD_OF_VIEW,
-                SpatialVisibility.SPATIAL_VISIBILITY_PARTIALLY_WITHIN_FIELD_OF_VIEW,
-                SpatialVisibility.SPATIAL_VISIBILITY_WITHIN_FIELD_OF_VIEW,
+                SpatialVisibility.UNKNOWN,
+                SpatialVisibility.OUTSIDE_FIELD_OF_VIEW,
+                SpatialVisibility.PARTIALLY_WITHIN_FIELD_OF_VIEW,
+                SpatialVisibility.WITHIN_FIELD_OF_VIEW,
             )
             .inOrder()
     }
@@ -482,10 +482,10 @@ class UtilsTest {
                     .map { it.toSpatialVisibilityValue() }
             )
             .containsExactly(
-                SpatialVisibility.SPATIAL_VISIBILITY_UNKNOWN,
-                SpatialVisibility.SPATIAL_VISIBILITY_OUTSIDE_FIELD_OF_VIEW,
-                SpatialVisibility.SPATIAL_VISIBILITY_PARTIALLY_WITHIN_FIELD_OF_VIEW,
-                SpatialVisibility.SPATIAL_VISIBILITY_WITHIN_FIELD_OF_VIEW,
+                SpatialVisibility.UNKNOWN,
+                SpatialVisibility.OUTSIDE_FIELD_OF_VIEW,
+                SpatialVisibility.PARTIALLY_WITHIN_FIELD_OF_VIEW,
+                SpatialVisibility.WITHIN_FIELD_OF_VIEW,
             )
             .inOrder()
     }
