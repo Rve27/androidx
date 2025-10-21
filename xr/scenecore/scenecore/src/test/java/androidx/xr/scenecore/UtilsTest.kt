@@ -740,13 +740,13 @@ class UtilsTest {
     fun intToTextureSampler_convertsCorrectly() {
         val sampler =
             TextureSampler(
-                minificationFilter = TextureSampler.MINIFICATION_FILTER_NEAREST,
-                magnificationFilter = TextureSampler.MAGNIFICATION_FILTER_LINEAR,
-                wrapModeHorizontal = TextureSampler.WRAP_MODE_CLAMP_TO_EDGE,
-                wrapModeVertical = TextureSampler.WRAP_MODE_REPEAT,
-                wrapModeDepth = TextureSampler.WRAP_MODE_MIRRORED_REPEAT,
-                compareMode = TextureSampler.COMPARE_MODE_NONE,
-                compareFunction = TextureSampler.COMPARE_FUNCTION_LESSER_OR_EQUAL,
+                minificationFilter = TextureSampler.MinificationFilter.NEAREST,
+                magnificationFilter = TextureSampler.MagnificationFilter.LINEAR,
+                wrapModeHorizontal = TextureSampler.WrapMode.CLAMP_TO_EDGE,
+                wrapModeVertical = TextureSampler.WrapMode.REPEAT,
+                wrapModeDepth = TextureSampler.WrapMode.MIRRORED_REPEAT,
+                compareMode = TextureSampler.CompareMode.NONE,
+                compareFunction = TextureSampler.CompareFunction.LESSER_OR_EQUAL,
                 anisotropyLog2 = 2,
             )
 
