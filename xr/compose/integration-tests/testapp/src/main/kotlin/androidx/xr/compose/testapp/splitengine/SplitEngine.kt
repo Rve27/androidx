@@ -433,7 +433,7 @@ class SplitEngine : ComponentActivity() {
 
                         val interactableComponent =
                             InteractableComponent.create(session, mainExecutor) {
-                                if (it.action == InputEvent.Action.ACTION_DOWN) {
+                                if (it.action == InputEvent.Action.DOWN) {
                                     dragonEntity.value!!.setScale(
                                         dragonEntity.value!!.getScale() * 1.1f
                                     )
