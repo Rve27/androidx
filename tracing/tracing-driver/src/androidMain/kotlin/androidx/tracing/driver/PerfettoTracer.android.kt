@@ -16,21 +16,21 @@
 
 package androidx.tracing.driver
 
-import kotlin.coroutines.CoroutineContext
+import android.os.Build
+import android.os.Process
 
-/**
- * A token representing state carried forward for context propagation.
- *
- * This interface is only useful for libraries that want to bring their own implementation of
- * context propagation.
- */
-@DelicateTracingApi public interface PropagationToken
-
-/**
- * A token representing state carried forward for context propagation.
- *
- * This interface is only useful for libraries that want to bring their own implementation of
- * context propagation when using Kotlin Coroutines.
- */
-@DelicateTracingApi
-public interface CoroutinePropagationToken : PropagationToken, CoroutineContext.Element
+@Suppress("NOTHING_TO_INLINE")
+internal actual inline fun TraceContext.currentProcessTrack(): ProcessTrack {
+    val id = Process.myPid()
+    return processes.getOrElse(id) {
+        val name =
+            if (Build.VERSION.SDK_INT >= 33) {
+                Process.myProcessName()
+            } else {
+                // Only used in the context of tests where the default process track is not already
+                // bootstrapped.
+                "Process pid($id)"
+            }
+        getOrCreateProcessTrack(id = id, name = name)
+    }
+}

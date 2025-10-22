@@ -14,12 +14,15 @@
  * limitations under the License.
  */
 
-package androidx.tracing.benchmark
+package androidx.tracing.driver
 
-import java.util.UUID
+/** Useful to emit counters into a Trace. */
+public abstract class Counter {
+    public abstract fun name(): String
 
-const val CATEGORY = "category"
-const val BASIC_STRING = "work"
+    /** Emits a [Long] value into the trace for the provided [name]. */
+    public abstract fun setValue(value: Long)
 
-const val PROCESS_NAME = "process"
-val LARGE_STRING_POOL = Array(50_000) { UUID.randomUUID().toString() }
+    /** Emits a [Double] value into the trace for the provided [name]. */
+    public abstract fun setValue(value: Double)
+}
