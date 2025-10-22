@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
-package androidx.tracing.benchmark
+package androidx.tracing.driver
 
-import java.util.UUID
+import kotlin.jvm.optionals.getOrNull
 
-const val CATEGORY = "category"
-const val BASIC_STRING = "work"
-
-const val PROCESS_NAME = "process"
-val LARGE_STRING_POOL = Array(50_000) { UUID.randomUUID().toString() }
+@Suppress("NOTHING_TO_INLINE")
+internal actual inline fun TraceContext.currentProcessTrack(): ProcessTrack {
+    val handle = ProcessHandle.current()
+    val key = handle.pid().toInt()
+    return processes.getOrElse(key) {
+        val name = handle.info().command().getOrNull() ?: "Process pid($key)"
+        getOrCreateProcessTrack(id = key, name = name)
+    }
+}

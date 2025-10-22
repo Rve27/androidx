@@ -14,12 +14,17 @@
  * limitations under the License.
  */
 
-package androidx.tracing.benchmark
+package androidx.tracing.driver
 
-import java.util.UUID
-
-const val CATEGORY = "category"
-const val BASIC_STRING = "work"
-
-const val PROCESS_NAME = "process"
-val LARGE_STRING_POOL = Array(50_000) { UUID.randomUUID().toString() }
+/** A holder for a [MetadataHandle] and the [AutoCloseable]. */
+// False positive: https://youtrack.jetbrains.com/issue/KTIJ-22326
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@DelicateTracingApi
+public class MetadataHandleCloseable(
+    @field:Suppress("MutableBareField") // public / mutable to minimize overhead
+    @JvmField
+    public var metadata: MetadataHandle = EmptyMetadataHandle,
+    @field:Suppress("MutableBareField") // public / mutable to minimize overhead
+    @JvmField
+    public var closeable: AutoCloseable = EmptyCloseable,
+)
