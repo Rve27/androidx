@@ -42,6 +42,7 @@ import androidx.camera.extensions.internal.ClientVersion
 import androidx.camera.extensions.internal.ExtensionVersion
 import androidx.camera.extensions.internal.Version
 import androidx.concurrent.futures.CallbackToFutureAdapter
+import androidx.concurrent.futures.await
 import androidx.lifecycle.LifecycleOwner
 import com.google.common.util.concurrent.ListenableFuture
 import java.util.concurrent.ExecutionException
@@ -59,49 +60,39 @@ import java.util.concurrent.ExecutionException
  * [Supported devices](https://developer.android.com/training/camera/supported-devices) page.
  *
  * `CameraX Extensions` are built on the top of `CameraX Core` libraries. To enable an extension
- * mode, an [ExtensionsManager] instance needs to be retrieved first with [getInstanceAsync]. Only a
- * single [ExtensionsManager] instance can exist within a process. After retrieving the
- * [ExtensionsManager] instance, the availability of a specific extension mode can be checked by
- * [isExtensionAvailable]. For an available extension mode, an extension enabled [CameraSelector]
- * can be obtained by calling [getExtensionEnabledCameraSelector]. After binding use cases by the
- * extension enabled [CameraSelector], the extension mode will be applied to the bound [Preview] and
- * [ImageCapture]. The following sample code describes how to enable an extension mode for use
- * cases.
+ * mode, an [ExtensionsManager] instance needs to be retrieved first. For kotlin users, it is
+ * recommended to use [ExtensionsManager.getInstance] which is a suspend function. For Java users,
+ * please use [getInstanceAsync].
+ *
+ * After retrieving the [ExtensionsManager] instance, the availability of a specific extension mode
+ * can be checked by [isExtensionAvailable]. For an available extension mode, an extension enabled
+ * [CameraSelector] can be obtained by calling [getExtensionEnabledCameraSelector]. After binding
+ * use cases by the extension enabled [CameraSelector], the extension mode will be applied to the
+ * bound [Preview] and [ImageCapture]. The following sample code describes how to enable an
+ * extension mode for use cases.
  *
  * ```kotlin
- * fun bindUseCasesWithBokehMode() {
- *     // Create a camera provider
- *     val cameraProvider: ProcessCameraProvider = ... // Get the provider instance
- *     // Call the getInstanceAsync function to retrieve a ListenableFuture object
- *     val future = ExtensionsManager.getInstanceAsync(context, cameraProvider)
+ * suspend fun bindUseCasesWithBokehMode(context: Context, lifecycleOwner: LifecycleOwner) {
+ *     // Create a camera provider.
+ *     val cameraProvider = ProcessCameraProvider.awaitInstance(context)
  *
- *     // Obtain the ExtensionsManager instance from the returned ListenableFuture object
- *     future.addListener({
- *         try {
- *             val extensionsManager = future.get()
+ *     // Retrieve the ExtensionsManager instance.
+ *     val extensionsManager = ExtensionsManager.getInstance(context, cameraProvider)
  *
- *             val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
- *             // Query if extension is available.
- *             if (extensionsManager.isExtensionAvailable(cameraSelector, ExtensionMode.BOKEH)) {
- *                 // Create an ExtensionSessionConfig.
- *                 val imageCapture = ImageCapture.Builder().build()
- *                 val preview = Preview.Builder().build()
- *                 ExtensionSessionConfig sessionConfig = ExtensionSessionConfig(
- *                         ExtensionMode.BOKEH,
- *                         extensionsManager,
- *                         imageCapture,
- *                         preview
- *                 )
- *                 cameraProvider.bindToLifecycle(lifecycleOwner, cameraSelector, sessionConfig)
- *             }
- *         } catch (e: ExecutionException) {
- *             // This should not happen unless the future is cancelled or the thread is
- *             // interrupted by applications.
- *         } catch (e: InterruptedException) {
- *             // This should not happen unless the future is cancelled or the thread is
- *             // interrupted by applications.
- *         }
- *     }, ContextCompat.getMainExecutor(context))
+ *     val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+ *     // Query if extension is available.
+ *     if (extensionsManager.isExtensionAvailable(cameraSelector, ExtensionMode.BOKEH)) {
+ *         // Create an ExtensionSessionConfig.
+ *         val imageCapture = ImageCapture.Builder().build()
+ *         val preview = Preview.Builder().build()
+ *         ExtensionSessionConfig sessionConfig = ExtensionSessionConfig(
+ *                 ExtensionMode.BOKEH,
+ *                 extensionsManager,
+ *                 imageCapture,
+ *                 preview
+ *         )
+ *         cameraProvider.bindToLifecycle(lifecycleOwner, cameraSelector, sessionConfig)
+ *     }
  * }
  * ```
  *
@@ -638,5 +629,20 @@ internal constructor(
                     ?: ExtensionsManager(extensionsAvailability, cameraProvider, applicationContext)
                         .also { sExtensionsManager = it }
             }
+
+        /**
+         * Retrieves the [ExtensionsManager].
+         *
+         * @param context The application context.
+         * @param cameraProvider A [CameraProvider] will be used to query the information of cameras
+         *   on the device.
+         * @return A fully initialized [ExtensionsManager] for the current process.
+         * @see ExtensionsManager.getInstanceAsync
+         */
+        @JvmStatic
+        public suspend fun getInstance(
+            context: Context,
+            cameraProvider: CameraProvider,
+        ): ExtensionsManager = getInstanceAsync(context, cameraProvider).await()
     }
 }
