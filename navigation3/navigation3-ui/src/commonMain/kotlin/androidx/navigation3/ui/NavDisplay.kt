@@ -71,11 +71,11 @@ import kotlinx.coroutines.launch
 public object NavDisplay {
     /**
      * Function to be called on the [NavEntry.metadata] or [Scene.metadata] to notify the
-     * [NavDisplay] that the content should be animated using the provided [ContentTransform].
+     * [NavDisplay] of how the content should be animated using the provided [ContentTransform].
      *
-     * **IMPORTANT** By default, the [transitionSpec] defined on a transitioning [NavEntry.metadata]
-     * takes precedence over the [transitionSpec] defined on a [Scene.metadata]. However, the
-     * [Scene] implementation can potentially override the [transitionSpec] defined on a NavEntry.
+     * **IMPORTANT** [NavDisplay] only looks at the [Scene.metadata] to determine the
+     * [transitionSpec], it is the responsibility of the [Scene.metadata] to decide which
+     * [transitionSpec] to return, whether that be from the [NavEntry.metadata] or something custom.
      *
      * @param transitionSpec the [ContentTransform] to be used when adding to the backstack. If this
      *   is null, the transition will fallback to the transition set on the [NavDisplay]
@@ -89,10 +89,10 @@ public object NavDisplay {
      * [NavDisplay] that, when popping from backstack, the content should be animated using the
      * provided [ContentTransform].
      *
-     * **IMPORTANT** By default, the [popTransitionSpec] defined on a transitioning
-     * [NavEntry.metadata] takes precedence over the [popTransitionSpec] defined on a
-     * [Scene.metadata]. However, a [Scene] implementation can potentially override the
-     * [popTransitionSpec] defined on a NavEntry.
+     * **IMPORTANT** [NavDisplay] only looks at the [Scene.metadata] to determine the
+     * [popTransitionSpec], it is the responsibility of the [Scene.metadata] to decide which
+     * [popTransitionSpec] to return, whether that be from the [NavEntry.metadata] or something
+     * custom.
      *
      * @param popTransitionSpec the [ContentTransform] to be used when popping from backstack. If
      *   this is null, the transition will fallback to the transition set on the [NavDisplay]
@@ -106,10 +106,10 @@ public object NavDisplay {
      * [NavDisplay] that, when popping from backstack using a Predictive back gesture, the content
      * should be animated using the provided [ContentTransform].
      *
-     * **IMPORTANT** By default, the [predictivePopTransitionSpec] defined on a transitioning
-     * [NavEntry.metadata] takes precedence over the [predictivePopTransitionSpec] defined on a
-     * [Scene.metadata]. However, a [Scene] implementation can potentially override the
-     * [predictivePopTransitionSpec] defined on a NavEntry.
+     * **IMPORTANT** [NavDisplay] only looks at the [Scene.metadata] to determine the
+     * [predictivePopTransitionSpec], it is the responsibility of the [Scene.metadata] to decide
+     * which [predictivePopTransitionSpec] to return, whether that be from the [NavEntry.metadata]
+     * or something custom.
      *
      * @param predictivePopTransitionSpec the [ContentTransform] to be used when popping from
      *   backStack with predictive back gesture. If this is null, the transition will fallback to
