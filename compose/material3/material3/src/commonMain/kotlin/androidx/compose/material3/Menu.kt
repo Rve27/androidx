@@ -507,12 +507,10 @@ object MenuDefaults {
     /**
      * The standard default container color for a group within a menu.
      *
-     * Menus have two color options:
-     *  standard (surface based)
-     *  vibrant (tertiary based)
+     * Menus have two color options: standard (surface based) vibrant (tertiary based)
      *
-     * These mappings provide options for lower or higher visual emphasis.
-     * Vibrant menus are more prominent so should be used sparingly.
+     * These mappings provide options for lower or higher visual emphasis. Vibrant menus are more
+     * prominent so should be used sparingly.
      */
     // TODO update with tokens when available
     @ExperimentalMaterial3ExpressiveApi
@@ -522,12 +520,10 @@ object MenuDefaults {
     /**
      * The vibrant default container color for a group within a menu.
      *
-     * Menus have two color options:
-     *  standard (surface based)
-     *  vibrant (tertiary based)
+     * Menus have two color options: standard (surface based) vibrant (tertiary based)
      *
-     * These mappings provide options for lower or higher visual emphasis.
-     * Vibrant menus are more prominent so should be used sparingly.
+     * These mappings provide options for lower or higher visual emphasis. Vibrant menus are more
+     * prominent so should be used sparingly.
      */
     // TODO update with tokens when available
     @ExperimentalMaterial3ExpressiveApi
@@ -826,8 +822,8 @@ object MenuDefaults {
         )
 
     /**
-     * Creates a [MenuItemColors] that represents the default text, icon, and container
-     * colors used in a standard color variant [DropdownMenuItem].
+     * Creates a [MenuItemColors] that represents the default text, icon, and container colors used
+     * in a standard color variant [DropdownMenuItem].
      *
      * @param textColor the text color of this [DropdownMenuItem] when enabled
      * @param containerColor the container color of this [DropdownMenuItem] when enabled and
@@ -877,8 +873,8 @@ object MenuDefaults {
         )
 
     /**
-     * Creates a [MenuItemColors] that represents the default text, icon, and container
-     * colors used in a vibrant color variant [DropdownMenuItem].
+     * Creates a [MenuItemColors] that represents the default text, icon, and container colors used
+     * in a vibrant color variant [DropdownMenuItem].
      *
      * @param textColor the text color of this [DropdownMenuItem] when enabled
      * @param containerColor the container color of this [DropdownMenuItem] when enabled and
@@ -952,29 +948,29 @@ object MenuDefaults {
         get() {
             return defaultMenuSelectableItemColorsCached
                 ?: MenuItemColors(
-                    textColor = fromToken(StandardMenuTokens.ItemLabelTextColor),
-                    containerColor = fromToken(StandardMenuTokens.ContainerColor),
-                    leadingIconColor = fromToken(StandardMenuTokens.ItemLeadingIconColor),
-                    trailingIconColor = fromToken(StandardMenuTokens.ItemTrailingIconColor),
-                    disabledTextColor =
-                        fromToken(StandardMenuTokens.ItemDisabledLabelTextColor)
-                            .copy(alpha = StandardMenuTokens.ItemDisabledLabelTextOpacity),
-                    disabledLeadingIconColor =
-                        fromToken(StandardMenuTokens.ItemDisabledLeadingIconColor)
-                            .copy(alpha = StandardMenuTokens.ItemDisabledLeadingIconOpacity),
-                    disabledTrailingIconColor =
-                        fromToken(StandardMenuTokens.ItemDisabledTrailingIconColor)
-                            .copy(alpha = StandardMenuTokens.ItemDisabledTrailingIconOpacity),
-                    disabledContainerColor = fromToken(StandardMenuTokens.ContainerColor),
-                    selectedTextColor =
-                        fromToken(StandardMenuTokens.ItemSelectedLabelTextColor),
-                    selectedContainerColor =
-                        fromToken(StandardMenuTokens.ItemSelectedContainerColor),
-                    selectedLeadingIconColor =
-                        fromToken(StandardMenuTokens.ItemSelectedLeadingIconColor),
-                    selectedTrailingIconColor =
-                        fromToken(StandardMenuTokens.ItemSelectedTrailingIconColor),
-                )
+                        textColor = fromToken(StandardMenuTokens.ItemLabelTextColor),
+                        containerColor = fromToken(StandardMenuTokens.ContainerColor),
+                        leadingIconColor = fromToken(StandardMenuTokens.ItemLeadingIconColor),
+                        trailingIconColor = fromToken(StandardMenuTokens.ItemTrailingIconColor),
+                        disabledTextColor =
+                            fromToken(StandardMenuTokens.ItemDisabledLabelTextColor)
+                                .copy(alpha = StandardMenuTokens.ItemDisabledLabelTextOpacity),
+                        disabledLeadingIconColor =
+                            fromToken(StandardMenuTokens.ItemDisabledLeadingIconColor)
+                                .copy(alpha = StandardMenuTokens.ItemDisabledLeadingIconOpacity),
+                        disabledTrailingIconColor =
+                            fromToken(StandardMenuTokens.ItemDisabledTrailingIconColor)
+                                .copy(alpha = StandardMenuTokens.ItemDisabledTrailingIconOpacity),
+                        disabledContainerColor = fromToken(StandardMenuTokens.ContainerColor),
+                        selectedTextColor =
+                            fromToken(StandardMenuTokens.ItemSelectedLabelTextColor),
+                        selectedContainerColor =
+                            fromToken(StandardMenuTokens.ItemSelectedContainerColor),
+                        selectedLeadingIconColor =
+                            fromToken(StandardMenuTokens.ItemSelectedLeadingIconColor),
+                        selectedTrailingIconColor =
+                            fromToken(StandardMenuTokens.ItemSelectedTrailingIconColor),
+                    )
                     .also { defaultMenuSelectableItemColorsCached = it }
         }
 
@@ -983,28 +979,28 @@ object MenuDefaults {
         get() {
             return defaultMenuSelectableItemVibrantColorsCached
                 ?: MenuItemColors(
-                    textColor = fromToken(VibrantMenuTokens.ItemLabelTextColor),
-                    containerColor = fromToken(VibrantMenuTokens.ContainerColor),
-                    leadingIconColor = fromToken(VibrantMenuTokens.ItemLeadingIconColor),
-                    trailingIconColor = fromToken(VibrantMenuTokens.ItemTrailingIconColor),
-                    disabledTextColor =
-                        fromToken(VibrantMenuTokens.ItemDisabledLabelTextColor)
-                            .copy(alpha = VibrantMenuTokens.ItemDisabledLabelTextOpacity),
-                    disabledLeadingIconColor =
-                        fromToken(VibrantMenuTokens.ItemDisabledLeadingIconColor)
-                            .copy(alpha = VibrantMenuTokens.ItemDisabledLeadingIconOpacity),
-                    disabledTrailingIconColor =
-                        fromToken(VibrantMenuTokens.ItemDisabledTrailingIconColor)
-                            .copy(alpha = VibrantMenuTokens.ItemDisabledTrailingIconOpacity),
-                    disabledContainerColor = fromToken(VibrantMenuTokens.ContainerColor),
-                    selectedTextColor = fromToken(VibrantMenuTokens.ItemSelectedLabelTextColor),
-                    selectedContainerColor =
-                        fromToken(VibrantMenuTokens.ItemSelectedContainerColor),
-                    selectedLeadingIconColor =
-                        fromToken(VibrantMenuTokens.ItemSelectedLeadingIconColor),
-                    selectedTrailingIconColor =
-                        fromToken(VibrantMenuTokens.ItemSelectedTrailingIconColor),
-                )
+                        textColor = fromToken(VibrantMenuTokens.ItemLabelTextColor),
+                        containerColor = fromToken(VibrantMenuTokens.ContainerColor),
+                        leadingIconColor = fromToken(VibrantMenuTokens.ItemLeadingIconColor),
+                        trailingIconColor = fromToken(VibrantMenuTokens.ItemTrailingIconColor),
+                        disabledTextColor =
+                            fromToken(VibrantMenuTokens.ItemDisabledLabelTextColor)
+                                .copy(alpha = VibrantMenuTokens.ItemDisabledLabelTextOpacity),
+                        disabledLeadingIconColor =
+                            fromToken(VibrantMenuTokens.ItemDisabledLeadingIconColor)
+                                .copy(alpha = VibrantMenuTokens.ItemDisabledLeadingIconOpacity),
+                        disabledTrailingIconColor =
+                            fromToken(VibrantMenuTokens.ItemDisabledTrailingIconColor)
+                                .copy(alpha = VibrantMenuTokens.ItemDisabledTrailingIconOpacity),
+                        disabledContainerColor = fromToken(VibrantMenuTokens.ContainerColor),
+                        selectedTextColor = fromToken(VibrantMenuTokens.ItemSelectedLabelTextColor),
+                        selectedContainerColor =
+                            fromToken(VibrantMenuTokens.ItemSelectedContainerColor),
+                        selectedLeadingIconColor =
+                            fromToken(VibrantMenuTokens.ItemSelectedLeadingIconColor),
+                        selectedTrailingIconColor =
+                            fromToken(VibrantMenuTokens.ItemSelectedTrailingIconColor),
+                    )
                     .also { defaultMenuSelectableItemVibrantColorsCached = it }
         }
 
@@ -1032,14 +1028,15 @@ object MenuDefaults {
         get() {
             return defaultMenuLeadingItemShapesCached
                 ?: MenuItemShapes(
-                    shape = RoundedCornerShape(
-                        topStart = ShapeTokens.CornerValueMedium,
-                        topEnd = ShapeTokens.CornerValueMedium,
-                        bottomStart = ShapeTokens.CornerValueExtraSmall,
-                        bottomEnd = ShapeTokens.CornerValueExtraSmall,
-                    ),
-                    selectedShape = fromToken(SegmentedMenuTokens.ItemSelectedShape),
-                )
+                        shape =
+                            RoundedCornerShape(
+                                topStart = ShapeTokens.CornerValueMedium,
+                                topEnd = ShapeTokens.CornerValueMedium,
+                                bottomStart = ShapeTokens.CornerValueExtraSmall,
+                                bottomEnd = ShapeTokens.CornerValueExtraSmall,
+                            ),
+                        selectedShape = fromToken(SegmentedMenuTokens.ItemSelectedShape),
+                    )
                     .also { defaultMenuLeadingItemShapesCached = it }
         }
 
@@ -1048,9 +1045,9 @@ object MenuDefaults {
         get() {
             return defaultMenuMiddleItemShapesCached
                 ?: MenuItemShapes(
-                    shape = fromToken(SegmentedMenuTokens.ItemShape),
-                    selectedShape = fromToken(SegmentedMenuTokens.ItemSelectedShape),
-                )
+                        shape = fromToken(SegmentedMenuTokens.ItemShape),
+                        selectedShape = fromToken(SegmentedMenuTokens.ItemSelectedShape),
+                    )
                     .also { defaultMenuMiddleItemShapesCached = it }
         }
 
@@ -1059,14 +1056,15 @@ object MenuDefaults {
         get() {
             return defaultMenuTrailingItemShapesCached
                 ?: MenuItemShapes(
-                    shape = RoundedCornerShape(
-                        topStart = ShapeTokens.CornerValueExtraSmall,
-                        topEnd = ShapeTokens.CornerValueExtraSmall,
-                        bottomStart = ShapeTokens.CornerValueMedium,
-                        bottomEnd = ShapeTokens.CornerValueMedium,
-                    ),
-                    selectedShape = fromToken(SegmentedMenuTokens.ItemSelectedShape),
-                )
+                        shape =
+                            RoundedCornerShape(
+                                topStart = ShapeTokens.CornerValueExtraSmall,
+                                topEnd = ShapeTokens.CornerValueExtraSmall,
+                                bottomStart = ShapeTokens.CornerValueMedium,
+                                bottomEnd = ShapeTokens.CornerValueMedium,
+                            ),
+                        selectedShape = fromToken(SegmentedMenuTokens.ItemSelectedShape),
+                    )
                     .also { defaultMenuTrailingItemShapesCached = it }
         }
 
@@ -1086,14 +1084,15 @@ object MenuDefaults {
         get() {
             return defaultMenuLeadingGroupShapesCached
                 ?: MenuGroupShapes(
-                    shape = RoundedCornerShape(
-                        topStart = ShapeTokens.CornerValueLarge,
-                        topEnd = ShapeTokens.CornerValueLarge,
-                        bottomStart = ShapeTokens.CornerValueSmall,
-                        bottomEnd = ShapeTokens.CornerValueSmall,
-                    ),
-                    inactiveShape = fromToken(SegmentedMenuTokens.InactiveContainerShape),
-                )
+                        shape =
+                            RoundedCornerShape(
+                                topStart = ShapeTokens.CornerValueLarge,
+                                topEnd = ShapeTokens.CornerValueLarge,
+                                bottomStart = ShapeTokens.CornerValueSmall,
+                                bottomEnd = ShapeTokens.CornerValueSmall,
+                            ),
+                        inactiveShape = fromToken(SegmentedMenuTokens.InactiveContainerShape),
+                    )
                     .also { defaultMenuLeadingGroupShapesCached = it }
         }
 
@@ -1102,9 +1101,9 @@ object MenuDefaults {
         get() {
             return defaultMenuMiddleGroupShapesCached
                 ?: MenuGroupShapes(
-                    shape = fromToken(SegmentedMenuTokens.GroupShape),
-                    inactiveShape = fromToken(SegmentedMenuTokens.InactiveContainerShape),
-                )
+                        shape = fromToken(SegmentedMenuTokens.GroupShape),
+                        inactiveShape = fromToken(SegmentedMenuTokens.InactiveContainerShape),
+                    )
                     .also { defaultMenuMiddleGroupShapesCached = it }
         }
 
@@ -1113,14 +1112,15 @@ object MenuDefaults {
         get() {
             return defaultMenuTrailingGroupShapesCached
                 ?: MenuGroupShapes(
-                    shape = RoundedCornerShape(
-                        topStart = ShapeTokens.CornerValueSmall,
-                        topEnd = ShapeTokens.CornerValueSmall,
-                        bottomStart = ShapeTokens.CornerValueLarge,
-                        bottomEnd = ShapeTokens.CornerValueLarge,
-                    ),
-                    inactiveShape = fromToken(SegmentedMenuTokens.InactiveContainerShape),
-                )
+                        shape =
+                            RoundedCornerShape(
+                                topStart = ShapeTokens.CornerValueSmall,
+                                topEnd = ShapeTokens.CornerValueSmall,
+                                bottomStart = ShapeTokens.CornerValueLarge,
+                                bottomEnd = ShapeTokens.CornerValueLarge,
+                            ),
+                        inactiveShape = fromToken(SegmentedMenuTokens.InactiveContainerShape),
+                    )
                     .also { defaultMenuTrailingGroupShapesCached = it }
         }
 }
@@ -1648,8 +1648,7 @@ internal fun DropdownMenuItemContent(
                             LocalContentColor provides colors.trailingIconColor(enabled, selected)
                         ) {
                             Box(
-                                Modifier
-                                    .layoutId(TrailingIconLayoutId)
+                                Modifier.layoutId(TrailingIconLayoutId)
                                     .defaultMinSize(
                                         minWidth = SegmentedMenuTokens.ItemTrailingIconSize
                                     ),
