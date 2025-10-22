@@ -32,10 +32,7 @@
 // later when a module using the interface is updated, e.g., Mainline modules.
 
 package androidx.xr.projected.platform;
-@JavaPassthrough(annotation="@androidx.annotation.RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY)")
-interface IProjectedService {
-  void registerProjectedInputEventListener(in androidx.xr.projected.platform.IProjectedInputEventListener listener);
-  void unregisterProjectedInputEventListener(in androidx.xr.projected.platform.IProjectedInputEventListener listener);
-  void addWindowFlags(in int flags);
-  void clearWindowFlags(in int flags);
+@Backing(type="int") @JavaPassthrough(annotation="@androidx.annotation.RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY)")
+enum ProjectedInputAction {
+  TOGGLE_APP_CAMERA = 0,
 }
