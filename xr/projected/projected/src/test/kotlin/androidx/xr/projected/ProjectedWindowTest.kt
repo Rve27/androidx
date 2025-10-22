@@ -45,6 +45,9 @@ import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.kotlin.any
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
 import org.robolectric.util.ReflectionHelpers
@@ -55,7 +58,11 @@ import org.robolectric.util.ReflectionHelpers.ClassParameter
 @SdkSuppress(minSdkVersion = Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 class ProjectedWindowTest {
 
-    private val testProjectedService = TestProjectedService()
+    private val mockProjectedService = mock<IProjectedService>()
+    private val mockProjectedServiceStub =
+        mock<IProjectedService.Stub> {
+            on { queryLocalInterface(any()) }.thenReturn(mockProjectedService)
+        }
     private val context: Application = ApplicationProvider.getApplicationContext()
 
     private lateinit var projectedWindow: ProjectedWindow
@@ -70,7 +77,7 @@ class ProjectedWindowTest {
         }
 
         shadowOf(context).apply {
-            setComponentNameAndServiceForBindService(COMPONENT_NAME, testProjectedService)
+            setComponentNameAndServiceForBindService(COMPONENT_NAME, mockProjectedServiceStub)
             setBindServiceCallsOnServiceConnectedDirectly(true)
         }
     }
@@ -108,7 +115,7 @@ class ProjectedWindowTest {
 
         projectedWindow.addFlags(flags)
 
-        assertThat(testProjectedService.getFlags()).contains(flags)
+        verify(mockProjectedService).addWindowFlags(flags)
     }
 
     @Test
@@ -116,11 +123,8 @@ class ProjectedWindowTest {
         runBlocking { projectedWindow = ProjectedWindow.create(projectedDeviceActivity) }
         val flags = WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
 
-        projectedWindow.addFlags(flags)
-        check(testProjectedService.getFlags().contains(flags))
-
         projectedWindow.clearFlags(flags)
-        assertThat(testProjectedService.getFlags()).doesNotContain(flags)
+        verify(mockProjectedService).clearWindowFlags(flags)
     }
 
     @Test
@@ -175,20 +179,6 @@ class ProjectedWindowTest {
                 services = arrayOf(SERVICE_INFO)
                 applicationInfo = ApplicationInfo().apply { flags = ApplicationInfo.FLAG_SYSTEM }
             }
-    }
-
-    private class TestProjectedService : IProjectedService.Stub() {
-        private val flagList = mutableListOf<Int>()
-
-        override fun addWindowFlags(flags: Int) {
-            flagList.add(flags)
-        }
-
-        override fun clearWindowFlags(flags: Int) {
-            flagList.remove(flags)
-        }
-
-        fun getFlags(): List<Int> = flagList
     }
 }
 
