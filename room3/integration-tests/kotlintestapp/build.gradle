@@ -79,7 +79,6 @@ dependencies {
     // its kotlinx-coroutines-guava dependency's guava-jre version
     androidTestImplementation(libs.guavaAndroid)
     androidTestImplementation(project(":room3:room3-rxjava3"))
-    androidTestImplementation(project(":room3:room3-ktx"))
     androidTestImplementation(project(":internal-testutils-common"))
     androidTestImplementation(project(":paging:paging-runtime"))
     androidTestImplementation(project(":paging:paging-guava"))
