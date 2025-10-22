@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.room3.integration.testapp.test;
+package androidx.room3.integration.kotlintestapp.test;
 
-import static com.google.common.truth.Truth.assertThat;
+import static androidx.kruth.Kruth.assertThat;
 
 import androidx.room3.Dao;
 import androidx.room3.Database;
@@ -29,6 +29,7 @@ import androidx.room3.Room;
 import androidx.room3.RoomDatabase;
 import androidx.room3.Transaction;
 import androidx.room3.Update;
+import androidx.sqlite.driver.AndroidSQLiteDriver;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
@@ -55,7 +56,7 @@ public class DefaultDaoMethodsTest {
     }
 
     @Dao
-    abstract static class AbstractEntityDao implements BaseDefaultDao<DefaultEntity> {
+    public abstract static class AbstractEntityDao implements BaseDefaultDao<DefaultEntity> {
         @Query("SELECT COUNT(*) FROM DefaultEntity")
         abstract int count();
         @Query("SELECT * FROM DefaultEntity WHERE id = :id")
@@ -63,7 +64,7 @@ public class DefaultDaoMethodsTest {
     }
 
     @Dao
-    interface InterfaceEntityDao extends BaseDefaultDao<DefaultEntity> {
+    public interface InterfaceEntityDao extends BaseDefaultDao<DefaultEntity> {
         @Query("SELECT COUNT(*) FROM DefaultEntity")
         int count();
         @Query("SELECT * FROM DefaultEntity WHERE id = :id")
@@ -71,7 +72,7 @@ public class DefaultDaoMethodsTest {
     }
 
     @Entity
-    static class DefaultEntity {
+    public static class DefaultEntity {
         @PrimaryKey(autoGenerate = true)
         public long id;
         public String value;
@@ -100,7 +101,7 @@ public class DefaultDaoMethodsTest {
             exportSchema = false,
             entities = {DefaultEntity.class}
     )
-    abstract static class DefaultsDb extends RoomDatabase {
+    public abstract static class DefaultsDb extends RoomDatabase {
         abstract AbstractEntityDao abstractDao();
         abstract InterfaceEntityDao interfaceDao();
     }
@@ -112,7 +113,8 @@ public class DefaultDaoMethodsTest {
         mDb = Room.inMemoryDatabaseBuilder(
                 ApplicationProvider.getApplicationContext(),
                 DefaultsDb.class
-        ).build();
+        ).setDriver(new AndroidSQLiteDriver())
+                .build();
     }
 
     @After
