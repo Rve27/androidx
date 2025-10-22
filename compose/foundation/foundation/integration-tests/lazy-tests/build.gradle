@@ -57,3 +57,5 @@ dependencies {
     androidTestImplementation(libs.mockitoCore)
     androidTestImplementation(libs.mockitoKotlin)
 }
+
+androidx.deviceTests.minSdkForFtlOverride = 24 // b/437944630

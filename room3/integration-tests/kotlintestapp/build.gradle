@@ -125,4 +125,5 @@ tasks.withType(KspTask).configureEach { kspTask ->
 
 androidx {
     kotlinTarget = KotlinTarget.KOTLIN_2_2
+    deviceTests.minSdkForFtlOverride = 24 // b/437944630
 }
