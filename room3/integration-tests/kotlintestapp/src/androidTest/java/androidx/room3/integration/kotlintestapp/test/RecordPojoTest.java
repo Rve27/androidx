@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 
-package androidx.room3.integration.testapp.test;
-
-import static com.google.common.truth.Truth.assertThat;
+package androidx.room3.integration.kotlintestapp.test;
 
 import android.content.Context;
 
+import androidx.kruth.Kruth;
 import androidx.room3.Dao;
-import androidx.room3.Database;
 import androidx.room3.Entity;
 import androidx.room3.Insert;
 import androidx.room3.PrimaryKey;
 import androidx.room3.Query;
 import androidx.room3.Room;
 import androidx.room3.RoomDatabase;
+import androidx.sqlite.driver.AndroidSQLiteDriver;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.SmallTest;
@@ -47,26 +46,30 @@ public class RecordPojoTest {
     @Test
     public void recordEntity() {
         Context context = ApplicationProvider.getApplicationContext();
-        TestDatabase db = Room.inMemoryDatabaseBuilder(context, TestDatabase.class).build();
+        TestDatabase db = Room.inMemoryDatabaseBuilder(context, TestDatabase.class)
+                .setDriver(new AndroidSQLiteDriver())
+                .build();
         RecordEntityDao recordDao = db.getDao();
         recordDao.insert(new RecordEntity(1, "I am a RECORD"));
         List<RecordEntity> result = recordDao.getAll();
-        assertThat(result.size()).isEqualTo(1);
-        assertThat(result.get(0).data()).isEqualTo("I am a RECORD");
+        Kruth.assertThat(result.size()).isEqualTo(1);
+        Kruth.assertThat(result.get(0).data()).isEqualTo("I am a RECORD");
     }
 
     @Entity
-    record RecordEntity(
+    public record RecordEntity(
             @PrimaryKey long id,
             String data
     ) {}
 
-    abstract static class TestDatabase  extends RoomDatabase {
+    // Cannot process due to b/b/445473504
+    // @Database(entities = {RecordEntity.class}, version = 1, exportSchema = false)
+    public abstract static class TestDatabase  extends RoomDatabase {
         abstract RecordEntityDao getDao();
     }
 
     @Dao
-    interface RecordEntityDao {
+    public interface RecordEntityDao {
         @Query("SELECT * FROM RecordEntity")
         @NonNull List<RecordEntity> getAll();
 
