@@ -429,6 +429,13 @@ class FlowQueryTest(driver: UseDriver) : TestDatabaseTest(driver) {
         @OptIn(ExperimentalRoomApi::class)
         val database =
             Room.databaseBuilder<TestDatabase>(context, "auto-close-test.db")
+                .apply {
+                    if (useDriver == UseDriver.ANDROID) {
+                        setDriver(AndroidSQLiteDriver())
+                    } else if (useDriver == UseDriver.BUNDLED) {
+                        setDriver(BundledSQLiteDriver())
+                    }
+                }
                 .setAutoCloseTimeout(1, TimeUnit.SECONDS)
                 .build()
 
