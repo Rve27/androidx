@@ -50,12 +50,7 @@ package androidx.room3 {
     method public final kotlinx.coroutines.flow.Flow<java.util.Set<java.lang.String>> createFlow(String[] tables, optional boolean emitInitialState);
     method @BytecodeOnly public static kotlinx.coroutines.flow.Flow! createFlow$default(androidx.room3.InvalidationTracker!, String![]!, boolean, int, Object!);
     method public final void refreshAsync();
-    method public void refreshVersionsAsync();
     method @WorkerThread public void removeObserver(androidx.room3.InvalidationTracker.Observer observer);
-    field public static final androidx.room3.InvalidationTracker.Companion Companion;
-  }
-
-  public static final class InvalidationTracker.Companion {
   }
 
   public abstract static class InvalidationTracker.Observer {
@@ -84,20 +79,14 @@ package androidx.room3 {
   }
 
   public abstract class RoomDatabase {
-    method @Deprecated public void beginTransaction();
     method @WorkerThread public abstract void clearAllTables();
     method public void close();
     method protected abstract androidx.room3.InvalidationTracker createInvalidationTracker();
-    method @Deprecated public void endTransaction();
     method @InaccessibleFromKotlin public androidx.room3.InvalidationTracker getInvalidationTracker();
     method @InaccessibleFromKotlin public androidx.sqlite.db.SupportSQLiteOpenHelper getOpenHelper();
     method @InaccessibleFromKotlin public java.util.concurrent.Executor getQueryExecutor();
     method @InaccessibleFromKotlin public java.util.concurrent.Executor getTransactionExecutor();
-    method public boolean inTransaction();
     method @CallSuper public void init(androidx.room3.DatabaseConfiguration configuration);
-    method public void runInTransaction(Runnable body);
-    method public <V> V runInTransaction(java.util.concurrent.Callable<V> body);
-    method @Deprecated public void setTransactionSuccessful();
     property public androidx.room3.InvalidationTracker invalidationTracker;
     property public androidx.sqlite.db.SupportSQLiteOpenHelper openHelper;
     property public java.util.concurrent.Executor queryExecutor;

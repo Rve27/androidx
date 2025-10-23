@@ -66,10 +66,6 @@ public fun <R> performBlocking(
     val context = db.suspendingTransactionContext.get() ?: EmptyCoroutineContext
     return runBlockingUninterruptible {
         withContext(context) {
-            // If in compatibility mode and the database is already in a transaction, then do not
-            // start a nested transaction to avoid the overhead and because the SupportSQLite APIs
-            // do not support real SAVEPOINT-based nested transactions.
-            val inTransaction = !(db.inCompatibilityMode() && db.inTransaction()) && inTransaction
             db.internalPerform(isReadOnly, inTransaction) { connection ->
                 (connection as RawConnectionAccessor).useRawConnection { rawConnection ->
                     block.invoke(rawConnection)
@@ -108,11 +104,7 @@ public fun <R> performInTransactionBlocking(db: RoomDatabase, block: () -> R): R
     val context = db.suspendingTransactionContext.get() ?: EmptyCoroutineContext
     return runBlockingUninterruptible {
         withContext(context) {
-            // If in compatibility mode and the database is already in a transaction, then do not
-            // start a nested transaction to avoid the overhead and because the SupportSQLite APIs
-            // do not support real SAVEPOINT-based nested transactions.
-            val inTransaction = !db.inCompatibilityMode() || !db.inTransaction()
-            db.internalPerform(false, inTransaction) { block.invoke() }
+            db.internalPerform(isReadOnly = false, inTransaction = true) { block.invoke() }
         }
     }
 }
@@ -126,9 +118,6 @@ private suspend inline fun <R> RoomDatabase.compatCoroutineExecute(
     inTransaction: Boolean,
     crossinline block: suspend () -> R,
 ): R {
-    if (inCompatibilityMode() && isOpenInternal && inTransaction()) {
-        return block.invoke()
-    }
     return withContext(getCoroutineContext(inTransaction)) { block.invoke() }
 }
 
