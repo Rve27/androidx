@@ -76,7 +76,9 @@ import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.SemanticsPropertyReceiver
+import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.toggleableState
@@ -235,7 +237,10 @@ internal fun ListItem(
         verticalAlignment = verticalAlignment,
         enabled = enabled,
         selected = selected,
-        applySemantics = { this.selected = selected },
+        applySemantics = {
+            this.selected = selected
+            role = Role.RadioButton
+        },
         onClick = onClick,
         onLongClick = onLongClick,
         onLongClickLabel = onLongClickLabel,
@@ -316,7 +321,10 @@ internal fun ListItem(
         verticalAlignment = verticalAlignment,
         enabled = enabled,
         selected = checked,
-        applySemantics = { toggleableState = ToggleableState(checked) },
+        applySemantics = {
+            toggleableState = ToggleableState(checked)
+            role = Role.Checkbox
+        },
         onClick = { onCheckedChange(!checked) },
         onLongClick = onLongClick,
         onLongClickLabel = onLongClickLabel,
@@ -476,7 +484,10 @@ internal fun SegmentedListItem(
         verticalAlignment = verticalAlignment,
         enabled = enabled,
         selected = selected,
-        applySemantics = { this.selected = selected },
+        applySemantics = {
+            this.selected = selected
+            role = Role.RadioButton
+        },
         onClick = onClick,
         onLongClick = onLongClick,
         onLongClickLabel = onLongClickLabel,
@@ -557,7 +568,10 @@ internal fun SegmentedListItem(
         verticalAlignment = verticalAlignment,
         enabled = enabled,
         selected = checked,
-        applySemantics = { toggleableState = ToggleableState(checked) },
+        applySemantics = {
+            toggleableState = ToggleableState(checked)
+            role = Role.Checkbox
+        },
         onClick = { onCheckedChange(!checked) },
         onLongClick = onLongClick,
         onLongClickLabel = onLongClickLabel,
