@@ -394,29 +394,6 @@ public open class PdfViewerFragment constructor() : Fragment() {
             _pdfView = pdfContainer.pdfView
         }
 
-        applyResponsiveMargins()
-
-        val stylingOptions = pdfStylingOptions
-        if (stylingOptions != null) {
-            applyPdfViewStyledAttributes(stylingOptions.containerStyleResId)
-        }
-
-        setupPdfView()
-        setupSearchView(_pdfSearchView)
-        setupToolbox()
-
-        lifecycleScope.launch { collectFragmentUiScreenState() }
-
-        // Call onPdfViewCreated last to allow host apps to override any internal PdfView listeners
-        // set by fragment.
-        onPdfViewCreated(pdfView)
-    }
-
-    /**
-     * Applies responsive horizontal margins to the PDF container based on the window width,
-     * ensuring optimal content readability across different devices.
-     */
-    private fun applyResponsiveMargins() {
         val windowMetrics =
             WindowMetricsCalculator.getOrCreate().computeCurrentWindowMetrics(requireActivity())
 
@@ -435,6 +412,61 @@ public open class PdfViewerFragment constructor() : Fragment() {
             leftMargin = marginPx
             rightMargin = marginPx
         }
+
+        val gestureDetector =
+            GestureDetector(
+                activity,
+                object : GestureDetector.SimpleOnGestureListener() {
+                    override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
+                        toolboxGestureEventProcessor.processEvent(SingleTap)
+                        // we should not consume this event as the events are required in PdfView
+                        return false
+                    }
+                },
+            )
+
+        _pdfView.setOnTouchListener { _, event ->
+            // we should not consume this event as the events are required in PdfView
+            gestureDetector.onTouchEvent(event)
+        }
+        _pdfView.setOnScrollChangeListener { _, _, scrollY, _, _ ->
+            toolboxGestureEventProcessor.processEvent(ScrollTo(scrollY))
+        }
+        _pdfView.requestFailedListener =
+            object : PdfView.EventListener {
+                override fun onEvent(event: PdfTrackingEvent) {
+                    when (event) {
+                        is RequestFailureEvent -> {
+                            // TODO(b/409464802): Propagate it through event callback
+                            // onLoadDocumentError(event.exception)
+                        }
+                    }
+                }
+            }
+
+        pdfViewManager =
+            PdfViewManager(
+                pdfView = _pdfView,
+                selectedHighlightColor =
+                    requireContext().getColor(R.color.selected_highlight_color),
+                highlightColor = requireContext().getColor(R.color.highlight_color),
+            )
+        pdfSearchViewManager = PdfSearchViewManager(_pdfSearchView)
+
+        setupPdfViewListeners()
+
+        onPdfSearchViewCreated(_pdfSearchView)
+        lifecycleScope.launch { collectFragmentUiScreenState() }
+        _toolboxView.hide()
+        _toolboxView.setOnCurrentPageRequested { _pdfView.visiblePages.getCenter() }
+
+        val stylingOptions = pdfStylingOptions
+        if (stylingOptions != null) {
+            applyPdfViewStyledAttributes(stylingOptions.containerStyleResId)
+        }
+        // Call onPdfViewCreated last to allow host apps to override any internal PdfView listeners
+        // set by fragment.
+        onPdfViewCreated(pdfView)
     }
 
     private fun applyPdfViewStyledAttributes(resId: Int) {
@@ -500,14 +532,9 @@ public open class PdfViewerFragment constructor() : Fragment() {
     }
 
     /**
-     * Initializes the [PdfSearchView] by setting up [PdfSearchViewManager] to orchestrate search UI
-     * updates, configures listeners for search actions (e.g., text changes, button clicks), and
-     * attaches a [androidx.core.view.WindowInsetsAnimationCompat.Callback].
-     *
-     * @param searchView The [PdfSearchView] instance to be configured.
+     * Called from Fragment.onViewCreated(). This gives subclasses a chance to customize component.
      */
-    private fun setupSearchView(searchView: PdfSearchView) {
-        pdfSearchViewManager = PdfSearchViewManager(_pdfSearchView)
+    private fun onPdfSearchViewCreated(searchView: PdfSearchView) {
         setupSearchViewListeners(searchView)
         val windowManager = activity?.getSystemService(Context.WINDOW_SERVICE) as WindowManager
 
@@ -539,21 +566,7 @@ public open class PdfViewerFragment constructor() : Fragment() {
         return false
     }
 
-    /**
-     * Sets up essential listeners on the [PdfView].
-     *
-     * This function configures listeners for selection changes, link clicks, key events (for
-     * search), and touch/scroll events to manage UI interactions like closing search and handling
-     * gestures.
-     */
-    private fun setupPdfView() {
-        pdfViewManager =
-            PdfViewManager(
-                pdfView = _pdfView,
-                selectedHighlightColor =
-                    requireContext().getColor(R.color.selected_highlight_color),
-                highlightColor = requireContext().getColor(R.color.highlight_color),
-            )
+    private fun setupPdfViewListeners() {
         /**
          * Closes any active search session if the user selects anything in the PdfView. This
          * improves the user experience by allowing the focus to shift to the intended content.
@@ -587,37 +600,6 @@ public open class PdfViewerFragment constructor() : Fragment() {
             }
             return@setOnKeyListener false
         }
-
-        val gestureDetector =
-            GestureDetector(
-                activity,
-                object : GestureDetector.SimpleOnGestureListener() {
-                    override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
-                        toolboxGestureEventProcessor.processEvent(SingleTap)
-                        // we should not consume this event as the events are required in PdfView
-                        return false
-                    }
-                },
-            )
-
-        _pdfView.setOnTouchListener { _, event ->
-            // we should not consume this event as the events are required in PdfView
-            gestureDetector.onTouchEvent(event)
-        }
-        _pdfView.setOnScrollChangeListener { _, _, scrollY, _, _ ->
-            toolboxGestureEventProcessor.processEvent(ScrollTo(scrollY))
-        }
-        _pdfView.requestFailedListener =
-            object : PdfView.EventListener {
-                override fun onEvent(event: PdfTrackingEvent) {
-                    when (event) {
-                        is RequestFailureEvent -> {
-                            // TODO(b/409464802): Propagate it through event callback
-                            // onLoadDocumentError(event.exception)
-                        }
-                    }
-                }
-            }
     }
 
     private fun setupSearchViewListeners(searchView: PdfSearchView) {
@@ -640,11 +622,6 @@ public open class PdfViewerFragment constructor() : Fragment() {
             }
             closeButton.setOnClickListener { isTextSearchActive = false }
         }
-    }
-
-    private fun setupToolbox() {
-        _toolboxView.hide()
-        _toolboxView.setOnCurrentPageRequested { _pdfView.visiblePages.getCenter() }
     }
 
     private fun PdfSearchView.performSearch() {
