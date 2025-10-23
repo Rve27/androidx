@@ -85,6 +85,9 @@ internal class SubspaceLayoutNode : ComposeSubspaceNode {
     internal val isAttached: Boolean
         get() = owner != null
 
+    internal val isPlaced: Boolean
+        get() = measurableLayout.isPlaced
+
     internal val nodes: SubspaceModifierNodeChain = SubspaceModifierNodeChain(this)
 
     /**
@@ -187,6 +190,8 @@ internal class SubspaceLayoutNode : ComposeSubspaceNode {
 
             children.add(toIndex, child)
         }
+
+        requestMeasure()
     }
 
     /** Removes one or more children, starting at [index]. */
@@ -247,6 +252,9 @@ internal class SubspaceLayoutNode : ComposeSubspaceNode {
         nodes.markAsAttached()
         children.forEach { child -> child.attach(subspaceOwner) }
         nodes.runOnAttach()
+
+        requestMeasure()
+        parent?.requestMeasure()
     }
 
     /**
@@ -264,6 +272,8 @@ internal class SubspaceLayoutNode : ComposeSubspaceNode {
         }
 
         this.depth = 0
+        parent?.requestMeasure()
+
         nodes.runOnDetach()
         ignoreMeasureRequests { children.forEach { child -> child.detach() } }
         nodes.markAsDetached()
@@ -376,6 +386,9 @@ internal class SubspaceLayoutNode : ComposeSubspaceNode {
          * This node is used to mark the end of the modifier chain.
          */
         val tail: SubspaceModifier.Node = TailModifierNode()
+
+        val isPlaced
+            get() = layoutPose != null
 
         override fun measure(constraints: VolumeConstraints): SubspacePlaceable {
             layoutState = LayoutState.Measuring
