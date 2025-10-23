@@ -286,14 +286,8 @@ public final class EntityTest {
     @Test
     public void getGravityAlignedPose_returnsGravityAlignedPose() {
         Vector3 translation = new Vector3(1f, 2f, 3f);
-        Pose pose_yawOnly = new Pose(
-                translation,
-                Quaternion.fromEulerAngles(0f, 30f, 0f)
-        );
-        Pose pose_yawPitchRoll = new Pose(
-                translation,
-                Quaternion.fromEulerAngles(15f, 30f, 45f)
-        );
+        Pose pose_yawOnly = new Pose(translation, Quaternion.fromEulerAngles(0f, 30f, 0f));
+        Pose pose_yawPitchRoll = new Pose(translation, Quaternion.fromEulerAngles(15f, 30f, 45f));
 
         // Pitch and roll of rotation will be ignored when the parent's rotation is identity.
         assertPose(mEntity.getGravityAlignedPose(pose_yawPitchRoll), pose_yawOnly);
@@ -311,47 +305,49 @@ public final class EntityTest {
         mEntity.setPose(pose_yawOnly);
 
         // Pitch and roll of rotation will be ignored when the parent uses YAW rotation only.
-        Pose gravityAlignedPose_withYawRotatedParent = new Pose(
-                translation,
-                // The local rotation required to make the child upright in world space.
-                Quaternion.fromEulerAngles(0f, 30f, 0f)
-        );
+        Pose gravityAlignedPose_withYawRotatedParent =
+                new Pose(
+                        translation,
+                        // The local rotation required to make the child upright in world space.
+                        Quaternion.fromEulerAngles(0f, 30f, 0f));
 
-        assertPose(child.getGravityAlignedPose(pose_yawPitchRoll),
+        assertPose(
+                child.getGravityAlignedPose(pose_yawPitchRoll),
                 gravityAlignedPose_withYawRotatedParent);
 
         mEntity.setPose(pose_yawPitchRoll);
 
-        Pose gravityAlignedPose_withYawPitchRollRotatedParent = new Pose(
-                translation,
-                // The local rotation required to make the child upright in world space.
-                // Euler angles are approximately (pitch=12.5, yaw=32.7, roll=-45.6).
-                // Calculation:
-                // 1.Quaternion from EulerAngles(15f, 30f, 45f)
-                //   = [x=0.2146, y=0.1888, z=0.3352, w=0.8977]
-                //
-                // 2.inputWorldRotation = parent world rotation * local rotation
-                //     [0.2146, 0.1888, 0.3352, 0.8977] * [0.2146, 0.1888, 0.3352, 0.8977]
-                //   = [x=0.3854, y=0.3390, z=0.6019, w=0.6117]
-                //
-                // 3.Child's "forward" direction (local +Z) in world space:
-                //   worldForward = inputWorldRotation * Vector3(0f, 0f, 1f)
-                //                = [x=0.8787, y=-0.0634, z=0.4730]
-                //
-                // 4.Project "forward" onto the horizontal (X-Z) ground plane:
-                //   gravityAlignedForward = [x=0.8787, y=0.0, z=0.4730]
-                //
-                // 5.gravityAlignedWorldRotation = fromLookTowards(gravityAlignedForward)
-                //                               = [x=0.0, y=0.5128, z=0.0, w=0.8584]
-                //
-                // 6.finalLocalRotation
-                //   = parentWorldRot.inverse              * gravityAlignedWorldRotation
-                //   = [-0.2146, -0.1888, -0.3352, 0.8977] * [0.0, 0.5128, 0.0, 0.8584]
-                //   = [x=-0.0123, y=0.2982, z=-0.3979, w=0.8675]
-                new Quaternion(-0.0123f, 0.298f, -0.398f, 0.867f)
-        );
+        Pose gravityAlignedPose_withYawPitchRollRotatedParent =
+                new Pose(
+                        translation,
+                        // The local rotation required to make the child upright in world space.
+                        // Euler angles are approximately (pitch=12.5, yaw=32.7, roll=-45.6).
+                        // Calculation:
+                        // 1.Quaternion from EulerAngles(15f, 30f, 45f)
+                        //   = [x=0.2146, y=0.1888, z=0.3352, w=0.8977]
+                        //
+                        // 2.inputWorldRotation = parent world rotation * local rotation
+                        //     [0.2146, 0.1888, 0.3352, 0.8977] * [0.2146, 0.1888, 0.3352, 0.8977]
+                        //   = [x=0.3854, y=0.3390, z=0.6019, w=0.6117]
+                        //
+                        // 3.Child's "forward" direction (local +Z) in world space:
+                        //   worldForward = inputWorldRotation * Vector3(0f, 0f, 1f)
+                        //                = [x=0.8787, y=-0.0634, z=0.4730]
+                        //
+                        // 4.Project "forward" onto the horizontal (X-Z) ground plane:
+                        //   gravityAlignedForward = [x=0.8787, y=0.0, z=0.4730]
+                        //
+                        // 5.gravityAlignedWorldRotation = fromLookTowards(gravityAlignedForward)
+                        //                               = [x=0.0, y=0.5128, z=0.0, w=0.8584]
+                        //
+                        // 6.finalLocalRotation
+                        //   = parentWorldRot.inverse              * gravityAlignedWorldRotation
+                        //   = [-0.2146, -0.1888, -0.3352, 0.8977] * [0.0, 0.5128, 0.0, 0.8584]
+                        //   = [x=-0.0123, y=0.2982, z=-0.3979, w=0.8675]
+                        new Quaternion(-0.0123f, 0.298f, -0.398f, 0.867f));
 
-        assertPose(child.getGravityAlignedPose(pose_yawPitchRoll),
+        assertPose(
+                child.getGravityAlignedPose(pose_yawPitchRoll),
                 gravityAlignedPose_withYawPitchRollRotatedParent);
     }
 
@@ -364,7 +360,8 @@ public final class EntityTest {
         // When the entity is looking straight up, the projected forward vector is zero.
         // The gravity-aligned world rotation becomes Identity.
         // Since the parent is Identity, the local rotation is also Identity.
-        assertPose(mEntity.getGravityAlignedPose(poseLookingUp),
+        assertPose(
+                mEntity.getGravityAlignedPose(poseLookingUp),
                 new Pose(translation, Quaternion.Identity));
 
         TestEntity child =
@@ -381,7 +378,8 @@ public final class EntityTest {
         mEntity.setPose(new Pose(Vector3.Zero, parentYawRotation));
 
         // The gravity-aligned world rotation is still Identity.
-        assertPose(child.getGravityAlignedPose(poseLookingUp),
+        assertPose(
+                child.getGravityAlignedPose(poseLookingUp),
                 new Pose(translation, Quaternion.Identity));
     }
 
@@ -394,7 +392,8 @@ public final class EntityTest {
         // When the entity is looking straight down, the projected forward vector is zero.
         // The gravity-aligned world rotation becomes Identity.
         // Since the parent is Identity, the local rotation is also Identity.
-        assertPose(mEntity.getGravityAlignedPose(poseLookingDown),
+        assertPose(
+                mEntity.getGravityAlignedPose(poseLookingDown),
                 new Pose(translation, Quaternion.Identity));
 
         TestEntity child =
@@ -411,7 +410,8 @@ public final class EntityTest {
         mEntity.setPose(new Pose(new Vector3(), parentYawRotation));
 
         // The gravity-aligned world rotation is still Identity.
-        assertPose(child.getGravityAlignedPose(poseLookingDown),
+        assertPose(
+                child.getGravityAlignedPose(poseLookingDown),
                 new Pose(translation, Quaternion.Identity));
     }
 
