@@ -36,9 +36,6 @@ import androidx.room3.concurrent.CloseBarrier
 import androidx.room3.coroutines.runBlockingUninterruptible
 import androidx.room3.migration.AutoMigrationSpec
 import androidx.room3.migration.Migration
-import androidx.room3.prepackage.CopyFromAssetPath
-import androidx.room3.prepackage.CopyFromFile
-import androidx.room3.prepackage.CopyFromInputStream
 import androidx.room3.prepackage.PrePackagedCopySQLiteDriver
 import androidx.room3.support.AutoCloser
 import androidx.room3.support.AutoClosingRoomOpenHelper
@@ -273,7 +270,6 @@ actual constructor() {
         }
     }
 
-    /** Wraps the configured [SQLiteDriver] based on various builder set functionalities. */
     private fun wrapDriverConfiguration(
         configuration: DatabaseConfiguration,
         databaseVersion: Int,
@@ -281,21 +277,22 @@ actual constructor() {
         if (configuration.sqliteDriver == null) {
             return configuration
         }
-        // The order of wrapping is significant, the last wrap being the outer-most and first to be
-        // invoked, while the first one being the inner-most, being the last to be invoked.
-        var newConfiguration = configuration
-        if (configuration.copyFromConfig != null) {
-            newConfiguration =
-                configuration.copy(
-                    sqliteDriver =
-                        PrePackagedCopySQLiteDriver(
-                            configuration.sqliteDriver,
-                            configuration,
-                            databaseVersion,
-                        )
-                )
+        val prePackagedCopyEnabled =
+            configuration.copyFromAssetPath != null ||
+                configuration.copyFromFile != null ||
+                configuration.copyFromInputStream != null
+        return if (prePackagedCopyEnabled) {
+            configuration.copy(
+                sqliteDriver =
+                    PrePackagedCopySQLiteDriver(
+                        configuration.sqliteDriver,
+                        configuration,
+                        databaseVersion,
+                    )
+            )
+        } else {
+            configuration
         }
-        return newConfiguration
     }
 
     /**
@@ -1507,30 +1504,25 @@ actual constructor() {
                     )
                 }
             val autoCloseEnabled = autoCloseTimeout > 0
-            val copyFromConfig =
-                if (
-                    copyFromAssetPath != null || copyFromFile != null || copyFromInputStream != null
-                ) {
-                    requireNotNull(name) {
-                        "Cannot create from asset or file for an in-memory database."
-                    }
-                    val copyFromAssetPathConfig = if (copyFromAssetPath == null) 0 else 1
-                    val copyFromFileConfig = if (copyFromFile == null) 0 else 1
-                    val copyFromInputStreamConfig = if (copyFromInputStream == null) 0 else 1
-                    val copyConfigurations =
-                        copyFromAssetPathConfig + copyFromFileConfig + copyFromInputStreamConfig
-                    require(copyConfigurations == 1) {
-                        "More than one of createFromAsset(), createFromInputStream() and " +
-                            "createFromFile() were called on this Builder, but the database can " +
-                            "only be created using one of the " +
-                            "three configurations."
-                    }
-                    copyFromAssetPath?.let { CopyFromAssetPath(context, it) }
-                        ?: copyFromFile?.let { CopyFromFile(it) }
-                        ?: copyFromInputStream?.let { CopyFromInputStream(it) }
-                } else {
-                    null
+            val prePackagedCopyEnabled =
+                copyFromAssetPath != null || copyFromFile != null || copyFromInputStream != null
+            if (prePackagedCopyEnabled) {
+                requireNotNull(name) {
+                    "Cannot create from asset or file for an in-memory database."
                 }
+                val copyFromAssetPathConfig = if (copyFromAssetPath == null) 0 else 1
+                val copyFromFileConfig = if (copyFromFile == null) 0 else 1
+                val copyFromInputStreamConfig = if (copyFromInputStream == null) 0 else 1
+                val copyConfigurations =
+                    copyFromAssetPathConfig + copyFromFileConfig + copyFromInputStreamConfig
+
+                require(copyConfigurations == 1) {
+                    "More than one of createFromAsset(), " +
+                        "createFromInputStream(), and createFromFile() were called on this " +
+                        "Builder, but the database can only be created using one of the " +
+                        "three configurations."
+                }
+            }
             val queryCallbackEnabled = queryCallback != null
             val supportOpenHelperFactory =
                 initialFactory
@@ -1587,6 +1579,9 @@ actual constructor() {
                         requireMigration = requireMigration,
                         allowDestructiveMigrationOnDowngrade = allowDestructiveMigrationOnDowngrade,
                         migrationNotRequiredFrom = migrationsNotRequiredFrom,
+                        copyFromAssetPath = copyFromAssetPath,
+                        copyFromFile = copyFromFile,
+                        copyFromInputStream = copyFromInputStream,
                         prepackagedDatabaseCallback = prepackagedDatabaseCallback,
                         typeConverters = typeConverters,
                         autoMigrationSpecs = autoMigrationSpecs,
@@ -1595,10 +1590,7 @@ actual constructor() {
                         sqliteDriver = driver,
                         queryCoroutineContext = queryCoroutineContext,
                     )
-                    .apply {
-                        this.useTempTrackingTable = inMemoryTrackingTableMode
-                        this.copyFromConfig = copyFromConfig
-                    }
+                    .apply { this.useTempTrackingTable = inMemoryTrackingTableMode }
             val db = factory?.invoke() ?: findAndInstantiateDatabaseImpl(klass.java)
             db.init(configuration)
             return db
@@ -1781,7 +1773,6 @@ actual constructor() {
      * callback can be useful for updating the pre-package DB schema to satisfy Room's schema
      * validation.
      */
-    // TODO(b/339934813): Move pre-package out of Room and into a set of utility drivers.
     public abstract class PrepackagedDatabaseCallback {
         /**
          * Called when the pre-packaged database has been copied.
