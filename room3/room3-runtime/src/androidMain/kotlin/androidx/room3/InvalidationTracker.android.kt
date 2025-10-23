@@ -91,12 +91,9 @@ actual constructor(
     private val trackerLock = Any()
 
     init {
-        // TODO(b/316944352): Figure out auto-close with driver APIs
-        // Setup a callback to disallow invalidation refresh when underlying compat database
+        // Setup a callback to disallow invalidation refresh when underlying database
         // is closed. This is done to support auto-close feature.
-        implementation.onAllowRefresh = {
-            !database.inCompatibilityMode() || database.isOpenInternal
-        }
+        implementation.onAllowRefresh = { database.isOpenInternal }
     }
 
     /**
