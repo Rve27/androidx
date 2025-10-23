@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-@file:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+package androidx.room3.autoclose
 
-package androidx.room3.concurrent
+import java.util.concurrent.TimeUnit
 
-import androidx.annotation.RestrictTo
-
-public actual typealias AtomicInt = java.util.concurrent.atomic.AtomicInteger
-
-internal typealias AtomicLong = java.util.concurrent.atomic.AtomicLong
-
-public actual typealias AtomicBoolean = java.util.concurrent.atomic.AtomicBoolean
+/**
+ * The auto-close configuration used to automatically close the database if not used after a certain
+ * amount time.
+ */
+internal class AutoCloserConfig(val timeout: Long, val timeUnit: TimeUnit) {
+    internal val timeoutInMs = timeUnit.toMillis(timeout)
+}
