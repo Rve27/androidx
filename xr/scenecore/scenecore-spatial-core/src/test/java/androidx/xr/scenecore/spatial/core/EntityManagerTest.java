@@ -113,7 +113,7 @@ public class EntityManagerTest {
         SystemClock.setCurrentTimeMillis(currentTimeMillis);
 
         // By default, set the activity space to the root of the underlying OpenXR reference space.
-        mActivitySpace.setOpenXrReferenceSpacePose(Matrix4.Identity);
+        mActivitySpace.setOpenXrReferenceSpaceTransform(Matrix4.Identity);
     }
 
     @After

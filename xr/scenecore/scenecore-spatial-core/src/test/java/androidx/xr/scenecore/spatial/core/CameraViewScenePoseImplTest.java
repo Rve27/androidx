@@ -133,7 +133,7 @@ public final class CameraViewScenePoseImplTest {
     @Test
     public void transformPoseTo_returnsCorrectPose() {
         // Set the activity space to the root of the underlying OpenXR reference space.
-        mActivitySpace.setOpenXrReferenceSpacePose(Matrix4.Identity);
+        mActivitySpace.setOpenXrReferenceSpaceTransform(Matrix4.Identity);
         Pose poseLeft = new Pose(new Vector3(1, 2, 3), new Quaternion(1, 0, 0, 0));
         Pose poseRight = new Pose(new Vector3(4, 5, 6), new Quaternion(0, 1, 0, 0));
         Fov fov = new Fov(0, 0, 0, 0);
@@ -164,7 +164,7 @@ public final class CameraViewScenePoseImplTest {
     @Test
     public void getActivitySpaceScale_returnsInverseOfActivitySpaceWorldScale() throws Exception {
         float activitySpaceScale = 5f;
-        mActivitySpace.setOpenXrReferenceSpacePose(Matrix4.fromScale(activitySpaceScale));
+        mActivitySpace.setOpenXrReferenceSpaceTransform(Matrix4.fromScale(activitySpaceScale));
         CameraViewScenePoseImpl cameraScenePoseLeft =
                 createCameraViewScenePose(CameraViewScenePose.CameraType.CAMERA_TYPE_LEFT_EYE);
 
