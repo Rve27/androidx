@@ -32,9 +32,7 @@ import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.ObservableEmitter
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.Disposable
-import io.reactivex.rxjava3.schedulers.Schedulers
 import java.util.concurrent.Callable
-import java.util.concurrent.Executor
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.rx3.asObservable
@@ -151,27 +149,6 @@ public fun createFlowable(database: RoomDatabase, vararg tableNames: String): Fl
 }
 
 /**
- * Helper method used by generated code to bind a Callable such that it will be run in our disk io
- * thread and will automatically block null values since RxJava3 does not like null.
- */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-@Deprecated("No longer used by generated code.")
-public fun <T : Any> createFlowable(
-    database: RoomDatabase,
-    inTransaction: Boolean,
-    tableNames: Array<String>,
-    callable: Callable<out T>,
-): Flowable<T> {
-    val scheduler = Schedulers.from(getExecutor(database, inTransaction))
-    val maybe = Maybe.fromCallable(callable)
-    return createFlowable(database, *tableNames)
-        .subscribeOn(scheduler)
-        .unsubscribeOn(scheduler)
-        .observeOn(scheduler)
-        .flatMapMaybe { maybe }
-}
-
-/**
  * Creates a [Observable] that emits at least once and also re-emits whenever one of the observed
  * tables is updated.
  *
@@ -205,27 +182,6 @@ public fun createObservable(database: RoomDatabase, vararg tableNames: String): 
 }
 
 /**
- * Helper method used by generated code to bind a Callable such that it will be run in our disk io
- * thread and will automatically block null values since RxJava3 does not like null.
- */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-@Deprecated("No longer used by generated code.")
-public fun <T : Any> createObservable(
-    database: RoomDatabase,
-    inTransaction: Boolean,
-    tableNames: Array<String>,
-    callable: Callable<out T>,
-): Observable<T> {
-    val scheduler = Schedulers.from(getExecutor(database, inTransaction))
-    val maybe = Maybe.fromCallable(callable)
-    return createObservable(database, *tableNames)
-        .subscribeOn(scheduler)
-        .unsubscribeOn(scheduler)
-        .observeOn(scheduler)
-        .flatMapMaybe { maybe }
-}
-
-/**
  * Helper method used by generated code to create a Single from a Callable that will ignore the
  * EmptyResultSetException if the stream is already disposed.
  */
@@ -242,13 +198,5 @@ public fun <T : Any> createSingle(callable: Callable<out T>): Single<T> {
         } catch (e: EmptyResultSetException) {
             emitter.tryOnError(e)
         }
-    }
-}
-
-private fun getExecutor(database: RoomDatabase, inTransaction: Boolean): Executor {
-    return if (inTransaction) {
-        database.transactionExecutor
-    } else {
-        database.queryExecutor
     }
 }
