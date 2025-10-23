@@ -130,18 +130,6 @@ public final class WindowLayoutInfoTest {
     }
 
     @Test
-    public void testBuilder_addEngagementModeFlag() {
-        WindowLayoutInfo info = new WindowLayoutInfo.Builder()
-                .setEngagementModeFlags(0)
-                .addEngagementModeFlag(ENGAGEMENT_MODE_FLAG_VISUALS_ON)
-                .addEngagementModeFlag(ENGAGEMENT_MODE_FLAG_AUDIO_ON)
-                .build();
-
-        assertTrue(info.hasFlag(ENGAGEMENT_MODE_FLAG_VISUALS_ON));
-        assertTrue(info.hasFlag(ENGAGEMENT_MODE_FLAG_AUDIO_ON));
-    }
-
-    @Test
     public void testBuilder_defaultEngagementModeFlags() {
         WindowLayoutInfo info = new WindowLayoutInfo.Builder().build();
 
@@ -159,12 +147,12 @@ public final class WindowLayoutInfoTest {
     }
 
     @Test
-    public void testHasFlag() {
+    public void testHasEngagementModeFlag() {
         WindowLayoutInfo info = new WindowLayoutInfo.Builder()
                 .setEngagementModeFlags(ENGAGEMENT_MODE_FLAG_VISUALS_ON)
                 .build();
 
-        assertTrue(info.hasFlag(ENGAGEMENT_MODE_FLAG_VISUALS_ON));
-        assertFalse(info.hasFlag(ENGAGEMENT_MODE_FLAG_AUDIO_ON));
+        assertTrue(info.hasEngagementModeFlag(ENGAGEMENT_MODE_FLAG_VISUALS_ON));
+        assertFalse(info.hasEngagementModeFlag(ENGAGEMENT_MODE_FLAG_AUDIO_ON));
     }
 }

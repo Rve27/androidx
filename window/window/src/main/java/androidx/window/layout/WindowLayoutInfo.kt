@@ -59,8 +59,8 @@ constructor(
     public class EngagementMode private constructor(private val id: Int) {
         override fun toString(): String =
             when (id) {
-                0 -> "VISUALS_ON"
-                1 -> "AUDIO_ON"
+                1 -> "VISUALS_ON"
+                2 -> "AUDIO_ON"
                 else -> "UNKNOWN($id)"
             }
 
@@ -73,14 +73,14 @@ constructor(
              * Indicates the engagement mode includes a visual presentation. When this mode is
              * active, the user can visually see the app UI on a visible window.
              */
-            @JvmField public val VISUALS_ON: EngagementMode = EngagementMode(0)
+            @JvmField public val VISUALS_ON: EngagementMode = EngagementMode(1)
 
             /**
              * Indicates the engagement mode includes an audio presentation. This can be active with
              * or without [VISUALS_ON]. When active without visuals, it signifies an audio-only
              * experience.
              */
-            @JvmField public val AUDIO_ON: EngagementMode = EngagementMode(1)
+            @JvmField public val AUDIO_ON: EngagementMode = EngagementMode(2)
         }
     }
 
