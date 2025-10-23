@@ -77,7 +77,7 @@ public abstract class Tracer(
      *   other sections in the trace, potentially on different Tracks. The start and end of each
      *   trace `flow` (connection) between trace sections must share an ID, so each `Long` must be
      *   unique to each `flow` in the trace.
-     * @return A [MetadataHandleCloseable] instance that can be used to add additional metadata and
+     * @return A [EventMetadataCloseable] instance that can be used to add additional metadata and
      *   close the trace section.
      */
     @DelicateTracingApi
@@ -85,7 +85,7 @@ public abstract class Tracer(
         category: String,
         name: String,
         token: PropagationToken,
-    ): MetadataHandleCloseable
+    ): EventMetadataCloseable
 
     /**
      * @return The [Counter] instance for the provided [name]. This can be used to emit counter
@@ -101,14 +101,12 @@ public abstract class Tracer(
         category: String,
         name: String,
         token: PropagationToken,
-        crossinline metadataBlock: MetadataHandle.() -> Unit,
+        crossinline metadataBlock: EventMetadata.() -> Unit,
     ): AutoCloseable {
         val result = beginSectionWithMetadata(category = category, name = name, token = token)
-        return synchronized(lock = result.metadata) {
-            metadataBlock(result.metadata)
-            result.metadata.dispatchToTraceSink()
-            result.closeable
-        }
+        metadataBlock(result.metadata)
+        result.metadata.dispatchToTraceSink()
+        return result.closeable
     }
 
     /**
@@ -130,7 +128,7 @@ public abstract class Tracer(
         category: String,
         name: String,
         token: PropagationToken = tokenFromThreadContext(),
-        crossinline metadataBlock: MetadataHandle.() -> Unit = {},
+        crossinline metadataBlock: EventMetadata.() -> Unit = {},
         crossinline block: () -> T,
     ): T {
         val closeable =
@@ -161,6 +159,11 @@ public abstract class Tracer(
      * @param category The [String] category. Its useful to categorize [TraceEvent]s, so that they
      *   can be filtered if necessary using the [metadataBlock].
      * @param name The name of the trace section.
+     * @param token An optional explicit [CoroutinePropagationToken] instance that is intended to be
+     *   used for manual context propagation. This might be useful in instances where the
+     *   implementation of context propagation was to distinguish between job executions that are
+     *   well scoped vs. fire and forget. When `null`, the [Tracer] instance delegates to the
+     *   implementation of [tokenFromCoroutineContext].
      * @param metadataBlock The lambda that can be used to decorate the [TraceEvent] instance with
      *   additional debug annotations. Return `true` in the block if you intend to dispatch the
      *   [TraceEvent] after all metadata has been added. For e.g. applications might want to filter
@@ -171,11 +174,12 @@ public abstract class Tracer(
     public suspend inline fun <T> traceCoroutine(
         category: String,
         name: String,
-        crossinline metadataBlock: MetadataHandle.() -> Unit = {},
+        token: CoroutinePropagationToken? = null,
+        crossinline metadataBlock: EventMetadata.() -> Unit = {},
         crossinline block: suspend () -> T,
     ): T {
         if (!isEnabled) return block()
-        val tokenContextElement = tokenFromCoroutineContext()
+        val tokenContextElement = token ?: tokenFromCoroutineContext()
         val closeable =
             beginSection(
                 category = category,
@@ -183,14 +187,19 @@ public abstract class Tracer(
                 token = tokenContextElement,
                 metadataBlock = metadataBlock,
             )
-        return withContext(context = currentCoroutineContext() + tokenContextElement) {
-            try {
-                // Not using .use here to avoid a layer of indirection in the implementation of
-                // AutoCloseable.use on Android.
+        // Not using .use here to avoid a layer of indirection in the implementation of
+        // AutoCloseable.use on Android.
+        try {
+            // withContext is not desirable all the time here. But for instances where the
+            // same tokenContextElement is used, the underlying implementation of withContext
+            // does an undispatched start as an optimization so it's not terrible.
+            return withContext(context = currentCoroutineContext() + tokenContextElement) {
                 block()
-            } finally {
-                closeable.close()
             }
+        } finally {
+            // Only have the tokenContextElement be relevant for the execution of the suspending
+            // `block` and not in this finally block.
+            closeable.close()
         }
     }
 }

@@ -16,8 +16,8 @@
 
 package androidx.tracing.driver
 
-/** A [MetadataHandle] instance that does nothing. */
-internal object EmptyMetadataHandle : MetadataHandle() {
+/** A [EventMetadata] instance that does nothing. */
+internal object EmptyEventMetadata : EventMetadata() {
     override fun addMetadataEntry(name: String, value: Boolean) {
         // Does nothing
     }

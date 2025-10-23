@@ -156,7 +156,7 @@ public class PerfettoTracer(context: TraceContext, name: String) :
         category: String,
         name: String,
         token: PropagationToken,
-    ): MetadataHandleCloseable {
+    ): EventMetadataCloseable {
         return when (token) {
             is PropagationUnsupportedToken -> {
                 val track = currentThreadTrack()
@@ -176,8 +176,8 @@ public class PerfettoTracer(context: TraceContext, name: String) :
 
     @DelicateTracingApi
     override fun counter(name: String): Counter {
-        // Intentionally not synchronized, given context.currentThreadTrack() will return
-        // the same instance of the underlying track.
+        // getOrCreateCounterTrack() is synchronized, so we get the same instance of the counter
+        // for the provided name.
         val counter = process.counters.getOrPut(name) { process.getOrCreateCounterTrack(name) }
         return PerfettoCounter(track = counter)
     }
