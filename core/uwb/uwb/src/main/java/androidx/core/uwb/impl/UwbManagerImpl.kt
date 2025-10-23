@@ -50,7 +50,7 @@ import androidx.core.uwb.backend.IUwbAvailabilityObserver
 import androidx.core.uwb.backend.IUwbClient
 import androidx.core.uwb.exceptions.UwbServiceNotAvailableException
 import androidx.core.uwb.helper.checkSystemFeature
-import androidx.core.uwb.helper.handleApiException
+import androidx.core.uwb.helper.getFailureReasonFromApiException
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.common.api.ApiException
@@ -311,7 +311,7 @@ internal class UwbManagerImpl(private val context: Context) : UwbManager {
                 UwbControleeSessionScopeImpl(uwbClient, rangingCapabilities, localAddress)
             }
         } catch (e: ApiException) {
-            handleApiException(e)
+            Log.e(TAG, "RangingResultFailure Reason Code: ${getFailureReasonFromApiException(e)}")
             throw RuntimeException(
                 "Unexpected error. This indicates that the library is not " +
                     "up-to-date with the service backend."
