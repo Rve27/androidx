@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 The Android Open Source Project
+ * Copyright 2024 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,34 +14,33 @@
  * limitations under the License.
  */
 
-package androidx.room3.autoclose
+package androidx.room3.support
 
 import android.content.Context
 import android.os.StrictMode
+import android.os.StrictMode.ThreadPolicy
+import androidx.arch.core.executor.testing.CountingTaskExecutorRule
 import androidx.kruth.assertThat
 import androidx.room3.Dao
 import androidx.room3.Database
 import androidx.room3.Entity
 import androidx.room3.ExperimentalRoomApi
 import androidx.room3.Insert
+import androidx.room3.InvalidationTracker
 import androidx.room3.PrimaryKey
 import androidx.room3.Query
 import androidx.room3.Room
 import androidx.room3.RoomDatabase
-import androidx.room3.useReaderConnection
-import androidx.room3.withWriteTransaction
-import androidx.sqlite.driver.AndroidSQLiteDriver
-import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.filters.MediumTest
 import androidx.test.filters.SdkSuppress
+import androidx.test.platform.app.InstrumentationRegistry
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicInteger
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.produceIn
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -49,42 +48,23 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withContext
 import org.junit.After
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.Parameterized
 
 @MediumTest
-@RunWith(Parameterized::class)
-@OptIn(ExperimentalRoomApi::class, ExperimentalCoroutinesApi::class)
-class AutoClosingDatabaseTest(driver: UseDriver) {
-
-    private val driver =
-        when (driver) {
-            UseDriver.ANDROID -> AndroidSQLiteDriver()
-            UseDriver.BUNDLED -> BundledSQLiteDriver()
-        }
+@OptIn(ExperimentalRoomApi::class)
+class AutoClosingDatabaseTest {
+    @get:Rule val executorRule = CountingTaskExecutorRule()
 
     private lateinit var db: TestDatabase
     private lateinit var userDao: TestUserDao
-
-    companion object {
-        @JvmStatic
-        @Parameterized.Parameters(name = "driver={0}")
-        fun parameters() = UseDriver.entries
-    }
-
-    enum class UseDriver {
-        ANDROID,
-        BUNDLED,
-    }
 
     @Before
     fun createDb() {
         val context = ApplicationProvider.getApplicationContext<Context>()
         context.deleteDatabase("testDb")
         db =
-            Room.databaseBuilder<TestDatabase>(context, "testDb")
-                .setDriver(driver)
+            Room.databaseBuilder(context, TestDatabase::class.java, "testDb")
                 .setAutoCloseTimeout(10, TimeUnit.MILLISECONDS)
                 .build()
         userDao = db.getUserDao()
@@ -92,41 +72,44 @@ class AutoClosingDatabaseTest(driver: UseDriver) {
 
     @After
     fun cleanUp() {
+        executorRule.drainTasks(1, TimeUnit.SECONDS)
+        assertThat(executorRule.isIdle).isTrue()
         db.close()
     }
 
     @Test
-    fun autoClosedInvalidation() = runTest {
-        val invalidationChannel = db.invalidationTracker.createFlow("user").produceIn(this)
-        invalidationChannel.receive() // consume initial emission
+    fun invalidationObserver_notifiedByTableName() = runTest {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        context.deleteDatabase("test.db")
+
+        val db: TestDatabase =
+            Room.databaseBuilder(context, TestDatabase::class.java, "test.db")
+                .setAutoCloseTimeout(0, TimeUnit.MILLISECONDS)
+                .build()
+
+        val invalidationCount = AtomicInteger(0)
+
+        db.invalidationTracker.addObserver(
+            object : InvalidationTracker.Observer("user") {
+                override fun onInvalidated(tables: Set<String>) {
+                    invalidationCount.getAndIncrement()
+                }
+            }
+        )
 
         db.getUserDao().insert(TestUser(1, "bob"))
-        assertThat(invalidationChannel.receive()).containsExactly("user")
 
-        withContext(Dispatchers.IO) { delay(20) } // let db auto close
+        executorRule.drainTasks(1, TimeUnit.SECONDS)
+        assertThat(invalidationCount.get()).isEqualTo(1)
 
-        db.getUserDao().insert(TestUser(2, "bob"))
-        assertThat(invalidationChannel.receive()).containsExactly("user")
+        delay(100) // Let db auto close
 
-        invalidationChannel.cancel()
-    }
+        db.invalidationTracker.notifyObserversByTableNames(setOf("user"))
 
-    @Test
-    fun noAutoCloseOnSlowConnectionUsage() = runTest {
-        db.getUserDao().insert(TestUser(1, "bob"))
-        db.useReaderConnection {
-            withContext(Dispatchers.IO) { delay(20) } // let db auto-close
-            assertThat(db.getUserDao().getAll()).containsExactly(TestUser(1, "bob"))
-        }
-    }
+        executorRule.drainTasks(1, TimeUnit.SECONDS)
+        assertThat(invalidationCount.get()).isEqualTo(2)
 
-    @Test
-    fun noAutoCloseOnSlowTransaction() = runTest {
-        db.getUserDao().insert(TestUser(1, "bob"))
-        db.withWriteTransaction {
-            withContext(Dispatchers.IO) { delay(20) } // let db auto-close
-            assertThat(db.getUserDao().getAll()).containsExactly(TestUser(1, "bob"))
-        }
+        db.close()
     }
 
     /**
@@ -134,20 +117,18 @@ class AutoClosingDatabaseTest(driver: UseDriver) {
      * not cause a IO on the main thread.
      */
     @Test
-    fun suspendQueryMainThreadAutoClosed() = runTest {
-        withContext(Dispatchers.Main.immediate) {
+    fun suspendQueryMainThreadAutoClosed() {
+        InstrumentationRegistry.getInstrumentation().runOnMainSync {
             val currentPolicy = StrictMode.getThreadPolicy()
             StrictMode.setThreadPolicy(
-                StrictMode.ThreadPolicy.Builder()
-                    .detectDiskReads()
-                    .detectDiskWrites()
-                    .penaltyDeath()
-                    .build()
+                ThreadPolicy.Builder().detectDiskReads().detectDiskWrites().penaltyDeath().build()
             )
             try {
-                db.getUserDao().getAllSuspend()
-                withContext(Dispatchers.IO) { delay(20) } // let db auto-close
-                db.getUserDao().getAllSuspend()
+                runBlocking {
+                    db.getUserDao().getAllSuspend()
+                    delay(20) // let db auto-close
+                    db.getUserDao().getAllSuspend()
+                }
             } finally {
                 StrictMode.setThreadPolicy(currentPolicy)
             }
@@ -165,7 +146,6 @@ class AutoClosingDatabaseTest(driver: UseDriver) {
         // making this test more useful.
         val db =
             Room.databaseBuilder<TestDatabase>(context, "testDb")
-                .setDriver(driver)
                 .setAutoCloseTimeout(1, TimeUnit.NANOSECONDS)
                 .build()
 
@@ -175,7 +155,6 @@ class AutoClosingDatabaseTest(driver: UseDriver) {
                         launch(Dispatchers.IO) {
                             repeat(1000) { db.getUserDao().insert(TestUser(it.toLong(), "$it")) }
                         }
-
                     1 -> launch(Dispatchers.IO) { repeat(1000) { db.getUserDao().getAll() } }
                     else -> error("Too many repeat")
                 }
@@ -196,7 +175,7 @@ class AutoClosingDatabaseTest(driver: UseDriver) {
     fun flowReadAndInsertConcurrentlyStressTest() = runTest {
         val context = ApplicationProvider.getApplicationContext<Context>()
 
-        repeat(500) {
+        repeat(1000) {
             context.deleteDatabase("testDb")
             // Ideally we would use one nanosecond which is basically 'zero' but that has the side
             // effect of closing the database in-between our two concurrent operations, not
@@ -205,7 +184,6 @@ class AutoClosingDatabaseTest(driver: UseDriver) {
             // executed concurrently.
             val db =
                 Room.databaseBuilder<TestDatabase>(context, "testDb")
-                    .setDriver(driver)
                     .setAutoCloseTimeout(1, TimeUnit.MILLISECONDS)
                     .build()
             db.getUserDao().insert(TestUser(1L, "1"))

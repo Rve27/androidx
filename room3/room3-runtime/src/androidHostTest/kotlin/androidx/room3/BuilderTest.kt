@@ -28,6 +28,7 @@ import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
 import instantiateImpl
 import java.io.File
 import java.util.concurrent.Executor
+import java.util.concurrent.TimeUnit
 import kotlin.coroutines.EmptyCoroutineContext
 import kotlinx.coroutines.Dispatchers
 import org.junit.Assert
@@ -554,6 +555,19 @@ class BuilderTest {
                         "SupportOpenHelper.Factory."
                 )
         }
+    }
+
+    @OptIn(ExperimentalRoomApi::class)
+    @Test
+    fun driverProvidedAutoClose() {
+        assertThrows<IllegalArgumentException> {
+                inMemoryDatabaseBuilder(mock(), TestDatabase::class.java)
+                    .setAutoCloseTimeout(3, TimeUnit.SECONDS)
+                    .setDriver(mock())
+                    .build()
+            }
+            .hasMessageThat()
+            .isEqualTo("Auto Closing Database is not supported when an SQLiteDriver is configured.")
     }
 
     @OptIn(ExperimentalRoomApi::class)

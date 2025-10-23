@@ -19,22 +19,21 @@ package androidx.room3
 import android.app.ActivityManager
 import android.content.Context
 import android.os.Build
+import androidx.arch.core.executor.testing.CountingTaskExecutorRule
 import androidx.kruth.assertThat
-import androidx.sqlite.driver.AndroidSQLiteDriver
+import androidx.kruth.assertWithMessage
+import androidx.room3.support.AutoClosingRoomOpenHelper
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.filters.SdkSuppress
+import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
+import kotlin.test.Ignore
 import kotlin.test.Test
-import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.Duration.Companion.seconds
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.produceIn
 import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.withContext
-import kotlinx.coroutines.withTimeoutOrNull
-import org.junit.AssumptionViolatedException
 import org.junit.Before
+import org.junit.Rule
 
 class MultiInstanceInvalidationTest {
     @Entity data class SampleEntity(@PrimaryKey val pk: Int)
@@ -55,6 +54,8 @@ class MultiInstanceInvalidationTest {
         abstract fun dao(): SampleDao
     }
 
+    @get:Rule val countingTaskExecutorRule = CountingTaskExecutorRule()
+
     private val context = ApplicationProvider.getApplicationContext<Context>()
 
     @Before
@@ -63,32 +64,28 @@ class MultiInstanceInvalidationTest {
     }
 
     @Test
-    @OptIn(ExperimentalRoomApi::class)
     fun invalidateInAnotherInstanceFlow() = runTest {
         val databaseOne =
-            Room.databaseBuilder<SampleDatabase>(context, "test.db")
-                .setDriver(AndroidSQLiteDriver())
+            Room.databaseBuilder(context, SampleDatabase::class.java, "test.db")
                 .enableMultiInstanceInvalidation()
+                .setQueryCoroutineContext(backgroundScope.coroutineContext)
                 .build()
         val databaseTwo =
-            Room.databaseBuilder<SampleDatabase>(context, "test.db")
-                .setDriver(AndroidSQLiteDriver())
+            Room.databaseBuilder(context, SampleDatabase::class.java, "test.db")
                 .enableMultiInstanceInvalidation()
+                .setQueryCoroutineContext(backgroundScope.coroutineContext)
                 .build()
 
         val channel =
             databaseOne.invalidationTracker
                 .createFlow("SampleEntity", "AnotherSampleEntity")
+                .buffer(2)
                 .produceIn(this)
+
+        databaseTwo.dao().insert(SampleEntity(1))
 
         // Initial invalidation, all tables
         assertThat(channel.receive()).containsExactly("SampleEntity", "AnotherSampleEntity")
-
-        // Assert multi-instance invalidation service is running.
-        awaitService(isRunning = true)
-        // Insert in second instance
-        databaseTwo.dao().insert(SampleEntity(1))
-
         // Invalidation by second instance
         assertThat(channel.receive()).containsExactly("SampleEntity")
 
@@ -100,43 +97,47 @@ class MultiInstanceInvalidationTest {
     @Test
     @OptIn(ExperimentalRoomApi::class)
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.N)
-    fun autoCloseDatabaseStopsService() = runTest {
+    @Ignore // Flaky Test b/359161892
+    @Suppress("DEPRECATION") // For getRunningServices()
+    fun invalidateInAnotherInstanceAutoCloser() {
         val autoCloseDb =
-            Room.databaseBuilder<SampleDatabase>(context, "test.db")
-                .setDriver(AndroidSQLiteDriver())
+            Room.databaseBuilder(context, SampleDatabase::class.java, "test.db")
                 .enableMultiInstanceInvalidation()
                 .setAutoCloseTimeout(200, TimeUnit.MILLISECONDS)
                 .build()
+        val manager = context.getSystemService(ActivityManager::class.java)
+        val autoCloseHelper = autoCloseDb.openHelper as AutoClosingRoomOpenHelper
 
-        // Force open the database causing the multi-instance invalidation service to start
-        autoCloseDb.withWriteTransaction {
-            // Assert multi-instance invalidation service is running.
-            awaitService(isRunning = true)
+        // Force open the database causing the multi-instance invalidation service  to start
+        autoCloseHelper.writableDatabase
+
+        // Assert multi-instance invalidation service is running.
+        assertThat(manager.getRunningServices(100)).isNotEmpty()
+
+        // Remember the current auto close callback, it should be the one installed by the
+        // invalidation tracker
+        val trackerCallback = autoCloseHelper.autoCloser.autoCloseCallbackForTest!!
+
+        // Set a new callback, intercepting when DB is auto-closed
+        val latch = CountDownLatch(1)
+        autoCloseHelper.autoCloser.setAutoCloseCallback {
+            // Run the remember auto close callback
+            trackerCallback.invoke()
+            // At this point in time InvalidationTracker's callback has run and unbind should have
+            // been invoked.
+            latch.countDown()
         }
 
-        // Await and assert multi-instance invalidation service is no longer running. As this
-        // function awaits, the database will be auto-closed and the service should be stopped.
-        awaitService(isRunning = false)
+        assertWithMessage("Auto close callback latch await")
+            .that(latch.await(2, TimeUnit.SECONDS))
+            .isTrue()
+
+        countingTaskExecutorRule.drainTasks(2, TimeUnit.SECONDS)
+        assertWithMessage("Executor isIdle").that(countingTaskExecutorRule.isIdle).isTrue()
+
+        // Assert multi-instance invalidation service is no longer running.
+        assertThat(manager.getRunningServices(100)).isEmpty()
 
         autoCloseDb.close()
-    }
-
-    @Suppress("DEPRECATION") // For getRunningServices()
-    private suspend fun awaitService(isRunning: Boolean) {
-        val manager = context.getSystemService(ActivityManager::class.java)
-        withContext(Dispatchers.Main) {
-            withTimeoutOrNull(10.seconds) {
-                while (true) {
-                    val hasRunningServices = manager.getRunningServices(100).isNotEmpty()
-                    if (hasRunningServices == isRunning) {
-                        return@withTimeoutOrNull
-                    }
-                    delay(200.milliseconds)
-                }
-            }
-                ?: throw AssumptionViolatedException(
-                    "Could not validate multi-instance service isRunning to be $isRunning."
-                )
-        }
     }
 }

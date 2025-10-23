@@ -19,7 +19,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import androidx.annotation.RestrictTo
-import androidx.room3.autoclose.AutoCloserConfig
 import androidx.room3.migration.AutoMigrationSpec
 import androidx.room3.prepackage.PrePackagedCopyConfig
 import androidx.room3.util.isMigrationRequired as isMigrationRequiredExt
@@ -107,9 +106,6 @@ constructor(
 
     /* Config for pre-package database or null if not used. */
     internal var copyFromConfig: PrePackagedCopyConfig? = null
-
-    /* Config for auto-close or null if not used. */
-    internal var autoCloseConfig: AutoCloserConfig? = null
 
     /**
      * Returns whether a migration is required between two versions.
