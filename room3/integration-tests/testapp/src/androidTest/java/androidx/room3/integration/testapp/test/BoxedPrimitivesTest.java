@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package androidx.room3.integration.kotlintestapp.test;
+package androidx.room3.integration.testapp.test;
 
-import static androidx.room3.integration.kotlintestapp.test.BoxedPrimitivesTest.BaseBoxed.DEFAULT_BOOLEAN_VALUE;
-import static androidx.room3.integration.kotlintestapp.test.BoxedPrimitivesTest.BaseBoxed.DEFAULT_NUMBER_VALUE;
+import static androidx.room3.integration.testapp.test.BoxedPrimitivesTest.BaseBoxed.DEFAULT_BOOLEAN_VALUE;
+import static androidx.room3.integration.testapp.test.BoxedPrimitivesTest.BaseBoxed.DEFAULT_NUMBER_VALUE;
 
 import android.content.Context;
 
-import androidx.kruth.Kruth;
 import androidx.room3.ColumnInfo;
 import androidx.room3.Dao;
 import androidx.room3.Database;
@@ -32,10 +31,11 @@ import androidx.room3.Query;
 import androidx.room3.Room;
 import androidx.room3.RoomDatabase;
 import androidx.room3.RoomWarnings;
-import androidx.sqlite.driver.AndroidSQLiteDriver;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.MediumTest;
+
+import com.google.common.truth.Truth;
 
 import org.junit.After;
 import org.junit.Before;
@@ -53,7 +53,6 @@ public class BoxedPrimitivesTest {
         mDb = Room.inMemoryDatabaseBuilder(
                 context,
                 BoxingTestDatabase.class)
-                .setDriver(new AndroidSQLiteDriver())
                 .build();
     }
 
@@ -78,8 +77,8 @@ public class BoxedPrimitivesTest {
     private void test(BaseDao<? extends BaseBoxed> dao) {
         long rowId = dao.insert(new BoxedBooleanHolder(null, null));
         BaseBoxed read = dao.find(rowId);
-        Kruth.assertThat(read.mFlag).isNull();
-        Kruth.assertThat(read.mNumber).isNull();
+        Truth.assertThat(read.mFlag).isNull();
+        Truth.assertThat(read.mNumber).isNull();
     }
 
     @Test
@@ -101,11 +100,11 @@ public class BoxedPrimitivesTest {
     private void testInsertedAsEntity(BaseDao<? extends BaseBoxed> dao, long rowId) {
         BaseBoxed read = dao.find(rowId);
         // default getter value
-        Kruth.assertThat(read.mFlag).isEqualTo(DEFAULT_BOOLEAN_VALUE);
-        Kruth.assertThat(read.mNumber).isEqualTo(DEFAULT_NUMBER_VALUE);
+        Truth.assertThat(read.mFlag).isEqualTo(DEFAULT_BOOLEAN_VALUE);
+        Truth.assertThat(read.mNumber).isEqualTo(DEFAULT_NUMBER_VALUE);
     }
 
-    public static class BaseBoxed {
+    static class BaseBoxed {
         @ColumnInfo(name = "boxed_bool")
         Boolean mFlag;
         @ColumnInfo(name = "boxed_int")
@@ -127,7 +126,7 @@ public class BoxedPrimitivesTest {
 
     @Entity
     @SuppressWarnings(RoomWarnings.MISMATCHED_GETTER)
-    public static class ConstructorEntity extends BaseBoxed {
+    static class ConstructorEntity extends BaseBoxed {
         @PrimaryKey(autoGenerate = true)
         public long rowId = 0;
 
@@ -139,7 +138,7 @@ public class BoxedPrimitivesTest {
 
     @Entity
     @SuppressWarnings({RoomWarnings.MISMATCHED_GETTER, RoomWarnings.MISMATCHED_SETTER})
-    public static class FieldEntity extends BaseBoxed {
+    static class FieldEntity extends BaseBoxed {
         @PrimaryKey(autoGenerate = true)
         public long rowId = 0;
 
@@ -152,7 +151,7 @@ public class BoxedPrimitivesTest {
         }
     }
 
-    public static class BoxedBooleanHolder {
+    static class BoxedBooleanHolder {
         @ColumnInfo(name = "boxed_bool")
         final Boolean mFlag;
         @ColumnInfo(name = "boxed_int")
@@ -164,7 +163,7 @@ public class BoxedPrimitivesTest {
         }
     }
 
-    public interface BaseDao<T> {
+    interface BaseDao<T> {
         long insert(BoxedBooleanHolder t);
 
         @Insert
@@ -174,7 +173,7 @@ public class BoxedPrimitivesTest {
     }
 
     @Dao
-    public interface BoxedConstructorDao extends BaseDao<ConstructorEntity> {
+    interface BoxedConstructorDao extends BaseDao<ConstructorEntity> {
         @Override
         @Insert(entity = ConstructorEntity.class)
         long insert(BoxedBooleanHolder item);
@@ -185,7 +184,7 @@ public class BoxedPrimitivesTest {
     }
 
     @Dao
-    public interface BoxedFieldDao extends BaseDao<FieldEntity> {
+    interface BoxedFieldDao extends BaseDao<FieldEntity> {
 
         @Insert(entity = FieldEntity.class)
         long insert(BoxedBooleanHolder item);
@@ -200,7 +199,7 @@ public class BoxedPrimitivesTest {
             version = 1,
             exportSchema = false
     )
-    public abstract static class BoxingTestDatabase extends RoomDatabase {
+    abstract static class BoxingTestDatabase extends RoomDatabase {
         abstract BoxedConstructorDao constructor();
 
         abstract BoxedFieldDao field();
