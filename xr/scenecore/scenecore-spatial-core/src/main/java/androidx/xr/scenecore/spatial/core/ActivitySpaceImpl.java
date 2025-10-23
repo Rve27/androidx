@@ -66,8 +66,6 @@ final class ActivitySpaceImpl extends SystemSpaceEntityImpl implements ActivityS
 
     private final Supplier<SpatialState> mSpatialStateProvider;
     private final AtomicReference<Dimensions> mBounds = new AtomicReference<>();
-    // The current scene parent aka ActivitySpace origin transform.
-
     private final boolean mUnscaledGravityAlignedActivitySpace;
     // Spatial mode change handler will be invoked on every update to activity space origin we
     // receive from the node transform listener.
