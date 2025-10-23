@@ -41,6 +41,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withTimeout
 import org.junit.After
@@ -88,6 +89,9 @@ class InvalidationTrackerTest {
                 requireMigration = true,
                 allowDestructiveMigrationOnDowngrade = false,
                 migrationNotRequiredFrom = null,
+                copyFromAssetPath = null,
+                copyFromFile = null,
+                copyFromInputStream = null,
                 prepackagedDatabaseCallback = null,
                 typeConverters = emptyList(),
                 autoMigrationSpecs = emptyList(),

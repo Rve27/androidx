@@ -134,7 +134,7 @@ public abstract class BaseRoomConnectionManager {
      * Performs non-initial database connection configuration, specifically executing any
      * per-connection PRAGMA.
      */
-    protected fun configurationConnection(connection: SQLiteConnection) {
+    private fun configurationConnection(connection: SQLiteConnection) {
         configureBusyTimeout(connection)
         configureSynchronousFlag(connection)
         openDelegate.onOpen(connection)
