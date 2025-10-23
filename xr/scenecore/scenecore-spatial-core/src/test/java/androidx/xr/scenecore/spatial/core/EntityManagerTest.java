@@ -212,8 +212,7 @@ public class EntityManagerTest {
     }
 
     @Test
-    public void getAllSystemSpaceScenePoses_returnsAllSystemSpaceScenePoses()
-            throws Exception {
+    public void getAllSystemSpaceScenePoses_returnsAllSystemSpaceScenePoses() throws Exception {
         assertThat(mEntityManager.getAllSystemSpaceActivityPoses().size()).isAtLeast(4);
         assertThat(mEntityManager.getAllSystemSpaceActivityPoses())
                 .containsAtLeast(
@@ -222,8 +221,7 @@ public class EntityManagerTest {
     }
 
     @Test
-    public void getSystemSpaceScenePoseOfType_returnsSystemSpaceScenePoseOfType()
-            throws Exception {
+    public void getSystemSpaceScenePoseOfType_returnsSystemSpaceScenePoseOfType() throws Exception {
         assertThat(mEntityManager.getSystemSpaceActivityPoseOfType(ActivitySpace.class).get(0))
                 .isInstanceOf(ActivitySpaceImpl.class);
         assertThat(
