@@ -14,14 +14,27 @@
  * limitations under the License.
  */
 
-@file:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+package androidx.room3.autoclose
 
-package androidx.room3.concurrent
+import kotlinx.coroutines.test.TestCoroutineScheduler
 
-import androidx.annotation.RestrictTo
+internal class AutoCloserTestWatch(
+    private val autoCloseTimeout: Long,
+    private val testDispatcher: TestCoroutineScheduler,
+) : AutoCloser.Watch {
 
-public actual typealias AtomicInt = java.util.concurrent.atomic.AtomicInteger
+    private var currentMillis: Long = 0
 
-internal typealias AtomicLong = java.util.concurrent.atomic.AtomicLong
+    override fun getMillis(): Long {
+        return currentMillis
+    }
 
-public actual typealias AtomicBoolean = java.util.concurrent.atomic.AtomicBoolean
+    /**
+     * Advances the internal time by [autoCloseTimeout] amount and executes pending tasks in the
+     * [testDispatcher].
+     */
+    fun step() {
+        currentMillis += autoCloseTimeout
+        testDispatcher.advanceUntilIdle()
+    }
+}

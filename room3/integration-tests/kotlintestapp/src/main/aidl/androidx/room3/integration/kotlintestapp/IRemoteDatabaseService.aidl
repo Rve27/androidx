@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 The Android Open Source Project
+ * Copyright 2018 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,11 @@
  * limitations under the License.
  */
 
-@file:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+package androidx.room3.integration.kotlintestapp;
 
-package androidx.room3.concurrent
+interface IRemoteDatabaseService {
 
-import androidx.annotation.RestrictTo
+    int getPid();
 
-public actual typealias AtomicInt = java.util.concurrent.atomic.AtomicInteger
-
-internal typealias AtomicLong = java.util.concurrent.atomic.AtomicLong
-
-public actual typealias AtomicBoolean = java.util.concurrent.atomic.AtomicBoolean
+    oneway void insertEntity(long id);
+}
