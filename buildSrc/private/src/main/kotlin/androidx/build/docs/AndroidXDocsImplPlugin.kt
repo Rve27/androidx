@@ -54,6 +54,7 @@ import org.gradle.api.attributes.DocsType
 import org.gradle.api.attributes.LibraryElements
 import org.gradle.api.attributes.Usage
 import org.gradle.api.file.ArchiveOperations
+import org.gradle.api.file.CopySpec
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.DuplicatesStrategy
@@ -195,12 +196,13 @@ abstract class AndroidXDocsImplPlugin : Plugin<Project> {
             task.from(
                 pairProvider
                     .map { it.first }
-                    .map {
-                        it.map { jar ->
+                    .map { jars ->
+                        jars.map { jar ->
                             localVar.zipTree(jar).matching { it.exclude("**/META-INF/MANIFEST.MF") }
                         }
                     }
             )
+            task.rewriteSamplesTags()
             // Files with the same path in different source jars of the same library will lead to
             // some classes/methods not appearing in the docs.
             task.duplicatesStrategy = DuplicatesStrategy.WARN
@@ -922,6 +924,7 @@ abstract class UnzipMultiplatformSourcesTask() : DefaultTask() {
                     seenPath = true
                 }
             }
+            it.rewriteSamplesTags()
         }
 
         fileSystemOperations.sync {
@@ -941,6 +944,16 @@ abstract class UnzipMultiplatformSourcesTask() : DefaultTask() {
             }
         }
     }
+}
+
+/**
+ * To work around a parser issue with `@sample` where when the tag is used in the middle of a kdoc
+ * any links after the sample do not resolve (see b/427708573), rewrite `@sample` tags to
+ * `@author #@sample`. The `@author` tag is not supported by dackka, so as a workaround for the
+ * samples issue it replaces any author tags with samples.
+ */
+internal fun CopySpec.rewriteSamplesTags() {
+    filter { line -> line.replace(" * @sample ", " * @author #@sample ") }
 }
 
 private fun <K, V> Map<K, V>.partition(condition: (K) -> Boolean): Pair<Map<K, V>, Map<K, V>> =
