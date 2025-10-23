@@ -131,6 +131,7 @@ private constructor(
          */
         @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
         @JvmStatic
+        @ExperimentalProjectedApi
         public suspend fun create(activity: Activity): ProjectedDisplayController {
             require(
                 ProjectedContext.isProjectedDeviceContext(activity),
