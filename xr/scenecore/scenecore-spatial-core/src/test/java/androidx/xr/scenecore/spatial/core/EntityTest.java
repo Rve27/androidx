@@ -130,7 +130,7 @@ public final class EntityTest {
     public void getPose_parentSpace_returnsParentPose() {
         ActivitySpaceImpl activitySpace =
                 (ActivitySpaceImpl) mSpatialSceneRuntime.getActivitySpace();
-        activitySpace.setOpenXrReferenceSpacePose(
+        activitySpace.setOpenXrReferenceSpaceTransform(
                 Matrix4.fromTrs(
                         new Vector3(5f, 6f, 7f),
                         Quaternion.fromEulerAngles(22f, 33f, 44f),
@@ -145,7 +145,7 @@ public final class EntityTest {
     public void getPose_activitySpace_returnsActivitySpacePose() {
         ActivitySpaceImpl activitySpace =
                 (ActivitySpaceImpl) mSpatialSceneRuntime.getActivitySpace();
-        activitySpace.setOpenXrReferenceSpacePose(
+        activitySpace.setOpenXrReferenceSpaceTransform(
                 Matrix4.fromTrs(
                         new Vector3(5f, 6f, 7f),
                         Quaternion.fromEulerAngles(22f, 33f, 44f),
@@ -440,7 +440,7 @@ public final class EntityTest {
         grandchild.setParent(child);
         ActivitySpaceImpl activitySpace =
                 (ActivitySpaceImpl) mSpatialSceneRuntime.getActivitySpace();
-        activitySpace.setOpenXrReferenceSpacePose(
+        activitySpace.setOpenXrReferenceSpaceTransform(
                 Matrix4.fromTrs(
                         new Vector3(5f, 6f, 7f),
                         Quaternion.fromEulerAngles(22f, 33f, 44f),
@@ -573,6 +573,7 @@ public final class EntityTest {
         mFakeScheduledExecutorService.runAll();
         HitTestResult hitTestResult = hitTestResultFuture.get();
 
+        assertThat(hitTestResult).isNotNull();
         assertThat(hitTestResult.getDistance()).isEqualTo(distance);
         // Since the entity is rotated 90 degrees about the x axis, the hit position should be
         // rotated 90 degrees about the x axis.
@@ -589,7 +590,7 @@ public final class EntityTest {
         Vec3 surfaceNormal = new Vec3(0.0f, 1.0f, 0.0f);
         int surfaceType = com.android.extensions.xr.space.HitTestResult.SURFACE_PANEL;
         ((ActivitySpaceImpl) mSpatialSceneRuntime.getActivitySpace())
-                .setOpenXrReferenceSpacePose(Matrix4.fromScale(2f));
+                .setOpenXrReferenceSpaceTransform(Matrix4.fromScale(2f));
         com.android.extensions.xr.space.HitTestResult extensionsHitTestResult =
                 new com.android.extensions.xr.space.HitTestResult.Builder(
                                 distance, hitPosition, true, surfaceType)
