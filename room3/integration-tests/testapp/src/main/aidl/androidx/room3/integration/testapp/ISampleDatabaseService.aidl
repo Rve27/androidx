@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
-package androidx.room3.integration.kotlintestapp;
+package androidx.room3.integration.testapp;
 
-interface IRemoteDatabaseService {
+interface ISampleDatabaseService {
 
     int getPid();
 
-    oneway void insertEntity(long id);
+    oneway void insertCustomer(int id, String name, String lastName);
+
+    boolean waitForCustomer(int id, String name, String lastName);
+
 }
