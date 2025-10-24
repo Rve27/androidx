@@ -41,6 +41,9 @@ import kotlin.math.min
  * 2. The coordinate system used for this data structure has the positive "x" axis pointing to the
  *    "right", and the positive "y" axis pointing "down". As a result, a rectangle will always have
  *    top <= bottom, and left <= right.
+ * 3. The parent is always inserted in the list before a child. With that we guarantee that we need
+ *    to traverse back from the child index in order to find a parent. And the parent keeps track of
+ *    the offset to the last child.
  */
 @Suppress("NAME_SHADOWING")
 internal class RectList {
@@ -185,6 +188,7 @@ internal class RectList {
             }
             i -= LongsPerItem
         }
+        throw IllegalStateException("Inserted child $value before its parent $parentId")
     }
 
     /**
