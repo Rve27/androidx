@@ -601,6 +601,7 @@ internal class LayoutNode(
         ignoreRemeasureRequests { _foldedChildren.forEach { child -> child.detach() } }
         nodes.markAsDetached()
         owner.onDetach(this)
+        owner.rectManager.remove(this)
         this.owner = null
 
         lookaheadRoot = null
@@ -1455,6 +1456,8 @@ internal class LayoutNode(
             resetModifierState()
         }
         val oldSemanticsId = semanticsId
+        // semanticsId is used as the identity. we need to remove from rectlist before changing it
+        owner?.rectManager?.remove(this)
         semanticsId = generateSemanticsId()
         owner?.onPreLayoutNodeReused(this, oldSemanticsId)
         // resetModifierState detaches all nodes, so we need to re-attach them upon reuse.
