@@ -24,6 +24,7 @@ import androidx.compose.ui.focus.FocusTargetModifierNode
 import androidx.compose.ui.geometry.MutableRect
 import androidx.compose.ui.graphics.Matrix
 import androidx.compose.ui.graphics.isIdentity
+import androidx.compose.ui.internal.requirePrecondition
 import androidx.compose.ui.node.DelegatableNode
 import androidx.compose.ui.node.DelegatableNode.RegistrationHandle
 import androidx.compose.ui.node.LayoutNode
@@ -409,7 +410,12 @@ internal class RectManager(
         b: Int,
     ) {
         val id = layoutNode.semanticsId
-        if (firstPlacement || !rects.move(id, l, t, r, b)) {
+        if (!firstPlacement) {
+            val found = rects.move(id, l, t, r, b)
+            requirePrecondition(found) {
+                "RectList didn't contain ${layoutNode.semanticsId} when firstPlacement is false"
+            }
+        } else {
             val parentId = layoutNode.parent?.semanticsId ?: -1
             rects.insert(
                 id,
@@ -464,10 +470,12 @@ internal class RectManager(
     }
 
     fun remove(layoutNode: LayoutNode) {
-        rects.remove(layoutNode.semanticsId)
-        layoutNode.addedToRectList = false
-        invalidate()
-        isFragmented = true
+        if (layoutNode.addedToRectList) {
+            rects.remove(layoutNode.semanticsId)
+            layoutNode.addedToRectList = false
+            invalidate()
+            isFragmented = true
+        }
     }
 
     /**
