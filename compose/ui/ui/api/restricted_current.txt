@@ -508,7 +508,7 @@ package androidx.compose.ui.autofill {
 
 }
 
-package androidx.compose.ui.contentcapture {
+package @SuppressCompatibility androidx.compose.ui.contentcapture {
 
   @SuppressCompatibility @androidx.compose.ui.ExperimentalComposeUiApi public sealed interface ContentCaptureManager {
     field public static final androidx.compose.ui.contentcapture.ContentCaptureManager.Companion Companion;
@@ -3874,7 +3874,7 @@ package androidx.compose.ui.platform {
     method public static androidx.compose.ui.platform.ClipMetadata toClipMetadata(android.content.ClipDescription);
   }
 
-  public final class AndroidComposeViewAccessibilityDelegateCompat_androidKt {
+  @SuppressCompatibility public final class AndroidComposeViewAccessibilityDelegateCompat_androidKt {
     method @InaccessibleFromKotlin @Deprecated @SuppressCompatibility @androidx.compose.ui.ExperimentalComposeUiApi public static boolean getDisableContentCapture();
     method @InaccessibleFromKotlin @Deprecated @SuppressCompatibility @androidx.compose.ui.ExperimentalComposeUiApi public static void setDisableContentCapture(boolean);
     property @Deprecated @SuppressCompatibility @androidx.compose.ui.ExperimentalComposeUiApi public static boolean DisableContentCapture;
@@ -3979,7 +3979,7 @@ package androidx.compose.ui.platform {
     property public abstract android.content.ClipboardManager nativeClipboard;
   }
 
-  public final class ClipboardExtensions_androidKt {
+  @SuppressCompatibility public final class ClipboardExtensions_androidKt {
     method @SuppressCompatibility @androidx.compose.ui.ExperimentalComposeUiApi public static android.net.Uri? firstUriOrNull(androidx.compose.ui.platform.ClipEntry);
   }
 
