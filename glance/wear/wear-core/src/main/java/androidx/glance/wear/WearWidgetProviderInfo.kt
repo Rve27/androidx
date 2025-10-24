@@ -80,12 +80,9 @@ import org.xmlpull.v1.XmlPullParserException
  *   service.
  * @property configIntentAction The intent action to launch an activity for configuring the widget.
  *   This can be null if no configuration is needed.
- * @property minSchemaVersion The minimum schema version supported by this widget provider.
- * @property maxSchemaVersion The maximum schema version supported by this widget provider.
  * @property unrecognisedAttributes Any unrecognised attributes during the XML parsing of the
  *   provider info.
  */
-// TODO: populate default min schema version for remote compose widgets.
 public class WearWidgetProviderInfo
 @RestrictTo(LIBRARY)
 @Throws(XmlPullParserException::class)
@@ -98,8 +95,6 @@ public constructor(
     @ContainerInfo.ContainerType public val preferredContainerType: Int,
     public val group: String = providerService.className,
     public val configIntentAction: String? = null,
-    public val minSchemaVersion: SchemaVersion? = null,
-    public val maxSchemaVersion: SchemaVersion? = null,
     public val unrecognisedAttributes: Map<String, String> = emptyMap(),
 ) {
     init {
@@ -243,11 +238,3 @@ public constructor(
         public const val CONTAINER_TYPE_SMALL: Int = 2
     }
 }
-
-/**
- * The schema version of the widget renderer.
- *
- * @property major The major version of the schema.
- * @property minor The minor version of the schema.
- */
-public class SchemaVersion(public val major: Int, public val minor: Int)

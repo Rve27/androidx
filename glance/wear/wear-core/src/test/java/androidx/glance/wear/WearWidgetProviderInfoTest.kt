@@ -56,10 +56,6 @@ class WearWidgetProviderInfoTest {
         assertThat(info.preferredContainerType).isEqualTo(ContainerInfo.CONTAINER_TYPE_SMALL)
         assertThat(info.group).isEqualTo("test.group")
         assertThat(info.configIntentAction).isEqualTo("test.action")
-        assertThat(info.minSchemaVersion?.major).isEqualTo(1)
-        assertThat(info.minSchemaVersion?.minor).isEqualTo(200)
-        assertThat(info.maxSchemaVersion?.major).isEqualTo(2)
-        assertThat(info.maxSchemaVersion?.minor).isEqualTo(340)
         assertThat(info.containers).hasSize(2)
         assertThat(info.containers)
             .containsExactlyElementsIn(
@@ -90,10 +86,6 @@ class WearWidgetProviderInfoTest {
         assertThat(info.preferredContainerType).isEqualTo(ContainerInfo.CONTAINER_TYPE_SMALL)
         assertThat(info.group).isEqualTo("test.group")
         assertThat(info.configIntentAction).isEqualTo("test.action")
-        assertThat(info.minSchemaVersion?.major).isEqualTo(1)
-        assertThat(info.minSchemaVersion?.minor).isEqualTo(200)
-        assertThat(info.maxSchemaVersion?.major).isEqualTo(2)
-        assertThat(info.maxSchemaVersion?.minor).isEqualTo(340)
         assertThat(info.containers).hasSize(2)
         assertThat(info.containers)
             .containsExactlyElementsIn(
@@ -167,8 +159,6 @@ class WearWidgetProviderInfoTest {
         assertThat(info.preferredContainerType).isEqualTo(defaultPreferredContainerType)
         assertThat(info.group).isEqualTo(defaultGroup)
         assertThat(info.configIntentAction).isNull()
-        assertThat(info.minSchemaVersion).isNull()
-        assertThat(info.maxSchemaVersion).isNull()
         assertThat(info.containers).hasSize(1)
         assertThat(info.containers)
             .containsExactlyElementsIn(
@@ -222,10 +212,6 @@ class WearWidgetProviderInfoTest {
         assertThat(info.preferredContainerType).isEqualTo(ContainerInfo.CONTAINER_TYPE_SMALL)
         assertThat(info.group).isEqualTo("test.group")
         assertThat(info.configIntentAction).isEqualTo("test.action")
-        assertThat(info.minSchemaVersion?.major).isEqualTo(1)
-        assertThat(info.minSchemaVersion?.minor).isEqualTo(200)
-        assertThat(info.maxSchemaVersion?.major).isEqualTo(2)
-        assertThat(info.maxSchemaVersion?.minor).isEqualTo(340)
         assertThat(info.containers).hasSize(2)
         assertThat(info.containers)
             .containsExactlyElementsIn(
