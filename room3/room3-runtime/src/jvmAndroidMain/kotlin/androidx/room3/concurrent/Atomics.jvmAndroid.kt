@@ -22,6 +22,4 @@ import androidx.annotation.RestrictTo
 
 public actual typealias AtomicInt = java.util.concurrent.atomic.AtomicInteger
 
-internal typealias AtomicLong = java.util.concurrent.atomic.AtomicLong
-
 public actual typealias AtomicBoolean = java.util.concurrent.atomic.AtomicBoolean

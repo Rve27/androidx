@@ -32,17 +32,15 @@ import androidx.annotation.RestrictTo
 import androidx.annotation.WorkerThread
 import androidx.arch.core.executor.ArchTaskExecutor
 import androidx.room3.Room.LOG_TAG
-import androidx.room3.autoclose.AutoCloser
-import androidx.room3.autoclose.AutoCloserConfig
-import androidx.room3.autoclose.AutoClosingSQLiteDriver
 import androidx.room3.concurrent.CloseBarrier
 import androidx.room3.coroutines.runBlockingUninterruptible
 import androidx.room3.migration.AutoMigrationSpec
 import androidx.room3.migration.Migration
-import androidx.room3.prepackage.CopyFromAssetPath
-import androidx.room3.prepackage.CopyFromFile
-import androidx.room3.prepackage.CopyFromInputStream
 import androidx.room3.prepackage.PrePackagedCopySQLiteDriver
+import androidx.room3.support.AutoCloser
+import androidx.room3.support.AutoClosingRoomOpenHelper
+import androidx.room3.support.AutoClosingRoomOpenHelperFactory
+import androidx.room3.support.QueryInterceptorOpenHelperFactory
 import androidx.room3.util.contains as containsCommon
 import androidx.room3.util.findAndInstantiateDatabaseImpl
 import androidx.room3.util.findMigrationPath as findMigrationPathExt
@@ -210,15 +208,10 @@ actual constructor() {
         this.configuration = configuration
         useTempTrackingTable = configuration.useTempTrackingTable
 
-        this.autoCloser = configuration.autoCloseConfig?.let { AutoCloser(it) }
         val openDelegate = createOpenDelegate() as RoomOpenDelegate
         val configuration = wrapDriverConfiguration(configuration, openDelegate.version)
         connectionManager = createConnectionManager(configuration, openDelegate)
         internalTracker = createInvalidationTracker()
-        autoCloser?.let {
-            connectionManager.setAutoCloser(it)
-            invalidationTracker.setAutoCloser(it)
-        }
         validateAutoMigrations(configuration)
         validateTypeConverters(configuration)
 
@@ -258,7 +251,13 @@ actual constructor() {
         }
 
         allowMainThreadQueries = configuration.allowMainThreadQueries
-        autoCloser?.initCoroutineScope(coroutineScope)
+
+        // Configure AutoClosingRoomOpenHelper if it is available
+        unwrapOpenHelper<AutoClosingRoomOpenHelper>(connectionManager.supportOpenHelper)?.let {
+            autoCloser = it.autoCloser
+            it.autoCloser.initCoroutineScope(coroutineScope)
+            invalidationTracker.setAutoCloser(it.autoCloser)
+        }
 
         // Configure multi-instance invalidation, if enabled
         if (configuration.multiInstanceInvalidationServiceIntent != null) {
@@ -271,7 +270,6 @@ actual constructor() {
         }
     }
 
-    /** Wraps the configured [SQLiteDriver] based on various builder set functionalities. */
     private fun wrapDriverConfiguration(
         configuration: DatabaseConfiguration,
         databaseVersion: Int,
@@ -279,32 +277,22 @@ actual constructor() {
         if (configuration.sqliteDriver == null) {
             return configuration
         }
-        // The order of wrapping is significant, the last wrap being the outer-most and first to be
-        // invoked by the connection manager, while the first one being the inner-most, being the
-        // last to be invoked.
-        var newConfiguration = configuration
-        if (configuration.autoCloseConfig != null) {
-            newConfiguration =
-                configuration.copy(
-                    sqliteDriver =
-                        AutoClosingSQLiteDriver(
-                            autoCloser = checkNotNull(autoCloser),
-                            delegateDriver = configuration.sqliteDriver,
-                        )
-                )
+        val prePackagedCopyEnabled =
+            configuration.copyFromAssetPath != null ||
+                configuration.copyFromFile != null ||
+                configuration.copyFromInputStream != null
+        return if (prePackagedCopyEnabled) {
+            configuration.copy(
+                sqliteDriver =
+                    PrePackagedCopySQLiteDriver(
+                        configuration.sqliteDriver,
+                        configuration,
+                        databaseVersion,
+                    )
+            )
+        } else {
+            configuration
         }
-        if (configuration.copyFromConfig != null) {
-            newConfiguration =
-                configuration.copy(
-                    sqliteDriver =
-                        PrePackagedCopySQLiteDriver(
-                            configuration.sqliteDriver,
-                            configuration,
-                            databaseVersion,
-                        )
-                )
-        }
-        return newConfiguration
     }
 
     /**
@@ -328,6 +316,33 @@ actual constructor() {
     public actual abstract fun createAutoMigrations(
         autoMigrationSpecs: Map<KClass<out AutoMigrationSpec>, AutoMigrationSpec>
     ): List<Migration>
+
+    /**
+     * Unwraps (delegating) open helpers until it finds [T], otherwise returns null.
+     *
+     * @param openHelper the open helper to search through
+     * @param T the type of open helper type to search for
+     * @return the instance of [T], otherwise null
+     */
+    private inline fun <reified T : SupportSQLiteOpenHelper> unwrapOpenHelper(
+        openHelper: SupportSQLiteOpenHelper?
+    ): T? {
+        if (openHelper == null) {
+            return null
+        }
+        var current: SupportSQLiteOpenHelper = openHelper
+        while (true) {
+            if (current is T) {
+                return current
+            }
+            if (current is DelegatingOpenHelper) {
+                current = current.delegate
+            } else {
+                break
+            }
+        }
+        return null
+    }
 
     /**
      * Creates a delegate to configure and initialize the database when it is being opened. An
@@ -444,11 +459,22 @@ actual constructor() {
         }
     }
 
+    /**
+     * True if database connection is open and initialized.
+     *
+     * When Room is configured with [RoomDatabase.Builder.setAutoCloseTimeout] the database is
+     * considered open even if internally the connection has been closed, unless manually closed.
+     *
+     * @return true if the database connection is open, false otherwise.
+     */
+    public open val isOpen: Boolean
+        get() = autoCloser?.isActive ?: connectionManager.isSupportDatabaseOpen()
+
     /** True if the actual database connection is open, regardless of auto-close. */
     internal val isOpenInternal: Boolean
         get() =
-            autoCloser?.isOpen()
-                ?: if (inCompatibilityMode()) openHelper.writableDatabase.isOpen else false
+            autoCloser?.let { it.delegateDatabase?.isOpen ?: false }
+                ?: connectionManager.isSupportDatabaseOpen()
 
     /**
      * Closes the database.
@@ -765,6 +791,7 @@ actual constructor() {
 
         private val callbacks: MutableList<Callback> = mutableListOf()
         private var prepackagedDatabaseCallback: PrepackagedDatabaseCallback? = null
+        private var queryCallback: QueryCallback? = null
         private var queryCallbackExecutor: Executor? = null
         private var queryCallbackCoroutineContext: CoroutineContext? = null
         private val typeConverters: MutableList<Any> = mutableListOf()
@@ -1266,6 +1293,59 @@ actual constructor() {
         }
 
         /**
+         * Sets a [QueryCallback] to be invoked when queries are executed.
+         *
+         * The callback is invoked whenever a query is executed, note that adding this callback has
+         * a small cost and should be avoided in production builds unless needed.
+         *
+         * A use case for providing a callback is to allow logging executed queries. When the
+         * callback implementation logs then it is recommended to use an immediate executor.
+         *
+         * If a previous callback was set with [setQueryCallback] then this call will override it,
+         * including removing the Coroutine context previously set, if any.
+         *
+         * @param queryCallback The query callback.
+         * @param executor The executor on which the query callback will be invoked.
+         * @return This builder instance.
+         */
+        @Suppress("MissingGetterMatchingBuilder")
+        public open fun setQueryCallback(
+            queryCallback: QueryCallback,
+            executor: Executor,
+        ): Builder<T> = apply {
+            this.queryCallback = queryCallback
+            this.queryCallbackExecutor = executor
+            this.queryCallbackCoroutineContext = null
+        }
+
+        /**
+         * Sets a [QueryCallback] to be invoked when queries are executed.
+         *
+         * The callback is invoked whenever a query is executed, note that adding this callback has
+         * a small cost and should be avoided in production builds unless needed.
+         *
+         * A use case for providing a callback is to allow logging executed queries. When the
+         * callback implementation simply logs then it is recommended to use
+         * [kotlinx.coroutines.Dispatchers.Unconfined].
+         *
+         * If a previous callback was set with [setQueryCallback] then this call will override it,
+         * including removing the executor previously set, if any.
+         *
+         * @param context The coroutine context on which the query callback will be invoked.
+         * @param queryCallback The query callback.
+         * @return This builder instance.
+         */
+        @Suppress("MissingGetterMatchingBuilder")
+        public fun setQueryCallback(
+            context: CoroutineContext,
+            queryCallback: QueryCallback,
+        ): Builder<T> = apply {
+            this.queryCallback = queryCallback
+            this.queryCallbackExecutor = null
+            this.queryCallbackCoroutineContext = context
+        }
+
+        /**
          * Adds a type converter instance to the builder.
          *
          * @param typeConverter The converter instance that is annotated with
@@ -1305,7 +1385,8 @@ actual constructor() {
          * @param autoCloseTimeUnit the timeunit for autoCloseTimeout.
          * @return This builder instance.
          */
-        @ExperimentalRoomApi
+        @ExperimentalRoomApi // When experimental is removed, add these parameters to
+        // DatabaseConfiguration
         @Suppress("MissingGetterMatchingBuilder")
         public open fun setAutoCloseTimeout(
             @IntRange(from = 0) autoCloseTimeout: Long,
@@ -1405,7 +1486,7 @@ actual constructor() {
 
             validateMigrationsNotRequired(migrationStartAndEndVersions, migrationsNotRequiredFrom)
 
-            val openHelperFactory: SupportSQLiteOpenHelper.Factory? =
+            val initialFactory: SupportSQLiteOpenHelper.Factory? =
                 if (driver == null && supportOpenHelperFactory == null) {
                     // No driver and no factory, compatibility mode, create the default factory
                     FrameworkSQLiteOpenHelperFactory()
@@ -1422,41 +1503,72 @@ actual constructor() {
                             "SupportOpenHelper.Factory."
                     )
                 }
-            val autoCloseConfig =
-                if (autoCloseTimeout > 0) {
-                    AutoCloserConfig(autoCloseTimeout, requireNotNull(autoCloseTimeUnit))
-                } else {
-                    null
+            val autoCloseEnabled = autoCloseTimeout > 0
+            val prePackagedCopyEnabled =
+                copyFromAssetPath != null || copyFromFile != null || copyFromInputStream != null
+            if (prePackagedCopyEnabled) {
+                requireNotNull(name) {
+                    "Cannot create from asset or file for an in-memory database."
                 }
-            val copyFromConfig =
-                if (
-                    copyFromAssetPath != null || copyFromFile != null || copyFromInputStream != null
-                ) {
-                    requireNotNull(name) {
-                        "Cannot create from asset or file for an in-memory database."
-                    }
-                    val copyFromAssetPathConfig = if (copyFromAssetPath == null) 0 else 1
-                    val copyFromFileConfig = if (copyFromFile == null) 0 else 1
-                    val copyFromInputStreamConfig = if (copyFromInputStream == null) 0 else 1
-                    val copyConfigurations =
-                        copyFromAssetPathConfig + copyFromFileConfig + copyFromInputStreamConfig
-                    require(copyConfigurations == 1) {
-                        "More than one of createFromAsset(), createFromInputStream() and " +
-                            "createFromFile() were called on this Builder, but the database can " +
-                            "only be created using one of the " +
-                            "three configurations."
-                    }
-                    copyFromAssetPath?.let { CopyFromAssetPath(context, it) }
-                        ?: copyFromFile?.let { CopyFromFile(it) }
-                        ?: copyFromInputStream?.let { CopyFromInputStream(it) }
-                } else {
-                    null
+                val copyFromAssetPathConfig = if (copyFromAssetPath == null) 0 else 1
+                val copyFromFileConfig = if (copyFromFile == null) 0 else 1
+                val copyFromInputStreamConfig = if (copyFromInputStream == null) 0 else 1
+                val copyConfigurations =
+                    copyFromAssetPathConfig + copyFromFileConfig + copyFromInputStreamConfig
+
+                require(copyConfigurations == 1) {
+                    "More than one of createFromAsset(), " +
+                        "createFromInputStream(), and createFromFile() were called on this " +
+                        "Builder, but the database can only be created using one of the " +
+                        "three configurations."
                 }
+            }
+            val queryCallbackEnabled = queryCallback != null
+            val supportOpenHelperFactory =
+                initialFactory
+                    ?.let {
+                        if (autoCloseEnabled) {
+                            requireNotNull(name) {
+                                "Cannot create auto-closing database for an in-memory database."
+                            }
+                            val autoCloser =
+                                AutoCloser(
+                                    timeoutAmount = autoCloseTimeout,
+                                    timeUnit = requireNotNull(autoCloseTimeUnit),
+                                )
+                            AutoClosingRoomOpenHelperFactory(delegate = it, autoCloser = autoCloser)
+                        } else {
+                            it
+                        }
+                    }
+                    ?.let {
+                        if (queryCallbackEnabled) {
+                            val queryCallbackContext =
+                                queryCallbackExecutor?.asCoroutineDispatcher()
+                                    ?: requireNotNull(queryCallbackCoroutineContext)
+                            QueryInterceptorOpenHelperFactory(
+                                delegate = it,
+                                queryCallbackScope = CoroutineScope(queryCallbackContext),
+                                queryCallback = requireNotNull(queryCallback),
+                            )
+                        } else {
+                            it
+                        }
+                    }
+            // No open helper means a driver is to be used.
+            if (supportOpenHelperFactory == null) {
+                require(!autoCloseEnabled) {
+                    "Auto Closing Database is not supported when an SQLiteDriver is configured."
+                }
+                require(!queryCallbackEnabled) {
+                    "Query Callback is not supported when an SQLiteDriver is configured."
+                }
+            }
             val configuration =
                 DatabaseConfiguration(
                         context = context,
                         name = name,
-                        sqliteOpenHelperFactory = openHelperFactory,
+                        sqliteOpenHelperFactory = supportOpenHelperFactory,
                         migrationContainer = migrationContainer,
                         callbacks = callbacks,
                         allowMainThreadQueries = allowMainThreadQueries,
@@ -1467,6 +1579,9 @@ actual constructor() {
                         requireMigration = requireMigration,
                         allowDestructiveMigrationOnDowngrade = allowDestructiveMigrationOnDowngrade,
                         migrationNotRequiredFrom = migrationsNotRequiredFrom,
+                        copyFromAssetPath = copyFromAssetPath,
+                        copyFromFile = copyFromFile,
+                        copyFromInputStream = copyFromInputStream,
                         prepackagedDatabaseCallback = prepackagedDatabaseCallback,
                         typeConverters = typeConverters,
                         autoMigrationSpecs = autoMigrationSpecs,
@@ -1475,11 +1590,7 @@ actual constructor() {
                         sqliteDriver = driver,
                         queryCoroutineContext = queryCoroutineContext,
                     )
-                    .apply {
-                        this.useTempTrackingTable = inMemoryTrackingTableMode
-                        this.copyFromConfig = copyFromConfig
-                        this.autoCloseConfig = autoCloseConfig
-                    }
+                    .apply { this.useTempTrackingTable = inMemoryTrackingTableMode }
             val db = factory?.invoke() ?: findAndInstantiateDatabaseImpl(klass.java)
             db.init(configuration)
             return db
@@ -1662,7 +1773,6 @@ actual constructor() {
      * callback can be useful for updating the pre-package DB schema to satisfy Room's schema
      * validation.
      */
-    // TODO(b/339934813): Move pre-package out of Room and into a set of utility drivers.
     public abstract class PrepackagedDatabaseCallback {
         /**
          * Called when the pre-packaged database has been copied.
@@ -1681,6 +1791,21 @@ actual constructor() {
                 onOpenPrepackagedDatabase(connection.db)
             }
         }
+    }
+
+    /**
+     * Callback interface for when SQLite queries are executed.
+     *
+     * Can be set using [RoomDatabase.Builder.setQueryCallback].
+     */
+    public fun interface QueryCallback {
+        /**
+         * Called when a SQL query is executed.
+         *
+         * @param sqlQuery The SQLite query statement.
+         * @param bindArgs Arguments of the query if available, empty list otherwise.
+         */
+        public fun onQuery(sqlQuery: String, bindArgs: List<Any?>)
     }
 
     public companion object {

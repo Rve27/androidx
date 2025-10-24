@@ -85,6 +85,7 @@ internal class MultiInstanceInvalidationClient(
                 coroutineScope.launch {
                     val invalidatedTablesSet = setOf(*tables)
                     invalidatedTables.emit(invalidatedTablesSet)
+                    invalidationTracker.notifyObserversByTableNames(invalidatedTablesSet)
                 }
             }
         }
