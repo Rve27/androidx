@@ -55,7 +55,7 @@ import androidx.wear.compose.foundation.pager.rememberPagerState
 import androidx.wear.compose.foundation.rotary.MockRotaryResolution
 import androidx.wear.compose.foundation.rotary.RotaryScrollableBehavior
 import androidx.wear.compose.foundation.rotary.RotaryScrollableDefaults
-import androidx.wear.compose.foundation.rotary.RotarySnapSensitivity
+import androidx.wear.compose.foundation.rotary.RotarySnapSensitivityValues
 import androidx.wear.compose.foundation.rotary.rotaryScrollable
 import kotlin.math.absoluteValue
 import kotlin.test.assertTrue
@@ -328,7 +328,7 @@ class PagerTest {
                 for (i in 0..1) {
                     rotateToScrollVertically(
                         state.pagerState.layoutInfo.pageSize.toFloat() /
-                            RotarySnapSensitivity.HIGH.minThresholdDivider + 1
+                            RotarySnapSensitivityValues.High.minThresholdDivider + 1
                     )
                     advanceEventTime(100)
                 }
@@ -364,7 +364,7 @@ class PagerTest {
             rotaryScrollInput = { state ->
                 rotateToScrollVertically(
                     state.pagerState.layoutInfo.pageSize.toFloat() /
-                        RotarySnapSensitivity.HIGH.minThresholdDivider + 1
+                        RotarySnapSensitivityValues.High.minThresholdDivider + 1
                 )
             },
             expectedPageTarget = 0,
@@ -381,7 +381,7 @@ class PagerTest {
             rotaryScrollInput = { state ->
                 rotateToScrollVertically(
                     state.pagerState.layoutInfo.pageSize.toFloat() /
-                        RotarySnapSensitivity.HIGH.minThresholdDivider + 1
+                        RotarySnapSensitivityValues.High.minThresholdDivider + 1
                 )
             },
             expectedPageTarget = 0,
@@ -399,7 +399,7 @@ class PagerTest {
                 for (i in 0..1) {
                     rotateToScrollVertically(
                         state.pagerState.layoutInfo.pageSize.toFloat() /
-                            RotarySnapSensitivity.HIGH.minThresholdDivider + 1
+                            RotarySnapSensitivityValues.High.minThresholdDivider + 1
                     )
                     advanceEventTime(100)
                 }
@@ -435,7 +435,7 @@ class PagerTest {
             rotaryScrollInput = { state ->
                 rotateToScrollVertically(
                     state.pagerState.layoutInfo.pageSize.toFloat() /
-                        RotarySnapSensitivity.HIGH.minThresholdDivider + 1
+                        RotarySnapSensitivityValues.High.minThresholdDivider + 1
                 )
             },
             expectedPageTarget = 0,
@@ -452,7 +452,7 @@ class PagerTest {
             rotaryScrollInput = { state ->
                 rotateToScrollVertically(
                     state.pagerState.layoutInfo.pageSize.toFloat() /
-                        RotarySnapSensitivity.HIGH.minThresholdDivider + 1
+                        RotarySnapSensitivityValues.High.minThresholdDivider + 1
                 )
             },
             expectedPageTarget = 0,
@@ -513,7 +513,7 @@ class PagerTest {
         rule.onNodeWithTag(pagerTestTag).performRotaryScrollInput {
             rotateToScrollVertically(
                 state.pagerState.layoutInfo.pageSize.toFloat() /
-                    RotarySnapSensitivity.HIGH.minThresholdDivider + 1
+                    RotarySnapSensitivityValues.High.minThresholdDivider + 1
             )
         }
 
@@ -580,7 +580,7 @@ class PagerTest {
         rule.onNodeWithTag(pagerTestTag).performRotaryScrollInput {
             rotateToScrollVertically(
                 state.pagerState.layoutInfo.pageSize.toFloat() /
-                    RotarySnapSensitivity.HIGH.minThresholdDivider + 1
+                    RotarySnapSensitivityValues.High.minThresholdDivider + 1
             )
         }
 
