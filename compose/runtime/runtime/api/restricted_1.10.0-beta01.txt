@@ -917,7 +917,6 @@ package androidx.compose.runtime.collection {
   public final class MutableVectorKt {
     method @KotlinOnly public static inline <reified T> androidx.compose.runtime.collection.MutableVector<T> MutableVector(optional int capacity);
     method @KotlinOnly public static inline <reified T> androidx.compose.runtime.collection.MutableVector<T> MutableVector(int size, kotlin.jvm.functions.Function1<java.lang.Integer,T> init);
-    method @BytecodeOnly public static androidx.compose.runtime.collection.MutableVector! MutableVector$default(int, int, Object!);
     method @KotlinOnly public static inline <reified T> androidx.compose.runtime.collection.MutableVector<T> mutableVectorOf();
     method @KotlinOnly public static inline <reified T> androidx.compose.runtime.collection.MutableVector<T> mutableVectorOf(T... elements);
   }
