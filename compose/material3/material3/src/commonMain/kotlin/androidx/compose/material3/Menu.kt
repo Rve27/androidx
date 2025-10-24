@@ -51,13 +51,14 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.internal.rememberAnimatedShape
-import androidx.compose.material3.tokens.ButtonSmallTokens
-import androidx.compose.material3.tokens.ColorSchemeKeyTokens
 import androidx.compose.material3.tokens.ElevationTokens
 import androidx.compose.material3.tokens.ListTokens
 import androidx.compose.material3.tokens.MenuTokens
 import androidx.compose.material3.tokens.MotionSchemeKeyTokens
+import androidx.compose.material3.tokens.SegmentedMenuTokens
 import androidx.compose.material3.tokens.ShapeTokens
+import androidx.compose.material3.tokens.StandardMenuTokens
+import androidx.compose.material3.tokens.VibrantMenuTokens
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
@@ -516,7 +517,7 @@ object MenuDefaults {
     // TODO update with tokens when available
     @ExperimentalMaterial3ExpressiveApi
     val groupStandardContainerColor: Color
-        @Composable get() = ColorSchemeKeyTokens.SurfaceContainerLow.value
+        @Composable get() = StandardMenuTokens.ContainerColor.value
 
     /**
      * The vibrant default container color for a group within a menu.
@@ -531,99 +532,88 @@ object MenuDefaults {
     // TODO update with tokens when available
     @ExperimentalMaterial3ExpressiveApi
     val groupVibrantContainerColor: Color
-        @Composable get() = ColorSchemeKeyTokens.TertiaryContainer.value
+        @Composable get() = VibrantMenuTokens.ContainerColor.value
 
     /** The default shape for the leading group of a menu. */
-    // TODO update with tokens when available
     @ExperimentalMaterial3ExpressiveApi
     val leadingGroupShape: Shape
         @Composable
         get() =
             RoundedCornerShape(
-                topStart = 16.dp,
-                topEnd = 16.dp,
-                bottomStart = 8.dp,
-                bottomEnd = 8.dp,
+                topStart = ShapeTokens.CornerValueLarge,
+                topEnd = ShapeTokens.CornerValueLarge,
+                bottomStart = ShapeTokens.CornerValueSmall,
+                bottomEnd = ShapeTokens.CornerValueSmall,
             )
 
     /** The default shape for the middle group of a menu. */
-    // TODO replace with token value
     @ExperimentalMaterial3ExpressiveApi
     val middleGroupShape: Shape
-        @Composable get() = RoundedCornerShape(8.dp)
+        @Composable get() = SegmentedMenuTokens.GroupShape.value
 
     /** The default shape for the trailing group of a menu. */
-    // TODO replace with token value
     @ExperimentalMaterial3ExpressiveApi
     val trailingGroupShape: Shape
         @Composable
         get() =
             RoundedCornerShape(
-                topStart = 8.dp,
-                topEnd = 8.dp,
-                bottomStart = 16.dp,
-                bottomEnd = 16.dp,
+                topStart = ShapeTokens.CornerValueSmall,
+                topEnd = ShapeTokens.CornerValueSmall,
+                bottomStart = ShapeTokens.CornerValueLarge,
+                bottomEnd = ShapeTokens.CornerValueLarge,
             )
 
     /** The default shape for the leading item of a menu or group. */
-    // TODO replace with token value
     @ExperimentalMaterial3ExpressiveApi
     val leadingItemShape: Shape
         @Composable
         get() =
             RoundedCornerShape(
-                topStart = 12.dp,
-                topEnd = 12.dp,
-                bottomStart = 4.dp,
-                bottomEnd = 4.dp,
+                topStart = ShapeTokens.CornerValueMedium,
+                topEnd = ShapeTokens.CornerValueMedium,
+                bottomStart = ShapeTokens.CornerValueExtraSmall,
+                bottomEnd = ShapeTokens.CornerValueExtraSmall,
             )
 
     /** The default shape for the middle item of a menu or group. */
-    // TODO replace with token value
     @ExperimentalMaterial3ExpressiveApi
     val middleItemShape: Shape
-        @Composable
-        get() =
-            RoundedCornerShape(topStart = 4.dp, topEnd = 4.dp, bottomStart = 4.dp, bottomEnd = 4.dp)
+        @Composable get() = SegmentedMenuTokens.ItemShape.value
 
     /** The default shape for the trailing item of a menu or group. */
-    // TODO replace with token value
     @ExperimentalMaterial3ExpressiveApi
     val trailingItemShape: Shape
         @Composable
         get() =
             RoundedCornerShape(
-                topStart = 4.dp,
-                topEnd = 4.dp,
-                bottomStart = 12.dp,
-                bottomEnd = 12.dp,
+                topStart = ShapeTokens.CornerValueExtraSmall,
+                topEnd = ShapeTokens.CornerValueExtraSmall,
+                bottomStart = ShapeTokens.CornerValueMedium,
+                bottomEnd = ShapeTokens.CornerValueMedium,
             )
 
     /** The default shape for a standalone item of a menu or group. */
-    // TODO replace with token value
     @ExperimentalMaterial3ExpressiveApi
     val standaloneItemShape: Shape
-        @Composable get() = RoundedCornerShape(12.dp)
+        @Composable get() = middleItemShape
 
     /** The selected shape for items of a group. */
-    // TODO replace with token value
     @ExperimentalMaterial3ExpressiveApi
     val selectedItemShape: Shape
-        @Composable get() = RoundedCornerShape(12.dp)
+        @Composable get() = SegmentedMenuTokens.ItemSelectedShape.value
 
     /** The default shape for a standalone group of a menu. */
-    // TODO replace with token value
     @ExperimentalMaterial3ExpressiveApi
     val standaloneGroupShape: Shape
-        @Composable get() = ShapeTokens.CornerLarge
+        @Composable get() = SegmentedMenuTokens.ContainerShape.value
 
     /** The shape for a group of a menu that is no longer being hovered. */
     @ExperimentalMaterial3ExpressiveApi
     val inactiveGroupShape: Shape
-        @Composable get() = ShapeTokens.CornerMedium
+        @Composable get() = SegmentedMenuTokens.InactiveContainerShape.value
 
     /** The default spacing between each menu group. Usually used in a [Spacer]'s height */
-    @ExperimentalMaterial3ExpressiveApi val GroupSpacing = 2.dp
+    @ExperimentalMaterial3ExpressiveApi val GroupSpacing: Dp = SegmentedMenuTokens.SegmentedGap
 
     /**
      * The default horizontal padding for a divider used in a menu group. Usually used in a
@@ -957,62 +947,64 @@ object MenuDefaults {
                     .also { defaultMenuItemColorsCached = it }
         }
 
-    // TODO update with actual tokens
     @OptIn(ExperimentalMaterial3ExpressiveApi::class)
     internal val ColorScheme.defaultMenuSelectableItemColors: MenuItemColors
         get() {
             return defaultMenuSelectableItemColorsCached
                 ?: MenuItemColors(
-                        textColor = fromToken(ListTokens.ItemLabelTextColor),
-                        containerColor = fromToken(ColorSchemeKeyTokens.SurfaceContainerLow),
-                        leadingIconColor = fromToken(ListTokens.ItemLeadingIconColor),
-                        trailingIconColor = fromToken(ListTokens.ItemTrailingIconColor),
-                        disabledTextColor =
-                            fromToken(ListTokens.ItemDisabledLabelTextColor)
-                                .copy(alpha = ListTokens.ItemDisabledLabelTextOpacity),
-                        disabledLeadingIconColor =
-                            fromToken(ListTokens.ItemDisabledLeadingIconColor)
-                                .copy(alpha = ListTokens.ItemDisabledLeadingIconOpacity),
-                        disabledTrailingIconColor =
-                            fromToken(ListTokens.ItemDisabledTrailingIconColor)
-                                .copy(alpha = ListTokens.ItemDisabledTrailingIconOpacity),
-                        disabledContainerColor =
-                            fromToken(ColorSchemeKeyTokens.SurfaceContainerLow),
-                        selectedTextColor = fromToken(ColorSchemeKeyTokens.OnTertiaryContainer),
-                        selectedContainerColor = fromToken(ColorSchemeKeyTokens.TertiaryContainer),
-                        selectedLeadingIconColor =
-                            fromToken(ColorSchemeKeyTokens.OnTertiaryContainer),
-                        selectedTrailingIconColor =
-                            fromToken(ColorSchemeKeyTokens.OnTertiaryContainer),
-                    )
+                    textColor = fromToken(StandardMenuTokens.ItemLabelTextColor),
+                    containerColor = fromToken(StandardMenuTokens.ContainerColor),
+                    leadingIconColor = fromToken(StandardMenuTokens.ItemLeadingIconColor),
+                    trailingIconColor = fromToken(StandardMenuTokens.ItemTrailingIconColor),
+                    disabledTextColor =
+                        fromToken(StandardMenuTokens.ItemDisabledLabelTextColor)
+                            .copy(alpha = StandardMenuTokens.ItemDisabledLabelTextOpacity),
+                    disabledLeadingIconColor =
+                        fromToken(StandardMenuTokens.ItemDisabledLeadingIconColor)
+                            .copy(alpha = StandardMenuTokens.ItemDisabledLeadingIconOpacity),
+                    disabledTrailingIconColor =
+                        fromToken(StandardMenuTokens.ItemDisabledTrailingIconColor)
+                            .copy(alpha = StandardMenuTokens.ItemDisabledTrailingIconOpacity),
+                    disabledContainerColor = fromToken(StandardMenuTokens.ContainerColor),
+                    selectedTextColor =
+                        fromToken(StandardMenuTokens.ItemSelectedLabelTextColor),
+                    selectedContainerColor =
+                        fromToken(StandardMenuTokens.ItemSelectedContainerColor),
+                    selectedLeadingIconColor =
+                        fromToken(StandardMenuTokens.ItemSelectedLeadingIconColor),
+                    selectedTrailingIconColor =
+                        fromToken(StandardMenuTokens.ItemSelectedTrailingIconColor),
+                )
                     .also { defaultMenuSelectableItemColorsCached = it }
         }
 
-    // TODO update with actual tokens
     @OptIn(ExperimentalMaterial3ExpressiveApi::class)
     internal val ColorScheme.defaultMenuSelectableItemVibrantColors: MenuItemColors
         get() {
             return defaultMenuSelectableItemVibrantColorsCached
                 ?: MenuItemColors(
-                        textColor = fromToken(ColorSchemeKeyTokens.OnTertiaryContainer),
-                        containerColor = fromToken(ColorSchemeKeyTokens.TertiaryContainer),
-                        leadingIconColor = fromToken(ColorSchemeKeyTokens.OnTertiaryContainer),
-                        trailingIconColor = fromToken(ColorSchemeKeyTokens.OnTertiaryContainer),
-                        disabledTextColor =
-                            fromToken(ListTokens.ItemDisabledLabelTextColor)
-                                .copy(alpha = ListTokens.ItemDisabledLabelTextOpacity),
-                        disabledLeadingIconColor =
-                            fromToken(ListTokens.ItemDisabledLeadingIconColor)
-                                .copy(alpha = ListTokens.ItemDisabledLeadingIconOpacity),
-                        disabledTrailingIconColor =
-                            fromToken(ListTokens.ItemDisabledTrailingIconColor)
-                                .copy(alpha = ListTokens.ItemDisabledTrailingIconOpacity),
-                        disabledContainerColor = fromToken(ColorSchemeKeyTokens.TertiaryContainer),
-                        selectedTextColor = fromToken(ColorSchemeKeyTokens.OnTertiary),
-                        selectedContainerColor = fromToken(ColorSchemeKeyTokens.Tertiary),
-                        selectedLeadingIconColor = fromToken(ColorSchemeKeyTokens.OnTertiary),
-                        selectedTrailingIconColor = fromToken(ColorSchemeKeyTokens.OnTertiary),
-                    )
+                    textColor = fromToken(VibrantMenuTokens.ItemLabelTextColor),
+                    containerColor = fromToken(VibrantMenuTokens.ContainerColor),
+                    leadingIconColor = fromToken(VibrantMenuTokens.ItemLeadingIconColor),
+                    trailingIconColor = fromToken(VibrantMenuTokens.ItemTrailingIconColor),
+                    disabledTextColor =
+                        fromToken(VibrantMenuTokens.ItemDisabledLabelTextColor)
+                            .copy(alpha = VibrantMenuTokens.ItemDisabledLabelTextOpacity),
+                    disabledLeadingIconColor =
+                        fromToken(VibrantMenuTokens.ItemDisabledLeadingIconColor)
+                            .copy(alpha = VibrantMenuTokens.ItemDisabledLeadingIconOpacity),
+                    disabledTrailingIconColor =
+                        fromToken(VibrantMenuTokens.ItemDisabledTrailingIconColor)
+                            .copy(alpha = VibrantMenuTokens.ItemDisabledTrailingIconOpacity),
+                    disabledContainerColor = fromToken(VibrantMenuTokens.ContainerColor),
+                    selectedTextColor = fromToken(VibrantMenuTokens.ItemSelectedLabelTextColor),
+                    selectedContainerColor =
+                        fromToken(VibrantMenuTokens.ItemSelectedContainerColor),
+                    selectedLeadingIconColor =
+                        fromToken(VibrantMenuTokens.ItemSelectedLeadingIconColor),
+                    selectedTrailingIconColor =
+                        fromToken(VibrantMenuTokens.ItemSelectedTrailingIconColor),
+                )
                     .also { defaultMenuSelectableItemVibrantColorsCached = it }
         }
 
@@ -1029,9 +1021,8 @@ object MenuDefaults {
         get() {
             return defaultMenuStandaloneItemShapesCached
                 ?: MenuItemShapes(
-                        // TODO use tokens when available
-                        shape = RoundedCornerShape(ShapeTokens.CornerValueExtraSmall),
-                        selectedShape = fromToken(ButtonSmallTokens.SelectedContainerShapeSquare),
+                        shape = fromToken(SegmentedMenuTokens.ItemShape),
+                        selectedShape = fromToken(SegmentedMenuTokens.ItemSelectedShape),
                     )
                     .also { defaultMenuStandaloneItemShapesCached = it }
         }
@@ -1041,16 +1032,14 @@ object MenuDefaults {
         get() {
             return defaultMenuLeadingItemShapesCached
                 ?: MenuItemShapes(
-                        // TODO use tokens when available
-                        shape =
-                            RoundedCornerShape(
-                                topStart = 12.dp,
-                                topEnd = 12.dp,
-                                bottomStart = 4.dp,
-                                bottomEnd = 4.dp,
-                            ),
-                        selectedShape = fromToken(ButtonSmallTokens.SelectedContainerShapeSquare),
-                    )
+                    shape = RoundedCornerShape(
+                        topStart = ShapeTokens.CornerValueMedium,
+                        topEnd = ShapeTokens.CornerValueMedium,
+                        bottomStart = ShapeTokens.CornerValueExtraSmall,
+                        bottomEnd = ShapeTokens.CornerValueExtraSmall,
+                    ),
+                    selectedShape = fromToken(SegmentedMenuTokens.ItemSelectedShape),
+                )
                     .also { defaultMenuLeadingItemShapesCached = it }
         }
 
@@ -1059,16 +1048,9 @@ object MenuDefaults {
         get() {
             return defaultMenuMiddleItemShapesCached
                 ?: MenuItemShapes(
-                        // TODO use tokens when available
-                        shape =
-                            RoundedCornerShape(
-                                topStart = 4.dp,
-                                topEnd = 4.dp,
-                                bottomStart = 4.dp,
-                                bottomEnd = 4.dp,
-                            ),
-                        selectedShape = fromToken(ButtonSmallTokens.SelectedContainerShapeSquare),
-                    )
+                    shape = fromToken(SegmentedMenuTokens.ItemShape),
+                    selectedShape = fromToken(SegmentedMenuTokens.ItemSelectedShape),
+                )
                     .also { defaultMenuMiddleItemShapesCached = it }
         }
 
@@ -1077,16 +1059,14 @@ object MenuDefaults {
         get() {
             return defaultMenuTrailingItemShapesCached
                 ?: MenuItemShapes(
-                        // TODO use tokens when available
-                        shape =
-                            RoundedCornerShape(
-                                topStart = 4.dp,
-                                topEnd = 4.dp,
-                                bottomStart = 12.dp,
-                                bottomEnd = 12.dp,
-                            ),
-                        selectedShape = fromToken(ButtonSmallTokens.SelectedContainerShapeSquare),
-                    )
+                    shape = RoundedCornerShape(
+                        topStart = ShapeTokens.CornerValueExtraSmall,
+                        topEnd = ShapeTokens.CornerValueExtraSmall,
+                        bottomStart = ShapeTokens.CornerValueMedium,
+                        bottomEnd = ShapeTokens.CornerValueMedium,
+                    ),
+                    selectedShape = fromToken(SegmentedMenuTokens.ItemSelectedShape),
+                )
                     .also { defaultMenuTrailingItemShapesCached = it }
         }
 
@@ -1095,9 +1075,8 @@ object MenuDefaults {
         get() {
             return defaultMenuStandaloneGroupShapesCached
                 ?: MenuGroupShapes(
-                        // Update to the menu tokens when available
-                        shape = ShapeTokens.CornerLarge,
-                        inactiveShape = fromToken(ButtonSmallTokens.SelectedContainerShapeSquare),
+                        shape = fromToken(SegmentedMenuTokens.ContainerShape),
+                        inactiveShape = fromToken(SegmentedMenuTokens.InactiveContainerShape),
                     )
                     .also { defaultMenuStandaloneGroupShapesCached = it }
         }
@@ -1107,16 +1086,14 @@ object MenuDefaults {
         get() {
             return defaultMenuLeadingGroupShapesCached
                 ?: MenuGroupShapes(
-                        // Update to the menu tokens when available
-                        shape =
-                            RoundedCornerShape(
-                                topStart = 16.dp,
-                                topEnd = 16.dp,
-                                bottomStart = 8.dp,
-                                bottomEnd = 8.dp,
-                            ),
-                        inactiveShape = fromToken(ButtonSmallTokens.SelectedContainerShapeSquare),
-                    )
+                    shape = RoundedCornerShape(
+                        topStart = ShapeTokens.CornerValueLarge,
+                        topEnd = ShapeTokens.CornerValueLarge,
+                        bottomStart = ShapeTokens.CornerValueSmall,
+                        bottomEnd = ShapeTokens.CornerValueSmall,
+                    ),
+                    inactiveShape = fromToken(SegmentedMenuTokens.InactiveContainerShape),
+                )
                     .also { defaultMenuLeadingGroupShapesCached = it }
         }
 
@@ -1125,10 +1102,9 @@ object MenuDefaults {
         get() {
             return defaultMenuMiddleGroupShapesCached
                 ?: MenuGroupShapes(
-                        // Update to the menu tokens when available
-                        shape = RoundedCornerShape(8.dp),
-                        inactiveShape = fromToken(ButtonSmallTokens.SelectedContainerShapeSquare),
-                    )
+                    shape = fromToken(SegmentedMenuTokens.GroupShape),
+                    inactiveShape = fromToken(SegmentedMenuTokens.InactiveContainerShape),
+                )
                     .also { defaultMenuMiddleGroupShapesCached = it }
         }
 
@@ -1137,16 +1113,14 @@ object MenuDefaults {
         get() {
             return defaultMenuTrailingGroupShapesCached
                 ?: MenuGroupShapes(
-                        // Update to the menu tokens when available
-                        shape =
-                            RoundedCornerShape(
-                                topStart = 8.dp,
-                                topEnd = 8.dp,
-                                bottomStart = 16.dp,
-                                bottomEnd = 16.dp,
-                            ),
-                        inactiveShape = fromToken(ButtonSmallTokens.SelectedContainerShapeSquare),
-                    )
+                    shape = RoundedCornerShape(
+                        topStart = ShapeTokens.CornerValueSmall,
+                        topEnd = ShapeTokens.CornerValueSmall,
+                        bottomStart = ShapeTokens.CornerValueLarge,
+                        bottomEnd = ShapeTokens.CornerValueLarge,
+                    ),
+                    inactiveShape = fromToken(SegmentedMenuTokens.InactiveContainerShape),
+                )
                     .also { defaultMenuTrailingGroupShapesCached = it }
         }
 }
@@ -1599,7 +1573,7 @@ internal fun DropdownMenuItemContent(
                     Modifier.sizeIn(
                             minWidth = DropdownMenuItemDefaultMinWidth,
                             maxWidth = DropdownMenuItemDefaultMaxWidth,
-                            minHeight = MenuListItemContainerHeight,
+                            minHeight = SegmentedMenuTokens.Item,
                         )
                         .padding(contentPadding),
                 content = {
@@ -1674,8 +1648,11 @@ internal fun DropdownMenuItemContent(
                             LocalContentColor provides colors.trailingIconColor(enabled, selected)
                         ) {
                             Box(
-                                Modifier.layoutId(TrailingIconLayoutId)
-                                    .defaultMinSize(minWidth = ListTokens.ItemTrailingIconSize),
+                                Modifier
+                                    .layoutId(TrailingIconLayoutId)
+                                    .defaultMinSize(
+                                        minWidth = SegmentedMenuTokens.ItemTrailingIconSize
+                                    ),
                                 contentAlignment = Alignment.Center,
                             ) {
                                 trailingIcon()
@@ -1866,7 +1843,7 @@ private fun shapeByInteraction(
 @Composable
 private fun WrappedLeadingIcon(content: @Composable BoxScope.() -> Unit) {
     Box(
-        modifier = Modifier.defaultMinSize(minWidth = ListTokens.ItemLeadingIconSize),
+        modifier = Modifier.defaultMinSize(minWidth = SegmentedMenuTokens.ItemLeadingIconSize),
         content = content,
     )
 }
@@ -2096,7 +2073,7 @@ private val MenuListItemContainerHeight = 48.dp
 private val DropdownMenuItemHorizontalPadding = 12.dp
 private val DropdownMenuGroupVerticalPadding = 2.dp
 
-private val DropdownMenuSelectableItemPadding = PaddingValues(horizontal = 4.dp, vertical = 2.dp)
+private val DropdownMenuSelectableItemPadding = PaddingValues(horizontal = 4.dp)
 private val DropdownMenuIconTextPadding = 8.dp
 internal val DropdownMenuVerticalPadding = 8.dp
 private val DropdownMenuItemDefaultMinWidth = 112.dp

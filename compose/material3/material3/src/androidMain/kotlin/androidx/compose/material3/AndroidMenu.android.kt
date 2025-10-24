@@ -72,8 +72,8 @@ actual fun DropdownMenu(
         val popupPositionProvider =
             remember(offset, density) {
                 DropdownMenuPositionProvider(offset, density, horizontalMargin = 0) {
-                    parentBounds,
-                    menuBounds ->
+                        parentBounds,
+                        menuBounds ->
                     transformOriginState.value = calculateTransformOrigin(parentBounds, menuBounds)
                 }
             }
@@ -128,14 +128,14 @@ actual fun DropdownMenuPopup(
         val scaleAnimationSpec = MotionSchemeKeyTokens.FastSpatial.value<Float>()
         val alphaAnimationSpec = MotionSchemeKeyTokens.FastEffects.value<Float>()
         val scale by
-            transition.animateFloat(transitionSpec = { scaleAnimationSpec }) { expanded ->
-                if (expanded) ExpandedScaleTarget else ClosedScaleTarget
-            }
+        transition.animateFloat(transitionSpec = { scaleAnimationSpec }) { expanded ->
+            if (expanded) ExpandedScaleTarget else ClosedScaleTarget
+        }
 
         val alpha by
-            transition.animateFloat(transitionSpec = { alphaAnimationSpec }) { expanded ->
-                if (expanded) ExpandedAlphaTarget else ClosedAlphaTarget
-            }
+        transition.animateFloat(transitionSpec = { alphaAnimationSpec }) { expanded ->
+            if (expanded) ExpandedAlphaTarget else ClosedAlphaTarget
+        }
 
         val isInspecting = LocalInspectionMode.current
         Popup(
