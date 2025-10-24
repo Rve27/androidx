@@ -489,9 +489,11 @@ class BuilderTest {
         assertThat(exception).isInstanceOf<IllegalArgumentException>()
         assertThat(exception)
             .hasMessageThat()
-            .contains(
-                "More than one of createFromAsset(), " +
-                    "createFromInputStream(), and createFromFile() were called on this Builder"
+            .isEqualTo(
+                "More than one of createFromAsset(), createFromInputStream() and " +
+                    "createFromFile() were called on this Builder, but the database can " +
+                    "only be created using one of the " +
+                    "three configurations."
             )
     }
 
