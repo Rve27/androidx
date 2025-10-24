@@ -313,6 +313,7 @@ dependencies {
     docs(project(":resourceinspection:resourceinspection-annotation"))
     kmpDocs(project(":room3:room3-common"))
     docs(project(":room3:room3-guava"))
+    docs(project(":room3:room3-livedata"))
     kmpDocs(project(":room3:room3-migration"))
     kmpDocs(project(":room3:room3-paging"))
     docs(project(":room3:room3-paging-guava"))

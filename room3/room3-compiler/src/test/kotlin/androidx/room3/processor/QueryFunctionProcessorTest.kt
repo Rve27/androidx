@@ -43,7 +43,6 @@ import androidx.room3.processor.ProcessorErrors.cannotFindQueryResultAdapter
 import androidx.room3.processor.ProcessorErrors.mayNeedMapColumn
 import androidx.room3.solver.query.result.DataClassRowAdapter
 import androidx.room3.solver.query.result.ListQueryResultAdapter
-import androidx.room3.solver.query.result.LiveDataQueryResultBinder
 import androidx.room3.solver.query.result.SingleColumnRowAdapter
 import androidx.room3.solver.query.result.SingleItemQueryResultAdapter
 import androidx.room3.testing.context
@@ -53,6 +52,7 @@ import androidx.room3.vo.ReadQueryFunction
 import androidx.room3.vo.Warning
 import androidx.room3.vo.WriteQueryFunction
 import createVerifierFromEntitiesAndViews
+import kotlin.collections.listOf
 import mockElementAndType
 import org.junit.AssumptionViolatedException
 import org.junit.Test
@@ -526,24 +526,6 @@ class QueryFunctionProcessorTest(private val enableVerification: Boolean) {
                     )
                 )
             }
-        }
-    }
-
-    @Test
-    fun testLiveDataQuery() {
-        singleQueryMethod<ReadQueryFunction>(
-            """
-                @Query("select name from user where uid = :id")
-                abstract ${LifecyclesTypeNames.LIVE_DATA.canonicalName}<String> nameLiveData(String id);
-                """
-        ) { parsedQuery, _ ->
-            assertThat(parsedQuery.returnType.asTypeName())
-                .isEqualTo(
-                    LifecyclesTypeNames.LIVE_DATA.parametrizedBy(STRING.copy(nullable = true))
-                        .copy(nullable = true)
-                )
-
-            assertThat(parsedQuery.queryResultBinder).isInstanceOf<LiveDataQueryResultBinder>()
         }
     }
 
