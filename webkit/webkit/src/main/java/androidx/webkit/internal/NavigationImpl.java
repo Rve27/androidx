@@ -21,17 +21,39 @@ import androidx.webkit.Page;
 import androidx.webkit.WebNavigationClient;
 
 import org.chromium.support_lib_boundary.WebViewNavigationBoundaryInterface;
-import org.chromium.support_lib_boundary.WebViewPageBoundaryInterface;
 import org.chromium.support_lib_boundary.util.BoundaryInterfaceReflectionUtil;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
-@WebNavigationClient.ExperimentalNavigationCallback
-public class NavigationAdapter implements Navigation {
-    WebViewNavigationBoundaryInterface mImpl;
-    PageImpl mPage;
+import java.lang.reflect.InvocationHandler;
+import java.util.Objects;
 
-    public NavigationAdapter(@NonNull WebViewNavigationBoundaryInterface impl) {
+/**
+ * Adapter for {@link WebViewNavigationBoundaryInterface} instances.
+ *
+ * <p>Adapters are isomorphic, and should be obtained through
+ * {@link #forInvocationHandler(InvocationHandler)}.
+ */
+@WebNavigationClient.ExperimentalNavigationCallback
+public class NavigationImpl implements Navigation {
+    WebViewNavigationBoundaryInterface mImpl;
+    Page mPage;
+
+    /**
+     * Factory method that returns the NavigationImpl associated with the given invocationHandler.
+     */
+    public static @NonNull Navigation forInvocationHandler(
+            @NonNull InvocationHandler invocationHandler) {
+        WebViewNavigationBoundaryInterface boundaryInterface =
+                BoundaryInterfaceReflectionUtil.castToSuppLibClass(
+                        WebViewNavigationBoundaryInterface.class, invocationHandler);
+        assert boundaryInterface != null;
+        return (Navigation) Objects.requireNonNull(boundaryInterface.getOrCreatePeer(
+                () -> new NavigationImpl(boundaryInterface)));
+
+    }
+
+    private NavigationImpl(@NonNull WebViewNavigationBoundaryInterface impl) {
         mImpl = impl;
     }
 
@@ -40,11 +62,7 @@ public class NavigationAdapter implements Navigation {
         if (mImpl.getPage() == null) return null;
         // Once the Page is non-null, it won't change so there's no need to do an extra casting.
         if (mPage == null) {
-            WebViewPageBoundaryInterface boundaryInterface =
-                    BoundaryInterfaceReflectionUtil.castToSuppLibClass(
-                            WebViewPageBoundaryInterface.class, mImpl.getPage());
-            mPage = (PageImpl) boundaryInterface.getOrCreatePeer(
-                () -> new PageImpl(boundaryInterface));
+            mPage = PageImpl.forInvocationHandler(mImpl.getPage());
         }
         return mPage;
     }
@@ -103,5 +121,4 @@ public class NavigationAdapter implements Navigation {
     public int getStatusCode() {
         return mImpl.getStatusCode();
     }
-
 }
