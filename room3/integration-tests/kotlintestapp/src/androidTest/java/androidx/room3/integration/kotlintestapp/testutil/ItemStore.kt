@@ -21,6 +21,7 @@ import androidx.paging.ItemSnapshotList
 import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.recyclerview.widget.ListUpdateCallback
+import androidx.test.espresso.base.MainThread
 import androidx.testutils.withTestTimeout
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -104,6 +105,7 @@ class ItemStore(private val coroutineScope: CoroutineScope) {
         asyncDiffer.submitData(data)
     }
 
+    @MainThread
     private fun onDataSetChanged(id: Int) {
         coroutineScope.launch(Dispatchers.Main) {
             // deferring this
