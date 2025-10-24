@@ -116,7 +116,7 @@ public class WindowLayoutInfo {
      * @return {@code true} if the flag is set, {@code false} otherwise.
      */
     @RequiresVendorApiLevel(level = 10)
-    public boolean hasFlag(@EngagementModeFlags int flag) {
+    public boolean hasEngagementModeFlag(@EngagementModeFlags int flag) {
         return (mEngagementModeFlags & flag) == flag;
     }
 
@@ -183,17 +183,6 @@ public class WindowLayoutInfo {
         @RequiresVendorApiLevel(level = 10)
         public @NonNull Builder setEngagementModeFlags(@EngagementModeFlags int flags) {
             mEngagementModeFlags = flags;
-            return this;
-        }
-
-        /**
-         * Adds an engagement mode flag to the current set of flags.
-         * @param flag the {@link EngagementModeFlags} flag to add.
-         * @return this {@link Builder} instance.
-         */
-        @RequiresVendorApiLevel(level = 10)
-        public @NonNull Builder addEngagementModeFlag(@EngagementModeFlags int flag) {
-            mEngagementModeFlags |= flag;
             return this;
         }
 

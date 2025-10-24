@@ -236,20 +236,18 @@ internal class SafeWindowLayoutComponentProvider(
             val windowLayoutInfoClass = windowLayoutInfoClass
             val getEngagementModeFlagsMethod =
                 windowLayoutInfoClass.getMethod("getEngagementModeFlags")
-            val hasFlagMethod = windowLayoutInfoClass.getMethod("hasFlag", Int::class.java)
+            val hasEngagementModeFlagMethod =
+                windowLayoutInfoClass.getMethod("hasEngagementModeFlag", Int::class.java)
 
             val windowLayoutInfoBuilderClass = windowLayoutInfoBuilderClass
-            val addEngagementModeFlagMethod =
-                windowLayoutInfoBuilderClass.getMethod("addEngagementModeFlag", Int::class.java)
             val setEngagementModeFlagsMethod =
                 windowLayoutInfoBuilderClass.getMethod("setEngagementModeFlags", Int::class.java)
             val buildMethod = windowLayoutInfoBuilderClass.getMethod("build")
 
             getEngagementModeFlagsMethod.isPublic &&
                 getEngagementModeFlagsMethod.doesReturn(Int::class) &&
-                hasFlagMethod.isPublic &&
-                hasFlagMethod.doesReturn(Boolean::class) &&
-                addEngagementModeFlagMethod.isPublic &&
+                hasEngagementModeFlagMethod.isPublic &&
+                hasEngagementModeFlagMethod.doesReturn(Boolean::class) &&
                 setEngagementModeFlagsMethod.isPublic &&
                 buildMethod.isPublic &&
                 buildMethod.doesReturn(windowLayoutInfoClass)
