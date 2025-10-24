@@ -40,7 +40,7 @@ import okhttp3.mockwebserver.MockWebServer;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class NavigationTest {
+public class NavigationClientTest {
     private static final String START_URL = "about:blank";
     private static final String SAME_DOCUMENT_URL = "about:blank#fragment";
     private static final int HTTP_OK = 200;
