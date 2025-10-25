@@ -63,40 +63,55 @@ public abstract class SliceTrack(
     internal inline fun beginSection(
         category: String,
         name: String,
-        token: PropagationToken,
+        token: PropagationUnsupportedToken,
     ): EventMetadataCloseable {
         // This method is intentionally not being synchronized. This is because PerfettoTracer
         // always uses the currentThreadTrack() to dispatch beginSection. This method effectively
         // ends up running on the same thread as a result.
         eventMetadataCloseable.metadata = EmptyEventMetadata
         eventMetadataCloseable.closeable = EmptyCloseable
+        eventMetadataCloseable.propagationToken = PropagationUnsupportedToken
+        eventMetadataCloseable.coroutinePropagationToken = CoroutinePropagationUnsupportedToken
         if (context.isEnabled) {
             val event = obtainTraceEvent()
             if (event != null) {
+                eventMetadataCloseable.propagationToken = token
                 event.primaryCategory = category
                 traceEventScope.event = event
                 eventMetadataCloseable.metadata = traceEventScope
-                eventMetadataCloseable.closeable =
-                    when (token) {
-                        is PropagationUnsupportedToken -> {
-                            event.setBeginSection(trackUuid = uuid, name = name)
-                            // The closeable will just end up calling endSection()
-                            this
-                        }
-                        is PlatformThreadContextElement<*> -> {
-                            event.setBeginSectionWithFlows(
-                                trackUuid = uuid,
-                                name = name,
-                                flowIds = token.flowIds,
-                            )
-                            // The context element knows how to endSection() while tracking
-                            // suspension and resumption points
-                            token
-                        }
-                        else -> {
-                            throw IllegalArgumentException("Unsupported PropagationToken: $token")
-                        }
-                    }
+                event.setBeginSection(trackUuid = uuid, name = name)
+                // The closeable will just end up calling endSection()
+                eventMetadataCloseable.closeable = this
+            }
+        }
+        return eventMetadataCloseable
+    }
+
+    @Suppress("NOTHING_TO_INLINE")
+    internal inline fun beginCoroutineSection(
+        category: String,
+        name: String,
+        token: PlatformThreadContextElement<*>,
+    ): EventMetadataCloseable {
+        eventMetadataCloseable.metadata = EmptyEventMetadata
+        eventMetadataCloseable.closeable = EmptyCloseable
+        eventMetadataCloseable.propagationToken = PropagationUnsupportedToken
+        eventMetadataCloseable.coroutinePropagationToken = CoroutinePropagationUnsupportedToken
+        if (context.isEnabled) {
+            val event = obtainTraceEvent()
+            if (event != null) {
+                traceEventScope.event = event
+                eventMetadataCloseable.coroutinePropagationToken = token
+                eventMetadataCloseable.metadata = traceEventScope
+                event.primaryCategory = category
+                event.setBeginSectionWithFlows(
+                    trackUuid = uuid,
+                    name = name,
+                    flowIds = token.flowIds,
+                )
+                // The context element knows how to endSection() while tracking
+                // suspension and resumption points
+                eventMetadataCloseable.closeable = token
             }
         }
         return eventMetadataCloseable
@@ -109,14 +124,10 @@ public abstract class SliceTrack(
      * un-paired calls to [endSection] are ignored when the trace is displayed.
      */
     public open fun endSection() {
-        if (context.isEnabled) {
-            synchronized(traceEventScope) {
-                val event = obtainTraceEvent()
-                event?.apply {
-                    event.setEndSection(trackUuid = uuid)
-                    dispatchTraceEvent(event)
-                }
-            }
+        val event = obtainTraceEvent()
+        event?.apply {
+            event.setEndSection(trackUuid = uuid)
+            dispatchTraceEvent(event)
         }
     }
 
@@ -133,12 +144,10 @@ public abstract class SliceTrack(
      */
     public fun instant(name: String) {
         if (context.isEnabled) {
-            synchronized(traceEventScope) {
-                val event = obtainTraceEvent()
-                event?.apply {
-                    setInstant(trackUuid = uuid, name = name)
-                    dispatchTraceEvent(event)
-                }
+            val event = obtainTraceEvent()
+            event?.apply {
+                setInstant(trackUuid = uuid, name = name)
+                dispatchTraceEvent(event)
             }
         }
     }

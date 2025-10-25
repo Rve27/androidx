@@ -27,4 +27,18 @@ public class EventMetadataCloseable(
     @field:Suppress("MutableBareField") // public / mutable to minimize overhead
     @JvmField
     public var closeable: AutoCloseable = EmptyCloseable,
+    @field:Suppress("MutableBareField") // public / mutable to minimize overhead
+    // beginEventWithMetadata tells us the actual propagation token that was used.
+    @JvmField
+    public var propagationToken: PropagationToken = PropagationUnsupportedToken,
+    // beginCoroutineEventWithMetadata tells us the actual coroutine propagation token that was
+    // used.
+    @field:Suppress("MutableBareField") // public / mutable to minimize overhead
+    @JvmField
+    public var coroutinePropagationToken: CoroutinePropagationToken =
+        CoroutinePropagationUnsupportedToken,
 )
+
+/** The empty holder. */
+@PublishedApi
+internal val EmptyEventMetadataCloseable: EventMetadataCloseable = EventMetadataCloseable()

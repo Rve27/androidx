@@ -110,7 +110,7 @@ public class PerfettoTracer(context: TraceContext, name: String) :
                             )
                     ) {
                         val result =
-                            contextElement.owner.beginSection(
+                            contextElement.owner.beginCoroutineSection(
                                 category = category,
                                 name = name,
                                 token = contextElement,
@@ -155,22 +155,49 @@ public class PerfettoTracer(context: TraceContext, name: String) :
     override fun beginSectionWithMetadata(
         category: String,
         name: String,
-        token: PropagationToken,
+        token: PropagationToken?,
     ): EventMetadataCloseable {
-        return when (token) {
-            is PropagationUnsupportedToken -> {
-                val track = currentThreadTrack()
-                track.beginSection(category = category, name = name, token = token)
-            }
-            is PlatformThreadContextElement<*> -> {
-                token.name = name
-                token.category = category
-                val track = token.owner
-                track.beginSection(category = category, name = name, token = token)
-            }
-            else -> {
-                throw IllegalArgumentException("Unsupported token type $token")
-            }
+        val tokenElement = token ?: tokenFromThreadContext()
+        // Out of the box we don't support propagation at all outside of suspending contexts.
+        return if (tokenElement == PropagationUnsupportedToken) {
+            val track = currentThreadTrack()
+            track.beginSection(
+                category = category,
+                name = name,
+                token = PropagationUnsupportedToken,
+            )
+        } else {
+            throw IllegalArgumentException("Unsupported token type $token")
+        }
+    }
+
+    @DelicateTracingApi
+    override suspend fun beginCoroutineSectionWithMetadata(
+        category: String,
+        name: String,
+        token: CoroutinePropagationToken?,
+    ): EventMetadataCloseable {
+        val tokenElement = token ?: tokenFromCoroutineContext()
+        return if (tokenElement == CoroutinePropagationUnsupportedToken) {
+            val eventMetadataCloseable =
+                beginSectionWithMetadata(
+                    category = category,
+                    name = name,
+                    token = PropagationUnsupportedToken,
+                )
+            eventMetadataCloseable
+        } else {
+            val platformContextElement =
+                tokenElement as? PlatformThreadContextElement<*>
+                    ?: throw IllegalArgumentException("Unsupported token type $token")
+            platformContextElement.name = name
+            platformContextElement.category = category
+            val track = tokenElement.owner
+            track.beginCoroutineSection(
+                category = category,
+                name = name,
+                token = platformContextElement,
+            )
         }
     }
 
