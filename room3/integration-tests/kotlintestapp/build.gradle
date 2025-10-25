@@ -32,6 +32,7 @@ plugins {
 }
 android {
     buildFeatures {
+        aidl = true
         buildConfig = true
     }
 
@@ -56,19 +57,14 @@ dependencies {
     implementation("androidx.arch.core:core-runtime:2.2.0")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
     implementation(libs.kotlinCoroutinesAndroid)
+    kspWithKspGenKotlin(project(":room3:room3-compiler"))
     kspAndroidTestWithKspGenKotlin(project(":room3:room3-compiler"))
     androidTestImplementation("androidx.arch.core:core-runtime:2.2.0")
     androidTestImplementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
     androidTestImplementation(libs.testExtJunit)
     androidTestImplementation(libs.testCore)
-    androidTestImplementation(libs.testRunner) {
-        exclude module: "support-annotations"
-        exclude module: "hamcrest-core"
-    }
-    androidTestImplementation(libs.espressoCore, {
-        exclude group: "com.android.support", module: "support-annotations"
-        exclude module: "hamcrest-core"
-    })
+    androidTestImplementation(libs.testRunner)
+    androidTestImplementation(libs.testRules)
     androidTestImplementation(project(":kruth:kruth"))
     androidTestImplementation(libs.kotlinTest)
     androidTestImplementation(project(":room3:room3-guava"))

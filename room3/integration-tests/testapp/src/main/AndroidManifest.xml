@@ -14,15 +14,4 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
 -->
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
-    <application
-        android:allowBackup="true"
-        android:supportsRtl="true">
-        <service
-            android:name=".SampleDatabaseService"
-            android:label="Multi-process SampleDatabase"
-            android:exported="false"
-            android:process="androidx.room3.integration.testapp.service" />
-    </application>
-</manifest>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" />
