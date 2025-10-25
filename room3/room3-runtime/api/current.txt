@@ -95,7 +95,6 @@ package androidx.room3 {
     method @InaccessibleFromKotlin public java.util.concurrent.Executor getTransactionExecutor();
     method public boolean inTransaction();
     method @CallSuper public void init(androidx.room3.DatabaseConfiguration configuration);
-    method @InaccessibleFromKotlin public boolean isOpen();
     method public android.database.Cursor query(androidx.sqlite.db.SupportSQLiteQuery query);
     method public android.database.Cursor query(androidx.sqlite.db.SupportSQLiteQuery query, optional android.os.CancellationSignal? signal);
     method public android.database.Cursor query(String query, Object?[]? args);
@@ -104,7 +103,6 @@ package androidx.room3 {
     method public <V> V runInTransaction(java.util.concurrent.Callable<V> body);
     method @Deprecated public void setTransactionSuccessful();
     property public androidx.room3.InvalidationTracker invalidationTracker;
-    property public boolean isOpen;
     property public androidx.sqlite.db.SupportSQLiteOpenHelper openHelper;
     property public java.util.concurrent.Executor queryExecutor;
     property public java.util.concurrent.Executor transactionExecutor;
