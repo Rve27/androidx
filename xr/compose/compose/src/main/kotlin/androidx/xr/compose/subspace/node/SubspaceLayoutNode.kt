@@ -356,7 +356,8 @@ internal class SubspaceLayoutNode : ComposeSubspaceNode {
     /**
      * Measures this layout node using the most recently provided constraints.
      *
-     * Returns true if the measured size has changed.
+     * Returns true if the measured size has changed or the node has not been measured, in which
+     * case the parent layout node should be remeasured.
      */
     internal fun remeasure(): Boolean =
         outerCoordinator?.remeasure() ?: measurableLayout.remeasure()
@@ -423,14 +424,15 @@ internal class SubspaceLayoutNode : ComposeSubspaceNode {
         /**
          * Measures this layout node using the most recently provided constraints.
          *
-         * Returns true if the measured size has changed.
+         * Returns true if the measured size has changed or the node has not been measured, in which
+         * case the parent layout node should be remeasured.
          */
         internal fun remeasure(): Boolean {
             return lastConstraints?.let {
                 val oldSize = size
                 measure(it)
                 oldSize != size
-            } ?: false
+            } ?: true
         }
 
         /**
