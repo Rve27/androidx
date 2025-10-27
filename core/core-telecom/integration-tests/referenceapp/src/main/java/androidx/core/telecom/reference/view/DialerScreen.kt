@@ -162,6 +162,21 @@ fun DialerScreen(
             Text("Call")
         }
 
+        if (uiState.isLocalCallSilenceEnabled) {
+            Row(
+                modifier =
+                    Modifier.fillMaxWidth().padding(top = 16.dp, bottom = 8.dp), // Add some padding
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                Text("Start Call Muted (Local Silence)")
+                Switch(
+                    checked = uiState.isInitiallyMuted,
+                    onCheckedChange = { dialerViewModel.updateIsInitiallyMuted(it) },
+                )
+            }
+        }
+
         // --- Pre-Call Endpoint List ---
         if (uiState.isFetchingEndpoints) {
             CircularProgressIndicator(modifier = Modifier.padding(bottom = 16.dp))
