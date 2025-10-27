@@ -30,6 +30,7 @@ import androidx.compose.ui.node.LayoutNode
 import androidx.compose.ui.node.NodeCoordinator
 import androidx.compose.ui.node.Nodes
 import androidx.compose.ui.node.requireCoordinator
+import androidx.compose.ui.node.requireLayoutNode
 import androidx.compose.ui.node.requireOwner
 import androidx.compose.ui.node.requireSemanticsInfo
 import androidx.compose.ui.postDelayed
@@ -166,6 +167,10 @@ internal class RectManager(
         return throttledCallbacks
             .registerOnRectChanged(id, throttleMillis, debounceMillis, node, callback)
             .also {
+                val layoutNode = node.node.requireLayoutNode()
+                if (layoutNode.addedToRectList) {
+                    rects.updateHasCallbacks(id, true)
+                }
                 invalidate()
                 scheduleDebounceCallback(true)
             }
@@ -309,6 +314,7 @@ internal class RectManager(
                 layoutNode.addedToRectList = true
                 val focusable = layoutNode.nodes.has(Nodes.FocusTarget)
                 val gesturable = layoutNode.nodes.has(Nodes.PointerInput)
+                val hasCallbacks = throttledCallbacks.rectChangedMap.containsKey(semanticsId)
                 if (parent != null) {
                     rects.insertBasedOnParentOffset(
                         value = semanticsId,
@@ -319,6 +325,7 @@ internal class RectManager(
                         height = height,
                         focusable = focusable,
                         gesturable = gesturable,
+                        hasCallbacks = hasCallbacks,
                     )
                 } else {
                     // inserting the root, which has no parent.
@@ -331,6 +338,7 @@ internal class RectManager(
                         b = offsetFromParent.y + height,
                         focusable = focusable,
                         gesturable = gesturable,
+                        hasCallbacks = hasCallbacks,
                     )
                 }
                 invalidate()
@@ -412,6 +420,7 @@ internal class RectManager(
                 parentId = parentId,
                 focusable = layoutNode.nodes.has(Nodes.FocusTarget),
                 gesturable = layoutNode.nodes.has(Nodes.PointerInput),
+                hasCallbacks = throttledCallbacks.rectChangedMap.containsKey(id),
             )
         }
         invalidate()
@@ -628,6 +637,10 @@ internal class RectManager(
         var node = this
         repeat(ups) { node = node.parent ?: return false }
         return node === container
+    }
+
+    fun unsetHasCallbacksFor(layoutNode: LayoutNode) {
+        rects.updateHasCallbacks(layoutNode.semanticsId, false)
     }
 }
 
