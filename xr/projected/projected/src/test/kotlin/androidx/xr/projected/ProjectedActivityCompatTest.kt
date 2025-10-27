@@ -24,6 +24,7 @@ import android.content.pm.PackageInfo
 import android.content.pm.ServiceInfo
 import androidx.test.core.app.ApplicationProvider
 import androidx.xr.projected.ProjectedServiceBinding.ACTION_BIND
+import androidx.xr.projected.experimental.ExperimentalProjectedApi
 import androidx.xr.projected.platform.IProjectedInputEventListener
 import androidx.xr.projected.platform.IProjectedService
 import androidx.xr.projected.platform.ProjectedInputAction
@@ -47,7 +48,7 @@ import org.mockito.kotlin.verify
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows.shadowOf
 
-@OptIn(ExperimentalCoroutinesApi::class)
+@OptIn(ExperimentalCoroutinesApi::class, ExperimentalProjectedApi::class)
 @RunWith(RobolectricTestRunner::class)
 class ProjectedActivityCompatTest {
 
@@ -91,7 +92,7 @@ class ProjectedActivityCompatTest {
     }
 
     @Test
-    fun projectedActions_emitsProjectedAction() =
+    fun projectedInputEvents_emitsProjectedInputEvent() =
         runTest(UnconfinedTestDispatcher()) {
             shadowOf(context).setBindServiceCallsOnServiceConnectedDirectly(true)
             val projectedActivityCompat = ProjectedActivityCompat.create(context)
@@ -115,7 +116,7 @@ class ProjectedActivityCompatTest {
         }
 
     @Test
-    fun projectedActions_flowIsClosed_afterCloseCalled() =
+    fun projectedInputEvents_flowIsClosed_afterCloseCalled() =
         runTest(UnconfinedTestDispatcher()) {
             shadowOf(context).setBindServiceCallsOnServiceConnectedDirectly(true)
             val projectedActivityCompat = ProjectedActivityCompat.create(context)
@@ -136,7 +137,7 @@ class ProjectedActivityCompatTest {
         }
 
     @Test
-    fun projectedActions_doesNotEmit_whenUnknownActionIsReceived() =
+    fun projectedInputEvents_doesNotEmit_whenUnknownActionIsReceived() =
         runTest(UnconfinedTestDispatcher()) {
             shadowOf(context).setBindServiceCallsOnServiceConnectedDirectly(true)
             val projectedActivityCompat = ProjectedActivityCompat.create(context)
@@ -158,7 +159,7 @@ class ProjectedActivityCompatTest {
         }
 
     @Test
-    fun projectedAction_fromCode_returnsCorrectEnum() {
+    fun projectedInputAction_fromCode_returnsCorrectEnum() {
         val action =
             androidx.xr.projected.ProjectedInputEvent.ProjectedInputAction.fromCode(
                 androidx.xr.projected.ProjectedInputEvent.ProjectedInputAction.TOGGLE_APP_CAMERA
@@ -172,7 +173,7 @@ class ProjectedActivityCompatTest {
     }
 
     @Test
-    fun projectedAction_fromCode_withInvalidCode_throwsException() {
+    fun projectedInputAction_fromCode_withInvalidCode_throwsException() {
         assertFailsWith<IllegalArgumentException> {
             androidx.xr.projected.ProjectedInputEvent.ProjectedInputAction.fromCode(
                 INVALID_PROJECTED_ACTION_CODE
