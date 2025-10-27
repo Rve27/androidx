@@ -108,6 +108,18 @@ class SectionedItemTemplateDemoScreen(carContext: CarContext) : Screen(carContex
                 .build()
         )
 
+        builder.addAction(
+            Action.Builder()
+                .setIcon(
+                    CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_mic))
+                        .build()
+                )
+                .setOnClickListener {}
+                .setBackgroundColor(CarColor.GREEN)
+                .build()
+        )
+
+        builder.setAlphabeticalIndexingAllowed(true)
         return builder.build()
     }
 
