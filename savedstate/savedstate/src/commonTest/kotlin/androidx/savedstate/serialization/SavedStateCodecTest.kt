@@ -286,7 +286,10 @@ internal class SavedStateCodecTest : RobolectricTest() {
             assertThat(isNull("5")).isTrue()
         }
 
-        listOf(true, false, true).encodeDecode { assertThat(size()).isEqualTo(3) }
+        listOf(true, false, true).encodeDecode {
+            assertThat(size()).isEqualTo(1)
+            assertThat(getBooleanArray("")).isEqualTo(booleanArrayOf(true, false, true))
+        }
 
         // List of list.
         listOf(listOf(1, 2), listOf(3, 4)).encodeDecode {
