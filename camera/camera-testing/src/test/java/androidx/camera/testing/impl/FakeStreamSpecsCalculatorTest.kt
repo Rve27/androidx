@@ -17,6 +17,7 @@
 package androidx.camera.testing.impl
 
 import android.graphics.ImageFormat
+import android.os.Build
 import android.util.Range
 import androidx.camera.core.DynamicRange
 import androidx.camera.core.ImageCapture
@@ -35,6 +36,7 @@ import org.robolectric.annotation.internal.DoNotInstrument
 
 @RunWith(RobolectricTestRunner::class)
 @DoNotInstrument
+@org.robolectric.annotation.Config(minSdk = Build.VERSION_CODES.LOLLIPOP)
 class FakeStreamSpecsCalculatorTest {
     private val fakeStreamSpecsCalculator = FakeStreamSpecsCalculator()
     private val fakeCameraInfo = FakeCameraInfoInternal()

@@ -24,6 +24,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import android.os.Build;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -36,6 +38,7 @@ import org.robolectric.annotation.internal.DoNotInstrument;
 @RunWith(RobolectricTestRunner.class)
 @DoNotInstrument
 @Config(
+        minSdk = Build.VERSION_CODES.LOLLIPOP,
         instrumentedPackages = {"androidx.camera.extensions.internal"} // to override CURRENT
 )
 public class ExtensionVersionTest {
