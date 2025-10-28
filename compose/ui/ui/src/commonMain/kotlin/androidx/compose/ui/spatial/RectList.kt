@@ -36,8 +36,8 @@ import kotlin.math.min
  *
  * This data structure comes with some assumptions:
  * 1. the "identifier" values for this data structure are positive Ints. For performance reasons, we
- *    only store 26 bits of precision here, so practically speaking the item id is limited to 26
- *    bits (~67,000,000).
+ *    only store 25 bits of precision here, so practically speaking the item id is limited to 25
+ *    bits (~33,000,000).
  * 2. The coordinate system used for this data structure has the positive "x" axis pointing to the
  *    "right", and the positive "y" axis pointing "down". As a result, a rectangle will always have
  *    top <= bottom, and left <= right.
@@ -58,12 +58,13 @@ internal class RectList {
      *          32 bits: right
      *          32 bits: bottom
      *        Long 3 (64 bits): the "meta" long
-     *          26 bits: item id
-     *          26 bits: parent id
-     *          9 bits: last child offset
-     *           1 bits: updated
-     *           1 bits: focusable
-     *           1 bits: gesturable
+     *          25 bits: item id
+     *          25 bits: parent id
+     *          10 bits: last child offset
+     *           1 bis: updated
+     *           1 bit: focusable
+     *           1 bit: gesturable
+     *           1 bit: not used for now
      */
     @JvmField internal var items: LongArray = LongArray(LongsPerItem * InitialSize)
 
@@ -180,12 +181,7 @@ internal class RectList {
         while (i >= 0) {
             val meta = items[i + 2]
             if (unpackMetaValue(meta) == parentId) {
-                // TODO: right now this number will always be a multiple of 3. Since the last child
-                //  offset only has 9 bits of precision, we probably want to encode this more
-                //  efficiently. It doesn't have to be exact, it just can't be too small. We could
-                //  obviously divide by LongsPerItem, but we may also want to do something cheaper
-                //  like dividing by 2 or 4
-                val lastChildOffset = index - i
+                val lastChildOffset = (index - i) / LongsPerItem
                 items[i + 2] = metaWithLastChildOffset(meta, lastChildOffset)
                 return
             }
@@ -435,7 +431,7 @@ internal class RectList {
                 packMeta(
                     itemId = id,
                     parentId = 0,
-                    lastChildOffset = itemsSize,
+                    lastChildOffset = itemsSize / LongsPerItem,
                     updated = false,
                     focusable = false,
                     gesturable = false,
@@ -451,11 +447,10 @@ internal class RectList {
      * encoding has the following semantic specific to this method:
      *
      *        Long (64 bits): the "stack meta" encoding
-     *          26 bits: the "parent id" that we are matching on (normally item id)
-     *          26 bits: the minimum index that a child can have (normally parent id)
+     *          25 bits: the "parent id" that we are matching on (normally item id)
+     *          25 bits: the minimum index that a child can have (normally parent id)
      *          10 bits: max offset from start index a child can have (normally last child offset)
-     *           1 bits: unused (normally focusable)
-     *           1 bits: unused (normally gesturable)
+     *          next bits are unused
      *
      * We use this essentially as a way to encode three integers into a long, which includes all of
      * the data needed to efficiently iterate through the below algorithm. It is effectively an id
@@ -474,7 +469,9 @@ internal class RectList {
             val parentId = unpackMetaValue(idAndStartAndOffset) // parent id is in the id slot
             var i = unpackMetaParentId(idAndStartAndOffset) // start index is in the parent id slot
             val offset = unpackMetaLastChildOffset(idAndStartAndOffset)
-            val endIndex = if (offset == MaxSupportedLastChildOffset) items.size else offset + i
+            val endIndex =
+                if (offset == MaxSupportedLastChildOffset) itemsSize
+                else i + (offset * LongsPerItem)
             if (i < 0) break
             while (i < items.size - 2) {
                 if (i >= endIndex) break
@@ -994,17 +991,17 @@ internal class RectList {
 internal const val LongsPerItem = 3
 internal const val InitialSize = 64
 
-private const val Lower26Bits = 0b0000_0011_1111_1111_1111_1111_1111_1111
-internal const val Lower9Bits = 0b0000_0000_0000_0000_0000_0001_1111_1111
+private const val Lower25Bits = 0b0000_0001_1111_1111_1111_1111_1111_1111
+internal const val Lower10Bits = 0b0000_0000_0000_0000_0000_0011_1111_1111
 
-private const val MaxSupportedId = Lower26Bits
-internal const val MaxSupportedLastChildOffset = Lower9Bits
+private const val MaxSupportedId = Lower25Bits
+internal const val MaxSupportedLastChildOffset = Lower10Bits
 
-internal const val BitOffsetForParentId = 26
-internal const val BitOffsetForLastChildOffset = 52
-internal const val BitOffsetForUpdated = 61
-internal const val BitOffsetForFocusable = 62
-internal const val BitOffsetForGesturable = 63
+internal const val BitOffsetForParentId = 25
+internal const val BitOffsetForLastChildOffset = 50
+internal const val BitOffsetForUpdated = 60
+internal const val BitOffsetForFocusable = 61
+internal const val BitOffsetForGesturable = 62
 
 internal val EverythingButLastChildOffset =
     (ULong.MAX_VALUE xor (MaxSupportedLastChildOffset.toULong() shl BitOffsetForLastChildOffset))
