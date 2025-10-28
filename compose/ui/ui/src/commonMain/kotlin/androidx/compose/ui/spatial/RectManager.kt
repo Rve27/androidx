@@ -84,6 +84,10 @@ internal class RectManager(
 
     // TODO: we need to make sure these are dispatched after draw if needed
     fun dispatchCallbacks() {
+        // on every invalidation we schedule callback, and then in some cases we call this function
+        // manually in the end of the frame, which means that the callback is not needed anymore
+        removeScheduledCallback()
+
         val currentTime = currentTimeMillis()
 
         // For ThrottledCallbacks on global changes we need to make sure they are all called for any
@@ -150,6 +154,13 @@ internal class RectManager(
         scheduledDispatchDeadline = deadline
         val delay = deadline - currentTime
         dispatchToken = postDelayed(delay, dispatchLambda)
+    }
+
+    fun removeScheduledCallback() {
+        if (dispatchToken != null) {
+            removePost(dispatchToken)
+            dispatchToken = null
+        }
     }
 
     fun registerOnChangedCallback(callback: () -> Unit): Any? {
