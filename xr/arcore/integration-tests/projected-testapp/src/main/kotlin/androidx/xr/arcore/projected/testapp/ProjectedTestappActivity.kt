@@ -63,11 +63,15 @@ class ProjectedTestAppActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.i(TAG, "onCreate")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.i(TAG, "onResume")
         textView = TextView(this)
         textView.text = "\n\n\n\nWaiting for Geospatial Pose..."
         setContentView(textView)
         lifecycleScope.launch(Dispatchers.IO) {
-            delay(4000)
             tryCreateSession()
             lifecycleScope.launch {
                 Log.i(TAG, "before sessionInitialized.await()")
@@ -82,11 +86,6 @@ class ProjectedTestAppActivity : ComponentActivity() {
                 }
             }
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        Log.i(TAG, "onResume")
     }
 
     override fun onPause() {
