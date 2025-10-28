@@ -175,7 +175,7 @@ class ProjectedManagerTest {
         assertThat(projectedConfigCaptor.value.geospatialMode)
             .isEqualTo(ProjectedGeospatialMode.ENABLED)
         assertThat(projectedConfigCaptor.value.trackingMode)
-            .isEqualTo(ProjectedTrackingMode.PROJECTED_TRACKING_3DOF)
+            .isEqualTo(ProjectedTrackingMode.PROJECTED_TRACKING_6DOF)
 
         val configWithoutGeospatial =
             Config(
@@ -188,6 +188,8 @@ class ProjectedManagerTest {
             .startWithConfiguration(projectedConfigCaptor.capture())
         assertThat(projectedConfigCaptor.value.geospatialMode)
             .isEqualTo(ProjectedGeospatialMode.DISABLED)
+        assertThat(projectedConfigCaptor.value.trackingMode)
+            .isEqualTo(ProjectedTrackingMode.PROJECTED_TRACKING_3DOF)
     }
 
     @Test
