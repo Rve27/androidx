@@ -180,13 +180,14 @@ internal constructor(
         val service = perceptionManager.xrResources.service ?: return
         val serviceConfig = ProjectedConfig()
         // TODO: b/452091636 - Remove hardcoded config" so we remember to address this.
-        serviceConfig.trackingMode = ProjectedTrackingMode.PROJECTED_TRACKING_3DOF
-        serviceConfig.geospatialMode =
-            if (config.geospatial == Config.GeospatialMode.EARTH) {
-                ProjectedGeospatialMode.ENABLED
-            } else {
-                ProjectedGeospatialMode.DISABLED
-            }
+        // TODO: b/455872882 - Currently, Geo is not compatible with 3DoF tracking stack.
+        if (config.geospatial == Config.GeospatialMode.EARTH) {
+            serviceConfig.geospatialMode = ProjectedGeospatialMode.ENABLED
+            serviceConfig.trackingMode = ProjectedTrackingMode.PROJECTED_TRACKING_6DOF
+        } else {
+            serviceConfig.geospatialMode = ProjectedGeospatialMode.DISABLED
+            serviceConfig.trackingMode = ProjectedTrackingMode.PROJECTED_TRACKING_3DOF
+        }
         service.startWithConfiguration(serviceConfig)
         running = true
     }
