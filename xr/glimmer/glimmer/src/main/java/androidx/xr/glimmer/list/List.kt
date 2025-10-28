@@ -23,7 +23,6 @@ import androidx.compose.foundation.lazy.layout.LazyLayout
 import androidx.compose.foundation.scrollableArea
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -163,6 +162,7 @@ internal fun List(
                 )
                 // TODO: b/433235501 - Behaviour conflicts between the AutoFocus and BeyondBounds.
                 .then(beyondBoundsModifier)
+                .edgeScrim(state, orientation)
                 .scrollableArea(
                     state = state,
                     orientation = orientation,
