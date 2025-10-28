@@ -732,7 +732,6 @@ public class WebViewFeature {
     public static final String NAVIGATION_CALLBACK_BASIC = "WEB_VIEW_NAVIGATION_CLIENT_BASIC_USAGE";
 
     @WebNavigationClient.ExperimentalNavigationCallback
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public static final String NAVIGATION_LISTENER_V1 = "NAVIGATION_LISTENER_V1";
 
     /**
