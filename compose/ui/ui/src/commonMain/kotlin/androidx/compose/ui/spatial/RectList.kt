@@ -150,7 +150,7 @@ internal class RectList {
         gesturable: Boolean = false,
         parentIndexInRectList: Int = -1,
     ) {
-        val value = value and Lower26Bits
+        val value = value and MaxSupportedId
         val index = allocateItemsIndex()
         val items = items
 
@@ -174,7 +174,7 @@ internal class RectList {
             )
 
         if (parentId < 0) return
-        val parentId = parentId and Lower26Bits
+        val parentId = parentId and MaxSupportedId
         // After inserting, find the item with id = parentId and update it's "last child offset".
         var i = if (parentIndexInRectList != -1) parentIndexInRectList else index - LongsPerItem
         while (i >= 0) {
@@ -222,7 +222,7 @@ internal class RectList {
         focusable: Boolean,
         gesturable: Boolean,
     ) {
-        val value = value and Lower26Bits
+        val value = value and MaxSupportedId
         val items = items
         val size = itemsSize
         var i = 0
@@ -262,7 +262,7 @@ internal class RectList {
      * @see defragment
      */
     fun remove(value: Int): Boolean {
-        val value = value and Lower26Bits
+        val value = value and MaxSupportedId
         val items = items
         val size = itemsSize
         var i = 0
@@ -274,8 +274,8 @@ internal class RectList {
                 // To "remove" an item, we make the rectangle [max, max, max, max] so that it won't
                 // match any queries, and we mark meta as tombStone so we can detect it later
                 // in the defragment method
-                items[i + 0] = 0xffff_ffff_ffff_ffffUL.toLong()
-                items[i + 1] = 0xffff_ffff_ffff_ffffUL.toLong()
+                items[i + 0] = ULong.MAX_VALUE.toLong()
+                items[i + 1] = ULong.MAX_VALUE.toLong()
                 items[i + 2] = TombStone
                 return true
             }
@@ -291,7 +291,7 @@ internal class RectList {
      *   collection
      */
     fun update(value: Int, l: Int, t: Int, r: Int, b: Int): Boolean {
-        val value = value and Lower26Bits
+        val value = value and MaxSupportedId
         val items = items
         val size = itemsSize
         var i = 0
@@ -317,7 +317,7 @@ internal class RectList {
      *   collection
      */
     fun updateFlagsFor(value: Int, focusable: Boolean, gesturable: Boolean): Boolean {
-        val value = value and Lower26Bits
+        val value = value and MaxSupportedId
         val items = items
         val size = itemsSize
         var i = 0
@@ -341,7 +341,7 @@ internal class RectList {
      * of the item.
      */
     fun move(value: Int, l: Int, t: Int, r: Int, b: Int) {
-        val value = value and Lower26Bits
+        val value = value and MaxSupportedId
         val items = items
         val size = itemsSize
         var i = 0
@@ -379,7 +379,7 @@ internal class RectList {
         width: Int,
         height: Int,
     ) {
-        val value = value and Lower26Bits
+        val value = value and MaxSupportedId
         val items = items
         val size = itemsSize
         var i = 0
@@ -499,7 +499,7 @@ internal class RectList {
     }
 
     fun markUpdated(value: Int) {
-        val value = value and Lower26Bits
+        val value = value and MaxSupportedId
         val items = items
         val size = itemsSize
         var i = 0
@@ -515,7 +515,7 @@ internal class RectList {
     }
 
     fun withRect(value: Int, block: (Int, Int, Int, Int) -> Unit): Boolean {
-        val value = value and Lower26Bits
+        val value = value and MaxSupportedId
         val items = items
         val size = itemsSize
         var i = 0
@@ -540,7 +540,7 @@ internal class RectList {
     }
 
     fun withTopLeftBottomRight(value: Int, block: (Long, Long) -> Unit): Boolean {
-        val value = value and Lower26Bits
+        val value = value and MaxSupportedId
         val items = items
         val size = itemsSize
         var i = 0
@@ -560,7 +560,7 @@ internal class RectList {
     }
 
     fun getTopLeft(value: Int): Long {
-        val value = value and Lower26Bits
+        val value = value and MaxSupportedId
         val items = items
         val size = itemsSize
         var i = 0
@@ -577,7 +577,7 @@ internal class RectList {
     }
 
     operator fun contains(value: Int): Boolean {
-        val value = value and Lower26Bits
+        val value = value and MaxSupportedId
         val items = items
         val size = itemsSize
         var i = 0
@@ -599,7 +599,7 @@ internal class RectList {
      * Note that returned index corresponds to the Long that contains the topLeft data of the item.
      */
     fun indexOf(value: Int): Int {
-        val value = value and Lower26Bits
+        val value = value and MaxSupportedId
         val items = items
         val size = itemsSize
         var i = 0
@@ -615,7 +615,7 @@ internal class RectList {
     }
 
     fun metaFor(value: Int): Long {
-        val value = value and Lower26Bits
+        val value = value and MaxSupportedId
         val items = items
         val size = itemsSize
         var i = 0
@@ -979,7 +979,13 @@ internal class RectList {
             val t = unpackY(topLeft)
             val r = unpackX(bottomRight)
             val b = unpackY(bottomRight)
-            appendLine("id=$id, rect=[$l,$t,$r,$b], parent=$parentId")
+            val lastChildOffset = unpackMetaLastChildOffset(meta)
+            val updated = unpackMetaUpdated(meta)
+            val focusable = unpackMetaFocusable(meta)
+            val gesturable = unpackMetaGesturable(meta)
+            appendLine(
+                "id=$id, rect=[$l,$t,$r,$b], parent=$parentId, lastChildOffset=$lastChildOffset, updated=$updated, focusable=$focusable, gesturable=$gesturable"
+            )
             i += LongsPerItem
         }
     }
@@ -987,11 +993,25 @@ internal class RectList {
 
 internal const val LongsPerItem = 3
 internal const val InitialSize = 64
-internal const val Lower26Bits = 0b0000_0011_1111_1111_1111_1111_1111_1111
+
+private const val Lower26Bits = 0b0000_0011_1111_1111_1111_1111_1111_1111
 internal const val Lower9Bits = 0b0000_0000_0000_0000_0000_0001_1111_1111
+
+private const val MaxSupportedId = Lower26Bits
 internal const val MaxSupportedLastChildOffset = Lower9Bits
-internal const val EverythingButParentId = 0xfff0_0000_03ff_ffffUL
-internal const val EverythingButLastChildOffset = 0xe00fffffffffffffUL
+
+internal const val BitOffsetForParentId = 26
+internal const val BitOffsetForLastChildOffset = 52
+internal const val BitOffsetForUpdated = 61
+internal const val BitOffsetForFocusable = 62
+internal const val BitOffsetForGesturable = 63
+
+internal val EverythingButLastChildOffset =
+    (ULong.MAX_VALUE xor (MaxSupportedLastChildOffset.toULong() shl BitOffsetForLastChildOffset))
+        .toLong()
+internal val EverythingButParentId =
+    (ULong.MAX_VALUE xor (MaxSupportedId.toULong() shl BitOffsetForParentId)).toLong()
+
 private const val PackedIntsLowestBit = 0x000_0001_0000_0001L
 private const val PackedIntsHighestBit = -0x7FFF_FFFF_8000_0000L // 0x8000_0000_8000_0000UL
 
@@ -1001,7 +1021,7 @@ private const val PackedIntsHighestBit = -0x7FFF_FFFF_8000_0000L // 0x8000_0000_
  * @see RectList.remove
  * @see packMeta
  */
-internal const val TombStone = 0x1fff_ffff_ffff_ffffL // packMeta(-1, -1, -1, false, false, false)
+internal val TombStone = packMeta(-1, -1, 0, false, false, false)
 
 internal const val AxisNorth: Int = 0
 internal const val AxisSouth: Int = 1
@@ -1010,6 +1030,7 @@ internal const val AxisEast: Int = 3
 
 internal inline fun packXY(x: Int, y: Int) = (x.toLong() shl 32) or (y.toLong() and 0xffff_ffff)
 
+/** see docs for [RectList.items] for the description on the structure of this long */
 internal inline fun packMeta(
     itemId: Int,
     parentId: Int,
@@ -1018,44 +1039,44 @@ internal inline fun packMeta(
     focusable: Boolean,
     gesturable: Boolean,
 ): Long =
-    //     26 bits: item id
-    //     26 bits: parent id
-    //     9 bits: last child offset
-    //      1 bits: updated - means the bounds have been updated
-    //      1 bits: focusable
-    //      1 bits: gesturable
-    (gesturable.toLong() shl 63) or
-        (focusable.toLong() shl 62) or
-        (updated.toLong() shl 61) or
-        (minOf(lastChildOffset, MaxSupportedLastChildOffset).toLong() shl 52) or
-        ((parentId and Lower26Bits).toLong() shl 26) or
-        ((itemId and Lower26Bits).toLong() shl 0)
+    (gesturable.toLong() shl BitOffsetForGesturable) or
+        (focusable.toLong() shl BitOffsetForFocusable) or
+        (updated.toLong() shl BitOffsetForUpdated) or
+        (minOf(lastChildOffset, MaxSupportedLastChildOffset).toLong() shl
+            BitOffsetForLastChildOffset) or
+        ((parentId and MaxSupportedId).toLong() shl BitOffsetForParentId) or
+        ((itemId and MaxSupportedId).toLong())
 
-internal inline fun unpackMetaValue(meta: Long): Int = meta.toInt() and Lower26Bits
+internal inline fun unpackMetaValue(meta: Long): Int = meta.toInt() and MaxSupportedId
 
-internal inline fun unpackMetaParentId(meta: Long): Int = (meta shr 26).toInt() and Lower26Bits
+internal inline fun unpackMetaParentId(meta: Long): Int =
+    (meta shr BitOffsetForParentId).toInt() and MaxSupportedId
 
 /**
  * @return value which is not larger than [MaxSupportedLastChildOffset]. If this max value is
  *   returned, it means we don't know the last child offset, and the whole array should be checked.
  */
 internal inline fun unpackMetaLastChildOffset(meta: Long): Int =
-    (meta shr 52).toInt() and Lower9Bits
+    (meta shr BitOffsetForLastChildOffset).toInt() and MaxSupportedLastChildOffset
 
 internal inline fun metaWithParentId(meta: Long, parentId: Int): Long =
-    (meta and EverythingButParentId.toLong()) or ((parentId and Lower26Bits).toLong() shl 26)
+    (meta and EverythingButParentId) or
+        ((parentId and MaxSupportedId).toLong() shl BitOffsetForParentId)
 
 internal inline fun metaWithUpdated(meta: Long, updated: Boolean): Long =
-    (meta and (0b1L shl 61).inv()) or (updated.toLong() shl 61)
+    (meta and (0b1L shl BitOffsetForUpdated).inv()) or (updated.toLong() shl BitOffsetForUpdated)
 
-internal inline fun metaMarkUpdated(meta: Long): Long = meta or (1L shl 61)
+internal inline fun metaMarkUpdated(meta: Long): Long = meta or (1L shl BitOffsetForUpdated)
 
-internal inline fun metaUnMarkUpdated(meta: Long): Long = meta and (1L shl 61).inv()
+internal inline fun metaUnMarkUpdated(meta: Long): Long =
+    meta and (1L shl BitOffsetForUpdated).inv()
 
 internal inline fun metaMarkFlags(meta: Long, focusable: Boolean, gesturable: Boolean): Long {
-    return (meta and (1L shl 62).inv() and (1L shl 63).inv()) or
-        ((1L shl 62) * focusable.toInt()) or
-        ((1L shl 63) * gesturable.toInt())
+    return (meta and
+        (1L shl BitOffsetForFocusable).inv() and
+        (1L shl BitOffsetForGesturable).inv()) or
+        ((1L shl BitOffsetForFocusable) * focusable.toInt()) or
+        ((1L shl BitOffsetForGesturable) * gesturable.toInt())
 }
 
 /**
@@ -1063,14 +1084,18 @@ internal inline fun metaMarkFlags(meta: Long, focusable: Boolean, gesturable: Bo
  *   [MaxSupportedLastChildOffset] will be saved instead.
  */
 internal inline fun metaWithLastChildOffset(meta: Long, lastChildOffset: Int): Long =
-    (meta and EverythingButLastChildOffset.toLong()) or
-        ((minOf(lastChildOffset, MaxSupportedLastChildOffset)).toLong() shl 52)
+    (meta and EverythingButLastChildOffset) or
+        ((minOf(lastChildOffset, MaxSupportedLastChildOffset)).toLong() shl
+            BitOffsetForLastChildOffset)
 
-internal inline fun unpackMetaFocusable(meta: Long): Int = (meta shr 62).toInt() and 0b1
+internal inline fun unpackMetaFocusable(meta: Long): Int =
+    (meta shr BitOffsetForFocusable).toInt() and 0b1
 
-internal inline fun unpackMetaGesturable(meta: Long): Int = (meta shr 63).toInt() and 0b1
+internal inline fun unpackMetaGesturable(meta: Long): Int =
+    (meta shr BitOffsetForGesturable).toInt() and 0b1
 
-internal inline fun unpackMetaUpdated(meta: Long): Int = (meta shr 61).toInt() and 0b1
+internal inline fun unpackMetaUpdated(meta: Long): Int =
+    (meta shr BitOffsetForUpdated).toInt() and 0b1
 
 internal inline fun unpackX(xy: Long): Int = (xy shr 32).toInt()
 
