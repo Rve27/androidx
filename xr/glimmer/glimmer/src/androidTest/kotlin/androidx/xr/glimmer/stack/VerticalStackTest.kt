@@ -33,6 +33,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.ComposeUiFlags
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -63,6 +65,7 @@ import androidx.compose.ui.unit.size
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SdkSuppress
 import androidx.xr.glimmer.Text
+import androidx.xr.glimmer.nonTouchInputModeRule
 import androidx.xr.glimmer.performIndirectSwipe
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
@@ -72,19 +75,36 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withContext
+import org.junit.After
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
+@OptIn(ExperimentalComposeUiApi::class)
 @RunWith(AndroidJUnit4::class)
 // The expected min sdk is 35, but we test on 33 for wider device coverage (some APIs are not
 // available below 33)
 @SdkSuppress(minSdkVersion = Build.VERSION_CODES.TIRAMISU)
 class VerticalStackTest {
 
-    @get:Rule val rule = createComposeRule(StandardTestDispatcher())
+    @get:Rule(0) val rule = createComposeRule(StandardTestDispatcher())
+
+    @get:Rule(1) val inputModeRule = nonTouchInputModeRule()
 
     private val focusRequester = FocusRequester()
+    private val savedInitialFocusAvailabilityFlag =
+        ComposeUiFlags.isInitialFocusOnFocusableAvailable
+
+    @Before
+    fun setup() {
+        ComposeUiFlags.isInitialFocusOnFocusableAvailable = true
+    }
+
+    @After
+    fun tearDown() {
+        ComposeUiFlags.isInitialFocusOnFocusableAvailable = savedInitialFocusAvailabilityFlag
+    }
 
     @Test
     fun zeroItems_displaysNothing() {
@@ -962,19 +982,13 @@ class VerticalStackTest {
 
     private fun ComposeContentTestRule.setContentWithInitialFocus(content: @Composable () -> Unit) {
         setContent { Box(Modifier.focusRequester(focusRequester)) { content() } }
-        requestFocus()
     }
 
     private fun requestFocusAndPerformIndirectSwipe(distancePx: Int) {
         require(distancePx != 0)
         // TODO(b/413429531): remove once VerticalStack supports moving focus automatically.
-        requestFocus()
-        rule.onRoot().performIndirectSwipe(rule, distancePx.toFloat())
-    }
-
-    private fun requestFocus() {
         rule.runOnIdle { focusRequester.requestFocus() }
-        rule.waitForIdle()
+        rule.onRoot().performIndirectSwipe(rule, distancePx.toFloat())
     }
 
     suspend fun runOnUiThread(action: suspend () -> Unit) {
