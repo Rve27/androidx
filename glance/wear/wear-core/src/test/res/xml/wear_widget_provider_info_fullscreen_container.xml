@@ -14,8 +14,9 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<wearwidget-provider>
+<wearwidget-provider
+    label="test label">
     <container
-        type="@integer/glance_wear_container_type_small"
+        type="0"
         previewImage="@android:drawable/ic_dialog_alert" />
 </wearwidget-provider>
