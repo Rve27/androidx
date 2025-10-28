@@ -246,7 +246,7 @@ class ElementExtTest(private val preCompile: Boolean) {
                     assertThat(info.getter!!.propertyName).isEqualTo("data")
                     assertThat(info.parameter.type)
                         .isEqualTo(invocation.processingEnv.requireType(XTypeName.PRIMITIVE_LONG))
-                    assertThat(info.getter!!.returnType)
+                    assertThat(info.getter.returnType)
                         .isEqualTo(invocation.processingEnv.requireType(XTypeName.PRIMITIVE_LONG))
                 }
             subject
