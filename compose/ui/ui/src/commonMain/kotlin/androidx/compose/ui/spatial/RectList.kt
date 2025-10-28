@@ -64,7 +64,7 @@ internal class RectList {
      *           1 bis: updated
      *           1 bit: focusable
      *           1 bit: gesturable
-     *           1 bit: not used for now
+     *           1 bit: hasCallbacks
      */
     @JvmField internal var items: LongArray = LongArray(LongsPerItem * InitialSize)
 
@@ -149,6 +149,7 @@ internal class RectList {
         parentId: Int = -1,
         focusable: Boolean = false,
         gesturable: Boolean = false,
+        hasCallbacks: Boolean = false,
         parentIndexInRectList: Int = -1,
     ) {
         val value = value and MaxSupportedId
@@ -172,6 +173,7 @@ internal class RectList {
                 updated = true,
                 focusable,
                 gesturable,
+                hasCallbacks,
             )
 
         if (parentId < 0) return
@@ -217,6 +219,7 @@ internal class RectList {
         height: Int,
         focusable: Boolean,
         gesturable: Boolean,
+        hasCallbacks: Boolean,
     ) {
         val value = value and MaxSupportedId
         val items = items
@@ -243,6 +246,7 @@ internal class RectList {
                     parentIndexInRectList = i,
                     focusable = focusable,
                     gesturable = gesturable,
+                    hasCallbacks = hasCallbacks,
                 )
                 return
             }
@@ -298,7 +302,7 @@ internal class RectList {
             if (unpackMetaValue(meta) == value) {
                 items[i + 0] = packXY(l, t)
                 items[i + 1] = packXY(r, b)
-                items[i + 2] = metaMarkUpdated(meta)
+                items[i + 2] = metaMarkUpdatedIfHasCallbacks(meta)
                 return true
             }
             i += LongsPerItem
@@ -330,6 +334,29 @@ internal class RectList {
         return false
     }
 
+    fun updateHasCallbacks(value: Int, hasCallbacks: Boolean): Boolean {
+        val value = value and MaxSupportedId
+        val items = items
+        val size = itemsSize
+        var i = 0
+        while (i < items.size - 2) {
+            if (i >= size) break
+            val meta = items[i + 2]
+            // NOTE: We are assuming that the value can only be here once.
+            if (unpackMetaValue(meta) == value) {
+                items[i + 2] =
+                    metaMarkUpdatedAndHasCallbacks(
+                        meta,
+                        updated = hasCallbacks,
+                        hasCallbacks = hasCallbacks,
+                    )
+                return true
+            }
+            i += LongsPerItem
+        }
+        return false
+    }
+
     /**
      * Moves the rectangle associated with this value to the specified rectangle, and updates every
      * item that is "below" the specified rectangle by the associated offset. move() is generally
@@ -349,7 +376,7 @@ internal class RectList {
                 val prevLT = items[i + 0]
                 items[i + 0] = packXY(l, t)
                 items[i + 1] = packXY(r, b)
-                items[i + 2] = metaMarkUpdated(meta)
+                items[i + 2] = metaMarkUpdatedIfHasCallbacks(meta)
                 val deltaX = l - unpackX(prevLT)
                 val deltaY = t - unpackY(prevLT)
                 if ((deltaX != 0) or (deltaY != 0)) {
@@ -405,7 +432,7 @@ internal class RectList {
                         val deltaY = t - oldT
                         items[i + 0] = packXY(l, t)
                         items[i + 1] = packXY(r, b)
-                        items[i + 2] = metaMarkUpdated(meta)
+                        items[i + 2] = metaMarkUpdatedIfHasCallbacks(meta)
                         if (deltaX != 0 || deltaY != 0) {
                             updateSubhierarchy(
                                 metaWithParentId(meta, i + LongsPerItem),
@@ -435,6 +462,7 @@ internal class RectList {
                     updated = false,
                     focusable = false,
                     gesturable = false,
+                    hasCallbacks = false,
                 ),
             deltaX = deltaX,
             deltaY = deltaY,
@@ -482,7 +510,7 @@ internal class RectList {
                     items[i + 0] = packXY(unpackX(topLeft) + deltaX, unpackY(topLeft) + deltaY)
                     items[i + 1] =
                         packXY(unpackX(bottomRight) + deltaX, unpackY(bottomRight) + deltaY)
-                    items[i + 2] = metaMarkUpdated(meta)
+                    items[i + 2] = metaMarkUpdatedIfHasCallbacks(meta)
                     if (unpackMetaLastChildOffset(meta) > 0) {
                         // we need to store itemId, lastChildOffset, and a "start index".
                         // For convenience, we just use `meta` which already encodes two of those
@@ -504,7 +532,7 @@ internal class RectList {
             if (i >= size) break
             val meta = items[i + 2]
             if (unpackMetaValue(meta) == value) {
-                items[i + 2] = metaMarkUpdated(meta)
+                items[i + 2] = metaMarkUpdatedIfHasCallbacks(meta)
                 return
             }
             i += LongsPerItem
@@ -1002,6 +1030,7 @@ internal const val BitOffsetForLastChildOffset = 50
 internal const val BitOffsetForUpdated = 60
 internal const val BitOffsetForFocusable = 61
 internal const val BitOffsetForGesturable = 62
+internal const val BitOffsetForHasCallbacks = 63
 
 internal val EverythingButLastChildOffset =
     (ULong.MAX_VALUE xor (MaxSupportedLastChildOffset.toULong() shl BitOffsetForLastChildOffset))
@@ -1018,7 +1047,7 @@ private const val PackedIntsHighestBit = -0x7FFF_FFFF_8000_0000L // 0x8000_0000_
  * @see RectList.remove
  * @see packMeta
  */
-internal val TombStone = packMeta(-1, -1, 0, false, false, false)
+internal val TombStone = packMeta(-1, -1, 0, false, false, false, false)
 
 internal const val AxisNorth: Int = 0
 internal const val AxisSouth: Int = 1
@@ -1035,8 +1064,10 @@ internal inline fun packMeta(
     updated: Boolean,
     focusable: Boolean,
     gesturable: Boolean,
+    hasCallbacks: Boolean,
 ): Long =
-    (gesturable.toLong() shl BitOffsetForGesturable) or
+    (hasCallbacks.toLong() shl BitOffsetForHasCallbacks) or
+        (gesturable.toLong() shl BitOffsetForGesturable) or
         (focusable.toLong() shl BitOffsetForFocusable) or
         (updated.toLong() shl BitOffsetForUpdated) or
         (minOf(lastChildOffset, MaxSupportedLastChildOffset).toLong() shl
@@ -1059,9 +1090,6 @@ internal inline fun unpackMetaLastChildOffset(meta: Long): Int =
 internal inline fun metaWithParentId(meta: Long, parentId: Int): Long =
     (meta and EverythingButParentId) or
         ((parentId and MaxSupportedId).toLong() shl BitOffsetForParentId)
-
-internal inline fun metaWithUpdated(meta: Long, updated: Boolean): Long =
-    (meta and (0b1L shl BitOffsetForUpdated).inv()) or (updated.toLong() shl BitOffsetForUpdated)
 
 internal inline fun metaMarkUpdated(meta: Long): Long = meta or (1L shl BitOffsetForUpdated)
 
@@ -1093,6 +1121,24 @@ internal inline fun unpackMetaGesturable(meta: Long): Int =
 
 internal inline fun unpackMetaUpdated(meta: Long): Int =
     (meta shr BitOffsetForUpdated).toInt() and 0b1
+
+internal inline fun unpackMetaHasCallbacks(meta: Long): Int =
+    (meta shr BitOffsetForHasCallbacks).toInt() and 0b1
+
+internal inline fun metaMarkUpdatedIfHasCallbacks(meta: Long): Long =
+    meta or ((meta shr BitOffsetForHasCallbacks and 0b1) shl BitOffsetForUpdated)
+
+internal inline fun metaMarkUpdatedAndHasCallbacks(
+    meta: Long,
+    updated: Boolean,
+    hasCallbacks: Boolean,
+): Long {
+    return (meta and
+        (1L shl BitOffsetForUpdated).inv() and
+        (1L shl BitOffsetForHasCallbacks).inv()) or
+        ((1L shl BitOffsetForUpdated) * updated.toInt()) or
+        ((1L shl BitOffsetForHasCallbacks) * hasCallbacks.toInt())
+}
 
 internal inline fun unpackX(xy: Long): Int = (xy shr 32).toInt()
 
