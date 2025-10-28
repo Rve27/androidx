@@ -213,7 +213,7 @@ package androidx.xr.runtime {
     property public kotlin.time.ComparableTimeMark timeMark;
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FieldOfView {
+  public final class FieldOfView {
     ctor public FieldOfView(float angleLeft, float angleRight, float angleUp, float angleDown);
     method public androidx.xr.runtime.FieldOfView copy();
     method public androidx.xr.runtime.FieldOfView copy(optional float angleLeft);
