@@ -873,9 +873,16 @@ class VerticalStackTest {
             val nextItemBottom = with(rule.density) { nextItemBounds.bottom.roundToPx() }
             val x = (pixels.width / 2)
             val y = nextItemBottom - 1
+            val nextItemColor = pixels[x, y]
             assertWithMessage("Pixel at ($x, $y) should have the next item's color")
-                .that(pixels[x, y].toOpaque())
-                .isEqualTo(Color.Green)
+                .that(nextItemColor.red)
+                .isEqualTo(0)
+            assertWithMessage("Pixel at ($x, $y) should have the next item's color")
+                .that(nextItemColor.green)
+                .isGreaterThan(0)
+            assertWithMessage("Pixel at ($x, $y) should have the next item's color")
+                .that(nextItemColor.blue)
+                .isEqualTo(0)
         }
     }
 
@@ -957,9 +964,16 @@ class VerticalStackTest {
             assertThat(nextNextItemBottom).isGreaterThan(nextItemBottom)
             val x = (pixels.width / 2)
             val y = nextNextItemBottom - 1
+            val nextNextItemColor = pixels[x, y]
             assertWithMessage("Pixel at ($x, $y) should have the next-next item's color")
-                .that(pixels[x, y].toOpaque())
-                .isEqualTo(Color.Blue)
+                .that(nextNextItemColor.red)
+                .isEqualTo(0)
+            assertWithMessage("Pixel at ($x, $y) should have the next-next item's color")
+                .that(nextNextItemColor.green)
+                .isEqualTo(0)
+            assertWithMessage("Pixel at ($x, $y) should have the next-next item's color")
+                .that(nextNextItemColor.blue)
+                .isGreaterThan(0)
         }
     }
 
