@@ -20,7 +20,6 @@ import android.app.KeyguardManager
 import android.content.Context
 import android.os.Build
 import android.util.Log
-import androidx.annotation.VisibleForTesting
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.biometric.BiometricPrompt.AuthenticationCallback
@@ -92,7 +91,8 @@ internal interface AuthenticationHandler {
                 DeviceUtils.isWearOS(context) ||
                     context.isKeyguardManagerNeededForNoBiometric(allowedAuthenticators) ||
                     isKeyguardManagerNeededForBiometricAndCredential -> {
-                    AuthenticationHandlerKeyguardManager(
+                    // TODO: add AuthenticationHandlerKeyguardManager
+                    AuthenticationHandlerBiometricPrompt(
                         context,
                         lifecycleOwner,
                         viewModel,
@@ -102,7 +102,8 @@ internal interface AuthenticationHandler {
                     )
                 }
                 context.isUsingFingerprintDialog(viewModel.cryptoObject) ->
-                    AuthenticationHandlerFingerprintManager(
+                    // TODO: add AuthenticationHandlerFingerprintManager
+                    AuthenticationHandlerBiometricPrompt(
                         context,
                         lifecycleOwner,
                         viewModel,
@@ -193,8 +194,7 @@ internal fun Context.isKeyguardManagerNeededForNoBiometric(allowedAuthenticators
  * Checks if this fragment should display the fingerprint dialog authentication UI to the user,
  * rather than delegate to the framework [android.hardware.biometrics.BiometricPrompt].
  */
-@VisibleForTesting
-internal fun Context.isUsingFingerprintDialog(crypto: BiometricPrompt.CryptoObject?) =
+private fun Context.isUsingFingerprintDialog(crypto: BiometricPrompt.CryptoObject?) =
     Build.VERSION.SDK_INT < Build.VERSION_CODES.P ||
         isFingerprintDialogNeededForCrypto(crypto) ||
         isFingerprintDialogNeededForErrorHandling()
