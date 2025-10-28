@@ -188,7 +188,7 @@ public final class CameraX {
             // Try to retrieve the CameraXConfig.Provider through meta-data provided by
             // implementation library.
             try {
-                Context appContext = ContextUtil.getApplicationContext(context);
+                Context appContext = ContextUtil.getPersistentApplicationContext(context);
                 ServiceInfo serviceInfo = appContext.getPackageManager().getServiceInfo(
                         new ComponentName(appContext, MetadataHolderService.class),
                         PackageManager.GET_META_DATA | PackageManager.MATCH_DISABLED_COMPONENTS);
@@ -388,7 +388,7 @@ public final class CameraX {
             CallbackToFutureAdapter.@NonNull Completer<Void> completer) {
         cameraExecutor.execute(() -> {
             Trace.beginSection("CX:initAndRetryRecursively");
-            Context appContext = ContextUtil.getApplicationContext(context);
+            Context appContext = ContextUtil.getPersistentApplicationContext(context);
             try {
                 CameraFactory.Provider cameraFactoryProvider =
                         mCameraXConfig.getCameraFactoryProvider(null);
