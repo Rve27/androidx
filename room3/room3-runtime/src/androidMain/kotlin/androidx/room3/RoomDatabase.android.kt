@@ -49,7 +49,6 @@ import androidx.sqlite.SQLiteDriver
 import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.sqlite.db.SupportSQLiteOpenHelper
 import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
-import androidx.sqlite.driver.SupportSQLiteConnection
 import java.io.File
 import java.io.InputStream
 import java.util.TreeMap
@@ -1425,73 +1424,27 @@ actual constructor() {
     /** Callback for [RoomDatabase]. */
     public actual abstract class Callback {
         /**
-         * Called when the database is created for the first time. This is called after all the
-         * tables are created.
-         *
-         * This function is only called when Room is configured without a driver. If a driver is set
-         * using [Builder.setDriver], then only the version that receives a [SQLiteConnection] is
-         * called.
-         *
-         * @param db The database.
-         */
-        public open fun onCreate(db: SupportSQLiteDatabase) {}
-
-        /**
          * Called when the database is created for the first time.
          *
          * This function called after all the tables are created.
          *
          * @param connection The database connection.
          */
-        public actual open fun onCreate(connection: SQLiteConnection) {
-            if (connection is SupportSQLiteConnection) {
-                onCreate(connection.db)
-            }
-        }
-
-        /**
-         * Called after the database was destructively migrated
-         *
-         * This function is only called when Room is configured without a driver. If a driver is set
-         * using [Builder.setDriver], then only the version that receives a [SQLiteConnection] is
-         * called.
-         *
-         * @param db The database.
-         */
-        public open fun onDestructiveMigration(db: SupportSQLiteDatabase) {}
+        public actual open fun onCreate(connection: SQLiteConnection) {}
 
         /**
          * Called after the database was destructively migrated.
          *
          * @param connection The database connection.
          */
-        public actual open fun onDestructiveMigration(connection: SQLiteConnection) {
-            if (connection is SupportSQLiteConnection) {
-                onDestructiveMigration(connection.db)
-            }
-        }
-
-        /**
-         * Called when the database has been opened.
-         *
-         * This function is only called when Room is configured without a driver. If a driver is set
-         * using [Builder.setDriver], then only the version that receives a [SQLiteConnection] is
-         * called.
-         *
-         * @param db The database.
-         */
-        public open fun onOpen(db: SupportSQLiteDatabase) {}
+        public actual open fun onDestructiveMigration(connection: SQLiteConnection) {}
 
         /**
          * Called when the database has been opened.
          *
          * @param connection The database connection.
          */
-        public actual open fun onOpen(connection: SQLiteConnection) {
-            if (connection is SupportSQLiteConnection) {
-                onOpen(connection.db)
-            }
-        }
+        public actual open fun onOpen(connection: SQLiteConnection) {}
     }
 
     /**
@@ -1505,23 +1458,13 @@ actual constructor() {
      */
     // TODO(b/339934813): Move pre-package out of Room and into a set of utility drivers.
     public abstract class PrepackagedDatabaseCallback {
-        /**
-         * Called when the pre-packaged database has been copied.
-         *
-         * @param db The database.
-         */
-        public open fun onOpenPrepackagedDatabase(db: SupportSQLiteDatabase) {}
 
         /**
          * Called when the pre-packaged database has been copied.
          *
          * @param connection The database connection.
          */
-        public open fun onOpenPrepackagedDatabase(connection: SQLiteConnection) {
-            if (connection is SupportSQLiteConnection) {
-                onOpenPrepackagedDatabase(connection.db)
-            }
-        }
+        public abstract fun onOpenPrepackagedDatabase(connection: SQLiteConnection)
     }
 
     public companion object {

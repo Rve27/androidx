@@ -21,8 +21,8 @@ import androidx.kruth.assertThrows
 import androidx.room3.Room.databaseBuilder
 import androidx.room3.Room.inMemoryDatabaseBuilder
 import androidx.room3.migration.Migration
+import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.SQLiteDriver
-import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.sqlite.db.SupportSQLiteOpenHelper
 import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
 import instantiateImpl
@@ -566,6 +566,6 @@ class BuilderTest {
     }
 
     internal class EmptyMigration(start: Int, end: Int) : Migration(start, end) {
-        override fun migrate(db: SupportSQLiteDatabase) {}
+        override fun migrate(connection: SQLiteConnection) {}
     }
 }

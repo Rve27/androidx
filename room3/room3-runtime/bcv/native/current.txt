@@ -81,7 +81,7 @@ abstract class androidx.room3.migration/Migration { // androidx.room3.migration/
     final val startVersion // androidx.room3.migration/Migration.startVersion|{}startVersion[0]
         final fun <get-startVersion>(): kotlin/Int // androidx.room3.migration/Migration.startVersion.<get-startVersion>|<get-startVersion>(){}[0]
 
-    open fun migrate(androidx.sqlite/SQLiteConnection) // androidx.room3.migration/Migration.migrate|migrate(androidx.sqlite.SQLiteConnection){}[0]
+    abstract fun migrate(androidx.sqlite/SQLiteConnection) // androidx.room3.migration/Migration.migrate|migrate(androidx.sqlite.SQLiteConnection){}[0]
 }
 
 abstract class androidx.room3/BaseRoomConnectionManager { // androidx.room3/BaseRoomConnectionManager|null[0]
