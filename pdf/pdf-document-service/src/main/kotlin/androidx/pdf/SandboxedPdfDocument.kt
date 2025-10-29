@@ -53,7 +53,6 @@ import androidx.pdf.models.FormWidgetInfo
 import androidx.pdf.service.connect.PdfServiceConnection
 import androidx.pdf.utils.toAndroidClass
 import androidx.pdf.utils.toContentClass
-import java.util.Collections
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.TimeoutException
 import java.util.concurrent.atomic.AtomicInteger
@@ -108,12 +107,6 @@ public class SandboxedPdfDocument(
 
     private val annotationsManager =
         InMemoryAnnotationsManager(::getAnnotationsForPage, annotationsProcessor)
-
-    public override val formEditInfos: List<FormEditInfo>
-        get() = _formEditInfos.toList()
-
-    private val _formEditInfos: MutableList<FormEditInfo> =
-        Collections.synchronizedList(mutableListOf<FormEditInfo>())
 
     /** The [CoroutineScope] we use to close [BitmapSource]s asynchronously */
     private val closeScope = CoroutineScope(coroutineContext + SupervisorJob())
@@ -270,14 +263,6 @@ public class SandboxedPdfDocument(
         onPdfContentInvalidatedListeners.forEach {
             it.onPdfContentInvalidated(record.pageNumber, dirtyAreas)
         }
-    }
-
-    override suspend fun applyEdit(pageNum: Int, record: FormEditInfo): List<Rect> {
-        val invalidatedAreas = withDocument { document ->
-            document.applyEdit(pageNum, record.toAndroidClass())
-        }
-        _formEditInfos.add(record)
-        return invalidatedAreas
     }
 
     @WorkerThread

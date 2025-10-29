@@ -35,7 +35,6 @@ import androidx.pdf.content.PdfPageGotoLinkContent
 import androidx.pdf.content.PdfPageLinkContent
 import androidx.pdf.content.PdfPageTextContent
 import androidx.pdf.content.SelectionBoundary
-import androidx.pdf.models.FormEditInfo
 import androidx.pdf.models.FormWidgetInfo
 import kotlin.math.roundToInt
 import kotlin.random.Random
@@ -73,7 +72,6 @@ internal open class FakePdfDocument(
     private val pages: List<Point> = listOf(),
     override val formType: Int = PDF_FORM_TYPE_NONE,
     override val isLinearized: Boolean = false,
-    override val formEditInfos: List<FormEditInfo> = emptyList(),
     private val searchResults: SparseArray<List<PageMatchBounds>> = SparseArray(),
     override val uri: Uri = Uri.parse("content://test.app/document.pdf"),
     private val pageLinks: Map<Int, PdfDocument.PdfPageLinks> = mapOf(),
@@ -188,10 +186,6 @@ internal open class FakePdfDocument(
         listener: PdfDocument.OnPdfContentInvalidatedListener
     ) {
         return
-    }
-
-    override suspend fun applyEdit(pageNum: Int, record: FormEditInfo): List<Rect> {
-        return listOf()
     }
 
     override fun close() {

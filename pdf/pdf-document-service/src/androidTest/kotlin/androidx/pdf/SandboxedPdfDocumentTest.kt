@@ -371,7 +371,7 @@ class SandboxedPdfDocumentTest {
             )
 
         // Apply edit to select the check-box
-        document.applyEdit(pageNum, editRecord)
+        document.applyEdit(editRecord)
 
         val context = ApplicationProvider.getApplicationContext<Context>()
         val editedPdfFile = File(context.cacheDir, "edited_test_pdf.pdf")

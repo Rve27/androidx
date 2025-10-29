@@ -17,7 +17,6 @@
 package androidx.pdf
 
 import android.graphics.PointF
-import android.graphics.Rect
 import android.net.Uri
 import android.os.ParcelFileDescriptor
 import android.util.SparseArray
@@ -42,7 +41,6 @@ internal class FakeEditablePdfDocument(
     override val pageCount: Int,
     override val isLinearized: Boolean = false,
     override val formType: Int = -1,
-    override val formEditInfos: List<FormEditInfo> = listOf(),
 ) : EditablePdfDocument() {
     private val annotationsByPage = mutableMapOf<Int, MutableList<PdfEditEntry<out PdfEdit>>>()
 
@@ -175,10 +173,6 @@ internal class FakeEditablePdfDocument(
     }
 
     override suspend fun applyEdit(record: FormEditInfo) {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun applyEdit(pageNum: Int, record: FormEditInfo): List<Rect> {
         TODO("Not yet implemented")
     }
 

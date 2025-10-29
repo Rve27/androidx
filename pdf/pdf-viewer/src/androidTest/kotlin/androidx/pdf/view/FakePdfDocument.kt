@@ -81,9 +81,6 @@ internal open class FakePdfDocument(
 
     @get:Synchronized @set:Synchronized internal var layoutReach: Int = 0
 
-    override val formEditInfos: List<FormEditInfo>
-        get() = editHistory.toList()
-
     private val bitmapRequestsLock = Any()
     private val _bitmapRequests = mutableMapOf<Int, SizeParams>()
     internal val bitmapRequests
@@ -130,11 +127,6 @@ internal open class FakePdfDocument(
         listener: PdfDocument.OnPdfContentInvalidatedListener
     ) {
         return
-    }
-
-    override suspend fun applyEdit(pageNum: Int, record: FormEditInfo): List<Rect> {
-        editHistory.add(record)
-        return listOf()
     }
 
     override suspend fun getPageLinks(pageNumber: Int): PdfDocument.PdfPageLinks {

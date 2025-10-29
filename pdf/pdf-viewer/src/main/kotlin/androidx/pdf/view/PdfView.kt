@@ -451,7 +451,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
          *
          * @param formEditInfo The edit to be applied to the [PdfDocument] Note: In order to
          *   correctly update the state the formEditInfo at the document the [formEditInfo] must be
-         *   applied to the document via [PdfDocument.applyEdit].
+         *   applied to the document via [androidx.pdf.annotation.EditablePdfDocument.applyEdit].
          */
         public fun onFormWidgetInfoUpdated(formEditInfo: FormEditInfo)
     }
@@ -1407,7 +1407,6 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         state.paginationModel = pageLayoutManager?.paginationModel
         state.layoutStrategy = pageLayoutManager?.layoutStrategy
         state.pdfFormFillingState = pageLayoutManager?.pdfFormFillingState
-        state.pdfFormEditInfos = pdfDocument?.formEditInfos
         state.selectionModel = selectionStateManager?.selectionModel?.value
         state.pdfFormFillingEditTextState = getFormFillingEditTextState()
 

@@ -30,7 +30,6 @@ import androidx.pdf.content.PdfPageGotoLinkContent
 import androidx.pdf.content.PdfPageImageContent
 import androidx.pdf.content.PdfPageLinkContent
 import androidx.pdf.content.PdfPageTextContent
-import androidx.pdf.models.FormEditInfo
 import androidx.pdf.models.FormWidgetInfo
 import java.io.Closeable
 import kotlinx.coroutines.CancellationException
@@ -49,9 +48,6 @@ public interface PdfDocument : Closeable {
 
     /** The type of form present in the document. */
     @get:RestrictTo(RestrictTo.Scope.LIBRARY) public val formType: Int
-
-    /** The list of [FormEditInfo]s applied to the document. */
-    @get:RestrictTo(RestrictTo.Scope.LIBRARY) public val formEditInfos: List<FormEditInfo>
 
     /**
      * Asynchronously retrieves information about the specified page.
@@ -204,25 +200,6 @@ public interface PdfDocument : Closeable {
 
     @RestrictTo(RestrictTo.Scope.LIBRARY)
     public fun removeOnPdfContentInvalidatedListener(listener: OnPdfContentInvalidatedListener)
-
-    /**
-     * Applies the changes specified by [record] to the form, and returns a list of [Rect]
-     * indicating regions of the PDF content that were affected by the mutation. It reflects the
-     * regions of the PDF which need to be re-rendered to reflect the changes.
-     *
-     * It is recommended that UI classes maintain a list of [FormEditInfo] they've applied to the
-     * document so they can be saved and restored across destructive events like low memory kills or
-     * configuration changes.
-     *
-     * @property pageNum The page number (0-based).
-     * @property record The [FormEditInfo] to apply to the form.
-     * @return A list of [Rect] indicating regions of the PDF content that were affected by the
-     *   mutation.
-     * @throws IllegalArgumentException if the provided [record] cannot be applied to the widget
-     *   indicated by the index, or if the index does not correspond to a widget on the page.
-     */
-    @RestrictTo(RestrictTo.Scope.LIBRARY)
-    public suspend fun applyEdit(pageNum: Int, record: FormEditInfo): List<Rect>
 
     /**
      * Represents information about a single page in the PDF document.
