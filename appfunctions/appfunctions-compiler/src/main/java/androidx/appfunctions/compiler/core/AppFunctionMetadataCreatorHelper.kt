@@ -55,7 +55,7 @@ import com.google.devtools.ksp.symbol.KSValueParameter
 
 /**
  * A helper class that provides methods to construct
- * [androidx.appfunctions.compiler.core.metadata.CompileTimeAppFunctionMetadata] related class.
+ * [androidx.appfunctions.compiler.core.metadata.AppFunctionMetadata] related class.
  */
 class AppFunctionMetadataCreatorHelper(
     private val sharedDataTypeDescriptionMap: Map<String, String> = mapOf()
