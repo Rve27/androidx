@@ -17,8 +17,7 @@ package androidx.room3 {
     property public final kotlin.coroutines.CoroutineContext? queryCoroutineContext;
     property public final java.util.concurrent.Executor queryExecutor;
     property public final boolean requireMigration;
-    property public final androidx.sqlite.SQLiteDriver? sqliteDriver;
-    property public final androidx.sqlite.db.SupportSQLiteOpenHelper.Factory? sqliteOpenHelperFactory;
+    property public final androidx.sqlite.SQLiteDriver sqliteDriver;
     property public final java.util.concurrent.Executor transactionExecutor;
     property public final java.util.List<java.lang.Object> typeConverters;
     field public final boolean allowDestructiveMigrationForAllTables;
@@ -35,8 +34,7 @@ package androidx.room3 {
     field public final kotlin.coroutines.CoroutineContext? queryCoroutineContext;
     field public final java.util.concurrent.Executor queryExecutor;
     field public final boolean requireMigration;
-    field public final androidx.sqlite.SQLiteDriver? sqliteDriver;
-    field public final androidx.sqlite.db.SupportSQLiteOpenHelper.Factory? sqliteOpenHelperFactory;
+    field public final androidx.sqlite.SQLiteDriver sqliteDriver;
     field public final java.util.concurrent.Executor transactionExecutor;
     field public final java.util.List<java.lang.Object> typeConverters;
   }
@@ -83,12 +81,10 @@ package androidx.room3 {
     method public void close();
     method protected abstract androidx.room3.InvalidationTracker createInvalidationTracker();
     method @InaccessibleFromKotlin public androidx.room3.InvalidationTracker getInvalidationTracker();
-    method @InaccessibleFromKotlin public androidx.sqlite.db.SupportSQLiteOpenHelper getOpenHelper();
     method @InaccessibleFromKotlin public java.util.concurrent.Executor getQueryExecutor();
     method @InaccessibleFromKotlin public java.util.concurrent.Executor getTransactionExecutor();
     method @CallSuper public void init(androidx.room3.DatabaseConfiguration configuration);
     property public androidx.room3.InvalidationTracker invalidationTracker;
-    property public androidx.sqlite.db.SupportSQLiteOpenHelper openHelper;
     property public java.util.concurrent.Executor queryExecutor;
     property public java.util.concurrent.Executor transactionExecutor;
     field public static final androidx.room3.RoomDatabase.Companion Companion;
@@ -111,7 +107,6 @@ package androidx.room3 {
     method public final androidx.room3.RoomDatabase.Builder<T> fallbackToDestructiveMigration(boolean dropAllTables);
     method public androidx.room3.RoomDatabase.Builder<T> fallbackToDestructiveMigrationFrom(boolean dropAllTables, int... startVersions);
     method public final androidx.room3.RoomDatabase.Builder<T> fallbackToDestructiveMigrationOnDowngrade(boolean dropAllTables);
-    method public androidx.room3.RoomDatabase.Builder<T> openHelperFactory(androidx.sqlite.db.SupportSQLiteOpenHelper.Factory? factory);
     method @SuppressCompatibility @androidx.room3.ExperimentalRoomApi public androidx.room3.RoomDatabase.Builder<T> setAutoCloseTimeout(@IntRange(from=0L) long autoCloseTimeout, java.util.concurrent.TimeUnit autoCloseTimeUnit);
     method public final androidx.room3.RoomDatabase.Builder<T> setDriver(androidx.sqlite.SQLiteDriver driver);
     method @SuppressCompatibility @androidx.room3.ExperimentalRoomApi public final androidx.room3.RoomDatabase.Builder<T> setInMemoryTrackingMode(boolean inMemory);

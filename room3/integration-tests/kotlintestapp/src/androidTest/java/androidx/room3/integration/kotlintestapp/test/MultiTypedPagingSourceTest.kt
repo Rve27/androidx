@@ -29,6 +29,7 @@ import androidx.room3.integration.kotlintestapp.testutil.PagingDb
 import androidx.room3.integration.kotlintestapp.testutil.PagingEntity
 import androidx.room3.integration.kotlintestapp.testutil.PagingEntityDao
 import androidx.room3.paging.LimitOffsetPagingSource
+import androidx.room3.useWriterConnection
 import androidx.sqlite.driver.AndroidSQLiteDriver
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.filters.MediumTest
@@ -448,12 +449,11 @@ class MultiTypedPagingSourceTest(
     }
 
     private fun simple_emptyStart_thenAddAnItem(preOpenDb: Boolean) {
-        if (preOpenDb) {
-            // trigger db open
-            db.openHelper.writableDatabase
-        }
-
         runTest {
+            if (preOpenDb) {
+                // trigger db open
+                db.useWriterConnection {}
+            }
             itemStore.awaitGeneration(1)
             itemStore.awaitInitialLoad()
             assertThat(itemStore.peekItems()).isEmpty()
