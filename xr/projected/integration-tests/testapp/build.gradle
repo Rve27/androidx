@@ -39,7 +39,7 @@ dependencies {
 
 android {
     compileSdk = 36
-    namespace = "androidx.xr.projected.samples.testapp"
+    namespace = "androidx.xr.projected.testapp"
 
     defaultConfig {
         minSdk = 35
