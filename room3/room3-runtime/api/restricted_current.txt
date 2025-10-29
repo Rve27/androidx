@@ -263,51 +263,6 @@ package androidx.room3 {
     property public String sql;
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class RoomSQLiteQuery implements androidx.sqlite.db.SupportSQLiteProgram androidx.sqlite.db.SupportSQLiteQuery {
-    method public static androidx.room3.RoomSQLiteQuery acquire(String query, int argumentCount);
-    method public void bindBlob(int index, byte[] value);
-    method public void bindDouble(int index, double value);
-    method public void bindLong(int index, long value);
-    method public void bindNull(int index);
-    method public void bindString(int index, String value);
-    method public void bindText(int index, String value);
-    method public void bindTo(androidx.sqlite.db.SupportSQLiteProgram statement);
-    method public void bindTo(androidx.sqlite.SQLiteStatement statement);
-    method public void clearBindings();
-    method public void close();
-    method public void copyArgumentsFrom(androidx.room3.RoomSQLiteQuery other);
-    method public static androidx.room3.RoomSQLiteQuery copyFrom(androidx.sqlite.db.SupportSQLiteQuery supportSQLiteQuery);
-    method @InaccessibleFromKotlin public int getArgCount();
-    method @InaccessibleFromKotlin public int getCapacity();
-    method @InaccessibleFromKotlin public String getSql();
-    method public void init(String query, int initArgCount);
-    method public void release();
-    method public androidx.room3.RoomRawQuery toRoomRawQuery();
-    property public int argCount;
-    property @VisibleForTesting public byte[]?[] blobBindings;
-    property public int capacity;
-    property @VisibleForTesting public double[] doubleBindings;
-    property @VisibleForTesting public long[] longBindings;
-    property public String sql;
-    property @VisibleForTesting public String?[] stringBindings;
-    field public static final androidx.room3.RoomSQLiteQuery.Companion Companion;
-    field @VisibleForTesting public static final int DESIRED_POOL_SIZE = 10; // 0xa
-    field @VisibleForTesting public static final int POOL_LIMIT = 15; // 0xf
-    field @VisibleForTesting public final byte[]?[] blobBindings;
-    field @VisibleForTesting public final double[] doubleBindings;
-    field @VisibleForTesting public final long[] longBindings;
-    field @VisibleForTesting public static final java.util.TreeMap<java.lang.Integer,androidx.room3.RoomSQLiteQuery> queryPool;
-    field @VisibleForTesting public final String?[] stringBindings;
-  }
-
-  public static final class RoomSQLiteQuery.Companion {
-    method public androidx.room3.RoomSQLiteQuery acquire(String query, int argumentCount);
-    method public androidx.room3.RoomSQLiteQuery copyFrom(androidx.sqlite.db.SupportSQLiteQuery supportSQLiteQuery);
-    property @VisibleForTesting public static int DESIRED_POOL_SIZE;
-    property @VisibleForTesting public static int POOL_LIMIT;
-    property @VisibleForTesting public java.util.TreeMap<java.lang.Integer,androidx.room3.RoomSQLiteQuery> queryPool;
-  }
-
   public interface TransactionScope<T> extends androidx.room3.PooledConnection {
     method public suspend Object? rollback(T result, kotlin.coroutines.Continuation<? extends java.lang.Object?>);
     method public suspend <R> Object? withNestedTransaction(kotlin.jvm.functions.Function2<? super androidx.room3.TransactionScope<R>,? super kotlin.coroutines.Continuation<? super R>,? extends java.lang.Object?> block, kotlin.coroutines.Continuation<? super R>);

@@ -21,11 +21,7 @@ import androidx.kruth.assertThat
 import androidx.room3.InvalidationTracker
 import androidx.room3.RoomDatabase
 import io.reactivex.rxjava3.functions.Consumer
-import io.reactivex.rxjava3.observers.TestObserver
-import io.reactivex.rxjava3.subscribers.TestSubscriber
-import java.util.concurrent.Callable
 import java.util.concurrent.TimeUnit
-import java.util.concurrent.atomic.AtomicReference
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -137,98 +133,6 @@ class RxRoomTest {
         disposable.dispose()
         observer.onInvalidated(tableSet)
         assertThat(consumer.mCount).isEqualTo(3)
-    }
-
-    @Test
-    @Suppress("DEPRECATION")
-    fun internalCallable_Flowable() {
-        val value = AtomicReference<Any>(null)
-        val tables = arrayOf("a", "b")
-        val tableSet: Set<String> = HashSet(listOf(*tables))
-        val flowable = createFlowable(mDatabase, false, tables, Callable { value.get() })
-        val consumer = CountingConsumer()
-        val disposable = flowable.subscribe(consumer)
-        drain()
-        val observer = mAddedObservers[0]
-        // no value because it is null
-        assertThat(consumer.mCount).isEqualTo(0)
-        value.set("bla")
-        observer.onInvalidated(tableSet)
-        drain()
-        // get value
-        assertThat(consumer.mCount).isEqualTo(1)
-        observer.onInvalidated(tableSet)
-        drain()
-        // get value
-        assertThat(consumer.mCount).isEqualTo(2)
-        value.set(null)
-        observer.onInvalidated(tableSet)
-        drain()
-        // no value
-        assertThat(consumer.mCount).isEqualTo(2)
-        disposable.dispose()
-    }
-
-    @Test
-    @Suppress("DEPRECATION")
-    fun internalCallable_Observable() {
-        val value = AtomicReference<Any>(null)
-        val tables = arrayOf("a", "b")
-        val tableSet: Set<String> = HashSet(listOf(*tables))
-        val flowable = createObservable(mDatabase, false, tables, Callable { value.get() })
-        val consumer = CountingConsumer()
-        val disposable = flowable.subscribe(consumer)
-        drain()
-        val observer = mAddedObservers[0]
-        // no value because it is null
-        assertThat(consumer.mCount).isEqualTo(0)
-        value.set("bla")
-        observer.onInvalidated(tableSet)
-        drain()
-        // get value
-        assertThat(consumer.mCount).isEqualTo(1)
-        observer.onInvalidated(tableSet)
-        drain()
-        // get value
-        assertThat(consumer.mCount).isEqualTo(2)
-        value.set(null)
-        observer.onInvalidated(tableSet)
-        drain()
-        // no value
-        assertThat(consumer.mCount).isEqualTo(2)
-        disposable.dispose()
-    }
-
-    @Test
-    @Suppress("DEPRECATION")
-    fun exception_Flowable() {
-        val flowable =
-            createFlowable<String>(
-                mDatabase,
-                false,
-                arrayOf("a"),
-                Callable { throw Exception("i want exception") },
-            )
-        val subscriber = TestSubscriber<String>()
-        flowable.subscribe(subscriber)
-        drain()
-        subscriber.assertError { throwable: Throwable -> throwable.message == "i want exception" }
-    }
-
-    @Test
-    @Suppress("DEPRECATION")
-    fun exception_Observable() {
-        val flowable =
-            createObservable<String>(
-                mDatabase,
-                false,
-                arrayOf("a"),
-                Callable { throw Exception("i want exception") },
-            )
-        val observer = TestObserver<String>()
-        flowable.subscribe(observer)
-        drain()
-        observer.assertError { throwable: Throwable -> throwable.message == "i want exception" }
     }
 
     @Throws(Exception::class)
