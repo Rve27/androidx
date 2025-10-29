@@ -124,11 +124,8 @@ package androidx.room3 {
 
   public abstract static class RoomDatabase.Callback {
     ctor public RoomDatabase.Callback();
-    method public void onCreate(androidx.sqlite.db.SupportSQLiteDatabase db);
     method public void onCreate(androidx.sqlite.SQLiteConnection connection);
-    method public void onDestructiveMigration(androidx.sqlite.db.SupportSQLiteDatabase db);
     method public void onDestructiveMigration(androidx.sqlite.SQLiteConnection connection);
-    method public void onOpen(androidx.sqlite.db.SupportSQLiteDatabase db);
     method public void onOpen(androidx.sqlite.SQLiteConnection connection);
   }
 
@@ -152,8 +149,7 @@ package androidx.room3 {
 
   public abstract static class RoomDatabase.PrepackagedDatabaseCallback {
     ctor public RoomDatabase.PrepackagedDatabaseCallback();
-    method public void onOpenPrepackagedDatabase(androidx.sqlite.db.SupportSQLiteDatabase db);
-    method public void onOpenPrepackagedDatabase(androidx.sqlite.SQLiteConnection connection);
+    method public abstract void onOpenPrepackagedDatabase(androidx.sqlite.SQLiteConnection connection);
   }
 
   public interface RoomDatabaseConstructor<T extends androidx.room3.RoomDatabase> {
@@ -217,14 +213,12 @@ package androidx.room3.concurrent {
 package androidx.room3.migration {
 
   public interface AutoMigrationSpec {
-    method public default void onPostMigrate(androidx.sqlite.db.SupportSQLiteDatabase db);
     method public default void onPostMigrate(androidx.sqlite.SQLiteConnection connection);
   }
 
   public abstract class Migration {
     ctor public Migration(int startVersion, int endVersion);
-    method public void migrate(androidx.sqlite.db.SupportSQLiteDatabase db);
-    method public void migrate(androidx.sqlite.SQLiteConnection connection);
+    method public abstract void migrate(androidx.sqlite.SQLiteConnection connection);
     property public final int endVersion;
     property public final int startVersion;
     field public final int endVersion;
@@ -232,7 +226,7 @@ package androidx.room3.migration {
   }
 
   public final class MigrationKt {
-    method public static androidx.room3.migration.Migration Migration(int startVersion, int endVersion, kotlin.jvm.functions.Function1<? super androidx.sqlite.db.SupportSQLiteDatabase,kotlin.Unit> migrate);
+    method public static androidx.room3.migration.Migration Migration(int startVersion, int endVersion, kotlin.jvm.functions.Function1<? super androidx.sqlite.SQLiteConnection,kotlin.Unit> migrate);
   }
 
 }
