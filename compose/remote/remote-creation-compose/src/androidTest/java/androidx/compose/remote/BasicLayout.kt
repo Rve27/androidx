@@ -39,6 +39,7 @@ import androidx.compose.remote.creation.compose.layout.RemoteCanvas
 import androidx.compose.remote.creation.compose.layout.RemoteColumn
 import androidx.compose.remote.creation.compose.layout.RemoteComposable
 import androidx.compose.remote.creation.compose.layout.RemoteContext
+import androidx.compose.remote.creation.compose.layout.RemoteOffset
 import androidx.compose.remote.creation.compose.layout.RemoteRow
 import androidx.compose.remote.creation.compose.layout.RemoteText
 import androidx.compose.remote.creation.compose.layout.StateLayout
@@ -1133,7 +1134,7 @@ ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
         val iconSizePx = with(LocalDensity.current) { size.toPx() }
         val scale = iconSizePx / 24f
         RemoteCanvas(modifier = RemoteModifier.size(size)) {
-            scale(scale, pivot = Offset.Zero) {
+            scale(scale, pivot = RemoteOffset.Zero) {
                 // Suppressed because of https://buganizer.corp.google.com/issues/375131944
                 @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
                 with(painter.vector.root) { this@RemoteCanvas.drawScope.draw() }

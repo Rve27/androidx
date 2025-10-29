@@ -289,6 +289,7 @@ private fun RemoteDrawWithContentScope.drawShapedBackground(
 
     when (shape) {
         is RoundedCornerShape -> {
+            @Suppress("DEPRECATION")
             canvas.drawRoundRect(
                 0f,
                 0f,
@@ -299,6 +300,7 @@ private fun RemoteDrawWithContentScope.drawShapedBackground(
                 paint,
             )
             if (borderPaint != null) {
+                @Suppress("DEPRECATION")
                 canvas.drawRoundRect(
                     paint.strokeWidth,
                     paint.strokeWidth,
@@ -311,8 +313,9 @@ private fun RemoteDrawWithContentScope.drawShapedBackground(
             }
         }
         is CircleShape -> {
-            canvas.drawCircle(0f, 0f, size.maxDimension / 2f, paint)
+            @Suppress("DEPRECATION") canvas.drawCircle(0f, 0f, size.maxDimension / 2f, paint)
             if (borderPaint != null) {
+                @Suppress("DEPRECATION")
                 canvas.drawCircle(0f, 0f, size.maxDimension / 2f, borderPaint)
             }
         }
