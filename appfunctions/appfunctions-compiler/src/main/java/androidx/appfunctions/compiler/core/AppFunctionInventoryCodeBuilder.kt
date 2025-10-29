@@ -104,7 +104,6 @@ class AppFunctionInventoryCodeBuilder(private val inventoryClassBuilder: TypeSpe
                 .addModifiers(KModifier.PUBLIC)
                 .initializer(
                     buildCodeBlock {
-                        // TODO(b/454661174): Include deprecated data
                         addStatement(
                             """
                             %T(
