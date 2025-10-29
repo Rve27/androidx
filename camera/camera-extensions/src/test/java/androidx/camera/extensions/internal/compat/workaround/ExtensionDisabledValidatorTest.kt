@@ -32,7 +32,10 @@ import org.robolectric.util.ReflectionHelpers
 
 @RunWith(ParameterizedRobolectricTestRunner::class)
 @DoNotInstrument
-@Config(instrumentedPackages = arrayOf("androidx.camera.extensions.internal"))
+@Config(
+    minSdk = Build.VERSION_CODES.LOLLIPOP,
+    instrumentedPackages = arrayOf("androidx.camera.extensions.internal"),
+)
 class ExtensionDisabledValidatorTest(private val config: TestConfig) {
 
     @Before
