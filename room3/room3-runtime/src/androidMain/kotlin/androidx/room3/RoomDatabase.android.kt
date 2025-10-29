@@ -22,8 +22,6 @@ import android.annotation.SuppressLint
 import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
-import android.database.Cursor
-import android.os.CancellationSignal
 import android.os.Looper
 import android.util.Log
 import androidx.annotation.CallSuper
@@ -49,10 +47,8 @@ import androidx.room3.util.findMigrationPath as findMigrationPathExt
 import androidx.room3.util.performBlocking
 import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.SQLiteDriver
-import androidx.sqlite.db.SimpleSQLiteQuery
 import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.sqlite.db.SupportSQLiteOpenHelper
-import androidx.sqlite.db.SupportSQLiteQuery
 import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
 import androidx.sqlite.driver.SupportSQLiteConnection
 import java.io.File
@@ -519,38 +515,6 @@ actual constructor() {
     // Below, there are wrapper methods for SupportSQLiteDatabase. This helps us track which
     // methods we are using and also helps unit tests to mock this class without mocking
     // all SQLite database methods.
-    /**
-     * Convenience method to query the database with arguments.
-     *
-     * @param query The sql query
-     * @param args The bind arguments for the placeholders in the query
-     * @return A Cursor obtained by running the given query in the Room database.
-     * @throws IllegalStateException If a [SQLiteDriver] is configured with this database.
-     */
-    public open fun query(query: String, args: Array<out Any?>?): Cursor {
-        assertNotMainThread()
-        assertNotSuspendingTransaction()
-        return openHelper.writableDatabase.query(SimpleSQLiteQuery(query, args))
-    }
-
-    /**
-     * Wrapper for [SupportSQLiteDatabase.query].
-     *
-     * @param query The Query which includes the SQL and a bind callback for bind arguments.
-     * @param signal The cancellation signal to be attached to the query.
-     * @return Result of the query.
-     * @throws IllegalStateException If a [SQLiteDriver] is configured with this database.
-     */
-    @JvmOverloads
-    public open fun query(query: SupportSQLiteQuery, signal: CancellationSignal? = null): Cursor {
-        assertNotMainThread()
-        assertNotSuspendingTransaction()
-        return if (signal != null) {
-            openHelper.writableDatabase.query(query, signal)
-        } else {
-            openHelper.writableDatabase.query(query)
-        }
-    }
 
     /**
      * Wrapper for [SupportSQLiteDatabase.beginTransaction].
