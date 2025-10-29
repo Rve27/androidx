@@ -46,9 +46,7 @@ import androidx.room3.util.findAndInstantiateDatabaseImpl
 import androidx.room3.util.findMigrationPath as findMigrationPathExt
 import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.SQLiteDriver
-import androidx.sqlite.db.SupportSQLiteDatabase
-import androidx.sqlite.db.SupportSQLiteOpenHelper
-import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
+import androidx.sqlite.driver.AndroidSQLiteDriver
 import java.io.File
 import java.io.InputStream
 import java.util.TreeMap
@@ -63,7 +61,6 @@ import kotlin.coroutines.resume
 import kotlin.reflect.KClass
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.asContextElement
@@ -108,20 +105,6 @@ actual constructor() {
         get() = internalTransactionExecutor
 
     private lateinit var internalTransactionExecutor: Executor
-
-    /**
-     * The SQLite open helper used by this database.
-     *
-     * @throws IllegalStateException If a [SQLiteDriver] is configured with this database.
-     */
-    // TODO(b/408062492): @Deprecate with replace to wrapper
-    public open val openHelper: SupportSQLiteOpenHelper
-        get() =
-            connectionManager.supportOpenHelper
-                ?: error(
-                    "Cannot return a SupportSQLiteOpenHelper since no " +
-                        "SupportSQLiteOpenHelper.Factory was configured with Room."
-                )
 
     private lateinit var connectionManager: RoomConnectionManager
 
@@ -228,17 +211,7 @@ actual constructor() {
             val parentJob = configuration.queryCoroutineContext[Job]
             coroutineScope =
                 CoroutineScope(configuration.queryCoroutineContext + SupervisorJob(parentJob))
-            transactionContext =
-                if (inCompatibilityMode()) {
-                    // To prevent starvation due to primary connection blocking in
-                    // SupportSQLiteDatabase a limited dispatcher is used for transactions.
-                    @OptIn(ExperimentalCoroutinesApi::class) // For limitedParallelism(1)
-                    coroutineScope.coroutineContext + dispatcher.limitedParallelism(1)
-                } else {
-                    // When a SQLiteDriver is provided a suspending connection pool is used and
-                    // there is no reason to limit parallelism.
-                    coroutineScope.coroutineContext
-                }
+            transactionContext = coroutineScope.coroutineContext
         } else {
             internalQueryExecutor = configuration.queryExecutor
             internalTransactionExecutor = TransactionExecutor(configuration.transactionExecutor)
@@ -270,9 +243,6 @@ actual constructor() {
         configuration: DatabaseConfiguration,
         databaseVersion: Int,
     ): DatabaseConfiguration {
-        if (configuration.sqliteDriver == null) {
-            return configuration
-        }
         // The order of wrapping is significant, the last wrap being the outer-most and first to be
         // invoked by the connection manager, while the first one being the inner-most, being the
         // last to be invoked.
@@ -417,7 +387,6 @@ actual constructor() {
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     protected fun performClear(hasForeignKeys: Boolean, vararg tableNames: String) {
         assertNotMainThread()
-        assertNotSuspendingTransaction()
         runBlockingUninterruptible {
             connectionManager.useConnection(isReadOnly = false) { connection ->
                 if (!connection.inTransaction()) {
@@ -440,9 +409,7 @@ actual constructor() {
 
     /** True if the actual database connection is open, regardless of auto-close. */
     internal val isOpenInternal: Boolean
-        get() =
-            autoCloser?.isOpen()
-                ?: if (inCompatibilityMode()) openHelper.writableDatabase.isOpen else false
+        get() = autoCloser?.isOpen() ?: true
 
     /**
      * Closes the database.
@@ -475,15 +442,6 @@ actual constructor() {
         }
     }
 
-    /** Asserts that we are not on a suspending transaction. */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) // used in generated code
-    public open fun assertNotSuspendingTransaction() {
-        check(!inCompatibilityMode() || !isThreadInSuspendingTransaction) {
-            "Cannot access database on a different coroutine" +
-                " context inherited from a suspending transaction."
-        }
-    }
-
     /**
      * Use a connection to perform database operations.
      *
@@ -498,17 +456,6 @@ actual constructor() {
     ): R {
         return connectionManager.useConnection(isReadOnly, block)
     }
-
-    /**
-     * Return true if this database is operating in compatibility mode, otherwise false.
-     *
-     * Room is considered in compatibility mode in Android when no [SQLiteDriver] was provided and
-     * [androidx.sqlite.db] APIs are used instead (SupportSQLite*).
-     *
-     * @see RoomConnectionManager
-     */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    public fun inCompatibilityMode(): Boolean = connectionManager.supportOpenHelper != null
 
     /**
      * Initialize invalidation tracker. Note that this method is called when the [RoomDatabase] is
@@ -605,13 +552,10 @@ actual constructor() {
 
         private val callbacks: MutableList<Callback> = mutableListOf()
         private var prepackagedDatabaseCallback: PrepackagedDatabaseCallback? = null
-        private var queryCallbackExecutor: Executor? = null
-        private var queryCallbackCoroutineContext: CoroutineContext? = null
         private val typeConverters: MutableList<Any> = mutableListOf()
         private var queryExecutor: Executor? = null
         private var transactionExecutor: Executor? = null
 
-        private var supportOpenHelperFactory: SupportSQLiteOpenHelper.Factory? = null
         private var allowMainThreadQueries = false
         private var journalMode: JournalMode = JournalMode.AUTOMATIC
         private var multiInstanceInvalidationIntent: Intent? = null
@@ -816,17 +760,6 @@ actual constructor() {
             this.prepackagedDatabaseCallback = callback
             this.copyFromInputStream = inputStreamCallable
         }
-
-        /**
-         * Sets the database factory. If not set, it defaults to [FrameworkSQLiteOpenHelperFactory].
-         *
-         * @param factory The factory to use to access the database.
-         * @return This builder instance.
-         */
-        public open fun openHelperFactory(factory: SupportSQLiteOpenHelper.Factory?): Builder<T> =
-            apply {
-                this.supportOpenHelperFactory = factory
-            }
 
         /**
          * Adds a migration to the builder.
@@ -1135,10 +1068,9 @@ actual constructor() {
          *
          * The auto-closing database operation runs on the query executor.
          *
-         * The database will not be re-opened if the RoomDatabase or the SupportSqliteOpenHelper is
-         * closed manually (by calling [RoomDatabase.close] or [SupportSQLiteOpenHelper.close]. If
-         * the database is closed manually, you must create a new database using
-         * [RoomDatabase.Builder.build].
+         * The database will not be re-opened if the RoomDatabase is closed manually (by calling
+         * [RoomDatabase.close]). If the database is closed manually, you must create a new database
+         * using [RoomDatabase.Builder.build].
          *
          * @param autoCloseTimeout the amount of time after the last usage before closing the
          *   database. Must greater or equal to zero.
@@ -1160,11 +1092,6 @@ actual constructor() {
          * Sets the [SQLiteDriver] implementation to be used by Room to open database connections.
          * For example, an instance of [androidx.sqlite.driver.AndroidSQLiteDriver] or
          * [androidx.sqlite.driver.bundled.BundledSQLiteDriver].
-         *
-         * Once a driver is configured using this function, various callbacks that receive a
-         * [SupportSQLiteDatabase] will not be invoked, such as [RoomDatabase.Callback.onCreate].
-         * Moreover, APIs that use SupportSQLite will also throw an exception, such as
-         * [RoomDatabase.openHelper].
          *
          * See the documentation on
          * [Migrating to SQLite Driver](https://d.android.com/training/data-storage/room/room-kmp-migration#migrate_from_support_sqlite_to_sqlite_driver)
@@ -1245,23 +1172,10 @@ actual constructor() {
 
             validateMigrationsNotRequired(migrationStartAndEndVersions, migrationsNotRequiredFrom)
 
-            val openHelperFactory: SupportSQLiteOpenHelper.Factory? =
-                if (driver == null && supportOpenHelperFactory == null) {
-                    // No driver and no factory, compatibility mode, create the default factory
-                    FrameworkSQLiteOpenHelperFactory()
-                } else if (driver == null) {
-                    // No driver but a factory was provided, use it in compatibility mode
-                    supportOpenHelperFactory
-                } else if (supportOpenHelperFactory == null) {
-                    // A driver was provided, no need to create the default factory
-                    null
-                } else {
-                    // Both driver and factory provided, invalid configuration.
-                    throw IllegalArgumentException(
-                        "A RoomDatabase cannot be configured with both a SQLiteDriver and a " +
-                            "SupportOpenHelper.Factory."
-                    )
-                }
+            if (driver == null) {
+                // No driver, use default one for Android
+                driver = AndroidSQLiteDriver()
+            }
             val autoCloseConfig =
                 if (autoCloseTimeout > 0) {
                     AutoCloserConfig(autoCloseTimeout, requireNotNull(autoCloseTimeUnit))
@@ -1296,7 +1210,6 @@ actual constructor() {
                 DatabaseConfiguration(
                         context = context,
                         name = name,
-                        sqliteOpenHelperFactory = openHelperFactory,
                         migrationContainer = migrationContainer,
                         callbacks = callbacks,
                         allowMainThreadQueries = allowMainThreadQueries,
@@ -1312,7 +1225,7 @@ actual constructor() {
                         autoMigrationSpecs = autoMigrationSpecs,
                         allowDestructiveMigrationForAllTables =
                             allowDestructiveMigrationForAllTables,
-                        sqliteDriver = driver,
+                        sqliteDriver = requireNotNull(driver),
                         queryCoroutineContext = queryCoroutineContext,
                     )
                     .apply {
