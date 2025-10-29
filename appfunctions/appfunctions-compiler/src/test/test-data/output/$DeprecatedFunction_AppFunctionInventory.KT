@@ -3,7 +3,6 @@ package com.testdata
 import androidx.appfunctions.`internal`.AppFunctionInventory
 import androidx.appfunctions.metadata.AppFunctionComponentsMetadata
 import androidx.appfunctions.metadata.AppFunctionDataTypeMetadata
-import androidx.appfunctions.metadata.AppFunctionDeprecationMetadata
 import androidx.appfunctions.metadata.AppFunctionParameterMetadata
 import androidx.appfunctions.metadata.AppFunctionResponseMetadata
 import androidx.appfunctions.metadata.AppFunctionSchemaMetadata
@@ -48,9 +47,6 @@ public class `$DeprecatedFunction_AppFunctionInventory` : AppFunctionInventory {
             description = ""
         )
 
-    private val DEPRECATION_METADATA: AppFunctionDeprecationMetadata? =
-        AppFunctionDeprecationMetadata(message= "Deprecated Message")
-
     public val APP_FUNCTION_METADATA: CompileTimeAppFunctionMetadata =
         CompileTimeAppFunctionMetadata(
             id = "com.testdata.DeprecatedFunction#deprecatedFunction",
@@ -58,7 +54,6 @@ public class `$DeprecatedFunction_AppFunctionInventory` : AppFunctionInventory {
             schema =  SCHEMA_METADATA,
             parameters = PARAMETER_METADATA_LIST,
             response = RESPONSE_METADATA,
-            deprecation = DEPRECATION_METADATA,
         )
   }
 }
