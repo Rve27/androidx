@@ -34,7 +34,6 @@ import org.junit.Assert.assertThrows
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
-import org.robolectric.annotation.Config
 import org.robolectric.annotation.internal.DoNotInstrument
 
 private const val CAMERA_ID_0 = "0"
@@ -42,7 +41,6 @@ private const val CAMERA_ID_0 = "0"
 @RunWith(RobolectricTestRunner::class)
 @DoNotInstrument
 @Suppress("DEPRECATION")
-@Config(sdk = [Config.ALL_SDKS])
 class QualitySelectorTest {
 
     private val cameraInfo0 =

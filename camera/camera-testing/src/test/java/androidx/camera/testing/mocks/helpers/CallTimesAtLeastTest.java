@@ -22,9 +22,7 @@ import static org.junit.Assert.assertTrue;
 import androidx.camera.testing.impl.mocks.helpers.CallTimesAtLeast;
 
 import org.junit.Test;
-import org.robolectric.annotation.Config;
 
-@Config(sdk = {Config.ALL_SDKS})
 public class CallTimesAtLeastTest {
     private final CallTimesAtLeast mCallTimes = new CallTimesAtLeast(5);
 

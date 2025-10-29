@@ -23,9 +23,7 @@ import static org.junit.Assert.assertTrue;
 import androidx.camera.testing.impl.mocks.helpers.CallTimes;
 
 import org.junit.Test;
-import org.robolectric.annotation.Config;
 
-@Config(sdk = {Config.ALL_SDKS})
 public class CallTimesTest {
     private final CallTimes mCallTimes = new CallTimes(5);
 

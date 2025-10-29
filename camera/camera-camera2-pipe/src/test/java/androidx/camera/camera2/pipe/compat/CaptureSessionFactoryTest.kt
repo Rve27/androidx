@@ -62,10 +62,8 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.kotlin.mock
 import org.robolectric.Shadows
-import org.robolectric.annotation.Config
 
 @RunWith(RobolectricCameraPipeTestRunner::class)
-@Config(sdk = [Config.ALL_SDKS])
 internal class CaptureSessionFactoryTest {
     private val context = ApplicationProvider.getApplicationContext() as Context
     private val mainLooper = Shadows.shadowOf(Looper.getMainLooper())

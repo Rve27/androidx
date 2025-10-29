@@ -58,12 +58,10 @@ import com.google.common.truth.Truth.assertWithMessage
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
-import org.robolectric.annotation.Config
 import org.robolectric.annotation.internal.DoNotInstrument
 
 @RunWith(RobolectricTestRunner::class)
 @DoNotInstrument
-@Config(sdk = [Config.ALL_SDKS])
 class QualityExploredEncoderProfilesProviderTest {
 
     private val allQualities = Quality.getSortedQualities()

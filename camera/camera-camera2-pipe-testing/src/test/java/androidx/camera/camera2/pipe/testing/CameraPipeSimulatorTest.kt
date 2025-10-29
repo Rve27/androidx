@@ -34,7 +34,6 @@ import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
 
 @RunWith(RobolectricCameraPipeTestRunner::class)
-@Config(sdk = [Config.ALL_SDKS])
 class CameraPipeSimulatorTest {
     private val testScope = TestScope()
     private val backCameraMetadata =

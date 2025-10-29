@@ -27,10 +27,8 @@ import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.robolectric.annotation.Config
 
 @RunWith(RobolectricCameraPipeTestRunner::class)
-@Config(sdk = [Config.ALL_SDKS])
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class Result3AStateListenerImplTest {
     @Test
