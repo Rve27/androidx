@@ -136,9 +136,6 @@ actual constructor(
         implementation.syncTriggers()
     }
 
-    // TODO(b/309990302): Needed for compatibility with internalBeginTransaction(), not great.
-    @WorkerThread internal fun syncBlocking(): Unit = runBlockingUninterruptible { sync() }
-
     /**
      * Refresh subscribed [Observer]s and [Flow]s asynchronously, invoking [Observer.onInvalidated]
      * on those whose tables have been invalidated.
@@ -309,30 +306,6 @@ actual constructor(
 
     private fun getAllObservers() = observerMapLock.withLock { observerMap.keys.toList() }
 
-    /**
-     * Enqueues a task to refresh the list of updated tables.
-     *
-     * This method is automatically called when [RoomDatabase.endTransaction] is called but if you
-     * have another connection to the database or directly use
-     * [androidx.sqlite.db.SupportSQLiteDatabase], you may need to call this manually.
-     *
-     * @see refreshAsync
-     */
-    public open fun refreshVersionsAsync() {
-        implementation.refreshInvalidationAsync(onRefreshScheduled, onRefreshCompleted)
-    }
-
-    /**
-     * Check versions for tables, and run observers synchronously if tables have been updated.
-     *
-     * @see refresh
-     */
-    @WorkerThread
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) // used in generated code
-    public open fun refreshVersionsSync(): Unit = runBlockingUninterruptible {
-        implementation.refreshInvalidation(emptyArray(), onRefreshScheduled, onRefreshCompleted)
-    }
-
     private fun notifyInvalidatedObservers(tableIds: Set<Int>) {
         observerMapLock
             .withLock { observerMap.values.toList() }
@@ -438,9 +411,6 @@ actual constructor(
         internal open val isRemote: Boolean
             get() = false
     }
-
-    // Kept for binary compatibility even if empty. :(
-    public companion object
 }
 
 /**
