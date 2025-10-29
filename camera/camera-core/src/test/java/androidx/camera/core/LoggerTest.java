@@ -37,7 +37,6 @@ import java.util.List;
 
 @RunWith(ParameterizedRobolectricTestRunner.class)
 @DoNotInstrument
-@Config(sdk = {Config.ALL_SDKS})
 public class LoggerTest {
 
     private static final String TAG = "LoggerTestTag";

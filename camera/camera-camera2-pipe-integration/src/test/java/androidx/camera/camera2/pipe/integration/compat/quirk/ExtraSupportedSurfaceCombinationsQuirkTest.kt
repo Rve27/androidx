@@ -29,7 +29,6 @@ import org.robolectric.util.ReflectionHelpers
 
 @RunWith(ParameterizedRobolectricTestRunner::class)
 @DoNotInstrument
-@Config(sdk = [Config.ALL_SDKS])
 class ExtraSupportedSurfaceCombinationsQuirkTest(private val config: Config) {
 
     @Test

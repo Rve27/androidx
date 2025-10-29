@@ -51,12 +51,10 @@ import kotlinx.coroutines.test.TestScope
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.kotlin.mock
-import org.robolectric.annotation.Config
 import org.robolectric.annotation.internal.DoNotInstrument
 
 @RunWith(RobolectricCameraPipeTestRunner::class)
 @DoNotInstrument
-@Config(sdk = [Config.ALL_SDKS])
 internal class StreamGraphImplTest {
     private val testScope = TestScope()
 

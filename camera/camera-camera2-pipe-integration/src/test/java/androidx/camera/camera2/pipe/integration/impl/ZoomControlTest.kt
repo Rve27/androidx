@@ -39,11 +39,9 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.robolectric.annotation.Config
 import org.robolectric.annotation.internal.DoNotInstrument
 
 @RunWith(RobolectricCameraPipeTestRunner::class)
-@Config(sdk = [Config.ALL_SDKS])
 @DoNotInstrument
 class ZoomControlTest {
     @get:Rule

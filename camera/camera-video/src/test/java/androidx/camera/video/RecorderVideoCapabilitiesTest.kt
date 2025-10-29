@@ -75,7 +75,6 @@ import org.junit.Assume.assumeTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.ParameterizedRobolectricTestRunner
-import org.robolectric.annotation.Config
 import org.robolectric.annotation.internal.DoNotInstrument
 
 private val UNSPECIFIED_8_BIT = DynamicRange(ENCODING_UNSPECIFIED, BIT_DEPTH_8_BIT)
@@ -85,7 +84,6 @@ private val DOLBY_VISION_UNSPECIFIED = DynamicRange(ENCODING_DOLBY_VISION, BIT_D
 
 @RunWith(ParameterizedRobolectricTestRunner::class)
 @DoNotInstrument
-@Config(sdk = [Config.ALL_SDKS])
 class RecorderVideoCapabilitiesTest(private val videoCaptureType: Int) {
 
     companion object {

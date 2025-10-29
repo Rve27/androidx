@@ -151,7 +151,6 @@ import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows.shadowOf
-import org.robolectric.annotation.Config
 import org.robolectric.annotation.internal.DoNotInstrument
 import org.robolectric.shadows.ShadowLog
 
@@ -160,7 +159,6 @@ private const val CAMERA_ID_0 = "0"
 
 @RunWith(RobolectricTestRunner::class)
 @DoNotInstrument
-@Config(sdk = [Config.ALL_SDKS])
 class VideoCaptureTest {
 
     private val context: Context = ApplicationProvider.getApplicationContext()

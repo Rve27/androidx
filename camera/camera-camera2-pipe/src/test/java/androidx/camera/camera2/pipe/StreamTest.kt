@@ -24,7 +24,6 @@ import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
 
 @RunWith(RobolectricCameraPipeTestRunner::class)
-@Config(sdk = [Config.ALL_SDKS])
 internal class StreamTest {
     private val streamConfig1 =
         CameraStream.Config.create(size = Size(640, 480), format = StreamFormat.YUV_420_888)

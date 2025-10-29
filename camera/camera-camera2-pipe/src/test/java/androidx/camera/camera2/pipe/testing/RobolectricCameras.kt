@@ -37,7 +37,6 @@ import org.junit.After
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Shadows.shadowOf
-import org.robolectric.annotation.Config
 import org.robolectric.shadow.api.Shadow
 import org.robolectric.shadows.ShadowApplication
 import org.robolectric.shadows.ShadowCameraCharacteristics
@@ -161,7 +160,6 @@ public object RobolectricCameras {
 }
 
 @RunWith(RobolectricCameraPipeTestRunner::class)
-@Config(sdk = [Config.ALL_SDKS])
 class RobolectricCamerasTest {
     private val mainLooper = shadowOf(Looper.getMainLooper())
 
