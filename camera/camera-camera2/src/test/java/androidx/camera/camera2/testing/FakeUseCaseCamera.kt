@@ -84,7 +84,6 @@ class FakeUseCaseCameraComponentBuilder : UseCaseCameraComponent.Builder {
 class FakeUseCaseCameraComponent() : UseCaseCameraComponent {
     private val fakeUseCaseCamera = FakeUseCaseCamera()
     private val cameraGraph = FakeCameraGraph()
-    private val cameraStateAdapter = CameraStateAdapter()
 
     override fun getUseCaseCamera(): UseCaseCamera {
         return fakeUseCaseCamera
@@ -112,17 +111,26 @@ open class FakeUseCaseCameraRequestControl(
     //  UseCaseCameraRequestControl
 
     override fun setParametersAsync(
-        type: UseCaseCameraRequestControl.Type,
         values: Map<CaptureRequest.Key<*>, Any>,
+        type: UseCaseCameraRequestControl.Type,
         optionPriority: Config.OptionPriority,
     ): Deferred<Unit> {
         addParameterCalls.add(values)
         return addParameterResult
     }
 
-    override fun removeParametersAsync(
+    override fun setParametersAsync(
+        valuesFactory: () -> Map<CaptureRequest.Key<*>, Any>,
         type: UseCaseCameraRequestControl.Type,
+        optionPriority: Config.OptionPriority,
+    ): Deferred<Unit> {
+        addParameterCalls.add(valuesFactory())
+        return addParameterResult
+    }
+
+    override fun removeParametersAsync(
         keys: List<CaptureRequest.Key<*>>,
+        type: UseCaseCameraRequestControl.Type,
     ): Deferred<Unit> {
         removeParameterCalls.addAll(keys)
         return removeParameterResult
