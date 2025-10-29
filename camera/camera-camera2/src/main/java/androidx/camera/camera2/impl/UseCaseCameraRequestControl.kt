@@ -90,8 +90,30 @@ public interface UseCaseCameraRequestControl {
      */
     @AnyThread
     public fun setParametersAsync(
+        values: Map<CaptureRequest.Key<*>, Any>,
         type: Type = Type.DEFAULT,
-        values: Map<CaptureRequest.Key<*>, Any> = emptyMap(),
+        optionPriority: Config.OptionPriority = defaultOptionPriority,
+    ): Deferred<Unit>
+
+    /**
+     * Asynchronously sets parameters for the repeating capture request by invoking a factory
+     * function.
+     *
+     * This overload is an optimization. The provided [valuesFactory] lambda will be invoked on the
+     * internal camera executor, not on the calling thread. This allows the caller to avoid
+     * expensive map creation or computation on their current thread, which is especially useful
+     * when calling from within a `synchronized` block.
+     *
+     * @param valuesFactory A lambda function that produces the parameter map. This will be executed
+     *   on the camera executor thread.
+     * @param type The [Type] of the parameters to set.
+     * @param optionPriority The priority of these options.
+     * @return A [Deferred] that completes when the parameters have been submitted.
+     */
+    @AnyThread
+    public fun setParametersAsync(
+        valuesFactory: () -> Map<CaptureRequest.Key<*>, Any>,
+        type: Type = Type.DEFAULT,
         optionPriority: Config.OptionPriority = defaultOptionPriority,
     ): Deferred<Unit>
 
@@ -104,13 +126,13 @@ public interface UseCaseCameraRequestControl {
      * This method doesn't clear the parameters with the specified [CaptureRequest.Key] if the
      * parameters with the same keys are set by other controls.
      *
-     * @param type The category of parameters being set (default: [Type.DEFAULT]).
      * @param keys A list of [CaptureRequest.Key] to be removed.
+     * @param type The category of parameters being set (default: [Type.DEFAULT]).
      * @return A [Deferred] object representing the asynchronous operation.
      */
     public fun removeParametersAsync(
+        keys: List<CaptureRequest.Key<*>>,
         type: Type = Type.DEFAULT,
-        keys: List<CaptureRequest.Key<*>> = emptyList(),
     ): Deferred<Unit>
 
     /**
@@ -137,7 +159,7 @@ public interface UseCaseCameraRequestControl {
     @AnyThread
     public fun setConfigAsync(
         type: Type,
-        config: Config? = null,
+        config: Config?,
         tags: Map<String, Any> = emptyMap(),
         streams: Set<StreamId>? = null,
         template: RequestTemplate? = null,
@@ -262,40 +284,96 @@ constructor(
         var template: RequestTemplate? = null,
     )
 
+    /**
+     * Creates a new [InfoBundle] by copying the current one and adding new parameters to its
+     * options.
+     */
+    private fun InfoBundle.withParameters(
+        values: Map<CaptureRequest.Key<*>, Any>,
+        optionPriority: Config.OptionPriority,
+    ): InfoBundle {
+        val newOptionsBuilder =
+            Camera2ImplConfig.Builder().apply {
+                insertAllOptions(this@withParameters.options.mutableConfig)
+
+                addAllCaptureRequestOptionsWithPriority(values, optionPriority)
+            }
+
+        return this.copy(
+            options = newOptionsBuilder,
+            tags = this.tags.toMutableMap(),
+            listeners = this.listeners.toMutableSet(),
+        )
+    }
+
+    /**
+     * Creates a new [InfoBundle] by copying the current one and removing specified parameters from
+     * its options.
+     */
+    private fun InfoBundle.withoutParameters(keys: List<CaptureRequest.Key<*>>): InfoBundle {
+        val newOptionsBuilder =
+            Camera2ImplConfig.Builder().apply {
+                insertAllOptions(this@withoutParameters.options.mutableConfig)
+                removeCaptureRequestOptions(keys)
+            }
+
+        return this.copy(
+            options = newOptionsBuilder,
+            tags = this.tags.toMutableMap(),
+            listeners = this.listeners.toMutableSet(),
+        )
+    }
+
     private val infoBundleMap = mutableMapOf<UseCaseCameraRequestControl.Type, InfoBundle>()
 
     override fun setParametersAsync(
+        values: Map<CaptureRequest.Key<*>, Any>,
+        type: UseCaseCameraRequestControl.Type,
+        optionPriority: Config.OptionPriority,
+    ): Deferred<Unit> {
+        return runIfNotClosed {
+            threads.confineDeferredSuspend { setParametersInternal(type, values, optionPriority) }
+        } ?: canceledResult
+    }
+
+    override fun setParametersAsync(
+        valuesFactory: () -> Map<CaptureRequest.Key<*>, Any>,
+        type: UseCaseCameraRequestControl.Type,
+        optionPriority: Config.OptionPriority,
+    ): Deferred<Unit> {
+        return runIfNotClosed {
+            threads.confineDeferredSuspend {
+                val values = valuesFactory()
+                setParametersInternal(type, values, optionPriority)
+            }
+        } ?: canceledResult
+    }
+
+    private suspend fun setParametersInternal(
         type: UseCaseCameraRequestControl.Type,
         values: Map<CaptureRequest.Key<*>, Any>,
         optionPriority: Config.OptionPriority,
-    ): Deferred<Unit> =
-        runIfNotClosed {
-            threads.confineDeferredSuspend {
-                Camera2Logger.debug {
-                    "UseCaseCameraRequestControlImpl#setParametersAsync: [$type] values = $values" +
-                        ", optionPriority = $optionPriority"
-                }
-                infoBundleMap
-                    .getOrPut(type) { InfoBundle() }
-                    .options
-                    .addAllCaptureRequestOptionsWithPriority(values, optionPriority)
-                infoBundleMap.merge().updateCameraStateAsync()
-            }
-        } ?: canceledResult
+    ): Deferred<Unit> {
+        Camera2Logger.debug {
+            "UseCaseCameraRequestControlImpl#setParametersAsync: [$type] values = $values" +
+                ", optionPriority = $optionPriority"
+        }
+        val currentBundle = infoBundleMap.getOrPut(type) { InfoBundle() }
+        infoBundleMap[type] = currentBundle.withParameters(values, optionPriority)
+        return infoBundleMap.merge().updateCameraStateAsync()
+    }
 
     override fun removeParametersAsync(
-        type: UseCaseCameraRequestControl.Type,
         keys: List<CaptureRequest.Key<*>>,
+        type: UseCaseCameraRequestControl.Type,
     ): Deferred<Unit> =
         runIfNotClosed {
             threads.confineDeferredSuspend {
                 Camera2Logger.debug {
                     "UseCaseCameraRequestControlImpl#removeParametersAsync: [$type] keys = $keys"
                 }
-                infoBundleMap
-                    .getOrPut(type) { InfoBundle() }
-                    .options
-                    .removeCaptureRequestOptions(keys)
+                val currentBundle = infoBundleMap.getOrPut(type) { InfoBundle() }
+                infoBundleMap[type] = currentBundle.withoutParameters(keys)
                 infoBundleMap.merge().updateCameraStateAsync()
             }
         } ?: canceledResult
@@ -494,18 +572,20 @@ constructor(
      * different, the later merge would override the earlier one. Listener merge: merge the
      * listeners into a set.
      */
-    private fun Map<UseCaseCameraRequestControl.Type, InfoBundle>.merge(): InfoBundle =
-        InfoBundle(template = RequestTemplate(DEFAULT_REQUEST_TEMPLATE)).apply {
-            UseCaseCameraRequestControl.Type.values().forEach { type ->
-                getOrElse(type) { InfoBundle() }
-                    .let { infoBundleInType ->
-                        options.insertAllOptions(infoBundleInType.options.mutableConfig)
-                        tags.putAll(infoBundleInType.tags)
-                        listeners.addAll(infoBundleInType.listeners)
-                        infoBundleInType.template?.let { template = it }
-                    }
+    private fun Map<UseCaseCameraRequestControl.Type, InfoBundle>.merge(): InfoBundle {
+        val mergedBundle = InfoBundle(template = RequestTemplate(DEFAULT_REQUEST_TEMPLATE))
+        UseCaseCameraRequestControl.Type.entries.forEach { type ->
+            val bundleForType = this@merge[type]
+
+            if (bundleForType != null) {
+                mergedBundle.options.insertAllOptions(bundleForType.options.mutableConfig)
+                mergedBundle.tags.putAll(bundleForType.tags)
+                mergedBundle.listeners.addAll(bundleForType.listeners)
+                bundleForType.template?.let { mergedBundle.template = it }
             }
         }
+        return mergedBundle
+    }
 
     private fun InfoBundle.toTagBundle(): TagBundle =
         MutableTagBundle.create().also { tagBundle ->
@@ -521,7 +601,7 @@ constructor(
                 ?.configureWithUnchecked(options.build().toParameters().toMap())
 
             capturePipeline.template =
-                if (template != null && template!!.value != TEMPLATE_TYPE_NONE) {
+                if (template!!.value != TEMPLATE_TYPE_NONE) {
                     template!!.value
                 } else {
                     DEFAULT_REQUEST_TEMPLATE
