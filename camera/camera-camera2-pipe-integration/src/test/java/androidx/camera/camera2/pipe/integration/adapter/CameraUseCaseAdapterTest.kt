@@ -39,7 +39,6 @@ import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
 
 @RunWith(RobolectricCameraPipeTestRunner::class)
-@Config(sdk = [Config.ALL_SDKS])
 class CameraUseCaseAdapterTest {
 
     private val resolution: Size = Size(640, 480)

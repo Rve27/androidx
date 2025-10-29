@@ -31,7 +31,6 @@ import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.robolectric.annotation.Config
 import org.robolectric.annotation.internal.DoNotInstrument
 import org.robolectric.shadows.ShadowDisplayManager
 import org.robolectric.shadows.ShadowDisplayManager.removeDisplay
@@ -40,7 +39,6 @@ import org.robolectric.util.ReflectionHelpers
 
 @RunWith(RobolectricCameraPipeTestRunner::class)
 @DoNotInstrument
-@Config(sdk = [Config.ALL_SDKS])
 class MeteringRepeatingTest {
     companion object {
         val dummyZeroSizeStreamSpec = StreamSpec.builder(Size(0, 0)).build()

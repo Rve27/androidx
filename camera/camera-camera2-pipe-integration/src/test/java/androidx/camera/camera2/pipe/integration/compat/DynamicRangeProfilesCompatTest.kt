@@ -43,7 +43,6 @@ import org.robolectric.shadows.ShadowCameraCharacteristics
 
 @RunWith(RobolectricTestRunner::class)
 @DoNotInstrument
-@Config(sdk = [Config.ALL_SDKS])
 class DynamicRangeProfilesCompatTest {
 
     private val cameraId = CameraId.fromCamera1Id(0)
