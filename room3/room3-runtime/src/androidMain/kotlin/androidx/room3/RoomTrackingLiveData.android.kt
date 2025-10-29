@@ -22,7 +22,6 @@ import androidx.room3.util.performSuspending
 import androidx.sqlite.SQLiteConnection
 import java.util.concurrent.Callable
 import java.util.concurrent.atomic.AtomicBoolean
-import kotlin.coroutines.EmptyCoroutineContext
 import kotlinx.coroutines.launch
 
 /**
@@ -52,17 +51,6 @@ internal sealed class RoomTrackingLiveData<T>(
     private val invalid = AtomicBoolean(true)
     private val computing = AtomicBoolean(false)
     private val registeredObserver = AtomicBoolean(false)
-
-    private val launchContext =
-        if (database.inCompatibilityMode()) {
-            if (inTransaction) {
-                database.getTransactionContext()
-            } else {
-                database.getQueryContext()
-            }
-        } else {
-            EmptyCoroutineContext
-        }
 
     private suspend fun refresh() {
         if (registeredObserver.compareAndSet(false, true)) {
@@ -110,7 +98,7 @@ internal sealed class RoomTrackingLiveData<T>(
         val isActive = hasActiveObservers()
         if (invalid.compareAndSet(false, true)) {
             if (isActive) {
-                database.getCoroutineScope().launch(launchContext) { refresh() }
+                database.getCoroutineScope().launch { refresh() }
             }
         }
     }
@@ -120,7 +108,7 @@ internal sealed class RoomTrackingLiveData<T>(
     override fun onActive() {
         super.onActive()
         container.onActive(this)
-        database.getCoroutineScope().launch(launchContext) { refresh() }
+        database.getCoroutineScope().launch { refresh() }
     }
 
     override fun onInactive() {
