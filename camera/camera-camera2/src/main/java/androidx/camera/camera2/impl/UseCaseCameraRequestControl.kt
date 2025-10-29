@@ -20,6 +20,7 @@ import android.hardware.camera2.CameraDevice
 import android.hardware.camera2.CaptureRequest
 import android.hardware.camera2.params.MeteringRectangle
 import androidx.annotation.AnyThread
+import androidx.camera.camera2.adapter.SessionConfigAdapter
 import androidx.camera.camera2.config.UseCaseCameraScope
 import androidx.camera.camera2.config.UseCaseGraphConfig
 import androidx.camera.camera2.interop.configureWithUnchecked
@@ -35,6 +36,7 @@ import androidx.camera.camera2.pipe.StreamId
 import androidx.camera.core.CameraXConfig
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
+import androidx.camera.core.UseCase
 import androidx.camera.core.impl.CaptureConfig
 import androidx.camera.core.impl.CaptureConfig.TEMPLATE_TYPE_NONE
 import androidx.camera.core.impl.Config
@@ -44,6 +46,7 @@ import androidx.camera.core.impl.StreamSpec.FRAME_RATE_RANGE_UNSPECIFIED
 import androidx.camera.core.impl.TagBundle
 import dagger.Binds
 import dagger.Module
+import java.util.concurrent.Executor
 import javax.inject.Inject
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableDeferred
@@ -136,35 +139,36 @@ public interface UseCaseCameraRequestControl {
     ): Deferred<Unit>
 
     /**
-     * Asynchronously updates the repeating request with a new configuration.
+     * Asynchronously builds a SessionConfig from the running UseCases and updates the repeating
+     * request.
      *
-     * This method replaces any existing configuration, tags, and listeners associated with the
-     * specified [type]. The repeating request is then rebuilt by merging all configurations, tags,
-     * and listeners from all defined types.
+     * This performs all work, including the potentially slow SessionConfig creation, within a
+     * single sequential task to guarantee ordering.
      *
-     * @param type The category of the configuration being updated (e.g., SESSION_CONFIG, DEFAULT).
-     * @param config The new configuration values to apply. If null, the existing configuration for
-     *   this type is cleared.
-     * @param tags Optional tags to append to the repeating request, similar to
-     *   [CaptureRequest.Builder.setTag].
-     * @param streams The specific streams to update. If empty, all previously specified streams are
-     *   updated. The update only proceeds if at least one valid stream is specified.
-     * @param template The [RequestTemplate] to use for the requests. If null, the previously
-     *   specified template is used.
-     * @param listeners Listeners to receive capture results.
-     * @param sessionConfig Optional [SessionConfig] to update if applicable to the configuration
-     *   type.
+     * @param isPrimary Whether the camera is the primary camera.
+     * @param runningUseCases The collection of active UseCases.
      * @return A [Deferred] representing the asynchronous update operation.
      */
     @AnyThread
-    public fun setConfigAsync(
-        type: Type,
-        config: Config?,
+    public fun updateRepeatingRequestAsync(
+        isPrimary: Boolean,
+        runningUseCases: Collection<UseCase>,
+    ): Deferred<Unit>
+
+    /**
+     * Asynchronously updates the repeating request with Camera2 interop configurations.
+     *
+     * This replaces any existing configuration for the [Type.CAMERA2_CAMERA_CONTROL] type. The
+     * repeating request is then rebuilt by merging all configurations.
+     *
+     * @param config The new configuration values to apply.
+     * @param tags Optional tags to append to the repeating request.
+     * @return A [Deferred] representing the asynchronous update operation.
+     */
+    @AnyThread
+    public fun updateCamera2ConfigAsync(
+        config: Config,
         tags: Map<String, Any> = emptyMap(),
-        streams: Set<StreamId>? = null,
-        template: RequestTemplate? = null,
-        listeners: Set<Request.Listener> = emptySet(),
-        sessionConfig: SessionConfig? = null,
     ): Deferred<Unit>
 
     // 3A
@@ -378,40 +382,50 @@ constructor(
             }
         } ?: canceledResult
 
-    override fun setConfigAsync(
-        type: UseCaseCameraRequestControl.Type,
-        config: Config?,
-        tags: Map<String, Any>,
-        streams: Set<StreamId>?,
-        template: RequestTemplate?,
-        listeners: Set<Request.Listener>,
-        sessionConfig: SessionConfig?,
+    override fun updateRepeatingRequestAsync(
+        isPrimary: Boolean,
+        runningUseCases: Collection<UseCase>,
     ): Deferred<Unit> =
         runIfNotClosed {
             threads.confineDeferredSuspend {
+                Camera2Logger.debug { "UseCaseCameraRequestControlImpl: Building SessionConfig..." }
+
+                val sessionConfigAdapter = SessionConfigAdapter(runningUseCases, isPrimary)
+                val sessionConfig =
+                    sessionConfigAdapter.getValidSessionConfigOrNull()
+                        ?: run {
+                            Camera2Logger.debug { "Using default SessionConfig" }
+                            SessionConfig.Builder()
+                                .apply { setTemplateType(DEFAULT_REQUEST_TEMPLATE) }
+                                .build()
+                        }
+
                 Camera2Logger.debug {
-                    "UseCaseCameraRequestControlImpl#setConfigAsync:" +
-                        " [$type] config params = ${config?.toParameters()}"
+                    "UseCaseCameraRequestControlImpl: SessionConfig built. Updating state..."
                 }
-                infoBundleMap[type] =
-                    InfoBundle(
-                        Camera2ImplConfig.Builder().apply {
-                            sessionConfig
-                                ?.expectedFrameRateRange
-                                .takeIf { it != FRAME_RATE_RANGE_UNSPECIFIED }
-                                ?.let { fpsRange ->
-                                    setCaptureRequestOption(
-                                        CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE,
-                                        fpsRange,
-                                    )
-                                }
-                            config?.let { insertAllOptions(it) }
-                        },
-                        tags.toMutableMap(),
-                        listeners.toMutableSet(),
-                        template,
+
+                infoBundleMap[UseCaseCameraRequestControl.Type.SESSION_CONFIG] =
+                    sessionConfig.toInfoBundle(threads.sequentialExecutor)
+
+                val streams =
+                    useCaseGraphConfig.getStreamIdsFromSurfaces(
+                        sessionConfig.repeatingCaptureConfig.surfaces
                     )
+                Camera2Logger.debug { "UseCaseCameraRequestControlImpl: State update processing." }
                 infoBundleMap.merge().updateCameraStateAsync(streams = streams)
+            }
+        } ?: canceledResult
+
+    override fun updateCamera2ConfigAsync(config: Config, tags: Map<String, Any>): Deferred<Unit> =
+        runIfNotClosed {
+            threads.confineDeferredSuspend {
+                Camera2Logger.debug { "UseCaseCameraRequestControlImpl#updateCamera2ConfigAsync" }
+                infoBundleMap[UseCaseCameraRequestControl.Type.CAMERA2_CAMERA_CONTROL] =
+                    InfoBundle(
+                        options = config.extractCamera2ImplConfigBuilder(),
+                        tags = tags.toMutableMap(),
+                    )
+                infoBundleMap.merge().updateCameraStateAsync()
             }
         } ?: canceledResult
 
@@ -645,6 +659,45 @@ constructor(
         private val submitFailedResult =
             CompletableDeferred(Result3A(Result3A.Status.SUBMIT_FAILED))
         private val canceledResult = CompletableDeferred<Unit>().apply { cancel() }
+
+        public fun SessionConfig.extractCamera2ImplConfigBuilder(): Camera2ImplConfig.Builder {
+            val updatedConfig = Camera2ImplConfig.Builder()
+            if (expectedFrameRateRange != FRAME_RATE_RANGE_UNSPECIFIED) {
+                updatedConfig.setCaptureRequestOption(
+                    CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE,
+                    expectedFrameRateRange,
+                )
+            }
+            updatedConfig.insertAllOptions(implementationOptions)
+            return updatedConfig
+        }
+
+        public fun SessionConfig.extractTags(): MutableMap<String, Any> =
+            repeatingCaptureConfig.tagBundle.toMap().toMutableMap()
+
+        public fun SessionConfig.extractListeners(
+            callbackExecutor: Executor
+        ): MutableSet<Request.Listener> =
+            mutableSetOf(
+                CameraCallbackMap.createFor(repeatingCameraCaptureCallbacks, callbackExecutor)
+            )
+
+        public fun SessionConfig.extractTemplate(): RequestTemplate = RequestTemplate(templateType)
+
+        private fun SessionConfig.toInfoBundle(callbackExecutor: Executor): InfoBundle {
+            return InfoBundle(
+                options = extractCamera2ImplConfigBuilder(),
+                tags = extractTags(),
+                listeners = extractListeners(callbackExecutor),
+                template = extractTemplate(),
+            )
+        }
+
+        private fun Config.extractCamera2ImplConfigBuilder(): Camera2ImplConfig.Builder {
+            val updatedConfig = Camera2ImplConfig.Builder()
+            updatedConfig.insertAllOptions(this)
+            return updatedConfig
+        }
     }
 }
 
