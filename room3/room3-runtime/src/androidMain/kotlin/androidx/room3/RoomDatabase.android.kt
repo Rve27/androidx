@@ -44,7 +44,6 @@ import androidx.room3.prepackage.PrePackagedCopySQLiteDriver
 import androidx.room3.util.contains as containsCommon
 import androidx.room3.util.findAndInstantiateDatabaseImpl
 import androidx.room3.util.findMigrationPath as findMigrationPathExt
-import androidx.room3.util.performBlocking
 import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.SQLiteDriver
 import androidx.sqlite.db.SupportSQLiteDatabase
@@ -480,7 +479,7 @@ actual constructor() {
     /** Asserts that we are not on a suspending transaction. */
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) // used in generated code
     public open fun assertNotSuspendingTransaction() {
-        check(!inCompatibilityMode() || inTransaction() || !isThreadInSuspendingTransaction) {
+        check(!inCompatibilityMode() || !isThreadInSuspendingTransaction) {
             "Cannot access database on a different coroutine" +
                 " context inherited from a suspending transaction."
         }
@@ -512,116 +511,6 @@ actual constructor() {
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public fun inCompatibilityMode(): Boolean = connectionManager.supportOpenHelper != null
 
-    // Below, there are wrapper methods for SupportSQLiteDatabase. This helps us track which
-    // methods we are using and also helps unit tests to mock this class without mocking
-    // all SQLite database methods.
-
-    /**
-     * Wrapper for [SupportSQLiteDatabase.beginTransaction].
-     *
-     * @throws IllegalStateException If a [SQLiteDriver] is configured with this database.
-     */
-    @Deprecated("beginTransaction() is deprecated", ReplaceWith("runInTransaction(Runnable)"))
-    public open fun beginTransaction() {
-        assertNotMainThread()
-        internalBeginTransaction()
-    }
-
-    private fun internalBeginTransaction() {
-        assertNotMainThread()
-        val database = openHelper.writableDatabase
-        if (!database.inTransaction()) {
-            invalidationTracker.syncBlocking()
-        }
-        if (database.isWriteAheadLoggingEnabled) {
-            database.beginTransactionNonExclusive()
-        } else {
-            database.beginTransaction()
-        }
-    }
-
-    /**
-     * Wrapper for [SupportSQLiteDatabase.endTransaction].
-     *
-     * @throws IllegalStateException If a [SQLiteDriver] is configured with this database.
-     */
-    @Deprecated("endTransaction() is deprecated", ReplaceWith("runInTransaction(Runnable)"))
-    public open fun endTransaction() {
-        internalEndTransaction()
-    }
-
-    private fun internalEndTransaction() {
-        openHelper.writableDatabase.endTransaction()
-        if (!inTransaction()) {
-            // enqueue refresh only if we are NOT in a transaction. Otherwise, wait for the last
-            // endTransaction call to do it.
-            invalidationTracker.refreshVersionsAsync()
-        }
-    }
-
-    /**
-     * Wrapper for [SupportSQLiteDatabase.setTransactionSuccessful].
-     *
-     * @throws IllegalStateException If a [SQLiteDriver] is configured with this database.
-     */
-    @Deprecated(
-        "setTransactionSuccessful() is deprecated",
-        ReplaceWith("runInTransaction(Runnable)"),
-    )
-    public open fun setTransactionSuccessful() {
-        openHelper.writableDatabase.setTransactionSuccessful()
-    }
-
-    /**
-     * Executes the specified [Runnable] in a database transaction. The transaction will be marked
-     * as successful unless an exception is thrown in the [Runnable].
-     *
-     * Room will only perform at most one transaction at a time.
-     *
-     * If a [SQLiteDriver] is configured with this database, then it is best to use
-     * [useWriterConnection] along with [immediateTransaction] to perform transactional operations.
-     *
-     * @param body The piece of code to execute.
-     */
-    public open fun runInTransaction(body: Runnable) {
-        runInTransaction { body.run() }
-    }
-
-    /**
-     * Executes the specified [Callable] in a database transaction. The transaction will be marked
-     * as successful unless an exception is thrown in the [Callable].
-     *
-     * Room will only perform at most one transaction at a time.
-     *
-     * If a [SQLiteDriver] is configured with this database, then it is best to use
-     * [useWriterConnection] along with [immediateTransaction] to perform transactional operations.
-     *
-     * @param body The piece of code to execute.
-     * @param V The type of the return value.
-     * @return The value returned from the [Callable].
-     */
-    public open fun <V> runInTransaction(body: Callable<V>): V {
-        return runInTransaction { body.call() }
-    }
-
-    @Suppress("DEPRECATION") // Usage of try-finally transaction idiom APIs
-    private fun <T> runInTransaction(body: () -> T): T {
-        if (inCompatibilityMode()) {
-            beginTransaction()
-            try {
-                val result = body.invoke()
-                setTransactionSuccessful()
-                return result
-            } finally {
-                endTransaction()
-            }
-        } else {
-            return performBlocking(db = this, isReadOnly = false, inTransaction = true) {
-                body.invoke()
-            }
-        }
-    }
-
     /**
      * Initialize invalidation tracker. Note that this method is called when the [RoomDatabase] is
      * initialized and opens a database connection.
@@ -631,18 +520,6 @@ actual constructor() {
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) // used in generated code
     protected actual fun internalInitInvalidationTracker(connection: SQLiteConnection) {
         invalidationTracker.internalInit(connection)
-    }
-
-    /**
-     * Wrapper for [SupportSQLiteDatabase.inTransaction]. Returns true if current thread is in a
-     * transaction.
-     *
-     * @return True if there is an active transaction in current thread, false otherwise.
-     * @throws IllegalStateException If a [SQLiteDriver] is configured with this database.
-     * @see SupportSQLiteDatabase.inTransaction
-     */
-    public open fun inTransaction(): Boolean {
-        return isOpenInternal && openHelper.writableDatabase.inTransaction()
     }
 
     /**
@@ -1755,9 +1632,6 @@ internal class TransactionElement(internal val transactionDispatcher: Continuati
  * TODO: Check if this still needed even if SupportSQLite is removed with AndroidSQLiteDriver
  */
 internal suspend fun <R> RoomDatabase.compatTransactionCoroutineExecute(block: suspend () -> R): R {
-    if (inCompatibilityMode() && isOpenInternal && inTransaction()) {
-        return block.invoke()
-    }
     if (coroutineContext[RoomExternalOperationElement] == null) {
         return block.invoke()
     }
