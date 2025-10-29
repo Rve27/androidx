@@ -14,1066 +14,895 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.impl.impress;
+package androidx.xr.scenecore.impl.impress
 
-import android.content.res.Resources.NotFoundException;
-import android.graphics.SurfaceTexture;
-import android.os.Handler;
-import android.os.Looper;
-import android.view.Surface;
-
-import androidx.annotation.RestrictTo;
-import androidx.annotation.VisibleForTesting;
-import androidx.concurrent.futures.ResolvableFuture;
-import androidx.xr.scenecore.runtime.KhronosPbrMaterialSpec;
-import androidx.xr.scenecore.runtime.TextureSampler;
-
-import com.google.ar.imp.view.View;
-import com.google.common.util.concurrent.ListenableFuture;
-
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import android.content.res.Resources.NotFoundException
+import android.graphics.SurfaceTexture
+import android.os.Handler
+import android.os.Looper
+import android.view.Surface
+import androidx.annotation.RestrictTo
+import androidx.annotation.VisibleForTesting
+import androidx.concurrent.futures.ResolvableFuture
+import androidx.xr.scenecore.impl.impress.ImpressApi.ColorRange
+import androidx.xr.scenecore.impl.impress.ImpressApi.ColorSpace
+import androidx.xr.scenecore.impl.impress.ImpressApi.ColorTransfer
+import androidx.xr.scenecore.impl.impress.ImpressApi.ContentSecurityLevel
+import androidx.xr.scenecore.impl.impress.ImpressApi.StereoMode
+import androidx.xr.scenecore.runtime.KhronosPbrMaterialSpec
+import androidx.xr.scenecore.runtime.TextureSampler
+import com.google.ar.imp.view.View
+import com.google.common.util.concurrent.ListenableFuture
 
 /**
  * Fake implementation of the JNI API for communicating with the Impress Split Engine instance for
  * testing purposes.
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY)
-public class FakeImpressApiImpl implements ImpressApi {
-    static class AnimationInProgress {
-        public String name;
-        public ResolvableFuture<Void> fireOnDone;
-    }
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+public class FakeImpressApiImpl : ImpressApi {
+    internal data class AnimationInProgress(
+        var name: String?,
+        var fireOnDone: ResolvableFuture<Void?>,
+    )
 
     /** Test bookkeeping data for a Android Surface */
-    public static class TestSurface extends Surface {
-        public TestSurface(int id) {
-            super(new SurfaceTexture(id));
-        }
-    }
+    public class TestSurface(id: Int) : Surface(SurfaceTexture(id))
 
     /** Test bookkeeping data for a StereoSurfaceEntity */
-    public static class StereoSurfaceEntityData {
+    public data class StereoSurfaceEntityData(
+        public var impressNode: ImpressNode,
+        public var surface: Surface? = null,
+        public var useSuperSampling: Boolean = false,
+        @StereoMode public var stereoMode: Int = 0,
+        public var width: Float = 0f,
+        public var height: Float = 0f,
+        public var radius: Float = 0f,
+        public var canvasShape: CanvasShape? = null,
+        public var featherRadiusX: Float = 0f,
+        public var featherRadiusY: Float = 0f,
+        public var surfaceWidth: Int = 1,
+        public var surfaceHeight: Int = 1,
+        public var colliderEnabled: Boolean = false,
+    ) {
         /** Enum representing the different canvas shapes that can be created. */
-        public enum CanvasShape {
+        public enum class CanvasShape {
             QUAD,
             VR_360_SPHERE,
-            VR_180_HEMISPHERE
-        }
-
-        ImpressNode mImpressNode;
-        Surface mSurface;
-        boolean mUseSuperSampling;
-        @StereoMode int mStereoMode;
-        // This is a union of the CanvasShape parameters
-        float mWidth;
-        float mHeight;
-        float mRadius;
-        CanvasShape mCanvasShape;
-        float mFeatherRadiusX;
-        float mFeatherRadiusY;
-        int mSurfaceWidth = 1;
-        int mSurfaceHeight = 1;
-
-        boolean mColliderEnabled;
-
-        @Nullable
-        public Surface getSurface() {
-            return mSurface;
-        }
-
-        @StereoMode
-        public int getStereoMode() {
-            return mStereoMode;
-        }
-
-        public float getWidth() {
-            return mWidth;
-        }
-
-        public float getHeight() {
-            return mHeight;
-        }
-
-        public float getRadius() {
-            return mRadius;
-        }
-
-        public float getFeatherRadiusX() {
-            return mFeatherRadiusX;
-        }
-
-        public float getFeatherRadiusY() {
-            return mFeatherRadiusY;
-        }
-
-        public int getSurfaceWidth() {
-            return mSurfaceWidth;
-        }
-
-        public int getSurfaceHeight() {
-            return mSurfaceHeight;
-        }
-
-        @Nullable
-        public CanvasShape getCanvasShape() {
-            return mCanvasShape;
-        }
-
-        public boolean getColliderEnabled() {
-            return mColliderEnabled;
+            VR_180_HEMISPHERE,
         }
     }
 
     /** Test bookkeeping data for a Material */
-    public static class MaterialData {
+    public data class MaterialData(val type: Type, val materialHandle: Long) {
         /** Enum representing the different built-in material types that can be created. */
-        public enum Type {
+        public enum class Type {
             GENERIC,
             WATER,
             WATER_ALPHA,
-            KHRONOS_PBR
-        }
-
-        @NonNull Type mType;
-        long mMaterialHandle;
-
-        public MaterialData(@NonNull Type type, long materialHandle) {
-            this.mType = type;
-            this.mMaterialHandle = materialHandle;
-        }
-
-        @NonNull
-        public Type getType() {
-            return mType;
-        }
-
-        public long getMaterialHandle() {
-            return mMaterialHandle;
+            KHRONOS_PBR,
         }
     }
 
     /** Test bookkeeping data for a Gltf gltfToken */
-    public static class GltfNodeData {
-        int mEntityId;
-        @Nullable MaterialData mMaterialOverride;
-
-        public void setEntityId(int entityId) {
-            this.mEntityId = entityId;
-        }
+    public class GltfNodeData {
+        public var entityId: Int = 0
+        public var materialOverride: MaterialData? = null
 
         /** Sets the material override for a specific mesh of a node */
-        public void setMaterialOverride(
-                @Nullable MaterialData materialOverride,
-                @NonNull String nodeName,
-                int primitiveIndex) {
-            this.mMaterialOverride = materialOverride;
+        public fun setMaterialOverride(
+            materialOverride: MaterialData?,
+            nodeName: String,
+            primitiveIndex: Int,
+        ) {
+            this.materialOverride = materialOverride
         }
 
         /** Clears a material override for a specific mesh of a node. */
-        public void clearMaterialOverride(@NonNull String nodeName, int primitiveIndex) {
-            this.mMaterialOverride = null;
-        }
-
-        public int getEntityId() {
-            return mEntityId;
-        }
-
-        @Nullable
-        public MaterialData getMaterialOverride() {
-            return mMaterialOverride;
+        public fun clearMaterialOverride(nodeName: String, primitiveIndex: Int) {
+            this.materialOverride = null
         }
     }
 
     // Non-functional resource manager.
-    private final BindingsResourceManager mResourceManager =
-            new BindingsResourceManager(new Handler(Looper.getMainLooper()));
+    private val resourceManager = BindingsResourceManager(Handler(Looper.getMainLooper()))
     // Vector of image based lighting asset tokens.
-    private final List<Long> mImageBasedLightingAssets = new ArrayList<>();
+    private val imageBasedLightingAssets: MutableList<Long> = ArrayList()
     // Map of model tokens to the list of impress nodes that are instances of that model.
-    private final Map<Long, List<Integer>> mGltfModels = new HashMap<>();
+    private val gltfModels: MutableMap<Long, MutableList<Int>> = HashMap()
     // Map of impress nodes to their parent impress nodes.
-    private final Map<GltfNodeData, GltfNodeData> mImpressNodes = new HashMap<>();
+    private val impressNodes: MutableMap<GltfNodeData, GltfNodeData?> = HashMap()
     // Map of impress nodes and animations that are currently playing (non looping)
-    final Map<ImpressNode, AnimationInProgress> mImpressAnimatedNodes = new HashMap<>();
+    private val impressAnimatedNodes: MutableMap<ImpressNode, AnimationInProgress> = HashMap()
     // Map of impress nodes and animations that are currently playing (looping)
-    final Map<ImpressNode, AnimationInProgress> mImpressLoopAnimatedNodes = new HashMap<>();
+    private val impressLoopAnimatedNodes: MutableMap<ImpressNode, AnimationInProgress> = HashMap()
     // Map of impress entity nodes to their associated StereoSurfaceEntityData
-    final Map<ImpressNode, StereoSurfaceEntityData> mStereoSurfaceEntities = new HashMap<>();
+    private val stereoSurfaceEntities: MutableMap<ImpressNode, StereoSurfaceEntityData> = HashMap()
     // Map of texture image tokens to their associated Texture object
-    final Map<Long, Texture> mTextureImages = new HashMap<>();
+    private val textureImages: MutableMap<Long, Texture> = HashMap()
     // Map of material tokens to their associated MaterialData object
-    final Map<Long, MaterialData> mMaterials = new HashMap<>();
-    private int mNextImageBasedLightingAssetId = 1;
-    private int mNextModelId = 1;
-    private int mNextNodeId = 1;
-    private long mNextTextureId = 1;
-    private long mNextMaterialId = 1;
-    private long mCurrentEnvironmentLightId = -1;
+    private val materials: MutableMap<Long, MaterialData> = HashMap()
 
-    @NonNull
-    public Map<ImpressNode, StereoSurfaceEntityData> getStereoSurfaceEntities() {
-        return mStereoSurfaceEntities;
-    }
+    private var nextImageBasedLightingAssetId: Int = 1
+    private var nextModelId: Int = 1
+    private var nextNodeId: Int = 1
+    private var nextTextureId: Long = 1
+    private var nextMaterialId: Long = 1
+    private var currentEnvironmentLightId: Long = -1
 
-    @Override
-    public void setup(@Nullable View view) {}
+    override fun setup(view: View?) {}
 
-    @VisibleForTesting
-    @Override
-    public void setup(long nativeTestViewHandle) {}
+    @VisibleForTesting override fun setup(nativeTestViewHandle: Long) {}
 
-    @Override
-    public void onResume() {}
+    override fun onResume() {}
 
-    @Override
-    public void onPause() {}
+    override fun onPause() {}
 
-    @Override
-    @NonNull
-    public BindingsResourceManager getBindingsResourceManager() {
-        if (mResourceManager == null) {
-            throw new IllegalStateException("BindingsResourceManager is not initialized");
+    override fun getBindingsResourceManager(): BindingsResourceManager = resourceManager
+
+    override fun releaseImageBasedLightingAsset(iblToken: Long) {
+        if (!imageBasedLightingAssets.contains(iblToken)) {
+            throw NotFoundException("Image based lighting asset token not found")
         }
-        return mResourceManager;
+        imageBasedLightingAssets.remove(iblToken)
     }
 
-    @Override
-    public void releaseImageBasedLightingAsset(long iblToken) {
-        if (!mImageBasedLightingAssets.contains(iblToken)) {
-            throw new NotFoundException("Image based lighting asset token not found");
+    @Suppress("RestrictTo", "AsyncSuffixFuture")
+    override fun loadImageBasedLightingAsset(path: String): ListenableFuture<ExrImage> {
+        val token = (nextImageBasedLightingAssetId++).toLong()
+        imageBasedLightingAssets.add(token)
+        val exrImage: ExrImage =
+            ExrImage.Builder().setImpressApi(this).setNativeExrImage(token).build()
+        // TODO(b/352827267): Enforce minSDK API strategy - go/androidx-api-guidelines#compat-newapi
+        return ResolvableFuture.create<ExrImage>().apply { set(exrImage) }
+    }
+
+    @Suppress("RestrictTo", "AsyncSuffixFuture")
+    override fun loadImageBasedLightingAsset(
+        data: ByteArray,
+        key: String,
+    ): ListenableFuture<ExrImage> {
+        val token = (nextImageBasedLightingAssetId++).toLong()
+        imageBasedLightingAssets.add(token)
+        val exrImage: ExrImage =
+            ExrImage.Builder().setImpressApi(this).setNativeExrImage(token).build()
+        // TODO(b/352827267): Enforce minSDK API strategy - go/androidx-api-guidelines#compat-newapi
+        return ResolvableFuture.create<ExrImage>().apply { set(exrImage) }
+    }
+
+    @Suppress("RestrictTo", "AsyncSuffixFuture")
+    override fun loadGltfAsset(path: String): ListenableFuture<GltfModel> {
+        val token = (nextModelId++).toLong()
+        gltfModels[token] = ArrayList()
+        val gltfModel: GltfModel =
+            GltfModel.Builder().setImpressApi(this).setNativeGltfModel(token).build()
+        // TODO(b/352827267): Enforce minSDK API strategy - go/androidx-api-guidelines#compat-newapi
+        return ResolvableFuture.create<GltfModel>().apply { set(gltfModel) }
+    }
+
+    @Suppress("RestrictTo", "AsyncSuffixFuture")
+    override fun loadGltfAsset(data: ByteArray, key: String): ListenableFuture<GltfModel> {
+        val token = (nextModelId++).toLong()
+        gltfModels[token] = ArrayList()
+        val gltfModel: GltfModel =
+            GltfModel.Builder().setImpressApi(this).setNativeGltfModel(token).build()
+        // TODO(b/352827267): Enforce minSDK API strategy - go/androidx-api-guidelines#compat-newapi
+        return ResolvableFuture.create<GltfModel>().apply { set(gltfModel) }
+    }
+
+    override fun releaseGltfAsset(gltfToken: Long) {
+        if (!gltfModels.containsKey(gltfToken)) {
+            throw NotFoundException("Model token not found")
         }
-        mImageBasedLightingAssets.remove(iblToken);
+        gltfModels.remove(gltfToken)
     }
 
-    @Override
-    @NonNull
-    @SuppressWarnings({"RestrictTo", "AsyncSuffixFuture"})
-    public ListenableFuture<ExrImage> loadImageBasedLightingAsset(@NonNull String path) {
-        long imageBasedLightingAssetToken = mNextImageBasedLightingAssetId++;
-        mImageBasedLightingAssets.add(imageBasedLightingAssetToken);
-        ExrImage exrImage =
-                new ExrImage.Builder()
-                        .setImpressApi(this)
-                        .setNativeExrImage(imageBasedLightingAssetToken)
-                        .build();
-        // TODO(b/352827267): Enforce minSDK API strategy - go/androidx-api-guidelines#compat-newapi
-        ResolvableFuture<ExrImage> ret = ResolvableFuture.create();
-        ret.set(exrImage);
-        return ret;
+    override fun instanceGltfModel(gltfToken: Long): ImpressNode {
+        return instanceGltfModel(gltfToken, true)
     }
 
-    @Override
-    @NonNull
-    @SuppressWarnings({"RestrictTo", "AsyncSuffixFuture"})
-    public ListenableFuture<ExrImage> loadImageBasedLightingAsset(
-            byte @NonNull [] data, @NonNull String key) {
-        long imageBasedLightingAssetToken = mNextImageBasedLightingAssetId++;
-        mImageBasedLightingAssets.add(imageBasedLightingAssetToken);
-        ExrImage exrImage =
-                new ExrImage.Builder()
-                        .setImpressApi(this)
-                        .setNativeExrImage(imageBasedLightingAssetToken)
-                        .build();
-        // TODO(b/352827267): Enforce minSDK API strategy - go/androidx-api-guidelines#compat-newapi
-        ResolvableFuture<ExrImage> ret = ResolvableFuture.create();
-        ret.set(exrImage);
-        return ret;
+    override fun instanceGltfModel(gltfToken: Long, enableCollider: Boolean): ImpressNode {
+        require(gltfModels.containsKey(gltfToken)) { "Model token not found" }
+        val entityId = nextNodeId++
+        gltfModels[gltfToken]?.add(entityId)
+        val gltfNodeData = GltfNodeData().apply { this.entityId = entityId }
+        impressNodes[gltfNodeData] = null
+        return ImpressNode(entityId)
     }
 
-    @Override
-    @NonNull
-    @SuppressWarnings({"RestrictTo", "AsyncSuffixFuture"})
-    public ListenableFuture<GltfModel> loadGltfAsset(@NonNull String path) {
-        long gltfToken = mNextModelId++;
-        mGltfModels.put(gltfToken, new ArrayList<>());
-        GltfModel gltfModel =
-                new GltfModel.Builder().setImpressApi(this).setNativeGltfModel(gltfToken).build();
-        // TODO(b/352827267): Enforce minSDK API strategy - go/androidx-api-guidelines#compat-newapi
-        ResolvableFuture<GltfModel> ret = ResolvableFuture.create();
-        ret.set(gltfModel);
-        return ret;
+    override fun setGltfModelColliderEnabled(impressNode: ImpressNode, enableCollider: Boolean) {
+        throw IllegalArgumentException("not implemented")
     }
 
-    @Override
-    @NonNull
-    @SuppressWarnings({"RestrictTo", "AsyncSuffixFuture"})
-    public ListenableFuture<GltfModel> loadGltfAsset(byte @NonNull [] data, @NonNull String key) {
-        long gltfToken = mNextModelId++;
-        mGltfModels.put(gltfToken, new ArrayList<>());
-        GltfModel gltfModel =
-                new GltfModel.Builder().setImpressApi(this).setNativeGltfModel(gltfToken).build();
-        // TODO(b/352827267): Enforce minSDK API strategy - go/androidx-api-guidelines#compat-newapi
-        ResolvableFuture<GltfModel> ret = ResolvableFuture.create();
-        ret.set(gltfModel);
-        return ret;
-    }
-
-    @Override
-    public void releaseGltfAsset(long gltfToken) {
-        if (!mGltfModels.containsKey(gltfToken)) {
-            throw new NotFoundException("Model token not found");
-        }
-        mGltfModels.remove(gltfToken);
-    }
-
-    @Override
-    public @NonNull ImpressNode instanceGltfModel(long gltfToken) {
-        return instanceGltfModel(gltfToken, true);
-    }
-
-    @Override
-    public @NonNull ImpressNode instanceGltfModel(long gltfToken, boolean enableCollider) {
-        if (!mGltfModels.containsKey(gltfToken)) {
-            throw new IllegalArgumentException("Model token not found");
-        }
-        int entityId = mNextNodeId++;
-        mGltfModels.get(gltfToken).add(entityId);
-        GltfNodeData gltfNodeData = new GltfNodeData();
-        gltfNodeData.setEntityId(entityId);
-        mImpressNodes.put(gltfNodeData, null);
-        return new ImpressNode(entityId);
-    }
-
-    @Override
-    public void setGltfModelColliderEnabled(
-            @NonNull ImpressNode impressNode, boolean enableCollider) {
-        throw new IllegalArgumentException("not implemented");
-    }
-
-    @Override
-    @NonNull
-    @SuppressWarnings({"RestrictTo", "AsyncSuffixFuture"})
-    public ListenableFuture<Void> animateGltfModel(
-            @NonNull ImpressNode impressNode, @Nullable String animationName, boolean loop) {
-        ResolvableFuture<Void> future = ResolvableFuture.create();
+    @Suppress("RestrictTo", "AsyncSuffixFuture")
+    override fun animateGltfModel(
+        impressNode: ImpressNode,
+        animationName: String?,
+        looping: Boolean,
+    ): ListenableFuture<Void?> {
+        val future = ResolvableFuture.create<Void?>()
         if (getGltfNodeData(impressNode) == null) {
-            future.setException(new IllegalArgumentException("Impress node not found"));
-            return future;
+            future.setException(IllegalArgumentException("Impress node not found"))
+            return future
         }
-        AnimationInProgress animationInProgress = new AnimationInProgress();
-        animationInProgress.name = animationName;
-        animationInProgress.fireOnDone = future;
-        if (loop) {
-            mImpressLoopAnimatedNodes.put(impressNode, animationInProgress);
+        val animationInProgress = AnimationInProgress(animationName, future)
+        if (looping) {
+            impressLoopAnimatedNodes[impressNode] = animationInProgress
         } else {
-            mImpressAnimatedNodes.put(impressNode, animationInProgress);
+            impressAnimatedNodes[impressNode] = animationInProgress
         }
-        return future;
+        return future
     }
 
-    @Override
-    public void stopGltfModelAnimation(@NonNull ImpressNode impressNode) {
-        if (getGltfNodeData(impressNode) == null) {
-            throw new IllegalArgumentException("Impress node not found");
-        } else if (!mImpressAnimatedNodes.containsKey(impressNode)
-                && !mImpressLoopAnimatedNodes.containsKey(impressNode)) {
-            throw new IllegalArgumentException("Impress node is not animating");
-        } else if (mImpressAnimatedNodes.containsKey(impressNode)) {
-            mImpressAnimatedNodes.remove(impressNode);
-        } else if (mImpressLoopAnimatedNodes.containsKey(impressNode)) {
-            mImpressLoopAnimatedNodes.remove(impressNode);
+    override fun stopGltfModelAnimation(impressNode: ImpressNode) {
+        when {
+            getGltfNodeData(impressNode) == null ->
+                throw IllegalArgumentException("Impress node not found")
+            !impressAnimatedNodes.containsKey(impressNode) &&
+                !impressLoopAnimatedNodes.containsKey(impressNode) ->
+                throw IllegalArgumentException("Impress node is not animating")
+            impressAnimatedNodes.containsKey(impressNode) ->
+                impressAnimatedNodes.remove(impressNode)
+            impressLoopAnimatedNodes.containsKey(impressNode) ->
+                impressLoopAnimatedNodes.remove(impressNode)
         }
     }
 
-    @Override
-    public @NonNull ImpressNode createImpressNode() {
-        int entityId = mNextNodeId++;
-        GltfNodeData gltfNodeData = new GltfNodeData();
-        gltfNodeData.setEntityId(entityId);
-        mImpressNodes.put(gltfNodeData, null);
-        return new ImpressNode(entityId);
+    override fun createImpressNode(): ImpressNode {
+        val entityId = nextNodeId++
+        val gltfNodeData = GltfNodeData().apply { this.entityId = entityId }
+        impressNodes[gltfNodeData] = null
+        return ImpressNode(entityId)
     }
 
-    @Override
-    public void destroyImpressNode(@NonNull ImpressNode impressNode) {
-        GltfNodeData gltfNodeData = getGltfNodeData(impressNode);
-        if (gltfNodeData == null) {
-            throw new IllegalArgumentException("Impress node not found");
+    override fun destroyImpressNode(impressNode: ImpressNode) {
+        val gltfNodeData =
+            getGltfNodeData(impressNode) ?: throw IllegalArgumentException("Impress node not found")
+        for ((_, value) in gltfModels) {
+            value.remove(impressNode.handle)
         }
-        for (Map.Entry<Long, List<Integer>> pair : mGltfModels.entrySet()) {
-            if (pair.getValue().contains(impressNode.getHandle())) {
-                pair.getValue().remove(Integer.valueOf(impressNode.getHandle()));
+        for ((key, value) in impressNodes) {
+            if (value != null && value == gltfNodeData) {
+                impressNodes[key] = null
             }
         }
-        for (Map.Entry<GltfNodeData, GltfNodeData> pair : mImpressNodes.entrySet()) {
-            if (pair.getValue() != null && pair.getValue().equals(gltfNodeData)) {
-                pair.setValue(null);
-            }
-        }
-        mImpressNodes.remove(gltfNodeData);
-        if (mStereoSurfaceEntities.containsKey(impressNode)) {
-            mStereoSurfaceEntities.remove(impressNode);
-        }
+        impressNodes.remove(gltfNodeData)
+        stereoSurfaceEntities.remove(impressNode)
     }
 
-    @Override
-    public void setImpressNodeParent(
-            @NonNull ImpressNode impressNodeChild, @NonNull ImpressNode impressNodeParent) {
-        GltfNodeData childGltfNodeData = getGltfNodeData(impressNodeChild);
-        GltfNodeData parentGltfNodeData = getGltfNodeData(impressNodeParent);
-        if (childGltfNodeData == null || parentGltfNodeData == null) {
-            throw new IllegalArgumentException("Impress node(s) not found");
+    override fun setImpressNodeParent(
+        impressNodeChild: ImpressNode,
+        impressNodeParent: ImpressNode,
+    ) {
+        val childGltfNodeData = getGltfNodeData(impressNodeChild)
+        val parentGltfNodeData = getGltfNodeData(impressNodeParent)
+        require(childGltfNodeData != null && parentGltfNodeData != null) {
+            "Impress node(s) not found"
         }
-        mImpressNodes.put(childGltfNodeData, parentGltfNodeData);
+        impressNodes[childGltfNodeData] = parentGltfNodeData
     }
 
     /** Gets the impress nodes for glTF models that match the given token. */
-    @NonNull
-    public List<Integer> getImpressNodesForToken(long gltfToken) {
-        return mGltfModels.get(gltfToken);
-    }
+    public fun getImpressNodesForToken(gltfToken: Long): List<Int>? = gltfModels[gltfToken]
 
     /** Returns true if the given impress node has a parent. */
-    public boolean impressNodeHasParent(@NonNull ImpressNode impressNode) {
-        GltfNodeData gltfNodeData = getGltfNodeData(impressNode);
-        if (gltfNodeData == null) {
-            return false;
-        }
-        return mImpressNodes.get(gltfNodeData) != null;
+    public fun impressNodeHasParent(impressNode: ImpressNode): Boolean {
+        val gltfNodeData = getGltfNodeData(impressNode) ?: return false
+        return impressNodes[gltfNodeData] != null
     }
 
     /** Returns the parent impress node for the given impress node. */
-    public int getImpressNodeParent(@NonNull ImpressNode impressNode) {
-        GltfNodeData gltfNodeData = getGltfNodeData(impressNode);
-        GltfNodeData parentGltfNodeData = mImpressNodes.get(gltfNodeData);
-        if (gltfNodeData == null || parentGltfNodeData == null) {
-            return -1;
-        }
-        return parentGltfNodeData.mEntityId;
+    public fun getImpressNodeParent(impressNode: ImpressNode): Int {
+        val gltfNodeData = getGltfNodeData(impressNode)
+        val parentGltfNodeData = impressNodes[gltfNodeData]
+        return if (gltfNodeData == null || parentGltfNodeData == null) -1
+        else parentGltfNodeData.entityId
     }
 
     /** Returns the number of impress nodes that are currently animating. */
-    public int impressNodeAnimatingSize() {
-        return mImpressAnimatedNodes.size();
-    }
+    public fun impressNodeAnimatingSize(): Int = impressAnimatedNodes.size
 
     /** Returns the number of impress nodes that looping animations. */
-    public int impressNodeLoopAnimatingSize() {
-        return mImpressLoopAnimatedNodes.size();
-    }
+    public fun impressNodeLoopAnimatingSize(): Int = impressLoopAnimatedNodes.size
 
-    @Override
-    public @NonNull ImpressNode createStereoSurface(@StereoMode int stereoMode) {
+    override fun createStereoSurface(@StereoMode stereoMode: Int): ImpressNode {
         return createStereoSurface(
-                stereoMode, ContentSecurityLevel.NONE, /* useSuperSampling= */ false);
+            stereoMode,
+            ContentSecurityLevel.NONE,
+            /* useSuperSampling= */ false,
+        )
     }
 
     // TODO - b/410899125: Set the content security level properly.
-    @Override
-    public @NonNull ImpressNode createStereoSurface(
-            @StereoMode int stereoMode, @ContentSecurityLevel int contentSecurityLevel) {
-        return createStereoSurface(stereoMode, contentSecurityLevel, /* useSuperSampling= */ false);
+    override fun createStereoSurface(
+        @StereoMode stereoMode: Int,
+        @ContentSecurityLevel contentSecurityLevel: Int,
+    ): ImpressNode {
+        return createStereoSurface(stereoMode, contentSecurityLevel, /* useSuperSampling= */ false)
     }
 
-    @Override
-    public @NonNull ImpressNode createStereoSurface(
-            @StereoMode int stereoMode,
-            @ContentSecurityLevel int contentSecurityLevel,
-            boolean useSuperSampling) {
-        StereoSurfaceEntityData data = new StereoSurfaceEntityData();
-        data.mImpressNode = createImpressNode();
-        data.mSurface = new TestSurface(data.mImpressNode.getHandle());
-        data.mUseSuperSampling = useSuperSampling;
-        data.mStereoMode = stereoMode;
-        data.mCanvasShape = null;
-        mStereoSurfaceEntities.put(data.mImpressNode, data);
-        return data.mImpressNode;
+    override fun createStereoSurface(
+        @StereoMode stereoMode: Int,
+        @ContentSecurityLevel contentSecurityLevel: Int,
+        useSuperSampling: Boolean,
+    ): ImpressNode {
+        val impressNode: ImpressNode = createImpressNode()
+        val data =
+            StereoSurfaceEntityData(
+                impressNode = impressNode,
+                surface = TestSurface(impressNode.handle),
+                useSuperSampling = useSuperSampling,
+                stereoMode = stereoMode,
+                canvasShape = null,
+            )
+        stereoSurfaceEntities[data.impressNode] = data
+        return data.impressNode
     }
 
-    /**
-     * This method sets the canvas shape of a StereoSurfaceEntity using its Impress ID.
-     *
-     * @param impressNode The Impress node which hosts the StereoSurfaceEntity to be updated.
-     * @param width The width in local spatial units to set the quad to.
-     * @param height The height in local spatial units to set the quad to.
-     */
-    @Override
-    public void setStereoSurfaceEntityCanvasShapeQuad(
-            @NonNull ImpressNode impressNode, float width, float height) {
-        if (!mStereoSurfaceEntities.containsKey(impressNode)) {
-            throw new IllegalArgumentException("Couldn't find stereo surface entity!");
+    override fun setStereoSurfaceEntityCanvasShapeQuad(
+        impressNode: ImpressNode,
+        width: Float,
+        height: Float,
+    ) {
+        val data =
+            stereoSurfaceEntities[impressNode]
+                ?: throw IllegalArgumentException("Couldn't find stereo surface entity!")
+        data.canvasShape = StereoSurfaceEntityData.CanvasShape.QUAD
+        data.width = width
+        data.height = height
+    }
+
+    override fun setStereoSurfaceEntityCanvasShapeSphere(impressNode: ImpressNode, radius: Float) {
+        val data =
+            stereoSurfaceEntities[impressNode]
+                ?: throw IllegalArgumentException("Couldn't find stereo surface entity!")
+        data.canvasShape = StereoSurfaceEntityData.CanvasShape.VR_360_SPHERE
+        data.radius = radius
+    }
+
+    override fun setStereoSurfaceEntityCanvasShapeHemisphere(
+        impressNode: ImpressNode,
+        radius: Float,
+    ) {
+        val data =
+            stereoSurfaceEntities[impressNode]
+                ?: throw IllegalArgumentException("Couldn't find stereo surface entity!")
+        data.canvasShape = StereoSurfaceEntityData.CanvasShape.VR_180_HEMISPHERE
+        data.radius = radius
+    }
+
+    override fun setStereoSurfaceEntityColliderEnabled(
+        impressNode: ImpressNode,
+        enableCollider: Boolean,
+    ) {
+        stereoSurfaceEntities[impressNode]?.colliderEnabled = enableCollider
+    }
+
+    override fun getSurfaceFromStereoSurface(panelImpressNode: ImpressNode): Surface {
+        // TODO: b/387323937 - the Native code currently CHECK fails in this case
+        return stereoSurfaceEntities[panelImpressNode]?.surface
+            ?: throw IllegalArgumentException("Couldn't find stereo surface entity!")
+    }
+
+    override fun setStereoSurfaceEntitySurfaceSize(
+        impressNode: ImpressNode,
+        width: Int,
+        height: Int,
+    ) {
+        require(!(width <= 0 || height <= 0)) { "Surface dimensions must be positive!" }
+        require(stereoSurfaceEntities.containsKey(impressNode)) {
+            "Couldn't find stereo surface entity!"
         }
-        StereoSurfaceEntityData data = mStereoSurfaceEntities.get(impressNode);
-        data.mCanvasShape = StereoSurfaceEntityData.CanvasShape.QUAD;
-        data.mWidth = width;
-        data.mHeight = height;
+        val data: StereoSurfaceEntityData = stereoSurfaceEntities[impressNode]!!
+        data.surfaceWidth = width
+        data.surfaceHeight = height
     }
 
-    /**
-     * This method sets the canvas shape of a StereoSurfaceEntity using its Impress ID.
-     *
-     * @param impressNode The Impress node which hosts the StereoSurfaceEntity to be updated.
-     * @param radius The radius in local spatial units to set the sphere to.
-     */
-    @Override
-    public void setStereoSurfaceEntityCanvasShapeSphere(
-            @NonNull ImpressNode impressNode, float radius) {
-        if (!mStereoSurfaceEntities.containsKey(impressNode)) {
-            throw new IllegalArgumentException("Couldn't find stereo surface entity!");
-        }
-        StereoSurfaceEntityData data = mStereoSurfaceEntities.get(impressNode);
-        data.mCanvasShape = StereoSurfaceEntityData.CanvasShape.VR_360_SPHERE;
-        data.mRadius = radius;
+    override fun setFeatherRadiusForStereoSurface(
+        panelImpressNode: ImpressNode,
+        radiusX: Float,
+        radiusY: Float,
+    ) {
+        // TODO: b/387323937 - the Native code currently CHECK fails in this case
+        val data =
+            stereoSurfaceEntities[panelImpressNode]
+                ?: throw IllegalArgumentException("Couldn't find stereo surface entity!")
+        data.featherRadiusX = radiusX
+        data.featherRadiusY = radiusY
     }
 
-    /**
-     * This method sets the canvas shape of a StereoSurfaceEntity using its Impress ID.
-     *
-     * @param impressNode The Impress node which hosts the StereoSurfaceEntity to be updated.
-     * @param radius The radius in local spatial units of the hemisphere.
-     */
-    @Override
-    public void setStereoSurfaceEntityCanvasShapeHemisphere(
-            @NonNull ImpressNode impressNode, float radius) {
-        StereoSurfaceEntityData data = mStereoSurfaceEntities.get(impressNode);
-        data.mCanvasShape = StereoSurfaceEntityData.CanvasShape.VR_180_HEMISPHERE;
-        data.mRadius = radius;
+    override fun setStereoModeForStereoSurface(
+        panelImpressNode: ImpressNode,
+        @StereoMode stereoMode: Int,
+    ) {
+        // TODO: b/387323937 - the Native code currently CHECK fails in this case
+        val data =
+            stereoSurfaceEntities[panelImpressNode]
+                ?: throw IllegalArgumentException("Couldn't find stereo surface entity!")
+        data.stereoMode = stereoMode
     }
 
-    @Override
-    public void setStereoSurfaceEntityColliderEnabled(
-            @NonNull ImpressNode impressNode, boolean enableCollider) {
-        StereoSurfaceEntityData data = mStereoSurfaceEntities.get(impressNode);
-        if (data != null) {
-            data.mColliderEnabled = enableCollider;
-        }
-    }
+    override fun setContentColorMetadataForStereoSurface(
+        stereoSurfaceNode: ImpressNode,
+        @ColorSpace colorSpace: Int,
+        @ColorTransfer colorTransfer: Int,
+        @ColorRange colorRange: Int,
+        maxLuminance: Int,
+    ) {}
 
-    @Override
-    @NonNull
-    public Surface getSurfaceFromStereoSurface(@NonNull ImpressNode panelImpressNode) {
-        if (!mStereoSurfaceEntities.containsKey(panelImpressNode)) {
-            // TODO: b/387323937 - the Native code currently CHECK fails in this case
-            throw new IllegalArgumentException("Couldn't find stereo surface entity!");
-        }
-        return mStereoSurfaceEntities.get(panelImpressNode).mSurface;
-    }
+    override fun resetContentColorMetadataForStereoSurface(stereoSurfaceNode: ImpressNode) {}
 
-    @Override
-    public void setStereoSurfaceEntitySurfaceSize(
-            @NonNull ImpressNode impressNode, int width, int height) {
-        if (width <= 0 || height <= 0) {
-            throw new IllegalArgumentException("Surface dimensions must be positive!");
-        }
-        if (!mStereoSurfaceEntities.containsKey(impressNode)) {
-            throw new IllegalArgumentException("Couldn't find stereo surface entity!");
-        }
-        StereoSurfaceEntityData data = mStereoSurfaceEntities.get(impressNode);
-        data.mSurfaceWidth = width;
-        data.mSurfaceHeight = height;
-    }
-
-    @Override
-    public void setFeatherRadiusForStereoSurface(
-            @NonNull ImpressNode panelImpressNode, float radiusX, float radiusY) {
-        if (!mStereoSurfaceEntities.containsKey(panelImpressNode)) {
-            // TODO: b/387323937 - the Native code currently CHECK fails in this case
-            throw new IllegalArgumentException("Couldn't find stereo surface entity!");
-        }
-        mStereoSurfaceEntities.get(panelImpressNode).mFeatherRadiusX = radiusX;
-        mStereoSurfaceEntities.get(panelImpressNode).mFeatherRadiusY = radiusY;
-    }
-
-    @Override
-    public void setStereoModeForStereoSurface(
-            @NonNull ImpressNode panelImpressNode, @StereoMode int mode) {
-        if (!mStereoSurfaceEntities.containsKey(panelImpressNode)) {
-            // TODO: b/387323937 - the Native code currently CHECK fails in this case
-            throw new IllegalArgumentException("Couldn't find stereo surface entity!");
-        }
-        mStereoSurfaceEntities.get(panelImpressNode).mStereoMode = mode;
-    }
-
-    @Override
-    public void setContentColorMetadataForStereoSurface(
-            @NonNull ImpressNode stereoSurfaceNode,
-            @ColorSpace int colorSpace,
-            @ColorTransfer int colorTransfer,
-            @ColorRange int colorRange,
-            int maxLuminance) {}
-
-    @Override
-    public void resetContentColorMetadataForStereoSurface(@NonNull ImpressNode stereoSurfaceNode) {}
-
-    @Override
-    @NonNull
-    @SuppressWarnings({"RestrictTo", "AsyncSuffixFuture"})
-    public ListenableFuture<Texture> loadTexture(@NonNull String path) {
-        long textureImageToken = mNextTextureId++;
-        Texture texture =
-                new Texture.Builder()
-                        .setImpressApi(this)
-                        .setNativeTexture(textureImageToken)
-                        .build();
-        mTextureImages.put(textureImageToken, texture);
+    @Suppress("RestrictTo", "AsyncSuffixFuture")
+    override fun loadTexture(path: String): ListenableFuture<Texture> {
+        val textureImageToken = nextTextureId++
+        val texture =
+            Texture.Builder().setImpressApi(this).setNativeTexture(textureImageToken).build()
+        textureImages[textureImageToken] = texture
         // TODO(b/352827267): Enforce minSDK API strategy - go/androidx-api-guidelines#compat-newapi
-        ResolvableFuture<Texture> ret = ResolvableFuture.create();
-        ret.set(texture);
-        return ret;
+        return ResolvableFuture.create<Texture>().apply { set(texture) }
     }
 
-    @Override
-    @NonNull
-    public Texture borrowReflectionTexture() {
-        long textureImageToken = mNextTextureId++;
-        return new Texture.Builder()
+    override fun borrowReflectionTexture(): Texture {
+        val textureImageToken = nextTextureId++
+        return Texture.Builder().setImpressApi(this).setNativeTexture(textureImageToken).build()
+    }
+
+    override fun getReflectionTextureFromIbl(iblToken: Long): Texture {
+        val textureImageToken = nextTextureId++
+        return Texture.Builder().setImpressApi(this).setNativeTexture(textureImageToken).build()
+    }
+
+    @Suppress("RestrictTo", "AsyncSuffixFuture")
+    override fun createWaterMaterial(isAlphaMapVersion: Boolean): ListenableFuture<WaterMaterial> {
+        val materialToken = nextMaterialId++
+        val material =
+            WaterMaterial.Builder().setImpressApi(this).setNativeMaterial(materialToken).build()
+        materials[materialToken] = MaterialData(MaterialData.Type.WATER, materialToken)
+        return ResolvableFuture.create<WaterMaterial>().apply { set(material) }
+    }
+
+    override fun setReflectionMapOnWaterMaterial(
+        nativeWaterMaterial: Long,
+        reflectionMap: Long,
+        sampler: TextureSampler,
+    ) {
+        throw IllegalArgumentException("not implemented")
+    }
+
+    override fun setNormalMapOnWaterMaterial(
+        nativeWaterMaterial: Long,
+        normalMap: Long,
+        sampler: TextureSampler,
+    ) {
+        throw IllegalArgumentException("not implemented")
+    }
+
+    override fun setNormalTilingOnWaterMaterial(nativeWaterMaterial: Long, normalTiling: Float) {
+        throw IllegalArgumentException("not implemented")
+    }
+
+    override fun setNormalSpeedOnWaterMaterial(nativeWaterMaterial: Long, normalSpeed: Float) {
+        throw IllegalArgumentException("not implemented")
+    }
+
+    override fun setAlphaStepMultiplierOnWaterMaterial(
+        nativeWaterMaterial: Long,
+        alphaStepMultiplier: Float,
+    ) {
+        throw IllegalArgumentException("not implemented")
+    }
+
+    override fun setAlphaMapOnWaterMaterial(
+        nativeWaterMaterial: Long,
+        alphaMap: Long,
+        sampler: TextureSampler,
+    ) {
+        throw IllegalArgumentException("not implemented")
+    }
+
+    override fun setNormalZOnWaterMaterial(nativeWaterMaterial: Long, normalZ: Float) {
+        throw IllegalArgumentException("not implemented")
+    }
+
+    override fun setNormalBoundaryOnWaterMaterial(nativeWaterMaterial: Long, boundary: Float) {
+        throw IllegalArgumentException("not implemented")
+    }
+
+    override fun setAlphaStepUOnWaterMaterial(
+        nativeWaterMaterial: Long,
+        x: Float,
+        y: Float,
+        z: Float,
+        w: Float,
+    ) {
+        throw IllegalArgumentException("not implemented")
+    }
+
+    override fun setAlphaStepVOnWaterMaterial(
+        nativeWaterMaterial: Long,
+        x: Float,
+        y: Float,
+        z: Float,
+        w: Float,
+    ) {
+        throw IllegalArgumentException("not implemented")
+    }
+
+    @Suppress("RestrictTo")
+    override fun createKhronosPbrMaterial(
+        spec: KhronosPbrMaterialSpec
+    ): ListenableFuture<KhronosPbrMaterial> {
+        val materialToken = nextMaterialId++
+        val material =
+            KhronosPbrMaterial.Builder()
                 .setImpressApi(this)
-                .setNativeTexture(textureImageToken)
-                .build();
+                .setNativeMaterial(materialToken)
+                .build()
+        materials[materialToken] = MaterialData(MaterialData.Type.KHRONOS_PBR, materialToken)
+        return ResolvableFuture.create<KhronosPbrMaterial>().apply { set(material) }
     }
 
-    @Override
-    @NonNull
-    public Texture getReflectionTextureFromIbl(long iblToken) {
-        long textureImageToken = mNextTextureId++;
-        return new Texture.Builder()
-                .setImpressApi(this)
-                .setNativeTexture(textureImageToken)
-                .build();
+    override fun setBaseColorTextureOnKhronosPbrMaterial(
+        nativeKhronosPbrMaterial: Long,
+        baseColorTexture: Long,
+        sampler: TextureSampler,
+    ) {
+        throw IllegalArgumentException("not implemented")
     }
 
-    @Override
-    @SuppressWarnings({"RestrictTo", "AsyncSuffixFuture"})
-    @NonNull
-    public ListenableFuture<WaterMaterial> createWaterMaterial(boolean isAlphaMapVersion) {
-        long materialToken = mNextMaterialId++;
-        WaterMaterial material =
-                new WaterMaterial.Builder()
-                        .setImpressApi(this)
-                        .setNativeMaterial(materialToken)
-                        .build();
-        mMaterials.put(materialToken, new MaterialData(MaterialData.Type.WATER, materialToken));
-        ResolvableFuture<WaterMaterial> ret = ResolvableFuture.create();
-        ret.set(material);
-        return ret;
+    override fun setBaseColorUvTransformOnKhronosPbrMaterial(
+        nativeKhronosPbrMaterial: Long,
+        ux: Float,
+        uy: Float,
+        uz: Float,
+        vx: Float,
+        vy: Float,
+        vz: Float,
+        wx: Float,
+        wy: Float,
+        wz: Float,
+    ) {
+        throw IllegalArgumentException("not implemented")
     }
 
-    @Override
-    public void setReflectionMapOnWaterMaterial(
-            long nativeMaterial, long reflectionMap, @NonNull TextureSampler sampler) {
-        throw new IllegalArgumentException("not implemented");
+    override fun setBaseColorFactorsOnKhronosPbrMaterial(
+        nativeKhronosPbrMaterial: Long,
+        x: Float,
+        y: Float,
+        z: Float,
+        w: Float,
+    ) {
+        throw IllegalArgumentException("not implemented")
     }
 
-    @Override
-    public void setNormalMapOnWaterMaterial(
-            long nativeMaterial, long normalMap, @NonNull TextureSampler sampler) {
-        throw new IllegalArgumentException("not implemented");
+    override fun setMetallicRoughnessTextureOnKhronosPbrMaterial(
+        nativeKhronosPbrMaterial: Long,
+        metallicRoughnessTexture: Long,
+        sampler: TextureSampler,
+    ) {
+        throw IllegalArgumentException("not implemented")
     }
 
-    @Override
-    public void setNormalTilingOnWaterMaterial(long nativeMaterial, float normalTiling) {
-        throw new IllegalArgumentException("not implemented");
+    override fun setMetallicRoughnessUvTransformOnKhronosPbrMaterial(
+        nativeKhronosPbrMaterial: Long,
+        ux: Float,
+        uy: Float,
+        uz: Float,
+        vx: Float,
+        vy: Float,
+        vz: Float,
+        wx: Float,
+        wy: Float,
+        wz: Float,
+    ) {
+        throw IllegalArgumentException("not implemented")
     }
 
-    @Override
-    public void setNormalSpeedOnWaterMaterial(long nativeMaterial, float normalSpeed) {
-        throw new IllegalArgumentException("not implemented");
+    override fun setMetallicFactorOnKhronosPbrMaterial(
+        nativeKhronosPbrMaterial: Long,
+        factor: Float,
+    ) {
+        throw IllegalArgumentException("not implemented")
     }
 
-    @Override
-    public void setAlphaStepMultiplierOnWaterMaterial(
-            long nativeMaterial, float alphaStepMultiplier) {
-        throw new IllegalArgumentException("not implemented");
+    override fun setRoughnessFactorOnKhronosPbrMaterial(
+        nativeKhronosPbrMaterial: Long,
+        factor: Float,
+    ) {
+        throw IllegalArgumentException("not implemented")
     }
 
-    @Override
-    public void setAlphaMapOnWaterMaterial(
-            long nativeWaterMaterial, long alphaMap, @NonNull TextureSampler sampler) {
-        throw new IllegalArgumentException("not implemented");
+    override fun setNormalTextureOnKhronosPbrMaterial(
+        nativeKhronosPbrMaterial: Long,
+        normalTexture: Long,
+        sampler: TextureSampler,
+    ) {
+        throw IllegalArgumentException("not implemented")
     }
 
-    @Override
-    public void setNormalZOnWaterMaterial(long nativeWaterMaterial, float normalZ) {
-        throw new IllegalArgumentException("not implemented");
+    override fun setNormalUvTransformOnKhronosPbrMaterial(
+        nativeKhronosPbrMaterial: Long,
+        ux: Float,
+        uy: Float,
+        uz: Float,
+        vx: Float,
+        vy: Float,
+        vz: Float,
+        wx: Float,
+        wy: Float,
+        wz: Float,
+    ) {
+        throw IllegalArgumentException("not implemented")
     }
 
-    @Override
-    public void setNormalBoundaryOnWaterMaterial(long nativeWaterMaterial, float normalBoundary) {
-        throw new IllegalArgumentException("not implemented");
+    override fun setNormalFactorOnKhronosPbrMaterial(
+        nativeKhronosPbrMaterial: Long,
+        factor: Float,
+    ) {
+        throw IllegalArgumentException("not implemented")
     }
 
-    @Override
-    public void setAlphaStepUOnWaterMaterial(
-            long nativeWaterMaterial, float x, float y, float z, float w) {
-        throw new IllegalArgumentException("not implemented");
+    override fun setAmbientOcclusionTextureOnKhronosPbrMaterial(
+        nativeKhronosPbrMaterial: Long,
+        ambientOcclusionTexture: Long,
+        sampler: TextureSampler,
+    ) {
+        throw IllegalArgumentException("not implemented")
     }
 
-    @Override
-    public void setAlphaStepVOnWaterMaterial(
-            long nativeWaterMaterial, float x, float y, float z, float w) {
-        throw new IllegalArgumentException("not implemented");
+    override fun setAmbientOcclusionUvTransformOnKhronosPbrMaterial(
+        nativeKhronosPbrMaterial: Long,
+        ux: Float,
+        uy: Float,
+        uz: Float,
+        vx: Float,
+        vy: Float,
+        vz: Float,
+        wx: Float,
+        wy: Float,
+        wz: Float,
+    ) {
+        throw IllegalArgumentException("not implemented")
     }
 
-    @Override
-    @SuppressWarnings("RestrictTo")
-    @NonNull
-    public ListenableFuture<KhronosPbrMaterial> createKhronosPbrMaterial(
-            @NonNull KhronosPbrMaterialSpec spec) {
-        long materialToken = mNextMaterialId++;
-        KhronosPbrMaterial material =
-                new KhronosPbrMaterial.Builder()
-                        .setImpressApi(this)
-                        .setNativeMaterial(materialToken)
-                        .build();
-        mMaterials.put(
-                materialToken, new MaterialData(MaterialData.Type.KHRONOS_PBR, materialToken));
-        ResolvableFuture<KhronosPbrMaterial> ret = ResolvableFuture.create();
-        ret.set(material);
-        return ret;
+    override fun setAmbientOcclusionFactorOnKhronosPbrMaterial(
+        nativeKhronosPbrMaterial: Long,
+        factor: Float,
+    ) {
+        throw IllegalArgumentException("not implemented")
     }
 
-    @Override
-    public void setBaseColorTextureOnKhronosPbrMaterial(
-            long nativeKhronosPbrMaterial, long baseColorTexture, @NonNull TextureSampler sampler) {
-        throw new IllegalArgumentException("not implemented");
+    override fun setEmissiveTextureOnKhronosPbrMaterial(
+        nativeKhronosPbrMaterial: Long,
+        emissiveTexture: Long,
+        sampler: TextureSampler,
+    ) {
+        throw IllegalArgumentException("not implemented")
     }
 
-    @Override
-    public void setBaseColorUvTransformOnKhronosPbrMaterial(
-            long nativeKhronosPbrMaterial,
-            float ux,
-            float uy,
-            float uz,
-            float vx,
-            float vy,
-            float vz,
-            float wx,
-            float wy,
-            float wz) {
-        throw new IllegalArgumentException("not implemented");
+    override fun setEmissiveUvTransformOnKhronosPbrMaterial(
+        nativeKhronosPbrMaterial: Long,
+        ux: Float,
+        uy: Float,
+        uz: Float,
+        vx: Float,
+        vy: Float,
+        vz: Float,
+        wx: Float,
+        wy: Float,
+        wz: Float,
+    ) {
+        throw IllegalArgumentException("not implemented")
     }
 
-    @Override
-    public void setBaseColorFactorsOnKhronosPbrMaterial(
-            long nativeKhronosPbrMaterial, float x, float y, float z, float w) {
-        throw new IllegalArgumentException("not implemented");
+    override fun setEmissiveFactorsOnKhronosPbrMaterial(
+        nativeKhronosPbrMaterial: Long,
+        x: Float,
+        y: Float,
+        z: Float,
+    ) {
+        throw IllegalArgumentException("not implemented")
     }
 
-    @Override
-    public void setMetallicRoughnessTextureOnKhronosPbrMaterial(
-            long nativeKhronosPbrMaterial,
-            long metallicRoughnessTexture,
-            @NonNull TextureSampler sampler) {
-        throw new IllegalArgumentException("not implemented");
+    override fun setClearcoatTextureOnKhronosPbrMaterial(
+        nativeKhronosPbrMaterial: Long,
+        clearcoatTexture: Long,
+        sampler: TextureSampler,
+    ) {
+        throw IllegalArgumentException("not implemented")
     }
 
-    @Override
-    public void setMetallicRoughnessUvTransformOnKhronosPbrMaterial(
-            long nativeKhronosPbrMaterial,
-            float ux,
-            float uy,
-            float uz,
-            float vx,
-            float vy,
-            float vz,
-            float wx,
-            float wy,
-            float wz) {
-        throw new IllegalArgumentException("not implemented");
+    override fun setClearcoatNormalTextureOnKhronosPbrMaterial(
+        nativeKhronosPbrMaterial: Long,
+        clearcoatNormalTexture: Long,
+        sampler: TextureSampler,
+    ) {
+        throw IllegalArgumentException("not implemented")
     }
 
-    @Override
-    public void setMetallicFactorOnKhronosPbrMaterial(long nativeKhronosPbrMaterial, float factor) {
-        throw new IllegalArgumentException("not implemented");
+    override fun setClearcoatRoughnessTextureOnKhronosPbrMaterial(
+        nativeKhronosPbrMaterial: Long,
+        clearcoatRoughnessTexture: Long,
+        sampler: TextureSampler,
+    ) {
+        throw IllegalArgumentException("not implemented")
     }
 
-    @Override
-    public void setRoughnessFactorOnKhronosPbrMaterial(
-            long nativeKhronosPbrMaterial, float factor) {
-        throw new IllegalArgumentException("not implemented");
+    override fun setClearcoatFactorsOnKhronosPbrMaterial(
+        nativeKhronosPbrMaterial: Long,
+        intensity: Float,
+        roughness: Float,
+        normal: Float,
+    ) {
+        throw IllegalArgumentException("not implemented")
     }
 
-    @Override
-    public void setNormalTextureOnKhronosPbrMaterial(
-            long nativeKhronosPbrMaterial, long normalTexture, @NonNull TextureSampler sampler) {
-        throw new IllegalArgumentException("not implemented");
+    override fun setSheenColorTextureOnKhronosPbrMaterial(
+        nativeKhronosPbrMaterial: Long,
+        sheenColorTexture: Long,
+        sampler: TextureSampler,
+    ) {
+        throw IllegalArgumentException("not implemented")
     }
 
-    @Override
-    public void setNormalUvTransformOnKhronosPbrMaterial(
-            long nativeKhronosPbrMaterial,
-            float ux,
-            float uy,
-            float uz,
-            float vx,
-            float vy,
-            float vz,
-            float wx,
-            float wy,
-            float wz) {
-        throw new IllegalArgumentException("not implemented");
+    override fun setSheenColorFactorsOnKhronosPbrMaterial(
+        nativeKhronosPbrMaterial: Long,
+        x: Float,
+        y: Float,
+        z: Float,
+    ) {
+        throw IllegalArgumentException("not implemented")
     }
 
-    @Override
-    public void setNormalFactorOnKhronosPbrMaterial(long nativeKhronosPbrMaterial, float factor) {
-        throw new IllegalArgumentException("not implemented");
+    override fun setSheenRoughnessTextureOnKhronosPbrMaterial(
+        nativeKhronosPbrMaterial: Long,
+        sheenRoughnessTexture: Long,
+        sampler: TextureSampler,
+    ) {
+        throw IllegalArgumentException("not implemented")
     }
 
-    @Override
-    public void setAmbientOcclusionTextureOnKhronosPbrMaterial(
-            long nativeKhronosPbrMaterial,
-            long ambientOcclusionTexture,
-            @NonNull TextureSampler sampler) {
-        throw new IllegalArgumentException("not implemented");
+    override fun setSheenRoughnessFactorOnKhronosPbrMaterial(
+        nativeKhronosPbrMaterial: Long,
+        factor: Float,
+    ) {
+        throw IllegalArgumentException("not implemented")
     }
 
-    @Override
-    public void setAmbientOcclusionUvTransformOnKhronosPbrMaterial(
-            long nativeKhronosPbrMaterial,
-            float ux,
-            float uy,
-            float uz,
-            float vx,
-            float vy,
-            float vz,
-            float wx,
-            float wy,
-            float wz) {
-        throw new IllegalArgumentException("not implemented");
+    override fun setTransmissionTextureOnKhronosPbrMaterial(
+        nativeKhronosPbrMaterial: Long,
+        transmissionTexture: Long,
+        sampler: TextureSampler,
+    ) {
+        throw IllegalArgumentException("not implemented")
     }
 
-    @Override
-    public void setAmbientOcclusionFactorOnKhronosPbrMaterial(
-            long nativeKhronosPbrMaterial, float factor) {
-        throw new IllegalArgumentException("not implemented");
+    override fun setTransmissionUvTransformOnKhronosPbrMaterial(
+        nativeKhronosPbrMaterial: Long,
+        ux: Float,
+        uy: Float,
+        uz: Float,
+        vx: Float,
+        vy: Float,
+        vz: Float,
+        wx: Float,
+        wy: Float,
+        wz: Float,
+    ) {
+        throw IllegalArgumentException("not implemented")
     }
 
-    @Override
-    public void setEmissiveTextureOnKhronosPbrMaterial(
-            long nativeKhronosPbrMaterial, long emissiveTexture, @NonNull TextureSampler sampler) {
-        throw new IllegalArgumentException("not implemented");
+    override fun setTransmissionFactorOnKhronosPbrMaterial(
+        nativeKhronosPbrMaterial: Long,
+        factor: Float,
+    ) {
+        throw IllegalArgumentException("not implemented")
     }
 
-    @Override
-    public void setEmissiveUvTransformOnKhronosPbrMaterial(
-            long nativeKhronosPbrMaterial,
-            float ux,
-            float uy,
-            float uz,
-            float vx,
-            float vy,
-            float vz,
-            float wx,
-            float wy,
-            float wz) {
-        throw new IllegalArgumentException("not implemented");
+    override fun setIndexOfRefractionOnKhronosPbrMaterial(
+        nativeKhronosPbrMaterial: Long,
+        indexOfRefraction: Float,
+    ) {
+        throw IllegalArgumentException("not implemented")
     }
 
-    @Override
-    public void setEmissiveFactorsOnKhronosPbrMaterial(
-            long nativeKhronosPbrMaterial, float x, float y, float z) {
-        throw new IllegalArgumentException("not implemented");
+    override fun setAlphaCutoffOnKhronosPbrMaterial(
+        nativeKhronosPbrMaterial: Long,
+        alphaCutoff: Float,
+    ) {
+        throw IllegalArgumentException("not implemented")
     }
 
-    @Override
-    public void setClearcoatTextureOnKhronosPbrMaterial(
-            long nativeKhronosPbrMaterial, long clearcoatTexture, @NonNull TextureSampler sampler) {
-        throw new IllegalArgumentException("not implemented");
+    override fun destroyNativeObject(nativeHandle: Long) {
+        materials.remove(nativeHandle)
+        textureImages.remove(nativeHandle)
     }
 
-    @Override
-    public void setClearcoatNormalTextureOnKhronosPbrMaterial(
-            long nativeKhronosPbrMaterial,
-            long clearcoatNormalTexture,
-            @NonNull TextureSampler sampler) {
-        throw new IllegalArgumentException("not implemented");
+    override fun setMaterialOverride(
+        impressNode: ImpressNode,
+        nativeMaterial: Long,
+        nodeName: String,
+        primitiveIndex: Int,
+    ) {
+        val gltfNodeData =
+            getGltfNodeData(impressNode) ?: throw IllegalArgumentException("Impress node not found")
+        gltfNodeData.setMaterialOverride(materials[nativeMaterial], nodeName, primitiveIndex)
     }
 
-    @Override
-    public void setClearcoatRoughnessTextureOnKhronosPbrMaterial(
-            long nativeKhronosPbrMaterial,
-            long clearcoatRoughnessTexture,
-            @NonNull TextureSampler sampler) {
-        throw new IllegalArgumentException("not implemented");
+    override fun clearMaterialOverride(
+        impressNode: ImpressNode,
+        nodeName: String,
+        primitiveIndex: Int,
+    ) {
+        val gltfNodeData =
+            getGltfNodeData(impressNode) ?: throw IllegalArgumentException("Impress node not found")
+        gltfNodeData.clearMaterialOverride(nodeName, primitiveIndex)
     }
 
-    @Override
-    public void setClearcoatFactorsOnKhronosPbrMaterial(
-            long nativeKhronosPbrMaterial, float intensity, float roughness, float normal) {
-        throw new IllegalArgumentException("not implemented");
+    override fun setPreferredEnvironmentLight(iblToken: Long) {
+        currentEnvironmentLightId = iblToken
     }
 
-    @Override
-    public void setSheenColorTextureOnKhronosPbrMaterial(
-            long nativeKhronosPbrMaterial,
-            long sheenColorTexture,
-            @NonNull TextureSampler sampler) {
-        throw new IllegalArgumentException("not implemented");
+    override fun clearPreferredEnvironmentIblAsset() {
+        currentEnvironmentLightId = -1
     }
 
-    @Override
-    public void setSheenColorFactorsOnKhronosPbrMaterial(
-            long nativeKhronosPbrMaterial, float x, float y, float z) {
-        throw new IllegalArgumentException("not implemented");
+    override fun setPrimaryAlphaMaskForStereoSurface(
+        panelImpressNode: ImpressNode,
+        alphaMask: Long,
+    ) {
+        throw IllegalArgumentException("not implemented")
     }
 
-    @Override
-    public void setSheenRoughnessTextureOnKhronosPbrMaterial(
-            long nativeKhronosPbrMaterial,
-            long sheenRoughnessTexture,
-            @NonNull TextureSampler sampler) {
-        throw new IllegalArgumentException("not implemented");
+    override fun setAuxiliaryAlphaMaskForStereoSurface(
+        panelImpressNode: ImpressNode,
+        alphaMask: Long,
+    ) {
+        throw IllegalArgumentException("not implemented")
     }
 
-    @Override
-    public void setSheenRoughnessFactorOnKhronosPbrMaterial(
-            long nativeKhronosPbrMaterial, float factor) {
-        throw new IllegalArgumentException("not implemented");
-    }
-
-    @Override
-    public void setTransmissionTextureOnKhronosPbrMaterial(
-            long nativeKhronosPbrMaterial,
-            long transmissionTexture,
-            @NonNull TextureSampler sampler) {
-        throw new IllegalArgumentException("not implemented");
-    }
-
-    @Override
-    public void setTransmissionUvTransformOnKhronosPbrMaterial(
-            long nativeKhronosPbrMaterial,
-            float ux,
-            float uy,
-            float uz,
-            float vx,
-            float vy,
-            float vz,
-            float wx,
-            float wy,
-            float wz) {
-        throw new IllegalArgumentException("not implemented");
-    }
-
-    @Override
-    public void setTransmissionFactorOnKhronosPbrMaterial(
-            long nativeKhronosPbrMaterial, float factor) {
-        throw new IllegalArgumentException("not implemented");
-    }
-
-    @Override
-    public void setIndexOfRefractionOnKhronosPbrMaterial(
-            long nativeKhronosPbrMaterial, float indexOfRefraction) {
-        throw new IllegalArgumentException("not implemented");
-    }
-
-    @Override
-    public void setAlphaCutoffOnKhronosPbrMaterial(
-            long nativeKhronosPbrMaterial, float alphaCutoff) {
-        throw new IllegalArgumentException("not implemented");
-    }
-
-    @Override
-    public void destroyNativeObject(long nativeHandle) {
-        if (mMaterials.containsKey(nativeHandle)) {
-            mMaterials.remove(nativeHandle);
-        }
-        if (mTextureImages.containsKey(nativeHandle)) {
-            mTextureImages.remove(nativeHandle);
-        }
-    }
-
-    @Override
-    public void setMaterialOverride(
-            @NonNull ImpressNode impressNode,
-            long nativeMaterial,
-            @NonNull String nodeName,
-            int primitiveIndex) {
-        GltfNodeData gltfNodeData = getGltfNodeData(impressNode);
-        if (gltfNodeData == null) {
-            throw new IllegalArgumentException("Impress node not found");
-        }
-        gltfNodeData.setMaterialOverride(mMaterials.get(nativeMaterial), nodeName, primitiveIndex);
-    }
-
-    @Override
-    public void clearMaterialOverride(
-            @NonNull ImpressNode impressNode, @NonNull String nodeName, int primitiveIndex) {
-        GltfNodeData gltfNodeData = getGltfNodeData(impressNode);
-        if (gltfNodeData == null) {
-            throw new IllegalArgumentException("Impress node not found");
-        }
-        gltfNodeData.clearMaterialOverride(nodeName, primitiveIndex);
-    }
-
-    @Override
-    public void setPreferredEnvironmentLight(long iblToken) {
-        mCurrentEnvironmentLightId = iblToken;
-    }
-
-    @Override
-    public void clearPreferredEnvironmentIblAsset() {
-        mCurrentEnvironmentLightId = -1;
-    }
-
-    @Override
-    public void setPrimaryAlphaMaskForStereoSurface(
-            @NonNull ImpressNode impressNode, long alphaMask) {
-        throw new IllegalArgumentException("not implemented");
-    }
-
-    @Override
-    public void setAuxiliaryAlphaMaskForStereoSurface(
-            @NonNull ImpressNode impressNode, long alphaMask) {
-        throw new IllegalArgumentException("not implemented");
-    }
-
-    @Override
-    public void disposeAllResources() {
-        mImageBasedLightingAssets.clear();
-        mImpressNodes.clear();
-        mGltfModels.clear();
-        mTextureImages.clear();
-        mMaterials.clear();
+    override fun disposeAllResources() {
+        imageBasedLightingAssets.clear()
+        impressNodes.clear()
+        gltfModels.clear()
+        textureImages.clear()
+        materials.clear()
     }
 
     /** Returns the map of texture image tokens to their associated Texture object. */
-    @NonNull
-    public Map<Long, Texture> getTextureImages() {
-        return mTextureImages;
+    public fun getTextureImages(): MutableMap<Long, Texture> {
+        return textureImages
     }
 
     /** Returns the map of material tokens to their associated MaterialData object. */
-    @NonNull
-    public Map<Long, MaterialData> getMaterials() {
-        return mMaterials;
+    public fun getMaterials(): MutableMap<Long, MaterialData> {
+        return materials
     }
 
     /** Returns the map of impress nodes to their parent impress nodes. */
-    @NonNull
-    public Map<GltfNodeData, GltfNodeData> getImpressNodes() {
-        return mImpressNodes;
+    public fun getImpressNodes(): MutableMap<GltfNodeData, GltfNodeData?> {
+        return impressNodes
     }
 
     // Returns the list of image based lighting assets that have been loaded.
-    @NonNull
-    public List<Long> getImageBasedLightingAssets() {
-        return mImageBasedLightingAssets;
+    public fun getImageBasedLightingAssets(): MutableList<Long> {
+        return imageBasedLightingAssets
     }
 
     // Returns the map of glTF model tokens to their associated impress nodes.
-    @NonNull
-    public Map<Long, List<Integer>> getGltfModels() {
-        return mGltfModels;
+    public fun getGltfModels(): MutableMap<Long, MutableList<Int>> {
+        return gltfModels
     }
 
     /** Returns the current environment light token. */
-    public long getCurrentEnvironmentLight() {
-        return mCurrentEnvironmentLightId;
+    public fun getCurrentEnvironmentLight(): Long {
+        return currentEnvironmentLightId
     }
 
-    @Nullable
-    private GltfNodeData getGltfNodeData(@NonNull ImpressNode impressNode) {
-        for (Map.Entry<GltfNodeData, GltfNodeData> pair : mImpressNodes.entrySet()) {
-            if (pair.getKey().mEntityId == impressNode.getHandle()) {
-                return pair.getKey();
-            }
-        }
-        return null;
+    public fun getStereoSurfaceEntities(): MutableMap<ImpressNode, StereoSurfaceEntityData> {
+        return stereoSurfaceEntities
+    }
+
+    private fun getGltfNodeData(impressNode: ImpressNode): GltfNodeData? {
+        return impressNodes.keys.firstOrNull { it.entityId == impressNode.handle }
     }
 }

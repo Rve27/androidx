@@ -14,1837 +14,2006 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.impl.impress;
+package androidx.xr.scenecore.impl.impress
 
-import android.os.Handler;
-import android.os.Looper;
-import android.view.Surface;
-
-import androidx.annotation.RestrictTo;
-import androidx.annotation.VisibleForTesting;
-import androidx.concurrent.futures.CallbackToFutureAdapter;
-import androidx.xr.runtime.math.BoundingBox;
-import androidx.xr.runtime.math.FloatSize3d;
-import androidx.xr.runtime.math.Vector3;
-import androidx.xr.scenecore.runtime.KhronosPbrMaterialSpec;
-import androidx.xr.scenecore.runtime.TextureSampler;
-
-import com.google.ar.imp.view.View;
-import com.google.common.util.concurrent.ListenableFuture;
-
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
+import android.os.Handler
+import android.os.Looper
+import android.view.Surface
+import androidx.annotation.RestrictTo
+import androidx.annotation.VisibleForTesting
+import androidx.concurrent.futures.CallbackToFutureAdapter
+import androidx.xr.runtime.math.BoundingBox
+import androidx.xr.runtime.math.FloatSize3d
+import androidx.xr.runtime.math.Vector3
+import androidx.xr.scenecore.impl.impress.ImpressApi.ColorRange
+import androidx.xr.scenecore.impl.impress.ImpressApi.ColorSpace
+import androidx.xr.scenecore.impl.impress.ImpressApi.ColorTransfer
+import androidx.xr.scenecore.impl.impress.ImpressApi.ContentSecurityLevel
+import androidx.xr.scenecore.impl.impress.ImpressApi.StereoMode
+import androidx.xr.scenecore.runtime.KhronosPbrMaterialSpec
+import androidx.xr.scenecore.runtime.TextureSampler
+import com.google.ar.imp.view.View
+import com.google.common.util.concurrent.ListenableFuture
 
 /** Implementation of the JNI API for communicating with the Impress Split Engine instance. */
-@RestrictTo(RestrictTo.Scope.LIBRARY)
-public final class ImpressApiImpl implements ImpressApi {
-    private View mView;
-    private long mTestViewHandle = 0;
-    private BindingsResourceManager mResourceManager;
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+public class ImpressApiImpl : ImpressApi {
+    private var view: View? = null
+    private var testViewHandle: Long = 0
+
+    private lateinit var resourceManager: BindingsResourceManager
 
     /*
      * This is mostly here to throw on unsupported values. The int cast works as long as
      * ImpressApi.StereoMode is in sync with imp::MediaStereoMode.
      */
-    private int validateStereoMode(@StereoMode int stereoMode) {
-        switch (stereoMode) {
-            case StereoMode.MONO:
-            case StereoMode.TOP_BOTTOM:
-            case StereoMode.SIDE_BY_SIDE:
-            case StereoMode.MULTIVIEW_LEFT_PRIMARY:
-            case StereoMode.MULTIVIEW_RIGHT_PRIMARY:
-                return stereoMode;
-            default:
-                throw new IllegalArgumentException(
-                        "Unspported value for ImpressApi.StereoMode: " + stereoMode);
+    private fun validateStereoMode(@StereoMode stereoMode: Int): Int =
+        when (stereoMode) {
+            StereoMode.MONO,
+            StereoMode.TOP_BOTTOM,
+            StereoMode.SIDE_BY_SIDE,
+            StereoMode.MULTIVIEW_LEFT_PRIMARY,
+            StereoMode.MULTIVIEW_RIGHT_PRIMARY -> stereoMode
+            else ->
+                throw IllegalArgumentException(
+                    "Unsupported value for ImpressApi.StereoMode: $stereoMode"
+                )
         }
-    }
 
     /*
      * This is mostly here to throw on unsupported values. The int cast works as long as
      * ImpressApi.ContentSecurityLevel is in sync with imp::ContentSecurityLevel.
      */
-    private int validateContentSecurityLevel(@ContentSecurityLevel int contentSecurityLevel) {
-        switch (contentSecurityLevel) {
-            case ContentSecurityLevel.NONE:
-            case ContentSecurityLevel.PROTECTED:
-                return contentSecurityLevel;
-            default:
-                throw new IllegalArgumentException(
-                        "Unspported value for ImpressApi.ContentSecurityLevel: "
-                                + contentSecurityLevel);
+    private fun validateContentSecurityLevel(@ContentSecurityLevel contentSecurityLevel: Int): Int =
+        when (contentSecurityLevel) {
+            ContentSecurityLevel.NONE,
+            ContentSecurityLevel.PROTECTED -> contentSecurityLevel
+            else ->
+                throw IllegalArgumentException(
+                    "Unsupported value for ImpressApi.ContentSecurityLevel: " +
+                        "$contentSecurityLevel"
+                )
         }
-    }
 
     /*
      * This is mostly here to throw on unsupported values. The int cast works as long as
      * ImpressApi.ColorSpace is in sync with the native counterpart.
      */
-    private int validateColorSpace(@ColorSpace int colorSpace) {
-        switch (colorSpace) {
-            case ColorSpace.BT709:
-            case ColorSpace.BT601_PAL:
-            case ColorSpace.BT2020:
-            case ColorSpace.BT601_525:
-            case ColorSpace.DISPLAY_P3:
-            case ColorSpace.DCI_P3:
-            case ColorSpace.ADOBE_RGB:
-                return colorSpace;
-            default:
-                throw new IllegalArgumentException(
-                        "Unsupported value for ImpressApi.ColorSpace: " + colorSpace);
+    private fun validateColorSpace(@ColorSpace colorSpace: Int): Int =
+        when (colorSpace) {
+            ColorSpace.BT709,
+            ColorSpace.BT601_PAL,
+            ColorSpace.BT2020,
+            ColorSpace.BT601_525,
+            ColorSpace.DISPLAY_P3,
+            ColorSpace.DCI_P3,
+            ColorSpace.ADOBE_RGB -> colorSpace
+            else ->
+                throw IllegalArgumentException(
+                    "Unsupported value for ImpressApi.ColorSpace: $colorSpace"
+                )
         }
-    }
 
     /*
      * This is mostly here to throw on unsupported values. The int cast works as long as
      * ImpressApi.ColorTransfer is in sync with the native counterpart.
      */
-    private int validateColorTransfer(@ColorTransfer int colorTransfer) {
-        switch (colorTransfer) {
-            case ColorTransfer.LINEAR:
-            case ColorTransfer.SRGB:
-            case ColorTransfer.SDR:
-            case ColorTransfer.GAMMA_2_2:
-            case ColorTransfer.ST2084:
-            case ColorTransfer.HLG:
-                return colorTransfer;
-            default:
-                throw new IllegalArgumentException(
-                        "Unsupported value for ImpressApi.ColorTransfer: " + colorTransfer);
+    private fun validateColorTransfer(@ColorTransfer colorTransfer: Int): Int =
+        when (colorTransfer) {
+            ColorTransfer.LINEAR,
+            ColorTransfer.SRGB,
+            ColorTransfer.SDR,
+            ColorTransfer.GAMMA_2_2,
+            ColorTransfer.ST2084,
+            ColorTransfer.HLG -> colorTransfer
+            else ->
+                throw IllegalArgumentException(
+                    "Unsupported value for ImpressApi.ColorTransfer: $colorTransfer"
+                )
         }
-    }
 
     /*
      * This is mostly here to throw on unsupported values. The int cast works as long as
      * ImpressApi.ColorRange is in sync with the native counterpart.
      */
-    private int validateColorRange(@ColorRange int colorRange) {
-        switch (colorRange) {
-            case ColorRange.FULL:
-            case ColorRange.LIMITED:
-                return colorRange;
-            default:
-                throw new IllegalArgumentException(
-                        "Unsupported value for ImpressApi.ColorRange: " + colorRange);
+    private fun validateColorRange(@ColorRange colorRange: Int): Int =
+        when (colorRange) {
+            ColorRange.FULL,
+            ColorRange.LIMITED -> colorRange
+            else ->
+                throw IllegalArgumentException(
+                    "Unsupported value for ImpressApi.ColorRange: $colorRange"
+                )
         }
+
+    private fun validateMaxLuminance(maxLuminance: Int): Int {
+        if (maxLuminance !in 0..65535) {
+            throw IllegalArgumentException(
+                "maxLuminance must be either 0 (unknown) or greater than 0 and smaller than" +
+                    " 65536: $maxLuminance"
+            )
+        }
+        return maxLuminance
     }
 
-    private int validateMaxLuminance(int maxLuminance) {
-        if (maxLuminance < 0 || maxLuminance > 65535) {
-            throw new IllegalArgumentException(
-                    "maxLuminance must be either 0 (unknown) or greater than 0 and smaller than"
-                            + " 65536: "
-                            + maxLuminance);
+    override fun setup(view: View?) {
+        this.view = view
+        if (this.view != null) {
+            nSetup(getViewNativeHandle(view))
         }
-        return maxLuminance;
-    }
-
-    @Override
-    public void setup(@Nullable View view) {
-        mView = view;
-        if (mView != null) {
-            nSetup(getViewNativeHandle(view));
-        }
-        mResourceManager = new BindingsResourceManager(new Handler(Looper.getMainLooper()));
+        resourceManager = BindingsResourceManager(Handler(Looper.getMainLooper()))
     }
 
     @VisibleForTesting
-    @Override
-    public void setup(long nativeTestViewHandle) {
-        mTestViewHandle = nativeTestViewHandle;
-        nSetup(getViewNativeHandle(mView));
-        mResourceManager = new BindingsResourceManager(new Handler(Looper.getMainLooper()));
+    override fun setup(nativeTestViewHandle: Long) {
+        testViewHandle = nativeTestViewHandle
+        nSetup(getViewNativeHandle(view))
+        resourceManager = BindingsResourceManager(Handler(Looper.getMainLooper()))
     }
 
-    @Override
-    public void onResume() {
-        if (mView != null) {
-            mView.onResume();
+    override fun onResume(): Unit {
+        view?.onResume()
+    }
+
+    override fun onPause(): Unit {
+        view?.onPause()
+    }
+
+    override fun getBindingsResourceManager(): BindingsResourceManager = resourceManager
+
+    override fun releaseImageBasedLightingAsset(iblToken: Long): Unit =
+        nReleaseImageBasedLightingAsset(getViewNativeHandle(view), iblToken)
+
+    override fun loadImageBasedLightingAsset(path: String): ListenableFuture<ExrImage> =
+        CallbackToFutureAdapter.getFuture { completer ->
+            // TODO: b/374216912 - Add a cancellationListener to the completer here when the
+            // loading APIs support cancellation.
+            nLoadImageBasedLightingAssetFromPath(
+                getViewNativeHandle(view),
+                // The underlying C++ code will hold a reference to this (anoynomous)
+                // AssetLoader until the load is complete.
+                object : AssetLoader {
+                    override fun onSuccess(value: Long) {
+                        val exrImage: ExrImage =
+                            ExrImage.Builder()
+                                .setImpressApi(this@ImpressApiImpl)
+                                .setNativeExrImage(value)
+                                .build()
+                        completer.set(exrImage)
+                    }
+
+                    override fun onFailure(message: String) {
+                        // We can safely check for the CANCELLED string here since we
+                        // know that the underlying absl Status code is being
+                        // translated to a java Exception and the message is being
+                        // propagated. Ideally the native code would generate a separate
+                        // signal call for this.
+                        // TODO: b/374217508 - Publish a more precisely typed Exception
+                        // interface for this.
+                        if (message.contains("CANCELLED")) {
+                            onCancelled(message)
+                        } else {
+                            completer.setException(Exception(message))
+                        }
+                    }
+
+                    override fun onCancelled(message: String) {
+                        completer.setCancelled()
+                    }
+                },
+                path,
+            )
+            "LoadImageBasedLightingAsset Operation"
         }
-    }
 
-    @Override
-    public void onPause() {
-        if (mView != null) {
-            mView.onPause();
+    override fun loadImageBasedLightingAsset(
+        data: ByteArray,
+        key: String,
+    ): ListenableFuture<ExrImage> =
+        CallbackToFutureAdapter.getFuture { completer ->
+            nLoadImageBasedLightingAssetFromByteArray(
+                getViewNativeHandle(view),
+                // The underlying C++ code will hold a reference to this (anoynomous)
+                // AssetLoader until the load is complete.
+                object : AssetLoader {
+                    override fun onSuccess(value: Long) {
+                        val exrImage: ExrImage =
+                            ExrImage.Builder()
+                                .setImpressApi(this@ImpressApiImpl)
+                                .setNativeExrImage(value)
+                                .build()
+                        completer.set(exrImage)
+                    }
+
+                    override fun onFailure(message: String) {
+                        // We can safely check for the CANCELLED string here since we
+                        // know that the underlying absl Status code is being
+                        // translated to a java Exception and the message is being
+                        // propagated. Ideally the native code would generate a separate
+                        // signal call for this.
+                        // TODO: b/374217508 - Publish a more precisely typed Exception
+                        // interface for this.
+                        if (message.contains("CANCELLED")) {
+                            onCancelled(message)
+                        } else {
+                            completer.setException(Exception(message))
+                        }
+                    }
+
+                    override fun onCancelled(message: String) {
+                        completer.setCancelled()
+                    }
+                },
+                data,
+                key,
+            )
+            "LoadImageBasedLightingAsset Operation"
         }
-    }
 
-    @Override
-    @NonNull
-    public BindingsResourceManager getBindingsResourceManager() {
-        if (mResourceManager == null) {
-            throw new IllegalStateException("BindingsResourceManager is not initialized");
+    override fun loadGltfAsset(path: String): ListenableFuture<GltfModel> =
+        CallbackToFutureAdapter.getFuture { completer ->
+            // TODO: b/374216912 - Add a cancellationListener to the completer here when the
+            // loading APIs support cancellation.
+            nLoadGltfAssetFromPath(
+                getViewNativeHandle(view),
+                object : AssetLoader {
+                    override fun onSuccess(value: Long) {
+                        val model: GltfModel =
+                            GltfModel.Builder()
+                                .setImpressApi(this@ImpressApiImpl)
+                                .setNativeGltfModel(value)
+                                .build()
+                        completer.set(model)
+                    }
+
+                    override fun onFailure(message: String) {
+                        // We can safely check for the CANCELLED string here since we
+                        // know that the underlying absl Status code is being
+                        // translated to a java Exception and the message is being
+                        // propagated. Ideally the native code would generate a separate
+                        // signal call for this.
+                        // TODO: b/374217508 - Publish a more precisely typed Exception
+                        // interface for this.
+                        if (message.contains("CANCELLED")) {
+                            onCancelled(message)
+                        } else {
+                            completer.setException(Exception(message))
+                        }
+                    }
+
+                    override fun onCancelled(message: String) {
+                        completer.setCancelled()
+                    }
+                },
+                path,
+            )
+            "LoadGltfAsset Operation"
         }
-        return mResourceManager;
-    }
 
-    @Override
-    public void releaseImageBasedLightingAsset(long iblToken) {
-        nReleaseImageBasedLightingAsset(getViewNativeHandle(mView), iblToken);
-    }
+    override fun loadGltfAsset(data: ByteArray, key: String): ListenableFuture<GltfModel> =
+        CallbackToFutureAdapter.getFuture { completer ->
+            // TODO: b/374216912 - Add a cancellationListener to the completer here when the
+            // loading APIs support cancellation.
+            nLoadGltfAssetFromByteArray(
+                getViewNativeHandle(view),
+                // The underlying C++ code will hold a reference to this (anoynomous)
+                // AssetLoader until the load is complete.
+                object : AssetLoader {
+                    override fun onSuccess(value: Long) {
+                        val model: GltfModel =
+                            GltfModel.Builder()
+                                .setImpressApi(this@ImpressApiImpl)
+                                .setNativeGltfModel(value)
+                                .build()
+                        completer.set(model)
+                    }
 
-    @Override
-    @NonNull
-    public ListenableFuture<ExrImage> loadImageBasedLightingAsset(@NonNull String path) {
-        return CallbackToFutureAdapter.getFuture(
-                completer -> {
-                    // TODO: b/374216912 - Add a cancellationListener to the completer here when the
-                    // loading APIs support cancellation.
-                    nLoadImageBasedLightingAssetFromPath(
-                            getViewNativeHandle(mView),
-                            // The underlying C++ code will hold a reference to this (anoynomous)
-                            // AssetLoader until the load is complete.
-                            new AssetLoader() {
+                    override fun onFailure(message: String) {
+                        // We can safely check for the CANCELLED string here since we
+                        // know that the underlying absl Status code is being
+                        // translated to a java Exception and the message is being
+                        // propagated.
+                        // TODO: b/374217508 - Publish a more precisely typed Exception
+                        // interface for this.
+                        if (message.contains("CANCELLED")) {
+                            onCancelled(message)
+                        } else {
+                            completer.setException(Exception(message))
+                        }
+                    }
 
-                                @Override
-                                public void onSuccess(long value) {
-                                    ExrImage exrImage =
-                                            new ExrImage.Builder()
-                                                    .setImpressApi(ImpressApiImpl.this)
-                                                    .setNativeExrImage(value)
-                                                    .build();
-                                    completer.set(exrImage);
-                                }
+                    override fun onCancelled(message: String) {
+                        completer.setCancelled()
+                    }
+                },
+                data,
+                key,
+            )
+            "LoadGltfAsset Operation"
+        }
 
-                                @Override
-                                public void onFailure(@NonNull String message) {
-                                    // We can safely check for the CANCELLED string here since we
-                                    // know that the underlying absl Status code is being
-                                    // translated to a java Exception and the message is being
-                                    // propagated. Ideally the native code would generate a separate
-                                    // signal call for this.
-                                    // TODO: b/374217508 - Publish a more precisely typed Exception
-                                    // interface for this.
-                                    if (message.contains("CANCELLED")) {
-                                        onCancelled(message);
-                                    } else {
-                                        completer.setException(new Exception(message));
-                                    }
-                                }
+    override fun releaseGltfAsset(gltfToken: Long): Unit =
+        nReleaseGltfAsset(getViewNativeHandle(view), gltfToken)
 
-                                @Override
-                                public void onCancelled(@NonNull String message) {
-                                    completer.setCancelled();
-                                }
-                            },
-                            path);
-                    return "LoadImageBasedLightingAsset Operation";
-                });
-    }
+    override fun instanceGltfModel(gltfToken: Long): ImpressNode =
+        ImpressNode(
+            nInstanceGltfModel(getViewNativeHandle(view), gltfToken, /* enableCollider= */ false)
+        )
 
-    @Override
-    @NonNull
-    public ListenableFuture<ExrImage> loadImageBasedLightingAsset(
-            byte @NonNull [] data, @NonNull String key) {
-        return CallbackToFutureAdapter.getFuture(
-                completer -> {
-                    // TODO: b/374216912 - Add a cancellationListener to the completer here when the
-                    // loading APIs support cancellation.
-                    nLoadImageBasedLightingAssetFromByteArray(
-                            getViewNativeHandle(mView),
-                            // The underlying C++ code will hold a reference to this (anoynomous)
-                            // AssetLoader until the load is complete.
-                            new AssetLoader() {
+    override fun instanceGltfModel(gltfToken: Long, enableCollider: Boolean): ImpressNode =
+        ImpressNode(nInstanceGltfModel(getViewNativeHandle(view), gltfToken, enableCollider))
 
-                                @Override
-                                public void onSuccess(long value) {
-                                    ExrImage exrImage =
-                                            new ExrImage.Builder()
-                                                    .setImpressApi(ImpressApiImpl.this)
-                                                    .setNativeExrImage(value)
-                                                    .build();
-                                    completer.set(exrImage);
-                                }
-
-                                @Override
-                                public void onFailure(@NonNull String message) {
-                                    // We can safely check for the CANCELLED string here since we
-                                    // know that the underlying absl Status code is being
-                                    // translated to a java Exception and the message is being
-                                    // propagated. Ideally the native code would generate a separate
-                                    // signal call for this.
-                                    // TODO: b/374217508 - Publish a more precisely typed Exception
-                                    // interface for this.
-                                    if (message.contains("CANCELLED")) {
-                                        onCancelled(message);
-                                    } else {
-                                        completer.setException(new Exception(message));
-                                    }
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull String message) {
-                                    completer.setCancelled();
-                                }
-                            },
-                            data,
-                            key);
-                    return "LoadImageBasedLightingAsset Operation";
-                });
-    }
-
-    @Override
-    @NonNull
-    public ListenableFuture<GltfModel> loadGltfAsset(@NonNull String path) {
-        return CallbackToFutureAdapter.getFuture(
-                completer -> {
-                    // TODO: b/374216912 - Add a cancellationListener to the completer here when the
-                    // loading APIs support cancellation.
-                    nLoadGltfAssetFromPath(
-                            getViewNativeHandle(mView),
-                            // The underlying C++ code will hold a reference to this (anoynomous)
-                            // AssetLoader until the load is complete.
-                            new AssetLoader() {
-
-                                @Override
-                                public void onSuccess(long value) {
-                                    GltfModel model =
-                                            new GltfModel.Builder()
-                                                    .setImpressApi(ImpressApiImpl.this)
-                                                    .setNativeGltfModel(value)
-                                                    .build();
-                                    completer.set(model);
-                                }
-
-                                @Override
-                                public void onFailure(@NonNull String message) {
-                                    // We can safely check for the CANCELLED string here since we
-                                    // know that the underlying absl Status code is being
-                                    // translated to a java Exception and the message is being
-                                    // propagated. Ideally the native code would generate a separate
-                                    // signal call for this.
-                                    // TODO: b/374217508 - Publish a more precisely typed Exception
-                                    // interface for this.
-                                    if (message.contains("CANCELLED")) {
-                                        onCancelled(message);
-                                    } else {
-                                        completer.setException(new Exception(message));
-                                    }
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull String message) {
-                                    completer.setCancelled();
-                                }
-                            },
-                            path);
-                    return "LoadGltfAsset Operation";
-                });
-    }
-
-    @Override
-    @NonNull
-    public ListenableFuture<GltfModel> loadGltfAsset(byte @NonNull [] data, @NonNull String key) {
-        return CallbackToFutureAdapter.getFuture(
-                completer -> {
-                    // TODO: b/374216912 - Add a cancellationListener to the completer here when the
-                    // loading APIs support cancellation.
-                    nLoadGltfAssetFromByteArray(
-                            getViewNativeHandle(mView),
-                            // The underlying C++ code will hold a reference to this (anoynomous)
-                            // AssetLoader until the load is complete.
-                            new AssetLoader() {
-
-                                @Override
-                                public void onSuccess(long value) {
-                                    GltfModel model =
-                                            new GltfModel.Builder()
-                                                    .setImpressApi(ImpressApiImpl.this)
-                                                    .setNativeGltfModel(value)
-                                                    .build();
-                                    completer.set(model);
-                                }
-
-                                @Override
-                                public void onFailure(@NonNull String message) {
-                                    // We can safely check for the CANCELLED string here since we
-                                    // know that the underlying absl Status code is being
-                                    // translated to a java Exception and the message is being
-                                    // propagated.
-                                    // TODO: b/374217508 - Publish a more precisely typed Exception
-                                    // interface for this.
-                                    if (message.contains("CANCELLED")) {
-                                        onCancelled(message);
-                                    } else {
-                                        completer.setException(new Exception(message));
-                                    }
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull String message) {
-                                    completer.setCancelled();
-                                }
-                            },
-                            data,
-                            key);
-                    return "LoadGltfAsset Operation";
-                });
-    }
-
-    @Override
-    public void releaseGltfAsset(long gltfToken) {
-        nReleaseGltfAsset(getViewNativeHandle(mView), gltfToken);
-    }
-
-    @Override
-    @NonNull
-    public ImpressNode instanceGltfModel(long gltfToken) {
-        return new ImpressNode(
-                nInstanceGltfModel(
-                        getViewNativeHandle(mView), gltfToken, /* enableCollider= */ false));
-    }
-
-    @Override
-    @NonNull
-    public ImpressNode instanceGltfModel(long gltfToken, boolean enableCollider) {
-        return new ImpressNode(
-                nInstanceGltfModel(getViewNativeHandle(mView), gltfToken, enableCollider));
-    }
-
-    @Override
-    public void setGltfModelColliderEnabled(
-            @NonNull ImpressNode impressNode, boolean enableCollider) {
+    override fun setGltfModelColliderEnabled(
+        impressNode: ImpressNode,
+        enableCollider: Boolean,
+    ): Unit =
         nSetGltfModelColliderEnabled(
-                getViewNativeHandle(mView), impressNode.getHandle(), enableCollider);
-    }
+            getViewNativeHandle(view),
+            impressNode.handle.toLong(),
+            enableCollider,
+        )
 
     /**
      * Starts an animation on an instanced GLTFModel.
      *
      * @param impressNode The integer ID of the Impress node for the instance of the GLTF
      * @param animationName A nullable String which contains a requested animation to play. If null
-     *     is provided, this will attempt to play the first animation it finds
+     *   is provided, this will attempt to play the first animation it finds
      * @param looping True if the animation should loop. Note that if the animation is looped, the
-     *     returned Future will never fire successfully.
+     *   returned Future will never fire successfully.
      * @return a ListenableFuture which fires when the animation stops. It will return an exception
-     *     if the animation can't play.
+     *   if the animation can't play.
      */
-    @Override
-    @NonNull
-    public ListenableFuture<Void> animateGltfModel(
-            @NonNull ImpressNode impressNode, @Nullable String animationName, boolean looping) {
+    override fun animateGltfModel(
+        impressNode: ImpressNode,
+        animationName: String?,
+        looping: Boolean,
+    ): ListenableFuture<Void?> =
+        CallbackToFutureAdapter.getFuture { completer ->
+            nAnimateGltfModel(
+                getViewNativeHandle(view),
+                impressNode.handle,
+                animationName!!,
+                looping,
+                object : AssetAnimator {
+                    // Hold a reference to the completer to ensure it isn't garbage
+                    // collected until the C++ side releases the reference to the
+                    // AssetAnimator. The future returned by
+                    // CallbackToFutureAdapter.getFuture() aggressively tries to let the
+                    // garbage collector clean up the completer as an optimization, we
+                    // are concerned that this could cause the future to never fire, or
+                    // cancel incorrectly and return an error, especially since the code
+                    // that calls this simply allows the future to go out of scope
+                    // without storing it. This might not actually be a problem, but
+                    // this code shouldn't be harmful and should reduce the uncertainty.
+                    // We should eventually have a different way of communicating
+                    // animation completion back to the application. See b/362368652.
+                    val mCompleter: CallbackToFutureAdapter.Completer<Void?> = completer
 
-        return CallbackToFutureAdapter.getFuture(
-                completer -> {
-                    nAnimateGltfModel(
-                            getViewNativeHandle(mView),
-                            impressNode.getHandle(),
-                            animationName,
-                            looping,
-                            new AssetAnimator() {
-                                // Hold a reference to the completer to ensure it isn't garbage
-                                // collected until the C++ side releases the reference to the
-                                // AssetAnimator. The future returned by
-                                // CallbackToFutureAdapter.getFuture() aggressively tries to let the
-                                // garbage collector clean up the completer as an optimization, we
-                                // are concerned that this could cause the future to never fire, or
-                                // cancel incorrectly and return an error, especially since the code
-                                // that calls this simply allows the future to go out of scope
-                                // without storing it. This might not actually be a problem, but
-                                // this code shouldn't be harmful and should reduce the uncertainty.
-                                // We should eventually have a different way of communicating
-                                // animation completion back to the application. See b/362368652.
-                                CallbackToFutureAdapter.Completer<Void> mCompleter = completer;
+                    override fun onComplete() {
+                        // Setting null here is required since we don't have a return
+                        // value.
+                        mCompleter.set(null)
+                    }
 
-                                @Override
-                                public void onComplete() {
-                                    // Setting null here is required since we don't have a return
-                                    // value.
-                                    mCompleter.set(null);
-                                }
+                    override fun onFailure(message: String) {
+                        // We can safely check for the CANCELLED string here since we
+                        // know that the underlying absl Status code is being
+                        // translated to a java Exception and the message is being
+                        // propagated. Ideally the native code would generate a separate
+                        // signal call for this.
+                        // TODO: b/374217508 - Publish a more precisely typed Exception
+                        // interface for this.
+                        if (message.contains("CANCELLED")) {
+                            onCancelled(message)
+                        } else {
+                            mCompleter.setException(Exception(message))
+                        }
+                    }
 
-                                @Override
-                                public void onFailure(@NonNull String message) {
-                                    // We can safely check for the CANCELLED string here since we
-                                    // know that the underlying absl Status code is being
-                                    // translated to a java Exception and the message is being
-                                    // propagated. Ideally the native code would generate a separate
-                                    // signal call for this.
-                                    // TODO: b/374217508 - Publish a more precisely typed Exception
-                                    // interface for this.
-                                    if (message.contains("CANCELLED")) {
-                                        onCancelled(message);
-                                    } else {
-                                        mCompleter.setException(new Exception(message));
-                                    }
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull String message) {
-                                    mCompleter.setCancelled();
-                                }
-                            });
-                    return "AnimateGltfModel Operation";
-                });
-    }
+                    override fun onCancelled(message: String) {
+                        mCompleter.setCancelled()
+                    }
+                },
+            )
+            "AnimateGltfModel Operation"
+        }
 
     /**
      * Stops an animation on an instanced GLTFModel.
      *
      * @param impressNode The integer ID of the Impress node for the instance of the GLTF
      */
-    @Override
-    public void stopGltfModelAnimation(@NonNull ImpressNode impressNode) {
-        nStopGltfModelAnimation(getViewNativeHandle(mView), impressNode.getHandle());
-    }
+    override fun stopGltfModelAnimation(impressNode: ImpressNode): Unit =
+        nStopGltfModelAnimation(getViewNativeHandle(view), impressNode.handle)
 
-    @Override
-    @NonNull
-    public ImpressNode createImpressNode() {
-        return new ImpressNode(nCreateImpressNode(getViewNativeHandle(mView)));
-    }
+    override fun createImpressNode(): ImpressNode =
+        ImpressNode(nCreateImpressNode(getViewNativeHandle(view)))
 
-    @Override
-    @NonNull
-    public BoundingBox getGltfModelBoundingBox(@NonNull ImpressNode impressNode) {
-        float[] center = new float[3];
-        float[] halfExtents = new float[3];
-        nGetGltfModelLocalBounds(
-                getViewNativeHandle(mView), impressNode.getHandle(), center, halfExtents);
+    override fun destroyImpressNode(impressNode: ImpressNode): Unit =
+        nDestroyImpressNode(getViewNativeHandle(view), impressNode.handle)
+
+    override fun getGltfModelBoundingBox(impressNode: ImpressNode): BoundingBox {
+        val center = FloatArray(3)
+        val halfExtents = FloatArray(3)
+        nGetGltfModelLocalBounds(getViewNativeHandle(view), impressNode.handle, center, halfExtents)
 
         return BoundingBox.fromCenterAndHalfExtents(
-                // center
-                new Vector3(center[0], center[1], center[2]),
-                // halfExtents
-                new FloatSize3d(halfExtents[0], halfExtents[1], halfExtents[2]));
+            // center
+            Vector3(center[0], center[1], center[2]),
+            // halfExtents
+            FloatSize3d(halfExtents[0], halfExtents[1], halfExtents[2]),
+        )
     }
 
-    @Override
-    public void destroyImpressNode(@NonNull ImpressNode impressNode) {
-        nDestroyImpressNode(getViewNativeHandle(mView), impressNode.getHandle());
-    }
-
-    @Override
-    public void setImpressNodeParent(
-            @NonNull ImpressNode impressNodeChild, @NonNull ImpressNode impressNodeParent) {
+    override fun setImpressNodeParent(
+        impressNodeChild: ImpressNode,
+        impressNodeParent: ImpressNode,
+    ): Unit =
         nSetImpressNodeParent(
-                getViewNativeHandle(mView),
-                impressNodeChild.getHandle(),
-                impressNodeParent.getHandle());
-    }
+            getViewNativeHandle(view),
+            impressNodeChild.handle,
+            impressNodeParent.handle,
+        )
 
-    @Override
-    @NonNull
-    public ImpressNode createStereoSurface(@StereoMode int stereoMode) {
-        return new ImpressNode(
-                nCreateStereoSurfaceEntity(
-                        getViewNativeHandle(mView),
-                        validateStereoMode(stereoMode),
-                        ContentSecurityLevel.NONE,
-                        /* useSuperSampling= */ false));
-    }
+    override fun createStereoSurface(@StereoMode stereoMode: Int): ImpressNode =
+        ImpressNode(
+            nCreateStereoSurfaceEntity(
+                getViewNativeHandle(view),
+                validateStereoMode(stereoMode),
+                ContentSecurityLevel.NONE,
+                /* useSuperSampling= */ false,
+            )
+        )
 
-    @Override
-    @NonNull
-    public ImpressNode createStereoSurface(
-            @StereoMode int stereoMode, @ContentSecurityLevel int contentSecurityLevel) {
-        return new ImpressNode(
-                nCreateStereoSurfaceEntity(
-                        getViewNativeHandle(mView),
-                        validateStereoMode(stereoMode),
-                        validateContentSecurityLevel(contentSecurityLevel),
-                        /* useSuperSampling= */ false));
-    }
+    override fun createStereoSurface(
+        @StereoMode stereoMode: Int,
+        @ContentSecurityLevel contentSecurityLevel: Int,
+    ): ImpressNode =
+        ImpressNode(
+            nCreateStereoSurfaceEntity(
+                getViewNativeHandle(view),
+                validateStereoMode(stereoMode),
+                validateContentSecurityLevel(contentSecurityLevel),
+                /* useSuperSampling= */ false,
+            )
+        )
 
-    @Override
-    @NonNull
-    public ImpressNode createStereoSurface(
-            @StereoMode int stereoMode,
-            @ContentSecurityLevel int contentSecurityLevel,
-            boolean useSuperSampling) {
-        return new ImpressNode(
-                nCreateStereoSurfaceEntity(
-                        getViewNativeHandle(mView),
-                        validateStereoMode(stereoMode),
-                        validateContentSecurityLevel(contentSecurityLevel),
-                        useSuperSampling));
-    }
+    override fun createStereoSurface(
+        @StereoMode stereoMode: Int,
+        @ContentSecurityLevel contentSecurityLevel: Int,
+        useSuperSampling: Boolean,
+    ): ImpressNode =
+        ImpressNode(
+            nCreateStereoSurfaceEntity(
+                getViewNativeHandle(view),
+                validateStereoMode(stereoMode),
+                validateContentSecurityLevel(contentSecurityLevel),
+                useSuperSampling,
+            )
+        )
 
-    @Override
-    public void setStereoSurfaceEntityCanvasShapeQuad(
-            @NonNull ImpressNode impressNode, float width, float height) {
+    override fun setStereoSurfaceEntityCanvasShapeQuad(
+        impressNode: ImpressNode,
+        width: Float,
+        height: Float,
+    ): Unit =
         nSetStereoSurfaceEntityCanvasShapeQuad(
-                getViewNativeHandle(mView), impressNode.getHandle(), width, height);
-    }
+            getViewNativeHandle(view),
+            impressNode.handle,
+            width,
+            height,
+        )
 
-    @Override
-    public void setStereoSurfaceEntityCanvasShapeSphere(
-            @NonNull ImpressNode impressNode, float radius) {
+    override fun setStereoSurfaceEntityCanvasShapeSphere(
+        impressNode: ImpressNode,
+        radius: Float,
+    ): Unit =
         nSetStereoSurfaceEntityCanvasShapeSphere(
-                getViewNativeHandle(mView), impressNode.getHandle(), radius);
-    }
+            getViewNativeHandle(view),
+            impressNode.handle,
+            radius,
+        )
 
-    @Override
-    public void setStereoSurfaceEntityCanvasShapeHemisphere(
-            @NonNull ImpressNode impressNode, float radius) {
+    override fun setStereoSurfaceEntityCanvasShapeHemisphere(
+        impressNode: ImpressNode,
+        radius: Float,
+    ): Unit =
         nSetStereoSurfaceEntityCanvasShapeHemisphere(
-                getViewNativeHandle(mView), impressNode.getHandle(), radius);
-    }
+            getViewNativeHandle(view),
+            impressNode.handle,
+            radius,
+        )
 
-    @Override
-    public void setStereoSurfaceEntityColliderEnabled(
-            @NonNull ImpressNode impressNode, boolean enableCollider) {
+    override fun setStereoSurfaceEntityColliderEnabled(
+        impressNode: ImpressNode,
+        enableCollider: Boolean,
+    ): Unit =
         nSetStereoSurfaceEntityColliderEnabled(
-                getViewNativeHandle(mView), impressNode.getHandle(), enableCollider);
-    }
+            getViewNativeHandle(view),
+            impressNode.handle,
+            enableCollider,
+        )
 
-    @Override
-    public void setStereoModeForStereoSurface(
-            @NonNull ImpressNode panelImpressNode, @StereoMode int stereoMode) {
+    override fun setStereoModeForStereoSurface(
+        panelImpressNode: ImpressNode,
+        @StereoMode stereoMode: Int,
+    ): Unit =
         nSetStereoModeForStereoSurfaceEntity(
-                getViewNativeHandle(mView),
-                panelImpressNode.getHandle(),
-                validateStereoMode(stereoMode));
-    }
+            getViewNativeHandle(view),
+            panelImpressNode.handle,
+            validateStereoMode(stereoMode),
+        )
 
-    @Override
-    public void setContentColorMetadataForStereoSurface(
-            @NonNull ImpressNode stereoSurfaceNode,
-            @ColorSpace int colorSpace,
-            @ColorTransfer int colorTransfer,
-            @ColorRange int colorRange,
-            int maxLuminance) {
+    override fun setContentColorMetadataForStereoSurface(
+        stereoSurfaceNode: ImpressNode,
+        @ColorSpace colorSpace: Int,
+        @ColorTransfer colorTransfer: Int,
+        @ColorRange colorRange: Int,
+        maxLuminance: Int,
+    ): Unit =
         nSetContentColorMetadataForStereoSurfaceEntity(
-                getViewNativeHandle(mView),
-                stereoSurfaceNode.getHandle(),
-                validateColorSpace(colorSpace),
-                validateColorTransfer(colorTransfer),
-                validateColorRange(colorRange),
-                validateMaxLuminance(maxLuminance));
-    }
+            getViewNativeHandle(view),
+            stereoSurfaceNode.handle,
+            validateColorSpace(colorSpace),
+            validateColorTransfer(colorTransfer),
+            validateColorRange(colorRange),
+            validateMaxLuminance(maxLuminance),
+        )
 
-    @Override
-    public void resetContentColorMetadataForStereoSurface(@NonNull ImpressNode stereoSurfaceNode) {
+    override fun resetContentColorMetadataForStereoSurface(stereoSurfaceNode: ImpressNode): Unit =
         nResetContentColorMetadataForStereoSurfaceEntity(
-                getViewNativeHandle(mView), stereoSurfaceNode.getHandle());
-    }
+            getViewNativeHandle(view),
+            stereoSurfaceNode.handle,
+        )
 
-    @Override
-    public void setFeatherRadiusForStereoSurface(
-            @NonNull ImpressNode panelImpressNode, float radiusX, float radiusY) {
+    override fun setFeatherRadiusForStereoSurface(
+        panelImpressNode: ImpressNode,
+        radiusX: Float,
+        radiusY: Float,
+    ): Unit =
         nSetFeatherRadiusForStereoSurfaceEntity(
-                getViewNativeHandle(mView), panelImpressNode.getHandle(), radiusX, radiusY);
-    }
+            getViewNativeHandle(view),
+            panelImpressNode.handle,
+            radiusX,
+            radiusY,
+        )
 
-    @Override
-    @NonNull
-    public Surface getSurfaceFromStereoSurface(@NonNull ImpressNode panelImpressNode) {
-        return nGetSurfaceFromStereoSurfaceEntity(
-                getViewNativeHandle(mView), panelImpressNode.getHandle());
-    }
+    override fun getSurfaceFromStereoSurface(panelImpressNode: ImpressNode): Surface =
+        nGetSurfaceFromStereoSurfaceEntity(getViewNativeHandle(view), panelImpressNode.handle)
 
-    @Override
-    public void setStereoSurfaceEntitySurfaceSize(
-            @NonNull ImpressNode impressNode, int width, int height) {
+    override fun setStereoSurfaceEntitySurfaceSize(
+        impressNode: ImpressNode,
+        width: Int,
+        height: Int,
+    ): Unit =
         nSetStereoSurfaceEntitySurfaceSize(
-                getViewNativeHandle(mView), impressNode.getHandle(), width, height);
-    }
+            getViewNativeHandle(view),
+            impressNode.getHandle(),
+            width,
+            height,
+        )
 
-    @Override
-    public void setPrimaryAlphaMaskForStereoSurface(
-            @NonNull ImpressNode panelImpressNode, long alphaMask) {
+    override fun setPrimaryAlphaMaskForStereoSurface(
+        panelImpressNode: ImpressNode,
+        alphaMask: Long,
+    ): Unit =
         nSetPrimaryAlphaMaskForStereoSurfaceEntity(
-                getViewNativeHandle(mView), panelImpressNode.getHandle(), alphaMask);
-    }
+            getViewNativeHandle(view),
+            panelImpressNode.handle,
+            alphaMask,
+        )
 
-    @Override
-    public void setAuxiliaryAlphaMaskForStereoSurface(
-            @NonNull ImpressNode panelImpressNode, long alphaMask) {
+    override fun setAuxiliaryAlphaMaskForStereoSurface(
+        panelImpressNode: ImpressNode,
+        alphaMask: Long,
+    ): Unit =
         nSetAuxiliaryAlphaMaskForStereoSurfaceEntity(
-                getViewNativeHandle(mView), panelImpressNode.getHandle(), alphaMask);
-    }
+            getViewNativeHandle(view),
+            panelImpressNode.handle,
+            alphaMask,
+        )
 
-    @Override
-    @NonNull
-    public ListenableFuture<Texture> loadTexture(@NonNull String path) {
-        return CallbackToFutureAdapter.getFuture(
-                completer -> {
-                    // TODO: b/374216912 - Add a cancellationListener to the completer here when the
-                    // loading APIs support cancellation.
-                    nLoadTexture(
-                            getViewNativeHandle(mView),
-                            // The underlying C++ code will hold a reference to this (anoynomous)
-                            // AssetLoader until the load is complete.
-                            // TODO(b/394349866): Revisit the way C++ --> Java code is called back
-                            // for the AssetLoader (proguard)
-                            new AssetLoader() {
+    override fun loadTexture(path: String): ListenableFuture<Texture> =
+        CallbackToFutureAdapter.getFuture { completer ->
+            // TODO: b/374216912 - Add a cancellationListener to the completer here when the
+            // loading APIs support cancellation.
+            nLoadTexture(
+                getViewNativeHandle(view),
+                object : AssetLoader {
+                    override fun onSuccess(value: Long) {
+                        val texture =
+                            Texture.Builder()
+                                .setImpressApi(this@ImpressApiImpl)
+                                .setNativeTexture(value)
+                                .build()
+                        completer.set(texture)
+                    }
 
-                                @Override
-                                public void onSuccess(long value) {
-                                    Texture texture =
-                                            new Texture.Builder()
-                                                    .setImpressApi(ImpressApiImpl.this)
-                                                    .setNativeTexture(value)
-                                                    .build();
-                                    completer.set(texture);
-                                }
+                    override fun onFailure(message: String) {
+                        // We can safely check for the CANCELLED string here since we
+                        // know that the underlying absl Status code is being
+                        // translated to a java Exception and the message is being
+                        // propagated. Ideally the native code would generate a separate
+                        // signal call for this.
+                        // TODO: b/374217508 - Publish a more precisely typed Exception
+                        // interface for this.
+                        if (message.contains("CANCELLED")) {
+                            onCancelled(message)
+                        } else {
+                            completer.setException(Exception(message))
+                        }
+                    }
 
-                                @Override
-                                public void onFailure(@NonNull String message) {
-                                    // We can safely check for the CANCELLED string here since we
-                                    // know that the underlying absl Status code is being
-                                    // translated to a java Exception and the message is being
-                                    // propagated. Ideally the native code would generate a separate
-                                    // signal call for this.
-                                    // TODO: b/374217508 - Publish a more precisely typed Exception
-                                    // interface for this.
-                                    if (message.contains("CANCELLED")) {
-                                        onCancelled(message);
-                                    } else {
-                                        completer.setException(new Exception(message));
-                                    }
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull String message) {
-                                    completer.setCancelled();
-                                }
-                            },
-                            path);
-                    return "LoadTexture Operation";
-                });
-    }
-
-    @Override
-    @NonNull
-    public Texture borrowReflectionTexture() {
-        long textureHandle = nBorrowReflectionTexture(getViewNativeHandle(mView));
-        return new Texture.Builder()
-                .setImpressApi(ImpressApiImpl.this)
-                .setNativeTexture(textureHandle)
-                .build();
-    }
-
-    @Override
-    @NonNull
-    public Texture getReflectionTextureFromIbl(long iblToken) {
-        long textureHandle = nGetReflectionTextureFromIbl(getViewNativeHandle(mView), iblToken);
-        return new Texture.Builder()
-                .setImpressApi(ImpressApiImpl.this)
-                .setNativeTexture(textureHandle)
-                .build();
-    }
-
-    @Override
-    @NonNull
-    public ListenableFuture<WaterMaterial> createWaterMaterial(boolean isAlphaMapVersion) {
-        return CallbackToFutureAdapter.getFuture(
-                completer -> {
-                    // TODO: b/374216912 - Add a cancellationListener to the completer here when the
-                    // loading APIs support cancellation.
-                    nCreateWaterMaterial(
-                            getViewNativeHandle(mView),
-                            // The underlying C++ code will hold a reference to this (anoynomous)
-                            // AssetLoader until the load is complete.
-                            // TODO(b/394349866): Revisit the way C++ --> Java code is called back
-                            // for the AssetLoader (proguard)
-                            new AssetLoader() {
-
-                                @Override
-                                public void onSuccess(long value) {
-                                    WaterMaterial waterMaterial =
-                                            new WaterMaterial.Builder()
-                                                    .setImpressApi(ImpressApiImpl.this)
-                                                    .setNativeMaterial(value)
-                                                    .build();
-                                    completer.set(waterMaterial);
-                                }
-
-                                @Override
-                                public void onFailure(@NonNull String message) {
-                                    // We can safely check for the CANCELLED string here since we
-                                    // know that the underlying absl Status code is being
-                                    // translated to a java Exception and the message is being
-                                    // propagated. Ideally the native code would generate a separate
-                                    // signal call for this.
-                                    // TODO: b/374217508 - Publish a more precisely typed Exception
-                                    // interface for this.
-                                    if (message.contains("CANCELLED")) {
-                                        onCancelled(message);
-                                    } else {
-                                        completer.setException(new Exception(message));
-                                    }
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull String message) {
-                                    completer.setCancelled();
-                                }
-                            },
-                            isAlphaMapVersion);
-                    return "CreateWaterMaterial Operation";
-                });
-    }
-
-    @Override
-    public void setReflectionMapOnWaterMaterial(
-            long nativeWaterMaterial, long reflectionMap, @NonNull TextureSampler sampler) {
-        nSetReflectionMapOnWaterMaterial(
-                getViewNativeHandle(mView),
-                nativeWaterMaterial,
-                reflectionMap,
-                sampler.getMinFilter(),
-                sampler.getMagFilter(),
-                sampler.getWrapModeS(),
-                sampler.getWrapModeT(),
-                sampler.getWrapModeR(),
-                sampler.getCompareMode(),
-                sampler.getCompareFunc(),
-                sampler.getAnisotropyLog2());
-    }
-
-    @Override
-    public void setNormalMapOnWaterMaterial(
-            long nativeWaterMaterial, long normalMap, @NonNull TextureSampler sampler) {
-        nSetNormalMapOnWaterMaterial(
-                getViewNativeHandle(mView),
-                nativeWaterMaterial,
-                normalMap,
-                sampler.getMinFilter(),
-                sampler.getMagFilter(),
-                sampler.getWrapModeS(),
-                sampler.getWrapModeT(),
-                sampler.getWrapModeR(),
-                sampler.getCompareMode(),
-                sampler.getCompareFunc(),
-                sampler.getAnisotropyLog2());
-    }
-
-    @Override
-    public void setNormalTilingOnWaterMaterial(long nativeWaterMaterial, float normalTiling) {
-        nSetNormalTilingOnWaterMaterial(
-                getViewNativeHandle(mView), nativeWaterMaterial, normalTiling);
-    }
-
-    @Override
-    public void setNormalSpeedOnWaterMaterial(long nativeWaterMaterial, float normalSpeed) {
-        nSetNormalSpeedOnWaterMaterial(
-                getViewNativeHandle(mView), nativeWaterMaterial, normalSpeed);
-    }
-
-    @Override
-    public void setAlphaStepMultiplierOnWaterMaterial(
-            long nativeWaterMaterial, float alphaStepMultiplier) {
-        nSetAlphaStepMultiplierOnWaterMaterial(
-                getViewNativeHandle(mView), nativeWaterMaterial, alphaStepMultiplier);
-    }
-
-    @Override
-    public void setAlphaMapOnWaterMaterial(
-            long nativeWaterMaterial, long alphaMap, @NonNull TextureSampler sampler) {
-        nSetAlphaMapOnWaterMaterial(
-                getViewNativeHandle(mView),
-                nativeWaterMaterial,
-                alphaMap,
-                sampler.getMinFilter(),
-                sampler.getMagFilter(),
-                sampler.getWrapModeS(),
-                sampler.getWrapModeT(),
-                sampler.getWrapModeR(),
-                sampler.getCompareMode(),
-                sampler.getCompareFunc(),
-                sampler.getAnisotropyLog2());
-    }
-
-    @Override
-    public void setNormalZOnWaterMaterial(long nativeWaterMaterial, float normalZ) {
-        nSetNormalZOnWaterMaterial(getViewNativeHandle(mView), nativeWaterMaterial, normalZ);
-    }
-
-    @Override
-    public void setNormalBoundaryOnWaterMaterial(long nativeWaterMaterial, float normalBoundary) {
-        nSetNormalBoundaryOnWaterMaterial(
-                getViewNativeHandle(mView), nativeWaterMaterial, normalBoundary);
-    }
-
-    @Override
-    public void setAlphaStepUOnWaterMaterial(
-            long nativeWaterMaterial, float x, float y, float z, float w) {
-        throw new UnsupportedOperationException("Stub API to be removed.");
-    }
-
-    @Override
-    public void setAlphaStepVOnWaterMaterial(
-            long nativeWaterMaterial, float x, float y, float z, float w) {
-        throw new UnsupportedOperationException("Stub API to be removed.");
-    }
-
-    @Override
-    @NonNull
-    public ListenableFuture<KhronosPbrMaterial> createKhronosPbrMaterial(
-            @NonNull KhronosPbrMaterialSpec spec) {
-        return CallbackToFutureAdapter.getFuture(
-                completer -> {
-                    // TODO: b/374216912 - Add a cancellationListener to the completer here when the
-                    // loading APIs support cancellation.
-                    nCreateGenericMaterial(
-                            getViewNativeHandle(mView),
-                            // The underlying C++ code will hold a reference to this (anoynomous)
-                            // AssetLoader until the load is complete.
-                            // TODO(b/394349866): Revisit the way C++ --> Java code is called back
-                            // for the AssetLoader (proguard)
-                            new AssetLoader() {
-
-                                @Override
-                                public void onSuccess(long value) {
-                                    KhronosPbrMaterial khronosPbrMaterial =
-                                            new KhronosPbrMaterial.Builder()
-                                                    .setImpressApi(ImpressApiImpl.this)
-                                                    .setNativeMaterial(value)
-                                                    .build();
-                                    completer.set(khronosPbrMaterial);
-                                }
-
-                                @Override
-                                public void onFailure(@NonNull String message) {
-                                    // We can safely check for the CANCELLED string here since we
-                                    // know that the underlying absl Status code is being
-                                    // translated to a java Exception and the message is being
-                                    // propagated. Ideally the native code would generate a separate
-                                    // signal call for this.
-                                    // TODO: b/374217508 - Publish a more precisely typed Exception
-                                    // interface for this.
-                                    if (message.contains("CANCELLED")) {
-                                        onCancelled(message);
-                                    } else {
-                                        completer.setException(new Exception(message));
-                                    }
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull String message) {
-                                    completer.setCancelled();
-                                }
-                            },
-                            spec.getLightingModel(),
-                            spec.getBlendMode(),
-                            spec.getDoubleSidedMode());
-                    return "CreateKhronosPbrMaterial Operation";
-                });
-    }
-
-    @Override
-    public void setBaseColorTextureOnKhronosPbrMaterial(
-            long nativeKhronosPbrMaterial, long baseColorTexture, @NonNull TextureSampler sampler) {
-        nSetBaseColorTextureOnGenericMaterial(
-                getViewNativeHandle(mView),
-                nativeKhronosPbrMaterial,
-                baseColorTexture,
-                sampler.getMinFilter(),
-                sampler.getMagFilter(),
-                sampler.getWrapModeS(),
-                sampler.getWrapModeT(),
-                sampler.getWrapModeR(),
-                sampler.getCompareMode(),
-                sampler.getCompareFunc(),
-                sampler.getAnisotropyLog2());
-    }
-
-    @Override
-    public void setBaseColorUvTransformOnKhronosPbrMaterial(
-            long nativeKhronosPbrMaterial,
-            float ux,
-            float uy,
-            float uz,
-            float vx,
-            float vy,
-            float vz,
-            float wx,
-            float wy,
-            float wz) {
-        nSetBaseColorUvTransformOnGenericMaterial(
-                getViewNativeHandle(mView),
-                nativeKhronosPbrMaterial,
-                ux,
-                uy,
-                uz,
-                vx,
-                vy,
-                vz,
-                wx,
-                wy,
-                wz);
-    }
-
-    @Override
-    public void setBaseColorFactorsOnKhronosPbrMaterial(
-            long nativeKhronosPbrMaterial, float x, float y, float z, float w) {
-        nSetBaseColorFactorsOnGenericMaterial(
-                getViewNativeHandle(mView), nativeKhronosPbrMaterial, x, y, z, w);
-    }
-
-    @Override
-    public void setMetallicRoughnessTextureOnKhronosPbrMaterial(
-            long nativeKhronosPbrMaterial,
-            long metallicRoughnessTexture,
-            @NonNull TextureSampler sampler) {
-        nSetMetallicRoughnessTextureOnGenericMaterial(
-                getViewNativeHandle(mView),
-                nativeKhronosPbrMaterial,
-                metallicRoughnessTexture,
-                sampler.getMinFilter(),
-                sampler.getMagFilter(),
-                sampler.getWrapModeS(),
-                sampler.getWrapModeT(),
-                sampler.getWrapModeR(),
-                sampler.getCompareMode(),
-                sampler.getCompareFunc(),
-                sampler.getAnisotropyLog2());
-    }
-
-    @Override
-    public void setMetallicRoughnessUvTransformOnKhronosPbrMaterial(
-            long nativeKhronosPbrMaterial,
-            float ux,
-            float uy,
-            float uz,
-            float vx,
-            float vy,
-            float vz,
-            float wx,
-            float wy,
-            float wz) {
-        nSetMetallicRoughnessUvTransformOnGenericMaterial(
-                getViewNativeHandle(mView),
-                nativeKhronosPbrMaterial,
-                ux,
-                uy,
-                uz,
-                vx,
-                vy,
-                vz,
-                wx,
-                wy,
-                wz);
-    }
-
-    @Override
-    public void setMetallicFactorOnKhronosPbrMaterial(long nativeKhronosPbrMaterial, float factor) {
-        nSetMetallicFactorOnGenericMaterial(
-                getViewNativeHandle(mView), nativeKhronosPbrMaterial, factor);
-    }
-
-    @Override
-    public void setRoughnessFactorOnKhronosPbrMaterial(
-            long nativeKhronosPbrMaterial, float factor) {
-        nSetRoughnessFactorOnGenericMaterial(
-                getViewNativeHandle(mView), nativeKhronosPbrMaterial, factor);
-    }
-
-    @Override
-    public void setNormalTextureOnKhronosPbrMaterial(
-            long nativeKhronosPbrMaterial, long normalTexture, @NonNull TextureSampler sampler) {
-        nSetNormalTextureOnGenericMaterial(
-                getViewNativeHandle(mView),
-                nativeKhronosPbrMaterial,
-                normalTexture,
-                sampler.getMinFilter(),
-                sampler.getMagFilter(),
-                sampler.getWrapModeS(),
-                sampler.getWrapModeT(),
-                sampler.getWrapModeR(),
-                sampler.getCompareMode(),
-                sampler.getCompareFunc(),
-                sampler.getAnisotropyLog2());
-    }
-
-    @Override
-    public void setNormalUvTransformOnKhronosPbrMaterial(
-            long nativeKhronosPbrMaterial,
-            float ux,
-            float uy,
-            float uz,
-            float vx,
-            float vy,
-            float vz,
-            float wx,
-            float wy,
-            float wz) {
-        nSetNormalUvTransformOnGenericMaterial(
-                getViewNativeHandle(mView),
-                nativeKhronosPbrMaterial,
-                ux,
-                uy,
-                uz,
-                vx,
-                vy,
-                vz,
-                wx,
-                wy,
-                wz);
-    }
-
-    @Override
-    public void setNormalFactorOnKhronosPbrMaterial(long nativeKhronosPbrMaterial, float factor) {
-        nSetNormalFactorOnGenericMaterial(
-                getViewNativeHandle(mView), nativeKhronosPbrMaterial, factor);
-    }
-
-    @Override
-    public void setAmbientOcclusionTextureOnKhronosPbrMaterial(
-            long nativeKhronosPbrMaterial,
-            long ambientOcclusionTexture,
-            @NonNull TextureSampler sampler) {
-        nSetAmbientOcclusionTextureOnGenericMaterial(
-                getViewNativeHandle(mView),
-                nativeKhronosPbrMaterial,
-                ambientOcclusionTexture,
-                sampler.getMinFilter(),
-                sampler.getMagFilter(),
-                sampler.getWrapModeS(),
-                sampler.getWrapModeT(),
-                sampler.getWrapModeR(),
-                sampler.getCompareMode(),
-                sampler.getCompareFunc(),
-                sampler.getAnisotropyLog2());
-    }
-
-    @Override
-    public void setAmbientOcclusionUvTransformOnKhronosPbrMaterial(
-            long nativeKhronosPbrMaterial,
-            float ux,
-            float uy,
-            float uz,
-            float vx,
-            float vy,
-            float vz,
-            float wx,
-            float wy,
-            float wz) {
-        nSetAmbientOcclusionUvTransformOnGenericMaterial(
-                getViewNativeHandle(mView),
-                nativeKhronosPbrMaterial,
-                ux,
-                uy,
-                uz,
-                vx,
-                vy,
-                vz,
-                wx,
-                wy,
-                wz);
-    }
-
-    @Override
-    public void setAmbientOcclusionFactorOnKhronosPbrMaterial(
-            long nativeKhronosPbrMaterial, float factor) {
-        nSetAmbientOcclusionFactorOnGenericMaterial(
-                getViewNativeHandle(mView), nativeKhronosPbrMaterial, factor);
-    }
-
-    @Override
-    public void setEmissiveTextureOnKhronosPbrMaterial(
-            long nativeKhronosPbrMaterial, long emissiveTexture, @NonNull TextureSampler sampler) {
-        nSetEmissiveTextureOnGenericMaterial(
-                getViewNativeHandle(mView),
-                nativeKhronosPbrMaterial,
-                emissiveTexture,
-                sampler.getMinFilter(),
-                sampler.getMagFilter(),
-                sampler.getWrapModeS(),
-                sampler.getWrapModeT(),
-                sampler.getWrapModeR(),
-                sampler.getCompareMode(),
-                sampler.getCompareFunc(),
-                sampler.getAnisotropyLog2());
-    }
-
-    @Override
-    public void setEmissiveUvTransformOnKhronosPbrMaterial(
-            long nativeKhronosPbrMaterial,
-            float ux,
-            float uy,
-            float uz,
-            float vx,
-            float vy,
-            float vz,
-            float wx,
-            float wy,
-            float wz) {
-        nSetEmissiveUvTransformOnGenericMaterial(
-                getViewNativeHandle(mView),
-                nativeKhronosPbrMaterial,
-                ux,
-                uy,
-                uz,
-                vx,
-                vy,
-                vz,
-                wx,
-                wy,
-                wz);
-    }
-
-    @Override
-    public void setEmissiveFactorsOnKhronosPbrMaterial(
-            long nativeKhronosPbrMaterial, float x, float y, float z) {
-        nSetEmissiveFactorsOnGenericMaterial(
-                getViewNativeHandle(mView), nativeKhronosPbrMaterial, x, y, z);
-    }
-
-    @Override
-    public void setClearcoatTextureOnKhronosPbrMaterial(
-            long nativeKhronosPbrMaterial, long clearcoatTexture, @NonNull TextureSampler sampler) {
-        nSetClearcoatTextureOnGenericMaterial(
-                getViewNativeHandle(mView),
-                nativeKhronosPbrMaterial,
-                clearcoatTexture,
-                sampler.getMinFilter(),
-                sampler.getMagFilter(),
-                sampler.getWrapModeS(),
-                sampler.getWrapModeT(),
-                sampler.getWrapModeR(),
-                sampler.getCompareMode(),
-                sampler.getCompareFunc(),
-                sampler.getAnisotropyLog2());
-    }
-
-    @Override
-    public void setClearcoatNormalTextureOnKhronosPbrMaterial(
-            long nativeKhronosPbrMaterial,
-            long clearcoatNormalTexture,
-            @NonNull TextureSampler sampler) {
-        nSetClearcoatNormalTextureOnGenericMaterial(
-                getViewNativeHandle(mView),
-                nativeKhronosPbrMaterial,
-                clearcoatNormalTexture,
-                sampler.getMinFilter(),
-                sampler.getMagFilter(),
-                sampler.getWrapModeS(),
-                sampler.getWrapModeT(),
-                sampler.getWrapModeR(),
-                sampler.getCompareMode(),
-                sampler.getCompareFunc(),
-                sampler.getAnisotropyLog2());
-    }
-
-    @Override
-    public void setClearcoatRoughnessTextureOnKhronosPbrMaterial(
-            long nativeKhronosPbrMaterial,
-            long clearcoatRoughnessTexture,
-            @NonNull TextureSampler sampler) {
-        nSetClearcoatRoughnessTextureOnGenericMaterial(
-                getViewNativeHandle(mView),
-                nativeKhronosPbrMaterial,
-                clearcoatRoughnessTexture,
-                sampler.getMinFilter(),
-                sampler.getMagFilter(),
-                sampler.getWrapModeS(),
-                sampler.getWrapModeT(),
-                sampler.getWrapModeR(),
-                sampler.getCompareMode(),
-                sampler.getCompareFunc(),
-                sampler.getAnisotropyLog2());
-    }
-
-    @Override
-    public void setClearcoatFactorsOnKhronosPbrMaterial(
-            long nativeKhronosPbrMaterial, float intensity, float roughness, float normal) {
-        nSetClearcoatFactorsOnGenericMaterial(
-                getViewNativeHandle(mView), nativeKhronosPbrMaterial, intensity, roughness, normal);
-    }
-
-    @Override
-    public void setSheenColorTextureOnKhronosPbrMaterial(
-            long nativeKhronosPbrMaterial,
-            long sheenColorTexture,
-            @NonNull TextureSampler sampler) {
-        nSetSheenColorTextureOnGenericMaterial(
-                getViewNativeHandle(mView),
-                nativeKhronosPbrMaterial,
-                sheenColorTexture,
-                sampler.getMinFilter(),
-                sampler.getMagFilter(),
-                sampler.getWrapModeS(),
-                sampler.getWrapModeT(),
-                sampler.getWrapModeR(),
-                sampler.getCompareMode(),
-                sampler.getCompareFunc(),
-                sampler.getAnisotropyLog2());
-    }
-
-    @Override
-    public void setSheenColorFactorsOnKhronosPbrMaterial(
-            long nativeKhronosPbrMaterial, float x, float y, float z) {
-        nSetSheenColorFactorsOnGenericMaterial(
-                getViewNativeHandle(mView), nativeKhronosPbrMaterial, x, y, z);
-    }
-
-    @Override
-    public void setSheenRoughnessTextureOnKhronosPbrMaterial(
-            long nativeKhronosPbrMaterial,
-            long sheenRoughnessTexture,
-            @NonNull TextureSampler sampler) {
-        nSetSheenRoughnessTextureOnGenericMaterial(
-                getViewNativeHandle(mView),
-                nativeKhronosPbrMaterial,
-                sheenRoughnessTexture,
-                sampler.getMinFilter(),
-                sampler.getMagFilter(),
-                sampler.getWrapModeS(),
-                sampler.getWrapModeT(),
-                sampler.getWrapModeR(),
-                sampler.getCompareMode(),
-                sampler.getCompareFunc(),
-                sampler.getAnisotropyLog2());
-    }
-
-    @Override
-    public void setSheenRoughnessFactorOnKhronosPbrMaterial(
-            long nativeKhronosPbrMaterial, float factor) {
-        nSetSheenRoughnessFactorOnGenericMaterial(
-                getViewNativeHandle(mView), nativeKhronosPbrMaterial, factor);
-    }
-
-    @Override
-    public void setTransmissionTextureOnKhronosPbrMaterial(
-            long nativeKhronosPbrMaterial,
-            long transmissionTexture,
-            @NonNull TextureSampler sampler) {
-        nSetTransmissionTextureOnGenericMaterial(
-                getViewNativeHandle(mView),
-                nativeKhronosPbrMaterial,
-                transmissionTexture,
-                sampler.getMinFilter(),
-                sampler.getMagFilter(),
-                sampler.getWrapModeS(),
-                sampler.getWrapModeT(),
-                sampler.getWrapModeR(),
-                sampler.getCompareMode(),
-                sampler.getCompareFunc(),
-                sampler.getAnisotropyLog2());
-    }
-
-    @Override
-    public void setTransmissionUvTransformOnKhronosPbrMaterial(
-            long nativeKhronosPbrMaterial,
-            float ux,
-            float uy,
-            float uz,
-            float vx,
-            float vy,
-            float vz,
-            float wx,
-            float wy,
-            float wz) {
-        nSetTransmissionUvTransformOnGenericMaterial(
-                getViewNativeHandle(mView),
-                nativeKhronosPbrMaterial,
-                ux,
-                uy,
-                uz,
-                vx,
-                vy,
-                vz,
-                wx,
-                wy,
-                wz);
-    }
-
-    @Override
-    public void setTransmissionFactorOnKhronosPbrMaterial(
-            long nativeKhronosPbrMaterial, float factor) {
-        nSetTransmissionFactorOnGenericMaterial(
-                getViewNativeHandle(mView), nativeKhronosPbrMaterial, factor);
-    }
-
-    @Override
-    public void setIndexOfRefractionOnKhronosPbrMaterial(
-            long nativeKhronosPbrMaterial, float indexOfRefraction) {
-        nSetIndexOfRefractionOnGenericMaterial(
-                getViewNativeHandle(mView), nativeKhronosPbrMaterial, indexOfRefraction);
-    }
-
-    @Override
-    public void setAlphaCutoffOnKhronosPbrMaterial(
-            long nativeKhronosPbrMaterial, float alphaCutoff) {
-        nSetAlphaCutoffOnGenericMaterial(
-                getViewNativeHandle(mView), nativeKhronosPbrMaterial, alphaCutoff);
-    }
-
-    @Override
-    public void destroyNativeObject(long nativeHandle) {
-        nDestroyNativeObject(getViewNativeHandle(mView), nativeHandle);
-    }
-
-    @Override
-    public void setMaterialOverride(
-            @NonNull ImpressNode impressNode,
-            long nativeMaterial,
-            @NonNull String nodeName,
-            int primitiveIndex) {
-        nSetMaterialOverride(
-                getViewNativeHandle(mView),
-                impressNode.getHandle(),
-                nativeMaterial,
-                nodeName,
-                primitiveIndex);
-    }
-
-    @Override
-    public void clearMaterialOverride(
-            @NonNull ImpressNode impressNode, @NonNull String nodeName, int primitiveIndex) {
-        nClearMaterialOverride(
-                getViewNativeHandle(mView), impressNode.getHandle(), nodeName, primitiveIndex);
-    }
-
-    @Override
-    public void setPreferredEnvironmentLight(long iblToken) {
-        nSetEnvironmentLight(getViewNativeHandle(mView), iblToken);
-    }
-
-    @Override
-    public void clearPreferredEnvironmentIblAsset() {
-        nClearEnvironmentLight(getViewNativeHandle(mView));
-    }
-
-    @Override
-    public void disposeAllResources() {
-        nDisposeAllResources(getViewNativeHandle(mView));
-    }
-
-    private long getViewNativeHandle(View view) {
-        if (view != null) {
-            return view.getNativeHandle();
-        } else if (mTestViewHandle != 0) {
-            return mTestViewHandle;
+                    override fun onCancelled(message: String) {
+                        completer.setCancelled()
+                    }
+                },
+                path,
+            )
+            "LoadTexture Operation"
         }
-        return -1;
+
+    override fun borrowReflectionTexture(): Texture {
+        val textureHandle = nBorrowReflectionTexture(getViewNativeHandle(view))
+        return Texture.Builder()
+            .setImpressApi(this@ImpressApiImpl)
+            .setNativeTexture(textureHandle)
+            .build()
+    }
+
+    override fun getReflectionTextureFromIbl(iblToken: Long): Texture {
+        val textureHandle = nGetReflectionTextureFromIbl(getViewNativeHandle(view), iblToken)
+        return Texture.Builder()
+            .setImpressApi(this@ImpressApiImpl)
+            .setNativeTexture(textureHandle)
+            .build()
+    }
+
+    override fun createWaterMaterial(isAlphaMapVersion: Boolean): ListenableFuture<WaterMaterial> =
+        CallbackToFutureAdapter.getFuture { completer ->
+            // TODO: b/374216912 - Add a cancellationListener to the completer here when the
+            // loading APIs support cancellation.
+            nCreateWaterMaterial(
+                getViewNativeHandle(view),
+                object : AssetLoader {
+
+                    override fun onSuccess(value: Long) {
+                        val waterMaterial =
+                            WaterMaterial.Builder()
+                                .setImpressApi(this@ImpressApiImpl)
+                                .setNativeMaterial(value)
+                                .build()
+                        completer.set(waterMaterial)
+                    }
+
+                    override fun onFailure(message: String) {
+                        // We can safely check for the CANCELLED string here since we
+                        // know that the underlying absl Status code is being
+                        // translated to a java Exception and the message is being
+                        // propagated. Ideally the native code would generate a separate
+                        // signal call for this.
+                        // TODO: b/374217508 - Publish a more precisely typed Exception
+                        // interface for this.
+                        if (message.contains("CANCELLED")) {
+                            onCancelled(message)
+                        } else {
+                            completer.setException(Exception(message))
+                        }
+                    }
+
+                    override fun onCancelled(message: String) {
+                        completer.setCancelled()
+                    }
+                },
+                isAlphaMapVersion,
+            )
+            // This string is used for debugging purposes by the Future.
+            "CreateWaterMaterial Operation"
+        }
+
+    override fun setReflectionMapOnWaterMaterial(
+        nativeWaterMaterial: Long,
+        reflectionMap: Long,
+        sampler: TextureSampler,
+    ): Unit =
+        nSetReflectionMapOnWaterMaterial(
+            getViewNativeHandle(view),
+            nativeWaterMaterial,
+            reflectionMap,
+            sampler.minFilter,
+            sampler.magFilter,
+            sampler.wrapModeS,
+            sampler.wrapModeT,
+            sampler.wrapModeR,
+            sampler.compareMode,
+            sampler.compareFunc,
+            sampler.anisotropyLog2,
+        )
+
+    override fun setNormalMapOnWaterMaterial(
+        nativeWaterMaterial: Long,
+        normalMap: Long,
+        sampler: TextureSampler,
+    ): Unit =
+        nSetNormalMapOnWaterMaterial(
+            getViewNativeHandle(view),
+            nativeWaterMaterial,
+            normalMap,
+            sampler.minFilter,
+            sampler.magFilter,
+            sampler.wrapModeS,
+            sampler.wrapModeT,
+            sampler.wrapModeR,
+            sampler.compareMode,
+            sampler.compareFunc,
+            sampler.anisotropyLog2,
+        )
+
+    override fun setNormalTilingOnWaterMaterial(
+        nativeWaterMaterial: Long,
+        normalTiling: Float,
+    ): Unit =
+        nSetNormalTilingOnWaterMaterial(
+            getViewNativeHandle(view),
+            nativeWaterMaterial,
+            normalTiling,
+        )
+
+    override fun setNormalSpeedOnWaterMaterial(
+        nativeWaterMaterial: Long,
+        normalSpeed: Float,
+    ): Unit =
+        nSetNormalSpeedOnWaterMaterial(getViewNativeHandle(view), nativeWaterMaterial, normalSpeed)
+
+    override fun setAlphaStepMultiplierOnWaterMaterial(
+        nativeWaterMaterial: Long,
+        alphaStepMultiplier: Float,
+    ): Unit =
+        nSetAlphaStepMultiplierOnWaterMaterial(
+            getViewNativeHandle(view),
+            nativeWaterMaterial,
+            alphaStepMultiplier,
+        )
+
+    override fun setAlphaMapOnWaterMaterial(
+        nativeWaterMaterial: Long,
+        alphaMap: Long,
+        sampler: TextureSampler,
+    ): Unit =
+        nSetAlphaMapOnWaterMaterial(
+            getViewNativeHandle(view),
+            nativeWaterMaterial,
+            alphaMap,
+            sampler.minFilter,
+            sampler.magFilter,
+            sampler.wrapModeS,
+            sampler.wrapModeT,
+            sampler.wrapModeR,
+            sampler.compareMode,
+            sampler.compareFunc,
+            sampler.anisotropyLog2,
+        )
+
+    override fun setNormalZOnWaterMaterial(nativeWaterMaterial: Long, normalZ: Float): Unit =
+        nSetNormalZOnWaterMaterial(getViewNativeHandle(view), nativeWaterMaterial, normalZ)
+
+    override fun setNormalBoundaryOnWaterMaterial(
+        nativeWaterMaterial: Long,
+        boundary: Float,
+    ): Unit =
+        nSetNormalBoundaryOnWaterMaterial(getViewNativeHandle(view), nativeWaterMaterial, boundary)
+
+    override fun setAlphaStepUOnWaterMaterial(
+        nativeWaterMaterial: Long,
+        x: Float,
+        y: Float,
+        z: Float,
+        w: Float,
+    ): Unit = throw UnsupportedOperationException("Stub API to be removed.")
+
+    override fun setAlphaStepVOnWaterMaterial(
+        nativeWaterMaterial: Long,
+        x: Float,
+        y: Float,
+        z: Float,
+        w: Float,
+    ): Unit = throw UnsupportedOperationException("Stub API to be removed.")
+
+    override fun createKhronosPbrMaterial(
+        spec: KhronosPbrMaterialSpec
+    ): ListenableFuture<KhronosPbrMaterial> =
+        CallbackToFutureAdapter.getFuture { completer ->
+            // TODO: b/374216912 - Add a cancellationListener to the completer here when the
+            // loading APIs support cancellation.
+            nCreateGenericMaterial(
+                getViewNativeHandle(view),
+                object : AssetLoader {
+                    override fun onSuccess(value: Long) {
+                        val khronosPbrMaterial =
+                            KhronosPbrMaterial.Builder()
+                                .setImpressApi(this@ImpressApiImpl)
+                                .setNativeMaterial(value)
+                                .build()
+                        completer.set(khronosPbrMaterial)
+                    }
+
+                    override fun onFailure(message: String) {
+                        // We can safely check for the CANCELLED string here since we
+                        // know that the underlying absl Status code is being
+                        // translated to a java Exception and the message is being
+                        // propagated. Ideally the native code would generate a separate
+                        // signal call for this.
+                        // TODO: b/374217508 - Publish a more precisely typed Exception
+                        // interface for this.
+                        if (message.contains("CANCELLED")) {
+                            onCancelled(message)
+                        } else {
+                            completer.setException(Exception(message))
+                        }
+                    }
+
+                    override fun onCancelled(message: String) {
+                        completer.setCancelled()
+                    }
+                },
+                spec.lightingModel,
+                spec.blendMode,
+                spec.doubleSidedMode,
+            )
+            // This string is used for debugging purposes by the Future.
+            "CreateKhronosPbrMaterial Operation"
+        }
+
+    override fun setBaseColorTextureOnKhronosPbrMaterial(
+        nativeKhronosPbrMaterial: Long,
+        baseColorTexture: Long,
+        sampler: TextureSampler,
+    ): Unit =
+        nSetBaseColorTextureOnGenericMaterial(
+            getViewNativeHandle(view),
+            nativeKhronosPbrMaterial,
+            baseColorTexture,
+            sampler.minFilter,
+            sampler.magFilter,
+            sampler.wrapModeS,
+            sampler.wrapModeT,
+            sampler.wrapModeR,
+            sampler.compareMode,
+            sampler.compareFunc,
+            sampler.anisotropyLog2,
+        )
+
+    override fun setBaseColorUvTransformOnKhronosPbrMaterial(
+        nativeKhronosPbrMaterial: Long,
+        ux: Float,
+        uy: Float,
+        uz: Float,
+        vx: Float,
+        vy: Float,
+        vz: Float,
+        wx: Float,
+        wy: Float,
+        wz: Float,
+    ): Unit =
+        nSetBaseColorUvTransformOnGenericMaterial(
+            getViewNativeHandle(view),
+            nativeKhronosPbrMaterial,
+            ux,
+            uy,
+            uz,
+            vx,
+            vy,
+            vz,
+            wx,
+            wy,
+            wz,
+        )
+
+    override fun setBaseColorFactorsOnKhronosPbrMaterial(
+        nativeKhronosPbrMaterial: Long,
+        x: Float,
+        y: Float,
+        z: Float,
+        w: Float,
+    ): Unit =
+        nSetBaseColorFactorsOnGenericMaterial(
+            getViewNativeHandle(view),
+            nativeKhronosPbrMaterial,
+            x,
+            y,
+            z,
+            w,
+        )
+
+    override fun setMetallicRoughnessTextureOnKhronosPbrMaterial(
+        nativeKhronosPbrMaterial: Long,
+        metallicRoughnessTexture: Long,
+        sampler: TextureSampler,
+    ): Unit =
+        nSetMetallicRoughnessTextureOnGenericMaterial(
+            getViewNativeHandle(view),
+            nativeKhronosPbrMaterial,
+            metallicRoughnessTexture,
+            sampler.minFilter,
+            sampler.magFilter,
+            sampler.wrapModeS,
+            sampler.wrapModeT,
+            sampler.wrapModeR,
+            sampler.compareMode,
+            sampler.compareFunc,
+            sampler.anisotropyLog2,
+        )
+
+    override fun setMetallicRoughnessUvTransformOnKhronosPbrMaterial(
+        nativeKhronosPbrMaterial: Long,
+        ux: Float,
+        uy: Float,
+        uz: Float,
+        vx: Float,
+        vy: Float,
+        vz: Float,
+        wx: Float,
+        wy: Float,
+        wz: Float,
+    ): Unit =
+        nSetMetallicRoughnessUvTransformOnGenericMaterial(
+            getViewNativeHandle(view),
+            nativeKhronosPbrMaterial,
+            ux,
+            uy,
+            uz,
+            vx,
+            vy,
+            vz,
+            wx,
+            wy,
+            wz,
+        )
+
+    override fun setMetallicFactorOnKhronosPbrMaterial(
+        nativeKhronosPbrMaterial: Long,
+        factor: Float,
+    ): Unit =
+        nSetMetallicFactorOnGenericMaterial(
+            getViewNativeHandle(view),
+            nativeKhronosPbrMaterial,
+            factor,
+        )
+
+    override fun setRoughnessFactorOnKhronosPbrMaterial(
+        nativeKhronosPbrMaterial: Long,
+        factor: Float,
+    ): Unit =
+        nSetRoughnessFactorOnGenericMaterial(
+            getViewNativeHandle(view),
+            nativeKhronosPbrMaterial,
+            factor,
+        )
+
+    override fun setNormalTextureOnKhronosPbrMaterial(
+        nativeKhronosPbrMaterial: Long,
+        normalTexture: Long,
+        sampler: TextureSampler,
+    ): Unit =
+        nSetNormalTextureOnGenericMaterial(
+            getViewNativeHandle(view),
+            nativeKhronosPbrMaterial,
+            normalTexture,
+            sampler.minFilter,
+            sampler.magFilter,
+            sampler.wrapModeS,
+            sampler.wrapModeT,
+            sampler.wrapModeR,
+            sampler.compareMode,
+            sampler.compareFunc,
+            sampler.anisotropyLog2,
+        )
+
+    override fun setNormalUvTransformOnKhronosPbrMaterial(
+        nativeKhronosPbrMaterial: Long,
+        ux: Float,
+        uy: Float,
+        uz: Float,
+        vx: Float,
+        vy: Float,
+        vz: Float,
+        wx: Float,
+        wy: Float,
+        wz: Float,
+    ): Unit =
+        nSetNormalUvTransformOnGenericMaterial(
+            getViewNativeHandle(view),
+            nativeKhronosPbrMaterial,
+            ux,
+            uy,
+            uz,
+            vx,
+            vy,
+            vz,
+            wx,
+            wy,
+            wz,
+        )
+
+    override fun setNormalFactorOnKhronosPbrMaterial(
+        nativeKhronosPbrMaterial: Long,
+        factor: Float,
+    ): Unit =
+        nSetNormalFactorOnGenericMaterial(
+            getViewNativeHandle(view),
+            nativeKhronosPbrMaterial,
+            factor,
+        )
+
+    override fun setAmbientOcclusionTextureOnKhronosPbrMaterial(
+        nativeKhronosPbrMaterial: Long,
+        ambientOcclusionTexture: Long,
+        sampler: TextureSampler,
+    ): Unit =
+        nSetAmbientOcclusionTextureOnGenericMaterial(
+            getViewNativeHandle(view),
+            nativeKhronosPbrMaterial,
+            ambientOcclusionTexture,
+            sampler.minFilter,
+            sampler.magFilter,
+            sampler.wrapModeS,
+            sampler.wrapModeT,
+            sampler.wrapModeR,
+            sampler.compareMode,
+            sampler.compareFunc,
+            sampler.anisotropyLog2,
+        )
+
+    override fun setAmbientOcclusionUvTransformOnKhronosPbrMaterial(
+        nativeKhronosPbrMaterial: Long,
+        ux: Float,
+        uy: Float,
+        uz: Float,
+        vx: Float,
+        vy: Float,
+        vz: Float,
+        wx: Float,
+        wy: Float,
+        wz: Float,
+    ): Unit =
+        nSetAmbientOcclusionUvTransformOnGenericMaterial(
+            getViewNativeHandle(view),
+            nativeKhronosPbrMaterial,
+            ux,
+            uy,
+            uz,
+            vx,
+            vy,
+            vz,
+            wx,
+            wy,
+            wz,
+        )
+
+    override fun setAmbientOcclusionFactorOnKhronosPbrMaterial(
+        nativeKhronosPbrMaterial: Long,
+        factor: Float,
+    ): Unit =
+        nSetAmbientOcclusionFactorOnGenericMaterial(
+            getViewNativeHandle(view),
+            nativeKhronosPbrMaterial,
+            factor,
+        )
+
+    override fun setEmissiveTextureOnKhronosPbrMaterial(
+        nativeKhronosPbrMaterial: Long,
+        emissiveTexture: Long,
+        sampler: TextureSampler,
+    ): Unit =
+        nSetEmissiveTextureOnGenericMaterial(
+            getViewNativeHandle(view),
+            nativeKhronosPbrMaterial,
+            emissiveTexture,
+            sampler.minFilter,
+            sampler.magFilter,
+            sampler.wrapModeS,
+            sampler.wrapModeT,
+            sampler.wrapModeR,
+            sampler.compareMode,
+            sampler.compareFunc,
+            sampler.anisotropyLog2,
+        )
+
+    override fun setEmissiveUvTransformOnKhronosPbrMaterial(
+        nativeKhronosPbrMaterial: Long,
+        ux: Float,
+        uy: Float,
+        uz: Float,
+        vx: Float,
+        vy: Float,
+        vz: Float,
+        wx: Float,
+        wy: Float,
+        wz: Float,
+    ): Unit =
+        nSetEmissiveUvTransformOnGenericMaterial(
+            getViewNativeHandle(view),
+            nativeKhronosPbrMaterial,
+            ux,
+            uy,
+            uz,
+            vx,
+            vy,
+            vz,
+            wx,
+            wy,
+            wz,
+        )
+
+    override fun setEmissiveFactorsOnKhronosPbrMaterial(
+        nativeKhronosPbrMaterial: Long,
+        x: Float,
+        y: Float,
+        z: Float,
+    ): Unit =
+        nSetEmissiveFactorsOnGenericMaterial(
+            getViewNativeHandle(view),
+            nativeKhronosPbrMaterial,
+            x,
+            y,
+            z,
+        )
+
+    override fun setClearcoatTextureOnKhronosPbrMaterial(
+        nativeKhronosPbrMaterial: Long,
+        clearcoatTexture: Long,
+        sampler: TextureSampler,
+    ): Unit =
+        nSetClearcoatTextureOnGenericMaterial(
+            getViewNativeHandle(view),
+            nativeKhronosPbrMaterial,
+            clearcoatTexture,
+            sampler.minFilter,
+            sampler.magFilter,
+            sampler.wrapModeS,
+            sampler.wrapModeT,
+            sampler.wrapModeR,
+            sampler.compareMode,
+            sampler.compareFunc,
+            sampler.anisotropyLog2,
+        )
+
+    override fun setClearcoatNormalTextureOnKhronosPbrMaterial(
+        nativeKhronosPbrMaterial: Long,
+        clearcoatNormalTexture: Long,
+        sampler: TextureSampler,
+    ): Unit =
+        nSetClearcoatNormalTextureOnGenericMaterial(
+            getViewNativeHandle(view),
+            nativeKhronosPbrMaterial,
+            clearcoatNormalTexture,
+            sampler.minFilter,
+            sampler.magFilter,
+            sampler.wrapModeS,
+            sampler.wrapModeT,
+            sampler.wrapModeR,
+            sampler.compareMode,
+            sampler.compareFunc,
+            sampler.anisotropyLog2,
+        )
+
+    override fun setClearcoatRoughnessTextureOnKhronosPbrMaterial(
+        nativeKhronosPbrMaterial: Long,
+        clearcoatRoughnessTexture: Long,
+        sampler: TextureSampler,
+    ): Unit =
+        nSetClearcoatRoughnessTextureOnGenericMaterial(
+            getViewNativeHandle(view),
+            nativeKhronosPbrMaterial,
+            clearcoatRoughnessTexture,
+            sampler.minFilter,
+            sampler.magFilter,
+            sampler.wrapModeS,
+            sampler.wrapModeT,
+            sampler.wrapModeR,
+            sampler.compareMode,
+            sampler.compareFunc,
+            sampler.anisotropyLog2,
+        )
+
+    override fun setClearcoatFactorsOnKhronosPbrMaterial(
+        nativeKhronosPbrMaterial: Long,
+        intensity: Float,
+        roughness: Float,
+        normal: Float,
+    ): Unit =
+        nSetClearcoatFactorsOnGenericMaterial(
+            getViewNativeHandle(view),
+            nativeKhronosPbrMaterial,
+            intensity,
+            roughness,
+            normal,
+        )
+
+    override fun setSheenColorTextureOnKhronosPbrMaterial(
+        nativeKhronosPbrMaterial: Long,
+        sheenColorTexture: Long,
+        sampler: TextureSampler,
+    ): Unit =
+        nSetSheenColorTextureOnGenericMaterial(
+            getViewNativeHandle(view),
+            nativeKhronosPbrMaterial,
+            sheenColorTexture,
+            sampler.minFilter,
+            sampler.magFilter,
+            sampler.wrapModeS,
+            sampler.wrapModeT,
+            sampler.wrapModeR,
+            sampler.compareMode,
+            sampler.compareFunc,
+            sampler.anisotropyLog2,
+        )
+
+    override fun setSheenColorFactorsOnKhronosPbrMaterial(
+        nativeKhronosPbrMaterial: Long,
+        x: Float,
+        y: Float,
+        z: Float,
+    ): Unit =
+        nSetSheenColorFactorsOnGenericMaterial(
+            getViewNativeHandle(view),
+            nativeKhronosPbrMaterial,
+            x,
+            y,
+            z,
+        )
+
+    override fun setSheenRoughnessTextureOnKhronosPbrMaterial(
+        nativeKhronosPbrMaterial: Long,
+        sheenRoughnessTexture: Long,
+        sampler: TextureSampler,
+    ): Unit =
+        nSetSheenRoughnessTextureOnGenericMaterial(
+            getViewNativeHandle(view),
+            nativeKhronosPbrMaterial,
+            sheenRoughnessTexture,
+            sampler.minFilter,
+            sampler.magFilter,
+            sampler.wrapModeS,
+            sampler.wrapModeT,
+            sampler.wrapModeR,
+            sampler.compareMode,
+            sampler.compareFunc,
+            sampler.anisotropyLog2,
+        )
+
+    override fun setSheenRoughnessFactorOnKhronosPbrMaterial(
+        nativeKhronosPbrMaterial: Long,
+        factor: Float,
+    ): Unit =
+        nSetSheenRoughnessFactorOnGenericMaterial(
+            getViewNativeHandle(view),
+            nativeKhronosPbrMaterial,
+            factor,
+        )
+
+    override fun setTransmissionTextureOnKhronosPbrMaterial(
+        nativeKhronosPbrMaterial: Long,
+        transmissionTexture: Long,
+        sampler: TextureSampler,
+    ): Unit =
+        nSetTransmissionTextureOnGenericMaterial(
+            getViewNativeHandle(view),
+            nativeKhronosPbrMaterial,
+            transmissionTexture,
+            sampler.minFilter,
+            sampler.magFilter,
+            sampler.wrapModeS,
+            sampler.wrapModeT,
+            sampler.wrapModeR,
+            sampler.compareMode,
+            sampler.compareFunc,
+            sampler.anisotropyLog2,
+        )
+
+    override fun setTransmissionUvTransformOnKhronosPbrMaterial(
+        nativeKhronosPbrMaterial: Long,
+        ux: Float,
+        uy: Float,
+        uz: Float,
+        vx: Float,
+        vy: Float,
+        vz: Float,
+        wx: Float,
+        wy: Float,
+        wz: Float,
+    ): Unit =
+        nSetTransmissionUvTransformOnGenericMaterial(
+            getViewNativeHandle(view),
+            nativeKhronosPbrMaterial,
+            ux,
+            uy,
+            uz,
+            vx,
+            vy,
+            vz,
+            wx,
+            wy,
+            wz,
+        )
+
+    override fun setTransmissionFactorOnKhronosPbrMaterial(
+        nativeKhronosPbrMaterial: Long,
+        factor: Float,
+    ): Unit =
+        nSetTransmissionFactorOnGenericMaterial(
+            getViewNativeHandle(view),
+            nativeKhronosPbrMaterial,
+            factor,
+        )
+
+    override fun setIndexOfRefractionOnKhronosPbrMaterial(
+        nativeKhronosPbrMaterial: Long,
+        indexOfRefraction: Float,
+    ): Unit =
+        nSetIndexOfRefractionOnGenericMaterial(
+            getViewNativeHandle(view),
+            nativeKhronosPbrMaterial,
+            indexOfRefraction,
+        )
+
+    override fun setAlphaCutoffOnKhronosPbrMaterial(
+        nativeKhronosPbrMaterial: Long,
+        alphaCutoff: Float,
+    ): Unit =
+        nSetAlphaCutoffOnGenericMaterial(
+            getViewNativeHandle(view),
+            nativeKhronosPbrMaterial,
+            alphaCutoff,
+        )
+
+    override fun destroyNativeObject(nativeHandle: Long): Unit =
+        nDestroyNativeObject(getViewNativeHandle(view), nativeHandle)
+
+    override fun setMaterialOverride(
+        impressNode: ImpressNode,
+        nativeMaterial: Long,
+        nodeName: String,
+        primitiveIndex: Int,
+    ): Unit =
+        nSetMaterialOverride(
+            getViewNativeHandle(view),
+            impressNode.handle,
+            nativeMaterial,
+            nodeName,
+            primitiveIndex,
+        )
+
+    override fun clearMaterialOverride(
+        impressNode: ImpressNode,
+        nodeName: String,
+        primitiveIndex: Int,
+    ): Unit =
+        nClearMaterialOverride(
+            getViewNativeHandle(view),
+            impressNode.handle,
+            nodeName,
+            primitiveIndex,
+        )
+
+    override fun setPreferredEnvironmentLight(iblToken: Long): Unit =
+        nSetEnvironmentLight(getViewNativeHandle(view), iblToken)
+
+    override fun clearPreferredEnvironmentIblAsset(): Unit =
+        nClearEnvironmentLight(getViewNativeHandle(view))
+
+    override fun disposeAllResources(): Unit = nDisposeAllResources(getViewNativeHandle(view))
+
+    private fun getViewNativeHandle(view: View?): Long {
+        if (view != null) {
+            return view.nativeHandle
+        } else if (testViewHandle.toInt() != 0) {
+            return testViewHandle
+        }
+        return -1
     }
 
     // returns the bridge handle after it's been initialized.
-    private static native void nSetup(long view);
-
-    private static native void nReleaseImageBasedLightingAsset(long view, long assetToken);
-
-    private static native void nLoadImageBasedLightingAssetFromPath(
-            long view, AssetLoader assetLoader, String path);
-
-    private static native void nLoadImageBasedLightingAssetFromByteArray(
-            long view, AssetLoader assetLoader, byte[] data, String key);
-
-    private static native void nLoadGltfAssetFromPath(
-            long view, AssetLoader assetLoader, String path);
-
-    private static native void nLoadGltfAssetFromByteArray(
-            long view, AssetLoader assetLoader, byte[] data, String key);
-
-    private static native void nReleaseGltfAsset(long view, long gltfToken);
-
-    private static native int nInstanceGltfModel(long view, long gltfToken, boolean enableCollider);
-
-    private static native void nSetGltfModelColliderEnabled(
-            long view, long gltfToken, boolean enableCollider);
-
-    private static native void nAnimateGltfModel(
-            long view,
-            int impressNode,
-            String animationName,
-            boolean loop,
-            AssetAnimator assetAnimator);
-
-    private static native void nStopGltfModelAnimation(long view, int impressNode);
-
-    private static native void nGetGltfModelLocalBounds(
-            long view, int impressNode, float[] outCenter, float[] outHalfExtent);
-
-    private static native int nCreateImpressNode(long view);
-
-    private static native void nDestroyImpressNode(long view, int impressNode);
-
-    private static native void nSetImpressNodeParent(
-            long view, int impressNodeChild, int impressNodeParent);
-
-    private static native int nCreateStereoSurfaceEntity(
-            long view, int stereoMode, int contentSecurityLevel, boolean useSuperSampling);
-
-    private static native void nSetStereoSurfaceEntitySurfaceSize(
-            long view, int impressNode, int width, int height);
-
-    private static native void nSetStereoSurfaceEntityCanvasShapeQuad(
-            long view, int impressNode, float width, float height);
-
-    private static native void nSetStereoSurfaceEntityCanvasShapeSphere(
-            long view, int impressNode, float radius);
-
-    private static native void nSetStereoSurfaceEntityCanvasShapeHemisphere(
-            long view, int impressNode, float radius);
-
-    private static native void nSetStereoSurfaceEntityColliderEnabled(
-            long view, int impressNode, boolean enableCollider);
-
-    private static native Surface nGetSurfaceFromStereoSurfaceEntity(
-            long view, int panelImpressNode);
-
-    private static native void nSetFeatherRadiusForStereoSurfaceEntity(
-            long view, int panelImpressNode, float radiusX, float radiusY);
-
-    private static native void nSetStereoModeForStereoSurfaceEntity(
-            long view, int panelImpressNode, int stereoMode);
-
-    private static native void nSetContentColorMetadataForStereoSurfaceEntity(
-            long view,
-            int stereoSurfaceNode,
-            int colorSpace,
-            int colorTransfer,
-            int colorRange,
-            int maxLuminance);
-
-    private static native void nResetContentColorMetadataForStereoSurfaceEntity(
-            long view, int stereoSurfaceNode);
-
-    private static native void nSetPrimaryAlphaMaskForStereoSurfaceEntity(
-            long view, int panelImpressNode, long alphaMask);
-
-    private static native void nSetAuxiliaryAlphaMaskForStereoSurfaceEntity(
-            long view, int panelImpressNode, long alphaMask);
-
-    private static native void nLoadTexture(long view, AssetLoader assetLoader, String path);
-
-    private static native long nBorrowReflectionTexture(long view);
-
-    private static native long nGetReflectionTextureFromIbl(long view, long iblToken);
-
-    private static native void nCreateWaterMaterial(
-            long view, AssetLoader assetLoader, boolean isAlphaMapVersion);
-
-    private static native void nSetReflectionMapOnWaterMaterial(
-            long view,
-            long nativeWaterMaterial,
-            long reflectionMap,
-            int minFilter,
-            int magFilter,
-            int wrapModeS,
-            int wrapModeT,
-            int wrapModeR,
-            int compareMode,
-            int compareFunc,
-            int anisotropyLog2);
-
-    private static native void nSetNormalMapOnWaterMaterial(
-            long view,
-            long nativeWaterMaterial,
-            long normalMap,
-            int minFilter,
-            int magFilter,
-            int wrapModeS,
-            int wrapModeT,
-            int wrapModeR,
-            int compareMode,
-            int compareFunc,
-            int anisotropyLog2);
-
-    private static native void nSetNormalTilingOnWaterMaterial(
-            long view, long nativeWaterMaterial, float normalTiling);
-
-    private static native void nSetNormalSpeedOnWaterMaterial(
-            long view, long nativeWaterMaterial, float normalSpeed);
-
-    private static native void nSetAlphaStepUOnWaterMaterial(
-            long view, long nativeWaterMaterial, float x, float y, float z, float w);
-
-    private static native void nSetAlphaStepVOnWaterMaterial(
-            long view, long nativeWaterMaterial, float x, float y, float z, float w);
-
-    private static native void nSetAlphaStepMultiplierOnWaterMaterial(
-            long view, long nativeWaterMaterial, float alphaStepMultiplier);
-
-    private static native void nSetAlphaMapOnWaterMaterial(
-            long view,
-            long nativeWaterMaterial,
-            long alphaMap,
-            int minFilter,
-            int magFilter,
-            int wrapModeS,
-            int wrapModeT,
-            int wrapModeR,
-            int compareMode,
-            int compareFunc,
-            int anisotropyLog2);
-
-    private static native void nSetNormalZOnWaterMaterial(
-            long view, long nativeWaterMaterial, float normalZ);
-
-    private static native void nSetNormalBoundaryOnWaterMaterial(
-            long view, long nativeWaterMaterial, float normalBoundary);
-
-    private native void nCreateGenericMaterial(
-            long view,
-            AssetLoader assetLoader,
-            int lightingModel,
-            int blendMode,
-            int doubleSidedMode);
-
-    private native void nSetBaseColorTextureOnGenericMaterial(
-            long view,
-            long nativeGenericMaterial,
-            long baseColorTexture,
-            int minFilter,
-            int magFilter,
-            int wrapModeS,
-            int wrapModeT,
-            int wrapModeR,
-            int compareMode,
-            int compareFunc,
-            int anisotropyLog2);
-
-    private native void nSetBaseColorUvTransformOnGenericMaterial(
-            long view,
-            long nativeGenericMaterial,
-            float ux,
-            float uy,
-            float uz,
-            float vx,
-            float vy,
-            float vz,
-            float wx,
-            float wy,
-            float wz);
-
-    private native void nSetBaseColorFactorsOnGenericMaterial(
-            long view, long nativeGenericMaterial, float x, float y, float z, float w);
-
-    private native void nSetMetallicRoughnessTextureOnGenericMaterial(
-            long view,
-            long nativeGenericMaterial,
-            long metallicRoughnessTexture,
-            int minFilter,
-            int magFilter,
-            int wrapModeS,
-            int wrapModeT,
-            int wrapModeR,
-            int compareMode,
-            int compareFunc,
-            int anisotropyLog2);
-
-    private native void nSetMetallicRoughnessUvTransformOnGenericMaterial(
-            long view,
-            long nativeGenericMaterial,
-            float ux,
-            float uy,
-            float uz,
-            float vx,
-            float vy,
-            float vz,
-            float wx,
-            float wy,
-            float wz);
-
-    private native void nSetMetallicFactorOnGenericMaterial(
-            long view, long nativeGenericMaterial, float factor);
-
-    private native void nSetRoughnessFactorOnGenericMaterial(
-            long view, long nativeGenericMaterial, float factor);
-
-    private native void nSetNormalTextureOnGenericMaterial(
-            long view,
-            long nativeGenericMaterial,
-            long normalTexture,
-            int minFilter,
-            int magFilter,
-            int wrapModeS,
-            int wrapModeT,
-            int wrapModeR,
-            int compareMode,
-            int compareFunc,
-            int anisotropyLog2);
-
-    private native void nSetNormalUvTransformOnGenericMaterial(
-            long view,
-            long nativeGenericMaterial,
-            float ux,
-            float uy,
-            float uz,
-            float vx,
-            float vy,
-            float vz,
-            float wx,
-            float wy,
-            float wz);
-
-    private native void nSetNormalFactorOnGenericMaterial(
-            long view, long nativeGenericMaterial, float factor);
-
-    private native void nSetAmbientOcclusionTextureOnGenericMaterial(
-            long view,
-            long nativeGenericMaterial,
-            long ambientOcclusionTexture,
-            int minFilter,
-            int magFilter,
-            int wrapModeS,
-            int wrapModeT,
-            int wrapModeR,
-            int compareMode,
-            int compareFunc,
-            int anisotropyLog2);
-
-    private native void nSetAmbientOcclusionUvTransformOnGenericMaterial(
-            long view,
-            long nativeGenericMaterial,
-            float ux,
-            float uy,
-            float uz,
-            float vx,
-            float vy,
-            float vz,
-            float wx,
-            float wy,
-            float wz);
-
-    private native void nSetAmbientOcclusionFactorOnGenericMaterial(
-            long view, long nativeGenericMaterial, float factor);
-
-    private native void nSetEmissiveTextureOnGenericMaterial(
-            long view,
-            long nativeGenericMaterial,
-            long emissiveTexture,
-            int minFilter,
-            int magFilter,
-            int wrapModeS,
-            int wrapModeT,
-            int wrapModeR,
-            int compareMode,
-            int compareFunc,
-            int anisotropyLog2);
-
-    private native void nSetEmissiveUvTransformOnGenericMaterial(
-            long view,
-            long nativeGenericMaterial,
-            float ux,
-            float uy,
-            float uz,
-            float vx,
-            float vy,
-            float vz,
-            float wx,
-            float wy,
-            float wz);
-
-    private native void nSetEmissiveFactorsOnGenericMaterial(
-            long view, long nativeGenericMaterial, float x, float y, float z);
-
-    private native void nSetClearcoatTextureOnGenericMaterial(
-            long view,
-            long nativeGenericMaterial,
-            long clearcoatTexture,
-            int minFilter,
-            int magFilter,
-            int wrapModeS,
-            int wrapModeT,
-            int wrapModeR,
-            int compareMode,
-            int compareFunc,
-            int anisotropyLog2);
-
-    private native void nSetClearcoatNormalTextureOnGenericMaterial(
-            long view,
-            long nativeGenericMaterial,
-            long clearcoatNormalTexture,
-            int minFilter,
-            int magFilter,
-            int wrapModeS,
-            int wrapModeT,
-            int wrapModeR,
-            int compareMode,
-            int compareFunc,
-            int anisotropyLog2);
-
-    private native void nSetClearcoatRoughnessTextureOnGenericMaterial(
-            long view,
-            long nativeGenericMaterial,
-            long clearcoatRoughnessTexture,
-            int minFilter,
-            int magFilter,
-            int wrapModeS,
-            int wrapModeT,
-            int wrapModeR,
-            int compareMode,
-            int compareFunc,
-            int anisotropyLog2);
-
-    private native void nSetClearcoatFactorsOnGenericMaterial(
-            long view, long nativeGenericMaterial, float intensity, float roughness, float normal);
-
-    private native void nSetSheenColorTextureOnGenericMaterial(
-            long view,
-            long nativeGenericMaterial,
-            long sheenColorTexture,
-            int minFilter,
-            int magFilter,
-            int wrapModeS,
-            int wrapModeT,
-            int wrapModeR,
-            int compareMode,
-            int compareFunc,
-            int anisotropyLog2);
-
-    private native void nSetSheenColorFactorsOnGenericMaterial(
-            long view, long nativeGenericMaterial, float x, float y, float z);
-
-    private native void nSetSheenRoughnessTextureOnGenericMaterial(
-            long view,
-            long nativeGenericMaterial,
-            long sheenRoughnessTexture,
-            int minFilter,
-            int magFilter,
-            int wrapModeS,
-            int wrapModeT,
-            int wrapModeR,
-            int compareMode,
-            int compareFunc,
-            int anisotropyLog2);
-
-    private native void nSetSheenRoughnessFactorOnGenericMaterial(
-            long view, long nativeGenericMaterial, float factor);
-
-    private native void nSetTransmissionTextureOnGenericMaterial(
-            long view,
-            long nativeGenericMaterial,
-            long transmissionTexture,
-            int minFilter,
-            int magFilter,
-            int wrapModeS,
-            int wrapModeT,
-            int wrapModeR,
-            int compareMode,
-            int compareFunc,
-            int anisotropyLog2);
-
-    private native void nSetTransmissionUvTransformOnGenericMaterial(
-            long view,
-            long nativeGenericMaterial,
-            float ux,
-            float uy,
-            float uz,
-            float vx,
-            float vy,
-            float vz,
-            float wx,
-            float wy,
-            float wz);
-
-    private native void nSetTransmissionFactorOnGenericMaterial(
-            long view, long nativeGenericMaterial, float factor);
-
-    private native void nSetIndexOfRefractionOnGenericMaterial(
-            long view, long nativeGenericMaterial, float indexOfRefraction);
-
-    private native void nSetAlphaCutoffOnGenericMaterial(
-            long view, long nativeGenericMaterial, float alphaCutoff);
-
-    private static native void nDestroyNativeObject(long view, long nativeHandle);
-
-    private static native void nSetMaterialOverride(
-            long view, int impressNode, long nativeMaterial, String nodeName, int primitiveIndex);
-
-    private static native void nClearMaterialOverride(
-            long view, int impressNode, String nodeName, int primitiveIndex);
-
-    private static native void nSetEnvironmentLight(long view, long iblToken);
-
-    private static native void nClearEnvironmentLight(long view);
-
-    private static native void nDisposeAllResources(long view);
+    private external fun nSetup(view: Long)
+
+    private external fun nReleaseImageBasedLightingAsset(view: Long, assetToken: Long)
+
+    private external fun nLoadImageBasedLightingAssetFromPath(
+        view: Long,
+        assetLoader: AssetLoader,
+        path: String,
+    )
+
+    private external fun nLoadImageBasedLightingAssetFromByteArray(
+        view: Long,
+        assetLoader: AssetLoader,
+        data: ByteArray,
+        key: String,
+    )
+
+    private external fun nLoadGltfAssetFromPath(view: Long, assetLoader: AssetLoader, path: String)
+
+    private external fun nLoadGltfAssetFromByteArray(
+        view: Long,
+        assetLoader: AssetLoader,
+        data: ByteArray,
+        key: String,
+    )
+
+    private external fun nReleaseGltfAsset(view: Long, gltfToken: Long)
+
+    private external fun nInstanceGltfModel(
+        view: Long,
+        gltfToken: Long,
+        enableCollider: Boolean,
+    ): Int
+
+    private external fun nSetGltfModelColliderEnabled(
+        view: Long,
+        gltfToken: Long,
+        enableCollider: Boolean,
+    )
+
+    private external fun nAnimateGltfModel(
+        view: Long,
+        impressNode: Int,
+        animationName: String,
+        loop: Boolean,
+        assetAnimator: AssetAnimator,
+    )
+
+    private external fun nStopGltfModelAnimation(view: Long, impressNode: Int)
+
+    private external fun nGetGltfModelLocalBounds(
+        view: Long,
+        impressNode: Int,
+        outCenter: FloatArray,
+        outHalfExtent: FloatArray,
+    )
+
+    private external fun nCreateImpressNode(view: Long): Int
+
+    private external fun nDestroyImpressNode(view: Long, impressNode: Int)
+
+    private external fun nSetImpressNodeParent(
+        view: Long,
+        impressNodeChild: Int,
+        impressNodeParent: Int,
+    )
+
+    private external fun nCreateStereoSurfaceEntity(
+        view: Long,
+        stereoMode: Int,
+        contentSecurityLevel: Int,
+        useSuperSampling: Boolean,
+    ): Int
+
+    private external fun nSetStereoSurfaceEntitySurfaceSize(
+        view: Long,
+        impressNode: Int,
+        width: Int,
+        height: Int,
+    )
+
+    private external fun nSetStereoSurfaceEntityCanvasShapeQuad(
+        view: Long,
+        impressNode: Int,
+        width: Float,
+        height: Float,
+    )
+
+    private external fun nSetStereoSurfaceEntityCanvasShapeSphere(
+        view: Long,
+        impressNode: Int,
+        radius: Float,
+    )
+
+    private external fun nSetStereoSurfaceEntityCanvasShapeHemisphere(
+        view: Long,
+        impressNode: Int,
+        radius: Float,
+    )
+
+    private external fun nSetStereoSurfaceEntityColliderEnabled(
+        view: Long,
+        impressNode: Int,
+        enableCollider: Boolean,
+    )
+
+    private external fun nGetSurfaceFromStereoSurfaceEntity(
+        view: Long,
+        panelImpressNode: Int,
+    ): Surface
+
+    private external fun nSetFeatherRadiusForStereoSurfaceEntity(
+        view: Long,
+        panelImpressNode: Int,
+        radiusX: Float,
+        radiusY: Float,
+    )
+
+    private external fun nSetStereoModeForStereoSurfaceEntity(
+        view: Long,
+        panelImpressNode: Int,
+        stereoMode: Int,
+    )
+
+    private external fun nSetContentColorMetadataForStereoSurfaceEntity(
+        view: Long,
+        stereoSurfaceNode: Int,
+        colorSpace: Int,
+        colorTransfer: Int,
+        colorRange: Int,
+        maxLuminance: Int,
+    )
+
+    private external fun nResetContentColorMetadataForStereoSurfaceEntity(
+        view: Long,
+        stereoSurfaceNode: Int,
+    )
+
+    private external fun nSetPrimaryAlphaMaskForStereoSurfaceEntity(
+        view: Long,
+        panelImpressNode: Int,
+        alphaMask: Long,
+    )
+
+    private external fun nSetAuxiliaryAlphaMaskForStereoSurfaceEntity(
+        view: Long,
+        panelImpressNode: Int,
+        alphaMask: Long,
+    )
+
+    private external fun nLoadTexture(view: Long, assetLoader: AssetLoader, path: String)
+
+    private external fun nBorrowReflectionTexture(view: Long): Long
+
+    private external fun nGetReflectionTextureFromIbl(view: Long, iblToken: Long): Long
+
+    private external fun nCreateWaterMaterial(
+        view: Long,
+        assetLoader: AssetLoader,
+        isAlphaMapVersion: Boolean,
+    )
+
+    private external fun nSetReflectionMapOnWaterMaterial(
+        view: Long,
+        nativeWaterMaterial: Long,
+        reflectionMap: Long,
+        minFilter: Int,
+        magFilter: Int,
+        wrapModeS: Int,
+        wrapModeT: Int,
+        wrapModeR: Int,
+        compareMode: Int,
+        compareFunc: Int,
+        anisotropyLog2: Int,
+    )
+
+    private external fun nSetNormalMapOnWaterMaterial(
+        view: Long,
+        nativeWaterMaterial: Long,
+        normalMap: Long,
+        minFilter: Int,
+        magFilter: Int,
+        wrapModeS: Int,
+        wrapModeT: Int,
+        wrapModeR: Int,
+        compareMode: Int,
+        compareFunc: Int,
+        anisotropyLog2: Int,
+    )
+
+    private external fun nSetNormalTilingOnWaterMaterial(
+        view: Long,
+        nativeWaterMaterial: Long,
+        normalTiling: Float,
+    )
+
+    private external fun nSetNormalSpeedOnWaterMaterial(
+        view: Long,
+        nativeWaterMaterial: Long,
+        normalSpeed: Float,
+    )
+
+    private external fun nSetAlphaStepUOnWaterMaterial(
+        view: Long,
+        nativeWaterMaterial: Long,
+        x: Float,
+        y: Float,
+        z: Float,
+        w: Float,
+    )
+
+    private external fun nSetAlphaStepVOnWaterMaterial(
+        view: Long,
+        nativeWaterMaterial: Long,
+        x: Float,
+        y: Float,
+        z: Float,
+        w: Float,
+    )
+
+    private external fun nSetAlphaStepMultiplierOnWaterMaterial(
+        view: Long,
+        nativeWaterMaterial: Long,
+        alphaStepMultiplier: Float,
+    )
+
+    private external fun nSetAlphaMapOnWaterMaterial(
+        view: Long,
+        nativeWaterMaterial: Long,
+        alphaMap: Long,
+        minFilter: Int,
+        magFilter: Int,
+        wrapModeS: Int,
+        wrapModeT: Int,
+        wrapModeR: Int,
+        compareMode: Int,
+        compareFunc: Int,
+        anisotropyLog2: Int,
+    )
+
+    private external fun nSetNormalZOnWaterMaterial(
+        view: Long,
+        nativeWaterMaterial: Long,
+        normalZ: Float,
+    )
+
+    private external fun nSetNormalBoundaryOnWaterMaterial(
+        view: Long,
+        nativeWaterMaterial: Long,
+        normalBoundary: Float,
+    )
+
+    private external fun nCreateGenericMaterial(
+        view: Long,
+        assetLoader: AssetLoader,
+        lightingModel: Int,
+        blendMode: Int,
+        doubleSidedMode: Int,
+    )
+
+    private external fun nSetBaseColorTextureOnGenericMaterial(
+        view: Long,
+        nativeGenericMaterial: Long,
+        baseColorTexture: Long,
+        minFilter: Int,
+        magFilter: Int,
+        wrapModeS: Int,
+        wrapModeT: Int,
+        wrapModeR: Int,
+        compareMode: Int,
+        compareFunc: Int,
+        anisotropyLog2: Int,
+    )
+
+    private external fun nSetBaseColorUvTransformOnGenericMaterial(
+        view: Long,
+        nativeGenericMaterial: Long,
+        ux: Float,
+        uy: Float,
+        uz: Float,
+        vx: Float,
+        vy: Float,
+        vz: Float,
+        wx: Float,
+        wy: Float,
+        wz: Float,
+    )
+
+    private external fun nSetBaseColorFactorsOnGenericMaterial(
+        view: Long,
+        nativeGenericMaterial: Long,
+        x: Float,
+        y: Float,
+        z: Float,
+        w: Float,
+    )
+
+    private external fun nSetMetallicRoughnessTextureOnGenericMaterial(
+        view: Long,
+        nativeGenericMaterial: Long,
+        metallicRoughnessTexture: Long,
+        minFilter: Int,
+        magFilter: Int,
+        wrapModeS: Int,
+        wrapModeT: Int,
+        wrapModeR: Int,
+        compareMode: Int,
+        compareFunc: Int,
+        anisotropyLog2: Int,
+    )
+
+    private external fun nSetMetallicRoughnessUvTransformOnGenericMaterial(
+        view: Long,
+        nativeGenericMaterial: Long,
+        ux: Float,
+        uy: Float,
+        uz: Float,
+        vx: Float,
+        vy: Float,
+        vz: Float,
+        wx: Float,
+        wy: Float,
+        wz: Float,
+    )
+
+    private external fun nSetMetallicFactorOnGenericMaterial(
+        view: Long,
+        nativeGenericMaterial: Long,
+        factor: Float,
+    )
+
+    private external fun nSetRoughnessFactorOnGenericMaterial(
+        view: Long,
+        nativeGenericMaterial: Long,
+        factor: Float,
+    )
+
+    private external fun nSetNormalTextureOnGenericMaterial(
+        view: Long,
+        nativeGenericMaterial: Long,
+        normalTexture: Long,
+        minFilter: Int,
+        magFilter: Int,
+        wrapModeS: Int,
+        wrapModeT: Int,
+        wrapModeR: Int,
+        compareMode: Int,
+        compareFunc: Int,
+        anisotropyLog2: Int,
+    )
+
+    private external fun nSetNormalUvTransformOnGenericMaterial(
+        view: Long,
+        nativeGenericMaterial: Long,
+        ux: Float,
+        uy: Float,
+        uz: Float,
+        vx: Float,
+        vy: Float,
+        vz: Float,
+        wx: Float,
+        wy: Float,
+        wz: Float,
+    )
+
+    private external fun nSetNormalFactorOnGenericMaterial(
+        view: Long,
+        nativeGenericMaterial: Long,
+        factor: Float,
+    )
+
+    private external fun nSetAmbientOcclusionTextureOnGenericMaterial(
+        view: Long,
+        nativeGenericMaterial: Long,
+        ambientOcclusionTexture: Long,
+        minFilter: Int,
+        magFilter: Int,
+        wrapModeS: Int,
+        wrapModeT: Int,
+        wrapModeR: Int,
+        compareMode: Int,
+        compareFunc: Int,
+        anisotropyLog2: Int,
+    )
+
+    private external fun nSetAmbientOcclusionUvTransformOnGenericMaterial(
+        view: Long,
+        nativeGenericMaterial: Long,
+        ux: Float,
+        uy: Float,
+        uz: Float,
+        vx: Float,
+        vy: Float,
+        vz: Float,
+        wx: Float,
+        wy: Float,
+        wz: Float,
+    )
+
+    private external fun nSetAmbientOcclusionFactorOnGenericMaterial(
+        view: Long,
+        nativeGenericMaterial: Long,
+        factor: Float,
+    )
+
+    private external fun nSetEmissiveTextureOnGenericMaterial(
+        view: Long,
+        nativeGenericMaterial: Long,
+        emissiveTexture: Long,
+        minFilter: Int,
+        magFilter: Int,
+        wrapModeS: Int,
+        wrapModeT: Int,
+        wrapModeR: Int,
+        compareMode: Int,
+        compareFunc: Int,
+        anisotropyLog2: Int,
+    )
+
+    private external fun nSetEmissiveUvTransformOnGenericMaterial(
+        view: Long,
+        nativeGenericMaterial: Long,
+        ux: Float,
+        uy: Float,
+        uz: Float,
+        vx: Float,
+        vy: Float,
+        vz: Float,
+        wx: Float,
+        wy: Float,
+        wz: Float,
+    )
+
+    private external fun nSetEmissiveFactorsOnGenericMaterial(
+        view: Long,
+        nativeGenericMaterial: Long,
+        x: Float,
+        y: Float,
+        z: Float,
+    )
+
+    private external fun nSetClearcoatTextureOnGenericMaterial(
+        view: Long,
+        nativeGenericMaterial: Long,
+        clearcoatTexture: Long,
+        minFilter: Int,
+        magFilter: Int,
+        wrapModeS: Int,
+        wrapModeT: Int,
+        wrapModeR: Int,
+        compareMode: Int,
+        compareFunc: Int,
+        anisotropyLog2: Int,
+    )
+
+    private external fun nSetClearcoatNormalTextureOnGenericMaterial(
+        view: Long,
+        nativeGenericMaterial: Long,
+        clearcoatNormalTexture: Long,
+        minFilter: Int,
+        magFilter: Int,
+        wrapModeS: Int,
+        wrapModeT: Int,
+        wrapModeR: Int,
+        compareMode: Int,
+        compareFunc: Int,
+        anisotropyLog2: Int,
+    )
+
+    private external fun nSetClearcoatRoughnessTextureOnGenericMaterial(
+        view: Long,
+        nativeGenericMaterial: Long,
+        clearcoatRoughnessTexture: Long,
+        minFilter: Int,
+        magFilter: Int,
+        wrapModeS: Int,
+        wrapModeT: Int,
+        wrapModeR: Int,
+        compareMode: Int,
+        compareFunc: Int,
+        anisotropyLog2: Int,
+    )
+
+    private external fun nSetClearcoatFactorsOnGenericMaterial(
+        view: Long,
+        nativeGenericMaterial: Long,
+        intensity: Float,
+        roughness: Float,
+        normal: Float,
+    )
+
+    private external fun nSetSheenColorTextureOnGenericMaterial(
+        view: Long,
+        nativeGenericMaterial: Long,
+        sheenColorTexture: Long,
+        minFilter: Int,
+        magFilter: Int,
+        wrapModeS: Int,
+        wrapModeT: Int,
+        wrapModeR: Int,
+        compareMode: Int,
+        compareFunc: Int,
+        anisotropyLog2: Int,
+    )
+
+    private external fun nSetSheenColorFactorsOnGenericMaterial(
+        view: Long,
+        nativeGenericMaterial: Long,
+        x: Float,
+        y: Float,
+        z: Float,
+    )
+
+    private external fun nSetSheenRoughnessTextureOnGenericMaterial(
+        view: Long,
+        nativeGenericMaterial: Long,
+        sheenRoughnessTexture: Long,
+        minFilter: Int,
+        magFilter: Int,
+        wrapModeS: Int,
+        wrapModeT: Int,
+        wrapModeR: Int,
+        compareMode: Int,
+        compareFunc: Int,
+        anisotropyLog2: Int,
+    )
+
+    private external fun nSetSheenRoughnessFactorOnGenericMaterial(
+        view: Long,
+        nativeGenericMaterial: Long,
+        factor: Float,
+    )
+
+    private external fun nSetTransmissionTextureOnGenericMaterial(
+        view: Long,
+        nativeGenericMaterial: Long,
+        transmissionTexture: Long,
+        minFilter: Int,
+        magFilter: Int,
+        wrapModeS: Int,
+        wrapModeT: Int,
+        wrapModeR: Int,
+        compareMode: Int,
+        compareFunc: Int,
+        anisotropyLog2: Int,
+    )
+
+    private external fun nSetTransmissionUvTransformOnGenericMaterial(
+        view: Long,
+        nativeGenericMaterial: Long,
+        ux: Float,
+        uy: Float,
+        uz: Float,
+        vx: Float,
+        vy: Float,
+        vz: Float,
+        wx: Float,
+        wy: Float,
+        wz: Float,
+    )
+
+    private external fun nSetTransmissionFactorOnGenericMaterial(
+        view: Long,
+        nativeGenericMaterial: Long,
+        factor: Float,
+    )
+
+    private external fun nSetIndexOfRefractionOnGenericMaterial(
+        view: Long,
+        nativeGenericMaterial: Long,
+        indexOfRefraction: Float,
+    )
+
+    private external fun nSetAlphaCutoffOnGenericMaterial(
+        view: Long,
+        nativeGenericMaterial: Long,
+        alphaCutoff: Float,
+    )
+
+    private external fun nDestroyNativeObject(view: Long, nativeHandle: Long)
+
+    private external fun nSetMaterialOverride(
+        view: Long,
+        impressNode: Int,
+        nativeMaterial: Long,
+        nodeName: String,
+        primitiveIndex: Int,
+    )
+
+    private external fun nClearMaterialOverride(
+        view: Long,
+        impressNode: Int,
+        nodeName: String,
+        primitiveIndex: Int,
+    )
+
+    private external fun nSetEnvironmentLight(view: Long, iblToken: Long)
+
+    private external fun nClearEnvironmentLight(view: Long)
+
+    private external fun nDisposeAllResources(view: Long)
 }
