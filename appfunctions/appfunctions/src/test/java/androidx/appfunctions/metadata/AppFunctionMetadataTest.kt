@@ -31,7 +31,6 @@ class AppFunctionMetadataTest {
                 description = "The response description",
             )
         val description = "The function's description"
-        val deprecation = AppFunctionDeprecationMetadata(message = "Function is deprecated")
 
         val metadata1 =
             AppFunctionMetadata(
@@ -42,7 +41,6 @@ class AppFunctionMetadataTest {
                 parameters = parameters,
                 response = response,
                 description = description,
-                deprecation = deprecation,
             )
         val metadata2 =
             AppFunctionMetadata(
@@ -53,7 +51,6 @@ class AppFunctionMetadataTest {
                 parameters = parameters,
                 response = response,
                 description = description,
-                deprecation = deprecation,
             )
         val metadata3 =
             AppFunctionMetadata(
@@ -64,7 +61,6 @@ class AppFunctionMetadataTest {
                 parameters = parameters,
                 response = response,
                 description = description,
-                deprecation = deprecation,
             )
 
         assertThat(metadata1).isEqualTo(metadata2)
@@ -101,8 +97,13 @@ class AppFunctionMetadataTest {
                 valueType = AppFunctionStringTypeMetadata(false),
                 description = "The response description",
             )
+        val primitiveType1 = AppFunctionIntTypeMetadata(false)
+        val primitiveType2 = AppFunctionStringTypeMetadata(true)
+        val components =
+            AppFunctionComponentsMetadata(
+                mapOf("dataType1" to primitiveType1, "dataType2" to primitiveType2)
+            )
         val description = "The function's description"
-        val deprecation = AppFunctionDeprecationMetadata(message = "Function is deprecated")
         val appFunctionMetadata =
             CompileTimeAppFunctionMetadata(
                 id = id,
@@ -111,7 +112,6 @@ class AppFunctionMetadataTest {
                 parameters = parameters,
                 response = response,
                 description = description,
-                deprecation = deprecation,
             )
 
         val actualAppFunctionMetadataDocument = appFunctionMetadata.toAppFunctionMetadataDocument()
@@ -126,7 +126,6 @@ class AppFunctionMetadataTest {
                 parameters = parameters.map { it.toAppFunctionParameterMetadataDocument() },
                 response = response.toAppFunctionResponseMetadataDocument(),
                 description = description,
-                deprecation = deprecation.toAppFunctionDeprecationMetadataDocument(),
             )
         assertThat(actualAppFunctionMetadataDocument).isEqualTo(expectedAppFunctionMetadataDocument)
     }
