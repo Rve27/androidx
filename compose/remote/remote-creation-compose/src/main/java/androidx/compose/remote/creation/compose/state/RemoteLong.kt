@@ -116,11 +116,6 @@ public class MutableRemoteLong(
             return getIdForCreationState(FallbackCreationState.state)
         }
 
-    public override val value: Long
-        get() {
-            return content.longValue
-        }
-
     public override fun toString(): String {
         return "MutableRemoteLong@${this.hashCode()} =" + content.longValue
     }
