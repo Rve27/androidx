@@ -36,7 +36,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
 import org.robolectric.annotation.internal.DoNotInstrument;
 
 import java.util.ArrayList;
@@ -48,7 +47,6 @@ import java.util.concurrent.ExecutionException;
 
 @RunWith(RobolectricTestRunner.class)
 @DoNotInstrument
-@Config(sdk = {Config.ALL_SDKS})
 public final class CameraRepositoryTest {
 
     private static final String CAMERA_ID_0 = "0";

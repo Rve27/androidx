@@ -37,7 +37,6 @@ import org.robolectric.shadows.ShadowLog
 
 @RunWith(RobolectricCameraPipeTestRunner::class)
 @DoNotInstrument
-@Config(sdk = [Config.ALL_SDKS])
 class UseTorchAsFlashTest {
 
     @Test

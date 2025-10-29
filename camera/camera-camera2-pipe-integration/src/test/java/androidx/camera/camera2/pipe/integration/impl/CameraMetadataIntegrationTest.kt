@@ -28,7 +28,6 @@ import org.robolectric.annotation.Config
 import org.robolectric.annotation.internal.DoNotInstrument
 
 @RunWith(RobolectricCameraPipeTestRunner::class)
-@Config(sdk = [Config.ALL_SDKS])
 @DoNotInstrument
 class CameraMetadataIntegrationTest {
     private lateinit var cameraMetadata: androidx.camera.camera2.pipe.CameraMetadata

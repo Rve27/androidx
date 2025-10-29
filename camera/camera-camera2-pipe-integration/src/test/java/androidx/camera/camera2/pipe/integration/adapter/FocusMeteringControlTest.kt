@@ -130,7 +130,6 @@ private val M_RECT_PVIEW_RATIO_4x3_SENSOR_1920x1080 =
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(RobolectricCameraPipeTestRunner::class)
-@Config(sdk = [Config.ALL_SDKS])
 @DoNotInstrument
 class FocusMeteringControlTest {
     private val testScope = TestScope()

@@ -25,7 +25,6 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
-import org.robolectric.annotation.Config
 import org.robolectric.annotation.internal.DoNotInstrument
 
 private const val FLOAT_ERROR = 1E-4F
@@ -33,7 +32,6 @@ private const val FLOAT_ERROR = 1E-4F
 /** Unit tests for [CoordinateTransform]. */
 @RunWith(RobolectricTestRunner::class)
 @DoNotInstrument
-@Config(sdk = [Config.ALL_SDKS])
 public class CoordinateTransformTest {
 
     @Test

@@ -50,7 +50,6 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.kotlin.mock
-import org.robolectric.annotation.Config
 import org.robolectric.annotation.internal.DoNotInstrument
 import org.robolectric.shadows.StreamConfigurationMapBuilder
 import org.robolectric.util.ReflectionHelpers
@@ -58,7 +57,6 @@ import org.robolectric.util.ReflectionHelpers
 @ExperimentalCoroutinesApi
 @RunWith(RobolectricCameraPipeTestRunner::class)
 @DoNotInstrument
-@Config(sdk = [Config.ALL_SDKS])
 class CameraFactoryAdapterTest {
     private val testScope = TestScope()
     private lateinit var threadConfig: CameraThreadConfig

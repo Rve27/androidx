@@ -36,7 +36,6 @@ import org.robolectric.annotation.Config
 
 /** Tests for [OutputImage] and [SharedOutputImage] */
 @RunWith(RobolectricTestRunner::class)
-@Config(sdk = [Config.ALL_SDKS])
 class SharedOutputImageTest {
     private val streamId = StreamId(42)
     private val outputId = OutputId(64)
