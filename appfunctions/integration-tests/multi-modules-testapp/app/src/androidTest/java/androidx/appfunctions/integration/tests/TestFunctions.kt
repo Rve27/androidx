@@ -543,8 +543,11 @@ class OneOfFunctions {
         OneOfSealedInterface
 
     @AppFunctionSerializable
-    data class BSubclass(override val interfaceProperty: String, val integer: Int) :
-        OneOfSealedInterface
+    data class BSubclass(
+        override val interfaceProperty: String,
+        val integer: Int,
+        override val resources: List<AppFunctionTextResource>,
+    ) : OneOfSealedInterface, AppFunctionResourceContainer
 
     @AppFunctionSerializable
     data class OneOfSealedNestedSerializable(val sealedInterface: OneOfSealedInterface)
