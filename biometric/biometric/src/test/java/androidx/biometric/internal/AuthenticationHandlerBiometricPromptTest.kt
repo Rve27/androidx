@@ -19,8 +19,8 @@ package androidx.biometric.internal
 import android.app.Application
 import android.app.KeyguardManager
 import android.content.Context
-import android.hardware.biometrics.BiometricManager
 import android.os.Build
+import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.biometric.internal.data.FakeAuthenticationStateRepository
 import androidx.biometric.internal.data.FakePromptConfigRepository
@@ -35,12 +35,13 @@ import java.util.concurrent.Executor
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.robolectric.Shadows.shadowOf
+import org.robolectric.Shadows
 import org.robolectric.annotation.Config
 import org.robolectric.shadows.ShadowKeyguardManager
 
 @RunWith(AndroidJUnit4::class)
-class AuthenticationHandlerFingerprintManagerTest {
+@Config(minSdk = Build.VERSION_CODES.P)
+class AuthenticationHandlerBiometricPromptTest {
     private val context: Application = ApplicationProvider.getApplicationContext()
     private val promptRepository = FakePromptConfigRepository()
     private val authRepository = FakeAuthenticationStateRepository()
@@ -53,22 +54,23 @@ class AuthenticationHandlerFingerprintManagerTest {
     private val clientAuthenticationCallback =
         object : BiometricPrompt.AuthenticationCallback() {
             override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
-                this@AuthenticationHandlerFingerprintManagerTest.errorCode = errorCode
+                this@AuthenticationHandlerBiometricPromptTest.errorCode = errorCode
             }
         }
 
-    private lateinit var authenticationHandler: AuthenticationHandlerFingerprintManager
+    private lateinit var authenticationHandler: AuthenticationHandlerBiometricPrompt
 
     @Before
     fun setUp() {
+        // TODO(442913777): Inject isManagingDeviceCredentialButton to remove this Shadow usage.
         val shadowKeyguardManager: ShadowKeyguardManager =
-            shadowOf(context.getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager)
+            Shadows.shadowOf(context.getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager)
         shadowKeyguardManager.setIsDeviceSecure(true)
         val testLifecycleOwner = TestLifecycleOwner()
         testLifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_START)
 
         authenticationHandler =
-            AuthenticationHandlerFingerprintManager(
+            AuthenticationHandlerBiometricPrompt(
                 context = context,
                 lifecycleOwner = testLifecycleOwner,
                 viewModel = viewModel,
@@ -79,79 +81,70 @@ class AuthenticationHandlerFingerprintManagerTest {
     }
 
     @Test
-    fun cancelAuthentication_whenIgnoringCancel_doesNothing() {
-        viewModel.isIgnoringCancel = true
-        val cancellationSignal = viewModel.cancellationSignalProvider.fingerprintCancellationSignal
-        assertThat(cancellationSignal.isCanceled).isFalse()
-
-        authenticationHandler.cancelAuthentication(CanceledFrom.USER)
-
-        assertThat(cancellationSignal.isCanceled).isFalse()
-    }
-
-    @Test
-    fun cancelAuthentication_whenNotIgnoringCancel_doesCancellation() {
-        viewModel.isIgnoringCancel = false
-        val cancellationSignal = viewModel.cancellationSignalProvider.fingerprintCancellationSignal
-        assertThat(cancellationSignal.isCanceled).isFalse()
-
-        authenticationHandler.cancelAuthentication(CanceledFrom.USER)
-
-        assertThat(cancellationSignal.isCanceled).isTrue()
-        assertThat(viewModel.canceledFrom).isEqualTo(CanceledFrom.USER)
-    }
-
-    @Test
     @Config(maxSdk = Build.VERSION_CODES.P)
-    fun onAuthenticationError_lockoutWithDeviceCredential_showsKeyguard() {
-        authenticationHandler.authenticate(
-            getPromptInfo(
-                BiometricManager.Authenticators.DEVICE_CREDENTIAL or
-                    BiometricManager.Authenticators.BIOMETRIC_WEAK
-            ),
-            null,
-        )
+    fun onAuthenticationError_lockoutWhenManagingDeviceCredentialButton_showsKeyguard() {
+        val allowedAuthenticators =
+            BiometricManager.Authenticators.BIOMETRIC_WEAK or
+                BiometricManager.Authenticators.DEVICE_CREDENTIAL
+        assertThat(context.isManagingDeviceCredentialButton(allowedAuthenticators)).isTrue()
+        authenticationHandler.authenticate(getPromptInfo(allowedAuthenticators), null)
 
         viewModel.setAuthenticationError(
             BiometricErrorData(BiometricPrompt.ERROR_LOCKOUT, "Lockout")
         )
 
         assertThat(isConfirmCredentialActivityLaunched).isTrue()
-    }
-
-    @Test
-    fun onAuthenticationError_canceledFromClient_sendsErrorToClient() {
-        authenticationHandler.authenticate(getPromptInfo(), null)
-        viewModel.canceledFrom = CanceledFrom.CLIENT
-
-        viewModel.setAuthenticationError(
-            BiometricErrorData(BiometricPrompt.ERROR_CANCELED, "Canceled")
-        )
-
-        assertThat(errorCode).isEqualTo(BiometricPrompt.ERROR_CANCELED)
-    }
-
-    @Test
-    fun onAuthenticationError_canceledFromUser_doesNotSendErrorToClient() {
-        authenticationHandler.authenticate(getPromptInfo(), null)
-        viewModel.canceledFrom = CanceledFrom.USER
-
-        viewModel.setAuthenticationError(
-            BiometricErrorData(BiometricPrompt.ERROR_CANCELED, "Canceled")
-        )
-
         assertThat(errorCode).isEqualTo(-1)
     }
 
     @Test
-    fun onAuthenticationError_otherError_sendsErrorToClient() {
+    fun onAuthenticationError_lockoutWithoutDeviceCredential_sendsErrorToClient() {
         authenticationHandler.authenticate(getPromptInfo(), null)
 
         viewModel.setAuthenticationError(
-            BiometricErrorData(BiometricPrompt.ERROR_HW_UNAVAILABLE, "HW unavailable")
+            BiometricErrorData(BiometricPrompt.ERROR_LOCKOUT, "Lockout")
         )
 
+        assertThat(isConfirmCredentialActivityLaunched).isFalse()
+        assertThat(errorCode).isEqualTo(BiometricPrompt.ERROR_LOCKOUT)
+    }
+
+    @Test
+    fun onAuthenticationError_nonLockoutError_sendsErrorToClient() {
+        authenticationHandler.authenticate(getPromptInfo(), null)
+
+        viewModel.setAuthenticationError(
+            BiometricErrorData(BiometricPrompt.ERROR_HW_UNAVAILABLE, "HW Unavailable")
+        )
+
+        assertThat(isConfirmCredentialActivityLaunched).isFalse()
         assertThat(errorCode).isEqualTo(BiometricPrompt.ERROR_HW_UNAVAILABLE)
+    }
+
+    @Test
+    fun onMoreOptionsButtonPressed_sendsErrorAndCancels() {
+        authenticationHandler.authenticate(getPromptInfo(), null)
+        val cancellationSignal = viewModel.cancellationSignalProvider.biometricCancellationSignal
+        assertThat(cancellationSignal.isCanceled).isFalse()
+
+        viewModel.setMoreOptionsButtonPressPending()
+
+        assertThat(errorCode).isEqualTo(BiometricPrompt.ERROR_CONTENT_VIEW_MORE_OPTIONS_BUTTON)
+        assertThat(cancellationSignal.isCanceled).isTrue()
+        assertThat(viewModel.canceledFrom).isEqualTo(CanceledFrom.MORE_OPTIONS_BUTTON)
+    }
+
+    @Test
+    fun onNegativeButtonPressed_sendsErrorAndCancels() {
+        authenticationHandler.authenticate(getPromptInfo(), null)
+        val cancellationSignal = viewModel.cancellationSignalProvider.biometricCancellationSignal
+        assertThat(cancellationSignal.isCanceled).isFalse()
+
+        viewModel.setNegativeButtonPressPending()
+
+        assertThat(errorCode).isEqualTo(BiometricPrompt.ERROR_NEGATIVE_BUTTON)
+        assertThat(cancellationSignal.isCanceled).isTrue()
+        assertThat(viewModel.canceledFrom).isEqualTo(CanceledFrom.NEGATIVE_BUTTON)
     }
 
     private fun getPromptInfo(
