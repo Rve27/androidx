@@ -114,12 +114,6 @@ class MultimapQueryTest(driver: UseDriver) : TestDatabaseTest(driver) {
             ImageFormat.MPEG,
         )
 
-    private open inner class MyTestObserver<T> : TestObserver<T>() {
-        override fun drain() {
-            this@MultimapQueryTest.drain()
-        }
-    }
-
     @Before
     fun createDb() {
         musicDao = database.musicDao()
@@ -214,7 +208,7 @@ class MultimapQueryTest(driver: UseDriver) : TestDatabaseTest(driver) {
         val artistToSongsMapLiveData: LiveData<Map<Artist, Song>> =
             musicDao.getAllArtistAndTheirSongsAsLiveData()
         val testOwner = TestLifecycleOwner(Lifecycle.State.CREATED)
-        val observer: TestObserver<Map<Artist, Song>> = MyTestObserver()
+        val observer = LiveDataTestObserver<Map<Artist, Song>>()
         TestUtil.observeOnMainThread(artistToSongsMapLiveData, testOwner, observer)
         assertThat(observer.hasValue()).isFalse()
         observer.reset()
@@ -231,7 +225,7 @@ class MultimapQueryTest(driver: UseDriver) : TestDatabaseTest(driver) {
         val artistToSongsMapLiveData: LiveData<Map<Artist, List<Song>>> =
             musicDao.getAllArtistAndTheirSongsAsLiveDataList()
         val testOwner = TestLifecycleOwner(Lifecycle.State.CREATED)
-        val observer: TestObserver<Map<Artist, List<Song>>> = MyTestObserver()
+        val observer = LiveDataTestObserver<Map<Artist, List<Song>>>()
         TestUtil.observeOnMainThread(artistToSongsMapLiveData, testOwner, observer)
         assertThat(observer.hasValue()).isFalse()
         observer.reset()
@@ -248,7 +242,7 @@ class MultimapQueryTest(driver: UseDriver) : TestDatabaseTest(driver) {
         val artistToSongsMapLiveData: LiveData<Map<Artist, Set<Song>>> =
             musicDao.allArtistAndTheirSongsAsLiveDataSet()
         val testOwner = TestLifecycleOwner(Lifecycle.State.CREATED)
-        val observer: TestObserver<Map<Artist, Set<Song>>> = MyTestObserver()
+        val observer = LiveDataTestObserver<Map<Artist, Set<Song>>>()
         TestUtil.observeOnMainThread(artistToSongsMapLiveData, testOwner, observer)
         assertThat(observer.hasValue()).isFalse()
         observer.reset()
@@ -441,7 +435,7 @@ class MultimapQueryTest(driver: UseDriver) : TestDatabaseTest(driver) {
         val artistToSongsMapLiveData: LiveData<ImmutableListMultimap<Artist, Song>> =
             musicDao.allArtistAndTheirSongsAsLiveDataGuavaImmutableListMultimap()
         val testOwner = TestLifecycleOwner(Lifecycle.State.CREATED)
-        val observer: TestObserver<ImmutableListMultimap<Artist, Song>> = MyTestObserver()
+        val observer = LiveDataTestObserver<ImmutableListMultimap<Artist, Song>>()
         TestUtil.observeOnMainThread(artistToSongsMapLiveData, testOwner, observer)
         assertThat(observer.hasValue()).isFalse()
         observer.reset()
@@ -458,7 +452,7 @@ class MultimapQueryTest(driver: UseDriver) : TestDatabaseTest(driver) {
         val artistToSongsMapLiveData: LiveData<ImmutableSetMultimap<Artist, Song>> =
             musicDao.allArtistAndTheirSongsAsLiveDataGuavaImmutableSetMultimap()
         val testOwner = TestLifecycleOwner(Lifecycle.State.CREATED)
-        val observer: TestObserver<ImmutableSetMultimap<Artist, Song>> = MyTestObserver()
+        val observer = LiveDataTestObserver<ImmutableSetMultimap<Artist, Song>>()
         TestUtil.observeOnMainThread(artistToSongsMapLiveData, testOwner, observer)
         assertThat(observer.hasValue()).isFalse()
         observer.reset()
@@ -558,7 +552,7 @@ class MultimapQueryTest(driver: UseDriver) : TestDatabaseTest(driver) {
         val artistToSongsMapLiveData: LiveData<ImmutableMap<Artist, Set<Song>>> =
             musicDao.allArtistAndTheirSongsAsLiveDataImmutableMap()
         val testOwner = TestLifecycleOwner(Lifecycle.State.CREATED)
-        val observer: TestObserver<ImmutableMap<Artist, Set<Song>>> = MyTestObserver()
+        val observer = LiveDataTestObserver<ImmutableMap<Artist, Set<Song>>>()
         TestUtil.observeOnMainThread(artistToSongsMapLiveData, testOwner, observer)
         assertThat(observer.hasValue()).isFalse()
         observer.reset()

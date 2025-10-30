@@ -20,15 +20,17 @@ import android.content.Intent
 import androidx.annotation.RestrictTo
 import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.asLiveData
 import androidx.room3.InvalidationTracker.Observer
 import androidx.room3.autoclose.AutoCloser
 import androidx.room3.concurrent.ReentrantLock
 import androidx.room3.concurrent.withLock
 import androidx.room3.coroutines.runBlockingUninterruptible
+import androidx.room3.util.performSuspending
 import androidx.sqlite.SQLiteConnection
 import java.lang.ref.WeakReference
-import java.util.concurrent.Callable
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
 
 /**
@@ -78,9 +80,6 @@ actual constructor(
     }
 
     private val onRefreshCompleted: () -> Unit = { autoCloser?.decrementCount() }
-
-    private val invalidationLiveDataContainer: InvalidationLiveDataContainer =
-        InvalidationLiveDataContainer(database)
 
     /** The intent for restarting invalidation after auto-close. */
     private var multiInstanceInvalidationIntent: Intent? = null
@@ -313,34 +312,6 @@ actual constructor(
      * Creates a LiveData that computes the given function once and for every other invalidation of
      * the database.
      *
-     * Holds a strong reference to the created LiveData as long as it is active.
-     *
-     * @param tableNames The list of tables to observe
-     * @param inTransaction True if the computeFunction will be done in a transaction, false
-     *   otherwise.
-     * @param computeFunction The function that calculates the value
-     * @param T The return type
-     * @return A new LiveData that computes the given function when the given list of tables
-     *   invalidates.
-     */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) // used in generated code
-    public open fun <T> createLiveData(
-        tableNames: Array<out String>,
-        inTransaction: Boolean,
-        computeFunction: Callable<T?>,
-    ): LiveData<T> {
-        // Validate names early to fail fast as actual observer subscription is done once LiveData
-        // is observed.
-        implementation.validateTableNames(tableNames)
-        return invalidationLiveDataContainer.create(tableNames, inTransaction, computeFunction)
-    }
-
-    /**
-     * Creates a LiveData that computes the given function once and for every other invalidation of
-     * the database.
-     *
-     * Holds a strong reference to the created LiveData as long as it is active.
-     *
      * @param tableNames The list of tables to observe
      * @param inTransaction True if the computeFunction will be done in a transaction, false
      *   otherwise.
@@ -353,13 +324,11 @@ actual constructor(
     public fun <T> createLiveData(
         tableNames: Array<out String>,
         inTransaction: Boolean,
-        computeFunction: (SQLiteConnection) -> T?,
+        computeFunction: (SQLiteConnection) -> T,
     ): LiveData<T> {
-        // Validate names early to fail fast as actual observer subscription is done once LiveData
-        // is observed.
-        implementation.validateTableNames(tableNames)
-        // TODO(329315924): Could we use createFlow(...).asLiveData() ?
-        return invalidationLiveDataContainer.create(tableNames, inTransaction, computeFunction)
+        return createFlow(*tableNames, emitInitialState = true)
+            .map { performSuspending(database, true, inTransaction, computeFunction) }
+            .asLiveData(database.getQueryContext())
     }
 
     internal fun initMultiInstanceInvalidation(
