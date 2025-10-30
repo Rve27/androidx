@@ -24,7 +24,6 @@ import android.os.Looper
 import androidx.annotation.RequiresApi
 import androidx.annotation.RestrictTo
 import androidx.annotation.UiContext
-import androidx.xr.projected.ProjectedController.Companion.create
 import androidx.xr.projected.experimental.ExperimentalProjectedApi
 import androidx.xr.projected.platform.IProjectedService
 import java.util.function.Consumer
@@ -35,11 +34,11 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flowOn
 
 /**
- * Controller for the Projected device.
+ * Controller for the Projected device display.
  *
  * Use [create] to create an instance of this class. Use [close] to clear the instance.
  */
-public class ProjectedController
+public class ProjectedDisplayController
 private constructor(
     private val connection: ProjectedServiceConnection,
     private val projectedService: IProjectedService,
@@ -86,7 +85,7 @@ private constructor(
 
     /**
      * Disconnects from the service providing features for Projected devices. Methods from the
-     * [ProjectedController] shouldn't be called after this.
+     * [ProjectedDisplayController] shouldn't be called after this.
      *
      * This method should be called in [android.app.Activity.onDestroy].
      */
@@ -122,7 +121,7 @@ private constructor(
     public companion object {
         /**
          * Connects to the service providing features for Projected devices and returns the
-         * [ProjectedController] when the connection is established.
+         * [ProjectedDisplayController] when the connection is established.
          *
          * @param activity The [Activity] running on a Projected device.
          * @throws IllegalStateException if the projected service is not found or binding is not
@@ -132,14 +131,14 @@ private constructor(
          */
         @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
         @JvmStatic
-        public suspend fun create(activity: Activity): ProjectedController {
+        public suspend fun create(activity: Activity): ProjectedDisplayController {
             require(
                 ProjectedContext.isProjectedDeviceContext(activity),
                 { "Provided Activity is not running on a Projected device." },
             )
             val serviceConnection = ProjectedServiceConnection(activity)
 
-            return ProjectedController(
+            return ProjectedDisplayController(
                 serviceConnection,
                 projectedService = serviceConnection.connect(),
                 EngagementModeClient(activity, Handler.createAsync(Looper.getMainLooper())),
