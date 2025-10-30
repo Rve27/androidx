@@ -16,11 +16,17 @@
 
 package androidx.xr.arcore.playservices
 
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.xr.arcore.runtime.AnchorNotAuthorizedException
 import androidx.xr.arcore.runtime.AnchorUnsupportedLocationException
 import androidx.xr.arcore.runtime.Geospatial
 import androidx.xr.arcore.runtime.GeospatialPoseNotTrackingException
+import androidx.xr.runtime.VpsAvailabilityAvailable
+import androidx.xr.runtime.VpsAvailabilityErrorInternal
+import androidx.xr.runtime.VpsAvailabilityNetworkError
+import androidx.xr.runtime.VpsAvailabilityNotAuthorized
+import androidx.xr.runtime.VpsAvailabilityResourceExhausted
+import androidx.xr.runtime.VpsAvailabilityResult
+import androidx.xr.runtime.VpsAvailabilityUnavailable
 import androidx.xr.runtime.math.GeospatialPose
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Quaternion
@@ -35,14 +41,21 @@ import com.google.ar.core.ResolveAnchorOnRooftopFuture as ARCore1xRooftopAnchorF
 import com.google.ar.core.ResolveAnchorOnTerrainFuture as ARCore1xTerrainAnchorFuture
 import com.google.ar.core.Session
 import com.google.ar.core.TrackingState as ARCore1xTrackingState
+import com.google.ar.core.VpsAvailability as ARCore1xVpsAvailability
+import com.google.ar.core.VpsAvailabilityFuture
 import com.google.ar.core.exceptions.NotTrackingException
 import com.google.common.truth.Truth.assertThat
+import com.google.testing.junit.testparameterinjector.TestParameter
+import com.google.testing.junit.testparameterinjector.TestParameterInjector
 import java.util.function.BiConsumer
+import java.util.function.Consumer
+import kotlin.reflect.KClass
 import kotlin.test.assertFailsWith
 import kotlin.test.assertIs
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -55,8 +68,8 @@ import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
-@RunWith(AndroidJUnit4::class)
-class ArCoreEarthTest {
+@RunWith(TestParameterInjector::class)
+class ArCoreGeospatialTest {
     private val testDispatcher = StandardTestDispatcher()
 
     private var mockArCoreEarth: ARCore1xEarth = mock<ARCore1xEarth>()
@@ -682,6 +695,51 @@ class ArCoreEarthTest {
             verify(mockTerrainFuture).cancel()
             verify(mockTerrainFuture).resultAnchor
             verify(mockArCoreAnchor).detach()
+        }
+
+    enum class VpsAvailabilityTestCase(
+        val arCoreVpsAvailability: ARCore1xVpsAvailability,
+        val expectedXrVpsAvailability: KClass<out VpsAvailabilityResult>,
+    ) {
+        AVAILABLE(ARCore1xVpsAvailability.AVAILABLE, VpsAvailabilityAvailable::class),
+        ERROR_INTERNAL(ARCore1xVpsAvailability.ERROR_INTERNAL, VpsAvailabilityErrorInternal::class),
+        ERROR_NETWORK_CONNECTION(
+            ARCore1xVpsAvailability.ERROR_NETWORK_CONNECTION,
+            VpsAvailabilityNetworkError::class,
+        ),
+        ERROR_NOT_AUTHORIZED(
+            ARCore1xVpsAvailability.ERROR_NOT_AUTHORIZED,
+            VpsAvailabilityNotAuthorized::class,
+        ),
+        ERROR_RESOURCE_EXHAUSTED(
+            ARCore1xVpsAvailability.ERROR_RESOURCE_EXHAUSTED,
+            VpsAvailabilityResourceExhausted::class,
+        ),
+        UNAVAILABLE(ARCore1xVpsAvailability.UNAVAILABLE, VpsAvailabilityUnavailable::class),
+        UNKNOWN(ARCore1xVpsAvailability.UNKNOWN, VpsAvailabilityErrorInternal::class),
+    }
+
+    @Test
+    fun checkVpsAvailability_returnsCorrectType(@TestParameter testCase: VpsAvailabilityTestCase) =
+        runTest {
+            underTest.update(mockSession)
+            val mockFuture = mock<VpsAvailabilityFuture>()
+            whenever(
+                    mockSession.checkVpsAvailabilityAsync(
+                        any(),
+                        any(),
+                        any<Consumer<ARCore1xVpsAvailability?>>(),
+                    )
+                )
+                .thenAnswer { invocation ->
+                    val callback = invocation.getArgument<Consumer<ARCore1xVpsAvailability?>>(2)
+                    callback.accept(testCase.arCoreVpsAvailability)
+                    mockFuture
+                }
+
+            val result = underTest.checkVpsAvailability(0.0, 0.0)
+
+            assertThat(result::class).isEqualTo(testCase.expectedXrVpsAvailability)
         }
 
     private companion object {

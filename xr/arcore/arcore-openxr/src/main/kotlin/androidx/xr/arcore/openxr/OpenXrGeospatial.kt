@@ -19,6 +19,7 @@ package androidx.xr.arcore.openxr
 import androidx.annotation.RestrictTo
 import androidx.xr.arcore.runtime.Anchor
 import androidx.xr.arcore.runtime.Geospatial
+import androidx.xr.runtime.VpsAvailabilityResult
 import androidx.xr.runtime.math.GeospatialPose
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Quaternion
@@ -56,6 +57,13 @@ public class OpenXrGeospatial internal constructor(private val xrResources: XrRe
         surface: Geospatial.Surface,
     ): Anchor {
         throw NotImplementedError("Not implemented yet.")
+    }
+
+    override suspend fun checkVpsAvailability(
+        latitude: Double,
+        longitude: Double,
+    ): VpsAvailabilityResult {
+        throw NotImplementedError("Not implemented on OpenXR runtime.")
     }
 
     override fun update(xrTime: Long) {}

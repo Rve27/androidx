@@ -27,8 +27,6 @@ import androidx.xr.arcore.runtime.Hand
 import androidx.xr.arcore.runtime.HitResult
 import androidx.xr.arcore.runtime.PerceptionManager
 import androidx.xr.arcore.runtime.Trackable
-import androidx.xr.runtime.VpsAvailabilityAvailable
-import androidx.xr.runtime.VpsAvailabilityResult
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Quaternion
 import androidx.xr.runtime.math.Ray
@@ -121,14 +119,6 @@ public class FakePerceptionManager : PerceptionManager, AnchorHolder {
     override fun detachAnchor(anchor: Anchor) {
         anchors.remove(anchor)
         anchor.uuid?.let { anchorUuids.remove(it) }
-    }
-
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-    override suspend fun checkVpsAvailability(
-        latitude: Double,
-        longitude: Double,
-    ): VpsAvailabilityResult {
-        return VpsAvailabilityAvailable()
     }
 
     /**

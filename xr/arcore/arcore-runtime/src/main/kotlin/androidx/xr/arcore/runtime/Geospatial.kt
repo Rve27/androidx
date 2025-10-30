@@ -17,6 +17,7 @@
 package androidx.xr.arcore.runtime
 
 import androidx.annotation.RestrictTo
+import androidx.xr.runtime.VpsAvailabilityResult
 import androidx.xr.runtime.math.GeospatialPose
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Quaternion
@@ -157,4 +158,14 @@ public interface Geospatial {
         eastUpSouthQuaternion: Quaternion,
         surface: Surface,
     ): Anchor
+
+    /**
+     * Gets the availability of the Visual Positioning System (VPS) at a specified horizontal
+     * position. The availability of VPS in a given location helps to improve the quality of
+     * Geospatial localization and tracking accuracy.
+     */
+    public suspend fun checkVpsAvailability(
+        latitude: Double,
+        longitude: Double,
+    ): VpsAvailabilityResult
 }

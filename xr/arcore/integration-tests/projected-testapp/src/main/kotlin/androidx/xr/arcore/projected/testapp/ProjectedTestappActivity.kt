@@ -201,8 +201,7 @@ class ProjectedTestAppActivity : ComponentActivity() {
     private fun checkVpsAvailability(latitude: Double, longitude: Double) {
         Log.i(TAG, "checkVpsAvailability latitude: $latitude, longitude: $longitude")
         lifecycleScope.launch {
-            val vpsAvailabilityResult =
-                geospatial.checkVpsAvailability(session, latitude, longitude)
+            val vpsAvailabilityResult = geospatial.checkVpsAvailability(latitude, longitude)
             vpsStatusMessage = getVpsMessage(vpsAvailabilityResult)
             Log.i(TAG, "VPS availability: $vpsStatusMessage ($vpsAvailabilityResult)")
         }

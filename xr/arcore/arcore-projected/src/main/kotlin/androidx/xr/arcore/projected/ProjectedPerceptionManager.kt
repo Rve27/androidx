@@ -28,21 +28,11 @@ import androidx.xr.arcore.runtime.HitResult
 import androidx.xr.arcore.runtime.PerceptionManager
 import androidx.xr.arcore.runtime.RenderViewpoint
 import androidx.xr.arcore.runtime.Trackable
-import androidx.xr.runtime.VpsAvailabilityAvailable
-import androidx.xr.runtime.VpsAvailabilityErrorInternal
-import androidx.xr.runtime.VpsAvailabilityNetworkError
-import androidx.xr.runtime.VpsAvailabilityNotAuthorized
-import androidx.xr.runtime.VpsAvailabilityResourceExhausted
-import androidx.xr.runtime.VpsAvailabilityResult
-import androidx.xr.runtime.VpsAvailabilityUnavailable
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Quaternion
 import androidx.xr.runtime.math.Ray
 import androidx.xr.runtime.math.Vector3
 import java.util.UUID
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
-import kotlinx.coroutines.suspendCancellableCoroutine
 
 /**
  * Implementation of the perception capabilities of a runtime using Projected.
@@ -106,44 +96,6 @@ internal constructor(private val timeSource: ProjectedTimeSource) : PerceptionMa
      */
     override fun unpersistAnchor(uuid: UUID) {
         throw NotImplementedError("Anchor persistence is currently not supported by Projected.")
-    }
-
-    /** Gets the VPS availability at the given location. */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-    override public suspend fun checkVpsAvailability(
-        latitude: Double,
-        longitude: Double,
-    ): VpsAvailabilityResult = suspendCancellableCoroutine { continuation ->
-        val callback =
-            object : IVpsAvailabilityCallback.Stub() {
-                override fun onVpsAvailabilityChanged(vpsState: Int) {
-                    val vpsResult =
-                        // vpsState is the enum VpsAvailability, see the code in
-                        // third_party/arcore/java/com/google/ar/core/VpsAvailability.java
-                        // and the onVpsAvailabilityChanged callback call in
-                        // java/com/google/android/projection/core/modules/perception/PerceptionManagerService.java.
-                        when (vpsState) {
-                            // VpsAvailability.AVAILABLE
-                            1 -> VpsAvailabilityAvailable()
-                            // VpsAvailability.UNAVAILABLE
-                            2 -> VpsAvailabilityUnavailable()
-                            // VpsAvailability.ERROR_NETWORK_CONNECTION
-                            -2 -> VpsAvailabilityNetworkError()
-                            // VpsAvailability.ERROR_NOT_AUTHORIZED
-                            -3 -> VpsAvailabilityNotAuthorized()
-                            // VpsAvailability.ERROR_RESOURCE_EXHAUSTED
-                            -4 -> VpsAvailabilityResourceExhausted()
-                            // VpsAvailability.UNKNOWN or VpsAvailability.ERROR_INTERNAL
-                            else -> VpsAvailabilityErrorInternal()
-                        }
-                    continuation.resume(vpsResult)
-                }
-            }
-        try {
-            xrResources.service.checkVpsAvailability(latitude, longitude, callback)
-        } catch (e: Exception) {
-            continuation.resumeWithException(e)
-        }
     }
 
     override val trackables: Collection<Trackable> = emptyList()

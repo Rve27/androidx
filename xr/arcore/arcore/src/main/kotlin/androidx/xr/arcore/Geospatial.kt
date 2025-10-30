@@ -39,7 +39,7 @@ import kotlinx.coroutines.flow.asStateFlow
  * To use the Geospatial object, configure the session with [Config.GeospatialMode.VPS_AND_GPS].
  *
  * Not all devices support [Config.GeospatialMode.VPS_AND_GPS], use [ConfigMode.isSupported] to
- * check if the current device and selected camera support enabling this mode.
+ * check if the current device supports enabling this mode.
  *
  * The Geospatial object should only be used when its [State] is [State.Running], and otherwise
  * should not be used. Use [Geospatial.state] to obtain the current [State].
@@ -136,19 +136,17 @@ internal constructor(
      * called without calling [Session.configure].
      *
      * Your app must be properly set up to communicate with the Google Cloud ARCore API in order to
-     * obtain a result from this call.
+     * obtain a result from this call, otherwise the result will be [VpsAvailabilityNotAuthorized].
      *
      * @param latitude The latitude in degrees.
      * @param longitude The longitude in degrees.
-     * @param session The [Session] to use for the VPS availability check.
      * @return the result of the VPS availability check.
      */
     public suspend fun checkVpsAvailability(
-        session: Session,
         latitude: Double,
         longitude: Double,
     ): VpsAvailabilityResult {
-        return session.perceptionRuntime.perceptionManager.checkVpsAvailability(latitude, longitude)
+        return runtimeGeospatial.checkVpsAvailability(latitude, longitude)
     }
 
     /**

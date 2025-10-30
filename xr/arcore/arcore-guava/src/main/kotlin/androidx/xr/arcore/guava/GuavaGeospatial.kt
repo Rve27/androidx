@@ -105,7 +105,7 @@ public fun Geospatial.createAnchorOnSurfaceAsync(
  * called without calling [Session.configure].
  *
  * Your app must be properly set up to communicate with the Google Cloud ARCore API in order to
- * obtain a result from this call.
+ * obtain a result from this call, otherwise the result will be [VpsAvailabilityNotAuthorized].
  *
  * @param latitude The latitude in degrees.
  * @param longitude The longitude in degrees.
@@ -121,5 +121,5 @@ public fun Geospatial.checkVpsAvailabilityAsync(
         context = session.coroutineScope.coroutineContext,
         launchUndispatched = true,
     ) {
-        checkVpsAvailability(session, latitude, longitude)
+        checkVpsAvailability(latitude, longitude)
     }

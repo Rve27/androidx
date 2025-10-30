@@ -18,22 +18,37 @@ package androidx.xr.arcore.projected
 
 import androidx.xr.arcore.runtime.GeospatialPoseNotTrackingException
 import androidx.xr.runtime.TrackingState
+import androidx.xr.runtime.VpsAvailabilityAvailable
+import androidx.xr.runtime.VpsAvailabilityErrorInternal
+import androidx.xr.runtime.VpsAvailabilityNetworkError
+import androidx.xr.runtime.VpsAvailabilityNotAuthorized
+import androidx.xr.runtime.VpsAvailabilityResourceExhausted
+import androidx.xr.runtime.VpsAvailabilityResult
+import androidx.xr.runtime.VpsAvailabilityUnavailable
 import androidx.xr.runtime.math.GeospatialPose
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Quaternion
 import androidx.xr.runtime.math.Vector3
 import com.google.common.truth.Truth.assertThat
+import com.google.testing.junit.testparameterinjector.TestParameter
+import com.google.testing.junit.testparameterinjector.TestParameterInjector
+import kotlin.reflect.KClass
 import kotlin.test.assertFailsWith
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.eq
 import org.mockito.Mock
+import org.mockito.Mockito.doAnswer
+import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
-import org.robolectric.RobolectricTestRunner
 
-@RunWith(RobolectricTestRunner::class)
+@OptIn(ExperimentalCoroutinesApi::class)
+@RunWith(TestParameterInjector::class)
 class ProjectedGeospatialTest {
     @Mock private lateinit var service: IProjectedPerceptionService
     private lateinit var xrResources: XrResources
@@ -154,5 +169,48 @@ class ProjectedGeospatialTest {
         assertFailsWith<GeospatialPoseNotTrackingException> {
             projectedGeospatial.createPoseFromGeospatialPose(GeospatialPose())
         }
+    }
+
+    // vpsState is the enum VpsAvailability, see the code in
+    // third_party/arcore/java/com/google/ar/core/VpsAvailability.java
+    // and the onVpsAvailabilityChanged callback call in
+    // java/com/google/android/projection/core/modules/perception/PerceptionManagerService.java.
+    enum class VpsAvailabilityTestCase(
+        val vpsState: Int,
+        val expectedResult: KClass<out VpsAvailabilityResult>,
+    ) {
+        // VpsAvailability.AVAILABLE
+        AVAILABLE(1, VpsAvailabilityAvailable::class),
+        // VpsAvailability.UNAVAILABLE
+        UNAVAILABLE(2, VpsAvailabilityUnavailable::class),
+        // VpsAvailability.ERROR_NETWORK_CONNECTION
+        NETWORK_ERROR(-2, VpsAvailabilityNetworkError::class),
+        // VpsAvailability.ERROR_NOT_AUTHORIZED
+        NOT_AUTHORIZED(-3, VpsAvailabilityNotAuthorized::class),
+        // VpsAvailability.ERROR_RESOURCE_EXHAUSTED
+        RESOURCE_EXHAUSTED(-4, VpsAvailabilityResourceExhausted::class),
+        // VpsAvailability.ERROR_INTERNAL
+        INTERNAL_ERROR(-1, VpsAvailabilityErrorInternal::class),
+        // VpsAvailability.UNKNOWN
+        UNKNOWN(0, VpsAvailabilityErrorInternal::class),
+    }
+
+    @Test
+    fun checkVpsAvailability_returnsCorrectResult(
+        @TestParameter testCase: VpsAvailabilityTestCase
+    ) = runTest {
+        doAnswer { invocation ->
+                val callback = invocation.getArgument<IVpsAvailabilityCallback>(2)
+                callback.onVpsAvailabilityChanged(testCase.vpsState)
+                null
+            }
+            .`when`(service)
+            .checkVpsAvailability(eq(1.0), eq(2.0), any(IVpsAvailabilityCallback::class.java))
+
+        val result = projectedGeospatial.checkVpsAvailability(1.0, 2.0)
+
+        assertThat(result).isInstanceOf(testCase.expectedResult.java)
+        verify(service)
+            .checkVpsAvailability(eq(1.0), eq(2.0), any(IVpsAvailabilityCallback::class.java))
     }
 }

@@ -20,6 +20,8 @@ import androidx.kruth.assertThat
 import androidx.xr.arcore.runtime.AnchorResourcesExhaustedException
 import androidx.xr.arcore.runtime.Geospatial as RuntimeGeospatial
 import androidx.xr.arcore.runtime.GeospatialPoseNotTrackingException
+import androidx.xr.runtime.VpsAvailabilityErrorInternal
+import androidx.xr.runtime.VpsAvailabilityResult
 import androidx.xr.runtime.math.GeospatialPose
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Quaternion
@@ -169,6 +171,16 @@ class FakeRuntimeGeospatialTest {
 
         assertThat(thrown).isEqualTo(ANCHOR_EXCEPTION)
         assertThat(underTest.nextException).isNull()
+    }
+
+    @Test
+    fun checkVpsAvailability_withNextResult_returnsResult() = doBlocking {
+        val expectedResult: VpsAvailabilityResult = VpsAvailabilityErrorInternal()
+        underTest.nextVpsAvailabilityResult = expectedResult
+
+        val result = underTest.checkVpsAvailability(1.0, 2.0)
+
+        assertThat(result).isEqualTo(expectedResult)
     }
 
     private companion object {

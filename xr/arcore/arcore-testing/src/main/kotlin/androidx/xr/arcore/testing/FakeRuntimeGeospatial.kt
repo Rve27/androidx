@@ -20,6 +20,8 @@ import androidx.annotation.RestrictTo
 import androidx.xr.arcore.runtime.Anchor
 import androidx.xr.arcore.runtime.Geospatial as RuntimeGeospatial
 import androidx.xr.arcore.runtime.Geospatial.GeospatialPoseResult
+import androidx.xr.runtime.VpsAvailabilityAvailable
+import androidx.xr.runtime.VpsAvailabilityResult
 import androidx.xr.runtime.math.GeospatialPose
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Quaternion
@@ -53,6 +55,9 @@ public class FakeRuntimeGeospatial(
      * after the result is returned.
      */
     public var nextAnchor: Anchor? = null
+
+    /** The VpsAvailabilityResult to be returned by [checkVpsAvailability]. */
+    public var nextVpsAvailabilityResult: VpsAvailabilityResult = VpsAvailabilityAvailable()
 
     /**
      * Returns the supplied Pose.
@@ -123,5 +128,13 @@ public class FakeRuntimeGeospatial(
         val toReturn = checkNotNull(nextAnchor) { "No anchor set." }
         nextAnchor = null
         return toReturn
+    }
+
+    override public suspend fun checkVpsAvailability(
+        latitude: Double,
+        longitude: Double,
+    ): VpsAvailabilityResult {
+        maybeThrowException()
+        return nextVpsAvailabilityResult
     }
 }
