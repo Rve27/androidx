@@ -489,6 +489,10 @@ class TestFunctions {
         delay(500)
         return "Completed"
     }
+
+    @AppFunction
+    @Deprecated("deprecatedFunction is deprecated")
+    fun deprecatedFunction(appFunctionContext: AppFunctionContext) {}
 }
 
 @Suppress("UNUSED_PARAMETER")
