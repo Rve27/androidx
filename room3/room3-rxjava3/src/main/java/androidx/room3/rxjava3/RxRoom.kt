@@ -18,7 +18,6 @@
 package androidx.room3.rxjava3
 
 import androidx.annotation.RestrictTo
-import androidx.room3.InvalidationTracker
 import androidx.room3.RoomDatabase
 import androidx.room3.coroutines.createFlow
 import androidx.room3.util.performSuspending
@@ -26,15 +25,12 @@ import androidx.sqlite.SQLiteConnection
 import io.reactivex.rxjava3.core.BackpressureStrategy
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Flowable
-import io.reactivex.rxjava3.core.FlowableEmitter
 import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.ObservableEmitter
 import io.reactivex.rxjava3.core.Single
-import io.reactivex.rxjava3.disposables.Disposable
-import java.util.concurrent.Callable
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.rx3.asObservable
 import kotlinx.coroutines.rx3.rxCompletable
 import kotlinx.coroutines.rx3.rxMaybe
@@ -122,30 +118,7 @@ public fun <T : Any> createSingle(
  *   when the invalidation tracker connection is established).
  */
 public fun createFlowable(database: RoomDatabase, vararg tableNames: String): Flowable<Any> {
-    return Flowable.create(
-        { emitter: FlowableEmitter<Any> ->
-            val observer =
-                object : InvalidationTracker.Observer(tableNames) {
-                    override fun onInvalidated(tables: Set<String>) {
-                        if (!emitter.isCancelled) {
-                            emitter.onNext(NOTHING)
-                        }
-                    }
-                }
-            if (!emitter.isCancelled) {
-                database.invalidationTracker.addObserver(observer)
-                emitter.setDisposable(
-                    Disposable.fromAction { database.invalidationTracker.removeObserver(observer) }
-                )
-            }
-
-            // emit once to avoid missing any data and also easy chaining
-            if (!emitter.isCancelled) {
-                emitter.onNext(NOTHING)
-            }
-        },
-        BackpressureStrategy.LATEST,
-    )
+    return createObservable(database, *tableNames).toFlowable(BackpressureStrategy.LATEST)
 }
 
 /**
@@ -164,39 +137,8 @@ public fun createFlowable(database: RoomDatabase, vararg tableNames: String): Fl
  *   once when the invalidation tracker connection is established).
  */
 public fun createObservable(database: RoomDatabase, vararg tableNames: String): Observable<Any> {
-    return Observable.create { emitter: ObservableEmitter<Any> ->
-        val observer =
-            object : InvalidationTracker.Observer(tableNames) {
-                override fun onInvalidated(tables: Set<String>) {
-                    emitter.onNext(NOTHING)
-                }
-            }
-        database.invalidationTracker.addObserver(observer)
-        emitter.setDisposable(
-            Disposable.fromAction { database.invalidationTracker.removeObserver(observer) }
-        )
-
-        // emit once to avoid missing any data and also easy chaining
-        emitter.onNext(NOTHING)
-    }
-}
-
-/**
- * Helper method used by generated code to create a Single from a Callable that will ignore the
- * EmptyResultSetException if the stream is already disposed.
- */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public fun <T : Any> createSingle(callable: Callable<out T>): Single<T> {
-    return Single.create { emitter ->
-        try {
-            val result = callable.call()
-            if (result != null) {
-                emitter.onSuccess(result)
-            } else {
-                throw EmptyResultSetException("Query returned empty result set.")
-            }
-        } catch (e: EmptyResultSetException) {
-            emitter.tryOnError(e)
-        }
-    }
+    return database.invalidationTracker
+        .createFlow(*tableNames)
+        .map { NOTHING }
+        .asObservable(database.getQueryContext())
 }
