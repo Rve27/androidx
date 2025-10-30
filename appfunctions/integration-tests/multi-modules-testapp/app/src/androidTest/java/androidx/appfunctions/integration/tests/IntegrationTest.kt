@@ -1610,7 +1610,17 @@ class IntegrationTest {
         val oneOfList =
             listOf(
                 OneOfFunctions.ASubclass(interfaceProperty = "interfacePropertyA", str = "strA"),
-                OneOfFunctions.BSubclass(interfaceProperty = "interfacePropertyB", integer = 10),
+                OneOfFunctions.BSubclass(
+                    interfaceProperty = "interfacePropertyB",
+                    integer = 10,
+                    resources =
+                        listOf(
+                            AppFunctionTextResource(
+                                mimeType = "text/plain",
+                                content = "Hello World!",
+                            )
+                        ),
+                ),
             )
         val request =
             ExecuteAppFunctionRequest(
