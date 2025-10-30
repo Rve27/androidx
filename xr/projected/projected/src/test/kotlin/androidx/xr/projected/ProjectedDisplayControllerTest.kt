@@ -69,7 +69,7 @@ import org.robolectric.util.ReflectionHelpers.ClassParameter
 @Config(sdk = [Build.VERSION_CODES.UPSIDE_DOWN_CAKE])
 @RunWith(AndroidJUnit4::class)
 @SdkSuppress(minSdkVersion = Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
-class ProjectedControllerTest {
+class ProjectedDisplayControllerTest {
 
     private val mockProjectedService = mock<IProjectedService>()
     private val mockProjectedServiceStub =
@@ -78,7 +78,7 @@ class ProjectedControllerTest {
         }
     private val context: Application = ApplicationProvider.getApplicationContext()
 
-    private lateinit var projectedController: ProjectedController
+    private lateinit var projectedDisplayController: ProjectedDisplayController
 
     @Before
     fun setUp() {
@@ -96,13 +96,14 @@ class ProjectedControllerTest {
     }
 
     @Test
-    fun create_returnsProjectedControllerInstance() =
+    fun create_returnsProjectedDisplayControllerInstance() =
         launchTestProjectedDeviceActivity { projectedDeviceActivity ->
             runBlocking {
-                projectedController = ProjectedController.create(projectedDeviceActivity)
+                projectedDisplayController =
+                    ProjectedDisplayController.create(projectedDeviceActivity)
             }
 
-            assertThat(projectedController).isNotNull()
+            assertThat(projectedDisplayController).isNotNull()
         }
 
     @Test
@@ -112,7 +113,8 @@ class ProjectedControllerTest {
 
             assertFailsWith<IllegalStateException> {
                 runBlocking {
-                    projectedController = ProjectedController.create(projectedDeviceActivity)
+                    projectedDisplayController =
+                        ProjectedDisplayController.create(projectedDeviceActivity)
                 }
             }
         }
@@ -121,17 +123,19 @@ class ProjectedControllerTest {
     fun create_nonProjectedDeviceActivity_throwsException() =
         launchTestActivity { nonProjectedDeviceActivity ->
             assertThrows(IllegalArgumentException::class.java) {
-                runBlocking { ProjectedController.create(nonProjectedDeviceActivity) }
+                runBlocking { ProjectedDisplayController.create(nonProjectedDeviceActivity) }
             }
         }
 
     @Test
     @OptIn(ExperimentalProjectedApi::class)
     fun addFlags_callsService() = launchTestProjectedDeviceActivity { projectedDeviceActivity ->
-        runBlocking { projectedController = ProjectedController.create(projectedDeviceActivity) }
+        runBlocking {
+            projectedDisplayController = ProjectedDisplayController.create(projectedDeviceActivity)
+        }
         val flags = WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
 
-        projectedController.addLayoutParamsFlags(flags)
+        projectedDisplayController.addLayoutParamsFlags(flags)
 
         verify(mockProjectedService).addWindowFlags(flags)
     }
@@ -139,10 +143,12 @@ class ProjectedControllerTest {
     @Test
     @OptIn(ExperimentalProjectedApi::class)
     fun removeFlags_callsService() = launchTestProjectedDeviceActivity { projectedDeviceActivity ->
-        runBlocking { projectedController = ProjectedController.create(projectedDeviceActivity) }
+        runBlocking {
+            projectedDisplayController = ProjectedDisplayController.create(projectedDeviceActivity)
+        }
         val flags = WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
 
-        projectedController.removeLayoutParamsFlags(flags)
+        projectedDisplayController.removeLayoutParamsFlags(flags)
         verify(mockProjectedService).clearWindowFlags(flags)
     }
 
@@ -150,33 +156,36 @@ class ProjectedControllerTest {
     fun isDisplayCapable_serviceReturnsTrue_returnsTrue() =
         launchTestProjectedDeviceActivity { projectedDeviceActivity ->
             runBlocking {
-                projectedController = ProjectedController.create(projectedDeviceActivity)
+                projectedDisplayController =
+                    ProjectedDisplayController.create(projectedDeviceActivity)
             }
             whenever(mockProjectedService.isDisplayCapable()).thenReturn(true)
 
-            assertThat(projectedController.isDisplayCapable()).isTrue()
+            assertThat(projectedDisplayController.isDisplayCapable()).isTrue()
         }
 
     @Test
     fun isDisplayCapable_serviceReturnsFalse_returnsFalse() =
         launchTestProjectedDeviceActivity { projectedDeviceActivity ->
             runBlocking {
-                projectedController = ProjectedController.create(projectedDeviceActivity)
+                projectedDisplayController =
+                    ProjectedDisplayController.create(projectedDeviceActivity)
             }
             whenever(mockProjectedService.isDisplayCapable()).thenReturn(false)
 
-            assertThat(projectedController.isDisplayCapable()).isFalse()
+            assertThat(projectedDisplayController.isDisplayCapable()).isFalse()
         }
 
     @Test
     fun close_disconnectsConnection() =
         launchTestProjectedDeviceActivity { projectedDeviceActivity ->
             runBlocking {
-                projectedController = ProjectedController.create(projectedDeviceActivity)
+                projectedDisplayController =
+                    ProjectedDisplayController.create(projectedDeviceActivity)
             }
             check(shadowOf(context).boundServiceConnections.size == 1)
 
-            projectedController.close()
+            projectedDisplayController.close()
 
             assertThat(shadowOf(context).boundServiceConnections).isEmpty()
         }
@@ -216,9 +225,10 @@ class ProjectedControllerTest {
                     )
                     setBindServiceCallsOnServiceConnectedDirectly(true)
                 }
-                projectedController = ProjectedController.create(projectedDeviceActivity)
+                projectedDisplayController =
+                    ProjectedDisplayController.create(projectedDeviceActivity)
 
-                val layoutInfoFlow = projectedController.windowLayoutInfo(context)
+                val layoutInfoFlow = projectedDisplayController.windowLayoutInfo(context)
                 var result: WindowLayoutInfo? = null
                 val job = launch { result = layoutInfoFlow.first() }
 
