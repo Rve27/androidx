@@ -17,6 +17,7 @@
 package androidx.camera.camera2.adapter
 
 import android.graphics.ImageFormat
+import android.graphics.Rect
 import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraMetadata
 import android.os.Build
@@ -254,6 +255,7 @@ class CameraFactoryAdapterTest {
                     CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL to
                         CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_FULL,
                     CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES to capabilities,
+                    CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE to Rect(0, 0, 10, 10),
                     CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP to
                         StreamConfigurationMapBuilder.newBuilder()
                             .addOutputSize(ImageFormat.YUV_444_888, testOutputSize)
