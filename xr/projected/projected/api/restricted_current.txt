@@ -23,6 +23,18 @@ package androidx.xr.projected {
     field public static final androidx.xr.projected.ProjectedContext INSTANCE;
   }
 
+  public final class ProjectedController implements java.lang.AutoCloseable {
+    method @SuppressCompatibility @androidx.xr.projected.experimental.ExperimentalProjectedApi public void addLayoutParamsFlags(int flags);
+    method public void close();
+    method @RequiresApi(android.os.Build.VERSION_CODES.UPSIDE_DOWN_CAKE) public static suspend Object? create(android.app.Activity activity, kotlin.coroutines.Continuation<? super androidx.xr.projected.ProjectedController>);
+    method @SuppressCompatibility @androidx.xr.projected.experimental.ExperimentalProjectedApi public void removeLayoutParamsFlags(int flags);
+    field public static final androidx.xr.projected.ProjectedController.Companion Companion;
+  }
+
+  public static final class ProjectedController.Companion {
+    method @RequiresApi(android.os.Build.VERSION_CODES.UPSIDE_DOWN_CAKE) public suspend Object? create(android.app.Activity activity, kotlin.coroutines.Continuation<? super androidx.xr.projected.ProjectedController>);
+  }
+
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class ProjectedInputEvent {
     method @InaccessibleFromKotlin public androidx.xr.projected.ProjectedInputEvent.ProjectedInputAction getInputAction();
     property public androidx.xr.projected.ProjectedInputEvent.ProjectedInputAction inputAction;
@@ -40,6 +52,13 @@ package androidx.xr.projected {
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class ProjectedServiceBinding {
     method public static boolean bind(android.content.Context context, android.content.ServiceConnection serviceConnection);
     field public static final androidx.xr.projected.ProjectedServiceBinding INSTANCE;
+  }
+
+}
+
+package @SuppressCompatibility androidx.xr.projected.experimental {
+
+  @SuppressCompatibility @kotlin.RequiresOptIn(message="This is an experimental API. It may be changed or removed in the future.") @kotlin.annotation.Retention(kotlin.annotation.AnnotationRetention.BINARY) public @interface ExperimentalProjectedApi {
   }
 
 }
