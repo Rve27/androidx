@@ -123,7 +123,7 @@ internal constructor(private val timeSource: OpenXrTimeSource) : PerceptionManag
     override val userFace: Face?
         get() = xrResources.userFace
 
-    override val earth: OpenXrEarth = xrResources.earth
+    override val geospatial: OpenXrGeospatial = xrResources.geospatial
 
     override val leftDepthMap: DepthMap?
         get() = xrResources.leftDepthMap

@@ -115,7 +115,7 @@ class ProjectedManagerTest {
         underTest.update()
         assertThat(perceptionManager.xrResources.deviceTrackingState)
             .isEqualTo(TrackingState.TRACKING)
-        assertThat(perceptionManager.xrResources.earthTrackingState)
+        assertThat(perceptionManager.xrResources.geospatialTrackingState)
             .isEqualTo(TrackingState.STOPPED)
         assertThat(perceptionManager.arDevice.devicePose).isEqualTo(expectedPose)
     }
@@ -126,7 +126,7 @@ class ProjectedManagerTest {
         val config =
             Config(
                 deviceTracking = Config.DeviceTrackingMode.LAST_KNOWN,
-                geospatial = Config.GeospatialMode.EARTH,
+                geospatial = Config.GeospatialMode.VPS_AND_GPS,
             )
 
         underTest.configure(config)
@@ -154,7 +154,7 @@ class ProjectedManagerTest {
         val config =
             Config(
                 deviceTracking = Config.DeviceTrackingMode.DISABLED,
-                geospatial = Config.GeospatialMode.EARTH,
+                geospatial = Config.GeospatialMode.VPS_AND_GPS,
             )
         assertThrows(UnsupportedOperationException::class.java) { underTest.configure(config) }
     }
@@ -166,7 +166,7 @@ class ProjectedManagerTest {
         val configWithGeospatial =
             Config(
                 deviceTracking = Config.DeviceTrackingMode.LAST_KNOWN,
-                geospatial = Config.GeospatialMode.EARTH,
+                geospatial = Config.GeospatialMode.VPS_AND_GPS,
             )
 
         underTest.configure(configWithGeospatial)

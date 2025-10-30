@@ -236,9 +236,9 @@ internal constructor(private val timeSource: ArCoreTimeSource) : PerceptionManag
      */
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) override val userFace: Face? = null
 
-    /** Returns the [Earth] instance. */
+    /** Returns the [Geospatial] instance. */
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-    override val earth: ArCoreEarth = xrResources.earth
+    override val geospatial: ArCoreEarth = xrResources.geospatial
 
     /** Returns the [ArDevice] instance. */
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
@@ -330,7 +330,7 @@ internal constructor(private val timeSource: ArCoreTimeSource) : PerceptionManag
             xrResources.depthMap.update(_latestFrame)
         }
 
-        earth.update(session)
+        geospatial.update(session)
     }
 
     /**

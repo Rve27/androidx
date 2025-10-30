@@ -34,19 +34,19 @@ import org.mockito.MockitoAnnotations
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
-class ProjectedEarthTest {
+class ProjectedGeospatialTest {
     @Mock private lateinit var service: IProjectedPerceptionService
     private lateinit var xrResources: XrResources
-    private lateinit var projectedEarth: ProjectedEarth
+    private lateinit var projectedGeospatial: ProjectedGeospatial
 
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
         xrResources = XrResources()
         xrResources.service = service
-        projectedEarth = xrResources.earth
+        projectedGeospatial = xrResources.geospatial
         xrResources.deviceTrackingState = TrackingState.TRACKING
-        xrResources.earthTrackingState = TrackingState.TRACKING
+        xrResources.geospatialTrackingState = TrackingState.TRACKING
     }
 
     @Test
@@ -71,7 +71,7 @@ class ProjectedEarthTest {
         `when`(service.createPoseFromGeospatialPose(any(ProjectedEarthPose::class.java)))
             .thenReturn(expectedPose)
 
-        val resultPose = projectedEarth.createPoseFromGeospatialPose(geospatialPose)
+        val resultPose = projectedGeospatial.createPoseFromGeospatialPose(geospatialPose)
 
         val expectedResultPose =
             Pose(
@@ -104,54 +104,7 @@ class ProjectedEarthTest {
         `when`(service.createGeospatialPoseFromPose(any(ProjectedPose::class.java)))
             .thenReturn(expectedEarthPose)
 
-        val result = projectedEarth.createGeospatialPoseFromPose(pose)
-
-        val expectedNormalizedQuaternion =
-            Quaternion(
-                expectedEarthPose.eus.x,
-                expectedEarthPose.eus.y,
-                expectedEarthPose.eus.z,
-                expectedEarthPose.eus.w,
-            )
-        assertThat(result.geospatialPose.latitude).isEqualTo(expectedEarthPose.latitude)
-        assertThat(result.geospatialPose.longitude).isEqualTo(expectedEarthPose.longitude)
-        assertThat(result.geospatialPose.altitude).isEqualTo(expectedEarthPose.altitude)
-        assertThat(result.geospatialPose.eastUpSouthQuaternion.x)
-            .isEqualTo(expectedNormalizedQuaternion.x)
-        assertThat(result.geospatialPose.eastUpSouthQuaternion.y)
-            .isEqualTo(expectedNormalizedQuaternion.y)
-        assertThat(result.geospatialPose.eastUpSouthQuaternion.z)
-            .isEqualTo(expectedNormalizedQuaternion.z)
-        assertThat(result.geospatialPose.eastUpSouthQuaternion.w)
-            .isEqualTo(expectedNormalizedQuaternion.w)
-        assertThat(result.horizontalAccuracy).isEqualTo(expectedEarthPose.locationAccuracyMeters)
-        assertThat(result.verticalAccuracy).isEqualTo(expectedEarthPose.altitudeAccuracyMeters)
-        assertThat(result.orientationYawAccuracy)
-            .isEqualTo(expectedEarthPose.orientationYawAccuracyDegrees)
-    }
-
-    @Test
-    fun createGeospatialPoseFromDevicePose_returnsCorrectGeospatialPoseResult() {
-        val expectedEarthPose =
-            ProjectedEarthPose().apply {
-                latitude = 10.0
-                longitude = 20.0
-                altitude = 30.0
-                eus =
-                    ProjectedQuarternion().apply {
-                        x = 0.5f
-                        y = 0.6f
-                        z = 0.7f
-                        w = 0.8f
-                    }
-                locationAccuracyMeters = 1.0
-                altitudeAccuracyMeters = 2.0
-                orientationYawAccuracyDegrees = 3.0
-            }
-
-        `when`(service.createGeospatialPoseFromDevicePose()).thenReturn(expectedEarthPose)
-
-        val result = projectedEarth.createGeospatialPoseFromDevicePose()
+        val result = projectedGeospatial.createGeospatialPoseFromPose(pose)
 
         val expectedNormalizedQuaternion =
             Quaternion(
@@ -180,9 +133,9 @@ class ProjectedEarthTest {
     @Test
     fun createPoseFromGeospatialPose_notTracking_throwsException() {
         xrResources.deviceTrackingState = TrackingState.STOPPED
-        xrResources.earthTrackingState = TrackingState.STOPPED
+        xrResources.geospatialTrackingState = TrackingState.STOPPED
         assertFailsWith<GeospatialPoseNotTrackingException> {
-            projectedEarth.createPoseFromGeospatialPose(GeospatialPose())
+            projectedGeospatial.createPoseFromGeospatialPose(GeospatialPose())
         }
     }
 
@@ -190,16 +143,16 @@ class ProjectedEarthTest {
     fun createPoseFromGeospatialPose_partiallyTracking_throwsException() {
         // This should throw
         xrResources.deviceTrackingState = TrackingState.STOPPED
-        xrResources.earthTrackingState = TrackingState.TRACKING
+        xrResources.geospatialTrackingState = TrackingState.TRACKING
         assertFailsWith<GeospatialPoseNotTrackingException> {
-            projectedEarth.createPoseFromGeospatialPose(GeospatialPose())
+            projectedGeospatial.createPoseFromGeospatialPose(GeospatialPose())
         }
 
         // This should also throw
         xrResources.deviceTrackingState = TrackingState.TRACKING
-        xrResources.earthTrackingState = TrackingState.STOPPED
+        xrResources.geospatialTrackingState = TrackingState.STOPPED
         assertFailsWith<GeospatialPoseNotTrackingException> {
-            projectedEarth.createPoseFromGeospatialPose(GeospatialPose())
+            projectedGeospatial.createPoseFromGeospatialPose(GeospatialPose())
         }
     }
 }

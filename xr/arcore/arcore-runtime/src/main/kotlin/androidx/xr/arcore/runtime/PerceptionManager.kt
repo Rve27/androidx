@@ -82,7 +82,7 @@ public interface PerceptionManager {
     public val monoRenderViewpoint: RenderViewpoint?
 
     /** [Earth] tracking information. */
-    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val earth: Earth
+    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val geospatial: Geospatial
 
     /** Left [DepthMap]'s current frame information */
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val leftDepthMap: DepthMap?

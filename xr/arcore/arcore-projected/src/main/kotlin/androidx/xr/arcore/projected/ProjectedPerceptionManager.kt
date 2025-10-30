@@ -20,9 +20,9 @@ import androidx.annotation.RestrictTo
 import androidx.xr.arcore.runtime.Anchor
 import androidx.xr.arcore.runtime.ArDevice
 import androidx.xr.arcore.runtime.DepthMap
-import androidx.xr.arcore.runtime.Earth
 import androidx.xr.arcore.runtime.Eye
 import androidx.xr.arcore.runtime.Face
+import androidx.xr.arcore.runtime.Geospatial
 import androidx.xr.arcore.runtime.Hand
 import androidx.xr.arcore.runtime.HitResult
 import androidx.xr.arcore.runtime.PerceptionManager
@@ -176,10 +176,10 @@ internal constructor(private val timeSource: ProjectedTimeSource) : PerceptionMa
      */
     override val rightHand: Hand? = null
 
-    /** Returns the [Earth] instance. */
+    /** Returns the [Geospatial] instance. */
     // @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-    override val earth: Earth
-        get() = xrResources.earth
+    override val geospatial: Geospatial
+        get() = xrResources.geospatial
 
     /** Returns the [ArDevice] instance. */
     override val arDevice: ArDevice
