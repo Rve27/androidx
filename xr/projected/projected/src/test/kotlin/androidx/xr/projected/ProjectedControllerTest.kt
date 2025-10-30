@@ -38,15 +38,26 @@ import androidx.test.filters.SdkSuppress
 import androidx.xr.projected.ProjectedContext.PROJECTED_DEVICE_NAME
 import androidx.xr.projected.ProjectedServiceBinding.ACTION_BIND
 import androidx.xr.projected.experimental.ExperimentalProjectedApi
+import androidx.xr.projected.platform.IEngagementModeCallback
+import androidx.xr.projected.platform.IEngagementModeService
 import androidx.xr.projected.platform.IProjectedService
 import com.google.common.truth.Truth.assertThat
 import kotlin.test.assertFailsWith
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
 import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.kotlin.any
+import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
@@ -170,6 +181,66 @@ class ProjectedControllerTest {
             assertThat(shadowOf(context).boundServiceConnections).isEmpty()
         }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun windowLayoutInfo_fromService_returnsEngagementMode() {
+        launchTestProjectedDeviceActivity { projectedDeviceActivity ->
+            // The windowLayoutInfo needs to be called from the main thread.
+            val dispatcher = UnconfinedTestDispatcher()
+            Dispatchers.setMain(dispatcher)
+            runTest {
+                val mockEngagementModeService = mock<IEngagementModeService>()
+                val mockEngagementModeServiceStub =
+                    mock<IEngagementModeService.Stub> {
+                        on { queryLocalInterface(any()) }.thenReturn(mockEngagementModeService)
+                    }
+                val engagementModeServiceComponent =
+                    ComponentName(SYSTEM_PACKAGE_NAME, ENGAGEMENT_MODE_SYSTEM_CLASS_NAME)
+                shadowOf(context.packageManager).apply {
+                    addServiceIfNotPresent(engagementModeServiceComponent)
+                    addOrUpdateService(
+                        ServiceInfo().apply {
+                            packageName = SYSTEM_PACKAGE_NAME
+                            name = ENGAGEMENT_MODE_SYSTEM_CLASS_NAME
+                        }
+                    )
+                    addIntentFilterForService(
+                        engagementModeServiceComponent,
+                        IntentFilter(EngagementModeClient.SERVICE_ACTION),
+                    )
+                }
+                shadowOf(context).apply {
+                    setComponentNameAndServiceForBindService(
+                        engagementModeServiceComponent,
+                        mockEngagementModeServiceStub,
+                    )
+                    setBindServiceCallsOnServiceConnectedDirectly(true)
+                }
+                projectedController = ProjectedController.create(projectedDeviceActivity)
+
+                val layoutInfoFlow = projectedController.windowLayoutInfo(context)
+                var result: WindowLayoutInfo? = null
+                val job = launch { result = layoutInfoFlow.first() }
+
+                advanceUntilIdle()
+
+                // Trigger the callback.
+                val callbackCaptor = argumentCaptor<IEngagementModeCallback>()
+                verify(mockEngagementModeService).registerCallback(callbackCaptor.capture())
+                callbackCaptor.firstValue.onEngagementModeChanged(
+                    EngagementModeClient.ENGAGEMENT_MODE_FLAG_AUDIO_ON
+                )
+
+                advanceUntilIdle()
+
+                assertThat(result)
+                    .isEqualTo(WindowLayoutInfo(EngagementModeClient.ENGAGEMENT_MODE_FLAG_AUDIO_ON))
+
+                job.cancel()
+            }
+        }
+    }
+
     private fun launchTestProjectedDeviceActivity(block: (Activity) -> Unit) {
         shadowOf(context.packageManager)
             .addOrUpdateActivity(
@@ -199,6 +270,8 @@ class ProjectedControllerTest {
     companion object {
         private const val SYSTEM_PACKAGE_NAME = "com.system.service"
         private const val SYSTEM_CLASS_NAME = "com.system.service.ProjectedService"
+        private const val ENGAGEMENT_MODE_SYSTEM_CLASS_NAME =
+            "com.system.service.EngagementModeService"
         private val COMPONENT_NAME = ComponentName(SYSTEM_PACKAGE_NAME, SYSTEM_CLASS_NAME)
         private val SERVICE_INFO =
             ServiceInfo().apply {

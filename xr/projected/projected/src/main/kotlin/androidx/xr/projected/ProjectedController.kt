@@ -17,12 +17,22 @@
 package androidx.xr.projected
 
 import android.app.Activity
+import android.content.Context
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import androidx.annotation.RequiresApi
 import androidx.annotation.RestrictTo
+import androidx.annotation.UiContext
 import androidx.xr.projected.ProjectedController.Companion.create
 import androidx.xr.projected.experimental.ExperimentalProjectedApi
 import androidx.xr.projected.platform.IProjectedService
+import java.util.function.Consumer
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.flowOn
 
 /**
  * Controller for the Projected device.
@@ -33,6 +43,7 @@ public class ProjectedController
 private constructor(
     private val connection: ProjectedServiceConnection,
     private val projectedService: IProjectedService,
+    private val engagementModeClient: EngagementModeClient,
 ) : AutoCloseable {
 
     /**
@@ -83,6 +94,31 @@ private constructor(
         connection.disconnect()
     }
 
+    /**
+     * A [Flow] of [WindowLayoutInfo] that contains the Engagement mode.
+     *
+     * A [WindowLayoutInfo] value should be published when [WindowLayoutInfo.EngagementMode] has
+     * changed, but the behavior is ultimately decided by the hardware implementation. It is
+     * recommended to test the following scenarios:
+     * * Values are emitted immediately after subscribing to this function.
+     * * There is a long delay between subscribing and receiving the first value.
+     * * Never receiving a value after subscription.
+     *
+     * @param context a [UiContext] such as an [Activity], that listens to configuration changes.
+     * @throws IllegalArgumentException when [context] is not a [UiContext].
+     */
+    // TODO: b/456198269 - investigate if Dispatchers.Main is needed.
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public fun windowLayoutInfo(@UiContext context: Context): Flow<WindowLayoutInfo> =
+        callbackFlow {
+                val listener = Consumer { engagementModeFlags: Int ->
+                    trySend(WindowLayoutInfo(engagementModeFlags))
+                }
+                engagementModeClient.addUpdateCallback(Runnable::run, listener)
+                awaitClose { engagementModeClient.removeUpdateCallback(listener) }
+            }
+            .flowOn(Dispatchers.Main)
+
     public companion object {
         /**
          * Connects to the service providing features for Projected devices and returns the
@@ -106,6 +142,7 @@ private constructor(
             return ProjectedController(
                 serviceConnection,
                 projectedService = serviceConnection.connect(),
+                EngagementModeClient(activity, Handler.createAsync(Looper.getMainLooper())),
             )
         }
     }
