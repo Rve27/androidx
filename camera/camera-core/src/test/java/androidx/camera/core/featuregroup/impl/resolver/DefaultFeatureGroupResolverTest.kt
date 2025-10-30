@@ -96,6 +96,8 @@ class DefaultFeatureGroupResolverTest {
             )
 
             supportedDynamicRanges = setOf(DynamicRange.SDR, DynamicRange.HLG_10_BIT)
+
+            setIsPreviewStabilizationSupported(true)
         }
 
     private val defaultResolver = DefaultFeatureGroupResolver(fakeCameraInfo)
