@@ -325,7 +325,6 @@ package androidx.room3.util {
     method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static <R> R performInTransactionBlocking(androidx.room3.RoomDatabase db, kotlin.jvm.functions.Function0<? extends R> block);
     method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static suspend <R> Object? performInTransactionSuspending(androidx.room3.RoomDatabase db, kotlin.jvm.functions.Function1<? super kotlin.coroutines.Continuation<? super R>,? extends java.lang.Object?> block, kotlin.coroutines.Continuation<? super R>);
     method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static suspend <R> Object? performSuspending(androidx.room3.RoomDatabase db, boolean isReadOnly, boolean inTransaction, kotlin.jvm.functions.Function1<? super androidx.sqlite.SQLiteConnection,? extends R> block, kotlin.coroutines.Continuation<? super R>);
-    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static androidx.sqlite.SQLiteConnection toSQLiteConnection(androidx.sqlite.db.SupportSQLiteDatabase db);
   }
 
   @RestrictTo({androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX}) public final class FileUtil {
@@ -335,7 +334,6 @@ package androidx.room3.util {
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FtsTableInfo {
     ctor public FtsTableInfo(String name, java.util.Set<java.lang.String> columns, String createSql);
     ctor public FtsTableInfo(String name, java.util.Set<java.lang.String> columns, java.util.Set<java.lang.String> options);
-    method public static androidx.room3.util.FtsTableInfo read(androidx.sqlite.db.SupportSQLiteDatabase database, String tableName);
     method public static androidx.room3.util.FtsTableInfo read(androidx.sqlite.SQLiteConnection connection, String tableName);
     property public java.util.Set<java.lang.String> columns;
     property public String name;
@@ -347,7 +345,6 @@ package androidx.room3.util {
   }
 
   public static final class FtsTableInfo.Companion {
-    method public androidx.room3.util.FtsTableInfo read(androidx.sqlite.db.SupportSQLiteDatabase database, String tableName);
     method public androidx.room3.util.FtsTableInfo read(androidx.sqlite.SQLiteConnection connection, String tableName);
   }
 
