@@ -229,6 +229,40 @@ public class MediaRouteProviderServiceTest {
         assertFalse(sLastDiscoveryRequest.shouldScanWithScreenOff());
     }
 
+    @Test
+    public void testPlatformRequestsActiveScanWithScreenOff_shouldUpdateCompositeRequest() {
+        if (Looper.myLooper() == null) {
+            Looper.prepare();
+        }
+        MediaRouteProviderService.MediaRouteProviderServiceImplBase mrProviderServiceImplBase =
+                new MediaRouteProviderService.MediaRouteProviderServiceImplBase(
+                        new MediaRouteProviderServiceImpl());
+
+        mrProviderServiceImplBase.setBaseDiscoveryRequest(
+                new MediaRouteDiscoveryRequest(
+                        mSelector, /* activeScan= */ true, /* shouldScanWithScreenOff= */ true));
+
+        assertTrue(mrProviderServiceImplBase.mCompositeDiscoveryRequest.isActiveScan());
+        assertTrue(mrProviderServiceImplBase.mCompositeDiscoveryRequest.shouldScanWithScreenOff());
+    }
+
+    @Test
+    public void testPlatformRequestsActiveScanWithOutScreenOff_shouldUpdateCompositeRequest() {
+        if (Looper.myLooper() == null) {
+            Looper.prepare();
+        }
+        MediaRouteProviderService.MediaRouteProviderServiceImplBase mrProviderServiceImplBase =
+                new MediaRouteProviderService.MediaRouteProviderServiceImplBase(
+                        new MediaRouteProviderServiceImpl());
+
+        mrProviderServiceImplBase.setBaseDiscoveryRequest(
+                new MediaRouteDiscoveryRequest(
+                        mSelector, /* activeScan= */ true, /* shouldScanWithScreenOff= */ false));
+
+        assertTrue(mrProviderServiceImplBase.mCompositeDiscoveryRequest.isActiveScan());
+        assertFalse(mrProviderServiceImplBase.mCompositeDiscoveryRequest.shouldScanWithScreenOff());
+    }
+
     @LargeTest
     @Test
     public void testRequestActiveScan_suppressActiveScanAfter30Seconds() throws Exception {
