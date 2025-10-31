@@ -215,6 +215,20 @@ public class MediaRouteProviderServiceTest {
         assertTrue(sActiveScanCountDownLatch.await(TIME_OUT_MS, TimeUnit.MILLISECONDS));
     }
 
+    @Test
+    public void testRequestScreenOffActiveScanFromClients_shouldSuppressScreenOffScanRequest()
+            throws Exception {
+        resetActiveAndPassiveScanCountDownLatches();
+        sendDiscoveryRequest(
+                mReceiveMessenger1,
+                new MediaRouteDiscoveryRequest(mSelector, /* activeScan= */ true,
+                        /* shouldScanWithScreenOff= */ true));
+
+        // Active scan should be true.
+        assertTrue(sActiveScanCountDownLatch.await(TIME_OUT_MS, TimeUnit.MILLISECONDS));
+        assertFalse(sLastDiscoveryRequest.shouldScanWithScreenOff());
+    }
+
     @LargeTest
     @Test
     public void testRequestActiveScan_suppressActiveScanAfter30Seconds() throws Exception {
