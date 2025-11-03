@@ -25,6 +25,7 @@ import androidx.annotation.RestrictTo
     SpatialApiVersions.UNKNOWN,
     SpatialApiVersions.SPATIAL_API_V1,
     SpatialApiVersions.SPATIAL_API_V2,
+    SpatialApiVersions.SPATIAL_API_V3,
 )
 public annotation class SpatialApiVersion
 
@@ -42,6 +43,8 @@ public object SpatialApiVersions {
     public const val SPATIAL_API_V1: Int = 1
     /** API version 2. */
     public const val SPATIAL_API_V2: Int = 2
+    /** API version 3. */
+    public const val SPATIAL_API_V3: Int = 3
 }
 
 /**
@@ -82,3 +85,47 @@ public annotation class RequiresSpatialApi(
      */
     @SpatialApiVersion public val value: Int
 )
+
+/**
+ * Marks declarations that are part of the unstable Spatial API Preview, version 3.
+ *
+ * These APIs are not final and are subject to change or removal in future releases without notice.
+ * They are intended for development and testing purposes only and require a specific developer
+ * preview system image to function correctly. The version number in this annotation's name will
+ * increase in future releases to correspond with the next upcoming stable API version (e.g.,
+ * `@PreviewSpatialApi4` for `SpatialApiVersions.SPATIAL_API_V4`).
+ *
+ * Any usage of a declaration annotated with `@PreviewSpatialApi3` must be explicitly opted-in by
+ * annotating the calling code with `@OptIn(PreviewSpatialApi3::class)`.
+ *
+ * Furthermore, to prevent runtime errors, applications must wrap calls to these APIs in a
+ * `try-catch` block to handle cases where the device does not support the required preview API
+ * version.
+ *
+ * Example of opting-in and performing a runtime check:
+ * <pre><code class="language-kotlin">
+ * @PreviewSpatialApi3
+ * fun newPreviewApi() {
+ *     // ...
+ * }
+ *
+ * @OptIn(PreviewSpatialApi3::class)
+ * fun callPreviewApi() {
+ *     try {
+ *         newPreviewApi()
+ *     } catch (e: RuntimeException) {
+ *         // Handle the case where the preview API is not available.
+ *     }
+ * }
+ * </code></pre>
+ */
+@RequiresOptIn(
+    level = RequiresOptIn.Level.ERROR,
+    message =
+        "This API is in an unstable preview state and requires a developer preview system " +
+            "image work properly. Do not use this API in release builds as it will likely to " +
+            "lead to crashes.",
+)
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
+@Retention(AnnotationRetention.BINARY)
+public annotation class PreviewSpatialApi3
