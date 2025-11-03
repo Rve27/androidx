@@ -245,13 +245,20 @@ fun createHistogramPlot(
     val q3 = stats.getPercentile(75.0)
     val iqr = q3 - q1
 
-    val optimalBins =
+    val minBins = 5
+    val calculatedBins =
         if (iqr > 0) {
             val binWidth = 2 * iqr * (1 / cbrt(n))
-            ((stats.max - stats.min) / binWidth).toInt()
+            if (binWidth > 0) {
+                ((stats.max - stats.min) / binWidth).toInt()
+            } else {
+                minBins
+            }
         } else {
-            20
+            minBins
         }
+
+    val optimalBins = maxOf(1, minOf(calculatedBins, n.toInt())).coerceAtLeast(minBins)
 
     val plotTitle =
         if (metricName != null) {

@@ -80,3 +80,14 @@ tasks.register<JavaExec>("runMicrobenchmark") {
         args(project.property("args").toString().split(" "))
     }
 }
+
+tasks.register<JavaExec>("runMacrobenchmark") {
+    group = "A/B Benchmarking"
+    description = "Runs A/B macrobenchmarks between two git revisions."
+    mainClass.set("androidx.abbenchmarking.macrobenchmarking.MacroBenchmarkRunnerKt")
+    classpath = sourceSets.main.get().runtimeClasspath
+    // Forward command-line arguments from Gradle to the application
+    if (project.hasProperty("args")) {
+        args(project.property("args").toString().split(" "))
+    }
+}

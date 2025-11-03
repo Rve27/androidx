@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package androidx.abbenchmarking.microbenchmarking
+package androidx.abbenchmarking.macrobenchmarking
 
 import androidx.abbenchmarking.common.findJsonFiles
 import java.io.File
 import java.io.FileReader
 import java.io.FileWriter
 import kotlin.collections.emptyMap
+import kotlin.collections.flatten
 import kotlin.collections.getOrPut
 import kotlin.collections.mapValues
 import kotlin.collections.mutableListOf
@@ -38,11 +39,22 @@ import org.apache.commons.csv.CSVPrinter
 @Serializable private data class BenchmarkReport(val benchmarks: List<Benchmark>)
 
 @Serializable
-private data class Benchmark(val name: String, val className: String, val metrics: Metrics)
+private data class Benchmark(
+    val name: String,
+    val className: String,
+    val metrics: Map<String, Metrics>,
+    val sampledMetrics: Map<String, SampledMetrics> = emptyMap(),
+)
 
-@Serializable private data class Metrics(val timeNs: TimeNs)
+@Serializable private data class Metrics(val runs: List<Double>)
 
-@Serializable private data class TimeNs(val runs: List<Double>)
+@Serializable private data class SampledMetrics(val runs: List<List<Double>>)
+
+private data class BenchmarkRecord(
+    val benchmarkName: String,
+    val metricName: String,
+    val timing: Double,
+)
 
 /**
  * Parses benchmark JSON files to extract the raw performance timing data for all tests.
@@ -53,22 +65,29 @@ private data class Benchmark(val name: String, val className: String, val metric
  *
  * @param jsonFiles List of benchmark result files to parse.
  * @return A map where each key is a benchmark test name (e.g., "myBenchmark_test") and the value is
- *   a list of all timing runs (in nanoseconds) collected for that test across all input files.
+ *   a list of all timing runs collected for that test across all input files.
  */
-private fun parseBenchmarkRuns(jsonFiles: List<File>): Map<String, List<Double>> {
-    val allRuns = mutableMapOf<String, MutableList<Double>>()
+internal fun parseBenchmarkRuns(jsonFiles: List<File>): Map<String, Map<String, List<Double>>> {
+    val allRuns = mutableMapOf<String, MutableMap<String, MutableList<Double>>>()
     val jsonParser = Json { ignoreUnknownKeys = true }
     jsonFiles.forEach { jsonFile ->
         try {
             val jsonString = jsonFile.readText()
             val report = jsonParser.decodeFromString<BenchmarkReport>(jsonString)
             report.benchmarks.forEach { benchmark ->
-                // Get the existing list for this benchmark, or create a new empty
-                // list if it's the first time we've seen it. Then, add all the
-                // new runs to that list.
-                allRuns
-                    .getOrPut(benchmark.name) { kotlin.collections.mutableListOf() }
-                    .addAll(benchmark.metrics.timeNs.runs)
+                val benchmarkMetrics = allRuns.getOrPut(benchmark.name) { mutableMapOf() }
+                benchmark.metrics.forEach { (metricName, metricRun) ->
+                    // Get the existing list for this benchmark, or create a new empty
+                    // list if it's the first time we've seen it. Then, add all the
+                    // new runs to that list.
+                    benchmarkMetrics.getOrPut(metricName) { mutableListOf() }.addAll(metricRun.runs)
+                }
+
+                benchmark.sampledMetrics.forEach { (metricName, sampledMetricRun) ->
+                    // The 'runs' in sampledMetrics is a List<List<Double>>. Flatten it.
+                    val flattenedRuns = sampledMetricRun.runs.flatten()
+                    benchmarkMetrics.getOrPut(metricName) { mutableListOf() }.addAll(flattenedRuns)
+                }
             }
         } catch (e: Exception) {
             System.err.println(
@@ -82,16 +101,17 @@ private fun parseBenchmarkRuns(jsonFiles: List<File>): Map<String, List<Double>>
 /**
  * Saves or appends aggregated benchmark data to a structured CSV file.
  *
- * This function writes benchmark results to a CSV file with two columns: `benchmark_name` and
- * `timing`. If the file does not exist or is empty, it first writes a header row. Otherwise, it
- * appends the new data to the existing file. This is useful for aggregating results from multiple
- * benchmark runs into a single source.
+ * This function writes benchmark results to a CSV file with three columns: `benchmark_name`,
+ * `metric_name`, and `timing`. If the file does not exist or is empty, it first writes a header
+ * row. Otherwise, it appends the new data to the existing file. This is useful for aggregating
+ * results from multiple benchmark runs into a single source.
  *
- * @param benchmarks A map where the key is the benchmark name and the value is a list of timing
- *   values.
+ * @param benchmarks A nested map where the outer key is the benchmark name (e.g., "startup"), the
+ *   inner key is the metric name (e.g., "timeToInitialDisplayMs"), and the value is a list of all
+ *   measurement values for that metric.
  * @param outputFile The [File] to write the data to. The file will be created if it doesn't exist.
  */
-private fun saveDataToFile(benchmarks: Map<String, List<Double>>, outputFile: File) {
+private fun saveDataToFile(benchmarks: Map<String, Map<String, List<Double>>>, outputFile: File) {
     if (benchmarks.isEmpty()) return
     // Check if the file is new. If so, we need to write the header.
     val isNewFile = !outputFile.exists() || outputFile.length() == 0L
@@ -101,11 +121,14 @@ private fun saveDataToFile(benchmarks: Map<String, List<Double>>, outputFile: Fi
     FileWriter(outputFile, true).use { fileWriter ->
         CSVPrinter(fileWriter, csvFormat).use { csvPrinter ->
             if (isNewFile) {
-                csvPrinter.printRecord("benchmark_name", "timing")
+                csvPrinter.printRecord("benchmark_name", "metric_name", "timing")
             }
-
-            benchmarks.forEach { (name, timings) ->
-                timings.forEach { timing -> csvPrinter.printRecord(name, timing) }
+            benchmarks.forEach { (benchmarkName, metrics) ->
+                metrics.forEach { (metricName, timings) ->
+                    timings.forEach { timing ->
+                        csvPrinter.printRecord(benchmarkName, metricName, timing)
+                    }
+                }
             }
         }
     }
@@ -124,34 +147,37 @@ private fun saveDataToFile(benchmarks: Map<String, List<Double>>, outputFile: Fi
  * @param outputFile The final destination file for the consolidated, clean data.
  */
 internal fun extractBenchmarkTestResult(resultsPath: String, outputFile: File) {
-    // 1.Extract JSON files where benchmark test run data is stored
     val jsonFiles = findJsonFiles(File(resultsPath))
     if (jsonFiles.isEmpty()) {
         System.err.println("Warning: No .json files found in '$resultsPath'")
         return
     }
-    // 2. Parse the JSON files and extract the benchmark run time
     val benchmarks = parseBenchmarkRuns(jsonFiles)
-    // 3. Save the results to a file
     saveDataToFile(benchmarks, outputFile)
 }
 
 /**
  * Loads and parses processed benchmark data from a specified CSV file.
  *
- * It opens a CSV file containing `benchmark_name` and `timing` columns, groups the timings by
- * benchmark name, and returns them as a map for statistical analysis.
+ * It opens a CSV file containing `benchmark_name`, `metric_name`, and `timing` columns. It then
+ * groups the timings first by benchmark name and then by metric name, returning them as a nested
+ * map suitable for statistical analysis.
  *
  * @param outputFile The CSV file containing the benchmark data.
- * @return A map where the key is the benchmark name and the value is a [DoubleArray] of its
- *   timings.
+ * @return A nested map where the outer key is the benchmark name (e.g., "startup"), the inner key
+ *   is the metric name (e.g., "timeToInitialDisplayMs"), and the value is a [DoubleArray] of all
+ *   its timing measurements.
  */
-internal fun getBenchmarkDataFromOutputFile(outputFile: File): Map<String, DoubleArray> {
+internal fun getBenchmarkDataFromOutputFile(
+    outputFile: File
+): Map<String, Map<String, DoubleArray>> {
     if (!outputFile.exists()) {
         System.err.println("Error: File not found at '${outputFile.absolutePath}'")
         return emptyMap()
     }
-    val benchmarks = mutableMapOf<String, MutableList<Double>>()
+
+    val allRecords = mutableListOf<BenchmarkRecord>()
+
     try {
         FileReader(outputFile).use { reader ->
             val csvParser =
@@ -161,14 +187,14 @@ internal fun getBenchmarkDataFromOutputFile(outputFile: File): Map<String, Doubl
                 )
 
             for (record in csvParser) {
-                val name = record.get("benchmark_name")
+                val benchmarkName = record.get("benchmark_name")
+                val metricName = record.get("metric_name")
                 val timing = record.get("timing").toDoubleOrNull()
 
                 if (timing != null) {
-                    // Add the timing to the list for the corresponding benchmark.
-                    benchmarks.getOrPut(name) { mutableListOf() }.add(timing)
+                    allRecords.add(BenchmarkRecord(benchmarkName, metricName, timing))
                 } else {
-                    System.err.println("Warning: Could not parse timing from record: $record")
+                    System.err.println("Warning: Could not parse timing value from record: $record")
                 }
             }
         }
@@ -177,6 +203,13 @@ internal fun getBenchmarkDataFromOutputFile(outputFile: File): Map<String, Doubl
         return emptyMap()
     }
 
-    // Convert the list of timings for each benchmark into a DoubleArray.
-    return benchmarks.mapValues { it.value.toDoubleArray() }
+    return allRecords
+        .groupBy { it.benchmarkName } // Group by benchmark_name
+        .mapValues { (_, triplesForBenchmark) ->
+            triplesForBenchmark
+                .groupBy { it.metricName } // Group by metric_name
+                .mapValues { (_, triplesForMetric) ->
+                    triplesForMetric.map { it.timing }.toDoubleArray()
+                }
+        }
 }
