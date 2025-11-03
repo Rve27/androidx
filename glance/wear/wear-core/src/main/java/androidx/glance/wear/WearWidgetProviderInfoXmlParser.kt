@@ -35,8 +35,6 @@ internal object WearWidgetProviderInfoXmlParser {
     private const val ATTR_PREFERRED_TYPE = "preferredType"
     private const val ATTR_GROUP = "group"
     private const val ATTR_CONFIG_INTENT_ACTION = "configIntentAction"
-    private const val ATTR_MIN_SCHEMA_VERSION = "minSchemaVersion"
-    private const val ATTR_MAX_SCHEMA_VERSION = "maxSchemaVersion"
     private const val ATTR_TYPE = "type"
     private const val ATTR_PREVIEW_IMAGE = "previewImage"
 
@@ -96,14 +94,6 @@ internal object WearWidgetProviderInfoXmlParser {
             parseContainerTypeAttr(resources, ATTR_PREFERRED_TYPE, defaultPreferredContainerType)
         val group = getAttributeValue(NAMESPACE_DISABLED, ATTR_GROUP) ?: defaultGroup
         val configIntentAction = getAttributeValue(NAMESPACE_DISABLED, ATTR_CONFIG_INTENT_ACTION)
-        val minSchemaVersion =
-            getAttributeValue(NAMESPACE_DISABLED, ATTR_MIN_SCHEMA_VERSION)?.let {
-                parseSchemaVersion(it)
-            }
-        val maxSchemaVersion =
-            getAttributeValue(NAMESPACE_DISABLED, ATTR_MAX_SCHEMA_VERSION)?.let {
-                parseSchemaVersion(it)
-            }
         val unrecognisedAttributes = mutableMapOf<String, String>()
         val knownAttributes =
             setOf(
@@ -113,8 +103,6 @@ internal object WearWidgetProviderInfoXmlParser {
                 ATTR_PREFERRED_TYPE,
                 ATTR_GROUP,
                 ATTR_CONFIG_INTENT_ACTION,
-                ATTR_MIN_SCHEMA_VERSION,
-                ATTR_MAX_SCHEMA_VERSION,
             )
         for (i in 0 until attributeCount) {
             val attrName = getAttributeName(i)
@@ -150,8 +138,6 @@ internal object WearWidgetProviderInfoXmlParser {
             preferredContainerType = preferredContainerType,
             group = group,
             configIntentAction = configIntentAction,
-            minSchemaVersion = minSchemaVersion,
-            maxSchemaVersion = maxSchemaVersion,
             unrecognisedAttributes = unrecognisedAttributes,
         )
     }
@@ -168,19 +154,6 @@ internal object WearWidgetProviderInfoXmlParser {
             label = label,
             description = description,
         )
-    }
-
-    internal fun parseSchemaVersion(value: String): SchemaVersion {
-        val parts = value.split('.')
-        if (parts.size != 2) {
-            throw XmlPullParserException("Invalid schema version format: $value")
-        }
-        return try {
-            val minor = parts[1].padEnd(3, '0').toInt()
-            SchemaVersion(parts[0].toInt(), minor)
-        } catch (e: NumberFormatException) {
-            throw XmlPullParserException("Invalid schema version format: $value")
-        }
     }
 
     @Throws(XmlPullParserException::class)
