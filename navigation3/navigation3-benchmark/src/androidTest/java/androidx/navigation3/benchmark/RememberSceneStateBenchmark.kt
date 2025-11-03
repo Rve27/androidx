@@ -16,23 +16,16 @@
 
 package androidx.navigation3.benchmark
 
-import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.testutils.LayeredComposeTestCase
 import androidx.compose.testutils.ToggleableTestCase
 import androidx.compose.testutils.benchmark.ComposeBenchmarkRule
 import androidx.compose.testutils.benchmark.benchmarkFirstCompose
-import androidx.compose.testutils.benchmark.benchmarkFirstDraw
-import androidx.compose.testutils.benchmark.benchmarkFirstLayout
-import androidx.compose.testutils.benchmark.benchmarkFirstMeasure
-import androidx.compose.testutils.benchmark.benchmarkLayoutPerf
-import androidx.compose.testutils.benchmark.toggleStateBenchmarkDraw
-import androidx.compose.testutils.benchmark.toggleStateBenchmarkLayout
-import androidx.compose.testutils.benchmark.toggleStateBenchmarkMeasure
 import androidx.compose.testutils.benchmark.toggleStateBenchmarkRecompose
-import androidx.compose.ui.layout.Measurable
-import androidx.compose.ui.layout.Placeable
+import androidx.compose.ui.Modifier
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.rememberDecoratedNavEntries
 import androidx.navigation3.scene.SinglePaneSceneStrategy
@@ -46,7 +39,7 @@ internal class RememberSceneStateBenchmark {
 
     private val caseFactory = {
         object : LayeredComposeTestCase(), ToggleableTestCase {
-            var keyCount: Int = 0
+            var keyCount = 0
             val backStack = mutableStateListOf(keyCount++)
 
             @Composable
@@ -54,7 +47,7 @@ internal class RememberSceneStateBenchmark {
                 rememberSceneState(
                     entries =
                         rememberDecoratedNavEntries(backStack = backStack) { key ->
-                            NavEntry(key) { BasicText("Key = $key") }
+                            NavEntry(key) { Box(Modifier.fillMaxSize()) }
                         },
                     sceneStrategy = SinglePaneSceneStrategy(),
                     onBack = { /* no-op */ },
@@ -76,60 +69,9 @@ internal class RememberSceneStateBenchmark {
         benchmarkRule.benchmarkFirstCompose(caseFactory)
     }
 
-    /**
-     * Measure the time taken by the first time measure the scene. This is mainly the time used to
-     * measure all the [Measurable]s in the scene.
-     */
-    @Test
-    fun first_measure() {
-        benchmarkRule.benchmarkFirstMeasure(caseFactory)
-    }
-
-    /**
-     * Measure the time taken by the first time layout the scene. This is mainly the time used to
-     * place [Placeable]s in the scene.
-     */
-    @Test
-    fun first_layout() {
-        benchmarkRule.benchmarkFirstLayout(caseFactory)
-    }
-
-    /** Measure the time taken by first time draw the scene. */
-    @Test
-    fun first_draw() {
-        benchmarkRule.benchmarkFirstDraw(caseFactory)
-    }
-
-    /**
-     * Measure the time taken by layout the scene after the layout constraints changed. This is
-     * mainly the time used to re-measure and re-layout the composable.
-     */
-    @Test
-    fun layout() {
-        benchmarkRule.benchmarkLayoutPerf(caseFactory)
-    }
-
     /** Measure the time taken to recompose the scene when the back stack state gets toggled. */
     @Test
     fun toggleState_recompose() {
         benchmarkRule.toggleStateBenchmarkRecompose(caseFactory)
-    }
-
-    /** Measure the time taken to measure the scene when the back stack state gets toggled. */
-    @Test
-    fun toggleState_measure() {
-        benchmarkRule.toggleStateBenchmarkMeasure(caseFactory)
-    }
-
-    /** Measure the time taken to layout the scene when the back stack state gets toggled. */
-    @Test
-    fun toggleState_layout() {
-        benchmarkRule.toggleStateBenchmarkLayout(caseFactory)
-    }
-
-    /** Measure the time taken to draw the scene when the back stack state gets toggled. */
-    @Test
-    fun toggleState_draw() {
-        benchmarkRule.toggleStateBenchmarkDraw(caseFactory)
     }
 }
