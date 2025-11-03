@@ -76,16 +76,44 @@ public abstract class Tracer(
      *   default implementation uses a list of [Long]s which will connect this trace section to
      *   other sections in the trace, potentially on different Tracks. The start and end of each
      *   trace `flow` (connection) between trace sections must share an ID, so each `Long` must be
-     *   unique to each `flow` in the trace.
-     * @return A [MetadataHandleCloseable] instance that can be used to add additional metadata and
+     *   unique to each `flow` in the trace. When a `null` value is specified, the [Tracer]
+     *   implementation obtains the token by calling [tokenFromThreadContext].
+     * @return A [EventMetadataCloseable] instance that can be used to add additional metadata and
      *   close the trace section.
      */
     @DelicateTracingApi
     public abstract fun beginSectionWithMetadata(
         category: String,
         name: String,
-        token: PropagationToken,
-    ): MetadataHandleCloseable
+        token: PropagationToken?,
+    ): EventMetadataCloseable
+
+    /**
+     * Writes a trace message indicating that a given suspending section of code has begun.
+     *
+     * Should be followed by a corresponding call to [AutoCloseable.close] returned by the call to
+     * `beginCoroutineSectionWithMetadata`. If the corresponding [AutoCloseable.close] is missing,
+     * the section will be present in the trace, but non-terminating (generally shown as fading out
+     * to the left).
+     *
+     * @param category The category that the trace section belongs to. Apps can potentially filter
+     *   sections to the categories that they are interested in looking into.
+     * @param name The name of the code section to appear in the trace.
+     * @param token An optional [CoroutinePropagationToken] that can be used for context
+     *   propagation. The default implementation uses a list of [Long]s which will connect this
+     *   trace section to other sections in the trace, potentially on different Tracks. The start
+     *   and end of each trace `flow` (connection) between trace sections must share an ID, so each
+     *   `Long` must be unique to each `flow` in the trace. When a `null` value is specified, the
+     *   [Tracer] obtains a token by calling [tokenFromCoroutineContext].
+     * @return A [EventMetadataCloseable] instance that can be used to add additional metadata and
+     *   close the trace section.
+     */
+    @DelicateTracingApi
+    public abstract suspend fun beginCoroutineSectionWithMetadata(
+        category: String,
+        name: String,
+        token: CoroutinePropagationToken?,
+    ): EventMetadataCloseable
 
     /**
      * @return The [Counter] instance for the provided [name]. This can be used to emit counter
@@ -96,19 +124,29 @@ public abstract class Tracer(
     /** Emits a zero duration section to the Trace with the provided [name]. */
     @DelicateTracingApi public abstract fun instant(name: String)
 
-    @Suppress("NOTHING_TO_INLINE")
     public inline fun beginSection(
         category: String,
         name: String,
-        token: PropagationToken,
-        crossinline metadataBlock: MetadataHandle.() -> Unit,
+        token: PropagationToken?,
+        crossinline metadataBlock: EventMetadata.() -> Unit,
     ): AutoCloseable {
         val result = beginSectionWithMetadata(category = category, name = name, token = token)
-        return synchronized(lock = result.metadata) {
-            metadataBlock(result.metadata)
-            result.metadata.dispatchToTraceSink()
-            result.closeable
-        }
+        metadataBlock(result.metadata)
+        result.metadata.dispatchToTraceSink()
+        return result.closeable
+    }
+
+    public suspend inline fun beginCoroutineSection(
+        category: String,
+        name: String,
+        token: CoroutinePropagationToken?,
+        crossinline metadataBlock: EventMetadata.() -> Unit,
+    ): EventMetadataCloseable {
+        val result =
+            beginCoroutineSectionWithMetadata(category = category, name = name, token = token)
+        metadataBlock(result.metadata)
+        result.metadata.dispatchToTraceSink()
+        return result
     }
 
     /**
@@ -117,20 +155,21 @@ public abstract class Tracer(
      * @param category The [String] category. Its useful to categorize [TraceEvent]s, so that they
      *   can be filtered if necessary using the [metadataBlock].
      * @param name The name of the trace section.
-     * @param token The [PropagationToken] instance to use for context propagation. This defaults to
-     *   the token returned by [tokenFromThreadContext].
+     * @param token The optional [PropagationToken] instance to use for context propagation. This
+     *   defaults to the token returned by [tokenFromThreadContext].
      * @param metadataBlock The lambda that can be used to decorate the [TraceEvent] instance with
      *   additional debug annotations. Return `true` in the block if you intend to dispatch the
      *   [TraceEvent] after all metadata has been added. For e.g. applications might want to filter
      *   [TraceEvent]s scoped to well known categories.
      * @param block The block of code being traced.
+     * @return The [AutoCloseable] instance that can be used to close the trace section.
      */
     @JvmOverloads
     public inline fun <T> trace(
         category: String,
         name: String,
-        token: PropagationToken = tokenFromThreadContext(),
-        crossinline metadataBlock: MetadataHandle.() -> Unit = {},
+        token: PropagationToken? = null,
+        crossinline metadataBlock: EventMetadata.() -> Unit = {},
         crossinline block: () -> T,
     ): T {
         val closeable =
@@ -161,36 +200,57 @@ public abstract class Tracer(
      * @param category The [String] category. Its useful to categorize [TraceEvent]s, so that they
      *   can be filtered if necessary using the [metadataBlock].
      * @param name The name of the trace section.
+     * @param token An optional explicit [CoroutinePropagationToken] instance that is intended to be
+     *   used for manual context propagation. This might be useful in instances where the
+     *   implementation of context propagation was to distinguish between job executions that are
+     *   well scoped vs. fire and forget. When `null`, the [Tracer] instance delegates to the
+     *   implementation of [tokenFromCoroutineContext].
      * @param metadataBlock The lambda that can be used to decorate the [TraceEvent] instance with
      *   additional debug annotations. Return `true` in the block if you intend to dispatch the
      *   [TraceEvent] after all metadata has been added. For e.g. applications might want to filter
      *   [TraceEvent]s scoped to well known categories.
      * @param block The suspending block of code being traced.
+     * @return The [AutoCloseable] instance that can be used to close the trace section.
      */
     @JvmOverloads
     public suspend inline fun <T> traceCoroutine(
         category: String,
         name: String,
-        crossinline metadataBlock: MetadataHandle.() -> Unit = {},
+        token: CoroutinePropagationToken? = null,
+        crossinline metadataBlock: EventMetadata.() -> Unit = {},
         crossinline block: suspend () -> T,
     ): T {
-        if (!isEnabled) return block()
-        val tokenContextElement = tokenFromCoroutineContext()
-        val closeable =
-            beginSection(
-                category = category,
-                name = name,
-                token = tokenContextElement,
-                metadataBlock = metadataBlock,
-            )
-        return withContext(context = currentCoroutineContext() + tokenContextElement) {
-            try {
-                // Not using .use here to avoid a layer of indirection in the implementation of
-                // AutoCloseable.use on Android.
-                block()
-            } finally {
-                closeable.close()
+        val result =
+            if (!isEnabled) {
+                EmptyEventMetadataCloseable
+            } else {
+                beginCoroutineSection(
+                    category = category,
+                    name = name,
+                    token = token,
+                    metadataBlock = metadataBlock,
+                )
             }
+        // Not using .use here to avoid a layer of indirection in the implementation of
+        // AutoCloseable.use on Android.
+        try {
+            // If the coroutinePropagationToken needs to be installed then install it
+            // before dispatching the call to block(). This does bloat the amount of code
+            // being inlined in this function, but its worth doing to minimize the additional
+            // lambda allocation because of the use of withContext(...).
+            return if (result.coroutinePropagationToken.requiresInstall()) {
+                withContext(
+                    context = currentCoroutineContext() + result.coroutinePropagationToken
+                ) {
+                    block()
+                }
+            } else {
+                block()
+            }
+        } finally {
+            // Only have the tokenContextElement be relevant for the execution of the suspending
+            // `block` and not in this finally block.
+            result.closeable.close()
         }
     }
 }
