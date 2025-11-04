@@ -38,6 +38,8 @@ import android.view.accessibility.AccessibilityNodeProvider;
 
 import androidx.core.view.ViewCompatActivity;
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat.AccessibilityActionCompat;
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat.SelectionCompat;
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat.SelectionPositionCompat;
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat.TouchDelegateInfoCompat;
 import androidx.test.filters.SdkSuppress;
 import androidx.test.filters.SmallTest;
@@ -614,6 +616,66 @@ public class AccessibilityNodeInfoCompatTest extends
                     .SORT_DIRECTION_ASCENDING);
     }
 
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES_FULL.BAKLAVA_1)
+    @Test
+    public void testSelection() {
+        // Create a tree of nodes.
+        final Activity activity = mActivityTestRule.getActivity();
+        final View root = activity.findViewById(androidx.core.test.R.id.view);
+        assertThat(root).isNotNull();
+        root.setAccessibilityDelegate(new View.AccessibilityDelegate() {
+            @Override
+            public AccessibilityNodeProvider getAccessibilityNodeProvider(@NonNull View host) {
+                return new SelectionProviderTest(root);
+            }
+        });
+        AccessibilityNodeInfo containerNode = new AccessibilityNodeInfo(root, 1);
+        assertThat(containerNode).isNotNull();
+        AccessibilityNodeInfo helloNode = new AccessibilityNodeInfo(root, 2);
+        assertThat(helloNode).isNotNull();
+        AccessibilityNodeInfo worldNode = new AccessibilityNodeInfo(root, 3);
+        assertThat(worldNode).isNotNull();
+
+        // Create a multi-node selection.
+        containerNode.setQueryFromAppProcessEnabled(root, true);
+        AccessibilityNodeInfoCompat containerNodeCompat =
+                AccessibilityNodeInfoCompat.wrap(containerNode);
+        assertThat(containerNodeCompat.getSelection()).isNull();
+        AccessibilityNodeInfoCompat start = AccessibilityNodeInfoCompat.wrap(helloNode);
+        AccessibilityNodeInfoCompat end = AccessibilityNodeInfoCompat.wrap(worldNode);
+        SelectionCompat selection = new SelectionCompat(
+                        new SelectionPositionCompat(start, 0),
+                        new SelectionPositionCompat(end, 5));
+        containerNodeCompat.setSelection(selection);
+
+        // Verify selection is set properly.
+        assertThat(containerNodeCompat.getSelection()).isNotNull();
+        assertThat(containerNodeCompat.getSelection().getStart().getNode()).isNotNull();
+        assertThat(containerNodeCompat.getSelection().getEnd().getNode()).isNotNull();
+        assertThat(containerNodeCompat.getSelection().getStart().getNode().unwrap())
+                .isEqualTo(helloNode);
+        assertThat(containerNodeCompat.getSelection().getEnd().getNode().unwrap())
+                .isEqualTo(worldNode);
+        assertThat(containerNodeCompat.getSelection().getStart().getOffset()).isEqualTo(0);
+        assertThat(containerNodeCompat.getSelection().getEnd().getOffset()).isEqualTo(5);
+
+        // Test behavior when setting a null selection.
+        containerNodeCompat.setSelection(null);
+        assertThat(containerNodeCompat.getSelection()).isNull();
+    }
+
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES_FULL.BAKLAVA_1)
+    @SmallTest
+    @Test
+    public void testActionSetExtendedSelection() {
+        AccessibilityActionCompat actionCompat =
+                AccessibilityActionCompat.ACTION_SET_EXTENDED_SELECTION;
+        assertThat(actionCompat.getId()).isEqualTo(
+                android.R.id.accessibilityActionSetExtendedSelection);
+        assertThat(actionCompat.toString()).isEqualTo("AccessibilityActionCompat: "
+                + "ACTION_SET_EXTENDED_SELECTION");
+    }
+
     private static class LabelNodeProviderTest extends AccessibilityNodeProvider {
         static final int LABELED_ID = 1;
         static final int LABEL_ONE_ID = 2;
@@ -671,6 +733,40 @@ public class AccessibilityNodeInfoCompatTest extends
                 result.add(mLabeledNodeCompat.unwrap());
             }
             return result;
+        }
+    }
+
+    private static class SelectionProviderTest extends AccessibilityNodeProvider {
+        static final String CONTAINER_TEXT = "Container";
+        static final String HELLO_TEXT = "Hello";
+        static final String WORLD_TEXT = "world";
+
+        private final View mRoot;
+
+        SelectionProviderTest(View root) {
+            this.mRoot = root;
+        }
+
+        @Nullable
+        @Override
+        public AccessibilityNodeInfo createAccessibilityNodeInfo(int virtualViewId) {
+            final AccessibilityNodeInfo node;
+            // AccessibilityNodeInfo constructor used below is not available prior to Android R.
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                node = new AccessibilityNodeInfo(mRoot, virtualViewId);
+            } else {
+                return null;
+            }
+
+            if (virtualViewId == 1) {
+                node.setText(CONTAINER_TEXT);
+            } else if (virtualViewId == 2) {
+                node.setText(HELLO_TEXT);
+            } else if (virtualViewId == 3) {
+                node.setText(WORLD_TEXT);
+            }
+
+            return node;
         }
     }
 }
