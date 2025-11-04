@@ -33,11 +33,8 @@ import androidx.compose.material3.tokens.MotionSchemeKeyTokens
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.State
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
@@ -278,6 +275,7 @@ fun TriStateCheckbox(
     colors: CheckboxColors = CheckboxDefaults.colors(),
     interactionSource: MutableInteractionSource? = null,
 ) {
+    val isCheckboxStylingFixEnabled = ComposeMaterial3Flags.isCheckboxStylingFixEnabled
     val indication =
         if (isCheckboxStylingFixEnabled)
             ripple(
@@ -478,6 +476,7 @@ private fun CheckboxImpl(
     checkmarkStroke: Stroke,
     outlineStroke: Stroke,
 ) {
+    val isCheckboxStylingFixEnabled = ComposeMaterial3Flags.isCheckboxStylingFixEnabled
     val transition = updateTransition(value)
     val defaultAnimationSpec = MotionSchemeKeyTokens.DefaultSpatial.value<Float>()
     val checkDrawFraction =
@@ -583,6 +582,7 @@ private fun DrawScope.drawCheck(
     stroke: Stroke,
     drawingCache: CheckDrawingCache,
 ) {
+    val isCheckboxStylingFixEnabled = ComposeMaterial3Flags.isCheckboxStylingFixEnabled
     val width = size.width
     val checkCrossX = 0.4f
     val checkCrossY = if (isCheckboxStylingFixEnabled) 0.65f else 0.7f
@@ -958,17 +958,3 @@ private const val SnapAnimationDelay = 100
 private val CheckboxDefaultPadding = 2.dp
 private val CheckboxSize = 20.dp
 private val RadiusSize = 2.dp
-
-/**
- * Flag indicating checkbox style. When true, the checkbox will use the Material Design 3 styling.
- * This includes updated colors, and checkbox container sizing. When false, it uses the older
- * Material Design 2 styling. This flag is intended for temporary use during the migration.
- *
- * See the [Material Design 2 Checkboxes Specs](https://m2.material.io/components/checkboxes#specs)
- * and the [Material Design 3 Checkboxes Specs](https://m3.material.io/components/checkbox/specs).
- */
-@Suppress("GetterSetterNames")
-@get:Suppress("GetterSetterNames")
-@set:ExperimentalMaterial3Api
-@ExperimentalMaterial3Api
-var isCheckboxStylingFixEnabled by mutableStateOf(false)
