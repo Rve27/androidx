@@ -156,6 +156,7 @@ public class PerfettoTracer(context: TraceContext, name: String) :
         category: String,
         name: String,
         token: PropagationToken?,
+        isRoot: Boolean,
     ): EventMetadataCloseable {
         val tokenElement = token ?: tokenFromThreadContext()
         // Out of the box we don't support propagation at all outside of suspending contexts.
@@ -176,6 +177,7 @@ public class PerfettoTracer(context: TraceContext, name: String) :
         category: String,
         name: String,
         token: CoroutinePropagationToken?,
+        isRoot: Boolean,
     ): EventMetadataCloseable {
         val tokenElement = token ?: tokenFromCoroutineContext()
         return if (tokenElement == CoroutinePropagationUnsupportedToken) {
@@ -184,6 +186,7 @@ public class PerfettoTracer(context: TraceContext, name: String) :
                     category = category,
                     name = name,
                     token = PropagationUnsupportedToken,
+                    isRoot = isRoot,
                 )
             eventMetadataCloseable
         } else {
