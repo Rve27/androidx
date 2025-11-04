@@ -327,10 +327,10 @@ public class AccessibilityNodeInfoCompatTest extends
     public void testGetSetExpandedState() {
         AccessibilityNodeInfoCompat nodeCompat = obtainedWrappedNodeCompat();
         assertThat(nodeCompat.getExpandedState())
-                .isEqualTo(AccessibilityNodeInfo.EXPANDED_STATE_UNDEFINED);
-        nodeCompat.setExpandedState(AccessibilityNodeInfo.EXPANDED_STATE_PARTIAL);
+                .isEqualTo(AccessibilityNodeInfoCompat.EXPANDED_STATE_UNDEFINED);
+        nodeCompat.setExpandedState(AccessibilityNodeInfoCompat.EXPANDED_STATE_PARTIAL);
         assertThat(nodeCompat.getExpandedState())
-                .isEqualTo(AccessibilityNodeInfo.EXPANDED_STATE_PARTIAL);
+                .isEqualTo(AccessibilityNodeInfoCompat.EXPANDED_STATE_PARTIAL);
     }
 
     @Test
@@ -535,23 +535,28 @@ public class AccessibilityNodeInfoCompatTest extends
     @Test
     public void testGetSetChecked() {
         AccessibilityNodeInfoCompat nodeCompat = obtainedWrappedNodeCompat();
-        assertThat(nodeCompat.getChecked()).isEqualTo(AccessibilityNodeInfo.CHECKED_STATE_FALSE);
+        assertThat(nodeCompat.getChecked()).isEqualTo(
+                AccessibilityNodeInfoCompat.CHECKED_STATE_FALSE);
 
-        nodeCompat.setChecked(AccessibilityNodeInfo.CHECKED_STATE_TRUE);
-        assertThat(nodeCompat.getChecked()).isEqualTo(AccessibilityNodeInfo.CHECKED_STATE_TRUE);
+        nodeCompat.setChecked(AccessibilityNodeInfoCompat.CHECKED_STATE_TRUE);
+        assertThat(nodeCompat.getChecked()).isEqualTo(
+                AccessibilityNodeInfoCompat.CHECKED_STATE_TRUE);
 
-        nodeCompat.setChecked(AccessibilityNodeInfo.CHECKED_STATE_PARTIAL);
-        assertThat(nodeCompat.getChecked()).isEqualTo(AccessibilityNodeInfo.CHECKED_STATE_PARTIAL);
+        nodeCompat.setChecked(AccessibilityNodeInfoCompat.CHECKED_STATE_PARTIAL);
+        assertThat(nodeCompat.getChecked()).isEqualTo(
+                AccessibilityNodeInfoCompat.CHECKED_STATE_PARTIAL);
 
-        nodeCompat.setChecked(AccessibilityNodeInfo.CHECKED_STATE_FALSE);
-        assertThat(nodeCompat.getChecked()).isEqualTo(AccessibilityNodeInfo.CHECKED_STATE_FALSE);
+        nodeCompat.setChecked(AccessibilityNodeInfoCompat.CHECKED_STATE_FALSE);
+        assertThat(nodeCompat.getChecked()).isEqualTo(
+                AccessibilityNodeInfoCompat.CHECKED_STATE_FALSE);
     }
 
     @SmallTest
     @Test
     public void testSetChecked_throwsWithInvalidArgument() {
         AccessibilityNodeInfoCompat nodeCompat = obtainedWrappedNodeCompat();
-        assertThat(nodeCompat.getChecked()).isEqualTo(AccessibilityNodeInfo.CHECKED_STATE_FALSE);
+        assertThat(nodeCompat.getChecked()).isEqualTo(
+                AccessibilityNodeInfoCompat.CHECKED_STATE_FALSE);
 
         assertThrows(IllegalArgumentException.class, () -> nodeCompat.setChecked(4));
     }
@@ -585,6 +590,28 @@ public class AccessibilityNodeInfoCompatTest extends
                 LabelNodeProviderTest.LABEL_ONE)).isTrue();
         assertThat(TextUtils.equals(labeledByList.get(1).getText(),
                 LabelNodeProviderTest.LABEL_TWO)).isTrue();
+    }
+
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES_FULL.BAKLAVA_1)
+    @Test
+    public void testGetSortDirection() {
+        AccessibilityNodeInfoCompat.CollectionItemInfoCompat collectionItemInfoCompat =
+                new AccessibilityNodeInfoCompat.CollectionItemInfoCompat.Builder()
+                        .setColumnIndex(2)
+                        .setColumnSpan(1)
+                        .setColumnTitle("Column title")
+                        .setRowIndex(1)
+                        .setRowSpan(2)
+                        .setRowTitle("Row title")
+                        .setSelected(true)
+                        .setHeading(true)
+                        .setSortDirection(AccessibilityNodeInfoCompat
+                            .CollectionItemInfoCompat.SORT_DIRECTION_ASCENDING)
+                        .build();
+
+        assertThat(collectionItemInfoCompat.getSortDirection())
+                .isEqualTo(AccessibilityNodeInfoCompat.CollectionItemInfoCompat
+                    .SORT_DIRECTION_ASCENDING);
     }
 
     private static class LabelNodeProviderTest extends AccessibilityNodeProvider {
