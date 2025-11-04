@@ -1300,7 +1300,7 @@ class EntityTest {
     }
 
     @Test
-    fun anyEntity_useAfterDisposeRaisesIllegalStateException() {
+    fun anyEntity_useAfterDisposeRaisesDisposedException() {
         panelEntity.dispose()
         surfaceEntity.dispose()
         anchorEntity.dispose()
@@ -1309,19 +1309,19 @@ class EntityTest {
         gltfModelEntity.dispose()
         activitySpace.dispose()
 
-        assertFailsWith<IllegalStateException> { surfaceEntity.stereoMode }
-        assertFailsWith<IllegalStateException> { panelEntity.size }
-        assertFailsWith<IllegalStateException> { groupEntity.getScale() }
-        assertFailsWith<IllegalStateException> { activityPanelEntity.getPerceivedResolution() }
+        assertFailsWith<Entity.DisposedException> { surfaceEntity.stereoMode }
+        assertFailsWith<Entity.DisposedException> { panelEntity.sizeInPixels }
+        assertFailsWith<Entity.DisposedException> { groupEntity.getScale() }
+        assertFailsWith<Entity.DisposedException> { activityPanelEntity.getPerceivedResolution() }
 
-        assertFailsWith<IllegalStateException> { gltfModelEntity.getGltfModelBoundingBox() }
-        assertFailsWith<IllegalStateException> { gltfModelEntity.stopAnimation() }
-        assertFailsWith<IllegalStateException> { activitySpace.bounds }
+        assertFailsWith<Entity.DisposedException> { gltfModelEntity.getScale() }
+        assertFailsWith<Entity.DisposedException> { gltfModelEntity.setPose(Pose.Identity) }
+        assertFailsWith<Entity.DisposedException> { activitySpace.getAlpha() }
 
         val component = mock<Component>()
 
-        assertFailsWith<IllegalStateException> { panelEntity.addComponent(component) }
-        assertFailsWith<IllegalStateException> { panelEntity.removeComponent(component) }
+        assertFailsWith<Entity.DisposedException> { panelEntity.addComponent(component) }
+        assertFailsWith<Entity.DisposedException> { panelEntity.removeComponent(component) }
     }
 
     @Test
@@ -1428,5 +1428,35 @@ class EntityTest {
 
         // Verify that the mainPanelEntity's parent is now null.
         assertThat(mainPanel.parent).isNull()
+    }
+
+    @Test
+    fun isDisposed_falseForNewEntity() {
+        assertThat(panelEntity.isDisposed).isFalse()
+        assertThat(surfaceEntity.isDisposed).isFalse()
+        assertThat(anchorEntity.isDisposed).isFalse()
+        assertThat(groupEntity.isDisposed).isFalse()
+        assertThat(activityPanelEntity.isDisposed).isFalse()
+        assertThat(gltfModelEntity.isDisposed).isFalse()
+        assertThat(activitySpace.isDisposed).isFalse()
+    }
+
+    @Test
+    fun isDisposed_trueAfterDispose() {
+        panelEntity.dispose()
+        surfaceEntity.dispose()
+        anchorEntity.dispose()
+        groupEntity.dispose()
+        activityPanelEntity.dispose()
+        gltfModelEntity.dispose()
+        activitySpace.dispose()
+
+        assertThat(panelEntity.isDisposed).isTrue()
+        assertThat(surfaceEntity.isDisposed).isTrue()
+        assertThat(anchorEntity.isDisposed).isTrue()
+        assertThat(groupEntity.isDisposed).isTrue()
+        assertThat(activityPanelEntity.isDisposed).isTrue()
+        assertThat(gltfModelEntity.isDisposed).isTrue()
+        assertThat(activitySpace.isDisposed).isTrue()
     }
 }
