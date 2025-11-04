@@ -75,7 +75,7 @@ public class Scene : SessionConnector {
      * The [ActivitySpace] is a special entity that represents the space in which the application is
      * launched. It is the default parent of all entities in the scene.
      *
-     * The ActivitySpace is created automatically when the [Session] is created.
+     * The ActivitySpace is created automatically when the [androidx.xr.runtime.Session] is created.
      */
     public lateinit var activitySpace: ActivitySpace
         private set
@@ -220,8 +220,8 @@ public class Scene : SessionConnector {
         }
 
     /**
-     * Adds the given [Consumer] as a listener to be invoked when this [Session]'s spatial
-     * capabilities change.
+     * Adds the given [Consumer] as a listener to be invoked when this
+     * [androidx.xr.runtime.Session]'s spatial capabilities change.
      *
      * @param listener The Consumer to be invoked asynchronously, on the main thread. The set
      *   includes every currently-available [SpatialCapability].
@@ -231,8 +231,8 @@ public class Scene : SessionConnector {
     ): Unit = addSpatialCapabilitiesChangedListener(HandlerExecutor.mainThreadExecutor, listener)
 
     /**
-     * Adds the given [Consumer] as a listener to be invoked when this [Session]'s spatial
-     * capabilities change.
+     * Adds the given [Consumer] as a listener to be invoked when this
+     * [androidx.xr.runtime.Session]'s spatial capabilities change.
      *
      * @param callbackExecutor The [Executor] to run the listener on.
      * @param listener The Consumer to be invoked asynchronously on the given callbackExecutor. The
@@ -246,8 +246,8 @@ public class Scene : SessionConnector {
     }
 
     /**
-     * Releases the given [Consumer] from receiving updates when the [Session]'s [SpatialCapability]
-     * change.
+     * Releases the given [Consumer] from receiving updates when the [androidx.xr.runtime.Session]'s
+     * [SpatialCapability] change.
      *
      * The listeners are automatically released at the end of the Scene's lifecycle even if this
      * method is not explicitly called.

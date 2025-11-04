@@ -64,7 +64,7 @@ public class GltfModel internal constructor(internal val model: RtGltfModel) {
          * @param path The Path of the binary glTF (.glb) model to be loaded, relative to the
          *   application's `assets/` folder.
          * @return a [GltfModel] upon completion.
-         * @throws IllegalArgumentException if [path.isAbsolute] is true, as this method requires a
+         * @throws IllegalArgumentException if [Path.isAbsolute] is true, as this method requires a
          *   relative path.
          */
         @MainThread
