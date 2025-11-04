@@ -623,7 +623,6 @@ private class CheckDrawingCache(
  *
  * @param checkedCheckmarkColor color that will be used for the checkmark when checked
  * @param uncheckedCheckmarkColor color that will be used for the checkmark when unchecked
- * @param disabledCheckmarkColor color that will be used for the checkmark when disabled
  * @param checkedBoxColor the color that will be used for the box when checked
  * @param uncheckedBoxColor color that will be used for the box when unchecked
  * @param disabledCheckedBoxColor color that will be used for the box when disabled and checked
@@ -637,6 +636,7 @@ private class CheckDrawingCache(
  *   unchecked
  * @param disabledIndeterminateBorderColor color that will be used for the border when disabled and
  *   in an [ToggleableState.Indeterminate] state.
+ * @param disabledCheckmarkColor color that will be used for the checkmark when disabled
  * @constructor create an instance with arbitrary colors, see [CheckboxDefaults.colors] for the
  *   default implementation that follows Material specifications.
  */
@@ -645,7 +645,6 @@ class CheckboxColors
 constructor(
     val checkedCheckmarkColor: Color,
     val uncheckedCheckmarkColor: Color,
-    val disabledCheckmarkColor: Color,
     val checkedBoxColor: Color,
     val uncheckedBoxColor: Color,
     val disabledCheckedBoxColor: Color,
@@ -656,6 +655,7 @@ constructor(
     val disabledBorderColor: Color,
     val disabledUncheckedBorderColor: Color,
     val disabledIndeterminateBorderColor: Color,
+    val disabledCheckmarkColor: Color,
 ) {
     @Deprecated(
         message =
@@ -678,7 +678,6 @@ constructor(
     ) : this(
         checkedCheckmarkColor = checkedCheckmarkColor,
         uncheckedCheckmarkColor = uncheckedCheckmarkColor,
-        disabledCheckmarkColor = checkedCheckmarkColor,
         checkedBoxColor = checkedBoxColor,
         uncheckedBoxColor = uncheckedBoxColor,
         disabledCheckedBoxColor = disabledCheckedBoxColor,
@@ -689,6 +688,7 @@ constructor(
         disabledBorderColor = disabledBorderColor,
         disabledUncheckedBorderColor = disabledUncheckedBorderColor,
         disabledIndeterminateBorderColor = disabledIndeterminateBorderColor,
+        disabledCheckmarkColor = checkedCheckmarkColor,
     )
 
     /**
@@ -715,19 +715,27 @@ constructor(
         disabledIndeterminateBorderColor: Color = this.disabledIndeterminateBorderColor,
     ) =
         CheckboxColors(
-            checkedCheckmarkColor.takeOrElse { this.checkedCheckmarkColor },
-            uncheckedCheckmarkColor.takeOrElse { this.uncheckedCheckmarkColor },
-            checkedCheckmarkColor.takeOrElse { this.checkedCheckmarkColor },
-            checkedBoxColor.takeOrElse { this.checkedBoxColor },
-            uncheckedBoxColor.takeOrElse { this.uncheckedBoxColor },
-            disabledCheckedBoxColor.takeOrElse { this.disabledCheckedBoxColor },
-            disabledUncheckedBoxColor.takeOrElse { this.disabledUncheckedBoxColor },
-            disabledIndeterminateBoxColor.takeOrElse { this.disabledIndeterminateBoxColor },
-            checkedBorderColor.takeOrElse { this.checkedBorderColor },
-            uncheckedBorderColor.takeOrElse { this.uncheckedBorderColor },
-            disabledBorderColor.takeOrElse { this.disabledBorderColor },
-            disabledUncheckedBorderColor.takeOrElse { this.disabledUncheckedBorderColor },
-            disabledIndeterminateBorderColor.takeOrElse { this.disabledIndeterminateBorderColor },
+            checkedCheckmarkColor = checkedCheckmarkColor.takeOrElse { this.checkedCheckmarkColor },
+            uncheckedCheckmarkColor =
+                uncheckedCheckmarkColor.takeOrElse { this.uncheckedCheckmarkColor },
+            checkedBoxColor = checkedBoxColor.takeOrElse { this.checkedBoxColor },
+            uncheckedBoxColor = uncheckedBoxColor.takeOrElse { this.uncheckedBoxColor },
+            disabledCheckedBoxColor =
+                disabledCheckedBoxColor.takeOrElse { this.disabledCheckedBoxColor },
+            disabledUncheckedBoxColor =
+                disabledUncheckedBoxColor.takeOrElse { this.disabledUncheckedBoxColor },
+            disabledIndeterminateBoxColor =
+                disabledIndeterminateBoxColor.takeOrElse { this.disabledIndeterminateBoxColor },
+            checkedBorderColor = checkedBorderColor.takeOrElse { this.checkedBorderColor },
+            uncheckedBorderColor = uncheckedBorderColor.takeOrElse { this.uncheckedBorderColor },
+            disabledBorderColor = disabledBorderColor.takeOrElse { this.disabledBorderColor },
+            disabledUncheckedBorderColor =
+                disabledUncheckedBorderColor.takeOrElse { this.disabledUncheckedBorderColor },
+            disabledIndeterminateBorderColor =
+                disabledIndeterminateBorderColor.takeOrElse {
+                    this.disabledIndeterminateBorderColor
+                },
+            disabledCheckmarkColor = checkedCheckmarkColor.takeOrElse { this.checkedCheckmarkColor },
         )
 
     /**
@@ -737,7 +745,6 @@ constructor(
     fun copy(
         checkedCheckmarkColor: Color = this.checkedCheckmarkColor,
         uncheckedCheckmarkColor: Color = this.uncheckedCheckmarkColor,
-        disabledCheckmarkColor: Color = this.disabledCheckmarkColor,
         checkedBoxColor: Color = this.checkedBoxColor,
         uncheckedBoxColor: Color = this.uncheckedBoxColor,
         disabledCheckedBoxColor: Color = this.disabledCheckedBoxColor,
@@ -748,21 +755,31 @@ constructor(
         disabledBorderColor: Color = this.disabledBorderColor,
         disabledUncheckedBorderColor: Color = this.disabledUncheckedBorderColor,
         disabledIndeterminateBorderColor: Color = this.disabledIndeterminateBorderColor,
+        disabledCheckmarkColor: Color = this.disabledCheckmarkColor,
     ) =
         CheckboxColors(
-            checkedCheckmarkColor.takeOrElse { this.checkedCheckmarkColor },
-            uncheckedCheckmarkColor.takeOrElse { this.uncheckedCheckmarkColor },
-            disabledCheckmarkColor.takeOrElse { this.disabledCheckmarkColor },
-            checkedBoxColor.takeOrElse { this.checkedBoxColor },
-            uncheckedBoxColor.takeOrElse { this.uncheckedBoxColor },
-            disabledCheckedBoxColor.takeOrElse { this.disabledCheckedBoxColor },
-            disabledUncheckedBoxColor.takeOrElse { this.disabledUncheckedBoxColor },
-            disabledIndeterminateBoxColor.takeOrElse { this.disabledIndeterminateBoxColor },
-            checkedBorderColor.takeOrElse { this.checkedBorderColor },
-            uncheckedBorderColor.takeOrElse { this.uncheckedBorderColor },
-            disabledBorderColor.takeOrElse { this.disabledBorderColor },
-            disabledUncheckedBorderColor.takeOrElse { this.disabledUncheckedBorderColor },
-            disabledIndeterminateBorderColor.takeOrElse { this.disabledIndeterminateBorderColor },
+            checkedCheckmarkColor = checkedCheckmarkColor.takeOrElse { this.checkedCheckmarkColor },
+            uncheckedCheckmarkColor =
+                uncheckedCheckmarkColor.takeOrElse { this.uncheckedCheckmarkColor },
+            checkedBoxColor = checkedBoxColor.takeOrElse { this.checkedBoxColor },
+            uncheckedBoxColor = uncheckedBoxColor.takeOrElse { this.uncheckedBoxColor },
+            disabledCheckedBoxColor =
+                disabledCheckedBoxColor.takeOrElse { this.disabledCheckedBoxColor },
+            disabledUncheckedBoxColor =
+                disabledUncheckedBoxColor.takeOrElse { this.disabledUncheckedBoxColor },
+            disabledIndeterminateBoxColor =
+                disabledIndeterminateBoxColor.takeOrElse { this.disabledIndeterminateBoxColor },
+            checkedBorderColor = checkedBorderColor.takeOrElse { this.checkedBorderColor },
+            uncheckedBorderColor = uncheckedBorderColor.takeOrElse { this.uncheckedBorderColor },
+            disabledBorderColor = disabledBorderColor.takeOrElse { this.disabledBorderColor },
+            disabledUncheckedBorderColor =
+                disabledUncheckedBorderColor.takeOrElse { this.disabledUncheckedBorderColor },
+            disabledIndeterminateBorderColor =
+                disabledIndeterminateBorderColor.takeOrElse {
+                    this.disabledIndeterminateBorderColor
+                },
+            disabledCheckmarkColor =
+                disabledCheckmarkColor.takeOrElse { this.disabledCheckmarkColor },
         )
 
     /**
