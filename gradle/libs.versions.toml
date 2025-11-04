@@ -28,7 +28,6 @@ annotationVersion = "1.7.0"
 atomicFu = "0.28.0"
 autoService = "1.0-rc6"
 autoValue = "1.6.3"
-binaryCompatibilityValidator = "0.16.2"
 builder = "8.6.0-alpha05"
 byteBuddy = "1.14.9"
 asm = "9.7"
@@ -123,8 +122,6 @@ assertj = { module = "org.assertj:assertj-core", version = "3.23.1" }
 asm = { module = "org.ow2.asm:asm", version.ref = "asm"}
 asmCommons = { module = "org.ow2.asm:asm-commons", version.ref = "asm" }
 asmUtil = { module = "org.ow2.asm:asm-util", version.ref = "asm" }
-jetbrainsBinaryCompatibilityValidator = { module = "org.jetbrains.kotlinx:binary-compatibility-validator", version.ref = "binaryCompatibilityValidator" }
-binaryCompatibilityValidator = { module = "org.jetbrains.kotlinx.binary-compatibility-validator:org.jetbrains.kotlinx.binary-compatibility-validator.gradle.plugin", version.ref = "binaryCompatibilityValidator"}
 builder = { module = "com.android.tools.build:builder", version.ref = "builder" }
 byteBuddy = { module = "net.bytebuddy:byte-buddy", version.ref = "byteBuddy" }
 byteBuddyAgent = { module = "net.bytebuddy:byte-buddy-agent", version.ref = "byteBuddy" }
@@ -189,6 +186,7 @@ guavaTestlib = { module = "com.google.guava:guava-testlib", version.ref = "guava
 gradleIncapHelper = { module = "net.ltgt.gradle.incap:incap", version.ref = "incap" }
 gradleIncapHelperProcessor = { module = "net.ltgt.gradle.incap:incap-processor", version.ref = "incap" }
 intellijKotlinCompiler = { module = "com.android.tools.external.com-intellij:kotlin-compiler", version.ref = "androidLint" }
+kotlinAbiTools = { module = "org.jetbrains.kotlin:abi-tools", version.ref = "kotlin" }
 kotlinNativeUtils = { module = "org.jetbrains.kotlin:kotlin-native-utils", version.ref = "kotlinNativeUtils" }
 kotlinGradlePluginApi = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin-api", version.ref = "kotlinGradlePluginApi" }
 kotlinToolingCore = { module = "org.jetbrains.kotlin:kotlin-tooling-core", version.ref = "kotlinToolingCore" }
