@@ -20,7 +20,7 @@ package androidx.tracing.driver
  * Makes it possible to associate debug metadata & categories to a [TraceEvent]. Typically obtained
  * by a call to [Tracer.beginSectionWithMetadata].
  */
-public abstract class MetadataHandle internal constructor() {
+public abstract class EventMetadata internal constructor() {
 
     /** Adds a metadata entry where the type of the [value] is an [Boolean]. */
     public abstract fun addMetadataEntry(name: String, value: Boolean)
