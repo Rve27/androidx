@@ -78,6 +78,9 @@ public abstract class Tracer(
      *   trace `flow` (connection) between trace sections must share an ID, so each `Long` must be
      *   unique to each `flow` in the trace. When a `null` value is specified, the [Tracer]
      *   implementation obtains the token by calling [tokenFromThreadContext].
+     * @param isRoot An hint that tells the [Tracer] that this trace section is an entry point that
+     *   all subsequent trace spans can be attributed to. Some [Tracer] implementations treat trace
+     *   sections as a forest, and require that there is at least one top level root span.
      * @return A [EventMetadataCloseable] instance that can be used to add additional metadata and
      *   close the trace section.
      */
@@ -86,6 +89,7 @@ public abstract class Tracer(
         category: String,
         name: String,
         token: PropagationToken?,
+        isRoot: Boolean,
     ): EventMetadataCloseable
 
     /**
@@ -105,6 +109,9 @@ public abstract class Tracer(
      *   and end of each trace `flow` (connection) between trace sections must share an ID, so each
      *   `Long` must be unique to each `flow` in the trace. When a `null` value is specified, the
      *   [Tracer] obtains a token by calling [tokenFromCoroutineContext].
+     * @param isRoot An hint that tells the [Tracer] that this trace section is an entry point that
+     *   all subsequent trace spans can be attributed to. Some [Tracer] implementations treat trace
+     *   sections as a forest, and require that there is at least one top level root span.
      * @return A [EventMetadataCloseable] instance that can be used to add additional metadata and
      *   close the trace section.
      */
@@ -113,6 +120,7 @@ public abstract class Tracer(
         category: String,
         name: String,
         token: CoroutinePropagationToken?,
+        isRoot: Boolean,
     ): EventMetadataCloseable
 
     /**
@@ -124,26 +132,92 @@ public abstract class Tracer(
     /** Emits a zero duration section to the Trace with the provided [name]. */
     @DelicateTracingApi public abstract fun instant(name: String)
 
+    /**
+     * Writes a trace message indicating that a given section of code has begun.
+     *
+     * Should be followed by a corresponding call to [AutoCloseable.close] returned by the call to
+     * `beginSection`. If the corresponding [AutoCloseable.close] is missing, the section will be
+     * present in the trace, but non-terminating (generally shown as fading out to the left).
+     *
+     * @param category The category that the trace section belongs to. Apps can potentially filter
+     *   sections to the categories that they are interested in looking into.
+     * @param name The name of the code section to appear in the trace.
+     * @param token An optional [PropagationToken] that can be used for context propagation. The
+     *   default implementation uses a list of [Long]s which will connect this trace section to
+     *   other sections in the trace, potentially on different Tracks. The start and end of each
+     *   trace `flow` (connection) between trace sections must share an ID, so each `Long` must be
+     *   unique to each `flow` in the trace. When a `null` value is specified, the [Tracer]
+     *   implementation obtains the token by calling [tokenFromThreadContext].
+     * @param isRoot An hint that tells the [Tracer] that this trace section is an entry point that
+     *   all subsequent trace spans can be attributed to. Some [Tracer] implementations treat trace
+     *   sections as a forest, and require that there is at least one top level root span.
+     * @param metadataBlock The lambda that can be used to decorate the [TraceEvent] instance with
+     *   additional debug annotations. Return `true` in the block if you intend to dispatch the
+     *   [TraceEvent] after all metadata has been added. For e.g. applications might want to filter
+     *   [TraceEvent]s scoped to well known categories.
+     * @return A [EventMetadataCloseable] instance that can be used to add additional metadata and
+     *   close the trace section.
+     */
     public inline fun beginSection(
         category: String,
         name: String,
         token: PropagationToken?,
+        isRoot: Boolean = false,
         crossinline metadataBlock: EventMetadata.() -> Unit,
     ): AutoCloseable {
-        val result = beginSectionWithMetadata(category = category, name = name, token = token)
+        val result =
+            beginSectionWithMetadata(
+                category = category,
+                name = name,
+                token = token,
+                isRoot = isRoot,
+            )
         metadataBlock(result.metadata)
         result.metadata.dispatchToTraceSink()
         return result.closeable
     }
 
+    /**
+     * Writes a trace message indicating that a given suspending section of code has begun.
+     *
+     * Should be followed by a corresponding call to [AutoCloseable.close] returned by the call to
+     * `beginCoroutineSectionWithMetadata`. If the corresponding [AutoCloseable.close] is missing,
+     * the section will be present in the trace, but non-terminating (generally shown as fading out
+     * to the left).
+     *
+     * @param category The category that the trace section belongs to. Apps can potentially filter
+     *   sections to the categories that they are interested in looking into.
+     * @param name The name of the code section to appear in the trace.
+     * @param token An optional [CoroutinePropagationToken] that can be used for context
+     *   propagation. The default implementation uses a list of [Long]s which will connect this
+     *   trace section to other sections in the trace, potentially on different Tracks. The start
+     *   and end of each trace `flow` (connection) between trace sections must share an ID, so each
+     *   `Long` must be unique to each `flow` in the trace. When a `null` value is specified, the
+     *   [Tracer] obtains a token by calling [tokenFromCoroutineContext].
+     * @param isRoot A hint that tells the [Tracer] that this trace section is an entry point that
+     *   all subsequent trace spans can be attributed to. Some [Tracer] implementations treat trace
+     *   sections as a forest, and require that there is at least one top level root span.
+     * @param metadataBlock The lambda that can be used to decorate the [TraceEvent] instance with
+     *   additional debug annotations. Return `true` in the block if you intend to dispatch the
+     *   [TraceEvent] after all metadata has been added. For e.g. applications might want to filter
+     *   [TraceEvent]s scoped to well known categories.
+     * @return A [EventMetadataCloseable] instance that can be used to add additional metadata and
+     *   close the trace section.
+     */
     public suspend inline fun beginCoroutineSection(
         category: String,
         name: String,
         token: CoroutinePropagationToken?,
+        isRoot: Boolean = false,
         crossinline metadataBlock: EventMetadata.() -> Unit,
     ): EventMetadataCloseable {
         val result =
-            beginCoroutineSectionWithMetadata(category = category, name = name, token = token)
+            beginCoroutineSectionWithMetadata(
+                category = category,
+                name = name,
+                token = token,
+                isRoot = isRoot,
+            )
         metadataBlock(result.metadata)
         result.metadata.dispatchToTraceSink()
         return result
@@ -157,6 +231,9 @@ public abstract class Tracer(
      * @param name The name of the trace section.
      * @param token The optional [PropagationToken] instance to use for context propagation. This
      *   defaults to the token returned by [tokenFromThreadContext].
+     * @param isRoot An hint that tells the [Tracer] that this trace section is an entry point that
+     *   all subsequent trace spans can be attributed to. Some [Tracer] implementations treat trace
+     *   sections as a forest, and require that there is at least one top level root span.
      * @param metadataBlock The lambda that can be used to decorate the [TraceEvent] instance with
      *   additional debug annotations. Return `true` in the block if you intend to dispatch the
      *   [TraceEvent] after all metadata has been added. For e.g. applications might want to filter
@@ -169,6 +246,7 @@ public abstract class Tracer(
         category: String,
         name: String,
         token: PropagationToken? = null,
+        isRoot: Boolean = false,
         crossinline metadataBlock: EventMetadata.() -> Unit = {},
         crossinline block: () -> T,
     ): T {
@@ -205,6 +283,9 @@ public abstract class Tracer(
      *   implementation of context propagation was to distinguish between job executions that are
      *   well scoped vs. fire and forget. When `null`, the [Tracer] instance delegates to the
      *   implementation of [tokenFromCoroutineContext].
+     * @param isRoot An hint that tells the [Tracer] that this trace section is an entry point that
+     *   all subsequent trace spans can be attributed to. Some [Tracer] implementations treat trace
+     *   sections as a forest, and require that there is at least one top level root span.
      * @param metadataBlock The lambda that can be used to decorate the [TraceEvent] instance with
      *   additional debug annotations. Return `true` in the block if you intend to dispatch the
      *   [TraceEvent] after all metadata has been added. For e.g. applications might want to filter
@@ -217,6 +298,7 @@ public abstract class Tracer(
         category: String,
         name: String,
         token: CoroutinePropagationToken? = null,
+        isRoot: Boolean = false,
         crossinline metadataBlock: EventMetadata.() -> Unit = {},
         crossinline block: suspend () -> T,
     ): T {
