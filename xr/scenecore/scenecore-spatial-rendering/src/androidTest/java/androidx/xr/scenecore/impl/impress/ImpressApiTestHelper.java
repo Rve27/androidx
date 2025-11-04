@@ -32,5 +32,35 @@ final class ImpressApiTestHelper {
 
     static native void nativeSetLoadGltfAssetFailure(String message);
 
+    static native void nativeSetExpectedLoadGltfAssetTestPattern(int size, String key);
+
+    static native void nativeSetExpectedReleaseGltfAsset(long token);
+
+    static native void nativeSetExpectedInstanceGltfModel(long token, boolean enableCollider);
+
+    static native void nativeSetInstanceGltfModelSuccess(int nodeId);
+
+    static native void nativeSetExpectedSetGltfModelColliderEnabled(
+            int nodeId, boolean enableCollider);
+
+    static native void nativeSetExpectedAnimateGltfModel(
+            int nodeId, String animationName, boolean loop);
+
+    static native void nativeSetAnimateGltfModelSuccess();
+
+    static native void nativeSetAnimateGltfModelFailure(String message);
+
+    static native void nativeSetExpectedStopGltfModelAnimation(int nodeId);
+
+    static native void nativeSetExpectedGetGltfModelLocalBounds(int nodeId);
+
+    static native void nativeSetGetGltfModelLocalBoundsSuccess(float[] center, float[] halfExtents);
+
+    static native void nativeSetExpectedSetMaterialOverride(
+            int nodeId, long materialHandle, String nodeName, int primitiveIndex);
+
+    static native void nativeSetExpectedClearMaterialOverride(
+            int nodeId, String nodeName, int primitiveIndex);
+
     private ImpressApiTestHelper() {}
 }
