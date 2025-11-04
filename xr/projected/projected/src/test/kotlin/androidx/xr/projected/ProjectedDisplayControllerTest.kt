@@ -66,6 +66,7 @@ import org.robolectric.util.ReflectionHelpers.ClassParameter
 @Config(sdk = [Build.VERSION_CODES.UPSIDE_DOWN_CAKE])
 @RunWith(AndroidJUnit4::class)
 @SdkSuppress(minSdkVersion = Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
+@OptIn(ExperimentalProjectedApi::class)
 class ProjectedDisplayControllerTest {
 
     private val mockProjectedService = mock<IProjectedService>()
@@ -386,6 +387,7 @@ class ProjectedDisplayControllerTest {
 private class TestActivity : Activity()
 
 @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
+@OptIn(ExperimentalProjectedApi::class)
 private class TestProjectedDeviceActivity : Activity() {
 
     private lateinit var virtualDeviceManager: VirtualDeviceManager
