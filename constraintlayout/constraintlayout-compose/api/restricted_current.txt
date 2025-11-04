@@ -261,8 +261,6 @@ package androidx.constraintlayout.compose {
     property @kotlin.PublishedApi internal final androidx.constraintlayout.core.parser.CLObject containerObject;
     property @kotlin.PublishedApi internal final int helpersHashCode;
     property @Deprecated protected final java.util.List<kotlin.jvm.functions.Function1<androidx.constraintlayout.compose.State,kotlin.Unit>> tasks;
-    field @kotlin.PublishedApi internal final androidx.constraintlayout.core.parser.CLObject containerObject;
-    field @kotlin.PublishedApi internal int helpersHashCode;
   }
 
   @androidx.compose.runtime.Stable public static final class ConstraintLayoutBaseScope.BaselineAnchor {
@@ -332,7 +330,6 @@ package androidx.constraintlayout.compose {
     method @InaccessibleFromKotlin @kotlin.PublishedApi internal boolean isAnimateChanges();
     method @InaccessibleFromKotlin @kotlin.PublishedApi internal void setAnimateChanges(boolean);
     property @kotlin.PublishedApi internal boolean isAnimateChanges;
-    field @kotlin.PublishedApi internal boolean isAnimateChanges;
   }
 
   public final class ConstraintLayoutScope.ConstrainedLayoutReferences {
@@ -1195,7 +1192,6 @@ package androidx.constraintlayout.compose {
     method @InaccessibleFromKotlin @kotlin.PublishedApi internal static void setDesignInfoProvider(androidx.compose.ui.semantics.SemanticsPropertyReceiver, androidx.constraintlayout.compose.DesignInfoProvider);
     property public static androidx.compose.ui.semantics.SemanticsPropertyKey<androidx.constraintlayout.compose.DesignInfoProvider> DesignInfoDataKey;
     property @kotlin.PublishedApi internal static androidx.constraintlayout.compose.DesignInfoProvider androidx.compose.ui.semantics.SemanticsPropertyReceiver.designInfoProvider;
-    field @kotlin.PublishedApi internal static final androidx.compose.ui.semantics.SemanticsPropertyKey<androidx.constraintlayout.compose.DesignInfoProvider> designInfoProvider$delegate;
   }
 
   @SuppressCompatibility @androidx.compose.runtime.Immutable @androidx.constraintlayout.compose.ExperimentalMotionApi public interface Transition {

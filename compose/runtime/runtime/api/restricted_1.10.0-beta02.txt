@@ -270,17 +270,11 @@ package androidx.compose.runtime {
     property @kotlin.PublishedApi internal static Object reference;
     property @kotlin.PublishedApi internal static int referenceKey;
     property @kotlin.PublishedApi internal static int reuseKey;
-    field @kotlin.PublishedApi internal static final Object compositionLocalMap;
     field @kotlin.PublishedApi internal static final int compositionLocalMapKey = 202; // 0xca
-    field @kotlin.PublishedApi internal static final Object invocation;
     field @kotlin.PublishedApi internal static final int invocationKey = 200; // 0xc8
-    field @kotlin.PublishedApi internal static final Object provider;
     field @kotlin.PublishedApi internal static final int providerKey = 201; // 0xc9
-    field @kotlin.PublishedApi internal static final Object providerMaps;
     field @kotlin.PublishedApi internal static final int providerMapsKey = 204; // 0xcc
-    field @kotlin.PublishedApi internal static final Object providerValues;
     field @kotlin.PublishedApi internal static final int providerValuesKey = 203; // 0xcb
-    field @kotlin.PublishedApi internal static final Object reference;
     field @kotlin.PublishedApi internal static final int referenceKey = 206; // 0xce
     field @kotlin.PublishedApi internal static final int reuseKey = 207; // 0xcf
   }
@@ -846,7 +840,7 @@ package androidx.compose.runtime {
 package androidx.compose.runtime.collection {
 
   public final class MutableVector<T> implements java.util.RandomAccess {
-    ctor @kotlin.PublishedApi internal MutableVector(@kotlin.PublishedApi T?[] content, int size);
+    ctor @kotlin.PublishedApi internal MutableVector(T?[] content, int size);
     method public void add(int index, T element);
     method public boolean add(T element);
     method public inline boolean addAll(androidx.compose.runtime.collection.MutableVector<T> elements);
@@ -918,6 +912,7 @@ package androidx.compose.runtime.collection {
     property public inline kotlin.ranges.IntRange indices;
     property public inline int lastIndex;
     property public int size;
+    field @kotlin.PublishedApi internal T?[] content;
   }
 
   public final class MutableVectorKt {
@@ -1187,8 +1182,6 @@ package androidx.compose.runtime.snapshots {
     method @kotlin.PublishedApi internal static <T extends androidx.compose.runtime.snapshots.StateRecord> T writableRecord(T, androidx.compose.runtime.snapshots.StateObject state, androidx.compose.runtime.snapshots.Snapshot snapshot);
     property @kotlin.PublishedApi internal static Object lock;
     property @kotlin.PublishedApi internal static androidx.compose.runtime.snapshots.Snapshot snapshotInitializer;
-    field @kotlin.PublishedApi internal static final Object lock;
-    field @kotlin.PublishedApi internal static final androidx.compose.runtime.snapshots.Snapshot snapshotInitializer;
   }
 
   public interface SnapshotMutableState<T> extends androidx.compose.runtime.MutableState<T> {

@@ -47,7 +47,6 @@ package androidx.compose.ui.graphics {
     method @BytecodeOnly public android.graphics.Region.Op toRegionOp--7u2Bmg(int);
     method public void translate(float dx, float dy);
     property @kotlin.PublishedApi internal android.graphics.Canvas internalCanvas;
-    field @kotlin.PublishedApi internal android.graphics.Canvas internalCanvas;
   }
 
   public final class AndroidCanvas_androidKt {
@@ -426,7 +425,6 @@ package androidx.compose.ui.graphics {
     method public inline void drawInto(android.graphics.Canvas targetCanvas, kotlin.jvm.functions.Function1<? super androidx.compose.ui.graphics.Canvas,kotlin.Unit> block);
     method @InaccessibleFromKotlin @kotlin.PublishedApi internal androidx.compose.ui.graphics.AndroidCanvas getAndroidCanvas();
     property @kotlin.PublishedApi internal androidx.compose.ui.graphics.AndroidCanvas androidCanvas;
-    field @kotlin.PublishedApi internal final androidx.compose.ui.graphics.AndroidCanvas androidCanvas;
   }
 
   public final class CanvasKt {
@@ -1672,7 +1670,6 @@ package androidx.compose.ui.graphics.drawscope {
     property @kotlin.PublishedApi internal androidx.compose.ui.graphics.drawscope.CanvasDrawScope.DrawParams drawParams;
     property public float fontScale;
     property public androidx.compose.ui.unit.LayoutDirection layoutDirection;
-    field @kotlin.PublishedApi internal final androidx.compose.ui.graphics.drawscope.CanvasDrawScope.DrawParams drawParams;
   }
 
   @kotlin.PublishedApi internal static final class CanvasDrawScope.DrawParams {

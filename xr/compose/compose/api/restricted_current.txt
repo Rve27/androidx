@@ -4,7 +4,6 @@ package androidx.xr.compose.platform {
   public final class LocalCoreEntityKt {
     method @InaccessibleFromKotlin @kotlin.PublishedApi internal static androidx.compose.runtime.ProvidableCompositionLocal<androidx.xr.compose.subspace.layout.OpaqueEntity?> getLocalOpaqueEntity();
     property @kotlin.PublishedApi internal static androidx.compose.runtime.ProvidableCompositionLocal<androidx.xr.compose.subspace.layout.OpaqueEntity?> LocalOpaqueEntity;
-    field @kotlin.PublishedApi internal static final androidx.compose.runtime.ProvidableCompositionLocal<androidx.xr.compose.subspace.layout.OpaqueEntity?> LocalOpaqueEntity;
   }
 
   public final class LocalSessionKt {

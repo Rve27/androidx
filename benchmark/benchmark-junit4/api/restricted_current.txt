@@ -15,7 +15,6 @@ package androidx.benchmark.junit4 {
     method @InaccessibleFromKotlin @kotlin.PublishedApi internal void setTestDefinition(androidx.benchmark.TestDefinition?);
     property public androidx.benchmark.MicrobenchmarkConfig config;
     property @kotlin.PublishedApi internal androidx.benchmark.TestDefinition? testDefinition;
-    field @kotlin.PublishedApi internal androidx.benchmark.TestDefinition? testDefinition;
   }
 
   public final class BenchmarkRule.Scope extends androidx.benchmark.MicrobenchmarkScope {

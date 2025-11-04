@@ -133,7 +133,6 @@ package androidx.compose.foundation.layout {
     method @BytecodeOnly @androidx.compose.runtime.Composable @kotlin.PublishedApi internal static androidx.compose.ui.layout.MeasurePolicy columnMeasurePolicy(androidx.compose.foundation.layout.Arrangement.Vertical, androidx.compose.ui.Alignment.Horizontal, androidx.compose.runtime.Composer?, int);
     method @InaccessibleFromKotlin @kotlin.PublishedApi internal static androidx.compose.ui.layout.MeasurePolicy getDefaultColumnMeasurePolicy();
     property @kotlin.PublishedApi internal static androidx.compose.ui.layout.MeasurePolicy DefaultColumnMeasurePolicy;
-    field @kotlin.PublishedApi internal static final androidx.compose.ui.layout.MeasurePolicy DefaultColumnMeasurePolicy;
   }
 
   @androidx.compose.foundation.layout.LayoutScopeMarker @androidx.compose.runtime.Immutable @kotlin.jvm.JvmDefaultWithCompatibility public interface ColumnScope {
@@ -404,7 +403,6 @@ package androidx.compose.foundation.layout {
     method @KotlinOnly @androidx.compose.runtime.Composable @kotlin.PublishedApi internal static androidx.compose.ui.layout.MeasurePolicy rowMeasurePolicy(androidx.compose.foundation.layout.Arrangement.Horizontal horizontalArrangement, androidx.compose.ui.Alignment.Vertical verticalAlignment);
     method @BytecodeOnly @androidx.compose.runtime.Composable @kotlin.PublishedApi internal static androidx.compose.ui.layout.MeasurePolicy rowMeasurePolicy(androidx.compose.foundation.layout.Arrangement.Horizontal, androidx.compose.ui.Alignment.Vertical, androidx.compose.runtime.Composer?, int);
     property @kotlin.PublishedApi internal static androidx.compose.ui.layout.MeasurePolicy DefaultRowMeasurePolicy;
-    field @kotlin.PublishedApi internal static final androidx.compose.ui.layout.MeasurePolicy DefaultRowMeasurePolicy;
   }
 
   @androidx.compose.foundation.layout.LayoutScopeMarker @androidx.compose.runtime.Immutable @kotlin.jvm.JvmDefaultWithCompatibility public interface RowScope {
