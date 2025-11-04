@@ -16,25 +16,34 @@
 
 package androidx.pdf.ink.view
 
-import android.view.View
+import android.content.Context
 import android.view.ViewGroup.LayoutParams
 import androidx.pdf.PdfTestActivity
 import androidx.pdf.ink.R
+import androidx.pdf.ink.util.setSliderValue
+import androidx.pdf.ink.util.withSliderValue
 import androidx.pdf.ink.view.tool.AnnotationToolView
+import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso.onIdle
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom
+import androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.isEnabled
+import androidx.test.espresso.matcher.ViewMatchers.isSelected
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
+import com.google.android.material.slider.Slider
 import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertTrue
 import kotlin.test.assertNotNull
+import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.not
+import org.junit.After
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -44,6 +53,12 @@ import org.junit.runner.RunWith
 class AnnotationToolbarTest {
 
     @get:Rule val activityRule = ActivityScenarioRule(PdfTestActivity::class.java)
+
+    @After
+    fun tearDown() {
+        // Reset the on create callback
+        PdfTestActivity.onCreateCallback = {}
+    }
 
     @Test
     fun testPenButtonClicked_whenPenToolIsSelected() {
@@ -227,6 +242,49 @@ class AnnotationToolbarTest {
         onView(withId(R.id.redo_button)).check(matches(isEnabled()))
     }
 
+    @Test
+    fun testAnnotationToolbar_restoresStateOnConfigChange() {
+        PdfTestActivity.onCreateCallback = { activity ->
+            activity.container.addView(
+                createToolbar(activity),
+                LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT),
+            )
+        }
+
+        with(ActivityScenario.launch(PdfTestActivity::class.java)) {
+            // select highlighter tool
+            onView(withId(R.id.highlighter_button)).perform(click())
+            onView(withId(R.id.highlighter_button)).check(matches(isSelected()))
+            // Click again to show the brush slider
+            onView(withId(R.id.highlighter_button)).perform(click())
+            // Verify the container (BrushSizeSelectorView) is displayed
+            onView(withId(R.id.brush_size_selector)).check(matches(isDisplayed()))
+
+            // Slide the brush slider to a new value (e.g., 3.0f)
+            onView(
+                    allOf(
+                        isAssignableFrom(Slider::class.java),
+                        isDescendantOfA(withId(R.id.brush_size_selector)),
+                    )
+                )
+                .perform(setSliderValue(3.0f))
+
+            // recreate the activity
+            recreate()
+
+            // Assert toolbar restored
+            onView(withId(R.id.highlighter_button)).check(matches(isSelected()))
+            onView(withId(R.id.brush_size_selector)).check(matches(isDisplayed()))
+            onView(
+                    allOf(
+                        isAssignableFrom(Slider::class.java),
+                        isDescendantOfA(withId(R.id.brush_size_selector)),
+                    )
+                )
+                .check(matches(withSliderValue(3.0f)))
+        }
+    }
+
     private fun assertColorPaletteChecks() {
         onView(withId(R.id.color_palette_button)).check(matches(isEnabled()))
         // assert initially color palette is not visible
@@ -265,14 +323,7 @@ class AnnotationToolbarTest {
 
     private fun setupAnnotationToolbar(callback: ((AnnotationToolbar) -> Unit) = {}) {
         activityRule.scenario.onActivity { activity ->
-            val annotationToolbar =
-                AnnotationToolbar(activity).apply {
-                    id = ANNOTATION_TOOLBAR_VIEW_ID
-                    elevation = context.resources.getDimension(R.dimen.annotation_toolbar_elevation)
-                    val defaultPadding =
-                        context.resources.getDimensionPixelSize(R.dimen.padding_8dp)
-                    setPadding(defaultPadding, defaultPadding, defaultPadding, defaultPadding)
-                }
+            val annotationToolbar = createToolbar(activity)
             activity.container.addView(
                 annotationToolbar,
                 LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT),
@@ -285,7 +336,15 @@ class AnnotationToolbarTest {
         }
     }
 
+    private fun createToolbar(context: Context): AnnotationToolbar =
+        AnnotationToolbar(context).apply {
+            id = ANNOTATION_TOOLBAR_VIEW_ID
+            elevation = context.resources.getDimension(R.dimen.annotation_toolbar_elevation)
+            val defaultPadding = context.resources.getDimensionPixelSize(R.dimen.padding_8dp)
+            setPadding(defaultPadding, defaultPadding, defaultPadding, defaultPadding)
+        }
+
     companion object {
-        private val ANNOTATION_TOOLBAR_VIEW_ID = View.generateViewId()
+        private const val ANNOTATION_TOOLBAR_VIEW_ID = 4091995
     }
 }
