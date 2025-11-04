@@ -65,10 +65,10 @@ public final class ContextUtil {
     /**
      * Attempts to retrieve an {@link Application} object from the provided {@link Context}.
      *
-     * <p>Because the contract does not specify that {@code Context.getApplicationContext()} must
-     * return an {@code Application} object, this method will attempt to retrieve the
-     * {@code Application} by unwrapping the context via {@link ContextWrapper#getBaseContext()} if
-     * {@code Context.getApplicationContext()}} does not succeed.
+     * <p>Because the contract does not specify that {@link Context#getApplicationContext()} must
+     * return an {@link Application} object, this method will attempt to retrieve the
+     * {@link Application} by unwrapping the context via {@link ContextWrapper#getBaseContext()} if
+     * {@link Context#getApplicationContext()}} does not succeed.
      *
      * <p>Since the purpose of this method is to retrieve the {@link Application} instance, it is
      * not necessary to keep the attribution and device id info and also invoking
@@ -76,9 +76,9 @@ public final class ContextUtil {
      * will create a non-ContextWrapper instance which could fail to invoke
      * {@link ContextWrapper#getBaseContext()}.
      */
-    public static @Nullable Application getApplicationFromContext(@NonNull Context context) {
+    public static @Nullable Application getApplication(@NonNull Context context) {
         Application application = null;
-        Context appContext = getPersistentApplicationContext(context);
+        Context appContext = context.getApplicationContext();
         while (appContext instanceof ContextWrapper) {
             if (appContext instanceof Application) {
                 application = (Application) appContext;

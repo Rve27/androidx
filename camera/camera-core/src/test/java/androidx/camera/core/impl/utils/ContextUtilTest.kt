@@ -123,11 +123,11 @@ class ContextUtilTest {
     }
 
     @Test
-    fun testGetApplicationFromContext() {
+    fun testGetApplication() {
         val application = ApplicationProvider.getApplicationContext<Context>()
         val context1 = FakeContext(baseContext = application)
         val context2 = FakeContext(baseContext = context1)
-        val resultContext = ContextUtil.getApplicationFromContext(context2)
+        val resultContext = ContextUtil.getApplication(context2)
         assertThat(resultContext).isSameInstanceAs(application)
     }
 

@@ -180,7 +180,7 @@ public final class CameraX {
     @SuppressWarnings("deprecation")
     private static CameraXConfig.@Nullable Provider getConfigProvider(@NonNull Context context) {
         CameraXConfig.Provider configProvider = null;
-        Application application = ContextUtil.getApplicationFromContext(context);
+        Application application = ContextUtil.getApplication(context);
         if (application instanceof CameraXConfig.Provider) {
             // Application is a CameraXConfig.Provider, use this directly
             configProvider = (CameraXConfig.Provider) application;
