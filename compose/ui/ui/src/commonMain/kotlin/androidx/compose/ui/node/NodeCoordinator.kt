@@ -247,6 +247,7 @@ internal abstract class NodeCoordinator(override val layoutNode: LayoutNode) :
         }
         visitNodes(Nodes.Draw) { it.onMeasureResultChanged() }
         layoutNode.owner?.onLayoutChange(layoutNode)
+        layoutNode.onCoordinatorRectChanged(this)
     }
 
     override var position: IntOffset = IntOffset.Zero
@@ -425,13 +426,13 @@ internal abstract class NodeCoordinator(override val layoutNode: LayoutNode) :
             } else {
                 wrappedBy?.invalidateLayer()
             }
-            layoutNode.onCoordinatorPositionChanged()
+            layoutNode.onCoordinatorRectChanged(this)
             invalidateAlignmentLinesFromPositionChange()
             layoutNode.owner?.onLayoutChange(layoutNode)
         }
         this.zIndex = zIndex
         if (this === layoutNode.outerCoordinator) {
-            layoutNode.requireOwner().rectManager.onLayoutPositionChanged(layoutNode)
+            layoutNode.requireOwner().rectManager.recalculateRectIfDirty(layoutNode)
         }
         if (!isPlacingForAlignment) {
             captureRulersIfNeeded(measureResult)
@@ -563,7 +564,7 @@ internal abstract class NodeCoordinator(override val layoutNode: LayoutNode) :
             this.layerBlock = null
             layer?.let {
                 if (!it.underlyingMatrix.isIdentity()) {
-                    layoutNode.onCoordinatorPositionChanged()
+                    layoutNode.onCoordinatorRectChanged(this)
                 }
                 it.destroy()
                 layoutNode.innerLayerCoordinatorIsDirty = true
@@ -638,18 +639,9 @@ internal abstract class NodeCoordinator(override val layoutNode: LayoutNode) :
                     }
                     layoutDelegate.measurePassDelegate.notifyChildrenUsingCoordinatesWhilePlacing()
                 }
-                layoutNode.onCoordinatorPositionChanged()
-                val owner = layoutNode.requireOwner()
-                val rectManager = owner.rectManager
-                if (this === layoutNode.outerCoordinator) {
-                    // transformations on the outer coordinator define the layout position
-                    rectManager.onLayoutPositionChanged(layoutNode)
-                } else {
-                    // transformations on other coordinators invalidate outerToInnerOffset
-                    rectManager.onLayoutLayerPositionalPropertiesChanged(layoutNode)
-                }
+                layoutNode.onCoordinatorRectChanged(this)
                 if (layoutNode.globallyPositionedObservers > 0) {
-                    owner.requestOnPositionedCallback(layoutNode)
+                    layoutNode.requireOwner().requestOnPositionedCallback(layoutNode)
                 }
             }
         } else {
@@ -1269,7 +1261,7 @@ internal abstract class NodeCoordinator(override val layoutNode: LayoutNode) :
         invalidateParentLayer()
         releaseLayer()
         if (position != IntOffset.Zero) {
-            layoutNode.onCoordinatorPositionChanged()
+            layoutNode.onCoordinatorRectChanged(this)
         }
     }
 
