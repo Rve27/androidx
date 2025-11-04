@@ -139,6 +139,8 @@ public open class PdfDocumentViewModel(
     /** Holds business logic for search feature. */
     private lateinit var searchRepository: SearchRepository
 
+    private var formApplyEditJob: Job? = null
+
     init {
         /**
          * Open PDF if documentUri was previously set in state. This will be required in events like
@@ -275,11 +277,14 @@ public open class PdfDocumentViewModel(
             currentState is PdfFragmentUiState.DocumentLoaded &&
                 currentState.pdfDocument is EditablePdfDocument
         ) {
-            viewModelScope.launch {
-                currentState.pdfDocument.applyEdit(formEditInfo)
-                formEditInfos.add(formEditInfo)
-                state[FORM_EDIT_INFOS_KEY] = formEditInfos
-            }
+            val previousJob = formApplyEditJob
+            formApplyEditJob =
+                viewModelScope.launch {
+                    previousJob?.join()
+                    currentState.pdfDocument.applyEdit(formEditInfo)
+                    formEditInfos.add(formEditInfo)
+                    state[FORM_EDIT_INFOS_KEY] = formEditInfos
+                }
         }
     }
 
