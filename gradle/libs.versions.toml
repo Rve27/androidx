@@ -271,6 +271,7 @@ protobuf = { module = "com.google.protobuf:protobuf-java", version.ref = "protob
 protobufCompiler = { module = "com.google.protobuf:protoc", version.ref = "protobuf" }
 protobufGradlePlugin = { module = "com.google.protobuf:protobuf-gradle-plugin", version = "0.9.4" }
 protobufLite = { module = "com.google.protobuf:protobuf-javalite", version.ref = "protobuf" }
+protobufKotlinLite = { module = "com.google.protobuf:protobuf-kotlin-lite", version.ref = "protobuf" }
 reactiveStreams = { module = "org.reactivestreams:reactive-streams", version = "1.0.0" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 retrofitConverterWire = { module = "com.squareup.retrofit2:converter-wire", version.ref = "retrofit" }
