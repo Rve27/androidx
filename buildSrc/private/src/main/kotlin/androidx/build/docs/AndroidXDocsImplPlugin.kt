@@ -173,48 +173,8 @@ abstract class AndroidXDocsImplPlugin : Plugin<Project> {
     }
 
     /**
-     * Creates and configures a task that will build a list of all sources for projects in
-     * [docsConfiguration] configuration, resolve them and put them to [destinationDirectory].
-     */
-    private fun configureUnzipTask(
-        project: Project,
-        taskName: String,
-        destinationDirectory: Provider<Directory>,
-        docsConfiguration: Configuration,
-    ): TaskProvider<Sync> {
-        return project.tasks.register(taskName, Sync::class.java) { task ->
-            val sources = docsConfiguration.incoming.artifactView {}.files
-            // Store archiveOperations into a local variable to prevent access to the plugin
-            // during the task execution, as that breaks configuration caching.
-            val localVar = archiveOperations
-            task.from(
-                sources.elements.map { jars ->
-                    jars.map { jar ->
-                        localVar.zipTree(jar).matching {
-                            // Filter out files that documentation tools cannot process.
-                            it.exclude("**/*.MF")
-                            it.exclude("**/*.aidl")
-                            it.exclude("**/META-INF/**")
-                            it.exclude("**/OWNERS")
-                            it.exclude("**/package.html")
-                            it.exclude("**/*.md")
-                        }
-                    }
-                }
-            )
-            task.into(destinationDirectory)
-            // TODO(123020809) remove this filter once it is no longer necessary to prevent Dokka
-            //  from failing
-            val regex = Regex("@attr ref ([^*]*)styleable#([^_*]*)_([^*]*)$")
-            task.filter { line -> regex.replace(line, "{@link $1attr#$3}") }
-        }
-    }
-
-    /**
      * Creates and configures a task that builds a list of select sources from jars and places them
      * in [sourcesDestinationDirectory], partitioning samples into [samplesDestinationDirectory].
-     *
-     * This is a modified version of [configureUnzipTask], customized for Dackka usage.
      */
     private fun configureUnzipJvmSourcesTasks(
         project: Project,
@@ -289,9 +249,7 @@ abstract class AndroidXDocsImplPlugin : Plugin<Project> {
                 "unzipMultiplatformSources",
                 UnzipMultiplatformSourcesTask::class.java,
             ) {
-                it.inputJars.set(
-                    multiplatformDocsSourcesConfiguration.incoming.artifactView {}.files
-                )
+                it.inputJars.set(multiplatformDocsSourcesConfiguration.incoming.files)
                 it.metadataOutput.set(tempMultiplatformMetadataDirectory)
                 it.sourceOutput.set(unzippedMultiplatformSourcesDirectory)
                 it.samplesOutput.set(unzippedMultiplatformSamplesDirectory)
@@ -549,9 +507,7 @@ abstract class AndroidXDocsImplPlugin : Plugin<Project> {
                     annotationsNotToDisplayKotlin.set(hiddenAnnotationsKotlin)
                     hidingAnnotations.set(annotationsToHideApis)
                     nullabilityAnnotations.set(validNullabilityAnnotations)
-                    versionMetadataFiles.from(
-                        versionMetadataConfiguration.incoming.artifactView {}.files
-                    )
+                    versionMetadataFiles.from(versionMetadataConfiguration.incoming.files)
                     task.doFirst { taskStartTime = LocalDateTime.now() }
                     task.doLast {
                         val cpus =
