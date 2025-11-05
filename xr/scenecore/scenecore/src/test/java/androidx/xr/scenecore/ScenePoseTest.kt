@@ -17,7 +17,6 @@
 package androidx.xr.scenecore
 
 import android.app.Activity
-import androidx.xr.runtime.FieldOfView
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Vector3
 import androidx.xr.scenecore.ScenePose.HitTestFilter
@@ -40,10 +39,7 @@ import org.robolectric.RobolectricTestRunner
 @org.robolectric.annotation.Config(sdk = [org.robolectric.annotation.Config.TARGET_SDK])
 class ScenePoseTest {
     private val entityManager = EntityManager()
-
-    private var head: Head? = null
     private lateinit var activitySpace: ActivitySpace
-    private var camera: CameraView? = null
     private lateinit var perceptionSpace: PerceptionSpace
 
     private val activity = Robolectric.buildActivity(Activity::class.java).create().start().get()
@@ -54,8 +50,6 @@ class ScenePoseTest {
         val fakeRuntimeFactory = FakeSceneRuntimeFactory()
         fakeRuntime = fakeRuntimeFactory.create(activity)
 
-        head = Head.create(fakeRuntime)
-        camera = CameraView.createLeft(fakeRuntime)
         activitySpace = ActivitySpace.create(fakeRuntime, entityManager)
         perceptionSpace = PerceptionSpace.create(fakeRuntime)
     }
@@ -64,8 +58,6 @@ class ScenePoseTest {
     fun allScenePoseTransformPoseTo_callsRuntimeScenePoseImplTransformPoseTo() {
         val pose = Pose.Identity
 
-        assertThat(head?.transformPoseTo(pose, head!!)).isEqualTo(pose)
-        assertThat(camera!!.transformPoseTo(pose, camera!!)).isEqualTo(pose)
         assertThat(perceptionSpace.transformPoseTo(pose, perceptionSpace)).isEqualTo(pose)
     }
 
@@ -73,8 +65,6 @@ class ScenePoseTest {
     fun allScenePoseTransformPoseToEntity_callsRuntimeScenePoseImplTransformPoseTo() {
         val pose = Pose.Identity
 
-        assertThat(head!!.transformPoseTo(pose, activitySpace)).isEqualTo(pose)
-        assertThat(camera!!.transformPoseTo(pose, activitySpace)).isEqualTo(pose)
         assertThat(perceptionSpace.transformPoseTo(pose, activitySpace)).isEqualTo(pose)
     }
 
@@ -82,8 +72,6 @@ class ScenePoseTest {
     fun allScenePoseTransformPoseFromEntity_callsRuntimeScenePoseImplTransformPoseTo() {
         val pose = Pose.Identity
 
-        assertThat(activitySpace.transformPoseTo(pose, head!!)).isEqualTo(pose)
-        assertThat(activitySpace.transformPoseTo(pose, camera!!)).isEqualTo(pose)
         assertThat(activitySpace.transformPoseTo(pose, perceptionSpace)).isEqualTo(pose)
     }
 
@@ -91,8 +79,6 @@ class ScenePoseTest {
     fun allScenePoseGetActivitySpacePose_callsRuntimeScenePoseImplGetActivitySpacePose() {
         val pose = Pose.Identity
 
-        assertThat(head!!.activitySpacePose).isEqualTo(pose)
-        assertThat(camera!!.activitySpacePose).isEqualTo(pose)
         assertThat(perceptionSpace.activitySpacePose).isEqualTo(pose)
     }
 
@@ -119,10 +105,6 @@ class ScenePoseTest {
             rtHitTestResult
 
         runBlocking {
-            assertThat(head!!.hitTest(origin, direction, hitTestFilter))
-                .isEqualTo(expectedHitTestResult)
-            assertThat(camera!!.hitTest(origin, direction, hitTestFilter))
-                .isEqualTo(expectedHitTestResult)
             assertThat(perceptionSpace.hitTest(origin, direction, hitTestFilter))
                 .isEqualTo(expectedHitTestResult)
         }
@@ -150,8 +132,6 @@ class ScenePoseTest {
             rtHitTestResult
 
         runBlocking {
-            assertThat(head!!.hitTest(origin, direction)).isEqualTo(expectedHitTestResult)
-            assertThat(camera!!.hitTest(origin, direction)).isEqualTo(expectedHitTestResult)
             assertThat(perceptionSpace.hitTest(origin, direction)).isEqualTo(expectedHitTestResult)
         }
     }
@@ -178,43 +158,7 @@ class ScenePoseTest {
             rtHitTestResult
 
         runBlocking {
-            assertThat(head!!.hitTest(origin, direction, hitTestFilter)).isNull()
-            assertThat(camera!!.hitTest(origin, direction, hitTestFilter)).isNull()
             assertThat(perceptionSpace.hitTest(origin, direction, hitTestFilter)).isNull()
         }
-    }
-
-    @Test
-    fun cameraView_getFov_returnsFov() {
-        val rtFov = RtCameraViewScenePose.Fov(1f, 2f, 3f, 4f)
-
-        // Set the fov in the camera view.
-        (fakeRuntime.getCameraViewActivityPose(
-                RtCameraViewScenePose.CameraType.CAMERA_TYPE_LEFT_EYE
-            ) as? FakeCameraViewScenePose)
-            ?.fov = rtFov
-
-        assertThat(camera!!.fov).isEqualTo(FieldOfView(1f, 2f, 3f, 4f))
-    }
-
-    @Test
-    fun cameraView_getFovTwice_returnsUpdatedFov() {
-        val rtFov = RtCameraViewScenePose.Fov(1f, 2f, 3f, 4f)
-        // Set the fov in the camera view.
-        (fakeRuntime.getCameraViewActivityPose(
-                RtCameraViewScenePose.CameraType.CAMERA_TYPE_LEFT_EYE
-            ) as? FakeCameraViewScenePose)
-            ?.fov = rtFov
-
-        assertThat(camera!!.fov).isEqualTo(FieldOfView(1f, 2f, 3f, 4f))
-
-        val rtFov2 = RtCameraViewScenePose.Fov(5f, 6f, 7f, 8f)
-        // Set the fov in the camera view.
-        (fakeRuntime.getCameraViewActivityPose(
-                RtCameraViewScenePose.CameraType.CAMERA_TYPE_LEFT_EYE
-            ) as? FakeCameraViewScenePose)
-            ?.fov = rtFov2
-
-        assertThat(camera!!.fov).isEqualTo(FieldOfView(5f, 6f, 7f, 8f))
     }
 }
