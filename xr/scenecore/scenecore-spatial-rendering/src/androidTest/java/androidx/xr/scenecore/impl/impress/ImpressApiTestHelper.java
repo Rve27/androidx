@@ -62,5 +62,20 @@ final class ImpressApiTestHelper {
     static native void nativeSetExpectedClearMaterialOverride(
             int nodeId, String nodeName, int primitiveIndex);
 
+    // Hooks for the skybox operations.
+    static native void nativeSetExpectedLoadIblPath(String path);
+
+    static native void nativeSetLoadIblAssetSuccess(long token);
+
+    static native void nativeSetLoadIblAssetFailure(String message);
+
+    static native void nativeSetExpectedLoadIblAssetTestPattern(int size, String key);
+
+    static native void nativeSetExpectedReleaseIblAsset(long token);
+
+    static native void nativeSetExpectedSetEnvironmentLight(long token);
+
+    static native void nativeSetExpectedClearEnvironmentLight();
+
     private ImpressApiTestHelper() {}
 }
