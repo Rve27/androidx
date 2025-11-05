@@ -67,6 +67,7 @@ package androidx.tracing.driver {
   }
 
   public final class EventMetadataCloseableKt {
+    method @InaccessibleFromKotlin @kotlin.PublishedApi internal static androidx.tracing.driver.EventMetadataCloseable getEmptyEventMetadataCloseable();
     property @kotlin.PublishedApi internal static androidx.tracing.driver.EventMetadataCloseable EmptyEventMetadataCloseable;
     field @kotlin.PublishedApi internal static final androidx.tracing.driver.EventMetadataCloseable EmptyEventMetadataCloseable;
   }
