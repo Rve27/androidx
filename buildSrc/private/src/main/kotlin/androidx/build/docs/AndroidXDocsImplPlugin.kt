@@ -24,7 +24,7 @@ import androidx.build.getAndroidJar
 import androidx.build.getCheckoutRoot
 import androidx.build.getDistributionDirectory
 import androidx.build.getKeystore
-import androidx.build.getLibraryByName
+import androidx.build.getLibraryClasspath
 import androidx.build.getSupportRootFolder
 import androidx.build.metalava.versionMetadataUsage
 import androidx.build.sources.PROJECT_STRUCTURE_METADATA_FILENAME
@@ -478,13 +478,6 @@ abstract class AndroidXDocsImplPlugin : Plugin<Project> {
         docsType: String,
     ) {
         val generatedDocsDir = project.layout.buildDirectory.dir("docs")
-
-        val dackkaConfiguration =
-            project.configurations.create("dackka") {
-                it.dependencies.add(project.dependencies.create(project.getLibraryByName("dackka")))
-                it.isCanBeConsumed = false
-            }
-
         val generateMetadataTask =
             project.tasks.register("generateMetadata", GenerateMetadataTask::class.java) { task ->
                 val artifacts = docsConfiguration.incoming.artifacts.resolvedArtifacts
@@ -523,7 +516,7 @@ abstract class AndroidXDocsImplPlugin : Plugin<Project> {
                             " plugin. Places docs in ${generatedDocsDir.get()}"
                     group = JavaBasePlugin.DOCUMENTATION_GROUP
 
-                    dackkaClasspath.from(project.files(dackkaConfiguration))
+                    dackkaClasspath.from(project.getLibraryClasspath("dackka"))
                     destinationDir.set(generatedDocsDir)
                     frameworkSamplesDir.set(File(project.getSupportRootFolder(), "samples"))
                     samplesJvmDir.set(unzippedJvmSamplesSources)
