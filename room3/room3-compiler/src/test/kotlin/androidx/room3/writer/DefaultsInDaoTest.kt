@@ -45,7 +45,7 @@ class DefaultsInDaoTest(private val jvmDefaultMode: String) {
     @Test
     fun abstractDao() {
         val defaultWithCompatibilityAnnotation =
-            if (jvmDefaultMode == "all-compatibility") {
+            if (jvmDefaultMode == "enable") {
                 "@JvmDefaultWithoutCompatibility"
             } else {
                 ""
@@ -173,7 +173,7 @@ class DefaultsInDaoTest(private val jvmDefaultMode: String) {
         runKspTest(
             sources = listOf(source, COMMON.COROUTINES_ROOM, COMMON.ROOM_DATABASE_KTX),
             javacArguments = listOf("-source", jvmTarget),
-            kotlincArguments = listOf("-jvm-target=$jvmTarget", "-Xjvm-default=${jvmDefaultMode}"),
+            kotlincArguments = listOf("-jvm-target=$jvmTarget", "-jvm-default=${jvmDefaultMode}"),
         ) { invocation ->
             invocation.roundEnv
                 .getElementsAnnotatedWith(androidx.room3.Dao::class.qualifiedName!!)
@@ -211,6 +211,6 @@ class DefaultsInDaoTest(private val jvmDefaultMode: String) {
     companion object {
         @JvmStatic
         @Parameters(name = "jvmDefaultMode={0}")
-        fun modes() = listOf("all-compatibility", "all", "disable")
+        fun modes() = listOf("enable", "no-compatibility", "disable")
     }
 }
