@@ -590,7 +590,7 @@ class SurfaceProcessorNodeTest {
     }
 
     private fun createSurfaceProcessorNode() {
-        node = SurfaceProcessorNode(FakeCamera(), surfaceProcessorInternal)
+        node = SurfaceProcessorNode(FakeCamera(), surfaceProcessorInternal, null)
     }
 
     private fun provideSurfaces(nodeOutput: SurfaceProcessorNode.Out) {
