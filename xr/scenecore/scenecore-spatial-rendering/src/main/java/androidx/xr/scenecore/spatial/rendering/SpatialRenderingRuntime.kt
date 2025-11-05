@@ -14,1081 +14,967 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.spatial.rendering;
+package androidx.xr.scenecore.spatial.rendering
 
-import android.app.Activity;
-import android.os.Looper;
-
-import androidx.annotation.VisibleForTesting;
-import androidx.concurrent.futures.ResolvableFuture;
-import androidx.xr.runtime.math.Matrix3;
-import androidx.xr.runtime.math.Pose;
-import androidx.xr.runtime.math.Vector3;
-import androidx.xr.runtime.math.Vector4;
-import androidx.xr.scenecore.impl.impress.ExrImage;
-import androidx.xr.scenecore.impl.impress.GltfModel;
-import androidx.xr.scenecore.impl.impress.ImpressApi;
-import androidx.xr.scenecore.impl.impress.ImpressApiImpl;
-import androidx.xr.scenecore.impl.impress.KhronosPbrMaterial;
-import androidx.xr.scenecore.impl.impress.Material;
-import androidx.xr.scenecore.impl.impress.Texture;
-import androidx.xr.scenecore.impl.impress.WaterMaterial;
-import androidx.xr.scenecore.runtime.Entity;
-import androidx.xr.scenecore.runtime.ExrImageResource;
-import androidx.xr.scenecore.runtime.GltfEntity;
-import androidx.xr.scenecore.runtime.GltfFeature;
-import androidx.xr.scenecore.runtime.GltfModelResource;
-import androidx.xr.scenecore.runtime.KhronosPbrMaterialSpec;
-import androidx.xr.scenecore.runtime.MaterialResource;
-import androidx.xr.scenecore.runtime.RenderingEntityFactory;
-import androidx.xr.scenecore.runtime.RenderingRuntime;
-import androidx.xr.scenecore.runtime.SceneRuntime;
-import androidx.xr.scenecore.runtime.SpatialEnvironmentExt;
-import androidx.xr.scenecore.runtime.SurfaceEntity;
-import androidx.xr.scenecore.runtime.TextureResource;
-import androidx.xr.scenecore.runtime.TextureSampler;
-import androidx.xr.scenecore.runtime.extensions.XrExtensionsProvider;
-
-import com.android.extensions.xr.XrExtensions;
-
-import com.google.androidxr.splitengine.SplitEngineSubspaceManager;
-import com.google.ar.imp.view.splitengine.ImpSplitEngine;
-import com.google.ar.imp.view.splitengine.ImpSplitEngineRenderer;
-import com.google.common.util.concurrent.ListenableFuture;
-
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
-
-import java.util.concurrent.CancellationException;
-import java.util.function.Supplier;
+import android.app.Activity
+import android.os.Looper
+import androidx.annotation.VisibleForTesting
+import androidx.concurrent.futures.ResolvableFuture
+import androidx.xr.runtime.math.Matrix3
+import androidx.xr.runtime.math.Pose
+import androidx.xr.runtime.math.Vector3
+import androidx.xr.runtime.math.Vector4
+import androidx.xr.scenecore.impl.impress.ExrImage
+import androidx.xr.scenecore.impl.impress.GltfModel
+import androidx.xr.scenecore.impl.impress.ImpressApi
+import androidx.xr.scenecore.impl.impress.ImpressApiImpl
+import androidx.xr.scenecore.impl.impress.KhronosPbrMaterial
+import androidx.xr.scenecore.impl.impress.Material
+import androidx.xr.scenecore.impl.impress.Texture
+import androidx.xr.scenecore.impl.impress.WaterMaterial
+import androidx.xr.scenecore.runtime.Entity
+import androidx.xr.scenecore.runtime.ExrImageResource
+import androidx.xr.scenecore.runtime.GltfEntity
+import androidx.xr.scenecore.runtime.GltfModelResource
+import androidx.xr.scenecore.runtime.KhronosPbrMaterialSpec
+import androidx.xr.scenecore.runtime.MaterialResource
+import androidx.xr.scenecore.runtime.RenderingEntityFactory
+import androidx.xr.scenecore.runtime.RenderingRuntime
+import androidx.xr.scenecore.runtime.SceneRuntime
+import androidx.xr.scenecore.runtime.SpatialEnvironmentExt
+import androidx.xr.scenecore.runtime.SpatialEnvironmentFeature
+import androidx.xr.scenecore.runtime.SurfaceEntity
+import androidx.xr.scenecore.runtime.TextureResource
+import androidx.xr.scenecore.runtime.TextureSampler
+import androidx.xr.scenecore.runtime.extensions.XrExtensionsProvider.getXrExtensions
+import com.android.extensions.xr.XrExtensions
+import com.google.androidxr.splitengine.SplitEngineSubspaceManager
+import com.google.ar.imp.view.splitengine.ImpSplitEngine
+import com.google.ar.imp.view.splitengine.ImpSplitEngineRenderer
+import com.google.common.util.concurrent.ListenableFuture
+import java.util.concurrent.CancellationException
+import java.util.function.Supplier
 
 /**
- * Implementation of [RenderingRuntime] for devices that support the [Feature.SPATIAL] system
- * feature.
+ * Implementation of [RenderingRuntime] for devices that support the
+ * [androidx.xr.runtime.internal.Feature.SPATIAL] system feature.
  */
-class SpatialRenderingRuntime implements RenderingRuntime {
-    private static final String SPLIT_ENGINE_LIBRARY_NAME = "impress_api_jni";
+internal class SpatialRenderingRuntime
+private constructor(
+    sceneRuntime: SceneRuntime,
+    private var activity: Activity?,
+    private val extensions: XrExtensions,
+    private val impressApi: ImpressApi,
+    private val subspaceManager: SplitEngineSubspaceManager,
+    private val renderer: ImpSplitEngineRenderer,
+) : RenderingRuntime {
 
-    @SuppressWarnings("UnusedVariable")
-    private final @NonNull RenderingEntityFactory mRenderingEntityFactory;
+    private lateinit var renderingEntityFactory: RenderingEntityFactory
+    private var spatialEnvironmentFeature: SpatialEnvironmentFeatureImpl?
+    private var isDestroyed = false
+    private var frameLoopStarted = false
 
-    private @Nullable Activity mActivity;
-    private @Nullable SpatialEnvironmentFeatureImpl mSpatialEnvironmentFeature;
-
-    @SuppressWarnings("UnusedVariable")
-    private final XrExtensions mExtensions;
-
-    private final ImpressApi mImpressApi;
-    private SplitEngineSubspaceManager mSplitEngineSubspaceManager;
-    private ImpSplitEngineRenderer mSplitEngineRenderer;
-    private boolean mIsDestroyed = false;
-    private boolean mFrameLoopStarted;
-
-    private SpatialRenderingRuntime(
-            @NonNull SceneRuntime sceneRuntime,
-            @NonNull Activity activity,
-            @NonNull XrExtensions extensions,
-            @NonNull ImpressApi impressApi,
-            @NonNull SplitEngineSubspaceManager subspaceManager,
-            @NonNull ImpSplitEngineRenderer renderer) {
-        if (!(sceneRuntime instanceof RenderingEntityFactory)) {
-            throw new IllegalArgumentException(
-                    "Expected sceneRuntime to be a RenderingEntityFactory");
+    init {
+        require(sceneRuntime is RenderingEntityFactory) {
+            "Expected sceneRuntime to be a RenderingEntityFactory"
         }
-        mRenderingEntityFactory = (RenderingEntityFactory) sceneRuntime;
-        mActivity = activity;
-        mExtensions = extensions;
-        mImpressApi = impressApi;
-        mSplitEngineRenderer = renderer;
-        mSplitEngineSubspaceManager = subspaceManager;
-        mSpatialEnvironmentFeature =
-                new SpatialEnvironmentFeatureImpl(
-                        mActivity, mImpressApi, mSplitEngineSubspaceManager, mExtensions);
+        this.renderingEntityFactory = sceneRuntime
+        // TODO(b/458776699): Handle activity nullability.
+        // TODO(b/458779328): Fix incorrect use of !! on a nullable return value.
+        this.spatialEnvironmentFeature =
+            SpatialEnvironmentFeatureImpl(activity!!, impressApi, subspaceManager, extensions)
 
-        ((SpatialEnvironmentExt) sceneRuntime.getSpatialEnvironment())
-                .onRenderingFeatureReady(mSpatialEnvironmentFeature);
-    }
-
-    /** Create a new @c RenderingRuntime. */
-    @VisibleForTesting
-    static @NonNull SpatialRenderingRuntime create(
-            @NonNull SceneRuntime sceneRuntime,
-            @NonNull Activity activity,
-            @Nullable ImpressApi impressApi,
-            @Nullable SplitEngineSubspaceManager splitEngineSubspaceManager,
-            @Nullable ImpSplitEngineRenderer splitEngineRenderer) {
-        XrExtensions extensions = XrExtensionsProvider.getXrExtensions();
-        if (extensions == null) throw new IllegalStateException("XrExtensions is null");
-        if (impressApi == null) impressApi = new ImpressApiImpl();
-        if (splitEngineRenderer == null) {
-            ImpSplitEngine.SplitEngineSetupParams impApiSetupParams =
-                    new ImpSplitEngine.SplitEngineSetupParams();
-            impApiSetupParams.jniLibraryName = SPLIT_ENGINE_LIBRARY_NAME;
-            splitEngineRenderer =
-                    ImpSplitEngineRenderer.create(activity, impApiSetupParams, extensions);
-        }
-        if (splitEngineSubspaceManager == null) {
-            splitEngineSubspaceManager =
-                    new SplitEngineSubspaceManager(
-                            splitEngineRenderer, extensions, null, null, SPLIT_ENGINE_LIBRARY_NAME);
-        }
-        impressApi.setup(splitEngineRenderer.getView());
-        return new SpatialRenderingRuntime(
-                sceneRuntime,
-                activity,
-                extensions,
-                impressApi,
-                splitEngineSubspaceManager,
-                splitEngineRenderer);
-    }
-
-    /**
-     * Create a new @c SpatialRenderingRuntime.
-     *
-     * @param sceneRuntime The SceneRuntime provide basic function for creating entities.
-     * @param activity The Activity to use.
-     * @return A new SpatialRenderingRuntime.
-     */
-    static @NonNull SpatialRenderingRuntime create(
-            @NonNull SceneRuntime sceneRuntime, @NonNull Activity activity) {
-        return SpatialRenderingRuntime.create(sceneRuntime, activity, null, null, null);
+        (sceneRuntime.spatialEnvironment as SpatialEnvironmentExt).onRenderingFeatureReady(
+            spatialEnvironmentFeature as SpatialEnvironmentFeature
+        )
     }
 
     @SuppressWarnings("FutureReturnValueIgnored")
-    private @Nullable ListenableFuture<GltfModelResource> loadGltfAsset(
-            Supplier<ListenableFuture<GltfModel>> modelLoader) {
-        if (!Looper.getMainLooper().isCurrentThread()) {
-            throw new IllegalStateException("This method must be called on the main thread.");
+    private fun loadGltfAsset(
+        modelLoader: Supplier<ListenableFuture<GltfModel>>
+    ): ListenableFuture<GltfModelResource>? {
+        check(Looper.getMainLooper().isCurrentThread) {
+            "This method must be called on the main thread."
         }
 
-        ResolvableFuture<GltfModelResource> gltfModelResourceFuture = ResolvableFuture.create();
+        val gltfModelResourceFuture = ResolvableFuture.create<GltfModelResource>()
 
-        ListenableFuture<GltfModel> gltfTokenFuture;
-        try {
-            gltfTokenFuture = modelLoader.get();
-        } catch (RuntimeException e) {
-            return null;
-        }
+        val gltfTokenFuture: ListenableFuture<GltfModel> =
+            try {
+                modelLoader.get()
+            } catch (e: RuntimeException) {
+                return null
+            }
 
         gltfTokenFuture.addListener(
-                () -> {
-                    try {
-                        GltfModel gltfToken = gltfTokenFuture.get();
-                        gltfModelResourceFuture.set(gltfToken);
-                    } catch (Exception e) {
-                        if (e instanceof InterruptedException) {
-                            Thread.currentThread().interrupt();
-                        }
-                        if (e instanceof CancellationException) {
-                            gltfModelResourceFuture.cancel(false);
-                        } else {
-                            gltfModelResourceFuture.setException(e);
-                        }
+            {
+                try {
+                    val gltfToken: GltfModel = gltfTokenFuture.get()
+                    gltfModelResourceFuture.set(gltfToken)
+                } catch (e: Exception) {
+                    when (e) {
+                        is InterruptedException -> Thread.currentThread().interrupt()
+                        is CancellationException -> gltfModelResourceFuture.cancel(false)
+                        else -> gltfModelResourceFuture.setException(e)
                     }
-                },
-                mActivity::runOnUiThread);
+                }
+            },
+            // TODO(b/458776699): Handle activity nullability.
+            activity!!::runOnUiThread,
+        )
 
-        return gltfModelResourceFuture;
+        return gltfModelResourceFuture
     }
 
     @SuppressWarnings("FutureReturnValueIgnored")
-    private @Nullable ListenableFuture<ExrImageResource> loadExrImage(
-            Supplier<ListenableFuture<ExrImage>> assetLoader) {
-        if (!Looper.getMainLooper().isCurrentThread()) {
-            throw new IllegalStateException("This method must be called on the main thread.");
+    private fun loadExrImage(
+        assetLoader: Supplier<ListenableFuture<ExrImage>>
+    ): ListenableFuture<ExrImageResource>? {
+        check(Looper.getMainLooper().isCurrentThread) {
+            "This method must be called on the main thread."
         }
 
-        ResolvableFuture<ExrImageResource> exrImageResourceFuture = ResolvableFuture.create();
+        val exrImageResourceFuture = ResolvableFuture.create<ExrImageResource>()
 
-        ListenableFuture<ExrImage> exrImageTokenFuture;
-        try {
-            exrImageTokenFuture = assetLoader.get();
-        } catch (RuntimeException e) {
-            return null;
-        }
+        val exrImageTokenFuture: ListenableFuture<ExrImage> =
+            try {
+                assetLoader.get()
+            } catch (e: RuntimeException) {
+                return null
+            }
 
         exrImageTokenFuture.addListener(
-                () -> {
-                    try {
-                        ExrImage exrImageToken = exrImageTokenFuture.get();
-                        exrImageResourceFuture.set(exrImageToken);
-                    } catch (Exception e) {
-                        if (e instanceof InterruptedException) {
-                            Thread.currentThread().interrupt();
-                        }
-                        if (e instanceof CancellationException) {
-                            exrImageResourceFuture.cancel(false);
-                        } else {
-                            exrImageResourceFuture.setException(e);
-                        }
+            {
+                try {
+                    val exrImageToken = exrImageTokenFuture.get()
+                    exrImageResourceFuture.set(exrImageToken)
+                } catch (e: Exception) {
+                    when (e) {
+                        is InterruptedException -> Thread.currentThread().interrupt()
+                        is CancellationException -> exrImageResourceFuture.cancel(false)
+                        else -> exrImageResourceFuture.setException(e)
                     }
-                },
-                mActivity::runOnUiThread);
+                }
+            },
+            // TODO(b/458776699): Handle activity nullability.
+            activity!!::runOnUiThread,
+        )
 
-        return exrImageResourceFuture;
+        return exrImageResourceFuture
     }
 
     // ResolvableFuture is marked as RestrictTo(LIBRARY_GROUP_PREFIX), which is intended for classes
     // within AndroidX. We're in the process of migrating to AndroidX. Without suppressing this
     // warning, however, we get a build error - go/bugpattern/RestrictTo.
-    @SuppressWarnings({"RestrictTo", "AsyncSuffixFuture"})
-    @Override
-    public @NonNull ListenableFuture<GltfModelResource> loadGltfByAssetName(@NonNull String name) {
-        return loadGltfAsset(() -> mImpressApi.loadGltfAsset(name));
+    @SuppressWarnings("RestrictTo", "AsyncSuffixFuture")
+    override fun loadGltfByAssetName(assetName: String): ListenableFuture<GltfModelResource> {
+        // TODO(b/458779328): Fix incorrect use of !! on a nullable return value.
+        return loadGltfAsset { impressApi.loadGltfAsset(assetName) }!!
     }
 
-    @SuppressWarnings({"RestrictTo", "AsyncSuffixFuture"})
-    @Override
-    public @NonNull ListenableFuture<GltfModelResource> loadGltfByByteArray(
-            byte @NonNull [] assetData, @NonNull String assetKey) {
-        return loadGltfAsset(() -> mImpressApi.loadGltfAsset(assetData, assetKey));
-    }
-
-    @Override
-    public void destroyGltfModel(@NonNull GltfModelResource gltfModel) {
-        GltfModel gltfModelResource = (GltfModel) gltfModel;
-        mImpressApi.releaseGltfAsset(gltfModelResource.getNativeHandle());
-    }
-
-    // ResolvableFuture is marked as RestrictTo(LIBRARY_GROUP_PREFIX), which is intended for classes
-    // within AndroidX. We're in the process of migrating to AndroidX. Without suppressing this
-    // warning, however, we get a build error - go/bugpattern/RestrictTo.
-    @SuppressWarnings({"RestrictTo", "AsyncSuffixFuture"})
-    @Override
-    public @NonNull ListenableFuture<ExrImageResource> loadExrImageByAssetName(
-            @NonNull String assetName) {
-        return loadExrImage(() -> mImpressApi.loadImageBasedLightingAsset(assetName));
-    }
-
-    @SuppressWarnings({"RestrictTo", "AsyncSuffixFuture"})
-    @Override
-    public @NonNull ListenableFuture<ExrImageResource> loadExrImageByByteArray(
-            byte @NonNull [] assetData, @NonNull String assetKey) {
-        return loadExrImage(() -> mImpressApi.loadImageBasedLightingAsset(assetData, assetKey));
+    @SuppressWarnings("RestrictTo", "AsyncSuffixFuture")
+    override fun loadGltfByByteArray(
+        assetData: ByteArray,
+        assetKey: String,
+    ): ListenableFuture<GltfModelResource> {
+        // TODO(b/458779328): Fix incorrect use of !! on a nullable return value.
+        return loadGltfAsset { impressApi.loadGltfAsset(assetData, assetKey) }!!
     }
 
     @Override
-    public void destroyExrImage(@NonNull ExrImageResource exrImage) {
-        ExrImage exrImageResource = (ExrImage) exrImage;
-        mImpressApi.releaseImageBasedLightingAsset(exrImageResource.getNativeHandle());
+    override fun destroyGltfModel(gltfModel: GltfModelResource) {
+        val gltfModelResource: GltfModel = gltfModel as GltfModel
+        impressApi.releaseGltfAsset(gltfModelResource.nativeHandle)
     }
 
     // ResolvableFuture is marked as RestrictTo(LIBRARY_GROUP_PREFIX), which is intended for classes
     // within AndroidX. We're in the process of migrating to AndroidX. Without suppressing this
     // warning, however, we get a build error - go/bugpattern/RestrictTo.
-    @SuppressWarnings({"RestrictTo", "AsyncSuffixFuture"})
+    @SuppressWarnings("FutureReturnValueIgnored", "RestrictTo", "AsyncSuffixFuture")
+    override fun loadExrImageByAssetName(assetName: String): ListenableFuture<ExrImageResource> {
+        // TODO(b/458779328): Fix incorrect use of !! on a nullable return value.
+        return loadExrImage { impressApi.loadImageBasedLightingAsset(assetName) }!!
+    }
+
+    @SuppressWarnings("FutureReturnValueIgnored", "RestrictTo", "AsyncSuffixFuture")
+    override fun loadExrImageByByteArray(
+        assetData: ByteArray,
+        assetKey: String,
+    ): ListenableFuture<ExrImageResource> {
+        // TODO(b/458779328): Fix incorrect use of !! on a nullable return value.
+        return loadExrImage { impressApi.loadImageBasedLightingAsset(assetData, assetKey) }!!
+    }
+
     @Override
-    public @NonNull ListenableFuture<TextureResource> loadTexture(@NonNull String path) {
-        ResolvableFuture<TextureResource> textureResourceFuture = ResolvableFuture.create();
+    override fun destroyExrImage(exrImage: ExrImageResource) {
+        val exrImageResource: ExrImage = exrImage as ExrImage
+        impressApi.releaseImageBasedLightingAsset(exrImageResource.nativeHandle)
+    }
+
+    // ResolvableFuture is marked as RestrictTo(LIBRARY_GROUP_PREFIX), which is intended for classes
+    // within AndroidX. We're in the process of migrating to AndroidX. Without suppressing this
+    // warning, however, we get a build error - go/bugpattern/RestrictTo.
+    @SuppressWarnings("RestrictTo", "AsyncSuffixFuture")
+    override fun loadTexture(assetName: String): ListenableFuture<TextureResource> {
+        val textureResourceFuture = ResolvableFuture.create<TextureResource>()
         // TODO:b/374216912 - Consider calling setFuture() here to catch if the application calls
         // cancel() on the return value from this function, so we can propagate the cancelation
         // message to the Impress API.
 
-        if (!Looper.getMainLooper().isCurrentThread()) {
-            throw new IllegalStateException("This method must be called on the main thread.");
+        check(Looper.getMainLooper().isCurrentThread) {
+            "This method must be called on the main thread."
         }
 
-        ListenableFuture<Texture> textureFuture;
-        try {
-            textureFuture = mImpressApi.loadTexture(path);
-        } catch (RuntimeException e) {
-            textureResourceFuture.setException(e);
-            return textureResourceFuture;
-        }
+        val textureFuture: ListenableFuture<Texture> =
+            try {
+                impressApi.loadTexture(assetName)
+            } catch (e: RuntimeException) {
+                textureResourceFuture.setException(e)
+                return textureResourceFuture
+            }
 
         textureFuture.addListener(
-                () -> {
-                    try {
-                        Texture texture = textureFuture.get();
-                        textureResourceFuture.set(texture);
-                    } catch (Exception e) {
-                        if (e instanceof InterruptedException) {
-                            Thread.currentThread().interrupt();
-                        }
-                        if (e instanceof CancellationException) {
-                            textureResourceFuture.cancel(false);
-                        } else {
-                            textureResourceFuture.setException(e);
-                        }
+            {
+                try {
+                    val texture = textureFuture.get()
+                    textureResourceFuture.set(texture)
+                } catch (e: Exception) {
+                    when (e) {
+                        is InterruptedException -> Thread.currentThread().interrupt()
+                        is CancellationException -> textureResourceFuture.cancel(false)
+                        else -> textureResourceFuture.setException(e)
                     }
-                },
-                // It's convenient for the main application for us to dispatch their listeners on
-                // the main thread, because they are required to call back to Impress from there,
-                // and it's likely that they will want to call back into the SDK to create entities
-                // from within a listener. We defensively post to the main thread here, but in
-                // practice this should not cause a thread hop because the Impress API already
-                // dispatches its callbacks to the main thread.
-                mActivity::runOnUiThread);
-        return textureResourceFuture;
+                }
+            },
+            // It's convenient for the main application for us to dispatch their listeners on
+            // the main thread, because they are required to call back to Impress from there,
+            // and it's likely that they will want to call back into the SDK to create entities
+            // from within a listener. We defensively post to the main thread here, but in
+            // practice this should not cause a thread hop because the Impress API already
+            // dispatches its callbacks to the main thread.
+            // TODO(b/458776699): Handle activity nullability.
+            activity!!::runOnUiThread,
+        )
+        return textureResourceFuture
     }
 
-    @Override
-    public @Nullable TextureResource borrowReflectionTexture() {
-        Texture texture = mImpressApi.borrowReflectionTexture();
-        if (texture == null) {
-            return null;
-        }
-        return texture;
+    override fun borrowReflectionTexture(): TextureResource? {
+        return impressApi.borrowReflectionTexture()
     }
 
-    @Override
-    public void destroyTexture(@NonNull TextureResource texture) {
-        Texture textureResource = (Texture) texture;
-        mImpressApi.destroyNativeObject(textureResource.getNativeHandle());
+    override fun destroyTexture(texture: TextureResource) {
+        val textureResource = texture as Texture
+        impressApi.destroyNativeObject(textureResource.nativeHandle)
     }
 
-    @Override
-    public @Nullable TextureResource getReflectionTextureFromIbl(
-            @NonNull ExrImageResource iblToken) {
-        Texture texture =
-                mImpressApi.getReflectionTextureFromIbl(((ExrImage) iblToken).getNativeHandle());
-        if (texture == null) {
-            return null;
-        }
-        return texture;
+    override fun getReflectionTextureFromIbl(iblToken: ExrImageResource): TextureResource? {
+        val texture: Texture? =
+            impressApi.getReflectionTextureFromIbl((iblToken as ExrImage).nativeHandle)
+        return texture
     }
 
     // ResolvableFuture is marked as RestrictTo(LIBRARY_GROUP_PREFIX), which is intended for classes
     // within AndroidX. We're in the process of migrating to AndroidX. Without suppressing this
     // warning, however, we get a build error - go/bugpattern/RestrictTo.
-    @SuppressWarnings({"RestrictTo", "AsyncSuffixFuture"})
-    @Override
-    public @NonNull ListenableFuture<MaterialResource> createWaterMaterial(
-            boolean isAlphaMapVersion) {
-        ResolvableFuture<MaterialResource> materialResourceFuture = ResolvableFuture.create();
+    @SuppressWarnings("RestrictTo", "AsyncSuffixFuture")
+    override fun createWaterMaterial(
+        isAlphaMapVersion: Boolean
+    ): ListenableFuture<MaterialResource> {
+        val materialResourceFuture = ResolvableFuture.create<MaterialResource>()
         // TODO:b/374216912 - Consider calling setFuture() here to catch if the application calls
         // cancel() on the return value from this function, so we can propagate the cancelation
         // message to the Impress API.
 
-        if (!Looper.getMainLooper().isCurrentThread()) {
-            throw new IllegalStateException("This method must be called on the main thread.");
+        check(Looper.getMainLooper().isCurrentThread) {
+            "This method must be called on the main thread."
         }
 
-        ListenableFuture<WaterMaterial> materialFuture;
-        try {
-            materialFuture = mImpressApi.createWaterMaterial(isAlphaMapVersion);
-        } catch (RuntimeException e) {
-            materialResourceFuture.setException(e);
-            return materialResourceFuture;
-        }
+        val materialFuture: ListenableFuture<WaterMaterial> =
+            try {
+                impressApi.createWaterMaterial(isAlphaMapVersion)
+            } catch (e: RuntimeException) {
+                materialResourceFuture.setException(e)
+                return materialResourceFuture
+            }
 
         materialFuture.addListener(
-                () -> {
-                    try {
-                        WaterMaterial material = materialFuture.get();
-                        materialResourceFuture.set(material);
-                    } catch (Exception e) {
-                        if (e instanceof InterruptedException) {
-                            Thread.currentThread().interrupt();
-                        }
-                        if (e instanceof CancellationException) {
-                            materialResourceFuture.cancel(false);
-                        } else {
-                            materialResourceFuture.setException(e);
-                        }
+            {
+                try {
+                    val material = materialFuture.get()
+                    materialResourceFuture.set(material)
+                } catch (e: Exception) {
+                    when (e) {
+                        is InterruptedException -> Thread.currentThread().interrupt()
+                        is CancellationException -> materialResourceFuture.cancel(false)
+                        else -> materialResourceFuture.setException(e)
                     }
-                },
-                // It's convenient for the main application for us to dispatch their listeners on
-                // the main thread, because they are required to call back to Impress from there,
-                // and it's likely that they will want to call back into the SDK to create entities
-                // from within a listener. We defensively post to the main thread here, but in
-                // practice this should not cause a thread hop because the Impress API already
-                // dispatches its callbacks to the main thread.
-                mActivity::runOnUiThread);
-        return materialResourceFuture;
+                }
+            },
+            // It's convenient for the main application for us to dispatch their listeners on
+            // the main thread, because they are required to call back to Impress from there,
+            // and it's likely that they will want to call back into the SDK to create entities
+            // from within a listener. We defensively post to the main thread here, but in
+            // practice this should not cause a thread hop because the Impress API already
+            // dispatches its callbacks to the main thread.
+            // TODO(b/458776699): Handle activity nullability.
+            activity!!::runOnUiThread,
+        )
+        return materialResourceFuture
     }
 
-    @Override
-    public void destroyWaterMaterial(@NonNull MaterialResource material) {
-        if (!(material instanceof Material)) {
-            throw new IllegalArgumentException("MaterialResource is not a Material");
-        }
-        ((Material) material).destroy();
+    override fun destroyWaterMaterial(material: MaterialResource) {
+        require(material is Material) { "MaterialResource is not a Material" }
+        material.destroy()
     }
 
-    @Override
-    public void setReflectionMapOnWaterMaterial(
-            @NonNull MaterialResource material,
-            @NonNull TextureResource reflectionMap,
-            @NonNull TextureSampler sampler) {
-        if (!(material instanceof Material)) {
-            throw new IllegalArgumentException("MaterialResource is not a Material");
-        }
-        if (!(reflectionMap instanceof Texture)) {
-            throw new IllegalArgumentException("TextureResource is not a Texture");
-        }
-        mImpressApi.setReflectionMapOnWaterMaterial(
-                ((Material) material).getNativeHandle(),
-                ((Texture) reflectionMap).getNativeHandle(),
-                sampler);
+    override fun setReflectionMapOnWaterMaterial(
+        material: MaterialResource,
+        reflectionMap: TextureResource,
+        sampler: TextureSampler,
+    ) {
+        require(material is Material) { "MaterialResource is not a Material" }
+        require(reflectionMap is Texture) { "TextureResource is not a Texture" }
+        impressApi.setReflectionMapOnWaterMaterial(
+            material.nativeHandle,
+            reflectionMap.nativeHandle,
+            sampler,
+        )
     }
 
-    @Override
-    public void setNormalMapOnWaterMaterial(
-            @NonNull MaterialResource material,
-            @NonNull TextureResource normalMap,
-            @NonNull TextureSampler sampler) {
-        if (!(material instanceof Material)) {
-            throw new IllegalArgumentException("MaterialResource is not a Material");
-        }
-        if (!(normalMap instanceof Texture)) {
-            throw new IllegalArgumentException("TextureResource is not a Texture");
-        }
-        mImpressApi.setNormalMapOnWaterMaterial(
-                ((Material) material).getNativeHandle(),
-                ((Texture) normalMap).getNativeHandle(),
-                sampler);
+    override fun setNormalMapOnWaterMaterial(
+        material: MaterialResource,
+        normalMap: TextureResource,
+        sampler: TextureSampler,
+    ) {
+        require(material is Material) { "MaterialResource is not a Material" }
+        require(normalMap is Texture) { "TextureResource is not a Texture" }
+        impressApi.setNormalMapOnWaterMaterial(
+            material.nativeHandle,
+            normalMap.nativeHandle,
+            sampler,
+        )
     }
 
-    @Override
-    public void setNormalTilingOnWaterMaterial(
-            @NonNull MaterialResource material, float normalTiling) {
-        if (!(material instanceof Material)) {
-            throw new IllegalArgumentException("MaterialResource is not a Material");
-        }
-        mImpressApi.setNormalTilingOnWaterMaterial(
-                ((Material) material).getNativeHandle(), normalTiling);
+    override fun setNormalTilingOnWaterMaterial(material: MaterialResource, normalTiling: Float) {
+        require(material is Material) { "MaterialResource is not a Material" }
+        impressApi.setNormalTilingOnWaterMaterial(material.nativeHandle, normalTiling)
     }
 
-    @Override
-    public void setNormalSpeedOnWaterMaterial(
-            @NonNull MaterialResource material, float normalSpeed) {
-        if (!(material instanceof Material)) {
-            throw new IllegalArgumentException("MaterialResource is not a Material");
-        }
-        mImpressApi.setNormalSpeedOnWaterMaterial(
-                ((Material) material).getNativeHandle(), normalSpeed);
+    override fun setNormalSpeedOnWaterMaterial(material: MaterialResource, normalSpeed: Float) {
+        require(material is Material) { "MaterialResource is not a Material" }
+        impressApi.setNormalSpeedOnWaterMaterial(material.nativeHandle, normalSpeed)
     }
 
-    @Override
-    public void setAlphaStepMultiplierOnWaterMaterial(
-            @NonNull MaterialResource material, float alphaStepMultiplier) {
-        if (!(material instanceof Material)) {
-            throw new IllegalArgumentException("MaterialResource is not a Material");
-        }
-        mImpressApi.setAlphaStepMultiplierOnWaterMaterial(
-                ((Material) material).getNativeHandle(), alphaStepMultiplier);
+    override fun setAlphaStepMultiplierOnWaterMaterial(
+        material: MaterialResource,
+        alphaStepMultiplier: Float,
+    ) {
+        require(material is Material) { "MaterialResource is not a Material" }
+        impressApi.setAlphaStepMultiplierOnWaterMaterial(material.nativeHandle, alphaStepMultiplier)
     }
 
-    @Override
-    public void setAlphaMapOnWaterMaterial(
-            @NonNull MaterialResource material,
-            @NonNull TextureResource alphaMap,
-            @NonNull TextureSampler sampler) {
-        if (!(material instanceof Material)) {
-            throw new IllegalArgumentException("MaterialResource is not a Material");
-        }
-        if (!(alphaMap instanceof Texture)) {
-            throw new IllegalArgumentException("TextureResource is not a Texture");
-        }
-        mImpressApi.setAlphaMapOnWaterMaterial(
-                ((Material) material).getNativeHandle(),
-                ((Texture) alphaMap).getNativeHandle(),
-                sampler);
+    override fun setAlphaMapOnWaterMaterial(
+        material: MaterialResource,
+        alphaMap: TextureResource,
+        sampler: TextureSampler,
+    ) {
+        require(material is Material) { "MaterialResource is not a Material" }
+        require(alphaMap is Texture) { "TextureResource is not a Texture" }
+        impressApi.setAlphaMapOnWaterMaterial(material.nativeHandle, alphaMap.nativeHandle, sampler)
     }
 
-    @Override
-    public void setNormalZOnWaterMaterial(@NonNull MaterialResource material, float normalZ) {
-        if (!(material instanceof Material)) {
-            throw new IllegalArgumentException("MaterialResource is not a Material");
-        }
-        mImpressApi.setNormalZOnWaterMaterial(((Material) material).getNativeHandle(), normalZ);
+    override fun setNormalZOnWaterMaterial(material: MaterialResource, normalZ: Float) {
+        require(material is Material) { "MaterialResource is not a Material" }
+        impressApi.setNormalZOnWaterMaterial(material.nativeHandle, normalZ)
     }
 
-    @Override
-    public void setNormalBoundaryOnWaterMaterial(
-            @NonNull MaterialResource material, float normalBoundary) {
-        if (!(material instanceof Material)) {
-            throw new IllegalArgumentException("MaterialResource is not a Material");
-        }
-        mImpressApi.setNormalBoundaryOnWaterMaterial(
-                ((Material) material).getNativeHandle(), normalBoundary);
+    override fun setNormalBoundaryOnWaterMaterial(
+        material: MaterialResource,
+        normalBoundary: Float,
+    ) {
+        require(material is Material) { "MaterialResource is not a Material" }
+        impressApi.setNormalBoundaryOnWaterMaterial(material.nativeHandle, normalBoundary)
     }
 
     @SuppressWarnings("AsyncSuffixFuture")
-    @Override
-    public @NonNull ListenableFuture<MaterialResource> createKhronosPbrMaterial(
-            @NonNull KhronosPbrMaterialSpec spec) {
-        ResolvableFuture<MaterialResource> materialResourceFuture = ResolvableFuture.create();
+    override fun createKhronosPbrMaterial(
+        spec: KhronosPbrMaterialSpec
+    ): ListenableFuture<MaterialResource> {
+        val materialResourceFuture = ResolvableFuture.create<MaterialResource>()
         // TODO:b/374216912 - Consider calling setFuture() here to catch if the application calls
         // cancel() on the return value from this function, so we can propagate the cancelation
         // message to the Impress API.
 
-        if (!Looper.getMainLooper().isCurrentThread()) {
-            throw new IllegalStateException("This method must be called on the main thread.");
+        check(Looper.getMainLooper().isCurrentThread) {
+            "This method must be called on the main thread."
         }
 
-        ListenableFuture<KhronosPbrMaterial> materialFuture;
-        try {
-            materialFuture = mImpressApi.createKhronosPbrMaterial(spec);
-        } catch (RuntimeException e) {
-            materialResourceFuture.setException(e);
-            return materialResourceFuture;
-        }
+        val materialFuture: ListenableFuture<KhronosPbrMaterial> =
+            try {
+                impressApi.createKhronosPbrMaterial(spec)
+            } catch (e: RuntimeException) {
+                materialResourceFuture.setException(e)
+                return materialResourceFuture
+            }
 
         materialFuture.addListener(
-                () -> {
-                    try {
-                        KhronosPbrMaterial material = materialFuture.get();
-                        materialResourceFuture.set(material);
-                    } catch (Exception e) {
-                        if (e instanceof InterruptedException) {
-                            Thread.currentThread().interrupt();
-                        }
-                        if (e instanceof CancellationException) {
-                            materialResourceFuture.cancel(false);
-                        } else {
-                            materialResourceFuture.setException(e);
-                        }
+            {
+                try {
+                    val material = materialFuture.get()
+                    materialResourceFuture.set(material)
+                } catch (e: Exception) {
+                    when (e) {
+                        is InterruptedException -> Thread.currentThread().interrupt()
+                        is CancellationException -> materialResourceFuture.cancel(false)
+                        else -> materialResourceFuture.setException(e)
                     }
-                },
-                // It's convenient for the main application for us to dispatch their listeners on
-                // the main thread, because they are required to call back to Impress from there,
-                // and it's likely that they will want to call back into the SDK to create entities
-                // from within a listener. We defensively post to the main thread here, but in
-                // practice this should not cause a thread hop because the Impress API already
-                // dispatches its callbacks to the main thread.
-                mActivity::runOnUiThread);
-        return materialResourceFuture;
+                }
+            },
+            // It's convenient for the main application for us to dispatch their listeners on
+            // the main thread, because they are required to call back to Impress from there,
+            // and it's likely that they will want to call back into the SDK to create entities
+            // from within a listener. We defensively post to the main thread here, but in
+            // practice this should not cause a thread hop because the Impress API already
+            // dispatches its callbacks to the main thread.
+            // TODO(b/458776699): Handle activity nullability.
+            activity!!::runOnUiThread,
+        )
+        return materialResourceFuture
     }
 
-    @Override
-    public void destroyKhronosPbrMaterial(@NonNull MaterialResource material) {
-        if (!(material instanceof Material)) {
-            throw new IllegalArgumentException("MaterialResource is not a Material");
-        }
-        ((Material) material).destroy();
+    override fun destroyKhronosPbrMaterial(material: MaterialResource) {
+        require(material is Material) { "MaterialResource is not a Material" }
+        material.destroy()
     }
 
-    @Override
-    public void setBaseColorTextureOnKhronosPbrMaterial(
-            @NonNull MaterialResource material,
-            @NonNull TextureResource baseColor,
-            @NonNull TextureSampler sampler) {
-        if (!(material instanceof Material)) {
-            throw new IllegalArgumentException("MaterialResource is not a Material");
-        }
-        if (!(baseColor instanceof Texture)) {
-            throw new IllegalArgumentException("TextureResource is not a Texture");
-        }
-        mImpressApi.setBaseColorTextureOnKhronosPbrMaterial(
-                ((Material) material).getNativeHandle(),
-                ((Texture) baseColor).getNativeHandle(),
-                sampler);
+    override fun setBaseColorTextureOnKhronosPbrMaterial(
+        material: MaterialResource,
+        baseColor: TextureResource,
+        sampler: TextureSampler,
+    ) {
+        require(material is Material) { "MaterialResource is not a Material" }
+        require(baseColor is Texture) { "TextureResource is not a Texture" }
+        impressApi.setBaseColorTextureOnKhronosPbrMaterial(
+            material.nativeHandle,
+            baseColor.nativeHandle,
+            sampler,
+        )
     }
 
-    @Override
-    public void setBaseColorUvTransformOnKhronosPbrMaterial(
-            @NonNull MaterialResource material, @NonNull Matrix3 uvTransform) {
-        if (!(material instanceof Material)) {
-            throw new IllegalArgumentException("MaterialResource is not a Material");
-        }
-        float[] data = uvTransform.getData();
-        mImpressApi.setBaseColorUvTransformOnKhronosPbrMaterial(
-                ((Material) material).getNativeHandle(),
-                data[0],
-                data[1],
-                data[2],
-                data[3],
-                data[4],
-                data[5],
-                data[6],
-                data[7],
-                data[8]);
+    override fun setBaseColorUvTransformOnKhronosPbrMaterial(
+        material: MaterialResource,
+        uvTransform: Matrix3,
+    ) {
+        require(material is Material) { "MaterialResource is not a Material" }
+        val data = uvTransform.data
+        impressApi.setBaseColorUvTransformOnKhronosPbrMaterial(
+            material.nativeHandle,
+            data[0],
+            data[1],
+            data[2],
+            data[3],
+            data[4],
+            data[5],
+            data[6],
+            data[7],
+            data[8],
+        )
     }
 
-    @Override
-    public void setBaseColorFactorsOnKhronosPbrMaterial(
-            @NonNull MaterialResource material, @NonNull Vector4 factors) {
-        if (!(material instanceof Material)) {
-            throw new IllegalArgumentException("MaterialResource is not a Material");
-        }
-        mImpressApi.setBaseColorFactorsOnKhronosPbrMaterial(
-                ((Material) material).getNativeHandle(),
-                factors.getX(),
-                factors.getY(),
-                factors.getZ(),
-                factors.getW());
+    override fun setBaseColorFactorsOnKhronosPbrMaterial(
+        material: MaterialResource,
+        factors: Vector4,
+    ) {
+        require(material is Material) { "MaterialResource is not a Material" }
+        impressApi.setBaseColorFactorsOnKhronosPbrMaterial(
+            material.nativeHandle,
+            factors.x,
+            factors.y,
+            factors.z,
+            factors.w,
+        )
     }
 
-    @Override
-    public void setMetallicRoughnessTextureOnKhronosPbrMaterial(
-            @NonNull MaterialResource material,
-            @NonNull TextureResource metallicRoughness,
-            @NonNull TextureSampler sampler) {
-        if (!(material instanceof Material)) {
-            throw new IllegalArgumentException("MaterialResource is not a Material");
-        }
-        if (!(metallicRoughness instanceof Texture)) {
-            throw new IllegalArgumentException("TextureResource is not a Texture");
-        }
-        mImpressApi.setMetallicRoughnessTextureOnKhronosPbrMaterial(
-                ((Material) material).getNativeHandle(),
-                ((Texture) metallicRoughness).getNativeHandle(),
-                sampler);
+    override fun setMetallicRoughnessTextureOnKhronosPbrMaterial(
+        material: MaterialResource,
+        metallicRoughness: TextureResource,
+        sampler: TextureSampler,
+    ) {
+        require(material is Material) { "MaterialResource is not a Material" }
+        require(metallicRoughness is Texture) { "TextureResource is not a Texture" }
+        impressApi.setMetallicRoughnessTextureOnKhronosPbrMaterial(
+            material.nativeHandle,
+            metallicRoughness.nativeHandle,
+            sampler,
+        )
     }
 
-    @Override
-    public void setMetallicRoughnessUvTransformOnKhronosPbrMaterial(
-            @NonNull MaterialResource material, @NonNull Matrix3 uvTransform) {
-        if (!(material instanceof Material)) {
-            throw new IllegalArgumentException("MaterialResource is not a Material");
-        }
-        float[] data = uvTransform.getData();
-        mImpressApi.setMetallicRoughnessUvTransformOnKhronosPbrMaterial(
-                ((Material) material).getNativeHandle(),
-                data[0],
-                data[1],
-                data[2],
-                data[3],
-                data[4],
-                data[5],
-                data[6],
-                data[7],
-                data[8]);
+    override fun setMetallicRoughnessUvTransformOnKhronosPbrMaterial(
+        material: MaterialResource,
+        uvTransform: Matrix3,
+    ) {
+        require(material is Material) { "MaterialResource is not a Material" }
+        val data = uvTransform.data
+        impressApi.setMetallicRoughnessUvTransformOnKhronosPbrMaterial(
+            material.nativeHandle,
+            data[0],
+            data[1],
+            data[2],
+            data[3],
+            data[4],
+            data[5],
+            data[6],
+            data[7],
+            data[8],
+        )
     }
 
-    @Override
-    public void setMetallicFactorOnKhronosPbrMaterial(
-            @NonNull MaterialResource material, float factor) {
-        if (!(material instanceof Material)) {
-            throw new IllegalArgumentException("MaterialResource is not a Material");
-        }
-        mImpressApi.setMetallicFactorOnKhronosPbrMaterial(
-                ((Material) material).getNativeHandle(), factor);
+    override fun setMetallicFactorOnKhronosPbrMaterial(material: MaterialResource, factor: Float) {
+        require(material is Material) { "MaterialResource is not a Material" }
+        impressApi.setMetallicFactorOnKhronosPbrMaterial(material.nativeHandle, factor)
     }
 
-    @Override
-    public void setRoughnessFactorOnKhronosPbrMaterial(
-            @NonNull MaterialResource material, float factor) {
-        if (!(material instanceof Material)) {
-            throw new IllegalArgumentException("MaterialResource is not a Material");
-        }
-        mImpressApi.setRoughnessFactorOnKhronosPbrMaterial(
-                ((Material) material).getNativeHandle(), factor);
+    override fun setRoughnessFactorOnKhronosPbrMaterial(material: MaterialResource, factor: Float) {
+        require(material is Material) { "MaterialResource is not a Material" }
+        impressApi.setRoughnessFactorOnKhronosPbrMaterial(material.nativeHandle, factor)
     }
 
-    @Override
-    public void setNormalTextureOnKhronosPbrMaterial(
-            @NonNull MaterialResource material,
-            @NonNull TextureResource normal,
-            @NonNull TextureSampler sampler) {
-        if (!(material instanceof Material)) {
-            throw new IllegalArgumentException("MaterialResource is not a Material");
-        }
-        if (!(normal instanceof Texture)) {
-            throw new IllegalArgumentException("TextureResource is not a Texture");
-        }
-        mImpressApi.setNormalTextureOnKhronosPbrMaterial(
-                ((Material) material).getNativeHandle(),
-                ((Texture) normal).getNativeHandle(),
-                sampler);
+    override fun setNormalTextureOnKhronosPbrMaterial(
+        material: MaterialResource,
+        normal: TextureResource,
+        sampler: TextureSampler,
+    ) {
+        require(material is Material) { "MaterialResource is not a Material" }
+        require(normal is Texture) { "TextureResource is not a Texture" }
+        impressApi.setNormalTextureOnKhronosPbrMaterial(
+            material.nativeHandle,
+            normal.nativeHandle,
+            sampler,
+        )
     }
 
-    @Override
-    public void setNormalUvTransformOnKhronosPbrMaterial(
-            @NonNull MaterialResource material, @NonNull Matrix3 uvTransform) {
-        if (!(material instanceof Material)) {
-            throw new IllegalArgumentException("MaterialResource is not a Material");
-        }
-        float[] data = uvTransform.getData();
-        mImpressApi.setNormalUvTransformOnKhronosPbrMaterial(
-                ((Material) material).getNativeHandle(),
-                data[0],
-                data[1],
-                data[2],
-                data[3],
-                data[4],
-                data[5],
-                data[6],
-                data[7],
-                data[8]);
+    override fun setNormalUvTransformOnKhronosPbrMaterial(
+        material: MaterialResource,
+        uvTransform: Matrix3,
+    ) {
+        require(material is Material) { "MaterialResource is not a Material" }
+        val data = uvTransform.data
+        impressApi.setNormalUvTransformOnKhronosPbrMaterial(
+            material.nativeHandle,
+            data[0],
+            data[1],
+            data[2],
+            data[3],
+            data[4],
+            data[5],
+            data[6],
+            data[7],
+            data[8],
+        )
     }
 
-    @Override
-    public void setNormalFactorOnKhronosPbrMaterial(
-            @NonNull MaterialResource material, float factor) {
-        if (!(material instanceof Material)) {
-            throw new IllegalArgumentException("MaterialResource is not a Material");
-        }
-        mImpressApi.setNormalFactorOnKhronosPbrMaterial(
-                ((Material) material).getNativeHandle(), factor);
+    override fun setNormalFactorOnKhronosPbrMaterial(material: MaterialResource, factor: Float) {
+        require(material is Material) { "MaterialResource is not a Material" }
+        impressApi.setNormalFactorOnKhronosPbrMaterial(material.nativeHandle, factor)
     }
 
-    @Override
-    public void setAmbientOcclusionTextureOnKhronosPbrMaterial(
-            @NonNull MaterialResource material,
-            @NonNull TextureResource ambientOcclusion,
-            @NonNull TextureSampler sampler) {
-        if (!(material instanceof Material)) {
-            throw new IllegalArgumentException("MaterialResource is not a Material");
-        }
-        if (!(ambientOcclusion instanceof Texture)) {
-            throw new IllegalArgumentException("TextureResource is not a Texture");
-        }
-        mImpressApi.setAmbientOcclusionTextureOnKhronosPbrMaterial(
-                ((Material) material).getNativeHandle(),
-                ((Texture) ambientOcclusion).getNativeHandle(),
-                sampler);
+    override fun setAmbientOcclusionTextureOnKhronosPbrMaterial(
+        material: MaterialResource,
+        ambientOcclusion: TextureResource,
+        sampler: TextureSampler,
+    ) {
+        require(material is Material) { "MaterialResource is not a Material" }
+        require(ambientOcclusion is Texture) { "TextureResource is not a Texture" }
+        impressApi.setAmbientOcclusionTextureOnKhronosPbrMaterial(
+            material.nativeHandle,
+            ambientOcclusion.nativeHandle,
+            sampler,
+        )
     }
 
-    @Override
-    public void setAmbientOcclusionUvTransformOnKhronosPbrMaterial(
-            @NonNull MaterialResource material, @NonNull Matrix3 uvTransform) {
-        if (!(material instanceof Material)) {
-            throw new IllegalArgumentException("MaterialResource is not a Material");
-        }
-        float[] data = uvTransform.getData();
-        mImpressApi.setAmbientOcclusionUvTransformOnKhronosPbrMaterial(
-                ((Material) material).getNativeHandle(),
-                data[0],
-                data[1],
-                data[2],
-                data[3],
-                data[4],
-                data[5],
-                data[6],
-                data[7],
-                data[8]);
+    override fun setAmbientOcclusionUvTransformOnKhronosPbrMaterial(
+        material: MaterialResource,
+        uvTransform: Matrix3,
+    ) {
+        require(material is Material) { "MaterialResource is not a Material" }
+        val data = uvTransform.data
+        impressApi.setAmbientOcclusionUvTransformOnKhronosPbrMaterial(
+            material.nativeHandle,
+            data[0],
+            data[1],
+            data[2],
+            data[3],
+            data[4],
+            data[5],
+            data[6],
+            data[7],
+            data[8],
+        )
     }
 
-    @Override
-    public void setAmbientOcclusionFactorOnKhronosPbrMaterial(
-            @NonNull MaterialResource material, float factor) {
-        if (!(material instanceof Material)) {
-            throw new IllegalArgumentException("MaterialResource is not a Material");
-        }
-        mImpressApi.setAmbientOcclusionFactorOnKhronosPbrMaterial(
-                ((Material) material).getNativeHandle(), factor);
+    override fun setAmbientOcclusionFactorOnKhronosPbrMaterial(
+        material: MaterialResource,
+        factor: Float,
+    ) {
+        require(material is Material) { "MaterialResource is not a Material" }
+        impressApi.setAmbientOcclusionFactorOnKhronosPbrMaterial(material.nativeHandle, factor)
     }
 
-    @Override
-    public void setEmissiveTextureOnKhronosPbrMaterial(
-            @NonNull MaterialResource material,
-            @NonNull TextureResource emissive,
-            @NonNull TextureSampler sampler) {
-        if (!(material instanceof Material)) {
-            throw new IllegalArgumentException("MaterialResource is not a Material");
-        }
-        if (!(emissive instanceof Texture)) {
-            throw new IllegalArgumentException("TextureResource is not a Texture");
-        }
-        mImpressApi.setEmissiveTextureOnKhronosPbrMaterial(
-                ((Material) material).getNativeHandle(),
-                ((Texture) emissive).getNativeHandle(),
-                sampler);
+    override fun setEmissiveTextureOnKhronosPbrMaterial(
+        material: MaterialResource,
+        emissive: TextureResource,
+        sampler: TextureSampler,
+    ) {
+        require(material is Material) { "MaterialResource is not a Material" }
+        require(emissive is Texture) { "TextureResource is not a Texture" }
+        impressApi.setEmissiveTextureOnKhronosPbrMaterial(
+            material.nativeHandle,
+            emissive.nativeHandle,
+            sampler,
+        )
     }
 
-    @Override
-    public void setEmissiveUvTransformOnKhronosPbrMaterial(
-            @NonNull MaterialResource material, @NonNull Matrix3 uvTransform) {
-        if (!(material instanceof Material)) {
-            throw new IllegalArgumentException("MaterialResource is not a Material");
-        }
-        float[] data = uvTransform.getData();
-        mImpressApi.setEmissiveUvTransformOnKhronosPbrMaterial(
-                ((Material) material).getNativeHandle(),
-                data[0],
-                data[1],
-                data[2],
-                data[3],
-                data[4],
-                data[5],
-                data[6],
-                data[7],
-                data[8]);
+    override fun setEmissiveUvTransformOnKhronosPbrMaterial(
+        material: MaterialResource,
+        uvTransform: Matrix3,
+    ) {
+        require(material is Material) { "MaterialResource is not a Material" }
+        val data = uvTransform.data
+        impressApi.setEmissiveUvTransformOnKhronosPbrMaterial(
+            material.nativeHandle,
+            data[0],
+            data[1],
+            data[2],
+            data[3],
+            data[4],
+            data[5],
+            data[6],
+            data[7],
+            data[8],
+        )
     }
 
-    @Override
-    public void setEmissiveFactorsOnKhronosPbrMaterial(
-            @NonNull MaterialResource material, @NonNull Vector3 factors) {
-        if (!(material instanceof Material)) {
-            throw new IllegalArgumentException("MaterialResource is not a Material");
-        }
-        mImpressApi.setEmissiveFactorsOnKhronosPbrMaterial(
-                ((Material) material).getNativeHandle(),
-                factors.getX(),
-                factors.getY(),
-                factors.getZ());
+    override fun setEmissiveFactorsOnKhronosPbrMaterial(
+        material: MaterialResource,
+        factors: Vector3,
+    ) {
+        require(material is Material) { "MaterialResource is not a Material" }
+        impressApi.setEmissiveFactorsOnKhronosPbrMaterial(
+            material.nativeHandle,
+            factors.x,
+            factors.y,
+            factors.z,
+        )
     }
 
-    @Override
-    public void setClearcoatTextureOnKhronosPbrMaterial(
-            @NonNull MaterialResource material,
-            @NonNull TextureResource clearcoat,
-            @NonNull TextureSampler sampler) {
-        if (!(material instanceof Material)) {
-            throw new IllegalArgumentException("MaterialResource is not a Material");
-        }
-        if (!(clearcoat instanceof Texture)) {
-            throw new IllegalArgumentException("TextureResource is not a Texture");
-        }
-        mImpressApi.setClearcoatTextureOnKhronosPbrMaterial(
-                ((Material) material).getNativeHandle(),
-                ((Texture) clearcoat).getNativeHandle(),
-                sampler);
+    override fun setClearcoatTextureOnKhronosPbrMaterial(
+        material: MaterialResource,
+        clearcoat: TextureResource,
+        sampler: TextureSampler,
+    ) {
+        require(material is Material) { "MaterialResource is not a Material" }
+        require(clearcoat is Texture) { "TextureResource is not a Texture" }
+        impressApi.setClearcoatTextureOnKhronosPbrMaterial(
+            material.nativeHandle,
+            clearcoat.nativeHandle,
+            sampler,
+        )
     }
 
-    @Override
-    public void setClearcoatNormalTextureOnKhronosPbrMaterial(
-            @NonNull MaterialResource material,
-            @NonNull TextureResource clearcoatNormal,
-            @NonNull TextureSampler sampler) {
-        if (!(material instanceof Material)) {
-            throw new IllegalArgumentException("MaterialResource is not a Material");
-        }
-        if (!(clearcoatNormal instanceof Texture)) {
-            throw new IllegalArgumentException("TextureResource is not a Texture");
-        }
-        mImpressApi.setClearcoatNormalTextureOnKhronosPbrMaterial(
-                ((Material) material).getNativeHandle(),
-                ((Texture) clearcoatNormal).getNativeHandle(),
-                sampler);
+    override fun setClearcoatNormalTextureOnKhronosPbrMaterial(
+        material: MaterialResource,
+        clearcoatNormal: TextureResource,
+        sampler: TextureSampler,
+    ) {
+        require(material is Material) { "MaterialResource is not a Material" }
+        require(clearcoatNormal is Texture) { "TextureResource is not a Texture" }
+        impressApi.setClearcoatNormalTextureOnKhronosPbrMaterial(
+            material.nativeHandle,
+            clearcoatNormal.nativeHandle,
+            sampler,
+        )
     }
 
-    @Override
-    public void setClearcoatRoughnessTextureOnKhronosPbrMaterial(
-            @NonNull MaterialResource material,
-            @NonNull TextureResource clearcoatRoughness,
-            @NonNull TextureSampler sampler) {
-        if (!(material instanceof Material)) {
-            throw new IllegalArgumentException("MaterialResource is not a Material");
-        }
-        if (!(clearcoatRoughness instanceof Texture)) {
-            throw new IllegalArgumentException("TextureResource is not a Texture");
-        }
-        mImpressApi.setClearcoatRoughnessTextureOnKhronosPbrMaterial(
-                ((Material) material).getNativeHandle(),
-                ((Texture) clearcoatRoughness).getNativeHandle(),
-                sampler);
+    override fun setClearcoatRoughnessTextureOnKhronosPbrMaterial(
+        material: MaterialResource,
+        clearcoatRoughness: TextureResource,
+        sampler: TextureSampler,
+    ) {
+        require(material is Material) { "MaterialResource is not a Material" }
+        require(clearcoatRoughness is Texture) { "TextureResource is not a Texture" }
+        impressApi.setClearcoatRoughnessTextureOnKhronosPbrMaterial(
+            material.nativeHandle,
+            clearcoatRoughness.nativeHandle,
+            sampler,
+        )
     }
 
-    @Override
-    public void setClearcoatFactorsOnKhronosPbrMaterial(
-            @NonNull MaterialResource material, float intensity, float roughness, float normal) {
-        if (!(material instanceof Material)) {
-            throw new IllegalArgumentException("MaterialResource is not a Material");
-        }
-        mImpressApi.setClearcoatFactorsOnKhronosPbrMaterial(
-                ((Material) material).getNativeHandle(), intensity, roughness, normal);
+    override fun setClearcoatFactorsOnKhronosPbrMaterial(
+        material: MaterialResource,
+        intensity: Float,
+        roughness: Float,
+        normal: Float,
+    ) {
+        require(material is Material) { "MaterialResource is not a Material" }
+        impressApi.setClearcoatFactorsOnKhronosPbrMaterial(
+            material.nativeHandle,
+            intensity,
+            roughness,
+            normal,
+        )
     }
 
-    @Override
-    public void setSheenColorTextureOnKhronosPbrMaterial(
-            @NonNull MaterialResource material,
-            @NonNull TextureResource sheenColor,
-            @NonNull TextureSampler sampler) {
-        if (!(material instanceof Material)) {
-            throw new IllegalArgumentException("MaterialResource is not a Material");
-        }
-        if (!(sheenColor instanceof Texture)) {
-            throw new IllegalArgumentException("TextureResource is not a Texture");
-        }
-        mImpressApi.setSheenColorTextureOnKhronosPbrMaterial(
-                ((Material) material).getNativeHandle(),
-                ((Texture) sheenColor).getNativeHandle(),
-                sampler);
+    override fun setSheenColorTextureOnKhronosPbrMaterial(
+        material: MaterialResource,
+        sheenColor: TextureResource,
+        sampler: TextureSampler,
+    ) {
+        require(material is Material) { "MaterialResource is not a Material" }
+        require(sheenColor is Texture) { "TextureResource is not a Texture" }
+        impressApi.setSheenColorTextureOnKhronosPbrMaterial(
+            material.nativeHandle,
+            sheenColor.nativeHandle,
+            sampler,
+        )
     }
 
-    @Override
-    public void setSheenColorFactorsOnKhronosPbrMaterial(
-            @NonNull MaterialResource material, @NonNull Vector3 factors) {
-        if (!(material instanceof Material)) {
-            throw new IllegalArgumentException("MaterialResource is not a Material");
-        }
-        mImpressApi.setSheenColorFactorsOnKhronosPbrMaterial(
-                ((Material) material).getNativeHandle(),
-                factors.getX(),
-                factors.getY(),
-                factors.getZ());
+    override fun setSheenColorFactorsOnKhronosPbrMaterial(
+        material: MaterialResource,
+        factors: Vector3,
+    ) {
+        require(material is Material) { "MaterialResource is not a Material" }
+        impressApi.setSheenColorFactorsOnKhronosPbrMaterial(
+            material.nativeHandle,
+            factors.x,
+            factors.y,
+            factors.z,
+        )
     }
 
-    @Override
-    public void setSheenRoughnessTextureOnKhronosPbrMaterial(
-            @NonNull MaterialResource material,
-            @NonNull TextureResource sheenRoughness,
-            @NonNull TextureSampler sampler) {
-        if (!(material instanceof Material)) {
-            throw new IllegalArgumentException("MaterialResource is not a Material");
-        }
-        if (!(sheenRoughness instanceof Texture)) {
-            throw new IllegalArgumentException("TextureResource is not a Texture");
-        }
-        mImpressApi.setSheenRoughnessTextureOnKhronosPbrMaterial(
-                ((Material) material).getNativeHandle(),
-                ((Texture) sheenRoughness).getNativeHandle(),
-                sampler);
+    override fun setSheenRoughnessTextureOnKhronosPbrMaterial(
+        material: MaterialResource,
+        sheenRoughness: TextureResource,
+        sampler: TextureSampler,
+    ) {
+        require(material is Material) { "MaterialResource is not a Material" }
+        require(sheenRoughness is Texture) { "TextureResource is not a Texture" }
+        impressApi.setSheenRoughnessTextureOnKhronosPbrMaterial(
+            material.nativeHandle,
+            sheenRoughness.nativeHandle,
+            sampler,
+        )
     }
 
-    @Override
-    public void setSheenRoughnessFactorOnKhronosPbrMaterial(
-            @NonNull MaterialResource material, float factor) {
-        if (!(material instanceof Material)) {
-            throw new IllegalArgumentException("MaterialResource is not a Material");
-        }
-        mImpressApi.setSheenRoughnessFactorOnKhronosPbrMaterial(
-                ((Material) material).getNativeHandle(), factor);
+    override fun setSheenRoughnessFactorOnKhronosPbrMaterial(
+        material: MaterialResource,
+        factor: Float,
+    ) {
+        require(material is Material) { "MaterialResource is not a Material" }
+        impressApi.setSheenRoughnessFactorOnKhronosPbrMaterial(material.nativeHandle, factor)
     }
 
-    @Override
-    public void setTransmissionTextureOnKhronosPbrMaterial(
-            @NonNull MaterialResource material,
-            @NonNull TextureResource transmission,
-            @NonNull TextureSampler sampler) {
-        if (!(material instanceof Material)) {
-            throw new IllegalArgumentException("MaterialResource is not a Material");
-        }
-        if (!(transmission instanceof Texture)) {
-            throw new IllegalArgumentException("TextureResource is not a Texture");
-        }
-        mImpressApi.setTransmissionTextureOnKhronosPbrMaterial(
-                ((Material) material).getNativeHandle(),
-                ((Texture) transmission).getNativeHandle(),
-                sampler);
+    override fun setTransmissionTextureOnKhronosPbrMaterial(
+        material: MaterialResource,
+        transmission: TextureResource,
+        sampler: TextureSampler,
+    ) {
+        require(material is Material) { "MaterialResource is not a Material" }
+        require(transmission is Texture) { "TextureResource is not a Texture" }
+        impressApi.setTransmissionTextureOnKhronosPbrMaterial(
+            material.nativeHandle,
+            transmission.nativeHandle,
+            sampler,
+        )
     }
 
-    @Override
-    public void setTransmissionUvTransformOnKhronosPbrMaterial(
-            @NonNull MaterialResource material, @NonNull Matrix3 uvTransform) {
-        if (!(material instanceof Material)) {
-            throw new IllegalArgumentException("MaterialResource is not a Material");
-        }
-        float[] data = uvTransform.getData();
-        mImpressApi.setTransmissionUvTransformOnKhronosPbrMaterial(
-                ((Material) material).getNativeHandle(),
-                data[0],
-                data[1],
-                data[2],
-                data[3],
-                data[4],
-                data[5],
-                data[6],
-                data[7],
-                data[8]);
+    override fun setTransmissionUvTransformOnKhronosPbrMaterial(
+        material: MaterialResource,
+        uvTransform: Matrix3,
+    ) {
+        require(material is Material) { "MaterialResource is not a Material" }
+        val data = uvTransform.data
+        impressApi.setTransmissionUvTransformOnKhronosPbrMaterial(
+            material.nativeHandle,
+            data[0],
+            data[1],
+            data[2],
+            data[3],
+            data[4],
+            data[5],
+            data[6],
+            data[7],
+            data[8],
+        )
     }
 
-    @Override
-    public void setTransmissionFactorOnKhronosPbrMaterial(
-            @NonNull MaterialResource material, float factor) {
-        if (!(material instanceof Material)) {
-            throw new IllegalArgumentException("MaterialResource is not a Material");
-        }
-        mImpressApi.setTransmissionFactorOnKhronosPbrMaterial(
-                ((Material) material).getNativeHandle(), factor);
+    override fun setTransmissionFactorOnKhronosPbrMaterial(
+        material: MaterialResource,
+        factor: Float,
+    ) {
+        require(material is Material) { "MaterialResource is not a Material" }
+        impressApi.setTransmissionFactorOnKhronosPbrMaterial(material.nativeHandle, factor)
     }
 
-    @Override
-    public void setIndexOfRefractionOnKhronosPbrMaterial(
-            @NonNull MaterialResource material, float indexOfRefraction) {
-        if (!(material instanceof Material)) {
-            throw new IllegalArgumentException("MaterialResource is not a Material");
-        }
-        mImpressApi.setIndexOfRefractionOnKhronosPbrMaterial(
-                ((Material) material).getNativeHandle(), indexOfRefraction);
+    override fun setIndexOfRefractionOnKhronosPbrMaterial(
+        material: MaterialResource,
+        indexOfRefraction: Float,
+    ) {
+        require(material is Material) { "MaterialResource is not a Material" }
+        impressApi.setIndexOfRefractionOnKhronosPbrMaterial(
+            material.nativeHandle,
+            indexOfRefraction,
+        )
     }
 
-    @Override
-    public void setAlphaCutoffOnKhronosPbrMaterial(
-            @NonNull MaterialResource material, float alphaCutoff) {
-        if (!(material instanceof Material)) {
-            throw new IllegalArgumentException("MaterialResource is not a Material");
-        }
-        mImpressApi.setAlphaCutoffOnKhronosPbrMaterial(
-                ((Material) material).getNativeHandle(), alphaCutoff);
+    override fun setAlphaCutoffOnKhronosPbrMaterial(
+        material: MaterialResource,
+        alphaCutoff: Float,
+    ) {
+        require(material is Material) { "MaterialResource is not a Material" }
+        impressApi.setAlphaCutoffOnKhronosPbrMaterial(material.nativeHandle, alphaCutoff)
     }
 
-    @Override
-    @NonNull
-    public GltfEntity createGltfEntity(
-            @NonNull Pose pose,
-            @NonNull GltfModelResource loadedGltf,
-            @NonNull Entity parentEntity) {
-        GltfFeature feature =
-                new GltfFeatureImpl(
-                        (GltfModel) loadedGltf,
-                        mImpressApi,
-                        mSplitEngineSubspaceManager,
-                        mExtensions);
-        return mRenderingEntityFactory.createGltfEntity(feature, pose, parentEntity);
+    override fun createGltfEntity(
+        pose: Pose,
+        loadedGltf: GltfModelResource,
+        parentEntity: Entity,
+    ): GltfEntity {
+        // TODO(b/458779328): Fix incorrect use of !! on a nullable return value.
+        val feature =
+            GltfFeatureImpl(loadedGltf as GltfModel, impressApi, subspaceManager, extensions)
+        return renderingEntityFactory.createGltfEntity(feature, pose, parentEntity)
     }
 
-    @Override
-    @NonNull
-    public SurfaceEntity createSurfaceEntity(
-            @SurfaceEntity.StereoMode int stereoMode,
-            @NonNull Pose pose,
-            SurfaceEntity.@NonNull Shape canvasShape,
-            @SurfaceEntity.SurfaceProtection int contentSecurityLevel,
-            @SurfaceEntity.SuperSampling int superSampling,
-            @NonNull Entity parentEntity) {
-        if (!Looper.getMainLooper().isCurrentThread()) {
-            throw new IllegalStateException("This method must be called on the main thread.");
+    override fun createSurfaceEntity(
+        @SurfaceEntity.StereoMode stereoMode: Int,
+        pose: Pose,
+        shape: SurfaceEntity.Shape,
+        @SurfaceEntity.SurfaceProtection surfaceProtection: Int,
+        @SurfaceEntity.SuperSampling superSampling: Int,
+        parentEntity: Entity,
+    ): SurfaceEntity {
+        check(Looper.getMainLooper().isCurrentThread) {
+            "This method must be called on the main thread."
         }
 
-        SurfaceFeatureImpl feature =
-                new SurfaceFeatureImpl(
-                        mImpressApi,
-                        mSplitEngineSubspaceManager,
-                        mExtensions,
-                        stereoMode,
-                        canvasShape,
-                        contentSecurityLevel,
-                        superSampling);
-        return mRenderingEntityFactory.createSurfaceEntity(feature, pose, parentEntity);
+        // TODO(b/458779328): Fix incorrect use of !! on a nullable return value.
+        val feature =
+            SurfaceFeatureImpl(
+                impressApi,
+                subspaceManager,
+                extensions,
+                stereoMode,
+                shape,
+                surfaceProtection,
+                superSampling,
+            )
+        return renderingEntityFactory.createSurfaceEntity(feature, pose, parentEntity)
     }
 
     // JxrRuntime lifecycle
-    @Override
-    public void resume() {
+    override fun resume() {
         // Start renderer
-        if (mSplitEngineRenderer == null || mFrameLoopStarted) {
-            return;
+        if (frameLoopStarted) {
+            return
         }
-        mFrameLoopStarted = true;
-        mSplitEngineRenderer.startFrameLoop();
+        frameLoopStarted = true
+        renderer.startFrameLoop()
     }
 
-    @Override
-    public void pause() {
+    override fun pause() {
         // Stop renderer
-        if (mSplitEngineRenderer == null || !mFrameLoopStarted) {
-            return;
+        if (!frameLoopStarted) {
+            return
         }
-        mFrameLoopStarted = false;
-        mSplitEngineRenderer.stopFrameLoop();
+        frameLoopStarted = false
+        renderer.stopFrameLoop()
     }
 
-    @Override
-    public void destroy() {
-        if (mIsDestroyed) {
-            return;
+    override fun destroy() {
+        if (isDestroyed) {
+            return
+        }
+        activity = null
+
+        if (frameLoopStarted) {
+            frameLoopStarted = false
+            renderer.stopFrameLoop()
         }
 
-        mActivity = null;
-        if (mSplitEngineRenderer != null && mSplitEngineSubspaceManager != null) {
-            if (mFrameLoopStarted) {
-                mFrameLoopStarted = false;
-                mSplitEngineRenderer.stopFrameLoop();
-            }
-
-            // mSpatialEnvironmentFeature.dispose() will be invoked once in SceneRuntime.dispose()
-            // to make the XrExtensions operations happen before the SceneRuntime detaching the
-            // scene. Do the destroy here again to clean our own resource formally.
-            if (mSpatialEnvironmentFeature != null) {
-                mSpatialEnvironmentFeature.dispose();
-                mSpatialEnvironmentFeature = null;
-            }
-            mImpressApi.disposeAllResources();
-            mSplitEngineSubspaceManager.destroy();
-            mSplitEngineRenderer.destroy();
-            mSplitEngineSubspaceManager = null;
-            mSplitEngineRenderer = null;
-        }
-        mIsDestroyed = true;
+        // mSpatialEnvironmentFeature.dispose() will be invoked once in SceneRuntime.dispose()
+        // to make the XrExtensions operations happen before the SceneRuntime detaching the
+        // scene. Do the destroy here again to clean our own resource formally.
+        spatialEnvironmentFeature?.dispose()
+        spatialEnvironmentFeature = null
+        impressApi.disposeAllResources()
+        subspaceManager.destroy()
+        renderer.destroy()
+        isDestroyed = true
     }
 
-    @VisibleForTesting
-    boolean isFrameLoopStarted() {
-        return mFrameLoopStarted;
+    @VisibleForTesting public fun isFrameLoopStarted(): Boolean = frameLoopStarted
+
+    public companion object {
+        private const val SPLIT_ENGINE_LIBRARY_NAME = "impress_api_jni"
+
+        @VisibleForTesting
+        @JvmStatic
+        internal fun create(
+            sceneRuntime: SceneRuntime,
+            activity: Activity,
+            impressApi: ImpressApi?,
+            splitEngineSubspaceManager: SplitEngineSubspaceManager?,
+            splitEngineRenderer: ImpSplitEngineRenderer?,
+        ): SpatialRenderingRuntime {
+            val extensions =
+                getXrExtensions() ?: throw IllegalStateException("XrExtensions is null")
+
+            val finalImpressApi = impressApi ?: ImpressApiImpl()
+
+            val finalSplitEngineRenderer =
+                splitEngineRenderer
+                    ?: run {
+                        val impApiSetupParams =
+                            ImpSplitEngine.SplitEngineSetupParams().apply {
+                                jniLibraryName = SPLIT_ENGINE_LIBRARY_NAME
+                            }
+                        ImpSplitEngineRenderer.create(activity, impApiSetupParams, extensions)
+                    }
+
+            val finalSubspaceManager =
+                splitEngineSubspaceManager
+                    ?: SplitEngineSubspaceManager(
+                        finalSplitEngineRenderer,
+                        extensions,
+                        null,
+                        null,
+                        SPLIT_ENGINE_LIBRARY_NAME,
+                    )
+
+            if (finalSplitEngineRenderer != null) {
+                finalImpressApi.setup(finalSplitEngineRenderer.view)
+            }
+
+            return SpatialRenderingRuntime(
+                sceneRuntime,
+                activity,
+                extensions,
+                finalImpressApi,
+                finalSubspaceManager,
+                finalSplitEngineRenderer,
+            )
+        }
+
+        /**
+         * Create a new @c SpatialRenderingRuntime.
+         *
+         * @param sceneRuntime The SceneRuntime provide basic function for creating entities.
+         * @param activity The Activity to use.
+         * @return A new SpatialRenderingRuntime.
+         */
+        @JvmStatic
+        public fun create(sceneRuntime: SceneRuntime, activity: Activity): SpatialRenderingRuntime {
+            return create(sceneRuntime, activity, null, null, null)
+        }
     }
 }
