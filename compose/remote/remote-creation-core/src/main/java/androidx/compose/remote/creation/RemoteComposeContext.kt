@@ -235,7 +235,7 @@ public open class RemoteComposeContext {
         mRemoteWriter.setTheme(theme)
     }
 
-    public fun drawBitmap(image: Object, width: Int, height: Int, contentDescription: String) {
+    public fun drawBitmap(image: Any, width: Int, height: Int, contentDescription: String) {
         mRemoteWriter.drawBitmap(image, width, height, contentDescription)
     }
 
@@ -304,7 +304,7 @@ public open class RemoteComposeContext {
     }
 
     public fun drawScaledBitmap(
-        image: Object,
+        image: Any,
         srcLeft: Float,
         srcTop: Float,
         srcRight: Float,
@@ -688,7 +688,7 @@ public open class RemoteComposeContext {
         return mRemoteWriter.addNamedFloat(name, initialValue)
     }
 
-    public fun addNamedBitmap(name: String, initialValue: Object): Int {
+    public fun addNamedBitmap(name: String, initialValue: Any): Int {
         return mRemoteWriter.addNamedBitmap(name, initialValue)
     }
 
@@ -1248,11 +1248,11 @@ public open class RemoteComposeContext {
         return mRemoteWriter.storeBitmap(image)
     }
 
-    public fun addBitmap(image: Object): Int {
+    public fun addBitmap(image: Any): Int {
         return mRemoteWriter.addBitmap(image)
     }
 
-    public fun addBitmap(image: Object, name: String): Int {
+    public fun addBitmap(image: Any, name: String): Int {
         return mRemoteWriter.addBitmap(image, name)
     }
 
