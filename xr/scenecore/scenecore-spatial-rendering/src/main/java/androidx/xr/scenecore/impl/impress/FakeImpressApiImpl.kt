@@ -146,6 +146,16 @@ public class FakeImpressApiImpl : ImpressApi {
         imageBasedLightingAssets.remove(iblToken)
     }
 
+    @Suppress("RestrictTo")
+    override suspend fun loadImageBasedLightingAssetTemp(path: String): ExrImage {
+        val token = (nextImageBasedLightingAssetId++).toLong()
+        imageBasedLightingAssets.add(token)
+        val exrImage: ExrImage =
+            ExrImage.Builder().setImpressApi(this).setNativeExrImage(token).build()
+        // TODO(b/352827267): Enforce minSDK API strategy - go/androidx-api-guidelines#compat-newapi
+        return exrImage
+    }
+
     @Suppress("RestrictTo", "AsyncSuffixFuture")
     override fun loadImageBasedLightingAsset(path: String): ListenableFuture<ExrImage> {
         val token = (nextImageBasedLightingAssetId++).toLong()
@@ -154,6 +164,16 @@ public class FakeImpressApiImpl : ImpressApi {
             ExrImage.Builder().setImpressApi(this).setNativeExrImage(token).build()
         // TODO(b/352827267): Enforce minSDK API strategy - go/androidx-api-guidelines#compat-newapi
         return ResolvableFuture.create<ExrImage>().apply { set(exrImage) }
+    }
+
+    @Suppress("RestrictTo")
+    override suspend fun loadImageBasedLightingAssetTemp(data: ByteArray, key: String): ExrImage {
+        val token = (nextImageBasedLightingAssetId++).toLong()
+        imageBasedLightingAssets.add(token)
+        val exrImage: ExrImage =
+            ExrImage.Builder().setImpressApi(this).setNativeExrImage(token).build()
+        // TODO(b/352827267): Enforce minSDK API strategy - go/androidx-api-guidelines#compat-newapi
+        return exrImage
     }
 
     @Suppress("RestrictTo", "AsyncSuffixFuture")
@@ -169,6 +189,16 @@ public class FakeImpressApiImpl : ImpressApi {
         return ResolvableFuture.create<ExrImage>().apply { set(exrImage) }
     }
 
+    @Suppress("RestrictTo")
+    override suspend fun loadGltfAssetTemp(path: String): GltfModel {
+        val token = (nextModelId++).toLong()
+        gltfModels[token] = ArrayList()
+        val gltfModel: GltfModel =
+            GltfModel.Builder().setImpressApi(this).setNativeGltfModel(token).build()
+        // TODO(b/352827267): Enforce minSDK API strategy - go/androidx-api-guidelines#compat-newapi
+        return gltfModel
+    }
+
     @Suppress("RestrictTo", "AsyncSuffixFuture")
     override fun loadGltfAsset(path: String): ListenableFuture<GltfModel> {
         val token = (nextModelId++).toLong()
@@ -177,6 +207,16 @@ public class FakeImpressApiImpl : ImpressApi {
             GltfModel.Builder().setImpressApi(this).setNativeGltfModel(token).build()
         // TODO(b/352827267): Enforce minSDK API strategy - go/androidx-api-guidelines#compat-newapi
         return ResolvableFuture.create<GltfModel>().apply { set(gltfModel) }
+    }
+
+    @Suppress("RestrictTo")
+    override suspend fun loadGltfAssetTemp(data: ByteArray, key: String): GltfModel {
+        val token = (nextModelId++).toLong()
+        gltfModels[token] = ArrayList()
+        val gltfModel: GltfModel =
+            GltfModel.Builder().setImpressApi(this).setNativeGltfModel(token).build()
+        // TODO(b/352827267): Enforce minSDK API strategy - go/androidx-api-guidelines#compat-newapi
+        return gltfModel
     }
 
     @Suppress("RestrictTo", "AsyncSuffixFuture")
@@ -211,6 +251,31 @@ public class FakeImpressApiImpl : ImpressApi {
 
     override fun setGltfModelColliderEnabled(impressNode: ImpressNode, enableCollider: Boolean) {
         throw IllegalArgumentException("not implemented")
+    }
+
+    @Suppress("RestrictTo")
+    override suspend fun animateGltfModelTemp(
+        impressNode: ImpressNode,
+        animationName: String?,
+        looping: Boolean,
+    ): Void? {
+        val future = ResolvableFuture.create<Void?>()
+        if (getGltfNodeData(impressNode) == null) {
+            throw IllegalArgumentException("Impress node not found")
+        }
+        val animationInProgress = AnimationInProgress(animationName, future)
+        if (looping) {
+            impressLoopAnimatedNodes[impressNode] = animationInProgress
+        } else {
+            impressAnimatedNodes[impressNode] = animationInProgress
+        }
+        try {
+            return future.get()
+        } catch (e: Exception) {
+            impressLoopAnimatedNodes.remove(impressNode)
+            impressAnimatedNodes.remove(impressNode)
+            throw e
+        }
     }
 
     @Suppress("RestrictTo", "AsyncSuffixFuture")
@@ -431,7 +496,16 @@ public class FakeImpressApiImpl : ImpressApi {
 
     override fun resetContentColorMetadataForStereoSurface(stereoSurfaceNode: ImpressNode) {}
 
-    @Suppress("RestrictTo", "AsyncSuffixFuture")
+    @Suppress("RestrictTo")
+    override suspend fun loadTextureTemp(path: String): Texture {
+        val textureImageToken = nextTextureId++
+        val texture =
+            Texture.Builder().setImpressApi(this).setNativeTexture(textureImageToken).build()
+        textureImages[textureImageToken] = texture
+        return texture
+    }
+
+    @Suppress("AsyncSuffixFuture")
     override fun loadTexture(path: String): ListenableFuture<Texture> {
         val textureImageToken = nextTextureId++
         val texture =
@@ -449,6 +523,15 @@ public class FakeImpressApiImpl : ImpressApi {
     override fun getReflectionTextureFromIbl(iblToken: Long): Texture {
         val textureImageToken = nextTextureId++
         return Texture.Builder().setImpressApi(this).setNativeTexture(textureImageToken).build()
+    }
+
+    @Suppress("RestrictTo")
+    override suspend fun createWaterMaterialTemp(isAlphaMapVersion: Boolean): WaterMaterial {
+        val materialToken = nextMaterialId++
+        val material =
+            WaterMaterial.Builder().setImpressApi(this).setNativeMaterial(materialToken).build()
+        materials[materialToken] = MaterialData(MaterialData.Type.WATER, materialToken)
+        return material
     }
 
     @Suppress("RestrictTo", "AsyncSuffixFuture")
@@ -525,6 +608,20 @@ public class FakeImpressApiImpl : ImpressApi {
         w: Float,
     ) {
         throw IllegalArgumentException("not implemented")
+    }
+
+    @Suppress("RestrictTo")
+    override suspend fun createKhronosPbrMaterialTemp(
+        spec: KhronosPbrMaterialSpec
+    ): KhronosPbrMaterial {
+        val materialToken = nextMaterialId++
+        val material =
+            KhronosPbrMaterial.Builder()
+                .setImpressApi(this)
+                .setNativeMaterial(materialToken)
+                .build()
+        materials[materialToken] = MaterialData(MaterialData.Type.KHRONOS_PBR, materialToken)
+        return material
     }
 
     @Suppress("RestrictTo")
