@@ -159,7 +159,7 @@ public interface ImpressApi {
     }
 
     /** This method initializes the Impress Split Engine instance. */
-    public fun setup(view: View)
+    public fun setup(view: View?)
 
     /** This method initializes the Impress Split Engine instance for test purposes. */
     @VisibleForTesting public fun setup(nativeTestViewHandle: Long)
