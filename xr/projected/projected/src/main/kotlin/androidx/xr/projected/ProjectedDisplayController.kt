@@ -75,15 +75,6 @@ private constructor(
     }
 
     /**
-     * Returns `true` if the currently connected projected device is capable of displaying content
-     * to the user.
-     *
-     * This method does not provide any more details on what type of display it is.
-     */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    public fun isDisplayCapable(): Boolean = projectedService.isDisplayCapable()
-
-    /**
      * An EngagementMode value.
      *
      * The EngagementMode represents how a user is interacting with a projected application (e.g.

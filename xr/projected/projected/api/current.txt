@@ -11,6 +11,26 @@ package androidx.xr.projected {
     field public static final androidx.xr.projected.ProjectedContext INSTANCE;
   }
 
+  @SuppressCompatibility @androidx.xr.projected.experimental.ExperimentalProjectedApi public final class ProjectedDeviceController {
+    method @RequiresApi(android.os.Build.VERSION_CODES.UPSIDE_DOWN_CAKE) public static suspend Object? create(android.content.Context context, kotlin.coroutines.Continuation<? super androidx.xr.projected.ProjectedDeviceController>);
+    method @InaccessibleFromKotlin public java.util.Set<androidx.xr.projected.ProjectedDeviceController.Capability> getCapabilities();
+    property public java.util.Set<androidx.xr.projected.ProjectedDeviceController.Capability> capabilities;
+    field public static final androidx.xr.projected.ProjectedDeviceController.Companion Companion;
+  }
+
+  @SuppressCompatibility @androidx.xr.projected.experimental.ExperimentalProjectedApi public static final class ProjectedDeviceController.Capability {
+    field public static final androidx.xr.projected.ProjectedDeviceController.Capability CAPABILITY_VISUAL_UI;
+    field public static final androidx.xr.projected.ProjectedDeviceController.Capability.Companion Companion;
+  }
+
+  @SuppressCompatibility @androidx.xr.projected.experimental.ExperimentalProjectedApi public static final class ProjectedDeviceController.Capability.Companion {
+    property public androidx.xr.projected.ProjectedDeviceController.Capability CAPABILITY_VISUAL_UI;
+  }
+
+  @SuppressCompatibility @androidx.xr.projected.experimental.ExperimentalProjectedApi public static final class ProjectedDeviceController.Companion {
+    method @RequiresApi(android.os.Build.VERSION_CODES.UPSIDE_DOWN_CAKE) public suspend Object? create(android.content.Context context, kotlin.coroutines.Continuation<? super androidx.xr.projected.ProjectedDeviceController>);
+  }
+
   public final class ProjectedDisplayController implements java.lang.AutoCloseable {
     method @SuppressCompatibility @androidx.xr.projected.experimental.ExperimentalProjectedApi public void addLayoutParamsFlags(int flags);
     method public void close();
