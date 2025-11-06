@@ -186,9 +186,9 @@ class WearWidgetProviderInfoTest {
                 )
 
         assertThat(info.unrecognisedAttributes).hasSize(2)
-        assertThat(info.unrecognisedAttributes).containsEntry("unrecognizedStr", "some string")
+        assertThat(info.unrecognisedAttributes).containsEntry("unrecognisedstr", "some string")
         assertThat(info.unrecognisedAttributes)
-            .containsEntry("unrecognizedRef", "@${android.R.string.ok}")
+            .containsEntry("unrecognisedref", "@${android.R.string.ok}")
     }
 
     @Test
