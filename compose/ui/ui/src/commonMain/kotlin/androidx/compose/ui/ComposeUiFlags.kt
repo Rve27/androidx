@@ -178,28 +178,6 @@ object ComposeUiFlags {
     var isGraphicsLayerShapeSemanticsEnabled: Boolean = true
 
     /**
-     * Flag for enabling nested scroll interop fix for propagating integers, this fixes an issue
-     * with interop between compose and views nested scroll where small deltas with the wrong sign
-     * were being scaled up due to the rounding used.
-     */
-    @field:Suppress("MutableBareField")
-    @JvmField
-    var isNestedScrollInteropIntegerPropagationEnabled: Boolean = true
-
-    /**
-     * Enable fix for `[ComposeView.canScrollHorizontally]` and `[ComposeView.canScrollVertically]`
-     * methods. Previously, these methods would sometimes use the last MOVE event's position to
-     * determine if scrolling was possible, even if the gesture started with a DOWN event at a
-     * different location. This could lead to incorrect scrollability checks, especially when a
-     * scrollable container was touched and then moved. With this flag enabled, the methods
-     * correctly use the position of the initial DOWN event to establish the pointer position for an
-     * event that started on a scrollable container, ensuring accurate scroll checks.
-     */
-    @field:Suppress("MutableBareField")
-    @JvmField
-    var isCanScrollUsingLastDownEventFixEnabled: Boolean = true
-
-    /**
      * Enable fix to scroll target rect to the center when performing scroll capture, thus generally
      * avoiding floating content at the top and bottom of the UI.
      */
