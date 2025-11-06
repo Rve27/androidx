@@ -585,6 +585,7 @@ public class WebViewFeature {
      * {@link UserAgentMetadata.Builder#setFormFactors(List)}, and
      * {@link UserAgentMetadata#getFormFactors()}.
      */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public static final String USER_AGENT_METADATA_FORM_FACTORS =
             "USER_AGENT_METADATA_FORM_FACTORS";
 
