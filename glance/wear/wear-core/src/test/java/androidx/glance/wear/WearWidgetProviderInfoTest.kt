@@ -32,6 +32,7 @@ import org.robolectric.RobolectricTestRunner
 import org.xmlpull.v1.XmlPullParserException
 
 @RunWith(RobolectricTestRunner::class)
+@org.robolectric.annotation.Config(sdk = [org.robolectric.annotation.Config.TARGET_SDK])
 class WearWidgetProviderInfoTest {
     private val context: Context = getApplicationContext()
     private val service = ComponentName(context, "test.class")
