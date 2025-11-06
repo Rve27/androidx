@@ -569,6 +569,10 @@ public open class RemoteComposeContext {
         return mRemoteWriter.addPathString(path)
     }
 
+    public fun rFun(f: (RFloat) -> RFloat): RFloat {
+        return f.invoke(rf(Rc.FloatExpression.VAR1))
+    }
+
     /**
      * Add a path expression.
      *
@@ -1323,6 +1327,10 @@ public open class RemoteComposeContext {
 
     public fun addDebugMessage(message: String) {
         mRemoteWriter.addDebugMessage(message)
+    }
+
+    public fun addDebugMessage(message: String, value: RFloat) {
+        mRemoteWriter.addDebugMessage(message, value.toFloat())
     }
 
     public fun addDebugMessage(message: String, value: Float) {
