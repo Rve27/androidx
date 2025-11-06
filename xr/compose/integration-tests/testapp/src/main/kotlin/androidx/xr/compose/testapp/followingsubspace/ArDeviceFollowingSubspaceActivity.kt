@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.xr.compose.testapp.usersubspace
+package androidx.xr.compose.testapp.followingsubspace
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -58,14 +58,14 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.xr.compose.platform.LocalSession
-import androidx.xr.compose.spatial.ExperimentalUserSubspaceApi
-import androidx.xr.compose.spatial.UserSubspace
-import androidx.xr.compose.subspace.BodyPart
-import androidx.xr.compose.subspace.LockDimensions
-import androidx.xr.compose.subspace.LockingBehavior
+import androidx.xr.compose.spatial.ExperimentalFollowingSubspaceApi
+import androidx.xr.compose.spatial.FollowingSubspace
+import androidx.xr.compose.subspace.FollowBehavior
+import androidx.xr.compose.subspace.FollowTarget
 import androidx.xr.compose.subspace.SpatialColumn
 import androidx.xr.compose.subspace.SpatialCurvedRow
 import androidx.xr.compose.subspace.SpatialPanel
+import androidx.xr.compose.subspace.TrackedDimensions
 import androidx.xr.compose.subspace.layout.SubspaceModifier
 import androidx.xr.compose.subspace.layout.height
 import androidx.xr.compose.subspace.layout.offset
@@ -85,7 +85,7 @@ class UserSubspaceActivity : ComponentActivity() {
         setContent { MainContent() }
     }
 
-    @OptIn(ExperimentalUserSubspaceApi::class, ExperimentalMaterial3Api::class)
+    @OptIn(ExperimentalFollowingSubspaceApi::class, ExperimentalMaterial3Api::class)
     @Composable
     private fun MainContent() {
         val session = checkNotNull(LocalSession.current) { "session must be initialized" }
@@ -100,11 +100,12 @@ class UserSubspaceActivity : ComponentActivity() {
                 TodoItem("Review PRs", false),
             )
         }
-        // State for the soft lock duration slider
-        var softLockDuration by remember { mutableIntStateOf(1000) }
+        // State for the soft follow duration slider
+        var softFollowDuration by remember { mutableIntStateOf(1000) }
 
-        UserSubspace(
-            behavior = LockingBehavior.static(),
+        FollowingSubspace(
+            target = FollowTarget.ArDevice(session),
+            behavior = FollowBehavior.Static,
             modifier = SubspaceModifier.offset(z = (-200).dp),
         ) {
             SpatialPanel(SubspaceModifier.height(400.dp).width(600.dp)) {
@@ -130,10 +131,11 @@ class UserSubspaceActivity : ComponentActivity() {
                 }
             }
         }
-        UserSubspace(
-            lockTo = BodyPart.Head,
-            lockDimensions =
-                LockDimensions(
+
+        FollowingSubspace(
+            target = FollowTarget.ArDevice(session),
+            dimensions =
+                TrackedDimensions(
                     isTranslationXTracked = true,
                     isTranslationYTracked = true,
                     isTranslationZTracked = true,
@@ -141,7 +143,7 @@ class UserSubspaceActivity : ComponentActivity() {
                     isRotationYTracked = true,
                     isRotationZTracked = false,
                 ),
-            behavior = LockingBehavior.soft(durationMs = softLockDuration),
+            behavior = FollowBehavior.Soft(durationMs = softFollowDuration),
         ) {
             SpatialPanel(SubspaceModifier.height(200.dp).width(450.dp).offset(y = (-50).dp)) {
                 Box(Modifier.fillMaxSize().background(Color.Cyan)) {
@@ -157,23 +159,24 @@ class UserSubspaceActivity : ComponentActivity() {
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center,
                     ) {
-                        PanelHeader("CONTROL PANEL - HEAD LOCKED")
-                        SoftLockSlider(
-                            duration = softLockDuration,
-                            onDurationChange = { softLockDuration = it.toInt() },
+                        PanelHeader("HEAD LOCKED")
+                        SoftFollowSlider(
+                            duration = softFollowDuration,
+                            onDurationChange = { softFollowDuration = it.toInt() },
                         )
                     }
                 }
             }
         }
-        UserSubspace(
-            lockDimensions =
-                LockDimensions(
+        FollowingSubspace(
+            target = FollowTarget.ArDevice(session),
+            dimensions =
+                TrackedDimensions(
                     isTranslationXTracked = true,
                     isTranslationYTracked = true,
                     isTranslationZTracked = true,
                 ),
-            behavior = LockingBehavior.soft(durationMs = softLockDuration),
+            behavior = FollowBehavior.Soft(durationMs = softFollowDuration),
         ) {
             SpatialCurvedRow(SubspaceModifier.width(1000.dp).height(300.dp), curveRadius = 500.dp) {
                 // To-Do List Card
@@ -196,7 +199,7 @@ class UserSubspaceActivity : ComponentActivity() {
     }
 
     @Composable
-    private fun SoftLockSlider(duration: Int, onDurationChange: (Float) -> Unit) {
+    private fun SoftFollowSlider(duration: Int, onDurationChange: (Float) -> Unit) {
         Column(
             modifier = Modifier.width(400.dp).padding(horizontal = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
