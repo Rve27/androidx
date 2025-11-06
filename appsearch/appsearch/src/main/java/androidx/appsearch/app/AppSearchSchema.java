@@ -882,8 +882,6 @@ public final class AppSearchSchema extends AbstractSafeParcelable {
         }
 
         /** Does not propagate deletion. */
-        // TODO(b/384947619) unhide the API once it is ready.
-        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
         @ExperimentalAppSearchApi
         @FlaggedApi(Flags.FLAG_ENABLE_DELETE_PROPAGATION_TYPE)
         public static final int DELETE_PROPAGATION_TYPE_NONE = 0;
@@ -903,8 +901,6 @@ public final class AppSearchSchema extends AbstractSafeParcelable {
          * the joinable value type). Otherwise, throw {@link IllegalStateException} when building
          * (see {@link StringPropertyConfig.Builder#build}).
          */
-        // TODO(b/384947619) unhide the API once it is ready.
-        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
         @RequiresFeature(
                 enforcement = "androidx.appsearch.app.Features#isFeatureSupported",
                 name = Features
@@ -959,8 +955,6 @@ public final class AppSearchSchema extends AbstractSafeParcelable {
          * Returns how the deletion will be propagated between this document and the referenced
          * document whose qualified id is held by this property.
          */
-        // TODO(b/384947619) unhide the API once it is ready.
-        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
         @FlaggedApi(Flags.FLAG_ENABLE_DELETE_PROPAGATION_TYPE)
         @ExperimentalAppSearchApi
         @DeletePropagationType
@@ -1108,13 +1102,7 @@ public final class AppSearchSchema extends AbstractSafeParcelable {
              * the delete propagation has to use the qualified id. Otherwise, throw
              * {@link IllegalStateException} when building.
              */
-            // TODO(b/384947619) unhide the API once it is ready.
-            @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
             @CanIgnoreReturnValue
-            @RequiresFeature(
-                    enforcement = "androidx.appsearch.app.Features#isFeatureSupported",
-                    name = Features
-                            .SCHEMA_STRING_PROPERTY_CONFIG_DELETE_PROPAGATION_TYPE_PROPAGATE_FROM)
             @FlaggedApi(Flags.FLAG_ENABLE_DELETE_PROPAGATION_TYPE)
             @ExperimentalAppSearchApi
             public @NonNull StringPropertyConfig.Builder setDeletePropagationType(
