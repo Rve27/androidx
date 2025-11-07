@@ -171,9 +171,12 @@ final class FeaturesImpl implements Features {
                 // rollback compatibility issues. It is not allowed in Android T devices.
                 // TODO(b/369703879) Remove this special handling once embeddings are backported to
                 // Android T devices.
-                // fall through
-            case Features.SEARCH_SPEC_SEARCH_STRING_PARAMETERS:
                 return Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA;
+
+            // Pending Android B Features
+            case Features.SEARCH_SPEC_SEARCH_STRING_PARAMETERS:
+                // TODO(b/332620561) : Update when feature is ready in service-appsearch.
+                // fall through
 
             // Beyond Android B Features
             case Features.SCHEMA_SET_DESCRIPTION:
