@@ -87,7 +87,6 @@ public fun RemoteBrush.Companion.linearGradient(
  *   position at the far right and bottom of the drawing area
  * @param tileMode Determines the behavior for how the shader is to fill a region outside its
  *   bounds. Defaults to [TileMode.Clamp] to repeat the edge pixels
- * @sample androidx.compose.ui.graphics.samples.GradientBrushSample
  */
 @Stable
 public fun RemoteBrush.Companion.linearGradient(
@@ -123,7 +122,6 @@ public fun RemoteBrush.Companion.linearGradient(
  *   which indicates the right of the specified drawing area
  * @param tileMode Determines the behavior for how the shader is to fill a region outside its
  *   bounds. Defaults to [TileMode.Clamp] to repeat the edge pixels
- * @sample androidx.compose.ui.graphics.samples.GradientBrushSample
  */
 @Stable
 public fun RemoteBrush.Companion.horizontalGradient(
@@ -156,7 +154,6 @@ public fun RemoteBrush.Companion.horizontalGradient(
  *   which indicates the right of the specified drawing area
  * @param tileMode Determines the behavior for how the shader is to fill a region outside its
  *   bounds. Defaults to [TileMode.Clamp] to repeat the edge pixels
- * @sample androidx.compose.ui.graphics.samples.GradientBrushSample
  */
 @Stable
 public fun RemoteBrush.Companion.horizontalGradient(
@@ -190,7 +187,6 @@ public fun RemoteBrush.Companion.horizontalGradient(
  *   which indicates the bottom of the specified drawing area
  * @param tileMode Determines the behavior for how the shader is to fill a region outside its
  *   bounds. Defaults to [TileMode.Clamp] to repeat the edge pixels
- * @sample androidx.compose.ui.graphics.samples.GradientBrushSample
  */
 @Stable
 public fun RemoteBrush.Companion.verticalGradient(
@@ -223,7 +219,6 @@ public fun RemoteBrush.Companion.verticalGradient(
  *   which indicates the bottom of the specified drawing area
  * @param tileMode Determines the behavior for how the shader is to fill a region outside its
  *   bounds. Defaults to [TileMode.Clamp] to repeat the edge pixels
- * @sample androidx.compose.ui.graphics.samples.GradientBrushSample
  */
 @Stable
 public fun RemoteBrush.Companion.verticalGradient(
