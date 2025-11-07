@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,33 +14,26 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.spatial.rendering;
+package androidx.xr.scenecore.spatial.rendering
 
-import android.util.Log;
-
-import androidx.xr.runtime.math.BoundingBox;
-import androidx.xr.runtime.math.FloatSize3d;
-import androidx.xr.scenecore.impl.impress.GltfModel;
-import androidx.xr.scenecore.impl.impress.ImpressApi;
-import androidx.xr.scenecore.impl.impress.ImpressNode;
-import androidx.xr.scenecore.impl.impress.Material;
-import androidx.xr.scenecore.runtime.GltfEntity;
-import androidx.xr.scenecore.runtime.GltfFeature;
-import androidx.xr.scenecore.runtime.MaterialResource;
-
-import com.android.extensions.xr.XrExtensions;
-
-import com.google.androidxr.splitengine.SplitEngineSubspaceManager;
-import com.google.common.util.concurrent.ListenableFuture;
-
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.Executor;
-import java.util.function.Consumer;
+import android.util.Log
+import androidx.annotation.MainThread
+import androidx.xr.runtime.math.BoundingBox
+import androidx.xr.runtime.math.FloatSize3d
+import androidx.xr.scenecore.impl.impress.GltfModel
+import androidx.xr.scenecore.impl.impress.ImpressApi
+import androidx.xr.scenecore.impl.impress.ImpressNode
+import androidx.xr.scenecore.impl.impress.Material
+import androidx.xr.scenecore.runtime.GltfEntity
+import androidx.xr.scenecore.runtime.GltfFeature
+import androidx.xr.scenecore.runtime.MaterialResource
+import com.android.extensions.xr.XrExtensions
+import com.google.androidxr.splitengine.SplitEngineSubspaceManager
+import com.google.common.util.concurrent.ListenableFuture
+import java.util.Collections
+import java.util.HashMap
+import java.util.concurrent.Executor
+import java.util.function.Consumer
 
 /**
  * Implementation of a SceneCore GltfEntity.
@@ -48,139 +41,131 @@ import java.util.function.Consumer;
  * <p>This is used to create an entity that contains a glTF object.
  */
 // TODO: b/375520647 - Add unit tests for this class.
-class GltfFeatureImpl extends BaseRenderingFeature implements GltfFeature {
-    private final ImpressNode mModelImpressNode;
-    @GltfEntity.AnimationStateValue
-    private int mAnimationState = GltfEntity.AnimationState.STOPPED;
-    private final Map<String, Integer> meshOverrides = new HashMap<>();
+internal class GltfFeatureImpl(
+    gltfModel: GltfModel,
+    impressApi: ImpressApi,
+    splitEngineSubspaceManager: SplitEngineSubspaceManager,
+    extensions: XrExtensions,
+) : BaseRenderingFeature(impressApi, splitEngineSubspaceManager, extensions), GltfFeature {
 
-    private final Map<@NonNull Consumer<@NonNull Integer>, @NonNull Executor>
-            mAnimationStateListeners = Collections.synchronizedMap(new HashMap<>());
+    private val modelImpressNode: ImpressNode = impressApi.instanceGltfModel(gltfModel.nativeHandle)
 
-    GltfFeatureImpl(
-            GltfModel gltfModel,
-            ImpressApi impressApi,
-            SplitEngineSubspaceManager splitEngineSubspaceManager,
-            XrExtensions extensions) {
-        super(impressApi, splitEngineSubspaceManager, extensions);
+    private val meshOverrides = mutableMapOf<String, Int>()
 
-        mModelImpressNode = impressApi.instanceGltfModel(((GltfModel) gltfModel).getNativeHandle());
-        bindImpressNodeToSubspace("gltf_entity_subspace_", mModelImpressNode);
+    private val animationStateListeners: MutableMap<Consumer<Int>, Executor> =
+        Collections.synchronizedMap(mutableMapOf())
+
+    init {
+        bindImpressNodeToSubspace("gltf_entity_subspace_", modelImpressNode)
     }
 
-    @Override
-    @NonNull
-    public FloatSize3d getSize() {
-        return getGltfModelBoundingBox().getHalfExtents().times(2);
-    }
+    override val size: FloatSize3d = getGltfModelBoundingBox().halfExtents.times(2f)
 
-    @Override
-    @NonNull
-    public BoundingBox getGltfModelBoundingBox() {
-        return mImpressApi.getGltfModelBoundingBox(mModelImpressNode);
-    }
+    @get:GltfEntity.AnimationStateValue
+    override var animationState: Int = GltfEntity.AnimationState.STOPPED
+        private set(value) {
+            if (field != value) {
+                field = value
+                synchronized(animationStateListeners) {
+                    animationStateListeners.forEach { (listener, executor) ->
+                        executor.execute { listener.accept(value) }
+                    }
+                }
+            }
+        }
 
-    @Override
-    public void startAnimation(
-            boolean looping, @Nullable String animationName, @NonNull Executor executor) {
+    @MainThread
+    override fun getGltfModelBoundingBox(): BoundingBox =
+        impressApi.getGltfModelBoundingBox(modelImpressNode)
+
+    @MainThread
+    override fun startAnimation(loop: Boolean, animationName: String?, executor: Executor) {
         // TODO: b/362826747 - Add a listener interface so that the application can be
         // notified that the animation has stopped, been cancelled (by starting another animation)
         // and / or shown an error state if something went wrong.
 
-        ListenableFuture<Void> future =
-                mImpressApi.animateGltfModel(mModelImpressNode, animationName, looping);
-        setAnimationState(GltfEntity.AnimationState.PLAYING);
+        val future: ListenableFuture<Void?> =
+            impressApi.animateGltfModel(modelImpressNode, animationName, loop)
+        animationState = GltfEntity.AnimationState.PLAYING
 
         // At the moment, we don't do anything interesting on failure except for logging. If we
         // didn't care about logging the failure, we could just not register a listener at all if
         // the animation is looping, since it will never terminate normally.
         future.addListener(
-                () -> {
-                    try {
-                        future.get();
-                        // The animation played to completion and has stopped
-                    } catch (Exception e) {
-                        if (e instanceof InterruptedException) {
-                            // If this happened, then it's likely Impress is shutting down and we
-                            // need to shut down as well.
-                            Thread.currentThread().interrupt();
-                        } else {
-                            // Some other error happened.  Log it and stop the animation.
-                            Log.e("GltfEntityImpl", "Could not start animation: " + e);
-                        }
-                    } finally {
-                        setAnimationState(GltfEntity.AnimationState.STOPPED);
+            {
+                try {
+                    future.get()
+                    // The animation played to completion and has stopped
+                } catch (e: Exception) {
+                    if (e is InterruptedException) {
+                        // If this happened, then it's likely Impress is shutting down and we
+                        // need to shut down as well.
+                        Thread.currentThread().interrupt()
+                    } else {
+                        // Some other error happened.  Log it and stop the animation.
+                        Log.e("GltfEntityImpl", "Could not start animation: $e")
                     }
-                },
-                executor);
+                } finally {
+                    animationState = GltfEntity.AnimationState.STOPPED
+                }
+            },
+            executor,
+        )
     }
 
-    @Override
-    public void stopAnimation() {
-        if (mAnimationState == GltfEntity.AnimationState.PLAYING) {
-            mImpressApi.stopGltfModelAnimation(mModelImpressNode);
-            setAnimationState(GltfEntity.AnimationState.STOPPED);
+    @MainThread
+    override fun stopAnimation() {
+        if (animationState == GltfEntity.AnimationState.PLAYING) {
+            impressApi.stopGltfModelAnimation(modelImpressNode)
+            animationState = GltfEntity.AnimationState.STOPPED
         }
     }
 
-    @Override
-    @GltfEntity.AnimationStateValue
-    public int getAnimationState() {
-        return mAnimationState;
+    @MainThread
+    override fun setMaterialOverride(
+        material: MaterialResource,
+        nodeName: String,
+        primitiveIndex: Int,
+    ) {
+        require(material is Material) { "MaterialResource is not a Material" }
+        impressApi.setMaterialOverride(
+            modelImpressNode,
+            (material as Material).nativeHandle,
+            nodeName,
+            primitiveIndex,
+        )
+        meshOverrides[nodeName] = primitiveIndex
     }
 
-    private void setAnimationState(@GltfEntity.AnimationStateValue int animationState) {
-        if (mAnimationState != animationState) {
-            mAnimationState = animationState;
-            mAnimationStateListeners.forEach(
-                    (listener, executor) -> executor.execute(
-                            () -> listener.accept(animationState)));
-        }
+    @MainThread
+    override fun clearMaterialOverride(nodeName: String, primitiveIndex: Int) {
+        impressApi.clearMaterialOverride(modelImpressNode, nodeName, primitiveIndex)
+        meshOverrides.remove(nodeName, primitiveIndex)
     }
 
-    @Override
-    public void setMaterialOverride(
-            @NonNull MaterialResource material, @NonNull String nodeName, int primitiveIndex) {
-        if (!(material instanceof Material)) {
-            throw new IllegalArgumentException("MaterialResource is not a Material");
-        }
-        mImpressApi.setMaterialOverride(
-                mModelImpressNode,
-                ((Material) material).getNativeHandle(),
-                nodeName,
-                primitiveIndex);
-        meshOverrides.put(nodeName, primitiveIndex);
-    }
-
-    @Override
-    public void clearMaterialOverride(@NonNull String nodeName, int primitiveIndex) {
-        mImpressApi.clearMaterialOverride(mModelImpressNode, nodeName, primitiveIndex);
-        meshOverrides.remove(nodeName, primitiveIndex);
-    }
-
-    @Override
-    public void setColliderEnabled(boolean enableCollider) {
-        mImpressApi.setGltfModelColliderEnabled(mModelImpressNode, enableCollider);
+    @MainThread
+    override fun setColliderEnabled(enableCollider: Boolean) {
+        impressApi.setGltfModelColliderEnabled(modelImpressNode, enableCollider)
     }
 
     @SuppressWarnings("ObjectToString")
-    @Override
-    public void dispose() {
-        for (Map.Entry<String, Integer> entry : new HashMap<>(meshOverrides).entrySet()) {
-            mImpressApi.clearMaterialOverride(mModelImpressNode, entry.getKey(), entry.getValue());
+    override fun dispose() {
+        for ((key, value) in HashMap(meshOverrides)) {
+            impressApi.clearMaterialOverride(modelImpressNode, key, value)
         }
-        meshOverrides.clear();
-        super.dispose();
+        meshOverrides.clear()
+        super.dispose()
     }
 
-    @Override
-    public void addAnimationStateListener(
-            @NonNull Executor executor, @NonNull Consumer<@NonNull Integer> listener) {
-        mAnimationStateListeners.putIfAbsent(listener, executor);
+    @MainThread
+    override fun addAnimationStateListener(executor: Executor, listener: Consumer<Int>): Unit {
+        // Assigning the result to _ (or ignoring it) ensures the compiler sees Unit as the return.
+        val unused = animationStateListeners.putIfAbsent(listener, executor)
     }
 
-    @Override
-    public void removeAnimationStateListener(@NonNull Consumer<@NonNull Integer> listener) {
-        mAnimationStateListeners.remove(listener);
+    @MainThread
+    override fun removeAnimationStateListener(listener: Consumer<Int>): Unit {
+        // Assigning the result to _ (or ignoring it) ensures the compiler sees Unit as the return.
+        val unused = animationStateListeners.remove(listener)
     }
 }

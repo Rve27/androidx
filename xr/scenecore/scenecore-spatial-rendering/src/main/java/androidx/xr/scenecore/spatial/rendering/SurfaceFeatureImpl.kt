@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,31 +14,19 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.spatial.rendering;
+package androidx.xr.scenecore.spatial.rendering
 
-import android.view.Surface;
-
-import androidx.xr.scenecore.impl.impress.ImpressApi;
-import androidx.xr.scenecore.impl.impress.ImpressNode;
-import androidx.xr.scenecore.impl.impress.Texture;
-import androidx.xr.scenecore.runtime.Dimensions;
-import androidx.xr.scenecore.runtime.SurfaceEntity;
-import androidx.xr.scenecore.runtime.SurfaceEntity.ColorRange;
-import androidx.xr.scenecore.runtime.SurfaceEntity.ColorSpace;
-import androidx.xr.scenecore.runtime.SurfaceEntity.ColorTransfer;
-import androidx.xr.scenecore.runtime.SurfaceEntity.StereoMode;
-import androidx.xr.scenecore.runtime.SurfaceEntity.SuperSampling;
-import androidx.xr.scenecore.runtime.SurfaceEntity.SurfaceProtection;
-import androidx.xr.scenecore.runtime.SurfaceFeature;
-import androidx.xr.scenecore.runtime.TextureResource;
-
-import com.android.extensions.xr.XrExtensions;
-
-import com.google.androidxr.splitengine.SplitEngineSubspaceManager;
-
-import org.jetbrains.annotations.VisibleForTesting;
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
+import android.view.Surface
+import androidx.annotation.VisibleForTesting
+import androidx.xr.scenecore.impl.impress.ImpressApi
+import androidx.xr.scenecore.impl.impress.ImpressNode
+import androidx.xr.scenecore.impl.impress.Texture
+import androidx.xr.scenecore.runtime.Dimensions
+import androidx.xr.scenecore.runtime.SurfaceEntity
+import androidx.xr.scenecore.runtime.SurfaceFeature
+import androidx.xr.scenecore.runtime.TextureResource
+import com.android.extensions.xr.XrExtensions
+import com.google.androidxr.splitengine.SplitEngineSubspaceManager
 
 /**
  * Implementation of a RealityCore StereoSurfaceEntitySplitEngine.
@@ -46,284 +34,245 @@ import org.jspecify.annotations.Nullable;
  * <p>This is used to create an entity that contains a StereoSurfacePanel using the Split Engine
  * route.
  */
-final class SurfaceFeatureImpl extends BaseRenderingFeature implements SurfaceFeature {
-    private final ImpressNode mEntityImpressNode;
+internal class SurfaceFeatureImpl(
+    impressApi: ImpressApi,
+    splitEngineSubspaceManager: SplitEngineSubspaceManager,
+    extensions: XrExtensions,
+    @SurfaceEntity.StereoMode stereoMode: Int,
+    canvasShape: SurfaceEntity.Shape,
+    @SurfaceEntity.SurfaceProtection surfaceProtection: Int,
+    @SurfaceEntity.SuperSampling superSampling: Int,
+) : BaseRenderingFeature(impressApi, splitEngineSubspaceManager, extensions), SurfaceFeature {
 
-    @StereoMode private int mStereoMode = SurfaceEntity.StereoMode.SIDE_BY_SIDE;
+    @get:VisibleForTesting internal val entityImpressNode: ImpressNode
 
-    @SurfaceProtection private int mSurfaceProtection = SurfaceEntity.SurfaceProtection.NONE;
-
-    @SuperSampling private int mSuperSampling = SurfaceEntity.SuperSampling.DEFAULT;
-
-    private SurfaceEntity.Shape mShape;
-    private SurfaceEntity.EdgeFeather mEdgeFeather;
-    private boolean mContentColorMetadataSet = false;
-    @ColorSpace private int mColorSpace = SurfaceEntity.ColorSpace.BT709;
-    @ColorTransfer private int mColorTransfer = SurfaceEntity.ColorTransfer.SRGB;
-    @ColorRange private int mColorRange = SurfaceEntity.ColorRange.FULL;
-    private int mMaxContentLightLevel = 0;
-
-    // Converts SurfaceEntity's SurfaceProtection to an Impress ContentSecurityLevel.
-    private static int toImpressContentSecurityLevel(@SurfaceProtection int contentSecurityLevel) {
-        switch (contentSecurityLevel) {
-            case SurfaceEntity.SurfaceProtection.NONE:
-                return ImpressApi.ContentSecurityLevel.NONE;
-            case SurfaceEntity.SurfaceProtection.PROTECTED:
-                return ImpressApi.ContentSecurityLevel.PROTECTED;
-            default:
-                return ImpressApi.ContentSecurityLevel.NONE;
+    @get:SurfaceEntity.StereoMode
+    override var stereoMode: Int = stereoMode
+        set(value) {
+            try {
+                impressApi.setStereoModeForStereoSurface(entityImpressNode, value)
+            } catch (e: IllegalArgumentException) {
+                throw IllegalStateException(e)
+            }
+            field = value
         }
-    }
 
-    // Converts SurfaceEntity's SuperSampling to a boolean for Impress.
-    private static boolean toImpressSuperSampling(@SuperSampling int superSampling) {
-        switch (superSampling) {
-            case SurfaceEntity.SuperSampling.NONE:
-                return false;
-            case SurfaceEntity.SuperSampling.DEFAULT:
-                return true;
-            default:
-                return true;
+    @SurfaceEntity.SurfaceProtection private val surfaceProtection: Int = surfaceProtection
+
+    @SurfaceEntity.SuperSampling private val superSampling: Int = superSampling
+
+    override var shape: SurfaceEntity.Shape = canvasShape
+        set(value) {
+            field = value
+            when (value) {
+                is SurfaceEntity.Shape.Quad -> {
+                    try {
+                        impressApi.setStereoSurfaceEntityCanvasShapeQuad(
+                            entityImpressNode,
+                            value.extents.width,
+                            value.extents.height,
+                        )
+                    } catch (e: IllegalArgumentException) {
+                        throw IllegalStateException(e)
+                    }
+                }
+                is SurfaceEntity.Shape.Sphere -> {
+                    try {
+                        impressApi.setStereoSurfaceEntityCanvasShapeSphere(
+                            entityImpressNode,
+                            value.radius,
+                        )
+                    } catch (e: IllegalArgumentException) {
+                        throw IllegalStateException(e)
+                    }
+                }
+                is SurfaceEntity.Shape.Hemisphere -> {
+                    try {
+                        impressApi.setStereoSurfaceEntityCanvasShapeHemisphere(
+                            entityImpressNode,
+                            value.radius,
+                        )
+                    } catch (e: IllegalArgumentException) {
+                        throw IllegalStateException(e)
+                    }
+                }
+                else -> {
+                    throw IllegalArgumentException("Unsupported canvas shape: $value")
+                }
+            }
         }
-    }
 
-    SurfaceFeatureImpl(
-            ImpressApi impressApi,
-            SplitEngineSubspaceManager splitEngineSubspaceManager,
-            XrExtensions extensions,
-            @StereoMode int stereoMode,
-            SurfaceEntity.Shape canvasShape,
-            @SurfaceProtection int surfaceProtection,
-            @SuperSampling int superSampling) {
-        super(impressApi, splitEngineSubspaceManager, extensions);
-        mStereoMode = stereoMode;
-        mSurfaceProtection = surfaceProtection;
-        mSuperSampling = superSampling;
-        mShape = canvasShape;
+    override var edgeFeather: SurfaceEntity.EdgeFeather = SurfaceEntity.EdgeFeather.NoFeathering()
+        set(value) {
+            field = value
+            when (value) {
+                is SurfaceEntity.EdgeFeather.RectangleFeather -> {
+                    try {
+                        impressApi.setFeatherRadiusForStereoSurface(
+                            entityImpressNode,
+                            value.leftRight,
+                            value.topBottom,
+                        )
+                    } catch (e: IllegalArgumentException) {
+                        throw IllegalStateException(e)
+                    }
+                }
+                is SurfaceEntity.EdgeFeather.NoFeathering -> {
+                    try {
+                        impressApi.setFeatherRadiusForStereoSurface(entityImpressNode, 0.0f, 0.0f)
+                    } catch (e: IllegalArgumentException) {
+                        throw IllegalStateException(e)
+                    }
+                }
+                else -> {
+                    throw IllegalArgumentException("Unsupported edge feather: $value")
+                }
+            }
+        }
 
+    override var contentColorMetadataSet: Boolean = false
+        private set
+
+    @get:SurfaceEntity.ColorSpace
+    override var colorSpace: Int = SurfaceEntity.ColorSpace.BT709
+        private set
+
+    @get:SurfaceEntity.ColorTransfer
+    override var colorTransfer: Int = SurfaceEntity.ColorTransfer.SRGB
+        private set
+
+    @get:SurfaceEntity.ColorRange
+    override var colorRange: Int = SurfaceEntity.ColorRange.FULL
+        private set
+
+    override var maxContentLightLevel: Int = 0
+        private set
+
+    init {
         try {
             // This is broken up into two steps to limit the size of the Impress Surface
-            mEntityImpressNode =
-                    mImpressApi.createStereoSurface(
-                            stereoMode,
-                            toImpressContentSecurityLevel(mSurfaceProtection),
-                            toImpressSuperSampling(mSuperSampling));
-        } catch (IllegalArgumentException e) {
-            throw new IllegalStateException(e);
+            entityImpressNode =
+                impressApi.createStereoSurface(
+                    stereoMode,
+                    toImpressContentSecurityLevel(surfaceProtection),
+                    toImpressSuperSampling(superSampling),
+                )
+        } catch (e: IllegalArgumentException) {
+            throw IllegalStateException(e)
         }
-        setShape(mShape);
+        this.shape = canvasShape
 
-        bindImpressNodeToSubspace("stereo_surface_panel_entity_subspace_", mEntityImpressNode);
+        bindImpressNodeToSubspace("stereo_surface_panel_entity_subspace_", entityImpressNode)
     }
 
-    @Override
-    public SurfaceEntity.@NonNull Shape getShape() {
-        return mShape;
-    }
+    override fun setColliderEnabled(enableCollider: Boolean) =
+        impressApi.setStereoSurfaceEntityColliderEnabled(entityImpressNode, enableCollider)
 
-    @Override
-    public void setShape(SurfaceEntity.@NonNull Shape canvasShape) {
-        mShape = canvasShape;
+    override val dimensions: Dimensions
+        get() = shape.dimensions
 
-        if (mShape instanceof SurfaceEntity.Shape.Quad) {
-            SurfaceEntity.Shape.Quad q = (SurfaceEntity.Shape.Quad) mShape;
-            try {
-                mImpressApi.setStereoSurfaceEntityCanvasShapeQuad(
-                        mEntityImpressNode, q.getExtents().getWidth(), q.getExtents().getHeight());
-            } catch (IllegalArgumentException e) {
-                throw new IllegalStateException(e);
-            }
-        } else if (mShape instanceof SurfaceEntity.Shape.Sphere) {
-            SurfaceEntity.Shape.Sphere s = (SurfaceEntity.Shape.Sphere) mShape;
-            try {
-                mImpressApi.setStereoSurfaceEntityCanvasShapeSphere(
-                        mEntityImpressNode, s.getRadius());
-            } catch (IllegalArgumentException e) {
-                throw new IllegalStateException(e);
-            }
-        } else if (mShape instanceof SurfaceEntity.Shape.Hemisphere) {
-            SurfaceEntity.Shape.Hemisphere h = (SurfaceEntity.Shape.Hemisphere) mShape;
-            try {
-                mImpressApi.setStereoSurfaceEntityCanvasShapeHemisphere(
-                        mEntityImpressNode, h.getRadius());
-            } catch (IllegalArgumentException e) {
-                throw new IllegalStateException(e);
-            }
-        } else {
-            throw new IllegalArgumentException("Unsupported canvas shape: " + mShape);
-        }
-    }
-
-    @Override
-    public void setColliderEnabled(boolean enableCollider) {
-        mImpressApi.setStereoSurfaceEntityColliderEnabled(mEntityImpressNode, enableCollider);
-    }
-
-    @Override
-    public void setEdgeFeather(SurfaceEntity.@NonNull EdgeFeather edgeFeather) {
-        mEdgeFeather = edgeFeather;
-        if (mEdgeFeather instanceof SurfaceEntity.EdgeFeather.RectangleFeather) {
-            SurfaceEntity.EdgeFeather.RectangleFeather s =
-                    (SurfaceEntity.EdgeFeather.RectangleFeather) mEdgeFeather;
-            try {
-                mImpressApi.setFeatherRadiusForStereoSurface(
-                        mEntityImpressNode, s.getLeftRight(), s.getTopBottom());
-            } catch (IllegalArgumentException e) {
-                throw new IllegalStateException(e);
-            }
-        } else if (mEdgeFeather instanceof SurfaceEntity.EdgeFeather.NoFeathering) {
-            try {
-                mImpressApi.setFeatherRadiusForStereoSurface(mEntityImpressNode, 0.0f, 0.0f);
-            } catch (IllegalArgumentException e) {
-                throw new IllegalStateException(e);
-            }
-        } else {
-            throw new IllegalArgumentException("Unsupported edge feather: " + mEdgeFeather);
-        }
-    }
-
-    @Override
-    public SurfaceEntity.@NonNull EdgeFeather getEdgeFeather() {
-        return mEdgeFeather;
-    }
-
-    @Override
-    public void setStereoMode(@StereoMode int mode) {
-        try {
-            mImpressApi.setStereoModeForStereoSurface(mEntityImpressNode, mode);
-        } catch (IllegalArgumentException e) {
-            throw new IllegalStateException(e);
-        }
-        mStereoMode = mode;
-    }
-
-    @Override
-    public @NonNull Dimensions getDimensions() {
-        return mShape.getDimensions();
-    }
-
-    @Override
-    @StereoMode
-    public int getStereoMode() {
-        return mStereoMode;
-    }
-
-    @Override
-    public void setPrimaryAlphaMaskTexture(@Nullable TextureResource alphaMask) {
-        long alphaMaskToken = -1;
+    override fun setPrimaryAlphaMaskTexture(alphaMask: TextureResource?) {
+        var alphaMaskToken: Long = -1
         if (alphaMask != null) {
-            if (!(alphaMask instanceof Texture)) {
-                throw new IllegalArgumentException("TextureResource is not a Texture");
-            }
-            alphaMaskToken = ((Texture) alphaMask).getNativeHandle();
+            require(alphaMask is Texture) { "TextureResource is not a Texture" }
+            alphaMaskToken = alphaMask.nativeHandle
         }
         try {
-            mImpressApi.setPrimaryAlphaMaskForStereoSurface(mEntityImpressNode, alphaMaskToken);
-        } catch (IllegalArgumentException e) {
-            throw new IllegalStateException(e);
+            impressApi.setPrimaryAlphaMaskForStereoSurface(entityImpressNode, alphaMaskToken)
+        } catch (e: IllegalArgumentException) {
+            throw IllegalStateException(e)
         }
     }
 
-    @Override
-    public void setAuxiliaryAlphaMaskTexture(@Nullable TextureResource alphaMask) {
-        long alphaMaskToken = -1;
+    override fun setAuxiliaryAlphaMaskTexture(alphaMask: TextureResource?) {
+        var alphaMaskToken: Long = -1
         if (alphaMask != null) {
-            if (!(alphaMask instanceof Texture)) {
-                throw new IllegalArgumentException("TextureResource is not a Texture");
+            require(alphaMask is Texture) { "TextureResource is not a Texture" }
+            alphaMaskToken = alphaMask.nativeHandle
+        }
+        try {
+            impressApi.setAuxiliaryAlphaMaskForStereoSurface(entityImpressNode, alphaMaskToken)
+        } catch (e: IllegalArgumentException) {
+            throw IllegalStateException(e)
+        }
+    }
+
+    override val surface: Surface
+        get() {
+            // TODO Either cache the surface in the constructor, or change this interface to return
+            // a
+            //  Future.
+            try {
+                return impressApi.getSurfaceFromStereoSurface(entityImpressNode)
+            } catch (e: IllegalArgumentException) {
+                throw IllegalStateException(e)
             }
-            alphaMaskToken = ((Texture) alphaMask).getNativeHandle();
         }
+
+    override fun setSurfacePixelDimensions(width: Int, height: Int) {
+        require(width > 0 && height > 0) { "Surface dimensions must be positive." }
         try {
-            mImpressApi.setAuxiliaryAlphaMaskForStereoSurface(mEntityImpressNode, alphaMaskToken);
-        } catch (IllegalArgumentException e) {
-            throw new IllegalStateException(e);
+            impressApi.setStereoSurfaceEntitySurfaceSize(entityImpressNode, width, height)
+        } catch (e: IllegalArgumentException) {
+            throw IllegalStateException(e)
         }
     }
 
-    @Override
-    public @NonNull Surface getSurface() {
-        // TODO Either cache the surface in the constructor, or change this interface to return a
-        //  Future.
+    override fun setContentColorMetadata(
+        @SurfaceEntity.ColorSpace colorSpace: Int,
+        @SurfaceEntity.ColorTransfer colorTransfer: Int,
+        @SurfaceEntity.ColorRange colorRange: Int,
+        maxCLL: Int,
+    ) {
+        this.colorSpace = colorSpace
+        this.colorTransfer = colorTransfer
+        this.colorRange = colorRange
+        this.maxContentLightLevel = maxCLL
+        this.contentColorMetadataSet = true
         try {
-            return mImpressApi.getSurfaceFromStereoSurface(mEntityImpressNode);
-        } catch (IllegalArgumentException e) {
-            throw new IllegalStateException(e);
+            impressApi.setContentColorMetadataForStereoSurface(
+                entityImpressNode,
+                colorSpace,
+                colorTransfer,
+                colorRange,
+                maxCLL,
+            )
+        } catch (e: IllegalArgumentException) {
+            throw IllegalStateException(e)
         }
     }
 
-    @Override
-    public void setSurfacePixelDimensions(int width, int height) {
-        if (width <= 0 || height <= 0) {
-            throw new IllegalArgumentException("Surface dimensions must be positive.");
+    override fun resetContentColorMetadata() {
+        colorSpace = SurfaceEntity.ColorSpace.BT709
+        colorTransfer = SurfaceEntity.ColorTransfer.SRGB
+        colorRange = SurfaceEntity.ColorRange.FULL
+        maxContentLightLevel = 0
+        contentColorMetadataSet = false
+        impressApi.resetContentColorMetadataForStereoSurface(entityImpressNode)
+    }
+
+    companion object {
+        // Converts SurfaceEntity's SurfaceProtection to an Impress ContentSecurityLevel.
+        private fun toImpressContentSecurityLevel(
+            @SurfaceEntity.SurfaceProtection contentSecurityLevel: Int
+        ): Int {
+            return when (contentSecurityLevel) {
+                SurfaceEntity.SurfaceProtection.NONE -> ImpressApi.ContentSecurityLevel.NONE
+                SurfaceEntity.SurfaceProtection.PROTECTED ->
+                    ImpressApi.ContentSecurityLevel.PROTECTED
+                else -> ImpressApi.ContentSecurityLevel.NONE
+            }
         }
-        try {
-            mImpressApi.setStereoSurfaceEntitySurfaceSize(mEntityImpressNode, width, height);
-        } catch (IllegalArgumentException e) {
-            throw new IllegalStateException(e);
+
+        // Converts SurfaceEntity's SuperSampling to a boolean for Impress.
+        private fun toImpressSuperSampling(
+            @SurfaceEntity.SuperSampling superSampling: Int
+        ): Boolean {
+            return when (superSampling) {
+                SurfaceEntity.SuperSampling.NONE -> false
+                SurfaceEntity.SuperSampling.DEFAULT -> true
+                else -> true
+            }
         }
-    }
-
-    @Override
-    @ColorSpace
-    public int getColorSpace() {
-        return mColorSpace;
-    }
-
-    @Override
-    @ColorTransfer
-    public int getColorTransfer() {
-        return mColorTransfer;
-    }
-
-    @Override
-    @ColorRange
-    public int getColorRange() {
-        return mColorRange;
-    }
-
-    @Override
-    public int getMaxContentLightLevel() {
-        return mMaxContentLightLevel;
-    }
-
-    @Override
-    public boolean getContentColorMetadataSet() {
-        return mContentColorMetadataSet;
-    }
-
-    @Override
-    public void setContentColorMetadata(
-            @ColorSpace int colorSpace,
-            @ColorTransfer int colorTransfer,
-            @ColorRange int colorRange,
-            int maxCLL) {
-        mColorSpace = colorSpace;
-        mColorTransfer = colorTransfer;
-        mColorRange = colorRange;
-        mMaxContentLightLevel = maxCLL;
-        mContentColorMetadataSet = true;
-        try {
-            mImpressApi.setContentColorMetadataForStereoSurface(
-                    mEntityImpressNode, colorSpace, colorTransfer, colorRange, maxCLL);
-        } catch (IllegalArgumentException e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
-    @Override
-    public void resetContentColorMetadata() {
-        mColorSpace = SurfaceEntity.ColorSpace.BT709;
-        mColorTransfer = SurfaceEntity.ColorTransfer.SRGB;
-        mColorRange = SurfaceEntity.ColorRange.FULL;
-        mMaxContentLightLevel = 0;
-        mContentColorMetadataSet = false;
-        mImpressApi.resetContentColorMetadataForStereoSurface(mEntityImpressNode);
-    }
-
-    // Note this returns the Impress node for the entity, not the subspace. The subspace Impress
-    // node is the parent of the entity Impress node.
-    @VisibleForTesting
-    ImpressNode getEntityImpressNode() {
-        return mEntityImpressNode;
     }
 }

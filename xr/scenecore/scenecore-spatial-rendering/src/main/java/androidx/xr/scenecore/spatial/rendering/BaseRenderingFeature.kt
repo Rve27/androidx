@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,69 +14,50 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.spatial.rendering;
+package androidx.xr.scenecore.spatial.rendering
 
-import androidx.xr.runtime.NodeHolder;
-import androidx.xr.scenecore.impl.impress.ImpressApi;
-import androidx.xr.scenecore.impl.impress.ImpressNode;
-import androidx.xr.scenecore.runtime.RenderingFeature;
+import androidx.xr.runtime.NodeHolder
+import androidx.xr.scenecore.impl.impress.ImpressApi
+import androidx.xr.scenecore.impl.impress.ImpressNode
+import androidx.xr.scenecore.runtime.RenderingFeature
+import com.android.extensions.xr.XrExtensions
+import com.android.extensions.xr.node.Node
+import com.google.androidxr.splitengine.SplitEngineSubspaceManager
+import com.google.androidxr.splitengine.SubspaceNode
 
-import com.android.extensions.xr.XrExtensions;
-import com.android.extensions.xr.node.Node;
-import com.android.extensions.xr.node.NodeTransaction;
+internal abstract class BaseRenderingFeature(
+    protected val impressApi: ImpressApi,
+    protected val splitEngineSubspaceManager: SplitEngineSubspaceManager,
+    protected val extensions: XrExtensions,
+) : RenderingFeature {
 
-import com.google.androidxr.splitengine.SplitEngineSubspaceManager;
-import com.google.androidxr.splitengine.SubspaceNode;
+    internal val node: Node = extensions.createNode()
 
-import org.jspecify.annotations.NonNull;
-
-abstract class BaseRenderingFeature implements RenderingFeature {
-    final Node mNode;
-    protected final ImpressApi mImpressApi;
-    protected final SplitEngineSubspaceManager mSplitEngineSubspaceManager;
-    protected final XrExtensions mExtensions;
     // The SubspaceNode isn't final so that we can support setting it to null in dispose(), while
     // still allowing the application to hold a reference to this Entity.
-    protected SubspaceNode mSubspace;
+    protected var subspace: SubspaceNode? = null
 
-    BaseRenderingFeature(
-            ImpressApi impressApi,
-            SplitEngineSubspaceManager splitEngineSubspaceManager,
-            @NonNull XrExtensions extensions) {
-        mImpressApi = impressApi;
-        mSplitEngineSubspaceManager = splitEngineSubspaceManager;
-        mExtensions = extensions;
-        mNode = mExtensions.createNode();
+    override fun getNodeHolder(): NodeHolder<*> {
+        return NodeHolder(node, Node::class.java)
     }
 
-    @Override
-    @NonNull
-    public NodeHolder<?> getNodeHolder() {
-        return new NodeHolder<>(mNode, Node.class);
+    override fun getSubspaceNodeHolder(): NodeHolder<*>? {
+        return subspace?.let { NodeHolder(it.subspaceNode, Node::class.java) }
     }
 
-    @Override
-    public NodeHolder<?> getSubspaceNodeHolder() {
-        if (mSubspace == null) {
-            return null;
-        }
-        return new NodeHolder<>(mSubspace.getSubspaceNode(), Node.class);
-    }
-
-    protected void bindImpressNodeToSubspace(String subspaceName, ImpressNode impressNode) {
+    protected fun bindImpressNodeToSubspace(subspaceNamePrefix: String, impressNode: ImpressNode) {
         // System will only render Impress nodes that are parented by this subspace node.
-        ImpressNode subspaceImpressNode = mImpressApi.createImpressNode();
-        subspaceName += subspaceImpressNode.getHandle();
+        val subspaceImpressNode = impressApi.createImpressNode()
+        val fullSubspaceName = subspaceNamePrefix + subspaceImpressNode.handle
 
-        mSubspace =
-                mSplitEngineSubspaceManager.createSubspace(
-                        subspaceName, subspaceImpressNode.getHandle());
+        subspace =
+            splitEngineSubspaceManager.createSubspace(fullSubspaceName, subspaceImpressNode.handle)
 
-        // If mSplitEngineSubspaceManager is mock version, createSubspace might return null.
-        if (mSubspace != null) {
-            try (NodeTransaction transaction = mExtensions.createNodeTransaction()) {
+        // If splitEngineSubspaceManager is mock version, createSubspace might return null.
+        subspace?.let { validSubspace ->
+            extensions.createNodeTransaction().use { transaction ->
                 // Make the Entity node a parent of the subspace node.
-                transaction.setParent(mSubspace.getSubspaceNode(), mNode).apply();
+                transaction.setParent(validSubspace.subspaceNode, node).apply()
             }
         }
 
@@ -84,18 +65,17 @@ abstract class BaseRenderingFeature implements RenderingFeature {
         // The Impress node hierarchy is: Subspace Impress node --- parent of ---> Entity Impress
         // node.
         try {
-            mImpressApi.setImpressNodeParent(impressNode, subspaceImpressNode);
-        } catch (IllegalArgumentException e) {
-            throw new IllegalStateException(e);
+            impressApi.setImpressNodeParent(impressNode, subspaceImpressNode)
+        } catch (e: IllegalArgumentException) {
+            throw IllegalStateException(e)
         }
     }
 
-    @Override
-    public void dispose() {
-        if (mSubspace != null) {
+    override fun dispose() {
+        subspace?.let {
             // The subspace impress node will be destroyed when the subspace is deleted.
-            mSplitEngineSubspaceManager.deleteSubspace(mSubspace.subspaceId);
-            mSubspace = null;
+            splitEngineSubspaceManager.deleteSubspace(it.subspaceId)
+            subspace = null
         }
     }
 }
