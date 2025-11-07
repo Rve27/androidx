@@ -315,8 +315,6 @@ dependencies {
     docs("androidx.pdf:pdf-viewer:1.0.0-alpha11")
     docs("androidx.pdf:pdf-viewer-fragment:1.0.0-alpha11")
     docs("androidx.percentlayout:percentlayout:1.0.1")
-    kmpDocs("androidx.performance:performance-annotation:1.0.0-alpha01")
-    docs("androidx.performance:performance-unsafe:1.0.0-alpha01")
     docs("androidx.photopicker:photopicker:1.0.0-alpha01")
     docs("androidx.photopicker:photopicker-compose:1.0.0-alpha01")
     docs("androidx.photopicker:photopicker-testing:1.0.0-alpha01")
