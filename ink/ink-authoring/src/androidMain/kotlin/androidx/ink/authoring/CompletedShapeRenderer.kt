@@ -13,23 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package androidx.ink.authoring
 
 import android.graphics.Canvas
 import android.graphics.Matrix
+import androidx.annotation.UiThread
 
+/** Called to render a [CompletedShapeT] instance to an [android.graphics.Canvas]. */
 @ExperimentalCustomShapeWorkflowApi
-/** Implement this interface to render an [InProgressShape]. */
-public interface InProgressShapeRenderer<in InProgressShapeT : InProgressShape<*, *>> {
+public interface CompletedShapeRenderer<in CompletedShapeT : Any> {
+    @UiThread
+    public fun draw(
+        canvas: Canvas,
+        shape: CompletedShapeT,
+        strokeToScreenTransform: Matrix,
+        systemElapsedTimeMillis: Long,
+    )
+
     /**
-     * Draw the given [InProgressShape] onto the provided [Canvas], with the given transform. This
-     * will be called on the render thread.
-     *
-     * @param canvas The [Canvas] to draw to.
-     * @param shape The [InProgressShape] to draw.
-     * @param strokeToScreenTransform A [Matrix] to transform the [InProgressShape] from its local
-     *   coordinate space to the screen coordinate space.
+     * Whether calls to [draw] with a new timestamp value results in different visual output. In
+     * other words, return `true` if and only if [shape] is animated.
      */
-    public fun draw(canvas: Canvas, shape: InProgressShapeT, strokeToScreenTransform: Matrix)
+    @UiThread public fun changesWithTime(shape: CompletedShapeT): Boolean = false
 }
