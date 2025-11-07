@@ -65,7 +65,6 @@ public class RemoteSweepShader(
  * @param center Center position of the sweep gradient circle. If this is set to
  *   [Offset.Unspecified] then the center of the drawing area is used as the center for the sweep
  *   gradient
- * @sample androidx.compose.ui.graphics.samples.GradientBrushSample
  */
 @Stable
 public fun RemoteBrush.Companion.sweepGradient(
@@ -95,7 +94,6 @@ public fun RemoteBrush.Companion.sweepGradient(
  * @param center Center position of the sweep gradient circle. If this is set to
  *   [Offset.Unspecified] then the center of the drawing area is used as the center for the sweep
  *   gradient
- * @sample androidx.compose.ui.graphics.samples.GradientBrushSample
  */
 @Stable
 public fun RemoteBrush.Companion.sweepGradient(
