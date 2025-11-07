@@ -55,7 +55,6 @@ import androidx.compose.ui.graphics.toAndroidTileMode
  *   largest radius that can fit within the bounds of the drawing area
  * @param tileMode Determines the behavior for how the shader is to fill a region outside its
  *   bounds. Defaults to [TileMode.Clamp] to repeat the edge pixels
- * @sample androidx.compose.ui.graphics.samples.GradientBrushSample
  */
 @Stable
 public fun RemoteBrush.Companion.radialGradient(
@@ -94,7 +93,6 @@ public fun RemoteBrush.Companion.radialGradient(
  *   largest radius that can fit within the bounds of the drawing area
  * @param tileMode Determines the behavior for how the shader is to fill a region outside its
  *   bounds. Defaults to [TileMode.Clamp] to repeat the edge pixels
- * @sample androidx.compose.ui.graphics.samples.GradientBrushSample
  */
 @Stable
 public fun RemoteBrush.Companion.radialGradient(
