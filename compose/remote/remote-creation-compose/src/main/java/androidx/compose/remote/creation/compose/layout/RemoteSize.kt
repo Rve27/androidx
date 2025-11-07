@@ -15,22 +15,27 @@
  */
 @file:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 
-package androidx.compose.remote.creation.compose.modifier
+package androidx.compose.remote.creation.compose.layout
 
 import androidx.annotation.RestrictTo
 import androidx.compose.remote.creation.compose.state.RemoteFloat
-import androidx.compose.remote.creation.modifiers.RecordingModifier
+import androidx.compose.ui.geometry.Size
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public class CollapsiblePriorityModifier(
-    public val orientation: Int,
-    public val priority: RemoteFloat,
-) : RemoteModifier.Element {
+public class RemoteSize {
 
-    override fun toRemoteComposeElement(): RecordingModifier.Element {
-        return androidx.compose.remote.creation.modifiers.CollapsiblePriorityModifier(
-            orientation,
-            priority.internalAsFloat(),
-        )
+    public val width: RemoteFloat
+    public val height: RemoteFloat
+
+    public constructor(width: RemoteFloat, height: RemoteFloat) {
+        this.width = width
+        this.height = height
     }
+
+    public fun asSize(): Size {
+        return Size(width.internalAsFloat(), height.internalAsFloat())
+    }
+
+    public val center: RemoteOffset
+        get() = RemoteOffset(width / 2f, height / 2f)
 }

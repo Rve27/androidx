@@ -265,6 +265,8 @@ public inline fun RemoteDrawScope.withTransform(
 @DrawScopeMarker
 public // @JvmDefaultWithCompatibility
 interface RemoteDrawScope : Density {
+    public val canvas: RecordingCanvas
+        get() = drawContext.canvas.nativeCanvas as RecordingCanvas
 
     /**
      * The current [DrawContext] that contains the dependencies needed to create the drawing
