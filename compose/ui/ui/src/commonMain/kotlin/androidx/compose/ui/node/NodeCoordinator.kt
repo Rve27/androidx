@@ -17,7 +17,9 @@
 package androidx.compose.ui.node
 
 import androidx.collection.MutableObjectIntMap
+import androidx.collection.MutableScatterSet
 import androidx.collection.mutableObjectIntMapOf
+import androidx.collection.mutableScatterSetOf
 import androidx.compose.runtime.snapshots.Snapshot
 import androidx.compose.ui.ComposeUiFlags
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -212,19 +214,20 @@ internal abstract class NodeCoordinator(override val layoutNode: LayoutNode) :
 
     override val providedAlignmentLines: Set<AlignmentLine>
         get() {
-            var set: MutableSet<AlignmentLine>? = null
+            var set: MutableScatterSet<AlignmentLine>? = null
             var coordinator: NodeCoordinator? = this
             while (coordinator != null) {
                 val alignmentLines = coordinator._measureResult?.alignmentLines
                 if (alignmentLines?.isNotEmpty() == true) {
                     if (set == null) {
-                        set = mutableSetOf()
+                        set = mutableScatterSetOf()
                     }
                     set.addAll(alignmentLines.keys)
                 }
                 coordinator = coordinator.wrapped
             }
-            return set ?: emptySet()
+            @Suppress("AsCollectionCall")
+            return set?.asSet() ?: emptySet()
         }
 
     /**
