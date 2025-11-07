@@ -77,6 +77,24 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
     private val strokeIdToPageNumMap: MutableMap<InProgressStrokeId, Int> =
         Collections.synchronizedMap(mutableMapOf<InProgressStrokeId, Int>())
 
+    /**
+     * Callback invoked when [EditablePdfViewerFragment] enters edit mode. This is triggered when
+     * the user begins an edit for example modifying a form field or interaction via toolbox.
+     *
+     * <p> This callback can be used by the developers to make any UI changes required when the user
+     * enters edit mode, e.g. showing the "Save" button to the user.
+     */
+    public open fun onEnterEditMode() {}
+
+    /**
+     * Callback invoked when [EditablePdfViewerFragment] exits edit mode. This is triggered when the
+     * the edit mode is disabled and the fragment completes cleaning up it's edit state.
+     *
+     * <p> This callback can be used by the developers to make any UI changes required when the user
+     * exits edit mode e.g. hiding the "Save" button.
+     */
+    public open fun onExitEditMode() {}
+
     /** Undoes the last edit. If there are no more edits to undo, this is a no-op. */
     internal fun undo(): Unit = documentViewModel.undo()
 
