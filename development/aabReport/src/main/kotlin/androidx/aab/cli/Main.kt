@@ -67,8 +67,10 @@ internal abstract class PackageProcessor<T>(val typeLabel: String) {
         if (outputContext.csvFile != null) {
             val columns = getCsvColumns()
             println("$typeLabel parsing complete, constructing CSV...")
-            outputContext.csvFile.writeText(columns.fullHeader() + "\n")
-            items.forEach { outputContext.csvFile.appendText(columns.rowStringForItem(it) + "\n") }
+            outputContext.csvFile.bufferedWriter().use {
+                it.write(columns.fullHeader() + "\n")
+                items.forEach { item -> it.write(columns.rowStringForItem(item) + "\n") }
+            }
             println("Analysis complete, CSV saved to ${outputContext.csvFile.absolutePath}")
         } else {
             println("$typeLabel parsing complete, reporting problems...")
@@ -86,7 +88,7 @@ fun usageAndDie() {
             CSV Usage:
                  java -jar <path-to-jar> [--verbose] --out=<output_dir_path> --csv <path-to-aab> [<path-to-aab2>...]
 
-            When --out is passed, can also specify --mappingInfo to analyze obfuscation stats.
+            --out must be passed to see obfuscation and package keep statistics.
             """
             .trimIndent()
     )
@@ -104,7 +106,6 @@ fun main(args: Array<String>) = runBlocking {
                     ?.substringAfter(OUTPUT_PATH_PREFIX)
                     ?.replaceFirst("~", System.getProperty("user.home")),
             csv = args.contains("--csv"),
-            dumpMappingDebug = args.contains("--mappingInfo"),
             soMatchPatterns =
                 args
                     .singleOrNull { it.startsWith(SO_PATTERN_PREFIX) }
