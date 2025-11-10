@@ -375,7 +375,7 @@ public interface IcingOptionsConfig {
                         Flags.enableSchemaTypeIdOptimization())
                 .setEnableOptimizeImprovements(
                         Flags.enableOptimizeImprovements())
-                .setEnableRepeatedFieldJoins(Flags.enableRepeatedFieldJoins())
+                .setEnableRepeatedFieldJoins(enableRepeatedFieldJoins())
                 .build();
     }
 }
