@@ -85,6 +85,30 @@ public class WearWidgetProviderClient(
     ): ListenableFuture<Void?> =
         sendEventAsync(executor) { sendDeactivationNotice(instanceId, containerType) }
 
+    /** Call [IWearWidgetProvider.onAdded] on the provider and wait for completion. */
+    public suspend fun sendAddEvent(instanceId: Int, @ContainerType containerType: Int): Unit =
+        sendEvent(instanceId, containerType, "onAdded", IWearWidgetProvider::onAdded)
+
+    /** ListenableFuture version of [sendAddEvent]. */
+    public fun sendAddEventAsync(
+        instanceId: Int,
+        @ContainerType containerType: Int,
+        executor: Executor,
+    ): ListenableFuture<Void?> =
+        sendEventAsync(executor) { sendAddEvent(instanceId, containerType) }
+
+    /** Call [IWearWidgetProvider.onRemoved] on the provider and wait for completion. */
+    public suspend fun sendRemoveEvent(instanceId: Int, @ContainerType containerType: Int): Unit =
+        sendEvent(instanceId, containerType, "onRemoved", IWearWidgetProvider::onRemoved)
+
+    /** ListenableFuture version of [sendRemoveEvent]. */
+    public fun sendRemoveEventAsync(
+        instanceId: Int,
+        @ContainerType containerType: Int,
+        executor: Executor,
+    ): ListenableFuture<Void?> =
+        sendEventAsync(executor) { sendRemoveEvent(instanceId, containerType) }
+
     private suspend fun sendEvent(
         instanceId: Int,
         @ContainerType containerType: Int,
