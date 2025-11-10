@@ -4662,6 +4662,7 @@ package androidx.compose.ui.semantics {
     method @InaccessibleFromKotlin public androidx.compose.ui.semantics.SemanticsPropertyKey<java.lang.String> getStateDescription();
     method @InaccessibleFromKotlin public androidx.compose.ui.semantics.SemanticsPropertyKey<java.lang.String> getTestTag();
     method @InaccessibleFromKotlin public androidx.compose.ui.semantics.SemanticsPropertyKey<java.util.List<androidx.compose.ui.text.AnnotatedString>> getText();
+    method @InaccessibleFromKotlin public androidx.compose.ui.semantics.SemanticsPropertyKey<kotlin.Unit> getTextEntryKey();
     method @InaccessibleFromKotlin public androidx.compose.ui.semantics.SemanticsPropertyKey<androidx.compose.ui.text.TextRange> getTextSelectionRange();
     method @InaccessibleFromKotlin public androidx.compose.ui.semantics.SemanticsPropertyKey<androidx.compose.ui.text.AnnotatedString> getTextSubstitution();
     method @InaccessibleFromKotlin public androidx.compose.ui.semantics.SemanticsPropertyKey<androidx.compose.ui.state.ToggleableState> getToggleableState();
@@ -4704,6 +4705,7 @@ package androidx.compose.ui.semantics {
     property public androidx.compose.ui.semantics.SemanticsPropertyKey<java.lang.String> StateDescription;
     property public androidx.compose.ui.semantics.SemanticsPropertyKey<java.lang.String> TestTag;
     property public androidx.compose.ui.semantics.SemanticsPropertyKey<java.util.List<androidx.compose.ui.text.AnnotatedString>> Text;
+    property public androidx.compose.ui.semantics.SemanticsPropertyKey<kotlin.Unit> TextEntryKey;
     property public androidx.compose.ui.semantics.SemanticsPropertyKey<androidx.compose.ui.text.TextRange> TextSelectionRange;
     property public androidx.compose.ui.semantics.SemanticsPropertyKey<androidx.compose.ui.text.AnnotatedString> TextSubstitution;
     property public androidx.compose.ui.semantics.SemanticsPropertyKey<androidx.compose.ui.state.ToggleableState> ToggleableState;
@@ -4853,6 +4855,7 @@ package androidx.compose.ui.semantics {
     method @InaccessibleFromKotlin public static void setVerticalScrollAxisRange(androidx.compose.ui.semantics.SemanticsPropertyReceiver, androidx.compose.ui.semantics.ScrollAxisRange);
     method public static void showTextSubstitution(androidx.compose.ui.semantics.SemanticsPropertyReceiver, optional String? label, kotlin.jvm.functions.Function1<? super java.lang.Boolean,java.lang.Boolean>? action);
     method @BytecodeOnly public static void showTextSubstitution$default(androidx.compose.ui.semantics.SemanticsPropertyReceiver!, String!, kotlin.jvm.functions.Function1!, int, Object!);
+    method public static void textEntryKey(androidx.compose.ui.semantics.SemanticsPropertyReceiver);
     property public static androidx.compose.ui.semantics.CollectionInfo androidx.compose.ui.semantics.SemanticsPropertyReceiver.collectionInfo;
     property public static androidx.compose.ui.semantics.CollectionItemInfo androidx.compose.ui.semantics.SemanticsPropertyReceiver.collectionItemInfo;
     property public static androidx.compose.ui.autofill.ContentDataType androidx.compose.ui.semantics.SemanticsPropertyReceiver.contentDataType;
