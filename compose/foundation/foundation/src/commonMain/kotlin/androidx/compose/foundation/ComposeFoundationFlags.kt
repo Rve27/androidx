@@ -104,17 +104,6 @@ object ComposeFoundationFlags {
     @field:Suppress("MutableBareField") @JvmField var isTextFieldDpadNavigationEnabled = true
 
     /**
-     * Controls the behavior of any scrollable container in terms of how it operates to keep the
-     * focused child in view when the container's viewport shrinks. When this flag is enabled, the
-     * scrollable polls the focused area among its descendants to find the most up-to-date area
-     * which should be kept in view. Otherwise, each focused child notifies the scrollable of its
-     * focus area through [onFocusedBoundsChanged].
-     */
-    @field:Suppress("MutableBareField")
-    @JvmField
-    var isKeepInViewFocusObservationChangeEnabled: Boolean = true
-
-    /**
      * With this flag on, Pager will use Cache Window as the default prefetching strategy, instead
      * of 1 item in the direction of the scroll. The window used will be 1 view port AFTER the
      * currently composed items, this includes visible and items composed through beyond bounds.
