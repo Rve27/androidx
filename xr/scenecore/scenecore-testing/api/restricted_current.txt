@@ -30,7 +30,7 @@ package androidx.xr.scenecore.testing {
     property public androidx.xr.runtime.math.BoundingBox recommendedContentBoxInFullSpace;
   }
 
-  @RequiresApi(android.os.Build.VERSION_CODES.O) @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeAnchorEntity extends androidx.xr.scenecore.testing.FakeSystemSpaceEntity implements androidx.xr.scenecore.runtime.AnchorEntity {
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeAnchorEntity extends androidx.xr.scenecore.testing.FakeSystemSpaceEntity implements androidx.xr.scenecore.runtime.AnchorEntity {
     ctor public FakeAnchorEntity();
     method @InaccessibleFromKotlin public int getState();
     method public void onStateChanged(int newState);
@@ -823,8 +823,10 @@ package androidx.xr.scenecore.testing {
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public class FakeSystemSpaceEntity extends androidx.xr.scenecore.testing.FakeEntity implements androidx.xr.scenecore.runtime.SystemSpaceEntity {
     ctor public FakeSystemSpaceEntity();
+    method @InaccessibleFromKotlin public final Runnable? getOnSpaceUpdatedListener();
     method public final void onSpaceUpdated();
     method public void setOnSpaceUpdatedListener(Runnable? listener, java.util.concurrent.Executor? executor);
+    property public final Runnable? onSpaceUpdatedListener;
   }
 
 }
