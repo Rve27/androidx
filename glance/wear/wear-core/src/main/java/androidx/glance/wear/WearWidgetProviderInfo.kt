@@ -125,15 +125,6 @@ public constructor(
             "androidx.glance.wear.action.BIND_WIDGET_PROVIDER"
 
         /**
-         * Extra boolean in the intent to signal support for
-         * [androidx.glance.wear.parcel.IWearWidgetProvider] interface.
-         */
-        // TODO: b/459463712 - Remove this when not used anymore.
-        @RestrictTo(LIBRARY_GROUP)
-        public const val EXTRA_KEY_WEAR_WIDGET_PROVIDER_SUPPORTED: String =
-            "androidx.glance.wear.extra.WEAR_WIDGET_PROVIDER_SUPPORTED"
-
-        /**
          * Intent identifier to signal support for [androidx.glance.wear.parcel.IWearWidgetProvider]
          * interface.
          */
