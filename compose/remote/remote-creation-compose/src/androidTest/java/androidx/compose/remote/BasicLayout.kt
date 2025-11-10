@@ -1095,7 +1095,9 @@ ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
             RemoteBox(
                 modifier =
                     RemoteModifier.fillMaxSize()
-                        .background(RemoteBrush.radialGradient(colors = colors))
+                        .background(RemoteBrush.radialGradient(colors = colors)),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
             ) {
                 val green = RemoteColor(Color.Green)
                 RemoteText("Green", color = green, fontSize = 30.sp)
@@ -1155,7 +1157,9 @@ ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
             RemoteBox(
                 modifier =
                     RemoteModifier.fillMaxSize()
-                        .background(RemoteBrush.radialGradient(colors = colors))
+                        .background(RemoteBrush.radialGradient(colors = colors)),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
             ) {
                 RemoteRow(modifier = RemoteModifier.background(Color.Blue)) {
                     RemoteIconVector(

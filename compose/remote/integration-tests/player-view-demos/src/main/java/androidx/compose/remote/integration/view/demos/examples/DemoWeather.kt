@@ -57,7 +57,10 @@ import androidx.compose.ui.unit.sp
 @Composable
 @Preview
 fun WeatherDemo() {
-    RemoteBox {
+    RemoteBox(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
         RemoteColumn(
             modifier = RemoteModifier.fillMaxWidth(),
             // .background(Color(219, 247, 239) )
@@ -253,7 +256,11 @@ fun WeatherDay(day: String, precipitation: String, image: Int, temperature: Stri
             modifier = RemoteModifier.fillMaxWidth().widthIn(min = 200.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            RemoteBox(RemoteModifier.width(70.dp), horizontalAlignment = Alignment.Start) {
+            RemoteBox(
+                RemoteModifier.width(70.dp),
+                horizontalAlignment = Alignment.Start,
+                verticalArrangement = Arrangement.Center,
+            ) {
                 RemoteText(day, RemoteModifier.width(70.dp))
             }
             val modWeight = RemoteModifier.weight(1f)
@@ -263,7 +270,11 @@ fun WeatherDay(day: String, precipitation: String, image: Int, temperature: Stri
             modifier = RemoteModifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            RemoteBox(RemoteModifier.width(26.dp), horizontalAlignment = Alignment.Start) {
+            RemoteBox(
+                RemoteModifier.width(26.dp),
+                horizontalAlignment = Alignment.Start,
+                verticalArrangement = Arrangement.Center,
+            ) {
                 RemoteText(day.substring(IntRange(0, 2)), RemoteModifier.width(100.dp))
             }
             val modWeight = RemoteModifier.weight(1f)
@@ -292,5 +303,11 @@ private fun Temp(
         RemoteImage(image, RemoteString(""), RemoteModifier.size(24.dp))
     }
     RemoteBox(modWeight.widthIn(min = 0.dp))
-    RemoteBox(modifier = RemoteModifier.width(60.dp)) { RemoteText(temperature) }
+    RemoteBox(
+        modifier = RemoteModifier.width(60.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
+        RemoteText(temperature)
+    }
 }
