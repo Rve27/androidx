@@ -3302,7 +3302,6 @@ public final class Recorder implements VideoOutput {
 
             mCloseGuard.open("finalizeRecording");
 
-            AtomicBoolean isMediaStorePendingFlagSet = new AtomicBoolean(false);
             MuxerSupplier muxerSupplier =
                     (muxerOutputFormat, outputUriCreatedCallback) -> {
                         Muxer muxer = muxerFactory.create(muxerOutputFormat);
@@ -3333,7 +3332,6 @@ public final class Recorder implements VideoOutput {
                                 // Toggle on pending status for the video file. The saved file
                                 // will be hidden until the pending flag is changed to NOT_PENDING.
                                 contentValues.put(MediaStore.Video.Media.IS_PENDING, PENDING);
-                                isMediaStorePendingFlagSet.set(true);
                             }
                             try {
                                 outputUri = mediaStoreOutputOptions.getContentResolver().insert(
@@ -3431,12 +3429,12 @@ public final class Recorder implements VideoOutput {
                         if (outputUri.equals(Uri.EMPTY)) {
                             return;
                         }
-                        if (isMediaStorePendingFlagSet.get()) {
-                            ContentValues contentValues = new ContentValues();
-                            contentValues.put(MediaStore.Video.Media.IS_PENDING, NOT_PENDING);
-                            mediaStoreOutputOptions.getContentResolver().update(outputUri,
-                                    contentValues, null, null);
-                        }
+                        // Workaround: Explicitly update to NOT_PENDING even if it wasn't set.
+                        // This helps display the video duration on the Google Photos thumbnails.
+                        ContentValues contentValues = new ContentValues();
+                        contentValues.put(MediaStore.Video.Media.IS_PENDING, NOT_PENDING);
+                        mediaStoreOutputOptions.getContentResolver().update(outputUri,
+                                contentValues, null, null);
                     };
                 } else {
                     // Context will only be held in local scope of the consumer so it will not be
