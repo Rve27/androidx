@@ -138,7 +138,6 @@ dependencies {
     docs("androidx.credentials.providerevents:providerevents-play-services:1.0.0-alpha03")
     docs("androidx.credentials.registry:registry-digitalcredentials-mdoc:1.0.0-alpha03")
     docs("androidx.credentials.registry:registry-digitalcredentials-openid:1.0.0-alpha03")
-    docs("androidx.credentials.registry:registry-digitalcredentials-preview:1.0.0-alpha01")
     docs("androidx.credentials.registry:registry-digitalcredentials-sdjwtvc:1.0.0-alpha03")
     docs("androidx.credentials.registry:registry-provider:1.0.0-alpha03")
     docs("androidx.credentials.registry:registry-provider-play-services:1.0.0-alpha03")
