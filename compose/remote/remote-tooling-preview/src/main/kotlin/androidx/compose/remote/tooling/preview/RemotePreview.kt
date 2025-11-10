@@ -13,9 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@file:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 
-package androidx.compose.remote.integration.demos.preview
+package androidx.compose.remote.tooling.preview
 
+import androidx.annotation.RestrictTo
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.remote.creation.compose.capture.RememberRemoteDocumentInline
@@ -36,7 +38,7 @@ import androidx.compose.ui.platform.LocalWindowInfo
 @OptIn(ExperimentalRemoteComposePlayerApi::class)
 @Composable
 @Suppress("RestrictedApiAndroidX")
-fun RemoteComposePreview(content: @RemoteComposable @Composable () -> Unit) {
+public fun RemotePreview(content: @RemoteComposable @Composable () -> Unit) {
     RemoteComposePlayerFlags.isViewPlayerEnabled = false
     var documentState by remember { mutableStateOf<RemoteDocument?>(null) }
 
