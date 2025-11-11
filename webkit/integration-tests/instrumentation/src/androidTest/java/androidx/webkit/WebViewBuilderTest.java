@@ -48,7 +48,7 @@ import okhttp3.mockwebserver.MockWebServer;
 public class WebViewBuilderTest {
     @Before
     public void setUp() {
-        WebkitUtils.checkFeature(WebViewFeature.WEBVIEW_BUILDER);
+        WebkitUtils.checkFeature(WebViewFeature.WEBVIEW_BUILDER_EXPERIMENTAL_V1);
     }
 
     @Test
@@ -201,6 +201,34 @@ public class WebViewBuilderTest {
 
         // We then clean up this WebView to avoid leaking into the GC tests.
         WebViewOnUiThread.destroy(wv);
+    }
+
+    @Test
+    public void testSetNoProfileUsesDefault() throws WebViewBuilderException {
+        WebkitUtils.checkFeature(WebViewFeature.MULTI_PROFILE);
+
+        WebViewBuilder builder = new WebViewBuilder(WebViewBuilder.Preset.LEGACY);
+        WebView webView = build(builder);
+        String profileName = WebkitUtils.onMainThreadSync(
+                () -> WebViewCompat.getProfile(webView).getName());
+        WebViewOnUiThread.destroy(webView);
+
+        Assert.assertEquals(Profile.DEFAULT_PROFILE_NAME, profileName);
+    }
+
+    @Test
+    public void testSetProfileName() throws WebViewBuilderException {
+        WebkitUtils.checkFeature(WebViewFeature.MULTI_PROFILE);
+
+        String profileName = "NonDefault";
+        WebViewBuilder builder = new WebViewBuilder(WebViewBuilder.Preset.LEGACY)
+                .setProfile(profileName);
+        WebView webView = build(builder);
+        String actualProfileName = WebkitUtils.onMainThreadSync(
+                () -> WebViewCompat.getProfile(webView).getName());
+        WebViewOnUiThread.destroy(webView);
+
+        Assert.assertEquals(profileName, actualProfileName);
     }
 
     private WebView build(final WebViewBuilder builder) throws WebViewBuilderException {

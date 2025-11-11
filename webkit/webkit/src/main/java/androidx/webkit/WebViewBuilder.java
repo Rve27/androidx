@@ -54,6 +54,7 @@ public final class WebViewBuilder {
     private boolean mRestrictJavascriptInterface;
     private final @NonNull List<RestrictionAllowlist> mAllowLists =
             new ArrayList<RestrictionAllowlist>();
+    private @Nullable String mProfileName;
 
     @Retention(RetentionPolicy.CLASS)
     @Target({ElementType.METHOD, ElementType.TYPE, ElementType.FIELD})
@@ -97,6 +98,22 @@ public final class WebViewBuilder {
     }
 
     /**
+     * Set the profile for the WebView.
+     *
+     * <p>If the profile does not exist, it will be created when {@link WebViewBuilder#build} is
+     * called, as per {@link ProfileStore#getOrCreateProfile(String)}.
+     *
+     * @param profileName The name of the profile to use.
+     */
+    @Experimental
+    @RequiresFeature(name = WebViewFeature.MULTI_PROFILE,
+            enforcement = "androidx.webkit.WebViewFeature#isFeatureSupported")
+    public @NonNull WebViewBuilder setProfile(@NonNull String profileName) {
+        mProfileName = profileName;
+        return this;
+    }
+
+    /**
      * Add an allowlist of behaviors for a list origin patterns. All allowlists will be merged
      * together. A WebViewBuilderException will be thrown from {@link WebViewBuilder#build(Context)}
      * if a behavior is allow listed that has not been restricted via the WebViewBuilder.
@@ -117,10 +134,10 @@ public final class WebViewBuilder {
     @Experimental
     @UiThread
     @RequiresFeature(
-            name = WebViewFeature.WEBVIEW_BUILDER,
+            name = WebViewFeature.WEBVIEW_BUILDER_EXPERIMENTAL_V1,
             enforcement = "androidx.webkit.WebViewFeature#isFeatureSupported")
     public @NonNull WebView build(@NonNull Context context) throws WebViewBuilderException {
-        final ApiFeature.NoFramework feature = WebViewFeatureInternal.WEBVIEW_BUILDER;
+        final ApiFeature.NoFramework feature = WebViewFeatureInternal.WEBVIEW_BUILDER_V1;
         if (!feature.isSupportedByWebView()) {
             throw WebViewFeatureInternal.getUnsupportedOperationException();
         }
@@ -137,6 +154,7 @@ public final class WebViewBuilder {
                 new WebViewBuilderBoundaryInterface.Config();
 
         config.restrictJavascriptInterface = mRestrictJavascriptInterface;
+        config.profileName = mProfileName;
 
         try {
             for (RestrictionAllowlist allowList : mAllowLists) {
