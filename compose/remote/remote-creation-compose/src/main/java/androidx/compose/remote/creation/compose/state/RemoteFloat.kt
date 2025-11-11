@@ -1101,19 +1101,6 @@ public fun rememberRemoteFloatArray(content: () -> FloatArray): RemoteFloat {
     return rememberRemoteFloat { floatArrayId.rf }
 }
 
-/** Temporary method during migration */
-@Composable
-@RemoteComposable
-public fun rememberRemoteFloatValue(content: RemoteFloatContext.() -> Float): MutableRemoteFloat {
-    val state = LocalRemoteComposeCreationState.current
-    return remember {
-        val context = RemoteFloatContext(state)
-        val value = content(context)
-        val id = state.document.addFloatConstant(value)
-        MutableRemoteFloat(id)
-    }
-}
-
 /**
  * Composable function to remember and provide a mutable remote float value. This is intended for
  * use within a `@Composable` context and allows defining the initial value using a
