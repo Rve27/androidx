@@ -64,7 +64,7 @@ package androidx.xr.compose.platform {
 
 package androidx.xr.compose.spatial {
 
-  public sealed interface ContentEdge {
+  public sealed exhaustive interface ContentEdge {
     field public static final androidx.xr.compose.spatial.ContentEdge.Companion Companion;
   }
 
@@ -468,7 +468,7 @@ package androidx.xr.compose.subspace.animation {
     property public androidx.compose.animation.core.Transition<androidx.compose.animation.EnterExitState> transition;
   }
 
-  public abstract sealed class SpatialEnterTransition {
+  public abstract sealed nonexhaustive class SpatialEnterTransition {
     method @androidx.compose.runtime.Stable public final operator androidx.xr.compose.subspace.animation.SpatialEnterTransition plus(androidx.xr.compose.subspace.animation.SpatialEnterTransition enter);
     field public static final androidx.xr.compose.subspace.animation.SpatialEnterTransition.Companion Companion;
   }
@@ -478,7 +478,7 @@ package androidx.xr.compose.subspace.animation {
     property public androidx.xr.compose.subspace.animation.SpatialEnterTransition None;
   }
 
-  public abstract sealed class SpatialExitTransition {
+  public abstract sealed nonexhaustive class SpatialExitTransition {
     method @androidx.compose.runtime.Stable public final operator androidx.xr.compose.subspace.animation.SpatialExitTransition plus(androidx.xr.compose.subspace.animation.SpatialExitTransition exit);
     field public static final androidx.xr.compose.subspace.animation.SpatialExitTransition.Companion Companion;
   }
@@ -1207,7 +1207,7 @@ package androidx.xr.compose.subspace.node {
     method public abstract void update(N node);
   }
 
-  public sealed interface SubspaceSemanticsInfo {
+  public sealed nonexhaustive interface SubspaceSemanticsInfo {
     method @InaccessibleFromKotlin public default java.util.List<androidx.xr.scenecore.Component>? getComponents();
     method @InaccessibleFromKotlin public androidx.compose.ui.semantics.SemanticsConfiguration getConfig();
     method @InaccessibleFromKotlin public androidx.xr.runtime.math.Pose getPose();
