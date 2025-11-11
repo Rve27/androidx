@@ -14,141 +14,99 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.spatial.core;
+package androidx.xr.scenecore.spatial.core
 
-import android.app.Activity;
-import android.util.DisplayMetrics;
-import android.view.Display;
-import android.view.WindowManager;
-
-import androidx.xr.runtime.math.Pose;
-import androidx.xr.runtime.math.Vector3;
-import androidx.xr.scenecore.impl.perception.PerceptionLibrary;
-import androidx.xr.scenecore.impl.perception.Session;
-import androidx.xr.scenecore.impl.perception.ViewProjection;
-import androidx.xr.scenecore.impl.perception.ViewProjections;
-import androidx.xr.scenecore.runtime.CameraViewScenePose;
-import androidx.xr.scenecore.runtime.HitTestResult;
-import androidx.xr.scenecore.runtime.PixelDimensions;
-
-import com.google.common.util.concurrent.ListenableFuture;
-
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
+import android.util.DisplayMetrics
+import android.view.WindowManager
+import androidx.xr.runtime.math.Pose
+import androidx.xr.runtime.math.Vector3
+import androidx.xr.scenecore.impl.perception.PerceptionLibrary
+import androidx.xr.scenecore.impl.perception.ViewProjection
+import androidx.xr.scenecore.runtime.CameraViewScenePose
+import androidx.xr.scenecore.runtime.HitTestResult
+import androidx.xr.scenecore.runtime.PixelDimensions
+import androidx.xr.scenecore.runtime.ScenePose
+import com.google.common.util.concurrent.ListenableFuture
 
 /**
  * A ScenePose representing a user's camera. This can be used to determine the location and field of
  * view of the camera.
  */
-final class CameraViewScenePoseImpl extends BaseScenePose implements CameraViewScenePose {
-    private final PerceptionLibrary mPerceptionLibrary;
-    @CameraType private final int mCameraType;
-    private final ActivitySpaceImpl mActivitySpace;
-    private final OpenXrScenePoseHelper mOpenXrScenePoseHelper;
+internal class CameraViewScenePoseImpl(
+    @CameraViewScenePose.CameraType override val cameraType: Int,
+    private val activitySpace: ActivitySpaceImpl,
+    activitySpaceRoot: AndroidXrEntity,
+    private val perceptionLibrary: PerceptionLibrary,
+) : BaseScenePose(), CameraViewScenePose {
+
+    private val openXrScenePoseHelper: OpenXrScenePoseHelper =
+        OpenXrScenePoseHelper(activitySpace, activitySpaceRoot)
     // Default the pose to null. A null pose indicates that the camera is not ready yet.
-    private Pose mLastOpenXrPose = null;
+    private var lastOpenXrPose: Pose? = null
 
-    CameraViewScenePoseImpl(
-            @CameraType int cameraType,
-            ActivitySpaceImpl activitySpace,
-            AndroidXrEntity activitySpaceRoot,
-            PerceptionLibrary perceptionLibrary) {
-        mCameraType = cameraType;
-        mPerceptionLibrary = perceptionLibrary;
-        mActivitySpace = activitySpace;
-        mOpenXrScenePoseHelper = new OpenXrScenePoseHelper(activitySpace, activitySpaceRoot);
-    }
+    override val poseInActivitySpace: Pose
+        get() = openXrScenePoseHelper.getPoseInActivitySpace(poseInOpenXrReferenceSpace)
 
-    @Override
-    public @NonNull Pose getPoseInActivitySpace() {
-        return mOpenXrScenePoseHelper.getPoseInActivitySpace(getPoseInOpenXrReferenceSpace());
-    }
+    override val activitySpacePose: Pose
+        get() = openXrScenePoseHelper.getActivitySpacePose(poseInOpenXrReferenceSpace)
 
-    @Override
-    public @NonNull Pose getActivitySpacePose() {
-        return mOpenXrScenePoseHelper.getActivitySpacePose(getPoseInOpenXrReferenceSpace());
-    }
-
-    @Override
-    public @NonNull Vector3 getActivitySpaceScale() {
+    override val activitySpaceScale: Vector3
         // This WorldPose is assumed to always have a scale of 1.0f in the OpenXR reference space.
-        return mOpenXrScenePoseHelper.getActivitySpaceScale(new Vector3(1f, 1f, 1f));
-    }
+        get() = openXrScenePoseHelper.getActivitySpaceScale(Vector3(1f, 1f, 1f))
 
-    @Override
-    public @NonNull ListenableFuture<HitTestResult> hitTest(
-            @NonNull Vector3 origin,
-            @NonNull Vector3 direction,
-            @HitTestFilterValue int hitTestFilter) {
-        return mActivitySpace.hitTestRelativeToActivityPose(origin, direction, hitTestFilter, this);
-    }
+    override fun hitTest(
+        origin: Vector3,
+        direction: Vector3,
+        @ScenePose.HitTestFilterValue hitTestFilter: Int,
+    ): ListenableFuture<HitTestResult> =
+        activitySpace.hitTestRelativeToActivityPose(origin, direction, hitTestFilter, this)
 
-    private @Nullable ViewProjection getViewProjection() {
-        final Session session = mPerceptionLibrary.getSession();
-        if (session == null) {
-            // Cannot retrieve the camera pose with a null perception session.
-            return null;
+    private val viewProjection: ViewProjection?
+        get() {
+            val session = perceptionLibrary.session ?: return null
+            val perceptionViews = session.stereoViews ?: return null
+
+            return when (cameraType) {
+                CameraViewScenePose.CameraType.CAMERA_TYPE_LEFT_EYE -> perceptionViews.leftEye
+                CameraViewScenePose.CameraType.CAMERA_TYPE_RIGHT_EYE -> perceptionViews.rightEye
+                else -> null
+            }
         }
-        ViewProjections perceptionViews = session.getStereoViews();
-        if (perceptionViews == null) {
-            // Error retrieving the camera.
-            return null;
-        }
-        if (mCameraType == CameraViewScenePose.CameraType.CAMERA_TYPE_LEFT_EYE) {
-            return perceptionViews.getLeftEye();
-        } else if (mCameraType == CameraViewScenePose.CameraType.CAMERA_TYPE_RIGHT_EYE) {
-            return perceptionViews.getRightEye();
-        } else {
-            // Unsupported camera type: mCameraType
-            return null;
-        }
-    }
 
     /** Gets the pose in the OpenXR reference space. Can be null if it is not yet ready. */
-    public @Nullable Pose getPoseInOpenXrReferenceSpace() {
-        ViewProjection viewProjection = getViewProjection();
-        if (viewProjection != null) {
-            mLastOpenXrPose = RuntimeUtils.fromPerceptionPose(viewProjection.getPose());
+    val poseInOpenXrReferenceSpace: Pose?
+        get() {
+            viewProjection?.let { lastOpenXrPose = RuntimeUtils.fromPerceptionPose(it.pose) }
+            return lastOpenXrPose
         }
-        return mLastOpenXrPose;
-    }
 
-    @Override
-    @CameraType
-    public int getCameraType() {
-        return mCameraType;
-    }
-
-    @Override
-    public @NonNull Fov getFov() {
-        ViewProjection viewProjection = getViewProjection();
-        if (viewProjection == null) {
-            return new Fov(0, 0, 0, 0);
+    override val fov: CameraViewScenePose.Fov
+        get() {
+            val vp = viewProjection ?: return CameraViewScenePose.Fov(0f, 0f, 0f, 0f)
+            return RuntimeUtils.fovFromPerceptionFov(vp.fov)
         }
-        return RuntimeUtils.fovFromPerceptionFov(viewProjection.getFov());
-    }
 
     // Suppress warnings: windowManager's getDefaultDisplay and getRealMetrics.
-    @SuppressWarnings("deprecation")
-    @Override
-    public @NonNull PixelDimensions getDisplayResolutionInPixels() {
-        Activity activity = mPerceptionLibrary.getActivity();
-        WindowManager windowManager = activity.getSystemService(WindowManager.class);
-        if (windowManager == null) {
-            // WindowManager not available, cannot get display resolution. Returning (0, 0).
-            return new PixelDimensions(0, 0); // Fallback if WindowManager is not available
+    @Suppress("DEPRECATION")
+    override val displayResolutionInPixels: PixelDimensions
+        get() {
+            val activity = perceptionLibrary.activity
+            val windowManager =
+                activity.getSystemService(WindowManager::class.java)
+                    // WindowManager not available, cannot get display resolution. Returning (0, 0).
+                    ?: return PixelDimensions(0, 0)
+
+            val display =
+                windowManager.defaultDisplay
+                    // Default display not available, cannot get display resolution. Returning
+                    // (0,0).
+                    ?: return PixelDimensions(0, 0)
+
+            val displayMetrics = DisplayMetrics()
+            display.getRealMetrics(displayMetrics)
+
+            // Divide the width by 2 because we want single eye resolution, not full display
+            // resolution
+            return PixelDimensions(displayMetrics.widthPixels / 2, displayMetrics.heightPixels)
         }
-
-        Display display = windowManager.getDefaultDisplay();
-        if (display == null) {
-            // Default display not available, cannot get display resolution. Returning (0,0).
-            return new PixelDimensions(0, 0); // Fallback if display is not available
-        }
-
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        display.getRealMetrics(displayMetrics);
-
-        // Divide the width by 2 because we want single eye resolution, not full display resolution
-        return new PixelDimensions(displayMetrics.widthPixels / 2, displayMetrics.heightPixels);
-    }
 }

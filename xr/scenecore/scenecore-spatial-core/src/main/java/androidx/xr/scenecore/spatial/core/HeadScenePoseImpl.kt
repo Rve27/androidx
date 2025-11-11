@@ -14,74 +14,55 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.spatial.core;
+package androidx.xr.scenecore.spatial.core
 
-import androidx.xr.runtime.math.Pose;
-import androidx.xr.runtime.math.Vector3;
-import androidx.xr.scenecore.impl.perception.PerceptionLibrary;
-import androidx.xr.scenecore.impl.perception.Session;
-import androidx.xr.scenecore.runtime.HeadScenePose;
-import androidx.xr.scenecore.runtime.HitTestResult;
-
-import com.google.common.util.concurrent.ListenableFuture;
-
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
+import androidx.xr.runtime.math.Pose
+import androidx.xr.runtime.math.Vector3
+import androidx.xr.scenecore.impl.perception.PerceptionLibrary
+import androidx.xr.scenecore.runtime.HeadScenePose
+import androidx.xr.scenecore.runtime.HitTestResult
+import androidx.xr.scenecore.runtime.ScenePose
+import com.google.common.util.concurrent.ListenableFuture
 
 /**
  * An ScenePose representing the head of the user. This can be used to determine the location of the
  * user's head.
  */
-class HeadScenePoseImpl extends BaseScenePose implements HeadScenePose {
-    private final PerceptionLibrary mPerceptionLibrary;
-    private final ActivitySpaceImpl mActivitySpace;
-    private final OpenXrScenePoseHelper mOpenXrScenePoseHelper;
+internal class HeadScenePoseImpl(
+    private val activitySpace: ActivitySpaceImpl,
+    activitySpaceRoot: AndroidXrEntity,
+    private val perceptionLibrary: PerceptionLibrary,
+) : BaseScenePose(), HeadScenePose {
+
+    private val openXrScenePoseHelper = OpenXrScenePoseHelper(activitySpace, activitySpaceRoot)
     // Default the pose to null. A null pose indicates that the head is not ready yet.
-    private Pose mLastOpenXrPose = null;
+    private var lastOpenXrPose: Pose? = null
 
-    HeadScenePoseImpl(
-            ActivitySpaceImpl activitySpace,
-            AndroidXrEntity activitySpaceRoot,
-            PerceptionLibrary perceptionLibrary) {
-        this.mActivitySpace = activitySpace;
-        mPerceptionLibrary = perceptionLibrary;
-        mOpenXrScenePoseHelper = new OpenXrScenePoseHelper(activitySpace, activitySpaceRoot);
-    }
+    override val poseInActivitySpace: Pose
+        get() = openXrScenePoseHelper.getPoseInActivitySpace(poseInOpenXrReferenceSpace)
 
-    @Override
-    public @NonNull Pose getPoseInActivitySpace() {
-        return mOpenXrScenePoseHelper.getPoseInActivitySpace(getPoseInOpenXrReferenceSpace());
-    }
+    override val activitySpacePose: Pose
+        get() = openXrScenePoseHelper.getActivitySpacePose(poseInOpenXrReferenceSpace)
 
-    @Override
-    public @NonNull Pose getActivitySpacePose() {
-        return mOpenXrScenePoseHelper.getActivitySpacePose(getPoseInOpenXrReferenceSpace());
-    }
-
-    @Override
-    public @NonNull Vector3 getActivitySpaceScale() {
+    override val activitySpaceScale: Vector3
         // This WorldPose is assumed to always have a scale of 1.0f in the OpenXR reference space.
-        return mOpenXrScenePoseHelper.getActivitySpaceScale(new Vector3(1f, 1f, 1f));
-    }
+        get() = openXrScenePoseHelper.getActivitySpaceScale(Vector3(1f, 1f, 1f))
 
-    @Override
-    public @NonNull ListenableFuture<HitTestResult> hitTest(
-            @NonNull Vector3 origin,
-            @NonNull Vector3 direction,
-            @HitTestFilterValue int hitTestFilter) {
-        return mActivitySpace.hitTestRelativeToActivityPose(origin, direction, hitTestFilter, this);
-    }
+    override fun hitTest(
+        origin: Vector3,
+        direction: Vector3,
+        @ScenePose.HitTestFilterValue hitTestFilter: Int,
+    ): ListenableFuture<HitTestResult> =
+        activitySpace.hitTestRelativeToActivityPose(origin, direction, hitTestFilter, this)
 
     /** Gets the pose in the OpenXR reference space. Can be null if it is not yet ready. */
-    public @Nullable Pose getPoseInOpenXrReferenceSpace() {
-        final Session session = mPerceptionLibrary.getSession();
-        if (session == null) {
-            return mLastOpenXrPose;
+    val poseInOpenXrReferenceSpace: Pose?
+        get() {
+            val session = perceptionLibrary.session ?: return lastOpenXrPose
+            val perceptionHeadPose = session.headPose
+            if (perceptionHeadPose != null) {
+                lastOpenXrPose = RuntimeUtils.fromPerceptionPose(perceptionHeadPose)
+            }
+            return lastOpenXrPose
         }
-        androidx.xr.scenecore.impl.perception.Pose perceptionHeadPose = session.getHeadPose();
-        if (perceptionHeadPose != null) {
-            mLastOpenXrPose = RuntimeUtils.fromPerceptionPose(perceptionHeadPose);
-        }
-        return mLastOpenXrPose;
-    }
 }

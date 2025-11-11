@@ -2161,10 +2161,10 @@ public class SpatialSceneRuntimeTest {
     }
 
     @Test
-    public void passingNullExecutorWhenAddingConsumer_usesInternalExecutor() {
+    public void passingNoExecutorWhenAddingConsumer_usesInternalExecutor() {
         InputEventListener mockConsumer = mock(InputEventListener.class);
         PanelEntity panelEntity = createPanelEntity();
-        panelEntity.addInputEventListener(/* executor= */ null, mockConsumer);
+        panelEntity.addInputEventListener(null, mockConsumer);
         ShadowNode shadowNode = ShadowNode.extract(getNode(panelEntity));
 
         assertThat(shadowNode.getInputListener()).isNotNull();
@@ -2261,7 +2261,7 @@ public class SpatialSceneRuntimeTest {
         panelEntity.removeInputEventListener(mockConsumer1);
         panelEntity.removeInputEventListener(mockConsumer2);
 
-        assertThat(((PanelEntityImpl) panelEntity).mInputEventListenerMap).isEmpty();
+        assertThat(((PanelEntityImpl) panelEntity).getReformEventConsumerMap()).isEmpty();
         assertThat(shadowNode.getInputListener()).isNull();
         assertThat(shadowNode.getInputExecutor()).isNull();
     }
@@ -2287,7 +2287,7 @@ public class SpatialSceneRuntimeTest {
 
         panelEntity.dispose();
 
-        assertThat(((PanelEntityImpl) panelEntity).mInputEventListenerMap).isEmpty();
+        assertThat(((PanelEntityImpl) panelEntity).getReformEventConsumerMap()).isEmpty();
         assertThat(shadowNode.getInputListener()).isNull();
         assertThat(shadowNode.getInputExecutor()).isNull();
     }

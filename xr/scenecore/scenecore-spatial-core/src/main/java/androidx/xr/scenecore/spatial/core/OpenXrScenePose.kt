@@ -14,57 +14,41 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.spatial.core;
+package androidx.xr.scenecore.spatial.core
 
-import androidx.xr.runtime.math.Pose;
-import androidx.xr.runtime.math.Vector3;
-import androidx.xr.scenecore.runtime.HitTestResult;
+import androidx.xr.runtime.math.Pose
+import androidx.xr.runtime.math.Vector3
+import androidx.xr.scenecore.runtime.HitTestResult
+import androidx.xr.scenecore.runtime.ScenePose
+import com.google.common.util.concurrent.ListenableFuture
 
-import com.google.common.util.concurrent.ListenableFuture;
+internal class OpenXrScenePose(
+    private val activitySpace: ActivitySpaceImpl,
+    activitySpaceRoot: AndroidXrEntity,
+    private val perceptionPose: Pose?,
+) : BaseScenePose() {
 
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
+    private val openXrScenePoseHelper: OpenXrScenePoseHelper =
+        OpenXrScenePoseHelper(activitySpace, activitySpaceRoot)
 
-public class OpenXrScenePose extends BaseScenePose {
-    private final ActivitySpaceImpl mActivitySpace;
-    private final OpenXrScenePoseHelper mOpenXrScenePoseHelper;
-    // Default the pose to null. A null pose indicates that the head is not ready yet.
-    private Pose mPerceptionPose = null;
+    override val poseInActivitySpace: Pose
+        get() = openXrScenePoseHelper.getPoseInActivitySpace(poseInOpenXrReferenceSpace)
 
-    OpenXrScenePose(
-            ActivitySpaceImpl activitySpace,
-            AndroidXrEntity activitySpaceRoot,
-            Pose perceptionPose) {
-        this.mActivitySpace = activitySpace;
-        mOpenXrScenePoseHelper = new OpenXrScenePoseHelper(activitySpace, activitySpaceRoot);
-        this.mPerceptionPose = perceptionPose;
-    }
+    override val activitySpacePose: Pose
+        get() = openXrScenePoseHelper.getActivitySpacePose(poseInOpenXrReferenceSpace)
 
-    @Override
-    public @NonNull Pose getPoseInActivitySpace() {
-        return mOpenXrScenePoseHelper.getPoseInActivitySpace(getPoseInOpenXrReferenceSpace());
-    }
+    // This WorldPose is assumed to always have a scale of 1.0f in the OpenXR reference space.
+    override val activitySpaceScale: Vector3
+        get() = openXrScenePoseHelper.getActivitySpaceScale(Vector3(1f, 1f, 1f))
 
-    @Override
-    public @NonNull Pose getActivitySpacePose() {
-        return mOpenXrScenePoseHelper.getActivitySpacePose(getPoseInOpenXrReferenceSpace());
-    }
+    override fun hitTest(
+        origin: Vector3,
+        direction: Vector3,
+        @ScenePose.HitTestFilterValue hitTestFilter: Int,
+    ): ListenableFuture<HitTestResult> =
+        activitySpace.hitTestRelativeToActivityPose(origin, direction, hitTestFilter, this)
 
-    @Override
-    public @NonNull Vector3 getActivitySpaceScale() {
-        // This WorldPose is assumed to always have a scale of 1.0f in the OpenXR reference space.
-        return mOpenXrScenePoseHelper.getActivitySpaceScale(new Vector3(1f, 1f, 1f));
-    }
-
-    @Override
-    public @NonNull ListenableFuture<HitTestResult> hitTest(
-            @NonNull Vector3 origin,
-            @NonNull Vector3 direction,
-            @HitTestFilterValue int hitTestFilter) {
-        return mActivitySpace.hitTestRelativeToActivityPose(origin, direction, hitTestFilter, this);
-    }
-
-    public @Nullable Pose getPoseInOpenXrReferenceSpace() {
-        return mPerceptionPose;
-    }
+    /** Returns the pose relative to the OpenXR reference space (may be null if not ready). */
+    val poseInOpenXrReferenceSpace: Pose?
+        get() = perceptionPose
 }

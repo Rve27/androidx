@@ -14,147 +14,117 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.spatial.core;
+package androidx.xr.scenecore.spatial.core
 
-import android.content.Context;
-import android.util.Log;
-
-import androidx.concurrent.futures.ResolvableFuture;
-import androidx.xr.runtime.math.Pose;
-import androidx.xr.runtime.math.Vector3;
-import androidx.xr.scenecore.runtime.Entity;
-import androidx.xr.scenecore.runtime.HitTestResult;
-import androidx.xr.scenecore.runtime.InputEventListener;
-import androidx.xr.scenecore.runtime.LoggingEntity;
-import androidx.xr.scenecore.runtime.ScenePose;
-import androidx.xr.scenecore.runtime.SpaceValue;
-
-import com.google.common.util.concurrent.ListenableFuture;
-
-import org.jspecify.annotations.NonNull;
-
-import java.util.List;
-import java.util.concurrent.Executor;
+import android.content.Context
+import androidx.concurrent.futures.ResolvableFuture
+import androidx.xr.runtime.Log
+import androidx.xr.runtime.math.Pose
+import androidx.xr.runtime.math.Vector3
+import androidx.xr.scenecore.runtime.Entity
+import androidx.xr.scenecore.runtime.HitTestResult
+import androidx.xr.scenecore.runtime.InputEventListener
+import androidx.xr.scenecore.runtime.LoggingEntity
+import androidx.xr.scenecore.runtime.ScenePose
+import androidx.xr.scenecore.runtime.SpaceValue
+import com.google.common.util.concurrent.ListenableFuture
+import java.util.concurrent.Executor
 
 /** Implementation of a RealityCore Entity that logs its function calls. */
 // TODO: b/441103135 - Revaluate existence of LoggingEntity.
-class LoggingEntityImpl extends BaseEntity implements LoggingEntity {
+internal class LoggingEntityImpl(context: Context) : BaseEntity(context), LoggingEntity {
 
-    private static final String TAG = "SceneCore";
-
-    LoggingEntityImpl(Context context) {
-        super(context);
-        Log.i(TAG, "Creating LoggingEntity.");
+    init {
+        Log.info { "Creating LoggingEntity." }
     }
 
-    @Override
-    public @NonNull Pose getPose(@SpaceValue int relativeTo) {
-        Log.i(
-                TAG,
-                "Getting Logging Entity pose: "
-                        + super.getPose(relativeTo)
-                        + " relativeTo: "
-                        + relativeTo);
-        return super.getPose(relativeTo);
+    override fun getPose(@SpaceValue relativeTo: Int): Pose {
+        val pose = super<BaseEntity>.getPose(relativeTo)
+        Log.info { "Getting Logging Entity pose: $pose relativeTo: $relativeTo" }
+        return pose
     }
 
-    @Override
-    public void setPose(@NonNull Pose pose, @SpaceValue int relativeTo) {
-        Log.i(TAG, "Setting Logging Entity pose to: " + pose + " relativeTo: " + relativeTo);
-        super.setPose(pose, relativeTo);
+    override fun setPose(pose: Pose, @SpaceValue relativeTo: Int) {
+        Log.info { "Setting Logging Entity pose to: $pose relativeTo: $relativeTo" }
+        super<BaseEntity>.setPose(pose, relativeTo)
     }
 
-    @Override
-    public @NonNull Pose getActivitySpacePose() {
-        Log.i(TAG, "Getting Logging Entity activitySpacePose.");
-        return new Pose();
-    }
+    override val activitySpacePose: Pose
+        get() {
+            Log.info { "Getting Logging Entity activitySpacePose." }
+            return Pose()
+        }
 
-    @Override
-    public @NonNull Pose transformPoseTo(@NonNull Pose pose, @NonNull ScenePose destination) {
-        Log.i(
-                TAG,
-                "Transforming pose "
-                        + pose
-                        + " to be relative to the destination ScenePose: "
-                        + destination);
-        return new Pose();
+    override fun transformPoseTo(pose: Pose, destination: ScenePose): Pose {
+        Log.info {
+            "Transforming pose $pose to be relative to the destination ScenePose: $destination"
+        }
+        return Pose()
     }
 
     // ResolvableFuture is marked as RestrictTo(LIBRARY_GROUP_PREFIX), which is intended for classes
     // within AndroidX. We're in the process of migrating to AndroidX. Without suppressing this
     // warning, however, we get a build error - go/bugpattern/RestrictTo.
-    @SuppressWarnings("RestrictTo")
-    @Override
-    public @NonNull ListenableFuture<HitTestResult> hitTest(
-            @NonNull Vector3 origin,
-            @NonNull Vector3 direction,
-            @HitTestFilterValue int hitTestFilter) {
-        Log.i(
-                TAG,
-                "Hit testing Logging Entity with origin: "
-                        + origin
-                        + " direction: "
-                        + direction
-                        + " hitTestFilter: "
-                        + hitTestFilter);
-        ResolvableFuture<HitTestResult> future = ResolvableFuture.create();
-        future.set(
-                new HitTestResult(
-                        new Vector3(),
-                        new Vector3(),
-                        HitTestResult.HitTestSurfaceType.HIT_TEST_RESULT_SURFACE_TYPE_UNKNOWN,
-                        1f));
-        return future;
-    }
-
-    @Override
-    public void addChild(@NonNull Entity child) {
-        Log.i(TAG, "Adding child Entity: " + child);
-        super.addChild(child);
-    }
-
-    @Override
-    public void addChildren(@NonNull List<? extends Entity> children) {
-        Log.i(TAG, "Adding child Entities: " + children);
-        super.addChildren(children);
-    }
-
-    @Override
-    public Entity getParent() {
-        Log.i(TAG, "Getting Logging Entity parent: " + super.getParent());
-        return super.getParent();
-    }
-
-    @Override
-    public void setParent(Entity parent) {
-        if (!(parent instanceof LoggingEntityImpl)) {
-            Log.e(TAG, "Parent of a LoggingEntity must be a Logging entity");
-            return;
+    @Suppress("RestrictTo")
+    override fun hitTest(
+        origin: Vector3,
+        direction: Vector3,
+        @ScenePose.HitTestFilterValue hitTestFilter: Int,
+    ): ListenableFuture<HitTestResult> {
+        Log.info {
+            "Hit testing Logging Entity with origin: $origin direction: $direction hitTestFilter: $hitTestFilter"
         }
-        Log.i(TAG, "Setting Logging Entity parent to: " + parent);
-        super.setParent(parent);
+        val future = ResolvableFuture.create<HitTestResult>()
+        future.set(
+            HitTestResult(
+                Vector3(),
+                Vector3(),
+                HitTestResult.HitTestSurfaceType.HIT_TEST_RESULT_SURFACE_TYPE_UNKNOWN,
+                1f,
+            )
+        )
+        return future
     }
 
-    @Override
-    public @NonNull List<Entity> getChildren() {
-        Log.i(TAG, "Getting Logging Entity children: " + super.getChildren());
-        return super.getChildren();
+    override fun addChild(child: Entity) {
+        Log.info { "Adding child Entity: $child" }
+        super.addChild(child)
     }
 
-    @Override
-    public void addInputEventListener(
-            @NonNull Executor executor, @NonNull InputEventListener consumer) {
-        Log.i(TAG, "Add input consumer " + consumer + " executor " + executor);
+    override fun addChildren(children: List<Entity>) {
+        Log.info { "Adding child Entities: $children" }
+        super.addChildren(children)
     }
 
-    @Override
-    public void removeInputEventListener(@NonNull InputEventListener consumer) {
-        Log.i(TAG, "Remove input consumer " + consumer);
+    override var parent: Entity?
+        get() {
+            Log.info { "Getting Logging Entity parent: ${super.parent}" }
+            return super.parent
+        }
+        set(value) {
+            if (value !is LoggingEntityImpl) {
+                Log.error { "Parent of a LoggingEntity must be a Logging entity" }
+                return
+            }
+            Log.info { "Setting Logging Entity parent to: $value" }
+            super.parent = value
+        }
+
+    override val children: List<Entity>
+        get() {
+            Log.info { "Getting Logging Entity children: ${super.children}" }
+            return super.children
+        }
+
+    override fun addInputEventListener(executor: Executor?, listener: InputEventListener) {
+        Log.info { "Add input consumer $listener executor $executor" }
     }
 
-    @Override
-    public void dispose() {
-        Log.i(TAG, "dispose");
+    override fun removeInputEventListener(listener: InputEventListener) {
+        Log.info { "Remove input consumer $listener" }
+    }
+
+    override fun dispose() {
+        Log.info { "dispose" }
     }
 }

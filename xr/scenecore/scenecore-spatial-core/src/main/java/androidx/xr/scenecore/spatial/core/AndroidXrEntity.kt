@@ -14,42 +14,40 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.spatial.core;
+@file:Suppress("BanConcurrentHashMap")
 
-import static java.lang.Math.max;
-import static java.lang.Math.min;
+package androidx.xr.scenecore.spatial.core
 
-import android.content.Context;
-
-import androidx.xr.runtime.math.Pose;
-import androidx.xr.runtime.math.Quaternion;
-import androidx.xr.runtime.math.Vector3;
-import androidx.xr.scenecore.runtime.ActivitySpace;
-import androidx.xr.scenecore.runtime.Entity;
-import androidx.xr.scenecore.runtime.HitTestResult;
-import androidx.xr.scenecore.runtime.InputEventListener;
-import androidx.xr.scenecore.runtime.PerceptionSpaceScenePose;
-import androidx.xr.scenecore.runtime.PointerCaptureComponent;
-import androidx.xr.scenecore.runtime.Space;
-import androidx.xr.scenecore.runtime.SpaceValue;
-
-import com.android.extensions.xr.XrExtensions;
-import com.android.extensions.xr.function.Consumer;
-import com.android.extensions.xr.node.InputEvent;
-import com.android.extensions.xr.node.Node;
-import com.android.extensions.xr.node.NodeTransaction;
-import com.android.extensions.xr.node.ReformEvent;
-import com.android.extensions.xr.node.ReformOptions;
-
-import com.google.common.util.concurrent.ListenableFuture;
-
-import org.jspecify.annotations.NonNull;
-
-import java.lang.ref.WeakReference;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ScheduledExecutorService;
+import android.annotation.SuppressLint
+import android.content.Context
+import androidx.annotation.RestrictTo
+import androidx.annotation.VisibleForTesting
+import androidx.xr.runtime.math.Pose
+import androidx.xr.runtime.math.Quaternion
+import androidx.xr.runtime.math.Vector3
+import androidx.xr.scenecore.runtime.ActivitySpace
+import androidx.xr.scenecore.runtime.Entity
+import androidx.xr.scenecore.runtime.HitTestResult
+import androidx.xr.scenecore.runtime.InputEventListener
+import androidx.xr.scenecore.runtime.PerceptionSpaceScenePose
+import androidx.xr.scenecore.runtime.PointerCaptureComponent
+import androidx.xr.scenecore.runtime.ScenePose
+import androidx.xr.scenecore.runtime.Space
+import androidx.xr.scenecore.runtime.SpaceValue
+import com.android.extensions.xr.XrExtensions
+import com.android.extensions.xr.function.Consumer
+import com.android.extensions.xr.node.InputEvent
+import com.android.extensions.xr.node.Node
+import com.android.extensions.xr.node.ReformEvent
+import com.android.extensions.xr.node.ReformOptions
+import com.google.common.util.concurrent.ListenableFuture
+import java.lang.ref.WeakReference
+import java.util.Optional
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.Executor
+import java.util.concurrent.ScheduledExecutorService
+import kotlin.math.max
+import kotlin.math.min
 
 /**
  * Implementation of a JXR SceneCore Entity that wraps an android XR extension Node.
@@ -57,209 +55,183 @@ import java.util.concurrent.ScheduledExecutorService;
  * <p>This should not be created on its own but should be inherited by objects that need to wrap an
  * Android extension node.
  */
-@SuppressWarnings({"BanSynchronizedMethods", "BanConcurrentHashMap"})
-abstract class AndroidXrEntity extends BaseEntity implements Entity {
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+// TODO(b/452961674): Review RestrictTo annotations in SceneCore.
+public abstract class AndroidXrEntity(
+    context: Context?,
+    // Returns the underlying extension Node for the Entity.
+    @JvmField protected val mNode: Node,
+    @JvmField protected val mExtensions: XrExtensions,
+    @JvmField protected val mEntityManager: EntityManager,
+    @JvmField protected val mExecutor: ScheduledExecutorService,
+) : BaseEntity(context), Entity {
 
-    protected final Node mNode;
-    protected final XrExtensions mExtensions;
-    protected final ScheduledExecutorService mExecutor;
     // Visible for testing
-    final ConcurrentHashMap<InputEventListener, Executor> mInputEventListenerMap =
-            new ConcurrentHashMap<>();
-    Optional<InputEventListener> mPointerCaptureInputEventListener = Optional.empty();
-    Optional<Executor> mPointerCaptureExecutor = Optional.empty();
-    final ConcurrentHashMap<Consumer<ReformEvent>, Executor> mReformEventConsumerMap =
-            new ConcurrentHashMap<>();
-    protected final EntityManager mEntityManager;
-    private ReformOptions mReformOptions;
+    @VisibleForTesting
+    internal val inputEventListenerMap: MutableMap<InputEventListener, Executor> =
+        ConcurrentHashMap()
+    internal var pointerCaptureInputEventListener: Optional<InputEventListener> = Optional.empty()
+    internal var pointerCaptureExecutor: Optional<Executor> = Optional.empty()
+    public val reformEventConsumerMap: MutableMap<Consumer<ReformEvent>, Executor> =
+        ConcurrentHashMap()
+    private var reformOptions: ReformOptions? = null
 
-    AndroidXrEntity(
-            Context context,
-            Node node,
-            XrExtensions extensions,
-            EntityManager entityManager,
-            ScheduledExecutorService executor) {
-        super(context);
-        mNode = node;
-        mExtensions = extensions;
-        mEntityManager = entityManager;
-        mExecutor = executor;
-        mEntityManager.setEntityForNode(node, this);
+    init {
+        mEntityManager.setEntityForNode(mNode, this)
     }
 
-    @Override
-    public @NonNull Pose getPose(@SpaceValue int relativeTo) {
-        switch (relativeTo) {
-            case Space.PARENT:
-                return super.getPose(relativeTo);
-            case Space.ACTIVITY:
-                return getPoseInActivitySpace();
-            case Space.REAL_WORLD:
-                return getPoseInPerceptionSpace();
-            default:
-                throw new IllegalArgumentException("Unsupported relativeTo value: " + relativeTo);
+    override var parent: Entity?
+        get() = super.parent
+        set(newParent) {
+            if (newParent != null && newParent !is AndroidXrEntity) {
+                return
+            }
+            super.parent = newParent
+
+            mExtensions.createNodeTransaction().use { transaction ->
+                if (newParent == null) {
+                    @Suppress("UNUSED_VARIABLE")
+                    val unused = transaction.setVisibility(mNode, false).setParent(mNode, null)
+                } else {
+                    @Suppress("UNUSED_VARIABLE")
+                    val unused = transaction.setParent(mNode, newParent.mNode)
+                }
+                transaction.apply()
+            }
+        }
+
+    override fun getPose(@SpaceValue relativeTo: Int): Pose {
+        return when (relativeTo) {
+            Space.PARENT -> super<BaseEntity>.getPose(relativeTo)
+            Space.ACTIVITY -> poseInActivitySpace
+            Space.REAL_WORLD -> poseInPerceptionSpace
+            else -> throw IllegalArgumentException("Unsupported relativeTo value: $relativeTo")
         }
     }
 
-    @Override
-    public void setPose(@NonNull Pose pose, @SpaceValue int relativeTo) {
-        Pose localPose;
-        switch (relativeTo) {
-            case Space.PARENT:
-                localPose = pose;
-                break;
-            case Space.ACTIVITY:
-                localPose = getLocalPoseForActivitySpacePose(pose);
-                break;
-            case Space.REAL_WORLD:
-                localPose = getLocalPoseForPerceptionSpacePose(pose);
-                break;
-            default:
-                throw new IllegalArgumentException("Unsupported relativeTo value: " + relativeTo);
-        }
-        super.setPose(localPose, Space.PARENT);
+    override fun setPose(pose: Pose, @SpaceValue relativeTo: Int) {
+        val localPose: Pose =
+            when (relativeTo) {
+                Space.PARENT -> pose
+                Space.ACTIVITY -> getLocalPoseForActivitySpacePose(pose)
+                Space.REAL_WORLD -> getLocalPoseForPerceptionSpacePose(pose)
+                else -> throw IllegalArgumentException("Unsupported relativeTo value: $relativeTo")
+            }
+        super<BaseEntity>.setPose(localPose, Space.PARENT)
 
-        try (NodeTransaction transaction = mExtensions.createNodeTransaction()) {
+        mExtensions.createNodeTransaction().use { transaction ->
             transaction
-                    .setPosition(
-                            mNode,
-                            localPose.getTranslation().getX(),
-                            localPose.getTranslation().getY(),
-                            localPose.getTranslation().getZ())
-                    .setOrientation(
-                            mNode,
-                            localPose.getRotation().getX(),
-                            localPose.getRotation().getY(),
-                            localPose.getRotation().getZ(),
-                            localPose.getRotation().getW())
-                    .apply();
+                .setPosition(
+                    mNode,
+                    localPose.translation.x,
+                    localPose.translation.y,
+                    localPose.translation.z,
+                )
+                .setOrientation(
+                    mNode,
+                    localPose.rotation.x,
+                    localPose.rotation.y,
+                    localPose.rotation.z,
+                    localPose.rotation.w,
+                )
+                .apply()
         }
     }
 
-    @Override
-    public void setScale(@NonNull Vector3 scale, @SpaceValue int relativeTo) {
-        super.setScale(scale, relativeTo);
-        Vector3 localScale = super.getScale(Space.PARENT);
-        try (NodeTransaction transaction = mExtensions.createNodeTransaction()) {
-            transaction
-                    .setScale(mNode, localScale.getX(), localScale.getY(), localScale.getZ())
-                    .apply();
+    override fun setScale(scale: Vector3, @SpaceValue relativeTo: Int) {
+        super<BaseEntity>.setScale(scale, relativeTo)
+        val localScale = super<BaseEntity>.getScale(Space.PARENT)
+        mExtensions.createNodeTransaction().use { transaction ->
+            transaction.setScale(mNode, localScale.x, localScale.y, localScale.z).apply()
         }
     }
 
     /** Returns the pose for this entity, relative to the activity space root. */
-    @Override
-    public @NonNull Pose getPoseInActivitySpace() {
-        // This code might produce unexpected results when non-uniform scale
-        // is involved in the parent-child entity hierarchy.
+    override val poseInActivitySpace: Pose
+        get() {
+            // This code might produce unexpected results when non-uniform scale
+            // is involved in the parent-child entity hierarchy.
 
-        // Any parentless "space" entities (such as the root and anchor entities) are expected to
-        // override this method non-recursively so that this error is never thrown.
-        if (!(getParent() instanceof AndroidXrEntity)) {
-            throw new IllegalStateException(
-                    "Cannot get pose in Activity Space with a non-AndroidXrEntity parent");
-        }
-        AndroidXrEntity xrParent = (AndroidXrEntity) getParent();
-        return xrParent.getPoseInActivitySpace()
-                .compose(
-                        new Pose(
-                                getPose(Space.PARENT)
-                                        .getTranslation()
-                                        .scale(xrParent.getActivitySpaceScale()),
-                                getPose(Space.PARENT).getRotation()));
-    }
-
-    private Pose getPoseInPerceptionSpace() {
-        PerceptionSpaceScenePose perceptionSpaceScenePose =
-                mEntityManager
-                        .getSystemSpaceActivityPoseOfType(PerceptionSpaceScenePose.class)
-                        .get(0);
-        return transformPoseTo(new Pose(), perceptionSpaceScenePose);
-    }
-
-    private Pose getLocalPoseForActivitySpacePose(Pose pose) {
-        if (!(getParent() instanceof AndroidXrEntity)) {
-            throw new IllegalStateException(
-                    "Cannot get pose in Activity Space with a non-AndroidXrEntity parent");
-        }
-        AndroidXrEntity xrParent = (AndroidXrEntity) getParent();
-        ActivitySpace activitySpace =
-                mEntityManager.getSystemSpaceActivityPoseOfType(ActivitySpace.class).get(0);
-        return activitySpace.transformPoseTo(pose, xrParent);
-    }
-
-    private Pose getLocalPoseForPerceptionSpacePose(Pose pose) {
-        if (!(getParent() instanceof AndroidXrEntity)) {
-            throw new IllegalStateException(
-                    "Cannot get pose in Activity Space with a non-AndroidXrEntity parent");
-        }
-        AndroidXrEntity xrParent = (AndroidXrEntity) getParent();
-        PerceptionSpaceScenePose perceptionSpaceScenePose =
-                mEntityManager
-                        .getSystemSpaceActivityPoseOfType(PerceptionSpaceScenePose.class)
-                        .get(0);
-        return perceptionSpaceScenePose.transformPoseTo(pose, xrParent);
-    }
-
-    // Returns the underlying extension Node for the Entity.
-    public Node getNode() {
-        return mNode;
-    }
-
-    @Override
-    public void setParent(Entity parent) {
-        if ((parent != null) && !(parent instanceof AndroidXrEntity)) {
-            return;
-        }
-        super.setParent(parent);
-
-        AndroidXrEntity xrParent = (AndroidXrEntity) parent;
-
-        try (NodeTransaction transaction = mExtensions.createNodeTransaction()) {
-            if (xrParent == null) {
-                NodeTransaction unused =
-                        transaction.setVisibility(mNode, false).setParent(mNode, null);
-            } else {
-                NodeTransaction unused = transaction.setParent(mNode, xrParent.getNode());
+            // Any parentless "space" entities (such as the root and anchor entities) are expected
+            // to
+            // override this method non-recursively so that this error is never thrown.
+            if (parent !is AndroidXrEntity) {
+                throw IllegalStateException(
+                    "Cannot get pose in Activity Space with a non-AndroidXrEntity parent"
+                )
             }
-            transaction.apply();
+            val xrParent = parent as AndroidXrEntity
+            return xrParent.poseInActivitySpace.compose(
+                Pose(
+                    getPose(Space.PARENT).translation.scale(xrParent.activitySpaceScale),
+                    getPose(Space.PARENT).rotation,
+                )
+            )
+        }
+
+    private val poseInPerceptionSpace: Pose
+        get() {
+            val perceptionSpaceScenePose =
+                mEntityManager
+                    .getSystemSpaceActivityPoseOfType(PerceptionSpaceScenePose::class.java)[0]
+            return transformPoseTo(Pose(), perceptionSpaceScenePose)
+        }
+
+    private fun getLocalPoseForActivitySpacePose(pose: Pose): Pose {
+        if (parent !is AndroidXrEntity) {
+            throw IllegalStateException(
+                "Cannot get pose in Activity Space with a non-AndroidXrEntity parent"
+            )
+        }
+        val xrParent = parent as AndroidXrEntity
+        val activitySpace =
+            mEntityManager.getSystemSpaceActivityPoseOfType(ActivitySpace::class.java)[0]
+        return activitySpace.transformPoseTo(pose, xrParent)
+    }
+
+    private fun getLocalPoseForPerceptionSpacePose(pose: Pose): Pose {
+        if (parent !is AndroidXrEntity) {
+            throw IllegalStateException(
+                "Cannot get pose in Activity Space with a non-AndroidXrEntity parent"
+            )
+        }
+        val xrParent = parent as AndroidXrEntity
+        val perceptionSpaceScenePose =
+            mEntityManager.getSystemSpaceActivityPoseOfType(PerceptionSpaceScenePose::class.java)[0]
+        return perceptionSpaceScenePose.transformPoseTo(pose, xrParent)
+    }
+
+    override fun setAlpha(alpha: Float, @SpaceValue relativeTo: Int) {
+        val clampedAlpha = max(0.0f, min(1.0f, alpha))
+        super<BaseEntity>.setAlpha(clampedAlpha, relativeTo)
+
+        mExtensions.createNodeTransaction().use { transaction ->
+            transaction.setAlpha(mNode, super<BaseEntity>.getAlpha(relativeTo)).apply()
         }
     }
 
-    @Override
-    public void setAlpha(float alpha, @SpaceValue int relativeTo) {
-        alpha = max(0.0f, min(1.0f, alpha));
-        super.setAlpha(alpha, relativeTo);
+    override fun setHidden(hidden: Boolean) {
+        super.setHidden(hidden)
 
-        try (NodeTransaction transaction = mExtensions.createNodeTransaction()) {
-            transaction.setAlpha(mNode, super.getAlpha(relativeTo)).apply();
-        }
-    }
-
-    @Override
-    public void setHidden(boolean hidden) {
-        super.setHidden(hidden);
-
-        try (NodeTransaction transaction = mExtensions.createNodeTransaction()) {
-            if (mReformOptions != null) {
+        mExtensions.createNodeTransaction().use { transaction ->
+            if (reformOptions != null) {
                 if (hidden) {
                     // Since this entity is being hidden, disable reform and the highlights around
                     // the node.
-                    NodeTransaction unused = transaction.disableReform(mNode);
+                    @Suppress("UNUSED_VARIABLE") val unused = transaction.disableReform(mNode)
                 } else {
                     // Enables reform and the highlights around the node.
-                    NodeTransaction unused = transaction.enableReform(mNode, mReformOptions);
+                    @Suppress("UNUSED_VARIABLE")
+                    val unused = transaction.enableReform(mNode, reformOptions)
                 }
             }
-            transaction.setVisibility(mNode, !hidden).apply();
+            transaction.setVisibility(mNode, !hidden).apply()
         }
     }
 
-    @Override
-    public void addInputEventListener(
-            @NonNull Executor executor, @NonNull InputEventListener eventListener) {
-        maybeSetupInputListeners();
-        mInputEventListenerMap.put(eventListener, executor == null ? mExecutor : executor);
+    override fun addInputEventListener(executor: Executor?, listener: InputEventListener) {
+        maybeSetupInputListeners()
+        inputEventListenerMap[listener] = executor ?: mExecutor
     }
 
     /**
@@ -270,154 +242,156 @@ abstract class AndroidXrEntity extends BaseEntity implements Entity {
      * already a previously existing pointer capture session as only one can be supported at a given
      * time.
      */
-    public boolean requestPointerCapture(
-            Executor executor,
-            InputEventListener eventListener,
-            PointerCaptureComponent.StateListener stateListener) {
-        if (mPointerCaptureInputEventListener.isPresent()) {
-            return false;
+    public fun requestPointerCapture(
+        executor: Executor,
+        eventListener: InputEventListener,
+        stateListener: PointerCaptureComponent.StateListener,
+    ): Boolean {
+        if (pointerCaptureInputEventListener.isPresent) {
+            return false
         }
-        getNode()
-                .requestPointerCapture(
-                        executor,
-                        (pcState) -> {
-                            if (pcState == Node.POINTER_CAPTURE_STATE_PAUSED) {
-                                stateListener.onStateChanged(
-                                        PointerCaptureComponent.PointerCaptureState
-                                                .POINTER_CAPTURE_STATE_PAUSED);
-                            } else if (pcState == Node.POINTER_CAPTURE_STATE_ACTIVE) {
-                                stateListener.onStateChanged(
-                                        PointerCaptureComponent.PointerCaptureState
-                                                .POINTER_CAPTURE_STATE_ACTIVE);
-                            } else if (pcState == Node.POINTER_CAPTURE_STATE_STOPPED) {
-                                stateListener.onStateChanged(
-                                        PointerCaptureComponent.PointerCaptureState
-                                                .POINTER_CAPTURE_STATE_STOPPED);
-                            } else {
-                                throw new IllegalStateException(
-                                        "Invalid state received for pointer capture");
-                            }
-                        });
+        mNode.requestPointerCapture(executor) { pcState ->
+            when (pcState) {
+                Node.POINTER_CAPTURE_STATE_PAUSED ->
+                    stateListener.onStateChanged(
+                        PointerCaptureComponent.PointerCaptureState.POINTER_CAPTURE_STATE_PAUSED
+                    )
+                Node.POINTER_CAPTURE_STATE_ACTIVE ->
+                    stateListener.onStateChanged(
+                        PointerCaptureComponent.PointerCaptureState.POINTER_CAPTURE_STATE_ACTIVE
+                    )
+                Node.POINTER_CAPTURE_STATE_STOPPED ->
+                    stateListener.onStateChanged(
+                        PointerCaptureComponent.PointerCaptureState.POINTER_CAPTURE_STATE_STOPPED
+                    )
+                else -> throw IllegalStateException("Invalid state received for pointer capture")
+            }
+        }
 
-        addPointerCaptureInputListener(executor, eventListener);
-        return true;
+        addPointerCaptureInputListener(executor, eventListener)
+        return true
     }
 
-    private void addPointerCaptureInputListener(
-            Executor executor, InputEventListener eventListener) {
-        maybeSetupInputListeners();
-        mPointerCaptureInputEventListener = Optional.of(eventListener);
-        mPointerCaptureExecutor = Optional.ofNullable(executor);
+    private fun addPointerCaptureInputListener(
+        executor: Executor,
+        eventListener: InputEventListener,
+    ) {
+        maybeSetupInputListeners()
+        pointerCaptureInputEventListener = Optional.of(eventListener)
+        pointerCaptureExecutor = Optional.ofNullable(executor)
     }
 
-    private void maybeSetupInputListeners() {
+    private fun maybeSetupInputListeners() {
         // Only set up the listener if it doesn't already exist.
-        if (mInputEventListenerMap.isEmpty() && mPointerCaptureInputEventListener.isEmpty()) {
-            mNode.listenForInput(mExecutor, this::handleInputEvent);
+        if (inputEventListenerMap.isEmpty() && pointerCaptureInputEventListener.isEmpty) {
+            mNode.listenForInput(mExecutor, this::handleInputEvent)
         }
     }
 
     /** Handles an incoming input event from the underlying node and dispatches it appropriately. */
-    private void handleInputEvent(InputEvent xrInputEvent) {
-        if (xrInputEvent.getDispatchFlags() == InputEvent.DISPATCH_FLAG_CAPTURED_POINTER) {
-            dispatchCapturedPointerEvent(xrInputEvent);
+    private fun handleInputEvent(xrInputEvent: InputEvent) {
+        if (xrInputEvent.dispatchFlags == InputEvent.DISPATCH_FLAG_CAPTURED_POINTER) {
+            dispatchCapturedPointerEvent(xrInputEvent)
         } else {
-            dispatchStandardEvent(xrInputEvent);
+            dispatchStandardEvent(xrInputEvent)
         }
     }
 
     /** Dispatches an event to the active pointer capture listener. */
-    private void dispatchCapturedPointerEvent(InputEvent xrInputEvent) {
-        mPointerCaptureInputEventListener.ifPresent(
-                (listener) -> {
-                    Executor executor = mPointerCaptureExecutor.orElse(mExecutor);
-                    executor.execute(
-                            () ->
-                                    listener.onInputEvent(
-                                            RuntimeUtils.getInputEvent(
-                                                    xrInputEvent, mEntityManager)));
-                });
+    private fun dispatchCapturedPointerEvent(xrInputEvent: InputEvent) {
+        pointerCaptureInputEventListener.ifPresent { listener ->
+            val executor = pointerCaptureExecutor.orElse(mExecutor)
+            executor.execute {
+                listener.onInputEvent(RuntimeUtils.getInputEvent(xrInputEvent, mEntityManager))
+            }
+        }
     }
 
     /** Dispatches an event to all standard input listeners. */
-    private void dispatchStandardEvent(InputEvent xrInputEvent) {
-        mInputEventListenerMap.forEach(
-                (listener, executor) ->
-                        executor.execute(
-                                () ->
-                                        listener.onInputEvent(
-                                                RuntimeUtils.getInputEvent(
-                                                        xrInputEvent, mEntityManager))));
+    private fun dispatchStandardEvent(xrInputEvent: InputEvent) {
+        inputEventListenerMap.forEach { (listener, executor) ->
+            executor.execute {
+                listener.onInputEvent(RuntimeUtils.getInputEvent(xrInputEvent, mEntityManager))
+            }
+        }
     }
 
-    @Override
-    public void removeInputEventListener(@NonNull InputEventListener consumer) {
-        mInputEventListenerMap.remove(consumer);
-        maybeStopListeningForInput();
+    override fun removeInputEventListener(listener: InputEventListener) {
+        inputEventListenerMap.remove(listener)
+        maybeStopListeningForInput()
     }
 
     /** Stop any pointer capture requests on this Entity. */
-    public void stopPointerCapture() {
-        getNode().stopPointerCapture();
-        mPointerCaptureInputEventListener = Optional.empty();
-        mPointerCaptureExecutor = Optional.empty();
-        maybeStopListeningForInput();
+    public fun stopPointerCapture() {
+        mNode.stopPointerCapture()
+        pointerCaptureInputEventListener = Optional.empty()
+        pointerCaptureExecutor = Optional.empty()
+        maybeStopListeningForInput()
     }
 
-    private void maybeStopListeningForInput() {
-        if (mInputEventListenerMap.isEmpty() && mPointerCaptureInputEventListener.isEmpty()) {
-            mNode.stopListeningForInput();
+    private fun maybeStopListeningForInput() {
+        if (inputEventListenerMap.isEmpty() && pointerCaptureInputEventListener.isEmpty) {
+            mNode.stopListeningForInput()
         }
     }
 
-    @Override
-    public void dispose() {
-        mInputEventListenerMap.clear();
-        mNode.stopListeningForInput();
-        mReformEventConsumerMap.clear();
-        try (NodeTransaction transaction = mExtensions.createNodeTransaction()) {
-            NodeTransaction unused = transaction.disableReform(mNode);
-            transaction.apply();
+    override fun dispose() {
+        inputEventListenerMap.clear()
+        mNode.stopListeningForInput()
+        reformEventConsumerMap.clear()
+        mExtensions.createNodeTransaction().use { transaction ->
+            @Suppress("UNUSED_VARIABLE") val unused = transaction.disableReform(mNode)
+            transaction.apply()
         }
 
         // SystemSpaceEntityImpls (Anchors, ActivitySpace, etc) should have null parents.
-        if (getParent() != null) {
-            setParent(null);
+        if (parent != null) {
+            parent = null
         }
-        mEntityManager.removeEntityForNode(mNode);
-        super.dispose();
+        mEntityManager.removeEntityForNode(mNode)
+        super.dispose()
     }
 
     /**
      * Handles the logic for a reform event. This is in a separate method to be called from a weak
      * reference to avoid memory leaks.
      */
-    private void handleReformEvent(ReformEvent reformEvent) {
-        if ((mReformOptions.getEnabledReform() & ReformOptions.ALLOW_MOVE) != 0
-                && (mReformOptions.getFlags() & ReformOptions.FLAG_ALLOW_SYSTEM_MOVEMENT) != 0) {
+    private fun handleReformEvent(reformEvent: ReformEvent) {
+        val currentReformOptions = reformOptions
+        if (
+            currentReformOptions != null &&
+                (currentReformOptions.enabledReform and ReformOptions.ALLOW_MOVE) != 0 &&
+                (currentReformOptions.flags and ReformOptions.FLAG_ALLOW_SYSTEM_MOVEMENT) != 0
+        ) {
             // Update the cached pose of the entity.
-            super.setPose(
-                    new Pose(
-                            new Vector3(
-                                    reformEvent.getProposedPosition().x,
-                                    reformEvent.getProposedPosition().y,
-                                    reformEvent.getProposedPosition().z),
-                            new Quaternion(
-                                    reformEvent.getProposedOrientation().x,
-                                    reformEvent.getProposedOrientation().y,
-                                    reformEvent.getProposedOrientation().z,
-                                    reformEvent.getProposedOrientation().w)),
-                    Space.PARENT);
+            super<BaseEntity>.setPose(
+                Pose(
+                    Vector3(
+                        reformEvent.proposedPosition.x,
+                        reformEvent.proposedPosition.y,
+                        reformEvent.proposedPosition.z,
+                    ),
+                    Quaternion(
+                        reformEvent.proposedOrientation.x,
+                        reformEvent.proposedOrientation.y,
+                        reformEvent.proposedOrientation.z,
+                        reformEvent.proposedOrientation.w,
+                    ),
+                ),
+                Space.PARENT,
+            )
             // Update the cached scale of the entity.
             super.setScaleInternal(
-                    new Vector3(
-                            reformEvent.getProposedScale().x,
-                            reformEvent.getProposedScale().y,
-                            reformEvent.getProposedScale().z));
+                Vector3(
+                    reformEvent.proposedScale.x,
+                    reformEvent.proposedScale.y,
+                    reformEvent.proposedScale.z,
+                )
+            )
         }
-        mReformEventConsumerMap.forEach(
-                (eventConsumer, consumerExecutor) ->
-                        consumerExecutor.execute(() -> eventConsumer.accept(reformEvent)));
+        reformEventConsumerMap.forEach { (eventConsumer, consumerExecutor) ->
+            consumerExecutor.execute { eventConsumer.accept(reformEvent) }
+        }
     }
 
     /**
@@ -425,59 +399,61 @@ abstract class AndroidXrEntity extends BaseEntity implements Entity {
      *
      * @return The reform options for this entity.
      */
-    public ReformOptions getReformOptions() {
-        if (mReformOptions == null) {
-            final WeakReference<AndroidXrEntity> weakThis = new WeakReference<>(this);
-            Consumer<ReformEvent> reformEventConsumer =
-                    reformEvent -> {
-                        AndroidXrEntity entity = weakThis.get();
-                        if (entity != null) {
-                            entity.handleReformEvent(reformEvent);
-                        }
-                    };
-            mReformOptions = mExtensions.createReformOptions(mExecutor, reformEventConsumer);
+    public fun getReformOptions(): ReformOptions {
+        if (reformOptions == null) {
+            val weakThis = WeakReference(this)
+            val reformEventConsumer = Consumer { reformEvent: ReformEvent ->
+                val entity = weakThis.get()
+                entity?.handleReformEvent(reformEvent)
+            }
+            reformOptions = mExtensions.createReformOptions(mExecutor, reformEventConsumer)
         }
-        return mReformOptions;
+        return reformOptions!!
     }
 
     /**
      * Updates the reform options for this entity. Uses the same instance of [ReformOptions]
      * provided by {@link #getReformOptions()}.
      */
-    public synchronized void updateReformOptions() {
-        try (NodeTransaction transaction = mExtensions.createNodeTransaction()) {
-            if (mReformOptions.getEnabledReform() == 0) {
+    @SuppressLint("BanSynchronizedMethods")
+    @Synchronized
+    public fun updateReformOptions() {
+        mExtensions.createNodeTransaction().use { transaction ->
+            if (reformOptions!!.enabledReform == 0) {
                 // Disables reform and the highlights around the node.
-                NodeTransaction unused = transaction.disableReform(mNode);
+                @Suppress("UNUSED_VARIABLE") val unused = transaction.disableReform(mNode)
             } else {
                 // Enables reform and the highlights around the node.
-                NodeTransaction unused = transaction.enableReform(mNode, mReformOptions);
+                @Suppress("UNUSED_VARIABLE")
+                val unused = transaction.enableReform(mNode, reformOptions)
             }
-            transaction.apply();
+            transaction.apply()
         }
     }
 
-    public void addReformEventConsumer(
-            Consumer<ReformEvent> reformEventConsumer, Executor executor) {
-        executor = (executor == null) ? mExecutor : executor;
-        mReformEventConsumerMap.put(reformEventConsumer, executor);
+    public fun addReformEventConsumer(
+        reformEventConsumer: Consumer<ReformEvent>,
+        executor: Executor?,
+    ) {
+        val finalExecutor = executor ?: this.mExecutor
+        reformEventConsumerMap[reformEventConsumer] = finalExecutor
     }
 
-    public void removeReformEventConsumer(Consumer<ReformEvent> reformEventConsumer) {
-        mReformEventConsumerMap.remove(reformEventConsumer);
+    public fun removeReformEventConsumer(reformEventConsumer: Consumer<ReformEvent>) {
+        reformEventConsumerMap.remove(reformEventConsumer)
     }
 
-    @Override
-    public @NonNull ListenableFuture<HitTestResult> hitTest(
-            @NonNull Vector3 origin,
-            @NonNull Vector3 direction,
-            @HitTestFilterValue int hitTestFilter) {
+    override fun hitTest(
+        origin: Vector3,
+        direction: Vector3,
+        @ScenePose.HitTestFilterValue hitTestFilter: Int,
+    ): ListenableFuture<HitTestResult> {
         // Hit tests need to be issued in the activity space then converted to the entity's space.
-        ActivitySpace activitySpace =
-                mEntityManager.getSystemSpaceActivityPoseOfType(ActivitySpace.class).get(0);
-        if (activitySpace == null) {
-            throw new IllegalStateException("ActivitySpace is null");
-        }
-        return activitySpace.hitTestRelativeToActivityPose(origin, direction, hitTestFilter, this);
+        val activitySpace =
+            mEntityManager.getSystemSpaceActivityPoseOfType(ActivitySpace::class.java)[0]
+                ?: throw IllegalStateException("ActivitySpace is null")
+        return activitySpace.hitTestRelativeToActivityPose(origin, direction, hitTestFilter, this)
     }
+
+    public open fun getNode(): Node = mNode
 }
