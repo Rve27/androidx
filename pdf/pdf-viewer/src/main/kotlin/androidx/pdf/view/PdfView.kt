@@ -599,6 +599,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
     private var doubleTapAnimator: ValueAnimator? = null
     internal var lastFastScrollerVisibility: Boolean = false
 
+    private var prevScrollY: Int = 0
+
     @VisibleForTesting
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     @set:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
@@ -1782,7 +1784,12 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         if (deferViewportUpdate) return
         val prevVisiblePages = visiblePages
         // If the viewport didn't actually change, short-circuit all of the downstream work
-        if (pageLayoutManager?.onViewportChanged(getVisibleAreaInContentCoords()) != true) return
+        if (
+            pageLayoutManager?.onViewportChanged(getVisibleAreaInContentCoords()) != true &&
+                prevScrollY == scrollY
+        )
+            return
+        prevScrollY = scrollY
         dispatchViewportChanged()
         // Avoid fetching Bitmaps during active gestures like zoom and scroll, except to render
         // net new pages
