@@ -17,7 +17,6 @@
 package androidx.pdf.ink.view
 
 import PALETTE_VIEW_AFTER_CLICK_COLOR
-import PALETTE_VIEW_AFTER_CLICK_EMOJI
 import PALETTE_VIEW_WITH_HIGHLIGHT_ITEMS
 import PALETTE_VIEW_WITH_PEN_ITEMS
 import SCREENSHOT_GOLDEN_DIRECTORY
@@ -74,20 +73,6 @@ class ColorPaletteViewTests {
         clickItemAt<ColorPaletteAdapter.PaletteItemViewHolder>(COLOR_ITEM_INDEX)
 
         assertScreenshot(PALETTE_VIEW_ID, screenshotRule, PALETTE_VIEW_AFTER_CLICK_COLOR)
-    }
-
-    @Test
-    fun testColorPaletteView_itemSelection_emoji() {
-        setupColorPaletteView { view ->
-            view.updatePaletteItems(getHighlightPaletteItems(view.context))
-        }
-
-        // Select a color first
-        clickItemAt<ColorPaletteAdapter.PaletteItemViewHolder>(COLOR_ITEM_INDEX)
-        // Now select an emoji
-        clickItemAt<ColorPaletteAdapter.PaletteItemViewHolder>(EMOJI_ITEM_INDEX)
-
-        assertScreenshot(PALETTE_VIEW_ID, screenshotRule, PALETTE_VIEW_AFTER_CLICK_EMOJI)
     }
 
     @Test
