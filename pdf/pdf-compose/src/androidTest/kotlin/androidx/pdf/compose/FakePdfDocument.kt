@@ -30,7 +30,6 @@ import android.util.SparseArray
 import androidx.annotation.OpenForTesting
 import androidx.annotation.RequiresExtension
 import androidx.pdf.PdfDocument
-import androidx.pdf.annotation.models.PdfObject
 import androidx.pdf.content.PageMatchBounds
 import androidx.pdf.content.PageSelection
 import androidx.pdf.content.PdfPageGotoLinkContent
@@ -178,14 +177,6 @@ internal open class FakePdfDocument(
 
     override suspend fun getFormWidgetInfos(pageNum: Int, types: IntArray): List<FormWidgetInfo> {
         return listOf()
-    }
-
-    override suspend fun getTopPageObjectAtPosition(
-        pageNum: Int,
-        point: PointF,
-        types: IntArray,
-    ): PdfObject? {
-        return null
     }
 
     override suspend fun applyEdit(pageNum: Int, record: FormEditRecord): List<Rect> {
