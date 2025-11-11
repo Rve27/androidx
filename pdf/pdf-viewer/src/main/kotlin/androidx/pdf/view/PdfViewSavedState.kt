@@ -36,8 +36,8 @@ internal class PdfViewSavedState : AbsSavedState {
     var isFormFillingEnabled: Boolean = false
     var isFormFillingTooltipEnabled: Boolean = false
     var pagesPerRow: Int = PdfView.SINGLE_PAGE
-    var horizontalPageSpacing: Float = 20f
-    var verticalPageSpacing: Float = 20f
+    var horizontalPageSpacing: Int = 20
+    var verticalPageSpacing: Int = 20
     var documentUri: Uri? = null
     var paginationModel: PaginationModel? = null
     var layoutStrategy: LayoutStrategy? = null
@@ -77,8 +77,8 @@ internal class PdfViewSavedState : AbsSavedState {
         isFormFillingEnabled = parcel.readBoolean()
         isFormFillingTooltipEnabled = parcel.readBoolean()
         pagesPerRow = parcel.readInt()
-        horizontalPageSpacing = parcel.readFloat()
-        verticalPageSpacing = parcel.readFloat()
+        horizontalPageSpacing = parcel.readInt()
+        verticalPageSpacing = parcel.readInt()
         documentUri = ParcelCompat.readParcelable(parcel, loader, Uri::class.java)
         paginationModel = ParcelCompat.readParcelable(parcel, loader, PaginationModel::class.java)
         layoutStrategy = ParcelCompat.readParcelable(parcel, loader, LayoutStrategy::class.java)
@@ -99,8 +99,8 @@ internal class PdfViewSavedState : AbsSavedState {
         dest.writeBoolean(isFormFillingEnabled)
         dest.writeBoolean(isFormFillingTooltipEnabled)
         dest.writeInt(pagesPerRow)
-        dest.writeFloat(horizontalPageSpacing)
-        dest.writeFloat(verticalPageSpacing)
+        dest.writeInt(horizontalPageSpacing)
+        dest.writeInt(verticalPageSpacing)
         dest.writeParcelable(documentUri, flags)
         dest.writeParcelable(paginationModel, flags)
         dest.writeParcelable(layoutStrategy, flags)
