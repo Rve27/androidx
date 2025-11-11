@@ -44,6 +44,7 @@ import androidx.pdf.annotation.models.PdfAnnotationData
 import androidx.pdf.annotation.models.PdfEdit
 import androidx.pdf.annotation.models.PdfEditEntry
 import androidx.pdf.annotation.models.PdfEdits
+import androidx.pdf.annotation.models.PdfObject
 import androidx.pdf.annotation.processor.PdfAnnotationsProcessor
 import androidx.pdf.content.PageMatchBounds
 import androidx.pdf.content.PageSelection
@@ -240,6 +241,16 @@ public class SandboxedPdfDocument(
     override suspend fun getFormWidgetInfos(pageNum: Int, types: IntArray): List<FormWidgetInfo> {
         return withDocument { document ->
             document.getFormWidgetInfosOfType(pageNum, types).map { it.toContentClass() }
+        }
+    }
+
+    override suspend fun getTopPageObjectAtPosition(
+        pageNum: Int,
+        point: PointF,
+        types: IntArray,
+    ): PdfObject? {
+        return withDocument { document ->
+            document.getTopPageObjectAtPosition(pageNum, point, types)
         }
     }
 

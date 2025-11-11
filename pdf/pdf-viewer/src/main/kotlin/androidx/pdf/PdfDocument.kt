@@ -25,6 +25,7 @@ import android.util.Size
 import android.util.SparseArray
 import androidx.annotation.IntDef
 import androidx.annotation.RestrictTo
+import androidx.pdf.annotation.models.PdfObject
 import androidx.pdf.content.PageMatchBounds
 import androidx.pdf.content.PageSelection
 import androidx.pdf.content.PdfPageGotoLinkContent
@@ -183,6 +184,21 @@ public interface PdfDocument : Closeable {
         pageNum: Int,
         types: IntArray = intArrayOf(),
     ): List<FormWidgetInfo>
+
+    /**
+     * Returns the topmost page object at a specific position on the page.
+     *
+     * @param pageNum The page number (0-based).
+     * @param types An array of PdfObject types to return, or an empty array to return all types.
+     * @return The topmost [PdfObject] at the specified position or returns null if no page object
+     *   is present.
+     */
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    public suspend fun getTopPageObjectAtPosition(
+        pageNum: Int,
+        point: PointF,
+        types: IntArray = intArrayOf(),
+    ): PdfObject?
 
     /**
      * Applies the changes specified by [record] to the form, and returns a list of [Rect]
