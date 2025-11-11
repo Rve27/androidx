@@ -44,7 +44,7 @@ import java.util.function.Consumer
  * real world.
  */
 @Suppress("NotCloseable")
-public class Scene : SessionConnector {
+public class Scene internal constructor() : SessionConnector {
 
     internal val entityManager = EntityManager()
 
@@ -169,7 +169,7 @@ public class Scene : SessionConnector {
         }
 
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-    override fun initialize(runtimes: List<JxrRuntime>): Unit {
+    override fun initialize(runtimes: List<JxrRuntime>) {
         this.sceneRuntime = runtimes.filterIsInstance<SceneRuntime>().first()
         spatialEnvironment = SpatialEnvironment(sceneRuntime)
         perceptionSpace = PerceptionSpace.create(sceneRuntime)
@@ -197,7 +197,7 @@ public class Scene : SessionConnector {
     }
 
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-    override fun close(): Unit {
+    override fun close() {
         entityManager.clear()
         sceneRuntime.removeSpatialCapabilitiesChangedListener(rtSpatialCapabilitiesListener)
         spatialCapabilitiesListeners.keys.forEach { removeSpatialCapabilitiesChangedListener(it) }
@@ -241,7 +241,7 @@ public class Scene : SessionConnector {
     public fun addSpatialCapabilitiesChangedListener(
         callbackExecutor: Executor,
         listener: Consumer<Set<SpatialCapability>>,
-    ): Unit {
+    ) {
         spatialCapabilitiesListeners[listener] = callbackExecutor
     }
 
@@ -256,7 +256,7 @@ public class Scene : SessionConnector {
      */
     public fun removeSpatialCapabilitiesChangedListener(
         listener: Consumer<Set<SpatialCapability>>
-    ): Unit {
+    ) {
         spatialCapabilitiesListeners.remove(listener)
     }
 
@@ -298,7 +298,7 @@ public class Scene : SessionConnector {
     public fun setSpatialVisibilityChangedListener(
         callbackExecutor: Executor,
         listener: Consumer<SpatialVisibility>,
-    ): Unit {
+    ) {
         // Wrap client's listener in a callback that converts the sceneRuntime's
         // SpatialVisibility.
         val rtListener =
