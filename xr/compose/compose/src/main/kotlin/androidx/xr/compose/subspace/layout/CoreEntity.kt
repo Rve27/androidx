@@ -236,7 +236,7 @@ internal class CoreGroupEntity(entity: Entity) : CoreEntity(entity) {
  * from SceneCore.
  */
 internal sealed class CoreBasePanelEntity(private val panelEntity: PanelEntity) :
-    CoreEntity(panelEntity), MovableCoreEntity, ResizableCoreEntity {
+    CoreEntity(panelEntity), MovableCoreEntity, ResizableCoreEntity, InteractableCoreEntity {
     // Density set from setShape.
     private var shapeDensity: Density? = null
 
@@ -334,7 +334,7 @@ internal class CoreMainPanelEntity(session: Session) :
 internal class CoreSurfaceEntity(
     internal val surfaceEntity: SurfaceEntity,
     private val localDensity: Density,
-) : CoreEntity(surfaceEntity), ResizableCoreEntity, MovableCoreEntity {
+) : CoreEntity(surfaceEntity), ResizableCoreEntity, MovableCoreEntity, InteractableCoreEntity {
     private var pendingOnSurfaceDestroyed: ((Surface) -> Unit)? = null
 
     internal var stereoMode: SurfaceEntity.StereoMode
@@ -413,7 +413,7 @@ internal class AdaptableCoreEntity<T : Entity>(
 internal class CoreSphereSurfaceEntity(
     internal val surfaceEntity: SurfaceEntity,
     val initialDensity: Density,
-) : CoreEntity(surfaceEntity) {
+) : CoreEntity(surfaceEntity), InteractableCoreEntity {
     private var pendingOnSurfaceDestroyed: ((Surface) -> Unit)? = null
 
     internal var stereoMode: SurfaceEntity.StereoMode
@@ -582,6 +582,9 @@ internal interface ResizableCoreEntity
 
 /** [CoreEntity] types that implement this interface may have the MovableComponent attached. */
 internal interface MovableCoreEntity
+
+/** [CoreEntity] types that implement this interface may have the InteractableComponent attached. */
+internal interface InteractableCoreEntity
 
 /**
  * Check if the current entity is disposed.
