@@ -27,6 +27,7 @@ import androidx.xr.compose.subspace.ActionQueue
 import androidx.xr.compose.subspace.SceneCoreEntitySizeAdapter
 import androidx.xr.compose.subspace.SpatialPanelDefaults
 import androidx.xr.compose.subspace.node.SubspaceLayoutNode
+import androidx.xr.compose.subspace.node.SubspaceOwner
 import androidx.xr.compose.unit.IntVolumeSize
 import androidx.xr.compose.unit.Meter
 import androidx.xr.compose.unit.toIntVolumeSize
@@ -43,6 +44,13 @@ import androidx.xr.scenecore.PanelEntity
 import androidx.xr.scenecore.SurfaceEntity
 import androidx.xr.scenecore.scene
 import kotlin.math.PI
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.shareIn
 import org.jetbrains.annotations.TestOnly
 
 /**
@@ -517,6 +525,19 @@ internal class CoreSphereSurfaceEntity(
 }
 
 internal class CoreModelEntity() : CoreEntity() {
+    private val scope: CoroutineScope by lazy {
+        val context = requireOwner().coroutineContext
+        CoroutineScope(context + Job(context[Job]))
+    }
+
+    val animationStateFlow by lazy {
+        callbackFlow {
+                onEntity { addAnimationStateListener(::trySend) }
+                awaitClose { onEntity { removeAnimationStateListener(::trySend) } }
+            }
+            .shareIn(scope = scope, started = SharingStarted.WhileSubscribed(5000), replay = 1)
+    }
+
     /**
      * The size of the glTF entity will be scaled uniformly such that it fits within the most
      * restrictive dimension according to the constraints.
@@ -551,6 +572,11 @@ internal class CoreModelEntity() : CoreEntity() {
             return (entity as? GltfModelEntity)?.animationState ==
                 GltfModelEntity.AnimationState.PLAYING
         }
+
+    override fun dispose() {
+        scope.cancel()
+        super.dispose()
+    }
 
     fun startAnimation(name: String? = null) {
         if (name == null) {
@@ -599,3 +625,6 @@ private val Entity.isDisposed
         } catch (e: IllegalStateException) {
             e.message?.contains("disposed") == true
         }
+
+private fun CoreEntity.requireOwner(): SubspaceOwner =
+    checkNotNull(layout?.owner) { "Failed to get SubspaceOwner for CoreEntity." }
