@@ -865,6 +865,12 @@ package androidx.compose.material3 {
     property public static androidx.compose.runtime.ProvidableCompositionLocal<java.lang.Boolean> LocalTonalElevationEnabled;
   }
 
+  @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3Api public final class ComposeMaterial3Flags {
+    property public boolean isPrecisionPointerComponentSizingEnabled;
+    field public static final androidx.compose.material3.ComposeMaterial3Flags INSTANCE;
+    field public static boolean isPrecisionPointerComponentSizingEnabled;
+  }
+
   public final class ContentColorKt {
     method @InaccessibleFromKotlin public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.compose.ui.graphics.Color> getLocalContentColor();
     property public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.compose.ui.graphics.Color> LocalContentColor;
