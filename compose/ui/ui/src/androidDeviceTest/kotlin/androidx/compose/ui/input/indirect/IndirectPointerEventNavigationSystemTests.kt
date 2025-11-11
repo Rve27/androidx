@@ -6847,6 +6847,103 @@ class IndirectPointerEventNavigationSystemTests {
     }
 
     @Test
+    fun simpleUI_removeIndirectModifierFocusedUiNode_triggersIndirectCancelsInFocusPath() {
+        // This test will only run if the flag is true. Otherwise, it will be skipped.
+        @OptIn(ExperimentalComposeUiApi::class)
+        assumeTrue(ComposeUiFlags.isOptimizedFocusEventDispatchEnabled)
+        var indirectPointerCancelForBox1 = false
+
+        var enableBox1IndirectModifier by mutableStateOf(true)
+
+        rule.setContent {
+            rootView = LocalView.current as AndroidComposeView
+            Column(
+                modifier =
+                    Modifier.fillMaxSize()
+                        .onIndirectPointerInput(
+                            onEvent = {
+                                indirectPointerEvent: IndirectPointerEvent,
+                                pointerEventPass: PointerEventPass ->
+                                if (pointerEventPass == PointerEventPass.Main) {
+                                    receivedEvent = indirectPointerEvent
+                                }
+                            },
+                            onCancel = {
+                                indirectPointerCancelEventsThatShouldNotBeTriggered = true
+                            },
+                        )
+            ) {
+                // Box 1
+                Box(
+                    modifier =
+                        Modifier.testTag(testTagBox1)
+                            .size(contentBoxSize)
+                            .background(Color.Red)
+                            .padding(boxPadding)
+                            .then(
+                                if (enableBox1IndirectModifier) {
+                                    Modifier.onIndirectPointerInput(
+                                        onEvent = { _, _ -> },
+                                        onCancel = { indirectPointerCancelForBox1 = true },
+                                    )
+                                } else {
+                                    Modifier
+                                }
+                            )
+                            .focusable()
+                )
+                // Box 2
+                Box(
+                    modifier =
+                        Modifier.testTag(testTagBox2)
+                            .size(contentBoxSize)
+                            .background(Color.Green)
+                            .padding(boxPadding)
+                            .onIndirectPointerInput(
+                                onEvent = { _, _ -> },
+                                onCancel = {
+                                    indirectPointerCancelEventsThatShouldNotBeTriggered = true
+                                },
+                            )
+                            .focusable()
+                )
+
+                // Box 3
+                Box(
+                    modifier =
+                        Modifier.testTag(testTagBox3)
+                            .size(contentBoxSize)
+                            .background(Color.Blue)
+                            .padding(boxPadding)
+                            .onIndirectPointerInput(
+                                onEvent = { _, _ -> },
+                                onCancel = {
+                                    indirectPointerCancelEventsThatShouldNotBeTriggered = true
+                                },
+                            )
+                            .focusable()
+                )
+            }
+        }
+
+        rule.onNodeWithTag(testTagBox1).requestFocus()
+
+        // --- Test assertions and actions ---
+        rule.runOnIdle {
+            assertThat(receivedEvent).isEqualTo(null)
+            assertThat(indirectPointerCancelForBox1).isFalse()
+            assertThat(indirectPointerCancelEventsThatShouldNotBeTriggered).isFalse()
+        }
+
+        rule.runOnIdle { enableBox1IndirectModifier = false }
+        rule.runOnIdle {
+            assertThat(receivedEvent).isEqualTo(null)
+            assertThat(indirectPointerCancelForBox1).isTrue()
+            assertThat(indirectPointerCancelEventsThatShouldNotBeTriggered).isFalse()
+        }
+    }
+
+    @Test
     fun complexUI_detachAllUINodesNoFocus_noIndirectCancels() {
         var showContent by mutableStateOf(true)
 
