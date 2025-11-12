@@ -195,9 +195,7 @@ internal constructor(
  * @see movableContentOf
  */
 @InternalComposeApi
-public class MovableContent<P>(public val content: @Composable (parameter: P) -> Unit) {
-    internal var used: Boolean = false
-}
+public class MovableContent<P>(public val content: @Composable (parameter: P) -> Unit)
 
 /**
  * A Compose compiler plugin API. DO NOT call directly.
