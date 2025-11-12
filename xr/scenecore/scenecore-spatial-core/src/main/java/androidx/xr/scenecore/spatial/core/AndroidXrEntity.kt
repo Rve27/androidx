@@ -40,7 +40,6 @@ import com.android.extensions.xr.node.InputEvent
 import com.android.extensions.xr.node.Node
 import com.android.extensions.xr.node.ReformEvent
 import com.android.extensions.xr.node.ReformOptions
-import com.google.common.util.concurrent.ListenableFuture
 import java.lang.ref.WeakReference
 import java.util.Optional
 import java.util.concurrent.ConcurrentHashMap
@@ -443,11 +442,11 @@ public abstract class AndroidXrEntity(
         reformEventConsumerMap.remove(reformEventConsumer)
     }
 
-    override fun hitTest(
+    override suspend fun hitTest(
         origin: Vector3,
         direction: Vector3,
         @ScenePose.HitTestFilterValue hitTestFilter: Int,
-    ): ListenableFuture<HitTestResult> {
+    ): HitTestResult {
         // Hit tests need to be issued in the activity space then converted to the entity's space.
         val activitySpace =
             mEntityManager.getSystemSpaceActivityPoseOfType(ActivitySpace::class.java)[0]

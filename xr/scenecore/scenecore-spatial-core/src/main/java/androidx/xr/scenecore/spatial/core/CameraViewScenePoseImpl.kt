@@ -26,7 +26,6 @@ import androidx.xr.scenecore.runtime.CameraViewScenePose
 import androidx.xr.scenecore.runtime.HitTestResult
 import androidx.xr.scenecore.runtime.PixelDimensions
 import androidx.xr.scenecore.runtime.ScenePose
-import com.google.common.util.concurrent.ListenableFuture
 
 /**
  * A ScenePose representing a user's camera. This can be used to determine the location and field of
@@ -54,11 +53,11 @@ internal class CameraViewScenePoseImpl(
         // This WorldPose is assumed to always have a scale of 1.0f in the OpenXR reference space.
         get() = openXrScenePoseHelper.getActivitySpaceScale(Vector3(1f, 1f, 1f))
 
-    override fun hitTest(
+    override suspend fun hitTest(
         origin: Vector3,
         direction: Vector3,
         @ScenePose.HitTestFilterValue hitTestFilter: Int,
-    ): ListenableFuture<HitTestResult> =
+    ): HitTestResult =
         activitySpace.hitTestRelativeToActivityPose(origin, direction, hitTestFilter, this)
 
     private val viewProjection: ViewProjection?
