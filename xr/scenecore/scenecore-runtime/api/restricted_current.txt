@@ -464,7 +464,7 @@ package androidx.xr.scenecore.runtime {
     property public abstract androidx.xr.scenecore.runtime.PixelDimensions sizeInPixels;
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public abstract sealed class PerceivedResolutionResult {
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public abstract sealed exhaustive class PerceivedResolutionResult {
   }
 
   public static final class PerceivedResolutionResult.EntityTooClose extends androidx.xr.scenecore.runtime.PerceivedResolutionResult {
