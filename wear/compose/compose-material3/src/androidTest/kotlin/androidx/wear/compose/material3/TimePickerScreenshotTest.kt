@@ -238,6 +238,32 @@ class TimePickerScreenshotTest {
             },
         )
 
+    @Test
+    fun timePicker_frenchCanadian_sanitized(@TestParameter screenSize: ScreenSize) =
+        rule.verifyTimePickerScreenshot(
+            testName = testName,
+            screenshotRule = screenshotRule,
+            screenSize = screenSize,
+            content = {
+                // This test case verifies that a complex pattern with quoted literals,
+                // like fr-CA ("HH 'h' mm 'min' ss 's'"), is correctly sanitized.
+                // We expect the literals to be removed and a clean HH:mm:ss format to be displayed.
+                val frenchCanadianConfig =
+                    Configuration(LocalConfiguration.current).apply {
+                        setLocale(Locale.forLanguageTag("fr-CA"))
+                    }
+                CompositionLocalProvider(LocalConfiguration provides frenchCanadianConfig) {
+                    TimePicker(
+                        onTimePicked = {},
+                        modifier = Modifier.testTag(TEST_TAG),
+                        timePickerType = TimePickerType.HoursMinutesSeconds24H,
+                        initialTime =
+                            LocalTime.of(/* hour= */ 14, /* minute= */ 23, /* second= */ 59),
+                    )
+                }
+            },
+        )
+
     @RequiresApi(Build.VERSION_CODES.O)
     private fun ComposeContentTestRule.verifyTimePickerScreenshot(
         testName: TestName,
