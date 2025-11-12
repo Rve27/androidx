@@ -597,6 +597,7 @@ package androidx.xr.scenecore.testing {
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeSceneRuntime implements androidx.xr.scenecore.runtime.RenderingEntityFactory androidx.xr.scenecore.runtime.SceneRuntime {
     ctor public FakeSceneRuntime(boolean unscaledGravityAlignedActivitySpace, optional java.util.concurrent.Executor? executor);
     ctor @BytecodeOnly public FakeSceneRuntime(boolean, java.util.concurrent.Executor!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
+    method public void addOnBoundaryConsentChangedListener(java.util.concurrent.Executor callbackExecutor, java.util.function.Consumer<java.lang.Boolean> listener);
     method public void addPerceivedResolutionChangedListener(java.util.concurrent.Executor callbackExecutor, java.util.function.Consumer<androidx.xr.scenecore.runtime.PixelDimensions> listener);
     method public void addSpatialCapabilitiesChangedListener(java.util.concurrent.Executor callbackExecutor, java.util.function.Consumer<androidx.xr.scenecore.runtime.SpatialCapabilities> listener);
     method public void clearSpatialVisibilityChangedListener();
@@ -619,6 +620,7 @@ package androidx.xr.scenecore.testing {
     method public void enablePanelDepthTest(boolean enabled);
     method @InaccessibleFromKotlin public androidx.xr.scenecore.testing.FakeActivitySpace getActivitySpace();
     method @InaccessibleFromKotlin public androidx.xr.scenecore.testing.FakeAudioTrackExtensionsWrapper getAudioTrackExtensionsWrapper();
+    method @InaccessibleFromKotlin public java.util.Map<java.util.function.Consumer<java.lang.Boolean>,java.util.concurrent.Executor> getBoundaryConsentChangedMap();
     method @InaccessibleFromKotlin public float getDeviceDpPerMeter();
     method @InaccessibleFromKotlin public boolean getEnabledPanelDepthTest();
     method @InaccessibleFromKotlin public java.util.concurrent.Executor? getExecutor();
@@ -636,6 +638,9 @@ package androidx.xr.scenecore.testing {
     method @InaccessibleFromKotlin public androidx.xr.scenecore.runtime.SpatialModeChangeListener? getSpatialModeChangeListener();
     method @InaccessibleFromKotlin public java.util.Map<java.util.function.Consumer<androidx.xr.scenecore.runtime.SpatialVisibility>,java.util.concurrent.Executor> getSpatialVisibilityChangedMap();
     method @InaccessibleFromKotlin public Enum<androidx.xr.scenecore.testing.FakeSceneRuntime.State> getState();
+    method @InaccessibleFromKotlin public boolean isBoundaryConsentGranted();
+    method public void onBoundaryConsentChanged(boolean boundaryConsent);
+    method public void removeOnBoundaryConsentChangedListener(java.util.function.Consumer<java.lang.Boolean> listener);
     method public void removePerceivedResolutionChangedListener(java.util.function.Consumer<androidx.xr.scenecore.runtime.PixelDimensions> listener);
     method public void removeSpatialCapabilitiesChangedListener(java.util.function.Consumer<androidx.xr.scenecore.runtime.SpatialCapabilities> listener);
     method public void requestFullSpaceMode();
@@ -650,9 +655,11 @@ package androidx.xr.scenecore.testing {
     method public void setSpatialVisibilityChangedListener(java.util.concurrent.Executor callbackExecutor, java.util.function.Consumer<androidx.xr.scenecore.runtime.SpatialVisibility> listener);
     property public androidx.xr.scenecore.testing.FakeActivitySpace activitySpace;
     property public androidx.xr.scenecore.testing.FakeAudioTrackExtensionsWrapper audioTrackExtensionsWrapper;
+    property public java.util.Map<java.util.function.Consumer<java.lang.Boolean>,java.util.concurrent.Executor> boundaryConsentChangedMap;
     property public float deviceDpPerMeter;
     property public boolean enabledPanelDepthTest;
     property public java.util.concurrent.Executor? executor;
+    property public boolean isBoundaryConsentGranted;
     property public android.app.Activity? lastSetPreferredAspectRatioActivity;
     property public float lastSetPreferredAspectRatioRatio;
     property public androidx.xr.scenecore.runtime.PanelEntity mainPanelEntity;
