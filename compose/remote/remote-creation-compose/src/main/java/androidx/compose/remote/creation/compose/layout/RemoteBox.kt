@@ -58,8 +58,8 @@ public class RemoteComposeBoxModifier(
 @Composable
 public fun RemoteBox(
     modifier: RemoteModifier = RemoteModifier,
-    horizontalAlignment: Alignment.Horizontal = Alignment.CenterHorizontally,
-    verticalArrangement: Arrangement.Vertical = Arrangement.Center,
+    horizontalAlignment: Alignment.Horizontal = Alignment.Start,
+    verticalArrangement: Arrangement.Vertical = Arrangement.Top,
     content: @Composable () -> Unit,
 ) {
     val background = modifier.find<BackgroundModifier>()
