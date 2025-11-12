@@ -18,15 +18,18 @@
 package androidx.compose.remote.creation.compose.modifier
 
 import androidx.annotation.RestrictTo
+import androidx.compose.remote.core.operations.layout.modifiers.DimensionModifierOperation.Type
 import androidx.compose.remote.creation.compose.state.RemoteFloat
-import androidx.compose.remote.creation.modifiers.RecordingModifier
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.Dp
 
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public class ZIndexModifier(public val value: RemoteFloat) : RemoteModifier.Element {
+@Composable
+public fun RemoteModifier.size(width: Dp, height: Dp): RemoteModifier = width(width).height(height)
 
-    override fun toRemoteComposeElement(): RecordingModifier.Element {
-        return androidx.compose.remote.creation.modifiers.ZIndexModifier(value.internalAsFloat())
-    }
-}
+@Composable public fun RemoteModifier.size(size: Dp): RemoteModifier = width(size).height(size)
 
-public fun RemoteModifier.zIndex(zIndex: RemoteFloat): RemoteModifier = then(ZIndexModifier(zIndex))
+public fun RemoteModifier.fillMaxSize(fraction: RemoteFloat = RemoteFloat(1f)): RemoteModifier =
+    fillMaxWidth(fraction).fillMaxHeight(fraction)
+
+public fun RemoteModifier.wrapContentSize(): RemoteModifier =
+    then(WidthModifier(Type.WRAP, RemoteFloat(1f))).then(HeightModifier(Type.WRAP, RemoteFloat(1f)))
