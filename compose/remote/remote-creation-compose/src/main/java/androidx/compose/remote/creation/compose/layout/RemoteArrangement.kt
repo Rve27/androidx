@@ -22,7 +22,7 @@ import androidx.compose.remote.core.operations.layout.managers.ColumnLayout
 import androidx.compose.ui.unit.dp
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public interface Arrangement {
+public interface RemoteArrangement {
 
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public interface Horizontal {
@@ -47,23 +47,23 @@ public interface Arrangement {
     }
 
     public companion object {
-        public val Top: Arrangement.Vertical = VerticalArrangement(0)
-        public val Center: Arrangement.Vertical = VerticalArrangement(1)
-        public val Bottom: Arrangement.Vertical = VerticalArrangement(2)
-        public val Start: Arrangement.Horizontal = HorizontalArrangement(3)
-        public val CenterHorizontally: Arrangement.Horizontal = HorizontalArrangement(4)
-        public val End: Arrangement.Horizontal = HorizontalArrangement(5)
-        public val SpaceBetween: Arrangement.HorizontalOrVertical =
+        public val Top: RemoteArrangement.Vertical = VerticalArrangement(0)
+        public val Center: RemoteArrangement.Vertical = VerticalArrangement(1)
+        public val Bottom: RemoteArrangement.Vertical = VerticalArrangement(2)
+        public val Start: RemoteArrangement.Horizontal = HorizontalArrangement(3)
+        public val CenterHorizontally: RemoteArrangement.Horizontal = HorizontalArrangement(4)
+        public val End: RemoteArrangement.Horizontal = HorizontalArrangement(5)
+        public val SpaceBetween: RemoteArrangement.HorizontalOrVertical =
             HorizontalOrVerticalArrangement(6)
-        public val SpaceEvenly: Arrangement.HorizontalOrVertical =
+        public val SpaceEvenly: RemoteArrangement.HorizontalOrVertical =
             HorizontalOrVerticalArrangement(7)
-        public val SpaceAround: Arrangement.HorizontalOrVertical =
+        public val SpaceAround: RemoteArrangement.HorizontalOrVertical =
             HorizontalOrVerticalArrangement(8)
     }
 }
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public data class VerticalArrangement(var type: Int) : Arrangement.Vertical {
+public data class VerticalArrangement(var type: Int) : RemoteArrangement.Vertical {
     override fun toComposeUi(): androidx.compose.foundation.layout.Arrangement.Vertical {
         when (type) {
             0 -> return androidx.compose.foundation.layout.Arrangement.Top
@@ -85,7 +85,7 @@ public data class VerticalArrangement(var type: Int) : Arrangement.Vertical {
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public data class HorizontalOrVerticalArrangement(var type: Int) :
-    Arrangement.HorizontalOrVertical {
+    RemoteArrangement.HorizontalOrVertical {
     override fun toComposeUi():
         androidx.compose.foundation.layout.Arrangement.HorizontalOrVertical {
         when (type) {
@@ -107,7 +107,7 @@ public data class HorizontalOrVerticalArrangement(var type: Int) :
 }
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public data class HorizontalArrangement(var type: Int) : Arrangement.Horizontal {
+public data class HorizontalArrangement(var type: Int) : RemoteArrangement.Horizontal {
     override fun toComposeUi(): androidx.compose.foundation.layout.Arrangement.Horizontal {
         when (type) {
             3 -> return androidx.compose.foundation.layout.Arrangement.Start
