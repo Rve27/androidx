@@ -33,7 +33,6 @@ import androidx.compose.remote.creation.compose.capture.shaders.radialGradient
 import androidx.compose.remote.creation.compose.capture.translate
 import androidx.compose.remote.creation.compose.layout.Alignment
 import androidx.compose.remote.creation.compose.layout.Arrangement
-import androidx.compose.remote.creation.compose.layout.Box
 import androidx.compose.remote.creation.compose.layout.CaptureAsBitmap
 import androidx.compose.remote.creation.compose.layout.RemoteBox
 import androidx.compose.remote.creation.compose.layout.RemoteCanvas
@@ -42,7 +41,6 @@ import androidx.compose.remote.creation.compose.layout.RemoteComposable
 import androidx.compose.remote.creation.compose.layout.RemoteContext
 import androidx.compose.remote.creation.compose.layout.RemoteRow
 import androidx.compose.remote.creation.compose.layout.RemoteText
-import androidx.compose.remote.creation.compose.layout.Row
 import androidx.compose.remote.creation.compose.layout.StateLayout
 import androidx.compose.remote.creation.compose.layout.createIds
 import androidx.compose.remote.creation.compose.layout.rememberStateMachine
@@ -73,7 +71,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.compositeOver
@@ -834,13 +831,17 @@ ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
                 val fsm = rememberStateMachine(checked, off, on)
 
                 StateLayout(stateMachine = fsm, modifier = RemoteModifier.fillMaxSize()) { state ->
-                    Box {
+                    RemoteBox {
                         when (state) {
                             off -> {
-                                Box(modifier = RemoteModifier.size(60.dp).background(Color.Red))
+                                RemoteBox(
+                                    modifier = RemoteModifier.size(60.dp).background(Color.Red)
+                                )
                             }
                             on -> {
-                                Box(modifier = RemoteModifier.size(80.dp).background(Color.Green))
+                                RemoteBox(
+                                    modifier = RemoteModifier.size(80.dp).background(Color.Green)
+                                )
                             }
                         }
                     }
@@ -887,13 +888,17 @@ ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
                 val fsm = rememberStateMachine(checked, off, on)
 
                 StateLayout(stateMachine = fsm, modifier = RemoteModifier.fillMaxSize()) { state ->
-                    Box {
+                    RemoteBox {
                         when (state) {
                             off -> {
-                                Box(modifier = RemoteModifier.size(60.dp).background(Color.Red))
+                                RemoteBox(
+                                    modifier = RemoteModifier.size(60.dp).background(Color.Red)
+                                )
                             }
                             on -> {
-                                Box(modifier = RemoteModifier.size(80.dp).background(Color.Green))
+                                RemoteBox(
+                                    modifier = RemoteModifier.size(80.dp).background(Color.Green)
+                                )
                             }
                         }
                     }
@@ -952,13 +957,17 @@ ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
                             .onTouchUp(ValueChange(checked, 1))
                             .onTouchCancel(ValueChange(checked, 1)),
                 ) { state ->
-                    Box {
+                    RemoteBox {
                         when (state) {
                             off -> {
-                                Box(modifier = RemoteModifier.size(60.dp).background(Color.Red))
+                                RemoteBox(
+                                    modifier = RemoteModifier.size(60.dp).background(Color.Red)
+                                )
                             }
                             on -> {
-                                Box(modifier = RemoteModifier.size(80.dp).background(Color.Green))
+                                RemoteBox(
+                                    modifier = RemoteModifier.size(80.dp).background(Color.Green)
+                                )
                             }
                         }
                     }
@@ -992,16 +1001,18 @@ ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
         PADDING = [0.0, 0.0, 11.0, 0.0]
 """
         testLayout(result) {
-            Row(modifier = RemoteModifier.background(Color.Cyan).height(IntrinsicSize.Min)) {
-                Box(
+            RemoteRow(modifier = RemoteModifier.background(Color.Cyan).height(IntrinsicSize.Min)) {
+                RemoteBox(
                     modifier =
                         RemoteModifier.background(Color.Red)
                             .weight(1f)
                             .height(30.dp)
                             .padding(left = 4.dp)
                 )
-                Box(modifier = RemoteModifier.fillMaxHeight().width(1.dp).background(Color.Green))
-                Box(
+                RemoteBox(
+                    modifier = RemoteModifier.fillMaxHeight().width(1.dp).background(Color.Green)
+                )
+                RemoteBox(
                     modifier =
                         RemoteModifier.background(Color.Blue)
                             .weight(1f)
@@ -1043,19 +1054,21 @@ ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
         testLayout(result) {
             @Suppress("COMPOSE_APPLIER_CALL_MISMATCH") // b/446706254
             Column {
-                Row(modifier = RemoteModifier.background(Color.Cyan).height(IntrinsicSize.Min)) {
-                    Box(
+                RemoteRow(
+                    modifier = RemoteModifier.background(Color.Cyan).height(IntrinsicSize.Min)
+                ) {
+                    RemoteBox(
                         modifier =
                             RemoteModifier.background(Color.Red)
                                 .weight(1f)
                                 .height(60.dp)
                                 .padding(left = 4.dp)
                     )
-                    Box(
+                    RemoteBox(
                         modifier =
                             RemoteModifier.fillMaxHeight().width(1.dp).background(Color.Green)
                     )
-                    Box(
+                    RemoteBox(
                         modifier =
                             RemoteModifier.background(Color.Blue)
                                 .weight(1f)
@@ -1063,7 +1076,9 @@ ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
                                 .padding(right = 4.dp)
                     )
                 }
-                Box(modifier = RemoteModifier.fillMaxWidth().height(20.dp).background(Color.Yellow))
+                RemoteBox(
+                    modifier = RemoteModifier.fillMaxWidth().height(20.dp).background(Color.Yellow)
+                )
             }
         }
     }
@@ -1288,7 +1303,7 @@ list:
                 horizontalArrangement = Arrangement.CenterHorizontally,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Box(
+                RemoteBox(
                     modifier =
                         RemoteModifier.drawWithContent {
                                 rotate(37f) { this@drawWithContent.drawContent() }
