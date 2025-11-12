@@ -21,15 +21,13 @@ import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.remote.creation.compose.layout.Alignment
 import androidx.compose.remote.creation.compose.layout.Arrangement
-import androidx.compose.remote.creation.compose.layout.Box
-import androidx.compose.remote.creation.compose.layout.Column
 import androidx.compose.remote.creation.compose.layout.ROffset
 import androidx.compose.remote.creation.compose.layout.RemoteBox
 import androidx.compose.remote.creation.compose.layout.RemoteCanvas
 import androidx.compose.remote.creation.compose.layout.RemoteColumn
 import androidx.compose.remote.creation.compose.layout.RemoteComposable
+import androidx.compose.remote.creation.compose.layout.RemoteRow
 import androidx.compose.remote.creation.compose.layout.RemoteText
-import androidx.compose.remote.creation.compose.layout.Row
 import androidx.compose.remote.creation.compose.modifier.RemoteModifier
 import androidx.compose.remote.creation.compose.modifier.background
 import androidx.compose.remote.creation.compose.modifier.clip
@@ -100,7 +98,7 @@ fun CanvasCalendarMonth(modifier: RemoteModifier = RemoteModifier, month: Int = 
         }
         daysValue[i] = number
     }
-    Column(
+    RemoteColumn(
         modifier = modifier.clip(RoundedCornerShape(18.dp)).background(Color(3, 169, 244, 173)),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
@@ -114,17 +112,17 @@ fun CanvasCalendarMonth(modifier: RemoteModifier = RemoteModifier, month: Int = 
             modifier = RemoteModifier.padding(bottom = 24.dp),
         )
         //        CaptureAsDraw {
-        Row(modifier = RemoteModifier.height(IntrinsicSize.Min)) {
+        RemoteRow(modifier = RemoteModifier.height(IntrinsicSize.Min)) {
             var done = false
             for (j in 0 until 7) {
                 if (j == 1 || j == 6) {
-                    Box(
+                    RemoteBox(
                         modifier =
                             RemoteModifier.fillMaxHeight().width(1.dp).background(Color.DarkGray)
                     )
                 }
                 var modifier = RemoteModifier.padding(left = 8.rf, right = 8.rf)
-                Column(modifier = modifier, horizontalAlignment = Alignment.End) {
+                RemoteColumn(modifier = modifier, horizontalAlignment = Alignment.End) {
                     RemoteCanvas(modifier = RemoteModifier.size(20.dp)) {
                         drawAnchoredText(
                             "${dayNames[j]}",
