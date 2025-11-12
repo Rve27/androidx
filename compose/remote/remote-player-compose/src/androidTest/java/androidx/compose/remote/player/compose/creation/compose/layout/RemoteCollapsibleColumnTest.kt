@@ -266,7 +266,13 @@ private fun RemoteCollapsibleColumnScope.CustomBox(
                 }
             )
 
-    RemoteBox(modifier = appliedModifier) { RemoteText(letter.toString()) }
+    RemoteBox(
+        modifier = appliedModifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
+        RemoteText(letter.toString())
+    }
 }
 
 @Composable
@@ -275,6 +281,7 @@ private fun Container(modifier: RemoteModifier = RemoteModifier, content: @Compo
     RemoteBox(
         modifier = modifier.size(ContainerSize).background(Color(0xFFCFD8DC)),
         horizontalAlignment = Alignment.Start,
+        verticalArrangement = Arrangement.Center,
         content = content,
     )
 }

@@ -171,6 +171,7 @@ private fun Container(modifier: RemoteModifier = RemoteModifier, content: @Compo
     RemoteBox(
         modifier = modifier.size(ContainerSize).background(Color(0xFFCFD8DC)),
         horizontalAlignment = Alignment.Start,
+        verticalArrangement = Arrangement.Center,
         content = content,
     )
 }
