@@ -177,4 +177,14 @@ object ComposeUiFlags {
     @field:Suppress("MutableBareField")
     @JvmField
     var isPinningFocusedAndroidViewsEnabled: Boolean = true
+
+    /**
+     * This flag controls the behavior of Modifier.onPlaced(). When true, it will not called on each
+     * placement anymore, instead it will only be called when some of the coordinates did change. It
+     * will also be called after the layout phase happened instead of being called during the
+     * layout, similarly to how Modifier.onGloballyPositioned() works.
+     */
+    @field:Suppress("MutableBareField")
+    @JvmField
+    var isNewDispatchingMechanismForOnPlacedEnabled: Boolean = true
 }
