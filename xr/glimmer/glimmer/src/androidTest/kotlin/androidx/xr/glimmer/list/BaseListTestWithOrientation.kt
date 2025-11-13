@@ -20,6 +20,7 @@ import androidx.compose.foundation.OverscrollEffect
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.focusable
+import androidx.compose.foundation.gestures.FlingBehavior
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -71,14 +72,15 @@ abstract class BaseListTestWithOrientation(protected val orientation: Orientatio
     @Composable
     internal fun TestList(
         modifier: Modifier = Modifier,
+        state: ListState = rememberListState(),
         listOrientation: Orientation = orientation,
         userScrollEnabled: Boolean = true,
+        flingBehavior: FlingBehavior = rememberSnapFlingBehavior(state),
         horizontalAlignment: Alignment.Horizontal = Alignment.CenterHorizontally,
         horizontalArrangement: Arrangement.Horizontal = Arrangement.Center,
         verticalAlignment: Alignment.Vertical = Alignment.CenterVertically,
         verticalArrangement: Arrangement.Vertical = Arrangement.Center,
         overscrollEffect: OverscrollEffect? = null,
-        state: ListState = rememberListState(),
         itemsCount: Int = Int.MAX_VALUE,
         keyProvider: ((index: Int) -> Any)? = null,
         contentPadding: PaddingValues = PaddingValues(),
@@ -94,6 +96,7 @@ abstract class BaseListTestWithOrientation(protected val orientation: Orientatio
                 verticalAlignment = verticalAlignment,
                 verticalArrangement = verticalArrangement,
                 overscrollEffect = overscrollEffect,
+                flingBehavior = flingBehavior,
                 modifier = modifier.testTag(LIST_TEST_TAG),
                 contentPadding = contentPadding,
             ) {

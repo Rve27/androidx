@@ -16,7 +16,9 @@
 
 package androidx.xr.glimmer.list
 
+import androidx.compose.foundation.gestures.FlingBehavior
 import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.ScrollScope
 import androidx.compose.foundation.layout.size
 import androidx.compose.ui.ComposeUiFlags
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -151,6 +153,50 @@ class ListFocusSnapFlingBehaviorTest(orientation: Orientation) :
         // After the fling finishes, confirm that the focus line
         // moved beyond item-3 and landed on item-6.
         rule.onNodeWithTag("item-6").assertIsFocused()
+    }
+
+    @Test
+    fun noFlingBehavior_doesNotMoveFocusLine() {
+        val state = ListState()
+        val noFlingBehavior =
+            object : FlingBehavior {
+                override suspend fun ScrollScope.performFling(initialVelocity: Float): Float = 0f
+            }
+        rule.setContent {
+            TestList(state = state, flingBehavior = noFlingBehavior) {
+                FocusableItem(it, Modifier.size(50.dp))
+            }
+        }
+
+        var focusLinePosition = -1f
+        // Freeze the clock to prevent snapping or fling animations from starting prematurely.
+        rule.mainClock.withFrozenTime {
+            // Scroll the list to focus item-4,
+            // but ensure the focus line is not centered within the item.
+            val scrollDistance = with(rule.density) { 215.dp.toPx() }
+            rule
+                .onNodeWithTag(LIST_TEST_TAG)
+                .performIndirectSwipe(rule, scrollDistance, moveDuration = 20_000L)
+
+            // Allow the scroll to occur, but prevent approach + snapping animations.
+            advanceTimeByFrame()
+
+            // Verify the item is focused, but the focus line is not centered.
+            val focusedItem = rule.onNodeWithTag("item-4")
+            focusedItem.assertIsFocused()
+            assertThat(state.focusLinePosition)
+                .isNotWithin(snapPositionTolerance)
+                .of(focusedItem.boundsCenterInRoot)
+
+            // Remember the focus line's position.
+            focusLinePosition = state.focusLinePosition
+        }
+
+        // Let the list settle to ensure there are no pending animations.
+        rule.waitForIdle()
+
+        // Confirm that the focus line did not change its position.
+        assertThat(state.focusLinePosition).isEqualTo(focusLinePosition)
     }
 
     private fun MainTestClock.withFrozenTime(action: MainTestClock.() -> Unit) {
