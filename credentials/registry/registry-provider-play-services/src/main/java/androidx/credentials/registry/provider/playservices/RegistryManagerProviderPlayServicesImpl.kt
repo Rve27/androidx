@@ -25,6 +25,10 @@ import androidx.credentials.registry.provider.ClearCredentialRegistryException
 import androidx.credentials.registry.provider.ClearCredentialRegistryRequest
 import androidx.credentials.registry.provider.ClearCredentialRegistryResponse
 import androidx.credentials.registry.provider.ClearCredentialRegistryUnknownException
+import androidx.credentials.registry.provider.RegisterCreationOptionsException
+import androidx.credentials.registry.provider.RegisterCreationOptionsRequest
+import androidx.credentials.registry.provider.RegisterCreationOptionsResponse
+import androidx.credentials.registry.provider.RegisterCreationOptionsUnknownException
 import androidx.credentials.registry.provider.RegisterCredentialsException
 import androidx.credentials.registry.provider.RegisterCredentialsRequest
 import androidx.credentials.registry.provider.RegisterCredentialsResponse
@@ -70,6 +74,34 @@ public class RegistryManagerProviderPlayServicesImpl(private val context: Contex
             }
             .addOnFailureListener(executor) {
                 callback.onError(RegisterCredentialsUnknownException(it.message))
+            }
+    }
+
+    override fun onRegisterCreationOptions(
+        request: RegisterCreationOptionsRequest,
+        cancellationSignal: CancellationSignal?,
+        executor: Executor,
+        callback:
+            CredentialManagerCallback<
+                RegisterCreationOptionsResponse,
+                RegisterCreationOptionsException,
+            >,
+    ) {
+        val gmsRequest =
+            com.google.android.gms.identitycredentials.RegisterCreationOptionsRequest(
+                createOptions = request.creationOptions,
+                matcher = request.matcher,
+                type = request.type,
+                id = request.id,
+                fulfillmentActionName = request.intentAction,
+            )
+        client
+            .registerCreationOptions(gmsRequest)
+            .addOnSuccessListener(executor) {
+                callback.onResult(object : RegisterCreationOptionsResponse(request.type) {})
+            }
+            .addOnFailureListener(executor) {
+                callback.onError(RegisterCreationOptionsUnknownException(it.message))
             }
     }
 

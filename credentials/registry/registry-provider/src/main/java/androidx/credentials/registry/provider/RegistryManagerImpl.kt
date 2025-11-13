@@ -18,6 +18,7 @@ package androidx.credentials.registry.provider
 
 import android.content.Context
 import android.os.CancellationSignal
+import androidx.annotation.RestrictTo
 import androidx.credentials.CredentialManagerCallback
 import java.util.concurrent.Executor
 
@@ -43,6 +44,33 @@ internal class RegistryManagerImpl(private val context: Context) : RegistryManag
             return
         }
         provider.onRegisterCredentials(request, cancellationSignal, executor, callback)
+    }
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    override fun registerCreationOptionsAsync(
+        request: RegisterCreationOptionsRequest,
+        cancellationSignal: CancellationSignal?,
+        executor: Executor,
+        callback:
+            CredentialManagerCallback<
+                RegisterCreationOptionsResponse,
+                RegisterCreationOptionsException,
+            >,
+    ) {
+        val provider: RegistryManagerProvider? =
+            RegistryManagerProviderFactory(context).getBestAvailableProvider()
+        if (provider == null) {
+            executor.execute {
+                callback.onError(
+                    RegisterCreationOptionsConfigurationException(
+                        "registerCredentials: no provider dependencies found - please ensure " +
+                            "the desired provider dependencies are added"
+                    )
+                )
+            }
+            return
+        }
+        provider.onRegisterCreationOptions(request, cancellationSignal, executor, callback)
     }
 
     override fun clearCredentialRegistryAsync(

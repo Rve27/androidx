@@ -29,7 +29,7 @@ import java.util.concurrent.Executor
 public interface RegistryManagerProvider {
 
     /**
-     * Invoked on a request to get a credential.
+     * Invoked on a request to register a credential.
      *
      * @param request the request containing the credential data to register
      * @param cancellationSignal an optional signal that allows for cancelling this call
@@ -42,6 +42,26 @@ public interface RegistryManagerProvider {
         executor: Executor,
         callback:
             CredentialManagerCallback<RegisterCredentialsResponse, RegisterCredentialsException>,
+    )
+
+    /**
+     * Invoked on a request to register creation options.
+     *
+     * @param request the request containing the creation options to register
+     * @param cancellationSignal an optional signal that allows for cancelling this call
+     * @param executor the callback will take place on this executor
+     * @param callback the callback invoked when the request succeeds or fails
+     */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public fun onRegisterCreationOptions(
+        request: RegisterCreationOptionsRequest,
+        cancellationSignal: CancellationSignal?,
+        executor: Executor,
+        callback:
+            CredentialManagerCallback<
+                RegisterCreationOptionsResponse,
+                RegisterCreationOptionsException,
+            >,
     )
 
     /**
