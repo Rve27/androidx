@@ -28,9 +28,12 @@ import androidx.compose.runtime.Applier
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ComposeNode
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.currentComposer
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.UiComposable
@@ -41,14 +44,17 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toDrawable
+import androidx.core.viewtree.getParentOrViewTreeDisjointParent
 import androidx.xr.compose.R
-import androidx.xr.compose.platform.LocalCoreMainPanelEntity
+import androidx.xr.compose.platform.LocalComposeXrOwners
 import androidx.xr.compose.platform.LocalDialogManager
 import androidx.xr.compose.platform.LocalOpaqueEntity
 import androidx.xr.compose.platform.LocalSession
 import androidx.xr.compose.platform.disposableValueOf
+import androidx.xr.compose.platform.getActivity
 import androidx.xr.compose.platform.getValue
 import androidx.xr.compose.subspace.layout.CoreActivityPanelEntity
+import androidx.xr.compose.subspace.layout.CoreMainPanelEntity
 import androidx.xr.compose.subspace.layout.CorePanelEntity
 import androidx.xr.compose.subspace.layout.InteractionPolicy
 import androidx.xr.compose.subspace.layout.PlaneOrientation
@@ -546,13 +552,15 @@ public fun SpatialPanel(
  * ### How It Works
  * [SpatialMainPanel] is backed by a single shared instance that will move to the main content to
  * its active usage. When the main content panel moves inside the composition, its state moves with
- * it regardless of whether it is in a [MovableContent] block or not. Components that depend on the
- * main panel's state (such as [androidx.xr.compose.spatial.Orbiter]), will always access a single
- * deterministic instance of the panel.
+ * it regardless of whether it is in a [androidx.compose.runtime.MovableContent] block or not.
+ * Components that depend on the main panel's state (such as [androidx.xr.compose.spatial.Orbiter]),
+ * will always access a single deterministic instance of the panel.
  *
- * Note: It is crucial to ensure that only one [SpatialMainPanel] is active (composed) at any given
- * time. The underlying system is designed around a single main panel instance, and having multiple
- * active instances can lead to undefined behavior.
+ * Only the first `SpatialMainPanel` added to the composition will be granted ownership of the main
+ * panel at any point in time. Subsequent instances of `SpatialMainPanel` will be queued to be
+ * shown, but will not be granted ownership of the main panel until the first instance is removed
+ * from composition. If the original owner is removed from and added back to composition, it will be
+ * added to the back of the queue.
  *
  * The size of the panel in the Subspace is controlled by the standard Compose layout system, driven
  * by the SubspaceModifier applied to it. Modifiers like SubspaceModifier.width directly dictate the
@@ -603,7 +611,7 @@ public fun SpatialMainPanel(
             resizePolicy = resizePolicy,
             interactionPolicy = interactionPolicy,
         )
-    val mainPanel = LocalCoreMainPanelEntity.current ?: return
+    val mainPanel = requestMainPanelOwnership().value ?: return
     val density = LocalDensity.current
     val view = LocalView.current
 
@@ -615,6 +623,89 @@ public fun SpatialMainPanel(
         val depth = constraints.minDepth.coerceAtLeast(0)
         layout(width, height, depth) {}
     }
+}
+
+/**
+ * Allows the caller to request ownership of the main panel.
+ *
+ * @return A state object that will contain the [CoreMainPanelEntity] of the main panel if ownership
+ *   is granted to the caller or null if ownership is not currently granted. The state will change
+ *   once ownership is granted to the requestor.
+ */
+@Composable
+private fun requestMainPanelOwnership(): State<CoreMainPanelEntity?> {
+    val result = remember { mutableStateOf<CoreMainPanelEntity?>(null) }
+    val mainPanel = LocalComposeXrOwners.current?.coreMainPanelEntity ?: return result
+    // TODO(b/460459113) - For now we are using the decorView but we should be able to use LocalView
+    //  once the view tree is properly connected via `setViewTreeDisjointParent`.
+    val ownerQueue =
+        LocalContext.current.getActivity()?.window?.decorView?.findViewTreeMainPanelOwnerQueue()
+            ?: return result
+
+    DisposableEffect(mainPanel) {
+        val onFirstInQueue = { result.value = mainPanel }
+        if (ownerQueue.isEmpty()) {
+            onFirstInQueue()
+        }
+        ownerQueue.add(onFirstInQueue)
+        onDispose {
+            if (ownerQueue.firstOrNull() === onFirstInQueue) {
+                ownerQueue.removeFirst()
+                ownerQueue.firstOrNull()?.invoke()
+            } else {
+                ownerQueue.remove(onFirstInQueue)
+            }
+        }
+    }
+
+    return result
+}
+
+/**
+ * Returns the parent [MainPanelOwnerQueue] for this point in the view hierarchy, or `null` if none
+ * can be found.
+ *
+ * See [mainPanelOwnerQueue] to get or set the parent [MainPanelOwnerQueue] for a specific view.
+ */
+internal fun View.findViewTreeMainPanelOwnerQueue(): MainPanelOwnerQueue {
+    val ancestors = generateSequence(this) { it.getParentOrViewTreeDisjointParent() as? View }
+    var topParent: View = this
+
+    for (view in ancestors) {
+        val queue = view.mainPanelOwnerQueue
+        if (queue != null) {
+            return queue
+        }
+        topParent = view
+    }
+
+    return MainPanelOwnerQueue().also { topParent.mainPanelOwnerQueue = it }
+}
+
+/**
+ * The [MainPanelOwnerQueue] that should be used for compositions at or below this view in the
+ * hierarchy. Set to non-`null` to provide a [MainPanelOwnerQueue] for compositions created by child
+ * views, or `null` to fall back to any [MainPanelOwnerQueue] provided by ancestor views.
+ */
+private var View.mainPanelOwnerQueue: MainPanelOwnerQueue?
+    get() = getTag(R.id.compose_xr_main_panel_owner_queue) as? MainPanelOwnerQueue
+    set(value) {
+        setTag(R.id.compose_xr_main_panel_owner_queue, value)
+    }
+
+/**
+ * A first-in-first-out queue for determining the next main panel owner when the current owner
+ * leaves composition.
+ *
+ * We create this as a new type so we can safely cast to it from `View.getTag`.
+ */
+internal class MainPanelOwnerQueue(private val queue: ArrayDeque<() -> Unit> = ArrayDeque()) :
+    MutableList<() -> Unit> by queue {
+    // Use the more efficient ArrayDeque version of `firstOrNull`.
+    fun firstOrNull() = queue.firstOrNull()
+
+    // Use the more efficient ArrayDeque version of `removeFirst`.
+    fun removeFirst() = queue.removeFirst()
 }
 
 /**
