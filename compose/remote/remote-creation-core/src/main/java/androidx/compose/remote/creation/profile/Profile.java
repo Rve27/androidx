@@ -102,12 +102,12 @@ public class Profile {
      * Returns a valid RemoteComposeWriter that can be used to create a document
      *
      * @param creationDisplayInfo original size of the document
-     * @param description         content description
+     * @param writerCallback the callback for writer out of band data
      * @return a valid RemoteComposeWriter
      */
     public @NonNull RemoteComposeWriter create(@NonNull CreationDisplayInfo creationDisplayInfo,
-            @Nullable String description) {
-        return mFactory.create(creationDisplayInfo, this, description);
+            @Nullable Object writerCallback) {
+        return mFactory.create(creationDisplayInfo, this, writerCallback);
     }
 
     /**

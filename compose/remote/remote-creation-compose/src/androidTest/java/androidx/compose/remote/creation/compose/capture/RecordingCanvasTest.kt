@@ -79,16 +79,12 @@ class RecordingCanvasTest {
             CoreDocument.DOCUMENT_API_LEVEL,
             RcProfiles.PROFILE_ANDROIDX,
             AndroidxRcPlatformServices(),
-        ) { creationDisplayInfo, profile, contentDescription ->
+        ) { creationDisplayInfo, profile, callback ->
             RemoteComposeWriter(
                 profile,
                 recordingBuffer,
                 RemoteComposeWriter.hTag(Header.DOC_WIDTH, creationDisplayInfo.width),
                 RemoteComposeWriter.hTag(Header.DOC_HEIGHT, creationDisplayInfo.height),
-                RemoteComposeWriter.hTag(
-                    Header.DOC_CONTENT_DESCRIPTION,
-                    contentDescription.orEmpty(),
-                ),
                 RemoteComposeWriter.hTag(Header.DOC_PROFILES, RcProfiles.PROFILE_ANDROIDX),
             )
         }
