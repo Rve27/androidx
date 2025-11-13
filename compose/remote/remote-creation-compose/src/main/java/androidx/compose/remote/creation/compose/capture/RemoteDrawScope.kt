@@ -20,8 +20,12 @@ package androidx.compose.remote.creation.compose.capture
 import android.graphics.Typeface
 import androidx.annotation.RestrictTo
 import androidx.compose.remote.creation.compose.capture.shaders.RemoteBrush
+import androidx.compose.remote.creation.compose.layout.RemoteCanvasDrawScope.RemoteAccess
+import androidx.compose.remote.creation.compose.layout.RemoteOffset
+import androidx.compose.remote.creation.compose.layout.RemoteSize
 import androidx.compose.remote.creation.compose.state.RemoteFloat
 import androidx.compose.remote.creation.compose.state.RemoteString
+import androidx.compose.remote.creation.compose.state.getFloatIdForCreationState
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -124,9 +128,9 @@ public inline fun RemoteDrawScope.translate(
  */
 public inline fun RemoteDrawScope.rotate(
     degrees: Float,
-    pivot: Offset = center,
+    pivot: RemoteOffset = remoteCenter,
     block: RemoteDrawScope.() -> Unit,
-): Unit = withTransform({ rotate(degrees, pivot) }, block)
+): Unit = withTransform({ rotate(degrees, pivot.asOffset()) }, block)
 
 /**
  * Add a rotation (in radians clockwise) to the current transform at the given pivot point. The
@@ -138,7 +142,7 @@ public inline fun RemoteDrawScope.rotate(
  */
 public inline fun RemoteDrawScope.rotateRad(
     radians: Float,
-    pivot: Offset = center,
+    pivot: RemoteOffset = remoteCenter,
     block: RemoteDrawScope.() -> Unit,
 ) {
     //    withTransform({ rotate(degrees(radians), pivot) }, block)
@@ -158,9 +162,9 @@ public inline fun RemoteDrawScope.rotateRad(
 public inline fun RemoteDrawScope.scale(
     scaleX: Float,
     scaleY: Float,
-    pivot: Offset = center,
+    pivot: RemoteOffset = remoteCenter,
     block: RemoteDrawScope.() -> Unit,
-): Unit = withTransform({ scale(scaleX, scaleY, pivot) }, block)
+): Unit = withTransform({ scale(scaleX, scaleY, pivot.asOffset()) }, block)
 
 /**
  * Add an axis-aligned scale to the current transform, scaling both the horizontal direction and the
@@ -174,9 +178,9 @@ public inline fun RemoteDrawScope.scale(
  */
 public inline fun RemoteDrawScope.scale(
     scale: Float,
-    pivot: Offset = center,
+    pivot: RemoteOffset = remoteCenter,
     block: RemoteDrawScope.() -> Unit,
-): Unit = withTransform({ scale(scale, scale, pivot) }, block)
+): Unit = withTransform({ scale(scale, scale, pivot.asOffset()) }, block)
 
 /**
  * Reduces the clip region to the intersection of the current clip and the given rectangle indicated
@@ -193,14 +197,26 @@ public inline fun RemoteDrawScope.scale(
  * @param block Lambda callback with this CanvasScope as a receiver scope to issue drawing commands
  *   within the provided clip
  */
-public inline fun RemoteDrawScope.clipRect(
+public fun RemoteDrawScope.clipRect(
     left: Float = 0.0f,
     top: Float = 0.0f,
-    right: Float = size.width,
-    bottom: Float = size.height,
+    right: Number = remote.component.width,
+    bottom: Number = remote.component.height,
     clipOp: ClipOp = ClipOp.Intersect,
     block: RemoteDrawScope.() -> Unit,
-): Unit = withTransform({ clipRect(left, top, right, bottom, clipOp) }, block)
+): Unit =
+    withTransform(
+        {
+            clipRect(
+                left,
+                top,
+                right.getFloatIdForCreationState(this@clipRect.remote.remoteComposeCreationState),
+                bottom.getFloatIdForCreationState(this@clipRect.remote.remoteComposeCreationState),
+                clipOp,
+            )
+        },
+        block,
+    )
 
 /**
  * Reduces the clip region to the intersection of the current clip and the given path. This method
@@ -275,15 +291,25 @@ interface RemoteDrawScope : Density {
     public val drawContext: DrawContext
 
     /** Center of the current bounds of the drawing environment */
+    @Deprecated("use remoteCenter", replaceWith = ReplaceWith("remoteSize"))
     public val center: Offset
         get() = drawContext.size.center
 
     /** Provides the dimensions of the current drawing environment */
+    @Deprecated("use remoteSize", replaceWith = ReplaceWith("remoteSize"))
     public val size: Size
         get() = drawContext.size
 
+    public val remoteCenter: RemoteOffset
+        get() = RemoteOffset(remote.component.width / 2f, remote.component.height / 2f)
+
+    public val remoteSize: RemoteSize
+        get() = RemoteSize(remote.component.width, remote.component.height)
+
     /** The layout direction of the layout being drawn in. */
     public val layoutDirection: LayoutDirection
+
+    public val remote: RemoteAccess
 
     /**
      * Draws a line between the given points using the given paint. The line is stroked.
@@ -355,8 +381,8 @@ interface RemoteDrawScope : Density {
      */
     public fun drawRect(
         brush: Brush,
-        topLeft: Offset = Offset.Zero,
-        size: Size = this.size.offsetSize(topLeft),
+        topLeft: RemoteOffset = RemoteOffset.Zero,
+        size: RemoteSize = remoteSize.offsetSize(topLeft),
         /*FloatRange(from = 0.0, to = 1.0)*/
         alpha: Float = 1.0f,
         style: DrawStyle = Fill,
@@ -380,8 +406,8 @@ interface RemoteDrawScope : Density {
      */
     public fun drawRect(
         color: Color,
-        topLeft: Offset = Offset.Zero,
-        size: Size = this.size.offsetSize(topLeft),
+        topLeft: RemoteOffset = RemoteOffset.Zero,
+        size: RemoteSize = remoteSize.offsetSize(topLeft),
         /*@FloatRange(from = 0.0, to = 1.0)*/
         alpha: Float = 1.0f,
         style: DrawStyle = Fill,
@@ -530,8 +556,8 @@ interface RemoteDrawScope : Density {
      */
     public fun drawRoundRect(
         brush: Brush,
-        topLeft: Offset = Offset.Zero,
-        size: Size = this.size.offsetSize(topLeft),
+        topLeft: RemoteOffset = RemoteOffset.Zero,
+        size: RemoteSize = remoteSize.offsetSize(topLeft),
         cornerRadius: CornerRadius = CornerRadius.Zero,
         /*@FloatRange(from = 0.0, to = 1.0)*/
         alpha: Float = 1.0f,
@@ -557,8 +583,8 @@ interface RemoteDrawScope : Density {
      */
     public fun drawRoundRect(
         color: Color,
-        topLeft: Offset = Offset.Zero,
-        size: Size = this.size.offsetSize(topLeft),
+        topLeft: RemoteOffset = RemoteOffset.Zero,
+        size: RemoteSize = remoteSize.offsetSize(topLeft),
         cornerRadius: CornerRadius = CornerRadius.Zero,
         style: DrawStyle = Fill,
         /*@FloatRange(from = 0.0, to = 1.0)*/
@@ -571,30 +597,6 @@ interface RemoteDrawScope : Density {
      * Draws a circle at the provided center coordinate and radius. If no center point is provided
      * the center of the bounds is used.
      *
-     * @param brush The color or fill to be applied to the circle
-     * @param radius The radius of the circle
-     * @param center The center coordinate where the circle is to be drawn
-     * @param alpha Opacity to be applied to the circle from 0.0f to 1.0f representing fully
-     *   transparent to fully opaque respectively
-     * @param style Whether or not the circle is stroked or filled in
-     * @param colorFilter ColorFilter to apply to the [brush] when drawn into the destination
-     * @param blendMode Blending algorithm to be applied to the brush
-     */
-    public fun drawCircle(
-        brush: Brush,
-        radius: Float = size.minDimension / 2.0f,
-        center: Offset = this.center,
-        /*@FloatRange(from = 0.0, to = 1.0)*/
-        alpha: Float = 1.0f,
-        style: DrawStyle = Fill,
-        colorFilter: ColorFilter? = null,
-        blendMode: BlendMode = DefaultBlendMode,
-    )
-
-    /**
-     * Draws a circle at the provided center coordinate and radius. If no center point is provided
-     * the center of the bounds is used.
-     *
      * @param color The color or fill to be applied to the circle
      * @param radius The radius of the circle
      * @param center The center coordinate where the circle is to be drawn
@@ -606,32 +608,8 @@ interface RemoteDrawScope : Density {
      */
     public fun drawCircle(
         color: Color,
-        radius: Float = size.minDimension / 2.0f,
-        center: Offset = this.center,
-        /*@FloatRange(from = 0.0, to = 1.0)*/
-        alpha: Float = 1.0f,
-        style: DrawStyle = Fill,
-        colorFilter: ColorFilter? = null,
-        blendMode: BlendMode = DefaultBlendMode,
-    )
-
-    /**
-     * Draws a circle at the provided center coordinate and radius. If no center point is provided
-     * the center of the bounds is used.
-     *
-     * @param color The color or fill to be applied to the circle
-     * @param radius The radius of the circle
-     * @param center The center coordinate where the circle is to be drawn
-     * @param alpha Opacity to be applied to the circle from 0.0f to 1.0f representing fully
-     *   transparent to fully opaque respectively
-     * @param style Whether or not the circle is stroked or filled in
-     * @param colorFilter ColorFilter to apply to the [color] when drawn into the destination
-     * @param blendMode Blending algorithm to be applied to the brush
-     */
-    public fun drawCircle(
-        color: Color,
-        radius: Number = size.minDimension / 2.0f,
-        center: Offset = this.center,
+        radius: Number = remoteSize.minDimension / 2.0f,
+        center: RemoteOffset = remoteCenter,
         /*@FloatRange(from = 0.0, to = 1.0)*/
         alpha: Number = 1.0f,
         style: DrawStyle = Fill,
@@ -668,8 +646,8 @@ interface RemoteDrawScope : Density {
      */
     public fun drawOval(
         brush: Brush,
-        topLeft: Offset = Offset.Zero,
-        size: Size = this.size.offsetSize(topLeft),
+        topLeft: RemoteOffset = RemoteOffset.Zero,
+        size: RemoteSize = remoteSize.offsetSize(topLeft),
         /*@FloatRange(from = 0.0, to = 1.0)*/
         alpha: Float = 1.0f,
         style: DrawStyle = Fill,
@@ -693,8 +671,8 @@ interface RemoteDrawScope : Density {
      */
     public fun drawOval(
         color: Color,
-        topLeft: Offset = Offset.Zero,
-        size: Size = this.size.offsetSize(topLeft),
+        topLeft: RemoteOffset = RemoteOffset.Zero,
+        size: RemoteSize = remoteSize.offsetSize(topLeft),
         /*@FloatRange(from = 0.0, to = 1.0)*/
         alpha: Float = 1.0f,
         style: DrawStyle = Fill,
@@ -727,8 +705,8 @@ interface RemoteDrawScope : Density {
         startAngle: Float,
         sweepAngle: Float,
         useCenter: Boolean,
-        topLeft: Offset = Offset.Zero,
-        size: Size = this.size.offsetSize(topLeft),
+        topLeft: RemoteOffset = RemoteOffset.Zero,
+        size: RemoteSize = remoteSize.offsetSize(topLeft),
         /*@FloatRange(from = 0.0, to = 1.0)*/
         alpha: Float = 1.0f,
         style: DrawStyle = Fill,
@@ -761,8 +739,8 @@ interface RemoteDrawScope : Density {
         startAngle: Float,
         sweepAngle: Float,
         useCenter: Boolean,
-        topLeft: Offset = Offset.Zero,
-        size: Size = this.size.offsetSize(topLeft),
+        topLeft: RemoteOffset = RemoteOffset.Zero,
+        size: RemoteSize = remoteSize.offsetSize(topLeft),
         /*@FloatRange(from = 0.0, to = 1.0)*/
         alpha: Float = 1.0f,
         style: DrawStyle = Fill,
@@ -1168,10 +1146,6 @@ interface RemoteDrawScope : Density {
         size: Size = Size.Unspecified,
         blendMode: BlendMode = DrawScope.DefaultBlendMode,
     )
-
-    /** Helper method to offset the provided size with the offset in box width and height */
-    private fun Size.offsetSize(offset: Offset): Size =
-        Size(this.width - offset.x, this.height - offset.y)
 
     public companion object {
 

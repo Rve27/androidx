@@ -106,9 +106,9 @@ class CaptureRemoteDocumentTest {
 
                         canvas.drawTextOnCircle(
                             text = RemoteString("10:09"),
-                            centerX = size.width / 2,
-                            centerY = size.height / 2,
-                            radius = size.width / 2,
+                            centerX = remote.component.width / 2f,
+                            centerY = remote.component.height / 2f,
+                            radius = remote.component.width / 2f,
                             startAngle = 0f,
                             warpRadiusOffset = 0f,
                             alignment = DrawTextOnCircle.Alignment.CENTER,
