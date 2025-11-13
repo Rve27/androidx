@@ -17,6 +17,7 @@ package androidx.wear.compose.remote.material3
 
 import androidx.compose.remote.creation.compose.modifier.RemoteModifier
 import androidx.compose.remote.creation.compose.modifier.size
+import androidx.compose.remote.creation.compose.state.rdp
 import androidx.compose.remote.creation.compose.state.rememberRemoteColor
 import androidx.compose.remote.player.compose.test.utils.screenshot.TargetPlayer
 import androidx.compose.remote.player.compose.test.utils.screenshot.rule.RemoteComposeScreenshotTestRule
@@ -82,7 +83,7 @@ class RemoteIconTest {
             RemoteIcon(
                 imageVector = TestImageVectors.VolumeUp,
                 contentDescription = null,
-                modifier = RemoteModifier.size(48.dp),
+                modifier = RemoteModifier.size(48.rdp),
             )
         }
     }

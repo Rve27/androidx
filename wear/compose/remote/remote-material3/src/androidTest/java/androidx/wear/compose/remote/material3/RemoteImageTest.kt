@@ -22,6 +22,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import androidx.compose.remote.creation.compose.modifier.RemoteModifier
 import androidx.compose.remote.creation.compose.modifier.size
+import androidx.compose.remote.creation.compose.state.rdp
 import androidx.compose.remote.creation.compose.state.rememberRemoteBitmap
 import androidx.compose.remote.creation.compose.state.rememberRemoteBitmapValue
 import androidx.compose.remote.creation.compose.state.rememberRemoteString
@@ -30,7 +31,6 @@ import androidx.compose.remote.player.compose.test.utils.screenshot.TargetPlayer
 import androidx.compose.remote.player.compose.test.utils.screenshot.rule.RemoteComposeScreenshotTestRule
 import androidx.compose.remote.player.core.platform.BitmapLoader
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.unit.dp
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.filters.MediumTest
 import androidx.test.filters.SdkSuppress
@@ -59,15 +59,13 @@ class RemoteImageTest {
 
     @Test
     fun remoteImage() {
-        val size = 48.dp
+        val size = 48.rdp
         remoteComposeTestRule.runScreenshotTest(
-            size = Size(size.value, size.value),
+            size = Size(size.value.toFloat(), size.value.toFloat()),
             backgroundColor = androidx.compose.ui.graphics.Color.Black,
         ) {
             val avatarImage =
-                rememberRemoteBitmapValue(name = "avatarImage") {
-                    createImage(size.value.toInt(), size.value.toInt())
-                }
+                rememberRemoteBitmapValue(name = "avatarImage") { createImage(48, 48) }
             RemoteImage(
                 avatarImage,
                 contentDescription = rememberRemoteString { "background" },
@@ -78,15 +76,13 @@ class RemoteImageTest {
 
     @Test
     fun remoteImage_withAlpha() {
-        val size = 227.dp
+        val size = 227.rdp
         remoteComposeTestRule.runScreenshotTest(
-            size = Size(size.value, size.value),
+            size = Size(size.value.toFloat(), size.value.toFloat()),
             backgroundColor = androidx.compose.ui.graphics.Color.Black,
         ) {
             val backgroundImage =
-                rememberRemoteBitmapValue(name = "backgroundImage") {
-                    createImage(size.value.toInt(), size.value.toInt())
-                }
+                rememberRemoteBitmapValue(name = "backgroundImage") { createImage(227, 227) }
             RemoteImage(
                 remoteBitmap = backgroundImage,
                 alpha = 0.6f.rf,
@@ -98,8 +94,10 @@ class RemoteImageTest {
 
     @Test
     fun remoteImageWithDefaultUrl() {
-        val size = 48.dp
-        remoteComposeTestRule.runScreenshotTest(size = Size(size.value, size.value)) {
+        val size = 48.rdp
+        remoteComposeTestRule.runScreenshotTest(
+            size = Size(size.value.toFloat(), size.value.toFloat())
+        ) {
             // Without PlayerState API, will be blank
             val dummyImage =
                 rememberRemoteBitmap(
