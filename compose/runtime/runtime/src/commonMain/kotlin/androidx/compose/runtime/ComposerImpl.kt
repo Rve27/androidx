@@ -1492,7 +1492,7 @@ internal class ComposerImpl(
             // doesn't exist in this set, it needs to be removed.
             val usedKeys = current.fastToSet()
 
-            val placedKeys = mutableSetOf<KeyInfo>()
+            val placedKeys = mutableScatterSetOf<KeyInfo>()
             var currentIndex = 0
             val currentEnd = current.size
             var previousIndex = 0
@@ -2938,7 +2938,7 @@ internal class ComposerImpl(
         override val observerHolder: CompositionObserverHolder?,
     ) : CompositionContext() {
         var inspectionTables: MutableSet<MutableSet<CompositionData>>? = null
-        val composers = mutableSetOf<ComposerImpl>()
+        val composers = mutableScatterSetOf<ComposerImpl>()
 
         override val collectingCallByInformation: Boolean
             get() = parentContext.collectingCallByInformation
@@ -2949,7 +2949,7 @@ internal class ComposerImpl(
         fun dispose() {
             if (composers.isNotEmpty()) {
                 inspectionTables?.let {
-                    for (composer in composers) {
+                    composers.forEach { composer ->
                         for (table in it) table.remove(composer.compositionData)
                     }
                 }
@@ -2964,7 +2964,9 @@ internal class ComposerImpl(
 
         override fun unregisterComposer(composer: Composer) {
             inspectionTables?.forEach { it.remove((composer as ComposerImpl).compositionData) }
-            composers.remove(composer)
+            if (composer is ComposerImpl) {
+                composers.remove(composer)
+            }
         }
 
         override fun registerComposition(composition: ControlledComposition) {
