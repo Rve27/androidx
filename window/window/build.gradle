@@ -37,9 +37,11 @@ android {
         String testUtilDir = 'src/testUtil/java'
         test {
             java.srcDir testUtilDir
+            kotlin.directories.add(testUtilDir)
         }
         androidTest {
             java.srcDir testUtilDir
+            kotlin.directories.add(testUtilDir)
         }
     }
     namespace = "androidx.window"
