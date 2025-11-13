@@ -1241,6 +1241,8 @@ internal class LayoutNode(
                 rectManager.invalidateCallbacksFor(this)
             }
         }
+
+        layoutDelegate.measurePassDelegate.requestLayoutIfCoordinatesAreUsedAndNotifyChildren()
     }
 
     internal inline fun <T> ignoreRemeasureRequests(block: () -> T): T {

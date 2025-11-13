@@ -1927,7 +1927,9 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
             globalPosition = IntOffset(tmpPositionArray[0], tmpPositionArray[1])
             if (globalX != Int.MAX_VALUE && globalY != Int.MAX_VALUE) {
                 positionChanged = true
-                root.layoutDelegate.measurePassDelegate.notifyChildrenUsingCoordinatesWhilePlacing()
+                root.forEachChild { child ->
+                    child.measurePassDelegate.requestLayoutIfCoordinatesAreUsedAndNotifyChildren()
+                }
             }
         }
         recalculateWindowPosition()
