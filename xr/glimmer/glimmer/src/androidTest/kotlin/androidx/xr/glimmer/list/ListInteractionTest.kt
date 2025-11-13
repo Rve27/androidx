@@ -119,6 +119,33 @@ class ListInteractionTest(orientation: Orientation) : BaseListTestWithOrientatio
     }
 
     @Test
+    fun itemsExtensionOverload_forList() {
+        val itemsList = listOf("A", "B", "C", "D", "E")
+        rule.setGlimmerThemeContent { VerticalList { items(itemsList) { item -> Text(item) } } }
+
+        for (item in itemsList) {
+            rule.onNodeWithText(item).assertIsDisplayed()
+        }
+    }
+
+    @Test
+    fun itemsExtension_forIndexedList() {
+        val itemsList = listOf("A", "B", "C", "D", "E")
+        rule.setGlimmerThemeContent {
+            VerticalList {
+                itemsIndexed(itemsList) { index, item ->
+                    assertThat(index).isEqualTo(itemsList.indexOf(item))
+                    Text(item)
+                }
+            }
+        }
+
+        for (item in itemsList) {
+            rule.onNodeWithText(item).assertIsDisplayed()
+        }
+    }
+
+    @Test
     fun defaultOverscroll_isAttached() {
         var overscroll: OverscrollEffect? = null
         rule.setGlimmerThemeContent {
