@@ -354,7 +354,7 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
 
     override val density by composeViewContext.density
 
-    private lateinit var frameRateCategoryView: View
+    private var frameRateCategoryView: View? = null
 
     internal val isArrEnabled: Boolean
         get() =
@@ -974,13 +974,14 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
         if (SDK_INT >= Q) AndroidComposeViewForceDarkModeQ.disallowForceDark(this)
 
         if (isArrEnabled) {
-            frameRateCategoryView =
+            val view =
                 View(context).apply {
                     layoutParams = LayoutParams(1, 1)
                     // hide this View from layout inspector
                     setTag(R.id.hide_in_inspector_tag, true)
                 }
-            addView(frameRateCategoryView)
+            frameRateCategoryView = view
+            addView(view)
         }
     }
 
@@ -2123,11 +2124,14 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
         // Used to handle frame rate information
         if (isArrEnabled) {
             Api35Impl.setRequestedFrameRate(this, currentFrameRate)
-            Api35Impl.setRequestedFrameRate(frameRateCategoryView, currentFrameRateCategory)
+            val frameRateCategoryView = frameRateCategoryView
+            if (frameRateCategoryView != null) {
+                Api35Impl.setRequestedFrameRate(frameRateCategoryView, currentFrameRateCategory)
 
-            if (!currentFrameRateCategory.isNaN()) {
-                frameRateCategoryView.invalidate()
-                drawChild(canvas, frameRateCategoryView, drawingTime)
+                if (!currentFrameRateCategory.isNaN()) {
+                    frameRateCategoryView.invalidate()
+                    drawChild(canvas, frameRateCategoryView, drawingTime)
+                }
             }
 
             currentFrameRate = Float.NaN
@@ -2268,7 +2272,8 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
         if (ComposeUiFlags.areWindowInsetsRulersEnabled) {
             insetsListener.onViewDetachedFromWindow(this)
         }
-        if (isArrEnabled) {
+        val frameRateCategoryView = frameRateCategoryView
+        if (isArrEnabled && frameRateCategoryView != null) {
             removeView(frameRateCategoryView)
         }
 
