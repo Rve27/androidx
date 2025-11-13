@@ -198,7 +198,7 @@ public constructor(
                 return SessionCreateSuccess(activitySessionMap[activity]!!)
             }
 
-            val features = getDeviceFeatures(activity)
+            val features = getDeviceActivityFeatures(activity)
 
             val runtimes = mutableListOf<JxrRuntime>()
 
