@@ -29,6 +29,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.ComposeUiFlags
 import androidx.compose.ui.ComposeUiFlags.isOptimizedFocusEventDispatchEnabled
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -52,6 +57,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
 import kotlin.test.Test
 import kotlinx.coroutines.test.StandardTestDispatcher
+import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.runner.RunWith
@@ -3990,7 +3996,7 @@ class IndirectPointerEventNavigationSystemTests {
         }
     }
 
-    // ----- Tests for indirect pointer cancellations -----
+    // ----- Tests for indirect touch cancellations via Focus movement -----
     @Test
     fun noNavigationMotionEvent_clearsFocus_triggersIndirectCancel() {
         rule.setContent {
@@ -5071,13 +5077,947 @@ class IndirectPointerEventNavigationSystemTests {
         }
     }
 
+    // ----- Tests for indirect touch cancellations via detachment -----
+    // Detach UI only Tests
+    @Test
+    fun simpleUI_detachAllUIWithNoFocus_noIndirectCancels() {
+        var showContent by mutableStateOf(true)
+
+        rule.setContent {
+            rootView = LocalView.current as AndroidComposeView
+
+            if (showContent) {
+                ThreeStackedBoxes(
+                    boxSize = contentBoxSize,
+                    boxPadding = boxPadding,
+                    testTagBox1 = testTagBox1,
+                    testTagBox2 = testTagBox2,
+                    testTagBox3 = testTagBox3,
+                    onIndirectPointerEventMainPassForAllBoxes = {
+                        receivedEvent = it
+                        // We don't consume the event, so it can pass on for system navigation
+                        // behavior.
+                    },
+                    onIndirectPointerCancelForTopContainer = {
+                        indirectPointerCancelForTopContainer = true
+                    },
+                    onIndirectPointerCancelForBox1 = { indirectPointerCancelForBox1 = true },
+                    onIndirectPointerCancelForBox2 = { indirectPointerCancelForBox2 = true },
+                    onIndirectPointerCancelForBox3 = { indirectPointerCancelForBox3 = true },
+                )
+            } else {
+                // Empty box
+                Box {}
+            }
+        }
+
+        // --- Test assertions and actions ---
+        rule.runOnIdle {
+            assertThat(receivedEvent).isEqualTo(null)
+            assertThat(indirectPointerCancelForTopContainer).isFalse()
+            assertThat(indirectPointerCancelForBox1).isFalse()
+            assertThat(indirectPointerCancelForBox2).isFalse()
+            assertThat(indirectPointerCancelForBox3).isFalse()
+        }
+
+        // Detach boxes
+        showContent = false
+
+        rule.runOnIdle {
+            assertThat(receivedEvent).isEqualTo(null)
+            assertThat(indirectPointerCancelForTopContainer).isFalse()
+            assertThat(indirectPointerCancelForBox1).isFalse()
+            assertThat(indirectPointerCancelForBox2).isFalse()
+            assertThat(indirectPointerCancelForBox3).isFalse()
+        }
+    }
+
+    @Test
+    fun simpleUI_detachAllUINodesWithSomeFocused_triggersIndirectCancelsInFocusPath() {
+        // This test will only run if the flag is true. Otherwise, it will be skipped.
+        @OptIn(ExperimentalComposeUiApi::class)
+        assumeTrue(ComposeUiFlags.isOptimizedFocusEventDispatchEnabled)
+
+        var showContent by mutableStateOf(true)
+
+        rule.setContent {
+            rootView = LocalView.current as AndroidComposeView
+
+            if (showContent) {
+                ThreeStackedBoxes(
+                    boxSize = contentBoxSize,
+                    boxPadding = boxPadding,
+                    testTagBox1 = testTagBox1,
+                    testTagBox2 = testTagBox2,
+                    testTagBox3 = testTagBox3,
+                    onIndirectPointerEventMainPassForAllBoxes = {
+                        receivedEvent = it
+                        // We don't consume the event, so it can pass on for system navigation
+                        // behavior.
+                    },
+                    onIndirectPointerCancelForTopContainer = {
+                        indirectPointerCancelForTopContainer = true
+                    },
+                    onIndirectPointerCancelForBox1 = { indirectPointerCancelForBox1 = true },
+                    onIndirectPointerCancelForBox2 = { indirectPointerCancelForBox2 = true },
+                    onIndirectPointerCancelForBox3 = { indirectPointerCancelForBox3 = true },
+                )
+            } else {
+                // Empty box
+                Box {}
+            }
+        }
+
+        rule.onNodeWithTag(testTagBox2).requestFocus()
+
+        // --- Test assertions and actions ---
+        rule.runOnIdle {
+            assertThat(receivedEvent).isEqualTo(null)
+            assertThat(indirectPointerCancelForTopContainer).isFalse()
+            assertThat(indirectPointerCancelForBox1).isFalse()
+            assertThat(indirectPointerCancelForBox2).isFalse()
+            assertThat(indirectPointerCancelForBox3).isFalse()
+        }
+
+        // Detach boxes
+        showContent = false
+
+        rule.runOnIdle {
+            assertThat(receivedEvent).isEqualTo(null)
+            assertThat(indirectPointerCancelForTopContainer).isTrue()
+            assertThat(indirectPointerCancelForBox1).isFalse()
+            assertThat(indirectPointerCancelForBox2).isTrue()
+            assertThat(indirectPointerCancelForBox3).isFalse()
+        }
+    }
+
+    @Test
+    fun simpleUI_detachOneUiNodeNoFocus_noIndirectCancels() {
+        val showBox1Content = mutableStateOf(true)
+
+        rule.setContent {
+            rootView = LocalView.current as AndroidComposeView
+            ThreeStackedBoxes(
+                boxSize = contentBoxSize,
+                boxPadding = boxPadding,
+                testTagBox1 = testTagBox1,
+                displayBox1 = showBox1Content,
+                testTagBox2 = testTagBox2,
+                testTagBox3 = testTagBox3,
+                onIndirectPointerEventMainPassForAllBoxes = {
+                    receivedEvent = it
+                    // We don't consume the event, so it can pass on for system navigation behavior.
+                },
+                onIndirectPointerCancelForTopContainer = {
+                    indirectPointerCancelForTopContainer = true
+                },
+                onIndirectPointerCancelForBox1 = { indirectPointerCancelForBox1 = true },
+                onIndirectPointerCancelForBox2 = { indirectPointerCancelForBox2 = true },
+                onIndirectPointerCancelForBox3 = { indirectPointerCancelForBox3 = true },
+            )
+        }
+
+        // --- Test assertions and actions ---
+        rule.runOnIdle {
+            assertThat(receivedEvent).isEqualTo(null)
+            assertThat(indirectPointerCancelForTopContainer).isFalse()
+            assertThat(indirectPointerCancelForBox1).isFalse()
+            assertThat(indirectPointerCancelForBox2).isFalse()
+            assertThat(indirectPointerCancelForBox3).isFalse()
+        }
+
+        // Detach boxes
+        showBox1Content.value = false
+
+        rule.runOnIdle {
+            assertThat(receivedEvent).isEqualTo(null)
+            assertThat(indirectPointerCancelForTopContainer).isFalse()
+            assertThat(indirectPointerCancelForBox1).isFalse()
+            assertThat(indirectPointerCancelForBox2).isFalse()
+            assertThat(indirectPointerCancelForBox3).isFalse()
+        }
+    }
+
+    @Test
+    fun simpleUI_detachOneFocusedUiNode_triggersIndirectCancelsInFocusPath() {
+        // This test will only run if the flag is true. Otherwise, it will be skipped.
+        @OptIn(ExperimentalComposeUiApi::class)
+        assumeTrue(ComposeUiFlags.isOptimizedFocusEventDispatchEnabled)
+
+        val showBox1Content = mutableStateOf(true)
+
+        rule.setContent {
+            rootView = LocalView.current as AndroidComposeView
+            ThreeStackedBoxes(
+                boxSize = contentBoxSize,
+                boxPadding = boxPadding,
+                testTagBox1 = testTagBox1,
+                displayBox1 = showBox1Content,
+                testTagBox2 = testTagBox2,
+                testTagBox3 = testTagBox3,
+                onIndirectPointerEventMainPassForAllBoxes = {
+                    receivedEvent = it
+                    // We don't consume the event, so it can pass on for system navigation behavior.
+                },
+                onIndirectPointerCancelForTopContainer = {
+                    indirectPointerCancelForTopContainer = true
+                },
+                onIndirectPointerCancelForBox1 = { indirectPointerCancelForBox1 = true },
+                onIndirectPointerCancelForBox2 = { indirectPointerCancelForBox2 = true },
+                onIndirectPointerCancelForBox3 = { indirectPointerCancelForBox3 = true },
+            )
+        }
+
+        rule.onNodeWithTag(testTagBox1).requestFocus()
+
+        // --- Test assertions and actions ---
+        rule.runOnIdle {
+            assertThat(receivedEvent).isEqualTo(null)
+            assertThat(indirectPointerCancelForTopContainer).isFalse()
+            assertThat(indirectPointerCancelForBox1).isFalse()
+            assertThat(indirectPointerCancelForBox2).isFalse()
+            assertThat(indirectPointerCancelForBox3).isFalse()
+        }
+
+        // Detach boxes
+        showBox1Content.value = false
+
+        rule.runOnIdle {
+            assertThat(receivedEvent).isEqualTo(null)
+            assertThat(indirectPointerCancelForTopContainer).isTrue()
+            assertThat(indirectPointerCancelForBox1).isTrue()
+            assertThat(indirectPointerCancelForBox2).isFalse()
+            assertThat(indirectPointerCancelForBox3).isFalse()
+        }
+    }
+
+    @Test
+    fun complexUI_detachAllUINodesNoFocus_noIndirectCancels() {
+        var showContent by mutableStateOf(true)
+
+        rule.setContent {
+            rootView = LocalView.current as AndroidComposeView
+            if (showContent) {
+                ThreeStackUIsWithTwoBoxChildren(
+                    boxSize = contentBoxSize,
+                    boxPadding = boxPadding,
+                    testTagParent1 = testTagParent1,
+                    testTagParent1Child1 = testTagParent1Child1,
+                    testTagParent1Child2 = testTagParent1Child2,
+                    testTagParent2 = testTagParent2,
+                    testTagParent2Child1 = testTagParent2Child1,
+                    testTagParent2Child2 = testTagParent2Child2,
+                    testTagParent3 = testTagParent3,
+                    testTagParent3Child1 = testTagParent3Child1,
+                    testTagParent3Child2 = testTagParent3Child2,
+                    onIndirectPointerEventMainPassForAllBoxes = {
+                        receivedEvent = it
+                        // We don't consume the event, so it can pass on for system navigation
+                        // behavior.
+                    },
+                    onIndirectPointerCancelForTopContainer = {
+                        indirectPointerCancelForTopContainer = true
+                    },
+                    onIndirectPointerCancelForParent1 = {
+                        onIndirectPointerCancelForParent1 = true
+                    },
+                    onIndirectPointerCancelForParent1Child1 = {
+                        onIndirectPointerCancelForParent1Child1 = true
+                    },
+                    onIndirectPointerCancelForParent1Child2 = {
+                        onIndirectPointerCancelForParent1Child2 = true
+                    },
+                    onIndirectPointerCancelForParent2 = {
+                        onIndirectPointerCancelForParent2 = true
+                    },
+                    onIndirectPointerCancelForParent2Child1 = {
+                        onIndirectPointerCancelForParent2Child1 = true
+                    },
+                    onIndirectPointerCancelForParent2Child2 = {
+                        onIndirectPointerCancelForParent2Child2 = true
+                    },
+                    onIndirectPointerCancelForParent3 = {
+                        onIndirectPointerCancelForParent3 = true
+                    },
+                    onIndirectPointerCancelForParent3Child1 = {
+                        onIndirectPointerCancelForParent3Child1 = true
+                    },
+                    onIndirectPointerCancelForParent3Child2 = {
+                        onIndirectPointerCancelForParent3Child2 = true
+                    },
+                )
+            } else {
+                // Empty box
+                Box {}
+            }
+        }
+
+        // --- Test assertions and actions ---
+        rule.runOnIdle {
+            assertThat(receivedEvent).isEqualTo(null)
+            // If nothing was focused, then indirect touch callbacks will NOT get a cancel event.
+            assertThat(indirectPointerCancelForTopContainer).isFalse()
+            assertThat(onIndirectPointerCancelForParent1).isFalse()
+            assertThat(onIndirectPointerCancelForParent1Child1).isFalse()
+            assertThat(onIndirectPointerCancelForParent1Child2).isFalse()
+            assertThat(onIndirectPointerCancelForParent2).isFalse()
+            assertThat(onIndirectPointerCancelForParent2Child1).isFalse()
+            assertThat(onIndirectPointerCancelForParent2Child2).isFalse()
+            assertThat(onIndirectPointerCancelForParent3).isFalse()
+            assertThat(onIndirectPointerCancelForParent3Child1).isFalse()
+            assertThat(onIndirectPointerCancelForParent3Child2).isFalse()
+        }
+
+        // Detach boxes
+        showContent = false
+
+        rule.runOnIdle {
+            assertThat(receivedEvent).isEqualTo(null)
+            // If nothing was focused, then indirect touch callbacks will NOT get a cancel event.
+            assertThat(indirectPointerCancelForTopContainer).isFalse()
+            assertThat(onIndirectPointerCancelForParent1).isFalse()
+            assertThat(onIndirectPointerCancelForParent1Child1).isFalse()
+            assertThat(onIndirectPointerCancelForParent1Child2).isFalse()
+            assertThat(onIndirectPointerCancelForParent2).isFalse()
+            assertThat(onIndirectPointerCancelForParent2Child1).isFalse()
+            assertThat(onIndirectPointerCancelForParent2Child2).isFalse()
+            assertThat(onIndirectPointerCancelForParent3).isFalse()
+            assertThat(onIndirectPointerCancelForParent3Child1).isFalse()
+            assertThat(onIndirectPointerCancelForParent3Child2).isFalse()
+        }
+    }
+
+    @Test
+    fun complexUI_detachAllUIWithSomeFocused_triggersIndirectCancelsInFocusPath() {
+        // This test will only run if the flag is true. Otherwise, it will be skipped.
+        @OptIn(ExperimentalComposeUiApi::class)
+        assumeTrue(ComposeUiFlags.isOptimizedFocusEventDispatchEnabled)
+
+        var showContent by mutableStateOf(true)
+
+        rule.setContent {
+            rootView = LocalView.current as AndroidComposeView
+            if (showContent) {
+                ThreeStackUIsWithTwoBoxChildren(
+                    boxSize = contentBoxSize,
+                    boxPadding = boxPadding,
+                    testTagParent1 = testTagParent1,
+                    testTagParent1Child1 = testTagParent1Child1,
+                    testTagParent1Child2 = testTagParent1Child2,
+                    testTagParent2 = testTagParent2,
+                    testTagParent2Child1 = testTagParent2Child1,
+                    testTagParent2Child2 = testTagParent2Child2,
+                    testTagParent3 = testTagParent3,
+                    testTagParent3Child1 = testTagParent3Child1,
+                    testTagParent3Child2 = testTagParent3Child2,
+                    onIndirectPointerEventMainPassForAllBoxes = {
+                        receivedEvent = it
+                        // We don't consume the event, so it can pass on for system navigation
+                        // behavior.
+                    },
+                    onIndirectPointerCancelForTopContainer = {
+                        indirectPointerCancelForTopContainer = true
+                    },
+                    onIndirectPointerCancelForParent1 = {
+                        onIndirectPointerCancelForParent1 = true
+                    },
+                    onIndirectPointerCancelForParent1Child1 = {
+                        onIndirectPointerCancelForParent1Child1 = true
+                    },
+                    onIndirectPointerCancelForParent1Child2 = {
+                        onIndirectPointerCancelForParent1Child2 = true
+                    },
+                    onIndirectPointerCancelForParent2 = {
+                        onIndirectPointerCancelForParent2 = true
+                    },
+                    onIndirectPointerCancelForParent2Child1 = {
+                        onIndirectPointerCancelForParent2Child1 = true
+                    },
+                    onIndirectPointerCancelForParent2Child2 = {
+                        onIndirectPointerCancelForParent2Child2 = true
+                    },
+                    onIndirectPointerCancelForParent3 = {
+                        onIndirectPointerCancelForParent3 = true
+                    },
+                    onIndirectPointerCancelForParent3Child1 = {
+                        onIndirectPointerCancelForParent3Child1 = true
+                    },
+                    onIndirectPointerCancelForParent3Child2 = {
+                        onIndirectPointerCancelForParent3Child2 = true
+                    },
+                )
+            } else {
+                // Empty box
+                Box {}
+            }
+        }
+
+        rule.onNodeWithTag(testTagParent1Child2).requestFocus()
+
+        // --- Test assertions and actions ---
+        rule.runOnIdle {
+            assertThat(receivedEvent).isEqualTo(null)
+            // If nothing was focused, then indirect touch callbacks will NOT get a cancel event.
+            assertThat(indirectPointerCancelForTopContainer).isFalse()
+            assertThat(onIndirectPointerCancelForParent1).isFalse()
+            assertThat(onIndirectPointerCancelForParent1Child1).isFalse()
+            assertThat(onIndirectPointerCancelForParent1Child2).isFalse()
+            assertThat(onIndirectPointerCancelForParent2).isFalse()
+            assertThat(onIndirectPointerCancelForParent2Child1).isFalse()
+            assertThat(onIndirectPointerCancelForParent2Child2).isFalse()
+            assertThat(onIndirectPointerCancelForParent3).isFalse()
+            assertThat(onIndirectPointerCancelForParent3Child1).isFalse()
+            assertThat(onIndirectPointerCancelForParent3Child2).isFalse()
+        }
+
+        // Detach boxes
+        showContent = false
+
+        rule.runOnIdle {
+            assertThat(receivedEvent).isEqualTo(null)
+            // If nothing was focused, then indirect touch callbacks will NOT get a cancel event.
+            assertThat(indirectPointerCancelForTopContainer).isTrue()
+            assertThat(onIndirectPointerCancelForParent1).isTrue()
+            assertThat(onIndirectPointerCancelForParent1Child1).isFalse()
+            assertThat(onIndirectPointerCancelForParent1Child2).isTrue()
+            assertThat(onIndirectPointerCancelForParent2).isFalse()
+            assertThat(onIndirectPointerCancelForParent2Child1).isFalse()
+            assertThat(onIndirectPointerCancelForParent2Child2).isFalse()
+            assertThat(onIndirectPointerCancelForParent3).isFalse()
+            assertThat(onIndirectPointerCancelForParent3Child1).isFalse()
+            assertThat(onIndirectPointerCancelForParent3Child2).isFalse()
+        }
+    }
+
+    @Test
+    fun complexUI_detachChildUiNodeNoFocus_noIndirectCancels() {
+        val displayParent2Child2 = mutableStateOf(true)
+
+        rule.setContent {
+            rootView = LocalView.current as AndroidComposeView
+            ThreeStackUIsWithTwoBoxChildren(
+                boxSize = contentBoxSize,
+                boxPadding = boxPadding,
+                testTagParent1 = testTagParent1,
+                testTagParent1Child1 = testTagParent1Child1,
+                testTagParent1Child2 = testTagParent1Child2,
+                testTagParent2 = testTagParent2,
+                testTagParent2Child1 = testTagParent2Child1,
+                testTagParent2Child2 = testTagParent2Child2,
+                displayParent2Child2 = displayParent2Child2,
+                testTagParent3 = testTagParent3,
+                testTagParent3Child1 = testTagParent3Child1,
+                testTagParent3Child2 = testTagParent3Child2,
+                onIndirectPointerEventMainPassForAllBoxes = {
+                    receivedEvent = it
+                    // We don't consume the event, so it can pass on for system navigation behavior.
+                },
+                onIndirectPointerCancelForTopContainer = {
+                    indirectPointerCancelForTopContainer = true
+                },
+                onIndirectPointerCancelForParent1 = { onIndirectPointerCancelForParent1 = true },
+                onIndirectPointerCancelForParent1Child1 = {
+                    onIndirectPointerCancelForParent1Child1 = true
+                },
+                onIndirectPointerCancelForParent1Child2 = {
+                    onIndirectPointerCancelForParent1Child2 = true
+                },
+                onIndirectPointerCancelForParent2 = { onIndirectPointerCancelForParent2 = true },
+                onIndirectPointerCancelForParent2Child1 = {
+                    onIndirectPointerCancelForParent2Child1 = true
+                },
+                onIndirectPointerCancelForParent2Child2 = {
+                    onIndirectPointerCancelForParent2Child2 = true
+                },
+                onIndirectPointerCancelForParent3 = { onIndirectPointerCancelForParent3 = true },
+                onIndirectPointerCancelForParent3Child1 = {
+                    onIndirectPointerCancelForParent3Child1 = true
+                },
+                onIndirectPointerCancelForParent3Child2 = {
+                    onIndirectPointerCancelForParent3Child2 = true
+                },
+            )
+        }
+
+        // --- Test assertions and actions ---
+        rule.runOnIdle {
+            assertThat(receivedEvent).isEqualTo(null)
+            // If nothing was focused, then indirect touch callbacks will NOT get a cancel event.
+            assertThat(indirectPointerCancelForTopContainer).isFalse()
+            assertThat(onIndirectPointerCancelForParent1).isFalse()
+            assertThat(onIndirectPointerCancelForParent1Child1).isFalse()
+            assertThat(onIndirectPointerCancelForParent1Child2).isFalse()
+            assertThat(onIndirectPointerCancelForParent2).isFalse()
+            assertThat(onIndirectPointerCancelForParent2Child1).isFalse()
+            assertThat(onIndirectPointerCancelForParent2Child2).isFalse()
+            assertThat(onIndirectPointerCancelForParent3).isFalse()
+            assertThat(onIndirectPointerCancelForParent3Child1).isFalse()
+            assertThat(onIndirectPointerCancelForParent3Child2).isFalse()
+        }
+
+        // Detach boxes
+        displayParent2Child2.value = false
+
+        rule.runOnIdle {
+            assertThat(receivedEvent).isEqualTo(null)
+            // If nothing was focused, then indirect touch callbacks will NOT get a cancel event.
+            assertThat(indirectPointerCancelForTopContainer).isFalse()
+            assertThat(onIndirectPointerCancelForParent1).isFalse()
+            assertThat(onIndirectPointerCancelForParent1Child1).isFalse()
+            assertThat(onIndirectPointerCancelForParent1Child2).isFalse()
+            assertThat(onIndirectPointerCancelForParent2).isFalse()
+            assertThat(onIndirectPointerCancelForParent2Child1).isFalse()
+            assertThat(onIndirectPointerCancelForParent2Child2).isFalse()
+            assertThat(onIndirectPointerCancelForParent3).isFalse()
+            assertThat(onIndirectPointerCancelForParent3Child1).isFalse()
+            assertThat(onIndirectPointerCancelForParent3Child2).isFalse()
+        }
+    }
+
+    @Test
+    fun complexUI_detachChildFocusedUiNode_triggersIndirectCancelsInFocusPath() {
+        // This test will only run if the flag is true. Otherwise, it will be skipped.
+        @OptIn(ExperimentalComposeUiApi::class)
+        assumeTrue(ComposeUiFlags.isOptimizedFocusEventDispatchEnabled)
+
+        val displayParent2Child2 = mutableStateOf(true)
+
+        rule.setContent {
+            rootView = LocalView.current as AndroidComposeView
+            ThreeStackUIsWithTwoBoxChildren(
+                boxSize = contentBoxSize,
+                boxPadding = boxPadding,
+                testTagParent1 = testTagParent1,
+                testTagParent1Child1 = testTagParent1Child1,
+                testTagParent1Child2 = testTagParent1Child2,
+                testTagParent2 = testTagParent2,
+                testTagParent2Child1 = testTagParent2Child1,
+                testTagParent2Child2 = testTagParent2Child2,
+                displayParent2Child2 = displayParent2Child2,
+                testTagParent3 = testTagParent3,
+                testTagParent3Child1 = testTagParent3Child1,
+                testTagParent3Child2 = testTagParent3Child2,
+                onIndirectPointerEventMainPassForAllBoxes = {
+                    receivedEvent = it
+                    // We don't consume the event, so it can pass on for system navigation behavior.
+                },
+                onIndirectPointerCancelForTopContainer = {
+                    indirectPointerCancelForTopContainer = true
+                },
+                onIndirectPointerCancelForParent1 = { onIndirectPointerCancelForParent1 = true },
+                onIndirectPointerCancelForParent1Child1 = {
+                    onIndirectPointerCancelForParent1Child1 = true
+                },
+                onIndirectPointerCancelForParent1Child2 = {
+                    onIndirectPointerCancelForParent1Child2 = true
+                },
+                onIndirectPointerCancelForParent2 = { onIndirectPointerCancelForParent2 = true },
+                onIndirectPointerCancelForParent2Child1 = {
+                    onIndirectPointerCancelForParent2Child1 = true
+                },
+                onIndirectPointerCancelForParent2Child2 = {
+                    onIndirectPointerCancelForParent2Child2 = true
+                },
+                onIndirectPointerCancelForParent3 = { onIndirectPointerCancelForParent3 = true },
+                onIndirectPointerCancelForParent3Child1 = {
+                    onIndirectPointerCancelForParent3Child1 = true
+                },
+                onIndirectPointerCancelForParent3Child2 = {
+                    onIndirectPointerCancelForParent3Child2 = true
+                },
+            )
+        }
+
+        rule.onNodeWithTag(testTagParent2Child2).requestFocus()
+
+        // --- Test assertions and actions ---
+        rule.runOnIdle {
+            assertThat(receivedEvent).isEqualTo(null)
+            // If nothing was focused, then indirect touch callbacks will NOT get a cancel event.
+            assertThat(indirectPointerCancelForTopContainer).isFalse()
+            assertThat(onIndirectPointerCancelForParent1).isFalse()
+            assertThat(onIndirectPointerCancelForParent1Child1).isFalse()
+            assertThat(onIndirectPointerCancelForParent1Child2).isFalse()
+            assertThat(onIndirectPointerCancelForParent2).isFalse()
+            assertThat(onIndirectPointerCancelForParent2Child1).isFalse()
+            assertThat(onIndirectPointerCancelForParent2Child2).isFalse()
+            assertThat(onIndirectPointerCancelForParent3).isFalse()
+            assertThat(onIndirectPointerCancelForParent3Child1).isFalse()
+            assertThat(onIndirectPointerCancelForParent3Child2).isFalse()
+        }
+
+        // Detach boxes
+        displayParent2Child2.value = false
+
+        rule.runOnIdle {
+            assertThat(receivedEvent).isEqualTo(null)
+            // If nothing was focused, then indirect touch callbacks will NOT get a cancel event.
+            assertThat(indirectPointerCancelForTopContainer).isTrue()
+            assertThat(onIndirectPointerCancelForParent1).isFalse()
+            assertThat(onIndirectPointerCancelForParent1Child1).isFalse()
+            assertThat(onIndirectPointerCancelForParent1Child2).isFalse()
+            assertThat(onIndirectPointerCancelForParent2).isTrue()
+            assertThat(onIndirectPointerCancelForParent2Child1).isFalse()
+            assertThat(onIndirectPointerCancelForParent2Child2).isTrue()
+            assertThat(onIndirectPointerCancelForParent3).isFalse()
+            assertThat(onIndirectPointerCancelForParent3Child1).isFalse()
+            assertThat(onIndirectPointerCancelForParent3Child2).isFalse()
+        }
+    }
+
+    @Test
+    fun complexUI_detachParentUiNodeNoFocus_noIndirectCancels() {
+        val displayParent2 = mutableStateOf(true)
+
+        rule.setContent {
+            rootView = LocalView.current as AndroidComposeView
+            ThreeStackUIsWithTwoBoxChildren(
+                boxSize = contentBoxSize,
+                boxPadding = boxPadding,
+                testTagParent1 = testTagParent1,
+                testTagParent1Child1 = testTagParent1Child1,
+                testTagParent1Child2 = testTagParent1Child2,
+                testTagParent2 = testTagParent2,
+                displayParent2 = displayParent2,
+                testTagParent2Child1 = testTagParent2Child1,
+                testTagParent2Child2 = testTagParent2Child2,
+                testTagParent3 = testTagParent3,
+                testTagParent3Child1 = testTagParent3Child1,
+                testTagParent3Child2 = testTagParent3Child2,
+                onIndirectPointerEventMainPassForAllBoxes = {
+                    receivedEvent = it
+                    // We don't consume the event, so it can pass on for system navigation behavior.
+                },
+                onIndirectPointerCancelForTopContainer = {
+                    indirectPointerCancelForTopContainer = true
+                },
+                onIndirectPointerCancelForParent1 = { onIndirectPointerCancelForParent1 = true },
+                onIndirectPointerCancelForParent1Child1 = {
+                    onIndirectPointerCancelForParent1Child1 = true
+                },
+                onIndirectPointerCancelForParent1Child2 = {
+                    onIndirectPointerCancelForParent1Child2 = true
+                },
+                onIndirectPointerCancelForParent2 = { onIndirectPointerCancelForParent2 = true },
+                onIndirectPointerCancelForParent2Child1 = {
+                    onIndirectPointerCancelForParent2Child1 = true
+                },
+                onIndirectPointerCancelForParent2Child2 = {
+                    onIndirectPointerCancelForParent2Child2 = true
+                },
+                onIndirectPointerCancelForParent3 = { onIndirectPointerCancelForParent3 = true },
+                onIndirectPointerCancelForParent3Child1 = {
+                    onIndirectPointerCancelForParent3Child1 = true
+                },
+                onIndirectPointerCancelForParent3Child2 = {
+                    onIndirectPointerCancelForParent3Child2 = true
+                },
+            )
+        }
+
+        // --- Test assertions and actions ---
+        rule.runOnIdle {
+            assertThat(receivedEvent).isEqualTo(null)
+            // If nothing was focused, then indirect touch callbacks will NOT get a cancel event.
+            assertThat(indirectPointerCancelForTopContainer).isFalse()
+            assertThat(onIndirectPointerCancelForParent1).isFalse()
+            assertThat(onIndirectPointerCancelForParent1Child1).isFalse()
+            assertThat(onIndirectPointerCancelForParent1Child2).isFalse()
+            assertThat(onIndirectPointerCancelForParent2).isFalse()
+            assertThat(onIndirectPointerCancelForParent2Child1).isFalse()
+            assertThat(onIndirectPointerCancelForParent2Child2).isFalse()
+            assertThat(onIndirectPointerCancelForParent3).isFalse()
+            assertThat(onIndirectPointerCancelForParent3Child1).isFalse()
+            assertThat(onIndirectPointerCancelForParent3Child2).isFalse()
+        }
+
+        // Detach boxes
+        displayParent2.value = false
+
+        rule.runOnIdle {
+            assertThat(receivedEvent).isEqualTo(null)
+            // If nothing was focused, then indirect touch callbacks will NOT get a cancel event.
+            assertThat(indirectPointerCancelForTopContainer).isFalse()
+            assertThat(onIndirectPointerCancelForParent1).isFalse()
+            assertThat(onIndirectPointerCancelForParent1Child1).isFalse()
+            assertThat(onIndirectPointerCancelForParent1Child2).isFalse()
+            assertThat(onIndirectPointerCancelForParent2).isFalse()
+            assertThat(onIndirectPointerCancelForParent2Child1).isFalse()
+            assertThat(onIndirectPointerCancelForParent2Child2).isFalse()
+            assertThat(onIndirectPointerCancelForParent3).isFalse()
+            assertThat(onIndirectPointerCancelForParent3Child1).isFalse()
+            assertThat(onIndirectPointerCancelForParent3Child2).isFalse()
+        }
+    }
+
+    @Test
+    fun complexUI_detachParentUiNodeWithFocusedChild_triggersIndirectCancelsInFocusPath() {
+        // This test will only run if the flag is true. Otherwise, it will be skipped.
+        @OptIn(ExperimentalComposeUiApi::class)
+        assumeTrue(ComposeUiFlags.isOptimizedFocusEventDispatchEnabled)
+
+        val displayParent2 = mutableStateOf(true)
+
+        rule.setContent {
+            rootView = LocalView.current as AndroidComposeView
+            ThreeStackUIsWithTwoBoxChildren(
+                boxSize = contentBoxSize,
+                boxPadding = boxPadding,
+                testTagParent1 = testTagParent1,
+                testTagParent1Child1 = testTagParent1Child1,
+                testTagParent1Child2 = testTagParent1Child2,
+                testTagParent2 = testTagParent2,
+                displayParent2 = displayParent2,
+                testTagParent2Child1 = testTagParent2Child1,
+                testTagParent2Child2 = testTagParent2Child2,
+                testTagParent3 = testTagParent3,
+                testTagParent3Child1 = testTagParent3Child1,
+                testTagParent3Child2 = testTagParent3Child2,
+                onIndirectPointerEventMainPassForAllBoxes = {
+                    receivedEvent = it
+                    // We don't consume the event, so it can pass on for system navigation behavior.
+                },
+                onIndirectPointerCancelForTopContainer = {
+                    indirectPointerCancelForTopContainer = true
+                },
+                onIndirectPointerCancelForParent1 = { onIndirectPointerCancelForParent1 = true },
+                onIndirectPointerCancelForParent1Child1 = {
+                    onIndirectPointerCancelForParent1Child1 = true
+                },
+                onIndirectPointerCancelForParent1Child2 = {
+                    onIndirectPointerCancelForParent1Child2 = true
+                },
+                onIndirectPointerCancelForParent2 = { onIndirectPointerCancelForParent2 = true },
+                onIndirectPointerCancelForParent2Child1 = {
+                    onIndirectPointerCancelForParent2Child1 = true
+                },
+                onIndirectPointerCancelForParent2Child2 = {
+                    onIndirectPointerCancelForParent2Child2 = true
+                },
+                onIndirectPointerCancelForParent3 = { onIndirectPointerCancelForParent3 = true },
+                onIndirectPointerCancelForParent3Child1 = {
+                    onIndirectPointerCancelForParent3Child1 = true
+                },
+                onIndirectPointerCancelForParent3Child2 = {
+                    onIndirectPointerCancelForParent3Child2 = true
+                },
+            )
+        }
+
+        rule.onNodeWithTag(testTagParent2Child2).requestFocus()
+
+        // --- Test assertions and actions ---
+        rule.runOnIdle {
+            assertThat(receivedEvent).isEqualTo(null)
+            // If nothing was focused, then indirect touch callbacks will NOT get a cancel event.
+            assertThat(indirectPointerCancelForTopContainer).isFalse()
+            assertThat(onIndirectPointerCancelForParent1).isFalse()
+            assertThat(onIndirectPointerCancelForParent1Child1).isFalse()
+            assertThat(onIndirectPointerCancelForParent1Child2).isFalse()
+            assertThat(onIndirectPointerCancelForParent2).isFalse()
+            assertThat(onIndirectPointerCancelForParent2Child1).isFalse()
+            assertThat(onIndirectPointerCancelForParent2Child2).isFalse()
+            assertThat(onIndirectPointerCancelForParent3).isFalse()
+            assertThat(onIndirectPointerCancelForParent3Child1).isFalse()
+            assertThat(onIndirectPointerCancelForParent3Child2).isFalse()
+        }
+
+        // Detach boxes
+        displayParent2.value = false
+
+        rule.runOnIdle {
+            assertThat(receivedEvent).isEqualTo(null)
+            // If nothing was focused, then indirect touch callbacks will NOT get a cancel event.
+            assertThat(indirectPointerCancelForTopContainer).isTrue()
+            assertThat(onIndirectPointerCancelForParent1).isFalse()
+            assertThat(onIndirectPointerCancelForParent1Child1).isFalse()
+            assertThat(onIndirectPointerCancelForParent1Child2).isFalse()
+            assertThat(onIndirectPointerCancelForParent2).isTrue()
+            assertThat(onIndirectPointerCancelForParent2Child1).isFalse()
+            assertThat(onIndirectPointerCancelForParent2Child2).isTrue()
+            assertThat(onIndirectPointerCancelForParent3).isFalse()
+            assertThat(onIndirectPointerCancelForParent3Child1).isFalse()
+            assertThat(onIndirectPointerCancelForParent3Child2).isFalse()
+        }
+    }
+
+    // Request Focus + Detach all UI Tests
+    @Test
+    fun simpleUI_requestFocusAndDetachAllUI_triggersIndirectCancelsInFocusPath() {
+        // This test will only run if the flag is true. Otherwise, it will be skipped.
+        @OptIn(ExperimentalComposeUiApi::class)
+        assumeTrue(ComposeUiFlags.isOptimizedFocusEventDispatchEnabled)
+
+        var showContent by mutableStateOf(true)
+
+        rule.setContent {
+            rootView = LocalView.current as AndroidComposeView
+            focusManager = LocalFocusManager.current
+
+            if (showContent) {
+                ThreeStackedBoxes(
+                    boxSize = contentBoxSize,
+                    boxPadding = boxPadding,
+                    testTagBox1 = testTagBox1,
+                    testTagBox2 = testTagBox2,
+                    testTagBox3 = testTagBox3,
+                    onIndirectPointerEventMainPassForAllBoxes = {
+                        receivedEvent = it
+                        // We don't consume the event, so it can pass on for system navigation
+                        // behavior.
+                    },
+                    onIndirectPointerCancelForTopContainer = {
+                        indirectPointerCancelForTopContainer = true
+                    },
+                    onIndirectPointerCancelForBox1 = { indirectPointerCancelForBox1 = true },
+                    onIndirectPointerCancelForBox2 = { indirectPointerCancelForBox2 = true },
+                    onIndirectPointerCancelForBox3 = { indirectPointerCancelForBox3 = true },
+                )
+            } else {
+                // Empty box
+                Box {}
+            }
+        }
+
+        // --- Test assertions and actions ---
+        // Request initial focus for center box
+        rule.onNodeWithTag(testTagBox2).requestFocus()
+        rule.runOnIdle {
+            assertThat(receivedEvent).isEqualTo(null)
+            assertThat(indirectPointerCancelForTopContainer).isFalse()
+            assertThat(indirectPointerCancelForBox1).isFalse()
+            assertThat(indirectPointerCancelForBox2).isFalse()
+            assertThat(indirectPointerCancelForBox3).isFalse()
+        }
+
+        // Detach boxes
+        showContent = false
+
+        rule.runOnIdle {
+            assertThat(receivedEvent).isEqualTo(null)
+            assertThat(indirectPointerCancelForTopContainer).isTrue()
+            assertThat(indirectPointerCancelForBox1).isFalse()
+            assertThat(indirectPointerCancelForBox2).isTrue()
+            assertThat(indirectPointerCancelForBox3).isFalse()
+        }
+    }
+
+    @Test
+    fun complexUI_requestFocusAndDetachAllUI_triggersIndirectCancelsInFocusPath() {
+        // This test will only run if the flag is true. Otherwise, it will be skipped.
+        @OptIn(ExperimentalComposeUiApi::class)
+        assumeTrue(ComposeUiFlags.isOptimizedFocusEventDispatchEnabled)
+
+        var showContent by mutableStateOf(true)
+
+        rule.setContent {
+            rootView = LocalView.current as AndroidComposeView
+            focusManager = LocalFocusManager.current
+
+            if (showContent) {
+                ThreeStackUIsWithTwoBoxChildren(
+                    boxSize = contentBoxSize,
+                    boxPadding = boxPadding,
+                    testTagParent1 = testTagParent1,
+                    testTagParent1Child1 = testTagParent1Child1,
+                    testTagParent1Child2 = testTagParent1Child2,
+                    testTagParent2 = testTagParent2,
+                    testTagParent2Child1 = testTagParent2Child1,
+                    testTagParent2Child2 = testTagParent2Child2,
+                    testTagParent3 = testTagParent3,
+                    testTagParent3Child1 = testTagParent3Child1,
+                    testTagParent3Child2 = testTagParent3Child2,
+                    onIndirectPointerEventMainPassForAllBoxes = {
+                        receivedEvent = it
+                        // We don't consume the event, so it can pass on for system navigation
+                        // behavior.
+                    },
+                    onIndirectPointerCancelForTopContainer = {
+                        indirectPointerCancelForTopContainer = true
+                    },
+                    onIndirectPointerCancelForParent1 = {
+                        onIndirectPointerCancelForParent1 = true
+                    },
+                    onIndirectPointerCancelForParent1Child1 = {
+                        onIndirectPointerCancelForParent1Child1 = true
+                    },
+                    onIndirectPointerCancelForParent1Child2 = {
+                        onIndirectPointerCancelForParent1Child2 = true
+                    },
+                    onIndirectPointerCancelForParent2 = {
+                        onIndirectPointerCancelForParent2 = true
+                    },
+                    onIndirectPointerCancelForParent2Child1 = {
+                        onIndirectPointerCancelForParent2Child1 = true
+                    },
+                    onIndirectPointerCancelForParent2Child2 = {
+                        onIndirectPointerCancelForParent2Child2 = true
+                    },
+                    onIndirectPointerCancelForParent3 = {
+                        onIndirectPointerCancelForParent3 = true
+                    },
+                    onIndirectPointerCancelForParent3Child1 = {
+                        onIndirectPointerCancelForParent3Child1 = true
+                    },
+                    onIndirectPointerCancelForParent3Child2 = {
+                        onIndirectPointerCancelForParent3Child2 = true
+                    },
+                )
+            } else {
+                // Empty box
+                Box {}
+            }
+        }
+
+        // --- Test assertions and actions ---
+        // Request initial focus for center box
+        rule.onNodeWithTag(testTagParent2Child1).requestFocus()
+
+        rule.runOnIdle {
+            assertThat(receivedEvent).isEqualTo(null)
+            // If nothing was focused, then indirect touch callbacks will NOT get a cancel event.
+            assertThat(indirectPointerCancelForTopContainer).isFalse()
+            assertThat(onIndirectPointerCancelForParent1).isFalse()
+            assertThat(onIndirectPointerCancelForParent1Child1).isFalse()
+            assertThat(onIndirectPointerCancelForParent1Child2).isFalse()
+            assertThat(onIndirectPointerCancelForParent2).isFalse()
+            assertThat(onIndirectPointerCancelForParent2Child1).isFalse()
+            assertThat(onIndirectPointerCancelForParent2Child2).isFalse()
+            assertThat(onIndirectPointerCancelForParent3).isFalse()
+            assertThat(onIndirectPointerCancelForParent3Child1).isFalse()
+            assertThat(onIndirectPointerCancelForParent3Child2).isFalse()
+        }
+
+        // Detach boxes
+        showContent = false
+
+        rule.runOnIdle {
+            assertThat(receivedEvent).isEqualTo(null)
+            // If nothing was focused, then indirect touch callbacks will NOT get a cancel event.
+            assertThat(indirectPointerCancelForTopContainer).isTrue()
+            assertThat(onIndirectPointerCancelForParent1).isFalse()
+            assertThat(onIndirectPointerCancelForParent1Child1).isFalse()
+            assertThat(onIndirectPointerCancelForParent1Child2).isFalse()
+            assertThat(onIndirectPointerCancelForParent2).isTrue()
+            assertThat(onIndirectPointerCancelForParent2Child1).isTrue()
+            assertThat(onIndirectPointerCancelForParent2Child2).isFalse()
+            assertThat(onIndirectPointerCancelForParent3).isFalse()
+            assertThat(onIndirectPointerCancelForParent3Child1).isFalse()
+            assertThat(onIndirectPointerCancelForParent3Child2).isFalse()
+        }
+    }
+
+    // Helper functions:
     @Composable
     private fun ThreeStackedBoxes(
         boxSize: Dp,
         boxPadding: Dp,
         testTagBox1: String,
+        displayBox1: MutableState<Boolean> = mutableStateOf(true),
         testTagBox2: String,
+        displayBox2: MutableState<Boolean> = mutableStateOf(true),
         testTagBox3: String,
+        displayBox3: MutableState<Boolean> = mutableStateOf(true),
         onIndirectPointerEventMainPassForAllBoxes: (IndirectPointerEvent) -> Unit,
         onIndirectPointerCancelForTopContainer: () -> Unit,
         onIndirectPointerCancelForBox1: () -> Unit,
@@ -5100,44 +6040,50 @@ class IndirectPointerEventNavigationSystemTests {
                     )
         ) {
             // Box 1
-            Box(
-                modifier =
-                    Modifier.testTag(testTagBox1)
-                        .size(boxSize)
-                        .background(Color.Red)
-                        .padding(boxPadding)
-                        .onIndirectPointerInput(
-                            onEvent = { _, _ -> },
-                            onCancel = { onIndirectPointerCancelForBox1() },
-                        )
-                        .focusable()
-            )
+            if (displayBox1.value) {
+                Box(
+                    modifier =
+                        Modifier.testTag(testTagBox1)
+                            .size(boxSize)
+                            .background(Color.Red)
+                            .padding(boxPadding)
+                            .onIndirectPointerInput(
+                                onEvent = { _, _ -> },
+                                onCancel = { onIndirectPointerCancelForBox1() },
+                            )
+                            .focusable()
+                )
+            }
             // Box 2
-            Box(
-                modifier =
-                    Modifier.testTag(testTagBox2)
-                        .size(boxSize)
-                        .background(Color.Green)
-                        .padding(boxPadding)
-                        .onIndirectPointerInput(
-                            onEvent = { _, _ -> },
-                            onCancel = { onIndirectPointerCancelForBox2() },
-                        )
-                        .focusable()
-            )
+            if (displayBox2.value) {
+                Box(
+                    modifier =
+                        Modifier.testTag(testTagBox2)
+                            .size(boxSize)
+                            .background(Color.Green)
+                            .padding(boxPadding)
+                            .onIndirectPointerInput(
+                                onEvent = { _, _ -> },
+                                onCancel = { onIndirectPointerCancelForBox2() },
+                            )
+                            .focusable()
+                )
+            }
             // Box 3
-            Box(
-                modifier =
-                    Modifier.testTag(testTagBox3)
-                        .size(boxSize)
-                        .background(Color.Blue)
-                        .padding(boxPadding)
-                        .onIndirectPointerInput(
-                            onEvent = { _, _ -> },
-                            onCancel = { onIndirectPointerCancelForBox3() },
-                        )
-                        .focusable()
-            )
+            if (displayBox3.value) {
+                Box(
+                    modifier =
+                        Modifier.testTag(testTagBox3)
+                            .size(boxSize)
+                            .background(Color.Blue)
+                            .padding(boxPadding)
+                            .onIndirectPointerInput(
+                                onEvent = { _, _ -> },
+                                onCancel = { onIndirectPointerCancelForBox3() },
+                            )
+                            .focusable()
+                )
+            }
         }
     }
 
@@ -5219,14 +6165,23 @@ class IndirectPointerEventNavigationSystemTests {
         boxSize: Dp,
         boxPadding: Dp,
         testTagParent1: String,
+        displayParent1: MutableState<Boolean> = mutableStateOf(true),
         testTagParent1Child1: String,
+        displayParent1Child1: MutableState<Boolean> = mutableStateOf(true),
         testTagParent1Child2: String,
+        displayParent1Child2: MutableState<Boolean> = mutableStateOf(true),
         testTagParent2: String,
+        displayParent2: MutableState<Boolean> = mutableStateOf(true),
         testTagParent2Child1: String,
+        displayParent2Child1: MutableState<Boolean> = mutableStateOf(true),
         testTagParent2Child2: String,
+        displayParent2Child2: MutableState<Boolean> = mutableStateOf(true),
         testTagParent3: String,
+        displayParent3: MutableState<Boolean> = mutableStateOf(true),
         testTagParent3Child1: String,
+        displayParent3Child1: MutableState<Boolean> = mutableStateOf(true),
         testTagParent3Child2: String,
+        displayParent3Child2: MutableState<Boolean> = mutableStateOf(true),
         onIndirectPointerEventMainPassForAllBoxes: (IndirectPointerEvent) -> Unit,
         onIndirectPointerCancelForTopContainer: () -> Unit,
         onIndirectPointerCancelForParent1: () -> Unit,
@@ -5254,117 +6209,136 @@ class IndirectPointerEventNavigationSystemTests {
                     )
         ) {
             // Parent UI Element 1
-            Column(
-                modifier =
-                    Modifier.testTag(testTagParent1)
-                        .fillMaxWidth()
-                        .onIndirectPointerInput(
-                            onEvent = { _, _ -> },
-                            onCancel = onIndirectPointerCancelForParent1,
+            if (displayParent1.value) {
+                Column(
+                    modifier =
+                        Modifier.testTag(testTagParent1)
+                            .fillMaxWidth()
+                            .onIndirectPointerInput(
+                                onEvent = { _, _ -> },
+                                onCancel = onIndirectPointerCancelForParent1,
+                            )
+                ) {
+                    if (displayParent1Child1.value) {
+
+                        Box(
+                            modifier =
+                                @Suppress("DEPRECATION")
+                                Modifier.testTag(testTagParent1Child1)
+                                    .size(boxSize)
+                                    .background(Color.Red)
+                                    .padding(boxPadding)
+                                    .onIndirectPointerInput(
+                                        onEvent = { _, _ -> },
+                                        onCancel = onIndirectPointerCancelForParent1Child1,
+                                    )
+                                    .focusable()
                         )
-            ) {
-                Box(
-                    modifier =
-                        @Suppress("DEPRECATION")
-                        Modifier.testTag(testTagParent1Child1)
-                            .size(boxSize)
-                            .background(Color.Red)
-                            .padding(boxPadding)
-                            .onIndirectPointerInput(
-                                onEvent = { _, _ -> },
-                                onCancel = onIndirectPointerCancelForParent1Child1,
-                            )
-                            .focusable()
-                )
-                Box(
-                    modifier =
-                        @Suppress("DEPRECATION")
-                        Modifier.testTag(testTagParent1Child2)
-                            .size(boxSize)
-                            .background(Color.Magenta)
-                            .padding(boxPadding)
-                            .onIndirectPointerInput(
-                                onEvent = { _, _ -> },
-                                onCancel = onIndirectPointerCancelForParent1Child2,
-                            )
-                            .focusable()
-                )
+                    }
+                    if (displayParent1Child2.value) {
+                        Box(
+                            modifier =
+                                @Suppress("DEPRECATION")
+                                Modifier.testTag(testTagParent1Child2)
+                                    .size(boxSize)
+                                    .background(Color.Magenta)
+                                    .padding(boxPadding)
+                                    .onIndirectPointerInput(
+                                        onEvent = { _, _ -> },
+                                        onCancel = onIndirectPointerCancelForParent1Child2,
+                                    )
+                                    .focusable()
+                        )
+                    }
+                }
             }
 
             // Parent UI Element 2
-            Column(
-                modifier =
-                    Modifier.testTag(testTagParent2)
-                        .fillMaxWidth()
-                        .onIndirectPointerInput(
-                            onEvent = { _, _ -> },
-                            onCancel = onIndirectPointerCancelForParent2,
+            if (displayParent2.value) {
+                Column(
+                    modifier =
+                        Modifier.testTag(testTagParent2)
+                            .fillMaxWidth()
+                            .onIndirectPointerInput(
+                                onEvent = { _, _ -> },
+                                onCancel = onIndirectPointerCancelForParent2,
+                            )
+                ) {
+                    if (displayParent2Child1.value) {
+                        Box(
+                            modifier =
+                                @Suppress("DEPRECATION")
+                                Modifier.testTag(testTagParent2Child1)
+                                    .size(boxSize)
+                                    .background(Color.Green)
+                                    .padding(boxPadding)
+                                    .onIndirectPointerInput(
+                                        onEvent = { _, _ -> },
+                                        onCancel = onIndirectPointerCancelForParent2Child1,
+                                    )
+                                    .focusable()
                         )
-            ) {
-                Box(
-                    modifier =
-                        @Suppress("DEPRECATION")
-                        Modifier.testTag(testTagParent2Child1)
-                            .size(boxSize)
-                            .background(Color.Green)
-                            .padding(boxPadding)
-                            .onIndirectPointerInput(
-                                onEvent = { _, _ -> },
-                                onCancel = onIndirectPointerCancelForParent2Child1,
-                            )
-                            .focusable()
-                )
-                Box(
-                    modifier =
-                        @Suppress("DEPRECATION")
-                        Modifier.testTag(testTagParent2Child2)
-                            .size(boxSize)
-                            .background(Color.Yellow)
-                            .padding(boxPadding)
-                            .onIndirectPointerInput(
-                                onEvent = { _, _ -> },
-                                onCancel = onIndirectPointerCancelForParent2Child2,
-                            )
-                            .focusable()
-                )
+                    }
+                    if (displayParent2Child2.value) {
+                        Box(
+                            modifier =
+                                @Suppress("DEPRECATION")
+                                Modifier.testTag(testTagParent2Child2)
+                                    .size(boxSize)
+                                    .background(Color.Yellow)
+                                    .padding(boxPadding)
+                                    .onIndirectPointerInput(
+                                        onEvent = { _, _ -> },
+                                        onCancel = onIndirectPointerCancelForParent2Child2,
+                                    )
+                                    .focusable()
+                        )
+                    }
+                }
             }
 
             // Parent UI Element 3
-            Column(
-                modifier =
-                    Modifier.testTag(testTagParent3)
-                        .fillMaxWidth()
-                        .onIndirectPointerInput(
-                            onEvent = { _, _ -> },
-                            onCancel = onIndirectPointerCancelForParent3,
+            if (displayParent3.value) {
+                Column(
+                    modifier =
+                        Modifier.testTag(testTagParent3)
+                            .fillMaxWidth()
+                            .onIndirectPointerInput(
+                                onEvent = { _, _ -> },
+                                onCancel = onIndirectPointerCancelForParent3,
+                            )
+                ) {
+                    if (displayParent3Child1.value) {
+                        Box(
+                            modifier =
+                                @Suppress("DEPRECATION")
+                                Modifier.testTag(testTagParent3Child1)
+                                    .size(boxSize)
+                                    .background(Color.Blue)
+                                    .padding(boxPadding)
+                                    .onIndirectPointerInput(
+                                        onEvent = { _, _ -> },
+                                        onCancel = onIndirectPointerCancelForParent3Child1,
+                                    )
+                                    .focusable()
                         )
-            ) {
-                Box(
-                    modifier =
-                        @Suppress("DEPRECATION")
-                        Modifier.testTag(testTagParent3Child1)
-                            .size(boxSize)
-                            .background(Color.Blue)
-                            .padding(boxPadding)
-                            .onIndirectPointerInput(
-                                onEvent = { _, _ -> },
-                                onCancel = onIndirectPointerCancelForParent3Child1,
-                            )
-                            .focusable()
-                )
-                Box(
-                    modifier =
-                        @Suppress("DEPRECATION")
-                        Modifier.testTag(testTagParent3Child2)
-                            .size(boxSize)
-                            .background(Color.Cyan)
-                            .padding(boxPadding)
-                            .onIndirectPointerInput(
-                                onEvent = { _, _ -> },
-                                onCancel = onIndirectPointerCancelForParent3Child2,
-                            )
-                            .focusable()
-                )
+                    }
+                    if (displayParent3Child2.value) {
+                        Box(
+                            modifier =
+                                @Suppress("DEPRECATION")
+                                Modifier.testTag(testTagParent3Child2)
+                                    .size(boxSize)
+                                    .background(Color.Cyan)
+                                    .padding(boxPadding)
+                                    .onIndirectPointerInput(
+                                        onEvent = { _, _ -> },
+                                        onCancel = onIndirectPointerCancelForParent3Child2,
+                                    )
+                                    .focusable()
+                        )
+                    }
+                }
             }
         }
     }
