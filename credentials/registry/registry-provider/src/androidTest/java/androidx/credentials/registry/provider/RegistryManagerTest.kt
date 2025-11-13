@@ -57,6 +57,23 @@ class RegistryManagerTest {
         }
 
     @Test
+    fun registerCreationOptions_noOptionalModule_throws() =
+        runBlocking<Unit> {
+            assertThrows<RegisterCreationOptionsConfigurationException> {
+                registryManager.registerCreationOptions(
+                    object :
+                        RegisterCreationOptionsRequest(
+                            "type",
+                            "id",
+                            ByteArray(4),
+                            ByteArray(8),
+                            "intentAction",
+                        ) {}
+                )
+            }
+        }
+
+    @Test
     fun clearCredentialRegistry_noOptionalModule_throws() =
         runBlocking<Unit> {
             assertThrows<ClearCredentialRegistryConfigurationException> {
