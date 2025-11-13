@@ -1379,6 +1379,8 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
     /** This function is used by the testing framework to send indirect pointer events. */
     @ExperimentalIndirectPointerApi
     override fun sendIndirectPointerEvent(indirectPointerEvent: IndirectPointerEvent): Boolean {
+        // TODO (jjw): Investigate only triggering cancel during an active indirect event stream
+        //  (should include detach scenarios).
         if (indirectPointerEvent.nativeEvent.actionMasked == ACTION_CANCEL) {
             focusOwner.dispatchIndirectPointerCancel()
             return true
