@@ -247,5 +247,15 @@ public constructor(
          * Represents a small widget container. Support for this container type is device dependent.
          */
         public const val CONTAINER_TYPE_SMALL: Int = 2
+
+        @RestrictTo(LIBRARY_GROUP)
+        @JvmStatic
+        public fun containerTypeDebugString(@ContainerType containerType: Int): String =
+            when (containerType) {
+                CONTAINER_TYPE_FULLSCREEN -> "FULLSCREEN"
+                CONTAINER_TYPE_SMALL -> "SMALL"
+                CONTAINER_TYPE_LARGE -> "LARGE"
+                else -> containerType.toString()
+            }
     }
 }
