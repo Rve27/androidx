@@ -16,6 +16,9 @@
 
 package androidx.compose.ui.node
 
+import androidx.collection.MutableScatterSet
+import androidx.collection.ScatterSet
+import androidx.collection.mutableScatterSetOf
 import androidx.compose.runtime.collection.MutableVector
 import androidx.compose.runtime.collection.mutableVectorOf
 import androidx.compose.ui.Modifier
@@ -284,10 +287,10 @@ internal inline fun <reified T> DelegatableNode.ancestors(
 internal inline fun <reified T> DelegatableNode.setOfAncestors(
     type: NodeKind<T>,
     includeSelf: Boolean = false,
-): Set<T>? {
-    var result: MutableSet<T>? = null
+): ScatterSet<T>? {
+    var result: MutableScatterSet<T>? = null
     visitAncestors(type, includeSelf) {
-        if (result == null) result = mutableSetOf()
+        if (result == null) result = mutableScatterSetOf()
         result.add(it)
     }
     return result
