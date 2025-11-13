@@ -32,10 +32,10 @@ import androidx.compose.remote.creation.compose.modifier.fillMaxHeight
 import androidx.compose.remote.creation.compose.modifier.fillMaxSize
 import androidx.compose.remote.creation.compose.modifier.fillMaxWidth
 import androidx.compose.remote.creation.compose.state.RemoteFloat
+import androidx.compose.remote.creation.compose.state.rf
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
@@ -160,7 +160,7 @@ fun RcSimpleClock1(
             // bezel circles
             for (i in 0 until 12) {
                 rotate(15f + 30f * i, centerX, centerY) {
-                    drawCircle(minHandColor, 8f, ROffset(centerX, top + bezel_thick / 2))
+                    drawCircle(minHandColor, 8f, RemoteOffset(centerX, top + bezel_thick / 2))
                 }
             }
             // bezel text
@@ -188,7 +188,7 @@ fun RcSimpleClock1(
                         drawCircle(
                             minHandColor,
                             20f,
-                            ROffset(centerX, top + (bezel_thick + 20f) + 20f),
+                            RemoteOffset(centerX, top + (bezel_thick + 20f) + 20f),
                         )
                     }
                 } else {
@@ -197,16 +197,16 @@ fun RcSimpleClock1(
                         rotate(30f * i + 30, centerX, centerY) {
                             drawRect(
                                 minHandColor,
-                                topLeft = ROffset(centerX - 10f, shift),
-                                size = RSize(20f, 40f),
+                                topLeft = RemoteOffset(centerX - 10f, shift),
+                                size = RemoteSize(20f.rf, 40f.rf),
                             )
                         }
                     } else if (i == 8) {
                         rotate(30f * i + 30, centerX, centerY) {
                             drawRoundRect(
                                 minHandColor,
-                                topLeft = ROffset(centerX - 10f, shift),
-                                size = RSize(20f, 40f),
+                                topLeft = RemoteOffset(centerX - 10f, shift),
+                                size = RemoteSize(20f.rf, 40f.rf),
                                 CornerRadius(10f, 10f),
                             )
                         }
@@ -237,7 +237,7 @@ fun RcSimpleClock1(
             val dateRight = remote.component.width - 140f
             val dateBottom = centerY + 30f
             val cx = dateLeft + 40f
-            drawRect(bezelMarkColor, ROffset(dateLeft, dateTop), Size(80f, 60f))
+            drawRect(bezelMarkColor, RemoteOffset(dateLeft, dateTop), RemoteSize(80f.rf, 60f.rf))
             drawAnchoredText("32", Color.Black, ROffset(cx, centerY), 0f, 0f, textSize = 40)
             // =============== DAY Complication ===============
             val dayCenterX = centerX + rad - 280f
@@ -245,7 +245,7 @@ fun RcSimpleClock1(
             val dayRight = dayCenterX + 46f
 
             clipRect(dayLeft, dateTop, dayRight, dateBottom) {
-                drawCircle(Color.LightGray, dateLeft - centerX, ROffset(centerX, centerY))
+                drawCircle(Color.LightGray, dateLeft - centerX, RemoteOffset(centerX, centerY))
                 for (i in 0 until 7) {
                     val anim = remote.animateFloat((timeSeconds + i.toFloat()) * 360f / 7f, 0.2f)
                     rotate(anim, centerX, centerY) {
@@ -311,12 +311,12 @@ fun RcSimpleClock1(
                 drawCircle(
                     minHandColor,
                     handWidth,
-                    ROffset(centerX, centerY - minHandLength * 0.7f),
+                    RemoteOffset(centerX, centerY - minHandLength * 0.7f),
                 )
             }
 
-            drawCircle(minHandColor, handWidth, ROffset(centerX, centerY))
-            drawCircle(Color.Black, 10f, ROffset(centerX, centerY))
+            drawCircle(minHandColor, handWidth, RemoteOffset(centerX, centerY))
+            drawCircle(Color.Black, 10f, RemoteOffset(centerX, centerY))
         }
     }
 }
