@@ -39,6 +39,7 @@ import androidx.compose.remote.creation.compose.state.RemoteColor
 import androidx.compose.remote.creation.compose.state.RemoteFloat
 import androidx.compose.remote.creation.compose.state.RemotePaint
 import androidx.compose.remote.creation.compose.state.RemoteString
+import androidx.compose.remote.creation.compose.state.rf
 import androidx.compose.remote.creation.compose.state.tween
 import androidx.compose.remote.creation.compose.test.R
 import androidx.compose.remote.creation.platform.AndroidxRcPlatformServices
@@ -141,12 +142,18 @@ class RecordingCanvasTest {
         val angle = RemoteFloat(RemoteContext.FLOAT_CONTINUOUS_SEC) * 6f % 360.0f
         recordingCanvas.drawConditionally(flag) {
             recordingCanvas.save()
-            recordingCanvas.rotate(angle, 150f, 150f)
-            recordingCanvas.drawRect(10f, 10f, 300f, 300f, Paint().apply { color = Color.YELLOW })
+            recordingCanvas.rotate(angle, 150f.rf, 150f.rf)
+            recordingCanvas.drawRect(
+                10f.rf,
+                10f.rf,
+                300f.rf,
+                300f.rf,
+                Paint().apply { color = Color.YELLOW },
+            )
             recordingCanvas.drawText(
                 "True",
-                10,
-                80,
+                10.rf,
+                80.rf,
                 Paint().apply {
                     color = Color.GREEN
                     textSize = 80f
@@ -156,13 +163,19 @@ class RecordingCanvasTest {
         }
         recordingCanvas.drawConditionally(!flag) {
             recordingCanvas.save()
-            recordingCanvas.rotate(angle, 150f, 150f)
-            recordingCanvas.drawRect(10f, 10f, 300f, 300f, Paint().apply { color = Color.YELLOW })
+            recordingCanvas.rotate(angle, 150f.rf, 150f.rf)
+            recordingCanvas.drawRect(
+                10f.rf,
+                10f.rf,
+                300f.rf,
+                300f.rf,
+                Paint().apply { color = Color.YELLOW },
+            )
 
             recordingCanvas.drawText(
                 "False",
-                10,
-                80,
+                10.rf,
+                80.rf,
                 Paint().apply {
                     color = Color.RED
                     textSize = 80f
@@ -187,8 +200,8 @@ class RecordingCanvasTest {
             recordingCanvas.drawText(
                 hueString1,
                 -1,
-                10f,
-                80f,
+                10f.rf,
+                80f.rf,
                 Paint().apply {
                     color = Color.GREEN
                     textSize = 80f
@@ -198,8 +211,8 @@ class RecordingCanvasTest {
         recordingCanvas.drawText(
             hueString2,
             -1,
-            12f,
-            82f,
+            12f.rf,
+            82f.rf,
             Paint().apply {
                 color = Color.RED
                 textSize = 80f
@@ -391,27 +404,33 @@ class RecordingCanvasTest {
 
     @Test
     fun drawToOffscreenBitmap() {
-        recordingCanvas.drawRect(0, 0, WIDTH, HEIGHT, Paint().apply { color = Color.BLACK })
         recordingCanvas.drawRect(
-            20,
-            20,
-            WIDTH - 20,
-            HEIGHT - 20,
+            0.rf,
+            0.rf,
+            WIDTH.rf,
+            HEIGHT.rf,
+            Paint().apply { color = Color.BLACK },
+        )
+        recordingCanvas.drawRect(
+            20.rf,
+            20.rf,
+            (WIDTH - 20).rf,
+            (HEIGHT - 20).rf,
             Paint().apply { color = Color.YELLOW },
         )
         val bitmap =
             recordingCanvas.drawToOffscreenBitmap(WIDTH, HEIGHT, Color.BLACK) {
                 recordingCanvas.drawOval(
-                    20,
-                    20,
-                    WIDTH - 20,
-                    HEIGHT - 20,
+                    20.rf,
+                    20.rf,
+                    (WIDTH - 20).rf,
+                    (HEIGHT - 20).rf,
                     Paint().apply { color = Color.RED },
                 )
                 recordingCanvas.drawText(
                     "HI",
-                    20,
-                    HEIGHT - 50,
+                    20.rf,
+                    (HEIGHT - 50).rf,
                     Paint().apply {
                         textSize = 380f
                         typeface = Typeface.DEFAULT_BOLD
@@ -433,13 +452,25 @@ class RecordingCanvasTest {
 
     @Test
     fun drawToOffscreenBitmap_nested() {
-        recordingCanvas.drawRect(0, 0, WIDTH, HEIGHT, Paint().apply { color = Color.BLACK })
+        recordingCanvas.drawRect(
+            0.rf,
+            0.rf,
+            WIDTH.rf,
+            HEIGHT.rf,
+            Paint().apply { color = Color.BLACK },
+        )
 
         // Create the outer offscreen bitmap.
         val outerBitmap =
             recordingCanvas.drawToOffscreenBitmap(WIDTH, HEIGHT, Color.TRANSPARENT) {
                 // Draw a blue background on the outer bitmap.
-                recordingCanvas.drawRect(0, 0, WIDTH, HEIGHT, Paint().apply { color = Color.BLUE })
+                recordingCanvas.drawRect(
+                    0.rf,
+                    0.rf,
+                    WIDTH.rf,
+                    HEIGHT.rf,
+                    Paint().apply { color = Color.BLUE },
+                )
 
                 recordingCanvas.save()
 

@@ -131,18 +131,18 @@ fun RcSimpleClock1(
 
             drawCircle(bezel1, rad, RemoteOffset(centerX, centerY))
 
-            clipRect(0f, centerY.internalAsFloat(), w.internalAsFloat(), h.internalAsFloat()) {
+            clipRect(0f.rf, centerY, w, h) {
                 this@RemoteCanvas.drawCircle(bezel2, rad, RemoteOffset(centerX, centerY))
             }
             drawCircle(Color.Black, rad, RemoteOffset(centerX, centerY), style = Stroke(width = 8f))
             drawCircle(Color.DarkGray, rad - bezel_thick, RemoteOffset(centerX, centerY))
 
             for (i in 0 until 60) {
-                rotate(i * 6f, centerX, centerY) {
+                rotate((i * 6f).rf, centerX, centerY) {
                     drawLine(
                         ticksColor,
-                        ROffset(centerX, top + (bezel_thick + 20f)),
-                        ROffset(centerX, top + bezel_thick),
+                        RemoteOffset(centerX, top + (bezel_thick + 20f)),
+                        RemoteOffset(centerX, top + bezel_thick),
                         strokeWidth = 2f,
                     )
                 }
@@ -159,24 +159,24 @@ fun RcSimpleClock1(
             val shift = faceTop + bezel_thick + 20f
             // bezel circles
             for (i in 0 until 12) {
-                rotate(15f + 30f * i, centerX, centerY) {
-                    drawCircle(minHandColor, 8f, RemoteOffset(centerX, top + bezel_thick / 2))
+                rotate(15f.rf + 30f * i, centerX, centerY) {
+                    drawCircle(minHandColor, 8f.rf, RemoteOffset(centerX, top + bezel_thick / 2))
                 }
             }
             // bezel text
             for (i in 0 until 12) {
                 if (i != 0) {
-                    rotate(30f * i, centerX, centerY) {
+                    rotate(30f.rf * i.rf, centerX, centerY) {
                         //  drawText(textMeasurer.measure("" + (i*2)), color=Color.White,
                         // Offset(centerX, top +
                         // bezel_thick / 2),)
                         drawAnchoredText(
                             "" + (i * 2),
                             color = Color.White,
-                            anchor = ROffset(centerX, top + bezel_thick / 2),
-                            panx = 0f,
-                            pany = 0f,
-                            textSize = 50f,
+                            anchor = RemoteOffset(centerX, top + bezel_thick / 2),
+                            panx = 0f.rf,
+                            pany = 0f.rf,
+                            textSize = 50f.rf,
                         )
                     }
                 }
@@ -184,17 +184,17 @@ fun RcSimpleClock1(
             // ============ Draw Markers at various points =============
             for (i in 0 until 12) {
                 if ((i + 1) % 3 != 0) {
-                    rotate(30f * i + 30, centerX, centerY) {
+                    rotate(30f.rf * i.rf + 30.rf, centerX, centerY) {
                         drawCircle(
                             minHandColor,
-                            20f,
+                            20f.rf,
                             RemoteOffset(centerX, top + (bezel_thick + 20f) + 20f),
                         )
                     }
                 } else {
 
                     if (i == 5) {
-                        rotate(30f * i + 30, centerX, centerY) {
+                        rotate(30f.rf * i.rf + 30.rf, centerX, centerY) {
                             drawRect(
                                 minHandColor,
                                 topLeft = RemoteOffset(centerX - 10f, shift),
@@ -202,7 +202,7 @@ fun RcSimpleClock1(
                             )
                         }
                     } else if (i == 8) {
-                        rotate(30f * i + 30, centerX, centerY) {
+                        rotate(30f.rf * i.rf + 30.rf, centerX, centerY) {
                             drawRoundRect(
                                 minHandColor,
                                 topLeft = RemoteOffset(centerX - 10f, shift),
@@ -212,12 +212,12 @@ fun RcSimpleClock1(
                         }
                         // drawRect(rect1, 130f, rect2, 180f)
                     } else if (i == 11) {
-                        rotate(30f * i + 30, centerX, centerY) {
+                        rotate(30f.rf * i.rf + 30.rf, centerX, centerY) {
                             val path = Path()
 
-                            path.moveTo(40f, 0)
-                            path.lineTo(-40f, 0)
-                            path.lineTo(0, 40f)
+                            path.moveTo(40f, 0f)
+                            path.lineTo(-40f, 0f)
+                            path.lineTo(0f, 40f)
                             path.close()
 
                             translate(
@@ -238,7 +238,14 @@ fun RcSimpleClock1(
             val dateBottom = centerY + 30f
             val cx = dateLeft + 40f
             drawRect(bezelMarkColor, RemoteOffset(dateLeft, dateTop), RemoteSize(80f.rf, 60f.rf))
-            drawAnchoredText("32", Color.Black, ROffset(cx, centerY), 0f, 0f, textSize = 40)
+            drawAnchoredText(
+                "32",
+                Color.Black,
+                RemoteOffset(cx, centerY),
+                0f.rf,
+                0f.rf,
+                textSize = 40.rf,
+            )
             // =============== DAY Complication ===============
             val dayCenterX = centerX + rad - 280f
             val dayLeft = dayCenterX - 46f
@@ -248,14 +255,14 @@ fun RcSimpleClock1(
                 drawCircle(Color.LightGray, dateLeft - centerX, RemoteOffset(centerX, centerY))
                 for (i in 0 until 7) {
                     val anim = remote.animateFloat((timeSeconds + i.toFloat()) * 360f / 7f, 0.2f)
-                    rotate(anim, centerX, centerY) {
+                    this@RemoteCanvas.rotate(anim, centerX, centerY) {
                         drawAnchoredText(
                             days[6 - i],
                             Color.Black,
-                            ROffset(dayCenterX, centerY),
-                            0f,
-                            0f,
-                            textSize = 40f,
+                            RemoteOffset(dayCenterX, centerY),
+                            0f.rf,
+                            0f.rf,
+                            textSize = 40f.rf,
                         )
                     }
                 }
@@ -264,8 +271,8 @@ fun RcSimpleClock1(
             rotate(hrAngle, centerX, centerY) {
                 drawLine(
                     hourHandColor,
-                    ROffset(centerX, centerY - hourHandLength),
-                    ROffset(centerX, centerY),
+                    RemoteOffset(centerX, centerY - hourHandLength),
+                    RemoteOffset(centerX, centerY),
                     strokeWidth = handWidth,
                     cap = StrokeCap.Round,
                 )
@@ -274,8 +281,8 @@ fun RcSimpleClock1(
             rotate(minAngle, centerX, centerY) {
                 drawLine(
                     minHandColor,
-                    ROffset(centerX, centerY - minHandLength),
-                    ROffset(centerX, centerY),
+                    RemoteOffset(centerX, centerY - minHandLength),
+                    RemoteOffset(centerX, centerY),
                     strokeWidth = handWidth,
                     cap = StrokeCap.Round,
                 )
@@ -285,6 +292,7 @@ fun RcSimpleClock1(
             val gmtColor = Color(0xFFFF0000)
 
             val gmtPath = Path()
+            gmtPath.moveTo(1f, 1f)
             gmtPath.moveTo(centerX - 20f, top + (bezel_thick + 60f))
             gmtPath.lineTo(centerX + 20f, top + (bezel_thick + 60f))
             gmtPath.lineTo(centerX, top + (bezel_thick + 30f))
@@ -293,8 +301,8 @@ fun RcSimpleClock1(
             rotate(gmtAngle, centerX, centerY) {
                 drawLine(
                     gmtColor,
-                    ROffset(centerX, centerY),
-                    ROffset(centerX, top + (bezel_thick + 60f)),
+                    RemoteOffset(centerX, centerY),
+                    RemoteOffset(centerX, top + (bezel_thick + 60f)),
                     strokeWidth = 3f,
                 )
                 drawPath(gmtPath, gmtColor, style = Fill)
@@ -303,20 +311,20 @@ fun RcSimpleClock1(
             rotate(secondAngle, centerX, centerY) {
                 drawLine(
                     minHandColor,
-                    ROffset(centerX, centerY - minHandLength),
-                    ROffset(centerX, centerY),
+                    RemoteOffset(centerX, centerY - minHandLength),
+                    RemoteOffset(centerX, centerY),
                     strokeWidth = 4f,
                     cap = StrokeCap.Round,
                 )
                 drawCircle(
                     minHandColor,
-                    handWidth,
+                    handWidth.rf,
                     RemoteOffset(centerX, centerY - minHandLength * 0.7f),
                 )
             }
 
-            drawCircle(minHandColor, handWidth, RemoteOffset(centerX, centerY))
-            drawCircle(Color.Black, 10f, RemoteOffset(centerX, centerY))
+            drawCircle(minHandColor, handWidth.rf, RemoteOffset(centerX, centerY))
+            drawCircle(Color.Black, 10f.rf, RemoteOffset(centerX, centerY))
         }
     }
 }
