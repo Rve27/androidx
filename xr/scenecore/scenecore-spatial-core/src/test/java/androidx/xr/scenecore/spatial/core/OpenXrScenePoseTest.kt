@@ -24,8 +24,6 @@ import androidx.xr.runtime.math.Quaternion
 import androidx.xr.runtime.math.Vector3
 import androidx.xr.runtime.testing.math.assertPose
 import androidx.xr.runtime.testing.math.assertVector3
-import androidx.xr.scenecore.impl.perception.PerceptionLibrary
-import androidx.xr.scenecore.impl.perception.Session
 import androidx.xr.scenecore.runtime.GltfFeature
 import androidx.xr.scenecore.runtime.HitTestResult
 import androidx.xr.scenecore.runtime.ScenePose
@@ -43,7 +41,6 @@ import org.junit.Assert.assertNotNull
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito.mock
-import org.mockito.Mockito.`when`
 import org.robolectric.ParameterizedRobolectricTestRunner
 import org.robolectric.ParameterizedRobolectricTestRunner.Parameters
 import org.robolectric.Robolectric
@@ -52,8 +49,6 @@ import org.robolectric.Robolectric
 @RunWith(ParameterizedRobolectricTestRunner::class)
 class OpenXrScenePoseTest(private val testScenePoseType: OpenXrScenePoseType) {
     private val xrExtensions: XrExtensions? = XrExtensionsProvider.getXrExtensions()
-    private val perceptionLibrary: PerceptionLibrary = mock(PerceptionLibrary::class.java)
-    private val session: Session = mock(Session::class.java)
     private val executor = FakeScheduledExecutorService()
     private val entityManager = EntityManager()
     private val activity: Activity =
@@ -99,10 +94,6 @@ class OpenXrScenePoseTest(private val testScenePoseType: OpenXrScenePoseType) {
             OpenXrScenePoseType.PERCEPTION_POSE_ACTIVITY_POSE ->
                 return createOpenXrScenePose(activitySpace, pose)
         }
-    }
-
-    private fun setPerceptionPose(pose: Pose?) {
-        `when`(perceptionLibrary.session).thenReturn(session)
     }
 
     /** Creates a generic glTF entity. */
@@ -343,7 +334,6 @@ class OpenXrScenePoseTest(private val testScenePoseType: OpenXrScenePoseType) {
     fun transformPoseTo_withScaledActivitySpaceAndDifferentSourcePose_returnsTransformedPose() {
         val openXrPose = Pose(Vector3(1f, 2f, 3f), Quaternion.Identity)
         testScenePose = createTestScenePose(openXrPose)
-        setPerceptionPose(openXrPose)
         activitySpace.setOpenXrReferenceSpaceTransform(
             Matrix4.fromTrs(
                 /* translation= */ Vector3(2f, 3f, 4f),
@@ -369,7 +359,6 @@ class OpenXrScenePoseTest(private val testScenePoseType: OpenXrScenePoseType) {
         // With scaled activity space and identity offset
         val openXrPose = Pose(Vector3(1f, 2f, 3f), Quaternion.Identity)
         testScenePose = createTestScenePose(openXrPose)
-        setPerceptionPose(openXrPose)
         activitySpace.setOpenXrReferenceSpaceTransform(Matrix4.fromScale(2f))
 
         val expectedPose = testScenePose!!.poseInActivitySpace
@@ -382,7 +371,6 @@ class OpenXrScenePoseTest(private val testScenePoseType: OpenXrScenePoseType) {
     fun transformPoseTo_withScaledActivitySpaceAtSourcePose_returnsScaledOffset() {
         val openXrPose = Pose(Vector3(1f, 2f, 3f), Quaternion.Identity)
         testScenePose = createTestScenePose(openXrPose)
-        setPerceptionPose(openXrPose)
         activitySpace.setOpenXrReferenceSpaceTransform(
             Matrix4.fromTrs(
                 openXrPose.translation,

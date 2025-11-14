@@ -24,8 +24,6 @@ import static com.android.extensions.xr.node.ReformOptions.ALLOW_MOVE;
 import static com.android.extensions.xr.node.ReformOptions.ALLOW_RESIZE;
 
 import static com.google.common.truth.Truth.assertThat;
-import static com.google.common.util.concurrent.Futures.immediateFailedFuture;
-import static com.google.common.util.concurrent.Futures.immediateFuture;
 import static com.google.common.util.concurrent.MoreExecutors.directExecutor;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -55,12 +53,6 @@ import androidx.xr.runtime.math.Matrix4;
 import androidx.xr.runtime.math.Pose;
 import androidx.xr.runtime.math.Quaternion;
 import androidx.xr.runtime.math.Vector3;
-import androidx.xr.scenecore.impl.perception.Fov;
-import androidx.xr.scenecore.impl.perception.PerceptionLibrary;
-import androidx.xr.scenecore.impl.perception.Session;
-import androidx.xr.scenecore.impl.perception.ViewProjection;
-import androidx.xr.scenecore.impl.perception.ViewProjections;
-import androidx.xr.scenecore.impl.perception.exceptions.FailedToInitializeException;
 import androidx.xr.scenecore.runtime.ActivitySpace;
 import androidx.xr.scenecore.runtime.AnchorEntity;
 import androidx.xr.scenecore.runtime.AnchorEntity.State;
@@ -120,7 +112,6 @@ import com.android.extensions.xr.space.VisibilityState;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.util.concurrent.ListenableFuture;
 
 import org.jspecify.annotations.NonNull;
 import org.junit.After;
@@ -146,8 +137,6 @@ public class SpatialSceneRuntimeTest {
     Activity mActivity;
     private SpatialSceneRuntime mRuntime;
     private final EntityManager mEntityManager = new EntityManager();
-    private final PerceptionLibrary mPerceptionLibrary = mock(PerceptionLibrary.class);
-    private final Session mSession = mock(Session.class);
     private final NodeRepository mNodeRepository = NodeRepository.getInstance();
     private final @NonNull XrExtensions mXrExtensions =
             Objects.requireNonNull(XrExtensionsProvider.getXrExtensions());
@@ -161,9 +150,6 @@ public class SpatialSceneRuntimeTest {
 
         ShadowXrExtensions.extract(mXrExtensions)
                 .setOpenXrWorldSpaceType(OPEN_XR_REFERENCE_SPACE_TYPE);
-        when(mPerceptionLibrary.initSession(mActivity, OPEN_XR_REFERENCE_SPACE_TYPE, mFakeExecutor))
-                .thenReturn(immediateFuture(mSession));
-        when(mPerceptionLibrary.getActivity()).thenReturn(mActivity);
 
         mRuntime =
                 SpatialSceneRuntime.create(
@@ -171,7 +157,6 @@ public class SpatialSceneRuntimeTest {
                         mFakeExecutor,
                         mXrExtensions,
                         mEntityManager,
-                        mPerceptionLibrary,
                         false);
     }
 
@@ -216,28 +201,6 @@ public class SpatialSceneRuntimeTest {
         assertThat(mNodeRepository.getName(taskWindowLeashNode))
                 .isEqualTo("MainPanelAndTaskWindowLeashNode");
         assertThat(mNodeRepository.getParent(taskWindowLeashNode)).isEqualTo(rootNode);
-    }
-
-    @Test
-    public void initRuntimePerceptionFailure() {
-        ListenableFuture<Session> sessionFuture =
-                immediateFailedFuture(
-                        new FailedToInitializeException("Failed to initialize a session."));
-        when(mPerceptionLibrary.initSession(mActivity, OPEN_XR_REFERENCE_SPACE_TYPE, mFakeExecutor))
-                .thenReturn(sessionFuture);
-
-        mRuntime =
-                SpatialSceneRuntime.create(
-                        mActivity,
-                        mFakeExecutor,
-                        mXrExtensions,
-                        new EntityManager(),
-                        mPerceptionLibrary,
-                        false);
-
-        // The perception library failed to initialize a session, but the runtime should still be
-        // created.
-        assertThat(mRuntime).isNotNull();
     }
 
     @Test
@@ -2291,34 +2254,6 @@ public class SpatialSceneRuntimeTest {
     }
 
     @Test
-    public void
-            getStereoViewsInOpenXrUnboundedSpace_returnsNullWhenPerceptionSessionUninitialized() {
-        when(mPerceptionLibrary.getSession()).thenReturn(null);
-
-        assertThat(mRuntime.getStereoViewsInOpenXrUnboundedSpace()).isNull();
-    }
-
-    @Test
-    public void getStereoViewsInOpenXrUnboundedSpace_returnsViewProjections() {
-        ViewProjection leftViewProjection =
-                new ViewProjection(
-                        new androidx.xr.scenecore.impl.perception.Pose(-1f, 1f, 1f, 0f, 0f, 0f, 1f),
-                        new Fov(-1f, -1f, -1f, -1f));
-
-        ViewProjection rightViewProjection =
-                new ViewProjection(
-                        new androidx.xr.scenecore.impl.perception.Pose(1f, 1f, 1f, 0f, 0f, 0f, 1f),
-                        new Fov(1f, 1f, 1f, 1f));
-
-        when(mSession.getStereoViews())
-                .thenReturn(new ViewProjections(leftViewProjection, rightViewProjection));
-        when(mPerceptionLibrary.getSession()).thenReturn(mSession);
-
-        assertThat(mRuntime.getStereoViewsInOpenXrUnboundedSpace())
-                .isEqualTo(new ViewProjections(leftViewProjection, rightViewProjection));
-    }
-
-    @Test
     public void dispose_clearsReformOptions() {
         AndroidXrEntity entity = (AndroidXrEntity) createGroupEntity();
         ReformOptions reformOptions = entity.getReformOptions();
@@ -2389,7 +2324,6 @@ public class SpatialSceneRuntimeTest {
                         mFakeExecutor,
                         mXrExtensions,
                         mEntityManager,
-                        mPerceptionLibrary,
                         false);
 
         when(mActivity.getSystemService(WindowManager.class)).thenReturn(mWindowManager);

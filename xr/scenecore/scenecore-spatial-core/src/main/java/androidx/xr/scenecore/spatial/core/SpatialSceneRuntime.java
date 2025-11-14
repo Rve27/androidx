@@ -32,9 +32,6 @@ import android.view.WindowManager;
 import androidx.annotation.RestrictTo;
 import androidx.annotation.VisibleForTesting;
 import androidx.xr.runtime.math.Pose;
-import androidx.xr.scenecore.impl.perception.PerceptionLibrary;
-import androidx.xr.scenecore.impl.perception.Session;
-import androidx.xr.scenecore.impl.perception.ViewProjections;
 import androidx.xr.scenecore.runtime.ActivityPanelEntity;
 import androidx.xr.scenecore.runtime.ActivitySpace;
 import androidx.xr.scenecore.runtime.AnchorEntity;
@@ -107,7 +104,6 @@ public class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory
     private final Node mTaskWindowLeashNode;
     private boolean mIsDestroyed;
     private final EntityManager mEntityManager;
-    private final PerceptionLibrary mPerceptionLibrary;
     private final SpatialEnvironmentImpl mEnvironment;
 
     private final SoundPoolExtensionsWrapper mSoundPoolExtensionsWrapper;
@@ -145,7 +141,6 @@ public class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory
             @NonNull ScheduledExecutorService executor,
             @NonNull XrExtensions extensions,
             @NonNull EntityManager entityManager,
-            @NonNull PerceptionLibrary perceptionLibrary,
             @NonNull Node sceneRootNode,
             @NonNull Node taskWindowLeashNode,
             boolean unscaledGravityAlignedActivitySpace) {
@@ -155,7 +150,6 @@ public class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory
         mSceneRootNode = sceneRootNode;
         mTaskWindowLeashNode = taskWindowLeashNode;
         mEntityManager = entityManager;
-        mPerceptionLibrary = perceptionLibrary;
 
         mLazySpatialStateProvider =
                 () ->
@@ -207,14 +201,12 @@ public class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory
             @NonNull ScheduledExecutorService executor,
             @NonNull XrExtensions extensions,
             @NonNull EntityManager entityManager,
-            @NonNull PerceptionLibrary perceptionLibrary,
             boolean unscaledGravityAlignedActivitySpace) {
         return create(
                 activity,
                 executor,
                 extensions,
                 entityManager,
-                perceptionLibrary,
                 unscaledGravityAlignedActivitySpace,
                 /* sceneRootNode= */ extensions.createNode(),
                 /* taskWindowLeashNode= */ extensions.createNode());
@@ -230,7 +222,6 @@ public class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory
                 executor,
                 Objects.requireNonNull(XrExtensionsProvider.getXrExtensions()),
                 new EntityManager(),
-                new PerceptionLibrary(),
                 /* unscaledGravityAlignedActivitySpace= */ false,
                 /* sceneRootNode= */ sceneRootNode,
                 /* taskWindowLeashNode= */ taskWindowLeashNode);
@@ -241,7 +232,6 @@ public class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory
             @NonNull ScheduledExecutorService executor,
             @NonNull XrExtensions extensions,
             @NonNull EntityManager entityManager,
-            @NonNull PerceptionLibrary perceptionLibrary,
             boolean unscaledGravityAlignedActivitySpace,
             @NonNull Node sceneRootNode,
             @NonNull Node taskWindowLeashNode) {
@@ -263,7 +253,6 @@ public class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory
                         executor,
                         extensions,
                         entityManager,
-                        perceptionLibrary,
                         sceneRootNode,
                         taskWindowLeashNode,
                         unscaledGravityAlignedActivitySpace);
@@ -280,7 +269,6 @@ public class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory
                 executor,
                 Objects.requireNonNull(XrExtensionsProvider.getXrExtensions()),
                 new EntityManager(),
-                new PerceptionLibrary(),
                 unscaledGravityAlignedActivitySpace);
     }
 
@@ -771,20 +759,6 @@ public class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory
     @Override
     public @NonNull SpatialPointerComponent createSpatialPointerComponent() {
         return new SpatialPointerComponentImpl(mExtensions);
-    }
-
-    /**
-     * Get the user's current eye views relative to @c XR_REFERENCE_SPACE_TYPE_UNBOUNDED_ANDROID.
-     */
-    @VisibleForTesting
-    @Nullable
-    ViewProjections getStereoViewsInOpenXrUnboundedSpace() {
-        Session session = mPerceptionLibrary.getSession();
-        if (session == null) {
-            // Perception session is uninitialized, returning null head pose.
-            return null;
-        }
-        return session.getStereoViews();
     }
 
     // Suppress warnings: windowManager's getDefaultDisplay and getRealMetrics.

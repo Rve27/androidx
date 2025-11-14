@@ -24,17 +24,13 @@ import static com.android.extensions.xr.node.ReformEvent.REFORM_TYPE_RESIZE;
 import static com.android.extensions.xr.node.ReformOptions.ALLOW_MOVE;
 
 import static com.google.common.truth.Truth.assertThat;
-import static com.google.common.util.concurrent.Futures.immediateFuture;
 import static com.google.common.util.concurrent.MoreExecutors.directExecutor;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import android.app.Activity;
 import android.content.Context;
@@ -48,8 +44,6 @@ import androidx.xr.runtime.math.Matrix4;
 import androidx.xr.runtime.math.Pose;
 import androidx.xr.runtime.math.Quaternion;
 import androidx.xr.runtime.math.Vector3;
-import androidx.xr.scenecore.impl.perception.PerceptionLibrary;
-import androidx.xr.scenecore.impl.perception.Session;
 import androidx.xr.scenecore.runtime.AnchorPlacement;
 import androidx.xr.scenecore.runtime.Dimensions;
 import androidx.xr.scenecore.runtime.Entity;
@@ -102,7 +96,6 @@ public class MovableComponentImplTest {
             Robolectric.buildActivity(Activity.class);
     private final Activity mActivity = mActivityController.create().start().get();
     private final FakeScheduledExecutorService mFakeExecutor = new FakeScheduledExecutorService();
-    private final PerceptionLibrary mPerceptionLibrary = mock(PerceptionLibrary.class);
     private final XrExtensions mXrExtensions = XrExtensionsProvider.getXrExtensions();
     private final EntityManager mEntityManager = new EntityManager();
 
@@ -121,16 +114,12 @@ public class MovableComponentImplTest {
 
     @Before
     public void setUp() {
-        when(mPerceptionLibrary.initSession(eq(mActivity), anyInt(), eq(mFakeExecutor)))
-                .thenReturn(immediateFuture(mock(Session.class)));
-        when(mPerceptionLibrary.getActivity()).thenReturn(mActivity);
         mFakeRuntime =
                 SpatialSceneRuntime.create(
                         mActivity,
                         mFakeExecutor,
                         mXrExtensions,
                         mEntityManager,
-                        mPerceptionLibrary,
                         /* unscaledGravityAlignedActivitySpace= */ false);
         mActivitySpaceImpl = (ActivitySpaceImpl) mFakeRuntime.getActivitySpace();
         mActivitySpaceNode = mActivitySpaceImpl.mNode;

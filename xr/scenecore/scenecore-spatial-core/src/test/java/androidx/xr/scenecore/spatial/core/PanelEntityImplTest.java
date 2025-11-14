@@ -17,13 +17,8 @@
 package androidx.xr.scenecore.spatial.core;
 
 import static com.google.common.truth.Truth.assertThat;
-import static com.google.common.util.concurrent.Futures.immediateFuture;
 
 import static org.junit.Assert.assertThrows;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import android.app.Activity;
 import android.content.Context;
@@ -37,8 +32,6 @@ import androidx.xr.runtime.math.Pose;
 import androidx.xr.runtime.math.Quaternion;
 import androidx.xr.runtime.math.Vector2;
 import androidx.xr.runtime.math.Vector3;
-import androidx.xr.scenecore.impl.perception.PerceptionLibrary;
-import androidx.xr.scenecore.impl.perception.Session;
 import androidx.xr.scenecore.runtime.Dimensions;
 import androidx.xr.scenecore.runtime.PerceivedResolutionResult;
 import androidx.xr.scenecore.runtime.PixelDimensions;
@@ -57,7 +50,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.android.controller.ActivityController;
@@ -74,7 +66,6 @@ public class PanelEntityImplTest {
     private final Activity mActivity = mActivityController.create().start().get();
     private final FakeScheduledExecutorService mMakeFakeExecutor =
             new FakeScheduledExecutorService();
-    private final PerceptionLibrary mPerceptionLibrary = mock(PerceptionLibrary.class);
     private final EntityManager mEntityManager = new EntityManager();
     private SpatialSceneRuntime mRuntime;
     private FakeScenePose mRenderViewScenePose;
@@ -84,16 +75,12 @@ public class PanelEntityImplTest {
 
     @Before
     public void setUp() {
-        when(mPerceptionLibrary.initSession(eq(mActivity), anyInt(), eq(mMakeFakeExecutor)))
-                .thenReturn(immediateFuture(Mockito.mock(Session.class)));
-
         mRuntime =
                 SpatialSceneRuntime.create(
                         mActivity,
                         mMakeFakeExecutor,
                         mXrExtensions,
                         mEntityManager,
-                        mPerceptionLibrary,
                         /* unscaledGravityAlignedActivitySpace= */ false);
         mRenderViewScenePose = new FakeScenePose();
         mRenderViewScenePose.setActivitySpacePose(
