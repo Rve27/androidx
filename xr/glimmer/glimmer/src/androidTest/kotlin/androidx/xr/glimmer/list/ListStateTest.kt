@@ -16,6 +16,7 @@
 
 package androidx.xr.glimmer.list
 
+import androidx.compose.foundation.MutatePriority
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Box
@@ -43,6 +44,8 @@ import com.google.common.truth.Truth
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.withContext
 import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -281,6 +284,18 @@ class ListStateTest(orientation: Orientation) : BaseListTestWithOrientation(orie
         // line will not be at the right place. The total scroll was 45dp, it means that the
         // seconds item must be focused now.
         rule.onNodeWithTag("item-1").assertIsFocused()
+    }
+
+    @Test
+    fun isScrollInProgress_reflectsCorrectState() = runTest {
+        val state = ListState()
+        rule.setContent { TestList(state = state) { FocusableItem(it) } }
+
+        assertThat(state.isScrollInProgress).isFalse()
+        withContext(Dispatchers.Main) {
+            state.scroll(MutatePriority.Default) { assertThat(state.isScrollInProgress).isTrue() }
+        }
+        assertThat(state.isScrollInProgress).isFalse()
     }
 
     private fun ListState.scrollByAndCheckConsumedValue(delta: Float, consumed: Float = delta) {
