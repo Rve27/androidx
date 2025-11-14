@@ -110,6 +110,7 @@ class GltfModelTest {
         verify(mockRenderingRuntime).loadGltfByByteArrayAsync(byteArrayOf(1, 2, 3), "FakeAsset.zip")
     }
 
+    @Ignore("b/451677593")
     @SdkSuppress(minSdkVersion = 26)
     @Test
     fun gltfModel_createAsync_fails() = runTest {
