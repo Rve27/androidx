@@ -97,4 +97,27 @@ internal class RegistryManagerImpl(private val context: Context) : RegistryManag
         }
         provider.onClearCredentialRegistry(request, executor, callback)
     }
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    override fun clearCreationOptionsAsync(
+        request: ClearCreationOptionsRequest,
+        executor: Executor,
+        callback:
+            CredentialManagerCallback<ClearCreationOptionsResponse, ClearCreationOptionsException>,
+    ) {
+        val provider: RegistryManagerProvider? =
+            RegistryManagerProviderFactory(context).getBestAvailableProvider()
+        if (provider == null) {
+            executor.execute {
+                callback.onError(
+                    ClearCreationOptionsConfigurationException(
+                        "clearCreationOptions: no provider dependencies found - please ensure " +
+                            "the desired provider dependencies are added"
+                    )
+                )
+            }
+            return
+        }
+        provider.onClearCreationOptions(request, executor, callback)
+    }
 }

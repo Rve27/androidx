@@ -21,6 +21,10 @@ import android.os.CancellationSignal
 import androidx.annotation.RestrictTo
 import androidx.annotation.VisibleForTesting
 import androidx.credentials.CredentialManagerCallback
+import androidx.credentials.registry.provider.ClearCreationOptionsException
+import androidx.credentials.registry.provider.ClearCreationOptionsRequest
+import androidx.credentials.registry.provider.ClearCreationOptionsResponse
+import androidx.credentials.registry.provider.ClearCreationOptionsUnknownException
 import androidx.credentials.registry.provider.ClearCredentialRegistryException
 import androidx.credentials.registry.provider.ClearCredentialRegistryRequest
 import androidx.credentials.registry.provider.ClearCredentialRegistryResponse
@@ -134,6 +138,35 @@ public class RegistryManagerProviderPlayServicesImpl(private val context: Contex
             }
             .addOnFailureListener(executor) {
                 callback.onError(ClearCredentialRegistryUnknownException(it.message))
+            }
+    }
+
+    override fun onClearCreationOptions(
+        request: ClearCreationOptionsRequest,
+        executor: Executor,
+        callback:
+            CredentialManagerCallback<ClearCreationOptionsResponse, ClearCreationOptionsException>,
+    ) {
+        val gmsRequest =
+            com.google.android.gms.identitycredentials.ClearCreationOptionsRequest(
+                deleteAll = request.isDeleteAll,
+                clearTypedRegistryOption =
+                    request.deletePerTypeConfig?.let {
+                        com.google.android.gms.identitycredentials.ClearCreationOptionsRequest
+                            .ClearTypedCreationOption(
+                                deleteAllForType = it.isDeleteAll,
+                                type = it.type,
+                                registryIds = it.registryIds,
+                            )
+                    },
+            )
+        client
+            .clearCreationOptions(gmsRequest)
+            .addOnSuccessListener(executor) {
+                callback.onResult(ClearCreationOptionsResponse(it.isDeleted))
+            }
+            .addOnFailureListener(executor) {
+                callback.onError(ClearCreationOptionsUnknownException(it.message))
             }
     }
 

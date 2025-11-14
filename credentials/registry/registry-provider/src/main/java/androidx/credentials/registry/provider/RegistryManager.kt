@@ -211,6 +211,44 @@ public abstract class RegistryManager internal constructor() {
     }
 
     /**
+     * Clear creation options that were registered using the [registerCreationOptions] (Kotlin) or
+     * [registerCreationOptionsAsync] (Java) API.
+     *
+     * @param request the request to specify clearing configurations
+     */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public suspend fun clearCreationOptions(
+        request: ClearCreationOptionsRequest
+    ): ClearCreationOptionsResponse = suspendCancellableCoroutine { continuation ->
+        val callback =
+            object :
+                CredentialManagerCallback<
+                    ClearCreationOptionsResponse,
+                    ClearCreationOptionsException,
+                > {
+                override fun onResult(result: ClearCreationOptionsResponse) {
+                    if (continuation.isActive) {
+                        continuation.resume(result)
+                    }
+                }
+
+                override fun onError(e: ClearCreationOptionsException) {
+                    if (continuation.isActive) {
+                        continuation.resumeWithException(e)
+                    }
+                }
+            }
+
+        clearCreationOptionsAsync(
+            request,
+            // Use a direct executor to avoid extra dispatch. Resuming the continuation will
+            // handle getting to the right thread or pool via the ContinuationInterceptor.
+            Runnable::run,
+            callback,
+        )
+    }
+
+    /**
      * Registers credentials with the Credential Manager.
      *
      * This API uses callbacks instead of Kotlin coroutines.
@@ -280,5 +318,23 @@ public abstract class RegistryManager internal constructor() {
                 ClearCredentialRegistryResponse,
                 ClearCredentialRegistryException,
             >,
+    )
+
+    /**
+     * Clear creation options that were registered using the [registerCreationOptions] (Kotlin) or
+     * [registerCreationOptionsAsync] (Java) API.
+     *
+     * This API uses callbacks instead of Kotlin coroutines.
+     *
+     * @param request the request to specify clearing configurations
+     * @param executor the callback will take place on this executor
+     * @param callback the callback invoked when the request succeeds or fails
+     */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public abstract fun clearCreationOptionsAsync(
+        request: ClearCreationOptionsRequest,
+        executor: Executor,
+        callback:
+            CredentialManagerCallback<ClearCreationOptionsResponse, ClearCreationOptionsException>,
     )
 }
