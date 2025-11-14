@@ -223,6 +223,53 @@ class WearWidgetProviderClientTest {
         assertThat(shadowApp.boundServiceConnections).isEmpty()
     }
 
+    @Test
+    fun sendAddEventAsync() = runTest {
+        val client = WearWidgetProviderClient(context, COMPONENT_NAME)
+        val instanceId = 123
+        val containerType = CONTAINER_TYPE_LARGE
+
+        assertThat(shadowApp.boundServiceConnections).isEmpty()
+
+        val future = client.sendAddEventAsync(instanceId, containerType, Runnable::run)
+        // Actual binding runs on the main thread.
+        advanceUntilIdle()
+        shadowOf(Looper.getMainLooper()).idle()
+        advanceUntilIdle()
+        future.get()
+
+        val handle = ActiveWearWidgetHandle.fromParcel(service.addedHandleParcel!!, COMPONENT_NAME)
+        assertThat(handle.provider).isEqualTo(COMPONENT_NAME)
+        assertThat(handle.instanceId).isEqualTo(instanceId)
+        assertThat(handle.containerType).isEqualTo(containerType)
+        assertThat(shadowApp.unboundServiceConnections).hasSize(1)
+        assertThat(shadowApp.boundServiceConnections).isEmpty()
+    }
+
+    @Test
+    fun sendRemoveEventAsync() = runTest {
+        val client = WearWidgetProviderClient(context, COMPONENT_NAME)
+        val instanceId = 123
+        val containerType = CONTAINER_TYPE_LARGE
+
+        assertThat(shadowApp.boundServiceConnections).isEmpty()
+
+        val future = client.sendRemoveEventAsync(instanceId, containerType, Runnable::run)
+        // Actual binding runs on the main thread.
+        advanceUntilIdle()
+        shadowOf(Looper.getMainLooper()).idle()
+        advanceUntilIdle()
+        future.get()
+
+        val handle =
+            ActiveWearWidgetHandle.fromParcel(service.removedHandleParcel!!, COMPONENT_NAME)
+        assertThat(handle.provider).isEqualTo(COMPONENT_NAME)
+        assertThat(handle.instanceId).isEqualTo(instanceId)
+        assertThat(handle.containerType).isEqualTo(containerType)
+        assertThat(shadowApp.unboundServiceConnections).hasSize(1)
+        assertThat(shadowApp.boundServiceConnections).isEmpty()
+    }
+
     private class FakeWearWidgetProvider : IWearWidgetProvider.Stub() {
         var activatedHandleParcel: ActiveWearWidgetHandleParcel? = null
         var deactivatedHandleParcel: ActiveWearWidgetHandleParcel? = null
