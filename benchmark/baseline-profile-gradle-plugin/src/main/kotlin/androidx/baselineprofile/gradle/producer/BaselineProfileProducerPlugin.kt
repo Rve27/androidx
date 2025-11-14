@@ -25,7 +25,6 @@ import androidx.baselineprofile.gradle.utils.AgpFeature.TEST_VARIANT_SUPPORTS_IN
 import androidx.baselineprofile.gradle.utils.AgpFeature.TEST_VARIANT_TESTED_APKS
 import androidx.baselineprofile.gradle.utils.AgpPlugin
 import androidx.baselineprofile.gradle.utils.AgpPluginId
-import androidx.baselineprofile.gradle.utils.AndroidTestModuleWrapper
 import androidx.baselineprofile.gradle.utils.BUILD_TYPE_BASELINE_PROFILE_PREFIX
 import androidx.baselineprofile.gradle.utils.BUILD_TYPE_BENCHMARK_PREFIX
 import androidx.baselineprofile.gradle.utils.CONFIGURATION_ARTIFACT_TYPE
@@ -118,10 +117,12 @@ private class BaselineProfileProducerAgpPlugin(private val project: Project) :
         )
     }
 
+    @Suppress("UnstableApiUsage")
     override fun onBeforeFinalizeDsl() {
-
         // We need the instrumentation apk to run as a separate process
-        AndroidTestModuleWrapper(project).setSelfInstrumenting(true)
+        project.extensions
+            .getByType(com.android.build.gradle.TestExtension::class.java)
+            .experimentalProperties["android.experimental.self-instrumenting"] = true
     }
 
     override fun onTestFinalizeDsl(extension: TestExtension) {

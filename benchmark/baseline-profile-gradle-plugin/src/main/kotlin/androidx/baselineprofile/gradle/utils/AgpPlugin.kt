@@ -179,8 +179,9 @@ internal abstract class AgpPlugin(
         }
 
         // Runs the after variants callback that is module type dependent
-        val testedExtension = testedExtension()
-        val testExtension = testExtension()
+        val testedExtension = project.extensions.findByType(TestedExtension::class.java)
+        val testExtension =
+            project.extensions.findByType(com.android.build.gradle.TestExtension::class.java)
 
         val variants =
             when {
@@ -377,12 +378,6 @@ internal abstract class AgpPlugin(
 
     private fun androidComponentsExtension(): AndroidComponentsExtension<*, *, *>? =
         project.extensions.findByType(AndroidComponentsExtension::class.java)
-
-    private fun testedExtension(): TestedExtension? =
-        project.extensions.findByType(TestedExtension::class.java)
-
-    private fun testExtension(): com.android.build.gradle.TestExtension? =
-        project.extensions.findByType(com.android.build.gradle.TestExtension::class.java)
 }
 
 private val gradleSyncProps by lazy {
