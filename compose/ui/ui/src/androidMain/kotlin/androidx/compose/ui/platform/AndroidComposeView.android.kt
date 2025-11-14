@@ -154,7 +154,6 @@ import androidx.compose.ui.input.pointer.PointerIconService
 import androidx.compose.ui.input.pointer.PointerInputEventProcessor
 import androidx.compose.ui.input.pointer.PointerKeyboardModifiers
 import androidx.compose.ui.input.pointer.ProcessResult
-import androidx.compose.ui.input.pointer.SuspendingPointerInputModifierNode
 import androidx.compose.ui.input.rotary.RotaryInputModifierNode
 import androidx.compose.ui.input.rotary.RotaryScrollEvent
 import androidx.compose.ui.internal.checkPreconditionNotNull
@@ -192,7 +191,6 @@ import androidx.compose.ui.node.ancestors
 import androidx.compose.ui.node.requireLayoutCoordinates
 import androidx.compose.ui.node.requireLayoutNode
 import androidx.compose.ui.node.setOfAncestors
-import androidx.compose.ui.node.visitSubtree
 import androidx.compose.ui.platform.MotionEventVerifierApi29.isValidMotionEvent
 import androidx.compose.ui.platform.coreshims.ViewCompatShims
 import androidx.compose.ui.relocation.BringIntoViewModifierNode
@@ -281,23 +279,9 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
             // In some rare cases, the CoroutineContext is cancelled (because the parent
             // CompositionContext containing the CoroutineContext is no longer associated with this
             // class). Changing this CoroutineContext to the new CompositionContext's
-            // CoroutineContext needs to cancel all Pointer Input Nodes relying on the old
-            // CoroutineContext. See [Wrapper.android.kt] for more details.
+            // CoroutineContext needs to notify all Nodes relying on the old CoroutineContext.
             if (hasCoroutineContextChanged) {
-                val headModifierNode = root.nodes.head
-
-                // Reset head Modifier.Node's pointer input handler (that is, the underlying
-                // coroutine used to run the handler for input pointer events).
-                if (headModifierNode is SuspendingPointerInputModifierNode) {
-                    headModifierNode.resetPointerInputHandler()
-                }
-
-                // Reset all other Modifier.Node's pointer input handler in the chain.
-                headModifierNode.visitSubtree(Nodes.PointerInput) {
-                    if (it is SuspendingPointerInputModifierNode) {
-                        it.resetPointerInputHandler()
-                    }
-                }
+                root.dispatchCoroutineContextChanged()
             }
         }
 
