@@ -388,6 +388,14 @@ private fun autoInvalidateNodeSelf(node: Modifier.Node, selfKindSet: Int, phase:
     if (Nodes.FocusEvent in selfKindSet && node is FocusEventModifierNode) {
         node.invalidateFocusEvent()
     }
+
+    if (
+        Nodes.IndirectPointerInput in selfKindSet &&
+            node is IndirectPointerInputModifierNode &&
+            phase == Removed
+    ) {
+        node.onCancelIndirectPointerInput()
+    }
 }
 
 /**
