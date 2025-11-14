@@ -28,6 +28,8 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.ComposeUiFlags
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.TestActivity
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
@@ -530,5 +532,30 @@ class ComposeViewTest {
         childView.setContent { isComposed = true }
         rule.waitForIdle()
         assertThat(isComposed).isTrue()
+    }
+
+    @Test
+    @OptIn(ExperimentalComposeUiApi::class)
+    fun frameRateCategoryViewProtection() {
+        ComposeUiFlags.isAdaptiveRefreshRateEnabled = false
+
+        var addComposeView by mutableStateOf(true)
+        var isAdded by mutableStateOf(false)
+        rule.setContent {
+            if (addComposeView) {
+                AndroidView(
+                    factory = {
+                        ComposeView(it).apply { setContent { Box(Modifier.fillMaxSize()) } }
+                    }
+                )
+            }
+            isAdded = addComposeView
+        }
+
+        rule.waitForIdle()
+        ComposeUiFlags.isAdaptiveRefreshRateEnabled = true
+        addComposeView = false
+        rule.waitForIdle()
+        assertThat(isAdded).isFalse()
     }
 }
