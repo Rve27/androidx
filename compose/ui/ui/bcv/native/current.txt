@@ -1102,6 +1102,7 @@ abstract interface androidx.compose.ui/Modifier { // androidx.compose.ui/Modifie
 
         final fun sideEffect(kotlin/Function0<kotlin/Unit>) // androidx.compose.ui/Modifier.Node.sideEffect|sideEffect(kotlin.Function0<kotlin.Unit>){}[0]
         open fun onAttach() // androidx.compose.ui/Modifier.Node.onAttach|onAttach(){}[0]
+        open fun onCoroutineContextChanged() // androidx.compose.ui/Modifier.Node.onCoroutineContextChanged|onCoroutineContextChanged(){}[0]
         open fun onDetach() // androidx.compose.ui/Modifier.Node.onDetach|onDetach(){}[0]
         open fun onReset() // androidx.compose.ui/Modifier.Node.onReset|onReset(){}[0]
     }
