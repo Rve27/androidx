@@ -118,14 +118,14 @@ private class BaselineProfileProducerAgpPlugin(private val project: Project) :
     }
 
     @Suppress("UnstableApiUsage")
-    override fun onBeforeFinalizeDsl() {
+    fun setSelfInstrumenting(extension: TestExtension) {
         // We need the instrumentation apk to run as a separate process
-        project.extensions
-            .getByType(com.android.build.gradle.TestExtension::class.java)
-            .experimentalProperties["android.experimental.self-instrumenting"] = true
+        // waiting on b/307538948 for stable API
+        extension.experimentalProperties["android.experimental.self-instrumenting"] = true
     }
 
     override fun onTestFinalizeDsl(extension: TestExtension) {
+        setSelfInstrumenting(extension)
 
         // Creates the new build types to match the app target. All the existing build types beside
         // `debug`, that is the default one, are added manually in the configuration so we can
