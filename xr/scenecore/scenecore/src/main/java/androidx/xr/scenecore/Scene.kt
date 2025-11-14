@@ -201,6 +201,7 @@ public class Scene : SessionConnector {
         entityManager.clear()
         sceneRuntime.removeSpatialCapabilitiesChangedListener(rtSpatialCapabilitiesListener)
         spatialCapabilitiesListeners.keys.forEach { removeSpatialCapabilitiesChangedListener(it) }
+        keyEntity = null
         clearSpatialModeChangedListener()
         clearSpatialVisibilityChangedListener()
         removeSceneFromCache(this)
