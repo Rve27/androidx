@@ -17,8 +17,8 @@ export USE_ANDROIDX_REMOTE_BUILD_CACHE=gcp
 # find script
 SCRIPT_DIR="$(pwd)"
 TEST_XML_CONFIGS="$SCRIPT_DIR/../../../out/androidx/build/test-xml-configs"
-echo "Deleting $TEST_XML_CONFIGS and "
-rm -fr $TEST_XML_CONFIGSTEST_XML_CONFIGS
+echo "Deleting $TEST_XML_CONFIGS"
+rm -fr $TEST_XML_CONFIGS
 
 impl/build.sh zipTestConfigsWithApks zipOwnersFiles createModuleInfo "$@"
 
