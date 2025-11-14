@@ -47,6 +47,7 @@ import androidx.xr.compose.platform.LocalCoreEntity
 import androidx.xr.compose.platform.LocalCoreMainPanelEntity
 import androidx.xr.compose.platform.LocalSession
 import androidx.xr.compose.platform.LocalSpatialConfiguration
+import androidx.xr.compose.platform.SceneManager
 import androidx.xr.compose.platform.SpatialComposeScene
 import androidx.xr.compose.platform.disposableValueOf
 import androidx.xr.compose.platform.getValue
@@ -219,7 +220,9 @@ private fun Subspace(
     val compositionContext = rememberCompositionContext()
     val subspaceRoot = remember { GroupEntity.create(session, "SubspaceRoot") }
     val scene by remember {
-        session.scene.mainPanelEntity.setEnabled(false)
+        if (SceneManager.getSceneCount(context) == 0) {
+            session.scene.mainPanelEntity.setEnabled(false)
+        }
         disposableValueOf(
             SpatialComposeScene(
                 lifecycleOwner = lifecycleOwner,
@@ -232,7 +235,9 @@ private fun Subspace(
             it.dispose()
             subspaceRoot.dispose()
             try {
-                session.scene.mainPanelEntity.setEnabled(true)
+                if (SceneManager.getSceneCount(context) == 0) {
+                    session.scene.mainPanelEntity.setEnabled(true)
+                }
             } catch (_: IllegalStateException) {
                 // TODO(b/450063142) The shutdown order of Impress, SceneCore, and Compose should be
                 //  fixed to avoid having to catch this exception here.
