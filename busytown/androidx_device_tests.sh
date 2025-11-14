@@ -14,8 +14,11 @@ export USE_ANDROIDX_REMOTE_BUILD_CACHE=gcp
 
 # This target runs in incremental mode, but we do not want to restore the APKs and configs from
 # previous runs
-rm -fr "../../out/androidx/build/test-xml-configs"
-rm -fr "../../out/androidx/build/app-apks-files"
+# find script
+SCRIPT_DIR="$(pwd)"
+TEST_XML_CONFIGS="$SCRIPT_DIR/../../../out/androidx/build/test-xml-configs"
+echo "Deleting $TEST_XML_CONFIGS and "
+rm -fr $TEST_XML_CONFIGSTEST_XML_CONFIGS
 
 impl/build.sh zipTestConfigsWithApks zipOwnersFiles createModuleInfo "$@"
 
