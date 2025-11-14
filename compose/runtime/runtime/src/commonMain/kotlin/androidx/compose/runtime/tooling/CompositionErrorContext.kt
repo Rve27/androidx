@@ -17,7 +17,7 @@
 package androidx.compose.runtime.tooling
 
 import androidx.compose.runtime.CompositionLocal
-import androidx.compose.runtime.GapComposer
+import androidx.compose.runtime.InternalComposer
 import androidx.compose.runtime.composer.gapbuffer.changelist.OperationErrorContext
 import androidx.compose.runtime.staticCompositionLocalOf
 import kotlin.coroutines.CoroutineContext
@@ -60,7 +60,7 @@ public sealed interface CompositionErrorContext {
     public fun Throwable.attachComposeStackTrace(composeNode: Any): Boolean
 }
 
-internal class CompositionErrorContextImpl(private val composer: GapComposer) :
+internal class CompositionErrorContextImpl(private val composer: InternalComposer) :
     CompositionErrorContext, OperationErrorContext, CoroutineContext.Element {
     override fun Throwable.attachComposeStackTrace(composeNode: Any): Boolean =
         tryAttachComposeStackTrace {

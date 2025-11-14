@@ -22,18 +22,34 @@ import androidx.collection.MutableIntList
 import androidx.collection.MutableIntObjectMap
 import androidx.collection.MutableIntSet
 import androidx.collection.MutableObjectList
+import androidx.collection.ObjectList
+import androidx.collection.ScatterMap
+import androidx.collection.emptyScatterMap
 import androidx.collection.mutableIntListOf
 import androidx.collection.mutableIntSetOf
+import androidx.collection.mutableScatterMapOf
+import androidx.compose.runtime.Applier
 import androidx.compose.runtime.Composer
 import androidx.compose.runtime.IntStack
+import androidx.compose.runtime.InternalComposeApi
+import androidx.compose.runtime.MovableContentState
+import androidx.compose.runtime.MovableContentStateReference
+import androidx.compose.runtime.RecomposeScope
 import androidx.compose.runtime.RecomposeScopeImpl
+import androidx.compose.runtime.RememberManager
 import androidx.compose.runtime.RememberObserverHolder
+import androidx.compose.runtime.SlotStorage
 import androidx.compose.runtime.checkPrecondition
 import androidx.compose.runtime.collection.fastCopyInto
+import androidx.compose.runtime.collection.fastFilter
+import androidx.compose.runtime.collection.sortedBy
 import androidx.compose.runtime.composeRuntimeError
+import androidx.compose.runtime.deactivateCurrentGroup
 import androidx.compose.runtime.debugRuntimeCheck
+import androidx.compose.runtime.extractMovableContentAtCurrent
 import androidx.compose.runtime.platform.makeSynchronizedObject
 import androidx.compose.runtime.platform.synchronized
+import androidx.compose.runtime.removeCurrentGroup
 import androidx.compose.runtime.requirePrecondition
 import androidx.compose.runtime.runtimeCheck
 import androidx.compose.runtime.snapshots.fastAny
@@ -99,7 +115,7 @@ import kotlin.math.min
 
 // The public API refers only to Index values. Address values are internal.
 
-internal class SlotTable : CompositionData, Iterable<CompositionGroup> {
+internal class SlotTable : SlotStorage(), CompositionData, Iterable<CompositionGroup> {
     /**
      * An array to store group information that is stored as groups of [Group_Fields_Size] elements
      * of the array. The [groups] array can be thought of as an array of an inline struct.
@@ -157,6 +173,10 @@ internal class SlotTable : CompositionData, Iterable<CompositionGroup> {
     /** Returns true if the slot table is empty */
     override val isEmpty
         get() = groupsSize == 0
+
+    override fun clear(rememberManager: RememberManager) {
+        write { writer -> writer.removeCurrentGroup(rememberManager) }
+    }
 
     /**
      * Read the slot table in [block]. Any number of readers can be created but a slot table cannot
@@ -259,12 +279,18 @@ internal class SlotTable : CompositionData, Iterable<CompositionGroup> {
             anchors.search(anchor.location, groupsSize).let { it >= 0 && anchors[it] == anchor }
     }
 
-    /** Returns true if the [anchor] is for the group at [groupIndex] or one of it child groups. */
-    fun groupContainsAnchor(groupIndex: Int, anchor: Anchor): Boolean {
+    /** Returns true if the [anchor] is for the group at [group] or one of it child groups. */
+    override fun groupContainsAnchor(group: Int, anchor: Anchor): Boolean {
         runtimeCheck(!writer) { "Writer is active" }
-        runtimeCheck(groupIndex in 0 until groupsSize) { "Invalid group index" }
+        runtimeCheck(group in 0 until groupsSize) { "Invalid group index" }
         return ownsAnchor(anchor) &&
-            anchor.location in groupIndex until (groupIndex + groups.groupSize(groupIndex))
+            anchor.location in group until (group + groups.groupSize(group))
+    }
+
+    override fun inGroup(parent: Anchor, child: Anchor): Boolean {
+        val group = parent.location
+        val groupEnd = group + groups.groupSize(group)
+        return child.location in group until groupEnd
     }
 
     /** Close [reader]. */
@@ -341,7 +367,7 @@ internal class SlotTable : CompositionData, Iterable<CompositionGroup> {
      * Returns a list of groups if they were successfully invalidated. If this returns null then a
      * full composition must be forced.
      */
-    internal fun invalidateGroupsWithKey(target: Int): List<RecomposeScopeImpl>? {
+    override fun invalidateGroupsWithKey(target: Int): List<RecomposeScopeImpl>? {
         val anchors = mutableListOf<Anchor>()
         val scopes = mutableListOf<RecomposeScopeImpl>()
         var allScopesFound = true
@@ -404,6 +430,9 @@ internal class SlotTable : CompositionData, Iterable<CompositionGroup> {
         return if (allScopesFound) scopes else null
     }
 
+    override fun ownsRecomposeScope(scope: RecomposeScopeImpl) =
+        scope.anchor?.let { ownsAnchor(it) } == true
+
     /** Turns true if the first group (considered the root group) contains a mark. */
     fun containsMark(): Boolean {
         return groupsSize > 0 && groups.containsMark(0)
@@ -434,7 +463,7 @@ internal class SlotTable : CompositionData, Iterable<CompositionGroup> {
      * A debugging aid to validate the internal structure of the slot table. Throws an exception if
      * the slot table is not in the expected shape.
      */
-    fun verifyWellFormed() {
+    override fun verifyWellFormed() {
         // If the check passes Address and Index are identical so there is no need for
         // indexToAddress conversions.
         var current = 0
@@ -547,14 +576,110 @@ internal class SlotTable : CompositionData, Iterable<CompositionGroup> {
                 verifySourceGroup(sourceGroup)
             }
         }
+
+        validateRecomposeScopeAnchors()
     }
 
-    fun collectCalledByInformation() {
+    /**
+     * Helper for [verifyWellFormed] to ensure the anchor match there respective invalidation
+     * scopes.
+     */
+    private fun validateRecomposeScopeAnchors() {
+        val scopes = slots.mapNotNull { it as? RecomposeScopeImpl }
+        scopes.fastForEach { scope ->
+            scope.anchor?.let { anchor ->
+                checkPrecondition(scope in slotsOf(anchor.toIndexFor(this))) {
+                    val dataIndex = slots.indexOf(scope)
+                    "Misaligned anchor $anchor in scope $scope encountered, scope found at " +
+                        "$dataIndex"
+                }
+            }
+        }
+    }
+
+    override fun getSlots(): Iterable<Any?> =
+        object : Iterable<Any?> {
+            override fun iterator(): Iterator<Any?> = iterator {
+                for (index in 0 until slotsSize) {
+                    yield(slots[index])
+                }
+            }
+        }
+
+    override fun collectCalledByInformation() {
         calledByMap = MutableIntObjectMap()
     }
 
-    fun collectSourceInformation() {
+    override fun collectSourceInformation() {
         sourceInformationMap = HashMap()
+    }
+
+    override fun deactivateAll(rememberManager: RememberManager) {
+        write { writer -> writer.deactivateCurrentGroup(rememberManager) }
+    }
+
+    override fun dispose() {
+        // Nothing to do here as te slots array will be garbage collected
+    }
+
+    @OptIn(InternalComposeApi::class)
+    override fun extractNestedStates(
+        applier: Applier<*>,
+        references: ObjectList<MovableContentStateReference>,
+    ): ScatterMap<MovableContentStateReference, MovableContentState> {
+        val referencesToExtract =
+            references.fastFilter { ownsAnchor(it.anchor) }.sortedBy { anchorIndex(it.anchor) }
+        if (referencesToExtract.isEmpty()) return emptyScatterMap()
+        val result = mutableScatterMapOf<MovableContentStateReference, MovableContentState>()
+        write { writer ->
+            fun closeToGroupContaining(group: Int) {
+                while (writer.parent >= 0 && writer.currentGroupEnd <= group) {
+                    writer.skipToGroupEnd()
+                    writer.endGroup()
+                }
+            }
+            fun openParent(parent: Int) {
+                closeToGroupContaining(parent)
+                while (writer.currentGroup != parent && !writer.isGroupEnd) {
+                    if (parent < writer.nextGroup) {
+                        writer.startGroup()
+                    } else {
+                        writer.skipGroup()
+                    }
+                }
+                runtimeCheck(writer.currentGroup == parent) { "Unexpected slot table structure" }
+                writer.startGroup()
+            }
+            referencesToExtract.forEach { reference ->
+                val newGroup = writer.anchorIndex(reference.anchor)
+                val newParent = writer.parent(newGroup)
+                closeToGroupContaining(newParent)
+                openParent(newParent)
+                writer.advanceBy(newGroup - writer.currentGroup)
+                val content =
+                    extractMovableContentAtCurrent(
+                        composition = reference.composition,
+                        reference = reference,
+                        slots = writer,
+                        applier = applier,
+                    )
+                result[reference] = content
+            }
+            closeToGroupContaining(Int.MAX_VALUE)
+        }
+        return result
+    }
+
+    @OptIn(InternalComposeApi::class)
+    override fun disposeUnusedMovableContent(
+        rememberManager: RememberManager,
+        state: MovableContentState,
+    ) {
+        write { writer -> writer.removeCurrentGroup(rememberManager) }
+    }
+
+    override fun invalidateAll() {
+        slots.fastForEach { (it as? RecomposeScope)?.invalidate() }
     }
 
     /**
@@ -563,7 +688,7 @@ internal class SlotTable : CompositionData, Iterable<CompositionGroup> {
      * this function in the debugger should never be implicit which it often is for [toString]
      */
     @Suppress("unused", "MemberVisibilityCanBePrivate")
-    fun toDebugString(): String {
+    override fun toDebugString(): String {
         return if (writer) super.toString()
         else
             buildString {
@@ -686,6 +811,10 @@ internal class SlotTable : CompositionData, Iterable<CompositionGroup> {
 
     override fun find(identityToFind: Any): CompositionGroup? =
         SlotTableGroup(this, 0).find(identityToFind)
+}
+
+private inline fun <T> Array<T>.fastForEach(action: (T) -> Unit) {
+    for (i in 0 until size) action(this[i])
 }
 
 /**
@@ -4118,3 +4247,9 @@ private fun MutableIntObjectMap<MutableIntSet>.add(key: Int, value: Int) {
 internal fun throwConcurrentModificationException() {
     throw ConcurrentModificationException()
 }
+
+internal fun SlotStorage.asGapBufferSlotTable() =
+    this as? SlotTable ?: composeRuntimeError("Inconsistent composition")
+
+private val SlotWriter.nextGroup
+    get() = currentGroup + groupSize(currentGroup)

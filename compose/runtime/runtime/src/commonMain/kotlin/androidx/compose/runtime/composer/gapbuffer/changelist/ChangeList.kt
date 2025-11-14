@@ -17,6 +17,7 @@
 package androidx.compose.runtime.composer.gapbuffer.changelist
 
 import androidx.compose.runtime.Applier
+import androidx.compose.runtime.Changes
 import androidx.compose.runtime.ComposeNodeLifecycleCallback
 import androidx.compose.runtime.Composition
 import androidx.compose.runtime.CompositionContext
@@ -27,9 +28,11 @@ import androidx.compose.runtime.MovableContentStateReference
 import androidx.compose.runtime.RecomposeScopeImpl
 import androidx.compose.runtime.RememberManager
 import androidx.compose.runtime.RememberObserverHolder
+import androidx.compose.runtime.SlotStorage
 import androidx.compose.runtime.composer.gapbuffer.Anchor
 import androidx.compose.runtime.composer.gapbuffer.SlotTable
 import androidx.compose.runtime.composer.gapbuffer.SlotWriter
+import androidx.compose.runtime.composer.gapbuffer.asGapBufferSlotTable
 import androidx.compose.runtime.composer.gapbuffer.changelist.Operation.AdvanceSlotsBy
 import androidx.compose.runtime.composer.gapbuffer.changelist.Operation.AppendValue
 import androidx.compose.runtime.composer.gapbuffer.changelist.Operation.ApplyChangeList
@@ -65,20 +68,35 @@ import androidx.compose.runtime.composer.gapbuffer.changelist.Operation.UpdateVa
 import androidx.compose.runtime.composer.gapbuffer.changelist.Operation.Ups
 import androidx.compose.runtime.composer.gapbuffer.changelist.Operation.UseCurrentNode
 import androidx.compose.runtime.internal.IntRef
+import androidx.compose.runtime.tooling.CompositionErrorContextImpl
 
-internal class ChangeList : OperationsDebugStringFormattable() {
+internal class ChangeList : Changes() {
 
     private val operations = Operations()
 
     val size: Int
         get() = operations.size
 
-    fun isEmpty() = operations.isEmpty()
+    override fun isEmpty() = operations.isEmpty()
 
-    fun isNotEmpty() = operations.isNotEmpty()
-
-    fun clear() {
+    override fun clear() {
         operations.clear()
+    }
+
+    override fun execute(
+        slotStorage: SlotStorage,
+        applier: Applier<*>,
+        rememberManager: RememberManager,
+        errorContext: CompositionErrorContextImpl?,
+    ) {
+        slotStorage.asGapBufferSlotTable().write { slotWriter ->
+            executeAndFlushAllPendingChanges(
+                applier = applier,
+                slots = slotWriter,
+                rememberManager = rememberManager,
+                errorContext = errorContext,
+            )
+        }
     }
 
     fun executeAndFlushAllPendingChanges(
