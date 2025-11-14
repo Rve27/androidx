@@ -29,7 +29,7 @@ android {
             proguardFiles getDefaultProguardFile("proguard-android-optimize.txt")
         }
     }
-    compileSdk = 35
+    compileSdkPreview "Baklava"
     defaultConfig {
         vectorDrawables.useSupportLibrary = true
     }
