@@ -112,8 +112,6 @@ internal abstract class AgpPlugin(
             }
         }
 
-        onBeforeFinalizeDsl()
-
         testAndroidComponentExtension()?.let { testComponent ->
             testComponent.finalizeDsl {
                 onTestFinalizeDsl(it)
@@ -354,8 +352,6 @@ internal abstract class AgpPlugin(
     protected open fun onLibraryVariants(variant: LibraryVariant) {}
 
     // Shared callbacks
-
-    protected open fun onBeforeFinalizeDsl() {}
 
     protected open fun onFinalizeDsl(extension: AndroidComponentsExtension<*, *, *>) {}
 
