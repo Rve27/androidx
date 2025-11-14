@@ -106,6 +106,10 @@ public class RemoteComposeContextAndroid : RemoteComposeContext {
         )
     }
 
+    public fun drawRect(x: Number, y: Number, w: Number, h: Number) {
+        drawRect(x.toFloat(), y.toFloat(), w.toFloat(), h.toFloat())
+    }
+
     public fun drawLine(x1: Number, y1: Number, x2: Number, y2: Number) {
         drawLine(x1.toFloat(), y1.toFloat(), x2.toFloat(), y2.toFloat())
     }
