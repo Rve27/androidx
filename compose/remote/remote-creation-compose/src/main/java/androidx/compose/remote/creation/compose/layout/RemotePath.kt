@@ -108,3 +108,12 @@ public fun RemotePath.cubicTo(
     val iy3: Float = if (y3 is RemoteFloat) y3.internalAsFloat() else y3.toFloat()
     this.cubicTo(ix1, iy1, ix2, iy2, ix3, iy3)
 }
+
+public fun RemotePath.conicTo(x1: Number, y1: Number, x2: Number, y2: Number, weight: Number) {
+    val ix1: Float = if (x1 is RemoteFloat) x1.internalAsFloat() else x1.toFloat()
+    val iy1: Float = if (y1 is RemoteFloat) y1.internalAsFloat() else y1.toFloat()
+    val ix2: Float = if (x2 is RemoteFloat) x2.internalAsFloat() else x2.toFloat()
+    val iy2: Float = if (y2 is RemoteFloat) y2.internalAsFloat() else y2.toFloat()
+    val iWeight: Float = if (weight is RemoteFloat) weight.internalAsFloat() else weight.toFloat()
+    this.conicTo(ix1, iy1, ix2, iy2, iWeight)
+}
