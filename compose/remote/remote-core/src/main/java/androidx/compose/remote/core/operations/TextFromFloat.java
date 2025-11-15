@@ -40,7 +40,8 @@ import java.util.List;
  * the decimal point
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public class TextFromFloat extends Operation implements VariableSupport, Serializable {
+public class TextFromFloat extends Operation implements VariableSupport, Serializable,
+        ComponentData {
     private static final int OP_CODE = Operations.TEXT_FROM_FLOAT;
     private static final String CLASS_NAME = "TextFromFloat";
     public int mTextId;
@@ -274,8 +275,6 @@ public class TextFromFloat extends Operation implements VariableSupport, Seriali
             s = StringUtils.floatToString(
                     v, mDigitsBefore, mDigitsAfter, mPre, mAfter, mSeparator, mGroup, mOptions);
         }
-
-
         context.loadText(mTextId, s);
     }
 
