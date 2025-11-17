@@ -60,7 +60,11 @@ dependencies {
 android {
     defaultConfig.consumerProguardFiles("proguard-rules.pro")
     namespace = "androidx.mediarouter"
-    compileSdkPreview "Baklava"
+    compileSdk {
+        version = release(36) {
+            minorApiLevel = 1
+        }
+    }
 }
 
 androidx {
