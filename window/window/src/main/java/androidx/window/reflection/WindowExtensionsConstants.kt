@@ -56,13 +56,6 @@ internal object WindowExtensionsConstants {
         "$WINDOW_EXTENSIONS_PACKAGE_NAME.$LAYOUT_PACKAGE.WindowLayoutComponent"
 
     /**
-     * Constant name for class [androidx.window.extensions.layout.WindowLayoutInfo] used for
-     * reflection
-     */
-    internal const val WINDOW_LAYOUT_CLASS =
-        "$WINDOW_EXTENSIONS_PACKAGE_NAME.$LAYOUT_PACKAGE.WindowLayoutInfo"
-
-    /**
      * Constant name for class [androidx.window.extensions.area.WindowAreaComponent] used for
      * reflection
      */
