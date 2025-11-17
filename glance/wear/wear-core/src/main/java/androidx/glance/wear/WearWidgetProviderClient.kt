@@ -56,35 +56,6 @@ public class WearWidgetProviderClient(
     private val serviceIntent =
         Intent(ACTION_BIND_WIDGET_PROVIDER).apply { component = componentName }
 
-    /** Call [IWearWidgetProvider.onActivated] on the provider and wait for completion. */
-    public suspend fun sendActivationNotice(
-        instanceId: Int,
-        @ContainerType containerType: Int,
-    ): Unit = sendEvent(instanceId, containerType, "onActivated", IWearWidgetProvider::onActivated)
-
-    /** ListenableFuture version of [sendActivationNotice]. */
-    public fun sendActivationNoticeAsync(
-        instanceId: Int,
-        @ContainerType containerType: Int,
-        executor: Executor,
-    ): ListenableFuture<Void?> =
-        sendEventAsync(executor) { sendActivationNotice(instanceId, containerType) }
-
-    /** Call [IWearWidgetProvider.onDeactivated] on the provider and wait for completion. */
-    public suspend fun sendDeactivationNotice(
-        instanceId: Int,
-        @ContainerType containerType: Int,
-    ): Unit =
-        sendEvent(instanceId, containerType, "onDeactivated", IWearWidgetProvider::onDeactivated)
-
-    /** ListenableFuture version of [sendDeactivationNotice]. */
-    public fun sendDeactivationNoticeAsync(
-        instanceId: Int,
-        @ContainerType containerType: Int,
-        executor: Executor,
-    ): ListenableFuture<Void?> =
-        sendEventAsync(executor) { sendDeactivationNotice(instanceId, containerType) }
-
     /** Call [IWearWidgetProvider.onAdded] on the provider and wait for completion. */
     public suspend fun sendAddEvent(instanceId: Int, @ContainerType containerType: Int): Unit =
         sendEvent(instanceId, containerType, "onAdded", IWearWidgetProvider::onAdded)
