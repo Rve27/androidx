@@ -11,6 +11,7 @@ setup_build_env_vars
 start_time=$(initialize_start_time)
 
 export USE_ANDROIDX_REMOTE_BUILD_CACHE=gcp
+export ENABLE_PRESUBMIT_COMPATIBLE_CC_STORE=true
 
 # This target runs in incremental mode, but we do not want to restore the APKs and configs from
 # previous runs
