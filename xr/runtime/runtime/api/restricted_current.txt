@@ -233,18 +233,23 @@ package androidx.xr.runtime {
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class Log {
+    method public void debug(String message);
     method public void debug(optional Throwable? throwable, kotlin.jvm.functions.Function0<java.lang.String> message);
     method @BytecodeOnly public static void debug$default(androidx.xr.runtime.Log!, Throwable!, kotlin.jvm.functions.Function0!, int, Object!);
+    method public void error(String message);
     method public void error(optional Throwable? throwable, kotlin.jvm.functions.Function0<java.lang.String> message);
     method @BytecodeOnly public static void error$default(androidx.xr.runtime.Log!, Throwable!, kotlin.jvm.functions.Function0!, int, Object!);
     method @InaccessibleFromKotlin public boolean getEnabled();
     method @InaccessibleFromKotlin public androidx.xr.runtime.Log.Level getLevel();
+    method public void info(String message);
     method public void info(optional Throwable? throwable, kotlin.jvm.functions.Function0<java.lang.String> message);
     method @BytecodeOnly public static void info$default(androidx.xr.runtime.Log!, Throwable!, kotlin.jvm.functions.Function0!, int, Object!);
     method @InaccessibleFromKotlin public void setEnabled(boolean);
     method @InaccessibleFromKotlin public void setLevel(androidx.xr.runtime.Log.Level);
+    method public void verbose(String message);
     method public void verbose(optional Throwable? throwable, kotlin.jvm.functions.Function0<java.lang.String> message);
     method @BytecodeOnly public static void verbose$default(androidx.xr.runtime.Log!, Throwable!, kotlin.jvm.functions.Function0!, int, Object!);
+    method public void warn(String message);
     method public void warn(optional Throwable? throwable, kotlin.jvm.functions.Function0<java.lang.String> message);
     method @BytecodeOnly public static void warn$default(androidx.xr.runtime.Log!, Throwable!, kotlin.jvm.functions.Function0!, int, Object!);
     property public boolean enabled;
