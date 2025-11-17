@@ -19,6 +19,7 @@ package androidx.pdf.annotation
 import android.os.ParcelFileDescriptor
 import androidx.annotation.RestrictTo
 import androidx.pdf.PdfDocument
+import androidx.pdf.PdfWriteHandle
 import androidx.pdf.annotation.models.AnnotationResult
 import androidx.pdf.annotation.models.EditId
 import androidx.pdf.annotation.models.EditsResult
@@ -103,4 +104,10 @@ public abstract class EditablePdfDocument : PdfDocument {
 
     /** Discards all uncommitted edits. */
     public abstract fun clearUncommittedEdits()
+
+    /**
+     * Creates a [PdfWriteHandle] which can be used to save the document to a
+     * [ParcelFileDescriptor].
+     */
+    public abstract fun createWriteHandle(): PdfWriteHandle
 }
