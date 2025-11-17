@@ -661,7 +661,7 @@ class VerticalStackTest {
     }
 
     @Test
-    fun positioningAndScale_smallItems_centeredInViewport() {
+    fun positioningAndScale_smallItems_bottomAlignedInViewport() {
         val stackSize = 100.dp
         val itemHeight = 10.dp
         val state = StackState()
@@ -677,14 +677,14 @@ class VerticalStackTest {
         val topItemBounds = rule.onNodeWithTag("Item 0").getBoundsInRoot()
         val nextItemBounds = rule.onNodeWithTag("Item 1").getBoundsInRoot()
 
-        // Calculate the expected position based on the centering logic.
-        val expectedTopOffset = (stackBounds.height - topItemBounds.height) / 2
+        // Calculate the expected position based on the bottom alignment logic.
+        val expectedTopOffset = stackBounds.height - topItemBounds.height - RevealAreaSize
         assertThat(topItemBounds.left).isEqualTo(stackBounds.left)
         assertThat(topItemBounds.top.value).isWithin(1f).of(expectedTopOffset.value)
         assertThat(topItemBounds.right).isEqualTo(stackBounds.right)
         assertThat(topItemBounds.bottom.value)
             .isWithin(1f)
-            .of(stackBounds.bottom.value - expectedTopOffset.value)
+            .of(stackBounds.height.value - RevealAreaSize.value)
 
         assertThat(nextItemBounds.left).isGreaterThan(topItemBounds.left)
         assertThat(nextItemBounds.top).isGreaterThan(topItemBounds.top)

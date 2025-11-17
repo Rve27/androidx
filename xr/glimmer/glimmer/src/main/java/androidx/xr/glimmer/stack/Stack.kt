@@ -342,19 +342,11 @@ private fun StackState.nextNextItemTranslationY(
 
 /**
  * Calculates the offset from the top of the viewport for an item of a given height for the item's
- * top snapped position.
+ * top snapped position. Items are aligned to the bottom of the stack layout.
  */
 private fun StackState.calculateTopPositionOffset(itemHeight: Int, revealHeight: Int): Float {
     val viewportHeight = layoutInfoInternal.viewportSize.height
-    // If the item is too large to be centered in the viewport such that there is space for a reveal
-    // area, we shift it towards the top of the viewport, so that the reveal area fully fits between
-    // the bottom of the item and the bottom of the viewport. Otherwise, the item is centered in the
-    // viewport.
-    return if (itemHeight > viewportHeight - 2f * revealHeight) {
-        (viewportHeight - itemHeight - revealHeight).coerceAtLeast(0).toFloat()
-    } else {
-        (viewportHeight - itemHeight) / 2f
-    }
+    return (viewportHeight - itemHeight - revealHeight).coerceAtLeast(0).toFloat()
 }
 
 /** Calculates the initial offset for an item when it is positioned behind the item above it. */
