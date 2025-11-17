@@ -53,92 +53,6 @@ class WearWidgetProviderClientTest {
     }
 
     @Test
-    fun sendActivationNotice() = runTest {
-        val client = WearWidgetProviderClient(context, COMPONENT_NAME)
-        val instanceId = 123
-        val containerType = CONTAINER_TYPE_LARGE
-
-        assertThat(shadowApp.boundServiceConnections).isEmpty()
-
-        launch { client.sendActivationNotice(instanceId, containerType) }
-        // Actual binding runs on the main thread.
-        advanceUntilIdle()
-        shadowOf(Looper.getMainLooper()).idle()
-        advanceUntilIdle()
-
-        val handle =
-            ActiveWearWidgetHandle.fromParcel(service.activatedHandleParcel!!, COMPONENT_NAME)
-        assertThat(handle.provider).isEqualTo(COMPONENT_NAME)
-        assertThat(handle.instanceId).isEqualTo(instanceId)
-        assertThat(handle.containerType).isEqualTo(containerType)
-        assertThat(shadowApp.unboundServiceConnections).hasSize(1)
-        assertThat(shadowApp.boundServiceConnections).isEmpty()
-    }
-
-    @Test
-    fun sendDeactivationNotice() = runTest {
-        val client = WearWidgetProviderClient(context, COMPONENT_NAME)
-        val instanceId = 123
-        val containerType = CONTAINER_TYPE_LARGE
-
-        assertThat(shadowApp.boundServiceConnections).isEmpty()
-
-        launch { client.sendDeactivationNotice(instanceId, containerType) }
-        // Actual binding runs on the main thread.
-        advanceUntilIdle()
-        shadowOf(Looper.getMainLooper()).idle()
-        advanceUntilIdle()
-
-        val handle =
-            ActiveWearWidgetHandle.fromParcel(service.deactivatedHandleParcel!!, COMPONENT_NAME)
-        assertThat(handle.provider).isEqualTo(COMPONENT_NAME)
-        assertThat(handle.instanceId).isEqualTo(instanceId)
-        assertThat(handle.containerType).isEqualTo(containerType)
-        assertThat(shadowApp.unboundServiceConnections).hasSize(1)
-        assertThat(shadowApp.boundServiceConnections).isEmpty()
-    }
-
-    @Test
-    fun sendActivationNotice_cancelled() = runTest {
-        val client = WearWidgetProviderClient(context, COMPONENT_NAME)
-        val instanceId = 123
-        val containerType = CONTAINER_TYPE_LARGE
-
-        assertThat(shadowApp.boundServiceConnections).isEmpty()
-
-        val job = launch { client.sendActivationNotice(instanceId, containerType) }
-        // Actual binding runs on the main thread.
-        advanceUntilIdle()
-        shadowOf(Looper.getMainLooper()).idle()
-
-        job.cancel()
-        advanceUntilIdle()
-
-        assertThat(shadowApp.unboundServiceConnections).hasSize(1)
-        assertThat(shadowApp.boundServiceConnections).isEmpty()
-    }
-
-    @Test
-    fun sendDeactivationNotice_cancelled() = runTest {
-        val client = WearWidgetProviderClient(context, COMPONENT_NAME)
-        val instanceId = 123
-        val containerType = CONTAINER_TYPE_LARGE
-
-        assertThat(shadowApp.boundServiceConnections).isEmpty()
-
-        val job = launch { client.sendDeactivationNotice(instanceId, containerType) }
-        // Actual binding runs on the main thread.
-        advanceUntilIdle()
-        shadowOf(Looper.getMainLooper()).idle()
-
-        job.cancel()
-        advanceUntilIdle()
-
-        assertThat(shadowApp.unboundServiceConnections).hasSize(1)
-        assertThat(shadowApp.boundServiceConnections).isEmpty()
-    }
-
-    @Test
     fun sendAddEvent() = runTest {
         val client = WearWidgetProviderClient(context, COMPONENT_NAME)
         val instanceId = 123
@@ -271,8 +185,6 @@ class WearWidgetProviderClientTest {
     }
 
     private class FakeWearWidgetProvider : IWearWidgetProvider.Stub() {
-        var activatedHandleParcel: ActiveWearWidgetHandleParcel? = null
-        var deactivatedHandleParcel: ActiveWearWidgetHandleParcel? = null
         var addedHandleParcel: ActiveWearWidgetHandleParcel? = null
         var removedHandleParcel: ActiveWearWidgetHandleParcel? = null
 
@@ -286,18 +198,12 @@ class WearWidgetProviderClientTest {
         override fun onActivated(
             handleParcel: ActiveWearWidgetHandleParcel?,
             callback: IExecutionCallback?,
-        ) {
-            activatedHandleParcel = handleParcel
-            callback?.onSuccess()
-        }
+        ) {}
 
         override fun onDeactivated(
             handleParcel: ActiveWearWidgetHandleParcel?,
             callback: IExecutionCallback?,
-        ) {
-            deactivatedHandleParcel = handleParcel
-            callback?.onSuccess()
-        }
+        ) {}
 
         override fun onAdded(
             handleParcel: ActiveWearWidgetHandleParcel?,

@@ -61,12 +61,12 @@ internal class WearWidgetProviderImpl(
     override fun onActivated(
         handleParcel: ActiveWearWidgetHandleParcel?,
         callback: IExecutionCallback?,
-    ) = onEvent(handleParcel, callback, widget::onAdded)
+    ) {}
 
     override fun onDeactivated(
         handleParcel: ActiveWearWidgetHandleParcel?,
         callback: IExecutionCallback?,
-    ) = onEvent(handleParcel, callback, widget::onRemoved)
+    ) {}
 
     override fun onAdded(
         handleParcel: ActiveWearWidgetHandleParcel?,
