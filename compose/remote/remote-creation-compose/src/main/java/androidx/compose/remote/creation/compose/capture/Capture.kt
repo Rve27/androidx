@@ -85,6 +85,20 @@ public open class RemoteComposeCreationState {
         }
     }
 
+    public constructor(
+        platform: RcPlatformServices,
+        size: Size,
+        apiLevel: Int,
+        profiles: Int,
+        document: RemoteComposeWriter,
+    ) {
+        this.platform = platform
+        this.size = size
+        this.apiLevel = apiLevel
+        this.profiles = profiles
+        this.document = document
+    }
+
     public constructor(size: Size, profile: Profile) {
         this.platform = profile.platform
         this.size = size
