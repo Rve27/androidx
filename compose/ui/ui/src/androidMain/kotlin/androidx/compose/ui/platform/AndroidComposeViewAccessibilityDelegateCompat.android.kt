@@ -502,7 +502,7 @@ internal class AndroidComposeViewAccessibilityDelegateCompat(val view: AndroidCo
 
     private fun createNodeInfo(virtualViewId: Int): AccessibilityNodeInfoCompat? {
         if (
-            view.composeViewContext.lifecycleOwner.lifecycle.currentState ==
+            view.viewTreeOwners?.lifecycleOwner?.lifecycle?.currentState ==
                 Lifecycle.State.DESTROYED
         ) {
             return emptyNodeInfoOrNull()

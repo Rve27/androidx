@@ -33,9 +33,6 @@ import kotlinx.coroutines.cancel
 internal class ModifierNodeDetachedCancellationException :
     PlatformOptimizedCancellationException("The Modifier.Node was detached")
 
-internal class ModifierNodeCoroutineContextChangedException :
-    PlatformOptimizedCancellationException("The CoroutineContext of the Modifier.Node has changed")
-
 /**
  * An ordered, immutable collection of [modifier elements][Modifier.Element] that decorate or add
  * behavior to Compose UI elements. For example, backgrounds, padding and click event listeners
@@ -178,11 +175,8 @@ interface Modifier {
          * A [CoroutineScope] that can be used to launch tasks that should run while the node is
          * attached.
          *
-         * The scope is accessible between [onAttach] and [onDetach] calls, and will be canceled
-         * after the node is detached (after [onDetach] returns). It will also be canceled when the
-         * CoroutineContext changes as received from [onCoroutineContextChanged]. When
-         * [onCoroutineContextChanged] is called, the developer should restart any tasks that need
-         * to be completed.
+         * The scope is accessible between [onAttach] and [onDetach] calls, and will be cancelled
+         * after the node is detached (after [onDetach] returns).
          *
          * @sample androidx.compose.ui.samples.ModifierNodeCoroutineScopeSample
          * @throws IllegalStateException If called while the node is not attached.
@@ -302,26 +296,6 @@ interface Modifier {
                 scope = null
             }
         }
-
-        /**
-         * Called when the coroutine context has changed to cancel any ongoing coroutine scope and
-         * ask the [Node] to reset anything it must.
-         */
-        internal fun notifyCoroutineContextChanged() {
-            val oldScope = scope
-            if (oldScope != null) {
-                scope = null
-                oldScope.cancel(ModifierNodeCoroutineContextChangedException())
-            }
-            onCoroutineContextChanged()
-        }
-
-        /**
-         * Called when the coroutine scope has changed. The previous [coroutineScope] will have been
-         * canceled before this call. The new [coroutineScope] can be retrieved within
-         * [onCoroutineContextChanged] should a task need to be started.
-         */
-        open fun onCoroutineContextChanged() {}
 
         internal open fun reset() {
             checkPrecondition(isAttached) { "reset() called on an unattached node" }
