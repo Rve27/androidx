@@ -274,6 +274,9 @@ package androidx.xr.runtime {
     ctor public NodeHolder(T node, Class<? extends java.lang.Object?> type);
   }
 
+  @SuppressCompatibility @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) @kotlin.RequiresOptIn(level=kotlin.RequiresOptIn.Level.ERROR, message="This API is in an unstable preview state and requires a developer preview system image work properly. Do not use this API in release builds as it will likely to lead to crashes.") @kotlin.annotation.Retention(kotlin.annotation.AnnotationRetention.BINARY) public @interface PreviewSpatialApi3 {
+  }
+
   public final class RequiredCalibrationType {
     field public static final androidx.xr.runtime.RequiredCalibrationType.Companion Companion;
     field public static final androidx.xr.runtime.RequiredCalibrationType REQUIRED_CALIBRATION_TYPE_FACE_TRACKING;
@@ -281,6 +284,12 @@ package androidx.xr.runtime {
 
   public static final class RequiredCalibrationType.Companion {
     property public androidx.xr.runtime.RequiredCalibrationType REQUIRED_CALIBRATION_TYPE_FACE_TRACKING;
+  }
+
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) @kotlin.annotation.Retention(kotlin.annotation.AnnotationRetention.RUNTIME) @kotlin.annotation.Target(allowedTargets={kotlin.annotation.AnnotationTarget.FUNCTION, kotlin.annotation.AnnotationTarget.PROPERTY, kotlin.annotation.AnnotationTarget.CLASS}) public @interface RequiresSpatialApi {
+    ctor @KotlinOnly public RequiresSpatialApi(int value);
+    method @InaccessibleFromKotlin public abstract int value();
+    property public abstract int value;
   }
 
   public final class Session {
@@ -370,6 +379,33 @@ package androidx.xr.runtime {
 
   public final class SessionResumeSuccess extends androidx.xr.runtime.SessionResumeResult {
     ctor public SessionResumeSuccess();
+  }
+
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class SpatialApiVersionHelper {
+    method @InaccessibleFromKotlin @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static int getPreviewSpatialApiVersion();
+    method @InaccessibleFromKotlin public static int getSpatialApiVersion();
+    property @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static int previewSpatialApiVersion;
+    property public static int spatialApiVersion;
+    field public static final androidx.xr.runtime.SpatialApiVersionHelper INSTANCE;
+  }
+
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface SpatialApiVersionProvider {
+    method @InaccessibleFromKotlin public int getPreviewSpatialApiVersion();
+    method @InaccessibleFromKotlin public int getSpatialApiVersion();
+    property public abstract int previewSpatialApiVersion;
+    property public abstract int spatialApiVersion;
+  }
+
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class SpatialApiVersions {
+    property public static int SPATIAL_API_V1;
+    property public static int SPATIAL_API_V2;
+    property public static int SPATIAL_API_V3;
+    property public static int UNKNOWN;
+    field public static final androidx.xr.runtime.SpatialApiVersions INSTANCE;
+    field public static final int SPATIAL_API_V1 = 1; // 0x1
+    field public static final int SPATIAL_API_V2 = 2; // 0x2
+    field public static final int SPATIAL_API_V3 = 3; // 0x3
+    field public static final int UNKNOWN = 0; // 0x0
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class SpatialStateHolder<T> extends androidx.xr.runtime.TypeHolder<T> {
