@@ -421,8 +421,6 @@ internal abstract class NodeCoordinator(override val layoutNode: LayoutNode) :
         if (this.position != position) {
             layoutNode.requireOwner().voteFrameRate(FrameRateCategory.High.value)
             this.position = position
-            layoutNode.layoutDelegate.measurePassDelegate
-                .notifyChildrenUsingCoordinatesWhilePlacing()
             val layer = layer
             if (layer != null) {
                 layer.move(position)
@@ -632,16 +630,6 @@ internal abstract class NodeCoordinator(override val layoutNode: LayoutNode) :
             }
             if (positionalPropertiesChanged) {
                 val layoutNode = layoutNode
-                val layoutDelegate = layoutNode.layoutDelegate
-                if (layoutDelegate.childrenAccessingCoordinatesDuringPlacement > 0) {
-                    if (
-                        layoutDelegate.coordinatesAccessedDuringModifierPlacement ||
-                            layoutDelegate.coordinatesAccessedDuringPlacement
-                    ) {
-                        layoutNode.requestRelayout()
-                    }
-                    layoutDelegate.measurePassDelegate.notifyChildrenUsingCoordinatesWhilePlacing()
-                }
                 layoutNode.onCoordinatorRectChanged(this)
                 if (layoutNode.globallyPositionedObservers > 0) {
                     layoutNode.requireOwner().requestOnPositionedCallback(layoutNode)
