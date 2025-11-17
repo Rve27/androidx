@@ -33,6 +33,8 @@ import androidx.compose.remote.creation.compose.capture.shapes.RemoteRoundedCorn
 import androidx.compose.remote.creation.compose.capture.shapes.RemoteShape
 import androidx.compose.remote.creation.compose.layout.RemoteAlignment
 import androidx.compose.remote.creation.compose.layout.RemoteArrangement
+import androidx.compose.remote.creation.compose.layout.RemoteBox
+import androidx.compose.remote.creation.compose.layout.RemoteColumn
 import androidx.compose.remote.creation.compose.layout.RemoteComposable
 import androidx.compose.remote.creation.compose.layout.RemoteOffset
 import androidx.compose.remote.creation.compose.layout.RemotePaddingValues
@@ -46,7 +48,9 @@ import androidx.compose.remote.creation.compose.modifier.clickable
 import androidx.compose.remote.creation.compose.modifier.drawWithContent
 import androidx.compose.remote.creation.compose.modifier.heightIn
 import androidx.compose.remote.creation.compose.modifier.padding
+import androidx.compose.remote.creation.compose.modifier.size
 import androidx.compose.remote.creation.compose.modifier.widthIn
+import androidx.compose.remote.creation.compose.modifier.wrapContentSize
 import androidx.compose.remote.creation.compose.state.RemoteBoolean
 import androidx.compose.remote.creation.compose.state.RemoteColor
 import androidx.compose.remote.creation.compose.state.RemoteDp
@@ -57,7 +61,6 @@ import androidx.compose.remote.creation.compose.state.rf
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.DefaultAlpha
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
@@ -152,6 +155,7 @@ public fun RemoteButton(
  */
 @Composable
 @RemoteComposable
+@Suppress("RestrictedApiAndroidX")
 public fun RemoteButton(
     vararg onClick: Action,
     modifier: RemoteModifier = RemoteModifier,
@@ -181,6 +185,98 @@ public fun RemoteButton(
         content = content,
     )
 }
+
+/**
+ * Wear Material3 [RemoteButton] that offers parameters for optional container image backgrounds,
+ * with three slots and a specific layout for an icon, label and secondaryLabel. The icon and
+ * secondaryLabel are optional. The items are laid out with the icon, if provided, at the start of a
+ * row, with a column next containing the two label slots.
+ *
+ * An image background is a means to reinforce the meaning of information in a Button. Buttons
+ * should have a content color that contrasts with the background image and scrim.
+ *
+ * This [RemoteButton] takes [containerPainter] for the container image background to be drawn when
+ * the button is enabled and [disabledContainerPainter] for the image background when the button is
+ * disabled (the [RemoteButtonColors] containerColor and disabledContainerColor properties are
+ * ignored). It is recommended to use [RemoteButtonDefaults.containerPainter] to create the painters
+ * so that a scrim is drawn on top of the container image, ensuring that any content above the
+ * background is legible. If painters are not provided, a tonal color shape would be used as the
+ * button background.
+ *
+ * The [RemoteButton] is stadium-shaped by default and its standard height is designed to take 2
+ * lines of text - either a two-line label or both a single line label and a secondary label. With
+ * localisation and/or large font sizes, the [RemoteButton] height adjusts to accommodate the
+ * contents. The label and secondary label should be consistently aligned.
+ *
+ * [RemoteButton] can be enabled or disabled. A disabled button will not respond to click events.
+ *
+ * Example of a [RemoteButton] with an image background, an icon and a secondary label:
+ *
+ * @param onClick Will be called when the user clicks the button
+ * @param modifier Modifier to be applied to the button
+ * @param secondaryLabel A slot for providing the button's secondary label. The contents are
+ *   expected to be text which is "start" aligned if there is an icon preset and "start" or "center"
+ *   aligned if not. label and secondaryLabel contents should be consistently aligned.
+ * @param icon A slot for providing the button's icon. The contents are expected to be a
+ *   horizontally and vertically aligned icon of size [RemoteButtonDefaults.IconSize] or
+ *   [RemoteButtonDefaults.LargeIconSize].
+ * @param enabled Controls the enabled state of the button. When `false`, this button will not be
+ *   clickable
+ * @param containerPainter The [RemotePainter] to use to draw the container image of the
+ *   [RemoteButton], such as returned by [RemoteButtonDefaults.containerPainter].
+ * @param disabledContainerPainter [RemotePainter] to use to draw the container of the
+ *   [RemoteButton] when not enabled, such as returned by
+ *   [RemoteButtonDefaults.disabledContainerPainter].
+ * @param shape Defines the button's shape. It is strongly recommended to use the default as this
+ *   shape is a key characteristic of the Wear Material3 Theme
+ * @param colors [RemoteButtonColors] that will be used to resolve the background and content color
+ *   for this button in different states (the containerColor and disabledContainerColor are
+ *   overridden by containerPainter and disabledContainerPainter respectively). See
+ *   [RemoteButtonDefaults.buttonWithContainerPainterColors].
+ * @param border Optional [RemoteDp] that will be used to resolve the border for this button in
+ *   different states.
+ * @param borderColor Optional [RemoteColor] that will be used to resolve the border color for this
+ *   button in different states.
+ * @param contentPadding The spacing values to apply internally between the container and the
+ *   content
+ * @param label A slot for providing the button's main label. The contents are expected to be text
+ *   which is "start" aligned if there is an icon preset and "start" or "center" aligned if not.
+ */
+// TODO(b/261838497) Add Material3 UX guidance links
+@Composable
+@RemoteComposable
+@Suppress("RestrictedApiAndroidX")
+public fun RemoteButton(
+    vararg onClick: Action,
+    modifier: RemoteModifier = RemoteModifier,
+    secondaryLabel: @Composable @RemoteComposable (RemoteRowScope.() -> Unit)? = null,
+    icon: (@Composable () -> Unit)? = null,
+    enabled: RemoteBoolean = RemoteBoolean(true),
+    containerPainter: RemotePainter? = null,
+    disabledContainerPainter: RemotePainter? = null,
+    colors: RemoteButtonColors = RemoteButtonDefaults.buttonWithContainerPainterColors(),
+    border: RemoteDp? = null,
+    borderColor: RemoteColor? = null,
+    shape: RemoteShape = RemoteButtonDefaults.shape,
+    contentPadding: RemotePaddingValues = RemoteButtonDefaults.ContentPadding,
+    label: @Composable @RemoteComposable RemoteRowScope.() -> Unit,
+): Unit =
+    RemoteButtonImpl(
+        onClick = onClick,
+        modifier = modifier,
+        secondaryLabelContent = secondaryLabel,
+        icon = icon,
+        enabled = enabled,
+        shape = shape,
+        labelFont = RemoteMaterialTheme.typography.typography.displayMedium,
+        containerPainter = containerPainter,
+        disabledContainerPainter = disabledContainerPainter,
+        colors = colors,
+        border = border,
+        borderColor = borderColor,
+        contentPadding = contentPadding,
+        labelContent = label,
+    )
 
 /**
  * Button with label. This allows to use the token values for individual buttons instead of relying
@@ -236,6 +332,61 @@ private fun RemoteButtonImpl(
     )
 }
 
+/**
+ * Button with icon, label and secondary label. This allows to use the token values for individual
+ * buttons instead of relying on common values.
+ */
+@Composable
+@RemoteComposable
+@Suppress("RestrictedApiAndroidX")
+private fun RemoteButtonImpl(
+    vararg onClick: Action,
+    modifier: RemoteModifier = RemoteModifier,
+    secondaryLabelContent: (@Composable @RemoteComposable RemoteRowScope.() -> Unit)?,
+    icon: (@Composable @RemoteComposable () -> Unit)?,
+    colors: RemoteButtonColors,
+    containerPainter: RemotePainter?,
+    disabledContainerPainter: RemotePainter?,
+    enabled: RemoteBoolean,
+    border: RemoteDp?,
+    borderColor: RemoteColor?,
+    shape: RemoteShape,
+    contentPadding: RemotePaddingValues,
+    labelFont: TextStyle,
+    labelContent: @Composable @RemoteComposable RemoteRowScope.() -> Unit,
+) {
+    RemoteButtonImpl(
+        onClick = onClick,
+        modifier = modifier,
+        enabled = enabled,
+        shape = shape,
+        labelFont = labelFont,
+        containerPainter = containerPainter,
+        disabledContainerPainter = disabledContainerPainter,
+        colors = colors,
+        border = border,
+        borderColor = borderColor,
+        contentPadding = contentPadding,
+    ) {
+        if (icon != null) {
+            RemoteBox(
+                modifier = RemoteModifier.wrapContentSize(),
+                horizontalAlignment = RemoteAlignment.CenterHorizontally,
+                verticalArrangement = RemoteArrangement.Center,
+                content = icon,
+            )
+            RemoteBox(RemoteModifier.size(RemoteButtonDefaults.IconSpacing))
+        }
+        RemoteColumn(modifier = RemoteModifier) {
+            RemoteRow(content = labelContent)
+            if (secondaryLabelContent != null) {
+                RemoteBox(RemoteModifier.size(1.rdp))
+                RemoteRow(content = secondaryLabelContent)
+            }
+        }
+    }
+}
+
 /** Contains the default values used by [RemoteButton] */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 @Suppress("RestrictedApiAndroidX")
@@ -265,6 +416,18 @@ public object RemoteButtonDefaults {
 
     /** The default minimum width applied for the [RemoteButton]. */
     public val Width: Dp = 12.dp
+
+    /**
+     * The default size of the spacing between an icon and a text when they are used inside a
+     * [RemoteButton].
+     */
+    public val IconSpacing: RemoteDp = 6.rdp
+
+    /** The recommended default size for icons when used inside a [RemoteButton]. */
+    public val IconSize: RemoteDp = 26.rdp
+
+    /** The recommended icon size when used in [RemoteButton]s for icons such as an app icon */
+    public val LargeIconSize: RemoteDp = 32.rdp
 
     /** The recommended horizontal padding used by [RemoteButton] by default */
     public val ButtonHorizontalPadding: RemoteDp = RemoteDp(14f.rf)
@@ -298,11 +461,11 @@ public object RemoteButtonDefaults {
         @Composable
         get() {
             return RemoteButtonColors(
-                containerColor = RemoteColor(Color.Unspecified),
+                containerColor = primary,
                 contentColor = onBackground,
                 secondaryContentColor = onBackground.copy(alpha = 0.8f.rf),
                 iconColor = onBackground,
-                disabledContainerColor = RemoteColor(Color.Unspecified),
+                disabledContainerColor = onSurface.toDisabledColor(disabledAlpha = 0.12f.rf),
                 disabledContentColor = onSurface.toDisabledColor(disabledAlpha = 0.38f.rf),
                 disabledSecondaryContentColor = onSurface.toDisabledColor(disabledAlpha = 0.38f.rf),
                 disabledIconColor = onSurface.toDisabledColor(disabledAlpha = 0.38f.rf),
