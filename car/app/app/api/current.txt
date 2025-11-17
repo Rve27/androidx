@@ -854,6 +854,12 @@ package androidx.car.app.media {
     field public static final int AUDIO_CONTENT_SAMPLING_RATE = 16000; // 0x3e80
   }
 
+  public final class MediaConstants {
+    property public static String ACTION_SHOW_MEDIA_PLAYBACK;
+    field public static final String ACTION_SHOW_MEDIA_PLAYBACK = "androidx.car.app.media.action.SHOW_MEDIA_PLAYBACK";
+    field public static final androidx.car.app.media.MediaConstants INSTANCE;
+  }
+
   @SuppressCompatibility @androidx.car.app.annotations.ExperimentalCarApi public class MediaPlaybackManager implements androidx.car.app.managers.Manager {
     method @MainThread public void registerMediaPlaybackToken(android.support.v4.media.session.MediaSessionCompat.Token);
   }
