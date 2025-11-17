@@ -24,9 +24,6 @@ TEST_XML_CONFIGS="$SCRIPT_DIR/../../../out/androidx/build/test-xml-configs"
 echo "Deleting $TEST_XML_CONFIGS"
 rm -fr $TEST_XML_CONFIGS
 
-# Temporarily delete all of our_dir to set out trident image size
-rm -fr "$SCRIPT_DIR/../../../out/"
-
 impl/build.sh zipTestConfigsWithApks zipOwnersFiles createModuleInfo "$@"
 
 record_build_metrics "$start_time"
