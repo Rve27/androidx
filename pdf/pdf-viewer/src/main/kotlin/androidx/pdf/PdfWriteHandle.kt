@@ -26,7 +26,7 @@ public interface PdfWriteHandle : AutoCloseable {
     /**
      * Writes the contents of the PDF to [destination].
      *
-     * @property destination The [ParcelFileDescriptor] to write to. The caller is responsible for
+     * @param destination The [ParcelFileDescriptor] to write to. The caller is responsible for
      *   closing [destination].
      */
     @Throws(IOException::class) public suspend fun write(destination: ParcelFileDescriptor)
