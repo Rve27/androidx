@@ -1207,11 +1207,6 @@ internal class LayoutNode(
         requireOwner().requestOnPositionedCallback(this)
     }
 
-    fun dispatchCoroutineContextChanged() {
-        nodes.headToTail { it.notifyCoroutineContextChanged() }
-        _children.forEach { it.dispatchCoroutineContextChanged() }
-    }
-
     internal fun onCoordinatorRectChanged(coordinator: NodeCoordinator) {
         val rectManager = owner?.rectManager
         val placementPending = layoutState != Idle || measurePending || layoutPending
