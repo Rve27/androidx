@@ -27,6 +27,7 @@ import androidx.pdf.ink.R
 import androidx.pdf.ink.view.brush.BrushSizeSelectorView
 import androidx.pdf.ink.view.colorpalette.ColorPaletteView
 import androidx.pdf.ink.view.colorpalette.model.PaletteItem
+import androidx.pdf.ink.view.state.ToolbarInitializer
 import androidx.pdf.ink.view.tool.AnnotationToolInfo
 import androidx.pdf.ink.view.tool.AnnotationToolView
 
@@ -79,6 +80,9 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
     public fun setAnnotationToolbarListener(listener: AnnotationToolbarListener) {
         annotationToolbarListener = listener
     }
+
+    private val viewmodel =
+        AnnotationToolbarViewModel(ToolbarInitializer.createInitialState(context))
 
     private val pen: AnnotationToolView
     private val highlighter: AnnotationToolView
