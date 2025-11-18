@@ -93,7 +93,7 @@ internal abstract class LookaheadCapablePlaceable :
             return _rulerScope ?: ResettableRulerScope().also { _rulerScope = it }
         }
 
-    final override fun get(alignmentLine: AlignmentLine): Int {
+    override fun get(alignmentLine: AlignmentLine): Int {
         if (!hasMeasureResult) return AlignmentLine.Unspecified
         val measuredPosition = calculateAlignmentLine(alignmentLine)
         if (measuredPosition == AlignmentLine.Unspecified) return AlignmentLine.Unspecified
