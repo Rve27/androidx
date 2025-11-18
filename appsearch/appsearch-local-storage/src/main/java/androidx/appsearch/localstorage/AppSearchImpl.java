@@ -768,7 +768,7 @@ public final class AppSearchImpl implements Closeable {
             if (mRevocableFileDescriptorStore != null) {
                 mRevocableFileDescriptorStore.revokeAll();
             }
-            mIcingSearchEngineLocked.clearAndDestroy();
+            ResetResultProto unused = mIcingSearchEngineLocked.clearAndDestroy();
             mNeedsPersistToDisk.set(false);
             mClosedLocked = true;
         } catch (IOException e) {
@@ -4798,7 +4798,7 @@ public final class AppSearchImpl implements Closeable {
      * protos.
      */
     static Map<String, SchemaTypeConfigProto> getRewrittenPrefixedTypes(@NonNull String prefix,
-            @NonNull SchemaProto newSchema, boolean populateDatabase) throws AppSearchException {
+            @NonNull SchemaProto newSchema, boolean populateDatabase) {
         Map<String, SchemaTypeConfigProto> newTypesToProto = new ArrayMap<>();
         // Rewrite the schema type to include the typePrefix.
         for (int typeIdx = 0; typeIdx < newSchema.getTypesCount(); typeIdx++) {
