@@ -58,6 +58,10 @@ android {
             shrinkResources = true
         }
     }
+
+    adbOptions {
+        installOptions = ["-r", "-d", "-g"]
+    }
 }
 
 androidx {
