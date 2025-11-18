@@ -24,6 +24,7 @@ import static com.android.extensions.xr.node.ReformOptions.ALLOW_MOVE;
 import static com.android.extensions.xr.node.ReformOptions.ALLOW_RESIZE;
 
 import static com.google.common.truth.Truth.assertThat;
+import static com.google.common.truth.TruthJUnit.assume;
 import static com.google.common.util.concurrent.Futures.immediateFuture;
 import static com.google.common.util.concurrent.MoreExecutors.directExecutor;
 
@@ -90,16 +91,7 @@ public class ResizableComponentImplTest {
     private final PerceptionLibrary mPerceptionLibrary = mock(PerceptionLibrary.class);
     private final XrExtensions mXrExtensions = XrExtensionsProvider.getXrExtensions();
     private final EntityManager mEntityManager = new EntityManager();
-    private final Node mActivitySpaceNode = mXrExtensions.createNode();
-    private final ActivitySpaceImpl mActivitySpaceImpl =
-            new ActivitySpaceImpl(
-                    mActivitySpaceNode,
-                    mActivity,
-                    mXrExtensions,
-                    mEntityManager,
-                    () -> mXrExtensions.getSpatialState(mActivity),
-                    /* unscaledGravityAlignedActivitySpace= */ false,
-                    mFakeExecutor);
+    private ActivitySpaceImpl mActivitySpaceImpl;
     private final AndroidXrEntity mActivitySpaceRoot = Mockito.mock(AndroidXrEntity.class);
     private final PerceptionSpaceScenePoseImpl mPerceptionSpaceScenePose =
             new PerceptionSpaceScenePoseImpl(mActivitySpaceImpl, mActivitySpaceRoot);
@@ -111,6 +103,17 @@ public class ResizableComponentImplTest {
 
     @Before
     public void setUp() {
+        assume().that(mXrExtensions).isNotNull();
+        Node activitySpaceNode = mXrExtensions.createNode();
+        mActivitySpaceImpl =
+                new ActivitySpaceImpl(
+                        activitySpaceNode,
+                        mActivity,
+                        mXrExtensions,
+                        mEntityManager,
+                        () -> mXrExtensions.getSpatialState(mActivity),
+                        /* unscaledGravityAlignedActivitySpace= */ false,
+                        mFakeExecutor);
         when(mPerceptionLibrary.initSession(eq(mActivity), anyInt(), eq(mFakeExecutor)))
                 .thenReturn(immediateFuture(mock(Session.class)));
         mFakeRuntime =
@@ -1867,5 +1870,31 @@ public class ResizableComponentImplTest {
         assertThat(mNodeRepository.getAlpha(entity.getNode())).isEqualTo(0.9f);
         // The resize event listener should not be called again for a move event.
         verify(mockResizeEventListener, times(1)).onResizeEvent(any());
+    }
+
+    @Test
+    public void resizableComponent_restoresAlphaOnDetachWhenHidden() {
+        AndroidXrEntity entity = (AndroidXrEntity) createTestEntity();
+        ResizableComponentImpl resizableComponent =
+                new ResizableComponentImpl(
+                        mFakeExecutor, mXrExtensions, MIN_DIMENSIONS, MAX_DIMENSIONS);
+        assertThat(entity.addComponent(resizableComponent)).isTrue();
+        entity.setAlpha(0.9f);
+        ResizeEventListener mockResizeEventListener = mock(ResizeEventListener.class);
+        resizableComponent.addResizeEventListener(directExecutor(), mockResizeEventListener);
+
+        // Start a resize event to hide the content.
+        sendAndProcessReformEvent(
+                entity.getNode(),
+                ShadowReformEvent.create(REFORM_TYPE_RESIZE, REFORM_STATE_START, 0));
+
+        // Verify content is hidden.
+        assertThat(mNodeRepository.getAlpha(entity.getNode())).isEqualTo(0.0f);
+
+        // Detach the component.
+        entity.removeComponent(resizableComponent);
+
+        // Verify alpha is restored.
+        assertThat(mNodeRepository.getAlpha(entity.getNode())).isEqualTo(0.9f);
     }
 }
