@@ -163,7 +163,9 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
      * - [TWO_PAGE]: Displays two pages per row (like an open book).
      */
     @PagesPerRow
-    internal var pagesPerRow: Int = SINGLE_PAGE
+    @get:RestrictTo(RestrictTo.Scope.LIBRARY)
+    @set:RestrictTo(RestrictTo.Scope.LIBRARY)
+    public var pagesPerRow: Int = SINGLE_PAGE
         set(value) {
             checkMainThread()
             // If pagesPerRow anything other than two pages default it to single page.
@@ -184,8 +186,9 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
      * Note: This value is only relevant when [pagesPerRow] is set to [TWO_PAGE].
      */
     @FloatRange(from = 0.0)
-    internal var horizontalPageSpacing: Float =
-        context.getDimensions(R.dimen.horizontal_page_spacing)
+    @get:RestrictTo(RestrictTo.Scope.LIBRARY)
+    @set:RestrictTo(RestrictTo.Scope.LIBRARY)
+    public var horizontalPageSpacing: Float = context.getDimensions(R.dimen.horizontal_page_spacing)
         set(value) {
             checkMainThread()
             val validHorizontalPageSpacing = value.coerceAtLeast(0f)
@@ -198,7 +201,9 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
 
     /** The spacing between vertically adjacent pages in pixels. */
     @FloatRange(from = 0.0)
-    internal var verticalPageSpacing: Float = context.getDimensions(R.dimen.vertical_page_spacing)
+    @get:RestrictTo(RestrictTo.Scope.LIBRARY)
+    @set:RestrictTo(RestrictTo.Scope.LIBRARY)
+    public var verticalPageSpacing: Float = context.getDimensions(R.dimen.vertical_page_spacing)
         set(value) {
             checkMainThread()
             val validVerticalPageSpacing = value.coerceAtLeast(0f)
@@ -2221,7 +2226,10 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
     public annotation class GestureState
 
     /** Defines the allowed values for the number of pages displayed per row in the [PdfView]. */
-    @IntDef(SINGLE_PAGE, TWO_PAGE) internal annotation class PagesPerRow
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    @Retention(AnnotationRetention.SOURCE)
+    @IntDef(SINGLE_PAGE, TWO_PAGE)
+    public annotation class PagesPerRow
 
     /** Adjusts the position of [PdfView] in response to gestures detected by [GestureTracker] */
     private inner class ZoomScrollGestureHandler : GestureTracker.GestureHandler() {
@@ -2542,10 +2550,10 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         public const val GESTURE_STATE_SETTLING: Int = 2
 
         /** Represents the configuration for displaying a single page per row (standard display). */
-        internal const val SINGLE_PAGE: Int = 1
+        @RestrictTo(RestrictTo.Scope.LIBRARY) public const val SINGLE_PAGE: Int = 1
 
         /** Represents the configuration for displaying two pages per row (like an open book). */
-        internal const val TWO_PAGE: Int = 2
+        @RestrictTo(RestrictTo.Scope.LIBRARY) public const val TWO_PAGE: Int = 2
 
         /**
          * Vertically aligns the page to the top of the PdfView.
