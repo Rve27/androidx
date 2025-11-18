@@ -30,7 +30,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.node.CompositionLocalConsumerModifierNode
-import androidx.compose.ui.node.LayoutAwareModifierNode
+import androidx.compose.ui.node.MeasuredSizeAwareModifierNode
 import androidx.compose.ui.node.currentValueOf
 import androidx.compose.ui.node.requireLayoutCoordinates
 import androidx.compose.ui.unit.IntOffset
@@ -75,7 +75,7 @@ internal class ContentInViewNode(
     Modifier.Node(),
     androidx.compose.foundation.relocation.BringIntoViewResponder,
     CompositionLocalConsumerModifierNode,
-    LayoutAwareModifierNode {
+    MeasuredSizeAwareModifierNode {
 
     override val shouldAutoInvalidate: Boolean = false
 
