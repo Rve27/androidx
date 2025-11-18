@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.abbenchmarking
 
-/** Returns a list of connected device serial numbers. */
-internal fun getConnectedDevices(): List<String> {
-    val output = runCommand(*(listOf("adb", "devices").toTypedArray()))
-    return output
-        .lines()
-        .drop(1) // Drop the "List of devices attached" header
-        .mapNotNull { it.split("\\s+".toRegex()).firstOrNull() }
-        .filter { it.isNotBlank() }
+package androidx.abbenchmarking.common
+
+/** Defines constants for build variant names used to locate benchmark outputs. */
+object BuildVariant {
+    /** Build variant for microbenchmarks. */
+    const val RELEASE_ANDROID_TEST = "releaseAndroidTest"
+
+    /** Build variant for macrobenchmarks. */
+    const val RELEASE = "release"
 }

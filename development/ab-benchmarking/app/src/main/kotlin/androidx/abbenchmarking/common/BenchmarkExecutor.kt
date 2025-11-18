@@ -13,8 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.abbenchmarking
+package androidx.abbenchmarking.common
 
+import androidx.abbenchmarking.util.checkoutGitRevision
+import androidx.abbenchmarking.util.runCommandSilently
+import java.io.File
 import java.nio.file.Path
 
 /**
@@ -30,7 +33,8 @@ import java.nio.file.Path
  *   "compose:ui:ui-benchmark").
  * @param benchmarkTest The test to run, which can be a fully qualified class name or a specific
  *   test method (e.g., "androidx.compose.ui.benchmark.ModifiersBenchmark#full[clickable_1x]").
- * @param iterationCount The number of times the benchmark will be run.
+ * @param iterationCount The number of times the benchmark will be run. For macrobenchmarking it
+ *   will be null.
  * @param targetDeviceId The optional serial ID of the device to run the tests on. If provided, this
  *   is passed via the `ANDROID_SERIAL` environment variable.
  * @throws RuntimeException if the Gradle command fails or returns a non-zero exit code.
@@ -38,17 +42,21 @@ import java.nio.file.Path
 internal fun runBenchmarkTest(
     module: String,
     benchmarkTest: String,
-    iterationCount: Int = 50,
+    iterationCount: Int? = null,
     targetDeviceId: String? = null,
 ) {
     // Construct the command as a list of arguments for safety
     val command =
-        listOf(
+        mutableListOf(
             "./gradlew",
             "$module:connectedReleaseAndroidTest",
             "-Pandroid.testInstrumentationRunnerArguments.class=$benchmarkTest",
-            "-Pandroid.testInstrumentationRunnerArguments.androidx.benchmark.iterations=$iterationCount",
         )
+    if (iterationCount != null) {
+        command.add(
+            "-Pandroid.testInstrumentationRunnerArguments.androidx.benchmark.iterations=$iterationCount"
+        )
+    }
     println("Running command: ${command.joinToString(" ")}")
     println("(Benchmark execution in progress, output suppressed...)")
     // Execute the command directly using the spread operator (*).
@@ -79,6 +87,8 @@ internal fun runBenchmarkTest(
  *   test method (e.g., "androidx.compose.ui.benchmark.ModifiersBenchmark#full[clickable_1x]").
  * @param iterationCount The number of benchmark runs to perform on each test run.
  * @param targetDeviceId The optional serial ID of the device to run the tests on.
+ * @param discoverDeviceDirectory A lambda to find the benchmark output directory.
+ * @param extractBenchmarkTestResult A lambda to parse results and save them.
  * @throws RuntimeException if any step in the process (Git checkout, benchmark execution, or result
  *   discovery) fails.
  */
@@ -88,8 +98,11 @@ internal fun checkoutAndRunTest(
     gitRevisionHash: String,
     module: String,
     benchmarkTest: String,
-    iterationCount: Int,
+    iterationCount: Int? = null,
     targetDeviceId: String?,
+    buildVariant: String,
+    discoverDeviceDirectory: (String, String) -> File?,
+    extractBenchmarkTestResult: (String, File) -> Unit,
 ) {
     if (!checkoutGitRevision(gitRevisionHash)) {
         throw RuntimeException(
@@ -98,7 +111,7 @@ internal fun checkoutAndRunTest(
     }
     runBenchmarkTest(module, benchmarkTest, iterationCount, targetDeviceId)
     // Now, discover the directory that was just created
-    val deviceDir = discoverDeviceDirectory(module)
+    val deviceDir = discoverDeviceDirectory(module, buildVariant)
     if (deviceDir == null) {
         throw RuntimeException(
             "ERROR: Could not discover benchmark output directory after test run. Aborting."
