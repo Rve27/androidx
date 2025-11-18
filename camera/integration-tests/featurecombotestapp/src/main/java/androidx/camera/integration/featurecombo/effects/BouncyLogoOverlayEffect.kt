@@ -27,6 +27,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import androidx.camera.effects.OverlayEffect
+import androidx.camera.integration.featurecombo.AppUseCase
 import androidx.core.util.Consumer
 import kotlin.math.hypot
 import kotlin.math.sqrt
@@ -38,7 +39,7 @@ import kotlin.random.Random
  * <p>This is like the classic DVD logo bouncing around the screen, but with a CameraX logo.
  */
 class BouncyLogoOverlayEffect(
-    targets: Int,
+    useCases: Set<AppUseCase>,
     private val logoText: String,
     private val bgColor: Int,
     private val textColor: Int,
@@ -47,7 +48,7 @@ class BouncyLogoOverlayEffect(
     private val sensorToViewTransformer: () -> Matrix?,
 ) :
     OverlayEffect(
-        targets,
+        useCases.toTargets(),
         0,
         Handler(Looper.getMainLooper()),
         Consumer { t -> Log.d(TAG, "Effect error", t) },
@@ -120,6 +121,26 @@ class BouncyLogoOverlayEffect(
 
     companion object {
         private const val TAG = "CamXFcqBouncyLogoEffect"
+
+        private fun Collection<AppUseCase>.toTargets(): Int =
+            fold(0) { acc, useCase ->
+                acc or
+                    when (useCase) {
+                        AppUseCase.PREVIEW -> PREVIEW
+                        AppUseCase.VIDEO_CAPTURE -> VIDEO_CAPTURE
+                        AppUseCase.IMAGE_CAPTURE -> IMAGE_CAPTURE
+                    }
+            }
+
+        fun Collection<AppUseCase>.supportsEffect(): Boolean {
+            return listOf(
+                    PREVIEW,
+                    VIDEO_CAPTURE,
+                    PREVIEW or VIDEO_CAPTURE,
+                    PREVIEW or VIDEO_CAPTURE or IMAGE_CAPTURE,
+                )
+                .contains(toTargets())
+        }
     }
 }
 
