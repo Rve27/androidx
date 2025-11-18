@@ -232,8 +232,7 @@
     <string name="msg_template_demo_text" msgid="2275291617716161409">"A mensagem é colocada aqui.\nMais texto na segunda linha."</string>
     <string name="short_msg_template_demo_title" msgid="6798738013668580714">"Demonstração do modelo de mensagem curta"</string>
     <string name="sectioned_item_template_demo_title" msgid="8377594346379786774">"Demonstração do modelo de item em secções"</string>
-    <!-- no translation found for sectioned_item_alpha_jump_demo_title (1923794280863081616) -->
-    <skip />
+    <string name="sectioned_item_alpha_jump_demo_title" msgid="1923794280863081616">"Demonstração do AlphaJump de itens em secções ativado"</string>
     <string name="sectioned_item_template_radio_button_section_title" msgid="1014325865070733609">"Secção Botão de opção"</string>
     <string name="sectioned_item_template_toggle_section_title" msgid="3197227971733559949">"Ativar/desativar secção"</string>
     <string name="sectioned_item_template_lots_of_rows_section_title" msgid="1501401956386938735">"Secção Muitas linhas"</string>
@@ -242,8 +241,7 @@
     <string name="sectioned_item_list_one_title" msgid="6594204350307263338">"Lista 1"</string>
     <string name="sectioned_item_list_two_title" msgid="4941545381743022833">"Lista 2"</string>
     <string name="sectioned_item_list_subtext" msgid="2963927693547537519">"Subtexto abaixo de cada lista"</string>
-    <!-- no translation found for end_image_and_action_demo_title (6451955718459316414) -->
-    <skip />
+    <string name="end_image_and_action_demo_title" msgid="6451955718459316414">"Demonstração de ações e imagem final"</string>
     <string name="pane_template_demo_title" msgid="7804292600060341608">"Demonstração do modelo de painel"</string>
     <string name="place_list_template_demo_title" msgid="2054022985455460469">"Demonstração do modelo de lista de locais"</string>
     <string name="browse_places_title" msgid="7246005909846715898">"Procurar locais"</string>

@@ -232,8 +232,7 @@
     <string name="msg_template_demo_text" msgid="2275291617716161409">"ಸಂದೇಶವನ್ನು ಇಲ್ಲಿ ಟೈಪ್ ಮಾಡಲಾಗುತ್ತದೆ.\nಹೆಚ್ಚಿನ ಪಠ್ಯವನ್ನು ಎರಡನೇ ಸಾಲಿನಲ್ಲಿ ಸೇರಿಸಬಹುದು."</string>
     <string name="short_msg_template_demo_title" msgid="6798738013668580714">"ಕಿರು ಸಂದೇಶ ಟೆಂಪ್ಲೇಟ್ ಡೆಮೋ"</string>
     <string name="sectioned_item_template_demo_title" msgid="8377594346379786774">"ಸೆಕ್ಷನ್ ಮಾಡಲಾದ ಐಟಂ ಟೆಂಪ್ಲೇಟ್ ಡೆಮೊ"</string>
-    <!-- no translation found for sectioned_item_alpha_jump_demo_title (1923794280863081616) -->
-    <skip />
+    <string name="sectioned_item_alpha_jump_demo_title" msgid="1923794280863081616">"ಸೆಕ್ಷನ್ ಮಾಡಲಾದ ಐಟಂ AlphaJump ಸಕ್ರಿಯಗೊಳಿಸಿದ ಡೆಮೋ"</string>
     <string name="sectioned_item_template_radio_button_section_title" msgid="1014325865070733609">"ರೇಡಿಯೋ ಬಟನ್ ಸೆಕ್ಷನ್"</string>
     <string name="sectioned_item_template_toggle_section_title" msgid="3197227971733559949">"ಟಾಗಲ್ ಸೆಕ್ಷನ್"</string>
     <string name="sectioned_item_template_lots_of_rows_section_title" msgid="1501401956386938735">"ಬಹಳಷ್ಟು ಸಾಲುಗಳ ಸೆಕ್ಷನ್"</string>
@@ -242,8 +241,7 @@
     <string name="sectioned_item_list_one_title" msgid="6594204350307263338">"ಪಟ್ಟಿ 1"</string>
     <string name="sectioned_item_list_two_title" msgid="4941545381743022833">"ಪಟ್ಟಿ 2"</string>
     <string name="sectioned_item_list_subtext" msgid="2963927693547537519">"ಪ್ರತಿ ಪಟ್ಟಿಯ ಅಡಿಯಲ್ಲಿ ಉಪಪಠ್ಯ"</string>
-    <!-- no translation found for end_image_and_action_demo_title (6451955718459316414) -->
-    <skip />
+    <string name="end_image_and_action_demo_title" msgid="6451955718459316414">"ಚಿತ್ರ ಮತ್ತು ಕ್ರಿಯೆಗಳ ಡೆಮೋವನ್ನು ಕೊನೆಗೊಳಿಸಿ"</string>
     <string name="pane_template_demo_title" msgid="7804292600060341608">"ಪೇನ್ ಟೆಂಪ್ಲೇಟ್ ಡೆಮೋ"</string>
     <string name="place_list_template_demo_title" msgid="2054022985455460469">"ಸ್ಥಳ ಪಟ್ಟಿಯ ಟೆಂಪ್ಲೇಟ್ ಡೆಮೋ"</string>
     <string name="browse_places_title" msgid="7246005909846715898">"ಸ್ಥಳಗಳನ್ನು ಬ್ರೌಸ್ ಮಾಡಿ"</string>
