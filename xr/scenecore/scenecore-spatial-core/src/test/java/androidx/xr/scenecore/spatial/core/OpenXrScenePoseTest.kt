@@ -24,12 +24,8 @@ import androidx.xr.runtime.math.Quaternion
 import androidx.xr.runtime.math.Vector3
 import androidx.xr.runtime.testing.math.assertPose
 import androidx.xr.runtime.testing.math.assertVector3
-import androidx.xr.scenecore.impl.perception.Fov
 import androidx.xr.scenecore.impl.perception.PerceptionLibrary
 import androidx.xr.scenecore.impl.perception.Session
-import androidx.xr.scenecore.impl.perception.ViewProjection
-import androidx.xr.scenecore.impl.perception.ViewProjections
-import androidx.xr.scenecore.runtime.CameraViewScenePose
 import androidx.xr.scenecore.runtime.GltfFeature
 import androidx.xr.scenecore.runtime.HitTestResult
 import androidx.xr.scenecore.runtime.ScenePose
@@ -78,9 +74,7 @@ class OpenXrScenePoseTest(private val testScenePoseType: OpenXrScenePoseType) {
     private var testScenePose: BaseScenePose? = null
 
     enum class OpenXrScenePoseType {
-        HEAD_ACTIVITY_POSE,
-        CAMERA_ACTIVITY_POSE,
-        PERCEPTION_POSE_ACTIVITY_POSE,
+        PERCEPTION_POSE_ACTIVITY_POSE
     }
 
     companion object {
@@ -88,29 +82,8 @@ class OpenXrScenePoseTest(private val testScenePoseType: OpenXrScenePoseType) {
         @JvmStatic
         @Parameters
         fun data(): List<Any> {
-            return listOf(
-                OpenXrScenePoseType.HEAD_ACTIVITY_POSE,
-                OpenXrScenePoseType.CAMERA_ACTIVITY_POSE,
-                OpenXrScenePoseType.PERCEPTION_POSE_ACTIVITY_POSE,
-            )
+            return listOf(OpenXrScenePoseType.PERCEPTION_POSE_ACTIVITY_POSE)
         }
-    }
-
-    /** Creates a HeadScenePoseImpl instance. */
-    private fun createHeadScenePose(activitySpace: ActivitySpaceImpl): HeadScenePoseImpl {
-        return HeadScenePoseImpl(activitySpace, activitySpace, perceptionLibrary)
-    }
-
-    /** Creates a CameraViewScenePoseImpl instance. */
-    private fun createCameraViewScenePose(
-        activitySpace: ActivitySpaceImpl
-    ): CameraViewScenePoseImpl {
-        return CameraViewScenePoseImpl(
-            CameraViewScenePose.CameraType.CAMERA_TYPE_LEFT_EYE,
-            activitySpace,
-            activitySpace,
-            perceptionLibrary,
-        )
     }
 
     /** Creates an OpenXrActivityPose instance. */
@@ -123,40 +96,13 @@ class OpenXrScenePoseTest(private val testScenePoseType: OpenXrScenePoseType) {
 
     private fun createTestScenePose(pose: Pose): BaseScenePose {
         when (testScenePoseType) {
-            OpenXrScenePoseType.HEAD_ACTIVITY_POSE -> {
-                setPerceptionPose(pose)
-                return createHeadScenePose(activitySpace)
-            }
-            OpenXrScenePoseType.CAMERA_ACTIVITY_POSE -> {
-                setPerceptionPose(pose)
-                return createCameraViewScenePose(activitySpace)
-            }
-            OpenXrScenePoseType.PERCEPTION_POSE_ACTIVITY_POSE -> {
+            OpenXrScenePoseType.PERCEPTION_POSE_ACTIVITY_POSE ->
                 return createOpenXrScenePose(activitySpace, pose)
-            }
         }
     }
 
     private fun setPerceptionPose(pose: Pose?) {
         `when`(perceptionLibrary.session).thenReturn(session)
-        val perceptionPose = if (pose == null) null else RuntimeUtils.poseToPerceptionPose(pose)
-
-        when (testScenePoseType) {
-            OpenXrScenePoseType.HEAD_ACTIVITY_POSE -> {
-                `when`(session.headPose).thenReturn(perceptionPose)
-            }
-
-            OpenXrScenePoseType.CAMERA_ACTIVITY_POSE -> {
-                if (perceptionPose == null) {
-                    `when`(session.stereoViews).thenReturn(null)
-                    return
-                }
-                val viewProjection = ViewProjection(perceptionPose, Fov(0f, 0f, 0f, 0f))
-                `when`(session.stereoViews)
-                    .thenReturn(ViewProjections(viewProjection, viewProjection))
-            }
-            else -> {}
-        }
     }
 
     /** Creates a generic glTF entity. */
@@ -375,25 +321,6 @@ class OpenXrScenePoseTest(private val testScenePoseType: OpenXrScenePoseType) {
             Pose(Vector3(-1.0f, 0.5f, -1.5f), Quaternion.fromEulerAngles(Vector3(0f, 0f, -90f)))
 
         assertPose(testScenePose!!.activitySpacePose, expectedPose)
-    }
-
-    @Test
-    fun getActivitySpacePoseWithError_returnsLastKnownPose() {
-        activitySpace.setOpenXrReferenceSpaceTransform(Matrix4.Identity)
-        // Skip for OpenXrScenePose
-        if (testScenePoseType == OpenXrScenePoseType.PERCEPTION_POSE_ACTIVITY_POSE) {
-            return
-        }
-
-        val pose = Pose(Vector3(1f, 1f, 1f), Quaternion(0f, 1f, 0f, 1f))
-        testScenePose = createTestScenePose(pose)
-
-        assertNotNull(testScenePose)
-        assertPose(testScenePose!!.activitySpacePose, pose)
-
-        setPerceptionPose(null)
-
-        assertPose(testScenePose!!.activitySpacePose, pose)
     }
 
     @Test

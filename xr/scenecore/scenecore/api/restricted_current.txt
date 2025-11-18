@@ -555,7 +555,7 @@ package androidx.xr.scenecore {
     method public static final androidx.xr.scenecore.PanelEntity create(androidx.xr.runtime.Session session, android.view.View view, androidx.xr.runtime.math.IntSize2d pixelDimensions, String name, optional androidx.xr.runtime.math.Pose pose);
     method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static final androidx.xr.scenecore.PanelEntity create(androidx.xr.runtime.Session session, android.view.View view, androidx.xr.runtime.math.IntSize2d pixelDimensions, String name, optional androidx.xr.runtime.math.Pose pose, optional androidx.xr.scenecore.Entity? parent);
     method @InaccessibleFromKotlin public final float getCornerRadius();
-    method public final androidx.xr.scenecore.PerceivedResolutionResult getPerceivedResolution();
+    method public final androidx.xr.scenecore.PerceivedResolutionResult getPerceivedResolution(androidx.xr.arcore.RenderViewpoint renderViewpoint);
     method @InaccessibleFromKotlin public final androidx.xr.runtime.math.FloatSize2d getSize();
     method @InaccessibleFromKotlin public final androidx.xr.runtime.math.IntSize2d getSizeInPixels();
     method @InaccessibleFromKotlin public final boolean isMainPanelEntity();
@@ -591,8 +591,8 @@ package androidx.xr.scenecore {
     ctor public PerceivedResolutionResult.EntityTooClose();
   }
 
-  public static final class PerceivedResolutionResult.InvalidCameraView extends androidx.xr.scenecore.PerceivedResolutionResult {
-    ctor public PerceivedResolutionResult.InvalidCameraView();
+  public static final class PerceivedResolutionResult.InvalidRenderViewpoint extends androidx.xr.scenecore.PerceivedResolutionResult {
+    ctor public PerceivedResolutionResult.InvalidRenderViewpoint();
   }
 
   public static final class PerceivedResolutionResult.Success extends androidx.xr.scenecore.PerceivedResolutionResult {
@@ -1006,7 +1006,7 @@ package androidx.xr.scenecore {
     method @InaccessibleFromKotlin @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata? getContentColorMetadata();
     method @InaccessibleFromKotlin public androidx.xr.runtime.math.FloatSize3d getDimensions();
     method @InaccessibleFromKotlin public androidx.xr.scenecore.SurfaceEntity.EdgeFeatheringParams getEdgeFeatheringParams();
-    method public androidx.xr.scenecore.PerceivedResolutionResult getPerceivedResolution();
+    method public androidx.xr.scenecore.PerceivedResolutionResult getPerceivedResolution(androidx.xr.arcore.RenderViewpoint renderViewpoint);
     method @InaccessibleFromKotlin @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public androidx.xr.scenecore.Texture? getPrimaryAlphaMaskTexture();
     method @InaccessibleFromKotlin public androidx.xr.scenecore.SurfaceEntity.Shape getShape();
     method @InaccessibleFromKotlin public androidx.xr.scenecore.SurfaceEntity.StereoMode getStereoMode();

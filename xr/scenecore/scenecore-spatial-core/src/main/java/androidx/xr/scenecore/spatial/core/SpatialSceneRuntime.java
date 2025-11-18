@@ -23,8 +23,11 @@ import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.DisplayMetrics;
 import android.util.Pair;
+import android.view.Display;
 import android.view.View;
+import android.view.WindowManager;
 
 import androidx.annotation.RestrictTo;
 import androidx.annotation.VisibleForTesting;
@@ -37,12 +40,10 @@ import androidx.xr.scenecore.runtime.ActivitySpace;
 import androidx.xr.scenecore.runtime.AnchorEntity;
 import androidx.xr.scenecore.runtime.AnchorPlacement;
 import androidx.xr.scenecore.runtime.AudioTrackExtensionsWrapper;
-import androidx.xr.scenecore.runtime.CameraViewScenePose;
 import androidx.xr.scenecore.runtime.Dimensions;
 import androidx.xr.scenecore.runtime.Entity;
 import androidx.xr.scenecore.runtime.GltfEntity;
 import androidx.xr.scenecore.runtime.GltfFeature;
-import androidx.xr.scenecore.runtime.HeadScenePose;
 import androidx.xr.scenecore.runtime.InputEventListener;
 import androidx.xr.scenecore.runtime.InteractableComponent;
 import androidx.xr.scenecore.runtime.LoggingEntity;
@@ -77,14 +78,10 @@ import com.android.extensions.xr.space.ActivityPanel;
 import com.android.extensions.xr.space.ActivityPanelLaunchParameters;
 import com.android.extensions.xr.space.SpatialState;
 
-import com.google.common.util.concurrent.ListenableFuture;
-
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -108,7 +105,6 @@ public class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory
     private final XrExtensions mExtensions;
     private final Node mSceneRootNode;
     private final Node mTaskWindowLeashNode;
-    private final int mOpenXrReferenceSpaceType;
     private boolean mIsDestroyed;
     private final EntityManager mEntityManager;
     private final PerceptionLibrary mPerceptionLibrary;
@@ -124,7 +120,8 @@ public class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory
     private @Nullable Pair<Executor, Consumer<SpatialVisibility>> mSpatialVisibilityHandler = null;
     private final Map<Consumer<PixelDimensions>, Executor> mPerceivedResolutionChangedListeners =
             new ConcurrentHashMap<>();
-    @VisibleForTesting boolean mIsExtensionVisibilityStateCallbackRegistered = false;
+    @VisibleForTesting
+    boolean mIsExtensionVisibilityStateCallbackRegistered = false;
 
     // TODO b/373481538: remove lazy initialization once XR Extensions bug is fixed. This will allow
     // us to remove the lazySpatialStateProvider instance and pass the spatialState directly.
@@ -137,8 +134,6 @@ public class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory
     private SpatialModeChangeListener mSpatialModeChangeListener = null;
 
     private final ActivitySpaceImpl mActivitySpace;
-    private final HeadScenePoseImpl mHeadScenePose;
-    private final List<CameraViewScenePoseImpl> mCameraViewScenePoses = new ArrayList<>();
 
     /** Returns the PerceptionSpaceScenePose for the Session. */
     private final PerceptionSpaceScenePoseImpl mPerceptionSpaceScenePose;
@@ -161,7 +156,6 @@ public class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory
         mTaskWindowLeashNode = taskWindowLeashNode;
         mEntityManager = entityManager;
         mPerceptionLibrary = perceptionLibrary;
-        mOpenXrReferenceSpaceType = extensions.getOpenXrWorldReferenceSpaceType();
 
         mLazySpatialStateProvider =
                 () ->
@@ -199,24 +193,9 @@ public class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory
                         unscaledGravityAlignedActivitySpace,
                         executor);
         mEntityManager.addSystemSpaceActivityPose(mActivitySpace);
-        mHeadScenePose = new HeadScenePoseImpl(mActivitySpace, mActivitySpace, perceptionLibrary);
-        mEntityManager.addSystemSpaceActivityPose(mHeadScenePose);
         mPerceptionSpaceScenePose =
                 new PerceptionSpaceScenePoseImpl(mActivitySpace, mActivitySpace);
         mEntityManager.addSystemSpaceActivityPose(mPerceptionSpaceScenePose);
-        mCameraViewScenePoses.add(
-                new CameraViewScenePoseImpl(
-                        CameraViewScenePose.CameraType.CAMERA_TYPE_LEFT_EYE,
-                        mActivitySpace,
-                        mActivitySpace,
-                        perceptionLibrary));
-        mCameraViewScenePoses.add(
-                new CameraViewScenePoseImpl(
-                        CameraViewScenePose.CameraType.CAMERA_TYPE_RIGHT_EYE,
-                        mActivitySpace,
-                        mActivitySpace,
-                        perceptionLibrary));
-        mCameraViewScenePoses.forEach(mEntityManager::addSystemSpaceActivityPose);
         mMainPanelEntity =
                 new MainPanelEntityImpl(
                         activity, taskWindowLeashNode, extensions, entityManager, executor);
@@ -268,7 +247,8 @@ public class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory
             @NonNull Node taskWindowLeashNode) {
         // TODO: b/376934871 - Check async results.
         extensions.attachSpatialScene(
-                activity, sceneRootNode, taskWindowLeashNode, executor, (result) -> {});
+                activity, sceneRootNode, taskWindowLeashNode, executor, (result) -> {
+                });
         try (NodeTransaction transaction = extensions.createNodeTransaction()) {
             transaction
                     .setName(sceneRootNode, "SpatialSceneAndActivitySpaceRootNode")
@@ -287,7 +267,6 @@ public class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory
                         sceneRootNode,
                         taskWindowLeashNode,
                         unscaledGravityAlignedActivitySpace);
-        runtime.initPerceptionLibrary();
         return runtime;
     }
 
@@ -305,30 +284,6 @@ public class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory
                 unscaledGravityAlignedActivitySpace);
     }
 
-    private void initPerceptionLibrary() {
-        // Already initialized. Skip init perception session.
-        if (mPerceptionLibrary.getSession() != null) return;
-
-        ListenableFuture<Session> sessionFuture =
-                mPerceptionLibrary.initSession(
-                        Objects.requireNonNull(mActivity), mOpenXrReferenceSpaceType, mExecutor);
-        Objects.requireNonNull(sessionFuture)
-                .addListener(
-                        () -> {
-                            try {
-                                sessionFuture.get();
-                            } catch (Exception e) {
-                                if (e instanceof InterruptedException) {
-                                    Thread.currentThread().interrupt();
-                                }
-                                throw new RuntimeException(
-                                        "Failed to init perception session with error: "
-                                                + e.getMessage());
-                            }
-                        },
-                        mExecutor);
-    }
-
     @Override
     public void destroy() {
         if (mIsDestroyed) {
@@ -344,7 +299,8 @@ public class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory
         updateExtensionsVisibilityCallback();
 
         // TODO: b/376934871 - Check async results.
-        mExtensions.detachSpatialScene(mActivity, Runnable::run, (result) -> {});
+        mExtensions.detachSpatialScene(mActivity, Runnable::run, (result) -> {
+        });
         mActivity = null;
         mEntityManager.getAllEntities().forEach(Entity::dispose);
         mEntityManager.clear();
@@ -352,12 +308,14 @@ public class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory
     }
 
     @VisibleForTesting
-    @NonNull Node getSceneRootNode() {
+    @NonNull
+    Node getSceneRootNode() {
         return mSceneRootNode;
     }
 
     @VisibleForTesting
-    @NonNull Node getTaskWindowLeashNode() {
+    @NonNull
+    Node getTaskWindowLeashNode() {
         return mTaskWindowLeashNode;
     }
 
@@ -370,32 +328,6 @@ public class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory
     @Override
     public @NonNull ActivitySpace getActivitySpace() {
         return mActivitySpace;
-    }
-
-    @Override
-    public @Nullable HeadScenePose getHeadActivityPose() {
-        // If it is unable to retrieve a pose the head in not yet loaded in openXR so return null.
-        if (mHeadScenePose.getPoseInOpenXrReferenceSpace() == null) {
-            return null;
-        }
-        return mHeadScenePose;
-    }
-
-    @Override
-    public @Nullable CameraViewScenePose getCameraViewActivityPose(
-            @CameraViewScenePose.CameraType int cameraType) {
-        CameraViewScenePoseImpl cameraViewScenePose = null;
-        if (cameraType == CameraViewScenePose.CameraType.CAMERA_TYPE_LEFT_EYE) {
-            cameraViewScenePose = mCameraViewScenePoses.get(0);
-        } else if (cameraType == CameraViewScenePose.CameraType.CAMERA_TYPE_RIGHT_EYE) {
-            cameraViewScenePose = mCameraViewScenePoses.get(1);
-        }
-        // If it is unable to retrieve a pose the camera in not yet loaded in openXR so return null.
-        if (cameraViewScenePose == null
-                || cameraViewScenePose.getPoseInOpenXrReferenceSpace() == null) {
-            return null;
-        }
-        return cameraViewScenePose;
     }
 
     @Override
@@ -584,7 +516,8 @@ public class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory
 
         // This entity is used to back SceneCore's GroupEntity.
         Entity entity =
-                new AndroidXrEntity(mActivity, node, mExtensions, mEntityManager, mExecutor) {};
+                new AndroidXrEntity(mActivity, node, mExtensions, mEntityManager, mExecutor) {
+                };
         entity.setParent(parent);
         entity.setPose(pose, Space.PARENT);
         return entity;
@@ -606,8 +539,8 @@ public class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory
         boolean spatialCapabilitiesChanged =
                 previousSpatialState == null
                         || !newSpatialState
-                                .getSpatialCapabilities()
-                                .equals(previousSpatialState.getSpatialCapabilities());
+                        .getSpatialCapabilities()
+                        .equals(previousSpatialState.getSpatialCapabilities());
 
         boolean hasBoundsChanged =
                 previousSpatialState == null
@@ -753,14 +686,16 @@ public class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory
     public void requestFullSpaceMode() {
         // TODO: b/376934871 - Check async results.
         mExtensions.requestFullSpaceMode(
-                mActivity, /* requestEnter= */ true, Runnable::run, (result) -> {});
+                mActivity, /* requestEnter= */ true, Runnable::run, (result) -> {
+                });
     }
 
     @Override
     public void requestHomeSpaceMode() {
         // TODO: b/376934871 - Check async results.
         mExtensions.requestFullSpaceMode(
-                mActivity, /* requestEnter= */ false, Runnable::run, (result) -> {});
+                mActivity, /* requestEnter= */ false, Runnable::run, (result) -> {
+                });
     }
 
     @Override
@@ -783,7 +718,8 @@ public class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory
     public void setPreferredAspectRatio(@NonNull Activity activity, float preferredRatio) {
         // TODO: b/376934871 - Check async results.
         mExtensions.setPreferredAspectRatio(
-                activity, preferredRatio, Runnable::run, (result) -> {});
+                activity, preferredRatio, Runnable::run, (result) -> {
+                });
     }
 
     @Override
@@ -841,12 +777,37 @@ public class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory
      * Get the user's current eye views relative to @c XR_REFERENCE_SPACE_TYPE_UNBOUNDED_ANDROID.
      */
     @VisibleForTesting
-    @Nullable ViewProjections getStereoViewsInOpenXrUnboundedSpace() {
+    @Nullable
+    ViewProjections getStereoViewsInOpenXrUnboundedSpace() {
         Session session = mPerceptionLibrary.getSession();
         if (session == null) {
             // Perception session is uninitialized, returning null head pose.
             return null;
         }
         return session.getStereoViews();
+    }
+
+    // Suppress warnings: windowManager's getDefaultDisplay and getRealMetrics.
+    @SuppressWarnings("deprecation")
+    @Override
+    public @NonNull PixelDimensions getDisplayResolutionInPixels() {
+        WindowManager windowManager = Objects.requireNonNull(mActivity).getSystemService(
+                WindowManager.class);
+        if (windowManager == null) {
+            // WindowManager not available, cannot get display resolution. Returning (0, 0).
+            return new PixelDimensions(0, 0); // Fallback if WindowManager is not available
+        }
+
+        Display display = windowManager.getDefaultDisplay();
+        if (display == null) {
+            // Default display not available, cannot get display resolution. Returning (0,0).
+            return new PixelDimensions(0, 0); // Fallback if display is not available
+        }
+
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        display.getRealMetrics(displayMetrics);
+
+        // Divide the width by 2 because we want single eye resolution, not full display resolution
+        return new PixelDimensions(displayMetrics.widthPixels / 2, displayMetrics.heightPixels);
     }
 }

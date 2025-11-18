@@ -32,18 +32,19 @@ import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 
+import androidx.xr.runtime.FieldOfView;
 import androidx.xr.runtime.math.Pose;
 import androidx.xr.runtime.math.Quaternion;
 import androidx.xr.runtime.math.Vector2;
 import androidx.xr.runtime.math.Vector3;
 import androidx.xr.scenecore.impl.perception.PerceptionLibrary;
 import androidx.xr.scenecore.impl.perception.Session;
-import androidx.xr.scenecore.runtime.CameraViewScenePose;
 import androidx.xr.scenecore.runtime.Dimensions;
 import androidx.xr.scenecore.runtime.PerceivedResolutionResult;
 import androidx.xr.scenecore.runtime.PixelDimensions;
 import androidx.xr.scenecore.runtime.Space;
 import androidx.xr.scenecore.runtime.extensions.XrExtensionsProvider;
+import androidx.xr.scenecore.testing.FakeScenePose;
 import androidx.xr.scenecore.testing.FakeScheduledExecutorService;
 
 import com.android.extensions.xr.XrExtensions;
@@ -76,6 +77,9 @@ public class PanelEntityImplTest {
     private final PerceptionLibrary mPerceptionLibrary = mock(PerceptionLibrary.class);
     private final EntityManager mEntityManager = new EntityManager();
     private SpatialSceneRuntime mRuntime;
+    private FakeScenePose mRenderViewScenePose;
+    private FieldOfView mRenderViewFov;
+    private PixelDimensions mDisplayResolution;
     private final NodeRepository mNodeRepository = NodeRepository.getInstance();
 
     @Before
@@ -91,6 +95,15 @@ public class PanelEntityImplTest {
                         mEntityManager,
                         mPerceptionLibrary,
                         /* unscaledGravityAlignedActivitySpace= */ false);
+        mRenderViewScenePose = new FakeScenePose();
+        mRenderViewScenePose.setActivitySpacePose(
+                new Pose(new Vector3(0f, 0f, 0f), Quaternion.Identity));
+        mRenderViewFov = new FieldOfView(
+                (float) Math.atan(1.0),
+                (float) Math.atan(1.0),
+                (float) Math.atan(1.0),
+                (float) Math.atan(1.0));
+        mDisplayResolution = new PixelDimensions(1000, 1000);
     }
 
     @After
@@ -122,30 +135,6 @@ public class PanelEntityImplTest {
         // TODO(b/352829122): introduce a TestRootEntity which can serve as a parent
         panelEntity.setParent(mRuntime.getActivitySpace());
         return panelEntity;
-    }
-
-    private CameraViewScenePose setupDefaultMockCameraView() {
-        CameraViewScenePose cameraView = mock(CameraViewScenePose.class);
-        when(cameraView.getCameraType())
-                .thenReturn(CameraViewScenePose.CameraType.CAMERA_TYPE_LEFT_EYE);
-        // Camera at origin, looking along -Z
-        when(cameraView.getActivitySpacePose())
-                .thenReturn(new Pose(new Vector3(0f, 0f, 0f), Quaternion.Identity));
-
-        // 90 deg HFOV, 90 deg VFOV (tan(half-angle) = 1)
-        CameraViewScenePose.Fov fov =
-                new CameraViewScenePose.Fov(
-                        (float) Math.atan(1.0),
-                        (float) Math.atan(1.0),
-                        (float) Math.atan(1.0),
-                        (float) Math.atan(1.0));
-        when(cameraView.getFov()).thenReturn(fov);
-        // Standard display resolution for calculations
-        when(cameraView.getDisplayResolutionInPixels()).thenReturn(new PixelDimensions(1000, 1000));
-        // Clear the EntityManager to ensure LeftEye is the only entity inside it
-        mEntityManager.clear();
-        mEntityManager.addSystemSpaceActivityPose(cameraView);
-        return cameraView;
     }
 
     @Test
@@ -223,21 +212,9 @@ public class PanelEntityImplTest {
     }
 
     @Test
-    public void getPerceivedResolution_noCameraView_returnsInvalidCameraView() {
-        PanelEntityImpl panelEntity = createPanelEntity(new Dimensions(2f, 1f, 0f));
-        // Ensure mEntityManager is empty or has no left-eye camera
-        mEntityManager.clear(); // Make sure no camera views are present
-
-        PerceivedResolutionResult result = panelEntity.getPerceivedResolution();
-
-        assertThat(result).isInstanceOf(PerceivedResolutionResult.InvalidCameraView.class);
-    }
-
-    @Test
     public void getPerceivedResolution_validCameraAndPanelInFront_returnsSuccess() {
         // Panel created with PixelDimensions(2,1). With pixel density 1.0, size is 2m x 1m.
         PanelEntityImpl panelEntity = createPanelEntity(new Dimensions(2f, 1f, 0f));
-        setupDefaultMockCameraView();
 
         // Place panel 2m in front of camera. Camera is at (0,0,0). Panel at (0,0,-2).
         // Panel is parented to ActivitySpaceRoot (identity pose and scale by default).
@@ -246,7 +223,8 @@ public class PanelEntityImplTest {
         // So, panelEntity.getScale(Space.ACTIVITY) should be (1,1,1).
         panelEntity.setPose(new Pose(new Vector3(0f, 0f, -2f), Quaternion.Identity));
 
-        PerceivedResolutionResult result = panelEntity.getPerceivedResolution();
+        PerceivedResolutionResult result = panelEntity.getPerceivedResolution(mRenderViewScenePose,
+                mRenderViewFov, mDisplayResolution);
 
         assertThat(result).isInstanceOf(PerceivedResolutionResult.Success.class);
 
@@ -272,13 +250,13 @@ public class PanelEntityImplTest {
     @Test
     public void getPerceivedResolution_panelTooClose_returnsEntityTooClose() {
         PanelEntityImpl panelEntity = createPanelEntity(new Dimensions(2f, 1f, 0f));
-        setupDefaultMockCameraView();
 
         // Place panel very close to the camera (distance < EPSILON)
         float veryCloseDistance = PerceivedResolutionUtils.PERCEIVED_RESOLUTION_EPSILON / 2f;
         panelEntity.setPose(new Pose(new Vector3(0f, 0f, -veryCloseDistance), Quaternion.Identity));
 
-        PerceivedResolutionResult result = panelEntity.getPerceivedResolution();
+        PerceivedResolutionResult result = panelEntity.getPerceivedResolution(mRenderViewScenePose,
+                mRenderViewFov, mDisplayResolution);
 
         assertThat(result).isInstanceOf(PerceivedResolutionResult.EntityTooClose.class);
     }
@@ -286,7 +264,6 @@ public class PanelEntityImplTest {
     @Test
     public void getPerceivedResolution_panelAtEpsilonDistance_returnsEntityTooClose() {
         PanelEntityImpl panelEntity = createPanelEntity(new Dimensions(2f, 1f, 0f));
-        setupDefaultMockCameraView();
 
         // Place panel exactly at EPSILON distance
         panelEntity.setPose(
@@ -294,7 +271,8 @@ public class PanelEntityImplTest {
                         new Vector3(0f, 0f, -PerceivedResolutionUtils.PERCEIVED_RESOLUTION_EPSILON),
                         Quaternion.Identity));
 
-        PerceivedResolutionResult result = panelEntity.getPerceivedResolution();
+        PerceivedResolutionResult result = panelEntity.getPerceivedResolution(mRenderViewScenePose,
+                mRenderViewFov, mDisplayResolution);
 
         assertThat(result).isInstanceOf(PerceivedResolutionResult.EntityTooClose.class);
     }
@@ -303,12 +281,12 @@ public class PanelEntityImplTest {
     public void getPerceivedResolution_panelWithScale_calculatesCorrectly() {
         PanelEntityImpl panelEntity = createPanelEntity(new Dimensions(1f, 1f, 0f)); // 1m x 1m
         // local size
-        setupDefaultMockCameraView();
 
         panelEntity.setPose(new Pose(new Vector3(0f, 0f, -2f), Quaternion.Identity));
         panelEntity.setScale(new Vector3(2f, 3f, 1f)); // Scale the panel
 
-        PerceivedResolutionResult result = panelEntity.getPerceivedResolution();
+        PerceivedResolutionResult result = panelEntity.getPerceivedResolution(mRenderViewScenePose,
+                mRenderViewFov, mDisplayResolution);
 
         assertThat(result).isInstanceOf(PerceivedResolutionResult.Success.class);
 

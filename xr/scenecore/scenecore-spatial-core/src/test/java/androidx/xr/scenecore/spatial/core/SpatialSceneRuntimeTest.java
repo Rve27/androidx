@@ -30,6 +30,7 @@ import static com.google.common.util.concurrent.MoreExecutors.directExecutor;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -39,11 +40,15 @@ import static org.mockito.Mockito.when;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Rect;
 import android.hardware.display.DisplayManager;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.WindowMetrics;
 
 import androidx.xr.runtime.NodeHolder;
 import androidx.xr.runtime.math.Matrix4;
@@ -61,13 +66,11 @@ import androidx.xr.scenecore.runtime.AnchorEntity;
 import androidx.xr.scenecore.runtime.AnchorEntity.State;
 import androidx.xr.scenecore.runtime.AnchorPlacement;
 import androidx.xr.scenecore.runtime.AudioTrackExtensionsWrapper;
-import androidx.xr.scenecore.runtime.CameraViewScenePose;
 import androidx.xr.scenecore.runtime.Component;
 import androidx.xr.scenecore.runtime.Dimensions;
 import androidx.xr.scenecore.runtime.Entity;
 import androidx.xr.scenecore.runtime.GltfEntity;
 import androidx.xr.scenecore.runtime.GltfFeature;
-import androidx.xr.scenecore.runtime.HeadScenePose;
 import androidx.xr.scenecore.runtime.InputEvent;
 import androidx.xr.scenecore.runtime.InputEventListener;
 import androidx.xr.scenecore.runtime.InteractableComponent;
@@ -149,6 +152,8 @@ public class SpatialSceneRuntimeTest {
     private final @NonNull XrExtensions mXrExtensions =
             Objects.requireNonNull(XrExtensionsProvider.getXrExtensions());
     private final FakeScheduledExecutorService mFakeExecutor = new FakeScheduledExecutorService();
+    private final WindowManager mWindowManager = mock(WindowManager.class);
+    private final Display mDisplay = mock(Display.class);
 
     @Before
     public void setUp() {
@@ -249,78 +254,6 @@ public class SpatialSceneRuntimeTest {
         // Verify that there is an underlying extension node.
         ActivitySpaceImpl activitySpaceImpl = (ActivitySpaceImpl) activitySpace;
         assertThat(activitySpaceImpl.getNode()).isNotNull();
-    }
-
-    @Test
-    public void getHeadScenePose_returnsNullIfNotReady() {
-        when(mPerceptionLibrary.getSession()).thenReturn(mSession);
-        when(mSession.getHeadPose()).thenReturn(null);
-        HeadScenePose headScenePose = mRuntime.getHeadActivityPose();
-
-        assertThat(headScenePose).isNull();
-    }
-
-    @Test
-    public void getHeadScenePose_returnsScenePose() {
-        when(mPerceptionLibrary.getSession()).thenReturn(mSession);
-        when(mSession.getHeadPose())
-                .thenReturn(androidx.xr.scenecore.impl.perception.Pose.identity());
-        HeadScenePose headScenePose = mRuntime.getHeadActivityPose();
-
-        assertThat(headScenePose).isNotNull();
-    }
-
-    @Test
-    public void getCameraViewScenePose_returnsNullIfNotReady() {
-        when(mPerceptionLibrary.getSession()).thenReturn(mSession);
-        when(mSession.getStereoViews()).thenReturn(new ViewProjections(null, null));
-
-        CameraViewScenePose leftCameraViewScenePose =
-                mRuntime.getCameraViewActivityPose(
-                        CameraViewScenePose.CameraType.CAMERA_TYPE_LEFT_EYE);
-        CameraViewScenePose rightCameraViewScenePose =
-                mRuntime.getCameraViewActivityPose(
-                        CameraViewScenePose.CameraType.CAMERA_TYPE_RIGHT_EYE);
-
-        assertThat(leftCameraViewScenePose).isNull();
-        assertThat(rightCameraViewScenePose).isNull();
-    }
-
-    @Test
-    public void getLeftCameraViewScenePose_returnsScenePose() {
-        when(mPerceptionLibrary.getSession()).thenReturn(mSession);
-        ViewProjection viewProjection =
-                new ViewProjection(
-                        androidx.xr.scenecore.impl.perception.Pose.identity(), new Fov(0, 0, 0, 0));
-        when(mSession.getStereoViews())
-                .thenReturn(new ViewProjections(viewProjection, viewProjection));
-        CameraViewScenePose cameraViewScenePose =
-                mRuntime.getCameraViewActivityPose(
-                        CameraViewScenePose.CameraType.CAMERA_TYPE_LEFT_EYE);
-
-        assertThat(cameraViewScenePose).isNotNull();
-    }
-
-    @Test
-    public void getRightCameraViewScenePose_returnsScenePose() {
-        when(mPerceptionLibrary.getSession()).thenReturn(mSession);
-        ViewProjection viewProjection =
-                new ViewProjection(
-                        androidx.xr.scenecore.impl.perception.Pose.identity(), new Fov(0, 0, 0, 0));
-        when(mSession.getStereoViews())
-                .thenReturn(new ViewProjections(viewProjection, viewProjection));
-        CameraViewScenePose cameraViewScenePose =
-                mRuntime.getCameraViewActivityPose(
-                        CameraViewScenePose.CameraType.CAMERA_TYPE_RIGHT_EYE);
-
-        assertThat(cameraViewScenePose).isNotNull();
-    }
-
-    @Test
-    public void getUnknownCameraViewScenePose_returnsEmptyOptional() {
-        CameraViewScenePose cameraViewScenePose = mRuntime.getCameraViewActivityPose(555);
-
-        assertThat(cameraViewScenePose).isNull();
     }
 
     @Test
@@ -1088,7 +1021,9 @@ public class SpatialSceneRuntimeTest {
     @Test
     public void createPointerCaptureComponent_returnsComponent() {
         PointerCaptureComponent pointerCaptureComponent =
-                mRuntime.createPointerCaptureComponent(null, (inputEvent) -> {}, (state) -> {});
+                mRuntime.createPointerCaptureComponent(null, (inputEvent) -> {
+                }, (state) -> {
+                });
 
         assertThat(pointerCaptureComponent).isNotNull();
     }
@@ -2338,11 +2273,11 @@ public class SpatialSceneRuntimeTest {
         PanelEntity testEntity = createPanelEntity();
 
         assertThat(
-                        testEntity.addComponent(
-                                mRuntime.createMovableComponent(
-                                        /* systemMovable= */ true,
-                                        /* scaleInZ= */ true,
-                                        /* userAnchorable */ false)))
+                testEntity.addComponent(
+                        mRuntime.createMovableComponent(
+                                /* systemMovable= */ true,
+                                /* scaleInZ= */ true,
+                                /* userAnchorable */ false)))
                 .isTrue();
 
         testEntity.setHidden(true);
@@ -2436,5 +2371,41 @@ public class SpatialSceneRuntimeTest {
                 .isNull();
         assertThat(ShadowXrExtensions.extract(mXrExtensions).getMainWindowNode(mActivity)).isNull();
         assertThat(ShadowXrExtensions.extract(mXrExtensions).getTaskNode(mActivity)).isNull();
+    }
+
+    @Test
+    @SuppressWarnings("deprecation")
+    public void getDisplayResolutionInPixels_returnsPixelDimensionsOfDefaultDisplay() {
+        int expectedDisplayWidth = 750;
+        int expectedDisplayHeight = 500;
+        WindowMetrics mWindowMetrics = mock(WindowMetrics.class);
+        mActivity = mock(Activity.class);
+        when(mActivity.getWindowManager()).thenReturn(mWindowManager);
+        when(mWindowManager.getCurrentWindowMetrics()).thenReturn(mWindowMetrics);
+        when(mWindowMetrics.getBounds()).thenReturn(new Rect(0, 0, 0, 0));
+        mRuntime =
+                SpatialSceneRuntime.create(
+                        mActivity,
+                        mFakeExecutor,
+                        mXrExtensions,
+                        mEntityManager,
+                        mPerceptionLibrary,
+                        false);
+
+        when(mActivity.getSystemService(WindowManager.class)).thenReturn(mWindowManager);
+
+        when(mWindowManager.getDefaultDisplay()).thenReturn(mDisplay);
+        doAnswer(invocation -> {
+            DisplayMetrics metrics = invocation.getArgument(0);
+            metrics.widthPixels = expectedDisplayWidth;
+            metrics.heightPixels = expectedDisplayHeight;
+            return null;
+        }).when(mDisplay).getRealMetrics(any(DisplayMetrics.class));
+
+        PixelDimensions displayResolution = mRuntime.getDisplayResolutionInPixels();
+
+        // The implementation divides width by 2 for single eye resolution
+        assertThat(displayResolution.width).isEqualTo(expectedDisplayWidth / 2);
+        assertThat(displayResolution.height).isEqualTo(expectedDisplayHeight);
     }
 }

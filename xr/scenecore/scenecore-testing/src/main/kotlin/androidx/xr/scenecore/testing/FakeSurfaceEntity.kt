@@ -20,10 +20,13 @@ import android.graphics.ImageFormat
 import android.media.ImageReader
 import android.view.Surface
 import androidx.annotation.RestrictTo
+import androidx.xr.runtime.FieldOfView
 import androidx.xr.runtime.math.FloatSize2d
 import androidx.xr.runtime.math.IntSize2d
 import androidx.xr.scenecore.runtime.Dimensions
 import androidx.xr.scenecore.runtime.PerceivedResolutionResult
+import androidx.xr.scenecore.runtime.PixelDimensions
+import androidx.xr.scenecore.runtime.ScenePose
 import androidx.xr.scenecore.runtime.SurfaceEntity
 import androidx.xr.scenecore.runtime.SurfaceEntity.Shape
 import androidx.xr.scenecore.runtime.SurfaceFeature
@@ -173,7 +176,7 @@ public class FakeSurfaceEntity(private val feature: SurfaceFeature? = null) :
      * resolution.
      */
     private var perceivedResolutionResult: PerceivedResolutionResult =
-        PerceivedResolutionResult.InvalidCameraView()
+        PerceivedResolutionResult.InvalidRenderViewpoint()
 
     /**
      * For test purposes only.
@@ -189,13 +192,16 @@ public class FakeSurfaceEntity(private val feature: SurfaceFeature? = null) :
      * Gets the perceived resolution of the entity in the camera view.
      *
      * This API is only intended for use in Full Space Mode and will return
-     * [androidx.xr.scenecore.runtime.PerceivedResolutionResult.InvalidCameraView] in Home Space
-     * Mode.
+     * [androidx.xr.scenecore.runtime.PerceivedResolutionResult.InvalidRenderViewpoint] in Home
+     * Space Mode.
      *
      * The entity's own rotation and the camera's viewing direction are disregarded; this value
      * represents the dimensions of the entity on the camera view if its largest surface was facing
      * the camera without changing the distance of the entity to the camera.
      *
+     * @param renderViewScenePose The [ScenePose] that represents the camera pose.
+     * @param renderViewFov The [FieldOfView] of the camera.
+     * @param displayResolution The size of the viewing plane in pixels.
      * @return A [androidx.xr.scenecore.runtime.PerceivedResolutionResult] which encapsulates the
      *   outcome:
      *     - [PerceivedResolutionResult.Success] containing the [PixelDimensions] if the calculation
@@ -206,7 +212,11 @@ public class FakeSurfaceEntity(private val feature: SurfaceFeature? = null) :
      *
      * @see androidx.xr.scenecore.runtime.PerceivedResolutionResult
      */
-    override fun getPerceivedResolution(): PerceivedResolutionResult {
+    override fun getPerceivedResolution(
+        renderViewScenePose: ScenePose,
+        renderViewFov: FieldOfView,
+        displayResolution: PixelDimensions,
+    ): PerceivedResolutionResult {
         return perceivedResolutionResult
     }
 

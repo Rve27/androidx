@@ -34,12 +34,15 @@ import androidx.xr.scenecore.runtime.SceneRuntime
  * [SpatialCapability.EMBED_ACTIVITY] capability is required. Calling [Entity.dispose] on this
  * Entity will destroy the underlying Activity.
  */
+// TODO (b/469536598) - Remove SceneRuntime dependency once
+// SceneRuntime.getDisplayResolutionInPixels is moved to a common util class.
 public class ActivityPanelEntity
 private constructor(
-    private val lifecycleManager: LifecycleManager,
+    sceneRuntime: SceneRuntime,
+    perceptionSpace: PerceptionSpace,
     private val rtActivityPanelEntity: RtActivityPanelEntity,
     entityManager: EntityManager,
-) : PanelEntity(lifecycleManager, rtActivityPanelEntity, entityManager) {
+) : PanelEntity(sceneRuntime, perceptionSpace, rtActivityPanelEntity, entityManager) {
 
     /**
      * Starts an [Activity] in the given panel. Subsequent calls to this method will replace the
@@ -68,6 +71,7 @@ private constructor(
         internal fun create(
             lifecycleManager: LifecycleManager,
             sceneRuntime: SceneRuntime,
+            perceptionSpace: PerceptionSpace,
             entityManager: EntityManager,
             pixelDimensions: IntSize2d,
             name: String,
@@ -76,7 +80,8 @@ private constructor(
             parent: Entity? = entityManager.getEntityForRtEntity(sceneRuntime.activitySpace),
         ): ActivityPanelEntity =
             ActivityPanelEntity(
-                lifecycleManager,
+                sceneRuntime,
+                perceptionSpace,
                 sceneRuntime.createActivityPanelEntity(
                     pose,
                     pixelDimensions.toRtPixelDimensions(),
@@ -122,6 +127,7 @@ private constructor(
             ActivityPanelEntity.create(
                 session.perceptionRuntime.lifecycleManager,
                 session.sceneRuntime,
+                session.scene.perceptionSpace,
                 session.scene.entityManager,
                 pixelDimensions,
                 name,
@@ -151,6 +157,7 @@ private constructor(
             ActivityPanelEntity.create(
                 session.perceptionRuntime.lifecycleManager,
                 session.sceneRuntime,
+                session.scene.perceptionSpace,
                 session.scene.entityManager,
                 pixelDimensions,
                 name,

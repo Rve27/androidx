@@ -22,7 +22,6 @@ import androidx.xr.runtime.math.Pose;
 import androidx.xr.runtime.math.Quaternion;
 import androidx.xr.runtime.math.Vector3;
 import androidx.xr.scenecore.impl.perception.Plane;
-import androidx.xr.scenecore.runtime.CameraViewScenePose.Fov;
 import androidx.xr.scenecore.runtime.Entity;
 import androidx.xr.scenecore.runtime.HitTestResult;
 import androidx.xr.scenecore.runtime.InputEvent;
@@ -300,31 +299,6 @@ final class RuntimeUtils {
                 pose.getRotation().getY(),
                 pose.getRotation().getZ(),
                 pose.getRotation().getW());
-    }
-
-    /**
-     * Converts to a SceneCore FOV from a perception FOV type.
-     *
-     * @param perceptionFov a {@code androidx.xr.scenecore.impl.perception.Fov} instance
-     *     representing the FOV.
-     */
-    static Fov fovFromPerceptionFov(androidx.xr.scenecore.impl.perception.Fov perceptionFov) {
-        return new Fov(
-                perceptionFov.getAngleLeft(),
-                perceptionFov.getAngleRight(),
-                perceptionFov.getAngleUp(),
-                perceptionFov.getAngleDown());
-    }
-
-    /**
-     * Converts to a perception FOV from a SceneCore FOV type.
-     *
-     * @param fov a {@code androidx.xr.runtime.internal.CameraViewScenePose.Fov} instance
-     *     representing the FOV.
-     */
-    static androidx.xr.scenecore.impl.perception.Fov perceptionFovFromFov(Fov fov) {
-        return new androidx.xr.scenecore.impl.perception.Fov(
-                fov.getAngleLeft(), fov.getAngleRight(), fov.getAngleUp(), fov.getAngleDown());
     }
 
     /**

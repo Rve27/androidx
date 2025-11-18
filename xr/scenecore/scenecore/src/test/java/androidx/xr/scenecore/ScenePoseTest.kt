@@ -20,11 +20,8 @@ import android.app.Activity
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Vector3
 import androidx.xr.scenecore.ScenePose.HitTestFilter
-import androidx.xr.scenecore.runtime.CameraViewScenePose as RtCameraViewScenePose
 import androidx.xr.scenecore.runtime.HitTestResult as RtHitTestResult
 import androidx.xr.scenecore.runtime.SceneRuntime
-import androidx.xr.scenecore.testing.FakeCameraViewScenePose
-import androidx.xr.scenecore.testing.FakeHeadScenePose
 import androidx.xr.scenecore.testing.FakePerceptionSpaceScenePose
 import androidx.xr.scenecore.testing.FakeSceneRuntimeFactory
 import com.google.common.truth.Truth.assertThat
@@ -96,11 +93,6 @@ class ScenePoseTest {
 
         // Set the hit test results.
         val rtHitTestResult = RtHitTestResult(hitPosition, surfaceNormal, surfaceType, distance)
-        (fakeRuntime.headActivityPose as? FakeHeadScenePose)?.hitTestResult = rtHitTestResult
-        (fakeRuntime.getCameraViewActivityPose(
-                RtCameraViewScenePose.CameraType.CAMERA_TYPE_LEFT_EYE
-            ) as? FakeCameraViewScenePose)
-            ?.hitTestResult = rtHitTestResult
         (fakeRuntime.perceptionSpaceActivityPose as FakePerceptionSpaceScenePose).hitTestResult =
             rtHitTestResult
 
@@ -123,11 +115,6 @@ class ScenePoseTest {
 
         // Set the hit test results.
         val rtHitTestResult = RtHitTestResult(hitPosition, surfaceNormal, surfaceType, distance)
-        (fakeRuntime.headActivityPose as? FakeHeadScenePose)?.hitTestResult = rtHitTestResult
-        (fakeRuntime.getCameraViewActivityPose(
-                RtCameraViewScenePose.CameraType.CAMERA_TYPE_LEFT_EYE
-            ) as? FakeCameraViewScenePose)
-            ?.hitTestResult = rtHitTestResult
         (fakeRuntime.perceptionSpaceActivityPose as FakePerceptionSpaceScenePose).hitTestResult =
             rtHitTestResult
 
@@ -149,11 +136,6 @@ class ScenePoseTest {
 
         // Set the hit test results.
         val rtHitTestResult = RtHitTestResult(hitPosition, surfaceNormal, surfaceType, distance)
-        (fakeRuntime.headActivityPose as? FakeHeadScenePose)?.hitTestResult = rtHitTestResult
-        (fakeRuntime.getCameraViewActivityPose(
-                RtCameraViewScenePose.CameraType.CAMERA_TYPE_LEFT_EYE
-            ) as? FakeCameraViewScenePose)
-            ?.hitTestResult = rtHitTestResult
         (fakeRuntime.perceptionSpaceActivityPose as FakePerceptionSpaceScenePose).hitTestResult =
             rtHitTestResult
 
