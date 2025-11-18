@@ -326,9 +326,6 @@ public abstract class RemoteFloat : Number(), RemoteState<Float> {
         if (v.constantValue != null && v.constantValue == 1f) {
             return this
         }
-        if (constantValue != null && constantValue == 1f) {
-            return v
-        }
         return binaryOp(this, v, AnimatedFloatExpression.DIV) { a, b -> a / b }
     }
 
