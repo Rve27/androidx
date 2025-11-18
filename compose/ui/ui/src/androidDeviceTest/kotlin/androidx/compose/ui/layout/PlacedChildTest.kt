@@ -616,6 +616,151 @@ class PlacedChildTest {
     }
 
     @Test
+    fun onlyRealPositionReadsTriggerCallbackOnMove() {
+        var offset by mutableStateOf(0)
+        var coordinatesAction: (LayoutCoordinates) -> Unit by mutableStateOf({})
+        var calls = 0
+        rule.setContent {
+            Layout(
+                content = {
+                    val action = coordinatesAction
+                    val actionWithCounter: (LayoutCoordinates) -> Unit = { coordinates ->
+                        action(coordinates)
+                        calls++
+                    }
+                    Box(Modifier.onPlaced(actionWithCounter).size(10.dp))
+                }
+            ) { measurables, constraints ->
+                val placeable = measurables.first().measure(constraints)
+                layout(placeable.width, placeable.height) { placeable.place(offset, 0) }
+            }
+        }
+
+        fun assert(
+            callExpected: Boolean,
+            description: String,
+            action: (LayoutCoordinates) -> Unit,
+        ) {
+            coordinatesAction = action
+            rule.runOnIdle {
+                calls = 0
+                offset = if (offset == 0) 10 else 0
+            }
+            rule.runOnIdle { assertAllCallsAreExpected(description, callExpected, calls) }
+        }
+
+        assert(callExpected = true, "positionInParent()") { it.positionInParent() }
+        assert(callExpected = true, "positionInRoot()") { it.positionInRoot() }
+        assert(callExpected = true, "positionInWindow()") { it.positionInWindow() }
+        assert(callExpected = true, "boundsInParent()") { it.boundsInParent() }
+        assert(callExpected = true, "boundsInRoot()") { it.boundsInRoot() }
+        assert(callExpected = true, "boundsInWindow()") { it.boundsInWindow() }
+
+        assert(callExpected = false, "empty") {}
+        assert(callExpected = false, "isAttached") { it.isAttached }
+    }
+
+    @Test
+    fun sizeReadTriggersCallbackOnSizeChange() {
+        var size by mutableStateOf(10)
+        var calls = 0
+        rule.setContent {
+            Box {
+                Box(
+                    Modifier.layout { measurable, _ ->
+                            val placeable = measurable.measure(Constraints.fixed(size, size))
+                            layout(placeable.width, placeable.height) { placeable.place(0, 0) }
+                        }
+                        .onPlaced {
+                            it.size
+                            calls++
+                        }
+                )
+            }
+        }
+
+        rule.runOnIdle {
+            calls = 0
+            size = if (size == 10) 15 else 10
+        }
+        rule.runOnIdle { assertAllCallsAreExpected("size", true, calls) }
+    }
+
+    @Test
+    fun alignmentLineReadTriggersCallbackOnLineChange() {
+        var line by mutableStateOf(10)
+        var calls = 0
+        rule.setContent {
+            Box {
+                Box(
+                    Modifier.onPlaced {
+                            it.get(FirstBaseline)
+                            calls++
+                        }
+                        .layout { measurable, constraints ->
+                            val placeable = measurable.measure(constraints)
+                            layout(
+                                placeable.width,
+                                placeable.height,
+                                alignmentLines = mapOf(FirstBaseline to line),
+                            ) {
+                                placeable.place(0, 0)
+                            }
+                        }
+                )
+            }
+        }
+
+        rule.runOnIdle {
+            calls = 0
+            line = if (line == 10) 15 else 10
+        }
+        rule.runOnIdle { assertAllCallsAreExpected("get(FirstBaseline)", true, calls) }
+    }
+
+    @Test
+    fun providedAlignmentLinesReadTriggersCallbackOnLineChange() {
+        var line by mutableStateOf(10)
+        var calls = 0
+        rule.setContent {
+            Box {
+                Box(
+                    Modifier.onPlaced {
+                            it.providedAlignmentLines
+                            calls++
+                        }
+                        .layout { measurable, constraints ->
+                            val placeable = measurable.measure(constraints)
+                            layout(
+                                placeable.width,
+                                placeable.height,
+                                alignmentLines = mapOf(FirstBaseline to line),
+                            ) {
+                                placeable.place(0, 0)
+                            }
+                        }
+                )
+            }
+        }
+
+        rule.runOnIdle {
+            calls = 0
+            line = if (line == 10) 15 else 10
+        }
+        rule.runOnIdle { assertAllCallsAreExpected("providedAlignmentLines", true, calls) }
+    }
+
+    private fun assertAllCallsAreExpected(description: String, callExpected: Boolean, calls: Int) {
+        assertEquals(
+            "New сallback after `$description` read was" +
+                "${if (!callExpected) " not" else ""} expected, but " +
+                "$calls calls happened",
+            if (callExpected) 1 else 0,
+            calls,
+        )
+    }
+
+    @Test
     fun addingChildWithBaselineLater_onPlacedIsCalledOnOuterCoordinator() {
         var need by mutableStateOf(false)
         var actualPosition: Offset? = null
