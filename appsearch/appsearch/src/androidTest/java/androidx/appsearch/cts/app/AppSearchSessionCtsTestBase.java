@@ -1380,7 +1380,8 @@ public abstract class AppSearchSessionCtsTestBase {
             AppSearchException a = (AppSearchException) e.getCause();
             assertThat(a.getResultCode()).isEqualTo(RESULT_INVALID_ARGUMENT);
             assertThat(a).hasMessageThat().contains(
-                    "Repeated properties cannot be used with JOINABLE_VALUE_TYPE_QUALIFIED_ID");
+                    "Qualified id joinable property 'qualifiedId' cannot have REPEATED "
+                            + "cardinality");
         } else {
             // Previous behavior in AppSearchSchema.StringPropertyConfig.Builder#build would throw
             // IllegalStateException if callers set JOINABLE_VALUE_TYPE_QUALIFIED_ID and
