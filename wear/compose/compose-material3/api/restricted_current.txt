@@ -1344,13 +1344,26 @@ package androidx.wear.compose.material3 {
     property public androidx.wear.compose.material3.RevealValue RightRevealing;
   }
 
+  @androidx.compose.runtime.Immutable public final class RippleConfiguration {
+    ctor public RippleConfiguration();
+    ctor @KotlinOnly public RippleConfiguration(optional androidx.compose.ui.graphics.Color color, optional androidx.compose.material.ripple.RippleAlpha? rippleAlpha);
+    ctor @BytecodeOnly public RippleConfiguration(long, androidx.compose.material.ripple.RippleAlpha!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
+    ctor @BytecodeOnly public RippleConfiguration(long, androidx.compose.material.ripple.RippleAlpha!, kotlin.jvm.internal.DefaultConstructorMarker!);
+    method @BytecodeOnly public long getColor-0d7_KjU();
+    method @InaccessibleFromKotlin public androidx.compose.material.ripple.RippleAlpha? getRippleAlpha();
+    property public androidx.compose.ui.graphics.Color color;
+    property public androidx.compose.material.ripple.RippleAlpha? rippleAlpha;
+  }
+
   public final class RippleKt {
+    method @InaccessibleFromKotlin public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.wear.compose.material3.RippleConfiguration?> getLocalRippleConfiguration();
     method @KotlinOnly @androidx.compose.runtime.Stable public static androidx.compose.foundation.IndicationNodeFactory ripple(androidx.compose.ui.graphics.ColorProducer color, optional boolean bounded, optional androidx.compose.ui.unit.Dp radius);
     method @KotlinOnly @androidx.compose.runtime.Stable public static androidx.compose.foundation.IndicationNodeFactory ripple(optional boolean bounded, optional androidx.compose.ui.unit.Dp radius, optional androidx.compose.ui.graphics.Color color);
     method @BytecodeOnly @androidx.compose.runtime.Stable public static androidx.compose.foundation.IndicationNodeFactory ripple-H2RKhps(boolean, float, long);
     method @BytecodeOnly @androidx.compose.runtime.Stable public static androidx.compose.foundation.IndicationNodeFactory! ripple-H2RKhps$default(boolean, float, long, int, Object!);
     method @BytecodeOnly @androidx.compose.runtime.Stable public static androidx.compose.foundation.IndicationNodeFactory ripple-wH6b6FI(androidx.compose.ui.graphics.ColorProducer, boolean, float);
     method @BytecodeOnly @androidx.compose.runtime.Stable public static androidx.compose.foundation.IndicationNodeFactory! ripple-wH6b6FI$default(androidx.compose.ui.graphics.ColorProducer!, boolean, float, int, Object!);
+    property public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.wear.compose.material3.RippleConfiguration?> LocalRippleConfiguration;
   }
 
   public final class ScreenScaffoldDefaults {
