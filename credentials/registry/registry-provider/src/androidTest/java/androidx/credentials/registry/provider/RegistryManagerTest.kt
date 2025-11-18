@@ -91,6 +91,23 @@ class RegistryManagerTest {
         }
 
     @Test
+    fun clearCreationOptions_noOptionalModule_throws() =
+        runBlocking<Unit> {
+            assertThrows<ClearCreationOptionsConfigurationException> {
+                registryManager.clearCreationOptions(
+                    ClearCreationOptionsRequest(
+                        deletePerTypeConfig =
+                            ClearCreationOptionsRequest.PerTypeConfig(
+                                isDeleteAll = false,
+                                type = PasswordCredential.TYPE_PASSWORD_CREDENTIAL,
+                                registryIds = listOf("registry-id1", "registry-id2"),
+                            )
+                    )
+                )
+            }
+        }
+
+    @Test
     fun constant() {
         assertThat(RegistryManager.ACTION_GET_CREDENTIAL)
             .isEqualTo("androidx.credentials.registry.provider.action.GET_CREDENTIAL")

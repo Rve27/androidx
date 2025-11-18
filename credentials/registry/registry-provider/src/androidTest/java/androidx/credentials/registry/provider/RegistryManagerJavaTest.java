@@ -130,6 +130,32 @@ public class RegistryManagerJavaTest {
     }
 
     @Test
+    public void clearCreationOptionsAsync_noOptionalModule_throws() throws Exception {
+        CountDownLatch latch = new CountDownLatch(1);
+        AtomicReference<Exception> resultCaptor = new AtomicReference<>();
+
+        mRegistryManager.clearCreationOptionsAsync(
+                new ClearCreationOptionsRequest(true),
+                Runnable::run,
+                new CredentialManagerCallback<ClearCreationOptionsResponse,
+                        ClearCreationOptionsException>() {
+                    @Override
+                    public void onResult(ClearCreationOptionsResponse result) {
+                    }
+
+                    @Override
+                    public void onError(@NonNull ClearCreationOptionsException e) {
+                        resultCaptor.set(e);
+                        latch.countDown();
+                    }
+                }
+        );
+        latch.await(100L, TimeUnit.MILLISECONDS);
+        assertThat(resultCaptor.get()).isInstanceOf(
+                ClearCreationOptionsConfigurationException.class);
+    }
+
+    @Test
     public void constant() {
         assertThat(RegistryManager.ACTION_GET_CREDENTIAL).isEqualTo(
                 "androidx.credentials.registry.provider.action.GET_CREDENTIAL");
