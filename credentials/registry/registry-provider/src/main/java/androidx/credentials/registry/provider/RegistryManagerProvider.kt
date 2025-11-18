@@ -52,7 +52,7 @@ public interface RegistryManagerProvider {
      * @param executor the callback will take place on this executor
      * @param callback the callback invoked when the request succeeds or fails
      */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
     public fun onRegisterCreationOptions(
         request: RegisterCreationOptionsRequest,
         cancellationSignal: CancellationSignal?,
@@ -80,6 +80,21 @@ public interface RegistryManagerProvider {
                 ClearCredentialRegistryResponse,
                 ClearCredentialRegistryException,
             >,
+    )
+
+    /**
+     * Invoked on a request to clear creation options.
+     *
+     * @param request the request to specify clearing configurations
+     * @param executor the callback will take place on this executor
+     * @param callback the callback invoked when the request succeeds or fails
+     */
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    public fun onClearCreationOptions(
+        request: ClearCreationOptionsRequest,
+        executor: Executor,
+        callback:
+            CredentialManagerCallback<ClearCreationOptionsResponse, ClearCreationOptionsException>,
     )
 
     /** Returns true if the provider is available on this device, or otherwise false. */
