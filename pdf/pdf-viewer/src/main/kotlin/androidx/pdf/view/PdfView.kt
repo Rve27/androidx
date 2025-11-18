@@ -243,8 +243,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
             invalidate()
         }
 
-    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    @set:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    /** Enables / Disables the form- filling feature surface. */
     public var isFormFillingEnabled: Boolean = false
         set(value) {
             if (field == value) return
@@ -477,7 +476,6 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
     private val onViewportChangedListeners = mutableListOf<OnViewportChangedListener>()
 
     /** Listener interface for handling form edits on a PDF Document. */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public interface OnFormWidgetInfoUpdatedListener {
         /**
          * Called when a user interacts with a form widget which leads to the change in state of the
@@ -498,7 +496,6 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
      *
      * @param listener The listener to add
      */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public fun addOnFormWidgetInfoUpdatedListener(listener: OnFormWidgetInfoUpdatedListener) {
         onFormWidgetInfoUpdatedListeners.add(listener)
     }
@@ -509,7 +506,6 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
      *
      * @param listener The listener to remove
      */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public fun removeOnFormWidgetInfoUpdatedListener(listener: OnFormWidgetInfoUpdatedListener) {
         onFormWidgetInfoUpdatedListeners.remove(listener)
     }

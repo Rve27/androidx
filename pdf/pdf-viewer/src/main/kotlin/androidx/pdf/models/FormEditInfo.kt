@@ -34,7 +34,6 @@ import java.util.Objects
  *   32000-1:2008</a>
  */
 @SuppressLint("BanParcelableUsage")
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public class FormEditInfo
 private constructor(
     /** Represents the page number on which the edit occurred */
@@ -131,6 +130,7 @@ private constructor(
     /** Form edit operation type */
     @IntDef(EDIT_TYPE_CLICK, EDIT_TYPE_SET_INDICES, EDIT_TYPE_SET_TEXT)
     @Retention(AnnotationRetention.SOURCE)
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public annotation class EditType
 
     public companion object {
