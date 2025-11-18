@@ -25,6 +25,7 @@ import androidx.build.checkapi.JavaApiTaskConfig
 import androidx.build.checkapi.KmpApiTaskConfig
 import androidx.build.checkapi.LibraryApiTaskConfig
 import androidx.build.checkapi.configureProjectForApiTasks
+import androidx.build.dependencyTracker.AffectedModuleDetector
 import androidx.build.docs.CheckTipOfTreeDocsTask.Companion.setUpCheckDocsTask
 import androidx.build.gitclient.getHeadShaProvider
 import androidx.build.gradle.isRoot
@@ -322,6 +323,7 @@ abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
                         it.archiveFileName.set(archiveName)
                         it.from(project.file(xmlReport.outputLocation))
                         it.include("*.xml")
+                        AffectedModuleDetector.configureTaskGuard(it)
                     }
                 task.finalizedBy(zipXmlTask)
             }
