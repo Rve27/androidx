@@ -435,3 +435,6 @@ IdentityKey\.IDENTITY_KEY_TYPE_ED[0-9]+\);
 IdentityKey identityKey = IdentityKey\.createFromPrf\(prf, /\* salt= \*/null,
 IdentityKey identityKey[0-9]+ = IdentityKey\.createFromPrf\(prf, new byte\[[0-9]+\],
 IdentityKey identityKey = IdentityKey\.createFromPrf\(prfOutput, salt,
+# > Task :car:app:app-automotive:compileReleaseJavaWithJavac b/316376113
+\$OUT_DIR/androidx/car/app/app\-automotive/build/generated/source/stable_aidl/release/androidx/car/app/activity/renderer/IInsetsListener\.java:[0-9]+: warning: \[dep\-ann\] deprecated item is not annotated with @Deprecated
+@Override public void onInsetsChanged\(android\.graphics\.Insets insets\) throws android\.os\.RemoteException
