@@ -20,7 +20,6 @@ import android.graphics.Matrix
 import android.graphics.RectF
 import android.os.Build
 import android.os.Bundle
-import android.os.ParcelFileDescriptor
 import android.util.SparseArray
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -70,6 +69,7 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
     private lateinit var onViewportChangedListener: PdfView.OnViewportChangedListener
     private lateinit var wetStrokesOnFinishedListener: WetStrokesOnFinishedListener
 
+    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     override val documentViewModel: EditableDocumentViewModel by viewModels {
         EditableDocumentViewModel.Factory
     }
@@ -77,20 +77,11 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
     private val strokeIdToPageNumMap: MutableMap<InProgressStrokeId, Int> =
         Collections.synchronizedMap(mutableMapOf<InProgressStrokeId, Int>())
 
-    /**
-     * Writes the current state of the document, including any edits, to the given destination.
-     *
-     * @param dest The [ParcelFileDescriptor] to write the document to.
-     * @throws IllegalStateException If the document is not available (e.g., not loaded or lost due
-     *   to process death).
-     */
-    public suspend fun writeTo(dest: ParcelFileDescriptor): Unit = documentViewModel.saveEdits(dest)
-
     /** Undoes the last edit. If there are no more edits to undo, this is a no-op. */
-    public fun undo(): Unit = documentViewModel.undo()
+    internal fun undo(): Unit = documentViewModel.undo()
 
     /** Redoes the last undone edit. If there are no more edits to redo, this is a no-op. */
-    public fun redo(): Unit = documentViewModel.redo()
+    internal fun redo(): Unit = documentViewModel.redo()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -159,6 +150,7 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
      *
      * @param document The loaded [PdfDocument].
      */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     override fun onLoadDocumentSuccess(document: PdfDocument) {
         super.onLoadDocumentSuccess(document)
         documentViewModel.maybeInitialiseForDocument(document)
