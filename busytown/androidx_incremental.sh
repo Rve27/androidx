@@ -16,8 +16,7 @@ export OUT_DIR="$OUT_DIR/incremental"
 mkdir -p "$OUT_DIR"
 
 if [ "$MANIFEST" == "" -a "$CHANGE_INFO" != "" ]; then
-  cp "$DIST_DIR/manifest_${BUILD_NUMBER}.xml" "$OUT_DIR/manifest.xml"
-  export MANIFEST="$OUT_DIR/manifest.xml"
+  export MANIFEST="$DIST_DIR/manifest_${BUILD_NUMBER}.xml"
 fi
 
 deleteOldOutDir
