@@ -41,7 +41,7 @@ internal constructor(
     private val screenOffset: IntOffset,
     private val windowSize: Long,
     private val viewToWindowMatrix: Matrix?,
-    private val node: DelegatableNode,
+    internal val node: DelegatableNode,
 ) {
     /**
      * The top left position of the Rect in the coordinates of the root node of the compose
