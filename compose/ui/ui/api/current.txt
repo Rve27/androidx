@@ -3593,7 +3593,7 @@ package androidx.compose.ui.node {
     method public android.view.View? getInteropView();
   }
 
-  public interface LayoutAwareModifierNode extends androidx.compose.ui.node.DelegatableNode {
+  public interface LayoutAwareModifierNode extends androidx.compose.ui.node.MeasuredSizeAwareModifierNode androidx.compose.ui.node.DelegatableNode {
     method public default void onPlaced(androidx.compose.ui.layout.LayoutCoordinates coordinates);
     method @KotlinOnly public default void onRemeasured(androidx.compose.ui.unit.IntSize size);
     method @BytecodeOnly public default void onRemeasured-ozmzZPI(long);
@@ -3614,6 +3614,11 @@ package androidx.compose.ui.node {
     method public static void invalidatePlacement(androidx.compose.ui.node.LayoutModifierNode);
     method public static void remeasureSync(androidx.compose.ui.node.LayoutModifierNode);
     method public static void updateLayerBlock(androidx.compose.ui.node.LayoutModifierNode, kotlin.jvm.functions.Function1<? super androidx.compose.ui.graphics.GraphicsLayerScope,kotlin.Unit>? layerBlock);
+  }
+
+  public interface MeasuredSizeAwareModifierNode extends androidx.compose.ui.node.DelegatableNode {
+    method @KotlinOnly public void onRemeasured(androidx.compose.ui.unit.IntSize size);
+    method @BytecodeOnly public void onRemeasured-ozmzZPI(long);
   }
 
   public abstract class ModifierNodeElement<N extends androidx.compose.ui.Modifier.Node> implements androidx.compose.ui.platform.InspectableValue androidx.compose.ui.Modifier.Element {
