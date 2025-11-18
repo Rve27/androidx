@@ -40,9 +40,6 @@ import java.util.function.BiConsumer;
 /** Implementation of ResizableComponent. */
 @SuppressWarnings({"BanConcurrentHashMap"})
 class ResizableComponentImpl implements ResizableComponent {
-
-    private static final String TAG = "ResizableComponentImpl";
-
     private final XrExtensions mExtensions;
     private final ExecutorService mExecutor;
     private final ConcurrentHashMap<ResizeEventListener, Executor> mResizeEventListenerMap =
@@ -52,12 +49,12 @@ class ResizableComponentImpl implements ResizableComponent {
     private Entity mEntity = null;
     private Dimensions mCurrentSize = null;
 
-    /** Follows scenecore/ResizableComponent.create document, the default minimum size is 0. */
+    /** The default minimum size is 0x0. */
     private final Dimensions mMinimumSize = new Dimensions(0.0f, 0.0f, 0.0f);
 
     private @NonNull Dimensions mMinSize = mMinimumSize;
 
-    /** Follows scenecore/ResizableComponent.create document, the default maximum size is 10. */
+    /** The default maximum size is 10x10. */
     private final Dimensions mMaximumSize = new Dimensions(10.0f, 10.0f, 10.0f);
 
     private @NonNull Dimensions mMaxSize = mMaximumSize;
@@ -70,8 +67,8 @@ class ResizableComponentImpl implements ResizableComponent {
     private final Dimensions mMinimumValidSize = new Dimensions(0.01f, 0.01f, 0.0f);
 
     /**
-     * Follows scenecore/ResizableComponent.size document, the default size is 1. If
-     * ResizableComponent is attached to a panel, use the panel size as default size.
+     * The default size is 1x1. When ResizableComponent attaches to a panel, it'll inherit the
+     * attached panel size.
      */
     private Dimensions mDefaultSize = new Dimensions(1f, 1f, 1f);
 
@@ -143,6 +140,7 @@ class ResizableComponentImpl implements ResizableComponent {
 
     @Override
     public void onDetach(@NonNull Entity entity) {
+        restoreEntityContent();
         ReformOptions reformOptions = ((AndroidXrEntity) entity).getReformOptions();
         ReformOptions unused =
                 reformOptions.setEnabledReform(
