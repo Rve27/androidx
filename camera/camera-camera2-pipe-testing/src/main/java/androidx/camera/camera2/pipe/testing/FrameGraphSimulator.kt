@@ -37,4 +37,11 @@ public class FrameGraphSimulator(
     override fun toString(): String {
         return "FrameGraphSimulator($realFrameGraph, ${cameraSimulator})"
     }
+
+    override fun close() {
+        realFrameGraph.close()
+        if (cameraSimulator is CameraGraphSimulator) {
+            cameraSimulator.close()
+        }
+    }
 }

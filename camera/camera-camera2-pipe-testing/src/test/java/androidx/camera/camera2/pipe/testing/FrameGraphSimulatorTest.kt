@@ -28,7 +28,6 @@ import androidx.camera.camera2.pipe.StreamId
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.test.TestScope
-import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
@@ -62,26 +61,20 @@ class FrameGraphSimulatorTest {
             listOf(frontCameraMetadata, backCameraMetadata),
         )
 
-    private lateinit var frameGraphSimulator: FrameGraphSimulator
-
-    @Before
-    fun setUp() {
-        frameGraphSimulator = cameraPipe.createFrameGraph(FrameGraph.Config(graphConfig))
-        assertThat(frameGraphSimulator.setSurfaceResults.size).isEqualTo(0)
-    }
+    private val frameGraphSimulator: FrameGraphSimulator =
+        cameraPipe.createFrameGraph(FrameGraph.Config(graphConfig))
 
     @Test
     fun setSurface_validSurface_updatesSetSurfaceResults() {
-        val fakeSurfaces = FakeSurfaces()
-        val surface: Surface = fakeSurfaces.createFakeSurface()
-        assertThat(frameGraphSimulator.setSurfaceResults.size).isEqualTo(0)
+        FakeSurfaces().use { fakeSurfaces ->
+            val surface: Surface = fakeSurfaces.createFakeSurface()
+            assertThat(frameGraphSimulator.setSurfaceResults.size).isEqualTo(0)
 
-        frameGraphSimulator.setSurface(STREAM_ID, surface)
+            frameGraphSimulator.setSurface(STREAM_ID, surface)
 
-        assertThat(frameGraphSimulator.setSurfaceResults.size).isEqualTo(1)
-        assertThat(frameGraphSimulator.setSurfaceResults[STREAM_ID]).isSameInstanceAs(surface)
-
-        fakeSurfaces.close()
+            assertThat(frameGraphSimulator.setSurfaceResults.size).isEqualTo(1)
+            assertThat(frameGraphSimulator.setSurfaceResults[STREAM_ID]).isSameInstanceAs(surface)
+        }
     }
 
     @Test
@@ -93,6 +86,14 @@ class FrameGraphSimulatorTest {
 
         assertThat(frameGraphSimulator.setSurfaceResults.size).isEqualTo(1)
         assertThat(frameGraphSimulator.setSurfaceResults[STREAM_ID]).isNull()
+    }
+
+    @Test
+    fun closeFrameGraphSimulator_closesRealFrameGraphAndCameraGraphSimulator() {
+        frameGraphSimulator.close()
+
+        assertThat(frameGraphSimulator.isClosed).isTrue()
+        assertThat(cameraPipe.cameraGraphs.first().isClosed).isTrue()
     }
 
     companion object {
