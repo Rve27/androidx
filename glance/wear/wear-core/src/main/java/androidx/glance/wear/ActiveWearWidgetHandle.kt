@@ -53,7 +53,7 @@ public constructor(
     override fun hashCode(): Int = Objects.hash(provider, instanceId, containerType)
 
     override fun toString(): String =
-        "ActiveWidget{${provider.className}:$instanceId type=${ContainerInfo.containerTypeDebugString(containerType)}}"
+        "ActiveWidget{${provider.className}:$instanceId type=${ContainerInfo.containerTypeToString(containerType)}}"
 
     @RestrictTo(LIBRARY_GROUP)
     public fun toParcel(): ActiveWearWidgetHandleParcel {
