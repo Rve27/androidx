@@ -36,7 +36,7 @@ import java.util.Objects
  */
 @SuppressLint("BanParcelableUsage")
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public class FormEditRecord
+public class FormEditInfo
 private constructor(
     /** Represents the page number on which the edit occurred */
     public val pageNumber: Int,
@@ -52,21 +52,21 @@ private constructor(
         require(widgetIndex >= 0) { "widgetIndex should be greater than or equal to 0" }
     }
 
-    /** Construct a FormEditRecord of type [EDIT_TYPE_SET_INDICES] */
+    /** Construct a FormEditInfo of type [EDIT_TYPE_SET_INDICES] */
     public constructor(
         @IntRange(from = 0) pageNumber: Int,
         @IntRange(from = 0) widgetIndex: Int,
         selectedIndices: IntArray,
     ) : this(pageNumber, widgetIndex, EDIT_TYPE_SET_INDICES, selectedIndices = selectedIndices)
 
-    /** Construct a FormEditRecord of type [EDIT_TYPE_SET_TEXT] */
+    /** Construct a FormEditInfo of type [EDIT_TYPE_SET_TEXT] */
     public constructor(
         @IntRange(from = 0) pageNumber: Int,
         @IntRange(from = 0) widgetIndex: Int,
         text: String,
     ) : this(pageNumber, widgetIndex, EDIT_TYPE_SET_TEXT, text = text)
 
-    /** Construct a FormEditRecord of type [EDIT_TYPE_CLICK] */
+    /** Construct a FormEditInfo of type [EDIT_TYPE_CLICK] */
     public constructor(
         @IntRange(from = 0) pageNumber: Int,
         @IntRange(from = 0) widgetIndex: Int,
@@ -98,7 +98,7 @@ private constructor(
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other == null || other !is FormEditRecord) return false
+        if (other == null || other !is FormEditInfo) return false
 
         return pageNumber == other.pageNumber &&
             widgetIndex == other.widgetIndex &&
@@ -133,13 +133,13 @@ private constructor(
         public const val EDIT_TYPE_SET_TEXT: Int = 2
 
         @JvmField
-        public val CREATOR: Parcelable.Creator<FormEditRecord> =
-            object : Parcelable.Creator<FormEditRecord> {
-                override fun createFromParcel(parcel: Parcel): FormEditRecord? {
-                    return FormEditRecord(parcel)
+        public val CREATOR: Parcelable.Creator<FormEditInfo> =
+            object : Parcelable.Creator<FormEditInfo> {
+                override fun createFromParcel(parcel: Parcel): FormEditInfo? {
+                    return FormEditInfo(parcel)
                 }
 
-                override fun newArray(size: Int): Array<FormEditRecord?> {
+                override fun newArray(size: Int): Array<FormEditInfo?> {
                     return arrayOfNulls(size)
                 }
             }
