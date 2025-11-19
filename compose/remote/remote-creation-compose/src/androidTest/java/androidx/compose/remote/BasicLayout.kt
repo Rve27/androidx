@@ -16,6 +16,7 @@
 package androidx.compose.remote
 
 import android.annotation.SuppressLint
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.size
@@ -77,6 +78,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.semantics.SemanticsProperties
@@ -130,16 +133,29 @@ class LayoutTest {
         }
     }
 
+    @Composable
+    fun WithFixedDensity(content: @Composable () -> Unit) {
+        val configuration =
+            Configuration(LocalConfiguration.current).apply { densityDpi = (2.75 * 160).toInt() }
+        val fixedContext = LocalContext.current.createConfigurationContext(configuration)
+
+        CompositionLocalProvider(
+            LocalContext provides fixedContext,
+            LocalDensity provides Density(fixedContext),
+        ) {
+            content()
+        }
+    }
+
     fun testLayout(result: String, content: @Composable @RemoteComposable () -> Unit) {
         composeTestRule.setContent {
-            val customDensity = Density(density = 2.75f, fontScale = 1.0f)
-            CompositionLocalProvider(LocalDensity provides customDensity) {
+            WithFixedDensity {
                 val doc = rememberRemoteDocumentFixedDensity { content() }
                 Column {
                     var documentWidth by remember { mutableStateOf(300) }
                     var documentHeight by remember { mutableStateOf(300) }
-                    var documentContent = remember { mutableStateOf("") }
-                    var docu = remember(doc.value) { mutableStateOf<RemoteDocument?>(null) }
+                    val documentContent = remember { mutableStateOf("") }
+                    val docu = remember(doc.value) { mutableStateOf<RemoteDocument?>(null) }
 
                     if (doc.value != null) {
                         docu.value = RemoteDocument(doc.value!!)
@@ -202,14 +218,13 @@ class LayoutTest {
         content: @Composable @RemoteComposable () -> Unit,
     ) {
         composeTestRule.setContent {
-            val customDensity = Density(density = 2.75f, fontScale = 1.0f)
-            CompositionLocalProvider(LocalDensity provides customDensity) {
+            WithFixedDensity {
                 val doc = rememberRemoteDocumentFixedDensity { content() }
                 Column {
                     var documentWidth by remember { mutableStateOf(300) }
                     var documentHeight by remember { mutableStateOf(300) }
-                    var documentContent = remember { mutableStateOf("") }
-                    var docu = remember(doc.value) { mutableStateOf<RemoteDocument?>(null) }
+                    val documentContent = remember { mutableStateOf("") }
+                    val docu = remember(doc.value) { mutableStateOf<RemoteDocument?>(null) }
 
                     if (doc.value != null) {
                         docu.value = RemoteDocument(doc.value!!)
@@ -292,14 +307,13 @@ class LayoutTest {
         content: @Composable @RemoteComposable (MutableState<Boolean>) -> Unit,
     ) {
         composeTestRule.setContent {
-            val customDensity = Density(density = 2.75f, fontScale = 1.0f)
-            CompositionLocalProvider(LocalDensity provides customDensity) {
+            WithFixedDensity {
                 val doc = rememberAsyncRemoteDocumentFixedDensity { content(it) }
                 Column {
                     var documentWidth by remember { mutableStateOf(300) }
                     var documentHeight by remember { mutableStateOf(300) }
-                    var documentContent = remember { mutableStateOf("") }
-                    var docu = remember(doc.value) { mutableStateOf<RemoteDocument?>(null) }
+                    val documentContent = remember { mutableStateOf("") }
+                    val docu = remember(doc.value) { mutableStateOf<RemoteDocument?>(null) }
 
                     if (doc.value != null) {
                         docu.value = RemoteDocument(doc.value!!)
