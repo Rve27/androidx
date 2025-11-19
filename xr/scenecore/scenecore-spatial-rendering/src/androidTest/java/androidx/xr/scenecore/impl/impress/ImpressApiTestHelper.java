@@ -77,5 +77,22 @@ final class ImpressApiTestHelper {
 
     static native void nativeSetExpectedClearEnvironmentLight();
 
+    // Hooks for the texture operations.
+    static native void nativeSetExpectedLoadTexturePath(String path);
+
+    static native void nativeSetLoadTextureAssetSuccess(long token);
+
+    static native void nativeSetLoadTextureAssetFailure(String message);
+
+    static native void nativeSetExpectedBorrowReflectionTexture();
+
+    static native void nativeSetBorrowReflectionTextureSuccessToken(long token);
+
+    static native void nativeSetExpectedGetReflectionTextureFromIbl(long iblToken);
+
+    static native void nativeSetGetReflectionTextureFromIblSuccessToken(long textureToken);
+
+    static native void nativeSetExpectedBorrowTexture(long textureHandle);
+
     private ImpressApiTestHelper() {}
 }
