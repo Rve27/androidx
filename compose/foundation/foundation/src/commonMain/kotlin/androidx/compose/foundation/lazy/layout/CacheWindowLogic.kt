@@ -120,15 +120,7 @@ internal abstract class CacheWindowLogic(
          * changed.
          */
         if (previousPassItemCount != UnsetItemCount && previousPassItemCount != totalItemsCount) {
-            debugLog { "Total Items Changed" }
-            shouldRefillWindow = true
-            prefetchWindowStartLine = prefetchWindowStartLine.coerceAtLeast(0)
-            val lastLineIndex = getLastLineIndex()
-            if (lastLineIndex != InvalidIndex) {
-                prefetchWindowEndLine = prefetchWindowEndLine.coerceAtMost(lastLineIndex)
-            }
-            /** Free up the space so the fill will happen and not re-use old data. */
-            removeOutOfBoundsItems(prefetchWindowEndLine, itemsCount - 1)
+            onDatasetChanged()
         }
 
         itemsCount = totalItemsCount
@@ -153,6 +145,18 @@ internal abstract class CacheWindowLogic(
         }
 
         previousPassItemCount = totalItemsCount
+    }
+
+    private fun CacheWindowScope.onDatasetChanged() {
+        debugLog { "Total Items Changed" }
+        shouldRefillWindow = true
+        prefetchWindowStartLine = prefetchWindowStartLine.coerceAtLeast(0)
+        val lastLineIndex = getLastLineIndex()
+        if (lastLineIndex != InvalidIndex) {
+            prefetchWindowEndLine = prefetchWindowEndLine.coerceAtMost(lastLineIndex)
+        }
+        /** Free up the space so the fill will happen and not re-use old data. */
+        removeOutOfBoundsItems(prefetchWindowEndLine, itemsCount - 1)
     }
 
     fun hasValidBounds() =
@@ -386,13 +390,16 @@ internal abstract class CacheWindowLogic(
 
     private fun CacheWindowScope.getItemSizeOrPrefetch(index: Int, isUrgent: Boolean): Int {
         return if (windowCache.containsKey(index)) {
+            debugLog { "Item $index is Cached!" }
             windowCache[index]
         } else if (prefetchWindowHandles.containsKey(index)) {
             // item is scheduled but didn't finish yet
+            debugLog { "Item=$index is already scheduled. isUrgent=$isUrgent" }
             if (isUrgent) prefetchWindowHandles[index]?.fastForEach { it.markAsUrgent() }
             InvalidItemSize
         } else {
             // item is not scheduled
+            debugLog { "Scheduling Prefetching for Item=$index. isUrgent=$isUrgent" }
             prefetchWindowHandles[index] =
                 schedulePrefetch(index) { prefetchedIndex, size ->
                     onItemPrefetched(prefetchedIndex, size)
@@ -438,6 +445,8 @@ internal abstract class CacheWindowLogic(
         prefetchWindowHandles.forEachKey { if (it in startLine..endLine) indicesToRemove.add(it) }
 
         windowCache.forEachKey { if (it in startLine..endLine) indicesToRemove.add(it) }
+
+        debugLog { "Indices to remove=$indicesToRemove" }
 
         indicesToRemove.forEach {
             prefetchWindowHandles.remove(it)?.fastForEach { it.cancel() }
