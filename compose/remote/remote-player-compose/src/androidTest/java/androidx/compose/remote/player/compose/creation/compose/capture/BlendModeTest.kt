@@ -116,13 +116,13 @@ class BlendModeTest {
     @Composable
     private fun RemoteBlendModeVisual(blendMode: BlendMode, name: String) {
         RemoteBox(
-            RemoteModifier.size(100.dp)
+            RemoteModifier.size(100.rdp)
                 .border(1.rdp, androidx.compose.ui.graphics.Color.Black)
                 .padding(8.dp),
             horizontalAlignment = RemoteAlignment.Start,
             verticalArrangement = RemoteArrangement.Top,
         ) {
-            RemoteCanvas(RemoteModifier.size(100.dp)) {
+            RemoteCanvas(RemoteModifier.size(100.rdp)) {
                 val w = remoteComponentWidth(remoteComposeCreationState)
                 val h = remoteComponentHeight(remoteComposeCreationState)
 
