@@ -29,7 +29,6 @@ import androidx.compose.remote.player.compose.test.utils.screenshot.TargetPlayer
 import androidx.compose.remote.player.compose.test.utils.screenshot.rule.RemoteComposeScreenshotTestRule
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.filters.MediumTest
 import androidx.test.filters.SdkSuppress
@@ -117,7 +116,7 @@ class RemoteButtonTest {
     fun button_overrides_size() {
         remoteComposeTestRule.runScreenshotTest(backgroundColor = Color.Black, size = size) {
             RemoteButton(
-                modifier = RemoteModifier.size(180.dp, 100.dp),
+                modifier = RemoteModifier.size(180.rdp, 100.rdp),
                 contentPadding = RemotePaddingValues(0.rdp),
             ) {
                 RemoteText(
