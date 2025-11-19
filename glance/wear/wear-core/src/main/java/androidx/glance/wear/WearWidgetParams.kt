@@ -23,7 +23,7 @@ import androidx.glance.wear.parcel.WearWidgetRequestParcel
 import androidx.glance.wear.proto.WearWidgetRequestProto
 
 /**
- * Request for widget contents.
+ * The parameters used for providing data for a Wear Widget.
  *
  * @property instanceId The instance id of the widget for this request. The id is created by the
  *   system and is provided when [GlanceWearWidget.onActivated] is called.
@@ -31,7 +31,7 @@ import androidx.glance.wear.proto.WearWidgetRequestProto
  * @property widthDp The width in dp of the container for this widget.
  * @property heightDp The height in dp of the container for this widget.
  */
-public class WearWidgetRequest
+public class WearWidgetParams
 @RestrictTo(LIBRARY_GROUP)
 public constructor(
     public val instanceId: Int,
@@ -39,15 +39,8 @@ public constructor(
     @Dimension(unit = Dimension.DP) public val widthDp: Float,
     @Dimension(unit = Dimension.DP) public val heightDp: Float,
 ) {
-    // TODO(lucasmo): Remove once it's no longer used.
-    @RestrictTo(LIBRARY_GROUP)
-    public constructor(
-        instanceId: Int,
-        @Dimension(unit = Dimension.DP) widthDp: Float,
-        @Dimension(unit = Dimension.DP) heightDp: Float,
-    ) : this(instanceId, ContainerInfo.CONTAINER_TYPE_LARGE, widthDp, heightDp)
 
-    /** Convert this request to [WearWidgetRequestParcel]. */
+    /** Converts this object to [WearWidgetRequestParcel]. */
     @RestrictTo(LIBRARY_GROUP)
     public fun toParcel(): WearWidgetRequestParcel {
         val requestProto =
@@ -62,9 +55,9 @@ public constructor(
 
     public companion object {
         @RestrictTo(LIBRARY_GROUP)
-        public fun fromParcel(requestParcel: WearWidgetRequestParcel): WearWidgetRequest {
-            val requestProto = WearWidgetRequestProto.ADAPTER.decode(requestParcel.payload)
-            return WearWidgetRequest(
+        public fun fromParcel(parcel: WearWidgetRequestParcel): WearWidgetParams {
+            val requestProto = WearWidgetRequestProto.ADAPTER.decode(parcel.payload)
+            return WearWidgetParams(
                 instanceId = requestProto.instance_id,
                 containerType = requestProto.container_type,
                 widthDp = requestProto.width_dp,

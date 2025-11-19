@@ -42,12 +42,12 @@ internal constructor(private val updateClient: WidgetUpdateClient) {
      * This method is called from the main thread.
      *
      * @param context the context from which this method is called
-     * @param request provides parameters for the contents being requested
+     * @param params the parameters that describe the widget for which the data is being provided.
      */
     @MainThread
     public abstract suspend fun provideWidgetData(
         context: Context,
-        request: WearWidgetRequest,
+        params: WearWidgetParams,
     ): WearWidgetData
 
     /**
