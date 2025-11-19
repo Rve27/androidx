@@ -331,6 +331,16 @@ class RemoteFloatTest {
     }
 
     @Test
+    fun one_divided_by() {
+        val result = RemoteFloat(1f) / RemoteFloat(2f)
+        val resultId = result.getIdForCreationState(creationState)
+
+        makeAndPaintCoreDocument()
+
+        assertThat(context.getFloat(resultId)).isEqualTo(0.5f)
+    }
+
+    @Test
     fun hasConstantValue_true() {
         assertThat(RemoteFloat(21.5f).hasConstantValue).isTrue()
         assertThat(RemoteFloat(21.5f).plus(RemoteFloat(21.5f)).hasConstantValue).isTrue()
