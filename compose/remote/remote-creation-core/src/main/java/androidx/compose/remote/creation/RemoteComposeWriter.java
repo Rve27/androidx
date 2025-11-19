@@ -92,7 +92,7 @@ public class RemoteComposeWriter {
     private int mOriginalWidth = 0;
     private int mOriginalHeight = 0;
     private @NonNull String mContentDescription = "";
-    private boolean mHasForceSendingNewPaint = false;
+    protected boolean mHasForceSendingNewPaint = false;
 
     public static final float TIME_IN_CONTINUOUS_SEC = RemoteContext.FLOAT_CONTINUOUS_SEC;
     public static final int FONT_TYPE_DEFAULT = PaintBundle.FONT_TYPE_DEFAULT;
@@ -238,7 +238,7 @@ public class RemoteComposeWriter {
      * @param buffer the buffer to use
      * @param tags properties of the document
      */
-    protected RemoteComposeWriter(
+    public RemoteComposeWriter(
             @NonNull Profile profile, @NonNull RemoteComposeBuffer buffer, HTag @NonNull ... tags) {
         this.mPlatform = profile.getPlatform();
         mBuffer = buffer;
@@ -2092,7 +2092,7 @@ public class RemoteComposeWriter {
     public static class DataMap {
         @NonNull String mName;
 
-        enum Types {
+        public enum Types {
             STRING(DataMapIds.TYPE_STRING),
             INT(DataMapIds.TYPE_INT),
             FLOAT(DataMapIds.TYPE_FLOAT),
@@ -2635,7 +2635,7 @@ public class RemoteComposeWriter {
 
     /** End a conditional block */
     public void endConditionalOperations() {
-        mBuffer.addContainerEnd();
+        mBuffer.endConditionalOperations();
     }
 
     /** Call addContentStart on buffer */
