@@ -21,6 +21,7 @@ import android.provider.MediaStore
 import android.util.Log
 import androidx.camera.camera2.Camera2Config
 import androidx.camera.camera2.pipe.integration.CameraPipeConfig
+import androidx.camera.core.CameraEffect
 import androidx.camera.core.CameraInfo
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
@@ -32,11 +33,13 @@ import androidx.camera.core.featuregroup.GroupableFeature
 import androidx.camera.core.takePicture
 import androidx.camera.integration.featurecombo.AppFeatures
 import androidx.camera.integration.featurecombo.DynamicRange
+import androidx.camera.integration.featurecombo.Effect
 import androidx.camera.integration.featurecombo.Fps
 import androidx.camera.integration.featurecombo.ImageFormat
 import androidx.camera.integration.featurecombo.MainActivity
 import androidx.camera.integration.featurecombo.RecordingQuality
 import androidx.camera.integration.featurecombo.StabilizationMode
+import androidx.camera.integration.featurecombo.effects.BouncyLogoOverlayEffect
 import androidx.camera.lifecycle.ExperimentalCameraProviderConfiguration
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.lifecycle.awaitInstance
@@ -57,13 +60,17 @@ import kotlin.time.measureTimedValue
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 @androidx.annotation.OptIn(ExperimentalCameraProviderConfiguration::class)
 class CameraViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel() {
     private lateinit var appContext: Context
+    private var bouncyLogoOverlayEffect: BouncyLogoOverlayEffect? = null
 
     private val isCameraPipe: Boolean by lazy {
         savedStateHandle.get<String>(MainActivity.INTENT_EXTRA_CAMERA_IMPLEMENTATION) ==
@@ -81,7 +88,18 @@ class CameraViewModel(private val savedStateHandle: SavedStateHandle) : ViewMode
     private val videoCapture: VideoCapture<Recorder> =
         VideoCapture.withOutput(Recorder.Builder().build())
 
-    private val useCases = mutableListOf<UseCase>()
+    private val _useCases = MutableStateFlow(emptyList<UseCase>())
+    private val useCases: StateFlow<List<UseCase>>
+        get() = _useCases
+
+    val useCaseTargets: StateFlow<Int> =
+        _useCases
+            .map { it.toTargets() }
+            .stateIn(
+                viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000L),
+                initialValue = 0,
+            )
 
     private val _toastMessages = MutableSharedFlow<String>()
     private var activeRecording: Recording? = null
@@ -115,6 +133,7 @@ class CameraViewModel(private val savedStateHandle: SavedStateHandle) : ViewMode
     data class FeatureCombo(
         val requiredFeatures: Set<GroupableFeature> = emptySet(),
         val preferredFeatures: List<GroupableFeature> = emptyList(),
+        val effects: List<Effect> = emptyList(),
     )
 
     private var featureCombo: FeatureCombo? = null
@@ -189,9 +208,10 @@ class CameraViewModel(private val savedStateHandle: SavedStateHandle) : ViewMode
 
         val sessionConfig =
             SessionConfig(
-                    useCases = useCases,
+                    useCases = useCases.value,
                     requiredFeatureGroup = featureCombo.requiredFeatures,
                     preferredFeatureGroup = featureCombo.preferredFeatures,
+                    effects = featureCombo.effects.toCameraXEffects(),
                 )
                 .apply {
                     setFeatureSelectionListener { features ->
@@ -221,7 +241,12 @@ class CameraViewModel(private val savedStateHandle: SavedStateHandle) : ViewMode
         cameraProvider().bindToLifecycle(lifecycleOwner, cameraSelector, sessionConfig)
 
         viewModelScope.launch {
-            updateAppFeatures(selectedFeatures.await().toAppFeatures())
+            updateAppFeatures(
+                selectedFeatures
+                    .await()
+                    .toAppFeatures()
+                    .copy(effect = featureCombo.effects.firstOrNull() ?: Effect.NONE)
+            )
             updateUnsupportedFeatures()
         }
 
@@ -240,8 +265,16 @@ class CameraViewModel(private val savedStateHandle: SavedStateHandle) : ViewMode
         }
     }
 
-    fun setSurfaceProvider(surfaceProvider: Preview.SurfaceProvider) {
+    fun setSurfaceProvider(surfaceProvider: Preview.SurfaceProvider?) {
         preview.surfaceProvider = surfaceProvider
+    }
+
+    fun setBouncyLogoOverlayEffect(
+        bouncyLogoOverlayEffect: BouncyLogoOverlayEffect?,
+        lifecycleOwner: LifecycleOwner,
+    ) {
+        this.bouncyLogoOverlayEffect = bouncyLogoOverlayEffect
+        viewModelScope.launch { bindCamera(lifecycleOwner) }
     }
 
     fun toggleCamera(lifecycleOwner: LifecycleOwner) {
@@ -279,6 +312,8 @@ class CameraViewModel(private val savedStateHandle: SavedStateHandle) : ViewMode
     }
 
     fun updateFeature(featureUi: FeatureUi, newValueIndex: Int, lifecycleOwner: LifecycleOwner) {
+        Log.d(TAG, "updateFeature: featureUi = $featureUi, newValueIndex = $newValueIndex")
+
         val candidateAppFeatures =
             when (featureUi.title) {
                 AppFeatureTitle.HDR -> {
@@ -296,9 +331,14 @@ class CameraViewModel(private val savedStateHandle: SavedStateHandle) : ViewMode
                 AppFeatureTitle.RECORDING_QUALITY -> {
                     appFeatures.copy(recordingQuality = RecordingQuality.entries[newValueIndex])
                 }
+                AppFeatureTitle.EFFECT -> {
+                    appFeatures.copy(effect = Effect.entries[newValueIndex])
+                }
             }
 
         viewModelScope.launch {
+            Log.d(TAG, "updateFeature: candidateAppFeatures = $candidateAppFeatures")
+
             if (candidateAppFeatures.isSupported()) {
                 updateAppFeatures(candidateAppFeatures)
                 featureCombo = appFeatures.toFeatureCombo()
@@ -389,15 +429,23 @@ class CameraViewModel(private val savedStateHandle: SavedStateHandle) : ViewMode
         }
     }
 
-    private suspend fun reconfigureUseCasesAndFeatureCombo(lifecycleOwner: LifecycleOwner) {
-        useCases.clear()
-        useCases.add(preview)
+    private fun updateUseCases() {
+        val useCaseList = mutableListOf<UseCase>()
+
+        useCaseList.add(preview)
+
         if (isVideoOnlyMode.value) {
-            useCases.add(videoCapture)
+            useCaseList.add(videoCapture)
         } else {
-            useCases.add(videoCapture)
-            useCases.add(imageCapture)
+            useCaseList.add(videoCapture)
+            useCaseList.add(imageCapture)
         }
+
+        _useCases.value = useCaseList
+    }
+
+    private suspend fun reconfigureUseCasesAndFeatureCombo(lifecycleOwner: LifecycleOwner) {
+        updateUseCases()
 
         if (isVideoOnlyMode.value) {
             featureCombo =
@@ -441,10 +489,39 @@ class CameraViewModel(private val savedStateHandle: SavedStateHandle) : ViewMode
             val (appFeatures, duration) =
                 measureTimedValue {
                     if (isVideoOnlyMode.value) {
-                        getVideoModeUnsupportedFeatures()
-                    } else {
-                        getImageModeUnsupportedFeatures()
-                    }
+                            getVideoModeUnsupportedFeatures()
+                        } else {
+                            getImageModeUnsupportedFeatures()
+                        }
+                        .run {
+                            // Calculate unsupported features that are common for all modes.
+                            copy(
+                                unsupportedDynamicRanges =
+                                    DynamicRange.entries.toTypedArray().getUnsupportedValues(
+                                        appFeatures.dynamicRange
+                                    ) {
+                                        appFeatures.copy(dynamicRange = it)
+                                    },
+                                unsupportedFps =
+                                    Fps.entries.toTypedArray().getUnsupportedValues(
+                                        appFeatures.fps
+                                    ) {
+                                        appFeatures.copy(fps = it)
+                                    },
+                                unsupportedStabilizationModes =
+                                    StabilizationMode.entries.toTypedArray().getUnsupportedValues(
+                                        appFeatures.stabilizationMode
+                                    ) {
+                                        appFeatures.copy(stabilizationMode = it)
+                                    },
+                                unsupportedEffects =
+                                    Effect.entries.toTypedArray().getUnsupportedValues(
+                                        appFeatures.effect
+                                    ) {
+                                        appFeatures.copy(effect = it)
+                                    },
+                            )
+                        }
                 }
 
             Logger.d(TAG, "updateUnsupportedFeatures: duration = $duration")
@@ -460,21 +537,7 @@ class CameraViewModel(private val savedStateHandle: SavedStateHandle) : ViewMode
                     appFeatures.recordingQuality
                 ) {
                     appFeatures.copy(recordingQuality = it)
-                },
-            unsupportedDynamicRanges =
-                DynamicRange.entries.toTypedArray().getUnsupportedValues(appFeatures.dynamicRange) {
-                    appFeatures.copy(dynamicRange = it)
-                },
-            unsupportedFps =
-                Fps.entries.toTypedArray().getUnsupportedValues(appFeatures.fps) {
-                    appFeatures.copy(fps = it)
-                },
-            unsupportedStabilizationModes =
-                StabilizationMode.entries.toTypedArray().getUnsupportedValues(
-                    appFeatures.stabilizationMode
-                ) {
-                    appFeatures.copy(stabilizationMode = it)
-                },
+                }
         )
     }
 
@@ -483,24 +546,16 @@ class CameraViewModel(private val savedStateHandle: SavedStateHandle) : ViewMode
             unsupportedImageFormats =
                 ImageFormat.entries.toTypedArray().getUnsupportedValues(appFeatures.imageFormat) {
                     appFeatures.copy(imageFormat = it)
-                },
-            unsupportedDynamicRanges =
-                DynamicRange.entries.toTypedArray().getUnsupportedValues(appFeatures.dynamicRange) {
-                    appFeatures.copy(dynamicRange = it)
-                },
-            unsupportedFps =
-                Fps.entries.toTypedArray().getUnsupportedValues(appFeatures.fps) {
-                    appFeatures.copy(fps = it)
-                },
-            unsupportedStabilizationModes =
-                StabilizationMode.entries.toTypedArray().getUnsupportedValues(
-                    appFeatures.stabilizationMode
-                ) {
-                    appFeatures.copy(stabilizationMode = it)
-                },
+                }
         )
     }
 
+    /**
+     * Returns the list of unsupported values from the receiver array of values.
+     *
+     * @param currentValue Currently selected value.
+     * @param newAppFeatures The function to create a new [AppFeatures] using a specific value.
+     */
     private suspend fun <T> Array<T>.getUnsupportedValues(
         currentValue: T,
         newAppFeatures: (T) -> AppFeatures,
@@ -528,7 +583,11 @@ class CameraViewModel(private val savedStateHandle: SavedStateHandle) : ViewMode
             cameraSelector
                 .getCameraInfo()
                 .isSessionConfigSupported(
-                    SessionConfig(useCases, requiredFeatureGroup = requiredFeatures)
+                    SessionConfig(
+                        useCases.value,
+                        requiredFeatureGroup = requiredFeatures,
+                        effects = effects.toCameraXEffects(),
+                    )
                 )
 
         Log.d(TAG, "isSupported: isSupported = $isSupported")
@@ -537,7 +596,7 @@ class CameraViewModel(private val savedStateHandle: SavedStateHandle) : ViewMode
     }
 
     private fun AppFeatures.toFeatureCombo(): FeatureCombo {
-        return FeatureCombo(requiredFeatures = toCameraXFeatures())
+        return FeatureCombo(requiredFeatures = toCameraXFeatures(), effects = listOf(effect))
     }
 
     private fun AppFeatures.toCameraXFeatures(): Set<GroupableFeature> {
@@ -570,6 +629,37 @@ class CameraViewModel(private val savedStateHandle: SavedStateHandle) : ViewMode
         }
 
         return features
+    }
+
+    private fun Collection<Effect>.toCameraXEffects(): List<CameraEffect> {
+        return mapNotNull {
+            when (it) {
+                Effect.BOUNCY_LOGO_EFFECT ->
+                    bouncyLogoOverlayEffect
+                        ?: null.also {
+                            Log.e(TAG, "toCameraEffects: bouncyLogoOverlayEffect is null!")
+                        }
+
+                Effect.NONE -> null
+            }
+        }
+    }
+
+    private fun Collection<UseCase>.toTargets(): Int {
+        var targets = 0
+
+        forEach {
+            targets =
+                targets or
+                    when (it) {
+                        preview -> CameraEffect.PREVIEW
+                        videoCapture -> CameraEffect.VIDEO_CAPTURE
+                        imageCapture -> CameraEffect.IMAGE_CAPTURE
+                        else -> 0
+                    }
+        }
+
+        return targets
     }
 
     private fun Set<GroupableFeature>.toAppFeatures(): AppFeatures {
