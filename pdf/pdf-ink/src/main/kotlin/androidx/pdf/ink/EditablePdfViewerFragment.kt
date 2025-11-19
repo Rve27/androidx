@@ -39,6 +39,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.pdf.PdfDocument
+import androidx.pdf.PdfWriteHandle
 import androidx.pdf.annotation.AnnotationsView
 import androidx.pdf.annotation.AnnotationsView.PageAnnotationsData
 import androidx.pdf.annotation.EditablePdfDocument
@@ -46,6 +47,8 @@ import androidx.pdf.annotation.models.AnnotationsDisplayState
 import androidx.pdf.annotation.models.PdfAnnotation
 import androidx.pdf.annotation.models.PdfEdits
 import androidx.pdf.featureflag.PdfFeatureFlags
+import androidx.pdf.ink.model.ApplyEditsState
+import androidx.pdf.ink.model.ApplyInProgressException
 import androidx.pdf.ink.util.PageTransformCalculator
 import androidx.pdf.view.PdfContentLayout
 import androidx.pdf.view.PdfView
@@ -63,19 +66,38 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
 
     public constructor(pdfStylingOptions: PdfStylingOptions) : super(pdfStylingOptions)
 
-    private lateinit var wetStrokesView: InProgressStrokesView
-    private lateinit var annotationView: AnnotationsView
-    private lateinit var backPressedCallback: OnBackPressedCallback
-    private lateinit var onViewportChangedListener: PdfView.OnViewportChangedListener
-    private lateinit var wetStrokesOnFinishedListener: WetStrokesOnFinishedListener
+    /**
+     * If `true`, the fragment is in edit mode, allowing for annotating or editing. If `false`, the
+     * fragment is in viewing mode.
+     *
+     * Note: The host is responsible for setting this to `false` after a write operation is
+     * complete.
+     */
+    public var isEditModeEnabled: Boolean
+        get() = documentViewModel.isEditModeEnabled
+        set(value) {
+            documentViewModel.isEditModeEnabled = value
+            updateUiForEditMode(value)
+            if (value) onEnterEditMode() else onExitEditMode()
+        }
 
-    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    override val documentViewModel: EditableDocumentViewModel by viewModels {
-        EditableDocumentViewModel.Factory
-    }
-    private var pageTransformCalculator: PageTransformCalculator = PageTransformCalculator()
-    private val strokeIdToPageNumMap: MutableMap<InProgressStrokeId, Int> =
-        Collections.synchronizedMap(mutableMapOf<InProgressStrokeId, Int>())
+    /**
+     * Returns `true` if an `applyDraftEdits` operation is currently in progress.
+     *
+     * @see applyDraftEdits
+     */
+    public val isApplyEditsInProgress: Boolean
+        get() = documentViewModel.applyEditsStatus.value is ApplyEditsState.InProgress
+
+    /**
+     * Returns `true` if there are any draft edits that have not yet been applied to the document,
+     * `false` otherwise.
+     *
+     * This can be used to prompt the user to save changes before navigating away, as draft edits
+     * will be lost if the fragment is removed from the stack or comes out of edit mode.
+     */
+    public val hasUnsavedChanges: Boolean
+        get() = documentViewModel.hasUnsavedChanges()
 
     /**
      * Callback invoked when [EditablePdfViewerFragment] enters edit mode. This is triggered when
@@ -92,8 +114,62 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
      *
      * <p> This callback can be used by the developers to make any UI changes required when the user
      * exits edit mode e.g. hiding the "Save" button.
+     *
+     * @see isEditModeEnabled
      */
     public open fun onExitEditMode() {}
+
+    /**
+     * Applies all draft edits to the document.
+     *
+     * This operation executes asynchronously. The operation will be terminated if
+     * [EditablePdfViewerFragment] is removed from the fragment manager while an [applyDraftEdits]
+     * is in progress. [EditablePdfViewerFragment] internally disallows editing capabilities during
+     * complete operation. Upon completion, either [onApplyEditsSuccess] or [onApplyEditsFailed]
+     * will be invoked with the result.
+     *
+     * @throws ApplyInProgressException if another apply operation is already in progress.
+     */
+    public fun applyDraftEdits() {
+        if (isApplyEditsInProgress) {
+            throw ApplyInProgressException()
+        }
+        documentViewModel.applyDraftEdits()
+    }
+
+    /**
+     * Callback invoked when draft edits have been successfully applied to the document.
+     *
+     * The host should override this method to perform the write operation. The provided
+     * [PdfWriteHandle] allows writing the document changes to a [android.os.ParcelFileDescriptor].
+     * The handle **must** be closed after writing to ensure proper resource cleanup.
+     *
+     * @param handle A [PdfWriteHandle] to be used for writing the changes to a file.
+     * @see applyDraftEdits
+     */
+    public open fun onApplyEditsSuccess(handle: PdfWriteHandle) {}
+
+    /**
+     * Callback invoked when applying draft edits has failed.
+     *
+     * @param error The [Throwable] that caused the failure.
+     * @see applyDraftEdits
+     */
+    public open fun onApplyEditsFailed(error: Throwable) {}
+
+    private lateinit var wetStrokesView: InProgressStrokesView
+    private lateinit var annotationView: AnnotationsView
+    private lateinit var backPressedCallback: OnBackPressedCallback
+    private lateinit var onViewportChangedListener: PdfView.OnViewportChangedListener
+    private lateinit var wetStrokesOnFinishedListener: WetStrokesOnFinishedListener
+
+    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    override val documentViewModel: EditableDocumentViewModel by viewModels {
+        EditableDocumentViewModel.Factory
+    }
+    private var pageTransformCalculator: PageTransformCalculator = PageTransformCalculator()
+    private val strokeIdToPageNumMap: MutableMap<InProgressStrokeId, Int> =
+        Collections.synchronizedMap(mutableMapOf<InProgressStrokeId, Int>())
 
     /** Undoes the last edit. If there are no more edits to undo, this is a no-op. */
     internal fun undo(): Unit = documentViewModel.undo()
@@ -145,12 +221,33 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
                     documentViewModel.isEditModeEnabledFlow.collect { isEnabled ->
-                        updateUiForEditMode(isEnabled)
+                        isEditModeEnabled = isEnabled
                     }
                 }
                 launch {
                     documentViewModel.annotationsDisplayStateFlow.collect { displayState ->
                         updateAnnotationsView(displayState)
+                    }
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            documentViewModel.applyEditsStatus.collect { status ->
+                when (status) {
+                    is ApplyEditsState.Success -> {
+                        onApplyEditsSuccess(status.handle)
+                        documentViewModel.resetApplyEditsStatus()
+                    }
+                    is ApplyEditsState.Failure -> {
+                        onApplyEditsFailed(status.error)
+                        documentViewModel.resetApplyEditsStatus()
+                    }
+                    is ApplyEditsState.InProgress -> {
+                        if (isEditModeEnabled) setAnnotationInteraction(false)
+                    }
+                    is ApplyEditsState.Ready -> {
+                        if (isEditModeEnabled) setAnnotationInteraction(true)
                     }
                 }
             }
@@ -181,10 +278,15 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
     }
 
     private fun updateUiForEditMode(isEnabled: Boolean) {
-        PdfFeatureFlags.isMultiTouchScrollEnabled = isEnabled
+        setAnnotationInteraction(isEnabled)
         backPressedCallback.isEnabled = isEnabled
-        wetStrokesView.visibility = if (isEnabled) VISIBLE else GONE
         toolboxView.visibility = if (isEnabled) GONE else VISIBLE
+    }
+
+    /** Updates the UI interactions and visibility related to annotation components. */
+    private fun setAnnotationInteraction(isEnabled: Boolean) {
+        PdfFeatureFlags.isMultiTouchScrollEnabled = isEnabled
+        wetStrokesView.visibility = if (isEnabled) VISIBLE else GONE
     }
 
     private fun setupDiscardChangesDialogListener() {
