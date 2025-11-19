@@ -23,6 +23,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.ImageButton
 import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.contract.ActivityResultContracts.GetContent
 import androidx.annotation.RequiresExtension
 import androidx.annotation.RestrictTo
@@ -33,9 +34,9 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.FragmentTransaction
-import androidx.pdf.ink.EditablePdfViewerFragment
 import androidx.pdf.testapp.ui.FeatureFlagListener
 import androidx.pdf.testapp.ui.FeaturePreferencesDialog
+import androidx.pdf.testapp.ui.v2.EditablePdfHostFragment
 import androidx.pdf.testapp.ui.v2.PdfViewerFragmentExtended
 import androidx.pdf.testapp.ui.v2.StyledPdfViewerFragment
 import androidx.pdf.viewer.fragment.PdfViewerFragment
@@ -60,6 +61,7 @@ internal class MainActivityV2 : AppCompatActivity() {
         FeaturePreferencesDialog(this, listener = pdfViewerFragment as? FeatureFlagListener)
     }
 
+    // TODO(b/461991220) : Add the save button in toolbar for EditablePdfViewerFragment.
     private lateinit var savePdfButton: MaterialButton
 
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 13)
@@ -67,6 +69,22 @@ internal class MainActivityV2 : AppCompatActivity() {
     private var filePicker: ActivityResultLauncher<String> =
         registerForActivityResult(GetContent()) { uri: Uri? ->
             uri?.let { pdfViewerFragment.documentUri = uri }
+        }
+
+    private val createDocumentLauncher: ActivityResultLauncher<String> =
+        registerForActivityResult(ActivityResultContracts.CreateDocument(MIME_TYPE_PDF)) { uri: Uri?
+            ->
+            if (uri != null) {
+                val editableFragment = pdfViewerFragment as? EditablePdfHostFragment
+                editableFragment?.let { fragment ->
+                    fragment.destinationUri = uri
+                    savePdfButton.isEnabled = false
+
+                    if (!fragment.isApplyEditsInProgress) {
+                        fragment.applyDraftEdits()
+                    }
+                }
+            }
         }
 
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 13)
@@ -102,10 +120,11 @@ internal class MainActivityV2 : AppCompatActivity() {
         undoPdfButton = findViewById(R.id.undo_pdf_button)
         redoPdfButton = findViewById(R.id.redo_pdf_button)
 
-        if (pdfViewerFragment is EditablePdfViewerFragment) {
+        if (pdfViewerFragment is EditablePdfHostFragment) {
             savePdfButton.visibility = View.VISIBLE
             undoPdfButton.visibility = View.VISIBLE
             redoPdfButton.visibility = View.VISIBLE
+            pdfViewerFragment.onSaveCompletion = { savePdfButton.isEnabled = true }
         } else {
             savePdfButton.visibility = View.GONE
             undoPdfButton.visibility = View.GONE
@@ -117,6 +136,7 @@ internal class MainActivityV2 : AppCompatActivity() {
         searchButton.setOnClickListener { pdfViewerFragment.isTextSearchActive = true }
 
         preferenceButton.setOnClickListener { view -> settingsDialog.show() }
+        savePdfButton.setOnClickListener { createDocumentLauncher.launch(SAMPLE_PDF_NAME) }
     }
 
     private fun setPdfView() {
@@ -140,7 +160,7 @@ internal class MainActivityV2 : AppCompatActivity() {
             FragmentType.BASIC_FRAGMENT -> PdfViewerFragmentExtended()
             FragmentType.STYLED_FRAGMENT -> StyledPdfViewerFragment.newInstance()
             FragmentType.EDITABLE_FRAGMENT -> {
-                EditablePdfViewerFragment()
+                EditablePdfHostFragment()
             }
         }
     }
