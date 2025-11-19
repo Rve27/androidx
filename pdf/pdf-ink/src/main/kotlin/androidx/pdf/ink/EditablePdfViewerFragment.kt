@@ -57,7 +57,27 @@ import androidx.pdf.viewer.fragment.PdfViewerFragment
 import java.util.Collections
 import kotlinx.coroutines.launch
 
-/** A [PdfViewerFragment] that provide annotations capabilities using ink library. */
+/**
+ * A [Fragment] that extends [PdfViewerFragment] to provide PDF editing capabilities, including
+ * annotation and form filling, leveraging the 'androidx.ink' library.
+ *
+ * <p>This fragment coordinates the underlying PDF content with editing layers, enabling users to
+ * add ink strokes, create annotations, and modify form fields. It manages the interaction logic
+ * between viewing the document and performing edits.
+ *
+ * <p><b>Editing Workflow:</b>
+ * <ol>
+ * <li><b>Viewing:</b> Behaves exactly like [PdfViewerFragment].
+ * <li><b>Editing:</b> When [isEditModeEnabled] is set to `true`, user can leverage editing
+ *   capabilities(such as annotating or filling forms).
+ * <li><b>Saving:</b> Edits are accumulated as "drafts". To persist changes, the host must call
+ *   [applyDraftEdits], which asynchronously applies unsaved edits and creates a [PdfWriteHandle]
+ *   used to write the modified document to a file.
+ * </ol>
+ *
+ * @see PdfViewerFragment
+ * @see applyDraftEdits
+ */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 18)
 public open class EditablePdfViewerFragment : PdfViewerFragment {

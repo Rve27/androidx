@@ -29,7 +29,7 @@ import androidx.pdf.annotation.models.PdfEditEntry
 import androidx.pdf.annotation.models.PdfEdits
 import androidx.pdf.models.FormEditInfo
 
-/** Represents a PDF document that allows for editing of annotations. */
+/** Represents a PDF document that allows for editing. */
 @RestrictTo(RestrictTo.Scope.LIBRARY)
 public abstract class EditablePdfDocument : PdfDocument {
 
