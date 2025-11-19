@@ -177,10 +177,7 @@ public class EditableDocumentViewModel(private val state: SavedStateHandle, load
                     .flatMap { it.value }
                     .filterIsInstance<PdfAnnotationData>()
 
-            withContext(Dispatchers.IO) {
-                document.applyEdits(annotations)
-                document.write(dest)
-            }
+            withContext(Dispatchers.IO) { document.applyEdits(annotations) }
             isEditModeEnabled = false
         } finally {
             _fragmentUiScreenState.update { PdfFragmentUiState.DocumentLoaded(document) }

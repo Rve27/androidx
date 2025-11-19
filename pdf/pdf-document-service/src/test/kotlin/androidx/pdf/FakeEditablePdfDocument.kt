@@ -97,6 +97,10 @@ internal class FakeEditablePdfDocument(
         TODO("Not yet implemented")
     }
 
+    override fun createWriteHandle(): PdfWriteHandle {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun getPageInfo(pageNumber: Int): PdfDocument.PageInfo {
         TODO("Not yet implemented")
     }
@@ -159,10 +163,6 @@ internal class FakeEditablePdfDocument(
     }
 
     override suspend fun applyEdit(pageNum: Int, record: FormEditRecord): List<Rect> {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun write(destination: ParcelFileDescriptor) {
         TODO("Not yet implemented")
     }
 
