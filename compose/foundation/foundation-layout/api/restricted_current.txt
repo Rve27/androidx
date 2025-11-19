@@ -488,6 +488,10 @@ package androidx.compose.foundation.layout {
     method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.compose.runtime.ComposableTarget(applier="androidx.compose.ui.UiComposable") public static void Spacer(androidx.compose.ui.Modifier, androidx.compose.runtime.Composer?, int);
   }
 
+  public final class VisibleKt {
+    method @androidx.compose.runtime.Stable public static androidx.compose.ui.Modifier visible(androidx.compose.ui.Modifier, boolean visible);
+  }
+
   @androidx.compose.runtime.Stable public interface WindowInsets {
     method public int getBottom(androidx.compose.ui.unit.Density density);
     method public int getLeft(androidx.compose.ui.unit.Density density, androidx.compose.ui.unit.LayoutDirection layoutDirection);
