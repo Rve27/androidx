@@ -62,6 +62,7 @@ import androidx.pdf.event.PdfTrackingEvent
 import androidx.pdf.event.RequestFailureEvent
 import androidx.pdf.exceptions.RequestFailedException
 import androidx.pdf.formfilling.FormFillingEditTextState
+import androidx.pdf.models.FormEditInfo
 import androidx.pdf.models.FormWidgetInfo
 import androidx.pdf.selection.ContextMenuComponent
 import androidx.pdf.selection.Selection
@@ -441,6 +442,44 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
 
     private val onViewportChangedListeners = mutableListOf<OnViewportChangedListener>()
 
+    /** Listener interface for handling form edits on a PDF Document. */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public interface OnFormWidgetInfoUpdatedListener {
+        /**
+         * Called when a user interacts with a form widget which leads to the change in state of the
+         * widget i.e. [FormWidgetInfo]
+         *
+         * @param formEditInfo The edit to be applied to the [PdfDocument] Note: In order to
+         *   correctly update the state the formEditInfo at the document the [formEditInfo] must be
+         *   applied to the document via [androidx.pdf.annotation.EditablePdfDocument.applyEdit].
+         */
+        public fun onFormWidgetInfoUpdated(formEditInfo: FormEditInfo)
+    }
+
+    private val onFormWidgetInfoUpdatedListeners = mutableListOf<OnFormWidgetInfoUpdatedListener>()
+
+    /**
+     * Adds the specified listener to the list of listeners that is notified when any form widget is
+     * updated due to an edit action on a widget e.g. click on a radio button.
+     *
+     * @param listener The listener to add
+     */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public fun addOnFormWidgetInfoUpdatedListener(listener: OnFormWidgetInfoUpdatedListener) {
+        onFormWidgetInfoUpdatedListeners.add(listener)
+    }
+
+    /**
+     * Adds the specified listener to the list of listeners that is notified when any form widget is
+     * updated due to an edit action on the widget e.g. click on a radio button.
+     *
+     * @param listener The listener to remove
+     */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public fun removeOnFormWidgetInfoUpdatedListener(listener: OnFormWidgetInfoUpdatedListener) {
+        onFormWidgetInfoUpdatedListeners.remove(listener)
+    }
+
     /** Listener interface for handling clicks on links in a PDF document. */
     public interface LinkClickListener {
         /**
@@ -538,7 +577,6 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
     private val selectionMenuManager: SelectionMenuManager = SelectionMenuManager(context)
     private var formWidgetInteractionHandler: FormWidgetInteractionHandler? = null
     private var formWidgetMetadataLoader: FormWidgetMetadataLoader? = null
-    private var pdfFormFillingStateManager: PdfFormFillingStateManager? = null
     private var layoutInfoCollector: Job? = null
     private var pageSignalCollector: Job? = null
     private var selectionStateCollector: Job? = null
@@ -1050,6 +1088,23 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         }
     }
 
+    private val onPdfContentInvalidatedListener =
+        object : PdfDocument.OnPdfContentInvalidatedListener {
+            override fun onPdfContentInvalidated(pageNumber: Int, dirtyAreas: List<Rect>) {
+                val localPageLayoutManager = pageLayoutManager ?: return
+                pageManager?.maybeInvalidateAreas(
+                    pageNum = pageNumber,
+                    visibleArea = localPageLayoutManager.visiblePageAreas[pageNumber],
+                    currentZoom = zoom,
+                    areasToUpdate = dirtyAreas.map { it.toRectF() },
+                )
+                formWidgetMetadataLoader?.let { loader ->
+                    pageManager?.maybeUpdateFormWidgetMetadata(pageNumber, loader)
+                }
+                formFillingEditText = null
+            }
+        }
+
     override fun onGenericMotionEvent(event: MotionEvent?): Boolean {
         return event?.let { externalInputManager.handleMouseEvent(event) } ?: false ||
             super.onGenericMotionEvent(event)
@@ -1328,6 +1383,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         awaitingFirstLayout = true
         pageManager?.cleanup()
 
+        pdfDocument?.removeOnPdfContentInvalidatedListener(onPdfContentInvalidatedListener)
         accessibilityManager.removeAccessibilityStateChangeListener(accessibilityStateChangeHandler)
     }
 
@@ -1351,7 +1407,6 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         state.paginationModel = pageLayoutManager?.paginationModel
         state.layoutStrategy = pageLayoutManager?.layoutStrategy
         state.pdfFormFillingState = pageLayoutManager?.pdfFormFillingState
-        state.pdfFormEditRecords = pdfDocument?.formEditRecords
         state.selectionModel = selectionStateManager?.selectionModel?.value
         state.pdfFormFillingEditTextState = getFormFillingEditTextState()
 
@@ -1504,22 +1559,10 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         isFormFillingTooltipEnabled = localStateToRestore.isFormFillingTooltipEnabled
         setAccessibility()
 
-        restoreFormFillingState()
         restoreFormFillingEditText()
 
         stateToRestore = null
         return true
-    }
-
-    private fun restoreFormFillingState() {
-        val localPdfDocument = pdfDocument ?: return
-        val localStateToRestore = stateToRestore ?: return
-
-        if (localPdfDocument.formEditRecords == localStateToRestore.pdfFormEditRecords) {
-            return
-        }
-
-        pdfFormFillingStateManager?.restoreFormFillingState(localStateToRestore.pdfFormEditRecords)
     }
 
     private fun restoreFormFillingEditText() {
@@ -1600,18 +1643,9 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                 mainScope.launch(start = CoroutineStart.UNDISPATCHED) {
                     formEditActionToJoin?.join()
                     launch {
-                        handler.invalidatedAreas.collect {
-                            val localPageLayoutManager = pageLayoutManager ?: return@collect
-                            if (localPageLayoutManager.visiblePageAreas[it.first] == null)
-                                return@collect
-                            pageManager?.maybeInvalidateAreas(
-                                pageNum = it.first,
-                                visibleArea = localPageLayoutManager.visiblePageAreas[it.first],
-                                currentZoom = zoom,
-                                areasToUpdate = it.second,
-                            )
-                            formWidgetMetadataLoader?.let { loader ->
-                                pageManager?.maybeUpdateFormWidgetMetadata(it.first, loader)
+                        handler.formWidgetUpdates.collect {
+                            onFormWidgetInfoUpdatedListeners.forEach { listener ->
+                                listener.onFormWidgetInfoUpdated(it)
                             }
                         }
                     }
@@ -1720,36 +1754,11 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
             )
 
         formWidgetInteractionHandler =
-            FormWidgetInteractionHandler(context, localPdfDocument, backgroundScope, errorFlow) {
-                formFillingEditText ->
+            FormWidgetInteractionHandler(context, backgroundScope) { formFillingEditText ->
                 this.formFillingEditText = formFillingEditText
             }
 
-        pdfFormFillingStateManager =
-            PdfFormFillingStateManager(
-                localPdfDocument,
-                backgroundScope,
-                errorFlow,
-                onRestoreTaskStarted = { isFormEditStateBeingRestored = true },
-                onRestoreTaskComplete = { pagesInvalidatedAreas ->
-                    if (!isAttachedToVisibleWindow) return@PdfFormFillingStateManager
-
-                    val visiblePageAreas = pageLayoutManager?.visiblePageAreas
-                    visiblePageAreas?.keyIterator()?.forEach { pageNum ->
-                        pagesInvalidatedAreas[pageNum]
-                            ?.map { it.toRectF() }
-                            ?.let { areasToUpdateInPage ->
-                                pageManager?.maybeInvalidateAreas(
-                                    pageNum,
-                                    visiblePageAreas.get(pageNum),
-                                    zoom,
-                                    areasToUpdateInPage,
-                                )
-                            }
-                    }
-                    isFormEditStateBeingRestored = false
-                },
-            )
+        localPdfDocument.addOnPdfContentInvalidatedListener(onPdfContentInvalidatedListener)
 
         val fastScrollCalculator = FastScrollCalculator(context)
         val fastScrollDrawer =
@@ -1977,6 +1986,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         formFillingEditText = null
         startedFetchingAllDimensions = false
         backgroundScope.coroutineContext.cancelChildren()
+        pdfDocument?.removeOnPdfContentInvalidatedListener(onPdfContentInvalidatedListener)
         stopCollectingData()
 
         // Reset zoom and scroll after clearing pageMetadata loader, otherwise they can trigger

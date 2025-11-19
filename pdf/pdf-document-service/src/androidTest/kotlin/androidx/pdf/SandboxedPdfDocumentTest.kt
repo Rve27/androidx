@@ -36,7 +36,7 @@ import androidx.pdf.annotation.models.StampAnnotation
 import androidx.pdf.annotation.processor.BatchPdfAnnotationsProcessor
 import androidx.pdf.annotation.processor.BatchPdfAnnotationsProcessor.Companion.parcelSizeInBytes
 import androidx.pdf.content.PdfPageTextContent
-import androidx.pdf.models.FormEditRecord
+import androidx.pdf.models.FormEditInfo
 import androidx.pdf.models.FormWidgetInfo
 import androidx.pdf.service.connect.FakePdfServiceConnection
 import androidx.pdf.service.connect.PdfServiceConnection
@@ -360,7 +360,7 @@ class SandboxedPdfDocumentTest {
         assertThat(editableFormWidget.textValue).isEqualTo("false")
 
         val editRecord =
-            FormEditRecord(
+            FormEditInfo(
                 pageNumber = pageNum,
                 widgetIndex = editableFormWidget.widgetIndex,
                 clickPoint =
@@ -371,7 +371,7 @@ class SandboxedPdfDocumentTest {
             )
 
         // Apply edit to select the check-box
-        document.applyEdit(pageNum, editRecord)
+        document.applyEdit(editRecord)
 
         val context = ApplicationProvider.getApplicationContext<Context>()
         val editedPdfFile = File(context.cacheDir, "edited_test_pdf.pdf")
@@ -771,6 +771,20 @@ class SandboxedPdfDocumentTest {
         private const val PDF_DOCUMENT_WITH_TEXT_AND_IMAGE = "alt_text.pdf"
 
         internal suspend fun withDocument(filename: String, block: suspend (PdfDocument) -> Unit) {
+            val document = openDocument(filename)
+            try {
+                block(document)
+            } catch (exception: Exception) {
+                throw exception
+            } finally {
+                runTest { document.close() }
+            }
+        }
+
+        internal suspend fun withEditableDocument(
+            filename: String,
+            block: suspend (EditablePdfDocument) -> Unit,
+        ) {
             val document = openDocument(filename)
             try {
                 block(document)

@@ -30,7 +30,6 @@ import androidx.pdf.content.PdfPageGotoLinkContent
 import androidx.pdf.content.PdfPageImageContent
 import androidx.pdf.content.PdfPageLinkContent
 import androidx.pdf.content.PdfPageTextContent
-import androidx.pdf.models.FormEditRecord
 import androidx.pdf.models.FormWidgetInfo
 import java.io.Closeable
 import kotlinx.coroutines.CancellationException
@@ -49,9 +48,6 @@ public interface PdfDocument : Closeable {
 
     /** The type of form present in the document. */
     @get:RestrictTo(RestrictTo.Scope.LIBRARY) public val formType: Int
-
-    /** The list of [FormEditRecord]s applied to the document. */
-    @get:RestrictTo(RestrictTo.Scope.LIBRARY) public val formEditRecords: List<FormEditRecord>
 
     /**
      * Asynchronously retrieves information about the specified page.
@@ -182,23 +178,28 @@ public interface PdfDocument : Closeable {
     ): List<FormWidgetInfo>
 
     /**
-     * Applies the changes specified by [record] to the form, and returns a list of [Rect]
-     * indicating regions of the PDF content that were affected by the mutation. It reflects the
-     * regions of the PDF which need to be re-rendered to reflect the changes.
-     *
-     * It is recommended that UI classes maintain a list of [FormEditRecord] they've applied to the
-     * document so they can be saved and restored across destructive events like low memory kills or
-     * configuration changes.
-     *
-     * @property pageNum The page number (0-based).
-     * @property record The [FormEditRecord] to apply to the form.
-     * @return A list of [Rect] indicating regions of the PDF content that were affected by the
-     *   mutation.
-     * @throws IllegalArgumentException if the provided [record] cannot be applied to the widget
-     *   indicated by the index, or if the index does not correspond to a widget on the page.
+     * Listener interface for receiving notifications when some regions of the pdf content are
+     * invalidated.
      */
     @RestrictTo(RestrictTo.Scope.LIBRARY)
-    public suspend fun applyEdit(pageNum: Int, record: FormEditRecord): List<Rect>
+    public interface OnPdfContentInvalidatedListener {
+        /**
+         * Invoked when some regions of the pdf content are invalidated, and need to be re-rendered.
+         * (example scenario - when a form field is edited in the PDF.)
+         *
+         * @param pageNumber The page number (0-index based) on which the content was invalidated.
+         * @param dirtyAreas A list of [Rect] indicating regions of the PDF content that were
+         *   invalidated and need to be re-rendered in order to sync UI to the latest state of the
+         *   document.
+         */
+        public fun onPdfContentInvalidated(pageNumber: Int, dirtyAreas: List<Rect>)
+    }
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    public fun addOnPdfContentInvalidatedListener(listener: OnPdfContentInvalidatedListener)
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    public fun removeOnPdfContentInvalidatedListener(listener: OnPdfContentInvalidatedListener)
 
     /**
      * Represents information about a single page in the PDF document.

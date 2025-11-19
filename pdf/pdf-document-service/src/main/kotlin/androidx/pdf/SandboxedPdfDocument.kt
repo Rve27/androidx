@@ -48,12 +48,12 @@ import androidx.pdf.annotation.processor.PdfAnnotationsProcessor
 import androidx.pdf.content.PageMatchBounds
 import androidx.pdf.content.PageSelection
 import androidx.pdf.content.SelectionBoundary
-import androidx.pdf.models.FormEditRecord
+import androidx.pdf.models.FormEditInfo
 import androidx.pdf.models.FormWidgetInfo
 import androidx.pdf.service.connect.PdfServiceConnection
 import androidx.pdf.utils.toAndroidClass
 import androidx.pdf.utils.toContentClass
-import java.util.Collections
+import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.TimeoutException
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.coroutines.CoroutineContext
@@ -108,14 +108,12 @@ public class SandboxedPdfDocument(
     private val annotationsManager =
         InMemoryAnnotationsManager(::getAnnotationsForPage, annotationsProcessor)
 
-    public override val formEditRecords: List<FormEditRecord>
-        get() = _formEditRecords.toList()
-
-    private val _formEditRecords: MutableList<FormEditRecord> =
-        Collections.synchronizedList(mutableListOf<FormEditRecord>())
-
     /** The [CoroutineScope] we use to close [BitmapSource]s asynchronously */
     private val closeScope = CoroutineScope(coroutineContext + SupervisorJob())
+
+    private val onPdfContentInvalidatedListeners:
+        CopyOnWriteArrayList<PdfDocument.OnPdfContentInvalidatedListener> =
+        CopyOnWriteArrayList()
 
     /**
      * Indicates whether this [androidx.pdf.SandboxedPdfDocument] is closed explicitly by calling
@@ -246,12 +244,25 @@ public class SandboxedPdfDocument(
         }
     }
 
-    override suspend fun applyEdit(pageNum: Int, record: FormEditRecord): List<Rect> {
-        val invalidatedAreas = withDocument { document ->
-            document.applyEdit(pageNum, record.toAndroidClass())
+    override fun addOnPdfContentInvalidatedListener(
+        listener: PdfDocument.OnPdfContentInvalidatedListener
+    ) {
+        onPdfContentInvalidatedListeners.add(listener)
+    }
+
+    override fun removeOnPdfContentInvalidatedListener(
+        listener: PdfDocument.OnPdfContentInvalidatedListener
+    ) {
+        onPdfContentInvalidatedListeners.remove(listener)
+    }
+
+    override suspend fun applyEdit(record: FormEditInfo) {
+        val dirtyAreas = withDocument { document ->
+            document.applyEdit(record.pageNumber, record.toAndroidClass())
         }
-        _formEditRecords.add(record)
-        return invalidatedAreas
+        onPdfContentInvalidatedListeners.forEach {
+            it.onPdfContentInvalidated(record.pageNumber, dirtyAreas)
+        }
     }
 
     @WorkerThread
