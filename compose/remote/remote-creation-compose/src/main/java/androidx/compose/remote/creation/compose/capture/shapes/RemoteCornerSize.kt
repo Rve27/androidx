@@ -25,7 +25,6 @@ import androidx.compose.remote.creation.compose.state.RemoteFloat
 import androidx.compose.remote.creation.compose.state.rf
 import androidx.compose.remote.creation.compose.state.toPx
 import androidx.compose.runtime.Immutable
-import androidx.compose.ui.unit.Dp
 
 /** Defines size of a corner in pixels. For example for rounded shape it can be a corner radius. */
 @Immutable
@@ -39,7 +38,7 @@ public interface RemoteCornerSize {
 /**
  * Creates [RemoteCornerSize] with provided size.
  *
- * @param size the corner size defined in [Dp].
+ * @param size the corner size defined in [RemoteDp].
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public fun RemoteCornerSize(size: RemoteDp): RemoteCornerSize = RemoteDpCornerSize(size)
