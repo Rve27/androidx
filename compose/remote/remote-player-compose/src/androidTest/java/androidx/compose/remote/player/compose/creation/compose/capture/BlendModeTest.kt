@@ -37,6 +37,7 @@ import androidx.compose.remote.creation.compose.modifier.border
 import androidx.compose.remote.creation.compose.modifier.padding
 import androidx.compose.remote.creation.compose.modifier.size
 import androidx.compose.remote.creation.compose.state.RemotePaint
+import androidx.compose.remote.creation.compose.state.rdp
 import androidx.compose.remote.player.compose.SCREENSHOT_GOLDEN_DIRECTORY
 import androidx.compose.remote.player.compose.test.utils.screenshot.TargetPlayer
 import androidx.compose.remote.player.compose.test.utils.screenshot.rule.RemoteComposeScreenshotTestRule
@@ -116,7 +117,7 @@ class BlendModeTest {
     private fun RemoteBlendModeVisual(blendMode: BlendMode, name: String) {
         RemoteBox(
             RemoteModifier.size(100.dp)
-                .border(1.dp, androidx.compose.ui.graphics.Color.Black)
+                .border(1.rdp, androidx.compose.ui.graphics.Color.Black)
                 .padding(8.dp),
             horizontalAlignment = RemoteAlignment.Start,
             verticalArrangement = RemoteArrangement.Top,
