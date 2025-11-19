@@ -32,6 +32,7 @@ import androidx.compose.remote.creation.compose.modifier.RemoteModifier
 import androidx.compose.remote.creation.compose.modifier.clickable
 import androidx.compose.remote.creation.compose.modifier.fillMaxSize
 import androidx.compose.remote.creation.compose.modifier.size
+import androidx.compose.remote.creation.compose.state.rdp
 import androidx.compose.remote.player.core.RemoteDocument
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -47,7 +48,6 @@ import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
-import androidx.compose.ui.unit.dp
 import androidx.core.os.BundleCompat
 import androidx.glance.wear.WearWidgetRawContent
 import androidx.test.core.app.ApplicationProvider
@@ -72,7 +72,7 @@ class WearWidgetCaptureTest {
         @Composable
         fun TestLayout() {
             RemoteColumn(modifier = RemoteModifier.fillMaxSize()) {
-                RemoteBox(modifier = RemoteModifier.size(100.dp))
+                RemoteBox(modifier = RemoteModifier.size(100.rdp))
                 RemoteText(
                     text = "text-0",
                     modifier = RemoteModifier.clickable(pendingIntentAction(testPendingIntent0)),
@@ -191,10 +191,10 @@ DATA_TEXT<44> = "text-1"
 ROOT [-2:-1] = [0.0, 0.0, 0.0, 0.0] VISIBLE
   COLUMN [-3:-1] = [0.0, 0.0, 0.0, 0.0] VISIBLE
     MODIFIERS
-    BOX [-5:-1] = [0.0, 0.0, 200.0, 200.0] VISIBLE
+    BOX [-5:-1] = [0.0, 0.0, 100.0, 100.0] VISIBLE
       MODIFIERS
-        WIDTH = 200.0
-        HEIGHT = 200.0
+        WIDTH = 100.0 dp
+        HEIGHT = 100.0 dp
     TEXT_LAYOUT [-7:-1] = [0.0, 0.0, 0.0, 0.0] VISIBLE (42:"null")
       MODIFIERS
         CLICK_MODIFIER

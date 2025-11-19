@@ -61,6 +61,8 @@ import androidx.compose.remote.creation.compose.modifier.padding
 import androidx.compose.remote.creation.compose.modifier.size
 import androidx.compose.remote.creation.compose.modifier.width
 import androidx.compose.remote.creation.compose.state.RemoteColor
+import androidx.compose.remote.creation.compose.state.RemoteDp
+import androidx.compose.remote.creation.compose.state.rdp
 import androidx.compose.remote.creation.compose.state.rememberRemoteIntValue
 import androidx.compose.remote.creation.compose.state.rememberRemoteString
 import androidx.compose.remote.player.core.RemoteDocument
@@ -381,7 +383,7 @@ ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
       BACKGROUND = [0.0, 0.0, 825.0, 825.0] color [1.0, 1.0, 0.0, 1.0] shape [0]
     CANVAS [-5:-1] = [0.0, 275.0, 825.0, 275.0] VISIBLE
       MODIFIERS
-        HEIGHT = 275.0
+        HEIGHT = 100.0 dp
         BACKGROUND = [0.0, 0.0, 825.0, 275.0] color [1.0, 1.0, 1.0, 1.0] shape [0]
         PADDING = [22.0, 22.0, 22.0, 22.0]
         BACKGROUND = [0.0, 0.0, 781.0, 231.0] color [0.8, 0.8, 0.8, 1.0] shape [0]
@@ -400,7 +402,7 @@ ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
                 RemoteCanvas(
                     modifier =
                         RemoteModifier.fillMaxWidth()
-                            .height(100.dp)
+                            .height(100.rdp)
                             .background(Color.White)
                             .padding(8.dp)
                             .background(Color.LightGray)
@@ -431,7 +433,7 @@ ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
       BACKGROUND = [0.0, 0.0, 825.0, 825.0] color [1.0, 1.0, 0.0, 1.0] shape [0]
     CANVAS [-5:-1] = [0.0, 275.0, 825.0, 275.0] VISIBLE
       MODIFIERS
-        HEIGHT = 275.0
+        HEIGHT = 100.0 dp
         BACKGROUND = [0.0, 0.0, 825.0, 275.0] color [1.0, 1.0, 1.0, 1.0] shape [0]
         PADDING = [22.0, 22.0, 22.0, 22.0]
         BACKGROUND = [0.0, 0.0, 781.0, 231.0] color [0.8, 0.8, 0.8, 1.0] shape [0]
@@ -446,7 +448,7 @@ ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
                 RemoteCanvas(
                     modifier =
                         RemoteModifier.fillMaxWidth()
-                            .height(100.dp)
+                            .height(100.rdp)
                             .background(Color.White)
                             .padding(8.dp)
                             .background(Color.LightGray)
@@ -502,11 +504,12 @@ ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
             RemoteContext {
                 Column {
                     Box(
-                        modifier = RemoteModifier.height(32.dp).fillMaxWidth().background(Color.Red)
+                        modifier =
+                            RemoteModifier.height(32.rdp).fillMaxWidth().background(Color.Red)
                     ) {
                         Row(
                             modifier =
-                                RemoteModifier.background(Color.Black).fillMaxWidth().height(30.dp)
+                                RemoteModifier.background(Color.Black).fillMaxWidth().height(30.rdp)
                         ) {
                             @Suppress("COMPOSE_APPLIER_CALL_MISMATCH") // b/446706254
                             Text("Hello, World", color = Color.White)
@@ -515,7 +518,7 @@ ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
                     Row {
                         Box(
                             modifier =
-                                RemoteModifier.width(32.dp).height(10.dp).background(Color.Blue)
+                                RemoteModifier.width(32.rdp).height(10.rdp).background(Color.Blue)
                         )
                         @Suppress("COMPOSE_APPLIER_CALL_MISMATCH") // b/446706254
                         CaptureAsBitmap(onCapture = { it.value = true }) {
@@ -529,11 +532,12 @@ ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
                         }
                         Box(
                             modifier =
-                                RemoteModifier.width(32.dp).height(100.dp).background(Color.Blue)
+                                RemoteModifier.width(32.rdp).height(100.rdp).background(Color.Blue)
                         )
                     }
                     Box(
-                        modifier = RemoteModifier.height(32.dp).fillMaxWidth().background(Color.Red)
+                        modifier =
+                            RemoteModifier.height(32.rdp).fillMaxWidth().background(Color.Red)
                     )
                 }
             }
@@ -757,8 +761,8 @@ ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
       BACKGROUND = [0.0, 0.0, 825.0, 825.0] color [1.0, 1.0, 0.0, 1.0] shape [0]
     BOX [-5:-1] = [275.0, 275.0, 275.0, 275.0] VISIBLE
       MODIFIERS
-        WIDTH = 275.0
-        HEIGHT = 275.0
+        WIDTH = 100.0 dp
+        HEIGHT = 100.0 dp
         CLICK_MODIFIER
           HOST_NAMED_ACTION = 43
         SEMANTICS = SEMANTICS BUTTON
@@ -770,7 +774,7 @@ ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
                 horizontalAlignment = RemoteAlignment.CenterHorizontally,
             ) {
                 RemoteBox(
-                    modifier = RemoteModifier.size(100.dp).clickable(HostAction("my_host_action"))
+                    modifier = RemoteModifier.size(100.rdp).clickable(HostAction("my_host_action"))
                 )
             }
         }
@@ -787,8 +791,8 @@ ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
       BACKGROUND = [0.0, 0.0, 825.0, 825.0] color [1.0, 1.0, 0.0, 1.0] shape [0]
     BOX [-5:-1] = [275.0, 275.0, 275.0, 275.0] VISIBLE
       MODIFIERS
-        WIDTH = 275.0
-        HEIGHT = 275.0
+        WIDTH = 100.0 dp
+        HEIGHT = 100.0 dp
         CLICK_MODIFIER
           HOST_NAMED_ACTION = 44 : 43
         SEMANTICS = SEMANTICS BUTTON
@@ -802,7 +806,7 @@ ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
                 val param = rememberRemoteIntValue { 128 }
                 RemoteBox(
                     modifier =
-                        RemoteModifier.size(100.dp).clickable(HostAction("my_host_action", param))
+                        RemoteModifier.size(100.rdp).clickable(HostAction("my_host_action", param))
                 )
             }
         }
@@ -850,12 +854,12 @@ ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
                         when (state) {
                             off -> {
                                 RemoteBox(
-                                    modifier = RemoteModifier.size(60.dp).background(Color.Red)
+                                    modifier = RemoteModifier.size(60.rdp).background(Color.Red)
                                 )
                             }
                             on -> {
                                 RemoteBox(
-                                    modifier = RemoteModifier.size(80.dp).background(Color.Green)
+                                    modifier = RemoteModifier.size(80.rdp).background(Color.Green)
                                 )
                             }
                         }
@@ -907,12 +911,12 @@ ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
                         when (state) {
                             off -> {
                                 RemoteBox(
-                                    modifier = RemoteModifier.size(60.dp).background(Color.Red)
+                                    modifier = RemoteModifier.size(60.rdp).background(Color.Red)
                                 )
                             }
                             on -> {
                                 RemoteBox(
-                                    modifier = RemoteModifier.size(80.dp).background(Color.Green)
+                                    modifier = RemoteModifier.size(80.rdp).background(Color.Green)
                                 )
                             }
                         }
@@ -943,15 +947,15 @@ ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
         MODIFIERS
         BOX [-9:-1] = [0.0, 0.0, 165.0, 165.0] GONE
           MODIFIERS
-            WIDTH = 165.0
-            HEIGHT = 165.0
+            WIDTH = 60.0 dp
+            HEIGHT = 60.0 dp
             BACKGROUND = [0.0, 0.0, 165.0, 165.0] color [1.0, 0.0, 0.0, 1.0] shape [0]
       BOX [-11:-1] = [302.5, 302.5, 220.0, 220.0] VISIBLE
         MODIFIERS
         BOX [-13:-1] = [0.0, 0.0, 220.0, 220.0] VISIBLE
           MODIFIERS
-            WIDTH = 220.0
-            HEIGHT = 220.0
+            WIDTH = 80.0 dp
+            HEIGHT = 80.0 dp
             BACKGROUND = [0.0, 0.0, 220.0, 220.0] color [0.0, 1.0, 0.0, 1.0] shape [0]
 """
         testLayout(result) {
@@ -976,12 +980,12 @@ ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
                         when (state) {
                             off -> {
                                 RemoteBox(
-                                    modifier = RemoteModifier.size(60.dp).background(Color.Red)
+                                    modifier = RemoteModifier.size(60.rdp).background(Color.Red)
                                 )
                             }
                             on -> {
                                 RemoteBox(
-                                    modifier = RemoteModifier.size(80.dp).background(Color.Green)
+                                    modifier = RemoteModifier.size(80.rdp).background(Color.Green)
                                 )
                             }
                         }
@@ -1003,16 +1007,16 @@ ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
     BOX [-5:-1] = [0.0, 0.0, 411.125, 82.5] VISIBLE
       MODIFIERS
         BACKGROUND = [0.0, 0.0, 411.125, 82.5] color [1.0, 0.0, 0.0, 1.0] shape [0]
-        HEIGHT = 82.5
+        HEIGHT = 30.0 dp
         PADDING = [11.0, 0.0, 0.0, 0.0]
     BOX [-7:-1] = [411.125, 0.0, 2.75, 165.0] VISIBLE
       MODIFIERS
-        WIDTH = 2.75
+        WIDTH = 1.0 dp
         BACKGROUND = [0.0, 0.0, 2.75, 165.0] color [0.0, 1.0, 0.0, 1.0] shape [0]
     BOX [-9:-1] = [413.875, 0.0, 411.125, 165.0] VISIBLE
       MODIFIERS
         BACKGROUND = [0.0, 0.0, 411.125, 165.0] color [0.0, 0.0, 1.0, 1.0] shape [0]
-        HEIGHT = 165.0
+        HEIGHT = 60.0 dp
         PADDING = [0.0, 0.0, 11.0, 0.0]
 """
         testLayout(result) {
@@ -1021,17 +1025,17 @@ ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
                     modifier =
                         RemoteModifier.background(Color.Red)
                             .weight(1f)
-                            .height(30.dp)
+                            .height(30.rdp)
                             .padding(left = 4.dp)
                 )
                 RemoteBox(
-                    modifier = RemoteModifier.fillMaxHeight().width(1.dp).background(Color.Green)
+                    modifier = RemoteModifier.fillMaxHeight().width(1.rdp).background(Color.Green)
                 )
                 RemoteBox(
                     modifier =
                         RemoteModifier.background(Color.Blue)
                             .weight(1f)
-                            .height(60.dp)
+                            .height(60.rdp)
                             .padding(right = 4.dp)
                 )
             }
@@ -1050,20 +1054,20 @@ ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
     BOX [-5:-1] = [0.0, 0.0, 411.125, 165.0] VISIBLE
       MODIFIERS
         BACKGROUND = [0.0, 0.0, 411.125, 165.0] color [1.0, 0.0, 0.0, 1.0] shape [0]
-        HEIGHT = 165.0
+        HEIGHT = 60.0 dp
         PADDING = [11.0, 0.0, 0.0, 0.0]
     BOX [-7:-1] = [411.125, 0.0, 2.75, 165.0] VISIBLE
       MODIFIERS
-        WIDTH = 2.75
+        WIDTH = 1.0 dp
         BACKGROUND = [0.0, 0.0, 2.75, 165.0] color [0.0, 1.0, 0.0, 1.0] shape [0]
     BOX [-9:-1] = [413.875, 0.0, 411.125, 82.5] VISIBLE
       MODIFIERS
         BACKGROUND = [0.0, 0.0, 411.125, 82.5] color [0.0, 0.0, 1.0, 1.0] shape [0]
-        HEIGHT = 82.5
+        HEIGHT = 30.0 dp
         PADDING = [0.0, 0.0, 11.0, 0.0]
   BOX [-11:-1] = [0.0, 0.0, 825.0, 55.0] VISIBLE
     MODIFIERS
-      HEIGHT = 55.0
+      HEIGHT = 20.0 dp
       BACKGROUND = [0.0, 0.0, 825.0, 55.0] color [1.0, 1.0, 0.0, 1.0] shape [0]
 """
         testLayout(result) {
@@ -1076,23 +1080,23 @@ ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
                         modifier =
                             RemoteModifier.background(Color.Red)
                                 .weight(1f)
-                                .height(60.dp)
+                                .height(60.rdp)
                                 .padding(left = 4.dp)
                     )
                     RemoteBox(
                         modifier =
-                            RemoteModifier.fillMaxHeight().width(1.dp).background(Color.Green)
+                            RemoteModifier.fillMaxHeight().width(1.rdp).background(Color.Green)
                     )
                     RemoteBox(
                         modifier =
                             RemoteModifier.background(Color.Blue)
                                 .weight(1f)
-                                .height(30.dp)
+                                .height(30.rdp)
                                 .padding(right = 4.dp)
                     )
                 }
                 RemoteBox(
-                    modifier = RemoteModifier.fillMaxWidth().height(20.dp).background(Color.Yellow)
+                    modifier = RemoteModifier.fillMaxWidth().height(20.rdp).background(Color.Yellow)
                 )
             }
         }
@@ -1139,13 +1143,13 @@ ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
     @Composable
     fun RemoteIconVector(
         icon: ImageVector,
-        size: Dp = 32.dp,
+        size: RemoteDp = 32.rdp,
         modifier: RemoteModifier = RemoteModifier,
         tint: Color = Color.White,
     ) {
         // note -- tint isn't applied in that codepath
         val painter = rememberVectorPainter(icon)
-        val iconSizePx = with(LocalDensity.current) { size.toPx() }
+        val iconSizePx = with(LocalDensity.current) { Dp(size.value.internalAsFloat()).toPx() }
         val scale = iconSizePx / 24f
         RemoteCanvas(modifier = RemoteModifier.size(size)) {
             scale(scale, pivot = RemoteOffset.Zero) {
@@ -1177,8 +1181,8 @@ ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
         BACKGROUND = [0.0, 0.0, 88.0, 88.0] color [0.0, 0.0, 1.0, 1.0] shape [0]
       CANVAS [-10:-1] = [0.0, 0.0, 88.0, 88.0] VISIBLE
         MODIFIERS
-          WIDTH = 88.0
-          HEIGHT = 88.0
+          WIDTH = 32.0 dp
+          HEIGHT = 32.0 dp
         CANVAS_CONTENT [-12:-1] = [0.0, 0.0, 88.0, 88.0] VISIBLE
 """
         testLayout(result) {
@@ -1332,7 +1336,7 @@ list:
                                     rotate(30f) { this@drawWithContent.drawContent() }
                                 }
                             }
-                            .size(64.dp)
+                            .size(64.rdp)
                             .background(Color.Blue)
                             .padding(8.dp)
                             .background(Color.Magenta),
