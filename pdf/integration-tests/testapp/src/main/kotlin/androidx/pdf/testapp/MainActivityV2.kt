@@ -86,7 +86,8 @@ internal class MainActivityV2 : AppCompatActivity() {
                 pfd?.let {
                     lifecycleScope.launch {
                         try {
-                            (pdfViewerFragment as EditablePdfViewerFragment).writeTo(it)
+                            // TODO (b/461664624): Clean up code related to write, undo and redo.
+                            // No-op
                         } catch (e: IllegalStateException) {
                             // Handle the scenario where the document is not available for saving.
                         } finally {
@@ -146,18 +147,6 @@ internal class MainActivityV2 : AppCompatActivity() {
 
         preferenceButton.setOnClickListener { view -> settingsDialog.show() }
         savePdfButton.setOnClickListener { createDocumentLauncher.launch(SAMPLE_PDF_NAME) }
-        undoPdfButton.setOnClickListener {
-            val localFragment = pdfViewerFragment
-            if (localFragment is EditablePdfViewerFragment) {
-                localFragment.undo()
-            }
-        }
-        redoPdfButton.setOnClickListener {
-            val localFragment = pdfViewerFragment
-            if (localFragment is EditablePdfViewerFragment) {
-                localFragment.redo()
-            }
-        }
     }
 
     private fun setPdfView() {
