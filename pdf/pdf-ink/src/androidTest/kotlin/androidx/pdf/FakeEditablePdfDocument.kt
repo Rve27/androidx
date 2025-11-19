@@ -143,10 +143,6 @@ internal open class FakeEditablePdfDocument(
         return listOf()
     }
 
-    override suspend fun write(destination: ParcelFileDescriptor) {
-        return
-    }
-
     override suspend fun getPageLinks(pageNumber: Int): PdfDocument.PdfPageLinks {
         return pageLinks[pageNumber] ?: PdfDocument.PdfPageLinks(emptyList(), emptyList())
     }
@@ -340,6 +336,10 @@ internal open class FakeEditablePdfDocument(
     override fun getAllEdits(): PdfEdits = PdfEdits(edits.values.groupBy { it.annotation.pageNum })
 
     override fun clearUncommittedEdits() {
+        TODO("Not yet implemented")
+    }
+
+    override fun createWriteHandle(): PdfWriteHandle {
         TODO("Not yet implemented")
     }
 

@@ -55,6 +55,7 @@ import androidx.pdf.utils.toAndroidClass
 import androidx.pdf.utils.toContentClass
 import java.util.Collections
 import java.util.concurrent.TimeoutException
+import java.util.concurrent.atomic.AtomicInteger
 import kotlin.coroutines.CoroutineContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -101,6 +102,8 @@ public class SandboxedPdfDocument(
     override val formType: Int,
     private val annotationsProcessor: PdfAnnotationsProcessor,
 ) : EditablePdfDocument() {
+
+    private val refCount = AtomicInteger(1)
 
     private val annotationsManager =
         InMemoryAnnotationsManager(::getAnnotationsForPage, annotationsProcessor)
@@ -251,14 +254,10 @@ public class SandboxedPdfDocument(
         return invalidatedAreas
     }
 
-    override suspend fun write(destination: ParcelFileDescriptor) {
-        return withDocument { document ->
-            document.write(destination, /* removePasswordProtection= */ false)
-        }
-    }
-
     @WorkerThread
     override fun close() {
+        if (refCount.decrementAndGet() > 0) return
+
         isDocumentClosedExplicitly = true
 
         connection.disconnect()
@@ -323,7 +322,7 @@ public class SandboxedPdfDocument(
         }
     }
 
-    private suspend fun <T> withDocument(block: (PdfDocumentRemote) -> T): T {
+    internal suspend fun <T> withDocument(block: (PdfDocumentRemote) -> T): T {
         var trial = 1
         while (true) {
             try {
@@ -444,6 +443,16 @@ public class SandboxedPdfDocument(
 
     override fun clearUncommittedEdits() {
         return annotationsManager.clearUncommittedEdits()
+    }
+
+    /**
+     * Generates a handle for writing the document. This handle should be closed after use.
+     *
+     * @return A [PdfWriteHandle] for the document.
+     */
+    override fun createWriteHandle(): PdfWriteHandle {
+        refCount.incrementAndGet()
+        return PdfWriteHandleImpl(this)
     }
 
     // TODO: b/438309514 - Remove GetAnnotationsFromDraftState from SandboxPdfDocument
