@@ -85,40 +85,40 @@ public class FloatToStringTest {
 
         assertEquals("1,234.56",
                 StringUtils.floatToString(1234.56f, 8, 2,
-                        PAD_NONE, ' ', SEPARATOR_PERIOD_COMMA,
+                        PAD_NONE, ' ', SEPARATOR_COMMA_PERIOD,
                         GROUPING_BY3, NO_OPTIONS));
         assertEquals("-1,234.56",
                 StringUtils.floatToString(-1234.56f, 8, 2,
-                        PAD_NONE, ' ', SEPARATOR_PERIOD_COMMA,
+                        PAD_NONE, ' ', SEPARATOR_COMMA_PERIOD,
                         GROUPING_BY3, NO_OPTIONS));
         assertEquals("0.0 ",
                 StringUtils.floatToString(0f, 1, 2,
-                        PAD_NONE, PAD_SPACE, SEPARATOR_PERIOD_COMMA,
+                        PAD_NONE, PAD_SPACE, SEPARATOR_COMMA_PERIOD,
                         GROUPING_BY3, NO_OPTIONS));
 
         assertEquals("7.1200",
                 StringUtils.floatToString(7.12f, 1, 4, ' ',
-                        '0', SEPARATOR_PERIOD_COMMA, GROUPING_BY3, NO_OPTIONS));
+                        '0', SEPARATOR_COMMA_PERIOD, GROUPING_BY3, NO_OPTIONS));
         assertEquals("7.12",
                 StringUtils.floatToString(7.12f, 1, 4, ' ',
-                        PAD_NONE, SEPARATOR_PERIOD_COMMA, GROUPING_BY3, NO_OPTIONS));
+                        PAD_NONE, SEPARATOR_COMMA_PERIOD, GROUPING_BY3, NO_OPTIONS));
         assertEquals("7.1200",
                 StringUtils.floatToString(7.12f, 1, 4, ' ',
-                        PAD_ZERO, SEPARATOR_PERIOD_COMMA,
+                        PAD_ZERO, SEPARATOR_COMMA_PERIOD,
                         GROUPING_BY3, NO_OPTIONS));
 
 
         assertEquals("     123.45",
                 StringUtils.floatToString(123.45f, 8, 2,
-                        ' ', '0', SEPARATOR_PERIOD_COMMA,
+                        ' ', '0', SEPARATOR_COMMA_PERIOD,
                         GROUPING_BY3, NO_OPTIONS));
         assertEquals("00000123.45",
                 StringUtils.floatToString(123.45f, 8, 2,
-                        PAD_ZERO, '0', SEPARATOR_PERIOD_COMMA,
+                        PAD_ZERO, '0', SEPARATOR_COMMA_PERIOD,
                         GROUPING_BY3, NO_OPTIONS));
         assertEquals("123.45",
                 StringUtils.floatToString(123.45f, 8, 2,
-                        PAD_NONE, '0', SEPARATOR_PERIOD_COMMA,
+                        PAD_NONE, '0', SEPARATOR_COMMA_PERIOD,
                         GROUPING_BY3, NO_OPTIONS));
         // assertEquals("-0000123.45" ,
         // StringUtils.floatToString(-123.45f, 8, 2,  PAD_ZERO, '0',
@@ -128,7 +128,7 @@ public class FloatToStringTest {
         int options = GROUPING_BY3;
         assertEquals("1.234.567,88",
                 StringUtils.floatToString(1234567.89f, 9, 2,
-                        PAD_NONE, '0', SEPARATOR_COMMA_PERIOD,
+                        PAD_NONE, '0', SEPARATOR_PERIOD_COMMA,
                         GROUPING_BY3, NO_OPTIONS));
         assertEquals("1 234 567,88",
                 StringUtils.floatToString(1234567.89f, 9, 2,
@@ -143,62 +143,62 @@ public class FloatToStringTest {
         //  numbers exceeding the floating point precision
         assertEquals("1234567936.0 ",
                 StringUtils.floatToString(1234567890.12f, 20, 2,
-                        PAD_NONE, PAD_SPACE, SEPARATOR_PERIOD_COMMA,
+                        PAD_NONE, PAD_SPACE, SEPARATOR_COMMA_PERIOD,
                         GROUPING_NONE, NO_OPTIONS));
         assertEquals("1,234,567,936.0",
                 StringUtils.floatToString(1234567890.12f, 20, 1,
-                        PAD_NONE, PAD_ZERO, SEPARATOR_PERIOD_COMMA,
+                        PAD_NONE, PAD_ZERO, SEPARATOR_COMMA_PERIOD,
                         GROUPING_BY3, NO_OPTIONS));
         assertEquals("12,3456,7936.00",
                 StringUtils.floatToString(1234567890.12f, 20, 2,
-                        PAD_NONE, '0', SEPARATOR_PERIOD_COMMA,
+                        PAD_NONE, '0', SEPARATOR_COMMA_PERIOD,
                         GROUPING_BY4, NO_OPTIONS));
         assertEquals("1,23,45,67,936.00",
                 StringUtils.floatToString(1234567890.12f, 20, 2,
-                        PAD_NONE, '0', SEPARATOR_PERIOD_COMMA,
+                        PAD_NONE, '0', SEPARATOR_COMMA_PERIOD,
                         GROUPING_BY32, NO_OPTIONS));
 
         assertEquals("-890.12",
                 StringUtils.floatToString(-890.12f, 5, 2,
-                        PAD_NONE, '0', SEPARATOR_PERIOD_COMMA,
+                        PAD_NONE, '0', SEPARATOR_COMMA_PERIOD,
                         GROUPING_BY3, NO_OPTIONS));
         assertEquals("(890.12)",
                 StringUtils.floatToString(-890.12f, 20, 2,
-                        PAD_NONE, '0', SEPARATOR_PERIOD_COMMA,
+                        PAD_NONE, '0', SEPARATOR_COMMA_PERIOD,
                         GROUPING_BY3, NEGATIVE_PARENTHESES));
         assertEquals("(       890.12)",
                 StringUtils.floatToString(-890.12f, 10, 2,
-                        PAD_SPACE, '0', SEPARATOR_PERIOD_COMMA,
+                        PAD_SPACE, '0', SEPARATOR_COMMA_PERIOD,
                         GROUPING_BY3, NEGATIVE_PARENTHESES));
         System.out.println("------------------------------------------");
 
         System.out.println("7. Edge Cases (Rounding)");
         assertEquals("10.0",
                 StringUtils.floatToString(9.991f, 10, 1,
-                        PAD_NONE, PAD_ZERO, SEPARATOR_PERIOD_COMMA, GROUPING_NONE, ROUNDING));
+                        PAD_NONE, PAD_ZERO, SEPARATOR_COMMA_PERIOD, GROUPING_NONE, ROUNDING));
         assertEquals("9.99",
                 StringUtils.floatToString(9.991f, 10, 2,
-                        PAD_NONE, PAD_ZERO, SEPARATOR_PERIOD_COMMA,
+                        PAD_NONE, PAD_ZERO, SEPARATOR_COMMA_PERIOD,
                         GROUPING_NONE, NO_OPTIONS));
         assertEquals("10.0",
                 StringUtils.floatToString(9.999f, 10, 2,
-                        PAD_NONE, PAD_NONE, SEPARATOR_PERIOD_COMMA,
+                        PAD_NONE, PAD_NONE, SEPARATOR_COMMA_PERIOD,
                         GROUPING_NONE, ROUNDING));
         assertEquals("10",
                 StringUtils.floatToString(9.999f, 10, 0,
-                        PAD_NONE, PAD_NONE, SEPARATOR_PERIOD_COMMA,
+                        PAD_NONE, PAD_NONE, SEPARATOR_COMMA_PERIOD,
                         GROUPING_NONE, ROUNDING));
         assertEquals("10.0 ",
                 StringUtils.floatToString(9.999f, 10, 2,
-                        PAD_NONE, PAD_SPACE, SEPARATOR_PERIOD_COMMA,
+                        PAD_NONE, PAD_SPACE, SEPARATOR_COMMA_PERIOD,
                         GROUPING_NONE, ROUNDING));
         assertEquals("123.0",
                 StringUtils.floatToString(123f, 10, 1,
-                        PAD_NONE, PAD_ZERO, SEPARATOR_PERIOD_COMMA,
+                        PAD_NONE, PAD_ZERO, SEPARATOR_COMMA_PERIOD,
                         GROUPING_NONE, NO_OPTIONS));
         assertEquals("123.0",
                 StringUtils.floatToString(123f, 10, 1,
-                        PAD_NONE, PAD_ZERO, SEPARATOR_PERIOD_COMMA,
+                        PAD_NONE, PAD_ZERO, SEPARATOR_COMMA_PERIOD,
                         GROUPING_NONE, NO_OPTIONS));
         System.out.println("------------------------------------------");
 
@@ -210,11 +210,11 @@ public class FloatToStringTest {
                 + "SEPARATOR_COMMA_PERIOD | GROUPING_BY3 | NEGATIVE_PARENTHESES");
         assertEquals("(         12,345.6777)",
                 StringUtils.floatToString(myValue, 15, 4,
-                        PAD_SPACE, PAD_ZERO, SEPARATOR_PERIOD_COMMA,
+                        PAD_SPACE, PAD_ZERO, SEPARATOR_COMMA_PERIOD,
                         GROUPING_BY3, NEGATIVE_PARENTHESES));
         assertEquals("(         12.345,6777)",
                 StringUtils.floatToString(myValue, 15, 4,
-                        PAD_SPACE, PAD_ZERO, SEPARATOR_COMMA_PERIOD,
+                        PAD_SPACE, PAD_ZERO, SEPARATOR_PERIOD_COMMA,
                         GROUPING_BY3, NEGATIVE_PARENTHESES));
         assertEquals("(         12_345.6777)",
                 StringUtils.floatToString(myValue, 15, 4,
@@ -232,7 +232,7 @@ public class FloatToStringTest {
     @Test
     public void testOne() {
 
-        assertEquals("10.0 ",
+        assertEquals("10,0 ",
                 StringUtils.floatToString(9.999f, 10, 2,
                         PAD_NONE, PAD_SPACE, SEPARATOR_PERIOD_COMMA,
                         GROUPING_NONE, ROUNDING));
