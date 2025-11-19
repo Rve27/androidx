@@ -18,33 +18,34 @@ package androidx.xr.glimmer
 
 import android.app.Instrumentation
 import android.os.Build.VERSION.SDK_INT
-import androidx.compose.ui.input.InputMode
+import androidx.compose.ui.ComposeUiFlags
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.nativeKeyCode
 import androidx.test.platform.app.InstrumentationRegistry
 import org.junit.rules.ExternalResource
 
-/** Enters non-touch mode for tests, so that Glimmer's clickables can be focused. */
-internal fun nonTouchInputModeRule(): InputModeRule = InputModeRule(InputMode.Keyboard)
+internal fun createGlimmerRule(): GlimmerRule = GlimmerRule()
 
 /**
- * Sets up a given [inputMode] before the test and guarantees to reset it afterwards. Useful for
- * tests with non-touch input like TV.
+ * Enters non-touch mode for tests so that Glimmer's focusables can be focused. This also enables
+ * the [ComposeUiFlags.isInitialFocusOnFocusableAvailable] flag to allow initial focus on a
+ * focusable item.
  */
-class InputModeRule(val inputMode: InputMode) : ExternalResource() {
+@OptIn(ExperimentalComposeUiApi::class)
+class GlimmerRule() : ExternalResource() {
+
+    // Save the original flag value right before the test runs.
+    private val savedInitialFocusAvailability = ComposeUiFlags.isInitialFocusOnFocusableAvailable
 
     override fun before() {
-        // TODO(b/267253920): Add a compose test API to set/reset InputMode.
-        when (inputMode) {
-            InputMode.Touch ->
-                InstrumentationRegistry.getInstrumentation().setInTouchModeCompat(true)
-            InputMode.Keyboard ->
-                InstrumentationRegistry.getInstrumentation().setInTouchModeCompat(false)
-            else -> error("Unexpected input mode [$inputMode].")
-        }
+        ComposeUiFlags.isInitialFocusOnFocusableAvailable = true
+        InstrumentationRegistry.getInstrumentation().setInTouchModeCompat(false)
     }
 
     override fun after() {
+        // Restore the flag to its original value after the test finishes.
+        ComposeUiFlags.isInitialFocusOnFocusableAvailable = savedInitialFocusAvailability
         // TODO(b/267253920): Add a compose test API to set/reset InputMode.
         InstrumentationRegistry.getInstrumentation().resetInTouchModeCompat()
     }
