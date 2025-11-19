@@ -383,7 +383,7 @@ class SandboxedPdfDocumentTest {
             pfd = ParcelFileDescriptor.open(editedPdfFile, ParcelFileDescriptor.MODE_READ_WRITE)
 
             val pdfWriteHandle = document.createWriteHandle()
-            pdfWriteHandle.write(pfd)
+            pdfWriteHandle.writeTo(pfd)
             pdfWriteHandle.close()
 
             document.close()
