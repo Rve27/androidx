@@ -35,7 +35,6 @@ import androidx.annotation.RequiresApi
 import androidx.annotation.RestrictTo
 import androidx.compose.remote.core.operations.ConditionalOperations
 import androidx.compose.remote.core.operations.DrawTextOnCircle
-import androidx.compose.remote.core.operations.PaintData
 import androidx.compose.remote.core.operations.Utils
 import androidx.compose.remote.core.operations.paint.PaintBundle
 import androidx.compose.remote.creation.RemoteComposeWriter
@@ -353,7 +352,7 @@ public open class RecordingCanvas(bitmap: Bitmap) : Canvas(bitmap) {
             send = true
         }
         if (send) {
-            PaintData.apply(document.buffer.buffer, paintBundle)
+            document.buffer.addPaint(paintBundle)
         }
         forceSendingPaint = false
     }
@@ -1065,7 +1064,6 @@ public open class RecordingCanvas(bitmap: Bitmap) : Canvas(bitmap) {
         vOffset: Number,
         paint: Paint,
     ) {
-        // println("NRO drawTextOnPath 1")
         usePaint(paint)
         document.drawTextOnPath(
             text.getIdForCreationState(creationState),
