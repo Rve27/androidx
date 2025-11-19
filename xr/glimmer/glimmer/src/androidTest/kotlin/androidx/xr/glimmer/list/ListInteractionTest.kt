@@ -20,7 +20,6 @@ import androidx.compose.foundation.OverscrollEffect
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberOverscrollEffect
-import androidx.compose.ui.ComposeUiFlags
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -39,13 +38,9 @@ import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import androidx.test.filters.MediumTest
 import androidx.xr.glimmer.Text
-import androidx.xr.glimmer.nonTouchInputModeRule
 import androidx.xr.glimmer.performIndirectSwipe
 import androidx.xr.glimmer.setGlimmerThemeContent
 import com.google.common.truth.Truth.assertThat
-import org.junit.After
-import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -55,22 +50,6 @@ import org.junit.runners.Parameterized
 @OptIn(ExperimentalComposeUiApi::class)
 class ListInteractionTest(orientation: Orientation) : BaseListTestWithOrientation(orientation) {
 
-    @get:Rule(1) val inputModeRule = nonTouchInputModeRule()
-
-    private val savedInitialFocusAvailabilityFlag =
-        ComposeUiFlags.isInitialFocusOnFocusableAvailable
-
-    @Before
-    fun setup() {
-        ComposeUiFlags.isInitialFocusOnFocusableAvailable = true
-    }
-
-    @After
-    fun tearDown() {
-        ComposeUiFlags.isInitialFocusOnFocusableAvailable = savedInitialFocusAvailabilityFlag
-    }
-
-    @Test
     fun performScrollToIndex() {
         rule.setGlimmerThemeContent { TestList { Text("Item ($it)") } }
 

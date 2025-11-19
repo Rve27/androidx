@@ -27,8 +27,6 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -40,8 +38,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.testutils.WithTouchSlop
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.SemanticsNodeInteraction
@@ -55,7 +51,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.xr.glimmer.GlimmerRule
 import androidx.xr.glimmer.Text
+import androidx.xr.glimmer.createGlimmerRule
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -64,7 +62,9 @@ import org.junit.Rule
 abstract class BaseListTestWithOrientation(protected val orientation: Orientation) {
 
     val testDispatcher = StandardTestDispatcher()
-    @get:Rule val rule: ComposeContentTestRule = createComposeRule(testDispatcher)
+    @get:Rule(0) val rule: ComposeContentTestRule = createComposeRule(testDispatcher)
+
+    @get:Rule(1) val glimmerRule: GlimmerRule = createGlimmerRule()
 
     val vertical: Boolean
         get() = orientation == Orientation.Vertical
@@ -191,18 +191,6 @@ abstract class BaseListTestWithOrientation(protected val orientation: Orientatio
                 bottom = afterContentCrossAxis,
             )
         }
-
-    /** This helper method requests initial focus to the list so that the auto focus can work. */
-    protected fun ComposeContentTestRule.setContentWithInitialFocus(
-        modifier: Modifier = Modifier,
-        content: @Composable ColumnScope.() -> Unit,
-    ) {
-        val focusRequester = FocusRequester()
-        setContent { Column(modifier.focusRequester(focusRequester)) { content() } }
-        // Request initial focus.
-        rule.runOnIdle { focusRequester.requestFocus() }
-        rule.waitForIdle()
-    }
 
     companion object {
         internal const val LIST_TEST_TAG: String = "glimmer-lazy-list"
