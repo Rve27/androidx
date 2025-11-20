@@ -205,7 +205,6 @@ internal class AnnotationToolbarViewModel(initialState: AnnotationToolbarState) 
             _state.value.copy(
                 isAnnotationVisible = !state.value.isAnnotationVisible,
                 isColorPaletteVisible = false,
-                isColorPaletteEnabled = false,
                 isBrushSizeSliderVisible = false,
             )
         dispatchAnnotationVisibility(state.value)
