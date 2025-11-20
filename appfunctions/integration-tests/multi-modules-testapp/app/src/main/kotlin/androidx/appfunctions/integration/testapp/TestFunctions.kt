@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.appfunctions.integration.tests
+package androidx.appfunctions.integration.testapp
 
 import android.app.PendingIntent
 import android.content.Intent
@@ -449,7 +449,7 @@ class TestFunctions {
                 AppFunctionUriGrant(
                     uri =
                         Uri.parse(
-                            "content://androidx.appfunctions.integration.tests.provider/read_only_test_file.txt"
+                            "content://androidx.appfunctions.integration.testapp.provider/read_only_test_file.txt"
                         ),
                     modeFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION,
                 ),
@@ -457,7 +457,7 @@ class TestFunctions {
                 AppFunctionUriGrant(
                     uri =
                         Uri.parse(
-                            "content://androidx.appfunctions.integration.tests.provider/write_only_test_file.txt"
+                            "content://androidx.appfunctions.integration.testapp.provider/write_only_test_file.txt"
                         ),
                     modeFlags = Intent.FLAG_GRANT_WRITE_URI_PERMISSION,
                 ),
@@ -465,7 +465,7 @@ class TestFunctions {
                 AppFunctionUriGrant(
                     uri =
                         Uri.parse(
-                            "content://androidx.appfunctions.integration.tests.provider/read_write_test_file.txt"
+                            "content://androidx.appfunctions.integration.testapp.provider/read_write_test_file.txt"
                         ),
                     modeFlags =
                         Intent.FLAG_GRANT_READ_URI_PERMISSION or
@@ -475,7 +475,7 @@ class TestFunctions {
                 AppFunctionUriGrant(
                     uri =
                         Uri.parse(
-                            "content://androidx.appfunctions.integration.tests.provider/persist_read_write_test_file.txt"
+                            "content://androidx.appfunctions.integration.testapp.provider/persist_read_write_test_file.txt"
                         ),
                     modeFlags =
                         Intent.FLAG_GRANT_READ_URI_PERMISSION or
