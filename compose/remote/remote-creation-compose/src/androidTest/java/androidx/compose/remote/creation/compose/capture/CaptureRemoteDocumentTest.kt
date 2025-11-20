@@ -85,8 +85,8 @@ class CaptureRemoteDocumentTest {
                 RcProfiles.PROFILE_ANDROID_NATIVE,
                 AndroidxRcPlatformServices(),
                 { setOf(Operations.DRAW_TEXT_ON_CIRCLE) },
-            ) { creationDisplayInfo, profile, contentDescription ->
-                RemoteComposeWriterAndroid(creationDisplayInfo, contentDescription, profile)
+            ) { creationDisplayInfo, profile, callback ->
+                RemoteComposeWriterAndroid(creationDisplayInfo, null, profile, callback)
             }
         val document: ByteArray =
             withContext(Dispatchers.Main) {

@@ -103,12 +103,40 @@ public class RemoteComposeWriter {
 
     protected final @NonNull RcPaint mPainter = new RcPaint(this);
 
+    private @Nullable Object mWriterCallback = null;
+
     /**
      * Returns the paint object
      * @return the paint object
      */
     public @NonNull RcPaint getRcPaint() {
         return mPainter;
+    }
+
+    public @Nullable Object getWriterCallback() {
+        return mWriterCallback;
+    }
+
+    /**
+     * Create a RemoteComposeWriter
+     *
+     * @param creationDisplayInfo original document size
+     * @param contentDescription  content description
+     * @param profile             the platform to use
+     */
+    public RemoteComposeWriter(
+            @NonNull CreationDisplayInfo creationDisplayInfo,
+            @Nullable String contentDescription,
+            @NonNull Profile profile,
+            @Nullable Object writerCallback) {
+        this(
+                profile,
+                hTag(Header.DOC_WIDTH, creationDisplayInfo.getWidth()),
+                hTag(Header.DOC_HEIGHT, creationDisplayInfo.getHeight()),
+                hTag(Header.DOC_CONTENT_DESCRIPTION,
+                        contentDescription != null ? contentDescription : ""),
+                hTag(Header.DOC_PROFILES, profile.getOperationsProfiles()));
+        this.mWriterCallback = writerCallback;
     }
 
     /**
@@ -177,7 +205,7 @@ public class RemoteComposeWriter {
      */
     public static @NonNull RemoteComposeWriter obtain(
             int width, int height, @NonNull String contentDescription, @NonNull Profile profile) {
-        return profile.create(new CreationDisplayInfo(width, height, 1f), contentDescription);
+        return profile.create(new CreationDisplayInfo(width, height, 1f), null);
     }
 
     /**
@@ -190,7 +218,7 @@ public class RemoteComposeWriter {
      */
     public static @NonNull RemoteComposeWriter obtain(
             int width, int height, @NonNull Profile profile) {
-        return profile.create(new CreationDisplayInfo(width, height, 1f), "");
+        return profile.create(new CreationDisplayInfo(width, height, 1f), null);
     }
 
     /**

@@ -66,8 +66,17 @@ public open class RemoteComposeCreationState {
     ) {
         this.creationDisplayInfo = creationDisplayInfo
         this.profile = profile
-        document =
-            profile.create(creationDisplayInfo, contentDescription) as RemoteComposeWriterAndroid
+        document = profile.create(creationDisplayInfo, null) as RemoteComposeWriterAndroid
+    }
+
+    public constructor(
+        creationDisplayInfo: CreationDisplayInfo,
+        profile: Profile,
+        writerCallback: WriterCallback?,
+    ) {
+        this.creationDisplayInfo = creationDisplayInfo
+        this.profile = profile
+        document = profile.create(creationDisplayInfo, writerCallback) as RemoteComposeWriterAndroid
     }
 
     public constructor(platform: RcPlatformServices, size: Size) {
@@ -76,8 +85,8 @@ public open class RemoteComposeCreationState {
                 CoreDocument.DOCUMENT_API_LEVEL,
                 0,
                 platform,
-                { creationDisplayInfo, profile, description ->
-                    RemoteComposeWriterAndroid(creationDisplayInfo, description, profile)
+                { creationDisplayInfo, profile, callback ->
+                    RemoteComposeWriterAndroid(creationDisplayInfo, null, profile, callback)
                 },
             )
         this.creationDisplayInfo = CreationDisplayInfo(size.width.toInt(), size.height.toInt(), 1f)
@@ -90,8 +99,8 @@ public open class RemoteComposeCreationState {
                 apiLevel,
                 profiles,
                 platform,
-                { creationDisplayInfo, profile, description ->
-                    RemoteComposeWriterAndroid(creationDisplayInfo, description, profile)
+                { creationDisplayInfo, profile, callback ->
+                    RemoteComposeWriterAndroid(creationDisplayInfo, null, profile, callback)
                 },
             )
         this.creationDisplayInfo = CreationDisplayInfo(size.width.toInt(), size.height.toInt(), 1f)
@@ -124,7 +133,7 @@ public open class RemoteComposeCreationState {
     public constructor(size: Size, profile: Profile) {
         this.profile = profile
         this.creationDisplayInfo = CreationDisplayInfo(size.width.toInt(), size.height.toInt(), 1f)
-        this.document = profile.create(creationDisplayInfo, "")
+        this.document = profile.create(creationDisplayInfo, null)
     }
 
     public open fun <T : BaseRemoteState> getOrCreateNamedState(
