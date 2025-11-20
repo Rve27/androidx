@@ -27,6 +27,6 @@ public interface WearWidgetData {
     @RestrictTo(LIBRARY_GROUP)
     public suspend fun captureRawContent(
         context: Context,
-        request: WearWidgetRequest,
+        params: WearWidgetParams,
     ): WearWidgetRawContent
 }
