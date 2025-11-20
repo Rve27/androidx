@@ -36,13 +36,13 @@ public class WearWidgetDocument(public val content: @Composable () -> Unit) : We
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     override suspend fun captureRawContent(
         context: Context,
-        request: WearWidgetRequest,
+        params: WearWidgetParams,
     ): WearWidgetRawContent {
         return WearWidgetCapture.capture(
             context,
             CreationDisplayInfo(
-                request.widthDp.dpToPx(context),
-                request.heightDp.dpToPx(context),
+                params.widthDp.dpToPx(context),
+                params.heightDp.dpToPx(context),
                 context.resources.displayMetrics.density,
             ),
             content,
