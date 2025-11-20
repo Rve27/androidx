@@ -80,7 +80,6 @@ public class MeteringRepeating(
         secondaryStreamSpec: StreamSpec?,
     ): StreamSpec {
         updateSessionConfig(listOf(createPipeline(meteringSurfaceSize).build()))
-        notifyActive()
         return primaryStreamSpec.toBuilder().setResolution(meteringSurfaceSize).build()
     }
 
