@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.appfunctions.integration.tests
+package androidx.appfunctions.integration.testapp
 
 import android.net.Uri
 import androidx.appfunctions.AppFunctionContext
