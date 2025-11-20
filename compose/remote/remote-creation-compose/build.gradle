@@ -70,6 +70,8 @@ dependencies {
     androidTestImplementation(libs.testRunner)
     androidTestImplementation(libs.espressoCore)
     androidTestImplementation(libs.testParameterInjector)
+    androidTestImplementation(project(":test:uiautomator:uiautomator"))
+    androidTestImplementation(project(":test:uiautomator:uiautomator-shell"))
     androidTestImplementation(project(":compose:remote:remote-core-testutils"))
     androidTestImplementation(project(":compose:remote:remote-player-view"))
     androidTestImplementation(project(":compose:remote:remote-player-compose-testutils"))
