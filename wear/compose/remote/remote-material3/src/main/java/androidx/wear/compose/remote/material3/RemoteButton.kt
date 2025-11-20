@@ -532,7 +532,7 @@ public object RemoteButtonDefaults {
     @Composable
     public fun containerPainter(
         image: RemotePainter,
-        scrim: RemoteBrush? = scrimBrush(image.intrinsicSize),
+        scrim: RemoteBrush? = image.intrinsicSize?.let { scrimBrush(it) },
         alpha: RemoteFloat = DefaultAlpha.rf,
     ): RemotePainter {
         return remoteContainerPainter(image, scrim, alpha)
