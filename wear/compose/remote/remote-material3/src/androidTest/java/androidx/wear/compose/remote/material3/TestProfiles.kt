@@ -37,7 +37,7 @@ object TestProfiles {
                     ?.keySet()
                     .orEmpty() + setOf(Operations.DRAW_TEXT_ON_CIRCLE)
             },
-        ) { creationDisplayInfo, profile, contentDescription ->
-            RemoteComposeWriterAndroid(creationDisplayInfo, contentDescription, profile)
+        ) { creationDisplayInfo, profile, callback ->
+            RemoteComposeWriterAndroid(creationDisplayInfo, null, profile, callback)
         }
 }

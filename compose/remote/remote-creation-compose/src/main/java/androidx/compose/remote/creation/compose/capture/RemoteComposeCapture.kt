@@ -51,16 +51,17 @@ import java.io.ByteArrayInputStream
 public fun rememberRemoteDocument(
     creationDisplayInfo: CreationDisplayInfo = createCreationDisplayInfo(),
     profile: Profile = RcPlatformProfiles.ANDROIDX,
+    writerCallbacks: WriterCallback? = null,
     onCreate: ((CoreDocument) -> Unit)? = null,
     content: @Composable () -> Unit,
 ): MutableState<CoreDocument?> {
     val doc: MutableState<CoreDocument?> = remember { mutableStateOf(null) }
     val done = remember { mutableStateOf(false) }
     RemoteComposeCapture(
-        LocalContext.current,
-        creationDisplayInfo,
-        true,
-        { view, writer ->
+        context = LocalContext.current,
+        creationDisplayInfo = creationDisplayInfo,
+        immediateCapture = true,
+        onPaint = { view, writer ->
             if (!done.value) {
                 val buffer = writer.buffer()
                 val bufferSize = writer.bufferSize()
@@ -76,9 +77,10 @@ public fun rememberRemoteDocument(
             }
             done.value
         },
-        @Composable {},
-        profile,
-        @Composable { content() },
+        onCaptureReady = @Composable {},
+        profile = profile,
+        writerCallbacks = writerCallbacks,
+        content = @Composable { content() },
     )
     return doc
 }
@@ -91,7 +93,7 @@ public fun rememberRemoteDocument(
     content: @Composable () -> Unit,
 ): MutableState<CoreDocument?> {
     return rememberRemoteDocument(
-        CreationDisplayInfo(size.width.toInt(), size.height.toInt(), 1f),
+        creationDisplayInfo = CreationDisplayInfo(size.width.toInt(), size.height.toInt(), 1f),
         onCreate = onCreate,
         content = content,
     )
@@ -101,16 +103,17 @@ public fun rememberRemoteDocument(
 public fun rememberAsyncRemoteDocument(
     creationDisplayInfo: CreationDisplayInfo = createCreationDisplayInfo(),
     profile: Profile = RcPlatformProfiles.ANDROIDX,
+    writerCallbacks: WriterCallback? = null,
     content: @Composable (MutableState<Boolean>) -> Unit,
 ): MutableState<CoreDocument?> {
     val doc: MutableState<CoreDocument?> = remember { mutableStateOf(null) }
     val done = remember { mutableStateOf(false) }
     val readyToCapture = remember { mutableStateOf(false) }
     RemoteComposeCapture(
-        LocalContext.current,
-        creationDisplayInfo,
-        false,
-        { view, writer ->
+        context = LocalContext.current,
+        creationDisplayInfo = creationDisplayInfo,
+        immediateCapture = false,
+        onPaint = { view: View, writer: RemoteComposeWriter ->
             if (readyToCapture.value && !done.value) {
                 val buffer = writer.buffer()
                 val bufferSize = writer.bufferSize()
@@ -123,9 +126,10 @@ public fun rememberAsyncRemoteDocument(
             }
             done.value
         },
-        @Composable {},
-        profile,
-        @Composable { content(readyToCapture) },
+        onCaptureReady = {},
+        profile = profile,
+        writerCallbacks = writerCallbacks,
+        content = @Composable { content(readyToCapture) },
     )
     return doc
 }
@@ -154,12 +158,19 @@ public class RemoteComposeCapture(
     public val onPaint: (View, RemoteComposeWriter) -> Boolean,
     public val onCaptureReady: @Composable () -> Unit,
     public val profile: Profile,
+    public val writerCallbacks: WriterCallback?,
     public val content: @Composable () -> Unit,
     public val remoteComposeExecution:
         @Composable
         (CaptureComposeView, @Composable () -> Unit) -> Unit =
         { captureComposeView, contentWrapper ->
-            RemoteComposeExecution(captureComposeView, creationDisplayInfo, profile, contentWrapper)
+            RemoteComposeExecution(
+                captureComposeView = captureComposeView,
+                creationDisplayInfo = creationDisplayInfo,
+                profile = profile,
+                writerCallbacks = writerCallbacks,
+                content = contentWrapper,
+            )
         },
 ) {
     public constructor(
@@ -174,21 +185,23 @@ public class RemoteComposeCapture(
         remoteComposeExecution: @Composable (CaptureComposeView, @Composable () -> Unit) -> Unit =
             { captureComposeView, contentWrapper ->
                 RemoteComposeExecution(
-                    captureComposeView,
-                    creationDisplayInfo,
-                    RcPlatformProfiles.ANDROIDX,
-                    contentWrapper,
+                    captureComposeView = captureComposeView,
+                    creationDisplayInfo = creationDisplayInfo,
+                    profile = RcPlatformProfiles.ANDROIDX,
+                    writerCallbacks = null,
+                    content = contentWrapper,
                 )
             },
     ) : this(
-        context,
-        creationDisplayInfo,
-        immediateCapture,
-        onPaint,
-        onCaptureReady,
-        RcPlatformProfiles.ANDROIDX,
-        content,
-        remoteComposeExecution,
+        context = context,
+        creationDisplayInfo = creationDisplayInfo,
+        immediateCapture = immediateCapture,
+        onPaint = onPaint,
+        onCaptureReady = onCaptureReady,
+        profile = RcPlatformProfiles.ANDROIDX,
+        writerCallbacks = null,
+        content = content,
+        remoteComposeExecution = remoteComposeExecution,
     )
 
     public fun newSize(width: Int, height: Int) {
@@ -226,10 +239,15 @@ public fun RemoteComposeExecution(
     captureComposeView: CaptureComposeView,
     creationDisplayInfo: CreationDisplayInfo,
     profile: Profile,
+    writerCallbacks: WriterCallback?,
     content: @Composable () -> Unit,
 ) {
     val remoteComposeCreationState = remember {
-        RemoteComposeCreationState(creationDisplayInfo, null, profile)
+        RemoteComposeCreationState(
+            creationDisplayInfo = creationDisplayInfo,
+            profile = profile,
+            writerCallback = writerCallbacks,
+        )
     }
     CompositionLocalProvider(LocalRemoteComposeCreationState provides remoteComposeCreationState) {
         FallbackCreationState.state = remoteComposeCreationState
@@ -308,7 +326,13 @@ public fun RememberRemoteDocumentInline(
                     )
                     .apply {
                         setContent {
-                            RemoteComposeExecution(this, creationDisplayInfo, profile, content)
+                            RemoteComposeExecution(
+                                captureComposeView = this,
+                                creationDisplayInfo = creationDisplayInfo,
+                                profile = profile,
+                                writerCallbacks = null,
+                                content = content,
+                            )
                         }
                     }
             },

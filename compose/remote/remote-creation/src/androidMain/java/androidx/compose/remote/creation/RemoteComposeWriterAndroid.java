@@ -34,8 +34,16 @@ public class RemoteComposeWriterAndroid extends RemoteComposeWriter {
     public RemoteComposeWriterAndroid(
             @NonNull CreationDisplayInfo creationDisplayInfo,
             @Nullable String contentDescription,
+            @NonNull Profile profile,
+            @Nullable Object writerCallback) {
+        super(creationDisplayInfo, contentDescription, profile, writerCallback);
+    }
+
+    public RemoteComposeWriterAndroid(
+            @NonNull CreationDisplayInfo creationDisplayInfo,
+            @Nullable String contentDescription,
             @NonNull Profile profile) {
-        super(creationDisplayInfo, contentDescription, profile);
+        super(creationDisplayInfo, contentDescription, profile, null);
     }
 
     public RemoteComposeWriterAndroid(@NonNull Profile profile, HTag @NonNull ... tags) {
