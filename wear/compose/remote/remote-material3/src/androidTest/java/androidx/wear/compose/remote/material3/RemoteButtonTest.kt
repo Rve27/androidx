@@ -19,19 +19,29 @@ package androidx.wear.compose.remote.material3
 import android.annotation.SuppressLint
 import android.content.Context
 import androidx.compose.remote.creation.CreationDisplayInfo
+import androidx.compose.remote.creation.compose.capture.painter.painterRemoteBitmap
+import androidx.compose.remote.creation.compose.capture.shapes.RemoteCircleShape
+import androidx.compose.remote.creation.compose.layout.RemoteAlignment
+import androidx.compose.remote.creation.compose.layout.RemoteArrangement
+import androidx.compose.remote.creation.compose.layout.RemoteBox
+import androidx.compose.remote.creation.compose.layout.RemoteComposable
 import androidx.compose.remote.creation.compose.layout.RemotePaddingValues
 import androidx.compose.remote.creation.compose.modifier.RemoteModifier
+import androidx.compose.remote.creation.compose.modifier.fillMaxSize
 import androidx.compose.remote.creation.compose.modifier.size
 import androidx.compose.remote.creation.compose.state.RemoteBoolean
 import androidx.compose.remote.creation.compose.state.RemoteColor
 import androidx.compose.remote.creation.compose.state.RemoteString
 import androidx.compose.remote.creation.compose.state.rdp
+import androidx.compose.remote.creation.compose.state.rememberRemoteBitmapValue
 import androidx.compose.remote.player.compose.test.utils.screenshot.TargetPlayer
 import androidx.compose.remote.player.compose.test.utils.screenshot.rule.RemoteComposeScreenshotTestRule
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.filters.MediumTest
 import androidx.test.filters.SdkSuppress
+import androidx.wear.compose.remote.material3.Material3ImageTest.Companion.createImage
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Rule
@@ -61,11 +71,17 @@ class RemoteButtonTest {
             backgroundColor = Color.Black,
             creationDisplayInfo = creationDisplayInfo,
         ) {
-            RemoteButton(enabled = RemoteBoolean(true)) {
-                RemoteText(
-                    RemoteString("button_enabled"),
-                    color = RemoteButtonDefaults.buttonColors().contentColor(),
-                )
+            Center(RemoteModifier.fillMaxSize()) {
+                RemoteButton(
+                    modifier = RemoteModifier.buttonSizeModifier(),
+                    enabled = RemoteBoolean(true),
+                ) {
+                    RemoteText(
+                        RemoteString("button_enabled"),
+                        color = RemoteButtonDefaults.buttonColors().contentColor(),
+                        style = RemoteMaterialTheme.typography.typography.labelMedium,
+                    )
+                }
             }
         }
     }
@@ -76,13 +92,18 @@ class RemoteButtonTest {
             backgroundColor = Color.Black,
             creationDisplayInfo = creationDisplayInfo,
         ) {
-            RemoteButton(enabled = RemoteBoolean(false)) {
-                RemoteText(
-                    RemoteString("button_disabled"),
-                    color =
-                        RemoteButtonDefaults.buttonColors()
-                            .contentColor(enabled = RemoteBoolean(false)),
-                )
+            Center(RemoteModifier.fillMaxSize()) {
+                RemoteButton(
+                    modifier = RemoteModifier.buttonSizeModifier(),
+                    enabled = RemoteBoolean(false),
+                ) {
+                    RemoteText(
+                        RemoteString("button_disabled"),
+                        color =
+                            RemoteButtonDefaults.buttonColors().contentColor(RemoteBoolean(false)),
+                        style = RemoteMaterialTheme.typography.typography.labelMedium,
+                    )
+                }
             }
         }
     }
@@ -104,8 +125,18 @@ class RemoteButtonTest {
                     disabledSecondaryContentColor = RemoteColor(Color.Black),
                     disabledIconColor = RemoteColor(Color.Black),
                 )
-            RemoteButton(contentPadding = RemotePaddingValues(40.rdp), colors = colors) {
-                RemoteText(RemoteString("button_overrides_colors"), color = colors.contentColor())
+            Center(RemoteModifier.fillMaxSize()) {
+                RemoteButton(
+                    modifier = RemoteModifier.buttonSizeModifier(),
+                    contentPadding = RemotePaddingValues(40.rdp),
+                    colors = colors,
+                ) {
+                    RemoteText(
+                        RemoteString("button_overrides_colors"),
+                        color = colors.contentColor(),
+                        style = RemoteMaterialTheme.typography.typography.labelMedium,
+                    )
+                }
             }
         }
     }
@@ -116,11 +147,17 @@ class RemoteButtonTest {
             backgroundColor = Color.Black,
             creationDisplayInfo = creationDisplayInfo,
         ) {
-            RemoteButton(contentPadding = RemotePaddingValues(150.rdp)) {
-                RemoteText(
-                    RemoteString("button_overrides_padding"),
-                    color = RemoteButtonDefaults.buttonColors().contentColor(),
-                )
+            Center(RemoteModifier.fillMaxSize()) {
+                RemoteButton(
+                    modifier = RemoteModifier.buttonSizeModifier(),
+                    contentPadding = RemotePaddingValues(150.rdp),
+                ) {
+                    RemoteText(
+                        RemoteString("button_overrides_padding"),
+                        color = RemoteButtonDefaults.buttonColors().contentColor(),
+                        style = RemoteMaterialTheme.typography.typography.labelMedium,
+                    )
+                }
             }
         }
     }
@@ -131,14 +168,17 @@ class RemoteButtonTest {
             backgroundColor = Color.Black,
             creationDisplayInfo = creationDisplayInfo,
         ) {
-            RemoteButton(
-                modifier = RemoteModifier.size(180.rdp, 100.rdp),
-                contentPadding = RemotePaddingValues(0.rdp),
-            ) {
-                RemoteText(
-                    RemoteString("button_overrides_size"),
-                    color = RemoteButtonDefaults.buttonColors().contentColor(),
-                )
+            Center(RemoteModifier.fillMaxSize()) {
+                RemoteButton(
+                    modifier = RemoteModifier.size(180.rdp, 100.rdp),
+                    contentPadding = RemotePaddingValues(0.rdp),
+                ) {
+                    RemoteText(
+                        RemoteString("button_overrides_size"),
+                        color = RemoteButtonDefaults.buttonColors().contentColor(),
+                        style = RemoteMaterialTheme.typography.typography.labelMedium,
+                    )
+                }
             }
         }
     }
@@ -149,15 +189,98 @@ class RemoteButtonTest {
             backgroundColor = Color.Black,
             creationDisplayInfo = creationDisplayInfo,
         ) {
-            RemoteButton(
-                modifier = RemoteModifier,
-                border = 8.rdp,
-                borderColor = RemoteColor(Color.Green),
-            ) {
-                RemoteText(
-                    RemoteString("button_with_border"),
-                    color = RemoteButtonDefaults.buttonColors().contentColor(),
-                )
+            Center(RemoteModifier.fillMaxSize()) {
+                RemoteButton(
+                    modifier = RemoteModifier.buttonSizeModifier(),
+                    border = 8.rdp,
+                    borderColor = RemoteColor(Color.Green),
+                ) {
+                    RemoteText(
+                        RemoteString("button_with_border"),
+                        color = RemoteButtonDefaults.buttonColors().contentColor(),
+                        style = RemoteMaterialTheme.typography.typography.labelMedium,
+                    )
+                }
+            }
+        }
+    }
+
+    @Test
+    fun button_with_circle_shape() {
+        remoteComposeTestRule.runScreenshotTest(
+            backgroundColor = Color.Black,
+            creationDisplayInfo = creationDisplayInfo,
+        ) {
+            Center(RemoteModifier.fillMaxSize()) {
+                RemoteButton(
+                    modifier = RemoteModifier.size(150.rdp),
+                    border = 8.rdp,
+                    borderColor = RemoteColor(Color.Green),
+                    shape = RemoteCircleShape,
+                ) {
+                    RemoteText(
+                        RemoteString("button_with_circle_shape"),
+                        color = RemoteButtonDefaults.buttonColors().contentColor(),
+                        style = RemoteMaterialTheme.typography.typography.labelMedium,
+                    )
+                }
+            }
+        }
+    }
+
+    @Test
+    fun button_enabled_container_background_image() {
+        remoteComposeTestRule.runScreenshotTest(
+            backgroundColor = Color.Black,
+            creationDisplayInfo = creationDisplayInfo,
+        ) {
+            val backgroundImage =
+                rememberRemoteBitmapValue(name = "backgroundImage") { createImage(200, 200) }
+            Center(RemoteModifier.fillMaxSize()) {
+                val containerPainter =
+                    RemoteButtonDefaults.containerPainter(painterRemoteBitmap(backgroundImage))
+                RemoteButton(
+                    modifier = RemoteModifier.buttonSizeModifier(),
+                    containerPainter = containerPainter,
+                ) {
+                    RemoteText(
+                        RemoteString("image_background"),
+                        color =
+                            RemoteButtonDefaults.buttonWithContainerPainterColors().contentColor(),
+                        style = RemoteMaterialTheme.typography.typography.labelMedium,
+                    )
+                }
+            }
+        }
+    }
+
+    @Test
+    fun button_disabled_container_background_image() {
+        remoteComposeTestRule.runScreenshotTest(
+            backgroundColor = Color.Black,
+            creationDisplayInfo = creationDisplayInfo,
+        ) {
+            val backgroundImage =
+                rememberRemoteBitmapValue(name = "button_disabled_container_background_image") {
+                    createImage(200, 200)
+                }
+            Center(RemoteModifier.fillMaxSize()) {
+                val enabled = RemoteBoolean(false)
+                val containerPainter =
+                    RemoteButtonDefaults.containerPainter(painterRemoteBitmap(backgroundImage))
+                RemoteButton(
+                    modifier = RemoteModifier.buttonSizeModifier(),
+                    enabled = enabled,
+                    containerPainter = containerPainter,
+                ) {
+                    RemoteText(
+                        RemoteString("disable_image_background"),
+                        color =
+                            RemoteButtonDefaults.buttonWithContainerPainterColors()
+                                .contentColor(enabled = enabled),
+                        style = RemoteMaterialTheme.typography.typography.labelMedium,
+                    )
+                }
             }
         }
     }
@@ -182,7 +305,10 @@ ROOT [-2:-1] = [0.0, 0.0, 0.0, 0.0] VISIBLE
         runBlocking {
             val document =
                 remoteComposeTestRule.captureDocument(context = context) {
-                    RemoteButton(enabled = RemoteBoolean(true)) {
+                    RemoteButton(
+                        modifier = RemoteModifier.buttonSizeModifier(),
+                        enabled = RemoteBoolean(true),
+                    ) {
                         RemoteText(
                             RemoteString("button_enabled"),
                             color = RemoteButtonDefaults.buttonColors().contentColor(),
@@ -215,7 +341,10 @@ ROOT [-2:-1] = [0.0, 0.0, 0.0, 0.0] VISIBLE
         runBlocking {
             val document =
                 remoteComposeTestRule.captureDocument(context = context) {
-                    RemoteButton(enabled = RemoteBoolean(false)) {
+                    RemoteButton(
+                        modifier = RemoteModifier.buttonSizeModifier(),
+                        enabled = RemoteBoolean(false),
+                    ) {
                         RemoteText(
                             RemoteString("button_disabled"),
                             color = RemoteButtonDefaults.buttonColors().contentColor(),
@@ -231,4 +360,18 @@ ROOT [-2:-1] = [0.0, 0.0, 0.0, 0.0] VISIBLE
     // Replace all sequences of whitespace (including newlines, tabs) with a single space. Then
     // trim leading/trailing spaces from the whole string
     private fun String.normalizeWhiteSpace() = this.replace(Regex("``s+"), " ").trim()
+
+    @Composable
+    @RemoteComposable
+    private fun Center(
+        modifier: RemoteModifier,
+        content: @Composable @RemoteComposable () -> Unit,
+    ) {
+        RemoteBox(
+            modifier,
+            horizontalAlignment = RemoteAlignment.CenterHorizontally,
+            verticalArrangement = RemoteArrangement.Center,
+            content = content,
+        )
+    }
 }

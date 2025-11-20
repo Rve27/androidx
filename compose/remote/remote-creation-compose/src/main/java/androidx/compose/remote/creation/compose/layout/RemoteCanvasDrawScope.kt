@@ -394,17 +394,18 @@ public open class RemoteCanvasDrawScope(
         )
     }
 
-    public fun drawRect(
+    override fun drawRect(
         brush: RemoteBrush,
-        topLeft: RemoteOffset = RemoteOffset.Zero,
-        size: RemoteSize = RemoteSize(remote.component.width, remote.component.height),
-        alpha: Float = 1f,
-        style: DrawStyle = Fill,
-        colorFilter: ColorFilter? = null,
-        blendMode: BlendMode = DefaultBlendMode,
+        topLeft: RemoteOffset,
+        size: RemoteSize,
+        alpha: RemoteFloat,
+        style: DrawStyle,
+        colorFilter: ColorFilter?,
+        blendMode: BlendMode,
     ) {
         val right = topLeft.x + size.width
         val bottom = topLeft.y + size.height
+        val alpha = alpha.toFloat()
         remoteDrawRect(
             brush,
             topLeft.x.toFloat(),
