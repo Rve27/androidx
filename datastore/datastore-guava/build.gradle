@@ -41,7 +41,7 @@ dependencies {
     api(project(":datastore:datastore"))
 
     implementation("androidx.concurrent:concurrent-futures-ktx:1.2.0")
-    testImplementation(libs.guava)
+    api(libs.guava)
     testImplementation(libs.junit)
     testImplementation(libs.kotlinCoroutinesTest)
     testImplementation(libs.truth)
