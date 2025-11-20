@@ -226,6 +226,7 @@ public class MediaRouteProviderServiceTest {
 
         // Active scan should be true.
         assertTrue(sActiveScanCountDownLatch.await(TIME_OUT_MS, TimeUnit.MILLISECONDS));
+        PollingCheck.waitFor(TIME_OUT_MS, () -> sLastDiscoveryRequest != null);
         assertFalse(sLastDiscoveryRequest.shouldScanWithScreenOff());
     }
 
