@@ -26,6 +26,7 @@ import androidx.compose.remote.creation.compose.layout.RemoteSize
 import androidx.compose.remote.creation.compose.state.RemoteFloat
 import androidx.compose.remote.creation.compose.state.RemoteString
 import androidx.compose.remote.creation.compose.state.getFloatIdForCreationState
+import androidx.compose.remote.creation.compose.state.rf
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -385,6 +386,31 @@ interface RemoteDrawScope : Density {
         size: RemoteSize = remoteSize.offsetSize(topLeft),
         /*FloatRange(from = 0.0, to = 1.0)*/
         alpha: Float = 1.0f,
+        style: DrawStyle = Fill,
+        colorFilter: ColorFilter? = null,
+        blendMode: BlendMode = DefaultBlendMode,
+    )
+
+    /**
+     * Draws a rectangle with the given offset and size. If no offset from the top left is provided,
+     * it is drawn starting from the origin of the current translation. If no size is provided, the
+     * size of the current environment is used.
+     *
+     * @param brush The color or fill to be applied to the rectangle
+     * @param topLeft Offset from the local origin of 0, 0 relative to the current translation
+     * @param size Dimensions of the rectangle to draw
+     * @param alpha Opacity to be applied to the [brush] from 0.0f to 1.0f representing fully
+     *   transparent to fully opaque respectively
+     * @param style Whether or not the rectangle is stroked or filled in
+     * @param colorFilter ColorFilter to apply to the [brush] when drawn into the destination
+     * @param blendMode Blending algorithm to apply to destination
+     */
+    public fun drawRect(
+        brush: RemoteBrush,
+        topLeft: RemoteOffset = RemoteOffset.Zero,
+        size: RemoteSize = remoteSize.offsetSize(topLeft),
+        /*FloatRange(from = 0.0, to = 1.0)*/
+        alpha: RemoteFloat = 1.0f.rf,
         style: DrawStyle = Fill,
         colorFilter: ColorFilter? = null,
         blendMode: BlendMode = DefaultBlendMode,
