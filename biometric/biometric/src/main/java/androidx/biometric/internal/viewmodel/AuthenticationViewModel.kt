@@ -346,7 +346,7 @@ internal class AuthenticationViewModel(
         DialogInterface.OnClickListener {
         private val viewModelRef: WeakReference<AuthenticationViewModel> = WeakReference(viewModel)
 
-        override fun onClick(dialogInterface: DialogInterface, which: Int) {
+        override fun onClick(dialogInterface: DialogInterface?, which: Int) {
             viewModelRef.get()?.setNegativeButtonPressPending()
         }
     }
@@ -356,7 +356,7 @@ internal class AuthenticationViewModel(
         DialogInterface.OnClickListener {
         private val viewModelRef: WeakReference<AuthenticationViewModel> = WeakReference(viewModel)
 
-        override fun onClick(dialogInterface: DialogInterface, which: Int) {
+        override fun onClick(dialogInterface: DialogInterface?, which: Int) {
             viewModelRef.get()?.setMoreOptionsButtonPressPending()
         }
     }
