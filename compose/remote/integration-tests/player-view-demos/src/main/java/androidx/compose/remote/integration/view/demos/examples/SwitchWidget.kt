@@ -44,6 +44,7 @@ import androidx.compose.remote.creation.compose.state.RemoteInt
 import androidx.compose.remote.creation.compose.state.rdp
 import androidx.compose.remote.creation.compose.state.rememberRemoteInt
 import androidx.compose.remote.creation.compose.state.rememberRemoteIntValue
+import androidx.compose.remote.creation.compose.state.rf
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
@@ -67,7 +68,7 @@ fun SwitchWidgetOnState(modifier: RemoteModifier = RemoteModifier, id: Int = 0) 
         ) {
             Canvas(modifier = RemoteModifier.size(32.rdp)) {
                 val color = Color(255, 255, 255)
-                drawCircle(color = color, radius = 34f)
+                drawCircle(color = color, radius = 34f.rf)
             }
         }
     }
@@ -92,7 +93,7 @@ fun SwitchWidgetOffState(modifier: RemoteModifier = RemoteModifier, id: Int = 0)
         ) {
             Canvas(modifier = RemoteModifier.size(20.rdp)) {
                 val color = Color(220, 220, 220)
-                drawCircle(color = color, radius = 30f)
+                drawCircle(color = color, radius = 30f.rf)
             }
         }
     }

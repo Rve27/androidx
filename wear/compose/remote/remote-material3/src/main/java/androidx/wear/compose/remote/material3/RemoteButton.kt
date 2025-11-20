@@ -419,7 +419,7 @@ private fun RemoteDrawScope.drawShapedBackground(
     val h = remoteComponentHeight(state)
 
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-        canvas.drawRect(0f, 0f, w, h, RemotePaint().apply { remoteColor = color })
+        canvas.drawRect(0f.rf, 0f.rf, w, h, RemotePaint().apply { remoteColor = color })
         return
     }
 

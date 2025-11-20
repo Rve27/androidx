@@ -60,17 +60,8 @@ public val Float.rf: RemoteFloat
 internal fun Number.getFloatIdForCreationState(creationState: RemoteComposeCreationState): Float =
     when (this) {
         is Float -> this
-        is RemoteFloat -> getFloatIdForCreationState(creationState)
         else -> toFloat()
     }
-
-/** Extension property that extracts whether or not a [Number] represents a constant value. */
-internal val Number.hasConstantValue: Boolean
-    get() =
-        when (this) {
-            is RemoteFloat -> this.hasConstantValue
-            else -> true
-        }
 
 /**
  * Abstract base class for all remote float representations. It extends [Number] and implements
@@ -81,7 +72,7 @@ internal val Number.hasConstantValue: Boolean
  *   constant.
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public abstract class RemoteFloat : Number(), RemoteState<Float> {
+public abstract class RemoteFloat : RemoteState<Float> {
     internal abstract val arrayProvider: (creationState: RemoteComposeCreationState) -> FloatArray
 
     internal fun arrayForCreationState(creationState: RemoteComposeCreationState): FloatArray {
@@ -114,7 +105,7 @@ public abstract class RemoteFloat : Number(), RemoteState<Float> {
         return id
     }
 
-    public override fun toFloat(): Float {
+    public fun toFloat(): Float {
         return id
     }
 
@@ -186,26 +177,6 @@ public abstract class RemoteFloat : Number(), RemoteState<Float> {
                 }
             },
         )
-    }
-
-    public override fun toByte(): Byte {
-        TODO("Not yet implemented")
-    }
-
-    public override fun toDouble(): Double {
-        TODO("Not yet implemented")
-    }
-
-    public override fun toInt(): Int {
-        TODO("Not yet implemented")
-    }
-
-    public override fun toLong(): Long {
-        TODO("Not yet implemented")
-    }
-
-    public override fun toShort(): Short {
-        TODO("Not yet implemented")
     }
 
     /**
@@ -1062,7 +1033,6 @@ public annotation class AnimationType
  */
 public fun toArray(a: Number): FloatArray =
     when (a) {
-        is RemoteFloat -> a.arrayForCreationState(FallbackCreationState.state)
         is Float -> floatArrayOf(a)
         else -> floatArrayOf(a.toFloat())
     }
@@ -1076,12 +1046,8 @@ public fun toArray(a: Number): FloatArray =
  * @param creationState The [RemoteComposeCreationState] to use for conversion.
  * @return A [FloatArray] representation of the number.
  */
-public fun toArray(a: Number, creationState: RemoteComposeCreationState): FloatArray =
-    when (a) {
-        is RemoteFloat -> a.arrayForCreationState(creationState)
-        is Float -> floatArrayOf(a)
-        else -> floatArrayOf(a.toFloat())
-    }
+public fun toArray(a: RemoteFloat, creationState: RemoteComposeCreationState): FloatArray =
+    a.arrayForCreationState(creationState)
 
 /**
  * Composable function to remember and provide a [RemoteFloat] from a [FloatArray]. This is intended

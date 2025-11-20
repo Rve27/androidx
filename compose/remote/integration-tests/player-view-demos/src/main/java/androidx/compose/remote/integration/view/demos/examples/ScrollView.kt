@@ -19,13 +19,13 @@ package androidx.compose.remote.integration.view.demos.examples
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.remote.creation.compose.layout.ROffset
 import androidx.compose.remote.creation.compose.layout.RemoteAlignment
 import androidx.compose.remote.creation.compose.layout.RemoteArrangement
 import androidx.compose.remote.creation.compose.layout.RemoteBox
 import androidx.compose.remote.creation.compose.layout.RemoteCanvas
 import androidx.compose.remote.creation.compose.layout.RemoteColumn
 import androidx.compose.remote.creation.compose.layout.RemoteComposable
+import androidx.compose.remote.creation.compose.layout.RemoteOffset
 import androidx.compose.remote.creation.compose.layout.RemoteRow
 import androidx.compose.remote.creation.compose.layout.RemoteText
 import androidx.compose.remote.creation.compose.modifier.RemoteModifier
@@ -127,9 +127,9 @@ fun CanvasCalendarMonth(modifier: RemoteModifier = RemoteModifier, month: Int = 
                         drawAnchoredText(
                             "${dayNames[j]}",
                             Color.Black,
-                            ROffset(40f, 20f),
-                            1f,
-                            0f,
+                            RemoteOffset(40f, 20f),
+                            1f.rf,
+                            0f.rf,
                             typeface = android.graphics.Typeface.DEFAULT_BOLD,
                         )
                     }
@@ -169,10 +169,10 @@ fun CanvasCalendarMonth(modifier: RemoteModifier = RemoteModifier, month: Int = 
                                 drawAnchoredText(
                                     "$number",
                                     Color.White,
-                                    ROffset(40f, 20f),
-                                    1f,
-                                    0f,
-                                    1f,
+                                    RemoteOffset(40f, 20f),
+                                    1f.rf,
+                                    0f.rf,
+                                    1f.rf,
                                 )
                             }
                         } else {
@@ -180,10 +180,10 @@ fun CanvasCalendarMonth(modifier: RemoteModifier = RemoteModifier, month: Int = 
                                 drawAnchoredText(
                                     "$number",
                                     Color.Black,
-                                    ROffset(40f, 20f),
-                                    1f,
-                                    0f,
-                                    1f,
+                                    RemoteOffset(40f, 20f),
+                                    1f.rf,
+                                    0f.rf,
+                                    1f.rf,
                                 )
                             }
                             //                            RemoteText("$number", fontSize = 20.sp)
@@ -234,9 +234,9 @@ fun ScrollViewDemo() {
                 CanvasCalendarMonth(
                     modifier =
                         RemoteModifier.graphicsLayer(
-                                scaleX = scale.internalAsFloat(),
-                                scaleY = scale.internalAsFloat(),
-                                rotationX = rotation.internalAsFloat(),
+                                scaleX = scale,
+                                scaleY = scale,
+                                rotationX = rotation,
                             )
                             .width(h2)
                             .height(h2)

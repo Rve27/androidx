@@ -199,18 +199,18 @@ public inline fun RemoteDrawScope.scale(
  *   within the provided clip
  */
 public fun RemoteDrawScope.clipRect(
-    left: Float = 0.0f,
-    top: Float = 0.0f,
-    right: Number = remote.component.width,
-    bottom: Number = remote.component.height,
+    left: RemoteFloat = 0.0f.rf,
+    top: RemoteFloat = 0.0f.rf,
+    right: RemoteFloat = remote.component.width,
+    bottom: RemoteFloat = remote.component.height,
     clipOp: ClipOp = ClipOp.Intersect,
     block: RemoteDrawScope.() -> Unit,
 ): Unit =
     withTransform(
         {
             clipRect(
-                left,
-                top,
+                left.getFloatIdForCreationState(this@clipRect.remote.remoteComposeCreationState),
+                top.getFloatIdForCreationState(this@clipRect.remote.remoteComposeCreationState),
                 right.getFloatIdForCreationState(this@clipRect.remote.remoteComposeCreationState),
                 bottom.getFloatIdForCreationState(this@clipRect.remote.remoteComposeCreationState),
                 clipOp,
@@ -328,8 +328,8 @@ interface RemoteDrawScope : Density {
      */
     public fun drawLine(
         brush: Brush,
-        start: Offset,
-        end: Offset,
+        start: RemoteOffset,
+        end: RemoteOffset,
         strokeWidth: Float = Stroke.HairlineWidth,
         cap: StrokeCap = Stroke.DefaultCap,
         pathEffect: PathEffect? = null,
@@ -355,8 +355,8 @@ interface RemoteDrawScope : Density {
      */
     public fun drawLine(
         color: Color,
-        start: Offset,
-        end: Offset,
+        start: RemoteOffset,
+        end: RemoteOffset,
         strokeWidth: Float = Stroke.HairlineWidth,
         cap: StrokeCap = Stroke.DefaultCap,
         pathEffect: PathEffect? = null,
@@ -455,7 +455,7 @@ interface RemoteDrawScope : Density {
      */
     public fun drawImage(
         image: ImageBitmap,
-        topLeft: Offset = Offset.Zero,
+        topLeft: RemoteOffset = RemoteOffset.Zero,
         /*@FloatRange(from = 0.0, to = 1.0)*/
         alpha: Float = 1.0f,
         style: DrawStyle = Fill,
@@ -634,27 +634,14 @@ interface RemoteDrawScope : Density {
      */
     public fun drawCircle(
         color: Color,
-        radius: Number = remoteSize.minDimension / 2.0f,
+        radius: RemoteFloat = remoteSize.minDimension / 2.0f,
         center: RemoteOffset = remoteCenter,
         /*@FloatRange(from = 0.0, to = 1.0)*/
-        alpha: Number = 1.0f,
+        alpha: RemoteFloat = 1.0f.rf,
         style: DrawStyle = Fill,
         colorFilter: ColorFilter? = null,
         blendMode: BlendMode = DefaultBlendMode,
-    ) {
-        val iRadius: Float =
-            if (radius is RemoteFloat) radius.internalAsFloat() else radius.toFloat()
-        val iAlpha: Float = if (alpha is RemoteFloat) alpha.internalAsFloat() else alpha.toFloat()
-        drawCircle(
-            color = color,
-            radius = iRadius,
-            center = center,
-            alpha = iAlpha,
-            style = style,
-            colorFilter = colorFilter,
-            blendMode = blendMode,
-        )
-    }
+    )
 
     /**
      * Draws an oval with the given offset and size. If no offset from the top left is provided, it
@@ -818,10 +805,10 @@ interface RemoteDrawScope : Density {
     public fun drawTweenPath(
         path1: Path,
         path2: Path,
-        tween: Number,
+        tween: RemoteFloat,
         color: Color,
-        start: Number = 0f,
-        stop: Number = 1f,
+        start: RemoteFloat = 0f.rf,
+        stop: RemoteFloat = 1f.rf,
         /*@FloatRange(from = 0.0, to = 1.0)*/
         alpha: Float = 1.0f,
         style: DrawStyle = Fill,
@@ -834,32 +821,20 @@ interface RemoteDrawScope : Density {
      * Whether this shape is filled or stroked (or both) is controlled by [DrawStyle]. If the path
      * is filled, then subpaths within it are implicitly closed (see [Path.close]). path must
      * contain the same pattern and order of path commands (path.xxTo())
-     *
-     * @param path1 Path to draw
-     * @param path2 Path to draw
-     * @param tween defines interpolation (path2-path1) * tween + path1
-     * @param start defines fraction to start def = 0f at Nan means start at beginning
-     * @param stop defines fraction to stop default = 1f, Nan means start at ending
-     * @param color Color to be applied to the path
-     * @param alpha Opacity to be applied to the path from 0.0f to 1.0f representing fully
-     *   transparent to fully opaque respectively
-     * @param style Whether or not the path is stroked or filled in
-     * @param colorFilter ColorFilter to apply to the [color] when drawn into the destination
-     * @param blendMode Blending algorithm to be applied to the path when it is drawn
      */
     public fun drawAnchoredText(
         text: CharSequence,
         brush: RemoteBrush,
-        anchor: Offset = Offset.Zero,
+        anchor: RemoteOffset = RemoteOffset.Zero,
         /*@FloatRange(from = -1.0, to = 1.0)*/
-        panx: Number = 0f,
+        panx: RemoteFloat = 0f.rf,
         /*@FloatRange(from = -1.0, to = 1.0)*/
-        pany: Number = 0f,
-        alpha: Number = 1f,
+        pany: RemoteFloat = 0f.rf,
+        alpha: RemoteFloat = 1f.rf,
         //    textDecoration: TextDecoration? = null,
         drawStyle: DrawStyle = Fill,
         typeface: Typeface? = null,
-        textSize: Number = 32f,
+        textSize: RemoteFloat = 32f.rf,
         //    blendMode: BlendMode = DrawScope.DefaultBlendMode
     )
 
@@ -868,32 +843,20 @@ interface RemoteDrawScope : Density {
      * Whether this shape is filled or stroked (or both) is controlled by [DrawStyle]. If the path
      * is filled, then subpaths within it are implicitly closed (see [Path.close]). path must
      * contain the same pattern and order of path commands (path.xxTo())
-     *
-     * @param path1 Path to draw
-     * @param path2 Path to draw
-     * @param tween defines interpolation (path2-path1) * tween + path1
-     * @param start defines fraction to start def = 0f at Nan means start at beginning
-     * @param stop defines fraction to stop default = 1f, Nan means start at ending
-     * @param color Color to be applied to the path
-     * @param alpha Opacity to be applied to the path from 0.0f to 1.0f representing fully
-     *   transparent to fully opaque respectively
-     * @param style Whether or not the path is stroked or filled in
-     * @param colorFilter ColorFilter to apply to the [color] when drawn into the destination
-     * @param blendMode Blending algorithm to be applied to the path when it is drawn
      */
     public fun drawAnchoredText(
         text: RemoteString,
         brush: RemoteBrush,
-        anchor: Offset = Offset.Zero,
+        anchor: RemoteOffset = RemoteOffset.Zero,
         /*@FloatRange(from = -1.0, to = 1.0)*/
-        panx: Number = 0f,
+        panx: RemoteFloat = 0f.rf,
         /*@FloatRange(from = -1.0, to = 1.0)*/
-        pany: Number = 0f,
-        alpha: Number = 1f,
+        pany: RemoteFloat = 0f.rf,
+        alpha: RemoteFloat = 1f.rf,
         //    textDecoration: TextDecoration? = null,
         drawStyle: DrawStyle = Fill,
         typeface: Typeface? = null,
-        textSize: Number = 32f,
+        textSize: RemoteFloat = 32f.rf,
         //    blendMode: BlendMode = DrawScope.DefaultBlendMode
     )
 
@@ -902,48 +865,36 @@ interface RemoteDrawScope : Density {
      * Whether this shape is filled or stroked (or both) is controlled by [DrawStyle]. If the path
      * is filled, then subpaths within it are implicitly closed (see [Path.close]). path must
      * contain the same pattern and order of path commands (path.xxTo())
-     *
-     * @param path1 Path to draw
-     * @param path2 Path to draw
-     * @param tween defines interpolation (path2-path1) * tween + path1
-     * @param start defines fraction to start def = 0f at Nan means start at beginning
-     * @param stop defines fraction to stop default = 1f, Nan means start at ending
-     * @param color Color to be applied to the path
-     * @param alpha Opacity to be applied to the path from 0.0f to 1.0f representing fully
-     *   transparent to fully opaque respectively
-     * @param style Whether or not the path is stroked or filled in
-     * @param colorFilter ColorFilter to apply to the [color] when drawn into the destination
-     * @param blendMode Blending algorithm to be applied to the path when it is drawn
      */
     public fun drawAnchoredText(
         text: CharSequence,
         color: Color = Color.Unspecified,
-        anchor: Offset = Offset.Zero,
+        anchor: RemoteOffset = RemoteOffset.Zero,
         /*@FloatRange(from = -1.0, to = 1.0)*/
-        panx: Number = 0f,
+        panx: RemoteFloat = 0f.rf,
         /*@FloatRange(from = -1.0, to = 1.0)*/
-        pany: Number = 0f,
-        alpha: Number = 1f,
+        pany: RemoteFloat = 0f.rf,
+        alpha: RemoteFloat = 1f.rf,
         //    textDecoration: TextDecoration? = null,
         drawStyle: DrawStyle = Fill,
         typeface: Typeface? = null,
-        textSize: Number = 32f,
+        textSize: RemoteFloat = 32f.rf,
         //    blendMode: BlendMode = DrawScope.DefaultBlendMode
     )
 
     public fun drawAnchoredText(
         text: RemoteString,
         color: Color = Color.Unspecified,
-        anchor: Offset = Offset.Zero,
+        anchor: RemoteOffset = RemoteOffset.Zero,
         /*@FloatRange(from = -1.0, to = 1.0)*/
-        panx: Number = 0f,
+        panx: RemoteFloat = 0f.rf,
         /*@FloatRange(from = -1.0, to = 1.0)*/
-        pany: Number = 0f,
-        alpha: Number = 1f,
+        pany: RemoteFloat = 0f.rf,
+        alpha: RemoteFloat = 1f.rf,
         //    textDecoration: TextDecoration? = null,
         drawStyle: DrawStyle = Fill,
         typeface: Typeface? = null,
-        textSize: Number = 32f,
+        textSize: RemoteFloat = 32f.rf,
         //    blendMode: BlendMode = DrawScope.DefaultBlendMode
     )
 
@@ -1047,7 +998,7 @@ interface RemoteDrawScope : Density {
     public fun drawText(
         textLayoutResult: TextLayoutResult,
         color: Color = Color.Unspecified,
-        topLeft: Offset = Offset.Zero,
+        topLeft: RemoteOffset = RemoteOffset.Zero,
         alpha: Float = Float.NaN,
         shadow: Shadow? = null,
         textDecoration: TextDecoration? = null,
@@ -1074,7 +1025,7 @@ interface RemoteDrawScope : Density {
     public fun drawText(
         textLayoutResult: TextLayoutResult,
         brush: Brush,
-        topLeft: Offset = Offset.Zero,
+        topLeft: RemoteOffset = RemoteOffset.Zero,
         alpha: Float = Float.NaN,
         shadow: Shadow? = null,
         textDecoration: TextDecoration? = null,
@@ -1116,7 +1067,7 @@ interface RemoteDrawScope : Density {
     public fun drawText(
         textMeasurer: TextMeasurer,
         text: String,
-        topLeft: Offset = Offset.Zero,
+        topLeft: RemoteOffset = RemoteOffset.Zero,
         style: TextStyle = TextStyle.Default,
         overflow: TextOverflow = TextOverflow.Clip,
         softWrap: Boolean = true,
@@ -1163,7 +1114,7 @@ interface RemoteDrawScope : Density {
     public fun drawText(
         textMeasurer: TextMeasurer,
         text: AnnotatedString,
-        topLeft: Offset = Offset.Zero,
+        topLeft: RemoteOffset = RemoteOffset.Zero,
         style: TextStyle = TextStyle.Default,
         overflow: TextOverflow = TextOverflow.Clip,
         softWrap: Boolean = true,
