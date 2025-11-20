@@ -23,6 +23,7 @@ import androidx.compose.remote.core.Operations
 import androidx.compose.remote.core.RcProfiles
 import androidx.compose.remote.core.RemoteComposeBuffer
 import androidx.compose.remote.core.operations.DrawTextOnCircle
+import androidx.compose.remote.creation.RemoteComposeWriterAndroid
 import androidx.compose.remote.creation.compose.SCREENSHOT_GOLDEN_DIRECTORY
 import androidx.compose.remote.creation.compose.layout.RemoteBox
 import androidx.compose.remote.creation.compose.layout.RemoteCanvas
@@ -32,7 +33,6 @@ import androidx.compose.remote.creation.compose.modifier.fillMaxSize
 import androidx.compose.remote.creation.compose.state.RemoteString
 import androidx.compose.remote.creation.platform.AndroidxRcPlatformServices
 import androidx.compose.remote.creation.profile.Profile
-import androidx.compose.remote.creation.profile.RcPlatformProfiles
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.test.core.app.ApplicationProvider
@@ -83,15 +83,9 @@ class CaptureRemoteDocumentTest {
                 CoreDocument.DOCUMENT_API_LEVEL,
                 RcProfiles.PROFILE_ANDROID_NATIVE,
                 AndroidxRcPlatformServices(),
-            ) { width, height, contentDescription, profile ->
-                RcPlatformProfiles.ANDROIDX.profileFactory
-                    .create(width, height, contentDescription, profile)
-                    .apply {
-                        buffer.setVersion(
-                            CoreDocument.DOCUMENT_API_LEVEL,
-                            setOf(Operations.DRAW_TEXT_ON_CIRCLE),
-                        )
-                    }
+                { setOf(Operations.DRAW_TEXT_ON_CIRCLE) },
+            ) { creationDisplayInfo, profile, contentDescription ->
+                RemoteComposeWriterAndroid(creationDisplayInfo, contentDescription, profile)
             }
         val document: ByteArray =
             withContext(Dispatchers.Main) {

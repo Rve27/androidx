@@ -16,7 +16,9 @@
 
 package androidx.compose.remote.creation.compose.capture.shapes
 
+import android.content.Context
 import android.graphics.Color
+import androidx.compose.remote.creation.CreationDisplayInfo
 import androidx.compose.remote.creation.compose.SCREENSHOT_GOLDEN_DIRECTORY
 import androidx.compose.remote.creation.compose.layout.RemoteAlignment
 import androidx.compose.remote.creation.compose.layout.RemoteArrangement
@@ -37,6 +39,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.filters.SdkSuppress
 import androidx.test.filters.SmallTest
 import com.google.testing.junit.testparameterinjector.TestParameter
@@ -58,17 +61,26 @@ class RemoteShapeTest {
             targetPlayer = targetPlayer,
         )
     }
+    private val context: Context = ApplicationProvider.getApplicationContext()
+
+    val size = Size(500f, 500f)
+    private val creationDisplayInfo =
+        CreationDisplayInfo(
+            size.width.toInt(),
+            size.height.toInt(),
+            context.resources.displayMetrics.density,
+        )
 
     @Test
     fun circleShape() {
-        remoteComposeTestRule.runScreenshotTest(size = Size(500f, 500f)) {
+        remoteComposeTestRule.runScreenshotTest(creationDisplayInfo = creationDisplayInfo) {
             DrawRemoteShape(RemoteCircleShape)
         }
     }
 
     @Test
     fun roundedUniformPercentCorners() {
-        remoteComposeTestRule.runScreenshotTest(size = Size(500f, 500f)) {
+        remoteComposeTestRule.runScreenshotTest(creationDisplayInfo = creationDisplayInfo) {
             val rounded = RemoteRoundedCornerShape(25)
             DrawRemoteShape(rounded)
         }
@@ -76,7 +88,7 @@ class RemoteShapeTest {
 
     @Test
     fun roundedUniformRemoteDpCorners() {
-        remoteComposeTestRule.runScreenshotTest(size = Size(500f, 500f)) {
+        remoteComposeTestRule.runScreenshotTest(creationDisplayInfo = creationDisplayInfo) {
             val rounded = RemoteRoundedCornerShape(25.rdp)
             DrawRemoteShape(rounded)
         }
@@ -84,7 +96,7 @@ class RemoteShapeTest {
 
     @Test
     fun roundedUniformPxCorners() {
-        remoteComposeTestRule.runScreenshotTest(size = Size(500f, 500f)) {
+        remoteComposeTestRule.runScreenshotTest(creationDisplayInfo = creationDisplayInfo) {
             val rounded = RemoteRoundedCornerShape(25f.rf)
             DrawRemoteShape(rounded)
         }
@@ -92,7 +104,7 @@ class RemoteShapeTest {
 
     @Test
     fun roundedDifferentRemoteDpRadius() {
-        remoteComposeTestRule.runScreenshotTest(size = Size(500f, 500f)) {
+        remoteComposeTestRule.runScreenshotTest(creationDisplayInfo = creationDisplayInfo) {
             val topStart = 12.rdp
             val topEnd = 22.rdp
             val bottomEnd = 32.rdp
@@ -104,7 +116,7 @@ class RemoteShapeTest {
 
     @Test
     fun roundedDifferentPercentRadius() {
-        remoteComposeTestRule.runScreenshotTest(size = Size(500f, 500f)) {
+        remoteComposeTestRule.runScreenshotTest(creationDisplayInfo = creationDisplayInfo) {
             val topStart = 50
             val topEnd = 25
             val bottomEnd = 25
@@ -116,7 +128,7 @@ class RemoteShapeTest {
 
     @Test
     fun roundedDifferentPercentRadiusRTL() {
-        remoteComposeTestRule.runScreenshotTest(size = Size(500f, 500f)) {
+        remoteComposeTestRule.runScreenshotTest(creationDisplayInfo = creationDisplayInfo) {
             CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
                 val topStart = 50
                 val topEnd = 25
@@ -130,7 +142,7 @@ class RemoteShapeTest {
 
     @Test
     fun roundedDifferentPxRadius() {
-        remoteComposeTestRule.runScreenshotTest(size = Size(500f, 500f)) {
+        remoteComposeTestRule.runScreenshotTest(creationDisplayInfo = creationDisplayInfo) {
             val topStart = 12f.rf
             val topEnd = 22f.rf
             val bottomEnd = 32f.rf
@@ -142,7 +154,7 @@ class RemoteShapeTest {
 
     @Test
     fun zeroSizedCorners() {
-        remoteComposeTestRule.runScreenshotTest(size = Size(500f, 500f)) {
+        remoteComposeTestRule.runScreenshotTest(creationDisplayInfo = creationDisplayInfo) {
             val rounded = RemoteRoundedCornerShape(0f.rf)
             DrawRemoteShape(rounded)
         }

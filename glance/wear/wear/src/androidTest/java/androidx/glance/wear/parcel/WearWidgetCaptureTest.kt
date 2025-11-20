@@ -22,8 +22,8 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.text.BasicText
+import androidx.compose.remote.creation.CreationDisplayInfo
 import androidx.compose.remote.creation.compose.action.pendingIntentAction
-import androidx.compose.remote.creation.compose.capture.CreationDisplayInfo
 import androidx.compose.remote.creation.compose.capture.RemoteComposeCapture
 import androidx.compose.remote.creation.compose.layout.RemoteBox
 import androidx.compose.remote.creation.compose.layout.RemoteColumn
@@ -38,8 +38,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.getOrNull
@@ -89,8 +89,7 @@ class WearWidgetCaptureTest {
             widgetPendingIntents: WidgetPendingIntents,
             content: @Composable () -> Unit,
         ) {
-            val creationDisplayInfo =
-                CreationDisplayInfo(400, 400, LocalConfiguration.current.densityDpi)
+            val creationDisplayInfo = CreationDisplayInfo(400, 400, LocalDensity.current.density)
             RemoteComposeCapture(
                 LocalContext.current,
                 creationDisplayInfo,
@@ -104,7 +103,7 @@ class WearWidgetCaptureTest {
 
         @Composable
         internal fun CaptureWidgetContentData(content: @Composable () -> Unit) {
-            val creationDisplayInfo = CreationDisplayInfo(400, 400, 320)
+            val creationDisplayInfo = CreationDisplayInfo(400, 400, 2f)
             val context = LocalContext.current
 
             val data = remember { mutableStateOf<WearWidgetRawContent?>(null) }
