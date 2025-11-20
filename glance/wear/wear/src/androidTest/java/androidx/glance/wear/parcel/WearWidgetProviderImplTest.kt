@@ -25,7 +25,8 @@ import androidx.glance.wear.ActiveWearWidgetHandle
 import androidx.glance.wear.ContainerInfo.Companion.CONTAINER_TYPE_LARGE
 import androidx.glance.wear.ContainerInfo.Companion.CONTAINER_TYPE_SMALL
 import androidx.glance.wear.GlanceWearWidget
-import androidx.glance.wear.WearWidgetContent
+import androidx.glance.wear.WearWidgetData
+import androidx.glance.wear.WearWidgetDocument
 import androidx.glance.wear.WearWidgetRawContent
 import androidx.glance.wear.WearWidgetRequest
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
@@ -65,7 +66,7 @@ class WearWidgetProviderImplTest {
     private val contentChannel = Channel<WearWidgetRawContent>()
 
     @Test
-    fun onWidgetRequest_callsProvideWidgetContent() = runTest {
+    fun onWidgetRequest_callsProvideWidgetData() = runTest {
         val widgetRequest = WearWidgetRequest(instanceId = 17, widthDp = 200f, heightDp = 200f)
         val channelWidgetCallback = ChannelWidgetCallback(this, contentChannel)
         val provider = WearWidgetProviderImpl(context, testName, mainScope, testWidget)
@@ -169,15 +170,15 @@ class WearWidgetProviderImplTest {
         var enableFailureMode = false
         var content = @Composable { RemoteText("WearWidgetProviderImplTest") }
 
-        override suspend fun provideWidgetContent(
+        override suspend fun provideWidgetData(
             context: Context,
             request: WearWidgetRequest,
-        ): WearWidgetContent {
+        ): WearWidgetData {
             lastRequestedInstanceId = request.instanceId
             if (enableFailureMode) {
                 throw Exception("Test exception")
             }
-            return WearWidgetContent { content() }
+            return WearWidgetDocument { content() }
         }
 
         override suspend fun onAdded(context: Context, widgetHandle: ActiveWearWidgetHandle) {

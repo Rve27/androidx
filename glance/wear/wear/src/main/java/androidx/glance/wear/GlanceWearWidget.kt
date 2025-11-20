@@ -25,8 +25,8 @@ import androidx.glance.wear.parcel.WidgetUpdateClientImpl
 /**
  * Object that handles providing the contents of a Wear Widget.
  *
- * The widget UI is defined by the content in [WearWidgetContent], provided in the implementation of
- * [provideWidgetContent].
+ * The widget UI is defined by an instance of [WearWidgetData] such as [WearWidgetDocument],
+ * provided in the implementation of [provideWidgetData].
  *
  * An implementation of this class can be associated with a [GlanceWearWidgetService] for receiving
  * content requests and events from the Host.
@@ -37,7 +37,7 @@ internal constructor(private val updateClient: WidgetUpdateClient) {
     public constructor() : this(WidgetUpdateClientImpl())
 
     /**
-     * Override this method to provide the contents for this Widget.
+     * Override this method to provide data for this Widget.
      *
      * This method is called from the main thread.
      *
@@ -45,10 +45,10 @@ internal constructor(private val updateClient: WidgetUpdateClient) {
      * @param request provides parameters for the contents being requested
      */
     @MainThread
-    public abstract suspend fun provideWidgetContent(
+    public abstract suspend fun provideWidgetData(
         context: Context,
         request: WearWidgetRequest,
-    ): WearWidgetContent
+    ): WearWidgetData
 
     /**
      * Called when a widget provider linked to this widget class is added to the host.
