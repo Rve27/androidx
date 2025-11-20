@@ -39,7 +39,7 @@ public class RemoteComposeContextAndroid : RemoteComposeContext {
         contentDescription: String,
         profile: Profile,
         content: RemoteComposeContextAndroid.() -> Unit,
-    ) : super(RemoteComposeWriterAndroid(creationDisplayInfo, contentDescription, profile)) {
+    ) : super(RemoteComposeWriterAndroid(creationDisplayInfo, contentDescription, profile, null)) {
         content()
     }
 

@@ -29,12 +29,12 @@ public interface RemoteComposeWriterFactory {
      * Returns a valid RemoteComposeWriter
      *
      * @param creationDisplayInfo original size of the document
-     * @param description content description
-     * @param profile operation profiles used by this document
+     * @param profile             operation profiles used by this document
+     * @param writerCallback      callbacks for out of band creation data such as pending intents
      * @return a valid RemoteComposeWriter
      */
     @NonNull
     RemoteComposeWriter create(
             @NonNull CreationDisplayInfo creationDisplayInfo, @NonNull Profile profile,
-            @Nullable String description);
+            @Nullable Object writerCallback);
 }

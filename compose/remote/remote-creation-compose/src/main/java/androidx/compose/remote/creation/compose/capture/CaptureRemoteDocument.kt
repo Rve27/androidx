@@ -44,6 +44,7 @@ public suspend fun captureRemoteDocument(
     context: Context,
     creationDisplayInfo: CreationDisplayInfo = createCreationDisplayInfo(context),
     profile: Profile = RcPlatformProfiles.ANDROIDX,
+    writerCallbacks: WriterCallback? = null,
     content: @Composable @RemoteComposable () -> Unit,
 ): ByteArray = suspendCoroutine { continuation ->
     var completed = false
@@ -60,6 +61,7 @@ public suspend fun captureRemoteDocument(
         },
         onCaptureReady = @Composable {},
         profile = profile,
+        writerCallbacks = writerCallbacks,
         content = content,
     )
 }

@@ -49,7 +49,7 @@ public open class RemoteComposeContext {
         profile: Profile,
         content: RemoteComposeContext.() -> Unit,
     ) {
-        mRemoteWriter = profile.create(creationDisplayInfo, contentDescription)
+        mRemoteWriter = profile.create(creationDisplayInfo, null)
         content()
     }
 

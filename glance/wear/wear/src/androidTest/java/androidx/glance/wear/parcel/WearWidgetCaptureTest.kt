@@ -33,6 +33,7 @@ import androidx.compose.remote.creation.compose.modifier.clickable
 import androidx.compose.remote.creation.compose.modifier.fillMaxSize
 import androidx.compose.remote.creation.compose.modifier.size
 import androidx.compose.remote.creation.compose.state.rdp
+import androidx.compose.remote.creation.profile.RcPlatformProfiles
 import androidx.compose.remote.player.core.RemoteDocument
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -91,13 +92,14 @@ class WearWidgetCaptureTest {
         ) {
             val creationDisplayInfo = CreationDisplayInfo(400, 400, LocalDensity.current.density)
             RemoteComposeCapture(
-                LocalContext.current,
-                creationDisplayInfo,
-                true,
-                { view, writer -> true },
-                @Composable {},
-                WearWidgetProfile(widgetPendingIntents),
-                @Composable { content() },
+                context = LocalContext.current,
+                creationDisplayInfo = creationDisplayInfo,
+                immediateCapture = true,
+                onPaint = { view, writer -> true },
+                onCaptureReady = @Composable {},
+                profile = RcPlatformProfiles.WEAR_WIDGETS,
+                writerCallbacks = widgetPendingIntents,
+                content = @Composable { content() },
             )
         }
 
