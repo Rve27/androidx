@@ -18,6 +18,7 @@ package androidx.pdf.ink.view
 
 import android.content.Context
 import android.content.res.ColorStateList
+import android.os.Parcelable
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.animation.DecelerateInterpolator
@@ -368,6 +369,22 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                 .excludeTarget(colorPaletteView, true)
 
         TransitionManager.beginDelayedTransition(this@AnnotationToolbar, transition)
+    }
+
+    override fun onSaveInstanceState(): Parcelable {
+        val superState = super.onSaveInstanceState()
+        val savedState = ToolbarSavedState(superState)
+        savedState.toolbarState = viewmodel.state.value
+        return savedState
+    }
+
+    override fun onRestoreInstanceState(state: Parcelable?) {
+        if (state is ToolbarSavedState) {
+            super.onRestoreInstanceState(state.superState)
+            viewmodel.restoreState(state.toolbarState)
+        } else {
+            super.onRestoreInstanceState(state)
+        }
     }
 
     /**
