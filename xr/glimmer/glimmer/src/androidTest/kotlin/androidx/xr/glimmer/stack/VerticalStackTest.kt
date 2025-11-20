@@ -145,6 +145,42 @@ class VerticalStackTest {
     }
 
     @Test
+    fun multipleItems_withKeys_displaysFirstTwoItems() {
+        val state = StackState()
+        rule.setContent {
+            VerticalStack(state = state) {
+                item(key = 0) { StackItem("Item 0") }
+                item(key = 1) { StackItem("Item 1") }
+                item(key = 2) { StackItem("Item 2") }
+            }
+        }
+
+        rule.onNodeWithText("Item 0").assertIsDisplayed()
+        rule.onNodeWithText("Item 1").assertIsDisplayed()
+        rule.onNodeWithText("Item 2").assertIsNotDisplayed()
+        assertThat(state.topItem).isEqualTo(0)
+        assertThat(state.topItemOffsetFraction).isEqualTo(0f)
+    }
+
+    @Test
+    fun multipleItems_withNullAndIntKey_displaysFirstTwoItems() {
+        val state = StackState()
+        rule.setContent {
+            VerticalStack(state = state) {
+                item(key = null) { StackItem("Item 0") }
+                item(key = 0) { StackItem("Item 1") }
+                item(key = 1) { StackItem("Item 2") }
+            }
+        }
+
+        rule.onNodeWithText("Item 0").assertIsDisplayed()
+        rule.onNodeWithText("Item 1").assertIsDisplayed()
+        rule.onNodeWithText("Item 2").assertIsNotDisplayed()
+        assertThat(state.topItem).isEqualTo(0)
+        assertThat(state.topItemOffsetFraction).isEqualTo(0f)
+    }
+
+    @Test
     fun multipleItems_customInitialTopItem_displaysRequestedAndNextItems() {
         val state = StackState(initialTopItem = 1)
         rule.setContent {
