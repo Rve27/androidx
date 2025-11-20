@@ -23,24 +23,24 @@ import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
 @org.robolectric.annotation.Config(sdk = [org.robolectric.annotation.Config.TARGET_SDK])
-class WearWidgetRequestTest {
+class WearWidgetParamsTest {
 
     @Test
     fun fromParcel_matchesOriginalRequest() {
-        val originalRequest =
-            WearWidgetRequest(
+        val originalParams =
+            WearWidgetParams(
                 instanceId = 123,
                 containerType = ContainerInfo.CONTAINER_TYPE_SMALL,
                 widthDp = 200.5f,
                 heightDp = 300.25f,
             )
 
-        val parcel = originalRequest.toParcel()
-        val restoredRequest = WearWidgetRequest.fromParcel(parcel)
+        val parcel = originalParams.toParcel()
+        val restoredParams = WearWidgetParams.fromParcel(parcel)
 
-        assertThat(restoredRequest.instanceId).isEqualTo(originalRequest.instanceId)
-        assertThat(restoredRequest.containerType).isEqualTo(originalRequest.containerType)
-        assertThat(restoredRequest.widthDp).isEqualTo(originalRequest.widthDp)
-        assertThat(restoredRequest.heightDp).isEqualTo(originalRequest.heightDp)
+        assertThat(restoredParams.instanceId).isEqualTo(originalParams.instanceId)
+        assertThat(restoredParams.containerType).isEqualTo(originalParams.containerType)
+        assertThat(restoredParams.widthDp).isEqualTo(originalParams.widthDp)
+        assertThat(restoredParams.heightDp).isEqualTo(originalParams.heightDp)
     }
 }

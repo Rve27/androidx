@@ -27,8 +27,8 @@ import androidx.glance.wear.ContainerInfo.Companion.CONTAINER_TYPE_SMALL
 import androidx.glance.wear.GlanceWearWidget
 import androidx.glance.wear.WearWidgetData
 import androidx.glance.wear.WearWidgetDocument
+import androidx.glance.wear.WearWidgetParams
 import androidx.glance.wear.WearWidgetRawContent
-import androidx.glance.wear.WearWidgetRequest
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -67,19 +67,31 @@ class WearWidgetProviderImplTest {
 
     @Test
     fun onWidgetRequest_callsProvideWidgetData() = runTest {
-        val widgetRequest = WearWidgetRequest(instanceId = 17, widthDp = 200f, heightDp = 200f)
+        val widgetParams =
+            WearWidgetParams(
+                instanceId = 17,
+                containerType = CONTAINER_TYPE_LARGE,
+                widthDp = 200f,
+                heightDp = 200f,
+            )
         val channelWidgetCallback = ChannelWidgetCallback(this, contentChannel)
         val provider = WearWidgetProviderImpl(context, testName, mainScope, testWidget)
 
-        provider.onWidgetRequest(widgetRequest.toParcel(), channelWidgetCallback)
+        provider.onWidgetRequest(widgetParams.toParcel(), channelWidgetCallback)
         contentChannel.receive()
 
-        assertThat(testWidget.lastRequestedInstanceId).isEqualTo(widgetRequest.instanceId)
+        assertThat(testWidget.lastRequestedInstanceId).isEqualTo(widgetParams.instanceId)
     }
 
     @Test
     fun onWidgetRequest_capturesRemoteComposable() = runBlocking {
-        val widgetRequest = WearWidgetRequest(instanceId = 17, widthDp = 200f, heightDp = 200f)
+        val widgetParams =
+            WearWidgetParams(
+                instanceId = 17,
+                containerType = CONTAINER_TYPE_LARGE,
+                widthDp = 200f,
+                heightDp = 200f,
+            )
         testWidget.content = { RemoteText("Testing ...") }
         val expectedRcDocumentHierarchy =
             """
@@ -92,10 +104,10 @@ class WearWidgetProviderImplTest {
         val provider = WearWidgetProviderImpl(context, testName, mainScope, testWidget)
         val channelWidgetCallback = ChannelWidgetCallback(this, contentChannel)
 
-        provider.onWidgetRequest(widgetRequest.toParcel(), channelWidgetCallback)
+        provider.onWidgetRequest(widgetParams.toParcel(), channelWidgetCallback)
         val receivedRawContent = contentChannel.receive()
 
-        assertThat(testWidget.lastRequestedInstanceId).isEqualTo(widgetRequest.instanceId)
+        assertThat(testWidget.lastRequestedInstanceId).isEqualTo(widgetParams.instanceId)
         assertThat(
                 RemoteDocument(receivedRawContent.rcDocument)
                     .document
@@ -172,9 +184,9 @@ class WearWidgetProviderImplTest {
 
         override suspend fun provideWidgetData(
             context: Context,
-            request: WearWidgetRequest,
+            params: WearWidgetParams,
         ): WearWidgetData {
-            lastRequestedInstanceId = request.instanceId
+            lastRequestedInstanceId = params.instanceId
             if (enableFailureMode) {
                 throw Exception("Test exception")
             }

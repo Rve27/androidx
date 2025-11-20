@@ -32,7 +32,7 @@ import androidx.glance.wear.GlanceWearWidget
 import androidx.glance.wear.GlanceWearWidgetService
 import androidx.glance.wear.WearWidgetData
 import androidx.glance.wear.WearWidgetDocument
-import androidx.glance.wear.WearWidgetRequest
+import androidx.glance.wear.WearWidgetParams
 
 class HelloWidgetService : GlanceWearWidgetService() {
     override val widget: GlanceWearWidget = HelloWidget()
@@ -41,7 +41,7 @@ class HelloWidgetService : GlanceWearWidgetService() {
 class HelloWidget : GlanceWearWidget() {
     override suspend fun provideWidgetData(
         context: Context,
-        request: WearWidgetRequest,
+        params: WearWidgetParams,
     ): WearWidgetData = WearWidgetDocument { HelloWidgetContent() }
 }
 

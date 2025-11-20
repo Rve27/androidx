@@ -90,9 +90,9 @@ class GlanceWearWidgetServiceTest {
 
         override suspend fun provideWidgetData(
             context: Context,
-            request: WearWidgetRequest,
+            params: WearWidgetParams,
         ): WearWidgetDocument {
-            instanceId = request.instanceId
+            instanceId = params.instanceId
             return WearWidgetDocument { RemoteText("Testing...") }
         }
     }
