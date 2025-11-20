@@ -14,12 +14,8 @@
  * limitations under the License.
  */
 
-package androidx.compose.remote.creation.compose.capture
+package androidx.compose.remote.core
 
-import androidx.compose.remote.core.CoreDocument
-import androidx.compose.remote.core.RcPlatformServices
-import androidx.compose.remote.core.RcProfiles
-import androidx.compose.remote.core.RemoteComposeBuffer
 import androidx.compose.remote.core.operations.ConditionalOperations
 import androidx.compose.remote.core.operations.Header
 import androidx.compose.remote.core.operations.utilities.AnimatedFloatExpression
