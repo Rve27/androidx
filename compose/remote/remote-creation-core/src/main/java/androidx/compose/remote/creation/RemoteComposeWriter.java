@@ -186,7 +186,8 @@ public class RemoteComposeWriter {
 
         Set<Integer> supportedOperations = profile.getSupportedOperations();
         if (supportedOperations != null) {
-            mBuffer.setVersion(profile.getApiLevel(), supportedOperations);
+            mBuffer.setVersion(profile.getApiLevel(),
+                    profile.getOperationsProfiles(), supportedOperations);
         } else {
             mBuffer.setVersion(profile.getApiLevel(), profiles);
         }
@@ -3083,6 +3084,60 @@ public class RemoteComposeWriter {
         endTextComponent();
     }
 
+    /** Add a text component */
+    public void textComponent(
+            @NonNull RecordingModifier modifier,
+            int textId,
+            int color,
+            int colorId,
+            float fontSize,
+            int fontStyle,
+            float fontWeight,
+            @Nullable String fontFamily,
+            int textAlign,
+            int overflow,
+            int maxLines,
+            float letterSpacing,
+            float lineHeightAdd,
+            float lineHeightMultiplier,
+            int lineBreakStrategy,
+            int hyphenationFrequency,
+            int justificationMode,
+            boolean underline,
+            boolean strikethrough,
+            @Nullable String[] fontAxis,
+            float @Nullable [] fontAxisValues,
+            boolean autosize,
+            int flags,
+            @NonNull RemoteComposeWriterInterface content) {
+        startTextComponent(
+                modifier,
+                textId,
+                color,
+                colorId,
+                fontSize,
+                fontStyle,
+                fontWeight,
+                fontFamily,
+                textAlign,
+                overflow,
+                maxLines,
+                letterSpacing,
+                lineHeightAdd,
+                lineHeightMultiplier,
+                lineBreakStrategy,
+                hyphenationFrequency,
+                justificationMode,
+                underline,
+                strikethrough,
+                fontAxis,
+                fontAxisValues,
+                autosize,
+                flags);
+        content.run();
+        endTextComponent();
+    }
+
     /**
      * Start a text component
      *
@@ -3108,43 +3163,23 @@ public class RemoteComposeWriter {
             int textAlign,
             int overflow,
             int maxLines) {
-        int fontFamilyId = -1;
-        if (fontFamily != null) {
-            fontFamilyId = addText(fontFamily);
-        }
-        mBuffer.addTextComponentStart(
-                modifier.getComponentId(),
-                -1,
-                textId,
-                color,
-                fontSize,
-                fontStyle,
-                fontWeight,
-                fontFamilyId,
-                (short) 0,
-                (short) textAlign,
-                overflow,
-                maxLines);
-        for (RecordingModifier.Element m : modifier.getList()) {
-            m.write(this);
-        }
-        addContentStart();
+        startTextComponent(modifier,
+                textId, color, fontSize, fontStyle,
+                fontWeight, fontFamily, (short) 0,
+                (short) textAlign, overflow, maxLines);
     }
 
     /**
      * Start a text component
      *
-     * @param modifier
-     * @param textId id of the text
-     * @param color color of the text
-     * @param fontSize font size
-     * @param fontStyle font style (0 : Normal, 1 : Italic)
+     * @param textId     id of the text
+     * @param color      color of the text
+     * @param fontSize   font size
+     * @param fontStyle  font style (0 : Normal, 1 : Italic)
      * @param fontWeight font weight (1 to 1000, normal is 400)
      * @param fontFamily font family or null
-     * @param flags flags for configuration, only use by color (0: Static color, 1: Color Id)
-     * @param textAlign text alignment (0 : Center, 1 : Left, 2 : Right)
-     * @param overflow
-     * @param maxLines
+     * @param flags      flags for configuration, only use by color (0: Static color, 1: Color Id)
+     * @param textAlign  text alignment (0 : Center, 1 : Left, 2 : Right)
      */
     public void startTextComponent(
             @NonNull RecordingModifier modifier,
@@ -3175,6 +3210,87 @@ public class RemoteComposeWriter {
                 textAlign,
                 overflow,
                 maxLines);
+        for (RecordingModifier.Element m : modifier.getList()) {
+            m.write(this);
+        }
+        addContentStart();
+    }
+
+    /**
+     * Start a text component
+     *
+     * @param textId     id of the text
+     * @param color      color of the text
+     * @param fontSize   font size
+     * @param fontStyle  font style (0 : Normal, 1 : Italic)
+     * @param fontWeight font weight (1 to 1000, normal is 400)
+     * @param fontFamily font family or null
+     * @param flags      flags for configuration, only use by color (0: Static color, 1: Color Id)
+     * @param textAlign  text alignment (0 : Center, 1 : Left, 2 : Right)
+     */
+    public void startTextComponent(
+            @NonNull RecordingModifier modifier,
+            int textId,
+            int color,
+            int colorId,
+            float fontSize,
+            int fontStyle,
+            float fontWeight,
+            @Nullable String fontFamily,
+            int textAlign,
+            int overflow,
+            int maxLines,
+            float letterSpacing,
+            float lineHeightAdd,
+            float lineHeightMultiplier,
+            int lineBreakStrategy,
+            int hyphenationFrequency,
+            int justificationMode,
+            boolean underline,
+            boolean strikethrough,
+            @Nullable String[] fontAxis,
+            float @Nullable [] fontAxisValues,
+            boolean autosize,
+            int flags) {
+        int fontFamilyId = -1;
+        if (fontFamily != null) {
+            fontFamilyId = addText(fontFamily);
+        }
+        int[] axis = null;
+        if (fontAxis != null) {
+            axis = new int[fontAxis.length];
+            int i = 0;
+            for (String axisName : fontAxis) {
+                int fontAxisTag = addText(axisName);
+                axis[i++] = fontAxisTag;
+            }
+        }
+
+        mBuffer.addTextComponentStart(
+                modifier.getComponentId(),
+                -1,
+                textId,
+                color,
+                colorId,
+                fontSize,
+                fontStyle,
+                fontWeight,
+                fontFamilyId,
+                textAlign,
+                overflow,
+                maxLines,
+                letterSpacing,
+                lineHeightAdd,
+                lineHeightMultiplier,
+                lineBreakStrategy,
+                hyphenationFrequency,
+                justificationMode,
+                underline,
+                strikethrough,
+                axis,
+                fontAxisValues,
+                autosize,
+                flags);
         for (RecordingModifier.Element m : modifier.getList()) {
             m.write(this);
         }
