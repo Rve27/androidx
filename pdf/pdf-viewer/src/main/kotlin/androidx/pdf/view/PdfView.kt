@@ -41,8 +41,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.accessibility.AccessibilityManager
 import android.view.inputmethod.InputMethodManager
-import androidx.annotation.FloatRange
 import androidx.annotation.IntDef
+import androidx.annotation.IntRange
 import androidx.annotation.MainThread
 import androidx.annotation.RestrictTo
 import androidx.annotation.VisibleForTesting
@@ -159,20 +159,21 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
     /**
      * The number of pages displayed side-by-side in a single row.
      *
-     * This property controls the layout mode:
-     * - [SINGLE_PAGE]: Displays one page per row (standard display).
-     * - [TWO_PAGE]: Displays two pages per row (like an open book).
+     * This property controls the layout mode and can be set to either 1 or 2.
+     * - 1: Displays one page per row (standard display).
+     * - 2: Displays two pages per row (like an open book).
+     *
+     * @throws IllegalArgumentException if the value is not either 1 or 2.
      */
-    @PagesPerRow
-    @get:RestrictTo(RestrictTo.Scope.LIBRARY)
-    @set:RestrictTo(RestrictTo.Scope.LIBRARY)
-    public var pagesPerRow: Int = SINGLE_PAGE
+    @IntRange(from = 1, to = 2)
+    public var pagesPerRow: Int = 1
         set(value) {
             checkMainThread()
-            // If pagesPerRow anything other than two pages default it to single page.
-            val validPagesPerRow = if (value == TWO_PAGE) TWO_PAGE else SINGLE_PAGE
-            if (field == validPagesPerRow) return
-            field = validPagesPerRow
+            require(value == SINGLE_PAGE || value == TWO_PAGE) {
+                "pagesPerRow must be either 1 or 2."
+            }
+            if (field == value) return
+            field = value
             pageLayoutManager?.let {
                 val lastVisiblePage = fullyVisiblePages.lower
                 updateLayoutStrategy()
@@ -184,15 +185,14 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
     /**
      * The spacing between two horizontally adjacent pages in pixels.
      *
-     * Note: This value is only relevant when [pagesPerRow] is set to [TWO_PAGE].
+     * Note: This value is only relevant when [pagesPerRow] is set to 2.
      */
-    @FloatRange(from = 0.0)
-    @get:RestrictTo(RestrictTo.Scope.LIBRARY)
-    @set:RestrictTo(RestrictTo.Scope.LIBRARY)
-    public var horizontalPageSpacing: Float = context.getDimensions(R.dimen.horizontal_page_spacing)
+    @IntRange(from = 0)
+    public var horizontalPageSpacing: Int =
+        context.resources.getDimensionPixelSize(R.dimen.pdf_horizontal_page_spacing)
         set(value) {
             checkMainThread()
-            val validHorizontalPageSpacing = value.coerceAtLeast(0f)
+            val validHorizontalPageSpacing = value.coerceAtLeast(0)
             if (field == validHorizontalPageSpacing) return
             field = validHorizontalPageSpacing
             // horizontal page spacing does not affect single page layout strategy.
@@ -201,13 +201,12 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         }
 
     /** The spacing between vertically adjacent pages in pixels. */
-    @FloatRange(from = 0.0)
-    @get:RestrictTo(RestrictTo.Scope.LIBRARY)
-    @set:RestrictTo(RestrictTo.Scope.LIBRARY)
-    public var verticalPageSpacing: Float = context.getDimensions(R.dimen.vertical_page_spacing)
+    @IntRange(from = 0)
+    public var verticalPageSpacing: Int =
+        context.resources.getDimensionPixelSize(R.dimen.pdf_vertical_page_spacing)
         set(value) {
             checkMainThread()
-            val validVerticalPageSpacing = value.coerceAtLeast(0f)
+            val validVerticalPageSpacing = value.coerceAtLeast(0)
             if (field == validVerticalPageSpacing) return
             field = validVerticalPageSpacing
             updateLayoutStrategy()
@@ -216,7 +215,11 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
     /** Updates the page layout strategy and triggers a viewport refresh. */
     private fun updateLayoutStrategy() {
         pageLayoutManager?.let {
-            it.updateLayoutStrategy(pagesPerRow, horizontalPageSpacing, verticalPageSpacing)
+            it.updateLayoutStrategy(
+                pagesPerRow,
+                horizontalPageSpacing.toFloat(),
+                verticalPageSpacing.toFloat(),
+            )
             onViewportChanged()
         }
     }
@@ -303,14 +306,12 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                     fastScrollVerticalThumbMarginEnd,
                 )
         }
-        if (typedArray.hasValue(R.styleable.PdfView_horizontalPageSpacing)) {
+        if (typedArray.hasValue(R.styleable.PdfView_pdfHorizontalPageSpacing)) {
             horizontalPageSpacing =
-                typedArray
-                    .getDimensionPixelSize(
-                        R.styleable.PdfView_horizontalPageSpacing,
-                        horizontalPageSpacing.toInt(),
-                    )
-                    .toFloat()
+                typedArray.getDimensionPixelSize(
+                    R.styleable.PdfView_pdfHorizontalPageSpacing,
+                    horizontalPageSpacing,
+                )
         }
         if (typedArray.hasValue(R.styleable.PdfView_isFormFillingEnabled)) {
             isFormFillingEnabled =
@@ -322,21 +323,19 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         if (typedArray.hasValue(R.styleable.PdfView_maxZoom)) {
             maxZoom = typedArray.getFloat(R.styleable.PdfView_maxZoom, maxZoom)
         }
-        if (typedArray.hasValue(R.styleable.PdfView_pagesPerRow)) {
-            pagesPerRow = typedArray.getInt(R.styleable.PdfView_pagesPerRow, SINGLE_PAGE)
+        if (typedArray.hasValue(R.styleable.PdfView_pdfPagesPerRow)) {
+            pagesPerRow = typedArray.getInt(R.styleable.PdfView_pdfPagesPerRow, SINGLE_PAGE)
         }
         if (typedArray.hasValue(R.styleable.PdfView_verticalAlignment)) {
             verticalAlignment =
                 typedArray.getInt(R.styleable.PdfView_verticalAlignment, VERTICAL_ALIGNMENT_CENTER)
         }
-        if (typedArray.hasValue(R.styleable.PdfView_verticalPageSpacing)) {
+        if (typedArray.hasValue(R.styleable.PdfView_pdfVerticalPageSpacing)) {
             verticalPageSpacing =
-                typedArray
-                    .getDimensionPixelSize(
-                        R.styleable.PdfView_verticalPageSpacing,
-                        verticalPageSpacing.toInt(),
-                    )
-                    .toFloat()
+                typedArray.getDimensionPixelSize(
+                    R.styleable.PdfView_pdfVerticalPageSpacing,
+                    verticalPageSpacing,
+                )
         }
         typedArray.recycle()
     }
@@ -1523,8 +1522,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                     backgroundScope,
                     topPageMarginPx = context.getDimensions(R.dimen.top_page_margin),
                     pagesPerRow = pagesPerRow,
-                    horizontalPageSpacingPx = horizontalPageSpacing,
-                    verticalPageSpacingPx = verticalPageSpacing,
+                    horizontalPageSpacingPx = horizontalPageSpacing.toFloat(),
+                    verticalPageSpacingPx = verticalPageSpacing.toFloat(),
                     paginationModel = requireNotNull(localStateToRestore.paginationModel),
                     layoutStrategy = requireNotNull(localStateToRestore.layoutStrategy),
                     pdfFormFillingState = requireNotNull(localStateToRestore.pdfFormFillingState),
@@ -1796,8 +1795,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                         backgroundScope,
                         topPageMarginPx = context.getDimensions(R.dimen.top_page_margin),
                         pagesPerRow = pagesPerRow,
-                        horizontalPageSpacingPx = horizontalPageSpacing,
-                        verticalPageSpacingPx = verticalPageSpacing,
+                        horizontalPageSpacingPx = horizontalPageSpacing.toFloat(),
+                        verticalPageSpacingPx = verticalPageSpacing.toFloat(),
                         errorFlow = errorFlow,
                         isFormFillingEnabled = isFormFillingEnabled,
                     )
@@ -2234,12 +2233,6 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
     @Retention(AnnotationRetention.SOURCE)
     @IntDef(GESTURE_STATE_IDLE, GESTURE_STATE_INTERACTING, GESTURE_STATE_SETTLING)
     public annotation class GestureState
-
-    /** Defines the allowed values for the number of pages displayed per row in the [PdfView]. */
-    @RestrictTo(RestrictTo.Scope.LIBRARY)
-    @Retention(AnnotationRetention.SOURCE)
-    @IntDef(SINGLE_PAGE, TWO_PAGE)
-    public annotation class PagesPerRow
 
     /** Adjusts the position of [PdfView] in response to gestures detected by [GestureTracker] */
     private inner class ZoomScrollGestureHandler : GestureTracker.GestureHandler() {
