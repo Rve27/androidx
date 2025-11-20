@@ -741,6 +741,10 @@ internal class AndroidComposeViewAccessibilityDelegateCompat(val view: AndroidCo
             info.isHeading = true
         }
 
+        semanticsNode.unmergedConfig.getOrNull(SemanticsProperties.TextEntryKey)?.let {
+            info.isTextEntryKey = true
+        }
+
         // Drawing order is not applicable for the root node.
         if (virtualViewId != AccessibilityNodeProviderCompat.HOST_VIEW_ID) {
             val drawingOrderForNode = drawingOrder.getOrDefault(semanticsNode.id, -1)
