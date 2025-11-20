@@ -37,6 +37,7 @@ import androidx.compose.remote.creation.compose.state.RemotePaint
 import androidx.compose.remote.creation.compose.state.RemoteString
 import androidx.compose.remote.creation.compose.state.rememberRemoteDpValue
 import androidx.compose.remote.creation.compose.state.rf
+import androidx.compose.remote.creation.compose.state.toPx
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
@@ -166,13 +167,14 @@ private fun BackgroundOverlay(modifier: RemoteModifier, overlayColor: RemoteColo
                 remoteColor = overlayColor
                 style = Paint.Style.FILL
             }
+        val cornerRadius = RemoteDp(ImageDefaults.BACKGROUND_CORNER_RADIUS_DP.value.rf).toPx()
         canvas.drawRoundRect(
-            0f,
-            0f,
+            0f.rf,
+            0f.rf,
             remote.component.width,
             remote.component.height,
-            ImageDefaults.BACKGROUND_CORNER_RADIUS_DP.toPx(),
-            ImageDefaults.BACKGROUND_CORNER_RADIUS_DP.toPx(),
+            cornerRadius,
+            cornerRadius,
             paint,
         )
     }

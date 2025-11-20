@@ -28,6 +28,7 @@ import androidx.compose.remote.creation.compose.layout.remoteComponentHeight
 import androidx.compose.remote.creation.compose.layout.remoteComponentWidth
 import androidx.compose.remote.creation.compose.state.RemoteFloat
 import androidx.compose.remote.creation.compose.state.RemotePaint
+import androidx.compose.remote.creation.compose.state.rf
 import androidx.compose.ui.unit.LayoutDirection
 
 /**
@@ -80,14 +81,14 @@ public sealed class RemoteOutline {
             }
 
             val path = RemotePath()
-            val circularArcWeight = 0.7071f // Weight for a 90-degree circular arc
+            val circularArcWeight = 0.7071f.rf // Weight for a 90-degree circular arc
 
             // 1. Move to top edge
-            path.moveTo(topLeft, 0f)
+            path.moveTo(topLeft, 0f.rf)
 
             // 2. Top Line & Top-Right Corner
-            path.lineTo(w - topRight, 0f)
-            path.conicTo(x1 = w, y1 = 0f, x2 = w, y2 = topRight, weight = circularArcWeight)
+            path.lineTo(w - topRight, 0f.rf)
+            path.conicTo(x1 = w, y1 = 0f.rf, x2 = w, y2 = topRight, weight = circularArcWeight)
 
             // 3. Right Line & Bottom-Right Corner
             path.lineTo(w, h - bottomRight)
@@ -95,11 +96,23 @@ public sealed class RemoteOutline {
 
             // 4. Bottom Line & Bottom-Left Corner
             path.lineTo(bottomLeft, h)
-            path.conicTo(x1 = 0f, y1 = h, x2 = 0f, y2 = h - bottomLeft, weight = circularArcWeight)
+            path.conicTo(
+                x1 = 0f.rf,
+                y1 = h,
+                x2 = 0f.rf,
+                y2 = h - bottomLeft,
+                weight = circularArcWeight,
+            )
 
             // 5. Start Line & Top-Left Corner
-            path.lineTo(0f, topLeft)
-            path.conicTo(x1 = 0f, y1 = 0f, x2 = topLeft, y2 = 0f, weight = circularArcWeight)
+            path.lineTo(0f.rf, topLeft)
+            path.conicTo(
+                x1 = 0f.rf,
+                y1 = 0f.rf,
+                x2 = topLeft,
+                y2 = 0f.rf,
+                weight = circularArcWeight,
+            )
 
             // 6. Close the path
             path.close()

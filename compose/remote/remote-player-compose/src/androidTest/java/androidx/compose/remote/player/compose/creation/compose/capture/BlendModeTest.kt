@@ -39,6 +39,7 @@ import androidx.compose.remote.creation.compose.modifier.padding
 import androidx.compose.remote.creation.compose.modifier.size
 import androidx.compose.remote.creation.compose.state.RemotePaint
 import androidx.compose.remote.creation.compose.state.rdp
+import androidx.compose.remote.creation.compose.state.rf
 import androidx.compose.remote.player.compose.SCREENSHOT_GOLDEN_DIRECTORY
 import androidx.compose.remote.player.compose.test.utils.screenshot.TargetPlayer
 import androidx.compose.remote.player.compose.test.utils.screenshot.rule.RemoteComposeScreenshotTestRule
@@ -148,7 +149,7 @@ class BlendModeTest {
                 // Draw src
                 paint.color = Color.BLUE
                 paint.blendMode = blendMode
-                canvas.drawRect(0f, (h * 1f / 3f), (w * 2f / 3f).toFloat(), h, paint)
+                canvas.drawRect(0f.rf, (h * 1f / 3f), (w * 2f / 3f), h, paint)
             }
             RemoteText(name, fontSize = 12f.sp)
         }

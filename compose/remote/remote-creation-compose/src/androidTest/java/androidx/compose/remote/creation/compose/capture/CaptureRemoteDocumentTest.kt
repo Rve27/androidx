@@ -31,6 +31,7 @@ import androidx.compose.remote.creation.compose.modifier.RemoteModifier
 import androidx.compose.remote.creation.compose.modifier.background
 import androidx.compose.remote.creation.compose.modifier.fillMaxSize
 import androidx.compose.remote.creation.compose.state.RemoteString
+import androidx.compose.remote.creation.compose.state.rf
 import androidx.compose.remote.creation.platform.AndroidxRcPlatformServices
 import androidx.compose.remote.creation.profile.Profile
 import androidx.compose.ui.graphics.Color
@@ -103,8 +104,8 @@ class CaptureRemoteDocumentTest {
                             centerX = remote.component.width / 2f,
                             centerY = remote.component.height / 2f,
                             radius = remote.component.width / 2f,
-                            startAngle = 0f,
-                            warpRadiusOffset = 0f,
+                            startAngle = 0f.rf,
+                            warpRadiusOffset = 0f.rf,
                             alignment = DrawTextOnCircle.Alignment.CENTER,
                             placement = DrawTextOnCircle.Placement.INSIDE,
                             paint = textPaint,
