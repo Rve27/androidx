@@ -22,7 +22,12 @@ import androidx.activity.ComponentActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.ArrowBack
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -30,11 +35,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
 import androidx.xr.arcore.Tilt
 import androidx.xr.arcore.TiltGesture
 import androidx.xr.glimmer.Button
 import androidx.xr.glimmer.GlimmerTheme
+import androidx.xr.glimmer.Icon
 import androidx.xr.glimmer.Text
 import androidx.xr.runtime.Config
 import androidx.xr.runtime.Session
@@ -77,14 +84,35 @@ class TiltGestureTrackingActivity : ComponentActivity() {
                     Column(
                         modifier = Modifier.fillMaxSize().background(GlimmerTheme.colors.surface),
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center,
+                        verticalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterVertically),
                     ) {
-                        Button(onClick = { finish() }) { Text("Back") }
                         val tiltState = tiltFlow?.collectAsState(Tilt.UNKNOWN)
-                        Text(text = "Tilt: ${tiltState?.value}")
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceEvenly,
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Button(onClick = { finish() }) {
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
+                                    contentDescription = "Back",
+                                )
+                            }
+                            Text(text = "Tilt - ${tiltState?.value ?: Tilt.UNKNOWN}")
+                        }
+                        TiltDemoApp(tilt = tiltState?.value ?: Tilt.UNKNOWN)
                     }
                 }
             }
+    }
+
+    @Composable
+    private fun TiltDemoApp(tilt: Tilt) {
+        MessageCard(
+            sender = "Lorem ipsum",
+            message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+            tilt = tilt,
+        )
     }
 
     private fun tryCreateSession() {
@@ -94,10 +122,9 @@ class TiltGestureTrackingActivity : ComponentActivity() {
                 session = result.session
                 try {
                     when (
-                        val configResult =
-                            session.configure(
-                                Config(deviceTracking = Config.DeviceTrackingMode.LAST_KNOWN)
-                            )
+                        session.configure(
+                            Config(deviceTracking = Config.DeviceTrackingMode.LAST_KNOWN)
+                        )
                     ) {
                         is SessionConfigureGooglePlayServicesLocationLibraryNotLinked -> {
                             Log.e(
