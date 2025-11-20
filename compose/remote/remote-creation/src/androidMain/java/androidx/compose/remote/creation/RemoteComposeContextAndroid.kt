@@ -35,6 +35,23 @@ public class RemoteComposeContextAndroid : RemoteComposeContext {
         }
 
     public constructor(
+        creationDisplayInfo: CreationDisplayInfo,
+        contentDescription: String,
+        profile: Profile,
+        content: RemoteComposeContextAndroid.() -> Unit,
+    ) : super(RemoteComposeWriterAndroid(creationDisplayInfo, contentDescription, profile)) {
+        content()
+    }
+
+    public constructor(
+        profile: Profile,
+        vararg tags: RemoteComposeWriter.HTag,
+        content: RemoteComposeContextAndroid.() -> Unit,
+    ) : super(RemoteComposeWriterAndroid(profile, *tags)) {
+        content()
+    }
+
+    public constructor(
         width: Int,
         height: Int,
         contentDescription: String,

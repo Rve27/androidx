@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.remote.core.CoreDocument
+import androidx.compose.remote.creation.CreationDisplayInfo
 import androidx.compose.remote.creation.compose.action.HostAction
 import androidx.compose.remote.creation.compose.action.ValueChange
 import androidx.compose.remote.creation.compose.capture.rememberAsyncRemoteDocument
@@ -111,27 +112,25 @@ import org.junit.runner.RunWith
 
 @SdkSuppress(minSdkVersion = 26) // b/437958945
 @RunWith(AndroidJUnit4::class)
-class LayoutTest {
+class BasicLayoutTest {
 
     @get:Rule val composeTestRule = createComposeRule(StandardTestDispatcher())
+
+    val creationDisplayInfo = CreationDisplayInfo((300 * 2.75).toInt(), (300 * 2.75).toInt(), 2.75f)
 
     @Composable
     fun rememberRemoteDocumentFixedDensity(
         content: @Composable () -> Unit
     ): MutableState<CoreDocument?> {
-        val customDensity = Density(density = 2.75f, fontScale = 1.0f)
-        return rememberRemoteDocument {
-            CompositionLocalProvider(LocalDensity provides customDensity) { content() }
-        }
+        return rememberRemoteDocument(creationDisplayInfo = creationDisplayInfo) { content() }
     }
 
     @Composable
     fun rememberAsyncRemoteDocumentFixedDensity(
         content: @Composable (MutableState<Boolean>) -> Unit
     ): MutableState<CoreDocument?> {
-        val customDensity = Density(density = 2.75f, fontScale = 1.0f)
-        return rememberAsyncRemoteDocument {
-            CompositionLocalProvider(LocalDensity provides customDensity) { content(it) }
+        return rememberAsyncRemoteDocument(creationDisplayInfo = creationDisplayInfo) {
+            content(it)
         }
     }
 
@@ -208,6 +207,7 @@ class LayoutTest {
                 }
             }
         }
+
         composeTestRule.onNodeWithContentDescription("Update").performClick()
         composeTestRule.waitForIdle()
         val content = composeTestRule.onNodeWithContentDescription("Document")
@@ -366,6 +366,7 @@ class LayoutTest {
                 }
             }
         }
+
         composeTestRule.onNodeWithContentDescription("Update").performClick()
         composeTestRule.waitForIdle()
         composeTestRule.onNodeWithContentDescription("Document").assertTextMatches(result)
@@ -376,7 +377,6 @@ class LayoutTest {
     fun testLayoutAndValues() {
         val result =
             """
-DATA_TEXT<42> = ""
 ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
   COLUMN [-3:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
     MODIFIERS
@@ -388,10 +388,10 @@ ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
         PADDING = [22.0, 22.0, 22.0, 22.0]
         BACKGROUND = [0.0, 0.0, 781.0, 231.0] color [0.8, 0.8, 0.8, 1.0] shape [0]
       CANVAS_CONTENT [-7:-1] = [0.0, 0.0, 781.0, 231.0] VISIBLE
-        ComponentValue value 43 set to WIDTH of Component -7
-        ComponentValue value 44 set to HEIGHT of Component -7
-        DrawLine(0.0, 0.0, [43 = 781.0], [44 = 231.0])
-        DrawLine(0.0, [44 = 231.0], [43 = 781.0], 0.0)
+        ComponentValue value 42 set to WIDTH of Component -7
+        ComponentValue value 43 set to HEIGHT of Component -7
+        DrawLine(0.0, 0.0, [42 = 781.0], [43 = 231.0])
+        DrawLine(0.0, [43 = 231.0], [42 = 781.0], 0.0)
 """
         testLayout(result) {
             RemoteColumn(
@@ -426,7 +426,6 @@ ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
     fun testSimple() {
         val result =
             """
-DATA_TEXT<42> = ""
 ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
   COLUMN [-3:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
     MODIFIERS
@@ -754,7 +753,6 @@ ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
     fun testBasicClickAction() {
         val result =
             """
-DATA_TEXT<42> = ""
 ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
   COLUMN [-3:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
     MODIFIERS
@@ -764,7 +762,7 @@ ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
         WIDTH = 100.0 dp
         HEIGHT = 100.0 dp
         CLICK_MODIFIER
-          HOST_NAMED_ACTION = 43
+          HOST_NAMED_ACTION = 42
         SEMANTICS = SEMANTICS BUTTON
 """
         testLayout(result) {
@@ -784,7 +782,6 @@ ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
     fun testBasicClickActionParam() {
         val result =
             """
-DATA_TEXT<42> = ""
 ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
   COLUMN [-3:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
     MODIFIERS
@@ -794,7 +791,7 @@ ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
         WIDTH = 100.0 dp
         HEIGHT = 100.0 dp
         CLICK_MODIFIER
-          HOST_NAMED_ACTION = 44 : 43
+          HOST_NAMED_ACTION = 43 : 42
         SEMANTICS = SEMANTICS BUTTON
 """
         testLayout(result) {
@@ -930,7 +927,6 @@ ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
     fun testTouch() {
         val result =
             """
-DATA_TEXT<42> = ""
 ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
   COLUMN [-3:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
     MODIFIERS
@@ -938,11 +934,11 @@ ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
     STATE_LAYOUT [-5:-1] = [302.5, 302.5, 220.0, 220.0] VISIBLE
       MODIFIERS
         TOUCH_DOWN_MODIFIER
-          VALUE_INTEGER_CHANGE = 43 -> 0
+          VALUE_INTEGER_CHANGE = 42 -> 0
         TOUCH_UP_MODIFIER
-          VALUE_INTEGER_CHANGE = 43 -> 1
+          VALUE_INTEGER_CHANGE = 42 -> 1
         TOUCH_CANCEL_MODIFIER
-          VALUE_INTEGER_CHANGE = 43 -> 1
+          VALUE_INTEGER_CHANGE = 42 -> 1
       BOX [-7:-1] = [0.0, 0.0, 165.0, 165.0] GONE
         MODIFIERS
         BOX [-9:-1] = [0.0, 0.0, 165.0, 165.0] GONE
@@ -999,7 +995,6 @@ ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
     fun testIntrinsics1() {
         val result =
             """
-DATA_TEXT<42> = ""
 ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
   ROW [-3:-1] = [0.0, 0.0, 825.0, 165.0] VISIBLE
     MODIFIERS
@@ -1046,7 +1041,6 @@ ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
     fun testIntrinsics2() {
         val result =
             """
-DATA_TEXT<42> = ""
 ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
   ROW [-3:-1] = [0.0, 0.0, 825.0, 165.0] VISIBLE
     MODIFIERS
@@ -1108,19 +1102,18 @@ ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
     fun testColorFilter1() {
         val result =
             """
-DATA_TEXT<42> = ""
-DATA_TEXT<43> = "Green"
+DATA_TEXT<42> = "Green"
 ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
-  ComponentValue value 44 set to WIDTH of Component -2
-  ComponentValue value 45 set to HEIGHT of Component -2
+  ComponentValue value 43 set to WIDTH of Component -2
+  ComponentValue value 44 set to HEIGHT of Component -2
   BOX [-3:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
     MODIFIERS
     CANVAS [-5:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
       MODIFIERS
       CANVAS_CONTENT [-7:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
-        ComponentValue value 49 set to WIDTH of Component -7
-        ComponentValue value 50 set to HEIGHT of Component -7
-    TEXT_LAYOUT [-8:-1] = [305.0, 364.0, 215.0, 97.0] VISIBLE (43:"Green")
+        ComponentValue value 48 set to WIDTH of Component -7
+        ComponentValue value 49 set to HEIGHT of Component -7
+    TEXT_LAYOUT [-8:-1] = [305.0, 364.0, 215.0, 97.0] VISIBLE (42:"Green")
       MODIFIERS
 """
         testLayout(result) {
@@ -1165,17 +1158,16 @@ ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
     fun testColorFilter2() {
         val result =
             """
-DATA_TEXT<42> = ""
 ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
-  ComponentValue value 43 set to WIDTH of Component -2
-  ComponentValue value 44 set to HEIGHT of Component -2
+  ComponentValue value 42 set to WIDTH of Component -2
+  ComponentValue value 43 set to HEIGHT of Component -2
   BOX [-3:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
     MODIFIERS
     CANVAS [-5:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
       MODIFIERS
       CANVAS_CONTENT [-7:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
-        ComponentValue value 48 set to WIDTH of Component -7
-        ComponentValue value 49 set to HEIGHT of Component -7
+        ComponentValue value 47 set to WIDTH of Component -7
+        ComponentValue value 48 set to HEIGHT of Component -7
     ROW [-8:-1] = [368.5, 368.5, 88.0, 88.0] VISIBLE
       MODIFIERS
         BACKGROUND = [0.0, 0.0, 88.0, 88.0] color [0.0, 0.0, 1.0, 1.0] shape [0]
