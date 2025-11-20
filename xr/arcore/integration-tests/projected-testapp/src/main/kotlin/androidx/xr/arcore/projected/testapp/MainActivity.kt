@@ -31,10 +31,15 @@ import androidx.xr.arcore.projected.testapp.tiltgesture.TiltGestureTrackingActiv
 import androidx.xr.glimmer.Button
 import androidx.xr.glimmer.GlimmerTheme
 import androidx.xr.glimmer.Text
+import androidx.xr.runtime.Log
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        Log.enabled = true
+        Log.level = Log.Level.VERBOSE
+
         ComposeView(this)
             .also { setContentView(it) }
             .setContent {
