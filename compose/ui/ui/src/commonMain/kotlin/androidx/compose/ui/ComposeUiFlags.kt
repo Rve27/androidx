@@ -17,6 +17,7 @@
 
 package androidx.compose.ui
 
+import androidx.compose.ui.node.findNearestAncestor
 import kotlin.jvm.JvmField
 import kotlin.jvm.JvmName
 
@@ -187,4 +188,12 @@ object ComposeUiFlags {
     @field:Suppress("MutableBareField")
     @JvmField
     var isNewDispatchingMechanismForOnPlacedEnabled: Boolean = true
+
+    /**
+     * Enables a fix where [TraversableNode] traversal method [findNearestAncestor] will take into
+     * consideration any delegates that might also be traversable.
+     */
+    @field:Suppress("MutableBareField")
+    @JvmField
+    var isTraversableDelegatesFixEnabled: Boolean = true
 }
