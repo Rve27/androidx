@@ -29,20 +29,13 @@ public class RcPlatformProfiles {
     // Platform profile
     public static final @NonNull Profile WIDGETS_V6 =
             new Profile(6, 0, new AndroidxRcPlatformServices(),
-                    WidgetsProfileWriterV6::new);
+                    (creationDisplayInfo, profile, description) ->
+                            new WidgetsProfileWriterV6(creationDisplayInfo, description, profile));
 
     // Default AndroidX profile
-    public static final @NonNull Profile ANDROIDX =
-            new Profile(
-                    CoreDocument.DOCUMENT_API_LEVEL,
-                    RcProfiles.PROFILE_ANDROIDX,
-                    new AndroidxRcPlatformServices(),
-                    (width, height, contentDescription, profile) ->
-                            new RemoteComposeWriterAndroid(
-                                    width,
-                                    height,
-                                    contentDescription,
-                                    CoreDocument.DOCUMENT_API_LEVEL,
-                                    RcProfiles.PROFILE_ANDROIDX,
-                                    profile.getPlatform()));
+    public static final @NonNull Profile ANDROIDX = new Profile(CoreDocument.DOCUMENT_API_LEVEL,
+            RcProfiles.PROFILE_ANDROIDX, new AndroidxRcPlatformServices(),
+            (creationDisplayInfo, profile, contentDescription) ->
+                    new RemoteComposeWriterAndroid(
+                            creationDisplayInfo, contentDescription, profile));
 }

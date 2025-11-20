@@ -456,8 +456,8 @@ public open class RecordingCanvas(bitmap: Bitmap) : Canvas(bitmap) {
         drawRect(
             0f,
             0f,
-            creationState.size.width,
-            creationState.size.height,
+            creationState.creationDisplayInfo.width,
+            creationState.creationDisplayInfo.height,
             Paint().apply {
                 color = drawColor
                 style = Paint.Style.FILL

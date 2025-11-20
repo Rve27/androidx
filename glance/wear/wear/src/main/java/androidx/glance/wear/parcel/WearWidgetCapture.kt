@@ -20,10 +20,10 @@ import android.app.PendingIntent
 import android.content.Context
 import android.os.Bundle
 import androidx.compose.remote.core.CoreDocument
-import androidx.compose.remote.core.RcPlatformServices
 import androidx.compose.remote.core.RcProfiles
+import androidx.compose.remote.creation.CreationDisplayInfo
 import androidx.compose.remote.creation.RemoteComposeWriter
-import androidx.compose.remote.creation.compose.capture.CreationDisplayInfo
+import androidx.compose.remote.creation.RemoteComposeWriterAndroid
 import androidx.compose.remote.creation.compose.capture.PendingIntentAwareWriter
 import androidx.compose.remote.creation.compose.capture.RemoteComposeCapture
 import androidx.compose.remote.creation.compose.layout.RemoteComposable
@@ -115,17 +115,7 @@ internal class WearWidgetProfile(widgetPendingIntents: WidgetPendingIntents) :
         CoreDocument.DOCUMENT_API_LEVEL,
         RcProfiles.PROFILE_WEAR_WIDGETS,
         AndroidxRcPlatformServices(),
-        { width, height, contentDescription, profile ->
-            WearWidgetRemoteComposeWriter(
-                widgetPendingIntents,
-                width,
-                height,
-                contentDescription,
-                apiLevel = CoreDocument.DOCUMENT_API_LEVEL,
-                profiles = profile.operationsProfiles,
-                platform = profile.platform,
-            )
-        },
+        { info, profile, _ -> WearWidgetRemoteComposeWriter(widgetPendingIntents, profile, info) },
     )
 
 /**
@@ -135,15 +125,9 @@ internal class WearWidgetProfile(widgetPendingIntents: WidgetPendingIntents) :
 @SuppressLint("RestrictedApiAndroidX")
 internal class WearWidgetRemoteComposeWriter(
     val widgetPendingIntents: WidgetPendingIntents,
-    width: Int,
-    height: Int,
-    contentDescription: String,
-    apiLevel: Int,
-    profiles: Int,
-    platform: RcPlatformServices,
-) :
-    RemoteComposeWriter(width, height, contentDescription, apiLevel, profiles, platform),
-    PendingIntentAwareWriter {
+    profile: Profile,
+    creationDisplayInfo: CreationDisplayInfo,
+) : RemoteComposeWriterAndroid(creationDisplayInfo, null, profile), PendingIntentAwareWriter {
 
     override fun storePendingIntent(pendingIntent: PendingIntent) =
         widgetPendingIntents.store(pendingIntent)

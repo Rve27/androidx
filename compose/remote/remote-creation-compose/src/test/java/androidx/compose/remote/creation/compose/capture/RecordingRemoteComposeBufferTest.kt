@@ -23,6 +23,7 @@ import androidx.compose.remote.core.RemoteComposeBuffer
 import androidx.compose.remote.core.operations.ConditionalOperations
 import androidx.compose.remote.core.operations.Header
 import androidx.compose.remote.core.operations.utilities.AnimatedFloatExpression
+import androidx.compose.remote.creation.CreationDisplayInfo
 import androidx.compose.remote.creation.RemoteComposeWriter
 import androidx.compose.remote.creation.profile.Profile
 import org.junit.Assert
@@ -39,38 +40,44 @@ class RecordingRemoteComposeBufferTest {
     private lateinit var profileWithRecordingRemoteComposeBuffer: Profile
     private lateinit var profileWithRemoteComposeBuffer: Profile
 
+    val creationDisplayInfo = CreationDisplayInfo(450, 450, 2f)
+
     @Before
     fun setUp() {
         rcPlatform = mock<RcPlatformServices>()
         recordingRemoteComposeBuffer = RecordingRemoteComposeBuffer()
         profileWithRecordingRemoteComposeBuffer =
             Profile(CoreDocument.DOCUMENT_API_LEVEL, RcProfiles.PROFILE_ANDROIDX, rcPlatform) {
-                width,
-                height,
-                contentDescription,
-                profile ->
+                creationDisplayInfo,
+                profile,
+                contentDescription ->
                 RemoteComposeWriter(
                     profile,
                     recordingRemoteComposeBuffer,
-                    RemoteComposeWriter.hTag(Header.DOC_WIDTH, width),
-                    RemoteComposeWriter.hTag(Header.DOC_HEIGHT, height),
-                    RemoteComposeWriter.hTag(Header.DOC_CONTENT_DESCRIPTION, contentDescription),
+                    RemoteComposeWriter.hTag(Header.DOC_WIDTH, creationDisplayInfo.width),
+                    RemoteComposeWriter.hTag(Header.DOC_HEIGHT, creationDisplayInfo.height),
+                    RemoteComposeWriter.hTag(
+                        Header.DOC_CONTENT_DESCRIPTION,
+                        contentDescription.orEmpty(),
+                    ),
                     RemoteComposeWriter.hTag(Header.DOC_PROFILES, RcProfiles.PROFILE_ANDROIDX),
                 )
             }
 
         profileWithRemoteComposeBuffer =
             Profile(CoreDocument.DOCUMENT_API_LEVEL, RcProfiles.PROFILE_ANDROIDX, rcPlatform) {
-                width,
-                height,
-                contentDescription,
-                profile ->
+                creationDisplayInfo,
+                profile,
+                contentDescription ->
                 RemoteComposeWriter(
                     profile,
                     RemoteComposeBuffer(),
-                    RemoteComposeWriter.hTag(Header.DOC_WIDTH, width),
-                    RemoteComposeWriter.hTag(Header.DOC_HEIGHT, height),
-                    RemoteComposeWriter.hTag(Header.DOC_CONTENT_DESCRIPTION, contentDescription),
+                    RemoteComposeWriter.hTag(Header.DOC_WIDTH, creationDisplayInfo.width),
+                    RemoteComposeWriter.hTag(Header.DOC_HEIGHT, creationDisplayInfo.height),
+                    RemoteComposeWriter.hTag(
+                        Header.DOC_CONTENT_DESCRIPTION,
+                        contentDescription.orEmpty(),
+                    ),
                     RemoteComposeWriter.hTag(Header.DOC_PROFILES, RcProfiles.PROFILE_ANDROIDX),
                 )
             }
@@ -78,7 +85,8 @@ class RecordingRemoteComposeBufferTest {
 
     @Test
     fun testDependencyReordered() {
-        val actualWriter = profileWithRecordingRemoteComposeBuffer.create(450, 450, "test")
+        val actualWriter =
+            profileWithRecordingRemoteComposeBuffer.create(creationDisplayInfo, "test")
         actualWriter.drawRect(0f, 0f, 10f, 10f)
         // ---
         actualWriter.conditionalOperations(ConditionalOperations.TYPE_EQ, 0f, 0f)
@@ -93,7 +101,7 @@ class RecordingRemoteComposeBufferTest {
         actualWriter.endConditionalOperations()
         recordingRemoteComposeBuffer.writeToBuffer()
 
-        val expectedWriter = profileWithRemoteComposeBuffer.create(450, 450, "test")
+        val expectedWriter = profileWithRemoteComposeBuffer.create(creationDisplayInfo, "test")
         expectedWriter.drawRect(0f, 0f, 10f, 10f)
         id0 = expectedWriter.floatExpression(123.0f)
         // ---
@@ -116,7 +124,8 @@ class RecordingRemoteComposeBufferTest {
 
     @Test
     fun testDependencyReorderedNestedConditionals() {
-        val actualWriter = profileWithRecordingRemoteComposeBuffer.create(450, 450, "test")
+        val actualWriter =
+            profileWithRecordingRemoteComposeBuffer.create(creationDisplayInfo, "test")
         actualWriter.drawRect(0f, 0f, 10f, 10f)
         // ---
         actualWriter.conditionalOperations(ConditionalOperations.TYPE_EQ, 0f, 0f)
@@ -135,7 +144,7 @@ class RecordingRemoteComposeBufferTest {
         actualWriter.endConditionalOperations()
         recordingRemoteComposeBuffer.writeToBuffer()
 
-        val expectedWriter = profileWithRemoteComposeBuffer.create(450, 450, "test")
+        val expectedWriter = profileWithRemoteComposeBuffer.create(creationDisplayInfo, "test")
         expectedWriter.drawRect(0f, 0f, 10f, 10f)
         id0 = expectedWriter.floatExpression(123.0f)
         // ---
@@ -162,7 +171,8 @@ class RecordingRemoteComposeBufferTest {
 
     @Test
     fun testExpressionOnlyUsedInConditionalNotReordered() {
-        val actualWriter = profileWithRecordingRemoteComposeBuffer.create(450, 450, "test")
+        val actualWriter =
+            profileWithRecordingRemoteComposeBuffer.create(creationDisplayInfo, "test")
         actualWriter.drawRect(0f, 0f, 10f, 10f)
         actualWriter.conditionalOperations(ConditionalOperations.TYPE_EQ, 0f, 0f)
         var id0 = actualWriter.floatExpression(123.0f)
@@ -171,7 +181,7 @@ class RecordingRemoteComposeBufferTest {
         actualWriter.endConditionalOperations()
         recordingRemoteComposeBuffer.writeToBuffer()
 
-        val expectedWriter = profileWithRemoteComposeBuffer.create(450, 450, "test")
+        val expectedWriter = profileWithRemoteComposeBuffer.create(creationDisplayInfo, "test")
         expectedWriter.drawRect(0f, 0f, 10f, 10f)
         expectedWriter.conditionalOperations(ConditionalOperations.TYPE_EQ, 0f, 0f)
         id0 = expectedWriter.floatExpression(123.0f)

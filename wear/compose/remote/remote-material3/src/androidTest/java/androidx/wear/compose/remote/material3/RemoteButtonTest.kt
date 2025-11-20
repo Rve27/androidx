@@ -18,6 +18,7 @@ package androidx.wear.compose.remote.material3
 
 import android.annotation.SuppressLint
 import android.content.Context
+import androidx.compose.remote.creation.CreationDisplayInfo
 import androidx.compose.remote.creation.compose.layout.RemotePaddingValues
 import androidx.compose.remote.creation.compose.modifier.RemoteModifier
 import androidx.compose.remote.creation.compose.modifier.size
@@ -27,7 +28,6 @@ import androidx.compose.remote.creation.compose.state.RemoteString
 import androidx.compose.remote.creation.compose.state.rdp
 import androidx.compose.remote.player.compose.test.utils.screenshot.TargetPlayer
 import androidx.compose.remote.player.compose.test.utils.screenshot.rule.RemoteComposeScreenshotTestRule
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.filters.MediumTest
@@ -52,11 +52,15 @@ class RemoteButtonTest {
         )
     private val context: Context = ApplicationProvider.getApplicationContext()
 
-    private val size = Size(500f, 500f)
+    private val creationDisplayInfo =
+        CreationDisplayInfo(500, 500, context.resources.displayMetrics.density)
 
     @Test
     fun button_enabled() {
-        remoteComposeTestRule.runScreenshotTest(backgroundColor = Color.Black, size = size) {
+        remoteComposeTestRule.runScreenshotTest(
+            backgroundColor = Color.Black,
+            creationDisplayInfo = creationDisplayInfo,
+        ) {
             RemoteButton(enabled = RemoteBoolean(true)) {
                 RemoteText(
                     RemoteString("button_enabled"),
@@ -68,7 +72,10 @@ class RemoteButtonTest {
 
     @Test
     fun button_disabled() {
-        remoteComposeTestRule.runScreenshotTest(backgroundColor = Color.Black, size = size) {
+        remoteComposeTestRule.runScreenshotTest(
+            backgroundColor = Color.Black,
+            creationDisplayInfo = creationDisplayInfo,
+        ) {
             RemoteButton(enabled = RemoteBoolean(false)) {
                 RemoteText(
                     RemoteString("button_disabled"),
@@ -82,7 +89,10 @@ class RemoteButtonTest {
 
     @Test
     fun button_overrides_colors() {
-        remoteComposeTestRule.runScreenshotTest(backgroundColor = Color.Black, size = size) {
+        remoteComposeTestRule.runScreenshotTest(
+            backgroundColor = Color.Black,
+            creationDisplayInfo = creationDisplayInfo,
+        ) {
             val colors =
                 RemoteButtonColors(
                     containerColor = RemoteColor(Color.Yellow),
@@ -102,7 +112,10 @@ class RemoteButtonTest {
 
     @Test
     fun button_overrides_padding() {
-        remoteComposeTestRule.runScreenshotTest(backgroundColor = Color.Black, size = size) {
+        remoteComposeTestRule.runScreenshotTest(
+            backgroundColor = Color.Black,
+            creationDisplayInfo = creationDisplayInfo,
+        ) {
             RemoteButton(contentPadding = RemotePaddingValues(150.rdp)) {
                 RemoteText(
                     RemoteString("button_overrides_padding"),
@@ -114,7 +127,10 @@ class RemoteButtonTest {
 
     @Test
     fun button_overrides_size() {
-        remoteComposeTestRule.runScreenshotTest(backgroundColor = Color.Black, size = size) {
+        remoteComposeTestRule.runScreenshotTest(
+            backgroundColor = Color.Black,
+            creationDisplayInfo = creationDisplayInfo,
+        ) {
             RemoteButton(
                 modifier = RemoteModifier.size(180.rdp, 100.rdp),
                 contentPadding = RemotePaddingValues(0.rdp),
@@ -129,7 +145,10 @@ class RemoteButtonTest {
 
     @Test
     fun button_with_border() {
-        remoteComposeTestRule.runScreenshotTest(backgroundColor = Color.Black, size = size) {
+        remoteComposeTestRule.runScreenshotTest(
+            backgroundColor = Color.Black,
+            creationDisplayInfo = creationDisplayInfo,
+        ) {
             RemoteButton(
                 modifier = RemoteModifier,
                 border = 8.rdp,
