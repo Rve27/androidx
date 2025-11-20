@@ -30,7 +30,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.glance.wear.GlanceWearWidget
 import androidx.glance.wear.GlanceWearWidgetService
-import androidx.glance.wear.WearWidgetContent
+import androidx.glance.wear.WearWidgetData
+import androidx.glance.wear.WearWidgetDocument
 import androidx.glance.wear.WearWidgetRequest
 
 class HelloWidgetService : GlanceWearWidgetService() {
@@ -38,14 +39,15 @@ class HelloWidgetService : GlanceWearWidgetService() {
 }
 
 class HelloWidget : GlanceWearWidget() {
-    override suspend fun provideWidgetContent(
+    override suspend fun provideWidgetData(
         context: Context,
         request: WearWidgetRequest,
-    ): WearWidgetContent = WearWidgetContent { HelloWidgetContent() }
+    ): WearWidgetData = WearWidgetDocument { HelloWidgetContent() }
 }
 
 @RemoteComposable
 @Composable
+@Suppress("RestrictedApiAndroidX")
 fun HelloWidgetContent() {
     RemoteBox(
         modifier = RemoteModifier.fillMaxSize(),

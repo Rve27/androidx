@@ -88,12 +88,12 @@ class GlanceWearWidgetServiceTest {
     class TestWidget : GlanceWearWidget() {
         var instanceId: Int? = null
 
-        override suspend fun provideWidgetContent(
+        override suspend fun provideWidgetData(
             context: Context,
             request: WearWidgetRequest,
-        ): WearWidgetContent {
+        ): WearWidgetDocument {
             instanceId = request.instanceId
-            return WearWidgetContent { RemoteText("Testing...") }
+            return WearWidgetDocument { RemoteText("Testing...") }
         }
     }
 
