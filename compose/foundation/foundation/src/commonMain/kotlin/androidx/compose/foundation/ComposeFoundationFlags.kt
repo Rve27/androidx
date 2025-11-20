@@ -94,16 +94,6 @@ object ComposeFoundationFlags {
     var isNonSuspendingPointerInputInClickableEnabled = true
 
     /**
-     * With this flag on, the new BasicTextField and the other new TextFields that accept
-     * [androidx.compose.foundation.text.input.TextFieldState] changes their behavior of how they
-     * process arrow/Dpad keys received from input devices such as hardware keyboards, gamepads, or
-     * TV remotes. The new behavior is to always move the cursor first until it reaches the start or
-     * the end of the text. Then the TextField allows to move the focus to the next focusable
-     * element on the screen.
-     */
-    @field:Suppress("MutableBareField") @JvmField var isTextFieldDpadNavigationEnabled = true
-
-    /**
      * With this flag on, Pager will use Cache Window as the default prefetching strategy, instead
      * of 1 item in the direction of the scroll. The window used will be 1 view port AFTER the
      * currently composed items, this includes visible and items composed through beyond bounds.
