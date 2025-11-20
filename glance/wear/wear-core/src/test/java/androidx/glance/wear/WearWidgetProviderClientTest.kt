@@ -55,7 +55,7 @@ class WearWidgetProviderClientTest {
     @Test
     fun sendAddEvent() = runTest {
         val client = WearWidgetProviderClient(context, COMPONENT_NAME)
-        val instanceId = 123
+        val instanceId = WidgetInstanceId(ID_NAMESPACE, 123)
         val containerType = CONTAINER_TYPE_LARGE
 
         assertThat(shadowApp.boundServiceConnections).isEmpty()
@@ -77,7 +77,7 @@ class WearWidgetProviderClientTest {
     @Test
     fun sendRemoveEvent() = runTest {
         val client = WearWidgetProviderClient(context, COMPONENT_NAME)
-        val instanceId = 123
+        val instanceId = WidgetInstanceId(ID_NAMESPACE, 123)
         val containerType = CONTAINER_TYPE_LARGE
 
         assertThat(shadowApp.boundServiceConnections).isEmpty()
@@ -100,7 +100,7 @@ class WearWidgetProviderClientTest {
     @Test
     fun sendAddEvent_cancelled() = runTest {
         val client = WearWidgetProviderClient(context, COMPONENT_NAME)
-        val instanceId = 123
+        val instanceId = WidgetInstanceId(ID_NAMESPACE, 123)
         val containerType = CONTAINER_TYPE_LARGE
 
         assertThat(shadowApp.boundServiceConnections).isEmpty()
@@ -120,7 +120,7 @@ class WearWidgetProviderClientTest {
     @Test
     fun sendRemoveEvent_cancelled() = runTest {
         val client = WearWidgetProviderClient(context, COMPONENT_NAME)
-        val instanceId = 123
+        val instanceId = WidgetInstanceId(ID_NAMESPACE, 123)
         val containerType = CONTAINER_TYPE_LARGE
 
         assertThat(shadowApp.boundServiceConnections).isEmpty()
@@ -140,7 +140,7 @@ class WearWidgetProviderClientTest {
     @Test
     fun sendAddEventAsync() = runTest {
         val client = WearWidgetProviderClient(context, COMPONENT_NAME)
-        val instanceId = 123
+        val instanceId = WidgetInstanceId(ID_NAMESPACE, 123)
         val containerType = CONTAINER_TYPE_LARGE
 
         assertThat(shadowApp.boundServiceConnections).isEmpty()
@@ -163,7 +163,7 @@ class WearWidgetProviderClientTest {
     @Test
     fun sendRemoveEventAsync() = runTest {
         val client = WearWidgetProviderClient(context, COMPONENT_NAME)
-        val instanceId = 123
+        val instanceId = WidgetInstanceId(ID_NAMESPACE, 123)
         val containerType = CONTAINER_TYPE_LARGE
 
         assertThat(shadowApp.boundServiceConnections).isEmpty()
@@ -224,5 +224,6 @@ class WearWidgetProviderClientTest {
 
     private companion object {
         val COMPONENT_NAME = ComponentName("my.package", "androidx.glance.wear.MyTestService")
+        private const val ID_NAMESPACE = "ns"
     }
 }

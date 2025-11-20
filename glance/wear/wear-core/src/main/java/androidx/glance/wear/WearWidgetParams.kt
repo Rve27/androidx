@@ -34,7 +34,7 @@ import androidx.glance.wear.proto.WearWidgetRequestProto
 public class WearWidgetParams
 @RestrictTo(LIBRARY_GROUP)
 public constructor(
-    public val instanceId: Int,
+    public val instanceId: WidgetInstanceId,
     @param:ContainerInfo.ContainerType
     @get:ContainerInfo.ContainerType
     public val containerType: Int,
@@ -51,7 +51,8 @@ public constructor(
     public fun toParcel(): WearWidgetRequestParcel {
         val requestProto =
             WearWidgetRequestProto(
-                instance_id = instanceId,
+                id = instanceId.id,
+                id_namespace = instanceId.namespace,
                 container_type = containerType,
                 width_dp = widthDp,
                 height_dp = heightDp,
@@ -64,7 +65,8 @@ public constructor(
         public fun fromParcel(parcel: WearWidgetRequestParcel): WearWidgetParams {
             val requestProto = WearWidgetRequestProto.ADAPTER.decode(parcel.payload)
             return WearWidgetParams(
-                instanceId = requestProto.instance_id,
+                instanceId =
+                    WidgetInstanceId(namespace = requestProto.id_namespace, requestProto.id),
                 containerType = requestProto.container_type,
                 widthDp = requestProto.width_dp,
                 heightDp = requestProto.height_dp,

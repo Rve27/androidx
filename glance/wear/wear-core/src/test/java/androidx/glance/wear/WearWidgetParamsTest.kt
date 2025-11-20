@@ -26,10 +26,10 @@ import org.robolectric.RobolectricTestRunner
 class WearWidgetParamsTest {
 
     @Test
-    fun fromParcel_matchesOriginalRequest() {
+    fun fromParcel_matchesOriginalParams() {
         val originalParams =
             WearWidgetParams(
-                instanceId = 123,
+                instanceId = WidgetInstanceId("ns", 123),
                 containerType = ContainerInfo.CONTAINER_TYPE_SMALL,
                 widthDp = 200.5f,
                 heightDp = 300.25f,
