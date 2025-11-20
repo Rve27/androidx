@@ -76,7 +76,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -410,10 +409,10 @@ ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
                     val color = Color.Blue
                     val w = remote.component.width
                     val h = remote.component.height
-                    val topLeft = Offset(0f, 0f)
-                    val topRight = Offset(w.internalAsFloat(), 0f)
-                    val bottomLeft = Offset(0f, h.internalAsFloat())
-                    val bottomRight = Offset(w.internalAsFloat(), h.internalAsFloat())
+                    val topLeft = RemoteOffset(0f, 0f)
+                    val topRight = RemoteOffset(w.internalAsFloat(), 0f)
+                    val bottomLeft = RemoteOffset(0f, h.internalAsFloat())
+                    val bottomRight = RemoteOffset(w.internalAsFloat(), h.internalAsFloat())
 
                     drawLine(color, start = topLeft, end = bottomRight, strokeWidth = 4f)
                     drawLine(color, start = bottomLeft, end = topRight, strokeWidth = 4f)

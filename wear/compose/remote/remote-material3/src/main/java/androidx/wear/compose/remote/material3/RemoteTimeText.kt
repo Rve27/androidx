@@ -35,6 +35,7 @@ import androidx.compose.remote.creation.compose.state.RemoteColor
 import androidx.compose.remote.creation.compose.state.RemoteFloat
 import androidx.compose.remote.creation.compose.state.RemotePaint
 import androidx.compose.remote.creation.compose.state.RemoteString
+import androidx.compose.remote.creation.compose.state.rf
 import androidx.compose.runtime.Composable
 
 /**
@@ -107,8 +108,8 @@ private fun RemoteCanvasDrawScope.drawTimeText(text: RemoteString, color: Remote
         width / 2f,
         height / 2f,
         width / 2f - fontSize,
-        270f,
-        0f,
+        270f.rf,
+        0f.rf,
         DrawTextOnCircle.Alignment.CENTER,
         DrawTextOnCircle.Placement.INSIDE,
         textPaint,

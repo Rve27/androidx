@@ -75,7 +75,7 @@ internal constructor(
          *
          * @param angle The angle of rotation.
          */
-        public fun createRotate(angle: Number): RemoteMatrix3x3 =
+        public fun createRotate(angle: RemoteFloat): RemoteMatrix3x3 =
             RemoteMatrix3x3(
                 angle.hasConstantValue,
                 { creationState ->
@@ -93,7 +93,7 @@ internal constructor(
          *
          * @param x The distance to translate along the X-axis.
          */
-        public fun createTranslateX(x: Number): RemoteMatrix3x3 =
+        public fun createTranslateX(x: RemoteFloat): RemoteMatrix3x3 =
             RemoteMatrix3x3(
                 x.hasConstantValue,
                 { creationState ->
@@ -111,7 +111,7 @@ internal constructor(
          *
          * @param y The distance to translate along the Y-axis.
          */
-        public fun createTranslateY(y: Number): RemoteMatrix3x3 =
+        public fun createTranslateY(y: RemoteFloat): RemoteMatrix3x3 =
             RemoteMatrix3x3(
                 y.hasConstantValue,
                 { creationState ->
@@ -129,7 +129,7 @@ internal constructor(
          *
          * @param scale The scaling factor.
          */
-        public fun createScaleX(scale: Number): RemoteMatrix3x3 =
+        public fun createScaleX(scale: RemoteFloat): RemoteMatrix3x3 =
             RemoteMatrix3x3(
                 scale.hasConstantValue,
                 { creationState ->
@@ -147,7 +147,7 @@ internal constructor(
          *
          * @param scale The scaling factor.
          */
-        public fun createScaleY(scale: Number): RemoteMatrix3x3 =
+        public fun createScaleY(scale: RemoteFloat): RemoteMatrix3x3 =
             RemoteMatrix3x3(
                 scale.hasConstantValue,
                 { creationState ->
@@ -168,9 +168,9 @@ internal constructor(
          * @param centerY The Y-coordinate of the pivot point.
          */
         public fun createRotationAround(
-            angle: Number,
-            centerX: Number,
-            centerY: Number,
+            angle: RemoteFloat,
+            centerX: RemoteFloat,
+            centerY: RemoteFloat,
         ): RemoteMatrix3x3 =
             RemoteMatrix3x3(
                 angle.hasConstantValue && centerX.hasConstantValue && centerY.hasConstantValue,
