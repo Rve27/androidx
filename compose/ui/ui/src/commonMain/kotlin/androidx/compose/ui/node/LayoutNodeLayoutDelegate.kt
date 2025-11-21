@@ -458,9 +458,6 @@ internal interface AlignmentLinesOwner : Measurable {
      * pass.
      */
     fun requestMeasure()
-
-    /** Triggers invalidation for RectManager based callbacks on this node. */
-    fun invalidateRectCallbacks()
 }
 
 /**

@@ -17,15 +17,11 @@
 package androidx.compose.ui.layout
 
 import androidx.compose.runtime.Stable
-import androidx.compose.ui.ComposeUiFlags
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.internal.JvmDefaultWithCompatibility
-import androidx.compose.ui.node.DelegatableNode.RegistrationHandle
 import androidx.compose.ui.node.LayoutAwareModifierNode
 import androidx.compose.ui.node.ModifierNodeElement
 import androidx.compose.ui.platform.InspectorInfo
-import androidx.compose.ui.spatial.RelativeLayoutBounds
 
 /**
  * Invoke [onPlaced] after the parent [LayoutModifier] and parent layout has been placed and before
@@ -34,15 +30,8 @@ import androidx.compose.ui.spatial.RelativeLayoutBounds
  *
  * @sample androidx.compose.ui.samples.OnPlaced
  */
-@OptIn(ExperimentalComposeUiApi::class)
 @Stable
-fun Modifier.onPlaced(onPlaced: (LayoutCoordinates) -> Unit) =
-    this then
-        if (ComposeUiFlags.isNewDispatchingMechanismForOnPlacedEnabled) {
-            OnPlacedUsingOnLayoutRectChangedElement(onPlaced)
-        } else {
-            OnPlacedElement(onPlaced)
-        }
+fun Modifier.onPlaced(onPlaced: (LayoutCoordinates) -> Unit) = this then OnPlacedElement(onPlaced)
 
 private class OnPlacedElement(val onPlaced: (LayoutCoordinates) -> Unit) :
     ModifierNodeElement<OnPlacedNode>() {
@@ -96,62 +85,4 @@ interface OnPlacedModifier : Modifier.Element {
      * parent [LayoutModifier] and parent layout can be calculated using the [LayoutCoordinates].
      */
     fun onPlaced(coordinates: LayoutCoordinates)
-}
-
-private class OnPlacedUsingOnLayoutRectChangedElement(val onPlaced: (LayoutCoordinates) -> Unit) :
-    ModifierNodeElement<OnPlacedUsingOnLayoutRectChangedNode>() {
-    override fun create(): OnPlacedUsingOnLayoutRectChangedNode {
-        return OnPlacedUsingOnLayoutRectChangedNode(onPlaced)
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is OnPlacedUsingOnLayoutRectChangedElement) return false
-        return onPlaced === other.onPlaced
-    }
-
-    override fun hashCode(): Int {
-        return onPlaced.hashCode()
-    }
-
-    override fun update(node: OnPlacedUsingOnLayoutRectChangedNode) {
-        node.callback = onPlaced
-        if (node.isAttached) {
-            node.disposeAndRegister()
-        }
-    }
-
-    override fun InspectorInfo.inspectableProperties() {
-        name = "onPlaced"
-        properties["onPlaced"] = onPlaced
-    }
-}
-
-private class OnPlacedUsingOnLayoutRectChangedNode(var callback: (LayoutCoordinates) -> Unit) :
-    Modifier.Node() {
-    var handle: RegistrationHandle? = null
-
-    val onLayoutRectChanged: (RelativeLayoutBounds) -> Unit = {
-        val coordinator = it.node.node.coordinator!!
-        coordinator.usageFromOnPlacedTracked = false
-        callback(coordinator)
-        if (!coordinator.usageFromOnPlacedTracked) {
-            handle?.unregister()
-            handle = null
-        }
-    }
-
-    fun disposeAndRegister() {
-        handle?.unregister()
-        handle = registerOnLayoutRectChanged(0, 0, onLayoutRectChanged)
-    }
-
-    override fun onAttach() {
-        disposeAndRegister()
-    }
-
-    override fun onDetach() {
-        handle?.unregister()
-        handle = null
-    }
 }
