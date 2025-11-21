@@ -31,7 +31,7 @@ import androidx.room3.processor.Context
 import androidx.room3.processor.ProcessorErrors
 import androidx.room3.processor.ProcessorErrors.AmbiguousColumnLocation.DATA_CLASS
 import androidx.room3.processor.ProcessorErrors.AmbiguousColumnLocation.ENTITY
-import androidx.room3.processor.ProcessorErrors.AmbiguousColumnLocation.MAP_INFO
+import androidx.room3.processor.ProcessorErrors.AmbiguousColumnLocation.MAP_COLUMN
 import androidx.room3.solver.types.StatementValueReader
 import androidx.room3.verifier.ColumnInfo
 import androidx.room3.vo.ColumnIndexVar
@@ -85,7 +85,7 @@ abstract class MultimapQueryResultAdapter(
                     val (location, objectTypeName) =
                         when (it) {
                             is SingleNamedColumnRowAdapter.SingleNamedColumnRowMapping ->
-                                MAP_INFO to null
+                                MAP_COLUMN to null
                             is DataClassRowAdapter.DataClassMapping ->
                                 DATA_CLASS to it.dataClass.typeName
                             is EntityRowAdapter.EntityMapping -> ENTITY to it.entity.typeName
@@ -179,6 +179,9 @@ abstract class MultimapQueryResultAdapter(
             val mapColumnName = annotation.getAsString("columnName")
             val mapColumnTableName = (annotation["tableName"]?.value ?: "") as String
 
+            // Checks if this list of columns contains one with matching name and origin table.
+            // Takes into account that projection tables names might be aliased but originTable uses
+            // sqlite3_column_origin_name which is un-aliased.
             fun List<ColumnInfo>.contains(columnName: String, tableName: String?) =
                 any { resultColumn ->
                     val resultTableAlias =
