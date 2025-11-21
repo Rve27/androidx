@@ -72,22 +72,21 @@ class FrameGraphSimulatorTest {
 
     @Test
     fun setSurface_validSurface_updatesSetSurfaceResults() {
-        val surface: Surface = FakeSurfaces.create()
-
-        // Initial state should be empty
+        val fakeSurfaces = FakeSurfaces()
+        val surface: Surface = fakeSurfaces.createFakeSurface()
         assertThat(frameGraphSimulator.setSurfaceResults.size).isEqualTo(0)
 
         frameGraphSimulator.setSurface(STREAM_ID, surface)
 
         assertThat(frameGraphSimulator.setSurfaceResults.size).isEqualTo(1)
         assertThat(frameGraphSimulator.setSurfaceResults[STREAM_ID]).isSameInstanceAs(surface)
+
+        fakeSurfaces.close()
     }
 
     @Test
     fun setSurface_nullSurface_updatesSetSurfaceResults() {
         val surface: Surface? = null
-
-        // Initial state should be empty
         assertThat(frameGraphSimulator.setSurfaceResults.size).isEqualTo(0)
 
         frameGraphSimulator.setSurface(STREAM_ID, surface)
