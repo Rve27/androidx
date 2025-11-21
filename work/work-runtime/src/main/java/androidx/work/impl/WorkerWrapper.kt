@@ -85,6 +85,8 @@ public class WorkerWrapper internal constructor(builder: Builder) {
 
     private val workerJob = Job()
 
+    private var startedWork = false
+
     public val workGenerationalId: WorkGenerationalId
         get() = workSpec.generationalId()
 
@@ -100,31 +102,66 @@ public class WorkerWrapper internal constructor(builder: Builder) {
                     Resolution.Stopped(workerStoppedException.reason)
                 } catch (e: CancellationException) {
                     // means that worker was self-cancelled, which we treat as failure
-                    Resolution.Failed()
+                    Resolution.Failed(e)
                 } catch (throwable: Throwable) {
                     loge(TAG, throwable) { "Unexpected error in WorkerWrapper" }
                     Resolution.WorkerWrapperFailure(recoverable = false)
                 }
-            workDatabase.runInTransaction(
-                Callable {
-                    when (resolution) {
-                        is Resolution.Finished -> onWorkFinished(resolution.result)
-                        is Resolution.Failed -> onWorkFailed(Failure())
-                        is Resolution.Stopped -> resetWorkerStatus(resolution.reason)
-                        is Resolution.WorkerWrapperFailure ->
-                            if (resolution.recoverable) resetWorkerStatus(STOP_REASON_NOT_STOPPED)
-                            else onWorkFailed(Failure())
+            val needsReschedule =
+                workDatabase.runInTransaction(
+                    Callable {
+                        when (resolution) {
+                            is Resolution.Finished -> onWorkFinished(resolution.result)
+                            is Resolution.Failed -> onWorkFailed(Failure())
+                            is Resolution.Stopped -> resetWorkerStatus(resolution.reason)
+                            is Resolution.WorkerWrapperFailure ->
+                                if (resolution.recoverable)
+                                    resetWorkerStatus(STOP_REASON_NOT_STOPPED)
+                                else onWorkFailed(Failure())
+                        }
+                    }
+                )
+            val workExecutionListener = configuration.getWorkExecutionEventListener()
+            if (workExecutionListener != null && startedWork) {
+                val workInfoSnapshot = workSpecDao.getWorkStatusPojoForId(workSpecId)?.toWorkInfo()
+                workInfoSnapshot?.let {
+                    val listenerDispatcher =
+                        configuration.workExecutionEventExecutor.asCoroutineDispatcher()
+                    withContext(listenerDispatcher) {
+                        when (resolution) {
+                            is Resolution.Finished -> {
+                                workExecutionListener.onEnd(resolution.result, workInfoSnapshot)
+                            }
+                            is Resolution.Failed -> {
+                                workExecutionListener.onException(
+                                    resolution.throwable,
+                                    workInfoSnapshot,
+                                )
+                            }
+                            is Resolution.Stopped -> {
+                                workExecutionListener.onStop(resolution.reason, workInfoSnapshot)
+                            }
+                            is Resolution.WorkerWrapperFailure -> {
+                                // Should theoretically not run since a WorkerWrapper exception
+                                // should occur before startWork
+                            }
+                        }
                     }
                 }
-            )
+            }
+            needsReschedule
         }
 
     private sealed class Resolution {
         /** Stopped by signal from system. */
         class Stopped(val reason: Int = STOP_REASON_NOT_STOPPED) : Resolution()
 
-        /** Failed exceptionally during worker execution. */
-        class Failed() : Resolution()
+        /**
+         * Failed exceptionally during worker execution.
+         *
+         * @param throwable throwable thrown by the app code
+         */
+        class Failed(val throwable: Throwable) : Resolution()
 
         /** Finished with a result returned by the worker. */
         class Finished(val result: ListenableWorker.Result) : Resolution()
@@ -305,6 +342,18 @@ public class WorkerWrapper internal constructor(builder: Builder) {
         val foregroundUpdater = params.foregroundUpdater
         val mainDispatcher = workTaskExecutor.getMainThreadExecutor().asCoroutineDispatcher()
         try {
+            val workExecutionListener = configuration.getWorkExecutionEventListener()
+            workExecutionListener?.let {
+                val workInfoSnapshot = workSpecDao.getWorkStatusPojoForId(workSpecId)?.toWorkInfo()
+                workInfoSnapshot?.let {
+                    val listenerDispatcher =
+                        configuration.workExecutionEventExecutor.asCoroutineDispatcher()
+                    withContext(listenerDispatcher) {
+                        workExecutionListener.onStart(workInfoSnapshot)
+                    }
+                }
+            }
+            startedWork = true
             val result =
                 withContext(mainDispatcher) {
                     workForeground(
@@ -330,7 +379,7 @@ public class WorkerWrapper internal constructor(builder: Builder) {
                 WorkerExceptionInfo(workSpec.workerClassName, params, throwable),
                 TAG,
             )
-            return Resolution.Failed()
+            return Resolution.Failed(throwable)
         }
     }
 
