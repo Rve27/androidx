@@ -297,6 +297,7 @@ public class SandboxedPdfDocument(
                         pageNumber,
                         scaledPageSizePx.width,
                         scaledPageSizePx.height,
+                        RenderParams(renderMode = RenderParams.RENDER_MODE_FOR_DISPLAY),
                     ) ?: getDefaultBitmap(scaledPageSizePx.width, scaledPageSizePx.height)
                 } else {
                     val offsetX = tileRegion.left
@@ -309,6 +310,7 @@ public class SandboxedPdfDocument(
                         scaledPageSizePx.height,
                         offsetX,
                         offsetY,
+                        RenderParams(renderMode = RenderParams.RENDER_MODE_FOR_DISPLAY),
                     ) ?: getDefaultBitmap(tileRegion.width(), tileRegion.height())
                 }
             }
