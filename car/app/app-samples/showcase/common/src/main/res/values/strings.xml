@@ -351,6 +351,7 @@
   <string name="tab_template_demo_title">Tab Template Demo</string>
   <string name="tab_title_message">Message Tab</string>
   <string name="tab_title_pane">Pane Tab</string>
+  <string name="tab_title_sectioned_item">Sectioned Item Tab</string>
   <string name="tab_title_list">List Tab</string>
   <string name="tab_title_grid">Grid Tab with Long Tab Title</string>
   <string name="tab_title_search">Search Tab</string>
