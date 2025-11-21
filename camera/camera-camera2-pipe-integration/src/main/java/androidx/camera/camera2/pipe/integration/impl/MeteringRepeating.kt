@@ -84,6 +84,8 @@ public class MeteringRepeating(
     }
 
     override fun onUnbind() {
+        closeableErrorListener?.close()
+        closeableErrorListener = null
         synchronized(deferrableSurfaceLock) {
             deferrableSurface?.close()
             deferrableSurface = null
