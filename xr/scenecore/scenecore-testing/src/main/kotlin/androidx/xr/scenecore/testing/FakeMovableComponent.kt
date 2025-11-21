@@ -65,7 +65,7 @@ public class FakeMovableComponent : FakeComponent(), MovableComponent {
      */
     @Suppress("ExecutorRegistration")
     override fun addMoveEventListener(executor: Executor, moveEventListener: MoveEventListener) {
-        moveEventListenersMap.put(moveEventListener, executor)
+        moveEventListenersMap[moveEventListener] = executor
     }
 
     /**
