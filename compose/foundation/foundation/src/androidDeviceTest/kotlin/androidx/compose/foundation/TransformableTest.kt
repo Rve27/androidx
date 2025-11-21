@@ -863,10 +863,7 @@ class TransformableTest {
                 .isAtLeast(2f)
 
             centroids.forEach { centroid ->
-                // TODO: b/462198195
-                //       assertThatOffset(centroid).equalsWithTolerance(assertNotNull(Offset(20f,
-                // 30f)))
-                assertThat(centroid).isEqualTo(Offset.Unspecified)
+                assertThatOffset(centroid).equalsWithTolerance(assertNotNull(Offset(20f, 30f)))
             }
         }
     }
@@ -904,10 +901,7 @@ class TransformableTest {
                 .isAtMost(0.5f)
 
             centroids.forEach { centroid ->
-                // TODO: b/462198195
-                //       assertThatOffset(centroid).equalsWithTolerance(assertNotNull(Offset(20f,
-                // 30f)))
-                assertThat(centroid).isEqualTo(Offset.Unspecified)
+                assertThatOffset(centroid).equalsWithTolerance(assertNotNull(Offset(20f, 30f)))
             }
         }
     }
@@ -955,10 +949,7 @@ class TransformableTest {
             assertWithMessage("Should not scroll").that(scrollState.value).isEqualTo(0)
 
             centroids.forEach { centroid ->
-                // TODO: b/462198195
-                //       assertThatOffset(centroid).equalsWithTolerance(assertNotNull(Offset(20f,
-                // 30f)))
-                assertThat(centroid).isEqualTo(Offset.Unspecified)
+                assertThatOffset(centroid).equalsWithTolerance(assertNotNull(Offset(20f, 30f)))
             }
         }
     }
