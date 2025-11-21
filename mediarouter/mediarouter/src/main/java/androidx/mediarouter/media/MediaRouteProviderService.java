@@ -57,6 +57,7 @@ import static androidx.mediarouter.media.MediaRouteProviderProtocol.SERVICE_VERS
 import static androidx.mediarouter.media.MediaRouteProviderProtocol.isValidRemoteMessenger;
 import static androidx.mediarouter.media.MediaRouter.UNSELECT_REASON_UNKNOWN;
 
+import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -82,6 +83,7 @@ import androidx.annotation.RequiresApi;
 import androidx.annotation.VisibleForTesting;
 import androidx.collection.ArrayMap;
 import androidx.core.content.ContextCompat;
+import androidx.core.os.BuildCompat;
 import androidx.core.util.Consumer;
 import androidx.core.util.ObjectsCompat;
 import androidx.mediarouter.media.MediaRouteProvider.DynamicGroupRouteController;
@@ -203,12 +205,13 @@ public abstract class MediaRouteProviderService extends Service {
     /**
      * Creates a media route provider service.
      */
+    @SuppressLint("NewApi") // b/462789273 NewApi check fails to detect BuildCompat.isAtLeastB_1 use
     public MediaRouteProviderService() {
         mReceiveHandler = new ReceiveHandler(this);
         mReceiveMessenger = new Messenger(mReceiveHandler);
         mPrivateHandler = new PrivateHandler();
 
-        if (Build.VERSION.SDK_INT_FULL >= Build.VERSION_CODES_FULL.BAKLAVA_1) {
+        if (BuildCompat.isAtLeastB_1()) {
             mImpl = new MediaRouteProviderServiceImplApi36_1(this);
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             mImpl = new MediaRouteProviderServiceImplApi30(this);
