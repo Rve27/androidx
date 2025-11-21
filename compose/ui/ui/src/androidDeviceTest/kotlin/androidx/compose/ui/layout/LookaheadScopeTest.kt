@@ -2866,28 +2866,20 @@ class LookaheadScopeTest {
                                 Modifier
                                     // starts as false
                                     .layoutId(OffsetData(100f, placeWithDirectManipulation))
-                                    .layout { measurable, constraints ->
-                                        val placeable = measurable.measure(constraints)
-                                        layout(placeable.width, placeable.height) {
-                                            placeable.place(0, 0)
-                                            val it = coordinates
-                                            if (it != null) {
-                                                val parentLookaheadCoords =
-                                                    it.parentLayoutCoordinates!!
-                                                        .toLookaheadCoordinates()
+                                    .onPlaced {
+                                        val parentLookaheadCoords =
+                                            it.parentLayoutCoordinates!!.toLookaheadCoordinates()
 
-                                                regularPositions[0] =
-                                                    parentLookaheadCoords.localLookaheadPositionOf(
-                                                        sourceCoordinates = it
-                                                    )
+                                        regularPositions[0] =
+                                            parentLookaheadCoords.localLookaheadPositionOf(
+                                                sourceCoordinates = it
+                                            )
 
-                                                excludedManipulationPositions[0] =
-                                                    parentLookaheadCoords.localLookaheadPositionOf(
-                                                        sourceCoordinates = it,
-                                                        includeMotionFrameOfReference = false,
-                                                    )
-                                            }
-                                        }
+                                        excludedManipulationPositions[0] =
+                                            parentLookaheadCoords.localLookaheadPositionOf(
+                                                sourceCoordinates = it,
+                                                includeMotionFrameOfReference = false,
+                                            )
                                     }
                         )
                         Box(
@@ -2895,28 +2887,20 @@ class LookaheadScopeTest {
                                 Modifier
                                     // starts as true
                                     .layoutId(OffsetData(200f, !placeWithDirectManipulation))
-                                    .layout { measurable, constraints ->
-                                        val placeable = measurable.measure(constraints)
-                                        layout(placeable.width, placeable.height) {
-                                            placeable.place(0, 0)
-                                            val it = coordinates
-                                            if (it != null) {
-                                                val parentLookaheadCoords =
-                                                    it.parentLayoutCoordinates!!
-                                                        .toLookaheadCoordinates()
+                                    .onPlaced {
+                                        val parentLookaheadCoords =
+                                            it.parentLayoutCoordinates!!.toLookaheadCoordinates()
 
-                                                regularPositions[1] =
-                                                    parentLookaheadCoords.localLookaheadPositionOf(
-                                                        sourceCoordinates = it
-                                                    )
+                                        regularPositions[1] =
+                                            parentLookaheadCoords.localLookaheadPositionOf(
+                                                sourceCoordinates = it
+                                            )
 
-                                                excludedManipulationPositions[1] =
-                                                    parentLookaheadCoords.localLookaheadPositionOf(
-                                                        sourceCoordinates = it,
-                                                        includeMotionFrameOfReference = false,
-                                                    )
-                                            }
-                                        }
+                                        excludedManipulationPositions[1] =
+                                            parentLookaheadCoords.localLookaheadPositionOf(
+                                                sourceCoordinates = it,
+                                                includeMotionFrameOfReference = false,
+                                            )
                                     }
                         )
                     }
@@ -4126,6 +4110,7 @@ class LookaheadScopeTest {
     private fun Modifier.assertSameSizeAndPosition(scope: LookaheadScope) = composed {
         var lookaheadSize by remember { mutableStateOf(IntSize.Zero) }
         var lookaheadLayoutCoordinates: LayoutCoordinates? by remember { mutableStateOf(null) }
+        var onPlacedCoordinates: LayoutCoordinates? by remember { mutableStateOf(null) }
         with(scope) {
             this@composed.createIntermediateElement(
                     object : TestApproachLayoutModifierNode() {
@@ -4150,11 +4135,17 @@ class LookaheadScopeTest {
                         }
                     }
                 )
-                .onGloballyPositioned { coordinates ->
-                    assertEquals(lookaheadSize, coordinates.size)
+                .onPlaced { it -> onPlacedCoordinates = it }
+                .onGloballyPositioned {
+                    assertEquals(lookaheadSize, it.size)
                     assertEquals(
-                        lookaheadLayoutCoordinates!!.localLookaheadPositionOf(coordinates),
-                        lookaheadLayoutCoordinates!!.localPositionOf(coordinates, Offset.Zero),
+                        lookaheadLayoutCoordinates!!.localLookaheadPositionOf(
+                            onPlacedCoordinates!!
+                        ),
+                        lookaheadLayoutCoordinates!!.localPositionOf(
+                            onPlacedCoordinates!!,
+                            Offset.Zero,
+                        ),
                     )
                     // Also check that localPositionOf with non-zero offset works
                     // correctly for lookahead coordinates and LayoutCoordinates.
@@ -4163,8 +4154,14 @@ class LookaheadScopeTest {
                     assertEquals(
                         lookaheadLayoutCoordinates!!
                             .toLookaheadCoordinates()
-                            .localPositionOf(coordinates.toLookaheadCoordinates(), randomOffset),
-                        lookaheadLayoutCoordinates!!.localPositionOf(coordinates, randomOffset),
+                            .localPositionOf(
+                                onPlacedCoordinates!!.toLookaheadCoordinates(),
+                                randomOffset,
+                            ),
+                        lookaheadLayoutCoordinates!!.localPositionOf(
+                            onPlacedCoordinates!!,
+                            randomOffset,
+                        ),
                     )
                 }
         }

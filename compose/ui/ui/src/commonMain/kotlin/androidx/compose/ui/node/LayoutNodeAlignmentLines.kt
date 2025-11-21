@@ -45,11 +45,6 @@ internal sealed class AlignmentLines(val alignmentLinesOwner: AlignmentLinesOwne
     /** `true` when the alignment lines were used by the modifier of the node during measurement. */
     internal var usedByModifierLayout = false
 
-    /**
-     * `true` when the alignment lines were used by [androidx.compose.ui.layout.LayoutCoordinates].
-     */
-    internal var usedByLayoutCoordinates = false
-
     /** `true` when the direct parent or our modifier relies on our alignment lines. */
     internal val queried
         get() =
@@ -179,7 +174,6 @@ internal sealed class AlignmentLines(val alignmentLinesOwner: AlignmentLinesOwne
         usedDuringParentLayout = false
         usedByModifierMeasurement = false
         usedByModifierLayout = false
-        usedByLayoutCoordinates = false
         queryOwner = null
     }
 
@@ -197,9 +191,6 @@ internal sealed class AlignmentLines(val alignmentLinesOwner: AlignmentLinesOwne
         }
         if (usedByModifierLayout) {
             alignmentLinesOwner.requestLayout()
-        }
-        if (usedByLayoutCoordinates) {
-            alignmentLinesOwner.invalidateRectCallbacks()
         }
         parent.alignmentLines.onAlignmentsChanged()
     }

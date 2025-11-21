@@ -57,7 +57,6 @@ import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.layout.findRootCoordinates
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.layout.positionOnScreen
-import androidx.compose.ui.node.LayoutNode.LayoutState
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntOffset
@@ -137,10 +136,7 @@ internal abstract class NodeCoordinator(override val layoutNode: LayoutNode) :
 
     // Size exposed to LayoutCoordinates.
     final override val size: IntSize
-        get() {
-            usageFromOnPlacedTracked = true
-            return measuredSize
-        }
+        get() = measuredSize
 
     private var isClipping: Boolean = false
 
@@ -218,10 +214,6 @@ internal abstract class NodeCoordinator(override val layoutNode: LayoutNode) :
 
     override val providedAlignmentLines: Set<AlignmentLine>
         get() {
-            usageFromOnPlacedTracked = true
-            if (layoutNode.layoutState == LayoutState.Idle) {
-                alignmentLinesOwner.alignmentLines.usedByLayoutCoordinates = true
-            }
             var set: MutableScatterSet<AlignmentLine>? = null
             var coordinator: NodeCoordinator? = this
             while (coordinator != null) {
@@ -237,14 +229,6 @@ internal abstract class NodeCoordinator(override val layoutNode: LayoutNode) :
             @Suppress("AsCollectionCall")
             return set?.asSet() ?: emptySet()
         }
-
-    override fun get(alignmentLine: AlignmentLine): Int {
-        usageFromOnPlacedTracked = true
-        if (layoutNode.layoutState == LayoutState.Idle) {
-            alignmentLinesOwner.alignmentLines.usedByLayoutCoordinates = true
-        }
-        return super.get(alignmentLine)
-    }
 
     /**
      * Called when the width or height of [measureResult] change. The object instance pointed to by
@@ -298,10 +282,7 @@ internal abstract class NodeCoordinator(override val layoutNode: LayoutNode) :
             return null
         }
 
-    internal var usageFromOnPlacedTracked = false
-
     internal fun onCoordinatesUsed() {
-        usageFromOnPlacedTracked = true
         layoutNode.layoutDelegate.onCoordinatesUsed()
     }
 
