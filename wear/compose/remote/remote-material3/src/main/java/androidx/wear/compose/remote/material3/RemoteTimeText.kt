@@ -23,7 +23,6 @@ import androidx.annotation.RestrictTo
 import androidx.compose.remote.core.RemoteContext.FLOAT_TIME_IN_HR
 import androidx.compose.remote.core.RemoteContext.FLOAT_TIME_IN_MIN
 import androidx.compose.remote.core.operations.DrawTextOnCircle
-import androidx.compose.remote.core.operations.TextFromFloat
 import androidx.compose.remote.creation.compose.layout.RemoteBox
 import androidx.compose.remote.creation.compose.layout.RemoteCanvas
 import androidx.compose.remote.creation.compose.layout.RemoteCanvasDrawScope
@@ -37,6 +36,7 @@ import androidx.compose.remote.creation.compose.state.RemotePaint
 import androidx.compose.remote.creation.compose.state.RemoteString
 import androidx.compose.remote.creation.compose.state.rf
 import androidx.compose.runtime.Composable
+import java.text.DecimalFormat
 
 /**
  * A remote composable for displaying the time and surrounding text, designed to curve along the top
@@ -118,12 +118,13 @@ private fun RemoteCanvasDrawScope.drawTimeText(text: RemoteString, color: Remote
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public object RemoteTimeTextDefaults {
+    private val AsInteger: DecimalFormat = DecimalFormat("00")
 
     @Composable
     public fun defaultTimeString(): RemoteString {
-        val mins =
-            (RemoteFloat(FLOAT_TIME_IN_MIN) % 60f).toRemoteString(2, 0, TextFromFloat.PAD_PRE_ZERO)
-        val hours = RemoteFloat(FLOAT_TIME_IN_HR).toRemoteString(2, 0, TextFromFloat.PAD_PRE_ZERO)
+
+        val mins = (RemoteFloat(FLOAT_TIME_IN_MIN) % 60f).toRemoteString(AsInteger)
+        val hours = RemoteFloat(FLOAT_TIME_IN_HR).toRemoteString(AsInteger)
         return hours + RemoteString(":") + mins
     }
 }
