@@ -76,7 +76,7 @@ abstract class FunctionProcessorDelegate(
     abstract fun findResultBinder(
         returnType: XType,
         query: ParsedQuery,
-        extrasCreator: TypeAdapterExtras.() -> Unit,
+        extrasCreator: TypeAdapterExtras.() -> Unit = {},
     ): QueryResultBinder
 
     abstract fun findPreparedResultBinder(
