@@ -210,7 +210,7 @@ private class Invalidation(
 
 /** Implementation of a composer for a mutable tree. */
 @OptIn(ExperimentalComposeRuntimeApi::class)
-internal class ComposerImpl(
+internal class GapComposer(
     /** An adapter that applies changes to the tree using the Applier abstraction. */
     override val applier: Applier<*>,
 
@@ -1249,7 +1249,7 @@ internal class ComposerImpl(
                 ReusableRememberObserverHolder(
                     CompositionContextHolder(
                         CompositionContextImpl(
-                            this@ComposerImpl.compositeKeyHashCode,
+                            this@GapComposer.compositeKeyHashCode,
                             forceRecomposeScopes,
                             sourceMarkersEnabled,
                             composition.observerHolder,
@@ -1647,7 +1647,7 @@ internal class ComposerImpl(
         val parent = reader.parent
         val end = parent + reader.groupSize(parent)
         val recomposeIndex = nodeIndex
-        val recomposeCompositeKey = this@ComposerImpl.compositeKeyHashCode
+        val recomposeCompositeKey = this@GapComposer.compositeKeyHashCode
         val oldGroupNodeCount = groupNodeCount
         val oldRGroupIndex = rGroupIndex
         var oldGroup = parent
@@ -1679,7 +1679,7 @@ internal class ComposerImpl(
                 // Calculate the composite hash code (a semi-unique code for every group in the
                 // composition used to restore saved state).
                 val newParent = reader.parent(newGroup)
-                this@ComposerImpl.compositeKeyHashCode =
+                this@GapComposer.compositeKeyHashCode =
                     compositeKeyOf(newParent, parent, recomposeCompositeKey)
 
                 // We have moved so the cached lookup of the provider is invalid
@@ -1736,7 +1736,7 @@ internal class ComposerImpl(
             // No need to restore the parent state for nodeIndex, groupNodeCount and
             // rGroupIndex as they are going to be restored immediately by the endGroup
         }
-        this@ComposerImpl.compositeKeyHashCode = recomposeCompositeKey
+        this@GapComposer.compositeKeyHashCode = recomposeCompositeKey
 
         isComposing = wasComposing
     }
@@ -2938,7 +2938,7 @@ internal class ComposerImpl(
         override val observerHolder: CompositionObserverHolder?,
     ) : CompositionContext() {
         var inspectionTables: MutableSet<MutableSet<CompositionData>>? = null
-        val composers = mutableScatterSetOf<ComposerImpl>()
+        val composers = mutableScatterSetOf<GapComposer>()
 
         override val collectingCallByInformation: Boolean
             get() = parentContext.collectingCallByInformation
@@ -2958,13 +2958,13 @@ internal class ComposerImpl(
         }
 
         override fun registerComposer(composer: Composer) {
-            super.registerComposer(composer as ComposerImpl)
+            super.registerComposer(composer as GapComposer)
             composers.add(composer)
         }
 
         override fun unregisterComposer(composer: Composer) {
-            inspectionTables?.forEach { it.remove((composer as ComposerImpl).compositionData) }
-            if (composer is ComposerImpl) {
+            inspectionTables?.forEach { it.remove((composer as GapComposer).compositionData) }
+            if (composer is GapComposer) {
                 composers.remove(composer)
             }
         }
@@ -3015,7 +3015,7 @@ internal class ComposerImpl(
             // This invalidation process could be made more efficient as it's currently N^2 with
             // subcomposition meta-tree depth thanks to the double recursive parent walk
             // performed here, but we currently assume a low N.
-            parentContext.invalidate(this@ComposerImpl.composition)
+            parentContext.invalidate(this@GapComposer.composition)
             parentContext.invalidate(composition)
         }
 
@@ -3079,7 +3079,7 @@ internal class ComposerImpl(
         }
 
         override val composition: Composition
-            get() = this@ComposerImpl.composition
+            get() = this@GapComposer.composition
 
         override fun scheduleFrameEndCallback(action: () -> Unit): CancellationHandle {
             return parentContext.scheduleFrameEndCallback(action)
