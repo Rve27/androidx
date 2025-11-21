@@ -69,13 +69,9 @@ internal fun Number.getFloatIdForCreationState(creationState: RemoteComposeCreat
 /**
  * Abstract base class for all remote float representations. It extends [Number] and implements
  * [RemoteState<Float>].
- *
- * @property hasConstantValue Whether this [RemoteFloat] will always evaluate to the same value.
- *   This is a conservative check and might return false for some expressions that are effectively
- *   constant.
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public abstract class RemoteFloat : RemoteState<Float> {
+public abstract class RemoteFloat : BaseRemoteState<Float>() {
     internal abstract val arrayProvider: (creationState: RemoteComposeCreationState) -> FloatArray
 
     internal fun arrayForCreationState(creationState: RemoteComposeCreationState): FloatArray {

@@ -24,9 +24,9 @@ import androidx.compose.remote.creation.CreationDisplayInfo
 import androidx.compose.remote.creation.RemoteComposeWriter
 import androidx.compose.remote.creation.RemoteComposeWriterAndroid
 import androidx.compose.remote.creation.compose.state.AnimatedRemoteFloat
-import androidx.compose.remote.creation.compose.state.BaseRemoteState
 import androidx.compose.remote.creation.compose.state.RemoteFloat
 import androidx.compose.remote.creation.compose.state.RemoteInt
+import androidx.compose.remote.creation.compose.state.RemoteState
 import androidx.compose.remote.creation.profile.Profile
 import androidx.compose.remote.creation.profile.RcPlatformProfiles
 import androidx.compose.runtime.MutableState
@@ -41,18 +41,16 @@ public open class RemoteComposeCreationState {
     public val creationDisplayInfo: CreationDisplayInfo
     public val profile: Profile
 
-    public val animCache: HashMap<Int, AnimatedRemoteFloat> = HashMap<Int, AnimatedRemoteFloat>()
-    public val expressionCache: HashMap<Int, RemoteFloat> = HashMap<Int, RemoteFloat>()
-    public val intExpressionCache: HashMap<Int, RemoteInt> = HashMap<Int, RemoteInt>()
+    public val animCache: HashMap<Int, AnimatedRemoteFloat> = HashMap()
+    public val expressionCache: HashMap<Int, RemoteFloat> = HashMap()
+    public val intExpressionCache: HashMap<Int, RemoteInt> = HashMap()
     public var ready: Boolean = true
     public var document: RemoteComposeWriter
-    public val remoteVariableToId: HashMap<BaseRemoteState, Int> = HashMap<BaseRemoteState, Int>()
-    public val floatArrayCache: HashMap<BaseRemoteState, FloatArray> =
-        HashMap<BaseRemoteState, FloatArray>()
-    public val longArrayCache: HashMap<BaseRemoteState, LongArray> =
-        HashMap<BaseRemoteState, LongArray>()
+    public val remoteVariableToId: HashMap<RemoteState<*>, Int> = HashMap()
+    public val floatArrayCache: HashMap<RemoteState<*>, FloatArray> = HashMap()
+    public val longArrayCache: HashMap<RemoteState<*>, LongArray> = HashMap()
 
-    public val namedState: HashMap<String, BaseRemoteState> = HashMap()
+    public val namedState: HashMap<String, RemoteState<*>> = HashMap()
 
     public val time: MutableState<Long> = mutableStateOf(0L)
 
@@ -136,7 +134,7 @@ public open class RemoteComposeCreationState {
         this.document = profile.create(creationDisplayInfo, null)
     }
 
-    public open fun <T : BaseRemoteState> getOrCreateNamedState(
+    public open fun <T : RemoteState<*>> getOrCreateNamedState(
         type: Class<T>,
         name: String,
         domain: String,
@@ -150,7 +148,7 @@ public open class RemoteComposeCreationState {
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public class NoRemoteCompose :
     RemoteComposeCreationState(CreationDisplayInfo(1, 1, 1f), null, RcPlatformProfiles.ANDROIDX) {
-    override fun <T : BaseRemoteState> getOrCreateNamedState(
+    override fun <T : RemoteState<*>> getOrCreateNamedState(
         type: Class<T>,
         name: String,
         domain: String,
@@ -162,4 +160,6 @@ public class NoRemoteCompose :
 }
 
 public val LocalRemoteComposeCreationState: ProvidableCompositionLocal<RemoteComposeCreationState> =
-    compositionLocalOf<RemoteComposeCreationState> { NoRemoteCompose() }
+    compositionLocalOf {
+        NoRemoteCompose()
+    }

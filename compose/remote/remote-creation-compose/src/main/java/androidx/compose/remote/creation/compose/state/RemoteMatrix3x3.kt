@@ -22,17 +22,15 @@ import androidx.compose.remote.core.operations.Utils
 import androidx.compose.remote.core.operations.utilities.MatrixOperations
 import androidx.compose.remote.creation.compose.capture.RemoteComposeCreationState
 
-/**
- * Represents a 3x3 transformation matrix.
- *
- * @property hasConstantValue Indicates whether the matrix value is constant
- */
+/** Represents a 3x3 transformation matrix. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public class RemoteMatrix3x3
 internal constructor(
     public override val hasConstantValue: Boolean,
     private val idProvider: (creationState: RemoteComposeCreationState) -> Int,
-) : BaseRemoteState {
+) : BaseRemoteState<Any>() {
+    override val constantValue: Any?
+        get() = null
 
     /**
      * Creates a new [RemoteMatrix3x3] that represents the multiplication of this matrix by another.
