@@ -842,10 +842,6 @@ internal class MeasurePassDelegate(private val layoutNodeLayoutDelegate: LayoutN
         layoutNode.requestRemeasure()
     }
 
-    override fun invalidateRectCallbacks() {
-        layoutNode.requireOwner().rectManager.invalidateCallbacksFor(layoutNode)
-    }
-
     /**
      * This is called any time a placement has done that changes the position during the layout
      * pass. If any child is looking at their own coordinates to know how to place children, it will

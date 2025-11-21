@@ -147,7 +147,6 @@ package androidx.compose.ui {
     property public boolean isIgnoreInvalidPrevFocusRectEnabled;
     property public boolean isIndirectPointerNavigationGestureDetectorEnabled;
     property public boolean isInitialFocusOnFocusableAvailable;
-    property public boolean isNewDispatchingMechanismForOnPlacedEnabled;
     property public boolean isOptimizedFocusEventDispatchEnabled;
     property public boolean isPinningFocusedAndroidViewsEnabled;
     property public boolean isPre26FocusFinderFixEnabled;
@@ -166,7 +165,6 @@ package androidx.compose.ui {
     field public static boolean isIgnoreInvalidPrevFocusRectEnabled;
     field public static boolean isIndirectPointerNavigationGestureDetectorEnabled;
     field public static boolean isInitialFocusOnFocusableAvailable;
-    field public static boolean isNewDispatchingMechanismForOnPlacedEnabled;
     field public static boolean isOptimizedFocusEventDispatchEnabled;
     field public static boolean isPinningFocusedAndroidViewsEnabled;
     field public static boolean isPre26FocusFinderFixEnabled;
