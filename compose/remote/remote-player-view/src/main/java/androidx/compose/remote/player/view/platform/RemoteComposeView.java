@@ -25,6 +25,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.view.Choreographer;
 import android.view.MotionEvent;
@@ -69,7 +70,7 @@ public class RemoteComposeView extends FrameLayout implements View.OnAttachState
     Clock mClock;
 
     RemoteDocument mDocument = null;
-    int mTheme = Theme.LIGHT;
+    int mTheme = Theme.SYSTEM;
     boolean mInActionDown = false;
     int mDebug = 0;
     boolean mHasClickAreas = false;
@@ -738,6 +739,15 @@ public class RemoteComposeView extends FrameLayout implements View.OnAttachState
             drawDisable(canvas, mErrorMessage);
             return;
         }
+        int theme = (mTheme == Theme.SYSTEM) ? Theme.LIGHT : mTheme;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { // REMOVE IN PLATFORM
+            if (mTheme == Theme.SYSTEM) {
+                int mode =
+                        getResources().getConfiguration().isNightModeActive() ? Theme.DARK
+                                : Theme.LIGHT;
+                theme = mode;
+            }
+        }
         try {
             long nanoStart = nanoTime(mClock);
             long start = mEvalTime ? nanoStart : 0; // measure execution of commands
@@ -754,7 +764,7 @@ public class RemoteComposeView extends FrameLayout implements View.OnAttachState
             mARContext.useCanvas(canvas);
             mARContext.mWidth = getWidth();
             mARContext.mHeight = getHeight();
-            mDocument.paint(mARContext, mTheme);
+            mDocument.paint(mARContext, theme);
             if (mDebug == 1) {
                 mCount++;
                 long nanoEnd = nanoTime(mClock);
