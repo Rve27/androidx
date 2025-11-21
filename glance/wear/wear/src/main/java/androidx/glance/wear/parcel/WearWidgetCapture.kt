@@ -39,7 +39,6 @@ internal object WearWidgetCapture {
      * Directly capture a RemoteCompose document and gather the pending intents used in the layout.
      */
     @OptIn(ExperimentalCoroutinesApi::class)
-    @SuppressLint("RestrictedApiAndroidX")
     internal suspend fun capture(
         context: Context,
         creationDisplayInfo: CreationDisplayInfo,
