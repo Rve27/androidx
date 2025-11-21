@@ -286,6 +286,97 @@ class RemoteButtonTest {
     }
 
     @Test
+    fun button_with_icon_and_label_and_secondary_label() {
+        remoteComposeTestRule.runScreenshotTest(
+            backgroundColor = Color.Black,
+            creationDisplayInfo = creationDisplayInfo,
+        ) {
+            Center(RemoteModifier.fillMaxSize()) {
+                RemoteButton(
+                    modifier = RemoteModifier.buttonSizeModifier(),
+                    icon = {
+                        RemoteIcon(
+                            imageVector = TestImageVectors.VolumeUp,
+                            contentDescription = null,
+                            tint = RemoteButtonDefaults.buttonColors().iconColor,
+                        )
+                    },
+                    secondaryLabel = {
+                        RemoteText(
+                            RemoteString("secondaryLabel"),
+                            color = RemoteButtonDefaults.buttonColors().secondaryContentColor,
+                            style = RemoteMaterialTheme.typography.typography.labelMedium,
+                        )
+                    },
+                    label = {
+                        RemoteText(
+                            RemoteString("label"),
+                            color = RemoteButtonDefaults.buttonColors().contentColor(),
+                            style = RemoteMaterialTheme.typography.typography.labelMedium,
+                        )
+                    },
+                )
+            }
+        }
+    }
+
+    @Test
+    fun button_with_icon_and_label() {
+        remoteComposeTestRule.runScreenshotTest(
+            backgroundColor = Color.Black,
+            creationDisplayInfo = creationDisplayInfo,
+        ) {
+            Center(RemoteModifier.fillMaxSize()) {
+                RemoteButton(
+                    modifier = RemoteModifier.buttonSizeModifier(),
+                    icon = {
+                        RemoteIcon(
+                            imageVector = TestImageVectors.VolumeUp,
+                            contentDescription = null,
+                            tint = RemoteButtonDefaults.buttonColors().iconColor,
+                        )
+                    },
+                    label = {
+                        RemoteText(
+                            RemoteString("label"),
+                            color = RemoteButtonDefaults.buttonColors().contentColor(),
+                            style = RemoteMaterialTheme.typography.typography.labelMedium,
+                        )
+                    },
+                )
+            }
+        }
+    }
+
+    @Test
+    fun button_with_label_and_secondary_label() {
+        remoteComposeTestRule.runScreenshotTest(
+            backgroundColor = Color.Black,
+            creationDisplayInfo = creationDisplayInfo,
+        ) {
+            Center(RemoteModifier.fillMaxSize()) {
+                RemoteButton(
+                    modifier = RemoteModifier.buttonSizeModifier(),
+                    secondaryLabel = {
+                        RemoteText(
+                            RemoteString("secondaryLabel"),
+                            color = RemoteButtonDefaults.buttonColors().secondaryContentColor,
+                            style = RemoteMaterialTheme.typography.typography.labelMedium,
+                        )
+                    },
+                    label = {
+                        RemoteText(
+                            RemoteString("label"),
+                            color = RemoteButtonDefaults.buttonColors().contentColor(),
+                            style = RemoteMaterialTheme.typography.typography.labelMedium,
+                        )
+                    },
+                )
+            }
+        }
+    }
+
+    @Test
     fun button_enabled_click_modifier_is_added() {
         val expectedContent =
             """
