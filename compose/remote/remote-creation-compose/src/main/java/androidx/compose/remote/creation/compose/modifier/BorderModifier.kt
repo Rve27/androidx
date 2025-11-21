@@ -20,7 +20,6 @@ package androidx.compose.remote.creation.compose.modifier
 import androidx.annotation.RestrictTo
 import androidx.compose.remote.creation.compose.state.RemoteDp
 import androidx.compose.remote.creation.compose.state.RemoteFloat
-import androidx.compose.remote.creation.compose.state.toPx
 import androidx.compose.remote.creation.modifiers.RecordingModifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
