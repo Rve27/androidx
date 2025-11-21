@@ -75,13 +75,8 @@ class RemoteButtonTest {
                 RemoteButton(
                     modifier = RemoteModifier.buttonSizeModifier(),
                     enabled = RemoteBoolean(true),
-                ) {
-                    RemoteText(
-                        RemoteString("button_enabled"),
-                        color = RemoteButtonDefaults.buttonColors().contentColor(),
-                        style = RemoteMaterialTheme.typography.typography.labelMedium,
-                    )
-                }
+                    content = { RemoteText(RemoteString("button_enabled")) },
+                )
             }
         }
     }
@@ -97,12 +92,7 @@ class RemoteButtonTest {
                     modifier = RemoteModifier.buttonSizeModifier(),
                     enabled = RemoteBoolean(false),
                 ) {
-                    RemoteText(
-                        RemoteString("button_disabled"),
-                        color =
-                            RemoteButtonDefaults.buttonColors().contentColor(RemoteBoolean(false)),
-                        style = RemoteMaterialTheme.typography.typography.labelMedium,
-                    )
+                    RemoteText(RemoteString("button_disabled"))
                 }
             }
         }
@@ -131,11 +121,7 @@ class RemoteButtonTest {
                     contentPadding = RemotePaddingValues(40.rdp),
                     colors = colors,
                 ) {
-                    RemoteText(
-                        RemoteString("button_overrides_colors"),
-                        color = colors.contentColor(),
-                        style = RemoteMaterialTheme.typography.typography.labelMedium,
-                    )
+                    RemoteText(RemoteString("button_overrides_colors"))
                 }
             }
         }
@@ -152,11 +138,7 @@ class RemoteButtonTest {
                     modifier = RemoteModifier.buttonSizeModifier(),
                     contentPadding = RemotePaddingValues(150.rdp),
                 ) {
-                    RemoteText(
-                        RemoteString("button_overrides_padding"),
-                        color = RemoteButtonDefaults.buttonColors().contentColor(),
-                        style = RemoteMaterialTheme.typography.typography.labelMedium,
-                    )
+                    RemoteText(RemoteString("button_overrides_padding"))
                 }
             }
         }
@@ -173,10 +155,28 @@ class RemoteButtonTest {
                     modifier = RemoteModifier.size(180.rdp, 100.rdp),
                     contentPadding = RemotePaddingValues(0.rdp),
                 ) {
+                    RemoteText(RemoteString("button_overrides_size"))
+                }
+            }
+        }
+    }
+
+    @Test
+    fun button_overrides_textStyle() {
+        remoteComposeTestRule.runScreenshotTest(
+            backgroundColor = Color.Black,
+            creationDisplayInfo = creationDisplayInfo,
+        ) {
+            Center(RemoteModifier.fillMaxSize()) {
+                RemoteButton(
+                    modifier = RemoteModifier.buttonSizeModifier(),
+                    contentPadding = RemotePaddingValues(0.rdp),
+                ) {
                     RemoteText(
-                        RemoteString("button_overrides_size"),
-                        color = RemoteButtonDefaults.buttonColors().contentColor(),
-                        style = RemoteMaterialTheme.typography.typography.labelMedium,
+                        RemoteString("button_overrides_textStyle"),
+                        color = null,
+                        style =
+                            RemoteMaterialTheme.typography.typography.labelSmall.copy(Color.Cyan),
                     )
                 }
             }
@@ -195,11 +195,7 @@ class RemoteButtonTest {
                     border = 8.rdp,
                     borderColor = RemoteColor(Color.Green),
                 ) {
-                    RemoteText(
-                        RemoteString("button_with_border"),
-                        color = RemoteButtonDefaults.buttonColors().contentColor(),
-                        style = RemoteMaterialTheme.typography.typography.labelMedium,
-                    )
+                    RemoteText(RemoteString("button_with_border"))
                 }
             }
         }
@@ -218,11 +214,7 @@ class RemoteButtonTest {
                     borderColor = RemoteColor(Color.Green),
                     shape = RemoteCircleShape,
                 ) {
-                    RemoteText(
-                        RemoteString("button_with_circle_shape"),
-                        color = RemoteButtonDefaults.buttonColors().contentColor(),
-                        style = RemoteMaterialTheme.typography.typography.labelMedium,
-                    )
+                    RemoteText(RemoteString("button_with_circle_shape"))
                 }
             }
         }
@@ -243,12 +235,7 @@ class RemoteButtonTest {
                     modifier = RemoteModifier.buttonSizeModifier(),
                     containerPainter = containerPainter,
                 ) {
-                    RemoteText(
-                        RemoteString("image_background"),
-                        color =
-                            RemoteButtonDefaults.buttonWithContainerPainterColors().contentColor(),
-                        style = RemoteMaterialTheme.typography.typography.labelMedium,
-                    )
+                    RemoteText(RemoteString("image_background"))
                 }
             }
         }
@@ -273,13 +260,7 @@ class RemoteButtonTest {
                     enabled = enabled,
                     containerPainter = containerPainter,
                 ) {
-                    RemoteText(
-                        RemoteString("disable_image_background"),
-                        color =
-                            RemoteButtonDefaults.buttonWithContainerPainterColors()
-                                .contentColor(enabled = enabled),
-                        style = RemoteMaterialTheme.typography.typography.labelMedium,
-                    )
+                    RemoteText(RemoteString("disable_image_background"))
                 }
             }
         }
@@ -301,20 +282,8 @@ class RemoteButtonTest {
                             tint = RemoteButtonDefaults.buttonColors().iconColor,
                         )
                     },
-                    secondaryLabel = {
-                        RemoteText(
-                            RemoteString("secondaryLabel"),
-                            color = RemoteButtonDefaults.buttonColors().secondaryContentColor,
-                            style = RemoteMaterialTheme.typography.typography.labelMedium,
-                        )
-                    },
-                    label = {
-                        RemoteText(
-                            RemoteString("label"),
-                            color = RemoteButtonDefaults.buttonColors().contentColor(),
-                            style = RemoteMaterialTheme.typography.typography.labelMedium,
-                        )
-                    },
+                    secondaryLabel = { RemoteText(RemoteString("secondaryLabel")) },
+                    label = { RemoteText(RemoteString("label")) },
                 )
             }
         }
@@ -336,13 +305,7 @@ class RemoteButtonTest {
                             tint = RemoteButtonDefaults.buttonColors().iconColor,
                         )
                     },
-                    label = {
-                        RemoteText(
-                            RemoteString("label"),
-                            color = RemoteButtonDefaults.buttonColors().contentColor(),
-                            style = RemoteMaterialTheme.typography.typography.labelMedium,
-                        )
-                    },
+                    label = { RemoteText(RemoteString("label")) },
                 )
             }
         }
@@ -357,20 +320,8 @@ class RemoteButtonTest {
             Center(RemoteModifier.fillMaxSize()) {
                 RemoteButton(
                     modifier = RemoteModifier.buttonSizeModifier(),
-                    secondaryLabel = {
-                        RemoteText(
-                            RemoteString("secondaryLabel"),
-                            color = RemoteButtonDefaults.buttonColors().secondaryContentColor,
-                            style = RemoteMaterialTheme.typography.typography.labelMedium,
-                        )
-                    },
-                    label = {
-                        RemoteText(
-                            RemoteString("label"),
-                            color = RemoteButtonDefaults.buttonColors().contentColor(),
-                            style = RemoteMaterialTheme.typography.typography.labelMedium,
-                        )
-                    },
+                    secondaryLabel = { RemoteText(RemoteString("secondaryLabel")) },
+                    label = { RemoteText(RemoteString("label")) },
                 )
             }
         }
@@ -400,10 +351,7 @@ ROOT [-2:-1] = [0.0, 0.0, 0.0, 0.0] VISIBLE
                         modifier = RemoteModifier.buttonSizeModifier(),
                         enabled = RemoteBoolean(true),
                     ) {
-                        RemoteText(
-                            RemoteString("button_enabled"),
-                            color = RemoteButtonDefaults.buttonColors().contentColor(),
-                        )
+                        RemoteText(RemoteString("button_enabled"))
                     }
                 }
             val actualContent = document.displayHierarchy()
@@ -436,10 +384,7 @@ ROOT [-2:-1] = [0.0, 0.0, 0.0, 0.0] VISIBLE
                         modifier = RemoteModifier.buttonSizeModifier(),
                         enabled = RemoteBoolean(false),
                     ) {
-                        RemoteText(
-                            RemoteString("button_disabled"),
-                            color = RemoteButtonDefaults.buttonColors().contentColor(),
-                        )
+                        RemoteText(RemoteString("button_disabled"))
                     }
                 }
             val actualContent = document.displayHierarchy()
