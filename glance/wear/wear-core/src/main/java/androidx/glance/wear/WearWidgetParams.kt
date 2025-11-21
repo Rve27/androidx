@@ -35,9 +35,15 @@ public class WearWidgetParams
 @RestrictTo(LIBRARY_GROUP)
 public constructor(
     public val instanceId: Int,
-    @ContainerInfo.ContainerType public val containerType: Int,
-    @Dimension(unit = Dimension.DP) public val widthDp: Float,
-    @Dimension(unit = Dimension.DP) public val heightDp: Float,
+    @param:ContainerInfo.ContainerType
+    @get:ContainerInfo.ContainerType
+    public val containerType: Int,
+    @param:Dimension(unit = Dimension.DP)
+    @get:Dimension(unit = Dimension.DP)
+    public val widthDp: Float,
+    @param:Dimension(unit = Dimension.DP)
+    @get:Dimension(unit = Dimension.DP)
+    public val heightDp: Float,
 ) {
 
     /** Converts this object to [WearWidgetRequestParcel]. */
