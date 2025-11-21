@@ -125,6 +125,7 @@ internal fun copyBuildTypeSources(
                 )) {
                 val fromSet = dirSet(fromSourceSets)
                 val toSet = dirSet(toSourceSets)
+
                 if (supportsDirectories) {
                     toSet.directories.addAll(fromSet.directories)
                 } else {
