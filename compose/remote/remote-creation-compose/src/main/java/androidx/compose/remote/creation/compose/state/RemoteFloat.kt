@@ -28,6 +28,7 @@ import androidx.compose.remote.core.operations.utilities.AnimatedFloatExpression
 import androidx.compose.remote.core.operations.utilities.AnimatedFloatExpression.IFELSE
 import androidx.compose.remote.core.operations.utilities.AnimatedFloatExpression.SUB
 import androidx.compose.remote.core.operations.utilities.StringUtils
+import androidx.compose.remote.core.operations.utilities.StringUtils.PAD_NONE
 import androidx.compose.remote.core.operations.utilities.easing.FloatAnimation
 import androidx.compose.remote.creation.compose.capture.LocalRemoteComposeCreationState
 import androidx.compose.remote.creation.compose.capture.RemoteComposeCreationState
@@ -36,6 +37,8 @@ import androidx.compose.remote.creation.compose.layout.RemoteFloatContext
 import androidx.compose.remote.player.core.state.RemoteDomains
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import java.math.RoundingMode
+import java.text.DecimalFormat
 
 private const val MAX_SAFE_FLOAT_ARRAY = 30
 
@@ -119,6 +122,76 @@ public abstract class RemoteFloat : RemoteState<Float> {
         return RemoteIntExpression(constantValue = null) { creationState ->
             longArrayOf(getLongIdForCreationState(creationState))
         }
+    }
+
+    public fun toRemoteString(format: DecimalFormat): RemoteString {
+
+        val decimalSeparator = format.decimalFormatSymbols.decimalSeparator
+        val groupingSeparator = format.decimalFormatSymbols.groupingSeparator
+
+        val grouping =
+            if (format.groupingSize == 3) {
+                val pattern = format.toPattern()
+
+                if (pattern.matches(",[0#]{2},[0#]{3}".toRegex())) {
+                    TextFromFloat.GROUPING_BY32
+                } else {
+                    TextFromFloat.GROUPING_BY3
+                }
+            } else if (format.groupingSize == 4) {
+                TextFromFloat.GROUPING_BY4
+            } else {
+                TextFromFloat.GROUPING_NONE
+            }
+
+        val separator =
+            if (groupingSeparator == ',' && decimalSeparator == '.') {
+                TextFromFloat.SEPARATOR_COMMA_PERIOD
+            } else if (groupingSeparator == '.' && decimalSeparator == ',') {
+                TextFromFloat.SEPARATOR_PERIOD_COMMA
+            } else if (groupingSeparator == ' ' && decimalSeparator == ',') {
+                TextFromFloat.SEPARATOR_SPACE_COMMA
+            } else if (groupingSeparator == '_' && decimalSeparator == '.') {
+                TextFromFloat.SEPARATOR_UNDER_PERIOD
+            } else {
+                // default
+                TextFromFloat.SEPARATOR_COMMA_PERIOD
+            }
+
+        var options = 0
+        if (format.negativePrefix == "(") {
+            options = options or TextFromFloat.OPTIONS_NEGATIVE_PARENTHESES
+        }
+
+        if (format.roundingMode != RoundingMode.UNNECESSARY) {
+            // Not clear we can represent rounding properly
+            options = options or TextFromFloat.OPTIONS_ROUNDING
+        }
+
+        constantValue?.let {
+            return RemoteString(
+                StringUtils.floatToString(
+                    it,
+                    format.maximumIntegerDigits.coerceAtMost(255),
+                    format.maximumFractionDigits.coerceAtMost(255),
+                    PAD_NONE,
+                    PAD_NONE,
+                    separator.toByte(),
+                    grouping.toByte(),
+                    options shr 8,
+                )
+            )
+        }
+
+        var flags: Int = TextFromFloat.PAD_PRE_NONE or TextFromFloat.PAD_AFTER_NONE
+
+        flags = flags or separator or grouping or options
+
+        return toRemoteString(
+            before = format.maximumIntegerDigits.coerceAtMost(255),
+            after = format.maximumFractionDigits.coerceAtMost(255),
+            flags = flags,
+        )
     }
 
     /**
