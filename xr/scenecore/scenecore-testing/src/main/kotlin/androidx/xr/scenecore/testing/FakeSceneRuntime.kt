@@ -26,6 +26,7 @@ import androidx.annotation.RestrictTo
 import androidx.xr.runtime.math.Pose
 import androidx.xr.scenecore.runtime.ActivityPanelEntity
 import androidx.xr.scenecore.runtime.AnchorEntity
+import androidx.xr.scenecore.runtime.BoundsComponent
 import androidx.xr.scenecore.runtime.Dimensions
 import androidx.xr.scenecore.runtime.Entity
 import androidx.xr.scenecore.runtime.GltfFeature
@@ -384,6 +385,8 @@ public class FakeSceneRuntime(
 
     override fun createSpatialPointerComponent(): SpatialPointerComponent =
         FakeSpatialPointerComponent()
+
+    override fun createBoundsComponent(): BoundsComponent = FakeBoundsComponent()
 
     // Assuming the subspaceNodeHolder contains a valid FakeSubspaceNode and a valid FakeNode.
     public fun createSubspaceNodeEntity(node: FakeNode, size: Dimensions): SubspaceNodeEntity =

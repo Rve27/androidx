@@ -446,7 +446,7 @@ class SpatialCompose : ComponentActivity() {
 
                     // 2. Only calculate the bounding box if the animation is actually playing.
                     if (entity.animationState == AnimationState.PLAYING) {
-                        entitySize = entity.getGltfModelBoundingBox().halfExtents.times(2f)
+                        entitySize = entity.gltfModelBoundingBox.halfExtents.times(2f)
                     }
 
                     delay(16L)

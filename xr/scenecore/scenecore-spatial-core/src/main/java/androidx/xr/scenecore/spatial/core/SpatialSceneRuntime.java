@@ -34,6 +34,7 @@ import androidx.xr.scenecore.runtime.ActivitySpace;
 import androidx.xr.scenecore.runtime.AnchorEntity;
 import androidx.xr.scenecore.runtime.AnchorPlacement;
 import androidx.xr.scenecore.runtime.AudioTrackExtensionsWrapper;
+import androidx.xr.scenecore.runtime.BoundsComponent;
 import androidx.xr.scenecore.runtime.Dimensions;
 import androidx.xr.scenecore.runtime.Entity;
 import androidx.xr.scenecore.runtime.GltfEntity;
@@ -756,5 +757,10 @@ public class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory
     @Override
     public @NonNull SpatialPointerComponent createSpatialPointerComponent() {
         return new SpatialPointerComponentImpl(mExtensions);
+    }
+
+    @Override
+    public @NonNull BoundsComponent createBoundsComponent() {
+        return new BoundsComponentImpl();
     }
 }

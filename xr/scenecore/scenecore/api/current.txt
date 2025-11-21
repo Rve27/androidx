@@ -130,6 +130,20 @@ package androidx.xr.scenecore {
     property public androidx.xr.runtime.math.Pose activitySpacePose;
   }
 
+  public final class BoundsComponent implements androidx.xr.scenecore.Component {
+    method public void addOnBoundsUpdateListener(java.util.concurrent.Executor executor, java.util.function.BiConsumer<androidx.xr.scenecore.Entity,androidx.xr.runtime.math.BoundingBox> listener);
+    method public void addOnBoundsUpdateListener(java.util.function.BiConsumer<androidx.xr.scenecore.Entity,androidx.xr.runtime.math.BoundingBox> listener);
+    method public static androidx.xr.scenecore.BoundsComponent create(androidx.xr.runtime.Session session);
+    method public boolean onAttach(androidx.xr.scenecore.Entity entity);
+    method public void onDetach(androidx.xr.scenecore.Entity entity);
+    method public void removeOnBoundsUpdateListener(java.util.function.BiConsumer<androidx.xr.scenecore.Entity,androidx.xr.runtime.math.BoundingBox> listener);
+    field public static final androidx.xr.scenecore.BoundsComponent.Companion Companion;
+  }
+
+  public static final class BoundsComponent.Companion {
+    method public androidx.xr.scenecore.BoundsComponent create(androidx.xr.runtime.Session session);
+  }
+
   public interface Component {
   }
 

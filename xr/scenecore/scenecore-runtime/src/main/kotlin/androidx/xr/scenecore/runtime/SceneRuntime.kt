@@ -234,14 +234,14 @@ public interface SceneRuntime : JxrRuntime {
     public fun addPerceivedResolutionChangedListener(
         callbackExecutor: Executor,
         listener: Consumer<PixelDimensions>,
-    ): Unit
+    )
 
     /**
      * Releases the listener previously added by [addPerceivedResolutionChangedListener].
      *
      * @param listener The [Consumer] to be removed. It will no longer receive change events.
      */
-    public fun removePerceivedResolutionChangedListener(listener: Consumer<PixelDimensions>): Unit
+    public fun removePerceivedResolutionChangedListener(listener: Consumer<PixelDimensions>)
 
     /**
      * If the primary Activity for the Session that owns this object has focus, causes it to be
@@ -433,4 +433,17 @@ public interface SceneRuntime : JxrRuntime {
     ): PointerCaptureComponent
 
     public fun createSpatialPointerComponent(): SpatialPointerComponent
+
+    /**
+     * Creates an instance of [BoundsComponent].
+     *
+     * This component allows an application to monitor changes to the spatial bounds of an entity.
+     * Once created, the component can be attached to an entity that supports bounds tracking. After
+     * attachment, listeners can be added via [BoundsComponent.addOnBoundsUpdateListener] to receive
+     * notifications when the entity's bounds change due to animations or other transformations.
+     *
+     * @return A new [BoundsComponent] instance.
+     * @see BoundsComponent
+     */
+    public fun createBoundsComponent(): BoundsComponent
 }
