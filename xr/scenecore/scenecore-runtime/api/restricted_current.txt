@@ -397,6 +397,7 @@ package androidx.xr.scenecore.runtime {
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface MovableComponent extends androidx.xr.scenecore.runtime.Component {
+    method public void addMoveEventListener(androidx.xr.scenecore.runtime.MoveEventListener moveEventListener);
     method public void addMoveEventListener(java.util.concurrent.Executor executor, androidx.xr.scenecore.runtime.MoveEventListener moveEventListener);
     method @InaccessibleFromKotlin public int getScaleWithDistanceMode();
     method @InaccessibleFromKotlin public androidx.xr.scenecore.runtime.Dimensions getSize();

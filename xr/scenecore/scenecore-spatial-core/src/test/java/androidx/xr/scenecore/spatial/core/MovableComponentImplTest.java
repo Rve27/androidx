@@ -560,6 +560,34 @@ public class MovableComponentImplTest {
     }
 
     @Test
+    public void addMoveEventListenerOnDefaultExecutor_invokesListenerOnDefaultExecutor() {
+        Entity entity = createTestEntity();
+        MovableComponent movableComponent =
+                new MovableComponentImpl(
+                        /* systemMovable= */ true,
+                        /* scaleInZ= */ true,
+                        /* userAnchorable= */ false,
+                        mActivitySpaceImpl,
+                        mPanelShadowRenderer,
+                        mFakeExecutor);
+        assertThat(movableComponent).isNotNull();
+        assertThat(entity.addComponent(movableComponent)).isTrue();
+        ReformOptions options = mNodeRepository.getReformOptions(getEntityNode(entity));
+        MoveEventListener mockMoveEventListener = mock(MoveEventListener.class);
+
+        movableComponent.addMoveEventListener(mockMoveEventListener);
+        assertThat(options.getEventCallback()).isNotNull();
+        assertThat(options.getEventExecutor()).isNotNull();
+
+        ReformEvent reformEvent =
+                ShadowReformEvent.create(
+                        /* type= */ REFORM_TYPE_MOVE, /* state= */ REFORM_STATE_START, /* id= */ 0);
+
+        sendReformEvent(getEntityNode(entity), reformEvent);
+        verify(mockMoveEventListener).onMoveEvent(any());
+    }
+
+    @Test
     public void removeMoveEventListenerMultiple_removesGivenListener() {
         Entity entity = createTestEntity();
         MovableComponentImpl movableComponent =

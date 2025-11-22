@@ -228,7 +228,9 @@ package androidx.xr.scenecore.testing {
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeMovableComponent extends androidx.xr.scenecore.testing.FakeComponent implements androidx.xr.scenecore.runtime.MovableComponent {
     ctor public FakeMovableComponent();
+    method public void addMoveEventListener(androidx.xr.scenecore.runtime.MoveEventListener moveEventListener);
     method public void addMoveEventListener(java.util.concurrent.Executor executor, androidx.xr.scenecore.runtime.MoveEventListener moveEventListener);
+    method @InaccessibleFromKotlin public java.util.concurrent.Executor getDefaultExecutor();
     method @InaccessibleFromKotlin public androidx.xr.runtime.math.Pose? getLastPlanePose();
     method @InaccessibleFromKotlin public boolean getScaleInZ();
     method @InaccessibleFromKotlin public int getScaleWithDistanceMode();
@@ -238,11 +240,13 @@ package androidx.xr.scenecore.testing {
     method @InaccessibleFromKotlin public boolean getUserAnchorable();
     method public void onMoveEvent(androidx.xr.scenecore.runtime.MoveEvent event);
     method public void removeMoveEventListener(androidx.xr.scenecore.runtime.MoveEventListener moveEventListener);
+    method @InaccessibleFromKotlin public void setDefaultExecutor(java.util.concurrent.Executor);
     method @InaccessibleFromKotlin public void setLastPlanePose(androidx.xr.runtime.math.Pose?);
     method public void setPlanePoseForMoveUpdatePose(androidx.xr.runtime.math.Pose? planePose, androidx.xr.runtime.math.Pose moveUpdatePose);
     method @InaccessibleFromKotlin public void setScaleWithDistanceMode(int);
     method @InaccessibleFromKotlin public void setSetPlanePoseForMoveUpdatePoseCallCount(long);
     method @InaccessibleFromKotlin public void setSize(androidx.xr.scenecore.runtime.Dimensions);
+    property public java.util.concurrent.Executor defaultExecutor;
     property public androidx.xr.runtime.math.Pose? lastPlanePose;
     property public boolean scaleInZ;
     property public int scaleWithDistanceMode;
