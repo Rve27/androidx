@@ -4473,6 +4473,14 @@ package androidx.compose.ui.semantics {
     property public String label;
   }
 
+  public final class InputTextSuggestionState {
+    ctor public InputTextSuggestionState();
+    ctor public InputTextSuggestionState(optional boolean isCommittedByInputMethodEditor);
+    ctor @BytecodeOnly public InputTextSuggestionState(boolean, int, kotlin.jvm.internal.DefaultConstructorMarker!);
+    method @InaccessibleFromKotlin public boolean isCommittedByInputMethodEditor();
+    property public boolean isCommittedByInputMethodEditor;
+  }
+
   @androidx.compose.runtime.Immutable @kotlin.jvm.JvmInline public final value class LiveRegionMode {
     method @BytecodeOnly public static androidx.compose.ui.semantics.LiveRegionMode! box-impl(int);
     method @BytecodeOnly public int unbox-impl();
@@ -4703,6 +4711,7 @@ package androidx.compose.ui.semantics {
     method @InaccessibleFromKotlin public androidx.compose.ui.semantics.SemanticsPropertyKey<androidx.compose.ui.text.input.ImeAction> getImeAction();
     method @InaccessibleFromKotlin public androidx.compose.ui.semantics.SemanticsPropertyKey<kotlin.jvm.functions.Function1<java.lang.Object,java.lang.Integer>> getIndexForKey();
     method @InaccessibleFromKotlin public androidx.compose.ui.semantics.SemanticsPropertyKey<androidx.compose.ui.text.AnnotatedString> getInputText();
+    method @InaccessibleFromKotlin public androidx.compose.ui.semantics.SemanticsPropertyKey<androidx.compose.ui.semantics.InputTextSuggestionState> getInputTextSuggestionState();
     method @InaccessibleFromKotlin @Deprecated public androidx.compose.ui.semantics.SemanticsPropertyKey<kotlin.Unit> getInvisibleToUser();
     method @InaccessibleFromKotlin @Deprecated public androidx.compose.ui.semantics.SemanticsPropertyKey<java.lang.Boolean> getIsContainer();
     method @InaccessibleFromKotlin public androidx.compose.ui.semantics.SemanticsPropertyKey<kotlin.Unit> getIsDialog();
@@ -4724,6 +4733,7 @@ package androidx.compose.ui.semantics {
     method @InaccessibleFromKotlin public androidx.compose.ui.semantics.SemanticsPropertyKey<java.lang.String> getStateDescription();
     method @InaccessibleFromKotlin public androidx.compose.ui.semantics.SemanticsPropertyKey<java.lang.String> getTestTag();
     method @InaccessibleFromKotlin public androidx.compose.ui.semantics.SemanticsPropertyKey<java.util.List<androidx.compose.ui.text.AnnotatedString>> getText();
+    method @InaccessibleFromKotlin public androidx.compose.ui.semantics.SemanticsPropertyKey<androidx.compose.ui.text.TextRange?> getTextCompositionRange();
     method @InaccessibleFromKotlin public androidx.compose.ui.semantics.SemanticsPropertyKey<kotlin.Unit> getTextEntryKey();
     method @InaccessibleFromKotlin public androidx.compose.ui.semantics.SemanticsPropertyKey<androidx.compose.ui.text.TextRange> getTextSelectionRange();
     method @InaccessibleFromKotlin public androidx.compose.ui.semantics.SemanticsPropertyKey<androidx.compose.ui.text.AnnotatedString> getTextSubstitution();
@@ -4746,6 +4756,7 @@ package androidx.compose.ui.semantics {
     property public androidx.compose.ui.semantics.SemanticsPropertyKey<androidx.compose.ui.text.input.ImeAction> ImeAction;
     property public androidx.compose.ui.semantics.SemanticsPropertyKey<kotlin.jvm.functions.Function1<java.lang.Object,java.lang.Integer>> IndexForKey;
     property public androidx.compose.ui.semantics.SemanticsPropertyKey<androidx.compose.ui.text.AnnotatedString> InputText;
+    property public androidx.compose.ui.semantics.SemanticsPropertyKey<androidx.compose.ui.semantics.InputTextSuggestionState> InputTextSuggestionState;
     property @Deprecated public androidx.compose.ui.semantics.SemanticsPropertyKey<kotlin.Unit> InvisibleToUser;
     property @Deprecated public androidx.compose.ui.semantics.SemanticsPropertyKey<java.lang.Boolean> IsContainer;
     property public androidx.compose.ui.semantics.SemanticsPropertyKey<kotlin.Unit> IsDialog;
@@ -4767,6 +4778,7 @@ package androidx.compose.ui.semantics {
     property public androidx.compose.ui.semantics.SemanticsPropertyKey<java.lang.String> StateDescription;
     property public androidx.compose.ui.semantics.SemanticsPropertyKey<java.lang.String> TestTag;
     property public androidx.compose.ui.semantics.SemanticsPropertyKey<java.util.List<androidx.compose.ui.text.AnnotatedString>> Text;
+    property public androidx.compose.ui.semantics.SemanticsPropertyKey<androidx.compose.ui.text.TextRange?> TextCompositionRange;
     property public androidx.compose.ui.semantics.SemanticsPropertyKey<kotlin.Unit> TextEntryKey;
     property public androidx.compose.ui.semantics.SemanticsPropertyKey<androidx.compose.ui.text.TextRange> TextSelectionRange;
     property public androidx.compose.ui.semantics.SemanticsPropertyKey<androidx.compose.ui.text.AnnotatedString> TextSubstitution;
@@ -4812,6 +4824,7 @@ package androidx.compose.ui.semantics {
     method @InaccessibleFromKotlin public static androidx.compose.ui.semantics.ScrollAxisRange getHorizontalScrollAxisRange(androidx.compose.ui.semantics.SemanticsPropertyReceiver);
     method @BytecodeOnly @Deprecated public static int getImeAction(androidx.compose.ui.semantics.SemanticsPropertyReceiver);
     method @InaccessibleFromKotlin public static androidx.compose.ui.text.AnnotatedString getInputText(androidx.compose.ui.semantics.SemanticsPropertyReceiver);
+    method @InaccessibleFromKotlin public static androidx.compose.ui.semantics.InputTextSuggestionState getInputTextSuggestionState(androidx.compose.ui.semantics.SemanticsPropertyReceiver);
     method @BytecodeOnly public static int getLiveRegion(androidx.compose.ui.semantics.SemanticsPropertyReceiver);
     method @InaccessibleFromKotlin public static int getMaxTextLength(androidx.compose.ui.semantics.SemanticsPropertyReceiver);
     method @InaccessibleFromKotlin public static String getPaneTitle(androidx.compose.ui.semantics.SemanticsPropertyReceiver);
@@ -4824,6 +4837,7 @@ package androidx.compose.ui.semantics {
     method @InaccessibleFromKotlin public static String getStateDescription(androidx.compose.ui.semantics.SemanticsPropertyReceiver);
     method @InaccessibleFromKotlin public static String getTestTag(androidx.compose.ui.semantics.SemanticsPropertyReceiver);
     method @InaccessibleFromKotlin public static androidx.compose.ui.text.AnnotatedString getText(androidx.compose.ui.semantics.SemanticsPropertyReceiver);
+    method @BytecodeOnly public static androidx.compose.ui.text.TextRange? getTextCompositionRange(androidx.compose.ui.semantics.SemanticsPropertyReceiver);
     method public static void getTextLayoutResult(androidx.compose.ui.semantics.SemanticsPropertyReceiver, optional String? label, kotlin.jvm.functions.Function1<? super java.util.List<androidx.compose.ui.text.TextLayoutResult>,java.lang.Boolean>? action);
     method @BytecodeOnly public static void getTextLayoutResult$default(androidx.compose.ui.semantics.SemanticsPropertyReceiver!, String!, kotlin.jvm.functions.Function1!, int, Object!);
     method @BytecodeOnly public static long getTextSelectionRange(androidx.compose.ui.semantics.SemanticsPropertyReceiver);
@@ -4889,6 +4903,7 @@ package androidx.compose.ui.semantics {
     method @InaccessibleFromKotlin public static void setHorizontalScrollAxisRange(androidx.compose.ui.semantics.SemanticsPropertyReceiver, androidx.compose.ui.semantics.ScrollAxisRange);
     method @BytecodeOnly @Deprecated public static void setImeAction-4L7nppU(androidx.compose.ui.semantics.SemanticsPropertyReceiver, int);
     method @InaccessibleFromKotlin public static void setInputText(androidx.compose.ui.semantics.SemanticsPropertyReceiver, androidx.compose.ui.text.AnnotatedString);
+    method @InaccessibleFromKotlin public static void setInputTextSuggestionState(androidx.compose.ui.semantics.SemanticsPropertyReceiver, androidx.compose.ui.semantics.InputTextSuggestionState);
     method @BytecodeOnly public static void setLiveRegion-hR3wRGc(androidx.compose.ui.semantics.SemanticsPropertyReceiver, int);
     method @InaccessibleFromKotlin public static void setMaxTextLength(androidx.compose.ui.semantics.SemanticsPropertyReceiver, int);
     method @InaccessibleFromKotlin public static void setPaneTitle(androidx.compose.ui.semantics.SemanticsPropertyReceiver, String);
@@ -4907,6 +4922,7 @@ package androidx.compose.ui.semantics {
     method @InaccessibleFromKotlin public static void setText(androidx.compose.ui.semantics.SemanticsPropertyReceiver, androidx.compose.ui.text.AnnotatedString);
     method public static void setText(androidx.compose.ui.semantics.SemanticsPropertyReceiver, optional String? label, kotlin.jvm.functions.Function1<? super androidx.compose.ui.text.AnnotatedString,java.lang.Boolean>? action);
     method @BytecodeOnly public static void setText$default(androidx.compose.ui.semantics.SemanticsPropertyReceiver!, String!, kotlin.jvm.functions.Function1!, int, Object!);
+    method @BytecodeOnly public static void setTextCompositionRange-psREZIo(androidx.compose.ui.semantics.SemanticsPropertyReceiver, androidx.compose.ui.text.TextRange?);
     method @BytecodeOnly public static void setTextSelectionRange-FDrldGo(androidx.compose.ui.semantics.SemanticsPropertyReceiver, long);
     method @InaccessibleFromKotlin public static void setTextSubstitution(androidx.compose.ui.semantics.SemanticsPropertyReceiver, androidx.compose.ui.text.AnnotatedString);
     method public static void setTextSubstitution(androidx.compose.ui.semantics.SemanticsPropertyReceiver, optional String? label, kotlin.jvm.functions.Function1<? super androidx.compose.ui.text.AnnotatedString,java.lang.Boolean>? action);
@@ -4930,6 +4946,7 @@ package androidx.compose.ui.semantics {
     property public static androidx.compose.ui.semantics.ScrollAxisRange androidx.compose.ui.semantics.SemanticsPropertyReceiver.horizontalScrollAxisRange;
     property @Deprecated public static androidx.compose.ui.text.input.ImeAction androidx.compose.ui.semantics.SemanticsPropertyReceiver.imeAction;
     property public static androidx.compose.ui.text.AnnotatedString androidx.compose.ui.semantics.SemanticsPropertyReceiver.inputText;
+    property public static androidx.compose.ui.semantics.InputTextSuggestionState androidx.compose.ui.semantics.SemanticsPropertyReceiver.inputTextSuggestionState;
     property @Deprecated public static boolean androidx.compose.ui.semantics.SemanticsPropertyReceiver.isContainer;
     property public static boolean androidx.compose.ui.semantics.SemanticsPropertyReceiver.isEditable;
     property public static boolean androidx.compose.ui.semantics.SemanticsPropertyReceiver.isSensitiveData;
@@ -4945,6 +4962,7 @@ package androidx.compose.ui.semantics {
     property public static String androidx.compose.ui.semantics.SemanticsPropertyReceiver.stateDescription;
     property public static String androidx.compose.ui.semantics.SemanticsPropertyReceiver.testTag;
     property public static androidx.compose.ui.text.AnnotatedString androidx.compose.ui.semantics.SemanticsPropertyReceiver.text;
+    property public static androidx.compose.ui.text.TextRange? androidx.compose.ui.semantics.SemanticsPropertyReceiver.textCompositionRange;
     property public static androidx.compose.ui.text.TextRange androidx.compose.ui.semantics.SemanticsPropertyReceiver.textSelectionRange;
     property public static androidx.compose.ui.text.AnnotatedString androidx.compose.ui.semantics.SemanticsPropertyReceiver.textSubstitution;
     property public static androidx.compose.ui.state.ToggleableState androidx.compose.ui.semantics.SemanticsPropertyReceiver.toggleableState;
