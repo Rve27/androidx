@@ -26,6 +26,7 @@ import androidx.credentials.providerevents.transfer.ClearExportRequest
 import androidx.credentials.providerevents.transfer.CredentialTypes
 import androidx.credentials.providerevents.transfer.ExportEntry
 import androidx.credentials.providerevents.transfer.ImportCredentialsRequest
+import androidx.credentials.providerevents.transfer.KnownExtensions
 import androidx.credentials.providerevents.transfer.RegisterExportRequest
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
@@ -57,7 +58,13 @@ class ProviderEventsManagerTest {
             assertThrows<ImportCredentialsProviderConfigurationException> {
                 providerEventsManager.importCredentials(
                     Activity(),
-                    ImportCredentialsRequest(CXP_REQUEST),
+                    ImportCredentialsRequest(
+                        setOf(
+                            CredentialTypes.CREDENTIAL_TYPE_BASIC_AUTH,
+                            CredentialTypes.CREDENTIAL_TYPE_PUBLIC_KEY,
+                        ),
+                        setOf(KnownExtensions.KNOWN_EXTENSION_SHARED),
+                    ),
                 )
             }
         }
@@ -79,7 +86,8 @@ class ProviderEventsManagerTest {
                                 Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888),
                                 setOf(CredentialTypes.CREDENTIAL_TYPE_BASIC_AUTH),
                             )
-                        )
+                        ),
+                        exportMatcher = ByteArray(0),
                     )
                 )
             }
