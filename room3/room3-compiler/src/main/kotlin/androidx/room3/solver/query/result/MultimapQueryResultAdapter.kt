@@ -17,11 +17,9 @@
 package androidx.room3.solver.query.result
 
 import androidx.room3.MapColumn
-import androidx.room3.compiler.codegen.CodeLanguage
 import androidx.room3.compiler.codegen.XClassName
 import androidx.room3.compiler.codegen.XCodeBlock
 import androidx.room3.compiler.codegen.asClassName
-import androidx.room3.compiler.codegen.buildCodeBlock
 import androidx.room3.compiler.processing.XType
 import androidx.room3.ext.CollectionTypeNames
 import androidx.room3.ext.CommonTypeNames
@@ -215,16 +213,9 @@ abstract class MultimapQueryResultAdapter(
     }
 
     /** Generates a code expression that verifies if all matched properties are null. */
-    fun getColumnNullCheckCode(stmtVarName: String, indexVars: List<ColumnIndexVar>) =
-        buildCodeBlock { language ->
-            val space =
-                when (language) {
-                    CodeLanguage.JAVA -> "%W"
-                    CodeLanguage.KOTLIN -> " "
-                }
-            val conditions =
-                indexVars.map { XCodeBlock.of("%L.isNull(%L)", stmtVarName, it.indexVar) }
-            val placeholders = conditions.joinToString(separator = "$space&&$space") { "%L" }
-            add(placeholders, *conditions.toTypedArray())
-        }
+    fun getColumnNullCheckCode(stmtVarName: String, indexVars: List<ColumnIndexVar>): XCodeBlock {
+        val conditions = indexVars.map { XCodeBlock.of("%L.isNull(%L)", stmtVarName, it.indexVar) }
+        val placeholders = conditions.joinToString(separator = " && ") { "%L" }
+        return XCodeBlock.of(placeholders, *conditions.toTypedArray())
+    }
 }
