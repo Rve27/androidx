@@ -69,6 +69,47 @@ class SinglePageLayoutStrategyTest {
     }
 
     @Test
+    fun testSetPagePositions_jumpForward_approximatesLayout() {
+        // Load the first page.
+        singlePageLayoutStrategy.setPagePositions(0, Dimension(100, 200))
+
+        // Jump forward to page 3, creating a gap for pages 1 and 2.
+        val dimension3 = Dimension(100, 250)
+        singlePageLayoutStrategy.setPagePositions(3, dimension3)
+
+        // Verify the layout for the intermediate pages is approximated.
+        // The approximation should use the height of the newly loaded page (page 3).
+        val viewport = RectF(0f, 0f, 100f, 600f)
+        val expectedPage0Location = RectF(0f, 5f, 100f, 205f)
+        assertThat(singlePageLayoutStrategy.getPageLocation(viewport, 0, Dimension(100, 200)))
+            .isEqualTo(expectedPage0Location)
+
+        val expectedPage3Location = RectF(0f, 735f, 100f, 985f)
+        assertThat(singlePageLayoutStrategy.getPageLocation(viewport, 3, Dimension(100, 250)))
+            .isEqualTo(expectedPage3Location)
+    }
+
+    @Test
+    fun testSetPagePositions_lateLoadForPreviousPage_correctsLayout() {
+        // Create an approximated layout by loading page 3 first.
+        singlePageLayoutStrategy.setPagePositions(3, Dimension(110, 250))
+
+        // Load page 1 out of order with a different, taller dimension.
+        singlePageLayoutStrategy.setPagePositions(1, Dimension(110, 300))
+
+        // Verify the layout of page 0 is the same.
+        val viewport = RectF(0f, 0f, 110f, 600f)
+        val expectedPage0Location = RectF(0f, 5f, 110f, 255f)
+        assertThat(singlePageLayoutStrategy.getPageLocation(viewport, 0, Dimension(110, 250)))
+            .isEqualTo(expectedPage0Location)
+
+        // Verify the layout of page 3 is corrected.
+        val expectedPage3Location = RectF(0f, 835f, 110f, 1085f)
+        assertThat(singlePageLayoutStrategy.getPageLocation(viewport, 3, Dimension(110, 250)))
+            .isEqualTo(expectedPage3Location)
+    }
+
+    @Test
     fun testGetVisiblePages_includePartial() {
         setupPageDimensions()
         val viewport = RectF(0f, 200f, 100f, 500f)
