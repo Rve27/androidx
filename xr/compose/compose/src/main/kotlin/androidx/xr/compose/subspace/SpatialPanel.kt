@@ -21,34 +21,44 @@ import android.content.Intent
 import android.graphics.Color
 import android.view.View
 import android.view.View.MeasureSpec
+import android.view.ViewParent
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.runtime.Applier
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ComposeNode
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.currentComposer
+import androidx.compose.runtime.currentCompositeKeyHash
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCompositionContext
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.UiComposable
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.viewtree.getParentOrViewTreeDisjointParent
+import androidx.core.viewtree.setViewTreeDisjointParent
+import androidx.lifecycle.findViewTreeLifecycleOwner
+import androidx.lifecycle.findViewTreeViewModelStoreOwner
+import androidx.lifecycle.setViewTreeLifecycleOwner
+import androidx.lifecycle.setViewTreeViewModelStoreOwner
+import androidx.savedstate.findViewTreeSavedStateRegistryOwner
+import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import androidx.xr.compose.R
 import androidx.xr.compose.platform.LocalComposeXrOwners
 import androidx.xr.compose.platform.LocalDialogManager
-import androidx.xr.compose.platform.LocalOpaqueEntity
 import androidx.xr.compose.platform.LocalSession
 import androidx.xr.compose.platform.disposableValueOf
 import androidx.xr.compose.platform.getActivity
@@ -397,7 +407,7 @@ private fun <T : View> AndroidViewPanel(
     val view = remember { factory(context) }
     val session = checkNotNull(LocalSession.current) { "session must be initialized" }
     val density = LocalDensity.current
-
+    val parentView = LocalView.current
     val corePanelEntity: CorePanelEntity = remember {
         CorePanelEntity(
                 PanelEntity.create(
@@ -408,8 +418,13 @@ private fun <T : View> AndroidViewPanel(
                     pose = Pose.Identity,
                 )
             )
-            .also { it.setShape(shape, density) }
+            .also {
+                it.setShape(shape, density)
+                view.setTag(R.id.compose_xr_local_view_entity, it)
+            }
     }
+
+    SideEffect { view.setViewTreeDisjointParent(parentView as? ViewParent ?: parentView.parent) }
 
     LaunchedEffect(shape, density) { corePanelEntity.setShape(shape, density) }
 
@@ -463,75 +478,73 @@ public fun SpatialPanel(
             resizePolicy = resizePolicy,
             interactionPolicy = interactionPolicy,
         )
-    val view = rememberComposeView()
-    val session = checkNotNull(LocalSession.current) { "session must be initialized" }
-    val density = LocalDensity.current
+    @Suppress("DEPRECATION") val localId = currentCompositeKeyHash
+    val context = LocalContext.current
+    val parentView = LocalView.current
+    val compositionContext = rememberCompositionContext()
+    val dialogManager = LocalDialogManager.current
+    val isDialogActive = dialogManager.isSpatialDialogActive.value
+    AndroidViewPanel(
+        factory = {
+            ComposeView(context).apply {
+                id = android.R.id.content
 
-    val corePanelEntity: CorePanelEntity = remember {
-        CorePanelEntity(
-                PanelEntity.create(
-                    session = session,
-                    view = view,
-                    dimensions = SpatialPanelDimensions.minimumPanelDimension,
-                    name = "SpatialPanel",
-                    pose = Pose.Identity,
+                // Set the strategy to automatically dispose the composition
+                // when the ComposeView is detached from the window.
+                setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnDetachedFromWindow)
+
+                setViewTreeLifecycleOwner(parentView.findViewTreeLifecycleOwner())
+                setViewTreeViewModelStoreOwner(parentView.findViewTreeViewModelStoreOwner())
+                setViewTreeSavedStateRegistryOwner(parentView.findViewTreeSavedStateRegistryOwner())
+                // Dispose of the Composition when the view's LifecycleOwner is destroyed
+                setParentCompositionContext(compositionContext)
+
+                // Set unique id for AbstractComposeView. This allows state restoration
+                // for the state defined inside the SpatialElevation via rememberSaveable().
+                setTag(
+                    androidx.compose.ui.R.id.compose_view_saveable_id_tag,
+                    "ComposeView:$localId",
                 )
-            )
-            .also { it.setShape(shape, density) }
-    }
 
-    LaunchedEffect(shape, density) { corePanelEntity.setShape(shape, density) }
-
-    val measurePolicy = SpatialViewPanelMeasurePolicy(view)
-
-    val compositionLocalMap = currentComposer.currentCompositionLocalMap
-
-    // Set the content on the ComposeView.
-    view.setContent {
-        val dialogManager = LocalDialogManager.current
-        val isDialogActive = dialogManager.isSpatialDialogActive.value
-
-        // The root is a Box. Its size is determined by its content.
-        @Suppress("COMPOSE_APPLIER_CALL_MISMATCH") // b/446706254
-        Box {
-            // The user's content is the first child. It determines the size of the parent Box.
-            CompositionLocalProvider(LocalOpaqueEntity provides corePanelEntity, content = content)
-
-            // The scrim for input handling. It uses matchParentSize to avoid affecting
-            // the measurement of the parent Box.
-            if (isDialogActive) {
-                @Suppress("COMPOSE_APPLIER_CALL_MISMATCH") // b/446706254
-                Box(
-                    modifier =
-                        Modifier.matchParentSize() // This sizes the overlay without affecting the
-                            // parent's size.
-                            .pointerInput(Unit) {
-                                detectTapGestures {
-                                    dialogManager.isSpatialDialogActive.value = false
-                                }
-                            }
-                )
+                // Enable children to draw their shadow by not clipping them
+                clipChildren = false
             }
-        }
-
-        SideEffect {
-            view.foreground =
-                if (isDialogActive) {
-                    DEFAULT_SCRIM_ALPHA.toDrawable()
-                } else {
-                    Color.TRANSPARENT.toDrawable()
-                }
-        }
-    }
-
-    ComposeNode<ComposeSubspaceNode, Applier<Any>>(
-        factory = ComposeSubspaceNode.Constructor,
-        update = {
-            set(compositionLocalMap, SetCompositionLocalMap)
-            set(measurePolicy, SetMeasurePolicy)
-            set(corePanelEntity, SetCoreEntity)
-            set(finalModifier, SetModifier)
         },
+        modifier = finalModifier,
+        update = { composeView ->
+            composeView.setContent {
+                // The root is a Box. Its size is determined by its content.
+                @Suppress("COMPOSE_APPLIER_CALL_MISMATCH") // b/446706254
+                Box {
+                    content()
+                    // The scrim for input handling. It uses matchParentSize to avoid affecting
+                    // the measurement of the parent Box.
+                    if (isDialogActive) {
+                        @Suppress("COMPOSE_APPLIER_CALL_MISMATCH") // b/446706254
+                        Box(
+                            modifier =
+                                Modifier
+                                    .matchParentSize() // This sizes the overlay without affecting
+                                    // the parent's size.
+                                    .pointerInput(Unit) {
+                                        detectTapGestures {
+                                            dialogManager.isSpatialDialogActive.value = false
+                                        }
+                                    }
+                        )
+                    }
+                }
+                SideEffect {
+                    composeView.foreground =
+                        if (isDialogActive) {
+                            DEFAULT_SCRIM_ALPHA.toDrawable()
+                        } else {
+                            Color.TRANSPARENT.toDrawable()
+                        }
+                }
+            }
+        },
+        shape = shape,
     )
 }
 
@@ -872,6 +885,7 @@ internal fun buildSpatialPanelModifier(
                     anchorPlaneOrientations = dragPolicy.anchorPlaneOrientations,
                     anchorPlaneSemantics = dragPolicy.anchorPlaneSemantics,
                 )
+
             is MovePolicy ->
                 baseModifier.movable(
                     enabled = dragPolicy.isEnabled,
@@ -881,6 +895,7 @@ internal fun buildSpatialPanelModifier(
                     onMoveEnd = dragPolicy.onMoveEnd,
                     onMove = dragPolicy.onMove,
                 )
+
             else -> {
                 baseModifier
             }
