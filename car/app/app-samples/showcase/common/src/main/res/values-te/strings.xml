@@ -272,6 +272,8 @@
     <string name="tab_template_demo_title" msgid="7587839101813629975">"ట్యాబ్ టెంప్లేట్ డెమో"</string>
     <string name="tab_title_message" msgid="5266710951630087246">"మెసేజ్ ట్యాబ్"</string>
     <string name="tab_title_pane" msgid="2520606145526537263">"పేన్ ట్యాబ్"</string>
+    <!-- no translation found for tab_title_sectioned_item (7299509321019990398) -->
+    <skip />
     <string name="tab_title_list" msgid="5104962518489668123">"లిస్ట్ ట్యాబ్"</string>
     <string name="tab_title_grid" msgid="5268168907976325154">"పొడవైన ట్యాబ్ టైటిల్ గల గ్రిడ్ ట్యాబ్"</string>
     <string name="tab_title_search" msgid="1892925693146631173">"సెర్చ్ ట్యాబ్"</string>

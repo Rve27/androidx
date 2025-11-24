@@ -232,8 +232,7 @@
     <string name="msg_template_demo_text" msgid="2275291617716161409">"ମେସେଜ ଏଠାକୁ ଯାଏ।\nଦ୍ୱିତୀୟ ଲାଇନରେ ଅଧିକ ଟେକ୍ସଟ।"</string>
     <string name="short_msg_template_demo_title" msgid="6798738013668580714">"ଛୋଟ ମେସେଜ ଟେମ୍ପଲେଟର ଡେମୋ"</string>
     <string name="sectioned_item_template_demo_title" msgid="8377594346379786774">"ଚୟନିତ ଆଇଟମ ଟେମ୍ପଲେଟ ଡେମୋ"</string>
-    <!-- no translation found for sectioned_item_alpha_jump_demo_title (1923794280863081616) -->
-    <skip />
+    <string name="sectioned_item_alpha_jump_demo_title" msgid="1923794280863081616">"ବିଭାଗୀକୃତ ଆଇଟମ AlphaJump ସକ୍ଷମ କରାଯାଇଥିବା ଡେମୋ"</string>
     <string name="sectioned_item_template_radio_button_section_title" msgid="1014325865070733609">"ରେଡିଓ ବଟନ ବିଭାଗ"</string>
     <string name="sectioned_item_template_toggle_section_title" msgid="3197227971733559949">"ଟୋଗଲ ବିଭାଗ"</string>
     <string name="sectioned_item_template_lots_of_rows_section_title" msgid="1501401956386938735">"ବହୁତ ଧାଡ଼ି ବିଭାଗ"</string>
@@ -242,8 +241,7 @@
     <string name="sectioned_item_list_one_title" msgid="6594204350307263338">"ତାଲିକା 1"</string>
     <string name="sectioned_item_list_two_title" msgid="4941545381743022833">"ତାଲିକା 2"</string>
     <string name="sectioned_item_list_subtext" msgid="2963927693547537519">"ପ୍ରତ୍ୟେକ ତାଲିକା ତଳେ ସବଟେକ୍ସଟ"</string>
-    <!-- no translation found for end_image_and_action_demo_title (6451955718459316414) -->
-    <skip />
+    <string name="end_image_and_action_demo_title" msgid="6451955718459316414">"ଇମେଜ ଏବଂ କାର୍ଯ୍ୟ ଡେମୋ ଶେଷ କରନ୍ତୁ"</string>
     <string name="pane_template_demo_title" msgid="7804292600060341608">"ପେନ ଟେମ୍ପଲେଟର ଡେମୋ"</string>
     <string name="place_list_template_demo_title" msgid="2054022985455460469">"ସ୍ଥାନର ତାଲିକାର ଟେମ୍ପଲେଟର ଡେମୋ"</string>
     <string name="browse_places_title" msgid="7246005909846715898">"ସ୍ଥାନଗୁଡ଼ିକୁ ବ୍ରାଉଜ କରନ୍ତୁ"</string>
@@ -274,6 +272,8 @@
     <string name="tab_template_demo_title" msgid="7587839101813629975">"ଟାବ ଟେମ୍ପଲେଟର ଡେମୋ"</string>
     <string name="tab_title_message" msgid="5266710951630087246">"ମେସେଜ ଟାବ"</string>
     <string name="tab_title_pane" msgid="2520606145526537263">"ପେନ ଟାବ"</string>
+    <!-- no translation found for tab_title_sectioned_item (7299509321019990398) -->
+    <skip />
     <string name="tab_title_list" msgid="5104962518489668123">"ଲିଷ୍ଟ ଟାବ"</string>
     <string name="tab_title_grid" msgid="5268168907976325154">"ଲମ୍ବା ଟାବ ଟାଇଟେଲ ସହ ଗ୍ରୀଡ ଟାବ"</string>
     <string name="tab_title_search" msgid="1892925693146631173">"ସର୍ଚ୍ଚ ଟାବ"</string>
