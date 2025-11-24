@@ -32,7 +32,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -346,6 +348,52 @@ class SpatialPanelTest {
         val panelNode = composeTestRule.onSubspaceNodeWithTag("panel").fetchSemanticsNode()
         val panelEntity = panelNode.semanticsEntity as? PanelEntity
         assertThat(checkNotNull(panelEntity).cornerRadius.meters.toDp()).isEqualTo(32.dp)
+    }
+
+    @Test
+    fun spatialPanel_countCompositions_inContext() {
+        var compositions = 0
+
+        composeTestRule.setContent {
+            Subspace {
+                SpatialPanel {
+                    // Use SideEffect to count successful compositions
+                    SideEffect { compositions++ }
+                }
+            }
+        }
+
+        composeTestRule.waitForIdle()
+        assertThat(compositions).isEqualTo(1)
+    }
+
+    @Test
+    fun spatialPanel_recomposes_whenStateChanges() {
+        var compositions = 0
+        val countState = mutableIntStateOf(0)
+
+        composeTestRule.setContent {
+            Subspace {
+                SpatialPanel {
+                    val currentCount = countState.intValue
+
+                    compositions++
+
+                    Text("Count is $currentCount")
+                }
+            }
+        }
+
+        composeTestRule.waitForIdle()
+        assertThat(compositions).isEqualTo(1)
+
+        // Trigger the state change externally
+        countState.intValue = 1
+
+        composeTestRule.waitForIdle()
+
+        // Assert that exactly one extra composition happened
+        assertThat(compositions).isEqualTo(2)
     }
 
     @Test
