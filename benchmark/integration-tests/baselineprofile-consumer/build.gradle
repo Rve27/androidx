@@ -35,7 +35,7 @@ android {
     sourceSets {
         // This is required because of release variant specific code used by hilt.
         releaseLibrariesOnly {
-            java.srcDirs += "src/release/"
+            kotlin.directories.add("src/release/")
         }
     }
     buildTypes {
