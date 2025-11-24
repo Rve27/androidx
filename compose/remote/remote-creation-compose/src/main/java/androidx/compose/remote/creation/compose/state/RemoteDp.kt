@@ -67,6 +67,11 @@ public val Int.rdp: RemoteDp
         return RemoteDp(this.rf)
     }
 
+/** Extension property to convert a [Dp] to a [RemoteDp]. */
+public fun Dp.asRdp(): RemoteDp {
+    return RemoteDp(this.value.rf)
+}
+
 /**
  * A Composable function to remember and provide a [RemoteDp] value.
  *
