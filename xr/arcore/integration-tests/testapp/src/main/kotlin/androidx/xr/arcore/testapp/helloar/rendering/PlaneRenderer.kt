@@ -168,12 +168,12 @@ internal class PlaneRenderer(val session: Session, val coroutineScope: Coroutine
         private const val PANEL_RESIZE_UPDATE_COUNT = 50
         private const val MODEL_SCALING_FACTOR = 1f / 1.7f / 2f
         private const val MODEL_DEPTH = .001f
-        private val DEFAULT_OBJECT_MODEL = "BoundingBoxKeyboard.glb"
+        private val DEFAULT_OBJECT_MODEL = "BoundingBoxGreen.glb"
         private val SUPPORTED_OBJECT_MODELS =
             mapOf(
-                "WALL" to "BoundingBoxKeyboard.glb",
-                "FLOOR" to "BoundingBoxMouse.glb",
-                "CEILING" to "BoundingBoxLaptop.glb",
+                "WALL" to "BoundingBoxGreen.glb",
+                "FLOOR" to "BoundingBoxBlue.glb",
+                "CEILING" to "BoundingBoxYellow.glb",
                 "TABLE" to "BoundingBoxMagenta.glb",
             )
     }
