@@ -57,31 +57,35 @@ public class WearWidgetProviderClient(
         Intent(ACTION_BIND_WIDGET_PROVIDER).apply { component = componentName }
 
     /** Call [IWearWidgetProvider.onAdded] on the provider and wait for completion. */
-    public suspend fun sendAddEvent(instanceId: Int, @ContainerType containerType: Int): Unit =
-        sendEvent(instanceId, containerType, "onAdded", IWearWidgetProvider::onAdded)
+    public suspend fun sendAddEvent(
+        instanceId: WidgetInstanceId,
+        @ContainerType containerType: Int,
+    ): Unit = sendEvent(instanceId, containerType, "onAdded", IWearWidgetProvider::onAdded)
 
     /** ListenableFuture version of [sendAddEvent]. */
     public fun sendAddEventAsync(
-        instanceId: Int,
+        instanceId: WidgetInstanceId,
         @ContainerType containerType: Int,
         executor: Executor,
     ): ListenableFuture<Void?> =
         sendEventAsync(executor) { sendAddEvent(instanceId, containerType) }
 
     /** Call [IWearWidgetProvider.onRemoved] on the provider and wait for completion. */
-    public suspend fun sendRemoveEvent(instanceId: Int, @ContainerType containerType: Int): Unit =
-        sendEvent(instanceId, containerType, "onRemoved", IWearWidgetProvider::onRemoved)
+    public suspend fun sendRemoveEvent(
+        instanceId: WidgetInstanceId,
+        @ContainerType containerType: Int,
+    ): Unit = sendEvent(instanceId, containerType, "onRemoved", IWearWidgetProvider::onRemoved)
 
     /** ListenableFuture version of [sendRemoveEvent]. */
     public fun sendRemoveEventAsync(
-        instanceId: Int,
+        instanceId: WidgetInstanceId,
         @ContainerType containerType: Int,
         executor: Executor,
     ): ListenableFuture<Void?> =
         sendEventAsync(executor) { sendRemoveEvent(instanceId, containerType) }
 
     private suspend fun sendEvent(
-        instanceId: Int,
+        instanceId: WidgetInstanceId,
         @ContainerType containerType: Int,
         eventTag: String,
         eventSender: IWearWidgetProvider.(ActiveWearWidgetHandleParcel, IExecutionCallback) -> Unit,
@@ -89,7 +93,10 @@ public class WearWidgetProviderClient(
         withBoundService { service ->
             suspendCancellableCoroutine { continuation ->
                 continuation.invokeOnCancellation {
-                    Log.d(TAG, "$eventTag event for instanceId=$instanceId was cancelled")
+                    Log.d(
+                        TAG,
+                        "$eventTag event for instanceId=${instanceId.flattenToString()} was cancelled",
+                    )
                 }
                 eventSender.invoke(
                     service,
