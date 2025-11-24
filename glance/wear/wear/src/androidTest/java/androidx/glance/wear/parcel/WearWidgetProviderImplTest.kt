@@ -29,6 +29,7 @@ import androidx.glance.wear.WearWidgetData
 import androidx.glance.wear.WearWidgetDocument
 import androidx.glance.wear.WearWidgetParams
 import androidx.glance.wear.WearWidgetRawContent
+import androidx.glance.wear.WidgetInstanceId
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -69,7 +70,7 @@ class WearWidgetProviderImplTest {
     fun onWidgetRequest_callsProvideWidgetData() = runTest {
         val widgetParams =
             WearWidgetParams(
-                instanceId = 17,
+                instanceId = WidgetInstanceId("namespace", 17),
                 containerType = CONTAINER_TYPE_LARGE,
                 widthDp = 200f,
                 heightDp = 200f,
@@ -87,7 +88,7 @@ class WearWidgetProviderImplTest {
     fun onWidgetRequest_capturesRemoteComposable() = runBlocking {
         val widgetParams =
             WearWidgetParams(
-                instanceId = 17,
+                instanceId = WidgetInstanceId("namespace", 17),
                 containerType = CONTAINER_TYPE_LARGE,
                 widthDp = 200f,
                 heightDp = 200f,
@@ -119,7 +120,12 @@ class WearWidgetProviderImplTest {
 
     @Test
     fun onAdded_callsWidgetAndCallback() = runTest {
-        val handle = ActiveWearWidgetHandle(testName, 12, CONTAINER_TYPE_LARGE)
+        val handle =
+            ActiveWearWidgetHandle(
+                testName,
+                WidgetInstanceId("namespace", 12),
+                CONTAINER_TYPE_LARGE,
+            )
         val provider = WearWidgetProviderImpl(context, testName, this, testWidget)
 
         provider.onAdded(handle.toParcel(), fakeExecutionCallback)
@@ -131,7 +137,12 @@ class WearWidgetProviderImplTest {
 
     @Test
     fun onAdded_throws_callsCallbackOnError() = runTest {
-        val handle = ActiveWearWidgetHandle(testName, 12, CONTAINER_TYPE_LARGE)
+        val handle =
+            ActiveWearWidgetHandle(
+                testName,
+                WidgetInstanceId("namespace", 12),
+                CONTAINER_TYPE_LARGE,
+            )
         val exceptionHandlerScope =
             CoroutineScope(
                 coroutineContext + SupervisorJob() + CoroutineExceptionHandler { _, _ -> }
@@ -148,7 +159,12 @@ class WearWidgetProviderImplTest {
 
     @Test
     fun onRemoved_callsWidgetAndCallback() = runTest {
-        val handle = ActiveWearWidgetHandle(testName, 12, CONTAINER_TYPE_SMALL)
+        val handle =
+            ActiveWearWidgetHandle(
+                testName,
+                WidgetInstanceId("namespace", 12),
+                CONTAINER_TYPE_SMALL,
+            )
         val provider = WearWidgetProviderImpl(context, testName, this, testWidget)
 
         provider.onRemoved(handle.toParcel(), fakeExecutionCallback)
@@ -160,7 +176,12 @@ class WearWidgetProviderImplTest {
 
     @Test
     fun onRemoved_throws_callsCallbackOnError() = runTest {
-        val handle = ActiveWearWidgetHandle(testName, 12, CONTAINER_TYPE_LARGE)
+        val handle =
+            ActiveWearWidgetHandle(
+                testName,
+                WidgetInstanceId("namespace", 12),
+                CONTAINER_TYPE_LARGE,
+            )
         val exceptionHandlerScope =
             CoroutineScope(
                 coroutineContext + SupervisorJob() + CoroutineExceptionHandler { _, _ -> }
@@ -176,7 +197,7 @@ class WearWidgetProviderImplTest {
     }
 
     private class TestGlanceWearWidget : GlanceWearWidget() {
-        var lastRequestedInstanceId: Int? = null
+        var lastRequestedInstanceId: WidgetInstanceId? = null
         var addedHandle: ActiveWearWidgetHandle? = null
         var removedHandle: ActiveWearWidgetHandle? = null
         var enableFailureMode = false
