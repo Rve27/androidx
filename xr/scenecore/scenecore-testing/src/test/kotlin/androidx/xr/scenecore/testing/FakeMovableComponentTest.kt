@@ -77,22 +77,20 @@ class FakeMovableComponentTest {
         val updatedParent = FakeEntity()
         val disposedEntity = null
 
-        underTest.moveEventListenersMap.forEach { entry ->
-            entry.key.onMoveEvent(
-                MoveEvent(
-                    dummyState,
-                    initialRay,
-                    currentRay,
-                    previousPose,
-                    currentPose,
-                    previousScale,
-                    currentScale,
-                    initialParent,
-                    updatedParent,
-                    disposedEntity,
-                )
+        underTest.onMoveEvent(
+            MoveEvent(
+                dummyState,
+                initialRay,
+                currentRay,
+                previousPose,
+                currentPose,
+                previousScale,
+                currentScale,
+                initialParent,
+                updatedParent,
+                disposedEntity,
             )
-        }
+        )
 
         tasks.forEach { it.run() }
         assertThat(listenerCalled.get()).isTrue()
@@ -124,22 +122,20 @@ class FakeMovableComponentTest {
         val updatedParent = FakeEntity()
         val disposedEntity = null
 
-        underTest.moveEventListenersMap.forEach { entry ->
-            entry.key.onMoveEvent(
-                MoveEvent(
-                    dummyState,
-                    initialRay,
-                    currentRay,
-                    previousPose,
-                    currentPose,
-                    previousScale,
-                    currentScale,
-                    initialParent,
-                    updatedParent,
-                    disposedEntity,
-                )
+        underTest.onMoveEvent(
+            MoveEvent(
+                dummyState,
+                initialRay,
+                currentRay,
+                previousPose,
+                currentPose,
+                previousScale,
+                currentScale,
+                initialParent,
+                updatedParent,
+                disposedEntity,
             )
-        }
+        )
 
         tasks.forEach { it.run() }
         assertThat(listenerCalled.get()).isFalse()
