@@ -25,6 +25,7 @@ import androidx.biometric.AuthenticationResultCallback
 import androidx.biometric.compose.rememberAuthenticationLauncher
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.statusBars // Import this
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Button
@@ -41,21 +42,31 @@ import androidx.fragment.app.FragmentActivity
 class MainActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent { RememberLauncherForAuthResult() }
+        setContent { TwoAuthLauncher() }
     }
 }
 
 @Composable
-private fun RememberLauncherForAuthResult() {
+private fun TwoAuthLauncher() {
+    Column {
+        RememberLauncherForAuthResult("1")
+        RememberLauncherForAuthResult("2")
+        RememberLauncherForAuthResult("3")
+        RememberLauncherForAuthResult("4")
+    }
+}
+
+@Composable
+private fun RememberLauncherForAuthResult(id: String) {
     var authResult by rememberSaveable { mutableStateOf("") }
     val resultCallback = remember {
         object : AuthenticationResultCallback {
             override fun onAuthResult(result: AuthenticationResult) {
-                authResult = result.toText()
+                authResult = id + result.toText()
             }
 
             override fun onAuthFailure() {
-                authResult = "fail, try again"
+                authResult = id + "fail, try again"
             }
         }
     }
@@ -76,7 +87,7 @@ private fun RememberLauncherForAuthResult() {
         ) {
             Text(text = "Start Authentication")
         }
-        Text(text = "Result: $authResult")
+        Text(text = "Result: $authResult", modifier = Modifier.fillMaxWidth(fraction = 0.5f))
     }
 }
 

@@ -1241,7 +1241,7 @@ public class BiometricPrompt {
     }
 
     /**
-     * Initializes or updates the data needed by the prompt.
+     * Initializes or updates the data needed by the prompt (for new AuthenticationExtensions APIs).
      *
      * @param context             The  {@link Context} used for calling framework API
      * @param lifecycleOwner           The  {@link androidx.lifecycle.Lifecycle} to observer. If
@@ -1269,7 +1269,7 @@ public class BiometricPrompt {
     }
 
     /**
-     * Initializes or updates the data needed by the prompt.
+     * Initializes or updates the data needed by the prompt (for old BiometricPrompt APIs).
      *
      * @param fragmentManager The fragment manager that will be used to attach the prompt.
      * @param viewModelStoreOwner The {@link androidx.lifecycle.ViewModelStoreOwner} used for
