@@ -232,8 +232,7 @@
     <string name="msg_template_demo_text" msgid="2275291617716161409">"मैसेज यहां पर लिखा जाएगा.\nज़्यादा लिखने के लिए, अगली लाइन पर जाएं."</string>
     <string name="short_msg_template_demo_title" msgid="6798738013668580714">"छोटे मैसेज के टेंप्लेट का डेमो"</string>
     <string name="sectioned_item_template_demo_title" msgid="8377594346379786774">"सेक्शन में बांटे गए आइटम के टेंप्लेट का डेमो"</string>
-    <!-- no translation found for sectioned_item_alpha_jump_demo_title (1923794280863081616) -->
-    <skip />
+    <string name="sectioned_item_alpha_jump_demo_title" msgid="1923794280863081616">"सेक्शन में बांटे गए आइटम के लिए चालू की गई AlphaJump की सुविधा का डेमो"</string>
     <string name="sectioned_item_template_radio_button_section_title" msgid="1014325865070733609">"रेडियो बटन वाला सेक्शन"</string>
     <string name="sectioned_item_template_toggle_section_title" msgid="3197227971733559949">"टॉगल वाला सेक्शन"</string>
     <string name="sectioned_item_template_lots_of_rows_section_title" msgid="1501401956386938735">"कई पंक्तियों वाला सेक्शन"</string>
@@ -242,8 +241,7 @@
     <string name="sectioned_item_list_one_title" msgid="6594204350307263338">"सूची 1"</string>
     <string name="sectioned_item_list_two_title" msgid="4941545381743022833">"सूची 2"</string>
     <string name="sectioned_item_list_subtext" msgid="2963927693547537519">"हर सूची के नीचे सबटेक्स्ट"</string>
-    <!-- no translation found for end_image_and_action_demo_title (6451955718459316414) -->
-    <skip />
+    <string name="end_image_and_action_demo_title" msgid="6451955718459316414">"इमेज और ऐक्शन वाला डेमो बंद करें"</string>
     <string name="pane_template_demo_title" msgid="7804292600060341608">"पैनल के टेंप्लेट का डेमो"</string>
     <string name="place_list_template_demo_title" msgid="2054022985455460469">"जगह की सूची के टेंप्लेट का डेमो"</string>
     <string name="browse_places_title" msgid="7246005909846715898">"जगहें ब्राउज़ करें"</string>
@@ -274,6 +272,8 @@
     <string name="tab_template_demo_title" msgid="7587839101813629975">"टैब टेंप्लेट का डेमो"</string>
     <string name="tab_title_message" msgid="5266710951630087246">"मैसेज टैब"</string>
     <string name="tab_title_pane" msgid="2520606145526537263">"पैनल टैब"</string>
+    <!-- no translation found for tab_title_sectioned_item (7299509321019990398) -->
+    <skip />
     <string name="tab_title_list" msgid="5104962518489668123">"सूची टैब"</string>
     <string name="tab_title_grid" msgid="5268168907976325154">"लंबे टैब टाइटल वाले ग्रिड टैब"</string>
     <string name="tab_title_search" msgid="1892925693146631173">"खोज टैब"</string>
