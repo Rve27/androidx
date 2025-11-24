@@ -406,6 +406,7 @@ dependencies {
     docs(project(":wear:wear-phone-interactions"))
     docs(project(":wear:wear-remote-interactions"))
     docs(project(":wear:wear-tooling-preview"))
+    docs(project(":webgpu:webgpu"))
     docs(project(":webkit:webkit"))
     docs(project(":window:window"))
     stubs(fileTree(dir: "../window/stubs/", include: ["window-sidecar-release.aar"]))
