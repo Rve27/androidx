@@ -21,6 +21,8 @@ import java.util.Collections
 
 /** A thread-safe, in-memory implementation of [AnnotationHandleRegistry]. */
 internal class StablePdfAnnotationHandleRegistry : AnnotationHandleRegistry {
+    private val lock = Any()
+
     private val handleToSourceMap: MutableMap<String, String> =
         Collections.synchronizedMap(HashMap())
 
@@ -28,16 +30,18 @@ internal class StablePdfAnnotationHandleRegistry : AnnotationHandleRegistry {
         Collections.synchronizedMap(HashMap())
 
     override fun getHandleId(sourceId: String): String {
-        if (sourceToHandleMap[sourceId] != null) {
-            return sourceToHandleMap.getValue(sourceId)
+        synchronized(lock) {
+            if (sourceToHandleMap[sourceId] != null) {
+                return sourceToHandleMap.getValue(sourceId)
+            }
+
+            val newHandleId = AnnotationHandleIdGenerator.generateId()
+
+            handleToSourceMap[newHandleId] = sourceId
+            sourceToHandleMap[sourceId] = newHandleId
+
+            return newHandleId
         }
-
-        val newHandleId = AnnotationHandleIdGenerator.generateId()
-
-        handleToSourceMap[newHandleId] = sourceId
-        sourceToHandleMap[sourceId] = newHandleId
-
-        return newHandleId
     }
 
     override fun getSourceId(handleId: String): String? {
