@@ -25,6 +25,8 @@ import androidx.compose.remote.creation.compose.state.RemoteString
 import androidx.compose.remote.player.compose.test.utils.screenshot.TargetPlayer
 import androidx.compose.remote.player.compose.test.utils.screenshot.rule.RemoteComposeScreenshotTestRule
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.unit.sp
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.filters.MediumTest
 import androidx.test.filters.SdkSuppress
@@ -65,6 +67,18 @@ class RemoteTimeTextTest {
                 time = RemoteString("10:09"),
                 leadingText = RemoteString("paused"),
                 trailingText = RemoteString("eta 13 min"),
+            )
+        }
+    }
+
+    @Test
+    fun withFontConfigured() = runTest {
+        runDocumentTest {
+            RemoteTimeText(
+                modifier = RemoteModifier.fillMaxSize(),
+                time = RemoteString("10:09"),
+                fontSize = 15.sp,
+                fontFamily = FontFamily.SansSerif,
             )
         }
     }
