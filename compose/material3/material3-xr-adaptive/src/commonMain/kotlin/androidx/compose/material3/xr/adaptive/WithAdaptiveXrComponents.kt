@@ -18,6 +18,10 @@ package androidx.compose.material3.xr.adaptive
 
 import androidx.compose.runtime.Composable
 
+/**
+ * Enables certain Material3 components inside [content] to adapt to display XR Spatial UI in an XR
+ * spatial environment, if [enabled] is set to `true`.
+ */
 @ExperimentalMaterial3XrAdaptiveApi
 @Composable
-public expect fun EnableAdaptiveXrComponents(content: @Composable () -> Unit)
+public expect fun WithAdaptiveXrComponents(enabled: Boolean = true, content: @Composable () -> Unit)
