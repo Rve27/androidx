@@ -202,7 +202,7 @@ public class EditableDocumentViewModel(private val state: SavedStateHandle, load
      *   no changes.
      */
     internal fun hasUnsavedChanges(): Boolean =
-        editablePdfDocument != null && editsHistoryManager?.canUndo() ?: false
+        editablePdfDocument != null && editsHistoryManager?.canUndo?.value ?: false
 
     /** Discards all uncommitted edits, reverting the document to its last saved state. */
     internal fun discardUnsavedChanges() {
