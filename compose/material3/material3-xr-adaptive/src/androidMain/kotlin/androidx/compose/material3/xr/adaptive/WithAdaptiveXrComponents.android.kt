@@ -16,11 +16,11 @@
 
 package androidx.compose.material3.xr.adaptive
 
+import androidx.compose.material3.xr.XrStubs
 import androidx.compose.runtime.Composable
 
 @ExperimentalMaterial3XrAdaptiveApi
 @Composable
-public actual fun EnableAdaptiveXrComponents(content: @Composable () -> Unit) {
-    // No-op
-    content()
+public actual fun WithAdaptiveXrComponents(enabled: Boolean, content: @Composable () -> Unit) {
+    XrStubs.Set(stubs = if (enabled) XrStubsImpl else null, content = content)
 }
