@@ -236,7 +236,6 @@ import androidx.core.view.ViewConfigurationCompat.getScaledHorizontalScrollFacto
 import androidx.core.view.ViewConfigurationCompat.getScaledVerticalScrollFactor
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import androidx.core.view.accessibility.AccessibilityNodeProviderCompat
-import androidx.core.view.inputmethod.InputConnectionCompat
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
@@ -2872,23 +2871,12 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
     }
 
     override fun onCreateInputConnection(outAttrs: EditorInfo): InputConnection? {
-        if (textInputSessionMutex.currentSession != null) {
-            val inputConnection =
-                textInputSessionMutex.currentSession!!.createInputConnection(outAttrs)
-            return if (inputConnection != null) {
-                InputConnectionCompat.createWrapper(this, inputConnection, outAttrs)
-            } else {
-                // Do not fallback to legacy input system.
-                null
-            }
-        }
-
-        val legacyInputConnection = legacyTextInputServiceAndroid.createInputConnection(outAttrs)
-        if (legacyInputConnection != null) {
-            return InputConnectionCompat.createWrapper(this, legacyInputConnection, outAttrs)
-        }
-
-        return null
+        val parentSession =
+            textInputSessionMutex.currentSession
+                ?: return legacyTextInputServiceAndroid.createInputConnection(outAttrs)
+        // Don't bring this up before the ?: - if this returns null, we SHOULD NOT fall back to
+        // the legacy input system.
+        return parentSession.createInputConnection(outAttrs)
     }
 
     override fun calculateLocalPosition(positionInWindow: Offset): Offset {
