@@ -143,8 +143,8 @@ public constructor(
          *
          * @param context The [Context] to use for resolving resources and package manager.
          * @param providerService The [ComponentName] of the widget provider service.
-         * @throws [PackageManager.NameNotFoundException] if the metadata is not found or the
-         *   resource is invalid.
+         * @throws [PackageManager.NameNotFoundException] if the meta-data resource is not found or
+         *   the provider service is not found.
          * @throws [XmlPullParserException] if there is an error parsing the XML resource or if this
          *   is not a valid provider info, for example:
          *     - No `<container>` tags are defined.
@@ -152,7 +152,7 @@ public constructor(
          *     - Invalid resource IDs.
          *     - Using `CONTAINER_TYPE_FULLSCREEN` which is not supported for widgets.
          */
-        @Throws(XmlPullParserException::class)
+        @Throws(PackageManager.NameNotFoundException::class, XmlPullParserException::class)
         @JvmStatic
         public fun parseFromService(
             context: Context,
