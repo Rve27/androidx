@@ -4005,6 +4005,17 @@ public class RemoteComposeWriter {
     /**
      * Add a modifier background
      *
+     * @param colorId the color to set
+     * @param shape the shape to set
+     */
+    public void addDynamicModifierBackground(int colorId, int shape) {
+        mBuffer.addDynamicModifierBackground(colorId, shape);
+    }
+
+
+    /**
+     * Add a modifier background
+     *
      * @param r the red value, possibly a remote float
      * @param g the green value, possibly a remote float
      * @param b the blue value, possibly a remote float
@@ -4172,6 +4183,22 @@ public class RemoteComposeWriter {
      */
     public void addModifierBorder(float width, float roundedCorner, int color, int shapeType) {
         mBuffer.addModifierBorder(width, roundedCorner, color, shapeType);
+    }
+
+    /**
+     * Add a modifier border
+     *
+     * @param width         the width
+     * @param roundedCorner the rounded corner
+     * @param colorId         the color
+     * @param shapeType     the shape type
+     */
+    public void addModifierDynamicBorder(
+            float width,
+            float roundedCorner,
+            int colorId,
+            int shapeType) {
+        mBuffer.addModifierDynamicBorder(width, roundedCorner, colorId, shapeType);
     }
 
     /**
