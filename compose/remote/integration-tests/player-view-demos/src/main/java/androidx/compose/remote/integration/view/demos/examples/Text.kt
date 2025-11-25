@@ -27,6 +27,8 @@ import androidx.compose.remote.creation.RemoteComposeContextAndroid
 import androidx.compose.remote.creation.modifiers.RecordingModifier
 import androidx.compose.remote.creation.platform.AndroidxRcPlatformServices
 import androidx.compose.remote.creation.sin
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.tooling.preview.Preview
 
 @Suppress("RestrictedApiAndroidX")
 fun RcTextDemo8(): RemoteComposeContext {
@@ -437,3 +439,19 @@ fun RcTextDemo(): RemoteComposeContext {
         }
     }
 }
+
+@Preview @Composable fun RcTextDemoPreview() = RemoteDocPreview(RcTextDemo())
+
+@Preview @Composable fun RcTextDemo2Preview() = RemoteDocPreview(RcTextDemo2())
+
+@Preview @Composable fun RcTextDemo3Preview() = RemoteDocPreview(RcTextDemo3())
+
+@Preview @Composable fun RcTextDemo4Preview() = RemoteDocPreview(RcTextDemo4())
+
+@Preview @Composable fun RcTextDemo5Preview() = RemoteDocPreview(RcTextDemo5())
+
+@Preview @Composable fun RcTextDemo6Preview() = RemoteDocPreview(RcTextDemo6())
+
+@Preview @Composable fun RcTextDemo7Preview() = RemoteDocPreview(RcTextDemo7())
+
+@Preview @Composable fun RcTextDemo8Preview() = RemoteDocPreview(RcTextDemo8())
