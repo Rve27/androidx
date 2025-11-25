@@ -23,6 +23,7 @@ import androidx.compose.remote.core.RemoteComposeBuffer
 import androidx.compose.remote.core.RemoteContext
 import androidx.compose.remote.core.operations.BitmapFontData
 import androidx.compose.remote.core.operations.DrawTextOnCircle
+import androidx.compose.remote.core.operations.TouchExpression
 import androidx.compose.remote.core.operations.layout.managers.BoxLayout
 import androidx.compose.remote.core.operations.layout.managers.ColumnLayout
 import androidx.compose.remote.core.operations.layout.managers.RowLayout
@@ -612,6 +613,36 @@ public open class RemoteComposeContext {
         )
     }
 
+    /**
+     * Add a polar path expression
+     *
+     * @param expressionR The r component of the expression.
+     * @param start The start value of the expression.
+     * @param end The end value of the expression.
+     * @param count The number of values in the expression.
+     * @param flags The flags for the expression.
+     */
+    public fun addPolarPathExpression(
+        expressionR: RFloat,
+        start: Number,
+        end: Number,
+        count: Number,
+        centerX: Number,
+        centerY: Number,
+        flags: Int = 0,
+    ): Int {
+
+        return mRemoteWriter.addPolarPathExpression(
+            expressionR.array,
+            start.toFloat(),
+            end.toFloat(),
+            count.toFloat(),
+            centerX.toFloat(),
+            centerY.toFloat(),
+            flags,
+        )
+    }
+
     public fun skew(skewX: Float, skewY: Float) {
         mRemoteWriter.skew(skewX, skewY)
     }
@@ -778,6 +809,43 @@ public open class RemoteComposeContext {
 
     public fun easing(maxTime: Float, maxAcceleration: Float, maxVelocity: Float): FloatArray {
         return mRemoteWriter.easing(maxTime, maxAcceleration, maxVelocity)
+    }
+
+    /**
+     * Add a touch expression.
+     *
+     * @param exp The expression.
+     * @param defValue The default value.
+     * @param min The minimum value.
+     * @param max The maximum value.
+     * @param touchMode The touch mode.
+     * @param velocityId The velocity ID.
+     * @param touchEffects The touch effects.
+     * @param touchSpec The touch spec.
+     * @param easingSpec The easing spec.
+     */
+    public fun touchExpression(
+        vararg exp: Float,
+        defValue: Float = 0f,
+        min: Float = 0f,
+        max: Float = 10f,
+        touchMode: Int = TouchExpression.STOP_GENTLY,
+        velocityId: Float = 0f,
+        touchEffects: Int = 0,
+        touchSpec: FloatArray? = null,
+        easingSpec: FloatArray? = null,
+    ): Float {
+        return mRemoteWriter.addTouch(
+            defValue,
+            min,
+            max,
+            touchMode,
+            velocityId,
+            touchEffects,
+            touchSpec,
+            easingSpec,
+            *exp,
+        )
     }
 
     public fun addTouch(
@@ -1437,6 +1505,32 @@ public open class RemoteComposeContext {
 
     public fun rf(v: Number): RFloat {
         return mRemoteWriter.rf(v)
+    }
+
+    public fun text(
+        stringId: Int,
+        modifier: RecordingModifier = RecordingModifier(),
+        color: Int = 0xFF000000.toInt(),
+        fontSize: Float = 36f,
+        fontStyle: Int = 0,
+        fontWeight: Float = 400f,
+        fontFamily: String? = null,
+        textAlign: Int = TextLayout.TEXT_ALIGN_LEFT,
+        overflow: Int = TextLayout.OVERFLOW_CLIP,
+        maxLines: Int = Int.MAX_VALUE,
+    ) {
+        mRemoteWriter.textComponent(
+            modifier,
+            stringId,
+            color,
+            fontSize,
+            fontStyle,
+            fontWeight,
+            fontFamily,
+            textAlign,
+            overflow,
+            maxLines,
+        ) {}
     }
 
     public fun text(
