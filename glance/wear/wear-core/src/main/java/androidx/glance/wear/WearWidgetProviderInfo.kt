@@ -162,10 +162,19 @@ public constructor(
             val serviceInfo = pm.getServiceInfo(providerService, PackageManager.GET_META_DATA)
             val providerResources = pm.getResourcesForApplication(serviceInfo.applicationInfo)
             val xmlParser =
-                serviceInfo.loadXmlMetaData(pm, META_DATA_WEAR_WIDGET_PROVIDER)
-                    ?: throw PackageManager.NameNotFoundException(
-                        "Invalid meta-data name $META_DATA_WEAR_WIDGET_PROVIDER for service $providerService"
+                try {
+                    serviceInfo.loadXmlMetaData(pm, META_DATA_WEAR_WIDGET_PROVIDER)
+                } catch (e: java.lang.ClassCastException) {
+                    throw PackageManager.NameNotFoundException(
+                        "Invalid meta-data value for $META_DATA_WEAR_WIDGET_PROVIDER for service $providerService. Meta-data should reference an xml resource."
                     )
+                }
+
+            if (xmlParser == null) {
+                throw PackageManager.NameNotFoundException(
+                    "Invalid meta-data name $META_DATA_WEAR_WIDGET_PROVIDER for service $providerService"
+                )
+            }
             return xmlParser.parseWearWidgetProviderInfo(
                 providerResources,
                 pm,
