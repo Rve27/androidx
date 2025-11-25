@@ -54,7 +54,7 @@ public interface PdfPage : AutoCloseable {
      *
      * @param bitmap The [Bitmap] to render the page onto.
      */
-    public fun renderPage(bitmap: Bitmap)
+    public fun renderPage(bitmap: Bitmap, renderParams: RenderParams)
 
     /**
      * Renders a specific tile of the page onto the provided [Bitmap].
@@ -74,6 +74,7 @@ public interface PdfPage : AutoCloseable {
         top: Int,
         scaledPageWidth: Int,
         scaledPageHeight: Int,
+        renderParams: RenderParams,
     )
 
     /**
@@ -139,15 +140,6 @@ public interface PdfPage : AutoCloseable {
      * @return A list of [PdfPageGotoLinkContent] objects representing the "Go to" links.
      */
     public fun getPageGotoLinks(): List<PdfPageGotoLinkContent>
-
-    /**
-     * Returns the [RenderParams] used for rendering the page.
-     *
-     * By default, this includes rendering flags for highlighting and text annotations.
-     *
-     * @return The [RenderParams] for this page.
-     */
-    public fun getRenderParams(): RenderParams
 
     /**
      * Applies a [FormEditRecord] to the given PDF.

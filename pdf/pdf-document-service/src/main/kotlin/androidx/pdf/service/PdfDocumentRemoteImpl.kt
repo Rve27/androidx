@@ -52,6 +52,7 @@ import androidx.pdf.annotation.processor.PageAnnotationsPaginator
 import androidx.pdf.annotation.processor.PdfRendererAnnotationsProcessor
 import androidx.pdf.models.Dimensions
 import androidx.pdf.utils.readAnnotationsFromPfd
+import androidx.pdf.utils.toAndroidClass
 
 @RestrictTo(RestrictTo.Scope.LIBRARY)
 internal class PdfDocumentRemoteImpl(
@@ -96,7 +97,9 @@ internal class PdfDocumentRemoteImpl(
         // guarantee a specific background color by default.
         output.eraseColor(Color.WHITE)
         // TODO (b/464133165): Update renderPage to use renderParams
-        rendererAdapter.openPage(pageNum, useCache = true).renderPage(output)
+        rendererAdapter
+            .openPage(pageNum, useCache = true)
+            .renderPage(output, renderParams.toAndroidClass())
         return output
     }
 
@@ -120,7 +123,14 @@ internal class PdfDocumentRemoteImpl(
         // TODO (b/464133165): Update renderTile to use renderParams
         rendererAdapter
             .openPage(pageNum, useCache = true)
-            .renderTile(output, offsetX, offsetY, pageWidth, pageHeight)
+            .renderTile(
+                output,
+                offsetX,
+                offsetY,
+                pageWidth,
+                pageHeight,
+                renderParams.toAndroidClass(),
+            )
         return output
     }
 
