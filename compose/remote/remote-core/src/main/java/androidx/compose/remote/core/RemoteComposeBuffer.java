@@ -1574,9 +1574,19 @@ public class RemoteComposeBuffer {
         float g = (color >> 8 & 0xff) / 255.0f;
         float b = (color & 0xff) / 255.0f;
         float a = (color >> 24 & 0xff) / 255.0f;
-        BackgroundModifierOperation.apply(mBuffer, 0f, 0f, 0f, 0f, r, g, b, a, shape);
+        BackgroundModifierOperation.apply(mBuffer, 0, 0, 0, 0, r, g, b, a, shape);
     }
 
+    /**
+     * Add a background modifier of provided color
+     *
+     * @param colorId the color of the background
+     * @param shape the background shape -- SHAPE_RECTANGLE, SHAPE_CIRCLE
+     */
+    public void addDynamicModifierBackground(int colorId, int shape) {
+        BackgroundModifierOperation.apply(mBuffer,
+                BackgroundModifierOperation.COLOR_REF, colorId, 0, 0, 0f, 0f, 0f, 0f, shape);
+    }
 
     /**
      * Add a background modifier of provided color
@@ -1588,7 +1598,7 @@ public class RemoteComposeBuffer {
      * @param shape the background shape -- SHAPE_RECTANGLE, SHAPE_CIRCLE
      */
     public void addModifierBackground(float r, float g, float b, float a, int shape) {
-        BackgroundModifierOperation.apply(mBuffer, 0f, 0f, 0f, 0f, r, g, b, a, shape);
+        BackgroundModifierOperation.apply(mBuffer, 0, 0, 0, 0, r, g, b, a, shape);
     }
 
     /**
@@ -1613,7 +1623,24 @@ public class RemoteComposeBuffer {
         float b = (color & 0xff) / 255.0f;
         float a = (color >> 24 & 0xff) / 255.0f;
         BorderModifierOperation.apply(
-                mBuffer, 0f, 0f, 0f, 0f, borderWidth, borderRoundedCorner, r, g, b, a, shape);
+                mBuffer, 0, 0, 0, 0, borderWidth, borderRoundedCorner, r, g, b, a, shape);
+    }
+
+    /**
+     * Add a border modifier
+     *
+     * @param borderWidth the border width
+     * @param borderRoundedCorner the rounded corner radius if the shape is ROUNDED_RECT
+     * @param colorId the color of the border
+     * @param shape the shape of the border
+     */
+    public void addModifierDynamicBorder(
+            float borderWidth, float borderRoundedCorner, int colorId, int shape) {
+
+        BorderModifierOperation.apply(
+                mBuffer,
+                BorderModifierOperation.COLOR_REF, colorId, 0, 0,
+                borderWidth, borderRoundedCorner, 0, 0, 0, 0, shape);
     }
 
     /**
