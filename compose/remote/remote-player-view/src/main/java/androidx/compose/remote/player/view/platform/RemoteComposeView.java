@@ -854,9 +854,11 @@ public class RemoteComposeView extends FrameLayout implements View.OnAttachState
         canvas.drawText(str, x, y, paint);
         paint.setTextSize(48f);
         y += rect.height();
-        paint.getTextBounds(message, 0, message.length(), rect);
-        x = w / 2f - rect.width() / 2f - rect.left;
-        canvas.drawText(message, x, y, paint);
+        if (message != null) {
+            paint.getTextBounds(message, 0, message.length(), rect);
+            x = w / 2f - rect.width() / 2f - rect.left;
+            canvas.drawText(message, x, y, paint);
+        }
     }
 
     private float getDefaultTextSize() {
