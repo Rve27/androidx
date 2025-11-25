@@ -14,10 +14,14 @@
  * limitations under the License.
  */
 
-package androidx.appsearch.app;
+package androidx.appsearch.cts.app;
 
 import static com.google.common.truth.Truth.assertThat;
 
+import androidx.appsearch.app.AppSearchAccount;
+import androidx.appsearch.app.DocumentClassFactory;
+import androidx.appsearch.app.DocumentClassFactoryRegistry;
+import androidx.appsearch.app.GenericDocument;
 import androidx.appsearch.builtintypes.Account;
 
 import org.junit.Test;
@@ -45,14 +49,6 @@ public class AppSearchAccountTest {
         assertThat(account.getAccountType()).isEqualTo(TEST_ACCOUNT_TYPE);
         assertThat(account.getAccountName()).isEqualTo(TEST_ACCOUNT_NAME);
         assertThat(account.getAccountId()).isEqualTo(TEST_ACCOUNT_ID);
-
-        // Verify underlying GenericDocument properties match
-        assertThat(account.getPropertyString(AppSearchAccount.PROPERTY_ACCOUNT_TYPE))
-                .isEqualTo(TEST_ACCOUNT_TYPE);
-        assertThat(account.getPropertyString(AppSearchAccount.PROPERTY_ACCOUNT_NAME))
-                .isEqualTo(TEST_ACCOUNT_NAME);
-        assertThat(account.getPropertyString(AppSearchAccount.PROPERTY_ACCOUNT_ID))
-                .isEqualTo(TEST_ACCOUNT_ID);
     }
 
     @Test
@@ -60,9 +56,9 @@ public class AppSearchAccountTest {
         // Build a GenericDocument manually with the expected properties
         GenericDocument genericDocument = new GenericDocument.Builder<>(
                 NAMESPACE, ID, AppSearchAccount.SCHEMA_TYPE)
-                .setPropertyString(AppSearchAccount.PROPERTY_ACCOUNT_TYPE, TEST_ACCOUNT_TYPE)
-                .setPropertyString(AppSearchAccount.PROPERTY_ACCOUNT_NAME, TEST_ACCOUNT_NAME)
-                .setPropertyString(AppSearchAccount.PROPERTY_ACCOUNT_ID, TEST_ACCOUNT_ID)
+                .setPropertyString("accountType", TEST_ACCOUNT_TYPE)
+                .setPropertyString("accountName", TEST_ACCOUNT_NAME)
+                .setPropertyString("accountId", TEST_ACCOUNT_ID)
                 .build();
 
         // Construct AppSearchAccount from the GenericDocument
