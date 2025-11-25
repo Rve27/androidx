@@ -38,7 +38,7 @@ public class Face
 internal constructor(
     internal val runtimeFace: RuntimeFace,
     internal val xrResourceManager: XrResourcesManager,
-) : Updatable {
+) : Trackable<Face.State>, Updatable {
 
     public companion object {
         /**
@@ -180,7 +180,7 @@ internal constructor(
      */
     public class State
     internal constructor(
-        public val trackingState: TrackingState,
+        public override val trackingState: TrackingState,
         public val centerPose: Pose? = null,
         public val mesh: Mesh? = null,
         internal val blendShapeValues: FloatArray? = null,
@@ -188,7 +188,7 @@ internal constructor(
         internal val noseTipPose: Pose? = null,
         internal val foreheadLeftPose: Pose? = null,
         internal val foreheadRightPose: Pose? = null,
-    ) {
+    ) : Trackable.State {
 
         /**
          * Represents the blend shapes of the face.
@@ -275,10 +275,10 @@ internal constructor(
         )
 
     /** The current [State] of this Face. */
-    public val state: StateFlow<State> = _state.asStateFlow()
+    public override val state: StateFlow<State> = _state.asStateFlow()
 
     /** Create and attach an [Anchor] to the Face at the given [Pose] in world space. */
-    public fun createAnchor(pose: Pose): AnchorCreateResult {
+    public override fun createAnchor(pose: Pose): AnchorCreateResult {
         val runtimeAnchor: RuntimeAnchor
         try {
             runtimeAnchor = runtimeFace.createAnchor(pose)
