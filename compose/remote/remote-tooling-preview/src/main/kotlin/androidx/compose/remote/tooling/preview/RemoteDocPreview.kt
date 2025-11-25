@@ -20,38 +20,29 @@ package androidx.compose.remote.tooling.preview
 import androidx.annotation.RestrictTo
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.remote.creation.compose.capture.RememberRemoteDocumentInline
-import androidx.compose.remote.creation.compose.layout.RemoteComposable
 import androidx.compose.remote.player.compose.ExperimentalRemoteComposePlayerApi
+import androidx.compose.remote.player.compose.RemoteComposePlayerFlags
+import androidx.compose.remote.player.compose.RemoteDocumentPlayer
 import androidx.compose.remote.player.core.RemoteDocument
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalWindowInfo
 
-/** Display a Remote Compose Composable in the Android Studio Preview. */
+/** Display a [RemoteDocument] in the Android Studio Preview. */
 @OptIn(ExperimentalRemoteComposePlayerApi::class)
 @Composable
 @Suppress("RestrictedApiAndroidX")
-public fun RemotePreview(content: @RemoteComposable @Composable () -> Unit) {
-    var documentState by remember { mutableStateOf<RemoteDocument?>(null) }
-
+public fun RemoteDocPreview(remoteDocument: RemoteDocument) {
+    RemoteComposePlayerFlags.isViewPlayerEnabled = false
     Box(modifier = Modifier.fillMaxSize()) {
-        @Suppress("COMPOSE_APPLIER_CALL_MISMATCH") // b/446706254
-        RememberRemoteDocumentInline(
-            onDocument = { doc ->
-                println("Document generated: $doc")
-                if (documentState == null) {
-                    // Generate seems to get called again with a partial document
-                    // Essentially re-recording but with existing state, so document is incomplete
-                    documentState = RemoteDocument(doc)
-                }
-            },
-            content = content,
+        val windowInfo = LocalWindowInfo.current
+        RemoteDocumentPlayer(
+            document = remoteDocument.document,
+            documentWidth = windowInfo.containerSize.width,
+            documentHeight = windowInfo.containerSize.height,
+            modifier = Modifier.fillMaxSize(),
+            debugMode = 0,
+            onNamedAction = { _, _, _ -> },
         )
-
-        documentState?.let { RemoteDocPreview(it) }
     }
 }
