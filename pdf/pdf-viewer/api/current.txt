@@ -285,6 +285,7 @@ package androidx.pdf.view {
     ctor public PdfView(android.content.Context context, optional android.util.AttributeSet? attrs);
     ctor public PdfView(android.content.Context context, optional android.util.AttributeSet? attrs, optional int defStyle);
     ctor @BytecodeOnly public PdfView(android.content.Context!, android.util.AttributeSet!, int, int, kotlin.jvm.internal.DefaultConstructorMarker!);
+    method public final void addOnFirstContentLoadListener(androidx.pdf.view.PdfView.OnFirstContentLoadListener listener);
     method public final void addOnGestureStateChangedListener(androidx.pdf.view.PdfView.OnGestureStateChangedListener listener);
     method public final void addOnSelectionChangedListener(androidx.pdf.view.PdfView.OnSelectionChangedListener listener);
     method public final void addOnViewportChangedListener(androidx.pdf.view.PdfView.OnViewportChangedListener listener);
@@ -307,6 +308,7 @@ package androidx.pdf.view {
     method @InaccessibleFromKotlin public final int getVisiblePagesCount();
     method @InaccessibleFromKotlin public final float getZoom();
     method public final android.graphics.PointF? pdfToViewPoint(androidx.pdf.PdfPoint pdfPoint);
+    method public final void removeOnFirstContentLoadListener(androidx.pdf.view.PdfView.OnFirstContentLoadListener listener);
     method public final void removeOnGestureStateChangedListener(androidx.pdf.view.PdfView.OnGestureStateChangedListener listener);
     method public final void removeOnSelectionChangedListener(androidx.pdf.view.PdfView.OnSelectionChangedListener listener);
     method public final void removeOnViewportChangedListener(androidx.pdf.view.PdfView.OnViewportChangedListener listener);
@@ -363,6 +365,10 @@ package androidx.pdf.view {
 
   public static interface PdfView.LinkClickListener {
     method public boolean onLinkClicked(androidx.pdf.content.ExternalLink externalLink);
+  }
+
+  public static fun interface PdfView.OnFirstContentLoadListener {
+    method public void onFirstContentLoad();
   }
 
   public static interface PdfView.OnGestureStateChangedListener {

@@ -561,6 +561,25 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
     private var onSelectionChangedListeners = mutableListOf<OnSelectionChangedListener>()
 
     /**
+     * Listener interface to receive a callback on the UI thread when the content of the PDF
+     * document has been loaded for the first time.
+     *
+     * <p>
+     * This callback is invoked on successful document load on current view instance and The state
+     * for this listener resets when view recreates (eg. due to configuration changes) or when a new
+     * document is set via the [pdfDocument] property. This callback indicates that the document is
+     * ready for user interaction and can be used for hiding loading indicators (like progress bars)
+     * or for logging initial page load metrics. If a fatal error prevents the content of the PDF
+     * from loading (e.g., file corruption), this listener will not be called.
+     */
+    public fun interface OnFirstContentLoadListener {
+        /** Called when the content of the document has been loaded for the first time. */
+        public fun onFirstContentLoad()
+    }
+
+    private val onFirstContentLoadListeners = mutableListOf<OnFirstContentLoadListener>()
+
+    /**
      * The [CoroutineScope] used to make suspending calls to [PdfDocument]. The size of the fixed
      * thread pool is arbitrary and subject to tuning.
      */
@@ -863,6 +882,26 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
      */
     public fun removeOnSelectionChangedListener(listener: OnSelectionChangedListener) {
         onSelectionChangedListeners.remove(listener)
+    }
+
+    /**
+     * Adds the specified listener to the list of listeners that will be notified on first content
+     * load.
+     *
+     * @param listener The listener to add.
+     */
+    public fun addOnFirstContentLoadListener(listener: OnFirstContentLoadListener) {
+        onFirstContentLoadListeners.add(listener)
+    }
+
+    /**
+     * Removes the specified listener from the list of listeners that will be notified on first
+     * content load.
+     *
+     * @param listener The listener to remove.
+     */
+    public fun removeOnFirstContentLoadListener(listener: OnFirstContentLoadListener) {
+        onFirstContentLoadListeners.remove(listener)
     }
 
     /**
