@@ -91,6 +91,9 @@ public class EditableDocumentViewModel(private val state: SavedStateHandle, load
             updateAnnotationInteractionState()
         }
 
+    internal var areAnnotationsVisibleFlow: StateFlow<Boolean> =
+        state.getStateFlow(ANNOTATION_VISIBLE_KEY, true)
+
     private val _applyEditsStatus = MutableStateFlow<ApplyEditsState>(ApplyEditsState.Ready)
     internal val applyEditsStatus: StateFlow<ApplyEditsState> = _applyEditsStatus.asStateFlow()
 
@@ -202,6 +205,7 @@ public class EditableDocumentViewModel(private val state: SavedStateHandle, load
             return
         }
         _applyEditsStatus.value = ApplyEditsState.InProgress
+        updateAnnotationInteractionState()
 
         viewModelScope.launch {
             try {
@@ -220,6 +224,8 @@ public class EditableDocumentViewModel(private val state: SavedStateHandle, load
                 _applyEditsStatus.value = ApplyEditsState.Success(handle)
             } catch (e: Exception) {
                 _applyEditsStatus.value = ApplyEditsState.Failure(e)
+            } finally {
+                updateAnnotationInteractionState()
             }
         }
     }
@@ -315,7 +321,10 @@ public class EditableDocumentViewModel(private val state: SavedStateHandle, load
     }
 
     private fun updateAnnotationInteractionState() {
-        _isAnnotationInteractionEnabled.value = isEditModeEnabled && areAnnotationsVisible
+        _isAnnotationInteractionEnabled.value =
+            isEditModeEnabled &&
+                areAnnotationsVisible &&
+                _applyEditsStatus.value != ApplyEditsState.InProgress
     }
 
     @Suppress("UNCHECKED_CAST")
