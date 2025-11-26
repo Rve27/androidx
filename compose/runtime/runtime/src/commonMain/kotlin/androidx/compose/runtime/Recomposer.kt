@@ -904,16 +904,18 @@ public class Recomposer(effectCoroutineContext: CoroutineContext) : CompositionC
     }
 
     private fun resetErrorState(): RecomposerErrorState? {
-        val errorState =
-            synchronized(stateLock) {
-                val error = errorState
+        var error: RecomposerErrorState? = null
+        synchronized(stateLock) {
+                error = errorState
                 if (error != null) {
                     errorState = null
                     deriveStateLocked()
+                } else {
+                    null
                 }
-                error
             }
-        return errorState
+            ?.resume(Unit)
+        return error
     }
 
     private fun retryFailedCompositions() {
