@@ -619,7 +619,7 @@ public class RemoteButtonColors(
 }
 
 /** Draws a colored and shaped background with when clipping is not supported. */
-private fun RemoteDrawScope.drawShapedBackground(
+internal fun RemoteDrawScope.drawShapedBackground(
     shape: RemoteShape,
     color: RemoteColor,
     borderColor: RemoteColor?,
