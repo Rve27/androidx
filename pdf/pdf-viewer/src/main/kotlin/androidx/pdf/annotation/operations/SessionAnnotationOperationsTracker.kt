@@ -73,10 +73,23 @@ internal class SessionAnnotationOperationsTracker : AnnotationOperationsTracker 
         }
     }
 
-    // TODO: Compress and clean the operations
     override fun getSnapshot(): List<KeyedAnnotationOperation> {
         synchronized(operationsMap) {
             return ArrayList(operationsMap.values)
+        }
+    }
+
+    override fun isDeleted(key: String): Boolean {
+        val op = operationsMap[key]
+        return op?.operationType == KeyedAnnotationOperation.OperationType.REMOVE
+    }
+
+    override fun getUpdatedAnnotation(key: String): PdfAnnotation? {
+        val op = operationsMap[key]
+        return if (op?.operationType == KeyedAnnotationOperation.OperationType.UPDATE) {
+            op.keyedAnnotation.annotation
+        } else {
+            null
         }
     }
 

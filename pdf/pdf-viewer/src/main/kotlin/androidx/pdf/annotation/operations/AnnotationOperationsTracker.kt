@@ -50,6 +50,21 @@ internal interface AnnotationOperationsTracker {
      */
     fun getSnapshot(): List<KeyedAnnotationOperation>
 
+    /**
+     * Returns the new annotation if the annotation with [key] has been updated. Returns null
+     * otherwise.
+     *
+     * @param key The unique identifier to look up.
+     */
+    fun getUpdatedAnnotation(key: String): PdfAnnotation?
+
+    /**
+     * Returns true if the persisted annotation with [key] has been marked for deletion.
+     *
+     * @param key The unique identifier to look up.
+     */
+    fun isDeleted(key: String): Boolean
+
     /** Resets the internal state of the tracker. */
     fun clear(): Unit
 }

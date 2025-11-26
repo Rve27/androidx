@@ -258,4 +258,47 @@ class SessionAnnotationOperationsTrackerTest {
             // If we reach here without crashing, the test passes
         }
     }
+
+    @Test
+    fun isDeleted_nonExistentKey_returnsFalse() {
+        assertThat(tracker.isDeleted("unknown")).isFalse()
+    }
+
+    @Test
+    fun isDeleted_afterRemoveOperation_returnsTrue() {
+        tracker.addEntry(OperationType.REMOVE, keyA, annotationA)
+        assertThat(tracker.isDeleted(keyA)).isTrue()
+    }
+
+    @Test
+    fun isDeleted_afterAddThenRemove_returnsFalse() {
+        tracker.addEntry(OperationType.ADD, keyA, annotationA)
+        tracker.addEntry(OperationType.REMOVE, keyA, annotationA)
+        assertThat(tracker.isDeleted(keyA)).isFalse()
+    }
+
+    @Test
+    fun isDeleted_afterUpdateThenRemove_returnsTrue() {
+        tracker.addEntry(OperationType.UPDATE, keyA, annotationA)
+        tracker.addEntry(OperationType.REMOVE, keyA, annotationA)
+        assertThat(tracker.isDeleted(keyA)).isTrue()
+    }
+
+    @Test
+    fun getUpdatedContent_afterUpdateOperation_returnsNewContent() {
+        tracker.addEntry(OperationType.UPDATE, keyA, annotationB)
+        assertThat(tracker.getUpdatedAnnotation(keyA)).isEqualTo(annotationB)
+    }
+
+    @Test
+    fun getUpdatedContent_afterAddOperation_returnsNull() {
+        tracker.addEntry(OperationType.ADD, keyA, annotationA)
+        assertThat(tracker.getUpdatedAnnotation(keyA)).isNull()
+    }
+
+    @Test
+    fun getUpdatedContent_afterRemoveOperation_returnsNull() {
+        tracker.addEntry(OperationType.REMOVE, keyA, annotationA)
+        assertThat(tracker.getUpdatedAnnotation(keyA)).isNull()
+    }
 }

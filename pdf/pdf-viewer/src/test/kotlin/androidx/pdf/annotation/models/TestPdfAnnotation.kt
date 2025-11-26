@@ -16,4 +16,4 @@
 
 package androidx.pdf.annotation.models
 
-data class TestPdfAnnotation(override val pageNum: Int) : PdfAnnotation(pageNum)
+class TestPdfAnnotation(override val pageNum: Int) : PdfAnnotation(pageNum)

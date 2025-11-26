@@ -21,6 +21,15 @@ import androidx.pdf.annotation.KeyedPdfAnnotation
 /** The single source of truth for fetching persisted annotation data. */
 internal interface AnnotationsRepository {
     /**
+     * Retrieves the persisted [KeyedPdfAnnotation] for the specified page and id.
+     *
+     * @param pageNum The specified page number.
+     * @param annotationId The id of the annotation.
+     * @return The [KeyedPdfAnnotation] object if found else null.
+     */
+    suspend fun getAnnotation(pageNum: Int, annotationId: String): KeyedPdfAnnotation?
+
+    /**
      * Retrieves the list of persisted annotations for a specific page.
      *
      * @param pageNum The 0-based index of the page to fetch.

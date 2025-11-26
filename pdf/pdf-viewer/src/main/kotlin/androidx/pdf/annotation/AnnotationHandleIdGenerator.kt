@@ -20,10 +20,42 @@ import java.util.UUID
 
 /** Responsible for generating unique string identifiers. */
 internal object AnnotationHandleIdGenerator {
+    private const val ANNOTATION_ID_PREFIX = "AnnotationId_"
+
+    private const val ANNOTATION_ID_DELIMITER = "::"
+
     /**
      * Generates a strong pseudo-random unique identifier (UUID).
      *
      * @return A string representation of a random UUID
      */
     fun generateId(): String = UUID.randomUUID().toString()
+
+    /** Returns an annotation id in the format AnnotationId_<pageNum>::<string>. */
+    fun composeAnnotationId(pageNum: Int, id: String): String =
+        "${ANNOTATION_ID_PREFIX}${pageNum}${ANNOTATION_ID_DELIMITER}${id}"
+
+    fun decomposeAnnotationId(key: String): Pair<Int, String> {
+        require(key.startsWith(ANNOTATION_ID_PREFIX)) {
+            "Invalid ID format: '$this' must start with prefix '$ANNOTATION_ID_PREFIX'"
+        }
+
+        val prefixLength = ANNOTATION_ID_PREFIX.length
+        val delimiterIndex = key.indexOf(ANNOTATION_ID_DELIMITER, startIndex = prefixLength)
+
+        require(delimiterIndex != -1) {
+            "Invalid ID format: '$this' missing delimiter '$ANNOTATION_ID_DELIMITER'"
+        }
+
+        val pageNumStr = key.substring(prefixLength, delimiterIndex)
+        val pageNum =
+            pageNumStr.toIntOrNull()
+                ?: throw IllegalArgumentException(
+                    "Invalid ID format: Page segment '$pageNumStr' is not a valid integer"
+                )
+
+        val originalString = key.substring(delimiterIndex + ANNOTATION_ID_DELIMITER.length)
+
+        return pageNum to originalString
+    }
 }

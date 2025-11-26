@@ -42,6 +42,13 @@ internal class PdfDocumentAnnotationsRepository(private val document: PdfDocumen
 
     private val mutexPool = Array(MAX_MUTEX_POOL_SIZE) { Mutex() }
 
+    override suspend fun getAnnotation(pageNum: Int, annotationId: String): KeyedPdfAnnotation? {
+        val annotationsPerPage = getAnnotationsForPage(pageNum)
+
+        // TODO: Can be optimized by maintaining a separate map from id -> index
+        return annotationsPerPage.find { it.key == annotationId }
+    }
+
     override suspend fun getAnnotationsForPage(pageNum: Int): List<KeyedPdfAnnotation> {
         val cachedData = cachedAnnotationsPerPage[pageNum]
         if (cachedData != null) {
