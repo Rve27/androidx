@@ -42,7 +42,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth.assertThat
 import java.io.File
 import java.util.concurrent.Executors
-import kotlin.collections.first
+import junit.framework.TestCase.assertFalse
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.flow.first
@@ -241,7 +241,8 @@ class EditableDocumentViewModelTest {
         testScheduler.advanceUntilIdle()
 
         annotationsViewModel.applyDraftEdits()
-
+        // Assert annotation interactions is disabled while applying edits
+        assertFalse(annotationsViewModel.isAnnotationInteractionEnabled.value)
         collectJob.join()
 
         assertThat(applyStates).isNotEmpty()
@@ -269,7 +270,8 @@ class EditableDocumentViewModelTest {
         testScheduler.advanceUntilIdle()
 
         annotationsViewModel.applyDraftEdits()
-
+        // Assert annotation interactions is disabled while applying edits
+        assertFalse(annotationsViewModel.isAnnotationInteractionEnabled.value)
         collectJob.join()
 
         // Verify the sequence of states
