@@ -24,6 +24,7 @@ import androidx.compose.remote.integration.view.demos.examples.Cube3DKt;
 import androidx.compose.remote.integration.view.demos.examples.DemoAnchorText;
 import androidx.compose.remote.integration.view.demos.examples.DemoAttributedString;
 import androidx.compose.remote.integration.view.demos.examples.DemoColorKt;
+import androidx.compose.remote.integration.view.demos.examples.DemoGlobalKt;
 import androidx.compose.remote.integration.view.demos.examples.DemoKt;
 import androidx.compose.remote.integration.view.demos.examples.DemoMetalClockKt;
 import androidx.compose.remote.integration.view.demos.examples.DemoParticlesKt;
@@ -53,6 +54,9 @@ public abstract class DemosCreation {
                 getp("5/Server/serverClock", ServerSideKt::serverClock),
                 getp("2/Example/spreadSheet", ExampleNumbersKt::spreadSheet),
                 getp("0/Example/color", DemoColorKt::colorButtons),
+                getp("1/Example/spreadSheet", ExampleNumbersKt::spreadSheet),
+                getp("0/Example/demoUseOfGlobal",
+                        DemoGlobalKt::demoUseOfGlobal),
 
                 getp("0/ThemedPlot1", DemoKt::plot1),
                 getp("0/plot2", DemoKt::plot2),
