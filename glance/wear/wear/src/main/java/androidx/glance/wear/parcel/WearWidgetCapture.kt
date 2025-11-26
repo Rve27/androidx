@@ -17,7 +17,6 @@
 
 package androidx.glance.wear.parcel
 
-import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.content.Context
 import android.os.Bundle
@@ -60,13 +59,12 @@ internal object WearWidgetCapture {
     }
 
     private fun Bundle.addPendingIntents(widgetPendingIntents: WidgetPendingIntents): Bundle {
-        putParcelable(WearWidgetCapture.PENDING_INTENT_KEY, widgetPendingIntents.toBundle())
+        putParcelable(PENDING_INTENT_KEY, widgetPendingIntents.toBundle())
         return this
     }
 }
 
 /** The collected [PendingIntent] on the widget, to be sent as sidecar bundle with the document. */
-@SuppressLint("RestrictedApiAndroidX")
 internal class WidgetPendingIntents : WriterEvents {
     private val pendingIntentList: MutableList<PendingIntent> = mutableListOf()
 
