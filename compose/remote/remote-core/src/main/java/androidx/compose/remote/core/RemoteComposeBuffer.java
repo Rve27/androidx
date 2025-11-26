@@ -2009,37 +2009,88 @@ public class RemoteComposeBuffer {
             int justificationMode,
             boolean underline,
             boolean strikethrough,
-            int @NonNull [] fontAxis,
-            float @NonNull [] fontAxisValues,
+            int @Nullable [] fontAxis,
+            float @Nullable [] fontAxisValues,
             boolean autosize,
             int flags) {
         mLastComponentId = getComponentId(componentId);
-        CoreText.apply(
-                mBuffer,
-                mLastComponentId,
-                animationId,
-                textId,
-                color,
-                colorId,
-                fontSize,
-                fontStyle,
-                fontWeight,
-                fontFamilyId,
-                textAlign,
-                overflow,
-                maxLines,
-                letterSpacing,
-                lineHeightAdd,
-                lineHeightMultiplier,
-                lineBreakStrategy,
-                hyphenationFrequency,
-                justificationMode,
-                underline,
-                strikethrough,
-                fontAxis,
-                fontAxisValues,
-                autosize,
-                flags);
+        if (mApiLevel < 7) {
+            if (letterSpacing != 0f
+                    || lineHeightAdd != 0f
+                    || lineHeightMultiplier != 1f
+                    || lineBreakStrategy != 0
+                    || hyphenationFrequency != 0
+                    || justificationMode != 0
+                    || underline
+                    || strikethrough
+                    || (fontAxis != null && fontAxis.length > 0)
+                    || (fontAxisValues != null && fontAxisValues.length > 0)
+                    || autosize
+            ) {
+                StringBuilder error = new StringBuilder();
+                error.append("The following text parameters are not supported on API level < 7:\n");
+                if (letterSpacing != 0f) {
+                    error.append("- letterSpacing\n");
+                }
+                if (lineHeightAdd != 0f || lineHeightMultiplier != 1f) {
+                    error.append("- lineHeight\n");
+                }
+                if (lineBreakStrategy != 0) {
+                    error.append("- lineBreakStrategy\n");
+                }
+                if (hyphenationFrequency != 0) {
+                    error.append("- hyphenationFrequency\n");
+                }
+                if (justificationMode != 0) {
+                    error.append("- justificationMode\n");
+                }
+                if (underline) {
+                    error.append("- underline\n");
+                }
+                if (strikethrough) {
+                    error.append("- strikethrough\n");
+                }
+                if ((fontAxis != null && fontAxis.length > 0)
+                        || (fontAxisValues != null && fontAxisValues.length > 0)) {
+                    error.append("- fontAxis\n");
+                }
+                if (autosize) {
+                    error.append("- autosize\n");
+                }
+                throw new RuntimeException(error.toString());
+            }
+            // Use TextLayout as a backstop
+            TextLayout.apply(mBuffer, mLastComponentId, animationId, textId,
+                    color, fontSize, fontStyle, fontWeight, fontFamilyId,
+                    textAlign, overflow, maxLines);
+        } else {
+            CoreText.apply(
+                    mBuffer,
+                    mLastComponentId,
+                    animationId,
+                    textId,
+                    color,
+                    colorId,
+                    fontSize,
+                    fontStyle,
+                    fontWeight,
+                    fontFamilyId,
+                    textAlign,
+                    overflow,
+                    maxLines,
+                    letterSpacing,
+                    lineHeightAdd,
+                    lineHeightMultiplier,
+                    lineBreakStrategy,
+                    hyphenationFrequency,
+                    justificationMode,
+                    underline,
+                    strikethrough,
+                    fontAxis,
+                    fontAxisValues,
+                    autosize,
+                    flags);
+        }
     }
 
     /**
