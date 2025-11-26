@@ -46,24 +46,20 @@ fun RcTextDemo8(): RemoteComposeContext {
                 vertical = RowLayout.CENTER,
             ) {
                 column(Modifier.horizontalWeight(1f).background(Color.YELLOW)) {
+                    text("New Arsenal Game", maxLines = 1, overflow = CoreText.OVERFLOW_ELLIPSIS)
                     text(
-                        "(1) New Arsenal Game",
-                        maxLines = 1,
-                        overflow = CoreText.OVERFLOW_ELLIPSIS,
-                    )
-                    text(
-                        "(3) Arsenal vs Bayern Munich",
+                        "Arsenal vs Bayern Munich",
                         fontSize = 64f,
                         maxLines = 3,
                         overflow = CoreText.OVERFLOW_ELLIPSIS,
                     )
                     text(
-                        "(2) UEFA Champions League Group Stage",
+                        "UEFA Champions League Group Stage",
                         maxLines = 2,
                         overflow = CoreText.OVERFLOW_ELLIPSIS,
                     )
                     text(
-                        "(1) Wednesday 26th November",
+                        "Wednesday 26th November",
                         maxLines = 1,
                         overflow = CoreText.OVERFLOW_ELLIPSIS,
                     )
