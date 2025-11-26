@@ -631,8 +631,11 @@ public class CoreText extends LayoutManager implements VariableSupport, Accessib
                 mPaint.setTextSize(current);
                 context.replacePaint(mPaint);
                 textLayout(context, maxWidth, bounds, true);
+                boolean hasHyphenation =
+                        mComputedTextLayout != null && mComputedTextLayout.isHyphenatedText();
+                boolean invalid = mHyphenationFrequency == 0 && hasHyphenation;
                 float h = bounds[3] - bounds[1];
-                if (h >= maxHeight) {
+                if (invalid || h >= maxHeight) {
                     max = current;
                 } else {
                     min = current;
@@ -644,8 +647,11 @@ public class CoreText extends LayoutManager implements VariableSupport, Accessib
                 mPaint.setTextSize(current + stepSize);
                 context.replacePaint(mPaint);
                 textLayout(context, maxWidth, bounds, true);
+                boolean hasHyphenation =
+                        mComputedTextLayout != null && mComputedTextLayout.isHyphenatedText();
+                boolean invalid = mHyphenationFrequency == 0 && hasHyphenation;
                 float h = bounds[3] - bounds[1];
-                if (h < maxHeight) {
+                if (!invalid && h < maxHeight) {
                     current += stepSize;
                 }
             }
@@ -679,6 +685,7 @@ public class CoreText extends LayoutManager implements VariableSupport, Accessib
         int flags = PaintContext.TEXT_MEASURE_FONT_HEIGHT | PaintContext.TEXT_MEASURE_SPACES;
         if (forceComplex) {
             flags |= PaintContext.TEXT_COMPLEX;
+            flags |= PaintContext.TEXT_USE_CORE_TEXT;
         }
         if (mOverflow == OVERFLOW_START_ELLIPSIS
                 || mOverflow == OVERFLOW_MIDDLE_ELLIPSIS
@@ -687,8 +694,11 @@ public class CoreText extends LayoutManager implements VariableSupport, Accessib
             forceComplex = true;
         }
         if (mLetterSpacing > 0f || mLineHeightMultiplier != 1f || mLineHeightAdd > 0f
-                || mUnderline || mStrikethrough) {
+                || mUnderline || mStrikethrough
+                || mJustificationMode > 0 || mLineBreakStrategy > 0
+                || mHyphenationFrequency > 0) {
             flags |= PaintContext.TEXT_COMPLEX;
+            flags |= PaintContext.TEXT_USE_CORE_TEXT;
             forceComplex = true;
         }
         if ((flags & PaintContext.TEXT_COMPLEX) != PaintContext.TEXT_COMPLEX) {
@@ -718,9 +728,9 @@ public class CoreText extends LayoutManager implements VariableSupport, Accessib
                             mLetterSpacing,
                             mLineHeightAdd,
                             mLineHeightMultiplier,
-                            0,
-                            0,
-                            0,
+                            mLineBreakStrategy,
+                            mHyphenationFrequency,
+                            mJustificationMode,
                             mUnderline,
                             mStrikethrough,
                             flags);
