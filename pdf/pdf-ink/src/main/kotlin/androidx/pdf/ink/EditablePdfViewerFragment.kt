@@ -285,6 +285,14 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
         attachOnViewportChangedListener()
         setupDiscardChangesDialogListener()
         setupAnnotationToolbar()
+
+        collectFlowOnLifecycleScope {
+            documentViewModel.isAnnotationInteractionEnabled.collect { isEnabled ->
+                annotationView.visibility = if (isEnabled) VISIBLE else GONE
+                wetStrokesView.visibility = if (isEnabled) VISIBLE else GONE
+                pdfContainer.isAnnotationInteractionEnabled = isEnabled
+            }
+        }
     }
 
     /**
@@ -315,7 +323,6 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
     /** Updates the UI interactions and visibility related to annotation components. */
     private fun setAnnotationInteraction(isEnabled: Boolean) {
         PdfFeatureFlags.isMultiTouchScrollEnabled = isEnabled
-        wetStrokesView.visibility = if (isEnabled) VISIBLE else GONE
         annotationToolbar.visibility = if (isEnabled) VISIBLE else GONE
         if (!isEnabled) {
             annotationToolbar.reset()
@@ -494,32 +501,21 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
                 }
 
                 override fun onAnnotationVisibilityChanged(isVisible: Boolean) {
-                    documentViewModel.setAnnotationVisibility(isVisible)
+                    documentViewModel.areAnnotationsVisible = isVisible
                 }
             }
         )
 
-        lifecycleScope.apply {
-            collectFlowOnLifecycleScope {
-                documentViewModel.canUndo.collect { annotationToolbar.canUndo = it }
-            }
+        collectFlowOnLifecycleScope {
+            documentViewModel.canUndo.collect { annotationToolbar.canUndo = it }
+        }
 
-            collectFlowOnLifecycleScope {
-                documentViewModel.canRedo.collect { annotationToolbar.canRedo = it }
-            }
+        collectFlowOnLifecycleScope {
+            documentViewModel.canRedo.collect { annotationToolbar.canRedo = it }
+        }
 
-            collectFlowOnLifecycleScope {
-                documentViewModel.drawingMode.collect { updateDrawingMode(it) }
-            }
-
-            collectFlowOnLifecycleScope {
-                documentViewModel.areAnnotationsEnabled.collect { isEnabled ->
-                    annotationView.visibility = if (isEnabled) VISIBLE else GONE
-                    // Disable touch listener to short-circuit touch events to PdfView.
-                    val touchListener = if (isEnabled) annotationsViewOnTouchListener else null
-                    pdfContainer.setOnTouchListener(touchListener)
-                }
-            }
+        collectFlowOnLifecycleScope {
+            documentViewModel.drawingMode.collect { updateDrawingMode(it) }
         }
     }
 

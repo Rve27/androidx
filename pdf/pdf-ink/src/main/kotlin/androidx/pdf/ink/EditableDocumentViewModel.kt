@@ -81,6 +81,14 @@ public class EditableDocumentViewModel(private val state: SavedStateHandle, load
         get() = state[EDIT_MODE_ENABLED_KEY] ?: false
         set(value) {
             state[EDIT_MODE_ENABLED_KEY] = value
+            updateAnnotationInteractionState()
+        }
+
+    internal var areAnnotationsVisible: Boolean
+        get() = state[ANNOTATION_VISIBLE_KEY] ?: true
+        set(value) {
+            state[ANNOTATION_VISIBLE_KEY] = value
+            updateAnnotationInteractionState()
         }
 
     private val _applyEditsStatus = MutableStateFlow<ApplyEditsState>(ApplyEditsState.Ready)
@@ -96,8 +104,10 @@ public class EditableDocumentViewModel(private val state: SavedStateHandle, load
     internal val drawingMode: StateFlow<AnnotationDrawingMode>
         get() = _drawingMode.asStateFlow()
 
-    private val _areAnnotationsEnabled = MutableStateFlow(true)
-    internal val areAnnotationsEnabled: StateFlow<Boolean> = _areAnnotationsEnabled.asStateFlow()
+    private val _isAnnotationInteractionEnabled =
+        MutableStateFlow(isEditModeEnabled && areAnnotationsVisible)
+    internal val isAnnotationInteractionEnabled: StateFlow<Boolean> =
+        _isAnnotationInteractionEnabled.asStateFlow()
 
     @VisibleForTesting
     public override fun resetState() {
@@ -304,8 +314,8 @@ public class EditableDocumentViewModel(private val state: SavedStateHandle, load
         }
     }
 
-    internal fun setAnnotationVisibility(isVisible: Boolean) {
-        _areAnnotationsEnabled.value = isVisible
+    private fun updateAnnotationInteractionState() {
+        _isAnnotationInteractionEnabled.value = isEditModeEnabled && areAnnotationsVisible
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -313,6 +323,7 @@ public class EditableDocumentViewModel(private val state: SavedStateHandle, load
         const val LOADED_DOCUMENT_URI_KEY = "loadedDocumentUri"
         private const val EDIT_MODE_ENABLED_KEY = "isEditModeEnabled"
 
+        private const val ANNOTATION_VISIBLE_KEY = "isAnnotationVisible"
         val Factory: ViewModelProvider.Factory =
             object : ViewModelProvider.Factory {
                 override fun <T : ViewModel> create(
