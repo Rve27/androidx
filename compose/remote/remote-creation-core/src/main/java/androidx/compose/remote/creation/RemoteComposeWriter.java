@@ -4276,7 +4276,9 @@ public class RemoteComposeWriter {
         }
         int bytes = mBuffer.getBuffer().size() - mStartGlobalSection;
         mBuffer.getBuffer().moveBlock(mStartGlobalSection, mInsertPoint);
-        mInsertPoint += bytes;
+        if (mInsertPoint != -1) {
+            mInsertPoint += bytes;
+        }
         mStartGlobalSection = -1;
     }
 
