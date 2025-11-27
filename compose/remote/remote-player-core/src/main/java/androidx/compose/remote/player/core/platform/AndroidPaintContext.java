@@ -449,6 +449,7 @@ public class AndroidPaintContext extends PaintContext {
             int overflow,
             int maxLines,
             float maxWidth,
+            float maxHeight,
             float letterSpacing,
             float lineHeightAdd,
             float lineHeightMultiplier,
@@ -497,18 +498,27 @@ public class AndroidPaintContext extends PaintContext {
             default:
                 staticLayoutBuilder.setAlignment(Layout.Alignment.ALIGN_NORMAL);
         }
+        boolean useEllipses = false;
         switch (overflow) {
             case CoreText.OVERFLOW_ELLIPSIS:
                 staticLayoutBuilder.setEllipsize(TextUtils.TruncateAt.END);
+                useEllipses = true;
                 break;
             case CoreText.OVERFLOW_MIDDLE_ELLIPSIS:
                 staticLayoutBuilder.setEllipsize(TextUtils.TruncateAt.MIDDLE);
+                useEllipses = true;
                 break;
             case CoreText.OVERFLOW_START_ELLIPSIS:
                 staticLayoutBuilder.setEllipsize(TextUtils.TruncateAt.START);
+                useEllipses = true;
                 break;
             default:
         }
+
+        if (useEllipses) {
+            useAdvancedFeatures = true;
+        }
+
         staticLayoutBuilder.setMaxLines(maxLines);
         staticLayoutBuilder.setIncludePad(false);
 
@@ -533,20 +543,39 @@ public class AndroidPaintContext extends PaintContext {
         if (useAdvancedFeatures) {
             Rect bounds = new Rect(0, 0, 0, 0);
             boolean isHyphenatedText = getTightBoundingBox(staticLayout, bounds);
+            int visibleLines = staticLayout.getLineCount();
+            if (bounds.height() > maxHeight
+                    && useEllipses && staticLayout.getLineCount() >= maxLines) {
+                // let's measure how many lines we can actually fit
+                int lineCount = staticLayout.getLineCount();
+                visibleLines = 0;
+                for (int i = 0; i < lineCount; i++) {
+                    float lineHeight = 0;
+                    if (Build.VERSION.SDK_INT // REMOVE IN PLATFORM
+                            >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) { // REMOVE IN PLATFORM
+                        lineHeight = staticLayout.getLineBottom(i, true);
+                    } else { // REMOVE IN PLATFORM
+                        lineHeight = staticLayout.getLineBottom(i); // REMOVE IN PLATFORM
+                    } // REMOVE IN PLATFORM
+                    if (lineHeight < maxHeight) {
+                        visibleLines++;
+                    } else {
+                        break;
+                    }
+                }
+            }
             return new AndroidComputedTextLayout(
-                    staticLayout, bounds.width(), bounds.height(), isHyphenatedText);
+                    staticLayout, bounds.width(), bounds.height(),
+                    visibleLines, isHyphenatedText);
         } else {
             return new AndroidComputedTextLayout(
-                    staticLayout, staticLayout.getWidth(), staticLayout.getHeight(), false);
+                    staticLayout, staticLayout.getWidth(), staticLayout.getHeight(),
+                    staticLayout.getLineCount(), false);
         }
     }
 
     /**
      * Returns true if a line is hyphenated.
-     * @param layout
-     * @param originalText
-     * @param lineIndex
-     * @return
      */
     public boolean isLineHyphenated(@NonNull StaticLayout layout,
             @NonNull CharSequence originalText, int lineIndex) {
@@ -564,9 +593,6 @@ public class AndroidPaintContext extends PaintContext {
 
     /**
      * Returns the bounding box of the static layout
-     * @param layout
-     * @param bounds
-     * @return
      */
     public boolean getTightBoundingBox(@NonNull StaticLayout layout, @NonNull Rect bounds) {
         int lineCount = layout.getLineCount();
@@ -593,9 +619,7 @@ public class AndroidPaintContext extends PaintContext {
             if (lineLeft < minLeft) {
                 minLeft = lineLeft;
             }
-            if (!isHyphenated) {
-                isHyphenated |= isLineHyphenated(layout, layout.getText(), i);
-            }
+            isHyphenated |= isLineHyphenated(layout, layout.getText(), i);
         }
         bounds.left = (int) minLeft;
         bounds.top = top;
