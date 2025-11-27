@@ -316,6 +316,7 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
         super.onDestroyView()
         pdfView.removeOnViewportChangedListener(onViewportChangedListener)
         annotationToolbar.setAnnotationToolbarListener(null)
+        pdfContainer.setOnTouchListener(null)
     }
 
     private fun updateUiForEditMode(isEnabled: Boolean) {
@@ -370,7 +371,11 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
                 requireContext(),
                 WetStrokesViewTouchEventDispatcher(),
                 PdfViewTouchEventDispatcher(),
-            )
+            ) {
+                // dismiss any popups shown on annotation toolbar if touch is intercepted
+                // outside toolbar
+                annotationToolbar.dismissPopups()
+            }
         pdfContainer.setOnTouchListener(annotationsViewOnTouchListener)
     }
 
