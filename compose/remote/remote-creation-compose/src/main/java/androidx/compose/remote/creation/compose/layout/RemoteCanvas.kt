@@ -151,19 +151,11 @@ public fun RemoteCanvasDrawScope.remoteDrawAnchoredText(
     typeface: Typeface? = null,
     textSize: RemoteFloat = 18f.rf,
 ) {
-    val iAlpha: Float =
-        if (alpha is RemoteFloat) alpha.getFloatIdForCreationState(FallbackCreationState.state)
-        else alpha.toFloat()
-    val iTextSize: Float =
-        if (textSize is RemoteFloat)
-            textSize.getFloatIdForCreationState(FallbackCreationState.state)
-        else textSize.toFloat()
-
     val colorFilter: ColorFilter? = null
     val blendMode: BlendMode = DefaultBlendMode
 
     val size = RemoteSize(remote.component.width, remote.component.height)
-    val paint = toPaint(brush, drawStyle, iAlpha, colorFilter, blendMode, size = size)
+    val paint = toPaint(brush, drawStyle, alpha.id, colorFilter, blendMode, size = size)
 
     val ap = paint.asFrameworkPaint()
 
@@ -172,7 +164,7 @@ public fun RemoteCanvasDrawScope.remoteDrawAnchoredText(
     } else {
         ap.setTypeface(Typeface.DEFAULT)
     }
-    ap.textSize = iTextSize
+    ap.textSize = textSize.id
     canvas.drawAnchoredText(
         text.toString(),
         anchorX = anchor.x,
@@ -195,19 +187,11 @@ public fun RemoteCanvasDrawScope.remoteDrawAnchoredText(
     typeface: Typeface? = null,
     textSize: RemoteFloat = 18f.rf,
 ) {
-    val iAlpha: Float =
-        if (alpha is RemoteFloat) alpha.getFloatIdForCreationState(FallbackCreationState.state)
-        else alpha.toFloat()
-    val iTextSize: Float =
-        if (textSize is RemoteFloat)
-            textSize.getFloatIdForCreationState(FallbackCreationState.state)
-        else textSize.toFloat()
-
     val colorFilter: ColorFilter? = null
     val blendMode: BlendMode = DefaultBlendMode
 
     val size = RemoteSize(remote.component.width, remote.component.height)
-    val paint = toPaint(brush, drawStyle, iAlpha, colorFilter, blendMode, size = size)
+    val paint = toPaint(brush, drawStyle, alpha.id, colorFilter, blendMode, size = size)
 
     val ap = paint.asFrameworkPaint()
 
@@ -216,7 +200,7 @@ public fun RemoteCanvasDrawScope.remoteDrawAnchoredText(
     } else {
         ap.setTypeface(Typeface.DEFAULT)
     }
-    ap.textSize = iTextSize
+    ap.textSize = textSize.id
     canvas.drawAnchoredText(
         text,
         anchorX = anchor.x,
