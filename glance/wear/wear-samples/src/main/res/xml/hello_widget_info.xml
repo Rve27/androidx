@@ -13,10 +13,15 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
+<wearwidget-provider
+    description="@string/hello_widget_description"
+    group="hello"
+    icon="@drawable/ic_launcher"
+    label="@string/hello_widget_label"
+    preferredType="@integer/glance_wear_container_type_small">
 
-<resources>
-    <string name="app_name">Widget AX samples</string>
-    <string name="hello_widget_label">AX Hello widget</string>
-    <string name="hello_widget_description">AX Hello widget sample</string>
-    <string name="hello">Hello Wear Widget!</string>
-</resources>
+    <container type="@integer/glance_wear_container_type_small" />
+
+    <container type="@integer/glance_wear_container_type_large" />
+
+</wearwidget-provider>
