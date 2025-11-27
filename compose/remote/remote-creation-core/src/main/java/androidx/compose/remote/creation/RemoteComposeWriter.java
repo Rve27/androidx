@@ -3311,7 +3311,7 @@ public class RemoteComposeWriter {
             int justificationMode,
             boolean underline,
             boolean strikethrough,
-            @Nullable String[] fontAxis,
+            @NonNull String @Nullable [] fontAxis,
             float @Nullable [] fontAxisValues,
             boolean autosize,
             int flags) {

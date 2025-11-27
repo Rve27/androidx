@@ -30,6 +30,7 @@ import androidx.compose.remote.creation.compose.capture.heightDp
 import androidx.compose.remote.creation.compose.capture.rememberRemoteDocument
 import androidx.compose.remote.creation.compose.capture.widthDp
 import androidx.compose.remote.creation.compose.layout.RemoteComposable
+import androidx.compose.remote.creation.profile.Profile
 import androidx.compose.remote.creation.profile.RcPlatformProfiles
 import androidx.compose.remote.player.compose.ExperimentalRemoteComposePlayerApi
 import androidx.compose.remote.player.compose.RemoteComposePlayerFlags
@@ -75,6 +76,7 @@ class RemoteComposeScreenshotTestRule(
     moduleDirectory: String,
     private val matcher: BitmapMatcher? = null,
     private val targetPlayer: TargetPlayer,
+    private val profile: Profile = RcPlatformProfiles.ANDROIDX,
 ) : ExternalResource() {
     private val composeTestRule = createComposeRule(StandardTestDispatcher())
     private val screenshotRule = AndroidXScreenshotTestRule(moduleDirectory)
@@ -212,7 +214,7 @@ class RemoteComposeScreenshotTestRule(
                     rememberRemoteDocument(
                         content = content,
                         creationDisplayInfo = creationDisplayInfo,
-                        profile = RcPlatformProfiles.ANDROIDX,
+                        profile = profile,
                     )
                 document?.let { RemoteDocumentPlayer(it, creationDisplayInfo) }
             }
