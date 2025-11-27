@@ -31,6 +31,7 @@ import androidx.compose.remote.creation.compose.state.rf
 import androidx.compose.remote.player.compose.test.utils.screenshot.TargetPlayer
 import androidx.compose.remote.player.compose.test.utils.screenshot.rule.RemoteComposeScreenshotTestRule
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.Color
 import androidx.test.filters.MediumTest
 import androidx.test.filters.SdkSuppress
@@ -60,6 +61,8 @@ class RemoteCanvasTest {
         listOf<@Composable () -> Unit>(
             ::TestDrawAnchoredText_colorAndTextSize,
             ::TestDrawAnchoredText_brushAndTextSize,
+            ::TestClipRect_intersect,
+            ::TestClipRect_difference,
         )
 
     @Test
@@ -131,6 +134,47 @@ class RemoteCanvasTest {
                 anchor = RemoteOffset(w / 2f, 120f),
                 textSize = LARGE_FONT_SIZE.rf,
             )
+        }
+    }
+
+    @RemoteComposable
+    @Composable
+    fun TestClipRect_intersect() {
+        ClipRectTest(ClipOp.Intersect)
+    }
+
+    @RemoteComposable
+    @Composable
+    fun TestClipRect_difference() {
+        // It generates the same output as Intersect: b/464257438
+        ClipRectTest(ClipOp.Difference)
+    }
+
+    @RemoteComposable
+    @Composable
+    private fun ClipRectTest(clipOp: ClipOp) {
+        RemoteCanvas(modifier = RemoteModifier.fillMaxSize()) {
+            val clipRect1Left = 20f.rf
+            val clipRect1Top = 20f.rf
+            val clipRect1Right = 60f.rf
+            val clipRect1Bottom = 60f.rf
+
+            val clipRect2Left = 40f.rf
+            val clipRect2Top = 40f.rf
+            val clipRect2Right = 80f.rf
+            val clipRect2Bottom = 80f.rf
+
+            clipRect(clipRect1Left, clipRect1Top, clipRect1Right, clipRect1Bottom) {
+                clipRect(
+                    clipRect2Left,
+                    clipRect2Top,
+                    clipRect2Right,
+                    clipRect2Bottom,
+                    clipOp = clipOp,
+                ) {
+                    drawRect(color = Color.Red)
+                }
+            }
         }
     }
 
