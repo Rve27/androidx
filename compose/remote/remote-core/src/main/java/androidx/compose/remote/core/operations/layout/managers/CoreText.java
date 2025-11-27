@@ -630,7 +630,7 @@ public class CoreText extends LayoutManager implements VariableSupport, Accessib
             while (max - min >= stepSize) {
                 mPaint.setTextSize(current);
                 context.replacePaint(mPaint);
-                textLayout(context, maxWidth, bounds, true, true);
+                textLayout(context, maxWidth, maxHeight, bounds, true, true);
                 boolean hasHyphenation =
                         mComputedTextLayout != null && mComputedTextLayout.isHyphenatedText();
                 boolean invalid = mHyphenationFrequency == 0 && hasHyphenation;
@@ -646,7 +646,7 @@ public class CoreText extends LayoutManager implements VariableSupport, Accessib
             if ((current + stepSize) < maxFontSize) {
                 mPaint.setTextSize(current + stepSize);
                 context.replacePaint(mPaint);
-                textLayout(context, maxWidth, bounds, true, true);
+                textLayout(context, maxWidth, maxHeight, bounds, true, true);
                 boolean hasHyphenation =
                         mComputedTextLayout != null && mComputedTextLayout.isHyphenatedText();
                 boolean invalid = mHyphenationFrequency == 0 && hasHyphenation;
@@ -659,9 +659,9 @@ public class CoreText extends LayoutManager implements VariableSupport, Accessib
             mMeasureFontSize = current;
             mPaint.setTextSize(mFontSizeValue);
             context.replacePaint(mPaint);
-            textLayout(context, maxWidth, bounds, true, true);
+            textLayout(context, maxWidth, maxHeight, bounds, true, true);
         } else {
-            textLayout(context, maxWidth, bounds);
+            textLayout(context, maxWidth, maxHeight, bounds);
         }
 
         context.restorePaint();
@@ -676,11 +676,11 @@ public class CoreText extends LayoutManager implements VariableSupport, Accessib
     }
 
     private void textLayout(@NonNull PaintContext context, float maxWidth,
-            float @NonNull [] bounds) {
-        textLayout(context, maxWidth, bounds, false, false);
+            float maxHeight, float @NonNull [] bounds) {
+        textLayout(context, maxWidth, maxHeight, bounds, false, false);
     }
 
-    private void textLayout(@NonNull PaintContext context, float maxWidth,
+    private void textLayout(@NonNull PaintContext context, float maxWidth, float maxHeight,
             float @NonNull [] bounds, boolean forceComplex, boolean inAutosize) {
         int flags = PaintContext.TEXT_MEASURE_FONT_HEIGHT | PaintContext.TEXT_MEASURE_SPACES;
         if (forceComplex) {
@@ -717,29 +717,54 @@ public class CoreText extends LayoutManager implements VariableSupport, Accessib
             if (inAutosize) {
                 flags |= PaintContext.TEXT_MEASURE_AUTOSIZE;
             }
-            mComputedTextLayout =
-                    context.layoutComplexText(
-                            mTextId,
-                            0,
-                            mCachedString.length(),
-                            mTextAlign,
-                            mOverflow,
-                            mMaxLines,
-                            maxWidth,
-                            mLetterSpacing,
-                            mLineHeightAdd,
-                            mLineHeightMultiplier,
-                            mLineBreakStrategy,
-                            mHyphenationFrequency,
-                            mJustificationMode,
-                            mUnderline,
-                            mStrikethrough,
-                            flags);
-            if (mComputedTextLayout != null) {
-                bounds[0] = 0f;
-                bounds[1] = 0f;
-                bounds[2] = mComputedTextLayout.getWidth();
-                bounds[3] = mComputedTextLayout.getHeight();
+            boolean done = false;
+            int maxLines = mMaxLines;
+            while (!done) {
+                mComputedTextLayout =
+                        context.layoutComplexText(
+                                mTextId,
+                                0,
+                                mCachedString.length(),
+                                mTextAlign,
+                                mOverflow,
+                                maxLines,
+                                maxWidth,
+                                maxHeight,
+                                mLetterSpacing,
+                                mLineHeightAdd,
+                                mLineHeightMultiplier,
+                                mLineBreakStrategy,
+                                mHyphenationFrequency,
+                                mJustificationMode,
+                                mUnderline,
+                                mStrikethrough,
+                                flags);
+                if (mComputedTextLayout != null) {
+                    bounds[0] = 0f;
+                    bounds[1] = 0f;
+                    bounds[2] = mComputedTextLayout.getWidth();
+                    bounds[3] = mComputedTextLayout.getHeight();
+                }
+                if (mComputedTextLayout != null
+                        && mComputedTextLayout.getHeight() > maxHeight
+                        && mOverflow == CoreText.OVERFLOW_ELLIPSIS) {
+                    // If the text is bigger than the available space *and* we have
+                    // OVERFLOW_ELLIPSIS, let's recompute the maxLines in order
+                    // to show the ellipsis.
+                    // Note: on Android, maxLines doesn't seem to apply when using
+                    // OVERFLOW_START_ELLIPSIS or OVERFLOW_MIDDLE_ELLIPSIS -- those seem
+                    // to only work with maxLines = 1.
+                    if (mComputedTextLayout.getVisibleLineCount() != maxLines) {
+                        maxLines = mComputedTextLayout.getVisibleLineCount();
+                    } else {
+                        maxLines--;
+                    }
+                    if (maxLines < 1) {
+                        done = true;
+                    }
+                } else {
+                    done = true;
+                }
             }
         } else {
             mComputedTextLayout = null;
