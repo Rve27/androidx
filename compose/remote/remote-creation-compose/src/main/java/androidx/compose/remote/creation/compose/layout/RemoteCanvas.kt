@@ -114,20 +114,9 @@ public fun RemoteCanvasDrawScope.clipRect(
     clipOp: ClipOp = ClipOp.Intersect,
     block: RemoteCanvasDrawScope.() -> Unit,
 ) {
-    val iLeft: Float =
-        if (left is RemoteFloat) left.getFloatIdForCreationState(FallbackCreationState.state)
-        else left.toFloat()
-    val iTop: Float =
-        if (top is RemoteFloat) top.getFloatIdForCreationState(FallbackCreationState.state)
-        else top.toFloat()
-    val iRight: Float =
-        if (right is RemoteFloat) right.getFloatIdForCreationState(FallbackCreationState.state)
-        else right.toFloat()
-    val iBottom: Float =
-        if (bottom is RemoteFloat) bottom.getFloatIdForCreationState(FallbackCreationState.state)
-        else bottom.toFloat()
-
-    withTransform({ clipRect(iLeft, iTop, iRight, iBottom, clipOp) }) { this@clipRect.block() }
+    withTransform({ clipRect(left.id, top.id, right.id, bottom.id, clipOp) }) {
+        this@clipRect.block()
+    }
 }
 
 public fun DrawTransform.translate(x: RemoteFloat, y: RemoteFloat) {
