@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.abbenchmarking
+package androidx.abbenchmarking.util
 
 import java.io.File
 
@@ -93,10 +93,8 @@ internal fun checkoutGitRevision(rev: String): Boolean {
     return try {
         runCommand("git", "checkout", rev, workingDir = projectRoot)
         true
-    } catch (e: java.lang.RuntimeException) {
-        java.lang.System.err.println(
-            "FAIL: Could not checkout revision '$rev'. Error: ${e.message}"
-        )
+    } catch (e: RuntimeException) {
+        System.err.println("FAIL: Could not checkout revision '$rev'. Error: ${e.message}")
         false
     }
 }
