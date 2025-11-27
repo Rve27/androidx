@@ -226,7 +226,6 @@ public class CoreText extends LayoutManager implements VariableSupport, Accessib
                 Float.isNaN(mFontWeight)
                         ? context.getFloat(Utils.idFromNan(mFontWeight))
                         : mFontWeight;
-        System.out.println("Font Weight" + mFontWeightValue);
         mTextAlignValue = (short) (mTextAlign & 0xFFFF);
         if (mIsDynamicColorEnabled) {
             mColorValue = context.getColor(mColorId);
@@ -863,8 +862,13 @@ public class CoreText extends LayoutManager implements VariableSupport, Accessib
         count += PARAMETERS.countIfNotDefault(P_UNDERLINE, underline);
         count += PARAMETERS.countIfNotDefault(P_STRIKETHROUGH, strikethrough);
         count += PARAMETERS.countIfNotDefault(P_AUTOSIZE, autosize);
-        if (fontAxis != null && fontAxisValues != null
-                && fontAxis.length > 0 && fontAxis.length == fontAxisValues.length) {
+        boolean hasFontAxis = fontAxis != null && fontAxis.length > 0;
+
+        if (fontAxis != null && fontAxis.length != fontAxisValues.length) {
+            throw new IllegalStateException("fontAxis and fontAxisValues must be the same length");
+        }
+
+        if (hasFontAxis) {
             count += 2;
         }
         count += PARAMETERS.countIfNotDefault(P_FLAGS, flags);
@@ -889,7 +893,7 @@ public class CoreText extends LayoutManager implements VariableSupport, Accessib
         PARAMETERS.write(buffer, P_JUSTIFICATION_MODE, justificationMode);
         PARAMETERS.write(buffer, P_UNDERLINE, underline);
         PARAMETERS.write(buffer, P_STRIKETHROUGH, strikethrough);
-        if (fontAxis != null && fontAxisValues != null) {
+        if (hasFontAxis) {
             PARAMETERS.write(buffer, P_FONT_AXIS, fontAxis);
             PARAMETERS.write(buffer, P_FONT_AXIS_VALUES, fontAxisValues);
         }
