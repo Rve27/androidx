@@ -633,6 +633,7 @@ package androidx.xr.scenecore.testing {
     method @InaccessibleFromKotlin public float getDeviceDpPerMeter();
     method @InaccessibleFromKotlin public boolean getEnabledPanelDepthTest();
     method @InaccessibleFromKotlin public java.util.concurrent.Executor? getExecutor();
+    method @InaccessibleFromKotlin public androidx.xr.scenecore.runtime.Entity? getKeyEntity();
     method @InaccessibleFromKotlin public android.app.Activity? getLastSetPreferredAspectRatioActivity();
     method @InaccessibleFromKotlin public float getLastSetPreferredAspectRatioRatio();
     method @InaccessibleFromKotlin public androidx.xr.scenecore.runtime.PanelEntity getMainPanelEntity();
@@ -657,6 +658,7 @@ package androidx.xr.scenecore.testing {
     method @InaccessibleFromKotlin public void setDeviceDpPerMeter(float);
     method public android.os.Bundle setFullSpaceMode(android.os.Bundle bundle);
     method public android.os.Bundle setFullSpaceModeWithEnvironmentInherited(android.os.Bundle bundle);
+    method @InaccessibleFromKotlin public void setKeyEntity(androidx.xr.scenecore.runtime.Entity?);
     method @InaccessibleFromKotlin public void setLastSetPreferredAspectRatioActivity(android.app.Activity?);
     method @InaccessibleFromKotlin public void setLastSetPreferredAspectRatioRatio(float);
     method public void setPreferredAspectRatio(android.app.Activity activity, float preferredRatio);
@@ -669,6 +671,7 @@ package androidx.xr.scenecore.testing {
     property public boolean enabledPanelDepthTest;
     property public java.util.concurrent.Executor? executor;
     property public boolean isBoundaryConsentGranted;
+    property public androidx.xr.scenecore.runtime.Entity? keyEntity;
     property public android.app.Activity? lastSetPreferredAspectRatioActivity;
     property public float lastSetPreferredAspectRatioRatio;
     property public androidx.xr.scenecore.runtime.PanelEntity mainPanelEntity;
