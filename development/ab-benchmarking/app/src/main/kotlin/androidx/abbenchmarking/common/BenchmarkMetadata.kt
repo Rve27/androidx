@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.abbenchmarking
+package androidx.abbenchmarking.common
 
 import java.io.File
 import java.nio.file.Files
@@ -61,7 +61,39 @@ internal fun getDeviceInfoFromOutputFile(jsonFile: File): DeviceInfo? {
 }
 
 /** Creates the final .metadata.json file with all collected information. */
-internal fun createMetadataFile(metadata: Metadata, outputDirPath: Path) {
+internal fun createMetadataFile(
+    benchmarkArgs: BenchmarkArguments,
+    outputDirPath: Path,
+    gitCommitHashA: String,
+    gitCommitHashB: String,
+    executionTimestamp: String,
+    buildVariant: String,
+) {
+    val inputParameters =
+        mutableMapOf(
+            "module" to benchmarkArgs.module,
+            "benchmark_test" to benchmarkArgs.benchmarkTest,
+            "run_count" to benchmarkArgs.runCount.toString(),
+            "serial" to (benchmarkArgs.serial ?: "Not Provided"),
+            "output_path" to
+                (benchmarkArgs.outputDirectoryPath ?: getDefaultOutputDirPath().toString()),
+        )
+
+    benchmarkArgs.iterationCount?.let { inputParameters["iteration_count"] = it.toString() }
+    val deviceDir = discoverDeviceDirectory(benchmarkArgs.module, buildVariant)
+    val deviceInfo =
+        if (deviceDir != null) {
+            val jsonFiles = findJsonFiles(File(deviceDir.absolutePath))
+            getDeviceInfoFromOutputFile(jsonFiles.first())
+        } else null
+    val metadata =
+        Metadata(
+            executionTimestamp = executionTimestamp,
+            revA = RevInfo(name = benchmarkArgs.revA, commit = gitCommitHashA),
+            revB = RevInfo(name = benchmarkArgs.revB, commit = gitCommitHashB),
+            deviceInfo = deviceInfo,
+            inputParameters = inputParameters,
+        )
     val json = Json { prettyPrint = true }
     val jsonString = json.encodeToString(metadata)
     Files.createDirectories(outputDirPath)
