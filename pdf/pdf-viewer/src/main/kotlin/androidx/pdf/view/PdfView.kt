@@ -1614,6 +1614,12 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                             invalidate()
                         }
                     }
+
+                    launch {
+                        manager.bitmapReadyFlow.collect {
+                            // TODO: b/461565451 - Add Implementation of Api onFirstContentLoad
+                        }
+                    }
                     launch {
                         manager.pageTextReadyFlow.collect { pageNum ->
                             pdfViewAccessibilityManager?.onPageTextReady(pageNum)
