@@ -185,20 +185,20 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
     private lateinit var annotationView: AnnotationsView
     private lateinit var backPressedCallback: OnBackPressedCallback
     private lateinit var onViewportChangedListener: PdfView.OnViewportChangedListener
+    private lateinit var gestureStateChangedListener: PdfView.OnGestureStateChangedListener
     private lateinit var wetStrokesOnFinishedListener: WetStrokesOnFinishedListener
-
     private lateinit var wetStrokesViewTouchHandler: WetStrokesViewTouchHandler
+    private lateinit var annotationsViewOnTouchListener: AnnotationsViewOnTouchListener
+    private lateinit var annotationToolbar: AnnotationToolbar
+
+    private var pageTransformCalculator: PageTransformCalculator = PageTransformCalculator()
+    private val strokeIdToPageNumMap: MutableMap<InProgressStrokeId, Int> =
+        Collections.synchronizedMap(mutableMapOf<InProgressStrokeId, Int>())
 
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     override val documentViewModel: EditableDocumentViewModel by viewModels {
         EditableDocumentViewModel.Factory
     }
-    private lateinit var annotationToolbar: AnnotationToolbar
-    private var pageTransformCalculator: PageTransformCalculator = PageTransformCalculator()
-    private val strokeIdToPageNumMap: MutableMap<InProgressStrokeId, Int> =
-        Collections.synchronizedMap(mutableMapOf<InProgressStrokeId, Int>())
-
-    private lateinit var annotationsViewOnTouchListener: AnnotationsViewOnTouchListener
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -264,8 +264,8 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
 
         setupUiStateCollectors()
         setupTouchListeners()
+        setUpPdfViewListeners()
         setupBackPressedCallback()
-        attachOnViewportChangedListener()
         setupDiscardChangesDialogListener()
         setupAnnotationToolbar()
     }
@@ -315,6 +315,8 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
         // Clean up the listener to avoid potential memory leaks
         super.onDestroyView()
         pdfView.removeOnViewportChangedListener(onViewportChangedListener)
+        pdfView.removeOnGestureStateChangedListener(gestureStateChangedListener)
+        wetStrokesView.removeFinishedStrokesListener(wetStrokesOnFinishedListener)
         annotationToolbar.setAnnotationToolbarListener(null)
         pdfContainer.setOnTouchListener(null)
     }
@@ -432,7 +434,18 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
         return PageAnnotationsData(annotationsForPage, transformMatrix)
     }
 
-    private fun attachOnViewportChangedListener() {
+    private fun setUpPdfViewListeners() {
+        gestureStateChangedListener =
+            object : PdfView.OnGestureStateChangedListener {
+                override fun onGestureStateChanged(newState: Int) {
+                    if (newState == PdfView.GESTURE_STATE_IDLE) {
+                        documentViewModel.isPdfViewGestureActive = false
+                    } else {
+                        documentViewModel.isPdfViewGestureActive = true
+                    }
+                }
+            }
+
         onViewportChangedListener =
             object : PdfView.OnViewportChangedListener {
                 override fun onViewportChanged(
@@ -456,6 +469,7 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
                     )
                 }
             }
+        pdfView.addOnGestureStateChangedListener(gestureStateChangedListener)
         pdfView.addOnViewportChangedListener(onViewportChangedListener)
     }
 
