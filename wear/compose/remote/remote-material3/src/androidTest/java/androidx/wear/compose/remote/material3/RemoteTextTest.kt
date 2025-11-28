@@ -34,6 +34,7 @@ import androidx.compose.ui.text.font.FontVariation
 import androidx.compose.ui.text.font.FontVariation.Setting
 import androidx.compose.ui.text.font.FontVariation.Settings
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
 import androidx.test.filters.MediumTest
@@ -203,6 +204,56 @@ class RemoteTextTest {
                 VariantText(Setting("ROND", 0f))
                 VariantText(Setting("ROND", 50f))
                 VariantText(Setting("ROND", 100f))
+            }
+        }
+    }
+
+    @Test
+    fun text_withDecoration() {
+        remoteComposeTestRule.runScreenshotTest(backgroundColor = Color.Black) {
+            RemoteColumn(RemoteModifier.fillMaxSize()) {
+                RemoteText(
+                    text = RemoteString("None"),
+                    modifier = RemoteModifier.fillMaxWidth(),
+                    fontSize = 32.sp,
+                )
+                RemoteText(
+                    text = RemoteString("Underline"),
+                    modifier = RemoteModifier.fillMaxWidth(),
+                    fontSize = 32.sp,
+                    style = LocalTextStyle.current.copy(textDecoration = TextDecoration.Underline),
+                )
+                RemoteText(
+                    text = RemoteString("LineThrough"),
+                    modifier = RemoteModifier.fillMaxWidth(),
+                    fontSize = 32.sp,
+                    style = LocalTextStyle.current.copy(textDecoration = TextDecoration.LineThrough),
+                )
+            }
+        }
+    }
+
+    @Test
+    fun text_withSpacing() {
+        remoteComposeTestRule.runScreenshotTest(backgroundColor = Color.Black) {
+            RemoteColumn(RemoteModifier.fillMaxSize()) {
+                RemoteText(
+                    text = RemoteString("Standard\nParagraph"),
+                    modifier = RemoteModifier.fillMaxWidth(),
+                    fontSize = 32.sp,
+                )
+                RemoteText(
+                    text = RemoteString("Double Line Height\nParagraph\nAnd one more"),
+                    modifier = RemoteModifier.fillMaxWidth(),
+                    fontSize = 32.sp,
+                    style = LocalTextStyle.current.copy(lineHeight = 64.sp),
+                )
+                RemoteText(
+                    text = RemoteString("Letter Spacing\nParagraph"),
+                    modifier = RemoteModifier.fillMaxWidth(),
+                    fontSize = 32.sp,
+                    style = LocalTextStyle.current.copy(letterSpacing = 64.sp),
+                )
             }
         }
     }

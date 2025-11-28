@@ -46,6 +46,7 @@ import androidx.compose.ui.text.font.FontVariation
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.GenericFontFamily
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
@@ -81,6 +82,28 @@ public fun RemoteText(
     )
 }
 
+/**
+ * Remote composable that displays text.
+ *
+ * Note that density-dependent values like [fontSize], [style.letterSpacing], and [style.lineHeight]
+ * are converted to pixels using [LocalDensity.current] from the environment where the [RemoteText]
+ * is being *created*, not the remote environment where it will be displayed. This means these
+ * values are fixed at creation time based on the local density.
+ *
+ * @param text The text to be displayed.
+ * @param modifier The [RemoteModifier] to be applied to this text.
+ * @param color [RemoteColor] to apply to the text. If [color] is not specified, and it is not
+ *   provided in [style], then [Color.Black] will be used.
+ * @param fontSize The size of the font.
+ * @param fontStyle The font style to be applied to the text.
+ * @param fontWeight The font weight to be applied to the text.
+ * @param fontFamily The font family to be applied to the text.
+ * @param textAlign The alignment of the text within its container.
+ * @param overflow How visual overflow should be handled.
+ * @param maxLines An optional maximum number of lines for the text.
+ * @param style The [TextStyle] to be applied to the text.
+ * @param fontVariationSettings The font variation settings to be applied to the text.
+ */
 @Composable
 @RemoteComposable
 public fun RemoteText(
@@ -110,21 +133,35 @@ public fun RemoteText(
 
     val fontSize =
         with(LocalDensity.current) {
-                if (style.fontSize == TextUnit.Unspecified) 12.sp.toPx() else style.fontSize.toPx()
+            if (style.fontSize == TextUnit.Unspecified) 12.sp.toPx() else style.fontSize.toPx()
+        }
+
+    val letterSpacing =
+        if (style.letterSpacing == TextUnit.Unspecified) null
+        else with(LocalDensity.current) { style.letterSpacing.toPx() / fontSize }
+
+    val lineHeightMultiply =
+        if (style.lineHeight == TextUnit.Unspecified) null
+        else
+            with(LocalDensity.current) {
+                // default lineHeight is descent — ascent
+                style.lineHeight.toPx() / fontSize
             }
-            .rf
 
     RemoteText(
         text = text,
         modifier = modifier,
         color = textColor,
-        fontSize = fontSize,
+        fontSize = fontSize.rf,
         fontStyle = style.fontStyle ?: FontStyle.Normal,
         fontWeight = style.fontWeight?.weight?.rf ?: 400.rf,
         fontFamily = fontFamily.encode(),
         textAlign = style.textAlign,
         overflow = overflow,
         maxLines = maxLines,
+        textDecoration = style.textDecoration,
+        letterSpacing = letterSpacing,
+        lineHeightMultiply = lineHeightMultiply,
         fontVariationSettings = fontVariationSettings,
     )
 }
@@ -142,6 +179,10 @@ public fun RemoteText(
     fontFamily: String? = null,
     overflow: TextOverflow = TextOverflow.Clip,
     maxLines: Int = Int.MAX_VALUE,
+    letterSpacing: Float? = null,
+    lineHeightAdd: Float? = null,
+    lineHeightMultiply: Float? = null,
+    textDecoration: TextDecoration? = null,
     fontVariationSettings: FontVariation.Settings? = null,
 ) {
     val captureMode = LocalRemoteComposeCreationState.current
@@ -164,6 +205,10 @@ public fun RemoteText(
                     textAlign = textAlign.encode(),
                     overflow = overflow.encode(),
                     maxLines = maxLines,
+                    textDecoration = textDecoration ?: TextDecoration.None,
+                    letterSpacing = letterSpacing,
+                    lineHeightAdd = lineHeightAdd,
+                    lineHeightMultiply = lineHeightMultiply,
                     fontVariationSettings = fontVariationSettings,
                 )
                 .then(modifier.toComposeUiLayout())
@@ -290,6 +335,10 @@ public class RemoteComposeCoreTextComponentModifier(
     public val textAlign: Int,
     public val overflow: Int,
     public val maxLines: Int,
+    public val textDecoration: TextDecoration,
+    public val letterSpacing: Float? = null,
+    public val lineHeightAdd: Float? = null,
+    public val lineHeightMultiply: Float? = null,
     public val fontVariationSettings: FontVariation.Settings?,
 ) : DrawModifier {
     override fun ContentDrawScope.draw() {
@@ -309,14 +358,14 @@ public class RemoteComposeCoreTextComponentModifier(
                 textAlign,
                 overflow,
                 maxLines,
-                0f,
-                0f,
-                1f,
+                letterSpacing ?: 0f,
+                lineHeightAdd ?: 0f,
+                lineHeightMultiply ?: 1f,
                 0,
                 0,
                 0,
-                false,
-                false,
+                textDecoration.contains(TextDecoration.Underline),
+                textDecoration.contains(TextDecoration.LineThrough),
                 fontAxisNames,
                 fontAxisValues,
                 false,
