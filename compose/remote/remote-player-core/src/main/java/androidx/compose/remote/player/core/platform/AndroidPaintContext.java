@@ -471,8 +471,8 @@ public class AndroidPaintContext extends PaintContext {
 
         boolean useAdvancedFeatures = (flags & PaintContext.TEXT_MEASURE_AUTOSIZE) != 0;
 
-        if (letterSpacing > 0f) {
-            textPaint.setLetterSpacing(letterSpacing);
+        if (letterSpacing != 0f) {
+            mPaint.setLetterSpacing(letterSpacing);
             useAdvancedFeatures = true;
         }
         if (underline) {
@@ -534,7 +534,7 @@ public class AndroidPaintContext extends PaintContext {
             staticLayoutBuilder.setJustificationMode(justificationMode);
             useAdvancedFeatures = true;
         }
-        if (lineHeightAdd > 0f || lineHeightMultiplier != 1f) {
+        if (lineHeightAdd != 0f || lineHeightMultiplier != 1f) {
             staticLayoutBuilder.setLineSpacing(lineHeightAdd, lineHeightMultiplier);
             useAdvancedFeatures = true;
         }
