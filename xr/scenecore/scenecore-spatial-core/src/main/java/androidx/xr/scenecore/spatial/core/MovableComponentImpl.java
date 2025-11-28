@@ -50,7 +50,7 @@ class MovableComponentImpl implements MovableComponent {
             new ConcurrentHashMap<>();
     // Visible for testing.
     Consumer<ReformEvent> mReformEventConsumer;
-    private Entity mEntity;
+    private volatile Entity mEntity;
     private Entity mInitialParent;
     private Pose mLastPose = new Pose();
     private Vector3 mLastScale = new Vector3(1f, 1f, 1f);
@@ -77,7 +77,9 @@ class MovableComponentImpl implements MovableComponent {
                 return;
             }
             if (reformEvent.getState() == ReformEvent.REFORM_STATE_START) {
-                mInitialParent = mEntity.getParent() != null ? mEntity.getParent()
+                final Entity entity = mEntity;
+                mInitialParent = (entity != null && entity.getParent() != null)
+                        ? mEntity.getParent()
                         : mActivitySpaceImpl;
                 mIsMoving = true;
             } else if (reformEvent.getState() == ReformEvent.REFORM_STATE_END) {
