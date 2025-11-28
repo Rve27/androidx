@@ -419,6 +419,49 @@ class EditablePdfViewerFragmentTestSuite {
         assertNotEquals(fitToScreenZoom, pdfView?.zoom)
     }
 
+    @Test
+    fun testEditablePdfViewerFragment_toolbarPopupDismissed_OnContentTouch() {
+        if (!isRequiredSdkExtensionAvailable()) return
+
+        loadDocumentAndSetupFragment()
+
+        enterEditMode()
+
+        // Click again to show brush slider
+        onView(withId(PdfInkR.id.pen_button)).perform(click())
+
+        onView(withId(PdfInkR.id.brush_size_selector)).check(matches(isDisplayed()))
+        // Draw an annotation on the content view
+        onView(withId(PdfR.id.pdfContentLayout)).perform(swipeLeft())
+        // Assert brush size selector is not displayed
+        onView(withId(PdfInkR.id.brush_size_selector)).check(matches(not(isDisplayed())))
+
+        onView(withId(PdfInkR.id.color_palette_button)).perform(click())
+        onView(withId(PdfInkR.id.color_palette)).check(matches(isDisplayed()))
+        // Draw an annotation on the content view
+        onView(withId(PdfR.id.pdfContentLayout)).perform(swipeLeft())
+        // Assert color palette is not displayed
+        onView(withId(PdfInkR.id.color_palette)).check(matches(not(isDisplayed())))
+    }
+
+    @Test
+    fun testEditablePdfViewerFragment_toolbarPopupDismissed_OnBackPress() {
+        if (!isRequiredSdkExtensionAvailable()) return
+
+        loadDocumentAndSetupFragment()
+
+        enterEditMode()
+
+        // Click again to show brush slider
+        onView(withId(PdfInkR.id.pen_button)).perform(click())
+
+        onView(withId(PdfInkR.id.brush_size_selector)).check(matches(isDisplayed()))
+        // Press back to show discard dialog
+        onView(withId(PdfR.id.pdfContentLayout)).perform(pressBack())
+        // Assert brush size selector is not displayed
+        onView(withId(PdfInkR.id.brush_size_selector)).check(matches(not(isDisplayed())))
+    }
+
     private fun enterEditMode() {
         onView(withId(R.id.edit_fab)).apply {
             check(matches(isDisplayed()))
