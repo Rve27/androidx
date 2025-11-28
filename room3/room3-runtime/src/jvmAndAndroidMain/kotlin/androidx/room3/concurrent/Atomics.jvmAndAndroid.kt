@@ -14,9 +14,15 @@
  * limitations under the License.
  */
 
+@file:JvmName("Atomics_jvmAndroidKt")
+@file:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+
 package androidx.room3.concurrent
 
-internal actual typealias SynchronizedObject = Any
+import androidx.annotation.RestrictTo
 
-internal actual inline fun <T> synchronized(lock: SynchronizedObject, block: () -> T): T =
-    kotlin.synchronized(lock, block)
+public actual typealias AtomicInt = java.util.concurrent.atomic.AtomicInteger
+
+internal typealias AtomicLong = java.util.concurrent.atomic.AtomicLong
+
+public actual typealias AtomicBoolean = java.util.concurrent.atomic.AtomicBoolean

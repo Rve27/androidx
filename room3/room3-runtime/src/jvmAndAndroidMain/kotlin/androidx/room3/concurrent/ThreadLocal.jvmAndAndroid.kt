@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:JvmName("ThreadLocal_jvmAndroidKt")
+
 package androidx.room3.concurrent
 
 import kotlin.coroutines.CoroutineContext

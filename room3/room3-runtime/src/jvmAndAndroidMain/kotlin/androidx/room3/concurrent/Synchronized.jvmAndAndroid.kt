@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+@file:JvmName("Synchronized_jvmAndroidKt")
+
 package androidx.room3.concurrent
 
-internal actual typealias ReentrantLock = java.util.concurrent.locks.ReentrantLock
+internal actual typealias SynchronizedObject = Any
+
+internal actual inline fun <T> synchronized(lock: SynchronizedObject, block: () -> T): T =
+    kotlin.synchronized(lock, block)

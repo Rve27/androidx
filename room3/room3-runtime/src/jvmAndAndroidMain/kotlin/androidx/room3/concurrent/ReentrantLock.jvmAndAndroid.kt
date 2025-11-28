@@ -14,14 +14,8 @@
  * limitations under the License.
  */
 
-@file:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+@file:JvmName("ReentrantLock_jvmAndroidKt")
 
 package androidx.room3.concurrent
 
-import androidx.annotation.RestrictTo
-
-public actual typealias AtomicInt = java.util.concurrent.atomic.AtomicInteger
-
-internal typealias AtomicLong = java.util.concurrent.atomic.AtomicLong
-
-public actual typealias AtomicBoolean = java.util.concurrent.atomic.AtomicBoolean
+internal actual typealias ReentrantLock = java.util.concurrent.locks.ReentrantLock
