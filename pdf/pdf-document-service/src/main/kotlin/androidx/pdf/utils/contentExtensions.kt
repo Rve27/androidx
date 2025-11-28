@@ -152,6 +152,7 @@ public fun FormEditInfo.toAndroidClass(): android.graphics.pdf.models.FormEditRe
         builder.build()
     }
 
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 @SuppressLint("WrongConstant")
 public fun RenderParams.toAndroidClass(): android.graphics.pdf.RenderParams =
     requireSdkExtensionVersion {

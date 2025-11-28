@@ -38,6 +38,7 @@ internal class FakeEditablePdfDocument(
     override val uri: Uri,
     override val pageCount: Int,
     override val isLinearized: Boolean = false,
+    override val renderParams: RenderParams = RenderParams(RenderParams.RENDER_MODE_FOR_DISPLAY),
     override val formType: Int = -1,
 ) : EditablePdfDocument() {
     private val annotationsByPage = mutableMapOf<Int, MutableList<PdfEditEntry<out PdfEdit>>>()

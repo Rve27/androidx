@@ -21,6 +21,7 @@ import android.os.Parcel
 import android.os.Parcelable
 import androidx.annotation.IntDef
 import androidx.annotation.RestrictTo
+import java.util.Objects
 
 @SuppressLint("BanParcelableUsage")
 /**
@@ -31,11 +32,15 @@ import androidx.annotation.RestrictTo
  * rendered on the bitmap. [renderFormContentMode] defaults to [RENDER_FORM_CONTENT_ENABLED] which
  * means that PDF form widgets (if present) will be rendered on the bitmap.
  *
+ * @property renderMode The mode to render the content.
+ * @property renderFlags (Optional) Flags to control the rendering of annotations on the page
+ *   bitmaps. Defaults to [FLAG_RENDER_NONE].
+ * @property renderFormContentMode (Optional) Mode to control the rendering of PDF form content in
+ *   the page bitmaps. Defaults to [RENDER_FORM_CONTENT_ENABLED].
  * @see RenderMode
  * @see RenderFlags
  * @see RenderFormContentMode
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public class RenderParams(
     @RenderMode public val renderMode: Int,
     @RenderFlags public val renderFlags: Int = FLAG_RENDER_NONE,
@@ -44,6 +49,7 @@ public class RenderParams(
 
     @Retention(AnnotationRetention.SOURCE)
     @IntDef(RENDER_MODE_FOR_DISPLAY, RENDER_MODE_FOR_PRINT)
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public annotation class RenderMode
 
     @Retention(AnnotationRetention.SOURCE)
@@ -58,10 +64,12 @@ public class RenderParams(
                 FLAG_RENDER_FREETEXT,
             ],
     )
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public annotation class RenderFlags
 
     @Retention(AnnotationRetention.SOURCE)
     @IntDef(RENDER_FORM_CONTENT_ENABLED, RENDER_FORM_CONTENT_DISABLED)
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public annotation class RenderFormContentMode
 
     override fun describeContents(): Int = 0
@@ -72,13 +80,26 @@ public class RenderParams(
         dest.writeInt(renderFormContentMode)
     }
 
+    override fun equals(other: Any?): Boolean {
+        if (other !is RenderParams) return false
+        if (this === other) return true
+
+        return renderMode == other.renderMode &&
+            renderFlags == other.renderFlags &&
+            renderFormContentMode == other.renderFormContentMode
+    }
+
+    override fun hashCode(): Int {
+        return Objects.hash(renderMode, renderFlags, renderFormContentMode)
+    }
+
     public companion object {
         /** Mode to render the content for display on a screen. */
         public const val RENDER_MODE_FOR_DISPLAY: Int = 1
         /** Mode to render the content for printing. */
         public const val RENDER_MODE_FOR_PRINT: Int = 2
 
-        /** Render flags for annotations */
+        /** Flag to disable rendering of all types of annotations on the page. */
         public const val FLAG_RENDER_NONE: Int = 0
         /** Flag to enable rendering of text annotation on the page. */
         public const val FLAG_RENDER_TEXT_ANNOTATIONS: Int = 1 shl 1
