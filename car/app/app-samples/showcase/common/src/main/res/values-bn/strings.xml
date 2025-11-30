@@ -272,8 +272,7 @@
     <string name="tab_template_demo_title" msgid="7587839101813629975">"টেস্পলেট ডেমো ট্যাব"</string>
     <string name="tab_title_message" msgid="5266710951630087246">"মেসেজ ট্যাব"</string>
     <string name="tab_title_pane" msgid="2520606145526537263">"প্যানেল ট্যাব"</string>
-    <!-- no translation found for tab_title_sectioned_item (7299509321019990398) -->
-    <skip />
+    <string name="tab_title_sectioned_item" msgid="7299509321019990398">"বিভাগ অনুযায়ী আইটেম ট্যাব"</string>
     <string name="tab_title_list" msgid="5104962518489668123">"তালিকা ট্যাব"</string>
     <string name="tab_title_grid" msgid="5268168907976325154">"ট্যাবের দীর্ঘ শিরোনাম সহ গ্রিড ট্যাব"</string>
     <string name="tab_title_search" msgid="1892925693146631173">"সার্চ ট্যাব"</string>
