@@ -149,7 +149,8 @@ class AppFunctionInventoryCodeBuilder(private val inventoryClassBuilder: TypeSpe
                     buildCodeBlock {
                         addStatement("mapOf(")
                         indent()
-                        for ((componentReferenceKey, componentReferenceTypeMetadata) in dataTypes) {
+                        for ((componentReferenceKey, componentReferenceTypeMetadata) in
+                            dataTypes.entries.sortedBy { it.key }) {
                             val datatypeVariableName =
                                 when (componentReferenceTypeMetadata) {
                                     is AppFunctionObjectTypeMetadata -> {
@@ -879,7 +880,8 @@ class AppFunctionInventoryCodeBuilder(private val inventoryClassBuilder: TypeSpe
                     buildCodeBlock {
                         addStatement("mapOf(")
                         indent()
-                        for ((objectPropertyName, objectPropertyTypeMetadata) in propertiesMap) {
+                        for ((objectPropertyName, objectPropertyTypeMetadata) in
+                            propertiesMap.entries.sortedBy { it.key }) {
                             val dataTypeVariableName =
                                 propertyName + "_${objectPropertyName.uppercase()}"
                             when (objectPropertyTypeMetadata) {
@@ -926,8 +928,8 @@ class AppFunctionInventoryCodeBuilder(private val inventoryClassBuilder: TypeSpe
                             }
                             addStatement(
                                 """
-                                %S to %L,
-                                """
+                                    %S to %L,
+                                    """
                                     .trimIndent(),
                                 objectPropertyName,
                                 dataTypeVariableName,
