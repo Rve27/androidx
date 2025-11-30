@@ -272,8 +272,7 @@
     <string name="tab_template_demo_title" msgid="7587839101813629975">"ટૅબના નમૂનાનો ડેમો"</string>
     <string name="tab_title_message" msgid="5266710951630087246">"મેસેજ ટૅબ"</string>
     <string name="tab_title_pane" msgid="2520606145526537263">"વિભાગ ટૅબ"</string>
-    <!-- no translation found for tab_title_sectioned_item (7299509321019990398) -->
-    <skip />
+    <string name="tab_title_sectioned_item" msgid="7299509321019990398">"વિભાગમાં ઉપલબ્ધ આઇટમનું ટૅબ"</string>
     <string name="tab_title_list" msgid="5104962518489668123">"સૂચિ ટૅબ"</string>
     <string name="tab_title_grid" msgid="5268168907976325154">"ટૅબનું લાંબું શીર્ષક ધરાવતું ગ્રીડ ટૅબ"</string>
     <string name="tab_title_search" msgid="1892925693146631173">"શોધ ટૅબ"</string>
