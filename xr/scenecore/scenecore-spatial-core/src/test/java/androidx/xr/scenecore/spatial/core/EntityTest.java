@@ -624,4 +624,33 @@ public final class EntityTest {
         assertThat(hitTestResult.getSurfaceType())
                 .isEqualTo(HitTestResult.HitTestSurfaceType.HIT_TEST_RESULT_SURFACE_TYPE_PLANE);
     }
+
+    @Test
+    public void getParent_nullParent_returnsNull() {
+        mEntity.setParent(null);
+        assertThat(mEntity.getParent()).isEqualTo(null);
+    }
+
+    @Test
+    public void getPoseInParentSpace_nullParent_returnsIdentity() {
+        mEntity.setParent(null);
+        mEntity.setPose(Pose.Identity);
+        assertThat(mEntity.getPose(Space.PARENT)).isEqualTo(Pose.Identity);
+    }
+
+    @Test
+    public void getPoseInActivitySpace_nullParent_throwsException() {
+        mEntity.setParent(null);
+        assertThrows(
+                IllegalStateException.class,
+                () -> mEntity.getPose(Space.ACTIVITY));
+    }
+
+    @Test
+    public void getPoseInRealWorldSpace_nullParent_throwsException() {
+        mEntity.setParent(null);
+        assertThrows(
+                IllegalStateException.class,
+                () -> mEntity.getPose(Space.REAL_WORLD));
+    }
 }
