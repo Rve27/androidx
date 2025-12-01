@@ -143,6 +143,8 @@ private val taskNamesKnownToDuplicateOutputs =
 
         // b/308798582
         "transformNonJvmMainCInteropDependenciesMetadataForIde",
+        "transformAndroidNativeMainCInteropDependenciesMetadataForIde",
+        "transformAndroidNativeTestCInteropDependenciesMetadataForIde",
         "transformAppleMainCInteropDependenciesMetadataForIde",
         "transformAppleTestCInteropDependenciesMetadataForIde",
         "transformDarwinTestCInteropDependenciesMetadataForIde",
