@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 The Android Open Source Project
+ * Copyright 2024 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,17 @@
  * limitations under the License.
  */
 
-package androidx.savedstate.internal
+@file:JvmName("LocalSavedStateRegistryOwnerKt")
 
-import kotlin.reflect.KClass
+package androidx.savedstate.compose
 
-internal actual val KClass<*>?.canonicalName: String?
-    get() = this?.qualifiedName
+import androidx.compose.runtime.ProvidableCompositionLocal
+import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.savedstate.SavedStateRegistryOwner
+import kotlin.jvm.JvmName
+
+public actual val LocalSavedStateRegistryOwner:
+    ProvidableCompositionLocal<SavedStateRegistryOwner> =
+    staticCompositionLocalOf {
+        error("CompositionLocal LocalSavedStateRegistryOwner not present")
+    }
