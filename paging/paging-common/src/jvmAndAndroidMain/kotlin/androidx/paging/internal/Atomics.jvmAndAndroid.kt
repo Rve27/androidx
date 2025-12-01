@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package androidx.paging.testing.internal
+@file:JvmName("Atomics_jvmKt")
+
+package androidx.paging.internal
 
 internal actual typealias AtomicInt = java.util.concurrent.atomic.AtomicInteger
 
 internal actual typealias AtomicBoolean = java.util.concurrent.atomic.AtomicBoolean
 
-internal actual class AtomicRef<T> actual constructor(initialValue: T) {
-    private val delegate = java.util.concurrent.atomic.AtomicReference(initialValue)
+internal actual class CopyOnWriteArrayList<T> : Iterable<T> {
+    private val delegate = java.util.concurrent.CopyOnWriteArrayList<T>()
 
-    actual fun get(): T = delegate.get()
+    actual fun add(value: T): Boolean = delegate.add(value)
 
-    actual fun set(value: T) {
-        delegate.set(value)
-    }
+    actual fun remove(value: T): Boolean = delegate.remove(value)
 
-    actual fun getAndSet(value: T): T = delegate.getAndSet(value)
+    actual override fun iterator(): Iterator<T> = delegate.iterator()
 }
