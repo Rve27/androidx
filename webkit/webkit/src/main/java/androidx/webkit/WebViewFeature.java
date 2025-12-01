@@ -751,7 +751,6 @@ public class WebViewFeature {
      * This feature covers:
      * {@link WebViewBuilder#build(Context)}.
      */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     @WebViewBuilder.Experimental
     public static final String WEBVIEW_BUILDER_EXPERIMENTAL_V1 = "WEBVIEW_BUILDER_EXPERIMENTAL_V1";
 
