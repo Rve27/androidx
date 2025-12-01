@@ -272,8 +272,7 @@
     <string name="tab_template_demo_title" msgid="7587839101813629975">"Démonstration du modèle d\'onglet"</string>
     <string name="tab_title_message" msgid="5266710951630087246">"Onglet de message"</string>
     <string name="tab_title_pane" msgid="2520606145526537263">"Onglet de volet"</string>
-    <!-- no translation found for tab_title_sectioned_item (7299509321019990398) -->
-    <skip />
+    <string name="tab_title_sectioned_item" msgid="7299509321019990398">"Onglet d\'élément à sections"</string>
     <string name="tab_title_list" msgid="5104962518489668123">"Onglet de liste"</string>
     <string name="tab_title_grid" msgid="5268168907976325154">"Onglet de grille avec titre d\'onglet long"</string>
     <string name="tab_title_search" msgid="1892925693146631173">"Onglet de recherche"</string>

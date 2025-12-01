@@ -272,8 +272,7 @@
     <string name="tab_template_demo_title" msgid="7587839101813629975">"Дэмаверсія шаблона ўкладкі"</string>
     <string name="tab_title_message" msgid="5266710951630087246">"Укладка \"Паведамленне\""</string>
     <string name="tab_title_pane" msgid="2520606145526537263">"Укладка \"Панэль\""</string>
-    <!-- no translation found for tab_title_sectioned_item (7299509321019990398) -->
-    <skip />
+    <string name="tab_title_sectioned_item" msgid="7299509321019990398">"Укладка элемента з раздзеламі"</string>
     <string name="tab_title_list" msgid="5104962518489668123">"Укладка \"Спіс\""</string>
     <string name="tab_title_grid" msgid="5268168907976325154">"Укладка з доўгай назвай і змесцівам у выглядзе сеткі"</string>
     <string name="tab_title_search" msgid="1892925693146631173">"Укладка \"Пошук\""</string>
