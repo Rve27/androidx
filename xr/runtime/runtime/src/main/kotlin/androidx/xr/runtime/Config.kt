@@ -382,8 +382,8 @@ constructor(
     /**
      * Feature that allows tracking of human faces.
      *
-     * Setting this feature to [FaceTrackingMode.USER] requires that the `FACE_TRACKING` Android
-     * permission is granted by the calling application.
+     * Setting this feature to [FaceTrackingMode.BLEND_SHAPES] requires that the `FACE_TRACKING`
+     * Android permission is granted by the calling application.
      *
      * Setting this feature to [FaceTrackingMode.MESHES] requires the `CAMERA` Android permission to
      * be granted and that [CameraFacingDirection] is set to [CameraFacingDirection.USER].
@@ -397,9 +397,8 @@ constructor(
             /** Faces will not be tracked. */
             @JvmField public val DISABLED: FaceTrackingMode = FaceTrackingMode(0)
 
-            // TODO b/451663642: Rename Config.FaceTrackingMode.USER to better reflect its use case
             /** Blend shapes of the user's face will be tracked. */
-            @JvmField public val USER: FaceTrackingMode = FaceTrackingMode(1)
+            @JvmField public val BLEND_SHAPES: FaceTrackingMode = FaceTrackingMode(1)
 
             /** Face meshes will be tracked using the front-facing camera. */
             @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
