@@ -1774,6 +1774,7 @@ package androidx.car.app.model {
     field @SuppressCompatibility @androidx.car.app.annotations.ExperimentalCarApi public static final int IMAGE_TYPE_EXTRA_SMALL = 8; // 0x8
     field public static final int IMAGE_TYPE_ICON = 4; // 0x4
     field public static final int IMAGE_TYPE_LARGE = 2; // 0x2
+    field @androidx.car.app.annotations.RequiresCarApi(8) public static final int IMAGE_TYPE_MEDIUM = 16; // 0x10
     field public static final int IMAGE_TYPE_SMALL = 1; // 0x1
     field public static final int NO_DECORATION = -1; // 0xffffffff
   }
