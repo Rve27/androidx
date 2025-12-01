@@ -29,6 +29,7 @@ import androidx.compose.remote.creation.compose.layout.RemoteColumn
 import androidx.compose.remote.creation.compose.layout.RemoteComposable
 import androidx.compose.remote.creation.compose.layout.RemoteText
 import androidx.compose.remote.creation.compose.modifier.RemoteModifier
+import androidx.compose.remote.creation.compose.modifier.background
 import androidx.compose.remote.creation.compose.modifier.border
 import androidx.compose.remote.creation.compose.modifier.fillMaxSize
 import androidx.compose.remote.creation.compose.modifier.fillMaxWidth
@@ -99,7 +100,7 @@ fun ScrollableListMain(modifier: Modifier = Modifier) {
 fun ScrollableList(modifier: RemoteModifier = RemoteModifier) {
     val scrollState = rememberRemoteScrollState()
     RemoteColumn(
-        modifier = modifier.verticalScroll(scrollState),
+        modifier = modifier.verticalScroll(scrollState).background(Color.White),
         horizontalAlignment = RemoteAlignment.CenterHorizontally,
         verticalArrangement = RemoteArrangement.Center,
     ) {
