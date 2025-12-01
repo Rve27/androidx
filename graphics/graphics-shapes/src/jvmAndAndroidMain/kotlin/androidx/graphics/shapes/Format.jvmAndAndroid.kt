@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:JvmName("Format_jvmKt")
+
 package androidx.graphics.shapes
 
 internal actual fun Float.toStringWithLessPrecision(): String {
