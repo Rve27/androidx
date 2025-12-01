@@ -35,7 +35,7 @@ import androidx.compose.material3.SheetValue.Expanded
 import androidx.compose.material3.SheetValue.Hidden
 import androidx.compose.material3.SheetValue.PartiallyExpanded
 import androidx.compose.material3.internal.Strings
-import androidx.compose.material3.internal.draggableAnchorsV2
+import androidx.compose.material3.internal.draggableAnchors
 import androidx.compose.material3.internal.getString
 import androidx.compose.material3.tokens.MotionSchemeKeyTokens
 import androidx.compose.runtime.Composable
@@ -277,7 +277,7 @@ private fun StandardBottomSheet(
                 .fillMaxWidth()
                 .requiredHeightIn(min = peekHeight)
                 .then(nestedScroll)
-                .draggableAnchorsV2(state.anchoredDraggableState, orientation) {
+                .draggableAnchors(state.anchoredDraggableState, orientation) {
                     sheetSize,
                     constraints ->
                     val layoutHeight = constraints.maxHeight.toFloat()
@@ -311,7 +311,7 @@ private fun StandardBottomSheet(
                             Expanded ->
                                 if (newAnchors.hasPositionFor(Expanded)) Expanded else Hidden
                         }
-                    return@draggableAnchorsV2 newAnchors to newTarget
+                    return@draggableAnchors newAnchors to newTarget
                 }
                 .anchoredDraggable(
                     state = state.anchoredDraggableState,
