@@ -176,11 +176,11 @@ public class PerfettoTracer(context: TraceContext, name: String) :
     override suspend fun beginCoroutineSectionWithMetadata(
         category: String,
         name: String,
-        token: CoroutinePropagationToken?,
+        token: PropagationToken?,
         isRoot: Boolean,
     ): EventMetadataCloseable {
         val tokenElement = token ?: tokenFromCoroutineContext()
-        return if (tokenElement == CoroutinePropagationUnsupportedToken) {
+        return if (tokenElement == PropagationUnsupportedToken) {
             val eventMetadataCloseable =
                 beginSectionWithMetadata(
                     category = category,
