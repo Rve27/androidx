@@ -103,10 +103,17 @@ class AnchorEntityActivity : AppCompatActivity() {
                     PlaneSemanticType.ANY,
                 )
             val xyzModelEntity =
-                GltfModelEntity.create(session!!, xyzModel, Pose.Identity).also {
-                    it.setScale(1f)
-                    anchorEntity.addChild(it)
-                }
+                GltfModelEntity.create(
+                        session = session!!,
+                        model = xyzModel,
+                        pose = Pose.Identity,
+                        parent = null,
+                    )
+                    .also {
+                        it.setScale(1f)
+                        anchorEntity.addChild(it)
+                        it.setEnabled(true)
+                    }
 
             val gltfEntityDebugPanel =
                 DebugTextPanel(
