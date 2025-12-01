@@ -179,9 +179,10 @@ private class TransformableNode(
                                     while (event !is TransformStopped) {
                                         (event as? TransformDelta)?.let {
                                             transformBy(
-                                                it.zoomChange,
-                                                it.panChange,
-                                                it.rotationChange,
+                                                centroid = it.centroid,
+                                                zoomChange = it.zoomChange,
+                                                panChange = it.panChange,
+                                                rotationChange = it.rotationChange,
                                             )
                                         }
                                         event = channel.receive()
@@ -276,6 +277,8 @@ private suspend fun PointerInputScope.detectZoomByCtrlMouseScroll(
                     val zoomChange = 2f.pow(scrollDelta.y / SCROLL_FACTOR)
                     channel.trySend(
                         TransformDelta(
+                            // TODO: b/462198195 Use cursor position to determine centroid
+                            centroid = Offset.Unspecified,
                             zoomChange = zoomChange,
                             panChange = Offset.Zero,
                             rotationChange = 0f,
@@ -365,13 +368,16 @@ private suspend fun AwaitPointerEventScope.detectZoom(
             }
 
             if (pastTouchSlop) {
+                val centroid = event.calculateCentroid(useCurrent = false)
                 val effectiveRotation = if (lockedToPanZoom) 0f else rotationChange
                 if (
                     effectiveRotation != 0f ||
                         zoomChange != 1f ||
                         (panChange != Offset.Zero && canPan.invoke(panChange))
                 ) {
-                    channel.trySend(TransformDelta(zoomChange, panChange, effectiveRotation))
+                    channel.trySend(
+                        TransformDelta(centroid, zoomChange, panChange, effectiveRotation)
+                    )
                 }
                 event.changes.fastForEach {
                     if (it.positionChanged()) {
@@ -393,6 +399,10 @@ private sealed class TransformEvent {
 
     object TransformStopped : TransformEvent()
 
-    class TransformDelta(val zoomChange: Float, val panChange: Offset, val rotationChange: Float) :
-        TransformEvent()
+    class TransformDelta(
+        val centroid: Offset,
+        val zoomChange: Float,
+        val panChange: Offset,
+        val rotationChange: Float,
+    ) : TransformEvent()
 }
