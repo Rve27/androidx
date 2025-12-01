@@ -106,6 +106,9 @@ public fun PdfViewer(
                 this.id = pdfViewId
                 state.pdfView = this
                 setLinkClickListener(PdfViewerLinkClickListener(onUrlLinkClicked))
+                addOnFirstContentLoadListener(
+                    PdfViewerOnFirstContentLoadListener(onFirstContentLoad)
+                )
                 addSelectionMenuItemPreparer(
                     PdfViewerSelectionMenuPreparer(
                         appendContextMenuComponents,
@@ -252,6 +255,17 @@ private class PdfViewerLinkClickListener(private val behavior: ((Uri) -> Boolean
     PdfView.LinkClickListener {
     override fun onLinkClicked(externalLink: ExternalLink): Boolean {
         return behavior?.invoke(externalLink.uri) ?: false
+    }
+}
+
+/**
+ * Bridge between the lambda-based [PdfViewer] API for custom "first content load" callback and the
+ * listener interface [PdfView] API for the same.
+ */
+private class PdfViewerOnFirstContentLoadListener(private val behavior: (() -> Unit)?) :
+    PdfView.OnFirstContentLoadListener {
+    override fun onFirstContentLoad() {
+        behavior?.invoke()
     }
 }
 

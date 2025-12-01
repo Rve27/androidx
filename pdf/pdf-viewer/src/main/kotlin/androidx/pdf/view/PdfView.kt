@@ -703,6 +703,10 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
     private var isAutoScrolling = false
     private var prevDragEvent: MotionEvent? = null
 
+    @VisibleForTesting internal var notifyFirstContentLoad: Boolean = true
+
+    @VisibleForTesting internal var isAnyBitmapAvailable: Boolean = false
+
     /**
      * Returns true if neither zoom nor scroll are actively changing. Does not account for
      * externally-driven changes in position (e.g. a animating scrollY or zoom)
@@ -1094,6 +1098,12 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                     pageLoc,
                     zoom,
                 )
+            }
+
+            if (isAnyBitmapAvailable && notifyFirstContentLoad) {
+                post { onFirstContentLoadListeners.forEach { it.onFirstContentLoad() } }
+                notifyFirstContentLoad = false
+                isFirstPageRendered = true
             }
         }
         canvas.restore()
@@ -1647,18 +1657,10 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                 mainScope.launch(start = CoroutineStart.UNDISPATCHED) {
                     // Prevent 2 copies from running concurrently
                     pageSignalsToJoin?.join()
-                    launch {
-                        manager.invalidationSignalFlow.collect {
-                            isFirstPageRendered = true
-                            invalidate()
-                        }
-                    }
+                    launch { manager.invalidationSignalFlow.collect { invalidate() } }
 
-                    launch {
-                        manager.bitmapReadyFlow.collect {
-                            // TODO: b/461565451 - Add Implementation of Api onFirstContentLoad
-                        }
-                    }
+                    launch { manager.bitmapReadyFlow.collect { isAnyBitmapAvailable = true } }
+
                     launch {
                         manager.pageTextReadyFlow.collect { pageNum ->
                             pdfViewAccessibilityManager?.onPageTextReady(pageNum)
@@ -2032,6 +2034,9 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         backgroundScope.coroutineContext.cancelChildren()
         pdfDocument?.removeOnPdfContentInvalidatedListener(onPdfContentInvalidatedListener)
         stopCollectingData()
+        isFirstPageRendered = false
+        notifyFirstContentLoad = true
+        isAnyBitmapAvailable = false
 
         // Reset zoom and scroll after clearing pageMetadata loader, otherwise they can trigger
         // onViewportChanged callback with outdated information.
