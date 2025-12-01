@@ -18,11 +18,14 @@ package androidx.xr.scenecore.testing
 
 import androidx.annotation.RestrictTo
 import androidx.xr.runtime.math.BoundingBox
+import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Vector3
 import androidx.xr.scenecore.runtime.ActivitySpace
 import androidx.xr.scenecore.runtime.Dimensions
 import androidx.xr.scenecore.runtime.HitTestResult
 import androidx.xr.scenecore.runtime.ScenePose
+import androidx.xr.scenecore.runtime.Space
+import androidx.xr.scenecore.runtime.SpaceValue
 import com.google.common.util.concurrent.Futures.immediateFuture
 import com.google.common.util.concurrent.ListenableFuture
 import java.util.Collections
@@ -50,6 +53,23 @@ public class FakeActivitySpace(public val unscaledGravityAlignedActivitySpace: B
     /** Returns the bounds of this ActivitySpace. */
     override val bounds: Dimensions
         get() = _bounds.get()
+
+    /** Returns the pose for this ActivitySpace, relative to the given space. */
+    override fun getPose(@SpaceValue relativeTo: Int): Pose {
+        return when (relativeTo) {
+            Space.PARENT -> {
+                throw UnsupportedOperationException(
+                    "ActivitySpace is a root space and it does not have a parent."
+                )
+            }
+            Space.ACTIVITY -> {
+                Pose.Identity
+            }
+            else -> {
+                super<FakeSystemSpaceEntity>.getPose(relativeTo)
+            }
+        }
+    }
 
     /**
      * For test purposes only.
