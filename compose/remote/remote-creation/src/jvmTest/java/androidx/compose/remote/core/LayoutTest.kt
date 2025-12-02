@@ -335,4 +335,26 @@ class LayoutTest : LayoutTestPlayer() {
             TestClock(1234),
         )
     }
+
+    @Test
+    fun testLayoutInfiniteDrawContent() {
+        val ops =
+            arrayListOf<TestOperation?>(
+                TestLayout {
+                    box(
+                        RecordingModifier().fillMaxSize().background(Color.YELLOW),
+                        BoxLayout.CENTER,
+                        BoxLayout.CENTER,
+                    ) {
+                        startCanvasOperations()
+                        drawComponentContent()
+                        endCanvasOperations()
+                        drawComponentContent()
+                        endCanvasOperations()
+                    }
+                },
+                CaptureComponentTree(),
+            )
+        checkLayout(1000, 1000, 7, RcProfiles.PROFILE_ANDROIDX, "Layout", ops, TestClock(1234))
+    }
 }
