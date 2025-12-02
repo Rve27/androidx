@@ -59,7 +59,7 @@ class Material3ImageTest {
         ) {
             val avatarImage =
                 rememberRemoteBitmapValue(name = "avatarImage") { createImage(size, size) }
-            AvatarImage(
+            RemoteAvatarImage(
                 avatarImage,
                 contentDescription = rememberRemoteString { "background" },
                 RemoteModifier.size(sizeDp),
@@ -77,7 +77,7 @@ class Material3ImageTest {
         ) {
             val backgroundImage =
                 rememberRemoteBitmapValue(name = "backgroundImage") { createImage(size, size) }
-            BackgroundImage(
+            RemoteBackgroundImage(
                 background = backgroundImage,
                 contentDescription = rememberRemoteString { "background" },
                 modifier = RemoteModifier.size(sizeDp),
