@@ -272,7 +272,7 @@ internal class PageLayoutManager(
      * Returns a View-relative [RectF] corresponding to a page-relative [PdfRect], or null if the
      * page hasn't been laid out
      */
-    fun getViewRect(pdfRect: PdfRect, viewport: RectF): RectF? {
+    fun getContentViewRect(pdfRect: PdfRect, viewport: RectF): RectF? {
         if (pdfRect.pageNum > paginationModel.reach) return null
         val pageBounds = getPageLocation(pdfRect.pageNum, viewport)
         val out = RectF(pdfRect.left, pdfRect.top, pdfRect.right, pdfRect.bottom)
