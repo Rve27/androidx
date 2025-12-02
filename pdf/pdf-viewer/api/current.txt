@@ -94,6 +94,10 @@ package androidx.pdf {
     property public float top;
   }
 
+  public interface PdfWriteHandle extends java.io.Closeable {
+    method @kotlin.jvm.Throws(exceptionClasses=IOException::class) public suspend Object? writeTo(android.os.ParcelFileDescriptor destination, kotlin.coroutines.Continuation<? super kotlin.Unit>) throws java.io.IOException;
+  }
+
 }
 
 package androidx.pdf.content {
