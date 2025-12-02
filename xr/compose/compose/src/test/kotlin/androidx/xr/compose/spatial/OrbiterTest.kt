@@ -52,7 +52,6 @@ import androidx.xr.compose.testing.SubspaceTestingActivity
 import androidx.xr.compose.testing.TestSceneRuntime
 import androidx.xr.compose.testing.createFakeRuntime
 import androidx.xr.compose.testing.createFakeSession
-import androidx.xr.compose.testing.disableXr
 import androidx.xr.compose.testing.session
 import androidx.xr.compose.testing.toDp
 import androidx.xr.scenecore.PanelEntity
@@ -88,7 +87,7 @@ class OrbiterTest {
 
     @Test
     fun orbiter_nonXr_contentIsInline() {
-        composeTestRule.disableXr()
+        composeTestRule.activity.disableXr()
 
         composeTestRule.setContent {
             Box(Modifier.testTag(parentTestTag)) {
@@ -169,7 +168,7 @@ class OrbiterTest {
 
     @Test
     fun orbiter_settingChange_contentIsInline() {
-        composeTestRule.disableXr()
+        composeTestRule.activity.disableXr()
 
         var shouldRenderInNonSpatial by mutableStateOf(false)
         composeTestRule.setContent {
