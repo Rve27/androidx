@@ -1977,7 +1977,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
      * hidden.
      */
     private fun updateSelectionActionModeVisibility() {
-        if (selectionIsVisible() && gestureState == GESTURE_STATE_IDLE) {
+        if (isSelectionVisible() && gestureState == GESTURE_STATE_IDLE) {
             selectionActionModeCallback?.actionMode?.invalidateContentRect()
             selectionStateManager?.maybeShowActionMode()
         } else {
@@ -1985,42 +1985,34 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         }
     }
 
-    private fun selectionIsVisible(): Boolean {
+    private fun isSelectionVisible(): Boolean {
         // If we don't have a selection or any way to understand the layout of our pages, the
         // selection is not visible
         val localSelection = currentSelection ?: return false
         val localPageLayoutManager = pageLayoutManager ?: return false
 
+        // Get the area of the screen currently visible in content coordinates
         val viewport = getVisibleAreaInContentCoords()
-        val firstPage = localSelection.bounds.minOf { it.pageNum }
-        val lastPage = localSelection.bounds.maxOf { it.pageNum }
-        // Top and bottom edge must be on the first and last page, respectively
-        // If we can't locate any edge of the selection, we consider it invisible
-        val topEdge =
-            localSelection.bounds
-                .filter { it.pageNum == firstPage }
-                .minByOrNull { it.top }
-                ?.let { localPageLayoutManager.getViewRect(it, viewport) }
-                ?.top ?: return false
-        val bottomEdge =
-            localSelection.bounds
-                .filter { it.pageNum == lastPage }
-                .maxByOrNull { it.bottom }
-                ?.let { localPageLayoutManager.getViewRect(it, viewport) }
-                ?.bottom ?: return false
-        // The left or right edge may be on any page
-        val leftEdge =
-            localSelection.bounds
-                .minByOrNull { it.left }
-                ?.let { localPageLayoutManager.getViewRect(it, viewport) }
-                ?.left ?: return false
-        val rightEdge =
-            localSelection.bounds
-                .maxByOrNull { it.right }
-                ?.let { localPageLayoutManager.getViewRect(it, viewport) }
-                ?.right ?: return false
 
-        return RectF(viewport).intersects(leftEdge, topEdge, rightEdge, bottomEdge)
+        // Iterate over all bounding boxes that make up the selection
+        for (contentRect in localSelection.bounds) {
+            // Convert content coordinates (contentRect) to content view coordinates.
+            val contentViewRect =
+                localPageLayoutManager.getContentViewRect(contentRect, viewport) ?: continue
+
+            // Check for intersection between the selection's bound and the viewport
+            if (
+                viewport.intersects(
+                    contentViewRect.left,
+                    contentViewRect.top,
+                    contentViewRect.right,
+                    contentViewRect.bottom,
+                )
+            ) {
+                return true
+            }
+        }
+        return false
     }
 
     private fun reset() {

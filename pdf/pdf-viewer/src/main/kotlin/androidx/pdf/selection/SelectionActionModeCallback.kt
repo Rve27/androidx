@@ -117,24 +117,28 @@ internal class SelectionActionModeCallback(
         // Try to position the context menu near the first selection if it's visible
         if (firstSelection != null) {
             // Copy bounds to avoid mutating the real data
-            val boundsInView = localPageLayoutManager.getViewRect(firstSelection, viewport)
+            val boundsInContentView =
+                localPageLayoutManager.getContentViewRect(firstSelection, viewport)
             if (
-                boundsInView?.let { viewport.intersects(it.left, it.top, it.right, it.bottom) } ==
-                    true
+                boundsInContentView?.let {
+                    viewport.intersects(it.left, it.top, it.right, it.bottom)
+                } == true
             ) {
-                outRect?.set(pdfView.toViewRect(boundsInView))
+                outRect?.set(pdfView.toViewRect(boundsInContentView))
                 return
             }
         }
         // Else, try to position the context menu near the last selection if it's visible
         if (lastSelection != null) {
             // Copy bounds to avoid mutating the real data
-            val boundsInView = localPageLayoutManager.getViewRect(lastSelection, viewport)
+            val boundsInContentView =
+                localPageLayoutManager.getContentViewRect(lastSelection, viewport)
             if (
-                boundsInView?.let { viewport.intersects(it.left, it.top, it.right, it.bottom) } ==
-                    true
+                boundsInContentView?.let {
+                    viewport.intersects(it.left, it.top, it.right, it.bottom)
+                } == true
             ) {
-                outRect?.set(pdfView.toViewRect(boundsInView))
+                outRect?.set(pdfView.toViewRect(boundsInContentView))
                 return
             }
         }
