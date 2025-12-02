@@ -55,10 +55,10 @@ android {
 }
 
 androidx {
-    name = "Glimmer"
+    name = "Compose Glimmer"
     type = SoftwareType.PUBLISHED_LIBRARY_ONLY_USED_BY_KOTLIN_CONSUMERS
     inceptionYear = "2025"
-    description = "Glimmer, the UI library for augmented Android XR experiences"
+    description = "Jetpack Compose Glimmer, the UI library for augmented Android XR experiences"
     addGoldenImageAssets()
     samples(project(":xr:glimmer:glimmer:glimmer-samples"))
 }
