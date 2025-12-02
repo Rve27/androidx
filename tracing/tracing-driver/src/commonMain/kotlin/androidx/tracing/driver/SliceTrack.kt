@@ -71,7 +71,6 @@ public abstract class SliceTrack(
         eventMetadataCloseable.metadata = EmptyEventMetadata
         eventMetadataCloseable.closeable = EmptyCloseable
         eventMetadataCloseable.propagationToken = PropagationUnsupportedToken
-        eventMetadataCloseable.coroutinePropagationToken = CoroutinePropagationUnsupportedToken
         if (context.isEnabled) {
             val event = obtainTraceEvent()
             if (event != null) {
@@ -96,12 +95,11 @@ public abstract class SliceTrack(
         eventMetadataCloseable.metadata = EmptyEventMetadata
         eventMetadataCloseable.closeable = EmptyCloseable
         eventMetadataCloseable.propagationToken = PropagationUnsupportedToken
-        eventMetadataCloseable.coroutinePropagationToken = CoroutinePropagationUnsupportedToken
         if (context.isEnabled) {
             val event = obtainTraceEvent()
             if (event != null) {
                 traceEventScope.event = event
-                eventMetadataCloseable.coroutinePropagationToken = token
+                eventMetadataCloseable.propagationToken = token
                 eventMetadataCloseable.metadata = traceEventScope
                 event.primaryCategory = category
                 event.setBeginSectionWithFlows(
