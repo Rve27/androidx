@@ -1957,13 +1957,6 @@ public class RemoteComposeWriter {
             @Nullable String darkName, int darkValue) {
         int lightId = mState.createNextAvailableId();
         int darkId = mState.createNextAvailableId();
-        int light_mode;
-        if (Rc.System.sLightMode == 0f) {
-            light_mode = mState.createNextAvailableId();
-            Rc.System.sLightMode = Utils.asNan(light_mode);
-        } else {
-            light_mode = Utils.idFromNan(Rc.System.sLightMode);
-        }
 
         if (lightName != null) {
             mBuffer.setNamedVariable(lightId, lightName, NamedVariable.COLOR_TYPE);
@@ -1972,11 +1965,20 @@ public class RemoteComposeWriter {
             mBuffer.setNamedVariable(darkId, darkName, NamedVariable.COLOR_TYPE);
         }
 
-        int retId = mState.createNextAvailableId();
         mBuffer.addColor(lightId, lightValue);
         mBuffer.addColor(darkId, darkValue);
-        mBuffer.addFloat(light_mode, 0);
+        return addThemedColor((short) lightId, (short) darkId);
+    }
 
+    /**
+     * This returns a color that is lightId if light theme and dark id if dark theme
+     *
+     * @param lightId the id of the light color
+     * @param darkId  the id of the dark color
+     * @return the id of the color that switches autmaticly
+     */
+    public short addThemedColor(short lightId, short darkId) {
+        int retId = mState.createNextAvailableId();
         setTheme(Rc.Theme.DARK);
         startLoop(0, 0f, 1f, 1f);
         mBuffer.addColorExpression(retId, (short) darkId, (short) lightId, 0);
@@ -1986,7 +1988,6 @@ public class RemoteComposeWriter {
         mBuffer.addColorExpression(retId, (short) darkId, (short) lightId, 1);
         endLoop();
         setTheme(Rc.Theme.UNSPECIFIED);
-
         return (short) retId;
     }
 
