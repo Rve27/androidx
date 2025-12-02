@@ -729,6 +729,7 @@ abstract class UnzipMultiplatformSourcesTask() : DefaultTask() {
 
     @TaskAction
     fun execute() {
+        listOf(sourceOutput, samplesOutput).map { it.get().asFile.deleteRecursively() }
         val (sources, samples) =
             inputJars
                 .get()
