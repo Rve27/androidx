@@ -18,13 +18,10 @@ package androidx.compose.material3.windowsizeclass
 
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.google.common.truth.Truth.assertThat
+import androidx.kruth.assertThat
+import kotlin.test.Test
 import kotlin.test.assertFailsWith
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
 
-@RunWith(JUnit4::class)
 class WindowSizeClassTest {
     @Test
     fun calculateWidthSizeClass_forNegativeWidth_throws() {
