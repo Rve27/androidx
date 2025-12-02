@@ -232,7 +232,7 @@ fun RcTextDemo5(): RemoteComposeContext {
                 val content2 = "The quick brown fox jumps over the lazy dog"
                 val c1 = 0xFFFF0000.toInt()
                 val c2 = 0xFF0000FF.toInt()
-                val color = addColorExpression(c1, c2, tween.toFloat())
+                val color = addColorExpression(c1, c2, tween)
                 text(
                     content2,
                     RecordingModifier().background(Color.LTGRAY).fillMaxWidth(),
