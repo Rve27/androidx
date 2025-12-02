@@ -83,7 +83,6 @@ import kotlinx.coroutines.launch
  * @see PdfViewerFragment
  * @see applyDraftEdits
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 18)
 public open class EditablePdfViewerFragment : PdfViewerFragment {
 
@@ -120,6 +119,7 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
      * This can be used to prompt the user to save changes before navigating away, as draft edits
      * will be lost if the fragment is removed from the stack or comes out of edit mode.
      */
+    @get:JvmName("hasUnsavedChanges")
     public val hasUnsavedChanges: Boolean
         get() = documentViewModel.hasUnsavedChanges()
 
