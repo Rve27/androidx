@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.wear.compose.remote.integration.demos.previews
+package androidx.wear.compose.remote.material3.previews
 
 import androidx.compose.remote.creation.ExperimentalRemoteCreationApi
 import androidx.compose.remote.creation.profile.Profile

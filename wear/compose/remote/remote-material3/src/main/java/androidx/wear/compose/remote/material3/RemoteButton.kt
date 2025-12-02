@@ -82,6 +82,7 @@ import androidx.wear.compose.material3.TextConfiguration
  *
  * Button can be enabled or disabled. A disabled button will not respond to click events.
  *
+ * @sample androidx.wear.compose.remote.material3.samples.RemoteButtonSimpleSample
  * @param onClick Will be called when the user clicks the button
  * @param modifier Modifier to be applied to the button
  * @param enabled Controls the enabled state of the button. When `false`, this button will not be
