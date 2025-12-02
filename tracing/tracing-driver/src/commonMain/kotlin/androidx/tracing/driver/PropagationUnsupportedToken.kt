@@ -16,6 +16,8 @@
 
 package androidx.tracing.driver
 
+import kotlin.coroutines.CoroutineContext
+
 /**
  * The [PropagationToken] instance that should be returned when context propagation is unsupported
  * by the underlying [Tracer].
@@ -24,5 +26,10 @@ package androidx.tracing.driver
 public object PropagationUnsupportedToken : PropagationToken, AutoCloseable {
     override fun close() {
         // Does nothing
+    }
+
+    @DelicateTracingApi
+    override fun contextElementOrNull(): CoroutineContext.Element? {
+        return null
     }
 }

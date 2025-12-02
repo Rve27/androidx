@@ -31,7 +31,7 @@ internal constructor(
     public open var category: String,
     public open var name: String,
     public open val flowIds: List<Long>,
-) : AbstractCoroutineContextElement(key = KEY), CoroutinePropagationToken, AutoCloseable {
+) : AbstractCoroutineContextElement(key = KEY), PropagationToken, AutoCloseable {
     // Always starts in a begin state.
     @JvmField internal var started: Int = STATE_BEGIN
 
@@ -60,8 +60,8 @@ internal constructor(
         }
     }
 
-    override suspend fun requiresInstall(): Boolean {
-        return true
+    override fun contextElementOrNull(): CoroutineContext.Element? {
+        return this
     }
 
     @PublishedApi
