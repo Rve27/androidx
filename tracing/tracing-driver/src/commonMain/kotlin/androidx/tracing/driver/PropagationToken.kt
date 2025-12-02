@@ -24,20 +24,11 @@ import kotlin.coroutines.CoroutineContext
  * This interface is only useful for libraries that want to bring their own implementation of
  * context propagation.
  */
-@DelicateTracingApi public interface PropagationToken
-
-/**
- * A token representing state carried forward for context propagation.
- *
- * This interface is only useful for libraries that want to bring their own implementation of
- * context propagation when using Kotlin Coroutines.
- */
-@DelicateTracingApi
-public interface CoroutinePropagationToken : PropagationToken, CoroutineContext.Element {
+public interface PropagationToken {
     /**
-     * @return `true` if the [CoroutineContext.Element] needs to be installed in the
+     * @return a [CoroutineContext.Element] that needs to be installed in the
      *   [kotlinx.coroutines.currentCoroutineContext] prior to dispatching the suspending block of
-     *   code being traced.
+     *   code being traced; if the token is being used in a suspending context.
      */
-    public suspend fun requiresInstall(): Boolean
+    @DelicateTracingApi public fun contextElementOrNull(): CoroutineContext.Element?
 }
