@@ -19,6 +19,7 @@ package androidx.compose.remote.integration.view.demos;
 import static androidx.compose.remote.integration.view.demos.ExperimentRecyclerActivity.getp;
 import static androidx.compose.remote.integration.view.demos.ExperimentRecyclerActivity.getpc;
 
+import androidx.compose.remote.integration.view.demos.examples.ColorCheckKt;
 import androidx.compose.remote.integration.view.demos.examples.CountdownKt;
 import androidx.compose.remote.integration.view.demos.examples.Cube3DKt;
 import androidx.compose.remote.integration.view.demos.examples.DemoAnchorText;
@@ -33,6 +34,7 @@ import androidx.compose.remote.integration.view.demos.examples.DemoTextTransform
 import androidx.compose.remote.integration.view.demos.examples.DemoTouchKt;
 import androidx.compose.remote.integration.view.demos.examples.ExampleNumbersKt;
 import androidx.compose.remote.integration.view.demos.examples.ExampleTimerKt;
+import androidx.compose.remote.integration.view.demos.examples.HostileActor;
 import androidx.compose.remote.integration.view.demos.examples.PlotWaveKt;
 import androidx.compose.remote.integration.view.demos.examples.ServerSideKt;
 import androidx.compose.remote.integration.view.demos.examples.ShaderCalendarKt;
@@ -55,11 +57,17 @@ public abstract class DemosCreation {
                 getp("5/Server/serverClock", ServerSideKt::serverClock),
                 getp("2/Example/spreadSheet", ExampleNumbersKt::spreadSheet),
                 getp("1/Example/color", DemoColorKt::colorButtons),
+                getp("0/Color/colorList", ColorCheckKt::colorList),
+
                 getp("1/Example/spreadSheet", ExampleNumbersKt::spreadSheet),
                 getp("1/Example/demoUseOfGlobal",
                         DemoGlobalKt::demoUseOfGlobal),
                 getp("0/Example/demoTextTransform",
                         DemoTextTransformKt::demoTextTransform),
+                getp("1/Example/HostileActor1",
+                        HostileActor::demoImage),
+                getp("1/Example/HostileActor1",
+                        HostileActor::demoImageColor),
 
                 getp("0/ThemedPlot1", DemoKt::plot1),
                 getp("0/plot2", DemoKt::plot2),
@@ -82,7 +90,7 @@ public abstract class DemosCreation {
 
                 getp("Java/AttributeString", DemoAttributedString::demo),
                 getp("Java/anchoredText", DemoAnchorText::anchoredText),
-                getp("Java/pathsDemos", DemoPaths::pathTest),
+                getp("0/Java/pathsDemos", DemoPaths::pathTest),
 
                 getp("fancyClock2", DemoMetalClockKt::fancyClock2),
                 getp("Server/maze", DemoParticlesKt::pmaze),
