@@ -76,7 +76,6 @@ import androidx.xr.compose.testing.assertWidthIsEqualTo
 import androidx.xr.compose.testing.assertWidthIsNotEqualTo
 import androidx.xr.compose.testing.createFakeRuntime
 import androidx.xr.compose.testing.createFakeSession
-import androidx.xr.compose.testing.disableXr
 import androidx.xr.compose.testing.onSubspaceNodeWithTag
 import androidx.xr.compose.testing.session
 import androidx.xr.compose.testing.toDp
@@ -199,7 +198,7 @@ class SubspaceTest {
 
     @Test
     fun subspace_whenXrIsDisabled_doesNotCreateContent() {
-        composeTestRule.disableXr()
+        composeTestRule.activity.disableXr()
 
         composeTestRule.setContent {
             Subspace { SpatialPanel(SubspaceModifier.testTag("panel")) {} }
@@ -757,7 +756,7 @@ class SubspaceTest {
 
     @Test
     fun planarEmbeddedSubspace_whenXrIsDisabled_doesNotCreateContent() {
-        composeTestRule.disableXr()
+        composeTestRule.activity.disableXr()
         composeTestRule.setContent {
             Subspace {
                 SpatialPanel {

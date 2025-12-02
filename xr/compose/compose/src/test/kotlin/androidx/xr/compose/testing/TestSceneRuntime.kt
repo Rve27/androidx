@@ -20,7 +20,6 @@ import android.app.Activity
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
 import androidx.xr.arcore.runtime.PerceptionRuntime
 import androidx.xr.arcore.testing.FakePerceptionRuntimeFactory
-import androidx.xr.compose.R
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.math.BoundingBox
 import androidx.xr.runtime.math.Pose
@@ -46,19 +45,6 @@ import java.util.concurrent.Executor
 
 private object SubspaceAndroidComposeTestRuleConstants {
     const val DEFAULT_DP_PER_METER = 1151.856f
-
-    val DISABLED_SESSION_FACTORY: () -> Session? = { null }
-}
-
-/**
- * Simulate a non-XR environment by returning null from the session provider used by
- * `ComposeXrOwnerLocals`.
- */
-fun AndroidComposeTestRule<*, *>.disableXr() {
-    activity.window.decorView.setTag(
-        R.id.compose_xr_session_factory,
-        SubspaceAndroidComposeTestRuleConstants.DISABLED_SESSION_FACTORY,
-    )
 }
 
 /**
