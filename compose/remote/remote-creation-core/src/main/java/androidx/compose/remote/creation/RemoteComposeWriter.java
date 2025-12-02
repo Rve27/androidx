@@ -2562,9 +2562,9 @@ public class RemoteComposeWriter {
         int id = mState.dataGetId(placeHolder);
         if (id == -1) {
             id = mState.cacheData(placeHolder);
-            //   TextData.apply(mBuffer, id, text);
+            return mBuffer.createTextFromFloat(id, value, (short) before, (short) after, flags);
         }
-        return mBuffer.createTextFromFloat(id, value, (short) before, (short) after, flags);
+        return id;
     }
 
     /**
