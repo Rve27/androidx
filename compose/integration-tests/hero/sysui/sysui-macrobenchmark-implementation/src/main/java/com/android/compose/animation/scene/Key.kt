@@ -49,7 +49,7 @@ sealed class ContentKey(debugName: String, identity: Any) : Key(debugName, ident
 }
 
 /** Key for a scene. */
-class SceneKey(debugName: String, identity: Any = Object()) : ContentKey(debugName, identity) {
+class SceneKey(debugName: String, identity: Any = Any()) : ContentKey(debugName, identity) {
     override val testTag: String = "scene:$debugName"
 
     /** The unique [ElementKey] identifying this scene's root element. */
@@ -61,7 +61,7 @@ class SceneKey(debugName: String, identity: Any = Object()) : ContentKey(debugNa
 }
 
 /** Key for an overlay. */
-class OverlayKey(debugName: String, identity: Any = Object()) : ContentKey(debugName, identity) {
+class OverlayKey(debugName: String, identity: Any = Any()) : ContentKey(debugName, identity) {
     override val testTag: String = "overlay:$debugName"
 
     override fun toString(): String {
@@ -72,7 +72,7 @@ class OverlayKey(debugName: String, identity: Any = Object()) : ContentKey(debug
 /** Key for an element. */
 open class ElementKey(
     debugName: String,
-    identity: Any = Object(),
+    identity: Any = Any(),
 
     /**
      * The [ElementContentPicker] to use when deciding in which scene we should draw shared Elements
@@ -127,14 +127,14 @@ class MovableElementKey(
      * @see MovableElementContentPicker
      */
     override val contentPicker: StaticElementContentPicker,
-    identity: Any = Object(),
+    identity: Any = Any(),
 ) : ElementKey(debugName, identity, contentPicker) {
     constructor(
         debugName: String,
 
         /** The exhaustive list of contents (scenes or overlays) that can contain this element. */
         contents: Set<ContentKey>,
-        identity: Any = Object(),
+        identity: Any = Any(),
     ) : this(debugName, MovableElementContentPicker(contents), identity)
 
     override fun toString(): String {
@@ -143,7 +143,7 @@ class MovableElementKey(
 }
 
 /** Key for a shared value of an element. */
-class ValueKey(debugName: String, identity: Any = Object()) : Key(debugName, identity) {
+class ValueKey(debugName: String, identity: Any = Any()) : Key(debugName, identity) {
     override fun toString(): String {
         return "ValueKey(debugName=$debugName)"
     }
@@ -153,7 +153,7 @@ class ValueKey(debugName: String, identity: Any = Object()) : Key(debugName, ide
  * Key for a transition. This can be used to specify which transition spec should be used when
  * starting the transition between two scenes.
  */
-class TransitionKey(debugName: String, identity: Any = Object()) : Key(debugName, identity) {
+class TransitionKey(debugName: String, identity: Any = Any()) : Key(debugName, identity) {
     override fun toString(): String {
         return "TransitionKey(debugName=$debugName)"
     }
