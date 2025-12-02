@@ -691,7 +691,7 @@ public class CoreText extends LayoutManager implements VariableSupport, Accessib
             flags |= PaintContext.TEXT_COMPLEX;
             forceComplex = true;
         }
-        if (mLetterSpacing > 0f || mLineHeightMultiplier != 1f || mLineHeightAdd > 0f
+        if (mLetterSpacing != 0f || mLineHeightMultiplier != 1f || mLineHeightAdd > 0f
                 || mUnderline || mStrikethrough
                 || mJustificationMode > 0 || mLineBreakStrategy > 0
                 || mHyphenationFrequency > 0) {
