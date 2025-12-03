@@ -17,8 +17,6 @@
 
 package androidx.compose.remote.creation.compose.capture.painter
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.annotation.RestrictTo
 import androidx.compose.remote.creation.compose.capture.RemoteDrawScope
 import androidx.compose.remote.creation.compose.capture.RemoteImageVector
@@ -44,7 +42,6 @@ public class RemoteVectorPainter(
         RemoteSize(RemoteFloat(vector.intrinsicWidth), RemoteFloat(vector.intrinsicHeight)),
     private val tintColor: RemoteColor,
 ) : RemotePainter() {
-    @RequiresApi(Build.VERSION_CODES.Q)
     override fun RemoteDrawScope.onDraw() {
         val size = componentSize()
         val viewportSize = size.width.min(size.height)

@@ -80,7 +80,7 @@ public fun rememberRemoteDocument(
         onCaptureReady = @Composable {},
         profile = profile,
         writerCallbacks = writerCallbacks,
-        content = @Composable { content() },
+        content = content,
     )
     return doc
 }
