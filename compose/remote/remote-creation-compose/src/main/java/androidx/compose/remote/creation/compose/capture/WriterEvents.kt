@@ -16,7 +16,9 @@
 
 package androidx.compose.remote.creation.compose.capture
 
+import android.app.PendingIntent
 import androidx.annotation.RestrictTo
+import androidx.compose.remote.creation.compose.ExperimentalRemoteCreationComposeApi
 
 /**
  * A callback interface used during the capture process to write out the captured composable
@@ -27,4 +29,27 @@ import androidx.annotation.RestrictTo
  * composable tree into a desired output format, such as a binary file, a JSON representation, or a
  * network stream.
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) public interface WriterCallback {}
+@ExperimentalRemoteCreationComposeApi
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+public interface WriterEvents {
+
+    /**
+     * Notifies the producer of the document, that a [PendingIntent] was referenced and should be
+     * associated with a id, that represents this PendingIntent for the lifetime of the capture
+     * session.
+     *
+     * The id scheme is up to the producer of the document, and typically could be the index in a
+     * list.
+     *
+     * @param pendingIntent The [PendingIntent] to store.
+     * @return The id for the host to retrieve the corresponding [PendingIntent].
+     */
+    public fun storePendingIntent(pendingIntent: PendingIntent): Int
+
+    /**
+     * Called when an initial or new version of the document is available.
+     *
+     * @param documentBytes the bytes of the document.
+     */
+    public fun onDocumentAvailable(documentBytes: ByteArray)
+}

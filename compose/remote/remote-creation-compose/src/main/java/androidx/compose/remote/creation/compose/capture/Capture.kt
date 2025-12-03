@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 @file:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+@file:OptIn(ExperimentalRemoteCreationComposeApi::class)
 
 package androidx.compose.remote.creation.compose.capture
 
@@ -25,6 +26,7 @@ import androidx.compose.remote.core.RcPlatformServices
 import androidx.compose.remote.creation.CreationDisplayInfo
 import androidx.compose.remote.creation.RemoteComposeWriter
 import androidx.compose.remote.creation.RemoteComposeWriterAndroid
+import androidx.compose.remote.creation.compose.ExperimentalRemoteCreationComposeApi
 import androidx.compose.remote.creation.compose.state.AnimatedRemoteFloat
 import androidx.compose.remote.creation.compose.state.RemoteFloat
 import androidx.compose.remote.creation.compose.state.RemoteInt
@@ -72,11 +74,11 @@ public open class RemoteComposeCreationState {
     public constructor(
         creationDisplayInfo: CreationDisplayInfo,
         profile: Profile,
-        writerCallback: WriterCallback?,
+        writerEvents: WriterEvents?,
     ) {
         this.creationDisplayInfo = creationDisplayInfo
         this.profile = profile
-        document = profile.create(creationDisplayInfo, writerCallback) as RemoteComposeWriterAndroid
+        document = profile.create(creationDisplayInfo, writerEvents) as RemoteComposeWriterAndroid
     }
 
     public constructor(platform: RcPlatformServices, size: Size) {
@@ -89,7 +91,7 @@ public open class RemoteComposeCreationState {
                     RemoteComposeWriterAndroid(creationDisplayInfo, null, profile, callback)
                 },
             )
-        this.creationDisplayInfo = CreationDisplayInfo(size.width.toInt(), size.height.toInt(), 1f)
+        this.creationDisplayInfo = CreationDisplayInfo(size.width.toInt(), size.height.toInt(), 160)
         document = RemoteComposeWriterAndroid(size.width.toInt(), size.height.toInt(), "", platform)
     }
 
@@ -103,7 +105,7 @@ public open class RemoteComposeCreationState {
                     RemoteComposeWriterAndroid(creationDisplayInfo, null, profile, callback)
                 },
             )
-        this.creationDisplayInfo = CreationDisplayInfo(size.width.toInt(), size.height.toInt(), 1f)
+        this.creationDisplayInfo = CreationDisplayInfo(size.width.toInt(), size.height.toInt(), 160)
         if (apiLevel == CoreDocument.DOCUMENT_API_LEVEL && profiles == 0) {
             document =
                 RemoteComposeWriterAndroid(size.width.toInt(), size.height.toInt(), "", platform)
@@ -132,7 +134,7 @@ public open class RemoteComposeCreationState {
 
     public constructor(size: Size, profile: Profile) {
         this.profile = profile
-        this.creationDisplayInfo = CreationDisplayInfo(size.width.toInt(), size.height.toInt(), 1f)
+        this.creationDisplayInfo = CreationDisplayInfo(size.width.toInt(), size.height.toInt(), 160)
         this.document = profile.create(creationDisplayInfo, null)
     }
 
@@ -149,7 +151,7 @@ public open class RemoteComposeCreationState {
 // Density and Size should be taken from Compose in this mode
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public class NoRemoteCompose :
-    RemoteComposeCreationState(CreationDisplayInfo(1, 1, 1f), null, RcPlatformProfiles.ANDROIDX) {
+    RemoteComposeCreationState(CreationDisplayInfo(1, 1, 160), null, RcPlatformProfiles.ANDROIDX) {
     override fun <T : RemoteState<*>> getOrCreateNamedState(
         type: Class<T>,
         name: String,

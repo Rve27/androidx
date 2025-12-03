@@ -235,7 +235,7 @@ fun getComposeDoc(
         ) {
             //        val doc: MutableState<CoreDocument?> = remember { mutableStateOf(null) }
             //        val density = with(LocalDensity.current) { 1.dp.toPx() * 160 }
-            val connection = CreationDisplayInfo(1000, 1000, 440 / 160f)
+            val connection = CreationDisplayInfo(1000, 1000, 440)
             //        val done = remember { mutableStateOf(false) }
             RemoteComposeCapture(
                 baseContext,
@@ -380,7 +380,7 @@ class ExperimentActivity : ComponentActivity() {
                 content: @Composable () -> Unit,
             ): MutableState<CoreDocument?> {
                 val doc: MutableState<CoreDocument?> = remember { mutableStateOf(null) }
-                val connection = CreationDisplayInfo(1000, 1000, 1f)
+                val connection = CreationDisplayInfo(1000, 1000, 160)
                 val done = remember { mutableStateOf(false) }
                 RemoteComposeCapture(
                     LocalContext.current,

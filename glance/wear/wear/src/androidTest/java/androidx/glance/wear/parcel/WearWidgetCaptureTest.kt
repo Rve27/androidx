@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:OptIn(ExperimentalRemoteCreationComposeApi::class, ExperimentalRemoteCreationApi::class)
+
 package androidx.glance.wear.parcel
 
 import android.app.PendingIntent
@@ -23,6 +25,8 @@ import android.os.Bundle
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.remote.creation.CreationDisplayInfo
+import androidx.compose.remote.creation.ExperimentalRemoteCreationApi
+import androidx.compose.remote.creation.compose.ExperimentalRemoteCreationComposeApi
 import androidx.compose.remote.creation.compose.action.pendingIntentAction
 import androidx.compose.remote.creation.compose.capture.RemoteComposeCapture
 import androidx.compose.remote.creation.compose.layout.RemoteBox
@@ -39,8 +43,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.getOrNull
@@ -90,22 +94,23 @@ class WearWidgetCaptureTest {
             widgetPendingIntents: WidgetPendingIntents,
             content: @Composable () -> Unit,
         ) {
-            val creationDisplayInfo = CreationDisplayInfo(400, 400, LocalDensity.current.density)
+            val creationDisplayInfo =
+                CreationDisplayInfo(400, 400, LocalConfiguration.current.densityDpi)
             RemoteComposeCapture(
                 context = LocalContext.current,
                 creationDisplayInfo = creationDisplayInfo,
                 immediateCapture = true,
-                onPaint = { view, writer -> true },
+                onPaint = { _, _ -> true },
                 onCaptureReady = @Composable {},
                 profile = RcPlatformProfiles.WEAR_WIDGETS,
-                writerCallbacks = widgetPendingIntents,
+                writerEvents = widgetPendingIntents,
                 content = @Composable { content() },
             )
         }
 
         @Composable
         internal fun CaptureWidgetContentData(content: @Composable () -> Unit) {
-            val creationDisplayInfo = CreationDisplayInfo(400, 400, 2f)
+            val creationDisplayInfo = CreationDisplayInfo(400, 400, (2f * 160).toInt())
             val context = LocalContext.current
 
             val data = remember { mutableStateOf<WearWidgetRawContent?>(null) }
