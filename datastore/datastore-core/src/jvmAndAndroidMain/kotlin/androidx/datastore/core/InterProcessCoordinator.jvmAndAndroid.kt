@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+@file:JvmName("InterProcessCoordinator_jvmKt")
 @file:Suppress("FacadeClassJvmName") // Cannot be updated, the Kt name has been released
 
 package androidx.datastore.core

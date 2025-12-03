@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2020 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,33 +17,32 @@
 package androidx.datastore.preferences.core
 
 import androidx.datastore.core.CorruptionException
-import androidx.datastore.core.Serializer
+import androidx.datastore.core.okio.OkioSerializer
 import androidx.datastore.preferences.PreferencesMapCompat
 import androidx.datastore.preferences.PreferencesProto.PreferenceMap
 import androidx.datastore.preferences.PreferencesProto.StringSet
 import androidx.datastore.preferences.PreferencesProto.Value
 import androidx.datastore.preferences.protobuf.ByteString
-import java.io.IOException
-import java.io.InputStream
-import java.io.OutputStream
-import kotlin.jvm.Throws
+import okio.BufferedSink
+import okio.BufferedSource
+import okio.IOException
 
 /**
  * Proto based serializer for Preferences. Can be used to manually create
  * [DataStore][androidx.datastore.core.DataStore] using the
  * [DataStoreFactory#create][androidx.datastore.core.DataStoreFactory.create] function.
  */
-object PreferencesFileSerializer : Serializer<Preferences> {
+actual object PreferencesSerializer : OkioSerializer<Preferences> {
     internal const val fileExtension = "preferences_pb"
 
-    override val defaultValue: Preferences
+    actual override val defaultValue: Preferences
         get() {
             return emptyPreferences()
         }
 
     @Throws(IOException::class, CorruptionException::class)
-    override suspend fun readFrom(input: InputStream): Preferences {
-        val preferencesProto = PreferencesMapCompat.readFrom(input)
+    actual override suspend fun readFrom(source: BufferedSource): Preferences {
+        val preferencesProto = PreferencesMapCompat.readFrom(source.inputStream())
 
         val mutablePreferences = mutablePreferencesOf()
 
@@ -56,7 +55,7 @@ object PreferencesFileSerializer : Serializer<Preferences> {
 
     @Suppress("InvalidNullabilityOverride") // Remove after b/232460179 is fixed
     @Throws(IOException::class, CorruptionException::class)
-    override suspend fun writeTo(t: Preferences, output: OutputStream) {
+    actual override suspend fun writeTo(t: Preferences, sink: BufferedSink) {
         val preferences = t.asMap()
         val protoBuilder = PreferenceMap.newBuilder()
 
@@ -64,7 +63,8 @@ object PreferencesFileSerializer : Serializer<Preferences> {
             protoBuilder.putPreferences(key.name, getValueProto(value))
         }
 
-        protoBuilder.build().writeTo(output)
+        protoBuilder.build().writeTo(sink.outputStream())
+        sink.flush()
     }
 
     private fun getValueProto(value: Any): Value {

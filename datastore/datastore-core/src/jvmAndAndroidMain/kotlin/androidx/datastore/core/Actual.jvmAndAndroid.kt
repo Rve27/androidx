@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+@file:JvmName("Actual_jvmKt")
 @file:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 
 package androidx.datastore.core

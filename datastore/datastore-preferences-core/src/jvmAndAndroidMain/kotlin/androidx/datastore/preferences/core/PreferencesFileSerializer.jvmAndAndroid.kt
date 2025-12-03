@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 The Android Open Source Project
+ * Copyright 2024 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,33 +17,32 @@
 package androidx.datastore.preferences.core
 
 import androidx.datastore.core.CorruptionException
-import androidx.datastore.core.okio.OkioSerializer
+import androidx.datastore.core.Serializer
 import androidx.datastore.preferences.PreferencesMapCompat
 import androidx.datastore.preferences.PreferencesProto.PreferenceMap
 import androidx.datastore.preferences.PreferencesProto.StringSet
 import androidx.datastore.preferences.PreferencesProto.Value
 import androidx.datastore.preferences.protobuf.ByteString
-import kotlin.jvm.Throws
-import okio.BufferedSink
-import okio.BufferedSource
-import okio.IOException
+import java.io.IOException
+import java.io.InputStream
+import java.io.OutputStream
 
 /**
  * Proto based serializer for Preferences. Can be used to manually create
  * [DataStore][androidx.datastore.core.DataStore] using the
  * [DataStoreFactory#create][androidx.datastore.core.DataStoreFactory.create] function.
  */
-actual object PreferencesSerializer : OkioSerializer<Preferences> {
+object PreferencesFileSerializer : Serializer<Preferences> {
     internal const val fileExtension = "preferences_pb"
 
-    actual override val defaultValue: Preferences
+    override val defaultValue: Preferences
         get() {
             return emptyPreferences()
         }
 
     @Throws(IOException::class, CorruptionException::class)
-    actual override suspend fun readFrom(source: BufferedSource): Preferences {
-        val preferencesProto = PreferencesMapCompat.readFrom(source.inputStream())
+    override suspend fun readFrom(input: InputStream): Preferences {
+        val preferencesProto = PreferencesMapCompat.readFrom(input)
 
         val mutablePreferences = mutablePreferencesOf()
 
@@ -56,7 +55,7 @@ actual object PreferencesSerializer : OkioSerializer<Preferences> {
 
     @Suppress("InvalidNullabilityOverride") // Remove after b/232460179 is fixed
     @Throws(IOException::class, CorruptionException::class)
-    actual override suspend fun writeTo(t: Preferences, sink: BufferedSink) {
+    override suspend fun writeTo(t: Preferences, output: OutputStream) {
         val preferences = t.asMap()
         val protoBuilder = PreferenceMap.newBuilder()
 
@@ -64,8 +63,7 @@ actual object PreferencesSerializer : OkioSerializer<Preferences> {
             protoBuilder.putPreferences(key.name, getValueProto(value))
         }
 
-        protoBuilder.build().writeTo(sink.outputStream())
-        sink.flush()
+        protoBuilder.build().writeTo(output)
     }
 
     private fun getValueProto(value: Any): Value {
