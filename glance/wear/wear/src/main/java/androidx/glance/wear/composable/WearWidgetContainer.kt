@@ -43,7 +43,7 @@ internal fun WearWidgetContainer(
     backgroundPainter: RemotePainter,
     content: @RemoteComposable @Composable () -> Unit,
 ) {
-
+    @Suppress("RestrictedApiAndroidX")
     RemoteBox(
         modifier =
             RemoteModifier.fillMaxSize().clip(shape = RoundedCornerShape(size = cornerRadius))
