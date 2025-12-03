@@ -183,4 +183,32 @@ class RecordingRemoteComposeBufferTest {
             actualWriter.buffer.buffer.buffer.copyOfRange(0, actualWriter.buffer.buffer.index)
         Assert.assertArrayEquals(trimmedExpected, trimmedActual)
     }
+
+    @Test
+    fun testAddListWithTextFromFloatInConditionalHoisted() {
+        val actualWriter =
+            profileWithRecordingRemoteComposeBuffer.create(creationDisplayInfo, "test")
+        actualWriter.conditionalOperations(ConditionalOperations.TYPE_EQ, 0f, 0f)
+        val id1 = actualWriter.createTextFromFloat(1.2f, 1, 2, 0)
+        val id2 = actualWriter.createTextFromFloat(3.4f, 1, 2, 0)
+        actualWriter.addList(intArrayOf(id1, id2))
+        actualWriter.endConditionalOperations()
+        recordingRemoteComposeBuffer.writeToBuffer()
+
+        // Re b/465085573, to work around a rust player bug, we require the list to be hoisted
+        // to the root span.
+        val expectedWriter = profileWithRemoteComposeBuffer.create(creationDisplayInfo, "test")
+        val eid1 = expectedWriter.createTextFromFloat(1.2f, 1, 2, 0)
+        val eid2 = expectedWriter.createTextFromFloat(3.4f, 1, 2, 0)
+        expectedWriter.addList(intArrayOf(eid1, eid2))
+
+        expectedWriter.conditionalOperations(ConditionalOperations.TYPE_EQ, 0f, 0f)
+        expectedWriter.addContainerEnd()
+
+        val trimmedExpected =
+            expectedWriter.buffer.buffer.buffer.copyOfRange(0, expectedWriter.buffer.buffer.index)
+        val trimmedActual =
+            actualWriter.buffer.buffer.buffer.copyOfRange(0, actualWriter.buffer.buffer.index)
+        Assert.assertArrayEquals(trimmedExpected, trimmedActual)
+    }
 }
