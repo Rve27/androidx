@@ -41,6 +41,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.accessibility.AccessibilityManager
 import android.view.inputmethod.InputMethodManager
+import androidx.annotation.FloatRange
 import androidx.annotation.IntDef
 import androidx.annotation.IntRange
 import androidx.annotation.MainThread
@@ -89,6 +90,7 @@ import java.util.Queue
 import java.util.concurrent.Executors
 import kotlin.math.abs
 import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.roundToInt
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -267,11 +269,43 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
      */
     public var isFormFillingTooltipEnabled: Boolean = false
 
-    /** The maximum scaling factor that can be applied to this View using the [zoom] property */
-    public var maxZoom: Float = DEFAULT_MAX_ZOOM
+    /**
+     * The maximum scaling factor that can be applied to this View using the [zoom] property. This
+     * value is a multiplier relative to the content's natural size, where '1.0' represents 100%
+     * (1x) zoom (similarly '2.5' represents 250% (2.5x) zoom).
+     *
+     * The value is automatically clamped to stay within the defined range.
+     */
+    @get:FloatRange(from = MIN_PERMISSIBLE_ZOOM.toDouble(), to = MAX_PERMISSIBLE_ZOOM.toDouble())
+    public var maxZoom: Float = MAX_PERMISSIBLE_ZOOM
+        set(
+            @FloatRange(
+                from = MIN_PERMISSIBLE_ZOOM.toDouble(),
+                to = MAX_PERMISSIBLE_ZOOM.toDouble(),
+            )
+            value
+        ) {
+            field = min(value, MAX_PERMISSIBLE_ZOOM)
+        }
 
-    /** The minimum scaling factor that can be applied to this View using the [zoom] property */
-    public var minZoom: Float = DEFAULT_MIN_ZOOM
+    /**
+     * The minimum scaling factor that can be applied to this View using the [zoom] property. This
+     * value is a multiplier relative to the content's natural size, where '1.0' represents 100%
+     * (1x) zoom (similarly '0.5' represents 50% (0.5x) zoom).
+     *
+     * The value is automatically clamped to stay within the defined range.
+     */
+    @get:FloatRange(from = MIN_PERMISSIBLE_ZOOM.toDouble(), to = MAX_PERMISSIBLE_ZOOM.toDouble())
+    public var minZoom: Float = MIN_PERMISSIBLE_ZOOM
+        set(
+            @FloatRange(
+                from = MIN_PERMISSIBLE_ZOOM.toDouble(),
+                to = MAX_PERMISSIBLE_ZOOM.toDouble(),
+            )
+            value
+        ) {
+            field = max(value, MIN_PERMISSIBLE_ZOOM)
+        }
 
     // After the pagination model has loaded and the first set of pages are made visible (or if
     // the view is not attached to a window, we fetch all the dimensions to optimize subsequent
@@ -410,7 +444,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
          * touch. [newState] will be one of [GESTURE_STATE_IDLE], [GESTURE_STATE_INTERACTING], or
          * [GESTURE_STATE_SETTLING]
          */
-        public fun onGestureStateChanged(@GestureState newState: Int)
+        @MainThread public fun onGestureStateChanged(@GestureState newState: Int)
     }
 
     private val onGestureStateChangedListeners = mutableListOf<OnGestureStateChangedListener>()
@@ -431,6 +465,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
          *   wish to make use of beyond the scope of this method.
          * @param zoomLevel the current zoom level
          */
+        @MainThread
         public fun onViewportChanged(
             firstVisiblePage: Int,
             visiblePagesCount: Int,
@@ -487,7 +522,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
          * @param externalLink The ExternalLink associated with the link.
          * @return True if the link click was handled, false to use the default behavior.
          */
-        public fun onLinkClicked(externalLink: ExternalLink): Boolean
+        @MainThread public fun onLinkClicked(externalLink: ExternalLink): Boolean
     }
 
     /** The listener that is notified when a link in the PDF is clicked. */
@@ -502,6 +537,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
          * Customize the text selection menu, by adding items to or removing items from
          * [components].
          */
+        @MainThread
         public fun onPrepareSelectionMenuItems(components: MutableList<ContextMenuComponent>)
     }
 
@@ -2623,8 +2659,10 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         public const val VERTICAL_ALIGNMENT_CENTER: Int = 1
 
         @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) public const val DEFAULT_INIT_ZOOM: Float = 1.0f
-        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) public const val DEFAULT_MAX_ZOOM: Float = 25.0f
-        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) public const val DEFAULT_MIN_ZOOM: Float = 0.5f
+        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+        public const val MAX_PERMISSIBLE_ZOOM: Float = 25.0f
+        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+        public const val MIN_PERMISSIBLE_ZOOM: Float = 0.5f
 
         /** The ratio of vertical to horizontal scroll that is assumed to be vertical only */
         private const val SCROLL_CORRECTION_RATIO = 1.5f
