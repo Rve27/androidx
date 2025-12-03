@@ -11,12 +11,6 @@ package androidx.xr.compose.platform {
     property public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.xr.runtime.Session?> LocalSession;
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class SceneManager {
-    method public java.util.List<androidx.xr.compose.subspace.node.SubspaceSemanticsInfo> getAllRootSubspaceSemanticsNodes(android.content.Context context);
-    method public int getSceneCount(android.content.Context context);
-    field public static final androidx.xr.compose.platform.SceneManager INSTANCE;
-  }
-
   public interface SpatialCapabilities {
     method @InaccessibleFromKotlin public boolean isAppEnvironmentEnabled();
     method @InaccessibleFromKotlin public boolean isContent3dEnabled();
