@@ -60,7 +60,7 @@ constructor(
             CreationDisplayInfo(
                 params.widthDp.dpToPx(context),
                 params.heightDp.dpToPx(context),
-                context.resources.displayMetrics.density,
+                context.resources.displayMetrics.densityDpi,
             ),
         ) {
             WearWidgetContainer(

@@ -55,7 +55,7 @@ class Material3ImageTest {
         val sizeDp = size.rdp
         remoteComposeTestRule.runScreenshotTest(
             creationDisplayInfo =
-                CreationDisplayInfo(size, size, context.resources.displayMetrics.density)
+                CreationDisplayInfo(size, size, context.resources.displayMetrics.densityDpi)
         ) {
             val avatarImage =
                 rememberRemoteBitmapValue(name = "avatarImage") { createImage(size, size) }
@@ -73,7 +73,7 @@ class Material3ImageTest {
         val sizeDp = size.rdp
         remoteComposeTestRule.runScreenshotTest(
             creationDisplayInfo =
-                CreationDisplayInfo(size, size, context.resources.displayMetrics.density)
+                CreationDisplayInfo(size, size, context.resources.displayMetrics.densityDpi)
         ) {
             val backgroundImage =
                 rememberRemoteBitmapValue(name = "backgroundImage") { createImage(size, size) }

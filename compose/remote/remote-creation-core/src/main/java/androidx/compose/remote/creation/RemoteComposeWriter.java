@@ -207,7 +207,7 @@ public class RemoteComposeWriter {
      */
     public static @NonNull RemoteComposeWriter obtain(
             int width, int height, @NonNull String contentDescription, @NonNull Profile profile) {
-        return profile.create(new CreationDisplayInfo(width, height, 1f), null);
+        return profile.create(new CreationDisplayInfo(width, height, (int) (1f * 160)), null);
     }
 
     /**
@@ -220,7 +220,7 @@ public class RemoteComposeWriter {
      */
     public static @NonNull RemoteComposeWriter obtain(
             int width, int height, @NonNull Profile profile) {
-        return profile.create(new CreationDisplayInfo(width, height, 1f), null);
+        return profile.create(new CreationDisplayInfo(width, height, (int) (1f * 160)), null);
     }
 
     /**
