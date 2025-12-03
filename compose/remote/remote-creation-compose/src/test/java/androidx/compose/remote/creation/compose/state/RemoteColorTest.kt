@@ -43,7 +43,7 @@ private val referenceHsvColor =
 
 @RunWith(RobolectricTestRunner::class)
 @org.robolectric.annotation.Config(sdk = [org.robolectric.annotation.Config.TARGET_SDK])
-@SdkSuppress(minSdkVersion = 26)
+@SdkSuppress(minSdkVersion = 29)
 class RemoteColorTest {
     val context =
         AndroidRemoteContext().apply {
