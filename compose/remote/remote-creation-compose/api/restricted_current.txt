@@ -1,1 +1,8 @@
 // Signature format: 4.0
+package androidx.compose.remote.creation.compose.layout {
+
+  @androidx.compose.runtime.ComposableTargetMarker(description="RemoteCompose Composable") @kotlin.annotation.Retention(kotlin.annotation.AnnotationRetention.BINARY) @kotlin.annotation.Target(allowedTargets={kotlin.annotation.AnnotationTarget.FUNCTION, kotlin.annotation.AnnotationTarget.PROPERTY_GETTER, kotlin.annotation.AnnotationTarget.TYPE, kotlin.annotation.AnnotationTarget.TYPE_PARAMETER}) public @interface RemoteComposable {
+  }
+
+}
+
