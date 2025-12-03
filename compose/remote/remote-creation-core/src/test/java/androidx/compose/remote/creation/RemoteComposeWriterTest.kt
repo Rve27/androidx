@@ -34,7 +34,7 @@ class RemoteComposeWriterTest {
     private lateinit var writer: RemoteComposeWriter
     private lateinit var profile: Profile
 
-    val creationDisplayInfo = CreationDisplayInfo(450, 450, 2f)
+    val creationDisplayInfo = CreationDisplayInfo(450, 450, (2f * 160).toInt())
 
     @Before
     fun setUp() {

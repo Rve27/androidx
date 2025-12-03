@@ -63,7 +63,7 @@ class RemoteButtonTest {
     private val context: Context = ApplicationProvider.getApplicationContext()
 
     private val creationDisplayInfo =
-        CreationDisplayInfo(500, 500, context.resources.displayMetrics.density)
+        CreationDisplayInfo(500, 500, context.resources.displayMetrics.densityDpi)
 
     @Test
     fun button_enabled() {

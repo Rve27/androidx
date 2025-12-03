@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@file:OptIn(ExperimentalRemoteCreationApi::class, ExperimentalRemoteCreationComposeApi::class)
+
 package androidx.glance.wear.parcel
 
 import android.annotation.SuppressLint
@@ -20,8 +22,10 @@ import android.app.PendingIntent
 import android.content.Context
 import android.os.Bundle
 import androidx.compose.remote.creation.CreationDisplayInfo
-import androidx.compose.remote.creation.compose.capture.PendingIntentWriterCallback
-import androidx.compose.remote.creation.compose.capture.captureRemoteDocument
+import androidx.compose.remote.creation.ExperimentalRemoteCreationApi
+import androidx.compose.remote.creation.compose.ExperimentalRemoteCreationComposeApi
+import androidx.compose.remote.creation.compose.capture.WriterEvents
+import androidx.compose.remote.creation.compose.capture.captureSingleRemoteDocument
 import androidx.compose.remote.creation.compose.layout.RemoteComposable
 import androidx.compose.remote.creation.profile.RcPlatformProfiles
 import androidx.compose.runtime.Composable
@@ -41,18 +45,18 @@ internal object WearWidgetCapture {
         creationDisplayInfo: CreationDisplayInfo,
         content: @Composable @RemoteComposable () -> Unit,
     ): WearWidgetRawContent {
-        val writerCallbacks = WidgetPendingIntents()
+        val writerEvents = WidgetPendingIntents()
         val remoteDocument =
-            captureRemoteDocument(
+            captureSingleRemoteDocument(
                 context,
                 creationDisplayInfo,
                 RcPlatformProfiles.WEAR_WIDGETS,
-                writerCallbacks,
+                writerEvents,
                 content,
             )
         return WearWidgetRawContent(
             rcDocument = remoteDocument,
-            extras = Bundle().addPendingIntents(writerCallbacks),
+            extras = Bundle().addPendingIntents(writerEvents),
         )
     }
 
@@ -64,7 +68,7 @@ internal object WearWidgetCapture {
 
 /** The collected [PendingIntent] on the widget, to be sent as sidecar bundle with the document. */
 @SuppressLint("RestrictedApiAndroidX")
-internal class WidgetPendingIntents : PendingIntentWriterCallback {
+internal class WidgetPendingIntents : WriterEvents {
     private val pendingIntentList: MutableList<PendingIntent> = mutableListOf()
 
     override fun storePendingIntent(pendingIntent: PendingIntent): Int {
@@ -75,6 +79,10 @@ internal class WidgetPendingIntents : PendingIntentWriterCallback {
 
         pendingIntentList.add(pendingIntent)
         return pendingIntentList.lastIndex
+    }
+
+    override fun onDocumentAvailable(documentBytes: ByteArray) {
+        // Not used currently, in favour of result of captureSingleRemoteDocument
     }
 
     fun get(index: Int): PendingIntent? = pendingIntentList.getOrNull(index)

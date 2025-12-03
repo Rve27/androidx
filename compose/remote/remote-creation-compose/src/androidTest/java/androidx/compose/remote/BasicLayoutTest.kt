@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@file:OptIn(ExperimentalRemoteCreationComposeApi::class)
+
 package androidx.compose.remote
 
 import android.annotation.SuppressLint
@@ -24,6 +26,7 @@ import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.remote.core.CoreDocument
 import androidx.compose.remote.creation.CreationDisplayInfo
+import androidx.compose.remote.creation.compose.ExperimentalRemoteCreationComposeApi
 import androidx.compose.remote.creation.compose.action.HostAction
 import androidx.compose.remote.creation.compose.action.ValueChange
 import androidx.compose.remote.creation.compose.capture.rememberAsyncRemoteDocument
@@ -115,7 +118,8 @@ class BasicLayoutTest {
 
     @get:Rule val composeTestRule = createComposeRule(StandardTestDispatcher())
 
-    val creationDisplayInfo = CreationDisplayInfo((300 * 2.75).toInt(), (300 * 2.75).toInt(), 2.75f)
+    val creationDisplayInfo =
+        CreationDisplayInfo((300 * 2.75).toInt(), (300 * 2.75).toInt(), ((2.75f * 160).toInt()))
 
     @Composable
     fun rememberRemoteDocumentFixedDensity(

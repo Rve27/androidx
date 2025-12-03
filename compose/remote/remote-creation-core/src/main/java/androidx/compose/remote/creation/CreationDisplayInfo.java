@@ -26,20 +26,20 @@ import androidx.annotation.RestrictTo;
 public class CreationDisplayInfo {
     private final int mWidth;
     private final int mHeight;
-    private final float mDensity;
+    private final int mDensityDpi;
 
     public CreationDisplayInfo(
             int width,
             int height,
-            float density
+            int mDensityDpi
     ) {
         this.mWidth = width;
         this.mHeight = height;
-        this.mDensity = density;
+        this.mDensityDpi = mDensityDpi;
     }
 
     public float getDensity() {
-        return mDensity;
+        return mDensityDpi / 160f;
     }
 
     public int getHeight() {
@@ -55,6 +55,6 @@ public class CreationDisplayInfo {
      * of 1.0.
      */
     public int getDensityDpi() {
-        return (int) (160 * mDensity);
+        return mDensityDpi;
     }
 }
