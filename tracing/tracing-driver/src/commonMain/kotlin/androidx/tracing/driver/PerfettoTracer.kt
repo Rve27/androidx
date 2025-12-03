@@ -204,7 +204,6 @@ public class PerfettoTracer(context: TraceContext, name: String) :
         }
     }
 
-    @DelicateTracingApi
     override fun counter(name: String): Counter {
         // getOrCreateCounterTrack() is synchronized, so we get the same instance of the counter
         // for the provided name.
@@ -212,7 +211,6 @@ public class PerfettoTracer(context: TraceContext, name: String) :
         return PerfettoCounter(track = counter)
     }
 
-    @DelicateTracingApi
     override fun instant(name: String) {
         val track = currentThreadTrack()
         track.instant(name = name)
