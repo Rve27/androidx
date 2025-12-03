@@ -19,7 +19,6 @@ package androidx.compose.remote.creation.compose.state
 
 import android.graphics.Color
 import androidx.annotation.ColorInt
-import androidx.annotation.RequiresApi
 import androidx.annotation.RestrictTo
 import androidx.compose.remote.core.operations.ColorAttribute
 import androidx.compose.remote.core.operations.Utils
@@ -417,7 +416,6 @@ internal constructor(
  */
 @Composable
 @RemoteComposable
-@RequiresApi(26)
 public fun rememberRemoteColor(
     name: String,
     domain: RemoteDomains = RemoteDomains.USER,

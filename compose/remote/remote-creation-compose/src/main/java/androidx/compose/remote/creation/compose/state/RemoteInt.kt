@@ -817,7 +817,7 @@ internal constructor(
             return Utils.idFromLong(array[0]).toInt()
         }
         val hash = calcHashID(array)
-        val ie = creationState.intExpressionCache.get(hash)
+        val ie = creationState.intExpressionCache[hash]
         if (ie != null) {
             if (
                 ie != this &&
