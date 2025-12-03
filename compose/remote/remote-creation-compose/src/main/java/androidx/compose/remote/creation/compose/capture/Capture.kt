@@ -18,6 +18,8 @@
 package androidx.compose.remote.creation.compose.capture
 
 import androidx.annotation.RestrictTo
+import androidx.collection.MutableIntObjectMap
+import androidx.collection.MutableObjectIntMap
 import androidx.compose.remote.core.CoreDocument
 import androidx.compose.remote.core.RcPlatformServices
 import androidx.compose.remote.creation.CreationDisplayInfo
@@ -32,7 +34,7 @@ import androidx.compose.remote.creation.profile.RcPlatformProfiles
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.compositionLocalOf
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.ui.geometry.Size
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
@@ -41,18 +43,18 @@ public open class RemoteComposeCreationState {
     public val creationDisplayInfo: CreationDisplayInfo
     public val profile: Profile
 
-    public val animCache: HashMap<Int, AnimatedRemoteFloat> = HashMap()
-    public val expressionCache: HashMap<Int, RemoteFloat> = HashMap()
-    public val intExpressionCache: HashMap<Int, RemoteInt> = HashMap()
+    public val animCache: MutableIntObjectMap<AnimatedRemoteFloat> = MutableIntObjectMap()
+    public val expressionCache: MutableIntObjectMap<RemoteFloat> = MutableIntObjectMap()
+    public val intExpressionCache: MutableIntObjectMap<RemoteInt> = MutableIntObjectMap()
     public var ready: Boolean = true
     public var document: RemoteComposeWriter
-    public val remoteVariableToId: HashMap<RemoteState<*>, Int> = HashMap()
+    public val remoteVariableToId: MutableObjectIntMap<RemoteState<*>> = MutableObjectIntMap()
     public val floatArrayCache: HashMap<RemoteState<*>, FloatArray> = HashMap()
     public val longArrayCache: HashMap<RemoteState<*>, LongArray> = HashMap()
 
     public val namedState: HashMap<String, RemoteState<*>> = HashMap()
 
-    public val time: MutableState<Long> = mutableStateOf(0L)
+    public val time: MutableState<Long> = mutableLongStateOf(0L)
 
     public val platform: RcPlatformServices
         get() = profile.platform
