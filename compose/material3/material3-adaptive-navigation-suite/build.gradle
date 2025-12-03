@@ -39,6 +39,7 @@ androidXMultiplatform {
     jvmStubs()
 
     defaultPlatform(PlatformIdentifier.ANDROID)
+    applyAndroidXDefaultHierarchyTemplate()
 
     sourceSets {
         commonMain {
@@ -49,52 +50,26 @@ androidXMultiplatform {
             }
         }
 
-        commonTest {
-            dependencies {
-            }
+        androidMain.dependencies {
+            api("androidx.annotation:annotation:1.8.1")
+            api("androidx.annotation:annotation-experimental:1.4.1")
         }
 
-        jvmMain {
-            dependsOn(commonMain)
-            dependencies {
-            }
+        androidDeviceTest.dependencies {
+            implementation(project(":compose:test-utils"))
+            implementation(project(":window:window-testing"))
+            implementation(libs.junit)
+            implementation(libs.testRunner)
+            implementation(libs.truth)
         }
 
-        androidMain {
-            dependsOn(jvmMain)
-            dependencies {
-                api("androidx.annotation:annotation:1.8.1")
-                api("androidx.annotation:annotation-experimental:1.4.1")
-            }
-        }
-
-        jvmStubsMain {
-            dependsOn(jvmMain)
-            dependencies {
-            }
-        }
-
-        androidDeviceTest {
-            dependsOn(commonTest)
-            dependencies {
-                implementation(project(":compose:test-utils"))
-                implementation(project(":window:window-testing"))
-                implementation(libs.junit)
-                implementation(libs.testRunner)
-                implementation(libs.truth)
-            }
-        }
-
-        androidHostTest {
-            dependsOn(commonTest)
-            dependencies {
-                implementation(libs.junit)
-                implementation(libs.testRunner)
-                implementation(libs.espressoCore)
-                implementation(libs.truth)
-                implementation(project(":compose:ui:ui"))
-                implementation(project(":window:window-core"))
-            }
+        androidHostTest.dependencies {
+            implementation(libs.junit)
+            implementation(libs.testRunner)
+            implementation(libs.espressoCore)
+            implementation(libs.truth)
+            implementation(project(":compose:ui:ui"))
+            implementation(project(":window:window-core"))
         }
     }
 }
