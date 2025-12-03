@@ -18,6 +18,7 @@
 package androidx.compose.remote.creation.compose.state
 
 import androidx.annotation.RestrictTo
+import androidx.compose.remote.core.operations.TextTransform
 import androidx.compose.remote.core.operations.Utils
 import androidx.compose.remote.core.operations.utilities.AnimatedFloatExpression
 import androidx.compose.remote.core.operations.utilities.IntegerExpressionEvaluator
@@ -154,6 +155,103 @@ public abstract class RemoteString : BaseRemoteState<String>() {
                     )
 
                 // TODO(b/): This is probably overestimate, consider refactoring.
+                override fun computeRequiredCodePointSet(
+                    creationState: RemoteComposeCreationState
+                ) = this@RemoteString.computeRequiredCodePointSet(creationState)
+            },
+        )
+    }
+
+    /**
+     * Returns a [RemoteString] that evaluates to a upper case version of this [RemoteString] using
+     * the system default locale.
+     *
+     * @return A new [MutableRemoteString] representing the upper case version of this string.
+     */
+    public fun uppercase(): RemoteString {
+        constantValue?.let {
+            return RemoteString(it.uppercase())
+        }
+
+        return MutableRemoteString(
+            constantValue = null,
+            object : LazyRemoteString {
+                override fun reserveTextId(creationState: RemoteComposeCreationState) =
+                    creationState.document.textTransform(
+                        getIdForCreationState(creationState),
+                        0f,
+                        -1f,
+                        TextTransform.TEXT_TO_UPPERCASE,
+                    )
+
+                // Is this correct in all locales?
+                override fun computeRequiredCodePointSet(
+                    creationState: RemoteComposeCreationState
+                ) =
+                    this@RemoteString.computeRequiredCodePointSet(creationState)?.mapTo(HashSet()) {
+                        it.uppercase()
+                    }
+            },
+        )
+    }
+
+    /**
+     * Returns a [RemoteString] that evaluates to a lower case version of this [RemoteString] using
+     * the system default locale.
+     *
+     * @return A new [MutableRemoteString] representing the lower case version of this string.
+     */
+    public fun lowercase(): RemoteString {
+        constantValue?.let {
+            return RemoteString(it.lowercase())
+        }
+
+        return MutableRemoteString(
+            constantValue = null,
+            object : LazyRemoteString {
+                override fun reserveTextId(creationState: RemoteComposeCreationState) =
+                    creationState.document.textTransform(
+                        getIdForCreationState(creationState),
+                        0f,
+                        -1f,
+                        TextTransform.TEXT_TO_LOWERCASE,
+                    )
+
+                // Is this correct in all locales?
+                override fun computeRequiredCodePointSet(
+                    creationState: RemoteComposeCreationState
+                ) =
+                    this@RemoteString.computeRequiredCodePointSet(creationState)?.mapTo(HashSet()) {
+                        it.lowercase()
+                    }
+            },
+        )
+    }
+
+    /**
+     * Returns a [RemoteString] that evaluates to the trimmed version of this this [RemoteString]
+     * where leading and trailing whitespace characters have been removed.
+     *
+     * @return A new [MutableRemoteString] representing the trimmed version of this string.
+     */
+    public fun trim(): RemoteString {
+        constantValue?.let {
+            return RemoteString(it.trim())
+        }
+
+        return MutableRemoteString(
+            constantValue = null,
+            object : LazyRemoteString {
+                override fun reserveTextId(creationState: RemoteComposeCreationState) =
+                    creationState.document.textTransform(
+                        getIdForCreationState(creationState),
+                        0f,
+                        -1f,
+                        TextTransform.TEXT_TRIM,
+                    )
+
+                // This is likely an overestimate, but whitespace glyphs are typically encoded as
+                // a space so optimizing doesn't seem worthwhile.
                 override fun computeRequiredCodePointSet(
                     creationState: RemoteComposeCreationState
                 ) = this@RemoteString.computeRequiredCodePointSet(creationState)
