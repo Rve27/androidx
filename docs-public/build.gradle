@@ -51,7 +51,7 @@ dependencies {
     docs("androidx.camera.viewfinder:viewfinder-compose:1.6.0-alpha01")
     docs("androidx.camera.viewfinder:viewfinder-core:1.6.0-alpha01")
     docs("androidx.camera.viewfinder:viewfinder-view:1.6.0-alpha01")
-    docs("androidx.camera:camera-camera2:1.5.1")
+    docs("androidx.camera:camera-camera2:1.5.2")
     docs("androidx.camera:camera-compose:1.6.0-alpha01")
     docs("androidx.camera:camera-core:1.6.0-alpha01")
     docs("androidx.camera:camera-effects:1.6.0-alpha01")
