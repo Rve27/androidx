@@ -22,6 +22,7 @@ import androidx.compose.foundation.gestures.TransformEvent.TransformStarted
 import androidx.compose.foundation.gestures.TransformEvent.TransformStopped
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.isSpecified
 import androidx.compose.ui.input.pointer.AwaitPointerEventScope
 import androidx.compose.ui.input.pointer.PointerEvent
 import androidx.compose.ui.input.pointer.PointerEventPass
@@ -44,7 +45,6 @@ import kotlin.math.abs
 import kotlin.math.pow
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineStart
-import kotlinx.coroutines.NonCancellable.isActive
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.currentCoroutineContext
@@ -270,21 +270,34 @@ private suspend fun PointerInputScope.detectZoomByCtrlMouseScroll(
     awaitPointerEventScope {
         while (currentContext.isActive) {
             try {
-                var scrollDelta = awaitFirstCtrlMouseScroll(scrollConfig)
+                var offset: Offset?
+                var pointer: PointerEvent
+                do {
+                    pointer = awaitPointerEvent()
+                    offset = consumePointerEventAsMouseWheelScrollOrNull(pointer, scrollConfig)
+                } while (offset == null)
+                var scrollDelta: Offset = offset
                 channel.trySend(TransformStarted)
                 while (true) {
                     // This formula is curve fitting form Chrome OS's ctrl + scroll implementation.
                     val zoomChange = 2f.pow(scrollDelta.y / SCROLL_FACTOR)
                     channel.trySend(
                         TransformDelta(
-                            // TODO: b/462198195 Use cursor position to determine centroid
-                            centroid = Offset.Unspecified,
+                            // Calculate the centroid for all pointers that have a specified
+                            // non-zero scroll delta
+                            centroid =
+                                pointer.calculateCentroid { change ->
+                                    change.scrollDelta.isSpecified &&
+                                        change.scrollDelta != Offset.Zero
+                                },
                             zoomChange = zoomChange,
                             panChange = Offset.Zero,
                             rotationChange = 0f,
                         )
                     )
-                    scrollDelta = awaitCtrlMouseScrollOrNull(scrollConfig) ?: break
+                    pointer = awaitPointerEvent()
+                    scrollDelta =
+                        consumePointerEventAsMouseWheelScrollOrNull(pointer, scrollConfig) ?: break
                 }
             } finally {
                 channel.trySend(TransformStopped)
@@ -293,26 +306,15 @@ private suspend fun PointerInputScope.detectZoomByCtrlMouseScroll(
     }
 }
 
-/** Await for the first mouse scroll event while ctrl is pressed and return its scrollDelta. */
-private suspend fun AwaitPointerEventScope.awaitFirstCtrlMouseScroll(
-    scrollConfig: ScrollConfig
-): Offset {
-    var offset: Offset?
-    do {
-        offset = awaitCtrlMouseScrollOrNull(scrollConfig)
-    } while (offset == null)
-    return offset
-}
-
 /**
- * Await for the next pointer event. If the PointerEvent is a mouse scroll event that has non zero
- * scrollDelta and the ctrl key is pressed, its scrollDelta is returned. Otherwise, null is
- * returned. The event is consumed when it detects ctrl + mouse scroll.
+ * If the PointerEvent is a mouse scroll event that has non zero scrollDelta and the ctrl key is
+ * pressed, its scrollDelta is returned. Otherwise, null is returned. The event is consumed when it
+ * detects ctrl + mouse scroll.
  */
-private suspend fun AwaitPointerEventScope.awaitCtrlMouseScrollOrNull(
-    scrollConfig: ScrollConfig
+private fun AwaitPointerEventScope.consumePointerEventAsMouseWheelScrollOrNull(
+    pointer: PointerEvent,
+    scrollConfig: ScrollConfig,
 ): Offset? {
-    val pointer = awaitPointerEvent()
     if (!pointer.keyboardModifiers.isCtrlPressed || pointer.type != PointerEventType.Scroll) {
         return null
     }
