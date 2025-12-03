@@ -4979,8 +4979,10 @@ package androidx.compose.ui.window {
     ctor public PopupProperties(optional boolean focusable, optional boolean dismissOnBackPress, optional boolean dismissOnClickOutside, optional androidx.compose.ui.window.SecureFlagPolicy securePolicy, optional boolean excludeFromSystemGesture, optional boolean clippingEnabled, optional boolean usePlatformDefaultWidth);
     ctor @BytecodeOnly public PopupProperties(boolean, boolean, boolean, androidx.compose.ui.window.SecureFlagPolicy!, boolean, boolean, boolean, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor @BytecodeOnly public PopupProperties(boolean, boolean, boolean, androidx.compose.ui.window.SecureFlagPolicy!, boolean, boolean, int, kotlin.jvm.internal.DefaultConstructorMarker!);
-    ctor public PopupProperties(optional boolean focusable, optional boolean dismissOnBackPress, optional boolean dismissOnClickOutside, optional boolean clippingEnabled);
-    ctor @BytecodeOnly public PopupProperties(boolean, boolean, boolean, boolean, int, kotlin.jvm.internal.DefaultConstructorMarker!);
+    ctor @BytecodeOnly @Deprecated public PopupProperties(boolean, boolean, boolean, boolean);
+    ctor public PopupProperties(optional boolean focusable, optional boolean dismissOnBackPress, optional boolean dismissOnClickOutside, optional boolean clippingEnabled, optional boolean usePlatformDefaultWidth);
+    ctor @BytecodeOnly public PopupProperties(boolean, boolean, boolean, boolean, boolean, int, kotlin.jvm.internal.DefaultConstructorMarker!);
+    ctor @BytecodeOnly @Deprecated public PopupProperties(boolean, boolean, boolean, boolean, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor public PopupProperties(int flags, optional boolean inheritSecurePolicy, optional boolean dismissOnBackPress, optional boolean dismissOnClickOutside, optional boolean excludeFromSystemGesture, optional boolean usePlatformDefaultWidth);
     ctor @BytecodeOnly public PopupProperties(int, boolean, boolean, boolean, boolean, boolean, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method @InaccessibleFromKotlin public boolean getClippingEnabled();
