@@ -125,10 +125,10 @@ public abstract class Tracer(
      * @return The [Counter] instance for the provided [name]. This can be used to emit counter
      *   events.
      */
-    @DelicateTracingApi public abstract fun counter(name: String): Counter
+    public abstract fun counter(name: String): Counter
 
     /** Emits a zero duration section to the Trace with the provided [name]. */
-    @DelicateTracingApi public abstract fun instant(name: String)
+    public abstract fun instant(name: String)
 
     /**
      * Writes a trace message indicating that a given section of code has begun.
