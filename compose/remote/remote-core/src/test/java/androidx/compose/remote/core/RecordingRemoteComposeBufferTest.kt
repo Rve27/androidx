@@ -36,7 +36,7 @@ class RecordingRemoteComposeBufferTest {
     private lateinit var profileWithRecordingRemoteComposeBuffer: Profile
     private lateinit var profileWithRemoteComposeBuffer: Profile
 
-    val creationDisplayInfo = CreationDisplayInfo(450, 450, 2f)
+    val creationDisplayInfo = CreationDisplayInfo(450, 450, 2 * 160)
 
     @Before
     fun setUp() {

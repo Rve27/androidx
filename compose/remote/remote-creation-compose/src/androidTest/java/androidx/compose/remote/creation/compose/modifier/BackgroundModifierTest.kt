@@ -64,7 +64,7 @@ class BackgroundModifierTest {
         CreationDisplayInfo(
             size.width.toInt(),
             size.height.toInt(),
-            context.resources.displayMetrics.density,
+            context.resources.displayMetrics.densityDpi,
         )
 
     @SuppressLint("UnrememberedMutableState")

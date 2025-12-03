@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:OptIn(ExperimentalRemoteCreationComposeApi::class)
+
 package androidx.compose.remote.player.compose.test.utils.screenshot.rule
 
 import android.content.Context
@@ -24,7 +26,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.remote.core.CoreDocument
 import androidx.compose.remote.core.RemoteComposeBuffer
 import androidx.compose.remote.creation.CreationDisplayInfo
-import androidx.compose.remote.creation.compose.capture.captureRemoteDocument
+import androidx.compose.remote.creation.compose.ExperimentalRemoteCreationComposeApi
+import androidx.compose.remote.creation.compose.capture.captureSingleRemoteDocument
 import androidx.compose.remote.creation.compose.capture.createCreationDisplayInfo
 import androidx.compose.remote.creation.compose.capture.heightDp
 import androidx.compose.remote.creation.compose.capture.rememberRemoteDocument
@@ -119,7 +122,9 @@ class RemoteComposeScreenshotTestRule(
         content: @Composable @RemoteComposable () -> Unit,
     ): CoreDocument {
         val document: ByteArray =
-            withContext(Dispatchers.Main) { captureRemoteDocument(context, content = content) }
+            withContext(Dispatchers.Main) {
+                captureSingleRemoteDocument(context, content = content)
+            }
 
         val remoteComposeDocument =
             CoreDocument().apply {

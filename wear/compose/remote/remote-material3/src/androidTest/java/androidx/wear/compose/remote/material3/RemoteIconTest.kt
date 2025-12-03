@@ -55,7 +55,7 @@ class RemoteIconTest {
                 CreationDisplayInfo(
                     size.width,
                     size.height,
-                    context.resources.displayMetrics.density,
+                    context.resources.displayMetrics.densityDpi,
                 ),
             backgroundColor = Color.Black,
         ) {
@@ -70,7 +70,7 @@ class RemoteIconTest {
                 CreationDisplayInfo(
                     size.width,
                     size.height,
-                    context.resources.displayMetrics.density,
+                    context.resources.displayMetrics.densityDpi,
                 ),
             backgroundColor = Color.Black,
         ) {
@@ -90,7 +90,7 @@ class RemoteIconTest {
                 CreationDisplayInfo(
                     size.width,
                     size.height,
-                    context.resources.displayMetrics.density,
+                    context.resources.displayMetrics.densityDpi,
                 ),
             backgroundColor = Color.Black,
         ) {
@@ -105,7 +105,7 @@ class RemoteIconTest {
     fun volumeUpRemoteIcon_scaledUp() {
         remoteComposeTestRule.runScreenshotTest(
             creationDisplayInfo =
-                CreationDisplayInfo(48, 48, context.resources.displayMetrics.density),
+                CreationDisplayInfo(48, 48, context.resources.displayMetrics.densityDpi),
             backgroundColor = Color.Black,
         ) {
             RemoteIcon(

@@ -22,7 +22,9 @@ import android.content.Context
 import android.os.Build
 import android.widget.RemoteViews
 import androidx.annotation.RequiresApi
-import androidx.compose.remote.creation.compose.capture.captureRemoteDocument
+import androidx.compose.remote.creation.ExperimentalRemoteCreationApi
+import androidx.compose.remote.creation.compose.ExperimentalRemoteCreationComposeApi
+import androidx.compose.remote.creation.compose.capture.captureSingleRemoteDocument
 import androidx.compose.remote.creation.compose.capture.createCreationDisplayInfo
 import androidx.compose.remote.creation.compose.layout.RemoteComposable
 import androidx.compose.remote.creation.compose.modifier.RemoteModifier
@@ -54,12 +56,13 @@ class ListRCWidget : AppWidgetProvider() {
         }
     }
 
+    @OptIn(ExperimentalRemoteCreationComposeApi::class, ExperimentalRemoteCreationApi::class)
     suspend fun record(
         context: Context,
         content: @RemoteComposable @Composable () -> Unit,
     ): ByteArray =
         withContext(Dispatchers.Main) {
-            captureRemoteDocument(
+            captureSingleRemoteDocument(
                 context,
                 createCreationDisplayInfo(context),
                 RcPlatformProfiles.WIDGETS_V6,
