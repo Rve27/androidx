@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright (C) 2017 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@ package androidx.lifecycle
 
 import androidx.annotation.MainThread
 import androidx.annotation.VisibleForTesting
+import androidx.arch.core.internal.FastSafeIterableMap
+import java.lang.ref.WeakReference
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -31,10 +33,12 @@ public actual open class LifecycleRegistry
 private constructor(provider: LifecycleOwner, private val enforceMainThread: Boolean) :
     Lifecycle() {
     /**
+     * Custom list that keeps observers and can handle removals / additions during traversal.
+     *
      * Invariant: at any moment of time for observer1 & observer2: if addition_order(observer1) <
      * addition_order(observer2), then state(observer1) >= state(observer2),
      */
-    private var observerMap = linkedMapOf<LifecycleObserver, ObserverWithState>()
+    private var observerMap = FastSafeIterableMap<LifecycleObserver, ObserverWithState>()
 
     /** Current state */
     private var state: State = State.INITIALIZED
@@ -74,6 +78,18 @@ private constructor(provider: LifecycleOwner, private val enforceMainThread: Boo
         lifecycleOwner = WeakReference(provider)
     }
 
+    /**
+     * Moves the Lifecycle to the given state and dispatches necessary events to the observers.
+     *
+     * @param state new state
+     */
+    @MainThread
+    @Deprecated("Override [currentState].")
+    public open fun markState(state: State) {
+        enforceMainThreadIfNeeded("markState")
+        currentState = state
+    }
+
     actual override var currentState: State
         get() = state
         /**
@@ -107,6 +123,7 @@ private constructor(provider: LifecycleOwner, private val enforceMainThread: Boo
         if (state == next) {
             return
         }
+        @Suppress("NewApi") // b/437073246
         checkLifecycleStateTransition(lifecycleOwner.get(), state, next)
 
         state = next
@@ -119,26 +136,23 @@ private constructor(provider: LifecycleOwner, private val enforceMainThread: Boo
         sync()
         handlingEvent = false
         if (state == State.DESTROYED) {
-            observerMap = linkedMapOf()
+            observerMap = FastSafeIterableMap()
         }
     }
 
     private val isSynced: Boolean
         get() {
-            if (observerMap.isEmpty()) {
+            if (observerMap.size() == 0) {
                 return true
             }
-            val eldestObserverState = observerMap.values.first().state
-            val newestObserverState = observerMap.values.last().state
+            val eldestObserverState = observerMap.eldest()!!.value.state
+            val newestObserverState = observerMap.newest()!!.value.state
             return eldestObserverState == newestObserverState && state == newestObserverState
         }
 
     private fun calculateTargetState(observer: LifecycleObserver): State {
-        val siblingState =
-            observerMap.keys.toList().let {
-                val index = it.indexOf(observer)
-                if (index > 0) observerMap[it[index - 1]]?.state else null
-            }
+        val map = observerMap.ceil(observer)
+        val siblingState = map?.value?.state
         val parentState =
             if (parentStates.isNotEmpty()) parentStates[parentStates.size - 1] else null
         return min(min(state, siblingState), parentState)
@@ -159,10 +173,11 @@ private constructor(provider: LifecycleOwner, private val enforceMainThread: Boo
         enforceMainThreadIfNeeded("addObserver")
         val initialState = if (state == State.DESTROYED) State.DESTROYED else State.INITIALIZED
         val statefulObserver = ObserverWithState(observer, initialState)
-        val previous = observerMap.put(observer, statefulObserver)
+        val previous = observerMap.putIfAbsent(observer, statefulObserver)
         if (previous != null) {
             return
         }
+        @Suppress("NewApi") // b/437073246
         val lifecycleOwner =
             lifecycleOwner.get()
                 ?: // it is null we should be destroyed. Fallback quickly
@@ -221,11 +236,15 @@ private constructor(provider: LifecycleOwner, private val enforceMainThread: Boo
     public actual open val observerCount: Int
         get() {
             enforceMainThreadIfNeeded("getObserverCount")
-            return observerMap.size
+            return observerMap.size()
         }
 
     private fun forwardPass(lifecycleOwner: LifecycleOwner) {
-        forEachObserverWithAdditions { key, observer ->
+        @Suppress()
+        val ascendingIterator: Iterator<Map.Entry<LifecycleObserver, ObserverWithState>> =
+            observerMap.iteratorWithAdditions()
+        while (ascendingIterator.hasNext() && !newEventOccurred) {
+            val (key, observer) = ascendingIterator.next()
             while (observer.state < state && !newEventOccurred && observerMap.contains(key)) {
                 pushParentState(observer.state)
                 val event =
@@ -238,7 +257,9 @@ private constructor(provider: LifecycleOwner, private val enforceMainThread: Boo
     }
 
     private fun backwardPass(lifecycleOwner: LifecycleOwner) {
-        forEachObserverReversed { key, observer ->
+        val descendingIterator = observerMap.descendingIterator()
+        while (descendingIterator.hasNext() && !newEventOccurred) {
+            val (key, observer) = descendingIterator.next()
             while (observer.state > state && !newEventOccurred && observerMap.contains(key)) {
                 val event =
                     Event.downFrom(observer.state)
@@ -250,42 +271,10 @@ private constructor(provider: LifecycleOwner, private val enforceMainThread: Boo
         }
     }
 
-    private inline fun forEachObserverWithAdditions(
-        block: (LifecycleObserver, ObserverWithState) -> Unit
-    ) {
-        val visited = mutableSetOf<LifecycleObserver>()
-        while (!newEventOccurred) {
-            val keys = observerMap.keys.filter { it !in visited }
-            if (keys.isEmpty()) {
-                break
-            }
-            for (key in keys) {
-                if (newEventOccurred) {
-                    break
-                }
-                val value = observerMap[key] ?: continue
-                block(key, value)
-                visited.add(key)
-            }
-        }
-    }
-
-    private inline fun forEachObserverReversed(
-        block: (LifecycleObserver, ObserverWithState) -> Unit
-    ) {
-        val keys = observerMap.keys.reversed()
-        for (key in keys) {
-            if (newEventOccurred) {
-                break
-            }
-            val value = observerMap[key] ?: continue
-            block(key, value)
-        }
-    }
-
     // happens only on the top of stack (never in reentrance),
     // so it doesn't have to take in account parents
     private fun sync() {
+        @Suppress("NewApi") // b/437073246
         val lifecycleOwner =
             lifecycleOwner.get()
                 ?: throw IllegalStateException(
@@ -294,11 +283,11 @@ private constructor(provider: LifecycleOwner, private val enforceMainThread: Boo
                 )
         while (!isSynced) {
             newEventOccurred = false
-            if (state < observerMap.values.first().state) {
+            if (state < observerMap.eldest()!!.value.state) {
                 backwardPass(lifecycleOwner)
             }
-            val newest = observerMap.values.lastOrNull()
-            if (!newEventOccurred && newest != null && state > newest.state) {
+            val newest = observerMap.newest()
+            if (!newEventOccurred && newest != null && state > newest.value.state) {
                 forwardPass(lifecycleOwner)
             }
         }
@@ -314,7 +303,7 @@ private constructor(provider: LifecycleOwner, private val enforceMainThread: Boo
 
     internal class ObserverWithState(observer: LifecycleObserver?, initialState: State) {
         var state: State
-        private var lifecycleObserver: LifecycleEventObserver
+        var lifecycleObserver: LifecycleEventObserver
 
         init {
             lifecycleObserver = Lifecycling.lifecycleEventObserver(observer!!)
@@ -340,12 +329,13 @@ private constructor(provider: LifecycleOwner, private val enforceMainThread: Boo
          * Another possible use-case for this method is JVM testing, when main thread is not
          * present.
          */
+        @JvmStatic
         @VisibleForTesting
-        @Suppress("ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT")
         public actual fun createUnsafe(owner: LifecycleOwner): LifecycleRegistry {
             return LifecycleRegistry(owner, false)
         }
 
+        @JvmStatic
         internal fun min(state1: State, state2: State?): State {
             return if ((state2 != null) && (state2 < state1)) state2 else state1
         }
