@@ -22,7 +22,6 @@ import kotlin.coroutines.CoroutineContext
  * The [PropagationToken] instance that should be returned when context propagation is unsupported
  * by the underlying [Tracer].
  */
-@DelicateTracingApi
 public object PropagationUnsupportedToken : PropagationToken, AutoCloseable {
     override fun close() {
         // Does nothing
