@@ -20,10 +20,9 @@ import androidx.compose.remote.creation.compose.SCREENSHOT_GOLDEN_DIRECTORY
 import androidx.compose.remote.creation.compose.modifier.RemoteModifier
 import androidx.compose.remote.creation.compose.modifier.background
 import androidx.compose.remote.creation.compose.modifier.fillMaxSize
-import androidx.compose.remote.creation.compose.modifier.height
 import androidx.compose.remote.creation.compose.modifier.size
-import androidx.compose.remote.creation.compose.modifier.width
 import androidx.compose.remote.creation.compose.state.rdp
+import androidx.compose.remote.creation.compose.test.base.GridScreenshotUI
 import androidx.compose.remote.player.compose.test.utils.screenshot.TargetPlayer
 import androidx.compose.remote.player.compose.test.utils.screenshot.rule.RemoteComposeScreenshotTestRule
 import androidx.compose.runtime.Composable
@@ -50,129 +49,48 @@ class RemoteBoxTest {
         )
     }
 
+    private val gridScreenshotUI = GridScreenshotUI()
+
     @Test
-    fun simpleLayout() {
-        composeTestRule.simpleLayout()
-    }
-}
+    fun grid() =
+        composeTestRule.runScreenshotTest {
+            val alignments =
+                listOf(
+                    RemoteAlignment.Start,
+                    RemoteAlignment.CenterHorizontally,
+                    RemoteAlignment.End,
+                )
+            val arrangements =
+                listOf(RemoteArrangement.Top, RemoteArrangement.Center, RemoteArrangement.Bottom)
 
-private fun RemoteComposeScreenshotTestRule.simpleLayout() = runScreenshotTest {
-    RemoteRow {
-        RemoteColumn {
-            Container {
-                RemoteBox(
-                    modifier = RemoteModifier.fillMaxSize(),
-                    horizontalAlignment = RemoteAlignment.Start,
-                    verticalArrangement = RemoteArrangement.Top,
-                ) {
-                    Content()
-                }
-            }
-            RemoteBox(modifier = RemoteModifier.height(Padding))
-            Container {
-                RemoteBox(
-                    modifier = RemoteModifier.fillMaxSize(),
-                    horizontalAlignment = RemoteAlignment.Start,
-                    verticalArrangement = RemoteArrangement.Center,
-                ) {
-                    Content()
-                }
-            }
-            RemoteBox(modifier = RemoteModifier.height(Padding))
-            Container {
-                RemoteBox(
-                    modifier = RemoteModifier.fillMaxSize(),
-                    horizontalAlignment = RemoteAlignment.Start,
-                    verticalArrangement = RemoteArrangement.Bottom,
-                ) {
-                    Content()
-                }
-            }
+            gridScreenshotUI.GridContent(
+                sequence {
+                        for (arrangement in arrangements) {
+                            for (alignment in alignments) {
+                                yield(
+                                    @RemoteComposable @Composable {
+                                        RemoteBox(
+                                            modifier = RemoteModifier.fillMaxSize(),
+                                            horizontalAlignment = alignment,
+                                            verticalArrangement = arrangement,
+                                        ) {
+                                            RemoteBox(
+                                                modifier =
+                                                    RemoteModifier.size(48.rdp)
+                                                        .background(Color(0xFF6200EE))
+                                            )
+                                            RemoteBox(
+                                                modifier =
+                                                    RemoteModifier.size(24.rdp)
+                                                        .background(Color(0xFF03DAC6))
+                                            )
+                                        }
+                                    }
+                                )
+                            }
+                        }
+                    }
+                    .toList()
+            )
         }
-        RemoteBox(modifier = RemoteModifier.width(Padding))
-        RemoteColumn {
-            Container {
-                RemoteBox(
-                    modifier = RemoteModifier.fillMaxSize(),
-                    horizontalAlignment = RemoteAlignment.CenterHorizontally,
-                    verticalArrangement = RemoteArrangement.Top,
-                ) {
-                    Content()
-                }
-            }
-            RemoteBox(modifier = RemoteModifier.height(Padding))
-            Container {
-                RemoteBox(
-                    modifier = RemoteModifier.fillMaxSize(),
-                    horizontalAlignment = RemoteAlignment.CenterHorizontally,
-                    verticalArrangement = RemoteArrangement.Center,
-                ) {
-                    Content()
-                }
-            }
-            RemoteBox(modifier = RemoteModifier.height(Padding))
-            Container {
-                RemoteBox(
-                    modifier = RemoteModifier.fillMaxSize(),
-                    horizontalAlignment = RemoteAlignment.CenterHorizontally,
-                    verticalArrangement = RemoteArrangement.Bottom,
-                ) {
-                    Content()
-                }
-            }
-        }
-        RemoteBox(modifier = RemoteModifier.width(Padding))
-        RemoteColumn {
-            Container {
-                RemoteBox(
-                    modifier = RemoteModifier.fillMaxSize(),
-                    horizontalAlignment = RemoteAlignment.End,
-                    verticalArrangement = RemoteArrangement.Top,
-                ) {
-                    Content()
-                }
-            }
-            RemoteBox(modifier = RemoteModifier.height(Padding))
-            Container {
-                RemoteBox(
-                    modifier = RemoteModifier.fillMaxSize(),
-                    horizontalAlignment = RemoteAlignment.End,
-                    verticalArrangement = RemoteArrangement.Center,
-                ) {
-                    Content()
-                }
-            }
-            RemoteBox(modifier = RemoteModifier.height(Padding))
-            Container {
-                RemoteBox(
-                    modifier = RemoteModifier.fillMaxSize(),
-                    horizontalAlignment = RemoteAlignment.End,
-                    verticalArrangement = RemoteArrangement.Bottom,
-                ) {
-                    Content()
-                }
-            }
-        }
-    }
 }
-
-@Composable
-@RemoteComposable
-private fun Container(modifier: RemoteModifier = RemoteModifier, content: @Composable () -> Unit) {
-    RemoteBox(
-        modifier = modifier.size(ContainerSize).background(Color(0xFFCFD8DC)),
-        horizontalAlignment = RemoteAlignment.Start,
-        verticalArrangement = RemoteArrangement.Center,
-        content = content,
-    )
-}
-
-@Composable
-@RemoteComposable
-private fun Content(modifier: RemoteModifier = RemoteModifier) {
-    RemoteBox(modifier = modifier.size(48.rdp).background(Color(0xFF6200EE)))
-    RemoteBox(modifier = modifier.size(24.rdp).background(Color(0xFF03DAC6)))
-}
-
-private val Padding = 24.rdp
-private val ContainerSize = 100.rdp
