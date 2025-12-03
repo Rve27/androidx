@@ -106,8 +106,8 @@ public class ExperimentRecyclerActivity extends Activity {
     static Bitmap sPersonImage3;
     static RemoteComposeBuffer sCurrentBuffer = DemoPaths.pathTest().getBuffer();
     private FrameMetrics mMetrics;
-    private static final String CHANNEL_ID = "custom_notification_channel";
-    private static int sNotificationId = 1;
+    static final String CHANNEL_ID = "custom_notification_channel";
+    static int sNotificationId = 1;
     public static final boolean BACKGROUND = false;
 
     public static @NonNull RemoteComposeBuffer getCurrentDoc() {
@@ -878,9 +878,9 @@ public class ExperimentRecyclerActivity extends Activity {
                 mSize = mItem.size();
                 mZipSize = mItem.zipSize();
             }
-            String stats = "  Load time: " + mTimeStr + "\ncmds/fr doc: " + ops + " / " + mDocOps
-                    + "\n       Size: " + mDf2.format(mSize) + "/" + mDf2.format(mZipSize)
-                    + " bytes" + "\n  Per Frame: "
+            String stats = "  Load: " + mTimeStr + "\n   cmd: " + ops + " / " + mDocOps
+                    + "\n  Size: " + mDf2.format(mSize) + "/" + mDf2.format(mZipSize)
+                    + " B" + "\n Frame: "
                     + mDf2.format(evalTime) + " ms";
             mUi.mStats.setText(stats);
         }
