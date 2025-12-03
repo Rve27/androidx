@@ -37,18 +37,20 @@ import androidx.glance.wear.parcel.WearWidgetCapture
 // TODO: Add @RemoteComposable annotation to content parameter once it's public.
 public class WearWidgetDocument
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+@Suppress("RestrictedApiAndroidX")
 constructor(
     private val backgroundPainter: RemotePainter,
     public val content: @Composable () -> Unit,
 ) : WearWidgetData {
 
     // TODO: Remove this when RemotePainter it's public.
+    @Suppress("RestrictedApiAndroidX")
     public constructor(
         content: @Composable () -> Unit
     ) : this(backgroundPainter = painterRemoteColor(Color.Transparent), content = content)
 
-    @Suppress("RestrictedApiAndroidX")
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    @Suppress("RestrictedApiAndroidX")
     override suspend fun captureRawContent(
         context: Context,
         params: WearWidgetParams,
