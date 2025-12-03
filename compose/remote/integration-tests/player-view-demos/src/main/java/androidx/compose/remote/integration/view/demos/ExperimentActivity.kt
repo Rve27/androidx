@@ -16,15 +16,19 @@
 
 package androidx.compose.remote.integration.view.demos
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.widget.RemoteViews
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
@@ -114,6 +118,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -129,11 +136,9 @@ const val DEFAULT_SHOW_COMPOSE_PLAYER = true
 const val DEFAULT_DEBUG_REMOTE_COMPOSE = false
 const val DELAY_IN_MS = 2000L
 
-@Suppress("RestrictedApiAndroidX") var launcher: RemoteComposeBuffer = countDown().buffer
-
 @Suppress("RestrictedApiAndroidX")
 fun launcherDoc(): RemoteComposeBuffer {
-    return launcher
+    return ExperimentRecyclerActivity.sCurrentBuffer
 }
 
 var remoteIDs: IntArray = IntArray(0)
@@ -265,14 +270,6 @@ class ExperimentActivity : ComponentActivity() {
     val showComposePlayerKey = "SHOW_COMPOSE_PLAYER"
     val showOrigamiKey = "SHOW_ORIGAMI"
     val debugComposeKey = "DEBUG_ORIGAMI"
-
-    fun setLauncherDoc(doc: RemoteComposeBuffer) {
-        val appWidgetManager = AppWidgetManager.getInstance(applicationContext)
-        val buffer = doc.buffer
-        val bufferSize = doc.buffer.size
-        val bytes = ByteArray(bufferSize)
-        ByteArrayInputStream(buffer.buffer, 0, bufferSize).read(bytes)
-    }
 
     var cmap = listOf(get("Frontend...") {}, get("Procedural...") {}, get("Java...") {})
 
@@ -547,8 +544,78 @@ class ExperimentActivity : ComponentActivity() {
             }
         }
     }
+
+    fun setLauncherDoc(doc: RemoteComposeBuffer) {
+        ExperimentRecyclerActivity.sCurrentBuffer = doc
+        println("setLauncherDoc")
+        val appWidgetManager = AppWidgetManager.getInstance(applicationContext)
+        val buffer = doc.buffer
+        val bufferSize = doc.buffer.size
+        val bytes = ByteArray(bufferSize)
+        ByteArrayInputStream(buffer.buffer, 0, bufferSize).read(bytes)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            val drawInstruction = RemoteViews.DrawInstructions.Builder(listOf(bytes)).build()
+            val remoteViews = RemoteViews(drawInstruction)
+            val intent =
+                Intent(this, ExperimentWidgetProvider::class.java).apply {
+                    action = "com.example.ACTION_VIEW_CLICKED"
+                }
+
+            val pendingIntent =
+                PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_MUTABLE)
+            val id = 567
+            remoteViews.setOnClickPendingIntent(id, pendingIntent)
+            appWidgetManager.updateAppWidget(ExperimentWidgetProvider.sAppWidgetIds, remoteViews)
+            println("update widget ")
+        } else {
+            println("VERSION.SDK_INT < VANILLA_ICE_CREAM")
+        }
+    }
+
+    fun asNotification(doc: RemoteComposeBuffer) {
+        println("asNotification")
+        val buffer = doc.buffer
+        val bufferSize = doc.buffer.size
+        val bytes = ByteArray(bufferSize)
+        ByteArrayInputStream(buffer.buffer, 0, bufferSize).read(bytes)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            val drawInstruction =
+                RemoteViews.DrawInstructions.Builder(java.util.List.of<ByteArray?>(bytes)).build()
+            val remoteViews = RemoteViews(drawInstruction)
+            Log.v("MAIN", "created RemoteViews")
+            val intent = Intent(this, this.javaClass)
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            val pendingIntent =
+                PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+
+            val builder =
+                NotificationCompat.Builder(this, ExperimentRecyclerActivity.CHANNEL_ID)
+                    .setSmallIcon(R.drawable.ic_launcher_background)
+                    .setStyle(NotificationCompat.DecoratedCustomViewStyle())
+                    .setCustomContentView(remoteViews)
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                    .setContentIntent(pendingIntent)
+                    .setAutoCancel(true)
+
+            val notificationManager = NotificationManagerCompat.from(this)
+            if (
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) !=
+                    PackageManager.PERMISSION_GRANTED
+            ) {
+                Log.e("MAIN", "Permission not granted")
+                return
+            }
+            notificationManager.notify(
+                ExperimentRecyclerActivity.sNotificationId++,
+                builder.build(),
+            )
+        } else {
+            println("VERSION.SDK_INT < VANILLA_ICE_CREAM")
+        }
+    }
 }
 
+// ===============================end activity===================================
 @Suppress("RestrictedApiAndroidX")
 @Composable
 fun DisplayControls(fileReady: Boolean, name: String, func: RemoteComposeFunc, context: Context) {
@@ -864,24 +931,18 @@ fun DisplayMain(
         } else {
             Text(if (showOrigami) "Waiting for file..." else "RC not shown")
         }
-        if (showComposePlayer) {
-            //            Text("Compose player:")
-            //            Box(modifier = Modifier
-            //                .background(Color(0xFFFFFFFF))
-            //            ) {
-            //                val currentDocument = func.getDoc()
-            //                currentDocument.value?.let {
-            //                    RemoteDocumentPlayer(
-            //                        it,
-            //                        documentWidth = documentWidth,
-            //                        documentHeight = documentHeight,
-            //                    ) { _, _, _ -> }
-            //                }
-            //            }
-        }
+
         if (showCompose) {
             Text("Direct Compose:")
             Box(modifier = Modifier.background(Color.LightGray)) { func.Run() }
+        }
+        val doc = func.getDoc()
+        Row {
+            val activity = LocalContext.current.getActivity<ExperimentActivity>()
+            Button(onClick = { activity?.setLauncherDoc(doc.value?.buffer!!) }) { Text("Launcher") }
+            Button(onClick = { activity?.asNotification(doc.value?.buffer!!) }) {
+                Text("Notification")
+            }
         }
     }
 }
