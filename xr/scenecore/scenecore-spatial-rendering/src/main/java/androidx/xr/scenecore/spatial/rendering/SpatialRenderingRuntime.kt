@@ -31,7 +31,6 @@ import androidx.xr.scenecore.impl.impress.ImpressApiImpl
 import androidx.xr.scenecore.impl.impress.KhronosPbrMaterial
 import androidx.xr.scenecore.impl.impress.Material
 import androidx.xr.scenecore.impl.impress.Texture
-import androidx.xr.scenecore.impl.impress.WaterMaterial
 import androidx.xr.scenecore.runtime.Entity
 import androidx.xr.scenecore.runtime.ExrImageResource
 import androidx.xr.scenecore.runtime.GltfEntity
@@ -89,7 +88,7 @@ private constructor(
         )
     }
 
-    private suspend fun loadGltfAssetAsync(
+    private suspend fun loadGltfAsset(
         modelLoader: () -> ListenableFuture<GltfModel>
     ): GltfModelResource {
         check(Looper.getMainLooper().isCurrentThread) {
@@ -136,7 +135,7 @@ private constructor(
         return gltfModelResourceFuture
     }
 
-    private suspend fun loadExrImageAsync(
+    private suspend fun loadExrImage(
         assetLoader: () -> ListenableFuture<ExrImage>
     ): ExrImageResource {
         check(Looper.getMainLooper().isCurrentThread) {
@@ -184,35 +183,17 @@ private constructor(
     }
 
     @SuppressWarnings("RestrictTo")
-    override suspend fun loadGltfByAssetNameAsync(assetName: String): GltfModelResource {
-        return loadGltfAssetAsync { impressApi.loadGltfAsset(assetName) }
-    }
-
-    // ResolvableFuture is marked as RestrictTo(LIBRARY_GROUP_PREFIX), which is intended for classes
-    // within AndroidX. We're in the process of migrating to AndroidX. Without suppressing this
-    // warning, however, we get a build error - go/bugpattern/RestrictTo.
-    @SuppressWarnings("RestrictTo", "AsyncSuffixFuture")
-    override fun loadGltfByAssetName(assetName: String): ListenableFuture<GltfModelResource> {
-        // TODO(b/458779328): Fix incorrect use of !! on a nullable return value.
-        return loadGltfAsset { impressApi.loadGltfAsset(assetName) }!!
+    override suspend fun loadGltfByAssetName(assetName: String): GltfModelResource {
+        return loadGltfAsset { impressApi.loadGltfAsset(assetName) }
     }
 
     @SuppressWarnings("RestrictTo")
-    override suspend fun loadGltfByByteArrayAsync(
+    override suspend fun loadGltfByByteArray(
         assetData: ByteArray,
         assetKey: String,
     ): GltfModelResource {
         // TODO(b/458779328): Fix incorrect use of !! on a nullable return value.
-        return loadGltfAssetAsync { impressApi.loadGltfAsset(assetData, assetKey) }
-    }
-
-    @SuppressWarnings("RestrictTo", "AsyncSuffixFuture")
-    override fun loadGltfByByteArray(
-        assetData: ByteArray,
-        assetKey: String,
-    ): ListenableFuture<GltfModelResource> {
-        // TODO(b/458779328): Fix incorrect use of !! on a nullable return value.
-        return loadGltfAsset { impressApi.loadGltfAsset(assetData, assetKey) }!!
+        return loadGltfAsset { impressApi.loadGltfAsset(assetData, assetKey) }
     }
 
     @Override
@@ -222,34 +203,16 @@ private constructor(
     }
 
     @SuppressWarnings("RestrictTo")
-    override suspend fun loadExrImageByAssetNameAsync(assetName: String): ExrImageResource {
-        return loadExrImageAsync { impressApi.loadImageBasedLightingAsset(assetName) }
-    }
-
-    // ResolvableFuture is marked as RestrictTo(LIBRARY_GROUP_PREFIX), which is intended for classes
-    // within AndroidX. We're in the process of migrating to AndroidX. Without suppressing this
-    // warning, however, we get a build error - go/bugpattern/RestrictTo.
-    @SuppressWarnings("FutureReturnValueIgnored", "RestrictTo", "AsyncSuffixFuture")
-    override fun loadExrImageByAssetName(assetName: String): ListenableFuture<ExrImageResource> {
-        // TODO(b/458779328): Fix incorrect use of !! on a nullable return value.
-        return loadExrImage { impressApi.loadImageBasedLightingAsset(assetName) }!!
+    override suspend fun loadExrImageByAssetName(assetName: String): ExrImageResource {
+        return loadExrImage { impressApi.loadImageBasedLightingAsset(assetName) }
     }
 
     @SuppressWarnings("RestrictTo")
-    override suspend fun loadExrImageByByteArrayAsync(
+    override suspend fun loadExrImageByByteArray(
         assetData: ByteArray,
         assetKey: String,
     ): ExrImageResource {
-        return loadExrImageAsync { impressApi.loadImageBasedLightingAsset(assetData, assetKey) }
-    }
-
-    @SuppressWarnings("FutureReturnValueIgnored", "RestrictTo", "AsyncSuffixFuture")
-    override fun loadExrImageByByteArray(
-        assetData: ByteArray,
-        assetKey: String,
-    ): ListenableFuture<ExrImageResource> {
-        // TODO(b/458779328): Fix incorrect use of !! on a nullable return value.
-        return loadExrImage { impressApi.loadImageBasedLightingAsset(assetData, assetKey) }!!
+        return loadExrImage { impressApi.loadImageBasedLightingAsset(assetData, assetKey) }
     }
 
     @Override
@@ -259,7 +222,7 @@ private constructor(
     }
 
     @SuppressWarnings("RestrictTo")
-    override suspend fun loadTextureAsync(assetName: String): TextureResource {
+    override suspend fun loadTexture(assetName: String): TextureResource {
         // TODO:b/374216912 - Consider calling setFuture() here to catch if the application calls
         // cancel() on the return value from this function, so we can propagate the cancelation
         // message to the Impress API.
@@ -274,53 +237,6 @@ private constructor(
         // dispatches its callbacks to the main thread.
         val texture: Texture = impressApi.loadTextureTemp(assetName)
         return texture
-    }
-
-    // ResolvableFuture is marked as RestrictTo(LIBRARY_GROUP_PREFIX), which is intended for classes
-    // within AndroidX. We're in the process of migrating to AndroidX. Without suppressing this
-    // warning, however, we get a build error - go/bugpattern/RestrictTo.
-    @SuppressWarnings("RestrictTo", "AsyncSuffixFuture")
-    override fun loadTexture(assetName: String): ListenableFuture<TextureResource> {
-        val textureResourceFuture = ResolvableFuture.create<TextureResource>()
-        // TODO:b/374216912 - Consider calling setFuture() here to catch if the application calls
-        // cancel() on the return value from this function, so we can propagate the cancelation
-        // message to the Impress API.
-
-        check(Looper.getMainLooper().isCurrentThread) {
-            "This method must be called on the main thread."
-        }
-
-        val textureFuture: ListenableFuture<Texture> =
-            try {
-                impressApi.loadTexture(assetName)
-            } catch (e: RuntimeException) {
-                textureResourceFuture.setException(e)
-                return textureResourceFuture
-            }
-
-        textureFuture.addListener(
-            {
-                try {
-                    val texture = textureFuture.get()
-                    textureResourceFuture.set(texture)
-                } catch (e: Exception) {
-                    when (e) {
-                        is InterruptedException -> Thread.currentThread().interrupt()
-                        is CancellationException -> textureResourceFuture.cancel(false)
-                        else -> textureResourceFuture.setException(e)
-                    }
-                }
-            },
-            // It's convenient for the main application for us to dispatch their listeners on
-            // the main thread, because they are required to call back to Impress from there,
-            // and it's likely that they will want to call back into the SDK to create entities
-            // from within a listener. We defensively post to the main thread here, but in
-            // practice this should not cause a thread hop because the Impress API already
-            // dispatches its callbacks to the main thread.
-            // TODO(b/458776699): Handle activity nullability.
-            activity!!::runOnUiThread,
-        )
-        return textureResourceFuture
     }
 
     override fun borrowReflectionTexture(): TextureResource? {
@@ -339,7 +255,7 @@ private constructor(
     }
 
     @SuppressWarnings("RestrictTo")
-    override suspend fun createWaterMaterialAsync(isAlphaMapVersion: Boolean): MaterialResource {
+    override suspend fun createWaterMaterial(isAlphaMapVersion: Boolean): MaterialResource {
         // TODO:b/374216912 - Consider calling setFuture() here to catch if the application calls
         // cancel() on the return value from this function, so we can propagate the cancelation
         // message to the Impress API.
@@ -354,55 +270,6 @@ private constructor(
         // dispatches its callbacks to the main thread.
         val materialResource = impressApi.createWaterMaterialTemp(isAlphaMapVersion)
         return materialResource
-    }
-
-    // ResolvableFuture is marked as RestrictTo(LIBRARY_GROUP_PREFIX), which is intended for classes
-    // within AndroidX. We're in the process of migrating to AndroidX. Without suppressing this
-    // warning, however, we get a build error - go/bugpattern/RestrictTo.
-    @SuppressWarnings("RestrictTo", "AsyncSuffixFuture")
-    override fun createWaterMaterial(
-        isAlphaMapVersion: Boolean
-    ): ListenableFuture<MaterialResource> {
-        val materialResourceFuture = ResolvableFuture.create<MaterialResource>()
-        // TODO:b/374216912 - Consider calling setFuture() here to catch if the application calls
-        // cancel() on the return value from this function, so we can propagate the cancelation
-        // message to the Impress API.
-
-        check(Looper.getMainLooper().isCurrentThread) {
-            "This method must be called on the main thread."
-        }
-
-        val materialFuture: ListenableFuture<WaterMaterial> =
-            try {
-                impressApi.createWaterMaterial(isAlphaMapVersion)
-            } catch (e: RuntimeException) {
-                materialResourceFuture.setException(e)
-                return materialResourceFuture
-            }
-
-        materialFuture.addListener(
-            {
-                try {
-                    val material = materialFuture.get()
-                    materialResourceFuture.set(material)
-                } catch (e: Exception) {
-                    when (e) {
-                        is InterruptedException -> Thread.currentThread().interrupt()
-                        is CancellationException -> materialResourceFuture.cancel(false)
-                        else -> materialResourceFuture.setException(e)
-                    }
-                }
-            },
-            // It's convenient for the main application for us to dispatch their listeners on
-            // the main thread, because they are required to call back to Impress from there,
-            // and it's likely that they will want to call back into the SDK to create entities
-            // from within a listener. We defensively post to the main thread here, but in
-            // practice this should not cause a thread hop because the Impress API already
-            // dispatches its callbacks to the main thread.
-            // TODO(b/458776699): Handle activity nullability.
-            activity!!::runOnUiThread,
-        )
-        return materialResourceFuture
     }
 
     override fun destroyWaterMaterial(material: MaterialResource) {
@@ -479,60 +346,12 @@ private constructor(
         impressApi.setNormalBoundaryOnWaterMaterial(material.nativeHandle, normalBoundary)
     }
 
-    override suspend fun createKhronosPbrMaterialAsync(
-        spec: KhronosPbrMaterialSpec
-    ): MaterialResource {
+    override suspend fun createKhronosPbrMaterial(spec: KhronosPbrMaterialSpec): MaterialResource {
         check(Looper.getMainLooper().isCurrentThread) {
             "This method must be called on the main thread."
         }
         val material: KhronosPbrMaterial = impressApi.createKhronosPbrMaterialTemp(spec)
         return material
-    }
-
-    @SuppressWarnings("AsyncSuffixFuture")
-    override fun createKhronosPbrMaterial(
-        spec: KhronosPbrMaterialSpec
-    ): ListenableFuture<MaterialResource> {
-        val materialResourceFuture = ResolvableFuture.create<MaterialResource>()
-        // TODO:b/374216912 - Consider calling setFuture() here to catch if the application calls
-        // cancel() on the return value from this function, so we can propagate the cancelation
-        // message to the Impress API.
-
-        check(Looper.getMainLooper().isCurrentThread) {
-            "This method must be called on the main thread."
-        }
-
-        val materialFuture: ListenableFuture<KhronosPbrMaterial> =
-            try {
-                impressApi.createKhronosPbrMaterial(spec)
-            } catch (e: RuntimeException) {
-                materialResourceFuture.setException(e)
-                return materialResourceFuture
-            }
-
-        materialFuture.addListener(
-            {
-                try {
-                    val material = materialFuture.get()
-                    materialResourceFuture.set(material)
-                } catch (e: Exception) {
-                    when (e) {
-                        is InterruptedException -> Thread.currentThread().interrupt()
-                        is CancellationException -> materialResourceFuture.cancel(false)
-                        else -> materialResourceFuture.setException(e)
-                    }
-                }
-            },
-            // It's convenient for the main application for us to dispatch their listeners on
-            // the main thread, because they are required to call back to Impress from there,
-            // and it's likely that they will want to call back into the SDK to create entities
-            // from within a listener. We defensively post to the main thread here, but in
-            // practice this should not cause a thread hop because the Impress API already
-            // dispatches its callbacks to the main thread.
-            // TODO(b/458776699): Handle activity nullability.
-            activity!!::runOnUiThread,
-        )
-        return materialResourceFuture
     }
 
     override fun destroyKhronosPbrMaterial(material: MaterialResource) {
