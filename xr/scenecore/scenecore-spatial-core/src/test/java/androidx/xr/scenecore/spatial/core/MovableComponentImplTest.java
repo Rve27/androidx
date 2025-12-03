@@ -134,7 +134,7 @@ public class MovableComponentImplTest {
                         mPerceptionLibrary,
                         /* unscaledGravityAlignedActivitySpace= */ false);
         mActivitySpaceImpl = (ActivitySpaceImpl) mFakeRuntime.getActivitySpace();
-        mActivitySpaceNode = mActivitySpaceImpl.getNode();
+        mActivitySpaceNode = mActivitySpaceImpl.mNode;
     }
 
     @After
@@ -190,7 +190,7 @@ public class MovableComponentImplTest {
     }
 
     private Node getEntityNode(Entity entity) {
-        return ((AndroidXrEntity) entity).getNode();
+        return ((AndroidXrEntity) entity).mNode;
     }
 
     private void sendReformEvent(Node node, ReformEvent reformEvent) {
@@ -316,7 +316,7 @@ public class MovableComponentImplTest {
         shadowReformEvent.setProposedOrientation(new Quatf(0.5f, 0.5f, 0.5f, 0.5f));
         shadowReformEvent.setProposedScale(new Vec3(1.2f, 1.2f, 1.2f));
 
-        sendReformEvent(entity.getNode(), reformEvent);
+        sendReformEvent(entity.mNode, reformEvent);
 
         expect.that(entity.getPose()).isEqualTo(expectedPose);
         expect.that(entity.getScale()).isEqualTo(expectedScale);
@@ -348,7 +348,7 @@ public class MovableComponentImplTest {
         shadowReformEvent.setProposedOrientation(new Quatf(0.5f, 0.5f, 0.5f, 0.5f));
         shadowReformEvent.setProposedScale(new Vec3(1.2f, 1.2f, 1.2f));
 
-        sendReformEvent(entity.getNode(), reformEvent);
+        sendReformEvent(entity.mNode, reformEvent);
 
         expect.that(entity.getPose()).isEqualTo(expectedPose);
         expect.that(entity.getScale()).isEqualTo(expectedScale);
@@ -439,14 +439,14 @@ public class MovableComponentImplTest {
         movableComponent.addMoveEventListener(directExecutor(), mockMoveEventListener);
         assertThat(movableComponent.mReformEventConsumer).isNotNull();
         assertThat(entity.addComponent(movableComponent)).isTrue();
-        ReformOptions options = mNodeRepository.getReformOptions(entity.getNode());
+        ReformOptions options = mNodeRepository.getReformOptions(entity.mNode);
 
         assertThat(options.getCurrentSize().x).isEqualTo(2f);
         assertThat(options.getCurrentSize().y).isEqualTo(2f);
         assertThat(options.getCurrentSize().z).isEqualTo(2f);
         assertThat(options.getEventCallback()).isNotNull();
         assertThat(options.getEventExecutor()).isNotNull();
-        assertThat(entity.mReformEventConsumerMap).isNotEmpty();
+        assertThat(entity.getReformEventConsumerMap()).isNotEmpty();
     }
 
     @Test
@@ -466,13 +466,13 @@ public class MovableComponentImplTest {
                         mFakeExecutor);
         assertThat(movableComponent).isNotNull();
         assertThat(entity.addComponent(movableComponent)).isTrue();
-        ReformOptions options = mNodeRepository.getReformOptions(entity.getNode());
+        ReformOptions options = mNodeRepository.getReformOptions(entity.mNode);
         MoveEventListener mockMoveEventListener = mock(MoveEventListener.class);
 
         movableComponent.addMoveEventListener(directExecutor(), mockMoveEventListener);
         assertThat(options.getEventCallback()).isNotNull();
         assertThat(options.getEventExecutor()).isNotNull();
-        assertThat(entity.mReformEventConsumerMap).isNotEmpty();
+        assertThat(entity.getReformEventConsumerMap()).isNotEmpty();
 
         ReformEvent resizeReformEvent =
                 ShadowReformEvent.create(
@@ -480,14 +480,14 @@ public class MovableComponentImplTest {
                         /* state= */ REFORM_STATE_START,
                         /* id= */ 0);
 
-        sendReformEvent(entity.getNode(), resizeReformEvent);
+        sendReformEvent(entity.mNode, resizeReformEvent);
         verify(mockMoveEventListener, never()).onMoveEvent(any());
 
         ReformEvent moveReformEvent =
                 ShadowReformEvent.create(
                         /* type= */ REFORM_TYPE_MOVE, /* state= */ REFORM_STATE_START, /* id= */ 0);
 
-        sendReformEvent(entity.getNode(), moveReformEvent);
+        sendReformEvent(entity.mNode, moveReformEvent);
         ArgumentCaptor<MoveEvent> moveEventCaptor = ArgumentCaptor.forClass(MoveEvent.class);
         verify(mockMoveEventListener).onMoveEvent(moveEventCaptor.capture());
         List<MoveEvent> capturedEvents = moveEventCaptor.getAllValues();
@@ -616,11 +616,11 @@ public class MovableComponentImplTest {
 
         movableComponent.addMoveEventListener(directExecutor(), mockMoveEventListener);
         assertThat(movableComponent.mReformEventConsumer).isNotNull();
-        assertThat(((AndroidXrEntity) entity).mReformEventConsumerMap).isNotEmpty();
+        assertThat(((AndroidXrEntity) entity).getReformEventConsumerMap()).isNotEmpty();
 
         entity.removeComponent(movableComponent);
         assertThat(mNodeRepository.getReformOptions(getEntityNode(entity))).isNull();
-        assertThat(((AndroidXrEntity) entity).mReformEventConsumerMap).isEmpty();
+        assertThat(((AndroidXrEntity) entity).getReformEventConsumerMap()).isEmpty();
     }
 
     @Test

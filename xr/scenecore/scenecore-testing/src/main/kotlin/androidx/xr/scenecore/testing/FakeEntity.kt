@@ -212,8 +212,10 @@ public open class FakeEntity() : FakeScenePose(), Entity {
      * @param listener The input event listener to add.
      */
     @Suppress("ExecutorRegistration")
-    override fun addInputEventListener(executor: Executor, listener: InputEventListener) {
-        inputEventListenerMap.put(listener, executor)
+    override fun addInputEventListener(executor: Executor?, listener: InputEventListener) {
+        if (executor != null) {
+            inputEventListenerMap[listener] = executor
+        }
     }
 
     /** Removes the given listener from the set of active input listeners. */
