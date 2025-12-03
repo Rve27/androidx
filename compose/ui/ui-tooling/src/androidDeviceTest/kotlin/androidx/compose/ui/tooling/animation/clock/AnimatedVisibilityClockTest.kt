@@ -16,6 +16,7 @@
 
 package androidx.compose.ui.tooling.animation.clock
 
+import android.os.Build
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.tooling.animation.Utils.assertEquals
 import androidx.compose.ui.tooling.animation.Utils.createTestAnimatedVisibility
@@ -28,6 +29,7 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertTrue
+import org.junit.Assume.assumeFalse
 import org.junit.Rule
 import org.junit.Test
 
@@ -174,6 +176,10 @@ class AnimatedVisibilityClockTest {
     @SdkSuppress(minSdkVersion = 24) // b/452716095
     @Test
     fun clockKeepsSetTime() {
+        assumeFalse(
+            "Test fails on cuttlefish b/460514260",
+            Build.MODEL.contains("Cuttlefish", ignoreCase = true),
+        )
         val clock = setupClock()
         rule.runOnIdle {
             // Set clock to the end of the animation.

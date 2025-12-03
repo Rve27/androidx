@@ -59,6 +59,7 @@ import junit.framework.TestCase.assertNotNull
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertThrows
+import org.junit.Assume.assumeFalse
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -407,6 +408,10 @@ class SandboxedPdfDocumentTest {
 
     @Test
     fun getEditsForPage_addAndGetAnnotationFromService() = runTest {
+        assumeFalse(
+            "Test fails on cuttlefish b/460511191",
+            Build.MODEL.contains("Cuttlefish", ignoreCase = true),
+        )
         if (!isRequiredSdkExtensionAvailable()) return@runTest
 
         val pageNum = 1
@@ -465,6 +470,10 @@ class SandboxedPdfDocumentTest {
 
     @Test
     fun applyEdits_writingAnnotationToStorage() = runTest {
+        assumeFalse(
+            "Test fails on cuttlefish b/460511191",
+            Build.MODEL.contains("Cuttlefish", ignoreCase = true),
+        )
         if (!isRequiredSdkExtensionAvailable()) return@runTest
 
         val pageNum = 1
