@@ -17,7 +17,6 @@
 
 package androidx.lifecycle.viewmodel.compose
 
-import android.os.Bundle
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.SnapshotMutationPolicy
 import androidx.compose.runtime.getValue
@@ -29,7 +28,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotMutableState
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.SavedStateHandle.Companion.validateValue
+import androidx.savedstate.SavedState
+import androidx.savedstate.read
 import androidx.savedstate.savedState
+import kotlin.jvm.JvmName
 import kotlin.properties.PropertyDelegateProvider
 import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
@@ -56,8 +58,7 @@ public fun <T : Any> SavedStateHandle.saveable(
     @Suppress("UNCHECKED_CAST")
     saver as Saver<T, Any>
     // value is restored using the SavedStateHandle or created via [init] lambda
-    @Suppress("DEPRECATION") // Bundle.get has been deprecated in API 31
-    val value = get<Bundle?>(key)?.get("value")?.let(saver::restore) ?: init()
+    val value = get<SavedState?>(key)?.read { toMap()["value"] }?.let(saver::restore) ?: init()
 
     // Hook up saving the state to the SavedStateHandle
     setSavedStateProvider(key) {
@@ -109,8 +110,12 @@ public fun <T : Any> SavedStateHandle.saveable(
     init: () -> T,
 ): PropertyDelegateProvider<Any?, ReadOnlyProperty<Any?, T>> =
     PropertyDelegateProvider { thisRef, property ->
-        val classNamePrefix = if (thisRef != null) thisRef::class.qualifiedName + "." else ""
-        val value = saveable(key = classNamePrefix + property.name, saver = saver, init = init)
+        val value =
+            saveable(
+                key = getSaveableKeyPrefix(thisRef) + property.name,
+                saver = saver,
+                init = init,
+            )
 
         ReadOnlyProperty { _, _ -> value }
     }
@@ -143,9 +148,12 @@ public fun <T, M : MutableState<T>> SavedStateHandle.saveable(
     init: () -> M,
 ): PropertyDelegateProvider<Any?, ReadWriteProperty<Any?, T>> =
     PropertyDelegateProvider<Any?, ReadWriteProperty<Any?, T>> { thisRef, property ->
-        val classNamePrefix = if (thisRef != null) thisRef::class.qualifiedName + "." else ""
         val mutableState =
-            saveable(key = classNamePrefix + property.name, stateSaver = stateSaver, init = init)
+            saveable(
+                key = getSaveableKeyPrefix(thisRef) + property.name,
+                stateSaver = stateSaver,
+                init = init,
+            )
 
         // Create a property that delegates to the mutableState
         object : ReadWriteProperty<Any?, T> {
@@ -180,3 +188,5 @@ private fun <T> mutableStateSaver(inner: Saver<T, out Any>) =
                 },
         )
     }
+
+internal expect fun getSaveableKeyPrefix(thisRef: Any?): String
