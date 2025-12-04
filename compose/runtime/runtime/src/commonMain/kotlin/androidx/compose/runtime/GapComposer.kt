@@ -2251,11 +2251,7 @@ internal class GapComposer(
             // Either insert a place-holder to be inserted later (either created new or moved from
             // another location) or (re)compose the movable content. This is forced if a new value
             // needs to be created as a late change.
-            if (
-                inserting &&
-                    !force &&
-                    (!ComposeRuntimeFlags.isMovableContentUsageTrackingEnabled || content.used)
-            ) {
+            if (inserting && !force) {
                 writerHasAProvider = true
 
                 // Create an anchor to the movable group
@@ -2275,7 +2271,6 @@ internal class GapComposer(
             } else {
                 val savedProvidersInvalid = providersInvalid
                 providersInvalid = providersChanged
-                content.used = true
                 invokeComposable(this, { content.content(parameter) })
                 providersInvalid = savedProvidersInvalid
             }
