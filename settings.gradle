@@ -1155,6 +1155,7 @@ includeProject(":wear:compose:compose-material3-macrobenchmark", "wear/compose/c
 includeProject(":wear:compose:compose-material3-macrobenchmark-common", "wear/compose/compose-material3/macrobenchmark-common", [BuildType.COMPOSE])
 includeProject(":wear:compose:compose-material3-macrobenchmark-target", "wear/compose/compose-material3/macrobenchmark-target", [BuildType.COMPOSE])
 includeProject(":wear:compose:compose-navigation", [BuildType.COMPOSE])
+includeProject(":wear:compose:compose-navigation3", [BuildType.COMPOSE])
 includeProject(":wear:compose:compose-navigation-samples", "wear/compose/compose-navigation/samples", [BuildType.COMPOSE])
 includeProject(":wear:compose:compose-ui-tooling", [BuildType.COMPOSE])
 includeProject(":wear:compose:integration-tests:demos", [BuildType.COMPOSE])
