@@ -140,14 +140,16 @@ public abstract class SliceTrack(
      *
      * Except it is faster to write, and guaranteed zero duration.
      */
-    public fun instant(name: String) {
-        if (context.isEnabled) {
-            val event = obtainTraceEvent()
-            event?.apply {
-                setInstant(trackUuid = uuid, name = name)
-                dispatchTraceEvent(event)
-            }
+    public fun instant(category: String, name: String): EventMetadataCloseable {
+        if (!context.isEnabled) return EmptyEventMetadataCloseable
+        val event = obtainTraceEvent()
+        event?.apply {
+            setInstant(trackUuid = uuid, name = name)
+            primaryCategory = category
         }
+        traceEventScope.event = event
+        eventMetadataCloseable.metadata = traceEventScope
+        return eventMetadataCloseable
     }
 
     override fun close() {

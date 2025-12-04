@@ -114,6 +114,7 @@ public abstract class Tracer(
      * @return A [EventMetadataCloseable] instance that can be used to add additional metadata and
      *   close the trace section.
      */
+    @DelicateTracingApi
     public abstract suspend fun beginCoroutineSectionWithMetadata(
         category: String,
         name: String,
@@ -122,13 +123,14 @@ public abstract class Tracer(
     ): EventMetadataCloseable
 
     /**
-     * @return The [Counter] instance for the provided [name]. This can be used to emit counter
-     *   events.
+     * @return The [Counter] instance for the provided [category] and [name]. This can be used to
+     *   emit counter events.
      */
-    public abstract fun counter(name: String): Counter
+    public abstract fun counter(category: String, name: String): Counter
 
-    /** Emits a zero duration section to the Trace with the provided [name]. */
-    public abstract fun instant(name: String)
+    /** Emits a zero duration section to the Trace with the provided [category] and [name]. */
+    @DelicateTracingApi
+    public abstract fun instant(category: String, name: String): EventMetadataCloseable
 
     /**
      * Writes a trace message indicating that a given section of code has begun.
@@ -149,10 +151,8 @@ public abstract class Tracer(
      * @param isRoot An hint that tells the [Tracer] that this trace section is an entry point that
      *   all subsequent trace spans can be attributed to. Some [Tracer] implementations treat trace
      *   sections as a forest, and require that there is at least one top level root span.
-     * @param metadataBlock The lambda that can be used to decorate the [TraceEvent] instance with
-     *   additional debug annotations. Return `true` in the block if you intend to dispatch the
-     *   [TraceEvent] after all metadata has been added. For e.g. applications might want to filter
-     *   [TraceEvent]s scoped to well known categories.
+     * @param metadataBlock The lambda that can be used to decorate the trace event with additional
+     *   debug annotations.
      * @return A [EventMetadataCloseable] instance that can be used to add additional metadata and
      *   close the trace section.
      */
@@ -195,10 +195,8 @@ public abstract class Tracer(
      * @param isRoot A hint that tells the [Tracer] that this trace section is an entry point that
      *   all subsequent trace spans can be attributed to. Some [Tracer] implementations treat trace
      *   sections as a forest, and require that there is at least one top level root span.
-     * @param metadataBlock The lambda that can be used to decorate the [TraceEvent] instance with
-     *   additional debug annotations. Return `true` in the block if you intend to dispatch the
-     *   [TraceEvent] after all metadata has been added. For e.g. applications might want to filter
-     *   [TraceEvent]s scoped to well known categories.
+     * @param metadataBlock The lambda that can be used to decorate the trace event with additional
+     *   debug annotations.
      * @return A [EventMetadataCloseable] instance that can be used to add additional metadata and
      *   close the trace section.
      */
@@ -232,10 +230,8 @@ public abstract class Tracer(
      * @param isRoot An hint that tells the [Tracer] that this trace section is an entry point that
      *   all subsequent trace spans can be attributed to. Some [Tracer] implementations treat trace
      *   sections as a forest, and require that there is at least one top level root span.
-     * @param metadataBlock The lambda that can be used to decorate the [TraceEvent] instance with
-     *   additional debug annotations. Return `true` in the block if you intend to dispatch the
-     *   [TraceEvent] after all metadata has been added. For e.g. applications might want to filter
-     *   [TraceEvent]s scoped to well known categories.
+     * @param metadataBlock The lambda that can be used to decorate the trace event with additional
+     *   debug annotations.
      * @param block The block of code being traced.
      * @return The [AutoCloseable] instance that can be used to close the trace section.
      */
@@ -285,10 +281,8 @@ public abstract class Tracer(
      * @param isRoot An hint that tells the [Tracer] that this trace section is an entry point that
      *   all subsequent trace spans can be attributed to. Some [Tracer] implementations treat trace
      *   sections as a forest, and require that there is at least one top level root span.
-     * @param metadataBlock The lambda that can be used to decorate the [TraceEvent] instance with
-     *   additional debug annotations. Return `true` in the block if you intend to dispatch the
-     *   [TraceEvent] after all metadata has been added. For e.g. applications might want to filter
-     *   [TraceEvent]s scoped to well known categories.
+     * @param metadataBlock The lambda that can be used to decorate the trace event with additional
+     *   debug annotations.
      * @param block The suspending block of code being traced.
      * @return The [AutoCloseable] instance that can be used to close the trace section.
      */
@@ -331,5 +325,25 @@ public abstract class Tracer(
             // `block` and not in this finally block.
             result.closeable.close()
         }
+    }
+
+    /**
+     * Emits a zero duration trace section.
+     *
+     * @param category The category that the trace section belongs to. Apps can potentially filter
+     *   sections to the categories that they are interested in looking into.
+     * @param name The name of the code section to appear in the trace.
+     * @param metadataBlock The lambda that can be used to decorate the trace event with additional
+     *   debug annotations.
+     */
+    @JvmOverloads
+    public inline fun instant(
+        category: String,
+        name: String,
+        crossinline metadataBlock: EventMetadata.() -> Unit = {},
+    ) {
+        val result = instant(category = category, name = name)
+        metadataBlock(result.metadata)
+        result.metadata.dispatchToTraceSink()
     }
 }

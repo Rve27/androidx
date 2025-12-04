@@ -16,7 +16,8 @@
 
 package androidx.tracing.driver
 
-internal class PerfettoCounter(private val track: CounterTrack) : Counter() {
+internal class PerfettoCounter(private val category: String, private val track: CounterTrack) :
+    Counter() {
     override fun name(): String {
         return track.name
     }
