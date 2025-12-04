@@ -75,10 +75,10 @@ fun RemoteComposeSetup(modifier: Modifier = Modifier) {
             val windowInfo = LocalWindowInfo.current
             RemoteDocumentPlayer(
                 document = documentState!!.document,
-                windowInfo.containerSize.width,
-                windowInfo.containerSize.height,
+                documentWidth = windowInfo.containerSize.width,
+                documentHeight = windowInfo.containerSize.height,
                 modifier = modifier.fillMaxSize(),
-                0,
+                debugMode = 0,
                 onNamedAction = { _, _, _ -> },
             )
         }
