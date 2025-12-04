@@ -51,6 +51,25 @@ public class RecordingModifier {
     }
 
     /**
+     * Add a wrap content height modifier
+     * @return
+     */
+    public @NonNull RecordingModifier wrapContentHeight() {
+        setHeightModifier(DimensionModifierOperation.Type.WRAP, 0);
+        return this;
+    }
+
+    /**
+     * Add a wrap content width modifier
+     * @return
+     */
+    public @NonNull RecordingModifier wrapContentWidth() {
+        setWidthModifier(DimensionModifierOperation.Type.WRAP, 0);
+        return this;
+    }
+
+
+    /**
      * Write the modifier to the buffer
      *
      * @param buffer
