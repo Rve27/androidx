@@ -230,7 +230,7 @@ class SpatialRenderingRuntimeTest {
         runBlocking {
             Mockito.doAnswer { COROUTINE_SUSPENDED }
                 .`when`(mockImpressApi)
-                .animateGltfModelTemp(
+                .animateGltfModel(
                     any(ImpressNode::class.java) ?: fakeImpressApi.createImpressNode(),
                     Mockito.anyString(),
                     Mockito.eq(false),
@@ -255,7 +255,7 @@ class SpatialRenderingRuntimeTest {
         runBlocking {
             Mockito.doAnswer { COROUTINE_SUSPENDED }
                 .`when`(mockImpressApi)
-                .animateGltfModelTemp(
+                .animateGltfModel(
                     any(ImpressNode::class.java) ?: fakeImpressApi.createImpressNode(),
                     Mockito.anyString(),
                     Mockito.eq(true),
@@ -277,7 +277,7 @@ class SpatialRenderingRuntimeTest {
         runBlocking {
             Mockito.doAnswer { COROUTINE_SUSPENDED }
                 .`when`(mockImpressApi)
-                .animateGltfModelTemp(
+                .animateGltfModel(
                     any(ImpressNode::class.java) ?: fakeImpressApi.createImpressNode(),
                     Mockito.anyString(),
                     Mockito.eq(false),

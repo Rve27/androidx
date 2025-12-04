@@ -19,7 +19,6 @@ package androidx.xr.scenecore.spatial.rendering
 import android.app.Activity
 import android.os.Looper
 import androidx.annotation.VisibleForTesting
-import androidx.concurrent.futures.ResolvableFuture
 import androidx.xr.runtime.math.Matrix3
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Vector3
@@ -50,9 +49,6 @@ import com.android.extensions.xr.XrExtensions
 import com.google.androidxr.splitengine.SplitEngineSubspaceManager
 import com.google.ar.imp.view.splitengine.ImpSplitEngine
 import com.google.ar.imp.view.splitengine.ImpSplitEngineRenderer
-import com.google.common.util.concurrent.ListenableFuture
-import java.util.concurrent.CancellationException
-import java.util.function.Supplier
 
 /**
  * Implementation of [RenderingRuntime] for devices that support the
@@ -88,103 +84,9 @@ private constructor(
         )
     }
 
-    private suspend fun loadGltfAsset(
-        modelLoader: () -> ListenableFuture<GltfModel>
-    ): GltfModelResource {
-        check(Looper.getMainLooper().isCurrentThread) {
-            "This method must be called on the main thread."
-        }
-        val gltfToken: GltfModel = modelLoader().awaitSuspending()
-        return gltfToken
-    }
-
-    @SuppressWarnings("FutureReturnValueIgnored")
-    private fun loadGltfAsset(
-        modelLoader: Supplier<ListenableFuture<GltfModel>>
-    ): ListenableFuture<GltfModelResource>? {
-        check(Looper.getMainLooper().isCurrentThread) {
-            "This method must be called on the main thread."
-        }
-
-        val gltfModelResourceFuture = ResolvableFuture.create<GltfModelResource>()
-
-        val gltfTokenFuture: ListenableFuture<GltfModel> =
-            try {
-                modelLoader.get()
-            } catch (e: RuntimeException) {
-                return null
-            }
-
-        gltfTokenFuture.addListener(
-            {
-                try {
-                    val gltfToken: GltfModel = gltfTokenFuture.get()
-                    gltfModelResourceFuture.set(gltfToken)
-                } catch (e: Exception) {
-                    when (e) {
-                        is InterruptedException -> Thread.currentThread().interrupt()
-                        is CancellationException -> gltfModelResourceFuture.cancel(false)
-                        else -> gltfModelResourceFuture.setException(e)
-                    }
-                }
-            },
-            // TODO(b/458776699): Handle activity nullability.
-            activity!!::runOnUiThread,
-        )
-
-        return gltfModelResourceFuture
-    }
-
-    private suspend fun loadExrImage(
-        assetLoader: () -> ListenableFuture<ExrImage>
-    ): ExrImageResource {
-        check(Looper.getMainLooper().isCurrentThread) {
-            "This method must be called on the main thread."
-        }
-        val exrImageToken: ExrImage = assetLoader().awaitSuspending()
-        return exrImageToken
-    }
-
-    @SuppressWarnings("FutureReturnValueIgnored")
-    private fun loadExrImage(
-        assetLoader: Supplier<ListenableFuture<ExrImage>>
-    ): ListenableFuture<ExrImageResource>? {
-        check(Looper.getMainLooper().isCurrentThread) {
-            "This method must be called on the main thread."
-        }
-
-        val exrImageResourceFuture = ResolvableFuture.create<ExrImageResource>()
-
-        val exrImageTokenFuture: ListenableFuture<ExrImage> =
-            try {
-                assetLoader.get()
-            } catch (e: RuntimeException) {
-                return null
-            }
-
-        exrImageTokenFuture.addListener(
-            {
-                try {
-                    val exrImageToken = exrImageTokenFuture.get()
-                    exrImageResourceFuture.set(exrImageToken)
-                } catch (e: Exception) {
-                    when (e) {
-                        is InterruptedException -> Thread.currentThread().interrupt()
-                        is CancellationException -> exrImageResourceFuture.cancel(false)
-                        else -> exrImageResourceFuture.setException(e)
-                    }
-                }
-            },
-            // TODO(b/458776699): Handle activity nullability.
-            activity!!::runOnUiThread,
-        )
-
-        return exrImageResourceFuture
-    }
-
     @SuppressWarnings("RestrictTo")
     override suspend fun loadGltfByAssetName(assetName: String): GltfModelResource {
-        return loadGltfAsset { impressApi.loadGltfAsset(assetName) }
+        return impressApi.loadGltfAsset(assetName)
     }
 
     @SuppressWarnings("RestrictTo")
@@ -193,7 +95,7 @@ private constructor(
         assetKey: String,
     ): GltfModelResource {
         // TODO(b/458779328): Fix incorrect use of !! on a nullable return value.
-        return loadGltfAsset { impressApi.loadGltfAsset(assetData, assetKey) }
+        return impressApi.loadGltfAsset(assetData, assetKey)
     }
 
     @Override
@@ -204,7 +106,7 @@ private constructor(
 
     @SuppressWarnings("RestrictTo")
     override suspend fun loadExrImageByAssetName(assetName: String): ExrImageResource {
-        return loadExrImage { impressApi.loadImageBasedLightingAsset(assetName) }
+        return impressApi.loadImageBasedLightingAsset(assetName)
     }
 
     @SuppressWarnings("RestrictTo")
@@ -212,7 +114,7 @@ private constructor(
         assetData: ByteArray,
         assetKey: String,
     ): ExrImageResource {
-        return loadExrImage { impressApi.loadImageBasedLightingAsset(assetData, assetKey) }
+        return impressApi.loadImageBasedLightingAsset(assetData, assetKey)
     }
 
     @Override
@@ -235,7 +137,7 @@ private constructor(
         // from within a listener. We defensively post to the main thread here, but in
         // practice this should not cause a thread hop because the Impress API already
         // dispatches its callbacks to the main thread.
-        val texture: Texture = impressApi.loadTextureTemp(assetName)
+        val texture: Texture = impressApi.loadTexture(assetName)
         return texture
     }
 
@@ -268,7 +170,7 @@ private constructor(
         // from within a listener. We defensively post to the main thread here, but in
         // practice this should not cause a thread hop because the Impress API already
         // dispatches its callbacks to the main thread.
-        val materialResource = impressApi.createWaterMaterialTemp(isAlphaMapVersion)
+        val materialResource = impressApi.createWaterMaterial(isAlphaMapVersion)
         return materialResource
     }
 
@@ -350,7 +252,7 @@ private constructor(
         check(Looper.getMainLooper().isCurrentThread) {
             "This method must be called on the main thread."
         }
-        val material: KhronosPbrMaterial = impressApi.createKhronosPbrMaterialTemp(spec)
+        val material: KhronosPbrMaterial = impressApi.createKhronosPbrMaterial(spec)
         return material
     }
 
