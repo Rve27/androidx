@@ -62,6 +62,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.graphics.DefaultAlpha
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -330,14 +331,19 @@ private fun RemoteButtonImpl(
     content: @Composable @RemoteComposable RemoteRowScope.() -> Unit,
 ) {
     val state = LocalRemoteComposeCreationState.current
+    // TODO(b/466078229): uses padding modifiers that takes RemoteDp
+    val contentPadding: RemoteModifier =
+        with(LocalDensity.current) {
+            RemoteModifier.padding(
+                left = contentPadding.leftPadding.value * density,
+                top = contentPadding.topPadding.value * density,
+                right = contentPadding.rightPadding.value * density,
+                bottom = contentPadding.bottomPadding.value * density,
+            )
+        }
     val containerModifier =
         RemoteModifier.clickable(*onClick, enabled = enabled.constantValue ?: false)
-            .padding(
-                left = contentPadding.leftPadding.value,
-                top = contentPadding.topPadding.value,
-                right = contentPadding.rightPadding.value,
-                bottom = contentPadding.bottomPadding.value,
-            )
+            .then(contentPadding)
 
     RemoteRow(
         verticalAlignment = RemoteAlignment.CenterVertically,
@@ -474,10 +480,10 @@ public object RemoteButtonDefaults {
     public val LargeIconSize: RemoteDp = 32.rdp
 
     /** The recommended horizontal padding used by [RemoteButton] by default */
-    public val ButtonHorizontalPadding: RemoteDp = RemoteDp(14f.rf)
+    public val ButtonHorizontalPadding: RemoteDp = 14.rdp
 
     /** The recommended vertical padding used by [RemoteButton] by default */
-    public val ButtonVerticalPadding: RemoteDp = RemoteDp(6f.rf)
+    public val ButtonVerticalPadding: RemoteDp = 6.rdp
 
     /** The default content padding used by [RemoteButton] */
     public val ContentPadding: RemotePaddingValues =
