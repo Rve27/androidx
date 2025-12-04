@@ -31,18 +31,6 @@
             dimensionModifierType: FILL
           - {type: BackgroundModifierOperation, x: 0.0, y: 0.0, width: 1000.0, height: 1000.0,
             color: '0xffffff00', shapeType: RECTANGLE}
-        - type: CANVAS_CONTENT
-          id: -5
-          x: 500.0
-          y: 500.0
-          width: 0.0
-          height: 0.0
-          visibility: VISIBLE
-          list:
-          - type: CanvasOperations
-            list:
-            - {type: DrawContent}
-          - {type: DrawContent}
         paddingLeft: 0.0
         paddingRight: 0.0
         paddingTop: 0.0
@@ -82,18 +70,6 @@
             dimensionModifierType: FILL
           - {type: BackgroundModifierOperation, x: 0.0, y: 0.0, width: 1000.0, height: 1000.0,
             color: '0xffffff00', shapeType: RECTANGLE}
-        - type: CANVAS_CONTENT
-          id: -5
-          x: 500.0
-          y: 500.0
-          width: 0.0
-          height: 0.0
-          visibility: VISIBLE
-          list:
-          - type: CanvasOperations
-            list:
-            - {type: DrawContent}
-          - {type: DrawContent}
         paddingLeft: 0.0
         paddingRight: 0.0
         paddingTop: 0.0
