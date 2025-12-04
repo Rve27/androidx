@@ -147,7 +147,7 @@ class `$OpenableNoteFactory` : AppFunctionSerializableFactory<OpenableNote> {
             attachment =
                 checkNotNull(appFunctionData.getAppFunctionData("attachment"))
                     .deserialize(Attachment::class.java),
-            intentToOpen = checkNotNull(appFunctionData.getPendingIntent("intentToOpen")),
+            intentToOpen = checkNotNull(appFunctionData.getParcelable("intentToOpen")),
         )
     }
 
@@ -161,7 +161,7 @@ class `$OpenableNoteFactory` : AppFunctionSerializableFactory<OpenableNote> {
                     Attachment::class.java,
                 ),
             )
-            .setPendingIntent("intentToOpen", appFunctionSerializable.intentToOpen)
+            .setParcelable("intentToOpen", appFunctionSerializable.intentToOpen)
             .build()
     }
 }

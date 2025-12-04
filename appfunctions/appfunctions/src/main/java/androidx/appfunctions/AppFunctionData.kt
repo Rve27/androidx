@@ -16,7 +16,6 @@
 
 package androidx.appfunctions
 
-import android.app.PendingIntent
 import android.app.appsearch.GenericDocument
 import android.net.Uri
 import android.os.Build
@@ -476,32 +475,6 @@ internal constructor(
     }
 
     /**
-     * Retrieves a [PendingIntent] value associated with the specified [key].
-     *
-     * @param key The key to retrieve the value for.
-     * @return The value associated with the [key], or null if the associated value is not found.
-     * @throws IllegalArgumentException if the [key] is not allowed or the value type is incorrect
-     *   according to the metadata specification.
-     */
-    public fun getPendingIntent(key: String): PendingIntent? {
-        return getPendingIntentOrNull(key)
-    }
-
-    // Equivalent to getPendingIntent. Provided for generated AppFunctionSerializableFactory to use
-    // without changing the access getter name based on type.
-    @RestrictTo(LIBRARY_GROUP)
-    public fun getPendingIntentOrNull(key: String): PendingIntent? {
-        val pendingIntentValue = extras.getParcelable(extrasKey(key), PendingIntent::class.java)
-        spec?.validateReadRequest(
-            key,
-            PendingIntent::class.java,
-            isCollection = false,
-            targetValue = pendingIntentValue,
-        )
-        return pendingIntentValue
-    }
-
-    /**
      * Retrieves a [Parcelable] value of type [T] associated with the specified [key].
      *
      * Returns null or fails with an exception if:
@@ -768,27 +741,6 @@ internal constructor(
             targetValue = dataArrayValue,
         )
         return dataArrayValue
-    }
-
-    /**
-     * Retrieves a [List] of [PendingIntent] value associated with the specified [key].
-     *
-     * @param key The key to retrieve the value for.
-     * @return The value associated with the [key]. Or null if the associated value is not found.
-     * @throws IllegalArgumentException if the [key] is not allowed or the value type is incorrect
-     *   according to the metadata specification.
-     */
-    @Suppress("NullableCollection")
-    public fun getPendingIntentList(key: String): List<PendingIntent>? {
-        val pendingIntentListValue =
-            extras.getParcelableArrayList(extrasKey(key), PendingIntent::class.java)
-        spec?.validateReadRequest(
-            key,
-            PendingIntent::class.java,
-            isCollection = true,
-            targetValue = pendingIntentListValue,
-        )
-        return pendingIntentListValue
     }
 
     /**
@@ -1292,26 +1244,6 @@ internal constructor(
         }
 
         /**
-         * Sets a [PendingIntent] value for the given [key].
-         *
-         * @param key The key to set the [AppFunctionData] value for.
-         * @param value The [AppFunctionData] value to set.
-         * @throws IllegalArgumentException if the [key] is not allowed or the [value] does not
-         *   match the metadata specification associated with the [key].
-         */
-        @CanIgnoreReturnValue
-        public fun setPendingIntent(key: String, value: PendingIntent): Builder {
-            spec?.validateWriteRequest(
-                key,
-                PendingIntent::class.java,
-                isCollection = false,
-                targetValue = value,
-            )
-            extrasBuilder.putParcelable(extrasKey(key), value)
-            return this
-        }
-
-        /**
          * Sets a [Parcelable] value of type [T] for the given [key].
          *
          * For `Parcelable` types not defined by the Android platform (e.g., custom classes shared
@@ -1509,26 +1441,6 @@ internal constructor(
                     extrasBuilder.putBundle(extrasKey(key, index), element.extras)
                 }
             }
-            return this
-        }
-
-        /**
-         * Sets a [List] of [PendingIntent] value for the given [key].
-         *
-         * @param key The key to set the [List] of [AppFunctionData] value for.
-         * @param value The [List] of [AppFunctionData] value to set.
-         * @throws IllegalArgumentException if the [key] is not allowed or the [value] does not
-         *   match the metadata specification associated with the [key].
-         */
-        @CanIgnoreReturnValue
-        public fun setPendingIntentList(key: String, value: List<PendingIntent>): Builder {
-            spec?.validateWriteRequest(
-                key,
-                PendingIntent::class.java,
-                isCollection = true,
-                targetValue = value,
-            )
-            extrasBuilder.putParcelableArrayList(extrasKey(key), ArrayList<PendingIntent>(value))
             return this
         }
 
