@@ -16,7 +16,6 @@
 
 package androidx.camera.camera2.pipe.graph
 
-import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.params.OutputConfiguration
 import android.os.Build
 import android.util.Size
@@ -28,6 +27,7 @@ import androidx.camera.camera2.pipe.CameraMetadata
 import androidx.camera.camera2.pipe.CameraMetadata.Companion.isHardwareLevelExternal
 import androidx.camera.camera2.pipe.CameraMetadata.Companion.isHardwareLevelLegacy
 import androidx.camera.camera2.pipe.CameraMetadata.Companion.isHardwareLevelLimited
+import androidx.camera.camera2.pipe.CameraMetadata.Companion.streamConfigurationMap
 import androidx.camera.camera2.pipe.CameraStream
 import androidx.camera.camera2.pipe.InputStream
 import androidx.camera.camera2.pipe.InputStreamId
@@ -90,10 +90,9 @@ constructor(
                     "No output found for given outputId $outputId"
             }
         }
-        val streamConfigurationMap =
-            cameraMetadata[CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP]
+        val streamConfigurationMap = cameraMetadata.streamConfigurationMap
         val stallDuration =
-            streamConfigurationMap?.getOutputStallDuration(output.format.value, output.size)
+            streamConfigurationMap?.getOutputStallDuration(output.format, output.size)
         return stallDuration?.let { StreamGraph.OutputLatency(it, 0) }
     }
 
