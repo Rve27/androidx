@@ -28,6 +28,7 @@ import androidx.compose.remote.creation.CreationDisplayInfo
 import androidx.compose.remote.creation.ExperimentalRemoteCreationApi
 import androidx.compose.remote.creation.compose.ExperimentalRemoteCreationComposeApi
 import androidx.compose.remote.creation.compose.action.pendingIntentAction
+import androidx.compose.remote.creation.compose.capture.DisplayPool
 import androidx.compose.remote.creation.compose.capture.RemoteComposeCapture
 import androidx.compose.remote.creation.compose.layout.RemoteBox
 import androidx.compose.remote.creation.compose.layout.RemoteColumn
@@ -40,6 +41,7 @@ import androidx.compose.remote.creation.compose.state.rdp
 import androidx.compose.remote.creation.profile.RcPlatformProfiles
 import androidx.compose.remote.player.core.RemoteDocument
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -96,8 +98,10 @@ class WearWidgetCaptureTest {
         ) {
             val creationDisplayInfo =
                 CreationDisplayInfo(400, 400, LocalConfiguration.current.densityDpi)
+            val virtualDisplay = DisplayPool.allocate(LocalContext.current, creationDisplayInfo)
             RemoteComposeCapture(
                 context = LocalContext.current,
+                virtualDisplay = virtualDisplay,
                 creationDisplayInfo = creationDisplayInfo,
                 immediateCapture = true,
                 onPaint = { _, _ -> true },
@@ -106,6 +110,7 @@ class WearWidgetCaptureTest {
                 writerEvents = widgetPendingIntents,
                 content = @Composable { content() },
             )
+            DisposableEffect(Unit) { onDispose { DisplayPool.release(virtualDisplay) } }
         }
 
         @Composable

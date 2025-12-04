@@ -51,8 +51,11 @@ public suspend fun captureSingleRemoteDocument(
     writerEvents: WriterEvents? = null,
     content: @Composable @RemoteComposable () -> Unit,
 ): ByteArray = suspendCancellableCoroutine { continuation ->
+    val virtualDisplay = DisplayPool.allocate(context, creationDisplayInfo)
+
     RemoteComposeCapture(
         context = context,
+        virtualDisplay = virtualDisplay,
         creationDisplayInfo = creationDisplayInfo,
         immediateCapture = true,
         onPaint = { _, writer ->
@@ -60,6 +63,7 @@ public suspend fun captureSingleRemoteDocument(
                 val docBytes = writer.encodeToByteArray()
                 writerEvents?.onDocumentAvailable(docBytes)
                 continuation.resume(docBytes)
+                DisplayPool.release(virtualDisplay)
             }
             true
         },
@@ -68,4 +72,6 @@ public suspend fun captureSingleRemoteDocument(
         writerEvents = writerEvents,
         content = content,
     )
+
+    continuation.invokeOnCancellation { DisplayPool.release(virtualDisplay) }
 }

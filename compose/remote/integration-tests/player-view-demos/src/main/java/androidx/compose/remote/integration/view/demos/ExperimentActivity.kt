@@ -71,7 +71,9 @@ import androidx.compose.remote.core.operations.Theme
 import androidx.compose.remote.creation.CreationDisplayInfo
 import androidx.compose.remote.creation.RemoteComposeContext
 import androidx.compose.remote.creation.RemoteComposeWriter
+import androidx.compose.remote.creation.compose.capture.DisplayPool
 import androidx.compose.remote.creation.compose.capture.RemoteComposeCapture
+import androidx.compose.remote.creation.compose.capture.rememberVirtualDisplay
 import androidx.compose.remote.integration.view.demos.examples.DemoPaths.pathTest
 import androidx.compose.remote.integration.view.demos.examples.LayoutModifierDemo1
 import androidx.compose.remote.integration.view.demos.examples.LayoutModifierDemo2
@@ -237,11 +239,13 @@ fun getComposeDoc(
             //        val density = with(LocalDensity.current) { 1.dp.toPx() * 160 }
             val connection = CreationDisplayInfo(1000, 1000, 440)
             //        val done = remember { mutableStateOf(false) }
+            val virtualDisplay = DisplayPool.allocate(context, connection)
             RemoteComposeCapture(
-                baseContext,
-                connection,
-                true,
-                { view, writer ->
+                context = baseContext,
+                virtualDisplay = virtualDisplay,
+                creationDisplayInfo = connection,
+                immediateCapture = true,
+                onPaint = { view, writer ->
                     if (document == null) {
                         val buffer = writer.buffer()
                         val bufferSize = writer.bufferSize()
@@ -250,13 +254,14 @@ fun getComposeDoc(
                         val rcBuffer = RemoteComposeBuffer.fromInputStream(inputStream)
                         coreDocument.initFromBuffer(rcBuffer)
                         document = coreDocument
+                        DisplayPool.release(virtualDisplay)
                     }
                     true
                 },
-                @Composable {},
-                apiLevel,
-                profiles,
-                @Composable { content() },
+                onCaptureReady = @Composable {},
+                apiLevel = apiLevel,
+                profiles = profiles,
+                content = @Composable { content() },
             )
         }
     }
@@ -382,11 +387,13 @@ class ExperimentActivity : ComponentActivity() {
                 val doc: MutableState<CoreDocument?> = remember { mutableStateOf(null) }
                 val connection = CreationDisplayInfo(1000, 1000, 160)
                 val done = remember { mutableStateOf(false) }
+                val virtualDisplay = rememberVirtualDisplay(connection)
                 RemoteComposeCapture(
-                    LocalContext.current,
-                    connection,
-                    true,
-                    { view, writer ->
+                    context = LocalContext.current,
+                    virtualDisplay = virtualDisplay,
+                    creationDisplayInfo = connection,
+                    immediateCapture = true,
+                    onPaint = { _, writer ->
                         if (!done.value) {
                             val buffer = writer.buffer()
                             val bufferSize = writer.bufferSize()
@@ -399,10 +406,10 @@ class ExperimentActivity : ComponentActivity() {
                         }
                         done.value
                     },
-                    @Composable {},
-                    apiLevel,
-                    profiles,
-                    @Composable { content() },
+                    onCaptureReady = @Composable {},
+                    apiLevel = apiLevel,
+                    profiles = profiles,
+                    content = @Composable { content() },
                 )
                 return doc
             }
