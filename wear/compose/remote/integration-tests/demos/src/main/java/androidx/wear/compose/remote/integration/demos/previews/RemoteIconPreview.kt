@@ -26,26 +26,34 @@ import androidx.compose.remote.creation.compose.layout.RemoteComposable
 import androidx.compose.remote.creation.compose.modifier.RemoteModifier
 import androidx.compose.remote.creation.compose.modifier.fillMaxSize
 import androidx.compose.remote.creation.compose.state.rememberRemoteColor
+import androidx.compose.remote.creation.profile.Profile
 import androidx.compose.remote.tooling.preview.RemotePreview
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.wear.compose.remote.material3.RemoteIcon
 import androidx.wear.compose.ui.tooling.preview.WearPreviewDevices
 
 @WearPreviewDevices
 @Composable
-private fun RemoteIconPreview() = RemotePreview {
-    Container { RemoteIcon(imageVector = VolumeUp, contentDescription = null) }
-}
+private fun RemoteIconPreview(
+    @PreviewParameter(ProfilePreviewParameterProvider::class) profile: Profile
+) =
+    RemotePreview(profile = profile) {
+        Container { RemoteIcon(imageVector = VolumeUp, contentDescription = null) }
+    }
 
 @WearPreviewDevices
 @Composable
-private fun RemoteIconColorPreview() = RemotePreview {
-    Container {
-        val color = rememberRemoteColor("testColor") { Color.Red }
-        RemoteIcon(imageVector = VolumeUp, contentDescription = null, tint = color)
+private fun RemoteIconColorPreview(
+    @PreviewParameter(ProfilePreviewParameterProvider::class) profile: Profile
+) =
+    RemotePreview(profile = profile) {
+        Container {
+            val color = rememberRemoteColor("testColor") { Color.Red }
+            RemoteIcon(imageVector = VolumeUp, contentDescription = null, tint = color)
+        }
     }
-}
 
 @Composable
 @RemoteComposable
