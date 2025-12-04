@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package androidx.xr.compose.testapp.spatialcompose
+package androidx.xr.compose.testapp.fragments
 
 import android.os.Bundle
 import android.os.Environment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -35,7 +36,6 @@ import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
-import androidx.media3.common.MediaItem.DrmConfiguration
 import androidx.media3.common.Player
 import androidx.media3.common.VideoSize
 import androidx.media3.exoplayer.ExoPlayer
@@ -148,7 +148,10 @@ class VideoPlayerFragment : Fragment() {
                 alignment = SpatialAlignment.TopEnd,
             ) {
                 SpatialPanel(SubspaceModifier.offset(z = 30.dp)) {
-                    Button(onClick = { requireActivity().finish() }) { Text("Close") }
+                    Column {
+                        Button(onClick = { parentFragmentManager.popBackStack() }) { Text("Back") }
+                        Button(onClick = { requireActivity().finish() }) { Text("Close") }
+                    }
                 }
             }
 
@@ -165,7 +168,9 @@ class VideoPlayerFragment : Fragment() {
             MediaItem.Builder()
                 .setUri(drmVideoUri)
                 .setDrmConfiguration(
-                    DrmConfiguration.Builder(C.WIDEVINE_UUID).setLicenseUri(drmLicenseUrl).build()
+                    MediaItem.DrmConfiguration.Builder(C.WIDEVINE_UUID)
+                        .setLicenseUri(drmLicenseUrl)
+                        .build()
                 )
                 .build()
         } else {
