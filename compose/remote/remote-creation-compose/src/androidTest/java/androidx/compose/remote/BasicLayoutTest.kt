@@ -19,6 +19,7 @@ package androidx.compose.remote
 
 import android.annotation.SuppressLint
 import android.content.res.Configuration
+import android.os.Build
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.size
@@ -107,6 +108,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SdkSuppress
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.test.StandardTestDispatcher
+import org.junit.Assume.assumeFalse
 import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
@@ -378,6 +380,10 @@ class BasicLayoutTest {
     @SdkSuppress(minSdkVersion = 29)
     @Test
     fun testLayoutAndValues() {
+        assumeFalse(
+            "Test fails on cuttlefish b/465858421",
+            Build.MODEL.contains("Cuttlefish", ignoreCase = true),
+        )
         val result =
             """
 ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
@@ -427,6 +433,10 @@ ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
 
     @Test
     fun testSimple() {
+        assumeFalse(
+            "Test fails on cuttlefish b/465858421",
+            Build.MODEL.contains("Cuttlefish", ignoreCase = true),
+        )
         val result =
             """
 ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
@@ -754,6 +764,10 @@ ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
 
     @Test
     fun testBasicClickAction() {
+        assumeFalse(
+            "Test fails on cuttlefish b/465858421",
+            Build.MODEL.contains("Cuttlefish", ignoreCase = true),
+        )
         val result =
             """
 ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
@@ -783,6 +797,10 @@ ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
 
     @Test
     fun testBasicClickActionParam() {
+        assumeFalse(
+            "Test fails on cuttlefish b/465858421",
+            Build.MODEL.contains("Cuttlefish", ignoreCase = true),
+        )
         val result =
             """
 ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
@@ -928,6 +946,10 @@ ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
 
     @Test
     fun testTouch() {
+        assumeFalse(
+            "Test fails on cuttlefish b/465858421",
+            Build.MODEL.contains("Cuttlefish", ignoreCase = true),
+        )
         val result =
             """
 ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
@@ -996,6 +1018,10 @@ ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
 
     @Test
     fun testIntrinsics1() {
+        assumeFalse(
+            "Test fails on cuttlefish b/465858421",
+            Build.MODEL.contains("Cuttlefish", ignoreCase = true),
+        )
         val result =
             """
 ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
@@ -1042,6 +1068,10 @@ ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
 
     @Test
     fun testIntrinsics2() {
+        assumeFalse(
+            "Test fails on cuttlefish b/465858421",
+            Build.MODEL.contains("Cuttlefish", ignoreCase = true),
+        )
         val result =
             """
 ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
@@ -1103,6 +1133,10 @@ ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
     @SdkSuppress(minSdkVersion = 29)
     @Test
     fun testColorFilter1() {
+        assumeFalse(
+            "Test fails on cuttlefish b/465858421",
+            Build.MODEL.contains("Cuttlefish", ignoreCase = true),
+        )
         val result =
             """
 DATA_TEXT<42> = "Green"
@@ -1159,6 +1193,10 @@ ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE
     @SdkSuppress(minSdkVersion = 29)
     @Test
     fun testColorFilter2() {
+        assumeFalse(
+            "Test fails on cuttlefish b/465858421",
+            Build.MODEL.contains("Cuttlefish", ignoreCase = true),
+        )
         val result =
             """
 ROOT [-2:-1] = [0.0, 0.0, 825.0, 825.0] VISIBLE

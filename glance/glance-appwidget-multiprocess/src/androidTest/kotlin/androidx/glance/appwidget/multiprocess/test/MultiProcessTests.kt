@@ -171,6 +171,10 @@ class MultiProcessTests {
     @Test
     fun runAction() =
         runBlocking<Unit> {
+            assumeFalse(
+                "Test fails on cuttlefish b/460513394",
+                Build.MODEL.contains("Cuttlefish", ignoreCase = true),
+            )
             val state = app.actionFlow.apply { value = 0 }
             setContent {
                 Text(
