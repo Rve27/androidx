@@ -407,7 +407,7 @@ internal class ResponsiveTransformationSpecImpl(
         trace("wear-compose:tlc:applyContainerTransformation") {
             if (scrollProgress.isUnspecified) return
             with(TransformationState(TransitionAreaProgress(scrollProgress))) {
-                compositingStrategy = CompositingStrategy.ModulateAlpha
+                compositingStrategy = CompositingStrategy.Offscreen
                 translationY = -1f * size.height * (1f - scale) / 2f
                 alpha = containerAlpha
                 scaleX = scale
