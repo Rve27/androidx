@@ -25,7 +25,6 @@ import androidx.compose.remote.creation.platform.AndroidxRcPlatformServices;
 
 import org.jspecify.annotations.NonNull;
 
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public class RcPlatformProfiles {
     /**
      * Profile for Glance Widgets for Platform 16.
@@ -33,6 +32,7 @@ public class RcPlatformProfiles {
      * This will be moved to the glance module when creation APIs are public, before
      * stable APIs.
      */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     @ExperimentalRemoteCreationApi
     public static final @NonNull Profile WIDGETS_V6 =
             new Profile(6, 0, new AndroidxRcPlatformServices(),
@@ -40,7 +40,9 @@ public class RcPlatformProfiles {
                             new WidgetsProfileWriterV6(creationDisplayInfo, null, profile));
 
     /**
-     * Profile for targeting the AndroidX player.
+     * A profile for creating Remote Compose UIs for use with the embedded AndroidX Player.
+     *
+     * <p>It uses the {@link RemoteComposeWriterAndroid} to serialize the UI tree.
      */
     public static final @NonNull Profile ANDROIDX = new Profile(CoreDocument.DOCUMENT_API_LEVEL,
             RcProfiles.PROFILE_ANDROIDX, new AndroidxRcPlatformServices(),
