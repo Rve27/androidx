@@ -18,4 +18,4 @@ package androidx.compose.remote.player.compose
 
 @RequiresOptIn("This API is experimental and is likely to change in the future.")
 @Retention(AnnotationRetention.BINARY)
-public annotation class ExperimentalRemoteComposePlayerApi
+public annotation class ExperimentalRemotePlayerApi
