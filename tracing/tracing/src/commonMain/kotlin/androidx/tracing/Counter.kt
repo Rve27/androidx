@@ -14,26 +14,15 @@
  * limitations under the License.
  */
 
-package androidx.tracing.benchmark.driver
+package androidx.tracing
 
-import androidx.tracing.PooledTracePacketArray
-import androidx.tracing.TraceSink
+/** Useful to emit counters into a Trace. */
+public abstract class Counter {
+    public abstract fun name(): String
 
-/** A sink that does very little. We simply drop the trace packets without writing it to a file. */
-class NoOpSink : TraceSink() {
-    override fun enqueue(pooledPacketArray: PooledTracePacketArray) {
-        pooledPacketArray.recycle()
-    }
+    /** Emits a [Long] value into the trace for the provided [name]. */
+    public abstract fun setValue(value: Long)
 
-    override fun flush() {
-        // Does nothing
-    }
-
-    override fun onDroppedTraceEvent() {
-        // Does nothing
-    }
-
-    override fun close() {
-        // Does nothing
-    }
+    /** Emits a [Double] value into the trace for the provided [name]. */
+    public abstract fun setValue(value: Double)
 }

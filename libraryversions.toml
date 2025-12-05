@@ -308,7 +308,6 @@ TESTSCREENSHOT = { group = "androidx.test.screenshot", atomicGroupVersion = "ver
 TEST_UIAUTOMATOR = { group = "androidx.test.uiautomator", atomicGroupVersion = "versions.TEST_UIAUTOMATOR" }
 TEXT = { group = "androidx.text", atomicGroupVersion = "versions.TEXT" }
 TRACING = { group = "androidx.tracing", atomicGroupVersion = "versions.TRACING" }
-TRACING_DRIVER = { group = "androidx.tracing", atomicGroupVersion = "versions.TRACING_DRIVER", overrideInclude = [ ":tracing:tracing-driver", ":tracing:tracing-driver-wire" ] }
 TRACING_PERFETTO = { group = "androidx.tracing", atomicGroupVersion = "versions.TRACING_PERFETTO", overrideInclude = [ ":tracing:tracing-perfetto", ":tracing:tracing-perfetto-binary", ":tracing:tracing-perfetto-handshake" ] }
 TRANSITION = { group = "androidx.transition", atomicGroupVersion = "versions.TRANSITION" }
 TV = { group = "androidx.tv" }
