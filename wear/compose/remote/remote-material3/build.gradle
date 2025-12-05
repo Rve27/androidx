@@ -27,6 +27,7 @@ androidx {
     type = SoftwareType.PUBLISHED_LIBRARY_ONLY_USED_BY_KOTLIN_CONSUMERS
     inceptionYear = "2025"
     description = "Provides a set of Remote Compose Material3 components for Wear, built on top of Remote Compose Foundation components."
+    samples(project(":wear:compose:remote:remote-material3-samples"))
     addGoldenImageAssets()
 }
 
@@ -48,6 +49,7 @@ dependencies {
     implementation("androidx.compose.foundation:foundation:1.8.3")
     implementation("androidx.compose.foundation:foundation-layout:1.8.3")
 
+    androidTestImplementation(project(":wear:compose:remote:remote-material3-samples"))
     androidTestImplementation(project(":compose:remote:remote-creation"))
     androidTestImplementation(project(":compose:remote:remote-player-core"))
     androidTestImplementation(project(":compose:remote:remote-player-compose-testutils"))
