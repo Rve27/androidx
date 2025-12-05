@@ -87,6 +87,7 @@ import java.util.Set;
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public class RemoteComposeWriter {
+    private int mApiLevel;
     protected @NonNull RemoteComposeBuffer mBuffer;
     protected @NonNull RemoteComposeState mState = new RemoteComposeState();
     protected @NonNull RcPlatformServices mPlatform;
@@ -278,6 +279,7 @@ public class RemoteComposeWriter {
     public RemoteComposeWriter(@NonNull RcPlatformServices platform, int apiLevel,
             HTag @NonNull ... tags) {
         this.mPlatform = platform;
+        this.mApiLevel = apiLevel;
         mBuffer = new RemoteComposeBuffer(apiLevel);
 
         Object w = HTag.getValue(tags, Header.DOC_WIDTH);
@@ -2922,12 +2924,16 @@ public class RemoteComposeWriter {
             m.write(this);
         }
         addContentStart();
-        mBuffer.addCanvasContentStart(-1);
+        if (mApiLevel <= 7) {
+            mBuffer.addCanvasContentStart(-1);
+        }
     }
 
     /** End a canvas */
     public void endCanvas() {
-        mBuffer.addContainerEnd();
+        if (mApiLevel <= 7) {
+            mBuffer.addContainerEnd();
+        }
         mBuffer.addContainerEnd();
         mBuffer.addContainerEnd();
     }

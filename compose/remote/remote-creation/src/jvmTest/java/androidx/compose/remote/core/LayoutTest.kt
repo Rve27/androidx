@@ -30,6 +30,7 @@ import androidx.compose.remote.core.operations.layout.managers.ColumnLayout
 import androidx.compose.remote.core.operations.layout.managers.CoreText
 import androidx.compose.remote.core.operations.layout.managers.RowLayout
 import androidx.compose.remote.core.operations.layout.managers.TextLayout.TEXT_ALIGN_START
+import androidx.compose.remote.creation.RFloat
 import androidx.compose.remote.creation.Rc.Time.CONTINUOUS_SEC
 import androidx.compose.remote.creation.RemoteComposeContext
 import androidx.compose.remote.creation.actions.ValueIntegerChange
@@ -356,5 +357,46 @@ class LayoutTest : LayoutTestPlayer() {
                 CaptureComponentTree(),
             )
         checkLayout(1000, 1000, 7, RcProfiles.PROFILE_ANDROIDX, "Layout", ops, TestClock(1234))
+    }
+
+    @Test
+    fun testCanvasComponents() {
+        val ops =
+            arrayListOf<TestOperation?>(
+                TestLayout {
+                    column(Modifier.fillMaxSize().background(Color.YELLOW).padding(16)) {
+                        canvas(Modifier.fillMaxSize().background(Color.BLUE)) {
+                            val w = ComponentWidth()
+                            val h = ComponentHeight()
+                            drawLine(0f, 0f, w.toFloat(), h.toFloat())
+                            drawLine(0f, h.toFloat(), w.toFloat(), 0f)
+                            box(
+                                Modifier.background(Color.YELLOW).size(300, 200).computePosition {
+                                    x = w / 2f - width as RFloat / 2f
+                                    y = h / 2f - height as RFloat / 2f
+                                }
+                            ) {
+                                text(
+                                    "Hello, World!",
+                                    autosize = true,
+                                    textAlign = CoreText.TEXT_ALIGN_CENTER,
+                                )
+                            }
+                        }
+                    }
+                },
+                CaptureComponentTree(),
+                ResizeDocument(600, 800),
+                CaptureComponentTree(),
+            )
+        checkLayout(
+            1000,
+            1000,
+            8,
+            RcProfiles.PROFILE_ANDROIDX or RcProfiles.PROFILE_EXPERIMENTAL,
+            "Layout",
+            ops,
+            TestClock(1234),
+        )
     }
 }
