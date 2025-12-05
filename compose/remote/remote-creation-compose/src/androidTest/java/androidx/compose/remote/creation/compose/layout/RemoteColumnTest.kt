@@ -1,0 +1,168 @@
+/*
+ * Copyright 2025 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package androidx.compose.remote.creation.compose.layout
+
+import androidx.compose.remote.creation.compose.SCREENSHOT_GOLDEN_DIRECTORY
+import androidx.compose.remote.creation.compose.modifier.RemoteModifier
+import androidx.compose.remote.creation.compose.modifier.background
+import androidx.compose.remote.creation.compose.modifier.height
+import androidx.compose.remote.creation.compose.modifier.size
+import androidx.compose.remote.creation.compose.modifier.width
+import androidx.compose.remote.creation.compose.state.rdp
+import androidx.compose.remote.player.compose.test.utils.screenshot.TargetPlayer
+import androidx.compose.remote.player.compose.test.utils.screenshot.rule.RemoteComposeScreenshotTestRule
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
+import androidx.test.filters.MediumTest
+import androidx.test.filters.SdkSuppress
+import com.google.testing.junit.testparameterinjector.TestParameter
+import com.google.testing.junit.testparameterinjector.TestParameterInjector
+import org.junit.Rule
+import org.junit.Test
+import org.junit.runner.RunWith
+
+@MediumTest
+@SdkSuppress(minSdkVersion = 35, maxSdkVersion = 35)
+@RunWith(TestParameterInjector::class)
+class RemoteColumnTest {
+    @TestParameter private lateinit var targetPlayer: TargetPlayer
+
+    @get:Rule
+    val composeTestRule: RemoteComposeScreenshotTestRule by lazy {
+        RemoteComposeScreenshotTestRule(
+            moduleDirectory = SCREENSHOT_GOLDEN_DIRECTORY,
+            targetPlayer = targetPlayer,
+        )
+    }
+
+    @Test
+    fun simpleLayout() {
+        composeTestRule.simpleLayout()
+    }
+}
+
+private fun RemoteComposeScreenshotTestRule.simpleLayout() = runScreenshotTest {
+    RemoteRow {
+        RemoteColumn {
+            Container {
+                // TODO(b/447100988): replace size by fillMaxSize in all those RemoteColumns
+                RemoteColumn(modifier = RemoteModifier.size(ContainerSize)) { Content() }
+            }
+            RemoteBox(modifier = RemoteModifier.height(Padding))
+            Container {
+                RemoteColumn(
+                    modifier = RemoteModifier.size(ContainerSize),
+                    verticalArrangement = RemoteArrangement.Center,
+                ) {
+                    Content()
+                }
+            }
+            RemoteBox(modifier = RemoteModifier.height(Padding))
+            Container {
+                RemoteColumn(
+                    modifier = RemoteModifier.size(ContainerSize),
+                    verticalArrangement = RemoteArrangement.Bottom,
+                ) {
+                    Content()
+                }
+            }
+        }
+        RemoteBox(modifier = RemoteModifier.width(Padding))
+        RemoteColumn {
+            Container {
+                RemoteColumn(
+                    modifier = RemoteModifier.size(ContainerSize),
+                    horizontalAlignment = RemoteAlignment.CenterHorizontally,
+                ) {
+                    Content()
+                }
+            }
+            RemoteBox(modifier = RemoteModifier.height(Padding))
+            Container {
+                RemoteColumn(
+                    modifier = RemoteModifier.size(ContainerSize),
+                    horizontalAlignment = RemoteAlignment.CenterHorizontally,
+                    verticalArrangement = RemoteArrangement.Center,
+                ) {
+                    Content()
+                }
+            }
+            RemoteBox(modifier = RemoteModifier.height(Padding))
+            Container {
+                RemoteColumn(
+                    modifier = RemoteModifier.size(ContainerSize),
+                    horizontalAlignment = RemoteAlignment.CenterHorizontally,
+                    verticalArrangement = RemoteArrangement.Bottom,
+                ) {
+                    Content()
+                }
+            }
+        }
+        RemoteBox(modifier = RemoteModifier.width(Padding))
+        RemoteColumn {
+            Container {
+                RemoteColumn(
+                    modifier = RemoteModifier.size(ContainerSize),
+                    horizontalAlignment = RemoteAlignment.End,
+                ) {
+                    Content()
+                }
+            }
+            RemoteBox(modifier = RemoteModifier.height(Padding))
+            Container {
+                RemoteColumn(
+                    modifier = RemoteModifier.size(ContainerSize),
+                    horizontalAlignment = RemoteAlignment.End,
+                    verticalArrangement = RemoteArrangement.Center,
+                ) {
+                    Content()
+                }
+            }
+            RemoteBox(modifier = RemoteModifier.height(Padding))
+            Container {
+                RemoteColumn(
+                    modifier = RemoteModifier.size(ContainerSize),
+                    horizontalAlignment = RemoteAlignment.End,
+                    verticalArrangement = RemoteArrangement.Bottom,
+                ) {
+                    Content()
+                }
+            }
+        }
+    }
+}
+
+@Composable
+@RemoteComposable
+private fun Container(modifier: RemoteModifier = RemoteModifier, content: @Composable () -> Unit) {
+    RemoteBox(
+        modifier = modifier.size(ContainerSize).background(Color(0xFFCFD8DC)),
+        horizontalAlignment = RemoteAlignment.Start,
+        verticalArrangement = RemoteArrangement.Center,
+        content = content,
+    )
+}
+
+@Composable
+@RemoteComposable
+private fun Content(modifier: RemoteModifier = RemoteModifier) {
+    RemoteBox(modifier = modifier.size(48.rdp).background(Color(0xFF6200EE)))
+    RemoteBox(modifier = modifier.size(24.rdp).background(Color(0xFF03DAC6)))
+}
+
+private val Padding = 24.rdp
+private val ContainerSize = 100.rdp
