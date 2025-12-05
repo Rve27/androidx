@@ -115,8 +115,8 @@ public class InteractableComponentImplTest {
         sendInputEvent(node, inputEvent);
         mFakeExecutor.runAll();
 
-        assertThat(((AndroidXrEntity) entity)
-                .getInputEventListenerMap$scenecore_spatial_core()).isNotEmpty();
+        assertThat(((AndroidXrEntity) entity).getInputEventListenerMap$scenecore_spatial_core())
+                .isNotEmpty();
         verify(inputEventListener).onInputEvent(any());
     }
 
@@ -141,8 +141,8 @@ public class InteractableComponentImplTest {
         sendInputEvent(node, inputEvent);
         mFakeExecutor.runAll();
 
-        assertThat(((AndroidXrEntity) entity)
-                .getInputEventListenerMap$scenecore_spatial_core()).isNotEmpty();
+        assertThat(((AndroidXrEntity) entity).getInputEventListenerMap$scenecore_spatial_core())
+                .isNotEmpty();
         verify(inputEventListener).onInputEvent(any());
 
         entity.removeComponent(interactableComponent);

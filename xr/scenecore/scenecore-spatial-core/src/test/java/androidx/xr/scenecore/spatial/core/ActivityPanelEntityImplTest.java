@@ -260,11 +260,7 @@ public class ActivityPanelEntityImplTest {
     public void getParent_nullParent_returnsNull() {
         ActivityPanelEntity activityPanelEntity =
                 mFakeRuntime.createActivityPanelEntity(
-                        new Pose(),
-                        mWindowBoundsPx,
-                        "test",
-                        mHostActivity,
-                        /* parent= */ null);
+                        new Pose(), mWindowBoundsPx, "test", mHostActivity, /* parent= */ null);
 
         assertThat(activityPanelEntity.getParent()).isEqualTo(null);
     }
@@ -273,11 +269,7 @@ public class ActivityPanelEntityImplTest {
     public void getPoseInParentSpace_nullParent_returnsIdentity() {
         ActivityPanelEntity activityPanelEntity =
                 mFakeRuntime.createActivityPanelEntity(
-                        new Pose(),
-                        mWindowBoundsPx,
-                        "test",
-                        mHostActivity,
-                        /* parent= */ null);
+                        new Pose(), mWindowBoundsPx, "test", mHostActivity, /* parent= */ null);
 
         activityPanelEntity.setPose(Pose.Identity);
         assertThat(activityPanelEntity.getPose(Space.PARENT)).isEqualTo(Pose.Identity);
@@ -287,29 +279,19 @@ public class ActivityPanelEntityImplTest {
     public void getPoseInActivitySpace_nullParent_throwsException() {
         ActivityPanelEntity activityPanelEntity =
                 mFakeRuntime.createActivityPanelEntity(
-                        new Pose(),
-                        mWindowBoundsPx,
-                        "test",
-                        mHostActivity,
-                        /* parent= */ null);
+                        new Pose(), mWindowBoundsPx, "test", mHostActivity, /* parent= */ null);
 
         assertThrows(
-                IllegalStateException.class,
-                () -> activityPanelEntity.getPose(Space.ACTIVITY));
+                IllegalStateException.class, () -> activityPanelEntity.getPose(Space.ACTIVITY));
     }
 
     @Test
     public void getPoseInRealWorldSpace_nullParent_throwsException() {
         ActivityPanelEntity activityPanelEntity =
                 mFakeRuntime.createActivityPanelEntity(
-                        new Pose(),
-                        mWindowBoundsPx,
-                        "test",
-                        mHostActivity,
-                        /* parent= */ null);
+                        new Pose(), mWindowBoundsPx, "test", mHostActivity, /* parent= */ null);
 
         assertThrows(
-                IllegalStateException.class,
-                () -> activityPanelEntity.getPose(Space.REAL_WORLD));
+                IllegalStateException.class, () -> activityPanelEntity.getPose(Space.REAL_WORLD));
     }
 }

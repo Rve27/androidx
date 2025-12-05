@@ -88,7 +88,8 @@ public abstract class SystemSpaceEntityImpl extends AndroidXrEntity implements S
      * <p>The OpenXR reference space is the space returned by {@link
      * XrExtensions#getOpenXrWorldReferenceSpaceType()}
      */
-    @Nullable public Pose getPoseInOpenXrReferenceSpace() {
+    @Nullable
+    public Pose getPoseInOpenXrReferenceSpace() {
         if (mOpenXrReferenceSpaceTransform.get() == null) {
             return null;
         }
