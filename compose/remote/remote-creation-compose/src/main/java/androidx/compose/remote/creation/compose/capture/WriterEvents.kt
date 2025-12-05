@@ -17,7 +17,6 @@
 package androidx.compose.remote.creation.compose.capture
 
 import android.app.PendingIntent
-import androidx.annotation.RestrictTo
 import androidx.compose.remote.creation.compose.ExperimentalRemoteCreationComposeApi
 
 /**
@@ -30,7 +29,6 @@ import androidx.compose.remote.creation.compose.ExperimentalRemoteCreationCompos
  * network stream.
  */
 @ExperimentalRemoteCreationComposeApi
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public interface WriterEvents {
 
     /**
@@ -44,7 +42,7 @@ public interface WriterEvents {
      * @param pendingIntent The [PendingIntent] to store.
      * @return The id for the host to retrieve the corresponding [PendingIntent].
      */
-    public fun storePendingIntent(pendingIntent: PendingIntent): Int
+    public fun storePendingIntent(pendingIntent: PendingIntent): Int = INVALID_ID
 
     /**
      * Called when an initial or new version of the document is available.
@@ -52,4 +50,9 @@ public interface WriterEvents {
      * @param documentBytes the bytes of the document.
      */
     public fun onDocumentAvailable(documentBytes: ByteArray)
+
+    public companion object {
+        /** Sentinel value indicating an invalid or unhandled ID for a stored object. */
+        public const val INVALID_ID: Int = -1
+    }
 }

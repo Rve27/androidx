@@ -46,7 +46,6 @@ import java.util.function.Supplier;
  * (e.g. validating parameters for a specific functionality) Additional features will likely be
  * represented via Profile in the future (set of valid host actions, etc.)
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public class Profile {
     int mApiLevel;
     int mOperationsProfiles;
@@ -66,6 +65,7 @@ public class Profile {
      * @param platform          a platform services implementation
      * @param factory           a valid factory returning a RemoteComposeWriter
      */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public Profile(
             int apiLevel,
             int operationProfiles,
@@ -87,6 +87,7 @@ public class Profile {
      * @param supportedOperations supplier of supported operations
      * @param factory             a valid factory returning a RemoteComposeWriter
      */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public Profile(
             int apiLevel,
             int operationProfiles,
@@ -107,6 +108,7 @@ public class Profile {
      * @param writerCallback the callback for writer out of band data
      * @return a valid RemoteComposeWriter
      */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public @NonNull RemoteComposeWriter create(@NonNull CreationDisplayInfo creationDisplayInfo,
             @Nullable Object writerCallback) {
         return mFactory.create(creationDisplayInfo, this, writerCallback);
@@ -117,6 +119,7 @@ public class Profile {
      *
      * @return the current API level used
      */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public int getApiLevel() {
         return mApiLevel;
     }
@@ -126,6 +129,7 @@ public class Profile {
      *
      * @return a bitmask of operation profiles
      */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public int getOperationsProfiles() {
         return mOperationsProfiles;
     }
@@ -135,6 +139,7 @@ public class Profile {
      *
      * @return the platform
      */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public @NonNull RcPlatformServices getPlatform() {
         return mPlatform;
     }
@@ -144,6 +149,7 @@ public class Profile {
      *
      * @return a ProfileFactory
      */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public @NonNull RemoteComposeWriterFactory getProfileFactory() {
         return mFactory;
     }
@@ -154,6 +160,7 @@ public class Profile {
      *
      * @return a set of operations
      */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     @RequiresApi(24)
     public @NonNull Set<Integer> getSupportedOperations() {
         if (mSupportedOperations == null) {
