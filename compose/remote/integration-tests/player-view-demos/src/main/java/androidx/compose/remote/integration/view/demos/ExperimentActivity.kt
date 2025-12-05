@@ -77,6 +77,7 @@ import androidx.compose.remote.creation.compose.capture.rememberVirtualDisplay
 import androidx.compose.remote.integration.view.demos.examples.DemoPaths.pathTest
 import androidx.compose.remote.integration.view.demos.examples.LayoutModifierDemo1
 import androidx.compose.remote.integration.view.demos.examples.LayoutModifierDemo2
+import androidx.compose.remote.integration.view.demos.examples.RcCanvasComponents1
 import androidx.compose.remote.integration.view.demos.examples.RcSimpleClock1
 import androidx.compose.remote.integration.view.demos.examples.RcTextDemo
 import androidx.compose.remote.integration.view.demos.examples.RcTextDemo2
@@ -290,6 +291,7 @@ class ExperimentActivity : ComponentActivity() {
                 ),
             "Procedural..." to
                 listOf(
+                    getpc("Canvas") { RcCanvasComponents1() },
                     getpc("Fireworks") { shaderFireworks() },
                     getpc("Layout modifier 2") { LayoutModifierDemo2() },
                     getpc("Layout modifier 1") { LayoutModifierDemo1() },
