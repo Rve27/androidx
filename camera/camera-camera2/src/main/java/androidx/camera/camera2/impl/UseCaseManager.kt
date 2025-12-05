@@ -38,9 +38,6 @@ import androidx.camera.camera2.interop.ExperimentalCamera2Interop
 import androidx.camera.camera2.pipe.CameraGraph
 import androidx.camera.camera2.pipe.CameraMetadata.Companion.supportsLowLightBoost
 import androidx.camera.camera2.pipe.CameraPipe
-import androidx.camera.camera2.pipe.CameraStream
-import androidx.camera.camera2.pipe.OutputStream
-import androidx.camera.camera2.pipe.StreamFormat
 import androidx.camera.core.CameraXConfig
 import androidx.camera.core.DynamicRange
 import androidx.camera.core.ImageCapture
@@ -169,23 +166,6 @@ constructor(
     private val closingCameraJobs = mutableListOf<Job>()
 
     private val allControls = controls.toMutableSet().apply { add(camera2CameraControl) }
-
-    init {
-        val outputStream =
-            OutputStream.Config.create(
-                size = getProperPreviewSize(cameraProperties, displayInfoManager),
-                format = StreamFormat.PRIVATE,
-            )
-        val cameraStream = CameraStream.Config.create(outputStream)
-        val noOpCameraGraph =
-            cameraPipe.createCameraGraph(
-                CameraGraph.Config(
-                    camera = cameraProperties.cameraId,
-                    streams = listOf(cameraStream),
-                )
-            )
-        noOpCameraGraph.close()
-    }
 
     internal fun setCameraGraphCreationMode(createImmediately: Boolean) =
         synchronized(lock) {
@@ -349,6 +329,13 @@ constructor(
 
     @GuardedBy("lock")
     private fun refreshRunningUseCases() {
+        // If there are no attached UseCases, the camera is either closed or being closed
+        // by refreshAttachedUseCases(). There is no need to update the running state or
+        // repeating request.
+        if (attachedUseCases.isEmpty()) {
+            return
+        }
+
         val runningUseCases = getRunningUseCases()
         when {
             shouldAddRepeatingUseCase(runningUseCases) -> addRepeatingUseCase()
