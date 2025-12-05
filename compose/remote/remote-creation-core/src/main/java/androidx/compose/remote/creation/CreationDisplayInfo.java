@@ -16,13 +16,13 @@
 
 package androidx.compose.remote.creation;
 
-import androidx.annotation.RestrictTo;
-
 /**
- * Details about the connection to the virtual display at Creation time. May not match the
- * properties of the local UI Context.
+ * Holds information about the display properties at the time of creation.
+ *
+ * <p>This includes the width, height, and density of the display where the remote UI will be
+ * rendered. These properties may differ from the properties of the local UI context and may change
+ * when the document is played.
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public class CreationDisplayInfo {
     private final int mWidth;
     private final int mHeight;
@@ -38,14 +38,29 @@ public class CreationDisplayInfo {
         this.mDensityDpi = mDensityDpi;
     }
 
+    /**
+     * Returns the logical density of the display. This is a scaling factor for the Density
+     * Independent Pixel unit, where one DIP is one pixel on an approximately 160 dpi screen (for
+     * example a 240x320, 1.5"x2" screen), providing the baseline of the system's display.
+     * Thus on a 160dpi screen this density value will be 1; on a 120 dpi screen it would be .75;
+     * etc.
+     *
+     * @see #getDensityDpi()
+     */
     public float getDensity() {
         return mDensityDpi / 160f;
     }
 
+    /**
+     * Returns the height in pixels of the virtual display.
+     */
     public int getHeight() {
         return mHeight;
     }
 
+    /**
+     * Returns the width in pixels of the virtual display.
+     */
     public int getWidth() {
         return mWidth;
     }
