@@ -23,7 +23,6 @@ import com.android.build.api.variant.KotlinMultiplatformAndroidComponentsExtensi
 import com.android.build.api.variant.LibraryAndroidComponentsExtension
 import com.android.build.api.variant.LibraryVariant
 import org.gradle.api.Project
-import org.gradle.api.attributes.Attribute
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Provider
@@ -244,39 +243,7 @@ internal class MultiplatformCompilationInputs(
             compilationProvider: Provider<KotlinCompilation<*>>,
             bootClasspath: FileCollection,
         ): MultiplatformCompilationInputs {
-            val compileDependencies =
-                compilationProvider.map { compilation ->
-                    // Sometimes an Android source set has the jvm platform type instead of
-                    // androidJvm
-                    val platformType =
-                        if (compilation.defaultSourceSet.name == "androidMain") {
-                            KotlinPlatformType.androidJvm
-                        } else {
-                            compilation.platformType
-                        }
-
-                    project.configurations
-                        .named(compilation.compileDependencyConfigurationName)
-                        .map { config ->
-                            // AGP adds files from many configurations to the
-                            // compileDependencyFiles,
-                            // so it needs to be filtered to avoid variant resolution errors.
-                            config.incoming
-                                .artifactView {
-                                    val artifactType =
-                                        if (platformType == KotlinPlatformType.androidJvm) {
-                                            "android-classes"
-                                        } else {
-                                            "jar"
-                                        }
-                                    it.attributes.attribute(
-                                        Attribute.of("artifactType", String::class.java),
-                                        artifactType,
-                                    )
-                                }
-                                .files
-                        }
-                }
+            val compileDependencies = compilationProvider.map { it.compileDependencyFiles }
             val sourceSets =
                 compilationProvider.map { compilation ->
                     compilation.allKotlinSourceSets.map { sourceSet ->
