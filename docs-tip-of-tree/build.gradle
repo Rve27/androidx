@@ -418,6 +418,7 @@ dependencies {
     docs(project(":window:window-rxjava2"))
     docs(project(":window:window-rxjava3"))
     docs(project(":window:window-testing"))
+    docs(project(":work:work-analytics"))
     docs(project(":work:work-gcm"))
     docs(project(":work:work-multiprocess"))
     docs(project(":work:work-runtime"))
