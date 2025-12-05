@@ -37,7 +37,6 @@ fun RemoteButtonSimpleSample(modifier: RemoteModifier = RemoteModifier) {
     RemoteButton(modifier = modifier) { RemoteText(RemoteString("Tap me!")) }
 }
 
-// Failing to display due to b/434130226
 @WearPreviewDevices
 @Composable
 fun RemoteButtonSimpleSamplePreview() = RemotePreview { Container { RemoteButtonSimpleSample() } }
