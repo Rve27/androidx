@@ -16,16 +16,9 @@
 
 package androidx.xr.projected.platform;
 
-import androidx.xr.projected.platform.IProjectedDeviceStateListener;
-import androidx.xr.projected.platform.IProjectedInputEventListener;
-
 @JavaPassthrough(annotation="@androidx.annotation.RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX)")
-interface IProjectedService {
-  void registerProjectedInputEventListener(in IProjectedInputEventListener listener);
-  void unregisterProjectedInputEventListener(in IProjectedInputEventListener listener);
-  void addWindowFlags(in int flags);
-  void clearWindowFlags(in int flags);
-  boolean isDisplayCapable();
-  void registerProjectedDeviceStateListener(in IProjectedDeviceStateListener listener);
-  void unregisterProjectedDeviceStateListener(in IProjectedDeviceStateListener listener);
+@Backing(type="int")
+enum ProjectedDeviceState {
+  INACTIVE = 0,
+  ACTIVE = 1,
 }
