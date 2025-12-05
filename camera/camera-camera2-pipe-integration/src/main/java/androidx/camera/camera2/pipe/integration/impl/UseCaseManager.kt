@@ -330,6 +330,13 @@ constructor(
 
     @GuardedBy("lock")
     private fun refreshRunningUseCases() {
+        // If there are no attached UseCases, the camera is either closed or being closed
+        // by refreshAttachedUseCases(). There is no need to update the running state or
+        // repeating request.
+        if (attachedUseCases.isEmpty()) {
+            return
+        }
+
         val runningUseCases = getRunningUseCases()
         when {
             shouldAddRepeatingUseCase(runningUseCases) -> addRepeatingUseCase()
