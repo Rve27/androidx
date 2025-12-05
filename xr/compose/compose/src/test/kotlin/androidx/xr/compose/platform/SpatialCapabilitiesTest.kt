@@ -21,9 +21,7 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.xr.compose.testing.SubspaceTestingActivity
-import androidx.xr.compose.testing.createFakeRuntime
-import androidx.xr.compose.testing.createFakeSession
-import androidx.xr.compose.testing.session
+import androidx.xr.compose.testing.configureFakeSession
 import androidx.xr.scenecore.scene
 import org.junit.Rule
 import org.junit.Test
@@ -162,8 +160,7 @@ class SpatialCapabilitiesTest {
 
     @Test
     fun isSpatialUiEnabled_homeSpaceMode_returnsFalse() {
-        composeTestRule.session =
-            createFakeSession(composeTestRule.activity).apply { scene.requestHomeSpaceMode() }
+        composeTestRule.configureFakeSession().scene.requestHomeSpaceMode()
 
         composeTestRule.setContent {
             if (LocalSpatialCapabilities.current.isSpatialUiEnabled) {
@@ -176,9 +173,7 @@ class SpatialCapabilitiesTest {
 
     @Test
     fun isSpatialUiEnabled_homeSpaceMode_requestFullSpaceMode_returnsTrue() {
-        val runtime = createFakeRuntime(composeTestRule.activity)
-        runtime.requestHomeSpaceMode()
-        composeTestRule.session = createFakeSession(composeTestRule.activity, runtime)
+        composeTestRule.configureFakeSession().scene.requestHomeSpaceMode()
 
         composeTestRule.setContent {
             if (LocalSpatialCapabilities.current.isSpatialUiEnabled) {
@@ -216,8 +211,7 @@ class SpatialCapabilitiesTest {
 
     @Test
     fun isContent3dEnabled_homeSpaceMode_requestFullSpaceMode_returnsTrue() {
-        composeTestRule.session =
-            createFakeSession(composeTestRule.activity).apply { scene.requestHomeSpaceMode() }
+        composeTestRule.configureFakeSession().scene.requestHomeSpaceMode()
 
         composeTestRule.setContent {
             if (LocalSpatialCapabilities.current.isContent3dEnabled) {
@@ -255,8 +249,7 @@ class SpatialCapabilitiesTest {
 
     @Test
     fun isAppEnvironmentEnabled_homeSpaceMode_requestFullSpaceMode_returnsTrue() {
-        composeTestRule.session =
-            createFakeSession(composeTestRule.activity).apply { scene.requestHomeSpaceMode() }
+        composeTestRule.configureFakeSession().scene.requestHomeSpaceMode()
 
         composeTestRule.setContent {
             if (LocalSpatialCapabilities.current.isAppEnvironmentEnabled) {
@@ -294,8 +287,7 @@ class SpatialCapabilitiesTest {
 
     @Test
     fun isPassthroughControlEnabled_homeSpaceMode_requestFullSpaceMode_returnsTrue() {
-        composeTestRule.session =
-            createFakeSession(composeTestRule.activity).apply { scene.requestHomeSpaceMode() }
+        composeTestRule.configureFakeSession().scene.requestHomeSpaceMode()
 
         composeTestRule.setContent {
             if (LocalSpatialCapabilities.current.isPassthroughControlEnabled) {
@@ -333,8 +325,7 @@ class SpatialCapabilitiesTest {
 
     @Test
     fun isSpatialAudioEnabled_homeSpaceMode_requestFullSpaceMode_returnsTrue() {
-        composeTestRule.session =
-            createFakeSession(composeTestRule.activity).apply { scene.requestHomeSpaceMode() }
+        composeTestRule.configureFakeSession().scene.requestHomeSpaceMode()
 
         composeTestRule.setContent {
             if (LocalSpatialCapabilities.current.isSpatialAudioEnabled) {
