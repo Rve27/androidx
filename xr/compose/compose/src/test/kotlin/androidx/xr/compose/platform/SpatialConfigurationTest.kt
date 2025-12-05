@@ -23,8 +23,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.xr.compose.testing.SubspaceTestingActivity
-import androidx.xr.compose.testing.createFakeSession
-import androidx.xr.compose.testing.session
+import androidx.xr.compose.testing.configureFakeSession
 import androidx.xr.compose.unit.DpVolumeSize
 import androidx.xr.scenecore.scene
 import com.google.common.truth.Truth.assertThat
@@ -108,8 +107,7 @@ class SpatialConfigurationTest {
 
     @Test
     fun hasXrSpatialFeature_homeSpaceMode_returnsTrue() {
-        composeTestRule.session = createFakeSession(composeTestRule.activity)
-        composeTestRule.session?.scene?.requestHomeSpaceMode()
+        composeTestRule.configureFakeSession().scene.requestHomeSpaceMode()
 
         composeTestRule.setContent {
             if (LocalSpatialConfiguration.current.hasXrSpatialFeature) {
@@ -122,8 +120,7 @@ class SpatialConfigurationTest {
 
     @Test
     fun bounds_homeSpaceMode_isPositiveAndNotMax() {
-        composeTestRule.session = createFakeSession(composeTestRule.activity)
-        composeTestRule.session?.scene?.requestHomeSpaceMode()
+        composeTestRule.configureFakeSession().scene.requestHomeSpaceMode()
 
         var bounds: DpVolumeSize? = null
         composeTestRule.setContent { bounds = LocalSpatialConfiguration.current.bounds }
