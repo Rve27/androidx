@@ -137,12 +137,15 @@ package androidx.tracing.driver {
     ctor public Tracer(String name, boolean isEnabled);
     method public final suspend inline Object? beginCoroutineSection(String category, String name, androidx.tracing.driver.PropagationToken? token, optional boolean isRoot, kotlin.jvm.functions.Function1<? super androidx.tracing.driver.EventMetadata,kotlin.Unit> metadataBlock, kotlin.coroutines.Continuation<? super androidx.tracing.driver.EventMetadataCloseable>);
     method @BytecodeOnly public static Object! beginCoroutineSection$default(androidx.tracing.driver.Tracer!, String!, String!, androidx.tracing.driver.PropagationToken!, boolean, kotlin.jvm.functions.Function1!, kotlin.coroutines.Continuation!, int, Object!);
-    method public abstract suspend Object? beginCoroutineSectionWithMetadata(String category, String name, androidx.tracing.driver.PropagationToken? token, boolean isRoot, kotlin.coroutines.Continuation<? super androidx.tracing.driver.EventMetadataCloseable>);
+    method @SuppressCompatibility @androidx.tracing.driver.DelicateTracingApi public abstract suspend Object? beginCoroutineSectionWithMetadata(String category, String name, androidx.tracing.driver.PropagationToken? token, boolean isRoot, kotlin.coroutines.Continuation<? super androidx.tracing.driver.EventMetadataCloseable>);
     method public final inline AutoCloseable beginSection(String category, String name, androidx.tracing.driver.PropagationToken? token, optional boolean isRoot, kotlin.jvm.functions.Function1<? super androidx.tracing.driver.EventMetadata,kotlin.Unit> metadataBlock);
     method @BytecodeOnly public static AutoCloseable! beginSection$default(androidx.tracing.driver.Tracer!, String!, String!, androidx.tracing.driver.PropagationToken!, boolean, kotlin.jvm.functions.Function1!, int, Object!);
     method @SuppressCompatibility @androidx.tracing.driver.DelicateTracingApi public abstract androidx.tracing.driver.EventMetadataCloseable beginSectionWithMetadata(String category, String name, androidx.tracing.driver.PropagationToken? token, boolean isRoot);
-    method public abstract androidx.tracing.driver.Counter counter(String name);
-    method public abstract void instant(String name);
+    method public abstract androidx.tracing.driver.Counter counter(String category, String name);
+    method @SuppressCompatibility @androidx.tracing.driver.DelicateTracingApi public abstract androidx.tracing.driver.EventMetadataCloseable instant(String category, String name);
+    method public final inline void instant(String category, String name);
+    method public final inline void instant(String category, String name, optional kotlin.jvm.functions.Function1<? super androidx.tracing.driver.EventMetadata,kotlin.Unit> metadataBlock);
+    method @BytecodeOnly public static void instant$default(androidx.tracing.driver.Tracer!, String!, String!, kotlin.jvm.functions.Function1!, int, Object!);
     method @SuppressCompatibility @androidx.tracing.driver.DelicateTracingApi public abstract suspend Object? tokenFromCoroutineContext(kotlin.coroutines.Continuation<? super androidx.tracing.driver.PropagationToken>);
     method @SuppressCompatibility @androidx.tracing.driver.DelicateTracingApi public abstract androidx.tracing.driver.PropagationToken tokenFromThreadContext();
     method public final inline <T> T trace(String category, String name, optional androidx.tracing.driver.PropagationToken? token, optional boolean isRoot, kotlin.jvm.functions.Function0<? extends T> block);

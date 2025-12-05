@@ -48,7 +48,7 @@ class RecyclingTest {
     @Test
     internal fun testProcessTrackCounter() = runTest {
         context.use {
-            val counter = tracer.counter("counter")
+            val counter = tracer.counter("counter", "name")
             counter.setValue(0L)
         }
         assertTrue(context.isDebug)

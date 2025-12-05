@@ -184,8 +184,28 @@ class TracingTest {
 
     @Test
     internal fun testCounterTrackEvents() {
-        driver.use { tracer.counter("counter").setValue(10L) }
+        driver.use { tracer.counter(category = "counter", "counter").setValue(10L) }
         assertEquals(3, sink.packets.size)
+        val packet =
+            sink.packets.firstOrNull { packet ->
+                packet.track_event?.type == MutableTrackEvent.Type.TYPE_COUNTER
+            }
+        assertNotNull(packet) { "Cannot find a track event of TYPE_COUNTER" }
+    }
+
+    @Test
+    internal fun testInstantTrackEvents() {
+        driver.use {
+            tracer.instant(category = "category", name = "name") {
+                addMetadataEntry("key", "value")
+            }
+        }
+        assertEquals(3, sink.packets.size)
+        val packet =
+            sink.packets.firstOrNull { packet ->
+                packet.track_event?.type == MutableTrackEvent.Type.TYPE_INSTANT
+            }
+        assertNotNull(packet) { "Cannot find a track event of TYPE_INSTANT" }
     }
 
     @Test

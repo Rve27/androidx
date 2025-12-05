@@ -204,16 +204,17 @@ public class PerfettoTracer(context: TraceContext, name: String) :
         }
     }
 
-    override fun counter(name: String): Counter {
+    override fun counter(category: String, name: String): Counter {
         // getOrCreateCounterTrack() is synchronized, so we get the same instance of the counter
         // for the provided name.
         val counter = process.counters.getOrPut(name) { process.getOrCreateCounterTrack(name) }
-        return PerfettoCounter(track = counter)
+        return PerfettoCounter(category = category, track = counter)
     }
 
-    override fun instant(name: String) {
+    @DelicateTracingApi
+    override fun instant(category: String, name: String): EventMetadataCloseable {
         val track = currentThreadTrack()
-        track.instant(name = name)
+        return track.instant(category = category, name = name)
     }
 
     override fun close() {

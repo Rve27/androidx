@@ -40,7 +40,7 @@ class TracingDemoTest {
     internal val driver =
         TraceDriver(sink = TraceSink(sequenceId = 1, directory = File("/tmp")), isEnabled = true)
     internal val tracer = driver.createTracer(name = "TracingDemoTest")
-    internal val counter = tracer.counter("Batches Completed")
+    internal val counter = tracer.counter(category = "Counters", name = "Batches Completed")
 
     @Test
     internal fun testSimpleTracingTest() = runBlocking {
@@ -53,6 +53,9 @@ class TracingDemoTest {
                         addMetadataEntry("context", "basic trace with 1 suspension point")
                     },
                 ) {
+                    tracer.instant(category = "category", name = "Delaying") {
+                        addMetadataEntry("key", "value")
+                    }
                     coroutineScope { delay(10L) }
                 }
             }
