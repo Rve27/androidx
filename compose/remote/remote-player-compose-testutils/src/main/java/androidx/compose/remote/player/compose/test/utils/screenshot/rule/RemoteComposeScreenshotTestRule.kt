@@ -35,7 +35,7 @@ import androidx.compose.remote.creation.compose.capture.widthDp
 import androidx.compose.remote.creation.compose.layout.RemoteComposable
 import androidx.compose.remote.creation.profile.Profile
 import androidx.compose.remote.creation.profile.RcPlatformProfiles
-import androidx.compose.remote.player.compose.ExperimentalRemoteComposePlayerApi
+import androidx.compose.remote.player.compose.ExperimentalRemotePlayerApi
 import androidx.compose.remote.player.compose.RemoteComposePlayerFlags
 import androidx.compose.remote.player.compose.RemoteDocumentPlayer
 import androidx.compose.remote.player.compose.test.utils.screenshot.TargetPlayer
@@ -73,7 +73,7 @@ import org.junit.runners.model.Statement
  * @param matcher The algorithm to be used to perform the matching. If null, it will let
  *   [androidx.compose.testutils.assertAgainstGolden] use its default.
  */
-@OptIn(ExperimentalRemoteComposePlayerApi::class)
+@OptIn(ExperimentalRemotePlayerApi::class)
 @SdkSuppress(minSdkVersion = 35, maxSdkVersion = 35)
 class RemoteComposeScreenshotTestRule(
     moduleDirectory: String,
