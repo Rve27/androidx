@@ -14,59 +14,41 @@
  * limitations under the License.
  */
 
-package androidx.compose.remote.player.compose.creation.compose.layout
+package androidx.compose.remote.creation.compose.layout
 
-import androidx.compose.remote.creation.compose.layout.RemoteAlignment
-import androidx.compose.remote.creation.compose.layout.RemoteArrangement
-import androidx.compose.remote.creation.compose.layout.RemoteBox
-import androidx.compose.remote.creation.compose.layout.RemoteColumn
-import androidx.compose.remote.creation.compose.layout.RemoteComposable
-import androidx.compose.remote.creation.compose.layout.RemoteRow
+import androidx.compose.remote.creation.compose.SCREENSHOT_GOLDEN_DIRECTORY
 import androidx.compose.remote.creation.compose.modifier.RemoteModifier
 import androidx.compose.remote.creation.compose.modifier.background
+import androidx.compose.remote.creation.compose.modifier.fillMaxSize
 import androidx.compose.remote.creation.compose.modifier.height
 import androidx.compose.remote.creation.compose.modifier.size
 import androidx.compose.remote.creation.compose.modifier.width
 import androidx.compose.remote.creation.compose.state.rdp
-import androidx.compose.remote.player.compose.SCREENSHOT_GOLDEN_DIRECTORY
 import androidx.compose.remote.player.compose.test.utils.screenshot.TargetPlayer
 import androidx.compose.remote.player.compose.test.utils.screenshot.rule.RemoteComposeScreenshotTestRule
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.test.filters.MediumTest
 import androidx.test.filters.SdkSuppress
+import com.google.testing.junit.testparameterinjector.TestParameter
+import com.google.testing.junit.testparameterinjector.TestParameterInjector
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
 
 @MediumTest
 @SdkSuppress(minSdkVersion = 35, maxSdkVersion = 35)
-@RunWith(JUnit4::class)
-class RemoteColumnComposeTest {
+@RunWith(TestParameterInjector::class)
+class RemoteBoxTest {
+    @TestParameter private lateinit var targetPlayer: TargetPlayer
+
     @get:Rule
-    val composeTestRule =
+    val composeTestRule: RemoteComposeScreenshotTestRule by lazy {
         RemoteComposeScreenshotTestRule(
             moduleDirectory = SCREENSHOT_GOLDEN_DIRECTORY,
-            targetPlayer = TargetPlayer.Compose,
+            targetPlayer = targetPlayer,
         )
-
-    @Test
-    fun simpleLayout() {
-        composeTestRule.simpleLayout()
     }
-}
-
-@MediumTest
-@SdkSuppress(minSdkVersion = 35, maxSdkVersion = 35)
-@RunWith(JUnit4::class)
-class RemoteColumnViewTest {
-    @get:Rule
-    val composeTestRule =
-        RemoteComposeScreenshotTestRule(
-            moduleDirectory = SCREENSHOT_GOLDEN_DIRECTORY,
-            targetPlayer = TargetPlayer.View,
-        )
 
     @Test
     fun simpleLayout() {
@@ -78,13 +60,19 @@ private fun RemoteComposeScreenshotTestRule.simpleLayout() = runScreenshotTest {
     RemoteRow {
         RemoteColumn {
             Container {
-                // TODO(b/447100988): replace size by fillMaxSize in all those RemoteColumns
-                RemoteColumn(modifier = RemoteModifier.size(ContainerSize)) { Content() }
+                RemoteBox(
+                    modifier = RemoteModifier.fillMaxSize(),
+                    horizontalAlignment = RemoteAlignment.Start,
+                    verticalArrangement = RemoteArrangement.Top,
+                ) {
+                    Content()
+                }
             }
             RemoteBox(modifier = RemoteModifier.height(Padding))
             Container {
-                RemoteColumn(
-                    modifier = RemoteModifier.size(ContainerSize),
+                RemoteBox(
+                    modifier = RemoteModifier.fillMaxSize(),
+                    horizontalAlignment = RemoteAlignment.Start,
                     verticalArrangement = RemoteArrangement.Center,
                 ) {
                     Content()
@@ -92,8 +80,9 @@ private fun RemoteComposeScreenshotTestRule.simpleLayout() = runScreenshotTest {
             }
             RemoteBox(modifier = RemoteModifier.height(Padding))
             Container {
-                RemoteColumn(
-                    modifier = RemoteModifier.size(ContainerSize),
+                RemoteBox(
+                    modifier = RemoteModifier.fillMaxSize(),
+                    horizontalAlignment = RemoteAlignment.Start,
                     verticalArrangement = RemoteArrangement.Bottom,
                 ) {
                     Content()
@@ -103,17 +92,18 @@ private fun RemoteComposeScreenshotTestRule.simpleLayout() = runScreenshotTest {
         RemoteBox(modifier = RemoteModifier.width(Padding))
         RemoteColumn {
             Container {
-                RemoteColumn(
-                    modifier = RemoteModifier.size(ContainerSize),
+                RemoteBox(
+                    modifier = RemoteModifier.fillMaxSize(),
                     horizontalAlignment = RemoteAlignment.CenterHorizontally,
+                    verticalArrangement = RemoteArrangement.Top,
                 ) {
                     Content()
                 }
             }
             RemoteBox(modifier = RemoteModifier.height(Padding))
             Container {
-                RemoteColumn(
-                    modifier = RemoteModifier.size(ContainerSize),
+                RemoteBox(
+                    modifier = RemoteModifier.fillMaxSize(),
                     horizontalAlignment = RemoteAlignment.CenterHorizontally,
                     verticalArrangement = RemoteArrangement.Center,
                 ) {
@@ -122,8 +112,8 @@ private fun RemoteComposeScreenshotTestRule.simpleLayout() = runScreenshotTest {
             }
             RemoteBox(modifier = RemoteModifier.height(Padding))
             Container {
-                RemoteColumn(
-                    modifier = RemoteModifier.size(ContainerSize),
+                RemoteBox(
+                    modifier = RemoteModifier.fillMaxSize(),
                     horizontalAlignment = RemoteAlignment.CenterHorizontally,
                     verticalArrangement = RemoteArrangement.Bottom,
                 ) {
@@ -134,17 +124,18 @@ private fun RemoteComposeScreenshotTestRule.simpleLayout() = runScreenshotTest {
         RemoteBox(modifier = RemoteModifier.width(Padding))
         RemoteColumn {
             Container {
-                RemoteColumn(
-                    modifier = RemoteModifier.size(ContainerSize),
+                RemoteBox(
+                    modifier = RemoteModifier.fillMaxSize(),
                     horizontalAlignment = RemoteAlignment.End,
+                    verticalArrangement = RemoteArrangement.Top,
                 ) {
                     Content()
                 }
             }
             RemoteBox(modifier = RemoteModifier.height(Padding))
             Container {
-                RemoteColumn(
-                    modifier = RemoteModifier.size(ContainerSize),
+                RemoteBox(
+                    modifier = RemoteModifier.fillMaxSize(),
                     horizontalAlignment = RemoteAlignment.End,
                     verticalArrangement = RemoteArrangement.Center,
                 ) {
@@ -153,8 +144,8 @@ private fun RemoteComposeScreenshotTestRule.simpleLayout() = runScreenshotTest {
             }
             RemoteBox(modifier = RemoteModifier.height(Padding))
             Container {
-                RemoteColumn(
-                    modifier = RemoteModifier.size(ContainerSize),
+                RemoteBox(
+                    modifier = RemoteModifier.fillMaxSize(),
                     horizontalAlignment = RemoteAlignment.End,
                     verticalArrangement = RemoteArrangement.Bottom,
                 ) {
