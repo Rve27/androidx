@@ -25,6 +25,11 @@ import androidx.collection.emptyScatterMap
 import androidx.collection.mutableScatterMapOf
 import androidx.compose.runtime.collection.fastFilter
 import androidx.compose.runtime.collection.sortedBy
+import androidx.compose.runtime.composer.gapbuffer.Anchor
+import androidx.compose.runtime.composer.gapbuffer.SlotReader
+import androidx.compose.runtime.composer.gapbuffer.SlotTable
+import androidx.compose.runtime.composer.gapbuffer.SlotWriter
+import androidx.compose.runtime.composer.gapbuffer.compositionGroupOf
 import androidx.compose.runtime.tooling.ComposeStackTraceMode
 import androidx.compose.runtime.tooling.CompositionData
 import androidx.compose.runtime.tooling.CompositionGroup

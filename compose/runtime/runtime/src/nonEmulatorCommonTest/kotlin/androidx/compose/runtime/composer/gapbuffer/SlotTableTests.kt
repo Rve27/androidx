@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,8 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.compose.runtime
+package androidx.compose.runtime.composer.gapbuffer
 
+import androidx.compose.runtime.Composer
+import androidx.compose.runtime.RememberObserver
+import androidx.compose.runtime.RememberObserverHolder
+import androidx.compose.runtime.isAfterFirstChild
+import androidx.compose.runtime.reuseKey
 import androidx.compose.runtime.snapshots.fastForEach
 import androidx.compose.runtime.tooling.CompositionData
 import androidx.compose.runtime.tooling.CompositionGroup

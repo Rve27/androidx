@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 @file:Suppress("NOTHING_TO_INLINE", "KotlinRedundantDiagnosticSuppress", "PrimitiveInCollection")
 
-package androidx.compose.runtime
+package androidx.compose.runtime.composer.gapbuffer
 
 import androidx.collection.MutableIntList
 import androidx.collection.MutableIntObjectMap
@@ -24,9 +24,18 @@ import androidx.collection.MutableIntSet
 import androidx.collection.MutableObjectList
 import androidx.collection.mutableIntListOf
 import androidx.collection.mutableIntSetOf
+import androidx.compose.runtime.Composer
+import androidx.compose.runtime.IntStack
+import androidx.compose.runtime.RecomposeScopeImpl
+import androidx.compose.runtime.RememberObserverHolder
+import androidx.compose.runtime.checkPrecondition
 import androidx.compose.runtime.collection.fastCopyInto
+import androidx.compose.runtime.composeRuntimeError
+import androidx.compose.runtime.debugRuntimeCheck
 import androidx.compose.runtime.platform.makeSynchronizedObject
 import androidx.compose.runtime.platform.synchronized
+import androidx.compose.runtime.requirePrecondition
+import androidx.compose.runtime.runtimeCheck
 import androidx.compose.runtime.snapshots.fastAny
 import androidx.compose.runtime.snapshots.fastFilterIndexed
 import androidx.compose.runtime.snapshots.fastForEach
