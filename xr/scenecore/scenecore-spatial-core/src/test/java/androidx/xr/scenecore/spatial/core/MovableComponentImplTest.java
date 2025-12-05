@@ -113,8 +113,7 @@ public class MovableComponentImplTest {
             Mockito.mock(PanelShadowRenderer.class);
     private final NodeRepository mNodeRepository = NodeRepository.getInstance();
 
-    @Rule
-    public final Expect expect = Expect.create();
+    @Rule public final Expect expect = Expect.create();
 
     @Rule
     public GrantPermissionRule mGrantPermissionRule =
@@ -392,9 +391,9 @@ public class MovableComponentImplTest {
                 .isEqualTo(MovableComponent.ScaleWithDistanceMode.DEFAULT);
         assertThat(entity.addComponent(movableComponent)).isTrue();
         assertThat(
-                mNodeRepository
-                        .getReformOptions(getEntityNode(entity))
-                        .getScaleWithDistanceMode())
+                        mNodeRepository
+                                .getReformOptions(getEntityNode(entity))
+                                .getScaleWithDistanceMode())
                 .isEqualTo(ReformOptions.SCALE_WITH_DISTANCE_MODE_DEFAULT);
     }
 
@@ -416,9 +415,9 @@ public class MovableComponentImplTest {
         assertThat(movableComponent.getScaleWithDistanceMode())
                 .isEqualTo(MovableComponent.ScaleWithDistanceMode.DMM);
         assertThat(
-                mNodeRepository
-                        .getReformOptions(getEntityNode(entity))
-                        .getScaleWithDistanceMode())
+                        mNodeRepository
+                                .getReformOptions(getEntityNode(entity))
+                                .getScaleWithDistanceMode())
                 .isEqualTo(ReformOptions.SCALE_WITH_DISTANCE_MODE_DMM);
     }
 
@@ -644,8 +643,8 @@ public class MovableComponentImplTest {
     @Test
     public void anchorableComponentMoving_sendMoveEvent_rendersShadow() {
         // Set the activity space pose to be 1 unit down and to the left of the origin.
-        Pose activitySpacePose = new Pose(new Vector3(-1f, -1f, 0f),
-                new Quaternion(0f, 0f, 0f, 1f));
+        Pose activitySpacePose =
+                new Pose(new Vector3(-1f, -1f, 0f), new Quaternion(0f, 0f, 0f, 1f));
         setActivitySpacePose(activitySpacePose, 1f);
         PanelEntity entity = createTestPanelEntity();
         MovableComponentImpl movableComponent =
@@ -664,23 +663,22 @@ public class MovableComponentImplTest {
 
         ReformEvent moveStartReformEvent =
                 ShadowReformEvent.create(
-                        /* type= */ REFORM_TYPE_MOVE,
-                        /* state= */ REFORM_STATE_START,
-                        /* id= */ 0);
+                        /* type= */ REFORM_TYPE_MOVE, /* state= */ REFORM_STATE_START, /* id= */ 0);
         ReformEvent moveOngoingReformEvent =
                 ShadowReformEvent.create(
                         /* type= */ REFORM_TYPE_MOVE,
                         /* state= */ REFORM_STATE_ONGOING,
                         /* id= */ 0);
 
-        Pose proposedPoseInActivitySpace = new Pose(new Vector3(1.0f, 1.0f, 1.0f),
-                new Quaternion(0.0f, 0.0f, 0.0f, 1.0f));
-        Vec3 proposedPosition = new Vec3(
-                proposedPoseInActivitySpace.getTranslation().getX(),
-                proposedPoseInActivitySpace.getTranslation().getY(),
-                proposedPoseInActivitySpace.getTranslation().getZ());
-        Pose proposedPoseInOxr = proposedPoseInActivitySpace.translate(
-                activitySpacePose.getTranslation());
+        Pose proposedPoseInActivitySpace =
+                new Pose(new Vector3(1.0f, 1.0f, 1.0f), new Quaternion(0.0f, 0.0f, 0.0f, 1.0f));
+        Vec3 proposedPosition =
+                new Vec3(
+                        proposedPoseInActivitySpace.getTranslation().getX(),
+                        proposedPoseInActivitySpace.getTranslation().getY(),
+                        proposedPoseInActivitySpace.getTranslation().getZ());
+        Pose proposedPoseInOxr =
+                proposedPoseInActivitySpace.translate(activitySpacePose.getTranslation());
         Pose expectedPlanePoseInOxr = proposedPoseInOxr.translate(new Vector3(0.0f, 1.0f, 0.0f));
 
         // Put the proposed position at 1 above the origin. so it would need to move up 1 unit to
@@ -694,9 +692,7 @@ public class MovableComponentImplTest {
         // Since it is by the plane a call should be made to the panel shadow renderer.
         verify(mPanelShadowRenderer)
                 .updatePanelPose(
-                        proposedPoseInOxr,
-                        expectedPlanePoseInOxr,
-                        (PanelEntityImpl) entity);
+                        proposedPoseInOxr, expectedPlanePoseInOxr, (PanelEntityImpl) entity);
     }
 
     @Test
@@ -718,9 +714,7 @@ public class MovableComponentImplTest {
 
         ReformEvent moveStartReformEvent =
                 ShadowReformEvent.create(
-                        /* type= */ REFORM_TYPE_MOVE,
-                        /* state= */ REFORM_STATE_START,
-                        /* id= */ 0);
+                        /* type= */ REFORM_TYPE_MOVE, /* state= */ REFORM_STATE_START, /* id= */ 0);
         ReformEvent moveOngoingReformEvent =
                 ShadowReformEvent.create(
                         /* type= */ REFORM_TYPE_MOVE,
@@ -728,9 +722,7 @@ public class MovableComponentImplTest {
                         /* id= */ 0);
         ReformEvent moveEndReformEvent =
                 ShadowReformEvent.create(
-                        /* type= */ REFORM_TYPE_MOVE,
-                        /* state= */ REFORM_STATE_END,
-                        /* id= */ 0);
+                        /* type= */ REFORM_TYPE_MOVE, /* state= */ REFORM_STATE_END, /* id= */ 0);
 
         sendReformEvent(getEntityNode(entity), moveStartReformEvent);
         sendReformEvent(getEntityNode(entity), moveEndReformEvent);
@@ -760,14 +752,10 @@ public class MovableComponentImplTest {
 
         ReformEvent moveStartReformEvent =
                 ShadowReformEvent.create(
-                        /* type= */ REFORM_TYPE_MOVE,
-                        /* state= */ REFORM_STATE_START,
-                        /* id= */ 0);
+                        /* type= */ REFORM_TYPE_MOVE, /* state= */ REFORM_STATE_START, /* id= */ 0);
         ReformEvent moveEndReformEvent =
                 ShadowReformEvent.create(
-                        /* type= */ REFORM_TYPE_MOVE,
-                        /* state= */ REFORM_STATE_END,
-                        /* id= */ 0);
+                        /* type= */ REFORM_TYPE_MOVE, /* state= */ REFORM_STATE_END, /* id= */ 0);
 
         sendReformEvent(getEntityNode(entity), moveStartReformEvent);
         sendReformEvent(getEntityNode(entity), moveEndReformEvent);
@@ -789,16 +777,19 @@ public class MovableComponentImplTest {
             mLastMoveEvent = event;
             mCallCount++;
             Pose currentPoseInParentSpace = event.getCurrentPose();
-            Pose currentPoseInOxr = event.getInitialParent().transformPoseTo(
-                    currentPoseInParentSpace, mFakeRuntime.getPerceptionSpaceActivityPose());
+            Pose currentPoseInOxr =
+                    event.getInitialParent()
+                            .transformPoseTo(
+                                    currentPoseInParentSpace,
+                                    mFakeRuntime.getPerceptionSpaceActivityPose());
             Pose planePoseInOxr = currentPoseInOxr.translate(new Vector3(0.0f, 1.0f, 0.0f));
             switch (event.getMoveState()) {
                 case MoveEvent.MOVE_STATE_START:
                     break;
                 case MoveEvent.MOVE_STATE_ONGOING:
                     // Notify movable component that there is a plane 1 unit up from proposed pose.
-                    mMovableComponent.setPlanePoseForMoveUpdatePose(planePoseInOxr,
-                            currentPoseInOxr);
+                    mMovableComponent.setPlanePoseForMoveUpdatePose(
+                            planePoseInOxr, currentPoseInOxr);
                     break;
                 case MoveEvent.MOVE_STATE_END:
                     mMovableComponent.setPlanePoseForMoveUpdatePose(null, currentPoseInOxr);
