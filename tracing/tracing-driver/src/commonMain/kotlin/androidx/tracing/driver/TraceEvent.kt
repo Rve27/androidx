@@ -196,7 +196,7 @@ internal constructor(
 
     @PublishedApi
     internal inline fun setInstant(trackUuid: Long, name: String) {
-        type = TRACE_EVENT_TYPE_END
+        type = TRACE_EVENT_TYPE_INSTANT
         this.trackUuid = trackUuid
         timestamp = nanoTime()
         this.name = name
